@@ -180,18 +180,6 @@ void DreamGenContext::manAsleep2() {
 	addToPeopleList();
 }
 
-void DreamGenContext::manSatStill() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
-}
-
-void DreamGenContext::tattooMan() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::drinker() {
 	STACK_CHECK;
 	checkSpeed();
@@ -448,12 +436,6 @@ endmugger1:
 	data.byte(kBeenmugged) = 1;
 	bx = pop();
 	es = pop();
-}
-
-void DreamGenContext::aide() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
 }
 
 void DreamGenContext::businessMan() {

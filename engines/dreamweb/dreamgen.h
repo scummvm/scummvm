@@ -707,7 +707,6 @@ public:
 	void useDryer();
 	void outOfInv();
 	void diaryKeyP();
-	void manSatStill();
 	void transferMap();
 	void showMonk();
 	void diaryKeyN();
@@ -831,7 +830,6 @@ public:
 	void useCardReader1();
 	void useCardReader2();
 	void useCardReader3();
-	void tattooMan();
 	void useHandle();
 	void openFile();
 	void showPuzText();
@@ -866,7 +864,6 @@ public:
 	void makeMainScreen();
 	void useWinch();
 	void setBotRight();
-	void aide();
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();
