@@ -515,6 +515,9 @@ public:
 	FontId _currentFont;
 
 	// decoding functions
+	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);
+	static uint16 decodeEGAGetCode(const uint8 *&pos, uint8 &nib);
+
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);

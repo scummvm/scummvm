@@ -2052,6 +2052,87 @@ void Screen::drawShapePlotType52(uint8 *dst, uint8 cmd) {
 	*dst = cmd;
 }
 
+void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
+	const uint8 *dstEnd = dst + size;
+
+	struct Pattern {
+		const uint8 *pos;
+		uint16 len;
+	};
+
+	Pattern *patterns = new Pattern[3840];
+	uint16 numPatterns = 0;
+	uint8 nib = 0;	
+
+	uint16 code = decodeEGAGetCode(src, nib);
+	uint8 last = code & 0xff;
+
+	uint8 *dstPrev = dst;
+	uint16 count = 1;
+	uint16 countPrev = 1;
+
+	*dst++ = last;
+
+	while (dst < dstEnd) {
+		code = decodeEGAGetCode(src, nib);
+		last = code & 0xff;
+		uint8 cmd = code >> 8;
+
+		if (cmd--) {
+			code = (cmd << 8) | last;
+			uint8 *tmpDst = dst;
+			last = *dst;
+
+			if (code < numPatterns) {
+				const uint8 *tmpSrc = patterns[code].pos;
+				countPrev = patterns[code].len;
+				for (int i = 0; i < countPrev; i++)
+					*dst++ = *tmpSrc++;
+
+			} else {
+				const uint8 *tmpSrc = dstPrev;
+				count = countPrev;
+				for (int i = 0; i < countPrev; i++)
+					*dst++ = *tmpSrc++;
+				*dst++ = last;
+				countPrev++;
+			}
+
+			if (numPatterns < 3840) {
+				patterns[numPatterns].pos = dstPrev;
+				patterns[numPatterns++].len = ++count;
+			}
+
+			dstPrev = tmpDst;
+			count = countPrev;
+
+		} else {
+			*dst++ = last;
+
+			if (numPatterns < 3840) {
+				patterns[numPatterns].pos = dstPrev;
+				patterns[numPatterns++].len = ++count;
+			}
+
+			dstPrev = dst - 1;
+			count = 1;
+			countPrev = 1;
+		}
+	}
+	delete[] patterns;
+}
+
+uint16 Screen::decodeEGAGetCode(const uint8 *&pos, uint8 &nib) {
+	uint16 res = READ_BE_UINT16(pos++);
+	if ((++nib) & 1) {
+		res >>= 4;		
+	} else {
+		pos++;
+		res &= 0xfff;
+	}
+	return res;
+}
+
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
 	const uint8 *dstEnd = dst + size;
 	while (dst < dstEnd) {
@@ -2932,6 +3013,9 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 	switch (compType) {
 	case 0:
 		memcpy(dstData, srcPtr, imgSize);
+		break;
+	case 1:
+		Screen::decodeFrame1(srcPtr, dstData, imgSize);
 		break;
 	case 3:
 		Screen::decodeFrame3(srcPtr, dstData, imgSize);
