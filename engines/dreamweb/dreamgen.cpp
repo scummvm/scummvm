@@ -2423,19 +2423,6 @@ biblequotearly:
 	data.byte(kLasthardkey) = 0;
 }
 
-void DreamGenContext::hangOne() {
-	STACK_CHECK;
-hangonloope:
-	push(cx);
-	vSync();
-	cx = pop();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		return /* (hangonearly) */;
-	if (--cx)
-		goto hangonloope;
-}
-
 void DreamGenContext::intro() {
 	STACK_CHECK;
 	dx = 1035;

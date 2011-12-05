@@ -444,4 +444,6 @@
 	void loadCart();
 	void soundOnReels();
 	void readKey();
+	void hangOne(uint16 delay);
+	void hangOne();
 

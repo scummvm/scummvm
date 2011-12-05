@@ -3136,6 +3136,17 @@ void DreamGenContext::readKey() {
 	data.word(kBufferout) = bufOut;
 }
 
+void DreamGenContext::hangOne(uint16 delay) {
+	do {
+		vSync();
+		if (data.byte(kLasthardkey) == 1)
+			return; // "hangonearly"
+	} while	(--delay);
+}
+
+void DreamGenContext::hangOne() {
+	hangOne(cx);
+}
 
 } /*namespace dreamgen */
 
