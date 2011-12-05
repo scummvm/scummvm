@@ -468,5 +468,10 @@
 	void realCredits();
 	void intro();
 	Common::String getFilename(Context &context);
+	void fadeScreenUp();
+	void fadeScreenUps();
+	void fadeScreenUpHalf();
+	void fadeScreenDown();
+	void fadeScreenDowns();
 
 #endif

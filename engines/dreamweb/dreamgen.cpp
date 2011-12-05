@@ -1772,16 +1772,6 @@ void DreamGenContext::clearPalette() {
 	dumpCurrent();
 }
 
-void DreamGenContext::fadeScreenUp() {
-	STACK_CHECK;
-	clearStartPal();
-	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-}
-
 void DreamGenContext::fadeToWhite() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -1816,16 +1806,6 @@ void DreamGenContext::fadeFromWhite() {
 	data.byte(kNumtofade) = 128;
 }
 
-void DreamGenContext::fadeScreenUps() {
-	STACK_CHECK;
-	clearStartPal();
-	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
-}
-
 void DreamGenContext::fadeScreenDownHalf() {
 	STACK_CHECK;
 	palToStartPal();
@@ -1854,36 +1834,6 @@ halfend:
 	data.byte(kFadecount) = 31;
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 32;
-}
-
-void DreamGenContext::fadeScreenUpHalf() {
-	STACK_CHECK;
-	endPalToStart();
-	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 31;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 32;
-}
-
-void DreamGenContext::fadeScreenDown() {
-	STACK_CHECK;
-	palToStartPal();
-	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-}
-
-void DreamGenContext::fadeScreenDowns() {
-	STACK_CHECK;
-	palToStartPal();
-	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
 }
 
 void DreamGenContext::showGun() {

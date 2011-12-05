@@ -108,5 +108,51 @@ void DreamGenContext::fadeupMonFirst() {
 	hangOn(64);
 }
 
+void DreamGenContext::fadeScreenUp() {
+	clearStartPal();
+	palToEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+}
+
+
+void DreamGenContext::fadeScreenUps() {
+	clearStartPal();
+	palToEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 64;
+}
+
+void DreamGenContext::fadeScreenUpHalf() {
+	endPalToStart();
+	palToEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 31;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 32;
+}
+
+void DreamGenContext::fadeScreenDown() {
+	palToStartPal();
+	clearEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+}
+
+void DreamGenContext::fadeScreenDowns() {
+	palToStartPal();
+	clearEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 64;
+}
+
 } /*namespace dreamgen */
 

@@ -640,7 +640,6 @@ public:
 	void removeObFromInv();
 	void useCoveredBox();
 	void openYourNeighbour();
-	void fadeScreenUpHalf();
 	void heavy();
 	void useKey();
 	void lockLightOn();
@@ -730,7 +729,6 @@ public:
 	void useWindow();
 	void rollEm();
 	void delEverything();
-	void fadeScreenDown();
 	void poolGuard();
 	void openInv();
 	void lookAtPlace();
@@ -800,7 +798,6 @@ public:
 	void nextDest();
 	void makeCaps();
 	void read();
-	void fadeScreenUps();
 	void hotelControl();
 	void mugger();
 	void gettingShot();
@@ -834,7 +831,6 @@ public:
 	void initialMonCols();
 	void checkForShake();
 	void useButtonA();
-	void fadeScreenUp();
 	void mode640x480();
 	void openEden();
 	void execCommand();
@@ -859,7 +855,6 @@ public:
 	void inToInv();
 	void parser();
 	void setMouse();
-	void fadeScreenDowns();
 	void openHotelDoor2();
 	void selectLocation();
 	void underTextLine();
