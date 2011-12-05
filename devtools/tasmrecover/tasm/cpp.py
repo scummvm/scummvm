@@ -612,9 +612,9 @@ namespace %s {
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
 
-namespace %s {
-
 #include "structs.h"
+
+namespace %s {
 
 class %sContext : public Context {
 public:

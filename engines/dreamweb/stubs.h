@@ -449,7 +449,7 @@
 	void readKey();
 	void hangOne(uint16 delay);
 	void hangOne();
-	void showPCX(const ::Common::String &name);
+	void showPCX(const Common::String &name);
 	void showPCX();
 	void bibleQuote();
 	void realCredits();

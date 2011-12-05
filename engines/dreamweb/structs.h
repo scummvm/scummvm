@@ -26,6 +26,8 @@
 #include "common/endian.h"
 #include "common/rect.h"
 
+namespace DreamGen {
+
 struct Sprite {
 	uint16 _updateCallback;
 	uint16 updateCallback() const { return READ_LE_UINT16(&_updateCallback); }
@@ -287,6 +289,8 @@ struct Atmosphere {
 	uint8 _sound;
 	uint8 _repeat;
 };
+
+}
 
 #endif
 
