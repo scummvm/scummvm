@@ -35,8 +35,6 @@
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp();
-	void loadIntoTemp2();
-	void loadIntoTemp3();
 	void loadIntoTemp(const char *fileName);
 	void loadIntoTemp2(const char *fileName);
 	void loadIntoTemp3(const char *fileName);

@@ -777,14 +777,6 @@ void DreamGenContext::loadIntoTemp() {
 	loadIntoTemp((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadIntoTemp2() {
-	loadIntoTemp2((const char *)cs.ptr(dx, 0));
-}
-
-void DreamGenContext::loadIntoTemp3() {
-	loadIntoTemp3((const char *)cs.ptr(dx, 0));
-}
-
 void DreamGenContext::loadIntoTemp(const char *fileName) {
 	data.word(kTempgraphics) = standardLoad(fileName);
 }
