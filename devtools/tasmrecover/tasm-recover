@@ -304,6 +304,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'initman',
 	'initrain',
 	'input',
+	'intro',
 	'inventory',
 	'isitdescribed',
 	'isitright',

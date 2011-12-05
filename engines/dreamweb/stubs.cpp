@@ -3336,5 +3336,61 @@ void DreamGenContext::realCredits() {
 	data.byte(kLasthardkey) =  0;
 }
 
+void DreamGenContext::intro() {
+	loadTempText("DREAMWEB.T82");
+	loadPalFromIFF();
+	setMode();
+	data.byte(kNewlocation) = 50;
+	clearPalette();
+	loadIntroRoom();
+	data.byte(kVolume) = 7;
+	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumeto) = 4;
+	playChannel0(12, 255);
+	fadeScreenUps();
+	runIntroSeq();
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "introearly"
+	}
+
+	clearBeforeLoad();
+	data.byte(kNewlocation) = 52;
+	loadIntroRoom();
+	runIntroSeq();
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "introearly"
+	}
+
+	clearBeforeLoad();
+	data.byte(kNewlocation) = 53;
+	loadIntroRoom();
+	runIntroSeq();
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "introearly"
+	}
+
+	clearBeforeLoad();
+	allPalette();
+	data.byte(kNewlocation) = 54;
+	loadIntroRoom();
+	runIntroSeq();
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "introearly"
+	}
+
+	getRidOfTempText();
+	clearBeforeLoad();
+
+	data.byte(kLasthardkey) =  0;
+}
+
 } /*namespace dreamgen */
 

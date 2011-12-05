@@ -2396,54 +2396,6 @@ void DreamGenContext::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamGenContext::intro() {
-	STACK_CHECK;
-	dx = 1035;
-	loadTempText();
-	loadPalFromIFF();
-	setMode();
-	data.byte(kNewlocation) = 50;
-	clearPalette();
-	loadIntroRoom();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = -1;
-	data.byte(kVolumeto) = 4;
-	al = 12;
-	ah = 255;
-	playChannel0();
-	fadeScreenUps();
-	runIntroSeq();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto introearly;
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 52;
-	loadIntroRoom();
-	runIntroSeq();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto introearly;
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 53;
-	loadIntroRoom();
-	runIntroSeq();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto introearly;
-	clearBeforeLoad();
-	allPalette();
-	data.byte(kNewlocation) = 54;
-	loadIntroRoom();
-	runIntroSeq();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto introearly;
-	getRidOfTempText();
-	clearBeforeLoad();
-introearly:
-	data.byte(kLasthardkey) =  0;
-}
-
 void DreamGenContext::runIntroSeq() {
 	STACK_CHECK;
 	data.byte(kGetback) = 0;

@@ -453,5 +453,6 @@
 	void showPCX();
 	void bibleQuote();
 	void realCredits();
+	void intro();
 
 #endif
