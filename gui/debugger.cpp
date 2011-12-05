@@ -247,16 +247,11 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					*(int32 *)_dvars[i].variable = atoi(param[1]);
 					DebugPrintf("(int)%s = %d\n", param[0], *(int32 *)_dvars[i].variable);
 					break;
-				case DVAR_BOOL:	{
-					Common::String value = Common::String(param[1]);
-					if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false") ||
-						value == "1" || value == "0") {
-						*(bool *)_dvars[i].variable = (value.equalsIgnoreCase("true") || value == "1");
+				case DVAR_BOOL:
+					if (Common::parseBool(param[1], *(bool *)_dvars[i].variable))
 						DebugPrintf("(bool)%s = %s\n", param[0], *(bool *)_dvars[i].variable ? "true" : "false");
-					} else {
-						DebugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\"");
-					}
-					}
+					else
+						DebugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"");
 					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
