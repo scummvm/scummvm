@@ -58,7 +58,6 @@ public:
 	Talk(CGEEngine *vm);
 
 	virtual void update(const char *text);
-	void putLine(int line, const char *text);
 private:
 	CGEEngine *_vm;
 };
