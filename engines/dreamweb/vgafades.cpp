@@ -25,39 +25,39 @@
 namespace DreamGen {
 
 uint8 *DreamGenContext::mainPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256 * 3);
 }
 
 uint8 *DreamGenContext::startPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256 * 3);
 }
 
 uint8 *DreamGenContext::endPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256 * 3);
 }
 
 void DreamGenContext::clearStartPal() {
-	memset(startPalette(), 0, 256*3);
+	memset(startPalette(), 0, 256 * 3);
 }
 
 void DreamGenContext::clearEndPal() {
-	memset(endPalette(), 0, 256*3);
+	memset(endPalette(), 0, 256 * 3);
 }
 
 void DreamGenContext::palToStartPal() {
-	memcpy(startPalette(), mainPalette(), 256*3);
+	memcpy(startPalette(), mainPalette(), 256 * 3);
 }
 
 void DreamGenContext::endPalToStart() {
-	memcpy(startPalette(), endPalette(), 256*3);
+	memcpy(startPalette(), endPalette(), 256 * 3);
 }
 
 void DreamGenContext::startPalToEnd() {
-	memcpy(endPalette(), startPalette(), 256*3);
+	memcpy(endPalette(), startPalette(), 256 * 3);
 }
 
 void DreamGenContext::palToEndPal() {
-	memcpy(endPalette(), mainPalette(), 256*3);
+	memcpy(endPalette(), mainPalette(), 256 * 3);
 }
 
 void DreamGenContext::fadeCalculation() {
@@ -85,8 +85,8 @@ void DreamGenContext::fadeCalculation() {
 
 void DreamGenContext::fadeupYellows() {
 	palToEndPal();
-	memset(endPalette() + 231*3, 0, 8*3);
-	memset(endPalette() + 246*3, 0, 1*3);
+	memset(endPalette() + 231 * 3, 0, 8 * 3);
+	memset(endPalette() + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
@@ -97,8 +97,8 @@ void DreamGenContext::fadeupYellows() {
 void DreamGenContext::fadeupMonFirst() {
 	palToStartPal();
 	palToEndPal();
-	memset(startPalette() + 231*3, 0, 8*3);
-	memset(startPalette() + 246*3, 0, 1*3);
+	memset(startPalette() + 231 * 3, 0, 8 * 3);
+	memset(startPalette() + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
