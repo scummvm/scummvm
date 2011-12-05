@@ -410,6 +410,7 @@
 	void smokeBloke(ReelRoutine &routine);
 	void manAsleep(ReelRoutine &routine);
 	void drunk(ReelRoutine &routine);
+	void introMagic1(ReelRoutine &routine);
 	void security(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();

@@ -577,6 +577,7 @@ public:
 	void introMonks1();
 	void resetLocation();
 	void introMonks2();
+	void advisor();
 	void additionalText();
 	void useElevator5();
 	void greyscaleSum();
@@ -654,7 +655,7 @@ public:
 	void lockLightOff();
 	void wearWatch();
 	void runIntroSeq();
-	void advisor();
+	void nextColon();
 	void attendant();
 	void monks2text();
 	void clearPalette();
@@ -663,7 +664,6 @@ public:
 	void openHotelDoor();
 	void blank();
 	void drinker();
-	void nextColon();
 	void placeFreeObject();
 	void allPalette();
 	void adjustRight();
@@ -691,7 +691,6 @@ public:
 	void introMagic2();
 	void introMagic3();
 	void edenInBath();
-	void introMagic1();
 	void showDiaryPage();
 	void useShield();
 	void getBackToOps();

@@ -789,37 +789,6 @@ smallcandlef:
 	showGameReel();
 }
 
-void DreamGenContext::introMagic1() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto introm1fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 145);
-	if (!flags.z())
-		goto gotintrom1;
-	ax = 121;
-gotintrom1:
-	es.word(bx+3) = ax;
-	_cmp(ax, 121);
-	if (!flags.z())
-		goto introm1fin;
-	_inc(data.byte(kIntrocount));
-	push(es);
-	push(bx);
-	intro1Text();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kIntrocount), 8);
-	if (!flags.z())
-		goto introm1fin;
-	_add(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-introm1fin:
-	showGameReel();
-}
-
 void DreamGenContext::candles() {
 	STACK_CHECK;
 	checkSpeed();

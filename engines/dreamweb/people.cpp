@@ -43,7 +43,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::businessMan,
 	&DreamGenContext::train, NULL,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
-	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
+	NULL, &DreamGenContext::introMusic,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
 	&DreamGenContext::introMonks1, &DreamGenContext::candles,
@@ -75,7 +75,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	/*&DreamGenContext::train*/NULL, &DreamGenContext::genericPerson /*aide*/,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
-	/*&DreamGenContext::introMagic1*/NULL, /*&DreamGenContext::introMusic*/NULL,
+	&DreamGenContext::introMagic1, /*&DreamGenContext::introMusic*/NULL,
 	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
 	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::introMagic3*/NULL,
 	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
@@ -351,6 +351,28 @@ void DreamGenContext::drunk(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::introMagic1(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 145)
+			nextReelPointer = 121;
+		routine.setReelPointer(nextReelPointer);
+		if (nextReelPointer == 121) {
+			++data.byte(kIntrocount);
+			push(es);
+			push(bx);
+			intro1Text();
+			bx = pop();
+			es = pop();
+			if (data.byte(kIntrocount) == 8) {
+				data.byte(kMapy) += 10;
+				data.byte(kNowinnewroom) = 1;
+			}
+		}
+	}
+	showGameReel(&routine);
 }
 
 void DreamGenContext::security(ReelRoutine &routine) {
