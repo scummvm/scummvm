@@ -223,5 +223,69 @@ void DreamGenContext::viewFolder() {
 	workToScreenM();
 }
 
+void DreamGenContext::edensCDPlayer() {
+	showFirstUse();
+	data.word(kWatchingtime) = 18 * 2;
+	data.word(kReeltowatch) = 25;
+	data.word(kEndwatchreel) = 42;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::hotelBell() {
+	playChannel1(12);
+	showFirstUse();
+	putBackObStuff();
+}
+
+void DreamGenContext::playGuitar() {
+	playChannel1(14);
+	showFirstUse();
+	putBackObStuff();
+}
+
+void DreamGenContext::useElevator1() {
+	showFirstUse();
+	selectLocation();
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useElevator3() {
+	showFirstUse();
+	data.byte(kCounttoclose) = 20;
+	data.byte(kNewlocation) = 34;
+	data.word(kReeltowatch) = 46;
+	data.word(kEndwatchreel) = 63;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useElevator4() {
+	showFirstUse();
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 11;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kCounttoclose) = 20;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
+	data.byte(kNewlocation) = 24;
+}
+
+void DreamGenContext::useHatch() {
+	showFirstUse();
+	data.byte(kNewlocation) = 40;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::wheelSound() {
+	playChannel1(17);
+	showFirstUse();
+	putBackObStuff();
+}
+
 } /*namespace dreamgen */
 

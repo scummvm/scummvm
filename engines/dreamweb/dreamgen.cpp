@@ -5805,14 +5805,6 @@ douse:
 	useRoutine();
 }
 
-void DreamGenContext::wheelSound() {
-	STACK_CHECK;
-	al = 17;
-	playChannel1();
-	showFirstUse();
-	putBackObStuff();
-}
-
 void DreamGenContext::runTap() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -5862,14 +5854,6 @@ cupfromtapfull:
 	putBackObStuff();
 }
 
-void DreamGenContext::playGuitar() {
-	STACK_CHECK;
-	al = 14;
-	playChannel1();
-	showFirstUse();
-	putBackObStuff();
-}
-
 void DreamGenContext::hotelControl() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 21);
@@ -5883,14 +5867,6 @@ void DreamGenContext::hotelControl() {
 	return;
 notrightcont:
 	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::hotelBell() {
-	STACK_CHECK;
-	al = 12;
-	playChannel1();
-	showFirstUse();
 	putBackObStuff();
 }
 
@@ -7345,13 +7321,6 @@ axeoncontrols:
 	putBackObStuff();
 }
 
-void DreamGenContext::useHatch() {
-	STACK_CHECK;
-	showFirstUse();
-	data.byte(kNewlocation) = 40;
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::useWire() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -7423,39 +7392,6 @@ havecutwire:
 	showPuzText();
 	data.byte(kNewlocation) = 22;
 	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElevator1() {
-	STACK_CHECK;
-	showFirstUse();
-	selectLocation();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElevator3() {
-	STACK_CHECK;
-	showFirstUse();
-	data.byte(kCounttoclose) = 20;
-	data.byte(kNewlocation) = 34;
-	data.word(kReeltowatch) = 46;
-	data.word(kEndwatchreel) = 63;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.word(kWatchingtime) = 80;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElevator4() {
-	STACK_CHECK;
-	showFirstUse();
-	data.word(kReeltowatch) = 0;
-	data.word(kEndwatchreel) = 11;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kCounttoclose) = 20;
-	data.word(kWatchingtime) = 80;
-	data.byte(kGetback) = 1;
-	data.byte(kNewlocation) = 24;
 }
 
 void DreamGenContext::useElevator2() {
@@ -8069,17 +8005,6 @@ void DreamGenContext::setupTimedUse() {
 	bx = ax;
 	data.word(kTimedseg) = es;
 	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::edensCDPlayer() {
-	STACK_CHECK;
-	showFirstUse();
-	data.word(kWatchingtime) = 18*2;
-	data.word(kReeltowatch) = 25;
-	data.word(kEndwatchreel) = 42;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useWall() {

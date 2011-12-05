@@ -579,8 +579,6 @@ public:
 	void introMonks2();
 	void additionalText();
 	void useElevator5();
-	void useElevator4();
-	void useElevator1();
 	void greyscaleSum();
 	void useElevator2();
 	void keyboardRead();
@@ -630,7 +628,6 @@ public:
 	void openPoolBoss();
 	void usePlate();
 	void lookInInterface();
-	void hotelBell();
 	void loadSpeech();
 	void adjustLeft();
 	void callEdensLift();
@@ -639,7 +636,6 @@ public:
 	void getFreeAd();
 	void showArrows();
 	void walkIntoRoom();
-	void useHatch();
 	void printOuterMon();
 	void showDecisions();
 	void removeObFromInv();
@@ -731,8 +727,6 @@ public:
 	void deleteExFrame();
 	void bossMan();
 	void DOSReturn();
-	void wheelSound();
-	void playGuitar();
 	void searchForSame();
 	void chewy();
 	void getBack1();
@@ -799,7 +793,6 @@ public:
 	void swapWithOpen();
 	void dreamweb();
 	void dropError();
-	void edensCDPlayer();
 	void callEdensDLift();
 	void checkInside();
 	void gates();
@@ -834,7 +827,6 @@ public:
 	void openFile();
 	void showPuzText();
 	void incRyanPage();
-	void useElevator3();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();

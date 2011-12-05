@@ -370,6 +370,14 @@
 	void restoreReels();
 	void enterSymbol();
 	void viewFolder();
+	void edensCDPlayer();
+	void hotelBell();
+	void playGuitar();
+	void useElevator1();
+	void useElevator3();
+	void useElevator4();
+	void useHatch();
+	void wheelSound();
 	void checkFolderCoords();
 	void loadFolder();
 	void showFolder();
