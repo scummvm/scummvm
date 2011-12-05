@@ -571,7 +571,7 @@ public:
 	void watchReel();
 	void openFileFromC();
 	void getTime();
-	void candles1();
+	void pickupOb();
 	void fadeDOS();
 	void findText1();
 	void isRyanHolding();
@@ -649,7 +649,6 @@ public:
 	void walkIntoRoom();
 	void useHatch();
 	void printOuterMon();
-	void showPCX();
 	void showDecisions();
 	void removeObFromInv();
 	void useCoveredBox();
@@ -785,7 +784,7 @@ public:
 	void drawItAll();
 	void useStereo();
 	void candles2();
-	void pickupOb();
+	void candles1();
 	void showOpBox();
 	void clearBeforeLoad();
 	void bibleQuote();

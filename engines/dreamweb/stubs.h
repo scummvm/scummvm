@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef DREAMWEB_STUBS_H
+#define DREAMWEB_STUBS_H
+
 	void screenUpdate();
 	bool quitRequested();
 	void startup();
@@ -446,4 +449,7 @@
 	void readKey();
 	void hangOne(uint16 delay);
 	void hangOne();
+	void showPCX(::Common::String name);
+	void showPCX();
 
+#endif

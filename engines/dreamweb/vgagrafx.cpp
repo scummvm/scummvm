@@ -219,8 +219,7 @@ static Common::String getFilename(Context &context) {
 	return name;
 }
 
-void DreamGenContext::showPCX() {
-	Common::String name = getFilename(*this);
+void DreamGenContext::showPCX(::Common::String name) {
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
@@ -287,6 +286,10 @@ void DreamGenContext::showPCX() {
 
 	g_system->unlockScreen();
 	pcxFile.close();
+}
+
+void DreamGenContext::showPCX() {
+	showPCX(getFilename(*this));
 }
 
 void DreamGenContext::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
