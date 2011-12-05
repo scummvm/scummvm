@@ -126,8 +126,10 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 
 			boundingBox = _tiles[i];
 
-			if (isBoundingBoxEmpty(boundingBox))
-				goto next;
+			if (isBoundingBoxEmpty(boundingBox)) {
+				++i;
+				continue;
+			}
 
 			x0 = (x * TileSize) + TileX0(boundingBox);
 			y0 = (y * TileSize) + TileY0(boundingBox);
@@ -141,27 +143,22 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 #if 1
 			start = i;
 
-			if (TileX1(boundingBox) != TileSize - 1 || x == _tilesW - 1) {
-				/* the tile does not continue */
-				goto done;
-			}
+			if (TileX1(boundingBox) == TileSize - 1 && x != _tilesW - 1) {	// check if the tile continues
+				while (!finish) {
+					++x;
+					++i;
 
-			while (!finish) {
-				++x;
-				++i;
-
-				if (x == _tilesW || i >= _tilesW * _tilesH ||
-					TileY0(_tiles[i]) != TileY0(boundingBox) ||
-					TileY1(_tiles[i]) != TileY1(boundingBox) ||
-					TileX0(_tiles[i]) != 0)
-				{
-					--x;
-					--i;
-					finish = 1;
+					if (x == _tilesW || i >= _tilesW * _tilesH ||
+						TileY0(_tiles[i]) != TileY0(boundingBox) ||
+						TileY1(_tiles[i]) != TileY1(boundingBox) ||
+						TileX0(_tiles[i]) != 0)
+					{
+						--x;
+						--i;
+						finish = 1;
+					}
 				}
 			}
-
-		done:
 #endif
 			x1 = (x * TileSize) + TileX1(_tiles[i]);
 
@@ -203,11 +200,9 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 
 			#endif
 
-		next:
 			++i;
-
-		}
-	}
+		}	// for (x = 0; x < _tilesW; ++x)
+	}	// for (y = 0; y < _tilesH; ++y)
 
 	*num_rects = n_rects;
 
