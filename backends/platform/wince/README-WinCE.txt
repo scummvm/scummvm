@@ -273,6 +273,7 @@ The following actions are available :
   * Quit           : quit ScummVM (without saving, be careful when using it)
   * Skip           : skip a non interactive sequence, the current dialog or
                      behaves like the ESC key on a regular keyboard
+                     All AGI games    -> F10 to quit full-screen dialogs
   * Hide           : hide or display the toolbar
   * Keyboard       : hide or display the virtual keyboard
   * Sound          : turns all sound effects and music off and on
@@ -291,6 +292,7 @@ The following actions are available :
                      Fate of Atlantis -> sucker punch (cheat)
                      Bargon           -> F1 (start the game)
                      All AGI games    -> bring up the predictive input dialog
+                     Simon 1 & 2      -> highlight all hotspots in screen
   * Bind keys        map a key action to a device button
   * Up,Down,Left   :
     Right,         : emulate mouse/stylus behavior
