@@ -738,7 +738,6 @@ public:
 	void useElvDoor();
 	void putBackObStuff();
 	void useLadder();
-	void handClap();
 	void afterIntroRoom();
 	void findAllOpen();
 	void readFromFile();

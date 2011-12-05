@@ -302,6 +302,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getundertimed',
 	'getxad',
 	'getyad',
+	'handclap',
 	'hangon',
 	'hangoncurs',
 	'hangone',

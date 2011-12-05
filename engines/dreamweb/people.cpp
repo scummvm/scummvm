@@ -47,7 +47,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	NULL, &DreamGenContext::introMagic3,
 	&DreamGenContext::introMonks1, NULL,
-	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
+	&DreamGenContext::introMonks2, NULL,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
 	NULL, &DreamGenContext::alleyBarkSound,
@@ -79,7 +79,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
 	&DreamGenContext::gates, /*&DreamGenContext::introMagic3*/NULL,
 	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
-	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
+	/*&DreamGenContext::intromonks2*/NULL, &DreamGenContext::handClap,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, /*&DreamGenContext::alleyBarkSound*/NULL,
@@ -443,6 +443,9 @@ void DreamGenContext::louis(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::handClap(ReelRoutine &routine) {
 }
 
 } /*namespace dreamgen */

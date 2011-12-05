@@ -928,10 +928,6 @@ intromonk2fin:
 	showGameReel();
 }
 
-void DreamGenContext::handClap() {
-	STACK_CHECK;
-}
-
 void DreamGenContext::monks2text() {
 	STACK_CHECK;
 	_cmp(data.byte(kIntrocount), 1);
