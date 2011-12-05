@@ -61,13 +61,13 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::eden, /*&DreamGenContext::edenInBath*/NULL,
 	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
 	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
-	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::maleFan,
-	&DreamGenContext::femaleFan, /*&DreamGenContext::louis*/NULL,
+	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::genericPerson /*maleFan*/,
+	&DreamGenContext::genericPerson /*femaleFan*/, /*&DreamGenContext::louis*/NULL,
 	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
 	/*&DreamGenContext::bossMan*/NULL, /*&DreamGenContext::interviewer*/NULL,
 	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manAsleep2*/NULL,
 	/*&DreamGenContext::manSatStill*/NULL, /*&DreamGenContext::drinker*/NULL,
-	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::otherSmoker,
+	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::genericPerson /*otherSmoker*/,
 	/*&DreamGenContext::tattooMan*/NULL, /*&DreamGenContext::attendant*/NULL,
 	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
 	/*&DreamGenContext::smallcandle*/NULL, &DreamGenContext::security,
@@ -225,7 +225,7 @@ void DreamGenContext::sparkyDrip(ReelRoutine &routine) {
 		playChannel0(14, 0);
 }
 
-void DreamGenContext::otherSmoker(ReelRoutine &routine) {
+void DreamGenContext::genericPerson(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
@@ -246,16 +246,6 @@ void DreamGenContext::gamer(ReelRoutine &routine) {
 void DreamGenContext::eden(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
-	showGameReel(&routine);
-	addToPeopleList(&routine);
-}
-
-void DreamGenContext::femaleFan(ReelRoutine &routine) {
-	showGameReel(&routine);
-	addToPeopleList(&routine);
-}
-
-void DreamGenContext::maleFan(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }

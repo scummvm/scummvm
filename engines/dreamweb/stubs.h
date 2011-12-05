@@ -393,12 +393,10 @@
 	bool checkSpeed(ReelRoutine &routine);
 	void checkSpeed();
 	void sparkyDrip(ReelRoutine &routine);
-	void otherSmoker(ReelRoutine &routine);
+	void genericPerson(ReelRoutine &routine);
 	void gamer(ReelRoutine &routine);
 	void eden(ReelRoutine &routine);
 	void sparky(ReelRoutine &routine);
-	void femaleFan(ReelRoutine &routine);
-	void maleFan(ReelRoutine &routine);
 	void rockstar(ReelRoutine &routine);
 	void madmansTelly(ReelRoutine &routine);
 	void smokeBloke(ReelRoutine &routine);
