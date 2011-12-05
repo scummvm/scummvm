@@ -219,7 +219,7 @@ static Common::String getFilename(Context &context) {
 	return name;
 }
 
-void DreamGenContext::showPCX(::Common::String name) {
+void DreamGenContext::showPCX(const ::Common::String &name) {
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
