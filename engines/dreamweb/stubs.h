@@ -378,6 +378,8 @@
 	void useElevator4();
 	void useHatch();
 	void wheelSound();
+	void callHotelLift();
+	void useShield();
 	void checkFolderCoords();
 	void loadFolder();
 	void showFolder();
@@ -418,6 +420,7 @@
 	void edenInBath(ReelRoutine &routine);
 	void louis(ReelRoutine &routine);
 	void handClap(ReelRoutine &routine);
+	void carParkDrip(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();

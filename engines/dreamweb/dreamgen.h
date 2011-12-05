@@ -687,7 +687,6 @@ public:
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();
-	void useShield();
 	void getBackToOps();
 	void dumpSymbol();
 	void intro1Text();
@@ -742,7 +741,6 @@ public:
 	void quitSymbol();
 	void setTopRight();
 	void findSetObject();
-	void carParkDrip();
 	void useDiary();
 	void deleteExObject();
 	void moneyPoke();
@@ -806,7 +804,6 @@ public:
 	void useGun();
 	void autoAppear();
 	void openRyan();
-	void callHotelLift();
 	void useFullCart();
 	void newPlace();
 	void useCardReader1();

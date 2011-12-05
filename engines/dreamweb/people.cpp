@@ -51,9 +51,9 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
 	NULL, &DreamGenContext::alleyBarkSound,
-	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
-	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
-	&DreamGenContext::carParkDrip
+	&DreamGenContext::foghornSound, NULL,
+	NULL, NULL,
+	NULL
 };
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
@@ -83,9 +83,9 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, /*&DreamGenContext::alleyBarkSound*/NULL,
-	/*&DreamGenContext::foghornSound*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
-	/*&DreamGenContext::carParkDrip*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
-	/*&DreamGenContext::carParkDrip*/NULL
+	/*&DreamGenContext::foghornSound*/NULL, &DreamGenContext::carParkDrip,
+	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
+	&DreamGenContext::carParkDrip
 };
 
 void DreamGenContext::updatePeople() {
@@ -446,6 +446,13 @@ void DreamGenContext::louis(ReelRoutine &routine) {
 }
 
 void DreamGenContext::handClap(ReelRoutine &routine) {
+}
+
+void DreamGenContext::carParkDrip(ReelRoutine &routine) {
+	if (!checkSpeed(routine))
+		return; // cantdrip2
+
+	playChannel1(14);
 }
 
 } /*namespace dreamgen */

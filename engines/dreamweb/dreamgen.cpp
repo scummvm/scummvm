@@ -699,15 +699,6 @@ notboss:
 	data.byte(kTalkedtoboss) = 1;
 }
 
-void DreamGenContext::carParkDrip() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		return /* (cantdrip2) */;
-	al = 14;
-	playChannel1();
-}
-
 void DreamGenContext::keeper() {
 	STACK_CHECK;
 	_cmp(data.byte(kKeeperflag), 0);
@@ -6641,20 +6632,6 @@ void DreamGenContext::trapDoor() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::callHotelLift() {
-	STACK_CHECK;
-	al = 12;
-	playChannel1();
-	showFirstUse();
-	data.byte(kCounttoopen) = 8;
-	data.byte(kGetback) = 1;
-	data.byte(kDestination) = 5;
-	data.byte(kFinaldest) = 5;
-	autoSetWalk();
-	al = 4;
-	turnPathOn();
-}
-
 void DreamGenContext::callEdensLift() {
 	STACK_CHECK;
 	showFirstUse();
@@ -8109,25 +8086,6 @@ pathoktv:
 	data.byte(kGetback) = 1;
 	return;
 nottvsoldier:
-	showFirstUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::useShield() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 20);
-	if (!flags.z())
-		goto notinsartroom;
-	_cmp(data.byte(kCombatcount), 0);
-	if (flags.z())
-		goto notinsartroom;
-	data.byte(kLastweapon) = 3;
-	showSecondUse();
-	data.byte(kGetback) = 1;
-	_inc(data.byte(kProgresspoints));
-	removeObFromInv();
-	return;
-notinsartroom:
 	showFirstUse();
 	putBackObStuff();
 }

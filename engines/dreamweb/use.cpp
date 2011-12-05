@@ -287,5 +287,30 @@ void DreamGenContext::wheelSound() {
 	putBackObStuff();
 }
 
+void DreamGenContext::callHotelLift() {
+	playChannel1(12);
+	showFirstUse();
+	data.byte(kCounttoopen) = 8;
+	data.byte(kGetback) = 1;
+	data.byte(kDestination) = 5;
+	data.byte(kFinaldest) = 5;
+	autoSetWalk();
+	turnPathOn(4);
+}
+
+void DreamGenContext::useShield() {
+	if (data.byte(kReallocation) != 20 || data.byte(kCombatcount) == 0) {
+		// Not in Sart room
+		showFirstUse();
+		putBackObStuff();
+	} else {
+		data.byte(kLastweapon) = 3;
+		showSecondUse();
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		removeObFromInv();
+	}
+}
+
 } /*namespace dreamgen */
 
