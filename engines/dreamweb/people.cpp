@@ -412,16 +412,16 @@ void DreamGenContext::edenInBath(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead) == 0 || data.byte(kSartaindead) != 0)
 		return;
 
-	showGameReel();
-	addToPeopleList();
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 void DreamGenContext::louis(ReelRoutine &routine) {
 	if (data.byte(kRockstardead) != 0)
 		return;
 
-	showGameReel();
-	addToPeopleList();
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 } /*namespace dreamgen */
