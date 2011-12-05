@@ -562,7 +562,7 @@ public:
 	void entryTexts();
 	void checkInput();
 	void setMode();
-	void showDiary();
+	void getBackFromOps();
 	void openSarters();
 	void putUnderCentre();
 	void checkObjectSize();
@@ -608,7 +608,7 @@ public:
 	void train();
 	void fadeDownMon();
 	void bartender();
-	void getBackFromOps();
+	void showDiary();
 	void sLabDoorF();
 	void outOfOpen();
 	void dirCom();
@@ -779,7 +779,7 @@ public:
 	void openLouis();
 	void lookAtCard();
 	void helicopter();
-	void setSoundOff();
+	void getEitherAd();
 	void setPickup();
 	void dropObject();
 	void reExFromOpen();
@@ -879,7 +879,6 @@ public:
 	void useWinch();
 	void setBotRight();
 	void aide();
-	void getEitherAd();
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();

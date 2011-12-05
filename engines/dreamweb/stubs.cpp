@@ -485,7 +485,6 @@ void DreamGenContext::dreamweb() {
 	data.byte(kWongame) = 0;
 
 	engine->loadSounds(0, "DREAMWEB.V99"); // basic sample
-	setSoundOff();
 
 	bool firstLoop = true;
 
@@ -1095,10 +1094,6 @@ void DreamGenContext::disableSoundInt() {}
 void DreamGenContext::enableSoundInt() {}
 void DreamGenContext::checkSoundInt() {
 	data.byte(kTestresult) = 1;
-}
-
-void DreamGenContext::setSoundOff() {
-	warning("setsoundoff: STUB");
 }
 
 void DreamGenContext::loadSpeech() {
