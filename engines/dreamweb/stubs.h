@@ -547,6 +547,11 @@
 	void sLabDoorE();
 	void sLabDoorD();
 	void sLabDoorF();
+	void openHotelDoor();
+	void openHotelDoor2();
+	void grafittiDoor();
+	void openTomb();
+	void hotelControl();
 	void obsThatDoThings();
 	void makeMainScreen();
 	void openInv();

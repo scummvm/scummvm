@@ -564,7 +564,6 @@ public:
 	void isRyanHolding();
 	void showSlots();
 	void useCashCard();
-	void openTomb();
 	void doSomeTalk();
 	void showSaveOps();
 	void introMonks1();
@@ -625,7 +624,6 @@ public:
 	void attendant();
 	void cantDrop();
 	void copper();
-	void openHotelDoor();
 	void drinker();
 	void nextColon();
 	void placeFreeObject();
@@ -727,11 +725,9 @@ public:
 	void isSetObOnMap();
 	void getDestInfo();
 	void setupTimedUse();
-	void grafittiDoor();
 	void makeCaps();
 	void read();
 	void additionalText();
-	void hotelControl();
 	void mugger();
 	void searchForString();
 	void selectOpenOb();
@@ -771,7 +767,6 @@ public:
 	void inToInv();
 	void parser();
 	void setMouse();
-	void openHotelDoor2();
 	void selectLocation();
 	void underTextLine();
 	void showNames();

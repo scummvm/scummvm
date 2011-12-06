@@ -5075,34 +5075,6 @@ cupfromtapfull:
 	putBackObStuff();
 }
 
-void DreamGenContext::hotelControl() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 21);
-	if (!flags.z())
-		goto notrightcont;
-	_cmp(data.byte(kMapx), 33);
-	if (!flags.z())
-		goto notrightcont;
-	showFirstUse();
-	putBackObStuff();
-	return;
-notrightcont:
-	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::openTomb() {
-	STACK_CHECK;
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.word(kWatchingtime) = 35*2;
-	data.word(kReeltowatch) = 1;
-	data.word(kEndwatchreel) = 33;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::notHeldError() {
 	STACK_CHECK;
 	createPanel();
@@ -5334,92 +5306,6 @@ void DreamGenContext::drawItAll() {
 	drawFloor();
 	printSprites();
 	showIcon();
-}
-
-void DreamGenContext::openHotelDoor() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto hoteldoorwith;
-	withWhat();
-	return;
-hoteldoorwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'K';
-	ch = 'E';
-	dl = 'Y';
-	dh = 'A';
-	compare();
-	if (flags.z())
-		goto keyonhotel1;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-keyonhotel1:
-	al = 16;
-	playChannel1();
-	showFirstUse();
-	data.byte(kLockstatus) = 0;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openHotelDoor2() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto hoteldoorwith2;
-	withWhat();
-	return;
-hoteldoorwith2:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'K';
-	ch = 'E';
-	dl = 'Y';
-	dh = 'A';
-	compare();
-	if (flags.z())
-		goto keyonhotel2;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-keyonhotel2:
-	al = 16;
-	playChannel1();
-	showFirstUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::grafittiDoor() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto grafwith;
-	withWhat();
-	return;
-grafwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'A';
-	ch = 'P';
-	dl = 'E';
-	dh = 'N';
-	compare();
-	if (flags.z())
-		goto dograf;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-dograf:
-	showFirstUse();
-	putBackObStuff();
 }
 
 void DreamGenContext::usePoolReader() {

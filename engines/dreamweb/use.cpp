@@ -1025,4 +1025,84 @@ void DreamGenContext::useHole() {
 	}
 }
 
+void DreamGenContext::openHotelDoor() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		playChannel1(16);
+		showFirstUse();
+		data.byte(kLockstatus) = 0;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::openHotelDoor2() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		playChannel1(16);
+		showFirstUse();
+		putBackObStuff();
+	}
+}
+
+void DreamGenContext::grafittiDoor() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'A', 'P', 'E', 'N' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		showFirstUse();
+		putBackObStuff();
+	}
+}
+
+void DreamGenContext::openTomb() {
+	data.byte(kProgresspoints)++;
+	showFirstUse();
+	data.word(kWatchingtime) = 35 * 2;
+	data.word(kReeltowatch) = 1;
+	data.word(kEndwatchreel) = 33;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::hotelControl() {
+	if (data.byte(kReallocation) != 21 || data.byte(kMapx) != 33)
+		showSecondUse();	// Not right control
+	else
+		showFirstUse();
+
+	putBackObStuff();
+}
+
 } /*namespace dreamgen */
