@@ -48,9 +48,20 @@ public:
 
 
 public:
+	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
+
+	// from vgagrafx.cpp
+	void printUnderMon();
+	void cls();
+	void frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y);
+	void frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void doShake();
+	void showPCX(const Common::String &name);
 
 // TODO: Move more methods from stubs.h to here.
 };
