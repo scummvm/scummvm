@@ -552,7 +552,6 @@ public:
 	void decide();
 	void entryTexts();
 	void checkInput();
-	void setMode();
 	void getBackFromOps();
 	void openSarters();
 	void putUnderCentre();
@@ -566,7 +565,7 @@ public:
 	void fadeDOS();
 	void findText1();
 	void isRyanHolding();
-	void interruptTest();
+	void showSlots();
 	void useCashCard();
 	void useWall();
 	void openTomb();
@@ -576,8 +575,6 @@ public:
 	void introMonks1();
 	void resetLocation();
 	void introMonks2();
-	void advisor();
-	void additionalText();
 	void useElevator5();
 	void greyscaleSum();
 	void useElevator2();
@@ -651,7 +648,7 @@ public:
 	void lockLightOff();
 	void wearWatch();
 	void runIntroSeq();
-	void nextColon();
+	void advisor();
 	void attendant();
 	void monks2text();
 	void clearPalette();
@@ -660,6 +657,7 @@ public:
 	void openHotelDoor();
 	void blank();
 	void drinker();
+	void nextColon();
 	void placeFreeObject();
 	void allPalette();
 	void adjustRight();
@@ -736,9 +734,10 @@ public:
 	void useLadder();
 	void afterIntroRoom();
 	void findAllOpen();
+	void quitSymbol();
 	void readFromFile();
 	void initialInv();
-	void quitSymbol();
+	void interruptTest();
 	void setTopRight();
 	void findSetObject();
 	void useDiary();
@@ -794,13 +793,13 @@ public:
 	void nextDest();
 	void makeCaps();
 	void read();
+	void additionalText();
 	void hotelControl();
 	void mugger();
 	void gettingShot();
 	void setTopLeft();
 	void searchForString();
 	void selectOpenOb();
-	void showSlots();
 	void useGun();
 	void autoAppear();
 	void openRyan();

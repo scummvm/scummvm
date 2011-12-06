@@ -479,5 +479,6 @@
 	void clearBeforeLoad();
 	void clearReels();
 	void getRidOfReels();
+	void setMode();
 
 #endif
