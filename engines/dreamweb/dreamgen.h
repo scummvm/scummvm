@@ -643,7 +643,6 @@ public:
 	void cantDrop();
 	void copper();
 	void openHotelDoor();
-	void blank();
 	void drinker();
 	void nextColon();
 	void placeFreeObject();
@@ -799,7 +798,6 @@ public:
 	void initialMonCols();
 	void checkForShake();
 	void useButtonA();
-	void mode640x480();
 	void openEden();
 	void execCommand();
 	void obsThatDoThings();
@@ -812,7 +810,6 @@ public:
 	void makeMainScreen();
 	void useWinch();
 	void updateSymbolTop();
-	void allPointer();
 	void checkSoundInt();
 	void doSaveLoad();
 	void createName();

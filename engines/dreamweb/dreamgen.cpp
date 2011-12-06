@@ -9653,23 +9653,6 @@ void DreamGenContext::middlePanel() {
 	showFrame();
 }
 
-void DreamGenContext::blank() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 199);
-	if (flags.z())
-		return /* (alreadyblnk) */;
-	data.byte(kCommandtype) = 199;
-	al = 0;
-	commandOnly();
-}
-
-void DreamGenContext::allPointer() {
-	STACK_CHECK;
-	readMouse();
-	showPointer();
-	dumpPointer();
-}
-
 void DreamGenContext::getUnderZoom() {
 	STACK_CHECK;
 	di = (8)+5;

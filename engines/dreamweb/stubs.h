@@ -511,5 +511,7 @@
 	void gettingShot();
 	void redrawMainScrn();
 	void selectSlot2();
+	void blank();
+	void allPointer();
 
 #endif

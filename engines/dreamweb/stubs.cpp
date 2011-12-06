@@ -1121,13 +1121,6 @@ void DreamGenContext::DOSReturn() {
 void DreamGenContext::set16ColPalette() {
 }
 
-void DreamGenContext::mode640x480() {
-	// Video mode 12h: 640x480 pixels, 16 colors, I believe
-	al = 0x12 + 128;
-	ah = 0;
-	initGraphics(640, 480, true);
-}
-
 void DreamGenContext::showGroup() {
 	engine->setPalette();
 }
@@ -3141,7 +3134,7 @@ void DreamGenContext::hangOne() {
 }
 
 void DreamGenContext::bibleQuote() {
-	mode640x480();
+	initGraphics(640, 480, true);
 
 	showPCX("DREAMWEB.I00");
 	fadeScreenUps();
@@ -3176,7 +3169,7 @@ void DreamGenContext::realCredits() {
 	loadRoomsSample();
 	data.byte(kVolume) = 0;
 
-	mode640x480();
+	initGraphics(640, 480, true);
 	hangOn(35);
 
 	showPCX("DREAMWEB.I01");
@@ -3576,6 +3569,19 @@ void DreamGenContext::selectSlot2() {
 		selectSlot();
 	else
 		data.byte(kLoadingorsave) = 2;
+}
+
+void DreamGenContext::blank() {
+	if (data.byte(kCommandtype) != 199) {
+		data.byte(kCommandtype) = 199;
+		commandOnly(0);
+	}
+}
+
+void DreamGenContext::allPointer() {
+	readMouse();
+	showPointer();
+	dumpPointer();
 }
 
 } /*namespace dreamgen */
