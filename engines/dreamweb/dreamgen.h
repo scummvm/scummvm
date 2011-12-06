@@ -544,7 +544,6 @@ public:
 	void identifyOb();
 	void useLighter();
 	void runEndSeq();
-	void usePoolReader();
 	void useOpenBox();
 	void clearBuffers();
 	void getObTextStart();
@@ -735,9 +734,6 @@ public:
 	void useGun();
 	void autoAppear();
 	void newPlace();
-	void useCardReader1();
-	void useCardReader2();
-	void useCardReader3();
 	void useHandle();
 	void showPuzText();
 	void incRyanPage();

@@ -405,6 +405,10 @@
 	void useElvDoor();
 	void useObject();
 	void useWinch();
+	void useCardReader1();
+	void useCardReader2();
+	void useCardReader3();
+	void usePoolReader();
 	bool defaultUseHandler(const char *id);
 	void openTVDoor();
 	void wearWatch();

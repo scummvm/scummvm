@@ -1012,6 +1012,112 @@ void DreamGenContext::grafittiDoor() {
 	putBackObStuff();
 }
 
+void DreamGenContext::usePoolReader() {
+	char id[4] = { 'M', 'E', 'M', 'B' };	// TODO: convert to string with trailing zero
+	if (defaultUseHandler(id))
+		return;
+
+	if (data.byte(kTalkedtoattendant) != 1) {
+		// Can't open pool
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		playChannel1(17);
+		showFirstUse();
+		data.byte(kCounttoopen) = 6;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useCardReader1() {
+	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
+	if (defaultUseHandler(id))
+		return;
+
+	if (data.byte(kTalkedtosparky) == 0) {
+		// Not yet
+		showFirstUse();
+		putBackObStuff();
+	} else if (data.word(kCard1money) == 0) {
+		// No cash
+		cx = 300;
+		al = 17;
+		showPuzText();
+		putBackObStuff();
+		return;
+	} else {
+		// Get cash
+		playChannel1(16);
+		cx = 300;
+		al = 18;
+		showPuzText();
+		data.byte(kProgresspoints)++;
+		data.word(kCard1money) = 12432;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useCardReader2() {
+	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
+	if (defaultUseHandler(id))
+		return;
+
+	if (data.byte(kTalkedtoboss) == 0) {
+		// Haven't talked to boss
+		showFirstUse();
+		putBackObStuff();
+	} else if (data.byte(kCard1money) == 0) {
+		// No cash
+		cx = 300;
+		al = 20;
+		showPuzText();
+		putBackObStuff();
+	} else if (data.byte(kGunpassflag) == 2) {
+		// Already got new
+		cx = 300;
+		al = 22;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		playChannel1(18);
+		cx = 300;
+		al = 19;
+		showPuzText();
+		placeSetObject(94);
+		data.byte(kGunpassflag) = 1;
+		data.word(kCard1money) -= 2000;
+		data.byte(kProgresspoints)++;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useCardReader3() {
+	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
+	if (defaultUseHandler(id))
+		return;
+
+	if (data.byte(kTalkedtorecep) == 0) {
+		// Haven't talked to receptionist
+		showFirstUse();
+		putBackObStuff();
+	} else if (data.byte(kCardpassflag) != 0) {
+		// Already used it
+		cx = 300;
+		al = 26;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		playChannel1(16);
+		cx = 300;
+		al = 25;
+		showPuzText();
+		data.byte(kProgresspoints)++;
+		data.word(kCard1money) -= 8300;
+		data.byte(kCardpassflag) = 1;
+		data.byte(kGetback) = 1;
+	}
+}
+
 void DreamGenContext::openTomb() {
 	data.byte(kProgresspoints)++;
 	showFirstUse();
