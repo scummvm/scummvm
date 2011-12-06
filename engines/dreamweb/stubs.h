@@ -520,5 +520,6 @@
 	void openSarters();
 	void openLouis();
 	void DOSReturn();
+	void setWalk();
 
 #endif

@@ -77,6 +77,33 @@ RoomPaths *DreamGenContext::getRoomsPaths() {
 	return (RoomPaths *)result;
 }
 
+void DreamGenContext::setWalk() {
+	if (data.byte(kLinepointer) != 254) {
+		// Already walking
+		data.byte(kFinaldest) = data.byte(kPointerspath);
+	} else if (data.byte(kPointerspath) == data.byte(kManspath)) {
+		// Can't walk
+		faceRightWay();
+	} else if (data.byte(kWatchmode) == 1) {
+		// Holding reel
+		data.byte(kDestafterhold) = data.byte(kPointerspath);
+		data.byte(kWatchmode) = 2;
+	} else if (data.byte(kWatchmode) == 2) {
+		// Can't walk
+	} else {
+		data.byte(kDestination) = data.byte(kPointerspath);
+		data.byte(kFinaldest) = data.byte(kPointerspath);
+		if (data.word(kMousebutton) != 2 || data.word(kMousebutton) == 3) {
+			autoSetWalk();
+		} else {
+			data.byte(kWalkandexam) = 1;
+			data.byte(kWalkexamtype) = data.byte(kCommandtype);
+			data.byte(kWalkexamnum) = data.byte(kCommand);
+			autoSetWalk();
+		}
+	}
+}
+
 void DreamGenContext::autoSetWalk() {
 	al = data.byte(kManspath);
 	if (data.byte(kFinaldest) == al)

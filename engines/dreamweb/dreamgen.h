@@ -753,7 +753,6 @@ public:
 	void dreamweb();
 	void dropError();
 	void checkInside();
-	void setWalk();
 	void findPathOfPoint();
 	void isSetObOnMap();
 	void getDestInfo();

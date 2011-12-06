@@ -498,6 +498,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'setupemm',
 	'setuppit',
 	'setuptimedtemp',
+	'setwalk',
 	'showallex',
 	'showallfree',
 	'showallobs',

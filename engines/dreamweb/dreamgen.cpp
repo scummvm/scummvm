@@ -9362,49 +9362,6 @@ searchmess:
 	printDirect();
 }
 
-void DreamGenContext::setWalk() {
-	STACK_CHECK;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto alreadywalking;
-	al = data.byte(kPointerspath);
-	_cmp(al, data.byte(kManspath));
-	if (flags.z())
-		goto cantwalk2;
-	_cmp(data.byte(kWatchmode), 1);
-	if (flags.z())
-		goto holdingreel;
-	_cmp(data.byte(kWatchmode), 2);
-	if (flags.z())
-		return /* (cantwalk) */;
-	data.byte(kDestination) = al;
-	data.byte(kFinaldest) = al;
-	_cmp(data.word(kMousebutton), 2);
-	if (!flags.z())
-		goto notwalkandexam;
-	_cmp(data.byte(kCommandtype), 3);
-	if (flags.z())
-		goto notwalkandexam;
-	data.byte(kWalkandexam) = 1;
-	al = data.byte(kCommandtype);
-	data.byte(kWalkexamtype) = al;
-	al = data.byte(kCommand);
-	data.byte(kWalkexamnum) = al;
-notwalkandexam:
-	autoSetWalk();
-	return;
-cantwalk2:
-	faceRightWay();
-	return;
-alreadywalking:
-	al = data.byte(kPointerspath);
-	data.byte(kFinaldest) = al;
-	return;
-holdingreel:
-	data.byte(kDestafterhold) = al;
-	data.byte(kWatchmode) = 2;
-}
-
 void DreamGenContext::workoutFrames() {
 	STACK_CHECK;
 	bx = data.word(kLinestartx);
