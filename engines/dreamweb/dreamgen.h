@@ -566,7 +566,6 @@ public:
 	void useCashCard();
 	void openTomb();
 	void doSomeTalk();
-	void getAnyAdDir();
 	void showSaveOps();
 	void introMonks1();
 	void resetLocation();

@@ -3068,23 +3068,6 @@ isex:
 	ax = es.word(bx+7);
 }
 
-void DreamGenContext::getAnyAdDir() {
-	STACK_CHECK;
-	_cmp(ah, 4);
-	if (flags.z())
-		goto isex3;
-	_cmp(ah, 2);
-	if (flags.z())
-		goto isfree3;
-	getSetAd();
-	return;
-isfree3:
-	getFreeAd();
-	return;
-isex3:
-	getExAd();
-}
-
 void DreamGenContext::getOpenedSize() {
 	STACK_CHECK;
 	_cmp(data.byte(kOpenedtype), 4);

@@ -292,6 +292,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'gamer',
 	'gates',
 	'generalerror',
+	'getanyaddir',
 	'getbackfromob',
 	'getbackfromops',
 	'getbacktoops',
