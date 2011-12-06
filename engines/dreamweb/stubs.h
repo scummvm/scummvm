@@ -70,9 +70,7 @@
 	void seeCommandTail();
 	void randomNumber();
 	void quickQuit2();
-	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printBoth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
-	void printChar();
 	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printChar(const Frame* charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printDirect();
@@ -86,10 +84,7 @@
 	void getUnderTimed();
 	void putUnderTimed();
 	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
-	void printSlow();
 	void dumpTextLine();
-	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
-	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void oldToNames();
 	void namesToOld();
 	void loadPalFromIFF();

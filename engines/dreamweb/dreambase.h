@@ -48,7 +48,11 @@ public:
 
 
 public:
-// TODO: Move functions from stubs.h which do not access any Context member variables to here.
+	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
+	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
+	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
+
+// TODO: Move more methods from stubs.h to here.
 };
 
 
