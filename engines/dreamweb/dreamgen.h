@@ -577,7 +577,6 @@ public:
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
-	void train();
 	void fadeDownMon();
 	void bartender();
 	void showDiary();

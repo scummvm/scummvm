@@ -585,6 +585,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'textforend',
 	'textformonk',
 	'titles',
+	'train',
 	'transferinv',
 	'transfertext',
 	'trapdoor',

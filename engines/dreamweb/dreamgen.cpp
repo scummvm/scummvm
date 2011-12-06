@@ -1200,32 +1200,6 @@ nocopper:
 	addToPeopleList();
 }
 
-void DreamGenContext::train() {
-	STACK_CHECK;
-	return;
-	ax = es.word(bx+3);
-	_cmp(ax, 21);
-	if (!flags.c())
-		goto notrainyet;
-	_inc(ax);
-	goto gottrainframe;
-notrainyet:
-	randomNumber();
-	_cmp(al, 253);
-	if (flags.c())
-		return /* (notrainatall) */;
-	_cmp(data.byte(kManspath), 5);
-	if (!flags.z())
-		return /* (notrainatall) */;
-	_cmp(data.byte(kFinaldest), 5);
-	if (!flags.z())
-		return /* (notrainatall) */;
-	ax = 5;
-gottrainframe:
-	es.word(bx+3) = ax;
-	showGameReel();
-}
-
 void DreamGenContext::checkForExit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
