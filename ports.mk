@@ -167,6 +167,7 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/no-nb
 	cp $(srcdir)doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
 	mkdir ScummVM-snapshot/doc/se
+	cp $(srcdir)doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
 	cp $(srcdir)doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
@@ -227,6 +228,7 @@ endif
 	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp $(srcdir)/doc/de/Liesmich $(WIN32PATH)/doc/de/Liesmich.txt
+	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
