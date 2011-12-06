@@ -934,7 +934,7 @@ void DreamGenContext::useWinch() {
 	checkInside();
 
 	char id[4] = { 'F', 'U', 'S', 'E' };	// TODO: convert to string with trailing zero
-	if (cl == 114 || !compare(cl, 4, id)) {
+	if (cl == kNumexobjects || !compare(cl, 4, id)) {
 		// No winch
 		showFirstUse();
 		putBackObStuff();
@@ -973,7 +973,7 @@ void DreamGenContext::useCart() {
 		DynObject *exObject = getExAd(data.byte(kWithobject));
 		exObject->mapad[0] = 0;
 		removeSetObject(data.byte(kCommand));
-		placeSetObject(data.byte(kWithobject) + 1);
+		placeSetObject(data.byte(kCommand) + 1);
 		data.byte(kProgresspoints)++;
 		playChannel1(17);
 		showFirstUse();
