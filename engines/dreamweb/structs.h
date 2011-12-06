@@ -290,7 +290,7 @@ struct Atmosphere {
 	uint8 _repeat;
 };
 
-}
+} // End of namespace DreamWeb
 
 #endif
 

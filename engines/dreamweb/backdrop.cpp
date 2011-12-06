@@ -325,5 +325,4 @@ void DreamGenContext::showAllEx() {
 	}
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

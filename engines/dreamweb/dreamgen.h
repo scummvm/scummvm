@@ -784,6 +784,7 @@ public:
 	void createFile();
 	void fadeToWhite();
 };
-}
+
+} // End of namespace DreamWeb
 
 #endif

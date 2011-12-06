@@ -436,5 +436,4 @@ void DreamGenContext::loadSaveBox() {
 	loadIntoTemp("DREAMWEB.G08");
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

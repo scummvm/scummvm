@@ -1191,5 +1191,4 @@ void DreamGenContext::liftNoise(uint8 index) {
 		playChannel1(index);
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

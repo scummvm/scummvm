@@ -263,5 +263,4 @@ void DreamGenContext::getBackFromOb() {
 		blank();
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

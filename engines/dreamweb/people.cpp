@@ -464,5 +464,4 @@ void DreamGenContext::foghornSound(ReelRoutine &routine) {
 void DreamGenContext::train(ReelRoutine &routine) {
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

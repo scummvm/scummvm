@@ -3769,4 +3769,4 @@ void DreamGenContext::putBackObStuff() {
 	delPointer();
 }
 
-} /*namespace dreamgen */
+} // End of namespace DreamGen
