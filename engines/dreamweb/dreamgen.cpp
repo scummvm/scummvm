@@ -6328,15 +6328,6 @@ doqk:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::dumpKeypad() {
-	STACK_CHECK;
-	di = (36+112)-3;
-	bx = (72)-4;
-	cl = 120;
-	ch = 90;
-	multiDump();
-}
-
 void DreamGenContext::quitSymbol() {
 	STACK_CHECK;
 	_cmp(data.byte(kSymboltopx), 24);
@@ -6362,16 +6353,6 @@ alreadyqs:
 	return;
 doqs:
 	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::dumpSymbol() {
-	STACK_CHECK;
-	data.byte(kNewtextline) = 0;
-	di = (64);
-	bx = (56)+20;
-	cl = 104;
-	ch = 60;
-	multiDump();
 }
 
 void DreamGenContext::updateSymbolTop() {
@@ -6460,19 +6441,6 @@ notwrapbackb:
 	if (!flags.z())
 		return /* (botfinished) */;
 	data.byte(kSymbolbotdir) = 0;
-}
-
-void DreamGenContext::dumpSymBox() {
-	STACK_CHECK;
-	_cmp(data.word(kDumpx), -1);
-	if (flags.z())
-		return /* (nodumpsym) */;
-	di = data.word(kDumpx);
-	bx = data.word(kDumpy);
-	cl = 30;
-	ch = 77;
-	multiDump();
-	data.word(kDumpx) = -1;
 }
 
 void DreamGenContext::useDiary() {
@@ -8006,18 +7974,6 @@ void DreamGenContext::getUnderZoom() {
 	cl = 46;
 	ch = 40;
 	multiGet();
-}
-
-void DreamGenContext::dumpZoom() {
-	STACK_CHECK;
-	_cmp(data.byte(kZoomon), 1);
-	if (!flags.z())
-		return /* (notzoomon) */;
-	di = (8)+5;
-	bx = (132)+4;
-	cl = 46;
-	ch = 40;
-	multiDump();
 }
 
 void DreamGenContext::putUnderZoom() {

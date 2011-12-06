@@ -574,5 +574,9 @@
 	void redes();
 	void isSetObOnMap();
 	bool isSetObOnMap(uint8 index);
+	void dumpKeypad();
+	void dumpSymbol();
+	void dumpSymBox();
+	void dumpZoom();
 
 #endif

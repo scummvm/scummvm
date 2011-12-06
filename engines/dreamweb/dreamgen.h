@@ -581,8 +581,6 @@ public:
 	void showDiary();
 	void outOfOpen();
 	void dirCom();
-	void dumpKeypad();
-	void dumpZoom();
 	void endGameSeq();
 	void findFirstPath();
 	void useSLab();
@@ -632,7 +630,6 @@ public:
 	void vSync();
 	void findInvPos();
 	void workoutFrames();
-	void dumpSymBox();
 	void rollEndCredits();
 	void interviewer();
 	void getKeyAndLogo();
@@ -646,7 +643,6 @@ public:
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();
-	void dumpSymbol();
 	void transferToEx();
 	void reExFromInv();
 	void examineInventory();
