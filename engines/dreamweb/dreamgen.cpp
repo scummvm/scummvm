@@ -8456,39 +8456,6 @@ justret:
 	data.byte(kManisoffscreen) = 0;
 }
 
-void DreamGenContext::getBackFromOps() {
-	STACK_CHECK;
-	_cmp(data.byte(kMandead), 2);
-	if (flags.z())
-		goto opsblock1;
-	getBack1();
-	return;
-opsblock1:
-	blank();
-}
-
-void DreamGenContext::getBackToOps() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 201);
-	if (flags.z())
-		goto alreadygetops;
-	data.byte(kCommandtype) = 201;
-	al = 42;
-	commandOnly();
-alreadygetops:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nogetbackops) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto dogetbackops;
-	return;
-dogetbackops:
-	oldToNames();
-	data.byte(kGetback) = 2;
-}
-
 void DreamGenContext::discOps() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 249);
@@ -8871,22 +8838,6 @@ void DreamGenContext::showDecisions() {
 	ah = 0;
 	showFrame();
 	underTextLine();
-}
-
-void DreamGenContext::newGame() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 251);
-	if (flags.z())
-		goto alreadynewgame;
-	data.byte(kCommandtype) = 251;
-	al = 47;
-	commandOnly();
-alreadynewgame:
-	ax = data.word(kMousebutton);
-	_cmp(ax, 1);
-	if (!flags.z())
-		return /* (nonewgame) */;
-	data.byte(kGetback) = 3;
 }
 
 void DreamGenContext::createName() {

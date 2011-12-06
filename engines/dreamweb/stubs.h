@@ -500,5 +500,8 @@
 	void setTopRight();
 	void setBotLeft();
 	void setBotRight();
+	void newGame();
+	void getBackFromOps();
+	void getBackToOps();
 
 #endif

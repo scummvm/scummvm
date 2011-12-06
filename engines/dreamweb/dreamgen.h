@@ -552,7 +552,6 @@ public:
 	void decide();
 	void entryTexts();
 	void checkInput();
-	void getBackFromOps();
 	void openSarters();
 	void putUnderCentre();
 	void checkObjectSize();
@@ -678,7 +677,6 @@ public:
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();
-	void getBackToOps();
 	void dumpSymbol();
 	void intro1Text();
 	void transferToEx();
@@ -769,7 +767,6 @@ public:
 	void dreamweb();
 	void dropError();
 	void checkInside();
-	void newGame();
 	void setWalk();
 	void findPathOfPoint();
 	void isSetObOnMap();

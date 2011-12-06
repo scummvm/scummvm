@@ -3444,5 +3444,36 @@ void DreamGenContext::setBotRight() {
 		data.byte(kSymbolbotdir) = 1;
 }
 
+void DreamGenContext::newGame() {
+	if (data.byte(kCommandtype) != 251) {
+		data.byte(kCommandtype) = 251;
+		commandOnly(47);
+	}
+
+	if (data.word(kMousebutton) == 1)
+		data.byte(kGetback) = 3;
+}
+
+void DreamGenContext::getBackFromOps() {
+	if (data.byte(kMandead) == 2)
+		blank();
+	else
+		getBack1();
+}
+
+void DreamGenContext::getBackToOps() {
+	if (data.byte(kCommandtype) != 201) {
+		data.byte(kCommandtype) = 201;
+		commandOnly(42);
+	}
+
+	if (data.word(kMousebutton) != data.word(kOldbutton)) {
+		if (!(data.word(kMousebutton) & 1)) {
+			oldToNames();
+			data.byte(kGetback) = 2;
+		}
+	}
+}
+
 } /*namespace dreamgen */
 
