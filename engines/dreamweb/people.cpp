@@ -402,6 +402,7 @@ void DreamGenContext::gates(ReelRoutine &routine) {
 		routine.setReelPointer(nextReelPointer);
 		push(es);
 		push(bx);
+		ax = nextReelPointer;
 		intro3Text();
 		bx = pop();
 		es = pop();
