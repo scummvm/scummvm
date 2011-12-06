@@ -32,7 +32,7 @@ void DreamGenContext::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8
 	*x = newX;
 }
 
-uint8 DreamGenContext::getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
+uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
 	while(true) {
@@ -50,20 +50,11 @@ uint8 DreamGenContext::getNextWord(const Frame *charSet, const uint8 *string, ui
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = *string;
-			uint8 width = charSet[firstChar - 32 + data.word(kCharshift)].width;
+			uint8 width = charSet[firstChar - 32 + data.word(DreamGenContext::kCharshift)].width;
 			width = kernChars(firstChar, secondChar, width);
 			*totalWidth += width;
 		}
 	}
-}
-
-void DreamGenContext::printChar() {
-	uint16 x = di;
-	uint8 width, height;
-	printChar((const Frame *)ds.ptr(0, 0), &x, bx, al, ah, &width, &height);
-	di = x;
-	cl = width;
-	ch = height;
 }
 
 void DreamGenContext::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
@@ -86,10 +77,6 @@ void DreamGenContext::printChar(const Frame *charSet, uint16* x, uint16 y, uint8
 
 void DreamGenContext::printChar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	printChar(charSet, &x, y, c, nextChar, width, height);
-}
-
-void DreamGenContext::printSlow() {
-	al = printSlow(es.ptr(si, 0), di, bx, dl, (bool)(dl & 1));
 }
 
 uint8 DreamGenContext::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
@@ -171,7 +158,7 @@ uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, ui
 	}
 }
 
-uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
+uint8 DreamBase::getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
 	while (true) {
@@ -210,7 +197,7 @@ uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint
 	}
 }
 
-uint8 DreamGenContext::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
+uint8 DreamBase::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	if ((firstChar == 'a') || (firstChar == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
 			return width-1;
