@@ -519,5 +519,6 @@
 	void openEden();
 	void openSarters();
 	void openLouis();
+	void DOSReturn();
 
 #endif

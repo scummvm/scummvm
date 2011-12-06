@@ -698,7 +698,6 @@ public:
 	void describeOb();
 	void deleteExFrame();
 	void bossMan();
-	void DOSReturn();
 	void searchForSame();
 	void chewy();
 	void getBack1();
