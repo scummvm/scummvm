@@ -575,11 +575,7 @@ public:
 	void getOpenedSize();
 	void resetKeyboard();
 	void soundStartup();
-	void sLabDoorA();
-	void sLabDoorC();
 	void sLabDoorB();
-	void sLabDoorE();
-	void sLabDoorD();
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
@@ -587,7 +583,6 @@ public:
 	void fadeDownMon();
 	void bartender();
 	void showDiary();
-	void sLabDoorF();
 	void outOfOpen();
 	void dirCom();
 	void dumpKeypad();
@@ -623,7 +618,6 @@ public:
 	void heavy();
 	void useKey();
 	void lockLightOn();
-	void useLadderB();
 	void discOps();
 	void middlePanel();
 	void monitorLogo();
@@ -709,7 +703,6 @@ public:
 	void useAxe();
 	void useElvDoor();
 	void putBackObStuff();
-	void useLadder();
 	void findAllOpen();
 	void quitSymbol();
 	void readFromFile();

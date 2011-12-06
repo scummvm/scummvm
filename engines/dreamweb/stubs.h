@@ -521,5 +521,12 @@
 	void openLouis();
 	void DOSReturn();
 	void setWalk();
+	void useLadder();
+	void useLadderB();
+	void sLabDoorA();
+	void sLabDoorC();
+	void sLabDoorE();
+	void sLabDoorD();
+	void sLabDoorF();
 
 #endif

@@ -564,5 +564,132 @@ void DreamGenContext::useWall() {
 	}
 }
 
-} /*namespace dreamgen */
+void DreamGenContext::useLadder() {
+	showFirstUse();
+	data.byte(kMapx) = data.byte(kMapx) - 11;
+	findRoomInLoc();
+	data.byte(kFacing) = 6;
+	data.byte(kTurntoface) = 6;
+	data.byte(kManspath) = 0;
+	data.byte(kDestination) = 0;
+	data.byte(kFinaldest) = 0;
+	findXYFromPath();
+	data.byte(kResetmanxy) = 1;
+	data.byte(kGetback) = 1;
+}
 
+void DreamGenContext::useLadderB() {
+	showFirstUse();
+	data.byte(kMapx) = data.byte(kMapx) + 11;
+	findRoomInLoc();
+	data.byte(kFacing) = 2;
+	data.byte(kTurntoface) = 2;
+	data.byte(kManspath) = 1;
+	data.byte(kDestination) = 1;
+	data.byte(kFinaldest) = 1;
+	findXYFromPath();
+	data.byte(kResetmanxy) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::sLabDoorA() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 13;
+	if (data.byte(kDreamnumber) != 3) {
+		// Wrong
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 34;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.word(kWatchingtime) = 60;
+		data.word(kEndwatchreel) = 42;
+		data.byte(kNewlocation) = 47;
+	}
+}
+
+void DreamGenContext::sLabDoorC() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 108;
+	if (data.byte(kDreamnumber) != 4) {
+		// Wrong
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 127;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.word(kWatchingtime) = 60;
+		data.word(kEndwatchreel) = 135;
+		data.byte(kNewlocation) = 47;
+	}
+}
+
+void DreamGenContext::sLabDoorD() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 75;
+	if (data.byte(kDreamnumber) != 0) {
+		// Wrong
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 94;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.word(kWatchingtime) = 60;
+		data.word(kEndwatchreel) = 102;
+		data.byte(kNewlocation) = 47;
+	}
+}
+
+void DreamGenContext::sLabDoorE() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 141;
+	if (data.byte(kDreamnumber) != 5) {
+		// Wrong
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 160;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.word(kWatchingtime) = 60;
+		data.word(kEndwatchreel) = 168;
+		data.byte(kNewlocation) = 47;
+	}
+}
+
+void DreamGenContext::sLabDoorF() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 171;
+	if (data.byte(kDreamnumber) != 2) {
+		// Wrong
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 189;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.word(kWatchingtime) = 60;
+		data.word(kEndwatchreel) = 197;
+		data.byte(kNewlocation) = 47;
+	}
+}
+
+} /*namespace dreamgen */
