@@ -5026,30 +5026,6 @@ void DreamGenContext::triggerMessage() {
 	data.byte(kLasttrigger) = 0;
 }
 
-void DreamGenContext::useObject() {
-	STACK_CHECK;
-	data.byte(kWithobject) = 255;
-	_cmp(data.byte(kCommandtype), 229);
-	if (flags.z())
-		goto alreadyuse;
-	data.byte(kCommandtype) = 229;
-	bl = data.byte(kCommand);
-	bh = data.byte(kObjecttype);
-	al = 51;
-	commandWithOb();
-alreadyuse:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nouse) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto douse;
-	return;
-douse:
-	useRoutine();
-}
-
 void DreamGenContext::runTap() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -5206,39 +5182,6 @@ alreadyfull:
 	al = 35;
 	showPuzText();
 	putBackObStuff();
-}
-
-void DreamGenContext::usePlinth() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto plinthwith;
-	withWhat();
-	return;
-plinthwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'D';
-	ch = 'K';
-	dl = 'E';
-	dh = 'Y';
-	compare();
-	if (flags.z())
-		goto isrightkey;
-	showFirstUse();
-	putBackObStuff();
-	return;
-isrightkey:
-	_inc(data.byte(kProgresspoints));
-	showSecondUse();
-	data.word(kWatchingtime) = 220;
-	data.word(kReeltowatch) = 0;
-	data.word(kEndwatchreel) = 104;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	al = data.byte(kRoomafterdream);
-	data.byte(kNewlocation) = al;
 }
 
 void DreamGenContext::chewy() {
@@ -6309,41 +6252,6 @@ notinpool:
 	showFirstUse();
 	return;
 /*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
-axeondoor:
-	al = 15;
-	cx = 300;
-	showPuzText();
-	_inc(data.byte(kProgresspoints));
-	data.word(kWatchingtime) = 46*2;
-	data.word(kReeltowatch) = 31;
-	data.word(kEndwatchreel) = 77;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElvDoor() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto gotdoorwith;
-	withWhat();
-	return;
-gotdoorwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'A';
-	ch = 'X';
-	dl = 'E';
-	dh = 'D';
-	compare();
-	if (flags.z())
-		goto axeondoor;
-	al = 14;
-	cx = 300;
-	showPuzText();
-	putBackObStuff();
-	return;
 axeondoor:
 	al = 15;
 	cx = 300;

@@ -401,6 +401,9 @@
 	void useFullCart();
 	void useClearBox();
 	void usePlate();
+	void usePlinth();
+	void useElvDoor();
+	void useObject();
 	void openTVDoor();
 	void wearWatch();
 	void wearShades();

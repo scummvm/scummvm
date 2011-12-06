@@ -641,7 +641,6 @@ public:
 	void interviewer();
 	void getKeyAndLogo();
 	void selectOb();
-	void usePlinth();
 	void useCooker();
 	void receptionist();
 	void selectSlot();
@@ -689,7 +688,6 @@ public:
 	void poolGuard();
 	void lookAtPlace();
 	void useAxe();
-	void useElvDoor();
 	void findAllOpen();
 	void quitSymbol();
 	void readFromFile();
@@ -794,7 +792,6 @@ public:
 	void openOb();
 	void createFile();
 	void useHole();
-	void useObject();
 	void fadeToWhite();
 	void showLoadOps();
 };

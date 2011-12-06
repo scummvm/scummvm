@@ -820,4 +820,77 @@ void DreamGenContext::usePlate() {
 	}
 }
 
+void DreamGenContext::usePlinth() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'D', 'K', 'E', 'Y' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong key
+		showFirstUse();
+		putBackObStuff();
+	} else {
+		data.byte(kProgresspoints)++;
+		showSecondUse();
+		data.word(kWatchingtime) = 220;
+		data.word(kReeltowatch) = 0;
+		data.word(kEndwatchreel) = 104;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kNewlocation) = data.byte(kRoomafterdream);
+	}
+}
+
+void DreamGenContext::useElvDoor() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		// Axe on door
+		al = 15;
+		cx = 300;
+		showPuzText();
+		_inc(data.byte(kProgresspoints));
+		data.word(kWatchingtime) = 46*2;
+		data.word(kReeltowatch) = 31;
+		data.word(kEndwatchreel) = 77;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useObject() {
+	data.byte(kWithobject) = 255;
+
+	if (data.byte(kCommandtype) != 229) {
+		data.byte(kCommandtype) = 229;
+		commandWithOb(data.byte(kCommand), data.byte(kObjecttype), 51);
+	}
+
+alreadyuse:
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
+		return /* (nouse) */;
+	_and(ax, 1);
+	if (!flags.z())
+		goto douse;
+	return;
+douse:
+	useRoutine();
+}
+
 } /*namespace dreamgen */
