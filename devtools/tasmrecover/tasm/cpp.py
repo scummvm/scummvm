@@ -612,12 +612,15 @@ namespace %s {
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
 
-#include "structs.h"
+#include "dreamweb/structs.h"
+#include "dreamweb/dreambase.h"
 
 namespace %s {
 
-class %sContext : public Context {
+class %sContext : public DreamBase, public Context {
 public:
+	DreamGenContext() : DreamBase(), Context(_realData) {}
+
 	void __start();
 """
 %(self.namespace, self.namespace))

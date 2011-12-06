@@ -27,12 +27,15 @@
 
 #include "dreamweb/runtime.h"
 
-#include "structs.h"
+#include "dreamweb/structs.h"
+#include "dreamweb/dreambase.h"
 
 namespace DreamGen {
 
-class DreamGenContext : public Context {
+class DreamGenContext : public DreamBase, public Context {
 public:
+	DreamGenContext() : DreamBase(), Context(_realData) {}
+
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 

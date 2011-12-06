@@ -31,10 +31,6 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
-namespace DreamWeb {
-	class DreamWebEngine;
-}
-
 namespace DreamGen {
 
 struct Register {
@@ -242,8 +238,6 @@ class Context {
 	FreeSegmentList _freeSegments;
 
 public:
-	DreamWeb::DreamWebEngine *engine;
-
 	enum { kDefaultDataSegment = 0x1000 };
 
 	Register ax, dx, bx, cx, si, di;
@@ -256,21 +250,17 @@ public:
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
 
-	SegmentPtr _realData;	///< the primary data segment, points to a huge blob of binary data
 	SegmentRef cs;
 	MutableSegmentRef ds;
 	MutableSegmentRef es;
-	SegmentRef data;	///< fake segment register always pointing to data segment
 	Flags flags;
 
-	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
-		_realData(new Segment()),
-		cs(kDefaultDataSegment, _realData),
-		ds(this, kDefaultDataSegment, _realData),
-		es(this, kDefaultDataSegment, _realData),
-		data(kDefaultDataSegment, _realData) {
+	Context(SegmentPtr realData): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
+		cs(kDefaultDataSegment, realData),
+		ds(this, kDefaultDataSegment, realData),
+		es(this, kDefaultDataSegment, realData) {
 
-		_segments[kDefaultDataSegment] = _realData;
+		_segments[kDefaultDataSegment] = realData;
 	}
 
 	SegmentRef getSegment(uint16 value) {
