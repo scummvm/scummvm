@@ -880,17 +880,11 @@ void DreamGenContext::useObject() {
 		commandWithOb(data.byte(kCommand), data.byte(kObjecttype), 51);
 	}
 
-alreadyuse:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nouse) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto douse;
-	return;
-douse:
-	useRoutine();
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return;	// nouse
+
+	if (data.word(kMousebutton) & 1)
+		useRoutine();
 }
 
 } /*namespace dreamgen */
