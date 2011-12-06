@@ -2229,20 +2229,19 @@ void DreamGenContext::enterSymbol() {
 }
 
 void DreamGenContext::zoomOnOff() {
-	if (data.word(kWatchingtime) != 0) {
+	if (data.word(kWatchingtime) != 0 || data.byte(kPointermode) == 2) {
 		blank();
 		return;
 	}
-	if (data.byte(kPointermode) == 2) {
-		blank();
-		return;
-	}
+
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
 		commandOnly(39);
 	}
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
+
+	if (!(data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
 		return;
+
 	data.byte(kZoomon) ^= 1;
 	createPanel();
 	data.byte(kNewobs) = 0;
