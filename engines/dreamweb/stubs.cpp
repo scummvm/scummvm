@@ -769,10 +769,6 @@ void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBy
 	return buffer;
 }
 
-void DreamGenContext::standardLoad() {
-	ax = standardLoad((const char *)cs.ptr(dx, 0), NULL);
-}
-
 void DreamGenContext::loadIntoTemp() {
 	loadIntoTemp((const char *)cs.ptr(dx, 0));
 }
