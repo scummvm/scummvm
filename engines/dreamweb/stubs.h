@@ -51,22 +51,16 @@
 	void hangOnCurs();
 	void multiDump();
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
-	void frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y);
-	void frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
-	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
-	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void workToScreen();
 	void workToScreenCPP();
 	uint8 *mapStore();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
-	void cls();
 	void printSprites();
 	void quickQuit();
 	void readOneBlock();
 	void readCityPic();
 	void readDestIcon();
-	void printUnderMon();
 	void seeCommandTail();
 	void randomNumber();
 	void quickQuit2();
@@ -479,7 +473,6 @@
 	void loadGame();
 	void saveGame();
 	void zoomOnOff();
-	void doShake();
 	void atmospheres();
 	void loadPersonal();
 	void loadNews();
@@ -489,7 +482,6 @@
 	void hangOne(uint16 delay);
 	void hangOne();
 	void showPCX(const Common::String &name);
-	void showPCX();
 	void bibleQuote();
 	void realCredits();
 	void intro();

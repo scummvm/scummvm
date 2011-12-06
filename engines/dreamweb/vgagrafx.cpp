@@ -106,15 +106,15 @@ void DreamGenContext::workToScreen() {
 	cx = 0;
 }
 
-void DreamGenContext::printUnderMon() {
+void DreamBase::printUnderMon() {
 	engine->printUnderMonitor();
 }
 
-void DreamGenContext::cls() {
+void DreamBase::cls() {
 	engine->cls();
 }
 
-void DreamGenContext::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamBase::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	dst += pitch * y + x;
 
 	for (uint16 j = 0; j < height; ++j) {
@@ -124,7 +124,7 @@ void DreamGenContext::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamBase::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 
@@ -140,7 +140,7 @@ void DreamGenContext::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamBase::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 	dst -= width;
@@ -157,8 +157,8 @@ void DreamGenContext::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::doShake() {
-	uint8 &counter = data.byte(kShakecounter);
+void DreamBase::doShake() {
+	uint8 &counter = data.byte(DreamGenContext::kShakecounter);
 	if (counter == 48)
 		return;
 
@@ -226,8 +226,7 @@ void DreamGenContext::showPCX(const Common::String &name) {
 	// the color components have to be adjusted from 8 to 6 bits.
 
 	pcxFile.seek(16, SEEK_SET);
-	es = data.word(kBuffers);
-	mainGamePal = es.ptr(kMaingamepal, 768);
+	mainGamePal = getSegment(data.word(DreamGenContext::kBuffers)).ptr(DreamGenContext::kMaingamepal, 768);
 	pcxFile.read(mainGamePal, 48);
 
 	memset(mainGamePal + 48, 0xff, 720);
@@ -280,11 +279,7 @@ void DreamGenContext::showPCX(const Common::String &name) {
 	pcxFile.close();
 }
 
-void DreamGenContext::showPCX() {
-	showPCX(getFilename(*this));
-}
-
-void DreamGenContext::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
+void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
