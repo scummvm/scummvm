@@ -585,7 +585,6 @@ public:
 	void sLabDoorD();
 	void adjustUp();
 	void fadeScreenDownHalf();
-	void loadIntroRoom();
 	void mouseCall();
 	void train();
 	void fadeDownMon();
@@ -608,7 +607,6 @@ public:
 	void getUnderZoom();
 	void rollEndCredits2();
 	void reminders();
-	void selectSlot2();
 	void runTap();
 	void talk();
 	void dumpDiaryKeys();
@@ -623,7 +621,6 @@ public:
 	void entryAnims();
 	void getFreeAd();
 	void showArrows();
-	void walkIntoRoom();
 	void printOuterMon();
 	void showDecisions();
 	void removeObFromInv();
@@ -720,7 +717,6 @@ public:
 	void useElvDoor();
 	void putBackObStuff();
 	void useLadder();
-	void afterIntroRoom();
 	void findAllOpen();
 	void quitSymbol();
 	void readFromFile();
@@ -777,7 +773,6 @@ public:
 	void additionalText();
 	void hotelControl();
 	void mugger();
-	void gettingShot();
 	void searchForString();
 	void selectOpenOb();
 	void useGun();
@@ -814,7 +809,6 @@ public:
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
-	void redrawMainScrn();
 	void makeMainScreen();
 	void useWinch();
 	void updateSymbolTop();

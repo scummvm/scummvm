@@ -3504,5 +3504,79 @@ void DreamGenContext::initialInv() {
 	switchRyanOff();
 }
 
+void DreamGenContext::walkIntoRoom() {
+	if (data.byte(kLocation) == 14 && data.byte(kMapx) == 22) {
+		data.byte(kDestination) = 1;
+		data.byte(kFinaldest) = 1;
+		autoSetWalk();
+	}
+}
+
+void DreamGenContext::loadIntroRoom() {
+	data.byte(kIntrocount) = 0;
+	data.byte(kLocation) = 255;
+	loadRoom();
+	data.word(kMapoffsetx) = 72;
+	data.word(kMapoffsety) = 16;
+	clearSprites();
+	data.byte(kThroughdoor) = 0;
+	data.byte(kCurrentkey) = '0';
+	data.byte(kMainmode) = 0;
+	clearWork();
+	data.byte(kNewobs) = 1;
+	drawFloor();
+	reelsOnScreen();
+	spriteUpdate();
+	printSprites();
+	workToScreen();
+}
+
+void DreamGenContext::afterIntroRoom() {
+	if (data.byte(kNowinnewroom) == 0)
+		return; // notnewintro
+
+	clearWork();
+	findRoomInLoc();
+	data.byte(kNewobs) = 1;
+	drawFloor();
+	reelsOnScreen();
+	spriteUpdate();
+	printSprites();
+	workToScreen();
+	data.byte(kNowinnewroom) = 0;
+}
+
+void DreamGenContext::gettingShot() {
+	data.byte(kNewlocation) = 55;
+	clearPalette();
+	loadIntroRoom();
+	fadeScreenUps();
+	data.byte(kVolumeto) = 0;
+	data.byte(kVolumedirection) = 0xFF;
+	runEndSeq();
+	clearBeforeLoad();
+}
+
+void DreamGenContext::redrawMainScrn() {
+	data.word(kTimecount) = 0;
+	createPanel();
+	data.byte(kNewobs) = 0;
+	drawFloor();
+	printSprites();
+	reelsOnScreen();
+	showIcon();
+	getUnderZoom();
+	underTextLine();
+	readMouse();
+	data.byte(kCommandtype) = 255;
+}
+
+void DreamGenContext::selectSlot2() {
+	if (data.word(kMousebutton) ==  0)
+		selectSlot();
+	else
+		data.byte(kLoadingorsave) = 2;
+}
+
 } /*namespace dreamgen */
 

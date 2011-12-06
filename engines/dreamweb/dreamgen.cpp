@@ -2165,18 +2165,6 @@ void DreamGenContext::showMonk() {
 	showFrame();
 }
 
-void DreamGenContext::gettingShot() {
-	STACK_CHECK;
-	data.byte(kNewlocation) = 55;
-	clearPalette();
-	loadIntroRoom();
-	fadeScreenUps();
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
-	runEndSeq();
-	clearBeforeLoad();
-}
-
 void DreamGenContext::runIntroSeq() {
 	STACK_CHECK;
 	data.byte(kGetback) = 0;
@@ -2234,26 +2222,6 @@ moreendseq:
 	_cmp(data.byte(kGetback), 1);
 	if (!flags.z())
 		goto moreendseq;
-}
-
-void DreamGenContext::loadIntroRoom() {
-	STACK_CHECK;
-	data.byte(kIntrocount) = 0;
-	data.byte(kLocation) = 255;
-	loadRoom();
-	data.word(kMapoffsetx) = 72;
-	data.word(kMapoffsety) = 16;
-	clearSprites();
-	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
-	clearWork();
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	reelsOnScreen();
-	spriteUpdate();
-	printSprites();
-	workToScreen();
 }
 
 void DreamGenContext::fillOpen() {
@@ -4015,21 +3983,6 @@ beforethistext:
 	_add(di, 2);
 	if (--cx)
 		goto shuffletextads;
-}
-
-void DreamGenContext::redrawMainScrn() {
-	STACK_CHECK;
-	data.word(kTimecount) = 0;
-	createPanel();
-	data.byte(kNewobs) = 0;
-	drawFloor();
-	printSprites();
-	reelsOnScreen();
-	showIcon();
-	getUnderZoom();
-	underTextLine();
-	readMouse();
-	data.byte(kCommandtype) = 255;
 }
 
 void DreamGenContext::getBack1() {
@@ -8498,16 +8451,6 @@ discopsloop:
 		goto discopsloop;
 }
 
-void DreamGenContext::selectSlot2() {
-	STACK_CHECK;
-	_cmp(data.word(kMousebutton), 0);
-	if (flags.z())
-		goto noselslot2;
-	data.byte(kLoadingorsave) = 2;
-noselslot2:
-	selectSlot();
-}
-
 void DreamGenContext::checkInput() {
 	STACK_CHECK;
 	_cmp(data.byte(kLoadingorsave), 3);
@@ -9521,35 +9464,6 @@ ryansoff:
 	walkIntoRoom();
 	reminders();
 	atmospheres();
-}
-
-void DreamGenContext::walkIntoRoom() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 14);
-	if (!flags.z())
-		return /* (notlair) */;
-	_cmp(data.byte(kMapx), 22);
-	if (!flags.z())
-		return /* (notlair) */;
-	data.byte(kDestination) = 1;
-	data.byte(kFinaldest) = 1;
-	autoSetWalk();
-}
-
-void DreamGenContext::afterIntroRoom() {
-	STACK_CHECK;
-	_cmp(data.byte(kNowinnewroom), 0);
-	if (flags.z())
-		return /* (notnewintro) */;
-	clearWork();
-	findRoomInLoc();
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	reelsOnScreen();
-	spriteUpdate();
-	printSprites();
-	workToScreen();
-	data.byte(kNowinnewroom) = 0;
 }
 
 void DreamGenContext::printmessage2() {

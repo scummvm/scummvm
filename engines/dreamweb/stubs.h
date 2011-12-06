@@ -505,5 +505,11 @@
 	void getBackToOps();
 	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
+	void walkIntoRoom();
+	void loadIntroRoom();
+	void afterIntroRoom();
+	void gettingShot();
+	void redrawMainScrn();
+	void selectSlot2();
 
 #endif
