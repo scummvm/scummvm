@@ -3388,7 +3388,7 @@ void DreamGenContext::setTopLeft() {
 		commandOnly(19);
 	}
 
-	if (data.word(kMousebutton) != 0);
+	if (data.word(kMousebutton) != 0)
 		data.byte(kSymboltopdir) = 0xFF;
 }
 
@@ -3403,7 +3403,7 @@ void DreamGenContext::setTopRight() {
 		commandOnly(20);
 	}
 
-	if (data.word(kMousebutton) != 0);
+	if (data.word(kMousebutton) != 0)
 		data.byte(kSymboltopdir) = 1;
 }
 
@@ -3418,7 +3418,7 @@ void DreamGenContext::setBotLeft() {
 		commandOnly(21);
 	}
 
-	if (data.word(kMousebutton) != 0);
+	if (data.word(kMousebutton) != 0)
 		data.byte(kSymbolbotdir) = 0xFF;
 }
 
@@ -3433,7 +3433,7 @@ void DreamGenContext::setBotRight() {
 		commandOnly(22);
 	}
 
-	if (data.word(kMousebutton) != 0);
+	if (data.word(kMousebutton) != 0)
 		data.byte(kSymbolbotdir) = 1;
 }
 
