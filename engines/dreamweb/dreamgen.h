@@ -695,7 +695,6 @@ public:
 	void rollEm();
 	void delEverything();
 	void poolGuard();
-	void openInv();
 	void lookAtPlace();
 	void useAxe();
 	void useElvDoor();
@@ -779,14 +778,12 @@ public:
 	void checkForShake();
 	void useButtonA();
 	void execCommand();
-	void obsThatDoThings();
 	void updateSymbolBot();
 	void findPuzText();
 	void useChurchGate();
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
-	void makeMainScreen();
 	void useWinch();
 	void updateSymbolTop();
 	void checkSoundInt();

@@ -532,5 +532,8 @@
 	void sLabDoorE();
 	void sLabDoorD();
 	void sLabDoorF();
+	void obsThatDoThings();
+	void makeMainScreen();
+	void openInv();
 
 #endif

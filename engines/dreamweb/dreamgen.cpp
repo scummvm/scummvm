@@ -2135,24 +2135,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::makeMainScreen() {
-	STACK_CHECK;
-	createPanel();
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	spriteUpdate();
-	printSprites();
-	reelsOnScreen();
-	showIcon();
-	getUnderZoom();
-	underTextLine();
-	data.byte(kCommandtype) = 255;
-	animPointer();
-	workToScreenM();
-	data.byte(kCommandtype) = 200;
-	data.byte(kManisoffscreen) = 0;
-}
-
 void DreamGenContext::incRyanPage() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 222);
@@ -2185,18 +2167,6 @@ findnewpage:
 	showPointer();
 	workToScreen();
 	delPointer();
-}
-
-void DreamGenContext::openInv() {
-	STACK_CHECK;
-	data.byte(kInvopen) = 1;
-	al = 61;
-	di = (80);
-	bx = (58)-10;
-	dl = 240;
-	printMessage();
-	fillRyan();
-	data.byte(kCommandtype) = 255;
 }
 
 void DreamGenContext::openOb() {
@@ -2308,27 +2278,6 @@ fullcup:
 	dl = 241;
 	ah = 0;
 	printDirect();
-}
-
-void DreamGenContext::obsThatDoThings() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	ah = data.byte(kObjecttype);
-	cl = 'M';
-	ch = 'E';
-	dl = 'M';
-	dh = 'B';
-	compare();
-	if (!flags.z())
-		return /* (notlouiscard) */;
-	al = 4;
-	getLocation();
-	_cmp(al, 1);
-	if (flags.z())
-		return /* (seencard) */;
-	al = 4;
-	setLocation();
-	lookAtCard();
 }
 
 void DreamGenContext::getObTextStart() {

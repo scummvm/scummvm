@@ -3580,5 +3580,39 @@ void DreamGenContext::allPointer() {
 	dumpPointer();
 }
 
-} /*namespace dreamgen */
+void DreamGenContext::makeMainScreen() {
+	createPanel();
+	data.byte(kNewobs) = 1;
+	drawFloor();
+	spriteUpdate();
+	printSprites();
+	reelsOnScreen();
+	showIcon();
+	getUnderZoom();
+	underTextLine();
+	data.byte(kCommandtype) = 255;
+	animPointer();
+	workToScreenM();
+	data.byte(kCommandtype) = 200;
+	data.byte(kManisoffscreen) = 0;
+}
 
+void DreamGenContext::openInv() {
+	data.byte(kInvopen) = 1;
+	printMessage(80, 58 - 10, 61, 240, (240 & 1));
+	fillRyan();
+	data.byte(kCommandtype) = 255;
+}
+
+void DreamGenContext::obsThatDoThings() {
+	char id[4] = { 'M', 'E', 'M', 'B' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kCommand), data.byte(kObjecttype), id))
+		return; // notlouiscard
+
+	if (getLocation(4) != 1) {
+		setLocation(4);
+		lookAtCard();
+	}
+}
+
+} /*namespace dreamgen */
