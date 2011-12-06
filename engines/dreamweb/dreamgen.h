@@ -541,7 +541,6 @@ public:
 
 	void useWire();
 	void getNamePos();
-	void clearChanges();
 	void identifyOb();
 	void useLighter();
 	void runEndSeq();
@@ -564,6 +563,7 @@ public:
 	void isRyanHolding();
 	void showSlots();
 	void useCashCard();
+	void moneyPoke();
 	void doSomeTalk();
 	void showSaveOps();
 	void introMonks1();
@@ -577,6 +577,7 @@ public:
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
+	void train();
 	void fadeDownMon();
 	void bartender();
 	void showDiary();
@@ -600,10 +601,12 @@ public:
 	void talk();
 	void dumpDiaryKeys();
 	void disableSoundInt();
-	void priestText();
+	void checkForExit();
 	void lookInInterface();
+	void inToInv();
 	void loadSpeech();
 	void adjustLeft();
+	void deleteExText();
 	void entryAnims();
 	void getFreeAd();
 	void showArrows();
@@ -621,14 +624,13 @@ public:
 	void lockLightOff();
 	void runIntroSeq();
 	void advisor();
+	void allPalette();
 	void attendant();
 	void cantDrop();
 	void copper();
 	void drinker();
 	void nextColon();
 	void placeFreeObject();
-	void allPalette();
-	void adjustRight();
 	void putUnderZoom();
 	void vSync();
 	void findInvPos();
@@ -641,10 +643,10 @@ public:
 	void useCooker();
 	void receptionist();
 	void selectSlot();
-	void openFileNoCheck();
 	void fadeUpMon();
 	void soundEnd();
 	void redes();
+	void manAsleep2();
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();
@@ -666,7 +668,6 @@ public:
 	void getSetAd();
 	void soldier1();
 	void getUnderCentre();
-	void checkForExit();
 	void loadSeg();
 	void showKeys();
 	void setKeyboardInt();
@@ -680,6 +681,7 @@ public:
 	void searchForSame();
 	void getBack1();
 	void fadeFromWhite();
+	void checkSoundInt();
 	void rollEm();
 	void poolGuard();
 	void lookAtPlace();
@@ -691,13 +693,13 @@ public:
 	void findSetObject();
 	void useDiary();
 	void deleteExObject();
-	void moneyPoke();
 	void removeFreeObject();
 	void lookAtCard();
 	void helicopter();
 	void getEitherAd();
 	void setPickup();
 	void dropObject();
+	void openOb();
 	void drawItAll();
 	void useStereo();
 	void candles2();
@@ -711,7 +713,6 @@ public:
 	void useOpened();
 	void fillOpen();
 	void signOn();
-	void deleteExText();
 	void showGun();
 	void louisChair();
 	void locationPic();
@@ -720,6 +721,7 @@ public:
 	void swapWithOpen();
 	void dreamweb();
 	void dropError();
+	void openFileNoCheck();
 	void checkInside();
 	void findPathOfPoint();
 	void isSetObOnMap();
@@ -741,7 +743,7 @@ public:
 	void showPuzText();
 	void incRyanPage();
 	void findExObject();
-	void manAsleep2();
+	void clearChanges();
 	void searchForFiles();
 	void monkSpeaking();
 	void clearRest();
@@ -753,20 +755,21 @@ public:
 	void initialMonCols();
 	void checkForShake();
 	void useButtonA();
+	void priestText();
 	void execCommand();
 	void updateSymbolBot();
 	void findPuzText();
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
+	void adjustRight();
 	void updateSymbolTop();
-	void checkSoundInt();
 	void doSaveLoad();
 	void createName();
 	void getPersonText();
-	void inToInv();
 	void parser();
 	void setMouse();
+	void showLoadOps();
 	void selectLocation();
 	void underTextLine();
 	void showNames();
@@ -779,10 +782,8 @@ public:
 	void transferConToEx();
 	void adjustDown();
 	void withWhat();
-	void openOb();
 	void createFile();
 	void fadeToWhite();
-	void showLoadOps();
 };
 }
 

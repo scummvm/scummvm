@@ -432,7 +432,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'openinv',
 	'openlouis',
 	'openpoolboss',
-	'openryan'
+	'openryan',
 	'opensarters',
 	'opentomb',
 	'opentvdoor',
@@ -585,7 +585,6 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'textforend',
 	'textformonk',
 	'titles',
-	'train',
 	'transferinv',
 	'transfertext',
 	'trapdoor',
