@@ -405,6 +405,7 @@
 	void useElvDoor();
 	void useObject();
 	void useWinch();
+	bool defaultUseHandler(const char *id);
 	void openTVDoor();
 	void wearWatch();
 	void wearShades();

@@ -732,33 +732,41 @@ void DreamGenContext::sLabDoorF() {
 	}
 }
 
-void DreamGenContext::useChurchGate() {
+bool DreamGenContext::defaultUseHandler(const char *id) {
 	if (data.byte(kWithobject) == 255) {
 		withWhat();
-		return;
+		return true;	// event handled
 	}
 
-	char id[4] = { 'C', 'U', 'T', 'T' };	// TODO: convert to string with trailing zero
 	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
 		// Wrong item
 		cx = 300;
 		al = 14;
 		showPuzText();
 		putBackObStuff();
-	} else {
-		// Cut gate
-		showFirstUse();
-		data.word(kWatchingtime) = 64 * 2;
-		data.word(kReeltowatch) = 4;
-		data.word(kEndwatchreel) = 70;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
-		data.byte(kGetback) = 1;
-		data.byte(kProgresspoints)++;
-		turnPathOn(3);
-		if (data.byte(kAidedead) != 0)
-			turnPathOn(2);	// Open church
+		return true;	// event handled
 	}
+
+	return false;	// continue with the original event
+}
+
+void DreamGenContext::useChurchGate() {
+	char id[4] = { 'C', 'U', 'T', 'T' };	// TODO: convert to string with trailing zero
+	if (defaultUseHandler(id))
+		return;
+
+	// Cut gate
+	showFirstUse();
+	data.word(kWatchingtime) = 64 * 2;
+	data.word(kReeltowatch) = 4;
+	data.word(kEndwatchreel) = 70;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	data.byte(kProgresspoints)++;
+	turnPathOn(3);
+	if (data.byte(kAidedead) != 0)
+		turnPathOn(2);	// Open church
 }
 
 void DreamGenContext::useFullCart() {
@@ -780,50 +788,30 @@ void DreamGenContext::useFullCart() {
 }
 
 void DreamGenContext::useClearBox() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'R', 'A', 'I', 'L' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		// Open box
-		data.byte(kProgresspoints)++;
-		showFirstUse();
-		data.word(kWatchingtime) = 80;
-		data.word(kReeltowatch) = 67;
-		data.word(kEndwatchreel) = 105;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	// Open box
+	data.byte(kProgresspoints)++;
+	showFirstUse();
+	data.word(kWatchingtime) = 80;
+	data.word(kReeltowatch) = 67;
+	data.word(kEndwatchreel) = 105;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::openTVDoor() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'U', 'L', 'O', 'K' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		// Key on TV
-		showFirstUse();
-		data.byte(kLockstatus) = 0;
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	// Key on TV
+	showFirstUse();
+	data.byte(kLockstatus) = 0;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::usePlate() {
@@ -885,31 +873,21 @@ void DreamGenContext::usePlinth() {
 }
 
 void DreamGenContext::useElvDoor() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		// Axe on door
-		al = 15;
-		cx = 300;
-		showPuzText();
-		_inc(data.byte(kProgresspoints));
-		data.word(kWatchingtime) = 46 * 2;
-		data.word(kReeltowatch) = 31;
-		data.word(kEndwatchreel) = 77;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	// Axe on door
+	al = 15;
+	cx = 300;
+	showPuzText();
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 46 * 2;
+	data.word(kReeltowatch) = 31;
+	data.word(kEndwatchreel) = 77;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useObject() {
@@ -957,28 +935,18 @@ void DreamGenContext::useWinch() {
 }
 
 void DreamGenContext::useCart() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'R', 'O', 'C', 'K' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		DynObject *exObject = getExAd(data.byte(kWithobject));
-		exObject->mapad[0] = 0;
-		removeSetObject(data.byte(kCommand));
-		placeSetObject(data.byte(kCommand) + 1);
-		data.byte(kProgresspoints)++;
-		playChannel1(17);
-		showFirstUse();
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	DynObject *exObject = getExAd(data.byte(kWithobject));
+	exObject->mapad[0] = 0;
+	removeSetObject(data.byte(kCommand));
+	placeSetObject(data.byte(kCommand) + 1);
+	data.byte(kProgresspoints)++;
+	playChannel1(17);
+	showFirstUse();
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useTrainer() {
@@ -1003,86 +971,46 @@ void DreamGenContext::chewy() {
 }
 
 void DreamGenContext::useHole() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'H', 'N', 'D', 'A' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		showFirstUse();
-		removeSetObject(86);
-		DynObject *exObject = getExAd(data.byte(kWithobject));
-		exObject->mapad[0] = 255;
-		data.byte(kCanmovealtar) = 1;
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	showFirstUse();
+	removeSetObject(86);
+	DynObject *exObject = getExAd(data.byte(kWithobject));
+	exObject->mapad[0] = 255;
+	data.byte(kCanmovealtar) = 1;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::openHotelDoor() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		playChannel1(16);
-		showFirstUse();
-		data.byte(kLockstatus) = 0;
-		data.byte(kGetback) = 1;
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	playChannel1(16);
+	showFirstUse();
+	data.byte(kLockstatus) = 0;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::openHotelDoor2() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		playChannel1(16);
-		showFirstUse();
-		putBackObStuff();
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	playChannel1(16);
+	showFirstUse();
+	putBackObStuff();
 }
 
 void DreamGenContext::grafittiDoor() {
-	if (data.byte(kWithobject) == 255) {
-		withWhat();
-		return;
-	}
-
 	char id[4] = { 'A', 'P', 'E', 'N' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
-		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
-		putBackObStuff();
-	} else {
-		showFirstUse();
-		putBackObStuff();
-	}
+	if (defaultUseHandler(id))
+		return;
+
+	showFirstUse();
+	putBackObStuff();
 }
 
 void DreamGenContext::openTomb() {
