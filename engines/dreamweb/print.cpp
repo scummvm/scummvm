@@ -50,7 +50,7 @@ uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *t
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = *string;
-			uint8 width = charSet[firstChar - 32 + data.word(DreamGenContext::kCharshift)].width;
+			uint8 width = charSet[firstChar - 32 + data.word(kCharshift)].width;
 			width = kernChars(firstChar, secondChar, width);
 			*totalWidth += width;
 		}

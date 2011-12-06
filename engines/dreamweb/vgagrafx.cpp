@@ -158,7 +158,7 @@ void DreamBase::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wi
 }
 
 void DreamBase::doShake() {
-	uint8 &counter = data.byte(DreamGenContext::kShakecounter);
+	uint8 &counter = data.byte(kShakecounter);
 	if (counter == 48)
 		return;
 
@@ -227,7 +227,7 @@ void DreamGenContext::showPCX(const Common::String &name) {
 	// the color components have to be adjusted from 8 to 6 bits.
 
 	pcxFile.seek(16, SEEK_SET);
-	mainGamePal = getSegment(data.word(DreamGenContext::kBuffers)).ptr(DreamGenContext::kMaingamepal, 768);
+	mainGamePal = getSegment(data.word(kBuffers)).ptr(kMaingamepal, 768);
 	pcxFile.read(mainGamePal, 48);
 
 	memset(mainGamePal + 48, 0xff, 720);
