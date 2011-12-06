@@ -692,4 +692,51 @@ void DreamGenContext::sLabDoorF() {
 	}
 }
 
+void DreamGenContext::useChurchGate() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'C', 'U', 'T', 'T' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		// Cut gate
+		showFirstUse();
+		data.word(kWatchingtime) = 64 * 2;
+		data.word(kReeltowatch) = 4;
+		data.word(kEndwatchreel) = 70;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+		turnPathOn(3);
+		if (data.byte(kAidedead) != 0)
+			turnPathOn(2);	// Open church
+	}
+}
+
+void DreamGenContext::useFullCart() {
+	data.byte(kProgresspoints)++;
+	turnAnyPathOn(2, data.byte(kRoomnum) + 6);
+	data.byte(kManspath) = 4;
+	data.byte(kFacing) = 4;
+	data.byte(kTurntoface) = 4;
+	data.byte(kFinaldest) = 4;
+	findXYFromPath();
+	data.byte(kResetmanxy) = 1;
+	showFirstUse();
+	data.word(kWatchingtime) = 72 * 2;
+	data.word(kReeltowatch) = 58;
+	data.word(kEndwatchreel) = 142;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
 } /*namespace dreamgen */

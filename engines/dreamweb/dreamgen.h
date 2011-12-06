@@ -756,7 +756,6 @@ public:
 	void selectOpenOb();
 	void useGun();
 	void autoAppear();
-	void useFullCart();
 	void newPlace();
 	void useCardReader1();
 	void useCardReader2();
@@ -780,7 +779,6 @@ public:
 	void execCommand();
 	void updateSymbolBot();
 	void findPuzText();
-	void useChurchGate();
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();

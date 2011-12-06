@@ -5441,28 +5441,6 @@ alreadyfull:
 	putBackObStuff();
 }
 
-void DreamGenContext::useFullCart() {
-	STACK_CHECK;
-	_inc(data.byte(kProgresspoints));
-	al = 2;
-	ah = data.byte(kRoomnum);
-	_add(ah, 6);
-	turnAnyPathOn();
-	data.byte(kManspath) = 4;
-	data.byte(kFacing) = 4;
-	data.byte(kTurntoface) = 4;
-	data.byte(kFinaldest) = 4;
-	findXYFromPath();
-	data.byte(kResetmanxy) = 1;
-	showFirstUse();
-	data.word(kWatchingtime) = 72*2;
-	data.word(kReeltowatch) = 58;
-	data.word(kEndwatchreel) = 142;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::usePlinth() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -7054,46 +7032,6 @@ void DreamGenContext::setupTimedUse() {
 	bx = ax;
 	data.word(kTimedseg) = es;
 	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::useChurchGate() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto gatewith;
-	withWhat();
-	return;
-gatewith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'T';
-	dh = 'T';
-	compare();
-	if (flags.z())
-		goto cutgate;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-cutgate:
-	showFirstUse();
-	data.word(kWatchingtime) = 64*2;
-	data.word(kReeltowatch) = 4;
-	data.word(kEndwatchreel) = 70;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	_inc(data.byte(kProgresspoints));
-	al = 3;
-	turnPathOn();
-	_cmp(data.byte(kAidedead), 0);
-	if (flags.z())
-		return /* (notopenchurch) */;
-	al = 2;
-	turnPathOn();
 }
 
 void DreamGenContext::useGun() {

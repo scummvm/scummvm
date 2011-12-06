@@ -397,6 +397,8 @@
 	void callHotelLift();
 	void useShield();
 	void useWall();
+	void useChurchGate();
+	void useFullCart();
 	void wearWatch();
 	void wearShades();
 	void checkFolderCoords();
