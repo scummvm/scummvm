@@ -560,7 +560,6 @@ public:
 	void watchReel();
 	void openFileFromC();
 	void getTime();
-	void pickupOb();
 	void fadeDOS();
 	void findText1();
 	void isRyanHolding();
@@ -725,7 +724,6 @@ public:
 	void findAllOpen();
 	void quitSymbol();
 	void readFromFile();
-	void initialInv();
 	void interruptTest();
 	void findSetObject();
 	void useDiary();

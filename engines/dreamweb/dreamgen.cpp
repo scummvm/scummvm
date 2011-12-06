@@ -9116,56 +9116,6 @@ notalley:
 	turnAnyPathOn();
 }
 
-void DreamGenContext::initialInv() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 24);
-	if (flags.z())
-		goto isedens;
-	return;
-isedens:
-	al = 11;
-	ah = 5;
-	pickupOb();
-	al = 12;
-	ah = 6;
-	pickupOb();
-	al = 13;
-	ah = 7;
-	pickupOb();
-	al = 14;
-	ah = 8;
-	pickupOb();
-	al = 18;
-	al = 18;
-	ah = 0;
-	pickupOb();
-	al = 19;
-	ah = 1;
-	pickupOb();
-	al = 20;
-	ah = 9;
-	pickupOb();
-	al = 16;
-	ah = 2;
-	pickupOb();
-	data.byte(kWatchmode) = 1;
-	data.word(kReeltohold) = 0;
-	data.word(kEndofholdreel) = 6;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	switchRyanOff();
-}
-
-void DreamGenContext::pickupOb() {
-	STACK_CHECK;
-	data.byte(kLastinvpos) = ah;
-	data.byte(kObjecttype) = 2;
-	data.byte(kItemframe) = al;
-	data.byte(kCommand) = al;
-	getAnyAd();
-	transferToEx();
-}
-
 void DreamGenContext::clearBuffers() {
 	STACK_CHECK;
 	es = data.word(kBuffers);

@@ -3475,5 +3475,34 @@ void DreamGenContext::getBackToOps() {
 	}
 }
 
+void DreamGenContext::pickupOb(uint8 command, uint8 pos) {
+	data.byte(kLastinvpos) = pos;
+	data.byte(kObjecttype) = 2;
+	data.byte(kItemframe) = command;
+	data.byte(kCommand) = command;
+	getAnyAd();
+	transferToEx();
+}
+
+void DreamGenContext::initialInv() {
+	if (data.byte(kReallocation) != 24)
+		return;
+
+	pickupOb(11, 5);
+	pickupOb(12, 6);
+	pickupOb(13, 7);
+	pickupOb(14, 8);
+	pickupOb(18, 0);
+	pickupOb(19, 1);
+	pickupOb(20, 9);
+	pickupOb(16, 2);
+	data.byte(kWatchmode) = 1;
+	data.word(kReeltohold) = 0;
+	data.word(kEndofholdreel) = 6;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchRyanOff();
+}
+
 } /*namespace dreamgen */
 

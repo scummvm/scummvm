@@ -503,5 +503,7 @@
 	void newGame();
 	void getBackFromOps();
 	void getBackToOps();
+	void pickupOb(uint8 command, uint8 pos);
+	void initialInv();
 
 #endif
