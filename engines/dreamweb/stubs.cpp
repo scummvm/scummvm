@@ -3769,4 +3769,57 @@ void DreamGenContext::putBackObStuff() {
 	delPointer();
 }
 
+void DreamGenContext::redes() {
+	if (data.byte(kCh1playing) != 255 || data.byte(kTalkmode) != 2) {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 217) {
+		data.byte(kCommandtype) = 217;
+		commandOnly(50);
+	}
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	delPointer();
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	convIcons();
+	startTalk();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::moreTalk() {
+	if (data.byte(kTalkmode) != 0) {
+		redes();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 215) {
+		data.byte(kCommandtype) = 215;
+		commandOnly(49);
+	}
+	
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return;	// nomore
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	data.byte(kTalkmode) = 2;
+	data.byte(kTalkpos) = 4;
+	
+	if (data.byte(kCharacter) < 100)
+		doSomeTalk();	// not second part
+	else
+		data.byte(kTalkpos) = 48;
+}
+
 } // End of namespace DreamGen

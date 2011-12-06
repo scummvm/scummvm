@@ -587,7 +587,6 @@ public:
 	void findFirstPath();
 	void useSLab();
 	void useAltar();
-	void moreTalk();
 	void startTalk();
 	void getAnyAd();
 	void endGame();
@@ -643,7 +642,6 @@ public:
 	void selectSlot();
 	void fadeUpMon();
 	void soundEnd();
-	void redes();
 	void manAsleep2();
 	void introMagic2();
 	void introMagic3();

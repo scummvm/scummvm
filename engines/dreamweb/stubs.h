@@ -570,5 +570,7 @@
 	void lastDest();
 	void destSelect();
 	void putBackObStuff();
+	void moreTalk();
+	void redes();
 
 #endif

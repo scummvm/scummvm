@@ -3716,40 +3716,6 @@ void DreamGenContext::getPersonText() {
 	si = ax;
 }
 
-void DreamGenContext::moreTalk() {
-	STACK_CHECK;
-	_cmp(data.byte(kTalkmode), 0);
-	if (flags.z())
-		goto canmore;
-	redes();
-	return;
-canmore:
-	_cmp(data.byte(kCommandtype), 215);
-	if (flags.z())
-		goto alreadymore;
-	data.byte(kCommandtype) = 215;
-	al = 49;
-	commandOnly();
-alreadymore:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nomore) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto domoretalk;
-	return;
-domoretalk:
-	data.byte(kTalkmode) = 2;
-	data.byte(kTalkpos) = 4;
-	_cmp(data.byte(kCharacter), 100);
-	if (flags.c())
-		goto notsecondpart;
-	data.byte(kTalkpos) = 48;
-notsecondpart:
-	doSomeTalk();
-}
-
 void DreamGenContext::doSomeTalk() {
 	STACK_CHECK;
 dospeech:
@@ -3942,44 +3908,6 @@ quitconv:
 	cancelCh1();
 	flags._c = true;
  }
-
-void DreamGenContext::redes() {
-	STACK_CHECK;
-	_cmp(data.byte(kCh1playing), 255);
-	if (!flags.z())
-		goto cantredes;
-	_cmp(data.byte(kTalkmode), 2);
-	if (flags.z())
-		goto canredes;
-cantredes:
-	blank();
-	return;
-canredes:
-	_cmp(data.byte(kCommandtype), 217);
-	if (flags.z())
-		goto alreadyreds;
-	data.byte(kCommandtype) = 217;
-	al = 50;
-	commandOnly();
-alreadyreds:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (!flags.z())
-		goto doredes;
-	return;
-doredes:
-	delPointer();
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	convIcons();
-	startTalk();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
 
 void DreamGenContext::newPlace() {
 	STACK_CHECK;
