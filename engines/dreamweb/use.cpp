@@ -1038,13 +1038,12 @@ void DreamGenContext::useCardReader1() {
 		// Not yet
 		showFirstUse();
 		putBackObStuff();
-	} else if (data.word(kCard1money) == 0) {
+	} else if (data.word(kCard1money) != 0) {
 		// No cash
 		cx = 300;
 		al = 17;
 		showPuzText();
 		putBackObStuff();
-		return;
 	} else {
 		// Get cash
 		playChannel1(16);
