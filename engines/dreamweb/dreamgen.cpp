@@ -8584,4 +8584,4 @@ void DreamGenContext::__start() {
 	dreamweb(); 
 }
 
-} /*namespace*/
+} // End of namespace DreamWeb

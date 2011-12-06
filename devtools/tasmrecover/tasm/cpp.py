@@ -563,7 +563,7 @@ namespace %s {
 				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, self.function_name_remapping[p], self.function_name_remapping[p]))
 			else:
 				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, p, p))
-		fd.write("} /*namespace %s */\n" %self.namespace)
+		fd.write("} // End of namespace  %s\n" %self.namespace)
 		fd.close()
 
 
@@ -659,7 +659,7 @@ public:
 				else:
 					self.hd.write("\tvoid %s();\n" %p)
 
-		self.hd.write("};\n}\n\n#endif\n")
+		self.hd.write("};\n\n} // End of namespace DreamGen\n\n#endif\n")
 		self.hd.close()
 		
 		self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
@@ -672,5 +672,5 @@ public:
 			self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
 			self.fd.write("\n\t}\n}")
 		
-		self.fd.write("\n} /*namespace*/\n")
+		self.fd.write("\n} // End of namespace DreamGen\n")
 		self.fd.close()

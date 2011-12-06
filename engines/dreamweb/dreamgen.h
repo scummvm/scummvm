@@ -784,6 +784,7 @@ public:
 	void fadeToWhite();
 	void showLoadOps();
 };
-}
+
+} // End of namespace DreamWeb
 
 #endif
