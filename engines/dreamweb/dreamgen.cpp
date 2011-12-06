@@ -6240,16 +6240,6 @@ keyontv:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::openLouis() {
-	STACK_CHECK;
-	al = 5;
-	ah = 2;
-	cl = 3;
-	ch = 8;
-	enterCode();
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::nextColon() {
 	STACK_CHECK;
 lookcolon:
@@ -6258,56 +6248,6 @@ lookcolon:
 	_cmp(al, ':');
 	if (!flags.z())
 		goto lookcolon;
-}
-
-void DreamGenContext::openYourNeighbour() {
-	STACK_CHECK;
-	al = 255;
-	ah = 255;
-	cl = 255;
-	ch = 255;
-	enterCode();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openRyan() {
-	STACK_CHECK;
-	al = 5;
-	ah = 1;
-	cl = 0;
-	ch = 6;
-	enterCode();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openPoolBoss() {
-	STACK_CHECK;
-	al = 5;
-	ah = 2;
-	cl = 2;
-	ch = 2;
-	enterCode();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openEden() {
-	STACK_CHECK;
-	al = 2;
-	ah = 8;
-	cl = 6;
-	ch = 5;
-	enterCode();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openSarters() {
-	STACK_CHECK;
-	al = 7;
-	ah = 8;
-	cl = 3;
-	ch = 3;
-	enterCode();
-	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::drawItAll() {

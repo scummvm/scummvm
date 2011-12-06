@@ -462,7 +462,6 @@
 	void addToPressList();
 	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
-	void enterCode();
 	unsigned int scanForNames();
 	void doLoad(int slot);
 	void loadOld();
@@ -513,5 +512,11 @@
 	void selectSlot2();
 	void blank();
 	void allPointer();
+	void openYourNeighbour();
+	void openRyan();
+	void openPoolBoss();
+	void openEden();
+	void openSarters();
+	void openLouis();
 
 #endif

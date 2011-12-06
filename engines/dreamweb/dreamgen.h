@@ -552,7 +552,6 @@ public:
 	void decide();
 	void entryTexts();
 	void checkInput();
-	void openSarters();
 	void putUnderCentre();
 	void checkObjectSize();
 	void deallocateMem();
@@ -612,7 +611,6 @@ public:
 	void dumpDiaryKeys();
 	void disableSoundInt();
 	void priestText();
-	void openPoolBoss();
 	void usePlate();
 	void lookInInterface();
 	void loadSpeech();
@@ -624,7 +622,6 @@ public:
 	void printOuterMon();
 	void showDecisions();
 	void removeObFromInv();
-	void openYourNeighbour();
 	void heavy();
 	void useKey();
 	void lockLightOn();
@@ -727,7 +724,6 @@ public:
 	void destSelect();
 	void lastDest();
 	void removeFreeObject();
-	void openLouis();
 	void lookAtCard();
 	void helicopter();
 	void getEitherAd();
@@ -776,7 +772,6 @@ public:
 	void selectOpenOb();
 	void useGun();
 	void autoAppear();
-	void openRyan();
 	void useFullCart();
 	void newPlace();
 	void useCardReader1();
@@ -798,7 +793,6 @@ public:
 	void initialMonCols();
 	void checkForShake();
 	void useButtonA();
-	void openEden();
 	void execCommand();
 	void obsThatDoThings();
 	void updateSymbolBot();

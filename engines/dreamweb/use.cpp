@@ -490,5 +490,35 @@ void DreamGenContext::callEdensDLift() {
 	}
 }
 
+void DreamGenContext::openYourNeighbour() {
+	enterCode(255, 255, 255, 255);
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::openRyan() {
+	enterCode(5, 1, 0, 6);
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::openPoolBoss() {
+	enterCode(5, 2, 2, 2);
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::openEden() {
+	enterCode(2, 8, 6, 5);
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::openSarters() {
+	enterCode(7, 8, 3, 3);
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::openLouis() {
+	enterCode(5, 2, 3, 8);
+	data.byte(kGetback) = 1;
+}
+
 } /*namespace dreamgen */
 

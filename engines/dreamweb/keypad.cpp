@@ -75,10 +75,6 @@ void DreamGenContext::showKeypad() {
 	}
 }
 
-void DreamGenContext::enterCode() {
-	enterCode(al, ah, cl, ch);
-}
-
 bool DreamGenContext::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	
 	return digit0 == data.byte(kPresslist+0) && digit1 == data.byte(kPresslist+1)
