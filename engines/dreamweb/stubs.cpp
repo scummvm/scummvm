@@ -3614,7 +3614,7 @@ void DreamGenContext::obsThatDoThings() {
 }
 
 void DreamGenContext::delEverything() {
-	if (data.byte(kMapysize) + data.word(kMapoffsety) == 182) {
+	if (data.byte(kMapysize) + data.word(kMapoffsety) < 182) {
 		mapToPanel();
 	} else {
 		// Big room
