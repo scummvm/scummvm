@@ -877,7 +877,7 @@ void DreamGenContext::useObject() {
 
 	if (data.byte(kCommandtype) != 229) {
 		data.byte(kCommandtype) = 229;
-		commandWithOb(data.byte(kCommand), data.byte(kObjecttype), 51);
+		commandWithOb(51, data.byte(kObjecttype), data.byte(kCommand));
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton))
