@@ -743,9 +743,11 @@ void DreamGenContext::initRain() {
 }
 
 void DreamGenContext::intro1Text() {
-	if ((data.byte(kIntrocount) == 2 || data.byte(kIntrocount) == 4 || data.byte(kIntrocount) == 6) &&
-		data.byte(kCh1playing) == 255) {
-		data.byte(kIntrocount) = data.byte(kIntrocount) - 1;
+	if (data.byte(kIntrocount) != 2 && data.byte(kIntrocount) != 4 && data.byte(kIntrocount) != 6)
+		return;
+
+	if (isCD() && data.byte(kCh1playing) == 255) {
+		data.byte(kIntrocount)--;
 	} else {
 		if (data.byte(kIntrocount) == 2)
 			setupTimedTemp(40, 82, 34, 130, 90, 1);
@@ -766,22 +768,37 @@ void DreamGenContext::intro2Text() {
 void DreamGenContext::intro3Text() {
 	if (ax == 107)
 		setupTimedTemp(45, 82, 36, 56, 100, 1);
-	else if (ax == 108)
+	else if (ax == (isCD() ? 108 : 109))
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 
 void DreamGenContext::monks2text() {
+	bool isGermanCD = isCD() && engine->getLanguage() == Common::DE_DEU;
+
 	if (data.byte(kIntrocount) == 1)
 		setupTimedTemp(8, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 4)
+	else if (data.byte(kIntrocount) == (isGermanCD ? 5 : 4))
 		setupTimedTemp(9, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 7)
+	else if (data.byte(kIntrocount) == (isGermanCD ? 9 : 7))
 		setupTimedTemp(10, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 10)
+	else if (data.byte(kIntrocount) == (isGermanCD ? 13 : 10)) {
+		data.byte(kIntrocount) = isCD() ? 14 : 12;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	else if (data.byte(kIntrocount) == 13)
+	} else if (data.byte(kIntrocount) == 19 && isGermanCD)
+		setupTimedTemp(14, 82, 36, 120, 120, 1);
+	else if (data.byte(kIntrocount) == 23 && isGermanCD)
+		setupTimedTemp(15, 82, 36, 120, 120, 1);
+	else if (data.byte(kIntrocount) == 27 && isGermanCD)
+		setupTimedTemp(16, 82, 36, 120, 120, 1);
+	else if (data.byte(kIntrocount) == 30 && isGermanCD)
+		setupTimedTemp(17, 82, 36, 120, 120, 1);
+	else if (data.byte(kIntrocount) == 35 && isGermanCD)
+		setupTimedTemp(18, 82, 36, 120, 120, 1);
+	else if (data.byte(kIntrocount) == 13 && !isGermanCD) {
+		if (isCD())
+			data.byte(kIntrocount) = 17;
 		setupTimedTemp(12, 82, 0, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 16)
+	} else if (data.byte(kIntrocount) == 16)
 		setupTimedTemp(13, 82, 0, 135, 120, 1);
 	else if (data.byte(kIntrocount) == 19)
 		setupTimedTemp(14, 82, 36, 160, 120, 1);
@@ -789,7 +806,7 @@ void DreamGenContext::monks2text() {
 		setupTimedTemp(15, 82, 36, 160, 120, 1);
 	else if (data.byte(kIntrocount) == 25)
 		setupTimedTemp(16, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 27)
+	else if (data.byte(kIntrocount) == (isCD() ? 27 : 28))
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
 	else if (data.byte(kIntrocount) == 31)
 		setupTimedTemp(18, 82, 36, 160, 120, 1);
