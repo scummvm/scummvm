@@ -579,7 +579,6 @@ public:
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
-	void train();
 	void fadeDownMon();
 	void bartender();
 	void showDiary();
@@ -626,7 +625,6 @@ public:
 	void runIntroSeq();
 	void advisor();
 	void attendant();
-	void clearPalette();
 	void cantDrop();
 	void copper();
 	void openHotelDoor();
@@ -652,9 +650,6 @@ public:
 	void fadeUpMon();
 	void soundEnd();
 	void redes();
-	void errorMessage1();
-	void errorMessage2();
-	void errorMessage3();
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();
@@ -692,7 +687,6 @@ public:
 	void getBack1();
 	void fadeFromWhite();
 	void rollEm();
-	void delEverything();
 	void poolGuard();
 	void lookAtPlace();
 	void useAxe();

@@ -1200,32 +1200,6 @@ nocopper:
 	addToPeopleList();
 }
 
-void DreamGenContext::train() {
-	STACK_CHECK;
-	return;
-	ax = es.word(bx+3);
-	_cmp(ax, 21);
-	if (!flags.c())
-		goto notrainyet;
-	_inc(ax);
-	goto gottrainframe;
-notrainyet:
-	randomNumber();
-	_cmp(al, 253);
-	if (flags.c())
-		return /* (notrainatall) */;
-	_cmp(data.byte(kManspath), 5);
-	if (!flags.z())
-		return /* (notrainatall) */;
-	_cmp(data.byte(kFinaldest), 5);
-	if (!flags.z())
-		return /* (notrainatall) */;
-	ax = 5;
-gottrainframe:
-	es.word(bx+3) = ax;
-	showGameReel();
-}
-
 void DreamGenContext::checkForExit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -1438,22 +1412,6 @@ forgotone:
 	setupTimedUse();
 }
 
-void DreamGenContext::delEverything() {
-	STACK_CHECK;
-	al = data.byte(kMapysize);
-	ah = 0;
-	_add(ax, data.word(kMapoffsety));
-	_cmp(ax, 182);
-	if (!flags.c())
-		goto bigroom;
-	mapToPanel();
-	return;
-bigroom:
-	_sub(data.byte(kMapysize), 8);
-	mapToPanel();
-	_add(data.byte(kMapysize), 8);
-}
-
 void DreamGenContext::transferMap() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -1523,13 +1481,6 @@ void DreamGenContext::doFade() {
 	if (!flags.z())
 		return /* (finishfade) */;
 	fadeCalculation();
-}
-
-void DreamGenContext::clearPalette() {
-	STACK_CHECK;
-	data.byte(kFadedirection) = 0;
-	clearStartPal();
-	dumpCurrent();
 }
 
 void DreamGenContext::fadeToWhite() {
@@ -3174,76 +3125,6 @@ sizeok1:
 	es.byte(bx+5) = al;
 	fillOpen();
 	underTextLine();
-	readMouse();
-	useOpened();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
-void DreamGenContext::errorMessage1() {
-	STACK_CHECK;
-	delPointer();
-	di = 76;
-	bx = 21;
-	al = 58;
-	dl = 240;
-	printMessage();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-	cx = 50;
-	hangOnP();
-	showPanel();
-	showMan();
-	examIcon();
-	readMouse();
-	useOpened();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
-void DreamGenContext::errorMessage2() {
-	STACK_CHECK;
-	data.byte(kCommandtype) = 255;
-	delPointer();
-	di = 76;
-	bx = 21;
-	al = 59;
-	dl = 240;
-	printMessage();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-	cx = 50;
-	hangOnP();
-	showPanel();
-	showMan();
-	examIcon();
-	readMouse();
-	useOpened();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
-void DreamGenContext::errorMessage3() {
-	STACK_CHECK;
-	delPointer();
-	di = 76;
-	bx = 21;
-	al = 60;
-	dl = 240;
-	printMessage();
-	workToScreenM();
-	cx = 50;
-	hangOnP();
-	showPanel();
-	showMan();
-	examIcon();
 	readMouse();
 	useOpened();
 	showPointer();

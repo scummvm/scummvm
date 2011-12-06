@@ -3615,4 +3615,67 @@ void DreamGenContext::obsThatDoThings() {
 	}
 }
 
+void DreamGenContext::delEverything() {
+	if (data.byte(kMapysize) + data.word(kMapoffsety) == 182) {
+		mapToPanel();
+	} else {
+		// Big room
+		data.byte(kMapysize) -= 8;
+		mapToPanel();
+		data.byte(kMapysize) += 8;
+	}
+}
+
+void DreamGenContext::errorMessage1() {
+	delPointer();
+	printMessage(76, 21, 58, 240, (240 & 1));
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	readMouse();
+	useOpened();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::errorMessage2() {
+	data.byte(kCommandtype) = 255;
+	delPointer();
+	printMessage(76, 21, 59, 240, (240 & 1));
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	readMouse();
+	useOpened();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::errorMessage3() {
+	delPointer();
+	printMessage(76, 21, 60, 240, (240 & 1));
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	readMouse();
+	useOpened();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
 } /*namespace dreamgen */

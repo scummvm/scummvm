@@ -445,6 +445,7 @@
 	void handClap(ReelRoutine &routine);
 	void carParkDrip(ReelRoutine &routine);
 	void foghornSound(ReelRoutine &routine);
+	void train(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();
@@ -539,5 +540,10 @@
 	void obsThatDoThings();
 	void makeMainScreen();
 	void openInv();
+	void delEverything();
+	void clearPalette();
+	void errorMessage1();
+	void errorMessage2();
+	void errorMessage3();
 
 #endif

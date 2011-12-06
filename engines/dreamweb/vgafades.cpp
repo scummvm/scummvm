@@ -154,5 +154,11 @@ void DreamGenContext::fadeScreenDowns() {
 	data.byte(kNumtofade) = 64;
 }
 
+void DreamGenContext::clearPalette() {
+	data.byte(kFadedirection) = 0;
+	clearStartPal();
+	dumpCurrent();
+}
+
 } /*namespace dreamgen */
 
