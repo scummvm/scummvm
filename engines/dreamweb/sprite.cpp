@@ -746,7 +746,7 @@ void DreamGenContext::intro1Text() {
 	if (data.byte(kIntrocount) != 2 && data.byte(kIntrocount) != 4 && data.byte(kIntrocount) != 6)
 		return;
 
-	if (isCD() && data.byte(kCh1playing) == 255) {
+	if (isCD() && data.byte(kCh1playing) != 255) {
 		data.byte(kIntrocount)--;
 	} else {
 		if (data.byte(kIntrocount) == 2)

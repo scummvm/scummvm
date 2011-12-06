@@ -397,7 +397,7 @@ void DreamGenContext::useChurchHole() {
 }
 
 void DreamGenContext::sitDownInBar() {
-	if (data.byte(kWatchmode) == 0xFF) {
+	if (data.byte(kWatchmode) != 0xFF) {
 		// Sat down
 		showSecondUse();
 		putBackObStuff();

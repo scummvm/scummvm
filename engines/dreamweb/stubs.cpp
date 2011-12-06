@@ -3558,10 +3558,9 @@ void DreamGenContext::redrawMainScrn() {
 }
 
 void DreamGenContext::selectSlot2() {
-	if (data.word(kMousebutton) ==  0)
-		selectSlot();
-	else
+	if (data.word(kMousebutton))
 		data.byte(kLoadingorsave) = 2;
+	selectSlot();
 }
 
 void DreamGenContext::blank() {
