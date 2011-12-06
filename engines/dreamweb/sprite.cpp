@@ -1122,7 +1122,7 @@ static const ReelSound *g_roomByRoom[] = {
 void DreamGenContext::soundOnReels() {
 	const ReelSound *r = g_roomByRoom[data.byte(kReallocation)];
 
-	if (data.byte(kForeignrelease) && r == g_roomSound29)
+	if (engine->getLanguage() == Common::DE_DEU && r == g_roomSound29)
 		r = g_roomSound29_German;
 
 	for (; r->_sample != 255; ++r) {
