@@ -392,6 +392,7 @@
 	void wheelSound();
 	void callHotelLift();
 	void useShield();
+	void useWall();
 	void wearWatch();
 	void wearShades();
 	void checkFolderCoords();

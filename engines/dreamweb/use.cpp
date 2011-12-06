@@ -520,5 +520,49 @@ void DreamGenContext::openLouis() {
 	data.byte(kGetback) = 1;
 }
 
+
+void DreamGenContext::useWall() {
+	showFirstUse();
+
+	if (data.byte(kManspath) != 3) {
+		data.word(kWatchingtime) = 30*2;
+		data.word(kReeltowatch) = 2;
+		data.word(kEndwatchreel) = 31;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		turnPathOn(3);
+		turnPathOn(4);
+		turnPathOff(0);
+		turnPathOff(1);
+		turnPathOff(2);
+		turnPathOff(5);
+		data.byte(kManspath) = 3;
+		data.byte(kFinaldest) = 3;
+		findXYFromPath();
+		data.byte(kResetmanxy) = 1;
+		switchRyanOff();
+	} else {
+		// Go back over
+		data.word(kWatchingtime) = 30 * 2;
+		data.word(kReeltowatch) = 34;
+		data.word(kEndwatchreel) = 60;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		turnPathOff(3);
+		turnPathOff(4);
+		turnPathOn(0);
+		turnPathOn(1);
+		turnPathOn(2);
+		turnPathOn(5);
+		data.byte(kManspath) = 5;
+		data.byte(kFinaldest) = 5;
+		findXYFromPath();
+		data.byte(kResetmanxy) = 1;
+		switchRyanOff();
+	}
+}
+
 } /*namespace dreamgen */
 

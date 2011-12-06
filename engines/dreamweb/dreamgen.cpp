@@ -7470,62 +7470,6 @@ void DreamGenContext::setupTimedUse() {
 	data.word(kTimedoffset) = bx;
 }
 
-void DreamGenContext::useWall() {
-	STACK_CHECK;
-	showFirstUse();
-	_cmp(data.byte(kManspath), 3);
-	if (flags.z())
-		goto gobackover;
-	data.word(kWatchingtime) = 30*2;
-	data.word(kReeltowatch) = 2;
-	data.word(kEndwatchreel) = 31;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	al = 3;
-	turnPathOn();
-	al = 4;
-	turnPathOn();
-	al = 0;
-	turnPathOff();
-	al = 1;
-	turnPathOff();
-	al = 2;
-	turnPathOff();
-	al = 5;
-	turnPathOff();
-	data.byte(kManspath) = 3;
-	data.byte(kFinaldest) = 3;
-	findXYFromPath();
-	data.byte(kResetmanxy) = 1;
-	switchRyanOff();
-	return;
-gobackover:
-	data.word(kWatchingtime) = 30*2;
-	data.word(kReeltowatch) = 34;
-	data.word(kEndwatchreel) = 60;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	al = 3;
-	turnPathOff();
-	al = 4;
-	turnPathOff();
-	al = 0;
-	turnPathOn();
-	al = 1;
-	turnPathOn();
-	al = 2;
-	turnPathOn();
-	al = 5;
-	turnPathOn();
-	data.byte(kManspath) = 5;
-	data.byte(kFinaldest) = 5;
-	findXYFromPath();
-	data.byte(kResetmanxy) = 1;
-	switchRyanOff();
-}
-
 void DreamGenContext::useChurchGate() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);

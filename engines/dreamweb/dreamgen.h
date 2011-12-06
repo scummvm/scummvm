@@ -564,7 +564,6 @@ public:
 	void isRyanHolding();
 	void showSlots();
 	void useCashCard();
-	void useWall();
 	void openTomb();
 	void doSomeTalk();
 	void getAnyAdDir();
