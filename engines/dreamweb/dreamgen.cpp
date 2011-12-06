@@ -6127,30 +6127,6 @@ openbox:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useCoveredBox() {
-	STACK_CHECK;
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.word(kWatchingtime) = 50;
-	data.word(kReeltowatch) = 41;
-	data.word(kEndwatchreel) = 66;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useRailing() {
-	STACK_CHECK;
-	showFirstUse();
-	data.word(kWatchingtime) = 80;
-	data.word(kReeltowatch) = 0;
-	data.word(kEndwatchreel) = 30;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	data.byte(kMandead) = 4;
-}
-
 void DreamGenContext::useOpenBox() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -6201,69 +6177,6 @@ openboxwrong:
 	al = 38;
 	showPuzText();
 	putBackObStuff();
-}
-
-void DreamGenContext::wearWatch() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchon), 1);
-	if (flags.z())
-		goto wearingwatch;
-	showFirstUse();
-	data.byte(kWatchon) = 1;
-	data.byte(kGetback) = 1;
-	getAnyAd();
-	makeWorn();
-	return;
-wearingwatch:
-	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::wearShades() {
-	STACK_CHECK;
-	_cmp(data.byte(kShadeson), 1);
-	if (flags.z())
-		goto wearingshades;
-	data.byte(kShadeson) = 1;
-	showFirstUse();
-	data.byte(kGetback) = 1;
-	getAnyAd();
-	makeWorn();
-	return;
-wearingshades:
-	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::sitDownInBar() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchmode), -1);
-	if (!flags.z())
-		goto satdown;
-	showFirstUse();
-	data.word(kWatchingtime) = 50;
-	data.word(kReeltowatch) = 55;
-	data.word(kEndwatchreel) = 71;
-	data.word(kReeltohold) = 73;
-	data.word(kEndofholdreel) = 83;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	return;
-satdown:
-	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::useChurchHole() {
-	STACK_CHECK;
-	showFirstUse();
-	data.byte(kGetback) = 1;
-	data.word(kWatchingtime) = 28;
-	data.word(kReeltowatch) = 13;
-	data.word(kEndwatchreel) = 26;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
 }
 
 void DreamGenContext::useHole() {
@@ -6374,14 +6287,6 @@ keyontv:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useDryer() {
-	STACK_CHECK;
-	al = 12;
-	playChannel1();
-	showFirstUse();
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::openLouis() {
 	STACK_CHECK;
 	al = 5;
@@ -6409,53 +6314,6 @@ void DreamGenContext::openYourNeighbour() {
 	cl = 255;
 	ch = 255;
 	enterCode();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useWindow() {
-	STACK_CHECK;
-	_cmp(data.byte(kManspath), 6);
-	if (!flags.z())
-		goto notonbalc;
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.byte(kNewlocation) = 29;
-	data.byte(kGetback) = 1;
-	return;
-notonbalc:
-	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::useBalcony() {
-	STACK_CHECK;
-	showFirstUse();
-	al = 6;
-	turnPathOn();
-	al = 0;
-	turnPathOff();
-	al = 1;
-	turnPathOff();
-	al = 2;
-	turnPathOff();
-	al = 3;
-	turnPathOff();
-	al = 4;
-	turnPathOff();
-	al = 5;
-	turnPathOff();
-	_inc(data.byte(kProgresspoints));
-	data.byte(kManspath) = 6;
-	data.byte(kDestination) = 6;
-	data.byte(kFinaldest) = 6;
-	findXYFromPath();
-	switchRyanOff();
-	data.byte(kResetmanxy) = 1;
-	data.word(kWatchingtime) = 30*2;
-	data.word(kReeltowatch) = 183;
-	data.word(kEndwatchreel) = 212;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
 	data.byte(kGetback) = 1;
 }
 
@@ -6590,45 +6448,6 @@ grafwith:
 	return;
 dograf:
 	showFirstUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::trapDoor() {
-	STACK_CHECK;
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	switchRyanOff();
-	data.word(kWatchingtime) = 20*2;
-	data.word(kReeltowatch) = 181;
-	data.word(kEndwatchreel) = 197;
-	data.byte(kNewlocation) = 26;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::callEdensLift() {
-	STACK_CHECK;
-	showFirstUse();
-	data.byte(kCounttoopen) = 8;
-	data.byte(kGetback) = 1;
-	al = 2;
-	turnPathOn();
-}
-
-void DreamGenContext::callEdensDLift() {
-	STACK_CHECK;
-	_cmp(data.byte(kLiftflag), 1);
-	if (flags.z())
-		goto edensdhere;
-	showFirstUse();
-	data.byte(kCounttoopen) = 8;
-	data.byte(kGetback) = 1;
-	al = 2;
-	turnPathOn();
-	return;
-edensdhere:
-	showSecondUse();
 	putBackObStuff();
 }
 
@@ -7176,40 +6995,6 @@ havecutwire:
 	al = 13;
 	showPuzText();
 	data.byte(kNewlocation) = 22;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElevator2() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 23);
-	if (flags.z())
-		goto inpoolhall;
-	showFirstUse();
-	data.byte(kNewlocation) = 23;
-	data.byte(kCounttoclose) = 20;
-	data.byte(kCounttoopen) = 0;
-	data.word(kWatchingtime) = 80;
-	data.byte(kGetback) = 1;
-	return;
-inpoolhall:
-	showFirstUse();
-	data.byte(kNewlocation) = 31;
-	data.byte(kCounttoclose) = 20;
-	data.byte(kCounttoopen) = 0;
-	data.word(kWatchingtime) = 80;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useElevator5() {
-	STACK_CHECK;
-	al = 4;
-	placeSetObject();
-	al = 0;
-	removeSetObject();
-	data.byte(kNewlocation) = 20;
-	data.word(kWatchingtime) = 80;
-	data.byte(kLiftflag) = 1;
-	data.byte(kCounttoclose) = 8;
 	data.byte(kGetback) = 1;
 }
 

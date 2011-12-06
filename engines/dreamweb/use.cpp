@@ -251,6 +251,20 @@ void DreamGenContext::useElevator1() {
 	data.byte(kGetback) = 1;
 }
 
+void DreamGenContext::useElevator2() {
+	showFirstUse();
+
+	if (data.byte(kLocation) == 23)	// In pool hall
+		data.byte(kNewlocation) = 31;
+	else
+		data.byte(kNewlocation) = 23;
+
+	data.byte(kCounttoclose) = 20;
+	data.byte(kCounttoopen) = 0;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
+}
+
 void DreamGenContext::useElevator3() {
 	showFirstUse();
 	data.byte(kCounttoclose) = 20;
@@ -273,6 +287,16 @@ void DreamGenContext::useElevator4() {
 	data.word(kWatchingtime) = 80;
 	data.byte(kGetback) = 1;
 	data.byte(kNewlocation) = 24;
+}
+
+void DreamGenContext::useElevator5() {
+	placeSetObject(4);
+	removeSetObject(0);
+	data.byte(kNewlocation) = 20;
+	data.word(kWatchingtime) = 80;
+	data.byte(kLiftflag) = 1;
+	data.byte(kCounttoclose) = 8;
+	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useHatch() {
@@ -309,6 +333,160 @@ void DreamGenContext::useShield() {
 		data.byte(kGetback) = 1;
 		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
 		removeObFromInv();
+	}
+}
+
+void DreamGenContext::useCoveredBox() {
+	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	showFirstUse();
+	data.word(kWatchingtime) = 50;
+	data.word(kReeltowatch) = 41;
+	data.word(kEndwatchreel) = 66;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useRailing() {
+	showFirstUse();
+	data.word(kWatchingtime) = 80;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 30;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	data.byte(kMandead) = 4;
+}
+
+void DreamGenContext::wearWatch() {
+	if (data.byte(kWatchon) == 1) {
+		// Already wearing watch
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		showFirstUse();
+		data.byte(kWatchon) = 1;
+		data.byte(kGetback) = 1;
+		getAnyAd();
+		makeWorn();
+	}
+}
+
+void DreamGenContext::wearShades() {
+	if (data.byte(kShadeson) == 1) {
+		// Already wearing shades
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		data.byte(kShadeson) = 1;
+		showFirstUse();
+		data.byte(kGetback) = 1;
+		getAnyAd();
+		makeWorn();
+	}
+}
+
+void DreamGenContext::useChurchHole() {
+	showFirstUse();
+	data.byte(kGetback) = 1;
+	data.word(kWatchingtime) = 28;
+	data.word(kReeltowatch) = 13;
+	data.word(kEndwatchreel) = 26;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+}
+
+void DreamGenContext::sitDownInBar() {
+	if (data.byte(kWatchmode) == 0xFF) {
+		// Sat down
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		showFirstUse();
+		data.word(kWatchingtime) = 50;
+		data.word(kReeltowatch) = 55;
+		data.word(kEndwatchreel) = 71;
+		data.word(kReeltohold) = 73;
+		data.word(kEndofholdreel) = 83;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useDryer() {
+	playChannel1(12);
+	showFirstUse();
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useBalcony() {
+	showFirstUse();
+	turnPathOn(6);
+	turnPathOff(0);
+	turnPathOff(1);
+	turnPathOff(2);
+	turnPathOff(3);
+	turnPathOff(4);
+	turnPathOff(5);
+	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	data.byte(kManspath) = 6;
+	data.byte(kDestination) = 6;
+	data.byte(kFinaldest) = 6;
+	findXYFromPath();
+	switchRyanOff();
+	data.byte(kResetmanxy) = 1;
+	data.word(kWatchingtime) = 30 * 2;
+	data.word(kReeltowatch) = 183;
+	data.word(kEndwatchreel) = 212;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useWindow() {
+	if (data.byte(kManspath) != 6) {
+		// Not on balcony
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		showFirstUse();
+		data.byte(kNewlocation) = 29;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::trapDoor() {
+	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	showFirstUse();
+	switchRyanOff();
+	data.word(kWatchingtime) = 20 * 2;
+	data.word(kReeltowatch) = 181;
+	data.word(kEndwatchreel) = 197;
+	data.byte(kNewlocation) = 26;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::callEdensLift() {
+	showFirstUse();
+	data.byte(kCounttoopen) = 8;
+	data.byte(kGetback) = 1;
+	turnPathOn(2);
+}
+
+void DreamGenContext::callEdensDLift() {
+	if (data.byte(kLiftflag) == 1) {
+		// Eden's D here
+		showSecondUse();
+		putBackObStuff();
+	} else {
+		showFirstUse();
+		data.byte(kCounttoopen) = 8;
+		data.byte(kGetback) = 1;
+		turnPathOn(2);
 	}
 }
 

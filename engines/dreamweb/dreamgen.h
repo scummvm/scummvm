@@ -575,9 +575,7 @@ public:
 	void introMonks1();
 	void resetLocation();
 	void introMonks2();
-	void useElevator5();
 	void greyscaleSum();
-	void useElevator2();
 	void keyboardRead();
 	void getOpenedSize();
 	void resetKeyboard();
@@ -616,7 +614,6 @@ public:
 	void selectSlot2();
 	void runTap();
 	void talk();
-	void useBalcony();
 	void dumpDiaryKeys();
 	void disableSoundInt();
 	void priestText();
@@ -625,7 +622,6 @@ public:
 	void lookInInterface();
 	void loadSpeech();
 	void adjustLeft();
-	void callEdensLift();
 	void useClearBox();
 	void entryAnims();
 	void getFreeAd();
@@ -634,7 +630,6 @@ public:
 	void printOuterMon();
 	void showDecisions();
 	void removeObFromInv();
-	void useCoveredBox();
 	void openYourNeighbour();
 	void heavy();
 	void useKey();
@@ -646,7 +641,6 @@ public:
 	void dirFile();
 	void pickupConts();
 	void lockLightOff();
-	void wearWatch();
 	void runIntroSeq();
 	void advisor();
 	void attendant();
@@ -711,7 +705,6 @@ public:
 	void setKeyboardInt();
 	void priest();
 	void printmessage2();
-	void wearShades();
 	void hangOnPQ();
 	void findOpenPos();
 	void describeOb();
@@ -722,7 +715,6 @@ public:
 	void chewy();
 	void getBack1();
 	void fadeFromWhite();
-	void useWindow();
 	void rollEm();
 	void delEverything();
 	void poolGuard();
@@ -746,7 +738,6 @@ public:
 	void destSelect();
 	void lastDest();
 	void removeFreeObject();
-	void trapDoor();
 	void openLouis();
 	void lookAtCard();
 	void helicopter();
@@ -779,7 +770,6 @@ public:
 	void swapWithOpen();
 	void dreamweb();
 	void dropError();
-	void callEdensDLift();
 	void checkInside();
 	void newGame();
 	void setWalk();
@@ -811,7 +801,6 @@ public:
 	void incRyanPage();
 	void findExObject();
 	void manAsleep2();
-	void useChurchHole();
 	void searchForFiles();
 	void monkSpeaking();
 	void clearRest();
@@ -849,7 +838,6 @@ public:
 	void openHotelDoor2();
 	void selectLocation();
 	void underTextLine();
-	void sitDownInBar();
 	void showNames();
 	void saveFileRead();
 	void emergencyPurge();
@@ -859,12 +847,10 @@ public:
 	void processTrigger();
 	void volumeAdjust();
 	void transferConToEx();
-	void useDryer();
 	void adjustDown();
 	void withWhat();
 	void openOb();
 	void createFile();
-	void useRailing();
 	void useHole();
 	void useObject();
 	void fadeToWhite();
