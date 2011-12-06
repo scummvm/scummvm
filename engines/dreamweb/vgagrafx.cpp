@@ -182,6 +182,7 @@ void DreamGenContext::doShake() {
 		0, -2,  3, -2,  0,  2,  4, -1,
 		1, -3,  3,  0,
 	};
+	assert(counter < ARRAYSIZE(shakeTable));
 	int offset = shakeTable[counter];
 	engine->setShakePos(offset >= 0 ? offset : -offset);
 }
