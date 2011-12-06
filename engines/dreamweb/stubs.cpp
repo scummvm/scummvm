@@ -3461,7 +3461,7 @@ void DreamGenContext::getBackToOps() {
 	}
 
 	if (data.word(kMousebutton) != data.word(kOldbutton)) {
-		if (!(data.word(kMousebutton) & 1)) {
+		if (data.word(kMousebutton) & 1) {
 			oldToNames();
 			data.byte(kGetback) = 2;
 		}

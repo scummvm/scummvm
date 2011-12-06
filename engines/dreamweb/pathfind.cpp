@@ -93,7 +93,7 @@ void DreamGenContext::setWalk() {
 	} else {
 		data.byte(kDestination) = data.byte(kPointerspath);
 		data.byte(kFinaldest) = data.byte(kPointerspath);
-		if (data.word(kMousebutton) != 2 || data.word(kMousebutton) == 3) {
+		if (data.word(kMousebutton) != 2 || data.word(kCommandtype) == 3) {
 			autoSetWalk();
 		} else {
 			data.byte(kWalkandexam) = 1;
