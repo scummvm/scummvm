@@ -45,7 +45,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
 	NULL, NULL,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
-	&DreamGenContext::gates, &DreamGenContext::introMagic3,
+	NULL, &DreamGenContext::introMagic3,
 	&DreamGenContext::introMonks1, NULL,
 	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
@@ -77,7 +77,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
-	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::introMagic3*/NULL,
+	&DreamGenContext::gates, /*&DreamGenContext::introMagic3*/NULL,
 	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
 	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
@@ -384,6 +384,27 @@ void DreamGenContext::candles(ReelRoutine &routine) {
 		if (nextReelPointer == 167)
 			nextReelPointer = 162;
 		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
+}
+
+void DreamGenContext::gates(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 116)
+			playChannel1(17);
+		if (nextReelPointer >= 110)
+			routine.period = 2;
+		if (nextReelPointer == 120) {
+			data.byte(kGetback) = 1;
+			nextReelPointer = 119;
+		}
+		routine.setReelPointer(nextReelPointer);
+		push(es);
+		push(bx);
+		intro3Text();
+		bx = pop();
+		es = pop();
 	}
 	showGameReel(&routine);
 }

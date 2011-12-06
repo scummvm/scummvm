@@ -781,46 +781,6 @@ candles2fin:
 	showGameReel();
 }
 
-void DreamGenContext::gates() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto gatesfin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 116);
-	if (!flags.z())
-		goto notbang;
-	push(ax);
-	push(bx);
-	push(es);
-	al = 17;
-	playChannel1();
-	es = pop();
-	bx = pop();
-	ax = pop();
-notbang:
-	_cmp(ax, 110);
-	if (flags.c())
-		goto slowgates;
-	es.byte(bx+5) = 2;
-slowgates:
-	_cmp(ax, 120);
-	if (!flags.z())
-		goto gotgates;
-	data.byte(kGetback) = 1;
-	ax = 119;
-gotgates:
-	es.word(bx+3) = ax;
-	push(es);
-	push(bx);
-	intro3Text();
-	bx = pop();
-	es = pop();
-gatesfin:
-	showGameReel();
-}
-
 void DreamGenContext::introMagic2() {
 	STACK_CHECK;
 	checkSpeed();

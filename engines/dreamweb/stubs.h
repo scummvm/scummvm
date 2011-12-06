@@ -413,6 +413,7 @@
 	void introMagic1(ReelRoutine &routine);
 	void introMusic(ReelRoutine &routine);
 	void candles(ReelRoutine &routine);
+	void gates(ReelRoutine &routine);
 	void security(ReelRoutine &routine);
 	void edenInBath(ReelRoutine &routine);
 	void louis(ReelRoutine &routine);

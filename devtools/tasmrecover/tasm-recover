@@ -274,6 +274,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'frameoutnm',
 	'frameoutv',
 	'gamer',
+	'gates',
 	'generalerror',
 	'getbackfromob',
 	'getblockofpixel',

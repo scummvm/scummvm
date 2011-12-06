@@ -791,7 +791,6 @@ public:
 	void dropError();
 	void callEdensDLift();
 	void checkInside();
-	void gates();
 	void newGame();
 	void setWalk();
 	void findPathOfPoint();
