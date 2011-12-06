@@ -599,7 +599,6 @@ public:
 	void dumpKeypad();
 	void dumpZoom();
 	void endGameSeq();
-	void setBotLeft();
 	void findFirstPath();
 	void useSLab();
 	void useAltar();
@@ -730,7 +729,6 @@ public:
 	void readFromFile();
 	void initialInv();
 	void interruptTest();
-	void setTopRight();
 	void findSetObject();
 	void useDiary();
 	void deleteExObject();
@@ -785,7 +783,6 @@ public:
 	void hotelControl();
 	void mugger();
 	void gettingShot();
-	void setTopLeft();
 	void searchForString();
 	void selectOpenOb();
 	void useGun();
@@ -825,7 +822,6 @@ public:
 	void redrawMainScrn();
 	void makeMainScreen();
 	void useWinch();
-	void setBotRight();
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();

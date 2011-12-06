@@ -3384,5 +3384,65 @@ void DreamGenContext::intro() {
 	data.byte(kLasthardkey) =  0;
 }
 
+void DreamGenContext::setTopLeft() {
+	if (data.byte(kSymboltopdir) != 0) {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 210) {
+		data.byte(kCommandtype) = 210;
+		commandOnly(19);
+	}
+
+	if (data.word(kMousebutton) != 0);
+		data.byte(kSymboltopdir) = 0xFF;
+}
+
+void DreamGenContext::setTopRight() {
+	if (data.byte(kSymboltopdir) != 0) {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 211) {
+		data.byte(kCommandtype) = 211;
+		commandOnly(20);
+	}
+
+	if (data.word(kMousebutton) != 0);
+		data.byte(kSymboltopdir) = 1;
+}
+
+void DreamGenContext::setBotLeft() {
+	if (data.byte(kSymbolbotdir) != 0) {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 212) {
+		data.byte(kCommandtype) = 212;
+		commandOnly(21);
+	}
+
+	if (data.word(kMousebutton) != 0);
+		data.byte(kSymbolbotdir) = 0xFF;
+}
+
+void DreamGenContext::setBotRight() {
+	if (data.byte(kSymbolbotdir) != 0) {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 213) {
+		data.byte(kCommandtype) = 213;
+		commandOnly(22);
+	}
+
+	if (data.word(kMousebutton) != 0);
+		data.byte(kSymbolbotdir) = 1;
+}
+
 } /*namespace dreamgen */
 

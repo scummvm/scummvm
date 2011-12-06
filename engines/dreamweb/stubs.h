@@ -496,5 +496,9 @@
 	void getRidOfReels();
 	void setMode();
 	void liftNoise(uint8 index);
+	void setTopLeft();
+	void setTopRight();
+	void setBotLeft();
+	void setBotRight();
 
 #endif
