@@ -400,6 +400,7 @@
 	void useChurchGate();
 	void useFullCart();
 	void useClearBox();
+	void usePlate();
 	void openTVDoor();
 	void wearWatch();
 	void wearShades();
@@ -545,5 +546,10 @@
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();
+	void reExFromOpen();
+	void nextDest();
+	void lastDest();
+	void destSelect();
+	void putBackObStuff();
 
 #endif

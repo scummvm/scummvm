@@ -786,4 +786,38 @@ void DreamGenContext::openTVDoor() {
 	}
 }
 
+void DreamGenContext::usePlate() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char screw[4] = { 'S', 'C', 'R', 'W' };	// TODO: convert to string with trailing zero
+	char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), screw)) {
+		// Unscrew plate
+		playChannel1(20);
+		showFirstUse();
+		placeSetObject(28);
+		placeSetObject(24);
+		removeSetObject(25);
+		al = 0;
+		placeFreeObject();
+		data.byte(kProgresspoints)++;
+		data.byte(kGetback) = 1;
+	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+		// Tried knife
+		cx = 300;
+		al = 54;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	}
+}
+
 } /*namespace dreamgen */

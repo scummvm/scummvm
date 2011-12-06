@@ -603,7 +603,6 @@ public:
 	void dumpDiaryKeys();
 	void disableSoundInt();
 	void priestText();
-	void usePlate();
 	void lookInInterface();
 	void loadSpeech();
 	void adjustLeft();
@@ -691,7 +690,6 @@ public:
 	void lookAtPlace();
 	void useAxe();
 	void useElvDoor();
-	void putBackObStuff();
 	void findAllOpen();
 	void quitSymbol();
 	void readFromFile();
@@ -700,15 +698,12 @@ public:
 	void useDiary();
 	void deleteExObject();
 	void moneyPoke();
-	void destSelect();
-	void lastDest();
 	void removeFreeObject();
 	void lookAtCard();
 	void helicopter();
 	void getEitherAd();
 	void setPickup();
 	void dropObject();
-	void reExFromOpen();
 	void drawItAll();
 	void useStereo();
 	void candles2();
@@ -738,7 +733,6 @@ public:
 	void getDestInfo();
 	void setupTimedUse();
 	void grafittiDoor();
-	void nextDest();
 	void makeCaps();
 	void read();
 	void additionalText();

@@ -2422,17 +2422,6 @@ void DreamGenContext::reExFromInv() {
 	data.byte(kPointermode) = 0;
 }
 
-void DreamGenContext::reExFromOpen() {
-	STACK_CHECK;
-	return;
-	findOpenPos();
-	ax = es.word(bx);
-	data.byte(kCommandtype) = ah;
-	data.byte(kCommand) = al;
-	data.byte(kExamagain) = 1;
-	data.byte(kPointermode) = 0;
-}
-
 void DreamGenContext::swapWithInv() {
 	STACK_CHECK;
 	al = data.byte(kItemframe);
@@ -4256,109 +4245,6 @@ void DreamGenContext::showArrows() {
 	al = 2;
 	ah = 0;
 	showFrame();
-}
-
-void DreamGenContext::nextDest() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 218);
-	if (flags.z())
-		goto alreadydu;
-	data.byte(kCommandtype) = 218;
-	al = 28;
-	commandOnly();
-alreadydu:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return /* (nodu) */;
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nodu) */;
-searchdestup:
-	_inc(data.byte(kDestpos));
-	_cmp(data.byte(kDestpos), 15);
-	if (!flags.z())
-		goto notlastdest;
-	data.byte(kDestpos) = 0;
-notlastdest:
-	getDestInfo();
-	_cmp(al, 0);
-	if (flags.z())
-		goto searchdestup;
-	data.byte(kNewtextline) = 1;
-	delTextLine();
-	delPointer();
-	showPanel();
-	showMan();
-	showArrows();
-	locationPic();
-	underTextLine();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
-void DreamGenContext::lastDest() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 219);
-	if (flags.z())
-		goto alreadydd;
-	data.byte(kCommandtype) = 219;
-	al = 29;
-	commandOnly();
-alreadydd:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return /* (nodd) */;
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nodd) */;
-searchdestdown:
-	_dec(data.byte(kDestpos));
-	_cmp(data.byte(kDestpos), -1);
-	if (!flags.z())
-		goto notfirstdest;
-	data.byte(kDestpos) = 15;
-notfirstdest:
-	getDestInfo();
-	_cmp(al, 0);
-	if (flags.z())
-		goto searchdestdown;
-	data.byte(kNewtextline) = 1;
-	delTextLine();
-	delPointer();
-	showPanel();
-	showMan();
-	showArrows();
-	locationPic();
-	underTextLine();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
-void DreamGenContext::destSelect() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadytrav;
-	data.byte(kCommandtype) = 222;
-	al = 30;
-	commandOnly();
-alreadytrav:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return /* (notrav) */;
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notrav) */;
-	getDestInfo();
-	al = data.byte(kDestpos);
-	data.byte(kNewlocation) = al;
 }
 
 void DreamGenContext::resetLocation() {
@@ -6677,23 +6563,6 @@ notfoundinside:
 		goto insideloop;
 }
 
-void DreamGenContext::putBackObStuff() {
-	STACK_CHECK;
-	createPanel();
-	showPanel();
-	showMan();
-	obIcons();
-	showExit();
-	obPicture();
-	describeOb();
-	underTextLine();
-	data.byte(kCommandtype) = 255;
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
 void DreamGenContext::showPuzText() {
 	STACK_CHECK;
 	push(cx);
@@ -7056,59 +6925,6 @@ void DreamGenContext::useButtonA() {
 	return;
 donethisbit:
 	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::usePlate() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto platewith;
-	withWhat();
-	return;
-platewith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'S';
-	ch = 'C';
-	dl = 'R';
-	dh = 'W';
-	compare();
-	if (flags.z())
-		goto unscrewplate;
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'K';
-	ch = 'N';
-	dl = 'F';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto triedknife;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-unscrewplate:
-	al = 20;
-	playChannel1();
-	showFirstUse();
-	al = 28;
-	placeSetObject();
-	al = 24;
-	placeSetObject();
-	al = 25;
-	removeSetObject();
-	al = 0;
-	placeFreeObject();
-	_inc(data.byte(kProgresspoints));
-	data.byte(kGetback) = 1;
-	return;
-triedknife:
-	cx = 300;
-	al = 54;
-	showPuzText();
 	putBackObStuff();
 }
 

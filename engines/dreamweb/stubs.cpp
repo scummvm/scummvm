@@ -3678,4 +3678,99 @@ void DreamGenContext::errorMessage3() {
 	delPointer();
 }
 
+void DreamGenContext::reExFromOpen() {
+
+}
+
+void DreamGenContext::nextDest() {
+	if (data.byte(kCommandtype) != 218) {
+		data.byte(kCommandtype) = 218;
+		commandOnly(28);
+	}
+
+	if ((data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+		return;	// nodu
+
+	do {
+		data.byte(kDestpos)++;
+		if (data.byte(kDestpos) == 15)
+			data.byte(kDestpos) = 0;	// last destination
+
+		getDestInfo();
+	} while(al == 0);
+
+	data.byte(kNewtextline) = 1;
+	delTextLine();
+	delPointer();
+	showPanel();
+	showMan();
+	showArrows();
+	locationPic();
+	underTextLine();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::lastDest() {
+	if (data.byte(kCommandtype) != 219) {
+		data.byte(kCommandtype) = 219;
+		commandOnly(29);
+	}
+
+	if ((data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+		return;	// nodd
+
+	do {
+		data.byte(kDestpos)--;
+		if (data.byte(kDestpos) == 0xFF)
+			data.byte(kDestpos) = 15;	// first destination
+
+		getDestInfo();
+	} while(al == 0);
+
+	data.byte(kNewtextline) = 1;
+	delTextLine();
+	delPointer();
+	showPanel();
+	showMan();
+	showArrows();
+	locationPic();
+	underTextLine();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::destSelect() {
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandOnly(30);
+	}
+
+	if ((data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+		return;	// notrav
+
+	getDestInfo();
+	data.byte(kNewlocation) = data.byte(kDestpos);
+}
+
+void DreamGenContext::putBackObStuff() {
+	createPanel();
+	showPanel();
+	showMan();
+	obIcons();
+	showExit();
+	obPicture();
+	describeOb();
+	underTextLine();
+	data.byte(kCommandtype) = 255;
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
 } /*namespace dreamgen */
