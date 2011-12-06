@@ -421,6 +421,7 @@
 	void louis(ReelRoutine &routine);
 	void handClap(ReelRoutine &routine);
 	void carParkDrip(ReelRoutine &routine);
+	void foghornSound(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();
@@ -480,5 +481,6 @@
 	void clearReels();
 	void getRidOfReels();
 	void setMode();
+	void liftNoise(uint8 index);
 
 #endif

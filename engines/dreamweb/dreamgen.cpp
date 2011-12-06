@@ -44,16 +44,6 @@ nobark:
 	es.word(bx+3) = ax;
 }
 
-void DreamGenContext::foghornSound() {
-	STACK_CHECK;
-	randomNumber();
-	_cmp(al, 198);
-	if (!flags.z())
-		return /* (nofog) */;
-	al = 13;
-	playChannel1();
-}
-
 void DreamGenContext::receptionist() {
 	STACK_CHECK;
 	checkSpeed();
@@ -1652,21 +1642,6 @@ forgotone:
 	cx = 48;
 	dx = 8;
 	setupTimedUse();
-}
-
-void DreamGenContext::liftNoise() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 5);
-	if (flags.z())
-		goto hissnoise;
-	_cmp(data.byte(kReallocation), 21);
-	if (flags.z())
-		goto hissnoise;
-	playChannel1();
-	return;
-hissnoise:
-	al = 13;
-	playChannel1();
 }
 
 void DreamGenContext::delEverything() {

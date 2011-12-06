@@ -440,8 +440,7 @@ void DreamGenContext::liftSprite(Sprite *sprite, SetObject *objData) {
 		}
 		++sprite->animFrame;
 		if (sprite->animFrame == 1) {
-			al = 2;
-			liftNoise();
+			liftNoise(2);
 		}
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	} else { //closeLift
@@ -452,8 +451,7 @@ void DreamGenContext::liftSprite(Sprite *sprite, SetObject *objData) {
 		}
 		--sprite->animFrame;
 		if (sprite->animFrame == 11) {
-			al = 3;
-			liftNoise();
+			liftNoise(3);
 		}
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
@@ -1170,6 +1168,13 @@ void DreamGenContext::getRidOfReels() {
 	deallocateMem(data.word(kReel1));
 	deallocateMem(data.word(kReel2));
 	deallocateMem(data.word(kReel3));
+}
+
+void DreamGenContext::liftNoise(uint8 index) {
+	if (data.byte(kReallocation) == 5 || data.byte(kReallocation) == 21)
+		playChannel1(13);	// hiss noise
+	else
+		playChannel1(index);
 }
 
 } /*namespace dreamgen */

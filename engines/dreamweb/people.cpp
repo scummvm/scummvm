@@ -51,7 +51,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
 	NULL, &DreamGenContext::alleyBarkSound,
-	&DreamGenContext::foghornSound, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL
 };
@@ -83,7 +83,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, /*&DreamGenContext::alleyBarkSound*/NULL,
-	/*&DreamGenContext::foghornSound*/NULL, &DreamGenContext::carParkDrip,
+	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip
 };
@@ -453,6 +453,11 @@ void DreamGenContext::carParkDrip(ReelRoutine &routine) {
 		return; // cantdrip2
 
 	playChannel1(14);
+}
+
+void DreamGenContext::foghornSound(ReelRoutine &routine) {
+	if (engine->randomNumber() == 198)
+		playChannel1(13);
 }
 
 } /*namespace dreamgen */

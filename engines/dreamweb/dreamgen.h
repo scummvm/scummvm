@@ -770,8 +770,6 @@ public:
 	void fillOpen();
 	void signOn();
 	void deleteExText();
-	void foghornSound();
-	void liftNoise();
 	void showGun();
 	void louisChair();
 	void locationPic();
