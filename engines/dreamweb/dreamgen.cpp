@@ -5611,39 +5611,6 @@ nextcart:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useClearBox() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto clearboxwith;
-	withWhat();
-	return;
-clearboxwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'R';
-	ch = 'A';
-	dl = 'I';
-	dh = 'L';
-	compare();
-	if (flags.z())
-		goto openbox;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-openbox:
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.word(kWatchingtime) = 80;
-	data.word(kReeltowatch) = 67;
-	data.word(kEndwatchreel) = 105;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::useOpenBox() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -5773,34 +5740,6 @@ movealtar:
 	return;
 thingsonaltar:
 	showFirstUse();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::openTVDoor() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto tvdoorwith;
-	withWhat();
-	return;
-tvdoorwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'U';
-	ch = 'L';
-	dl = 'O';
-	dh = 'K';
-	compare();
-	if (flags.z())
-		goto keyontv;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-keyontv:
-	showFirstUse();
-	data.byte(kLockstatus) = 0;
 	data.byte(kGetback) = 1;
 }
 

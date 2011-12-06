@@ -421,6 +421,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'openpoolboss',
 	'openryan'
 	'opensarters',
+	'opentvdoor',
 	'openyourneighbour',
 	'othersmoker',
 	'out22c',
@@ -582,6 +583,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'usecharset1',
 	'usechurchgate',
 	'usechurchhole',
+	'useclearbox',
 	'usecoveredbox',
 	'usedryer',
 	'useelevator1',

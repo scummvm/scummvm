@@ -331,13 +331,13 @@ void DreamGenContext::useShield() {
 		data.byte(kLastweapon) = 3;
 		showSecondUse();
 		data.byte(kGetback) = 1;
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		removeObFromInv();
 	}
 }
 
 void DreamGenContext::useCoveredBox() {
-	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	data.byte(kProgresspoints)++;
 	showFirstUse();
 	data.word(kWatchingtime) = 50;
 	data.word(kReeltowatch) = 41;
@@ -429,7 +429,7 @@ void DreamGenContext::useBalcony() {
 	turnPathOff(3);
 	turnPathOff(4);
 	turnPathOff(5);
-	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	data.byte(kProgresspoints)++;
 	data.byte(kManspath) = 6;
 	data.byte(kDestination) = 6;
 	data.byte(kFinaldest) = 6;
@@ -450,7 +450,7 @@ void DreamGenContext::useWindow() {
 		showSecondUse();
 		putBackObStuff();
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		showFirstUse();
 		data.byte(kNewlocation) = 29;
 		data.byte(kGetback) = 1;
@@ -458,7 +458,7 @@ void DreamGenContext::useWindow() {
 }
 
 void DreamGenContext::trapDoor() {
-	data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+	data.byte(kProgresspoints)++;
 	showFirstUse();
 	switchRyanOff();
 	data.word(kWatchingtime) = 20 * 2;
@@ -605,7 +605,7 @@ void DreamGenContext::sLabDoorA() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 60;
 		data.word(kEndwatchreel) = 42;
 		data.byte(kNewlocation) = 47;
@@ -625,7 +625,7 @@ void DreamGenContext::sLabDoorC() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 60;
 		data.word(kEndwatchreel) = 135;
 		data.byte(kNewlocation) = 47;
@@ -645,7 +645,7 @@ void DreamGenContext::sLabDoorD() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 60;
 		data.word(kEndwatchreel) = 102;
 		data.byte(kNewlocation) = 47;
@@ -665,7 +665,7 @@ void DreamGenContext::sLabDoorE() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 60;
 		data.word(kEndwatchreel) = 168;
 		data.byte(kNewlocation) = 47;
@@ -685,7 +685,7 @@ void DreamGenContext::sLabDoorF() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		data.byte(kProgresspoints) = data.byte(kProgresspoints) + 1;
+		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 60;
 		data.word(kEndwatchreel) = 197;
 		data.byte(kNewlocation) = 47;
@@ -737,6 +737,53 @@ void DreamGenContext::useFullCart() {
 	data.byte(kWatchspeed) = 1;
 	data.byte(kSpeedcount) = 1;
 	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useClearBox() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'R', 'A', 'I', 'L' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		// Open box
+		data.byte(kProgresspoints)++;
+		showFirstUse();
+		data.word(kWatchingtime) = 80;
+		data.word(kReeltowatch) = 67;
+		data.word(kEndwatchreel) = 105;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::openTVDoor() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'U', 'L', 'O', 'K' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		// Key on TV
+		showFirstUse();
+		data.byte(kLockstatus) = 0;
+		data.byte(kGetback) = 1;
+	}
 }
 
 } /*namespace dreamgen */

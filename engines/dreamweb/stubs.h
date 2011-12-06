@@ -399,6 +399,8 @@
 	void useWall();
 	void useChurchGate();
 	void useFullCart();
+	void useClearBox();
+	void openTVDoor();
 	void wearWatch();
 	void wearShades();
 	void checkFolderCoords();

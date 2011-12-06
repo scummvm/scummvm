@@ -608,7 +608,6 @@ public:
 	void lookInInterface();
 	void loadSpeech();
 	void adjustLeft();
-	void useClearBox();
 	void entryAnims();
 	void getFreeAd();
 	void showArrows();
@@ -734,7 +733,6 @@ public:
 	void showGun();
 	void louisChair();
 	void locationPic();
-	void openTVDoor();
 	void triggerMessage();
 	void smallCandle();
 	void swapWithOpen();
