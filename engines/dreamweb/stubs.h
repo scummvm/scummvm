@@ -82,7 +82,6 @@
 	void printMessage();
 	void useTimedText();
 	void dumpTimedText();
-	void setupTimedTemp();
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 	void getUnderTimed();
 	void putUnderTimed();
@@ -302,7 +301,12 @@
 	void getUnderMenu();
 	void putUnderMenu();
 	void textForMonk();
+	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 	void textForEnd();
+	void monks2text();
+	void intro1Text();
+	void intro2Text();
+	void intro3Text();
 	void readSetData();
 	void loadRoomsSample();
 	void fadeupYellows();

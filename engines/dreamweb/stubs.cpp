@@ -964,10 +964,6 @@ void DreamGenContext::useTimedText() {
 	data.byte(kNeedtodumptimed) = 1;
 }
 
-void DreamGenContext::setupTimedTemp() {
-	setupTimedTemp(al, ah, bl, bh, cx, dx);
-}
-
 void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {

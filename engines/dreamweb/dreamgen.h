@@ -627,7 +627,6 @@ public:
 	void runIntroSeq();
 	void advisor();
 	void attendant();
-	void monks2text();
 	void clearPalette();
 	void cantDrop();
 	void copper();
@@ -643,7 +642,6 @@ public:
 	void workoutFrames();
 	void dumpSymBox();
 	void rollEndCredits();
-	void intro2Text();
 	void interviewer();
 	void getKeyAndLogo();
 	void selectOb();
@@ -662,7 +660,6 @@ public:
 	void introMagic3();
 	void showDiaryPage();
 	void dumpSymbol();
-	void intro1Text();
 	void transferToEx();
 	void reExFromInv();
 	void examineInventory();
@@ -730,7 +727,6 @@ public:
 	void dumpCurrent();
 	void showDiaryKeys();
 	void dontLoadSeg();
-	void intro3Text();
 	void allocateMem();
 	void useOpened();
 	void fillOpen();
