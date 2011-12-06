@@ -3816,10 +3816,9 @@ void DreamGenContext::moreTalk() {
 	data.byte(kTalkmode) = 2;
 	data.byte(kTalkpos) = 4;
 	
-	if (data.byte(kCharacter) < 100)
-		doSomeTalk();	// not second part
-	else
-		data.byte(kTalkpos) = 48;
+	if (data.byte(kCharacter) >= 100)
+		data.byte(kTalkpos) = 48; // second part
+	doSomeTalk();
 }
 
 } // End of namespace DreamGen
