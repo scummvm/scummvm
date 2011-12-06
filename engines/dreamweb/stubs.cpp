@@ -3821,4 +3821,12 @@ void DreamGenContext::moreTalk() {
 	doSomeTalk();
 }
 
+bool DreamGenContext::isSetObOnMap(uint8 index) {
+	return (getSetAd(index)->mapad[0] == 0);
+}
+
+void DreamGenContext::isSetObOnMap() {
+	flags._z = isSetObOnMap(al);
+}
+
 } // End of namespace DreamGen

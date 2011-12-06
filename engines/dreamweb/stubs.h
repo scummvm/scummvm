@@ -572,5 +572,7 @@
 	void putBackObStuff();
 	void moreTalk();
 	void redes();
+	void isSetObOnMap();
+	bool isSetObOnMap(uint8 index);
 
 #endif

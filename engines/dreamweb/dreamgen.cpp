@@ -5987,17 +5987,6 @@ void DreamGenContext::findPuzText() {
 	si = ax;
 }
 
-void DreamGenContext::isSetObOnMap() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	getSetAd();
-	al = es.byte(bx+58);
-	bx = pop();
-	es = pop();
-	_cmp(al, 0);
-}
-
 void DreamGenContext::placeFreeObject() {
 	STACK_CHECK;
 	push(es);

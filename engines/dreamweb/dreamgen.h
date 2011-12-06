@@ -720,7 +720,6 @@ public:
 	void openFileNoCheck();
 	void checkInside();
 	void findPathOfPoint();
-	void isSetObOnMap();
 	void getDestInfo();
 	void setupTimedUse();
 	void makeCaps();
