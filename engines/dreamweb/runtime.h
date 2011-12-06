@@ -596,6 +596,6 @@ public:
 #	define STACK_CHECK  do {} while (0)
 #endif
 
-}
+} // End of namespace DreamWeb
 
 #endif

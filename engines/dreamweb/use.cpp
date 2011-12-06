@@ -927,7 +927,6 @@ void DreamGenContext::useObject() {
 		useRoutine();
 }
 
-
 void DreamGenContext::useWinch() {
 	al = 40;
 	ah = 1;
@@ -1105,4 +1104,4 @@ void DreamGenContext::hotelControl() {
 	putBackObStuff();
 }
 
-} /*namespace dreamgen */
+} // End of namespace DreamGen

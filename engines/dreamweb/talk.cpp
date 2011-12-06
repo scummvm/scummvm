@@ -36,5 +36,4 @@ void DreamGenContext::convIcons() {
 	showFrame(frame, 234, 2, frameNumber, 0);
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen
