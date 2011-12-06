@@ -277,5 +277,4 @@ const char *DreamGenContext::monPrint(const char *string) {
 	return iterator;
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

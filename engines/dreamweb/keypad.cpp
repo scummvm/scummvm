@@ -228,5 +228,4 @@ void DreamGenContext::showOuterPad() {
 	showFrame(tempGraphics(), kKeypadx+74, kKeypady+76, 37, 0);
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

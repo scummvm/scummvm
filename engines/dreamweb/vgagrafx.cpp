@@ -496,5 +496,4 @@ void DreamGenContext::createPanel2() {
 	showFrame(engine->icons2(), 160, 0, 5, 2);
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

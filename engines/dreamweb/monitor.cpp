@@ -312,5 +312,4 @@ void DreamGenContext::loadCart() {
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

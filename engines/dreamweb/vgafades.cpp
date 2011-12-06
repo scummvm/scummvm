@@ -160,5 +160,4 @@ void DreamGenContext::clearPalette() {
 	dumpCurrent();
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen

@@ -276,5 +276,4 @@ void DreamGenContext::bresenhams() {
 	}
 }
 
-} /*namespace dreamgen */
-
+} // End of namespace DreamGen
