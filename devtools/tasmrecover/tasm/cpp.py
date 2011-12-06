@@ -617,29 +617,16 @@ namespace %s {
 
 namespace %s {
 
-class %sContext : public DreamBase, public Context {
-public:
-	DreamGenContext() : DreamBase(), Context(_realData) {}
-
-	void __start();
 """
-%(self.namespace, self.namespace))
-		if self.skip_dispatch_call == False:
-			self.hd.write(
-"""	void __dispatch_call(uint16 addr);
-""")
-		self.hd.write(
-"""#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
-
-""")
+%(self.namespace))
 
 		if self.skip_addr_constants == False:
 			for name,addr in self.proc_addr:
-				self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+				self.hd.write("static const uint16 addr_%s = 0x%04x;\n" %(name, addr))
 
 
 		for name,addr in self.used_data_offsets:
-			self.hd.write("\tstatic const uint16 offset_%s = 0x%04x;\n" %(name, addr))
+			self.hd.write("static const uint16 offset_%s = 0x%04x;\n" %(name, addr))
 
 		offsets = []
 		for k, v in self.context.get_globals().items():
@@ -650,8 +637,28 @@ public:
 		
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
-			self.hd.write("\tstatic const uint16 k%s = %s;\n" %o)
+			self.hd.write("static const uint16 k%s = %s;\n" %o)
 		self.hd.write("\n")
+
+		self.hd.write(
+"""
+class %sContext : public DreamBase, public Context {
+public:
+	DreamGenContext() : DreamBase(), Context(_realData) {}
+
+	void __start();
+"""
+%(self.namespace))
+		if self.skip_dispatch_call == False:
+			self.hd.write(
+"""	void __dispatch_call(uint16 addr);
+""")
+		self.hd.write(
+"""#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
+
+""")
+
+
 		for p in set(self.methods):
 			if p in self.blacklist:
 				if self.header_omit_blacklisted == False:
