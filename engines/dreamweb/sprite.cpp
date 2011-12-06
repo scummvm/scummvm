@@ -781,34 +781,31 @@ void DreamGenContext::monks2text() {
 		setupTimedTemp(9, 82, 36, 160, 120, 1);
 	else if (data.byte(kIntrocount) == (isGermanCD ? 9 : 7))
 		setupTimedTemp(10, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 13 : 10)) {
-		data.byte(kIntrocount) = isCD() ? 14 : 12;
+	else if (data.byte(kIntrocount) == 10 && !isGermanCD) {
+		if (isCD())
+			data.byte(kIntrocount) = 12;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	} else if (data.byte(kIntrocount) == 19 && isGermanCD)
-		setupTimedTemp(14, 82, 36, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 23 && isGermanCD)
-		setupTimedTemp(15, 82, 36, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 27 && isGermanCD)
-		setupTimedTemp(16, 82, 36, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 30 && isGermanCD)
-		setupTimedTemp(17, 82, 36, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 35 && isGermanCD)
-		setupTimedTemp(18, 82, 36, 120, 120, 1);
-	else if (data.byte(kIntrocount) == 13 && !isGermanCD) {
+	} else if (data.byte(kIntrocount) == 13 && isGermanCD) {
+		data.byte(kIntrocount) = 14;
+		setupTimedTemp(11, 82, 0, 105, 120, 1);
+	} else if (data.byte(kIntrocount) == 13 && !isGermanCD) {
 		if (isCD())
 			data.byte(kIntrocount) = 17;
-		setupTimedTemp(12, 82, 0, 120, 120, 1);
-	} else if (data.byte(kIntrocount) == 16)
+		else
+			setupTimedTemp(12, 82, 0, 120, 120, 1);
+	} else if (data.byte(kIntrocount) == 16 && !isGermanCD)
 		setupTimedTemp(13, 82, 0, 135, 120, 1);
 	else if (data.byte(kIntrocount) == 19)
-		setupTimedTemp(14, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 22)
+		setupTimedTemp(14, 82, 36, 160, 100, 1);
+	else if (data.byte(kIntrocount) == (isGermanCD ? 23 : 22))
 		setupTimedTemp(15, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 25)
+	else if (data.byte(kIntrocount) == (isGermanCD ? 27 : 25))
 		setupTimedTemp(16, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 27 : 28))
+	else if (data.byte(kIntrocount) == (isCD() ? 27 : 28) && !isGermanCD)
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 31)
+	else if (data.byte(kIntrocount) == 30 && isGermanCD)
+		setupTimedTemp(17, 82, 36, 160, 120, 1);
+	else if (data.byte(kIntrocount) == (isGermanCD ? 35 : 31))
 		setupTimedTemp(18, 82, 36, 160, 120, 1);
 }
 
