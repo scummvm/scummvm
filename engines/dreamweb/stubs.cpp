@@ -2241,7 +2241,7 @@ void DreamGenContext::zoomOnOff() {
 		data.byte(kCommandtype) = 222;
 		commandOnly(39);
 	}
-	if (!(data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
 		return;
 	data.byte(kZoomon) ^= 1;
 	createPanel();
@@ -3686,7 +3686,7 @@ void DreamGenContext::nextDest() {
 		commandOnly(28);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
 		return;	// nodu
 
 	do {
@@ -3717,7 +3717,7 @@ void DreamGenContext::lastDest() {
 		commandOnly(29);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
 		return;	// nodd
 
 	do {
@@ -3748,7 +3748,7 @@ void DreamGenContext::destSelect() {
 		commandOnly(30);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || (data.word(kMousebutton) == data.word(kOldbutton)))
+	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
 		return;	// notrav
 
 	getDestInfo();
