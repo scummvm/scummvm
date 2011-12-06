@@ -3322,7 +3322,7 @@ void DreamGenContext::intro() {
 	clearPalette();
 	loadIntroRoom();
 	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (uint8)-1;
 	data.byte(kVolumeto) = 4;
 	playChannel0(12, 255);
 	fadeScreenUps();

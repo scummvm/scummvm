@@ -1157,7 +1157,7 @@ void DreamGenContext::soundOnReels() {
 	}
 
 	if (data.word(kReelpointer) != data.word(kLastsoundreel))
-		data.word(kLastsoundreel) = -1;
+		data.word(kLastsoundreel) = (uint16)-1;
 }
 
 void DreamGenContext::clearBeforeLoad() {
