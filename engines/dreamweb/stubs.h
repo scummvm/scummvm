@@ -404,6 +404,7 @@
 	void usePlinth();
 	void useElvDoor();
 	void useObject();
+	void useWinch();
 	void openTVDoor();
 	void wearWatch();
 	void wearShades();
@@ -536,7 +537,12 @@
 	void setWalk();
 	void useLadder();
 	void useLadderB();
+	void useCart();
+	void useTrainer();
+	void useHole();
+	void chewy();
 	void sLabDoorA();
+	void sLabDoorB();
 	void sLabDoorC();
 	void sLabDoorE();
 	void sLabDoorD();

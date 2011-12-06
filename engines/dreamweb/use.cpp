@@ -612,6 +612,46 @@ void DreamGenContext::sLabDoorA() {
 	}
 }
 
+void DreamGenContext::sLabDoorB() {
+	if (data.byte(kDreamnumber) != 1) {
+		// Wrong
+		showFirstUse();
+		data.byte(kGetback) = 1;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.word(kReeltowatch) = 44;
+		data.word(kWatchingtime) = 40;
+		data.word(kEndwatchreel) = 63;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	} else {
+		al = 'S';
+		ah = 'H';
+		cl = 'L';
+		ch = 'D';
+		isRyanHolding();
+
+		if (flags.z()) {
+			// No crystal
+			al = 44;
+			cx = 200;
+			showPuzText();
+			putBackObStuff();
+		} else {
+			// Got crystal
+			showFirstUse();
+			data.byte(kProgresspoints)++;
+			data.byte(kGetback) = 1;
+			data.byte(kWatchspeed) = 1;
+			data.byte(kSpeedcount) = 1;
+			data.word(kReeltowatch) = 44;
+			data.word(kWatchingtime) = 60;
+			data.word(kEndwatchreel) = 71;
+			data.byte(kNewlocation) = 47;
+		}
+	}
+}
+
 void DreamGenContext::sLabDoorC() {
 	showFirstUse();
 	data.byte(kGetback) = 1;
@@ -863,7 +903,7 @@ void DreamGenContext::useElvDoor() {
 		cx = 300;
 		showPuzText();
 		_inc(data.byte(kProgresspoints));
-		data.word(kWatchingtime) = 46*2;
+		data.word(kWatchingtime) = 46 * 2;
 		data.word(kReeltowatch) = 31;
 		data.word(kEndwatchreel) = 77;
 		data.byte(kWatchspeed) = 1;
@@ -885,6 +925,104 @@ void DreamGenContext::useObject() {
 
 	if (data.word(kMousebutton) & 1)
 		useRoutine();
+}
+
+
+void DreamGenContext::useWinch() {
+	al = 40;
+	ah = 1;
+	checkInside();
+
+	char id[4] = { 'F', 'U', 'S', 'E' };	// TODO: convert to string with trailing zero
+	if (cl == 114 || !compare(cl, 4, id)) {
+		// No winch
+		showFirstUse();
+		putBackObStuff();
+		return;
+	}
+
+	data.word(kWatchingtime) = 217 * 2;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 217;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kDestpos) = 1;
+	data.byte(kNewlocation) = 45;
+	data.byte(kDreamnumber) = 1;
+	data.byte(kRoomafterdream) = 44;
+	data.byte(kGeneraldead) = 1;
+	data.byte(kNewsitem) = 2;
+	data.byte(kGetback) = 1;
+	data.byte(kProgresspoints)++;
+}
+
+void DreamGenContext::useCart() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'R', 'O', 'C', 'K' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		DynObject *exObject = getExAd(data.byte(kWithobject));
+		exObject->mapad[0] = 0;
+		removeSetObject(data.byte(kCommand));
+		placeSetObject(data.byte(kWithobject) + 1);
+		data.byte(kProgresspoints)++;
+		playChannel1(17);
+		showFirstUse();
+		data.byte(kGetback) = 1;
+	}
+}
+
+void DreamGenContext::useTrainer() {
+	// TODO: Use the C++ version of getAnyAd()
+	getAnyAd();
+	if (es.byte(bx + 2) != 4) {
+		notHeldError();
+	} else {
+		data.byte(kProgresspoints)++;
+		makeWorn();
+		showSecondUse();
+		putBackObStuff();
+	}
+}
+
+void DreamGenContext::chewy() {
+	showFirstUse();
+	// TODO: Use the C++ version of getAnyAd()
+	getAnyAd();
+	es.byte(bx + 2) = 255;
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useHole() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'H', 'N', 'D', 'A' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		// Wrong item
+		cx = 300;
+		al = 14;
+		showPuzText();
+		putBackObStuff();
+	} else {
+		showFirstUse();
+		removeSetObject(86);
+		DynObject *exObject = getExAd(data.byte(kWithobject));
+		exObject->mapad[0] = 255;
+		data.byte(kCanmovealtar) = 1;
+		data.byte(kGetback) = 1;
+	}
 }
 
 } /*namespace dreamgen */

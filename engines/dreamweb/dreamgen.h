@@ -575,7 +575,6 @@ public:
 	void getOpenedSize();
 	void resetKeyboard();
 	void soundStartup();
-	void sLabDoorB();
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
@@ -681,7 +680,6 @@ public:
 	void deleteExFrame();
 	void bossMan();
 	void searchForSame();
-	void chewy();
 	void getBack1();
 	void fadeFromWhite();
 	void rollEm();
@@ -708,7 +706,6 @@ public:
 	void candles1();
 	void showOpBox();
 	void doFade();
-	void useTrainer();
 	void dumpCurrent();
 	void showDiaryKeys();
 	void dontLoadSeg();
@@ -766,7 +763,6 @@ public:
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
-	void useWinch();
 	void updateSymbolTop();
 	void checkSoundInt();
 	void doSaveLoad();
@@ -782,7 +778,6 @@ public:
 	void saveFileRead();
 	void emergencyPurge();
 	void alleyBarkSound();
-	void useCart();
 	void quitKey();
 	void processTrigger();
 	void volumeAdjust();
@@ -791,7 +786,6 @@ public:
 	void withWhat();
 	void openOb();
 	void createFile();
-	void useHole();
 	void fadeToWhite();
 	void showLoadOps();
 };

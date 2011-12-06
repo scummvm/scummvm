@@ -5103,21 +5103,6 @@ void DreamGenContext::openTomb() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useTrainer() {
-	STACK_CHECK;
-	getAnyAd();
-	_cmp(es.byte(bx+2), 4);
-	if (!flags.z())
-		goto notheldtrainer;
-	_inc(data.byte(kProgresspoints));
-	makeWorn();
-	showSecondUse();
-	putBackObStuff();
-	return;
-notheldtrainer:
-	notHeldError();
-}
-
 void DreamGenContext::notHeldError() {
 	STACK_CHECK;
 	createPanel();
@@ -5184,54 +5169,6 @@ alreadyfull:
 	putBackObStuff();
 }
 
-void DreamGenContext::chewy() {
-	STACK_CHECK;
-	showFirstUse();
-	getAnyAd();
-	es.byte(bx+2) = 255;
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::sLabDoorB() {
-	STACK_CHECK;
-	_cmp(data.byte(kDreamnumber), 1);
-	if (!flags.z())
-		goto slabbwrong;
-	al = 'S';
-	ah = 'H';
-	cl = 'L';
-	ch = 'D';
-	isRyanHolding();
-	if (!flags.z())
-		goto gotcrystal;
-	al = 44;
-	cx = 200;
-	showPuzText();
-	putBackObStuff();
-	return;
-gotcrystal:
-	showFirstUse();
-	_inc(data.byte(kProgresspoints));
-	data.byte(kGetback) = 1;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.word(kReeltowatch) = 44;
-	data.word(kWatchingtime) = 60;
-	data.word(kEndwatchreel) = 71;
-	data.byte(kNewlocation) = 47;
-	return;
-slabbwrong:
-	showFirstUse();
-	data.byte(kGetback) = 1;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.word(kReeltowatch) = 44;
-	data.word(kWatchingtime) = 40;
-	data.word(kEndwatchreel) = 63;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-}
-
 void DreamGenContext::useSLab() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);
@@ -5278,45 +5215,6 @@ nextslab:
 	data.byte(kSpeedcount) = 1;
 notlastslab:
 	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.byte(kGetback) = 1;
-}
-
-void DreamGenContext::useCart() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto cartwith;
-	withWhat();
-	return;
-cartwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'R';
-	ch = 'O';
-	dl = 'C';
-	dh = 'K';
-	compare();
-	if (flags.z())
-		goto nextcart;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-nextcart:
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+2) = 0;
-	al = data.byte(kCommand);
-	push(ax);
-	removeSetObject();
-	ax = pop();
-	_inc(al);
-	placeSetObject();
-	_inc(data.byte(kProgresspoints));
-	al = 17;
-	playChannel1();
 	showFirstUse();
 	data.byte(kGetback) = 1;
 }
@@ -5371,39 +5269,6 @@ openboxwrong:
 	al = 38;
 	showPuzText();
 	putBackObStuff();
-}
-
-void DreamGenContext::useHole() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto holewith;
-	withWhat();
-	return;
-holewith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'H';
-	ch = 'N';
-	dl = 'D';
-	dh = 'A';
-	compare();
-	if (flags.z())
-		goto righthand;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-righthand:
-	showFirstUse();
-	al = 86;
-	removeSetObject();
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+2) = 255;
-	data.byte(kCanmovealtar) = 1;
-	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useAltar() {
@@ -6833,42 +6698,6 @@ void DreamGenContext::useButtonA() {
 	return;
 donethisbit:
 	showSecondUse();
-	putBackObStuff();
-}
-
-void DreamGenContext::useWinch() {
-	STACK_CHECK;
-	al = 40;
-	ah = 1;
-	checkInside();
-	_cmp(cl, (114));
-	if (flags.z())
-		goto nowinch;
-	al = cl;
-	ah = 4;
-	cl = 'F';
-	ch = 'U';
-	dl = 'S';
-	dh = 'E';
-	compare();
-	if (!flags.z())
-		goto nowinch;
-	data.word(kWatchingtime) = 217*2;
-	data.word(kReeltowatch) = 0;
-	data.word(kEndwatchreel) = 217;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kDestpos) = 1;
-	data.byte(kNewlocation) = 45;
-	data.byte(kDreamnumber) = 1;
-	data.byte(kRoomafterdream) = 44;
-	data.byte(kGeneraldead) = 1;
-	data.byte(kNewsitem) = 2;
-	data.byte(kGetback) = 1;
-	_inc(data.byte(kProgresspoints));
-	return;
-nowinch:
-	showFirstUse();
 	putBackObStuff();
 }
 
