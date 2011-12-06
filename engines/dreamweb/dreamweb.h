@@ -40,9 +40,9 @@
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
-namespace DreamGen {
-
 #include "dreamweb/structs.h"
+
+namespace DreamGen {
 
 // These are for ReelRoutine::reelPointer, which is a callback field.
 const uint16 addr_backobject = 0xc170;
