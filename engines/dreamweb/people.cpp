@@ -577,12 +577,16 @@ void DreamGenContext::louisChair(ReelRoutine &routine) {
 
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
-		if (nextReelPointer == 191)
+		if (nextReelPointer == 191) {
 			routine.setReelPointer(182);	// Restart Louis
-		else if (nextReelPointer != 185)
+		} else if (nextReelPointer != 185) {
 			routine.setReelPointer(nextReelPointer);
-		else if (engine->randomNumber() < 245)
-			routine.setReelPointer(182);	// Restart Louis
+		} else {
+			if (engine->randomNumber() < 245)
+				routine.setReelPointer(182);	// Restart Louis
+			else
+				routine.setReelPointer(nextReelPointer);
+		}
 	}
 
 	showGameReel(&routine);
