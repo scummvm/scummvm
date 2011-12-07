@@ -380,7 +380,7 @@ void DreamGenContext::showFrame() {
 	ch = height;
 }
 
-void DreamGenContext::clearWork() {
+void DreamBase::clearWork() {
 	memset(workspace(), 0, 320*200);
 }
 

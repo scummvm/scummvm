@@ -31,7 +31,6 @@
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
 	uint8 *textUnder();
-	void clearWork();
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp();

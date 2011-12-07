@@ -70,7 +70,8 @@ public:
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
-	uint8 *workspace() { return _workspace; }
+	inline uint8 *workspace() { return _workspace; }
+	void clearWork();
 
 	void printUnderMon();
 	void cls();
