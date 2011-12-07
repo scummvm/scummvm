@@ -677,7 +677,6 @@ public:
 	void fillOpen();
 	void signOn();
 	void showGun();
-	void louisChair();
 	void locationPic();
 	void triggerMessage();
 	void swapWithOpen();

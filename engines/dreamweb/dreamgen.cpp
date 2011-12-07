@@ -75,38 +75,6 @@ gotrecep:
 	data.byte(kTalkedtorecep) = 1;
 }
 
-void DreamGenContext::louisChair() {
-	STACK_CHECK;
-	_cmp(data.byte(kRockstardead), 0);
-	if (flags.z())
-		return /* (notlouis2) */;
-	checkSpeed();
-	if (!flags.z())
-		goto notlouisanim;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 191);
-	if (flags.z())
-		goto restartlouis;
-	_cmp(ax, 185);
-	if (flags.z())
-		goto randomlouis;
-	es.word(bx+3) = ax;
-	goto notlouisanim;
-randomlouis:
-	es.word(bx+3) = ax;
-	randomNumber();
-	_cmp(al, 245);
-	if (!flags.c())
-		goto notlouisanim;
-restartlouis:
-	ax = 182;
-	es.word(bx+3) = ax;
-notlouisanim:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::bartender() {
 	STACK_CHECK;
 	checkSpeed();

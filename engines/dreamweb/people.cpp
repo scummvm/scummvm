@@ -31,7 +31,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	&DreamGenContext::receptionist, NULL,
 	NULL, NULL,
-	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
+	NULL, &DreamGenContext::soldier1,
 	&DreamGenContext::bossMan, NULL,
 	&DreamGenContext::heavy, NULL,
 	NULL, NULL,
@@ -63,7 +63,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
 	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::genericPerson /*maleFan*/,
 	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
-	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
+	&DreamGenContext::louisChair, /*&DreamGenContext::soldier1*/NULL,
 	/*&DreamGenContext::bossMan*/NULL, &DreamGenContext::interviewer,
 	/*&DreamGenContext::heavy*/NULL, &DreamGenContext::manAsleep /*manAsleep2*/,
 	&DreamGenContext::genericPerson /*manSatStill*/, &DreamGenContext::drinker,
@@ -569,6 +569,24 @@ void DreamGenContext::foghornSound(ReelRoutine &routine) {
 }
 
 void DreamGenContext::train(ReelRoutine &routine) {
+}
+
+void DreamGenContext::louisChair(ReelRoutine &routine) {
+	if (data.byte(kRockstardead) == 0)
+		return; // notlouis2
+
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 191)
+			routine.setReelPointer(182);	// Restart Louis
+		else if (nextReelPointer != 185)
+			routine.setReelPointer(nextReelPointer);
+		else if (engine->randomNumber() < 245)
+			routine.setReelPointer(182);	// Restart Louis
+	}
+
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 } // End of namespace DreamGen
