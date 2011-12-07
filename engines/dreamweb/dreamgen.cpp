@@ -7439,33 +7439,6 @@ void DreamGenContext::clearChanges() {
 	_stosw(cx, true);
 }
 
-void DreamGenContext::clearRest() {
-	STACK_CHECK;
-	es = data.word(kMapdata);
-	cx = (66*60)/2;
-	ax = 0;
-	di = (0);
-	_stosw(cx, true);
-	es = data.word(kBackdrop);
-	deallocateMem();
-	es = data.word(kSetframes);
-	deallocateMem();
-	es = data.word(kReels);
-	deallocateMem();
-	es = data.word(kPeople);
-	deallocateMem();
-	es = data.word(kSetdesc);
-	deallocateMem();
-	es = data.word(kBlockdesc);
-	deallocateMem();
-	es = data.word(kRoomdesc);
-	deallocateMem();
-	es = data.word(kFreeframes);
-	deallocateMem();
-	es = data.word(kFreedesc);
-	deallocateMem();
-}
-
 void DreamGenContext::watchReel() {
 	STACK_CHECK;
 	_cmp(data.word(kReeltowatch), -1);

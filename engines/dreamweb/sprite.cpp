@@ -1165,7 +1165,20 @@ void DreamGenContext::clearBeforeLoad() {
 		return /* (noclear) */;
 
 	clearReels();
-	clearRest();
+
+	//clearRest
+	uint8 *dst = (uint8 *)getSegment(data.word(kMapdata)).ptr(0, 0);
+	memset(dst, 0, kMaplen);
+	deallocateMem(data.word(kBackdrop));
+	deallocateMem(data.word(kSetframes));
+	deallocateMem(data.word(kReels));
+	deallocateMem(data.word(kPeople));
+	deallocateMem(data.word(kSetdesc));
+	deallocateMem(data.word(kBlockdesc));
+	deallocateMem(data.word(kRoomdesc));
+	deallocateMem(data.word(kFreeframes));
+	deallocateMem(data.word(kFreedesc));
+
 	data.byte(kRoomloaded) = 0;
 }
 

@@ -207,6 +207,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'clearendpal',
 	'clearpalette',
 	'clearreels',
+	'clearrest',
 	'clearsprites',
 	'clearstartpal',
 	'clearwork',

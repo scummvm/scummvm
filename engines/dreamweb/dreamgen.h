@@ -729,7 +729,6 @@ public:
 	void findExObject();
 	void searchForFiles();
 	void monkSpeaking();
-	void clearRest();
 	void madmanRun();
 	void afterNewRoom();
 	void getExAd();
