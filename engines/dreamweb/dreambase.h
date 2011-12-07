@@ -34,6 +34,15 @@ namespace DreamWeb {
 
 namespace DreamGen {
 
+/**
+ * This class is one of the parent classes of DreamGenContext. Its sole purpose
+ * is to allow us to incrementally move things out of DreamGenContext into this
+ * base class, as soon as they don't modify any context registers (ax, bx, cx, ...)
+ * anymore.
+ * Ultimately, DreamGenContext should be empty, at which point it can be removed
+ * together with class Context. When that happens, we can probably merge
+ * DreamBase into DreamWebEngine.
+ */
 class DreamBase {
 protected:
 	DreamWeb::DreamWebEngine *engine;
@@ -69,8 +78,6 @@ public:
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void doShake();
 	void showPCX(const Common::String &name);
-
-// TODO: Move more methods from stubs.h to here.
 };
 
 
