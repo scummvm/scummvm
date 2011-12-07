@@ -45,13 +45,20 @@
 	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
-	void multiDump();
-	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
 	void workToScreen();
-	void workToScreenCPP();
 	uint8 *mapStore();
 	void multiGet();
-	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
+	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiGet(dst, x, y, width, height);
+	}
+	void multiPut();
+	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiPut(src, x, y, width, height);
+	}
+	void multiDump();
+	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiDump(x, y, width, height);
+	}
 	void printSprites();
 	void quickQuit();
 	void readOneBlock();
@@ -85,8 +92,6 @@
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	void printASprite(const Sprite *sprite);
 	void width160();
-	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
-	void multiPut();
 	void eraseOldObs();
 	void clearSprites();
 	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);

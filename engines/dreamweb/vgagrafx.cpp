@@ -34,7 +34,7 @@ void DreamGenContext::multiGet() {
 	cx = 0;
 }
 
-void DreamGenContext::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	const uint8 *src = workspace() + x + y * kScreenwidth;
@@ -57,7 +57,7 @@ void DreamGenContext::multiPut() {
 	cx = 0;
 }
 
-void DreamGenContext::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	uint8 *dst = workspace() + x + y * kScreenwidth;
@@ -73,12 +73,6 @@ void DreamGenContext::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, ui
 	}
 }
 
-void DreamGenContext::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
-	unsigned offset = x + y * kScreenwidth;
-	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
-	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
-}
-
 void DreamGenContext::multiDump() {
 	multiDump(di, bx, cl, ch);
 	unsigned offset = di + bx * kScreenwidth;
@@ -86,7 +80,13 @@ void DreamGenContext::multiDump() {
 	cx = 0;
 }
 
-void DreamGenContext::workToScreenCPP() {
+void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
+	unsigned offset = x + y * kScreenwidth;
+	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
+	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
+}
+
+void DreamBase::workToScreenCPP() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
 }
 
