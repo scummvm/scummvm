@@ -183,6 +183,7 @@ private:
 	DreamGen::Frame *_currentCharset;
 
 	DreamGen::DreamGenContext _context;
+	DreamGen::DreamBase &_base;
 };
 
 } // End of namespace DreamWeb

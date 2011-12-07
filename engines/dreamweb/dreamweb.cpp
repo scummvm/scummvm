@@ -42,7 +42,7 @@
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"), _context(this) {
+	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"), _context(this), _base(_context) {
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -100,14 +100,14 @@ void DreamWebEngine::waitForVSync() {
 		setVSyncInterrupt(false);
 	}
 
-	_context.doShake();
+	_base.doShake();
 	_context.doFade();
 	_system->updateScreen();
 }
 
 void DreamWebEngine::quit() {
-	_context.data.byte(DreamGen::kQuitrequested) = 1;
-	_context.data.byte(DreamGen::kLasthardkey) = 1;
+	_base.data.byte(DreamGen::kQuitrequested) = 1;
+	_base.data.byte(DreamGen::kLasthardkey) = 1;
 }
 
 void DreamWebEngine::processEvents() {
@@ -143,8 +143,8 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_c: //skip statue puzzle
-					_context.data.byte(DreamGen::kSymbolbotnum) = 3;
-					_context.data.byte(DreamGen::kSymboltopnum) = 5;
+					_base.data.byte(DreamGen::kSymbolbotnum) = 3;
+					_base.data.byte(DreamGen::kSymboltopnum) = 5;
 					break;
 
 				default:
@@ -174,7 +174,7 @@ void DreamWebEngine::processEvents() {
 				break;
 			}
 
-			_context.data.byte(DreamGen::kLasthardkey) = hardKey;
+			_base.data.byte(DreamGen::kLasthardkey) = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want
@@ -218,7 +218,7 @@ Common::Error DreamWebEngine::run() {
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
-	_context.data.byte(DreamGen::kQuitrequested) = 0;
+	_base.data.byte(DreamGen::kQuitrequested) = 0;
 
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 
@@ -297,13 +297,13 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint16 in = (_context.data.word(DreamGen::kBufferin) + 1) & 0x0f;
-	uint16 out = _context.data.word(DreamGen::kBufferout);
+	uint16 in = (_base.data.word(DreamGen::kBufferin) + 1) & 0x0f;
+	uint16 out = _base.data.word(DreamGen::kBufferout);
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
-	_context.data.word(DreamGen::kBufferin) = in;
+	_base.data.word(DreamGen::kBufferin) = in;
 	DreamGen::g_keyBuffer[in] = ascii;
 }
 
@@ -462,10 +462,10 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 }
 
 void DreamWebEngine::soundHandler() {
-	_context.data.byte(DreamGen::kSubtitles) = ConfMan.getBool("subtitles");
-	_context.volumeAdjust();
+	_base.data.byte(DreamGen::kSubtitles) = ConfMan.getBool("subtitles");
+	_base.volumeAdjust();
 
-	uint volume = _context.data.byte(DreamGen::kVolume);
+	uint volume = _base.data.byte(DreamGen::kVolume);
 	//.vol file loaded into soundbuf:0x4000
 	//volume table at (volume * 0x100 + 0x3f00)
 	//volume value could be from 1 to 7
@@ -481,13 +481,13 @@ void DreamWebEngine::soundHandler() {
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
-	uint8 ch0 = _context.data.byte(DreamGen::kCh0playing);
+	uint8 ch0 = _base.data.byte(DreamGen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
-	uint8 ch1 = _context.data.byte(DreamGen::kCh1playing);
+	uint8 ch1 = _base.data.byte(DreamGen::kCh1playing);
 	if (ch1 == 255)
 		ch1 = 0;
-	uint8 ch0loop = _context.data.byte(DreamGen::kCh0repeat);
+	uint8 ch0loop = _base.data.byte(DreamGen::kCh0repeat);
 
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
@@ -502,11 +502,11 @@ void DreamWebEngine::soundHandler() {
 		}
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
-		_context.data.byte(DreamGen::kCh0playing) = 255;
+		_base.data.byte(DreamGen::kCh0playing) = 255;
 		_channel0 = 0;
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
-		_context.data.byte(DreamGen::kCh1playing) = 255;
+		_base.data.byte(DreamGen::kCh1playing) = 255;
 		_channel1 = 0;
 	}
 
