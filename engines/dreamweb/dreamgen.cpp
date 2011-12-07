@@ -720,42 +720,6 @@ candles2fin:
 	showGameReel();
 }
 
-void DreamGenContext::introMagic2() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto introm2fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 216);
-	if (!flags.z())
-		goto gotintrom2;
-	ax = 192;
-gotintrom2:
-	es.word(bx+3) = ax;
-introm2fin:
-	showGameReel();
-}
-
-void DreamGenContext::introMagic3() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto introm3fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 218);
-	if (!flags.z())
-		goto gotintrom3;
-	data.byte(kGetback) = 1;
-gotintrom3:
-	es.word(bx+3) = ax;
-introm3fin:
-	showGameReel();
-	al = data.byte(kMapx);
-	es.byte(bx+1) = al;
-}
-
 void DreamGenContext::introMonks1() {
 	STACK_CHECK;
 	checkSpeed();

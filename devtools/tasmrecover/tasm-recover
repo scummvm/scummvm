@@ -360,6 +360,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'intro2text',
 	'intro3text',
 	'intromagic1',
+	'intromagic2',
+	'intromagic3',
 	'intromusic',
 	'inventory',
 	'isitdescribed',

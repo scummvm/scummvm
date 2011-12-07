@@ -639,8 +639,6 @@ public:
 	void openFileNoCheck();
 	void fadeUpMon();
 	void clearChanges();
-	void introMagic2();
-	void introMagic3();
 	void showDiaryPage();
 	void transferToEx();
 	void reExFromInv();

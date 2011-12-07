@@ -431,6 +431,8 @@
 	void manAsleep(ReelRoutine &routine);
 	void drunk(ReelRoutine &routine);
 	void introMagic1(ReelRoutine &routine);
+	void introMagic2(ReelRoutine &routine);
+	void introMagic3(ReelRoutine &routine);
 	void introMusic(ReelRoutine &routine);
 	void candles(ReelRoutine &routine);
 	void gates(ReelRoutine &routine);
