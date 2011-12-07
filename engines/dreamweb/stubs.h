@@ -67,12 +67,13 @@
 	void seeCommandTail();
 	void randomNumber();
 	void quickQuit2();
-	void printBoth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
-	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
-	void printChar(const Frame* charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printDirect();
-	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
-	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+		return DreamBase::printDirect(string, x, y, maxWidth, centered);
+	}
+	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+		return DreamBase::printDirect(string, x, y, maxWidth, centered);
+	}
 	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
 	void printMessage();
 	void useTimedText();
