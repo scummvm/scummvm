@@ -102,7 +102,6 @@
 	void faceRightWay();
 	void walking(Sprite *sprite);
 	void autoSetWalk();
-	void checkDest(const RoomPaths *roomsPaths);
 	void aboutTurn(Sprite *sprite);
 	void backObject(Sprite *sprite);
 	void backObject();

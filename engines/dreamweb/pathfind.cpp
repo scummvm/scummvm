@@ -105,8 +105,7 @@ void DreamGenContext::setWalk() {
 }
 
 void DreamGenContext::autoSetWalk() {
-	al = data.byte(kManspath);
-	if (data.byte(kFinaldest) == al)
+	if (data.byte(kFinaldest) == data.byte(kManspath))
 		return;
 	const RoomPaths *roomsPaths = getRoomsPaths();
 	checkDest(roomsPaths);
@@ -123,21 +122,19 @@ void DreamGenContext::autoSetWalk() {
 	data.byte(kLinepointer) = 0;
 }
 
-void DreamGenContext::checkDest(const RoomPaths *roomsPaths) {
+void DreamBase::checkDest(const RoomPaths *roomsPaths) {
 	const PathSegment *segments = roomsPaths->segments;
-	ah = data.byte(kManspath) << 4;
-	al = data.byte(kDestination);
+	const uint8 tmp = data.byte(kManspath) << 4;
 	uint8 destination = data.byte(kDestination);
 	for (size_t i = 0; i < 24; ++i) {
-		dh = segments[i].b0 & 0xf0;
-		dl = segments[i].b0 & 0x0f;
-		if (ax == dx) {
+		if ((segments[i].b0 & 0xf0) == tmp &&
+		    (segments[i].b0 & 0x0f) == data.byte(kDestination)) {
 			data.byte(kDestination) = segments[i].b1 & 0x0f;
 			return;
 		}
-		dl = (segments[i].b0 & 0xf0) >> 4;
-		dh = (segments[i].b0 & 0x0f) << 4;
-		if (ax == dx) {
+
+		if (((segments[i].b0 & 0x0f) << 4) == tmp &&
+		    ((segments[i].b0 & 0xf0) >> 4) == data.byte(kDestination)) {
 			destination = segments[i].b1 & 0x0f;
 		}
 	}

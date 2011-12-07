@@ -60,6 +60,9 @@ public:
 	}
 
 public:
+	// from pathfind.cpp
+	void checkDest(const RoomPaths *roomsPaths);
+
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
