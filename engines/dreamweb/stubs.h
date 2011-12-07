@@ -500,6 +500,7 @@
 	void showPCX(const Common::String &name);
 	void bibleQuote();
 	void realCredits();
+	void runIntroSeq();
 	void intro();
 	void fadeScreenUp();
 	void fadeScreenUps();

@@ -608,7 +608,6 @@ public:
 	void dirFile();
 	void pickupConts();
 	void lockLightOff();
-	void runIntroSeq();
 	void advisor();
 	void allPalette();
 	void cantDrop();

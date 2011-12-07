@@ -543,6 +543,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'restorereels',
 	'rockstar',
 	'roomname',
+	'runintroseq',
 	'saveems',
 	'savefileread',
 	'savefilewrite',

@@ -3239,6 +3239,58 @@ void DreamGenContext::realCredits() {
 	data.byte(kLasthardkey) =  0;
 }
 
+void DreamGenContext::runIntroSeq() {
+	data.byte(kGetback) = 0;
+
+	do {
+		vSync();
+
+		if (data.byte(kLasthardkey) == 1) {
+			getRidOfTempText();
+			clearBeforeLoad();
+			return; // "earlyendrun"
+		}
+
+		spriteUpdate();
+		vSync();
+
+		if (data.byte(kLasthardkey) == 1) {
+			getRidOfTempText();
+			clearBeforeLoad();
+			return; // "earlyendrun"
+		}
+
+		delEverything();
+		printSprites();
+		reelsOnScreen();
+		afterIntroRoom();
+		useTimedText();
+		vSync();
+
+		if (data.byte(kLasthardkey) == 1) {
+			getRidOfTempText();
+			clearBeforeLoad();
+			return; // "earlyendrun"
+		}
+
+		dumpMap();
+		dumpTimedText();
+		vSync();
+
+		if (data.byte(kLasthardkey) == 1) {
+			getRidOfTempText();
+			clearBeforeLoad();
+			return; // "earlyendrun"
+		}
+
+		} while (data.byte(kGetback) != 1);
+
+	// These were not called in this program arc
+	// in the original code.. Bug?
+	//getRidOfTempText();
+	//clearBeforeLoad();
+}
+
 void DreamGenContext::intro() {
 	loadTempText("DREAMWEB.T82");
 	loadPalFromIFF();

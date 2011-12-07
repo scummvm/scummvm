@@ -1567,43 +1567,6 @@ void DreamGenContext::showMonk() {
 	showFrame();
 }
 
-void DreamGenContext::runIntroSeq() {
-	STACK_CHECK;
-	data.byte(kGetback) = 0;
-moreintroseq:
-	vSync();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto earlyendrun;
-	spriteUpdate();
-	vSync();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto earlyendrun;
-	delEverything();
-	printSprites();
-	reelsOnScreen();
-	afterIntroRoom();
-	useTimedText();
-	vSync();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto earlyendrun;
-	dumpMap();
-	dumpTimedText();
-	vSync();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto earlyendrun;
-	_cmp(data.byte(kGetback), 1);
-	if (!flags.z())
-		goto moreintroseq;
-	return;
-earlyendrun:
-	getRidOfTempText();
-	clearBeforeLoad();
-}
-
 void DreamGenContext::runEndSeq() {
 	STACK_CHECK;
 	atmospheres();
