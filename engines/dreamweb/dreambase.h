@@ -61,6 +61,7 @@ public:
 
 public:
 	// from pathfind.cpp
+	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
 
 	// from print.cpp

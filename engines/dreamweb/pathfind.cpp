@@ -24,10 +24,6 @@
 
 namespace DreamGen {
 
-// Output of Bresenham
-Common::Point g_lineData[200];
-
-
 void DreamGenContext::turnPathOn() {
 	turnPathOn(al);
 }
@@ -159,7 +155,7 @@ bool DreamGenContext::checkIfPathIsOn(uint8 index) {
 
 void DreamGenContext::bresenhams() {
 	workoutFrames();
-	Common::Point *lineData = &g_lineData[0];
+	Common::Point *lineData = &_lineData[0];
 	int16 startX = (int16)data.word(kLinestartx);
 	int16 startY = (int16)data.word(kLinestarty);
 	int16 endX = (int16)data.word(kLineendx);
