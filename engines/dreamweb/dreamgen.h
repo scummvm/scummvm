@@ -621,14 +621,12 @@ public:
 	void allPalette();
 	void cantDrop();
 	void copper();
-	void drinker();
 	void placeFreeObject();
 	void putUnderZoom();
 	void vSync();
 	void findInvPos();
 	void workoutFrames();
 	void rollEndCredits();
-	void interviewer();
 	void getKeyAndLogo();
 	void selectOb();
 	void useCooker();
@@ -747,7 +745,6 @@ public:
 	void showNames();
 	void saveFileRead();
 	void emergencyPurge();
-	void alleyBarkSound();
 	void quitKey();
 	void processTrigger();
 	void transferConToEx();

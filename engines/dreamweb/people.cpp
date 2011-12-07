@@ -32,9 +32,9 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::receptionist, NULL,
 	NULL, NULL,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
-	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
+	&DreamGenContext::bossMan, NULL,
 	&DreamGenContext::heavy, NULL,
-	NULL, &DreamGenContext::drinker,
+	NULL, NULL,
 	&DreamGenContext::bartender, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -50,7 +50,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::introMonks2, NULL,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
-	NULL, &DreamGenContext::alleyBarkSound,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL
@@ -64,9 +64,9 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::genericPerson /*maleFan*/,
 	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
 	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
-	/*&DreamGenContext::bossMan*/NULL, /*&DreamGenContext::interviewer*/NULL,
+	/*&DreamGenContext::bossMan*/NULL, &DreamGenContext::interviewer,
 	/*&DreamGenContext::heavy*/NULL, &DreamGenContext::manAsleep /*manAsleep2*/,
-	&DreamGenContext::genericPerson /*manSatStill*/, /*&DreamGenContext::drinker*/NULL,
+	&DreamGenContext::genericPerson /*manSatStill*/, &DreamGenContext::drinker,
 	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::genericPerson /*otherSmoker*/,
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
@@ -82,7 +82,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::intromonks2*/NULL, &DreamGenContext::handClap,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
-	&DreamGenContext::madmansTelly, /*&DreamGenContext::alleyBarkSound*/NULL,
+	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
 	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip
@@ -374,6 +374,39 @@ void DreamGenContext::drunk(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::interviewer(ReelRoutine &routine) {
+	if (data.word(kReeltowatch) == 68)
+		routine.incReelPointer();
+
+	if (routine.reelPointer() != 250 && routine.reelPointer() != 259 && checkSpeed(routine))
+		routine.incReelPointer();
+	
+	showGameReel(&routine);
+}
+
+void DreamGenContext::drinker(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		routine.incReelPointer();
+
+		if ( routine.reelPointer() == 115 ||
+			(routine.reelPointer() == 106 && engine->randomNumber() >= 3))
+			routine.setReelPointer(105);
+	}
+
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::alleyBarkSound(ReelRoutine &routine) {
+	uint16 prevReelPointer = routine.reelPointer() - 1;
+	if (prevReelPointer == 0) {
+		playChannel1(14);
+		routine.setReelPointer(1000);
+	} else {
+		routine.setReelPointer(prevReelPointer);
+	}
 }
 
 void DreamGenContext::introMagic1(ReelRoutine &routine) {

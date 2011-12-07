@@ -26,24 +26,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::alleyBarkSound() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_dec(ax);
-	_cmp(ax, 0);
-	if (!flags.z())
-		goto nobark;
-	push(bx);
-	push(es);
-	al = 14;
-	playChannel1();
-	es = pop();
-	bx = pop();
-	ax = 1000;
-nobark:
-	es.word(bx+3) = ax;
-}
-
 void DreamGenContext::receptionist() {
 	STACK_CHECK;
 	checkSpeed();
@@ -125,31 +107,6 @@ notlouisanim:
 	addToPeopleList();
 }
 
-void DreamGenContext::drinker() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto gotdrinker;
-	_inc(es.word(bx+3));
-	_cmp(es.word(bx+3), 115);
-	if (!flags.z())
-		goto notdrinker1;
-	es.word(bx+3) = 105;
-	goto gotdrinker;
-notdrinker1:
-	_cmp(es.word(bx+3), 106);
-	if (!flags.z())
-		goto gotdrinker;
-	randomNumber();
-	_cmp(al, 3);
-	if (flags.c())
-		goto gotdrinker;
-	es.word(bx+3) = 105;
-gotdrinker:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::bartender() {
 	STACK_CHECK;
 	checkSpeed();
@@ -180,27 +137,6 @@ gotsmoket:
 	es.byte(bx+7) = 9;
 notgotgun:
 	addToPeopleList();
-}
-
-void DreamGenContext::interviewer() {
-	STACK_CHECK;
-	_cmp(data.word(kReeltowatch), 68);
-	if (!flags.z())
-		goto notgeneralstart;
-	_inc(es.word(bx+3));
-notgeneralstart:
-	_cmp(es.word(bx+3), 250);
-	if (flags.z())
-		goto talking;
-	checkSpeed();
-	if (!flags.z())
-		goto talking;
-	_cmp(es.word(bx+3), 259);
-	if (flags.z())
-		goto talking;
-	_inc(es.word(bx+3));
-talking:
-	showGameReel();
 }
 
 void DreamGenContext::soldier1() {
