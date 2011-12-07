@@ -345,15 +345,6 @@ void DreamWebEngine::fadeDos() {
 	}
 }
 
-void DreamWebEngine::setPalette() {
-	processEvents();
-	unsigned n = (uint16)_context.cx;
-	uint8 *src = _context.ds.ptr(_context.si, n * 3);
-	setPalette(src, _context.al, n);
-	_context.si += n * 3;
-	_context.cx = 0;
-}
-
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 	_system->getPaletteManager()->grabPalette(data, start, count);
 	while(count--)

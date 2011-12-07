@@ -1109,7 +1109,12 @@ void DreamGenContext::set16ColPalette() {
 }
 
 void DreamGenContext::showGroup() {
-	engine->setPalette();
+	engine->processEvents();
+	unsigned n = (uint16)cx;
+	uint8 *src = ds.ptr(si, n * 3);
+	engine->setPalette(src, al, n);
+	si += n * 3;
+	cx = 0;
 }
 
 void DreamGenContext::fadeDOS() {
