@@ -24,43 +24,43 @@
 
 namespace DreamGen {
 
-uint8 *DreamGenContext::mainPalette() {
+uint8 *DreamBase::mainPalette() {
 	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256 * 3);
 }
 
-uint8 *DreamGenContext::startPalette() {
+uint8 *DreamBase::startPalette() {
 	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256 * 3);
 }
 
-uint8 *DreamGenContext::endPalette() {
+uint8 *DreamBase::endPalette() {
 	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256 * 3);
 }
 
-void DreamGenContext::clearStartPal() {
+void DreamBase::clearStartPal() {
 	memset(startPalette(), 0, 256 * 3);
 }
 
-void DreamGenContext::clearEndPal() {
+void DreamBase::clearEndPal() {
 	memset(endPalette(), 0, 256 * 3);
 }
 
-void DreamGenContext::palToStartPal() {
+void DreamBase::palToStartPal() {
 	memcpy(startPalette(), mainPalette(), 256 * 3);
 }
 
-void DreamGenContext::endPalToStart() {
+void DreamBase::endPalToStart() {
 	memcpy(startPalette(), endPalette(), 256 * 3);
 }
 
-void DreamGenContext::startPalToEnd() {
+void DreamBase::startPalToEnd() {
 	memcpy(endPalette(), startPalette(), 256 * 3);
 }
 
-void DreamGenContext::palToEndPal() {
+void DreamBase::palToEndPal() {
 	memcpy(endPalette(), mainPalette(), 256 * 3);
 }
 
-void DreamGenContext::doFade() {
+void DreamBase::doFade() {
 	if (data.byte(kFadedirection) == 0)
 		return
 
@@ -73,7 +73,7 @@ void DreamGenContext::doFade() {
 		fadeCalculation();
 }
 
-void DreamGenContext::fadeCalculation() {
+void DreamBase::fadeCalculation() {
 	if (data.byte(kFadecount) == 0) {
 		data.byte(kFadedirection) = 0;
 		return;
@@ -81,7 +81,7 @@ void DreamGenContext::fadeCalculation() {
 
 	uint8 *startPal = startPalette();
 	const uint8 *endPal = endPalette();
-	for (size_t i = 0; i < 256 * 3; ++i, ++si, ++di) {
+	for (size_t i = 0; i < 256 * 3; ++i) {
 		uint8 s = startPal[i];
 		uint8 e = endPal[i];
 		if (s == e)
@@ -121,7 +121,7 @@ void DreamGenContext::fadeupMonFirst() {
 	hangOn(64);
 }
 
-void DreamGenContext::fadeScreenUp() {
+void DreamBase::fadeScreenUp() {
 	clearStartPal();
 	palToEndPal();
 	data.byte(kFadedirection) = 1;
@@ -130,8 +130,7 @@ void DreamGenContext::fadeScreenUp() {
 	data.byte(kNumtofade) = 128;
 }
 
-
-void DreamGenContext::fadeScreenUps() {
+void DreamBase::fadeScreenUps() {
 	clearStartPal();
 	palToEndPal();
 	data.byte(kFadedirection) = 1;
@@ -140,7 +139,7 @@ void DreamGenContext::fadeScreenUps() {
 	data.byte(kNumtofade) = 64;
 }
 
-void DreamGenContext::fadeScreenUpHalf() {
+void DreamBase::fadeScreenUpHalf() {
 	endPalToStart();
 	palToEndPal();
 	data.byte(kFadedirection) = 1;
@@ -149,7 +148,7 @@ void DreamGenContext::fadeScreenUpHalf() {
 	data.byte(kNumtofade) = 32;
 }
 
-void DreamGenContext::fadeScreenDown() {
+void DreamBase::fadeScreenDown() {
 	palToStartPal();
 	clearEndPal();
 	data.byte(kFadedirection) = 1;
@@ -158,7 +157,7 @@ void DreamGenContext::fadeScreenDown() {
 	data.byte(kNumtofade) = 128;
 }
 
-void DreamGenContext::fadeScreenDowns() {
+void DreamBase::fadeScreenDowns() {
 	palToStartPal();
 	clearEndPal();
 	data.byte(kFadedirection) = 1;

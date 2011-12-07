@@ -73,10 +73,35 @@ public:
 	void showRyanPage();
 	void volumeAdjust();
 
+	// from vgafades.cpp
+	uint8 *mainPalette();
+	uint8 *startPalette();
+	uint8 *endPalette();
+	void clearStartPal();
+	void clearEndPal();
+	void palToStartPal();
+	void endPalToStart();
+	void startPalToEnd();
+	void palToEndPal();
+	void doFade();
+	void fadeCalculation();
+	void fadeScreenUp();
+	void fadeScreenUps();
+	void fadeScreenUpHalf();
+	void fadeScreenDown();
+	void fadeScreenDowns();
+
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
+
+	uint8 *mapStore();
+	void panelToMap();
+	void mapToPanel();
+	void dumpMap();
+
+	void transferInv();
 
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
@@ -89,9 +114,12 @@ public:
 	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void doShake();
+	void vSync();
+	void setMode();
 	void showPCX(const Common::String &name);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void loadPalFromIFF();
 	void createPanel();
 	void createPanel2();
 	void showPanel();

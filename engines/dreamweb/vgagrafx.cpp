@@ -178,32 +178,16 @@ void DreamBase::doShake() {
 	engine->setShakePos(offset >= 0 ? offset : -offset);
 }
 
-void DreamGenContext::vSync() {
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(si);
-	push(di);
-	push(es);
-	push(ds);
+void DreamBase::vSync() {
 	engine->waitForVSync();
-	ds = pop();
-	es = pop();
-	di = pop();
-	si = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
 }
 
-void DreamGenContext::setMode() {
+void DreamBase::setMode() {
 	vSync();
 	initGraphics(320, 200, false);
 }
 
-void DreamGenContext::showPCX(const Common::String &name) {
+void DreamBase::showPCX(const Common::String &name) {
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
@@ -415,19 +399,23 @@ void DreamGenContext::zoom() {
 	data.byte(kDidzoom) = 1;
 }
 
-void DreamGenContext::panelToMap() {
+uint8 *DreamBase::mapStore() {
+	return getSegment(data.word(kMapstore)).ptr(0, 0);
+}
+
+void DreamBase::panelToMap() {
 	multiGet(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::mapToPanel() {
+void DreamBase::mapToPanel() {
 	multiPut(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::dumpMap() {
+void DreamBase::dumpMap() {
 	multiDump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::transferInv() {
+void DreamBase::transferInv() {
 	const Frame *freeFrames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(kFrframedata, 0);
 	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
 	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
@@ -453,7 +441,7 @@ bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	return *ptr != 0;
 }
 
-void DreamGenContext::loadPalFromIFF() {
+void DreamBase::loadPalFromIFF() {
 	engine->openFile("DREAMWEB.PAL");
 	engine->readFromFile(mapStore(), 2000);
 	engine->closeFile();
