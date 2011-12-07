@@ -30,9 +30,7 @@
 	void switchRyanOff();
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
-	uint8 *workspace();
 	uint8 *textUnder();
-	void allocateWork();
 	void clearWork();
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
@@ -354,6 +352,7 @@
 	void openForSave(unsigned int slot);
 	bool openForLoad(unsigned int slot);
 	uint16 allocateAndLoad(unsigned int size);
+	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void loadRoomData(const Room &room, bool skipDat);
 	void restoreAll();

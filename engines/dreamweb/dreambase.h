@@ -59,7 +59,6 @@ public:
 		data(kDefaultDataSegment, _realData) {
 	}
 
-
 public:
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
@@ -70,6 +69,9 @@ public:
 	void volumeAdjust();
 
 	// from vgagrafx.cpp
+	uint8 _workspace[(0x1000 + 2) * 16];
+	uint8 *workspace() { return _workspace; }
+
 	void printUnderMon();
 	void cls();
 	void frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y);

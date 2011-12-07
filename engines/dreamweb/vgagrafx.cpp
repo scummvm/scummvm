@@ -27,15 +27,6 @@
 
 namespace DreamGen {
 
-uint8 *DreamGenContext::workspace() {
-	uint8 *result = getSegment(data.word(kWorkspace)).ptr(0, 0);
-	return result;
-}
-
-void DreamGenContext::allocateWork() {
-	data.word(kWorkspace) = allocateMem(0x1000);
-}
-
 void DreamGenContext::multiGet() {
 	multiGet(ds.ptr(si, 0), di, bx, cl, ch);
 	si += cl * ch;

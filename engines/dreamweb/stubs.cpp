@@ -1215,12 +1215,18 @@ uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
 	return result;
 }
 
+void DreamGenContext::clearAndLoad(uint8 *buf, uint8 c,
+                                   unsigned int size, unsigned int maxSize) {
+	assert(size <= maxSize);
+	memset(buf, c, maxSize);
+	engine->readFromFile(buf, size);
+}
+
 void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
 	uint8 *buf = getSegment(seg).ptr(0, maxSize);
-	memset(buf, c, maxSize);
-	engine->readFromFile(buf, size);
+	clearAndLoad(buf, c, size, maxSize);
 }
 
 void DreamGenContext::startLoading(const Room &room) {
@@ -2638,7 +2644,7 @@ void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 		len[i] = header.len(i);
 
 	data.word(kBackdrop) = allocateAndLoad(len[0]);
-	clearAndLoad(data.word(kWorkspace), 0, len[1], 132*66); // 132*66 = maplen
+	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
 	data.word(kSetframes) = allocateAndLoad(len[2]);
 	if (!skipDat)
@@ -2950,7 +2956,6 @@ void DreamGenContext::allocateBuffers() {
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
-	allocateWork();
 	data.word(kSounddata) = allocateMem(2048/16);
 	data.word(kSounddata2) = allocateMem(2048/16);
 }
