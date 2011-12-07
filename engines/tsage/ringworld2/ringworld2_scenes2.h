@@ -136,9 +136,54 @@ public:
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-//	virtual void remove();
 	virtual void signal();
-//	virtual void process(Event &event);
+};
+
+class Scene2425 : public SceneExt {
+	class Item1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item4 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor1 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Actor2 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	Item1 _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Item4 _item4;
+	Actor1 _actor1;
+	Actor2 _actor2;
+	Actor2 _actor3;
+	Exit1 _exit1;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
 };
 
 } // End of namespace Ringworld2

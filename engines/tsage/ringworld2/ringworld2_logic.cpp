@@ -98,11 +98,14 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Maze
 		return new Scene2000();
 	case 2350:
-		// Balloon Launch Platform
+		// Maze: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
+		// Maze: Large empty room
 		return new Scene2400();
 	case 2425:
+		// Maze: 
+		return new Scene2425();
 	case 2430:
 	case 2435:
 	case 2440:

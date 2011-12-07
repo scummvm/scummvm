@@ -1222,7 +1222,7 @@ void Scene2350::process(Event &event) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 2400 - 
+ * Scene 2400 - Maze: Large empty room
  *
  *--------------------------------------------------------------------------*/
 void Scene2400::Exit1::changeScene() {
@@ -1276,6 +1276,221 @@ void Scene2400::signal() {
 	case 11:
 		R2_GLOBALS._v56605[1] = 17;
 		g_globals->_sceneManager.changeScene(2000);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 2425 - Maze:
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene2425::Item1::startAction(CursorType action, Event &event) {
+	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
+
+	if ((action == R2_37) && (!R2_GLOBALS.getFlag(84))) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2426;
+		scene->setAction(&scene->_sequenceManager, scene, 2426, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		R2_GLOBALS.setFlag(84);
+		return true;
+	} else if (action == R2_37) {
+		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
+		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
+		return startAction(R2_STEPPING_DISKS, event);
+	} else
+		return startAction(action, event);
+}
+
+bool Scene2425::Item2::startAction(CursorType action, Event &event) {
+	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
+
+	if ((action == R2_37) && (R2_GLOBALS.getFlag(84))) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2427;
+		scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		R2_GLOBALS.clearFlag(84);
+		return true;
+	} else if (action == R2_37) {
+		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
+		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
+		return startAction(R2_STEPPING_DISKS, event);
+	} else
+		return startAction(action, event);
+}
+
+bool Scene2425::Item3::startAction(CursorType action, Event &event) {
+	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != R2_37)
+		return startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		if (R2_GLOBALS.getFlag(84)) {
+			scene->_sceneMode = 20;
+			scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_actor1, NULL);
+			R2_GLOBALS.clearFlag(84);
+		} else {
+			scene->_sceneMode = 2425;
+			scene->setAction(&scene->_sequenceManager, scene, 2425, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		}
+		return true;
+	}
+}
+
+bool Scene2425::Item4::startAction(CursorType action, Event &event) {
+	if (action != R2_37)
+		return startAction(action, event);
+	else {
+		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
+		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
+		return startAction(R2_STEPPING_DISKS, event);
+	}
+}
+
+bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
+	if (action == R2_STEPPING_DISKS) {
+		if (R2_GLOBALS._player._characterIndex == 2) {
+			R2_GLOBALS._events.setCursor(R2_37);
+			return true;
+		} else {
+			return startAction(action, event);
+		}
+	} else if (R2_GLOBALS._events.getCursor() == R2_37)
+		return false;
+	else 
+		return startAction(action, event);
+}
+
+bool Scene2425::Actor2::startAction(CursorType action, Event &event) {
+	if (action != R2_37)
+		return startAction(action, event);
+	else {
+		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
+		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
+		return startAction(R2_STEPPING_DISKS, event);
+	}
+}
+
+void Scene2425::Exit1::changeScene() {
+	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._events.setCursor(R2_NEGATOR_GUN);
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 11;
+
+	Common::Point pt(340, 200);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+
+void Scene2425::postInit(SceneObjectList *OwnerList) {
+	loadScene(2425);
+	SceneExt::postInit();
+	if (R2_GLOBALS._sceneManager._previousScene == -1) {
+		R2_GLOBALS._player._characterIndex = 2;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+	}
+
+	R2_GLOBALS._sound1.play(200);
+	_exit1.setDetails(Rect(270, 136, 319, 168), EXITCURSOR_SE, 2000);
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+
+	if (R2_GLOBALS._player._characterIndex == 1) {
+		R2_GLOBALS._player.setVisage(2008);
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+	} else {
+		R2_GLOBALS._player.setVisage(20);
+		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
+	}
+
+	if (R2_GLOBALS._player._characterScene[1] == R2_GLOBALS._player._characterScene[2]) {
+		_actor2.postInit();
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_actor2.setup(20, 5, 1);
+			_actor2.setDetails(9002, 0, 4, 3, 1, NULL);
+		} else {
+			_actor2.setup(2008, 5, 1);
+			_actor2.setDetails(9001, 0, 5, 3, 1, NULL);
+		}
+		_actor2.setPosition(Common::Point(250, 185));
+	}
+
+	_actor1.postInit();
+	if (R2_GLOBALS._sceneManager._previousScene == 2455)
+		_actor1.setup(2426, 1, 1);
+	else
+		_actor1.setup(2426, 1, 2);
+	
+	_actor1.setPosition(Common::Point(290, 9));
+	_actor1.fixPriority(20);
+	_actor1.setDetails(2455, 12, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
+	_item2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
+
+//  CHECKME: SceneActor using a SceneItem function??
+//	_actor3.setDetails(11, 2425, 3, -1, 6);
+	_actor3._sceneRegionId = 11;
+	_actor3._resNum = 2425;
+	_actor3._lookLineNum = 3;
+	_actor3._talkLineNum = -1;
+	_actor3._useLineNum = 6;
+	g_globals->_sceneItems.addItems(&_actor3, this);
+
+	_item3.setDetails(12, 2425, 7, -1, 9);
+	_item4.setDetails(Rect(0, 0, 320, 200), 2425, 0, -1, -1, 1, NULL);
+
+	R2_GLOBALS._player.disableControl();
+	switch (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) {
+	case 2000: {
+		_sceneMode = 10;
+		R2_GLOBALS._player.setPosition(Common::Point(340, 200));
+
+		Common::Point pt(280, 150);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+		break;
+		}
+	case 2425:
+		_sceneMode = 10;
+		R2_GLOBALS._player.setPosition(Common::Point(280, 150));
+		_action->signal();
+		break;
+	case 2455:
+		_sceneMode = 2428;
+		setAction(&_sequenceManager, this, 2428, &R2_GLOBALS._player, &_actor1, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setPosition(Common::Point(280, 150));
+		R2_GLOBALS._player.setStrip(8);
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2425;
+}
+
+void Scene2425::remove() {
+	R2_GLOBALS._sound1.fadeOut(NULL);
+	SceneExt::remove();
+}
+
+void Scene2425::signal() {
+	switch (_sceneMode) {
+	case 11:
+		g_globals->_sceneManager.changeScene(2000);
+		break;
+	case 20:
+		_sceneMode = 2425;
+		setAction(&_sequenceManager, this, 2425, &R2_GLOBALS._player, &_actor1, NULL);
+		break;
+	case 2425:
+		g_globals->_sceneManager.changeScene(2455);
 		break;
 	default:
 		R2_GLOBALS._player.enableControl();
