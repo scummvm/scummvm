@@ -561,7 +561,6 @@ public:
 	void watchReel();
 	void openFileFromC();
 	void getTime();
-	void fadeDOS();
 	void findText1();
 	void isRyanHolding();
 	void showSlots();

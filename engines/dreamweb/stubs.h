@@ -563,5 +563,6 @@
 	void dumpSymbol();
 	void dumpSymBox();
 	void dumpZoom();
+	void fadeDOS();
 
 #endif

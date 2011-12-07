@@ -327,24 +327,6 @@ void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	_oldMouseState = newState;
 }
 
-void DreamWebEngine::fadeDos() {
-	_context.ds = _context.es = _context.data.word(DreamGen::kBuffers);
-	return; //fixme later
-	waitForVSync();
-	//processEvents will be called from vsync
-	uint8 *dst = _context.es.ptr(DreamGen::kStartpal, 768);
-	getPalette(dst, 0, 64);
-	for(int fade = 0; fade < 64; ++fade) {
-		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
-			if (dst[c]) {
-				--dst[c];
-			}
-		}
-		setPalette(dst, 0, 64);
-		waitForVSync();
-	}
-}
-
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 	_system->getPaletteManager()->grabPalette(data, start, count);
 	while(count--)
