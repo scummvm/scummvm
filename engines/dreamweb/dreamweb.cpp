@@ -463,9 +463,7 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 
 void DreamWebEngine::soundHandler() {
 	_context.data.byte(DreamGen::kSubtitles) = ConfMan.getBool("subtitles");
-	_context.push(_context.ax);
 	_context.volumeAdjust();
-	_context.ax = _context.pop();
 
 	uint volume = _context.data.byte(DreamGen::kVolume);
 	//.vol file loaded into soundbuf:0x4000

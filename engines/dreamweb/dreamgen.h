@@ -766,7 +766,6 @@ public:
 	void alleyBarkSound();
 	void quitKey();
 	void processTrigger();
-	void volumeAdjust();
 	void transferConToEx();
 	void adjustDown();
 	void withWhat();

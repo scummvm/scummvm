@@ -7141,27 +7141,6 @@ tensc:
 	cs.byte(di+7) = al;
 }
 
-void DreamGenContext::volumeAdjust() {
-	STACK_CHECK;
-	al = data.byte(kVolumedirection);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (volok) */;
-	al = data.byte(kVolume);
-	_cmp(al, data.byte(kVolumeto));
-	if (flags.z())
-		goto volfinish;
-	_add(data.byte(kVolumecount), 64);
-	if (!flags.z())
-		return /* (volok) */;
-	al = data.byte(kVolume);
-	_add(al, data.byte(kVolumedirection));
-	data.byte(kVolume) = al;
-	return;
-volfinish:
-	data.byte(kVolumedirection) = 0;
-}
-
 void DreamGenContext::entryTexts() {
 	STACK_CHECK;
 	_cmp(data.byte(kLocation), 21);

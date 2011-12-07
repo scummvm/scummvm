@@ -1135,6 +1135,7 @@ void DreamGenContext::fadeDOS() {
 	}
 }
 
+
 void DreamGenContext::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
@@ -2451,6 +2452,19 @@ Frame * DreamGenContext::tempGraphics2() {
 
 Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
+}
+
+void DreamBase::volumeAdjust() {
+	if (data.byte(kVolumedirection) == 0)
+		return;
+	if (data.byte(kVolume) != data.byte(kVolumeto)) {
+		data.byte(kVolumecount) += 64;
+		// Only modify the volume every 256/64 = 4th time around
+		if (data.byte(kVolumecount) == 0)
+			data.byte(kVolume) += data.byte(kVolumedirection);
+	} else {
+		data.byte(kVolumedirection) = 0;
+	}
 }
 
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
