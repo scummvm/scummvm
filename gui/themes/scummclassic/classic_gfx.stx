@@ -176,7 +176,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y>400'>
+	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
@@ -210,7 +210,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y>400'>
+	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
@@ -309,7 +309,7 @@
 	</drawdata>
 
 	<!--popup_idle HERE  -->
-	<drawdata id = 'popup_idle' cache = 'false' resolution = 'y>400'>
+	<drawdata id = 'popup_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
@@ -379,7 +379,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y>400'>
+	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
@@ -447,7 +447,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y>400'>
+	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
