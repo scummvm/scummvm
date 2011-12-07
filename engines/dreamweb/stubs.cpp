@@ -3245,20 +3245,14 @@ void DreamGenContext::runIntroSeq() {
 	do {
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1) {
-			getRidOfTempText();
-			clearBeforeLoad();
-			return; // "earlyendrun"
-		}
+		if (data.byte(kLasthardkey) == 1)
+			break;
 
 		spriteUpdate();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1) {
-			getRidOfTempText();
-			clearBeforeLoad();
-			return; // "earlyendrun"
-		}
+		if (data.byte(kLasthardkey) == 1)
+			break;
 
 		delEverything();
 		printSprites();
@@ -3267,23 +3261,23 @@ void DreamGenContext::runIntroSeq() {
 		useTimedText();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1) {
-			getRidOfTempText();
-			clearBeforeLoad();
-			return; // "earlyendrun"
-		}
+		if (data.byte(kLasthardkey) == 1)
+			break;
 
 		dumpMap();
 		dumpTimedText();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1) {
-			getRidOfTempText();
-			clearBeforeLoad();
-			return; // "earlyendrun"
-		}
+		if (data.byte(kLasthardkey) == 1)
+			break;
 
-		} while (data.byte(kGetback) != 1);
+	} while (data.byte(kGetback) != 1);
+
+
+	if (data.byte(kLasthardkey) == 1) {
+		getRidOfTempText();
+		clearBeforeLoad();
+	}
 
 	// These were not called in this program arc
 	// in the original code.. Bug?
