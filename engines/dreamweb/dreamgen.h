@@ -620,7 +620,6 @@ public:
 	void runIntroSeq();
 	void advisor();
 	void allPalette();
-	void attendant();
 	void cantDrop();
 	void copper();
 	void drinker();
@@ -735,7 +734,6 @@ public:
 	void monkSpeaking();
 	void clearRest();
 	void madmanRun();
-	void keeper();
 	void afterNewRoom();
 	void getExAd();
 	void closeFile();

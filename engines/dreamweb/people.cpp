@@ -36,8 +36,8 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::heavy, NULL,
 	NULL, &DreamGenContext::drinker,
 	&DreamGenContext::bartender, NULL,
-	NULL, &DreamGenContext::attendant,
-	&DreamGenContext::keeper, &DreamGenContext::candles1,
+	NULL, NULL,
+	NULL, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, NULL,
 	&DreamGenContext::copper, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
@@ -68,8 +68,8 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::heavy*/NULL, &DreamGenContext::manAsleep /*manAsleep2*/,
 	&DreamGenContext::genericPerson /*manSatStill*/, /*&DreamGenContext::drinker*/NULL,
 	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::genericPerson /*otherSmoker*/,
-	&DreamGenContext::genericPerson /*tattooMan*/, /*&DreamGenContext::attendant*/NULL,
-	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
+	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
+	&DreamGenContext::keeper, /*&DreamGenContext::candles1*/NULL,
 	/*&DreamGenContext::smallcandle*/NULL, &DreamGenContext::security,
 	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
@@ -344,6 +344,29 @@ void DreamGenContext::manAsleep(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
+void DreamGenContext::attendant(ReelRoutine &routine) {
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+	if (routine.b7 & 128)
+		data.byte(kTalkedtoattendant) = 1;
+}
+
+void DreamGenContext::keeper(ReelRoutine &routine) {
+	if (data.byte(kKeeperflag) != 0) {
+		// Not waiting
+		addToPeopleList(&routine);
+		showGameReel(&routine);
+		return;
+	}
+
+	if (data.word(kReeltowatch) < 190)
+		return; // waiting
+
+	data.byte(kKeeperflag)++;
+
+	if (routine.b7 & 127 != data.byte(kDreamnumber))
+		routine.b7 = data.byte(kDreamnumber);
+}
 
 void DreamGenContext::drunk(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))

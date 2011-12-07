@@ -93,17 +93,6 @@ gotrecep:
 	data.byte(kTalkedtorecep) = 1;
 }
 
-void DreamGenContext::attendant() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
-	al = es.byte(bx+7);
-	_and(al, 128);
-	if (flags.z())
-		return /* (nottalked) */;
-	data.byte(kTalkedtoattendant) = 1;
-}
-
 void DreamGenContext::louisChair() {
 	STACK_CHECK;
 	_cmp(data.byte(kRockstardead), 0);
@@ -678,28 +667,6 @@ notboss:
 	if (flags.z())
 		return /* (nottalkedboss) */;
 	data.byte(kTalkedtoboss) = 1;
-}
-
-void DreamGenContext::keeper() {
-	STACK_CHECK;
-	_cmp(data.byte(kKeeperflag), 0);
-	if (!flags.z())
-		goto notwaiting;
-	_cmp(data.word(kReeltowatch), 190);
-	if (flags.c())
-		return /* (waiting) */;
-	_inc(data.byte(kKeeperflag));
-	ah = es.byte(bx+7);
-	_and(ah, 127);
-	_cmp(ah, data.byte(kDreamnumber));
-	if (flags.z())
-		return /* (notdiff) */;
-	al = data.byte(kDreamnumber);
-	es.byte(bx+7) = al;
-	return;
-notwaiting:
-	addToPeopleList();
-	showGameReel();
 }
 
 void DreamGenContext::candles1() {

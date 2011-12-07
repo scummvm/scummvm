@@ -456,6 +456,8 @@
 	void carParkDrip(ReelRoutine &routine);
 	void foghornSound(ReelRoutine &routine);
 	void train(ReelRoutine &routine);
+	void attendant(ReelRoutine &routine);
+	void keeper(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();
