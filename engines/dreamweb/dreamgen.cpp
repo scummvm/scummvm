@@ -136,15 +136,6 @@ notlouisanim:
 	addToPeopleList();
 }
 
-void DreamGenContext::manAsleep2() {
-	STACK_CHECK;
-	al = es.byte(bx+7);
-	_and(al, 127);
-	es.byte(bx+7) = al;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::drinker() {
 	STACK_CHECK;
 	checkSpeed();

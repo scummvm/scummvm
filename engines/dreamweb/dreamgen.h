@@ -639,7 +639,6 @@ public:
 	void selectSlot();
 	void fadeUpMon();
 	void soundEnd();
-	void manAsleep2();
 	void introMagic2();
 	void introMagic3();
 	void showDiaryPage();

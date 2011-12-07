@@ -405,6 +405,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'makeworn',
 	'malefan',
 	'manasleep',
+	'manasleep2',
 	'mansatstill',
 	'maptopanel',
 	'mode640x480',
