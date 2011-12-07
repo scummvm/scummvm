@@ -37,14 +37,14 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::drinker,
 	&DreamGenContext::bartender, NULL,
 	NULL, NULL,
-	NULL, &DreamGenContext::candles1,
-	&DreamGenContext::smallCandle, NULL,
+	NULL, NULL,
+	NULL, NULL,
 	&DreamGenContext::copper, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
 	NULL, NULL,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
 	NULL, NULL,
-	NULL, &DreamGenContext::candles2,
+	NULL, NULL,
 	NULL, NULL,
 	&DreamGenContext::introMonks1, NULL,
 	&DreamGenContext::introMonks2, NULL,
@@ -69,14 +69,14 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::genericPerson /*manSatStill*/, /*&DreamGenContext::drinker*/NULL,
 	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::genericPerson /*otherSmoker*/,
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
-	&DreamGenContext::keeper, /*&DreamGenContext::candles1*/NULL,
-	/*&DreamGenContext::smallcandle*/NULL, &DreamGenContext::security,
+	&DreamGenContext::keeper, &DreamGenContext::candles1,
+	&DreamGenContext::smallCandle, &DreamGenContext::security,
 	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
-	&DreamGenContext::introMagic2, /*&DreamGenContext::candles2*/NULL,
+	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
 	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
 	/*&DreamGenContext::intromonks2*/NULL, &DreamGenContext::handClap,
@@ -417,6 +417,36 @@ void DreamGenContext::introMagic3(ReelRoutine &routine) {
 	}
 	showGameReel(&routine);
 	routine.mapX = data.byte(kMapx);
+}
+
+void DreamGenContext::candles1(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 44)
+			nextReelPointer = 39;
+		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
+}
+
+void DreamGenContext::candles2(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 238)
+			nextReelPointer = 233;
+		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
+}
+
+void DreamGenContext::smallCandle(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 37)
+			nextReelPointer = 25;
+		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
 }
 
 void DreamGenContext::introMusic(ReelRoutine &routine) {

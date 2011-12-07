@@ -686,8 +686,6 @@ public:
 	void openOb();
 	void drawItAll();
 	void useStereo();
-	void candles2();
-	void candles1();
 	void showOpBox();
 	void doFade();
 	void dumpCurrent();
@@ -701,7 +699,6 @@ public:
 	void louisChair();
 	void locationPic();
 	void triggerMessage();
-	void smallCandle();
 	void swapWithOpen();
 	void dreamweb();
 	void dropError();

@@ -669,57 +669,6 @@ notboss:
 	data.byte(kTalkedtoboss) = 1;
 }
 
-void DreamGenContext::candles1() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto candle1;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 44);
-	if (!flags.z())
-		goto notendcandle1;
-	ax = 39;
-notendcandle1:
-	es.word(bx+3) = ax;
-candle1:
-	showGameReel();
-}
-
-void DreamGenContext::smallCandle() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto smallcandlef;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 37);
-	if (!flags.z())
-		goto notendsmallcandle;
-	ax = 25;
-notendsmallcandle:
-	es.word(bx+3) = ax;
-smallcandlef:
-	showGameReel();
-}
-
-void DreamGenContext::candles2() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto candles2fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 238);
-	if (!flags.z())
-		goto gotcandles2;
-	ax = 233;
-gotcandles2:
-	es.word(bx+3) = ax;
-candles2fin:
-	showGameReel();
-}
-
 void DreamGenContext::introMonks1() {
 	STACK_CHECK;
 	checkSpeed();
