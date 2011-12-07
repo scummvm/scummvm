@@ -29,6 +29,7 @@
 	void switchRyanOn();
 	void switchRyanOff();
 	uint16 allocateMem(uint16 paragraphs);
+	void deallocateMem();
 	void deallocateMem(uint16 segment);
 	uint8 *workspace();
 	uint8 *textUnder();

@@ -224,6 +224,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'credits',
 	'crosshair',
 	'dealwithspecial',
+	'deallocatemem',
 	'delchar',
 	'delcurs',
 	'deletetaken',
