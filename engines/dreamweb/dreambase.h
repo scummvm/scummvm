@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#include "dreamweb/runtime.h"
+#include "dreamweb/segment.h"
 
 namespace DreamWeb {
 	class DreamWebEngine;
@@ -43,21 +43,12 @@ namespace DreamGen {
  * together with class Context. When that happens, we can probably merge
  * DreamBase into DreamWebEngine.
  */
-class DreamBase {
+class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
 public:
-	enum { kDefaultDataSegment = 0x1000 };
-
-	SegmentPtr _realData;	///< the primary data segment, points to a huge blob of binary data
-	SegmentRef data;	///< fake segment register always pointing to data segment
-
-	DreamBase(DreamWeb::DreamWebEngine *en) :
-		engine(en),
-		_realData(new Segment()),
-		data(kDefaultDataSegment, _realData) {
-	}
+	DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) { }
 
 public:
 	// from pathfind.cpp
