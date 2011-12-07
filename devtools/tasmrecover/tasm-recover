@@ -493,6 +493,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'plotreel',
 	'powerlightoff',
 	'powerlighton',
+	'priest',
+	'priesttext',
 	'printasprite',
 	'printboth',
 	'printchar',

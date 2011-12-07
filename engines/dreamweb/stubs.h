@@ -452,6 +452,8 @@
 	void alleyBarkSound(ReelRoutine &routine);
 	void louisChair(ReelRoutine &routine);
 	void bossMan(ReelRoutine &routine);
+	void priest(ReelRoutine &routine);
+	void priestText(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();

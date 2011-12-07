@@ -49,7 +49,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::introMonks1, NULL,
 	&DreamGenContext::introMonks2, NULL,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
-	&DreamGenContext::priest, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -81,7 +81,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
 	/*&DreamGenContext::intromonks2*/NULL, &DreamGenContext::handClap,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
-	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
+	&DreamGenContext::priest, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
 	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
@@ -594,7 +594,6 @@ void DreamGenContext::louisChair(ReelRoutine &routine) {
 }
 
 void DreamGenContext::bossMan(ReelRoutine &routine) {
-	checkSpeed();
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
@@ -618,6 +617,36 @@ void DreamGenContext::bossMan(ReelRoutine &routine) {
 
 	if (routine.b7 & 128)
 		data.byte(kTalkedtoboss) = 1;
+}
+
+void DreamGenContext::priest(ReelRoutine &routine) {
+	if (routine.reelPointer() == 8)
+		return; // priestspoken
+
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
+
+	if (checkSpeed(routine)) {
+		routine.incReelPointer();
+		push(es);
+		push(bx);
+		priestText(routine);
+		bx = pop();
+		es = pop();
+	}
+}
+
+void DreamGenContext::priestText(ReelRoutine &routine) {
+	uint16 reel = routine.reelPointer();
+	if (reel < 2 || reel >= 7 || (reel & 1))
+		return; // nopriesttext
+
+	al = ((reel & 0xFF) >> 1) + 50;
+	bl = 72;
+	bh = 80;
+	cx = 54;
+	dx = 1;
+	setupTimedUse();
 }
 
 } // End of namespace DreamGen

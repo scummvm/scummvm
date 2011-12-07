@@ -641,7 +641,6 @@ public:
 	void soldier1();
 	void getUnderCentre();
 	void showKeys();
-	void priest();
 	void nextColon();
 	void hangOnPQ();
 	void findOpenPos();
@@ -708,7 +707,6 @@ public:
 	void initialMonCols();
 	void checkForShake();
 	void useButtonA();
-	void priestText();
 	void execCommand();
 	void updateSymbolBot();
 	void findPuzText();

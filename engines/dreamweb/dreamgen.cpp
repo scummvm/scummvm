@@ -818,46 +818,6 @@ gotnext:
 	fadeScreenUpHalf();
 }
 
-void DreamGenContext::priest() {
-	STACK_CHECK;
-	_cmp(es.word(bx+3), 8);
-	if (flags.z())
-		return /* (priestspoken) */;
-	data.byte(kPointermode) = 0;
-	data.word(kWatchingtime) = 2;
-	checkSpeed();
-	if (!flags.z())
-		return /* (priestwait) */;
-	_inc(es.word(bx+3));
-	push(es);
-	push(bx);
-	priestText();
-	bx = pop();
-	es = pop();
-}
-
-void DreamGenContext::priestText() {
-	STACK_CHECK;
-	_cmp(es.word(bx+3), 2);
-	if (flags.c())
-		return /* (nopriesttext) */;
-	_cmp(es.word(bx+3), 7);
-	if (!flags.c())
-		return /* (nopriesttext) */;
-	al = es.byte(bx+3);
-	_and(al, 1);
-	if (!flags.z())
-		return /* (nopriesttext) */;
-	al = es.byte(bx+3);
-	_shr(al, 1);
-	_add(al, 50);
-	bl = 72;
-	bh = 80;
-	cx = 54;
-	dx = 1;
-	setupTimedUse();
-}
-
 void DreamGenContext::advisor() {
 	STACK_CHECK;
 	checkSpeed();
