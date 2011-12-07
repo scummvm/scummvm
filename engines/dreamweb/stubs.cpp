@@ -736,7 +736,7 @@ void DreamGenContext::switchRyanOff() {
 }
 
 Common::String DreamGenContext::getFilename(Context &context) {
-	const char *name = (const char *)context.cs.ptr(context.dx, 0);
+	const char *name = (const char *)context.data.ptr(context.dx, 0);
 	return Common::String(name);
 }
 
@@ -770,7 +770,7 @@ void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBy
 }
 
 void DreamGenContext::loadIntoTemp() {
-	loadIntoTemp((const char *)cs.ptr(dx, 0));
+	loadIntoTemp((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadIntoTemp(const char *fileName) {
@@ -786,7 +786,7 @@ void DreamGenContext::loadIntoTemp3(const char *fileName) {
 }
 
 void DreamGenContext::loadTempCharset() {
-	loadTempCharset((const char *)cs.ptr(dx, 0));
+	loadTempCharset((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadTempCharset(const char *fileName) {
@@ -1427,7 +1427,7 @@ const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 }
 
 void DreamGenContext::copyName() {
-	copyName(ah, al, cs.ptr(di, 0));
+	copyName(ah, al, data.ptr(di, 0));
 }
 
 void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
@@ -2606,7 +2606,7 @@ void DreamGenContext::getRidOfAll() {
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
-	cs.word(kHandle) = 1; //only one handle
+	data.word(kHandle) = 1; //only one handle
 	flags._c = false;
 
 	FileHeader header;
@@ -2659,7 +2659,7 @@ void DreamGenContext::restoreReels() {
 	const Room &room = g_roomData[data.byte(kReallocation)];
 
 	engine->openFile(room.name);
-	cs.word(kHandle) = 1; //only one handle
+	data.word(kHandle) = 1; //only one handle
 	flags._c = false;
 
 	FileHeader header;
@@ -2903,7 +2903,7 @@ void DreamGenContext::loadTravelText() {
 }
 
 void DreamGenContext::loadTempText() {
-	loadTempText((const char *)cs.ptr(dx, 0));
+	loadTempText((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadTempText(const char *fileName) {

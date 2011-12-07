@@ -219,11 +219,11 @@ void DreamGenContext::saveGame() {
 }
 
 void DreamGenContext::namesToOld() {
-	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), cs.ptr(kSavenames, 0), 17*4);
+	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), data.ptr(kSavenames, 0), 17*4);
 }
 
 void DreamGenContext::oldToNames() {
-	memcpy(cs.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
+	memcpy(data.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
 }
 
 void DreamGenContext::saveLoad() {
@@ -377,7 +377,7 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	engine->readFromSaveFile((uint8 *)&g_madeUpRoomDat, sizeof(Room));
 	engine->readFromSaveFile(data.ptr(kRoomscango, 16), 16);
 
-	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
+	engine->readFromSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 
 	closeFile();
 }
