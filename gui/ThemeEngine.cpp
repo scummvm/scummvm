@@ -972,7 +972,7 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	r2.left += 1;
 	r2.right -= 1;
 	r2.top += sliderY;
-	r2.bottom = r2.top + sliderHeight - 1;
+	r2.bottom = r2.top + sliderHeight;
 
 	r2.top += r.width() / 5;
 	r2.bottom -= r.width() / 5;
