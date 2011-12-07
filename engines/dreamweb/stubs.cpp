@@ -473,9 +473,12 @@ void DreamGenContext::dreamweb() {
 
 	seeCommandTail();
 	// soundStartup used to be done here...
-	setKeyboardInt();
+	// setKeyboardInt used to be done here...
 	allocateBuffers();
-	setMouse();
+
+	// setMouse
+	data.word(kOldpointerx) = 0xffff;
+
 	fadeDOS();
 	getTime();
 	clearBuffers();
@@ -816,16 +819,6 @@ void DreamGenContext::quickQuit2() {
 	engine->quit();
 }
 
-void DreamGenContext::keyboardRead() {
-	::error("keyboardread"); //this keyboard int handler, must never be called
-}
-
-void DreamGenContext::resetKeyboard() {
-}
-
-void DreamGenContext::setKeyboardInt() {
-}
-
 void DreamGenContext::closeFile() {
 	engine->closeFile();
 	data.byte(kHandle) = 0;
@@ -843,40 +836,6 @@ bool DreamGenContext::openForLoad(unsigned int slot) {
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
 	debug(1, "openForLoad(%s)", filename.c_str());
 	return engine->openSaveFileForReading(filename);
-}
-
-void DreamGenContext::openFileNoCheck() {
-	const char *name = (const char *)ds.ptr(dx, 13);
-	debug(1, "checkSaveFile(%s)", name);
-	bool ok = engine->openSaveFileForReading(name);
-	flags._c = !ok;
-}
-
-void DreamGenContext::openFileFromC() {
-	openFileNoCheck();
-}
-
-void DreamGenContext::createFile() {
-	::error("createfile");
-}
-
-void DreamGenContext::dontLoadSeg() {
-	ax = es.word(di);
-	_add(di, 2);
-	dx = ax;
-	cx = 0;
-	unsigned pos = engine->skipBytes(dx);
-	dx = pos >> 16;
-	ax = pos & 0xffff;
-	flags._c = false;
-}
-
-void DreamGenContext::mouseCall() {
-	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
-	cx = x;
-	dx = y;
-	bx = state;
 }
 
 uint8 *DreamGenContext::mapStore() {
@@ -897,10 +856,6 @@ uint16 DreamGenContext::readMouseState() {
 	data.word(kMousex) = x;
 	data.word(kMousey) = y;
 	return state;
-}
-
-void DreamGenContext::setMouse() {
-	data.word(kOldpointerx) = 0xffff;
 }
 
 void DreamGenContext::dumpTextLine() {
@@ -1058,22 +1013,6 @@ void DreamGenContext::loadSpeech() {
 	//warning("name = %s", name);
 	if (engine->loadSpeech(name))
 		data.byte(kSpeechloaded) = 1;
-}
-
-void DreamGenContext::saveFileRead() {
-	ax = engine->readFromSaveFile(ds.ptr(dx, cx), cx);
-}
-
-void DreamGenContext::loadSeg() {
-	ax = es.word(di);
-	di += 2;
-
-	uint16 dst_offset = dx;
-	uint16 size = ax;
-
-	debug(1, "loadseg(%04x:%u, %u)", (uint16)ds, dst_offset, size);
-	ax = engine->readFromFile(ds.ptr(dst_offset, size), size);
-	flags._c = false;
 }
 
 void DreamGenContext::DOSReturn() {

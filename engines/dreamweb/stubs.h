@@ -571,5 +571,11 @@
 	void dumpZoom();
 	void fadeDOS();
 	void selectLocation();
+	void vSync();
+	void showGroup();
+	void loadSpeech();
+	void closeFile();
+	void getTime();
+	void set16ColPalette();
 
 #endif
