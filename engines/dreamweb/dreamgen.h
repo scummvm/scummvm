@@ -647,7 +647,6 @@ public:
 	void findOpenPos();
 	void describeOb();
 	void deleteExFrame();
-	void bossMan();
 	void searchForSame();
 	void fadeFromWhite();
 	void rollEm();

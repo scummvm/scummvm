@@ -523,56 +523,6 @@ gotheavyframe:
 	addToPeopleList();
 }
 
-void DreamGenContext::bossMan() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto notboss;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 4);
-	if (flags.z())
-		goto firstdes;
-	_cmp(ax, 20);
-	if (flags.z())
-		goto secdes;
-	_cmp(ax, 41);
-	if (!flags.z())
-		goto gotallboss;
-	ax = 0;
-	_inc(data.byte(kGunpassflag));
-	es.byte(bx+7) = 10;
-	goto gotallboss;
-firstdes:
-	_cmp(data.byte(kGunpassflag), 1);
-	if (flags.z())
-		goto gotallboss;
-	push(ax);
-	randomNumber();
-	cl = al;
-	ax = pop();
-	_cmp(cl, 10);
-	if (flags.c())
-		goto gotallboss;
-	ax = 0;
-	goto gotallboss;
-secdes:
-	_cmp(data.byte(kGunpassflag), 1);
-	if (flags.z())
-		goto gotallboss;
-	ax = 0;
-gotallboss:
-	es.word(bx+3) = ax;
-notboss:
-	showGameReel();
-	addToPeopleList();
-	al = es.byte(bx+7);
-	_and(al, 128);
-	if (flags.z())
-		return /* (nottalkedboss) */;
-	data.byte(kTalkedtoboss) = 1;
-}
-
 void DreamGenContext::introMonks1() {
 	STACK_CHECK;
 	checkSpeed();
