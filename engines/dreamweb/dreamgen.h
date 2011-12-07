@@ -556,7 +556,6 @@ public:
 	void checkInput();
 	void putUnderCentre();
 	void checkObjectSize();
-	void deallocateMem();
 	void showGroup();
 	void watchReel();
 	void openFileFromC();
