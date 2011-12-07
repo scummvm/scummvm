@@ -31,10 +31,7 @@
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem();
 	void deallocateMem(uint16 segment);
-	uint8 *workspace();
 	uint8 *textUnder();
-	void allocateWork();
-	void clearWork();
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp();
@@ -49,13 +46,20 @@
 	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
-	void multiDump();
-	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
 	void workToScreen();
-	void workToScreenCPP();
 	uint8 *mapStore();
 	void multiGet();
-	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
+	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiGet(dst, x, y, width, height);
+	}
+	void multiPut();
+	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiPut(src, x, y, width, height);
+	}
+	void multiDump();
+	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
+		DreamBase::multiDump(x, y, width, height);
+	}
 	void printSprites();
 	void quickQuit();
 	void readOneBlock();
@@ -82,16 +86,17 @@
 	void oldToNames();
 	void namesToOld();
 	void loadPalFromIFF();
-	void fillSpace();
 	void startLoading(const Room &room);
 	Sprite *spriteTable();
 	void showFrame();
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
+	}
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
+	}
 	void printASprite(const Sprite *sprite);
 	void width160();
-	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
-	void multiPut();
 	void eraseOldObs();
 	void clearSprites();
 	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
@@ -102,7 +107,6 @@
 	void faceRightWay();
 	void walking(Sprite *sprite);
 	void autoSetWalk();
-	void checkDest(const RoomPaths *roomsPaths);
 	void aboutTurn(Sprite *sprite);
 	void backObject(Sprite *sprite);
 	void backObject();
@@ -129,7 +133,6 @@
 	void turnAnyPathOff();
 	RoomPaths *getRoomsPaths();
 	void makeBackOb(SetObject *objData);
-	void modifyChar();
 	void lockMon();
 	void cancelCh0();
 	void cancelCh1();
@@ -137,7 +140,6 @@
 	Reel *getReelStart();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
-	void crosshair();
 	void showRain();
 	void delTextLine();
 	void commandOnly();
@@ -154,7 +156,6 @@
 	void copyName(uint8 type, uint8 index, uint8 *dst);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
-	void showPanel();
 	void updatePeople();
 	void madman(ReelRoutine &routine);
 	void madmanText();
@@ -206,9 +207,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void delPointer();
-	void showBlink();
-	void dumpBlink();
-	void dumpPointer();
 	void showPointer();
 	void animPointer();
 	void checkCoords();
@@ -241,7 +239,6 @@
 	void makeWorn(DynObject *object);
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
-	void showRyanPage();
 	void findAllRyan();
 	void findAllRyan(uint8 *inv);
 	void fillRyan();
@@ -330,8 +327,6 @@
 	void playChannel1(uint8 index);
 	void showMainOps();
 	void showDiscOps();
-	void createPanel();
-	void createPanel2();
 	void findRoomInLoc();
 	void reelsOnScreen();
 	void reconstruct();
@@ -357,6 +352,7 @@
 	void openForSave(unsigned int slot);
 	bool openForLoad(unsigned int slot);
 	uint16 allocateAndLoad(unsigned int size);
+	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void loadRoomData(const Room &room, bool skipDat);
 	void restoreAll();
@@ -493,7 +489,6 @@
 	void bibleQuote();
 	void realCredits();
 	void intro();
-	Common::String getFilename(Context &context);
 	void fadeScreenUp();
 	void fadeScreenUps();
 	void fadeScreenUpHalf();
@@ -567,5 +562,6 @@
 	void dumpSymbol();
 	void dumpSymBox();
 	void dumpZoom();
+	void fadeDOS();
 
 #endif

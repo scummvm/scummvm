@@ -48,9 +48,6 @@ namespace DreamGen {
 const uint16 addr_backobject = 0xc170;
 const uint16 addr_mainman = 0xc138;
 
-// Output of Bresenham
-extern Common::Point g_lineData[200];
-
 // Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
 // into this, making it a ring buffer
 extern uint8 g_keyBuffer[16];
@@ -101,8 +98,6 @@ public:
 
 	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
 	void processEvents();
-	void setPalette();
-	void fadeDos();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
 	void cls();
 
@@ -185,6 +180,7 @@ private:
 	DreamGen::Frame *_currentCharset;
 
 	DreamGen::DreamGenContext _context;
+	DreamGen::DreamBase &_base;
 };
 
 } // End of namespace DreamWeb

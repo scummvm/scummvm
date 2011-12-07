@@ -96,8 +96,8 @@ void DreamGenContext::updatePeople() {
 	// The original callbacks are called with es:bx pointing to their reelRoutine entry.
 	// The new callbacks take a mutable ReelRoutine parameter.
 
-	es = cs;
-	ReelRoutine *r = (ReelRoutine *)cs.ptr(kReelroutines, 0);
+	es = data;
+	ReelRoutine *r = (ReelRoutine *)data.ptr(kReelroutines, 0);
 
 	for (int i = 0; r[i].reallocation != 255; ++i) {
 		bx = kReelroutines + 8*i;
@@ -196,7 +196,7 @@ void DreamGenContext::addToPeopleList() {
 }
 
 void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
-	uint16 routinePointer = (const uint8 *)routine - cs.ptr(0, 0);
+	uint16 routinePointer = (const uint8 *)routine - data.ptr(0, 0);
 
 	People *people = (People *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
 	people->setReelPointer(routine->reelPointer());

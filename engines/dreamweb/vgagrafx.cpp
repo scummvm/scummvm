@@ -27,15 +27,6 @@
 
 namespace DreamGen {
 
-uint8 *DreamGenContext::workspace() {
-	uint8 *result = getSegment(data.word(kWorkspace)).ptr(0, 0);
-	return result;
-}
-
-void DreamGenContext::allocateWork() {
-	data.word(kWorkspace) = allocateMem(0x1000);
-}
-
 void DreamGenContext::multiGet() {
 	multiGet(ds.ptr(si, 0), di, bx, cl, ch);
 	si += cl * ch;
@@ -43,7 +34,7 @@ void DreamGenContext::multiGet() {
 	cx = 0;
 }
 
-void DreamGenContext::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	const uint8 *src = workspace() + x + y * kScreenwidth;
@@ -66,7 +57,7 @@ void DreamGenContext::multiPut() {
 	cx = 0;
 }
 
-void DreamGenContext::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	uint8 *dst = workspace() + x + y * kScreenwidth;
@@ -82,12 +73,6 @@ void DreamGenContext::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, ui
 	}
 }
 
-void DreamGenContext::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
-	unsigned offset = x + y * kScreenwidth;
-	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
-	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
-}
-
 void DreamGenContext::multiDump() {
 	multiDump(di, bx, cl, ch);
 	unsigned offset = di + bx * kScreenwidth;
@@ -95,7 +80,13 @@ void DreamGenContext::multiDump() {
 	cx = 0;
 }
 
-void DreamGenContext::workToScreenCPP() {
+void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
+	unsigned offset = x + y * kScreenwidth;
+	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
+	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
+}
+
+void DreamBase::workToScreenCPP() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
 }
 
@@ -322,12 +313,12 @@ void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wid
 	}
 }
 
-void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 	uint8 width, height;
 	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
 }
 
-void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	const Frame *frame = frameData + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
@@ -352,8 +343,11 @@ void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint
 			y -= *height / 2;
 		}
 		if (effectsFlag & 64) { //diffDest
+			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
+			/*
 			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
+			*/
 		}
 		if (effectsFlag & 8) { //printList
 			/*
@@ -389,7 +383,7 @@ void DreamGenContext::showFrame() {
 	ch = height;
 }
 
-void DreamGenContext::clearWork() {
+void DreamBase::clearWork() {
 	memset(workspace(), 0, 320*200);
 }
 
@@ -479,17 +473,22 @@ void DreamGenContext::loadPalFromIFF() {
 	}
 }
 
-void DreamGenContext::createPanel() {
+void DreamBase::createPanel() {
 	showFrame(engine->icons2(), 0, 8, 0, 2);
 	showFrame(engine->icons2(), 160, 8, 0, 2);
 	showFrame(engine->icons2(), 0, 104, 0, 2);
 	showFrame(engine->icons2(), 160, 104, 0, 2);
 }
 
-void DreamGenContext::createPanel2() {
+void DreamBase::createPanel2() {
 	createPanel();
 	showFrame(engine->icons2(), 0, 0, 5, 2);
 	showFrame(engine->icons2(), 160, 0, 5, 2);
+}
+
+void DreamBase::showPanel() {
+	showFrame(engine->icons1(), 72, 0, 19, 0);
+	showFrame(engine->icons1(), 192, 0, 19, 0);
 }
 
 } // End of namespace DreamGen
