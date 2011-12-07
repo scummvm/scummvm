@@ -735,11 +735,6 @@ void DreamGenContext::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
-Common::String DreamGenContext::getFilename(Context &context) {
-	const char *name = (const char *)context.data.ptr(context.dx, 0);
-	return Common::String(name);
-}
-
 uint8 *DreamGenContext::textUnder() {
 	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
@@ -1134,10 +1129,6 @@ void DreamGenContext::eraseOldObs() {
 	}
 }
 
-void DreamGenContext::modifyChar() {
-	al = engine->modifyChar(al);
-}
-
 void DreamGenContext::lockMon() {
 	// Pressing space pauses text output in the monitor. We use the "hard"
 	// key because calling readkey() drains characters from the input
@@ -1253,10 +1244,6 @@ void DreamGenContext::startLoading(const Room &room) {
 		bx = pop();
 	}
 	findXYFromPath();
-}
-
-void DreamGenContext::fillSpace() {
-	memset(ds.ptr(dx, cx), al, cx);
 }
 
 void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {

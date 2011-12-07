@@ -81,7 +81,6 @@
 	void oldToNames();
 	void namesToOld();
 	void loadPalFromIFF();
-	void fillSpace();
 	void startLoading(const Room &room);
 	Sprite *spriteTable();
 	void showFrame();
@@ -128,7 +127,6 @@
 	void turnAnyPathOff();
 	RoomPaths *getRoomsPaths();
 	void makeBackOb(SetObject *objData);
-	void modifyChar();
 	void lockMon();
 	void cancelCh0();
 	void cancelCh1();
@@ -492,7 +490,6 @@
 	void bibleQuote();
 	void realCredits();
 	void intro();
-	Common::String getFilename(Context &context);
 	void fadeScreenUp();
 	void fadeScreenUps();
 	void fadeScreenUpHalf();
