@@ -70,6 +70,11 @@ public:
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 
 	// from stubs.cpp
+	void crosshair();
+	void showBlink();
+	void dumpBlink();
+	void dumpPointer();
+	void showRyanPage();
 	void volumeAdjust();
 
 	// from vgagrafx.cpp
@@ -89,6 +94,11 @@ public:
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void doShake();
 	void showPCX(const Common::String &name);
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void createPanel();
+	void createPanel2();
+	void showPanel();
 };
 
 

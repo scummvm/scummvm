@@ -1321,7 +1321,7 @@ void DreamGenContext::plotReel() {
 	es = pop();
 }
 
-void DreamGenContext::crosshair() {
+void DreamBase::crosshair() {
 	uint8 frame;
 	if ((data.byte(kCommandtype) != 3) && (data.byte(kCommandtype) < 10)) {
 		frame = 9;
@@ -1480,11 +1480,6 @@ void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
 
 void DreamGenContext::examineObText() {
 	commandWithOb(1, data.byte(kCommandtype), data.byte(kCommand));
-}
-
-void DreamGenContext::showPanel() {
-	showFrame(engine->icons1(), 72, 0, 19, 0);
-	showFrame(engine->icons1(), 192, 0, 19, 0);
 }
 
 void DreamGenContext::blockNameText() {
@@ -1750,7 +1745,7 @@ void DreamGenContext::delPointer() {
 	multiPut(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::showBlink() {
+void DreamBase::showBlink() {
 	if (data.byte(kManisoffscreen) == 1)
 		return;
 	++data.byte(kBlinkcount);
@@ -1771,7 +1766,7 @@ void DreamGenContext::showBlink() {
 	showFrame(engine->icons1(), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
-void DreamGenContext::dumpBlink() {
+void DreamBase::dumpBlink() {
 	if (data.byte(kShadeson) != 0)
 		return;
 	if (data.byte(kBlinkcount) != 0)
@@ -1781,7 +1776,7 @@ void DreamGenContext::dumpBlink() {
 	multiDump(44, 32, 16, 12);
 }
 
-void DreamGenContext::dumpPointer() {
+void DreamBase::dumpPointer() {
 	dumpBlink();
 	multiDump(data.word(kDelherex), data.word(kDelherey), data.byte(kDelxs), data.byte(kDelys));
 	if ((data.word(kOldpointerx) != data.word(kDelherex)) || (data.word(kOldpointery) != data.word(kDelherey)))
@@ -2062,7 +2057,7 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamGenContext::showRyanPage() {
+void DreamBase::showRyanPage() {
 	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
 	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }

@@ -88,8 +88,12 @@
 	void startLoading(const Room &room);
 	Sprite *spriteTable();
 	void showFrame();
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
+	}
+	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
+	}
 	void printASprite(const Sprite *sprite);
 	void width160();
 	void eraseOldObs();
@@ -135,7 +139,6 @@
 	Reel *getReelStart();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
-	void crosshair();
 	void showRain();
 	void delTextLine();
 	void commandOnly();
@@ -152,7 +155,6 @@
 	void copyName(uint8 type, uint8 index, uint8 *dst);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
-	void showPanel();
 	void updatePeople();
 	void madman(ReelRoutine &routine);
 	void madmanText();
@@ -204,9 +206,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void delPointer();
-	void showBlink();
-	void dumpBlink();
-	void dumpPointer();
 	void showPointer();
 	void animPointer();
 	void checkCoords();
@@ -239,7 +238,6 @@
 	void makeWorn(DynObject *object);
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
-	void showRyanPage();
 	void findAllRyan();
 	void findAllRyan(uint8 *inv);
 	void fillRyan();
@@ -328,8 +326,6 @@
 	void playChannel1(uint8 index);
 	void showMainOps();
 	void showDiscOps();
-	void createPanel();
-	void createPanel2();
 	void findRoomInLoc();
 	void reelsOnScreen();
 	void reconstruct();

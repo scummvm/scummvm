@@ -313,12 +313,12 @@ void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wid
 	}
 }
 
-void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 	uint8 width, height;
 	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
 }
 
-void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	const Frame *frame = frameData + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
@@ -343,8 +343,11 @@ void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint
 			y -= *height / 2;
 		}
 		if (effectsFlag & 64) { //diffDest
+			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
+			/*
 			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
+			*/
 		}
 		if (effectsFlag & 8) { //printList
 			/*
@@ -470,17 +473,22 @@ void DreamGenContext::loadPalFromIFF() {
 	}
 }
 
-void DreamGenContext::createPanel() {
+void DreamBase::createPanel() {
 	showFrame(engine->icons2(), 0, 8, 0, 2);
 	showFrame(engine->icons2(), 160, 8, 0, 2);
 	showFrame(engine->icons2(), 0, 104, 0, 2);
 	showFrame(engine->icons2(), 160, 104, 0, 2);
 }
 
-void DreamGenContext::createPanel2() {
+void DreamBase::createPanel2() {
 	createPanel();
 	showFrame(engine->icons2(), 0, 0, 5, 2);
 	showFrame(engine->icons2(), 160, 0, 5, 2);
+}
+
+void DreamBase::showPanel() {
+	showFrame(engine->icons1(), 72, 0, 19, 0);
+	showFrame(engine->icons1(), 192, 0, 19, 0);
 }
 
 } // End of namespace DreamGen
