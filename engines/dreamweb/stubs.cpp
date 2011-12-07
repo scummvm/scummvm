@@ -1005,16 +1005,6 @@ void DreamGenContext::deallocateMem(uint16 segment) {
 	}
 }
 
-void DreamGenContext::loadSpeech() {
-	cancelCh1();
-	data.byte(kSpeechloaded) = 0;
-	createName();
-	const char *name = (const char *)data.ptr(di, 13);
-	//warning("name = %s", name);
-	if (engine->loadSpeech(name))
-		data.byte(kSpeechloaded) = 1;
-}
-
 void DreamGenContext::DOSReturn() {
 	if (data.byte(kCommandtype) != 250) {
 		data.byte(kCommandtype) = 250;
@@ -1095,19 +1085,6 @@ void DreamGenContext::lockMon() {
 		data.byte(kLasthardkey) = 0;
 		lockLightOff();
 	}
-}
-
-void DreamGenContext::cancelCh0() {
-	data.byte(kCh0repeat) = 0;
-	data.word(kCh0blockstocopy) = 0;
-	data.byte(kCh0playing) = 255;
-	engine->stopSound(0);
-}
-
-void DreamGenContext::cancelCh1() {
-	data.word(kCh1blockstocopy) = 0;
-	data.byte(kCh1playing) = 255;
-	engine->stopSound(1);
 }
 
 void DreamGenContext::makeBackOb(SetObject *objData) {
@@ -2313,24 +2290,6 @@ void DreamGenContext::loadRoom() {
 	getDimension();
 }
 
-void DreamGenContext::loadRoomsSample() {
-	uint8 sample = data.byte(kRoomssample);
-
-	if (sample == 255 || data.byte(kCurrentsample) == sample)
-		return; // loaded already
-
-	assert(sample < 100);
-	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
-
-	uint8 ch0 = data.byte(kCh0playing);
-	if (ch0 >= 12 && ch0 != 255)
-		cancelCh0();
-	uint8 ch1 = data.byte(kCh1playing);
-	if (ch1 >= 12)
-		cancelCh1();
-	engine->loadSounds(1, sampleName.c_str());
-}
-
 void DreamGenContext::readSetData() {
 	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
 
@@ -2362,69 +2321,6 @@ Frame * DreamGenContext::tempGraphics2() {
 
 Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
-}
-
-void DreamBase::volumeAdjust() {
-	if (data.byte(kVolumedirection) == 0)
-		return;
-	if (data.byte(kVolume) != data.byte(kVolumeto)) {
-		data.byte(kVolumecount) += 64;
-		// Only modify the volume every 256/64 = 4th time around
-		if (data.byte(kVolumecount) == 0)
-			data.byte(kVolume) += data.byte(kVolumedirection);
-	} else {
-		data.byte(kVolumedirection) = 0;
-	}
-}
-
-void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
-	if (data.byte(kSoundint) == 255)
-		return;
-
-	data.byte(kCh0playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
-		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
-
-	data.byte(kCh0repeat) = repeat;
-	data.word(kCh0emmpage) = soundBank[index].emmPage;
-	data.word(kCh0offset) = soundBank[index].offset();
-	data.word(kCh0blockstocopy) = soundBank[index].blockCount();
-	if (repeat) {
-		data.word(kCh0oldemmpage) = data.word(kCh0emmpage);
-		data.word(kCh0oldoffset) = data.word(kCh0offset);
-		data.word(kCh0oldblockstocopy) = data.word(kCh0blockstocopy);
-	}
-}
-
-void DreamGenContext::playChannel0() {
-	playChannel0(al, ah);
-}
-
-void DreamGenContext::playChannel1(uint8 index) {
-	if (data.byte(kSoundint) == 255)
-		return;
-	if (data.byte(kCh1playing) == 7)
-		return;
-
-	data.byte(kCh1playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
-		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
-
-	data.word(kCh1emmpage) = soundBank[index].emmPage;
-	data.word(kCh1offset) = soundBank[index].offset();
-	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
-}
-
-void DreamGenContext::playChannel1() {
-	playChannel1(al);
 }
 
 void DreamGenContext::findRoomInLoc() {
