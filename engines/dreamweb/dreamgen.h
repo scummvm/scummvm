@@ -576,7 +576,6 @@ public:
 	void keyboardRead();
 	void getOpenedSize();
 	void resetKeyboard();
-	void soundStartup();
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void mouseCall();
@@ -599,7 +598,6 @@ public:
 	void runTap();
 	void talk();
 	void dumpDiaryKeys();
-	void disableSoundInt();
 	void checkForExit();
 	void lookInInterface();
 	void inToInv();
@@ -640,8 +638,8 @@ public:
 	void useCooker();
 	void receptionist();
 	void selectSlot();
+	void openFileNoCheck();
 	void fadeUpMon();
-	void soundEnd();
 	void clearChanges();
 	void introMagic2();
 	void introMagic3();
@@ -657,7 +655,6 @@ public:
 	void diaryKeyN();
 	void set16ColPalette();
 	void purgeAnItem();
-	void enableSoundInt();
 	void purgeALocation();
 	void notHeldError();
 	void getSetAd();
@@ -675,15 +672,13 @@ public:
 	void bossMan();
 	void searchForSame();
 	void fadeFromWhite();
-	void checkSoundInt();
 	void rollEm();
 	void poolGuard();
 	void lookAtPlace();
 	void useAxe();
 	void findAllOpen();
-	void quitSymbol();
 	void readFromFile();
-	void interruptTest();
+	void quitSymbol();
 	void findSetObject();
 	void useDiary();
 	void deleteExObject();
@@ -715,7 +710,6 @@ public:
 	void swapWithOpen();
 	void dreamweb();
 	void dropError();
-	void openFileNoCheck();
 	void checkInside();
 	void findPathOfPoint();
 	void getBack1();

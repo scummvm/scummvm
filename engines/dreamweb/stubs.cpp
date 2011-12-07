@@ -472,7 +472,7 @@ void DreamGenContext::dreamweb() {
 	}
 
 	seeCommandTail();
-	soundStartup();
+	// soundStartup used to be done here...
 	setKeyboardInt();
 	allocateBuffers();
 	setMouse();
@@ -1061,15 +1061,6 @@ void DreamGenContext::deallocateMem(uint16 segment) {
 		if (seg == segment)
 			memset(ptr + i, 0xff, 32);
 	}
-}
-
-void DreamGenContext::soundStartup() {}
-void DreamGenContext::soundEnd() {}
-void DreamGenContext::interruptTest() {}
-void DreamGenContext::disableSoundInt() {}
-void DreamGenContext::enableSoundInt() {}
-void DreamGenContext::checkSoundInt() {
-	data.byte(kTestresult) = 1;
 }
 
 void DreamGenContext::loadSpeech() {
