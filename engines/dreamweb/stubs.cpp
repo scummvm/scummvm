@@ -1033,10 +1033,6 @@ uint16 DreamGenContext::allocateMem(uint16 paragraphs) {
 	return result;
 }
 
-void DreamGenContext::deallocateMem() {
-	deallocateMem((uint16)es);
-}
-
 void DreamGenContext::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
@@ -1796,19 +1792,6 @@ void DreamGenContext::checkCoords() {
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(quitList);
-		break;
-	}
-	case offset_destlist: {
-		RectWithCallback destList[] = {
-			{ 238,258,4,44,&DreamGenContext::nextDest },
-			{ 104,124,4,44,&DreamGenContext::lastDest },
-			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
-			{ 104,216,138,192,&DreamGenContext::destSelect },
-			{ 273,320,157,198,&DreamGenContext::getBack1 },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(destList);
 		break;
 	}
 	case offset_diarylist: {
@@ -3839,6 +3822,67 @@ void DreamGenContext::isSetObOnMap() {
 void DreamGenContext::dumpZoom() {
 	if (data.byte(kZoomon) == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
+void DreamGenContext::selectLocation() {
+	data.byte(kInmaparea) = 0;
+	clearBeforeLoad();
+	data.byte(kGetback) = 0;
+	data.byte(kPointerframe) = 22;
+	readCityPic();
+	showCity();
+	getRidOfTemp();
+	readDestIcon();
+	loadTravelText();
+	showPanel();
+	showMan();
+	showArrows();
+	showExit();
+	locationPic();
+	underTextLine();
+	data.byte(kCommandtype) = 255;
+	readMouse();
+	data.byte(kPointerframe) = 0;
+	showPointer();
+	workToScreen();
+	playChannel0(9, 255);
+	data.byte(kNewlocation) = 255;
+
+	while (data.byte(kNewlocation) == 255) {
+		if (quitRequested())
+			break;
+
+		delPointer();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+
+		if (data.byte(kGetback) == 1)
+			break;
+
+		RectWithCallback destList[] = {
+			{ 238,258,4,44,&DreamGenContext::nextDest },
+			{ 104,124,4,44,&DreamGenContext::lastDest },
+			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
+			{ 104,216,138,192,&DreamGenContext::destSelect },
+			{ 273,320,157,198,&DreamGenContext::getBack1 },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkCoords(destList);
+	}
+
+	if (quitRequested() || data.byte(kGetback) == 1 || data.byte(kNewlocation) == data.byte(kLocation)) {
+		data.byte(kNewlocation) = data.byte(kReallocation);
+		data.byte(kGetback) = 0;
+	}
+
+	getRidOfTemp();
+	getRidOfTemp2();
+	getRidOfTemp3();
+	deallocateMem(data.word(kTraveltext));
 }
 
 } // End of namespace DreamGen

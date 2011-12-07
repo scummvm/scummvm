@@ -49,6 +49,8 @@ p = parser(skip_binary_data = [
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
+	# newplace.asm
+	'destlist',
 	# object.asm
 	'invlist1', 'invlist1continued',
 	'examlist',
@@ -529,6 +531,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'scrollmonitor',
 	'security',
 	'seecommandtail',
+	'selectlocation',
 	'selectslot2',
 	'setallchanges',
 	'setbotleft',

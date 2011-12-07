@@ -29,7 +29,6 @@
 	void switchRyanOn();
 	void switchRyanOff();
 	uint16 allocateMem(uint16 paragraphs);
-	void deallocateMem();
 	void deallocateMem(uint16 segment);
 	uint8 *textUnder();
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
@@ -565,5 +564,6 @@
 	void dumpSymBox();
 	void dumpZoom();
 	void fadeDOS();
+	void selectLocation();
 
 #endif
