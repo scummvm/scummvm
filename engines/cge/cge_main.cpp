@@ -279,6 +279,10 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	sceneDown();
 	_hero->park();
 	resetGame();
+	
+	// If music is playing, kill it.
+	if (_music)
+		_midiPlayer->killMidi();
 
 	// Load the game
 	loadGame(slot, NULL);
