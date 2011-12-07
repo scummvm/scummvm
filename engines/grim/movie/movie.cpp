@@ -57,20 +57,21 @@ MoviePlayer::~MoviePlayer() {
 }
 
 void MoviePlayer::pause(bool p) {
+	Common::StackLock lock(_frameMutex);
 	_videoPause = p;
 	_videoDecoder->pauseVideo(p);
 }
 
 void MoviePlayer::stop() {
+	Common::StackLock lock(_frameMutex);
 	deinit();
 	g_grim->setMode(GrimEngine::NormalMode);
 }
 
 void MoviePlayer::timerCallback(void *) {
-	g_movie->_frameMutex.lock();
+	Common::StackLock lock(g_movie->_frameMutex);
 	if (g_movie->prepareFrame())
 		g_movie->handleFrame();
-	g_movie->_frameMutex.unlock();
 }
 
 bool MoviePlayer::prepareFrame() {
@@ -99,11 +100,10 @@ bool MoviePlayer::prepareFrame() {
 }
 
 Graphics::Surface *MoviePlayer::getDstSurface() {
-	_frameMutex.lock();
+	Common::StackLock lock(_frameMutex);
 	if (_updateNeeded && _internalSurface) {
 		_externalSurface->copyFrom(*_internalSurface);
 	}
-	_frameMutex.unlock();
 
 	return _externalSurface;
 }
@@ -116,7 +116,6 @@ void MoviePlayer::init() {
 }
 
 void MoviePlayer::deinit() {
-	_frameMutex.unlock();
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
 	if (_videoDecoder)
@@ -132,6 +131,7 @@ void MoviePlayer::deinit() {
 }
 
 bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
+	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;
 	_y = y;
