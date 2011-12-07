@@ -591,7 +591,6 @@ public:
 	void endGame();
 	void usePipe();
 	void getUnderZoom();
-	void rollEndCredits2();
 	void reminders();
 	void runTap();
 	void talk();
@@ -691,7 +690,7 @@ public:
 	void dumpCurrent();
 	void showDiaryKeys();
 	void dontLoadSeg();
-	void allocateMem();
+	void rollEndCredits2();
 	void useOpened();
 	void fillOpen();
 	void signOn();

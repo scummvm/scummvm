@@ -153,6 +153,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'aide',
 	'allocatebuffers',
 	'allocateload',
+	'allocatemem',
 	'allocatework',
 	'allpointer',
 	'animpointer',

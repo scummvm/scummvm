@@ -1019,10 +1019,6 @@ void DreamGenContext::getTime() {
 	data.byte(kHourcount) = ch;
 }
 
-void DreamGenContext::allocateMem() {
-	ax = allocateMem(bx);
-}
-
 uint16 DreamGenContext::allocateMem(uint16 paragraphs) {
 	uint size = (paragraphs + 2) * 16;
 	debug(1, "allocate mem, %u bytes", size);
