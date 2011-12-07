@@ -2006,32 +2006,6 @@ pickupexob:
 	workToScreenM();
 }
 
-void DreamGenContext::examineInventory() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 249);
-	if (flags.z())
-		goto alreadyexinv;
-	data.byte(kCommandtype) = 249;
-	al = 32;
-	commandOnly();
-alreadyexinv:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (!flags.z())
-		goto doexinv;
-	return;
-doexinv:
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	examIcon();
-	data.byte(kPickup) = 0;
-	data.byte(kInvopen) = 2;
-	openInv();
-	workToScreenM();
-}
-
 void DreamGenContext::reExFromInv() {
 	STACK_CHECK;
 	findInvPos();

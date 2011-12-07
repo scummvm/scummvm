@@ -3872,4 +3872,25 @@ void DreamGenContext::selectLocation() {
 	deallocateMem(data.word(kTraveltext));
 }
 
+
+void DreamGenContext::examineInventory() {
+	if (data.byte(kCommandtype) != 249) {
+		data.byte(kCommandtype) = 249;
+		commandOnly(32);
+	}
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	examIcon();
+	data.byte(kPickup) = 0;
+	data.byte(kInvopen) = 2;
+	openInv();
+	workToScreenM();
+}
+
 } // End of namespace DreamGen

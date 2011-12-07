@@ -627,7 +627,6 @@ public:
 	void showDiaryPage();
 	void transferToEx();
 	void reExFromInv();
-	void examineInventory();
 	void businessMan();
 	void outOfInv();
 	void diaryKeyP();
