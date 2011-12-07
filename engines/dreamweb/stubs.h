@@ -280,6 +280,7 @@
 	void endPalToStart();
 	void startPalToEnd();
 	void palToEndPal();
+	void doFade();
 	void fadeCalculation();
 	void watchCount();
 	void zoomIcon();

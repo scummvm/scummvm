@@ -60,6 +60,19 @@ void DreamGenContext::palToEndPal() {
 	memcpy(endPalette(), mainPalette(), 256 * 3);
 }
 
+void DreamGenContext::doFade() {
+	if (data.byte(kFadedirection) == 0)
+		return
+
+	engine->processEvents();
+	uint8 *src = startPalette() + 3 * data.byte(kColourpos);
+	engine->setPalette(src, data.byte(kColourpos), data.byte(kNumtofade));
+
+	data.byte(kColourpos) += data.byte(kNumtofade);
+	if (data.byte(kColourpos) == 0)
+		fadeCalculation();
+}
+
 void DreamGenContext::fadeCalculation() {
 	if (data.byte(kFadecount) == 0) {
 		data.byte(kFadedirection) = 0;

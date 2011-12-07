@@ -668,7 +668,6 @@ public:
 	void drawItAll();
 	void useStereo();
 	void showOpBox();
-	void doFade();
 	void dumpCurrent();
 	void showDiaryKeys();
 	void rollEndCredits2();
