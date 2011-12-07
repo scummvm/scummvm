@@ -167,7 +167,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ 255,294,0,24,&DreamGenContext::dropObject },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
-				{ kInventx, cs.word(offset_openchangesize),kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
+				{ kInventx, data.word(offset_openchangesize),kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::inToInv },
 				{ 0,320,0,200,&DreamGenContext::blank },
 				{ 0xFFFF,0,0,0,0 }

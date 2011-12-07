@@ -735,11 +735,6 @@ void DreamGenContext::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
-Common::String DreamGenContext::getFilename(Context &context) {
-	const char *name = (const char *)context.cs.ptr(context.dx, 0);
-	return Common::String(name);
-}
-
 uint8 *DreamGenContext::textUnder() {
 	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
@@ -770,7 +765,7 @@ void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBy
 }
 
 void DreamGenContext::loadIntoTemp() {
-	loadIntoTemp((const char *)cs.ptr(dx, 0));
+	loadIntoTemp((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadIntoTemp(const char *fileName) {
@@ -786,7 +781,7 @@ void DreamGenContext::loadIntoTemp3(const char *fileName) {
 }
 
 void DreamGenContext::loadTempCharset() {
-	loadTempCharset((const char *)cs.ptr(dx, 0));
+	loadTempCharset((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadTempCharset(const char *fileName) {
@@ -1105,12 +1100,32 @@ void DreamGenContext::set16ColPalette() {
 }
 
 void DreamGenContext::showGroup() {
-	engine->setPalette();
+	engine->processEvents();
+	unsigned n = (uint16)cx;
+	uint8 *src = ds.ptr(si, n * 3);
+	engine->setPalette(src, al, n);
+	si += n * 3;
+	cx = 0;
 }
 
 void DreamGenContext::fadeDOS() {
-	engine->fadeDos();
+	ds = es = data.word(kBuffers);
+	return; //fixme later
+	engine->waitForVSync();
+	//processEvents will be called from vsync
+	uint8 *dst = es.ptr(kStartpal, 768);
+	engine->getPalette(dst, 0, 64);
+	for(int fade = 0; fade < 64; ++fade) {
+		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
+			if (dst[c]) {
+				--dst[c];
+			}
+		}
+		engine->setPalette(dst, 0, 64);
+		engine->waitForVSync();
+	}
 }
+
 
 void DreamGenContext::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
@@ -1123,10 +1138,6 @@ void DreamGenContext::eraseOldObs() {
 			memset(&sprite, 0xff, sizeof(Sprite));
 		}
 	}
-}
-
-void DreamGenContext::modifyChar() {
-	al = engine->modifyChar(al);
 }
 
 void DreamGenContext::lockMon() {
@@ -1195,12 +1206,18 @@ uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
 	return result;
 }
 
+void DreamGenContext::clearAndLoad(uint8 *buf, uint8 c,
+                                   unsigned int size, unsigned int maxSize) {
+	assert(size <= maxSize);
+	memset(buf, c, maxSize);
+	engine->readFromFile(buf, size);
+}
+
 void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
 	uint8 *buf = getSegment(seg).ptr(0, maxSize);
-	memset(buf, c, maxSize);
-	engine->readFromFile(buf, size);
+	clearAndLoad(buf, c, size, maxSize);
 }
 
 void DreamGenContext::startLoading(const Room &room) {
@@ -1244,10 +1261,6 @@ void DreamGenContext::startLoading(const Room &room) {
 		bx = pop();
 	}
 	findXYFromPath();
-}
-
-void DreamGenContext::fillSpace() {
-	memset(ds.ptr(dx, cx), al, cx);
 }
 
 void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
@@ -1299,7 +1312,7 @@ void DreamGenContext::plotReel() {
 	es = pop();
 }
 
-void DreamGenContext::crosshair() {
+void DreamBase::crosshair() {
 	uint8 frame;
 	if ((data.byte(kCommandtype) != 3) && (data.byte(kCommandtype) < 10)) {
 		frame = 9;
@@ -1418,7 +1431,7 @@ const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 }
 
 void DreamGenContext::copyName() {
-	copyName(ah, al, cs.ptr(di, 0));
+	copyName(ah, al, data.ptr(di, 0));
 }
 
 void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
@@ -1458,11 +1471,6 @@ void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
 
 void DreamGenContext::examineObText() {
 	commandWithOb(1, data.byte(kCommandtype), data.byte(kCommand));
-}
-
-void DreamGenContext::showPanel() {
-	showFrame(engine->icons1(), 72, 0, 19, 0);
-	showFrame(engine->icons1(), 192, 0, 19, 0);
 }
 
 void DreamGenContext::blockNameText() {
@@ -1728,7 +1736,7 @@ void DreamGenContext::delPointer() {
 	multiPut(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::showBlink() {
+void DreamBase::showBlink() {
 	if (data.byte(kManisoffscreen) == 1)
 		return;
 	++data.byte(kBlinkcount);
@@ -1749,7 +1757,7 @@ void DreamGenContext::showBlink() {
 	showFrame(engine->icons1(), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
-void DreamGenContext::dumpBlink() {
+void DreamBase::dumpBlink() {
 	if (data.byte(kShadeson) != 0)
 		return;
 	if (data.byte(kBlinkcount) != 0)
@@ -1759,7 +1767,7 @@ void DreamGenContext::dumpBlink() {
 	multiDump(44, 32, 16, 12);
 }
 
-void DreamGenContext::dumpPointer() {
+void DreamBase::dumpPointer() {
 	dumpBlink();
 	multiDump(data.word(kDelherex), data.word(kDelherey), data.byte(kDelxs), data.byte(kDelys));
 	if ((data.word(kOldpointerx) != data.word(kDelherex)) || (data.word(kOldpointery) != data.word(kDelherey)))
@@ -2040,7 +2048,7 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamGenContext::showRyanPage() {
+void DreamBase::showRyanPage() {
 	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
 	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
@@ -2438,6 +2446,19 @@ Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
+void DreamBase::volumeAdjust() {
+	if (data.byte(kVolumedirection) == 0)
+		return;
+	if (data.byte(kVolume) != data.byte(kVolumeto)) {
+		data.byte(kVolumecount) += 64;
+		// Only modify the volume every 256/64 = 4th time around
+		if (data.byte(kVolumecount) == 0)
+			data.byte(kVolume) += data.byte(kVolumedirection);
+	} else {
+		data.byte(kVolumedirection) = 0;
+	}
+}
+
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
 	if (data.byte(kSoundint) == 255)
 		return;
@@ -2597,7 +2618,7 @@ void DreamGenContext::getRidOfAll() {
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
-	cs.word(kHandle) = 1; //only one handle
+	data.word(kHandle) = 1; //only one handle
 	flags._c = false;
 
 	FileHeader header;
@@ -2609,7 +2630,7 @@ void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 		len[i] = header.len(i);
 
 	data.word(kBackdrop) = allocateAndLoad(len[0]);
-	clearAndLoad(data.word(kWorkspace), 0, len[1], 132*66); // 132*66 = maplen
+	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
 	data.word(kSetframes) = allocateAndLoad(len[2]);
 	if (!skipDat)
@@ -2650,7 +2671,7 @@ void DreamGenContext::restoreReels() {
 	const Room &room = g_roomData[data.byte(kReallocation)];
 
 	engine->openFile(room.name);
-	cs.word(kHandle) = 1; //only one handle
+	data.word(kHandle) = 1; //only one handle
 	flags._c = false;
 
 	FileHeader header;
@@ -2894,7 +2915,7 @@ void DreamGenContext::loadTravelText() {
 }
 
 void DreamGenContext::loadTempText() {
-	loadTempText((const char *)cs.ptr(dx, 0));
+	loadTempText((const char *)data.ptr(dx, 0));
 }
 
 void DreamGenContext::loadTempText(const char *fileName) {
@@ -2921,7 +2942,6 @@ void DreamGenContext::allocateBuffers() {
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
-	allocateWork();
 	data.word(kSounddata) = allocateMem(2048/16);
 	data.word(kSounddata2) = allocateMem(2048/16);
 }

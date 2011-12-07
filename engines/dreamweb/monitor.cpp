@@ -32,10 +32,10 @@ struct MonitorKeyEntry {
 
 void DreamGenContext::useMon() {
 	data.byte(kLasttrigger) = 0;
-	memset(cs.ptr(kCurrentfile+1, 0), ' ', 12);
-	memset(cs.ptr(offset_operand1+1, 0), ' ', 12);
+	memset(data.ptr(kCurrentfile+1, 0), ' ', 12);
+	memset(data.ptr(offset_operand1+1, 0), ' ', 12);
 
-	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)cs.ptr(offset_keys, 0);
+	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
 	monitorKeyEntries[0].b0 = 1;
 	monitorKeyEntries[1].b0 = 0;
 	monitorKeyEntries[2].b0 = 0;
@@ -103,7 +103,7 @@ void DreamGenContext::printLogo() {
 }
 
 void DreamGenContext::input() {
-	char *inputLine = (char *)cs.ptr(kInputline, 64);
+	char *inputLine = (char *)data.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
 	printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
@@ -149,7 +149,7 @@ void DreamGenContext::input() {
 }
 
 void DreamGenContext::delChar() {
-	char *inputLine = (char *)cs.ptr(kInputline, 0);
+	char *inputLine = (char *)data.ptr(kInputline, 0);
 	--data.word(kCurpos);
 	inputLine[data.word(kCurpos) * 2] = 0;
 	uint8 width = inputLine[data.word(kCurpos) * 2 + 1];
@@ -204,7 +204,7 @@ void DreamGenContext::scrollMonitor() {
 
 void DreamGenContext::showCurrentFile() {
 	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
-	const char *currentFile = (const char *)cs.ptr(kCurrentfile+1, 0);
+	const char *currentFile = (const char *)data.ptr(kCurrentfile+1, 0);
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = engine->modifyChar(c);

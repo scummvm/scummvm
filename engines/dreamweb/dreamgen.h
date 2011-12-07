@@ -538,7 +538,7 @@ static const uint16 kLenofreelrouts = (983-526);
 
 class DreamGenContext : public DreamBase, public Context {
 public:
-	DreamGenContext() : DreamBase(), Context(_realData) {}
+	DreamGenContext(DreamWeb::DreamWebEngine *en) : DreamBase(en), Context(data) {}
 
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
@@ -560,7 +560,6 @@ public:
 	void watchReel();
 	void openFileFromC();
 	void getTime();
-	void fadeDOS();
 	void findText1();
 	void isRyanHolding();
 	void showSlots();
@@ -759,7 +758,6 @@ public:
 	void alleyBarkSound();
 	void quitKey();
 	void processTrigger();
-	void volumeAdjust();
 	void transferConToEx();
 	void adjustDown();
 	void withWhat();
