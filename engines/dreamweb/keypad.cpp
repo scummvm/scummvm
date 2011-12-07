@@ -228,4 +228,20 @@ void DreamGenContext::showOuterPad() {
 	showFrame(tempGraphics(), kKeypadx+74, kKeypady+76, 37, 0);
 }
 
+void DreamGenContext::dumpKeypad() {
+	multiDump(kKeypadx - 3, kKeypady - 4, 120, 90);
+}
+
+void DreamGenContext::dumpSymbol() {
+	data.byte(kNewtextline) = 0;
+	multiDump(kSymbolx, kSymboly + 20, 104, 60);
+}
+
+void DreamGenContext::dumpSymBox() {
+	if (data.word(kDumpx) != 0xFFFF) {
+		multiDump(data.word(kDumpx), data.word(kDumpy), 30, 77);
+		data.word(kDumpx) = 0xFFFF;
+	}
+}
+
 } // End of namespace DreamGen

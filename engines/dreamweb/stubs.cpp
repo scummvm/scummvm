@@ -3829,4 +3829,9 @@ void DreamGenContext::isSetObOnMap() {
 	flags._z = isSetObOnMap(al);
 }
 
+void DreamGenContext::dumpZoom() {
+	if (data.byte(kZoomon) == 1)
+		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
 } // End of namespace DreamGen

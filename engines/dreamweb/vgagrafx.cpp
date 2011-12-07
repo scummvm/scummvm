@@ -497,25 +497,4 @@ void DreamGenContext::createPanel2() {
 	showFrame(engine->icons2(), 160, 0, 5, 2);
 }
 
-void DreamGenContext::dumpKeypad() {
-	multiDump((36 + 112) - 3, 72 - 4, 120, 90);
-}
-
-void DreamGenContext::dumpSymbol() {
-	data.byte(kNewtextline) = 0;
-	multiDump(64, 56 + 20, 104, 60);
-}
-
-void DreamGenContext::dumpZoom() {
-	if (data.byte(kZoomon) == 1)
-		multiDump(8 + 5, 132 + 4, 46, 40);
-}
-
-void DreamGenContext::dumpSymBox() {
-	if (data.word(kDumpx) != 0xFFFF) {
-		multiDump(data.word(kDumpx), data.word(kDumpy), 30, 77);
-		data.word(kDumpx) = 0xFFFF;
-	}
-}
-
 } // End of namespace DreamGen
