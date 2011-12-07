@@ -364,7 +364,7 @@ void DreamGenContext::keeper(ReelRoutine &routine) {
 
 	data.byte(kKeeperflag)++;
 
-	if (routine.b7 & 127 != data.byte(kDreamnumber))
+	if ((routine.b7 & 127) != data.byte(kDreamnumber))
 		routine.b7 = data.byte(kDreamnumber);
 }
 
