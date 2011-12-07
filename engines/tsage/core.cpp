@@ -1675,10 +1675,14 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 	if (resNum) {
 		// Get required bounding size
-		g_globals->gfxManager().getStringBounds(msg.c_str(), textRect, maxWidth);
-		textRect.center(pos.x, pos.y);
+		GfxFont font;
+		font.setFontNumber(g_globals->_sceneText._fontNumber);
+		font.getStringBounds(msg.c_str(), textRect, maxWidth);
 
+		// Center the text at the specified position, and then constrain it to be-
+		textRect.center(pos.x, pos.y);
 		textRect.contain(g_globals->gfxManager()._bounds);
+
 		if (centerText) {
 			g_globals->_sceneText._color1 = g_globals->_sceneText._color2;
 			g_globals->_sceneText._color2 = 0;
