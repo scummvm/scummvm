@@ -710,7 +710,6 @@ public:
 	void execCommand();
 	void updateSymbolBot();
 	void findPuzText();
-	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
 	void adjustRight();

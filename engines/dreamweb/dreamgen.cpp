@@ -634,34 +634,6 @@ intromonk2fin:
 	showGameReel();
 }
 
-void DreamGenContext::monkAndRyan() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto notmonkryan;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 83);
-	if (!flags.z())
-		goto gotmonkryan;
-	_inc(data.byte(kIntrocount));
-	push(es);
-	push(bx);
-	textForMonk();
-	bx = pop();
-	es = pop();
-	ax = 77;
-	_cmp(data.byte(kIntrocount), 57);
-	if (!flags.z())
-		goto gotmonkryan;
-	data.byte(kGetback) = 1;
-	return;
-gotmonkryan:
-	es.word(bx+3) = ax;
-notmonkryan:
-	showGameReel();
-}
-
 void DreamGenContext::endGameSeq() {
 	STACK_CHECK;
 	checkSpeed();

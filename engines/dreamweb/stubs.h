@@ -454,6 +454,7 @@
 	void bossMan(ReelRoutine &routine);
 	void priest(ReelRoutine &routine);
 	void priestText(ReelRoutine &routine);
+	void monkAndRyan(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();
