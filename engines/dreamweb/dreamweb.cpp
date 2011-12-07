@@ -42,9 +42,8 @@
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb") {
+	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"), _context(this) {
 
-	_context.engine = this;
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));

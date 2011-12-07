@@ -35,15 +35,19 @@ namespace DreamWeb {
 namespace DreamGen {
 
 class DreamBase {
+protected:
+	DreamWeb::DreamWebEngine *engine;
+
 public:
 	enum { kDefaultDataSegment = 0x1000 };
-
-	DreamWeb::DreamWebEngine *engine;
 
 	SegmentPtr _realData;	///< the primary data segment, points to a huge blob of binary data
 	SegmentRef data;	///< fake segment register always pointing to data segment
 
-	DreamBase() : _realData(new Segment()), data(kDefaultDataSegment, _realData) {
+	DreamBase(DreamWeb::DreamWebEngine *en) :
+		engine(en),
+		_realData(new Segment()),
+		data(kDefaultDataSegment, _realData) {
 	}
 
 
