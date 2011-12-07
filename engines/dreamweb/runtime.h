@@ -151,13 +151,17 @@ public:
 	: _value(value), _segment(segment) {
 	}
 
+	inline operator uint16() const {
+		return _value;
+	}
+
+	SegmentPtr getSegmentPtr() const {
+		return _segment;
+	}
+
 	inline uint8 &byte(unsigned index) {
 		assert(_segment != 0);
 		return _segment->byte(index);
-	}
-
-	inline operator uint16() const {
-		return _value;
 	}
 
 	inline WordRef word(unsigned index) {
@@ -192,6 +196,10 @@ protected:
 public:
 	MutableSegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr())
 	: _context(ctx), SegmentRef(value, segment) {
+	}
+
+	MutableSegmentRef(Context *ctx, SegmentRef seg)
+	: _context(ctx), SegmentRef(seg) {
 	}
 
 	inline MutableSegmentRef& operator=(const uint16 id);
@@ -255,12 +263,12 @@ public:
 	MutableSegmentRef es;
 	Flags flags;
 
-	Context(SegmentPtr realData): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
-		cs(kDefaultDataSegment, realData),
-		ds(this, kDefaultDataSegment, realData),
-		es(this, kDefaultDataSegment, realData) {
+	Context(SegmentRef data): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
+		cs(data),
+		ds(this, data),
+		es(this, data) {
 
-		_segments[kDefaultDataSegment] = realData;
+		_segments[kDefaultDataSegment] = data.getSegmentPtr();
 	}
 
 	SegmentRef getSegment(uint16 value) {
