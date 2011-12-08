@@ -1676,16 +1676,6 @@ void DreamGenContext::checkCoords() {
 	// FIXME: Move all these lists to the callers
 
 	switch ((uint16)bx) {
-	case offset_talklist: {
-		RectWithCallback talkList[] = {
-			{ 273,320,157,198,&DreamGenContext::getBack1 },
-			{ 240,290,2,44,&DreamGenContext::moreTalk },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(talkList);
-		break;
-	}
 	case offset_quitlist: {
 		RectWithCallback quitList[] = {
 			{ 273,320,157,198,&DreamGenContext::getBack1 },
@@ -3980,6 +3970,58 @@ void DreamGenContext::decide() {
 	data.word(kTextaddressx) = 13;
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
+}
+
+void DreamGenContext::talk() {
+	data.byte(kTalkpos) = 0;
+	data.byte(kInmaparea) = 0;
+	data.byte(kCharacter) = data.byte(kCommand);
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	underTextLine();
+	convIcons();
+	startTalk();
+	data.byte(kCommandtype) = 255;
+	readMouse();
+	showPointer();
+	workToScreen();
+
+	RectWithCallback talkList[] = {
+		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 240,290,2,44,&DreamGenContext::moreTalk },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	do {
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		data.byte(kGetback) = 0;
+		checkCoords(talkList);
+		if (data.byte(kQuitrequested))
+			break;
+	} while (!data.byte(kGetback));
+
+	bx = data.word(kPersondata);
+	es = cs;
+
+	if (data.byte(kTalkpos) >= 4)
+		es.byte(bx+7) |= 128;
+
+	redrawMainScrn();
+	workToScreenM();
+	if (data.byte(kSpeechloaded) == 1) {
+		cancelCh1();
+		data.byte(kVolumedirection) = -1;
+		data.byte(kVolumeto) = 0;
+	}
 }
 
 } // End of namespace DreamGen

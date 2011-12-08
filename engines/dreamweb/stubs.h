@@ -555,5 +555,6 @@
 	void getUnderZoom();
 	void putUnderZoom();
 	void decide();
+	void talk();
 
 #endif
