@@ -1576,7 +1576,6 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneObjects->draw();
 	}
 
-	GfxFontBackup font;
 	Common::Point pos(160, 100);
 	Rect textRect;
 	int maxWidth = 120;
