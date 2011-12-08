@@ -158,7 +158,7 @@ BitmapPtr Bitmap::code() {
 	debugC(1, kCGEDebugBitmap, "Bitmap::code()");
 
 	if (!_m)
-		return false;
+		return NULL;
 
 	uint16 cnt;
 
