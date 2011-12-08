@@ -600,7 +600,6 @@ public:
 	void useKey();
 	void lockLightOn();
 	void discOps();
-	void middlePanel();
 	void monitorLogo();
 	void dirFile();
 	void pickupConts();

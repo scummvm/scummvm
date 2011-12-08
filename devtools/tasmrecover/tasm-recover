@@ -440,6 +440,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'manasleep2',
 	'mansatstill',
 	'maptopanel',
+	'middlepanel',
 	'mode640x480',
 	'modifychar',
 	'monkandryan',

@@ -7219,34 +7219,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::middlePanel() {
-	STACK_CHECK;
-	ds = data.word(kTempsprites);
-	di = 72+47+20;
-	bx = 0;
-	al = 48;
-	ah = 0;
-	showFrame();
-	ds = data.word(kTempsprites);
-	di = 72+19;
-	bx = 21;
-	al = 47;
-	ah = 0;
-	showFrame();
-	ds = data.word(kTempsprites);
-	di = 160+23;
-	bx = 0;
-	al = 48;
-	ah = 4;
-	showFrame();
-	ds = data.word(kTempsprites);
-	di = 160+71;
-	bx = 21;
-	al = 47;
-	ah = 4;
-	showFrame();
-}
-
 void DreamGenContext::getUnderZoom() {
 	STACK_CHECK;
 	di = (8)+5;

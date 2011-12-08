@@ -3802,4 +3802,12 @@ void DreamGenContext::showSaveOps() {
 	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 
+void DreamBase::middlePanel() {
+	Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
+	showFrame(tempSprites, 72 + 47 + 20, 0, 48, 0);
+	showFrame(tempSprites, 72 + 19, 21, 47, 0);
+	showFrame(tempSprites, 160 + 23, 0, 48, 4);
+	showFrame(tempSprites, 160 + 71, 21, 47, 4);
+}
+
 } // End of namespace DreamGen

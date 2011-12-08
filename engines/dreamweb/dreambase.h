@@ -90,6 +90,7 @@ public:
 	Frame *tempGraphics3();
 	void showArrows();
 	void showOpBox();
+	void middlePanel();
 
 	// from vgafades.cpp
 	uint8 *mainPalette();
