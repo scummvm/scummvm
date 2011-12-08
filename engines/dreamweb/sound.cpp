@@ -289,7 +289,7 @@ void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
 	SoundData &soundData = _soundData[bank];
 	soundData.samples.resize(tablesize / 6);
 	uint total = 0;
-	for(uint i = 0; i < tablesize / 6; ++i) {
+	for (uint i = 0; i < tablesize / 6; ++i) {
 		uint8 entry[6];
 		Sample &sample = soundData.samples[i];
 		file.read(entry, sizeof(entry));

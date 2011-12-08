@@ -43,7 +43,7 @@ void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	if (x + w > 320)
 		w = 320 - x;
 	//debug(1, "multiGet %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
-	for(unsigned l = 0; l < h; ++l) {
+	for (unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + kScreenwidth * l;
 		uint8 *dst_p = dst + w * l;
 		memcpy(dst_p, src_p, w);
@@ -66,7 +66,7 @@ void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h)
 	if (x + w > 320)
 		w = 320 - x;
 	//debug(1, "multiPut %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
-	for(unsigned l = 0; l < h; ++l) {
+	for (unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + w * l;
 		uint8 *dst_p = dst + kScreenwidth * l;
 		memcpy(dst_p, src_p, w);
@@ -260,26 +260,26 @@ void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wid
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
 
-	if(x < 0) {
+	if (x < 0) {
 		assert(width >= -x);
 		width -= -x;
 		src += -x;
 		x = 0;
 	}
-	if(y < 0) {
+	if (y < 0) {
 		assert(height >= -y);
 		height -= -y;
 		src += (-y) * width;
 		y = 0;
 	}
-	if(x >= 320)
+	if (x >= 320)
 		return;
-	if(y >= 200)
+	if (y >= 200)
 		return;
-	if(x + width > 320) {
+	if (x + width > 320) {
 		width = 320 - x;
 	}
-	if(y + height > 200) {
+	if (y + height > 200) {
 		height = 200 - y;
 	}
 
@@ -384,8 +384,8 @@ void DreamGenContext::zoom() {
 	uint16 dstOffset = (kZoomy + 4) * 320 + (kZoomx + 5);
 	const uint8 *src = workspace() + srcOffset;
 	uint8 *dst = workspace() + dstOffset;
-	for(size_t i=0; i<20; ++i) {
-		for(size_t j=0; j<23; ++j) {
+	for (size_t i = 0; i < 20; ++i) {
+		for (size_t j = 0; j < 23; ++j) {
 			uint8 v = src[j];
 			dst[2*j+0] = v;
 			dst[2*j+1] = v; 

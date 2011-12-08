@@ -326,14 +326,14 @@ void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 	_system->getPaletteManager()->grabPalette(data, start, count);
-	while(count--)
+	while (count--)
 		*data++ >>= 2;
 }
 
 void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 	assert(start + count <= 256);
 	uint8 fixed[768];
-	for(uint i = 0; i < count * 3; ++i) {
+	for (uint i = 0; i < count * 3; ++i) {
 		fixed[i] = data[i] << 2;
 	}
 	_system->getPaletteManager()->setPalette(fixed, start, count);
@@ -356,9 +356,9 @@ void DreamWebEngine::printUnderMonitor() {
 	if (!s)
 		error("lockScreen failed");
 
-	for(uint y = 0; y < 104; ++y) {
+	for (uint y = 0; y < 104; ++y) {
 		uint8 *src = (uint8 *)s->getBasePtr(76, 43 + 8 + y);
-		for(uint x = 0; x < 170; ++x) {
+		for (uint x = 0; x < 170; ++x) {
 			if (*src < 231)
 				*dst++ = *src++;
 			else {

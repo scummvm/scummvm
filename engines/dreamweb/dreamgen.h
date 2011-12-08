@@ -599,7 +599,6 @@ public:
 	void cantDrop();
 	void putUnderZoom();
 	void findInvPos();
-	void workoutFrames();
 	void rollEndCredits();
 	void getKeyAndLogo();
 	void selectOb();

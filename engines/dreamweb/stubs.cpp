@@ -993,7 +993,7 @@ void DreamGenContext::deallocateMem(uint16 segment) {
 	MutableSegmentRef buffers(this);
 	buffers = bseg;
 	uint8 *ptr = buffers.ptr(kSpritetable, tsize);
-	for(uint i = 0; i < tsize; i += 32) {
+	for (uint i = 0; i < tsize; i += 32) {
 		uint16 seg = READ_LE_UINT16(ptr + i + 6);
 		//debug(1, "sprite segment = %04x", seg);
 		if (seg == segment)
@@ -1032,8 +1032,8 @@ void DreamGenContext::fadeDOS() {
 	//processEvents will be called from vsync
 	uint8 *dst = es.ptr(kStartpal, 768);
 	engine->getPalette(dst, 0, 64);
-	for(int fade = 0; fade < 64; ++fade) {
-		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
+	for (int fade = 0; fade < 64; ++fade) {
+		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
 			if (dst[c]) {
 				--dst[c];
 			}
@@ -1475,7 +1475,7 @@ void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
 void DreamGenContext::deleteTaken() {
 	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
 	DynObject *freeObjects = (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
-	for(size_t i = 0; i < kNumexobjects; ++i) {
+	for (size_t i = 0; i < kNumexobjects; ++i) {
 		uint8 location = extraObjects[i].initialLocation;
 		if (location == data.byte(kReallocation)) {
 			uint8 index = extraObjects[i].index;
@@ -1873,7 +1873,7 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 	void *ptr = getAnyAdDir(index, flag);
 	const char *objId = (const char *)(((const uint8 *)ptr) + 12); // whether it is a DynObject or a SetObject
 	for (size_t i = 0; i < 4; ++i) {
-		if(id[i] != objId[i] + 'A')
+		if (id[i] != objId[i] + 'A')
 			return false;
 	}
 	return true;
@@ -3549,7 +3549,7 @@ void DreamGenContext::nextDest() {
 			data.byte(kDestpos) = 0;	// last destination
 
 		getDestInfo();
-	} while(al == 0);
+	} while (al == 0);
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
@@ -3580,7 +3580,7 @@ void DreamGenContext::lastDest() {
 			data.byte(kDestpos) = 15;	// first destination
 
 		getDestInfo();
-	} while(al == 0);
+	} while (al == 0);
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
