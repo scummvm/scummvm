@@ -6781,45 +6781,6 @@ gotfirst:
 	al = es.byte(bx+6);
 }
 
-void DreamGenContext::afterNewRoom() {
-	STACK_CHECK;
-	_cmp(data.byte(kNowinnewroom), 0);
-	if (flags.z())
-		return /* (notnew) */;
-	data.word(kTimecount) = 0;
-	createPanel();
-	data.byte(kCommandtype) = 0;
-	findRoomInLoc();
-	_cmp(data.byte(kRyanon), 1);
-	if (flags.z())
-		goto ryansoff;
-	al = data.byte(kRyanx);
-	_add(al, 12);
-	ah = data.byte(kRyany);
-	_add(ah, 12);
-	findPathOfPoint();
-	data.byte(kManspath) = dl;
-	findXYFromPath();
-	data.byte(kResetmanxy) = 1;
-ryansoff:
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	data.word(kLookcounter) = 160;
-	data.byte(kNowinnewroom) = 0;
-	showIcon();
-	spriteUpdate();
-	printSprites();
-	underTextLine();
-	reelsOnScreen();
-	mainScreen();
-	getUnderZoom();
-	zoom();
-	workToScreenM();
-	walkIntoRoom();
-	reminders();
-	atmospheres();
-}
-
 void DreamGenContext::printmessage2() {
 	STACK_CHECK;
 	push(dx);

@@ -154,6 +154,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'adjustlen',
 	'advisor',
 	'afterintroroom',
+	'afternewroom',
 	'aide',
 	'alleybarksound',
 	'allocatebuffers',

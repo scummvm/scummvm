@@ -548,5 +548,6 @@
 	void removeFreeObject(uint8 index) {
 		DreamBase::removeFreeObject(index);
 	}
+	void afterNewRoom();
 
 #endif

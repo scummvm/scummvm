@@ -680,7 +680,6 @@ public:
 	void searchForFiles();
 	void monkSpeaking();
 	void madmanRun();
-	void afterNewRoom();
 	void getExAd();
 	void initialMonCols();
 	void useButtonA();
