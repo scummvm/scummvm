@@ -247,7 +247,7 @@ void DreamGenContext::showAllFree() {
 	data.word(kFramesad) = kFrframes;
 	data.byte(kCurrentfree) = 0;
 	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
-	for(size_t i = 0; i < 80; ++i) {
+	for (size_t i = 0; i < 80; ++i) {
 		uint8 mapAd = getMapAd(freeObjects[i].mapad);
 		if (mapAd != 0) {
 			uint8 width, height;

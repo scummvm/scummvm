@@ -35,7 +35,7 @@ void DreamBase::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, ui
 uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
-	while(true) {
+	while (true) {
 		uint8 firstChar = *string;
 		++string;
 		++*charCount;
@@ -153,7 +153,7 @@ uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 ma
 			printChar(charSet, &i, *y, c, nextChar, &width, &height);
 			data.word(kLastxpos) = i;
 			--charCount;
-		} while(charCount);
+		} while (charCount);
 		*y += data.word(kLinespacing);
 	}
 }

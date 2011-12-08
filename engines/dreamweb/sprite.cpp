@@ -530,7 +530,7 @@ void DreamGenContext::showRain() {
 		rain->setW3(ax);
 		const uint8 *src = ds.ptr(si, 0) + ax;
 		uint8 *dst = workspace() + y * 320 + x;
-		for(uint16 i = 0; i < size; ++i) {
+		for (uint16 i = 0; i < size; ++i) {
 			uint8 v = src[i];
 			if (v != 0)
 				*dst = v;
