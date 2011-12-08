@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#include "dreamweb/runtime.h"
+#include "dreamweb/segment.h"
 
 namespace DreamWeb {
 	class DreamWebEngine;
@@ -43,21 +43,12 @@ namespace DreamGen {
  * together with class Context. When that happens, we can probably merge
  * DreamBase into DreamWebEngine.
  */
-class DreamBase {
+class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
 public:
-	enum { kDefaultDataSegment = 0x1000 };
-
-	SegmentPtr _realData;	///< the primary data segment, points to a huge blob of binary data
-	SegmentRef data;	///< fake segment register always pointing to data segment
-
-	DreamBase(DreamWeb::DreamWebEngine *en) :
-		engine(en),
-		_realData(new Segment()),
-		data(kDefaultDataSegment, _realData) {
-	}
+	DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) { }
 
 public:
 	// from pathfind.cpp
@@ -66,6 +57,11 @@ public:
 
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
+	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
+	void printChar(const Frame* charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
+	void printBoth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
+	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 
@@ -82,10 +78,35 @@ public:
 	void dumpPointer();
 	void showRyanPage();
 
+	// from vgafades.cpp
+	uint8 *mainPalette();
+	uint8 *startPalette();
+	uint8 *endPalette();
+	void clearStartPal();
+	void clearEndPal();
+	void palToStartPal();
+	void endPalToStart();
+	void startPalToEnd();
+	void palToEndPal();
+	void doFade();
+	void fadeCalculation();
+	void fadeScreenUp();
+	void fadeScreenUps();
+	void fadeScreenUpHalf();
+	void fadeScreenDown();
+	void fadeScreenDowns();
+
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
+
+	uint8 *mapStore();
+	void panelToMap();
+	void mapToPanel();
+	void dumpMap();
+
+	void transferInv();
 
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
@@ -98,9 +119,12 @@ public:
 	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void doShake();
+	void vSync();
+	void setMode();
 	void showPCX(const Common::String &name);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void loadPalFromIFF();
 	void createPanel();
 	void createPanel2();
 	void showPanel();

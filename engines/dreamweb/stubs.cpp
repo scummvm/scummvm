@@ -838,10 +838,6 @@ bool DreamGenContext::openForLoad(unsigned int slot) {
 	return engine->openSaveFileForReading(filename);
 }
 
-uint8 *DreamGenContext::mapStore() {
-	return getSegment(data.word(kMapstore)).ptr(0, 0);
-}
-
 void DreamGenContext::readMouse() {
 	data.word(kOldbutton) = data.word(kMousebutton);
 	uint16 state = readMouseState();

@@ -46,7 +46,6 @@
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
 	void workToScreen();
-	uint8 *mapStore();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiGet(dst, x, y, width, height);
@@ -67,12 +66,13 @@
 	void seeCommandTail();
 	void randomNumber();
 	void quickQuit2();
-	void printBoth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
-	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
-	void printChar(const Frame* charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printDirect();
-	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
-	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+		return DreamBase::printDirect(string, x, y, maxWidth, centered);
+	}
+	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+		return DreamBase::printDirect(string, x, y, maxWidth, centered);
+	}
 	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
 	void printMessage();
 	void useTimedText();
@@ -84,7 +84,6 @@
 	void dumpTextLine();
 	void oldToNames();
 	void namesToOld();
-	void loadPalFromIFF();
 	void startLoading(const Room &room);
 	Sprite *spriteTable();
 	void showFrame();
@@ -215,11 +214,7 @@
 	void addToPeopleList();
 	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
-	void panelToMap();
-	void mapToPanel();
-	void dumpMap();
 	void obPicture();
-	void transferInv();
 	void obIcons();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]);
@@ -268,16 +263,6 @@
 	void transferText();
 	void initRain();
 	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
-	uint8 *mainPalette();
-	uint8 *startPalette();
-	uint8 *endPalette();
-	void clearStartPal();
-	void clearEndPal();
-	void palToStartPal();
-	void endPalToStart();
-	void startPalToEnd();
-	void palToEndPal();
-	void fadeCalculation();
 	void watchCount();
 	void zoomIcon();
 	void loadRoom();
@@ -494,20 +479,13 @@
 	void readKey();
 	void hangOne(uint16 delay);
 	void hangOne();
-	void showPCX(const Common::String &name);
 	void bibleQuote();
 	void realCredits();
 	void runIntroSeq();
 	void intro();
-	void fadeScreenUp();
-	void fadeScreenUps();
-	void fadeScreenUpHalf();
-	void fadeScreenDown();
-	void fadeScreenDowns();
 	void clearBeforeLoad();
 	void clearReels();
 	void getRidOfReels();
-	void setMode();
 	void liftNoise(uint8 index);
 	void setTopLeft();
 	void setTopRight();
@@ -574,7 +552,6 @@
 	void dumpZoom();
 	void fadeDOS();
 	void selectLocation();
-	void vSync();
 	void showGroup();
 	void loadSpeech();
 	void closeFile();
