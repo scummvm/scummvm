@@ -34,7 +34,6 @@ namespace DreamGen {
 
 static const uint16 offset_money1poke = 0x054e;
 static const uint16 offset_talklist = 0x0448;
-static const uint16 offset_decidelist = 0x05d9;
 static const uint16 offset_discopslist = 0x05aa;
 static const uint16 offset_openchangesize = 0x0446;
 static const uint16 offset_operand1 = 0x0524;
@@ -563,7 +562,6 @@ public:
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void fadeDownMon();
-	void printmessage2();
 	void bartender();
 	void outOfOpen();
 	void dirCom();
@@ -595,6 +593,7 @@ public:
 	void pickupConts();
 	void allPalette();
 	void cantDrop();
+	void nextColon();
 	void findInvPos();
 	void rollEndCredits();
 	void getKeyAndLogo();
@@ -617,7 +616,7 @@ public:
 	void soldier1();
 	void getUnderCentre();
 	void showKeys();
-	void nextColon();
+	void printmessage2();
 	void hangOnPQ();
 	void findOpenPos();
 	void describeOb();

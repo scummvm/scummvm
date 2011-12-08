@@ -1728,17 +1728,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(discOpsList);
 		break;
 	}
-	case offset_decidelist: {
-		RectWithCallback decideList[] = {
-			{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
-			{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
-			{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(decideList);
-		break;
-	}
 	default:
 		::error("Unimplemented checkcoords() call");
 	}
@@ -3964,6 +3953,14 @@ void DreamGenContext::decide() {
 	fadeScreenUp();
 	data.byte(kGetback) = 0;
 
+	RectWithCallback decideList[] = {
+		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
+		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
+		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
 	do {
 		if (data.byte(kQuitrequested) != 0)
 			return;
@@ -3974,8 +3971,7 @@ void DreamGenContext::decide() {
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
-		bx = offset_decidelist;
-		checkCoords();
+		checkCoords(decideList);
 	} while (!data.byte(kGetback));
 
 	if (data.byte(kGetback) != 4)
