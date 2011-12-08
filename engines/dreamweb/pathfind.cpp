@@ -280,20 +280,16 @@ void DreamBase::workoutFrames() {
 	byte tmp;
 	uint16 diffx, diffy;
 
-	// FIXME: Paranoia asserts, to be removed after sufficient play
-	// testing has happened. Background: The original code used to add
-	// 32 to the four values listed in the asserts below. Which seems
-	// nonsensical, as only the differences of the values matter, so the
-	// +32 cancels out. Unless there is an overflow somewhere... So we
-	// check for that here.
-	assert(data.word(kLinestartx) < 0xFFFF - 32);
-	assert(data.word(kLineendx)   < 0xFFFF - 32);
-	assert(data.word(kLinestarty) < 0xFFFF - 32);
-	assert(data.word(kLineendy)   < 0xFFFF - 32);
+	// We have to use signed arithmetic here because these values can
+	// be slightly negative when walking off-screen
+	int lineStartX = data.word(kLinestartx);
+	int lineStartY = data.word(kLinestarty);
+	int lineEndX = data.word(kLineendx);
+	int lineEndY = data.word(kLineendy);
 
 
-	diffx = ABS(data.word(kLinestartx) - data.word(kLineendx));
-	diffy = ABS(data.word(kLinestarty) - data.word(kLineendy));
+	diffx = ABS(lineStartX -lineEndX);
+	diffy = ABS(lineStartY - lineEndY);
 
 	if (diffx < diffy) {
 		tmp = 2;
@@ -306,9 +302,9 @@ void DreamBase::workoutFrames() {
 			tmp = 1;
 	}
 
-	if (data.word(kLinestartx) >= data.word(kLineendx)) {
+	if (lineStartX >= lineEndX) {
 		// isinleft
-		if (data.word(kLinestarty) < data.word(kLineendy)) {
+		if (lineStartY < lineEndY) {
 			if (tmp != 1)
 				tmp ^= 2;
 			tmp += 4;
@@ -318,7 +314,7 @@ void DreamBase::workoutFrames() {
 		}
 	} else {
 		// isinright
-		if (data.word(kLinestarty) < data.word(kLineendy)) {
+		if (lineStartY < lineEndY) {
 			tmp += 2;
 		} else {
 			// botright
