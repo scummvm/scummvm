@@ -1462,7 +1462,7 @@ void LBCode::runNotifyCommand() {
 		debugN("goto");
 		Common::Array<LBValue> params = readParams();
 		// TODO: type-checking
-		NotifyEvent notifyEvent(kLBNotifyChangePage, 0);
+		NotifyEvent notifyEvent(kLBNotifyChangePage, 1);
 		switch (params.size()) {
 		case 4:
 			notifyEvent.type = kLBNotifyChangeMode; // FIXME: type 8?
