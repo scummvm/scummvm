@@ -193,7 +193,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void animPointer();
-	void checkCoords();
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
 	void drawFlags();
 	void addToPeopleList();
@@ -559,5 +558,6 @@
 	void discOps();
 	void doSaveLoad();
 	void useDiary();
+	void hangOnPQ();
 
 #endif

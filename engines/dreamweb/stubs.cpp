@@ -1671,25 +1671,6 @@ void DreamBase::dumpPointer() {
 		multiDump(data.word(kOldpointerx), data.word(kOldpointery), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::checkCoords() {
-
-	// FIXME: Move all these lists to the callers
-
-	switch ((uint16)bx) {
-	case offset_quitlist: {
-		RectWithCallback quitList[] = {
-			{ 273,320,157,198,&DreamGenContext::getBack1 },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(quitList);
-		break;
-	}
-	default:
-		::error("Unimplemented checkcoords() call");
-	}
-}
-
 void DreamGenContext::checkCoords(const RectWithCallback *rectWithCallbacks) {
 	if (data.byte(kNewlocation) != 0xff)
 		return;
@@ -4094,5 +4075,46 @@ void DreamGenContext::doSaveLoad() {
 	}
 	data.byte(kManisoffscreen) = 0;
 }
+
+void DreamGenContext::hangOnPQ() {
+	data.byte(kGetback) = 0;
+
+	RectWithCallback quitList[] = {
+		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	uint16 speechFlag = 0;
+
+	do {
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		checkCoords(quitList);
+
+		if (data.byte(kGetback) == 1 || !data.byte(kQuitrequested)) {
+			// Quit conversation
+			delPointer();
+			data.byte(kPointermode) = 0;
+			cancelCh1();
+			flags._c = true;
+		}
+
+		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
+			speechFlag++;
+			if (speechFlag == 40)
+				break;
+		}
+	} while (!data.word(kMousebutton) || data.word(kOldbutton));
+
+	delPointer();
+	data.byte(kPointermode) = 0;
+	flags._c = false;
+ }
 
 } // End of namespace DreamGen

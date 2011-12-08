@@ -88,6 +88,7 @@ p = parser(skip_binary_data = [
 	'r45','r46','r47','r52','r53','r55',
 	#talk.asm
 	'talklist',
+	'quitlist',
 	# titles.asm
 	'introtextname',
 	'title0graphics',
@@ -381,6 +382,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'hangoncurs',
 	'hangone',
 	'hangonp',
+	'hangonpq',
 	'hangonw',
 	'hotelbell',
 	'hotelcontrol',
