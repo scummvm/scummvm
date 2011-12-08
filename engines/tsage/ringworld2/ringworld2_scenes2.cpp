@@ -1300,9 +1300,9 @@ bool Scene2425::Item1::startAction(CursorType action, Event &event) {
 	} else if (action == R2_37) {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return startAction(R2_STEPPING_DISKS, event);
+		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
 	} else
-		return startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 }
 
 bool Scene2425::Item2::startAction(CursorType action, Event &event) {
@@ -1317,16 +1317,16 @@ bool Scene2425::Item2::startAction(CursorType action, Event &event) {
 	} else if (action == R2_37) {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return startAction(R2_STEPPING_DISKS, event);
+		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
 	} else
-		return startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 }
 
 bool Scene2425::Item3::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != R2_37)
-		return startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._player.disableControl();
 		if (R2_GLOBALS.getFlag(84)) {
@@ -1343,11 +1343,11 @@ bool Scene2425::Item3::startAction(CursorType action, Event &event) {
 
 bool Scene2425::Item4::startAction(CursorType action, Event &event) {
 	if (action != R2_37)
-		return startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return startAction(R2_STEPPING_DISKS, event);
+		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
 	}
 }
 
@@ -1357,21 +1357,21 @@ bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
 			R2_GLOBALS._events.setCursor(R2_37);
 			return true;
 		} else {
-			return startAction(action, event);
+			return SceneActor::startAction(action, event);
 		}
 	} else if (R2_GLOBALS._events.getCursor() == R2_37)
 		return false;
 	else 
-		return startAction(action, event);
+		return SceneActor::startAction(action, event);
 }
 
 bool Scene2425::Actor2::startAction(CursorType action, Event &event) {
 	if (action != R2_37)
-		return startAction(action, event);
+		return SceneActor::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
-		return startAction(R2_STEPPING_DISKS, event);
+		return SceneActor::startAction(R2_STEPPING_DISKS, event);
 	}
 }
 
