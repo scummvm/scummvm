@@ -3852,8 +3852,8 @@ void DreamGenContext::watchReel() {
 			++data.word(kReeltohold);
 		}
 		if (data.word(kReeltohold) == data.word(kEndofholdreel)) {
-			data.word(kReeltohold) = -1;
-			data.byte(kWatchmode) = -1;
+			data.word(kReeltohold) = 0xFFFF;
+			data.byte(kWatchmode) = 0xFF;
 			data.byte(kDestination) = data.byte(kDestafterhold);
 			data.byte(kFinaldest) = data.byte(kDestafterhold);
 			autoSetWalk();

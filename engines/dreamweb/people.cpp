@@ -714,11 +714,10 @@ void DreamGenContext::introMonks1(ReelRoutine &routine) {
 			intro2Text();
 			bx = pop();
 			es = pop();
-			routine.counter = -20;
+			routine.counter = (uint8)-20;
 		}
 	}
 
-intromonk1fin:
 	showGameReel(&routine);
 	routine.mapY = data.byte(kMapy);
 }
