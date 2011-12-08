@@ -601,7 +601,6 @@ public:
 	void selectOb();
 	void receptionist();
 	void selectSlot();
-	void decide();
 	void fadeUpMon();
 	void showDiaryPage();
 	void transferToEx();

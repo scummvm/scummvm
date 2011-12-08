@@ -554,5 +554,6 @@
 	void underTextLine();
 	void getUnderZoom();
 	void putUnderZoom();
+	void decide();
 
 #endif

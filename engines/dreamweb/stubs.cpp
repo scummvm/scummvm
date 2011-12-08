@@ -3946,4 +3946,44 @@ void DreamGenContext::madmanRun() {
 		data.byte(kLastweapon) = 8;
 }
 
+
+void DreamGenContext::decide() {
+	setMode();
+	loadPalFromIFF();
+	clearPalette();
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 0;
+	data.byte(kPointerframe) = 0;
+	data.word(kTextaddressx) = 70;
+	data.word(kTextaddressy) = 182 - 8;
+	data.byte(kTextlen) = 181;
+	data.byte(kManisoffscreen) = 1;
+	loadSaveBox();
+	showDecisions();
+	workToScreen();
+	fadeScreenUp();
+	data.byte(kGetback) = 0;
+
+	do {
+		if (data.byte(kQuitrequested) != 0)
+			return;
+
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		delPointer();
+		bx = offset_decidelist;
+		checkCoords();
+	} while (!data.byte(kGetback));
+
+	if (data.byte(kGetback) != 4)
+		getRidOfTemp();	// room not loaded
+
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+}
+
 } // End of namespace DreamGen
