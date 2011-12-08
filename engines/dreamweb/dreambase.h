@@ -91,6 +91,7 @@ public:
 	void showArrows();
 	void showOpBox();
 	void middlePanel();
+	void showDiary();
 
 	// from vgafades.cpp
 	uint8 *mainPalette();

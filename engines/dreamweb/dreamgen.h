@@ -571,7 +571,6 @@ public:
 	void fadeDownMon();
 	void printmessage2();
 	void bartender();
-	void showDiary();
 	void outOfOpen();
 	void dirCom();
 	void endGameSeq();

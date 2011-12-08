@@ -3810,4 +3810,9 @@ void DreamBase::middlePanel() {
 	showFrame(tempSprites, 160 + 71, 21, 47, 4);
 }
 
+void DreamBase::showDiary() {
+	showFrame(tempGraphics(), kDiaryx, kDiaryy + 37, 1, 0);
+	showFrame(tempGraphics(), kDiaryx + 176, kDiaryy + 108, 2, 0);
+}
+
 } // End of namespace DreamGen

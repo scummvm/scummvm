@@ -587,6 +587,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showbyte',
 	'showcity',
 	'showcurrentfile',
+	'showdiary',
 	'showdiscops',
 	'showexit',
 	'showfirstuse',

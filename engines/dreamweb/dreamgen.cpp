@@ -5857,22 +5857,6 @@ diaryloop:
 	workToScreenM();
 }
 
-void DreamGenContext::showDiary() {
-	STACK_CHECK;
-	al = 1;
-	ah = 0;
-	di = (68+24);
-	bx = (48+12)+37;
-	ds = data.word(kTempgraphics);
-	showFrame();
-	al = 2;
-	ah = 0;
-	di = (68+24)+176;
-	bx = (48+12)+108;
-	ds = data.word(kTempgraphics);
-	showFrame();
-}
-
 void DreamGenContext::showDiaryKeys() {
 	STACK_CHECK;
 	_cmp(data.byte(kPresscount), 0);
