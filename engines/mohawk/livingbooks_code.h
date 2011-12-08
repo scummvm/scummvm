@@ -281,6 +281,7 @@ public:
 	void cmdLBXFunc(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
+	void itemClone(const Common::Array<LBValue> &params);
 	void itemIsPlaying(const Common::Array<LBValue> &params);
 	void itemIsLoaded(const Common::Array<LBValue> &params);
 	void itemMoveTo(const Common::Array<LBValue> &params);

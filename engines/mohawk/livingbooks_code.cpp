@@ -1336,7 +1336,7 @@ void LBCode::cmdKey(const Common::Array<LBValue> &params) {
 
 #define NUM_ITEM_COMMANDS 34
 CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
-	{ "clone", 0 },
+	{ "clone", &LBCode::itemClone },
 	{ "destroy", 0 },
 	{ "dragBeginFrom", 0 },
 	{ "dragEnd", 0 },
@@ -1387,6 +1387,17 @@ void LBCode::runItemCommand() {
 	if (!info.func)
 		error("item command '%s' (0x%02x) unimplemented", info.name, commandType);
 	(this->*(info.func))(params);
+}
+
+void LBCode::itemClone(const Common::Array<LBValue> &params) {
+	// TODO: first param can be target?
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to setParent", params.size());
+
+	uint id = params[0].toInt();
+	const Common::String &name = params[1].toString();
+
+	_currSource->clone(id, name);
 }
 
 void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {

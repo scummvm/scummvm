@@ -107,6 +107,11 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 		_items[i]->startPhase(kLBPhaseLoad);
 }
 
+void LBPage::addClonedItem(LBItem *item) {
+	_vm->addItem(item);
+	_items.push_back(item);
+}
+
 void LBPage::itemDestroyed(LBItem *item) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (item == _items[i]) {
@@ -2670,6 +2675,24 @@ void LBItem::moveTo(const Common::Point &pos) {
 	_rect.moveTo(pos);
 }
 
+LBItem *LBItem::clone(uint16 newId, const Common::String &newName) {
+	LBItem *item = createClone();
+
+	item->_itemId = newId;
+	item->_desc = newName;
+
+	item->_resourceId = _resourceId;
+	// FIXME: the rest
+
+	_page->addClonedItem(item);
+	// FIXME: zorder?
+	return item;
+}
+
+LBItem *LBItem::createClone() {
+	return new LBItem(_vm, _page, _rect);
+}
+
 void LBItem::runScript(uint event, uint16 data, uint16 from) {
 	for (uint i = 0; i < _scriptEntries.size(); i++) {
 		LBScriptEntry *entry = _scriptEntries[i];
@@ -3075,6 +3098,10 @@ void LBSoundItem::stop() {
 	LBItem::stop();
 }
 
+LBItem *LBSoundItem::createClone() {
+	return new LBSoundItem(_vm, _page, _rect);
+}
+
 LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBGroupItem");
 	_starting = false;
@@ -3222,6 +3249,12 @@ void LBGroupItem::moveTo(const Common::Point &pos) {
 	}
 }
 
+LBItem *LBGroupItem::createClone() {
+	// TODO: needed?
+	error("LBGroupItem::createClone unimplemented");
+	return new LBGroupItem(_vm, _page, _rect);
+}
+
 LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPaletteItem");
 
@@ -3305,6 +3338,10 @@ void LBPaletteItem::update() {
 	}
 
 	LBItem::update();
+}
+
+LBItem *LBPaletteItem::createClone() {
+	error("can't clone LBPaletteItem");
 }
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3554,6 +3591,10 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	LBItem::notify(data, from);
 }
 
+LBItem *LBLiveTextItem::createClone() {
+	error("can't clone LBLiveTextItem");
+}
+
 LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPictureItem");
 }
@@ -3597,6 +3638,10 @@ void LBPictureItem::draw() {
 		return;
 
 	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
+}
+
+LBItem *LBPictureItem::createClone() {
+	return new LBPictureItem(_vm, _page, _rect);
 }
 
 LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3704,6 +3749,12 @@ void LBAnimationItem::draw() {
 	_anim->draw();
 }
 
+LBItem *LBAnimationItem::createClone() {
+	LBAnimationItem *item = new LBAnimationItem(_vm, _page, _rect);
+	item->_anim = new LBAnimation(_vm, item, _resourceId);
+	return item;
+}
+
 LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBMovieItem");
 }
@@ -3731,6 +3782,10 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	}
 
 	return LBItem::togglePlaying(playing, restart);
+}
+
+LBItem *LBMovieItem::createClone() {
+	return new LBMovieItem(_vm, _page, _rect);
 }
 
 LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3766,6 +3821,10 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;
+}
+
+LBItem *LBMiniGameItem::createClone() {
+	error("can't clone LBMiniGameItem");
 }
 
 LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3809,6 +3868,10 @@ void LBProxyItem::unload() {
 	_page = NULL;
 
 	LBItem::unload();
+}
+
+LBItem *LBProxyItem::createClone() {
+	return new LBProxyItem(_vm, _page, _rect);
 }
 
 } // End of namespace Mohawk

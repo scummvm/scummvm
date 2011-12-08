@@ -415,6 +415,8 @@ public:
 	virtual void moveBy(const Common::Point &pos);
 	virtual void moveTo(const Common::Point &pos);
 
+	LBItem *clone(uint16 newId, const Common::String &newName);
+
 	uint16 getId() { return _itemId; }
 	const Common::String &getName() { return _desc; }
 	const Common::Rect &getRect() { return _rect; }
@@ -452,6 +454,8 @@ protected:
 	bool _isAmbient;
 	bool _doHitTest;
 
+	virtual LBItem *createClone();
+
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
 	int runScriptEntry(LBScriptEntry *entry);
@@ -472,6 +476,8 @@ public:
 	void stop();
 
 protected:
+	LBItem *createClone();
+
 	bool _running;
 };
 
@@ -503,6 +509,8 @@ public:
 	void moveTo(const Common::Point &pos);
 
 protected:
+	LBItem *createClone();
+
 	bool _starting;
 
 	Common::Array<GroupEntry> _groupEntries;
@@ -519,6 +527,8 @@ public:
 	void update();
 
 protected:
+	LBItem *createClone();
+
 	uint16 _fadeInPeriod, _fadeInStep, _drawStart, _drawCount;
 	uint32 _fadeInStart, _fadeInCurrent;
 	byte *_palette;
@@ -550,6 +560,8 @@ public:
 	void notify(uint16 data, uint16 from);
 
 protected:
+	LBItem *createClone();
+
 	void paletteUpdate(uint16 word, bool on);
 	void drawWord(uint word, uint yPos);
 
@@ -573,6 +585,9 @@ public:
 	bool contains(Common::Point point);
 	void draw();
 	void init();
+
+protected:
+	LBItem *createClone();
 };
 
 class LBAnimationItem : public LBItem {
@@ -593,6 +608,8 @@ public:
 	void stop();
 
 protected:
+	LBItem *createClone();
+
 	LBAnimation *_anim;
 	bool _running;
 };
@@ -604,6 +621,9 @@ public:
 
 	void update();
 	bool togglePlaying(bool playing, bool restart);
+
+protected:
+	LBItem *createClone();
 };
 
 class LBMiniGameItem : public LBItem {
@@ -612,6 +632,9 @@ public:
 	~LBMiniGameItem();
 
 	bool togglePlaying(bool playing, bool restart);
+
+protected:
+	LBItem *createClone();
 };
 
 class LBProxyItem : public LBItem {
@@ -623,6 +646,8 @@ public:
 	void unload();
 
 protected:
+	LBItem *createClone();
+
 	class LBPage *_page;
 };
 
@@ -659,6 +684,7 @@ public:
 	void open(Archive *mhk, uint16 baseId);
 	uint16 getResourceVersion();
 
+	void addClonedItem(LBItem *item);
 	void itemDestroyed(LBItem *item);
 
 	LBCode *_code;
