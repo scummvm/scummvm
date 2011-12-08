@@ -130,7 +130,6 @@
 	void turnAnyPathOff();
 	void makeBackOb(SetObject *objData);
 	void lockMon();
-	void plotReel();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void showRain();
@@ -297,9 +296,13 @@
 	void powerLightOn();
 	void powerLightOff();
 	void playChannel0();
-	void playChannel0(uint8 index, uint8 repeat);
+	void playChannel0(uint8 index, uint8 repeat) {
+		DreamBase::playChannel0(index, repeat);
+	}
 	void playChannel1();
-	void playChannel1(uint8 index);
+	void playChannel1(uint8 index) {
+		DreamBase::playChannel1(index);
+	}
 	void showMainOps();
 	void showDiscOps();
 	void findRoomInLoc();
@@ -471,7 +474,6 @@
 	void loadPersonal();
 	void loadNews();
 	void loadCart();
-	void soundOnReels();
 	void readKey();
 	void hangOne(uint16 delay);
 	void hangOne();
@@ -556,5 +558,8 @@
 	void examineInventory();
 	void showSaveOps();
 	void showLoadOps();
+	void watchReel();
+	void showWatchReel();
+	void plotReel(uint16 &reelPointer);
 
 #endif

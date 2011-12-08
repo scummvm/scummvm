@@ -482,8 +482,8 @@ Frame *DreamGenContext::findSource() {
 	}
 }
 
-Reel *DreamBase::getReelStart() {
-	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
+Reel *DreamBase::getReelStart(uint16 reelPointer) {
+	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + reelPointer * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
 
@@ -504,9 +504,8 @@ void DreamGenContext::showGameReel(ReelRoutine *routine) {
 	uint16 reelPointer = routine->reelPointer();
 	if (reelPointer >= 512)
 		return;
-	data.word(kReelpointer) = reelPointer;
-	plotReel();
-	routine->setReelPointer(data.word(kReelpointer));
+	plotReel(reelPointer);
+	routine->setReelPointer(reelPointer);
 }
 
 const Frame *DreamGenContext::getReelFrameAX(uint16 frame) {
@@ -1133,14 +1132,14 @@ static const ReelSound *g_roomByRoom[] = {
 };
 
 
-void DreamGenContext::soundOnReels() {
+void DreamBase::soundOnReels(uint16 reelPointer) {
 	const ReelSound *r = g_roomByRoom[data.byte(kReallocation)];
 
 	if (engine->getLanguage() == Common::DE_DEU && r == g_roomSound29)
 		r = g_roomSound29_German;
 
 	for (; r->_sample != 255; ++r) {
-		if (r->_reelPointer != data.word(kReelpointer))
+		if (r->_reelPointer != reelPointer)
 			continue;
 		if (r->_reelPointer == data.word(kLastsoundreel))
 			continue;
@@ -1156,7 +1155,7 @@ void DreamGenContext::soundOnReels() {
 		playChannel0(r->_sample & 63, 255);
 	}
 
-	if (data.word(kReelpointer) != data.word(kLastsoundreel))
+	if (data.word(kLastsoundreel) != reelPointer)
 		data.word(kLastsoundreel) = (uint16)-1;
 }
 

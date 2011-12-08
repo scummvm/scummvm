@@ -1196,11 +1196,11 @@ void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	}
 }
 
-void DreamGenContext::plotReel() {
-	Reel *reel = getReelStart();
+void DreamGenContext::plotReel(uint16 &reelPointer) {
+	Reel *reel = getReelStart(reelPointer);
 	while (reel->x >= 220 && reel->x != 255) {
 		dealWithSpecial(reel->x, reel->y);
-		++data.word(kReelpointer);
+		++reelPointer;
 		reel += 8;
 	}
 
@@ -1209,11 +1209,7 @@ void DreamGenContext::plotReel() {
 			showReelFrame(reel);
 		++reel;
 	}
-	push(es);
-	push(bx);
-	soundOnReels();
-	bx = pop();
-	es = pop();
+	soundOnReels(reelPointer);
 }
 
 void DreamBase::crosshair() {
@@ -1258,8 +1254,7 @@ bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
 	for (size_t i = 0; i < 12; ++i, ++people) {
 		if (people->b4 == 255)
 			continue;
-		data.word(kReelpointer) = people->reelPointer();
-		Reel *reel = getReelStart();
+		Reel *reel = getReelStart(people->reelPointer());
 		if (reel->frame() == 0xffff)
 			++reel;
 		const Frame *frame = getReelFrameAX(reel->frame());
@@ -3813,6 +3808,63 @@ void DreamBase::middlePanel() {
 void DreamBase::showDiary() {
 	showFrame(tempGraphics(), kDiaryx, kDiaryy + 37, 1, 0);
 	showFrame(tempGraphics(), kDiaryx + 176, kDiaryy + 108, 2, 0);
+}
+
+void DreamGenContext::showWatchReel() {
+	uint16 reelPointer = data.word(kReeltowatch);
+	plotReel(reelPointer);
+	data.word(kReeltowatch) = reelPointer;
+
+	// check for shake
+	if (data.byte(kReallocation) == 26 && reelPointer == 104)
+		data.byte(kShakecounter) = 0xFF;
+}
+
+void DreamGenContext::watchReel() {
+	if (data.word(kReeltowatch) != 0xFFFF) {
+		if (data.byte(kManspath) != data.byte(kFinaldest))
+			return; // Wait until stopped walking
+		if (data.byte(kTurntoface) != data.byte(kFacing))
+			return;
+
+		if (--data.byte(kSpeedcount) != 0xFF) {
+			showWatchReel();
+			return;
+		}
+		data.byte(kSpeedcount) = data.byte(kWatchspeed);
+		if (data.word(kReeltowatch) != data.word(kEndwatchreel)) {
+			++data.word(kReeltowatch);
+			showWatchReel();
+			return;
+		}
+		if (data.word(kWatchingtime)) {
+			showWatchReel();
+			return;
+		}
+		data.word(kReeltowatch) = 0xFFFF;
+		data.byte(kWatchmode) = 0xFF;
+		if (data.word(kReeltohold) == 0xFFFF)
+			return; // No more reel
+		data.byte(kWatchmode) = 1;
+	} else if (data.byte(kWatchmode) != 1) {
+		if (data.byte(kWatchmode) != 2)
+			return; // "notreleasehold"
+		if (--data.byte(kSpeedcount) == 0xFF) {
+			data.byte(kSpeedcount) = data.byte(kWatchspeed);
+			++data.word(kReeltohold);
+		}
+		if (data.word(kReeltohold) == data.word(kEndofholdreel)) {
+			data.word(kReeltohold) = -1;
+			data.byte(kWatchmode) = -1;
+			data.byte(kDestination) = data.byte(kDestafterhold);
+			data.byte(kFinaldest) = data.byte(kDestafterhold);
+			autoSetWalk();
+			return;
+		}
+	}
+
+	uint16 reelPointer = data.word(kReeltohold);
+	plotReel(reelPointer);
 }
 
 } // End of namespace DreamGen

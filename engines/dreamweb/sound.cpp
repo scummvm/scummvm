@@ -53,7 +53,7 @@ void DreamBase::volumeAdjust() {
 	}
 }
 
-void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
+void DreamBase::playChannel0(uint8 index, uint8 repeat) {
 	if (data.byte(kSoundint) == 255)
 		return;
 
@@ -80,7 +80,7 @@ void DreamGenContext::playChannel0() {
 	playChannel0(al, ah);
 }
 
-void DreamGenContext::playChannel1(uint8 index) {
+void DreamBase::playChannel1(uint8 index) {
 	if (data.byte(kSoundint) == 255)
 		return;
 	if (data.byte(kCh1playing) == 7)

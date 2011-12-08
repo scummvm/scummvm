@@ -74,10 +74,16 @@ public:
 	void cancelCh0();
 	void cancelCh1();
 	void loadRoomsSample();
+	void playChannel0(uint8 index, uint8 repeat);
+	void playChannel1(uint8 index);
 
 	// from sprite.cpp
 	Sprite *spriteTable();
-	Reel *getReelStart();
+	Reel *getReelStart(uint16 reelPointer);
+	const Frame *findSource(uint16 &frame);
+	void showReelFrame(Reel *reel);
+	const Frame *getReelFrameAX(uint16 frame);
+	void soundOnReels(uint16 reelPointer);
 
 	// from stubs.cpp
 	void crosshair();

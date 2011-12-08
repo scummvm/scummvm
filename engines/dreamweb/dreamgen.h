@@ -554,10 +554,9 @@ public:
 	void checkInput();
 	void putUnderCentre();
 	void checkObjectSize();
-	void watchReel();
 	void findText1();
 	void isRyanHolding();
-	void showSlots();
+	void quitSymbol();
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
@@ -643,7 +642,7 @@ public:
 	void lookAtPlace();
 	void useAxe();
 	void findAllOpen();
-	void quitSymbol();
+	void showSlots();
 	void findSetObject();
 	void useDiary();
 	void deleteExObject();
@@ -693,7 +692,6 @@ public:
 	void afterNewRoom();
 	void getExAd();
 	void initialMonCols();
-	void checkForShake();
 	void useButtonA();
 	void execCommand();
 	void updateSymbolBot();
