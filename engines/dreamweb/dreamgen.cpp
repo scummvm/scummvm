@@ -1116,30 +1116,6 @@ void DreamGenContext::transferMap() {
 	_add(data.word(kExframepos), cx);
 }
 
-void DreamGenContext::doFade() {
-	STACK_CHECK;
-	_cmp(data.byte(kFadedirection), 0);
-	if (flags.z())
-		return /* (finishfade) */;
-	cl = data.byte(kNumtofade);
-	ch = 0;
-	al = data.byte(kColourpos);
-	ah = 0;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	_add(si, ax);
-	_add(si, ax);
-	_add(si, ax);
-	showGroup();
-	al = data.byte(kNumtofade);
-	_add(al, data.byte(kColourpos));
-	data.byte(kColourpos) = al;
-	_cmp(al, 0);
-	if (!flags.z())
-		return /* (finishfade) */;
-	fadeCalculation();
-}
-
 void DreamGenContext::fadeToWhite() {
 	STACK_CHECK;
 	es = data.word(kBuffers);

@@ -644,7 +644,7 @@ namespace %s {
 """
 class %sContext : public DreamBase, public Context {
 public:
-	DreamGenContext(DreamWeb::DreamWebEngine *en) : DreamBase(en), Context(data) {}
+	DreamGenContext(DreamWeb::DreamWebEngine *en) : DreamBase(en), Context(this) {}
 
 	void __start();
 """

@@ -98,7 +98,7 @@ void DreamWebEngine::waitForVSync() {
 	}
 
 	_base.doShake();
-	_context.doFade();
+	_base.doFade();
 	_system->updateScreen();
 }
 

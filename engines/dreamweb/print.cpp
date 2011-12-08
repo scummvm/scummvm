@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-void DreamGenContext::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
+void DreamBase::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
 	printChar(charSet, &newX, y, c, nextChar, &width, &height);
@@ -57,7 +57,7 @@ uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *t
 	}
 }
 
-void DreamGenContext::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamBase::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 
@@ -75,7 +75,7 @@ void DreamGenContext::printChar(const Frame *charSet, uint16* x, uint16 y, uint8
 	(*x) += *width;
 }
 
-void DreamGenContext::printChar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamBase::printChar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	printChar(charSet, &x, y, c, nextChar, width, height);
 }
 
@@ -125,16 +125,16 @@ void DreamGenContext::printDirect() {
 	uint16 initialSi = si;
 	const uint8 *initialString = es.ptr(si, 0);
 	const uint8 *string = initialString;
-	al = printDirect(&string, di, &y, dl, (bool)(dl & 1));
+	al = DreamBase::printDirect(&string, di, &y, dl, (bool)(dl & 1));
 	si = initialSi + (string - initialString);
 	bx = y;
 }
 
-uint8 DreamGenContext::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamBase::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	return printDirect(&string, x, &y, maxWidth, centered);
 }
 
-uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
 	const Frame *charSet = engine->currentCharset();
 	while (true) {
