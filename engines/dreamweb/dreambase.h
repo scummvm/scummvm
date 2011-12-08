@@ -69,6 +69,11 @@ public:
 	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
 	RoomPaths *getRoomsPaths();
+	void faceRightWay();
+	void setWalk();
+	void autoSetWalk();
+	void findXYFromPath();
+	void bresenhams();
 	void workoutFrames();
 
 	// from print.cpp

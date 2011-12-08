@@ -73,7 +73,14 @@ RoomPaths *DreamBase::getRoomsPaths() {
 	return (RoomPaths *)result;
 }
 
-void DreamGenContext::setWalk() {
+void DreamBase::faceRightWay() {
+	PathNode *paths = getRoomsPaths()->nodes;
+	uint8 dir = paths[data.byte(kManspath)].dir;
+	data.byte(kTurntoface) = dir;
+	data.byte(kLeavedirection) = dir;
+}
+
+void DreamBase::setWalk() {
 	if (data.byte(kLinepointer) != 254) {
 		// Already walking
 		data.byte(kFinaldest) = data.byte(kPointerspath);
@@ -100,7 +107,7 @@ void DreamGenContext::setWalk() {
 	}
 }
 
-void DreamGenContext::autoSetWalk() {
+void DreamBase::autoSetWalk() {
 	if (data.byte(kFinaldest) == data.byte(kManspath))
 		return;
 	const RoomPaths *roomsPaths = getRoomsPaths();
@@ -137,7 +144,7 @@ void DreamBase::checkDest(const RoomPaths *roomsPaths) {
 	data.byte(kDestination) = destination;
 }
 
-void DreamGenContext::findXYFromPath() {
+void DreamBase::findXYFromPath() {
 	const PathNode *roomsPaths = getRoomsPaths()->nodes;
 	data.byte(kRyanx) = roomsPaths[data.byte(kManspath)].x - 12;
 	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
@@ -153,7 +160,7 @@ bool DreamGenContext::checkIfPathIsOn(uint8 index) {
 	return pathOn == 0xff;
 }
 
-void DreamGenContext::bresenhams() {
+void DreamBase::bresenhams() {
 	workoutFrames();
 	Common::Point *lineData = &_lineData[0];
 	int16 startX = (int16)data.word(kLinestartx);

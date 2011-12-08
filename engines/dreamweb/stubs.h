@@ -96,9 +96,7 @@
 	void initMan();
 	void mainMan(Sprite *sprite);
 	void mainMan();
-	void faceRightWay();
 	void walking(Sprite *sprite);
-	void autoSetWalk();
 	void aboutTurn(Sprite *sprite);
 	void backObject(Sprite *sprite);
 	void backObject();
@@ -161,7 +159,6 @@
 	void blockNameText();
 	void walkToText();
 	void personNameText();
-	void findXYFromPath();
 	void findOrMake();
 	void findOrMake(uint8 index, uint8 value, uint8 type) {
 		DreamBase::findOrMake(index, value, type);
@@ -239,7 +236,6 @@
 	void useText();
 	void getBlockOfPixel();
 	uint8 getBlockOfPixel(uint8 x, uint8 y);
-	void bresenhams();
 	void examineObText();
 	void sortOutMap();
 	void showCity();
@@ -497,7 +493,6 @@
 	void openSarters();
 	void openLouis();
 	void DOSReturn();
-	void setWalk();
 	void useLadder();
 	void useLadderB();
 	void useCart();
