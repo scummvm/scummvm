@@ -1580,7 +1580,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Rect textRect;
 	int maxWidth = 120;
 	bool keepOnscreen = false;
-	bool centerText = g_vm->getGameID() == GType_Ringworld;
+	bool centerText = g_vm->getGameID() != GType_BlueForce;
 	Common::List<int> playList;
 
 	if (resNum != 0) {
