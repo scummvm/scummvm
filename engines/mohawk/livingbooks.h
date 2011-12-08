@@ -719,7 +719,7 @@ public:
 	void nextPage();
 
 	// TODO: make private
-	Common::HashMap<Common::String, LBValue> _variables;
+	Common::HashMap<Common::String, LBValue, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 
 	// helper functions, also used by LBProxyItem
 	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
