@@ -1696,17 +1696,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(diaryList);
 		break;
 	}
-	case offset_opslist: {
-		RectWithCallback opsList[] = {
-			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
-			{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
-			{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(opsList);
-		break;
-	}
 	default:
 		::error("Unimplemented checkcoords() call");
 	}
@@ -4051,6 +4040,70 @@ void DreamGenContext::discOps() {
 		dumpTextLine();
 		checkCoords(discOpsList);
 	} while (!data.byte(kGetback));
+}
+
+void DreamGenContext::doSaveLoad() {
+	data.byte(kPointerframe) = 0;
+	data.word(kTextaddressx) = 70;
+	data.word(kTextaddressy) = 182-8;
+	data.byte(kTextlen) = 181;
+	data.byte(kManisoffscreen) = 1;
+	clearWork();
+	createPanel2();
+	underTextLine();
+	getRidOfAll();
+	loadSaveBox();
+	showOpBox();
+	showMainOps();
+	workToScreen();
+
+	RectWithCallback opsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
+		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
+		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	bool firstOps = true;
+
+	do {	// restart ops
+		if (firstOps) {
+			firstOps = false;
+		} else {
+			showOpBox();
+			showMainOps();
+			workToScreenM();
+		}
+		data.byte(kGetback) = 0;
+
+		do {	// wait ops
+			if (data.byte(kQuitrequested)) {
+				data.byte(kManisoffscreen) = 0;
+				return;
+			}
+
+			readMouse();
+			showPointer();
+			vSync();
+			dumpPointer();
+			dumpTextLine();
+			delPointer();
+			checkCoords(opsList);
+		} while (!data.byte(kGetback));
+	} while (data.byte(kGetback) == 2);
+
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	if (data.byte(kGetback) != 4) {
+		getRidOfTemp();
+		restoreAll();
+		redrawMainScrn();
+		workToScreenM();
+		data.byte(kCommandtype) = 200;
+	}
+	data.byte(kManisoffscreen) = 0;
 }
 
 } // End of namespace DreamGen

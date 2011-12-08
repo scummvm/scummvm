@@ -557,5 +557,6 @@
 	void decide();
 	void talk();
 	void discOps();
+	void doSaveLoad();
 
 #endif
