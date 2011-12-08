@@ -278,7 +278,7 @@ void DreamGenContext::turnOnPower() {
 	powerLightOn();
 }
 
-void DreamGenContext::printOuterMon() {
+void DreamBase::printOuterMon() {
 	showFrame(tempGraphics(), 40, 32, 1, 0);
 	showFrame(tempGraphics(), 264, 32, 2, 0);
 	showFrame(tempGraphics(), 40, 12, 3, 0);

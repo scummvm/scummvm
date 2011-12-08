@@ -51,9 +51,13 @@ public:
 	DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) { }
 
 public:
+	// from monitor.cpp
+	void printOuterMon();
+
 	// from pathfind.cpp
 	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
+	RoomPaths *getRoomsPaths();
 
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
@@ -71,12 +75,20 @@ public:
 	void cancelCh1();
 	void loadRoomsSample();
 
+	// from sprite.cpp
+	Sprite *spriteTable();
+	Reel *getReelStart();
+
 	// from stubs.cpp
 	void crosshair();
 	void showBlink();
 	void dumpBlink();
 	void dumpPointer();
 	void showRyanPage();
+	Frame *tempGraphics();
+	Frame *tempGraphics2();
+	Frame *tempGraphics3();
+	void showArrows();
 
 	// from vgafades.cpp
 	uint8 *mainPalette();

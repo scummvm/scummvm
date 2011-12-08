@@ -2307,15 +2307,15 @@ void DreamGenContext::readSetData() {
 	//engine->closeFile();
 }
 
-Frame * DreamGenContext::tempGraphics() {
+Frame * DreamBase::tempGraphics() {
 	return (Frame *)getSegment(data.word(kTempgraphics)).ptr(0, 0);
 }
 
-Frame * DreamGenContext::tempGraphics2() {
+Frame * DreamBase::tempGraphics2() {
 	return (Frame *)getSegment(data.word(kTempgraphics2)).ptr(0, 0);
 }
 
-Frame * DreamGenContext::tempGraphics3() {
+Frame * DreamBase::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
@@ -3779,7 +3779,7 @@ void DreamGenContext::examineInventory() {
 	workToScreenM();
 }
 
-void DreamGenContext::showArrows() {
+void DreamBase::showArrows() {
 	showFrame(tempGraphics(), 116 - 12, 16, 0, 0);
 	showFrame(tempGraphics(), 226 + 12, 16, 1, 0);
 	showFrame(tempGraphics(), 280, 14, 2, 0);

@@ -68,7 +68,7 @@ void DreamGenContext::turnAnyPathOff() {
 	turnAnyPathOff(al, ah);
 }
 
-RoomPaths *DreamGenContext::getRoomsPaths() {
+RoomPaths *DreamBase::getRoomsPaths() {
 	void *result = getSegment(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
 	return (RoomPaths *)result;
 }

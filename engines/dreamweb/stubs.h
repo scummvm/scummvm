@@ -85,7 +85,6 @@
 	void oldToNames();
 	void namesToOld();
 	void startLoading(const Room &room);
-	Sprite *spriteTable();
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
@@ -129,11 +128,9 @@
 	void turnAnyPathOff(uint8 param, uint8 room);
 	void turnAnyPathOn();
 	void turnAnyPathOff();
-	RoomPaths *getRoomsPaths();
 	void makeBackOb(SetObject *objData);
 	void lockMon();
 	void plotReel();
-	Reel *getReelStart();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void showRain();
@@ -289,9 +286,6 @@
 	void input();
 	void monPrint();
 	const char *monPrint(const char *string);
-	Frame *tempGraphics();
-	Frame *tempGraphics2();
-	Frame *tempGraphics3();
 	void accessLightOn();
 	void accessLightOff();
 	void randomAccess(uint16 count);
@@ -558,7 +552,5 @@
 	void getTime();
 	void set16ColPalette();
 	void examineInventory();
-	void printOuterMon();
-	void showArrows();
 
 #endif

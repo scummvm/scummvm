@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-Sprite *DreamGenContext::spriteTable() {
+Sprite *DreamBase::spriteTable() {
 	Sprite *sprite = (Sprite *)getSegment(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
 	return sprite;
 }
@@ -482,7 +482,7 @@ Frame *DreamGenContext::findSource() {
 	}
 }
 
-Reel *DreamGenContext::getReelStart() {
+Reel *DreamBase::getReelStart() {
 	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
