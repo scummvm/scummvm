@@ -3899,4 +3899,23 @@ void DreamGenContext::afterNewRoom() {
 	atmospheres();
 }
 
+void DreamGenContext::madmanRun() {
+	if (data.byte(kLocation)    != 14 ||
+		data.byte(kMapx)        != 22 ||
+		data.byte(kPointermode) !=  2 ||
+		data.byte(kMadmanflag)  !=  0) {
+		identifyOb();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 211) {
+		data.byte(kCommandtype) = 211;
+		commandOnly(52);
+	}
+
+	if (data.word(kMousebutton) == 1 &&
+		data.word(kMousebutton) != data.word(kOldbutton))
+		data.byte(kLastweapon) = 8;
+}
+
 } // End of namespace DreamGen

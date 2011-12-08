@@ -432,6 +432,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'louis',
 	'louischair',
 	'madman',
+	'madmanrun',
 	'madmanstelly',
 	'madmantext',
 	'madmode',

@@ -6600,37 +6600,6 @@ void DreamGenContext::clearChanges() {
 	_stosw(cx, true);
 }
 
-void DreamGenContext::madmanRun() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 14);
-	if (!flags.z())
-		{ identifyOb(); return; };
-	_cmp(data.byte(kMapx), 22);
-	if (!flags.z())
-		{ identifyOb(); return; };
-	_cmp(data.byte(kPointermode), 2);
-	if (!flags.z())
-		{ identifyOb(); return; };
-	_cmp(data.byte(kMadmanflag), 0);
-	if (!flags.z())
-		{ identifyOb(); return; };
-	_cmp(data.byte(kCommandtype), 211);
-	if (flags.z())
-		goto alreadyrun;
-	data.byte(kCommandtype) = 211;
-	al = 52;
-	commandOnly();
-alreadyrun:
-	_cmp(data.word(kMousebutton), 1);
-	if (!flags.z())
-		return /* (norun) */;
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (norun) */;
-	data.byte(kLastweapon) = 8;
-}
-
 void DreamGenContext::identifyOb() {
 	STACK_CHECK;
 	_cmp(data.word(kWatchingtime), 0);

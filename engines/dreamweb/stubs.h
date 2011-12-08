@@ -549,5 +549,6 @@
 		DreamBase::removeFreeObject(index);
 	}
 	void afterNewRoom();
+	void madmanRun();
 
 #endif

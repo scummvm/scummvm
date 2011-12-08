@@ -679,7 +679,6 @@ public:
 	void clearChanges();
 	void searchForFiles();
 	void monkSpeaking();
-	void madmanRun();
 	void getExAd();
 	void initialMonCols();
 	void useButtonA();
