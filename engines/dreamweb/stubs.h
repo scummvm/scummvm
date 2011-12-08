@@ -553,5 +553,7 @@
 	void getTime();
 	void set16ColPalette();
 	void examineInventory();
+	void showSaveOps();
+	void showLoadOps();
 
 #endif

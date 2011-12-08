@@ -89,6 +89,7 @@ public:
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
 	void showArrows();
+	void showOpBox();
 
 	// from vgafades.cpp
 	uint8 *mainPalette();

@@ -561,7 +561,6 @@ public:
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
-	void showSaveOps();
 	void introMonks1();
 	void resetLocation();
 	void introMonks2();
@@ -660,7 +659,6 @@ public:
 	void openOb();
 	void drawItAll();
 	void useStereo();
-	void showOpBox();
 	void dumpCurrent();
 	void showDiaryKeys();
 	void rollEndCredits2();
@@ -711,7 +709,6 @@ public:
 	void createName();
 	void getPersonText();
 	void parser();
-	void showLoadOps();
 	void underTextLine();
 	void showNames();
 	void emergencyPurge();

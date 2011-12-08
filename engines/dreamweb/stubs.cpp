@@ -3785,4 +3785,21 @@ void DreamBase::showArrows() {
 	showFrame(tempGraphics(), 280, 14, 2, 0);
 }
 
+void DreamBase::showOpBox() {
+	showFrame(tempGraphics(), kOpsx, kOpsy, 0, 0);
+	showFrame(tempGraphics(), kOpsx, kOpsy + 55, 4, 0);
+}
+
+void DreamGenContext::showLoadOps() {
+	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
+}
+
+void DreamGenContext::showSaveOps() {
+	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 6, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
+}
+
 } // End of namespace DreamGen

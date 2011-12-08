@@ -6256,64 +6256,6 @@ void DreamGenContext::getNamePos() {
 	_add(bx, ax);
 }
 
-void DreamGenContext::showOpBox() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics);
-	di = (60);
-	bx = (52);
-	al = 0;
-	ah = 0;
-	showFrame();
-	ds = data.word(kTempgraphics);
-	di = (60);
-	bx = (52)+55;
-	al = 4;
-	ah = 0;
-	showFrame();
-}
-
-void DreamGenContext::showLoadOps() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics);
-	di = (60)+128+4;
-	bx = (52)+12;
-	al = 1;
-	ah = 0;
-	showFrame();
-	ds = data.word(kTempgraphics);
-	di = (60)+176+2;
-	bx = (52)+60-4;
-	al = 5;
-	ah = 0;
-	showFrame();
-	di = (60)+104;
-	bx = (52)+14;
-	al = 55;
-	dl = 101;
-	printMessage();
-}
-
-void DreamGenContext::showSaveOps() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics);
-	di = (60)+128+4;
-	bx = (52)+12;
-	al = 1;
-	ah = 0;
-	showFrame();
-	ds = data.word(kTempgraphics);
-	di = (60)+176+2;
-	bx = (52)+60-4;
-	al = 5;
-	ah = 0;
-	showFrame();
-	di = (60)+104;
-	bx = (52)+14;
-	al = 54;
-	dl = 101;
-	printMessage();
-}
-
 void DreamGenContext::selectSlot() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 244);
