@@ -73,6 +73,7 @@ p = parser(skip_binary_data = [
 	'endgametext1',
 	'savefiles',
 	'decidelist',
+	'discopslist',
 	# sblaster.asm
 	'dmaaddresses',
 	# sprite.asm
@@ -258,6 +259,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'destselect',
 	'disablepath',
 	'disablesoundint',
+	'discops',
 	'dmaend',
 	'doblocks',
 	'dochange',

@@ -32,19 +32,18 @@
 
 namespace DreamGen {
 
-static const uint16 offset_opslist = 0x0560;
-static const uint16 offset_operand1 = 0x0504;
 static const uint16 offset_money1poke = 0x052e;
+static const uint16 offset_speechfile = 0x0595;
 static const uint16 offset_openchangesize = 0x0446;
-static const uint16 offset_discopslist = 0x058a;
-static const uint16 offset_commandline = 0x05cc;
+static const uint16 offset_operand1 = 0x0504;
 static const uint16 offset_comlist = 0x045e;
-static const uint16 offset_speechfile = 0x05bf;
+static const uint16 offset_opslist = 0x0560;
 static const uint16 offset_diarylist = 0x0536;
 static const uint16 offset_rootdir = 0x0512;
 static const uint16 offset_money2poke = 0x0533;
 static const uint16 offset_keys = 0x049a;
 static const uint16 offset_quitlist = 0x0448;
+static const uint16 offset_commandline = 0x05a2;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -426,15 +425,15 @@ static const uint16 kGungraphic = 1055;
 static const uint16 kMonkface = 1068;
 static const uint16 kTitle7graphics = 1081;
 static const uint16 kCurrentfile = 1312;
-static const uint16 kRoomscango = 1581;
-static const uint16 kRoompics = 1597;
-static const uint16 kOplist = 1612;
-static const uint16 kInputline = 1615;
-static const uint16 kPresslist = 1743;
-static const uint16 kSavenames = 1749;
-static const uint16 kQuitrequested = 1868;
-static const uint16 kSubtitles = 1869;
-static const uint16 kForeignrelease = 1870;
+static const uint16 kRoomscango = 1539;
+static const uint16 kRoompics = 1555;
+static const uint16 kOplist = 1570;
+static const uint16 kInputline = 1573;
+static const uint16 kPresslist = 1701;
+static const uint16 kSavenames = 1707;
+static const uint16 kQuitrequested = 1826;
+static const uint16 kSubtitles = 1827;
+static const uint16 kForeignrelease = 1828;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -585,7 +584,6 @@ public:
 	void removeObFromInv();
 	void heavy();
 	void useKey();
-	void discOps();
 	void monitorLogo();
 	void dirFile();
 	void pickupConts();

@@ -1707,17 +1707,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(opsList);
 		break;
 	}
-	case offset_discopslist: {
-		RectWithCallback discOpsList[] = {
-			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
-			{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
-			{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(discOpsList);
-		break;
-	}
 	default:
 		::error("Unimplemented checkcoords() call");
 	}
@@ -4019,9 +4008,49 @@ void DreamGenContext::talk() {
 	workToScreenM();
 	if (data.byte(kSpeechloaded) == 1) {
 		cancelCh1();
-		data.byte(kVolumedirection) = -1;
+		data.byte(kVolumedirection) = 0xFF;
 		data.byte(kVolumeto) = 0;
 	}
+}
+
+
+void DreamGenContext::discOps() {
+	if (data.byte(kCommandtype) != 249) {
+		data.byte(kCommandtype) = 249;
+		commandOnly(43);
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	scanForNames();
+	data.byte(kLoadingorsave) = 2;
+	showOpBox();
+	showDiscOps();
+	data.byte(kCurrentslot) = 0;
+	workToScreenM();
+	data.byte(kGetback) = 0;
+
+	RectWithCallback discOpsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
+		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
+		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	do {
+		if (data.byte(kQuitrequested) != 0)
+			return; // quitdiscops
+
+		delPointer();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		checkCoords(discOpsList);
+	} while (!data.byte(kGetback));
 }
 
 } // End of namespace DreamGen

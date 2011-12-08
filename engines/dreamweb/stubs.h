@@ -556,5 +556,6 @@
 	void putUnderZoom();
 	void decide();
 	void talk();
+	void discOps();
 
 #endif
