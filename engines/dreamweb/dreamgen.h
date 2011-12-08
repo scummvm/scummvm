@@ -606,10 +606,8 @@ public:
 	void dirFile();
 	void pickupConts();
 	void lockLightOff();
-	void advisor();
 	void allPalette();
 	void cantDrop();
-	void copper();
 	void placeFreeObject();
 	void putUnderZoom();
 	void findInvPos();

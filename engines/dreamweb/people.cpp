@@ -39,7 +39,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
-	&DreamGenContext::copper, &DreamGenContext::poolGuard,
+	NULL, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
 	NULL, NULL,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
@@ -71,7 +71,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, &DreamGenContext::security,
-	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
+	&DreamGenContext::copper, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
@@ -569,6 +569,7 @@ void DreamGenContext::foghornSound(ReelRoutine &routine) {
 }
 
 void DreamGenContext::train(ReelRoutine &routine) {
+	// The original code has logic for this, but it is disabled
 }
 
 void DreamGenContext::louisChair(ReelRoutine &routine) {
@@ -667,6 +668,24 @@ void DreamGenContext::monkAndRyan(ReelRoutine &routine) {
 	}
 
 	showGameReel(&routine);
+}
+
+void DreamGenContext::copper(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 94) {
+			nextReelPointer = 64;
+		} else if (nextReelPointer == 81 || nextReelPointer == 66) {
+			// Might wait
+			if (engine->randomNumber() >= 7)
+				nextReelPointer--;
+		}
+
+		routine.setReelPointer(nextReelPointer);
+	}
+
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 } // End of namespace DreamGen
