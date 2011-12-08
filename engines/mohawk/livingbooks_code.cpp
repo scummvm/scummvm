@@ -847,8 +847,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "deleteAt", &LBCode::cmdDeleteAt },
 	{ "clearList", &LBCode::cmdUnimplemented },
 	{ "setWorld", 0 },
-	{ "setProperty", 0 },
-	{ "getProperty", 0 },
+	{ "setProperty", &LBCode::cmdSetProperty },
+	{ "getProperty", &LBCode::cmdGetProperty },
 	{ "copyList", 0 },
 	{ "invoke", 0 },
 	{ "exec", &LBCode::cmdExec },
@@ -1187,6 +1187,45 @@ void LBCode::cmdDeleteAt(const Common::Array<LBValue> &params) {
 	if (params[1].integer < 1 || params[1].integer > (int)params[0].list->array.size())
 		return;
 	params[0].list->array.remove_at(params[1].integer - 1);
+}
+
+void LBCode::cmdSetProperty(const Common::Array<LBValue> &params) {
+	if (params.size() < 2 || params.size() > 3)
+		error("incorrect number of parameters (%d) to setProperty", params.size());
+
+	Common::String name;
+	LBValue val;
+	LBItem *target = _currSource;
+	if (params.size() == 3) {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted setProperty on invalid item (%s)", params[0].toString().c_str());
+		name = params[1].toString();
+		val = params[2];
+	} else {
+		name = params[0].toString();
+		val = params[1];
+	}
+
+	target->_variables[name] = val;
+}
+
+void LBCode::cmdGetProperty(const Common::Array<LBValue> &params) {
+	if (params.size() < 1 || params.size() > 2)
+		error("incorrect number of parameters (%d) to getProperty", params.size());
+
+	Common::String name;
+	LBItem *target = _currSource;
+	if (params.size() == 2) {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted getProperty on invalid item (%s)", params[0].toString().c_str());
+		name = params[1].toString();
+	} else {
+		name = params[0].toString();
+	}
+
+	_stack.push(target->_variables[name]);
 }
 
 void LBCode::cmdExec(const Common::Array<LBValue> &params) {

@@ -424,6 +424,9 @@ public:
 
 	Common::List<LBItem *>::iterator _iterator;
 
+	// TODO: make private
+	Common::HashMap<Common::String, LBValue, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
+
 protected:
 	MohawkEngine_LivingBooks *_vm;
 	LBPage *_page;
