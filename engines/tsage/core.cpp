@@ -2661,43 +2661,48 @@ void SceneObjectList::draw() {
 		}
 
 		g_globals->_paneRegions[paneNum].setRect(0, 0, 0, 0);
-redraw:
-		// Main draw loop
-		for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
-			SceneObject *obj = objList[objIndex];
 
-			if ((obj->_flags & flagMask) && !(obj->_flags & OBJFLAG_HIDE)) {
-				obj->_paneRects[paneNum] = obj->_bounds;
-				obj->draw();
+		// FIXME: Currently, removing objects causes screen flickers when the removed object intersects
+		// another drawn object, since the background is briefly redrawn over the object. For now, I'm
+		// using a forced jump back to redraw objects. In the long term, I should figure out how the
+		// original game does this properly
+		bool redrawFlag = true;
+		while (redrawFlag) {
+			redrawFlag = false;
+
+			// Main draw loop
+			for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
+				SceneObject *obj = objList[objIndex];
+
+				if ((obj->_flags & flagMask) && !(obj->_flags & OBJFLAG_HIDE)) {
+					obj->_paneRects[paneNum] = obj->_bounds;
+					obj->draw();
+				}
 			}
-		}
 
-		// Update the palette
-		g_globals->_sceneManager.fadeInIfNecessary();
-		g_globals->_sceneManager._loadMode = 0;
-		g_globals->_paneRefreshFlag[paneNum] = 0;
+			// Update the palette
+			g_globals->_sceneManager.fadeInIfNecessary();
+			g_globals->_sceneManager._loadMode = 0;
+			g_globals->_paneRefreshFlag[paneNum] = 0;
 
-		// Loop through the object list, removing any objects and refreshing the screen as necessary
-		for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
-			SceneObject *obj = objList[objIndex];
+			// Loop through the object list, removing any objects and refreshing the screen as necessary
+			for (uint objIndex = 0; objIndex < objList.size() && !redrawFlag; ++objIndex) {
+				SceneObject *obj = objList[objIndex];
 
-			if (obj->_flags & OBJFLAG_HIDE)
-				obj->_flags |= OBJFLAG_HIDING;
-			obj->_flags &= ~flagMask;
-			if (obj->_flags & OBJFLAG_REMOVE) {
-				obj->_flags |= OBJFLAG_PANES;
+				if (obj->_flags & OBJFLAG_HIDE)
+					obj->_flags |= OBJFLAG_HIDING;
+				obj->_flags &= ~flagMask;
+				if (obj->_flags & OBJFLAG_REMOVE) {
+					obj->_flags |= OBJFLAG_PANES;
 
-				checkIntersection(objList, objIndex, CURRENT_PANENUM);
+					checkIntersection(objList, objIndex, CURRENT_PANENUM);
 
-				obj->updateScreen();
-				obj->removeObject();
+					obj->updateScreen();
+					obj->removeObject();
 
-				// FIXME: Currently, removing objects causes screen flickers when the removed object intersects
-				// another drawn object, since the background is briefly redrawn over the object. For now, I'm
-				// using a forced jump back to redraw objects. In the long term, I should figure out how the
-				// original game does this properly
-				objList.remove_at(objIndex);
-				goto redraw;
+					objList.remove_at(objIndex);
+					redrawFlag = true;
+				}
 			}
 		}
 	}
