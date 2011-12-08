@@ -1685,17 +1685,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(quitList);
 		break;
 	}
-	case offset_diarylist: {
-		RectWithCallback diaryList[] = {
-			{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diaryKeyN },
-			{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diaryKeyP },
-			{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitKey },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(diaryList);
-		break;
-	}
 	default:
 		::error("Unimplemented checkcoords() call");
 	}

@@ -1158,5 +1158,49 @@ void DreamBase::removeFreeObject(uint8 index) {
 	getFreeAd(index)->mapad[0] = 0xFF;
 }
 
+void DreamGenContext::useDiary() {
+	getRidOfReels();
+	loadIntoTemp((const char *)data.ptr(kDiarygraphic, 0));
+	loadTempText((const char *)data.ptr(kDiarytext, 0));
+	loadTempCharset((const char *)data.ptr(kCharacterset3, 0));
+	createPanel();
+	showIcon();
+	showDiary();
+	underTextLine();
+	showDiaryPage();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+	data.byte(kGetback) = 0;
+
+	RectWithCallback diaryList[] = {
+		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diaryKeyN },
+		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diaryKeyP },
+		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitKey },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+	
+	do {
+		delPointer();
+		readMouse();
+		showDiaryKeys();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpDiaryKeys();
+		dumpTextLine();
+		checkCoords(diaryList);
+	} while (!data.byte(kGetback));
+
+	getRidOfTemp();
+	getRidOfTempText();
+	getRidOfTempCharset();
+	restoreReels();
+	data.byte(kManisoffscreen) = 0;
+	redrawMainScrn();
+	workToScreenM();
+}
 
 } // End of namespace DreamGen

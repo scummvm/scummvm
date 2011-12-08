@@ -49,6 +49,7 @@ p = parser(skip_binary_data = [
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
+	'diarylist',
 	# newplace.asm
 	'destlist',
 	# object.asm
@@ -700,6 +701,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'useclearbox',
 	'usecooker',
 	'usecoveredbox',
+	'usediary',
 	'usedryer',
 	'useelevator1',
 	'useelevator2',

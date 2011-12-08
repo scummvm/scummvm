@@ -33,12 +33,11 @@
 namespace DreamGen {
 
 static const uint16 offset_money1poke = 0x052e;
-static const uint16 offset_commandline = 0x0578;
+static const uint16 offset_speechfile = 0x0541;
 static const uint16 offset_openchangesize = 0x0446;
 static const uint16 offset_operand1 = 0x0504;
 static const uint16 offset_comlist = 0x045e;
-static const uint16 offset_diarylist = 0x0536;
-static const uint16 offset_speechfile = 0x056b;
+static const uint16 offset_commandline = 0x054e;
 static const uint16 offset_rootdir = 0x0512;
 static const uint16 offset_money2poke = 0x0533;
 static const uint16 offset_keys = 0x049a;
@@ -424,15 +423,15 @@ static const uint16 kGungraphic = 1055;
 static const uint16 kMonkface = 1068;
 static const uint16 kTitle7graphics = 1081;
 static const uint16 kCurrentfile = 1312;
-static const uint16 kRoomscango = 1497;
-static const uint16 kRoompics = 1513;
-static const uint16 kOplist = 1528;
-static const uint16 kInputline = 1531;
-static const uint16 kPresslist = 1659;
-static const uint16 kSavenames = 1665;
-static const uint16 kQuitrequested = 1784;
-static const uint16 kSubtitles = 1785;
-static const uint16 kForeignrelease = 1786;
+static const uint16 kRoomscango = 1455;
+static const uint16 kRoompics = 1471;
+static const uint16 kOplist = 1486;
+static const uint16 kInputline = 1489;
+static const uint16 kPresslist = 1617;
+static const uint16 kSavenames = 1623;
+static const uint16 kQuitrequested = 1742;
+static const uint16 kSubtitles = 1743;
+static const uint16 kForeignrelease = 1744;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -659,7 +658,6 @@ public:
 	void selectOpenOb();
 	void useGun();
 	void autoAppear();
-	void useDiary();
 	void newPlace();
 	void useHandle();
 	void showPuzText();

@@ -558,5 +558,6 @@
 	void talk();
 	void discOps();
 	void doSaveLoad();
+	void useDiary();
 
 #endif
