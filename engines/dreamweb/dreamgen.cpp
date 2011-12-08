@@ -5088,22 +5088,6 @@ stereoon:
 	putBackObStuff();
 }
 
-void DreamGenContext::useCooker() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	ah = data.byte(kObjecttype);
-	checkInside();
-	_cmp(cl, (114));
-	if (!flags.z())
-		goto foodinside;
-	showFirstUse();
-	putBackObStuff();
-	return;
-foodinside:
-	showSecondUse();
-	putBackObStuff();
-}
-
 void DreamGenContext::useAxe() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 22);

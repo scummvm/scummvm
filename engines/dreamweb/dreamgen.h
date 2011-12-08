@@ -613,7 +613,6 @@ public:
 	void rollEndCredits();
 	void getKeyAndLogo();
 	void selectOb();
-	void useCooker();
 	void receptionist();
 	void selectSlot();
 	void decide();

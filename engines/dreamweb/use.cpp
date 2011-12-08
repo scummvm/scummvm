@@ -1137,4 +1137,17 @@ void DreamGenContext::hotelControl() {
 	putBackObStuff();
 }
 
+void DreamGenContext::useCooker() {
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	checkInside();
+
+	if (cl == 114)
+		showFirstUse();
+	else
+		showSecondUse();	// Food inside
+		
+	putBackObStuff();
+}
+
 } // End of namespace DreamGen
