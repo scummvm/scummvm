@@ -30,10 +30,9 @@ uint16 DreamGenContext::getPersFrame(uint8 index) {
 
 void DreamGenContext::convIcons() {
 	uint8 index = data.byte(kCharacter) & 127;
-	data.word(kCurrentframe) = getPersFrame(index);
-	Frame *frame = findSource();
-	uint16 frameNumber = (data.word(kCurrentframe) - data.word(kTakeoff)) & 0xff;
-	showFrame(frame, 234, 2, frameNumber, 0);
+	uint16 frame = getPersFrame(index);
+	const Frame *base = findSource(frame);
+	showFrame(base, 234, 2, frame, 0);
 }
 
 } // End of namespace DreamGen

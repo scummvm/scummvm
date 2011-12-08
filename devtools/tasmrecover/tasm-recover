@@ -97,6 +97,9 @@ p = parser(skip_binary_data = [
 	'icons1',
 	'icons2',
 	'tempcharset',
+	'currentframe',
+	'takeoff',
+	'reelpointer',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

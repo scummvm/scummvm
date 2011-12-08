@@ -115,11 +115,8 @@
 	void wideDoor(Sprite *sprite, SetObject *objData);
 	void lockedDoorway(Sprite *sprite, SetObject *objData);
 	void liftSprite(Sprite *sprite, SetObject *objData);
-	Frame *findSource();
 	void showGameReel();
 	void showGameReel(ReelRoutine *routine);
-	void showReelFrame(Reel *reel);
-	const Frame *getReelFrameAX(uint16 frame);
 	void turnPathOn(uint8 param);
 	void turnPathOff(uint8 param);
 	void turnPathOn();
@@ -162,8 +159,8 @@
 	uint8 getMapAd(const uint8 *setData);
 	uint8 getXAd(const uint8 *setData, uint8 *result);
 	uint8 getYAd(const uint8 *setData, uint8 *result);
-	void calcFrFrame();
-	void calcFrFrame(uint8* width, uint8* height);
+	void calcFrFrame(uint16 frame);
+	void calcFrFrame(uint16 frame, uint8* width, uint8* height);
 	void finalFrame();
 	void finalFrame(uint16 *x, uint16 *y);
 	void showAllObs();

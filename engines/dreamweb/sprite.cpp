@@ -464,36 +464,33 @@ void DreamGenContext::faceRightWay() {
 	data.byte(kLeavedirection) = dir;
 }
 
-// Locate the reel segment (reel1, reel2, reel3) this frame is stored in.
-// The return value is a pointer to the start of the segment.
-// data.word(kCurrentframe) - data.word(kTakeoff) is the number of the frame
-// inside that segment
-Frame *DreamGenContext::findSource() {
-	uint16 currentFrame = data.word(kCurrentframe);
-	if (currentFrame < 160) {
-		data.word(kTakeoff) = 0;
-		return (Frame *)getSegment(data.word(kReel1)).ptr(0, 0);
-	} else if (currentFrame < 320) {
-		data.word(kTakeoff) = 160;
-		return (Frame *)getSegment(data.word(kReel2)).ptr(0, 0);
-	} else {
-		data.word(kTakeoff) = 320;
-		return (Frame *)getSegment(data.word(kReel3)).ptr(0, 0);
-	}
-}
-
 Reel *DreamBase::getReelStart(uint16 reelPointer) {
 	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + reelPointer * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
 
-void DreamGenContext::showReelFrame(Reel *reel) {
+// Locate the reel segment (reel1, reel2, reel3) this frame is stored in,
+// and adjust the frame number relative to this segment.
+const Frame *DreamBase::findSource(uint16 &frame) {
+	uint16 base;
+	if (frame < 160) {
+		base = data.word(kReel1);
+	} else if (frame < 320) {
+		frame -= 160;
+		base = data.word(kReel2);
+	} else {
+		frame -= 320;
+		base = data.word(kReel3);
+	}
+	return (const Frame *)getSegment(base).ptr(0, (frame+1)*sizeof(Frame));
+}
+
+void DreamBase::showReelFrame(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
-	data.word(kCurrentframe) = reel->frame();
-	Frame *source = findSource();
-	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
-	showFrame(source, x, y, frame, 8);
+	uint16 frame = reel->frame();
+	const Frame *base = findSource(frame);
+	showFrame(base, x, y, frame, 8);
 }
 
 void DreamGenContext::showGameReel() {
@@ -508,11 +505,9 @@ void DreamGenContext::showGameReel(ReelRoutine *routine) {
 	routine->setReelPointer(reelPointer);
 }
 
-const Frame *DreamGenContext::getReelFrameAX(uint16 frame) {
-	data.word(kCurrentframe) = frame;
-	Frame *source = findSource();
-	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
-	return source + offset;
+const Frame *DreamBase::getReelFrameAX(uint16 frame) {
+	const Frame *base = findSource(frame);
+	return base + frame;
 }
 
 void DreamGenContext::showRain() {
