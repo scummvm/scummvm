@@ -79,7 +79,7 @@ void DreamBase::printChar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uin
 	printChar(charSet, &x, y, c, nextChar, width, height);
 }
 
-uint8 DreamGenContext::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
 	const Frame* charSet = (const Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
@@ -205,7 +205,7 @@ uint8 DreamBase::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	return width;
 }
 
-uint16 DreamGenContext::waitFrames() {
+uint16 DreamBase::waitFrames() {
 	readMouse();
 	showPointer();
 	vSync();
@@ -221,7 +221,7 @@ void DreamGenContext::monPrint() {
 	bx = originalBx + (nextString - string);
 }
 
-const char *DreamGenContext::monPrint(const char *string) {
+const char *DreamBase::monPrint(const char *string) {
 	data.byte(kKerning) = 1;
 	uint16 x = data.word(kMonadx);
 	Frame *charset = engine->tempCharset();

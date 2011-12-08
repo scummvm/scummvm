@@ -593,15 +593,12 @@ public:
 	void removeObFromInv();
 	void heavy();
 	void useKey();
-	void lockLightOn();
 	void discOps();
 	void monitorLogo();
 	void dirFile();
 	void pickupConts();
-	void lockLightOff();
 	void allPalette();
 	void cantDrop();
-	void placeFreeObject();
 	void putUnderZoom();
 	void findInvPos();
 	void workoutFrames();
@@ -641,7 +638,6 @@ public:
 	void findAllOpen();
 	void showSlots();
 	void findSetObject();
-	void useDiary();
 	void deleteExObject();
 	void removeFreeObject();
 	void lookAtCard();
@@ -677,6 +673,7 @@ public:
 	void selectOpenOb();
 	void useGun();
 	void autoAppear();
+	void useDiary();
 	void newPlace();
 	void useHandle();
 	void showPuzText();

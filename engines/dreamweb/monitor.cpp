@@ -97,7 +97,7 @@ void DreamGenContext::useMon() {
 	workToScreenM();
 }
 
-void DreamGenContext::printLogo() {
+void DreamBase::printLogo() {
 	showFrame(tempGraphics(), 56, 32, 0, 0);
 	showCurrentFile();
 }
@@ -161,7 +161,7 @@ void DreamGenContext::delChar() {
 	multiDump(data.word(kMonadx), data.word(kMonady), al, 8);
 }
 
-void DreamGenContext::printCurs() {
+void DreamBase::printCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);
 	uint16 height;
@@ -177,7 +177,7 @@ void DreamGenContext::printCurs() {
 	multiDump(x - 6, y, 12, height);
 }
 
-void DreamGenContext::delCurs() {
+void DreamBase::delCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);
 	uint16 width = 6;
@@ -195,14 +195,14 @@ void DreamGenContext::hangOnCurs() {
 	hangOnCurs(cx);
 }
 
-void DreamGenContext::scrollMonitor() {
+void DreamBase::scrollMonitor() {
 	printLogo();
 	printUnderMon();
 	workToScreenCPP();
 	playChannel1(25);
 }
 
-void DreamGenContext::showCurrentFile() {
+void DreamBase::showCurrentFile() {
 	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
 	const char *currentFile = (const char *)data.ptr(kCurrentfile+1, 0);
 	while (*currentFile) {
@@ -212,12 +212,12 @@ void DreamGenContext::showCurrentFile() {
 	}
 }
 
-void DreamGenContext::accessLightOn() {
+void DreamBase::accessLightOn() {
 	showFrame(tempGraphics(), 74, 182, 8, 0);
 	multiDump(74, 182, 12, 8);
 }
 
-void DreamGenContext::accessLightOff() {
+void DreamBase::accessLightOff() {
 	showFrame(tempGraphics(), 74, 182, 7, 0);
 	multiDump(74, 182, 12, 8);
 }
@@ -258,17 +258,27 @@ void DreamGenContext::netError() {
 	scrollMonitor();
 }
 
-void DreamGenContext::powerLightOn() {
+void DreamBase::powerLightOn() {
 	showFrame(tempGraphics(), 257+4, 182, 6, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamGenContext::powerLightOff() {
+void DreamBase::powerLightOff() {
 	showFrame(tempGraphics(), 257+4, 182, 5, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamGenContext::turnOnPower() {
+void DreamBase::lockLightOn() {
+	showFrame(tempGraphics(), 56, 182, 10, 0);
+	multiDump(58, 182, 12, 8);
+}
+
+void DreamBase::lockLightOff() {
+	showFrame(tempGraphics(), 56, 182, 9, 0);
+	multiDump(58, 182, 12, 8);
+}
+
+void DreamBase::turnOnPower() {
 	for (size_t i = 0; i < 3; ++i) {
 		powerLightOn();
 		hangOn(30);

@@ -53,6 +53,17 @@ public:
 public:
 	// from monitor.cpp
 	void printOuterMon();
+	void showCurrentFile();
+	void accessLightOn();
+	void accessLightOff();
+	void turnOnPower();
+	void powerLightOn();
+	void powerLightOff();
+	void printLogo();
+	void scrollMonitor();
+	const char *monPrint(const char *string);
+	void lockLightOn();
+	void lockLightOff();
 
 	// from pathfind.cpp
 	Common::Point _lineData[200];		// Output of Bresenham
@@ -68,6 +79,10 @@ public:
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
+	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	uint16 waitFrames();
+	void printCurs();
+	void delCurs();
 
 	// from sound.cpp
 	void volumeAdjust();
@@ -90,6 +105,8 @@ public:
 	void showBlink();
 	void dumpBlink();
 	void dumpPointer();
+	void showPointer();
+	void delPointer();
 	void showRyanPage();
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
@@ -98,6 +115,21 @@ public:
 	void showOpBox();
 	void middlePanel();
 	void showDiary();
+	void readMouse();
+	uint16 readMouseState();
+	void hangOn(uint16 frameCount);
+	bool quitRequested();
+	void lockMon();
+	uint8 *textUnder();
+	void readKey();
+	void findOrMake(uint8 index, uint8 value, uint8 type);
+	DynObject *getFreeAd(uint8 index);
+	DynObject *getExAd(uint8 index);
+	DynObject *getEitherAdCPP();
+
+	// from use.cpp
+	void placeFreeObject(uint8 index);
+	void removeFreeObject(uint8 index);
 
 	// from vgafades.cpp
 	uint8 *mainPalette();

@@ -23,14 +23,12 @@
 #define DREAMWEB_STUBS_H
 
 	void screenUpdate();
-	bool quitRequested();
 	void startup();
 	void startup1();
 	void switchRyanOn();
 	void switchRyanOff();
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
-	uint8 *textUnder();
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp();
@@ -40,8 +38,6 @@
 	void loadTempCharset();
 	void loadTempCharset(const char *fileName);
 	void saveLoad();
-	void printCurs();
-	void delCurs();
 	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
@@ -80,7 +76,6 @@
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 	void getUnderTimed();
 	void putUnderTimed();
-	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void dumpTextLine();
 	void oldToNames();
 	void namesToOld();
@@ -126,7 +121,6 @@
 	void turnAnyPathOn();
 	void turnAnyPathOff();
 	void makeBackOb(SetObject *objData);
-	void lockMon();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void showRain();
@@ -169,9 +163,15 @@
 	void personNameText();
 	void findXYFromPath();
 	void findOrMake();
-	void findOrMake(uint8 index, uint8 value, uint8 type);
-	DynObject *getFreeAd(uint8 index);
-	DynObject *getExAd(uint8 index);
+	void findOrMake(uint8 index, uint8 value, uint8 type) {
+		DreamBase::findOrMake(index, value, type);
+	}
+	DynObject *getFreeAd(uint8 index) {
+		return DreamBase::getFreeAd(index);
+	}
+	DynObject *getExAd(uint8 index) {
+		return DreamBase::getExAd(index);
+	}
 	DynObject *getEitherAdCPP();
 	SetObject *getSetAd(uint8 index);
 	void *getAnyAd(uint8 *value1, uint8 *value2);
@@ -195,14 +195,9 @@
 	void walkAndExamine();
 	void obName();
 	void obName(uint8 command, uint8 commandType);
-	void delPointer();
-	void showPointer();
 	void animPointer();
 	void checkCoords();
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
-	void readMouse();
-	uint16 readMouseState();
-	uint16 waitFrames();
 	void drawFlags();
 	void addToPeopleList();
 	void addToPeopleList(ReelRoutine *routine);
@@ -229,7 +224,9 @@
 	void fillRyan();
 	void useRoutine();
 	void hangOn();
-	void hangOn(uint16 frameCount);
+	void hangOn(uint16 frameCount) {
+		DreamBase::hangOn(frameCount);
+	}
 	void hangOnW();
 	void hangOnW(uint16 frameCount);
 	void hangOnP();
@@ -271,27 +268,21 @@
 	void readSetData();
 	void fadeupYellows();
 	void fadeupMonFirst();
-	void printLogo();
 	void loadMenu();
 	void showMenu();
 	void dumpMenu();
 	void useMenu();
 	void useMon();
-	void scrollMonitor();
-	void showCurrentFile();
 	void input();
 	void monPrint();
-	const char *monPrint(const char *string);
-	void accessLightOn();
-	void accessLightOff();
+	const char *monPrint(const char *string) {
+		return DreamBase::monPrint(string);
+	}
 	void randomAccess(uint16 count);
 	void randomAccess();
 	void monMessage(uint8 index);
 	void monMessage();
 	void netError();
-	void turnOnPower();
-	void powerLightOn();
-	void powerLightOff();
 	void playChannel0();
 	void playChannel0(uint8 index, uint8 repeat) {
 		DreamBase::playChannel0(index, repeat);
@@ -471,7 +462,6 @@
 	void loadPersonal();
 	void loadNews();
 	void loadCart();
-	void readKey();
 	void hangOne(uint16 delay);
 	void hangOne();
 	void bibleQuote();
@@ -558,5 +548,8 @@
 	void watchReel();
 	void showWatchReel();
 	void plotReel(uint16 &reelPointer);
+	void removeFreeObject(uint8 index) {
+		DreamBase::removeFreeObject(index);
+	}
 
 #endif

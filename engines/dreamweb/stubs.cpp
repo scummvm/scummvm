@@ -645,7 +645,7 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	engine->freeIcons2();
 }
 
-bool DreamGenContext::quitRequested() {
+bool DreamBase::quitRequested() {
 	return data.byte(kQuitrequested);
 }
 
@@ -738,7 +738,7 @@ void DreamGenContext::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
-uint8 *DreamGenContext::textUnder() {
+uint8 *DreamBase::textUnder() {
 	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
 
@@ -838,13 +838,13 @@ bool DreamGenContext::openForLoad(unsigned int slot) {
 	return engine->openSaveFileForReading(filename);
 }
 
-void DreamGenContext::readMouse() {
+void DreamBase::readMouse() {
 	data.word(kOldbutton) = data.word(kMousebutton);
 	uint16 state = readMouseState();
 	data.word(kMousebutton) = state;
 }
 
-uint16 DreamGenContext::readMouseState() {
+uint16 DreamBase::readMouseState() {
 	data.word(kOldx) = data.word(kMousex);
 	data.word(kOldy) = data.word(kMousey);
 	uint16 x, y, state;
@@ -1057,7 +1057,7 @@ void DreamGenContext::eraseOldObs() {
 	}
 }
 
-void DreamGenContext::lockMon() {
+void DreamBase::lockMon() {
 	// Pressing space pauses text output in the monitor. We use the "hard"
 	// key because calling readkey() drains characters from the input
 	// buffer, we we want the user to be able to type ahead while the text
@@ -1176,12 +1176,10 @@ void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 		removeSetObject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 2) {
-		al = secondParam;
-		placeFreeObject();
+		placeFreeObject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 3) {
-		al = secondParam;
-		removeFreeObject();
+		removeFreeObject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 4) {
 		switchRyanOff();
@@ -1391,7 +1389,7 @@ void DreamGenContext::findOrMake() {
 	findOrMake(b0, b2, b3);
 }
 
-void DreamGenContext::findOrMake(uint8 index, uint8 value, uint8 type) {
+void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
 	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change) {
 		if (index == change->index && data.byte(kReallocation) == change->location && type == change->type) {
@@ -1413,15 +1411,15 @@ void DreamGenContext::setAllChanges() {
 			doChange(change->index, change->value, change->type);
 }
 
-DynObject *DreamGenContext::getFreeAd(uint8 index) {
+DynObject *DreamBase::getFreeAd(uint8 index) {
 	return (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0) + index;
 }
 
-DynObject *DreamGenContext::getExAd(uint8 index) {
+DynObject *DreamBase::getExAd(uint8 index) {
 	return (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0) + index;
 }
 
-DynObject *DreamGenContext::getEitherAdCPP() {
+DynObject *DreamBase::getEitherAdCPP() {
 	if (data.byte(kObjecttype) == 4)
 		return getExAd(data.byte(kItemframe));
 	else
@@ -1625,7 +1623,7 @@ void DreamGenContext::obName(uint8 command, uint8 commandType) {
 	}
 }
 
-void DreamGenContext::delPointer() {
+void DreamBase::delPointer() {
 	if (data.word(kOldpointerx) == 0xffff)
 		return;
 	data.word(kDelherex) = data.word(kOldpointerx);
@@ -1759,7 +1757,7 @@ void DreamGenContext::checkCoords(const RectWithCallback *rectWithCallbacks) {
 	}
 }
 
-void DreamGenContext::showPointer() {
+void DreamBase::showPointer() {
 	showBlink();
 	uint16 x = data.word(kMousex);
 	data.word(kOldpointerx) = data.word(kMousex);
@@ -1962,7 +1960,7 @@ void DreamGenContext::hangOn() {
 	hangOn(cx);
 }
 
-void DreamGenContext::hangOn(uint16 frameCount) {
+void DreamBase::hangOn(uint16 frameCount) {
 	while (frameCount) {
 		vSync();
 		--frameCount;
@@ -2912,7 +2910,7 @@ void DreamGenContext::showSymbol() {
 	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
 }
 
-void DreamGenContext::readKey() {
+void DreamBase::readKey() {
 	uint16 bufOut = data.word(kBufferout);
 
 	if (bufOut == data.word(kBufferin)) {

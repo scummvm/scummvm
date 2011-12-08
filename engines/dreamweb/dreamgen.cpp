@@ -3661,40 +3661,6 @@ emptyinterface:
 	al = 0;
 }
 
-void DreamGenContext::lockLightOn() {
-	STACK_CHECK;
-	di = 56;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 10;
-	ah = 0;
-	push(di);
-	push(bx);
-	showFrame();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multiDump();
-}
-
-void DreamGenContext::lockLightOff() {
-	STACK_CHECK;
-	di = 56;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 9;
-	ah = 0;
-	push(di);
-	push(bx);
-	showFrame();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multiDump();
-}
-
 void DreamGenContext::makeCaps() {
 	STACK_CHECK;
 	_cmp(al, 'a');
@@ -5357,19 +5323,6 @@ void DreamGenContext::findPuzText() {
 	ax = es.word(si);
 	_add(ax, (66*2));
 	si = ax;
-}
-
-void DreamGenContext::placeFreeObject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	cl = 0;
-	ch = 1;
-	findOrMake();
-	getFreeAd();
-	es.byte(bx+2) = 0;
-	bx = pop();
-	es = pop();
 }
 
 void DreamGenContext::removeFreeObject() {

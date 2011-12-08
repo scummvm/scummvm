@@ -829,8 +829,7 @@ void DreamGenContext::usePlate() {
 		placeSetObject(28);
 		placeSetObject(24);
 		removeSetObject(25);
-		al = 0;
-		placeFreeObject();
+		placeFreeObject(0);
 		data.byte(kProgresspoints)++;
 		data.byte(kGetback) = 1;
 	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
@@ -1149,5 +1148,15 @@ void DreamGenContext::useCooker() {
 		
 	putBackObStuff();
 }
+
+void DreamBase::placeFreeObject(uint8 index) {
+	findOrMake(index, 0, 1);
+	getFreeAd(index)->mapad[0] = 0;
+}
+
+void DreamBase::removeFreeObject(uint8 index) {
+	getFreeAd(index)->mapad[0] = 0xFF;
+}
+
 
 } // End of namespace DreamGen
