@@ -1441,7 +1441,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	_actor3._lookLineNum = 3;
 	_actor3._talkLineNum = -1;
 	_actor3._useLineNum = 6;
-	g_globals->_sceneItems.addItems(&_actor3, this);
+	g_globals->_sceneItems.push_back(&_actor3);
 
 	_item3.setDetails(12, 2425, 7, -1, 9);
 	_item4.setDetails(Rect(0, 0, 320, 200), 2425, 0, -1, -1, 1, NULL);
