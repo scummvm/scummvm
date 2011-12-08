@@ -104,7 +104,7 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 		_items[i]->init();
 
 	for (uint32 i = 0; i < _items.size(); i++)
-		_items[i]->startPhase(0xFFFE);
+		_items[i]->startPhase(kLBPhaseLoad);
 }
 
 void LBPage::itemDestroyed(LBItem *item) {
@@ -444,9 +444,9 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 
 void MohawkEngine_LivingBooks::updatePage() {
 	switch (_phase) {
-	case 0:
+	case kLBPhaseInit:
 		for (uint32 i = 0; i < _items.size(); i++)
-			_items[i]->startPhase(0xFFFF);
+			_items[i]->startPhase(kLBPhaseCreate);
 
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
@@ -542,7 +542,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_phase++;
 		break;
 
-	case 1:
+	case kLBPhaseIntro:
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
 
@@ -555,7 +555,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_phase++;
 		break;
 
-	case 2:
+	case kLBPhaseMain:
 		if (!_introDone)
 			break;
 
@@ -1954,7 +1954,10 @@ LBScriptEntry::~LBScriptEntry() {
 }
 
 LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : _vm(vm), _page(page), _rect(rect) {
-	_phase = 0;
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1 || _vm->getGameType() == GType_LIVINGBOOKSV2)
+		_phase = kLBPhaseInit;
+	else
+		_phase = kLBPhaseLoad;
 
 	_loopMode = 0;
 	_delayMin = 0;
@@ -2446,7 +2449,7 @@ bool LBItem::contains(Common::Point point) {
 }
 
 void LBItem::update() {
-	if (_phase != 0x7FFF && (!_loaded || !_enabled || !_globalEnabled))
+	if (_phase != kLBPhaseNone && (!_loaded || !_enabled || !_globalEnabled))
 		return;
 
 	if (_nextTime == 0 || _nextTime > (uint32)(_vm->_system->getMillis() / 16))
@@ -2484,7 +2487,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 		_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDone));
 		return true;
 	}
-	if (((_loaded && _enabled && _globalEnabled) || _phase == 0x7FFF) && !_playing) {
+	if (((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) && !_playing) {
 		_playing = togglePlaying(true, restart);
 		if (_playing) {
 			_nextTime = 0;
@@ -2574,7 +2577,7 @@ void LBItem::setGlobalVisible(bool visible) {
 
 void LBItem::startPhase(uint phase) {
 	if (_phase == phase) {
-		if (_phase != 0x7fff) {
+		if (_phase != kLBPhaseNone) {
 			setEnabled(true);
 		}
 
@@ -2582,31 +2585,31 @@ void LBItem::startPhase(uint phase) {
 	}
 
 	switch (phase) {
-	case 0xFFFE:
+	case kLBPhaseLoad:
 		runScript(kLBEventListLoad);
 		break;
-	case 0xFFFF:
+	case kLBPhaseCreate:
 		runScript(kLBEventPhaseCreate);
 		if (_timingMode == kLBAutoCreate) {
 			debug(2, "Phase create: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 0:
+	case kLBPhaseInit:
 		runScript(kLBEventPhaseInit);
 		if (_timingMode == kLBAutoInit) {
 			debug(2, "Phase init: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 1:
+	case kLBPhaseIntro:
 		runScript(kLBEventPhaseIntro);
 		if (_timingMode == kLBAutoIntro || _timingMode == kLBAutoUserIdle) {
 			debug(2, "Phase intro: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 2:
+	case kLBPhaseMain:
 		runScript(kLBEventPhaseMain);
 		if (_timingMode == kLBAutoUserIdle || _timingMode == kLBAutoMain) {
 			debug(2, "Phase main: time startup");
@@ -3720,7 +3723,7 @@ void LBMovieItem::update() {
 
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		if ((_loaded && _enabled && _globalEnabled) || _phase == 0x7FFF) {
+		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
 			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;

@@ -68,6 +68,15 @@ enum LBMode {
 	kLBPlayMode = 6
 };
 
+enum {
+	kLBPhaseInit = 0x0,
+	kLBPhaseIntro = 0x1,
+	kLBPhaseMain = 0x2,
+	kLBPhaseNone = 0x7fff,
+	kLBPhaseLoad = 0xfffe,
+	kLBPhaseCreate = 0xffff
+};
+
 // automatic modes used in _timingMode
 enum {
 	kLBAutoNone = 0,
