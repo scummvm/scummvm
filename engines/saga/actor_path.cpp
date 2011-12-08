@@ -223,7 +223,6 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	int currentRating;
 	Point bestPath;
 	int pointCounter;
-	int startDirection;
 	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
@@ -235,7 +234,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	bestRating = quickDistance(fromPoint, toPoint, compressX);
 	bestPath = fromPoint;
 
-	for (startDirection = 0; startDirection < 4; startDirection++) {
+	for (int8 startDirection = 0; startDirection < 4; startDirection++) {
 		PathDirectionData tmp = { startDirection, fromPoint.x, fromPoint.y };
 		pathDirectionQueue.push_back(tmp);
 	}
