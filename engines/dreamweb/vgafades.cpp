@@ -62,7 +62,7 @@ void DreamBase::palToEndPal() {
 
 void DreamBase::doFade() {
 	if (data.byte(kFadedirection) == 0)
-		return
+		return;
 
 	engine->processEvents();
 	uint8 *src = startPalette() + 3 * data.byte(kColourpos);
