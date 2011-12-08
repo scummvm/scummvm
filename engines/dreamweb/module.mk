@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	people.o \
 	print.o \
 	saveload.o \
+	sound.o \
 	sprite.o \
 	stubs.o \
 	talk.o \

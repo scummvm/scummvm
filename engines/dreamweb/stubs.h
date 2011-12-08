@@ -133,8 +133,6 @@
 	RoomPaths *getRoomsPaths();
 	void makeBackOb(SetObject *objData);
 	void lockMon();
-	void cancelCh0();
-	void cancelCh1();
 	void plotReel();
 	Reel *getReelStart();
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
@@ -293,7 +291,6 @@
 	void intro2Text();
 	void intro3Text();
 	void readSetData();
-	void loadRoomsSample();
 	void fadeupYellows();
 	void fadeupMonFirst();
 	void printLogo();

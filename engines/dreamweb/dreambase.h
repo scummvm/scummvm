@@ -69,13 +69,18 @@ public:
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 
+	// from sound.cpp
+	void volumeAdjust();
+	void cancelCh0();
+	void cancelCh1();
+	void loadRoomsSample();
+
 	// from stubs.cpp
 	void crosshair();
 	void showBlink();
 	void dumpBlink();
 	void dumpPointer();
 	void showRyanPage();
-	void volumeAdjust();
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
