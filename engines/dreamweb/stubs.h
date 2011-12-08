@@ -550,5 +550,9 @@
 	}
 	void afterNewRoom();
 	void madmanRun();
+	void showDecisions();
+	void underTextLine();
+	void getUnderZoom();
+	void putUnderZoom();
 
 #endif

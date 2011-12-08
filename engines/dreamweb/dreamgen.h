@@ -575,7 +575,6 @@ public:
 	void getAnyAd();
 	void endGame();
 	void usePipe();
-	void getUnderZoom();
 	void reminders();
 	void runTap();
 	void talk();
@@ -587,7 +586,6 @@ public:
 	void deleteExText();
 	void entryAnims();
 	void getFreeAd();
-	void showDecisions();
 	void removeObFromInv();
 	void heavy();
 	void useKey();
@@ -597,7 +595,6 @@ public:
 	void pickupConts();
 	void allPalette();
 	void cantDrop();
-	void putUnderZoom();
 	void findInvPos();
 	void rollEndCredits();
 	void getKeyAndLogo();
@@ -693,7 +690,6 @@ public:
 	void createName();
 	void getPersonText();
 	void parser();
-	void underTextLine();
 	void showNames();
 	void emergencyPurge();
 	void quitKey();

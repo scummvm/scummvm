@@ -6265,19 +6265,6 @@ hasloadedroom:
 	data.byte(kTextlen) = 240;
 }
 
-void DreamGenContext::showDecisions() {
-	STACK_CHECK;
-	createPanel2();
-	showOpBox();
-	ds = data.word(kTempgraphics);
-	di = (60)+17;
-	bx = (52)+13;
-	al = 6;
-	ah = 0;
-	showFrame();
-	underTextLine();
-}
-
 void DreamGenContext::createName() {
 	STACK_CHECK;
 	push(ax);
@@ -6777,44 +6764,6 @@ searchmess:
 	al = 0;
 	ah = 0;
 	printDirect();
-}
-
-void DreamGenContext::getUnderZoom() {
-	STACK_CHECK;
-	di = (8)+5;
-	bx = (132)+4;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	cl = 46;
-	ch = 40;
-	multiGet();
-}
-
-void DreamGenContext::putUnderZoom() {
-	STACK_CHECK;
-	di = (8)+5;
-	bx = (132)+4;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	cl = 46;
-	ch = 40;
-	multiPut();
-}
-
-void DreamGenContext::underTextLine() {
-	STACK_CHECK;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	ds = data.word(kBuffers);
-	si = (0);
-	cl = (228);
-	ch = (13);
-	multiGet();
 }
 
 void DreamGenContext::__start() { 

@@ -3808,6 +3808,34 @@ void DreamBase::showDiary() {
 	showFrame(tempGraphics(), kDiaryx + 176, kDiaryy + 108, 2, 0);
 }
 
+void DreamGenContext::underTextLine() {
+	uint16 y = data.word(kTextaddressy);
+	if (data.byte(kForeignrelease))
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kTextunder;
+	multiGet(ds.ptr(si, 0), data.byte(kTextaddressx), y, kUndertextsizex, kUndertextsizey);
+}
+
+void DreamGenContext::showDecisions() {
+	createPanel2();
+	showOpBox();
+	showFrame(tempGraphics(), kOpsx + 17, kOpsy + 13, 6, 0);
+	underTextLine();
+}
+
+void DreamGenContext::getUnderZoom() {
+	ds = data.word(kBuffers);
+	si = kZoomspace;
+	multiGet(ds.ptr(si, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
+void DreamGenContext::putUnderZoom() {
+	ds = data.word(kBuffers);
+	si = kZoomspace;
+	multiPut(ds.ptr(si, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
 void DreamGenContext::showWatchReel() {
 	uint16 reelPointer = data.word(kReeltowatch);
 	plotReel(reelPointer);
