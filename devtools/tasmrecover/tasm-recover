@@ -289,7 +289,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'errormessage2',
 	'errormessage3',
 	'examicon',
-	'examineinventory',
+	'examinventory',
 	'examineob',
 	'examineobtext',
 	'facerightway',
