@@ -595,8 +595,6 @@ public:
 	void deleteExText();
 	void entryAnims();
 	void getFreeAd();
-	void showArrows();
-	void printOuterMon();
 	void showDecisions();
 	void removeObFromInv();
 	void heavy();

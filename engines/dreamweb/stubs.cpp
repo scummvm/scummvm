@@ -3779,4 +3779,10 @@ void DreamGenContext::examineInventory() {
 	workToScreenM();
 }
 
+void DreamGenContext::showArrows() {
+	showFrame(tempGraphics(), 116 - 12, 16, 0, 0);
+	showFrame(tempGraphics(), 226 + 12, 16, 1, 0);
+	showFrame(tempGraphics(), 280, 14, 2, 0);
+}
+
 } // End of namespace DreamGen

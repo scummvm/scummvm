@@ -558,5 +558,7 @@
 	void getTime();
 	void set16ColPalette();
 	void examineInventory();
+	void printOuterMon();
+	void showArrows();
 
 #endif

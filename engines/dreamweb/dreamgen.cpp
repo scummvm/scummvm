@@ -3658,28 +3658,6 @@ void DreamGenContext::getDestInfo() {
 	ax = pop();
 }
 
-void DreamGenContext::showArrows() {
-	STACK_CHECK;
-	di = 116-12;
-	bx = 16;
-	ds = data.word(kTempgraphics);
-	al = 0;
-	ah = 0;
-	showFrame();
-	di = 226+12;
-	bx = 16;
-	ds = data.word(kTempgraphics);
-	al = 1;
-	ah = 0;
-	showFrame();
-	di = 280;
-	bx = 14;
-	ds = data.word(kTempgraphics);
-	al = 2;
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::resetLocation() {
 	STACK_CHECK;
 	push(ax);
@@ -3729,34 +3707,6 @@ clearedlocations:
 	es = dx;
 	_add(bx, 1661);
 	es.byte(bx) = 0;
-}
-
-void DreamGenContext::printOuterMon() {
-	STACK_CHECK;
-	di = 40;
-	bx = 32;
-	ds = data.word(kTempgraphics);
-	al = 1;
-	ah = 0;
-	showFrame();
-	di = 264;
-	bx = 32;
-	ds = data.word(kTempgraphics);
-	al = 2;
-	ah = 0;
-	showFrame();
-	di = 40;
-	bx = 12;
-	ds = data.word(kTempgraphics);
-	al = 3;
-	ah = 0;
-	showFrame();
-	di = 40;
-	bx = 164;
-	ds = data.word(kTempgraphics);
-	al = 4;
-	ah = 0;
-	showFrame();
 }
 
 void DreamGenContext::lookInInterface() {

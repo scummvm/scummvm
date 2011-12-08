@@ -278,6 +278,13 @@ void DreamGenContext::turnOnPower() {
 	powerLightOn();
 }
 
+void DreamGenContext::printOuterMon() {
+	showFrame(tempGraphics(), 40, 32, 1, 0);
+	showFrame(tempGraphics(), 264, 32, 2, 0);
+	showFrame(tempGraphics(), 40, 12, 3, 0);
+	showFrame(tempGraphics(), 40, 164, 4, 0);
+}
+
 void DreamGenContext::loadPersonal() {
 	if (data.byte(kLocation) == 0 || data.byte(kLocation) == 42)
 		data.word(kTextfile1) = standardLoad("DREAMWEB.T01"); // monitor file 1
