@@ -1232,191 +1232,197 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
  * @return 0 if script finished. Else offset where to continue.
  */
 uint16 Logic::script(uint16 scriptNo, uint16 offset) {
-script:
-	/// process a script
-	/// low level interface to interpreter
+	bool restartScript;
 
-	uint16 moduleNo = scriptNo >> 12;
-	uint16 *scriptData = _moduleList[moduleNo]; // get module address
+	do {
+		restartScript = false;
 
-	if (!scriptData) { // We need to load the script module
-		_moduleList[moduleNo] = _skyDisk->loadScriptFile(moduleNo + F_MODULE_0);
-		 scriptData = _moduleList[moduleNo]; // module has been loaded
-	}
+		/// process a script
+		/// low level interface to interpreter
 
-	uint16 *moduleStart = scriptData;
+		uint16 moduleNo = scriptNo >> 12;
+		uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
-	debug(3, "Doing Script: %d:%d:%x", moduleNo, scriptNo & 0xFFF, offset ? (offset - moduleStart[scriptNo & 0xFFF]) : 0);
+		if (!scriptData) { // We need to load the script module
+			_moduleList[moduleNo] = _skyDisk->loadScriptFile(moduleNo + F_MODULE_0);
+			 scriptData = _moduleList[moduleNo]; // module has been loaded
+		}
 
-	// WORKAROUND for bug #3149412: "Invalid Mode when giving shades to travel agent"
-	// Using the dark glasses on Trevor (travel agent) multiple times in succession would
-	// wreck the trevor compact's mode, as the script in question doesn't account for using
-	// this item at this point in the game (you will only have it here if you play the game
-	// in an unusual way) and thus would loop indefinitely / never drop out.
-	// To prevent this, we trigger the generic response by pretending we're using an item
-	// which the script /does/ handle.
-	if (scriptNo == TREVOR_SPEECH && _scriptVariables[OBJECT_HELD] == IDO_SHADES)
-		_scriptVariables[OBJECT_HELD] = IDO_GLASS;
+		uint16 *moduleStart = scriptData;
+
+		debug(3, "Doing Script: %d:%d:%x", moduleNo, scriptNo & 0xFFF, offset ? (offset - moduleStart[scriptNo & 0xFFF]) : 0);
+
+		// WORKAROUND for bug #3149412: "Invalid Mode when giving shades to travel agent"
+		// Using the dark glasses on Trevor (travel agent) multiple times in succession would
+		// wreck the trevor compact's mode, as the script in question doesn't account for using
+		// this item at this point in the game (you will only have it here if you play the game
+		// in an unusual way) and thus would loop indefinitely / never drop out.
+		// To prevent this, we trigger the generic response by pretending we're using an item
+		// which the script /does/ handle.
+		if (scriptNo == TREVOR_SPEECH && _scriptVariables[OBJECT_HELD] == IDO_SHADES)
+			_scriptVariables[OBJECT_HELD] = IDO_GLASS;
 
 
-	// Check whether we have an offset or what
-	if (offset)
-		scriptData = moduleStart + offset;
-	else
-		scriptData += scriptData[scriptNo & 0x0FFF];
+		// Check whether we have an offset or what
+		if (offset)
+			scriptData = moduleStart + offset;
+		else
+			scriptData += scriptData[scriptNo & 0x0FFF];
 
-	uint32 a = 0, b = 0, c = 0;
-	uint16 command, s;
+		uint32 a = 0, b = 0, c = 0;
+		uint16 command, s;
 
-	for (;;) {
-		command = *scriptData++; // get a command
-		Debug::script(command, scriptData);
+		while(!restartScript) {
+			command = *scriptData++; // get a command
+			Debug::script(command, scriptData);
 
-		switch (command) {
-		case 0: // push_variable
-			push( _scriptVariables[*scriptData++ / 4] );
-			break;
-		case 1: // less_than
-			a = pop();
-			b = pop();
-			if (a > b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 2: // push_number
-			push(*scriptData++);
-			break;
-		case 3: // not_equal
-			a = pop();
-			b = pop();
-			if (a != b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 4: // if_and
-			a = pop();
-			b = pop();
-			if (a && b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 5: // skip_zero
-			s = *scriptData++;
+			switch (command) {
+			case 0: // push_variable
+				push( _scriptVariables[*scriptData++ / 4] );
+				break;
+			case 1: // less_than
+				a = pop();
+				b = pop();
+				if (a > b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 2: // push_number
+				push(*scriptData++);
+				break;
+			case 3: // not_equal
+				a = pop();
+				b = pop();
+				if (a != b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 4: // if_and
+				a = pop();
+				b = pop();
+				if (a && b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 5: // skip_zero
+				s = *scriptData++;
 
-			a = pop();
-			if (!a)
+				a = pop();
+				if (!a)
+					scriptData += s / 2;
+				break;
+			case 6: // pop_var
+				b = _scriptVariables[*scriptData++ / 4] = pop();
+				break;
+			case 7: // minus
+				a = pop();
+				b = pop();
+				push(b-a);
+				break;
+			case 8: // plus
+				a = pop();
+				b = pop();
+				push(b+a);
+				break;
+			case 9: // skip_always
+				s = *scriptData++;
 				scriptData += s / 2;
-			break;
-		case 6: // pop_var
-			b = _scriptVariables[*scriptData++ / 4] = pop();
-			break;
-		case 7: // minus
-			a = pop();
-			b = pop();
-			push(b-a);
-			break;
-		case 8: // plus
-			a = pop();
-			b = pop();
-			push(b+a);
-			break;
-		case 9: // skip_always
-			s = *scriptData++;
-			scriptData += s / 2;
-			break;
-		case 10: // if_or
-			a = pop();
-			b = pop();
-			if (a || b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 11: // call_mcode
-			{
-				a = *scriptData++;
-				assert(a <= 3);
-				// No, I did not forget the "break"s
-				switch (a) {
-				case 3:
-					c = pop();
-				case 2:
-					b = pop();
-				case 1:
-					a = pop();
+				break;
+			case 10: // if_or
+				a = pop();
+				b = pop();
+				if (a || b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 11: // call_mcode
+				{
+					a = *scriptData++;
+					assert(a <= 3);
+					// No, I did not forget the "break"s
+					switch (a) {
+					case 3:
+						c = pop();
+					case 2:
+						b = pop();
+					case 1:
+						a = pop();
+					}
+
+					uint16 mcode = *scriptData++ / 4; // get mcode number
+					Debug::mcode(mcode, a, b, c);
+
+					Compact *saveCpt = _compact;
+					bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
+					_compact = saveCpt;
+
+					if (!ret)
+						return (scriptData - moduleStart);
 				}
+				break;
+			case 12: // more_than
+				a = pop();
+				b = pop();
+				if (a < b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 14: // switch
+				c = s = *scriptData++; // get number of cases
 
-				uint16 mcode = *scriptData++ / 4; // get mcode number
-				Debug::mcode(mcode, a, b, c);
+				a = pop(); // and value to switch on
 
-				Compact *saveCpt = _compact;
-				bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
-				_compact = saveCpt;
+				do {
+					if (a == *scriptData) {
+						scriptData += scriptData[1] / 2;
+						scriptData++;
+						break;
+					}
+					scriptData += 2;
+				} while (--s);
 
-				if (!ret)
-					return (scriptData - moduleStart);
-			}
-			break;
-		case 12: // more_than
-			a = pop();
-			b = pop();
-			if (a < b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 14: // switch
-			c = s = *scriptData++; // get number of cases
-
-			a = pop(); // and value to switch on
-
-			do {
-				if (a == *scriptData) {
-					scriptData += scriptData[1] / 2;
-					scriptData++;
+				if (s == 0)
+					scriptData += *scriptData / 2; // use the default
+				break;
+			case 15: // push_offset
+				push( *(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) );
+				break;
+			case 16: // pop_offset
+				// pop a value into a compact
+				*(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) = (uint16)pop();
+				break;
+			case 17: // is_equal
+				a = pop();
+				b = pop();
+				if (a == b)
+					push(1);
+				else
+					push(0);
+				break;
+			case 18: { // skip_nz
+					int16 t = *scriptData++;
+					a = pop();
+					if (a)
+						scriptData += t / 2;
 					break;
 				}
-				scriptData += 2;
-			} while (--s);
-
-			if (s == 0)
-				scriptData += *scriptData / 2; // use the default
-			break;
-		case 15: // push_offset
-			push( *(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) );
-			break;
-		case 16: // pop_offset
-			// pop a value into a compact
-			*(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) = (uint16)pop();
-			break;
-		case 17: // is_equal
-			a = pop();
-			b = pop();
-			if (a == b)
-				push(1);
-			else
-				push(0);
-			break;
-		case 18: { // skip_nz
-				int16 t = *scriptData++;
-				a = pop();
-				if (a)
-					scriptData += t / 2;
+			case 13:
+			case 19: // script_exit
+				return 0;
+			case 20: // restart_script
+				offset = 0;
+				restartScript = true;
 				break;
+			default:
+				error("Unknown script command: %d", command);
 			}
-		case 13:
-		case 19: // script_exit
-			return 0;
-		case 20: // restart_script
-			offset = 0;
-			goto script;
-		default:
-			error("Unknown script command: %d", command);
 		}
-	}
+	} while (restartScript);
 }
 
 bool Logic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
