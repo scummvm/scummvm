@@ -523,58 +523,6 @@ gotheavyframe:
 	addToPeopleList();
 }
 
-void DreamGenContext::introMonks1() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto intromonk1fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 80);
-	if (!flags.z())
-		goto notendmonk1;
-	_add(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	showGameReel();
-	return;
-notendmonk1:
-	_cmp(ax, 30);
-	if (!flags.z())
-		goto gotintromonk1;
-	_sub(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	ax = 51;
-gotintromonk1:
-	es.word(bx+3) = ax;
-	_cmp(ax, 5);
-	if (flags.z())
-		goto waitstep;
-	_cmp(ax, 15);
-	if (flags.z())
-		goto waitstep;
-	_cmp(ax, 25);
-	if (flags.z())
-		goto waitstep;
-	_cmp(ax, 61);
-	if (flags.z())
-		goto waitstep;
-	_cmp(ax, 71);
-	if (flags.z())
-		goto waitstep;
-	goto intromonk1fin;
-waitstep:
-	push(es);
-	push(bx);
-	intro2Text();
-	bx = pop();
-	es = pop();
-	es.byte(bx+6) = -20;
-intromonk1fin:
-	showGameReel();
-	al = data.byte(kMapy);
-	es.byte(bx+2) = al;
-}
-
 void DreamGenContext::introMonks2() {
 	STACK_CHECK;
 	checkSpeed();

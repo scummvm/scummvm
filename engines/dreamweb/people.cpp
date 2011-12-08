@@ -46,7 +46,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
-	&DreamGenContext::introMonks1, NULL,
+	NULL, NULL,
 	&DreamGenContext::introMonks2, NULL,
 	NULL, &DreamGenContext::endGameSeq,
 	NULL, NULL,
@@ -78,8 +78,8 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
-	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
-	/*&DreamGenContext::intromonks2*/NULL, &DreamGenContext::handClap,
+	&DreamGenContext::introMonks1, &DreamGenContext::candles,
+	/*&DreamGenContext::introMonks2*/NULL, &DreamGenContext::handClap,
 	&DreamGenContext::monkAndRyan, /*&DreamGenContext::endGameSeq*/NULL,
 	&DreamGenContext::priest, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
@@ -686,6 +686,41 @@ void DreamGenContext::copper(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::introMonks1(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+
+		if (nextReelPointer == 80) {
+			data.byte(kMapy) += 10;
+			data.byte(kNowinnewroom) = 1;
+			showGameReel(&routine);
+			return;
+		} else if (nextReelPointer == 30) {
+			data.byte(kMapy) -= 10;
+			data.byte(kNowinnewroom) = 1;
+			nextReelPointer = 51;
+		}
+
+		routine.setReelPointer(nextReelPointer);
+
+		if (nextReelPointer ==  5 || nextReelPointer == 15 ||
+			nextReelPointer == 25 || nextReelPointer == 61 ||
+			nextReelPointer == 71) {
+			// Wait step
+			push(es);
+			push(bx);
+			intro2Text();
+			bx = pop();
+			es = pop();
+			routine.counter = -20;
+		}
+	}
+
+intromonk1fin:
+	showGameReel(&routine);
+	routine.mapY = data.byte(kMapy);
 }
 
 } // End of namespace DreamGen

@@ -557,7 +557,6 @@ public:
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
-	void introMonks1();
 	void resetLocation();
 	void introMonks2();
 	void greyscaleSum();
