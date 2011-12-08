@@ -457,13 +457,6 @@ void DreamGenContext::liftSprite(Sprite *sprite, SetObject *objData) {
 	}
 }
 
-void DreamGenContext::faceRightWay() {
-	PathNode *paths = getRoomsPaths()->nodes;
-	uint8 dir = paths[data.byte(kManspath)].dir;
-	data.byte(kTurntoface) = dir;
-	data.byte(kLeavedirection) = dir;
-}
-
 Reel *DreamBase::getReelStart(uint16 reelPointer) {
 	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + reelPointer * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
@@ -530,7 +523,7 @@ void DreamGenContext::showRain() {
 		rain->setW3(ax);
 		const uint8 *src = ds.ptr(si, 0) + ax;
 		uint8 *dst = workspace() + y * 320 + x;
-		for(uint16 i = 0; i < size; ++i) {
+		for (uint16 i = 0; i < size; ++i) {
 			uint8 v = src[i];
 			if (v != 0)
 				*dst = v;

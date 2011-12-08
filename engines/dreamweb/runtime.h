@@ -40,12 +40,6 @@ struct Register {
 	inline Register(): _value() {}
 	inline Register& operator=(uint16 v) { _value = v; return *this; }
 	inline operator uint16&() { return _value; }
-	inline void cbw() {
-		if (_value & 0x80)
-			_value |= 0xff00;
-		else
-			_value &= 0x7f;
-	}
 };
 
 template<int kIndex> //from low to high
