@@ -244,14 +244,16 @@ void SceneExt::loadScene(int sceneNum) {
 
 bool SceneExt::display(CursorType action) {
 	switch (action) {
+	case CURSOR_CROSSHAIRS:
+		return false;
 	case CURSOR_LOOK:
-		SceneItem::display2(9000, R2_GLOBALS._randomSource.getRandomNumber(2));
+		SceneItem::display2(1, R2_GLOBALS._randomSource.getRandomNumber(4));
 		break;
 	case CURSOR_USE:
-		SceneItem::display2(9000, R2_GLOBALS._randomSource.getRandomNumber(2) + 6);
+		SceneItem::display2(1, R2_GLOBALS._randomSource.getRandomNumber(4) + 5);
 		break;
 	case CURSOR_TALK:
-		SceneItem::display2(9000, R2_GLOBALS._randomSource.getRandomNumber(2) + 3);
+		SceneItem::display2(1, R2_GLOBALS._randomSource.getRandomNumber(4) + 10);
 		break;
 	default:
 		return false;
