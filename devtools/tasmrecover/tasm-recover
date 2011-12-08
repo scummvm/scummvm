@@ -306,6 +306,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'fadescreenuphalf',
 	'fadescreendown',
 	'fadescreendowns',
+	'fadefromwhite',
+	'fadetowhite',
 	'fadeupmonfirst',
 	'fadeupyellows',
 	'femalefan',

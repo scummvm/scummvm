@@ -622,7 +622,6 @@ public:
 	void describeOb();
 	void deleteExFrame();
 	void searchForSame();
-	void fadeFromWhite();
 	void rollEm();
 	void poolGuard();
 	void lookAtPlace();
@@ -695,7 +694,6 @@ public:
 	void transferConToEx();
 	void adjustDown();
 	void withWhat();
-	void fadeToWhite();
 };
 
 } // End of namespace DreamGen

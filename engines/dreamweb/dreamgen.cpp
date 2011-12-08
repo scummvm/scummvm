@@ -938,40 +938,6 @@ void DreamGenContext::transferMap() {
 	_add(data.word(kExframepos), cx);
 }
 
-void DreamGenContext::fadeToWhite() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	cx = 768;
-	al = 63;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	al = 0;
-	_stosb(3);
-	palToStartPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-}
-
-void DreamGenContext::fadeFromWhite() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	cx = 768;
-	al = 63;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	al = 0;
-	_stosb(3);
-	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-}
-
 void DreamGenContext::fadeScreenDownHalf() {
 	STACK_CHECK;
 	palToStartPal();
