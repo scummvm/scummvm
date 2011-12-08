@@ -558,7 +558,6 @@ public:
 	void moneyPoke();
 	void doSomeTalk();
 	void resetLocation();
-	void introMonks2();
 	void greyscaleSum();
 	void getOpenedSize();
 	void adjustUp();

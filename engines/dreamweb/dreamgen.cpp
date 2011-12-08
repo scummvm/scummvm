@@ -523,65 +523,6 @@ gotheavyframe:
 	addToPeopleList();
 }
 
-void DreamGenContext::introMonks2() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto intromonk2fin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 87);
-	if (!flags.z())
-		goto nottalk1;
-	_inc(data.byte(kIntrocount));
-	push(es);
-	push(bx);
-	monks2text();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kIntrocount), 19);
-	if (!flags.z())
-		goto notlasttalk1;
-	ax = 87;
-	goto gotintromonk2;
-notlasttalk1:
-	ax = 74;
-	goto gotintromonk2;
-nottalk1:
-	_cmp(ax, 110);
-	if (!flags.z())
-		goto notraisearm;
-	_inc(data.byte(kIntrocount));
-	push(es);
-	push(bx);
-	monks2text();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kIntrocount), 35);
-	if (!flags.z())
-		goto notlastraise;
-	ax = 111;
-	goto gotintromonk2;
-notlastraise:
-	ax = 98;
-	goto gotintromonk2;
-notraisearm:
-	_cmp(ax, 176);
-	if (!flags.z())
-		goto notendmonk2;
-	data.byte(kGetback) = 1;
-	goto gotintromonk2;
-notendmonk2:
-	_cmp(ax, 125);
-	if (!flags.z())
-		goto gotintromonk2;
-	ax = 140;
-gotintromonk2:
-	es.word(bx+3) = ax;
-intromonk2fin:
-	showGameReel();
-}
-
 void DreamGenContext::endGameSeq() {
 	STACK_CHECK;
 	checkSpeed();
