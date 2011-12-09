@@ -146,6 +146,7 @@ p = parser(skip_binary_data = [
 	'diarygraphic',
 	'diarytext',
 	'title7graphics',
+	'handle',
 	# 'basicsample', # This can't be removed due to tasm-recover limitations
 	'endtextname',
 	'gungraphic',

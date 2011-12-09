@@ -745,14 +745,14 @@ uint8 *DreamBase::textUnder() {
 uint16 DreamGenContext::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
 	FileHeader header;
 
-	engine->openFile(fileName);
-	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
+	Common::File file;
+	file.open(fileName);
+	file.read((uint8 *)&header, sizeof(FileHeader));
 	uint16 sizeInBytes = header.len(0);
 	if (outSizeInBytes)
 		*outSizeInBytes = sizeInBytes;
 	uint16 result = allocateMem((sizeInBytes + 15) / 16);
-	engine->readFromFile(getSegment(result).ptr(0, 0), sizeInBytes);
-	engine->closeFile();
+	file.read(getSegment(result).ptr(0, 0), sizeInBytes);
 	return result;
 }
 
@@ -817,11 +817,6 @@ void DreamGenContext::quickQuit() {
 
 void DreamGenContext::quickQuit2() {
 	engine->quit();
-}
-
-void DreamGenContext::closeFile() {
-	engine->closeFile();
-	data.byte(kHandle) = 0;
 }
 
 void DreamGenContext::openForSave(unsigned int slot) {
@@ -2341,8 +2336,6 @@ void DreamGenContext::getRidOfAll() {
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
-	data.word(kHandle) = 1; //only one handle
-	flags._c = false;
 
 	FileHeader header;
 	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
@@ -2378,7 +2371,7 @@ void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 		engine->skipBytes(len[13]);
 	data.word(kFreedesc) = allocateAndLoad(len[14]);
 
-	closeFile();
+	engine->closeFile();
 }
 
 void DreamGenContext::restoreAll() {
@@ -2394,8 +2387,6 @@ void DreamGenContext::restoreReels() {
 	const Room &room = g_roomData[data.byte(kReallocation)];
 
 	engine->openFile(room.name);
-	data.word(kHandle) = 1; //only one handle
-	flags._c = false;
 
 	FileHeader header;
 	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
@@ -2413,7 +2404,7 @@ void DreamGenContext::restoreReels() {
 	data.word(kReel2) = allocateAndLoad(len[5]);
 	data.word(kReel3) = allocateAndLoad(len[6]);
 
-	closeFile();
+	engine->closeFile();
 }
 
 void DreamGenContext::loadFolder() {
