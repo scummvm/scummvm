@@ -34,12 +34,18 @@ namespace Lure {
 /* Provides the functionality for decoding screens                          */
 /*--------------------------------------------------------------------------*/
 
+/**
+ * Write a single byte to the output buffer
+ */
 void PictureDecoder::writeByte(MemoryBlock *dest, byte v) {
 	if (outputOffset == dest->size())
 		error("Decoded data exceeded allocated output buffer size");
 	dest->data()[outputOffset++] = v;
 }
 
+/**
+ * Writes out a specified byte a given number of times to the output
+ */
 void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 	if (outputOffset + numBytes > dest->size())
 		error("Decoded data exceeded allocated output buffer size");
@@ -47,6 +53,9 @@ void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 	outputOffset += numBytes;
 }
 
+/**
+ * Gets a byte from the compressed source using the first data pointer
+ */
 byte PictureDecoder::DSSI(bool incr) {
 	if (dataPos > dataIn->size())
 		error("PictureDecoder went beyond end of source data");
@@ -57,6 +66,9 @@ byte PictureDecoder::DSSI(bool incr) {
 	return result;
 }
 
+/**
+ * Gets a byte from the compressed source using the second data pointer
+ */
 byte PictureDecoder::ESBX(bool incr) {
 	if (dataPos2 >= dataIn->size())
 		error("PictureDecoder went beyond end of source data");
@@ -227,56 +239,61 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	CH = ESBX();
 	CL = 9;
 
-Loc754:
-	AL = DSSI();
-	writeByte(dest, AL);
-	BP = ((uint16) AL) << 2;
+	// Main decoding loop
+	bool loopFlag = true;
+	while (loopFlag) {
+		AL = DSSI();
+		writeByte(dest, AL);
+		BP = ((uint16) AL) << 2;
 
-Loc755:
-	decrCtr();
-	if (shlCarry()) goto Loc761;
-	decrCtr();
-	if (shlCarry()) goto Loc759;
-	AL = dataIn->data()[BP];
+		// Inner loop
+		for (;;) {
+			decrCtr();
+			if (shlCarry()) {
+				decrCtr();
+				if (shlCarry()) {
+					decrCtr();
+					if (shlCarry())
+						break;
+			
+					AL = dataIn->data()[BP + 3];
+				} else {
+					decrCtr();
+					if (shlCarry())
+						AL = dataIn->data()[BP + 2];
+					else
+						AL = dataIn->data()[BP + 1];
+				}
+			} else {
+				decrCtr();
+				if (shlCarry()) {
+					AL = (byte) (BP >> 2);
+					AH = DSSI();
+					if (AH == 0) {
+						AL = DSSI();
+						if (AL == 0) {
+							// Finally done
+							loopFlag = false;
+							break;
+						} else {
+							// Keep going
+							continue;
+						}
+					} else {
+						// Write out byte sequence
+						writeBytes(dest, AL, AH);
+						continue;
+					}
+				} else {
+					AL = dataIn->data()[BP];
+				}
+			}
 
-Loc758:
-	writeByte(dest, AL);
-	BP = ((uint16) AL) << 2;
-	goto Loc755;
-
-Loc759:
-	AL = (byte) (BP >> 2);
-	AH = DSSI();
-	if (AH == 0) goto Loc768;
-
-	writeBytes(dest, AL, AH);
-	goto Loc755;
-
-Loc761:
-	decrCtr();
-	if (shlCarry()) goto Loc765;
-	decrCtr();
-
-	if (shlCarry()) goto Loc764;
-	AL = dataIn->data()[BP+1];
-	goto Loc758;
-
-Loc764:
-	AL = dataIn->data()[BP+2];
-	goto Loc758;
-
-Loc765:
-	decrCtr();
-	if (shlCarry()) goto Loc767;
-	AL = dataIn->data()[BP+3];
-	goto Loc758;
-
-Loc767:
-	goto Loc754;
-
-Loc768:
-	AL = DSSI();
-	if (AL != 0) goto Loc755;
+			// Write out the next byte
+			writeByte(dest, AL);
+			BP = ((uint16) AL) << 2;
+		}
+	}
 
 	// Resize the output to be the number of outputed bytes and return it
 	if (outputOffset < dest->size()) dest->reallocate(outputOffset);
