@@ -143,6 +143,8 @@ p = parser(skip_binary_data = [
 	'idname',
 	'samplename',
 	# 'basicsample', # This can't be removed due to tasm-recover limitations
+	'endtextname',
+	'gungraphic',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
@@ -296,6 +298,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'edeninbath',
 	'edenscdplayer',
 	'enablesoundint',
+	'endgame',
 	'endpaltostart',
 	'entercode',
 	'entersymbol',
@@ -623,6 +626,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showframe',
 	'showgamereel',
 	'showgroup',
+	'showgun',
 	'showicon',
 	'showkeypad',
 	'showleftpage',

@@ -4118,4 +4118,50 @@ void DreamGenContext::hangOnPQ() {
 	flags._c = false;
  }
 
+void DreamGenContext::endGame() {
+	loadTempText("DREAMWEB.T83");
+	monkSpeaking();
+	gettingShot();
+	getRidOfTempText();
+	data.byte(kVolumeto) = 7;
+	data.byte(kVolumedirection) = 1;
+	hangOn(200);
+}
+
+void DreamGenContext::showGun() {
+	data.byte(kAddtored) = 0;
+	data.byte(kAddtogreen) = 0;
+	data.byte(kAddtoblue) = 0;
+	palToStartPal();
+	palToEndPal();
+	greyscaleSum();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangOn(130);
+	endPalToStart();
+	clearEndPal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangOn(200);
+	data.byte(kRoomssample) = 34;
+	loadRoomsSample();
+	data.byte(kVolume) = 0;
+	loadIntoTemp("DREAMWEB.G13");
+	createPanel2();
+	showFrame(tempGraphics(), 100, 4, 0, 0);
+	showFrame(tempGraphics(), 158, 106, 1, 0);
+	workToScreen();
+	getRidOfTemp();
+	fadeScreenUp();
+	hangOn(160);
+	playChannel0(12, 0);
+	loadTempText("DREAMWEB.T83");
+	rollEndCredits2();
+	getRidOfTempText();
+}
+
 } // End of namespace DreamGen

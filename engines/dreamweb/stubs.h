@@ -560,5 +560,7 @@
 	void doSaveLoad();
 	void useDiary();
 	void hangOnPQ();
+	void showGun();
+	void endGame();
 
 #endif
