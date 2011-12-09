@@ -1170,7 +1170,7 @@ void DreamGenContext::useDiary() {
 	showDiaryPage();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	data.byte(kGetback) = 0;
 

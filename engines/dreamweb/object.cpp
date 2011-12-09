@@ -135,7 +135,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			data.byte(kCommandtype) = 255;
 			readMouse();
 			showPointer();
-			workToScreen();
+			workToScreenCPP();
 			delPointer();
 			examineAgain = false;
 		}
@@ -238,7 +238,7 @@ void DreamGenContext::inventory() {
 	openInv();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	data.byte(kOpenedob) = 255;
 	examineOb(false);

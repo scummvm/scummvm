@@ -121,7 +121,7 @@ void DreamGenContext::doLoad(int savegameId) {
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
 	startup();
-	workToScreen();
+	workToScreenCPP();
 	data.byte(kGetback) = 4;
 }
 

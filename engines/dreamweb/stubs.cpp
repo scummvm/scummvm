@@ -509,7 +509,7 @@ void DreamGenContext::dreamweb() {
 			clearPalette();
 
 			doLoad(savegameId);
-			workToScreen();
+			workToScreenCPP();
 			fadeScreenUp();
 			startNewGame = false;
 
@@ -726,7 +726,7 @@ void DreamGenContext::startup1() {
 
 	startup();
 
-	workToScreen();
+	workToScreenCPP();
 	fadeScreenUp();
 }
 
@@ -2681,7 +2681,7 @@ void DreamGenContext::workToScreenM() {
 	readMouse();
 	showPointer();
 	vSync();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3297,7 +3297,7 @@ void DreamGenContext::loadIntroRoom() {
 	reelsOnScreen();
 	spriteUpdate();
 	printSprites();
-	workToScreen();
+	workToScreenCPP();
 }
 
 void DreamGenContext::afterIntroRoom() {
@@ -3311,7 +3311,7 @@ void DreamGenContext::afterIntroRoom() {
 	reelsOnScreen();
 	spriteUpdate();
 	printSprites();
-	workToScreen();
+	workToScreenCPP();
 	data.byte(kNowinnewroom) = 0;
 }
 
@@ -3410,7 +3410,7 @@ void DreamGenContext::errorMessage1() {
 	printMessage(76, 21, 58, 240, (240 & 1));
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	hangOnP(50);
 	showPanel();
@@ -3419,7 +3419,7 @@ void DreamGenContext::errorMessage1() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3429,7 +3429,7 @@ void DreamGenContext::errorMessage2() {
 	printMessage(76, 21, 59, 240, (240 & 1));
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	hangOnP(50);
 	showPanel();
@@ -3438,7 +3438,7 @@ void DreamGenContext::errorMessage2() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3453,7 +3453,7 @@ void DreamGenContext::errorMessage3() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3488,7 +3488,7 @@ void DreamGenContext::nextDest() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3519,7 +3519,7 @@ void DreamGenContext::lastDest() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3548,7 +3548,7 @@ void DreamGenContext::putBackObStuff() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3575,7 +3575,7 @@ void DreamGenContext::redes() {
 	startTalk();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -3637,7 +3637,7 @@ void DreamGenContext::selectLocation() {
 	readMouse();
 	data.byte(kPointerframe) = 0;
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	playChannel0(9, 255);
 	data.byte(kNewlocation) = 255;
 
@@ -3887,7 +3887,7 @@ void DreamGenContext::decide() {
 	data.byte(kManisoffscreen) = 1;
 	loadSaveBox();
 	showDecisions();
-	workToScreen();
+	workToScreenCPP();
 	fadeScreenUp();
 	data.byte(kGetback) = 0;
 
@@ -3934,7 +3934,7 @@ void DreamGenContext::talk() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 
 	RectWithCallback talkList[] = {
 		{ 273,320,157,198,&DreamGenContext::getBack1 },
@@ -4025,7 +4025,7 @@ void DreamGenContext::doSaveLoad() {
 	loadSaveBox();
 	showOpBox();
 	showMainOps();
-	workToScreen();
+	workToScreenCPP();
 
 	RectWithCallback opsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
@@ -4154,7 +4154,7 @@ void DreamGenContext::showGun() {
 	createPanel2();
 	showFrame(tempGraphics(), 100, 4, 0, 0);
 	showFrame(tempGraphics(), 158, 106, 1, 0);
-	workToScreen();
+	workToScreenCPP();
 	getRidOfTemp();
 	fadeScreenUp();
 	hangOn(160);

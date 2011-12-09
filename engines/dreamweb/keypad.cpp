@@ -118,7 +118,7 @@ void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 	showKeypad();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	data.word(kPresspointer) = 0;
 	data.byte(kGetback) = 0;
