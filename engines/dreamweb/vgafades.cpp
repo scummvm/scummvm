@@ -190,4 +190,62 @@ void DreamGenContext::clearPalette() {
 	dumpCurrent();
 }
 
+// Converts palette to grey scale, summed using formula
+// .20xred + .59xGreen + .11xBlue
+void DreamBase::greyscaleSum() {
+	byte *src = mainPalette();
+	byte *dst = endPalette();
+
+	for (int i = 0; i < 256; ++i) {
+		const unsigned int r = 20 * *src++;
+		const unsigned int g = 59 * *src++;
+		const unsigned int b = 11 * *src++;
+		const byte grey = (r + b + g) / 100;
+		byte tmp;
+
+		tmp = grey;
+		//if (tmp != 0)	// FIXME: The assembler code has this check commented out. Bug or feature?
+			tmp += data.byte(kAddtored);
+		*dst++ = tmp;
+
+		tmp = grey;
+		if (tmp != 0)
+			tmp += data.byte(kAddtogreen);
+		*dst++ = tmp;
+
+		tmp = grey;
+		if (tmp != 0)
+			tmp += data.byte(kAddtoblue);
+		*dst++ = tmp;
+	}
+}
+
+void DreamBase::allPalette() {
+	memcpy(startPalette(), mainPalette(), 3 * 256);
+	dumpCurrent();
+}
+
+void DreamBase::dumpCurrent() {
+	uint8 *pal = startPalette();
+
+	engine->waitForVSync();
+	engine->processEvents();
+	engine->setPalette(pal, 0, 128);
+
+	pal += 128 * 3;
+
+	engine->waitForVSync();
+	engine->processEvents();
+	engine->setPalette(pal, 128, 128);
+}
+
+void DreamGenContext::showGroup() {
+	engine->processEvents();
+	unsigned n = (uint16)cx;
+	uint8 *src = ds.ptr(si, n * 3);
+	engine->setPalette(src, al, n);
+	si += n * 3;
+	cx = 0;
+}
+
 } // End of namespace DreamGen

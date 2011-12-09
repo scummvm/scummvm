@@ -183,7 +183,7 @@ void DreamBase::vSync() {
 }
 
 void DreamBase::setMode() {
-	vSync();
+	engine->waitForVSync();
 	initGraphics(320, 200, false);
 }
 

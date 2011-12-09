@@ -517,7 +517,6 @@ public:
 	void moneyPoke();
 	void doSomeTalk();
 	void resetLocation();
-	void greyscaleSum();
 	void getOpenedSize();
 	void adjustUp();
 	void fadeScreenDownHalf();
@@ -547,7 +546,6 @@ public:
 	void dirFile();
 	void pickupConts();
 	void nextColon();
-	void allPalette();
 	void findInvPos();
 	void rollEndCredits();
 	void getKeyAndLogo();
@@ -589,7 +587,6 @@ public:
 	void openOb();
 	void drawItAll();
 	void useStereo();
-	void dumpCurrent();
 	void showDiaryKeys();
 	void rollEndCredits2();
 	void useOpened();
