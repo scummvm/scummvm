@@ -340,7 +340,7 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	engine->writeToSaveFile(data.ptr(kRoomscango, 16), 16);
 
 	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
-	closeFile();
+	engine->closeFile();
 }
 
 void DreamGenContext::loadPosition(unsigned int slot) {
@@ -379,7 +379,7 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 	engine->readFromSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 
-	closeFile();
+	engine->closeFile();
 }
 
 // Count number of save files, and load their descriptions into kSavenames
@@ -398,14 +398,14 @@ unsigned int DreamGenContext::scanForNames() {
 
 		if (header.len(0) != 17) {
 			::warning("Error loading save: description buffer isn't 17 bytes");
-			closeFile();
+			engine->closeFile();
 			continue;
 		}
 
 		// NB: Only possible if slot < 7
 		engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, 17), 17);
 
-		closeFile();
+		engine->closeFile();
 	}
 
 	al = (uint8)count;

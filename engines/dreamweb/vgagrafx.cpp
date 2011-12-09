@@ -442,9 +442,10 @@ bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 }
 
 void DreamBase::loadPalFromIFF() {
-	engine->openFile("DREAMWEB.PAL");
-	engine->readFromFile(mapStore(), 2000);
-	engine->closeFile();
+	Common::File palFile;
+	palFile.open("DREAMWEB.PAL");
+	palFile.read(mapStore(), 2000);
+	palFile.close();
 
 	const uint8 *src = mapStore() + 0x30;
 	uint8 *dst = mainPalette();

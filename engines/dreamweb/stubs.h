@@ -536,7 +536,6 @@
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();
-	void closeFile();
 	void getTime();
 	void set16ColPalette();
 	void examineInventory();
