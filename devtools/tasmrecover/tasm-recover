@@ -475,6 +475,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'middlepanel',
 	'mode640x480',
 	'modifychar',
+	'monitorlogo',
 	'monkandryan',
 	'monks2text',
 	'monmessage',

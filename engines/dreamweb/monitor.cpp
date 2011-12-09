@@ -54,7 +54,7 @@ void DreamGenContext::useMon() {
 	printOuterMon();
 	initialMonCols();
 	printLogo();
-	workToScreen();
+	workToScreenCPP();
 	turnOnPower();
 	fadeupYellows();
 	fadeupMonFirst();
@@ -95,6 +95,21 @@ void DreamGenContext::useMon() {
 	restoreAll();
 	redrawMainScrn();
 	workToScreenM();
+}
+
+void DreamGenContext::monitorLogo() {
+	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {
+		data.byte(kOldlogonum) = data.byte(kLogonum);
+		printLogo();
+		printUnderMon();
+		workToScreenCPP();
+		printLogo();
+		printLogo();
+		playChannel1(26);
+		randomAccess(20);
+	} else {
+		printLogo();
+	}
 }
 
 void DreamBase::printLogo() {

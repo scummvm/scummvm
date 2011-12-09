@@ -574,7 +574,6 @@ public:
 	void removeObFromInv();
 	void heavy();
 	void useKey();
-	void monitorLogo();
 	void dirFile();
 	void pickupConts();
 	void allPalette();

@@ -562,5 +562,6 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
+	void monitorLogo();
 
 #endif

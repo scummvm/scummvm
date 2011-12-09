@@ -3866,27 +3866,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::monitorLogo() {
-	STACK_CHECK;
-	al = data.byte(kLogonum);
-	_cmp(al, data.byte(kOldlogonum));
-	if (flags.z())
-		goto notnewlogo;
-	data.byte(kOldlogonum) = al;
-	printLogo();
-	printUnderMon();
-	workToScreen();
-	printLogo();
-	printLogo();
-	al = 26;
-	playChannel1();
-	cx = 20;
-	randomAccess();
-	return;
-notnewlogo:
-	printLogo();
-}
-
 void DreamGenContext::processTrigger() {
 	STACK_CHECK;
 	_cmp(data.byte(kLasttrigger), '1');
