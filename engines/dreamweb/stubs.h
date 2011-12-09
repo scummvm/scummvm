@@ -563,5 +563,6 @@
 	void showGun();
 	void endGame();
 	void monitorLogo();
+	void quitSymbol();
 
 #endif

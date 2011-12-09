@@ -541,7 +541,7 @@ public:
 	void checkObjectSize();
 	void findText1();
 	void isRyanHolding();
-	void quitSymbol();
+	void showSlots();
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
@@ -576,9 +576,9 @@ public:
 	void useKey();
 	void dirFile();
 	void pickupConts();
+	void nextColon();
 	void allPalette();
 	void cantDrop();
-	void nextColon();
 	void findInvPos();
 	void rollEndCredits();
 	void getKeyAndLogo();
@@ -610,7 +610,7 @@ public:
 	void lookAtPlace();
 	void useAxe();
 	void findAllOpen();
-	void showSlots();
+	void fillOpen();
 	void findSetObject();
 	void deleteExObject();
 	void removeFreeObject();
@@ -626,7 +626,6 @@ public:
 	void showDiaryKeys();
 	void rollEndCredits2();
 	void useOpened();
-	void fillOpen();
 	void signOn();
 	void locationPic();
 	void triggerMessage();

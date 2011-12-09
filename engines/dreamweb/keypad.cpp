@@ -244,4 +244,24 @@ void DreamGenContext::dumpSymBox() {
 	}
 }
 
+void DreamGenContext::quitSymbol() {
+	if (data.byte(kSymboltopx) != 24 || data.byte(kSymbolbotx) != 24) {
+		blank();
+		return;
+	};
+
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandOnly(18);
+	}
+
+	if (data.word(kMousebutton) = data.word(kOldbutton))
+		return;	// notqs
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	data.byte(kGetback) = 1;
+}
+
 } // End of namespace DreamGen

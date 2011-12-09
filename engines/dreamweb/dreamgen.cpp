@@ -5273,33 +5273,6 @@ doqk:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::quitSymbol() {
-	STACK_CHECK;
-	_cmp(data.byte(kSymboltopx), 24);
-	if (!flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kSymbolbotx), 24);
-	if (!flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadyqs;
-	data.byte(kCommandtype) = 222;
-	al = 18;
-	commandOnly();
-alreadyqs:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notqs) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doqs;
-	return;
-doqs:
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::updateSymbolTop() {
 	STACK_CHECK;
 	_cmp(data.byte(kSymboltopdir), 0);
