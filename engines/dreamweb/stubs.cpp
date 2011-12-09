@@ -4164,4 +4164,39 @@ void DreamGenContext::showGun() {
 	getRidOfTempText();
 }
 
+void DreamGenContext::diaryKeyP() {
+	if (data.byte(kCommandtype) != 214) {
+		data.byte(kCommandtype) = 214;
+		commandOnly(23);
+	}
+
+	if (!data.word(kMousebutton) ||
+		data.word(kOldbutton) == data.word(kMousebutton) ||
+		data.byte(kPresscount))
+		return; // notkeyp
+
+	playChannel1(16);
+	data.byte(kPresscount) = 12;
+	data.byte(kPressed) = 'P';
+	data.byte(kDiarypage)--;
+
+	if (data.byte(kDiarypage) == 0xFF)
+		data.byte(kDiarypage) = 11;
+}
+
+void DreamGenContext::diaryKeyN() {
+	if (data.byte(kCommandtype) != 213) {
+		data.byte(kCommandtype) = 213;
+		commandOnly(23);
+	}
+
+	playChannel1(16);
+	data.byte(kPresscount) = 12;
+	data.byte(kPressed) = 'N';
+	data.byte(kDiarypage)++;
+
+	if (data.byte(kDiarypage) == 12)
+		data.byte(kDiarypage) = 0;
+}
+
 } // End of namespace DreamGen

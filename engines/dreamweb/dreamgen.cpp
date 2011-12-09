@@ -5465,66 +5465,6 @@ notdumpdiary:
 	multiDump();
 }
 
-void DreamGenContext::diaryKeyP() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 214);
-	if (flags.z())
-		goto alreadykeyp;
-	data.byte(kCommandtype) = 214;
-	al = 23;
-	commandOnly();
-alreadykeyp:
-	_cmp(data.word(kMousebutton), 0);
-	if (flags.z())
-		return /* (notkeyp) */;
-	ax = data.word(kOldbutton);
-	_cmp(ax, data.word(kMousebutton));
-	if (flags.z())
-		return /* (notkeyp) */;
-	_cmp(data.byte(kPresscount), 0);
-	if (!flags.z())
-		return /* (notkeyp) */;
-	al = 16;
-	playChannel1();
-	data.byte(kPresscount) = 12;
-	data.byte(kPressed) = 'P';
-	_dec(data.byte(kDiarypage));
-	_cmp(data.byte(kDiarypage), -1);
-	if (!flags.z())
-		return /* (notkeyp) */;
-	data.byte(kDiarypage) = 11;
-}
-
-void DreamGenContext::diaryKeyN() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 213);
-	if (flags.z())
-		goto alreadykeyn;
-	data.byte(kCommandtype) = 213;
-	al = 23;
-	commandOnly();
-alreadykeyn:
-	_cmp(data.word(kMousebutton), 0);
-	if (flags.z())
-		return /* (notkeyn) */;
-	ax = data.word(kOldbutton);
-	_cmp(ax, data.word(kMousebutton));
-	if (flags.z())
-		return /* (notkeyn) */;
-	_cmp(data.byte(kPresscount), 0);
-	if (!flags.z())
-		return /* (notkeyn) */;
-	al = 16;
-	playChannel1();
-	data.byte(kPresscount) = 12;
-	data.byte(kPressed) = 'N';
-	_inc(data.byte(kDiarypage));
-	_cmp(data.byte(kDiarypage), 12);
-	if (!flags.z())
-		return /* (notkeyn) */;
-	data.byte(kDiarypage) = 0;
-}
-
 void DreamGenContext::showDiaryPage() {
 	STACK_CHECK;
 	al = 0;

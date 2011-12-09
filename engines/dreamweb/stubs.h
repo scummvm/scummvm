@@ -564,5 +564,7 @@
 	void endGame();
 	void monitorLogo();
 	void quitSymbol();
+	void diaryKeyP();
+	void diaryKeyN();
 
 #endif

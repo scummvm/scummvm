@@ -266,6 +266,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'deltextline',
 	'delthisone',
 	'destselect',
+	'diarykeyp',
+	'diarykeyn',
 	'disablepath',
 	'disablesoundint',
 	'discops',

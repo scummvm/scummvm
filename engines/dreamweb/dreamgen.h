@@ -591,9 +591,7 @@ public:
 	void reExFromInv();
 	void businessMan();
 	void outOfInv();
-	void diaryKeyP();
 	void transferMap();
-	void diaryKeyN();
 	void purgeAnItem();
 	void purgeALocation();
 	void notHeldError();
