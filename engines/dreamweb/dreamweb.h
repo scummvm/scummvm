@@ -106,9 +106,6 @@ public:
 
 	Common::String getSavegameFilename(int slot) const;
 
-	bool openSaveFileForReading(const Common::String &name);
-	uint readFromSaveFile(uint8 *data, uint size);
-
 	void setShakePos(int pos) { _system->setShakePos(pos); }
 	void printUnderMonitor();
 

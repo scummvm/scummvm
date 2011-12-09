@@ -232,6 +232,9 @@ void DreamWebEngine::openFile(const Common::String &name) {
 	closeFile();
 	if (_file.open(name))
 		return;
+	// File not found? See if there is a save state with this name
+	// FIXME: Is this really needed? If yes, document why; if not,
+	// remove all traces of _inSaveFile.
 	_inSaveFile = _saveFileMan->openForLoading(name);
 	if (_inSaveFile)
 		return;
@@ -268,20 +271,6 @@ Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 	//Common::String filename = _targetName + Common::String::format(".d%02d", savegameId);
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
 	return filename;
-}
-
-bool DreamWebEngine::openSaveFileForReading(const Common::String &name) {
-	processEvents();
-	delete _inSaveFile;
-	_inSaveFile = _saveFileMan->openForLoading(name);
-	return _inSaveFile != 0;
-}
-
-uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
-	processEvents();
-	if (!_inSaveFile)
-		error("save file was not opened for reading");
-	return _inSaveFile->read(data, size);
 }
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
