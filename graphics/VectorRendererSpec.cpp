@@ -252,6 +252,7 @@ fillSurface() {
 	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
 
 	int h = _activeSurface->h;
+	int w = _activeSurface->w;
 	int pitch = _activeSurface->pitch;
 
 	if (Base::_fillMode == kFillBackground) {
@@ -259,9 +260,60 @@ fillSurface() {
 	} else if (Base::_fillMode == kFillForeground) {
 		colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch * h), _fgColor);
 	} else if (Base::_fillMode == kFillGradient) {
-		int i = h;
-		while (i--) {
-			colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch), calcGradient(h - i, h));
+		Common::Array<PixelType> gradCache;
+		Common::Array<int> gradIndexes;
+		PixelType prevcolor = 0, color;
+		int numColors = 0;
+
+		for (int i = 0; i < h + 2; i++) {
+			color = calcGradient(i, h);
+			if (color != prevcolor || i == 0 || i > h - 1) {
+				prevcolor = color;
+				gradCache.push_back(color);
+				gradIndexes.push_back(i);
+				numColors++;
+			}
+		}
+
+		int curGrad = -1;
+		for (int i = 0; i < h; i++) {
+			PixelType *ptr1 = (PixelType *)ptr;
+
+			bool ox = (i & 1 == 1);
+			int stripSize;
+
+			if (i == gradIndexes[curGrad + 1]) {
+				curGrad++;
+
+				stripSize = gradIndexes[curGrad + 1] - gradIndexes[curGrad];
+			}
+
+			int grad = (((i - gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
+
+			// Dithering:
+			//   +--+ +--+ +--+ +--+ 
+			//   |  | |  | | *| | *| 
+			//   |  | | *| |* | |**| 
+			//   +--+ +--+ +--+ +--+ 
+			//     0    1    2    3
+			if (grad == 0 || 
+				gradCache[curGrad] == gradCache[curGrad + 1] || // no color change
+				stripSize < 2) { // the stip is small
+				colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch), gradCache[curGrad]);
+			} else if (grad == 3 && ox) {
+				colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch), gradCache[curGrad + 1]);
+			} else {
+				for (int j = 0; j < w; j++, ptr1++) {
+					bool oy = (j & 1 == 1);
+
+					if ((ox && oy) ||
+						((grad == 2 || grad == 3) && ox && !oy) ||
+						(grad == 3 && oy))
+						*ptr1 = gradCache[curGrad + 1];
+					else
+						*ptr1 = gradCache[curGrad];
+				}
+			}
 			ptr += pitch;
 		}
 	}
