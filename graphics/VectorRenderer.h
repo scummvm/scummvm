@@ -493,7 +493,6 @@ protected:
 	uint32 _dynamicData; /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
-	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
 };
 
 } // End of namespace Graphics

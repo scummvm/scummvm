@@ -208,6 +208,8 @@ protected:
 	PixelType _gradientStart; /**< Start color for the fill gradient */
 	PixelType _gradientEnd; /**< End color for the fill gradient */
 
+	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
+
 	PixelType _bevelColor;
 	PixelType _bitmapAlphaColor;
 };

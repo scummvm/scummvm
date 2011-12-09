@@ -229,9 +229,9 @@ setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 	_gradientEnd = _format.RGBToColor(r2, g2, b2);
 	_gradientStart = _format.RGBToColor(r1, g1, b1);
 
-	Base::_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
-	Base::_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
-	Base::_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+	_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
+	_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
+	_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
 }
 
 template<typename PixelType>
@@ -471,9 +471,9 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= ((_gradientStart & _redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart & _greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart & _blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
+	output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
+	output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
 	output |= _alphaMask;
 
 	return output;
