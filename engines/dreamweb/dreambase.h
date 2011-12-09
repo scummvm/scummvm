@@ -152,6 +152,7 @@ public:
 	void endPalToStart();
 	void startPalToEnd();
 	void palToEndPal();
+	void fadeDOS();
 	void doFade();
 	void fadeCalculation();
 	void fadeScreenUp();
