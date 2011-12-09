@@ -4097,12 +4097,13 @@ void DreamGenContext::hangOnPQ() {
 		dumpTextLine();
 		checkCoords(quitList);
 
-		if (data.byte(kGetback) == 1 || !data.byte(kQuitrequested)) {
+		if (data.byte(kGetback) == 1 || data.byte(kQuitrequested)) {
 			// Quit conversation
 			delPointer();
 			data.byte(kPointermode) = 0;
 			cancelCh1();
 			flags._c = true;
+			return;
 		}
 
 		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
