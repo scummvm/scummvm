@@ -276,10 +276,13 @@ Common::Error GrimEngine::run() {
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
-		assert(slot <= 99);
 		assert(slot >= 0);
 		char saveName[16];
-		sprintf(saveName, "grim%02d.gsv", slot);
+		if (slot < 100) {
+			sprintf(saveName, "grim%02d.gsv", slot);
+		} else {
+			sprintf(saveName, "grim%d.gsv", slot);
+		}
 		_savegameLoadRequest = true;
 		_savegameFileName = saveName;
 	}
