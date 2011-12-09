@@ -264,6 +264,15 @@ void DreamWebEngine::closeFile() {
 	_outSaveFile = 0;
 }
 
+Common::String DreamWebEngine::getSavegameFilename(int slot) const {
+	// TODO: Are saves from all versions of Dreamweb compatible with each other?
+	// Then we can can consider keeping the filenames as DREAMWEB.Dnn.
+	// Otherwise, this must be changed to be target dependent.
+	//Common::String filename = _targetName + Common::String::format(".d%02d", savegameId);
+	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
+	return filename;
+}
+
 void DreamWebEngine::openSaveFileForWriting(const Common::String &name) {
 	processEvents();
 	delete _outSaveFile;

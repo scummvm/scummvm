@@ -31,6 +31,18 @@ namespace DreamGen {
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
 
+void DreamGenContext::openForSave(unsigned int slot) {
+	Common::String filename = engine->getSavegameFilename(slot);
+	debug(1, "openForSave(%s)", filename.c_str());
+	engine->openSaveFileForWriting(filename);
+}
+
+bool DreamGenContext::openForLoad(unsigned int slot) {
+	Common::String filename = engine->getSavegameFilename(slot);
+	debug(1, "openForLoad(%s)", filename.c_str());
+	return engine->openSaveFileForReading(filename);
+}
+
 
 void DreamGenContext::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
