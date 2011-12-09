@@ -819,20 +819,6 @@ void DreamGenContext::quickQuit2() {
 	engine->quit();
 }
 
-void DreamGenContext::openForSave(unsigned int slot) {
-	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
-	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
-	debug(1, "openForSave(%s)", filename.c_str());
-	engine->openSaveFileForWriting(filename);
-}
-
-bool DreamGenContext::openForLoad(unsigned int slot) {
-	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
-	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
-	debug(1, "openForLoad(%s)", filename.c_str());
-	return engine->openSaveFileForReading(filename);
-}
-
 void DreamBase::readMouse() {
 	data.word(kOldbutton) = data.word(kMousebutton);
 	uint16 state = readMouseState();

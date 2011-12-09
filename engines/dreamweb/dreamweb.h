@@ -104,6 +104,8 @@ public:
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
 
+	Common::String getSavegameFilename(int slot) const;
+
 	void openSaveFileForWriting(const Common::String &name);
 	uint writeToSaveFile(const uint8 *data, uint size);
 
