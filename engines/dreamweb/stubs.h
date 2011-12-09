@@ -159,10 +159,6 @@
 	void blockNameText();
 	void walkToText();
 	void personNameText();
-	void findOrMake();
-	void findOrMake(uint8 index, uint8 value, uint8 type) {
-		DreamBase::findOrMake(index, value, type);
-	}
 	DynObject *getFreeAd(uint8 index) {
 		return DreamBase::getFreeAd(index);
 	}
