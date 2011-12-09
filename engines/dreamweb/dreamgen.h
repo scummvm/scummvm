@@ -606,7 +606,6 @@ public:
 	void purgeALocation();
 	void notHeldError();
 	void getSetAd();
-	void soldier1();
 	void getUnderCentre();
 	void showKeys();
 	void printmessage2();

@@ -107,46 +107,6 @@ notgotgun:
 	addToPeopleList();
 }
 
-void DreamGenContext::soldier1() {
-	STACK_CHECK;
-	_cmp(es.word(bx+3), 0);
-	if (flags.z())
-		goto soldierwait;
-	data.word(kWatchingtime) = 10;
-	_cmp(es.word(bx+3), 30);
-	if (!flags.z())
-		goto notaftersshot;
-	_inc(data.byte(kCombatcount));
-	_cmp(data.byte(kCombatcount), 40);
-	if (!flags.z())
-		goto gotsoldframe;
-	data.byte(kMandead) = 2;
-	goto gotsoldframe;
-notaftersshot:
-	checkSpeed();
-	if (!flags.z())
-		goto gotsoldframe;
-	_inc(es.word(bx+3));
-	goto gotsoldframe;
-soldierwait:
-	_cmp(data.byte(kLastweapon), 1);
-	if (!flags.z())
-		goto gotsoldframe;
-	data.word(kWatchingtime) = 10;
-	_cmp(data.byte(kManspath), 2);
-	if (!flags.z())
-		goto gotsoldframe;
-	_cmp(data.byte(kFacing), 4);
-	if (!flags.z())
-		goto gotsoldframe;
-	_inc(es.word(bx+3));
-	data.byte(kLastweapon) = -1;
-	data.byte(kCombatcount) = 0;
-gotsoldframe:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::helicopter() {
 	STACK_CHECK;
 	ax = es.word(bx+3);

@@ -656,6 +656,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'slabdoorf',
 	'smallcandle',
 	'smokebloke',
+	'soldier1',
 	'sortoutmap',
 	'soundend',
 	'soundonreels',
