@@ -1382,13 +1382,6 @@ void DreamGenContext::walkToText() {
 	commandWithOb(3, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::findOrMake() {
-	uint8 b0 = al;
-	uint8 b2 = cl;
-	uint8 b3 = ch;
-	findOrMake(b0, b2, b3);
-}
-
 void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
 	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change) {
