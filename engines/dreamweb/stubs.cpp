@@ -3718,7 +3718,7 @@ void DreamGenContext::showLoadOps() {
 
 void DreamGenContext::showSaveOps() {
 	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 6, 0);
+	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 
