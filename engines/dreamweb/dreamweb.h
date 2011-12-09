@@ -106,9 +106,6 @@ public:
 
 	Common::String getSavegameFilename(int slot) const;
 
-	void openSaveFileForWriting(const Common::String &name);
-	uint writeToSaveFile(const uint8 *data, uint size);
-
 	bool openSaveFileForReading(const Common::String &name);
 	uint readFromSaveFile(uint8 *data, uint size);
 
@@ -151,7 +148,6 @@ private:
 	Common::RandomSource			_rnd;
 
 	Common::File _file;
-	Common::OutSaveFile *_outSaveFile;
 	Common::InSaveFile *_inSaveFile;
 
 	uint _speed;
