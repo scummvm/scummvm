@@ -224,17 +224,6 @@ VectorRenderer *createRenderer(int mode) {
 }
 
 template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
-	_gradientEnd = _format.RGBToColor(r2, g2, b2);
-	_gradientStart = _format.RGBToColor(r1, g1, b1);
-
-	_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
-	_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
-	_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
-}
-
-template<typename PixelType>
 VectorRendererSpec<PixelType>::
 VectorRendererSpec(PixelFormat format) :
 	_format(format),
@@ -246,13 +235,99 @@ VectorRendererSpec(PixelFormat format) :
 	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
 }
 
+/****************************
+ * Gradient-related methods *
+ ****************************/
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
+	_gradientEnd = _format.RGBToColor(r2, g2, b2);
+	_gradientStart = _format.RGBToColor(r1, g1, b1);
+
+	_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
+	_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
+	_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+}
+
+template<typename PixelType>
+inline PixelType VectorRendererSpec<PixelType>::
+calcGradient(uint32 pos, uint32 max) {
+	PixelType output = 0;
+	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
+
+	output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
+	output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
+	output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	output |= _alphaMask;
+
+	return output;
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+precalcGradient(int h) {
+	PixelType prevcolor = 0, color;
+
+	_gradCache.resize(0);
+	_gradIndexes.resize(0);
+
+	for (int i = 0; i < h + 2; i++) {
+		color = calcGradient(i, h);
+		if (color != prevcolor || i == 0 || i > h - 1) {
+			prevcolor = color;
+			_gradCache.push_back(color);
+			_gradIndexes.push_back(i);
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+gradientFill(PixelType *ptr, int width, int x, int y) {
+	bool ox = (y & 1 == 1);
+	int stripSize;
+	int curGrad = 0;
+
+	while (_gradIndexes[curGrad + 1] <= y)
+		curGrad++;
+
+	stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
+
+	int grad = (((y - _gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
+
+	// Dithering:
+	//   +--+ +--+ +--+ +--+ 
+	//   |  | |  | | *| | *| 
+	//   |  | | *| |* | |**| 
+	//   +--+ +--+ +--+ +--+ 
+	//     0    1    2    3
+	if (grad == 0 || 
+		_gradCache[curGrad] == _gradCache[curGrad + 1] || // no color change
+		stripSize < 2) { // the stip is small
+		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad]);
+	} else if (grad == 3 && ox) {
+		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1]);
+	} else {
+		for (int j = x; j < x + width; j++, ptr++) {
+			bool oy = (j & 1 == 1);
+
+			if ((ox && oy) ||
+				((grad == 2 || grad == 3) && ox && !oy) ||
+				(grad == 3 && oy))
+				*ptr = _gradCache[curGrad + 1];
+			else
+				*ptr = _gradCache[curGrad];
+		}
+	}
+}
+
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 fillSurface() {
 	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
 
 	int h = _activeSurface->h;
-	int w = _activeSurface->w;
 	int pitch = _activeSurface->pitch;
 
 	if (Base::_fillMode == kFillBackground) {
@@ -260,60 +335,11 @@ fillSurface() {
 	} else if (Base::_fillMode == kFillForeground) {
 		colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch * h), _fgColor);
 	} else if (Base::_fillMode == kFillGradient) {
-		Common::Array<PixelType> gradCache;
-		Common::Array<int> gradIndexes;
-		PixelType prevcolor = 0, color;
-		int numColors = 0;
+		precalcGradient(h);
 
-		for (int i = 0; i < h + 2; i++) {
-			color = calcGradient(i, h);
-			if (color != prevcolor || i == 0 || i > h - 1) {
-				prevcolor = color;
-				gradCache.push_back(color);
-				gradIndexes.push_back(i);
-				numColors++;
-			}
-		}
-
-		int curGrad = -1;
 		for (int i = 0; i < h; i++) {
-			PixelType *ptr1 = (PixelType *)ptr;
+			gradientFill((PixelType *)ptr, _activeSurface->w, 0, i);
 
-			bool ox = (i & 1 == 1);
-			int stripSize;
-
-			if (i == gradIndexes[curGrad + 1]) {
-				curGrad++;
-
-				stripSize = gradIndexes[curGrad + 1] - gradIndexes[curGrad];
-			}
-
-			int grad = (((i - gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
-
-			// Dithering:
-			//   +--+ +--+ +--+ +--+ 
-			//   |  | |  | | *| | *| 
-			//   |  | | *| |* | |**| 
-			//   +--+ +--+ +--+ +--+ 
-			//     0    1    2    3
-			if (grad == 0 || 
-				gradCache[curGrad] == gradCache[curGrad + 1] || // no color change
-				stripSize < 2) { // the stip is small
-				colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch), gradCache[curGrad]);
-			} else if (grad == 3 && ox) {
-				colorFill<PixelType>((PixelType *)ptr, (PixelType *)(ptr + pitch), gradCache[curGrad + 1]);
-			} else {
-				for (int j = 0; j < w; j++, ptr1++) {
-					bool oy = (j & 1 == 1);
-
-					if ((ox && oy) ||
-						((grad == 2 || grad == 3) && ox && !oy) ||
-						(grad == 3 && oy))
-						*ptr1 = gradCache[curGrad + 1];
-					else
-						*ptr1 = gradCache[curGrad];
-				}
-			}
 			ptr += pitch;
 		}
 	}
@@ -463,20 +489,6 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		(_alphaMask & ((idst & _alphaMask) +
                 ((alpha >> _format.aLoss) << _format.aShift) -
                 (((int)(idst & _alphaMask) * alpha) >> 8))));
-}
-
-template<typename PixelType>
-inline PixelType VectorRendererSpec<PixelType>::
-calcGradient(uint32 pos, uint32 max) {
-	PixelType output = 0;
-	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
-
-	output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
-	output |= _alphaMask;
-
-	return output;
 }
 
 /********************************************************************
