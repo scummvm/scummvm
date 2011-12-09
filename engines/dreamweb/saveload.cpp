@@ -31,12 +31,6 @@ namespace DreamGen {
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
 
-void DreamGenContext::openForSave(unsigned int slot) {
-	Common::String filename = engine->getSavegameFilename(slot);
-	debug(1, "openForSave(%s)", filename.c_str());
-	engine->openSaveFileForWriting(filename);
-}
-
 bool DreamGenContext::openForLoad(unsigned int slot) {
 	Common::String filename = engine->getSavegameFilename(slot);
 	debug(1, "openForLoad(%s)", filename.c_str());
@@ -323,7 +317,14 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	madeUpRoom.facing = data.byte(kFacing);
 	madeUpRoom.b27 = 255;
 
-	openForSave(slot);
+
+	engine->processEvents();	// TODO: Is this necessary?
+
+	Common::String filename = engine->getSavegameFilename(slot);
+	debug(1, "openForSave(%s)", filename.c_str());
+	Common::OutSaveFile *outSaveFile = engine->getSaveFileManager()->openForSaving(filename);
+	if (!outSaveFile)	// TODO: Do proper error handling!
+		error("save could not be opened for writing");
 
 	// Initialize new header
 	FileHeader header;
@@ -341,18 +342,25 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
-	engine->writeToSaveFile((const uint8 *)&header, sizeof(FileHeader));
-	engine->writeToSaveFile(descbuf, len[0]);
-	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-	engine->writeToSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	engine->writeToSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
+	outSaveFile->write(descbuf, len[0]);
+	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
+	outSaveFile->write(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	outSaveFile->write(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
-	engine->writeToSaveFile((const uint8 *)&madeUpRoom, sizeof(Room));
-	engine->writeToSaveFile(data.ptr(kRoomscango, 16), 16);
+	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
+	outSaveFile->write(data.ptr(kRoomscango, 16), 16);
 
-	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
-	engine->closeFile();
+	outSaveFile->write(data.ptr(kReelroutines, len[5]), len[5]);
+
+	outSaveFile->finalize();
+	if (outSaveFile->err()) {
+		// TODO: Do proper error handling
+		warning("an error occurred while writing the savegame");
+	}
+
+	delete outSaveFile;
 }
 
 void DreamGenContext::loadPosition(unsigned int slot) {

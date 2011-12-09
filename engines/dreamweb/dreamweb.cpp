@@ -51,7 +51,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	_outSaveFile = 0;
 	_inSaveFile = 0;
 	_speed = 1;
 	_turbo = false;
@@ -260,8 +259,6 @@ void DreamWebEngine::closeFile() {
 		_file.close();
 	delete _inSaveFile;
 	_inSaveFile = 0;
-	delete _outSaveFile;
-	_outSaveFile = 0;
 }
 
 Common::String DreamWebEngine::getSavegameFilename(int slot) const {
@@ -273,24 +270,11 @@ Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 	return filename;
 }
 
-void DreamWebEngine::openSaveFileForWriting(const Common::String &name) {
-	processEvents();
-	delete _outSaveFile;
-	_outSaveFile = _saveFileMan->openForSaving(name);
-}
-
 bool DreamWebEngine::openSaveFileForReading(const Common::String &name) {
 	processEvents();
 	delete _inSaveFile;
 	_inSaveFile = _saveFileMan->openForLoading(name);
 	return _inSaveFile != 0;
-}
-
-uint DreamWebEngine::writeToSaveFile(const uint8 *data, uint size) {
-	processEvents();
-	if (!_outSaveFile)
-		error("save file was not opened for writing");
-	return _outSaveFile->write(data, size);
 }
 
 uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
