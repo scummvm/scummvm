@@ -108,8 +108,7 @@ void DreamWebEngine::quit() {
 }
 
 void DreamWebEngine::processEvents() {
-	Common::EventManager *event_manager = _system->getEventManager();
-	if (event_manager->shouldQuit()) {
+	if (_eventMan->shouldQuit()) {
 		quit();
 		return;
 	}
@@ -117,7 +116,7 @@ void DreamWebEngine::processEvents() {
 	soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
-	while (event_manager->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_RTL:
 			quit();
@@ -213,11 +212,11 @@ Common::Error DreamWebEngine::run() {
 
 	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
+	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
 	_base.data.byte(DreamGen::kQuitrequested) = 0;
 
-	getTimerManager()->removeTimerProc(vSyncInterrupt);
+	_timer->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
 }
@@ -225,8 +224,8 @@ Common::Error DreamWebEngine::run() {
 void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
-	getTimerManager()->removeTimerProc(vSyncInterrupt);
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
+	_timer->removeTimerProc(vSyncInterrupt);
+	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {
@@ -234,7 +233,7 @@ void DreamWebEngine::openFile(const Common::String &name) {
 	closeFile();
 	if (_file.open(name))
 		return;
-	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
+	_inSaveFile = _saveFileMan->openForLoading(name);
 	if (_inSaveFile)
 		return;
 	error("cannot open file %s", name.c_str());
@@ -268,13 +267,13 @@ void DreamWebEngine::closeFile() {
 void DreamWebEngine::openSaveFileForWriting(const Common::String &name) {
 	processEvents();
 	delete _outSaveFile;
-	_outSaveFile = _system->getSavefileManager()->openForSaving(name);
+	_outSaveFile = _saveFileMan->openForSaving(name);
 }
 
 bool DreamWebEngine::openSaveFileForReading(const Common::String &name) {
 	processEvents();
 	delete _inSaveFile;
-	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
+	_inSaveFile = _saveFileMan->openForLoading(name);
 	return _inSaveFile != 0;
 }
 
@@ -306,8 +305,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 
 void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	processEvents();
-	Common::EventManager *eventMan = _system->getEventManager();
-	Common::Point pos = eventMan->getMousePos();
+	Common::Point pos = _eventMan->getMousePos();
 	if (pos.x > 298)
 		pos.x = 298;
 	if (pos.x < 15)
@@ -319,7 +317,7 @@ void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	*x = pos.x;
 	*y = pos.y;
 
-	unsigned newState = eventMan->getButtonState();
+	unsigned newState = _eventMan->getButtonState();
 	*state = (newState == _oldMouseState? 0 : newState);
 	_oldMouseState = newState;
 }
