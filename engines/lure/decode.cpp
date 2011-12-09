@@ -372,92 +372,54 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 	currData <<= 4;
 	dx = 1;
 
-	for (;;) {
-		carry = false;
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (carry) goto loc_1441;
-		tableOffset = BX_VAL(0);
-
-loc_1439:
-		dx ^= 1;
-		if ((dx & 1) != 0) {
-			SET_HI_BYTE(dx, tableOffset << 4);
-			*pDest = dx >> 8;
-		} else {
-			*pDest++ |= tableOffset;
-		}
-		continue;
-
-loc_1441:
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (!carry) {
+	// Main loop
+	bool loopFlag = true;
+	while (loopFlag) {
+		for (;;) {		
+			carry = false;
 			rcl(currData, carry);
 			if (--bitCtr == 0) {
 				GET_BYTE;
 				bitCtr = 8;
 			}
-
 			if (!carry) {
-				tableOffset = BX_VAL(0x10);
-			} else {
-				tableOffset = BX_VAL(0x20);
+				tableOffset = BX_VAL(0);
+				break;
 			}
-			goto loc_1439;
-		}
 
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (!carry) {
-			tableOffset = BX_VAL(0x30);
-			goto loc_1439;
-		}
-
-		SET_HI_BYTE(dx, currData >> 12);
-		carry = false;
-		for (int ctr = 0; ctr < 4; ++ctr) {
 			rcl(currData, carry);
 			if (--bitCtr == 0) {
 				GET_BYTE;
 				bitCtr = 8;
 			}
-		}
+			if (!carry) {
+				rcl(currData, carry);
+				if (--bitCtr == 0) {
+					GET_BYTE;
+					bitCtr = 8;
+				}
 
-		byte dxHigh = dx >> 8;
-		if (dxHigh == BX_VAL(0)) {
-			tempReg1 = bitCtr;
-			tempReg2 = dx;
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-
-			SET_LO_BYTE(dx, dx >> 8);
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-			SET_HI_BYTE(bitCtr, dx & 0xff);
-			SET_LO_BYTE(bitCtr, dx >> 8);
-			dx = tempReg2;
-
-			if (bitCtr == 0)
-				// Exit out of infinite loop
+				if (!carry) {
+					tableOffset = BX_VAL(0x10);
+				} else {
+					tableOffset = BX_VAL(0x20);
+				}
 				break;
+			}
 
-		} else if (dxHigh == BX_VAL(0x10)) {
-			tempReg1 = bitCtr;
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-			bitCtr = dx >> 8;
+			rcl(currData, carry);
+			if (--bitCtr == 0) {
+				GET_BYTE;
+				bitCtr = 8;
+			}
+			if (!carry) {
+				tableOffset = BX_VAL(0x30);
+				break;
+			}
 
-		} else if (dxHigh == BX_VAL(0x20)) {
-			SET_HI_BYTE(dx, currData >> 10);
-
-			for (v = 0; v < 6; ++v) {
+			SET_HI_BYTE(dx, currData >> 12);
+			carry = false;
+			for (int ctr = 0; ctr < 4; ++ctr) {
 				rcl(currData, carry);
 				if (--bitCtr == 0) {
 					GET_BYTE;
@@ -465,48 +427,92 @@ loc_1441:
 				}
 			}
 
-			tempReg1 = bitCtr;
-			bitCtr = dx >> 8;
+			byte dxHigh = dx >> 8;
+			if (dxHigh == BX_VAL(0)) {
+				tempReg1 = bitCtr;
+				tempReg2 = dx;
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 
-		} else if (dxHigh == BX_VAL(0x30)) {
-			SET_HI_BYTE(dx, currData >> 11);
+				SET_LO_BYTE(dx, dx >> 8);
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
+				SET_HI_BYTE(bitCtr, dx & 0xff);
+				SET_LO_BYTE(bitCtr, dx >> 8);
+				dx = tempReg2;
 
-			for (v = 0; v < 5; ++v) {
-				rcl(currData, carry);
-				if (--bitCtr == 0) {
-					GET_BYTE;
-					bitCtr = 8;
+				if (bitCtr == 0) {
+					// End of decompression
+					loopFlag = false;
+					break;
 				}
+			} else if (dxHigh == BX_VAL(0x10)) {
+				tempReg1 = bitCtr;
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
+				bitCtr = dx >> 8;
+
+			} else if (dxHigh == BX_VAL(0x20)) {
+				SET_HI_BYTE(dx, currData >> 10);
+
+				for (v = 0; v < 6; ++v) {
+					rcl(currData, carry);
+					if (--bitCtr == 0) {
+						GET_BYTE;
+						bitCtr = 8;
+					}
+				}
+
+				tempReg1 = bitCtr;
+				bitCtr = dx >> 8;
+
+			} else if (dxHigh == BX_VAL(0x30)) {
+				SET_HI_BYTE(dx, currData >> 11);
+
+				for (v = 0; v < 5; ++v) {
+					rcl(currData, carry);
+					if (--bitCtr == 0) {
+						GET_BYTE;
+						bitCtr = 8;
+					}
+				}
+
+				tempReg1 = bitCtr;
+				bitCtr = dx >> 8;
+
+			} else {
+				tableOffset = dx >> 8;
+				break;
 			}
 
-			tempReg1 = bitCtr;
-			bitCtr = dx >> 8;
+			if ((dx & 1) == 1) {
+				*pDest++ |= tableOffset;
+				--bitCtr;
+				dx &= 0xfffe;
+			}
 
-		} else {
-			tableOffset = dx >> 8;
-			goto loc_1439;
+			SET_HI_BYTE(dx, tableOffset << 4);
+			tableOffset |= dx >> 8;
+
+			v = bitCtr >> 1;
+			while (v-- > 0) *pDest++ = tableOffset;
+
+			bitCtr &= 1;
+			if (bitCtr != 0) {
+				*pDest = tableOffset & 0xf0;
+				dx |= 1; //dx.l
+			}
+
+			bitCtr = tempReg1;
+			tableOffset &= 0x0f;
 		}
 
-		if ((dx & 1) == 1) {
-			*pDest++ |= tableOffset;
-			--bitCtr;
-			dx &= 0xfffe;
+		if (loopFlag) {
+			dx ^= 1;
+			if ((dx & 1) != 0) {
+				SET_HI_BYTE(dx, tableOffset << 4);
+				*pDest = dx >> 8;
+			} else {
+				*pDest++ |= tableOffset;
+			}
 		}
-
-		SET_HI_BYTE(dx, tableOffset << 4);
-		tableOffset |= dx >> 8;
-
-		v = bitCtr >> 1;
-		while (v-- > 0) *pDest++ = tableOffset;
-
-		bitCtr &= 1;
-		if (bitCtr != 0) {
-			*pDest = tableOffset & 0xf0;
-			dx |= 1; //dx.l
-		}
-
-		bitCtr = tempReg1;
-		tableOffset &= 0x0f;
 	}
 
 	// Return number of bytes written
