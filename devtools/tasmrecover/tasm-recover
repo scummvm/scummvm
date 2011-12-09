@@ -127,6 +127,7 @@ p = parser(skip_binary_data = [
 	'puzzletextname',
 	'commandtextname',
 	'characterset2',
+	'characterset3',
 	'monitorfile1',
 	'monitorfile2',
 	'monitorfile10',
@@ -142,6 +143,8 @@ p = parser(skip_binary_data = [
 	'palettescreen',
 	'idname',
 	'samplename',
+	'diarygraphic',
+	'diarytext',
 	# 'basicsample', # This can't be removed due to tasm-recover limitations
 	'endtextname',
 	'gungraphic',

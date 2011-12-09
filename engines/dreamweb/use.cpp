@@ -1160,9 +1160,9 @@ void DreamBase::removeFreeObject(uint8 index) {
 
 void DreamGenContext::useDiary() {
 	getRidOfReels();
-	loadIntoTemp((const char *)data.ptr(kDiarygraphic, 0));
-	loadTempText((const char *)data.ptr(kDiarytext, 0));
-	loadTempCharset((const char *)data.ptr(kCharacterset3, 0));
+	loadIntoTemp("DREAMWEB.G14");
+	loadTempText("DREAMWEB.T51");
+	loadTempCharset("DREAMWEB.C02");
 	createPanel();
 	showIcon();
 	showDiary();
