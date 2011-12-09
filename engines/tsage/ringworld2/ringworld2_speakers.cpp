@@ -26,6 +26,7 @@
 #include "tsage/graphics.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
+#include "tsage/ringworld2/ringworld2_scenes2.h"
 
 namespace TsAGE {
 
@@ -480,6 +481,115 @@ SpeakerPharisha2350::SpeakerPharisha2350(): VisualSpeaker() {
 	_object2 = NULL;
 	_displayMode = 1;
 	_numFrames = 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerQuinn2435::SpeakerQuinn2435() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+void SpeakerQuinn2435::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor1;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object2->setStrip(7);
+		_object1.setup(2020, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerSeeker2435::SpeakerSeeker2435() {
+	_speakerName = "SEEKER";
+	_color1 = 35;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerSeeker2435::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 2) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor1;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object2->setStrip(7);
+		_object1.setup(4099, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerPharisha2435::SpeakerPharisha2435() {
+	_speakerName = "PHARISHA";
+	_color1 = 151;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerPharisha2435::proc15() {
+	int v = _fieldF6;
+	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4098, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
 }
 
 } // End of namespace Ringworld2

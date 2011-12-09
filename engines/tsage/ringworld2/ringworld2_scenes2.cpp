@@ -1637,5 +1637,163 @@ void Scene2430::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2435 - Maze: Throne room
+ *
+ *--------------------------------------------------------------------------*/
+bool Scene2435::Actor1::startAction(CursorType action, Event &event) {
+	return SceneActor::startAction(action, event);
+}
+
+bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
+	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case R2_34:
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS.setFlag(82);
+		scene->_stripManager.start(603, scene);
+		return true;
+	case R2_35:
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS.setFlag(82);
+		scene->_stripManager.start(602, scene);
+		R2_INVENTORY.setObjectScene(R2_35, 2000);
+		return true;
+	case CURSOR_TALK:
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 20;
+		R2_GLOBALS._events.setCursor(R2_2);
+		if ((R2_GLOBALS._player._characterIndex == 1) || (R2_GLOBALS.getFlag(82))) {
+			scene->_stripManager.start(605, scene);
+			return true;
+		} else if (R2_INVENTORY.getObjectScene(R2_35) == 2) {
+			scene->_stripManager.start(601, scene);
+			return true;
+		} else {
+			R2_GLOBALS.setFlag(82);
+			scene->_stripManager.start(600, scene);
+			return true;
+		}
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+void Scene2435::Exit1::changeScene() {
+	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._events.setCursor(R2_NEGATOR_GUN);
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 11;
+	Common::Point pt(175, 200);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+
+}
+
+void Scene2435::postInit(SceneObjectList *OwnerList) {
+	loadScene(2435);
+	SceneExt::postInit();
+	R2_GLOBALS._sound1.play(201);
+	_stripManager.addSpeaker(&_quinnSpeaker);
+	_stripManager.addSpeaker(&_seekerSpeaker);
+	_stripManager.addSpeaker(&_pharishaSpeaker);
+	_exit1.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
+	_exit1.setDest(Common::Point(175, 160));
+	_actor2.postInit();
+	_actor2.setup(2005, 3, 1);
+	_actor2.setPosition(Common::Point(219, 106));
+	_actor2.setDetails(2001, 25, 26, -1, 1, NULL);
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	if (R2_GLOBALS._player._characterIndex == 1) {
+		R2_GLOBALS._player.setVisage(2008);
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+	} else {
+		R2_GLOBALS._player.setVisage(20);
+		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
+	}
+	R2_GLOBALS._player.setPosition(Common::Point(715, 200));
+	if (R2_GLOBALS._player._characterScene[1] == R2_GLOBALS._player._characterScene[2]) {
+		_actor1.postInit();
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_actor1.setup(20, 5, 1);
+			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+		} else {
+			_actor1.setup(2008, 5, 1);
+			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+		}
+		_actor1.setPosition(Common::Point(107, 145));
+		R2_GLOBALS._walkRegions.enableRegion(2);
+	}
+
+	_item2.setDetails(Rect(52, 44, 96, 82), 2430, 3, -1, 5, 1, NULL);
+	_item3.setDetails(Rect(117, 36, 161, 74), 2430, 3, -1, 5, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	R2_GLOBALS._player.disableControl();
+	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
+		_sceneMode = 10;
+		Common::Point pt(175, 150);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+	} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2450) {
+		_sceneMode = 30;
+		Common::Point pt(175, 150);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+	} else {
+		R2_GLOBALS._player.setPosition(Common::Point(210, 150));
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.enableControl();
+	}
+	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2435;
+	R2_GLOBALS._v56605[1 + R2_GLOBALS._player._characterIndex] = 12;
+}
+
+void Scene2435::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene2435::signal() {
+	switch (_sceneMode) {
+	case 11:
+		g_globals->_sceneManager.changeScene(2000);
+		break;
+	case 20:
+		R2_GLOBALS._player.enableControl(R2_6);
+		break;
+	case 30:
+		R2_GLOBALS._player._characterScene[1] = 2435;
+		R2_GLOBALS._player._characterScene[2] = 2435;
+		R2_GLOBALS._player._oldCharacterScene[1] = 2435;
+		R2_GLOBALS._player._oldCharacterScene[2] = 2435;
+		R2_GLOBALS._v56605[1] = 12;
+		R2_GLOBALS._v56605[2] = 12;
+		R2_GLOBALS.setFlag(81);
+		_sceneMode = 2436;
+		R2_GLOBALS._player.setStrip(7);
+		_actor1.postInit();
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_actor1.setVisage(20);
+		else
+			_actor1.setVisage(2008);
+		setAction(&_sequenceManager, this, 2436, &_actor1, NULL);
+		break;
+	case 2436:
+		R2_GLOBALS._walkRegions.enableRegion(2);
+		_sceneMode = 20;
+		R2_GLOBALS._events.setCursor(R2_2);
+		_stripManager.start(709, this);
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
