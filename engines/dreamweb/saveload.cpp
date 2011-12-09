@@ -31,13 +31,6 @@ namespace DreamGen {
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
 
-bool DreamGenContext::openForLoad(unsigned int slot) {
-	Common::String filename = engine->getSavegameFilename(slot);
-	debug(1, "openForLoad(%s)", filename.c_str());
-	return engine->openSaveFileForReading(filename);
-}
-
-
 void DreamGenContext::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
@@ -321,7 +314,7 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	engine->processEvents();	// TODO: Is this necessary?
 
 	Common::String filename = engine->getSavegameFilename(slot);
-	debug(1, "openForSave(%s)", filename.c_str());
+	debug(1, "savePosition: slot %d filename %s", slot, filename.c_str());
 	Common::OutSaveFile *outSaveFile = engine->getSaveFileManager()->openForSaving(filename);
 	if (!outSaveFile)	// TODO: Do proper error handling!
 		error("save could not be opened for writing");
@@ -367,11 +360,15 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	data.word(kTimecount) = 0;
 	clearChanges();
 
-	openForLoad(slot);
+	Common::String filename = engine->getSavegameFilename(slot);
+	debug(1, "loadPosition: slot %d filename %s", slot, filename.c_str());
+	Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
+	if (!inSaveFile)	// TODO: Do proper error handling!
+		error("save could not be opened for reading");
 
 	FileHeader header;
 
-	engine->readFromSaveFile((uint8 *)&header, sizeof(FileHeader));
+	inSaveFile->read((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from savegame file header
 	int len[6];
@@ -381,25 +378,25 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 		::error("Error loading save: description buffer isn't 17 bytes");
 
 	if (slot < 7) {
-		engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+		inSaveFile->read(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
 	} else {
 		// The savenames buffer only has room for 7 descriptions
 		uint8 namebuf[17];
-		engine->readFromSaveFile(namebuf, 17);
+		inSaveFile->read(namebuf, 17);
 	}
-	engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-	engine->readFromSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	engine->readFromSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
+	inSaveFile->read(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	inSaveFile->read(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	// Note: the values read into g_madeUpRoomDat are only used in actualLoad,
 	// which is (almost) immediately called after this function
-	engine->readFromSaveFile((uint8 *)&g_madeUpRoomDat, sizeof(Room));
-	engine->readFromSaveFile(data.ptr(kRoomscango, 16), 16);
+	inSaveFile->read((uint8 *)&g_madeUpRoomDat, sizeof(Room));
+	inSaveFile->read(data.ptr(kRoomscango, 16), 16);
 
-	engine->readFromSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
+	inSaveFile->read(data.ptr(kReelroutines, len[5]), len[5]);
 
-	engine->closeFile();
+	delete inSaveFile;
 }
 
 // Count number of save files, and load their descriptions into kSavenames
@@ -408,24 +405,28 @@ unsigned int DreamGenContext::scanForNames() {
 
 	FileHeader header;
 
+	// TODO: Change this to use SaveFileManager::listSavefiles()
 	for (unsigned int slot = 0; slot < 7; ++slot) {
-
-		if (!openForLoad(slot)) continue;
+		// Try opening savegame with the given slot id
+		Common::String filename = engine->getSavegameFilename(slot);
+		Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
+		if (!inSaveFile)
+			continue;
 
 		++count;
 
-		engine->readFromSaveFile((uint8 *)&header, sizeof(FileHeader));
+		inSaveFile->read((uint8 *)&header, sizeof(FileHeader));
 
 		if (header.len(0) != 17) {
 			::warning("Error loading save: description buffer isn't 17 bytes");
-			engine->closeFile();
+			delete inSaveFile;
 			continue;
 		}
 
 		// NB: Only possible if slot < 7
-		engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, 17), 17);
+		inSaveFile->read(data.ptr(kSavenames + 17*slot, 17), 17);
 
-		engine->closeFile();
+		delete inSaveFile;
 	}
 
 	al = (uint8)count;

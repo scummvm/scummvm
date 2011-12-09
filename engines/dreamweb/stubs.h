@@ -306,8 +306,6 @@
 	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const uint8 *descbuf);
-	void openForSave(unsigned int slot);
-	bool openForLoad(unsigned int slot);
 	uint16 allocateAndLoad(unsigned int size);
 	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
