@@ -160,6 +160,9 @@ public:
 	void fadeScreenUpHalf();
 	void fadeScreenDown();
 	void fadeScreenDowns();
+	void greyscaleSum();
+	void allPalette();
+	void dumpCurrent();
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
