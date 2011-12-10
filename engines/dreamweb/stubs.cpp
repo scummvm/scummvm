@@ -4183,6 +4183,11 @@ void DreamGenContext::diaryKeyN() {
 		commandOnly(23);
 	}
 
+	if (!data.word(kMousebutton) ||
+		data.word(kOldbutton) == data.word(kMousebutton) ||
+		data.byte(kPresscount))
+		return; // notkeyn
+
 	playChannel1(16);
 	data.byte(kPresscount) = 12;
 	data.byte(kPressed) = 'N';
