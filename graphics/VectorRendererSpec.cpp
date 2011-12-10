@@ -285,7 +285,7 @@ precalcGradient(int h) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 gradientFill(PixelType *ptr, int width, int x, int y) {
-	bool ox = (y & 1 == 1);
+	bool ox = ((y & 1) == 1);
 	int stripSize;
 	int curGrad = 0;
 
@@ -310,7 +310,7 @@ gradientFill(PixelType *ptr, int width, int x, int y) {
 		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1]);
 	} else {
 		for (int j = x; j < x + width; j++, ptr++) {
-			bool oy = (j & 1 == 1);
+			bool oy = ((j & 1) == 1);
 
 			if ((ox && oy) ||
 				((grad == 2 || grad == 3) && ox && !oy) ||
