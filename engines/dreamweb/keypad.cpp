@@ -255,7 +255,7 @@ void DreamGenContext::quitSymbol() {
 		commandOnly(18);
 	}
 
-	if (data.word(kMousebutton) = data.word(kOldbutton))
+	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return;	// notqs
 
 	if (!(data.word(kMousebutton) & 1))
