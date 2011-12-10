@@ -592,6 +592,96 @@ void SpeakerPharisha2435::proc15() {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerQuinn2450::SpeakerQuinn2450() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+void SpeakerQuinn2450::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor1;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		if (R2_GLOBALS.getFlag(61))
+			_object1.setup(2020, 3, 1);
+		else
+			_object1.setup(2020, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerSeeker2450::SpeakerSeeker2450() {
+	_speakerName = "SEEKER";
+	_color1 = 35;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerSeeker2450::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 2) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor1;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4099, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerCaretaker2450::SpeakerCaretaker2450() {
+	_speakerName = "CARETAKER";
+	_color1 = 43;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

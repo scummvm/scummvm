@@ -377,6 +377,7 @@ void Ringworld2Globals::reset() {
 	// Reset fields
 	_v5657C = 0;
 	_v565F5 = 0;
+	_v565AE = 0;
 	for (int i = 0; i < 14; i++)
 		_v56605[i] = 0;
 	_v57C2C = 0;
@@ -417,6 +418,8 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsSint16LE(_v565F1[i]);
+	
+	s.syncAsByte(_v565AE);
 
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_v56605[i]);
