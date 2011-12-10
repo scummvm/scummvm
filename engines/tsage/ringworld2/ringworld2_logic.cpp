@@ -113,6 +113,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Maze: Throne room
 		return new Scene2435();
 	case 2440:
+		// Maze: Another bedroom
+		return new Scene2440();
 	case 2445:
 	case 2450:
 	case 2455:
