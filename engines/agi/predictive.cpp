@@ -96,8 +96,6 @@ void bringWordtoTop(char *str, int wordnum) {
 }
 
 bool AgiEngine::predictiveDialog() {
-	int key = 0, active = -1, lastactive = 0;
-	bool rc = false;
 	uint8 x;
 	int y;
 	int bx[17], by[17];
@@ -105,7 +103,6 @@ bool AgiEngine::predictiveDialog() {
 	char temp[MAXWORDLEN + 1], repeatcount[MAXWORDLEN];
 	AgiBlock tmpwindow;
 	bool navigationwithkeys = false;
-	bool processkey;
 
 	const char *buttonStr[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 	const char *buttons[] = {
@@ -189,8 +186,11 @@ bool AgiEngine::predictiveDialog() {
 	int mode = kModePre;
 
 	bool needRefresh = true;
-
-	while (!shouldQuit()) {
+	int active = -1, lastactive = 0;
+	bool rc = false;
+	bool closeDialog = false;
+	bool enterPredictiveResult = false;
+	while (!closeDialog && !shouldQuit()) {
 		if (needRefresh) {
 			for (int i = 0; buttons[i]; i++) {
 				int color1 = colors[i * 2];
@@ -234,9 +234,10 @@ bool AgiEngine::predictiveDialog() {
 			_gfx->doUpdate();
 		}
 
+		bool processkey = false;
+
 		pollTimer();
-		key = doPollKeyboard();
-		processkey = false;
+		int key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
 			if (navigationwithkeys) {
@@ -251,7 +252,8 @@ bool AgiEngine::predictiveDialog() {
 			break;
 		case KEY_ESCAPE:
 			rc = false;
-			goto getout;
+			closeDialog = true;
+			break;
 		case BUTTON_LEFT:
 			navigationwithkeys = false;
 			for (int i = 0; buttons[i]; i++) {
@@ -361,7 +363,7 @@ bool AgiEngine::predictiveDialog() {
 			break;
 		}
 
-		if (processkey) {
+		if (processkey && !closeDialog) {
 			if (active >= 0) {
 				needRefresh = true;
 				lastactive = active;
@@ -442,7 +444,8 @@ bool AgiEngine::predictiveDialog() {
 					if (mode == kModePre && _predictiveDictActLine && numMatchingWords > 1 && _wordNumber != 0)
 						bringWordtoTop(_predictiveDictActLine, _wordNumber);
 					rc = true;
-					goto press;
+					enterPredictiveResult = true;
+					closeDialog = true;
 				} else if (active == 14) { // Mode
 					mode++;
 					if (mode > kModeAbc)
@@ -456,17 +459,18 @@ bool AgiEngine::predictiveDialog() {
 					_currentWord.clear();
 					memset(repeatcount, 0, sizeof(repeatcount));
 				} else {
-					goto press;
+					enterPredictiveResult = true;
+					closeDialog = true;
 				}
 			}
 		}
 	}
 
- press:
-	Common::strlcpy(_predictiveResult, prefix.c_str(), sizeof(_predictiveResult));
-	Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
+	if (enterPredictiveResult) {
+		Common::strlcpy(_predictiveResult, prefix.c_str(), sizeof(_predictiveResult));
+		Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
+	}
 
- getout:
 	// if another window was shown, bring it up again
 	if (!tmpwindow.active)
 		closeWindow();

@@ -340,8 +340,6 @@ int AgiEngine::messageBox(const char *s) {
 int AgiEngine::selectionBox(const char *m, const char **b) {
 	int numButtons = 0;
 	int x, y, i, s;
-	int key, active = 0;
-	int rc = -1;
 	int bx[5], by[5];
 
 	_noSaveLoadAllowed = true;
@@ -380,7 +378,9 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	AllowSyntheticEvents on(this);
 
 	debugC(4, kDebugLevelText, "selectionBox(): waiting...");
-	while (!(shouldQuit() || _restartGame)) {
+	int key, active = 0;
+	int rc = -1;
+	while (rc == -1 && !(shouldQuit() || _restartGame)) {
 		for (i = 0; b[i]; i++)
 			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
 
@@ -389,10 +389,8 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 		switch (key) {
 		case KEY_ENTER:
 			rc = active;
-			goto press;
-		case KEY_ESCAPE:
-			rc = -1;
-			goto getout;
+			debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
+			break;
 		case KEY_RIGHT:
 			active++;
 			if (active >= numButtons)
@@ -407,7 +405,8 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 			for (i = 0; b[i]; i++) {
 				if (_gfx->testButton(bx[i], by[i], b[i])) {
 					rc = active = i;
-					goto press;
+					debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
+					break;
 				}
 			}
 			break;
@@ -418,12 +417,11 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 			break;
 		}
 		_gfx->doUpdate();
+
+		if (key == KEY_ESCAPE)
+			break;
 	}
 
-press:
-	debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
-
-getout:
 	closeWindow();
 	debugC(2, kDebugLevelText, "selectionBox(): Result = %d", rc);
 
