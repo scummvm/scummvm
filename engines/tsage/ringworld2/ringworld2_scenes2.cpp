@@ -1908,5 +1908,22 @@ void Scene2440::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2445 - Maze:
+ *
+ *--------------------------------------------------------------------------*/
+void Scene2445::postInit(SceneObjectList *OwnerList) {
+	loadScene(2445);
+	SceneExt::postInit();
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.setPosition(Common::Point(160, 140));
+	R2_GLOBALS._player.disableControl();
+}
+
+void Scene2445::signal() {
+	R2_GLOBALS._player.enableControl();
+}
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
