@@ -640,6 +640,8 @@ void DreamGenContext::dreamweb() {
 
 	}
 done: // The engine will need some cleaner finalization, let's put it here for now
+	// FIXME: This triggers "Deallocating non existent segment" errors when
+	// quitting from a menu.
 	getRidOfAll();
 	engine->freeIcons1();
 	engine->freeIcons2();
