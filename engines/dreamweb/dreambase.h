@@ -91,6 +91,8 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
+	char _saveNames[17*7];
+	char _saveNamesOld[17*7];
 	void showNames();
 
 	// from sound.cpp

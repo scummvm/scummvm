@@ -190,8 +190,7 @@ void DreamGenContext::saveGame() {
 			return;
 		}
 
-		// TODO: Check if this 2 is a constant
-		uint8 descbuf[17] = { 2, 0 };
+		char descbuf[17] = { 2, 0 };
 		strncpy((char*)descbuf+1, game_description.c_str(), 16);
 		unsigned int desclen = game_description.size();
 		if (desclen > 15)
@@ -201,7 +200,7 @@ void DreamGenContext::saveGame() {
 		while (desclen < 17)
 			descbuf[++desclen] = 1;
 		if (savegameId < 7)
-			memcpy(data.ptr(kSavenames + 17*savegameId, 17), descbuf, 17);
+			memcpy(&_saveNames[17*savegameId], descbuf, 17);
 
 		savePosition(savegameId, descbuf);
 
@@ -218,11 +217,11 @@ void DreamGenContext::saveGame() {
 }
 
 void DreamGenContext::namesToOld() {
-	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), data.ptr(kSavenames, 0), 17*7);
+	memcpy(_saveNamesOld, _saveNames, 17*7);
 }
 
 void DreamGenContext::oldToNames() {
-	memcpy(data.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*7);
+	memcpy(_saveNames, _saveNamesOld, 17*7);
 }
 
 void DreamGenContext::saveLoad() {
@@ -262,7 +261,7 @@ void DreamGenContext::actualSave() {
 
 	unsigned int slot = data.byte(kCurrentslot);
 
-	const uint8 *desc = data.ptr(kSavenames + 17*slot, 16);
+	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
@@ -289,7 +288,7 @@ void DreamGenContext::actualLoad() {
 
 	unsigned int slot = data.byte(kCurrentslot);
 
-	const uint8 *desc = data.ptr(kSavenames + 17*slot, 16);
+	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
@@ -297,7 +296,7 @@ void DreamGenContext::actualLoad() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
+void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 
 	const Room &currentRoom = g_roomData[data.byte(kLocation)];
 
@@ -378,7 +377,7 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 		::error("Error loading save: description buffer isn't 17 bytes");
 
 	if (slot < 7) {
-		inSaveFile->read(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+		inSaveFile->read(&_saveNames[17*slot], len[0]);
 	} else {
 		// The savenames buffer only has room for 7 descriptions
 		uint8 namebuf[17];
@@ -399,7 +398,7 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	delete inSaveFile;
 }
 
-// Count number of save files, and load their descriptions into kSavenames
+// Count number of save files, and load their descriptions into _saveNames
 unsigned int DreamGenContext::scanForNames() {
 	unsigned int count = 0;
 
@@ -407,6 +406,11 @@ unsigned int DreamGenContext::scanForNames() {
 
 	// TODO: Change this to use SaveFileManager::listSavefiles()
 	for (unsigned int slot = 0; slot < 7; ++slot) {
+		_saveNames[17*slot+0] = 2;
+		_saveNames[17*slot+1] = 0;
+		for (int i = 2; i < 17; ++i)
+			_saveNames[17*slot+i] = 1;
+
 		// Try opening savegame with the given slot id
 		Common::String filename = engine->getSavegameFilename(slot);
 		Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
@@ -424,7 +428,7 @@ unsigned int DreamGenContext::scanForNames() {
 		}
 
 		// NB: Only possible if slot < 7
-		inSaveFile->read(data.ptr(kSavenames + 17*slot, 17), 17);
+		inSaveFile->read(&_saveNames[17*slot], 17);
 
 		delete inSaveFile;
 	}
@@ -461,7 +465,7 @@ void DreamGenContext::loadSaveBox() {
 void DreamBase::showNames() {
 	for (int slot = 0; slot < 7; ++slot) {
 		// The first character of the savegame name is unused
-		Common::String name((char *)data.ptr(kSavenames + 17*slot + 1, 16));
+		Common::String name(&_saveNames[17*slot + 1]);
 
 		if (slot != data.byte(kCurrentslot)) {
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
@@ -487,7 +491,8 @@ void DreamGenContext::checkInput() {
 
 	readKey();
 
-	char *name = (char *)data.ptr(kSavenames + 17*data.byte(kCurrentslot) + 1, 16);
+	// The first character of the savegame name is unused
+	char *name = &_saveNames[17*data.byte(kCurrentslot) + 1];
 
 	if (data.byte(kCurrentkey) == 0) {
 		return;

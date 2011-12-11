@@ -46,6 +46,7 @@ p = parser(skip_binary_data = [
 	'spritename1',
 	'icongraphics0',
 	'icongraphics1',
+	'savenames',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
