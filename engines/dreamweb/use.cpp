@@ -1130,8 +1130,8 @@ void DreamGenContext::useLighter() {
 		cx = 300;
 		al = 9;
 		showPuzText();
-		getExAd(data.byte(kWithobject));
-		es.byte(bx + 2) = 255;
+		DynObject *withObj = getExAd(data.byte(kWithobject));
+		withObj->mapad[0] = 255;
 		data.byte(kGetback) = 1;
 	}
 }

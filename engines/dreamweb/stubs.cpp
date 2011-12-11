@@ -3679,6 +3679,9 @@ void DreamBase::showArrows() {
 
 void DreamBase::showOpBox() {
 	showFrame(tempGraphics(), kOpsx, kOpsy, 0, 0);
+
+	// CHECKME: There seem to be versions of dreamweb in which this call
+	// should be removed. It displays a red dot on the ops dialogs if left in.
 	showFrame(tempGraphics(), kOpsx, kOpsy + 55, 4, 0);
 }
 
@@ -4205,20 +4208,22 @@ void DreamGenContext::cantDrop() {
 void DreamGenContext::getBack1() {
 	if (data.byte(kPickup) != 0) {
 		blank();
-	} else if (data.byte(kCommandtype) != 202) {
-		// Not holding object
+		return;
+	}
+
+
+	if (data.byte(kCommandtype) != 202) {
 		data.byte(kCommandtype) = 202;
 		commandOnly(26);
-	} else {
-		// Already got object
-		if (data.word(kMousebutton) == data.word(kOldbutton))
-			return; // nogetback
+	}
 
-		if (data.word(kMousebutton) & 1) {
-			// Get back
-			data.byte(kGetback) = 1;
-			data.byte(kPickup) = 0;
-		}
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return;
+
+	if (data.word(kMousebutton) & 1) {
+		// Get back
+		data.byte(kGetback) = 1;
+		data.byte(kPickup) = 0;
 	}
 }
 
