@@ -27,6 +27,7 @@
 #include "common/textconsole.h"
 #include "common/timer.h"
 #include "common/mutex.h"
+#include "common/config-manager.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"
@@ -899,17 +900,22 @@ void PCSoundFxPlayer::unload() {
 
 
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm) {
+	: Sound(mixer, vm), _soundDriver(0) {
 
 	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	const MusicType musicType = MidiDriver::getMusicType(dev);
 	if (musicType == MT_MT32 || musicType == MT_GM) {
-		MidiDriver *driver = MidiDriver::createMidi(dev);
-		if (driver && driver->open() == 0) {
-			driver->sendMT32Reset();
-			_soundDriver = new MidiSoundDriverH32(driver);
+		const bool isMT32 = (musicType == MT_MT32 || ConfMan.getBool("native_mt32"));
+		if (isMT32) {
+			MidiDriver *driver = MidiDriver::createMidi(dev);
+			if (driver && driver->open() == 0) {
+				driver->sendMT32Reset();
+				_soundDriver = new MidiSoundDriverH32(driver);
+			} else {
+				warning("Could not create MIDI output, falling back to AdLib");
+			}
 		} else {
-			warning("Could not create MIDI output falling back to AdLib");
+			warning("General MIDI output devices are not supported, falling back to AdLib");
 		}
 	}
 
