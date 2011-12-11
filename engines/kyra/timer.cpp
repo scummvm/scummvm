@@ -217,7 +217,7 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 bool TimerManager::isEnabled(uint8 id) const {
 	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
-		return (timer->enabled == 1);
+		return (timer->enabled & 1);
 
 	warning("TimerManager::isEnabled: No timer %d", id);
 	return false;

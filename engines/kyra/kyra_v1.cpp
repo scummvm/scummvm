@@ -211,7 +211,7 @@ Common::Error KyraEngine_v1::init() {
 }
 
 KyraEngine_v1::~KyraEngine_v1() {
-	for (Common::Array<const Opcode *>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete *i;
 	_opcodes.clear();
 	_keyMap.clear();
@@ -354,14 +354,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 }
 
 void KyraEngine_v1::setupKeyMap() {
-	struct KeyMapEntry {
+	struct KeyCodeMapEntry {
 		Common::KeyCode kcScummVM;
 		int16 kcDOS;
 		int16 kcPC98;
 	};
 
 #define KC(x) Common::KEYCODE_##x
-	static const KeyMapEntry keys[] = {
+	static const KeyCodeMapEntry keys[] = {
 		{ KC(SPACE), 61, 53 },
 		{ KC(RETURN), 43, 29 },
 		{ KC(UP), 96, 68 },
@@ -377,13 +377,48 @@ void KyraEngine_v1::setupKeyMap() {
 		{ KC(KP7), 91, 67 },
 		{ KC(PAGEUP), 101, 69 },
 		{ KC(KP9), 101, 69 },
+		{ KC(END), 93, 0/*unknown*/ },
+		{ KC(KP1), 93, 0/*unknown*/ },
+		{ KC(PAGEDOWN), 103, 0/*unknown*/ },
+		{ KC(KP3), 103, 0/*unknown*/ },
 		{ KC(F1), 112, 99 },
 		{ KC(F2), 113, 100 },
 		{ KC(F3), 114, 101 },
+		{ KC(F4), 115, 102 },
+		{ KC(F5), 116, 103 },
+		{ KC(F6), 117, 104 },
+		{ KC(a), 31, 31 },
+		{ KC(b), 50, 50 },
+		{ KC(c), 48, 48 },
+		{ KC(d), 33, 33 },
+		{ KC(e), 19, 19 },
+		{ KC(f), 34, 34 },
+		{ KC(i), 24, 24 },
+		{ KC(k), 38, 38 },
+		{ KC(m), 52, 52 },
+		{ KC(n), 51, 51 },
 		{ KC(o), 25, 25 },
+		{ KC(p), 26, 26 },
 		{ KC(r), 20, 20 },
+		{ KC(s), 32, 32 },
+		{ KC(w), 18, 18 },
+		{ KC(y), 22, 22 },
+		{ KC(z), 46, 46 },		
+		{ KC(1), 2, 0/*unknown*/ },
+		{ KC(2), 3, 0/*unknown*/ },
+		{ KC(3), 4, 0/*unknown*/ },
+		{ KC(4), 5, 0/*unknown*/ },
+		{ KC(5), 6, 0/*unknown*/ },
+		{ KC(6), 7, 0/*unknown*/ },
+		{ KC(7), 8, 0/*unknown*/ },
 		{ KC(SLASH), 55, 55 },
 		{ KC(ESCAPE), 110, 1 },
+		{ KC(MINUS), 12, 0/*unknown*/ },
+		{ KC(KP_MINUS), 105, 0/*unknown*/ },
+		{ KC(PLUS), 13, 0/*unknown*/ },
+		{ KC(KP_PLUS), 106, 0/*unknown*/ },
+		{ KC(COMMA), 53, 0/*unknown*/ },
+		{ KC(PERIOD), 54, 0/*unknown*/ }
 	};
 #undef KC
 

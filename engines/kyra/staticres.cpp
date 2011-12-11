@@ -75,7 +75,9 @@ const IndexTable iGameTable[] = {
 	{ GI_KYRA1, 0 },
 	{ GI_KYRA2, 1 },
 	{ GI_KYRA3, 2 },
-	{ GI_LOL, 3 },
+	{ GI_EOB1, 3 },
+	{ GI_EOB2, 4 },
+	{ GI_LOL, 5 },
 	{ -1, -1 }
 };
 
@@ -256,6 +258,12 @@ bool StaticResource::init() {
 		{ kLolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
 		{ kLolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
 #endif // ENABLE_LOL
+
+#ifdef ENABLE_EOB
+		{ kEob2SequenceData, proc(loadEob2SeqData), proc(freeEob2SeqData) },
+		{ kEob2ShapeData, proc(loadEob2ShapeData), proc(freeEob2ShapeData) },
+		{ kEobNpcData, proc(loadEobNpcData), proc(freeEobNpcData) },
+#endif // ENABLE_EOB
 
 		{ 0, 0, 0 }
 	};
@@ -503,9 +511,9 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 
 		tmp_s[i].flags = stream.readUint16BE();
 		tmp_s[i].wsaFile = new char[14];
-		stream.read(const_cast<char *>(tmp_s[i].wsaFile), 14);
+		stream.read(const_cast<char*>(tmp_s[i].wsaFile), 14);
 		tmp_s[i].cpsFile = new char[14];
-		stream.read(const_cast<char *>(tmp_s[i].cpsFile), 14);
+		stream.read(const_cast<char*>(tmp_s[i].cpsFile), 14);
 		tmp_s[i].startupCommand = stream.readByte();
 		tmp_s[i].finalCommand = stream.readByte();
 		tmp_s[i].stringIndex1 = stream.readUint16BE();
@@ -529,7 +537,7 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 
 		tmp_n[i].flags = stream.readUint16BE();
 		tmp_n[i].wsaFile = new char[14];
-		stream.read(const_cast<char *>(tmp_n[i].wsaFile), 14);
+		stream.read(const_cast<char*>(tmp_n[i].wsaFile), 14);
 		tmp_n[i].startframe = stream.readUint16BE();
 		tmp_n[i].endFrame = stream.readUint16BE();
 		tmp_n[i].frameDelay = stream.readUint16BE();

@@ -59,7 +59,7 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (_vm->game() == GI_KYRA1) {
+	if (_vm->game() == GI_KYRA1 || _vm->game() == GI_EOB1) {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 			return true;
@@ -128,7 +128,7 @@ bool Resource::reset() {
 
 			loadProtectedFiles(list);
 		}
-	} else {
+	} else if (_vm->game() != GI_EOB2) {
 		error("Unknown game id: %d", _vm->game());
 		return false;	// for compilers that don't support NORETURN
 	}

@@ -137,6 +137,37 @@ private:
 	uint16 *_bitmapOffsets;
 };
 
+#ifdef ENABLE_EOB
+/**
+ * Implementation of the Font interface for old DOS fonts used
+ * in EOB and EOB II.
+ *
+ */
+class OldDOSFont : public Font {
+public:
+	OldDOSFont();
+	~OldDOSFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src) { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch) const;
+
+private:
+	void unload();
+
+	uint8 *_data;
+	uint16 *_bitmapOffsets;
+
+	int _width, _height;
+	const uint8 *_colorMap;
+
+	int _numGlyphs;
+};
+#endif // ENABLE_EOB
+
 /**
  * Implementation of the Font interface for AMIGA fonts.
  */
@@ -369,6 +400,8 @@ public:
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
 
+	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
+
 	void clearPage(int pageNum);
 
 	uint8 getPagePixel(int pageNum, int x, int y);
@@ -420,6 +453,8 @@ public:
 
 	virtual void setScreenDim(int dim) = 0;
 	virtual const ScreenDim *getScreenDim(int dim) = 0;
+	virtual int curDimIndex() const { return 0; }
+	virtual void modifyScreenDim(int dim, int x, int y, int w, int h) {}
 	virtual int screenDimTableCount() const = 0;
 
 	const ScreenDim *_curDim;
@@ -430,13 +465,15 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
+	virtual int getShapeScaledWidth( const uint8*, int) { return 0; }
+
+	virtual void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
 	// mouse handling
 	void hideMouse();
 	void showMouse();
 	bool isMouseVisible() const;
-	void setMouseCursor(int x, int y, const byte *shape);
+	virtual void setMouseCursor(int x, int y, const byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h) = 0;
@@ -462,6 +499,8 @@ public:
 
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
+
+	virtual uint8 *getLevelOverlay(int) { return 0; }
 
 	int _charWidth;
 	int _charOffset;
@@ -514,7 +553,7 @@ protected:
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
-	Common::Array<Palette *> _palettes;
+	Common::Array<Palette*> _palettes;
 	Palette *_internFadePalette;
 
 	Font *_fonts[FID_NUM];

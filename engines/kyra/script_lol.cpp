@@ -93,25 +93,6 @@ void LoLEngine::runLevelScriptCustom(int block, int flags, int charNum, int item
 	checkSceneUpdateNeed(block);
 }
 
-bool LoLEngine::checkSceneUpdateNeed(int func) {
-	if (_sceneUpdateRequired)
-		return true;
-
-	for (int i = 0; i < 15; i++) {
-		if (_visibleBlockIndex[i] == func) {
-			_sceneUpdateRequired = true;
-			return true;
-		}
-	}
-
-	if (_currentBlock == func){
-		_sceneUpdateRequired = true;
-		return true;
-	}
-
-	return false;
-}
-
 int LoLEngine::olol_setWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(2) != -1) {
@@ -796,9 +777,9 @@ int LoLEngine::olol_updateBlockAnimations(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::olol_mapShapeToBlock(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
-	return assignLevelShapes(stackPos(0));
+int LoLEngine::olol_assignLevelDecorationShape(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignLevelDecorationShape(%p) (%d)", (const void *)script, stackPos(0));
+	return assignLevelDecorationShapes(stackPos(0));
 }
 
 int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
@@ -830,11 +811,11 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		return -1;
 
 	for (uint8 i = 0; i < 30; i++) {
-		MonsterInPlay *l = &_monsters[i];
+		LolMonsterInPlay *l = &_monsters[i];
 		if (l->hitPoints || l->mode == 13)
 			continue;
 
-		memset(l, 0, sizeof(MonsterInPlay));
+		memset(l, 0, sizeof(LolMonsterInPlay));
 		l->id = i;
 		l->x = x;
 		l->y = y;
@@ -945,7 +926,7 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
 		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
 
-	MonsterProperty *l = &_monsterProperties[stackPos(0)];
+	LolMonsterProperty *l = &_monsterProperties[stackPos(0)];
 	l->shapeIndex = stackPos(1) & 0xff;
 
 	int shpWidthMax = 0;
@@ -1017,7 +998,7 @@ int LoLEngine::olol_inflictDamage(EMCState *script) {
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	MonsterInPlay *m = &_monsters[stackPos(0)];
+	LolMonsterInPlay *m = &_monsters[stackPos(0)];
 
 	if (m->mode == 1 || m->mode == 2) {
 		calcCoordinates(m->destX, m->destY, stackPos(1), stackPos(2), stackPos(3));
@@ -1029,10 +1010,9 @@ int LoLEngine::olol_moveMonster(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_dialogueBox(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_dialogueBox(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-
-	_tim->drawDialogueBox(stackPos(0), getLangString(stackPos(1)), getLangString(stackPos(2)), getLangString(stackPos(3)));
+int LoLEngine::olol_setupDialogueButtons(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setupDialogueButtons(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	setupDialogueButtons(stackPos(0), getLangString(stackPos(1)), getLangString(stackPos(2)), getLangString(stackPos(3)));
 	return 1;
 }
 
@@ -1194,7 +1174,7 @@ int LoLEngine::olol_playSoundEffect(EMCState *script) {
 
 int LoLEngine::olol_processDialogue(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processDialogue(%p)", (const void *)script);
-	return _tim->processDialogue();
+	return processDialogue();
 }
 
 int LoLEngine::olol_stopTimScript(EMCState *script) {
@@ -1213,7 +1193,7 @@ int LoLEngine::olol_changeMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 1;
 
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 
 	int16 d = stackPos(2);
 	uint16 x = 0;
@@ -1254,7 +1234,7 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 0;
 
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 	int d = stackPos(1);
 
 	switch (d) {
@@ -1567,7 +1547,7 @@ int LoLEngine::olol_moveBlockObjects(EMCState *script) {
 
 			l &= 0x7fff;
 
-			MonsterInPlay *m = &_monsters[l];
+			LolMonsterInPlay *m = &_monsters[l];
 
 			setMonsterMode(m, 14);
 			checkSceneUpdateNeed(m->block);
@@ -1582,8 +1562,8 @@ int LoLEngine::olol_moveBlockObjects(EMCState *script) {
 			placeMoveLevelItem(l, level, destBlock, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
 			res = 1;
 
-			if (!runScript || level != _currentLevel)				
-				continue;			
+			if (!runScript || level != _currentLevel)
+				continue;
 
 			runLevelScriptCustom(destBlock, 0x80, -1, l, 0, 0);
 		}
@@ -1638,7 +1618,7 @@ int LoLEngine::olol_dummy1(EMCState *script) {
 
 int LoLEngine::olol_suspendMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_suspendMonster(%p) (%d)", (const void *)script, stackPos(0));
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 	setMonsterMode(m, 14);
 	checkSceneUpdateNeed(m->block);
 	placeMonster(m, 0, 0);
@@ -1889,9 +1869,9 @@ int LoLEngine::olol_checkBlockForMonster(EMCState *script) {
 	return -1;
 }
 
-int LoLEngine::olol_transformRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_transformRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
-	transformRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+int LoLEngine::olol_crossFadeRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_crossFadeRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	_screen->crossFadeRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	return 1;
 }
 
@@ -1984,7 +1964,7 @@ int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	if (stackPos(0)) {
-		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
+		_specialGuiShape = _levelDecorationShapes[_levelDecorationProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
 		_specialGuiShapeX = stackPos(2);
 		_specialGuiShapeY = stackPos(3);
 		_specialGuiShapeMirrorFlag = stackPos(4);
@@ -2291,10 +2271,10 @@ int LoLEngine::olol_calcNewBlockPosition(EMCState *script) {
 	return calcNewBlockPosition(stackPos(0), stackPos(1));
 }
 
-int LoLEngine::olol_fadeScene(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeScene(%p)", (const void *)script);
+int LoLEngine::olol_crossFadeScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_crossFadeScene(%p)", (const void *)script);
 	gui_drawScene(2);
-	transformRegion(112, 0, 112, 0, 176, 120, 2, 0);
+	_screen->crossFadeRegion(112, 0, 112, 0, 176, 120, 2, 0);
 	updateDrawPage2();
 	return 1;
 }
@@ -2700,7 +2680,7 @@ typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpco
 #define OpcodeTimUnImpl() timTable->push_back(new TIMOpcodeLoL(this, 0))
 
 void LoLEngine::setupOpcodeTable() {
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode*> *table = 0;
 
 	_opcodes.reserve(192);
 	SetOpcodeTable(_opcodes);
@@ -2784,7 +2764,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x34
 	Opcode(olol_updateBlockAnimations);
-	Opcode(olol_mapShapeToBlock);
+	Opcode(olol_assignLevelDecorationShape);
 	Opcode(olol_resetBlockShapeAssignment);
 	Opcode(olol_copyRegion);
 
@@ -2808,7 +2788,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x44
 	Opcode(olol_moveMonster);
-	Opcode(olol_dialogueBox);
+	Opcode(olol_setupDialogueButtons);
 	Opcode(olol_giveTakeMoney);
 	Opcode(olol_checkMoney);
 
@@ -2933,7 +2913,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_checkBlockForMonster);
 
 	// 0x98
-	Opcode(olol_transformRegion);
+	Opcode(olol_crossFadeRegion);
 	Opcode(olol_calcCoordinatesAddDirectionOffset);
 	Opcode(olol_resetPortraitsAndDisableSysTimer);
 	Opcode(olol_enableSysTimer);
@@ -2981,7 +2961,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_calcNewBlockPosition);
 
 	// 0xB8
-	Opcode(olol_fadeScene);
+	Opcode(olol_crossFadeScene);
 	Opcode(olol_updateDrawPage2);
 	Opcode(olol_setMouseCursor);
 	Opcode(olol_characterSays);
@@ -2992,7 +2972,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_getLanguage);
 	Opcode(olol_dummy0);
 
-	Common::Array<const TIMOpcode *> *timTable = 0;
+	Common::Array<const TIMOpcode*> *timTable = 0;
 
 	_timIntroOpcodes.reserve(8);
 	SetTimOpcodeTable(_timIntroOpcodes);

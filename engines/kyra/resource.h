@@ -35,6 +35,7 @@
 #include "common/archive.h"
 
 #include "kyra/kyra_v1.h"
+#include "kyra/eob2.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 
@@ -250,7 +251,264 @@ enum KyraResources {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
-#ifdef ENABLE_LOL
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+	kLolEobCommonMoreStrings,
+	kLolEobCommonDscShapeIndex,
+	kLolEobCommonDscX,
+	kLolEobCommonDscTileIndex,
+	kLolEobCommonDscUnk2,
+	kLolEobCommonDscDoorShapeIndex,
+	kLolEobCommonDscDimData1,
+	kLolEobCommonDscDimData2,
+	kLolEobCommonDscBlockMap,
+	kLolEobCommonDscDimMap,
+	kLolEobCommonDscDoorY2,
+	kLolEobCommonDscBlockIndex,
+
+	kEobBaseChargenStrings1,
+	kEobBaseChargenStrings2,
+	kEobBaseChargenStartLevels,
+	kEobBaseChargenStatStrings,
+	kEobBaseChargenRaceSexStrings,
+	kEobBaseChargenClassStrings,
+	kEobBaseChargenAlignmentStrings,
+	kEobBaseChargenEnterGameStrings,
+	kEobBaseChargenClassMinStats,
+	kEobBaseChargenRaceMinStats,
+	kEobBaseChargenRaceMaxStats,
+
+	kEobBaseConstModTable1,
+	kEobBaseConstModTable2,
+	kEobBaseConstModTable3,
+	kEobBaseConstModTable4,
+	kEobBaseConstModLvlIndex,
+	kEobBaseConstModDiv,
+	kEobBaseConstModExt,
+
+	kEobBasePryDoorStrings,
+	kEobBaseWarningStrings,
+	kEobBaseItemSuffixStrings,
+	kEobBaseItemExtraStrings,
+	kEobBaseTakenStrings,
+	kEobBasePotionEffectStrings,
+
+	kEobBaseYesNoStrings,
+	kEobBaseNpcMaxStrings,
+	kEobBaseOkStrings,
+	kEobBaseNpcJoinStrings,
+	kEobBaseCancelStrings,
+	kEobBaseAbortStrings,
+
+	kEobBaseCharGuiStringsHp,
+	kEobBaseCharGuiStringsWp1,
+	kEobBaseCharGuiStringsWp2,
+	kEobBaseCharGuiStringsWr,
+	kEobBaseCharGuiStringsSt1,
+	kEobBaseCharGuiStringsSt2,
+	kEobBaseCharGuiStringsIn,
+
+	kEobBaseCharStatusStrings7,
+	kEobBaseCharStatusStrings81,
+	kEobBaseCharStatusStrings82,
+	kEobBaseCharStatusStrings9,
+	kEobBaseCharStatusStrings12,
+	kEobBaseCharStatusStrings131,
+	kEobBaseCharStatusStrings132,
+
+	kEobBaseLevelGainStrings,
+	kEobBaseExperienceTable0,
+	kEobBaseExperienceTable1,
+	kEobBaseExperienceTable2,
+	kEobBaseExperienceTable3,
+	kEobBaseExperienceTable4,
+
+	kEobBaseClassModifierFlags,
+
+	kEobBaseMonsterStepTable01,
+	kEobBaseMonsterStepTable02,
+	kEobBaseMonsterStepTable1,
+	kEobBaseMonsterStepTable2,
+	kEobBaseMonsterStepTable3,
+	kEobBaseMonsterCloseAttPosTable1,
+	kEobBaseMonsterCloseAttPosTable21,
+	kEobBaseMonsterCloseAttPosTable22,
+	kEobBaseMonsterCloseAttUnkTable,
+	kEobBaseMonsterCloseAttChkTable1,
+	kEobBaseMonsterCloseAttChkTable2,
+	kEobBaseMonsterCloseAttDstTable1,
+	kEobBaseMonsterCloseAttDstTable2,
+
+	kEobBaseMonsterProximityTable,
+	kEobBaseFindBlockMonstersTable,
+	kEobBaseMonsterDirChangeTable,
+	kEobBaseMonsterDistAttStrings,
+
+	kEobBaseEncodeMonsterDefs,
+	kEobBaseNpcPresets,
+
+	kEobBaseWllFlagPreset,
+	kEobBaseDscShapeCoords,
+
+	kEobBaseDscDoorScaleOffs,
+	kEobBaseDscDoorScaleMult1,
+	kEobBaseDscDoorScaleMult2,
+	kEobBaseDscDoorScaleMult3,
+	kEobBaseDscDoorScaleMult4,
+	kEobBaseDscDoorScaleMult5,
+	kEobBaseDscDoorScaleMult6,
+	kEobBaseDscDoorType5Offs,
+	kEobBaseDscDoorY1,
+	kEobBaseDscDoorY3,
+	kEobBaseDscDoorY4,
+	kEobBaseDscDoorY5,
+	kEobBaseDscDoorY6,
+	kEobBaseDscDoorCoordsExt,
+
+	kEobBaseDscItemPosIndex,
+	kEobBaseDscItemShpX,
+	kEobBaseDscItemScaleIndex,
+	kEobBaseDscItemTileIndex,
+	kEobBaseDscItemShapeMap,
+
+	kEobBaseDscMonsterFrmOffsTbl1,
+	kEobBaseDscMonsterFrmOffsTbl2,
+
+	kEobBaseInvSlotX,
+	kEobBaseInvSlotY,
+	kEobBaseSlotValidationFlags,
+	kEobBaseDrawObjPosIndex,
+	kEobBaseFlightObjFlipIndex,
+	kEobBaseFlightObjShpMap,
+	kEobBaseFlightObjSclIndex,
+
+	kEobBaseDscTelptrShpCoords,
+
+	kEobBaseBookNumbers,
+	kEobBaseMageSpellsList,
+	kEobBaseClericSpellsList,
+	kEobBaseSpellNames,
+	kEobBaseMagicStrings1,
+	kEobBaseMagicStrings2,
+	kEobBaseMagicStrings3,
+	kEobBaseMagicStrings4,
+	kEobBaseMagicStrings5,
+	kEobBaseMagicStrings6,
+	kEobBaseMagicStrings7,
+	kEobBaseMagicStrings8,
+
+	kEobBaseSparkDefSteps,
+	kEobBaseSparkDefSubSteps,
+	kEobBaseSparkDefShift,
+	kEobBaseSparkDefAdd,
+	kEobBaseSparkDefX,
+	kEobBaseSparkDefY,
+	kEobBaseSparkOfFlags1,
+	kEobBaseSparkOfFlags2,
+	kEobBaseSparkOfShift,
+	kEobBaseSparkOfX,
+	kEobBaseSparkOfY,
+
+	kEobBaseSpellProperties,
+	kEobBaseMagicFlightProps,
+
+	kEob1MainMenuStrings,
+	kEob1DoorShapeDefs,
+	kEob1DoorSwitchShapeDefs,
+	kEob1DoorSwitchCoords,
+	kEob1MonsterProperties,
+
+	kEob1MonsterDistAttType10,
+	kEob1MonsterDistAttSfx10,
+	kEob1MonsterDistAttType17,
+	kEob1MonsterDistAttSfx17,
+
+	kEob2MainMenuStrings,
+	kEob2IntroStrings,
+	kEob2IntroCPSFiles,
+	kEob2IntroSeqData00,
+ 	kEob2IntroSeqData01,
+ 	kEob2IntroSeqData02,
+ 	kEob2IntroSeqData03,
+ 	kEob2IntroSeqData04,
+ 	kEob2IntroSeqData05,
+ 	kEob2IntroSeqData06,
+ 	kEob2IntroSeqData07,
+ 	kEob2IntroSeqData08,
+ 	kEob2IntroSeqData09,
+ 	kEob2IntroSeqData10,
+ 	kEob2IntroSeqData11,
+ 	kEob2IntroSeqData12,
+ 	kEob2IntroSeqData13,
+ 	kEob2IntroSeqData14,
+ 	kEob2IntroSeqData15,
+ 	kEob2IntroSeqData16,
+ 	kEob2IntroSeqData17,
+ 	kEob2IntroSeqData18,
+ 	kEob2IntroSeqData19,
+ 	kEob2IntroSeqData20,
+ 	kEob2IntroSeqData21,
+ 	kEob2IntroSeqData22,
+ 	kEob2IntroSeqData23,
+ 	kEob2IntroSeqData24,
+ 	kEob2IntroSeqData25,
+ 	kEob2IntroSeqData26,
+ 	kEob2IntroSeqData27,
+ 	kEob2IntroSeqData28,
+ 	kEob2IntroSeqData29,
+ 	kEob2IntroSeqData30,
+ 	kEob2IntroSeqData31,
+ 	kEob2IntroSeqData32,
+ 	kEob2IntroSeqData33,
+ 	kEob2IntroSeqData34,
+ 	kEob2IntroSeqData35,
+ 	kEob2IntroSeqData36,
+ 	kEob2IntroSeqData37,
+ 	kEob2IntroSeqData38,
+ 	kEob2IntroSeqData39,
+ 	kEob2IntroSeqData40,
+ 	kEob2IntroSeqData41,
+ 	kEob2IntroSeqData42,
+ 	kEob2IntroSeqData43,
+	kEob2IntroShapes00,
+ 	kEob2IntroShapes01,
+ 	kEob2IntroShapes04,
+ 	kEob2IntroShapes07,
+
+	kEob2FinaleStrings,
+	kEob2CreditsData,
+	kEob2FinaleCPSFiles,
+	kEob2FinaleSeqData00,
+ 	kEob2FinaleSeqData01,
+ 	kEob2FinaleSeqData02,
+ 	kEob2FinaleSeqData03,
+ 	kEob2FinaleSeqData04,
+ 	kEob2FinaleSeqData05,
+ 	kEob2FinaleSeqData06,
+ 	kEob2FinaleSeqData07,
+ 	kEob2FinaleSeqData08,
+ 	kEob2FinaleSeqData09,
+ 	kEob2FinaleSeqData10,
+ 	kEob2FinaleSeqData11,
+ 	kEob2FinaleSeqData12,
+ 	kEob2FinaleSeqData13,
+ 	kEob2FinaleSeqData14,
+ 	kEob2FinaleSeqData15,
+ 	kEob2FinaleSeqData16,
+ 	kEob2FinaleSeqData17,
+ 	kEob2FinaleSeqData18,
+ 	kEob2FinaleSeqData19,
+ 	kEob2FinaleSeqData20,
+	kEob2FinaleShapes00,
+ 	kEob2FinaleShapes03,
+ 	kEob2FinaleShapes07,
+ 	kEob2FinaleShapes09,
+ 	kEob2FinaleShapes10,
+
+	kEob2NpcShapeData,
+	kEob2Npc1Strings,
+	kEob2Npc2Strings,
+	kEob2MonsterDustStrings,
+
 	kLolIngamePakFiles,
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,
@@ -284,27 +542,17 @@ enum KyraResources {
 	kLolItemPrices,
 	kLolStashSetup,
 
-	kLolDscUnk1,
-	kLolDscShapeIndex,
+	kLolDscWalls,
 	kLolDscOvlMap,
 	kLolDscScaleWidthData,
 	kLolDscScaleHeightData,
-	kLolDscX,
-	kLolDscY,
-	kLolDscTileIndex,
-	kLolDscUnk2,
-	kLolDscDoorShapeIndex,
-	kLolDscDimData1,
-	kLolDscDimData2,
-	kLolDscBlockMap,
-	kLolDscDimMap,
-	kLolDscDoor1,
+	kLolBaseDscY,
+
 	kLolDscDoorScale,
 	kLolDscDoor4,
 	kLolDscDoorX,
 	kLolDscDoorY,
 	kLolDscOvlIndex,
-	kLolDscBlockIndex,
 
 	kLolScrollXTop,
 	kLolScrollYTop,
@@ -334,7 +582,7 @@ enum KyraResources {
 	kLolCredits,
 
 	kLolHistory,
-#endif
+#endif // ENABLE_EOB || ENABLE_LOL
 
 	kMaxResIDs
 };
@@ -363,15 +611,22 @@ public:
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+	const uint16 *loadRawDataBe16(int id, int &entries);
+	const uint32 *loadRawDataBe32(int id, int &entries);
+#endif // (ENABLE_EOB || ENABLE_LOL)
 #ifdef ENABLE_LOL
 	const LoLCharacter *loadCharData(int id, int &entries);
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
 	const FlyingObjectShape *loadFlyingObjectData(int id, int &entries);
-	const uint16 *loadRawDataBe16(int id, int &entries);
-	const uint32 *loadRawDataBe32(int id, int &entries);
-	const ButtonDef *loadButtonDefs(int id, int &entries);
+	const LoLButtonDef *loadButtonDefs(int id, int &entries);
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	const EobSequenceStep *loadEob2SeqData(int id, int &entries);
+	const EobShapeDef *loadEob2ShapeData(int id, int &entries);
+	const EobCharacter *loadEobNpcData(int id, int &entries);
+#endif // ENABLE_EOB
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -398,15 +653,22 @@ private:
 	bool loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size);
+#endif // (ENABLE_LOL || ENABLE_EOB)
 #ifdef ENABLE_LOL
 	bool loadCharData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadSpellData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadCompassData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadFlyingObjectData(Common::SeekableReadStream &stream, void *&ptr, int &size);
-	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
-	bool loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadButtonDefs(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	bool loadEob2SeqData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadEob2ShapeData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadEobNpcData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+#endif // ENABLE_EOB
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -416,15 +678,22 @@ private:
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+	void freeRawDataBe16(void *&ptr, int &size);
+	void freeRawDataBe32(void *&ptr, int &size);
+#endif // (ENABLE_EOB || ENABLE_LOL)
 #ifdef ENABLE_LOL
 	void freeCharData(void *&ptr, int &size);
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
 	void freeFlyingObjectData(void *&ptr, int &size);
-	void freeRawDataBe16(void *&ptr, int &size);
-	void freeRawDataBe32(void *&ptr, int &size);
 	void freeButtonDefs(void *&ptr, int &size);
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	void freeEob2SeqData(void *&ptr, int &size);
+	void freeEob2ShapeData(void *&ptr, int &size);
+	void freeEobNpcData(void *&ptr, int &size);
+#endif // ENABLE_EOB
 
 	enum ResTypes {
 		kStringList = 0,
@@ -443,7 +712,11 @@ private:
 		kLolFlightShpData = 11,
 		kLolButtonData = 12,
 		kLolRawDataBe16 = 13,
-		kLolRawDataBe32 = 14
+		kLolRawDataBe32 = 14,
+
+		kEob2SequenceData = 15,
+		kEob2ShapeData = 16,
+		kEobNpcData = 17
 	};
 
 	struct FileType {

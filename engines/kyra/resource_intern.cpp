@@ -254,6 +254,8 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		offset = SWAP_BYTES_32(offset);
 	}
 
+	int32 firstOffset = offset;
+
 	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
@@ -276,7 +278,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		firstFile = false;
 		offset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
-		if (!offset || offset == filesize)
+		if (!offset || offset == filesize || firstOffset == stream.pos())
 			break;
 	}
 
@@ -297,6 +299,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 	bool firstFile = true;
 
 	startoffset = stream.readUint32LE();
+	int32 firstOffset = startoffset;
 	if (startoffset > filesize || startoffset < 0) {
 		switchEndian = true;
 		startoffset = SWAP_BYTES_32(startoffset);
@@ -330,12 +333,12 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 		firstFile = false;
 		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
-		if (endoffset < 0) {
+		if (endoffset < 0 && stream.pos() != firstOffset) {
 			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
 			return 0;
 		}
 
-		if (!endoffset)
+		if (!endoffset || stream.pos() == firstOffset)
 			endoffset = filesize;
 
 		if (startoffset != endoffset)
@@ -493,7 +496,7 @@ public:
 	void advSrcBitsBy1();
 	void advSrcBitsByIndex(uint8 newIndex);
 
-	uint8 getKeyLower() { return _key & 0xff; }
+	uint8 getKeyLower() const { return _key & 0xff; }
 	void setIndex(uint8 index) { _index = index; }
 	uint16 getKeyMasked(uint8 newIndex);
 	uint16 keyMaskedAlign(uint16 val);

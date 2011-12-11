@@ -17,12 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "kyra/kyra_lok.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
+#include "kyra/eob1.h"
+#include "kyra/eob2.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -129,6 +132,14 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Kyra::LoLEngine(syst, flags);
 		break;
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	case Kyra::GI_EOB1:
+		*engine = new Kyra::EobEngine(syst, flags);
+		break;
+	case Kyra::GI_EOB2:
+		*engine = new Kyra::DarkMoonEngine(syst, flags);
+		break;
+#endif // ENABLE_EOB
 	default:
 		res = false;
 		warning("Kyra engine: unknown gameID");
