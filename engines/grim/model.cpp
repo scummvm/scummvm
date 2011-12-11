@@ -93,8 +93,14 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 }
 
 Model::~Model() {
+	for (int i = 0; i < _numMaterials; ++i) {
+		if (!_materialsShared[i]) {
+			delete _materials[i];
+		}
+	}
 	delete[] _materials;
 	delete[] _materialNames;
+	delete[] _materialsShared;
 	delete[] _geosets;
 	delete[] _rootHierNode;
 	g_resourceloader->uncacheModel(this);
