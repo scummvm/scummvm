@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
+#include "common/mutex.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"
@@ -200,6 +201,7 @@ public:
 private:
 	MidiDriver *_output;
 	UpdateCallback _callback;
+	Common::Mutex _mutex;
 
 	void writeInstrument(int offset, const byte *data, int size);
 	void selectInstrument(int channel, int unk, int instrument, int volume);
@@ -241,6 +243,7 @@ private:
 	byte *_sfxData;
 	byte *_instrumentsData[NUM_INSTRUMENTS];
 	PCSoundDriver *_driver;
+	Common::Mutex _mutex;
 };
 
 
@@ -595,7 +598,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-    : _output(output), _callback(0) {
+    : _output(output), _callback(0), _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -607,6 +610,8 @@ MidiSoundDriverH32::~MidiSoundDriverH32() {
 }
 
 void MidiSoundDriverH32::setUpdateCallback(UpdateCallback upCb, void *ref) {
+	Common::StackLock lock(_mutex);
+
 	Common::TimerManager *timer = g_system->getTimerManager();
 	assert(timer);
 
@@ -619,6 +624,8 @@ void MidiSoundDriverH32::setUpdateCallback(UpdateCallback upCb, void *ref) {
 }
 
 void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrument, int volume) {
+	Common::StackLock lock(_mutex);
+
 	if (volume < 0 ||  volume > 100)
 		volume = 0;
 
@@ -631,6 +638,8 @@ void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrum
 }
 
 void MidiSoundDriverH32::setChannelFrequency(int channel, int frequency) {
+	Common::StackLock lock(_mutex);
+
 	int note, oct;
 	findNote(frequency, &note, &oct);
 	note %= 12;
@@ -640,10 +649,14 @@ void MidiSoundDriverH32::setChannelFrequency(int channel, int frequency) {
 }
 
 void MidiSoundDriverH32::stopChannel(int channel) {
+	Common::StackLock lock(_mutex);
+
 	_output->send(0xB1 + channel, 0x7B, 0x00);
 }
 
 void MidiSoundDriverH32::playSample(const byte *data, int size, int channel, int volume) {
+	Common::StackLock lock(_mutex);
+
 	stopChannel(channel);
 
 	volume = volume * 8 / 5;
@@ -659,6 +672,8 @@ void MidiSoundDriverH32::playSample(const byte *data, int size, int channel, int
 }
 
 void MidiSoundDriverH32::notifyInstrumentLoad(const byte *data, int size, int channel) {
+	Common::StackLock lock(_mutex);
+
 	if (data[0] < 0x80 || data[0] > 0xC0)
 		return;
 
@@ -722,7 +737,7 @@ void MidiSoundDriverH32::selectInstrument(int channel, int unk, int instrument, 
 }
 
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
-	: _playing(false), _driver(driver) {
+	: _playing(false), _driver(driver), _mutex() {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
@@ -730,12 +745,15 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 }
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
+	Common::StackLock lock(_mutex);
+
 	_driver->setUpdateCallback(NULL, NULL);
 	stop();
 }
 
 bool PCSoundFxPlayer::load(const char *song) {
 	debug(9, "PCSoundFxPlayer::load('%s')", song);
+	Common::StackLock lock(_mutex);
 
 	/* stop (w/ fade out) the previous song */
 	while (_fadeOutCounter != 0 && _fadeOutCounter < 100) {
@@ -779,6 +797,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 
 void PCSoundFxPlayer::play() {
 	debug(9, "PCSoundFxPlayer::play()");
+	Common::StackLock lock(_mutex);
 	if (_sfxData) {
 		for (int i = 0; i < NUM_CHANNELS; ++i) {
 			_instrumentsChannelTable[i] = -1;
@@ -793,6 +812,7 @@ void PCSoundFxPlayer::play() {
 }
 
 void PCSoundFxPlayer::stop() {
+	Common::StackLock lock(_mutex);
 	if (_playing || _fadeOutCounter != 0) {
 		_fadeOutCounter = 0;
 		_playing = false;
@@ -805,6 +825,7 @@ void PCSoundFxPlayer::stop() {
 }
 
 void PCSoundFxPlayer::fadeOut() {
+	Common::StackLock lock(_mutex);
 	if (_playing) {
 		_fadeOutCounter = 1;
 		_playing = false;
@@ -816,6 +837,7 @@ void PCSoundFxPlayer::updateCallback(void *ref) {
 }
 
 void PCSoundFxPlayer::update() {
+	Common::StackLock lock(_mutex);
 	if (_playing || (_fadeOutCounter != 0 && _fadeOutCounter < 100)) {
 		++_updateTicksCounter;
 		if (_updateTicksCounter > _eventsDelay) {
