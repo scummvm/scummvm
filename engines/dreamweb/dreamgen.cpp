@@ -5509,68 +5509,6 @@ void DreamGenContext::findText1() {
 	si = ax;
 }
 
-void DreamGenContext::checkInput() {
-	STACK_CHECK;
-	_cmp(data.byte(kLoadingorsave), 3);
-	if (flags.z())
-		return /* (nokeypress) */;
-	readKey();
-	al = data.byte(kCurrentkey);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (nokeypress) */;
-	_cmp(al, 13);
-	if (!flags.z())
-		goto notret;
-	data.byte(kLoadingorsave) = 3;
-	goto afterkey;
-notret:
-	_cmp(al, 8);
-	if (!flags.z())
-		goto nodel2;
-	_cmp(data.byte(kCursorpos), 0);
-	if (flags.z())
-		return /* (nokeypress) */;
-	getNamePos();
-	_dec(data.byte(kCursorpos));
-	es.byte(bx) = 0;
-	es.byte(bx+1) = 1;
-	goto afterkey;
-nodel2:
-	_cmp(data.byte(kCursorpos), 14);
-	if (flags.z())
-		return /* (nokeypress) */;
-	getNamePos();
-	_inc(data.byte(kCursorpos));
-	al = data.byte(kCurrentkey);
-	es.byte(bx+1) = al;
-	es.byte(bx+2) = 0;
-	es.byte(bx+3) = 1;
-	goto afterkey;
-	return;
-afterkey:
-	showOpBox();
-	showNames();
-	showSlots();
-	showSaveOps();
-	workToScreenM();
-}
-
-void DreamGenContext::getNamePos() {
-	STACK_CHECK;
-	al = data.byte(kCurrentslot);
-	ah = 0;
-	cx = 17;
-	_mul(cx);
-	dx = data;
-	es = dx;
-	bx = 1521;
-	_add(bx, ax);
-	al = data.byte(kCursorpos);
-	ah = 0;
-	_add(bx, ax);
-}
-
 void DreamGenContext::selectSlot() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 244);

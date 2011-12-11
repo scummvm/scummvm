@@ -559,5 +559,6 @@
 	void quitSymbol();
 	void diaryKeyP();
 	void diaryKeyN();
+	void checkInput();
 
 #endif

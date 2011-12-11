@@ -526,7 +526,6 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void useWire();
-	void getNamePos();
 	void identifyOb();
 	void useLighter();
 	void runEndSeq();
@@ -535,7 +534,6 @@ public:
 	void getObTextStart();
 	void dumpDiaryKeys();
 	void entryTexts();
-	void checkInput();
 	void putUnderCentre();
 	void checkObjectSize();
 	void findText1();

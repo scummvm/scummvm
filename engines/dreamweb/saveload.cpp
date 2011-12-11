@@ -481,4 +481,41 @@ void DreamBase::showNames() {
 	}
 }
 
+void DreamGenContext::checkInput() {
+	if (data.byte(kLoadingorsave) == 3)
+		return;
+
+	readKey();
+
+	char *name = (char *)data.ptr(kSavenames + 17*data.byte(kCurrentslot) + 1, 16);
+
+	if (data.byte(kCurrentkey) == 0) {
+		return;
+	} else if (data.byte(kCurrentkey) == 13) {
+		data.byte(kLoadingorsave) = 3;
+	} else if (data.byte(kCurrentkey) == 8) {
+		if (data.byte(kCursorpos) == 0)
+			return;
+
+		--data.byte(kCursorpos);
+		name[data.byte(kCursorpos)] = 0;
+		name[data.byte(kCursorpos)+1] = 1;
+	} else {
+		if (data.byte(kCursorpos) == 14)
+			return;
+
+		name[data.byte(kCursorpos)] = data.byte(kCurrentkey);
+		name[data.byte(kCursorpos)+1] = 0;
+		name[data.byte(kCursorpos)+2] = 1;
+		++data.byte(kCursorpos);
+	}
+
+	showOpBox();
+	showNames();
+	showSlots();
+	showSaveOps();
+	workToScreenM();
+}
+
+
 } // End of namespace DreamGen
