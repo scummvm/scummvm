@@ -218,11 +218,11 @@ void DreamGenContext::saveGame() {
 }
 
 void DreamGenContext::namesToOld() {
-	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), data.ptr(kSavenames, 0), 17*4);
+	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), data.ptr(kSavenames, 0), 17*7);
 }
 
 void DreamGenContext::oldToNames() {
-	memcpy(data.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
+	memcpy(data.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*7);
 }
 
 void DreamGenContext::saveLoad() {
