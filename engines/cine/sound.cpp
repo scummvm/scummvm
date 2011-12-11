@@ -249,16 +249,30 @@ private:
 
 
 void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
-	*note = _noteTableCount - 1;
-	// It might seem odd that we start with 1 here, but the original has the
-	// same behavior.
-	for (int i = 1; i < _noteTableCount; ++i) {
-		if (_noteTable[i] <= freq) {
+	if (freq > 0x777)
+		*oct = 0;
+	else if (freq > 0x3BB)
+		*oct = 1;
+	else if (freq > 0x1DD)
+		*oct = 2;
+	else if (freq > 0x0EE)
+		*oct = 3;
+	else if (freq > 0x077)
+		*oct = 4;
+	else if (freq > 0x03B)
+		*oct = 5;
+	else if (freq > 0x01D)
+		*oct = 6;
+	else
+		*oct = 7;
+
+	*note = 11;
+	for (int i = 0; i < 12; ++i) {
+		if (_noteTable[*oct * 12 + i] <= freq) {
 			*note = i;
 			break;
 		}
 	}
-	*oct = *note / 12;
 }
 
 void PCSoundDriver::resetChannel(int channel) {
@@ -475,12 +489,11 @@ void AdLibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	if (ins->mode == 0 || ins->channel == 6) {
 		int freq, note, oct;
 		findNote(frequency, &note, &oct);
-		if (channel == 6) {
-			note %= 12;
-		}
+		if (channel == 6)
+			oct = 0;
 		freq = _freqTable[note % 12];
 		OPLWriteReg(_opl, 0xA0 | channel, freq);
-		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
+		freq = (oct << 2) | ((freq & 0x300) >> 8);
 		if (ins->mode == 0) {
 			freq |= 0x20;
 		}
@@ -543,14 +556,16 @@ void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	findNote(frequency, &note, &oct);
 	if (ins->amDepth) {
 		note = ins->amDepth;
+		oct = note / 12;
 	}
 	if (note < 0) {
 		note = 0;
+		oct = 0;
 	}
 
 	freq = _freqTable[note % 12];
 	OPLWriteReg(_opl, 0xA0 | channel, freq);
-	freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
+	freq = (oct << 2) | ((freq & 0x300) >> 8);
 	if (ins->mode == 0) {
 		freq |= 0x20;
 	}
