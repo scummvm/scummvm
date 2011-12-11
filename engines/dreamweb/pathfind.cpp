@@ -278,17 +278,17 @@ void DreamBase::bresenhams() {
 
 void DreamBase::workoutFrames() {
 	byte tmp;
-	uint16 diffx, diffy;
+	int diffx, diffy;
 
 	// We have to use signed arithmetic here because these values can
 	// be slightly negative when walking off-screen
-	int lineStartX = data.word(kLinestartx);
-	int lineStartY = data.word(kLinestarty);
-	int lineEndX = data.word(kLineendx);
-	int lineEndY = data.word(kLineendy);
+	int lineStartX = (int16)data.word(kLinestartx);
+	int lineStartY = (int16)data.word(kLinestarty);
+	int lineEndX = (int16)data.word(kLineendx);
+	int lineEndY = (int16)data.word(kLineendy);
 
 
-	diffx = ABS(lineStartX -lineEndX);
+	diffx = ABS(lineStartX - lineEndX);
 	diffy = ABS(lineStartY - lineEndY);
 
 	if (diffx < diffy) {
