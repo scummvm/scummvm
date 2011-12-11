@@ -45,16 +45,8 @@ const FlyingObjectShape *StaticResource::loadFlyingObjectData(int id, int &entri
 	return (const FlyingObjectShape *)getData(id, kLolFlightShpData, entries);
 }
 
-const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
-	return (const uint16 *)getData(id, kLolRawDataBe16, entries);
-}
-
-const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
-	return (const uint32 *)getData(id, kLolRawDataBe32, entries);
-}
-
-const ButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
-	return (const ButtonDef *)getData(id, kLolButtonData, entries);
+const LoLButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
+	return (const LoLButtonDef *)getData(id, kLolButtonData, entries);
 }
 
 bool StaticResource::loadCharData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -164,34 +156,10 @@ bool StaticResource::loadFlyingObjectData(Common::SeekableReadStream &stream, vo
 	return true;
 }
 
-bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
-	size = stream.size() >> 1;
-
-	uint16 *r = new uint16[size];
-
-	for (int i = 0; i < size; i++)
-		r[i] = stream.readUint16BE();
-
-	ptr = r;
-	return true;
-}
-
-bool StaticResource::loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size) {
-	size = stream.size() >> 2;
-
-	uint32 *r = new uint32[size];
-
-	for (int i = 0; i < size; i++)
-		r[i] = stream.readUint32BE();
-
-	ptr = r;
-	return true;
-}
-
 bool StaticResource::loadButtonDefs(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 18;
 
-	ButtonDef *r = new ButtonDef[size];
+	LoLButtonDef *r = new LoLButtonDef[size];
 
 	for (int i = 0; i < size; i++) {
 		r[i].buttonflags = stream.readUint16BE();
@@ -237,23 +205,8 @@ void StaticResource::freeFlyingObjectData(void *&ptr, int &size) {
 	size = 0;
 }
 
-
-void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
-	uint16 *data = (uint16 *)ptr;
-	delete[] data;
-	ptr = 0;
-	size = 0;
-}
-
-void StaticResource::freeRawDataBe32(void *&ptr, int &size) {
-	uint32 *data = (uint32 *)ptr;
-	delete[] data;
-	ptr = 0;
-	size = 0;
-}
-
 void StaticResource::freeButtonDefs(void *&ptr, int &size) {
-	ButtonDef *d = (ButtonDef *)ptr;
+	LoLButtonDef *d = (LoLButtonDef *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
@@ -289,67 +242,59 @@ void LoLEngine::initStaticResource() {
 	if (_flags.isDemo)
 		return;
 
+	int tempSize;
 	_pakFileList = _staticres->loadStrings(kLolIngamePakFiles, _pakFileListSize);
 	_charDefaults = _staticres->loadCharData(kLolCharacterDefs, _charDefaultsSize);
-	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, _ingameSoundIndexSize);
-	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, _musicTrackMapSize);
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, tempSize);
+	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, tempSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(kLolIngameGMSfxIndex, _ingameGMSoundIndexSize);
 	_ingameMT32SoundIndex = _staticres->loadRawData(kLolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
 	_ingamePCSpeakerSoundIndex = _staticres->loadRawData(kLolIngamePcSpkSfxIndex, _ingamePCSpeakerSoundIndexSize);
-	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, _spellPropertiesSize);
-	_gameShapeMap = (const int8 *)_staticres->loadRawData(kLolGameShapeMap, _gameShapeMapSize);
-	_sceneItemOffs = (const int8 *)_staticres->loadRawData(kLolSceneItemOffs, _sceneItemOffsSize);
-	_charInvIndex = _staticres->loadRawData(kLolCharInvIndex, _charInvIndexSize);
-	_charInvDefs = _staticres->loadRawData(kLolCharInvDefs, _charInvDefsSize);
-	_charDefsMan = _staticres->loadRawDataBe16(kLolCharDefsMan, _charDefsManSize);
-	_charDefsWoman = _staticres->loadRawDataBe16(kLolCharDefsWoman, _charDefsWomanSize);
-	_charDefsKieran = _staticres->loadRawDataBe16(kLolCharDefsKieran, _charDefsKieranSize);
-	_charDefsAkshel = _staticres->loadRawDataBe16(kLolCharDefsAkshel, _charDefsAkshelSize);
-	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLolExpRequirements, _expRequirementsSize);
-	_monsterModifiers = _staticres->loadRawDataBe16(kLolMonsterModifiers, _monsterModifiersSize);
-	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLolMonsterShiftOffsets, _monsterShiftOffsSize);
-	_monsterDirFlags = _staticres->loadRawData(kLolMonsterDirFlags, _monsterDirFlagsSize);
-	_monsterScaleX = _staticres->loadRawData(kLolMonsterScaleX, _monsterScaleXSize);
-	_monsterScaleY = _staticres->loadRawData(kLolMonsterScaleY, _monsterScaleYSize);
-	_monsterScaleWH = _staticres->loadRawDataBe16(kLolMonsterScaleWH, _monsterScaleWHSize);
-	_inventorySlotDesc = _staticres->loadRawDataBe16(kLolInventoryDesc, _inventorySlotDescSize);
-	_levelShpList = _staticres->loadStrings(kLolLevelShpList, _levelShpListSize);
-	_levelDatList = _staticres->loadStrings(kLolLevelDatList, _levelDatListSize);
-	_compassDefs = _staticres->loadCompassData(kLolCompassDefs, _compassDefsSize);
-	_flyingItemShapes = _staticres->loadFlyingObjectData(kLolFlyingObjectShp, _flyingItemShapesSize);
-	_itemCost = _staticres->loadRawDataBe16(kLolItemPrices, _itemCostSize);
-	_stashSetupData = _staticres->loadRawData(kLolStashSetup, _stashSetupDataSize);
+	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, tempSize);
+	_gameShapeMap = (const int8 *)_staticres->loadRawData(kLolGameShapeMap, tempSize);
+	_sceneItemOffs = (const int8 *)_staticres->loadRawData(kLolSceneItemOffs, tempSize);
+	_charInvIndex = _staticres->loadRawData(kLolCharInvIndex, tempSize);
+	_charInvDefs = _staticres->loadRawData(kLolCharInvDefs, tempSize);
+	_charDefsMan = _staticres->loadRawDataBe16(kLolCharDefsMan, tempSize);
+	_charDefsWoman = _staticres->loadRawDataBe16(kLolCharDefsWoman, tempSize);
+	_charDefsKieran = _staticres->loadRawDataBe16(kLolCharDefsKieran, tempSize);
+	_charDefsAkshel = _staticres->loadRawDataBe16(kLolCharDefsAkshel, tempSize);
+	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLolExpRequirements, tempSize);
+	_monsterModifiers = _staticres->loadRawDataBe16(kLolMonsterModifiers, tempSize);
+	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLolMonsterShiftOffsets, tempSize);
+	_monsterDirFlags = _staticres->loadRawData(kLolMonsterDirFlags, tempSize);
+	_monsterScaleX = _staticres->loadRawData(kLolMonsterScaleX, tempSize);
+	_monsterScaleY = _staticres->loadRawData(kLolMonsterScaleY, tempSize);
+	_monsterScaleWH = _staticres->loadRawDataBe16(kLolMonsterScaleWH, tempSize);
+	_inventorySlotDesc = _staticres->loadRawDataBe16(kLolInventoryDesc, tempSize);
+	_levelShpList = _staticres->loadStrings(kLolLevelShpList, tempSize);
+	_levelDatList = _staticres->loadStrings(kLolLevelDatList, tempSize);
+	_compassDefs = _staticres->loadCompassData(kLolCompassDefs, tempSize);
+	_flyingItemShapes = _staticres->loadFlyingObjectData(kLolFlyingObjectShp, tempSize);
+	_itemCost = _staticres->loadRawDataBe16(kLolItemPrices, tempSize);
+	_stashSetupData = _staticres->loadRawData(kLolStashSetup, tempSize);
 
-	_dscUnk1 = (const int8 *)_staticres->loadRawData(kLolDscUnk1, _dscUnk1Size);
-	_dscShapeIndex = (const int8 *)_staticres->loadRawData(kLolDscShapeIndex, _dscShapeIndexSize);
-	_dscOvlMap = _staticres->loadRawData(kLolDscOvlMap, _dscOvlMapSize);
-	_dscShapeScaleW = _staticres->loadRawDataBe16(kLolDscScaleWidthData, _dscShapeScaleWSize);
-	_dscShapeScaleH = _staticres->loadRawDataBe16(kLolDscScaleHeightData, _dscShapeScaleHSize);
-	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kLolDscX, _dscShapeXSize);
-	_dscShapeY = (const int8 *)_staticres->loadRawData(kLolDscY, _dscShapeYSize);
-	_dscTileIndex = _staticres->loadRawData(kLolDscTileIndex, _dscTileIndexSize);
-	_dscUnk2 = _staticres->loadRawData(kLolDscUnk2, _dscUnk2Size);
-	_dscDoorShpIndex = _staticres->loadRawData(kLolDscDoorShapeIndex, _dscDoorShpIndexSize);
-	_dscDim1 = (const int8 *)_staticres->loadRawData(kLolDscDimData1, _dscDim1Size);
-	_dscDim2 = (const int8 *)_staticres->loadRawData(kLolDscDimData2, _dscDim2Size);
-	_dscBlockMap = _staticres->loadRawData(kLolDscBlockMap, _dscBlockMapSize);
-	_dscDimMap = _staticres->loadRawData(kLolDscDimMap, _dscDimMapSize);
-	_dscDoorMonsterScaleTable = _staticres->loadRawDataBe16(kLolDscDoorScale, _dscDoorMonsterScaleTableSize);
-	_dscShapeOvlIndex = _staticres->loadRawData(kLolDscOvlIndex, _dscShapeOvlIndexSize);
-	_dscDoor4 = _staticres->loadRawDataBe16(kLolDscDoor4, _dscDoor4Size);
-	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kLolDscBlockIndex, _dscBlockIndexSize);
-	_dscDoor1 = _staticres->loadRawData(kLolDscDoor1, _dscDoor1Size);
-	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorX, _dscDoorMonsterXSize);
-	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorY, _dscDoorMonsterYSize);
+	_dscWalls = (const int8 *)_staticres->loadRawData(kLolDscWalls, tempSize);
 
-	_scrollXTop = _staticres->loadRawData(kLolScrollXTop, _scrollXTopSize);
-	_scrollYTop = _staticres->loadRawData(kLolScrollYTop, _scrollYTopSize);
-	_scrollXBottom = _staticres->loadRawData(kLolScrollXBottom, _scrollXBottomSize);
-	_scrollYBottom = _staticres->loadRawData(kLolScrollYBottom, _scrollYBottomSize);
+	_dscOvlMap = _staticres->loadRawData(kLolDscOvlMap, tempSize);
+	_dscShapeOvlIndex = _staticres->loadRawData(kLolDscOvlIndex, tempSize);
+	_dscShapeScaleW = _staticres->loadRawDataBe16(kLolDscScaleWidthData, tempSize);
+	_dscShapeScaleH = _staticres->loadRawDataBe16(kLolDscScaleHeightData, tempSize);
+	_dscShapeY = (const int8 *)_staticres->loadRawData(kLolBaseDscY, tempSize);
+
+	_dscDoorMonsterScaleTable = _staticres->loadRawDataBe16(kLolDscDoorScale, tempSize);
+	_dscDoor4 = _staticres->loadRawDataBe16(kLolDscDoor4, tempSize);
+	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorX, tempSize);
+	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorY, tempSize);
+
+	_scrollXTop = _staticres->loadRawData(kLolScrollXTop, tempSize);
+	_scrollYTop = _staticres->loadRawData(kLolScrollYTop, tempSize);
+	_scrollXBottom = _staticres->loadRawData(kLolScrollXBottom, tempSize);
+	_scrollYBottom = _staticres->loadRawData(kLolScrollYBottom, tempSize);
 
 	const char *const *tmpSndList = _staticres->loadStrings(kLolIngameSfxFiles, _ingameSoundListSize);
 	if (tmpSndList) {
-		_ingameSoundList = new char *[_ingameSoundListSize];
+		_ingameSoundList = new char*[_ingameSoundListSize];
 		for (int i = 0; i < _ingameSoundListSize; i++) {
 			_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
 			strcpy(_ingameSoundList[i], tmpSndList[i]);
@@ -357,19 +302,18 @@ void LoLEngine::initStaticResource() {
 		_staticres->unloadId(kLolIngameSfxFiles);
 	}
 
-	_buttonData = _staticres->loadButtonDefs(kLolButtonDefs, _buttonDataSize);
-	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList1, _buttonList1Size);
-	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList2, _buttonList2Size);
-	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList3, _buttonList3Size);
-	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList4, _buttonList4Size);
-	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList5, _buttonList5Size);
-	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList6, _buttonList6Size);
-	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList7, _buttonList7Size);
-	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList8, _buttonList8Size);
+	_buttonData = _staticres->loadButtonDefs(kLolButtonDefs, tempSize);
+	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList1, tempSize);
+	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList2, tempSize);
+	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList3, tempSize);
+	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList4, tempSize);
+	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList5, tempSize);
+	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList6, tempSize);
+	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList7, tempSize);
+	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList8, tempSize);
 
-	_autoMapStrings = _staticres->loadRawDataBe16(kLolMapStringId, _autoMapStringsSize);
+	_autoMapStrings = _staticres->loadRawDataBe16(kLolMapStringId, tempSize);
 
-	int tempSize;
 	const uint8 *tmp = _staticres->loadRawData(kLolLegendData, tempSize);
 	uint8 entrySize = tempSize / 12;
 	tempSize /= entrySize;
@@ -386,13 +330,15 @@ void LoLEngine::initStaticResource() {
 	}
 
 	tmp = _staticres->loadRawData(kLolMapCursorOvl, tempSize);
-	_mapCursorOverlay = new uint8[tempSize];
-	memcpy(_mapCursorOverlay, tmp, tempSize);
-	_staticres->unloadId(kLolMapCursorOvl);
+	if (tmp) {
+		_mapCursorOverlay = new uint8[tempSize];
+		memcpy(_mapCursorOverlay, tmp, tempSize);
+		_staticres->unloadId(kLolMapCursorOvl);
+	}
 
-	_updateSpellBookCoords = _staticres->loadRawData(kLolSpellbookCoords, _updateSpellBookCoordsSize);
-	_updateSpellBookAnimData = _staticres->loadRawData(kLolSpellbookAnim, _updateSpellBookAnimDataSize);
-	_healShapeFrames = _staticres->loadRawData(kLolHealShapeFrames, _healShapeFramesSize);
+	_updateSpellBookCoords = _staticres->loadRawData(kLolSpellbookCoords, tempSize);
+	_updateSpellBookAnimData = _staticres->loadRawData(kLolSpellbookAnim, tempSize);
+	_healShapeFrames = _staticres->loadRawData(kLolHealShapeFrames, tempSize);
 
 	tmp = _staticres->loadRawData(kLolLightningDefs, tempSize);
 	if (tmp) {
@@ -405,7 +351,7 @@ void LoLEngine::initStaticResource() {
 		_staticres->unloadId(kLolLightningDefs);
 	}
 
-	_fireBallCoords = (const int16 *)_staticres->loadRawDataBe16(kLolFireballCoords, _fireBallCoordsSize);
+	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLolFireballCoords, tempSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);

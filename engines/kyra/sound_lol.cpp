@@ -197,24 +197,9 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	}
 }
 
-void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
-	if (!_sound->sfxEnabled() || shouldQuit())
-		return;
-
-	if (_environmentSfx)
-		snd_playSoundEffect(_environmentSfx, _environmentSfxVol);
-
-	int dist = 0;
-	if (block) {
-		dist = getMonsterDistance(_currentBlock, block);
-		if (dist > _envSfxDistThreshold) {
-			_environmentSfx = 0;
-			return;
-		}
-	}
-
-	_environmentSfx = soundId;
-	_environmentSfxVol = (15 - ((block || dist < 2) ? dist : 0)) << 4;
+bool LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
+	if (!LolEobBaseEngine::snd_processEnvironmentalSoundEffect(soundId, block))
+		return false;
 
 	if (block != _currentBlock) {
 		static const int8 blockShiftTable[] = { -32, -31, 1, 33, 32, 31, -1, -33 };
@@ -231,9 +216,9 @@ void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 	}
 
 	if (!soundId || _sceneUpdateRequired)
-		return;
+		return false;
 
-	snd_processEnvironmentalSoundEffect(0, 0);
+	return snd_processEnvironmentalSoundEffect(0, 0);
 }
 
 void LoLEngine::snd_queueEnvironmentalSoundEffect(int soundId, int block) {

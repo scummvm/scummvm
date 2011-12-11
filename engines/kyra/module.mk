@@ -72,8 +72,19 @@ MODULE_OBJS := \
 	vqa.o \
 	wsamovie.o
 
+KYRARPG_COMMON_OBJ = \
+	gui_eob.o \
+	loleobbase.o \
+	saveload_eob.o \
+	scene_eob.o \
+	sprites_eob.o \
+	staticres_eob.o \
+	text_eob.o \
+	timer_eob.o
+
 ifdef ENABLE_LOL
 MODULE_OBJS += \
+	$(KYRARPG_COMMON_OBJ) \
 	gui_lol.o \
 	items_lol.o \
 	lol.o \
@@ -87,6 +98,24 @@ MODULE_OBJS += \
 	staticres_lol.o \
 	text_lol.o \
 	timer_lol.o
+endif
+
+ifdef ENABLE_EOB
+ifndef ENABLE_LOL
+MODULE_OBJS += \
+	$(KYRARPG_COMMON_OBJ)
+endif
+MODULE_OBJS += \
+	chargen.o \
+	eobcommon.o \
+	eob1.o \
+	eob2.o \
+	items_eob.o \
+	magic_eob.o \
+	screen_eob.o \
+	script_eob.o \
+	sequences_eob1.o \
+	sequences_eob2.o
 endif
 
 # This module can be built as a plugin

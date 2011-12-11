@@ -40,10 +40,10 @@ struct Button {
 	typedef Common::Functor1<Button *, int> CallbackFunctor;
 	typedef Common::SharedPtr<CallbackFunctor> Callback;
 
-	Button() : nextButton(0), index(0), keyCode(0), keyCode2(0), data0Val1(0), data1Val1(0), data2Val1(0), flags(0),
+	Button() : nextButton(0), index(0), keyCode(0), keyCode2(0), data0Val1(0), data1Val1(0), data2Val1(0), data3Val1(0), flags(0),
 	    data0ShapePtr(0), data1ShapePtr(0), data2ShapePtr(0), data0Callback(), data1Callback(), data2Callback(),
 	    dimTableIndex(0), x(0), y(0), width(0), height(0), data0Val2(0), data0Val3(0), data1Val2(0), data1Val3(0),
-	    data2Val2(0), data2Val3(0), flags2(0), mouseWheel(0), buttonCallback(), arg(0) {}
+	    data2Val2(0), data2Val3(0), data3Val2(0), data3Val3(0), flags2(0), mouseWheel(0), buttonCallback(), arg(0) {}
 
 	Button *nextButton;
 	uint16 index;
@@ -54,6 +54,7 @@ struct Button {
 	byte data0Val1;
 	byte data1Val1;
 	byte data2Val1;
+	byte data3Val1;
 
 	uint16 flags;
 
@@ -77,6 +78,9 @@ struct Button {
 
 	uint8 data2Val2;
 	uint8 data2Val3;
+
+	uint8 data3Val2;
+	uint8 data3Val3;
 
 	uint16 flags2;
 

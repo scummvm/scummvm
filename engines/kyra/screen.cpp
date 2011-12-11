@@ -976,6 +976,58 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 	}
 }
 
+void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
+	if (srcPage > 13 || dstPage > 13)
+		error("Screen::crossFadeRegion: attempting to use temp page as source or dest page.");
+
+	hideMouse();
+
+	uint16 *wB = (uint16*)_pagePtrs[14];
+	uint8 *hB = _pagePtrs[14] + 640;
+
+	for (int i = 0; i < w; i++)
+		wB[i] = i;
+
+	for (int i = 0; i < h; i++)
+		hB[i] = i;
+
+	for (int i = 0; i < w; i++)
+		SWAP(wB[_vm->_rnd.getRandomNumberRng(0, w - 1)], wB[i]);
+
+	for (int i = 0; i < h; i++)
+		SWAP(hB[_vm->_rnd.getRandomNumberRng(0, h - 1)], hB[i]);
+
+	uint8 *s = _pagePtrs[srcPage];
+	uint8 *d = _pagePtrs[dstPage];
+
+	for (int i = 0; i < h; i++) {
+		int iH = i;
+		uint32 end = _system->getMillis() + 1;
+		for (int ii = 0; ii < w; ii++) {
+			int sX = x1 + wB[ii];
+			int sY = y1 + hB[iH];
+			int dX = x2 + wB[ii];
+			int dY = y2 + hB[iH];
+
+			if (++iH >= h)
+				iH = 0;
+
+			d[dY * 320 + dX] = s[sY * 320 + sX];
+			addDirtyRect(dX, dY, 1, 1);
+		}
+
+		// This tries to speed things up, to get similiar speeds as in DOSBox etc.
+		if ((i & 5) == 5)
+			updateScreen();
+
+		uint32 cur = _system->getMillis();
+		if (end > cur)
+			_system->delayMillis(end - cur);
+	}
+
+	showMouse();
+}
+
 void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 	drawClippedLine(x1, y1, x2, y1, color);
 	drawClippedLine(x1, y1, x1, y2, color);
@@ -1088,6 +1140,10 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (!fnt) {
 		if (_isAmiga)
 			fnt = new AMIGAFont();
+#ifdef ENABLE_EOB
+		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
+			fnt = new OldDOSFont();
+#endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
 
@@ -2859,7 +2915,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 
 	const char *ext = filename + strlen(filename) - 3;
 	uint8 compType = srcData[2];
-	uint32 imgSize = scumm_stricmp(ext, "CMP") ? READ_LE_UINT32(srcData + 4) : READ_LE_UINT16(srcData);
+	uint32 imgSize = (_vm->game() == GI_KYRA2 && !scumm_stricmp(ext, "CMP")) ? READ_LE_UINT16(srcData) : READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
 	if (pal && palSize)

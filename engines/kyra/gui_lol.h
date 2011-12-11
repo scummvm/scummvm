@@ -162,9 +162,7 @@ private:
 
 	Button *_specialProcessButton;
 	Button *_backUpButtonList;
-	bool _buttonListChanged;
 	uint16 _flagsModifier;
-	uint8 _mouseClick;
 
 	int _savegameOffset;
 	int _sliderSfx;

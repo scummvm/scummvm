@@ -1754,7 +1754,7 @@ typedef Common::Functor1Mem<EMCState *, int, KyraEngine_LoK> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV1(this, &KyraEngine_LoK::x))
 void KyraEngine_LoK::setupOpcodeTable() {
-	Common::Array<const Opcode *> *table = 0;
+	Common::Array<const Opcode*> *table = 0;
 
 	_opcodes.reserve(157);
 	SetOpcodeTable(_opcodes);

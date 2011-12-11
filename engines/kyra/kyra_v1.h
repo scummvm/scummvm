@@ -323,7 +323,7 @@ protected:
 
 	// opcode
 	virtual void setupOpcodeTable() = 0;
-	Common::Array<const Opcode *> _opcodes;
+	Common::Array<const Opcode*> _opcodes;
 
 	int o1_queryGameFlag(EMCState *script);
 	int o1_setGameFlag(EMCState *script);
