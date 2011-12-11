@@ -2989,7 +2989,7 @@ Player::Player(): SceneObject() {
 	_field8C = 0;
 
 	// Return to Ringworld specific fields
-	_characterIndex = 0;
+	_characterIndex = R2_NONE;
 
 	for (int i = 0; i < MAX_CHARACTERS; ++i) {
 		_characterScene[i] = 0;

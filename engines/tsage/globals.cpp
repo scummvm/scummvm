@@ -400,7 +400,7 @@ void Ringworld2Globals::reset() {
 	_stripManager_lookupList[11] = 1;
 
 	// Reset fields stored in the player class
-	_player._characterIndex = 1;
+	_player._characterIndex = R2_QUINN;
 	_player._characterScene[1] = 100;
 	_player._characterScene[2] = 300;
 	_player._characterScene[3] = 300;

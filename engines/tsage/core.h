@@ -621,6 +621,7 @@ public:
 };
 
 #define MAX_CHARACTERS 4
+enum R2RCharacter { R2_NONE = 0, R2_QUINN = 1, R2_SEEKER = 2, R2_MIRANDA = 3 };
 
 class Player : public SceneObject {
 public:
@@ -630,7 +631,7 @@ public:
 	bool _enabled;
 
 	// Return to Ringworld specific fields
-	int _characterIndex;
+	R2RCharacter _characterIndex;
 	int _characterScene[MAX_CHARACTERS];
 	int _oldCharacterScene[MAX_CHARACTERS];
 	Common::Point _characterPos[MAX_CHARACTERS];

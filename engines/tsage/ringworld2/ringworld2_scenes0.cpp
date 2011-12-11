@@ -1539,6 +1539,8 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 				scene->_field412 = 211;
 			else
 				scene->_field412 = 438;
+
+			scene->_stripManager.start3(scene->_field412, scene, R2_GLOBALS._stripManager_lookupList);
 		}
 		return true;
 
@@ -1594,7 +1596,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
 		R2_GLOBALS._sceneManager._previousScene = 1000;
-		R2_GLOBALS._player._characterIndex = 1;
+		R2_GLOBALS._player._characterIndex = R2_QUINN;
 	}
 
 	_stripManager.setColors(60, 255);
@@ -2002,7 +2004,7 @@ void Scene300::signal() {
 		break;
 
 	case 20:
-		R2_GLOBALS._player._characterIndex = 1;
+		R2_GLOBALS._player._characterIndex = R2_QUINN;
 		R2_GLOBALS._sceneManager.changeScene(1500);
 		break;
 

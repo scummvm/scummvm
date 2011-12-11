@@ -218,11 +218,11 @@ void CharacterDialog::show() {
 
 	// Figure out the new selected character
 	if (btn == &dlg->_btnQuinn)
-		R2_GLOBALS._player._characterIndex = 1;
+		R2_GLOBALS._player._characterIndex = R2_QUINN;
 	else if (btn == &dlg->_btnSeeker)
-		R2_GLOBALS._player._characterIndex = 2;
+		R2_GLOBALS._player._characterIndex = R2_SEEKER;
 	else if (btn == &dlg->_btnMiranda)
-		R2_GLOBALS._player._characterIndex = 3;
+		R2_GLOBALS._player._characterIndex = R2_MIRANDA;
 
 	// Remove the dialog
 	dlg->remove();

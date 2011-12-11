@@ -1393,7 +1393,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	loadScene(2425);
 	SceneExt::postInit();
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
-		R2_GLOBALS._player._characterIndex = 2;
+		R2_GLOBALS._player._characterIndex = R2_SEEKER;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 	}
 
