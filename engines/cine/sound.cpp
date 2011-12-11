@@ -246,7 +246,9 @@ private:
 
 void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
 	*note = _noteTableCount - 1;
-	for (int i = 0; i < _noteTableCount; ++i) {
+	// It might seem odd that we start with 1 here, but the original has the
+	// same behavior.
+	for (int i = 1; i < _noteTableCount; ++i) {
 		if (_noteTable[i] <= freq) {
 			*note = i;
 			break;
