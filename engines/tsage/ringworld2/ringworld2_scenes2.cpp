@@ -2398,6 +2398,110 @@ void Scene2455::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2500 - Maze: Large Cave
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene2500::Exit1::changeScene() {
+	Scene2500 *scene = (Scene2500 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 11;
+
+	Common::Point pt(20, 105);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene2500::postInit(SceneObjectList *OwnerList) {
+	loadScene(2500);
+	SceneExt::postInit();
+
+	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 3100)
+		R2_GLOBALS._v58CE2 = 0;
+
+	_stripManager.addSpeaker(&_quinnSpeaker);
+	_stripManager.addSpeaker(&_seekerSpeaker);
+	_stripManager.addSpeaker(&_mirandaSpeaker);
+	_stripManager.addSpeaker(&_webbsterSpeaker);
+
+	if (R2_GLOBALS._sceneManager._previousScene == -1)
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+
+	_exit1.setDetails(Rect(30, 50, 85, 105), EXITCURSOR_W, 2000);
+	_exit1.setDest(Common::Point(84, 104));
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+
+	if (R2_GLOBALS._player._characterIndex == 1) {
+		R2_GLOBALS._player.setVisage(11);
+		R2_GLOBALS._player._moveDiff = Common::Point(2, 1);
+	} else {
+		R2_GLOBALS._player.setVisage(21);
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+	}
+
+	if (R2_GLOBALS._player._characterScene[1] == R2_GLOBALS._player._characterScene[2]) {
+		_actor1.postInit();
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_actor1.setup(21, 3, 1);
+			_actor1.setDetails(9002, 1, -1, -1, 1, NULL);
+		} else {
+			_actor1.setup(2008, 3, 1);
+			_actor1.changeZoom(50);
+			_actor1.setDetails(9001, 0, -1, -1, 1, NULL);
+		}
+		_actor1.setPosition(Common::Point(141, 94));
+	}
+
+	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
+		_sceneMode = 10;
+		R2_GLOBALS._player.setPosition(Common::Point(20, 105));
+		Common::Point pt(95, 105);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+	} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 3100) {
+		_sceneMode = 2500;
+		_actor2.postInit();
+		_actor3.postInit();
+		setAction(&_sequenceManager, this, 2500, &R2_GLOBALS._player, &_actor2, &_actor3, NULL);
+	} else {
+		R2_GLOBALS._player.setPosition(Common::Point(160, 150));
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.enableControl();
+	}
+	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2500;
+}
+
+void Scene2500::signal() {
+	switch (_sceneMode) {
+	case 11:
+		g_globals->_sceneManager.changeScene(2000);
+		break;
+	case 20:
+		R2_GLOBALS._player.disableControl();
+		_sceneMode = 2501;
+		setAction(&_sequenceManager, this, 2501, &R2_GLOBALS._player, &_actor2, &_actor3, NULL);
+		break;
+	case 2500:
+		_sceneMode = 20;
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		_stripManager.start(900, this);
+		break;
+	case 2501:
+		g_globals->_sceneManager.changeScene(1000);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
 
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

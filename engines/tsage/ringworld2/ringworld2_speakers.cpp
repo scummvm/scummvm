@@ -682,6 +682,57 @@ SpeakerCaretaker2450::SpeakerCaretaker2450() {
 	_numFrames = 0;
 }
 
-} // End of namespace Ringworld2
+/*--------------------------------------------------------------------------*/
 
+SpeakerQuinn2500::SpeakerQuinn2500() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+SpeakerSeeker2500::SpeakerSeeker2500() {
+	_speakerName = "SEEKER";
+	_color1 = 35;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+SpeakerMiranda2500::SpeakerMiranda2500() {
+	// Not in uppercase in the original
+	_speakerName = "Miranda";
+	_color1 = 154;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+SpeakerWebbster2500::SpeakerWebbster2500() {
+	// Not in uppercase in the original
+	_speakerName = "Webbster";
+	_color1 = 27;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+} // End of namespace Ringworld2
 } // End of namespace TsAGE
