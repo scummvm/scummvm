@@ -183,7 +183,7 @@ void DreamBase::vSync() {
 }
 
 void DreamBase::setMode() {
-	vSync();
+	engine->waitForVSync();
 	initGraphics(320, 200, false);
 }
 
@@ -202,7 +202,7 @@ void DreamBase::showPCX(const Common::String &name) {
 	// the color components have to be adjusted from 8 to 6 bits.
 
 	pcxFile.seek(16, SEEK_SET);
-	mainGamePal = getSegment(data.word(kBuffers)).ptr(kMaingamepal, 768);
+	mainGamePal = mainPalette();
 	pcxFile.read(mainGamePal, 48);
 
 	memset(mainGamePal + 48, 0xff, 720);

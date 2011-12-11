@@ -60,6 +60,24 @@ void DreamBase::palToEndPal() {
 	memcpy(endPalette(), mainPalette(), 256 * 3);
 }
 
+void DreamBase::fadeDOS() {
+	return; // FIXME later
+
+	engine->waitForVSync();
+	//processEvents will be called from vsync
+	uint8 *dst = startPalette();
+	engine->getPalette(dst, 0, 64);
+	for (int fade = 0; fade < 64; ++fade) {
+		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
+			if (dst[c]) {
+				--dst[c];
+			}
+		}
+		engine->setPalette(dst, 0, 64);
+		engine->waitForVSync();
+	}
+}
+
 void DreamBase::doFade() {
 	if (data.byte(kFadedirection) == 0)
 		return;
@@ -170,6 +188,62 @@ void DreamGenContext::clearPalette() {
 	data.byte(kFadedirection) = 0;
 	clearStartPal();
 	dumpCurrent();
+}
+
+void DreamBase::greyscaleSum() {
+	byte *src = mainPalette();
+	byte *dst = endPalette();
+
+	for (int i = 0; i < 256; ++i) {
+		const byte r = 20 * *src++;
+		const byte g = 59 * *src++;
+		const byte b = 11 * *src++;
+		const byte grey = (r + b + g) / 100;
+		byte tmp;
+
+		tmp = grey;
+		//if (tmp != 0)	// FIXME: The assembler code has this check commented out. Bug or feature?
+			tmp += data.byte(kAddtored);
+		*dst++ = tmp;
+
+		tmp = grey;
+		if (tmp != 0)
+			tmp += data.byte(kAddtogreen);
+		*dst++ = tmp;
+
+		tmp = grey;
+		if (tmp != 0)
+			tmp += data.byte(kAddtoblue);
+		*dst++ = tmp;
+	}
+}
+
+void DreamBase::allPalette() {
+	memcpy(startPalette(), mainPalette(), 3 * 256);
+	dumpCurrent();
+}
+
+void DreamBase::dumpCurrent() {
+	uint8 *pal = startPalette();
+
+	engine->waitForVSync();
+	engine->processEvents();
+	engine->setPalette(pal, 0, 128);
+
+	pal += 128 * 3;
+
+	engine->waitForVSync();
+	engine->processEvents();
+	engine->setPalette(pal, 128, 128);
+}
+
+void DreamGenContext::showGroup() {
+	engine->processEvents();
+	unsigned n = (uint16)cx;
+	uint8 *src = ds.ptr(si, n * 3);
+	engine->setPalette(src, al, n);
+	si += n * 3;
+	cx = 0;
 }
 
 } // End of namespace DreamGen

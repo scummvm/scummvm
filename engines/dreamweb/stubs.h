@@ -526,7 +526,6 @@
 	void dumpSymbol();
 	void dumpSymBox();
 	void dumpZoom();
-	void fadeDOS();
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();

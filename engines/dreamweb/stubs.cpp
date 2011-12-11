@@ -999,34 +999,6 @@ void DreamGenContext::DOSReturn() {
 void DreamGenContext::set16ColPalette() {
 }
 
-void DreamGenContext::showGroup() {
-	engine->processEvents();
-	unsigned n = (uint16)cx;
-	uint8 *src = ds.ptr(si, n * 3);
-	engine->setPalette(src, al, n);
-	si += n * 3;
-	cx = 0;
-}
-
-void DreamGenContext::fadeDOS() {
-	ds = es = data.word(kBuffers);
-	return; //fixme later
-	engine->waitForVSync();
-	//processEvents will be called from vsync
-	uint8 *dst = es.ptr(kStartpal, 768);
-	engine->getPalette(dst, 0, 64);
-	for (int fade = 0; fade < 64; ++fade) {
-		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
-			if (dst[c]) {
-				--dst[c];
-			}
-		}
-		engine->setPalette(dst, 0, 64);
-		engine->waitForVSync();
-	}
-}
-
-
 void DreamGenContext::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
