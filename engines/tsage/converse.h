@@ -182,12 +182,14 @@ public:
 class Obj44 : public Serialisable {
 public:
 	int _id;
-	int _field2[OBJ44_LIST_SIZE];
+	int _callbackId[OBJ44_LIST_SIZE];
 	Obj0A _list[OBJ44_LIST_SIZE];
 	uint _speakerOffset;
 
 	// Return to Ringworld specific field
 	int _mode;
+	int _field4, _field6, _field8;
+	int _field16;
 public:
 	void load(const byte *dataP);
 	virtual void synchronize(Serializer &s);

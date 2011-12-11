@@ -531,29 +531,51 @@ void ConversationChoiceDialog::draw() {
 /*--------------------------------------------------------------------------*/
 
 void Obj44::load(const byte *dataP) {
-	_id = READ_LE_UINT16(dataP);
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		_field2[idx] = READ_LE_UINT16(dataP + 2 + idx * 2);
+	Common::MemoryReadStream s(dataP, (g_vm->getGameID() == GType_Ringworld2) ? 126 : 68);
 
-	const byte *listP = dataP + 0x10;
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx, listP += 10) {
-		_list[idx]._id = READ_LE_UINT16(listP);
-		_list[idx]._scriptOffset = READ_LE_UINT16(listP + 2);
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		_mode = s.readSint16LE();
+		s.readSint16LE();
+		_field4 = s.readSint16LE();
+		_field6 = s.readSint16LE();
+		_field8 = s.readSint16LE();
 	}
 
-	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
+	_id = s.readSint16LE();
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		_callbackId[idx] = s.readSint16LE();
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		_field16 = s.readSint16LE();
+		s.skip(20);
+	} else {
+		s.skip(4);
+	}
+
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+		_list[idx]._id = s.readSint16LE();
+		_list[idx]._scriptOffset = s.readSint16LE();
+		s.skip(6);
+	}
+
+	_speakerOffset = s.readSint16LE();
 }
 
 void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		s.syncAsSint32LE(_field2[idx]);
+		s.syncAsSint32LE(_callbackId[idx]);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 
-	if (g_vm->getGameID() == GType_Ringworld2)
+	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_mode);
+		s.syncAsSint16LE(_field4);
+		s.syncAsSint16LE(_field6);
+		s.syncAsSint16LE(_field8);
+		s.syncAsSint16LE(_field16);
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -779,10 +801,10 @@ void StripManager::signal() {
 
 		if (_callbackObject) {
 			for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
-				if (!obj44._field2[idx])
+				if (!obj44._callbackId[idx])
 					break;
 
-				_callbackObject->stripCallback(obj44._field2[idx]);
+				_callbackObject->stripCallback(obj44._callbackId[idx]);
 			}
 		}
 
