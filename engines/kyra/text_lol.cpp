@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_Eob(engine, engine->screen()),
+TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_rpg(engine, engine->screen()),
 	_vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
@@ -333,7 +333,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 	*dst = 0;
 }
 
-LolEobBaseEngine *TextDisplayer_LoL::vm() {
+KyraRpgEngine *TextDisplayer_LoL::vm() {
 	return _vm;
 }
 
@@ -343,7 +343,7 @@ Screen *TextDisplayer_LoL::screen() {
 
 void TextDisplayer_LoL::textPageBreak() {
 	strcpy(_pageBreakString, _vm->getLangString(0x4073));
-	TextDisplayer_Eob::textPageBreak();
+	TextDisplayer_rpg::textPageBreak();
 }
 
 } // End of namespace Kyra

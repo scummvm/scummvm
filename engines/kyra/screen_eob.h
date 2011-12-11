@@ -100,7 +100,7 @@ private:
 	static const int _screenDimTableCount;
 
 	ScreenDim **_customDimTable;
-	int _curDimIndex;	
+	int _curDimIndex;
 };
 
 }	// End of namespace Kyra

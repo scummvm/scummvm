@@ -61,7 +61,7 @@ private:
 	void seq_king();
 	void seq_hands();
 	void seq_waterdeepExit();
-	void seq_tunnel();	
+	void seq_tunnel();
 
 	void seq_xdeath();
 
@@ -69,7 +69,7 @@ private:
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
 	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH);
 	void whirlTransition();
-	
+
 	const char *const *_introFilesOpening;
 	const char *const *_introFilesTower;
 	const char *const *_introFilesOrb;
@@ -90,7 +90,7 @@ private:
 	const uint8 *_introTvlY2;
 	const uint8 *_introTvlW;
 	const uint8 *_introTvlH;
-	
+
 	const char *const *_finBonusStrings;
 
 	// characters

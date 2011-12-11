@@ -737,7 +737,7 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			debugC(5, kDebugLevelScript, "         - check if whole party is invisible - PUSH result: '%d'", a);
 			break;
 
-		case 1:			
+		case 1:
 			_stack[_stackIndex++] = _vm->rollDice(pos[0], pos[1], pos[2]);
 			debugC(9, kDebugLevelScript, "         - throw dice(s): num = '%d', pips = '%d', offset = '%d' - PUSH result: '%d'", pos[0], pos[1], pos[2], _stack[_stackIndex - 1]);
 			pos += 3;
@@ -1478,7 +1478,7 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 		return 0;
 
 	case -2:
-		_vm->seq_portal();		
+		_vm->seq_portal();
 		break;
 
 	case -1:

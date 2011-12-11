@@ -22,21 +22,21 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/loleobbase.h"
+#include "kyra/kyra_rpg.h"
 #include "kyra/sound.h"
 
 #include "common/system.h"
 
 namespace Kyra {
 
-LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags), _numFlyingObjects(_flags.gameID == GI_LOL ? 8 : 10) {
+KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags), _numFlyingObjects(_flags.gameID == GI_LOL ? 8 : 10) {
 	_txt = 0;
 	_mouseClick = 0;
 	_preserveEvents = _buttonListChanged = false;
 
 	_sceneXoffset = 0;
 	_sceneShpDim = 5;
-	
+
 	_activeButtons = 0;
 
 	_currentLevel = 0;
@@ -76,7 +76,7 @@ LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : Ky
 	_updateFlags = _clickedSpecialFlag = 0;
 	_sceneDefaultUpdate = 0;
 	_sceneUpdateRequired = false;
-	
+
 	_flyingObjectsPtr = 0;
 	_flyingObjectStructSize = sizeof(EobFlyingObject);
 
@@ -125,7 +125,7 @@ LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : Ky
 	_monsterStepCounter = _monsterStepMode = 0;
 }
 
-LolEobBaseEngine::~LolEobBaseEngine() {
+KyraRpgEngine::~KyraRpgEngine() {
 	delete[] _wllVmpMap;
 	delete[] _wllShapeMap;
 	delete[] _specialWallTypes;
@@ -151,7 +151,7 @@ LolEobBaseEngine::~LolEobBaseEngine() {
 	delete[] _levelBlockProperties;
 }
 
-Common::Error LolEobBaseEngine::init() {
+Common::Error KyraRpgEngine::init() {
 	gui_resetButtonList();
 
 	_levelDecorationProperties = new LevelDecorationProperty[100];
@@ -196,13 +196,13 @@ Common::Error LolEobBaseEngine::init() {
 	return Common::kNoError;
 }
 
-bool LolEobBaseEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
+bool KyraRpgEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
 	if (posX < x1 || posX > x2 || posY < y1 || posY > y2)
 		return false;
 	return true;
 }
 
-void LolEobBaseEngine::drawDialogueButtons() {
+void KyraRpgEngine::drawDialogueButtons() {
 	int cp = screen()->setCurPage(0);
 	Screen::FontId of = screen()->setFont(gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
@@ -222,7 +222,7 @@ void LolEobBaseEngine::drawDialogueButtons() {
 	screen()->setCurPage(cp);
 }
 
-uint16 LolEobBaseEngine::processDialogue() {
+uint16 KyraRpgEngine::processDialogue() {
 	int df = _dialogueHighlightedButton;
 	int res = 0;
 
@@ -313,13 +313,13 @@ uint16 LolEobBaseEngine::processDialogue() {
 	return res;
 }
 
-void LolEobBaseEngine::delayUntil(uint32 time, bool doUpdate, bool isMainLoop) {
+void KyraRpgEngine::delayUntil(uint32 time, bool doUpdate, bool isMainLoop) {
 	uint32 curTime = _system->getMillis();
 	if (time > curTime)
 		delay(time - curTime, doUpdate, isMainLoop);
 }
 
-int LolEobBaseEngine::rollDice(int times, int pips, int inc) {
+int KyraRpgEngine::rollDice(int times, int pips, int inc) {
 	if (times <= 0 || pips <= 0)
 		return inc;
 
@@ -330,7 +330,7 @@ int LolEobBaseEngine::rollDice(int times, int pips, int inc) {
 	return res + inc;
 }
 
-bool LolEobBaseEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
+bool KyraRpgEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 	if (!_sound->sfxEnabled() || shouldQuit())
 		return false;
 
@@ -352,7 +352,7 @@ bool LolEobBaseEngine::snd_processEnvironmentalSoundEffect(int soundId, int bloc
 	return true;
 }
 
-void LolEobBaseEngine::updateEnvironmentalSfx(int soundId) {
+void KyraRpgEngine::updateEnvironmentalSfx(int soundId) {
 	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }
 

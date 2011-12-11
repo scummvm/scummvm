@@ -20,9 +20,8 @@
  *
  */
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+#ifdef ENABLE_EOB
 
-#include "kyra/eobcommon.h"
 #include "kyra/resource.h"
 #include "kyra/script_eob.h"
 
@@ -31,99 +30,6 @@
 #include "common/substream.h"
 
 namespace Kyra {
-
-void LolEobBaseEngine::generateTempData() {
-	int l = _currentLevel - 1;
-	if (_lvlTempData[l]) {
-		delete[] _lvlTempData[l]->wallsXorData;
-		delete[] _lvlTempData[l]->flags;
-		releaseMonsterTempData(_lvlTempData[l]);
-		releaseFlyingObjectTempData(_lvlTempData[l]);
-		releaseWallOfForceTempData(_lvlTempData[l]);
-		delete _lvlTempData[l];
-	}
-
-	_lvlTempData[l] = new LevelTempData;
-
-	_lvlTempData[l]->wallsXorData = new uint8[4096];
-	_lvlTempData[l]->flags = new uint16[1024];
-
-	const uint8 *p = getBlockFileData(_currentLevel);
-	uint16 len = READ_LE_UINT16(p + 4);
-	p += 6;
-
-	memset(_lvlTempData[l]->wallsXorData, 0, 4096);
-	memset(_lvlTempData[l]->flags, 0, 1024 * sizeof(uint16));
-	uint8 *d = _lvlTempData[l]->wallsXorData;
-	uint16 *df = _lvlTempData[l]->flags;
-
-	for (int i = 0; i < 1024; i++) {
-		for (int ii = 0; ii < 4; ii++)
-			*d++ = p[i * len + ii] ^ _levelBlockProperties[i].walls[ii];
-		*df++ = _levelBlockProperties[i].flags;
-	}
-
-	_lvlTempData[l]->monsters = generateMonsterTempData(_lvlTempData[l]);
-	_lvlTempData[l]->flyingObjects = generateFlyingObjectTempData(_lvlTempData[l]);
-	_lvlTempData[l]->wallsOfForce = generateWallOfForceTempData(_lvlTempData[l]);
-
-	_hasTempDataFlags |= (1 << l);
-}
-
-void LolEobBaseEngine::restoreBlockTempData(int levelIndex) {
-	int l = levelIndex - 1;
-	const uint8 *p = getBlockFileData(levelIndex);
-	uint16 len = READ_LE_UINT16(p + 4);
-	p += 6;
-
-	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
-
-	uint8 *t = _lvlTempData[l]->wallsXorData;
-	uint16 *t2 = _lvlTempData[l]->flags;
-
-	for (int i = 0; i < 1024; i++) {
-		for (int ii = 0; ii < 4; ii++)
-			_levelBlockProperties[i].walls[ii] = p[i * len + ii] ^ *t++;
-		_levelBlockProperties[i].flags = *t2++;
-	}
-
-	restoreMonsterTempData(_lvlTempData[l]);
-	restoreFlyingObjectTempData(_lvlTempData[l]);
-	restoreWallOfForceTempData(_lvlTempData[l]);
-}
-
-void LolEobBaseEngine::releaseTempData() {
-	for (int i = 0; i < 29; i++) {
-		if (_lvlTempData[i]) {
-			delete[] _lvlTempData[i]->wallsXorData;
-			delete[] _lvlTempData[i]->flags;
-			releaseMonsterTempData(_lvlTempData[i]);
-			releaseFlyingObjectTempData(_lvlTempData[i]);
-			releaseWallOfForceTempData(_lvlTempData[i]);
-			delete _lvlTempData[i];
-			_lvlTempData[i] = 0;
-		}
-	}
-}
-
-void *LolEobBaseEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
-	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
-	EobFlyingObject *f = new EobFlyingObject[_numFlyingObjects];
-	memcpy(f, _flyingObjectsPtr,  sizeof(EobFlyingObject) * _numFlyingObjects);
-	return f;
-}
-
-void LolEobBaseEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
-	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
-	memcpy(_flyingObjectsPtr, tmp->flyingObjects, sizeof(EobFlyingObject) * _numFlyingObjects);
-}
-
-void LolEobBaseEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-	EobFlyingObject *p = (EobFlyingObject*)tmp->flyingObjects;
-	delete[] p;
-}
-
-#ifdef ENABLE_EOB
 
 Common::Error EobCoreEngine::loadGameState(int slot) {
 	const char *fileName = 0;
@@ -221,7 +127,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_itemInHand = in.readSint16BE();
 	_hasTempDataFlags = in.readUint32BE();
 	_partyEffectFlags = in.readUint32BE();
-	
+
 	_updateFlags = in.readUint16BE();
 	_compassDirection = in.readUint16BE();
 	_currentControlMode = in.readUint16BE();
@@ -294,7 +200,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		EobFlyingObject *lf = new EobFlyingObject[_numFlyingObjects];
 		l->flyingObjects = lf;
 		WallOfForce *lw = new WallOfForce[5];
-		l->wallsOfForce = lw;		
+		l->wallsOfForce = lw;
 
 		in.read(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
@@ -364,7 +270,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	}
 
 	_screen->setCurPage(0);
-	gui_drawPlayField(false);	
+	gui_drawPlayField(false);
 
 	if (_currentControlMode)
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 0, 5, Screen::CR_NO_P_CHECK);
@@ -474,7 +380,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeSint16BE(_itemInHand);
 	out->writeUint32BE(_hasTempDataFlags);
 	out->writeUint32BE(_partyEffectFlags);
-	
+
 	out->writeUint16BE(_updateFlags);
 	out->writeUint16BE(_compassDirection);
 	out->writeUint16BE(_currentControlMode);
@@ -529,7 +435,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		LevelTempData *l = _lvlTempData[i];
 		if (!l || !(_hasTempDataFlags & (1 << i)))
 			continue;
-	
+
 		out->write(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);
@@ -643,8 +549,6 @@ void EobCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
 	delete[] p;
 }
 
-#endif // ENABLE_EOB
-
 }	// End of namespace Kyra
 
-#endif // ENABLE_EOB || ENABLE_LOL
+#endif // ENABLE_EOB

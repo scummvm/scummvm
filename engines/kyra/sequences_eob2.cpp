@@ -1278,7 +1278,7 @@ void DarkMoonEngine::seq_nightmare() {
 
 	initDialogueSequence();
 	gui_drawDialogueBox();
-	
+
 	_txt->printDialogueText(99, 0);
 	snd_playSoundEffect(54);
 
@@ -1292,7 +1292,7 @@ void DarkMoonEngine::seq_nightmare() {
 	}
 
 	_txt->printDialogueText(20, _okStrings[0]);
-	
+
 	restoreAfterDialogueSequence();
 
 	_screen->setFont(of);
@@ -1303,7 +1303,7 @@ void DarkMoonEngine::seq_kheldran() {
 
 	initDialogueSequence();
 	gui_drawDialogueBox();
-	
+
 	static const char file[] = "KHELDRAN";
 	_txt->printDialogueText(_kheldranStrings[0]);
 	drawSequenceBitmap(file, 0, 0, 0, 0);
@@ -1316,7 +1316,7 @@ void DarkMoonEngine::seq_kheldran() {
 	drawSequenceBitmap(file, 0, 20, 96, 0);
 	delay(7 * _tickLength);
 	_txt->printDialogueText(76, _okStrings[0]);
-	
+
 	restoreAfterDialogueSequence();
 
 	_screen->setFont(of);
@@ -1327,7 +1327,7 @@ void DarkMoonEngine::seq_dranDragonTransformation() {
 
 	initDialogueSequence();
 	gui_drawDialogueBox();
-	
+
 	static const char file[] = "DRANX";
 	drawSequenceBitmap(file, 0, 0, 0, 0);
 	_txt->printDialogueText(120, _moreStrings[0]);
@@ -1338,7 +1338,7 @@ void DarkMoonEngine::seq_dranDragonTransformation() {
 	delay(7 * _tickLength);
 	drawSequenceBitmap(file, 0, 20, 96, 0);
 	delay(18 * _tickLength);
-	
+
 	restoreAfterDialogueSequence();
 
 	_screen->setFont(of);

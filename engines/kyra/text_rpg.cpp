@@ -23,7 +23,7 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/loleobbase.h"
+#include "kyra/kyra_rpg.h"
 #include "kyra/screen.h"
 #include "kyra/timer.h"
 
@@ -35,7 +35,7 @@ enum {
 	kEobTextBufferSize = 2048
 };
 
-TextDisplayer_Eob::TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
+TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 
@@ -63,7 +63,7 @@ TextDisplayer_Eob::TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen) 
 	_waitButtonSpace = 0;
 }
 
-TextDisplayer_Eob::~TextDisplayer_Eob() {
+TextDisplayer_rpg::~TextDisplayer_rpg() {
 	delete[] _dialogueBuffer;
 	delete[] _currentLine;
 	delete[] _textDimData;
@@ -71,7 +71,7 @@ TextDisplayer_Eob::~TextDisplayer_Eob() {
 	delete[] _table2;
 }
 
-void TextDisplayer_Eob::setupField(int dim, bool mode) {
+void TextDisplayer_rpg::setupField(int dim, bool mode) {
 	setPageBreakFlag();
 
 	_textDimData[dim].color2 = _vm->_bkgColor_1;
@@ -83,26 +83,26 @@ void TextDisplayer_Eob::setupField(int dim, bool mode) {
 		resetDimTextPositions(dim);
 }
 
-void TextDisplayer_Eob::resetDimTextPositions(int dim) {
+void TextDisplayer_rpg::resetDimTextPositions(int dim) {
 	_textDimData[dim].column = 0;
 	_textDimData[dim].line = 0;
 }
 
-void TextDisplayer_Eob::resetPageBreakString() {
+void TextDisplayer_rpg::resetPageBreakString() {
 	if (vm()->_moreStrings)
 		strcpy(_pageBreakString, vm()->_moreStrings[0]);
 }
 
-void TextDisplayer_Eob::setPageBreakFlag() {
+void TextDisplayer_rpg::setPageBreakFlag() {
 	_allowPageBreak = true;
 	_lineCount = 0;
 }
 
-void TextDisplayer_Eob::removePageBreakFlag() {
+void TextDisplayer_rpg::removePageBreakFlag() {
 	_allowPageBreak = false;
 }
 
-void TextDisplayer_Eob::displayText(char *str, ...) {
+void TextDisplayer_rpg::displayText(char *str, ...) {
 	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 
 	_printFlag = false;
@@ -249,7 +249,7 @@ void TextDisplayer_Eob::displayText(char *str, ...) {
 		printLine(_currentLine);
 }
 
-char TextDisplayer_Eob::parseCommand() {
+char TextDisplayer_rpg::parseCommand() {
 	if (!_ctrl[1])
 		readNextPara();
 
@@ -263,7 +263,7 @@ char TextDisplayer_Eob::parseCommand() {
 	return res;
 }
 
-void TextDisplayer_Eob::readNextPara() {
+void TextDisplayer_rpg::readNextPara() {
 	char c = 0;
 	char d = 0;
 
@@ -283,7 +283,7 @@ void TextDisplayer_Eob::readNextPara() {
 			_tempString1 = 0;
 	}
 
-	if ((_vm->game() != GI_LOL) && (d & 0x80)) {		
+	if ((_vm->game() != GI_LOL) && (d & 0x80)) {
 		d &= 0x7f;
 		c = d & 7;
 		d = (d & 0x78) >> 3;
@@ -296,7 +296,7 @@ void TextDisplayer_Eob::readNextPara() {
 	_ctrl[2] = c;
 }
 
-void TextDisplayer_Eob::printLine(char *str) {
+void TextDisplayer_rpg::printLine(char *str) {
 	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
@@ -461,11 +461,11 @@ void TextDisplayer_Eob::printLine(char *str) {
 	printLine(str);
 }
 
-void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakString) {
+void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakString) {
 	const char * str = (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1]));
 	assert (strlen(str) < kEobTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
-	
+
 	displayText(_dialogueBuffer);
 
 	if (pageBreakString) {
@@ -477,7 +477,7 @@ void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakStr
 	}
 }
 
-void TextDisplayer_Eob::printDialogueText(const char *str, bool wait) {
+void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
 	assert (strlen(str) < kEobTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
 
@@ -487,7 +487,7 @@ void TextDisplayer_Eob::printDialogueText(const char *str, bool wait) {
 		displayWaitButton();
 }
 
-void TextDisplayer_Eob::printMessage(const char *str, int textColor, ...) {
+void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	int tc = _textDimData[screen()->curDimIndex()].color1;
 
 	if (textColor != -1)
@@ -507,7 +507,7 @@ void TextDisplayer_Eob::printMessage(const char *str, int textColor, ...) {
 		screen()->updateScreen();
 }
 
-int TextDisplayer_Eob::clearDim(int dim) {
+int TextDisplayer_rpg::clearDim(int dim) {
 	int res = screen()->curDimIndex();
 	screen()->setScreenDim(dim);
 	_textDimData[dim].color1 = screen()->_curDim->unk8;
@@ -516,7 +516,7 @@ int TextDisplayer_Eob::clearDim(int dim) {
 	return res;
 }
 
-void TextDisplayer_Eob::clearCurDim() {
+void TextDisplayer_rpg::clearCurDim() {
 	int d = screen()->curDimIndex();
 	const ScreenDim *tmp = screen()->getScreenDim(d);
 	if (vm()->gameFlags().use16ColorMode) {
@@ -528,7 +528,7 @@ void TextDisplayer_Eob::clearCurDim() {
 	_textDimData[d].column = _textDimData[d].line = 0;
 }
 
-void TextDisplayer_Eob::textPageBreak() {
+void TextDisplayer_rpg::textPageBreak() {
 	if (vm()->game() != GI_LOL)
 		SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
 
@@ -656,7 +656,7 @@ void TextDisplayer_Eob::textPageBreak() {
 	vm()->removeInputTop();
 }
 
-void TextDisplayer_Eob::displayWaitButton() {
+void TextDisplayer_rpg::displayWaitButton() {
 	vm()->_dialogueNumButtons = 1;
 	vm()->_dialogueButtonString[0] = _pageBreakString;
 	vm()->_dialogueButtonString[1] = 0;
@@ -675,7 +675,7 @@ void TextDisplayer_Eob::displayWaitButton() {
 		vm()->removeInputTop();
 
 	while (!vm()->processDialogue() && !vm()->shouldQuit()) {}
-	
+
 	_screen->fillRect(vm()->_dialogueButtonPosX[0], vm()->_dialogueButtonPosY[0], vm()->_dialogueButtonPosX[0] + vm()->_dialogueButtonW - 1, vm()->_dialogueButtonPosY[0] + vm()->_dialogueButtonH - 1, vm()->_bkgColor_1);
 	_screen->updateScreen();
 	vm()->_dialogueButtonW = 95;

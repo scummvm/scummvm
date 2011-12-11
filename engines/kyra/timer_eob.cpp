@@ -20,74 +20,11 @@
  *
  */
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-
 #include "kyra/eobcommon.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"
 
-namespace Kyra {
-
-void LolEobBaseEngine::enableSysTimer(int sysTimer) {
-	if (sysTimer != 2)
-		return;
-
-	for (int i = 0; i < getNumClock2Timers(); i++)
-		_timer->pauseSingleTimer(getClock2Timer(i), false);
-}
-
-void LolEobBaseEngine::disableSysTimer(int sysTimer) {
-	if (sysTimer != 2)
-		return;
-
-	for (int i = 0; i < getNumClock2Timers(); i++)
-		_timer->pauseSingleTimer(getClock2Timer(i), true);
-}
-
-void LolEobBaseEngine::enableTimer(int id) {
-	_timer->enable(id);
-	_timer->setCountdown(id, _timer->getDelay(id));
-}
-
-void LolEobBaseEngine::timerProcessDoors(int timerNum) {
-	for (int i = 0; i < 3; i++) {
-		uint16 b = _openDoorState[i].block;
-		if (!b)
-			continue;
-
-		int v = _openDoorState[i].state;
-		int c = _openDoorState[i].wall;
-
-		_levelBlockProperties[b].walls[c] += v;
-		_levelBlockProperties[b].walls[c ^ 2] += v;
-
-		int snd = 3;
-		int flg = _wllWallFlags[_levelBlockProperties[b].walls[c]];
-		if (flg & 0x20)
-			snd = 5;
-		else if (v == -1)
-			snd = 4;
-
-		if (_flags.gameID == GI_LOL) {
-			if (!(_updateFlags & 1)) {
-				snd_processEnvironmentalSoundEffect(snd + 28, b);
-				if (!checkSceneUpdateNeed(b))
-					updateEnvironmentalSfx(0);
-			}
-		} else {
-			checkSceneUpdateNeed(b);
-			updateEnvironmentalSfx(snd);
-		}
-
-		if (flg & 0x30)
-			_openDoorState[i].block = 0;
-	}
-}
-
-} // namespace Kyra
-
-#endif
 #ifdef ENABLE_EOB
 
 namespace Kyra {
@@ -370,7 +307,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 
 		_screen->setScreenDim(od);
 		_screen->setFont(of);
-	}	
+	}
 
 	uint32 nextTimer = 0xffffffff;
 	for (int i = 0; i < 10; i++) {

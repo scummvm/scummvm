@@ -42,7 +42,7 @@ namespace Kyra {
 
 const char *const LoLEngine::kKeymapName = "lol";
 
-LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : LolEobBaseEngine(system, flags) {
+LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags) {
 	_screen = 0;
 	_gui = 0;
 	_tim = 0;
@@ -154,9 +154,9 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : LolEobBaseEngine
 	_dscWalls = 0;
 	_dscOvlMap = 0;
 	_dscShapeScaleW = 0;
-	_dscShapeScaleH = 0;	
+	_dscShapeScaleH = 0;
 	_dscShapeY = 0;
-	_dscShapeOvlIndex = 0;	
+	_dscShapeOvlIndex = 0;
 	_dscDoorMonsterX = _dscDoorMonsterY = 0;
 	_dscDoor4 = 0;
 
@@ -409,8 +409,8 @@ Common::Error LoLEngine::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	LolEobBaseEngine::init();
-	
+	KyraRpgEngine::init();
+
 	_wllAutomapData = new uint8[80];
 	memset(_wllAutomapData, 0, 80);
 
@@ -1091,7 +1091,7 @@ int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 			assert(cChar < sizeof(decodeTable2));
 			cChar = decodeTable2[cChar];
 		} else if (cChar >= 0x70) {
-			cChar = *src++;			
+			cChar = *src++;
 		} else if (cChar >= 0x30) {
 			if (cChar < 0x60)
 				cChar -= 0x30;
@@ -1929,7 +1929,7 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 		_dialogueButtonString[1] = s2;
 		_dialogueButtonString[2] = s3;
 		_dialogueHighlightedButton = 0;
-		
+
 		const ScreenDim *d = screen()->getScreenDim(5);
 
 		static uint16 posX[3];
@@ -1945,8 +1945,8 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 		} else {
 			int xOffs = d->w / numStr;
 			posX[0] = d->sx + (xOffs >> 1) - 37;
-			posX[1] = posX[0] + xOffs; 
-			posX[2] = posX[1] + xOffs;		
+			posX[1] = posX[0] + xOffs;
+			posX[2] = posX[1] + xOffs;
 		}
 
 		drawDialogueButtons();

@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-class LolEobBaseEngine;
+class KyraRpgEngine;
 
 class EobInfProcessor {
 public:

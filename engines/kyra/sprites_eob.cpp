@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+#ifdef ENABLE_EOB
 
 #include "kyra/eobcommon.h"
 #include "kyra/script_eob.h"
@@ -29,31 +29,10 @@
 
 #include "common/system.h"
 
-namespace Kyra {
-
-int LolEobBaseEngine::getBlockDistance(uint16 block1, uint16 block2) {
-	int b1x = block1 & 0x1f;
-	int b1y = block1 >> 5;
-	int b2x = block2 & 0x1f;
-	int b2y = block2 >> 5;
-
-	uint8 dy = ABS(b2y - b1y);
-	uint8 dx = ABS(b2x - b1x);
-
-	if (dx > dy)
-		SWAP(dx, dy);
-
-	return (dx >> 1) + dy;
-}
-
-} // namespace Kyra
-
-#endif
-#ifdef ENABLE_EOB
 
 namespace Kyra {
 
-void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {	
+void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
 	_screen->loadShapeSetBitmap(filename, 3, 3);
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 

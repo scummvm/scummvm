@@ -169,7 +169,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 
 	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
-		int inputFlag = getInput(_vm->_activeButtons);		
+		int inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
 
 		if (inputFlag) {
@@ -434,7 +434,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 }
 
 void CharacterGenerator::createPartyMember() {
-	_screen->setScreenDim(2);	
+	_screen->setScreenDim(2);
 	assert(_vm->_gui);
 
 	for (int i = 0; i != 3 && !_vm->shouldQuit(); i++) {

@@ -24,7 +24,7 @@
 #define KYRA_EOBCOMMON_H
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-#include "kyra/loleobbase.h"
+#include "kyra/kyra_rpg.h"
 #endif // (ENABLE_EOB || ENABLE_LOL)
 
 #ifdef ENABLE_EOB
@@ -239,8 +239,8 @@ struct EobMenuButtonDef {
 
 class EobInfProcessor;
 
-class EobCoreEngine : public LolEobBaseEngine {
-friend class TextDisplayer_Eob;
+class EobCoreEngine : public KyraRpgEngine {
+friend class TextDisplayer_rpg;
 friend class GUI_Eob;
 friend class EobInfProcessor;
 friend class DarkmoonSequenceHelper;
@@ -328,7 +328,7 @@ protected:
 	static const uint8 _charClassModifier[];
 
 	const uint8 *_classModifierFlags;
-	
+
 	const uint8 *_transferConvertTable;
 	const uint32 *_transferExpTable;
 
@@ -550,7 +550,7 @@ protected:
 	const uint8 *_monsterProximityTable;
 	const uint8 *_findBlockMonstersTable;
 	const char *const *_monsterDustStrings;
-	
+
 	const uint8 *_enemyMageSpellList;
 	const uint8 *_enemyMageSfx;
 	const uint8 *_beholderSpellList;
@@ -798,9 +798,9 @@ protected:
 	const char *const *_validateCursedString;
 	const char *const *_validateNoDropString;
 	const char *const *_potionStrings;
-	const char *const *_wandStrings;	
-	const char *const *_itemMisuseStrings;	
-	
+	const char *const *_wandStrings;
+	const char *const *_itemMisuseStrings;
+
 	const char *const *_suffixStringsRings;
 	const char *const *_suffixStringsPotions;
 	const char *const *_suffixStringsWands;
@@ -832,7 +832,7 @@ protected:
 
 	void seq_portal();
 	bool checkPassword();
-	
+
 	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
 	virtual bool checkPartyStatusExtra() = 0;
@@ -900,7 +900,7 @@ protected:
 	int getDexHitChanceModifier(int charIndex);
 	int getMonsterAcHitChanceModifier(int charIndex, int monsterAc);
 	void explodeMonster(EobMonsterInPlay *m);
-	
+
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
 	int16 _foundMonstersArray[5];
@@ -940,7 +940,7 @@ protected:
 	void destroyWallOfForce(int index);
 
 	int findSingleSpellTarget(int dist);
-	
+
 	int findFirstCharacterSpellTarget();
 	int findNextCharacterSpellTarget(int curCharIndex);
 	int charDeathSavingThrow(int charIndex, int div);

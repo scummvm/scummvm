@@ -179,7 +179,7 @@ void EobCoreEngine::deleteBlockItem(uint16 block, int type) {
 		return;
 
 	_levelBlockProperties[block].drawObjects = 0;
-	
+
 	for (uint16 i2 = itm, i = 0; itm != i2 || !i; i++ ) {
 		if (type == _items[itm].type || type == -1) {
 			_items[itm].block = -1;
@@ -224,13 +224,13 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 
 int EobCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems) {
 	int itemsLeft = numItems;
-	
+
 	for (bool runloop = true; runloop && itemsLeft; ) {
 		runloop = false;
 		for (int i = 0; i < 6 && itemsLeft; i++) {
 			if (!testCharacter(i, 1))
 				continue;
-			
+
 			for (int ii = 0; ii < 27 && itemsLeft; ii++) {
 				if (ii == 16)
 					continue;
@@ -293,18 +293,18 @@ int EobCoreEngine::itemUsableByCharacter(int charIndex, Item item) {
 int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) {
 	uint16 o1 = itemQueue;
 	uint16 o2 = o1;
-	
+
 	if (!o1)
 		return 0;
 
 	int res = 0;
-		
+
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = _items[o1].prev) {
 		EobItem *itm = &_items[o1];
 		forceLoop = false;
 		if (id != -1 || type != -1) {
 			if (((id != -1) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))
-				continue;			
+				continue;
 		}
 
 		if (!includeFlyingItems) {
@@ -314,8 +314,8 @@ int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 
 		if (!count)
 			return o1;
-		
-		res++;		
+
+		res++;
 	}
 
 	return res;
@@ -329,13 +329,13 @@ int EobCoreEngine::getQueuedItem(Item *items, int pos, int id) {
 		return 0;
 
 	EobItem *itm = &_items[o1];
-	
+
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = itm->prev) {
 		itm = &_items[o1];
 		forceLoop = false;
 		if ((id != -1 || (id == -1 && itm->pos != pos)) && id != o1)
 			continue;
-		
+
 		Item n = itm->next;
 		Item p = itm->prev;
 		_items[n].prev = p;
@@ -359,10 +359,10 @@ void EobCoreEngine::printFullItemName(Item item) {
 	const char *nameId = _itemNames[itm->nameId];
 	uint8 f = _itemTypes[itm->type].extraProperties & 0x7f;
 	int8 v = itm->value;
-	
+
 	const char *tstr2 = 0;
 	const char *tstr3 = 0;
-	
+
 	bool correctSuffixCase = false;
 
 	Common::String tmpString;
@@ -422,7 +422,7 @@ void EobCoreEngine::printFullItemName(Item item) {
 				tmpString = nameUnid;
 				break;
 		}
-	
+
 
 		if (tstr3) {
 			if (!tstr2) {
@@ -511,7 +511,7 @@ void EobCoreEngine::eatItemInHand(int charIndex) {
 		gui_drawFoodStatusGraph(charIndex);
 		_screen->updateScreen();
 		snd_playSoundEffect(9);
-	}	
+	}
 }
 
 bool EobCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type) {
@@ -540,7 +540,7 @@ bool EobCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	t->attackerId = charIndex;
 	t->callBackIndex = 0;
 
-	snd_playSoundEffect(type == 7 ? 26 : 11);	
+	snd_playSoundEffect(type == 7 ? 26 : 11);
 	return true;
 }
 
@@ -579,7 +579,7 @@ bool EobCoreEngine::updateObjectFlight(EobFlyingObject *fo, int block, int pos) 
 			setItemPosition((Item*)&_levelBlockProperties[block].drawObjects, block, fo->item, pos | 4);
 			fo->curBlock = block;
 			fo->curPos = pos;
-			fo->distance--;	
+			fo->distance--;
 			return true;
 
 		} else {
@@ -594,7 +594,7 @@ bool EobCoreEngine::updateObjectFlight(EobFlyingObject *fo, int block, int pos) 
 		fo->curBlock = block;
 		fo->curPos = pos;
 		if (fo->distance != 255)
-			fo->distance--;		
+			fo->distance--;
 	}
 	return true;
 }
@@ -653,7 +653,7 @@ void EobCoreEngine::explodeObject(EobFlyingObject *fo, int block, Item item) {
 	int16 x2 = 0;
 
 	setLevelShapesDim(tl, x1, x2, 5);
-	
+
 	if (x2 < x1)
 		return;
 

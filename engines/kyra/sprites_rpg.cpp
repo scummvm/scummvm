@@ -20,52 +20,27 @@
  *
  */
 
-#ifndef KYRA_TEXT_LOL_H
-#define KYRA_TEXT_LOL_H
-
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-#include "kyra/text_rpg.h"
-#endif
-#include "common/scummsys.h"
 
-#ifdef ENABLE_LOL
+#include "kyra/kyra_rpg.h"
 
 namespace Kyra {
 
-class Screen_LoL;
-class LoLEngine;
-struct EMCState;
+int KyraRpgEngine::getBlockDistance(uint16 block1, uint16 block2) {
+	int b1x = block1 & 0x1f;
+	int b1y = block1 >> 5;
+	int b2x = block2 & 0x1f;
+	int b2y = block2 >> 5;
 
-class TextDisplayer_LoL : public TextDisplayer_rpg {
-public:
-	TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL);
-	~TextDisplayer_LoL();
+	uint8 dy = ABS(b2y - b1y);
+	uint8 dx = ABS(b2x - b1x);
 
-	void setupField(bool mode);
-	void expandField();
+	if (dx > dy)
+		SWAP(dx, dy);
 
-	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
+	return (dx >> 1) + dy;
+}
 
-	int16 _scriptTextParameter;
-
-private:
-	KyraRpgEngine *vm();
-	Screen *screen();
-
-	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void textPageBreak();
-
-	char *_stringParameters[15];
-	char *_buffer;
-
-	LoLEngine *_vm;
-	Screen_LoL *_screen;
-};
-
-} // End of namespace Kyra
-
-#endif // ENABLE_LOL
+} // namespace Kyra
 
 #endif
-

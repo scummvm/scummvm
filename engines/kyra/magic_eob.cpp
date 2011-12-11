@@ -158,7 +158,7 @@ void EobCoreEngine::useWand(int charIndex, int weaponSlot) {
 		uint16 bl2 = calcNewBlockPosition(bl1, _currentDirection);
 		snd_playSoundEffect(98);
 		sparkEffectOffensive();
-		
+
 		if ((_wllWallFlags[_levelBlockProperties[bl2].walls[_currentDirection ^ 2]] & 4) && !(_levelBlockProperties[bl2].flags & 7) && (_levelBlockProperties[bl1].flags & 7)) {
 			for (int i = 0; i < 30; i++) {
 				if (_monsters[i].block != bl1)
@@ -574,9 +574,9 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 
 	if (trySavingThrow(m, 0, p->level, mod, 6))
 		return false;
-	
+
 	int para = 0;
-		
+
 	switch (type) {
 	case 0:
 	case 1:
@@ -631,7 +631,7 @@ bool EobCoreEngine::turnUndeadHit(EobMonsterInPlay *m, int hitChance, int caster
 		m->mode = 0;
 		m->flags |= 8;
 		m->spellStatusLeft = 40;
-		m->dir = (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1;	
+		m->dir = (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1;
 	}
 
 	return true;
@@ -647,7 +647,7 @@ void EobCoreEngine::causeWounds(int dcTimes, int dcPips, int dcOffs) {
 		if (d != -1) {
 			if (!characterAttackHitTest(_openBookChar, d, 0, 1))
 				return;
-			
+
 			if (dcTimes == -1) {
 				dcOffs = _monsters[d].hitPointsMax - rollDice(1, 4);
 				dcTimes = dcPips = 0;
@@ -802,7 +802,7 @@ void EobCoreEngine::spellCallback_start_burningHands() {
 		drawBlockObject(i & 1, 0, _firebeamShapes[(5 - i) >> 1], bX[i], bY[i], 0);
 	_screen->updateScreen();
 	delay(2 * _tickLength);
-	
+
 	int cl = getMageLevel(_openBookChar);
 	int bl = calcNewBlockPosition(_currentBlock, _currentDirection);
 
@@ -915,7 +915,7 @@ void EobCoreEngine::spellCallback_start_holdPerson() {
 bool EobCoreEngine::spellCallback_end_holdPerson(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	bool res = false;
-	
+
 	if (_flags.gameID == GI_EOB2 && fo->curBlock == _currentBlock) {
 		// party hit
 		int numChar = rollDice(1, 4, 0);
@@ -1011,7 +1011,7 @@ void EobCoreEngine::spellCallback_start_removeCurse() {
 
 void EobCoreEngine::spellCallback_start_coneOfCold() {
 	const int8 *dirTables[] = { _coneOfColdDest1, _coneOfColdDest2, _coneOfColdDest3, _coneOfColdDest4 };
-	
+
 	int cl = getMageLevel(_openBookChar);
 
 	_screen->setCurPage(2);
@@ -1022,11 +1022,11 @@ void EobCoreEngine::spellCallback_start_coneOfCold() {
 	disableSysTimer(2);
 	_screen->drawVortex(150, 50, 10, 1, 100, _coneOfColdGfxTbl, _coneOfColdGfxTblSize);
 	enableSysTimer(2);
-	
+
 	const int8 *tbl = dirTables[_currentDirection];
 	_preventMonsterFlash = true;
 
-	for (int i = 0; i < 7; i++) {		
+	for (int i = 0; i < 7; i++) {
 		for (const int16 *m = findBlockMonsters((_currentBlock + tbl[i]) & 0x3ff, 4, _currentDirection, 1, 1); *m != -1; m++)
 			calcAndInflictMonsterDamage(&_monsters[*m], cl, 4, cl, 0x41, 5, 0);
 	}
@@ -1265,12 +1265,12 @@ void EobCoreEngine::spellCallback_start_turnUndead() {
 	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
 	if (!(_levelBlockProperties[bl].flags & 7))
 		return;
-	
+
 	int cl = _openBookCasterLevel ? _openBookCasterLevel : getClericPaladinLevel(_openBookChar);
 	int r = rollDice(1, 20);
 	bool hit = false;
 
-	for (const int16 *m = findBlockMonsters(bl, 4, 4, 1, 1); *m != -1; m++) {		
+	for (const int16 *m = findBlockMonsters(bl, 4, 4, 1, 1); *m != -1; m++) {
 		if ((_monsterProps[_monsters[*m].type].typeFlags & 4) && !(_monsters[*m].flags & 0x10)) {
 			_preventMonsterFlash = true;
 			_monsters[*m].flags |= 0x10;
@@ -1333,7 +1333,7 @@ bool EobCoreEngine::spellCallback_end_monster_disintegrate(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;
-	
+
 	int d = findFirstCharacterSpellTarget();
 	if (d != -1) {
 		if (!charDeathSavingThrow(d, 1)) {
@@ -1363,7 +1363,7 @@ bool EobCoreEngine::spellCallback_end_monster_fleshToStone(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;
-	
+
 	int d = findFirstCharacterSpellTarget();
 	while (d != -1) {
 		if (!charDeathSavingThrow(d, 2)) {
@@ -1373,7 +1373,7 @@ bool EobCoreEngine::spellCallback_end_monster_fleshToStone(void *obj) {
 			d = findNextCharacterSpellTarget(d);
 		}
 	}
-	
+
 	return true;
 }
 
