@@ -4176,4 +4176,30 @@ void DreamGenContext::diaryKeyN() {
 		data.byte(kDiarypage) = 0;
 }
 
+void DreamGenContext::dropError() {
+	data.byte(kCommandtype) = 255;
+	delPointer();
+	printMessage(76, 21, 56, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	data.byte(kCommandtype) = 255;
+	workToScreenM();
+}
+
+void DreamGenContext::cantDrop() {
+	data.byte(kCommandtype) = 255;
+	delPointer();
+	printMessage(76, 21, 24, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	data.byte(kCommandtype) = 255;
+	workToScreenM();
+}
+
 } // End of namespace DreamGen

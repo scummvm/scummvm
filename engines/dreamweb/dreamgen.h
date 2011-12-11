@@ -574,7 +574,6 @@ public:
 	void pickupConts();
 	void nextColon();
 	void allPalette();
-	void cantDrop();
 	void findInvPos();
 	void rollEndCredits();
 	void getKeyAndLogo();
@@ -625,7 +624,6 @@ public:
 	void triggerMessage();
 	void swapWithOpen();
 	void dreamweb();
-	void dropError();
 	void checkInside();
 	void findPathOfPoint();
 	void getBack1();

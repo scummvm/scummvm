@@ -560,5 +560,7 @@
 	void diaryKeyP();
 	void diaryKeyN();
 	void checkInput();
+	void dropError();
+	void cantDrop();
 
 #endif

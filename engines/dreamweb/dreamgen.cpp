@@ -2182,44 +2182,6 @@ notinlift:
 	es.byte(bx) = al;
 }
 
-void DreamGenContext::dropError() {
-	STACK_CHECK;
-	data.byte(kCommandtype) = 255;
-	delPointer();
-	di = 76;
-	bx = 21;
-	al = 56;
-	dl = 240;
-	printMessage();
-	workToScreenM();
-	cx = 50;
-	hangOnP();
-	showPanel();
-	showMan();
-	examIcon();
-	data.byte(kCommandtype) = 255;
-	workToScreenM();
-}
-
-void DreamGenContext::cantDrop() {
-	STACK_CHECK;
-	data.byte(kCommandtype) = 255;
-	delPointer();
-	di = 76;
-	bx = 21;
-	al = 24;
-	dl = 240;
-	printMessage();
-	workToScreenM();
-	cx = 50;
-	hangOnP();
-	showPanel();
-	showMan();
-	examIcon();
-	data.byte(kCommandtype) = 255;
-	workToScreenM();
-}
-
 void DreamGenContext::removeObFromInv() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommand), 100);
