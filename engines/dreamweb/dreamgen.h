@@ -663,7 +663,6 @@ public:
 	void createName();
 	void getPersonText();
 	void parser();
-	void showNames();
 	void emergencyPurge();
 	void quitKey();
 	void processTrigger();

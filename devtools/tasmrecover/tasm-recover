@@ -643,6 +643,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showmainops',
 	'showman',
 	'showmenu',
+	'shownames',
 	'showopbox',
 	'showoutermenu',
 	'showouterpad',

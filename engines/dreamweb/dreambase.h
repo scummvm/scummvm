@@ -90,6 +90,9 @@ public:
 	void printCurs();
 	void delCurs();
 
+	// from saveload.cpp
+	void showNames();
+
 	// from sound.cpp
 	void volumeAdjust();
 	void cancelCh0();

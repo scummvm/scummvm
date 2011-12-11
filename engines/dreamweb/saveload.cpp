@@ -457,4 +457,28 @@ void DreamGenContext::loadSaveBox() {
 	loadIntoTemp("DREAMWEB.G08");
 }
 
+// show savegame names (original interface), and set kCursorpos
+void DreamBase::showNames() {
+	for (int slot = 0; slot < 7; ++slot) {
+		// The first character of the savegame name is unused
+		Common::String name((char *)data.ptr(kSavenames + 17*slot + 1, 16));
+
+		if (slot != data.byte(kCurrentslot)) {
+			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
+			continue;
+		}
+		if (data.byte(kLoadingorsave) != 2) {
+			data.word(kCharshift) = 91;
+			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
+			data.word(kCharshift) = 0;
+			continue;
+		}
+
+		int pos = name.size();
+		data.byte(kCursorpos) = pos;
+		name += '/'; // cursor character
+		printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
+	}
+}
+
 } // End of namespace DreamGen
