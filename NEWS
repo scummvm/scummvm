@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
 
+ Cine:
+   - Implemented Roland MT-32 output driver.
+
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
 
