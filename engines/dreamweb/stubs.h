@@ -562,5 +562,7 @@
 	void checkInput();
 	void dropError();
 	void cantDrop();
+	void getBack1();
+	void newPlace();
 
 #endif

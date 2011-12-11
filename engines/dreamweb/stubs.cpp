@@ -4202,4 +4202,34 @@ void DreamGenContext::cantDrop() {
 	workToScreenM();
 }
 
+void DreamGenContext::getBack1() {
+	if (data.byte(kPickup) != 0) {
+		blank();
+	} else if (data.byte(kCommandtype) != 202) {
+		// Not holding object
+		data.byte(kCommandtype) = 202;
+		commandOnly(26);
+	} else {
+		// Already got object
+		if (data.word(kMousebutton) == data.word(kOldbutton))
+			return; // nogetback
+
+		if (data.word(kMousebutton) & 1) {
+			// Get back
+			data.byte(kGetback) = 1;
+			data.byte(kPickup) = 0;
+		}
+	}
+}
+
+void DreamGenContext::newPlace() {
+	if (data.byte(kNeedtotravel) == 1) {
+		data.byte(kNeedtotravel) = 0;
+		selectLocation();
+	} else if (data.byte(kAutolocation) != 0xFF) {
+		data.byte(kNewlocation) = data.byte(kAutolocation);
+		data.byte(kAutolocation) = 0xFF;
+	}
+}
+
 } // End of namespace DreamGen

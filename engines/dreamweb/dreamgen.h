@@ -626,7 +626,6 @@ public:
 	void dreamweb();
 	void checkInside();
 	void findPathOfPoint();
-	void getBack1();
 	void getDestInfo();
 	void setupTimedUse();
 	void makeCaps();
@@ -637,7 +636,6 @@ public:
 	void selectOpenOb();
 	void useGun();
 	void autoAppear();
-	void newPlace();
 	void useHandle();
 	void showPuzText();
 	void incRyanPage();

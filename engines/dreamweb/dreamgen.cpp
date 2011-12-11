@@ -2794,34 +2794,6 @@ beforethistext:
 		goto shuffletextads;
 }
 
-void DreamGenContext::getBack1() {
-	STACK_CHECK;
-	_cmp(data.byte(kPickup), 0);
-	if (flags.z())
-		goto notgotobject;
-	blank();
-	return;
-notgotobject:
-	_cmp(data.byte(kCommandtype), 202);
-	if (flags.z())
-		goto alreadyget;
-	data.byte(kCommandtype) = 202;
-	al = 26;
-	commandOnly();
-alreadyget:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nogetback) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto dogetback;
-	return;
-dogetback:
-	data.byte(kGetback) = 1;
-	data.byte(kPickup) = 0;
-}
-
 void DreamGenContext::startTalk() {
 	STACK_CHECK;
 	data.byte(kTalkmode) = 0;
@@ -3013,25 +2985,6 @@ skiptalk2:
 	goto dospeech;
 endheartalk:
 	data.byte(kPointermode) = 0;
-}
-
-void DreamGenContext::newPlace() {
-	STACK_CHECK;
-	_cmp(data.byte(kNeedtotravel), 1);
-	if (flags.z())
-		goto istravel;
-	_cmp(data.byte(kAutolocation), -1);
-	if (!flags.z())
-		goto isautoloc;
-	return;
-isautoloc:
-	al = data.byte(kAutolocation);
-	data.byte(kNewlocation) = al;
-	data.byte(kAutolocation) = -1;
-	return;
-istravel:
-	data.byte(kNeedtotravel) = 0;
-	selectLocation();
 }
 
 void DreamGenContext::lookAtPlace() {
