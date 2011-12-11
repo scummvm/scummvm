@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRA_LOLEOBBASE_H
-#define KYRA_LOLEOBBASE_H
+#ifndef KYRA_RPG_H
+#define KYRA_RPG_H
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
@@ -68,7 +68,7 @@ struct EobFlyingObject {
 	uint8 enable;
 	uint8 objectType;
 	int16 attackerId;
-	Item item;	
+	Item item;
 	uint16 curBlock;
 	uint16 u2;
 	uint8 u1;
@@ -80,11 +80,11 @@ struct EobFlyingObject {
 	uint8 unused;
 };
 
-class LolEobBaseEngine : public KyraEngine_v1 {
-friend class TextDisplayer_Eob;
+class KyraRpgEngine : public KyraEngine_v1 {
+friend class TextDisplayer_rpg;
 public:
-	LolEobBaseEngine(OSystem *system, const GameFlags &flags);
-	virtual ~LolEobBaseEngine();
+	KyraRpgEngine(OSystem *system, const GameFlags &flags);
+	virtual ~KyraRpgEngine();
 
 	virtual Screen *screen() = 0;
 	virtual GUI *gui() const = 0;
@@ -274,8 +274,8 @@ protected:
 	void drawDialogueButtons();
 	uint16 processDialogue();
 
-	TextDisplayer_Eob *_txt;
-	virtual TextDisplayer_Eob *txt() { return _txt; }
+	TextDisplayer_rpg *_txt;
+	virtual TextDisplayer_rpg *txt() { return _txt; }
 
 	bool _dialogueField;
 

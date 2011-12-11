@@ -22,22 +22,10 @@
  */
 
 #include "kyra/eob1.h"
-#include "kyra/eob2.h"
 #include "kyra/resource.h"
 
 
 namespace Kyra {
-
-
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
-	return (const uint16 *)getData(id, kLolRawDataBe16, entries);
-}
-
-const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
-	return (const uint32 *)getData(id, kLolRawDataBe32, entries);
-}
-#endif // defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #ifdef ENABLE_EOB
 const EobSequenceStep *StaticResource::loadEob2SeqData(int id, int &entries) {
@@ -51,35 +39,7 @@ const EobShapeDef *StaticResource::loadEob2ShapeData(int id, int &entries) {
 const EobCharacter *StaticResource::loadEobNpcData(int id, int &entries) {
 	return (const EobCharacter *)getData(id, kEobNpcData, entries);
 }
-#endif // ENABLE_EOB
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
-	size = stream.size() >> 1;
-
-	uint16 *r = new uint16[size];
-
-	for (int i = 0; i < size; i++)
-		r[i] = stream.readUint16BE();
-
-	ptr = r;
-	return true;
-}
-
-bool StaticResource::loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size) {
-	size = stream.size() >> 2;
-
-	uint32 *r = new uint32[size];
-
-	for (int i = 0; i < size; i++)
-		r[i] = stream.readUint32BE();
-
-	ptr = r;
-	return true;
-}
-#endif // defined(ENABLE_EOB) || defined(ENABLE_LOL)
-
-#ifdef ENABLE_EOB
 bool StaticResource::loadEob2SeqData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 11;
 
@@ -165,25 +125,7 @@ bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&p
 	ptr = e;
 	return true;
 }
-#endif // ENABLE_EOB
 
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
-	uint16 *data = (uint16 *)ptr;
-	delete[] data;
-	ptr = 0;
-	size = 0;
-}
-
-void StaticResource::freeRawDataBe32(void *&ptr, int &size) {
-	uint32 *data = (uint32 *)ptr;
-	delete[] data;
-	ptr = 0;
-	size = 0;
-}
-#endif // defined(ENABLE_EOB) || defined(ENABLE_LOL)
-
-#ifdef ENABLE_EOB
 void StaticResource::freeEob2SeqData(void *&ptr, int &size) {
 	EobSequenceStep *d = (EobSequenceStep *)ptr;
 	delete[] d;
@@ -238,29 +180,6 @@ const ScreenDim Screen_Eob::_screenDimTable[] = {
 };
 
 const int Screen_Eob::_screenDimTableCount = ARRAYSIZE(Screen_Eob::_screenDimTable);
-#endif
-
-#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-const uint8 LolEobBaseEngine::_dropItemDirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
-
-void LolEobBaseEngine::initStaticResource() {
-	int temp;
-	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kLolEobCommonDscX, temp);
-	_dscShapeIndex = (const int8 *)_staticres->loadRawData(kLolEobCommonDscShapeIndex, temp);
-	_dscTileIndex = _staticres->loadRawData(kLolEobCommonDscTileIndex, temp);
-	_dscDim1 = (const int8 *)_staticres->loadRawData(kLolEobCommonDscDimData1, temp);
-	_dscDim2 = (const int8 *)_staticres->loadRawData(kLolEobCommonDscDimData2, temp);
-	_dscUnk2 = _staticres->loadRawData(kLolEobCommonDscUnk2, temp);
-	_dscBlockMap = _staticres->loadRawData(kLolEobCommonDscBlockMap, temp);
-	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kLolEobCommonDscBlockIndex, temp);
-	_dscDimMap = _staticres->loadRawData(kLolEobCommonDscDimMap, temp);
-	_dscDoorShpIndex = _staticres->loadRawData(kLolEobCommonDscDoorShapeIndex, _dscDoorShpIndexSize);
-	_dscDoorY2 = _staticres->loadRawData(kLolEobCommonDscDoorY2, temp);
-	_moreStrings = _staticres->loadStrings(kLolEobCommonMoreStrings, temp);
-}
-
-#endif // (ENABLE_EOB || ENABLE_LOL)
-#ifdef ENABLE_EOB
 
 const uint8 EobCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 10, 9, 9, 3, 1, 2, 2, 3, 3 };
 
@@ -373,7 +292,7 @@ void EobCoreEngine::initStaticResource() {
 	_potionStrings = _staticres->loadStrings(kEobBasePotionStrings, temp);
 	_wandStrings = _staticres->loadStrings(kEobBaseWandStrings, temp);
 	_itemMisuseStrings = _staticres->loadStrings(kEobBaseItemMisuseStrings, temp);
-	
+
 	_takenStrings = _staticres->loadStrings(kEobBaseTakenStrings, temp);
 	_potionEffectStrings = _staticres->loadStrings(kEobBasePotionEffectStrings, temp);
 
@@ -559,7 +478,7 @@ void EobCoreEngine::initStaticResource() {
 		" Spielstände müssen\r einen Namen haben!",
 		0
 	};
-	
+
 	_saveLoadStrings = saveLoadStrings[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotEmptyString = errorSlotEmptyString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
@@ -587,7 +506,7 @@ void EobCoreEngine::initButtonData() {
 		{ 0, 0, 0x1100, 288, 62, 31, 33, 3 },
 		{ 368, 0, 0x1000, 184, 2, 63, 8, 0 },
 		{ 369, 0, 0x1000, 256, 2, 63, 8, 1 },
-		{ 370, 0, 0x1000, 184, 54, 63, 8, 2 },		
+		{ 370, 0, 0x1000, 184, 54, 63, 8, 2 },
 		{ 371, 0, 0x1000, 256, 54, 63, 8, 3 },
 		{ 0, 0, 0x1100, 230, 116, 16, 16, 0 },
 		{ 0, 0, 0x1100, 278, 116, 16, 16, 1 },
@@ -597,7 +516,7 @@ void EobCoreEngine::initButtonData() {
 		{ 0, 0, 0x1100, 199, 58, 16, 16, 5 },
 		{ 0, 0, 0x1100, 181, 76, 16, 16, 6 },
 		{ 0, 0, 0x1100, 199, 76, 16, 16, 7 },
-		{ 0, 0, 0x1100, 181, 94, 16, 16, 8 },		
+		{ 0, 0, 0x1100, 181, 94, 16, 16, 8 },
 		{ 0, 0, 0x1100, 199, 94, 16, 16, 9 },
 		{ 0, 0, 0x1100, 181, 112, 16, 16, 10 },
 		{ 0, 0, 0x1100, 199, 112, 16, 16, 11 },
@@ -785,7 +704,7 @@ void EobCoreEngine::initMenus() {
 	delete[] _menuDefs;
 	_menuDefs = new EobMenuDef[ARRAYSIZE(menuDefs)];
 	memcpy(_menuDefs, menuDefs, sizeof(menuDefs));
-	
+
 	if (_flags.gameID == GI_EOB1) {
 		// assign EOB 1 style memorize/pray menu
 		_menuDefs[4].numButtons = 8;
@@ -1061,7 +980,7 @@ void EobCoreEngine::initSpells() {
 	ec2(monster_fleshToStone);
 
 	_spells = new EobSpell[_numSpells];
-	memset(_spells, 0, _numSpells * sizeof(EobSpell));	
+	memset(_spells, 0, _numSpells * sizeof(EobSpell));
 
 	for (int i = 0, n = 0; i < _numSpells; i++, n++) {
 		EobSpell *s = &_spells[i];
@@ -1103,7 +1022,7 @@ void EobEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEob1MainMenuStrings, temp);
 	_finBonusStrings = _staticres->loadStrings(kEob1BonusStrings, temp);
-		
+
 	_introFilesOpening = _staticres->loadStrings(kEob1IntroFilesOpening, temp);
 	_introFilesTower = _staticres->loadStrings(kEob1IntroFilesTower, temp);
 	_introFilesOrb = _staticres->loadStrings(kEob1IntroFilesOrb, temp);

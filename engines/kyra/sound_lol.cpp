@@ -198,7 +198,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 }
 
 bool LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
-	if (!LolEobBaseEngine::snd_processEnvironmentalSoundEffect(soundId, block))
+	if (!KyraRpgEngine::snd_processEnvironmentalSoundEffect(soundId, block))
 		return false;
 
 	if (block != _currentBlock) {

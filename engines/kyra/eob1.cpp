@@ -173,7 +173,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 	int r = 0;
 	int a = 0;
 	Item itm = 0;
-	
+
 	switch (npcIndex) {
 	case 0:
 		for (r = 1; r == 1; ) {
@@ -199,7 +199,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 			}
 			if (!r)
 				r = DLG2(a ? 13 : 4, 4);
-			
+
 			if (!r) {
 				for (a = 0; a < 6; a++)
 					createItemOnCurrentBlock(55);
@@ -230,7 +230,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 			if (deletePartyItems(6, -1)) {
 				//_npcSequenceSub = 0;
 				//drawNpcScene(npcIndex);
-				TXT(28);				
+				TXT(28);
 				createItemOnCurrentBlock(32);
 				setScriptFlags(0x100000);
 				r = 1;
@@ -254,7 +254,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 					else
 						resurrectionSelectDialogue();
 					setScriptFlags(0x20000);
-				}				
+				}
 			}
 		} else {
 			TXT(24);
@@ -476,7 +476,7 @@ void EobEngine::turnUndeadAuto() {
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 0x0d))
 			continue;
-		
+
 		EobCharacter *c = &_characters[i];
 
 		if (_itemTypes[_items[c->inventory[0]].type].extraProperties != 6 && _itemTypes[_items[c->inventory[1]].type].extraProperties != 6)
@@ -553,13 +553,13 @@ void EobEngine::healParty() {
 	for (int i = 0; i < 6 && cnt; i++) {
 		if (testCharacter(i, 3))
 			continue;
-		
+
 		_characters[i].flags &= ~4;
 		neutralizePoison(i);
-		
+
 		if (_characters[i].hitPointsCur >= _characters[i].hitPointsMax)
 			continue;
-		
+
 		cnt--;
 		_characters[i].hitPointsCur += rollDice(1, 8, 9);
 		if (_characters[i].hitPointsCur > _characters[i].hitPointsMax)

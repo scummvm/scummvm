@@ -189,7 +189,7 @@ void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int
 			delete s;
 		}
 	}
-	
+
 	if (copyToPage == -1) {
 		return;
 	} else if (copyToPage == 0) {
@@ -248,7 +248,7 @@ uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 			uint8 *lineEnd = src + (w << 3);
 			do {
 				uint8 val = *src++;
-				if (!val) {				
+				if (!val) {
 					*dst++ = 0;
 					uint8 *startZeroPos = src;
 
@@ -563,9 +563,9 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			addDirtyRect(rX, rY, rW, rH);
 
 		while (dH--) {
-			int16 xpos = (int16) marginLeft;			
+			int16 xpos = (int16) marginLeft;
 
-			if (flags & 1) {				
+			if (flags & 1) {
 				for (int i = 0; i < w2; i++) {
 					if (*src++ == 0) {
 						i += (*src - 1);
@@ -636,7 +636,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 			dstL += 320;
 			dst = dstL;
-			if (flags & 1)			
+			if (flags & 1)
 				src = src2 + 1;
 		}
 	}
@@ -751,7 +751,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 	int rY1 = dm->sy;
 	int rX2 = rX1 + (dm->w << 3);
 	int rY2 = rY1 + dm->h - 1;
-	
+
 	int16 gx2 = _gfxX;
 	int16 gy2 = _gfxY;
 
@@ -783,7 +783,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 					py = ymax;
 				if (posWithinRect(px, py, rX1, rY1, rX2, rY2))
 					setPagePixel(0, px, py, ptr6[i]);
-			}			
+			}
 		}
 
 		l = 0;
@@ -798,7 +798,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 			ptr5[i] += 5;
 			ptr3[i] += ptr5[i];
 			ptr8[i] += ptr7[i];
-				
+
 			int16 px = ((ptr2[i] >> 6) >> scale) + gx2;
 			int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
 			if (py >= ymax || py < ymin)
@@ -808,7 +808,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 
 			if (py > ymax)
 				py = ymax;
-			
+
 			int pxVal1 = 0;
 			if (posWithinRect(px, py, 0, 0, 319, 199)) {
 				pxVal1 = getPagePixel(2, px, py);
@@ -833,7 +833,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 			}
 		}
 	}
-	
+
 	showMouse();
 }
 

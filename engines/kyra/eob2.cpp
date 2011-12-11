@@ -387,7 +387,7 @@ void DarkMoonEngine::restParty_npc() {
 bool DarkMoonEngine::restParty_extraAbortCondition() {
 	if (_currentLevel != 3)
 		return false;
-	
+
 	seq_nightmare();
 
 	return true;

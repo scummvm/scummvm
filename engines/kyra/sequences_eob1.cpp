@@ -38,7 +38,7 @@ int EobEngine::mainMenu() {
 	_menuChoiceInit = 0;
 
 	Screen::FontId of = _screen->_currentFont;
-	
+
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 			case 0:
@@ -162,25 +162,25 @@ void EobEngine::seq_playFinale() {
 	delete s;
 
 	snd_playSoundEffect(20);
-	
+
 	_txt->resetPageBreakString();
 	_txt->setWaitButtonMode(1);
 	_txt->setupField(12, true);
 	gui_drawBox(0, 0, 176, 175, _color1_1, _color2_1, _bkgColor_1);
 	_txt->printDialogueText(51, _moreStrings[0]);
-	
+
 	if (!checkScriptFlags(0x1ffe)) {
 		_screen->fadeToBlack();
 		return;
 	}
-	
+
 	_txt->printDialogueText(_finBonusStrings[0]);
 	for (int i = 0; i < 6; i++) {
 		_txt->printDialogueText(_finBonusStrings[1]);
 		if (_characters[i].flags & 1)
 			_txt->printDialogueText(_characters[i].name);
 	}
-	
+
 	uint32 password = 0;
 	for (int i = 0; i < 4; i++) {
 		if (!(_characters[i].flags & 1))
@@ -200,7 +200,7 @@ void EobEngine::seq_playFinale() {
 void EobEngine::seq_tower() {
 	if (shouldQuit() || skipFlag())
 		return;
-	
+
 	_screen->loadBitmap(_introFilesTower[1], 5, 3, 0);
 	_screen->setCurPage(2);
 	uint8 *shp = _screen->encodeShape(0, 0, 16, 56, true);
@@ -239,7 +239,7 @@ void EobEngine::seq_tower() {
 		_screen->copyRegion(104, 79 - i, 200, 0, 24, 65 + i, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(24, 110, 120, i + 31, 80, 34, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(152, 0, 120, 32, 80, i + 1, 4, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(0, 0, 96, 65 + i, 128, 103 - i, 2, 0, Screen::CR_NO_P_CHECK);	
+		_screen->copyRegion(0, 0, 96, 65 + i, 128, 103 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -282,18 +282,18 @@ void EobEngine::seq_orb() {
 	shp[4] = _screen->encodeShape(0, 0, 20, 136, true);
 	_screen->loadBitmap(_introFilesOrb[1], 5, 3, 0);
 	shp[3] = _screen->encodeShape(16, 0, 16, 104, true);
-	
+
 	_screen->fillRect(0, 0, 127, 103, 12);
 	for (int i = 1; i < 4; i++) {
 		copyBlurRegion(128, 0, 0, 0, 128, 104, i);
 		shp[3 - i] = _screen->encodeShape(0, 0, 16, 104, true);
 	}
-	
+
 	_screen->fillRect(0, 0, 159, 135, 12);
 	_screen->setCurPage(0);
 	_screen->copyPage(3, 4);
 	_screen->clearCurPage();
-	
+
 	_sound->playTrack(6);
 
 	for (int i = -1; i < 4 && !shouldQuit() && !skipFlag(); i++) {
@@ -467,7 +467,7 @@ void EobEngine::seq_king() {
 	static const uint8 advEncX[] = { 0, 6, 12, 19 };
 	static const uint8 advEncW[] = { 6, 6, 7, 6 };
 	static const int8 modY[] = { -4, -8, -2, -2, 1, 0, 0, 0 };
-	
+
 	_screen->loadBitmap(_introFilesKing[1], 5, 3, 0);
 	_screen->setCurPage(2);
 	for (int i = 0; i < 4; i++) {
@@ -481,7 +481,7 @@ void EobEngine::seq_king() {
 	for (bool runloop = true; runloop && !shouldQuit() && !skipFlag(); ) {
 		runloop = false;
 		uint32 end = _system->getMillis() + 2 * _tickLength;
-		
+
 		for (int i = 0; i < 4; i++) {
 			if (dy[i] <= 82)
 				continue;
@@ -527,7 +527,7 @@ void EobEngine::seq_hands() {
 	_screen->fillRect(0, 160, 319, 199, 12, 0);
 	_screen->fillRect(0, 0, 191, 63, 157, 2);
 	_screen->drawShape(2, shp1, 0, 4, 0);
-	_screen->drawShape(2, shp2, 151, 4, 0);	
+	_screen->drawShape(2, shp2, 151, 4, 0);
 	boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
 	_screen->copyRegion(0, 128, 0, 176, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
 
@@ -540,7 +540,7 @@ void EobEngine::seq_hands() {
 		_screen->fillRect(0, 0, 167, 63, 157);
 		_screen->drawShape(2, shp1, i, 4, 0);
 		_screen->drawShape(2, shp1, 105 - i, 4, 0);
-		_screen->copyRegion(0, 0, 144, 32, 168, 64, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 144, 32, 168, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -555,7 +555,7 @@ void EobEngine::seq_hands() {
 	shp1 = _screen->encodeShape(17, 0, 11, 120, true);
 	shp2 = _screen->encodeShape(28, 112, 1, 31, true);
 	uint8 *shp3 = _screen->encodeShape(9, 138, 14, 54, true);
-	
+
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 135, 63, 157);
 	_screen->drawShape(2, shp1, 32, -80, 0);
@@ -568,7 +568,7 @@ void EobEngine::seq_hands() {
 		_screen->fillRect(0, 0, 135, 63, 157);
 		_screen->drawShape(2, shp1, 32, i, 0);
 		_screen->drawShape(2, shp2, 40, i + 64, 0);
-		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -581,7 +581,7 @@ void EobEngine::seq_hands() {
 		_screen->fillRect(0, 0, 135, 63, 157);
 		_screen->drawShape(2, shp3, 12, 64 + i, 0);
 		_screen->drawShape(2, shp1, 32, i, 0);
-		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 80, 96, 136, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -608,7 +608,7 @@ void EobEngine::seq_hands() {
 		_screen->fillRect(0, 0, 143, 95, 157);
 		_screen->drawShape(2, shp1, i, i, 0);
 		_screen->drawShape(2, shp2, (i == -8) ? 55 : 52, (i == -8) ? 52 : 49, 0);
-		_screen->copyRegion(0, 0, 0, 0, 144, 96, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 0, 0, 144, 96, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -633,7 +633,7 @@ void EobEngine::seq_hands() {
 		uint32 end = _system->getMillis() + _tickLength;
 		_screen->fillRect(0, 0, 87, 112, 157);
 		_screen->drawShape(2, shp2, 0, dy, 0);
-		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 		dy -= 5;
@@ -645,7 +645,7 @@ void EobEngine::seq_hands() {
 		uint32 end = _system->getMillis() + _tickLength;
 		_screen->fillRect(0, 0, 87, 39, 157);
 		_screen->drawShape(2, shp1, 0, i, 0);
-		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);		
+		_screen->copyRegion(0, 0, 120, 48, 88, 112, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
 	}
@@ -837,7 +837,7 @@ void EobEngine::seq_tunnel() {
 	_sound->playTrack(9);
 
 	for (int i = 0; i < 6 && !shouldQuit() && !skipFlag(); i++) {
-		uint32 end = _system->getMillis() + _tickLength;		
+		uint32 end = _system->getMillis() + _tickLength;
 		_screen->copyRegion(_introTvlX1[i] << 3, _introTvlY1[i], _introTvlX2[i] << 3, _introTvlY2[i], _introTvlW[i] << 3, _introTvlH[i], 4, 2, Screen::CR_NO_P_CHECK);
 		for (int ii = 0; ii < 4 && !shouldQuit() && !skipFlag(); ii++) {
 			_screen->updateScreen();
@@ -864,13 +864,13 @@ void EobEngine::seq_tunnel() {
 	_screen->copyRegion(0, 176, 0, 184, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
 	_screen->setCurPage(0);
 	_screen->updateScreen();
-	delay(50 * _tickLength);	
+	delay(50 * _tickLength);
 }
 
 void EobEngine::seq_xdeath() {
 	uint8 *shapes1[5];
 	uint8 *shapes2;
-	
+
 	_screen->loadShapeSetBitmap("XDEATH2", 5, 3);
 	for (int i = 0; i < 4; i++)
 		shapes1[i] = _screen->encodeShape(i / 2 * 14, i / 2 * 88, 14, 88, true);
@@ -910,7 +910,7 @@ void EobEngine::seq_xdeath() {
 		_screen->updateScreen();
 		delay(2 * _tickLength);
 	}
-	
+
 	_screen->modifyScreenDim(5, dm->sx, 0, dm->w, dm->h);
 
 	snd_playSoundEffect(5);

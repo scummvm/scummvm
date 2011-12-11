@@ -479,7 +479,7 @@ Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
 
 void LoLEngine::restoreBlockTempData(int levelIndex) {
 	memset(_tempBuffer5120, 0, 5120);
-	LolEobBaseEngine::restoreBlockTempData(levelIndex);
+	KyraRpgEngine::restoreBlockTempData(levelIndex);
 	restoreTempDataAdjustMonsterStrength(levelIndex - 1);
 }
 

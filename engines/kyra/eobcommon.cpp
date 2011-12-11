@@ -22,7 +22,7 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/loleobbase.h"
+#include "kyra/kyra_rpg.h"
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 #include "kyra/script_eob.h"
@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBaseEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
+EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
 	_numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26), _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9), _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
@@ -164,7 +164,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_monsterProximityTable = _findBlockMonstersTable = _wallOfForceDsY = _wallOfForceDsNumW = _wallOfForceDsNumH = _wallOfForceShpId = _wllFlagPreset = _teleporterShapeCoords = 0;
 		_monsterCloseAttUnkTable = _monsterFrmOffsTable1 = _monsterFrmOffsTable2 = _monsterDirChangeTable = _portalSeq = 0;
 	_wallOfForceDsX = 0;
-	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = _wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size = 
+	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = _wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size =
 		_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = _buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
 	_buttonDefs = 0;
@@ -310,7 +310,7 @@ Common::Error EobCoreEngine::init() {
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
 	assert(_sound);
-	_sound->init();	
+	_sound->init();
 
 	syncSoundSettings();
 
@@ -335,7 +335,7 @@ Common::Error EobCoreEngine::init() {
 	setupKeyMap();
 	_gui = new GUI_Eob(this);
 	assert(_gui);
-	_txt = new TextDisplayer_Eob(this, _screen);
+	_txt = new TextDisplayer_rpg(this, _screen);
 	assert(_txt);
 	_inf = new EobInfProcessor(this, _screen);
 	assert(_inf);
@@ -345,7 +345,7 @@ Common::Error EobCoreEngine::init() {
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
 
-	Common::Error err = LolEobBaseEngine::init();
+	Common::Error err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)
 		return err;
 
@@ -522,7 +522,7 @@ void EobCoreEngine::startupNew() {
 }
 
 void EobCoreEngine::runLoop() {
-	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);	
+	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
 
@@ -566,7 +566,7 @@ bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
 
 	if (!handleDeath)
 		return true;
-	
+
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
@@ -1172,7 +1172,7 @@ void EobCoreEngine::dropCharacter(int charIndex) {
 		return;
 
 	removeCharacterFromParty(charIndex);
-	
+
 	if (charIndex < 5)
 		exchangeCharacters(charIndex, testCharacter(5, 1) ? 5 : 4);
 
@@ -1439,7 +1439,7 @@ bool EobCoreEngine::restParty_updateMonsters() {
 			return true;
 		}
 	}
-	
+
 	_sound->enableSFX(sfxEnabled);
 	_sound->enableMusic(musicEnabled);
 	return false;
@@ -1468,7 +1468,7 @@ bool EobCoreEngine::restParty_checkHealSpells(int charIndex) {
 	static const uint8 eob2healSpells[] = { 3, 16, 20 };
 	const uint8 *spells = _flags.gameID == GI_EOB1 ? eob1healSpells : eob2healSpells;
 	const int8 *list = _characters[charIndex].clericSpells;
-	
+
 	for (int i = 0; i < 80; i++) {
 		int s = list[i] < 0 ? -list[i] : list[i];
 		if (s == spells[0] || s == spells[1] || s == spells[2])
@@ -1551,7 +1551,7 @@ void EobCoreEngine::displayParchment(int id) {
 
 int EobCoreEngine::countResurrectionCandidates() {
 	_rrCount = 0;
-	memset(_rrNames, 0, 10 * sizeof(const char*));	
+	memset(_rrNames, 0, 10 * sizeof(const char*));
 
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
@@ -1646,11 +1646,11 @@ void EobCoreEngine::seq_portal() {
 			if (*(pos - 2) == 3)
 				snd_playSoundEffect(90);
 		}
-		
+
 		_screen->updateScreen();
 		delay(2 * _tickLength);
 	}
-	
+
 	delete[] shape0;
 	for (int i = 0; i < 5; i++) {
 		delete[] shapes1[i];
@@ -1663,12 +1663,12 @@ bool EobCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_screen->copyPage(0, 10);
-	
+
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, _color1_1, _color2_1, -1);
 	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, _color1_1, _color2_1, _bkgColor_1);
 	_screen->modifyScreenDim(13, _screen->_curDim->sx + 1, _screen->_curDim->sy + 2, _screen->_curDim->w - 2, _screen->_curDim->h - 16);
-	
+
 	for (int i = 0; i < 3; i++) {
 		_screen->fillRect(_screen->_curDim->sx << 3, _screen->_curDim->sy, ((_screen->_curDim->sx + _screen->_curDim->w) << 3) - 1, (_screen->_curDim->sy + _screen->_curDim->h) - 1, _bkgColor_1);
 		int c = rollDice(1, _mnNumWord - 1, -1);
@@ -1678,7 +1678,7 @@ bool EobCoreEngine::checkPassword() {
 		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, _bkgColor_1);
 		memset(answ, 0, 20);
 		gui_drawBox(76, 100, 133, 14, _color2_1, _color1_1, -1);
-		gui_drawBox(77, 101, 131, 12, _color2_1, _color1_1, -1);	
+		gui_drawBox(77, 101, 131, 12, _color2_1, _color1_1, -1);
 		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, _bkgColor_1, 8) < 0)
 			i = 3;
 		if (!scumm_stricmp(_mnWord[c], answ))
@@ -1812,7 +1812,7 @@ int EobCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 			SWAP(ammoItem, _characters[charIndex].inventory[1]);
 		else if (_characters[charIndex].inventory[16])
 			ammoItem = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
-		
+
 	} else {
 		for (int i = 0; i < 27; i++) {
 			if (_items[_characters[charIndex].inventory[i]].type == t) {

@@ -30,12 +30,12 @@
 namespace Kyra {
 
 class Screen;
-class LolEobBaseEngine;
+class KyraRpgEngine;
 
-class TextDisplayer_Eob {
+class TextDisplayer_rpg {
 public:
-	TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen);
-	virtual ~TextDisplayer_Eob();
+	TextDisplayer_rpg(KyraRpgEngine *engine, Screen *sScreen);
+	virtual ~TextDisplayer_rpg();
 
 	virtual void setupField(int dim, bool mode);
 
@@ -56,7 +56,7 @@ public:
 	int lineCount() { return _lineCount; }
 
 protected:
-	virtual LolEobBaseEngine *vm() { return _vm; }
+	virtual KyraRpgEngine *vm() { return _vm; }
 	virtual Screen *screen() { return _screen; }
 
 	void displayText(char *str, ...);
@@ -101,7 +101,7 @@ protected:
 	TextDimData *_textDimData;
 
 private:
-	LolEobBaseEngine *_vm;
+	KyraRpgEngine *_vm;
 	Screen *_screen;
 
 	char *_table1;

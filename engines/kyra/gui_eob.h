@@ -56,7 +56,7 @@ public:
 
 	// Non button based menu handling (main menu, character generation)
 	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
-	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);	
+	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
 
 	// Button based menus (camp menu, load menu)
 	void runCampMenu();
@@ -87,8 +87,8 @@ private:
 	void messageDialogue(int dim, int id, int buttonTextCol);
 	int selectCharacterDialogue(int id);
 	void displayTextBox(int id);
-	
-	Button *initMenu(int id);	
+
+	Button *initMenu(int id);
 	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
 	void drawTextBox(int dim, int id);

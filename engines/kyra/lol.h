@@ -25,7 +25,7 @@
 #ifndef KYRA_LOL_H
 #define KYRA_LOL_H
 
-#include "kyra/loleobbase.h"
+#include "kyra/kyra_rpg.h"
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
 #include "kyra/gui_lol.h"
@@ -265,7 +265,7 @@ struct MistOfDoomAnimData {
 	uint8 sound;
 };
 
-class LoLEngine : public LolEobBaseEngine {
+class LoLEngine : public KyraRpgEngine {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
 friend class TIMInterpreter_LoL;
@@ -577,7 +577,7 @@ private:
 	void setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3);
 
 	TextDisplayer_LoL *_txt;
-	TextDisplayer_Eob *txt() { return _txt; }
+	TextDisplayer_rpg *txt() { return _txt; }
 
 	// emc scripts
 	void runInitScript(const char *filename, int optionalFunc);
