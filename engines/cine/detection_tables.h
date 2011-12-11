@@ -122,7 +122,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -136,7 +136,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -150,7 +150,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		GF_ALT_FONT,
@@ -164,7 +164,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -178,7 +178,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -192,7 +192,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -210,7 +210,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -224,7 +224,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -238,7 +238,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_FW,
 		0,
@@ -384,7 +384,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -398,7 +398,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -412,7 +412,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -426,7 +426,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -440,7 +440,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -454,7 +454,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -468,7 +468,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		GF_DEMO,
@@ -482,7 +482,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,
@@ -496,7 +496,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOMIDI)
 		},
 		GType_OS,
 		0,

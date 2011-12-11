@@ -25,12 +25,14 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"
 
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
+#include "audio/mididrv.h"
 #include "audio/decoders/raw.h"
 #include "audio/mods/soundfx.h"
 
@@ -48,14 +50,13 @@ public:
 	virtual void playSample(const byte *data, int size, int channel, int volume) = 0;
 	virtual void stopAll() = 0;
 	virtual const char *getInstrumentExtension() const { return ""; }
+	virtual void notifyInstrumentLoad(const byte *data, int size, int channel) {}
 
-	void setUpdateCallback(UpdateCallback upCb, void *ref);
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref) = 0;
 	void resetChannel(int channel);
 	void findNote(int freq, int *note, int *oct) const;
 
 protected:
-	UpdateCallback _upCb;
-	void *_upRef;
 
 	static const int _noteTable[];
 	static const int _noteTableCount;
@@ -104,6 +105,7 @@ public:
 	virtual ~AdLibSoundDriver();
 
 	// PCSoundDriver interface
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
 	virtual void stopChannel(int channel);
 	virtual void stopAll();
@@ -121,6 +123,9 @@ public:
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
 
 protected:
+	UpdateCallback _upCb;
+	void *_upRef;
+
 	FM_OPL *_opl;
 	int _sampleRate;
 	Audio::Mixer *_mixer;
@@ -177,6 +182,29 @@ public:
 	virtual void playSample(const byte *data, int size, int channel, int volume);
 };
 
+// (Future Wars) MIDI driver
+class MidiSoundDriverH32 : public PCSoundDriver {
+public:
+	MidiSoundDriverH32(MidiDriver *output);
+	~MidiSoundDriverH32();
+
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
+	virtual void setChannelFrequency(int channel, int frequency);
+	virtual void stopChannel(int channel);
+	virtual void playSample(const byte *data, int size, int channel, int volume);
+	virtual void stopAll() {}
+	virtual const char *getInstrumentExtension() const { return ".H32"; }
+	virtual void notifyInstrumentLoad(const byte *data, int size, int channel);
+
+private:
+	MidiDriver *_output;
+	UpdateCallback _callback;
+
+	void writeInstrument(int offset, const byte *data, int size);
+	void selectInstrument(int channel, int unk, int instrument, int volume);
+};
+
 class PCSoundFxPlayer {
 public:
 
@@ -216,11 +244,6 @@ private:
 };
 
 
-void PCSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
-	_upCb = upCb;
-	_upRef = ref;
-}
-
 void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
 	*note = _noteTableCount - 1;
 	for (int i = 0; i < _noteTableCount; ++i) {
@@ -250,6 +273,11 @@ AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 AdLibSoundDriver::~AdLibSoundDriver() {
 	_mixer->stopHandle(_soundHandle);
 	OPLDestroy(_opl);
+}
+
+void AdLibSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
+	_upCb = upCb;
+	_upRef = ref;
 }
 
 void AdLibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
@@ -564,6 +592,133 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 	}
 }
 
+MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
+    : _output(output), _callback(0) {
+}
+
+MidiSoundDriverH32::~MidiSoundDriverH32() {
+	if (_callback)
+		g_system->getTimerManager()->removeTimerProc(_callback);
+
+	_output->close();
+	delete _output;
+}
+
+void MidiSoundDriverH32::setUpdateCallback(UpdateCallback upCb, void *ref) {
+	Common::TimerManager *timer = g_system->getTimerManager();
+	assert(timer);
+
+	if (_callback)
+		timer->removeTimerProc(_callback);
+
+	_callback = upCb;
+	if (_callback)
+		timer->installTimerProc(_callback, 1000000 / 50, ref, "MidiSoundDriverH32");
+}
+
+void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrument, int volume) {
+	if (volume < 0 ||  volume > 100)
+		volume = 0;
+
+	if (!data)
+		selectInstrument(channel, 0, 0, volume);
+	else if (data[0] < 0x80)
+		selectInstrument(channel, data[0] / 0x40, data[0] % 0x40, volume);
+	else
+		selectInstrument(channel, 2, instrument, volume);
+}
+
+void MidiSoundDriverH32::setChannelFrequency(int channel, int frequency) {
+	int note, oct;
+	findNote(frequency, &note, &oct);
+	note %= 12;
+	note = oct * 12 + note + 12;
+
+	_output->send(0x91 + channel, note, 0x7F);
+}
+
+void MidiSoundDriverH32::stopChannel(int channel) {
+	_output->send(0xB1 + channel, 0x7B, 0x00);
+}
+
+void MidiSoundDriverH32::playSample(const byte *data, int size, int channel, int volume) {
+	stopChannel(channel);
+
+	volume = volume * 8 / 5;
+
+	if (data[0] < 0x80) {
+		selectInstrument(channel, data[0] / 0x40, data[0] % 0x40, volume);
+	} else {
+		writeInstrument(channel * 512 + 0x80000, data + 1, 256);
+		selectInstrument(channel, 2, channel, volume);
+	}
+
+	_output->send(0x91 + channel, 12, 0x7F);
+}
+
+void MidiSoundDriverH32::notifyInstrumentLoad(const byte *data, int size, int channel) {
+	if (data[0] < 0x80 || data[0] > 0xC0)
+		return;
+
+	writeInstrument(channel * 512 + 0x80000, data + 1, size - 1);
+}
+
+void MidiSoundDriverH32::writeInstrument(int offset, const byte *data, int size) {
+	byte sysEx[254];
+
+	sysEx[0] = 0x41;
+	sysEx[1] = 0x10;
+	sysEx[2] = 0x16;
+	sysEx[3] = 0x12;
+	sysEx[4] = (offset >> 16) & 0xFF;
+	sysEx[5] = (offset >>  8) & 0xFF;
+	sysEx[6] = (offset >>  0) & 0xFF;
+	int copySize = MIN(246, size);
+	memcpy(&sysEx[7], data, copySize);
+
+	byte checkSum = 0;
+	for (int i = 0; i < copySize + 3; ++i)
+		checkSum += sysEx[4 + i];
+	sysEx[7 + copySize] = 0x80 - (checkSum & 0x7F);
+
+	_output->sysEx(sysEx, copySize + 8);
+}
+
+void MidiSoundDriverH32::selectInstrument(int channel, int unk, int instrument, int volume) {
+	const int offset = channel * 16 + 0x30000;
+
+	byte sysEx[24] = {
+		0x41, 0x10, 0x16, 0x12,
+		0x00, 0x00, 0x00,       // offset
+		0x00,                   // unk
+		0x00,                   // instrument
+		0x18, 0x32, 0x0C, 0x03, 0x01, 0x00,
+		0x00,                   // volume
+		0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00                    // checksum
+	};
+
+
+	sysEx[4] = (offset >> 16) & 0xFF;
+	sysEx[5] = (offset >>  8) & 0xFF;
+	sysEx[6] = (offset >>  0) & 0xFF;
+
+	sysEx[7] = unk;
+
+	sysEx[8] = instrument;
+
+	sysEx[15] = volume;
+
+	byte checkSum = 0;
+
+	for (int i = 4; i < 23; ++i)
+		checkSum += sysEx[i];
+
+	sysEx[23] = 0x80 - (checkSum & 0x7F);
+
+	_output->sysEx(sysEx, 24);
+}
+
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 	: _playing(false), _driver(driver) {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
@@ -608,9 +763,12 @@ bool PCSoundFxPlayer::load(const char *song) {
 				*dot = '\0';
 			}
 			strcat(instrument, _driver->getInstrumentExtension());
-			_instrumentsData[i] = readBundleSoundFile(instrument);
+			uint32 instrumentSize;
+			_instrumentsData[i] = readBundleSoundFile(instrument, &instrumentSize);
 			if (!_instrumentsData[i]) {
 				warning("Unable to load soundfx instrument '%s'", instrument);
+			} else {
+				_driver->notifyInstrumentLoad(_instrumentsData[i], instrumentSize, i);
 			}
 		}
 	}
@@ -718,11 +876,27 @@ void PCSoundFxPlayer::unload() {
 
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm) {
-	if (_vm->getGameType() == GType_FW) {
-		_soundDriver = new AdLibSoundDriverINS(_mixer);
-	} else {
-		_soundDriver = new AdLibSoundDriverADL(_mixer);
+
+	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
+	const MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_MT32 || musicType == MT_GM) {
+		MidiDriver *driver = MidiDriver::createMidi(dev);
+		if (driver && driver->open() == 0) {
+			driver->sendMT32Reset();
+			_soundDriver = new MidiSoundDriverH32(driver);
+		} else {
+			warning("Could not create MIDI output falling back to AdLib");
+		}
 	}
+
+	if (!_soundDriver) {
+		if (_vm->getGameType() == GType_FW) {
+			_soundDriver = new AdLibSoundDriverINS(_mixer);
+		} else {
+			_soundDriver = new AdLibSoundDriverADL(_mixer);
+		}
+	}
+
 	_player = new PCSoundFxPlayer(_soundDriver);
 }
 
