@@ -1528,7 +1528,39 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_TALK:
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			warning("TODO: talk sequence");
+			R2_GLOBALS._player.disableControl();
+
+			if (!R2_GLOBALS.getFlag(44)) {
+				if (R2_GLOBALS.getFlag(40))
+					scene->_field412 = 119;
+				else if (R2_GLOBALS.getFlag(38))
+					scene->_field412 = 101;
+				else {
+					R2_GLOBALS._sound1.play(69);
+					scene->_field412 = 100;
+				}
+
+				scene->_sceneMode = 309;
+				scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
+			} else if (!R2_GLOBALS.getFlag(55)) {
+				R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+				scene->_sceneMode = 10;
+				scene->_stripManager.start3(scene->_field412, scene, R2_GLOBALS._stripManager_lookupList);
+			} else {
+				scene->_sceneMode = 16;
+
+				if (!R2_GLOBALS.getFlag(57)) {
+					R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+					scene->_stripManager.start3(434, scene, R2_GLOBALS._stripManager_lookupList);
+				} else if (R2_GLOBALS._player._characterScene[R2_MIRANDA] != 500) {
+					R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+					scene->_stripManager.start3(407, scene, R2_GLOBALS._stripManager_lookupList);
+				} else {
+					scene->_field412 = 433;
+					scene->_sceneMode = 309;
+					scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
+				}
+			}
 		} else {
 			scene->_sceneMode = 10;
 			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
