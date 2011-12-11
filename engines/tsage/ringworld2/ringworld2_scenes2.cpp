@@ -2218,5 +2218,186 @@ void Scene2450::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2455 - Maze: Inside crevasse
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
+	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == R2_29) {
+		if ((R2_INVENTORY.getObjectScene(49) == 2455) || (R2_INVENTORY.getObjectScene(50) == 2455)) {
+			R2_GLOBALS._player.disableControl();
+			scene->_sceneMode = 2458;
+			scene->_actor2._lookLineNum = 9;
+			scene->_actor1.remove();
+			scene->_actor3.postInit();
+			scene->_actor3.setDetails(2455, 16, 1, -1, 2, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 2458, &R2_GLOBALS._player, &scene->_actor2, &scene->_actor3, NULL);
+			return true;
+		}
+	}
+
+	return SceneActor::startAction(action, event);
+}
+
+bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
+	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case R2_49:
+		if (R2_INVENTORY.getObjectScene(50) != 2455) {
+			R2_GLOBALS._player.disableControl();
+			scene->_actor1.postInit();
+			scene->_actor1.setup(2456, 3, 3);
+			scene->_actor1.setPosition(Common::Point(162, 165));
+			scene->_actor1.setDetails(2455, 15, 1, -1, 2, NULL);
+			scene->_sceneMode = 11;
+			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
+			return true;
+		}
+		break;
+	case R2_50:
+		if (R2_INVENTORY.getObjectScene(49) != 2455) {
+			R2_GLOBALS._player.disableControl();
+			scene->_actor1.postInit();
+			scene->_actor1.setup(2456, 3, 3);
+			scene->_actor1.setPosition(Common::Point(162, 165));
+			scene->_actor1.setDetails(2455, 15, 1, -1, 2, NULL);
+			scene->_sceneMode = 12;
+			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return SceneActor::startAction(action, event);
+}
+
+bool Scene2455::Actor3::startAction(CursorType action, Event &event) {
+	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2459;
+		scene->setAction(&scene->_sequenceManager, scene, 2459, &R2_GLOBALS._player, &scene->_actor3, NULL);
+		return true;
+	}
+
+	return SceneActor::startAction(action, event);
+}
+
+void Scene2455::Exit1::changeScene() {
+	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 2461;
+	scene->setAction(&scene->_sequenceManager, scene, 2461, &R2_GLOBALS._player, NULL);
+}
+
+void Scene2455::postInit(SceneObjectList *OwnerList) {
+	loadScene(2455);
+	SceneExt::postInit();
+
+	if (R2_GLOBALS._sceneManager._previousScene == -1) {
+		R2_INVENTORY.setObjectScene(29, 2);
+		R2_INVENTORY.setObjectScene(50, 2);
+	}
+
+	R2_GLOBALS._sound1.play(200);
+	_exit1.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
+
+	if (R2_INVENTORY.getObjectScene(29) == 2455) {
+		if ((R2_INVENTORY.getObjectScene(50) == 2455) || (R2_INVENTORY.getObjectScene(49) == 2455)) {
+			_actor1.postInit();
+			_actor1.setup(2456, 3, 3);
+			_actor1.setPosition(Common::Point(162, 165));
+			_actor1.setDetails(2455, 15, 1, -1, 1, NULL);
+		}	
+	} else {
+		_actor3.postInit();
+		_actor3.setup(2456, 3, 1);
+		_actor3.setPosition(Common::Point(176, 165));
+		_actor3.setDetails(2455, 16, 1, -1, 1, NULL);
+	}
+
+	_actor2.postInit();
+	if (R2_INVENTORY.getObjectScene(29) == 2455) {
+		_actor2.setup(2456, 3, 2);
+		_actor2.setDetails(2455, 9, 1, -1, 1, NULL);
+	} else {
+		if ((R2_INVENTORY.getObjectScene(50) != 2455) && (R2_INVENTORY.getObjectScene(49) != 2455)) 
+			_actor2.setup(2455, 1, 1);
+		else 
+			_actor2.setup(2456, 1, 1);
+		_actor2.setDetails(2455, 3, 1, -1, 1, NULL);
+	}
+	_actor2.setPosition(Common::Point(162, 165));
+	_actor2.fixPriority(20);
+	if (R2_INVENTORY.getObjectScene(29) != 2455)
+		_actor2.animate(ANIM_MODE_2, NULL);
+
+	R2_GLOBALS._player.postInit();
+	_item1.setDetails(Rect(0, 0, 320, 200), 2455, 0, 1, -1, 1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2425) {
+		_sceneMode = 2460;
+		setAction(&_sequenceManager, this, 2460, &R2_GLOBALS._player, NULL);
+	} else {
+		R2_GLOBALS._player.setup(2455, 2, 9);
+		R2_GLOBALS._player.setPosition(Common::Point(118, 165));
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+	}
+	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2455;
+}
+
+void Scene2455::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene2455::signal() {
+	switch (_sceneMode) {
+	case 10:
+	// No break on purpose
+	case 2461:
+		g_globals->_sceneManager.changeScene(2425);
+		break;
+	case 11:
+		R2_INVENTORY.setObjectScene(49, 2455);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 12:
+		R2_INVENTORY.setObjectScene(50, 2455);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 2458:
+		R2_INVENTORY.setObjectScene(29, 2455);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 2459:
+		_actor3.remove();
+		R2_INVENTORY.setObjectScene(31, 2);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	default:
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	}
+}
+
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
