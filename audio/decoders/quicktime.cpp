@@ -87,6 +87,9 @@ void QuickTimeAudioDecoder::init() {
 
 			// Initialize the codec (if necessary)
 			entry->initCodec();
+
+			if (_tracks[_audioTrackIndex]->editCount != 1)
+				warning("Multiple edit list entries in an audio track. Things may go awry");
 		}
 	}
 }
@@ -414,7 +417,9 @@ public:
 	}
 
 	Timestamp getLength() const {
-		return Timestamp(0, _tracks[_audioTrackIndex]->duration, _tracks[_audioTrackIndex]->timeScale);
+		// TODO: Switch to the other one when audio edits are supported
+		//return Timestamp(0, _tracks[_audioTrackIndex]->duration, _timeScale);
+		return Timestamp(0, _tracks[_audioTrackIndex]->mediaDuration, _tracks[_audioTrackIndex]->timeScale);
 	}
 };
 
