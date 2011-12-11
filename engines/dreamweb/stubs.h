@@ -333,6 +333,7 @@
 	void useRailing();
 	void useWindow();
 	void useHatch();
+	void useLighter();
 	void wheelSound();
 	void callHotelLift();
 	void useShield();

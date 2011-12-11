@@ -526,7 +526,6 @@ public:
 
 	void useWire();
 	void identifyOb();
-	void useLighter();
 	void runEndSeq();
 	void useOpenBox();
 	void clearBuffers();

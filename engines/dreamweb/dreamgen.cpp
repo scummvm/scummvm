@@ -4125,36 +4125,6 @@ void DreamGenContext::drawItAll() {
 	showIcon();
 }
 
-void DreamGenContext::useLighter() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto gotlighterwith;
-	withWhat();
-	return;
-gotlighterwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'S';
-	ch = 'M';
-	dl = 'K';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto cigarette;
-	showFirstUse();
-	putBackObStuff();
-	return;
-cigarette:
-	cx = 300;
-	al = 9;
-	showPuzText();
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+2) = 255;
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::useCashCard() {
 	STACK_CHECK;
 	getRidOfReels();

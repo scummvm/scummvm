@@ -1116,6 +1116,26 @@ void DreamGenContext::useCardReader3() {
 	}
 }
 
+void DreamGenContext::useLighter() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'S', 'M', 'K', 'E' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		showFirstUse();
+		putBackObStuff();
+	} else {
+		cx = 300;
+		al = 9;
+		showPuzText();
+		getExAd(data.byte(kWithobject));
+		es.byte(bx + 2) = 255;
+		data.byte(kGetback) = 1;
+	}
+}
+
 void DreamGenContext::openTomb() {
 	data.byte(kProgresspoints)++;
 	showFirstUse();
