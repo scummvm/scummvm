@@ -267,7 +267,7 @@ public:
 	Action3 _action3;
 	Action4 _action4;
 	PaletteRotation *_rotation;
-	int _field412;
+	int _stripId;
 
 	Scene300();
 	void signal309();

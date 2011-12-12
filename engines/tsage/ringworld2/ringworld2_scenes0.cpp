@@ -1527,17 +1527,18 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_TALK:
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			// Quinn talking to Miranda
 			R2_GLOBALS._player.disableControl();
 
 			if (!R2_GLOBALS.getFlag(44)) {
 				if (R2_GLOBALS.getFlag(40))
-					scene->_field412 = 119;
+					scene->_stripId = 119;
 				else if (R2_GLOBALS.getFlag(38))
-					scene->_field412 = 101;
+					scene->_stripId = 101;
 				else {
 					R2_GLOBALS._sound1.play(69);
-					scene->_field412 = 100;
+					scene->_stripId = 100;
 				}
 
 				scene->_sceneMode = 309;
@@ -1545,7 +1546,7 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 			} else if (!R2_GLOBALS.getFlag(55)) {
 				R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 				scene->_sceneMode = 10;
-				scene->_stripManager.start3(scene->_field412, scene, R2_GLOBALS._stripManager_lookupList);
+				scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
 			} else {
 				scene->_sceneMode = 16;
 
@@ -1556,23 +1557,24 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 					R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 					scene->_stripManager.start3(407, scene, R2_GLOBALS._stripManager_lookupList);
 				} else {
-					scene->_field412 = 433;
+					scene->_stripId = 433;
 					scene->_sceneMode = 309;
 					scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
 				}
 			}
 		} else {
+			// Seeker talking to Miranda
 			scene->_sceneMode = 10;
 			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 			if (!R2_GLOBALS.getFlag(44))
-				scene->_field412 = 174 + R2_GLOBALS._randomSource.getRandomNumber(2);
+				scene->_stripId = 174 + R2_GLOBALS._randomSource.getRandomNumber(2);
 			else if (!R2_GLOBALS.getFlag(55))
-				scene->_field412 = 211;
+				scene->_stripId = 211;
 			else
-				scene->_field412 = 438;
+				scene->_stripId = 438;
 
-			scene->_stripManager.start3(scene->_field412, scene, R2_GLOBALS._stripManager_lookupList);
+			scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
 		}
 		return true;
 
@@ -1585,7 +1587,7 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 			SceneItem::display2(300, 55);
 		else {
 			R2_GLOBALS._player.disableControl();
-			scene->_field412 = R2_GLOBALS.getFlag(4) ? 121 : 120;
+			scene->_stripId = R2_GLOBALS.getFlag(4) ? 121 : 120;
 			scene->_sceneMode = 309;
 			scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
 		}
@@ -1599,24 +1601,123 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 }
 
 bool Scene300::Seeker::startAction(CursorType action, Event &event) {
-	return false;
+	Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		R2_GLOBALS._player.disableControl();
+
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			if (R2_GLOBALS.getFlag(44)) {
+				if (!R2_GLOBALS.getFlag(38)) {
+					R2_GLOBALS._sound1.play(69);
+					scene->_stripId = 181;
+					scene->_sceneMode = 310;
+					scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
+				} else {
+					scene->_stripId = R2_GLOBALS.getFlag(40) ? 170 : 150;
+					scene->_sceneMode = 310;
+					scene->setAction(&scene->_sequenceManager1, scene, 309, &R2_GLOBALS._player, NULL);
+				}
+			} else {
+				R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+				if (!R2_GLOBALS.getFlag(55)) {
+					scene->_sceneMode = 10;
+					scene->_stripManager.start3(205, scene, R2_GLOBALS._stripManager_lookupList);
+				} else {
+					scene->_sceneMode = 16;
+					scene->_stripManager.start3(R2_GLOBALS.getFlag(57) ? 407 : 401, scene, R2_GLOBALS._stripManager_lookupList);
+				}
+			}
+		} else {
+			scene->_sceneMode = 10;
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+
+			if (!R2_GLOBALS.getFlag(44))
+				scene->_stripId = 122 + R2_GLOBALS._randomSource.getRandomNumber(2);
+			else if (!R2_GLOBALS.getFlag(55))
+				scene->_stripId = 209;
+			else
+				scene->_stripId = 440;
+
+			scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
+		}
+		return true;
+
+	case R2_OPTO_DISK:
+		if (R2_GLOBALS.getFlag(13)) {
+			SceneItem::display2(300, 53);
+		} else {
+			R2_GLOBALS._player.disableControl();
+			scene->_stripId = 171;
+		}
+
+		scene->_sceneMode = 310;
+		scene->setAction(&scene->_sequenceManager1, scene, 310, &R2_GLOBALS._player, NULL);
+		return true;
+
+	case R2_2:
+		if (!R2_GLOBALS.getFlag(2) || !R2_GLOBALS.getFlag(3) || (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 1))
+			break;
+
+		R2_GLOBALS._player.disableControl();
+		scene->_stripId = R2_GLOBALS.getFlag(4) ? 173 : 172;
+		scene->_sceneMode = 310;
+		scene->setAction(&scene->_sequenceManager1, scene, 310, &R2_GLOBALS._player, NULL);
+		return true;
+	
+	default:
+		break;
+	}
+
+	return SceneActor::startAction(action, event);
 }
 
 bool Scene300::Quinn::startAction(CursorType action, Event &event) {
-	return false;
+	Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+		scene->_sceneMode = 10;
+
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
+			if (R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500)
+				scene->_stripId = 442;
+			else if (!R2_GLOBALS.getFlag(44))
+				scene->_stripId = 177 + R2_GLOBALS._randomSource.getRandomNumber(2);
+			else if (!R2_GLOBALS.getFlag(55))
+				scene->_stripId = 208;
+			else
+				scene->_stripId = 441;
+		} else if (R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500) {
+			scene->_stripId = 442;
+		} else if (R2_GLOBALS.getFlag(44)) {
+			scene->_stripId = R2_GLOBALS.getFlag(55) ? 441 : 208;
+		} else {
+			scene->_stripId = 125 + R2_GLOBALS._randomSource.getRandomNumber(2);
+		}
+
+		scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
+		return true;
+
+	default:
+		return SceneActor::startAction(action, event);
+	}
 }
 
 /*--------------------------------------------------------------------------*/
 
 Scene300::Scene300(): SceneExt() {
-	_field412 = 0;
+	_stripId = 0;
 	_rotation = NULL;
 }
 
 void Scene300::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_stripId);
 	SYNC_POINTER(_rotation);
 }
 
@@ -1854,7 +1955,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		case 1100:
 			R2_GLOBALS._player.setVisage(10);
 			R2_GLOBALS._player.setPosition(Common::Point(160, 95));
-			_field412 = 400;
+			_stripId = 400;
 			_sceneMode = 309;
 			setAction(&_sequenceManager1, this, 309, &R2_GLOBALS._player, NULL);
 			break;
@@ -1953,7 +2054,7 @@ void Scene300::signal() {
 		}
 
 		_stripManager._field2E8 = 0;
-		switch (_field412) {
+		switch (_stripId) {
 		case 400:
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 15;
@@ -2066,7 +2167,7 @@ void Scene300::signal() {
 		signal309();
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_sceneMode = 10;
-		_stripManager.start3(_field412, this, R2_GLOBALS._stripManager_lookupList);
+		_stripManager.start3(_stripId, this, R2_GLOBALS._stripManager_lookupList);
 		break;
 
 	case 313:
