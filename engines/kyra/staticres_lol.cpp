@@ -30,23 +30,23 @@
 namespace Kyra {
 
 const LoLCharacter *StaticResource::loadCharData(int id, int &entries) {
-	return (const LoLCharacter *)getData(id, kLolCharData, entries);
+	return (const LoLCharacter *)getData(id, kLoLCharData, entries);
 }
 
 const SpellProperty *StaticResource::loadSpellData(int id, int &entries) {
-	return (const SpellProperty *)getData(id, kLolSpellData, entries);
+	return (const SpellProperty *)getData(id, kLoLSpellData, entries);
 }
 
 const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
-	return (const CompassDef *)getData(id, kLolCompassData, entries);
+	return (const CompassDef *)getData(id, kLoLCompassData, entries);
 }
 
 const FlyingObjectShape *StaticResource::loadFlyingObjectData(int id, int &entries) {
-	return (const FlyingObjectShape *)getData(id, kLolFlightShpData, entries);
+	return (const FlyingObjectShape *)getData(id, kLoLFlightShpData, entries);
 }
 
 const LoLButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
-	return (const LoLButtonDef *)getData(id, kLolButtonData, entries);
+	return (const LoLButtonDef *)getData(id, kLoLButtonData, entries);
 }
 
 bool StaticResource::loadCharData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -243,78 +243,78 @@ void LoLEngine::initStaticResource() {
 		return;
 
 	int tempSize;
-	_pakFileList = _staticres->loadStrings(kLolIngamePakFiles, _pakFileListSize);
-	_charDefaults = _staticres->loadCharData(kLolCharacterDefs, _charDefaultsSize);
-	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, tempSize);
-	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, tempSize);
-	_ingameGMSoundIndex = _staticres->loadRawData(kLolIngameGMSfxIndex, _ingameGMSoundIndexSize);
-	_ingameMT32SoundIndex = _staticres->loadRawData(kLolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
-	_ingamePCSpeakerSoundIndex = _staticres->loadRawData(kLolIngamePcSpkSfxIndex, _ingamePCSpeakerSoundIndexSize);
-	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, tempSize);
-	_gameShapeMap = (const int8 *)_staticres->loadRawData(kLolGameShapeMap, tempSize);
-	_sceneItemOffs = (const int8 *)_staticres->loadRawData(kLolSceneItemOffs, tempSize);
-	_charInvIndex = _staticres->loadRawData(kLolCharInvIndex, tempSize);
-	_charInvDefs = _staticres->loadRawData(kLolCharInvDefs, tempSize);
-	_charDefsMan = _staticres->loadRawDataBe16(kLolCharDefsMan, tempSize);
-	_charDefsWoman = _staticres->loadRawDataBe16(kLolCharDefsWoman, tempSize);
-	_charDefsKieran = _staticres->loadRawDataBe16(kLolCharDefsKieran, tempSize);
-	_charDefsAkshel = _staticres->loadRawDataBe16(kLolCharDefsAkshel, tempSize);
-	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLolExpRequirements, tempSize);
-	_monsterModifiers = _staticres->loadRawDataBe16(kLolMonsterModifiers, tempSize);
-	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLolMonsterShiftOffsets, tempSize);
-	_monsterDirFlags = _staticres->loadRawData(kLolMonsterDirFlags, tempSize);
-	_monsterScaleX = _staticres->loadRawData(kLolMonsterScaleX, tempSize);
-	_monsterScaleY = _staticres->loadRawData(kLolMonsterScaleY, tempSize);
-	_monsterScaleWH = _staticres->loadRawDataBe16(kLolMonsterScaleWH, tempSize);
-	_inventorySlotDesc = _staticres->loadRawDataBe16(kLolInventoryDesc, tempSize);
-	_levelShpList = _staticres->loadStrings(kLolLevelShpList, tempSize);
-	_levelDatList = _staticres->loadStrings(kLolLevelDatList, tempSize);
-	_compassDefs = _staticres->loadCompassData(kLolCompassDefs, tempSize);
-	_flyingItemShapes = _staticres->loadFlyingObjectData(kLolFlyingObjectShp, tempSize);
-	_itemCost = _staticres->loadRawDataBe16(kLolItemPrices, tempSize);
-	_stashSetupData = _staticres->loadRawData(kLolStashSetup, tempSize);
+	_pakFileList = _staticres->loadStrings(kLoLIngamePakFiles, _pakFileListSize);
+	_charDefaults = _staticres->loadCharData(kLoLCharacterDefs, _charDefaultsSize);
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLoLIngameSfxIndex, tempSize);
+	_musicTrackMap = _staticres->loadRawData(kLoLMusicTrackMap, tempSize);
+	_ingameGMSoundIndex = _staticres->loadRawData(kLoLIngameGMSfxIndex, _ingameGMSoundIndexSize);
+	_ingameMT32SoundIndex = _staticres->loadRawData(kLoLIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
+	_ingamePCSpeakerSoundIndex = _staticres->loadRawData(kLoLIngamePcSpkSfxIndex, _ingamePCSpeakerSoundIndexSize);
+	_spellProperties = _staticres->loadSpellData(kLoLSpellProperties, tempSize);
+	_gameShapeMap = (const int8 *)_staticres->loadRawData(kLoLGameShapeMap, tempSize);
+	_sceneItemOffs = (const int8 *)_staticres->loadRawData(kLoLSceneItemOffs, tempSize);
+	_charInvIndex = _staticres->loadRawData(kLoLCharInvIndex, tempSize);
+	_charInvDefs = _staticres->loadRawData(kLoLCharInvDefs, tempSize);
+	_charDefsMan = _staticres->loadRawDataBe16(kLoLCharDefsMan, tempSize);
+	_charDefsWoman = _staticres->loadRawDataBe16(kLoLCharDefsWoman, tempSize);
+	_charDefsKieran = _staticres->loadRawDataBe16(kLoLCharDefsKieran, tempSize);
+	_charDefsAkshel = _staticres->loadRawDataBe16(kLoLCharDefsAkshel, tempSize);
+	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLoLExpRequirements, tempSize);
+	_monsterModifiers = _staticres->loadRawDataBe16(kLoLMonsterModifiers, tempSize);
+	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLoLMonsterShiftOffsets, tempSize);
+	_monsterDirFlags = _staticres->loadRawData(kLoLMonsterDirFlags, tempSize);
+	_monsterScaleX = _staticres->loadRawData(kLoLMonsterScaleX, tempSize);
+	_monsterScaleY = _staticres->loadRawData(kLoLMonsterScaleY, tempSize);
+	_monsterScaleWH = _staticres->loadRawDataBe16(kLoLMonsterScaleWH, tempSize);
+	_inventorySlotDesc = _staticres->loadRawDataBe16(kLoLInventoryDesc, tempSize);
+	_levelShpList = _staticres->loadStrings(kLoLLevelShpList, tempSize);
+	_levelDatList = _staticres->loadStrings(kLoLLevelDatList, tempSize);
+	_compassDefs = _staticres->loadCompassData(kLoLCompassDefs, tempSize);
+	_flyingItemShapes = _staticres->loadFlyingObjectData(kLoLFlyingObjectShp, tempSize);
+	_itemCost = _staticres->loadRawDataBe16(kLoLItemPrices, tempSize);
+	_stashSetupData = _staticres->loadRawData(kLoLStashSetup, tempSize);
 
-	_dscWalls = (const int8 *)_staticres->loadRawData(kLolDscWalls, tempSize);
+	_dscWalls = (const int8 *)_staticres->loadRawData(kLoLDscWalls, tempSize);
 
-	_dscOvlMap = _staticres->loadRawData(kLolDscOvlMap, tempSize);
-	_dscShapeOvlIndex = _staticres->loadRawData(kLolDscOvlIndex, tempSize);
-	_dscShapeScaleW = _staticres->loadRawDataBe16(kLolDscScaleWidthData, tempSize);
-	_dscShapeScaleH = _staticres->loadRawDataBe16(kLolDscScaleHeightData, tempSize);
-	_dscShapeY = (const int8 *)_staticres->loadRawData(kLolBaseDscY, tempSize);
+	_dscOvlMap = _staticres->loadRawData(kLoLDscOvlMap, tempSize);
+	_dscShapeOvlIndex = _staticres->loadRawData(kLoLDscOvlIndex, tempSize);
+	_dscShapeScaleW = _staticres->loadRawDataBe16(kLoLDscScaleWidthData, tempSize);
+	_dscShapeScaleH = _staticres->loadRawDataBe16(kLoLDscScaleHeightData, tempSize);
+	_dscShapeY = (const int8 *)_staticres->loadRawData(kLoLBaseDscY, tempSize);
 
-	_dscDoorMonsterScaleTable = _staticres->loadRawDataBe16(kLolDscDoorScale, tempSize);
-	_dscDoor4 = _staticres->loadRawDataBe16(kLolDscDoor4, tempSize);
-	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorX, tempSize);
-	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(kLolDscDoorY, tempSize);
+	_dscDoorMonsterScaleTable = _staticres->loadRawDataBe16(kLoLDscDoorScale, tempSize);
+	_dscDoor4 = _staticres->loadRawDataBe16(kLoLDscDoor4, tempSize);
+	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(kLoLDscDoorX, tempSize);
+	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(kLoLDscDoorY, tempSize);
 
-	_scrollXTop = _staticres->loadRawData(kLolScrollXTop, tempSize);
-	_scrollYTop = _staticres->loadRawData(kLolScrollYTop, tempSize);
-	_scrollXBottom = _staticres->loadRawData(kLolScrollXBottom, tempSize);
-	_scrollYBottom = _staticres->loadRawData(kLolScrollYBottom, tempSize);
+	_scrollXTop = _staticres->loadRawData(kLoLScrollXTop, tempSize);
+	_scrollYTop = _staticres->loadRawData(kLoLScrollYTop, tempSize);
+	_scrollXBottom = _staticres->loadRawData(kLoLScrollXBottom, tempSize);
+	_scrollYBottom = _staticres->loadRawData(kLoLScrollYBottom, tempSize);
 
-	const char *const *tmpSndList = _staticres->loadStrings(kLolIngameSfxFiles, _ingameSoundListSize);
+	const char *const *tmpSndList = _staticres->loadStrings(kLoLIngameSfxFiles, _ingameSoundListSize);
 	if (tmpSndList) {
 		_ingameSoundList = new char*[_ingameSoundListSize];
 		for (int i = 0; i < _ingameSoundListSize; i++) {
 			_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
 			strcpy(_ingameSoundList[i], tmpSndList[i]);
 		}
-		_staticres->unloadId(kLolIngameSfxFiles);
+		_staticres->unloadId(kLoLIngameSfxFiles);
 	}
 
-	_buttonData = _staticres->loadButtonDefs(kLolButtonDefs, tempSize);
-	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList1, tempSize);
-	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList2, tempSize);
-	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList3, tempSize);
-	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList4, tempSize);
-	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList5, tempSize);
-	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList6, tempSize);
-	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList7, tempSize);
-	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList8, tempSize);
+	_buttonData = _staticres->loadButtonDefs(kLoLButtonDefs, tempSize);
+	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList1, tempSize);
+	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList2, tempSize);
+	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList3, tempSize);
+	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList4, tempSize);
+	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList5, tempSize);
+	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList6, tempSize);
+	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList7, tempSize);
+	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList8, tempSize);
 
-	_autoMapStrings = _staticres->loadRawDataBe16(kLolMapStringId, tempSize);
+	_autoMapStrings = _staticres->loadRawDataBe16(kLoLMapStringId, tempSize);
 
-	const uint8 *tmp = _staticres->loadRawData(kLolLegendData, tempSize);
+	const uint8 *tmp = _staticres->loadRawData(kLoLLegendData, tempSize);
 	uint8 entrySize = tempSize / 12;
 	tempSize /= entrySize;
 	if (tempSize) {
@@ -326,21 +326,21 @@ void LoLEngine::initStaticResource() {
 			_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
 			tmp += 2;
 		}
-		_staticres->unloadId(kLolLegendData);
+		_staticres->unloadId(kLoLLegendData);
 	}
 
-	tmp = _staticres->loadRawData(kLolMapCursorOvl, tempSize);
+	tmp = _staticres->loadRawData(kLoLMapCursorOvl, tempSize);
 	if (tmp) {
 		_mapCursorOverlay = new uint8[tempSize];
 		memcpy(_mapCursorOverlay, tmp, tempSize);
-		_staticres->unloadId(kLolMapCursorOvl);
+		_staticres->unloadId(kLoLMapCursorOvl);
 	}
 
-	_updateSpellBookCoords = _staticres->loadRawData(kLolSpellbookCoords, tempSize);
-	_updateSpellBookAnimData = _staticres->loadRawData(kLolSpellbookAnim, tempSize);
-	_healShapeFrames = _staticres->loadRawData(kLolHealShapeFrames, tempSize);
+	_updateSpellBookCoords = _staticres->loadRawData(kLoLSpellbookCoords, tempSize);
+	_updateSpellBookAnimData = _staticres->loadRawData(kLoLSpellbookAnim, tempSize);
+	_healShapeFrames = _staticres->loadRawData(kLoLHealShapeFrames, tempSize);
 
-	tmp = _staticres->loadRawData(kLolLightningDefs, tempSize);
+	tmp = _staticres->loadRawData(kLoLLightningDefs, tempSize);
 	if (tmp) {
 		_lightningProps = new LightningProperty[5];
 		for (int i = 0; i < 5; i++) {
@@ -348,10 +348,10 @@ void LoLEngine::initStaticResource() {
 			_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
 			_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
 		}
-		_staticres->unloadId(kLolLightningDefs);
+		_staticres->unloadId(kLoLLightningDefs);
 	}
 
-	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLolFireballCoords, tempSize);
+	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLoLFireballCoords, tempSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);

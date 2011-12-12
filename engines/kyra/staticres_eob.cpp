@@ -28,22 +28,22 @@
 namespace Kyra {
 
 #ifdef ENABLE_EOB
-const EobSequenceStep *StaticResource::loadEob2SeqData(int id, int &entries) {
-	return (const EobSequenceStep *)getData(id, kEob2SequenceData, entries);
+const EoBSequenceStep *StaticResource::loadEoB2SeqData(int id, int &entries) {
+	return (const EoBSequenceStep *)getData(id, kEoB2SequenceData, entries);
 }
 
-const EobShapeDef *StaticResource::loadEob2ShapeData(int id, int &entries) {
-	return (const EobShapeDef *)getData(id, kEob2ShapeData, entries);
+const EoBShapeDef *StaticResource::loadEoB2ShapeData(int id, int &entries) {
+	return (const EoBShapeDef *)getData(id, kEoB2ShapeData, entries);
 }
 
-const EobCharacter *StaticResource::loadEobNpcData(int id, int &entries) {
-	return (const EobCharacter *)getData(id, kEobNpcData, entries);
+const EoBCharacter *StaticResource::loadEoBNpcData(int id, int &entries) {
+	return (const EoBCharacter *)getData(id, kEoBNpcData, entries);
 }
 
-bool StaticResource::loadEob2SeqData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadEoB2SeqData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 11;
 
-	EobSequenceStep *s = new EobSequenceStep[size];
+	EoBSequenceStep *s = new EoBSequenceStep[size];
 
 	for (int i = 0; i < size; i++) {
 		s[i].command = stream.readByte();
@@ -62,10 +62,10 @@ bool StaticResource::loadEob2SeqData(Common::SeekableReadStream &stream, void *&
 	return true;
 }
 
-bool StaticResource::loadEob2ShapeData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadEoB2ShapeData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 6;
 
-	EobShapeDef *s = new EobShapeDef[size];
+	EoBShapeDef *s = new EoBShapeDef[size];
 
 	for (int i = 0; i < size; i++) {
 		s[i].index = stream.readSint16BE();
@@ -79,12 +79,12 @@ bool StaticResource::loadEob2ShapeData(Common::SeekableReadStream &stream, void 
 	return true;
 }
 
-bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadEoBNpcData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.readUint16BE();
 
-	EobCharacter *e = new EobCharacter[size];
-	memset(e, 0, size * sizeof(EobCharacter));
-	EobCharacter *s = e;
+	EoBCharacter *e = new EoBCharacter[size];
+	memset(e, 0, size * sizeof(EoBCharacter));
+	EoBCharacter *s = e;
 
 	for (int i = 0; i < size; i++, s++) {
 		s->id = stream.readByte();
@@ -126,28 +126,28 @@ bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&p
 	return true;
 }
 
-void StaticResource::freeEob2SeqData(void *&ptr, int &size) {
-	EobSequenceStep *d = (EobSequenceStep *)ptr;
+void StaticResource::freeEoB2SeqData(void *&ptr, int &size) {
+	EoBSequenceStep *d = (EoBSequenceStep *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
 }
 
-void StaticResource::freeEob2ShapeData(void *&ptr, int &size) {
-	EobShapeDef *d = (EobShapeDef *)ptr;
+void StaticResource::freeEoB2ShapeData(void *&ptr, int &size) {
+	EoBShapeDef *d = (EoBShapeDef *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
 }
 
-void StaticResource::freeEobNpcData(void *&ptr, int &size) {
-	EobCharacter *d = (EobCharacter *)ptr;
+void StaticResource::freeEoBNpcData(void *&ptr, int &size) {
+	EoBCharacter *d = (EoBCharacter *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
 }
 
-const ScreenDim Screen_Eob::_screenDimTable[] = {
+const ScreenDim Screen_EoB::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0E, 0x0C, 0x00, 0x00 },
 	{ 0x13, 0x40, 0x14, 0x80, 0x06, 0x0C, 0x00, 0x00 },
@@ -179,26 +179,26 @@ const ScreenDim Screen_Eob::_screenDimTable[] = {
 	{ 0x0A, 0xA8, 0x15, 0x18, 0x0F, 0x0C, 0x00, 0x00 }
 };
 
-const int Screen_Eob::_screenDimTableCount = ARRAYSIZE(Screen_Eob::_screenDimTable);
+const int Screen_EoB::_screenDimTableCount = ARRAYSIZE(Screen_EoB::_screenDimTable);
 
-const uint8 EobCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 10, 9, 9, 3, 1, 2, 2, 3, 3 };
+const uint8 EoBCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 10, 9, 9, 3, 1, 2, 2, 3, 3 };
 
-const uint8 EobCoreEngine::_numLevelsPerClass[] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2 };
+const uint8 EoBCoreEngine::_numLevelsPerClass[] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2 };
 
-const int8 EobCoreEngine::_characterClassType[] = {
+const int8 EoBCoreEngine::_characterClassType[] = {
 	0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1,  0,
 	2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2,  1,  5,
 	2, -1, 2, 1, -1
 };
 
-const int16 EobCoreEngine::_hpConstModifiers[] = { -1, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 7, 7 };
+const int16 EoBCoreEngine::_hpConstModifiers[] = { -1, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 7, 7 };
 
-const uint8 EobCoreEngine::_charClassModifier[] = {
+const uint8 EoBCoreEngine::_charClassModifier[] = {
 	0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x02,
 	0x00, 0x00, 0x02
 };
 
-const uint8 EobCoreEngine::_teleporterShapeDefs[] = {
+const uint8 EoBCoreEngine::_teleporterShapeDefs[] = {
 	0x0C, 0x58, 0x02, 0x0E,
 	0x0C, 0x67, 0x01, 0x07,
 	0x0C, 0x6F, 0x01, 0x07,
@@ -207,7 +207,7 @@ const uint8 EobCoreEngine::_teleporterShapeDefs[] = {
 	0x0C, 0x83, 0x01, 0x03
 };
 
-const uint8 EobCoreEngine::_wallOfForceShapeDefs[] = {
+const uint8 EoBCoreEngine::_wallOfForceShapeDefs[] = {
 	0x00, 0x00, 0x04, 0x08,
 	0x00, 0x08,	0x04, 0x08,
 	0x04, 0x00, 0x04, 0x08,
@@ -216,246 +216,246 @@ const uint8 EobCoreEngine::_wallOfForceShapeDefs[] = {
 	0x0C, 0x00,	0x05, 0x10
 };
 
-const int16 EobCoreEngine::_buttonList1[] = {
+const int16 EoBCoreEngine::_buttonList1[] = {
 	58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14,  15,  16,
 	80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList2[] = {
+const int16 EoBCoreEngine::_buttonList2[] = {
 	58, 61, 62, 63,	64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
 	90, 91,  4,  5,	6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
 	19, 20, 82, 83,	49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList3[] = {
+const int16 EoBCoreEngine::_buttonList3[] = {
 	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,	32, 33, 34, 35, 36, 37, 38, 39,
 	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60,	59, 92, 4, 5, 6, 7, 8, 49,  50,
 	51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList4[] = {
+const int16 EoBCoreEngine::_buttonList4[] = {
 	58, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList5[] = {
+const int16 EoBCoreEngine::_buttonList5[] = {
 	58, 61, 62, 63, 64, 65, 93, 66,	67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
 	27, 28, 29, 30, 31, 32, 33, 34,	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
 	85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList6[] = {
+const int16 EoBCoreEngine::_buttonList6[] = {
 	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 46, 47, 48, 60, 59, 92,
 	4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
-const int16 EobCoreEngine::_buttonList7[] = {
+const int16 EoBCoreEngine::_buttonList7[] = {
 	17, 18, 19, 20, 82, 83, 55, -1
 };
 
-const int16 EobCoreEngine::_buttonList8[] = {
+const int16 EoBCoreEngine::_buttonList8[] = {
 	72, 73, 74, 75, 86, 87, 89, -1
 };
 
-const uint8 EobCoreEngine::_clock2Timers[] = {
+const uint8 EoBCoreEngine::_clock2Timers[] = {
 	0x00, 0x01, 0x20, 0x21, 0x22, 0x22,
 	0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
 	0x04, 0x05, 0x06, 0x07
 };
 
-const uint8 EobCoreEngine::_numClock2Timers = ARRAYSIZE(EobCoreEngine::_clock2Timers);
+const uint8 EoBCoreEngine::_numClock2Timers = ARRAYSIZE(EoBCoreEngine::_clock2Timers);
 
-void EobCoreEngine::initStaticResource() {
+void EoBCoreEngine::initStaticResource() {
 	int temp;
-	_chargenStatStrings = _staticres->loadStrings(kEobBaseChargenStatStrings, temp);
-	_chargenRaceSexStrings = _staticres->loadStrings(kEobBaseChargenRaceSexStrings, temp);
-	_chargenClassStrings = _staticres->loadStrings(kEobBaseChargenClassStrings, temp);
-	_chargenAlignmentStrings = _staticres->loadStrings(kEobBaseChargenAlignmentStrings, temp);
+	_chargenStatStrings = _staticres->loadStrings(kEoBBaseChargenStatStrings, temp);
+	_chargenRaceSexStrings = _staticres->loadStrings(kEoBBaseChargenRaceSexStrings, temp);
+	_chargenClassStrings = _staticres->loadStrings(kEoBBaseChargenClassStrings, temp);
+	_chargenAlignmentStrings = _staticres->loadStrings(kEoBBaseChargenAlignmentStrings, temp);
 
-	_pryDoorStrings = _staticres->loadStrings(kEobBasePryDoorStrings, temp);
-	_warningStrings = _staticres->loadStrings(kEobBaseWarningStrings, temp);
+	_pryDoorStrings = _staticres->loadStrings(kEoBBasePryDoorStrings, temp);
+	_warningStrings = _staticres->loadStrings(kEoBBaseWarningStrings, temp);
 
-	_suffixStringsRings = _staticres->loadStrings(kEobBaseItemSuffixStringsRings, temp);
-	_suffixStringsPotions = _staticres->loadStrings(kEobBaseItemSuffixStringsPotions, temp);
-	_suffixStringsWands = _staticres->loadStrings(kEobBaseItemSuffixStringsWands, temp);
+	_suffixStringsRings = _staticres->loadStrings(kEoBBaseItemSuffixStringsRings, temp);
+	_suffixStringsPotions = _staticres->loadStrings(kEoBBaseItemSuffixStringsPotions, temp);
+	_suffixStringsWands = _staticres->loadStrings(kEoBBaseItemSuffixStringsWands, temp);
 
-	_ripItemStrings = _staticres->loadStrings(kEobBaseRipItemStrings, temp);
-	_cursedString = _staticres->loadStrings(kEobBaseCursedString, temp);
-	_enchantedString = _staticres->loadStrings(kEobBaseEnchantedString, temp);
-	_magicObjectStrings = _staticres->loadStrings(kEobBaseMagicObjectStrings, temp);
-	_magicObjectString5 = _staticres->loadStrings(kEobBaseMagicObjectString5, temp);
-	_patternSuffix = _staticres->loadStrings(kEobBasePatternSuffix, temp);
-	_patternGrFix1 = _staticres->loadStrings(kEobBasePatternGrFix1, temp);
-	_patternGrFix2 = _staticres->loadStrings(kEobBasePatternGrFix2, temp);
-	_validateArmorString = _staticres->loadStrings(kEobBaseValidateArmorString, temp);
-	_validateCursedString = _staticres->loadStrings(kEobBaseValidateCursedString, temp);
-	_validateNoDropString = _staticres->loadStrings(kEobBaseValidateNoDropString, temp);
-	_potionStrings = _staticres->loadStrings(kEobBasePotionStrings, temp);
-	_wandStrings = _staticres->loadStrings(kEobBaseWandStrings, temp);
-	_itemMisuseStrings = _staticres->loadStrings(kEobBaseItemMisuseStrings, temp);
+	_ripItemStrings = _staticres->loadStrings(kEoBBaseRipItemStrings, temp);
+	_cursedString = _staticres->loadStrings(kEoBBaseCursedString, temp);
+	_enchantedString = _staticres->loadStrings(kEoBBaseEnchantedString, temp);
+	_magicObjectStrings = _staticres->loadStrings(kEoBBaseMagicObjectStrings, temp);
+	_magicObjectString5 = _staticres->loadStrings(kEoBBaseMagicObjectString5, temp);
+	_patternSuffix = _staticres->loadStrings(kEoBBasePatternSuffix, temp);
+	_patternGrFix1 = _staticres->loadStrings(kEoBBasePatternGrFix1, temp);
+	_patternGrFix2 = _staticres->loadStrings(kEoBBasePatternGrFix2, temp);
+	_validateArmorString = _staticres->loadStrings(kEoBBaseValidateArmorString, temp);
+	_validateCursedString = _staticres->loadStrings(kEoBBaseValidateCursedString, temp);
+	_validateNoDropString = _staticres->loadStrings(kEoBBaseValidateNoDropString, temp);
+	_potionStrings = _staticres->loadStrings(kEoBBasePotionStrings, temp);
+	_wandStrings = _staticres->loadStrings(kEoBBaseWandStrings, temp);
+	_itemMisuseStrings = _staticres->loadStrings(kEoBBaseItemMisuseStrings, temp);
 
-	_takenStrings = _staticres->loadStrings(kEobBaseTakenStrings, temp);
-	_potionEffectStrings = _staticres->loadStrings(kEobBasePotionEffectStrings, temp);
+	_takenStrings = _staticres->loadStrings(kEoBBaseTakenStrings, temp);
+	_potionEffectStrings = _staticres->loadStrings(kEoBBasePotionEffectStrings, temp);
 
-	_yesNoStrings = _staticres->loadStrings(kEobBaseYesNoStrings, temp);
-	_npcMaxStrings = _staticres->loadStrings(kEobBaseNpcMaxStrings, temp);
-	_okStrings = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseOkStrings : kLolEobCommonMoreStrings, temp);
-	_npcJoinStrings = _staticres->loadStrings(kEobBaseNpcJoinStrings, temp);
-	_cancelStrings = _staticres->loadStrings(kEobBaseCancelStrings, temp);
-	_abortStrings = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseAbortStrings : kEobBaseCancelStrings, temp);
+	_yesNoStrings = _staticres->loadStrings(kEoBBaseYesNoStrings, temp);
+	_npcMaxStrings = _staticres->loadStrings(kEoBBaseNpcMaxStrings, temp);
+	_okStrings = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseOkStrings : kRpgCommonMoreStrings, temp);
+	_npcJoinStrings = _staticres->loadStrings(kEoBBaseNpcJoinStrings, temp);
+	_cancelStrings = _staticres->loadStrings(kEoBBaseCancelStrings, temp);
+	_abortStrings = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseAbortStrings : kEoBBaseCancelStrings, temp);
 
-	_menuStringsMain = _staticres->loadStrings(kEobBaseMenuStringsMain, temp);
-	_menuStringsSaveLoad = _staticres->loadStrings(kEobBaseMenuStringsSaveLoad, temp);
-	_menuStringsOnOff = _staticres->loadStrings(kEobBaseMenuStringsOnOff, temp);
-	_menuStringsSpells = _staticres->loadStrings(kEobBaseMenuStringsSpells, temp);
-	_menuStringsRest = _staticres->loadStrings(kEobBaseMenuStringsRest, temp);
-	_menuStringsDrop = _staticres->loadStrings(kEobBaseMenuStringsDrop, temp);
-	_menuStringsExit = _staticres->loadStrings(kEobBaseMenuStringsExit, temp);
-	_menuStringsStarve = _staticres->loadStrings(kEobBaseMenuStringsStarve, temp);
-	_menuStringsScribe = _staticres->loadStrings(kEobBaseMenuStringsScribe, temp);
-	_menuStringsDrop2 = _staticres->loadStrings(kEobBaseMenuStringsDrop2, temp);
-	_menuStringsHead = _staticres->loadStrings(kEobBaseMenuStringsHead, temp);
-	_menuStringsPoison = _staticres->loadStrings(kEobBaseMenuStringsPoison, temp);
-	_menuStringsMgc = _staticres->loadStrings(kEobBaseMenuStringsMgc, temp);
-	_menuStringsPrefs = _staticres->loadStrings(kEobBaseMenuStringsPrefs, temp);
-	_menuStringsRest2 = _staticres->loadStrings(kEobBaseMenuStringsRest2, temp);
-	_menuStringsRest3 = _staticres->loadStrings(kEobBaseMenuStringsRest3, temp);
-	_menuStringsRest4 = _staticres->loadStrings(kEobBaseMenuStringsRest4, temp);
-	_menuStringsDefeat = _staticres->loadStrings(kEobBaseMenuStringsDefeat, temp);
-	_menuStringsTransfer = _staticres->loadStrings(kEobBaseMenuStringsTransfer, temp);
-	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);
-	_menuStringsSpellNo = _staticres->loadStrings(kEobBaseMenuStringsSpellNo, temp);
-	_menuYesNoStrings = _staticres->loadStrings(kEobBaseMenuYesNoStrings, temp);
+	_menuStringsMain = _staticres->loadStrings(kEoBBaseMenuStringsMain, temp);
+	_menuStringsSaveLoad = _staticres->loadStrings(kEoBBaseMenuStringsSaveLoad, temp);
+	_menuStringsOnOff = _staticres->loadStrings(kEoBBaseMenuStringsOnOff, temp);
+	_menuStringsSpells = _staticres->loadStrings(kEoBBaseMenuStringsSpells, temp);
+	_menuStringsRest = _staticres->loadStrings(kEoBBaseMenuStringsRest, temp);
+	_menuStringsDrop = _staticres->loadStrings(kEoBBaseMenuStringsDrop, temp);
+	_menuStringsExit = _staticres->loadStrings(kEoBBaseMenuStringsExit, temp);
+	_menuStringsStarve = _staticres->loadStrings(kEoBBaseMenuStringsStarve, temp);
+	_menuStringsScribe = _staticres->loadStrings(kEoBBaseMenuStringsScribe, temp);
+	_menuStringsDrop2 = _staticres->loadStrings(kEoBBaseMenuStringsDrop2, temp);
+	_menuStringsHead = _staticres->loadStrings(kEoBBaseMenuStringsHead, temp);
+	_menuStringsPoison = _staticres->loadStrings(kEoBBaseMenuStringsPoison, temp);
+	_menuStringsMgc = _staticres->loadStrings(kEoBBaseMenuStringsMgc, temp);
+	_menuStringsPrefs = _staticres->loadStrings(kEoBBaseMenuStringsPrefs, temp);
+	_menuStringsRest2 = _staticres->loadStrings(kEoBBaseMenuStringsRest2, temp);
+	_menuStringsRest3 = _staticres->loadStrings(kEoBBaseMenuStringsRest3, temp);
+	_menuStringsRest4 = _staticres->loadStrings(kEoBBaseMenuStringsRest4, temp);
+	_menuStringsDefeat = _staticres->loadStrings(kEoBBaseMenuStringsDefeat, temp);
+	_menuStringsTransfer = _staticres->loadStrings(kEoBBaseMenuStringsTransfer, temp);
+	_menuStringsSpec = _staticres->loadStrings(kEoBBaseMenuStringsSpec, temp);
+	_menuStringsSpellNo = _staticres->loadStrings(kEoBBaseMenuStringsSpellNo, temp);
+	_menuYesNoStrings = _staticres->loadStrings(kEoBBaseMenuYesNoStrings, temp);
 
-	_spellLevelsMage = _staticres->loadRawData(kEobBaseSpellLevelsMage, _spellLevelsMageSize);
-	_spellLevelsCleric = _staticres->loadRawData(kEobBaseSpellLevelsCleric, _spellLevelsClericSize);
-	_numSpellsCleric = _staticres->loadRawData(kEobBaseNumSpellsCleric, temp);
-	_numSpellsWisAdj = _staticres->loadRawData(kEobBaseNumSpellsWisAdj, temp);
-	_numSpellsPal = _staticres->loadRawData(kEobBaseNumSpellsPal, temp);
-	_numSpellsMage = _staticres->loadRawData(kEobBaseNumSpellsMage, temp);
+	_spellLevelsMage = _staticres->loadRawData(kEoBBaseSpellLevelsMage, _spellLevelsMageSize);
+	_spellLevelsCleric = _staticres->loadRawData(kEoBBaseSpellLevelsCleric, _spellLevelsClericSize);
+	_numSpellsCleric = _staticres->loadRawData(kEoBBaseNumSpellsCleric, temp);
+	_numSpellsWisAdj = _staticres->loadRawData(kEoBBaseNumSpellsWisAdj, temp);
+	_numSpellsPal = _staticres->loadRawData(kEoBBaseNumSpellsPal, temp);
+	_numSpellsMage = _staticres->loadRawData(kEoBBaseNumSpellsMage, temp);
 
-	_characterGuiStringsHp = _staticres->loadStrings(kEobBaseCharGuiStringsHp, temp);
-	_characterGuiStringsWp = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharGuiStringsWp2 : kEobBaseCharGuiStringsWp1, temp);
-	_characterGuiStringsWr = _staticres->loadStrings(kEobBaseCharGuiStringsWr, temp);
-	_characterGuiStringsSt = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharGuiStringsSt2 : kEobBaseCharGuiStringsSt1, temp);
-	_characterGuiStringsIn = _staticres->loadStrings(kEobBaseCharGuiStringsIn, temp);
+	_characterGuiStringsHp = _staticres->loadStrings(kEoBBaseCharGuiStringsHp, temp);
+	_characterGuiStringsWp = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharGuiStringsWp2 : kEoBBaseCharGuiStringsWp1, temp);
+	_characterGuiStringsWr = _staticres->loadStrings(kEoBBaseCharGuiStringsWr, temp);
+	_characterGuiStringsSt = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharGuiStringsSt2 : kEoBBaseCharGuiStringsSt1, temp);
+	_characterGuiStringsIn = _staticres->loadStrings(kEoBBaseCharGuiStringsIn, temp);
 
-	_characterStatusStrings7 = _staticres->loadStrings(kEobBaseCharStatusStrings7, temp);
-	_characterStatusStrings8 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharStatusStrings82 : kEobBaseCharStatusStrings81, temp);
-	_characterStatusStrings9 = _staticres->loadStrings(kEobBaseCharStatusStrings9, temp);
-	_characterStatusStrings12 = _staticres->loadStrings(kEobBaseCharStatusStrings12, temp);
-	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharStatusStrings132 : kEobBaseCharStatusStrings131, temp);
+	_characterStatusStrings7 = _staticres->loadStrings(kEoBBaseCharStatusStrings7, temp);
+	_characterStatusStrings8 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharStatusStrings82 : kEoBBaseCharStatusStrings81, temp);
+	_characterStatusStrings9 = _staticres->loadStrings(kEoBBaseCharStatusStrings9, temp);
+	_characterStatusStrings12 = _staticres->loadStrings(kEoBBaseCharStatusStrings12, temp);
+	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharStatusStrings132 : kEoBBaseCharStatusStrings131, temp);
 
-	_levelGainStrings = _staticres->loadStrings(kEobBaseLevelGainStrings, temp);
+	_levelGainStrings = _staticres->loadStrings(kEoBBaseLevelGainStrings, temp);
 	for (int i = 0; i < 5; i++)
-		_expRequirementTables[i] = _staticres->loadRawDataBe32(kEobBaseExperienceTable0 + i, temp);
-	_expRequirementTables[5] = _staticres->loadRawDataBe32(kEobBaseExperienceTable4, temp);
+		_expRequirementTables[i] = _staticres->loadRawDataBe32(kEoBBaseExperienceTable0 + i, temp);
+	_expRequirementTables[5] = _staticres->loadRawDataBe32(kEoBBaseExperienceTable4, temp);
 
-	_classModifierFlags = _staticres->loadRawData(kEobBaseClassModifierFlags, temp);
+	_classModifierFlags = _staticres->loadRawData(kEoBBaseClassModifierFlags, temp);
 
-	_saveThrowTables[0] = _saveThrowTables[4] = _saveThrowTables[5] = _staticres->loadRawData(kEobBaseSaveThrowTable1, temp);
-	_saveThrowTables[1] = _staticres->loadRawData(kEobBaseSaveThrowTable2, temp);
-	_saveThrowTables[2] = _staticres->loadRawData(kEobBaseSaveThrowTable3, temp);
-	_saveThrowTables[3] = _staticres->loadRawData(kEobBaseSaveThrowTable4, temp);
-	_saveThrowLevelIndex = _staticres->loadRawData(kEobBaseSaveThrwLvlIndex, temp);
-	_saveThrowModDiv = _staticres->loadRawData(kEobBaseSaveThrwModDiv, temp);
-	_saveThrowModExt = _staticres->loadRawData(kEobBaseSaveThrwModExt, temp);
+	_saveThrowTables[0] = _saveThrowTables[4] = _saveThrowTables[5] = _staticres->loadRawData(kEoBBaseSaveThrowTable1, temp);
+	_saveThrowTables[1] = _staticres->loadRawData(kEoBBaseSaveThrowTable2, temp);
+	_saveThrowTables[2] = _staticres->loadRawData(kEoBBaseSaveThrowTable3, temp);
+	_saveThrowTables[3] = _staticres->loadRawData(kEoBBaseSaveThrowTable4, temp);
+	_saveThrowLevelIndex = _staticres->loadRawData(kEoBBaseSaveThrwLvlIndex, temp);
+	_saveThrowModDiv = _staticres->loadRawData(kEoBBaseSaveThrwModDiv, temp);
+	_saveThrowModExt = _staticres->loadRawData(kEoBBaseSaveThrwModExt, temp);
 
-	_encodeMonsterShpTable = _staticres->loadRawDataBe16(kEobBaseEncodeMonsterDefs, temp);
-	_npcPreset = _staticres->loadEobNpcData(kEobBaseNpcPresets, temp);
+	_encodeMonsterShpTable = _staticres->loadRawDataBe16(kEoBBaseEncodeMonsterDefs, temp);
+	_npcPreset = _staticres->loadEoBNpcData(kEoBBaseNpcPresets, temp);
 
-	_teleporterShapeCoords = _staticres->loadRawData(kEobBaseDscTelptrShpCoords, temp);
-	_portalSeq = (const int8*)_staticres->loadRawData(kEobBasePortalSeqData, temp);
-	_mnDef = _staticres->loadRawData(kEobBaseManDef, temp);
-	_mnWord = _staticres->loadStrings(kEobBaseManWord, _mnNumWord);
-	_mnPrompt = _staticres->loadStrings(kEobBaseManPrompt, temp);
+	_teleporterShapeCoords = _staticres->loadRawData(kEoBBaseDscTelptrShpCoords, temp);
+	_portalSeq = (const int8*)_staticres->loadRawData(kEoBBasePortalSeqData, temp);
+	_mnDef = _staticres->loadRawData(kEoBBaseManDef, temp);
+	_mnWord = _staticres->loadStrings(kEoBBaseManWord, _mnNumWord);
+	_mnPrompt = _staticres->loadStrings(kEoBBaseManPrompt, temp);
 
-	_monsterStepTable0 = (int8*) _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEobBaseMonsterStepTable02 : kEobBaseMonsterStepTable01, temp);
-	_monsterStepTable1 = (int8*)_staticres->loadRawData(kEobBaseMonsterStepTable1, temp);
-	_monsterStepTable2 = (int8*)_staticres->loadRawData(kEobBaseMonsterStepTable2, temp);
-	_monsterStepTable3 = (int8*)_staticres->loadRawData(kEobBaseMonsterStepTable3, temp);
-	_monsterCloseAttPosTable1 = _staticres->loadRawData(kEobBaseMonsterCloseAttPosTable1, temp);
-	_monsterCloseAttPosTable2 = _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEobBaseMonsterCloseAttPosTable22 : kEobBaseMonsterCloseAttPosTable21, temp);
-	_monsterCloseAttUnkTable = (int8*)_staticres->loadRawData(kEobBaseMonsterCloseAttUnkTable, temp);
-	_monsterCloseAttChkTable1 = _staticres->loadRawData(kEobBaseMonsterCloseAttChkTable1, temp);
-	_monsterCloseAttChkTable2 = _staticres->loadRawData(kEobBaseMonsterCloseAttChkTable2, temp);
-	_monsterCloseAttDstTable1 = _staticres->loadRawData(kEobBaseMonsterCloseAttDstTable1, temp);
-	_monsterCloseAttDstTable2 = _staticres->loadRawData(kEobBaseMonsterCloseAttDstTable2, temp);
+	_monsterStepTable0 = (int8*) _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterStepTable02 : kEoBBaseMonsterStepTable01, temp);
+	_monsterStepTable1 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable1, temp);
+	_monsterStepTable2 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable2, temp);
+	_monsterStepTable3 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable3, temp);
+	_monsterCloseAttPosTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttPosTable1, temp);
+	_monsterCloseAttPosTable2 = _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterCloseAttPosTable22 : kEoBBaseMonsterCloseAttPosTable21, temp);
+	_monsterCloseAttUnkTable = (int8*)_staticres->loadRawData(kEoBBaseMonsterCloseAttUnkTable, temp);
+	_monsterCloseAttChkTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable1, temp);
+	_monsterCloseAttChkTable2 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable2, temp);
+	_monsterCloseAttDstTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttDstTable1, temp);
+	_monsterCloseAttDstTable2 = _staticres->loadRawData(kEoBBaseMonsterCloseAttDstTable2, temp);
 
-	_monsterProximityTable = _staticres->loadRawData(kEobBaseMonsterProximityTable, temp);
-	_findBlockMonstersTable = _staticres->loadRawData(kEobBaseFindBlockMonstersTable, temp);
-	_monsterDirChangeTable = (const int8*)_staticres->loadRawData(kEobBaseMonsterDirChangeTable, temp);
-	_monsterSpecAttStrings = _staticres->loadStrings(kEobBaseMonsterDistAttStrings, temp);
+	_monsterProximityTable = _staticres->loadRawData(kEoBBaseMonsterProximityTable, temp);
+	_findBlockMonstersTable = _staticres->loadRawData(kEoBBaseFindBlockMonstersTable, temp);
+	_monsterDirChangeTable = (const int8*)_staticres->loadRawData(kEoBBaseMonsterDirChangeTable, temp);
+	_monsterSpecAttStrings = _staticres->loadStrings(kEoBBaseMonsterDistAttStrings, temp);
 
-	_monsterFrmOffsTable1 = (const int8*)_staticres->loadRawData(kEobBaseDscMonsterFrmOffsTbl1, temp);
-	_monsterFrmOffsTable2 = (const int8*)_staticres->loadRawData(kEobBaseDscMonsterFrmOffsTbl2, temp);
+	_monsterFrmOffsTable1 = (const int8*)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl1, temp);
+	_monsterFrmOffsTable2 = (const int8*)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl2, temp);
 
-	_inventorySlotsX = _staticres->loadRawDataBe16(kEobBaseInvSlotX, temp);
-	_inventorySlotsY = _staticres->loadRawData(kEobBaseInvSlotY, temp);
-	_slotValidationFlags = _staticres->loadRawDataBe16(kEobBaseSlotValidationFlags, temp);
+	_inventorySlotsX = _staticres->loadRawDataBe16(kEoBBaseInvSlotX, temp);
+	_inventorySlotsY = _staticres->loadRawData(kEoBBaseInvSlotY, temp);
+	_slotValidationFlags = _staticres->loadRawDataBe16(kEoBBaseSlotValidationFlags, temp);
 
-	_projectileWeaponAmmoTypes = (const int8*)_staticres->loadRawData(kEobBaseProjectileWeaponTypes, temp);
-	_wandTypes = _staticres->loadRawData(kEobBaseWandTypes, temp);
+	_projectileWeaponAmmoTypes = (const int8*)_staticres->loadRawData(kEoBBaseProjectileWeaponTypes, temp);
+	_wandTypes = _staticres->loadRawData(kEoBBaseWandTypes, temp);
 
-	_drawObjPosIndex = _staticres->loadRawData(kEobBaseDrawObjPosIndex, temp);
-	_flightObjFlipIndex = _staticres->loadRawData(kEobBaseFlightObjFlipIndex, temp);
-	_flightObjShpMap = (const int8*)_staticres->loadRawData(kEobBaseFlightObjShpMap, temp);
-	_flightObjSclIndex = (const int8*)_staticres->loadRawData(kEobBaseFlightObjSclIndex, temp);
+	_drawObjPosIndex = _staticres->loadRawData(kEoBBaseDrawObjPosIndex, temp);
+	_flightObjFlipIndex = _staticres->loadRawData(kEoBBaseFlightObjFlipIndex, temp);
+	_flightObjShpMap = (const int8*)_staticres->loadRawData(kEoBBaseFlightObjShpMap, temp);
+	_flightObjSclIndex = (const int8*)_staticres->loadRawData(kEoBBaseFlightObjSclIndex, temp);
 
-	_wllFlagPreset = _staticres->loadRawData(kEobBaseWllFlagPreset, _wllFlagPresetSize);
-	_dscShapeCoords = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscShapeCoords, temp);
+	_wllFlagPreset = _staticres->loadRawData(kEoBBaseWllFlagPreset, _wllFlagPresetSize);
+	_dscShapeCoords = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscShapeCoords, temp);
 
-	_dscDoorScaleOffs = _staticres->loadRawData(kEobBaseDscDoorScaleOffs, temp);
-	_dscDoorScaleMult1 = _staticres->loadRawData(kEobBaseDscDoorScaleMult1, temp);
-	_dscDoorScaleMult2 = _staticres->loadRawData(kEobBaseDscDoorScaleMult2, temp);
-	_dscDoorScaleMult3 = _staticres->loadRawData(kEobBaseDscDoorScaleMult3, temp);
-	_dscDoorY1 = _staticres->loadRawData(kEobBaseDscDoorY1, temp);
-	_dscDoorXE = _staticres->loadRawData(kEobBaseDscDoorXE, temp);
+	_dscDoorScaleOffs = _staticres->loadRawData(kEoBBaseDscDoorScaleOffs, temp);
+	_dscDoorScaleMult1 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult1, temp);
+	_dscDoorScaleMult2 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult2, temp);
+	_dscDoorScaleMult3 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult3, temp);
+	_dscDoorY1 = _staticres->loadRawData(kEoBBaseDscDoorY1, temp);
+	_dscDoorXE = _staticres->loadRawData(kEoBBaseDscDoorXE, temp);
 
-	_dscItemPosIndex= _staticres->loadRawData(kEobBaseDscItemPosIndex, temp);
-	_dscItemShpX = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscItemShpX, temp);
-	_dscItemScaleIndex = _staticres->loadRawData(kEobBaseDscItemScaleIndex, temp);
-	_dscItemTileIndex = _staticres->loadRawData(kEobBaseDscItemTileIndex, temp);
-	_dscItemShapeMap = _staticres->loadRawData(kEobBaseDscItemShapeMap, temp);
+	_dscItemPosIndex= _staticres->loadRawData(kEoBBaseDscItemPosIndex, temp);
+	_dscItemShpX = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscItemShpX, temp);
+	_dscItemScaleIndex = _staticres->loadRawData(kEoBBaseDscItemScaleIndex, temp);
+	_dscItemTileIndex = _staticres->loadRawData(kEoBBaseDscItemTileIndex, temp);
+	_dscItemShapeMap = _staticres->loadRawData(kEoBBaseDscItemShapeMap, temp);
 
-	_bookNumbers = _staticres->loadStrings(kEobBaseBookNumbers, temp);
-	_mageSpellList = _staticres->loadStrings(kEobBaseMageSpellsList, _mageSpellListSize);
-	_clericSpellList = _staticres->loadStrings(kEobBaseClericSpellsList, temp);
-	_spellNames = _staticres->loadStrings(kEobBaseSpellNames, temp);
+	_bookNumbers = _staticres->loadStrings(kEoBBaseBookNumbers, temp);
+	_mageSpellList = _staticres->loadStrings(kEoBBaseMageSpellsList, _mageSpellListSize);
+	_clericSpellList = _staticres->loadStrings(kEoBBaseClericSpellsList, temp);
+	_spellNames = _staticres->loadStrings(kEoBBaseSpellNames, temp);
 
-	_magicStrings1 = _staticres->loadStrings(kEobBaseMagicStrings1, temp);
-	_magicStrings2 = _staticres->loadStrings(kEobBaseMagicStrings2, temp);
-	_magicStrings3 = _staticres->loadStrings(kEobBaseMagicStrings3, temp);
-	_magicStrings4 = _staticres->loadStrings(kEobBaseMagicStrings4, temp);
-	_magicStrings6 = _staticres->loadStrings(kEobBaseMagicStrings6, temp);
-	_magicStrings7 = _staticres->loadStrings(kEobBaseMagicStrings7, temp);
-	_magicStrings8 = _staticres->loadStrings(kEobBaseMagicStrings8, temp);
+	_magicStrings1 = _staticres->loadStrings(kEoBBaseMagicStrings1, temp);
+	_magicStrings2 = _staticres->loadStrings(kEoBBaseMagicStrings2, temp);
+	_magicStrings3 = _staticres->loadStrings(kEoBBaseMagicStrings3, temp);
+	_magicStrings4 = _staticres->loadStrings(kEoBBaseMagicStrings4, temp);
+	_magicStrings6 = _staticres->loadStrings(kEoBBaseMagicStrings6, temp);
+	_magicStrings7 = _staticres->loadStrings(kEoBBaseMagicStrings7, temp);
+	_magicStrings8 = _staticres->loadStrings(kEoBBaseMagicStrings8, temp);
 
-	_expObjectTlMode = _staticres->loadRawData(kEobBaseExpObjectTlMode, temp);
-	_expObjectTblIndex = _staticres->loadRawData(kEobBaseExpObjectTblIndex, temp);
-	_expObjectShpStart = _staticres->loadRawData(kEobBaseExpObjectShpStart, temp);
-	_expObjectAnimTbl1 = _staticres->loadRawData(kEobBaseExpObjectTbl1, _expObjectAnimTbl1Size);
-	_expObjectAnimTbl2 = _staticres->loadRawData(kEobBaseExpObjectTbl2, _expObjectAnimTbl2Size);
-	_expObjectAnimTbl3 = _staticres->loadRawData(kEobBaseExpObjectTbl3, _expObjectAnimTbl3Size);
+	_expObjectTlMode = _staticres->loadRawData(kEoBBaseExpObjectTlMode, temp);
+	_expObjectTblIndex = _staticres->loadRawData(kEoBBaseExpObjectTblIndex, temp);
+	_expObjectShpStart = _staticres->loadRawData(kEoBBaseExpObjectShpStart, temp);
+	_expObjectAnimTbl1 = _staticres->loadRawData(kEoBBaseExpObjectTbl1, _expObjectAnimTbl1Size);
+	_expObjectAnimTbl2 = _staticres->loadRawData(kEoBBaseExpObjectTbl2, _expObjectAnimTbl2Size);
+	_expObjectAnimTbl3 = _staticres->loadRawData(kEoBBaseExpObjectTbl3, _expObjectAnimTbl3Size);
 
-	_sparkEffectDefSteps = _staticres->loadRawData(kEobBaseSparkDefSteps, temp);
-	_sparkEffectDefSubSteps = _staticres->loadRawData(kEobBaseSparkDefSubSteps, temp);
-	_sparkEffectDefShift = _staticres->loadRawData(kEobBaseSparkDefShift, temp);
-	_sparkEffectDefAdd = _staticres->loadRawData(kEobBaseSparkDefAdd, temp);
-	_sparkEffectDefX = _staticres->loadRawData(kEobBaseSparkDefX, temp);
-	_sparkEffectDefY = _staticres->loadRawData(kEobBaseSparkDefY, temp);
-	_sparkEffectOfFlags1 = _staticres->loadRawDataBe32(kEobBaseSparkOfFlags1, temp);
-	_sparkEffectOfFlags2 = _staticres->loadRawDataBe32(kEobBaseSparkOfFlags2, temp);
-	_sparkEffectOfShift = _staticres->loadRawData(kEobBaseSparkOfShift, temp);
-	_sparkEffectOfX = _staticres->loadRawData(kEobBaseSparkOfX, temp);
-	_sparkEffectOfY = _staticres->loadRawData(kEobBaseSparkOfY, temp);
-	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
-	_turnUndeadEffect = _staticres->loadRawData(kEobBaseTurnUndeadEffect, temp);
-	_burningHandsDest = _staticres->loadRawData(kEobBaseBurningHandsDest, temp);
-	_coneOfColdDest1 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest1, temp);
-	_coneOfColdDest2 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest2, temp);
-	_coneOfColdDest3 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest3, temp);
-	_coneOfColdDest4 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest4, temp);
-	_coneOfColdGfxTbl = _staticres->loadRawData(kEobBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
+	_sparkEffectDefSteps = _staticres->loadRawData(kEoBBaseSparkDefSteps, temp);
+	_sparkEffectDefSubSteps = _staticres->loadRawData(kEoBBaseSparkDefSubSteps, temp);
+	_sparkEffectDefShift = _staticres->loadRawData(kEoBBaseSparkDefShift, temp);
+	_sparkEffectDefAdd = _staticres->loadRawData(kEoBBaseSparkDefAdd, temp);
+	_sparkEffectDefX = _staticres->loadRawData(kEoBBaseSparkDefX, temp);
+	_sparkEffectDefY = _staticres->loadRawData(kEoBBaseSparkDefY, temp);
+	_sparkEffectOfFlags1 = _staticres->loadRawDataBe32(kEoBBaseSparkOfFlags1, temp);
+	_sparkEffectOfFlags2 = _staticres->loadRawDataBe32(kEoBBaseSparkOfFlags2, temp);
+	_sparkEffectOfShift = _staticres->loadRawData(kEoBBaseSparkOfShift, temp);
+	_sparkEffectOfX = _staticres->loadRawData(kEoBBaseSparkOfX, temp);
+	_sparkEffectOfY = _staticres->loadRawData(kEoBBaseSparkOfY, temp);
+	_magicFlightObjectProperties = _staticres->loadRawData(kEoBBaseMagicFlightProps, temp);
+	_turnUndeadEffect = _staticres->loadRawData(kEoBBaseTurnUndeadEffect, temp);
+	_burningHandsDest = _staticres->loadRawData(kEoBBaseBurningHandsDest, temp);
+	_coneOfColdDest1 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest1, temp);
+	_coneOfColdDest2 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest2, temp);
+	_coneOfColdDest3 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest3, temp);
+	_coneOfColdDest4 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
+	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -485,8 +485,8 @@ void EobCoreEngine::initStaticResource() {
 	_menuOkString = "OK";
 }
 
-void EobCoreEngine::initButtonData() {
-	static const EobGuiButtonDef buttonDefs[] = {
+void EoBCoreEngine::initButtonData() {
+	static const EoBGuiButtonDef buttonDefs[] = {
 		{ 112, 0, 0x1100, 184, 2, 63, 50, 0 },
 		{ 113, 0, 0x1100, 256, 2, 63, 50, 1 },
 		{ 114, 0, 0x1100, 184, 54, 63, 50, 2 },
@@ -596,7 +596,7 @@ void EobCoreEngine::initButtonData() {
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
 
-#define EOB_CBN(x, y) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EobCoreEngine, this, &EobCoreEngine::y)); for (int l = 0; l < (x - 1); l++) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]); }
+#define EOB_CBN(x, y) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EoBCoreEngine, this, &EoBCoreEngine::y)); for (int l = 0; l < (x - 1); l++) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]); }
 #define EOB_CBI(x, y) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[y]); }
 	EOB_CBN(4, clickedCharPortraitDefault);
 	EOB_CBN(1, clickedCamp);
@@ -640,8 +640,8 @@ void EobCoreEngine::initButtonData() {
 #undef EOB_CBN
 }
 
-void EobCoreEngine::initMenus() {
-	static const EobMenuButtonDef buttonDefs[] = {
+void EoBCoreEngine::initMenus() {
+	static const EoBMenuButtonDef buttonDefs[] = {
 		{  2,   12,  20, 158,  14,  20,  3  },
 		{  3,   12,  37, 158,  14,  52,  3  },
 		{  4,   12,  54, 158,  14,  26,  3  },
@@ -691,7 +691,7 @@ void EobCoreEngine::initMenus() {
 
 	_menuButtonDefs = buttonDefs;
 
-	static const EobMenuDef menuDefs[] = {
+	static const EoBMenuDef menuDefs[] = {
 		{  1, 10,  0, 7,  9 },
 		{  1, 10,  7, 5,  9 },
 		{  1, 10, 12, 3,  9 },
@@ -702,7 +702,7 @@ void EobCoreEngine::initMenus() {
 	};
 
 	delete[] _menuDefs;
-	_menuDefs = new EobMenuDef[ARRAYSIZE(menuDefs)];
+	_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefs)];
 	memcpy(_menuDefs, menuDefs, sizeof(menuDefs));
 
 	if (_flags.gameID == GI_EOB1) {
@@ -713,7 +713,7 @@ void EobCoreEngine::initMenus() {
 }
 
 
-void EobCoreEngine::initSpells() {
+void EoBCoreEngine::initSpells() {
 #define mpn magicTimingParaAssign.push_back(0);
 #define mp1n if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(0);
 #define mp2n if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(0);
@@ -721,12 +721,12 @@ void EobCoreEngine::initSpells() {
 #define mp1(x) if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
 #define mp2(x) if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
 
-#define sc(x) startCallback.push_back(&EobCoreEngine::spellCallback_start_##x);
-#define sc1(x) if (_flags.gameID == GI_EOB1) startCallback.push_back(&EobCoreEngine::spellCallback_start_##x);
-#define sc2(x) if (_flags.gameID == GI_EOB2) startCallback.push_back(&EobCoreEngine::spellCallback_start_##x);
-#define ec(x) endCallback.push_back(&EobCoreEngine::spellCallback_end_##x);
-#define ec1(x) if (_flags.gameID == GI_EOB1) endCallback.push_back(&EobCoreEngine::spellCallback_end_##x);
-#define ec2(x) if (_flags.gameID == GI_EOB2) endCallback.push_back(&EobCoreEngine::spellCallback_end_##x);
+#define sc(x) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#define sc1(x) if (_flags.gameID == GI_EOB1) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#define sc2(x) if (_flags.gameID == GI_EOB2) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#define ec(x) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#define ec1(x) if (_flags.gameID == GI_EOB1) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#define ec2(x) if (_flags.gameID == GI_EOB2) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
 
 	static const uint16 magicTimingPara[] = {
 		0, 546, 2, 1, // 0 detect magic
@@ -979,13 +979,13 @@ void EobCoreEngine::initSpells() {
 	ec2(monster_causeCriticalWounds);
 	ec2(monster_fleshToStone);
 
-	_spells = new EobSpell[_numSpells];
-	memset(_spells, 0, _numSpells * sizeof(EobSpell));
+	_spells = new EoBSpell[_numSpells];
+	memset(_spells, 0, _numSpells * sizeof(EoBSpell));
 
 	for (int i = 0, n = 0; i < _numSpells; i++, n++) {
-		EobSpell *s = &_spells[i];
+		EoBSpell *s = &_spells[i];
 
-		// Fix Eob 1 spell names
+		// Fix EoB 1 spell names
 		bool skip = false;
 		if (i == 5 || i == 9) {
 			n--;
@@ -1018,67 +1018,67 @@ void EobCoreEngine::initSpells() {
 #undef ec2
 }
 
-void EobEngine::initStaticResource() {
+void EoBEngine::initStaticResource() {
 	int temp;
-	_mainMenuStrings = _staticres->loadStrings(kEob1MainMenuStrings, temp);
-	_finBonusStrings = _staticres->loadStrings(kEob1BonusStrings, temp);
+	_mainMenuStrings = _staticres->loadStrings(kEoB1MainMenuStrings, temp);
+	_finBonusStrings = _staticres->loadStrings(kEoB1BonusStrings, temp);
 
-	_introFilesOpening = _staticres->loadStrings(kEob1IntroFilesOpening, temp);
-	_introFilesTower = _staticres->loadStrings(kEob1IntroFilesTower, temp);
-	_introFilesOrb = _staticres->loadStrings(kEob1IntroFilesOrb, temp);
-	_introFilesWdEntry = _staticres->loadStrings(kEob1IntroFilesWdEntry, temp);
-	_introFilesKing = _staticres->loadStrings(kEob1IntroFilesKing, temp);
-	_introFilesHands = _staticres->loadStrings(kEob1IntroFilesHands, temp);
-	_introFilesWdExit = _staticres->loadStrings(kEob1IntroFilesWdExit, temp);
-	_introFilesTunnel = _staticres->loadStrings(kEob1IntroFilesTunnel, temp);
-	_introOpeningFrmDelay = _staticres->loadRawData(kEob1IntroOpeningFrmDelay, temp);
-	_introWdEncodeX = _staticres->loadRawData(kEob1IntroWdEncodeX, temp);
-	_introWdEncodeY = _staticres->loadRawData(kEob1IntroWdEncodeY, temp);
-	_introWdEncodeWH = _staticres->loadRawData(kEob1IntroWdEncodeWH, temp);
-	_introWdDsX = _staticres->loadRawDataBe16(kEob1IntroWdDsX, temp);
-	_introWdDsY = _staticres->loadRawData(kEob1IntroWdDsY, temp);
-	_introTvlX1 = _staticres->loadRawData(kEob1IntroTvlX1, temp);
-	_introTvlY1 = _staticres->loadRawData(kEob1IntroTvlY1, temp);
-	_introTvlX2 = _staticres->loadRawData(kEob1IntroTvlX2, temp);
-	_introTvlY2 = _staticres->loadRawData(kEob1IntroTvlY2, temp);
-	_introTvlW = _staticres->loadRawData(kEob1IntroTvlW, temp);
-	_introTvlH = _staticres->loadRawData(kEob1IntroTvlH, temp);
+	_introFilesOpening = _staticres->loadStrings(kEoB1IntroFilesOpening, temp);
+	_introFilesTower = _staticres->loadStrings(kEoB1IntroFilesTower, temp);
+	_introFilesOrb = _staticres->loadStrings(kEoB1IntroFilesOrb, temp);
+	_introFilesWdEntry = _staticres->loadStrings(kEoB1IntroFilesWdEntry, temp);
+	_introFilesKing = _staticres->loadStrings(kEoB1IntroFilesKing, temp);
+	_introFilesHands = _staticres->loadStrings(kEoB1IntroFilesHands, temp);
+	_introFilesWdExit = _staticres->loadStrings(kEoB1IntroFilesWdExit, temp);
+	_introFilesTunnel = _staticres->loadStrings(kEoB1IntroFilesTunnel, temp);
+	_introOpeningFrmDelay = _staticres->loadRawData(kEoB1IntroOpeningFrmDelay, temp);
+	_introWdEncodeX = _staticres->loadRawData(kEoB1IntroWdEncodeX, temp);
+	_introWdEncodeY = _staticres->loadRawData(kEoB1IntroWdEncodeY, temp);
+	_introWdEncodeWH = _staticres->loadRawData(kEoB1IntroWdEncodeWH, temp);
+	_introWdDsX = _staticres->loadRawDataBe16(kEoB1IntroWdDsX, temp);
+	_introWdDsY = _staticres->loadRawData(kEoB1IntroWdDsY, temp);
+	_introTvlX1 = _staticres->loadRawData(kEoB1IntroTvlX1, temp);
+	_introTvlY1 = _staticres->loadRawData(kEoB1IntroTvlY1, temp);
+	_introTvlX2 = _staticres->loadRawData(kEoB1IntroTvlX2, temp);
+	_introTvlY2 = _staticres->loadRawData(kEoB1IntroTvlY2, temp);
+	_introTvlW = _staticres->loadRawData(kEoB1IntroTvlW, temp);
+	_introTvlH = _staticres->loadRawData(kEoB1IntroTvlH, temp);
 
-	_doorShapeEncodeDefs = _staticres->loadRawData(kEob1DoorShapeDefs, temp);
-	_doorSwitchShapeEncodeDefs = _staticres->loadRawData(kEob1DoorSwitchShapeDefs, temp);
-	_doorSwitchCoords = _staticres->loadRawData(kEob1DoorSwitchCoords, temp);
+	_doorShapeEncodeDefs = _staticres->loadRawData(kEoB1DoorShapeDefs, temp);
+	_doorSwitchShapeEncodeDefs = _staticres->loadRawData(kEoB1DoorSwitchShapeDefs, temp);
+	_doorSwitchCoords = _staticres->loadRawData(kEoB1DoorSwitchCoords, temp);
 
-	_dscDoorScaleMult4 = _staticres->loadRawData(kEobBaseDscDoorScaleMult4, temp);
-	_dscDoorScaleMult5 = _staticres->loadRawData(kEobBaseDscDoorScaleMult5, temp);
-	_dscDoorScaleMult6 = _staticres->loadRawData(kEobBaseDscDoorScaleMult6, temp);
-	_dscDoorY3 = _staticres->loadRawData(kEobBaseDscDoorY3, temp);
-	_dscDoorY4 = _staticres->loadRawData(kEobBaseDscDoorY4, temp);
-	_dscDoorY5 = _staticres->loadRawData(kEobBaseDscDoorY5, temp);
-	_dscDoorY6 = _staticres->loadRawData(kEobBaseDscDoorY6, temp);
-	_dscDoorY7 = _staticres->loadRawData(kEobBaseDscDoorY7, temp);
-	_dscDoorCoordsExt = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscDoorCoordsExt, temp);
+	_dscDoorScaleMult4 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult4, temp);
+	_dscDoorScaleMult5 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult5, temp);
+	_dscDoorScaleMult6 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult6, temp);
+	_dscDoorY3 = _staticres->loadRawData(kEoBBaseDscDoorY3, temp);
+	_dscDoorY4 = _staticres->loadRawData(kEoBBaseDscDoorY4, temp);
+	_dscDoorY5 = _staticres->loadRawData(kEoBBaseDscDoorY5, temp);
+	_dscDoorY6 = _staticres->loadRawData(kEoBBaseDscDoorY6, temp);
+	_dscDoorY7 = _staticres->loadRawData(kEoBBaseDscDoorY7, temp);
+	_dscDoorCoordsExt = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscDoorCoordsExt, temp);
 
-	_enemyMageSpellList = _staticres->loadRawData(kEob1EnemyMageSpellList, temp);
-	_enemyMageSfx = _staticres->loadRawData(kEob1EnemyMageSfx, temp);
-	_beholderSpellList = _staticres->loadRawData(kEob1BeholderSpellList, temp);
-	_beholderSfx = _staticres->loadRawData(kEob1BeholderSfx, temp);
+	_enemyMageSpellList = _staticres->loadRawData(kEoB1EnemyMageSpellList, temp);
+	_enemyMageSfx = _staticres->loadRawData(kEoB1EnemyMageSfx, temp);
+	_beholderSpellList = _staticres->loadRawData(kEoB1BeholderSpellList, temp);
+	_beholderSfx = _staticres->loadRawData(kEoB1BeholderSfx, temp);
 
-	_turnUndeadString = _staticres->loadStrings(kEob1TurnUndeadString, temp);
+	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
-	_npcShpData = _staticres->loadRawData(kEob1NpcShpData, temp);
-	_npcSubShpIndex1 = _staticres->loadRawData(kEob1NpcSubShpIndex1, temp);
-	_npcSubShpIndex2 = _staticres->loadRawData(kEob1NpcSubShpIndex2, temp);
-	_npcSubShpY = _staticres->loadRawData(kEob1NpcSubShpY, temp);
+	_npcShpData = _staticres->loadRawData(kEoB1NpcShpData, temp);
+	_npcSubShpIndex1 = _staticres->loadRawData(kEoB1NpcSubShpIndex1, temp);
+	_npcSubShpIndex2 = _staticres->loadRawData(kEoB1NpcSubShpIndex2, temp);
+	_npcSubShpY = _staticres->loadRawData(kEoB1NpcSubShpY, temp);
 	for (int i = 0; i < 11; i++)
-		_npcStrings[i] = _staticres->loadStrings(kEob1Npc0Strings + i, temp);
+		_npcStrings[i] = _staticres->loadStrings(kEoB1Npc0Strings + i, temp);
 
-	const uint8 *ps = _staticres->loadRawData(kEob1MonsterProperties, temp);
+	const uint8 *ps = _staticres->loadRawData(kEoB1MonsterProperties, temp);
 	temp /= 27;
-	_monsterProps = new EobMonsterProperty[temp];
-	memset(_monsterProps, 0, temp * sizeof(EobMonsterProperty));
+	_monsterProps = new EoBMonsterProperty[temp];
+	memset(_monsterProps, 0, temp * sizeof(EoBMonsterProperty));
 	// Convert EOB1 (hard coded) monster properties to EOB2 type monster properties.
 	for (int i = 0; i < temp; i++) {
-		EobMonsterProperty *p = &_monsterProps[i];
+		EoBMonsterProperty *p = &_monsterProps[i];
 		p->armorClass = (int8)*ps++;
 		p->hitChance = (int8)*ps++;
 		p->level = (int8)*ps++;
@@ -1109,8 +1109,8 @@ void EobEngine::initStaticResource() {
 	}
 }
 
-void EobEngine::initSpells() {
-	EobCoreEngine::initSpells();
+void EoBEngine::initSpells() {
+	EoBCoreEngine::initSpells();
 
 	struct FlagTableEntry {
 		uint16 typeFlag;
@@ -1175,11 +1175,11 @@ void EobEngine::initSpells() {
 	};
 
 	int temp;
-	const uint8 *src = _staticres->loadRawData(kEobBaseSpellProperties, temp);
+	const uint8 *src = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
 	_clericSpellOffset -= 1;
 
 	for (int i = 0; i < _numSpells; i++) {
-		EobSpell *s = &_spells[i];
+		EoBSpell *s = &_spells[i];
 		src += 4;
 		s->flags = flagTable[i].typeFlag;
 		s->damageFlags = flagTable[i].damageFlag;
@@ -1191,66 +1191,66 @@ void EobEngine::initSpells() {
 
 void DarkMoonEngine::initStaticResource() {
 	int temp;
-	_mainMenuStrings = _staticres->loadStrings(kEob2MainMenuStrings, temp);
-	_transferConvertTable = _staticres->loadRawData(kEob2TransferConvertTable, temp);
-	_transferExpTable = _staticres->loadRawDataBe32(kEob2TransferExpTable, temp);
+	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
+	_transferConvertTable = _staticres->loadRawData(kEoB2TransferConvertTable, temp);
+	_transferExpTable = _staticres->loadRawDataBe32(kEoB2TransferExpTable, temp);
 
-	_introStrings = _staticres->loadStrings(kEob2IntroStrings, temp);
-	_cpsFilesIntro = _staticres->loadStrings(kEob2IntroCPSFiles, temp);
+	_introStrings = _staticres->loadStrings(kEoB2IntroStrings, temp);
+	_cpsFilesIntro = _staticres->loadStrings(kEoB2IntroCPSFiles, temp);
 
-	_seqIntro = new const EobSequenceStep*[44];
+	_seqIntro = new const EoBSequenceStep*[44];
 	for (int i = 0; i < 44; i++)
-		_seqIntro[i] = _staticres->loadEob2SeqData(kEob2IntroSeqData00 + i, temp);
+		_seqIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroSeqData00 + i, temp);
 
-	_shapesIntro = new const EobShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(EobShapeDef*) * 13);
- 	_shapesIntro[0] = _staticres->loadEob2ShapeData(kEob2IntroShapes00, temp);
- 	_shapesIntro[1] = _staticres->loadEob2ShapeData(kEob2IntroShapes01, temp);
- 	_shapesIntro[4] = _staticres->loadEob2ShapeData(kEob2IntroShapes04, temp);
- 	_shapesIntro[7] = _staticres->loadEob2ShapeData(kEob2IntroShapes07, temp);
+	_shapesIntro = new const EoBShapeDef*[13];
+	memset(_shapesIntro, 0, sizeof(EoBShapeDef*) * 13);
+ 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
+ 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
+ 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
+ 	_shapesIntro[7] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes07, temp);
 
-	_finaleStrings = _staticres->loadStrings(kEob2FinaleStrings, temp);
-	_creditsData = _staticres->loadRawData(kEob2CreditsData, temp);
-	_cpsFilesFinale = _staticres->loadStrings(kEob2FinaleCPSFiles, temp);
+	_finaleStrings = _staticres->loadStrings(kEoB2FinaleStrings, temp);
+	_creditsData = _staticres->loadRawData(kEoB2CreditsData, temp);
+	_cpsFilesFinale = _staticres->loadStrings(kEoB2FinaleCPSFiles, temp);
 
-	_seqFinale = new const EobSequenceStep*[21];
+	_seqFinale = new const EoBSequenceStep*[21];
 	for (int i = 0; i < 21; i++)
-		_seqFinale[i] = _staticres->loadEob2SeqData(kEob2FinaleSeqData00 + i, temp);
+		_seqFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleSeqData00 + i, temp);
 
-	_shapesFinale = new const EobShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(EobShapeDef*) * 13);
-	_shapesFinale[0] = _staticres->loadEob2ShapeData(kEob2FinaleShapes00, temp);
- 	_shapesFinale[3] = _staticres->loadEob2ShapeData(kEob2FinaleShapes03, temp);
- 	_shapesFinale[7] = _staticres->loadEob2ShapeData(kEob2FinaleShapes07, temp);
- 	_shapesFinale[9] = _staticres->loadEob2ShapeData(kEob2FinaleShapes09, temp);
- 	_shapesFinale[10] = _staticres->loadEob2ShapeData(kEob2FinaleShapes10, temp);
+	_shapesFinale = new const EoBShapeDef*[13];
+	memset(_shapesFinale, 0, sizeof(EoBShapeDef*) * 13);
+	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
+ 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
+ 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
+ 	_shapesFinale[9] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes09, temp);
+ 	_shapesFinale[10] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes10, temp);
 
-	_dscDoorType5Offs = _staticres->loadRawData(kEobBaseDscDoorType5Offs, temp);
+	_dscDoorType5Offs = _staticres->loadRawData(kEoBBaseDscDoorType5Offs, temp);
 
-	_npcShpData = _staticres->loadRawData(kEob2NpcShapeData, temp);
-	_npcStrings[0] = _staticres->loadStrings(kEob2Npc1Strings, temp);
-	_npcStrings[1] = _staticres->loadStrings(kEob2Npc2Strings, temp);
-	_monsterDustStrings = _staticres->loadStrings(kEob2MonsterDustStrings, temp);
-	_dreamSteps = (const int8*)_staticres->loadRawData(kEob2DreamSteps, temp);
-	_kheldranStrings = _staticres->loadStrings(kEob2KheldranStrings, temp);
-	_hornStrings = _staticres->loadStrings(kEob2HornStrings, temp);
-	_hornSounds = _staticres->loadRawData(kEob2HornSounds, temp);
+	_npcShpData = _staticres->loadRawData(kEoB2NpcShapeData, temp);
+	_npcStrings[0] = _staticres->loadStrings(kEoB2Npc1Strings, temp);
+	_npcStrings[1] = _staticres->loadStrings(kEoB2Npc2Strings, temp);
+	_monsterDustStrings = _staticres->loadStrings(kEoB2MonsterDustStrings, temp);
+	_dreamSteps = (const int8*)_staticres->loadRawData(kEoB2DreamSteps, temp);
+	_kheldranStrings = _staticres->loadStrings(kEoB2KheldranStrings, temp);
+	_hornStrings = _staticres->loadStrings(kEoB2HornStrings, temp);
+	_hornSounds = _staticres->loadRawData(kEoB2HornSounds, temp);
 
-	_wallOfForceDsX = (const int16*)_staticres->loadRawDataBe16(kEob2WallOfForceDsX, temp);
-	_wallOfForceDsY = _staticres->loadRawData(kEob2WallOfForceDsY, temp);
-	_wallOfForceDsNumW = _staticres->loadRawData(kEob2WallOfForceNumW, temp);
-	_wallOfForceDsNumH = _staticres->loadRawData(kEob2WallOfForceNumH, temp);
-	_wallOfForceShpId = _staticres->loadRawData(kEob2WallOfForceShpId, temp);
+	_wallOfForceDsX = (const int16*)_staticres->loadRawDataBe16(kEoB2WallOfForceDsX, temp);
+	_wallOfForceDsY = _staticres->loadRawData(kEoB2WallOfForceDsY, temp);
+	_wallOfForceDsNumW = _staticres->loadRawData(kEoB2WallOfForceNumW, temp);
+	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
+	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
 }
 
 void DarkMoonEngine::initSpells() {
-	EobCoreEngine::initSpells();
+	EoBCoreEngine::initSpells();
 
 	int temp;
-	const uint8 *src = _staticres->loadRawData(kEobBaseSpellProperties, temp);
+	const uint8 *src = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
 
 	for (int i = 0; i < _numSpells; i++) {
-		EobSpell *s = &_spells[i];
+		EoBSpell *s = &_spells[i];
 		src += 8;
 		s->flags = READ_LE_UINT16(src);
 		src += 10;

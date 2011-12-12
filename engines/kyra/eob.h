@@ -29,11 +29,11 @@
 
 namespace Kyra {
 
-class EobEngine : public EobCoreEngine {
-friend class GUI_Eob;
+class EoBEngine : public EoBCoreEngine {
+friend class GUI_EoB;
 public:
-	EobEngine(OSystem *system, const GameFlags &flags);
-	~EobEngine();
+	EoBEngine(OSystem *system, const GameFlags &flags);
+	~EoBEngine();
 
 private:
 	// Init / Release

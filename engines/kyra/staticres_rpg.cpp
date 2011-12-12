@@ -28,11 +28,11 @@ namespace Kyra {
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
-	return (const uint16 *)getData(id, kLolRawDataBe16, entries);
+	return (const uint16 *)getData(id, kLoLRawDataBe16, entries);
 }
 
 const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
-	return (const uint32 *)getData(id, kLolRawDataBe32, entries);
+	return (const uint32 *)getData(id, kLoLRawDataBe32, entries);
 }
 
 bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -77,18 +77,18 @@ const uint8 KyraRpgEngine::_dropItemDirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2,
 
 void KyraRpgEngine::initStaticResource() {
 	int temp;
-	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kLolEobCommonDscX, temp);
-	_dscShapeIndex = (const int8 *)_staticres->loadRawData(kLolEobCommonDscShapeIndex, temp);
-	_dscTileIndex = _staticres->loadRawData(kLolEobCommonDscTileIndex, temp);
-	_dscDim1 = (const int8 *)_staticres->loadRawData(kLolEobCommonDscDimData1, temp);
-	_dscDim2 = (const int8 *)_staticres->loadRawData(kLolEobCommonDscDimData2, temp);
-	_dscUnk2 = _staticres->loadRawData(kLolEobCommonDscUnk2, temp);
-	_dscBlockMap = _staticres->loadRawData(kLolEobCommonDscBlockMap, temp);
-	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kLolEobCommonDscBlockIndex, temp);
-	_dscDimMap = _staticres->loadRawData(kLolEobCommonDscDimMap, temp);
-	_dscDoorShpIndex = _staticres->loadRawData(kLolEobCommonDscDoorShapeIndex, _dscDoorShpIndexSize);
-	_dscDoorY2 = _staticres->loadRawData(kLolEobCommonDscDoorY2, temp);
-	_moreStrings = _staticres->loadStrings(kLolEobCommonMoreStrings, temp);
+	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(kRpgCommonDscX, temp);
+	_dscShapeIndex = (const int8 *)_staticres->loadRawData(kRpgCommonDscShapeIndex, temp);
+	_dscTileIndex = _staticres->loadRawData(kRpgCommonDscTileIndex, temp);
+	_dscDim1 = (const int8 *)_staticres->loadRawData(kRpgCommonDscDimData1, temp);
+	_dscDim2 = (const int8 *)_staticres->loadRawData(kRpgCommonDscDimData2, temp);
+	_dscUnk2 = _staticres->loadRawData(kRpgCommonDscUnk2, temp);
+	_dscBlockMap = _staticres->loadRawData(kRpgCommonDscBlockMap, temp);
+	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kRpgCommonDscBlockIndex, temp);
+	_dscDimMap = _staticres->loadRawData(kRpgCommonDscDimMap, temp);
+	_dscDoorShpIndex = _staticres->loadRawData(kRpgCommonDscDoorShapeIndex, _dscDoorShpIndexSize);
+	_dscDoorY2 = _staticres->loadRawData(kRpgCommonDscDoorY2, temp);
+	_moreStrings = _staticres->loadStrings(kRpgCommonMoreStrings, temp);
 }
 
 #endif // (ENABLE_EOB || ENABLE_LOL)

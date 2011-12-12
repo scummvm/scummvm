@@ -32,23 +32,23 @@
 
 namespace Kyra {
 
-void EobCoreEngine::runLevelScript(int block, int flags) {
+void EoBCoreEngine::runLevelScript(int block, int flags) {
 	_inf->run(block, flags);
 }
 
-void EobCoreEngine::setScriptFlags(uint32 flags) {
+void EoBCoreEngine::setScriptFlags(uint32 flags) {
 	_inf->setFlags(flags);
 }
 
-void EobCoreEngine::clearScriptFlags(uint32 flags) {
+void EoBCoreEngine::clearScriptFlags(uint32 flags) {
 	_inf->clearFlags(flags);
 }
 
-bool EobCoreEngine::checkScriptFlags(uint32 flags) {
+bool EoBCoreEngine::checkScriptFlags(uint32 flags) {
 	return _inf->checkFlags(flags);
 }
 
-const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
+const uint8 *EoBCoreEngine::initScriptTimers(const uint8 *pos) {
 	_scriptTimersCount = 0;
 
 	while (((int16)READ_LE_UINT16(pos)) != -1) {
@@ -63,7 +63,7 @@ const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
 	return pos;
 }
 
-void EobCoreEngine::updateScriptTimers() {
+void EoBCoreEngine::updateScriptTimers() {
 	bool timerUpdate = false;
 	if ((_scriptTimersMode & 2) && _stepsUntilScriptCall && _stepCounter > _stepsUntilScriptCall) {
 		_inf->run(0, 0x20);
@@ -86,10 +86,10 @@ void EobCoreEngine::updateScriptTimers() {
 		updateScriptTimersExtra();
 }
 
-EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _vm(engine), _screen(screen),
+EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _vm(engine), _screen(screen),
 	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
-#define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EobInfProcessor::x), #x))
+#define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EoBInfProcessor::x), #x))
 #define OpcodeAlt(x) if (_vm->game() == GI_EOB1) { Opcode(x##_v1); } else { Opcode(x##_v2); }
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
@@ -152,7 +152,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_activeCharacter = -1;
 }
 
-EobInfProcessor::~EobInfProcessor() {
+EoBInfProcessor::~EoBInfProcessor() {
 	delete[] _subroutineStack;
 	delete[] _flagTable;
 	delete[] _stack;
@@ -164,14 +164,14 @@ EobInfProcessor::~EobInfProcessor() {
 	_opcodes.clear();
 }
 
-void EobInfProcessor::loadData(const uint8 *data, uint32 dataSize) {
+void EoBInfProcessor::loadData(const uint8 *data, uint32 dataSize) {
 	delete[] _scriptData;
 	_scriptSize = dataSize;
 	_scriptData = new int8[_scriptSize];
 	memcpy(_scriptData, data, _scriptSize);
 }
 
-void EobInfProcessor::run(int func, int flags) {
+void EoBInfProcessor::run(int func, int flags) {
 	int o = _vm->_levelBlockProperties[func].assignedObjects;
 	if (!o)
 		return;
@@ -196,40 +196,40 @@ void EobInfProcessor::run(int func, int flags) {
 		int8 cmd = *pos++;
 		if (cmd <= _commandMin || cmd >= 0)
 			continue;
-		debugC(3, kDebugLevelScript, "[0x%.04X] EobInfProcessor::%s()", (uint32)(pos - _scriptData), _opcodes[-(cmd + 1)]->desc.c_str());
+		debugC(3, kDebugLevelScript, "[0x%.04X] EoBInfProcessor::%s()", (uint32)(pos - _scriptData), _opcodes[-(cmd + 1)]->desc.c_str());
 		pos += (*_opcodes[-(cmd + 1)]->proc)(pos);
 	} while (!_abortScript && !_abortAfterSubroutine);
 }
 
-void EobInfProcessor::setFlags(uint32 flags) {
+void EoBInfProcessor::setFlags(uint32 flags) {
 	_flagTable[17] |= flags;
 }
 
-void EobInfProcessor::clearFlags(uint32 flags) {
+void EoBInfProcessor::clearFlags(uint32 flags) {
 	_flagTable[17] &= ~flags;
 }
 
-bool EobInfProcessor::checkFlags(uint32 flags) const {
+bool EoBInfProcessor::checkFlags(uint32 flags) const {
 	return ((_flagTable[17] & flags) == flags) ? true : false;
 }
 
-bool EobInfProcessor::preventRest() const {
+bool EoBInfProcessor::preventRest() const {
 	return _preventRest ? true : false;
 }
 
-void EobInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
+void EoBInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
 	_preventRest = in.readByte();
 	for (int i = 0; i < 18; i++)
 		_flagTable[i] = in.readUint32BE();
 }
 
-void EobInfProcessor::saveState(Common::OutSaveFile *out) {
+void EoBInfProcessor::saveState(Common::OutSaveFile *out) {
 	out->writeByte(_preventRest);
 	for (int i = 0; i < 18; i++)
 		out->writeUint32BE(_flagTable[i]);
 }
 
-const char *EobInfProcessor::getString(uint16 index) {
+const char *EoBInfProcessor::getString(uint16 index) {
 	if (index == 0xffff)
 		return 0;
 
@@ -244,7 +244,7 @@ const char *EobInfProcessor::getString(uint16 index) {
 	return (const char*)res;
 }
 
-int EobInfProcessor::oeob_setWallType(int8 *data) {
+int EoBInfProcessor::oeob_setWallType(int8 *data) {
 	int8 *pos = data;
 
 	uint16 block = 0;
@@ -278,7 +278,7 @@ int EobInfProcessor::oeob_setWallType(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_toggleWallState(int8 *data) {
+int EoBInfProcessor::oeob_toggleWallState(int8 *data) {
 	int8 *pos = data;
 
 	uint16 block = 0;
@@ -320,28 +320,28 @@ int EobInfProcessor::oeob_toggleWallState(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_openDoor(int8 *data) {
+int EoBInfProcessor::oeob_openDoor(int8 *data) {
 	int8 *pos = data;
 	_vm->openDoor(READ_LE_UINT16(pos));
 	pos += 2;
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_closeDoor(int8 *data) {
+int EoBInfProcessor::oeob_closeDoor(int8 *data) {
 	int8 *pos = data;
 	_vm->closeDoor(READ_LE_UINT16(pos));
 	pos += 2;
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_replaceMonster(int8 *data) {
+int EoBInfProcessor::oeob_replaceMonster(int8 *data) {
 	int8 *pos = data;
 	_vm->replaceMonster(pos[1], READ_LE_UINT16(pos + 2), pos[4], pos[5], pos[6], pos[7], pos[8], pos[9], READ_LE_UINT16(pos + 10), READ_LE_UINT16(pos + 12));
 	pos += 14;
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
+int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 	int8 *pos = data;
 
 	int8 a = *pos++;
@@ -454,7 +454,7 @@ int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
+int EoBInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 	int8 *pos = data;
 	int8 c = *pos++;
 	uint16 block = READ_LE_UINT16(pos);
@@ -500,7 +500,7 @@ int EobInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_printMessage_v1(int8 *data) {
+int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	static const char colorConfig[] = "\x6\x21\x2\x21";
 	char col[5];
 	int8 *pos = data;
@@ -522,7 +522,7 @@ int EobInfProcessor::oeob_printMessage_v1(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_printMessage_v2(int8 *data) {
+int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 	int8 *pos = data;
 	uint16 str = READ_LE_UINT16(pos);
 	pos += 2;
@@ -544,7 +544,7 @@ int EobInfProcessor::oeob_printMessage_v2(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_setFlags(int8 *data) {
+int EoBInfProcessor::oeob_setFlags(int8 *data) {
 	int8 *pos = data;
 	int8 b = 0;
 
@@ -583,7 +583,7 @@ int EobInfProcessor::oeob_setFlags(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_playSoundEffect(int8 *data) {
+int EoBInfProcessor::oeob_playSoundEffect(int8 *data) {
 	int8 *pos = data;
 	uint16 block = READ_LE_UINT16(pos + 1);
 
@@ -597,7 +597,7 @@ int EobInfProcessor::oeob_playSoundEffect(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_removeFlags(int8 *data) {
+int EoBInfProcessor::oeob_removeFlags(int8 *data) {
 	int8 *pos = data;
 	int8 a = *pos++;
 
@@ -629,7 +629,7 @@ int EobInfProcessor::oeob_removeFlags(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_modifyCharacterHitPoints(int8 *data) {
+int EoBInfProcessor::oeob_modifyCharacterHitPoints(int8 *data) {
 	int8 *pos = data;
 	int8 c = *pos++;
 	int8 p = *pos++;
@@ -644,7 +644,7 @@ int EobInfProcessor::oeob_modifyCharacterHitPoints(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_calcAndInflictCharacterDamage(int8 *data) {
+int EoBInfProcessor::oeob_calcAndInflictCharacterDamage(int8 *data) {
 	int8 *pos = data;
 	int charIndex = *pos++;
 	int times = *pos++;
@@ -673,19 +673,19 @@ int EobInfProcessor::oeob_calcAndInflictCharacterDamage(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_jump(int8 *data) {
+int EoBInfProcessor::oeob_jump(int8 *data) {
 	int8 *pos = data;
 	pos = _scriptData + READ_LE_UINT16(pos);
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_end(int8 *data) {
+int EoBInfProcessor::oeob_end(int8 *data) {
 	_abortScript = 1;
 	_subroutineStackPos = 0;
 	return 0;
 }
 
-int EobInfProcessor::oeob_returnFromSubroutine(int8 *data) {
+int EoBInfProcessor::oeob_returnFromSubroutine(int8 *data) {
 	int8 *pos = data;
 
 	if (_subroutineStackPos)
@@ -696,7 +696,7 @@ int EobInfProcessor::oeob_returnFromSubroutine(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_callSubroutine(int8 *data) {
+int EoBInfProcessor::oeob_callSubroutine(int8 *data) {
 	int8 *pos = data;
 	uint16 offs = READ_LE_UINT16(pos);
 	assert(offs < _scriptSize);
@@ -710,14 +710,14 @@ int EobInfProcessor::oeob_callSubroutine(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_eval_v1(int8 *data) {
+int EoBInfProcessor::oeob_eval_v1(int8 *data) {
 	int8 *pos = data;
 	int8 cmd = *pos++;
 
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EobItem *itm = &_vm->_items[_vm->_itemInHand];
+	EoBItem *itm = &_vm->_items[_vm->_itemInHand];
 	Common::String tempString1;
 	Common::String tempString2;
 
@@ -930,14 +930,14 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_eval_v2(int8 *data) {
+int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 	int8 *pos = data;
 	int8 cmd = *pos++;
 
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EobItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
+	EoBItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
 	Common::String tempString1;
 	Common::String tempString2;
 
@@ -1227,7 +1227,7 @@ int EobInfProcessor::oeob_eval_v2(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_deleteItem(int8 *data) {
+int EoBInfProcessor::oeob_deleteItem(int8 *data) {
 	int8 *pos = data;
 	int8 c = *pos++;
 
@@ -1243,7 +1243,7 @@ int EobInfProcessor::oeob_deleteItem(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
+int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 	int8 *pos = data;
 	_vm->gui_updateControls();
 
@@ -1264,7 +1264,7 @@ int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 			_vm->_monsters[i].curAttackFrame = 0;
 
 		for (int i = 0; i < 10; i++) {
-			EobFlyingObject *fo = &_vm->_flyingObjects[i];
+			EoBFlyingObject *fo = &_vm->_flyingObjects[i];
 			if (fo->enable == 1) {
 				_vm->_items[fo->item].pos &= 3;
 				run(_vm->_items[fo->item].block, 4);
@@ -1306,7 +1306,7 @@ int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 	return res;
 }
 
-int EobInfProcessor::oeob_increasePartyExperience(int8 *data) {
+int EoBInfProcessor::oeob_increasePartyExperience(int8 *data) {
 	int8 *pos = data;
 	if (*pos++ == -30) {
 		_vm->increasePartyExperience((int16)READ_LE_UINT16(pos));
@@ -1316,7 +1316,7 @@ int EobInfProcessor::oeob_increasePartyExperience(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_createItem_v1(int8 *data) {
+int EoBInfProcessor::oeob_createItem_v1(int8 *data) {
 	int8 *pos = data;
 	uint16 itm = _vm->duplicateItem(READ_LE_UINT16(pos));
 	pos += 2;
@@ -1337,7 +1337,7 @@ int EobInfProcessor::oeob_createItem_v1(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_createItem_v2(int8 *data) {
+int EoBInfProcessor::oeob_createItem_v2(int8 *data) {
 	static const uint8 _itemPos[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
 	int8 *pos = data;
 
@@ -1379,7 +1379,7 @@ int EobInfProcessor::oeob_createItem_v2(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_launchObject(int8 *data) {
+int EoBInfProcessor::oeob_launchObject(int8 *data) {
 	static const uint8 startPos[] = { 2, 3, 0, 2, 1, 0, 3, 1 };
 
 	int8 *pos = data;
@@ -1407,7 +1407,7 @@ int EobInfProcessor::oeob_launchObject(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_changeDirection(int8 *data) {
+int EoBInfProcessor::oeob_changeDirection(int8 *data) {
 	int8 *pos = data;
 
 	int8 cmd = *pos++;
@@ -1428,7 +1428,7 @@ int EobInfProcessor::oeob_changeDirection(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_identifyItems(int8 *data) {
+int EoBInfProcessor::oeob_identifyItems(int8 *data) {
 	int8 *pos = data;
 	uint16 block = READ_LE_UINT16(pos);
 
@@ -1451,7 +1451,7 @@ int EobInfProcessor::oeob_identifyItems(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_sequence(int8 *data) {
+int EoBInfProcessor::oeob_sequence(int8 *data) {
 	int8 *pos = data;
 	_vm->_npcSequenceSub = -1;
 	_vm->txt()->setWaitButtonMode(0);
@@ -1493,19 +1493,19 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_delay(int8 *data) {
+int EoBInfProcessor::oeob_delay(int8 *data) {
 	int8 *pos = data;
 	_vm->delay(READ_LE_UINT16(pos) * _vm->tickLength());
 	pos += 2;
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_drawScene(int8 *data) {
+int EoBInfProcessor::oeob_drawScene(int8 *data) {
 	_vm->drawScene(1);
 	return 0;
 }
 
-int EobInfProcessor::oeob_dialogue(int8 *data) {
+int EoBInfProcessor::oeob_dialogue(int8 *data) {
 	int8 *pos = data;
 
 	switch (*pos++) {
@@ -1543,7 +1543,7 @@ int EobInfProcessor::oeob_dialogue(int8 *data) {
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_specialEvent(int8 *data) {
+int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 	int8 *pos = data;
 	uint16 cmd = READ_LE_UINT16(pos);
 	pos += 2;

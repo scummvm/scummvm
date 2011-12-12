@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
+EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
 	_numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26), _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9), _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
@@ -212,7 +212,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 #undef DWM0
 }
 
-EobCoreEngine::~EobCoreEngine() {
+EoBCoreEngine::~EoBCoreEngine() {
 	releaseItemsAndDecorationsShapes();
 	releaseTempData();
 
@@ -292,12 +292,12 @@ EobCoreEngine::~EobCoreEngine() {
 	_txt = 0;
 }
 
-Common::Error EobCoreEngine::init() {
+Common::Error EoBCoreEngine::init() {
 	// In EOB the timer proc is directly invoked via interrupt 0x1c, 18.2 times per second.
 	// This makes a tick length of 54.94.
 	_tickLength = 55;
 
-	_screen = new Screen_Eob(this, _system);
+	_screen = new Screen_EoB(this, _system);
 
 	assert(_screen);
 	_screen->setResolution();
@@ -333,13 +333,13 @@ Common::Error EobCoreEngine::init() {
 	}
 
 	setupKeyMap();
-	_gui = new GUI_Eob(this);
+	_gui = new GUI_EoB(this);
 	assert(_gui);
 	_txt = new TextDisplayer_rpg(this, _screen);
 	assert(_txt);
-	_inf = new EobInfProcessor(this, _screen);
+	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
-	_debugger = new Debugger_Eob(this);
+	_debugger = new Debugger_EoB(this);
 	assert(_debugger);
 
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
@@ -375,14 +375,14 @@ Common::Error EobCoreEngine::init() {
 
 	_wllVcnOffset = 16;
 
-	_monsters = new EobMonsterInPlay[30];
-	memset(_monsters, 0, 30 * sizeof(EobMonsterInPlay));
+	_monsters = new EoBMonsterInPlay[30];
+	memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
 
-	_characters = new EobCharacter[6];
-	memset(_characters, 0, sizeof(EobCharacter) * 6);
+	_characters = new EoBCharacter[6];
+	memset(_characters, 0, sizeof(EoBCharacter) * 6);
 
-	_items = new EobItem[600];
-	memset(_items, 0, sizeof(EobItem) * 600);
+	_items = new EoBItem[600];
+	memset(_items, 0, sizeof(EoBItem) * 600);
 
 	_itemNames = new char*[130];
 	for (int i = 0; i < 130; i++) {
@@ -390,9 +390,9 @@ Common::Error EobCoreEngine::init() {
 		memset(_itemNames[i], 0, 35);
 	}
 
-	_flyingObjects = new EobFlyingObject[_numFlyingObjects];
+	_flyingObjects = new EoBFlyingObject[_numFlyingObjects];
 	_flyingObjectsPtr = _flyingObjects;
-	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(EobFlyingObject));
+	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(EoBFlyingObject));
 
 	_spellAnimBuffer = new uint8[4096];
 	memset(_spellAnimBuffer, 0, 4096);
@@ -426,7 +426,7 @@ Common::Error EobCoreEngine::init() {
 	return Common::kNoError;
 }
 
-Common::Error EobCoreEngine::go() {
+Common::Error EoBCoreEngine::go() {
 	_txt->removePageBreakFlag();
 	_screen->loadPalette("palette.col", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
@@ -482,12 +482,12 @@ Common::Error EobCoreEngine::go() {
 	return Common::kNoError;
 }
 
-void EobCoreEngine::registerDefaultSettings() {
+void EoBCoreEngine::registerDefaultSettings() {
 	KyraEngine_v1::registerDefaultSettings();
 	ConfMan.registerDefault("hpbargraphs", true);
 }
 
-void EobCoreEngine::readSettings() {
+void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = _configSounds ? 1 : 0;
@@ -496,7 +496,7 @@ void EobCoreEngine::readSettings() {
 		_sound->enableSFX(_configSounds);
 }
 
-void EobCoreEngine::writeSettings() {
+void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
@@ -510,7 +510,7 @@ void EobCoreEngine::writeSettings() {
 	ConfMan.flushToDisk();
 }
 
-void EobCoreEngine::startupNew() {
+void EoBCoreEngine::startupNew() {
 	gui_setPlayFieldButtons();
 	_screen->_curPage = 0;
 	gui_drawPlayField(false);
@@ -521,7 +521,7 @@ void EobCoreEngine::startupNew() {
 	_updateCharNum = 0;
 }
 
-void EobCoreEngine::runLoop() {
+void EoBCoreEngine::runLoop() {
 	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
@@ -556,7 +556,7 @@ void EobCoreEngine::runLoop() {
 	}
 }
 
-bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
+bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	int numChars = 0;
 	for (int i = 0; i < 6; i++)
 		numChars += testCharacter(i, 13);
@@ -582,7 +582,7 @@ bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
 	return false;
 }
 
-void EobCoreEngine::loadItemsAndDecorationsShapes() {
+void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	releaseItemsAndDecorationsShapes();
 	_screen->setCurPage(2);
 
@@ -653,7 +653,7 @@ void EobCoreEngine::loadItemsAndDecorationsShapes() {
 	}
 }
 
-void EobCoreEngine::releaseItemsAndDecorationsShapes() {
+void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_largeItemShapes) {
 		for (int i = 0; i < _numLargeItemShapes; i++) {
 			if (_largeItemShapes[i])
@@ -745,7 +745,7 @@ void EobCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _lightningColumnShape;
 }
 
-void EobCoreEngine::setHandItem(Item itemIndex) {
+void EoBCoreEngine::setHandItem(Item itemIndex) {
 	if (itemIndex == -1)
 		return;
 
@@ -771,13 +771,13 @@ void EobCoreEngine::setHandItem(Item itemIndex) {
 	_screen->setMouseCursor(mouseOffs, mouseOffs, shp);
 }
 
-int EobCoreEngine::getDexterityArmorClassModifier(int dexterity) {
+int EoBCoreEngine::getDexterityArmorClassModifier(int dexterity) {
 	static const int8 mod[] = { 5, 5, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -3, -4, -4, -5, -5, -5, -6, -6 };
 	return mod[dexterity];
 }
 
-int EobCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex) {
-	EobCharacter *c = &_characters[charIndex];
+int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex) {
+	EoBCharacter *c = &_characters[charIndex];
 	int m = getClassAndConstHitpointsModifier(c->cClass, c->constitutionCur);
 
 	int h = 0;
@@ -804,7 +804,7 @@ int EobCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 	return h;
 }
 
-int EobCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitution) {
+int EoBCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitution) {
 	int res = _hpConstModifiers[constitution];
 	// This also applies to EOB1 despite being coded differently there
 	if (res <= 2 || (_classModifierFlags[cclass] & 0x31))
@@ -813,11 +813,11 @@ int EobCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitutio
 	return 2;
 }
 
-int EobCoreEngine::getCharacterClassType(int cclass, int levelIndex) {
+int EoBCoreEngine::getCharacterClassType(int cclass, int levelIndex) {
 	return _characterClassType[cclass * 3 + levelIndex];
 }
 
-int EobCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode) {
+int EoBCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode) {
 	int s = _hpIncrPerLevel[6 + hpModifier] > level ? level : _hpIncrPerLevel[6 + hpModifier];
 	int res = s;
 
@@ -835,7 +835,7 @@ int EobCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int le
 	return res;
 }
 
-Common::String EobCoreEngine::getCharStrength(int str, int strExt) {
+Common::String EoBCoreEngine::getCharStrength(int str, int strExt) {
 	if (strExt) {
 		if (strExt == 100)
 			strExt = 0;
@@ -847,11 +847,11 @@ Common::String EobCoreEngine::getCharStrength(int str, int strExt) {
 	return _strenghtStr;
 }
 
-int EobCoreEngine::testCharacter(int index, int flags) {
+int EoBCoreEngine::testCharacter(int index, int flags) {
 	if (index == -1)
 		return 0;
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 	int res = 1;
 
 	if (flags & 1)
@@ -878,7 +878,7 @@ int EobCoreEngine::testCharacter(int index, int flags) {
 	return res;
 }
 
-int EobCoreEngine::getNextValidCharIndex(int curCharIndex, int searchStep) {
+int EoBCoreEngine::getNextValidCharIndex(int curCharIndex, int searchStep) {
 	do {
 		curCharIndex += searchStep;
 		if (curCharIndex < 0)
@@ -890,8 +890,8 @@ int EobCoreEngine::getNextValidCharIndex(int curCharIndex, int searchStep) {
 	return curCharIndex;
 }
 
-void EobCoreEngine::recalcArmorClass(int index) {
-	EobCharacter *c = &_characters[index];
+void EoBCoreEngine::recalcArmorClass(int index) {
+	EoBCharacter *c = &_characters[index];
 	int acm = getDexterityArmorClassModifier(c->dexterityCur);
 	c->armorClass = 10 + acm;
 
@@ -958,8 +958,8 @@ void EobCoreEngine::recalcArmorClass(int index) {
 		c->armorClass = -10;
 }
 
-int EobCoreEngine::validateWeaponSlotItem(int index, int slot) {
-	EobCharacter *c = &_characters[index];
+int EoBCoreEngine::validateWeaponSlotItem(int index, int slot) {
+	EoBCharacter *c = &_characters[index];
 	int itm1 = c->inventory[0];
 	int r = itemUsableByCharacter(index, itm1);
 	int tp1 = _items[itm1].type;
@@ -987,7 +987,7 @@ int EobCoreEngine::validateWeaponSlotItem(int index, int slot) {
 	return r;
 }
 
-int EobCoreEngine::getClericPaladinLevel(int index) {
+int EoBCoreEngine::getClericPaladinLevel(int index) {
 	if (_castScrollSlot)
 		return 9;
 
@@ -1007,7 +1007,7 @@ int EobCoreEngine::getClericPaladinLevel(int index) {
 	return 1;
 }
 
-int EobCoreEngine::getMageLevel(int index) {
+int EoBCoreEngine::getMageLevel(int index) {
 	if (_castScrollSlot)
 		return 9;
 
@@ -1018,7 +1018,7 @@ int EobCoreEngine::getMageLevel(int index) {
 	return (l > -1) ? _characters[index].level[l] : 1;
 }
 
-int EobCoreEngine::getCharacterLevelIndex(int type, int cClass) {
+int EoBCoreEngine::getCharacterLevelIndex(int type, int cClass) {
 	if (getCharacterClassType(cClass, 0) == type)
 		return 0;
 
@@ -1031,7 +1031,7 @@ int EobCoreEngine::getCharacterLevelIndex(int type, int cClass) {
 	return -1;
 }
 
-int EobCoreEngine::countCharactersWithSpecificItems(int16 itemType, int16 itemValue) {
+int EoBCoreEngine::countCharactersWithSpecificItems(int16 itemType, int16 itemValue) {
 	int res = 0;
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
@@ -1042,7 +1042,7 @@ int EobCoreEngine::countCharactersWithSpecificItems(int16 itemType, int16 itemVa
 	return res;
 }
 
-int EobCoreEngine::checkInventoryForItem(int character, int16 itemType, int16 itemValue) {
+int EoBCoreEngine::checkInventoryForItem(int character, int16 itemType, int16 itemValue) {
 	for (int i = 0; i < 27; i++) {
 		uint16 inv = _characters[character].inventory[i];
 		if (!inv)
@@ -1055,11 +1055,11 @@ int EobCoreEngine::checkInventoryForItem(int character, int16 itemType, int16 it
 	return -1;
 }
 
-void EobCoreEngine::modifyCharacterHitpoints(int character, int16 points) {
+void EoBCoreEngine::modifyCharacterHitpoints(int character, int16 points) {
 	if (!testCharacter(character, 3))
 		return;
 
-	EobCharacter *c = &_characters[character];
+	EoBCharacter *c = &_characters[character];
 	c->hitPointsCur += points;
 	if (c->hitPointsCur > c->hitPointsMax)
 		c->hitPointsCur = c->hitPointsMax;
@@ -1068,14 +1068,14 @@ void EobCoreEngine::modifyCharacterHitpoints(int character, int16 points) {
 	gui_drawCharPortraitWithStats(character);
 }
 
-void EobCoreEngine::neutralizePoison(int character) {
+void EoBCoreEngine::neutralizePoison(int character) {
 	_characters[character].flags &= ~2;
 	_characters[character].effectFlags &= ~0x2000;
 	deleteCharEventTimer(character, -34);
 	gui_drawCharPortraitWithStats(character);
 }
 
-void EobCoreEngine::npcSequence(int npcIndex) {
+void EoBCoreEngine::npcSequence(int npcIndex) {
 	_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 
@@ -1095,8 +1095,8 @@ void EobCoreEngine::npcSequence(int npcIndex) {
 	gui_restorePlayField();
 }
 
-void EobCoreEngine::initNpc(int npcIndex) {
-	EobCharacter *c = _characters;
+void EoBCoreEngine::initNpc(int npcIndex) {
+	EoBCharacter *c = _characters;
 	int i = 0;
 	for (; i < 6; i++) {
 		if (!(_characters[i].flags & 1)) {
@@ -1106,7 +1106,7 @@ void EobCoreEngine::initNpc(int npcIndex) {
 	}
 
 	delete[] c->faceShape;
-	memcpy(c, &_npcPreset[npcIndex], sizeof(EobCharacter));
+	memcpy(c, &_npcPreset[npcIndex], sizeof(EoBCharacter));
 	recalcArmorClass(i);
 
 	for (i = 0; i < 25; i++) {
@@ -1121,7 +1121,7 @@ void EobCoreEngine::initNpc(int npcIndex) {
 	_screen->_curPage = 0;
 }
 
-int EobCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId) {
+int EoBCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId) {
 	gui_drawDialogueBox();
 	_txt->printDialogueText(queryJoinTextId, 0);
 
@@ -1144,7 +1144,7 @@ int EobCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 	return r ^ 1;
 }
 
-int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
+int EoBCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 	int numChars = 0;
 	for (int i = 0; i < 6; i++)
 		numChars += (_characters[i].flags & 1);
@@ -1167,7 +1167,7 @@ int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 	return 1;
 }
 
-void EobCoreEngine::dropCharacter(int charIndex) {
+void EoBCoreEngine::dropCharacter(int charIndex) {
 	if (!testCharacter(charIndex, 1))
 		return;
 
@@ -1181,8 +1181,8 @@ void EobCoreEngine::dropCharacter(int charIndex) {
 	setupCharacterTimers();
 }
 
-void EobCoreEngine::removeCharacterFromParty(int charIndex) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::removeCharacterFromParty(int charIndex) {
+	EoBCharacter *c = &_characters[charIndex];
 	c->flags = 0;
 
 	for (int i = 0; i < 27; i++) {
@@ -1204,14 +1204,14 @@ void EobCoreEngine::removeCharacterFromParty(int charIndex) {
 	setupCharacterTimers();
 }
 
-void EobCoreEngine::exchangeCharacters(int charIndex1, int charIndex2) {
-	EobCharacter temp;
-	memcpy(&temp, &_characters[charIndex1], sizeof(EobCharacter));
-	memcpy(&_characters[charIndex1], &_characters[charIndex2], sizeof(EobCharacter));
-	memcpy(&_characters[charIndex2], &temp, sizeof(EobCharacter));
+void EoBCoreEngine::exchangeCharacters(int charIndex1, int charIndex2) {
+	EoBCharacter temp;
+	memcpy(&temp, &_characters[charIndex1], sizeof(EoBCharacter));
+	memcpy(&_characters[charIndex1], &_characters[charIndex2], sizeof(EoBCharacter));
+	memcpy(&_characters[charIndex2], &temp, sizeof(EoBCharacter));
 }
 
-void EobCoreEngine::increasePartyExperience(int16 points) {
+void EoBCoreEngine::increasePartyExperience(int16 points) {
 	int cnt = 0;
 	for (int i = 0; i < 6; i++) {
 		if (testCharacter(i, 3))
@@ -1230,7 +1230,7 @@ void EobCoreEngine::increasePartyExperience(int16 points) {
 	}
 }
 
-void EobCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
+void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	int cl = _characters[charIndex].cClass;
 	points /= _numLevelsPerClass[cl];
 
@@ -1248,7 +1248,7 @@ void EobCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	}
 }
 
-uint32 EobCoreEngine::getRequiredExperience(int cClass, int levelIndex, int level) {
+uint32 EoBCoreEngine::getRequiredExperience(int cClass, int levelIndex, int level) {
 	cClass = getCharacterClassType(cClass, levelIndex);
 	if (cClass == -1)
 		return 0xffffffff;
@@ -1257,7 +1257,7 @@ uint32 EobCoreEngine::getRequiredExperience(int cClass, int levelIndex, int leve
 	return tbl[level - 1];
 }
 
-void EobCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
+void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 	_characters[charIndex].level[levelIndex]++;
 	int hpInc = generateCharacterHitpointsByLevel(charIndex, 1 << levelIndex);
 	_characters[charIndex].hitPointsCur += hpInc;
@@ -1268,7 +1268,7 @@ void EobCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 	snd_playSoundEffect(23);
 }
 
-void EobCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
+void EoBCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
 	if (mode == 0 || mode == 2)
 		_characters[charIndex].disabledSlots ^= (1 << slot);
 	else if (mode != 1)
@@ -1278,7 +1278,7 @@ void EobCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
 	gui_drawCharPortraitWithStats(charIndex);
 }
 
-void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &args) {
+void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &args) {
 	_dialogueNumButtons = numStr;
 	_dialogueHighlightedButton = 0;
 
@@ -1306,7 +1306,7 @@ void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 		removeInputTop();
 }
 
-void EobCoreEngine::initDialogueSequence() {
+void EoBCoreEngine::initDialogueSequence() {
 	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
@@ -1324,7 +1324,7 @@ void EobCoreEngine::initDialogueSequence() {
 	delete s;
 }
 
-void EobCoreEngine::restoreAfterDialogueSequence() {
+void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_txt->allowPageBreak(false);
 	_dialogueField = false;
 
@@ -1340,7 +1340,7 @@ void EobCoreEngine::restoreAfterDialogueSequence() {
 	_sceneUpdateRequired = true;
 }
 
-void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags) {
+void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags) {
 	static const uint8 frameX[] = { 1, 0 };
 	static const uint8 frameY[] = { 8, 0 };
 	static const uint8 frameW[] = { 20, 40 };
@@ -1351,7 +1351,7 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	if (scumm_stricmp(_dialogueLastBitmap, file)) {
 		if (!destRect) {
 			if (!(flags & 1)) {
-				_screen->loadEobBitmap("BORDER", 0, 3, 3, 2);
+				_screen->loadEoBBitmap("BORDER", 0, 3, 3, 2);
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, page, Screen::CR_NO_P_CHECK);
 			} else {
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 0, page, Screen::CR_NO_P_CHECK);
@@ -1361,7 +1361,7 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, 6, Screen::CR_NO_P_CHECK);
 		}
 
-		_screen->loadEobBitmap(file, 0, 3, 3, 2);
+		_screen->loadEoBBitmap(file, 0, 3, 3, 2);
 		strcpy(_dialogueLastBitmap, file);
 	}
 
@@ -1376,7 +1376,7 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	_screen->updateScreen();
 }
 
-int EobCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
+int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 	if (dialogueTextId != -1)
 		txt()->printDialogueText(dialogueTextId, 0);
 
@@ -1397,7 +1397,7 @@ int EobCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 	return res;
 }
 
-void EobCoreEngine::restParty_displayWarning(const char *str) {
+void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
@@ -1409,7 +1409,7 @@ void EobCoreEngine::restParty_displayWarning(const char *str) {
 	_screen->setScreenDim(od);
 }
 
-bool EobCoreEngine::restParty_updateMonsters() {
+bool EoBCoreEngine::restParty_updateMonsters() {
 	bool sfxEnabled = _sound->sfxEnabled();
 	bool musicEnabled = _sound->musicEnabled();
 	_sound->enableSFX(false);
@@ -1445,7 +1445,7 @@ bool EobCoreEngine::restParty_updateMonsters() {
 	return false;
 }
 
-int EobCoreEngine::restParty_getCharacterWithLowestHp() {
+int EoBCoreEngine::restParty_getCharacterWithLowestHp() {
 	int lhp = 900;
 	int res = -1;
 
@@ -1463,7 +1463,7 @@ int EobCoreEngine::restParty_getCharacterWithLowestHp() {
 	return res + 1;
 }
 
-bool EobCoreEngine::restParty_checkHealSpells(int charIndex) {
+bool EoBCoreEngine::restParty_checkHealSpells(int charIndex) {
 	static const uint8 eob1healSpells[] = { 2, 15, 20 };
 	static const uint8 eob2healSpells[] = { 3, 16, 20 };
 	const uint8 *spells = _flags.gameID == GI_EOB1 ? eob1healSpells : eob2healSpells;
@@ -1478,7 +1478,7 @@ bool EobCoreEngine::restParty_checkHealSpells(int charIndex) {
 	return false;
 }
 
-bool EobCoreEngine::restParty_checkSpellsToLearn() {
+bool EoBCoreEngine::restParty_checkSpellsToLearn() {
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 0x43))
 			continue;
@@ -1501,11 +1501,11 @@ bool EobCoreEngine::restParty_checkSpellsToLearn() {
 	return false;
 }
 
-bool EobCoreEngine::restParty_extraAbortCondition() {
+bool EoBCoreEngine::restParty_extraAbortCondition() {
 	return false;
 }
 
-void EobCoreEngine::delay(uint32 millis, bool, bool) {
+void EoBCoreEngine::delay(uint32 millis, bool, bool) {
 	while (millis && !shouldQuit() && !(_allowSkip && skipFlag())) {
 		updateInput();
 		uint32 step = MIN<uint32>(millis, (_tickLength / 5));
@@ -1514,7 +1514,7 @@ void EobCoreEngine::delay(uint32 millis, bool, bool) {
 	}
 }
 
-void EobCoreEngine::displayParchment(int id) {
+void EoBCoreEngine::displayParchment(int id) {
 	_txt->setWaitButtonMode(1);
 	_txt->resetPageBreakString();
 	gui_updateControls();
@@ -1549,7 +1549,7 @@ void EobCoreEngine::displayParchment(int id) {
 	restoreAfterDialogueSequence();
 }
 
-int EobCoreEngine::countResurrectionCandidates() {
+int EoBCoreEngine::countResurrectionCandidates() {
 	_rrCount = 0;
 	memset(_rrNames, 0, 10 * sizeof(const char*));
 
@@ -1590,7 +1590,7 @@ int EobCoreEngine::countResurrectionCandidates() {
 	return _rrCount;
 }
 
-void EobCoreEngine::seq_portal() {
+void EoBCoreEngine::seq_portal() {
 	uint8 *shapes1[5];
 	uint8 *shapes2[5];
 	uint8 *shapes3[5];
@@ -1605,7 +1605,7 @@ void EobCoreEngine::seq_portal() {
 	}
 
 	shape0 = _screen->encodeShape(30, 0, 8, 77);
-	_screen->loadEobBitmap("PORTALB", 0, 5, 3, 2);
+	_screen->loadEoBBitmap("PORTALB", 0, 5, 3, 2);
 
 	snd_playSoundEffect(33);
 	snd_playSoundEffect(19);
@@ -1659,7 +1659,7 @@ void EobCoreEngine::seq_portal() {
 	}
 }
 
-bool EobCoreEngine::checkPassword() {
+bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_screen->copyPage(0, 10);
@@ -1693,8 +1693,8 @@ bool EobCoreEngine::checkPassword() {
 	return true;
 }
 
-void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
+	EoBCharacter *c = &_characters[charIndex];
 	int tp = item ? _items[item].type : 0;
 
 	if (c->effectFlags & 0x40)
@@ -1734,7 +1734,7 @@ void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	setCharEventTimer(charIndex, 18, inflict >= -2 ? slotIndex + 2 : slotIndex, 1);
 }
 
-int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
+int EoBCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 	if (charIndex > 1)
 		return -3;
 
@@ -1784,7 +1784,7 @@ int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 	return 0;
 }
 
-int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
+int EoBCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
 	int d = charIndex > 3 ? charIndex - 2 : charIndex;
 	if (!launchObject(charIndex, item, _currentBlock, _dropItemDirIndex[(_currentDirection << 2) + d], _currentDirection, _items[item].type))
 		return 0;
@@ -1796,7 +1796,7 @@ int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
 	return 0;
 }
 
-int EobCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
+int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 	int tp = _items[item].type;
 
 	if (_flags.gameID == GI_EOB1)
@@ -1839,7 +1839,7 @@ int EobCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 	return 0;
 }
 
-void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool giveExperience) {
+void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience) {
 	m->hitPointsCur -= damage;
 	m->flags = (m->flags & 0xf7) | 1;
 
@@ -1862,21 +1862,21 @@ void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool g
 		m->dest = _currentBlock;
 }
 
-void EobCoreEngine::calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
+void EoBCoreEngine::calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
 	int dmg = calcMonsterDamage(m, times, pips, offs, flags, savingThrowType, savingThrowEffect);
 	if (dmg > 0)
 		inflictMonsterDamage(m, dmg, flags & 0x800 ? true : false);
 }
 
-void EobCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
+void EoBCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
 	int dmg = calcCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flags, savingThrowType, savingThrowEffect);
 	if (dmg)
 		inflictCharacterDamage(charIndex, dmg);
 }
 
-int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
+int EoBCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
 	int s = (flags & 0x100) ? calcDamageModifers(times, 0, itemOrPips, _items[itemOrPips].type, useStrModifierOrBase) : rollDice(times, itemOrPips, useStrModifierOrBase);
-	EobCharacter *c = &_characters[charIndex];
+	EoBCharacter *c = &_characters[charIndex];
 
 	if (savingThrowType != 5) {
 		if (trySavingThrow(c, _charClassModifier[c->cClass], c->level[0], savingThrowType, c->raceSex >> 1 /*fix bug in original code by adding a right shift*/))
@@ -1903,8 +1903,8 @@ int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 	return s;
 }
 
-void EobCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
+	EoBCharacter *c = &_characters[charIndex];
 	if (!testCharacter(charIndex, 3))
 		return;
 
@@ -1943,7 +1943,7 @@ void EobCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 	setCharEventTimer(charIndex, 18, 6, 1);
 }
 
-bool EobCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType) {
+bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType) {
 	if (charIndex < 0)
 		return true;
 
@@ -1983,9 +1983,9 @@ bool EobCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	return s < m ? false : true;
 }
 
-bool EobCoreEngine::monsterAttackHitTest(EobMonsterInPlay *m, int charIndex) {
+bool EoBCoreEngine::monsterAttackHitTest(EoBMonsterInPlay *m, int charIndex) {
 	int tp = m->type;
-	EobMonsterProperty *p = &_monsterProps[tp];
+	EoBMonsterProperty *p = &_monsterProps[tp];
 
 	int r = rollDice(1, 20);
 	if (r != 20) {
@@ -2003,7 +2003,7 @@ bool EobCoreEngine::monsterAttackHitTest(EobMonsterInPlay *m, int charIndex) {
 	return ((r == 20) || (r >= (p->hitChance - _characters[charIndex].armorClass)));
 }
 
-bool EobCoreEngine::flyingObjectMonsterHit(EobFlyingObject *fo, int monsterIndex) {
+bool EoBCoreEngine::flyingObjectMonsterHit(EoBFlyingObject *fo, int monsterIndex) {
 	if (fo->attackerId != -1) {
 		if (!characterAttackHitTest(fo->attackerId, monsterIndex, fo->item, 0))
 			return false;
@@ -2012,7 +2012,7 @@ bool EobCoreEngine::flyingObjectMonsterHit(EobFlyingObject *fo, int monsterIndex
 	return true;
 }
 
-bool EobCoreEngine::flyingObjectPartyHit(EobFlyingObject *fo) {
+bool EoBCoreEngine::flyingObjectPartyHit(EoBFlyingObject *fo) {
 	int ps = _dscItemPosIndex[(_currentDirection << 2) + (_items[fo->item].pos & 3)];
 	bool res = false;
 
@@ -2037,7 +2037,7 @@ bool EobCoreEngine::flyingObjectPartyHit(EobFlyingObject *fo) {
 	return res;
 }
 
-void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
+void EoBCoreEngine::monsterCloseAttack(EoBMonsterInPlay *m) {
 	int first = _monsterCloseAttDstTable1[(_currentDirection << 2) + m->dir] * 12;
 	int v = (m->pos == 4) ? rollDice(1, 2, -1) : _monsterCloseAttChkTable2[(m->dir << 2) + m->pos];
 	if (!v)
@@ -2104,13 +2104,13 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 	}
 }
 
-void EobCoreEngine::monsterSpellCast(EobMonsterInPlay *m, int type) {
+void EoBCoreEngine::monsterSpellCast(EoBMonsterInPlay *m, int type) {
 	launchMagicObject(-1, type, m->block, m->pos, m->dir);
 	snd_processEnvironmentalSoundEffect(_spells[_magicFlightObjectProperties[type << 2]].sound, m->block);
 }
 
-void EobCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh) {
+	EoBCharacter *c = &_characters[charIndex];
 	if ((c->flags & attackStatusFlags) && noRefresh)
 		return;
 	if (!testCharacter(charIndex, 3))
@@ -2138,9 +2138,9 @@ void EobCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const cha
 	_txt->printMessage(_characterStatusStrings13[0], -1, c->name, attackStatusString);
 }
 
-int EobCoreEngine::calcMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
+int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
 	int s = flags & 0x100 ? calcDamageModifers(times, m, pips, _items[pips].type, offs) : rollDice(times, pips, offs);
-	EobMonsterProperty *p = &_monsterProps[m->type];
+	EoBMonsterProperty *p = &_monsterProps[m->type];
 
 	if (savingThrowType != 5) {
 		if (trySavingThrow(m, 0, p->level, savingThrowType, 6))
@@ -2188,10 +2188,10 @@ int EobCoreEngine::calcMonsterDamage(EobMonsterInPlay *m, int times, int pips, i
 	return s;
 }
 
-int EobCoreEngine::calcDamageModifers(int charIndex, EobMonsterInPlay *m, int item, int itemType, int useStrModifier) {
+int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier) {
 	int s = (useStrModifier && (charIndex != -1)) ? getStrDamageModifier(charIndex) : 0;
 	if (item) {
-		EobItemType *p = &_itemTypes[itemType];
+		EoBItemType *p = &_itemTypes[itemType];
 		int t = m ? m->type : 0;
 		s += ((m && (_monsterProps[t].capsFlags & 1)) ?	rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
 			rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
@@ -2203,7 +2203,7 @@ int EobCoreEngine::calcDamageModifers(int charIndex, EobMonsterInPlay *m, int it
 	return (s < 0) ? 0 : s;
 }
 
-bool EobCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int type, int race) {
+bool EoBCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int type, int race) {
 	static const int8 constMod[] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5 };
 
 	if (type == 5)
@@ -2211,18 +2211,18 @@ bool EobCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int 
 
 	int s = getSaveThrowModifier(hpModifier, level, type);
 	if (((race == 3 || race == 5) && (type == 4 || type == 1 || type == 0)) || (race == 4 && (type == 4 || type == 1))) {
-		EobCharacter *c = (EobCharacter*)target;
+		EoBCharacter *c = (EoBCharacter*)target;
 		s -= constMod[c->constitutionCur];
 	}
 
 	return rollDice(1, 20) < s ? false : true;
 }
 
-bool EobCoreEngine::specialAttackSavingThrow(int charIndex, int type) {
+bool EoBCoreEngine::specialAttackSavingThrow(int charIndex, int type) {
 	return trySavingThrow(&_characters[charIndex], _charClassModifier[_characters[charIndex].cClass], _characters[charIndex].level[0], type, _characters[charIndex].raceSex >> 1);
 }
 
-int EobCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
+int EoBCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
 	const uint8 *tbl = _saveThrowTables[hpModifier];
 	if (_saveThrowLevelIndex[hpModifier] < level)
 		level = _saveThrowLevelIndex[hpModifier];
@@ -2232,12 +2232,12 @@ int EobCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
 	return tbl[level];
 }
 
-bool EobCoreEngine::calcDamageCheckItemType(int itemType) {
+bool EoBCoreEngine::calcDamageCheckItemType(int itemType) {
 	itemType = _itemTypes[itemType].extraProperties & 0x7f;
 	return (itemType == 2 || itemType == 3) ? true : false;
 }
 
-int EobCoreEngine::savingThrowReduceDamage(int savingThrowEffect, int damage) {
+int EoBCoreEngine::savingThrowReduceDamage(int savingThrowEffect, int damage) {
 	if (savingThrowEffect == 3)
 		return 0;
 
@@ -2247,11 +2247,11 @@ int EobCoreEngine::savingThrowReduceDamage(int savingThrowEffect, int damage) {
 	return damage;
 }
 
-bool EobCoreEngine::tryMonsterAttackEvasion(EobMonsterInPlay *m) {
+bool EoBCoreEngine::tryMonsterAttackEvasion(EoBMonsterInPlay *m) {
 	return rollDice(1, 100) < _monsterProps[m->type].dmgModifierEvade ? true : false;
 }
 
-int EobCoreEngine::getStrHitChanceModifier(int charIndex) {
+int EoBCoreEngine::getStrHitChanceModifier(int charIndex) {
 	static const int8 strExtLimit[] = { 1, 51, 76, 91, 100 };
 	static const int8 strExtMod[] = { 1, 2, 2, 2, 3 };
 	static const int8 strMod[] = { -4, -3, -3, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 4, 4, 5, 6, 7 };
@@ -2267,7 +2267,7 @@ int EobCoreEngine::getStrHitChanceModifier(int charIndex) {
 	return r;
 }
 
-int EobCoreEngine::getStrDamageModifier(int charIndex) {
+int EoBCoreEngine::getStrDamageModifier(int charIndex) {
 	static const int8 strExtLimit[] = { 1, 51, 76, 91, 100 };
 	static const int8 strExtMod[] = { 3, 3, 4, 5, 6 };
 	static const int8 strMod[] = { -3, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 7, 8, 9, 10, 11, 12, 14 };
@@ -2283,12 +2283,12 @@ int EobCoreEngine::getStrDamageModifier(int charIndex) {
 	return r;
 }
 
-int EobCoreEngine::getDexHitChanceModifier(int charIndex) {
+int EoBCoreEngine::getDexHitChanceModifier(int charIndex) {
 	static const int8 dexMod[] = { -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4, 4 };
 	return dexMod[_characters[charIndex].dexterityCur - 1];
 }
 
-int EobCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
+int EoBCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
 	static const uint8 mod1[] = { 1, 3, 3, 2 };
 	static const uint8 mod2[] = { 1, 1, 2, 1 };
 
@@ -2298,7 +2298,7 @@ int EobCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
 	return (20 - ((l / mod1[cm]) * mod2[cm])) - monsterAc;
 }
 
-void EobCoreEngine::explodeMonster(EobMonsterInPlay *m) {
+void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 	m->flags |= 2;
 	if (getBlockDistance(m->block, _currentBlock) < 2) {
 		explodeObject(0, _currentBlock, 2);
@@ -2310,14 +2310,14 @@ void EobCoreEngine::explodeMonster(EobMonsterInPlay *m) {
 	m->flags &= ~2;
 }
 
-void EobCoreEngine::snd_playSoundEffect(int id, int volume) {
+void EoBCoreEngine::snd_playSoundEffect(int id, int volume) {
 	if ((id < 1) || (_flags.gameID == GI_EOB2 && id > 119) || shouldQuit())
 		return;
 
 	_sound->playSoundEffect(id, volume);
 }
 
-void EobCoreEngine::snd_stopSound() {
+void EoBCoreEngine::snd_stopSound() {
 	_sound->playSoundEffect(0);
 }
 

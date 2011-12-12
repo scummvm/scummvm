@@ -414,10 +414,10 @@ Common::Error LoLEngine::init() {
 	_wllAutomapData = new uint8[80];
 	memset(_wllAutomapData, 0, 80);
 
-	_monsters = new LolMonsterInPlay[30];
-	memset(_monsters, 0, 30 * sizeof(LolMonsterInPlay));
-	_monsterProperties = new LolMonsterProperty[5];
-	memset(_monsterProperties, 0, 5 * sizeof(LolMonsterProperty));
+	_monsters = new LoLMonsterInPlay[30];
+	memset(_monsters, 0, 30 * sizeof(LoLMonsterInPlay));
+	_monsterProperties = new LoLMonsterProperty[5];
+	memset(_monsterProperties, 0, 5 * sizeof(LoLMonsterProperty));
 
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
@@ -1956,7 +1956,7 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 		removeInputTop();
 }
 
-void LoLEngine::giveItemToMonster(LolMonsterInPlay *monster, Item item) {
+void LoLEngine::giveItemToMonster(LoLMonsterInPlay *monster, Item item) {
 	uint16 *c = &monster->assignedItems;
 	while (*c)
 		c = &_itemsInPlay[*c].nextAssignedObject;
@@ -2403,7 +2403,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			int might = rollDice(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
 			int dmg = calcInflictableDamagePerItem(charNum, 0, might, 3, 2);
 
-			LolMonsterInPlay *m = &_monsters[o & 0x7fff];
+			LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
 			if (m->hitPoints <= dmg) {
 				increaseExperience(charNum, 2, m->hitPoints);
 				o = m->nextAssignedObject;
@@ -2482,7 +2482,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			while (o & 0x8000) {
 				static const uint8 fireballDamage[] = { 20, 40, 80, 100 };
 				int dmg = calcInflictableDamagePerItem(charNum, o, fireballDamage[spellLevel], 4, 1);
-				LolMonsterInPlay *m = &_monsters[o & 0x7fff];
+				LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
 				o = m->nextAssignedObject;
 				_envSfxUseQueue = true;
 				inflictDamage(m->id | 0x8000, dmg, charNum, 2, 4);
@@ -2647,7 +2647,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 				uint16 o = _levelBlockProperties[b1].assignedObjects;
 				while (o & 0x8000) {
 					uint16 o2 = o;
-					LolMonsterInPlay *m = &_monsters[o & 0x7fff];
+					LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
 					o = findObject(o)->nextAssignedObject;
 					int nX = 0;
 					int nY = 0;
@@ -2916,7 +2916,7 @@ int LoLEngine::processMagicVaelansCube() {
 
 	uint16 o = _levelBlockProperties[bl].assignedObjects;
 	while (o & 0x8000) {
-		LolMonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
 		if (m->properties->flags & 0x1000) {
 			inflictDamage(o, 100, 0xffff, 0, 0x80);
 			v = 1;
@@ -3396,7 +3396,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 }
 
 int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags) {
-	LolMonsterInPlay *m = 0;
+	LoLMonsterInPlay *m = 0;
 	LoLCharacter *c = 0;
 
 	if (target & 0x8000) {
@@ -3613,7 +3613,7 @@ void LoLEngine::checkForPartyDeath() {
 	}
 }
 
-void LoLEngine::applyMonsterAttackSkill(LolMonsterInPlay *monster, int16 target, int16 damage) {
+void LoLEngine::applyMonsterAttackSkill(LoLMonsterInPlay *monster, int16 target, int16 damage) {
 	if (rollDice(1, 100) > monster->properties->attackSkillChance)
 		return;
 
@@ -3683,7 +3683,7 @@ void LoLEngine::applyMonsterAttackSkill(LolMonsterInPlay *monster, int16 target,
 	}
 }
 
-void LoLEngine::applyMonsterDefenseSkill(LolMonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
+void LoLEngine::applyMonsterDefenseSkill(LoLMonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
 	if (rollDice(1, 100) > monster->properties->defenseSkillChance)
 		return;
 
@@ -3942,7 +3942,7 @@ uint16 LoLEngine::getNearestMonsterFromCharacterForBlock(uint16 block, int charN
 	int o = _levelBlockProperties[block].assignedObjects;
 
 	while (o & 0x8000) {
-		LolMonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
 		if (m->mode >= 13) {
 			o = m->nextAssignedObject;
 			continue;

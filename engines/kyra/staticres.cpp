@@ -250,27 +250,27 @@ bool StaticResource::init() {
 		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
 
 #ifdef ENABLE_LOL
-		{ kLolCharData, proc(loadCharData), proc(freeCharData) },
-		{ kLolSpellData, proc(loadSpellData), proc(freeSpellData) },
-		{ kLolCompassData, proc(loadCompassData), proc(freeCompassData) },
-		{ kLolFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
-		{ kLolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
-		{ kLolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
-		{ kLolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
+		{ kLoLCharData, proc(loadCharData), proc(freeCharData) },
+		{ kLoLSpellData, proc(loadSpellData), proc(freeSpellData) },
+		{ kLoLCompassData, proc(loadCompassData), proc(freeCompassData) },
+		{ kLoLFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
+		{ kLoLRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+		{ kLoLRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
+		{ kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
 #else
-		{ kLolCharData, proc(loadDummy), proc(freeDummy) },
-		{ kLolSpellData, proc(loadDummy), proc(freeDummy) },
-		{ kLolCompassData, proc(loadDummy), proc(freeDummy) },
-		{ kLolFlightShpData, proc(loadDummy), proc(freeDummy) },
-		{ kLolRawDataBe16, proc(loadDummy), proc(freeDummy) },
-		{ kLolRawDataBe32, proc(loadDummy), proc(freeDummy) },
-		{ kLolButtonData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLCharData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLSpellData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLCompassData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLFlightShpData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLRawDataBe16, proc(loadDummy), proc(freeDummy) },
+		{ kLoLRawDataBe32, proc(loadDummy), proc(freeDummy) },
+		{ kLoLButtonData, proc(loadDummy), proc(freeDummy) },
 #endif // ENABLE_LOL
 
 #ifdef ENABLE_EOB
-		{ kEob2SequenceData, proc(loadEob2SeqData), proc(freeEob2SeqData) },
-		{ kEob2ShapeData, proc(loadEob2ShapeData), proc(freeEob2ShapeData) },
-		{ kEobNpcData, proc(loadEobNpcData), proc(freeEobNpcData) },
+		{ kEoB2SequenceData, proc(loadEoB2SeqData), proc(freeEoB2SeqData) },
+		{ kEoB2ShapeData, proc(loadEoB2ShapeData), proc(freeEoB2ShapeData) },
+		{ kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData) },
 #endif // ENABLE_EOB
 
 		{ 0, 0, 0 }
@@ -1110,24 +1110,24 @@ void KyraEngine_HoF::initStaticResource() {
 	};
 
 #ifdef ENABLE_LOL
-	static const SeqProc kLolDemoSequenceCallbacks[] = {
+	static const SeqProc kLoLDemoSequenceCallbacks[] = {
 		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
 		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
 		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
 		&KyraEngine_HoF::seq_lolDemoScene6, 0
 	};
 
-	static const SeqProc kLolDemoNestedSequenceCallbacks[] = { 0 };
+	static const SeqProc kLoLDemoNestedSequenceCallbacks[] = { 0 };
 #endif // ENABLE_LOL
 
 	_callbackS =
 #ifdef ENABLE_LOL
-		_flags.gameID == GI_LOL ? kLolDemoSequenceCallbacks :
+		_flags.gameID == GI_LOL ? kLoLDemoSequenceCallbacks :
 #endif // ENABLE_LOL
 		((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
 	_callbackN =
 #ifdef ENABLE_LOL
-		_flags.gameID == GI_LOL ? kLolDemoNestedSequenceCallbacks :
+		_flags.gameID == GI_LOL ? kLoLDemoNestedSequenceCallbacks :
 #endif // ENABLE_LOL
 		((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }

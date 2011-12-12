@@ -472,7 +472,7 @@ Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 #endif // ENABLE_LOL
 
 #ifdef ENABLE_EOB
-Debugger_Eob::Debugger_Eob(EobCoreEngine *vm) : Debugger(vm), _vm(vm) {
+Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 #endif // ENABLE_EOB
 

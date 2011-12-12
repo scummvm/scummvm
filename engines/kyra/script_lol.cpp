@@ -811,11 +811,11 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		return -1;
 
 	for (uint8 i = 0; i < 30; i++) {
-		LolMonsterInPlay *l = &_monsters[i];
+		LoLMonsterInPlay *l = &_monsters[i];
 		if (l->hitPoints || l->mode == 13)
 			continue;
 
-		memset(l, 0, sizeof(LolMonsterInPlay));
+		memset(l, 0, sizeof(LoLMonsterInPlay));
 		l->id = i;
 		l->x = x;
 		l->y = y;
@@ -926,7 +926,7 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
 		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
 
-	LolMonsterProperty *l = &_monsterProperties[stackPos(0)];
+	LoLMonsterProperty *l = &_monsterProperties[stackPos(0)];
 	l->shapeIndex = stackPos(1) & 0xff;
 
 	int shpWidthMax = 0;
@@ -998,7 +998,7 @@ int LoLEngine::olol_inflictDamage(EMCState *script) {
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	LolMonsterInPlay *m = &_monsters[stackPos(0)];
+	LoLMonsterInPlay *m = &_monsters[stackPos(0)];
 
 	if (m->mode == 1 || m->mode == 2) {
 		calcCoordinates(m->destX, m->destY, stackPos(1), stackPos(2), stackPos(3));
@@ -1193,7 +1193,7 @@ int LoLEngine::olol_changeMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 1;
 
-	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 
 	int16 d = stackPos(2);
 	uint16 x = 0;
@@ -1234,7 +1234,7 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 0;
 
-	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 	int d = stackPos(1);
 
 	switch (d) {
@@ -1547,7 +1547,7 @@ int LoLEngine::olol_moveBlockObjects(EMCState *script) {
 
 			l &= 0x7fff;
 
-			LolMonsterInPlay *m = &_monsters[l];
+			LoLMonsterInPlay *m = &_monsters[l];
 
 			setMonsterMode(m, 14);
 			checkSceneUpdateNeed(m->block);
@@ -1618,7 +1618,7 @@ int LoLEngine::olol_dummy1(EMCState *script) {
 
 int LoLEngine::olol_suspendMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_suspendMonster(%p) (%d)", (const void *)script, stackPos(0));
-	LolMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 	setMonsterMode(m, 14);
 	checkSceneUpdateNeed(m->block);
 	placeMonster(m, 0, 0);

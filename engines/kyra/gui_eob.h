@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-struct EobRect16 {
+struct EoBRect16 {
 	int16 x1;
 	int16 y1;
 	uint16 x2;
@@ -39,14 +39,14 @@ struct EobRect16 {
 };
 
 class DarkMoonEngine;
-class Screen_Eob;
+class Screen_EoB;
 
-class GUI_Eob : public GUI {
-	friend class EobCoreEngine;
+class GUI_EoB : public GUI {
+	friend class EoBCoreEngine;
 	friend class CharacterGenerator;
 public:
-	GUI_Eob(EobCoreEngine *vm);
-	virtual ~GUI_Eob();
+	GUI_EoB(EoBCoreEngine *vm);
+	virtual ~GUI_EoB();
 
 	void initStaticData() {}
 
@@ -113,8 +113,8 @@ private:
 	int16 _saveSlotX;
 	int16 _saveSlotY;
 
-	EobCoreEngine *_vm;
-	Screen_Eob *_screen;
+	EoBCoreEngine *_vm;
+	Screen_EoB *_screen;
 
 	bool _pressFlag;
 
@@ -145,7 +145,7 @@ private:
 	int _updateBoxColorIndex;
 	uint32 _highLightBoxTimer;
 
-	static const EobRect16 _updateBoxFrameHighLights[];
+	static const EoBRect16 _updateBoxFrameHighLights[];
 };
 
 }	// End of namespace Kyra

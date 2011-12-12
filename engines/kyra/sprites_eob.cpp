@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
+void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
 	_screen->loadShapeSetBitmap(filename, 3, 3);
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
@@ -47,7 +47,7 @@ void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bo
 	_screen->_curPage = 0;
 }
 
-void EobCoreEngine::releaseMonsterShapes(int first, int num) {
+void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 	for (int i = first; i < first + num; i++) {
 		delete[] _monsterShapes[i];
 		_monsterShapes[i] = 0;
@@ -56,10 +56,10 @@ void EobCoreEngine::releaseMonsterShapes(int first, int num) {
 	}
 }
 
-const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
+const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
 	uint8 cmd = *data++;
 	while (cmd != 0xff) {
-		EobMonsterProperty *d = &_monsterProps[cmd];
+		EoBMonsterProperty *d = &_monsterProps[cmd];
 		d->armorClass = (int8)*data++;
 		d->hitChance = (int8)*data++;
 		d->level = (int8)*data++;
@@ -112,7 +112,7 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 	return data;
 }
 
-const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
+const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
 	for (uint8 p = *data++; p != 0xff; p = *data++) {
 		uint8 v = *data++;
 		_timer->setCountdown(0x20 + (p << 1), v);
@@ -129,7 +129,7 @@ const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 	if (_hasTempDataFlags & (1 << (level - 1)))
 		return data + 420;
 
-	memset(_monsters, 0, 30 * sizeof(EobMonsterInPlay));
+	memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
 
 	for (int i = 0; i < 30; i++, data += 14) {
 		if (*data == 0xff)
@@ -142,10 +142,10 @@ const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 	return data;
 }
 
-void EobCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int i, int randItem, int fixedItem) {
-	EobMonsterInPlay *m = &_monsters[index];
-	EobMonsterProperty *p = &_monsterProps[type];
-	memset(m, 0, sizeof(EobMonsterInPlay));
+void EoBCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int i, int randItem, int fixedItem) {
+	EoBMonsterInPlay *m = &_monsters[index];
+	EoBMonsterProperty *p = &_monsterProps[type];
+	memset(m, 0, sizeof(EoBMonsterInPlay));
 
 	if (!block)
 		return;
@@ -173,7 +173,7 @@ void EobCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 	placeMonster(m, block, dir);
 }
 
-void EobCoreEngine::placeMonster(EobMonsterInPlay *m, uint16 block, int dir) {
+void EoBCoreEngine::placeMonster(EoBMonsterInPlay *m, uint16 block, int dir) {
 	if (block != 0xffff){
 		checkSceneUpdateNeed(m->block);
 		if (_levelBlockProperties[m->block].flags & 7) {
@@ -195,7 +195,7 @@ void EobCoreEngine::placeMonster(EobMonsterInPlay *m, uint16 block, int dir) {
 	checkSceneUpdateNeed(block);
 }
 
-void EobCoreEngine::killMonster(EobMonsterInPlay *m, bool giveExperience) {
+void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 	m->hitPointsCur = -1;
 	int pos = (m->pos == 4) ? rollDice(1, 4, -1) : m->pos;
 
@@ -223,11 +223,11 @@ void EobCoreEngine::killMonster(EobMonsterInPlay *m, bool giveExperience) {
 	}
 }
 
-bool EobCoreEngine::killMonsterExtra(EobMonsterInPlay*) {
+bool EoBCoreEngine::killMonsterExtra(EoBMonsterInPlay*) {
 	return true;
 }
 
-int EobCoreEngine::countSpecificMonsters(int type) {
+int EoBCoreEngine::countSpecificMonsters(int type) {
 	int res = 0;
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].type != type || _monsters[i].sub != _currentSub || _monsters[i].hitPointsCur < 0)
@@ -237,9 +237,9 @@ int EobCoreEngine::countSpecificMonsters(int type) {
 	return res;
 }
 
-void EobCoreEngine::updateAttackingMonsterFlags() {
-	EobMonsterInPlay *m2 = 0;
-	for (EobMonsterInPlay *m = _monsters; m < &_monsters[30]; m++) {
+void EoBCoreEngine::updateAttackingMonsterFlags() {
+	EoBMonsterInPlay *m2 = 0;
+	for (EoBMonsterInPlay *m = _monsters; m < &_monsters[30]; m++) {
 		if (m->mode != 8)
 			continue;
 		m->mode = 0;
@@ -254,7 +254,7 @@ void EobCoreEngine::updateAttackingMonsterFlags() {
 		setScriptFlags(0x800);
 }
 
-const int8 *EobCoreEngine::getMonstersOnBlockPositions(uint16 block) {
+const int8 *EoBCoreEngine::getMonstersOnBlockPositions(uint16 block) {
 	memset(_monsterBlockPosArray, -1, sizeof(_monsterBlockPosArray));
 	for (int8 i = 0; i < 30; i++) {
 		if (_monsters[i].block != block)
@@ -265,7 +265,7 @@ const int8 *EobCoreEngine::getMonstersOnBlockPositions(uint16 block) {
 	return _monsterBlockPosArray;
 }
 
-int EobCoreEngine::getClosestMonster(int charIndex, int block) {
+int EoBCoreEngine::getClosestMonster(int charIndex, int block) {
 	const int8 *pos = getMonstersOnBlockPositions(block);
 	if (pos[4] != -1)
 		return pos[4];
@@ -278,15 +278,15 @@ int EobCoreEngine::getClosestMonster(int charIndex, int block) {
 	return -1;
 }
 
-bool EobCoreEngine::blockHasMonsters(uint16 block) {
+bool EoBCoreEngine::blockHasMonsters(uint16 block) {
 	return _levelBlockProperties[block].flags & 7 ? true : false;
 }
 
-bool EobCoreEngine::isMonsterOnPos(EobMonsterInPlay *m, uint16 block, int pos, int checkPos4) {
+bool EoBCoreEngine::isMonsterOnPos(EoBMonsterInPlay *m, uint16 block, int pos, int checkPos4) {
 	return (m->block == block && (m->pos == pos || (m->pos == 4 && checkPos4))) ? true : false;
 }
 
-const int16 *EobCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, int blockDamage, int singleTargetCheckAdjacent) {
+const int16 *EoBCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, int blockDamage, int singleTargetCheckAdjacent) {
 	static const uint8 cpos4[] = { 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1 };
 	int include4 = (pos < 4) ? cpos4[(dir << 2) + pos] : 1;
 	int16 *dst = _foundMonstersArray;
@@ -333,12 +333,12 @@ const int16 *EobCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, in
 	return _foundMonstersArray;
 }
 
-void EobCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, int x, int y, int sd, uint8 *ovl) {
+void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, int x, int y, int sd, uint8 *ovl) {
 	const ScreenDim *d = _screen->getScreenDim(sd);
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
-void EobCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipped, int flags, int palIndex) {
+void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipped, int flags, int palIndex) {
 	uint8 *ovl = 0;
 
 	if (flags & 2)
@@ -351,7 +351,7 @@ void EobCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipp
 	drawBlockObject(flipped, 2, shape, x, y, 5, ovl);
 }
 
-void EobCoreEngine::flashMonsterShape(EobMonsterInPlay *m) {
+void EoBCoreEngine::flashMonsterShape(EoBMonsterInPlay *m) {
 	disableSysTimer(2);
 	_flashShapeTimer = 0;
 	drawScene(1);
@@ -362,11 +362,11 @@ void EobCoreEngine::flashMonsterShape(EobMonsterInPlay *m) {
 	_sceneUpdateRequired = true;
 }
 
-void EobCoreEngine::updateAllMonsterShapes() {
+void EoBCoreEngine::updateAllMonsterShapes() {
 	drawScene(1);
 	bool updateShp = false;
 
-	for (EobMonsterInPlay *m = _monsters; m < &_monsters[30]; m++) {
+	for (EoBMonsterInPlay *m = _monsters; m < &_monsters[30]; m++) {
 		if (m->flags & 2) {
 			m->flags &= ~2;
 			updateShp = true;
@@ -384,7 +384,7 @@ void EobCoreEngine::updateAllMonsterShapes() {
 	_preventMonsterFlash = false;
 }
 
-void EobCoreEngine::drawBlockItems(int index) {
+void EoBCoreEngine::drawBlockItems(int index) {
 	uint16 o = _visibleBlocks[index]->drawObjects;
 	uint8 w = _visibleBlocks[index]->walls[_sceneDrawVarDown];
 	uint8 flg = (index == 16) ? 0x80 : _wllWallFlags[w];
@@ -399,7 +399,7 @@ void EobCoreEngine::drawBlockItems(int index) {
 	int tile2 = 0;
 
 	while (o != o2 || forceLoop) {
-		EobItem *itm = &_items[o];
+		EoBItem *itm = &_items[o];
 		if (itm->pos == 8 || itm->pos < 4) {
 			tile2 = -1;
 
@@ -444,7 +444,7 @@ void EobCoreEngine::drawBlockItems(int index) {
 	}
 }
 
-void EobCoreEngine::drawDoor(int index) {
+void EoBCoreEngine::drawDoor(int index) {
 	int s = _visibleBlocks[index]->walls[_sceneDrawVarDown];
 
 	if (_flags.gameID == GI_EOB1 && s == 0x85)
@@ -467,7 +467,7 @@ void EobCoreEngine::drawDoor(int index) {
 	drawLevelModifyScreenDim(5, _shpDmX1, 0, _shpDmX2, 15);
 }
 
-void EobCoreEngine::drawMonsters(int index) {
+void EoBCoreEngine::drawMonsters(int index) {
 	static const uint8 distMap[] = { 2, 1, 0, 4 };
 	static const uint8 yAdd[] = { 20, 12, 4, 4, 2, 0, 0 };
 
@@ -480,8 +480,8 @@ void EobCoreEngine::drawMonsters(int index) {
 	int drawObjDirIndex = _currentDirection * 5;
 	int cDirOffs = _currentDirection << 2;
 
-	EobMonsterInPlay *drawObj[5];
-	memset(drawObj, 0, 5 * sizeof(EobMonsterInPlay*));
+	EoBMonsterInPlay *drawObj[5];
+	memset(drawObj, 0, 5 * sizeof(EoBMonsterInPlay*));
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].block != bl)
@@ -490,11 +490,11 @@ void EobCoreEngine::drawMonsters(int index) {
 	}
 
 	for (int i = 0; i < 5; i++) {
-		EobMonsterInPlay *d = drawObj[i];
+		EoBMonsterInPlay *d = drawObj[i];
 		if (!d)
 			continue;
 
-		EobMonsterProperty *p = &_monsterProps[d->type];
+		EoBMonsterProperty *p = &_monsterProps[d->type];
 
 		if (_flags.gameID == GI_EOB2 && (p->capsFlags & 0x100) && !(_partyEffectFlags & 0x220) && !(d->flags & 2))
 			continue;
@@ -569,7 +569,7 @@ void EobCoreEngine::drawMonsters(int index) {
 	}
 }
 
-void EobCoreEngine::drawWallOfForce(int index) {
+void EoBCoreEngine::drawWallOfForce(int index) {
 	int d = _dscDimMap[index];
 	assert(d < 3);
 	int dH = _wallOfForceDsNumH[d];
@@ -590,7 +590,7 @@ void EobCoreEngine::drawWallOfForce(int index) {
 	}
 }
 
-void EobCoreEngine::drawFlyingObjects(int index) {
+void EoBCoreEngine::drawFlyingObjects(int index) {
 	LevelBlockProperty *bl = _visibleBlocks[index];
 	int blockIndex = _visibleBlockIndex[index];
 	int w = bl->walls[_sceneDrawVarDown];
@@ -598,8 +598,8 @@ void EobCoreEngine::drawFlyingObjects(int index) {
 	if (_wllVmpMap[w] && !(_wllWallFlags[w] & 0x80))
 		return;
 
-	EobFlyingObject *drawObj[5];
-	memset(drawObj, 0, 5 * sizeof(EobFlyingObject*));
+	EoBFlyingObject *drawObj[5];
+	memset(drawObj, 0, 5 * sizeof(EoBFlyingObject*));
 
 	for (int i = 0; i < 10; i++) {
 		if (!_flyingObjects[i].enable || blockIndex != _flyingObjects[i].curBlock)
@@ -608,7 +608,7 @@ void EobCoreEngine::drawFlyingObjects(int index) {
 	}
 
 	for (int i = 0; i < 5; i++) {
-		EobFlyingObject *fo = drawObj[i];
+		EoBFlyingObject *fo = drawObj[i];
 		if (!fo)
 			continue;
 
@@ -665,7 +665,7 @@ void EobCoreEngine::drawFlyingObjects(int index) {
 	}
 }
 
-void EobCoreEngine::drawTeleporter(int index) {
+void EoBCoreEngine::drawTeleporter(int index) {
 	static const uint8 telprtX[] = { 0x28, 0x1C, 0x12 };
 	static const uint8 telprtY[] = { 0x0D, 0x15, 0x1A };
 
@@ -691,9 +691,9 @@ void EobCoreEngine::drawTeleporter(int index) {
 	}
 }
 
-void EobCoreEngine::updateMonsters(int unit) {
+void EoBCoreEngine::updateMonsters(int unit) {
 	for (int i = 0; i < 30; i++) {
-		EobMonsterInPlay *m = &_monsters[i];
+		EoBMonsterInPlay *m = &_monsters[i];
 		if (m->unit == unit) {
 			if (m->hitPointsCur <= 0 || m->flags & 0x20)
 				continue;
@@ -744,7 +744,7 @@ void EobCoreEngine::updateMonsters(int unit) {
 	checkFlyingObjects();
 }
 
-void EobCoreEngine::updateMonsterDest(EobMonsterInPlay *m) {
+void EoBCoreEngine::updateMonsterDest(EoBMonsterInPlay *m) {
 	if (m->mode >= 7 && m->mode <= 10)
 		return;
 	int dist = getBlockDistance(m->block, _currentBlock);
@@ -763,7 +763,7 @@ void EobCoreEngine::updateMonsterDest(EobMonsterInPlay *m) {
 	m->dest = _currentBlock;
 }
 
-void EobCoreEngine::updateMonsterAttackMode(EobMonsterInPlay *m) {
+void EoBCoreEngine::updateMonsterAttackMode(EoBMonsterInPlay *m) {
 	if (!(m->flags & 1) || m->mode == 10)
 		return;
 	if (m->mode == 8) {
@@ -774,13 +774,13 @@ void EobCoreEngine::updateMonsterAttackMode(EobMonsterInPlay *m) {
 	m->dest = _currentBlock;
 }
 
-void EobCoreEngine::updateAllMonsterDests() {
+void EoBCoreEngine::updateAllMonsterDests() {
 	for (int i = 0; i < 30; i++)
 		updateMonsterDest(&_monsters[i]);
 }
 
-void EobCoreEngine::turnFriendlyMonstersHostile() {
-	EobMonsterInPlay *m = 0;
+void EoBCoreEngine::turnFriendlyMonstersHostile() {
+	EoBMonsterInPlay *m = 0;
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].mode == 8) {
 			_monsters[i].mode = 0;
@@ -797,7 +797,7 @@ void EobCoreEngine::turnFriendlyMonstersHostile() {
 	}
 }
 
-int EobCoreEngine::getNextMonsterDirection(int curBlock, int destBlock) {
+int EoBCoreEngine::getNextMonsterDirection(int curBlock, int destBlock) {
 	uint8 c = destBlock % 32;
 	uint8 d = destBlock / 32;
 	uint8 e = curBlock % 32;
@@ -824,7 +824,7 @@ int EobCoreEngine::getNextMonsterDirection(int curBlock, int destBlock) {
 	return _monsterDirChangeTable[r];
 }
 
-int EobCoreEngine::getNextMonsterPos(EobMonsterInPlay *m, int block) {
+int EoBCoreEngine::getNextMonsterPos(EoBMonsterInPlay *m, int block) {
 	if ((_flags.gameID == GI_EOB1 && _monsterProps[m->type].u30 != 0) || (_flags.gameID == GI_EOB2 && _monsterProps[m->type].u30 == 2))
 		return -1;
 	int d = findFreeMonsterPos(block, _monsterProps[m->type].u30);
@@ -856,7 +856,7 @@ int EobCoreEngine::getNextMonsterPos(EobMonsterInPlay *m, int block) {
 	return -1;
 }
 
-int EobCoreEngine::findFreeMonsterPos(int block, int size) {
+int EoBCoreEngine::findFreeMonsterPos(int block, int size) {
 	int nm = _levelBlockProperties[block].flags & 7;
 	if (nm == 4)
 		return -2;
@@ -864,7 +864,7 @@ int EobCoreEngine::findFreeMonsterPos(int block, int size) {
 	int res = 0;
 
 	for (int i = 0; i < 30; i++) {
-		EobMonsterInPlay *m = &_monsters[i];
+		EoBMonsterInPlay *m = &_monsters[i];
 		if (m->block != block)
 			continue;
 		if (_monsterProps[m->type].u30 != size)
@@ -881,8 +881,8 @@ int EobCoreEngine::findFreeMonsterPos(int block, int size) {
 	return res;
 }
 
-void EobCoreEngine::updateMoveMonster(EobMonsterInPlay *m) {
-	EobMonsterProperty *p = &_monsterProps[m->type];
+void EoBCoreEngine::updateMoveMonster(EoBMonsterInPlay *m) {
+	EoBMonsterProperty *p = &_monsterProps[m->type];
 	int d = getNextMonsterDirection(m->block, _currentBlock);
 
 	if ((_flags.gameID == GI_EOB2) && (p->capsFlags & 0x800) && !(d & 1))
@@ -910,8 +910,8 @@ void EobCoreEngine::updateMoveMonster(EobMonsterInPlay *m) {
 		updateMonsterTryCloseAttack(m, -1);
 }
 
-bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
-	EobMonsterProperty *p = &_monsterProps[m->type];
+bool EoBCoreEngine::updateMonsterTryDistanceAttack(EoBMonsterInPlay *m) {
+	EoBMonsterProperty *p = &_monsterProps[m->type];
 	if (!m->numRemoteAttacks || ((_flags.gameID == GI_EOB1) && !(p->capsFlags & 0x40)))
 		return false;
 
@@ -1014,7 +1014,7 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 	return true;
 }
 
-bool EobCoreEngine::updateMonsterTryCloseAttack(EobMonsterInPlay *m, int block) {
+bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) {
 	if (block == -1)
 		block = calcNewBlockPosition(m->block, m->dir);
 
@@ -1070,7 +1070,7 @@ bool EobCoreEngine::updateMonsterTryCloseAttack(EobMonsterInPlay *m, int block) 
 	return true;
 }
 
-void EobCoreEngine::walkMonster(EobMonsterInPlay *m, int destBlock) {
+void EoBCoreEngine::walkMonster(EoBMonsterInPlay *m, int destBlock) {
 	if (++_monsterStepCounter > 10) {
 		_monsterStepCounter = 0;
 		_monsterStepMode ^= 1;
@@ -1141,8 +1141,8 @@ void EobCoreEngine::walkMonster(EobMonsterInPlay *m, int destBlock) {
 	}
 }
 
-bool EobCoreEngine::walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int direction) {
-	EobMonsterProperty *p = &_monsterProps[m->type];
+bool EoBCoreEngine::walkMonsterNextStep(EoBMonsterInPlay *m, int destBlock, int direction) {
+	EoBMonsterProperty *p = &_monsterProps[m->type];
 	int obl = m->block;
 
 	if (destBlock != m->block && destBlock != -1) {
@@ -1199,14 +1199,14 @@ bool EobCoreEngine::walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int 
 	return true;
 }
 
-void EobCoreEngine::updateMonsterFollowPath(EobMonsterInPlay *m, int turnSteps) {
+void EoBCoreEngine::updateMonsterFollowPath(EoBMonsterInPlay *m, int turnSteps) {
 	if (!walkMonsterNextStep(m, calcNewBlockPosition(m->block, m->dir), -1)) {
 		m->dir = (m->dir + turnSteps) & 3;
 		walkMonsterNextStep(m, -1, m->dir);
 	}
 }
 
-void EobCoreEngine::updateMonstersStraying(EobMonsterInPlay *m, int a) {
+void EoBCoreEngine::updateMonstersStraying(EoBMonsterInPlay *m, int a) {
 	if (m->f_9 >= 0) {
 		if (m->f_9 == 0)
 			updateMonsterFollowPath(m, -a);
@@ -1236,14 +1236,14 @@ void EobCoreEngine::updateMonstersStraying(EobMonsterInPlay *m, int a) {
 	}
 }
 
-void EobCoreEngine::updateMonstersSpellStatus(EobMonsterInPlay *m) {
+void EoBCoreEngine::updateMonstersSpellStatus(EoBMonsterInPlay *m) {
 	if (m->spellStatusLeft) {
 		if (!--m->spellStatusLeft)
 			m->mode = 0;
 	}
 }
 
-void EobCoreEngine::setBlockMonsterDirection(int block, int dir) {
+void EoBCoreEngine::setBlockMonsterDirection(int block, int dir) {
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].block != block || _monsters[i].dir == dir)
 			continue;

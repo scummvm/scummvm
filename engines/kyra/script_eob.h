@@ -34,10 +34,10 @@ namespace Kyra {
 
 class KyraRpgEngine;
 
-class EobInfProcessor {
+class EoBInfProcessor {
 public:
-	EobInfProcessor(EobCoreEngine *engine, Screen_Eob *_screen);
-	~EobInfProcessor();
+	EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *_screen);
+	~EoBInfProcessor();
 
 	void loadData(const uint8 *data, uint32 dataSize);
 	void run(int func, int flags);
@@ -87,10 +87,10 @@ private:
 	int oeob_dialogue(int8 *data);
 	int oeob_specialEvent(int8 *data);
 
-	EobCoreEngine *_vm;
-	Screen_Eob *_screen;
+	EoBCoreEngine *_vm;
+	Screen_EoB *_screen;
 
-	typedef Common::Functor1Mem<int8*, int, EobInfProcessor> InfProc;
+	typedef Common::Functor1Mem<int8*, int, EoBInfProcessor> InfProc;
 	struct InfOpcode {
 		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
 		InfProc *proc;

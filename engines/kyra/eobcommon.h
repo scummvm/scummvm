@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-struct EobShapeDef {
+struct EoBShapeDef {
 	int16 index;
 	uint8 x, y, w, h;
 };
@@ -48,14 +48,14 @@ struct CreatePartyModButton {
 	uint8 destY;
 };
 
-struct EobRect8 {
+struct EoBRect8 {
 	uint8 x;
 	uint8 y;
 	uint8 w;
 	uint8 h;
 };
 
-struct EobChargenButtonDef {
+struct EoBChargenButtonDef {
 	uint8 x;
 	uint8 y;
 	uint8 w;
@@ -63,7 +63,7 @@ struct EobChargenButtonDef {
 	uint8 keyCode;
 };
 
-struct EobGuiButtonDef {
+struct EoBGuiButtonDef {
 	uint16 keyCode;
 	uint16 keyCode2;
 	uint16 flags;
@@ -74,7 +74,7 @@ struct EobGuiButtonDef {
 	uint16 arg;
 };
 
-struct EobCharacter {
+struct EoBCharacter {
 	uint8 id;
 	uint8 flags;
 	char name[11];
@@ -118,7 +118,7 @@ struct EobCharacter {
 	int8 slotStatus[5];
 };
 
-struct EobItem {
+struct EoBItem {
 	uint8 nameUnid;
 	uint8 nameId;
 	uint8 flags;
@@ -132,7 +132,7 @@ struct EobItem {
 	int8 value;
 };
 
-struct EobItemType {
+struct EoBItemType {
 	uint16 invFlags;
 	uint16 handFlags;
 	int8 armorClass;
@@ -154,7 +154,7 @@ struct SpriteDecoration {
 	int16 y;
 };
 
-struct EobMonsterProperty {
+struct EoBMonsterProperty {
 	int8 armorClass;
 	int8 hitChance;
 	int8 level;
@@ -187,7 +187,7 @@ struct EobMonsterProperty {
 	uint8 decorations[3];
 };
 
-struct EobMonsterInPlay {
+struct EoBMonsterInPlay {
 	uint8 type;
 	uint8 unit;
 	uint16 block;
@@ -220,14 +220,14 @@ struct ScriptTimer {
 	uint32 next;
 };
 
-struct EobMenuDef {
+struct EoBMenuDef {
 	int8 titleStrId;
 	uint8 dim;
 	uint8 firstButtonStrId;
 	int8 numButtons;
 	int8 titleCol;
 };
-struct EobMenuButtonDef {
+struct EoBMenuButtonDef {
 	int8 labelId;
 	int16 x;
 	int8 y;
@@ -237,17 +237,17 @@ struct EobMenuButtonDef {
 	int16 flags;
 };
 
-class EobInfProcessor;
+class EoBInfProcessor;
 
-class EobCoreEngine : public KyraRpgEngine {
+class EoBCoreEngine : public KyraRpgEngine {
 friend class TextDisplayer_rpg;
-friend class GUI_Eob;
-friend class EobInfProcessor;
+friend class GUI_EoB;
+friend class EoBInfProcessor;
 friend class DarkmoonSequenceHelper;
 friend class CharacterGenerator;
 public:
-	EobCoreEngine(OSystem *system, const GameFlags &flags);
-	virtual ~EobCoreEngine();
+	EoBCoreEngine(OSystem *system, const GameFlags &flags);
+	virtual ~EoBCoreEngine();
 
 	Screen *screen() { return _screen; }
 	GUI *gui() const { return _gui; }
@@ -397,7 +397,7 @@ protected:
 
 	void setWeaponSlotStatus(int charIndex, int mode, int slot);
 
-	EobCharacter *_characters;
+	EoBCharacter *_characters;
 	Common::String _strenghtStr;
 	int _castScrollSlot;
 	int _exchangeCharacterId;
@@ -410,7 +410,7 @@ protected:
 	const uint8 *_saveThrowModDiv;
 	const uint8 *_saveThrowModExt;
 
-	const EobCharacter *_npcPreset;
+	const EoBCharacter *_npcPreset;
 	int _npcSequenceSub;
 	bool _partyResting;
 	bool _loading;
@@ -420,7 +420,7 @@ protected:
 	Item duplicateItem(Item itemIndex);
 	void setItemPosition(Item *itemQueue, int block, Item item, int pos);
 	Item createItemOnCurrentBlock(Item itemIndex);
-	void createInventoryItem(EobCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot);
+	void createInventoryItem(EoBCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot);
 	int deleteInventoryItem(int charIndex, int slot);
 	void deleteBlockItem(uint16 block, int type);
 	int validateInventorySlotForItem(Item item, int charIndex, int slot);
@@ -439,17 +439,17 @@ protected:
 
 	bool launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type);
 	void launchMagicObject(int charIndex, int type, uint16 startBlock, int startPos, int dir);
-	bool updateObjectFlight(EobFlyingObject *fo, int block, int pos);
-	bool updateFlyingObjectHitTest(EobFlyingObject *fo, int block, int pos);
-	void explodeObject(EobFlyingObject *fo, int block, Item item);
-	void endObjectFlight(EobFlyingObject *fo);
+	bool updateObjectFlight(EoBFlyingObject *fo, int block, int pos);
+	bool updateFlyingObjectHitTest(EoBFlyingObject *fo, int block, int pos);
+	void explodeObject(EoBFlyingObject *fo, int block, Item item);
+	void endObjectFlight(EoBFlyingObject *fo);
 	void checkFlyingObjects();
 
 	void reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger);
 
-	EobItem *_items;
+	EoBItem *_items;
 	uint16 _numItems;
-	EobItemType *_itemTypes;
+	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
 	uint32 _partyEffectFlags;
@@ -459,7 +459,7 @@ protected:
 	const int8 *_projectileWeaponAmmoTypes;
 	const uint8 *_wandTypes;
 
-	EobFlyingObject *_flyingObjects;
+	EoBFlyingObject *_flyingObjects;
 	const uint8 *_drawObjPosIndex;
 	const uint8 *_flightObjFlipIndex;
 	const int8 *_flightObjShpMap;
@@ -483,10 +483,10 @@ protected:
 	const uint8 *loadMonsterProperties(const uint8 *data);
 	const uint8 *loadActiveMonsterData(const uint8 *data, int level);
 	void initMonster(int index, int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int i, int randItem, int fixedItem);
-	void placeMonster(EobMonsterInPlay *m, uint16 block, int dir);
+	void placeMonster(EoBMonsterInPlay *m, uint16 block, int dir);
 	virtual void replaceMonster(int b, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) = 0;
-	void killMonster(EobMonsterInPlay *m, bool giveExperience);
-	virtual bool killMonsterExtra(EobMonsterInPlay *m);
+	void killMonster(EoBMonsterInPlay *m, bool giveExperience);
+	virtual bool killMonsterExtra(EoBMonsterInPlay *m);
 	int countSpecificMonsters(int type);
 	void updateAttackingMonsterFlags();
 
@@ -494,12 +494,12 @@ protected:
 	int getClosestMonster(int charIndex, int block);
 
 	bool blockHasMonsters(uint16 block);
-	bool isMonsterOnPos(EobMonsterInPlay *m, uint16 block, int pos, int checkPos4);
+	bool isMonsterOnPos(EoBMonsterInPlay *m, uint16 block, int pos, int checkPos4);
 	const int16 *findBlockMonsters(uint16 block, int pos, int dir, int blockDamage, int singleTargetCheckAdjacent);
 
 	void drawBlockObject(int flipped, int page, const uint8 *shape, int x, int y, int sd, uint8 *ovl = 0);
 	void drawMonsterShape(const uint8 *shape, int x, int y, int flipped, int flags, int palIndex);
-	void flashMonsterShape(EobMonsterInPlay *m);
+	void flashMonsterShape(EoBMonsterInPlay *m);
 	void updateAllMonsterShapes();
 	void drawBlockItems(int index);
 	void drawDoor(int index);
@@ -510,30 +510,30 @@ protected:
 	void drawTeleporter(int index);
 
 	void updateMonsters(int unit);
-	void updateMonsterDest(EobMonsterInPlay *m);
-	void updateMonsterAttackMode(EobMonsterInPlay *m);
+	void updateMonsterDest(EoBMonsterInPlay *m);
+	void updateMonsterAttackMode(EoBMonsterInPlay *m);
 	void updateAllMonsterDests();
 	void turnFriendlyMonstersHostile();
 	int getNextMonsterDirection(int curBlock, int destBlock);
-	int getNextMonsterPos(EobMonsterInPlay *m, int block);
+	int getNextMonsterPos(EoBMonsterInPlay *m, int block);
 	int findFreeMonsterPos(int block, int size);
-	void updateMoveMonster(EobMonsterInPlay *m);
-	bool updateMonsterTryDistanceAttack(EobMonsterInPlay *m);
-	bool updateMonsterTryCloseAttack(EobMonsterInPlay *m, int block);
-	void walkMonster(EobMonsterInPlay *m, int destBlock);
-	bool walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int direction);
-	void updateMonsterFollowPath(EobMonsterInPlay *m, int turnSteps);
-	void updateMonstersStraying(EobMonsterInPlay *m, int a);
-	void updateMonstersSpellStatus(EobMonsterInPlay *m);
+	void updateMoveMonster(EoBMonsterInPlay *m);
+	bool updateMonsterTryDistanceAttack(EoBMonsterInPlay *m);
+	bool updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block);
+	void walkMonster(EoBMonsterInPlay *m, int destBlock);
+	bool walkMonsterNextStep(EoBMonsterInPlay *m, int destBlock, int direction);
+	void updateMonsterFollowPath(EoBMonsterInPlay *m, int turnSteps);
+	void updateMonstersStraying(EoBMonsterInPlay *m, int a);
+	void updateMonstersSpellStatus(EoBMonsterInPlay *m);
 	void setBlockMonsterDirection(int block, int dir);
 
 	uint8 *_monsterOvl1;
 	uint8 *_monsterOvl2;
 
 	SpriteDecoration *_monsterDecorations;
-	EobMonsterProperty *_monsterProps;
+	EoBMonsterProperty *_monsterProps;
 
-	EobMonsterInPlay *_monsters;
+	EoBMonsterInPlay *_monsters;
 
 	const int8 *_monsterStepTable0;
 	const int8 *_monsterStepTable1;
@@ -608,7 +608,7 @@ protected:
 	int16 _doorType[2];
 	int16 _noDoorSwitch[2];
 
-	EobRect8 *_levelDecorationRects;
+	EoBRect8 *_levelDecorationRects;
 	SpriteDecoration *_doorSwitches;
 
 	int8 _currentSub;
@@ -651,7 +651,7 @@ protected:
 	void updateScriptTimers();
 	virtual void updateScriptTimersExtra() {}
 
-	EobInfProcessor *_inf;
+	EoBInfProcessor *_inf;
 	int _stepCounter;
 	int _stepsUntilScriptCall;
 	ScriptTimer _scriptTimers[5];
@@ -736,7 +736,7 @@ protected:
 	static const int16 _buttonList8[];
 	int _buttonList8Size;
 
-	const EobGuiButtonDef *_buttonDefs;
+	const EoBGuiButtonDef *_buttonDefs;
 
 	const char *const *_characterGuiStringsHp;
 	const char *const *_characterGuiStringsWp;
@@ -863,8 +863,8 @@ protected:
 
 	bool _allowSkip;
 
-	Screen_Eob *_screen;
-	GUI_Eob *_gui;
+	Screen_EoB *_screen;
+	GUI_EoB *_gui;
 
 	// fight
 	void useSlotWeapon(int charIndex, int slotIndex, Item item);
@@ -872,34 +872,34 @@ protected:
 	int thrownAttack(int charIndex, int slotIndex, Item item);
 	int projectileWeaponAttack(int charIndex, Item item);
 
-	void inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool giveExperience);
-	void calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
+	void inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience);
+	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
 	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect);
 	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType) ;
 	void inflictCharacterDamage(int charIndex, int damage);
 
 	bool characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType);
-	bool monsterAttackHitTest(EobMonsterInPlay *m, int charIndex);
-	bool flyingObjectMonsterHit(EobFlyingObject *fo, int monsterIndex);
-	bool flyingObjectPartyHit(EobFlyingObject *fo);
+	bool monsterAttackHitTest(EoBMonsterInPlay *m, int charIndex);
+	bool flyingObjectMonsterHit(EoBFlyingObject *fo, int monsterIndex);
+	bool flyingObjectPartyHit(EoBFlyingObject *fo);
 
-	void monsterCloseAttack(EobMonsterInPlay *m);
-	void monsterSpellCast(EobMonsterInPlay *m, int type);
+	void monsterCloseAttack(EoBMonsterInPlay *m);
+	void monsterSpellCast(EoBMonsterInPlay *m, int type);
 	void statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh);
 
-	int calcMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
-	int calcDamageModifers(int charIndex, EobMonsterInPlay *m, int item, int itemType, int useStrModifier);
+	int calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
+	int calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier);
 	bool trySavingThrow(void *target, int hpModifier, int level, int type, int race);
 	bool specialAttackSavingThrow(int charIndex, int type);
 	int getSaveThrowModifier(int hpModifier, int level, int type);
 	bool calcDamageCheckItemType(int itemType);
 	int savingThrowReduceDamage(int savingThrowEffect, int damage);
-	bool tryMonsterAttackEvasion(EobMonsterInPlay *m);
+	bool tryMonsterAttackEvasion(EoBMonsterInPlay *m);
 	int getStrHitChanceModifier(int charIndex);
 	int getStrDamageModifier(int charIndex);
 	int getDexHitChanceModifier(int charIndex);
 	int getMonsterAcHitChanceModifier(int charIndex, int monsterAc);
-	void explodeMonster(EobMonsterInPlay *m);
+	void explodeMonster(EoBMonsterInPlay *m);
 
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
@@ -926,9 +926,9 @@ protected:
 	void setSpellEventTimer(int spell, int timerBaseFactor, int timerLength, int timerLevelFactor, int updateExistingTimer);
 	void sortCharacterSpellList(int charIndex);
 
-	bool magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
-	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
-	bool turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel);
+	bool magicObjectDamageHit(EoBFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
+	bool magicObjectStatusHit(EoBMonsterInPlay *m, int type, bool tryEvade, int mod);
+	bool turnUndeadHit(EoBMonsterInPlay *m, int hitChance, int casterLevel);
 	void causeWounds(int dcTimes, int dcPips, int dcOffs);
 
 	int getMagicWeaponSlot(int charIndex);
@@ -1033,10 +1033,10 @@ protected:
 	int _characterSpellTarget;
 	bool _returnAfterSpellCallback;
 
-	typedef void (EobCoreEngine::*SpellStartCallback)();
-	typedef bool (EobCoreEngine::*SpellEndCallback)(void *obj);
+	typedef void (EoBCoreEngine::*SpellStartCallback)();
+	typedef bool (EoBCoreEngine::*SpellEndCallback)(void *obj);
 
-	struct EobSpell {
+	struct EoBSpell {
 		const char *name;
 		SpellStartCallback startCallback;
 		uint16 flags;
@@ -1047,7 +1047,7 @@ protected:
 		uint16 damageFlags;
 	};
 
-	EobSpell *_spells;
+	EoBSpell *_spells;
 	int _numSpells;
 
 	struct WallOfForce {
@@ -1096,8 +1096,8 @@ protected:
 	int _coneOfColdGfxTblSize;
 
 	// Menu
-	EobMenuDef *_menuDefs;
-	const EobMenuButtonDef *_menuButtonDefs;
+	EoBMenuDef *_menuDefs;
+	const EoBMenuButtonDef *_menuButtonDefs;
 
 	bool _configMouse;
 

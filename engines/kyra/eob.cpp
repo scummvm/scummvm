@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-EobEngine::EobEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(system, flags) {
+EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
 	_numSpells = 53;
 	_menuChoiceInit = 4;
 
@@ -42,12 +42,12 @@ EobEngine::EobEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(sy
 	_dscDoorCoordsExt = 0;
 }
 
-EobEngine::~EobEngine() {
+EoBEngine::~EoBEngine() {
 	delete[] _itemsOverlay;
 }
 
-Common::Error EobEngine::init() {
-	Common::Error err = EobCoreEngine::init();
+Common::Error EoBEngine::init() {
+	Common::Error err = EoBCoreEngine::init();
 	if (err.getCode() != Common::kNoError)
 		return err;
 
@@ -90,21 +90,21 @@ Common::Error EobEngine::init() {
 	return Common::kNoError;
 }
 
-void EobEngine::startupNew() {
+void EoBEngine::startupNew() {
 	_currentLevel = 1;
 	_currentSub = 0;
 	loadLevel(1, 0);
 	_currentBlock = 490;
 	_currentDirection = 0;
 	setHandItem(0);
-	EobCoreEngine::startupNew();
+	EoBCoreEngine::startupNew();
 }
 
-void EobEngine::startupLoad() {
+void EoBEngine::startupLoad() {
 	_sound->loadSoundFile("ADLIB");
 }
 
-void EobEngine::drawNpcScene(int npcIndex) {
+void EoBEngine::drawNpcScene(int npcIndex) {
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 6, 0, Screen::CR_NO_P_CHECK);
 	switch (npcIndex) {
 	case 0:
@@ -155,7 +155,7 @@ void EobEngine::drawNpcScene(int npcIndex) {
 	}
 }
 
-void EobEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
+void EoBEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 	const uint8 *shpDef = &_npcShpData[npcIndex << 2];
 	_screen->_curPage = 2;
 	const uint8 *shp = _screen->encodeShape(shpDef[0], shpDef[1], shpDef[2], shpDef[3]);
@@ -169,7 +169,7 @@ void EobEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 #define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
 #define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
 
-void EobEngine::runNpcDialogue(int npcIndex) {
+void EoBEngine::runNpcDialogue(int npcIndex) {
 	int r = 0;
 	int a = 0;
 	Item itm = 0;
@@ -327,8 +327,8 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 #undef DLG3
 #undef DLG2A3
 
-void EobEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
-	EobItem *itm = &_items[_characters[charIndex].inventory[slot]];
+void EoBEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
+	EoBItem *itm = &_items[_characters[charIndex].inventory[slot]];
 	if (itm->type == 48) {
 		int charges = itm->flags & 0x3f;
 		if (--charges)
@@ -340,7 +340,7 @@ void EobEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	}
 }
 
-void EobEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) {
+void EoBEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) {
 	if (_levelBlockProperties[block].flags & 7)
 		return;
 
@@ -352,7 +352,7 @@ void EobEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int typ
 	}
 }
 
-void EobEngine::updateScriptTimersExtra() {
+void EoBEngine::updateScriptTimersExtra() {
 	int cnt = 0;
 	for (int i = 1; i < 30; i++) {
 		if (_monsters[i].hitPointsCur <= 0)
@@ -369,7 +369,7 @@ void EobEngine::updateScriptTimersExtra() {
 	}
 }
 
-void EobEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {
+void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {
 	_screen->loadShapeSetBitmap("DOOR", 5, 3);
 	_screen->_curPage = 2;
 
@@ -398,7 +398,7 @@ void EobEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	_screen->_curPage = 0;
 }
 
-void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2) {
+void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2) {
 	int shapeIndex = type + 2 - mDim;
 	uint8 *shp = _doorShapes[shapeIndex];
 
@@ -467,7 +467,7 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	}
 }
 
-void EobEngine::turnUndeadAuto() {
+void EoBEngine::turnUndeadAuto() {
 	if (_currentLevel != 2 && _currentLevel != 7)
 		return;
 
@@ -477,7 +477,7 @@ void EobEngine::turnUndeadAuto() {
 		if (!testCharacter(i, 0x0d))
 			continue;
 
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 
 		if (_itemTypes[_items[c->inventory[0]].type].extraProperties != 6 && _itemTypes[_items[c->inventory[1]].type].extraProperties != 6)
 			continue;
@@ -506,12 +506,12 @@ void EobEngine::turnUndeadAuto() {
 	_openBookCasterLevel = 0;
 }
 
-void EobEngine::turnUndeadAutoHit() {
+void EoBEngine::turnUndeadAutoHit() {
 	_txt->printMessage(_turnUndeadString[0], -1, _characters[_openBookChar].name);
 	sparkEffectOffensive();
 }
 
-bool EobEngine::checkPartyStatusExtra() {
+bool EoBEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
 	int cd = _screen->curDimIndex();
 	gui_drawBox(0, 121, 320, 80, _color1_1, _color2_1, _bkgColor_1);
@@ -529,7 +529,7 @@ bool EobEngine::checkPartyStatusExtra() {
 	return true;
 }
 
-int EobEngine::resurrectionSelectDialogue() {
+int EoBEngine::resurrectionSelectDialogue() {
 	gui_drawDialogueBox();
 	_txt->printDialogueText(_npcStrings[0][1]);
 
@@ -548,7 +548,7 @@ int EobEngine::resurrectionSelectDialogue() {
 	return 1;
 }
 
-void EobEngine::healParty() {
+void EoBEngine::healParty() {
 	int cnt = rollDice(1, 3, 2);
 	for (int i = 0; i < 6 && cnt; i++) {
 		if (testCharacter(i, 3))

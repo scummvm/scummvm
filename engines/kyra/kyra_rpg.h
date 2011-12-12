@@ -64,7 +64,7 @@ struct LevelTempData {
 	uint8 monsterDifficulty;
 };
 
-struct EobFlyingObject {
+struct EoBFlyingObject {
 	uint8 enable;
 	uint8 objectType;
 	int16 attackerId;

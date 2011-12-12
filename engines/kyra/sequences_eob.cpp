@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-int EobEngine::mainMenu() {
+int EoBEngine::mainMenu() {
 	int menuChoice = _menuChoiceInit;
 	_menuChoiceInit = 0;
 
@@ -43,7 +43,7 @@ int EobEngine::mainMenu() {
 		switch (menuChoice) {
 			case 0:
 				_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-				_screen->loadEobBitmap("INTRO", 0, 5, 3, 2);
+				_screen->loadEoBBitmap("INTRO", 0, 5, 3, 2);
 				_screen->setScreenPalette(_screen->getPalette(0));
 				_screen->_curPage = 2;
 				of = _screen->setFont(Screen::FID_6_FNT);
@@ -90,7 +90,7 @@ int EobEngine::mainMenu() {
 	return shouldQuit() ? -5 : menuChoice;
 }
 
-int EobEngine::mainMenuLoop() {
+int EoBEngine::mainMenuLoop() {
 	int sel = -1;
 	do {
 		_screen->setScreenDim(28);
@@ -103,7 +103,7 @@ int EobEngine::mainMenuLoop() {
 	return sel + 1;
 }
 
-void EobEngine::seq_playOpeningCredits() {
+void EoBEngine::seq_playOpeningCredits() {
 	_allowSkip = true;
 
 	loadSetIntroPalette(_introFilesOpening[5]);
@@ -124,7 +124,7 @@ void EobEngine::seq_playOpeningCredits() {
 	_allowSkip = false;
 }
 
-void EobEngine::seq_playIntro() {
+void EoBEngine::seq_playIntro() {
 	_allowSkip = true;
 
 	if (!shouldQuit() && !skipFlag()) {
@@ -156,7 +156,7 @@ void EobEngine::seq_playIntro() {
 	_allowSkip = false;
 }
 
-void EobEngine::seq_playFinale() {
+void EoBEngine::seq_playFinale() {
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 	_screen->loadFileDataToPage(s, 5, 32000);
 	delete s;
@@ -197,7 +197,7 @@ void EobEngine::seq_playFinale() {
 	_screen->fadeToBlack();
 }
 
-void EobEngine::seq_tower() {
+void EoBEngine::seq_tower() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -272,7 +272,7 @@ void EobEngine::seq_tower() {
 	delete[] shp;
 }
 
-void EobEngine::seq_orb() {
+void EoBEngine::seq_orb() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -329,7 +329,7 @@ void EobEngine::seq_orb() {
 		delete[] shp[i];
 }
 
-void EobEngine::seq_waterdeepEntry() {
+void EoBEngine::seq_waterdeepEntry() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -429,7 +429,7 @@ void EobEngine::seq_waterdeepEntry() {
 		delete[] shp2[i];
 }
 
-void EobEngine::seq_king() {
+void EoBEngine::seq_king() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -515,7 +515,7 @@ void EobEngine::seq_king() {
 		delete[] shp[i];
 }
 
-void EobEngine::seq_hands() {
+void EoBEngine::seq_hands() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -655,7 +655,7 @@ void EobEngine::seq_hands() {
 	delay(48 * _tickLength);
 }
 
-void EobEngine::seq_waterdeepExit() {
+void EoBEngine::seq_waterdeepExit() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -771,7 +771,7 @@ void EobEngine::seq_waterdeepExit() {
 	delay(50 * _tickLength);
 }
 
-void EobEngine::seq_tunnel() {
+void EoBEngine::seq_tunnel() {
 	if (shouldQuit() || skipFlag())
 		return;
 
@@ -867,7 +867,7 @@ void EobEngine::seq_tunnel() {
 	delay(50 * _tickLength);
 }
 
-void EobEngine::seq_xdeath() {
+void EoBEngine::seq_xdeath() {
 	uint8 *shapes1[5];
 	uint8 *shapes2;
 
@@ -876,7 +876,7 @@ void EobEngine::seq_xdeath() {
 		shapes1[i] = _screen->encodeShape(i / 2 * 14, i / 2 * 88, 14, 88, true);
 	_screen->loadShapeSetBitmap("XDEATH3", 5, 3);
 	shapes2 = _screen->encodeShape(22, 0, 16, 95, true);
-	_screen->loadEobBitmap("XDEATH1", 0, 5, 3, -1);
+	_screen->loadEoBBitmap("XDEATH1", 0, 5, 3, -1);
 	_screen->setCurPage(0);
 
 	for (int i = 0; i < 10; i++) {
@@ -924,13 +924,13 @@ void EobEngine::seq_xdeath() {
 	gui_drawAllCharPortraitsWithStats();
 }
 
-void EobEngine::loadSetIntroPalette(const char *filename) {
+void EoBEngine::loadSetIntroPalette(const char *filename) {
 	_screen->loadPalette(filename, _screen->getPalette(0));
 	_screen->getPalette(0).fill(0, 1, 0);
 	_screen->setScreenPalette(_screen->getPalette(0));
 }
 
-void EobEngine::copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step) {
+void EoBEngine::copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step) {
 	const uint8 *ptr2 = _screen->getCPagePtr(3) + y1 * 320 + x1;
 
 	if (step == 1) {
@@ -990,7 +990,7 @@ void EobEngine::copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int
 	}
 }
 
-void EobEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH) {
+void EoBEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH) {
 	int originX2 = originX1 + originW;
 	int originY2 = originY1 + originH;
 	if (originY2 > 21)
@@ -1047,7 +1047,7 @@ void EobEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetF
 	}
 }
 
-void EobEngine::whirlTransition() {
+void EoBEngine::whirlTransition() {
 	for (int i = 0; i < 2; i++) {
 		for (int ii = 0; ii < 8; ii++) {
 			uint32 e = _system->getMillis() + 3;
