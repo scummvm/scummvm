@@ -65,6 +65,9 @@ public:
 
 	void add(EventHandler *obj);
 	void remove(EventHandler *obj);
+	// The following line prevents compiler warnings about hiding the remove()
+	// method from the parent class.
+	virtual void remove() { EventHandler::remove(); }
 };
 
 class Timer: public EventHandler {
