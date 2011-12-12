@@ -4531,28 +4531,6 @@ void DreamGenContext::removeFreeObject() {
 	es = pop();
 }
 
-void DreamGenContext::setupTimedUse() {
-	STACK_CHECK;
-	_cmp(data.word(kTimecount), 0);
-	if (!flags.z())
-		return /* (cantsetup) */;
-	data.byte(kTimedy) = bh;
-	data.byte(kTimedx) = bl;
-	data.word(kCounttotimed) = cx;
-	_add(dx, cx);
-	data.word(kTimecount) = dx;
-	bl = al;
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kPuzzletext);
-	cx = (66*2);
-	ax = es.word(bx);
-	_add(ax, cx);
-	bx = ax;
-	data.word(kTimedseg) = es;
-	data.word(kTimedoffset) = bx;
-}
-
 void DreamGenContext::useGun() {
 	STACK_CHECK;
 	_cmp(data.byte(kObjecttype), 4);
@@ -5049,85 +5027,6 @@ nomatchslot:
 	_cmp(cl, 7);
 	if (!flags.z())
 		goto slotloop;
-}
-
-void DreamGenContext::entryTexts() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 21);
-	if (!flags.z())
-		goto notloc15;
-	al = 28;
-	cx = 60;
-	dx = 11;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notloc15:
-	_cmp(data.byte(kLocation), 30);
-	if (!flags.z())
-		goto notloc43;
-	al = 27;
-	cx = 60;
-	dx = 11;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notloc43:
-	_cmp(data.byte(kLocation), 23);
-	if (!flags.z())
-		goto notloc23;
-	al = 29;
-	cx = 60;
-	dx = 11;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notloc23:
-	_cmp(data.byte(kLocation), 31);
-	if (!flags.z())
-		goto notloc44;
-	al = 30;
-	cx = 60;
-	dx = 11;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notloc44:
-	_cmp(data.byte(kLocation), 20);
-	if (!flags.z())
-		goto notsarters2;
-	al = 31;
-	cx = 60;
-	dx = 11;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notsarters2:
-	_cmp(data.byte(kLocation), 24);
-	if (!flags.z())
-		goto notedenlob;
-	al = 32;
-	cx = 60;
-	dx = 3;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
-	return;
-notedenlob:
-	_cmp(data.byte(kLocation), 34);
-	if (!flags.z())
-		return /* (noteden2) */;
-	al = 33;
-	cx = 60;
-	dx = 3;
-	bl = 68;
-	bh = 64;
-	setupTimedUse();
 }
 
 void DreamGenContext::entryAnims() {

@@ -4317,4 +4317,50 @@ void DreamGenContext::quitKey() {
 		data.byte(kGetback) = 1;
 }
 
+void DreamGenContext::setupTimedUse() {
+	DreamBase::setupTimedUse(al, cx, dx, bl, bh);
+}
+
+void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 timeCount, byte x, byte y) {
+	if (data.word(kTimecount) != 0)
+		return; // can't setup
+
+	data.byte(kTimedy) = y;
+	data.byte(kTimedx) = x;
+	data.word(kCounttotimed) = countToTimed;
+	data.word(kTimecount) = timeCount + countToTimed;
+	data.word(kTimedseg) = data.word(kPuzzletext);
+	data.word(kTimedoffset) = kTextstart + getSegment(data.word(kPuzzletext)).word(textIndex * 2);
+	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(data.word(kTimedoffset), 0);
+	debug(1, "setupTimedUse: %d => '%s'", textIndex, string);
+}
+
+void DreamBase::entryTexts() {
+	switch (data.byte(kLocation)) {
+	case 21:
+		setupTimedUse(28, 60, 11, 68, 64);
+		break;
+	case 30:
+		setupTimedUse(27, 60, 11, 68, 64);
+		break;
+	case 23:
+		setupTimedUse(29, 60, 11, 68, 64);
+		break;
+	case 31:
+		setupTimedUse(30, 60, 11, 68, 64);
+		break;
+	case 20:
+		setupTimedUse(31, 60, 11, 68, 64);
+		break;
+	case 24:
+		setupTimedUse(32, 60, 3, 68, 64);
+		break;
+	case 34:
+		setupTimedUse(33, 60, 3, 68, 64);
+		break;
+	default:
+		break;
+	}
+}
+
 } // End of namespace DreamGen

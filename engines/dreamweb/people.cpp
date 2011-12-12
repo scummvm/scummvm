@@ -629,25 +629,16 @@ void DreamGenContext::priest(ReelRoutine &routine) {
 
 	if (checkSpeed(routine)) {
 		routine.incReelPointer();
-		push(es);
-		push(bx);
 		priestText(routine);
-		bx = pop();
-		es = pop();
 	}
 }
 
-void DreamGenContext::priestText(ReelRoutine &routine) {
+void DreamBase::priestText(ReelRoutine &routine) {
 	uint16 reel = routine.reelPointer();
 	if (reel < 2 || reel >= 7 || (reel & 1))
 		return; // nopriesttext
 
-	al = ((reel & 0xFF) >> 1) + 50;
-	bl = 72;
-	bh = 80;
-	cx = 54;
-	dx = 1;
-	setupTimedUse();
+	setupTimedUse((reel >> 1) + 50, 54, 1, 72, 80);
 }
 
 void DreamGenContext::monkAndRyan(ReelRoutine &routine) {

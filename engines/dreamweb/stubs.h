@@ -408,7 +408,6 @@
 	void louisChair(ReelRoutine &routine);
 	void bossMan(ReelRoutine &routine);
 	void priest(ReelRoutine &routine);
-	void priestText(ReelRoutine &routine);
 	void monkAndRyan(ReelRoutine &routine);
 	void copper(ReelRoutine &routine);
 	void introMonks1(ReelRoutine &routine);
@@ -568,5 +567,6 @@
 	void useButtonA();
 	void autoAppear();
 	void quitKey();
+	void setupTimedUse();
 
 #endif

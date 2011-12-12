@@ -115,6 +115,7 @@ public:
 	const Frame *getReelFrameAX(uint16 frame);
 	void soundOnReels(uint16 reelPointer);
 	void rollEndCredits();
+	void priestText(ReelRoutine &routine);
 
 	// from stubs.cpp
 	void crosshair();
@@ -154,6 +155,7 @@ public:
 	// from use.cpp
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);
+	void setupTimedUse(uint16 offset, uint16 countToTimed, uint16 timeCount, byte x, byte y);
 
 	// from vgafades.cpp
 	uint8 *mainPalette();
@@ -209,6 +211,7 @@ public:
 	void createPanel();
 	void createPanel2();
 	void showPanel();
+	void entryTexts();
 };
 
 

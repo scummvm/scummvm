@@ -491,7 +491,6 @@ public:
 	void useOpenBox();
 	void clearBuffers();
 	void getObTextStart();
-	void entryTexts();
 	void putUnderCentre();
 	void checkObjectSize();
 	void findText1();
@@ -580,7 +579,6 @@ public:
 	void checkInside();
 	void findPathOfPoint();
 	void getDestInfo();
-	void setupTimedUse();
 	void makeCaps();
 	void read();
 	void additionalText();
