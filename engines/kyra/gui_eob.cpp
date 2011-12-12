@@ -3632,7 +3632,7 @@ void GUI_EoB::displayTextBox(int id) {
 	_screen->updateScreen();
 
 	for (uint32 timeOut = _vm->_system->getMillis() + 1440; _vm->_system->getMillis() < timeOut && !_vm->shouldQuit(); ) {
-	 	int in = _vm->checkInput(0, false, 0);
+		int in = _vm->checkInput(0, false, 0);
 		_vm->removeInputTop();
 		if (in && !(in & 0x800))
 			break;
@@ -3963,4 +3963,3 @@ const EoBRect16 GUI_EoB::_updateBoxFrameHighLights[] = {
 }	// End of namespace Kyra
 
 #endif // ENABLE_EOB
-

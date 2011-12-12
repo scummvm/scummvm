@@ -84,7 +84,7 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
-	  	(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail);
 }
 

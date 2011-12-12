@@ -131,4 +131,3 @@ bool KyraRpgEngine::clickedShape(int shapeIndex) {
 }	// End of namespace Kyra
 
 #endif // defined(ENABLE_EOB) || defined(ENABLE_LOL)
-

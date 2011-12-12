@@ -729,4 +729,3 @@ void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType,
 } // End of namespace Kyra
 
 #endif // ENABLE_EOB
-

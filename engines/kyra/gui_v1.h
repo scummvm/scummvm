@@ -195,4 +195,3 @@ private:
 } // end of namesapce Kyra
 
 #endif
-

@@ -1204,10 +1204,10 @@ void DarkMoonEngine::initStaticResource() {
 
 	_shapesIntro = new const EoBShapeDef*[13];
 	memset(_shapesIntro, 0, sizeof(EoBShapeDef*) * 13);
- 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
- 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
- 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
- 	_shapesIntro[7] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes07, temp);
+	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
+	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
+	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
+	_shapesIntro[7] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes07, temp);
 
 	_finaleStrings = _staticres->loadStrings(kEoB2FinaleStrings, temp);
 	_creditsData = _staticres->loadRawData(kEoB2CreditsData, temp);
@@ -1220,10 +1220,10 @@ void DarkMoonEngine::initStaticResource() {
 	_shapesFinale = new const EoBShapeDef*[13];
 	memset(_shapesFinale, 0, sizeof(EoBShapeDef*) * 13);
 	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
- 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
- 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
- 	_shapesFinale[9] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes09, temp);
- 	_shapesFinale[10] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes10, temp);
+	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
+	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
+	_shapesFinale[9] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes09, temp);
+	_shapesFinale[10] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes10, temp);
 
 	_dscDoorType5Offs = _staticres->loadRawData(kEoBBaseDscDoorType5Offs, temp);
 
@@ -1286,4 +1286,3 @@ const char *DarkMoonEngine::_palFilesFinale[] = {
 #endif // ENABLE_EOB
 
 } // End of namespace Kyra
-

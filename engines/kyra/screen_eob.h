@@ -101,5 +101,3 @@ private:
 #endif // ENABLE_EOB
 
 #endif
-
-

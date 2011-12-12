@@ -139,5 +139,3 @@ void GUI::updateSaveSlotsList() {
 }
 
 } // End of namespace Kyra
-
-
