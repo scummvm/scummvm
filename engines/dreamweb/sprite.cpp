@@ -782,7 +782,7 @@ void DreamBase::rollEndCredits() {
 			// Output up to 18 lines of text
 			uint16 y = 10 - j;
 			const uint8 *tmp_str = string;
-			for (int k = 0; k < 18; ++j) {
+			for (int k = 0; k < 18; ++k) {
 				DreamBase::printDirect(&tmp_str, 75, &y, 160 + 1, true);
 				y += linespacing;
 			}
