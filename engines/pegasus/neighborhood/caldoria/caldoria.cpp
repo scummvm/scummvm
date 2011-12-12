@@ -157,7 +157,16 @@ void sinclairTimerExpiredFunction(FunctionPtr *, void *caldoria) {
 	((Caldoria *)caldoria)->sinclairTimerExpired();
 }
 
-Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID) {
+SinclairCallBack::SinclairCallBack(Caldoria *caldoria) {
+	_caldoria = caldoria;
+}
+
+void SinclairCallBack::callBack() {
+	_caldoria->checkInterruptSinclair();
+}
+
+Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner)
+		: Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID), _sinclairInterrupt(this) {
 	setIsItemTaken(kKeyCard);
 	setIsItemTaken(kOrangeJuiceGlassEmpty);
 	GameState.setTakenItemID(kOrangeJuiceGlassFull, GameState.isTakenItemID(kOrangeJuiceGlassEmpty));
@@ -166,6 +175,7 @@ Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner) : Neighborho
 }
 
 Caldoria::~Caldoria() {
+	_sinclairInterrupt.releaseCallBack();
 }
 
 void Caldoria::init() {
@@ -173,6 +183,8 @@ void Caldoria::init() {
 
 	//	We need this notification flag as well.
 	_neighborhoodNotification.notifyMe(this, kSinclairLoopDoneFlag, kSinclairLoopDoneFlag);
+
+	_sinclairInterrupt.initCallBack(&_navMovie, kCallBackAtTime);
 
 	forceStridingStop(kCaldoria55, kSouth, kAltCaldoriaSinclairDown);
 	forceStridingStop(kCaldoria50, kNorth, kAltCaldoriaSinclairDown);
@@ -1072,8 +1084,15 @@ void Caldoria::setUpSinclairLoops() {
 	_navMovie.start();
 }
 
-void Caldoria::zoomToSinclair() {
-	// TODO
+void Caldoria::zoomToSinclair() {	
+	_utilityFuse.stopFuse();
+	_privateFlags.setFlag(kCaldoriaPrivateReadyToShootFlag, true);
+	setCurrentActivation(kActivateZoomedOnSinclair);
+
+	ExtraTable::Entry entry;
+	getExtraEntry(kCa53EastZoomToSinclair, entry);
+	_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime1, _navMovie.getScale());
+	startExtraSequence(kCa53EastZoomToSinclair, kExtraCompletedFlag, kFilterAllInput);
 }
 
 void Caldoria::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
@@ -1794,7 +1813,20 @@ void Caldoria::checkInterruptSinclair() {
 		_neighborhoodNotification.setNotificationFlags(kExtraCompletedFlag, kExtraCompletedFlag);
 		g_AIArea->unlockAI();
 	} else {
-		// TODO
+		uint32 currentTime = _navMovie.getTime();
+
+		ExtraTable::Entry entry;
+		getExtraEntry(kCa53EastZoomToSinclair, entry);
+
+		if (currentTime < entry.movieStart + kSinclairInterruptionTime2)
+			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime2,
+					_navMovie.getScale());
+		else if (currentTime < entry.movieStart + kSinclairInterruptionTime3)
+			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime3,
+					_navMovie.getScale());
+		else if (currentTime < entry.movieStart + kSinclairInterruptionTime4)
+			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime4,
+					_navMovie.getScale());
 	}
 }
 

@@ -386,7 +386,21 @@ const tDisplayElementID kCaldoriaBombTimerID = kCaldoriaBombGridID + 1;
 const TimeValue kCaldoria4DBlankChoiceIn = 29730;
 const TimeValue kCaldoria4DBlankChoiceOut = 33910;
 
+class Caldoria;
+
+class SinclairCallBack : public TimeBaseCallBack {
+public:
+	SinclairCallBack(Caldoria *);
+	~SinclairCallBack() {}
+
+protected:
+	virtual void callBack();
+
+	Caldoria *_caldoria;
+};
+
 class Caldoria : public Neighborhood {
+friend class SinclairCallBack;
 friend void doorBombTimerExpiredFunction(FunctionPtr *, void *);
 friend void sinclairTimerExpiredFunction(FunctionPtr *, void *);
 
@@ -499,6 +513,8 @@ protected:
 	long _numSinclairLoops;
 
 	Sprite *_gunSprite;
+
+	SinclairCallBack _sinclairInterrupt;
 
 	Common::String getSoundSpotsName();
 	Common::String getNavMovieName();
