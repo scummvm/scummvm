@@ -331,6 +331,7 @@
 	void useWindow();
 	void useHatch();
 	void useLighter();
+	void useSLab();
 	void wheelSound();
 	void callHotelLift();
 	void useShield();

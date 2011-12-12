@@ -3637,56 +3637,6 @@ alreadyfull:
 	putBackObStuff();
 }
 
-void DreamGenContext::useSLab() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto slabwith;
-	withWhat();
-	return;
-slabwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'J';
-	ch = 'E';
-	dl = 'W';
-	dh = 'L';
-	compare();
-	if (flags.z())
-		goto nextslab;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-nextslab:
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+2) = 0;
-	al = data.byte(kCommand);
-	push(ax);
-	removeSetObject();
-	ax = pop();
-	_inc(al);
-	push(ax);
-	placeSetObject();
-	ax = pop();
-	_cmp(al, 54);
-	if (!flags.z())
-		goto notlastslab;
-	al = 0;
-	turnPathOn();
-	data.word(kWatchingtime) = 22;
-	data.word(kReeltowatch) = 35;
-	data.word(kEndwatchreel) = 48;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-notlastslab:
-	_inc(data.byte(kProgresspoints));
-	showFirstUse();
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::useOpenBox() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);

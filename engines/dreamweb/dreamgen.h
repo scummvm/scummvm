@@ -508,7 +508,6 @@ public:
 	void dirCom();
 	void endGameSeq();
 	void findFirstPath();
-	void useSLab();
 	void useAltar();
 	void startTalk();
 	void getAnyAd();

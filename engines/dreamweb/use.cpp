@@ -1281,4 +1281,37 @@ void DreamGenContext::useControl() {
 	}
 }
 
+void DreamGenContext::useSLab() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char id[4] = { 'J', 'E', 'W', 'L' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+		showPuzText(14, 300);
+		putBackObStuff();
+		return;
+	}
+
+	DynObject *exObject = getExAd(data.byte(kWithobject));
+	exObject->mapad[0] = 0;
+
+	removeSetObject(data.byte(kCommand));
+	placeSetObject(data.byte(kCommand) + 1);
+	if (data.byte(kCommand) + 1 == 54) {
+		// Last slab
+		turnPathOn(0);
+		data.word(kWatchingtime) = 22;
+		data.word(kReeltowatch) = 35;
+		data.word(kEndwatchreel) = 48;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+	}
+
+	data.byte(kProgresspoints)++;
+	showFirstUse();
+	data.byte(kGetback) = 1;
+}
+
 } // End of namespace DreamGen
