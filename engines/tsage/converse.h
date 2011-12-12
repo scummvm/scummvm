@@ -188,8 +188,8 @@ public:
 
 	// Return to Ringworld specific field
 	int _mode;
-	int _field4, _field6, _field8;
-	int _field16;
+	int _lookupValue, _lookupIndex, _field6;
+	int _field8, _field16;
 public:
 	void load(const byte *dataP);
 	virtual void synchronize(Serializer &s);

@@ -535,8 +535,8 @@ void Obj44::load(const byte *dataP) {
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		_mode = s.readSint16LE();
-		s.readSint16LE();
-		_field4 = s.readSint16LE();
+		_lookupValue = s.readSint16LE();
+		_lookupIndex = s.readSint16LE();
 		_field6 = s.readSint16LE();
 		_field8 = s.readSint16LE();
 	}
@@ -571,7 +571,8 @@ void Obj44::synchronize(Serializer &s) {
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_mode);
-		s.syncAsSint16LE(_field4);
+		s.syncAsSint16LE(_lookupValue);
+		s.syncAsSint16LE(_lookupIndex);
 		s.syncAsSint16LE(_field6);
 		s.syncAsSint16LE(_field8);
 		s.syncAsSint16LE(_field16);
@@ -753,11 +754,21 @@ void StripManager::signal() {
 	if (g_vm->getGameID() != GType_Ringworld2) {
 		_field2E8 = obj44._id;
 	} else {
-		if (obj44._id)
-			_field2E8 = obj44._id;
+		// Return to Ringworld specific handling
+		if (obj44._field6)
+			_field2E8 = obj44._field6;
 
 		switch (obj44._mode) {
 		case 1:
+			++_lookupList[obj44._lookupIndex - 1];
+			break;
+		case 2:
+			--_lookupList[obj44._lookupIndex - 1];
+			break;
+		case 3:
+			_lookupList[obj44._lookupIndex - 1] = obj44._lookupValue;
+			break;
+		default:
 			break;
 		}
 	}
@@ -766,12 +777,27 @@ void StripManager::signal() {
 
 	// Build up a list of script entries
 	int idx;
-	for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
-		if (!obj44._list[idx]._id)
-			break;
 
-		// Get the next one
-		choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+	if (g_vm->getGameID() == GType_Ringworld2 && obj44._field16) {
+		// Special loading mode used in Return to Ringworld
+		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+			int objIndex = _lookupList[obj44._field16 - 1];
+
+			if (!obj44._list[objIndex]._id)
+				break;
+
+			// Get the next one
+			choiceList.push_back((const char *)&_script[0] + obj44._list[objIndex]._scriptOffset);
+		}
+	} else {
+		// Standard choices loading
+		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+			if (!obj44._list[idx]._id)
+				break;
+
+			// Get the next one
+			choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+		}
 	}
 
 	int strIndex = 0;
