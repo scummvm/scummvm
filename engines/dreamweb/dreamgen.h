@@ -606,7 +606,6 @@ public:
 	void getPersonText();
 	void parser();
 	void emergencyPurge();
-	void quitKey();
 	void processTrigger();
 	void transferConToEx();
 	void adjustDown();

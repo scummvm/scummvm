@@ -4307,4 +4307,14 @@ void DreamGenContext::autoAppear() {
 	}
 }
 
+void DreamGenContext::quitKey() {
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandOnly(4);
+	}
+
+	if (data.word(kMousebutton) != data.word(kOldbutton) && (data.word(kMousebutton) & 1))
+		data.byte(kGetback) = 1;
+}
+
 } // End of namespace DreamGen

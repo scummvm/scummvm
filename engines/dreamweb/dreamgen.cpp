@@ -4730,27 +4730,6 @@ nottvsoldier:
 	putBackObStuff();
 }
 
-void DreamGenContext::quitKey() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadyqk;
-	data.byte(kCommandtype) = 222;
-	al = 4;
-	commandOnly();
-alreadyqk:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notqk) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doqk;
-	return;
-doqk:
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::updateSymbolTop() {
 	STACK_CHECK;
 	_cmp(data.byte(kSymboltopdir), 0);

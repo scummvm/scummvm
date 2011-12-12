@@ -567,5 +567,6 @@
 	void rollEndCredits2();
 	void useButtonA();
 	void autoAppear();
+	void quitKey();
 
 #endif

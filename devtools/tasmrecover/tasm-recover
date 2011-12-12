@@ -608,6 +608,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'putunderzoom',
 	'quickquit',
 	'quickquit2',
+	'quitkey',
 	'quitsymbol',
 	'random',
 	'randomaccess',
