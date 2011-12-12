@@ -468,8 +468,6 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	virtual int getShapeScaledWidth( const uint8*, int) { return 0; }
-
 	virtual void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
 	// mouse handling
@@ -502,8 +500,6 @@ public:
 
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
-
-	virtual uint8 *getLevelOverlay(int) { return 0; }
 
 	int _charWidth;
 	int _charOffset;
