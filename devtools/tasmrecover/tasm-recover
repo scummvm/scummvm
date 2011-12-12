@@ -47,6 +47,7 @@ p = parser(skip_binary_data = [
 	'icongraphics0',
 	'icongraphics1',
 	'savenames',
+	'volumetabname',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
