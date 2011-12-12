@@ -1181,41 +1181,23 @@ void Actor::draw() {
 
 	if (!_costumeStack.empty()) {
 		Costume *costume = _costumeStack.back();
-		if (!g_driver->isHardwareAccelerated()) {
-			for (int l = 0; l < 5; l++) {
-				if (!shouldDrawShadow(l))
-					continue;
-				g_driver->setShadow(&_shadowArray[l]);
-				g_driver->setShadowMode();
-				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-				costume->draw();
-				g_driver->finishActorDraw();
-				g_driver->clearShadowMode();
-				g_driver->setShadow(NULL);
-			}
-			// normal draw actor
-			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw(px1, py1, px2, py2);
-			g_driver->finishActorDraw();
-		} else {
-			// normal draw actor
-			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw(px1, py1, px2, py2);
-			g_driver->finishActorDraw();
-
-			for (int l = 0; l < 5; l++) {
-				if (!shouldDrawShadow(l))
-					continue;
-				g_driver->setShadow(&_shadowArray[l]);
-				g_driver->setShadowMode();
+		for (int l = 0; l < 5; l++) {
+			if (!shouldDrawShadow(l))
+				continue;
+			g_driver->setShadow(&_shadowArray[l]);
+			g_driver->setShadowMode();
+			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-				costume->draw();
-				g_driver->finishActorDraw();
-				g_driver->clearShadowMode();
-				g_driver->setShadow(NULL);
-			}
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+			costume->draw();
+			g_driver->finishActorDraw();
+			g_driver->clearShadowMode();
+			g_driver->setShadow(NULL);
 		}
+		// normal draw actor
+		g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+		costume->draw(px1, py1, px2, py2);
+		g_driver->finishActorDraw();
 	}
 
 	if (_mustPlaceText) {

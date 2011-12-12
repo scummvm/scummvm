@@ -335,7 +335,7 @@ void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angl
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-		//glColor3f(0.0f, 1.0f, 0.0f);
+// 		glColor3f(0.0f, 1.0f, 0.0f);
 		glColor3f(_shadowColorR / 255.0f, _shadowColorG / 255.0f, _shadowColorB / 255.0f);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
@@ -364,7 +364,7 @@ void GfxOpenGL::drawShadowPlanes() {
 /*	glColor3f(1.0f, 1.0f, 1.0f);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
-		Sector *shadowSector = *i;
+		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
 			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
@@ -372,6 +372,7 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 */
+
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
@@ -382,7 +383,6 @@ void GfxOpenGL::drawShadowPlanes() {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
-	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
@@ -392,17 +392,18 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_TRUE);
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
 void GfxOpenGL::setShadowMode() {
+
 }
 
 void GfxOpenGL::clearShadowMode() {
 	glDisable(GL_STENCIL_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
