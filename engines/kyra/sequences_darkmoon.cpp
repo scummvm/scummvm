@@ -1172,7 +1172,7 @@ void DarkmoonSequenceHelper::fadeText() {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
 
-	_screen->fadeTextColor(_palettes[0], 255, 2);
+	_screen->fadeTextColor(_palettes[0], 255, 8);
 	_screen->clearCurDim();
 }
 
