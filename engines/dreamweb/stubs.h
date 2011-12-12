@@ -334,6 +334,8 @@
 	void useSLab();
 	void usePipe();
 	void useOpenBox();
+	void useAxe();
+	void useKey();
 	void wheelSound();
 	void callHotelLift();
 	void useShield();

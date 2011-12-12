@@ -1376,4 +1376,67 @@ void DreamGenContext::useOpenBox() {
 	showFirstUse();
 }
 
+void DreamGenContext::useAxe() {
+	if (data.byte(kReallocation) != 22) {
+		// Not in pool
+		showFirstUse();
+		return;
+	}
+
+	if (data.byte(kMapy) == 10) {
+		// Axe on door
+		al = 15;
+		cx = 300;
+		showPuzText(15, 300);
+		data.byte(kProgresspoints)++;
+		data.word(kWatchingtime) = 46*2;
+		data.word(kReeltowatch) = 31;
+		data.word(kEndwatchreel) = 77;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		return;
+	}
+
+	showSecondUse();
+	data.byte(kProgresspoints)++;
+	data.byte(kLastweapon) = 2;
+	data.byte(kGetback) = 1;
+	removeObFromInv();
+}
+
+void DreamGenContext::useKey() {
+	switch(data.byte(kLocation)) {
+	case 5:
+	case 30:
+		if (data.byte(kMapx) == 22 && data.byte(kMapy) == 10) {
+			showPuzText(0, 300);
+			data.byte(kCounttoclose) = 100;
+			data.byte(kGetback) = 1;
+		} else {
+			// Wrong room
+			showPuzText(2, 200);
+			putBackObStuff();
+		}
+		break;
+	case 21:
+		if (data.byte(kMapx) == 11 && data.byte(kMapy) == 10) {
+			showPuzText(3, 300);
+			data.byte(kNewlocation) = 30;
+			al = 2;
+			fadeScreenDown();
+			showFirstUse();
+			putBackObStuff();
+		} else {
+			// Wrong room
+			showPuzText(2, 200);
+			putBackObStuff();
+		}
+	default:
+		showPuzText(1, 200);
+		putBackObStuff();
+		break;
+	}
+}
+
 } // End of namespace DreamGen

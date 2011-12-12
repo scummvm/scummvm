@@ -3830,58 +3830,6 @@ havecutwire:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useKey() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 5);
-	if (flags.z())
-		goto usekey1;
-	_cmp(data.byte(kLocation), 30);
-	if (flags.z())
-		goto usekey1;
-	_cmp(data.byte(kLocation), 21);
-	if (flags.z())
-		goto usekey2;
-	cx = 200;
-	al = 1;
-	showPuzText();
-	putBackObStuff();
-	return;
-usekey1:
-	_cmp(data.byte(kMapx), 22);
-	if (!flags.z())
-		goto wrongroom1;
-	_cmp(data.byte(kMapy), 10);
-	if (!flags.z())
-		goto wrongroom1;
-	cx = 300;
-	al = 0;
-	showPuzText();
-	data.byte(kCounttoclose) = 100;
-	data.byte(kGetback) = 1;
-	return;
-usekey2:
-	_cmp(data.byte(kMapx), 11);
-	if (!flags.z())
-		goto wrongroom1;
-	_cmp(data.byte(kMapy), 10);
-	if (!flags.z())
-		goto wrongroom1;
-	cx = 300;
-	al = 3;
-	showPuzText();
-	data.byte(kNewlocation) = 30;
-	al = 2;
-	fadeScreenDown();
-	showFirstUse();
-	putBackObStuff();
-	return;
-wrongroom1:
-	cx = 200;
-	al = 2;
-	showPuzText();
-	putBackObStuff();
-}
-
 void DreamGenContext::useStereo() {
 	STACK_CHECK;
 	_cmp(data.byte(kLocation), 0);
@@ -3942,37 +3890,6 @@ stereoon:
 	cx = 400;
 	showPuzText();
 	putBackObStuff();
-}
-
-void DreamGenContext::useAxe() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 22);
-	if (!flags.z())
-		goto notinpool;
-	_cmp(data.byte(kMapy), 10);
-	if (flags.z())
-		goto axeondoor;
-	showSecondUse();
-	_inc(data.byte(kProgresspoints));
-	data.byte(kLastweapon) = 2;
-	data.byte(kGetback) = 1;
-	removeObFromInv();
-	return;
-notinpool:
-	showFirstUse();
-	return;
-/*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
-axeondoor:
-	al = 15;
-	cx = 300;
-	showPuzText();
-	_inc(data.byte(kProgresspoints));
-	data.word(kWatchingtime) = 46*2;
-	data.word(kReeltowatch) = 31;
-	data.word(kEndwatchreel) = 77;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::withWhat() {

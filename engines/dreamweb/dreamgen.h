@@ -521,7 +521,6 @@ public:
 	void getFreeAd();
 	void removeObFromInv();
 	void heavy();
-	void useKey();
 	void dirFile();
 	void pickupConts();
 	void nextColon();
@@ -549,7 +548,6 @@ public:
 	void rollEm();
 	void poolGuard();
 	void lookAtPlace();
-	void useAxe();
 	void findAllOpen();
 	void fillOpen();
 	void findSetObject();
