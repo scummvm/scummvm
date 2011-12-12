@@ -285,7 +285,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 			srcPage += 320;
 			src = srcPage;
 		}
-    	delete [] colorMap;
+		delete [] colorMap;
 	}
 
 	return shp;

@@ -406,7 +406,7 @@ void KyraEngine_v1::setupKeyMap() {
 		{ KC(s), 32, 32 },
 		{ KC(w), 18, 18 },
 		{ KC(y), 22, 22 },
-		{ KC(z), 46, 46 },		
+		{ KC(z), 46, 46 },
 		{ KC(1), 2, 0/*unknown*/ },
 		{ KC(2), 3, 0/*unknown*/ },
 		{ KC(3), 4, 0/*unknown*/ },

@@ -68,4 +68,3 @@ private:
 #endif // ENABLE_LOL
 
 #endif
-

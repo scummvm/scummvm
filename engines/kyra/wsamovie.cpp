@@ -95,7 +95,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 
 	for (int i = 1; i < _numFrames + 2; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData);
-	   	if (_frameOffsTable[i])
+		if (_frameOffsTable[i])
 			_frameOffsTable[i] -= frameDataOffs;
 		wsaData += 4;
 	}

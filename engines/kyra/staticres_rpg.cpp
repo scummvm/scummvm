@@ -94,4 +94,3 @@ void KyraRpgEngine::initStaticResource() {
 #endif // (ENABLE_EOB || ENABLE_LOL)
 
 } // End of namespace Kyra
-

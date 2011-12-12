@@ -2062,7 +2062,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 
 	Pattern *patterns = new Pattern[3840];
 	uint16 numPatterns = 0;
-	uint8 nib = 0;	
+	uint8 nib = 0;
 
 	uint16 code = decodeEGAGetCode(src, nib);
 	uint8 last = code & 0xff;
@@ -2125,7 +2125,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 uint16 Screen::decodeEGAGetCode(const uint8 *&pos, uint8 &nib) {
 	uint16 res = READ_BE_UINT16(pos++);
 	if ((++nib) & 1) {
-		res >>= 4;		
+		res >>= 4;
 	} else {
 		pos++;
 		res &= 0xfff;
@@ -3057,7 +3057,7 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
 		numCols = stream->size() / Palette::kPC98BytesPerColor;
 		pal.loadPC98Palette(*stream, 0, MIN(maxCols, numCols));
-	} else if (_vm->gameFlags().gameID == GI_EOB1) {		
+	} else if (_vm->gameFlags().gameID == GI_EOB1) {
 		numCols = stream->size() / Palette::kVGABytesPerColor;
 		pal.loadVGAPalette7bit(*stream, 0, MIN(maxCols, numCols));
 	} else {
