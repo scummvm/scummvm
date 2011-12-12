@@ -122,11 +122,10 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 
 void DreamGenContext::printDirect() {
 	uint16 y = bx;
-	uint16 initialSi = si;
 	const uint8 *initialString = es.ptr(si, 0);
 	const uint8 *string = initialString;
 	al = DreamBase::printDirect(&string, di, &y, dl, (bool)(dl & 1));
-	si = initialSi + (string - initialString);
+	si += (string - initialString);
 	bx = y;
 }
 
