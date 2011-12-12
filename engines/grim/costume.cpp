@@ -22,6 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "common/endian.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/costume.h"
