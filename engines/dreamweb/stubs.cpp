@@ -2163,6 +2163,7 @@ void DreamGenContext::readSetData() {
 	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
 	useCharset1();
 
+	// FIXME: Why is this commented out?
 	//engine->openFile("DREAMWEB.VOL");
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
 	//engine->readFromFile(volumeTab, 2048-256);
