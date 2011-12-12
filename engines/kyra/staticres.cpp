@@ -254,24 +254,27 @@ bool StaticResource::init() {
 		{ kLoLSpellData, proc(loadSpellData), proc(freeSpellData) },
 		{ kLoLCompassData, proc(loadCompassData), proc(freeCompassData) },
 		{ kLoLFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
-		{ kLoLRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
-		{ kLoLRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
-		{ kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
 #else
 		{ kLoLCharData, proc(loadDummy), proc(freeDummy) },
 		{ kLoLSpellData, proc(loadDummy), proc(freeDummy) },
 		{ kLoLCompassData, proc(loadDummy), proc(freeDummy) },
 		{ kLoLFlightShpData, proc(loadDummy), proc(freeDummy) },
-		{ kLoLRawDataBe16, proc(loadDummy), proc(freeDummy) },
-		{ kLoLRawDataBe32, proc(loadDummy), proc(freeDummy) },
+#endif
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+		{ kRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+		{ kRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
+#endif
+#ifdef ENABLE_LOL
+		{ kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
+#else
 		{ kLoLButtonData, proc(loadDummy), proc(freeDummy) },
-#endif // ENABLE_LOL
+#endif
 
 #ifdef ENABLE_EOB
 		{ kEoB2SequenceData, proc(loadEoB2SeqData), proc(freeEoB2SeqData) },
 		{ kEoB2ShapeData, proc(loadEoB2ShapeData), proc(freeEoB2ShapeData) },
 		{ kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData) },
-#endif // ENABLE_EOB
+#endif
 
 		{ 0, 0, 0 }
 	};

@@ -841,8 +841,8 @@ private:
 		kLoLCompassData = 10,
 		kLoLFlightShpData = 11,
 		kLoLButtonData = 12,
-		kLoLRawDataBe16 = 13,
-		kLoLRawDataBe32 = 14,
+		kRawDataBe16 = 13,
+		kRawDataBe32 = 14,
 
 		kEoB2SequenceData = 15,
 		kEoB2ShapeData = 16,
