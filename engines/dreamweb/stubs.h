@@ -492,6 +492,7 @@
 	void useCart();
 	void useTrainer();
 	void useHole();
+	void runTap();
 	void chewy();
 	void sLabDoorA();
 	void sLabDoorB();

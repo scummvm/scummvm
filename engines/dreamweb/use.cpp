@@ -1376,6 +1376,36 @@ void DreamGenContext::useOpenBox() {
 	showFirstUse();
 }
 
+void DreamGenContext::runTap() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
+	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
+
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+		// Fill cup from tap
+		DynObject *exObject = getExAd(data.byte(kWithobject));
+		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		playChannel1(8);
+		showPuzText(57, 300);
+		putBackObStuff();
+		return;
+	}
+
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+		// Cup from tap full
+		showPuzText(58, 300);
+		putBackObStuff();
+		return;
+	}
+
+	showPuzText(56, 300);
+	putBackObStuff();
+}
+
 void DreamGenContext::useAxe() {
 	if (data.byte(kReallocation) != 22) {
 		// Not in pool

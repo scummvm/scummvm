@@ -511,7 +511,6 @@ public:
 	void startTalk();
 	void getAnyAd();
 	void reminders();
-	void runTap();
 	void dumpDiaryKeys();
 	void checkForExit();
 	void lookInInterface();

@@ -649,6 +649,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'rollendcredits',
 	'rollendcredits2',
 	'roomname',
+	'runtap',
 	'runintroseq',
 	'saveems',
 	'savefileread',

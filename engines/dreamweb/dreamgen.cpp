@@ -3522,55 +3522,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::runTap() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto tapwith;
-	withWhat();
-	return;
-tapwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto fillcupfromtap;
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'F';
-	compare();
-	if (flags.z())
-		goto cupfromtapfull;
-	cx = 300;
-	al = 56;
-	showPuzText();
-	putBackObStuff();
-	return;
-fillcupfromtap:
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+15) = 'F'-'A';
-	al = 8;
-	playChannel1();
-	cx = 300;
-	al = 57;
-	showPuzText();
-	putBackObStuff();
-	return;
-cupfromtapfull:
-	cx = 300;
-	al = 58;
-	showPuzText();
-	putBackObStuff();
-}
-
 void DreamGenContext::notHeldError() {
 	STACK_CHECK;
 	createPanel();
