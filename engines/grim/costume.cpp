@@ -441,6 +441,7 @@ ModelComponent::~ModelComponent() {
 	}
 
 	delete _obj;
+	delete _animation;
 }
 
 void ModelComponent::translateObject(ModelNode *node, bool reset) {
@@ -542,8 +543,10 @@ void MainModelComponent::reset() {
 }
 
 MainModelComponent::~MainModelComponent() {
-	if (_hierShared)
+	if (_hierShared) {
 		_obj = NULL; // Keep ~ModelComp from deleting it
+		_animation = NULL;
+	}
 
 	for (Common::List<MainModelComponent*>::iterator i = _children.begin(); i != _children.end(); ++i) {
 		(*i)->_obj = NULL;
