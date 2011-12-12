@@ -633,9 +633,7 @@ void DreamGenContext::sLabDoorB() {
 
 		if (flags.z()) {
 			// No crystal
-			al = 44;
-			cx = 200;
-			showPuzText();
+			showPuzText(44, 200);
 			putBackObStuff();
 		} else {
 			// Got crystal
@@ -740,9 +738,7 @@ bool DreamGenContext::defaultUseHandler(const char *id) {
 
 	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
 		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
+		showPuzText(14, 300);
 		putBackObStuff();
 		return true;	// event handled
 	}
@@ -834,15 +830,11 @@ void DreamGenContext::usePlate() {
 		data.byte(kGetback) = 1;
 	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
 		// Tried knife
-		cx = 300;
-		al = 54;
-		showPuzText();
+		showPuzText(54, 300);
 		putBackObStuff();
 	} else {
 		// Wrong item
-		cx = 300;
-		al = 14;
-		showPuzText();
+		showPuzText(14, 300);
 		putBackObStuff();
 	}
 }
@@ -877,9 +869,7 @@ void DreamGenContext::useElvDoor() {
 		return;
 
 	// Axe on door
-	al = 15;
-	cx = 300;
-	showPuzText();
+	showPuzText(15, 300);
 	_inc(data.byte(kProgresspoints));
 	data.word(kWatchingtime) = 46 * 2;
 	data.word(kReeltowatch) = 31;
@@ -1039,16 +1029,12 @@ void DreamGenContext::useCardReader1() {
 		putBackObStuff();
 	} else if (data.word(kCard1money) != 0) {
 		// No cash
-		cx = 300;
-		al = 17;
-		showPuzText();
+		showPuzText(17, 300);
 		putBackObStuff();
 	} else {
 		// Get cash
 		playChannel1(16);
-		cx = 300;
-		al = 18;
-		showPuzText();
+		showPuzText(18, 300);
 		data.byte(kProgresspoints)++;
 		data.word(kCard1money) = 12432;
 		data.byte(kGetback) = 1;
@@ -1066,21 +1052,15 @@ void DreamGenContext::useCardReader2() {
 		putBackObStuff();
 	} else if (data.byte(kCard1money) == 0) {
 		// No cash
-		cx = 300;
-		al = 20;
-		showPuzText();
+		showPuzText(20, 300);
 		putBackObStuff();
 	} else if (data.byte(kGunpassflag) == 2) {
 		// Already got new
-		cx = 300;
-		al = 22;
-		showPuzText();
+		showPuzText(22, 300);
 		putBackObStuff();
 	} else {
 		playChannel1(18);
-		cx = 300;
-		al = 19;
-		showPuzText();
+		showPuzText(19, 300);
 		placeSetObject(94);
 		data.byte(kGunpassflag) = 1;
 		data.word(kCard1money) -= 2000;
@@ -1100,15 +1080,11 @@ void DreamGenContext::useCardReader3() {
 		putBackObStuff();
 	} else if (data.byte(kCardpassflag) != 0) {
 		// Already used it
-		cx = 300;
-		al = 26;
-		showPuzText();
+		showPuzText(26, 300);
 		putBackObStuff();
 	} else {
 		playChannel1(16);
-		cx = 300;
-		al = 25;
-		showPuzText();
+		showPuzText(25, 300);
 		data.byte(kProgresspoints)++;
 		data.word(kCard1money) -= 8300;
 		data.byte(kCardpassflag) = 1;
@@ -1127,9 +1103,7 @@ void DreamGenContext::useLighter() {
 		showFirstUse();
 		putBackObStuff();
 	} else {
-		cx = 300;
-		al = 9;
-		showPuzText();
+		showPuzText(9, 300);
 		DynObject *withObj = getExAd(data.byte(kWithobject));
 		withObj->mapad[0] = 255;
 		data.byte(kGetback) = 1;

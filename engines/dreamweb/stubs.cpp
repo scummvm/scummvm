@@ -4237,4 +4237,24 @@ void DreamGenContext::newPlace() {
 	}
 }
 
+void DreamGenContext::showPuzText() {
+	showPuzText(al, cx);
+}
+
+void DreamGenContext::showPuzText(uint16 command, uint16 count) {
+	// The original called findPuzText here and saved es:si. We call it below.
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	obIcons();
+	findPuzText();	// we call it here to set es:si correctly
+	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(command * 2);
+	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+	uint16 y = 104;
+	DreamBase::printDirect(&string, 36, &y, 241, 241 & 1);
+	workToScreenM();
+	hangOnP(count);
+}
+
 } // End of namespace DreamGen

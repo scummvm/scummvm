@@ -636,7 +636,6 @@ public:
 	void useGun();
 	void autoAppear();
 	void useHandle();
-	void showPuzText();
 	void incRyanPage();
 	void findExObject();
 	void clearChanges();

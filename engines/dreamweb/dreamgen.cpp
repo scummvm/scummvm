@@ -4796,29 +4796,6 @@ notfoundinside:
 		goto insideloop;
 }
 
-void DreamGenContext::showPuzText() {
-	STACK_CHECK;
-	push(cx);
-	findPuzText();
-	push(es);
-	push(si);
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	obIcons();
-	si = pop();
-	es = pop();
-	di = 36;
-	bx = 104;
-	dl = 241;
-	ah = 0;
-	printDirect();
-	workToScreenM();
-	cx = pop();
-	hangOnP();
-}
-
 void DreamGenContext::findPuzText() {
 	STACK_CHECK;
 	ah = 0;
