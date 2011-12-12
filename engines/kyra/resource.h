@@ -35,7 +35,7 @@
 #include "common/archive.h"
 
 #include "kyra/kyra_v1.h"
-#include "kyra/eob2.h"
+#include "kyra/darkmoon.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 
