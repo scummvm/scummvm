@@ -546,14 +546,12 @@ public:
 	void pickupConts();
 	void nextColon();
 	void findInvPos();
-	void rollEndCredits();
 	void getKeyAndLogo();
 	void selectOb();
 	void receptionist();
 	void selectSlot();
 	void fadeUpMon();
 	void showDiaryPage();
-	void transferToEx();
 	void reExFromInv();
 	void businessMan();
 	void outOfInv();
@@ -587,7 +585,6 @@ public:
 	void drawItAll();
 	void useStereo();
 	void showDiaryKeys();
-	void rollEndCredits2();
 	void useOpened();
 	void signOn();
 	void locationPic();
@@ -620,6 +617,7 @@ public:
 	void swapWithInv();
 	void useControl();
 	void adjustRight();
+	void transferToEx();
 	void updateSymbolTop();
 	void getPersonText();
 	void parser();

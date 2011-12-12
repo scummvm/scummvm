@@ -369,7 +369,6 @@
 	void getLocation();
 	void setLocation(uint8 index);
 	void setLocation();
-	const uint8 *getTextInFile1(uint16 index);
 	void loadTempText();
 	void loadTempText(const char *fileName);
 	void loadTravelText();
@@ -568,5 +567,6 @@
 	void showPuzText(uint16 command, uint16 count);
 	void showPuzText();
 	void monkSpeaking();
+	void rollEndCredits2();
 
 #endif

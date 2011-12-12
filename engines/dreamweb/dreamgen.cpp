@@ -546,99 +546,6 @@ notendseq:
 	rollEndCredits();
 }
 
-void DreamGenContext::rollEndCredits() {
-	STACK_CHECK;
-	al = 16;
-	ah = 255;
-	playChannel0();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
-	cl = 160;
-	ch = 160;
-	di = 75;
-	bx = 20;
-	ds = data.word(kMapstore);
-	si = 0;
-	multiGet();
-	es = data.word(kTextfile1);
-	si = 3*2;
-	ax = es.word(si);
-	si = ax;
-	_add(si, (66*2));
-	cx = 254;
-endcredits1:
-	push(cx);
-	bx = 10;
-	cx = data.word(kLinespacing);
-endcredits2:
-	push(cx);
-	push(si);
-	push(di);
-	push(es);
-	push(bx);
-	vSync();
-	cl = 160;
-	ch = 160;
-	di = 75;
-	bx = 20;
-	ds = data.word(kMapstore);
-	si = 0;
-	multiPut();
-	vSync();
-	bx = pop();
-	es = pop();
-	di = pop();
-	si = pop();
-	push(si);
-	push(di);
-	push(es);
-	push(bx);
-	cx = 18;
-onelot:
-	push(cx);
-	di = 75;
-	dx = 161;
-	ax = 0;
-	printDirect();
-	_add(bx, data.word(kLinespacing));
-	cx = pop();
-	if (--cx)
-		goto onelot;
-	vSync();
-	cl = 160;
-	ch = 160;
-	di = 75;
-	bx = 20;
-	multiDump();
-	bx = pop();
-	es = pop();
-	di = pop();
-	si = pop();
-	cx = pop();
-	_dec(bx);
-	if (--cx)
-		goto endcredits2;
-	cx = pop();
-looknext:
-	al = es.byte(si);
-	_inc(si);
-	_cmp(al, ':');
-	if (flags.z())
-		goto gotnext;
-	_cmp(al, 0);
-	if (flags.z())
-		goto gotnext;
-	goto looknext;
-gotnext:
-	if (--cx)
-		goto endcredits1;
-	cx = 100;
-	hangOn();
-	panelToMap();
-	fadeScreenUpHalf();
-}
-
 void DreamGenContext::checkForExit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -926,11 +833,6 @@ halfend:
 	data.byte(kFadecount) = 31;
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 32;
-}
-
-void DreamGenContext::rollEndCredits2() {
-	STACK_CHECK;
-	rollEm();
 }
 
 void DreamGenContext::rollEm() {

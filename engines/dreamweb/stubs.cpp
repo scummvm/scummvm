@@ -2482,9 +2482,10 @@ void DreamGenContext::setLocation() {
 	setLocation(al);
 }
 
-const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
-	uint16 offset = getSegment(data.word(kTextfile1)).word(index * 2) + kTextstart;
-	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
+const uint8 *DreamBase::getTextInFile1(uint16 index) {
+	SegmentRef text = getSegment(data.word(kTextfile1));
+	uint16 offset = text.word(index * 2) + kTextstart;
+	const uint8 *string = text.ptr(offset, 0);
 	return string;
 }
 

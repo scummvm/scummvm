@@ -759,6 +759,50 @@ void DreamGenContext::intro3Text() {
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 
+void DreamBase::rollEndCredits() {
+	playChannel0(16, 255);
+	data.byte(kVolume) = 7;
+	data.byte(kVolumeto) = 0;
+	data.byte(kVolumedirection) = -1;
+
+	multiGet(mapStore(), 75, 20, 160, 160);
+
+	const uint8 *string = getTextInFile1(3);
+	const int linespacing = data.word(kLinespacing);
+
+	for (int i = 0; i < 254; ++i) {
+		// Output the text, initially with an offset of 10 pixels,
+		// then move it up one pixel until we shifted it by a complete
+		// line of text.
+		for (int j = 0; j < linespacing; ++j) {
+			vSync();
+			multiPut(mapStore(), 75, 20, 160, 160);
+			vSync();
+
+			// Output up to 18 lines of text
+			uint16 y = 10 - j;
+			const uint8 *tmp_str = string;
+			for (int k = 0; k < 18; ++j) {
+				DreamBase::printDirect(&tmp_str, 75, &y, 160 + 1, true);
+				y += linespacing;
+			}
+
+			vSync();
+			multiDump(75, 20, 160, 160);
+		}
+
+		// Skip to the next text line
+		byte c;
+		do {
+			c = *string++;
+		} while (c != ':' && c != 0);
+	}
+	hangOn(100);
+	panelToMap();
+	fadeScreenUpHalf();
+}
+
+
 void DreamGenContext::monks2text() {
 	bool isGermanCD = isCD() && engine->getLanguage() == Common::DE_DEU;
 
