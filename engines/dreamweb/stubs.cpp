@@ -4262,4 +4262,49 @@ void DreamGenContext::useButtonA() {
 	}
 }
 
+void DreamGenContext::autoAppear() {
+	if (data.byte(kLocation) == 32) {
+		// In alley
+		al = 5;
+		resetLocation();
+		setLocation(10);
+		data.byte(kDestpos) = 10;
+		return;
+	}
+
+	if (data.byte(kReallocation) == 24) {
+		// In Eden's apartment
+		if (data.byte(kGeneraldead) == 1) {
+			data.byte(kGeneraldead)++;
+			placeSetObject(44);
+			placeSetObject(18);
+			placeSetObject(93);
+			removeSetObject(92);
+			removeSetObject(55);
+			removeSetObject(75);
+			removeSetObject(84);
+			removeSetObject(85);
+		} else if (data.byte(kSartaindead) == 1) {
+			// Eden's part 2
+			removeSetObject(44);
+			removeSetObject(93);
+			placeSetObject(55);
+			data.byte(kSartaindead)++;
+		}
+	} else {
+		// Not in Eden's
+		if (data.byte(kReallocation) == 25) {
+			// Sart roof
+			data.byte(kNewsitem) = 3;
+			al = 6;
+			resetLocation();
+			setLocation(11);
+			data.byte(kDestpos) = 11;
+		} else {
+			if (data.byte(kReallocation) == 2 && data.byte(kRockstardead) != 0)
+				placeSetObject(23);
+		}
+	}
+}
+
 } // End of namespace DreamGen

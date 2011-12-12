@@ -222,6 +222,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'animpointer',
 	'atmospheres',
 	'attendant',
+	'autoappear',
 	'autolook',
 	'autosetwalk',
 	'backobject',

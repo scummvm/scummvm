@@ -565,5 +565,6 @@
 	void monkSpeaking();
 	void rollEndCredits2();
 	void useButtonA();
+	void autoAppear();
 
 #endif

@@ -589,7 +589,6 @@ public:
 	void searchForString();
 	void selectOpenOb();
 	void useGun();
-	void autoAppear();
 	void useHandle();
 	void incRyanPage();
 	void findExObject();
