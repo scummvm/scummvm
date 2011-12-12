@@ -255,7 +255,6 @@ struct RoomPaths {
 };
 
 struct Sound {
-	uint8 emmPage;
 	uint8 w1_lo;
 	uint8 w1_hi;
 	uint16 offset() const { return READ_LE_UINT16(&w1_lo); }

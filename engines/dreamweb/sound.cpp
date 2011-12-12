@@ -69,14 +69,7 @@ void DreamBase::playChannel0(uint8 index, uint8 repeat) {
 		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
 	data.byte(kCh0repeat) = repeat;
-	data.word(kCh0emmpage) = soundBank[index].emmPage;
-	data.word(kCh0offset) = soundBank[index].offset();
 	data.word(kCh0blockstocopy) = soundBank[index].blockCount();
-	if (repeat) {
-		data.word(kCh0oldemmpage) = data.word(kCh0emmpage);
-		data.word(kCh0oldoffset) = data.word(kCh0offset);
-		data.word(kCh0oldblockstocopy) = data.word(kCh0blockstocopy);
-	}
 }
 
 void DreamBase::playChannel1(uint8 index) {
@@ -91,8 +84,6 @@ void DreamBase::playChannel1(uint8 index) {
 	} else
 		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
-	data.word(kCh1emmpage) = soundBank[index].emmPage;
-	data.word(kCh1offset) = soundBank[index].offset();
 	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
 }
 
