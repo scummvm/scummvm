@@ -22,7 +22,7 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/eob2.h"
+#include "kyra/darkmoon.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 

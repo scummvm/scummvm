@@ -109,8 +109,8 @@ endif
 MODULE_OBJS += \
 	chargen.o \
 	eobcommon.o \
-	eob1.o \
-	eob2.o \
+	eob.o \
+	darkmoon.o \
 	gui_eob.o \
 	items_eob.o \
 	magic_eob.o \
@@ -118,8 +118,8 @@ MODULE_OBJS += \
 	scene_eob.o \
 	screen_eob.o \
 	script_eob.o \
-	sequences_eob1.o \
-	sequences_eob2.o \
+	sequences_eob.o \
+	sequences_darkmoon.o \
 	sprites_eob.o \
 	staticres_eob.o \
 	timer_eob.o
