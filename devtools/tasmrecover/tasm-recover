@@ -148,6 +148,9 @@ p = parser(skip_binary_data = [
 	'ch1blocksplayed',
 	'soundemmpage',
 	'speechemmpage',
+	'lineroutine',
+	'increment1',
+	'increment2',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

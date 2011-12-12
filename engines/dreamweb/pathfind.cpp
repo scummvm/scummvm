@@ -230,33 +230,35 @@ void DreamBase::bresenhams() {
 	}
 
 	uint16 delta1, delta2;
+	byte lineRoutine;
+
 	if (deltaY > deltaX) {
-		data.byte(kLineroutine) = 1;
+		lineRoutine = 1;
 		delta1 = deltaY;
 		delta2 = deltaX;
 	} else {
-		data.byte(kLineroutine) = 0;
+		lineRoutine = 0;
 		delta1 = deltaX;
 		delta2 = deltaY;
 	}
 
-	data.word(kIncrement1) = delta2 * 2;
+	uint16 increment1 = delta2 * 2;
+	uint16 increment2 = delta2 * 2 - delta1 * 2;
 	int16 remainder = delta2 * 2 - delta1;
-	data.word(kIncrement2) = delta2 * 2 - delta1 * 2;
 	++delta1;
 	int8 x = (int8)startX;
 	int8 y = (int8)startY;
 	data.byte(kLinelength) = delta1;
-	if (data.byte(kLineroutine) != 1) {
+	if (lineRoutine != 1) {
 		for (; delta1; --delta1) {
 			lineData->x = x;
 			lineData->y = y;
 			++lineData;
 			++x;
 			if (remainder < 0) {
-				remainder += data.word(kIncrement1);
+				remainder += increment1;
 			} else {
-				remainder += data.word(kIncrement2);
+				remainder += increment2;
 				y += increment;
 			}
 		}
@@ -267,9 +269,9 @@ void DreamBase::bresenhams() {
 			++lineData;
 			y += increment;
 			if (remainder < 0) {
-				remainder += data.word(kIncrement1);
+				remainder += increment1;
 			} else {
-				remainder += data.word(kIncrement2);
+				remainder += increment2;
 				++x;
 			}
 		}
