@@ -161,7 +161,7 @@ public:
 
 protected:
 	Common::String _filename;
-	ObjectPtr<Model> _obj;
+	Model *_obj;
 	ModelNode *_hier;
 	Math::Matrix4 _matrix;
 	AnimManager *_animation;
@@ -376,11 +376,11 @@ void ModelComponent::init() {
 		if (_parent) {
 			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 			_obj = g_resourceloader->loadModel(_filename, cm, mc->getModel());
-			_hier = _obj->copyHierarchy();
+			_hier = _obj->getHierarchy();
 			mc->getNode()->addChild(_hier);
 		} else {
 			_obj = g_resourceloader->loadModel(_filename, cm);
-			_hier = _obj->copyHierarchy();
+			_hier = _obj->getHierarchy();
 			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _filename.c_str());
 		}
 
@@ -440,7 +440,7 @@ ModelComponent::~ModelComponent() {
 		_hier->_parent->removeChild(_hier);
 	}
 
-	delete[] _hier;
+	delete _obj;
 }
 
 void ModelComponent::translateObject(ModelNode *node, bool reset) {
@@ -543,10 +543,10 @@ void MainModelComponent::reset() {
 
 MainModelComponent::~MainModelComponent() {
 	if (_hierShared)
-		_hier = NULL; // Keep ~ModelComp from deleting it
+		_obj = NULL; // Keep ~ModelComp from deleting it
 
 	for (Common::List<MainModelComponent*>::iterator i = _children.begin(); i != _children.end(); ++i) {
-		(*i)->_hier = NULL;
+		(*i)->_obj = NULL;
 		(*i)->_parentModel = NULL;
 	}
 

@@ -250,19 +250,8 @@ void Model::draw() const {
 	_rootHierNode->draw();
 }
 
-ModelNode *Model::copyHierarchy() {
-	ModelNode *result = new ModelNode[_numHierNodes];
-	memcpy(result, _rootHierNode, _numHierNodes * sizeof(ModelNode));
-	// Now adjust pointers
-	for (int i = 0; i < _numHierNodes; i++) {
-		if (result[i]._parent)
-			result[i]._parent = &result[(_rootHierNode[i]._parent - _rootHierNode)];
-		if (result[i]._child)
-			result[i]._child = &result[(_rootHierNode[i]._child - _rootHierNode)];
-		if (result[i]._sibling)
-			result[i]._sibling = &result[(_rootHierNode[i]._sibling - _rootHierNode)];
-	}
-	return result;
+ModelNode *Model::getHierarchy() const {
+	return _rootHierNode;
 }
 
 void Model::reload(CMap *cmap) {

@@ -62,7 +62,7 @@ public:
 	Common::String _fname;
 	ObjectPtr<CMap> _cmap;
 
-	ModelNode *copyHierarchy();
+	ModelNode *getHierarchy() const;
 	int getNumNodes() const { return _numHierNodes; }
 
 //private:
