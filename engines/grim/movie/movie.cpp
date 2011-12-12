@@ -148,6 +148,9 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 	_internalSurface = NULL;
 
+	// Get the first frame immediately
+	timerCallback(0);
+
 	return true;
 }
 
