@@ -109,14 +109,14 @@ protected:
 #endif // ENABLE_LOL
 
 #ifdef ENABLE_EOB
-class EobCoreEngine;
+class EoBCoreEngine;
 
-class Debugger_Eob : public Debugger {
+class Debugger_EoB : public Debugger {
 public:
-	Debugger_Eob(EobCoreEngine *vm);
+	Debugger_EoB(EoBCoreEngine *vm);
 
 protected:
-	EobCoreEngine *_vm;
+	EoBCoreEngine *_vm;
 };
 #endif // ENABLE_EOB
 

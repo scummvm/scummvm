@@ -752,7 +752,7 @@ HistoryPlayer::~HistoryPlayer() {
 
 void HistoryPlayer::play() {
 	int dataSize = 0;
-	const char *data = (const char *)_vm->staticres()->loadRawData(kLolHistory, dataSize);
+	const char *data = (const char *)_vm->staticres()->loadRawData(kLoLHistory, dataSize);
 
 	if (!data)
 		error("Could not load history data");
@@ -1195,14 +1195,14 @@ void LoLEngine::showCredits() {
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		int size = 0;
-		const uint8 *internCredits = _staticres->loadRawData(kLolCredits, size);
+		const uint8 *internCredits = _staticres->loadRawData(kLoLCredits, size);
 		assert(size > 0);
 
 		credits = new char[size];
 		assert(credits);
 
 		memcpy(credits, internCredits, size);
-		_staticres->unloadId(kLolCredits);
+		_staticres->unloadId(kLoLCredits);
 	} else {
 		credits = (char *)_res->fileData("CREDITS.TXT", 0);
 	}

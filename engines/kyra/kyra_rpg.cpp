@@ -78,7 +78,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_sceneUpdateRequired = false;
 
 	_flyingObjectsPtr = 0;
-	_flyingObjectStructSize = sizeof(EobFlyingObject);
+	_flyingObjectStructSize = sizeof(EoBFlyingObject);
 
 	_clickedShapeXOffs = _clickedShapeYOffs = 0;
 

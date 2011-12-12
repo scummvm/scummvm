@@ -41,7 +41,7 @@ public:
 		kFinale
 	};
 
-	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_Eob *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EobShapeDef **shapeDefList, const EobSequenceStep **seqList);
+	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EoBShapeDef **shapeDefList, const EoBSequenceStep **seqList);
 	~DarkmoonSequenceHelper();
 
 	void loadScene(int index, int pageNum);
@@ -67,14 +67,14 @@ private:
 
 	OSystem *_system;
 	DarkMoonEngine *_vm;
-	Screen_Eob *_screen;
+	Screen_EoB *_screen;
 	Mode _mode;
 
 	const char *const *_strings;
 	const char *const *_cpsFiles;
 	const char *const *_palFiles;
-	const EobShapeDef **_shapeDefs;
-	const EobSequenceStep **_seqData;
+	const EoBShapeDef **_shapeDefs;
+	const EoBSequenceStep **_seqData;
 
 	Palette *_palettes[12];
 
@@ -910,7 +910,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_Eob *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EobShapeDef **shapeDefList, const EobSequenceStep **seqList) :
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EoBShapeDef **shapeDefList, const EoBSequenceStep **seqList) :
 	_system(system), _vm(vm), _screen(screen), _mode(mode), _strings(strings), _cpsFiles(cpsFiles), _palFiles(palFiles), _shapeDefs(shapeDefList), _seqData(seqList) {
 
 	for (int i = 0; _palFiles[i]; i++) {
@@ -991,7 +991,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 	int cp = _screen->setCurPage(pageNum);
 
 	if (_shapeDefs[index]) {
-		for (const EobShapeDef *df = _shapeDefs[index]; df->w; df++ ) {
+		for (const EoBShapeDef *df = _shapeDefs[index]; df->w; df++ ) {
 			uint16 shapeIndex = (df->index < 0) ? df->index * -1 : df->index;
 			if (_shapes[shapeIndex])
 				delete[] _shapes[shapeIndex];
@@ -1012,7 +1012,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 
 	uint32 end = 0;
 
-	for (const EobSequenceStep *s = _seqData[index]; s->command != 0xff && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
+	for (const EoBSequenceStep *s = _seqData[index]; s->command != 0xff && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
 		int palIndex = _mode == kFinale ? (s->pal + 1) : s->pal;
 		int x = s->x1;
 		int y = s->y1;

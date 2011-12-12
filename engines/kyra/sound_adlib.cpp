@@ -479,7 +479,7 @@ void AdLibDriver::setMusicVolume(uint8 volume) {
 		writeOPL(0x43 + regOffset, calculateOpLevel2(chan));
 	}
 
-	// For now we use the music volume for both sfx and music in Kyra1 and Eob
+	// For now we use the music volume for both sfx and music in Kyra1 and EoB
 	if (_version < 4) {
 		_sfxVolume = volume;
 
@@ -545,7 +545,7 @@ void AdLibDriver::queueTrack(int track, int volume) {
 	if (!trackData)
 		return;
 
-	// Don't drop tracks in Eob. The queue is always full there if a couple of monsters are around.
+	// Don't drop tracks in EoB. The queue is always full there if a couple of monsters are around.
 	// If we drop the incoming tracks we get no sound effects, but tons of warnings instead.
 	if (_version >= 3 && _programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0) {
 		warning("AdLibDriver: Program queue full, dropping track %d", track);

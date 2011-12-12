@@ -86,7 +86,7 @@ struct SpellProperty {
 	uint16 flags;
 };
 
-struct LolMonsterProperty {
+struct LoLMonsterProperty {
 	uint8 shapeIndex;
 	uint8 maxWidth;
 	uint16 fightingStats[9];
@@ -108,7 +108,7 @@ struct LolMonsterProperty {
 	uint8 sounds[3];
 };
 
-struct LolMonsterInPlay {
+struct LoLMonsterInPlay {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
 	uint8 flyingHeight;
@@ -134,7 +134,7 @@ struct LolMonsterInPlay {
 	int16 hitPoints;
 	uint8 speedTick;
 	uint8 type;
-	LolMonsterProperty *properties;
+	LoLMonsterProperty *properties;
 	uint8 numDistAttacks;
 	uint8 curDistWeapon;
 	int8 distAttackTick;
@@ -1089,16 +1089,16 @@ private:
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
 	int deleteMonstersFromBlock(int block);
-	void setMonsterMode(LolMonsterInPlay *monster, int mode);
-	bool updateMonsterAdjustBlocks(LolMonsterInPlay *monster);
-	void placeMonster(LolMonsterInPlay *monster, uint16 x, uint16 y);
+	void setMonsterMode(LoLMonsterInPlay *monster, int mode);
+	bool updateMonsterAdjustBlocks(LoLMonsterInPlay *monster);
+	void placeMonster(LoLMonsterInPlay *monster, uint16 x, uint16 y);
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void setMonsterDirection(LolMonsterInPlay *monster, int dir);
-	void monsterDropItems(LolMonsterInPlay *monster);
+	void setMonsterDirection(LoLMonsterInPlay *monster, int dir);
+	void monsterDropItems(LoLMonsterInPlay *monster);
 	void removeAssignedObjectFromBlock(LevelBlockProperty *l, uint16 id);
 	void removeDrawObjectFromBlock(LevelBlockProperty *l, uint16 id);
 	void assignMonsterToBlock(uint16 *assignedBlockObjects, uint16 id);
-	void giveItemToMonster(LolMonsterInPlay *monster, Item item);
+	void giveItemToMonster(LoLMonsterInPlay *monster, Item item);
 	int checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
@@ -1109,7 +1109,7 @@ private:
 
 	void drawBlockObjects(int blockArrayIndex);
 	void drawMonster(uint16 id);
-	int getMonsterCurFrame(LolMonsterInPlay *m, uint16 dirFlags);
+	int getMonsterCurFrame(LoLMonsterInPlay *m, uint16 dirFlags);
 	void reassignDrawObjects(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag);
 	void redrawSceneItem();
 	int calcItemMonsterPosition(ItemInPlay *i, uint16 direction);
@@ -1119,21 +1119,21 @@ private:
 	uint8 *drawItemOrMonster(uint8 *shape, uint8 *monsterPalette, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip);
 	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip);
 
-	void updateMonster(LolMonsterInPlay *monster);
-	void moveMonster(LolMonsterInPlay *monster);
-	void walkMonster(LolMonsterInPlay *monster);
-	bool chasePartyWithDistanceAttacks(LolMonsterInPlay *monster);
-	void chasePartyWithCloseAttacks(LolMonsterInPlay *monster);
-	int walkMonsterCalcNextStep(LolMonsterInPlay *monster);
+	void updateMonster(LoLMonsterInPlay *monster);
+	void moveMonster(LoLMonsterInPlay *monster);
+	void walkMonster(LoLMonsterInPlay *monster);
+	bool chasePartyWithDistanceAttacks(LoLMonsterInPlay *monster);
+	void chasePartyWithCloseAttacks(LoLMonsterInPlay *monster);
+	int walkMonsterCalcNextStep(LoLMonsterInPlay *monster);
 	int checkForPossibleDistanceAttack(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
-	int walkMonsterCheckDest(int x, int y, LolMonsterInPlay *monster, int unk);
+	int walkMonsterCheckDest(int x, int y, LoLMonsterInPlay *monster, int unk);
 	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
-	void rearrangeAttackingMonster(LolMonsterInPlay *monster);
-	void moveStrayingMonster(LolMonsterInPlay *monster);
-	void killMonster(LolMonsterInPlay *monster);
+	void rearrangeAttackingMonster(LoLMonsterInPlay *monster);
+	void moveStrayingMonster(LoLMonsterInPlay *monster);
+	void killMonster(LoLMonsterInPlay *monster);
 
-	LolMonsterInPlay *_monsters;
-	LolMonsterProperty *_monsterProperties;
+	LoLMonsterInPlay *_monsters;
+	LoLMonsterProperty *_monsterProperties;
 	uint8 **_monsterDecorationShapes;
 	uint8 _monsterAnimType[3];
 	uint16 _monsterCurBlock;
@@ -1242,8 +1242,8 @@ private:
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
 	void checkForPartyDeath();
 
-	void applyMonsterAttackSkill(LolMonsterInPlay *monster, int16 target, int16 damage);
-	void applyMonsterDefenseSkill(LolMonsterInPlay *monster, int16 attacker, int flags, int skill, int damage);
+	void applyMonsterAttackSkill(LoLMonsterInPlay *monster, int16 target, int16 damage);
+	void applyMonsterDefenseSkill(LoLMonsterInPlay *monster, int16 attacker, int flags, int skill, int damage);
 	int removeCharacterItem(int charNum, int itemFlags);
 	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);

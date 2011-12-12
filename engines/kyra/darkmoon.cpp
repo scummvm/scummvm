@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(system, flags) {
+DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
 	_seqIntro = _seqFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_dscDoorType5Offs = 0;
@@ -50,13 +50,13 @@ DarkMoonEngine::~DarkMoonEngine() {
 }
 
 Common::Error DarkMoonEngine::init() {
-	Common::Error err = EobCoreEngine::init();
+	Common::Error err = EoBCoreEngine::init();
 	if (err.getCode() != Common::kNoError)
 		return err;
 
 	initStaticResource();
 
-	_monsterProps = new EobMonsterProperty[10];
+	_monsterProps = new EoBMonsterProperty[10];
 
 	static const uint16 wX[] = { 221, 76 };
 	static const uint8 wY[] = { 189, 162 };
@@ -93,7 +93,7 @@ void DarkMoonEngine::startupNew() {
 	_currentBlock = 171;
 	_currentDirection = 2;
 	setHandItem(0);
-	EobCoreEngine::startupNew();
+	EoBCoreEngine::startupNew();
 }
 
 void DarkMoonEngine::drawNpcScene(int npcIndex) {
@@ -149,7 +149,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 }
 
 void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
-	EobItem *itm = &_items[_characters[charIndex].inventory[slot]];
+	EoBItem *itm = &_items[_characters[charIndex].inventory[slot]];
 	if (itm->type == 48 || itm->type == 62) {
 		if (itm->value == 5)
 			return;
@@ -278,7 +278,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 	initMonster(index, unit, block, pos, dir, type, shpIndex, mode, h2, randItem, fixedItem);
 }
 
-bool DarkMoonEngine::killMonsterExtra(EobMonsterInPlay *m) {
+bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
 	if (_currentLevel == 16 && _currentSub == 1 && (_monsterProps[m->type].capsFlags & 4)) {
 		if (m->type) {
 			_playFinale = true;
@@ -464,7 +464,7 @@ int DarkMoonEngine::charSelectDialogue() {
 }
 
 void DarkMoonEngine::characterLevelGain(int charIndex) {
-	EobCharacter *c = &_characters[charIndex];
+	EoBCharacter *c = &_characters[charIndex];
 	int s = _numLevelsPerClass[c->cClass];
 	for (int i = 0; i < s; i++) {
 		uint32 er = getRequiredExperience(c->cClass, i, c->level[i] + 1);

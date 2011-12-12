@@ -286,7 +286,7 @@ Common::Error KyraEngine_HoF::go() {
 		if (_flags.isDemo && !_flags.isTalkie) {
 #ifdef ENABLE_LOL
 			if (_flags.gameID == GI_LOL)
-				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);
+				seq_playSequences(kSequenceLoLDemoScene1, kSequenceLoLDemoScene6);
 			else
 #endif // ENABLE_LOL
 				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);

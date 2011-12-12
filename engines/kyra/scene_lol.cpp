@@ -474,10 +474,10 @@ void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].direction = 5;
 		uint16 id = _levelBlockProperties[i].assignedObjects;
-		LolMonsterInPlay *r = 0;
+		LoLMonsterInPlay *r = 0;
 
 		while (id & 0x8000) {
-			r = (LolMonsterInPlay *)findObject(id);
+			r = (LoLMonsterInPlay *)findObject(id);
 			id = r->nextAssignedObject;
 		}
 
@@ -496,7 +496,7 @@ void LoLEngine::resetItems(int flag) {
 }
 
 void LoLEngine::disableMonsters() {
-	memset(_monsters, 0, 30 * sizeof(LolMonsterInPlay));
+	memset(_monsters, 0, 30 * sizeof(LoLMonsterInPlay));
 	for (int i = 0; i < 30; i++)
 		_monsters[i].mode = 0x10;
 }

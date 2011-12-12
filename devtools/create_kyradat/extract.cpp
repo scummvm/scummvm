@@ -50,11 +50,11 @@ bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *d
 bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
-bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractLoLButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
-bool extractEob2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
-bool extractEob2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
-bool extractEobNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractEoB2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractEoB2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractEoBNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 // Extraction type table
 
 const ExtractType extractTypeTable[] = {
@@ -76,17 +76,17 @@ const ExtractType extractTypeTable[] = {
 	{ k3TypeRaw16to8, extractRaw16to8 },
 	{ k3TypeShpData, extractMrShapeAnimData },
 
-	{ kLolTypeCharData, extractRaw },
-	{ kLolTypeSpellData, extractRaw },
-	{ kLolTypeCompassData, extractRaw16to8 },
-	{ kLolTypeFlightShpData, extractRaw16to8 },
-	{ kLolTypeRaw16, extractRaw16 },
-	{ kLolTypeRaw32, extractRaw32 },
-	{ kLolTypeButtonDef, extractLolButtonDefs },
+	{ kLoLTypeCharData, extractRaw },
+	{ kLoLTypeSpellData, extractRaw },
+	{ kLoLTypeCompassData, extractRaw16to8 },
+	{ kLoLTypeFlightShpData, extractRaw16to8 },
+	{ kLoLTypeRaw16, extractRaw16 },
+	{ kLoLTypeRaw32, extractRaw32 },
+	{ kLoLTypeButtonDef, extractLoLButtonDefs },
 
-	{ kEob2TypeSeqData, extractEob2SeqData },
-	{ kEob2TypeShapeData, extractEob2ShapeData },
-	{ kEobTypeNpcData, extractEobNpcData },
+	{ kEoB2TypeSeqData, extractEoB2SeqData },
+	{ kEoB2TypeShapeData, extractEoB2ShapeData },
+	{ kEoBTypeNpcData, extractEoBNpcData },
 
 	{ -1, 0 }
 };
@@ -111,16 +111,16 @@ const TypeTable typeTable[] = {
 	{ k2TypeSfxList, 0 },
 	{ k3TypeRaw16to8, 1 },
 	{ k3TypeShpData, 7 },
-	{ kLolTypeRaw16, 13 },
-	{ kLolTypeRaw32, 14 },
-	{ kLolTypeButtonDef, 12 },
-	{ kLolTypeCharData, 8 },
-	{ kLolTypeSpellData, 9 },
-	{ kLolTypeCompassData, 10 },
-	{ kLolTypeFlightShpData, 11 },
-	{ kEob2TypeSeqData, 15 },
-	{ kEob2TypeShapeData, 16 },
-	{ kEobTypeNpcData, 17},
+	{ kLoLTypeRaw16, 13 },
+	{ kLoLTypeRaw32, 14 },
+	{ kLoLTypeButtonDef, 12 },
+	{ kLoLTypeCharData, 8 },
+	{ kLoLTypeSpellData, 9 },
+	{ kLoLTypeCompassData, 10 },
+	{ kLoLTypeFlightShpData, 11 },
+	{ kEoB2TypeSeqData, 15 },
+	{ kEoB2TypeShapeData, 16 },
+	{ kEoBTypeNpcData, 17},
 	{ -1, 1 }
 };
 
@@ -204,7 +204,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 		}
 
 		// HACK
-		if (id == k2SeqplayIntroTracks && info->game == kLol)
+		if (id == k2SeqplayIntroTracks && info->game == kLoL)
 			return extractStringsWoSuffix(out, info, data, size, filename, id);
 	}
 
@@ -1016,7 +1016,7 @@ bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+bool extractLoLButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int num = size / 22;
 	uint8 *buffer = new uint8[size];
 	uint32 outsize = num * 18;
@@ -1047,7 +1047,7 @@ bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const by
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractEob2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+bool extractEoB2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int num = size / 11;
 	uint8 *buffer = new uint8[size];
 	const uint8 *src = data;
@@ -1065,7 +1065,7 @@ bool extractEob2SeqData(PAKFile &out, const ExtractInformation *info, const byte
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractEob2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+bool extractEoB2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int num = size / 6;
 	uint8 *buffer = new uint8[size];
 	const uint8 *src = data;
@@ -1081,14 +1081,14 @@ bool extractEob2ShapeData(PAKFile &out, const ExtractInformation *info, const by
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractEobNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+bool extractEoBNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	// We use one extraction routine for both EOB 1 and EOB 2 (in spite of the data format differences)
 	// since it is easy enough to generate a common output usable by both engines
 	
 	uint8 *buffer = 0;
 	uint32 outsize = 0;
 	
-	if (info->game == kEob1) {
+	if (info->game == kEoB1) {
 		uint16 num = size / 243;
 		outsize = num * 111 + 2;
 		buffer = new uint8[outsize];

@@ -194,7 +194,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		_lvlTempData[i] = new LevelTempData;
 		_lvlTempData[i]->wallsXorData = new uint8[4096];
 		_lvlTempData[i]->flags = new uint16[1024];
-		LolMonsterInPlay *lm = new LolMonsterInPlay[30];
+		LoLMonsterInPlay *lm = new LoLMonsterInPlay[30];
 		 _lvlTempData[i]->monsters = lm;
 		FlyingObject *lf = new FlyingObject[_numFlyingObjects];
 		_lvlTempData[i]->flyingObjects = lf;
@@ -205,7 +205,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			l->flags[ii] = in.readByte();
 
 		for (int ii = 0; ii < 30; ii++) {
-			LolMonsterInPlay *m = &lm[ii];
+			LoLMonsterInPlay *m = &lm[ii];
 			m->nextAssignedObject = in.readUint16BE();
 			m->nextDrawObject = in.readUint16BE();
 			m->flyingHeight = in.readByte();
@@ -386,11 +386,11 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);
 
-		LolMonsterInPlay *lm = (LolMonsterInPlay*)_lvlTempData[i]->monsters;
+		LoLMonsterInPlay *lm = (LoLMonsterInPlay*)_lvlTempData[i]->monsters;
 		FlyingObject *lf = (FlyingObject*)_lvlTempData[i]->flyingObjects;
 
 		for (int ii = 0; ii < 30; ii++) {
-			LolMonsterInPlay *m = &lm[ii];
+			LoLMonsterInPlay *m = &lm[ii];
 			out->writeUint16BE(m->nextAssignedObject);
 			out->writeUint16BE(m->nextDrawObject);
 			out->writeByte(m->flyingHeight);
@@ -484,8 +484,8 @@ void LoLEngine::restoreBlockTempData(int levelIndex) {
 }
 
 void *LoLEngine::generateMonsterTempData(LevelTempData *tmp) {
-	LolMonsterInPlay *m = new LolMonsterInPlay[30];
-	memcpy(m, _monsters,  sizeof(LolMonsterInPlay) * 30);
+	LoLMonsterInPlay *m = new LoLMonsterInPlay[30];
+	memcpy(m, _monsters,  sizeof(LoLMonsterInPlay) * 30);
 	tmp->monsterDifficulty = _monsterDifficulty;
 	return m;
 }
@@ -509,7 +509,7 @@ void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 }
 
 void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
-	memcpy(_monsters, tmp->monsters, sizeof(LolMonsterInPlay) * 30);
+	memcpy(_monsters, tmp->monsters, sizeof(LoLMonsterInPlay) * 30);
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].block) {
@@ -521,7 +521,7 @@ void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
 }
 
 void LoLEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	LolMonsterInPlay *p = (LolMonsterInPlay*)tmp->monsters;
+	LoLMonsterInPlay *p = (LoLMonsterInPlay*)tmp->monsters;
 	delete[] p;
 }
 

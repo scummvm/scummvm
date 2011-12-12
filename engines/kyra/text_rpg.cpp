@@ -32,15 +32,15 @@
 namespace Kyra {
 
 enum {
-	kEobTextBufferSize = 2048
+	kEoBTextBufferSize = 2048
 };
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 
-	_dialogueBuffer = new char[kEobTextBufferSize];
-	memset(_dialogueBuffer, 0, kEobTextBufferSize);
+	_dialogueBuffer = new char[kEoBTextBufferSize];
+	memset(_dialogueBuffer, 0, kEoBTextBufferSize);
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
@@ -463,8 +463,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakString) {
 	const char * str = (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1]));
-	assert (strlen(str) < kEobTextBufferSize);
-	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
+	assert (strlen(str) < kEoBTextBufferSize);
+	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
 	displayText(_dialogueBuffer);
 
@@ -478,8 +478,8 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
-	assert (strlen(str) < kEobTextBufferSize);
-	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
+	assert (strlen(str) < kEoBTextBufferSize);
+	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
 	strcpy(_dialogueBuffer, str);
 	displayText(_dialogueBuffer);
@@ -495,7 +495,7 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 
 	va_list args;
 	va_start(args, textColor);
-	vsnprintf(_dialogueBuffer, kEobTextBufferSize - 1, str, args);
+	vsnprintf(_dialogueBuffer, kEoBTextBufferSize - 1, str, args);
 	va_end(args);
 
 	displayText(_dialogueBuffer);

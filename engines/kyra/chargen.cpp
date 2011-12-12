@@ -30,10 +30,10 @@ namespace Kyra {
 
 class CharacterGenerator {
 public:
-	CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen);
+	CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen);
 	~CharacterGenerator();
 
-	bool start(EobCharacter *characters, uint8 ***faceShapes);
+	bool start(EoBCharacter *characters, uint8 ***faceShapes);
 
 private:
 	void init();
@@ -89,9 +89,9 @@ private:
 	const uint8 *_chargenRaceMinStats;
 	const uint16 *_chargenRaceMaxStats;
 
-	static const EobChargenButtonDef _chargenButtonDefs[];
+	static const EoBChargenButtonDef _chargenButtonDefs[];
 	static const CreatePartyModButton _chargenModButtons[];
-	static const EobRect8 _chargenButtonBodyCoords[];
+	static const EoBRect8 _chargenButtonBodyCoords[];
 	static const int16 _chargenBoxX[];
 	static const int16 _chargenBoxY[];
 	static const int16 _chargenNameFieldX[];
@@ -102,14 +102,14 @@ private:
 
 	static const int16 _raceModifiers[];
 
-	EobCharacter *_characters;
+	EoBCharacter *_characters;
 	uint8 **_faceShapes;
 
-	EobCoreEngine *_vm;
-	Screen_Eob *_screen;
+	EoBCoreEngine *_vm;
+	Screen_EoB *_screen;
 };
 
-CharacterGenerator::CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen) : _vm(vm), _screen(screen),
+CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
 	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenButtonLabels(0), _chargenMagicShapeTimer(0),
 	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
 
@@ -124,13 +124,13 @@ CharacterGenerator::CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen) : 
 	memset(_chargenMaxStats, 0, sizeof(_chargenMaxStats));
 
 	int temp;
-	_chargenStrings1 = _vm->staticres()->loadStrings(kEobBaseChargenStrings1, temp);
-	_chargenStrings2 = _vm->staticres()->loadStrings(kEobBaseChargenStrings2, temp);
-	_chargenStartLevels = _vm->staticres()->loadRawData(kEobBaseChargenStartLevels, temp);
-	_chargenEnterGameStrings = _vm->staticres()->loadStrings(kEobBaseChargenEnterGameStrings, temp);
-	_chargenClassMinStats = _vm->staticres()->loadRawData(kEobBaseChargenClassMinStats, temp);
-	_chargenRaceMinStats = _vm->staticres()->loadRawData(kEobBaseChargenRaceMinStats, temp);
-	_chargenRaceMaxStats = _vm->staticres()->loadRawDataBe16(kEobBaseChargenRaceMaxStats, temp);
+	_chargenStrings1 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings1, temp);
+	_chargenStrings2 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings2, temp);
+	_chargenStartLevels = _vm->staticres()->loadRawData(kEoBBaseChargenStartLevels, temp);
+	_chargenEnterGameStrings = _vm->staticres()->loadStrings(kEoBBaseChargenEnterGameStrings, temp);
+	_chargenClassMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenClassMinStats, temp);
+	_chargenRaceMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenRaceMinStats, temp);
+	_chargenRaceMaxStats = _vm->staticres()->loadRawDataBe16(kEoBBaseChargenRaceMaxStats, temp);
 }
 
 CharacterGenerator::~CharacterGenerator() {
@@ -147,7 +147,7 @@ CharacterGenerator::~CharacterGenerator() {
 	}
 }
 
-bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
+bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	if (!characters && !faceShapes)
 		return true;
 
@@ -244,7 +244,7 @@ void CharacterGenerator::init() {
 		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true);
 	_screen->_curPage = 0;
 
-	_screen->loadEobBitmap("CHARGEN", 0, 3, 3, 0);
+	_screen->loadEoBBitmap("CHARGEN", 0, 3, 3, 0);
 	_screen->loadShapeSetBitmap("CHARGENB", 3, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
@@ -272,7 +272,7 @@ void CharacterGenerator::initButtonsFromList(int first, int numButtons) {
 	_vm->gui_resetButtonList();
 
 	for (int i = 0; i < numButtons; i++) {
-		const EobChargenButtonDef *e = &_chargenButtonDefs[first + i];
+		const EoBChargenButtonDef *e = &_chargenButtonDefs[first + i];
 		initButton(i, e->x, e->y, e->w, e->h, e->keyCode);
 	}
 
@@ -343,7 +343,7 @@ void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int page
 		return;
 
 	const CreatePartyModButton *c = &_chargenModButtons[index];
-	const EobRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + bodyCustom];
+	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + bodyCustom];
 
 	int x2 = 20;
 	int y2 = 0;
@@ -627,7 +627,7 @@ void CharacterGenerator::updateMagicShapes() {
 }
 
 void CharacterGenerator::generateStats(int index) {
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 
 	for (int i = 0; i < 3; i++) {
 		c->level[i] = _chargenStartLevels[(c->cClass << 2) + i];
@@ -674,7 +674,7 @@ void CharacterGenerator::modifyMenu() {
 	_vm->removeInputTop();
 	printStats(_activeBox, 3);
 
-	EobCharacter *c = &_characters[_activeBox];
+	EoBCharacter *c = &_characters[_activeBox];
 	int8 hpLO = c->hitPointsCur;
 
 	for (int i = 0; i >= 0 && i < 7; ) {
@@ -874,7 +874,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	_screen->_curPage = 2;
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 
 	if (mode != 4)
 		_screen->drawShape(2, c->faceShape, 224, 2, 0);
@@ -973,7 +973,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, 6, 0);
 	_screen->updateScreen();
 
-	EobCharacter *c = &_characters[_activeBox];
+	EoBCharacter *c = &_characters[_activeBox];
 
 	int ci = index;
 	uint8 v2 = s2 ? *s2 : 0;
@@ -1145,7 +1145,7 @@ void CharacterGenerator::finish() {
 		_characters[0].inventory[2] = _vm->duplicateItem(35);
 
 		for (int i = 0; i < 4; i++) {
-			EobCharacter *c = &_characters[i];
+			EoBCharacter *c = &_characters[i];
 			c->flags = 1;
 			c->food = 100;
 			c->id = i;
@@ -1193,7 +1193,7 @@ void CharacterGenerator::finish() {
 		static const int8 *itemList[] = { itemList0, itemList1, itemList2, itemList3 };
 
 		for (int i = 0; i < 4; i++) {
-			EobCharacter *c = &_characters[i];
+			EoBCharacter *c = &_characters[i];
 			c->flags = 1;
 			c->food = 100;
 			c->id = i;
@@ -1283,7 +1283,7 @@ void CharacterGenerator::finish() {
 	}
 
 	for (int i = 0; i < 4; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		c->strengthMax = c->strengthCur;
 		c->strengthExtMax = c->strengthExtCur;
 		c->intelligenceMax = c->intelligenceCur;
@@ -1325,7 +1325,7 @@ void CharacterGenerator::finish() {
 	}
 }
 
-const EobChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
+const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
 	{ 0x01, 0x37, 0x31, 0x32, 0x70 },
 	{ 0x09, 0x37, 0x31, 0x32, 0x71 },
 	{ 0x01, 0x77, 0x31, 0x32, 0x72 },
@@ -1389,7 +1389,7 @@ const CreatePartyModButton CharacterGenerator::_chargenModButtons[] = {
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x1C, 0xAC }
 };
 
-const EobRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
+const EoBRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
 	{ 0x00, 0x80, 0x04, 0x20 },
 	{ 0x04, 0x80, 0x04, 0x20 },
 	{ 0x08, 0x80, 0x04, 0x20 },
@@ -1426,11 +1426,11 @@ const int16 CharacterGenerator::_raceModifiers[] = {
 	0, 0, 0, 0,	1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, 0, 0
 };
 
-bool EobCoreEngine::startCharacterGeneration() {
+bool EoBCoreEngine::startCharacterGeneration() {
 	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
 }
 
-bool EobCoreEngine::transferParty() {
+bool EoBCoreEngine::transferParty() {
 
 	return false;
 }

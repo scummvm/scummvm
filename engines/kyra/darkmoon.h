@@ -31,7 +31,7 @@ namespace Kyra {
 
 class DarkmoonSequenceHelper;
 
-struct EobSequenceStep {
+struct EoBSequenceStep {
 	uint8 command;
 	uint8 obj;
 	int16 x1;
@@ -44,8 +44,8 @@ struct EobSequenceStep {
 	uint8 h;
 };
 
-class DarkMoonEngine : public EobCoreEngine {
-friend class GUI_Eob;
+class DarkMoonEngine : public EoBCoreEngine {
+friend class GUI_EoB;
 friend class DarkmoonSequenceHelper;
 public:
 	DarkMoonEngine(OSystem *system, const GameFlags &flags);
@@ -74,14 +74,14 @@ private:
 
 	const char * const *_introStrings;
 	const char * const *_cpsFilesIntro;
-	const EobSequenceStep **_seqIntro;
-	const EobShapeDef **_shapesIntro;
+	const EoBSequenceStep **_seqIntro;
+	const EoBShapeDef **_shapesIntro;
 
 	const char * const *_finaleStrings;
 	const uint8 *_creditsData;
 	const char * const *_cpsFilesFinale;
-	const EobSequenceStep **_seqFinale;
-	const EobShapeDef **_shapesFinale;
+	const EoBSequenceStep **_seqFinale;
+	const EoBShapeDef **_shapesFinale;
 
 	static const char *_palFilesIntro[];
 	static const char *_palFilesFinale[];
@@ -108,7 +108,7 @@ private:
 	void generateMonsterPalettes(const char *file, int16 monsterIndex);
 	void loadMonsterDecoration(const char *file, int16 monsterIndex);
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
-	bool killMonsterExtra(EobMonsterInPlay *m);
+	bool killMonsterExtra(EoBMonsterInPlay *m);
 
 	// Level
 	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs);

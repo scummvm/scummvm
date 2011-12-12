@@ -106,19 +106,19 @@ void KyraRpgEngine::releaseTempData() {
 }
 
 void *KyraRpgEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
-	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
-	EobFlyingObject *f = new EobFlyingObject[_numFlyingObjects];
-	memcpy(f, _flyingObjectsPtr,  sizeof(EobFlyingObject) * _numFlyingObjects);
+	assert(_flyingObjectStructSize == sizeof(EoBFlyingObject));
+	EoBFlyingObject *f = new EoBFlyingObject[_numFlyingObjects];
+	memcpy(f, _flyingObjectsPtr,  sizeof(EoBFlyingObject) * _numFlyingObjects);
 	return f;
 }
 
 void KyraRpgEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
-	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
-	memcpy(_flyingObjectsPtr, tmp->flyingObjects, sizeof(EobFlyingObject) * _numFlyingObjects);
+	assert(_flyingObjectStructSize == sizeof(EoBFlyingObject));
+	memcpy(_flyingObjectsPtr, tmp->flyingObjects, sizeof(EoBFlyingObject) * _numFlyingObjects);
 }
 
 void KyraRpgEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-	EobFlyingObject *p = (EobFlyingObject*)tmp->flyingObjects;
+	EoBFlyingObject *p = (EoBFlyingObject*)tmp->flyingObjects;
 	delete[] p;
 }
 

@@ -29,9 +29,9 @@
 
 namespace Kyra {
 
-#define TimerV2(x) new Common::Functor1Mem<int, void, EobCoreEngine>(this, &EobCoreEngine::x)
+#define TimerV2(x) new Common::Functor1Mem<int, void, EoBCoreEngine>(this, &EoBCoreEngine::x)
 
-void EobCoreEngine::setupTimers() {
+void EoBCoreEngine::setupTimers() {
 	_timer->addTimer(0, TimerV2(timerProcessCharacterExchange), 9, false);
 	_timer->addTimer(1, TimerV2(timerProcessFlyingObjects), 3, true);
 	_timer->addTimer(0x20, TimerV2(timerProcessMonsters), 20, true);
@@ -55,10 +55,10 @@ void EobCoreEngine::setupTimers() {
 	_timer->resetNextRun();
 }
 
-void EobCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer) {
+void EoBCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer) {
 	uint32 ntime = _system->getMillis() + countdown * _tickLength;
 	uint8 timerId = 0x30 | (charIndex & 0x0f);
-	EobCharacter *c = &_characters[charIndex];
+	EoBCharacter *c = &_characters[charIndex];
 
 	if (!_timer->isEnabled(timerId)) {
 		c->timers[0] = ntime;
@@ -101,8 +101,8 @@ void EobCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt,
 	}
 }
 
-void EobCoreEngine::deleteCharEventTimer(int charIndex, int evnt) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::deleteCharEventTimer(int charIndex, int evnt) {
+	EoBCharacter *c = &_characters[charIndex];
 	for (int i = 0; i < 10; i++) {
 		if (c->events[i] == evnt) {
 			c->events[i] = 0;
@@ -112,9 +112,9 @@ void EobCoreEngine::deleteCharEventTimer(int charIndex, int evnt) {
 	setupCharacterTimers();
 }
 
-void EobCoreEngine::setupCharacterTimers() {
+void EoBCoreEngine::setupCharacterTimers() {
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		if (!testCharacter(i, 1))
 			continue;
 
@@ -136,10 +136,10 @@ void EobCoreEngine::setupCharacterTimers() {
 	_timer->resetNextRun();
 }
 
-void EobCoreEngine::advanceTimers(uint32 millis) {
+void EoBCoreEngine::advanceTimers(uint32 millis) {
 	uint32 ct = _system->getMillis();
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] > ct) {
 				uint32 chrt = c->timers[ii] - ct;
@@ -167,7 +167,7 @@ void EobCoreEngine::advanceTimers(uint32 millis) {
 	}
 }
 
-void EobCoreEngine::timerProcessCharacterExchange(int timerNum) {
+void EoBCoreEngine::timerProcessCharacterExchange(int timerNum) {
 	_charExchangeSwap ^= 1;
 	if (_charExchangeSwap) {
 		int index = _exchangeCharacterId;
@@ -179,10 +179,10 @@ void EobCoreEngine::timerProcessCharacterExchange(int timerNum) {
 	}
 }
 
-void EobCoreEngine::timerProcessFlyingObjects(int timerNum) {
+void EoBCoreEngine::timerProcessFlyingObjects(int timerNum) {
 	static const uint8 dirPosIndex[] = { 0x82, 0x83, 0x00, 0x01, 0x01, 0x80, 0x03, 0x82, 0x02, 0x03, 0x80, 0x81, 0x81, 0x00, 0x83, 0x02 };
 	for (int i = 0; i < 10; i++) {
-		EobFlyingObject *fo = &_flyingObjects[i];
+		EoBFlyingObject *fo = &_flyingObjects[i];
 		if (!fo->enable)
 			continue;
 
@@ -218,13 +218,13 @@ void EobCoreEngine::timerProcessFlyingObjects(int timerNum) {
 	}
 }
 
-void EobCoreEngine::timerProcessMonsters(int timerNum) {
+void EoBCoreEngine::timerProcessMonsters(int timerNum) {
 	updateMonsters(timerNum & 0x0f);
 }
 
-void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
+void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 	int charIndex = timerNum & 0x0f;
-	EobCharacter *c = &_characters[charIndex];
+	EoBCharacter *c = &_characters[charIndex];
 	uint32 ctime =  _system->getMillis();
 
 	for (int i = 0; i < 10; i++) {
@@ -321,7 +321,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		_timer->setCountdown(timerNum, (nextTimer - ctime) / _tickLength);
 }
 
-void EobCoreEngine::timerUpdateTeleporters(int timerNum) {
+void EoBCoreEngine::timerUpdateTeleporters(int timerNum) {
 	_teleporterPulse ^= 1;
 	for (int i = 0; i < 18; i++) {
 		uint8 w = _visibleBlocks[i]->walls[_sceneDrawVarDown];
@@ -332,12 +332,12 @@ void EobCoreEngine::timerUpdateTeleporters(int timerNum) {
 	}
 }
 
-void EobCoreEngine::timerUpdateFoodStatus(int timerNum) {
+void EoBCoreEngine::timerUpdateFoodStatus(int timerNum) {
 	for (int i = 0; i < 6; i++) {
 		// Ring of Sustenance check
 		if (checkInventoryForRings(i, 2))
 			continue;
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		if (c->food != 0 && c->flags & 1 && c->hitPointsCur > -10) {
 			c->food--;
 			gui_drawFoodStatusGraph(i);
@@ -345,9 +345,9 @@ void EobCoreEngine::timerUpdateFoodStatus(int timerNum) {
 	}
 }
 
-void EobCoreEngine::timerUpdateMonsterIdleAnim(int timerNum) {
+void EoBCoreEngine::timerUpdateMonsterIdleAnim(int timerNum) {
 	for (int i = 0; i < 18; i++) {
-		EobMonsterInPlay *m = &_monsters[i];
+		EoBMonsterInPlay *m = &_monsters[i];
 		if (m->mode == 7 || m->mode == 10 || (m->flags & 0x20) || (rollDice(1, 2, 0) != 1))
 			continue;
 		m->idleAnimState = (rollDice(1, 2, 0) << 4) | rollDice(1, 2, 0);

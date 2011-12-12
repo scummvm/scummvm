@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-void EobCoreEngine::loadItemDefs() {
+void EoBCoreEngine::loadItemDefs() {
 	Common::SeekableReadStream *s = _res->createReadStream("item.dat");
 	_numItems = s->readUint16LE();
 
@@ -58,8 +58,8 @@ void EobCoreEngine::loadItemDefs() {
 	s = _res->createReadStream("itemtype.dat");
 	uint16 numTypes = s->readUint16LE();
 
-	_itemTypes = new EobItemType[65];
-	memset(_itemTypes, 0, sizeof(EobItemType) * 65);
+	_itemTypes = new EoBItemType[65];
+	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
 
 	for (int i = 0; i < numTypes; i++) {
 		_itemTypes[i].invFlags = s->readUint16LE();
@@ -80,8 +80,8 @@ void EobCoreEngine::loadItemDefs() {
 	delete s;
 }
 
-Kyra::Item EobCoreEngine::duplicateItem(Item itemIndex) {
-	EobItem *itm = &_items[itemIndex];
+Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
+	EoBItem *itm = &_items[itemIndex];
 
 	if (itm->block == -1)
 		return 0;
@@ -99,21 +99,21 @@ Kyra::Item EobCoreEngine::duplicateItem(Item itemIndex) {
 	if (!foundSlot)
 		return 0;
 
-	memcpy(&_items[i], itm, sizeof(EobItem));
+	memcpy(&_items[i], itm, sizeof(EoBItem));
 	return i;
 }
 
-Item EobCoreEngine::createItemOnCurrentBlock(Item itemIndex) {
+Item EoBCoreEngine::createItemOnCurrentBlock(Item itemIndex) {
 	Item itm = duplicateItem(itemIndex);
 	setItemPosition((Item*)&_levelBlockProperties[_currentBlock].drawObjects, _currentBlock, itm, _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 	return itm;
 }
 
-void EobCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int pos) {
+void EoBCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int pos) {
 	if (!item)
 		return;
 
-	EobItem *itm = &_items[item];
+	EoBItem *itm = &_items[item];
 	itm->pos = pos;
 	itm->block = block;
 	itm->level = block < 0 ? 0xff : _currentLevel;
@@ -121,15 +121,15 @@ void EobCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int p
 	if (!*itemQueue) {
 		*itemQueue = itm->next = itm->prev = item;
 	} else {
-		EobItem *itmQ = &_items[*itemQueue];
-		EobItem *itmQN = &_items[itmQ->next];
+		EoBItem *itmQ = &_items[*itemQueue];
+		EoBItem *itmQN = &_items[itmQ->next];
 		itm->prev = itmQN->prev;
 		itm->next = itmQ->next;
 		*itemQueue = itmQN->prev = itmQ->next = item;
 	}
 }
 
-void EobCoreEngine::createInventoryItem(EobCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot) {
+void EoBCoreEngine::createInventoryItem(EoBCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot) {
 	if (itemIndex <= 0)
 		return;
 
@@ -154,7 +154,7 @@ void EobCoreEngine::createInventoryItem(EobCharacter *c, Item itemIndex, int16 i
 	}
 }
 
-int EobCoreEngine::deleteInventoryItem(int charIndex, int slot) {
+int EoBCoreEngine::deleteInventoryItem(int charIndex, int slot) {
 	int itm = (slot == -1) ? _itemInHand : _characters[charIndex].inventory[slot];
 	_items[itm].block = -1;
 
@@ -173,7 +173,7 @@ int EobCoreEngine::deleteInventoryItem(int charIndex, int slot) {
 	return _items[itm].value;
 }
 
-void EobCoreEngine::deleteBlockItem(uint16 block, int type) {
+void EoBCoreEngine::deleteBlockItem(uint16 block, int type) {
 	uint16 itm = _levelBlockProperties[block].drawObjects;
 	if (!itm)
 		return;
@@ -196,7 +196,7 @@ void EobCoreEngine::deleteBlockItem(uint16 block, int type) {
 	}
 }
 
-int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int slot) {
+int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int slot) {
 	if (item < 0)
 		return 0;
 
@@ -222,7 +222,7 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	return 0;
 }
 
-int EobCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems) {
+int EoBCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems) {
 	int itemsLeft = numItems;
 
 	for (bool runloop = true; runloop && itemsLeft; ) {
@@ -249,13 +249,13 @@ int EobCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleVa
 	return numItems - itemsLeft;
 }
 
-bool EobCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
+bool EoBCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 	bool res = false;
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
 			continue;
 
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		for (int slot = checkInventoryForItem(i, itemType, itemValue); slot != -1; slot = checkInventoryForItem(i, itemType, itemValue)) {
 			int itm = c->inventory[slot];
 			_items[itm].block = -1;
@@ -283,14 +283,14 @@ bool EobCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 	return res;
 }
 
-int EobCoreEngine::itemUsableByCharacter(int charIndex, Item item) {
+int EoBCoreEngine::itemUsableByCharacter(int charIndex, Item item) {
 	if (!item)
 		return 1;
 
 	return (_itemTypes[_items[item].type].allowedClasses & _classModifierFlags[_characters[charIndex].cClass]);
 }
 
-int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) {
+int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) {
 	uint16 o1 = itemQueue;
 	uint16 o2 = o1;
 
@@ -300,7 +300,7 @@ int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 	int res = 0;
 
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = _items[o1].prev) {
-		EobItem *itm = &_items[o1];
+		EoBItem *itm = &_items[o1];
 		forceLoop = false;
 		if (id != -1 || type != -1) {
 			if (((id != -1) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))
@@ -321,14 +321,14 @@ int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 	return res;
 }
 
-int EobCoreEngine::getQueuedItem(Item *items, int pos, int id) {
+int EoBCoreEngine::getQueuedItem(Item *items, int pos, int id) {
 	Item o1 = *items;
 	Item o2 = o1;
 
 	if (!o1)
 		return 0;
 
-	EobItem *itm = &_items[o1];
+	EoBItem *itm = &_items[o1];
 
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = itm->prev) {
 		itm = &_items[o1];
@@ -353,8 +353,8 @@ int EobCoreEngine::getQueuedItem(Item *items, int pos, int id) {
 	return 0;
 }
 
-void EobCoreEngine::printFullItemName(Item item) {
-	EobItem *itm = &_items[item];
+void EoBCoreEngine::printFullItemName(Item item) {
+	EoBItem *itm = &_items[item];
 	const char *nameUnid = _itemNames[itm->nameUnid];
 	const char *nameId = _itemNames[itm->nameId];
 	uint8 f = _itemTypes[itm->type].extraProperties & 0x7f;
@@ -445,7 +445,7 @@ void EobCoreEngine::printFullItemName(Item item) {
 	_txt->printMessage(tmpString.c_str());
 }
 
-void EobCoreEngine::identifyQueuedItems(Item itemQueue) {
+void EoBCoreEngine::identifyQueuedItems(Item itemQueue) {
 	if (!itemQueue)
 		return;
 
@@ -457,7 +457,7 @@ void EobCoreEngine::identifyQueuedItems(Item itemQueue) {
 	} while (first != itemQueue);
 }
 
-void EobCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
+void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	int icn = _items[itemId].icon;
 	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[itemId].flags & 0x80)) ? true : false;
 
@@ -480,11 +480,11 @@ void EobCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	}
 }
 
-bool EobCoreEngine::isMagicEffectItem(Item itemIndex) {
+bool EoBCoreEngine::isMagicEffectItem(Item itemIndex) {
 	return (itemIndex > 10 && itemIndex < 18);
 }
 
-bool EobCoreEngine::checkInventoryForRings(int charIndex, int itemValue) {
+bool EoBCoreEngine::checkInventoryForRings(int charIndex, int itemValue) {
 	for (int i = 25; i <= 26; i++) {
 		int itm = _characters[charIndex].inventory[i];
 		if (itm && _items[itm].type == 47 && _items[itm].value == itemValue)
@@ -493,8 +493,8 @@ bool EobCoreEngine::checkInventoryForRings(int charIndex, int itemValue) {
 	return false;
 }
 
-void EobCoreEngine::eatItemInHand(int charIndex) {
-	EobCharacter *c = &_characters[charIndex];
+void EoBCoreEngine::eatItemInHand(int charIndex) {
+	EoBCharacter *c = &_characters[charIndex];
 	if (!testCharacter(charIndex, 5)) {
 		_txt->printMessage(_warningStrings[1], -1, c->name);
 	} else if (_itemInHand && _items[_itemInHand].type != 31 && !(_flags.gameID == GI_EOB1 && _items[_itemInHand].type == 49)) {
@@ -514,8 +514,8 @@ void EobCoreEngine::eatItemInHand(int charIndex) {
 	}
 }
 
-bool EobCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type) {
-	EobFlyingObject *t = _flyingObjects;
+bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type) {
+	EoBFlyingObject *t = _flyingObjects;
 	int slot = 0;
 	for (; slot < 10; slot++) {
 		if (!t->enable)
@@ -544,8 +544,8 @@ bool EobCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	return true;
 }
 
-void EobCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock, int startPos, int dir) {
-	EobFlyingObject *t = _flyingObjects;
+void EoBCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock, int startPos, int dir) {
+	EoBFlyingObject *t = _flyingObjects;
 	int slot = 0;
 	for (; slot < 10; slot++) {
 		if (!t->enable)
@@ -571,7 +571,7 @@ void EobCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock
 	_sceneUpdateRequired = true;
 }
 
-bool EobCoreEngine::updateObjectFlight(EobFlyingObject *fo, int block, int pos) {
+bool EoBCoreEngine::updateObjectFlight(EoBFlyingObject *fo, int block, int pos) {
 	uint8 wallFlags = _wllWallFlags[_levelBlockProperties[block].walls[fo->direction ^ 2]];
 	if (fo->enable == 1) {
 		if ((wallFlags & 1) || (fo->u2) || ((wallFlags & 2) && (_dscItemShapeMap[_items[fo->item].icon] >= 15))) {
@@ -599,7 +599,7 @@ bool EobCoreEngine::updateObjectFlight(EobFlyingObject *fo, int block, int pos) 
 	return true;
 }
 
-bool EobCoreEngine::updateFlyingObjectHitTest(EobFlyingObject *fo, int block, int pos) {
+bool EoBCoreEngine::updateFlyingObjectHitTest(EoBFlyingObject *fo, int block, int pos) {
 	if (fo->u2 && (fo->curBlock != _currentBlock || fo->attackerId >= 0) && (!blockHasMonsters(block) || fo->attackerId < 0))
 		return false;
 
@@ -623,7 +623,7 @@ bool EobCoreEngine::updateFlyingObjectHitTest(EobFlyingObject *fo, int block, in
 	return false;
 }
 
-void EobCoreEngine::explodeObject(EobFlyingObject *fo, int block, Item item) {
+void EoBCoreEngine::explodeObject(EoBFlyingObject *fo, int block, Item item) {
 	if (_partyResting) {
 		snd_processEnvironmentalSoundEffect(35, _currentBlock);
 		return;
@@ -688,21 +688,21 @@ void EobCoreEngine::explodeObject(EobFlyingObject *fo, int block, Item item) {
 	enableSysTimer(2);
 }
 
-void EobCoreEngine::endObjectFlight(EobFlyingObject *fo) {
+void EoBCoreEngine::endObjectFlight(EoBFlyingObject *fo) {
 	if (fo->enable == 1) {
 		_items[fo->item].pos &= 3;
 		runLevelScript(fo->curBlock, 4);
 		updateEnvironmentalSfx(18);
 	}
-	memset(fo, 0, sizeof(EobFlyingObject));
+	memset(fo, 0, sizeof(EoBFlyingObject));
 }
 
-void EobCoreEngine::checkFlyingObjects() {
+void EoBCoreEngine::checkFlyingObjects() {
 	if (!_runFlag)
 		return;
 
 	for (int i = 0; i < 10; i++) {
-		EobFlyingObject *fo = &_flyingObjects[i];
+		EoBFlyingObject *fo = &_flyingObjects[i];
 		if (!fo->enable)
 			continue;
 		if (updateFlyingObjectHitTest(fo, fo->curBlock, fo->curPos))
@@ -710,7 +710,7 @@ void EobCoreEngine::checkFlyingObjects() {
 	}
 }
 
-void EobCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger) {
+void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger) {
 	if (arrowOrDagger && _characters[charIndex].inventory[16]) {
 		_characters[charIndex].inventory[slotIndex] = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
 	} else {

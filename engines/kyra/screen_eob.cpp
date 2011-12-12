@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Screen_Eob::Screen_Eob(EobCoreEngine *vm, OSystem *system) : Screen(vm, system) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system) {
 	_shapeFadeMode[0] = _shapeFadeMode[1] = 0;
 	_shapeFadeInternal = 0;
 	_fadeData = 0;
@@ -53,7 +53,7 @@ Screen_Eob::Screen_Eob(EobCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 	_gfxMaxY = 0;
 }
 
-Screen_Eob::~Screen_Eob() {
+Screen_EoB::~Screen_EoB() {
 	delete[] _fadeData;
 	if (_customDimTable) {
 		for (int i = 0; i < _screenDimTableCount; i++)
@@ -63,13 +63,13 @@ Screen_Eob::~Screen_Eob() {
 	delete[] _dsTempPage;
 }
 
-bool Screen_Eob::init() {
+bool Screen_EoB::init() {
 	if (Screen::init()) {
 		_customDimTable = new ScreenDim*[_screenDimTableCount];
 		memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
 
 		int temp;
-		_gfxMaxY = _vm->staticres()->loadRawData(kEobBaseExpObjectY, temp);
+		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
 		_fadeData = _vm->resource()->fileData("FADING.DAT", 0);
 
 		if (!_fadeData) {
@@ -88,18 +88,18 @@ bool Screen_Eob::init() {
 	return false;
 }
 
-void Screen_Eob::setScreenDim(int dim) {
+void Screen_EoB::setScreenDim(int dim) {
 	assert(dim < _screenDimTableCount);
 	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
 	_curDimIndex = dim;
 }
 
-const ScreenDim *Screen_Eob::getScreenDim(int dim) {
+const ScreenDim *Screen_EoB::getScreenDim(int dim) {
 	assert(dim < _screenDimTableCount);
 	return _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
 }
 
-void Screen_Eob::modifyScreenDim(int dim, int x, int y, int w, int h) {
+void Screen_EoB::modifyScreenDim(int dim, int x, int y, int w, int h) {
 	if (!_customDimTable[dim])
 		_customDimTable[dim] = new ScreenDim;
 
@@ -112,16 +112,16 @@ void Screen_Eob::modifyScreenDim(int dim, int x, int y, int w, int h) {
 		setScreenDim(dim);
 }
 
-void Screen_Eob::setClearScreenDim(int dim) {
+void Screen_EoB::setClearScreenDim(int dim) {
 	setScreenDim(dim);
 	clearCurDim();
 }
 
-void Screen_Eob::clearCurDim() {
+void Screen_EoB::clearCurDim() {
 	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _curDim->unkA);
 }
 
-void Screen_Eob::setMouseCursor(int x, int y, const byte *shape) {
+void Screen_EoB::setMouseCursor(int x, int y, const byte *shape) {
 	if (!shape)
 		return;
 	int mouseW = shape[2] << 3;
@@ -143,23 +143,23 @@ void Screen_Eob::setMouseCursor(int x, int y, const byte *shape) {
 	_system->updateScreen();
 }
 
-void Screen_Eob::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size) {
+void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size) {
 	s->read(_pagePtrs[pageNum], size);
 }
 
-void Screen_Eob::printShadedText(const char *string, int x, int y, int col1, int col2) {
+void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2) {
 	printText(string, x - 1, y, 12, col2);
 	printText(string, x, y + 1, 12, 0);
 	printText(string, x - 1, y + 1, 12, 0);
 	printText(string, x, y, col1, 0);
 }
 
-void Screen_Eob::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
-	loadEobBitmap(file, 0, tempPage, destPage, -1);
+void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
+	loadEoBBitmap(file, 0, tempPage, destPage, -1);
 	_curPage = 2;
 }
 
-void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage) {
+void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage) {
 	Common::String tmp = Common::String::format("%s.CPS", file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
@@ -183,7 +183,7 @@ void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int
 			tmp.setChar('X', 0);
 			s = _vm->resource()->createReadStream(tmp);
 			if (!s)
-				error("Screen_Eob::loadEobBitmap(): CPS file loading failed.");
+				error("Screen_EoB::loadEoBBitmap(): CPS file loading failed.");
 			s->seek(768);
 			loadFileDataToPage(s, destPage, 64000);
 			delete s;
@@ -200,7 +200,7 @@ void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int
 	}
 }
 
-uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding) {
+uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding) {
 	uint8 *shp = 0;
 	uint16 shapesize = 0;
 
@@ -325,7 +325,7 @@ uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 	return shp;
 }
 
-void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
+void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	uint8 *dst = getPagePtr(pageNum);
 	const uint8 *src = shapeData;
 
@@ -642,7 +642,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	}
 }
 
-const uint8 *Screen_Eob::scaleShape(const uint8 *shapeData, int steps) {
+const uint8 *Screen_EoB::scaleShape(const uint8 *shapeData, int steps) {
 	setShapeFadeMode(1, steps ? true : false);
 
 	while (shapeData && steps--)
@@ -651,7 +651,7 @@ const uint8 *Screen_Eob::scaleShape(const uint8 *shapeData, int steps) {
 	return shapeData;
 }
 
-const uint8 *Screen_Eob::scaleShapeStep(const uint8 *shp) {
+const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 	uint8 *d = _dsTempPage;
 	*d++ = *shp++;
 
@@ -701,14 +701,14 @@ const uint8 *Screen_Eob::scaleShapeStep(const uint8 *shp) {
 	return (const uint8 *) _dsTempPage;
 }
 
-void Screen_Eob::replaceShapePalette(uint8 *shp, const uint8 *pal) {
+void Screen_EoB::replaceShapePalette(uint8 *shp, const uint8 *pal) {
 	if (*shp != 1)
 		return;
 	shp += 4;
 	memcpy(shp, pal, 16);
 }
 
-void Screen_Eob::applyShapeOverlay(uint8 *shp, int ovlIndex) {
+void Screen_EoB::applyShapeOverlay(uint8 *shp, int ovlIndex) {
 	if (*shp != 1)
 		return;
 	shp += 4;
@@ -717,25 +717,25 @@ void Screen_Eob::applyShapeOverlay(uint8 *shp, int ovlIndex) {
 		shp[i] = ovl[shp[i]];
 }
 
-void Screen_Eob::setShapeFrame(int x1, int y1, int x2, int y2) {
+void Screen_EoB::setShapeFrame(int x1, int y1, int x2, int y2) {
 	_dsX1 = x1;
 	_dsY1 = y1;
 	_dsX2 = x2;
 	_dsY2 = y2;
 }
 
-void Screen_Eob::setShapeFadeMode (uint8 i, bool b) {
+void Screen_EoB::setShapeFadeMode (uint8 i, bool b) {
 	if (!i || i == 1)
 		_shapeFadeMode[i] = b;
 }
 
-void Screen_Eob::setGfxParameters(int x, int y, int col) {
+void Screen_EoB::setGfxParameters(int x, int y, int col) {
 	_gfxX = x;
 	_gfxY = y;
 	_gfxCol = col;
 }
 
-void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize) {
+void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize) {
 	int ymin = 0;
 	int ymax = _gfxMaxY[scale];
 	int xmin = -100;
@@ -837,7 +837,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 	showMouse();
 }
 
-void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize) {
+void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize) {
 	int16 *xCoords = (int16*)_dsTempPage;
 	int16 *yCoords = (int16*)&_dsTempPage[300];
 	int16 *xMod = (int16*)&_dsTempPage[600];
@@ -973,7 +973,7 @@ void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int 
 	showMouse();
 }
 
-void Screen_Eob::fadeTextColor(Palette *pal, int color1, int rate) {
+void Screen_EoB::fadeTextColor(Palette *pal, int color1, int rate) {
 	uint8 *col = pal->getData();
 
 	for (bool loop = true; loop; ) {
@@ -1002,7 +1002,7 @@ void Screen_Eob::fadeTextColor(Palette *pal, int color1, int rate) {
 	}
 }
 
-bool Screen_Eob::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate) {
+bool Screen_EoB::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate) {
 	bool res = false;
 
 	uint8 *s = fadePal->getData();
@@ -1031,15 +1031,15 @@ bool Screen_Eob::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate
 	return res;
 }
 
-int Screen_Eob::getRectSize(int w, int h) {
+int Screen_EoB::getRectSize(int w, int h) {
 	return w * h;
 }
 
-void Screen_Eob::setFadeTableIndex(int index) {
+void Screen_EoB::setFadeTableIndex(int index) {
 	_fadeDataIndex = (CLIP(index, 0, 7) << 8);
 }
 
-void Screen_Eob::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
+void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
 	if (!palData)
 		return;
 
@@ -1082,11 +1082,11 @@ void Screen_Eob::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 	}
 }
 
-uint8 *Screen_Eob::getFadeTable(int index) {
+uint8 *Screen_EoB::getFadeTable(int index) {
 	return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0;
 }
 
-void Screen_Eob::drawShapeSetPixel(uint8 * dst, uint8 c) {
+void Screen_EoB::drawShapeSetPixel(uint8 * dst, uint8 c) {
 	if (_shapeFadeMode[0]) {
 		if (_shapeFadeMode[1]) {
 			c = *dst;
@@ -1105,7 +1105,7 @@ void Screen_Eob::drawShapeSetPixel(uint8 * dst, uint8 c) {
 	*dst = c;
 }
 
-void Screen_Eob::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
+void Screen_EoB::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
 	for (int i = 0; i < _dsDiv; i++) {
 		*dst++ = *src++;
 		*dst++ = (READ_BE_UINT16(src) >> 4) & 0xff;
@@ -1124,7 +1124,7 @@ void Screen_Eob::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
 	}
 }
 
-bool Screen_Eob::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
+bool Screen_EoB::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
 	if (posX < x1 || posX > x2 || posY < y1 || posY > y2)
 		return false;
 	return true;

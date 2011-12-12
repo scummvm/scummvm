@@ -29,11 +29,11 @@
 
 namespace Kyra {
 
-class EobCoreEngine;
-class Screen_Eob : public Screen{
+class EoBCoreEngine;
+class Screen_EoB : public Screen{
 public:
-	Screen_Eob(EobCoreEngine *vm, OSystem *system);
-	virtual ~Screen_Eob();
+	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
+	virtual ~Screen_EoB();
 
 	bool init();
 
@@ -51,7 +51,7 @@ public:
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
 	void printShadedText(const char *string, int x, int y, int col1, int col2);
-	void loadEobBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
+	void loadEoBBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
 	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding = false);

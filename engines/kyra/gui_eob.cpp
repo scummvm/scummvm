@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-Button *EobCoreEngine::gui_getButton(Button *buttonList, int index) {
+Button *EoBCoreEngine::gui_getButton(Button *buttonList, int index) {
 	while (buttonList) {
 		if (buttonList->index == index)
 			return buttonList;
@@ -45,8 +45,8 @@ Button *EobCoreEngine::gui_getButton(Button *buttonList, int index) {
 	return 0;
 }
 
-void EobCoreEngine::gui_drawPlayField(bool refresh) {
-	_screen->loadEobBitmap("PLAYFLD", 0, 5, 3, 2);
+void EoBCoreEngine::gui_drawPlayField(bool refresh) {
+	_screen->loadEoBBitmap("PLAYFLD", 0, 5, 3, 2);
 	int cp = _screen->setCurPage(2);
 	gui_drawCompass(true);
 
@@ -59,29 +59,29 @@ void EobCoreEngine::gui_drawPlayField(bool refresh) {
 	if (!_loading)
 		_screen->updateScreen();
 
-	_screen->loadEobBitmap("INVENT", 0, 5, 3, 2);
+	_screen->loadEoBBitmap("INVENT", 0, 5, 3, 2);
 }
 
-void EobCoreEngine::gui_restorePlayField() {
+void EoBCoreEngine::gui_restorePlayField() {
 	loadVcnData(0, 0);
 	_screen->_curPage = 0;
 	gui_drawPlayField(true);
 	gui_drawAllCharPortraitsWithStats();
 }
 
-void EobCoreEngine::gui_drawAllCharPortraitsWithStats() {
+void EoBCoreEngine::gui_drawAllCharPortraitsWithStats() {
 	for (int i = 0; i < 6; i++)
 		gui_drawCharPortraitWithStats(i);
 }
 
-void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
+void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
 	static const uint16 charPortraitPosX[] = { 8, 80, 184, 256 };
 	static const uint16 charPortraitPosY[] = { 2, 54, 106 };
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 	int txtCol1 = 12;
 	int txtCol2 = 15;
 
@@ -200,7 +200,7 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	}
 }
 
-void EobCoreEngine::gui_drawFaceShape(int index) {
+void EoBCoreEngine::gui_drawFaceShape(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
@@ -221,7 +221,7 @@ void EobCoreEngine::gui_drawFaceShape(int index) {
 		y = 3;
 	}
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 
 	if (c->hitPointsCur == -10) {
 		_screen->drawShape(_screen->_curPage, _deadCharShape, x, y, 0);
@@ -261,7 +261,7 @@ void EobCoreEngine::gui_drawFaceShape(int index) {
 	//}
 }
 
-void EobCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
+void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 	static const uint8 xCoords[] = { 40, 112 };
 	static const uint8 yCoords[] = { 11, 27, 63, 79, 115, 131 };
 
@@ -290,7 +290,7 @@ void EobCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 		_screen->drawShape(_screen->_curPage, _weaponSlotGrid, x, y, 0);
 }
 
-void EobCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
+void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 	Common::String tmpStr;
 	Common::String tmpStr2;
 
@@ -330,7 +330,7 @@ void EobCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 	}
 }
 
-void EobCoreEngine::gui_drawHitpoints(int index) {
+void EoBCoreEngine::gui_drawHitpoints(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
@@ -356,7 +356,7 @@ void EobCoreEngine::gui_drawHitpoints(int index) {
 		h = 5;
 	}
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 
 	if (_configHpBarGraphs) {
 		int bgCur = c->hitPointsCur + 10;
@@ -383,14 +383,14 @@ void EobCoreEngine::gui_drawHitpoints(int index) {
 	}
 }
 
-void EobCoreEngine::gui_drawFoodStatusGraph(int index) {
+void EoBCoreEngine::gui_drawFoodStatusGraph(int index) {
 	if (!_currentControlMode)
 		return;
 
 	if (!testCharacter(index, 1))
 		return;
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 	if (!(c->flags & 1))
 		return;
 
@@ -401,12 +401,12 @@ void EobCoreEngine::gui_drawFoodStatusGraph(int index) {
 	gui_drawHorizontalBarGraph(250, 25, 51, 5, c->food, 100, col, _color5);
 }
 
-void EobCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) {
+void EoBCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) {
 	gui_drawBox(x - 1, y - 1, w + 3, h + 2, _color2_1, _color1_1, -1);
 	KyraRpgEngine::gui_drawHorizontalBarGraph(x, y, w + 2, h, curVal, maxVal, col1, col2);
 }
 
-void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
+void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? 4 : 6;
 
 	static const uint8 xCoords[] = { 8, 80 };
@@ -417,7 +417,7 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	if (!_screen->_curPage)
 		x += 176;
 
-	EobCharacter *c = &_characters[index];
+	EoBCharacter *c = &_characters[index];
 
 	bool redGreen = ((c->effectFlags & 0x4818) || (_partyEffectFlags & 0x20000) || c->effectsRemainder[0] || c->effectsRemainder[1]) ? true : false;
 	bool yellow = ((c->effectFlags & 0x13000) || (_partyEffectFlags & 0x8420)) ? true : false;
@@ -471,7 +471,7 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	}
 }
 
-void EobCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
+void EoBCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 	int x = _inventorySlotsX[slot];
 	int y = _inventorySlotsY[slot];
 
@@ -502,7 +502,7 @@ void EobCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 	_screen->updateScreen();
 }
 
-void EobCoreEngine::gui_drawCompass(bool force) {
+void EoBCoreEngine::gui_drawCompass(bool force) {
 	if (_currentDirection == _compassDirection && !force)
 		return;
 
@@ -516,12 +516,12 @@ void EobCoreEngine::gui_drawCompass(bool force) {
 	_compassDirection = _currentDirection;
 }
 
-void EobCoreEngine::gui_drawDialogueBox() {
+void EoBCoreEngine::gui_drawDialogueBox() {
 	gui_drawBox(0, 121, 320, 79, _color1_1, _color2_1, _bkgColor_1);
 	txt()->clearCurDim();
 }
 
-void EobCoreEngine::gui_drawSpellbook() {
+void EoBCoreEngine::gui_drawSpellbook() {
 	_screen->setCurPage(2);
 	int numTab = (_flags.gameID == GI_EOB1) ? 5 : 6;
 	_screen->copyRegion(64, 121, 64, 121, 112, 56, 0, 2, Screen::CR_NO_P_CHECK);
@@ -608,7 +608,7 @@ void EobCoreEngine::gui_drawSpellbook() {
 		_screen->updateScreen();
 }
 
-void EobCoreEngine::gui_drawSpellbookScrollArrow(int x, int y, int direction) {
+void EoBCoreEngine::gui_drawSpellbookScrollArrow(int x, int y, int direction) {
 	static const uint8 x1[] = { 0, 2, 1, 0, 2, 2 };
 	static const uint8 x2[] = { 2, 4, 5, 6, 4, 4 };
 	if (direction) {
@@ -622,7 +622,7 @@ void EobCoreEngine::gui_drawSpellbookScrollArrow(int x, int y, int direction) {
 	}
 }
 
-void EobCoreEngine::gui_updateSlotAfterScrollUse() {
+void EoBCoreEngine::gui_updateSlotAfterScrollUse() {
 	_characters[_openBookChar].disabledSlots ^= (1 << (--_castScrollSlot));
 	setCharEventTimer(_openBookChar, 18, _castScrollSlot + 2, 1);
 	gui_drawCharPortraitWithStats(_openBookChar);
@@ -632,7 +632,7 @@ void EobCoreEngine::gui_updateSlotAfterScrollUse() {
 	gui_toggleButtons();
 }
 
-void EobCoreEngine::gui_updateControls() {
+void EoBCoreEngine::gui_updateControls() {
 	Button b;
 	if (_currentControlMode)
 		clickedPortraitRestore(&b);
@@ -640,7 +640,7 @@ void EobCoreEngine::gui_updateControls() {
 		clickedSpellbookAbort(&b);
 }
 
-void EobCoreEngine::gui_toggleButtons() {
+void EoBCoreEngine::gui_toggleButtons() {
 	if (_currentControlMode == 0)
 		gui_setPlayFieldButtons();
 	else if (_currentControlMode == 1)
@@ -649,32 +649,32 @@ void EobCoreEngine::gui_toggleButtons() {
 		gui_setStatsListButtons();
 }
 
-void EobCoreEngine::gui_setPlayFieldButtons() {
+void EoBCoreEngine::gui_setPlayFieldButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList2 : _buttonList1);
 }
 
-void EobCoreEngine::gui_setInventoryButtons() {
+void EoBCoreEngine::gui_setInventoryButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList5 : _buttonList3);
 }
 
-void EobCoreEngine::gui_setStatsListButtons() {
+void EoBCoreEngine::gui_setStatsListButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList6 : _buttonList4);
 }
 
-void EobCoreEngine::gui_setSwapCharacterButtons() {
+void EoBCoreEngine::gui_setSwapCharacterButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_buttonList7);
 }
 
-void EobCoreEngine::gui_setCastOnWhomButtons() {
+void EoBCoreEngine::gui_setCastOnWhomButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_buttonList8);
 }
 
-void EobCoreEngine::gui_initButton(int index, int, int, int) {
+void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	Button *b = 0;
 	int cnt = 1;
 
@@ -702,7 +702,7 @@ void EobCoreEngine::gui_initButton(int index, int, int, int) {
 
 	b->index = index + 1;
 
-	const EobGuiButtonDef *d = &_buttonDefs[index];
+	const EoBGuiButtonDef *d = &_buttonDefs[index];
 	b->buttonCallback = _buttonCallbacks[index];
 
 	if (_flags.gameID == GI_EOB1) {
@@ -731,7 +731,7 @@ void EobCoreEngine::gui_initButton(int index, int, int, int) {
 	b->arg = d->arg;
 }
 
-int EobCoreEngine::clickedCharPortraitDefault(Button *button) {
+int EoBCoreEngine::clickedCharPortraitDefault(Button *button) {
 	if (!testCharacter(button->arg, 1))
 		return 1;
 
@@ -739,7 +739,7 @@ int EobCoreEngine::clickedCharPortraitDefault(Button *button) {
 	return 0;
 }
 
-int EobCoreEngine::clickedCamp(Button *button) {
+int EoBCoreEngine::clickedCamp(Button *button) {
 	gui_updateControls();
 	disableSysTimer(2);
 	int cd = _screen->curDimIndex();
@@ -779,7 +779,7 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	return button->arg;
 }
 
-int EobCoreEngine::clickedSceneDropPickupItem(Button *button) {
+int EoBCoreEngine::clickedSceneDropPickupItem(Button *button) {
 	uint16 block = _currentBlock;
 	if (button->arg > 1) {
 		block = calcNewBlockPosition(_currentBlock, _currentDirection);
@@ -805,7 +805,7 @@ int EobCoreEngine::clickedSceneDropPickupItem(Button *button) {
 	return 1;
 }
 
-int EobCoreEngine::clickedCharPortrait2(Button *button) {
+int EoBCoreEngine::clickedCharPortrait2(Button *button) {
 	if (!_gui->_progress) {
 		if (!testCharacter(button->arg, 1))
 			return button->index;
@@ -822,7 +822,7 @@ int EobCoreEngine::clickedCharPortrait2(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedWeaponSlot(Button *button) {
+int EoBCoreEngine::clickedWeaponSlot(Button *button) {
 	if (!testCharacter(button->arg, 1))
 		return 1;
 
@@ -840,7 +840,7 @@ int EobCoreEngine::clickedWeaponSlot(Button *button) {
 	return 1;
 }
 
-int EobCoreEngine::clickedCharNameLabelRight(Button *button) {
+int EoBCoreEngine::clickedCharNameLabelRight(Button *button) {
 	if (!testCharacter(button->arg, 1))
 		return button->index;
 
@@ -870,17 +870,17 @@ int EobCoreEngine::clickedCharNameLabelRight(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedInventorySlot(Button *button) {
+int EoBCoreEngine::clickedInventorySlot(Button *button) {
 	gui_processInventorySlotClick(button->arg);
 	return button->index;
 }
 
-int EobCoreEngine::clickedEatItem(Button *button) {
+int EoBCoreEngine::clickedEatItem(Button *button) {
 	eatItemInHand(_updateCharNum);
 	return button->index;
 }
 
-int EobCoreEngine::clickedInventoryPrevChar(Button *button) {
+int EoBCoreEngine::clickedInventoryPrevChar(Button *button) {
 	if (_gui->_progress == 1)
 		_updateCharNum = 0;
 	else if (_gui->_progress == 2)
@@ -892,7 +892,7 @@ int EobCoreEngine::clickedInventoryPrevChar(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedInventoryNextChar(Button *button) {
+int EoBCoreEngine::clickedInventoryNextChar(Button *button) {
 	int oldVal = _updateCharNum;
 	int v = button->arg == 2 ? 2 : 0;
 
@@ -912,7 +912,7 @@ int EobCoreEngine::clickedInventoryNextChar(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedSpellbookTab(Button *button) {
+int EoBCoreEngine::clickedSpellbookTab(Button *button) {
 	_openBookSpellLevel = button->arg;
 	_openBookSpellListOffset = 0;
 
@@ -930,7 +930,7 @@ int EobCoreEngine::clickedSpellbookTab(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedSpellbookList(Button *button) {
+int EoBCoreEngine::clickedSpellbookList(Button *button) {
 	int listIndex = button->arg;
 	bool spellLevelAvailable = false;
 
@@ -1006,7 +1006,7 @@ int EobCoreEngine::clickedSpellbookList(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedCastSpellOnCharacter(Button *button) {
+int EoBCoreEngine::clickedCastSpellOnCharacter(Button *button) {
 	_activeSpellCharId = button->arg & 0xff;
 
 	if (_activeSpellCharId == 0xff) {
@@ -1025,7 +1025,7 @@ int EobCoreEngine::clickedCastSpellOnCharacter(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedInventoryNextPage(Button *button) {
+int EoBCoreEngine::clickedInventoryNextPage(Button *button) {
 	if (_currentControlMode == 2) {
 		gui_setInventoryButtons();
 		_currentControlMode = 1;
@@ -1038,7 +1038,7 @@ int EobCoreEngine::clickedInventoryNextPage(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedPortraitRestore(Button *button) {
+int EoBCoreEngine::clickedPortraitRestore(Button *button) {
 	_currentControlMode = 0;
 	_screen->_curPage = 2;
 	_screen->copyRegion(0, 0, 0, 0, 144, 168, 5, _screen->_curPage, Screen::CR_NO_P_CHECK);
@@ -1050,7 +1050,7 @@ int EobCoreEngine::clickedPortraitRestore(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedUpArrow(Button *button) {
+int EoBCoreEngine::clickedUpArrow(Button *button) {
 	int b = calcNewBlockPositionAndTestPassability(_currentBlock, _currentDirection);
 
 	if (b == -1) {
@@ -1063,7 +1063,7 @@ int EobCoreEngine::clickedUpArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedDownArrow(Button *button) {
+int EoBCoreEngine::clickedDownArrow(Button *button) {
 	int b = calcNewBlockPositionAndTestPassability(_currentBlock, (_currentDirection + 2) & 3);
 
 	if (b == -1) {
@@ -1076,7 +1076,7 @@ int EobCoreEngine::clickedDownArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedLeftArrow(Button *button) {
+int EoBCoreEngine::clickedLeftArrow(Button *button) {
 	int b = calcNewBlockPositionAndTestPassability(_currentBlock, (_currentDirection - 1) & 3);
 
 	if (b == -1) {
@@ -1089,7 +1089,7 @@ int EobCoreEngine::clickedLeftArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedRightArrow(Button *button) {
+int EoBCoreEngine::clickedRightArrow(Button *button) {
 	int b = calcNewBlockPositionAndTestPassability(_currentBlock, (_currentDirection + 1) & 3);
 
 	if (b == -1) {
@@ -1102,7 +1102,7 @@ int EobCoreEngine::clickedRightArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedTurnLeftArrow(Button *button) {
+int EoBCoreEngine::clickedTurnLeftArrow(Button *button) {
 	_currentDirection = (_currentDirection - 1) & 3;
 	//_keybControlUnk = -1;
 	_sceneDefaultUpdate = 1;
@@ -1110,7 +1110,7 @@ int EobCoreEngine::clickedTurnLeftArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedTurnRightArrow(Button *button) {
+int EoBCoreEngine::clickedTurnRightArrow(Button *button) {
 	_currentDirection = (_currentDirection + 1) & 3;
 	//_keybControlUnk = -1;
 	_sceneDefaultUpdate = 1;
@@ -1118,7 +1118,7 @@ int EobCoreEngine::clickedTurnRightArrow(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedAbortCharSwitch(Button *button) {
+int EoBCoreEngine::clickedAbortCharSwitch(Button *button) {
 	_timer->disable(0);
 	int c = _exchangeCharacterId;
 	_exchangeCharacterId = -1;
@@ -1127,7 +1127,7 @@ int EobCoreEngine::clickedAbortCharSwitch(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedSceneThrowItem(Button *button) {
+int EoBCoreEngine::clickedSceneThrowItem(Button *button) {
 	if (!_itemInHand)
 		return button->index;
 
@@ -1139,12 +1139,12 @@ int EobCoreEngine::clickedSceneThrowItem(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedSceneSpecial(Button *button) {
+int EoBCoreEngine::clickedSceneSpecial(Button *button) {
 	_clickedSpecialFlag = 0x40;
 	return specialWallAction(calcNewBlockPosition(_currentBlock, _currentDirection), _currentDirection);
 }
 
-int EobCoreEngine::clickedSpellbookAbort(Button *button) {
+int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_updateFlags = 0;
 	_screen->copyRegion(0, 0, 64, 121, 112, 56, 10, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -1153,7 +1153,7 @@ int EobCoreEngine::clickedSpellbookAbort(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedSpellbookScroll(Button *button) {
+int EoBCoreEngine::clickedSpellbookScroll(Button *button) {
 	if (_openBookAvailableSpells[_openBookSpellLevel * 10] > 0) {
 		_openBookSpellListOffset ^= 6;
 		_openBookSpellSelectedItem = 0;
@@ -1169,11 +1169,11 @@ int EobCoreEngine::clickedSpellbookScroll(Button *button) {
 	return button->index;
 }
 
-int EobCoreEngine::clickedUnk(Button *button) {
+int EoBCoreEngine::clickedUnk(Button *button) {
 	return button->index;
 }
 
-void EobCoreEngine::gui_processCharPortraitClick(int index) {
+void EoBCoreEngine::gui_processCharPortraitClick(int index) {
 	if (index == _updateCharNum)
 		return;
 
@@ -1184,7 +1184,7 @@ void EobCoreEngine::gui_processCharPortraitClick(int index) {
 	gui_drawCharPortraitWithStats(index);
 }
 
-void EobCoreEngine::gui_processWeaponSlotClickLeft(int charIndex, int slotIndex) {
+void EoBCoreEngine::gui_processWeaponSlotClickLeft(int charIndex, int slotIndex) {
 	int itm = _characters[charIndex].inventory[slotIndex];
 	if (_items[itm].flags & 0x20)
 		return;
@@ -1202,7 +1202,7 @@ void EobCoreEngine::gui_processWeaponSlotClickLeft(int charIndex, int slotIndex)
 	recalcArmorClass(charIndex);
 }
 
-void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex) {
+void EoBCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex) {
 	if (!testCharacter(charIndex, 0x0d))
 		return;
 
@@ -1308,7 +1308,7 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 	_lastUsedItem = 0;
 }
 
-void EobCoreEngine::gui_processInventorySlotClick(int slot) {
+void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 	int itm = _characters[_updateCharNum].inventory[slot];
 	int ih = _itemInHand;
 	if (!validateInventorySlotForItem(ih, _updateCharNum, slot))
@@ -1334,7 +1334,7 @@ void EobCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
 
@@ -1374,7 +1374,7 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_needRest = false;
 }
 
-GUI_Eob::~GUI_Eob() {
+GUI_EoB::~GUI_EoB() {
 	if (_menuStringsPrefsTemp) {
 		for (int i = 0; i < 4; i++)
 			delete[] _menuStringsPrefsTemp[i];
@@ -1392,7 +1392,7 @@ GUI_Eob::~GUI_Eob() {
 	delete[] _numAssignedSpellsOfType;
 }
 
-void GUI_Eob::processButton(Button *button) {
+void GUI_EoB::processButton(Button *button) {
 	if (!button->data0Val1 && !button->data2Val1 && !button->data1Val1)
 		return;
 
@@ -1496,7 +1496,7 @@ void GUI_Eob::processButton(Button *button) {
 	}
 }
 
-int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8 mouseWheel) {
+int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8 mouseWheel) {
 	_progress = 0;
 	uint16 in = inputFlags & 0xff;
 	uint16 buttonReleaseFlag = 0;
@@ -1878,7 +1878,7 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	return result;
 }
 
-void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing) {
+void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing) {
 	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, itemOffset);
 
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
@@ -1901,7 +1901,7 @@ void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	_vm->removeInputTop();
 }
 
-int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset) {
+int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset) {
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
 	int h = _menuNumItems - 1;
 	int currentItem = _menuCur % _menuNumItems;
@@ -1958,7 +1958,7 @@ int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	return result;
 }
 
-int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset) {
+int GUI_EoB::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset) {
 	if (menuItemsMask == -1)
 		return index;
 
@@ -1976,7 +1976,7 @@ int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffs
 	return res;
 }
 
-void GUI_Eob::simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3) {
+void GUI_EoB::simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3) {
 	for (int i = 0; i < 3; i++) {
 		_screen->printText(str, x, y, color2, color3);
 		_screen->updateScreen();
@@ -1987,7 +1987,7 @@ void GUI_Eob::simpleMenu_flashSelection(const char *str, int x, int y, int color
 	}
 }
 
-void GUI_Eob::runCampMenu() {
+void GUI_EoB::runCampMenu() {
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 
 	Button *highlightButton = 0;
@@ -2211,7 +2211,7 @@ void GUI_Eob::runCampMenu() {
 	_vm->writeSettings();
 }
 
-bool GUI_Eob::runLoadMenu(int x, int y) {
+bool GUI_EoB::runLoadMenu(int x, int y) {
 	const ScreenDim *dm = _screen->getScreenDim(11);
 	int xo = dm->sx;
 	int yo = dm->sy;
@@ -2239,7 +2239,7 @@ bool GUI_Eob::runLoadMenu(int x, int y) {
 	return result;
 }
 
-bool GUI_Eob::confirmDialogue2(int dim, int id, int deflt) {
+bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 	int od = _screen->curDimIndex();
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_screen->setScreenDim(dim);
@@ -2307,7 +2307,7 @@ bool GUI_Eob::confirmDialogue2(int dim, int id, int deflt) {
 	return newHighlight ? false : true;
 }
 
-void GUI_Eob::messageDialogue2(int dim, int id, int buttonTextCol) {
+void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 
 	_screen->_curPage = 2;
@@ -2345,7 +2345,7 @@ void GUI_Eob::messageDialogue2(int dim, int id, int buttonTextCol) {
 
 }
 
-void GUI_Eob::updateBoxFrameHighLight(int box) {
+void GUI_EoB::updateBoxFrameHighLight(int box) {
 	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00 };
 
 	if (_updateBoxIndex == box) {
@@ -2358,7 +2358,7 @@ void GUI_Eob::updateBoxFrameHighLight(int box) {
 		if (!colorTable[_updateBoxColorIndex])
 			_updateBoxColorIndex = 0;
 
-		const EobRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
+		const EoBRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
 		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, colorTable[_updateBoxColorIndex++]);
 		_screen->updateScreen();
 
@@ -2366,7 +2366,7 @@ void GUI_Eob::updateBoxFrameHighLight(int box) {
 
 	} else {
 		if (_updateBoxIndex != -1) {
-			const EobRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
+			const EoBRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
 			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
 			_screen->updateScreen();
 		}
@@ -2377,7 +2377,7 @@ void GUI_Eob::updateBoxFrameHighLight(int box) {
 	}
 }
 
-int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
+int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
 	uint8 cursorState = 1;
 	char sufx[] = " ";
 
@@ -2495,14 +2495,14 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
-void GUI_Eob::createScreenThumbnail(Graphics::Surface &dst) {
+void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screenPal = new uint8[768];
 	_screen->getRealPalette(0, screenPal);
 	::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 	delete[] screenPal;
 }
 
-void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
+void GUI_EoB::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
 	if (menuItemsMask == -1) {
 		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
 		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
@@ -2519,7 +2519,7 @@ void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuIt
 	_menuCur = 0;
 }
 
-bool GUI_Eob::runSaveMenu(int x, int y) {
+bool GUI_EoB::runSaveMenu(int x, int y) {
 	const ScreenDim *dm = _screen->getScreenDim(11);
 	int xo = dm->sx;
 	int yo = dm->sy;
@@ -2574,7 +2574,7 @@ bool GUI_Eob::runSaveMenu(int x, int y) {
 	return result;
 }
 
-int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
+int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 	assert (id < 2);
 
 	_saveSlotX = _saveSlotY = 0;
@@ -2685,7 +2685,7 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 	return newHighlight;
 }
 
-void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
+void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 	if (charIndex == -1)
 		return;
 
@@ -2695,7 +2695,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 	int li = 0;
 	int lv = 0;
 
-	EobCharacter *c = &_vm->_characters[charIndex];
+	EoBCharacter *c = &_vm->_characters[charIndex];
 	int8 wm = c->wisdomCur - 12;
 	if (wm < 0)
 		wm = 0;
@@ -2963,7 +2963,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 }
 
 
-void GUI_Eob::scribeScrollDialogue() {
+void GUI_EoB::scribeScrollDialogue() {
 	int16 *scrollInvSlot = new int16[32];
 	int16 *scrollCharacter = new int16[32];
 	int16 *menuItems = new int16[6];
@@ -2984,7 +2984,7 @@ void GUI_Eob::scribeScrollDialogue() {
 		int csel = selectCharacterDialogue(49);
 		if (csel != -1) {
 
-			EobCharacter *c = &_vm->_characters[csel];
+			EoBCharacter *c = &_vm->_characters[csel];
 			int s = 0;
 
 			for (int i = 0; i < 32 && s < 6; i++) {
@@ -3085,7 +3085,7 @@ void GUI_Eob::scribeScrollDialogue() {
 	delete[] scrollInvSlot;
 }
 
-bool GUI_Eob::restParty() {
+bool GUI_EoB::restParty() {
 	static const int8 eob1healSpells[] = { 2, 15, 20, 24 };
 	static const int8 eob2healSpells[] = { 3, 16, 20, 28 };
 	const int8 *spells = _vm->game() == GI_EOB1 ? eob1healSpells : eob2healSpells;
@@ -3366,7 +3366,7 @@ bool GUI_Eob::restParty() {
 	return res;
 }
 
-bool GUI_Eob::confirmDialogue(int id) {
+bool GUI_EoB::confirmDialogue(int id) {
 	int od = _screen->curDimIndex();
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 
@@ -3428,7 +3428,7 @@ bool GUI_Eob::confirmDialogue(int id) {
 	return result;
 }
 
-void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
+void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
@@ -3468,7 +3468,7 @@ void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
 	dm = _screen->getScreenDim(dim);
 }
 
-int GUI_Eob::selectCharacterDialogue(int id) {
+int GUI_EoB::selectCharacterDialogue(int id) {
 	uint8 flags = (id == 26) ? (_vm->game() == GI_EOB1 ? 0x04 : 0x14) : 0x02;
 	_vm->removeInputTop();
 
@@ -3619,7 +3619,7 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 	return result;
 }
 
-void GUI_Eob::displayTextBox(int id) {
+void GUI_EoB::displayTextBox(int id) {
 	int op = _screen->setCurPage(2);
 	int od = _screen->curDimIndex();
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
@@ -3644,10 +3644,10 @@ void GUI_Eob::displayTextBox(int id) {
 	_screen->setScreenDim(od);
 }
 
-Button *GUI_Eob::initMenu(int id) {
+Button *GUI_EoB::initMenu(int id) {
 	_screen->setCurPage(2);
 
-	EobMenuDef *m = &_vm->_menuDefs[id];
+	EoBMenuDef *m = &_vm->_menuDefs[id];
 
 	if (m->dim) {
 		const ScreenDim *dm = _screen->getScreenDim(m->dim);
@@ -3660,7 +3660,7 @@ Button *GUI_Eob::initMenu(int id) {
 
 	Button *buttons = 0;
 	for (int i = 0; i < m->numButtons; i++) {
-		const EobMenuButtonDef *df = &_vm->_menuButtonDefs[m->firstButtonStrId + i];
+		const EoBMenuButtonDef *df = &_vm->_menuButtonDefs[m->firstButtonStrId + i];
 		Button *b = new Button;
 		b->index = m->firstButtonStrId + i + 1;
 		if (id == 4 && _vm->game() == GI_EOB1)
@@ -3691,11 +3691,11 @@ Button *GUI_Eob::initMenu(int id) {
 	return buttons;
 }
 
-void GUI_Eob::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) {
+void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) {
 	if (!b)
 		return;
 
-	EobMenuButtonDef *d = (EobMenuButtonDef*)b->extButtonDef;
+	EoBMenuButtonDef *d = (EoBMenuButtonDef*)b->extButtonDef;
 
 	if (d->flags & 1)
 		drawMenuButtonBox(b->x, b->y, b->width, b->height, clicked, noFill);
@@ -3718,7 +3718,7 @@ void GUI_Eob::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 	}
 }
 
-void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill) {
+void GUI_EoB::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill) {
 	uint8 col1 = _vm->_color1_1;
 	uint8 col2 = _vm->_color2_1;
 
@@ -3729,7 +3729,7 @@ void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
 }
 
-void GUI_Eob::drawTextBox(int dim, int id) {
+void GUI_EoB::drawTextBox(int dim, int id) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
 	const ScreenDim *dm = _screen->getScreenDim(dim);
@@ -3750,7 +3750,7 @@ void GUI_Eob::drawTextBox(int dim, int id) {
 	_screen->setFont(of);
 }
 
-void GUI_Eob::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
+void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	if (slot < 0)
 		return;
 
@@ -3771,7 +3771,7 @@ void GUI_Eob::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	_screen->printShadedText(s, x + 4, y + 3, textCol, 0);
 }
 
-void GUI_Eob::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
+void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
 	if (bookPageIndex < 0)
 		return;
 
@@ -3789,7 +3789,7 @@ void GUI_Eob::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 	}
 }
 
-void GUI_Eob::updateOptionsStrings() {
+void GUI_EoB::updateOptionsStrings() {
 	for (int i = 0; i < 4; i++) {
 		delete[] _menuStringsPrefsTemp[i];
 		_menuStringsPrefsTemp[i] = new char[strlen(_vm->_menuStringsPrefs[i]) + 8];
@@ -3801,7 +3801,7 @@ void GUI_Eob::updateOptionsStrings() {
 	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
 }
 
-const char *GUI_Eob::getMenuString(int id) {
+const char *GUI_EoB::getMenuString(int id) {
 	static const char empty[] = "";
 
 	if (id >= 69)
@@ -3849,7 +3849,7 @@ const char *GUI_Eob::getMenuString(int id) {
 	return empty;
 }
 
-Button *GUI_Eob::linkButton(Button *list, Button *newbt) {
+Button *GUI_EoB::linkButton(Button *list, Button *newbt) {
 	if (!list) {
 		list = newbt;
 		return list;
@@ -3867,7 +3867,7 @@ Button *GUI_Eob::linkButton(Button *list, Button *newbt) {
 	return resList;
 }
 
-void GUI_Eob::releaseButtons(Button *list) {
+void GUI_EoB::releaseButtons(Button *list) {
 	while (list) {
 		Button *n = list->nextButton;
 		delete list;
@@ -3876,7 +3876,7 @@ void GUI_Eob::releaseButtons(Button *list) {
 	_vm->gui_notifyButtonListChanged();
 }
 
-void GUI_Eob::setupSaveMenuSlots() {
+void GUI_EoB::setupSaveMenuSlots() {
 	for (int i = 0; i < 6; ++i) {
 		if (_savegameOffset + i < _savegameListSize) {
 			if (_savegameList[i + _savegameOffset]) {
@@ -3890,7 +3890,7 @@ void GUI_Eob::setupSaveMenuSlots() {
 	}
 }
 
-int GUI_Eob::getHighlightSlot() {
+int GUI_EoB::getHighlightSlot() {
 	int res = -1;
 	Common::Point p = _vm->getMousePos();
 
@@ -3908,11 +3908,11 @@ int GUI_Eob::getHighlightSlot() {
 	return res;
 }
 
-void GUI_Eob::sortSaveSlots() {
+void GUI_EoB::sortSaveSlots() {
 	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
 }
 
-void GUI_Eob::restParty_updateRestTime(int hours, bool init) {
+void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(10);
@@ -3937,7 +3937,7 @@ void GUI_Eob::restParty_updateRestTime(int hours, bool init) {
 	_screen->setFont(of);
 }
 
-const EobRect16 GUI_Eob::_updateBoxFrameHighLights[] = {
+const EoBRect16 GUI_EoB::_updateBoxFrameHighLights[] = {
 	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
 	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
 	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },

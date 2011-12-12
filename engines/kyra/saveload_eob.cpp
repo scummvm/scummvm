@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-Common::Error EobCoreEngine::loadGameState(int slot) {
+Common::Error EoBCoreEngine::loadGameState(int slot) {
 	const char *fileName = 0;
 
 	if (slot == -1) {
@@ -51,7 +51,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_screen->fadeToBlack(10);
 
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		c->id = in.readByte();
 		c->flags = in.readByte();
 		in.read(c->name, 11);
@@ -105,7 +105,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait < 0)
 			continue;
 		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true);
@@ -113,7 +113,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait >= 0)
 			continue;
 		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
@@ -147,7 +147,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_inf->loadState(in);
 
 	for (int i = 0; i < 600; i++) {
-		EobItem *t = &_items[i];
+		EoBItem *t = &_items[i];
 		t->nameUnid = in.readByte();
 		t->nameId = in.readByte();
 		t->flags = in.readByte();
@@ -162,7 +162,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	}
 
 	for (int i = 51; i < 65; i++) {
-		EobItemType *t = &_itemTypes[i];
+		EoBItemType *t = &_itemTypes[i];
 		t->invFlags = in.readUint16BE();
 		t->handFlags = in.readUint16BE();
 		t->armorClass = in.readSByte();
@@ -195,9 +195,9 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		LevelTempData *l = _lvlTempData[i];
 		l->wallsXorData = new uint8[4096];
 		l->flags = new uint16[1024];
-		EobMonsterInPlay *lm = new EobMonsterInPlay[30];
+		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30];
 		l->monsters = lm;
-		EobFlyingObject *lf = new EobFlyingObject[_numFlyingObjects];
+		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects];
 		l->flyingObjects = lf;
 		WallOfForce *lw = new WallOfForce[5];
 		l->wallsOfForce = lw;
@@ -207,7 +207,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 			l->flags[ii] = in.readByte();
 
 		for (int ii = 0; ii < 30; ii++) {
-			EobMonsterInPlay *m = &lm[ii];
+			EoBMonsterInPlay *m = &lm[ii];
 			m->type = in.readByte();
 			m->unit = in.readByte();
 			m->block = in.readUint16BE();
@@ -235,7 +235,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		}
 
 		for (int ii = 0; ii < _numFlyingObjects; ii++) {
-			EobFlyingObject *m = &lf[ii];
+			EoBFlyingObject *m = &lf[ii];
 			m->enable = in.readByte();
 			m->objectType = in.readByte();
 			m->attackerId = in.readSint16BE();
@@ -299,7 +299,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
+Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
 	Common::String saveNameTmp;
 	const char *fileName = 0;
 
@@ -326,7 +326,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		timerSpecialCharacterUpdate(0x30 + i);
 
 	for (int i = 0; i < 6; i++) {
-		EobCharacter *c = &_characters[i];
+		EoBCharacter *c = &_characters[i];
 
 		out->writeByte(c->id);
 		out->writeByte(c->flags);
@@ -400,7 +400,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	_inf->saveState(out);
 
 	for (int i = 0; i < 600; i++) {
-		EobItem *t = &_items[i];
+		EoBItem *t = &_items[i];
 		out->writeByte(t->nameUnid);
 		out->writeByte(t->nameId);
 		out->writeByte(t->flags);
@@ -415,7 +415,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	}
 
 	for (int i = 51; i < 65; i++) {
-		EobItemType *t = &_itemTypes[i];
+		EoBItemType *t = &_itemTypes[i];
 		out->writeUint16BE(t->invFlags);
 		out->writeUint16BE(t->handFlags);
 		out->writeSByte(t->armorClass);
@@ -440,12 +440,12 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);
 
-		EobMonsterInPlay *lm = (EobMonsterInPlay*)_lvlTempData[i]->monsters;
-		EobFlyingObject *lf = (EobFlyingObject*)_lvlTempData[i]->flyingObjects;
+		EoBMonsterInPlay *lm = (EoBMonsterInPlay*)_lvlTempData[i]->monsters;
+		EoBFlyingObject *lf = (EoBFlyingObject*)_lvlTempData[i]->flyingObjects;
 		WallOfForce *lw = (WallOfForce*)_lvlTempData[i]->wallsOfForce;
 
 		for (int ii = 0; ii < 30; ii++) {
-			EobMonsterInPlay *m = &lm[ii];
+			EoBMonsterInPlay *m = &lm[ii];
 			out->writeByte(m->type);
 			out->writeByte(m->unit);
 			out->writeUint16BE(m->block);
@@ -473,7 +473,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		}
 
 		for (int ii = 0; ii < _numFlyingObjects; ii++) {
-			EobFlyingObject *m = &lf[ii];
+			EoBFlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
 			out->writeSint16BE(m->attackerId);
@@ -513,22 +513,22 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	return Common::kNoError;
 }
 
-void *EobCoreEngine::generateMonsterTempData(LevelTempData *tmp) {
-	EobMonsterInPlay *m = new EobMonsterInPlay[30];
-	memcpy(m, _monsters,  sizeof(EobMonsterInPlay) * 30);
+void *EoBCoreEngine::generateMonsterTempData(LevelTempData *tmp) {
+	EoBMonsterInPlay *m = new EoBMonsterInPlay[30];
+	memcpy(m, _monsters,  sizeof(EoBMonsterInPlay) * 30);
 	return m;
 }
 
-void EobCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
-	memcpy(_monsters, tmp->monsters, sizeof(EobMonsterInPlay) * 30);
+void EoBCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
+	memcpy(_monsters, tmp->monsters, sizeof(EoBMonsterInPlay) * 30);
 }
 
-void EobCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	EobMonsterInPlay *p = (EobMonsterInPlay*)tmp->monsters;
+void EoBCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
+	EoBMonsterInPlay *p = (EoBMonsterInPlay*)tmp->monsters;
 	delete[] p;
 }
 
-void *EobCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
+void *EoBCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
 	WallOfForce *w = new WallOfForce[5];
 	memcpy(w, _wallsOfForce,  sizeof(WallOfForce) * 5);
 	uint32 ct = _system->getMillis();
@@ -537,14 +537,14 @@ void *EobCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
 	return w;
 }
 
-void EobCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
+void EoBCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
 	memcpy(_wallsOfForce, tmp->wallsOfForce,  sizeof(WallOfForce) * 5);
 	uint32 ct = _system->getMillis();
 	for (int i = 0; i < 5; i++)
 		_wallsOfForce[i].duration += ct;
 }
 
-void EobCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
+void EoBCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
 	WallOfForce *p = (WallOfForce*)tmp->wallsOfForce;
 	delete[] p;
 }

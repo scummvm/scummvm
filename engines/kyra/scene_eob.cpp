@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-void EobCoreEngine::loadLevel(int level, int sub) {
+void EoBCoreEngine::loadLevel(int level, int sub) {
 	_currentLevel = level;
 	_currentSub = sub;
 	uint32 end = _system->getMillis() + 500;
@@ -80,7 +80,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 		if (*pos++ == 0xEC)
 			pos = loadActiveMonsterData(pos, level);
 		else if (!(_hasTempDataFlags & (1 << (level - 1))))
-			memset(_monsters, 0, 30 * sizeof(EobMonsterInPlay));
+			memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
 
 		len2 = len - (pos - data);
 		_inf->loadData(pos, len2);
@@ -111,7 +111,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	}
 
 	loadVcnData(gfxFile.c_str(), 0);
-	_screen->loadEobBitmap("INVENT", 0, 5, 3, 2);
+	_screen->loadEoBBitmap("INVENT", 0, 5, 3, 2);
 	delayUntil(end);
 	snd_stopSound();
 
@@ -121,7 +121,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	_screen->setCurPage(0);
 }
 
-Common::String EobCoreEngine::initLevelData(int sub){
+Common::String EoBCoreEngine::initLevelData(int sub){
 	const uint8 *data = _screen->getCPagePtr(5) + 2;
 	const uint8 *pos = data;
 
@@ -252,7 +252,7 @@ Common::String EobCoreEngine::initLevelData(int sub){
 	return _curGfxFile;
 }
 
-void EobCoreEngine::addLevelItems() {
+void EoBCoreEngine::addLevelItems() {
 	for (int i = 0; i < 1024; i++)
 		_levelBlockProperties[i].drawObjects = 0;
 
@@ -263,7 +263,7 @@ void EobCoreEngine::addLevelItems() {
 	}
 }
 
-void EobCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
+void EoBCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
@@ -278,7 +278,7 @@ void EobCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
 	memcpy(_vcnBlocks, v, tlen);
 }
 
-void EobCoreEngine::loadBlockProperties(const char *mazFile) {
+void EoBCoreEngine::loadBlockProperties(const char *mazFile) {
 	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
 	const uint8 *p = getBlockFileData(mazFile) + 6;
 
@@ -293,19 +293,19 @@ void EobCoreEngine::loadBlockProperties(const char *mazFile) {
 	}
 }
 
-const uint8 *EobCoreEngine::getBlockFileData(int) {
+const uint8 *EoBCoreEngine::getBlockFileData(int) {
 	Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
 	_screen->loadFileDataToPage(s, 15, s->size());
 	delete s;
 	return _screen->getCPagePtr(14);
 }
 
-const uint8 *EobCoreEngine::getBlockFileData(const char *mazFile) {
+const uint8 *EoBCoreEngine::getBlockFileData(const char *mazFile) {
 	_curBlockFile = mazFile;
 	return getBlockFileData(0);
 }
 
-void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
+void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 	_screen->loadShapeSetBitmap(cpsFile, 3, 3);
 	Common::SeekableReadStream *s = _res->createReadStream(decFile);
 
@@ -331,9 +331,9 @@ void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 
 	int len = s->readUint16LE();
 	delete[] _levelDecorationRects;
-	_levelDecorationRects = new EobRect8[len];
+	_levelDecorationRects = new EoBRect8[len];
 	for (int i = 0; i < len; i++) {
-		EobRect8 *l = &_levelDecorationRects[i];
+		EoBRect8 *l = &_levelDecorationRects[i];
 		l->x = s->readUint16LE();
 		l->y = s->readUint16LE();
 		l->w = s->readUint16LE();
@@ -343,7 +343,7 @@ void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 	delete s;
 }
 
-void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int decIndex, int specialType, int flags) {
+void EoBCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int decIndex, int specialType, int flags) {
 	_wllVmpMap[wallIndex] = vmpIndex;
 	for (int i = 0; i < 6; i++) {
 		for (int ii = 0; ii < 10; ii++) {
@@ -372,7 +372,7 @@ void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 			if (_levelDecorationShapes[t])
 				continue;
 
-			EobRect8 *r = &_levelDecorationRects[t];
+			EoBRect8 *r = &_levelDecorationRects[t];
 			if (r->w == 0 || r->h == 0)
 				error("Error trying to make decoration %d (x: %d, y: %d, w: %d, h: %d)", decIndex, r->x, r->y, r->w, r->h);
 
@@ -389,7 +389,7 @@ void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 	} while (decIndex != -1);
 }
 
-void EobCoreEngine::releaseDecorations() {
+void EoBCoreEngine::releaseDecorations() {
 	if (_levelDecorationShapes) {
 		for (int i = 0; i < 400; i++) {
 			delete[] _levelDecorationShapes[i];
@@ -399,7 +399,7 @@ void EobCoreEngine::releaseDecorations() {
 	_mappedDecorationsCount = 0;
 }
 
-void EobCoreEngine::releaseDoorShapes() {
+void EoBCoreEngine::releaseDoorShapes() {
 	for (int i = 0; i < 6; i++) {
 		delete[] _doorShapes[i];
 		_doorShapes[i] = 0;
@@ -408,7 +408,7 @@ void EobCoreEngine::releaseDoorShapes() {
 	}
 }
 
-void EobCoreEngine::toggleWallState(int wall, int toggle) {
+void EoBCoreEngine::toggleWallState(int wall, int toggle) {
 	wall = wall * 10 + 3;
 
 	for (int i = 0; i < 9 ; i++) {
@@ -422,7 +422,7 @@ void EobCoreEngine::toggleWallState(int wall, int toggle) {
 	}
 }
 
-void EobCoreEngine::drawScene(int refresh) {
+void EoBCoreEngine::drawScene(int refresh) {
 	generateBlockDrawingBuffer();
 	drawVcnBlocks();
 	drawSceneShapes();
@@ -470,7 +470,7 @@ void EobCoreEngine::drawScene(int refresh) {
 	_sceneUpdateRequired = false;
 }
 
-void EobCoreEngine::drawSceneShapes(int start) {
+void EoBCoreEngine::drawSceneShapes(int start) {
 	for (int i = start; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
 		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];
@@ -512,7 +512,7 @@ void EobCoreEngine::drawSceneShapes(int start) {
 	}
 }
 
-void EobCoreEngine::drawDecorations(int index) {
+void EoBCoreEngine::drawDecorations(int index) {
 	for (int i = 1; i >= 0; i--) {
 		int s = index * 2 + i;
 		if (_dscWallMapping[s]) {
@@ -563,7 +563,7 @@ void EobCoreEngine::drawDecorations(int index) {
 	}
 }
 
-int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction) {
+int EoBCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction) {
 	uint16 b = calcNewBlockPosition(curBlock, direction);
 	int w = _levelBlockProperties[b].walls[direction ^ 2];
 	int f = _wllWallFlags[w];
@@ -585,13 +585,13 @@ int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 	return b;
 }
 
-void EobCoreEngine::notifyBlockNotPassable() {
+void EoBCoreEngine::notifyBlockNotPassable() {
 	_txt->printMessage(_warningStrings[0]);
 	snd_playSoundEffect(29);
 	removeInputTop();
 }
 
-void EobCoreEngine::moveParty(uint16 block) {
+void EoBCoreEngine::moveParty(uint16 block) {
 	updateAllMonsterDests();
 	uint16 old = _currentBlock;
 	_currentBlock = block;
@@ -616,7 +616,7 @@ void EobCoreEngine::moveParty(uint16 block) {
 	checkFlyingObjects();
 }
 
-int EobCoreEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
+int EoBCoreEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 	uint8 v = _visibleBlocks[13]->walls[_sceneDrawVarDown];
 	SpriteDecoration *d = &_doorSwitches[((v > 12 && v < 23) || v == 31) ? 3 : 0];
 	int x1 = d->x + _dscShapeCoords[138] - 4;
@@ -638,7 +638,7 @@ int EobCoreEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 	return 1;
 }
 
-int EobCoreEngine::clickedNiche(uint16 block, uint16 direction) {
+int EoBCoreEngine::clickedNiche(uint16 block, uint16 direction) {
 	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
 	if (!clickedShape(v))
 		return 0;
@@ -664,7 +664,7 @@ int EobCoreEngine::clickedNiche(uint16 block, uint16 direction) {
 	return 1;
 }
 
-int EobCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
+int EoBCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
 	if (!posWithinRect(_mouseX, _mouseY, 40, 16, 136, 88) && (_clickedSpecialFlag == 0x40))
 		return 0;
 
@@ -702,7 +702,7 @@ int EobCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
 	return 1;
 }
 
-int EobCoreEngine::clickedDoorNoPry(uint16 block, uint16 direction) {
+int EoBCoreEngine::clickedDoorNoPry(uint16 block, uint16 direction) {
 	if (!posWithinRect(_mouseX, _mouseY, 40, 16, 136, 88) && (_clickedSpecialFlag == 0x40))
 		return 0;
 
@@ -712,7 +712,7 @@ int EobCoreEngine::clickedDoorNoPry(uint16 block, uint16 direction) {
 	return 1;
 }
 
-int EobCoreEngine::specialWallAction(int block, int direction) {
+int EoBCoreEngine::specialWallAction(int block, int direction) {
 	direction ^= 2;
 	uint8 type = _specialWallTypes[_levelBlockProperties[block].walls[direction]];
 	if (!type || !(_clickedSpecialFlag & (((_levelBlockProperties[block].flags & 0xf8) >> 3) | 0xe0)))
@@ -764,11 +764,11 @@ int EobCoreEngine::specialWallAction(int block, int direction) {
 	return res;
 }
 
-void EobCoreEngine::openDoor(int block) {
+void EoBCoreEngine::openDoor(int block) {
 	openCloseDoor(block, 1);
 }
 
-void EobCoreEngine::closeDoor(int block) {
+void EoBCoreEngine::closeDoor(int block) {
 	if (block == _currentBlock || _levelBlockProperties[block].flags & 7)
 		return;
 	openCloseDoor(block, -1);

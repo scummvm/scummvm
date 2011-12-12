@@ -134,7 +134,7 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 #endif // ENABLE_LOL
 #ifdef ENABLE_EOB
 	case Kyra::GI_EOB1:
-		*engine = new Kyra::EobEngine(syst, flags);
+		*engine = new Kyra::EoBEngine(syst, flags);
 		break;
 	case Kyra::GI_EOB2:
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
