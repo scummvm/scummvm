@@ -576,7 +576,7 @@ void DreamGenContext::dreamweb() {
 			data.byte(kLastflag) = 32;
 			startup1();
 			data.byte(kVolumeto) = 0;
-			data.byte(kVolumedirection) = (uint8)-1;
+			data.byte(kVolumedirection) = (byte)-1;
 			data.byte(kCommandtype) = 255;
 
 		}
@@ -3070,7 +3070,7 @@ void DreamGenContext::intro() {
 	clearPalette();
 	loadIntroRoom();
 	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (uint8)-1;
+	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 4;
 	playChannel0(12, 255);
 	fadeScreenUps();
@@ -3286,7 +3286,7 @@ void DreamGenContext::gettingShot() {
 	loadIntroRoom();
 	fadeScreenUps();
 	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = 0xFF;
+	data.byte(kVolumedirection) = (byte)-1;
 	runEndSeq();
 	clearBeforeLoad();
 }
@@ -3935,7 +3935,7 @@ void DreamGenContext::talk() {
 	workToScreenM();
 	if (data.byte(kSpeechloaded) == 1) {
 		cancelCh1();
-		data.byte(kVolumedirection) = 0xFF;
+		data.byte(kVolumedirection) = (byte)-1;
 		data.byte(kVolumeto) = 0;
 	}
 }
@@ -4258,7 +4258,7 @@ void DreamGenContext::monkSpeaking() {
 	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
 	workToScreen();
 	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = 0xFF;
+	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 5;
 	playChannel0(12, 255);
 	fadeScreenUps();
