@@ -166,8 +166,12 @@
 		return DreamBase::getExAd(index);
 	}
 	DynObject *getEitherAdCPP();
-	SetObject *getSetAd(uint8 index);
-	void *getAnyAd(uint8 *value1, uint8 *value2);
+	void *getAnyAd(uint8 *value1, uint8 *value2) {
+		return DreamBase::getAnyAd(value1, value2);
+	}
+	SetObject *getSetAd(uint8 index) {
+		return DreamBase::getSetAd(index);
+	}
 	void *getAnyAdDir(uint8 index, uint8 flag);
 	void setAllChanges();
 	void doChange(uint8 index, uint8 value, uint8 type);
@@ -195,7 +199,6 @@
 	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
 	void obPicture();
-	void obIcons();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]);
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
@@ -237,9 +240,7 @@
 	uint16 getPersFrame(uint8 index);
 	void convIcons();
 	void examineOb(bool examineAgain = true);
-	void showWatch();
 	void dumpWatch();
-	void showTime();
 	void roomName();
 	void transferText();
 	void initRain();
@@ -424,9 +425,6 @@
 	void showOuterPad();
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
-	void showExit();
-	void showMan();
-	void panelIcons1();
 	void examIcon();
 	void buttonOne();
 	void buttonTwo();

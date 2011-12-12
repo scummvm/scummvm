@@ -99,7 +99,7 @@ void DreamGenContext::obPicture() {
 	showFrame(frames, 160, 68, frame, 0x80);
 }
 
-void DreamGenContext::obIcons() {
+void DreamBase::obIcons() {
 	uint8 value1, value2;
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {

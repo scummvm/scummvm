@@ -65,6 +65,9 @@ public:
 	void lockLightOn();
 	void lockLightOff();
 
+	// from object.cpp
+	void obIcons();
+
 	// from pathfind.cpp
 	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
@@ -137,6 +140,13 @@ public:
 	DynObject *getFreeAd(uint8 index);
 	DynObject *getExAd(uint8 index);
 	DynObject *getEitherAdCPP();
+	void showWatch();
+	void showTime();
+	void showExit();
+	void showMan();
+	void panelIcons1();
+	SetObject *getSetAd(uint8 index);
+	void *getAnyAd(uint8 *value1, uint8 *value2);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

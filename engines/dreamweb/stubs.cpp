@@ -1383,7 +1383,7 @@ DynObject *DreamBase::getEitherAdCPP() {
 		return getFreeAd(data.byte(kItemframe));
 }
 
-void *DreamGenContext::getAnyAd(uint8 *value1, uint8 *value2) {
+void *DreamBase::getAnyAd(uint8 *value1, uint8 *value2) {
 	if (data.byte(kObjecttype) == 4) {
 		DynObject *exObject = getExAd(data.byte(kCommand));
 		*value1 = exObject->b7;
@@ -1411,7 +1411,7 @@ void *DreamGenContext::getAnyAdDir(uint8 index, uint8 flag) {
 		return getSetAd(index);
 }
 
-SetObject *DreamGenContext::getSetAd(uint8 index) {
+SetObject *DreamBase::getSetAd(uint8 index) {
 	return (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
@@ -2065,7 +2065,7 @@ void DreamGenContext::mainScreen() {
 		walkAndExamine();
 }
 
-void DreamGenContext::showWatch() {
+void DreamBase::showWatch() {
 	if (data.byte(kWatchon)) {
 		showFrame(engine->icons1(), 250, 1, 6, 0);
 		showTime();
@@ -2079,7 +2079,7 @@ void DreamGenContext::dumpWatch() {
 	data.byte(kWatchdump) = 0;
 }
 
-void DreamGenContext::showTime() {
+void DreamBase::showTime() {
 	if (data.byte(kWatchon) == 0)
 		return;
 	Frame *charset = (Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
@@ -2467,18 +2467,18 @@ void DreamGenContext::showRightPage() {
 	data.word(kLinespacing) = 10;
 }
 
-void DreamGenContext::showExit() {
+void DreamBase::showExit() {
 	showFrame(engine->icons1(), 274, 154, 11, 0);
 }
 
-void DreamGenContext::showMan() {
+void DreamBase::showMan() {
 	showFrame(engine->icons1(), 0, 0, 0, 0);
 	showFrame(engine->icons1(), 0, 114, 1, 0);
 	if (data.byte(kShadeson))
 		showFrame(engine->icons1(), 28, 25, 2, 0);
 }
 
-void DreamGenContext::panelIcons1() {
+void DreamBase::panelIcons1() {
 	uint16 x;
 	if (data.byte(kWatchon) != 1)
 		x = 48;
@@ -4223,22 +4223,22 @@ void DreamGenContext::showPuzText() {
 }
 
 void DreamGenContext::showPuzText(uint16 command, uint16 count) {
-	// The original called findPuzText here and saved es:si. We call it below.
+	findPuzText(); // FIXME: Unnecessary? (Input: al, Output: es:si)
 	createPanel();
 	showPanel();
 	showMan();
 	showExit();
 	obIcons();
-	findPuzText();	// we call it here to set es:si correctly
 	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(command * 2);
 	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
-	uint16 y = 104;
-	DreamBase::printDirect(&string, 36, &y, 241, 241 & 1);
+	printDirect(string, 36, 104, 241, 241 & 1);
 	workToScreenM();
 	hangOnP(count);
 }
 
 void DreamGenContext::monkSpeaking() {
+	// FIXME: This is the CD version only.
+
 	data.byte(kRoomssample) = 35;
 	loadRoomsSample();
 	loadIntoTemp("DREAMWEB.G15");
@@ -4251,13 +4251,13 @@ void DreamGenContext::monkSpeaking() {
 	playChannel0(12, 255);
 	fadeScreenUps();
 	hangOn(300);
-	al = 40;
 
 	for (int i = 40; i <= 48; i++) {
 		dl = 'T';
 		dh = 83;
 		cl = 'T';
 		ah = 0;
+		al = i;
 		loadSpeech();
 
 		playChannel1(50 + 12);
@@ -4265,8 +4265,6 @@ void DreamGenContext::monkSpeaking() {
 		do {
 			engine->waitForVSync();
 		} while (data.byte(kCh1playing) != 255);
-
-		al++;
 	} 
 
 	data.byte(kVolumedirection) = 1;
