@@ -262,7 +262,7 @@ void LoLEngine::loadBlockProperties(const char *cmzFile) {
 
 const uint8 *LoLEngine::getBlockFileData(int levelIndex) {
 	_screen->loadBitmap(Common::String::format("LEVEL%d.CMZ", levelIndex).c_str(), 15, 15, 0);
-	return screen()->getCPagePtr(14);
+	return _screen->getCPagePtr(14);
 }
 
 void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool flag) {
@@ -1490,7 +1490,7 @@ void LoLEngine::drawDecorations(int index) {
 					else
 						ov = 0;
 				}
-				ovl = screen()->getLevelOverlay(ov);
+				ovl = _screen->getLevelOverlay(ov);
 			} else if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
 				scaleW = scaleH = 0x100;
 				int ov = 7;
@@ -1501,7 +1501,7 @@ void LoLEngine::drawDecorations(int index) {
 					else
 						ov = 0;
 				}
-				ovl = screen()->getLevelOverlay(ov);
+				ovl = _screen->getLevelOverlay(ov);
 			}
 
 			if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
@@ -1511,7 +1511,7 @@ void LoLEngine::drawDecorations(int index) {
 						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						if (ix == _dscShapeIndex[s]) {
 							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) -
-								screen()->getShapeScaledWidth(shapeData, scaleW) - xOffs;
+								_screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
 						}
 						flags = 0x105;
 					} else {
@@ -1520,13 +1520,13 @@ void LoLEngine::drawDecorations(int index) {
 					}
 
 					y = _dscShapeY[s] + yOffs + ((_levelDecorationProperties[l].shapeY[shpIx] * scaleH) >> 8);
-					screen()->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
+					_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
 
 					if ((_levelDecorationProperties[l].flags & 1) && shpIx < 4) {
 						//draw shadow
-						x += (screen()->getShapeScaledWidth(shapeData, scaleW));
+						x += (_screen->getShapeScaledWidth(shapeData, scaleW));
 						flags ^= 1;
-						screen()->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
+						_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
 					}
 				}
 			}
