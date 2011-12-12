@@ -28,11 +28,11 @@ namespace Kyra {
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
-	return (const uint16 *)getData(id, kLoLRawDataBe16, entries);
+	return (const uint16 *)getData(id, kRawDataBe16, entries);
 }
 
 const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
-	return (const uint32 *)getData(id, kLoLRawDataBe32, entries);
+	return (const uint32 *)getData(id, kRawDataBe32, entries);
 }
 
 bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
