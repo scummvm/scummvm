@@ -79,6 +79,8 @@ p = parser(skip_binary_data = [
 	'opslist',
 	# sblaster.asm
 	'dmaaddresses',
+	'speechfilename',
+	'speechfile',
 	# sprite.asm
 	'reelcalls',
 	'facelist',
@@ -255,6 +257,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'copper',
 	'copyname',
 	'createfile',
+	'createname',
 	'createpanel',
 	'createpanel2',
 	'credits',

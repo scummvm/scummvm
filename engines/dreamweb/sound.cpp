@@ -33,9 +33,8 @@ namespace DreamGen {
 void DreamGenContext::loadSpeech() {
 	cancelCh1();
 	data.byte(kSpeechloaded) = 0;
-	createName();
-	const char *name = (const char *)data.ptr(di, 13);
-	//warning("name = %s", name);
+	Common::String name = Common::String::format("%c%02d%c%04d.RAW", (uint8)dl, (uint8)dh, (uint8)cl, (uint16)ax);
+	//debug("name = %s", name.c_str());
 	if (engine->loadSpeech(name))
 		data.byte(kSpeechloaded) = 1;
 }

@@ -32,11 +32,10 @@
 
 namespace DreamGen {
 
+static const uint16 offset_commandline = 0x04c8;
 static const uint16 offset_openchangesize = 0x03e9;
-static const uint16 offset_speechfile = 0x04ce;
 static const uint16 offset_operand1 = 0x0491;
 static const uint16 offset_money2poke = 0x04c0;
-static const uint16 offset_commandline = 0x04db;
 static const uint16 offset_keys = 0x0427;
 static const uint16 offset_rootdir = 0x049f;
 static const uint16 offset_money1poke = 0x04bb;
@@ -414,14 +413,14 @@ static const uint16 kReelroutines = 518;
 static const uint16 kBasicsample = 975;
 static const uint16 kVolumetabname = 988;
 static const uint16 kCurrentfile = 1197;
-static const uint16 kRoomscango = 1340;
-static const uint16 kRoompics = 1356;
-static const uint16 kOplist = 1371;
-static const uint16 kInputline = 1374;
-static const uint16 kPresslist = 1502;
-static const uint16 kQuitrequested = 1508;
-static const uint16 kSubtitles = 1509;
-static const uint16 kForeignrelease = 1510;
+static const uint16 kRoomscango = 1321;
+static const uint16 kRoompics = 1337;
+static const uint16 kOplist = 1352;
+static const uint16 kInputline = 1355;
+static const uint16 kPresslist = 1483;
+static const uint16 kQuitrequested = 1489;
+static const uint16 kSubtitles = 1490;
+static const uint16 kForeignrelease = 1491;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -648,7 +647,6 @@ public:
 	void useControl();
 	void adjustRight();
 	void updateSymbolTop();
-	void createName();
 	void getPersonText();
 	void parser();
 	void emergencyPurge();
