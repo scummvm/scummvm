@@ -2978,15 +2978,17 @@ void Myst::clockReset() {
 }
 
 void Myst::clockResetWeight() {
-	// Set video bounds, weight going up
+	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+
 	if (!(_vm->getFeatures() & GF_ME)) {
-		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		// Set video bounds, weight going up
 		_vm->_video->setVideoBounds(_clockWeightVideo,
 				Audio::Timestamp(0, 2214 * 2 - _clockWeightPosition, 600),
 				Audio::Timestamp(0, 2214 * 2, 600));
 	} else {
-		//FIXME: Needs QT backwards playing
+		//FIXME: Needs QT backwards playing, for now just display the weight up
 		warning("Weight going back up not implemented");
+		_vm->_video->drawVideoFrame(_clockWeightVideo, Audio::Timestamp(0, 0, 600));
 	}
 
 	// Reset position
