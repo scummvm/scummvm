@@ -511,7 +511,6 @@ public:
 	void useAltar();
 	void startTalk();
 	void getAnyAd();
-	void usePipe();
 	void reminders();
 	void runTap();
 	void dumpDiaryKeys();

@@ -3590,53 +3590,6 @@ void DreamGenContext::notHeldError() {
 	putBackObStuff();
 }
 
-void DreamGenContext::usePipe() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto pipewith;
-	withWhat();
-	return;
-pipewith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto fillcup;
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'F';
-	compare();
-	if (flags.z())
-		goto alreadyfull;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-fillcup:
-	cx = 300;
-	al = 36;
-	showPuzText();
-	putBackObStuff();
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+15) = 'F'-'A';
-	return;
-alreadyfull:
-	cx = 300;
-	al = 35;
-	showPuzText();
-	putBackObStuff();
-}
-
 void DreamGenContext::useOpenBox() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);

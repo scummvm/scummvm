@@ -1314,4 +1314,31 @@ void DreamGenContext::useSLab() {
 	data.byte(kGetback) = 1;
 }
 
+void DreamGenContext::usePipe() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
+	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
+
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+		// Fill cup
+		showPuzText(36, 300);
+		putBackObStuff();
+		DynObject *exObject = getExAd(data.byte(kWithobject));
+		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		return;
+	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+		// Already full
+		showPuzText(14, 300);
+		showPuzText();
+		putBackObStuff();
+	} else {
+		showPuzText(35, 300);
+		putBackObStuff();
+	}
+}
+
 } // End of namespace DreamGen

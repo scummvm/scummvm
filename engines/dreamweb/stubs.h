@@ -332,6 +332,7 @@
 	void useHatch();
 	void useLighter();
 	void useSLab();
+	void usePipe();
 	void wheelSound();
 	void callHotelLift();
 	void useShield();
