@@ -888,23 +888,9 @@ void DreamGenContext::useTimedText() {
 void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
-		push(ax);
-		push(bx);
-		push(cx);
-		push(dx);
-		dl = 'T';
-		dh = voiceIndex;
-		cl = 'T';
-		ah = 0;
-		al = textIndex;
-		loadSpeech();
-		if (data.byte(kSpeechloaded) == 1) {
+		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
 			playChannel1(50+12);
 		}
-		dx = pop();
-		cx = pop();
-		bx = pop();
-		ax = pop();
 
 		// FIXME: This fallthrough does not properly support subtitles+speech
 		// mode. The parameters to setuptimedtemp() are sometimes different
@@ -4239,12 +4225,7 @@ void DreamGenContext::monkSpeaking() {
 	hangOn(300);
 
 	for (int i = 40; i <= 48; i++) {
-		dl = 'T';
-		dh = 83;
-		cl = 'T';
-		ah = 0;
-		al = i;
-		loadSpeech();
+		loadSpeech('T', 83, 'T', i);
 
 		playChannel1(50 + 12);
 

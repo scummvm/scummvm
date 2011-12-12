@@ -31,13 +31,20 @@
 namespace DreamGen {
 
 void DreamGenContext::loadSpeech() {
-	cancelCh1();
-	data.byte(kSpeechloaded) = 0;
-	Common::String name = Common::String::format("%c%02d%c%04d.RAW", (uint8)dl, (uint8)dh, (uint8)cl, (uint16)ax);
-	//debug("name = %s", name.c_str());
-	if (engine->loadSpeech(name))
-		data.byte(kSpeechloaded) = 1;
+	loadSpeech((uint8)dl, (uint8)dh, (uint8)cl, (uint16)ax);
 }
+
+bool DreamBase::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
+	cancelCh1();
+
+	Common::String name = Common::String::format("%c%02d%c%04d.RAW", type1, idx1, type2, idx2);
+	//debug("name = %s", name.c_str());
+	bool result = engine->loadSpeech(name);
+
+	data.byte(kSpeechloaded) = result;
+	return result;
+}
+
 
 void DreamBase::volumeAdjust() {
 	if (data.byte(kVolumedirection) == 0)

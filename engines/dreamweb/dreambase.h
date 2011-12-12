@@ -99,6 +99,7 @@ public:
 	void showNames();
 
 	// from sound.cpp
+	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);
 	void volumeAdjust();
 	void cancelCh0();
 	void cancelCh1();
