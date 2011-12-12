@@ -121,7 +121,7 @@ ResourceLoader::~ResourceLoader() {
 
 const Lab *ResourceLoader::getLab(const Common::String &filename) const {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
-		if ((*i)->getFileExists(filename))
+		if ((*i)->hasFile(filename))
 			return *i;
 
 	return NULL;
@@ -180,31 +180,13 @@ Block *ResourceLoader::getBlock(const Common::String &filename) {
     return b;
 }
 
-LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
-		return NULL;
-	else
-		return l->openNewStreamLua(filename);
-}
-
 Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename) const {
 	const Lab *l = getLab(filename);
 
 	if (!l)
 		return SearchMan.createReadStreamForMember(filename);
 	else
-		return l->openNewStreamFile(filename);
-}
-
-Common::SeekableReadStream *ResourceLoader::openNewSubStreamFile(const char *filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
-		return NULL;
-	else
-		return l->openNewSubStreamFile(filename);
+		return l->createReadStreamForMember(filename);
 }
 
 int ResourceLoader::getFileLength(const char *filename) const {

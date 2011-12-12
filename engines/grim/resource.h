@@ -27,6 +27,7 @@
 #include "common/file.h"
 
 #include "engines/grim/object.h"
+#include "engines/grim/lua/lua.h"
 
 namespace Grim {
 
@@ -43,7 +44,6 @@ class TrackedObject;
 class SaveGame;
 class Skeleton;
 class Block;
-class LuaFile;
 class Lab;
 
 typedef ObjectPtr<Material> MaterialPtr;
@@ -72,8 +72,6 @@ public:
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(const char *filename) const;
-	Common::SeekableReadStream *openNewSubStreamFile(const char *filename) const;
-	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);
 	bool getFileExists(const Common::String &filename) const;
 	int getFileLength(const char *filename) const;
