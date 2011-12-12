@@ -763,7 +763,7 @@ void DreamBase::rollEndCredits() {
 	playChannel0(16, 255);
 	data.byte(kVolume) = 7;
 	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = 0xFF;
 
 	multiGet(mapStore(), 75, 20, 160, 160);
 
