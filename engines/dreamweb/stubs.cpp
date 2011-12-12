@@ -4257,4 +4257,42 @@ void DreamGenContext::showPuzText(uint16 command, uint16 count) {
 	hangOnP(count);
 }
 
+void DreamGenContext::monkSpeaking() {
+	data.byte(kRoomssample) = 35;
+	loadRoomsSample();
+	loadIntoTemp("DREAMWEB.G15");
+	clearWork();
+	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
+	workToScreen();
+	data.byte(kVolume) = 7;
+	data.byte(kVolumedirection) = 0xFF;
+	data.byte(kVolumeto) = 5;
+	playChannel0(12, 255);
+	fadeScreenUps();
+	hangOn(300);
+	al = 40;
+
+	for (int i = 40; i < 48; i++) {
+		dl = 'T';
+		dh = 83;
+		cl = 'T';
+		ah = 0;
+		loadSpeech();
+
+		playChannel1(50 + 12);
+
+		do {
+			engine->waitForVSync();
+		} while (data.byte(kCh1playing) != 255);
+
+		al++;
+	} 
+
+	data.byte(kVolumedirection) = 1;
+	data.byte(kVolumeto) = 7;
+	fadeScreenDowns();
+	hangOn(300);
+	getRidOfTemp();
+}
+
 } // End of namespace DreamGen

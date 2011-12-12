@@ -567,5 +567,6 @@
 	void newPlace();
 	void showPuzText(uint16 command, uint16 count);
 	void showPuzText();
+	void monkSpeaking();
 
 #endif

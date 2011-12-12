@@ -32,15 +32,15 @@
 
 namespace DreamGen {
 
-static const uint16 offset_commandline = 0x04e8;
-static const uint16 offset_money2poke = 0x04cd;
-static const uint16 offset_speechfile = 0x04db;
-static const uint16 offset_rootdir = 0x04ac;
-static const uint16 offset_keys = 0x0434;
-static const uint16 offset_money1poke = 0x04c8;
-static const uint16 offset_comlist = 0x03f8;
-static const uint16 offset_openchangesize = 0x03f6;
-static const uint16 offset_operand1 = 0x049e;
+static const uint16 offset_openchangesize = 0x03e9;
+static const uint16 offset_speechfile = 0x04ce;
+static const uint16 offset_operand1 = 0x0491;
+static const uint16 offset_money2poke = 0x04c0;
+static const uint16 offset_commandline = 0x04db;
+static const uint16 offset_keys = 0x0427;
+static const uint16 offset_rootdir = 0x049f;
+static const uint16 offset_money1poke = 0x04bb;
+static const uint16 offset_comlist = 0x03eb;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -413,16 +413,15 @@ static const uint16 kHowmuchalloc = 516;
 static const uint16 kReelroutines = 518;
 static const uint16 kBasicsample = 975;
 static const uint16 kVolumetabname = 988;
-static const uint16 kMonkface = 1001;
-static const uint16 kCurrentfile = 1210;
-static const uint16 kRoomscango = 1353;
-static const uint16 kRoompics = 1369;
-static const uint16 kOplist = 1384;
-static const uint16 kInputline = 1387;
-static const uint16 kPresslist = 1515;
-static const uint16 kQuitrequested = 1521;
-static const uint16 kSubtitles = 1522;
-static const uint16 kForeignrelease = 1523;
+static const uint16 kCurrentfile = 1197;
+static const uint16 kRoomscango = 1340;
+static const uint16 kRoompics = 1356;
+static const uint16 kOplist = 1371;
+static const uint16 kInputline = 1374;
+static const uint16 kPresslist = 1502;
+static const uint16 kQuitrequested = 1508;
+static const uint16 kSubtitles = 1509;
+static const uint16 kForeignrelease = 1510;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -558,7 +557,6 @@ public:
 	void usePipe();
 	void reminders();
 	void runTap();
-	void showMonk();
 	void checkForExit();
 	void lookInInterface();
 	void inToInv();
@@ -640,7 +638,6 @@ public:
 	void findExObject();
 	void clearChanges();
 	void searchForFiles();
-	void monkSpeaking();
 	void getExAd();
 	void initialMonCols();
 	void useButtonA();

@@ -151,6 +151,7 @@ p = parser(skip_binary_data = [
 	# 'basicsample', # This can't be removed due to tasm-recover limitations
 	'endtextname',
 	'gungraphic',
+	'monkface',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
@@ -487,6 +488,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'monitorlogo',
 	'monkandryan',
 	'monks2text',
+	'monkspeaking',
 	'monmessage',
 	'monprint',
 	'moretalk',
@@ -650,6 +652,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showmainops',
 	'showman',
 	'showmenu',
+	'showmonk',
 	'shownames',
 	'showopbox',
 	'showoutermenu',
