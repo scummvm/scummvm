@@ -383,7 +383,7 @@ void Ringworld2Globals::reset() {
 	_v57C2C = 0;
 	_v58CE2 = 0;
 	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
-	_speechSubtitles = 0;
+	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
 
 	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);

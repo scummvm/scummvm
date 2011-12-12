@@ -178,12 +178,13 @@ public:
 };
 
 #define OBJ44_LIST_SIZE 5
+#define OBJ0A_LIST_SIZE ((g_vm->getGameID() == GType_Ringworld2) ? 8 : 5)
 
 class Obj44 : public Serialisable {
 public:
 	int _id;
 	int _callbackId[OBJ44_LIST_SIZE];
-	Obj0A _list[OBJ44_LIST_SIZE];
+	Obj0A _list[8];
 	uint _speakerOffset;
 
 	// Return to Ringworld specific field

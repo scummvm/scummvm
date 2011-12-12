@@ -110,7 +110,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	Common::String s = msg;
 	if (s.hasPrefix("!")) {
 		s.deleteChar(0);
-		_soundId = atoi(msg.c_str());
+		_soundId = atoi(s.c_str());
 
 		while (!s.empty() && (*s.c_str() >= '0' && *s.c_str() <= '9'))
 			s.deleteChar(0);
@@ -123,7 +123,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	_sceneText._width = _textWidth;
 	_sceneText._fontNumber = _fontNumber;
 	_sceneText._textMode = _textMode;
-	_sceneText.setup(msg);
+	_sceneText.setup(s);
 
 	//_sceneText.clone();
 
@@ -131,12 +131,12 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	_sceneText.setPriority(0x100);
 
 	// If subtitles are turned off, don't show the text
-	if (!(R2_GLOBALS._speechSubtitles & 1)) {
+	if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
 		_sceneText.hide();
 	}
 
 	// Figure out the text delay if subtitles are turned on, or there's no speech resource specified
-	if ((R2_GLOBALS._speechSubtitles & 1) || !_soundId) {
+	if ((R2_GLOBALS._speechSubtitles & SPEECH_TEXT) || !_soundId) {
 		const char *msgP = s.c_str();
 		int numWords = 0;
 		while (*msgP != '\0') {
@@ -159,10 +159,10 @@ void VisualSpeaker::setText(const Common::String &msg) {
 
 	
 	if (_fieldF6) {
-		if ((R2_GLOBALS._speechSubtitles & 1) || !_soundId)
+		if ((R2_GLOBALS._speechSubtitles & SPEECH_TEXT) || !_soundId)
 			_sceneText.hide();
 	} else {
-		if ((R2_GLOBALS._speechSubtitles & 2) && _soundId) {
+		if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && _soundId) {
 			if (!R2_GLOBALS._playStream.play(_soundId, NULL))
 				_sceneText.show();
 		}

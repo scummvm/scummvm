@@ -150,7 +150,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+			GUIO0()
 		},
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS

@@ -552,7 +552,7 @@ void Obj44::load(const byte *dataP) {
 		s.skip(4);
 	}
 
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+	for (int idx = 0; idx < OBJ0A_LIST_SIZE; ++idx) {
 		_list[idx]._id = s.readSint16LE();
 		_list[idx]._scriptOffset = s.readSint16LE();
 		s.skip(6);
@@ -565,7 +565,7 @@ void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		s.syncAsSint32LE(_callbackId[idx]);
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+	for (int idx = 0; idx < OBJ0A_LIST_SIZE; ++idx)
 		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 
@@ -645,10 +645,12 @@ void StripManager::load() {
 	// Get the object list
 	byte *obj44List = g_resourceManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = g_vm->_memoryManager.getSize(obj44List);
-	assert((dataSize % 0x44) == 0);
+
+	int obj44Size = (g_vm->getGameID() == GType_Ringworld2) ? 126 : 68;
+	assert((dataSize % obj44Size) == 0);
 
 	byte *dataP = obj44List;
-	for (int idx = 0; idx < (dataSize / 0x44); ++idx, dataP += 0x44) {
+	for (int idx = 0; idx < (dataSize / obj44Size); ++idx, dataP += obj44Size) {
 		Obj44 obj;
 		obj.load(dataP);
 		_obj44List.push_back(obj);
