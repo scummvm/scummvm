@@ -484,7 +484,7 @@ begin_credits("Credits");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Travis Howell", "Kirben", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
@@ -492,7 +492,7 @@ begin_credits("Credits");
 			begin_section("HE");
 				add_person("Jonathan Gray", "khalek", "(retired)");
 				add_person("Travis Howell", "Kirben", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
@@ -523,7 +523,7 @@ begin_credits("Credits");
 			begin_section("Cine");
 				add_person("Vincent Hamm", "yaz0r", "(retired)");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Kari Salminen", "Buddha^", "");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
@@ -576,7 +576,7 @@ begin_credits("Credits");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Florian Kagerer", "athrxx", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Johannes Schickel", "LordHoto", "");
 			end_section();
 
@@ -610,7 +610,7 @@ begin_credits("Credits");
 
 			begin_section("Queen");
 				add_person("David Eriksson", "twogood", "(retired)");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
@@ -679,7 +679,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Touch&eacute;");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
 			begin_section("TsAGE");
@@ -688,7 +688,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Tucker");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
 		end_section();
