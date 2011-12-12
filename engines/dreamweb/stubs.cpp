@@ -4253,7 +4253,7 @@ void DreamGenContext::monkSpeaking() {
 	hangOn(300);
 	al = 40;
 
-	for (int i = 40; i < 48; i++) {
+	for (int i = 40; i <= 48; i++) {
 		dl = 'T';
 		dh = 83;
 		cl = 'T';
