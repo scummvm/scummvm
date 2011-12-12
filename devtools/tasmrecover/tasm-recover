@@ -750,6 +750,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'undertextline',
 	'updatepeople',
 	'usebalcony',
+	'usebuttona',
 	'usecardreader1',
 	'usecardreader2',
 	'usecardreader3',

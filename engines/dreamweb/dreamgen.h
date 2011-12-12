@@ -610,7 +610,6 @@ public:
 	void searchForFiles();
 	void getExAd();
 	void initialMonCols();
-	void useButtonA();
 	void execCommand();
 	void updateSymbolBot();
 	void findPuzText();

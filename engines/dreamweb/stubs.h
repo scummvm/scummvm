@@ -564,5 +564,6 @@
 	void showPuzText();
 	void monkSpeaking();
 	void rollEndCredits2();
+	void useButtonA();
 
 #endif

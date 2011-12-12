@@ -4242,4 +4242,24 @@ void DreamGenContext::monkSpeaking() {
 	getRidOfTemp();
 }
 
+void DreamGenContext::useButtonA() {
+	if (!isSetObOnMap(95)) {
+		showFirstUse();
+		turnAnyPathOn(0, data.byte(kRoomnum) - 1);
+		removeSetObject(9);
+		placeSetObject(95);
+		data.word(kWatchingtime) = 15 * 2;
+		data.word(kReeltowatch) = 71;
+		data.word(kEndwatchreel) = 85;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+	} else {
+		// Done this bit
+		showSecondUse();
+		putBackObStuff();
+	}
+}
+
 } // End of namespace DreamGen

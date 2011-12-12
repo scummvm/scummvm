@@ -4849,34 +4849,6 @@ nottvsoldier:
 	putBackObStuff();
 }
 
-void DreamGenContext::useButtonA() {
-	STACK_CHECK;
-	al = 95;
-	isSetObOnMap();
-	if (flags.z())
-		goto donethisbit;
-	showFirstUse();
-	al = 0;
-	ah = data.byte(kRoomnum);
-	_dec(ah);
-	turnAnyPathOn();
-	al = 9;
-	removeSetObject();
-	al = 95;
-	placeSetObject();
-	data.word(kWatchingtime) = 15*2;
-	data.word(kReeltowatch) = 71;
-	data.word(kEndwatchreel) = 85;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	data.byte(kGetback) = 1;
-	_inc(data.byte(kProgresspoints));
-	return;
-donethisbit:
-	showSecondUse();
-	putBackObStuff();
-}
-
 void DreamGenContext::quitKey() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 222);
