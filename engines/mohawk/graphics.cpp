@@ -308,16 +308,19 @@ MystGraphics::~MystGraphics() {
 	delete _backBuffer;
 }
 
-static const char* picFileNames[] = {
+static const char *s_picFileNames[] = {
 	"CHpics",
+	"",
 	"",
 	"DUpics",
 	"INpics",
+	"",
 	"MEpics",
 	"MYpics",
 	"SEpics",
-	"STpics",
-	""
+	"",
+	"",
+	"STpics"
 };
 
 void MystGraphics::loadExternalPictureFile(uint16 stack) {
@@ -328,11 +331,11 @@ void MystGraphics::loadExternalPictureFile(uint16 stack) {
 		_pictureFile.picFile.close();
 	delete[] _pictureFile.entries;
 
-	if (!scumm_stricmp(picFileNames[stack], ""))
+	if (!scumm_stricmp(s_picFileNames[stack], ""))
 		return;
 
-	if (!_pictureFile.picFile.open(picFileNames[stack]))
-		error ("Could not open external picture file \'%s\'", picFileNames[stack]);
+	if (!_pictureFile.picFile.open(s_picFileNames[stack]))
+		error ("Could not open external picture file \'%s\'", s_picFileNames[stack]);
 
 	_pictureFile.pictureCount = _pictureFile.picFile.readUint32BE();
 	_pictureFile.entries = new PictureFile::PictureEntry[_pictureFile.pictureCount];
