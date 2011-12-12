@@ -480,7 +480,6 @@ void DreamGenContext::dreamweb() {
 	data.word(kOldpointerx) = 0xffff;
 
 	fadeDOS();
-	getTime();
 	clearBuffers();
 	clearPalette();
 	set16ColPalette();
@@ -935,18 +934,6 @@ void DreamGenContext::dumpTimedText() {
 
 	multiDump(data.byte(kTimedx), y, 240, kUndertimedysize);
 	data.byte(kNeedtodumptimed) = 0;
-}
-
-void DreamGenContext::getTime() {
-	TimeDate t;
-	g_system->getTimeAndDate(t);
-	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
-	ch = t.tm_hour;
-	cl = t.tm_min;
-	dh = t.tm_sec;
-	data.byte(kSecondcount) = dh;
-	data.byte(kMinutecount) = cl;
-	data.byte(kHourcount) = ch;
 }
 
 uint16 DreamGenContext::allocateMem(uint16 paragraphs) {
@@ -2071,9 +2058,12 @@ void DreamBase::showTime() {
 		return;
 	Frame *charset = (Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
 
-	int seconds = data.byte(kSecondcount);
-	int minutes = data.byte(kMinutecount);
-	int hours = data.byte(kHourcount);
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	int seconds = t.tm_sec;
+	int minutes = t.tm_min;
+	int hours = t.tm_hour;
 
 	showFrame(charset, 282+5, 21, 91*3+10 + seconds / 10, 0);
 	showFrame(charset, 282+9, 21, 91*3+10 + seconds % 10, 0);
@@ -2096,17 +2086,6 @@ void DreamGenContext::watchCount() {
 		data.byte(kWatchdump) = 1;
 	} else if (data.byte(kTimercount) == 18) {
 		data.byte(kTimercount) = 0;
-		++data.byte(kSecondcount);
-		if (data.byte(kSecondcount) == 60) {
-			data.byte(kSecondcount) = 0;
-			++data.byte(kMinutecount);
-			if (data.byte(kMinutecount) == 60) {
-				data.byte(kMinutecount) = 0;
-				++data.byte(kHourcount);
-				if (data.byte(kHourcount) == 24)
-					data.byte(kHourcount) = 0;
-			}
-		}
 		showTime();
 		data.byte(kWatchdump) = 1;
 	}
