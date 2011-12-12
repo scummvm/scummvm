@@ -883,6 +883,7 @@ void Lua_V1::GetSaveGameImage() {
 		data[l] = savedState->readLEUint16();
 	}
 	screenshot = new Bitmap((char *)data, width, height, 16, "screenshot");
+	delete[] data;
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
