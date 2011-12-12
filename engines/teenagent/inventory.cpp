@@ -286,10 +286,10 @@ void Inventory::Item::free() {
 void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
 	uint w = _rect.right - _rect.left, h = _rect.bottom - _rect.top;
 	byte *line = (byte *)s->getBasePtr(_rect.left, _rect.top);
-	for(uint y = 0; y < h; ++y, line += s->pitch) {
+	for (uint y = 0; y < h; ++y, line += s->pitch) {
 		byte *dst = line;
-		for(uint x = 0; x < w; ++x, ++dst) {
-			*dst = (*dst == 232)? 214: 224;
+		for (uint x = 0; x < w; ++x, ++dst) {
+			*dst = (*dst == 232) ? 214 : 224;
 		}
 	}
 }

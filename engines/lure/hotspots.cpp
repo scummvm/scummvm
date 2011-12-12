@@ -179,7 +179,6 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_walkFlag = false;
 	_skipFlag = false;
 	_roomNumber = 0;
-	_destHotspotId = 0;
 	_startX = 0;
 	_startY = 0;
 	_destX = 0;

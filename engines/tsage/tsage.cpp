@@ -38,7 +38,14 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
-	_debugger = new Debugger();
+	if (g_vm->getFeatures() & GF_DEMO)
+		_debugger = new DemoDebugger();
+	else if (g_vm->getGameID() == GType_Ringworld)
+		_debugger = new RingworldDebugger();
+	else if (g_vm->getGameID() == GType_BlueForce)
+		_debugger = new BlueForceDebugger();
+	else if (g_vm->getGameID() == GType_Ringworld2)
+		_debugger = new Ringworld2Debugger();	
 }
 
 Common::Error TSageEngine::init() {
@@ -61,6 +68,9 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 }
 
 void TSageEngine::initialize() {
+	// Set up the correct graphics mode
+	init();
+
 	g_saver = new Saver();
 
 	// Set up the resource manager
@@ -84,11 +94,20 @@ void TSageEngine::initialize() {
 		g_globals = new BlueForce::BlueForceGlobals();
 		
 		// Setup the user interface
-		BF_GLOBALS._uiElements.setup(Common::Point(0, BF_INTERFACE_Y - 2));
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
 
 		// Reset all global variables
 		BF_GLOBALS.reset();
-	}
+	} else if (g_vm->getGameID() == GType_Ringworld2) {
+		g_resourceManager->addLib("R2RW.RLB");
+		g_globals = new Ringworld2::Ringworld2Globals();
+
+		// Setup the user interface
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+
+		// Reset all global variables
+		R2_GLOBALS.reset();
+	}		
 
 	g_globals->gfxManager().setDefaults();
 
@@ -119,14 +138,14 @@ Common::Error TSageEngine::run() {
  * Returns true if it is currently okay to restore a game
  */
 bool TSageEngine::canLoadGameStateCurrently() {
-	return (g_globals->getFlag(50) == 0);
+	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canLoadGameStateCurrently();
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool TSageEngine::canSaveGameStateCurrently() {
-	return (g_globals->getFlag(50) == 0);
+	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canSaveGameStateCurrently();
 }
 
 /**

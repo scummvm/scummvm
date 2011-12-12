@@ -83,7 +83,7 @@ extern SRSTATE SRstate;
 
 // FIXME: Avoid non-const global vars
 
-static bool ASceneIsSaved = false;
+bool ASceneIsSaved = false;
 
 static int savedSceneCount = 0;
 
@@ -281,7 +281,7 @@ void ResumeInterprets() {
 			if (TinselV2)
 				RestoreProcess(&rsd->SavedICInfo[i]);
 			else
-				RestoreActorProcess(rsd->SavedICInfo[i].idActor, &rsd->SavedICInfo[i]);
+				RestoreActorProcess(rsd->SavedICInfo[i].idActor, &rsd->SavedICInfo[i], rsd == &sgData);
 			break;
 
 		case GS_POLYGON:

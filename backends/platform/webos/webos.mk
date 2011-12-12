@@ -51,8 +51,8 @@
 
 # Increment this number when the packaging of the app has been changed while
 # ScummVM itself has the same version as before. The number can be reset to 
-# 1 when the ScummVM version is increased.
-VER_PACKAGE = 5
+# 0 when the ScummVM version is increased.
+VER_PACKAGE = 0
 
 PATH_DIST = $(srcdir)/dists/webos
 PATH_MOJO = $(PATH_DIST)/mojo
@@ -60,10 +60,19 @@ APP_ID = $(shell basename $(prefix))
 APP_VERSION = $(shell printf "%d.%d.%02d%02d" $(VER_MAJOR) $(VER_MINOR) $(VER_PATCH) $(VER_PACKAGE))
 DESTDIR ?= staging
 PORTDISTDIR ?= portdist
+ifeq ($(HOST_COMPILER),Darwin)
+	SED_DASH_I = "-i \"\""
+else
+	SED_DASH_I = "-i"
+endif
 
 install: all
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(prefix)"
+ifeq ($(HOST_COMPILER),Darwin)
+	$(QUIET)$(INSTALL) -m 0644 "$(PATH_MOJO)/"* "$(DESTDIR)$(prefix)/"
+else
 	$(QUIET)$(INSTALL) -m 0644 -t "$(DESTDIR)$(prefix)/" "$(PATH_MOJO)/"*
+endif
 	$(QUIET)$(INSTALL) -m 0755 "$(PATH_MOJO)/start" "$(DESTDIR)$(prefix)/"
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(QUIET)$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
@@ -77,12 +86,12 @@ ifdef DYNAMIC_MODULES
 	$(QUIET)$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/"
 	$(QUIET)$(STRIP) "$(DESTDIR)$(libdir)/"*
 endif
-	$(QUIET)sed -i s/'APP_VERSION'/'$(APP_VERSION)'/ "$(DESTDIR)$(prefix)/appinfo.json"
-	$(QUIET)sed -i s/'APP_ID'/'$(APP_ID)'/ "$(DESTDIR)$(prefix)/appinfo.json"
+	$(QUIET)sed $(SED_DASH_I) s/'APP_VERSION'/'$(APP_VERSION)'/ "$(DESTDIR)$(prefix)/appinfo.json"
+	$(QUIET)sed $(SED_DASH_I) s/'APP_ID'/'$(APP_ID)'/ "$(DESTDIR)$(prefix)/appinfo.json"
 ifneq (,$(findstring -beta,$(APP_ID)))
-	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM Beta'/ "$(DESTDIR)$(prefix)/appinfo.json"
+	$(QUIET)sed $(SED_DASH_I) s/'APP_TITLE'/'ScummVM Beta'/ "$(DESTDIR)$(prefix)/appinfo.json"
 else
-	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM'/ "$(DESTDIR)$(prefix)/appinfo.json"
+	$(QUIET)sed $(SED_DASH_I) s/'APP_TITLE'/'ScummVM'/ "$(DESTDIR)$(prefix)/appinfo.json"
 endif
 
 uninstall:

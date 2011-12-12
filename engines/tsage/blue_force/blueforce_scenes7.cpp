@@ -31,12 +31,13 @@ namespace TsAGE {
 namespace BlueForce {
 
 /*--------------------------------------------------------------------------
- * Scene 710 - 
+ * Scene 710 - Beach
  *
  *--------------------------------------------------------------------------*/
+
 void Scene710::Timer1::signal() {
 	PaletteRotation *rotation = BF_GLOBALS._scenePalette.addRotation(136, 138, -1);
-	rotation->setDelay(25);
+	rotation->setDelay(20);
 	rotation = BF_GLOBALS._scenePalette.addRotation(146, 148, -1);
 	rotation->setDelay(30);
 	rotation = BF_GLOBALS._scenePalette.addRotation(187, 191, -1);
@@ -58,8 +59,7 @@ void Scene710::Action1::signal() {
 		setDelay(3);
 		break;
 	case 1: {
-		PlayerMover *mover = new PlayerMover();
-		BF_GLOBALS._player.addMover(mover, &scene->_laura._position, scene);
+		ADD_MOVER(BF_GLOBALS._player, scene->_laura._position.x + 8, scene->_laura._position.y + 8);
 		break;
 		}
 	case 2:
@@ -67,7 +67,7 @@ void Scene710::Action1::signal() {
 		scene->_stripManager.start(_state, this);
 		break;
 	case 3:
-		if (_state == 7105)
+		if (_state != 7105)
 			BF_GLOBALS._player.enableControl();
 		else {
 			BF_GLOBALS._player.disableControl();
@@ -76,7 +76,7 @@ void Scene710::Action1::signal() {
 		}
 		if (_state < 7104) {
 			_state++;
-			if ((_state != 7104) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1))
+			if ((_state == 7104) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1))
 					_state = 7105;
 		}
 		remove();
@@ -101,7 +101,7 @@ bool Scene710::Object4::startAction(CursorType action, Event &event) {
 	Scene710 *scene = (Scene710 *)BF_GLOBALS._sceneManager._scene;
 
 	if ((action == CURSOR_LOOK) && (scene->_kid._position.x < 0)) {
-		SceneItem::display(710, 13);
+		SceneItem::display2(710, 13);
 		return true;
 	} else
 		return NamedObject::startAction(action, event);
@@ -113,19 +113,19 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		if (scene->_v1D64 <= 2)
+		if (scene->_stickThrowCount <= 2)
 			return NamedObject::startAction(action, event);
 		else {
-			SceneItem::display(710, 3);
-			scene->_v1D66 = 1;
+			SceneItem::display2(710, 3);
+			scene->_watchCrate = true;
 			return true;
 		}
 	case CURSOR_USE:
-		if ((scene->_kid._position.x < 0) && (scene->_v1D62 == 1)) {
-			scene->_v1D64++;
-			if (scene->_v1D66 == 0) {
+		if ((scene->_kid._position.x < 0) && (scene->_dogLying)) {
+			scene->_stickThrowCount++;
+			if (!scene->_watchCrate) {
 				BF_GLOBALS._player.disableControl();
-				scene->_v1D62 = 0;
+				scene->_dogLying = false;
 				scene->_sceneMode = 7105;
 				scene->setAction(&scene->_sequenceManager1, scene, 7105, &BF_GLOBALS._player, &scene->_stick, &scene->_dog, NULL);
 			} else {
@@ -144,8 +144,8 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 void Scene710::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(710);
-
 	_sceneBounds.moveTo(320, 0);
+
 	BF_GLOBALS._sound1.fadeSound(14);
 	_soundExt1.fadeSound(48);
 	_v51C34.set(40, 0, 280, 240);
@@ -187,7 +187,8 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 	_item7.setDetails(Rect(0,    0, 640,  52), 710, 11, 17, -1, 1, NULL);
 	_item9.setDetails(Rect(0,    0, 640, 128), 710,  5, 15, -1, 1, NULL);
 
-	_v1D62 = _v1D64 = _v1D66 = _v1D68 = 0;
+	_stickThrowCount = 0;
+	_dogLying = _watchCrate = _throwStick = false;
 	_action1._state = 7100;
 	_timer1.set(2, NULL);
 	_sceneMode = 7100;
@@ -195,7 +196,7 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene710::signal() {
-	switch (_sceneMode++) {
+	switch (_sceneMode) {
 	case 0:
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -205,28 +206,29 @@ void Scene710::signal() {
 		setAction(&_sequenceManager1, this, 7102, &_dog, NULL);
 		break;
 	case 7101:
+		// Pick up crate part
 		BF_GLOBALS._player.enableControl();
-		BF_INVENTORY.setObjectScene(288, 36);
+		BF_INVENTORY.setObjectScene(INV_CRATE1, 1);
 		_stick.remove();
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		break;
 	case 7102:
 		_stick.setPosition(Common::Point(100, 122));
 		_stick.animate(ANIM_MODE_NONE, NULL);
 		_stick._strip = 2;
-		if (_v1D64 <= 2)
+		if (_stickThrowCount <= 2)
 			_stick._frame = 2;
 		else {
-			if (_v1D64 == 3) {
+			if (_stickThrowCount == 3) {
 				BF_GLOBALS._player.disableControl();
 				_sceneMode = 0;
 				_stripManager.start(7108, this);
 			}
 			_stick._frame = 1;
 		}
-		_v1D62 = 1;
-		BF_GLOBALS._walkRegions.proc1(2);
-		if ((_v1D68 != 0) && (_sceneMode != 0))
+		_dogLying = true;
+		BF_GLOBALS._walkRegions.disableRegion(2);
+		if ((_throwStick) && (_sceneMode != 0))
 			BF_GLOBALS._player.enableControl();
 		break;
 	case 7103:
@@ -239,12 +241,12 @@ void Scene710::signal() {
 		}
 		break;
 	case 7105:
-		_v1D68 = 1;
+		_throwStick = true;
 		// No break on purpose
 	case 7104:
 		_sceneMode = 7102;
 		setAction(&_sequenceManager1, this, 7102, &_dog, NULL);
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		break;
 	case 7106:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -256,8 +258,8 @@ void Scene710::signal() {
 }
 
 void Scene710::dispatch() {
-	if ((_kid._position.x > 0) && (_v1D62 == 1) && (_sceneMode != 7106)) {
-		_v1D62 = 0;
+	if ((_kid._position.x > 0) && (_dogLying) && (_sceneMode != 7106)) {
+		_dogLying = false;
 		_sceneMode = 7103;
 		setAction(&_sequenceManager1, this, 7103, &_kid, &_stick, &_dog, NULL);
 	}
@@ -266,10 +268,10 @@ void Scene710::dispatch() {
 
 void Scene710::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_v1D62);
-	s.syncAsSint16LE(_v1D64);
-	s.syncAsSint16LE(_v1D66);
-	s.syncAsSint16LE(_v1D68);
+	s.syncAsSint16LE(_dogLying);
+	s.syncAsSint16LE(_stickThrowCount);
+	s.syncAsSint16LE(_watchCrate);
+	s.syncAsSint16LE(_throwStick);
 }
 
 

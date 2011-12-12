@@ -156,7 +156,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		g_globals->setFlag(122);
 
-		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() == GType_BlueForce))  {
+		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() != GType_Ringworld))  {
 			CursorMan.showMouse(false);
 			return;
 		}
@@ -165,10 +165,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_LOOK:
 		// Look cursor
-		if (g_vm->getGameID() == GType_BlueForce)
+		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 3, &size);
-		else
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 5, &size);
+		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 5, &size);
+		}
 		_currentCursor = CURSOR_LOOK;
 		break;
 
@@ -176,6 +179,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// Use cursor
 		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 2, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 4, &size);
 		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 4, &size);
 		}
@@ -186,6 +191,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// Talk cursor
 		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 4, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 6, &size);
 		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 3, &size);
 		}
@@ -214,7 +221,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_WALK:
 	default:
-		if (g_vm->getGameID() == GType_BlueForce) {
+		switch (g_vm->getGameID()) {
+		case GType_BlueForce:
 			if (cursorType == CURSOR_WALK) {
 				cursor = g_resourceManager->getSubResource(1, 5, 1, &size);
 			} else {
@@ -224,12 +232,44 @@ void EventsClass::setCursor(CursorType cursorType) {
 				questionEnabled = true;
 			}
 			_currentCursor = cursorType;
-		} else {
+			break;
+		case GType_Ringworld2:
+			if (cursorType == CURSOR_WALK) {
+				cursor = CURSOR_WALK_DATA;
+				delFlag = false;
+			} else {
+				// Inventory icon
+				InvObject *invObject = g_globals->_inventory->getItem((int)cursorType);
+				cursor = g_resourceManager->getSubResource(6, invObject->_strip, invObject->_frame, &size);
+				questionEnabled = true;
+			}
+			_currentCursor = cursorType;
+			break;
+		default:
 			// For Ringworld, always treat as the walk cursor
 			cursor = CURSOR_WALK_DATA;
 			_currentCursor = CURSOR_WALK;
 			delFlag = false;
+			break;
 		}
+		break;
+
+	// Ringworld 2 specific cursors
+	case EXITCURSOR_N:
+	case EXITCURSOR_S:
+	case EXITCURSOR_W:
+	case EXITCURSOR_E:
+	case EXITCURSOR_LEFT_HAND:
+	case CURSOR_INVALID:
+	case EXITCURSOR_NE:
+	case EXITCURSOR_SE:
+	case EXITCURSOR_SW:
+	case EXITCURSOR_NW:
+	case SHADECURSOR_UP:
+	case SHADECURSOR_DOWN:
+	case SHADECURSOR_HAND:
+		_currentCursor = cursorType;
+		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
 		break;
 	}
 
@@ -244,9 +284,9 @@ void EventsClass::setCursor(CursorType cursorType) {
 	if (delFlag)
 		DEALLOCATE(cursor);
 
-	// For Blue Force, enable the question button when an inventory icon is selected
-	if (g_vm->getGameID() == GType_BlueForce)
-		BF_GLOBALS._uiElements._question.setEnabled(questionEnabled);
+	// For Blue Force and Return to Ringworld, enable the question button when an inventory icon is selected
+	if (g_vm->getGameID() != GType_Ringworld)
+		T2_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 
 void EventsClass::pushCursor(CursorType cursorType) {
@@ -313,7 +353,6 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 }
 
 void EventsClass::setCursor(GfxSurface &cursor) {
-	// TODO: Find proper parameters for this form in Blue Force
 	Graphics::Surface s = cursor.lockSurface();
 
 	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);

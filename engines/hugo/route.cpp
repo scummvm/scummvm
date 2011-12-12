@@ -67,35 +67,35 @@ void Route::setDirection(const uint16 keyCode) {
 	switch (keyCode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
-		obj->currImagePtr = obj->seqList[_UP].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 		break;
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_KP2:
-		obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 		break;
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_KP6:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_KP7:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP1:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEUP:
 	case Common::KEYCODE_KP9:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEDOWN:
 	case Common::KEYCODE_KP3:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	}
 }
@@ -231,48 +231,48 @@ void Route::segment(int16 x, int16 y) {
 	if (_vm->_hero->x < x1) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
 		// Find all segments below current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 	} else if (_vm->_hero->x + kHeroMaxWidth > x2) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
-		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
+		for (x = x2; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x >= x1; x--) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
 		// Find all segments below current
-		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
+		for (x = x2; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x >= x1; x--) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 	} else {
 		// Organize search around hero x position - this gives
 		// better chance for more direct route.
-		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}

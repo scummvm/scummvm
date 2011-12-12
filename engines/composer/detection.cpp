@@ -63,8 +63,6 @@ static const PlainGameDescriptor composerGames[] = {
 
 namespace Composer {
 
-using Common::GUIO_NONE;
-
 static const ComposerGameDescription gameDescriptions[] = {
 	// from Liam Finds a Story CD
 	{
@@ -75,7 +73,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV1
 	},
@@ -88,7 +86,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -102,7 +100,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -119,7 +117,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -132,7 +130,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -145,7 +143,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -162,7 +160,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -175,7 +173,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -188,7 +186,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -205,7 +203,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},
@@ -222,7 +220,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ComposerV2
 	},

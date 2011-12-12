@@ -37,8 +37,6 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-#define kKeyCtrl    29
-#define kKeyAlt     56
 #define kEventMax   256
 
 enum EventMask {
@@ -51,49 +49,15 @@ enum EventMask {
 	kEventKeyb      = 1 << 7
 };
 
-enum Keys {
-    NoKey       = 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
-    CtrlI, CtrlJ, CtrlK, CtrlL, CtrlM, CtrlN, CtrlO, CtrlP,
-    CtrlQ, CtrlR, CtrlS, CtrlT, CtrlU, CtrlV, CtrlW, CtrlX,
-    CtrlY, CtrlZ,
-    BSp         = 8, Tab,
-    Enter       = 13,
-    Eof         = 26, Esc,
-    AltQ        = 256 + 16, AltW, AltE, AltR, AltT, AltY, AltU, AltI, AltO, AltP,
-    AltA        = 256 + 30, AltS, AltD, AltF, AltG, AltH, AltJ, AltK, AltL,
-    AltZ        = 256 + 44, AltX, AltC, AltV, AltB, AltN, AltM,
-    F11         = 256 + 87, F12,
-    F1          = 256 + 59, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-    ShiftTab    = 256 + 15,
-    ShiftF1     = 256 + 84, ShiftF2, ShiftF3, ShiftF4, ShiftF5,
-    ShiftF6, ShiftF7, ShiftF8, ShiftF9, ShiftF10,
-    CtrlF1      = 256 + 94, CtrlF2,  CtrlF3,  CtrlF4,  CtrlF5,
-    CtrlF6,  CtrlF7,  CtrlF8,  CtrlF9,  CtrlF10,
-    AltF1       = 256 + 104, AltF2,  AltF3,   AltF4,   AltF5,
-    AltF6,  AltF7,   AltF8,   AltF9,   AltF10,
-    Home        = 256 + 71, Up, PgUp,
-    Left        = 256 + 75, Ctr, Right,
-    End         = 256 + 79, Down, PgDn, Ins, Del,
-    CtrlLeft    = 256 + 115, CtrlRight, CtrlEnd, CtrlPgDn, CtrlHome,
-    CtrlPgUp    = 256 + 132,
-    MouseLeft   = 512 + 1, MouseRight,
-    TwiceLeft   = 512 + 256 + 1, TwiceRight
-};
-
 class Keyboard {
 private:
-	bool getKey(Common::Event &event, int &cgeCode);
-	uint16 _current;
+	bool getKey(Common::Event &event);
 	CGEEngine *_vm;
 public:
-	static const uint16 _code[0x60];
-	static const uint16 _scummVmCodes[0x60];
-
 	Sprite *_client;
-	bool _key[0x60];
+	bool _keyAlt;
 
 	void newKeyboard(Common::Event &event);
-	uint16 lastKey();
 	Sprite *setClient(Sprite *spr);
 
 	Keyboard(CGEEngine *vm);
@@ -118,7 +82,6 @@ public:
 	bool _exist;
 	int _buttons;
 	Sprite *_busy;
-	//Sprite *Touched;
 	Mouse(CGEEngine *vm);
 	~Mouse();
 	void on();
@@ -140,8 +103,6 @@ private:
 
 	void handleEvents();
 public:
-	bool _quitFlag;
-
 	EventManager(CGEEngine *vm);
 	void poll();	
 	void clearEvent(Sprite *spr);

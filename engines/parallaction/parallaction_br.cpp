@@ -289,7 +289,7 @@ void Parallaction_br::changeLocation() {
 
 		_disk->selectArchive(_partNames[_part]);
 
-		memset(_counters, 0, ARRAYSIZE(_counters));
+		memset(_counters, 0, sizeof(_counters));
 
 		_globalFlagsNames = _disk->loadTable("global");
 		_objectsNames = _disk->loadTable("objects");

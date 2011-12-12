@@ -102,6 +102,14 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 
 	for (uint32 i = 0; i < _items.size(); i++)
 		_items[i]->init();
+
+	for (uint32 i = 0; i < _items.size(); i++)
+		_items[i]->startPhase(kLBPhaseLoad);
+}
+
+void LBPage::addClonedItem(LBItem *item) {
+	_vm->addItem(item);
+	_items.push_back(item);
 }
 
 void LBPage::itemDestroyed(LBItem *item) {
@@ -138,8 +146,12 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// Rugrats
-	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game");
+	const Common::FSNode ProgPath = gameDataDir.getChild("program");
+	if (ProgPath.exists())
+		SearchMan.addDirectory(ProgPath.getPath(), ProgPath, 0, 2);
+	const Common::FSNode RugPath = gameDataDir.getChild("Rugrats Adventure Game");
+	if (RugPath.exists())
+		SearchMan.addDirectory(RugPath.getPath(), RugPath, 0, 2);
 	// CarmenTQ
 	const Common::FSNode CTQPath = gameDataDir.getChild("95instal");
 	if (CTQPath.exists())
@@ -304,8 +316,9 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 		const Common::ConfigFile::SectionKeyList globals = _bookInfoFile.getKeys("Globals");
 		for (Common::ConfigFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
 			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
-			debug("global: %s", command.c_str());
-			// TODO: run command
+			LBCode tempCode(this, 0);
+			uint offset = tempCode.parseCode(command);
+			tempCode.runCode(NULL, offset);
 		}
 	}
 }
@@ -436,12 +449,9 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 
 void MohawkEngine_LivingBooks::updatePage() {
 	switch (_phase) {
-	case 0:
+	case kLBPhaseInit:
 		for (uint32 i = 0; i < _items.size(); i++)
-			_items[i]->startPhase(0xFFFE);
-
-		for (uint32 i = 0; i < _items.size(); i++)
-			_items[i]->startPhase(0xFFFF);
+			_items[i]->startPhase(kLBPhaseCreate);
 
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
@@ -537,7 +547,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_phase++;
 		break;
 
-	case 1:
+	case kLBPhaseIntro:
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
 
@@ -550,7 +560,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_phase++;
 		break;
 
-	case 2:
+	case kLBPhaseMain:
 		if (!_introDone)
 			break;
 
@@ -593,8 +603,8 @@ void MohawkEngine_LivingBooks::updatePage() {
 		_items[i]->update();
 
 	if (_needsRedraw) {
-		for (uint16 i = 0; i < _items.size(); i++)
-			_items[i]->draw();
+		for (Common::List<LBItem *>::const_iterator i = _orderedItems.reverse_begin(); i != _orderedItems.end(); --i)
+			(*i)->draw();
 
 		_needsRedraw = false;
 		_needsUpdate = true;
@@ -1854,6 +1864,35 @@ void LBAnimation::seek(uint16 pos) {
 	}
 }
 
+void LBAnimation::seekToTime(uint32 time) {
+	_lastTime = 0;
+	_currentFrame = 0;
+
+	if (_currentSound != 0xffff) {
+		_vm->_sound->stopSound(_currentSound);
+		_currentSound = 0xffff;
+	}
+
+	for (uint32 i = 0; i < _nodes.size(); i++)
+		_nodes[i]->reset();
+
+	uint32 elapsed = 0;
+	while (elapsed <= time) {
+		bool ranSomething = false;
+		// nodes don't wait while seeking
+		for (uint32 i = 0; i < _nodes.size(); i++)
+			ranSomething |= (_nodes[i]->update(true) != kLBNodeDone);
+
+		elapsed += _tempo;
+		_currentFrame++;
+
+		if (!ranSomething) {
+			_running = false;
+			break;
+		}
+	}
+}
+
 void LBAnimation::stop() {
 	_running = false;
 	if (_currentSound != 0xffff) {
@@ -1920,7 +1959,10 @@ LBScriptEntry::~LBScriptEntry() {
 }
 
 LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : _vm(vm), _page(page), _rect(rect) {
-	_phase = 0;
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1 || _vm->getGameType() == GType_LIVINGBOOKSV2)
+		_phase = kLBPhaseInit;
+	else
+		_phase = kLBPhaseLoad;
 
 	_loopMode = 0;
 	_delayMin = 0;
@@ -1931,7 +1973,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : 
 	_controlMode = kLBControlNone;
 	_soundMode = 0;
 
-	_neverEnabled = true;
+	_loaded = false;
 	_enabled = false;
 	_visible = true;
 	_playing = false;
@@ -2338,6 +2380,22 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		}
 		break;
 
+	case kLBSetRolloverData:
+		{
+		assert(size == 2);
+		uint16 flag = stream->readUint16();
+		warning("ignoring kLBSetRolloverData: item %s, flag %d", _desc.c_str(), flag);
+		}
+		break;
+
+	case kLBSetParent:
+		{
+		assert(size == 2);
+		uint16 parent = stream->readUint16();
+		warning("ignoring kLBSetParent: item %s, parent id %d", _desc.c_str(), parent);
+		}
+		break;
+
 	case kLBUnknown194:
 		{
 		assert(size == 4);
@@ -2365,25 +2423,27 @@ void LBItem::destroySelf() {
 }
 
 void LBItem::setEnabled(bool enabled) {
-	if (enabled && _neverEnabled && !_playing) {
+	if (enabled && !_loaded && !_playing) {
 		if (_timingMode == kLBAutoUserIdle) {
 			setNextTime(_periodMin, _periodMax);
 			debug(2, "Enable time startup");
 		}
 	}
 
-	_neverEnabled = false;
 	_enabled = enabled;
 }
 
 void LBItem::setGlobalEnabled(bool enabled) {
-	bool wasEnabled = !_neverEnabled && _enabled && _globalEnabled;
+	bool wasEnabled = _loaded && _enabled && _globalEnabled;
 	_globalEnabled = enabled;
-	if (wasEnabled != (!_neverEnabled && _enabled && _globalEnabled))
+	if (wasEnabled != (_loaded && _enabled && _globalEnabled))
 		setEnabled(enabled);
 }
 
 bool LBItem::contains(Common::Point point) {
+	if (!_loaded)
+		return false;
+
 	if (_playing && _loopMode == 0xFFFF)
 		stop();
 
@@ -2394,7 +2454,7 @@ bool LBItem::contains(Common::Point point) {
 }
 
 void LBItem::update() {
-	if (_phase != 0x7FFF && (_neverEnabled || !_enabled || !_globalEnabled))
+	if (_phase != kLBPhaseNone && (!_loaded || !_enabled || !_globalEnabled))
 		return;
 
 	if (_nextTime == 0 || _nextTime > (uint32)(_vm->_system->getMillis() / 16))
@@ -2409,7 +2469,7 @@ void LBItem::update() {
 }
 
 void LBItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return;
 
 	_vm->setFocus(this);
@@ -2432,7 +2492,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 		_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDone));
 		return true;
 	}
-	if (((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) && !_playing) {
+	if (((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) && !_playing) {
 		_playing = togglePlaying(true, restart);
 		if (_playing) {
 			_nextTime = 0;
@@ -2501,6 +2561,10 @@ void LBItem::done(bool onlyNotify) {
 	notify(0xFFFF, _itemId);
 }
 
+void LBItem::init() {
+	runScript(kLBEventInit);
+}
+
 void LBItem::setVisible(bool visible) {
 	if (visible == _visible)
 		return;
@@ -2517,38 +2581,40 @@ void LBItem::setGlobalVisible(bool visible) {
 }
 
 void LBItem::startPhase(uint phase) {
-	if (_phase == phase)
-		setEnabled(true);
+	if (_phase == phase) {
+		if (_phase != kLBPhaseNone) {
+			setEnabled(true);
+		}
+
+		load();
+	}
 
 	switch (phase) {
-	case 0xFFFE:
-		if (_timingMode == kLBAutoLoad) {
-			debug(2, "Phase load: time startup");
-			setNextTime(_periodMin, _periodMax);
-		}
+	case kLBPhaseLoad:
+		runScript(kLBEventListLoad);
 		break;
-	case 0xFFFF:
+	case kLBPhaseCreate:
 		runScript(kLBEventPhaseCreate);
 		if (_timingMode == kLBAutoCreate) {
 			debug(2, "Phase create: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 0:
+	case kLBPhaseInit:
 		runScript(kLBEventPhaseInit);
 		if (_timingMode == kLBAutoInit) {
 			debug(2, "Phase init: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 1:
+	case kLBPhaseIntro:
 		runScript(kLBEventPhaseIntro);
 		if (_timingMode == kLBAutoIntro || _timingMode == kLBAutoUserIdle) {
 			debug(2, "Phase intro: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
-	case 2:
+	case kLBPhaseMain:
 		runScript(kLBEventPhaseMain);
 		if (_timingMode == kLBAutoUserIdle || _timingMode == kLBAutoMain) {
 			debug(2, "Phase main: time startup");
@@ -2577,6 +2643,54 @@ void LBItem::notify(uint16 data, uint16 from) {
 	}
 
 	runScript(kLBEventNotified, data, from);
+}
+
+void LBItem::load() {
+	if (_loaded)
+		return;
+
+	_loaded = true;
+
+	// FIXME: events etc
+	if (_timingMode == kLBAutoLoad) {
+		debug(2, "Load: time startup");
+		setNextTime(_periodMin, _periodMax);
+	}
+}
+
+void LBItem::unload() {
+	if (!_loaded)
+		return;
+
+	_loaded = false;
+
+	// FIXME: stuff
+}
+
+void LBItem::moveBy(const Common::Point &pos) {
+	_rect.translate(pos.x, pos.y);
+}
+
+void LBItem::moveTo(const Common::Point &pos) {
+	_rect.moveTo(pos);
+}
+
+LBItem *LBItem::clone(uint16 newId, const Common::String &newName) {
+	LBItem *item = createClone();
+
+	item->_itemId = newId;
+	item->_desc = newName;
+
+	item->_resourceId = _resourceId;
+	// FIXME: the rest
+
+	_page->addClonedItem(item);
+	// FIXME: zorder?
+	return item;
+}
+
+LBItem *LBItem::createClone() {
+	return new LBItem(_vm, _page, _rect);
 }
 
 void LBItem::runScript(uint event, uint16 data, uint16 from) {
@@ -2819,9 +2933,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpLoad:
-			// FIXME
-			warning("ignoring kLBOpLoad (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			target->load();
 			break;
 
 		case kLBOpPreload:
@@ -2831,9 +2943,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpUnload:
-			// FIXME
-			warning("ignoring kLBOpUnload (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			target->unload();
 			break;
 
 		case kLBOpSeekToPrev:
@@ -2882,6 +2992,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 				case kLBOpBreakExpression:
 					debug(2, "BreakExpression");
 					i = entry->subentries.size();
+					break;
 				case kLBOpJumpToExpression:
 					debug(2, "JumpToExpression got %d (on %d, of %d)", e, i, entry->subentries.size());
 					i = e - 1;
@@ -2969,7 +3080,7 @@ bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 		_vm->_sound->stopSound(_resourceId);
 	}
 
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return false;
 
 	_running = true;
@@ -2985,6 +3096,10 @@ void LBSoundItem::stop() {
 	}
 
 	LBItem::stop();
+}
+
+LBItem *LBSoundItem::createClone() {
+	return new LBSoundItem(_vm, _page, _rect);
 }
 
 LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3102,6 +3217,44 @@ void LBGroupItem::stop() {
 	}
 }
 
+void LBGroupItem::load() {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->load();
+	}
+}
+
+void LBGroupItem::unload() {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->unload();
+	}
+}
+
+void LBGroupItem::moveBy(const Common::Point &pos) {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->moveBy(pos);
+	}
+}
+
+void LBGroupItem::moveTo(const Common::Point &pos) {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->moveTo(pos);
+	}
+}
+
+LBItem *LBGroupItem::createClone() {
+	// TODO: needed?
+	error("LBGroupItem::createClone unimplemented");
+	return new LBGroupItem(_vm, _page, _rect);
+}
+
 LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPaletteItem");
 
@@ -3185,6 +3338,10 @@ void LBPaletteItem::update() {
 	}
 
 	LBItem::update();
+}
+
+LBItem *LBPaletteItem::createClone() {
+	error("can't clone LBPaletteItem");
 }
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3350,7 +3507,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _playing)
+	if (!_loaded || !_enabled || !_globalEnabled || _playing)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
@@ -3381,7 +3538,7 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return _playing;
 
 	// TODO: handle this properly
@@ -3400,7 +3557,7 @@ void LBLiveTextItem::stop() {
 }
 
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || !_playing)
+	if (!_loaded || !_enabled || !_globalEnabled || !_playing)
 		return LBItem::notify(data, from);
 
 	if (_currentWord != 0xFFFF) {
@@ -3432,6 +3589,10 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	}
 
 	LBItem::notify(data, from);
+}
+
+LBItem *LBLiveTextItem::createClone() {
+	error("can't clone LBLiveTextItem");
 }
 
 LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3468,13 +3629,19 @@ bool LBPictureItem::contains(Common::Point point) {
 
 void LBPictureItem::init() {
 	_vm->_gfx->preloadImage(_resourceId);
+
+	LBItem::init();
 }
 
 void LBPictureItem::draw() {
-	if (!_visible || !_globalVisible)
+	if (!_loaded || !_visible || !_globalVisible)
 		return;
 
 	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
+}
+
+LBItem *LBPictureItem::createClone() {
+	return new LBPictureItem(_vm, _page, _rect);
 }
 
 LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3489,9 +3656,9 @@ LBAnimationItem::~LBAnimationItem() {
 
 void LBAnimationItem::setEnabled(bool enabled) {
 	if (_running) {
-		if (enabled && _globalEnabled && _neverEnabled)
+		if (enabled && _globalEnabled && !_loaded)
 			_anim->start();
-		else if (!_neverEnabled && !enabled && _enabled && _globalEnabled)
+		else if (_loaded && !enabled && _enabled && _globalEnabled)
 			_anim->stop();
 	}
 
@@ -3509,7 +3676,7 @@ bool LBAnimationItem::contains(Common::Point point) {
 }
 
 void LBAnimationItem::update() {
-	if (!_neverEnabled && _enabled && _globalEnabled && _running) {
+	if (_loaded && _enabled && _globalEnabled && _running) {
 		bool wasDone = _anim->update();
 		if (wasDone) {
 			_running = false;
@@ -3522,7 +3689,7 @@ void LBAnimationItem::update() {
 
 bool LBAnimationItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		if (!_neverEnabled && _enabled && _globalEnabled) {
+		if (_loaded && _enabled && _globalEnabled) {
 			if (restart)
 				seek(1);
 			_running = true;
@@ -3545,6 +3712,8 @@ void LBAnimationItem::done(bool onlyNotify) {
 
 void LBAnimationItem::init() {
 	_anim = new LBAnimation(_vm, this, _resourceId);
+
+	LBItem::init();
 }
 
 void LBAnimationItem::stop() {
@@ -3562,6 +3731,10 @@ void LBAnimationItem::seek(uint16 pos) {
 	_anim->seek(pos);
 }
 
+void LBAnimationItem::seekToTime(uint32 time) {
+	_anim->seekToTime(time);
+}
+
 void LBAnimationItem::startPhase(uint phase) {
 	if (phase == _phase)
 		seek(1);
@@ -3574,6 +3747,12 @@ void LBAnimationItem::draw() {
 		return;
 
 	_anim->draw();
+}
+
+LBItem *LBAnimationItem::createClone() {
+	LBAnimationItem *item = new LBAnimationItem(_vm, _page, _rect);
+	item->_anim = new LBAnimation(_vm, item, _resourceId);
+	return item;
 }
 
 LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3595,7 +3774,7 @@ void LBMovieItem::update() {
 
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		if ((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) {
+		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
 			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;
@@ -3603,6 +3782,10 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	}
 
 	return LBItem::togglePlaying(playing, restart);
+}
+
+LBItem *LBMovieItem::createClone() {
+	return new LBMovieItem(_vm, _page, _rect);
 }
 
 LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
@@ -3640,6 +3823,10 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	return false;
 }
 
+LBItem *LBMiniGameItem::createClone() {
+	error("can't clone LBMiniGameItem");
+}
+
 LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBProxyItem");
 
@@ -3650,7 +3837,10 @@ LBProxyItem::~LBProxyItem() {
 	delete _page;
 }
 
-void LBProxyItem::init() {
+void LBProxyItem::load() {
+	if (_loaded)
+		return;
+
 	Common::String leftover;
 	Common::String filename = _vm->getFileNameFromConfig("Proxies", _desc.c_str(), leftover);
 	if (!leftover.empty())
@@ -3669,6 +3859,19 @@ void LBProxyItem::init() {
 		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
 	_page = new LBPage(_vm);
 	_page->open(pageArchive, baseId);
+
+	LBItem::load();
+}
+
+void LBProxyItem::unload() {
+	delete _page;
+	_page = NULL;
+
+	LBItem::unload();
+}
+
+LBItem *LBProxyItem::createClone() {
+	return new LBProxyItem(_vm, _page, _rect);
 }
 
 } // End of namespace Mohawk

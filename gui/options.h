@@ -43,6 +43,8 @@ class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
 
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd);
+
 class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
@@ -172,7 +174,7 @@ protected:
 	//
 	// Game GUI options
 	//
-	uint32 _guioptions;
+	Common::String _guioptions;
 	Common::String _guioptionsString;
 
 	//
@@ -196,8 +198,11 @@ protected:
 	KeysDialog *_keysDialog;
 #endif
 	StaticTextWidget *_savePath;
+	ButtonWidget	 *_savePathClearButton;
 	StaticTextWidget *_themePath;
+	ButtonWidget	 *_themePathClearButton;
 	StaticTextWidget *_extraPath;
+	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
 #endif

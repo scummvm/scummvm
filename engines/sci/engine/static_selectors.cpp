@@ -192,9 +192,6 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			for (int i = count + countSci1; i < count + countSci1 + countSci11; i++)
 				names[i] = sci11Selectors[i - count - countSci1];
 		}
-
-		findSpecificSelectors(names);
-
 #ifdef ENABLE_SCI32
 	} else {
 		// SCI2+
@@ -202,6 +199,8 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			names[i] = sci2Selectors[i];
 #endif
 	}
+
+	findSpecificSelectors(names);
 
 	for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
 		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
@@ -223,13 +222,16 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 	// We need to initialize script 0 here, to make sure that it's always
 	// located at segment 1.
 	_segMan->instantiateScript(0);
+	uint16 sci2Offset = (getSciVersion() >= SCI_VERSION_2) ? 64000 : 0;
 
 	// The Actor class contains the init, xLast and yLast selectors, which
 	// we reference directly. It's always in script 998, so we need to
 	// explicitly load it here.
 	if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY)) {
-		if (_resMan->testResource(ResourceId(kResourceTypeScript, 998))) {
-			_segMan->instantiateScript(998);
+		uint16 actorScript = 998;
+
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, actorScript + sci2Offset))) {
+			_segMan->instantiateScript(actorScript + sci2Offset);
 
 			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
 
@@ -237,9 +239,10 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 				// Find the xLast and yLast selectors, used in kDoBresen
 
 				const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
+				const int offset2 = (getSciVersion() >= SCI_VERSION_2) ? 12 : 0;
 				// xLast and yLast always come between illegalBits and xStep
-				int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
-				int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
+				int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset + offset2);	// illegalBits
+				int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset + offset2);	// xStep
 				if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
 					error("illegalBits and xStep selectors aren't found in "
 							"known locations. illegalBits = %d, xStep = %d",
@@ -263,10 +266,10 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 	// Find selectors from specific classes
 
 	for (int i = 0; i < ARRAYSIZE(classReferences); i++) {
-		if (!_resMan->testResource(ResourceId(kResourceTypeScript, classReferences[i].script)))
+		if (!_resMan->testResource(ResourceId(kResourceTypeScript, classReferences[i].script + sci2Offset)))
 			continue;
 
-		_segMan->instantiateScript(classReferences[i].script);
+		_segMan->instantiateScript(classReferences[i].script + sci2Offset);
 
 		const Object *targetClass = _segMan->getObject(_segMan->findObjectByName(classReferences[i].className));
 		int targetSelectorPos = 0;

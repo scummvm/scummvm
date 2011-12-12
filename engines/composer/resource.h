@@ -35,15 +35,20 @@ struct Animation;
 
 #define ID_LBRC MKTAG('L','B','R','C') // Main FourCC
 
+#define ID_ACEL MKTAG('A','C','E','L') // Keyboard Accelerator (v1)
+#define ID_AMBI MKTAG('A','M','B','I') // Ambient (v1 sprite button)
 #define ID_ANIM MKTAG('A','N','I','M') // Animation
 #define ID_BMAP MKTAG('B','M','A','P') // Bitmap
 #define ID_BUTN MKTAG('B','U','T','N') // Button
 #define ID_CTBL MKTAG('C','T','B','L') // Color Table
 #define ID_EVNT MKTAG('E','V','N','T') // Event
 #define ID_PIPE MKTAG('P','I','P','E') // Pipe
+#define ID_RAND MKTAG('R','A','N','D') // Random Object
 #define ID_SCRP MKTAG('S','C','R','P') // Script
 #define ID_VARI MKTAG('V','A','R','I') // Variables
 #define ID_WAVE MKTAG('W','A','V','E') // Wave
+
+#define ID_FRME MKTAG('F','R','M','E') // Frame
 
 class Archive {
 public:
@@ -102,12 +107,15 @@ struct PipeResource {
 class Pipe {
 public:
 	Pipe(Common::SeekableReadStream *stream);
-	void nextFrame();
+	virtual ~Pipe();
+	virtual void nextFrame();
 
 	Animation *_anim;
 
 	bool hasResource(uint32 tag, uint16 id) const;
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id, bool buffering);
+
+	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 
 protected:
 	Common::SeekableReadStream *_stream;
@@ -117,6 +125,18 @@ protected:
 	TypeMap _types;
 
 	uint32 _offset;
+};
+
+class OldPipe : public Pipe {
+public:
+	OldPipe(Common::SeekableReadStream *stream);
+	void nextFrame();
+
+	const Common::Array<uint16> *getScripts() { return &_scripts; }
+
+protected:
+	uint32 _currFrame, _numFrames;
+	Common::Array<uint16> _scripts;
 };
 
 } // End of namespace Composer

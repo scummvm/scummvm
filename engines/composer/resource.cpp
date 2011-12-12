@@ -252,8 +252,9 @@ Pipe::Pipe(Common::SeekableReadStream *stream) {
 	_offset = 0;
 	_stream = stream;
 	_anim = NULL;
+}
 
-	nextFrame();
+Pipe::~Pipe() {
 }
 
 void Pipe::nextFrame() {
@@ -332,6 +333,71 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	if (buffering)
 		_types[tag].erase(id);
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
+}
+
+OldPipe::OldPipe(Common::SeekableReadStream *stream) : Pipe(stream), _currFrame(0) {
+	uint32 tag = _stream->readUint32BE();
+	if (tag != ID_PIPE)
+		error("invalid tag for pipe (%08x)", tag);
+
+	_numFrames = _stream->readUint32LE();
+	uint16 scriptCount = _stream->readUint16LE();
+	_scripts.reserve(scriptCount);
+	for (uint i = 0; i < scriptCount; i++)
+		_scripts.push_back(_stream->readUint16LE());
+
+	_offset = _stream->pos();
+}
+
+void OldPipe::nextFrame() {
+	if (_currFrame >= _numFrames)
+		return;
+
+	_stream->seek(_offset, SEEK_SET);
+
+	uint32 tag = _stream->readUint32BE();
+	if (tag != ID_FRME)
+		error("invalid tag for pipe (%08x)", tag);
+
+	uint16 spriteCount = _stream->readUint16LE();
+	uint32 spriteSize = _stream->readUint32LE();
+	uint32 audioSize = _stream->readUint32LE();
+
+	Common::Array<uint16> spriteIds;
+	Common::Array<PipeResourceEntry> spriteEntries;
+	for (uint i = 0; i < spriteCount; i++) {
+		spriteIds.push_back(_stream->readUint16LE());
+		PipeResourceEntry entry;
+		entry.size = _stream->readUint32LE();
+		entry.offset = _stream->readUint32LE();
+		spriteEntries.push_back(entry);
+	}
+
+	uint32 spriteDataOffset = _stream->pos();
+	_stream->skip(spriteSize);
+
+	ResourceMap &spriteResMap = _types[ID_BMAP];
+	spriteResMap.clear();
+	for (uint i = 0; i < spriteIds.size(); i++) {
+		PipeResourceEntry &entry = spriteEntries[i];
+		entry.offset += spriteDataOffset;
+		spriteResMap[spriteIds[i]].entries.push_back(entry);
+	}
+
+	ResourceMap &audioResMap = _types[ID_WAVE];
+	audioResMap.clear();
+
+	if (audioSize > 0) {
+		PipeResourceEntry entry;
+		entry.size = audioSize;
+		entry.offset = _stream->pos();
+		// we use 0xffff for per-frame pipe audio
+		audioResMap[0xffff].entries.push_back(entry);
+		_stream->skip(audioSize);
+	}
+
+	_offset = _stream->pos();
+	_currFrame++;
 }
 
 }	// End of namespace Composer

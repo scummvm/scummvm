@@ -77,7 +77,6 @@ const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
 const char *RESTART_MSG = "Do you want to restart this game?";
 const char *GAME_PAUSED_MSG = "Game is paused.";
-const char *OPTIONS_MSG = "\x01Options...";
 const char *OK_BTN_STRING = " Ok ";
 const char *CANCEL_BTN_STRING = "Cancel";
 const char *QUIT_BTN_STRING = " Quit ";
@@ -99,6 +98,7 @@ F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Start Play ";
 const char *INTRODUCTION_BTN_STRING = "Introduction";
+const char *OPTIONS_MSG = "\x01Options...";
 
 // Scene specific resources
 const char *EXIT_MSG = "   EXIT   ";
@@ -134,6 +134,7 @@ F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Play ";
 const char *INTRODUCTION_BTN_STRING = " Watch ";
+const char *OPTIONS_MSG = "Options...";
 
 // Blue Force general messages
 const char *BF_NAME = "Blue Force";
@@ -175,6 +176,46 @@ const char *SCENE570_PROTODATA = "PROTODATA";
 const char *SCENE570_WACKYEXE = "WACKYEXE";
 const char *SCENE570_WACKYDATA = "WACKYDATA";
 
+// Scene 180 messages
+const char *THE_NEXT_DAY = "The Next Day";
+
 } // End of namespace BlueForce
+
+namespace Ringworld2 {
+
+const char *CONSOLE_MESSAGES[] = {
+	NULL, "Select Language", "Computer Services", "Food Services", "Entertainment Services",
+	"Main Menu", "Exit Menu", "Previous Menu", "Interworld", "Hero's Tongue", "Personal Log",
+	"Database", "Starchart", "Iso-Opto Disk Reader", "Eject Disk", "Meals", "Snacks",
+	"Beverages", "Human Basic Snacks", "Kzin Basic Snacks", "Hot Beverages", "Cold Beverages",
+	"Music", "Outpost Alpha", " ", " ", "Done", "A-G", "H-O", "P-S", "T-Z", "Tchaikovsky",
+	"Mozart", "Bach", "Rossini"
+};
+
+const char *HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
+const char *CHAR_TITLE = "\x01Select Character:";
+const char *CHAR_QUINN_MSG = "  Quinn  ";
+const char *CHAR_SEEKER_MSG = "  Seeker  ";
+const char *CHAR_MIRANDA_MSG = "Miranda";
+const char *CHAR_CANCEL_MSG = "  Cancel  ";
+
+const char *GAME_VERSION = "ScummVM Version";
+const char *SOUND_OPTIONS = "Sound options";
+const char *QUIT_GAME = "Quit";
+const char *RESTART_GAME = "Restart";
+const char *SAVE_GAME = "Save game";
+const char *RESTORE_GAME = "Restore game";
+const char *SHOW_CREDITS = "Show credits";
+const char *PAUSE_GAME = "Pause game";
+const char *RESUME_PLAY = "  Resume play  ";
+const char *F2 = "F2";
+const char *F3 = "F3";
+const char *F4 = "F4";
+const char *F5 = "F5";
+const char *F7 = "F7";
+const char *F8 = "F8";
+const char *F10 = "F10";
+
+} // End of namespace Ringworld2
 
 } // End of namespace TsAGE

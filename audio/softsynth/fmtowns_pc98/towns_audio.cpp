@@ -133,8 +133,9 @@ private:
 };
 
 class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
-public:
+private:
 	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
+public:
 	~TownsAudioInterfaceInternal();
 
 	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);

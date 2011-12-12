@@ -74,7 +74,7 @@ public:
 	bool isClosing() { return _appForm->isClosing(); }
 
 	BadaGraphicsManager *getGraphics() {
-		return (BadaGraphicsManager*)_graphicsManager;
+		return (BadaGraphicsManager *)_graphicsManager;
 	}
 
 private:
@@ -88,8 +88,9 @@ private:
 	void getTimeAndDate(TimeDate &t) const;
 	void fatalError();
 	void logMessage(LogMessageType::Type type, const char *message);
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
-	Common::EventSource *getDefaultEventSource() {return this;}
+	Common::EventSource *getDefaultEventSource() { return this; }
 	Common::SeekableReadStream *createConfigReadStream();
 	Common::WriteStream *createConfigWriteStream();
 

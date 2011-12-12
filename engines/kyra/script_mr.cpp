@@ -405,7 +405,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 	}
 
 	int convs[4];
-	Common::set_to(convs, convs+4, -1);
+	Common::fill(convs, convs+4, -1);
 
 	if (_currentChapter == 1) {
 		switch (_mainCharacter.dlgIndex) {

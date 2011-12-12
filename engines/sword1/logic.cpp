@@ -520,7 +520,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 		case IT_PUSHVARIABLE:
 			debug(9, "IT_PUSHVARIABLE: ScriptVar[%d] => %d", scriptCode[pc], _scriptVars[scriptCode[pc]]);
 			varNum = scriptCode[pc++];
-			if (SwordEngine::_systemVars.isDemo && SwordEngine::isPc()) {
+			if (SwordEngine::_systemVars.isDemo && SwordEngine::isWindows()) {
 				if (varNum >= 397) // BS1 Demo has different number of script variables
 					varNum++;
 				if (varNum >= 699)
@@ -611,7 +611,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 		case IT_POPVAR:         // pop a variable
 			debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx - 1]);
 			varNum = scriptCode[pc++];
-			if (SwordEngine::_systemVars.isDemo && SwordEngine::isPc()) {
+			if (SwordEngine::_systemVars.isDemo && SwordEngine::isWindows()) {
 				if (varNum >= 397) // BS1 Demo has different number of script variables
 					varNum++;
 				if (varNum >= 699)
@@ -959,7 +959,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	// meantime, we don't want any looping sound effects still playing.
 	_sound->quitScreen();
 
-	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _mixer, _system);
+	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _mixer, _system);
 	if (player) {
 		_screen->clearScreen();
 		if (player->load(sequenceId))

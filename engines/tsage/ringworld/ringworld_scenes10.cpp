@@ -20,7 +20,6 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -54,6 +53,7 @@ void Object9350::draw() {
  * Scene 9100 - Near beach: Slave washing clothes
  *
  *--------------------------------------------------------------------------*/
+// Slave hotspot
 void Scene9100::SceneHotspot1::doAction(int action) {
 	Scene9100 *scene = (Scene9100 *)g_globals->_sceneManager._scene;
 
@@ -102,7 +102,7 @@ void Scene9100::signal() {
 		g_globals->_sceneManager.changeScene(9150);
 		break;
 	case 9105:
-		_sceneHotspot3.remove();
+		_hotspotCleanedClothes.remove();
 	// No break on purpose
 	case 9103:
 	case 9104:
@@ -145,13 +145,13 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 		_object6.setStrip(6);
 		_object6.setFrame(1);
 		_object6.setPosition(Common::Point(138, 166));
-		_sceneHotspot3.setDetails(145, 125, 166, 156, 9100, 40, 43);
+		_hotspotCleanedClothes.setDetails(145, 125, 166, 156, 9100, 40, 43);
 	}
-	_sceneHotspot1.setDetails(140, 176, 185, 215, 9100, 36, 37);
-	_sceneHotspot2.setDetails(161, 138, 182, 175, 9100, 38, 39);
-	_sceneHotspot4.setDetails(37, 196, 47, 320, 9100, 44, -1);
-	_sceneHotspot5.setDetails(69, 36, 121, 272, 9100, 45, 46);
-	_sceneHotspot6.setDetails(127, 0, 200, 52, 9100, 47, 48);
+	_hotspotSlave.setDetails(140, 176, 185, 215, 9100, 36, 37);
+	_hotspotSoiledClothes.setDetails(161, 138, 182, 175, 9100, 38, 39);
+	_hotspotIsland.setDetails(37, 196, 47, 320, 9100, 44, -1);
+	_hotspotBoulders.setDetails(69, 36, 121, 272, 9100, 45, 46);
+	_hotspotTrees.setDetails(127, 0, 200, 52, 9100, 47, 48);
 
 	g_globals->_soundHandler.play(251);
 	if (g_globals->_sceneManager._previousScene == 9150) {
@@ -708,7 +708,7 @@ void Scene9360::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 Scene9400::Scene9400() {
-	_field1032 = 0;
+	_hittingAnvil = false;
 }
 
 void Scene9400::SceneHotspot7::doAction(int action) {
@@ -766,12 +766,12 @@ void Scene9400::signal() {
 
 void Scene9400::dispatch() {
 	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)){
-		if (_field1032 == 0) {
+		if (_hittingAnvil == false) {
 			_soundHandler.play(296);
-			_field1032 = 1;
+			_hittingAnvil = true;
 		}
 	} else {
-		_field1032 = 0;
+		_hittingAnvil = false;
 	}
 	if (_action == 0) {
 		if (g_globals->_player._position.y < 120) {
@@ -825,7 +825,7 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 void Scene9400::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3)
-		s.syncAsSint16LE(_field1032);
+		s.syncAsSint16LE(_hittingAnvil);
 }
 
 /*--------------------------------------------------------------------------
@@ -1181,7 +1181,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_object2.setFrame(_object2.getFrameCount());
 		_object2.setPosition(Common::Point(303, 130));
 		_object2.fixPriority(132);
-		if (RING_INVENTORY._helmet._sceneNumber == 1) {
+		if (RING_INVENTORY._helmet._sceneNumber != 1) {
 			_hotspot2.setDetails(87, 294, 104, 314, 9400, 17, -1);
 		} else {
 			_object2.setStrip(2);

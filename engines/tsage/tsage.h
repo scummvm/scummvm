@@ -40,7 +40,8 @@ namespace TsAGE {
 
 enum {
 	GType_Ringworld = 0,
-	GType_BlueForce = 1
+	GType_BlueForce = 1,
+	GType_Ringworld2 = 2
 };
 
 enum {
@@ -62,7 +63,7 @@ struct tSageGameDescription;
 #define SCREEN_HEIGHT 200
 #define SCREEN_CENTER_X 160
 #define SCREEN_CENTER_Y 100
-#define BF_INTERFACE_Y 168
+#define UI_INTERFACE_Y 168
 
 class TSageEngine : public Engine {
 private:

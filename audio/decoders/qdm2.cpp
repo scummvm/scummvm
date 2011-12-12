@@ -1832,7 +1832,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	_subSampling = _fftOrder - 7;
 	_frequencyRange = 255 / (1 << (2 - _subSampling));
 
-	switch ((_subSampling * 2 + _channels - 1)) {
+	switch (_subSampling * 2 + _channels - 1) {
 		case 0:
 			tmp = 40;
 			break;

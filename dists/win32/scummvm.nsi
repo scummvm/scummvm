@@ -72,7 +72,7 @@ Name ScummVM
 # General Symbol Definitions
 #########################################################################################
 !define REGKEY      "Software\$(^Name)\$(^Name)"
-!define VERSION     "1.4.0git"
+!define VERSION     "1.5.0git"
 !define COMPANY     "ScummVM Team"
 !define URL         "http://scummvm.org/"
 !define DESCRIPTION "ScummVM Installer. Look! A three headed monkey (TM)!"
@@ -92,7 +92,7 @@ XPStyle  on
 #TargetMinimalOS 5.0    ; Minimal version of windows for installer: Windows 2000 or more recent
                         ; (will build unicode installer with NSIS 2.50+)
 
-VIProductVersion 1.4.0.0
+VIProductVersion 1.5.0.0
 VIAddVersionKey  ProductName      $(^Name)
 VIAddVersionKey  ProductVersion  "${VERSION}"
 VIAddVersionKey  CompanyName     "${COMPANY}"
@@ -265,7 +265,6 @@ Section "ScummVM" SecMain
 	File "${engine_data}\hugo.dat"
 	File "${engine_data}\kyra.dat"
 	File "${engine_data}\lure.dat"
-	File "${engine_data}\m4.dat"
 	File "${engine_data}\queen.tbl"
 	File "${engine_data}\sky.cpt"
 	File "${engine_data}\teenagent.dat"
@@ -352,7 +351,6 @@ Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\hugo.dat
 	Delete /REBOOTOK $INSTDIR\kyra.dat
 	Delete /REBOOTOK $INSTDIR\lure.dat
-	Delete /REBOOTOK $INSTDIR\m4.dat
 	Delete /REBOOTOK $INSTDIR\queen.tbl
 	Delete /REBOOTOK $INSTDIR\sky.cpt
 	Delete /REBOOTOK $INSTDIR\teenagent.dat

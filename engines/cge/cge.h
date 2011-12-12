@@ -73,8 +73,9 @@ class Talk;
 #define kPathMax    128
 #define kCryptSeed  0xA5
 #define kMaxFile    128
-#define kMapXCnt       40
-#define kMapZCnt       20
+#define kMapXCnt    40
+#define kMapZCnt    20
+#define kMapTop     80
 
 // our engine debug channels
 enum {
@@ -140,6 +141,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	static const int _maxSceneArr[5];
+	bool _quitFlag;
+	bool _showBoundariesFl;
 
 	const   ADGameDescription *_gameDescription;
 	int    _startupMode;
@@ -222,7 +225,7 @@ public:
 	void runGame();
 	bool showTitle(const char *name);
 	void movie(const char *ext);
-	void inf(const char *text);
+	void inf(const char *text, bool wideSpace = false);
 	void selectSound();
 	void dummy() {}
 	void NONE();

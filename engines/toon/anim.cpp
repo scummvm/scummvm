@@ -29,7 +29,7 @@
 
 namespace Toon {
 
-bool Animation::loadAnimation(Common::String file) {
+bool Animation::loadAnimation(const Common::String &file) {
 	debugC(1, kDebugAnim, "loadAnimation(%s)", file.c_str());
 
 	uint32 fileSize = 0;

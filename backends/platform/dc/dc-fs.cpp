@@ -39,7 +39,7 @@ protected:
 	Common::String _path;
 
 public:
-	RoninCDFileNode(const Common::String &path) : _path(path) {};
+	RoninCDFileNode(const Common::String &path) : _path(path) {}
 
 	virtual bool exists() const { return true; }
 	virtual Common::String getName() const { return lastPathComponent(_path, '/'); }
@@ -61,7 +61,7 @@ public:
 /* A directory */
 class RoninCDDirectoryNode : public RoninCDFileNode {
 public:
-	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {};
+	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {}
 
 	virtual bool isDirectory() const { return true; }
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
@@ -72,7 +72,7 @@ public:
 /* A file/directory which does not exist */
 class RoninCDNonexistingNode : public RoninCDFileNode {
 public:
-	RoninCDNonexistingNode(const Common::String &path) : RoninCDFileNode(path) {};
+	RoninCDNonexistingNode(const Common::String &path) : RoninCDFileNode(path) {}
 
 	virtual bool exists() const { return false; }
 	virtual bool isReadable() const { return false; }

@@ -141,8 +141,6 @@ public:
 	void addEvent(const Common::Event& e);
 	bool isEventQueueEmpty() const { return queuePos == 0; }
 
-	virtual bool grabRawScreen(Graphics::Surface *surf);
-
 	virtual void setFocusRectangle(const Common::Rect& rect);
 
 	virtual void clearFocusRectangle();

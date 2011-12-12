@@ -69,6 +69,7 @@ class Button {
 public:
 	Button() { }
 	Button(Common::SeekableReadStream *stream, uint16 id, uint gameType);
+	Button(Common::SeekableReadStream *stream);
 
 	bool contains(const Common::Point &pos) const;
 
@@ -94,11 +95,23 @@ enum {
 	kEventKeyUp = 7
 };
 
+struct KeyboardHandler {
+	uint16 keyId;
+	uint16 modifierId;
+	uint16 scriptId;
+};
+
+struct RandomEvent {
+	uint16 weight;
+	uint16 scriptId;
+};
+
 struct Library {
 	uint _id;
 	Archive *_archive;
 
 	Common::List<Button> _buttons;
+	Common::List<KeyboardHandler> _keyboardHandlers;
 };
 
 struct QueuedScript {
@@ -114,6 +127,19 @@ struct PendingPageChange {
 
 	uint16 _pageId;
 	bool _remove;
+};
+
+struct OldScript {
+	OldScript(uint16 id, Common::SeekableReadStream *stream);
+	~OldScript();
+
+	uint16 _id;
+
+	uint32 _size;
+	Common::SeekableReadStream *_stream;
+
+	uint16 _zorder;
+	uint32 _currDelay;
 };
 
 class ComposerEngine : public Engine {
@@ -149,15 +175,20 @@ private:
 
 	uint _directoriesToStrip;
 	Common::ConfigFile _bookIni;
+	Common::String _bookGroup;
 	Common::List<Library> _libraries;
 	Common::Array<PendingPageChange> _pendingPageChanges;
 
 	Common::Array<uint16> _stack;
 	Common::Array<uint16> _vars;
 
+	Common::List<OldScript *> _oldScripts;
 	Common::Array<QueuedScript> _queuedScripts;
 	Common::List<Animation *> _anims;
 	Common::List<Pipe *> _pipes;
+	Common::Array<Common::SeekableReadStream *> _pipeStreams;
+
+	Common::HashMap<uint16, Common::Array<RandomEvent> > _randomEvents;
 
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);
@@ -188,17 +219,25 @@ private:
 	void setArg(uint16 arg, uint16 type, uint16 val);
 	void runScript(uint16 id);
 	int16 scriptFuncCall(uint16 id, int16 param1, int16 param2, int16 param3);
+	void runOldScript(uint16 id, uint16 wait);
+	void stopOldScript(uint16 id);
+	void tickOldScripts();
+	bool tickOldScript(OldScript *script);
 
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
 	void playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly);
 	void processAnimFrame();
 
+	void playPipe(uint16 id);
+	void stopPipes();
+
 	bool spriteVisible(uint16 id, uint16 animId);
 	Sprite *addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
 	void removeSprite(uint16 id, uint16 animId);
 	const Sprite *getSpriteAtPos(const Common::Point &pos);
 	const Button *getButtonFor(const Sprite *sprite, const Common::Point &pos);
+	void setButtonActive(uint16 id, bool active);
 
 	void dirtySprite(const Sprite &sprite);
 	void redraw();

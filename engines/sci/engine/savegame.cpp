@@ -203,7 +203,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				// Now, load the script itself
 				scr->load(g_sci->getResMan());
 
-				for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+				ObjMap objects = scr->getObjectMap();
+				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
 					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
 
 			}
@@ -226,9 +227,10 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			continue;
 
 		Script *scr = (Script *)_heap[i];
-		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
+		scr->syncLocalsBlock(this);
 
-		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+		ObjMap objects = scr->getObjectMap();
+		for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
 			reg_t addr = it->_value.getPos();
 			Object *obj = scr->scriptObjInit(addr, false);
 
@@ -237,7 +239,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
 					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
 					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->_objects.erase(addr.toUint16());
+					objects.erase(addr.toUint16());
 				}
 			}
 		}
@@ -545,8 +547,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
-	Common::StackLock lock(_mutex);
-
 	int songcount = 0;
 	byte masterVolume = soundGetMasterVolume();
 	byte reverb = _pMidiDrv->getReverb();
@@ -576,9 +576,12 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);
 
-	if (s.isLoading()) {
+	if (s.isLoading())
 		clearPlayList();
 
+	Common::StackLock lock(_mutex);
+
+	if (s.isLoading()) {
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			curSong->saveLoadWithSerializer(s);

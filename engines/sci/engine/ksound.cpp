@@ -195,6 +195,13 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, 1);
 		} else {
 			int16 language = argv[1].toSint16();
+
+			// athrxx: It seems from disasm that the original KQ5 FM-Towns loads a default language (Japanese) audio map at the beginning
+			// right after loading the video and audio drivers. The -1 language argument in here simply means that the original will stick
+			// with Japanese. Instead of doing that we switch to the language selected in the launcher.
+			if (g_sci->getPlatform() == Common::kPlatformFMTowns && language == -1)
+				language = (g_sci->getLanguage() == Common::JA_JPN) ? K_LANG_JAPANESE : K_LANG_ENGLISH;
+
 			debugC(kDebugLevelSound, "kDoAudio: set language to %d", language);
 
 			if (language != -1)

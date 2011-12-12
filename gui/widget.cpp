@@ -305,27 +305,22 @@ void ButtonWidget::setLabel(const Common::String &label) {
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _gfx(), _alpha(256), _transparency(false) {
+	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
+	  _gfx(), _alpha(256), _transparency(false) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: Widget(boss, name, tooltip), CommandSender(boss),
-	  _cmd(cmd), _gfx(), _alpha(256), _transparency(false) {
+	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
+	  _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::~PicButtonWidget() {
 	_gfx.free();
-}
-
-void PicButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
-		sendCommand(_cmd, 0);
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {

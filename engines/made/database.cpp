@@ -20,13 +20,15 @@
  *
  */
 
-#include "common/system.h"
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
-
 #include "made/database.h"
+#include "made/redreader.h"
+
+#include "common/endian.h"
+#include "common/stream.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace Made {
 
@@ -494,6 +496,7 @@ int16 GameDatabaseV2::savegame(const char *filename, const char *description, in
 	out->write(_gameState + 2, _gameStateSize - 2);
 	for (uint i = 0; i < _objects.size(); i++)
 		_objects[i]->save(*out);
+	out->finalize();
 	delete out;
 	return result;
 }
@@ -697,6 +700,7 @@ int16 GameDatabaseV3::savegame(const char *filename, const char *description, in
 	out->writeUint16LE(version);
 	out->write(desc, 64);
 	out->write(_gameState, _gameStateSize);
+	out->finalize();
 	delete out;
 	return result;
 }

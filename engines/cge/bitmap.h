@@ -77,7 +77,6 @@ public:
 	void show(int16 x, int16 y);
 	void xShow(int16 x, int16 y);
 	bool solidAt(int16 x, int16 y);
-	uint16 moveVmap(uint8 *buf);
 };
 
 

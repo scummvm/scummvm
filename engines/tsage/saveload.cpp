@@ -129,8 +129,12 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_macroSaveFlag = true;
 	_saveSlot = slot;
 
-	// Set up the serializer
+	// Try and create the save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
+	// Set up the serializer
 	Serializer serializer(NULL, saveFile);
 	serializer.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
@@ -177,6 +181,9 @@ Common::Error Saver::restore(int slot) {
 
 	// Set up the serializer
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
 	Serializer serializer(saveFile, NULL);
 
 	// Read in the savegame header
@@ -283,6 +290,7 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	::createThumbnail(thumb, (const byte *)s.pixels, SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	g_globals->_screenSurface.unlockSurface();
+	thumb->free();
 	delete thumb;
 
 	// Write out the save date/time

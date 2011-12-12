@@ -300,7 +300,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_game.state = (State)in->readByte();
 
 	in->read(loadId, 8);
-	if (strcmp(loadId, _game.id) && checkId) {
+	if (strcmp(loadId, _game.id) != 0 && checkId) {
 		delete in;
 		warning("This save seems to be from a different AGI game (save from %s, running %s), not loaded", loadId, _game.id);
 		return errBadFileOpen;
@@ -331,7 +331,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			warning("Since your game was only detected via the fallback detector, there is no possibility to assure the save is compatible with your game version");
 
 			debug(0, "The game used for saving is \"%s\".", md5);
-		} else if (strcmp(md5, getGameMD5())) {
+		} else if (strcmp(md5, getGameMD5()) != 0) {
 			warning("Game was saved with different gamedata - you may encounter problems");
 
 			debug(0, "Your game is \"%s\" and save is \"%s\".", getGameMD5(), md5);

@@ -215,10 +215,10 @@ class Scene4025 : public Scene {
 	};
 	class Peg : public SceneObject {
 	public:
-		int _field88;
+		int _pegId;
 		int _armStrip;
 
-		Peg() : SceneObject() { _field88 = 0; _armStrip = 3; }
+		Peg() : SceneObject() { _pegId = 0; _armStrip = 3; }
 		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
@@ -682,13 +682,13 @@ public:
 	SceneObject _hotspot1, _hotspot2, _hotspot3;
 	Hotspot4 _hotspot4;
 	Hotspot5 _hotspot5;
-	bool _field68E;
+	bool _puzzleDone;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void dispatch();
 	virtual void synchronize(Serializer &s) {
 		Scene::synchronize(s);
-		s.syncAsSint16LE(_field68E);
+		s.syncAsSint16LE(_puzzleDone);
 	}
 };
 

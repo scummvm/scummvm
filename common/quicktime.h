@@ -109,6 +109,7 @@ protected:
 
 	struct EditListEntry {
 		uint32 trackDuration;
+		uint32 timeOffset;
 		int32 mediaTime;
 		Rational mediaRate;
 	};
@@ -163,6 +164,7 @@ protected:
 
 		uint32 frameCount;
 		uint32 duration;
+		uint32 mediaDuration;
 		uint32 startTime;
 		Rational scaleFactorX;
 		Rational scaleFactorY;

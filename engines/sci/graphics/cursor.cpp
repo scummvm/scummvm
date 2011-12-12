@@ -179,6 +179,18 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	if (_useOriginalKQ6WinCursors)
 		viewNum += 2000;		// Windows cursors
 
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+		// HACK: Ignore cursor views for Phantasmagoria 2. They've got
+		// differences from other SCI32 views, thus we skip them for
+		// now, otherwise our view decoding code will crash.
+		// The view code will crash with *any* view in P2, but this hack
+		// allows the game to start and show the menu.
+		// TODO: Remove once the view code is updated to handle
+		// Phantasmagoria 2 views.
+		warning("TODO: Cursor views for Phantasmagoria 2");
+		return;
+	}
+
 	if (!_cachedCursors.contains(viewNum))
 		_cachedCursors[viewNum] = new GfxView(_resMan, _screen, _palette, viewNum);
 

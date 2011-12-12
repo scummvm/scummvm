@@ -592,6 +592,7 @@ bool Player::setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint f
 	if (tobeat == 0)
 		tobeat = 1;
 
+	// FIXME: Thread safety?
 	_loop_counter = 0; // Because of possible interrupts
 	_loop_to_beat = tobeat;
 	_loop_to_tick = totick;

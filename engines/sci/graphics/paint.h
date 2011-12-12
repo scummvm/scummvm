@@ -23,8 +23,6 @@
 #ifndef SCI_GRAPHICS_PAINT_H
 #define SCI_GRAPHICS_PAINT_H
 
-#include "common/hashmap.h"
-
 namespace Sci {
 
 class GfxPaint {

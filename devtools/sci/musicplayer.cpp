@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 			return 2;
 		}
 		sfx_song_set_status(&sound, DUMMY_SOUND_HANDLE, SOUND_STATUS_PLAYING);
-		while (sfx_poll(&sound, &dummy1, &dummy2) != SI_FINISHED) {};
+		while (sfx_poll(&sound, &dummy1, &dummy2) != SI_FINISHED) {}
 	}
 	sfx_exit(&sound);
 	scir_free_resource_manager(resmgr);

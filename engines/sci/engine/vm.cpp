@@ -232,11 +232,10 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	if (!temp) {
 #ifdef ENABLE_SCI32
-		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
-		// an invalid exported function.
-		if (getSciVersion() >= SCI_VERSION_2)
-			warning("Request for invalid exported function 0x%x of script %d", pubfunct, script);
-		else
+		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
+			// Script 64036 in Torin's Passage is empty and contains an invalid
+			// (empty) export
+		} else
 #endif
 			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		return NULL;
@@ -463,10 +462,10 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 
 	memset(opparams, 0, 4*sizeof(int16));
 
-	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
+	for (int i = 0; g_sci->_opcode_formats[opcode][i]; ++i) {
 		//debugN("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
 		assert(i < 3);
-		switch (g_opcode_formats[opcode][i]) {
+		switch (g_sci->_opcode_formats[opcode][i]) {
 
 		case Script_Byte:
 			opparams[i] = src[offset++];
@@ -594,15 +593,9 @@ void run_vm(EngineState *s) {
 			if (!local_script) {
 				error("Could not find local script from segment %x", s->xs->local_segment);
 			} else {
-				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
-				if (local_script->_localsBlock)
-					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
-				else
-					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-				if (local_script->_localsBlock)
-					s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
-				else
-					s->variablesMax[VAR_LOCAL] = 0;
+				s->variablesSegment[VAR_LOCAL] = local_script->getLocalsSegment();
+				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->getLocalsBegin();
+				s->variablesMax[VAR_LOCAL] = local_script->getLocalsCount();
 				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}
@@ -771,16 +764,28 @@ void run_vm(EngineState *s) {
 			// Branch relative if true
 			if (s->r_acc.offset || s->r_acc.segment)
 				s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_bt: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_bnt: // 0x18 (24)
 			// Branch relative if not true
 			if (!(s->r_acc.offset || s->r_acc.segment))
 				s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_bnt: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_jmp: // 0x19 (25)
 			s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_jmp: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_ldi: // 0x1a (26)

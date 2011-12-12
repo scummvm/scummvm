@@ -1286,14 +1286,35 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 	//
 	// Save/load palette data
-	//
-	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->isLoading() && s->getVersion() < VER(82))) {
+	// Don't save 16 bit palette in FM-Towns and PCE games, since it gets regenerated afterwards anyway.
+	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->getVersion() < VER(82)) && !((_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine) && s->getVersion() > VER(87))) {
 		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
 	}
 
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
-	if (s->getVersion() >= VER(82)) {
+	// In earlier save game versions (below 87) the FM-Towns specific data would get saved (and loaded) even in non FM-Towns games.
+	// This would cause an unnecessary save file incompatibility between DS (which uses the DISABLE_TOWNS_DUAL_LAYER_MODE setting)
+	// and other ports.
+	// In version 88 and later the save files from FM-Towns targets are compatible between DS and other platforms, too.
+
+#ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+	byte hasTownsData = 0;
+	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
+		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+
+	if (hasTownsData) {
+		// Skip FM-Towns specific data
+		for (int i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
+			s->loadByte();
+	}
+
+#else
+	byte hasTownsData = ((_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(87)) || (s->getVersion() >= VER(82) && s->getVersion() < VER(87))) ? 1 : 0;
+	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
+		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+
+	if (hasTownsData) {
 		const SaveLoadEntry townsFields[] = {
 			MKLINE(Common::Rect, left, sleInt16, VER(82)),
 			MKLINE(Common::Rect, top, sleInt16, VER(82)),
@@ -1316,6 +1337,8 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
 		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);
 		s->saveLoadEntries(this, townsExtraEntries);
+	} else if (_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(82)) {
+		warning("Save file is missing FM-Towns specific graphic data (game was apparently saved on another platform)");
 	}
 #endif
 

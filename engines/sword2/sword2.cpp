@@ -145,7 +145,7 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 
 				if (0 == scumm_stricmp(g->detectname, fileName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, Common::GUIO_NOMIDI));
+					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 					break;
 				}
 			}

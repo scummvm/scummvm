@@ -23,9 +23,6 @@
 #ifndef MADE_SCRIPT_H
 #define MADE_SCRIPT_H
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
 #include "common/textconsole.h"
 
 namespace Made {

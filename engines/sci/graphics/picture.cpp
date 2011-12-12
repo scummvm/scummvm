@@ -77,7 +77,7 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 #ifdef ENABLE_SCI32
 	case 0x0e: // SCI32 VGA picture
 		_resourceType = SCI_PICTURE_TYPE_SCI32;
-		//drawSci32Vga();
+		drawSci32Vga(0, 0, 0, 0, 0, false);
 		break;
 #endif
 	default:
@@ -132,7 +132,7 @@ void GfxPicture::drawSci11Vga() {
 		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 		_palette->set(&palette, true);
 
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0, 0);
 	}
 
 	// process vector data
@@ -148,18 +148,18 @@ int16 GfxPicture::getSci32celCount() {
 	return inbuffer[2];
 }
 
-int16 GfxPicture::getSci32celY(int16 celNo) {
-	byte *inbuffer = _resource->data;
-	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
-	int cel_headerPos = header_size + 42 * celNo;
-	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 40);
-}
-
 int16 GfxPicture::getSci32celX(int16 celNo) {
 	byte *inbuffer = _resource->data;
 	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
 	int cel_headerPos = header_size + 42 * celNo;
 	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 38);
+}
+
+int16 GfxPicture::getSci32celY(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 40);
 }
 
 int16 GfxPicture::getSci32celWidth(int16 celNo) {
@@ -169,6 +169,14 @@ int16 GfxPicture::getSci32celWidth(int16 celNo) {
 	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 0);
 }
 
+int16 GfxPicture::getSci32celHeight(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 2);
+}
+
+
 int16 GfxPicture::getSci32celPriority(int16 celNo) {
 	byte *inbuffer = _resource->data;
 	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
@@ -176,7 +184,7 @@ int16 GfxPicture::getSci32celPriority(int16 celNo) {
 	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 36);
 }
 
-void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictureX, bool mirrored) {
+void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool mirrored) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
@@ -216,14 +224,14 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	cel_RlePos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 24);
 	cel_LiteralPos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 28);
 
-	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX);
+	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX, pictureY);
 	cel_headerPos += 42;
 }
 #endif
 
 extern void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData);
 
-void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -300,10 +308,11 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 
 	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
 
+	// Horizontal clipping
 	uint16 skipCelBitmapPixels = 0;
 	int16 displayWidth = width;
 	if (pictureX) {
-		// scroll position for picture active, we need to adjust drawX accordingly
+		// horizontal scroll position for picture active, we need to adjust drawX accordingly
 		drawX -= pictureX;
 		if (drawX < 0) {
 			skipCelBitmapPixels = -drawX;
@@ -312,7 +321,21 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		}
 	}
 
-	if (displayWidth > 0) {
+	// Vertical clipping
+	uint16 skipCelBitmapLines = 0;
+	int16 displayHeight = height;
+	if (pictureY) {
+		// vertical scroll position for picture active, we need to adjust drawY accordingly
+		// TODO: Finish this
+		/*drawY -= pictureY;
+		if (drawY < 0) {
+			skipCelBitmapLines = -drawY;
+			displayHeight -= skipCelBitmapLines;
+			drawY = 0;
+		}*/
+	}
+
+	if (displayWidth > 0 && displayHeight > 0) {
 		y = displayArea.top + drawY;
 		lastY = MIN<int16>(height + y, displayArea.bottom);
 		leftX = displayArea.left + drawX;
@@ -334,6 +357,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;
+		ptr += skipCelBitmapLines * width;
 		if (!_mirroredFlag) {
 			// Draw bitmap to screen
 			x = leftX;
@@ -714,7 +738,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -757,7 +781,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:

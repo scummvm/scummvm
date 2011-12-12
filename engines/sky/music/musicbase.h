@@ -27,6 +27,8 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 
+#include "audio/mixer.h"
+
 namespace Sky {
 
 class Disk;
@@ -48,7 +50,7 @@ private:
 
 class MusicBase {
 public:
-	MusicBase(Disk *pDisk);
+	MusicBase(Audio::Mixer *pMixer, Disk *pDisk);
 	virtual ~MusicBase();
 	void loadSection(uint8 pSection);
 	void startMusic(uint16 param);
@@ -60,6 +62,7 @@ public:
 
 protected:
 
+	Audio::Mixer *_mixer;
 	Disk *_skyDisk;
 	uint8 *_musicData;
 
@@ -75,6 +78,7 @@ protected:
 	Actions _onNextPoll;
 	ChannelBase *_channels[10];
 	Common::Mutex _mutex;
+	Audio::SoundHandle _musicHandle;
 
 	virtual void setupPointers() = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;

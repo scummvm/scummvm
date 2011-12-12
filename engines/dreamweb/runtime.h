@@ -20,25 +20,17 @@
  *
  */
 
-#ifndef DREAMGEN_RUNTIME_H__
-#define DREAMGEN_RUNTIME_H__
+#ifndef DREAMGEN_RUNTIME_H
+#define DREAMGEN_RUNTIME_H
 
 #include <assert.h>
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/debug.h"
-#include "common/hashmap.h"
-#include "common/list.h"
-#include "common/ptr.h"
 
-namespace DreamWeb {
-	class DreamWebEngine;
-}
+#include "dreamweb/segment.h"
 
 namespace DreamGen {
-
-//fixme: name clash
-#undef random
 
 struct Register {
 	union {
@@ -48,12 +40,6 @@ struct Register {
 	inline Register(): _value() {}
 	inline Register& operator=(uint16 v) { _value = v; return *this; }
 	inline operator uint16&() { return _value; }
-	inline void cbw() {
-		if (_value & 0x80)
-			_value |= 0xff00;
-		else
-			_value &= 0x7f;
-	}
 };
 
 template<int kIndex> //from low to high
@@ -84,113 +70,6 @@ struct RegisterPart {
 	typedef RegisterPart<1> LowPartOfRegister;
 	typedef RegisterPart<0> HighPartOfRegister;
 #endif
-
-class WordRef {
-	uint8		*_data;
-	unsigned	_index;
-	uint16		_value;
-
-public:
-	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data.begin() + index), _index(index) {
-		assert(index + 1 < data.size());
-		_value = _data[0] | (_data[1] << 8);
-	}
-
-	inline WordRef& operator=(const WordRef &ref) {
-		_value = ref._value;
-		return *this;
-	}
-
-	inline WordRef& operator=(uint16 v) {
-		_value = v;
-		return *this;
-	}
-
-	inline operator uint16&() {
-		return _value;
-	}
-
-	inline ~WordRef() {
-		_data[0] = _value & 0xff;
-		_data[1] = _value >> 8;
-		_value = _data[0] | (_data[1] << 8);
-	}
-};
-
-struct Segment {
-	Common::Array<uint8> data;
-
-	inline void assign(const uint8 *b, const uint8 *e) {
-		data.assign(b, e);
-	}
-
-	inline uint8 &byte(unsigned index) {
-		assert(index < data.size());
-		return data[index];
-	}
-
-	inline WordRef word(unsigned index) {
-		return WordRef(data, index);
-	}
-
-	inline uint8 *ptr(unsigned index, unsigned size) {
-		assert(index + size <= data.size());
-		return data.begin() + index;
-	}
-};
-
-typedef Common::SharedPtr<Segment> SegmentPtr;
-
-class Context;
-
-class SegmentRef {
-	Context		*_context;
-	uint16		_value;
-	SegmentPtr	_segment;
-
-public:
-	SegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr()): _context(ctx), _value(value), _segment(segment) {
-	}
-
-	inline void reset(uint16 value);
-
-	inline SegmentRef& operator=(const uint16 id) {
-		reset(id);
-		return *this;
-	}
-
-	inline SegmentRef& operator=(const SegmentRef &ref) {
-		_context = ref._context;
-		_value = ref._value;
-		_segment = ref._segment;
-		return *this;
-	}
-
-	inline uint8 &byte(unsigned index) {
-		assert(_segment != 0);
-		return _segment->byte(index);
-	}
-
-	inline operator uint16() const {
-		return _value;
-	}
-
-	inline WordRef word(unsigned index) {
-		//debug(1, "getting word ref for %04x:%d", _value, index);
-		assert(_segment != 0);
-		return _segment->word(index);
-	}
-
-	inline void assign(const uint8 *b, const uint8 *e) {
-		assert(_segment != 0);
-		_segment->assign(b, e);
-	}
-
-	inline uint8 *ptr(unsigned index, unsigned size) {
-		assert(_segment != 0);
-		return _segment->ptr(index, size);
-	}
-};
 
 struct Flags {
 	bool _z, _c, _s, _o;
@@ -225,17 +104,7 @@ struct Flags {
 };
 
 class Context {
-	typedef Common::HashMap<uint16, SegmentPtr> SegmentMap;
-	SegmentMap _segments;
-
-	typedef Common::List<uint16> FreeSegmentList;
-	FreeSegmentList _freeSegments;
-
 public:
-	DreamWeb::DreamWebEngine *engine;
-
-	enum { kDefaultDataSegment = 0x1000 };
-
 	Register ax, dx, bx, cx, si, di;
 	LowPartOfRegister	al;
 	HighPartOfRegister	ah;
@@ -246,51 +115,16 @@ public:
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
 
-	SegmentRef cs, ds, es, data;
-	//data == fake segment register always pointing to data segment
+	SegmentRef cs;
+	MutableSegmentRef ds;
+	MutableSegmentRef es;
 	Flags flags;
 
-	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
-		cs(this), ds(this), es(this), data(this) {
-		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
-		cs.reset(kDefaultDataSegment);
-		ds.reset(kDefaultDataSegment);
-		es.reset(kDefaultDataSegment);
-		data.reset(kDefaultDataSegment);
-	}
+	Context(SegmentManager *segMan): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
+		cs(segMan->data),
+		ds(segMan, segMan->data),
+		es(segMan, segMan->data) {
 
-	SegmentRef getSegment(uint16 value) {
-		SegmentMap::iterator i = _segments.find(value);
-		assert(i != _segments.end());
-		return SegmentRef(this, value, i->_value);
-	}
-
-	SegmentRef allocateSegment(uint size) {
-		unsigned id;
-		if (_freeSegments.empty())
-			id = kDefaultDataSegment + _segments.size();
-		else {
-			id = _freeSegments.front();
-			_freeSegments.pop_front();
-		}
-		assert(!_segments.contains(id));
-		SegmentPtr seg(new Segment());
-		seg->data.resize(size);
-		_segments[id] = seg;
-		return SegmentRef(this, id, seg);
-	}
-
-	void deallocateSegment(uint16 id) {
-		SegmentMap::iterator i = _segments.find(id);
-		assert(i != _segments.end());
-		_segments.erase(i);
-		_freeSegments.push_back(id);
-	}
-
-	SegmentRef segRef(uint16 seg) {
-		SegmentRef result(this);
-		result = seg;
-		return result;
 	}
 
 	inline void _cmp(uint8 a, uint8 b) {
@@ -564,10 +398,6 @@ public:
 	}
 };
 
-inline void SegmentRef::reset(uint16 value) {
-	*this = _context->getSegment(value);
-}
-
 class StackChecker {
 	const Context	&_context;
 	const uint		_stackDepth;
@@ -583,6 +413,6 @@ public:
 #	define STACK_CHECK  do {} while (0)
 #endif
 
-}
+} // End of namespace DreamGen
 
 #endif

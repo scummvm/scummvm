@@ -649,8 +649,15 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			dr.language = detectLanguage(fslist, g->id);
 
 			// Detect if there are speech files in this unknown game
-			if (detectSpeech(fslist, g))
-				dr.game.guioptions &= ~GUIO_NOSPEECH;
+			if (detectSpeech(fslist, g)) {
+				if (strchr(dr.game.guioptions, GUIO_NOSPEECH[0]) != NULL) {
+					if (g->id == GID_MONKEY || g->id == GID_MONKEY2)
+						// TODO: This may need to be updated if something important gets added in the top detection table for these game ids
+						dr.game.guioptions = GUIO0();
+					else
+						warning("FIXME: fix NOSPEECH fallback");
+				}
+			}
 
 			// Add the game/variant to the candidates list if it is consistent
 			// with the file(s) we are seeing.
@@ -1001,7 +1008,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 			}
 		}
 
-		dg.setGUIOptions(x->game.guioptions | MidiDriver::musicType2GUIO(x->game.midi));
+		dg.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
 		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(dg);

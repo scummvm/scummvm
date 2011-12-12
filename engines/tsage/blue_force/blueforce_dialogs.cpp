@@ -187,6 +187,7 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Options dialog
+		BlueForce::OptionsDialog::show();
 		break;
 	}
 
@@ -428,6 +429,72 @@ int RadioConvDialog::show() {
 	return btnIndex;
 }
 
+/*--------------------------------------------------------------------------*/
+
+void OptionsDialog::show() {
+	OptionsDialog *dlg = new OptionsDialog();
+	dlg->draw();
+
+	GfxButton *btn = dlg->execute();
+
+	if (btn == &dlg->_btnQuit) {
+		// Quit game
+		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
+			g_vm->quitGame();
+		}
+	} else if (btn == &dlg->_btnRestart) {
+		// Restart game
+		g_globals->_game->restartGame();
+	} else if (btn == &dlg->_btnSound) {
+		// Sound dialog
+		SoundDialog::execute();
+	} else if (btn == &dlg->_btnSave) {
+		// Save button
+		g_globals->_game->saveGame();
+	} else if (btn == &dlg->_btnRestore) {
+		// Restore button
+		g_globals->_game->restoreGame();
+	}
+
+	dlg->remove();
+	delete dlg;
+}
+
+OptionsDialog::OptionsDialog() {
+	// Set the element text
+	_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
+	_btnRestore.setText(RESTORE_BTN_STRING);
+	_btnSave.setText(SAVE_BTN_STRING);
+	_btnRestart.setText(RESTART_BTN_STRING);
+	_btnQuit.setText(QUIT_BTN_STRING);
+	_btnSound.setText(SOUND_BTN_STRING);
+	_btnResume.setText(RESUME_BTN_STRING);
+
+	// Set position of the elements
+	_gfxMessage._bounds.moveTo(0, 1);
+	_btnRestore._bounds.moveTo(0, _gfxMessage._bounds.bottom + 1);
+	_btnSave._bounds.moveTo(0, _btnRestore._bounds.bottom + 1);
+	_btnRestart._bounds.moveTo(0, _btnSave._bounds.bottom + 1);
+	_btnQuit._bounds.moveTo(0, _btnRestart._bounds.bottom + 1);
+	_btnSound._bounds.moveTo(0, _btnQuit._bounds.bottom + 1);
+	_btnResume._bounds.moveTo(0, _btnSound._bounds.bottom + 1);
+
+	// Set all the buttons to the widest button
+	GfxButton *btnList[6] = {&_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume};
+	int16 btnWidth = 0;
+	for (int idx = 0; idx < 6; ++idx)
+		btnWidth = MAX(btnWidth, btnList[idx]->_bounds.width());
+	for (int idx = 0; idx < 6; ++idx)
+		btnList[idx]->_bounds.setWidth(btnWidth);
+
+	// Add the items to the dialog
+	addElements(&_gfxMessage, &_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume, NULL);
+
+	// Set the dialog size and position
+	frame();
+	_bounds.collapse(-6, -6);
+	setCenter(160, 90);
+}
 
 } // End of namespace BlueForce
 

@@ -719,7 +719,10 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	}
 
 	// Read the whole executable file into memory
-	Common::SharedPtr<Common::SeekableReadStream> data(file.readStream(file.size()));
+	// CHECKME: Why do we read the file into memory first? It does not seem to be
+	// kept outside of this function. Is the processing of the data too slow
+	// otherwise?
+	Common::ScopedPtr<Common::SeekableReadStream> data(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
@@ -769,8 +772,11 @@ bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeI
 	Common::File file;
 
 	// Open the wave file and read it into memory
+	// CHECKME: Why do we read the file into memory first? It does not seem to be
+	// kept outside of this function. Is the processing of the data too slow
+	// otherwise?
 	file.open(wavePath);
-	Common::SharedPtr<Common::SeekableReadStream> uint8Wave(file.readStream(file.size()));
+	Common::ScopedPtr<Common::SeekableReadStream> uint8Wave(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got the whole wave file

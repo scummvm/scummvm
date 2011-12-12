@@ -131,7 +131,7 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 			_emc->run(&_scriptClick);
 	}
 
-	memset(_entranceMouseCursorTracks, 0xFFFF, sizeof(uint16)*4);
+	memset(_entranceMouseCursorTracks, 0xFF, sizeof(_entranceMouseCursorTracks));
 	_currentCharacter->sceneId = sceneId;
 
 	assert(sceneId < _roomTableSize);

@@ -65,7 +65,7 @@ class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
 		_singleid = "cine";
-		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {

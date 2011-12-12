@@ -85,8 +85,13 @@ class MemoryPack : public Pack {
 		byte *data;
 		uint32 size;
 		inline Chunk(): data(0), size(0) {}
-		inline Chunk(const Chunk &c): data(c.data), size(c.size) { c.reset(); }
-		inline Chunk& operator=(const Chunk &c) { data = c.data; size = c.size; c.reset(); return *this; }
+		inline Chunk(const Chunk &c) : data(c.data), size(c.size) { c.reset(); }
+		inline Chunk &operator=(const Chunk &c) {
+			data = c.data;
+			size = c.size;
+			c.reset();
+			return *this;
+		}
 		inline ~Chunk() { delete[] data; }
 		inline void reset() const {
 			Chunk *c = const_cast<Chunk *>(this);

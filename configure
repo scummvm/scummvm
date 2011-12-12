@@ -83,7 +83,7 @@ add_engine he "HE71+ games" yes
 add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
-add_engine cge "CGE" no
+add_engine cge "CGE" yes
 add_engine cine "Cinematique evo 1" yes
 add_engine composer "Magic Composer" no
 add_engine cruise "Cinematique evo 2" yes
@@ -98,7 +98,6 @@ add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" yes
 add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
-add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
 add_engine mohawk "Mohawk" yes "cstime myst riven"
 add_engine cstime "Where in Time is Carmen Sandiego?" no
@@ -119,9 +118,10 @@ add_engine sword25 "Broken Sword 2.5" no
 add_engine teenagent "Teen Agent" yes
 add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
+add_engine toltecs "3 Skulls of the Toltecs" no
 add_engine toon "Toonstruck" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
-add_engine tsage "Ringworld: Revenge Of The Patriarch" yes
+add_engine tsage "TsAGE" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
 #
@@ -151,6 +151,7 @@ _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
+_optimizations=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -174,6 +175,8 @@ _plugins_default=static
 _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
+_optimization_level=
+_default_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -409,17 +412,37 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
+	if test "${3}" != "" ; then
+		tmpopt_prefix="${3}"
+	else
+		tmpopt_prefix="--"
+	fi
 	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
 
 # Show an error about an unknown option
 option_error() {
-	echo "error: unrecognised option: $ac_option
+	echo "error: unrecognized option: $ac_option
 Try \`$0 --help' for more information." >&2
 	exit 1
 }
+
+# Show an error about an unknown engine
+engine_option_error() {
+	echo "error: unrecognized engine: $1
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
+# Show an error about an invalid subengine option
+subengine_option_error() {
+	echo "error: this option is invalid for the subengine $1: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
 
 
 #
@@ -472,9 +495,9 @@ engine_disable_all() {
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
-	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
-		eng=`echo $1 | cut -d '=' -f 1`
-		opt=`echo $1 | cut -d '=' -f 2`
+	if ( echo $1 | grep ':' ) 2> /dev/null > /dev/null ; then
+		eng=`echo $1 | cut -d ':' -f 1`
+		opt=`echo $1 | cut -d ':' -f 2`
 	else
 		eng=$1
 		opt=yes
@@ -483,7 +506,7 @@ engine_enable() {
 
 	# Filter the parameter for the subengines
 	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
-		option_error
+		subengine_option_error ${engine}
 		return
 	fi
 
@@ -491,7 +514,7 @@ engine_enable() {
 		if test "`get_engine_name ${engine}`" != "" ; then
 			set_var _engine_${engine}_build "$opt"
 		else
-			option_error
+			engine_option_error ${engine}
 		fi
 	else
 		option_error
@@ -510,21 +533,14 @@ engine_disable() {
 	if test "`get_engine_name ${engine}`" != "" ; then
 		set_var _engine_${engine}_build "no"
 	else
-		option_error
+		engine_option_error ${engine}
 	fi
 }
 
 # Show the configure help line for a given engine
 show_engine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="don't "
-	else
-		option="enable"
-		do=""
-	fi
 	name=`get_engine_name $1`
-	option_help ${option}-${1} "${do}build the ${name} engine"
+	option_help "${1}" "${name} engine" "  "
 	for sub in `get_engine_subengines $1`; do
 		show_subengine_help $sub $1
 	done
@@ -532,16 +548,9 @@ show_engine_help() {
 
 # Show the configure help line for a given subengine
 show_subengine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="exclude"
-	else
-		option="enable"
-		do="include"
-	fi
 	name=`get_engine_name $1`
 	parent=`get_engine_name $2`
-	option_help ${option}-${1} "${do} the ${name} in ${parent} engine"
+	option_help "${1}" "${name} in ${parent} engine" "  "
 }
 
 # Prepare the strings about the engines to build
@@ -764,12 +773,21 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
+  --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
+  --enable-engine-static=<engine name>[,<engine name>...] 
+      enable engine(s) listed as static builtin (when plugins are enabled)
+  --enable-engine-dynamic=<engine name>[,<engine name>...]
+      enable engine(s) listed as dynamic plugin (when plugins are enabled)
+    The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
+  --enable-release-mode    enable building in release mode (without optimizations)
+  --enable-optimizations   enable optimizations
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -997,11 +1015,25 @@ for ac_option in $@; do
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
 		;;
+	--enable-release-mode)
+		_release_build=yes
+		;;
+	--disable-release-mode)
+		_release_build=no
+		;;
 	--enable-release)
 		_release_build=yes
+		_optimizations=yes
 		;;
 	--disable-release)
 		_release_build=no
+		_optimizations=no
+		;;
+	--enable-optimizations)
+		_optimizations=yes
+		;;
+	--disable-optimizations)
+		_optimizations=no
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -1050,11 +1082,25 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
-	--enable-*)
-		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine=* | --enable-engines=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}"
+		done
 		;;
-	--disable-*)
-		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine-static=* | --enable-engines-static=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:static"
+		done
+		;;
+	--enable-engine-dynamic=* | --enable-engines-dynamic=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:dynamic"
+		done
+		;;
+	--disable-engine=* | --disable-engines=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+			engine_disable ${engine_name}
+		done
 		;;
 	*)
 		option_error
@@ -1272,6 +1318,11 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 		# Enable release build by default.
 		_release_build=yes
 	fi
+
+	if test "$_optimizations" = auto; then
+		# Enable optimizations by default.
+		_optimizations=yes
+	fi
 	;;
 esac
 
@@ -1281,12 +1332,8 @@ if test "$_debug_build" != no; then
 fi
 
 if test "$_release_build" = yes; then
-	# Release mode enabled: enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
-	# We will also add a define, which indicates we are doing
+	# Add a define, which indicates we are doing
 	# an build for a release version.
-	CXXFLAGS="$CXXFLAGS -O2"
-	CXXFLAGS="$CXXFLAGS -Wuninitialized"
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
@@ -1527,7 +1574,7 @@ fi
 echo "$cxx_version"
 
 #
-# Bail out now if now useable compiler was found.
+# Bail out now if no useable compiler was found.
 #
 if test "$cxx_verc_fail" = yes ; then
 	echo
@@ -1800,7 +1847,7 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS -fstrict-aliasing"
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
@@ -1850,7 +1897,7 @@ case $_host_os in
 		# There is no way to get the prefix, so implementing a hack here
 		macport_version=`port version 2>/dev/null`
 		if test "$?" -eq 0; then
-			macport_version="`echo "${macport_version}" | sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
+			macport_version="`echo "${macport_version}" | sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
 			echo_n "You seem to be running MacPorts version ${macport_version}..."
 
 			macport_prefix=`which port`
@@ -1903,7 +1950,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		;;
 	gamecube)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mogc"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -1989,7 +2036,7 @@ case $_host_os in
 		fi
 		LDFLAGS="$LDFLAGS -L$PSPSDK/lib"
 		LDFLAGS="$LDFLAGS -specs=$_srcdir/backends/platform/psp/psp.spec"
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D_PSP_FW_VERSION=150"
@@ -2016,7 +2063,7 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	wii)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mrvl"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -2037,7 +2084,7 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -fno-inline-functions"
 		CXXFLAGS="$CXXFLAGS -march=armv4"
 		CXXFLAGS="$CXXFLAGS -mtune=xscale"
@@ -2047,9 +2094,11 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNICODE"
 		DEFINES="$DEFINES -DFPM_DEFAULT"
 		DEFINES="$DEFINES -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DWRAP_MALLOC"
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -Dcdecl="
 		DEFINES="$DEFINES -D__cdecl__="
+		add_line_to_config_mk "WRAP_MALLOC = 1"
 		;;
 esac
 
@@ -2102,7 +2151,7 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
 				# Use -O3 on the Caanoo for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
@@ -2145,7 +2194,7 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes; then
 				DEFINES="$DEFINES -DNOSERIAL"
 			fi
-			CXXFLAGS="$CXXFLAGS -O3"
+			_optimization_level=-O3
 			CXXFLAGS="$CXXFLAGS -funroll-loops"
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
@@ -2240,15 +2289,17 @@ if test -n "$_host"; then
 			_seq_midi=no
 			;;
 		maemo)
-			CXXFLAGS="$CXXFLAGS -Os"
+			_optimization_level=-Os
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			INCLUDES="$INCLUDES -I/usr/X11R6/include"
 			LIBS="$LIBS -lpthread"
+			LIBS="$LIBS -lX11"
 			LIBS="$LIBS -L/usr/lib"
 			
 			_backend="maemo"
 			_vkeybd=yes
+			_keymapper=yes
 			_build_hq_scalers=no
 			_mt32emu=no
 			_alsa=no
@@ -2330,7 +2381,7 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
 				# Use -O3 on the OpenPandora for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
@@ -2401,12 +2452,14 @@ if test -n "$_host"; then
 		webos)
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
-			_build_scalers=no
+			_build_scalers=yes
+			_build_hq_scalers=no
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
 			_vkeybd=no
 			_keymapper=yes
+			add_line_to_config_mk "HOST_COMPILER = `uname`"
 			;;
 		wii)
 			_backend="wii"
@@ -2444,8 +2497,9 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
-  bada)
+	bada)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
@@ -2553,7 +2607,8 @@ case $_backend in
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		LIBS="$LIBS -lSDL"
+		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
+		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
@@ -2689,6 +2744,29 @@ fi
 echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
+
+
+#
+# If a specific optimization level was requested, enable optimizations
+#
+if test -n "$_optimization_level" ; then
+	# Ports will specify an optimization level and expect that to be enabled
+	if test "$_optimizations" != no ; then
+		_optimizations=yes
+	fi
+else
+	_optimization_level=$_default_optimization_level
+fi
+
+#
+# Check whether to enable optimizations
+#
+if test "$_optimizations" = yes ; then
+	# Enable optimizations. This also
+	# makes it possible to use -Wuninitialized, so let's do that.
+	CXXFLAGS="$CXXFLAGS $_optimization_level"
+	CXXFLAGS="$CXXFLAGS -Wuninitialized"
+fi
 
 #
 # Check whether plugin support is requested and possible
@@ -3708,13 +3786,9 @@ done
 for engine in $_engines; do
 	engine_build=`get_engine_build $engine`
 	engine_build_default=`get_engine_build_default $engine`
-	engine_wip=false
 	if test $engine_build != no -a $engine_build_default = no ; then
-		engine_wip=true
 		set_var _tainted_build "yes"
 	fi
-	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
-	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'

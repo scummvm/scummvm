@@ -81,7 +81,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	if (!rleEncoded) {
 		Common::copy(srcP, srcP + (r.width() * r.height()), destP);
 	} else {
-		Common::set_to(destP, destP + (r.width() * r.height()), s._transColor);
+		Common::fill(destP, destP + (r.width() * r.height()), s._transColor);
 
 		for (int yp = 0; yp < r.height(); ++yp) {
 			int width = r.width();
@@ -105,7 +105,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 					controlVal &= 0x3f;
 					int pixel = *srcP++;
 
-					Common::set_to(destP, destP + controlVal, pixel);
+					Common::fill(destP, destP + controlVal, pixel);
 					destP += controlVal;
 					width -= controlVal;
 				}
@@ -261,7 +261,7 @@ void GfxSurface::create(int width, int height) {
 	}
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	Common::set_to((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
+	Common::fill((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -455,7 +455,7 @@ static int *scaleLine(int size, int srcSize) {
 	int scale = PRECISION_FACTOR * size / srcSize;
 	assert(scale >= 0);
 	int *v = new int[size];
-	Common::set_to(v, &v[size], -1);
+	Common::fill(v, &v[size], -1);
 
 	int distCtr = PRECISION_FACTOR / 2;
 	int *destP = v;
@@ -493,7 +493,7 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 		byte *destP = (byte *)destImage.getBasePtr(0, yp);
 
 		if (vertUsage[yp] == -1) {
-			Common::set_to(destP, destP + xSize, transIndex);
+			Common::fill(destP, destP + xSize, transIndex);
 		} else {
 			const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
 
@@ -676,7 +676,39 @@ void GfxElement::drawFrame() {
 	Rect tempRect = _bounds;
 	tempRect.collapse(g_globals->_gfxEdgeAdjust, g_globals->_gfxEdgeAdjust);
 	tempRect.collapse(-1, -1);
-	gfxManager.fillRect(tempRect, _colors.background);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// For Return to Ringworld, use palette shading
+
+		// Get the current palette and determining a shading translation list
+		ScenePalette tempPalette;
+		tempPalette.getPalette(0, 256);
+		int transList[256];
+
+		for (int i = 0; i < 256; ++i) {
+			uint r, g, b, v;
+			tempPalette.getEntry(i, &r, &g, &b);
+			v = ((r >> 1) + (g >> 1) + (b >> 1)) / 4;
+
+			transList[i] = tempPalette.indexOf(v, v, v);
+		}
+
+		// Loop through the surface area to replace each pixel
+		// with its proper shaded replacement
+		Graphics::Surface surface = gfxManager.lockSurface();
+		for (int y = tempRect.top; y < tempRect.bottom; ++y) {
+			byte *lineP = (byte *)surface.getBasePtr(tempRect.left, y);
+			for (int x = 0; x < tempRect.width(); ++x) {
+				*lineP = transList[*lineP];
+				lineP++;
+			}
+		}
+		gfxManager.unlockSurface();
+
+	} else {
+		// Fill dialog content with specified background colour
+		gfxManager.fillRect(tempRect, _colors.background);
+	}
 
 	--tempRect.bottom; --tempRect.right;
 	gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
@@ -1222,7 +1254,11 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 	if (!_fontData)
 		_fontData = g_resourceManager->getResource(RES_FONT, _fontNumber, 0);
 
-	_numChars = READ_LE_UINT16(_fontData + 4);
+	// Since some TsAGE game versions don't have a valid character count at offset 4, use the offset of the
+	// first charactre data to calculate the number of characters in the offset table preceeding it
+	_numChars = (READ_LE_UINT32(_fontData + 12) - 12) / 4;
+	assert(_numChars <= 256);
+
 	_fontSize.y = READ_LE_UINT16(_fontData + 6);
 	_fontSize.x = READ_LE_UINT16(_fontData + 8);
 	_bpp = READ_LE_UINT16(_fontData + 10);

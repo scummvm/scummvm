@@ -32,9 +32,10 @@
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine_v1 *vm)
-	: ::GUI::Debugger() {
-	_vm = vm;
+	: ::GUI::Debugger(), _vm(vm) {
+}
 
+void Debugger::initialize() {
 	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
 	DCmd_Register("load_palette",		WRAP_METHOD(Debugger, cmd_loadPalette));
@@ -196,6 +197,9 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	: Debugger(vm), _vm(vm) {
+}
+
+void Debugger_LoK::initialize() {
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_LoK, cmd_listScenes));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
@@ -281,6 +285,9 @@ bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
+}
+
+void Debugger_v2::initialize() {
 	DCmd_Register("character_info",		WRAP_METHOD(Debugger_v2, cmd_characterInfo));
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_v2, cmd_enterScene));
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v2, cmd_listScenes));
@@ -433,6 +440,9 @@ bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
+}
+
+void Debugger_HoF::initialize() {
 	DCmd_Register("pass_codes",			WRAP_METHOD(Debugger_HoF, cmd_passcodes));
 }
 

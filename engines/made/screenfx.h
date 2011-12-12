@@ -23,16 +23,15 @@
 #ifndef MADE_SCREENFX_H
 #define MADE_SCREENFX_H
 
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/rect.h"
+#include "common/scummsys.h"
 
-#include "graphics/surface.h"
-
-#include "made/made.h"
-#include "made/screen.h"
+namespace Graphics {
+struct Surface;
+}
 
 namespace Made {
+
+class Screen;
 
 struct BlendedPaletteStatus {
 	bool _active;

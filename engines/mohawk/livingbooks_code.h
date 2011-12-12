@@ -23,6 +23,7 @@
 #ifndef MOHAWK_LIVINGBOOKS_CODE_H
 #define MOHAWK_LIVINGBOOKS_CODE_H
 
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "common/substream.h"
@@ -31,6 +32,8 @@ namespace Mohawk {
 
 class MohawkEngine_LivingBooks;
 class LBItem;
+class LBXObject;
+struct LBList;
 
 enum LBValueType {
 	kLBValueString,
@@ -38,7 +41,9 @@ enum LBValueType {
 	kLBValueReal,
 	kLBValuePoint,
 	kLBValueRect,
-	kLBValueItemPtr
+	kLBValueItemPtr,
+	kLBValueLBX,
+	kLBValueList
 };
 
 struct LBValue {
@@ -66,6 +71,14 @@ struct LBValue {
 		type = kLBValueItemPtr;
 		item = itm;
 	}
+	LBValue(Common::SharedPtr<LBXObject> l) {
+		type = kLBValueLBX;
+		lbx = l;
+	}
+	LBValue(Common::SharedPtr<LBList> l) {
+		type = kLBValueList;
+		list = l;
+	}
 	LBValue(const LBValue &val) {
 		type = val.type;
 		switch (type) {
@@ -87,6 +100,12 @@ struct LBValue {
 		case kLBValueItemPtr:
 			item = val.item;
 			break;
+		case kLBValueLBX:
+			lbx = val.lbx;
+			break;
+		case kLBValueList:
+			list = val.list;
+			break;
 		}
 	}
 
@@ -97,6 +116,8 @@ struct LBValue {
 	Common::Point point;
 	Common::Rect rect;
 	LBItem *item;
+	Common::SharedPtr<LBXObject> lbx;
+	Common::SharedPtr<LBList> list;
 
 	bool operator==(const LBValue &x) const;
 	bool operator!=(const LBValue &x) const;
@@ -109,6 +130,10 @@ struct LBValue {
 	double toDouble() const;
 	Common::Point toPoint() const;
 	Common::Rect toRect() const;
+};
+
+struct LBList {
+	Common::Array<LBValue> array;
 };
 
 enum {
@@ -207,6 +232,7 @@ protected:
 	void parseArithmetic2();
 	void parseMain();
 
+	LBValue *getIndexedVar(Common::String varname, const Common::Array<LBValue> &index);
 	LBItem *resolveItem(const LBValue &value);
 	Common::Array<LBValue> readParams();
 	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
@@ -224,22 +250,43 @@ public:
 	void cmdRandom(const Common::Array<LBValue> &params);
 	void cmdStringLen(const Common::Array<LBValue> &params);
 	void cmdSubstring(const Common::Array<LBValue> &params);
+	void cmdMax(const Common::Array<LBValue> &params);
+	void cmdMin(const Common::Array<LBValue> &params);
+	void cmdAbs(const Common::Array<LBValue> &params);
 	void cmdGetRect(const Common::Array<LBValue> &params);
+	void cmdMakePoint(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);
 	void cmdBottomRight(const Common::Array<LBValue> &params);
+	void cmdMousePos(const Common::Array<LBValue> &params);
 	void cmdTop(const Common::Array<LBValue> &params);
 	void cmdLeft(const Common::Array<LBValue> &params);
 	void cmdBottom(const Common::Array<LBValue> &params);
 	void cmdRight(const Common::Array<LBValue> &params);
+	void cmdMove(const Common::Array<LBValue> &params);
 	void cmdSetDragParams(const Common::Array<LBValue> &params);
+	void cmdNewList(const Common::Array<LBValue> &params);
+	void cmdAdd(const Common::Array<LBValue> &params);
+	void cmdAddAt(const Common::Array<LBValue> &params);
+	void cmdSetAt(const Common::Array<LBValue> &params);
+	void cmdListLen(const Common::Array<LBValue> &params);
+	void cmdDeleteAt(const Common::Array<LBValue> &params);
+	void cmdSetProperty(const Common::Array<LBValue> &params);
+	void cmdGetProperty(const Common::Array<LBValue> &params);
+	void cmdExec(const Common::Array<LBValue> &params);
+	void cmdReturn(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
+	void cmdLBXCreate(const Common::Array<LBValue> &params);
+	void cmdLBXFunc(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
+	void itemClone(const Common::Array<LBValue> &params);
 	void itemIsPlaying(const Common::Array<LBValue> &params);
+	void itemIsLoaded(const Common::Array<LBValue> &params);
 	void itemMoveTo(const Common::Array<LBValue> &params);
 	void itemSeek(const Common::Array<LBValue> &params);
+	void itemSeekToFrame(const Common::Array<LBValue> &params);
 	void itemSetParent(const Common::Array<LBValue> &params);
 };
 

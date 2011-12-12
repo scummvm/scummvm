@@ -29,7 +29,7 @@
 
 namespace Toon {
 
-bool Picture::loadPicture(Common::String file) {
+bool Picture::loadPicture(const Common::String &file) {
 	debugC(1, kDebugPicture, "loadPicture(%s)", file.c_str());
 
 	uint32 size = 0;

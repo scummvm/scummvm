@@ -558,7 +558,6 @@ restart:
 	while ((byte *)sl != (byte *)sub) {
 		_currentLine = sl;
 		if (checkIfToRunSubroutineLine(sl, sub)) {
-			result = 0;
 			_codePtr = (byte *)sl;
 			if (sub->id)
 				_codePtr += 2;

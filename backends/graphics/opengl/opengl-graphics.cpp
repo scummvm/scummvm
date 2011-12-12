@@ -1115,8 +1115,6 @@ void OpenGLGraphicsManager::loadTextures() {
 	}
 #endif
 
-	uint gameScreenBPP = 0;
-
 	if (!_gameTexture) {
 		byte bpp;
 		GLenum intformat;
@@ -1127,7 +1125,6 @@ void OpenGLGraphicsManager::loadTextures() {
 #else
 		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, intformat, format, type);
 #endif
-		gameScreenBPP = bpp;
 		_gameTexture = new GLTexture(bpp, intformat, format, type);
 	} else
 		_gameTexture->refresh();
@@ -1186,10 +1183,11 @@ void OpenGLGraphicsManager::loadTextures() {
 	// We need to setup a proper unpack alignment value here, else we will
 	// get problems with the texture updates, in case the surface data is
 	// not properly aligned.
-	// For now we use the gcd of the game screen format and 2, since 2 is
-	// the BPP value for the overlay and the OSD.
-	if (gameScreenBPP)
-		glPixelStorei(GL_UNPACK_ALIGNMENT, Common::gcd<uint>(gameScreenBPP, 2));
+	// It is noteworthy this assumes the OSD uses the same BPP as the overlay
+	// and that the cursor works with any alignment setting.
+	int newAlignment = Common::gcd(_gameTexture->getBytesPerPixel(), _overlayTexture->getBytesPerPixel());
+	assert(newAlignment == 1 || newAlignment == 2 || newAlignment == 4);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, newAlignment);
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot

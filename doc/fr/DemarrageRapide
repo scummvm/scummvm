@@ -4,7 +4,7 @@ trouvez pas ce que vous cherchez dans ce document et que vous comprenez
 un peu l'anglais, jetez un coup d'oeil au fichier README anglais.
 
 Pour plus d'informations, liste des jeux compatibles, détails pour
-donner de l'argent, la dernière version disponibles et bien plus encore,
+faire un don, la dernière version disponibles et bien plus encore,
 visitez le site web de ScummVM à l'adresse http://www.scummvm.org/
 
 Table des matières:
@@ -34,7 +34,7 @@ for Maniac Mansion', qui a été le premier jeu pour lequel LucasArts a
 conçu ce système. Et beaucoup plus tard, il donna son nom à ScummVM
 ('VM' signifiant Virtual Machine). 
 
-Au cours du temps de nombreux jeux non-SCUMM ont été ajouté, et ScummVM
+Au cours du temps de nombreux jeux non-SCUMM ont été ajoutés, et ScummVM
 prend désormais en charge de nombreux jeux Sierra AGI et SCI (tels que
 King's Quest 1-6, Space Quest 1-5, ...), Discworld 1 et 2, Simon the
 Sorcerer 1 et 2, Beneath A Steel Sky, Lure of the Temptress, Les
@@ -75,7 +75,7 @@ aussi proposer des patches!
 IMPORTANT: Les instructions ci-dessous supposent que vous utilisez
 ScummVM en Français. Par défaut, ScummVM utilise la langue de votre
 système d'exploitation. Si vous préférez utiliser ScummVM en Anglais,
-vous pouvez plutôt utiliser le guide du fichier README Anglais.
+il est sans doute préférable de lire le fichier README Anglais.
 
 
 Pour les plus impatients, voici comment obtenir ScummVM en cinq étapes
@@ -121,13 +121,13 @@ Astuce: Si vous souhaitez ajouter plusieurs jeux d'un coup, essayez
 d'appuyer et de maintenir la touche Maj (Shift) tout en cliquant sur
 'Ajouter...' - son texte changera en 'Ajout Massif…'. Vous serez alors
 invitez à sélectioner un répertoire dans lequel ScummVM parcourra tous
-les sous-répertoire à la recherche de jeux supportés.
+les sous-répertoires à la recherche de jeux supportés.
 
 
 2.0) Contact:
 ---- --------
-La meilleure façon de contacter l'équipe de ScummVM est en soumettant
-des rapports de bogues (voir section 2.1) ou en utilisant nos forums
+La meilleure façon de contacter l'équipe de ScummVM est de soumettre
+des rapports de bogues (voir section 2.1) ou d'utiliser nos forums
 http://forums.scummvm.org. Vous pouvez également envoyer un e-mail sur
 la liste de diffusion scummvm-devel, ou discuter avec nous sur IRC
 (#scummvm sur irc.freenode.net). S'il vous plaît ne nous demandez pas de

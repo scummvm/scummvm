@@ -34,7 +34,7 @@ namespace TeenAgent {
 #define INC_FLAG(addr) (++*res->dseg.ptr(addr))
 
 void TeenAgentEngine::rejectMessage() {
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
 	//debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
@@ -46,9 +46,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (addr == 0)
 		return false;
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	debug(0, "processCallback(%04x)", addr);
-	byte * code = res->cseg.ptr(addr);
+	byte *code = res->cseg.ptr(addr);
 
 	//try trivial callbacks first
 	if (code[0] == 0xbb && code[3] == 0xe8 && code[6] == 0xc3) {
@@ -1355,7 +1355,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(11);
 		disableObject(1);
 
-		byte * scene_15_ons = scene->getOns(15); //patch ons for the scene 15
+		byte *scene_15_ons = scene->getOns(15);  //patch ons for the scene 15
 		scene_15_ons[0] = 0;
 
 		byte f = GET_FLAG(0xDB98) + 1;
@@ -2501,7 +2501,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x862c:
-		displayMessage(CHECK_FLAG(0xDBB0, 1)? 0x4882: 0x3457);
+		displayMessage(CHECK_FLAG(0xDBB0, 1) ? 0x4882 : 0x3457);
 		return true;
 
 	case 0x86a9: //correcting height of the pole with spanner
@@ -2561,7 +2561,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(4, 0);
 
 			{
-				Walkbox * w = scene->getWalkbox(0);
+				Walkbox *w = scene->getWalkbox(0);
 				w->rect.clear();
 				w->save();
 			}
@@ -2747,21 +2747,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->remove(36);
 		SET_FLAG(0xDBAD, 1);
 		{
-			Object * o = scene->getObject(7);
+			Object *o = scene->getObject(7);
 			o->actor_rect.left = o->actor_rect.right = 297;
 			o->actor_rect.top = o->actor_rect.bottom = 181;
 			o->actor_orientation = 1;
 			o->save();
 		}
 		{
-			Object * o = scene->getObject(9);
+			Object *o = scene->getObject(9);
 			o->actor_rect.left = o->actor_rect.right = 297;
 			o->actor_rect.top = o->actor_rect.bottom = 181;
 			o->actor_orientation = 1;
 			o->save();
 		}
 		{
-			Walkbox * w = scene->getWalkbox(0);
+			Walkbox *w = scene->getWalkbox(0);
 			w->rect.right = 266;
 			w->rect.bottom = 193;
 			w->save();
@@ -3110,7 +3110,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 4);
 			playActorAnimation(680);
 			SET_FLAG(0xDBB8, 0);
-		} else if (CHECK_FLAG(0xDBB8, 1)) {
+		} else if (CHECK_FLAG(0xDBB7, 1)) {
 			processCallback(0x6b86);
 		} else if (CHECK_FLAG(0xDBB9, 1)) {
 			processCallback(0x6b86);
@@ -3177,7 +3177,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 5);
 			playActorAnimation(688);
 			SET_FLAG(0xdbbc, 0);
-		} else if (CHECK_FLAG(0xdbbc, 1)) {
+		} else if (CHECK_FLAG(0xdbbb, 1)) {
 			processCallback(0x6b86);
 		} else {
 			playSound(66, 6);
@@ -3221,7 +3221,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x6c83:
-		Dialog::pop(scene, 0xdb2e, 0, 0, 0xd1, 0xef, 0, 1);
+		waitLanAnimationFrame(1, 1);
+		Dialog::pop(scene, 0xdb2e, 0, 727, 0xd1, 0xef, 0, 1);
 		scene->getObject(1)->setName((const char *)res->dseg.ptr(0xaa94));
 		SET_FLAG(0xDBD1, 1);
 		return true;
@@ -3557,8 +3558,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 39);
 		displayAsyncMessage(0x5124, 40388, 9, 35, 0xd0);
 		playActorAnimation(728);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3d17, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3d17, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD2, 1);
 		processCallback(0x9175);
 		return true;
@@ -3572,13 +3574,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			return true;
 		}
 		displayMessage(0x5138);
-		waitLanAnimationFrame(1, 1);
 
+		waitLanAnimationFrame(1, 1);
 		playSound(5, 3);
 		playSound(5, 23);
 		playActorAnimation(729);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3d70, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3d70, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD3, 1);
 		processCallback(0x9175);
 		return true;
@@ -3597,8 +3600,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 3);
 		playSound(5, 25);
 		playActorAnimation(730);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3dd6, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3dd6, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD4, 1);
 		processCallback(0x9175);
 		return true;
@@ -3904,7 +3908,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0, 0);
 		processCallback(0x9a7a);
 		INC_FLAG(0xDBA6);
-		switch(GET_FLAG(0xDBA6)) {
+		switch (GET_FLAG(0xDBA6)) {
 		case 1:
 			displayMessage(0x39ae);
 			break;
@@ -4014,7 +4018,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(186, 198, 2, true);
 			moveTo(220, 198, 4);
 			{
-				Walkbox * w = scene->getWalkbox(0);
+				Walkbox *w = scene->getWalkbox(0);
 				w->rect.left = 0;
 				w->rect.bottom = 199;
 				w->save();

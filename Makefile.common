@@ -252,9 +252,6 @@ endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
-ifdef ENABLE_M4
-DIST_FILES_ENGINEDATA+=m4.dat
-endif
 ifdef ENABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl
 endif

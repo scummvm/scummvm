@@ -24,16 +24,14 @@
  * @file
  * Sound decoder used in engines:
  *  - agos
- *  - drascula
  *  - kyra
- *  - made
  *  - saga
  *  - scumm
  *  - touche
  */
 
-#ifndef SOUND_VOC_H
-#define SOUND_VOC_H
+#ifndef AUDIO_VOC_H
+#define AUDIO_VOC_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -90,16 +88,11 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
 /**
  * Try to load a VOC from the given seekable stream and create an AudioStream
  * from that data. Currently this function only supports uncompressed raw PCM
- * data. Optionally supports (infinite) looping of a portion of the data.
+ * data.
  *
- * This function uses loadVOCFromStream() internally.
- */
-AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
-
-/**
  * This does not use any of the looping features of VOC files!
  */
-SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse);
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 } // End of namespace Audio
 

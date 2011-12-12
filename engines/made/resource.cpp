@@ -20,15 +20,17 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/endian.h"
-#include "common/memstream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
-
 #include "made/resource.h"
 #include "made/graphics.h"
-#include "made/sound.h"
+
+#include "common/file.h"
+#include "common/memstream.h"
+#include "common/debug.h"
+
+#include "graphics/surface.h"
+
+#include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 
 namespace Made {
 

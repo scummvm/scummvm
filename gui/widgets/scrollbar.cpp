@@ -45,28 +45,8 @@ ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	_numEntries = 0;
 	_entriesPerPage = 0;
 	_currentPos = 0;
-}
 
-static void upArrowRepeater(void *ref) {
-	ScrollBarWidget *sb = (ScrollBarWidget *)ref;
-	int old_pos = sb->_currentPos;
-
-	sb->_currentPos -= 3;
-	sb->checkBounds(old_pos);
-
-	g_system->getTimerManager()->removeTimerProc(&upArrowRepeater);
-	g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/10, ref, "guiScrollBarUp");
-}
-
-static void downArrowRepeater(void *ref) {
-	ScrollBarWidget *sb = (ScrollBarWidget *)ref;
-	int old_pos = sb->_currentPos;
-
-	sb->_currentPos += 3;
-	sb->checkBounds(old_pos);
-
-	g_system->getTimerManager()->removeTimerProc(&downArrowRepeater);
-	g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/10, ref, "guiScrollBarDown");
+	_repeatTimer = 0;
 }
 
 void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -79,13 +59,13 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 	if (y <= UP_DOWN_BOX_HEIGHT) {
 		// Up arrow
 		_currentPos--;
+		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kUpArrowPart;
-		g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/2, this, "guiScrollBarUp");
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
 		_currentPos++;
+		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kDownArrowPart;
-		g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/2, this, "guiScrollBarDown");
 	} else if (y < _sliderPos) {
 		_currentPos -= _entriesPerPage - 1;
 	} else if (y >= _sliderPos + _sliderHeight) {
@@ -101,9 +81,7 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 
 void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_draggingPart = kNoPart;
-
-	g_system->getTimerManager()->removeTimerProc(&upArrowRepeater);
-	g_system->getTimerManager()->removeTimerProc(&downArrowRepeater);
+	_repeatTimer = 0;
 }
 
 void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {
@@ -160,23 +138,21 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void ScrollBarWidget::handleTickle() {
-/*
-	// FIXME/TODO - this code is supposed to allow for "click-repeat" (like key repeat),
-	// i.e. if you click on one of the arrows and keep clicked, it will scroll
-	// continuously. However, just like key repeat, this requires two delays:
-	// First an "initial" delay that has to pass before repeating starts (otherwise
-	// it is near to impossible to achieve single clicks). Secondly, a repeat delay
-	// that determines how often per second a click is simulated.
-	int old_pos = _currentPos;
+	if (_repeatTimer) {
+		const uint32 curTime = g_system->getMillis();
+		if (curTime >= _repeatTimer) {
+			const int old_pos = _currentPos;
 
-	if (_draggingPart == kUpArrowPart)
-		_currentPos--;
-	else if (_draggingPart == kDownArrowPart)
-		_currentPos++;
+			if (_part == kUpArrowPart)
+				_currentPos -= 3;
+			else if (_part == kDownArrowPart)
+				_currentPos += 3;
 
-	// Make sure that _currentPos is still inside the bounds
-	checkBounds(old_pos);
-*/
+			checkBounds(old_pos);
+
+			_repeatTimer = curTime + kRepeatDelay;
+		}
+	}
 }
 
 void ScrollBarWidget::checkBounds(int old_pos) {

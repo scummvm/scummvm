@@ -78,27 +78,29 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 
 		switch (step.xAlign) {
 		case Graphics::DrawStep::kVectorAlignManual:
-			if (step.x >= 0) in_x = area.left + step.x;
-			else in_x = area.left + area.width() + step.x; // value relative to the opposite corner.
+			if (step.x >= 0)
+				in_x = area.left + step.x + step.padding.left;
+			else 
+				in_x = area.left + area.width() + step.x + step.padding.left; // value relative to the opposite corner.
 			break;
 
 		case Graphics::DrawStep::kVectorAlignCenter:
-			in_x = area.left + (area.width() / 2) - (in_w / 2);
+			in_x = area.left + (area.width() / 2) - (in_w / 2) + ((step.padding.left + step.padding.right ) / 2);
 			break;
 
 		case Graphics::DrawStep::kVectorAlignLeft:
-			in_x = area.left;
+			in_x = area.left  + step.padding.left;
 			break;
 
 		case Graphics::DrawStep::kVectorAlignRight:
-			in_x = area.left + area.width() - in_w;
+			in_x = area.left + area.width() - in_w - step.padding.right;
 			break;
 
 		default:
 			error("Vertical alignment in horizontal data");
 		}
 	} else {
-		in_x = area.left;
+		in_x = area.left + step.padding.left;
 		in_w = area.width();
 	}
 
@@ -107,27 +109,29 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 
 		switch (step.yAlign) {
 		case Graphics::DrawStep::kVectorAlignManual:
-			if (step.y >= 0) in_y = area.top + step.y;
-			else in_y = area.top + area.height() + step.y; // relative
+			if (step.y >= 0)
+				in_y = area.top + step.y + step.padding.top;
+			else
+				in_y = area.top + area.height() + step.y + step.padding.top; // relative
 			break;
 
 		case Graphics::DrawStep::kVectorAlignCenter:
-			in_y = area.top + (area.height() / 2) - (in_h / 2);
+			in_y = area.top + (area.height() / 2) - (in_h / 2) + ((step.padding.top + step.padding.bottom ) / 2) ;
 			break;
 
 		case Graphics::DrawStep::kVectorAlignTop:
-			in_y = area.top;
+			in_y = area.top + step.padding.top;
 			break;
 
 		case Graphics::DrawStep::kVectorAlignBottom:
-			in_y = area.top + area.height() - in_h;
+			in_y = area.top + area.height() - in_h - step.padding.bottom;
 			break;
 
 		default:
 			error("Horizontal alignment in vertical data");
 		}
 	} else {
-		in_y = area.top;
+		in_y = area.top + step.padding.top;
 		in_h = area.height();
 	}
 

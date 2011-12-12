@@ -30,6 +30,7 @@
 #include "common/textconsole.h"
 #include "common/math.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/bitstream.h"
@@ -199,28 +200,37 @@ const Graphics::Surface *BinkDecoder::decodeNextFrame() {
 			error("Audio packet too big for the frame");
 
 		if (audioPacketLength >= 4) {
+			uint32 audioPacketStart = _bink->pos();
+			uint32 audioPacketEnd   = _bink->pos() + audioPacketLength;
+
 			if (i == _audioTrack) {
 				// Only play one audio track
 
 				//                  Number of samples in bytes
 				audio.sampleCount = _bink->readUint32LE() / (2 * audio.channels);
 
-				audio.bits = new Common::BitStream32LE(*_bink, (audioPacketLength - 4) * 8);
+				audio.bits =
+					new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
+					    audioPacketStart + 4, audioPacketEnd), true);
 
 				audioPacket(audio);
 
 				delete audio.bits;
 				audio.bits = 0;
+			}
 
-			} else
-				// Skip the rest
-				_bink->skip(audioPacketLength);
+			_bink->seek(audioPacketEnd);
 
 			frameSize -= audioPacketLength;
 		}
 	}
 
-	frame.bits = new Common::BitStream32LE(*_bink, frameSize * 8);
+	uint32 videoPacketStart = _bink->pos();
+	uint32 videoPacketEnd   = _bink->pos() + frameSize;
+
+	frame.bits =
+		new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
+		    videoPacketStart, videoPacketEnd), true);
 
 	videoPacket(frame);
 

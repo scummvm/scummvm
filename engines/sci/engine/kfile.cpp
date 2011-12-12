@@ -22,6 +22,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
@@ -52,9 +53,10 @@ struct SavegameDesc {
  * arbitrary data files, simply because many of our target platforms do not
  * support this. The only files one can create are savestates. But SCI has an
  * opcode to create and write to seemingly 'arbitrary' files. This is mainly
- * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver) and
- * in LSL5 for MEMORY.DRV (which is again a game data file and contains the
- * game's password).
+ * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver, used
+ * for persisting the results of the "age quiz" across restarts) and in LSL5
+ * for MEMORY.DRV (which is again a game data file and contains the game's
+ * password, XOR encrypted).
  * To implement that opcode, we combine the SaveFileManager with regular file
  * code, similarly to how the SCUMM HE engine does it.
  *
@@ -114,20 +116,6 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		// file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
-
-		// Special case for LSL3: It tries to create a new dummy file,
-		// LARRY3.DRV. Apparently, if the file doesn't exist here, it should be
-		// created. The game scripts then go ahead and fill its contents with
-		// data. It seems to be a similar case as the dummy MEMORY.DRV file in
-		// LSL5, but LSL5 creates the file if it can't find it with a separate
-		// call to file_open().
-		if (!inFile && englishName == "LARRY3.DRV") {
-			outFile = saveFileMan->openForSaving(wrappedName);
-			outFile->finalize();
-			delete outFile;
-			outFile = 0;
-			inFile = SearchMan.createReadStreamForMember(wrappedName);
-		}
 
 		if (!inFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
@@ -365,9 +353,12 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
-	// TODO: SCI32 uses a parameter here.
-	if (argc > 0)
-		warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
+	// SCI32 uses a parameter here. It is used to modify a string, stored in a
+	// global variable, so that game scripts store the save directory. We
+	// don't really set a save game directory, thus not setting the string to
+	// anything is the correct thing to do here.
+	//if (argc > 0)
+	//	warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
 #endif
 		return s->_segMan->getSaveDirPtr();
 }
@@ -1057,6 +1048,18 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		exists = !saveFileMan->listSavefiles(wrappedName).empty();
 	}
 
+	// SCI2+ debug mode
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelDebugMode)) {
+		if (!exists && name == "1.scr")		// PQ4
+			exists = true;
+		if (!exists && name == "18.scr")	// QFG4
+			exists = true;
+		if (!exists && name == "99.scr")	// GK1, KQ7
+			exists = true;
+		if (!exists && name == "classes")	// GK2, SQ6, LSL7
+			exists = true;
+	}
+
 	// Special case for non-English versions of LSL5: The English version of
 	// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
 	// memory.drv exists (which is where the game's password is stored). If
@@ -1164,8 +1167,17 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 		return kRestoreGame(s, argc - 1,argv + 1);
 	case 2:
 		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 3:
+		return kCheckSaveGame(s, argc - 1, argv + 1);
 	case 5:
 		return kGetSaveFiles(s, argc - 1, argv + 1);
+	case 6:
+		// This is used in Shivers to delete saved games, however it
+		// always passes the same file name (SHIVER), so it doesn't
+		// actually delete anything...
+		// TODO: Check why this happens
+		// argv[1] is a string (most likely the save game directory)
+		return kFileIOUnlink(s, argc - 2, argv + 2);
 	case 8:
 		// TODO
 		// This is a timer callback, with 1 parameter: the timer object
@@ -1176,10 +1188,9 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 		// This function has to return something other than 0 to proceed
 		return s->r_acc;
 	default:
-		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
+		kStub(s, argc, argv);
+		return NULL_REG;
 	}
-
-	return NULL_REG;
 }
 
 #endif

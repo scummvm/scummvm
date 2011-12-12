@@ -32,7 +32,7 @@ public:
 	TextResource(ToonEngine *vm);
 	~TextResource(void);
 
-	bool loadTextResource(Common::String fileName);
+	bool loadTextResource(const Common::String &fileName);
 	char *getText(int32 id);
 	int32 getId(int32 offset);
 	int32 getNext(int32 offset);

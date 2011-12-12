@@ -2607,7 +2607,7 @@ void Scene90::stripCallback(int v) {
 	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	if (v == 1)
-		scene->_object2.animate(ANIM_MODE_7, NULL);
+		scene->_object2.animate(ANIM_MODE_7, 0, NULL);
 	else if (v == 2)
 		scene->_object2.animate(ANIM_MODE_NONE);
 }

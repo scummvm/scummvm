@@ -91,7 +91,7 @@ class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 		_singleid = "gob";
-		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {

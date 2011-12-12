@@ -25,10 +25,13 @@
 namespace TeenAgent {
 
 Console::Console(TeenAgentEngine *engine) : _engine(engine) {
-	DCmd_Register("enable_object",	WRAP_METHOD(Console, enableObject));
-	DCmd_Register("disable_object",	WRAP_METHOD(Console, enableObject));
-	DCmd_Register("set_ons",		WRAP_METHOD(Console, setOns));
-	DCmd_Register("set_music",		WRAP_METHOD(Console, setMusic));
+	DCmd_Register("enable_object",		WRAP_METHOD(Console, enableObject));
+	DCmd_Register("disable_object",		WRAP_METHOD(Console, enableObject));
+	DCmd_Register("set_ons",			WRAP_METHOD(Console, setOns));
+	DCmd_Register("set_music",			WRAP_METHOD(Console, setMusic));
+	DCmd_Register("animation",			WRAP_METHOD(Console, playAnimation));
+	DCmd_Register("actor_animation",	WRAP_METHOD(Console, playActorAnimation));
+	DCmd_Register("call",				WRAP_METHOD(Console, call));
 }
 
 bool Console::enableObject(int argc, const char **argv) {
@@ -97,12 +100,65 @@ bool Console::setMusic(int argc, const char **argv) {
 		DebugPrintf("usage: %s index(1-11)\n", argv[0]);
 		return true;
 	}
+
 	int index = atoi(argv[1]);
 	if (index <= 0 || index > 11) {
 		DebugPrintf("invalid value\n");
 		return true;
 	}
+
 	_engine->setMusic(index);
+	return true;
+}
+
+bool Console::playAnimation(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("usage: %s id slot(0-3)\n", argv[0]);
+		return true;
+	}
+
+	int id = atoi(argv[1]);
+	int slot = atoi(argv[2]);
+	if (id < 0 || slot < 0 || slot > 3) {
+		DebugPrintf("invalid slot or animation id\n");
+		return true;
+	}
+
+	_engine->playAnimation(id, slot);
+	return true;
+}
+
+bool Console::playActorAnimation(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("usage: %s id\n", argv[0]);
+		return true;
+	}
+
+	int id = atoi(argv[1]);
+	if (id < 0) {
+		DebugPrintf("invalid animation id\n");
+		return true;
+	}
+
+	_engine->playActorAnimation(id);
+	return true;
+}
+
+bool Console::call(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("usage: %s 0xHEXADDR\n", argv[0]);
+		return true;
+	}
+
+	uint addr;
+	if (sscanf(argv[1], "0x%x", &addr) != 1) {
+		DebugPrintf("invalid address\n");
+		return true;
+	}
+
+	if (!_engine->processCallback(addr))
+		DebugPrintf("calling callback %04x failed\n", addr);
+
 	return true;
 }
 

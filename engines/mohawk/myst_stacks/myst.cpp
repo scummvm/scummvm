@@ -2138,7 +2138,7 @@ void Myst::rocketSliderMove() {
 }
 
 uint16 Myst::rocketSliderGetSound(uint16 pos) {
-	return (uint16)(9530 + (pos - 216) * 35.0 * 0.01639344262295082);
+	return (uint16)(9530 + (pos - 216) * 35.0 / 61.0);
 }
 
 void Myst::rocketCheckSolution() {

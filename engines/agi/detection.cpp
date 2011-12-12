@@ -150,7 +150,7 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
 		_singleid = "agi";
-		_guioptions = Common::GUIO_NOSPEECH;
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {

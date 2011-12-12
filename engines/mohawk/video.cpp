@@ -529,6 +529,15 @@ void VideoManager::setVideoBounds(VideoHandle handle, Audio::Timestamp start, Au
 	_videoStreams[handle]->seekToTime(start);
 }
 
+void VideoManager::drawVideoFrame(VideoHandle handle, Audio::Timestamp time) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle].end = Audio::Timestamp(0xffffffff, 1);
+	_videoStreams[handle]->seekToTime(time);
+	updateMovies();
+	delete _videoStreams[handle].video;
+	_videoStreams[handle].clear();
+}
+
 void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle]->seekToTime(time);

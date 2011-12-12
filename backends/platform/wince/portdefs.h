@@ -73,6 +73,7 @@
 #include <mmsystem.h>
 #include <ctype.h>
 //#include <direct.h>
+#include <new>
 
 #ifdef __MINGW32CE__
 	void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));

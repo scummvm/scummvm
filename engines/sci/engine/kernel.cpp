@@ -828,7 +828,8 @@ void Kernel::setDefaultKernelNames(GameFeatures *features) {
 enum {
 	kKernelEntriesSci2 = 0x8b,
 	kKernelEntriesGk2Demo = 0xa0,
-	kKernelEntriesSci21 = 0x9d
+	kKernelEntriesSci21 = 0x9d,
+	kKernelEntriesSci3 = 0xa1
 };
 
 void Kernel::setKernelNamesSci2() {
@@ -856,8 +857,11 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
 		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
-	} else
+	} else if (getSciVersion() != SCI_VERSION_3) {
 		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
+	}
 }
 
 #endif
@@ -910,28 +914,32 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 // TODO: script_adjust_opcode_formats should probably be part of the
 // constructor (?) of a VirtualMachine or a ScriptManager class.
 void script_adjust_opcode_formats() {
+
+	g_sci->_opcode_formats = new opcode_format[128][4];
+	memcpy(g_sci->_opcode_formats, g_base_opcode_formats, 128*4*sizeof(opcode_format));
+
 	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
-		g_opcode_formats[op_lofsa][0] = Script_Offset;
-		g_opcode_formats[op_lofss][0] = Script_Offset;
+		g_sci->_opcode_formats[op_lofsa][0] = Script_Offset;
+		g_sci->_opcode_formats[op_lofss][0] = Script_Offset;
 	}
 
 #ifdef ENABLE_SCI32
 	// In SCI32, some arguments are now words instead of bytes
 	if (getSciVersion() >= SCI_VERSION_2) {
-		g_opcode_formats[op_calle][2] = Script_Word;
-		g_opcode_formats[op_callk][1] = Script_Word;
-		g_opcode_formats[op_super][1] = Script_Word;
-		g_opcode_formats[op_send][0] = Script_Word;
-		g_opcode_formats[op_self][0] = Script_Word;
-		g_opcode_formats[op_call][1] = Script_Word;
-		g_opcode_formats[op_callb][1] = Script_Word;
+		g_sci->_opcode_formats[op_calle][2] = Script_Word;
+		g_sci->_opcode_formats[op_callk][1] = Script_Word;
+		g_sci->_opcode_formats[op_super][1] = Script_Word;
+		g_sci->_opcode_formats[op_send][0] = Script_Word;
+		g_sci->_opcode_formats[op_self][0] = Script_Word;
+		g_sci->_opcode_formats[op_call][1] = Script_Word;
+		g_sci->_opcode_formats[op_callb][1] = Script_Word;
 	}
 
 	if (getSciVersion() >= SCI_VERSION_3) {
 		// TODO: There are also opcodes in
 		// here to get the superclass, and possibly the species too.
-		g_opcode_formats[0x4d/2][0] = Script_None;
-		g_opcode_formats[0x4e/2][0] = Script_None;
+		g_sci->_opcode_formats[0x4d/2][0] = Script_None;
+		g_sci->_opcode_formats[0x4e/2][0] = Script_None;
 	}
 #endif
 }

@@ -83,3 +83,10 @@ Links:
 A short turorial on implementing OpenGL ES 1.1 in BADA:
   http://forums.badadev.com/viewtopic.php?f=7&t=208
 
+HelvB14 font files:
+ http://www.cl.cam.ac.uk/~mgk25/ucs-fonts.html
+ http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts-75dpi100dpi.tar.gz
+
+ Then run the following command:
+ $ ./ucs2any.pl 100dpi/helvB14.bdf MAPPINGS/8859-1.TXT iso8859-1 \
+   MAPPINGS/8859-2.TXT iso8859-2 MAPPINGS/8859-3.TXT iso8859-3

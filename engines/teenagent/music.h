@@ -40,7 +40,7 @@ public:
 	void start();
 	void stop();
 
-protected:
+private:
 	int _id;
 
 	struct Row {

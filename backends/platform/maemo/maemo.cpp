@@ -22,16 +22,21 @@
 
 #if defined(MAEMO)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 
 #include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
+#include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "common/textconsole.h"
 
 
 #include <SDL/SDL_syswm.h>
 #include <X11/Xutil.h>
+
+namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	:
@@ -43,7 +48,12 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_eventSource == 0)
 		_eventSource = new MaemoSdlEventSource();
 
+	if (_graphicsManager == 0)
+		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
+
 	ConfMan.set("vkeybdpath", DATA_PATH);
+
+	_model = Model(detectModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -92,6 +102,22 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 	setXWindowName(cap.c_str());
 }
 
+const Maemo::Model OSystem_SDL_Maemo::detectModel() {
+	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
+	const Model *model;
+	for (model = models; model->hwId; model++) {
+		if (deviceHwId.equals(model->hwId))
+			return *model;
+	}
+	return *model;
+}
 
+void OSystem_SDL_Maemo::setupIcon() {
+	// no Maemo version needs setupIcon
+	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
+	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+}
+
+} //namespace Maemo
 
 #endif

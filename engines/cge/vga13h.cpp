@@ -115,13 +115,6 @@ BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 	return r;
 }
 
-void Sprite::moveShapes(uint8 *buf) {
-	BitmapPtr *p;
-	for (p = _ext->_shpList; *p; p++) {
-		buf += (*p)->moveVmap(buf);
-	}
-}
-
 bool Sprite::works(Sprite *spr) {
 	if (!spr || !spr->_ext)
 		return false;
@@ -492,7 +485,7 @@ void Sprite::sync(Common::Serializer &s) {
 		_flags._near = flags & 0x0002 ? true : false;
 		_flags._drag = flags & 0x0004 ? true : false;
 		_flags._hold = flags & 0x0008 ? true : false;
-		_flags._____ = flags & 0x0010 ? true : false;
+		_flags._dummy = flags & 0x0010 ? true : false;
 		_flags._slav = flags & 0x0020 ? true : false;
 		_flags._syst = flags & 0x0040 ? true : false;
 		_flags._kill = flags & 0x0080 ? true : false;
@@ -516,7 +509,7 @@ void Sprite::sync(Common::Serializer &s) {
 		flags = (flags << 1) | _flags._kill;
 		flags = (flags << 1) | _flags._syst;
 		flags = (flags << 1) | _flags._slav;
-		flags = (flags << 1) | _flags._____;
+		flags = (flags << 1) | _flags._dummy;
 		flags = (flags << 1) | _flags._hold;
 		flags = (flags << 1) | _flags._drag;
 		flags = (flags << 1) | _flags._near;
@@ -632,7 +625,7 @@ Sprite *Queue::locate(int ref) {
 	return NULL;
 }
 
-Vga::Vga() : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
+Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0), _vm(vm) {
 	_oldColors = NULL;
 	_newColors = NULL;
 	_showQ = new Queue(true);
@@ -828,6 +821,17 @@ void Vga::update() {
 	if (_setPal) {
 		updateColors();
 		_setPal = false;
+	}
+	if (_vm->_showBoundariesFl) {
+		Vga::_page[0]->hLine(0, 200 - kPanHeight, 320, 0xee);
+		if (_vm->_barriers[_vm->_now]._horz != 255) {
+			for (int i = 0; i < 8; i++)
+				Vga::_page[0]->vLine((_vm->_barriers[_vm->_now]._horz * 8) + i, 0, 200, 0xff);
+		}
+		if (_vm->_barriers[_vm->_now]._vert != 255) {
+			for (int i = 0; i < 4; i++)
+				Vga::_page[0]->hLine(0, 80 + (_vm->_barriers[_vm->_now]._vert * 4) + i, 320, 0xff);
+		}
 	}
 
 	g_system->copyRectToScreen((const byte *)Vga::_page[0]->getBasePtr(0, 0), kScrWidth, 0, 0, kScrWidth, kScrHeight);

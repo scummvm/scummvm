@@ -20,30 +20,14 @@
  *
  */
 
-#ifndef MADE_H
-#define MADE_H
+#ifndef MADE_MADE_H
+#define MADE_MADE_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/hash-str.h"
-#include "common/keyboard.h"
-#include "common/random.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/util.h"
-
-#include "graphics/surface.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/voc.h"
+#include "made/sound.h"
 
 #include "engines/engine.h"
 
-#include "made/sound.h"
-#include "made/console.h"
+#include "common/random.h"
 
 /**
  * This is the namespace of the Made engine.
@@ -82,6 +66,7 @@ class Screen;
 class ScriptInterpreter;
 class GameDatabase;
 class MusicPlayer;
+class MadeConsole;
 
 class MadeEngine : public ::Engine {
 	int _gameId;
@@ -98,7 +83,7 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
-	GUI::Debugger *getDebugger() { return _console; }
+	virtual GUI::Debugger *getDebugger();
 
 	int getGameId() {
 		return _gameId;

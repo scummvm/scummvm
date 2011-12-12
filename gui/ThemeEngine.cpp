@@ -45,6 +45,7 @@ namespace GUI {
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
 const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
 const char * const ThemeEngine::kImageSearch = "search.bmp";
+const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -590,7 +591,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 #ifdef USE_TRANSLATION
 				TransMan.setLanguage("C");
 #endif
-				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
+				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
 			}
 		}
 	}
@@ -659,6 +660,8 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
  *********************************************************/
 void ThemeEngine::loadTheme(const Common::String &themeId) {
 	unloadTheme();
+
+	debug(6, "Loading theme %s", themeId.c_str());
 
 	if (themeId == "builtin") {
 		_themeOk = loadDefaultXML();
@@ -969,7 +972,7 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	r2.left += 1;
 	r2.right -= 1;
 	r2.top += sliderY;
-	r2.bottom = r2.top + sliderHeight - 1;
+	r2.bottom = r2.top + sliderHeight;
 
 	r2.top += r.width() / 5;
 	r2.bottom -= r.width() / 5;

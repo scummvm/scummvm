@@ -337,6 +337,21 @@ public:
 	virtual Common::String getClassName() { return "SpeakerLyleText"; }
 };
 
+class SpeakerKate: public VisualSpeaker {
+public:
+	SpeakerKate();
+	
+	virtual Common::String getClassName() { return "SpeakerKate"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerTony: public VisualSpeaker {
+public:
+	SpeakerTony();
+	
+	virtual Common::String getClassName() { return "SpeakerTony"; }
+	virtual void setText(const Common::String &msg);
+};
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

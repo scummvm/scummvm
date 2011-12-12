@@ -123,7 +123,7 @@ void Surface::drawPolyLine(const Point *points, int count, int color) {
 			drawLine(points[i].x, points[i].y, points[i - 1].x, points[i - 1].y, color);
 		}
 
-		drawLine(points[count - 1].x, points[count - 1].y, points->x, points->y, color);
+		drawLine(points[count - 1].x, points[count - 1].y, points[0].x, points[0].y, color);
 	}
 }
 

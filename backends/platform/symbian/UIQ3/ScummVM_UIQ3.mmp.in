@@ -88,7 +88,7 @@ STATICLIBRARY esdl.lib
 
 // *** Include paths
 
-USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\engines
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\gui ..\..\..\..\engines
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..\..\..\..\sound
 
 SYSTEMINCLUDE	\epoc32\include\ESDL
@@ -128,9 +128,13 @@ SOURCE gui\Dialog.cpp
 
 // Common error
 source common\error.cpp
+source common\quicktime.cpp
 
 // Special for graphics
 source graphics\iff.cpp
+source backends\graphics\symbiansdl\symbiansdl-graphics.cpp
+source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
+source engines\obsolete.cpp
 
 // *** Dynamic Libraries
 LIBRARY cone.lib  eikcore.lib

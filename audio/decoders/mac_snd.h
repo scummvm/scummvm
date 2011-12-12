@@ -26,8 +26,8 @@
  *  - sci
  */
 
-#ifndef SOUND_MAC_SND_H
-#define SOUND_MAC_SND_H
+#ifndef AUDIO_MAC_SND_H
+#define AUDIO_MAC_SND_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

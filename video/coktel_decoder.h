@@ -437,9 +437,6 @@ private:
 		~Frame();
 	};
 
-	// Tables for the audio decompressors
-	static const uint16 _tableDPCM[128];
-
 	Common::SeekableReadStream *_stream;
 
 	byte   _version;
@@ -508,15 +505,10 @@ private:
 
 	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
 
-	// Generating sound slices
-	byte *soundEmpty     (uint32 &size);
-	byte *sound8bitRaw   (uint32 &size);
-	byte *sound16bitDPCM (uint32 &size);
-	byte *sound16bitADPCM(uint32 &size);
-
-	// Sound decompression
-	byte *deDPCM (const byte *data, uint32 &size, int32 init[2]);
-	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 index);
+	// Generating audio streams
+	Audio::AudioStream *create8bitRaw   (Common::SeekableReadStream *stream);
+	Audio::AudioStream *create16bitDPCM (Common::SeekableReadStream *stream);
+	Audio::AudioStream *create16bitADPCM(Common::SeekableReadStream *stream);
 
 	bool getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height);
 };

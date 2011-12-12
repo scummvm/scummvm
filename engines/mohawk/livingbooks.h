@@ -68,6 +68,15 @@ enum LBMode {
 	kLBPlayMode = 6
 };
 
+enum {
+	kLBPhaseInit = 0x0,
+	kLBPhaseIntro = 0x1,
+	kLBPhaseMain = 0x2,
+	kLBPhaseNone = 0x7fff,
+	kLBPhaseLoad = 0xfffe,
+	kLBPhaseCreate = 0xffff
+};
+
 // automatic modes used in _timingMode
 enum {
 	kLBAutoNone = 0,
@@ -178,10 +187,10 @@ enum {
 	kLBGlobalSetNotVisible = 0x79,
 	kLBGlobalSetVisible = 0x7a, // unused?
 	kLBSetAmbient = 0x7b,
-	kLBUnknown7C = 0x7c,     // unused?
+	kLBSetDragParams = 0x7c,
 	kLBSetKeyEvent = 0x7d,
-	kLBUnknown7E = 0x7e,     // unused? (rect flag)
-	kLBSetParent = 0x7f,     // unused?
+	kLBSetRolloverData = 0x7e,
+	kLBSetParent = 0x7f,
 	kLBSetHitTest = 0x80,
 	// from here, rugrats
 	kLBUnknown194 = 0x194
@@ -331,6 +340,7 @@ public:
 
 	void start();
 	void seek(uint16 pos);
+	void seekToTime(uint32 time);
 	void stop();
 
 	void playSound(uint16 resourceId);
@@ -391,22 +401,33 @@ public:
 	virtual void handleMouseUp(Common::Point pos); // 0xD
 	virtual bool togglePlaying(bool playing, bool restart = false); // 0xF
 	virtual void done(bool onlyNotify); // 0x10
-	virtual void init() { } // 0x11
+	virtual void init(); // 0x11
 	virtual void seek(uint16 pos) { } // 0x13
+	virtual void seekToTime(uint32 time) { }
 	virtual void setFocused(bool focused) { } // 0x14
 	virtual void setVisible(bool visible); // 0x17
 	virtual void setGlobalVisible(bool enabled);
 	virtual void startPhase(uint phase); // 0x18
 	virtual void stop(); // 0x19
 	virtual void notify(uint16 data, uint16 from); // 0x1A
+	virtual void load();
+	virtual void unload();
+	virtual void moveBy(const Common::Point &pos);
+	virtual void moveTo(const Common::Point &pos);
+
+	LBItem *clone(uint16 newId, const Common::String &newName);
 
 	uint16 getId() { return _itemId; }
 	const Common::String &getName() { return _desc; }
 	const Common::Rect &getRect() { return _rect; }
 	uint16 getSoundPriority() { return _soundMode; }
+	bool isLoaded() { return _loaded; }
 	bool isAmbient() { return _isAmbient; }
 
 	Common::List<LBItem *>::iterator _iterator;
+
+	// TODO: make private
+	Common::HashMap<Common::String, LBValue, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
@@ -420,7 +441,7 @@ protected:
 	uint16 _resourceId;
 	uint16 _itemId;
 
-	bool _visible, _globalVisible, _playing, _enabled, _neverEnabled, _globalEnabled;
+	bool _loaded, _visible, _globalVisible, _playing, _enabled, _globalEnabled;
 
 	uint32 _nextTime, _startTime;
 	uint16 _loops;
@@ -432,6 +453,8 @@ protected:
 
 	bool _isAmbient;
 	bool _doHitTest;
+
+	virtual LBItem *createClone();
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
@@ -453,6 +476,8 @@ public:
 	void stop();
 
 protected:
+	LBItem *createClone();
+
 	bool _running;
 };
 
@@ -478,8 +503,14 @@ public:
 	void setGlobalVisible(bool visible);
 	void startPhase(uint phase);
 	void stop();
+	void load();
+	void unload();
+	void moveBy(const Common::Point &pos);
+	void moveTo(const Common::Point &pos);
 
 protected:
+	LBItem *createClone();
+
 	bool _starting;
 
 	Common::Array<GroupEntry> _groupEntries;
@@ -496,6 +527,8 @@ public:
 	void update();
 
 protected:
+	LBItem *createClone();
+
 	uint16 _fadeInPeriod, _fadeInStep, _drawStart, _drawCount;
 	uint32 _fadeInStart, _fadeInCurrent;
 	byte *_palette;
@@ -527,6 +560,8 @@ public:
 	void notify(uint16 data, uint16 from);
 
 protected:
+	LBItem *createClone();
+
 	void paletteUpdate(uint16 word, bool on);
 	void drawWord(uint word, uint yPos);
 
@@ -550,6 +585,9 @@ public:
 	bool contains(Common::Point point);
 	void draw();
 	void init();
+
+protected:
+	LBItem *createClone();
 };
 
 class LBAnimationItem : public LBItem {
@@ -565,10 +603,13 @@ public:
 	void done(bool onlyNotify);
 	void init();
 	void seek(uint16 pos);
+	void seekToTime(uint32 time);
 	void startPhase(uint phase);
 	void stop();
 
 protected:
+	LBItem *createClone();
+
 	LBAnimation *_anim;
 	bool _running;
 };
@@ -580,6 +621,9 @@ public:
 
 	void update();
 	bool togglePlaying(bool playing, bool restart);
+
+protected:
+	LBItem *createClone();
 };
 
 class LBMiniGameItem : public LBItem {
@@ -588,6 +632,9 @@ public:
 	~LBMiniGameItem();
 
 	bool togglePlaying(bool playing, bool restart);
+
+protected:
+	LBItem *createClone();
 };
 
 class LBProxyItem : public LBItem {
@@ -595,9 +642,12 @@ public:
 	LBProxyItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 	~LBProxyItem();
 
-	void init();
+	void load();
+	void unload();
 
 protected:
+	LBItem *createClone();
+
 	class LBPage *_page;
 };
 
@@ -634,6 +684,7 @@ public:
 	void open(Archive *mhk, uint16 baseId);
 	uint16 getResourceVersion();
 
+	void addClonedItem(LBItem *item);
 	void itemDestroyed(LBItem *item);
 
 	LBCode *_code;
@@ -697,7 +748,7 @@ public:
 	void nextPage();
 
 	// TODO: make private
-	Common::HashMap<Common::String, LBValue> _variables;
+	Common::HashMap<Common::String, LBValue, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 
 	// helper functions, also used by LBProxyItem
 	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);

@@ -40,6 +40,20 @@
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
+#include "dreamweb/structs.h"
+
+namespace DreamGen {
+
+// These are for ReelRoutine::reelPointer, which is a callback field.
+const uint16 addr_backobject = 0xc170;
+const uint16 addr_mainman = 0xc138;
+
+// Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
+// into this, making it a ring buffer
+extern uint8 g_keyBuffer[16];
+
+}
+
 namespace DreamWeb {
 
 // Engine Debug Flags
@@ -84,19 +98,13 @@ public:
 
 	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
 	void processEvents();
-	void setPalette();
-	void fadeDos();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
 	void cls();
 
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
 
-	void openSaveFileForWriting(const Common::String &name);
-	uint writeToSaveFile(const uint8 *data, uint size);
-
-	bool openSaveFileForReading(const Common::String &name);
-	uint readFromSaveFile(uint8 *data, uint size);
+	Common::String getSavegameFilename(int slot) const;
 
 	void setShakePos(int pos) { _system->setShakePos(pos); }
 	void printUnderMonitor();
@@ -113,6 +121,20 @@ public:
 
 	void stopSound(uint8 channel);
 
+	DreamGen::Frame *icons1() const { return (DreamGen::Frame *)_icons1; }
+	DreamGen::Frame *icons2() const { return (DreamGen::Frame *)_icons2; }
+	void setIcons1(void *frames) { assert(_icons1 == NULL); _icons1 = frames; }
+	void setIcons2(void *frames) { assert(_icons2 == NULL); _icons2 = frames; }
+	void freeIcons1() { free(_icons1); _icons1 = NULL; }
+	void freeIcons2() { free(_icons2); _icons2 = NULL; }
+
+	DreamGen::Frame *tempCharset() const { return (DreamGen::Frame *)_tempCharset; }
+	void setTempCharset(void *frames) { assert(_tempCharset == NULL); _tempCharset = frames; }
+	void freeTempCharset() { free(_tempCharset); _tempCharset = NULL; }
+
+	DreamGen::Frame *currentCharset() const { return _currentCharset; }
+	void setCurrentCharset(DreamGen::Frame *charset) { _currentCharset = charset; }
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -123,7 +145,6 @@ private:
 	Common::RandomSource			_rnd;
 
 	Common::File _file;
-	Common::OutSaveFile *_outSaveFile;
 	Common::InSaveFile *_inSaveFile;
 
 	uint _speed;
@@ -148,7 +169,13 @@ private:
 	Audio::SoundHandle _channelHandle[2];
 	uint8 _channel0, _channel1;
 
+	void *_icons1;
+	void *_icons2;
+	void *_tempCharset;
+	DreamGen::Frame *_currentCharset;
+
 	DreamGen::DreamGenContext _context;
+	DreamGen::DreamBase &_base;
 };
 
 } // End of namespace DreamWeb

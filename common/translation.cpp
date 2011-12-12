@@ -130,14 +130,14 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 			// Get the range of messages with the same ID (but different context)
 			leftIndex = rightIndex = midIndex;
 			while (
-				leftIndex > 0 &&
-				_currentTranslationMessages[leftIndex - 1].msgid == m->msgid
+			    leftIndex > 0 &&
+			    _currentTranslationMessages[leftIndex - 1].msgid == m->msgid
 			) {
 				--leftIndex;
 			}
 			while (
-				rightIndex < (int)_currentTranslationMessages.size() - 1 &&
-				_currentTranslationMessages[rightIndex + 1].msgid == m->msgid
+			    rightIndex < (int)_currentTranslationMessages.size() - 1 &&
+			    _currentTranslationMessages[rightIndex + 1].msgid == m->msgid
 			) {
 				++rightIndex;
 			}
@@ -222,7 +222,7 @@ String TranslationManager::getLangById(int id) const {
 	return "";
 }
 
-bool TranslationManager::openTranslationsFile(File& inFile) {
+bool TranslationManager::openTranslationsFile(File &inFile) {
 	// First look in the Themepath if we can find the file.
 	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
 		return true;
@@ -242,7 +242,7 @@ bool TranslationManager::openTranslationsFile(File& inFile) {
 	return false;
 }
 
-bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, int depth) {
+bool TranslationManager::openTranslationsFile(const FSNode &node, File &inFile, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return false;
 
@@ -390,7 +390,7 @@ bool TranslationManager::checkHeader(File &in) {
 	buf[12] = '\0';
 
 	// Check header
-	if (strcmp(buf, "TRANSLATIONS")) {
+	if (strcmp(buf, "TRANSLATIONS") != 0) {
 		warning("File '%s' is not a valid translations data file. Skipping this file", in.getName());
 		return false;
 	}

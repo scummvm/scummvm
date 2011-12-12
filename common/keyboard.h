@@ -292,7 +292,8 @@ struct KeyState {
 	}
 
 	bool operator==(const KeyState &x) const {
-		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
+		// intentionally ignore ascii
+		return keycode == x.keycode && flags == x.flags;
 	}
 };
 

@@ -31,13 +31,13 @@
 #ifndef VIDEO_QT_DECODER_H
 #define VIDEO_QT_DECODER_H
 
-#include "common/scummsys.h"
-#include "common/rational.h"
-
-#include "video/video_decoder.h"
-
 #include "audio/mixer.h"
 #include "audio/decoders/quicktime_intern.h"
+#include "common/scummsys.h"
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
+
+#include "video/video_decoder.h"
 
 namespace Common {
 	class Rational;
@@ -63,13 +63,13 @@ public:
 	 * Returns the width of the video
 	 * @return the width of the video
 	 */
-	uint16 getWidth() const;
+	uint16 getWidth() const { return _width; }
 
 	/**
 	 * Returns the height of the video
 	 * @return the height of the video
 	 */
-	uint16 getHeight() const;
+	uint16 getHeight() const { return _height; }
 
 	/**
 	 * Returns the amount of frames in the video
@@ -100,6 +100,8 @@ public:
 	 */
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
+
+	int32 getCurFrame() const;
 
 	bool isVideoLoaded() const { return isOpen(); }
 	const Graphics::Surface *decodeNextFrame();
@@ -132,8 +134,6 @@ protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
 
 private:
-	Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
-	uint32 getFrameDuration();
 	void init();
 
 	void startAudio();
@@ -144,20 +144,108 @@ private:
 	Audio::Timestamp _audioStartOffset;
 
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
-	Codec *findDefaultVideoCodec() const;
-	uint32 _nextFrameStartTime;
-	int _videoTrackIndex;
 	uint32 findKeyFrame(uint32 frame) const;
 
 	bool _dirtyPalette;
 	const byte *_palette;
+	bool _setStartTime;
+	bool _needUpdate;
+
+	uint16 _width, _height;
 
 	Graphics::Surface *_scaledSurface;
-	const Graphics::Surface *scaleSurface(const Graphics::Surface *frame);
-	Common::Rational getScaleFactorX() const;
-	Common::Rational getScaleFactorY() const;
+	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
+			Common::Rational scaleFactorX, Common::Rational scaleFactorY);
 
 	void pauseVideoIntern(bool pause);
+	bool endOfVideoTracks() const;
+
+	// The TrackHandler is a class that wraps around a QuickTime Track
+	// and handles playback in this decoder class.
+	class TrackHandler {
+	public:
+		TrackHandler(QuickTimeDecoder *decoder, Track *parent);
+		virtual ~TrackHandler() {}
+
+		enum TrackType {
+			kTrackTypeAudio,
+			kTrackTypeVideo
+		};
+
+		virtual TrackType getTrackType() const = 0;
+
+		virtual void seekToTime(Audio::Timestamp time) = 0;
+
+		virtual bool endOfTrack();
+
+	protected:
+		uint32 _curEdit;
+		QuickTimeDecoder *_decoder;
+		Common::SeekableReadStream *_fd;
+		Track *_parent;
+	};
+
+	// The AudioTrackHandler is currently just a wrapper around some
+	// QuickTimeDecoder functions. Eventually this can be made to
+	// handle multiple audio tracks, but I haven't seen a video with
+	// that yet.
+	class AudioTrackHandler : public TrackHandler {
+	public:
+		AudioTrackHandler(QuickTimeDecoder *decoder, Track *parent);
+		TrackType getTrackType() const { return kTrackTypeAudio; }
+
+		void updateBuffer();
+		void seekToTime(Audio::Timestamp time);
+		bool endOfTrack();
+	};
+
+	// The VideoTrackHandler is the bridge between the time of playback
+	// and the media for the given track. It calculates when to start
+	// tracks and at what rate to play the media using the edit list.
+	class VideoTrackHandler : public TrackHandler {
+	public:
+		VideoTrackHandler(QuickTimeDecoder *decoder, Track *parent);
+		~VideoTrackHandler();
+
+		TrackType getTrackType() const { return kTrackTypeVideo; }
+
+		const Graphics::Surface *decodeNextFrame();
+
+		uint32 getNextFrameStartTime();
+
+		uint32 getFrameCount();
+
+		int32 getCurFrame() { return _curFrame; }
+
+		Graphics::PixelFormat getPixelFormat() const;
+
+		void seekToTime(Audio::Timestamp time);
+
+		Common::Rational getWidth() const;
+		Common::Rational getHeight() const;
+
+	private:
+		int32 _curFrame;
+		uint32 _nextFrameStartTime;
+		Graphics::Surface *_scaledSurface;
+		bool _holdNextFrameStartTime;
+		int32 _durationOverride;
+
+		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
+		uint32 getFrameDuration();
+		uint32 findKeyFrame(uint32 frame) const;
+		void enterNewEditList(bool bufferFrames);
+		const Graphics::Surface *bufferNextFrame();
+		uint32 getRateAdjustedFrameTime() const;
+		uint32 getCurEditTimeOffset() const;
+		uint32 getCurEditTrackDuration() const;
+	};
+
+	Common::Array<TrackHandler *> _handlers;
+	VideoTrackHandler *_nextVideoTrack;
+	VideoTrackHandler *findNextVideoTrack() const;
+
+	void freeAllTrackHandlers();
 };
 
 } // End of namespace Video

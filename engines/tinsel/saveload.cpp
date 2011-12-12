@@ -84,6 +84,8 @@ extern void syncPolyInfo(Common::Serializer &s);
 
 extern int sceneCtr;
 
+extern bool ASceneIsSaved;
+
 //----------------- LOCAL DEFINES --------------------
 
 struct SaveGameHeader {
@@ -438,6 +440,11 @@ static void DoSync(Common::Serializer &s) {
 		SAVED_DATA *sdPtr = SaveSceneSsData;
 		for (int i = 0; i < *SaveSceneSsCount; ++i, ++sdPtr)
 			syncSavedData(s, *sdPtr);
+
+		// Flag that there is a saved scene to return to. Note that in this context 'saved scene'
+		// is a stored scene to return to from another scene, such as from the Summoning Book close-up
+		// in Discworld 1 to whatever scene Rincewind was in prior to that
+		ASceneIsSaved = true;
 	}
 
 	if (!TinselV2)

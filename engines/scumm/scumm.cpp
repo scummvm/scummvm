@@ -1171,11 +1171,8 @@ Common::Error ScummEngine::init() {
 				Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
 				for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
 					if (g->bytesPerPixel != 2 || g->aBits()) {
-						g = tryModes.erase(g);
-						g--;
-					}
-
-					if (*g == _outputPixelFormat) {
+						g = tryModes.reverse_erase(g);
+					} else if (*g == _outputPixelFormat) {
 						tryModes.clear();
 						tryModes.push_back(_outputPixelFormat);
 						break;

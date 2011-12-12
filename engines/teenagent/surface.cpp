@@ -94,7 +94,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
 			byte *dst = dst_base;
 			for (int j = src_rect.left; j < src_rect.right; ++j) {
-				byte p = src[(mirror? w - j - 1: j)];
+				byte p = src[(mirror ? w - j - 1 : j)];
 				if (p != 0xff)
 					*dst++ = p;
 				else
@@ -105,10 +105,10 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		}
 	} else {
 		byte *dst = (byte *)surface->getBasePtr(dst_rect.left, dst_rect.top);
-		for(int i = 0; i < dst_rect.height(); ++i) {
+		for (int i = 0; i < dst_rect.height(); ++i) {
 			for (int j = 0; j < dst_rect.width(); ++j) {
 				int px = j * 256 / zoom;
-				const byte *src = (const byte *)getBasePtr(src_rect.left + (mirror? w - px - 1: px), src_rect.top + i * 256 / zoom);
+				const byte *src = (const byte *)getBasePtr(src_rect.left + (mirror ? w - px - 1 : px), src_rect.top + i * 256 / zoom);
 				byte p = *src;
 				if (p != 0xff)
 					dst[j] = p;

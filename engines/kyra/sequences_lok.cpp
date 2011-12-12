@@ -1322,7 +1322,7 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 
-			for (CreditsLineList::iterator it = lines.begin(); it != lines.end(); ++it) {
+			for (CreditsLineList::iterator it = lines.begin(); it != lines.end();) {
 				if (it->y < 0) {
 					it = lines.erase(it);
 					continue;
@@ -1338,6 +1338,8 @@ void KyraEngine_LoK::seq_playCredits() {
 				it->y--;
 				if (it->y > bottom)
 					bottom = it->y;
+
+				++it;
 			}
 
 			_screen->copyRegion(0, 32, 0, 32, 320, 128, 2, 0, Screen::CR_NO_P_CHECK);

@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
@@ -307,10 +308,7 @@ void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
 		//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
 		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
 		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
-			it->celRect.left = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsLeft));
-			it->celRect.top = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsTop));
-			it->celRect.right = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight));
-			it->celRect.bottom = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsBottom));
+			it->celRect = g_sci->_gfxCompare->getNSRect(it->object);
 			view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 			shouldSetNsRect = false;
 		} else {
@@ -319,10 +317,7 @@ void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
 	}
 
 	if (shouldSetNsRect) {
-		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsLeft), it->celRect.left);
-		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsTop), it->celRect.top);
-		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight), it->celRect.right);
-		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsBottom), it->celRect.bottom);
+		g_sci->_gfxCompare->setNSRect(it->object, it->celRect);
 	}
 }
 
@@ -544,10 +539,7 @@ void GfxAnimate::addToPicDrawCels() {
 				applyGlobalScaling(it, view);
 			}
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
+			g_sci->_gfxCompare->setNSRect(curObject, it->celRect);
 		} else {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}

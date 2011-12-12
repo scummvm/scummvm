@@ -34,6 +34,11 @@ void DrasculaEngine::talkInit(const char *filename) {
 }
 
 bool DrasculaEngine::isTalkFinished() {
+	if (shouldQuit()) {
+		stopSound();
+		return true;
+	}
+
 	if (getScan() != 0)
 		stopSound();
 	if (soundIsActive())
@@ -367,6 +372,7 @@ void DrasculaEngine::talk(int index) {
 }
 
 void DrasculaEngine::talk(const char *said, const char *filename) {
+	debug(1, "DrasculaEngine::talk(said:\"%s\", filename:\"%s\")", said, filename);
 	int talkOffset = 0;
 	if (currentChapter != 2)
 		talkOffset = 1;
@@ -409,8 +415,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		if (currentChapter == 2)
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, talkHeight - 1, screenSurface, drawSurface3);
 		else
-			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
+			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
 						   screenSurface, drawSurface3);
 
 		moveCharacters();
@@ -419,8 +425,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 			if (!strcmp(menuBackground, "99.alg") || !strcmp(menuBackground, "994.alg"))
 				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, talkHeight - 1, drawSurface3, screenSurface);
 		} else {
-			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-					   (int)(((float)(talkHeight - 1) / 100) * factor_red[curY + curHeight]),
+			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
+					   (int)(((float)(talkHeight - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
 						   drawSurface3, screenSurface);
 		}
 
@@ -429,8 +435,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, talkWidth, talkHeight,
 						extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
-						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
+				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+						curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)],
 						extraSurface, screenSurface);
 
 			updateRefresh();
@@ -439,8 +445,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, talkWidth, talkHeight,
 					extraSurface, screenSurface);
 			else
-				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
-					curY, talkWidth, talkHeight, factor_red[curY + curHeight], extraSurface, screenSurface);
+				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+					curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
@@ -448,8 +454,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						talkOffset + curX + (int)((12.0f / 100) * factor_red[curY + curHeight]),
-						curY, talkWidth, talkHeight, factor_red[curY + curHeight],
+						talkOffset + curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+						curY, talkWidth, talkHeight, factor_red[MIN(201, curY + curHeight)],
 						frontSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 3) {
@@ -458,8 +464,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 					frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						talkOffset + curX + (int)((8.0f / 100) * factor_red[curY + curHeight]),
-						curY, talkWidth,talkHeight, factor_red[curY + curHeight],
+						talkOffset + curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+						curY, talkWidth,talkHeight, factor_red[MIN(201, curY + curHeight)],
 						frontSurface, screenSurface);
 			updateRefresh();
 		}

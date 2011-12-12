@@ -26,6 +26,7 @@
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
+#include "gui/ThemeEval.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -51,8 +52,11 @@ enum {
 	kChooseSoundFontCmd		= 'chsf',
 	kClearSoundFontCmd      = 'clsf',
 	kChooseSaveDirCmd		= 'chos',
+	kSavePathClearCmd		= 'clsp',
 	kChooseThemeDirCmd		= 'chth',
+	kThemePathClearCmd		= 'clth',
 	kChooseExtraDirCmd		= 'chex',
+	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf'
 };
@@ -141,7 +145,7 @@ void OptionsDialog::init() {
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
-	_guioptions = 0;
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -155,7 +159,7 @@ void OptionsDialog::open() {
 	setResult(0);
 
 	// Retrieve game GUI options
-	_guioptions = 0;
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -195,15 +199,30 @@ void OptionsDialog::open() {
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
+		_aspectCheckbox->setState(false);
 		_aspectCheckbox->setEnabled(false);
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
 		// Aspect ratio setting
-		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		if (_guioptions.contains(GUIO_NOASPECT)) {
+			_aspectCheckbox->setState(false);
+			_aspectCheckbox->setEnabled(false);
+		} else {
+			_aspectCheckbox->setEnabled(true);
+			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		}
 #endif // SMALL_SCREEN_DEVICE
-		_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+
+		// EGA undithering setting
+		if (_guioptions.contains(GUIO_EGAUNDITHER)  || _domain == Common::ConfigManager::kApplicationDomain) {
+			_disableDitheringCheckbox->setEnabled(true);
+			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+		} else {
+			_disableDitheringCheckbox->setState(false);
+			_disableDitheringCheckbox->setEnabled(false);
+		}
 	}
 
 	// Audio options
@@ -551,6 +570,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
 		break;
+	case kSubtitleToggle:
+		// We update the slider settings here, when there are sliders, to
+		// disable the speech volume in case we are in subtitle only mode.
+		if (_musicVolumeSlider)
+			setVolumeSettingsState(true);
+		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
 		_subSpeedLabel->draw();
@@ -585,9 +610,15 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-	_aspectCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_NOASPECT))
+		_aspectCheckbox->setEnabled(false);
+	else
+		_aspectCheckbox->setEnabled(enabled);
 #endif
-	_disableDitheringCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_EGAUNDITHER) && enabled)
+		_disableDitheringCheckbox->setEnabled(true);
+	else
+		_disableDitheringCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -595,11 +626,12 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
-			(_guioptions & allFlags) && // No flags are specified
-				!(_guioptions & Common::GUIO_MIDIADLIB)) {
+		hasMidiDefined && // No flags are specified
+		!(_guioptions.contains(GUIO_MIDIADLIB))) {
 		_oplPopUpDesc->setEnabled(false);
 		_oplPopUp->setEnabled(false);
 	} else {
@@ -611,7 +643,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
-	if (_guioptions & Common::GUIO_NOMIDI)
+	if (_guioptions.contains(GUIO_NOMIDI))
 		enabled = false;
 
 	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
@@ -649,7 +681,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_enableVolumeSettings = enabled;
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOMUSIC)
+	if (_guioptions.contains(GUIO_NOMUSIC))
 		ena = false;
 
 	_musicVolumeDesc->setEnabled(ena);
@@ -657,7 +689,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOSFX)
+	if (_guioptions.contains(GUIO_NOSFX))
 		ena = false;
 
 	_sfxVolumeDesc->setEnabled(ena);
@@ -665,7 +697,10 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOSPEECH)
+	// Disable speech volume slider, when we are in subtitle only mode.
+	if (_subToggleGroup)
+		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
+	if (_guioptions.contains(GUIO_NOSPEECH))
 		ena = false;
 
 	_speechVolumeDesc->setEnabled(ena);
@@ -680,14 +715,14 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_enableSubtitleSettings = enabled;
 
 	ena = enabled;
-	if ((_guioptions & Common::GUIO_NOSUBTITLES) || (_guioptions & Common::GUIO_NOSPEECH))
+	if ((_guioptions.contains(GUIO_NOSUBTITLES)) || (_guioptions.contains(GUIO_NOSPEECH)))
 		ena = false;
 
 	_subToggleGroup->setEnabled(ena);
 	_subToggleDesc->setEnabled(ena);
 
 	ena = enabled;
-	if (_guioptions & Common::GUIO_NOSUBTITLES)
+	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		ena = false;
 
 	_subSpeedDesc->setEnabled(ena);
@@ -741,22 +776,23 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
-	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			const uint32 deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
+			Common::String deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
 			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS options there
 				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98)
-				|| (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
-				|| (_guioptions & deviceGuiOption) // flag is present
+				|| (_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
+				|| (_guioptions.contains(deviceGuiOption)) // flag is present
 				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
 				// else we would not show for example external devices connected via ALSA, since they are always
 				// marked as General MIDI device.
-				|| (deviceGuiOption == Common::GUIO_MIDIGM && (_guioptions & Common::GUIO_MIDIMT32))
+				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
 				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
 				_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
 		}
@@ -823,7 +859,8 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	else
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
-	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
+
+	_soundFontClearButton = addClearButton(boss, prefix + "mcFontClearButton", kClearSoundFontCmd);
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
@@ -996,10 +1033,26 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		ConfMan.removeKey(setting, _domain);
 }
 
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+
+	return button;
+}
+
+
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
-	if (_guioptions & Common::GUIO_NOSUBTITLES)
+	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		return kSubtitlesSpeech; // Speech only
-	if (_guioptions & Common::GUIO_NOSPEECH)
+	if (_guioptions.contains(GUIO_NOSPEECH))
 		return kSubtitlesSubs; // Subtitles only
 
 	if (!subtitles && !speech_mute) // Speech only
@@ -1081,17 +1134,23 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
+	_savePathClearButton = addClearButton(tab, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
+
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), 0, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
+	_themePathClearButton = addClearButton(tab, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
+
+	_extraPathClearButton = addClearButton(tab, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)
@@ -1199,7 +1258,7 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(_c("None", "path"));
+		_savePath->setLabel(_("Default"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
@@ -1243,8 +1302,10 @@ void GlobalOptionsDialog::open() {
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		Common::String savePath(_savePath->getLabel());
-		if (!savePath.empty() && (savePath != _c("None", "path")))
+		if (!savePath.empty() && (savePath != _("Default")))
 			ConfMan.set("savepath", savePath, _domain);
+		else
+			ConfMan.removeKey("savepath", _domain);
 
 		Common::String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != _c("None", "path")))
@@ -1352,6 +1413,15 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+	case kThemePathClearCmd:
+		_themePath->setLabel(_c("None", "path"));
+		break;
+	case kExtraPathClearCmd:
+		_extraPath->setLabel(_c("None", "path"));
+		break;
+	case kSavePathClearCmd:
+		_savePath->setLabel(_("Default"));
+		break;
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {

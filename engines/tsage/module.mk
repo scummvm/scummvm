@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	blue_force/blueforce_scenes8.o \
 	blue_force/blueforce_scenes9.o \
 	blue_force/blueforce_speakers.o \
-	blue_force/blueforce_ui.o \
 	converse.o \
 	core.o \
 	debugger.o \
@@ -36,11 +35,17 @@ MODULE_OBJS := \
 	ringworld/ringworld_scenes8.o \
 	ringworld/ringworld_scenes10.o \
 	ringworld/ringworld_speakers.o \
+	ringworld2/ringworld2_dialogs.o \
+	ringworld2/ringworld2_logic.o \
+	ringworld2/ringworld2_scenes0.o \
+	ringworld2/ringworld2_scenes2.o \
+	ringworld2/ringworld2_speakers.o \
 	saveload.o \
 	scenes.o \
 	sound.o \
 	staticres.o \
-	tsage.o
+	tsage.o \
+	user_interface.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TSAGE), DYNAMIC_PLUGIN)

@@ -41,7 +41,7 @@ using namespace TsAGE;
 
 class Scene550: public SceneExt {
 	/* Objects */
-	class Object1: public NamedObject {
+	class Lyle: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -61,7 +61,7 @@ class Scene550: public SceneExt {
 	};
 public:
 	SequenceManager _sequenceManager;
-	Object1 _object1;
+	Lyle _lyle;
 	CaravanDoor _caravanDoor;
 	Vechile _vechile;
 	NamedHotspot _item1, _item2, _item3;
@@ -228,7 +228,8 @@ public:
 	NamedHotspot _chair, _lamp, _item4, _trophy, _watercolours, _fileCabinets;
 	NamedHotspot _certificate, _bookcase, _desk, _carpet, _item12, _office;
 	ASound _sound1;
-	int _field380, _field11EA;
+	bool _field380; 
+	bool _field11EA;
 	Common::Point _destPosition;
 
 	Scene560();
@@ -397,6 +398,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void process(Event &event);
+	virtual void dispatch();
 };
 
 } // End of namespace BlueForce

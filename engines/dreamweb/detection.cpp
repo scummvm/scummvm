@@ -40,7 +40,7 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
 		_singleid = "dreamweb";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -95,7 +95,7 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::sort(files.begin(), files.end());
 
 	SaveStateList saveList;
-	for(uint i = 0; i < files.size(); ++i) {
+	for (uint i = 0; i < files.size(); ++i) {
 		const Common::String &file = files[i];
 		Common::InSaveFile *stream = saveFileMan->openForLoading(file);
 		if (!stream)

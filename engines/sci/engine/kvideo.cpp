@@ -21,6 +21,7 @@
  */
 
 #include "engines/util.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/cursor.h"
@@ -39,6 +40,7 @@
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
 #include "video/coktel_decoder.h"
+#include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
@@ -230,6 +232,49 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 
+reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
+	int16 subop = argv[0].toUint16();
+
+	switch (subop) {
+	case 0: { // init
+		int id = argv[1].toUint16();
+		reg_t obj = argv[2];
+		int16 flag = argv[3].toSint16();
+		int16 x = argv[4].toUint16();
+		int16 y = argv[5].toUint16();
+		warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
+		g_sci->_robotDecoder->load(id);
+		g_sci->_robotDecoder->setPos(x, y);
+		}
+		break;
+	case 1:	// LSL6 hires (startup)
+		// TODO
+		return NULL_REG;	// an integer is expected
+	case 4: {	// start - we don't really have a use for this one
+			//int id = argv[1].toUint16();
+			//warning("kRobot(start), id %d", id);
+		}
+		break;
+	case 7:	// unknown, called e.g. by Phantasmagoria
+		warning("kRobot(%d)", subop);
+		break;
+	case 8: // sync
+		if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
+		} else {
+			g_sci->_robotDecoder->close();
+			// Signal the engine scripts that the video is done
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+		}
+		break;
+	default:
+		warning("kRobot(%d)", subop);
+		break;
+	}
+
+	return s->r_acc;
+}
+
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 	Video::VideoDecoder *videoDecoder = 0;
@@ -325,6 +370,55 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		warning("%s", warningMsg.c_str());
+		break;
+	}
+
+	return s->r_acc;
+}
+
+reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+	Video::VideoDecoder *videoDecoder = 0;
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
+
+	switch (operation) {
+	case 1:	// Play
+		// 6 params
+		s->_videoState.reset();
+		s->_videoState.fileName = Common::String::format("%d.duk", argv[1].toUint16());
+
+		videoDecoder = new Video::AviDecoder(g_system->getMixer());
+
+		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
+			warning("Could not open Duck %s", s->_videoState.fileName.c_str());
+			break;
+		}
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelHide();
+
+		{
+		// Duck videos are 16bpp, so we need to change the active pixel format
+		int oldWidth = g_system->getWidth();
+		int oldHeight = g_system->getHeight();
+		Common::List<Graphics::PixelFormat> formats;
+		formats.push_back(videoDecoder->getPixelFormat());
+		initGraphics(640, 480, true, formats);
+
+		if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
+			error("Could not switch screen format for the duck video");
+
+		playVideo(videoDecoder, s->_videoState);
+
+		// Switch back to 8bpp
+		initGraphics(oldWidth, oldHeight, oldWidth > 320);
+		}
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelShow();
+		break;
+	default:
+		kStub(s, argc, argv);
 		break;
 	}
 

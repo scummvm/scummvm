@@ -151,8 +151,8 @@ void SegManager::deallocate(SegmentId seg) {
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->getScriptNumber());
-		if (scr->_localsSegment)
-			deallocate(scr->_localsSegment);
+		if (scr->getLocalsSegment())
+			deallocate(scr->getLocalsSegment());
 	}
 
 	delete mobj;
@@ -270,12 +270,13 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 		if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			// It's a script, scan all objects in it
 			const Script *scr = (const Script *)mobj;
-			for (ObjMap::const_iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+			const ObjMap &objects = scr->getObjectMap();
+			for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
 				objpos.offset = it->_value.getPos().offset;
 				if (name == getObjectName(objpos))
 					result.push_back(objpos);
 			}
-		} else  if (mobj->getType() == SEG_TYPE_CLONES) {
+		} else if (mobj->getType() == SEG_TYPE_CLONES) {
 			// It's clone table, scan all objects in it
 			const CloneTable *ct = (const CloneTable *)mobj;
 			for (uint idx = 0; idx < ct->_table.size(); ++idx) {
@@ -339,29 +340,6 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 			getScript(segment)->incrementLockers();
 	}
 	return segment;
-}
-
-LocalVariables *SegManager::allocLocalsSegment(Script *scr) {
-	if (!scr->getLocalsCount()) { // No locals
-		scr->_localsSegment = 0;
-		scr->_localsBlock = NULL;
-		return NULL;
-	} else {
-		LocalVariables *locals;
-
-		if (scr->_localsSegment) {
-			locals = (LocalVariables *)_heap[scr->_localsSegment];
-			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != scr->getScriptNumber())
-				error("Invalid script locals segment while allocating locals");
-		} else
-			locals = (LocalVariables *)allocSegment(new LocalVariables(), &scr->_localsSegment);
-
-		scr->_localsBlock = locals;
-		locals->script_id = scr->getScriptNumber();
-		locals->_locals.resize(scr->getLocalsCount());
-
-		return locals;
-	}
 }
 
 DataStack *SegManager::allocateStack(int size, SegmentId *segid) {

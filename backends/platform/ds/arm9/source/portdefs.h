@@ -37,6 +37,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <math.h>
+#include <new>
 
 #define double float
 

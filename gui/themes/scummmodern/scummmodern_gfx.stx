@@ -99,6 +99,7 @@
 		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
 		<bitmap filename = 'search.bmp'/>
+		<bitmap filename = 'eraser.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -259,7 +260,7 @@
 	</drawdata>
 
 	<!-- Buttons at the top and bottom of the scrollbar -->
-	<drawdata id = 'scrollbar_button_idle' cache = 'false'>
+	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'roundedsq'
 					radius = '10'
 					fill = 'none'
@@ -269,15 +270,35 @@
 		<drawstep	func = 'triangle'
 					fg_color = 'shadowcolor'
 					fill = 'foreground'
-					width = 'auto'
-					height = 'auto'
-					xpos = 'center'
+					width = '10'
+					height = '10'
+					xpos = 'right'
 					ypos = 'center'
+					padding = '0,0,2,0'
 					orientation = 'top'
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_hover' cache = 'false'>
+	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '10'
+					fill = 'none'
+					fg_color = 'darkgray'
+					stroke = '1'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'shadowcolor'
+					fill = 'foreground'
+					width = '5'
+					height = '5'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,1,0'
+					orientation = 'top'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'roundedsq'
 					radius = '10'
 					fill = 'gradient'
@@ -291,10 +312,30 @@
 		<drawstep	func = 'triangle'
 					fg_color = 'shadowcolor'
 					fill = 'foreground'
-					width = 'auto'
-					height = 'auto'
-					xpos = 'center'
+					width = '10'
+					height = '10'
+					xpos = 'right'
 					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'top'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '10'
+					fill = 'none'
+					fg_color = 'darkgray'
+					stroke = '1'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'shadowcolor'
+					fill = 'foreground'
+					width = '5'
+					height = '5'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
 					orientation = 'top'
 		/>
 	</drawdata>
@@ -392,7 +433,7 @@
 	</drawdata>
 
 	<!-- Idle popup -->
-	<drawdata id = 'popup_idle' cache = 'false'>
+	<drawdata id = 'popup_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'roundedsq'
 					radius = '5'
 					stroke = '1'
@@ -401,15 +442,68 @@
 					bg_color = 'xtrabrightred'
 					shadow = '2'
 		/>
+	
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
-					width = 'height'
-					height = 'auto'
+					width = '10'
+					height = '5'
 					xpos = 'right'
-					ypos = 'center'
+					ypos = '10'
+					padding = '0, 0, 6, 0'
 					orientation = 'bottom'
 		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 6, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'popup_idle' cache = 'false' resolution ='y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '2'
+		/>
+	
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
@@ -418,31 +512,7 @@
 	</drawdata>
 
 	<!-- Disabled popup -->
-	<drawdata id = 'popup_disabled' cache = 'false'>
-		<drawstep	func = 'roundedsq'
-					radius = '5'
-					fill = 'foreground'
-					fg_color = 'darkgray'
-					shadow = '2'
-		/>
-		<drawstep	func = 'triangle'
-					fg_color = 'shadowcolor'
-					fill = 'foreground'
-					width = 'height'
-					height = 'auto'
-					xpos = 'right'
-					ypos = 'center'
-					orientation = 'bottom'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'center'
-				horizontal_align = 'left'
-		/>
-	</drawdata>
-
-	<!-- Hovered popup -->
-	<drawdata id = 'popup_hover' cache = 'false'>
+	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
 					fg_color = 'lightgray'
@@ -453,16 +523,147 @@
 					shadow = '0'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = 'shadowcolor'
-					fill = 'foreground'
-					width = 'height'
-					height = 'auto'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
 					xpos = 'right'
-					ypos = 'center'
+					ypos = '10'
+					padding = '0, 0, 6, 0'
 					orientation = 'bottom'
 		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 6, 0'
+					orientation = 'top'
+		/>
+		
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '2'
+		/>
+	
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+
+	<!-- Hovered popup -->
+	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y>399'>
+		<drawstep	func = 'roundedsq'
+					stroke = '1'
+					fg_color = 'lightgray'
+					radius = '5'
+					fill = 'gradient'
+					gradient_start = 'blandyellow'
+					gradient_end = 'xtrabrightred'
+					shadow = '0'
+		/>
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '10'
+					padding = '0, 0, 6, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 6, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal_hover'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '2'
+		/>
+	
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>

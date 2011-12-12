@@ -98,12 +98,12 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	_speechList = newSpeechList;
 
 	_activeVoiceFileTotalTime = 0;
-	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end(); ++i) {
+	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end();) {
 		// Just in case any file loading failed: Remove the bad streams here.
 		if (!*i)
 			i = _speechList.erase(i);
 		else
-			_activeVoiceFileTotalTime += (*i)->getLength().msecs();
+			_activeVoiceFileTotalTime += (*i++)->getLength().msecs();
 	}
 
 	_sound->playVoiceStream(*_speechList.begin(), &_speechHandle);

@@ -22,8 +22,8 @@
 
 /// \brief Declarations related to the MidiParser class
 
-#ifndef SOUND_MIDIPARSER_H
-#define SOUND_MIDIPARSER_H
+#ifndef AUDIO_MIDIPARSER_H
+#define AUDIO_MIDIPARSER_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"

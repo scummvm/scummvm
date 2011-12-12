@@ -60,7 +60,7 @@ public:
 	int32 _paletteEntries;
 	char _name[32];
 
-	bool loadAnimation(Common::String file);
+	bool loadAnimation(const Common::String &file);
 	void drawFrame(Graphics::Surface &surface, int32 frame, int32 x, int32 y);
 	void drawFontFrame(Graphics::Surface &surface, int32 frame, int32 x, int32 y, byte *colorMap);
 	void drawFrameOnPicture(int32 frame, int32 x, int32 y);

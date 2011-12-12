@@ -29,7 +29,7 @@
 #include "audio/mods/maxtrax.h"
 
 // test for engines using this class.
-#if defined(SOUND_MODS_MAXTRAX_H)
+#if defined(AUDIO_MODS_MAXTRAX_H)
 
 namespace {
 
@@ -1034,4 +1034,4 @@ void MaxTrax::outPutScore(const Score &sc, int num) {}
 
 }	// End of namespace Audio
 
-#endif // #if defined(SOUND_MODS_MAXTRAX_H)
+#endif // #if defined(AUDIO_MODS_MAXTRAX_H)

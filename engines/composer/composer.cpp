@@ -32,6 +32,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/wincursor.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -52,6 +53,11 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 ComposerEngine::~ComposerEngine() {
 	DebugMan.clearAllDebugChannels();
 
+	stopPipes();
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
+		delete *i;
+	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++)
+		delete *i;
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		delete i->_archive;
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++)
@@ -98,6 +104,11 @@ Common::Error ComposerEngine::run() {
 	initGraphics(width, height, true);
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_needsUpdate = true;
+
+	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+		cursor->getHotspotY(), cursor->getKeyColor());
+	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 
 	loadLibrary(0);
 
@@ -150,6 +161,7 @@ Common::Error ComposerEngine::run() {
 
 			redraw();
 
+			tickOldScripts();
 			processAnimFrame();
 		} else if (_needsUpdate) {
 			redraw();
@@ -213,11 +225,13 @@ void ComposerEngine::onMouseDown(const Common::Point &pos) {
 	if (!button)
 		return;
 
+	debug(3, "mouseDown on button id %d", button->_id);
+
 	// TODO: other buttons?
 	uint16 buttonsDown = 1; // MK_LBUTTON
 
 	uint16 spriteId = sprite ? sprite->_id : 0;
-	runScript(button->_scriptId, button->_id, buttonsDown, spriteId);
+	runScript(button->_scriptId, (getGameType() == GType_ComposerV1) ? 0 : button->_id, buttonsDown, spriteId);
 }
 
 void ComposerEngine::onMouseMove(const Common::Point &pos) {
@@ -233,21 +247,48 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 	const Button *button = getButtonFor(sprite, pos);
 	if (_lastButton != button) {
 		if (_lastButton && _lastButton->_scriptIdRollOff)
-			runScript(_lastButton->_scriptIdRollOff, _lastButton->_id, buttonsDown, 0);
+			runScript(_lastButton->_scriptIdRollOff, (getGameType() == GType_ComposerV1) ? 0 : _lastButton->_id, buttonsDown, 0);
 		_lastButton = button;
 		if (_lastButton && _lastButton->_scriptIdRollOn)
-			runScript(_lastButton->_scriptIdRollOn, _lastButton->_id, buttonsDown, 0);
+			runScript(_lastButton->_scriptIdRollOn, (getGameType() == GType_ComposerV1) ? 0 : _lastButton->_id, buttonsDown, 0);
 	}
 
 	if (_mouseSpriteId) {
 		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
-		_needsUpdate = true;
 	}
+	_needsUpdate = true;
 }
 
 void ComposerEngine::onKeyDown(uint16 keyCode) {
 	runEvent(kEventKeyDown, keyCode, 0, 0);
 	runEvent(kEventChar, keyCode, 0, 0);
+
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) {
+		for (Common::List<KeyboardHandler>::iterator j = i->_keyboardHandlers.begin(); j != i->_keyboardHandlers.end(); j++) {
+			const KeyboardHandler &handler = *j;
+			if (keyCode != handler.keyId)
+				continue;
+
+			int modifiers = g_system->getEventManager()->getModifierState();
+			switch (handler.modifierId) {
+			case 0x10: // shift
+				if (!(modifiers & Common::KBD_SHIFT))
+					continue;
+				break;
+			case 0x11: // control
+				if (!(modifiers & Common::KBD_CTRL))
+					continue;
+				break;
+			case 0:
+				break;
+			default:
+				warning("unknown keyb modifier %d", handler.modifierId);
+				continue;
+			}
+
+			runScript(handler.scriptId);
+		}
+	}
 }
 
 void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
@@ -269,11 +310,15 @@ void ComposerEngine::setCursorVisible(bool visible) {
 		_mouseVisible = true;
 		if (_mouseSpriteId)
 			addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+		else
+			CursorMan.showMouse(true);
 		onMouseMove(_lastMousePos);
 	} else if (!visible && _mouseVisible) {
 		_mouseVisible = false;
 		if (_mouseSpriteId)
 			removeSprite(_mouseSpriteId, 0);
+		else
+			CursorMan.showMouse(false);
 	}
 }
 
@@ -316,9 +361,42 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 }
 
 void ComposerEngine::loadLibrary(uint id) {
-	if (!id)
-		id = atoi(getStringFromConfig("Common", "StartUp").c_str());
-	Common::String filename = getFilename("Libs", id);
+	if (getGameType() == GType_ComposerV1 && !_libraries.empty()) {
+		// kill the previous page, starting with any scripts running on it
+
+		for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
+			delete *i;
+		_oldScripts.clear();
+
+		Library *library = &_libraries.front();
+		unloadLibrary(library->_id);
+	}
+
+	Common::String filename;
+
+	if (getGameType() == GType_ComposerV1) {
+		if (!id || _bookGroup.empty())
+			filename = getStringFromConfig("Common", "StartPage");
+		else
+			filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
+		filename = mangleFilename(filename);
+
+		_bookGroup.clear();
+		for (uint i = 0; i < filename.size(); i++) {
+			if (filename[i] == '\\' || filename[i] == ':')
+				continue;
+			for (uint j = 0; j < filename.size(); j++) {
+				if (filename[j] == '.')
+					break;
+				_bookGroup += filename[j];
+			}
+			break;
+		}
+	} else {
+		if (!id)
+			id = atoi(getStringFromConfig("Common", "StartUp").c_str());
+		filename = getFilename("Libs", id);
+	}
 
 	Library library;
 
@@ -348,6 +426,37 @@ void ComposerEngine::loadLibrary(uint id) {
 			newLib._buttons.push_back(button);
 	}
 
+	Common::Array<uint16> ambientResources = library._archive->getResourceIDList(ID_AMBI);
+	for (uint i = 0; i < ambientResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_AMBI, ambientResources[i]);
+		Button button(stream);
+		newLib._buttons.insert(newLib._buttons.begin(), button);
+	}
+
+	Common::Array<uint16> accelResources = library._archive->getResourceIDList(ID_ACEL);
+	for (uint i = 0; i < accelResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_ACEL, accelResources[i]);
+		KeyboardHandler handler;
+		handler.keyId = stream->readUint16LE();
+		handler.modifierId = stream->readUint16LE();
+		handler.scriptId = stream->readUint16LE();
+		newLib._keyboardHandlers.push_back(handler);
+	}
+
+	Common::Array<uint16> randResources = library._archive->getResourceIDList(ID_RAND);
+	for (uint i = 0; i < randResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_RAND, randResources[i]);
+		Common::Array<RandomEvent> &events = _randomEvents[randResources[i]];
+		uint16 count = stream->readUint16LE();
+		for (uint j = 0; j < count; j++) {
+			RandomEvent random;
+			random.scriptId = stream->readUint16LE();
+			random.weight = stream->readUint16LE();
+			events.push_back(random);
+		}
+		delete stream;
+	}
+
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
 		setBackground(1000);
@@ -373,10 +482,9 @@ void ComposerEngine::unloadLibrary(uint id) {
 			delete *j;
 		}
 		_anims.clear();
-		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
-			delete *j;
-		}
-		_pipes.clear();
+		stopPipes();
+
+		_randomEvents.clear();
 
 		for (Common::List<Sprite>::iterator j = _sprites.begin(); j != _sprites.end(); j++) {
 			j->_surface.free();
@@ -426,13 +534,14 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 
 	_type = stream->readUint16LE();
 	_active = (_type & 0x8000) ? true : false;
+	bool hasRollover = (gameType == GType_ComposerV1) && (_type & 0x4000);
 	_type &= 0xfff;
 	debug(9, "button %d: type %d, active %d", id, _type, _active);
 
-	uint16 flags = 0;
 	uint16 size = 4;
 	if (gameType == GType_ComposerV1) {
-		flags = stream->readUint16LE();
+		stream->skip(2);
+
 		_zorder = 0;
 		_scriptId = stream->readUint16LE();
 		_scriptIdRollOn = 0;
@@ -469,9 +578,29 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 		error("unknown button type %d", _type);
 	}
 
-	if (flags & 0x40) {
+	if (hasRollover) {
 		_scriptIdRollOn = stream->readUint16LE();
 		_scriptIdRollOff = stream->readUint16LE();
+	}
+
+	delete stream;
+}
+
+// AMBI-style button
+Button::Button(Common::SeekableReadStream *stream) {
+	_id = 0;
+	_zorder = 0;
+	_active = true;
+	_type = kButtonSprites;
+	_scriptIdRollOn = 0;
+	_scriptIdRollOff = 0;
+
+	_scriptId = stream->readUint16LE();
+
+	uint16 count = stream->readUint16LE();
+	for (uint j = 0; j < count; j++) {
+		uint16 spriteId = stream->readUint16LE();
+		_spriteIds.push_back(spriteId);
 	}
 
 	delete stream;
@@ -522,6 +651,18 @@ const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::P
 	}
 
 	return NULL;
+}
+
+void ComposerEngine::setButtonActive(uint16 id, bool active) {
+	for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
+		for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
+			if (i->_id != id)
+				continue;
+			i->_active = active;
+		}
+	}
+
+	onMouseMove(_lastMousePos);
 }
 
 } // End of namespace Composer

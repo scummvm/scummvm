@@ -24,7 +24,7 @@
 #define SCI_ENGINE_KERNEL_TABLES_H
 
 #include "sci/engine/workarounds.h"
-#include "sci/engine/vm.h"	// for opcode_formats
+#include "sci/engine/vm_types.h" // for opcode_formats
 
 namespace Sci {
 
@@ -477,6 +477,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
@@ -493,25 +494,46 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// our own memory manager and garbage collector, thus we simply call FlushResources, which in turn invokes
 	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
 	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
+	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
-	// SetScroll
-	// AddMagnify	// most probably similar to the SCI1.1 functions. We need a test case
-	// DeleteMagnify
-	// EditText
-	// DisposeTextBitmap
-	// VibrateMouse - used in QFG4 floppy
-	// PalCycle
-	// ObjectIntersect - used in QFG4 floppy
-	// MakeSaveCatName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
-	// MakeSaveFileName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
+
+	// SetScroll - called by script 64909, Styler::doit()
+	// PalCycle - called by Game::newRoom. Related to RemapColors.
+	// VibrateMouse - used in QFG4
+
+	// SCI2 Empty functions
+	
+	// Debug function used to track resources
+	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	
+	// SCI2 functions that are used in the original save/load menus. Marked as dummy, so
+	// that the engine errors out on purpose. TODO: Implement once the original save/load
+	// menus are implemented.
+
+	// Creates the name of the save catalogue/directory to save into.
+	// TODO: Implement once the original save/load menus are implemented.
+	{ MAP_DUMMY(MakeSaveCatName),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	
+	// Creates the name of the save file to save into
+	// TODO: Implement once the original save/load menus are implemented.
+	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
+
+	// AddMagnify/DeleteMagnify are both called by script 64979 (the Magnifier
+	// object) in GK1 only. There is also an associated empty magnifier view
+	// (view 1), however, it doesn't seem to be used anywhere, as all the
+	// magnifier closeups (e.g. in scene 470) are normal views. Thus, these
+	// are marked as dummy, so if they're ever used the engine will error out.
+	{ MAP_DUMMY(AddMagnify),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(DeleteMagnify),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(RepaintPlane),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	// Profiler (same as SCI0-SCI1.1)
 	// Record (same as SCI0-SCI1.1)
@@ -590,7 +612,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2.1 unmapped functions - TODO!
 
-	// Bitmap
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
@@ -599,6 +620,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 	// SetHotRectangles - used by Phantasmagoria 1
+
+	// SCI3 Kernel Functions
+	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 #endif
 
 	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
@@ -771,7 +795,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x0d*/ "CelWide",
 	/*0x0e*/ "CelHigh",
 	/*0x0f*/ "GetHighPlanePri",
-	/*0x10*/ "GetHighItemPri",
+	/*0x10*/ "GetHighItemPri",		// unused function
 	/*0x11*/ "ShakeScreen",
 	/*0x12*/ "OnMe",
 	/*0x13*/ "ShowMovie",
@@ -783,9 +807,9 @@ static const char *const sci2_default_knames[] = {
 	/*0x19*/ "AddPlane",
 	/*0x1a*/ "DeletePlane",
 	/*0x1b*/ "UpdatePlane",
-	/*0x1c*/ "RepaintPlane",
+	/*0x1c*/ "RepaintPlane",		// unused function
 	/*0x1d*/ "SetShowStyle",
-	/*0x1e*/ "ShowStylePercent",
+	/*0x1e*/ "ShowStylePercent",	// unused function
 	/*0x1f*/ "SetScroll",
 	/*0x20*/ "AddMagnify",
 	/*0x21*/ "DeleteMagnify",
@@ -799,7 +823,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x29*/ "Dummy",
 	/*0x2a*/ "SetQuitStr",
 	/*0x2b*/ "EditText",
-	/*0x2c*/ "InputText",
+	/*0x2c*/ "InputText",			// unused function
 	/*0x2d*/ "CreateTextBitmap",
 	/*0x2e*/ "DisposeTextBitmap",
 	/*0x2f*/ "GetEvent",
@@ -944,8 +968,8 @@ static const char *const sci21_default_knames[] = {
 	/*0x15*/ "NumLoops",
 	/*0x16*/ "NumCels",
 	/*0x17*/ "IsOnMe",
-	/*0x18*/ "AddMagnify",
-	/*0x19*/ "DeleteMagnify",
+	/*0x18*/ "AddMagnify",		// dummy in SCI3
+	/*0x19*/ "DeleteMagnify",	// dummy in SCI3
 	/*0x1a*/ "CelRect",
 	/*0x1b*/ "BaseLineSpan",
 	/*0x1c*/ "CelWide",
@@ -965,10 +989,10 @@ static const char *const sci21_default_knames[] = {
 	/*0x2a*/ "UpdatePlane",
 	/*0x2b*/ "RepaintPlane",
 	/*0x2c*/ "GetHighPlanePri",
-	/*0x2d*/ "GetHighItemPri",
+	/*0x2d*/ "GetHighItemPri",		// unused function
 	/*0x2e*/ "SetShowStyle",
-	/*0x2f*/ "ShowStylePercent",
-	/*0x30*/ "SetScroll",
+	/*0x2f*/ "ShowStylePercent",	// unused function
+	/*0x30*/ "SetScroll",			// dummy in SCI3
 	/*0x31*/ "MovePlaneItems",
 	/*0x32*/ "ShakeScreen",
 	/*0x33*/ "Dummy",
@@ -977,7 +1001,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x36*/ "Dummy",
 	/*0x37*/ "IsHiRes",
 	/*0x38*/ "SetVideoMode",
-	/*0x39*/ "ShowMovie",
+	/*0x39*/ "ShowMovie",			// dummy in SCI3
 	/*0x3a*/ "Robot",
 	/*0x3b*/ "CreateTextBitmap",
 	/*0x3c*/ "Random",
@@ -995,7 +1019,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x48*/ "Message",
 	/*0x49*/ "Font",
 	/*0x4a*/ "EditText",
-	/*0x4b*/ "InputText",
+	/*0x4b*/ "InputText",		// unused function
 	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
@@ -1020,9 +1044,9 @@ static const char *const sci21_default_knames[] = {
 	/*0x61*/ "InitBresen",
 	/*0x62*/ "DoBresen",
 	/*0x63*/ "SetJump",
-	/*0x64*/ "AvoidPath",
+	/*0x64*/ "AvoidPath",		// dummy in SCI3
 	/*0x65*/ "InPolygon",
-	/*0x66*/ "MergePoly",
+	/*0x66*/ "MergePoly",		// dummy in SCI3
 	/*0x67*/ "ObjectIntersect",
 	/*0x68*/ "Dummy",
 	/*0x69*/ "MemoryInfo",
@@ -1051,7 +1075,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",		// called when changing rooms in most SCI2.1 games (e.g. KQ7, GK2, MUMG deluxe, Phant1)
 	/*0x82*/ "Dummy",
-	/*0x83*/ "PrintDebug",	// debug function, used by Shivers 2 (demo and full)
+	/*0x83*/ "PrintDebug",	// debug function, used by Shivers (demo and full)
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
@@ -1086,7 +1110,9 @@ static const char *const sci21_default_knames[] = {
 
 #endif
 
-opcode_format g_opcode_formats[128][4] = {
+// Base set of opcode formats. They're copied and adjusted slightly in
+// script_adjust_opcode_format depending on SCI version.
+static const opcode_format g_base_opcode_formats[128][4] = {
 	/*00*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
 	/*04*/

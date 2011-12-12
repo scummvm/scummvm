@@ -202,9 +202,10 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 					name = "<invalid name>";
 			}
 
-			warning("Object %04x:%04x (name %s, script %d) varnum doesn't "
-			        "match baseObj's: obj %d, base %d", PRINT_REG(_pos),
-			        name, objScript, originalVarCount, baseObj->getVarCount());
+			debugC(kDebugLevelVM, "Object %04x:%04x (name %s, script %d) "
+			        "varnum doesn't match baseObj's: obj %d, base %d",
+			        PRINT_REG(_pos), name, objScript,
+			        originalVarCount, baseObj->getVarCount());
 
 #if 0
 			// We enumerate the methods selectors which could be hidden here

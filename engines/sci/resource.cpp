@@ -169,8 +169,11 @@ ResourceType ResourceManager::convertResType(byte type) {
 		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
 			// LSL6 hires doesn't have the chunk resource type, to match
 			// the resource types of the lowres version, thus we use the
-			// older resource types here
-			if (g_sci && g_sci->getGameId() == GID_LSL6HIRES)
+			// older resource types here.
+			// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
+			// corresponding SCI2 floppy disk versions.
+			if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
+				g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
 				return s_resTypeMapSci0[type];
 			else
 				return s_resTypeMapSci21[type];
@@ -2181,15 +2184,16 @@ void ResourceManager::detectSciVersion() {
 	}
 
 	if (_volVersion == kResVersionSci11Mac) {
-		// SCI32 doesn't have the resource.cfg file, so we can figure out
-		// which of the games are SCI1.1. Note that there are no Mac SCI2 games.
-		// Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
+		Resource *res = testResource(ResourceId(kResourceTypeScript, 64920));
+		// Distinguish between SCI1.1 and SCI32 games here. SCI32 games will
+		// always include script 64920 (the Array class). Note that there are
+		// no Mac SCI2 games. Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
 
 		// TODO: Decide between SCI2.1 and SCI3
-		if (Common::File::exists("resource.cfg"))
-			s_sciVersion = SCI_VERSION_1_1;
-		else
+		if (res)
 			s_sciVersion = SCI_VERSION_2_1;
+		else
+			s_sciVersion = SCI_VERSION_1_1;
 		return;
 	}
 
@@ -2354,7 +2358,7 @@ bool ResourceManager::detectFontExtended() {
 }
 
 // detects, if SCI1.1 game uses palette merging or copying - this is supposed to only get used on SCI1.1 games
-bool ResourceManager::detectForPaletteMergingForSci11() {
+bool ResourceManager::detectPaletteMergingSci11() {
 	// Load palette 999 (default palette)
 	Resource *res = findResource(ResourceId(kResourceTypePalette, 999), false);
 

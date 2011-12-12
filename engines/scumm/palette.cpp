@@ -823,7 +823,7 @@ void ScummEngine::setShadowPalette(int slot, int redScale, int greenScale, int b
 	if (slot < 0 || slot >= NUM_SHADOW_PALETTE)
 		error("setShadowPalette: invalid slot %d", slot);
 
-	if (startColor < 0 || startColor > 255 || endColor < 0 || startColor > 255 || endColor < startColor)
+	if (startColor < 0 || startColor > 255 || endColor < 0 || endColor > 255 || endColor < startColor)
 		error("setShadowPalette: invalid range from %d to %d", startColor, endColor);
 
 	table = _shadowPalette + slot * 256;

@@ -20,7 +20,13 @@
  *
  */
 
+#ifndef DREAMWEB_STRUCTS_H
+#define DREAMWEB_STRUCTS_H
+
 #include "common/endian.h"
+#include "common/rect.h"
+
+namespace DreamGen {
 
 struct Sprite {
 	uint16 _updateCallback;
@@ -36,37 +42,33 @@ struct Sprite {
 	uint8  y;
 	uint16 w12;
 	uint8  b14;
-	uint8  b15;
+	uint8  frameNumber;
 	uint8  b16;
 	uint8  b17;
 	uint8  delay;
-	uint8  frame;
+	uint8  animFrame; // index into SetObject::frames
 	uint16 _objData;
 	uint16 objData() const { return READ_LE_UINT16(&_objData); }
 	void setObjData(uint16 v) { WRITE_LE_UINT16(&_objData, v); }
-	uint8  b22;
+	uint8  speed;
 	uint8  priority;
 	uint16 w24;
 	uint16 w26;
 	uint8  b28;
-	uint8  b29;
+	uint8  walkFrame;
 	uint8  type;
 	uint8  hidden;
 };
 
+class DreamGenContext;
+
 struct RectWithCallback {
 	uint16 _xMin, _xMax;
 	uint16 _yMin, _yMax;
-	uint16 _callback;
-
-	uint16 xMin() const { return READ_LE_UINT16(&_xMin); }
-	uint16 xMax() const { return READ_LE_UINT16(&_xMax); }
-	uint16 yMin() const { return READ_LE_UINT16(&_yMin); }
-	uint16 yMax() const { return READ_LE_UINT16(&_yMax); }
-	uint16 callback() const { return READ_LE_UINT16(&_callback); }
+	void (DreamGenContext::*_callback)();
 
 	bool contains(uint16 x, uint16 y) const {
-		return (x >= xMin()) && (x < xMax()) && (y >= yMin()) && (y < yMax());
+		return (x >= _xMin) && (x < _xMax) && (y >= _yMin) && (y < _yMax);
 	}
 };
 
@@ -86,7 +88,8 @@ struct SetObject {
 	uint8 name[4];
 	uint8 b16;
 	uint8 index;
-	uint8 b18[13]; // NB: Don't know the size yet
+	uint8 frames[13]; // Table mapping animFrame to sprite frame number
+	                  // NB: Don't know the size yet
 	uint8 b31;
 	uint8 b32;
 	uint8 b33;
@@ -136,6 +139,9 @@ struct ObjPos {
 	uint8 xMax;
 	uint8 yMax;
 	uint8 index;
+	bool contains(uint8 x, uint8 y) const {
+		return (x >= xMin) && (x < xMax) && (y >= yMin) && (y < yMax);
+	}
 };
 
 struct Frame {
@@ -166,8 +172,9 @@ struct ReelRoutine {
 	uint8 b4;
 	uint16 reelPointer() const { return READ_LE_UINT16(&b3); }
 	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b3, v); }
-	uint8 b5;
-	uint8 b6;
+	void incReelPointer() { setReelPointer(reelPointer() + 1); }
+	uint8 period;
+	uint8 counter;
 	uint8 b7;
 };
 
@@ -185,10 +192,7 @@ struct People {
 };
 
 struct Room {
-	uint8 name[10];
-	uint8 b10;
-	uint8 b11;
-	uint8 b12;
+	char  name[13];
 	uint8 roomsSample;
 	uint8 b14;
 	uint8 mapX;
@@ -198,7 +202,7 @@ struct Room {
 	uint8 b19;
 	uint8 liftFlag;
 	uint8 b21;
-	uint8 b22;
+	uint8 facing;
 	uint8 countToOpen;
 	uint8 liftPath;
 	uint8 doorPath;
@@ -207,8 +211,9 @@ struct Room {
 	uint8 b28;
 	uint8 b29;
 	uint8 b30;
-	uint8 b31;
+	uint8 realLocation;
 };
+extern const Room g_roomData[];
 
 struct Rain {
 	uint8 x;
@@ -248,4 +253,43 @@ struct RoomPaths {
 	PathNode    nodes[12];
 	PathSegment segments[24];
 };
+
+struct Sound {
+	uint8 w1_lo;
+	uint8 w1_hi;
+	uint16 offset() const { return READ_LE_UINT16(&w1_lo); }
+	void setOffset(uint16 v) { WRITE_LE_UINT16(&w1_lo, v); }
+	uint8 w3_lo;
+	uint8 w3_hi;
+	uint16 blockCount() const { return READ_LE_UINT16(&w3_lo); }
+	void setBlockCount(uint16 v) { WRITE_LE_UINT16(&w3_lo, v); }
+	uint8 b5;
+};
+
+struct FileHeader {
+	char _desc[50];
+	uint16 _len[20];
+	uint8 _padding[6];
+
+	uint16 len(unsigned int i) const {
+		assert(i < 20);
+		return READ_LE_UINT16(&_len[i]);
+	}
+	void setLen(unsigned int i, uint16 length) {
+		assert(i < 20);
+		WRITE_LE_UINT16(&_len[i], length);
+	}
+};
+
+struct Atmosphere {
+	uint8 _location;
+	uint8 _mapX;
+	uint8 _mapY;
+	uint8 _sound;
+	uint8 _repeat;
+};
+
+} // End of namespace DreamWeb
+
+#endif
 

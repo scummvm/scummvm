@@ -396,7 +396,7 @@ public:
 				// First nibble
 				idx = data >> 4;
 				step = stepTable[idx + _status.ima_ch[0].stepIndex / 4];
-				sample = CLIP(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
+				sample = CLIP<int>(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
 				buffer[samples] = (_stepAdjust2 * sample) >> _stepAdjust1;
 
 				// Second nibble

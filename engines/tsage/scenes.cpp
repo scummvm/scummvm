@@ -259,7 +259,7 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_sceneMode = 0;
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
-	Common::set_to(&_zoomPercents[0], &_zoomPercents[256], 0);
+	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
 }
 
 Scene::~Scene() {
@@ -316,11 +316,39 @@ void Scene::loadScene(int sceneNum) {
 void Scene::loadSceneData(int sceneNum) {
 	_activeScreenNumber = sceneNum;
 
-	// Get the basic scene size
-	byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
-	_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// Most scenes in Ringworld 2 don't have a scene size resource, but rather just have 
+		// a standard 320x200 size. Only read the scene size data for the specific few scenes
+		switch (sceneNum) {
+		case 700:
+		case 1020:
+		case 1100:
+		case 1700:
+		case 2600:
+		case 2950:
+		case 3100:
+		case 3101:
+		case 3275:
+		case 3600: {
+			// Get the basic scene size from the resource
+			byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
+			_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+			DEALLOCATE(data);
+			break;
+		}
+		default:
+			// For all other scenes, use a standard screen size
+			_backgroundBounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			break;
+		}
+	} else {
+		// Get the basic scene size
+		byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
+		_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+		DEALLOCATE(data);
+	}
+
 	g_globals->_sceneManager._scene->_sceneBounds.contain(_backgroundBounds);
-	DEALLOCATE(data);
 
 	// Set up a surface for storing the scene background
 	SceneManager::setBackSurface();
@@ -335,7 +363,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_priorities.load(sceneNum);
 
 	// Initialize the section enabled list
-	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
+	Common::fill(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
 	g_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
 	g_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
@@ -428,8 +456,9 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
-						if (g_vm->getGameID() == GType_BlueForce) {
-							// For Blue Force, if the scene has an interface area, exclude it from the copy
+						if (g_vm->getGameID() != GType_Ringworld) {
+							// For Blue Force and Return to Ringworld, if the scene has an interface area, 
+							// exclude it from the copy
 							srcBounds.bottom = MIN<int16>(srcBounds.bottom, BF_GLOBALS._interfaceY);
 							destBounds.bottom = MIN<int16>(destBounds.bottom, BF_GLOBALS._interfaceY);
 						}

@@ -478,7 +478,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 
 		// Make sure there's a MThd
 		in->read(buf, 4);
-		if (memcmp(buf, "MThd", 4)) {
+		if (memcmp(buf, "MThd", 4) != 0) {
 			warning("Expected MThd but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 			return;
 		}
@@ -487,7 +487,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 		// Now skip all the MTrk blocks
 		while (true) {
 			in->read(buf, 4);
-			if (memcmp(buf, "MTrk", 4))
+			if (memcmp(buf, "MTrk", 4) != 0)
 				break;
 			in->seek(in->readUint32BE(), SEEK_CUR);
 		}
@@ -524,7 +524,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 			memcpy(buf, &buf[2], 2);
 			in->read(&buf[2], 2);
 		}
-		if (memcmp(buf, "CAT ", 4)) {
+		if (memcmp(buf, "CAT ", 4) != 0) {
 			error("Could not find 'CAT ' tag to determine resource size");
 		}
 		size += 4 + in->readUint32BE();

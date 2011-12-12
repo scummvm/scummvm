@@ -998,7 +998,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
-					ovlDataStruct *ovl4 = NULL;
+					//ovlDataStruct *ovl4 = NULL;
 
 					if (verbeOvl > 0)
 						ovl2 = overlayTable[verbeOvl].ovlData;
@@ -1006,8 +1006,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if (obj1Ovl > 0)
 						ovl3 = overlayTable[obj1Ovl].ovlData;
 
-					if (obj2Ovl > 0)
-						ovl4 = overlayTable[obj2Ovl].ovlData;
+					//if (obj2Ovl > 0)
+					//	ovl4 = overlayTable[obj2Ovl].ovlData;
 
 					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
 						testState = ptrHead->obj1OldState;
@@ -1804,6 +1804,8 @@ void CruiseEngine::mainLoop() {
 			bool skipEvents = false;
 
 			do {
+				g_system->updateScreen();
+
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 

@@ -25,8 +25,8 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
-#ifndef __SID_H__
-#define __SID_H__
+#ifndef AUDIO_SOFTSYNTH_SID_H
+#define AUDIO_SOFTSYNTH_SID_H
 
 // Inlining on/off.
 #define RESID_INLINE inline
@@ -342,4 +342,4 @@ protected:
 
 }
 
-#endif // not __SID_H__
+#endif // not AUDIO_SOFTSYNTH_SID_H

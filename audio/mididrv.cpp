@@ -55,27 +55,30 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
-static const uint32 GUIOMapping[] = {
-	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
-	MT_CMS,			Common::GUIO_MIDICMS,
-	MT_PCJR,		Common::GUIO_MIDIPCJR,
-	MT_ADLIB,		Common::GUIO_MIDIADLIB,
-	MT_C64,		    Common::GUIO_MIDIC64,
-	MT_AMIGA,	    Common::GUIO_MIDIAMIGA,
-	MT_APPLEIIGS,	Common::GUIO_MIDIAPPLEIIGS,
-	MT_TOWNS,		Common::GUIO_MIDITOWNS,
-	MT_PC98,		Common::GUIO_MIDIPC98,
-	MT_GM,			Common::GUIO_MIDIGM,
-	MT_MT32,		Common::GUIO_MIDIMT32,
-	0,				0
+static const struct {
+	uint32      type;
+	const char *guio;
+} GUIOMapping[] = {
+	{ MT_PCSPK,		GUIO_MIDIPCSPK, },
+	{ MT_CMS,		GUIO_MIDICMS, },
+	{ MT_PCJR,		GUIO_MIDIPCJR, },
+	{ MT_ADLIB,		GUIO_MIDIADLIB, },
+	{ MT_C64,		GUIO_MIDIC64, },
+	{ MT_AMIGA,	    GUIO_MIDIAMIGA, },
+	{ MT_APPLEIIGS,	GUIO_MIDIAPPLEIIGS, },
+	{ MT_TOWNS,		GUIO_MIDITOWNS, },
+	{ MT_PC98,		GUIO_MIDIPC98, },
+	{ MT_GM,		GUIO_MIDIGM, },
+	{ MT_MT32,		GUIO_MIDIMT32, },
+	{ 0,			0 },
 };
 
-uint32 MidiDriver::musicType2GUIO(uint32 musicType) {
-	uint32 res = 0;
+Common::String MidiDriver::musicType2GUIO(uint32 musicType) {
+	Common::String res;
 
-	for (int i = 0; GUIOMapping[i] || GUIOMapping[i + 1]; i += 2) {
-		if (musicType == GUIOMapping[i] || musicType == (uint32)-1)
-			res |= GUIOMapping[i + 1];
+	for (int i = 0; GUIOMapping[i].guio; i++) {
+		if (musicType == GUIOMapping[i].type || musicType == (uint32)-1)
+			res += GUIOMapping[i].guio;
 	}
 
 	return res;

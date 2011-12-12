@@ -2118,7 +2118,7 @@ IMPLEMENT_FUNCTION_II(41, August, function41, CarIndex, EntityPosition)
 		 && getEntities()->isDistanceBetweenEntities(kEntityAugust, kEntityPlayer, 1000)
 		 && !getEntities()->isInsideCompartments(kEntityPlayer)
 		 && !getEntities()->checkFields10(kEntityPlayer)) {
-			if (getData()->car == kCarGreenSleeping || getData()->car == kCarGreenSleeping) {
+			if (getData()->car == kCarGreenSleeping || getData()->car == kCarRedSleeping) {
 				getAction()->playAnimation(kEventAugustMerchandise);
 
 				getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);

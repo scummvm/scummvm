@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MIXER_H
-#define SOUND_MIXER_H
+#ifndef AUDIO_MIXER_H
+#define AUDIO_MIXER_H
 
 #include "common/types.h"
 #include "common/noncopyable.h"

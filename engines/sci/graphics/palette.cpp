@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -65,7 +65,14 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	// the real merging done in earlier games. If we use the copying over, we
 	// will get issues because some views have marked all colors as being used
 	// and those will overwrite the current palette in that case
-	_useMerging = useMerging;
+	if (getSciVersion() < SCI_VERSION_1_1)
+		_useMerging = true;
+	else if (getSciVersion() == SCI_VERSION_1_1)
+		// there are some games that use inbetween SCI1.1 interpreter, so we have
+		// to detect if the current game is merging or copying
+		_useMerging = _resMan->detectPaletteMergingSci11();
+	else	// SCI32
+		_useMerging = false;
 
 	palVaryInit();
 
@@ -327,7 +334,9 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 
 	for (int i = 1; i < 255; i++) {
 		if (newPalette->colors[i].used) {
-			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) ||
+				(newPalette->colors[i].g != destPalette->colors[i].g) ||
+				(newPalette->colors[i].b != destPalette->colors[i].b)) {
 				destPalette->colors[i].r = newPalette->colors[i].r;
 				destPalette->colors[i].g = newPalette->colors[i].g;
 				destPalette->colors[i].b = newPalette->colors[i].b;
@@ -354,7 +363,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
-			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) ||
+				(newPalette->colors[i].g != _sysPalette.colors[i].g) ||
+				(newPalette->colors[i].b != _sysPalette.colors[i].b)) {
 				_sysPalette.colors[i].r = newPalette->colors[i].r;
 				_sysPalette.colors[i].g = newPalette->colors[i].g;
 				_sysPalette.colors[i].b = newPalette->colors[i].b;
@@ -367,7 +378,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) &&
+			(_sysPalette.colors[i].g == newPalette->colors[i].g) &&
+			(_sysPalette.colors[i].b == newPalette->colors[i].b)) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
@@ -696,6 +709,13 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 }
 
 void GfxPalette::palVaryInstallTimer() {
+	// Remove any possible leftover palVary timer callbacks.
+	// This happens for example in QFG1VGA, when sleeping at Erana's place
+	// (bug #3439240) - the nighttime to daytime effect clashes with the
+	// scene transition effect, as we load scene images too quickly for
+	// the SCI scripts in that case (also refer to kernelPalVaryInit).
+	palVaryRemoveTimer();
+
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
 	// Call signal increase every [ticks]
 	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this, "sciPalette");
@@ -953,7 +973,7 @@ void GfxPalette::loadMacIconBarPalette() {
 }
 
 bool GfxPalette::colorIsFromMacClut(byte index) {
-	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 1] != 0);
+	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 2] != 0);
 }
 
 #ifdef ENABLE_SCI32

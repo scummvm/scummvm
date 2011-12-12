@@ -95,7 +95,7 @@ static const int16 directions[8][2] = {
 
 IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_viewScroll.x = (128 - 8) * 16;
-	_viewScroll.x = (128 - 8) * 16 - 64;
+	_viewScroll.y = (128 - 8) * 16 - 64;
 	_viewDiff = 1;
 }
 

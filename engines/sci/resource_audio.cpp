@@ -915,18 +915,23 @@ bool ResourceManager::addAudioSources() {
 
 void ResourceManager::changeAudioDirectory(Common::String path) {
 	// Remove all of the audio map resource sources, as well as the audio resource sources
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
 		ResourceSource *source = *it;
 		ResSourceType sourceType = source->getSourceType();
 
 		// Remove the resource source, if it's an audio map or an audio file
 		if (sourceType == kSourceIntMap || sourceType == kSourceAudioVolume) {
 			// Don't remove 65535.map (the SFX map) or resource.sfx
-			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX")
+			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX") {
+				++it;
 				continue;
+			}
 
+			// erase() will move the iterator to the next element
 			it = _sources.erase(it);
 			delete source;
+		} else {
+			++it;
 		}
 	}
 

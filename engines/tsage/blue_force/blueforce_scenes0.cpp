@@ -48,45 +48,45 @@ void Scene20::Action1::signal() {
 		BF_GLOBALS._scenePalette.addRotation(64, 127, -1, 1, this);
 		break;
 	case 2:
-		scene->_object1.setVisage(22);
-		scene->_object1._strip = 1;
-		scene->_object1._frame = 1;
-		scene->_object1.changeZoom(100);
+		scene->_tsunamiWave.setVisage(22);
+		scene->_tsunamiWave._strip = 1;
+		scene->_tsunamiWave._frame = 1;
+		scene->_tsunamiWave.changeZoom(100);
 
-		scene->_object2.setVisage(22);
-		scene->_object2._strip = 2;
-		scene->_object2._frame = 1;
-		scene->_object2.changeZoom(100);
+		scene->_letterT.setVisage(22);
+		scene->_letterT._strip = 2;
+		scene->_letterT._frame = 1;
+		scene->_letterT.changeZoom(100);
 
-		scene->_object3.setVisage(22);
-		scene->_object3._strip = 3;
-		scene->_object3._frame = 1;
-		scene->_object3.changeZoom(100);
+		scene->_letterS.setVisage(22);
+		scene->_letterS._strip = 3;
+		scene->_letterS._frame = 1;
+		scene->_letterS.changeZoom(100);
 
-		scene->_object4.setVisage(22);
-		scene->_object4._strip = 4;
-		scene->_object4._frame = 1;
-		scene->_object4.changeZoom(100);
+		scene->_letterU.setVisage(22);
+		scene->_letterU._strip = 4;
+		scene->_letterU._frame = 1;
+		scene->_letterU.changeZoom(100);
 
-		scene->_object5.setVisage(22);
-		scene->_object5._strip = 5;
-		scene->_object5._frame = 1;
-		scene->_object5.changeZoom(100);
+		scene->_letterN.setVisage(22);
+		scene->_letterN._strip = 5;
+		scene->_letterN._frame = 1;
+		scene->_letterN.changeZoom(100);
 
-		scene->_object6.setVisage(22);
-		scene->_object6._strip = 6;
-		scene->_object6._frame = 1;
-		scene->_object6.changeZoom(100);
+		scene->_letterA.setVisage(22);
+		scene->_letterA._strip = 6;
+		scene->_letterA._frame = 1;
+		scene->_letterA.changeZoom(100);
 
-		scene->_object7.setVisage(22);
-		scene->_object7._strip = 7;
-		scene->_object7._frame = 1;
-		scene->_object7.changeZoom(100);
+		scene->_letterM.setVisage(22);
+		scene->_letterM._strip = 7;
+		scene->_letterM._frame = 1;
+		scene->_letterM.changeZoom(100);
 
-		scene->_object8.setVisage(22);
-		scene->_object8._strip = 8;
-		scene->_object8._frame = 1;
-		scene->_object8.changeZoom(100);
+		scene->_letterI.setVisage(22);
+		scene->_letterI._strip = 8;
+		scene->_letterI._frame = 1;
+		scene->_letterI.changeZoom(100);
 
 		setDelay(1);
 		break;
@@ -97,12 +97,12 @@ void Scene20::Action1::signal() {
 		setDelay(60);
 		break;
 	case 5:
-		scene->_object2.animate(ANIM_MODE_5, NULL);
-		scene->_object3.animate(ANIM_MODE_5, NULL);
-		scene->_object4.animate(ANIM_MODE_5, NULL);
-		scene->_object5.animate(ANIM_MODE_5, NULL);
-		scene->_object6.animate(ANIM_MODE_5, NULL);
-		scene->_object7.animate(ANIM_MODE_5, this);
+		scene->_letterT.animate(ANIM_MODE_5, NULL);
+		scene->_letterS.animate(ANIM_MODE_5, NULL);
+		scene->_letterU.animate(ANIM_MODE_5, NULL);
+		scene->_letterN.animate(ANIM_MODE_5, NULL);
+		scene->_letterA.animate(ANIM_MODE_5, NULL);
+		scene->_letterM.animate(ANIM_MODE_5, this);
 		break;
 	case 6:
 		setDelay(120);
@@ -121,75 +121,76 @@ void Scene20::Action1::signal() {
 
 void Scene20::postInit(SceneObjectList *OwnerList) {
 	loadScene(20);
-	Scene::postInit();
+	SceneExt::postInit();
 	setZoomPercents(60, 85, 200, 100);
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_scenePalette.loadPalette(1);
 	_scenePalette.loadPalette(22);
 
-	_object1.postInit();
-	_object1.setVisage(21);
-	_object1._strip = 1;
-	_object1._frame = 1;
-	_object1.animate(ANIM_MODE_NONE, NULL);
-	_object1.setPosition(Common::Point(62, 85));
-	_object1.changeZoom(100);
+	_tsunamiWave.postInit();
+	_tsunamiWave.setVisage(21);
+	_tsunamiWave._strip = 1;
+	_tsunamiWave._frame = 1;
+	_tsunamiWave.animate(ANIM_MODE_NONE, NULL);
+	_tsunamiWave.setPosition(Common::Point(62, 85));
+	_tsunamiWave.changeZoom(100);
 
-	_object2.postInit();
-	_object2.setVisage(21);
-	_object2._strip = 2;
-	_object2._frame = 1;
-	_object2.animate(ANIM_MODE_NONE, NULL);
-	_object2.setPosition(Common::Point(27, 94));
-	_object2.changeZoom(100);
+	_letterT.postInit();
+	_letterT.setVisage(21);
+	_letterT._strip = 2;
+	_letterT._frame = 1;
+	_letterT.animate(ANIM_MODE_NONE, NULL);
+	_letterT.setPosition(Common::Point(27, 94));
+	_letterT.changeZoom(100);
 
-	_object3.postInit();
-	_object3.setVisage(21);
-	_object3._strip = 2;
-	_object3._frame = 2;
-	_object3.animate(ANIM_MODE_NONE, NULL);
-	_object3.setPosition(Common::Point(68, 94));
-	_object3.changeZoom(100);
+	_letterS.postInit();
+	_letterS.setVisage(21);
+	_letterS._strip = 2;
+	_letterS._frame = 2;
+	_letterS.animate(ANIM_MODE_NONE, NULL);
+	_letterS.setPosition(Common::Point(68, 94));
+	_letterS.changeZoom(100);
 
-	_object4.postInit();
-	_object4.setVisage(21);
-	_object4._strip = 2;
-	_object4._frame = 3;
-	_object4.animate(ANIM_MODE_NONE, NULL);
-	_object4.setPosition(Common::Point(110, 94));
-	_object4.changeZoom(100);
+	_letterU.postInit();
+	_letterU.setVisage(21);
+	_letterU._strip = 2;
+	_letterU._frame = 3;
+	_letterU.animate(ANIM_MODE_NONE, NULL);
+	_letterU.setPosition(Common::Point(110, 94));
+	_letterU.changeZoom(100);
 
-	_object5.postInit();
-	_object5.setVisage(21);
-	_object5._strip = 2;
-	_object5._frame = 4;
-	_object5.animate(ANIM_MODE_NONE, NULL);
-	_object5.setPosition(Common::Point(154, 94));
-	_object5.changeZoom(100);
+	_letterN.postInit();
+	_letterN.setVisage(21);
+	_letterN._strip = 2;
+	_letterN._frame = 4;
+	_letterN.animate(ANIM_MODE_NONE, NULL);
+	_letterN.setPosition(Common::Point(154, 94));
+	_letterN.changeZoom(100);
 
-	_object6.postInit();
-	_object6.setVisage(21);
-	_object6._strip = 2;
-	_object6._frame = 5;
-	_object6.animate(ANIM_MODE_NONE, NULL);
-	_object6.setPosition(Common::Point(199, 94));
-	_object6.changeZoom(100);
+	_letterA.postInit();
+	_letterA.setVisage(21);
+	_letterA._strip = 2;
+	_letterA._frame = 5;
+	_letterA.animate(ANIM_MODE_NONE, NULL);
+	_letterA.setPosition(Common::Point(199, 94));
+	_letterA.changeZoom(100);
 
-	_object7.postInit();
-	_object7.setVisage(21);
-	_object7._strip = 2;
-	_object7._frame = 6;
-	_object7.animate(ANIM_MODE_NONE, NULL);
-	_object7.setPosition(Common::Point(244, 94));
-	_object7.changeZoom(100);
+	_letterM.postInit();
+	_letterM.setVisage(21);
+	_letterM._strip = 2;
+	_letterM._frame = 6;
+	_letterM.animate(ANIM_MODE_NONE, NULL);
+	_letterM.setPosition(Common::Point(244, 94));
+	_letterM.changeZoom(100);
 
-	_object8.postInit();
-	_object8.setVisage(21);
-	_object8._strip = 2;
-	_object8._frame = 7;
-	_object8.animate(ANIM_MODE_NONE, NULL);
-	_object8.setPosition(Common::Point(286, 94));
-	_object8.changeZoom(100);
+	_letterI.postInit();
+	_letterI.setVisage(21);
+	_letterI._strip = 2;
+	_letterI._frame = 7;
+	_letterI.animate(ANIM_MODE_NONE, NULL);
+	_letterI.setPosition(Common::Point(286, 94));
+	_letterI.changeZoom(100);
 
 	setAction(&_action1);
 	BF_GLOBALS._dialogCenter.y = 165;
@@ -238,11 +239,11 @@ void Scene50::Tooltip2::dispatch() {
 	}
 }
 
-void Scene50::Tooltip::set(const Rect &bounds, int v60, const Common::String &msg, int v62) {
+void Scene50::Tooltip::set(const Rect &bounds, int sceneNum, const Common::String &msg, int locationId) {
 	_bounds = bounds;
-	_newSceneNumber = v60;
+	_newSceneNumber = sceneNum;
 	_msg = msg;
-	_locationId = v62;
+	_locationId = locationId;
 }
 
 void Scene50::Tooltip::update() {
@@ -260,8 +261,8 @@ void Scene50::Tooltip::update() {
 void Scene50::Tooltip::highlight(bool btnDown) {
 	Scene50 *scene = (Scene50 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->_field382 = _newSceneNumber;
-	if ((scene->_field380 != 0) || (scene->_field380 != _newSceneNumber))
+	// In the original, a variable was used, always set to 0. The check is simplified
+	if (_newSceneNumber != 0)
 		update();
 
 	if (btnDown) {
@@ -322,16 +323,11 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene50::Scene50(): SceneExt() {
-	_field382 = 0;
-	_field380 = 0;
-}
-
 void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	BF_GLOBALS._interfaceY = 200;
-	BF_GLOBALS._uiElements._active = false;
+	T2_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
 	BF_GLOBALS._player.setStrip(3);
@@ -420,9 +416,10 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 void Scene50::remove() {
 	// Blank out the screen
 	clearScreen();
+	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
 
 	SceneExt::remove();
-	BF_GLOBALS._uiElements._active = true;
+	T2_GLOBALS._uiElements._active = true;
 }
 
 void Scene50::signal() {
@@ -437,11 +434,11 @@ void Scene50::signal() {
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 410) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(125);
+			BF_GLOBALS.setFlag(f1097Frankie);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 340) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(123);
+			BF_GLOBALS.setFlag(f1097Marina);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 380) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
@@ -467,7 +464,6 @@ void Scene50::signal() {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 0;
-		_field380 = 0;
 	}
 }
 
@@ -475,7 +471,6 @@ void Scene50::process(Event &event) {
 	SceneExt::process(event);
 	Common::Point pt(event.mousePos.x + _sceneBounds.left, event.mousePos.y + _sceneBounds.top);
 	bool mouseDown = false;
-	_field382 = 0;
 
 	if ((event.mousePos.x > 270 && (_sceneBounds.right < (SCREEN_WIDTH * 2))))
 		loadBackground(4, 0);
@@ -535,7 +530,7 @@ bool Scene60::Ignition::startAction(CursorType action, Event &event) {
 
 bool Scene60::Ignition::check1() {
 	if (BF_GLOBALS._bookmark >= bStoppedFrankie) {
-		BF_GLOBALS._v5098C |= 1;
+		BF_GLOBALS._subFlagBitArr1 |= 1;
 		return false;
 	} else {
 		if ((BF_GLOBALS._bookmark == bBookedGreen) && BF_GLOBALS.getFlag(fArrivedAtGangStop)) {
@@ -562,13 +557,13 @@ bool Scene60::Ignition::check1() {
 		} else if (BF_GLOBALS._bookmark < bStartOfGame) {
 			// Should never reach here
 		} else if (BF_GLOBALS._bookmark < bCalledToDomesticViolence) {
-			if ((BF_GLOBALS._v5098C >> 1) & 1)
+			if ((BF_GLOBALS._subFlagBitArr1 >> 1) & 1)
 				BF_GLOBALS.setFlag(fLateToMarina);
 			else
-				BF_GLOBALS._v5098C |= 2;
+				BF_GLOBALS._subFlagBitArr1 |= 2;
 		} else {
-			int v = (((BF_GLOBALS._v5098C >> 2) & 15) + 1) & 15;
-			BF_GLOBALS._v5098C = (BF_GLOBALS._v5098C & 0xC3) | (v << 2);
+			int v = (((BF_GLOBALS._subFlagBitArr1 >> 2) & 15) + 1) & 15;
+			BF_GLOBALS._subFlagBitArr1 = (BF_GLOBALS._subFlagBitArr1 & 0xC3) | (v << 2);
 
 			if ((v != 1) && (v != 2)) {
 				BF_GLOBALS._deathReason = 19;
@@ -578,17 +573,17 @@ bool Scene60::Ignition::check1() {
 		}
 	}
 
-	BF_GLOBALS._v5098C |= 1;
+	BF_GLOBALS._subFlagBitArr1 |= 1;
 	return false;
 }
 
 bool Scene60::Ignition::check2() {
 	switch (BF_GLOBALS._bookmark) {
 	case bInspectionDone:
-		if (BF_GLOBALS._v5098D & 1) {
+		if (BF_GLOBALS._subFlagBitArr2 & 1) {
 			BF_GLOBALS.setFlag(fLateToDrunkStop);
 		} else {
-			BF_GLOBALS._v5098D |= 1;
+			BF_GLOBALS._subFlagBitArr2 |= 1;
 		}
 		break;
 	case bCalledToDrunkStop:
@@ -598,7 +593,7 @@ bool Scene60::Ignition::check2() {
 		break;
 	}
 
-	BF_GLOBALS._v5098C |= 0x80;
+	BF_GLOBALS._subFlagBitArr1 |= 0x80;
 	return false;
 }
 
@@ -681,7 +676,7 @@ bool Scene60::MirandaCard::startAction(CursorType action, Event &event) {
 			SceneItem::display2(60, 6);
 			BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 1);
 			if (!BF_GLOBALS.getFlag(fGotPointsForTktBook)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				BF_GLOBALS.setFlag(fGotPointsForTktBook);
 			}
 
@@ -712,7 +707,7 @@ bool Scene60::TicketBook::startAction(CursorType action, Event &event) {
 			SceneItem::display2(60, 3);
 			BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 1);
 			if (!BF_GLOBALS.getFlag(fShotNicoIn910)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				BF_GLOBALS.setFlag(fShotNicoIn910);
 			}
 		}
@@ -777,10 +772,10 @@ void Scene60::Action1::signal() {
 		switch (_state) {
 		case 1:
 			if (BF_GLOBALS.removeFlag(fCan1004Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 606;
 			} else if (BF_GLOBALS.removeFlag(fCan1004Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 606;
 			} else {
 				_state = 611;
@@ -791,13 +786,13 @@ void Scene60::Action1::signal() {
 			break;
 		case 3:
 			if (BF_GLOBALS.removeFlag(f1015Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 613;
 			} else if (BF_GLOBALS.removeFlag(f1015Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 614;
 			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 615;
 			} else {
 				_state = 616;
@@ -805,15 +800,15 @@ void Scene60::Action1::signal() {
 			break;
 		case 4:
 			if (BF_GLOBALS.removeFlag(f1027Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 617;
 			} else if (BF_GLOBALS.removeFlag(f1027Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 618;
 			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 619;
 			} else {
@@ -823,15 +818,15 @@ void Scene60::Action1::signal() {
 		case 5:
 			if (BF_GLOBALS.removeFlag(f1035Marina)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				_state = 621;
 			} else if (BF_GLOBALS.removeFlag(f1035Frankie)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				_actionIndex = 5;
 				_state = 622;
 			} else if (BF_GLOBALS.removeFlag(f1035Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 623;
 			} else {
 				_state = 624;
@@ -839,14 +834,14 @@ void Scene60::Action1::signal() {
 			break;
 		case 6:
 			if (BF_GLOBALS.removeFlag(f1097Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 625;
 			} else if (BF_GLOBALS.removeFlag(f1097Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 626;
 			} else if (BF_GLOBALS.removeFlag(f1097Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 627;
 			} else {
 				_state = 628;
@@ -854,13 +849,13 @@ void Scene60::Action1::signal() {
 			break;
 		case 7:
 			if (BF_GLOBALS.removeFlag(f1098Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 629;
 			} else if (BF_GLOBALS.removeFlag(f1098Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 630;
 			} else if (BF_GLOBALS.removeFlag(f1098Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 631;
 			} else {
 				_state = 632;
@@ -1081,7 +1076,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 	switch (BF_GLOBALS._dayNumber) {
 	case 1:
-		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._v5098C & 1) &&
+		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._subFlagBitArr1 & 1) &&
 				(BF_GLOBALS._bookmark < bStartOfGame) && (BF_GLOBALS._sceneManager._previousScene != 342)) {
 			setAction(&_action2);
 			if (BF_GLOBALS._sceneManager._previousScene == 342)
@@ -1089,7 +1084,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 2:
-		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._v5098C >> 7) & 1) &&
+		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._subFlagBitArr1 >> 7) & 1) &&
 				(BF_GLOBALS._sceneManager._previousScene != 550) &&
 				(BF_GLOBALS._bookmark < bInspectionDone)) {
 			setAction(&_action3);

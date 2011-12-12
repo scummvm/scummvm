@@ -75,7 +75,6 @@ int Dialog::runModal() {
 }
 
 void Dialog::open() {
-
 	_result = 0;
 	_visible = true;
 	g_gui.openDialog(this);

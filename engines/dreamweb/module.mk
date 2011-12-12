@@ -6,12 +6,19 @@ MODULE_OBJS := \
 	detection.o \
 	dreamweb.o \
 	dreamgen.o \
+	keypad.o \
+	monitor.o \
+	object.o \
 	pathfind.o \
+	people.o \
 	print.o \
 	saveload.o \
+	sound.o \
 	sprite.o \
 	stubs.o \
+	talk.o \
 	use.o \
+	vgafades.o \
 	vgagrafx.o
 
 # This module can be built as a plugin

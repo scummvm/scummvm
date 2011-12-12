@@ -180,6 +180,11 @@ public:
 	 */
 	virtual void syncSoundSettings();
 
+	/*
+	 * Initialize the engine-specific keymap
+	 */
+	virtual void initKeymap() {}
+
 	/**
 	 * Flip mute all sound option.
 	 */

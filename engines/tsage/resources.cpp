@@ -33,7 +33,7 @@ namespace TsAGE {
 
 MemoryManager::MemoryManager() {
 	_memoryPool = new MemoryHeader*[MEMORY_POOL_SIZE];
-	Common::set_to(&_memoryPool[0], &_memoryPool[MEMORY_POOL_SIZE], (MemoryHeader *)NULL);
+	Common::fill(&_memoryPool[0], &_memoryPool[MEMORY_POOL_SIZE], (MemoryHeader *)NULL);
 }
 
 MemoryManager::~MemoryManager() {
@@ -67,7 +67,7 @@ uint16 MemoryManager::allocate(uint32 size) {
 byte *MemoryManager::allocate2(uint32 size) {
 	uint32 idx = allocate(size);
 	byte *result = lock(idx);
-	Common::set_to(result, result + size, 0);
+	Common::fill(result, result + size, 0);
 	return result;
 }
 
@@ -354,6 +354,8 @@ void TLib::loadIndex() {
 		se.resNum = resNum;
 		se.resType = (ResourceType)(configId & 0x1f);
 		se.fileOffset = (((configId >> 5) & 0x7ff) << 16) | fileOffset;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			se.fileOffset <<= 4;
 
 		_sections.push_back(se);
 	}
@@ -412,16 +414,27 @@ byte *TLib::getSubResource(int resNum, int rlbNum, int index, uint *size, bool s
  */
 bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors) {
 	byte *msgData = getResource(RES_MESSAGE, resNum, 0, true);
-	if (!msgData) {
+	if (!msgData || (lineNum < 0)) {
 		if (suppressErrors)
 			return false;
 
 		error("Unknown message %d line %d", resNum, lineNum);
 	}
 
+	int msgSize = _memoryManager.getSize(msgData);
 	const char *srcP = (const char *)msgData;
-	while (lineNum-- > 0)
+	const char *endP = srcP + msgSize;
+
+	while (lineNum-- > 0) {
 		srcP += strlen(srcP) + 1;
+		
+		if (srcP >= endP) {
+			if (suppressErrors)
+				return false;
+
+			error("Unknown message %d line %d", resNum, lineNum);
+		}
+	}
 
 	result = Common::String(srcP);
 	_memoryManager.deallocate(msgData);
@@ -501,7 +514,7 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
 
 	if (!suppressErrors)
 		error("Unknown message %d line %d", resNum, lineNum);
-	return result;
+	return Common::String();
 }
 
 } // end of namespace TsAGE

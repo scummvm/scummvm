@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (English) - UK Broderbund Release
@@ -66,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (English) - Interplay Release
@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (Demo - English) - Broderbund
@@ -99,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (French) - Broderbund Release
@@ -117,7 +117,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (German)
@@ -135,7 +135,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (Spanish)
@@ -153,7 +153,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// The Last Express (Italian)
@@ -171,7 +171,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 	
 	// The Last Express (Russian)
@@ -189,7 +189,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	AD_TABLE_END_MARKER
@@ -200,7 +200,7 @@ class LastExpressMetaEngine : public AdvancedMetaEngine {
 public:
 	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_singleid = "lastexpress";
-		_guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+		_guioptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 	}
 
 	const char *getName() const {

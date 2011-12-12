@@ -35,8 +35,6 @@ static const PlainGameDescriptor CGEGames[] = {
 
 namespace CGE {
 
-using Common::GUIO_NONE;
-
 static const ADGameDescription gameDescriptions[] = {
 
 	{
@@ -46,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437572},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"soltys", "Soltys Freeware",
@@ -55,17 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
-	},
-	// English ScummVM version
-	{
-		"soltys", "",
-		{
-			{"vol.cat", 0, "bd08969b5f1acea0f92d195f750c17d5", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8428832},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"soltys", "Soltys Demo (not supported)",
@@ -74,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO , GUIO0()
 	},
 	{
 		"soltys", "Soltys Demo (not supported)",
@@ -83,7 +71,25 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO0()
+	},
+	{
+		"soltys", "Soltys Freeware v1.0",
+		{
+			{"vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176},
+			{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS , GUIO0()
+	},
+	{
+		"soltys", "Soltys Freeware v1.0",
+		{
+			{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
+			{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
 	},
 	AD_TABLE_END_MARKER
 };

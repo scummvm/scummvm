@@ -185,11 +185,10 @@ int loadOverlay(const char *scriptName) {
 
 	// This memory block will be later passed to a MemoryReadStream, which will dispose of it
 	unpackedBuffer = (byte *)malloc(unpackedSize);
-	memset(unpackedBuffer, 0, unpackedSize);
-
 	if (!unpackedBuffer) {
 		return (-2);
 	}
+	memset(unpackedBuffer, 0, unpackedSize);
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
 		char *pakedBuffer =
@@ -566,11 +565,10 @@ int loadOverlay(const char *scriptName) {
 
 		// This memory block will be later passed to a MemoryReadStream, which will dispose of it
 		unpackedBuffer = (byte *)malloc(unpackedSize);
-		memset(unpackedBuffer, 0, unpackedSize);
-
 		if (!unpackedBuffer) {
 			return (-2);
 		}
+		memset(unpackedBuffer, 0, unpackedSize);
 
 		if (volumePtrToFileDescriptor[fileIdx].size + 2 !=
 		        unpackedSize) {

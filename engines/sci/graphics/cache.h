@@ -49,6 +49,8 @@ public:
 	int16 kernelViewGetLoopCount(GuiResourceId viewId);
 	int16 kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo);
 
+	byte kernelViewGetColorAtCoordinate(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y);
+
 private:
 	void purgeFontCache();
 	void purgeViewCache();

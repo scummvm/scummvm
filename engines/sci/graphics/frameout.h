@@ -32,6 +32,7 @@ struct PlaneEntry {
 	uint16 priority;
 	uint16 lastPriority;
 	int16 planeOffsetX;
+	int16 planeOffsetY;
 	GuiResourceId pictureId;
 	Common::Rect planeRect;
 	Common::Rect planeClipRect;
@@ -89,11 +90,11 @@ public:
 
 	void kernelAddPlane(reg_t object);
 	void kernelUpdatePlane(reg_t object);
-	void kernelRepaintPlane(reg_t object);
 	void kernelDeletePlane(reg_t object);
 	void kernelAddScreenItem(reg_t object);
 	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
+	FrameoutEntry *findScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
 	void kernelAddPicAt(reg_t planeObj, GuiResourceId pictureId, int16 pictureX, int16 pictureY);
 	void kernelFrameout();
@@ -103,6 +104,14 @@ public:
 	void clear();
 
 private:
+	void showVideo();
+	void createPlaneItemList(reg_t planeObject, FrameoutList &itemList);
+	bool isPictureOutOfView(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 planeOffsetX, int16 planeOffsetY);
+	void drawPicture(FrameoutEntry *itemEntry, int16 planeOffsetX, int16 planeOffsetY, bool planePictureMirrored);
+	int16 upscaleHorizontalCoordinate(int16 coordinate);
+	int16 upscaleVerticalCoordinate(int16 coordinate);
+	Common::Rect upscaleRect(Common::Rect &rect);
+
 	SegManager *_segMan;
 	ResourceManager *_resMan;
 	GfxCoordAdjuster32 *_coordAdjuster;
@@ -117,8 +126,8 @@ private:
 
 	void sortPlanes();
 
-	uint16 scriptsRunningWidth;
-	uint16 scriptsRunningHeight;
+	uint16 _scriptsRunningWidth;
+	uint16 _scriptsRunningHeight;
 };
 
 } // End of namespace Sci

@@ -185,6 +185,9 @@ protected:
 	 */
 	inline PixelType calcGradient(uint32 pos, uint32 max);
 
+	void precalcGradient(int h);
+	void gradientFill(PixelType *first, int width, int x, int y);
+
 	/**
 	 * Fills several pixels in a row with a given color and the specified alpha blending.
 	 *
@@ -207,6 +210,11 @@ protected:
 
 	PixelType _gradientStart; /**< Start color for the fill gradient */
 	PixelType _gradientEnd; /**< End color for the fill gradient */
+
+	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
+
+	Common::Array<PixelType> _gradCache;
+	Common::Array<int> _gradIndexes;
 
 	PixelType _bevelColor;
 	PixelType _bitmapAlphaColor;

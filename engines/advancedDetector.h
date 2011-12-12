@@ -88,7 +88,7 @@ struct ADGameDescription {
 	 */
 	uint32 flags;
 
-	uint32 guioptions;
+	const char *guioptions;
 };
 
 /**
@@ -101,7 +101,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * terminate a list to be passed to the AdvancedDetector API.
  */
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, Common::GUIO_NONE }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO0() }
 
 struct ADFileBasedFallback {
 	/**
@@ -181,11 +181,11 @@ protected:
 	uint32 _flags;
 
 	/**
-	 * A bitmask of game GUI options which will be added to each
+	 * A list of game GUI options which will be added to each
 	 * entry in addition to per-game options. Refer to GameGUIOption
 	 * enum for the list.
 	 */
-	uint32 _guioptions;
+	Common::String _guioptions;
 
 	/**
 	 * Maximum depth of directories to look up.

@@ -52,14 +52,16 @@ class KyraMetaEngine;
  *
  * Status of this engine:
  *
- * The KYRA engine supports all three Kyrandia games by Westwood. It also supports Westwood's
- * Lands of Lore. There are various platform ports of the different games, almost all of them are
- * fully supported. Only the Macintosh port of Kyrandia 1 makes a difference here, which lacks
- * support for sound effects and music.
+ * The KYRA engine supports all three Kyrandia games by Westwood. It also
+ * supports Westwood's Lands of Lore. There are various platform ports of
+ * the different games, almost all of them are fully supported. Only the
+ * Macintosh port of Kyrandia 1 makes a difference here, which lacks support
+ * for sound effects and music.
  *
- * The different translations of the games are mostly supported, since every translation
- * requires some work for kyra.dat for example, it is almost impossible to support translations,
- * without owning them. There a currently a few reported unsupported translations:
+ * The different translations of the games are mostly supported, since every
+ * translation requires some work for kyra.dat for example, it is almost
+ * impossible to support translations, without owning them. There a currently
+ * a few reported unsupported translations:
  *
  * - Official translations
  * None known.
@@ -69,24 +71,30 @@ class KyraMetaEngine;
  * Kyrandia 1 Korean (feature request #1758252 "KYRA1: Add support for Korean/DOS version")
  * Kyrandia 2 Polish (feature request #2146192 "KYRA2: Add support for Polish floppy version")
  * - Fan translations:
- * Kyrandia 1 Russian (no feature request)
- * Kyrandia 2 Russian (no feature request)
  * Kyrandia 3 Russian (feature request #2812792 "Kyrandia3 Russian")
  *
- * The engine is maintained by _athrxx.
+ * The primary maintainer for the engine is LordHoto, although some parts are
+ * maintained by _athrxx. If you have questions about parts of the code, the
+ * following rough description might help in determining who you should ask:
+ * _athrxx is the maintainer for the Lands of Lore subengine, he also
+ * maintains most of the FM-TOWNS and PC98 specific code (especially the sound
+ * code, also some ingame code) and the Kyrandia 2 sequence player code.
+ * LordHoto is responsible for the rest of the codebase, he also worked on the
+ * graphics output for 16 color PC98 games.
  *
- * Other people who worked on this engine include cyx, who initially started to work on Kyrandia 1
- * support, vinterstum, who did various things for Kyrandia 1 and started to work on the Kyrandia 2
- * sequence player code and also on the TIM script code, and eriktorbjorn, who helped out naming
- * our AdLib player code and also contributed a work around for a music bug in the "Pool of Sorrow"
- * scene of Kyrandia 1, which is also present in the original. LordHoto worked on Kyrandia 1 to 3
- * support and graphics output for 16 color PC98 games and was a maintainer of the Kyrandia part.
- * All mentioned developers are not actively working on KYRA anymore.
+ * Other people who worked on this engine include cyx, who initially started
+ * to work on Kyrandia 1 support. Vinterstum, who did various things for
+ * Kyrandia 1 and started to work on the Kyrandia 2 sequence player code and
+ * also on the TIM script code. Eriktorbjorn, who helped out naming our AdLib
+ * player code and also contributed a work around for a music bug in the
+ * "Pool of Sorrow" scene of Kyrandia 1, which is also present in the original.
+ * He also contributed the VQA player for Kyrandia 3.
  *
- * The engine is mostly finished code wise. A possible remaining task is proper refactoring,
- * which might help in reducing binary size and along with it runtime memory use, but of course
- * might lead to regressions (since the current code makes no problems on our low end ports, it
- * is pretty minor priority though, since the benefit would be mostly nicer code). The biggest
+ * The engine is mostly finished code wise. A possible remaining task is
+ * proper refactoring, which might help in reducing binary size and along with
+ * it runtime memory use, but of course might lead to regressions (since the
+ * current code makes no problems on our low end ports, it is pretty minor
+ * priority though, since the benefit would be mostly nicer code). The biggest
  * task left is the kyra.dat handling.
  *
  * Games using this engine:

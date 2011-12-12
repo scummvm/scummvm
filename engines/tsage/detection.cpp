@@ -61,6 +61,7 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "tsage", "Tsunami TsAGE-based Game" },
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
+	{ "ringworld2", "Return to Ringworld" },
 	{ 0, 0 }
 };
 
@@ -75,7 +76,7 @@ public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
 		_md5Bytes = 5000;
 		_singleid = "tsage";
-		_guioptions = Common::GUIO_NOSPEECH;
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {

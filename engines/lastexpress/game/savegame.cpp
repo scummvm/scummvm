@@ -154,11 +154,11 @@ void SaveLoad::loadStream(GameId id) {
 		error("[SaveLoad::loadStream] Savegame stream is invalid");
 
 	// Load all savegame data
-	uint8* buf = new uint8[8192];
+	uint8 *buf = new uint8[8192];
 	while (!save->eos() && !save->err()) {
 		_engine->pollEvents();
 
-		uint32 count = save->read(buf, sizeof(buf));
+		uint32 count = save->read(buf, 8192);
 		if (count) {
 			uint32 w = _savegame->write(buf, count);
 			assert (w == count);

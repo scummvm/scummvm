@@ -38,7 +38,7 @@ namespace CGE {
 Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
-		error("No talk (%s)\n", _fileName);
+		error("No talk (%s)", _fileName);
 	int16 txtCount = count() + 1;
 	if (!txtCount)
 		error("Unable to read dialog file %s", _fileName);
@@ -135,6 +135,13 @@ char *Text::getText(int ref) {
 
 void Text::say(const char *text, Sprite *spr) {
 	_vm->killText();
+
+	if (!text)
+		return;
+
+	if (*text == 0)
+		return;
+
 	_vm->_talk = new Talk(_vm, text, kTBRound);
 	if (!_vm->_talk)
 		return;
@@ -175,11 +182,16 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_vga->_showQ->insert(speaker, _vm->_vga->_showQ->last());
 }
 
-void CGEEngine::inf(const char *text) {
+void CGEEngine::inf(const char *text, bool wideSpace) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
+	if (!text)
+		return;
+
+	if (*text == 0)
+		return;
 
 	killText();
-	_talk = new Talk(this, text, kTBRect);
+	_talk = new Talk(this, text, kTBRect, wideSpace);
 	if (!_talk)
 		return;
 

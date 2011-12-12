@@ -1879,12 +1879,12 @@ void Scene7700::SceneHotspot8::doAction(int action) {
 		scene->_soundHandler.play(259);
 		scene->_object15.setFrame(scene->_object15.getFrameCount());
 		scene->_object15.animate(ANIM_MODE_6, scene);
-		if ((scene->_field977 == 2) && (scene->_field97B == 0)) {
-			scene->_field979++;
+		if ((scene->_seatCountLeft1 == 2) && (scene->_seatCountLeft2 == 0)) {
+			scene->_seatCountRight++;
 		} else {
-			scene->_field97B = 0;
-			scene->_field979 = 0;
-			scene->_field977 = 0;
+			scene->_seatCountLeft2 = 0;
+			scene->_seatCountRight = 0;
+			scene->_seatCountLeft1 = 0;
 		}
 		break;
 	default:
@@ -1905,26 +1905,26 @@ void Scene7700::SceneHotspot9::doAction(int action) {
 		scene->_soundHandler.play(259);
 		scene->_object15.setFrame(1);
 		scene->_object15.animate(ANIM_MODE_5, scene);
-		if (scene->_field977 > 2) {
-			scene->_field97B = 0;
-			scene->_field979 = 0;
-			scene->_field977 = 0;
+		if (scene->_seatCountLeft1 > 2) {
+			scene->_seatCountLeft2 = 0;
+			scene->_seatCountRight = 0;
+			scene->_seatCountLeft1 = 0;
 		}
 
-		if (scene->_field979 != 0) {
-			if (scene->_field979 != 4) {
-				scene->_field97B = 0;
-				scene->_field979 = 0;
-				scene->_field977 = 0;
+		if (scene->_seatCountRight != 0) {
+			if (scene->_seatCountRight != 4) {
+				scene->_seatCountLeft2 = 0;
+				scene->_seatCountRight = 0;
+				scene->_seatCountLeft1 = 0;
 			} else {
-				scene->_field97B++;
-				if (scene->_field97B == 3) {
+				scene->_seatCountLeft2++;
+				if (scene->_seatCountLeft2 == 3) {
 					g_globals->_player.disableControl();
 					scene->setAction(&scene->_action3);
 				}
 			}
 		} else {
-			scene->_field977++;
+			scene->_seatCountLeft1++;
 		}
 		break;
 	default:
@@ -2315,9 +2315,9 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(100, 80, 200, 100);
 	g_globals->setFlag(53);
-	_field97B = 0;
-	_field979 = 0;
-	_field977 = 0;
+	_seatCountLeft2 = 0;
+	_seatCountRight = 0;
+	_seatCountLeft1 = 0;
 
 	_stripManager.addSpeaker(&_speakerEText);
 	_stripManager.addSpeaker(&_speakerQText);
@@ -2538,9 +2538,9 @@ Scene7700::Scene7700() {
 void Scene7700::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3) {
-		s.syncAsSint16LE(_field977);
-		s.syncAsSint16LE(_field979);
-		s.syncAsSint16LE(_field97B);
+		s.syncAsSint16LE(_seatCountLeft1);
+		s.syncAsSint16LE(_seatCountRight);
+		s.syncAsSint16LE(_seatCountLeft2);
 	}
 }
 

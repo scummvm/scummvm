@@ -292,21 +292,21 @@ int32 Character::getFacing() {
 	return _facing;
 }
 
-bool Character::loadWalkAnimation(Common::String animName) {
+bool Character::loadWalkAnimation(const Common::String &animName) {
 	debugC(1, kDebugCharacter, "loadWalkAnimation(%s)", animName.c_str());
 	delete _walkAnim;
 	_walkAnim = new Animation(_vm);
 	return _walkAnim->loadAnimation(animName);
 }
 
-bool Character::loadIdleAnimation(Common::String animName) {
+bool Character::loadIdleAnimation(const Common::String &animName) {
 	debugC(1, kDebugCharacter, "loadIdleAnimation(%s)", animName.c_str());
 	delete _idleAnim;
 	_idleAnim = new Animation(_vm);
 	return _idleAnim->loadAnimation(animName);
 }
 
-bool Character::loadTalkAnimation(Common::String animName) {
+bool Character::loadTalkAnimation(const Common::String &animName) {
 	debugC(1, kDebugCharacter, "loadTalkAnimation(%s)", animName.c_str());
 	delete _talkAnim;
 	_talkAnim = new Animation(_vm);
@@ -977,7 +977,7 @@ const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterI
 	return &anims[characterAnims[characterId] + animationId];
 }
 
-bool Character::loadShadowAnimation(Common::String animName) {
+bool Character::loadShadowAnimation(const Common::String &animName) {
 	debugC(1, kDebugCharacter, "loadShadowAnimation(%s)", animName.c_str());
 
 	delete _shadowAnim;

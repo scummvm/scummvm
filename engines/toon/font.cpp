@@ -65,7 +65,7 @@ byte FontRenderer::textToFont(byte c) {
 	return map_textToFont[c - 0x80];
 }
 
-void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 mode) {
+void FontRenderer::renderText(int32 x, int32 y, const Common::String &origText, int32 mode) {
 	debugC(5, kDebugFont, "renderText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
 	int32 xx, yy;
@@ -104,7 +104,7 @@ void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 m
 	}
 }
 
-void FontRenderer::computeSize(Common::String origText, int32 *retX, int32 *retY) {
+void FontRenderer::computeSize(const Common::String &origText, int32 *retX, int32 *retY) {
 	debugC(4, kDebugFont, "computeSize(%s, retX, retY)", origText.c_str());
 
 	int32 lineWidth = 0;
@@ -189,7 +189,7 @@ void FontRenderer::setFontColor(int32 fontColor1, int32 fontColor2, int32 fontCo
 	_currentFontColor[3] = fontColor3;
 }
 
-void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText, int32 mode) {
+void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &origText, int32 mode) {
 	debugC(5, kDebugFont, "renderMultiLineText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
 	// divide the text in several lines

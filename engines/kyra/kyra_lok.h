@@ -29,10 +29,6 @@
 #include "kyra/gui_lok.h"
 #include "kyra/item.h"
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace Kyra {
 
 class Movie;
@@ -416,7 +412,7 @@ protected:
 
 	Movie *_movieObjects[10];
 
-	uint16 _entranceMouseCursorTracks[8];
+	uint16 _entranceMouseCursorTracks[5];
 	uint16 _walkBlockNorth;
 	uint16 _walkBlockEast;
 	uint16 _walkBlockSouth;

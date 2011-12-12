@@ -68,5 +68,5 @@ SOURCEPATH ..\..\..\..\engines\saga
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines
-USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio ..\src
+USERINCLUDE     ..\..\..\.. ..\..\..\..\gui ..\..\..\..\audio ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

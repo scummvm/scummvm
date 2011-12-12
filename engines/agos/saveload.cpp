@@ -1390,6 +1390,15 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	_videoLockOut &= ~0x100;
 
+	// The floppy disk versions of Simon the Sorcerer 2 block changing
+	// to scrolling rooms, if the copy protection fails. But the copy
+	// protection flags are never set in the CD version.
+	// Setting this copy protection flag, allows saved games to be shared 
+	// between all versions of Simon the Sorcerer 2.
+	if (getGameType() == GType_SIMON2) {
+		setBitFlag(135, 1);
+	}
+
 	return true;
 }
 

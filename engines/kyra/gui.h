@@ -200,9 +200,14 @@ protected:
 	void redrawText(const Menu &menu);
 	void redrawHighlight(const Menu &menu);
 
+	// The engine expects a list of contiguous savegame indices.
+	// Since ScummVM's savegame indices aren't, we re-index them.
+	// The integers stored in _saveSlots are ScummVM savegame indices.
 	Common::Array<int> _saveSlots;
 	void updateSaveList(bool excludeQuickSaves = false);
 	int getNextSavegameSlot();
+
+	virtual void sortSaveSlots();
 
 	uint32 _lastScreenUpdate;
 	Common::KeyState _keyPressed;

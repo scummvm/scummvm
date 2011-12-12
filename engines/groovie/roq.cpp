@@ -138,9 +138,7 @@ void ROQPlayer::buildShowBuf() {
 	}
 
 	// Swap buffers
-	Graphics::Surface *tmp = _prevBuf;
-	_prevBuf = _currBuf;
-	_currBuf = tmp;
+	SWAP(_prevBuf, _currBuf);
 }
 
 bool ROQPlayer::playFrameInternal() {

@@ -606,8 +606,6 @@ void Sound::playVoice(uint sound) {
 			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, true, -1500);
 		else
 			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, true);
-	} else if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
-		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	} else {
 		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	}
@@ -799,12 +797,12 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	Common::File *file = new Common::File();
 
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d", gss->speech_filename, disc);
+		sprintf(filename, "%s%u", gss->speech_filename, disc);
 		_voice = makeCompressedSound(_mixer, file, filename);
 		_hasVoiceFile = (_voice != 0);
 	}
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.wav", gss->speech_filename, disc);
+		sprintf(filename, "%s%u.wav", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
 			error("switchVoiceFile: Can't load voice file %s", filename);

@@ -1498,10 +1498,22 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 resourceId = atoi(argv[1]);
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// If a graphical debugger overlay is used, hide it here, so that the
+	// results can be drawn.
+	g_system->hideOverlay();
+#endif
 
+	uint16 resourceId = atoi(argv[1]);
 	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
 	_engine->_gfxScreen->copyToScreen();
+	_engine->sleep(2000);
+
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// Show the graphical debugger overlay
+	g_system->showOverlay();
+#endif
+
 	return true;
 }
 
@@ -1864,16 +1876,17 @@ bool Console::segmentInfo(int nr) {
 
 		DebugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
 
-		if (scr->_localsBlock)
-			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);
+		if (scr->getLocalsCount() > 0)
+			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->getLocalsCount(), scr->getLocalsSegment());
 		else
 			DebugPrintf("  Locals : none\n");
 
-		DebugPrintf("  Objects: %4d\n", scr->_objects.size());
+		ObjMap objects = scr->getObjectMap();
+		DebugPrintf("  Objects: %4d\n", objects.size());
 
 		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
 			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
@@ -2930,9 +2943,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		script = customSegMan->getScript(scriptSegment);
 
 		// Iterate through all the script's objects
+		ObjMap objects = script->getObjectMap();
 		ObjMap::iterator it;
-		const ObjMap::iterator end = script->_objects.end();
-		for (it = script->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			const Object *obj = customSegMan->getObject(it->_value.getPos());
 			const char *objName = customSegMan->getObjectName(it->_value.getPos());
 
@@ -2964,7 +2978,8 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 					// there is a jump after a ret, we don't stop processing
 					if (opcode == op_bt || opcode == op_bnt || opcode == op_jmp) {
 						uint16 curJmpOffset = offset + (uint16)opparams[0];
-						if (curJmpOffset > maxJmpOffset)
+						// QFG2 has invalid jumps outside the script buffer in script 260
+						if (curJmpOffset > maxJmpOffset && curJmpOffset < script->getScriptSize())
 							maxJmpOffset = curJmpOffset;
 					}
 

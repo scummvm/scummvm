@@ -453,14 +453,14 @@ void Scene2000::stripCallback(int v) {
 	switch (v) {
 	case 0:
 		_object9.setStrip(3);
-		_object9.animate(ANIM_MODE_7, NULL);
+		_object9.animate(ANIM_MODE_7, 0, NULL);
 		_object10.setStrip(6);
 		_object10.setFrame(1);
 		_object10.animate(ANIM_MODE_5, NULL);
 		break;
 	case 1:
 		_object10.setStrip(5);
-		_object10.animate(ANIM_MODE_7, NULL);
+		_object10.animate(ANIM_MODE_7, 0, NULL);
 		_object9.setStrip(4);
 		_object9.setFrame(1);
 		_object9.animate(ANIM_MODE_5, NULL);
@@ -1921,7 +1921,7 @@ void Scene2100::stripCallback(int v) {
 	switch (v) {
 	case 1:
 		_object4._numFrames = 4;
-		_object4.animate(ANIM_MODE_7, NULL);
+		_object4.animate(ANIM_MODE_7, 0, NULL);
 		break;
 	case 2:
 		_object4.animate(ANIM_MODE_NONE, NULL);

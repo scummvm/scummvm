@@ -24,8 +24,8 @@
 #if !defined(ENABLE_KYRA)
 
 // normal Header Guard
-#elif !defined SOUND_MODS_MAXTRAX_H
-#define SOUND_MODS_MAXTRAX_H
+#elif !defined AUDIO_MODS_MAXTRAX_H
+#define AUDIO_MODS_MAXTRAX_H
 
 // #define MAXTRAX_HAS_MODULATION
 // #define MAXTRAX_HAS_MICROTONAL
@@ -219,4 +219,4 @@ private:
 };
 }	// End of namespace Audio
 
-#endif // !defined SOUND_MODS_MAXTRAX_H
+#endif // !defined AUDIO_MODS_MAXTRAX_H

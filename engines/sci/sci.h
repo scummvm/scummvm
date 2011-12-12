@@ -59,7 +59,8 @@ class SegManager;
 class GfxAnimate;
 class GfxCache;
 class GfxCompare;
-class GfxControls;
+class GfxControls16;
+class GfxControls32;
 class GfxCoordAdjuster;
 class GfxCursor;
 class GfxMacIconBar;
@@ -101,7 +102,8 @@ enum kDebugLevels {
 	kDebugLevelScripts    = 1 << 17,
 	kDebugLevelGC         = 1 << 18,
 	kDebugLevelResMan     = 1 << 19,
-	kDebugLevelOnStartup  = 1 << 20
+	kDebugLevelOnStartup  = 1 << 20,
+	kDebugLevelDebugMode  = 1 << 21
 };
 
 enum SciGameId {
@@ -303,7 +305,8 @@ public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;
 	GfxCompare *_gfxCompare;
-	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxControls16 *_gfxControls16; // Controls for 16-bit gfx
+	GfxControls32 *_gfxControls32; // Controls for 32-bit gfx
 	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
@@ -326,6 +329,8 @@ public:
 	AudioPlayer *_audio;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
+
+	opcode_format (*_opcode_formats)[4];
 
 	DebugState _debugState;
 

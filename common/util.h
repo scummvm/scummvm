@@ -78,6 +78,36 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
 
+#define GUIO_NONE			"\000"
+#define GUIO_NOSUBTITLES	"\001"
+#define GUIO_NOMUSIC		"\002"
+#define GUIO_NOSPEECH		"\003"
+#define GUIO_NOSFX			"\004"
+#define GUIO_NOMIDI			"\005"
+#define GUIO_NOLAUNCHLOAD	"\006"
+
+#define GUIO_MIDIPCSPK		"\007"
+#define GUIO_MIDICMS		"\010"
+#define GUIO_MIDIPCJR		"\011"
+#define GUIO_MIDIADLIB		"\012"
+#define GUIO_MIDIC64        "\013"
+#define GUIO_MIDIAMIGA      "\014"
+#define GUIO_MIDIAPPLEIIGS  "\015"
+#define GUIO_MIDITOWNS		"\016"
+#define GUIO_MIDIPC98		"\017"
+#define GUIO_MIDIMT32		"\020"
+#define GUIO_MIDIGM			"\021"
+
+#define GUIO_NOASPECT		"\022"
+#define GUIO_EGAUNDITHER	"\023"
+
+#define GUIO0() (GUIO_NONE)
+#define GUIO1(a) (a)
+#define GUIO2(a,b) (a b)
+#define GUIO3(a,b,c) (a b c)
+#define GUIO4(a,b,c,d) (a b c d)
+#define GUIO5(a,b,c,d,e) (a b c d e)
+
 namespace Common {
 
 /**
@@ -118,6 +148,7 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HE_ISR,
+	HR_HRV,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,
@@ -224,32 +255,10 @@ extern RenderMode parseRenderMode(const String &str);
 extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
-enum GameGUIOption {
-	GUIO_NONE		= 0,
-	GUIO_NOSUBTITLES	= (1 << 0),
-	GUIO_NOMUSIC		= (1 << 1),
-	GUIO_NOSPEECH		= (1 << 2),
-	GUIO_NOSFX			= (1 << 3),
-	GUIO_NOMIDI			= (1 << 4),
-	GUIO_NOLAUNCHLOAD	= (1 << 5),
-
-	GUIO_MIDIPCSPK		= (1 << 6),
-	GUIO_MIDICMS		= (1 << 7),
-	GUIO_MIDIPCJR		= (1 << 8),
-	GUIO_MIDIADLIB		= (1 << 9),
-	GUIO_MIDIC64        = (1 << 10),
-	GUIO_MIDIAMIGA      = (1 << 11),
-	GUIO_MIDIAPPLEIIGS  = (1 << 12),
-	GUIO_MIDITOWNS		= (1 << 13),
-	GUIO_MIDIPC98		= (1 << 14),
-	GUIO_MIDIMT32		= (1 << 15),
-	GUIO_MIDIGM			= (1 << 16)
-};
-
-bool checkGameGUIOption(GameGUIOption option, const String &str);
+bool checkGameGUIOption(const String &option, const String &str);
 bool checkGameGUIOptionLanguage(Language lang, const String &str);
-uint32 parseGameGUIOptions(const String &str);
-const String getGameGUIOptionsDescription(uint32 options);
+String parseGameGUIOptions(const String &str);
+const String getGameGUIOptionsDescription(const String &options);
 const String getGameGUIOptionsDescriptionLanguage(Language lang);
 
 /**
@@ -257,7 +266,7 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang);
  * domain, when they differ to the ones passed as
  * parameter.
  */
-void updateGameGUIOptions(const uint32 options, const String &langOption);
+void updateGameGUIOptions(const String &options, const String &langOption);
 
 }	// End of namespace Common
 

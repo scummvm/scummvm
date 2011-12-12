@@ -30,7 +30,7 @@
 #include "tsage/events.h"
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
-#include "tsage/blue_force/blueforce_ui.h"
+#include "tsage/user_interface.h"
 
 namespace TsAGE {
 
@@ -77,7 +77,6 @@ public:
 	Globals();
 	~Globals();
 
-	void reset();
 	void setFlag(int flagNum) {
 		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = true;
@@ -94,13 +93,34 @@ public:
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
 	virtual void synchronize(Serializer &s);
+	virtual void reset();
+
 	void dispatchSounds();
+};
+
+typedef bool (*SelectItemProc)(int objectNumber);
+
+/**
+ * The following class represents common globals that were introduced after the release of Ringworld.
+ */
+class TsAGE2Globals: public Globals {
+public:
+	UIElements _uiElements;
+	SelectItemProc _onSelectItem;
+	int _interfaceY;
+	ASoundExt _inventorySound;
+
+	TsAGE2Globals() { _onSelectItem = NULL; }
+	virtual void reset();
+	virtual void synchronize(Serializer &s);
 };
 
 extern Globals *g_globals;
 
-#define GLOBALS (*g_globals)
+#define GLOBALS (*::TsAGE::g_globals)
+#define T2_GLOBALS (*((::TsAGE::TsAGE2Globals *)g_globals))
 #define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)g_globals))
+#define R2_GLOBALS (*((::TsAGE::Ringworld2::Ringworld2Globals *)g_globals))
 
 // Note: Currently this can't be part of the g_globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
@@ -162,50 +182,87 @@ enum Flag {
 	hookPoints
 };
 
-class BlueForceGlobals: public Globals {
+class BlueForceGlobals: public TsAGE2Globals {
 public:
-	ASoundExt _sound1, _sound2, _sound3;
-	UIElements _uiElements;
+	ASoundExt _sound1, _sound3;
 	StripProxy _stripProxy;
 	int _dayNumber;
-	int _v4CEA4;
+	int _tonyDialogCtr;
 	int _marinaWomanCtr;
+	int _kateDialogCtr;
 	int _v4CEB6;
 	int _safeCombination;
-	int _v4CEC0;
-	int _v4CEC2;
+	int _gateStatus;
+	int _greenDay5TalkCtr;
 	int _v4CEC4;
 	int _v4CEC8;
+	int _v4CECA;
+	int _v4CECC;
+	int8 _breakerBoxStatusArr[18];
+	int _hiddenDoorStatus;
+	int _v4CEE2;
+	int _v4CEE4;
+	int _v4CEE6;
+	int _v4CEE8;
 	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
+	int _v501F8;
+	int _v501FA;
 	int _v501FC;
+	int _v5020C;
 	int _v50696;
-	uint8 _v5098C;
-	uint8 _v5098D;
+	uint8 _subFlagBitArr1;
+	uint8 _subFlagBitArr2;
 	int _v50CC2;
 	int _v50CC4;
 	int _v50CC6;
 	int _v50CC8;
 	int _v51C42;
 	int _v51C44;
-	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
 
 	BlueForceGlobals();
-	void reset();
 	bool getHasBullets();
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
+	virtual void reset();
 	virtual void synchronize(Serializer &s);
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };
 
 } // End of namespace BlueForce
+
+namespace Ringworld2 {
+
+#define SPEECH_TEXT 1
+#define SPEECH_VOICE 2
+
+class Ringworld2Globals: public TsAGE2Globals {
+public:
+	ASoundExt _sound1, _sound2, _sound3, _sound4;
+	PlayStream _playStream;
+	StripProxy _stripProxy;
+	int _insetUp;
+	int _v565F5;
+	int _v5657C;
+	byte _v565AE;
+	byte _v56605[14];
+	int _v57C2C;
+	int _v58CE2;
+	int _speechSubtitles;
+	int _v565F1[4];
+	byte _stripManager_lookupList[12];
+
+	virtual void reset();
+	virtual void synchronize(Serializer &s);
+};
+
+} // End of namespace Ringworld2
 
 } // End of namespace TsAGE
 

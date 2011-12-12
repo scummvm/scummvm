@@ -478,9 +478,9 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 						// Non-transparent run length
 						color += pObj->constant;
 						if (horizFlipped)
-							Common::set_to(tempP - runLength + 1, tempP + 1, color);
+							Common::fill(tempP - runLength + 1, tempP + 1, color);
 						else
-							Common::set_to(tempP, tempP + runLength, color);
+							Common::fill(tempP, tempP + runLength, color);
 					}
 				}
 
@@ -533,7 +533,7 @@ static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 
 	// Loop through any remaining lines
 	while (pObj->height > 0) {
-		Common::set_to(destP, destP + pObj->width, pObj->constant);
+		Common::fill(destP, destP + pObj->width, pObj->constant);
 
 		--pObj->height;
 		destP += SCREEN_WIDTH;

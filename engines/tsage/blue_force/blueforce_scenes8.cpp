@@ -69,7 +69,7 @@ bool Scene800::Doorway::startAction(CursorType action, Event &event) {
 			SceneItem::display2(800, BF_GLOBALS.getFlag(onDuty) ? 6 : 15);
 		else if (((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._dayNumber == 3)) ||
 				(BF_GLOBALS._bookmark == bDoneWithIsland))
-			SceneItem::display(800, 5);
+			SceneItem::display2(800, 5);
 		else {
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
 				ADD_PLAYER_MOVER_NULL(scene->_lyle, 277, 145);
@@ -103,7 +103,7 @@ bool Scene800::Car1::startAction(CursorType action, Event &event) {
 		else {
 			BF_GLOBALS.setFlag(ticketVW);
 			BF_GLOBALS._player.disableControl();
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			scene->_sceneMode = 8005;
 			scene->setAction(&scene->_action1);
 		}
@@ -252,12 +252,12 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 		_car2.fixPriority(158);
 		BF_GLOBALS._sceneItems.push_back(&_car2);
 
-		BF_GLOBALS._walkRegions.proc1(8);
+		BF_GLOBALS._walkRegions.disableRegion(8);
 	}
 
 	if ((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark < bEndDayThree)) {
 		_car2.remove();
-		BF_GLOBALS._walkRegions.proc2(8);
+		BF_GLOBALS._walkRegions.enableRegion(8);
 	}
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -305,7 +305,7 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 			_sceneMode = 8001;
 			setAction(&_sequenceManager, this, 8001, &BF_GLOBALS._player, &_doorway, NULL);
 		}
-	} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._bookmark == bFlashBackThree)) {
+	} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._bookmark < bFlashBackThree)) {
 		BF_GLOBALS._bookmark = bFlashBackThree;
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS._player.setPosition(Common::Point(231, 150));
@@ -314,7 +314,7 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 		_lyle.setPosition(Common::Point(244, 162));
 		_lyle.setStrip(4);
 		_sceneMode = 8004;
-		setAction(&_sequenceManager, this, 8001, &_lyle, &_doorway, NULL);
+		setAction(&_sequenceManager, this, 8004, &_lyle, &_doorway, NULL);
 	} else {
 		BF_GLOBALS._player.updateAngle(_motorcycle._position);
 		BF_GLOBALS._player.enableControl();
@@ -344,6 +344,8 @@ void Scene800::signal() {
 	case 8004:
 		BF_GLOBALS.clearFlag(fWithLyle);
 		_lyle.remove();
+		BF_GLOBALS._player.enableControl();
+		break;
 	}
 }
 
@@ -353,6 +355,1142 @@ void Scene800::dispatch() {
 		BF_GLOBALS._player.updateZoom();
 	} else {
 		BF_GLOBALS._player.changeZoom(-1);
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 810 - Lyle's Office
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene810::Action1::signal() {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		if (scene->_lyle._position.x == 115) {
+			ADD_PLAYER_MOVER(174, 142);
+		} else if (scene->_lyle._position.x < 160) {
+			ADD_PLAYER_MOVER(scene->_lyle._position.x + 20, scene->_lyle._position.y + 15);
+		} else {
+			ADD_PLAYER_MOVER(scene->_lyle._position.x - 20, scene->_lyle._position.y + 15);
+		}
+		break;
+	case 1:
+		BF_GLOBALS._player.updateAngle(scene->_lyle._position);
+		scene->_stripManager.start(scene->_sceneMode, this);
+		break;
+	case 2:
+		if (BF_GLOBALS.getFlag(shownFax) && (BF_GLOBALS._dayNumber == 3) && !BF_GLOBALS.getFlag(fWithLyle))
+			BF_GLOBALS.setFlag(showMugAround);
+
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene810::Action2::signal() {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		if (!BF_GLOBALS.getFlag(shownLyleCrate1Day1))
+			T2_GLOBALS._uiElements.addScore(30);
+
+		if (scene->_lyle._position.x == 115) {
+			ADD_PLAYER_MOVER(174, 142);
+		} else {
+			ADD_PLAYER_MOVER(193, 105);
+		}
+		break;
+	case 1:
+		BF_GLOBALS._player.setStrip(8);
+		if (scene->_lyle._position.x != 115)
+			_actionIndex = 3;
+
+		if (BF_GLOBALS.getFlag(shownLyleCrate1Day1)) {
+			if (BF_GLOBALS.getFlag(onDuty)) {
+				scene->_stripManager.start(8138, this);
+			} else {
+				scene->_stripManager.start((BF_GLOBALS._dayNumber == 3) ? 8110 : 8126, this);
+			}
+		} else if (BF_GLOBALS._dayNumber >= 3) {
+			scene->_stripManager.start(8110, this);
+		} else {
+			scene->_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8140 : 8128, this);
+		}
+		break;
+	case 2:
+		setAction(&scene->_sequenceManager1, this, 8117, &scene->_lyle, &scene->_chair, NULL);
+		break;
+	case 3:
+		BF_GLOBALS._walkRegions.enableRegion(4);
+		ADD_PLAYER_MOVER_THIS(scene->_lyle, 27, 124);
+		break;
+	case 4:
+		scene->_lyle.setVisage(813);
+		scene->_lyle.setStrip(2);
+		scene->_lyle.setFrame(1);
+		
+		ADD_PLAYER_MOVER(84, 113);
+		break;
+	case 5:
+		BF_GLOBALS._player.setStrip(8);
+		scene->_lyle.animate(ANIM_MODE_4, 5, 1, this);
+		break;
+	case 6:
+		scene->_lyle.animate(ANIM_MODE_5, NULL);
+		scene->_stripManager.start(8111, this);
+		break;
+	case 7:
+		scene->_lyle.setVisage(845);
+		scene->_lyle.setStrip(1);
+		scene->_lyle.setFrame(1);
+		scene->_lyle.animate(ANIM_MODE_1, NULL);
+
+		scene->_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8137 : 8112, this);
+		break;
+	case 8:
+		BF_GLOBALS._walkRegions.disableRegion(13);
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene810::Lyle::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 26);
+		return true;
+
+	case CURSOR_TALK:
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._player.updateAngle(_position);
+
+		switch (BF_GLOBALS._dayNumber) {
+		case 4:
+			scene->_sceneMode = (BF_INVENTORY.getObjectScene(INV_AUTO_RIFLE) == 810) ? 8001 : 8123;
+			break;
+		case 2:
+			if (BF_GLOBALS.getFlag(shownFax))
+				scene->_sceneMode = 8151;
+			else if (BF_GLOBALS.getFlag(onDuty)) {
+				if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+					scene->_sceneMode = BF_GLOBALS.getFlag(shownLyleCrate1Day1) ? 8145 : 8154;
+				} else if (BF_GLOBALS.getFlag(shownLyleRapsheet) || BF_GLOBALS.getFlag(shownLylePO)) {
+					scene->_sceneMode = 8145;
+				} else if (!_flag) {
+					++_flag;
+					scene->_sceneMode = 8139;
+				} else {
+					scene->_sceneMode = 8152;
+				}
+			} else {
+				if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+					scene->_sceneMode = BF_GLOBALS.getFlag(shownLyleCrate1Day1) ? 8133 : 8153;
+				} else if (BF_GLOBALS.getFlag(shownLyleRapsheet) || BF_GLOBALS.getFlag(shownLylePO)) {
+					scene->_sceneMode = 8133;
+				} else if (!_flag) {
+					++_flag;
+					scene->_sceneMode = 8127;
+				} else {
+					scene->_sceneMode = 8152;
+				}
+			}
+			break;
+		default:
+			if (BF_GLOBALS.getFlag(shownFax))
+				scene->_sceneMode = 8146;
+			else if (BF_GLOBALS.getFlag(shownLylePO) || BF_GLOBALS.getFlag(shownLyleRapsheet) || BF_GLOBALS.getFlag(shownLyleCrate1))
+				scene->_sceneMode = 8108;
+			else if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1)
+				scene->_sceneMode = 8107;
+			else
+				scene->_sceneMode = 8155;
+			break;
+		}
+
+		scene->setAction(&scene->_action1);
+		return true;
+
+	case INV_FOREST_RAP:
+		if (BF_GLOBALS.getFlag(shownLyleRapsheet))
+			scene->_sceneMode = 8148;
+		else {
+			BF_GLOBALS.setFlag(shownLyleRapsheet);
+			if (BF_GLOBALS._dayNumber != 2) {
+				scene->_sceneMode = BF_GLOBALS.getFlag(shownLylePO) ? 8122 : 8101;
+			} else if (BF_GLOBALS.getFlag(onDuty)) {
+				scene->_sceneMode = BF_GLOBALS.getFlag(shownLylePO) ? 8142 : 8143;
+			} else {
+				scene->_sceneMode = BF_GLOBALS.getFlag(shownLylePO) ? 8130 : 8131;
+			}
+		}
+		BF_GLOBALS._player.disableControl();
+		scene->setAction(&scene->_action1);
+		return true;
+
+	case INV_COBB_RAP:
+		if (BF_GLOBALS.getFlag(shownFax)) {
+			scene->_sceneMode = 8151;
+		} else {
+			BF_GLOBALS.setFlag(shownFax);
+			scene->_sceneMode = 8118;
+		}
+
+		BF_GLOBALS._player.disableControl();
+		scene->setAction(&scene->_action1);
+		return true;
+
+	case INV_AUTO_RIFLE:
+		BF_INVENTORY.setObjectScene(INV_AUTO_RIFLE, 810);
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 8116;
+		scene->setAction(&scene->_sequenceManager1, scene, 8116, &BF_GLOBALS._player, NULL);
+		return true;
+
+	case INV_PRINT_OUT:
+		if (BF_GLOBALS.getFlag(shownLylePO)) {
+			scene->_sceneMode = 8149;
+		} else {
+			BF_GLOBALS.setFlag(shownLylePO);
+			if (BF_GLOBALS._dayNumber == 3) {
+				if (BF_GLOBALS.getFlag(shownFax)) {
+					BF_GLOBALS.setFlag(shownFax);
+					scene->_sceneMode = 8125;
+				} else if (BF_GLOBALS.getFlag(shownLyleRapsheet)) {
+					scene->_sceneMode = 8104;
+				} else {
+					scene->_sceneMode = 8121;
+				}
+			} else if (BF_GLOBALS.getFlag(onDuty)) {
+				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))){
+					scene->_sceneMode = 8141;
+				} else {
+					// Doublecheck on shownLyleCrate1 removed: useless
+					scene->_sceneMode = 8144;
+				}
+			} else {
+				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))) {
+					scene->_sceneMode = 8129;
+				} else { // if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+					scene->_sceneMode = 8132;
+				// doublecheck Present in the original, may hide a bug in the original
+				//} else
+				//	scene->_sceneMode = 8121;
+				}
+			}
+		}
+
+		BF_GLOBALS._player.disableControl();
+		scene->setAction(&scene->_action1);
+		return true;
+
+	case INV_CRATE1:
+		if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 8147;
+			scene->setAction(&scene->_action1);
+		} else {
+			BF_GLOBALS.setFlag(shownLyleCrate1);
+			BF_GLOBALS._player.disableControl();
+			scene->setAction(&scene->_action2);
+		}
+		return true;
+
+	default:
+		return NamedObjectExt::startAction(action, event);
+	}
+}		
+
+bool Scene810::Chair::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 28);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 29);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene810::Object3::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 30);
+		return true;
+	case CURSOR_USE:
+		if (!BF_GLOBALS.getFlag(seenFolder)) {
+			BF_GLOBALS.setFlag(seenFolder);
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 8104;
+			scene->setAction(&scene->_sequenceManager1, scene, 8104, &BF_GLOBALS._player, this, NULL);
+		} else if (BF_INVENTORY.getObjectScene(INV_MICROFILM) == 810) {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 8114;
+			scene->setAction(&scene->_sequenceManager1, scene, 8114, &BF_GLOBALS._player, NULL);
+		} else {
+			SceneItem::display2(810, 38);
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_WALK:
+		return true;
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 32);
+		return true;
+	case CURSOR_USE:
+		if (scene->_rect3.contains(event.mousePos)) {
+			if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 811) {
+				T2_GLOBALS._uiElements.addScore(50);
+				scene->_sound1.play(77);
+				scene->_fieldA70 = 1;
+				BF_GLOBALS._player.disableControl();
+
+				scene->_sceneMode = 8109;
+				scene->setAction(&scene->_sequenceManager1, scene, 8109, &BF_GLOBALS._player,
+					&scene->_object6, &scene->_object5, NULL);
+				scene->_fieldA74 = 1;
+				remove();
+			} else {
+				SceneItem::display2(810, 39);
+			}
+		}
+
+		if (scene->_rect1.contains(event.mousePos) || scene->_rect2.contains(event.mousePos)) {
+			if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 811) {
+				scene->_sound1.play(77);
+				BF_GLOBALS._player.disableControl();
+
+				scene->_sceneMode = 8109;
+				scene->setAction(&scene->_sequenceManager1, scene, 8109, &BF_GLOBALS._player,
+					&scene->_object6, &scene->_object5, NULL);
+				scene->_fieldA74 = 1;
+				remove();
+			} else {
+				SceneItem::display2(810, 39);
+			}
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene810::Object5::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 33);
+		return true;
+	case CURSOR_USE: {
+		scene->_sceneMode = 8195;
+		BF_GLOBALS._player.disableControl();
+		
+		PlayerMover *mover = new PlayerMover();
+		Common::Point destPos(67, 111);
+		BF_GLOBALS._player.addMover(mover, &destPos, scene);
+		return true;
+	}
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene810::Object7::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+	case CURSOR_USE:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 8113;
+		scene->setAction(&scene->_sequenceManager1, scene, 8113, &BF_GLOBALS._player, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene810::Map::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 0);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 1);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Window::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 2);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 3);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Bookcase::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 4);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 5);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::FaxMachine::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 6);
+		return true;
+	case CURSOR_USE:
+		if (scene->_fieldA74 == 1) {
+			scene->_object5.startAction(action, event);
+		} else {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 8105;
+
+			Common::Point destPos(67, 111);
+			PlayerMover *mover = new PlayerMover();
+			BF_GLOBALS._player.addMover(mover, &destPos, scene);
+		}
+		return true;
+	case INV_PRINT_OUT:
+		if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1)
+			SceneItem::display2(810, 31);
+		else {
+			BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 811);
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 811;
+
+			if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
+				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105, 
+					&BF_GLOBALS._player, &scene->_object6, NULL);
+			} else {
+				scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player,
+					&scene->_object6, NULL);
+			}
+		}
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::GarbageCan::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 8);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 9);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::FileCabinets::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 10);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 11);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::CoffeeMaker::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 12);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 13);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Shelves::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 14);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 15);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::MicroficheReader::startAction(CursorType action, Event &event) {
+	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 16);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 17);
+		return true;
+	case INV_MICROFILM:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 8106;
+		scene->setAction(&scene->_sequenceManager1, scene, 8106, &BF_GLOBALS._player, NULL);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Item10::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 18);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 19);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Pictures::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 20);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 21);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Item12::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 22);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 23);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Background::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 24);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Desk::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(810, 36);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(810, 37);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+bool Scene810::Exit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(event.mousePos.x + 30, event.mousePos.y);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene810::Scene810(): SceneExt() {
+	_fieldA70 = _fieldA74 = 0;
+	_rect1 = Rect(68, 12, 120, 22);
+	_rect2 = Rect(59, 27, 117, 37);
+	_rect3 = Rect(49, 43, 112, 54);
+}
+
+void Scene810::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_fieldA70);
+	s.syncAsSint16LE(_fieldA72);
+	s.syncAsSint16LE(_fieldA74);
+}
+
+void Scene810::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(810);
+	setZoomPercents(90, 80, 135, 100);
+	if (BF_GLOBALS._sceneManager._previousScene != 820)
+		BF_GLOBALS._sound1.fadeSound(76);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	_stripManager.addSpeaker(&_jakeUniformSpeaker);
+	_stripManager.addSpeaker(&_lyleHatSpeaker);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 361 : 368);
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.changeZoom(-1);
+	BF_GLOBALS._player._moveDiff = Common::Point(5, 3);
+	BF_GLOBALS._player.enableControl();
+
+	if (BF_GLOBALS._dayNumber == 2)
+		BF_GLOBALS.setFlag(beenToJRDay2);
+
+	if (BF_GLOBALS._dayNumber == 3) {
+		_object3.postInit();
+		_object3.setVisage(810);
+		_object3.setStrip(3);
+		_object3.setPosition(Common::Point(154, 97));
+		_object3.fixPriority(128);
+		BF_GLOBALS._sceneItems.push_back(&_object3);
+	}
+
+	if (BF_GLOBALS._dayNumber == 4) {
+		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 0);
+		BF_INVENTORY.setObjectScene(INV_COBB_RAP, 0);
+		BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 0);
+		BF_INVENTORY.setObjectScene(INV_CRATE1, 0);
+	}
+
+	_desk._sceneRegionId = 12;
+	BF_GLOBALS._sceneItems.push_back(&_desk);
+
+	_lyle.postInit();
+	_lyle.setVisage(812);
+	_lyle.setPosition(Common::Point(115, 112));
+	_lyle._moveDiff = Common::Point(4, 2);
+	_lyle.changeZoom(-1);
+	_lyle._flag = 0;
+	BF_GLOBALS._sceneItems.push_back(&_lyle);
+
+	_chair.postInit();
+	_chair.setVisage(810);
+	_chair.setStrip(2);
+	_chair.setPosition(Common::Point(113, 126));
+	_chair.hide();
+	BF_GLOBALS._sceneItems.push_back(&_chair);
+
+	_object6.postInit();
+	_object6.setVisage(810);
+	_object6.setStrip(6);
+	_object6.setPosition(Common::Point(51, 65));
+	_object6._numFrames = 3;
+	_object6.hide();
+
+	_object5.postInit();
+	_object5.setVisage(810);
+	_object5.setStrip(5);
+	_object5.setPosition(Common::Point(58, 82));
+	_object5._numFrames = 3;
+	_object5.fixPriority(108);
+	_object5.hide();
+
+	if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 811) {
+		_object5.show();
+		BF_GLOBALS._sceneItems.push_back(&_object5);
+	}
+
+	if ((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark < bEndDayThree)) {
+		_lyle.remove();
+		_chair.show();
+	}
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 820:
+		BF_GLOBALS._player.setStrip(7);
+		BF_GLOBALS._player.setPosition(Common::Point(278, 116));
+		
+		_lyle.setVisage(845);
+		_lyle.setPosition(Common::Point(340, 175));
+		_lyle.setObjectWrapper(new SceneObjectWrapper());
+		_lyle.animate(ANIM_MODE_1, NULL);
+		
+		_chair.show();
+
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8107;
+		setAction(&_sequenceManager1, this, 8107, &BF_GLOBALS._player, &_lyle, NULL);
+		break;
+	case 935:
+		BF_GLOBALS._v51C44 = 1;
+		BF_GLOBALS._scenePalette.loadPalette(2);
+		_lyle.remove();
+
+		BF_GLOBALS._player.setPosition(Common::Point(174, 142));
+		BF_GLOBALS._player.setStrip(8);
+		BF_GLOBALS._player.enableControl();
+
+		_chair.remove();
+		break;
+	default:
+		BF_GLOBALS._player.setPosition(Common::Point(340, 180));
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8100;
+
+		if (BF_GLOBALS.getFlag(fWithLyle)) {
+			_lyle.setVisage(845);
+			_lyle.setPosition(Common::Point(340, 175));
+			_lyle.setObjectWrapper(new SceneObjectWrapper());
+			_lyle.animate(ANIM_MODE_1, NULL);
+
+			_chair.show();
+			_sceneMode = 8196;
+			setAction(&_sequenceManager1, NULL, 8100, &BF_GLOBALS._player, NULL);
+			_lyle.setAction(&_sequenceManager2, this, 8107, &BF_GLOBALS._player, &_lyle, NULL);
+		} else {
+			setAction(&_sequenceManager1, this, 8100, &BF_GLOBALS._player, NULL);
+		}
+		break;
+	}
+
+	_exit.setDetails(Rect(315, 117, 320, 154), 810, -1, -1, -1, 1, NULL);
+	_map.setBounds(Rect(10, 10, 81, 52));
+	_window.setBounds(Rect(96, 10, 155, 49));
+	_bookcase.setBounds(Rect(5, 70, 74, 105));
+	_garbageCan.setBounds(Rect(84, 118, 101, 142));
+	_fileCabinets.setBounds(Rect(203, 41, 255, 100));
+	_coffeeMaker.setBounds(Rect(182, 54, 202, 89));
+	_shelves.setBounds(Rect(265, 10, 319, 41));
+	_microficheReader.setBounds(Rect(283, 47, 314, 73));
+
+	_faxMachine._sceneRegionId = 8;
+	BF_GLOBALS._sceneItems.push_back(&_faxMachine);
+	_item10._sceneRegionId = 9;
+	BF_GLOBALS._sceneItems.push_back(&_item10);
+	_pictures._sceneRegionId = 10;
+	BF_GLOBALS._sceneItems.push_back(&_pictures);
+	_item12._sceneRegionId = 8;
+	BF_GLOBALS._sceneItems.push_back(&_item12);
+
+	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan, 
+		&_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
+	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y));
+}
+
+void Scene810::signal() {
+	switch (_sceneMode) {
+	case 811:
+	case 8105:
+		_faxMachineInset.postInit();
+		_faxMachineInset.setVisage(810);
+		_faxMachineInset.setPosition(Common::Point(77, 94));
+		_faxMachineInset.setStrip(8);
+		_faxMachineInset.fixPriority(250);
+		BF_GLOBALS._sceneItems.push_back(&_faxMachineInset);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8100:
+		if (BF_GLOBALS.getFlag(examinedFile810)) {
+			if ((BF_GLOBALS._dayNumber == 4) && BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+				_sceneMode = 8115;
+				setAction(&_sequenceManager1, this, 8115, &BF_GLOBALS._player, NULL);
+			} else {
+				BF_GLOBALS._player.enableControl();
+			}
+		} else {
+			if ((BF_GLOBALS._dayNumber == 3) && BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+				_sceneMode = 8103;
+				setAction(&_sequenceManager1, this, 8103, &BF_GLOBALS._player, &_lyle, &_chair, NULL);
+			} else if (BF_GLOBALS.getFlag(shownLyleCrate1Day1) && !BF_GLOBALS.getFlag(shownLyleCrate1)) {
+				BF_GLOBALS.setFlag(shownLyleCrate1);
+				setAction(&_action2);
+			} else {
+				BF_GLOBALS._player.enableControl();
+			}
+		}
+		break;
+	case 8101:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(800);
+		break;
+	case 8103:
+		_lyle.remove();
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8104:
+		BF_GLOBALS.setFlag(examinedFile810);
+		_object7.postInit();
+		_object7.setVisage(810);
+		_object7.setPosition(Common::Point(54, 101));
+		_object7.fixPriority(200);
+		BF_GLOBALS._sceneItems.push_front(&_object7);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8106:
+		T2_GLOBALS._uiElements.addScore(30);
+		BF_INVENTORY.setObjectScene(INV_MICROFILM, 820);
+		BF_GLOBALS._sceneManager.changeScene(820);
+		break;
+	case 8107:
+		if (BF_GLOBALS.getFlag(shownFax)) {
+			BF_GLOBALS.setFlag(showMugAround);
+		} else {
+			BF_GLOBALS._walkRegions.disableRegion(4);
+			BF_GLOBALS._player.enableControl();
+		}
+		break;
+	case 8109:
+		_object6.setFrame(1);
+		BF_GLOBALS._sceneItems.push_front(&_object5);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8110:
+	case 8115:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8112:
+		BF_GLOBALS.setFlag(fWithLyle);
+		BF_GLOBALS._sceneManager.changeScene(800);
+		break;
+	case 8113:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(935);
+		break;
+	case 8114:
+		T2_GLOBALS._uiElements.addScore(10);
+		BF_INVENTORY.setObjectScene(INV_MICROFILM, 1);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8116:
+		BF_GLOBALS._bookmark = bDoneWithIsland;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8195:
+		BF_GLOBALS._player.setStrip(8);
+		BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 1);
+		if (_fieldA70 == 1) {
+			BF_INVENTORY.setObjectScene(INV_COBB_RAP, 1);
+			_sceneMode = 8110;
+			if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+				_sceneMode = 8198;
+				BF_GLOBALS.setFlag(shownFax);
+				_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8135 : 8106, this);
+			} else {
+				_stripManager.start(8117, this);
+			}
+		} else {
+			SceneItem::display2(810, 34);
+			BF_GLOBALS._player.enableControl();
+		}
+
+		_fieldA74 = 0;
+		_object5.hide();
+		_object5.setFrame(1);
+		break;
+	case 8196:
+		BF_GLOBALS._walkRegions.disableRegion(4);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 8198:
+		if (BF_GLOBALS._dayNumber == 3) {
+			BF_GLOBALS.setFlag(showMugAround);
+		} else {
+			BF_GLOBALS._player.enableControl();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene810::process(Event &event) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+
+	if (!event.handled)
+		SceneExt::process(event);
+}
+
+void Scene810::dispatch() {
+	SceneExt::dispatch();
+
+	if (BF_GLOBALS._sceneObjects->contains(&_lyle) && (BF_GLOBALS._player._position.x != 115) && !_lyle._mover) {
+		_lyle.updateAngle(BF_GLOBALS._player._position);
+	}
+
+	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) && 
+			(BF_GLOBALS._player._position.y != 111)) {
+		_faxMachineInset.remove();
+	}
+
+	if (!_action) {
+		if (BF_GLOBALS.getFlag(showMugAround)) {
+			if (_lyle._position.y == 115) {
+				BF_GLOBALS._player.disableControl();
+
+				_sceneMode = 8110;
+				setAction(&_sequenceManager1, this, 8117, &_lyle, &_chair, NULL);
+			} else {
+				BF_GLOBALS.clearFlag(showMugAround);
+				BF_GLOBALS._player.disableControl();
+				BF_GLOBALS._walkRegions.enableRegion(4);
+				BF_GLOBALS._walkRegions.enableRegion(13);
+
+				_sceneMode = 8112;
+				setAction(&_sequenceManager1, this, 8112, &BF_GLOBALS._player,  &_lyle, NULL);
+			}
+		}
+
+		if (BF_GLOBALS._player._position.x >= 318) {
+			BF_GLOBALS._player.disableControl();
+
+			if ((BF_GLOBALS._dayNumber == 3) && !BF_GLOBALS.getFlag(examinedFile810)) {
+				SceneItem::display2(810, 35);
+				_sceneMode = 8100;
+				setAction(&_sequenceManager1, this, 8100, &BF_GLOBALS._player, NULL);
+			} else {
+				if (BF_GLOBALS.getFlag(fWithLyle)) {
+					BF_GLOBALS._walkRegions.enableRegion(4);
+					BF_GLOBALS._walkRegions.enableRegion(13);
+
+					ADD_MOVER_NULL(_lyle, 320, 155);
+				}
+
+				_sceneMode = 8101;
+				setAction(&_sequenceManager1, this, 8101, &BF_GLOBALS._player, NULL);
+			}
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 820 - Microfiche Reader
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene820::PowerButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 5);
+		return true;
+	case CURSOR_USE:
+		scene->_sound1.play(69);
+		if (_flags & OBJFLAG_HIDING) {
+			scene->_pageNumber = 0;
+			show();
+			BF_GLOBALS._scenePalette.loadPalette(821);
+			BF_GLOBALS._scenePalette.refresh();
+
+			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+				SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		} else {
+			BF_GLOBALS._scenePalette.loadPalette(820);
+			BF_GLOBALS._scenePalette.refresh();
+
+			scene->_object4.remove();
+			scene->_object5.remove();
+
+			SceneItem::display(0, 0);
+			hide();
+
+			BF_GLOBALS._sceneManager.changeScene(810);
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene820::BackButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 7);
+		return true;
+	case CURSOR_USE:
+		// WORKAROUND: The original game had a bug where you could see the microfiche text by directly
+		// using the paging buttons, but then you had to use the power button twice to 'turn on' the
+		// reader and then off again. This check prevents the paging buttons being used until the
+		// reader is properly turned on.
+		if (scene->_powerButton._flags & OBJFLAG_HIDING)
+			return true;
+
+		scene->_sound1.play(72);
+		show();
+		scene->_sceneMode = 8200;
+		scene->setAction(&scene->_sequenceManager, scene, 8200, NULL);
+
+		if (scene->_pageNumber)
+			--scene->_pageNumber;
+		if (scene->_pageNumber == 3) {
+			scene->_object4.hide();
+			scene->_object5.hide();
+		}
+
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 6);
+		return true;
+	case CURSOR_USE:
+		// WORKAROUND: The original game had a bug where you could see the microfiche text by directly
+		// using the paging buttons, but then you had to use the power button twice to 'turn on' the
+		// reader and then off again. This check prevents the paging buttons being used until the
+		// reader is properly turned on.
+		if (scene->_powerButton._flags & OBJFLAG_HIDING)
+			return true;
+
+		scene->_sound1.play(72);
+		show();
+		scene->_sceneMode = 8200;
+		scene->setAction(&scene->_sequenceManager, scene, 8200, NULL);
+
+		if (scene->_pageNumber < 4)
+			++scene->_pageNumber;
+
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+
+		if (scene->_pageNumber == 4) {
+			scene->_object4.show();
+			scene->_object5.show();
+		}
+
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene820::Scene820(): SceneExt() {
+	_pageNumber = 0;
+}
+
+void Scene820::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_pageNumber);
+}
+
+void Scene820::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(820);
+	
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+
+	_powerButton.postInit();
+	_powerButton.setVisage(820);
+	_powerButton.setPosition(Common::Point(42, 163));
+	_powerButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_powerButton);
+
+	_backButton.postInit();
+	_backButton.setVisage(820);
+	_backButton.setStrip(2);
+	_backButton.setPosition(Common::Point(278, 155));
+	_backButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_backButton);
+
+	_forwardButton.postInit();
+	_forwardButton.setVisage(820);
+	_forwardButton.setStrip(3);
+	_forwardButton.setPosition(Common::Point(278, 164));
+	_forwardButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_forwardButton);
+
+	_object4.postInit();
+	_object4.setVisage(821);
+	_object4.setPosition(Common::Point(96, 130));
+	_object4.hide();
+
+	_object5.postInit();
+	_object5.setVisage(821);
+	_object5.setStrip(2);
+	_object5.setPosition(Common::Point(223, 130));
+	_object5.hide();
+
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._player._canWalk = false;
+
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 820, -1, -1, -1, 1, NULL);
+}
+
+void Scene820::signal() {
+	if (_sceneMode == 8200) {
+		_forwardButton.hide();
+		_backButton.hide();
 	}
 }
 
@@ -421,7 +1559,7 @@ bool Scene830::Door::startAction(CursorType action, Event &event) {
 	return NamedObject::startAction(action, event);
 }
 
-bool Scene830::Object4::startAction(CursorType action, Event &event) {
+bool Scene830::RentalBoat::startAction(CursorType action, Event &event) {
 	Scene830 *scene = (Scene830 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == INV_RENTAL_KEYS) {
@@ -431,7 +1569,7 @@ bool Scene830::Object4::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager, scene, 8300, &BF_GLOBALS._player, &scene->_lyle, NULL);
 		} else {
 			scene->_sceneMode = 834;
-			scene->setAction(&scene->_sequenceManager, scene, 8300, &BF_GLOBALS._player, &scene->_object4, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 834, &BF_GLOBALS._player, &scene->_rentalBoat, NULL);
 		}
 		return true;
 	} else {
@@ -529,12 +1667,12 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.disableControl();
 
 	if (_field18A8) {
-		_object4.postInit();
-		_object4.setVisage(830);
-		_object4.setStrip(1);
-		_object4.setPosition(Common::Point(271, 146));
-		_object4.fixPriority(90);
-		_object4.setDetails(830, 0, 1, 2, 1, NULL);
+		_rentalBoat.postInit();
+		_rentalBoat.setVisage(830);
+		_rentalBoat.setStrip(1);
+		_rentalBoat.setPosition(Common::Point(271, 146));
+		_rentalBoat.fixPriority(90);
+		_rentalBoat.setDetails(830, 0, 1, 2, 1, NULL);
 	}
 
 	_door.postInit();
@@ -573,7 +1711,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 			_field18A4 = 0;
 
 			_lyle.postInit();
-			_lyle._flags = OBJFLAG_CHECK_REGION;
+//			_lyle._flags = OBJFLAG_CHECK_REGION;
 			_lyle.setVisage(835);
 			_lyle.setObjectWrapper(new SceneObjectWrapper());
 			_lyle.animate(ANIM_MODE_1, NULL);
@@ -727,13 +1865,13 @@ void Scene830::signal() {
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		BF_GLOBALS._player._strip = 7;
 
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_CARTER_NOTE, 1);
 		break;
 	case 8307:
 		BF_GLOBALS._player.enableControl();
 		_object5.remove();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
 		break;
 	case 8309:
@@ -754,7 +1892,9 @@ void Scene830::process(Event &event) {
 		event.handled = true;
 	}
 
-	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_seExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SE);
@@ -800,7 +1940,7 @@ void Scene830::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene840::Object2::postInit(SceneObjectList *OwnerList) {
+void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 	FocusObject::postInit(OwnerList);
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) != 1) {
@@ -826,18 +1966,19 @@ void Scene840::Object2::postInit(SceneObjectList *OwnerList) {
 	_v1B4 = _v1B6 = 0;
 }
 
-void Scene840::Object2::remove() {
+void Scene840::BoatKeysInset::remove() {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	_rentalKeys.remove();
 	_waveKeys.remove();
+	FocusObject::remove();
 	BF_GLOBALS._player.disableControl();
 
 	scene->_sceneMode = 8412;
 	scene->setAction(&scene->_sequenceManager1, scene, 8412, &BF_GLOBALS._player, NULL);
 }
 
-void Scene840::Object2::process(Event &event) {
+void Scene840::BoatKeysInset::process(Event &event) {
 	if (BF_GLOBALS._player._enabled) {
 		if (_bounds.contains(event.mousePos)) {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();
@@ -859,7 +2000,7 @@ void Scene840::Object2::process(Event &event) {
 	FocusObject::process(event);
 }
 
-bool Scene840::Object2::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if ((event.mousePos.y > 43) && (event.mousePos.y < 92)) {
@@ -882,9 +2023,9 @@ bool Scene840::Object2::startAction(CursorType action, Event &event) {
 		break;
 	case INV_WAVE_KEYS:
 		if ((BF_GLOBALS._dayNumber != 4) || (BF_GLOBALS._bookmark != bEndDayThree))
-			SceneItem::display(840, 47);
+			SceneItem::display2(840, 47);
 		else {
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 
 			if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
 				// Replace rental keys
@@ -919,7 +2060,7 @@ bool Scene840::Object2::startAction(CursorType action, Event &event) {
 	return FocusObject::startAction(action, event);
 }
 
-bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::RentalKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -929,9 +2070,9 @@ bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event)
 		} else {
 			SceneItem::display2(840, 55);
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 
-			scene->_object2._v1B4 = 1;
+			scene->_boatKeysInset._v1B4 = 1;
 			remove();
 		}
 		return true;
@@ -940,16 +2081,16 @@ bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event)
 	}
 }
 
-bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
 		if (scene->_field1AC2) {
-			SceneItem::display(840, 56);
+			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
-			BF_GLOBALS._uiElements.addScore(50);
-			scene->_object2._v1B6 = 1;
+			T2_GLOBALS._uiElements.addScore(50);
+			scene->_boatKeysInset._v1B6 = 1;
 			remove();
 		} else {
 			SceneItem::display2(840, 9);
@@ -960,7 +2101,7 @@ bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene840::Object6::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1021,7 +2162,7 @@ bool Scene840::Carter::startAction(CursorType action, Event &event) {
 
 		if (BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1) {
 			if (!BF_GLOBALS.getFlag(fGotPointsForCombo)) {
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				BF_GLOBALS.setFlag(fGotPointsForCombo);
 			}
 		}
@@ -1145,16 +2286,16 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_item16.setDetails(4, 840, 44, 45, 46, 1);
 	_item17.setDetails(5, 840, 26, 27, 28, 1);
 	_item12.setDetails(7, 840, 35, 36, 37, 1);
-	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, BF_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
+	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, UI_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
-		_object6.postInit();
-		_object6.setVisage(840);
-		_object6.setStrip(4);
-		_object6.setFrame(1);
-		_object6.setPosition(Common::Point(250, 83));
-		_object6.fixPriority(120);
-		_object6.setDetails(840, -1, 8, 9, 2, NULL);
+		_boatKeys.postInit();
+		_boatKeys.setVisage(840);
+		_boatKeys.setStrip(4);
+		_boatKeys.setFrame(1);
+		_boatKeys.setPosition(Common::Point(250, 83));
+		_boatKeys.fixPriority(120);
+		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
 		_field1AC0 = 1;
 	}
 
@@ -1245,9 +2386,9 @@ void Scene840::signal() {
 		break;
 	case 4:
 		_sceneMode = 8403;
-		_object6.postInit();
-		_object6.setDetails(840, -1, 8, 9, 2, NULL);
-		setAction(&_sequenceManager1, this, 8403, &_carter, &_object6, NULL);
+		_boatKeys.postInit();
+		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
+		setAction(&_sequenceManager1, this, 8403, &_carter, &_boatKeys, NULL);
 		break;
 	case 5:
 		_sceneMode = 8408;
@@ -1261,7 +2402,7 @@ void Scene840::signal() {
 		if ((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark >= bEndDayThree)) {
 			_stripManager.start(8440, this);
 			_sceneMode = 3;
-		} else if (BF_GLOBALS._sceneObjects->contains(&_object6)) {
+		} else if (BF_GLOBALS._sceneObjects->contains(&_boatKeys)) {
 			_stripManager.start(8442, this);
 			_sceneMode = 3;
 		} else if (_field1AC6) {
@@ -1280,13 +2421,13 @@ void Scene840::signal() {
 		break;
 	case 8402:
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_CARTER_NOTE, 3);
 		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 1);
 		BF_INVENTORY.setObjectScene(INV_RENTAL_COUPON, 1);
 		break;
 	case 8403:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		_sceneMode = 3;
 		_field1AC0 = 1;
 		_stripManager.start(8441, this);
@@ -1323,18 +2464,18 @@ void Scene840::signal() {
 		break;
 	case 8411:
 		BF_GLOBALS._player.enableControl();
-		_object2.postInit();
-		_object2.setVisage(840);
-		_object2.setStrip(2);
-		_object2.setPosition(Common::Point(160, 140));
-		_object2.fixPriority(254);
-		_object2.setDetails(840, 50, 8, 51);
+		_boatKeysInset.postInit();
+		_boatKeysInset.setVisage(840);
+		_boatKeysInset.setStrip(2);
+		_boatKeysInset.setPosition(Common::Point(160, 140));
+		_boatKeysInset.fixPriority(254);
+		_boatKeysInset.setDetails(840, 50, 8, 51);
 		break;
 	case 8412:
-		if (_object2._v1B6) {
+		if (_boatKeysInset._v1B6) {
 			_sceneMode = 8409;
 			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
-		} else if (!_object2._v1B4) {
+		} else if (!_boatKeysInset._v1B4) {
 			BF_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 3;
@@ -1348,13 +2489,13 @@ void Scene840::signal() {
 		}
 		break;
 	case 8413:
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		_sceneMode = 8409;
 		setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		break;
 	case 8417:
 		_field1ABA = 1;
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 0);
 		BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 0);
 		BF_GLOBALS._player.enableControl();
@@ -1365,7 +2506,7 @@ void Scene840::signal() {
 void Scene840::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
 			BF_GLOBALS._events.setCursor(surface);
@@ -1388,6 +2529,1092 @@ void Scene840::dispatch() {
 
 		if (BF_GLOBALS.getFlag(fWithLyle)) {
 			_lyle.setAction(&_sequenceManager2, NULL, 8406, &_lyle, NULL);
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 850 - Boat Leaving/Entering Marina
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene850::Timer1::signal() {
+	PaletteRotation *rot = BF_GLOBALS._scenePalette.addRotation(240, 254, 1);
+	rot->setDelay(25);
+
+	remove();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene850::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(850);
+	BF_GLOBALS._sound1.fadeSound(35);
+
+	BF_GLOBALS._player.disableControl();
+	_timer.set(2, NULL);
+
+	_object1.postInit();
+	if (BF_GLOBALS._sceneManager._previousScene == 830) {
+		_sceneMode = 8500;
+		setAction(&_sequenceManager, this, 8500, &_object1, NULL);
+	} else {
+		BF_GLOBALS._sound1.changeSound(10);
+		_sceneMode = 8501;
+		setAction(&_sequenceManager, this, 8501, &_object1, NULL);
+	}
+}
+
+void Scene850::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+void Scene850::signal() {
+	switch (_sceneMode) {
+	case 8500:
+		BF_GLOBALS._sceneManager.changeScene(860);
+		break;
+	case 8501:
+		BF_GLOBALS._sceneManager.changeScene(830);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 860 - Boat Entering Cove
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene860::Action1::signal() {
+	Scene860 *scene = (Scene860 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_sound1.play(88);
+		scene->_sound1.holdAt(1);
+
+		if (scene->_field888 == scene->_field886) {
+			++_actionIndex;
+			signal();
+		} else {
+			BF_GLOBALS._player.addMover(NULL);
+			BF_GLOBALS._player.setStrip((scene->_field886 == 1) ? 4 : 5);
+			scene->_field888 = scene->_field886;
+
+			BF_GLOBALS._player.setFrame(1);
+			BF_GLOBALS._player._numFrames = 9;
+			BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		}
+		break;
+	case 1:
+		if (scene->_field886 == 1) {
+			BF_GLOBALS._player._position.x += 5;
+			BF_GLOBALS._player.setStrip(3);
+		} else {
+			BF_GLOBALS._player._position.x -= 5;
+			BF_GLOBALS._player.setStrip(2);
+		}
+		signal();
+		// Deliberate fall-through
+	case 2:
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		ADD_MOVER_NULL(BF_GLOBALS._player, scene->_destPos.x, scene->_destPos.y);
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene860::Scene860(): SceneExt() {
+	_field87E = _field880 = 0;
+	_destPos.x = _destPos.y = 0;
+	_field886 = _field888 = 0;
+
+	_swRect = Rect(37, 102, 175, 128);
+	_neRect = Rect(259, 50, 320, 84);
+}
+
+void Scene860::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field87E);
+	s.syncAsSint16LE(_field880);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
+	s.syncAsSint16LE(_field886);
+	s.syncAsSint16LE(_field888);
+
+	_swRect.synchronize(s);
+	_neRect.synchronize(s);
+	_yachtRect.synchronize(s);
+}
+
+void Scene860::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(880);
+
+	BF_GLOBALS._sound1.changeSound(90);
+	if (BF_GLOBALS._dayNumber == 0) {
+		BF_GLOBALS._dayNumber = 1;
+		BF_GLOBALS.setFlag(fBlowUpGoon);
+	}
+
+	if (BF_GLOBALS.getFlag(fBlowUpGoon)) {
+		_deadBody.postInit();
+		_deadBody.setVisage(875);
+		_deadBody.setStrip(7);
+		_deadBody.setFrame2(_deadBody.getFrameCount());
+		_deadBody.fixPriority(130);
+		_deadBody.setPosition(Common::Point(255, 148));
+	}
+
+	if (BF_GLOBALS._dayNumber == 5) {
+		_object2.postInit();
+		_object2.setVisage(880);
+		_object2.setPosition(Common::Point(196, 81));
+		BF_GLOBALS._sceneItems.push_back(&_object2);
+		_object2.setDetails(860, 0, 1, -1, 1, NULL);
+		_object2.fixPriority(20);
+
+		_neRect = Rect(0, 0, 0, 0);
+		_yachtRect = Rect(180, 66, 219, 79);
+	}
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(880);
+	BF_GLOBALS._player._moveDiff = Common::Point(1, 1);
+	BF_GLOBALS._player._moveRate = 20;
+
+	BF_GLOBALS._events.setCursor(CURSOR_WALK);
+	BF_GLOBALS._player.disableControl();
+	BF_GLOBALS._player._canWalk = false;
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 355:
+		if (BF_INVENTORY.getObjectScene(INV_GRENADES) == 860) {
+			_sceneMode = 8610;
+			setAction(&_sequenceManager, this, 8610, &BF_GLOBALS._player, NULL);
+		} else {
+			_sceneMode = 8609;
+			setAction(&_sequenceManager, this, 8609, &BF_GLOBALS._player, NULL);
+			_field87E = 0;
+			_field880 = 1;
+			_field888 = 1;
+		}
+		break;
+	case 870:
+		_sound1.play(89);
+		_sound1.holdAt(1);
+		_sceneMode = 8608;
+		setAction(&_sequenceManager, this, 8608, &BF_GLOBALS._player, NULL);
+		_field880 = 0;
+		_field87E = 2;
+		_field888 = 1;
+		break;
+	default:
+		_sound1.play(89);
+		_sound1.holdAt(1);
+		_sceneMode = 8607;
+		setAction(&_sequenceManager, this, 8607, &BF_GLOBALS._player, NULL);
+		_field87E = 0;
+		_field880 = 2;
+		_field888 = 1;
+		break;
+	}
+}
+
+void Scene860::signal() {
+	switch (_sceneMode) {
+	case 8601:
+	case 8606:
+		BF_GLOBALS._sceneManager.changeScene(870);
+		break;
+	case 8602:
+	case 8604:
+		BF_GLOBALS._sceneManager.changeScene(355);
+		break;
+	case 8603:
+	case 8605:
+		BF_GLOBALS._sceneManager.changeScene(850);
+		break;
+	case 8607:
+	case 8608:
+	case 8609:
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._player._canWalk = false;
+		break;
+	case 8610:
+		BF_GLOBALS._deathReason = 22;
+		BF_GLOBALS._sceneManager.changeScene(866);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene860::process(Event &event) {
+	if (_swRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_SW);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = 2;
+			_destPos = Common::Point(119, 126);
+			_field87E = 0;
+			setAction(&_action1);
+		}
+	} else if (_neRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_NE);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = 1;
+			_destPos = Common::Point(266, 56);
+			_field87E = 2;
+			setAction(&_action1);
+		}
+	} else if (_yachtRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_NW);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = (BF_GLOBALS._player._position.y <= 78) ? 2 : 1;
+			_destPos = Common::Point(212, 78);
+			_field87E = 1;
+			setAction(&_action1);
+		}
+	} else {
+		CursorType cursorId = BF_GLOBALS._events.getCursor();
+		BF_GLOBALS._events.setCursor(cursorId);
+	}
+}
+
+void Scene860::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else if (_swRect.contains(BF_GLOBALS._player._position) && (_field87E == 0)) {
+		_sound1.play(88);
+		BF_GLOBALS._sceneManager.changeScene(870);
+	} else if (_neRect.contains(BF_GLOBALS._player._position) && (_field87E == 2)) {
+		_sound1.release();
+		BF_GLOBALS._sceneManager.changeScene(850);
+	} else if (_yachtRect.contains(BF_GLOBALS._player._position) && (_field87E == 1)) {
+		_sound1.play(88);
+		BF_GLOBALS._sceneManager.changeScene(355);
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 870 - Cove Beach
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene870::Lyle::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		if (BF_GLOBALS.getFlag(fTookTrailerAmmo)) {
+			scene->startStrip((BF_GLOBALS._bookmark >= bFinishedWGreen) ? 8704 : 8701);
+		} else {
+			scene->startStrip(8700);
+		}
+		return true;
+	} else {
+		return NamedObjectExt::startAction(action, event);
+	}
+}
+
+bool Scene870::Green::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		if (!BF_GLOBALS.getFlag(fLyleOnIsland) && !scene->_field1664 && (BF_GLOBALS._bookmark == bFinishedWGreen)) {
+			scene->startStrip(8703);
+			++scene->_field1664;
+		} else {
+			scene->startStrip(8705);
+		}
+		return true;
+	} else {
+		return NamedObjectExt::startAction(action, event);
+	}
+}
+
+void Scene870::CrateInset::postInit(SceneObjectList *OwnerList) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	FocusObject::postInit();
+	setVisage(870);
+	setStrip(5);
+	setFrame(scene->_field1662);
+	setPosition(Common::Point(160, 130));
+	fixPriority(250);
+
+	if (scene->_field1662  == 3) {
+		initContents();
+	}
+}
+
+void Scene870::CrateInset::initContents() {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (BF_INVENTORY.getObjectScene(INV_JAR) == 870) {
+		// Jar still in crate, so display it
+		_jar.postInit();
+		_jar.setVisage(870);
+		_jar.setStrip(4);
+		_jar.setFrame(5);
+		_jar.setPosition(Common::Point(scene->_crateInset._position.x + 5,
+			scene->_crateInset._position.y - 26));
+		_jar.fixPriority(251);
+		_jar.setDetails(870, 39, 40, 41, 1, NULL);
+		BF_GLOBALS._sceneItems.remove(&_jar);
+		BF_GLOBALS._sceneItems.push_front(&_jar);
+	}
+
+	if (BF_INVENTORY.getObjectScene(INV_RAGS) == 870) {
+		// Rags still in crate, so display it
+		_rags.postInit();
+		_rags.setVisage(870);
+		_rags.setStrip(4);
+		_rags.setFrame(6);
+		_rags.setPosition(Common::Point(scene->_crateInset._position.x - 18,
+			scene->_crateInset._position.y - 18));
+		_rags.fixPriority(251);
+		_rags.setDetails(870, 42, 43, 44, 1, NULL);
+		BF_GLOBALS._sceneItems.remove(&_rags);
+		BF_GLOBALS._sceneItems.push_front(&_rags);
+	}
+}
+
+void Scene870::CrateInset::remove() {
+	_jar.remove();
+	_rags.remove();
+	FocusObject::remove();
+}
+
+bool Scene870::CrateInset::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_WALK:
+		return true;
+	case CURSOR_LOOK:
+		if (scene->_field1662 != 2)
+			break;
+
+		scene->_field1662 = 3;
+		setFrame(3);
+		initContents();
+		return true;
+	case CURSOR_USE:
+		if (scene->_field1662 == 2) {
+			setFrame(1);
+			scene->_field1662 = 1;
+		} else {
+			setFrame(2);
+			scene->_field1662 = 2;
+			_jar.remove();
+			_rags.remove();
+		}
+		return true;
+	default:
+		break;
+	}
+
+	return FocusObject::startAction(action, event);
+}
+
+bool Scene870::CrateInset::Jar::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_INVENTORY.setObjectScene(INV_JAR, 1);
+		remove();
+		T2_GLOBALS._uiElements.addScore(30);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene870::CrateInset::Rags::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_INVENTORY.setObjectScene(INV_RAGS, 1);
+		remove();
+		T2_GLOBALS._uiElements.addScore(30);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene870::Boat::startAction(CursorType action, Event &event) {
+	if (action == INV_RENTAL_KEYS) {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._sceneManager.changeScene(860);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+bool Scene870::Crate::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 1;
+		Common::Point destPos(163, 164);
+		PlayerMover *mover = new PlayerMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, scene);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+bool Scene870::Exit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(event.mousePos.x, event.mousePos.y);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene870::Action1::signal() {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1:
+		scene->_yacht.setStrip(6);
+		scene->_yacht.setFrame(1);
+		scene->_yacht._numFrames = 6;
+		scene->_yacht.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene870::Scene870(): SceneExt() {
+	_field1662 = 1;
+	_field1664 = 0;
+}
+
+void Scene870::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field1662);
+	s.syncAsSint16LE(_field1664);
+}
+
+void Scene870::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(870);
+	BF_GLOBALS._sound1.changeSound(90);
+
+	PaletteRotation *rot;
+	rot = BF_GLOBALS._scenePalette.addRotation(235, 235, 1);
+	rot->setDelay(10);
+	rot = BF_GLOBALS._scenePalette.addRotation(237, 238, 1);
+	rot->setDelay(40);
+	rot = BF_GLOBALS._scenePalette.addRotation(242, 243, 1);
+	rot->setDelay(30);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_greenSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	_stripManager.addSpeaker(&_lyleHatSpeaker);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 5;
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(831);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player._moveDiff = Common::Point(2, 1);
+
+	_exit.setDetails(Rect(305, 150, 320, 168), 870, -1, -1, -1, 1, NULL);
+	_lumber.setDetails(9, 870, 36, 37, 38, 1);
+	_firePit.setDetails(8, 870, 9, 10, 11, 1);
+
+	if (BF_GLOBALS._dayNumber == 5) {
+		if (!BF_GLOBALS.getFlag(fLyleOnIsland) && (BF_GLOBALS._bookmark != bFinishedWGreen) &&
+				(!BF_GLOBALS.getFlag(fTookTrailerAmmo) || (BF_GLOBALS._bookmark >= bInvestigateBoat))) {
+			_lyle.postInit();
+			_lyle.setVisage(835);
+			_lyle.setObjectWrapper(new SceneObjectWrapper());
+			_lyle.animate(ANIM_MODE_1, NULL);
+			_lyle._moveDiff = Common::Point(2, 1);
+			_lyle.setDetails(870, 27, 28, 29, 1, NULL);
+		}
+
+		_yacht.postInit();
+		_yacht.setVisage(870);
+		_yacht.setStrip(4);
+		_yacht.setFrame(4);
+		_yacht.setPosition(Common::Point(232, 19));
+		_yacht.setDetails(870, 30, 31, 32, 1, NULL);
+
+		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_FLARE) == 0) &&
+				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 355)) {
+			_green.postInit();
+			_green.setVisage(870);
+			_green.setStrip(7);
+			_green.setPosition(Common::Point(127, 109));
+
+			if (BF_GLOBALS._bookmark == bFinishedWGreen) {
+				_green.setDetails(870, 51, 54, 53, 1, NULL);
+			} else {
+				_green.setDetails(870, 51, 52, 53, 1, NULL);
+			}
+		}
+	}
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 355:
+		_object6.postInit();
+		_object6.setVisage(870);
+		_object6.setPosition(Common::Point(142, 154));
+		_object6.fixPriority(148);
+
+		BF_GLOBALS._player.remove();
+		_lyle.remove();
+		setAction(&_action1);
+		break;
+	case 880:
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.setPosition(Common::Point(330, 169));
+			ADD_PLAYER_MOVER_NULL(_lyle, 303, 169);
+		}
+
+		BF_GLOBALS._player.setPosition(Common::Point(330, 139));
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8700;
+		setAction(&_sequenceManager, this, 8700, &BF_GLOBALS._player, NULL);
+		break;
+	default:
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.setPosition(Common::Point(156, 148));
+			_lyle.fixPriority(149);
+		}
+	
+		if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) &&
+				(BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
+			_object4.postInit();
+			_object4.hide();
+			_object5.postInit();
+			_object5.hide();
+
+			BF_GLOBALS._deathReason = 7;
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 2;
+			setAction(&_sequenceManager, this, 8703, &BF_GLOBALS._player, &_lyle, &_green,
+				&_object4, &_object5, NULL);
+		} else {
+			BF_GLOBALS._player.changeAngle(135);
+			BF_GLOBALS._player.setPosition(Common::Point(214, 139));
+			BF_GLOBALS._player.enableControl();
+		}
+		break;
+	}
+	
+	_boat.setDetails(7, 870, 3, 4, 5, 1);
+	_crate.setDetails(14, 870, 12, 13, 14, 1);
+	_water.setDetails(5, 870, 24, 25, 26, 1);
+	_palmTrees.setDetails(4, 870, 45, 46, 47, 1);
+	_sand.setDetails(3, 870, 21, 22, 23, 1);
+	_boulders.setDetails(2, 870, 18, 19, 20, 1);
+	_farShore.setDetails(1, 870, 48, 49, 50, 1);
+}
+
+void Scene870::startStrip(int stripNumber) {
+	_sceneMode = 3;
+	BF_GLOBALS._player.disableControl();
+	_stripManager.start(stripNumber, this);
+}
+
+void Scene870::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+void Scene870::signal() {
+	switch (_sceneMode) {
+	case 0:
+	case 3:
+	case 8700:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 1:
+		_crateInset.postInit();
+		_crateInset.setDetails(870, -1, -1, -1);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2:
+		_yacht.setStrip(6);
+		_yacht.setFrame(1);
+		_yacht._numFrames = 6;
+		_yacht.animate(ANIM_MODE_5, this);
+		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	case 8701:
+		BF_GLOBALS._sceneManager.changeScene(880);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene870::process(Event &event) {
+	SceneExt::process(event);
+
+	if (!event.handled && BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene870::dispatch() {
+	SceneExt::dispatch();
+
+	if (BF_GLOBALS._sceneObjects->contains(&_lyle) && _lyle.isNoMover()) {
+		_lyle.updateAngle(BF_GLOBALS._player._position);
+	}
+
+	if (!_action && (BF_GLOBALS._player._position.x > 305)) {
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.animate(ANIM_MODE_1, NULL);
+			ADD_PLAYER_MOVER_NULL(_lyle, BF_GLOBALS._player._position.x, BF_GLOBALS._player._position.y + 5);
+		}
+
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8701;
+		setAction(&_sequenceManager, this, 8701, &BF_GLOBALS._player, NULL);
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 880 - Beach Path
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene880::Action1::signal() {
+	Scene880 *scene = (Scene880 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		_actionIndex = 1 + BF_GLOBALS._randomSource.getRandomNumber(1);
+		setDelay(BF_GLOBALS._randomSource.getRandomNumber(90));
+		break;
+	case 1:
+		_actionIndex = 0;
+		scene->_sequenceManager2._onCallback = SequenceManager_callbackProc;
+		setAction(&scene->_sequenceManager2, this, 8811, &scene->_object4, NULL);
+		break;
+	case 2:
+		_actionIndex = 1;
+		setAction(&scene->_sequenceManager2, this, 8814, &scene->_object4, NULL);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene880::Action1::SequenceManager_callbackProc(int v1, int v2) {
+	int idx = BF_GLOBALS._randomSource.getRandomNumber(2);
+	Scene880 *scene = (Scene880 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (idx) {
+	case 0:
+		scene->_object5.show();
+		break;
+	case 1:
+		scene->_object6.show();
+		break;
+	case 2:
+		scene->_object7.show();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene880::Object4::startAction(CursorType action, Event &event) {
+	Scene880 *scene = (Scene880 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (!scene->_seqNumber)
+			break;
+
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 8815;
+		scene->setAction(&scene->_sequenceManager1, scene, scene->_seqNumber, &BF_GLOBALS._player, NULL);
+		return true;
+	case CURSOR_TALK:
+		if (scene->_sceneMode != 2)
+			break;
+
+		scene->_stripManager.start(8800, &BF_GLOBALS._stripProxy);
+		return true;
+	case INV_COLT45:
+		if (scene->_sceneMode != 2)
+			break;
+
+		scene->gunDisplay();
+		return true;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene880::NorthExit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(40, 113);
+	return true;
+}
+
+bool Scene880::SouthEastExit::startAction(CursorType action, Event &event) {
+	Scene880 *scene = (Scene880 *)BF_GLOBALS._sceneManager._scene;
+
+	if (scene->_sceneMode == 2)
+		return false;
+	else {
+		ADD_PLAYER_MOVER(300, 158);
+		return true;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene880::Scene880(): SceneExt() {
+	_seqNumber = 0;
+}
+
+void Scene880::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_seqNumber);
+}
+
+void Scene880::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(880);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 5;
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	_stripManager.addSpeaker(&_lyleHatSpeaker);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(1358);
+	BF_GLOBALS._player._moveDiff = Common::Point(3, 2);
+	BF_GLOBALS._player.disableControl();
+
+	_northExit.setDetails(Rect(25, 99, 54, 127), 880, -1, -1, -1, 1, NULL);
+	_seExit.setDetails(Rect(279, 150, 320, 167), 880, -1, -1, -1, 1, NULL);
+
+	if (BF_GLOBALS._dayNumber == 5) {
+		BF_GLOBALS._sound1.changeSound(107);
+		_object1.postInit();
+		_object1.hide();
+
+		if ((BF_GLOBALS._bookmark != bFinishedWGreen) && (BF_GLOBALS._bookmark >= bInvestigateBoat) &&
+				BF_GLOBALS.getFlag(fTookTrailerAmmo)) {
+			BF_GLOBALS.setFlag(fLyleOnIsland);
+		}
+
+		_object2.postInit();
+		_object2.setVisage(880);
+		_object2.setPosition(Common::Point(209, 76));
+		_object2.setDetails(880, 4, 5, 6, 1, NULL);
+
+		_object4.postInit();
+		_object4.setVisage(875);
+		_object4.setDetails(880, 7, -1, 9, 1, NULL);
+
+		_object5.postInit();
+		_object5.setVisage(874);
+		_object5.setStrip(2);
+		_object5.setFrame(2);
+		_object5.fixPriority(118);
+		_object5.setPosition(Common::Point(55, 117));
+		_object5.hide();
+
+		_object6.postInit();
+		_object6.setVisage(874);
+		_object6.setStrip(3);
+		_object6.setFrame(2);
+		_object6.fixPriority(118);
+		_object6.setPosition(Common::Point(60, 109));
+		_object6.hide();
+
+		_object7.postInit();
+		_object7.setVisage(874);
+		_object7.setStrip(4);
+		_object7.setFrame(2);
+		_object7.fixPriority(118);
+		_object7.setPosition(Common::Point(57, 100));
+		_object7.hide();
+
+		if (BF_GLOBALS.getFlag(fShootGoon)) {
+			_object4.setStrip(6);
+			_object4.setFrame2(_object4.getFrameCount());
+			_object4.fixPriority(160);
+			_object4.setPosition(Common::Point(255, 148));
+			
+			_seqNumber = 8816;
+		} else if (BF_GLOBALS.getFlag(fBlowUpGoon)) {
+			_object4.setStrip(7);
+			_object4.setFrame2(_object4.getFrameCount());
+			_object4.fixPriority(130);
+			_object4.setPosition(Common::Point(255, 148));
+
+			_seqNumber = 8815;
+		} else {
+			_object4.setStrip(2);
+			_object4.setPosition(Common::Point(258, 147));
+		
+			_object3.postInit();
+			_object3.setVisage(871);
+			_object3.setStrip(4);
+			_object3.hide();
+
+			_seqNumber = 0;
+		}
+	} else if (BF_GLOBALS._sceneManager._previousScene != 900) {
+		BF_GLOBALS._sound1.changeSound(91);
+	}
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 900:
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 0;
+		setAction(&_sequenceManager1, this, 8802, &BF_GLOBALS._player, NULL);
+		break;
+	default:
+		BF_GLOBALS._player.disableControl();
+
+		if (BF_GLOBALS._dayNumber != 5) {
+			_sceneMode = 0;
+			setAction(&_sequenceManager1, this, 8800, &BF_GLOBALS._player, NULL);
+		} else if ((BF_GLOBALS._bookmark > bFinishedWGreen) || (_seqNumber != 0)) {
+			_sceneMode = 0;
+			setAction(&_sequenceManager1, this, 8800, &BF_GLOBALS._player, NULL);
+		} else {
+			BF_GLOBALS._bookmark = bFinishedWGreen;
+			_sceneMode = 8805;
+			setAction(&_sequenceManager1, this, 8805, &BF_GLOBALS._player, &_object1, &_object4, NULL);
+		}
+		break;
+	}
+
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 880, 0, -1, -1, 1, NULL);
+}
+
+void Scene880::signal() {
+	switch (_sceneMode) {
+	case 0:
+	case 2:
+		BF_GLOBALS._player._moveDiff = Common::Point(3, 2);
+		BF_GLOBALS._player.fixPriority(-1);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 1:
+		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	case 3:
+		T2_GLOBALS._uiElements.addScore(50);
+		BF_GLOBALS.clearFlag(gunDrawn);
+		BF_INVENTORY.setObjectScene(INV_GRENADES, 880);
+		_sceneMode = 0;
+		signal();
+		break;
+	case 4:
+		T2_GLOBALS._uiElements.addScore(30);
+		BF_GLOBALS.clearFlag(gunDrawn);
+		_sceneMode = 0;
+		signal();
+		break;
+	case 6:
+		BF_GLOBALS._deathReason = 10;
+		BF_GLOBALS.clearFlag(gunDrawn);
+
+		if (_object4._action) {
+			handleAction(_object4._action);
+		}
+
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 1;
+		setAction(&_sequenceManager1, this, 8806, &BF_GLOBALS._player, &_object4, NULL);
+		break;
+	case 7:
+		BF_GLOBALS.clearFlag(gunDrawn);
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8801;
+		setAction(&_sequenceManager1, this, 8801, &BF_GLOBALS._player, NULL);
+		break;
+	case 8801:
+		BF_GLOBALS._sceneManager.changeScene(870);
+		break;
+	case 8803:
+		BF_GLOBALS._sceneManager.changeScene(900);
+		break;
+	case 8805:
+		_object4.setAction(&_action1);
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 2;
+		setAction(&_sequenceManager1, this, 8807, &BF_GLOBALS._player, NULL);
+		BF_GLOBALS.setFlag(gunDrawn);
+		break;
+	case 8815:
+		if (BF_INVENTORY.getObjectScene(INV_DOG_WHISTLE) == 880) {
+			BF_INVENTORY.setObjectScene(INV_DOG_WHISTLE, 1);
+			T2_GLOBALS._uiElements.addScore(30);
+
+			SceneItem::display2(880, 13);
+		} else {
+			SceneItem::display2(880, 12);
+		}
+		BF_GLOBALS._player.enableControl();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene880::process(Event &event) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_northExit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
+			BF_GLOBALS._events.setCursor(surface);
+		} else if (_seExit.contains(event.mousePos) && (_sceneMode != 2)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SE);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+
+	if (event.eventType == EVENT_BUTTON_DOWN) {
+		switch (BF_GLOBALS._events.getCursor()) {
+		case INV_COLT45:
+			if (_sceneMode != 2) {
+				_sceneMode = 0;
+				SceneItem::display2(880, 11);
+				signal();
+			} else if (BF_GLOBALS.getFlag(gunDrawn)) {
+				BF_GLOBALS.clearFlag(gunDrawn);
+				BF_GLOBALS._player.disableControl();
+				_sceneMode = 6;
+				setAction(&_sequenceManager1, this, 8812, &BF_GLOBALS._player, NULL);
+			} else {
+				BF_GLOBALS._player.disableControl();
+				_sceneMode = 2;
+				setAction(&_sequenceManager1, this, 8807, &BF_GLOBALS._player, NULL);
+			}
+
+			event.handled = true;
+			break;
+		case INV_GRENADES:
+			if (_sceneMode == 2) {
+				if (event.mousePos.x >= 150) {
+					BF_GLOBALS.setFlag(fBlowUpGoon);
+					_seqNumber = 8815;
+					if (_object4._action)
+						handleAction(_object4._action);
+
+					BF_GLOBALS._player.disableControl();
+					_sceneMode = 3;
+					setAction(&_sequenceManager1, this, 8809, &BF_GLOBALS._player, &_object3, &_object4, NULL);
+				} else {
+					if (_object4._action)
+						handleAction(_object4._action);
+
+					BF_GLOBALS._player.disableControl();
+					BF_GLOBALS._deathReason = 11;
+					_sceneMode = 1;
+					setAction(&_sequenceManager1, this, 8810, &BF_GLOBALS._player, &_object3, NULL);
+				}
+				event.handled = true;
+			}
+			break;
+		case CURSOR_WALK:
+			if (_sceneMode == 2) {
+				event.handled = true;
+				BF_GLOBALS._player.disableControl();
+
+				_sceneMode = (event.mousePos.y <= BF_GLOBALS._player._position.y) ? 7 : 6;
+				setAction(&_sequenceManager1, this, 8812, &BF_GLOBALS._player, NULL);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	SceneExt::process(event);
+}
+
+void Scene880::handleAction(Action *action) {
+	if (action->_action)
+		// Work down into sub-actions
+		handleAction(action->_action);
+
+	if (action->_owner) {
+		action->_owner->_action = NULL;
+		action->_owner = NULL;
+	}
+}
+	
+void Scene880::dispatch() {
+	SceneExt::dispatch();
+
+	if (!_action) {
+		if ((BF_GLOBALS._player._position.y <= 123) && (BF_GLOBALS._player._priority != 5)) {
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 8801;
+			setAction(&_sequenceManager1, this, 8801, &BF_GLOBALS._player, NULL);
+		}
+
+		if ((BF_GLOBALS._player._position.x >= 275) && (BF_GLOBALS._player._position.y > 155)) {
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 8803;
+			setAction(&_sequenceManager1, this, 8803, &BF_GLOBALS._player, NULL);
 		}
 	}
 }
