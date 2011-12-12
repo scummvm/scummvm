@@ -1127,7 +1127,7 @@ void DreamGenContext::useWire() {
 	}
 
 	char axe[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
 		showPuzText(16, 300);
 		putBackObStuff();
 		return;
