@@ -1341,4 +1341,39 @@ void DreamGenContext::usePipe() {
 	}
 }
 
+void DreamGenContext::useOpenBox() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
+	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
+
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+		// Destroy open box
+		data.byte(kProgresspoints)++;
+		showPuzText(37, 300);
+		DynObject *exObject = getExAd(data.byte(kWithobject));
+		exObject->id[3] = 'E'-'A';	// CUPF (full cup) -> CUPE (empty cup)
+		data.word(kWatchingtime) = 140;
+		data.word(kReeltowatch) = 105;
+		data.word(kEndwatchreel) = 181;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		turnPathOn(4);
+		data.byte(kGetback) = 1;
+		return;
+	}
+
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+		// Open box wrong
+		showPuzText(38, 300);
+		putBackObStuff();
+		return;
+	}
+
+	showFirstUse();
+}
+
 } // End of namespace DreamGen

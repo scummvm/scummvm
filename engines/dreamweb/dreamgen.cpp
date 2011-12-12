@@ -3590,58 +3590,6 @@ void DreamGenContext::notHeldError() {
 	putBackObStuff();
 }
 
-void DreamGenContext::useOpenBox() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto openboxwith;
-	withWhat();
-	return;
-openboxwith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'F';
-	compare();
-	if (flags.z())
-		goto destoryopenbox;
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'C';
-	ch = 'U';
-	dl = 'P';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto openboxwrong;
-	showFirstUse();
-	return;
-destoryopenbox:
-	_inc(data.byte(kProgresspoints));
-	cx = 300;
-	al = 37;
-	showPuzText();
-	al = data.byte(kWithobject);
-	getExAd();
-	es.byte(bx+15) = 'E'-'A';
-	data.word(kWatchingtime) = 140;
-	data.word(kReeltowatch) = 105;
-	data.word(kEndwatchreel) = 181;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	al = 4;
-	turnPathOn();
-	data.byte(kGetback) = 1;
-	return;
-openboxwrong:
-	cx = 300;
-	al = 38;
-	showPuzText();
-	putBackObStuff();
-}
-
 void DreamGenContext::useAltar() {
 	STACK_CHECK;
 	al = 'C';

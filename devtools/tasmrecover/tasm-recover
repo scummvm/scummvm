@@ -802,6 +802,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'usemenu',
 	'usemon',
 	'useobject',
+	'useopenbox',
 	'usepipe',
 	'useplate',
 	'useplinth',

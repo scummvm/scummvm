@@ -488,7 +488,6 @@ public:
 
 	void identifyOb();
 	void runEndSeq();
-	void useOpenBox();
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
