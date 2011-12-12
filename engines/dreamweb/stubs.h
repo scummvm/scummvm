@@ -275,10 +275,6 @@
 	void monMessage(uint8 index);
 	void monMessage();
 	void netError();
-	void playChannel0();
-	void playChannel0(uint8 index, uint8 repeat) {
-		DreamBase::playChannel0(index, repeat);
-	}
 	void playChannel1();
 	void playChannel1(uint8 index) {
 		DreamBase::playChannel1(index);

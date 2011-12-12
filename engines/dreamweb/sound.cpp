@@ -79,10 +79,6 @@ void DreamBase::playChannel0(uint8 index, uint8 repeat) {
 	}
 }
 
-void DreamGenContext::playChannel0() {
-	playChannel0(al, ah);
-}
-
 void DreamBase::playChannel1(uint8 index) {
 	if (data.byte(kCh1playing) == 7)
 		return;
