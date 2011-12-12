@@ -318,6 +318,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	_mumbleChore.restoreState(savedState, this);
 
+	clearShadowPlanes();
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
 		shadow.name = savedState->readString();
@@ -325,7 +326,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLESint32();
-		shadow.planeList.clear();
 		Set *scene = NULL;
 		for (int j = 0; j < size; ++j) {
 			Common::String setName = savedState->readString();
