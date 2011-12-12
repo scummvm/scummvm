@@ -348,6 +348,7 @@
 	void useCardReader3();
 	void usePoolReader();
 	void useCooker();
+	void useWire();
 	bool defaultUseHandler(const char *id);
 	void openTVDoor();
 	void wearWatch();

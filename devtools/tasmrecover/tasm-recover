@@ -806,6 +806,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'usewall',
 	'usewinch',
 	'usewindow',
+	'usewire',
 	'viewfolder',
 	'vsync',
 	'volumeadjust',

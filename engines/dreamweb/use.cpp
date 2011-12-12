@@ -1110,6 +1110,33 @@ void DreamGenContext::useLighter() {
 	}
 }
 
+void DreamGenContext::useWire() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+		removeSetObject(51);
+		placeSetObject(52);
+		showPuzText(11, 300);
+		data.byte(kProgresspoints)++;
+		data.byte(kGetback) = 1;
+		return;
+	}
+
+	char axe[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
+		showPuzText(16, 300);
+		putBackObStuff();
+		return;
+	}
+
+	showPuzText(14, 300);
+	putBackObStuff();
+}
+
 void DreamGenContext::openTomb() {
 	data.byte(kProgresspoints)++;
 	showFirstUse();

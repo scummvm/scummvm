@@ -4135,55 +4135,6 @@ axeoncontrols:
 	putBackObStuff();
 }
 
-void DreamGenContext::useWire() {
-	STACK_CHECK;
-	_cmp(data.byte(kWithobject), 255);
-	if (!flags.z())
-		goto gotwirewith;
-	withWhat();
-	return;
-gotwirewith:
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'K';
-	ch = 'N';
-	dl = 'F';
-	dh = 'E';
-	compare();
-	if (flags.z())
-		goto wireknife;
-	al = data.byte(kWithobject);
-	ah = data.byte(kWithtype);
-	cl = 'A';
-	ch = 'X';
-	dl = 'E';
-	dh = 'D';
-	compare();
-	if (flags.z())
-		goto wireaxe;
-	cx = 300;
-	al = 14;
-	showPuzText();
-	putBackObStuff();
-	return;
-wireaxe:
-	cx = 300;
-	al = 16;
-	showPuzText();
-	putBackObStuff();
-	return;
-wireknife:
-	al = 51;
-	removeSetObject();
-	al = 52;
-	placeSetObject();
-	cx = 300;
-	al = 11;
-	showPuzText();
-	_inc(data.byte(kProgresspoints));
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::useHandle() {
 	STACK_CHECK;
 	al = 'C';
