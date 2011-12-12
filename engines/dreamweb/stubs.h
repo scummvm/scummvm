@@ -476,6 +476,7 @@
 	void afterIntroRoom();
 	void gettingShot();
 	void redrawMainScrn();
+	void selectSlot();
 	void selectSlot2();
 	void blank();
 	void allPointer();

@@ -663,6 +663,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'security',
 	'seecommandtail',
 	'selectlocation',
+	'selectslot',
 	'selectslot2',
 	'set16colpalette',
 	'setallchanges',

@@ -528,7 +528,6 @@ public:
 	void getKeyAndLogo();
 	void selectOb();
 	void receptionist();
-	void selectSlot();
 	void fadeUpMon();
 	void showDiaryPage();
 	void reExFromInv();

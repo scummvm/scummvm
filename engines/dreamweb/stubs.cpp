@@ -4476,4 +4476,39 @@ void DreamGenContext::entryAnims() {
 	}
 }
 
+void DreamGenContext::selectSlot() {
+	if (data.byte(kCommandtype) != 244) {
+		data.byte(kCommandtype) = 244;
+		commandOnly(45);
+	}
+
+	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
+		return; // noselslot
+	if (data.byte(kLoadingorsave) == 3)
+		data.byte(kLoadingorsave)--;
+
+	oldToNames();
+	uint16 y = data.word(kMousey) - (kOpsy + 4);
+	byte currentSlot = (byte)-1;
+
+	do {
+		currentSlot++;
+		y -= 11;
+	} while (y >= 11);
+
+	data.byte(kCurrentslot) = currentSlot;
+	delPointer();
+	showOpBox();
+	showSlots();
+	showNames();
+	if (data.byte(kLoadingorsave) == 1)
+		showLoadOps();
+	else
+		showSaveOps();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
 } // End of namespace DreamGen

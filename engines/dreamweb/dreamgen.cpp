@@ -4532,58 +4532,6 @@ void DreamGenContext::findText1() {
 	si = ax;
 }
 
-void DreamGenContext::selectSlot() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 244);
-	if (flags.z())
-		goto alreadysel;
-	data.byte(kCommandtype) = 244;
-	al = 45;
-	commandOnly();
-alreadysel:
-	ax = data.word(kMousebutton);
-	_cmp(ax, 1);
-	if (!flags.z())
-		return /* (noselslot) */;
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (noselslot) */;
-	_cmp(data.byte(kLoadingorsave), 3);
-	if (!flags.z())
-		goto notnocurs;
-	_dec(data.byte(kLoadingorsave));
-notnocurs:
-	oldToNames();
-	ax = data.word(kMousey);
-	_sub(ax, (52)+4);
-	cl = -1;
-getslotnum:
-	_inc(cl);
-	_sub(ax, 11);
-	if (!flags.c())
-		goto getslotnum;
-	data.byte(kCurrentslot) = cl;
-	delPointer();
-	showOpBox();
-	showSlots();
-	showNames();
-	_cmp(data.byte(kLoadingorsave), 1);
-	if (flags.z())
-		goto isloadmode;
-	showSaveOps();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-	return;
-isloadmode:
-	showLoadOps();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
 void DreamGenContext::showSlots() {
 	STACK_CHECK;
 	di = (60)+7;
