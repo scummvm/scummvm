@@ -1224,4 +1224,61 @@ void DreamGenContext::useDiary() {
 	workToScreenM();
 }
 
+void DreamGenContext::useControl() {
+	if (data.byte(kWithobject) == 255) {
+		withWhat();
+		return;
+	}
+
+	char key[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), key)) {	// Right key
+		playChannel1(16);
+		if (data.byte(kLocation) == 21) {	// Going down
+			showPuzText(3, 300);
+			data.byte(kNewlocation) = 30;
+		} else {
+			showPuzText(0, 300);
+			data.byte(kNewlocation) = 21;
+		}
+
+		data.byte(kCounttoclose) = 8;
+		data.byte(kCounttoopen) = 0;
+		data.word(kWatchingtime) = 80;
+		data.byte(kGetback) = 1;
+		return;
+	}
+
+	if (data.byte(kReallocation) == 21) {
+		char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
+		char   axe[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
+
+		if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+			// Jimmy controls
+			placeSetObject(50);
+			placeSetObject(51);
+			placeSetObject(26);
+			placeSetObject(30);
+			removeSetObject(16);
+			removeSetObject(17);
+			playChannel1(14);
+			showPuzText(10, 300);
+			data.byte(kProgresspoints)++;
+			data.byte(kGetback) = 1;
+		} else if (compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
+			// Axe on controls
+			showPuzText(16, 300);
+			data.byte(kProgresspoints)++;
+			putBackObStuff();
+		} else {
+			// Balls
+			showFirstUse();
+			putBackObStuff();
+		}
+	} else {
+		// Balls
+		showFirstUse();
+		putBackObStuff();
+	}
+}
+
 } // End of namespace DreamGen

@@ -593,7 +593,6 @@ public:
 	void updateSymbolBot();
 	void findPuzText();
 	void swapWithInv();
-	void useControl();
 	void adjustRight();
 	void transferToEx();
 	void updateSymbolTop();

@@ -349,6 +349,7 @@
 	void usePoolReader();
 	void useCooker();
 	void useWire();
+	void useControl();
 	bool defaultUseHandler(const char *id);
 	void openTVDoor();
 	void wearWatch();
