@@ -522,7 +522,6 @@ public:
 	void inToInv();
 	void adjustLeft();
 	void deleteExText();
-	void entryAnims();
 	void getFreeAd();
 	void removeObFromInv();
 	void heavy();

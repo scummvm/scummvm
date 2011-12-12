@@ -568,5 +568,6 @@
 	void autoAppear();
 	void quitKey();
 	void setupTimedUse();
+	void entryAnims();
 
 #endif

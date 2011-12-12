@@ -4349,17 +4349,95 @@ void DreamBase::entryTexts() {
 	case 31:
 		setupTimedUse(30, 60, 11, 68, 64);
 		break;
-	case 20:
+	case 20:	// Sarter's 2
 		setupTimedUse(31, 60, 11, 68, 64);
 		break;
-	case 24:
+	case 24:	// Eden's lobby
 		setupTimedUse(32, 60, 3, 68, 64);
 		break;
-	case 34:
+	case 34:	// Eden 2
 		setupTimedUse(33, 60, 3, 68, 64);
 		break;
 	default:
 		break;
+	}
+}
+
+void DreamGenContext::entryAnims() {
+	data.word(kReeltowatch) = 0xFFFF;
+	data.byte(kWatchmode) = (byte)-1;
+
+	switch (data.byte(kLocation)) {
+	case 33:	// beach
+		switchRyanOff();
+		data.word(kWatchingtime) = 76 * 2;
+		data.word(kReeltowatch) = 0;
+		data.word(kEndwatchreel) = 76;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		break;
+	case 44:	// Sparky's
+		al = 8;
+		resetLocation();
+		data.word(kWatchingtime) = 50*2;
+		data.word(kReeltowatch) = 247;
+		data.word(kEndwatchreel) = 297;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		switchRyanOff();
+		break;
+	case 22:	// lift
+		data.word(kWatchingtime) = 31 * 2;
+		data.word(kReeltowatch) = 0;
+		data.word(kEndwatchreel) = 30;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		switchRyanOff();
+		break;
+	case 26:	// under church
+		data.byte(kSymboltopnum) = 2;
+		data.byte(kSymbolbotnum) = 1;
+		break;
+	case 45:	// entered Dreamweb
+		data.byte(kKeeperflag) = 0;
+		data.word(kWatchingtime) = 296;
+		data.word(kReeltowatch) = 45;
+		data.word(kEndwatchreel) = 198;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		switchRyanOff();
+		break;
+	default:
+		if (data.byte(kReallocation) == 46 && data.byte(kSartaindead) == 1) {	// Crystal
+			removeFreeObject(0);
+		} else if (data.byte(kLocation) == 9 && checkIfPathIsOn(2) && data.byte(kAidedead) == 0) {
+			// Top of church
+			if (checkIfPathIsOn(3))
+				turnPathOn(2);
+
+			// Make doors open
+			removeSetObject(4);
+			placeSetObject(5);
+		} else if (data.byte(kLocation) == 47) {	// Dream centre
+			placeSetObject(4);
+			placeSetObject(5);
+		} else if (data.byte(kLocation) == 38) {	// Car park
+			data.word(kWatchingtime) = 57 * 2;
+			data.word(kReeltowatch) = 4;
+			data.word(kEndwatchreel) = 57;
+			data.byte(kWatchspeed) = 1;
+			data.byte(kSpeedcount) = 1;
+			switchRyanOff();
+		} else if (data.byte(kLocation) == 32) {	// Alley
+			data.word(kWatchingtime) = 66 * 2;
+			data.word(kReeltowatch) = 0;
+			data.word(kEndwatchreel) = 66;
+			data.byte(kWatchspeed) = 1;
+			data.byte(kSpeedcount) = 1;
+			switchRyanOff();
+		} else if (data.byte(kLocation) == 24) {	// Eden's again
+			turnAnyPathOn(2, data.byte(kRoomnum) - 1);
+		}
 	}
 }
 
