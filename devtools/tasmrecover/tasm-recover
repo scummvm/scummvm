@@ -133,9 +133,6 @@ p = parser(skip_binary_data = [
 	'currentirq',
 	'gameerror',
 	'howmuchalloc',
-	'secondcount',
-	'minutecount',
-	'hourcount',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

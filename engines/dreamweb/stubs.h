@@ -528,6 +528,7 @@
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();
+	void getTime();
 	void set16ColPalette();
 	void examineInventory();
 	void showSaveOps();
