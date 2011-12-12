@@ -978,7 +978,7 @@ void Screen_Eob::fadeTextColor(Palette *pal, int color1, int rate) {
 
 	for (bool loop = true; loop; ) {
 		loop = true;
-		uint32 end = _system->getMillis() + 1;
+		uint32 end = _system->getMillis() + _vm->tickLength();
 
 		loop = false;
 		for (int ii = 0; ii < 3; ii++) {
