@@ -362,9 +362,7 @@
 	void lastFolder();
 	void folderHints();
 	void folderExit();
-	uint8 getLocation(uint8 index);
 	void getLocation();
-	void setLocation(uint8 index);
 	void setLocation();
 	void loadTempText();
 	void loadTempText(const char *fileName);
@@ -569,8 +567,6 @@
 	void quitKey();
 	void setupTimedUse();
 	void entryAnims();
-	void getUnderCentre();
-	void putUnderCentre();
 	void triggerMessage(uint16 index);
 	void processTrigger();
 

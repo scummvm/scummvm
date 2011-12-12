@@ -321,7 +321,7 @@ void DreamGenContext::madmansTelly(ReelRoutine &routine) {
 void DreamGenContext::smokeBloke(ReelRoutine &routine) {
 	if (data.byte(kRockstardead) == 0) {
 		if (routine.b7 & 128)
-			setLocation(5);
+			DreamBase::setLocation(5);
 	}
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 100) {

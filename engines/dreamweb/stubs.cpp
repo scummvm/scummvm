@@ -862,16 +862,12 @@ void DreamGenContext::putUnderTimed() {
 	multiPut(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamGenContext::getUnderCentre() {
-	ds = data.word(kMapstore);
-	si = 0;
-	multiGet(ds.ptr(si, 0), 58, 72, 254, 110);
+void DreamBase::getUnderCentre() {
+	multiGet(mapStore(), 58, 72, 254, 110);
 }
 
-void DreamGenContext::putUnderCentre() {
-	ds = data.word(kMapstore);
-	si = 0;
-	multiPut(ds.ptr(si, 0), 58, 72, 254, 110);
+void DreamBase::putUnderCentre() {
+	multiPut(mapStore(), 58, 72, 254, 110);
 }
 
 void DreamGenContext::triggerMessage(uint16 index) {
@@ -890,13 +886,13 @@ void DreamGenContext::triggerMessage(uint16 index) {
 
 void DreamGenContext::processTrigger() {
 	if (data.byte(kLasttrigger) == '1') {
-		setLocation(8);
+		DreamBase::setLocation(8);
 		triggerMessage(45);
 	} else if (data.byte(kLasttrigger) == '2') {
-		setLocation(9);
+		DreamBase::setLocation(9);
 		triggerMessage(55);
 	} else if (data.byte(kLasttrigger) == '3') {
-		setLocation(2);
+		DreamBase::setLocation(2);
 		triggerMessage(59);
 	}
 }
@@ -2505,20 +2501,20 @@ void DreamGenContext::examIcon() {
 	showFrame(engine->icons2(), 254, 5, 3, 0);
 }
 
-uint8 DreamGenContext::getLocation(uint8 index) {
+uint8 DreamBase::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }
 
 void DreamGenContext::getLocation() {
-	al = getLocation(al);
+	al = DreamBase::getLocation(al);
 }
 
-void DreamGenContext::setLocation(uint8 index) {
+void DreamBase::setLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 1;
 }
 
 void DreamGenContext::setLocation() {
-	setLocation(al);
+	DreamBase::setLocation(al);
 }
 
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
@@ -2581,8 +2577,8 @@ void DreamGenContext::lastFolder() {
 
 void DreamGenContext::folderHints() {
 	if (data.byte(kFolderpage) == 5) {
-		if ((data.byte(kAidedead) != 1) && (getLocation(13) != 1)) {
-			setLocation(13);
+		if ((data.byte(kAidedead) != 1) && (DreamBase::getLocation(13) != 1)) {
+			DreamBase::setLocation(13);
 			showFolder();
 			const uint8 *string = getTextInFile1(30);
 			printDirect(string, 0, 86, 141, true);
@@ -2590,8 +2586,8 @@ void DreamGenContext::folderHints() {
 			hangOnP(200);
 		}
 	} else if (data.byte(kFolderpage) == 9) {
-		if (getLocation(7) != 1) {
-			setLocation(7);
+		if (DreamBase::getLocation(7) != 1) {
+			DreamBase::setLocation(7);
 			showFolder();
 			const uint8 *string = getTextInFile1(31);
 			printDirect(string, 0, 86, 141, true);
@@ -3353,8 +3349,8 @@ void DreamGenContext::obsThatDoThings() {
 	if (!compare(data.byte(kCommand), data.byte(kObjecttype), id))
 		return; // notlouiscard
 
-	if (getLocation(4) != 1) {
-		setLocation(4);
+	if (DreamBase::getLocation(4) != 1) {
+		DreamBase::setLocation(4);
 		lookAtCard();
 	}
 }
@@ -4306,7 +4302,7 @@ void DreamGenContext::autoAppear() {
 		// In alley
 		al = 5;
 		resetLocation();
-		setLocation(10);
+		DreamBase::setLocation(10);
 		data.byte(kDestpos) = 10;
 		return;
 	}
@@ -4337,7 +4333,7 @@ void DreamGenContext::autoAppear() {
 			data.byte(kNewsitem) = 3;
 			al = 6;
 			resetLocation();
-			setLocation(11);
+			DreamBase::setLocation(11);
 			data.byte(kDestpos) = 11;
 		} else {
 			if (data.byte(kReallocation) == 2 && data.byte(kRockstardead) != 0)

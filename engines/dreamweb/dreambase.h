@@ -184,6 +184,10 @@ public:
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
+	uint8 getLocation(uint8 index);
+	void setLocation(uint8 index);
+	void getUnderCentre();
+	void putUnderCentre();
 	uint8 *mapStore();
 	void panelToMap();
 	void mapToPanel();
