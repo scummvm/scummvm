@@ -1332,11 +1332,11 @@ void DreamGenContext::usePipe() {
 		return;
 	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
 		// Already full
-		showPuzText(14, 300);
-		showPuzText();
+		showPuzText(35, 300);
 		putBackObStuff();
 	} else {
-		showPuzText(35, 300);
+		showPuzText(14, 300);
+		showPuzText();
 		putBackObStuff();
 	}
 }
@@ -1385,8 +1385,6 @@ void DreamGenContext::useAxe() {
 
 	if (data.byte(kMapy) == 10) {
 		// Axe on door
-		al = 15;
-		cx = 300;
 		showPuzText(15, 300);
 		data.byte(kProgresspoints)++;
 		data.word(kWatchingtime) = 46*2;
