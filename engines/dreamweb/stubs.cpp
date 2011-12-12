@@ -4449,7 +4449,7 @@ void DreamGenContext::entryAnims() {
 	default:
 		if (data.byte(kReallocation) == 46 && data.byte(kSartaindead) == 1) {	// Crystal
 			removeFreeObject(0);
-		} else if (data.byte(kLocation) == 9 && checkIfPathIsOn(2) && data.byte(kAidedead) == 0) {
+		} else if (data.byte(kLocation) == 9 && !checkIfPathIsOn(2) && data.byte(kAidedead) != 0) {
 			// Top of church
 			if (checkIfPathIsOn(3))
 				turnPathOn(2);
