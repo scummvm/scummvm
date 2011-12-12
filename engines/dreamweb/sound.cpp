@@ -53,9 +53,6 @@ void DreamBase::volumeAdjust() {
 }
 
 void DreamBase::playChannel0(uint8 index, uint8 repeat) {
-	if (data.byte(kSoundint) == 255)
-		return;
-
 	data.byte(kCh0playing) = index;
 	Sound *soundBank;
 	if (index >= 12) {
@@ -80,8 +77,6 @@ void DreamGenContext::playChannel0() {
 }
 
 void DreamBase::playChannel1(uint8 index) {
-	if (data.byte(kSoundint) == 255)
-		return;
 	if (data.byte(kCh1playing) == 7)
 		return;
 

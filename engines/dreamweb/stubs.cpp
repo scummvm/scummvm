@@ -802,11 +802,7 @@ void DreamGenContext::hangOnCurs(uint16 frameCount) {
 }
 
 void DreamGenContext::seeCommandTail() {
-	data.word(kSoundbaseadd) = 0x220;
-	data.byte(kSoundint) = 5;
-	data.byte(kSounddmachannel) = 1;
 	data.byte(kBrightness) = 1;
-	data.word(kHowmuchalloc) = 0x9360;
 }
 
 void DreamGenContext::randomNumber() {
@@ -2175,8 +2171,6 @@ void DreamGenContext::readSetData() {
 	data.word(kPuzzletext) = standardLoad("DREAMWEB.T80");
 	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
 	useCharset1();
-	if (data.byte(kSoundint) == 0xff)
-		return;
 
 	//engine->openFile("DREAMWEB.VOL");
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
