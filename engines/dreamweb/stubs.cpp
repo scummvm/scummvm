@@ -862,6 +862,45 @@ void DreamGenContext::putUnderTimed() {
 	multiPut(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
+void DreamGenContext::getUnderCentre() {
+	ds = data.word(kMapstore);
+	si = 0;
+	multiGet(ds.ptr(si, 0), 58, 72, 254, 110);
+}
+
+void DreamGenContext::putUnderCentre() {
+	ds = data.word(kMapstore);
+	si = 0;
+	multiPut(ds.ptr(si, 0), 58, 72, 254, 110);
+}
+
+void DreamGenContext::triggerMessage(uint16 index) {
+	multiGet(mapStore(), 174, 153, 200, 63);
+	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
+	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+	uint16 y = 156;
+	printDirect(&string, 174, &y, 141, true);
+	hangOn(140);
+	workToScreenCPP();
+	hangOn(340);
+	multiPut(mapStore(), 174, 153, 200, 63);
+	workToScreenCPP();
+	data.byte(kLasttrigger) = 0;
+}
+
+void DreamGenContext::processTrigger() {
+	if (data.byte(kLasttrigger) == '1') {
+		setLocation(8);
+		triggerMessage(45);
+	} else if (data.byte(kLasttrigger) == '2') {
+		setLocation(9);
+		triggerMessage(55);
+	} else if (data.byte(kLasttrigger) == '3') {
+		setLocation(2);
+		triggerMessage(59);
+	}
+}
+
 void DreamGenContext::useTimedText() {
 	if (data.word(kTimecount) == 0)
 		return;

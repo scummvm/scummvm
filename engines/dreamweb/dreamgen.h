@@ -491,7 +491,6 @@ public:
 	void useOpenBox();
 	void clearBuffers();
 	void getObTextStart();
-	void putUnderCentre();
 	void checkObjectSize();
 	void findText1();
 	void isRyanHolding();
@@ -544,7 +543,6 @@ public:
 	void purgeALocation();
 	void notHeldError();
 	void getSetAd();
-	void getUnderCentre();
 	void showKeys();
 	void printmessage2();
 	void findOpenPos();
@@ -572,7 +570,6 @@ public:
 	void useOpened();
 	void signOn();
 	void locationPic();
-	void triggerMessage();
 	void swapWithOpen();
 	void dreamweb();
 	void checkInside();
@@ -603,7 +600,6 @@ public:
 	void getPersonText();
 	void parser();
 	void emergencyPurge();
-	void processTrigger();
 	void transferConToEx();
 	void adjustDown();
 	void withWhat();

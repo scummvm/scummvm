@@ -569,5 +569,9 @@
 	void quitKey();
 	void setupTimedUse();
 	void entryAnims();
+	void getUnderCentre();
+	void putUnderCentre();
+	void triggerMessage(uint16 index);
+	void processTrigger();
 
 #endif

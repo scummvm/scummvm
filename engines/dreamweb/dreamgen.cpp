@@ -2821,28 +2821,6 @@ _tmp2:
 	workToScreenM();
 }
 
-void DreamGenContext::getUnderCentre() {
-	STACK_CHECK;
-	di = 58;
-	bx = 72;
-	ds = data.word(kMapstore);
-	si = 0;
-	cl = 254;
-	ch = 110;
-	multiGet();
-}
-
-void DreamGenContext::putUnderCentre() {
-	STACK_CHECK;
-	di = 58;
-	bx = 72;
-	ds = data.word(kMapstore);
-	si = 0;
-	cl = 254;
-	ch = 110;
-	multiPut();
-}
-
 void DreamGenContext::locationPic() {
 	STACK_CHECK;
 	getDestInfo();
@@ -3542,68 +3520,6 @@ copyin1:
 		goto copyin1;
 finishpars:
 	di = offset_operand1;
-}
-
-void DreamGenContext::processTrigger() {
-	STACK_CHECK;
-	_cmp(data.byte(kLasttrigger), '1');
-	if (!flags.z())
-		goto notfirsttrigger;
-	al = 8;
-	setLocation();
-	al = 45;
-	triggerMessage();
-	return;
-notfirsttrigger:
-	_cmp(data.byte(kLasttrigger), '2');
-	if (!flags.z())
-		goto notsecondtrigger;
-	al = 9;
-	setLocation();
-	al = 55;
-	triggerMessage();
-	return;
-notsecondtrigger:
-	_cmp(data.byte(kLasttrigger), '3');
-	if (!flags.z())
-		return /* (notthirdtrigger) */;
-	al = 2;
-	setLocation();
-	al = 59;
-	triggerMessage();
-}
-
-void DreamGenContext::triggerMessage() {
-	STACK_CHECK;
-	push(ax);
-	di = 174;
-	bx = 153;
-	cl = 200;
-	ch = 63;
-	ds = data.word(kMapstore);
-	si = 0;
-	multiGet();
-	ax = pop();
-	findPuzText();
-	di = 174;
-	bx = 156;
-	dl = 141;
-	ah = 16;
-	printDirect();
-	cx = 140;
-	hangOn();
-	workToScreen();
-	cx = 340;
-	hangOn();
-	di = 174;
-	bx = 153;
-	cl = 200;
-	ch = 63;
-	ds = data.word(kMapstore);
-	si = 0;
-	multiPut();
-	workToScreen();
-	data.byte(kLasttrigger) = 0;
 }
 
 void DreamGenContext::runTap() {
