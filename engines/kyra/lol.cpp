@@ -390,8 +390,8 @@ Common::Error LoLEngine::init() {
 	_pageBuffer2 = new uint8[0xfa00];
 	memset(_pageBuffer2, 0, 0xfa00);
 
-	_itemsInPlay = new ItemInPlay[400];
-	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
+	_itemsInPlay = new LoLItem[400];
+	memset(_itemsInPlay, 0, sizeof(LoLItem) * 400);
 
 	_characters = new LoLCharacter[4];
 	memset(_characters, 0, sizeof(LoLCharacter) * 4);
@@ -404,8 +404,8 @@ Common::Error LoLEngine::init() {
 	_wllAutomapData = new uint8[80];
 	memset(_wllAutomapData, 0, 80);
 
-	_monsters = new LoLMonsterInPlay[30];
-	memset(_monsters, 0, 30 * sizeof(LoLMonsterInPlay));
+	_monsters = new LoLMonster[30];
+	memset(_monsters, 0, 30 * sizeof(LoLMonster));
 	_monsterProperties = new LoLMonsterProperty[5];
 	memset(_monsterProperties, 0, 5 * sizeof(LoLMonsterProperty));
 
@@ -821,7 +821,7 @@ void LoLEngine::startup() {
 	for (int i = 0; i < _numHealiShapes; i++)
 		_healiShapes[i] = _screen->makeShapeCopy(shp, i);
 
-	memset(_itemsInPlay, 0, 400 * sizeof(ItemInPlay));
+	memset(_itemsInPlay, 0, 400 * sizeof(LoLItem));
 	for (int i = 0; i < 400; i++)
 		_itemsInPlay[i].shpCurFrame_flg |= 0x8000;
 
@@ -1946,7 +1946,7 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 		removeInputTop();
 }
 
-void LoLEngine::giveItemToMonster(LoLMonsterInPlay *monster, Item item) {
+void LoLEngine::giveItemToMonster(LoLMonster *monster, Item item) {
 	uint16 *c = &monster->assignedItems;
 	while (*c)
 		c = &_itemsInPlay[*c].nextAssignedObject;
@@ -2397,7 +2397,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			int might = rollDice(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
 			int dmg = calcInflictableDamagePerItem(charNum, 0, might, 3, 2);
 
-			LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
+			LoLMonster *m = &_monsters[o & 0x7fff];
 			if (m->hitPoints <= dmg) {
 				increaseExperience(charNum, 2, m->hitPoints);
 				o = m->nextAssignedObject;
@@ -2476,7 +2476,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			while (o & 0x8000) {
 				static const uint8 fireballDamage[] = { 20, 40, 80, 100 };
 				int dmg = calcInflictableDamagePerItem(charNum, o, fireballDamage[spellLevel], 4, 1);
-				LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
+				LoLMonster *m = &_monsters[o & 0x7fff];
 				o = m->nextAssignedObject;
 				_envSfxUseQueue = true;
 				inflictDamage(m->id | 0x8000, dmg, charNum, 2, 4);
@@ -2641,7 +2641,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 				uint16 o = _levelBlockProperties[b1].assignedObjects;
 				while (o & 0x8000) {
 					uint16 o2 = o;
-					LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
+					LoLMonster *m = &_monsters[o & 0x7fff];
 					o = findObject(o)->nextAssignedObject;
 					int nX = 0;
 					int nY = 0;
@@ -2910,7 +2910,7 @@ int LoLEngine::processMagicVaelansCube() {
 
 	uint16 o = _levelBlockProperties[bl].assignedObjects;
 	while (o & 0x8000) {
-		LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonster *m = &_monsters[o & 0x7fff];
 		if (m->properties->flags & 0x1000) {
 			inflictDamage(o, 100, 0xffff, 0, 0x80);
 			v = 1;
@@ -3390,7 +3390,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 }
 
 int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags) {
-	LoLMonsterInPlay *m = 0;
+	LoLMonster *m = 0;
 	LoLCharacter *c = 0;
 
 	if (target & 0x8000) {
@@ -3607,7 +3607,7 @@ void LoLEngine::checkForPartyDeath() {
 	}
 }
 
-void LoLEngine::applyMonsterAttackSkill(LoLMonsterInPlay *monster, int16 target, int16 damage) {
+void LoLEngine::applyMonsterAttackSkill(LoLMonster *monster, int16 target, int16 damage) {
 	if (rollDice(1, 100) > monster->properties->attackSkillChance)
 		return;
 
@@ -3677,7 +3677,7 @@ void LoLEngine::applyMonsterAttackSkill(LoLMonsterInPlay *monster, int16 target,
 	}
 }
 
-void LoLEngine::applyMonsterDefenseSkill(LoLMonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
+void LoLEngine::applyMonsterDefenseSkill(LoLMonster *monster, int16 attacker, int flags, int skill, int damage) {
 	if (rollDice(1, 100) > monster->properties->defenseSkillChance)
 		return;
 
@@ -3936,7 +3936,7 @@ uint16 LoLEngine::getNearestMonsterFromCharacterForBlock(uint16 block, int charN
 	int o = _levelBlockProperties[block].assignedObjects;
 
 	while (o & 0x8000) {
-		LoLMonsterInPlay *m = &_monsters[o & 0x7fff];
+		LoLMonster *m = &_monsters[o & 0x7fff];
 		if (m->mode >= 13) {
 			o = m->nextAssignedObject;
 			continue;

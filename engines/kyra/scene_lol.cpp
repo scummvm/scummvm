@@ -105,16 +105,16 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].block], i);
+		assignBlockItem(&_levelBlockProperties[_itemsInPlay[i].block], i);
 
 		_levelBlockProperties[_itemsInPlay[i].block].direction = 5;
 		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
 
-void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
+void LoLEngine::assignBlockItem(LevelBlockProperty *l, uint16 item) {
 	uint16 *index = &l->assignedObjects;
-	ItemInPlay *tmp = 0;
+	LoLObject *tmp = 0;
 
 	while (*index & 0x8000) {
 		tmp = findObject(*index);
@@ -122,7 +122,7 @@ void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
 	}
 
 	tmp = findObject(item);
-	tmp->level = -1;
+	((LoLItem*)tmp)->level = -1;
 
 	uint16 ix = *index;
 
@@ -474,17 +474,17 @@ void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].direction = 5;
 		uint16 id = _levelBlockProperties[i].assignedObjects;
-		LoLMonsterInPlay *r = 0;
+		LoLObject *r = 0;
 
 		while (id & 0x8000) {
-			r = (LoLMonsterInPlay *)findObject(id);
+			r = findObject(id);
 			id = r->nextAssignedObject;
 		}
 
 		if (!id)
 			continue;
 
-		ItemInPlay *it = &_itemsInPlay[id];
+		LoLItem *it = &_itemsInPlay[id];
 		it->level = _currentLevel;
 		it->block = i;
 		if (r)
@@ -496,7 +496,7 @@ void LoLEngine::resetItems(int flag) {
 }
 
 void LoLEngine::disableMonsters() {
-	memset(_monsters, 0, 30 * sizeof(LoLMonsterInPlay));
+	memset(_monsters, 0, 30 * sizeof(LoLMonster));
 	for (int i = 0; i < 30; i++)
 		_monsters[i].mode = 0x10;
 }
