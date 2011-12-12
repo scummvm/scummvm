@@ -248,4 +248,8 @@ void DreamGenContext::showGroup() {
 	cx = 0;
 }
 
+void DreamGenContext::rollEndCredits2() {
+	rollEm();
+}
+
 } // End of namespace DreamGen

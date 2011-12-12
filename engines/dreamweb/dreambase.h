@@ -99,6 +99,7 @@ public:
 	void showNames();
 
 	// from sound.cpp
+	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);
 	void volumeAdjust();
 	void cancelCh0();
 	void cancelCh1();
@@ -113,6 +114,7 @@ public:
 	void showReelFrame(Reel *reel);
 	const Frame *getReelFrameAX(uint16 frame);
 	void soundOnReels(uint16 reelPointer);
+	void rollEndCredits();
 
 	// from stubs.cpp
 	void crosshair();
@@ -147,6 +149,7 @@ public:
 	void panelIcons1();
 	SetObject *getSetAd(uint8 index);
 	void *getAnyAd(uint8 *value1, uint8 *value2);
+	const uint8 *getTextInFile1(uint16 index);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

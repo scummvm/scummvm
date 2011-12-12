@@ -47,6 +47,7 @@ p = parser(skip_binary_data = [
 	'icongraphics0',
 	'icongraphics1',
 	'savenames',
+	'volumetabname',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
@@ -624,6 +625,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'restoreems',
 	'restorereels',
 	'rockstar',
+	'rollendcredits',
+	'rollendcredits2',
 	'roomname',
 	'runintroseq',
 	'saveems',

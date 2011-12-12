@@ -275,10 +275,6 @@
 	void monMessage(uint8 index);
 	void monMessage();
 	void netError();
-	void playChannel0();
-	void playChannel0(uint8 index, uint8 repeat) {
-		DreamBase::playChannel0(index, repeat);
-	}
 	void playChannel1();
 	void playChannel1(uint8 index) {
 		DreamBase::playChannel1(index);
@@ -369,7 +365,6 @@
 	void getLocation();
 	void setLocation(uint8 index);
 	void setLocation();
-	const uint8 *getTextInFile1(uint16 index);
 	void loadTempText();
 	void loadTempText(const char *fileName);
 	void loadTravelText();
@@ -528,6 +523,9 @@
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();
+	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
+		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
+	}
 	void getTime();
 	void set16ColPalette();
 	void examineInventory();
@@ -565,5 +563,6 @@
 	void showPuzText(uint16 command, uint16 count);
 	void showPuzText();
 	void monkSpeaking();
+	void rollEndCredits2();
 
 #endif

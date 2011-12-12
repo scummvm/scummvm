@@ -888,23 +888,9 @@ void DreamGenContext::useTimedText() {
 void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
-		push(ax);
-		push(bx);
-		push(cx);
-		push(dx);
-		dl = 'T';
-		dh = voiceIndex;
-		cl = 'T';
-		ah = 0;
-		al = textIndex;
-		loadSpeech();
-		if (data.byte(kSpeechloaded) == 1) {
+		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
 			playChannel1(50+12);
 		}
-		dx = pop();
-		cx = pop();
-		bx = pop();
-		ax = pop();
 
 		// FIXME: This fallthrough does not properly support subtitles+speech
 		// mode. The parameters to setuptimedtemp() are sometimes different
@@ -2163,6 +2149,7 @@ void DreamGenContext::readSetData() {
 	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
 	useCharset1();
 
+	// FIXME: Why is this commented out?
 	//engine->openFile("DREAMWEB.VOL");
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
 	//engine->readFromFile(volumeTab, 2048-256);
@@ -2495,9 +2482,10 @@ void DreamGenContext::setLocation() {
 	setLocation(al);
 }
 
-const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
-	uint16 offset = getSegment(data.word(kTextfile1)).word(index * 2) + kTextstart;
-	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
+const uint8 *DreamBase::getTextInFile1(uint16 index) {
+	SegmentRef text = getSegment(data.word(kTextfile1));
+	uint16 offset = text.word(index * 2) + kTextstart;
+	const uint8 *string = text.ptr(offset, 0);
 	return string;
 }
 
@@ -4238,12 +4226,7 @@ void DreamGenContext::monkSpeaking() {
 	hangOn(300);
 
 	for (int i = 40; i <= 48; i++) {
-		dl = 'T';
-		dh = 83;
-		cl = 'T';
-		ah = 0;
-		al = i;
-		loadSpeech();
+		loadSpeech('T', 83, 'T', i);
 
 		playChannel1(50 + 12);
 
