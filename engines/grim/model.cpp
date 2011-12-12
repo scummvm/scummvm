@@ -247,7 +247,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 }
 
 void Model::draw() const {
-	_rootHierNode->draw(NULL, NULL, NULL, NULL);
+	_rootHierNode->draw();
 }
 
 ModelNode *Model::copyHierarchy() {
@@ -549,18 +549,7 @@ void Mesh::changeMaterials(Material *materials[]) {
 		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
-void Mesh::draw(int *x1, int *y1, int *x2, int *y2) const {
-	if (x1) {
-		int winX1, winY1, winX2, winY2;
-		g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
-		if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
-			*x1 = MIN(*x1, winX1);
-			*y1 = MIN(*y1, winY1);
-			*x2 = MAX(*x2, winX2);
-			*y2 = MAX(*y2, winY2);
-		}
-	}
-
+void Mesh::draw() const {
 	if (_lightingMode == 0)
 		g_driver->disableLights();
 
@@ -569,6 +558,17 @@ void Mesh::draw(int *x1, int *y1, int *x2, int *y2) const {
 
 	if (_lightingMode == 0)
 		g_driver->enableLights();
+}
+
+void Mesh::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
+	int winX1, winY1, winX2, winY2;
+	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
+		*x1 = MIN(*x1, winX1);
+		*y1 = MIN(*y1, winY1);
+		*x2 = MAX(*x2, winX2);
+		*y2 = MAX(*y2, winY2);
+	}
 }
 
 /**
@@ -630,8 +630,58 @@ void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model:
 	_initialized = true;
 }
 
-void ModelNode::draw(int *x1, int *y1, int *x2, int *y2) const {
-	g_driver->drawHierachyNode(this, x1, y1, x2, y2);
+void ModelNode::draw() const {
+	translateViewpoint();
+	if (_hierVisible) {
+		g_driver->translateViewpointStart();
+		g_driver->translateViewpoint(_pivot);
+
+		if (!g_driver->isShadowModeActive()) {
+			Sprite *sprite = _sprite;
+			while (sprite) {
+				sprite->draw();
+				sprite = sprite->_next;
+			}
+		}
+
+		if (_mesh && _meshVisible) {
+			_mesh->draw();
+		}
+
+		g_driver->translateViewpointFinish();
+
+		if (_child) {
+			_child->draw();
+		}
+	}
+	translateViewpointBack();
+
+	if (_sibling) {
+		_sibling->draw();
+	}
+}
+
+void ModelNode::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
+	translateViewpoint();
+	if (_hierVisible) {
+		g_driver->translateViewpointStart();
+		g_driver->translateViewpoint(_pivot);
+
+		if (_mesh && _meshVisible) {
+			_mesh->getBoundingBox(x1, y1, x2, y2);
+		}
+
+		g_driver->translateViewpointFinish();
+
+		if (_child) {
+			_child->getBoundingBox(x1, y1, x2, y2);
+		}
+	}
+	translateViewpointBack();
+
+	if (_sibling) {
+		_sibling->getBoundingBox(x1, y1, x2, y2);
+	}
 }
 
 void ModelNode::addChild(ModelNode *child) {
@@ -709,6 +759,23 @@ void ModelNode::removeSprite(Sprite *sprite) {
 		prev = curr;
 		curr = curr->_next;
 	}
+}
+
+void ModelNode::translateViewpoint() const {
+	Math::Vector3d animPos = _pos + _animPos;
+	Math::Angle animPitch = _pitch + _animPitch;
+	Math::Angle animYaw = _yaw + _animYaw;
+	Math::Angle animRoll = _roll + _animRoll;
+	g_driver->translateViewpointStart();
+
+	g_driver->translateViewpoint(animPos);
+	g_driver->rotateViewpoint(animYaw, Math::Vector3d(0, 0, 1));
+	g_driver->rotateViewpoint(animPitch, Math::Vector3d(1, 0, 0));
+	g_driver->rotateViewpoint(animRoll, Math::Vector3d(0, 1, 0));
+}
+
+void ModelNode::translateViewpointBack() const {
+	g_driver->translateViewpointFinish();
 }
 
 } // end of namespace Grim

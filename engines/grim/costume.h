@@ -41,6 +41,7 @@ class CMap;
 class Model;
 class ModelNode;
 class TextSplitter;
+class ModelComponent;
 
 class Costume : public Object {
 public:
@@ -78,7 +79,7 @@ public:
 	void animate();
 	void setupTextures();
 	void draw();
-	void draw(int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
 					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
@@ -104,7 +105,7 @@ public:
 		virtual int update(float time) { return 0; }
 		virtual void animate() { }
 		virtual void setupTexture() { }
-		virtual void draw(int *x1, int *y1, int *x2, int *y2) { }
+		virtual void draw() { }
 		virtual void reset() { }
 		virtual void resetColormap() { }
 		virtual void saveState(SaveGame *) { }
@@ -130,6 +131,7 @@ public:
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
 	Component *loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent);
+	ModelComponent *getMainModelComponent() const;
 
 	Common::String _fname;
 	Costume *_prevCostume;

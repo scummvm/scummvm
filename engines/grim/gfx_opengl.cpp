@@ -398,10 +398,12 @@ void GfxOpenGL::drawShadowPlanes() {
 }
 
 void GfxOpenGL::setShadowMode() {
-
+	GfxBase::setShadowMode();
 }
 
 void GfxOpenGL::clearShadowMode() {
+	GfxBase::clearShadowMode();
+
 	glDisable(GL_STENCIL_TEST);
 	glDepthMask(GL_TRUE);
 }
@@ -487,55 +489,22 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glPopMatrix();
 }
 
-void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										const Math::Angle &yaw, const Math::Angle &roll) {
+void GfxOpenGL::translateViewpointStart() {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+}
 
-	glTranslatef(pos.x(), pos.y(), pos.z());
-	glRotatef(yaw.getDegrees(), 0, 0, 1);
-	glRotatef(pitch.getDegrees(), 1, 0, 0);
-	glRotatef(roll.getDegrees(), 0, 1, 0);
+void GfxOpenGL::translateViewpoint(const Math::Vector3d &vec) {
+	glTranslatef(vec.x(), vec.y(), vec.z());
+}
+
+void GfxOpenGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) {
+	glRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
 void GfxOpenGL::translateViewpointFinish() {
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-}
-
-void GfxOpenGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
-	Math::Vector3d animPos = node->_pos + node->_animPos;
-	Math::Angle animPitch = node->_pitch + node->_animPitch;
-	Math::Angle animYaw = node->_yaw + node->_animYaw;
-	Math::Angle animRoll = node->_roll + node->_animRoll;
-	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
-	if (node->_hierVisible) {
-		glPushMatrix();
-		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-
-		if (!_currentShadowArray) {
-			Sprite* sprite = node->_sprite;
-			while (sprite) {
-				sprite->draw();
-				sprite = sprite->_next;
-			}
-		}
-
-		if (node->_mesh && node->_meshVisible) {
-			node->_mesh->draw(x1, y1, x2, y2);
-		}
-
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-
-		if (node->_child) {
-			node->_child->draw(x1, y1, x2, y2);
-			glMatrixMode(GL_MODELVIEW);
-		}
-	}
-	translateViewpointFinish();
-
-	if (node->_sibling)
-		node->_sibling->draw(x1, y1, x2, y2);
 }
 
 void GfxOpenGL::enableLights() {

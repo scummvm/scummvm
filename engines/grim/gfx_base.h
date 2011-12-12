@@ -93,18 +93,19 @@ public:
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
 	virtual void drawShadowPlanes() = 0;
-	virtual void setShadowMode() = 0;
-	virtual void clearShadowMode() = 0;
+	virtual void setShadowMode();
+	virtual void clearShadowMode();
+	bool isShadowModeActive();
 	virtual void setShadowColor(byte r, byte g, byte b) = 0;
 	virtual void getShadowColor(byte *r, byte *g, byte *b) = 0;
 
 	virtual void set3DMode() = 0;
 
-	virtual void translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										 const Math::Angle &yaw, const Math::Angle &roll) = 0;
+	virtual void translateViewpointStart() = 0;
+	virtual void translateViewpoint(const Math::Vector3d &vec) = 0;
+	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
@@ -227,6 +228,7 @@ protected:
 	unsigned char _shadowColorB;
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
+	bool _shadowModeActive;
 };
 
 // Factory-like functions:

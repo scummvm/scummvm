@@ -28,8 +28,21 @@ namespace Grim {
 
 GfxBase::GfxBase() :
 	_renderBitmaps(true),
-	_renderZBitmaps(true) {
+	_renderZBitmaps(true),
+	_shadowModeActive(false) {
 
+}
+
+void GfxBase::setShadowMode() {
+	_shadowModeActive = true;
+}
+
+void GfxBase::clearShadowMode() {
+	_shadowModeActive = false;
+}
+
+bool GfxBase::isShadowModeActive() {
+	return _shadowModeActive;
 }
 
 void GfxBase::saveState(SaveGame *state) {

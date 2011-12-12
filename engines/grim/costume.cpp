@@ -148,13 +148,16 @@ public:
 	void resetColormap();
 	void setMatrix(Math::Matrix4 matrix) { _matrix = matrix; };
 	void restoreState(SaveGame *state);
+	void translateObject(bool reset);
+	static void translateObject(ModelNode *node, bool reset);
 	AnimManager *getAnimManager() const;
 	~ModelComponent();
 
 	ModelNode *getHierarchy() { return _hier; }
 	int getNumNodes() { return _obj->getNumNodes(); }
 	Model *getModel() { return _obj; }
-	void draw(int *x1, int *y1, int *x2, int *y2);
+	void draw();
+	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 
 protected:
 	Common::String _filename;
@@ -440,22 +443,25 @@ ModelComponent::~ModelComponent() {
 	delete[] _hier;
 }
 
-void translateObject(ModelNode *node, bool reset) {
+void ModelComponent::translateObject(ModelNode *node, bool reset) {
 	if (node->_parent)
 		translateObject(node->_parent, reset);
 
 	if (reset) {
-		g_driver->translateViewpointFinish();
+		node->translateViewpointBack();
 	} else {
-		Math::Vector3d animPos = node->_pos + node->_animPos;
-		Math::Angle animPitch = node->_pitch + node->_animPitch;
-		Math::Angle animYaw = node->_yaw + node->_animYaw;
-		Math::Angle animRoll = node->_roll + node->_animRoll;
-		g_driver->translateViewpointStart(animPos, animPitch, animYaw, animRoll);
+		node->translateViewpoint();
 	}
 }
 
-void ModelComponent::draw(int *x1, int *y1, int *x2, int *y2) {
+void ModelComponent::translateObject(bool res) {
+	ModelNode *node = _hier->_parent;
+	if (node) {
+		translateObject(node, res);
+	}
+}
+
+void ModelComponent::draw() {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
 
@@ -463,14 +469,28 @@ void ModelComponent::draw(int *x1, int *y1, int *x2, int *y2) {
 			return;
 	// Need to translate object to be in accordance
 	// with the setup of the parent
-	if (_hier->_parent)
-		translateObject(_hier->_parent, false);
+	translateObject(false);
 
-	_hier->draw(x1, y1, x2, y2);
+	_hier->draw();
 
 	// Need to un-translate when done
-	if (_hier->_parent)
-		translateObject(_hier->_parent, true);
+	translateObject(true);
+}
+
+void ModelComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
+	// If the object was drawn by being a component
+	// of it's parent then don't draw it
+
+	if (_parent && _parent->isVisible())
+		return;
+	// Need to translate object to be in accordance
+		// with the setup of the parent
+	translateObject(false);
+
+	_hier->getBoundingBox(x1, y1, x2, y2);
+
+	// Need to un-translate when done
+	translateObject(true);
 }
 
 MainModelComponent::MainModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
@@ -1347,26 +1367,28 @@ Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int pa
 	return NULL;
 }
 
-ModelNode *Costume::getModelNodes() {
+ModelComponent *Costume::getMainModelComponent() const {
 	for (int i = 0; i < _numComponents; i++) {
-		if (!_components[i])
-			continue;
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
 		if (FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L'))
-			return dynamic_cast<ModelComponent *>(_components[i])->getHierarchy();
+			return static_cast<ModelComponent *>(_components[i]);
+	}
+	return NULL;
+}
+
+ModelNode *Costume::getModelNodes() {
+	ModelComponent *comp = getMainModelComponent();
+	if (comp) {
+		return comp->getHierarchy();
 	}
 	return NULL;
 }
 
 Model *Costume::getModel() {
-	for (int i = 0; i < _numComponents; i++) {
-		if (!_components[i])
-			continue;
-		// Needs to handle Main Models (pigeons) and normal Models
-			// (when Manny climbs the rope)
-			if (FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L'))
-				return dynamic_cast<ModelComponent *>(_components[i])->getModel();
+	ModelComponent *comp = getMainModelComponent();
+	if (comp) {
+		return comp->getModel();
 	}
 	return NULL;
 }
@@ -1482,13 +1504,16 @@ void Costume::setupTextures() {
 void Costume::draw() {
 	for (int i = 0; i < _numComponents; i++)
 		if (_components[i])
-			_components[i]->draw(NULL, NULL, NULL, NULL);
+			_components[i]->draw();
 }
 
-void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
-	for (int i = 0; i < _numComponents; i++)
-		if (_components[i])
-			_components[i]->draw(x1, y1, x2, y2);
+void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
+	for (int i = 0; i < _numComponents; i++) {
+		ModelComponent *c = dynamic_cast<ModelComponent *>(_components[i]);
+		if (c) {
+			c->getBoundingBox(x1, y1, x2, y2);
+		}
+	}
 }
 
 int Costume::update(float time) {

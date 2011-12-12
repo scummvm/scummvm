@@ -433,10 +433,12 @@ void GfxTinyGL::drawShadowPlanes() {
 }
 
 void GfxTinyGL::setShadowMode() {
+	GfxBase::setShadowMode();
 	tglEnable(TGL_SHADOW_MODE);
 }
 
 void GfxTinyGL::clearShadowMode() {
+	GfxBase::clearShadowMode();
 	tglDisable(TGL_SHADOW_MODE);
 }
 
@@ -519,54 +521,21 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										const Math::Angle &yaw, const Math::Angle &roll) {
+void GfxTinyGL::translateViewpointStart() {
+	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
+}
 
-	tglTranslatef(pos.x(), pos.y(), pos.z());
-	tglRotatef(yaw.getDegrees(), 0, 0, 1);
-	tglRotatef(pitch.getDegrees(), 1, 0, 0);
-	tglRotatef(roll.getDegrees(), 0, 1, 0);
+void GfxTinyGL::translateViewpoint(const Math::Vector3d &vec) {
+	tglTranslatef(vec.x(), vec.y(), vec.z());
+}
+
+void GfxTinyGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) {
+	tglRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
 void GfxTinyGL::translateViewpointFinish() {
 	tglPopMatrix();
-}
-
-void GfxTinyGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
-	Math::Vector3d animPos = node->_pos + node->_animPos;
-	Math::Angle animPitch = node->_pitch + node->_animPitch;
-	Math::Angle animYaw = node->_yaw + node->_animYaw;
-	Math::Angle animRoll = node->_roll + node->_animRoll;
-	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
-	if (node->_hierVisible) {
-		tglPushMatrix();
-		tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-
-		if (!_currentShadowArray) {
-			Sprite* sprite = node->_sprite;
-			while (sprite) {
-				sprite->draw();
-				sprite = sprite->_next;
-			}
-		}
-
-		if (node->_mesh && node->_meshVisible) {
-			node->_mesh->draw(x1, y1, x2, y2);
-		}
-
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPopMatrix();
-
-		if (node->_child) {
-			node->_child->draw(x1, y1, x2, y2);
-			tglMatrixMode(TGL_MODELVIEW);
-		}
-	}
-	translateViewpointFinish();
-
-	if (node->_sibling)
-		node->_sibling->draw(x1, y1, x2, y2);
 }
 
 void GfxTinyGL::enableLights() {

@@ -1165,20 +1165,6 @@ void Actor::draw() {
 		}
 	}
 
-	int x1, y1, x2, y2;
-	int *px1, *py1, *px2, *py2;
-	if (_mustPlaceText) {
-		px1 = &x1;
-		py1 = &y1;
-		px2 = &x2;
-		py2 = &y2;
-
-		x1 = y1 = 1000;
-		x2 = y2 = -1000;
-	} else {
-		px1 = py1 = px2 = py2 = NULL;
-	}
-
 	if (!_costumeStack.empty()) {
 		Costume *costume = _costumeStack.back();
 		for (int l = 0; l < 5; l++) {
@@ -1196,11 +1182,20 @@ void Actor::draw() {
 		}
 		// normal draw actor
 		g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-		costume->draw(px1, py1, px2, py2);
+		costume->draw();
 		g_driver->finishActorDraw();
 	}
 
 	if (_mustPlaceText) {
+		int x1, y1, x2, y2;
+		x1 = y1 = 1000;
+		x2 = y2 = -1000;
+		if (!_costumeStack.empty()) {
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
+			g_driver->finishActorDraw();
+		}
+
 		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
 			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
