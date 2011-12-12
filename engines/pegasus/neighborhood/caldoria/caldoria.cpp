@@ -267,6 +267,19 @@ void Caldoria::flushGameState() {
 	GameState.setCaldoriaFuseTimeLimit(_utilityFuse.getTimeRemaining());
 }
 
+class AIBombActiveCondition : public AICondition {
+public:
+	AIBombActiveCondition() {}
+
+	bool fireCondition();
+};
+
+// Return true if player is on 53 east and Sinclair is shot.
+bool AIBombActiveCondition::fireCondition() {
+	return GameState.getCurrentRoom() == kCaldoria53 && GameState.getCurrentDirection() == kEast &&
+			GameState.getCaldoriaSinclairShot();
+}
+
 void Caldoria::setUpAIRules() {
 	Neighborhood::setUpAIRules();
 
@@ -278,13 +291,10 @@ void Caldoria::setUpAIRules() {
 			AIRule *rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
 
-#if 0
-			// TODO
 			messageAction = new AIPlayMessageAction("Images/AI/Caldoria/X56EH1", false);
-			AIBombActiveCondition *activeCondition = new AIBombActiveCondition;
+			AIBombActiveCondition *activeCondition = new AIBombActiveCondition();
 			rule = new AIRule(activeCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-#endif
 		} else {
 			AIPlayMessageAction *messageAction = new AIPlayMessageAction("Images/AI/Caldoria/XAB2", false);
 			AITimerCondition *timerCondition = new AITimerCondition(kLateWarning3TimeLimit, 1, true);
