@@ -26,15 +26,24 @@
 
 #ifdef MACOSX
 
-// HACK to disable deprecated warnings under Mac OS X 10.5.
-// Apple depracted the AUGraphNewNode & AUGraphGetNodeInfo APIs
-// in favor of the new AUGraphAddNode & AUGraphNodeInfo APIs.
-// While it would be trivial to switch to those, this would break
-// binary compatibility with all pre-10.5 systems, so we don't want
-// to do that just now. Maybe when 10.6 comes... :)
+
+// HACK to disable deprecated warnings under Mac OS X 10.5. Apple deprecated the
+// AUGraphNewNode & AUGraphGetNodeInfo APIs in favor of the new AUGraphAddNode &
+// AUGraphNodeInfo APIs. While it is easy to switch to those, it breaks
+// compatibility with all pre-10.5 systems.
+// If you want to retain compatibility with old systems, enable the following
+// switch. But Apple will eventually remove these APIs, at which point the
+// switch needs to be disabled.
+//
+// Also note that only the new API is available on the iPhone!
+#define USE_DEPRECATED_COREAUDIO_API
+
+
+#ifdef USE_DEPRECATED_COREAUDIO_API
 #include <AvailabilityMacros.h>
 #undef DEPRECATED_ATTRIBUTE
 #define DEPRECATED_ATTRIBUTE
+#endif
 
 
 #include "common/config-manager.h"
@@ -105,7 +114,11 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
+#ifdef USE_DEPRECATED_COREAUDIO_API
 	ComponentDescription desc;
+#else
+	AudioComponentDescription desc;
+#endif
 
 	// The default output device
 	desc.componentType = kAudioUnitType_Output;
@@ -113,13 +126,21 @@ int MidiDriver_CORE::open() {
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
+#ifdef USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
+#else
+	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &outputNode));
+#endif
 
 	// The built-in default (softsynth) music device
 	desc.componentType = kAudioUnitType_MusicDevice;
 	desc.componentSubType = kAudioUnitSubType_DLSSynth;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+#ifdef USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
+#else
+	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &synthNode));
+#endif
 
 	// Connect the softsynth to the default output
 	RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
@@ -129,8 +150,11 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(AUGraphInitialize(_auGraph));
 
 	// Get the music device from the graph.
+#ifdef USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
-
+#else
+	RequireNoErr(AUGraphNodeInfo(_auGraph, synthNode, NULL, &_synth));
+#endif
 
 	// Load custom soundfont, if specified
 	if (ConfMan.hasKey("soundfont")) {
