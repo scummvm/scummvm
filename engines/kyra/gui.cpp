@@ -46,8 +46,8 @@ GUI::~GUI() {
 	}
 }
 
-void GUI::updateSaveFileList(bool excludeQuickSaves) {
-	Common::String pattern = _vm->_targetName + ".???";
+void GUI::updateSaveFileList(Common::String targetName, bool excludeQuickSaves) {
+	Common::String pattern = targetName + ".???";
 	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
 
@@ -93,8 +93,8 @@ int GUI::getNextSavegameSlot() {
 	return 0;
 }
 
-void GUI::updateSaveSlotsList() {
-	if (!_saveSlotsListUpdateNeeded)
+void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
+	if (!_saveSlotsListUpdateNeeded && !force)
 		return;
 
 	_saveSlotsListUpdateNeeded = false;
@@ -105,7 +105,7 @@ void GUI::updateSaveSlotsList() {
 		delete[] _savegameList;
 	}
 
-	updateSaveFileList(true);
+	updateSaveFileList(targetName, true);
 	int numSaves = _savegameListSize = _saveSlots.size();
 	bool allowEmptySlots = (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2);
 
@@ -120,7 +120,7 @@ void GUI::updateSaveSlotsList() {
 		memset(_savegameList, 0, _savegameListSize * sizeof(char*));
 
 		for (int i = 0; i < numSaves; i++) {
-			in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i]), header);
+			in = _vm->openSaveForReading(_vm->getSavegameFilename(targetName, _saveSlots[i]).c_str(), header, targetName == _vm->_targetName);
 			char **listEntry = &_savegameList[allowEmptySlots? _saveSlots[i] : i];
 			if (in) {
 				*listEntry = new char[header.description.size() + 1];

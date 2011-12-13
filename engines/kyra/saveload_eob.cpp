@@ -32,23 +32,19 @@
 namespace Kyra {
 
 Common::Error EoBCoreEngine::loadGameState(int slot) {
-	const char *fileName = 0;
-
-	if (slot == -1) {
-		_savegameFilename = /*_targetName + */Common::String("eob.fin");
-		fileName = _savegameFilename.c_str();
-	} else {
-		fileName = getSavegameFilename(slot);
-	}
+	// Special slot id -1 for EOB1 party transfer
+	const char *fileName = (slot == -1) ? _savegameFilename.c_str() : getSavegameFilename(slot);
 
 	SaveHeader header;
-	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
+	Common::InSaveFile *saveFile = openSaveForReading(fileName, header, (slot != -1));
 	if (!saveFile)
 		return Common::Error(Common::kReadingFailed);
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
 	_loading = true;
-	_screen->fadeToBlack(10);
+
+	if (slot != -1)
+		_screen->fadeToBlack(10);
 
 	for (int i = 0; i < 6; i++) {
 		EoBCharacter *c = &_characters[i];
@@ -77,6 +73,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		c->cClass = in.readByte();
 		c->alignment = in.readByte();
 		c->portrait = in.readSByte();
+		if (slot == -1 && c->portrait < 0)
+			c->portrait += 43;
 		c->food = in.readByte();
 		in.read(c->level, 3);
 		for (int ii = 0; ii < 3; ii++)
@@ -119,6 +117,10 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
 	}
 	_screen->_curPage = 0;
+
+	// No more data required for party transfer
+	if (slot == -1)
+		return Common::kNoError;
 
 	_currentLevel = in.readByte();
 	_currentSub = in.readSByte();
@@ -303,6 +305,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	Common::String saveNameTmp;
 	const char *fileName = 0;
 
+	// Special slot id -1 to create final save for party transfer
 	if (slot == -1) {
 		_savegameFilename = _targetName + Common::String(".fin");
 		fileName = _savegameFilename.c_str();

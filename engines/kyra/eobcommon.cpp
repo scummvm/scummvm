@@ -167,6 +167,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = _wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size =
 		_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = _buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
+	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
 	_npcPreset = 0;
 	_chargenStatStrings	= _chargenRaceSexStrings = _chargenClassStrings = _chargenAlignmentStrings = _pryDoorStrings = _warningStrings = _ripItemStrings =
@@ -463,7 +464,7 @@ Common::Error EoBCoreEngine::go() {
 				startupNew();
 		} else if (action == -3) {
 			// transfer party
-			repeatLoop = transferParty();
+			repeatLoop = startPartyTransfer();
 			if (repeatLoop && !shouldQuit())
 				startupNew();
 		}

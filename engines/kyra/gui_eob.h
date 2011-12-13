@@ -69,6 +69,10 @@ public:
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
+	// Transfer party
+	Common::String transferTargetMenu(Common::Array<Common::String> &targets);
+	Common::String transferFileMenu(Common::String &target);
+
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst);
 

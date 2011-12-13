@@ -122,7 +122,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
 }
 
-Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
+Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header, bool checkID) {
 	Common::SeekableReadStream *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
@@ -142,7 +142,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 
 	if (!header.originalSave) {
 		if (!header.oldHeader) {
-			if (header.gameID != _flags.gameID) {
+			if (header.gameID != _flags.gameID && checkID) {
 				warning("Trying to load game state from other game (save game: %u, running game: %u)", header.gameID, _flags.gameID);
 				delete in;
 				return 0;

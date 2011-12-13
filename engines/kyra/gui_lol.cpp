@@ -2228,7 +2228,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
 		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
-			updateSaveSlotsList();
+			updateSaveSlotsList(_vm->_targetName);
 			setupSaveMenuSlots(*_currentMenu, 4);
 		}
 
