@@ -488,7 +488,6 @@ public:
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
-	void findText1();
 	void isRyanHolding();
 	void showSlots();
 	void useCashCard();
@@ -507,7 +506,6 @@ public:
 	void startTalk();
 	void getAnyAd();
 	void reminders();
-	void dumpDiaryKeys();
 	void checkForExit();
 	void lookInInterface();
 	void inToInv();

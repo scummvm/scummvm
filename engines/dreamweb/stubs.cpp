@@ -4599,4 +4599,32 @@ void DreamGenContext::showDiaryPage() {
 	useCharset1();
 }
 
+void DreamGenContext::dumpDiaryKeys() {
+	if (data.byte(kPresscount) == 1) {
+		if (data.byte(kSartaindead) != 1 && data.byte(kDiarypage) == 5 && DreamBase::getLocation(6) != 1) {
+			// Add Sartain Industries note
+			DreamBase::setLocation(6);
+			delPointer();
+			uint16 offset = kTextstart + getSegment(data.word(kTextfile1)).word(12 * 2);
+			const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
+			uint16 y = 106;
+			printDirect(&string, 70, &y, 241, 241 & 1);
+			workToScreenM();
+			hangOnP(200);
+			createPanel();
+			showIcon();
+			showDiary();
+			showDiaryPage();
+			workToScreenM();
+			showPointer();
+			return;
+		} else {
+			multiDump(kDiaryx + 48, kDiaryy + 15, 200, 16);
+		}
+	}
+
+	multiDump(kDiaryx + 94, kDiaryy + 97, 16, 16);
+	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
+}
+
 } // End of namespace DreamGen

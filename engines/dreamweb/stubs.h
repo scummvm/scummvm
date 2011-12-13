@@ -582,5 +582,6 @@
 	void updateSymbolTop();
 	void updateSymbolBot();
 	void showDiaryPage();
+	void dumpDiaryKeys();
 
 #endif
