@@ -118,9 +118,9 @@ protected:
 	// Since ScummVM's savegame indices aren't, we re-index them.
 	// The integers stored in _saveSlots are ScummVM savegame indices.
 	Common::Array<int> _saveSlots;
-	void updateSaveFileList(bool excludeQuickSaves = false);
+	void updateSaveFileList(Common::String targetName, bool excludeQuickSaves = false);
 	int getNextSavegameSlot();
-	void updateSaveSlotsList();
+	void updateSaveSlotsList(Common::String targetName, bool force = false);
 
 	virtual void sortSaveSlots();
 

@@ -594,7 +594,7 @@ int GUI_v2::cancelLoadMenu(Button *caller) {
 }
 
 int GUI_v2::saveMenu(Button *caller) {
-	updateSaveFileList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(caller);
 
@@ -690,7 +690,7 @@ int GUI_v2::cancelSaveMenu(Button *caller) {
 }
 
 int GUI_v2::deleteMenu(Button *caller) {
-	updateSaveFileList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(caller);
 	if (_saveSlots.size() < 2) {

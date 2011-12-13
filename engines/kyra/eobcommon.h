@@ -245,6 +245,7 @@ friend class GUI_EoB;
 friend class EoBInfProcessor;
 friend class DarkmoonSequenceHelper;
 friend class CharacterGenerator;
+friend class TransferPartyWiz;
 public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	virtual ~EoBCoreEngine();
@@ -318,7 +319,7 @@ protected:
 
 	// Character generation / party transfer
 	bool startCharacterGeneration();
-	bool transferParty();
+	bool startPartyTransfer();
 
 	uint8 **_faceShapes;
 
@@ -1125,6 +1126,7 @@ protected:
 	const char *_menuOkString;
 
 	const char *const *_menuStringsTransfer;
+	const char *const *_transferStringsScummVM;
 	const char *const *_menuStringsSpec;
 	const char *const *_menuStringsSpellNo;
 	const char *const *_menuYesNoStrings;

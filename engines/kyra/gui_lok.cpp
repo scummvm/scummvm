@@ -596,7 +596,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 }
 
 int GUI_LoK::saveGameMenu(Button *button) {
-	updateSaveFileList();
+	updateSaveFileList(_vm->_targetName);
 
 	updateMenuButton(button);
 	_menu[2].item[5].enabled = true;
@@ -636,7 +636,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 }
 
 int GUI_LoK::loadGameMenu(Button *button) {
-	updateSaveFileList();
+	updateSaveFileList(_vm->_targetName);
 
 	if (_vm->_menuDirectlyToLoad) {
 		_menu[2].item[5].enabled = false;

@@ -26,7 +26,12 @@
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 
+#include "common/savefile.h"
+#include "common/str-array.h"
+
 namespace Kyra {
+
+// Character Generator
 
 class CharacterGenerator {
 public:
@@ -191,7 +196,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 				loop = false;
 			} else {
 				_activeBox = inputFlag;
-				inputFlag = 43;
+				inputFlag = _vm->_keyMap[Common::KEYCODE_RETURN];
 			}
 		}
 
@@ -1426,13 +1431,157 @@ const int16 CharacterGenerator::_raceModifiers[] = {
 	0, 0, 0, 0,	1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, 0, 0
 };
 
+// Transfer Party
+
+class TransferPartyWiz {
+public:
+	TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen);
+	~TransferPartyWiz();
+
+	bool start();
+
+private:
+	bool selectAndLoadTransferFile();
+	Common::String transferFileDialogue();
+
+	void convertStats();
+
+	EoBCoreEngine *_vm;
+	Screen_EoB *_screen;
+};
+
+TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+}
+
+TransferPartyWiz::~TransferPartyWiz() {
+
+}
+
+bool TransferPartyWiz::start() {
+	_screen->copyPage(0, 12);
+
+	if (!selectAndLoadTransferFile())
+		return false;
+
+	convertStats();
+
+	return true;
+}
+
+bool TransferPartyWiz::selectAndLoadTransferFile() {
+	for (int numLoops = 1; numLoops; numLoops--)  {
+		_screen->copyPage(12, 0);
+		_vm->_savegameFilename = transferFileDialogue();
+		if (_vm->_savegameFilename.empty()) {
+			if (_vm->_gui->confirmDialogue2(15, 68, 1))
+				numLoops++;
+		}
+	}
+
+	if (_vm->_savegameFilename.equals(_vm->_saveLoadStrings[1]))
+		return false;
+
+	if (_vm->loadGameState(-1).getCode() != Common::kNoError)
+		return false;
+
+	return true;
+}
+
+Common::String TransferPartyWiz::transferFileDialogue() {
+	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles("*.*");
+	Common::StringArray targets;
+	Common::String tfile;
+
+	KyraEngine_v1::SaveHeader header;
+	Common::InSaveFile *in;
+
+	for (Common::StringArray::iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
+		if (!(in = _vm->_saveFileMan->openForLoading(*i)))
+			continue;
+
+		if (KyraEngine_v1::readSaveHeader(in, false, header)) {
+			delete in;
+			continue;
+		}
+
+		delete in;
+
+		if (header.gameID != GI_EOB1)
+			continue;
+
+		i->insertChar('\0', i->size() - 4);
+
+		Common::StringArray::iterator ii = targets.begin();
+		for (; ii != targets.end(); ++ii) {
+			if (!i->compareToIgnoreCase(*ii))
+				break;
+		}
+
+		if (ii == targets.end())
+			targets.push_back(*i);
+	}
+
+	if (targets.begin() == targets.end())
+		return tfile;
+
+	Common::String target = _vm->_gui->transferTargetMenu(targets);
+	_screen->copyPage(12, 0);
+
+	if (target.equals(_vm->_saveLoadStrings[1]))
+		return target;
+
+	tfile = target + ".fin";
+	in = _vm->_saveFileMan->openForLoading(tfile);
+	if (in) {
+		delete in;
+		if (_vm->_gui->confirmDialogue2(15, -2, 1))
+			return tfile;
+	}
+
+	_screen->copyPage(12, 0);
+
+	tfile = _vm->_gui->transferFileMenu(target);
+	_screen->copyPage(12, 0);
+
+	return tfile;
+}
+
+void TransferPartyWiz::convertStats() {
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_vm->_characters[i];
+		uint32 aflags = 0;
+
+		for (int ii = 0; ii < 25; ii++) {
+			if (c->mageSpellsAvailableFlags & (1 << ii)) {
+				int8 f = (int8)_vm->_transferConvertTable[i + 1] - 1;
+				if (f != -1)
+					aflags |= (1 << f);
+			}
+		}
+		c->mageSpellsAvailableFlags = aflags;
+
+		c->flags &= 1;
+		c->hitPointsCur = c->hitPointsMax;
+		c->food = 100;
+
+		for (int ii = 0; ii < 3; ii++) {
+			int t = _vm->getCharacterClassType(c->cClass, ii);
+			if (t == -1)
+				continue;
+			if (c->experience[ii] < _vm->_transferExpTable[t])
+				c->experience[ii] = _vm->_transferExpTable[t];
+		}
+	}
+}
+
+// Start functions
+
 bool EoBCoreEngine::startCharacterGeneration() {
 	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
 }
 
-bool EoBCoreEngine::transferParty() {
-
-	return false;
+bool EoBCoreEngine::startPartyTransfer() {
+	return TransferPartyWiz(this, _screen).start();
 }
 
 }	// End of namespace Kyra

@@ -2220,6 +2220,7 @@ bool GUI_EoB::runLoadMenu(int x, int y) {
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		updateSaveSlotsList(_vm->_targetName);
 		int slot = selectSaveSlotDialogue(x, y, 1);
 		if (slot > 5) {
 			runLoop = result = false;
@@ -2495,6 +2496,66 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
+Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &targets) {
+	_savegameListSize = targets.size();
+	if (_savegameList) {
+		for (int i = 0; i < _savegameListSize; i++)
+			delete[] _savegameList[i];
+		delete[] _savegameList;
+	}
+	_savegameList = new char*[_savegameListSize];
+	memset(_savegameList, 0, _savegameListSize * sizeof(char*));
+
+	Common::StringArray::iterator ii = targets.begin();
+	for (int i = 0; i < _savegameListSize; ++i) {
+		_savegameList[i] = new char[(*ii).size() + 1];
+		strcpy(_savegameList[i], (*ii++).c_str());
+	}
+
+	const ScreenDim *dm = _screen->getScreenDim(11);
+	int xo = dm->sx;
+	int yo = dm->sy;
+	_screen->modifyScreenDim(11, dm->sx + 9, dm->sy + 14, dm->w, dm->h);
+
+	int slot = 0;
+	do {
+		slot = selectSaveSlotDialogue(72, 14, 2);
+		if (slot == 6)
+			break;
+	} while (_saveSlotIdTemp[slot] == -1);
+
+	_screen->copyRegion(72, 14, 72, 14, 176, 144, 12, 0, Screen::CR_NO_P_CHECK);
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+
+	return (slot < 6) ? _savegameList[_savegameOffset + slot] : _vm->_saveLoadStrings[1];
+}
+
+Common::String GUI_EoB::transferFileMenu(Common::String &target) {
+	updateSaveSlotsList(target, true);
+	_saveSlotsListUpdateNeeded = true;
+
+	const ScreenDim *dm = _screen->getScreenDim(11);
+	int xo = dm->sx;
+	int yo = dm->sy;
+	_screen->modifyScreenDim(11, dm->sx + 9, dm->sy + 14, dm->w, dm->h);
+
+	int slot = 0;
+	do {
+		slot = selectSaveSlotDialogue(72, 14, 4);
+		if (slot < 6) {
+			if (_saveSlotIdTemp[slot] == -1)
+				messageDialogue(11, 65, 6);
+			else {
+				_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+				return _vm->getSavegameFilename(target, _saveSlotIdTemp[slot]);
+			}
+		}
+	} while (_saveSlotIdTemp[slot] == -1);
+
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+	return _vm->_saveLoadStrings[1];
+}
+
 void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screenPal = new uint8[768];
 	_screen->getRealPalette(0, screenPal);
@@ -2528,6 +2589,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		updateSaveSlotsList(_vm->_targetName);
 		int slot = selectSaveSlotDialogue(x, y, 0);
 		if (slot > 5) {
 			runLoop = result = false;
@@ -2575,16 +2637,14 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 }
 
 int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
-	assert (id < 2);
-
 	_saveSlotX = _saveSlotY = 0;
 	_screen->setCurPage(2);
 
-	updateSaveSlotsList();
 	_savegameOffset = 0;
 
 	drawMenuButtonBox(0, 0, 176, 144, false, false);
-	_screen->printShadedText(_vm->_saveLoadStrings[2 + id], 52, 5, 15, 0);
+	const char *title = (id < 2) ? _vm->_saveLoadStrings[2 + id] : _vm->_transferStringsScummVM[id - 1];
+	_screen->printShadedText(title, 52, 5, 15, 0);
 
 	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->setCurPage(0);
@@ -3806,8 +3866,10 @@ const char *GUI_EoB::getMenuString(int id) {
 
 	if (id >= 69)
 		return _vm->_menuStringsTransfer[id - 69];
-	else if (id >= 67)
-		return _vm->_menuStringsDefeat[id - 67];
+	else  if (id == 68)
+		return _vm->_transferStringsScummVM[0];
+	else if (id == 67)
+		return _vm->_menuStringsDefeat[0];
 	else if (id == 66)
 		return _vm->_errorSlotEmptyString;
 	else if (id == 65)
@@ -3846,6 +3908,8 @@ const char *GUI_EoB::getMenuString(int id) {
 		return _vm->_menuStringsSaveLoad[id - 9];
 	else if (id >= 1)
 		return _vm->_menuStringsMain[id - 1];
+	else if (id < 0)
+		return _vm->_transferStringsScummVM[-id];
 	return empty;
 }
 

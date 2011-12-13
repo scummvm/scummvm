@@ -424,7 +424,7 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc) { return saveGameStateIntern(slot, desc.c_str(), 0); }
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
-	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
+	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header, bool checkID = true);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
 
 	// TODO: Consider moving this to Screen

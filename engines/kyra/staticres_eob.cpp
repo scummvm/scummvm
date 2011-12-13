@@ -473,15 +473,8 @@ void EoBCoreEngine::initStaticResource() {
 		0
 	};
 
-	static const char *errorSlotNoNameString[3] = {
-		" You must specify\r a name for your\r save game!",
-		" Spielstände müssen\r einen Namen haben!",
-		0
-	};
-
 	_saveLoadStrings = saveLoadStrings[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotEmptyString = errorSlotEmptyString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
-	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_menuOkString = "OK";
 }
 
@@ -1107,6 +1100,14 @@ void EoBEngine::initStaticResource() {
 		p->tuResist = (int8)*ps++;
 		p->dmgModifierEvade = *ps++;
 	}
+
+	static const char *errorSlotNoNameString[3] = {
+		" You must specify\r a name for your\r save game!",
+		" Spielstaende mues-\r sen einen Namen\r haben!",
+		0
+	};
+
+	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 }
 
 void EoBEngine::initSpells() {
@@ -1241,6 +1242,32 @@ void DarkMoonEngine::initStaticResource() {
 	_wallOfForceDsNumW = _staticres->loadRawData(kEoB2WallOfForceNumW, temp);
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
 	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
+
+	static const char *errorSlotNoNameString[3] = {
+		" You must specify\r a name for your\r save game!",
+		" Spielst[nde m]ssen\r einen Namen haben!",
+		0
+	};
+
+	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+
+	// ScummVM specific
+	static const char *transferStringsScummVM[3][4] = {
+		{	"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+			"Game ID",
+			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
+			"Select File"
+		},
+		{	"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
+			"Game ID",
+			"\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
+			"Spiel W[hlen"
+		},
+		{	0, 0, 0, 0
+		}
+	};
+
+	_transferStringsScummVM = transferStringsScummVM[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 }
 
 void DarkMoonEngine::initSpells() {
