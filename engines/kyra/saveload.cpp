@@ -54,7 +54,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 		header.gameID = in->readByte();
 	} else {
 		// try checking for original save header
-		const int descriptionSize[2] = { 30, 80 };
+		const int descriptionSize[3] = { 30, 80, 60 };
 		char descriptionBuffer[81];
 
 		bool saveOk = false;
@@ -77,6 +77,16 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA3;
+				break;
+			} else if (type == MKTAG('C','D','0','4')) {
+				header.version = in->readUint32BE();
+				// We don't check the minor version, since the original doesn't do that either and it isn't required.
+				if (header.version != MKTAG(' ','C','D','1'))
+					continue;
+				saveOk = true;
+				header.description = descriptionBuffer;
+				header.gameID = GI_LOL;
+				in->seek(6, SEEK_CUR);
 				break;
 			}
 		}
