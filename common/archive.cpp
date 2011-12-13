@@ -24,10 +24,11 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/stream.h"
 
 namespace Common {
 
-GenericArchiveMember::GenericArchiveMember(String name, Archive *parent)
+GenericArchiveMember::GenericArchiveMember(const String name, const Archive *parent)
 	: _parent(parent), _name(name) {
 }
 
@@ -40,14 +41,14 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 }
 
 
-int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
+int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
 	// Get all "names" (TODO: "files" ?)
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
 	int matches = 0;
 
-	ArchiveMemberList::iterator it = allNames.begin();
+	ArchiveMemberList::const_iterator it = allNames.begin();
 	for ( ; it != allNames.end(); ++it) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
@@ -60,6 +61,18 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 	return matches;
 }
 
+DataBlock *Archive::getFileDataBlock(const Common::String &filename) const {
+	if (!hasFile(filename))
+		return 0;
+
+	SeekableReadStream *stream = createReadStreamForMember(filename);
+	int32 size = stream->size();
+	byte *data = new byte[size];
+	stream->read(data, size);
+	delete stream;
+
+	return new DataBlock(data, size);
+}
 
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
@@ -206,11 +219,11 @@ void SearchSet::setPriority(const String &name, int priority) {
 	insert(node);
 }
 
-bool SearchSet::hasFile(const String &name) {
+bool SearchSet::hasFile(const String &name) const {
 	if (name.empty())
 		return false;
 
-	ArchiveNodeList::iterator it = _list.begin();
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
 			return true;
@@ -219,31 +232,31 @@ bool SearchSet::hasFile(const String &name) {
 	return false;
 }
 
-int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
+int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
 	int matches = 0;
 
-	ArchiveNodeList::iterator it = _list.begin();
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it)
 		matches += it->_arc->listMatchingMembers(list, pattern);
 
 	return matches;
 }
 
-int SearchSet::listMembers(ArchiveMemberList &list) {
+int SearchSet::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 
-	ArchiveNodeList::iterator it = _list.begin();
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it)
 		matches += it->_arc->listMembers(list);
 
 	return matches;
 }
 
-ArchiveMemberPtr SearchSet::getMember(const String &name) {
+const ArchiveMemberPtr SearchSet::getMember(const String &name) const {
 	if (name.empty())
 		return ArchiveMemberPtr();
 
-	ArchiveNodeList::iterator it = _list.begin();
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
 			return it->_arc->getMember(name);

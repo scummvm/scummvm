@@ -27,11 +27,35 @@
 #include "common/list.h"
 #include "common/ptr.h"
 #include "common/singleton.h"
+#include "common/types.h"
 
 namespace Common {
 
 class FSNode;
 class SeekableReadStream;
+
+/**
+ * DataBlock is a simple container for generic data, like a raw file.
+ */
+class DataBlock {
+public:
+	/**
+	 * This constructor takes a pointer to a memory buffer and a length, and
+	 * wraps it. If disposeMemory is true, the DataBlock takes ownership
+	 * of the buffer and hence free's it when destructed.
+	 */
+	DataBlock(const byte *dataPtr, uint32 length, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::YES) :
+		_data(dataPtr), _len(length), _disposeMemory(disposeMemory) {}
+	~DataBlock() { if(_disposeMemory) delete[] _data; }
+
+	const byte *getData() const { return _data; }
+	int getLen() const { return _len; }
+
+private:
+	const byte *_data;
+	const uint32 _len;
+	const DisposeAfterUse::Flag _disposeMemory;
+};
 
 
 /**
@@ -65,10 +89,10 @@ class Archive;
  * is destroyed.
  */
 class GenericArchiveMember : public ArchiveMember {
-	Archive *_parent;
-	String _name;
+	const Archive *_parent;
+	const String _name;
 public:
-	GenericArchiveMember(String name, Archive *parent);
+	GenericArchiveMember(const String name, const Archive *parent);
 	String getName() const;
 	SeekableReadStream *createReadStream() const;
 };
@@ -88,7 +112,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const String &name) = 0;
+	virtual bool hasFile(const String &name) const = 0;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to list.
@@ -96,7 +120,7 @@ public:
 	 *
 	 * @return the number of members added to list
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -104,12 +128,12 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(ArchiveMemberList &list) = 0;
+	virtual int listMembers(ArchiveMemberList &list) const = 0;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual ArchiveMemberPtr getMember(const String &name) = 0;
+	virtual const ArchiveMemberPtr getMember(const String &name) const = 0;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -117,6 +141,13 @@ public:
 	 * @return the newly created input stream
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;
+
+	/**
+	 * Return the whole member as DataBlock, with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
+	 * @return the whole data member
+	 */
+	virtual DataBlock *getFileDataBlock(const String &filename) const;
 };
 
 
@@ -230,11 +261,11 @@ public:
 	 */
 	void setPriority(const String& name, int priority);
 
-	virtual bool hasFile(const String &name);
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
-	virtual int listMembers(ArchiveMemberList &list);
+	virtual bool hasFile(const String &name) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
 
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 
 	/**
 	 * Implements createReadStreamForMember from Archive base class. The current policy is

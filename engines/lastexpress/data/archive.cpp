@@ -74,11 +74,11 @@ HPFArchive::HPFArchive(const Common::String &path) {
 	delete archive;
 }
 
-bool HPFArchive::hasFile(const Common::String &name) {
+bool HPFArchive::hasFile(const Common::String &name) const {
 	return (_files.find(name) != _files.end());
 }
 
-int HPFArchive::listMembers(Common::ArchiveMemberList &list) {
+int HPFArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int numMembers = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
@@ -89,7 +89,7 @@ int HPFArchive::listMembers(Common::ArchiveMemberList &list) {
 	return numMembers;
 }
 
-Common::ArchiveMemberPtr HPFArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
