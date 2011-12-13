@@ -4488,15 +4488,12 @@ void DreamGenContext::selectSlot() {
 		data.byte(kLoadingorsave)--;
 
 	oldToNames();
-	uint16 y = data.word(kMousey) - (kOpsy + 4);
-	byte currentSlot = (byte)-1;
+	int y = data.word(kMousey) - (kOpsy + 4);
+	if (y < 11)
+		data.byte(kCurrentslot) = 0;
+	else
+		data.byte(kCurrentslot) = y / 11;
 
-	do {
-		currentSlot++;
-		y -= 11;
-	} while (y >= 11);
-
-	data.byte(kCurrentslot) = currentSlot;
 	delPointer();
 	showOpBox();
 	showSlots();
