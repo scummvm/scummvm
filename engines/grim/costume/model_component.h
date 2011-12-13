@@ -23,13 +23,16 @@
 #ifndef GRIM_MODEL_COMPONENT_H
 #define GRIM_MODEL_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
-class ModelComponent : public Costume::Component {
+class Model;
+class AnimManager;
+
+class ModelComponent : public Component {
 public:
-	ModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag);
+	ModelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~ModelComponent();
 
 	void init();

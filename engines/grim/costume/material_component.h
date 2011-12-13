@@ -23,15 +23,15 @@
 #ifndef GRIM_MATERIAL_COMPONENT_H
 #define GRIM_MATERIAL_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
 class Material;
 
-class MaterialComponent : public Costume::Component {
+class MaterialComponent : public Component {
 public:
-	MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	MaterialComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
 	void reset();

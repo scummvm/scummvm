@@ -20,15 +20,15 @@
  *
  */
 
-#include "engines/grim/costume.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/costume/keyframe_component.h"
 #include "engines/grim/costume/model_component.h"
 
 namespace Grim {
 
-KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _priority1(1), _priority2(5) {
+KeyframeComponent::KeyframeComponent(Component *p, int parentID, const char *filename, tag32 t) :
+		Component(p, parentID, t), _priority1(1), _priority2(5) {
 	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {

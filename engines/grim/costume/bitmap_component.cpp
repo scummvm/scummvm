@@ -30,8 +30,8 @@
 namespace Grim {
 
 
-BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _filename(filename) {
+BitmapComponent::BitmapComponent(Component *p, int parentID, const char *filename, tag32 t) :
+		Component(p, parentID, t), _filename(filename) {
 }
 
 void BitmapComponent::setKey(int val) {

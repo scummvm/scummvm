@@ -23,15 +23,16 @@
 #ifndef GRIM_KEYFRAME_COMPONENT_H
 #define GRIM_KEYFRAME_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
+#include "engines/grim/animation.h"
 
 namespace Grim {
 
 class Animation;
 
-class KeyframeComponent : public Costume::Component {
+class KeyframeComponent : public Component {
 public:
-	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	KeyframeComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	~KeyframeComponent();
 	void init();
 	void fade(Animation::FadeMode, int fadeLength);

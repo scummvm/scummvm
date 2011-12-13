@@ -23,14 +23,14 @@
 #ifndef GRIM_COLORMAP_COMPONENT_H
 #define GRIM_COLORMAP_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
-class ColormapComponent : public Costume::Component {
+class ColormapComponent : public Component {
 public:
-	ColormapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
-	ColormapComponent *copy(Costume::Component *newParent);
+	ColormapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
+	ColormapComponent *copy(Component *newParent);
 
 	void init();
 };

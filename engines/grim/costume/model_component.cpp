@@ -21,13 +21,13 @@
  */
 
 #include "engines/grim/debug.h"
-#include "engines/grim/costume.h"
 #include "engines/grim/model.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/animation.h"
 
 #include "engines/grim/costume/model_component.h"
 #include "engines/grim/costume/main_model_component.h"
@@ -35,8 +35,10 @@
 
 namespace Grim {
 	
-ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
-		Costume::Component(p, parentID, t), _filename(filename),
+#define DEFAULT_COLORMAP "item.cmp"
+
+ModelComponent::ModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
+		Component(p, parentID, t), _filename(filename),
 		_obj(NULL), _hier(NULL), _animation(NULL) {
 	const char *comma = strchr(filename, ',');
 

@@ -23,15 +23,15 @@
 #ifndef GRIM_SPRITE_COMPONENT_H
 #define GRIM_SPRITE_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
 struct Sprite;
 
-class SpriteComponent : public Costume::Component {
+class SpriteComponent : public Component {
 public:
-	SpriteComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	SpriteComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	~SpriteComponent();
 
 	void init();

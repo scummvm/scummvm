@@ -32,8 +32,8 @@
 namespace Grim {
 
 
-MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _filename(filename) {
+MaterialComponent::MaterialComponent(Component *p, int parentID, const char *filename, tag32 t) :
+		Component(p, parentID, t), _filename(filename) {
 
 	Debug::debug(Debug::Costumes, "Constructing MaterialComponent %s", filename);
 }

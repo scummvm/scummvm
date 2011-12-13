@@ -23,13 +23,13 @@
 #ifndef GRIM_BITMAP_COMPONENT_H
 #define GRIM_BITMAP_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
-class BitmapComponent : public Costume::Component {
+class BitmapComponent : public Component {
 public:
-	BitmapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	BitmapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	void setKey(int val);
 
 private:

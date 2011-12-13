@@ -23,13 +23,13 @@
 #ifndef GRIM_SOUND_COMPONENT_H
 #define GRIM_SOUND_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
-class SoundComponent : public Costume::Component {
+class SoundComponent : public Component {
 public:
-	SoundComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag);
+	SoundComponent(Component *parent, int parentID, const char *name, tag32 tag);
 	~SoundComponent();
 
 	void setKey(int val);

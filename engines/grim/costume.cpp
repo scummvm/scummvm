@@ -293,7 +293,7 @@ Costume::~Costume() {
 	}
 }
 
-Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
+Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent) {
 	if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
 		return new MainModelComponent(parent, parentID, name, prevComponent, tag);
 	else if (FROM_BE_32(tag) == MKTAG('M','O','D','L'))
@@ -323,7 +323,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 	return NULL;
 }
 
-Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
+Component *Costume::loadComponentEMI(Component *parent, int parentID, const char *name, Component *prevComponent) {
 	// some have an exclimation mark, this could mean something.
 	// for now, return 0 otherwise it will just crash in some other part.
 	//return 0;

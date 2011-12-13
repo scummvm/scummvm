@@ -31,7 +31,7 @@ class CMap;
 
 class MainModelComponent : public ModelComponent {
 public:
-	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
+	MainModelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~MainModelComponent();
 	void init();
 	int update(float time);

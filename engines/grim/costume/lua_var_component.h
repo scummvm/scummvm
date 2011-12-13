@@ -23,13 +23,13 @@
 #ifndef GRIM_LUA_VAR_COMPONENT_H
 #define GRIM_LUA_VAR_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
-class LuaVarComponent : public Costume::Component {
+class LuaVarComponent : public Component {
 public:
-	LuaVarComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag);
+	LuaVarComponent(Component *parent, int parentID, const char *name, tag32 tag);
 	void setKey(int val);
 private:
 	Common::String _name;

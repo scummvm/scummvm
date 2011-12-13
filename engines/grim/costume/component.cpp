@@ -20,12 +20,13 @@
  *
  */
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/costume.h"
 
 namespace Grim {
 
-Costume::Component::Component(Component *p, int parentID, tag32 t)  {
+Component::Component(Component *p, int parentID, tag32 t)  {
 	_visible = true;
 	_previousCmap = NULL;
 	_cmap = NULL;
@@ -36,8 +37,7 @@ Costume::Component::Component(Component *p, int parentID, tag32 t)  {
 	_tag = t;
 }
 
-Costume::Component::~Component()
-{
+Component::~Component() {
 	if (_parent)
 		_parent->removeChild(this);
 
@@ -48,7 +48,7 @@ Costume::Component::~Component()
 	}
 }
 
-void Costume::Component::setColormap(CMap *c) {
+void Component::setColormap(CMap *c) {
 	if (c)
 		_cmap = c;
 	if (getCMap()) {
@@ -57,24 +57,24 @@ void Costume::Component::setColormap(CMap *c) {
 	}
 }
 
-bool Costume::Component::isVisible() {
+bool Component::isVisible() {
 	if (_visible && _parent)
 		return _parent->isVisible();
 	return _visible;
 }
 
-CMap *Costume::Component::getCMap() {
+CMap *Component::getCMap() {
 	if (!_cmap && _previousCmap)
 		return _previousCmap;
 	else if (!_cmap && _parent)
 		return _parent->getCMap();
 	else if (!_cmap && !_parent && _cost)
-		return _cost->_cmap;
+		return _cost->getCMap();
 	else
 		return _cmap;
 }
 
-void Costume::Component::setParent(Component *newParent) {
+void Component::setParent(Component *newParent) {
 	_parent = newParent;
 	_child = NULL;
 	_sibling = NULL;
@@ -84,7 +84,7 @@ void Costume::Component::setParent(Component *newParent) {
 	}
 }
 
-void Costume::Component::removeChild(Component *child) {
+void Component::removeChild(Component *child) {
 	Component **childPos = &_child;
 	while (*childPos && *childPos != child)
 		childPos = &(*childPos)->_sibling;
@@ -94,7 +94,7 @@ void Costume::Component::removeChild(Component *child) {
 	}
 }
 
-void Costume::Component::resetHierCMap() {
+void Component::resetHierCMap() {
 	resetColormap();
 
 	Component *child = _child;

@@ -20,7 +20,6 @@
  *
  */
 
-#include "engines/grim/costume.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/model.h"
 #include "engines/grim/savegame.h"
@@ -29,8 +28,8 @@
 
 namespace Grim {
 
-MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
-		Costume::Component(p, parentID, t), _name(name), _node(NULL) {
+MeshComponent::MeshComponent(Component *p, int parentID, const char *name, tag32 t) :
+		Component(p, parentID, t), _name(name), _node(NULL) {
 	if (sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s", name);
 

@@ -23,7 +23,7 @@
 #ifndef GRIM_MESH_COMPONENT_H
 #define GRIM_MESH_COMPONENT_H
 
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
 
 namespace Grim {
 
@@ -31,9 +31,9 @@ class CMap;
 class Model;
 class ModelNode;
 
-class MeshComponent : public Costume::Component {
+class MeshComponent : public Component {
 public:
-	MeshComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag);
+	MeshComponent(Component *parent, int parentID, const char *name, tag32 tag);
 	void init();
 	CMap *cmap();
 	void setKey(int val);

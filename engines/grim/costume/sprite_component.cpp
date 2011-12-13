@@ -22,7 +22,6 @@
 
 #include "engines/grim/debug.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/costume.h"
 #include "engines/grim/model.h"
 #include "engines/grim/material.h"
 #include "engines/grim/resource.h"
@@ -32,8 +31,8 @@
 
 namespace Grim {
 
-SpriteComponent::SpriteComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-	Costume::Component(p, parentID, t), _filename(filename), _sprite(NULL) {
+SpriteComponent::SpriteComponent(Component *p, int parentID, const char *filename, tag32 t) :
+	Component(p, parentID, t), _filename(filename), _sprite(NULL) {
 
 }
 

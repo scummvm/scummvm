@@ -28,11 +28,11 @@
 namespace Grim {
 
 // Should initialize the status variables so the chore can't play unexpectedly
-Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
+Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
                           _tracks(NULL) {
 }
 
-Costume::Chore::~Chore() {
+Chore::~Chore() {
 	if (_tracks) {
 		for (int i = 0; i < _numTracks; i++)
 			delete[] _tracks[i].keys;
@@ -42,7 +42,7 @@ Costume::Chore::~Chore() {
 	}
 }
 
-void Costume::Chore::load(int id, Costume *owner, TextSplitter &ts) {
+void Chore::load(int id, Costume *owner, TextSplitter &ts) {
 	_owner = owner;
 	_tracks = new ChoreTrack[_numTracks];
 	_hasPlayed = _playing = false;
@@ -59,7 +59,7 @@ void Costume::Chore::load(int id, Costume *owner, TextSplitter &ts) {
 	}
 }
 
-void Costume::Chore::play() {
+void Chore::play() {
 	_playing = true;
 	_hasPlayed = true;
 	_looping = false;
@@ -68,7 +68,7 @@ void Costume::Chore::play() {
 	fade(Animation::None, 0);
 }
 
-void Costume::Chore::playLooping() {
+void Chore::playLooping() {
 	_playing = true;
 	_hasPlayed = true;
 	_looping = true;
@@ -77,7 +77,7 @@ void Costume::Chore::playLooping() {
 	fade(Animation::None, 0);
 }
 
-void Costume::Chore::stop() {
+void Chore::stop() {
 	_playing = false;
 	_hasPlayed = false;
 
@@ -88,7 +88,7 @@ void Costume::Chore::stop() {
 	}
 }
 
-void Costume::Chore::setKeys(int startTime, int stopTime) {
+void Chore::setKeys(int startTime, int stopTime) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
 		if (!comp)
@@ -103,7 +103,7 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 	}
 }
 
-void Costume::Chore::setLastFrame() {
+void Chore::setLastFrame() {
 	// If the chore has already played then don't set it to the end
 	// Example: This executing would result in Glottis being
 	// choppy when he hands Manny the work order
@@ -123,7 +123,7 @@ void Costume::Chore::setLastFrame() {
 	_currTime = -1;
 }
 
-void Costume::Chore::update(float time) {
+void Chore::update(float time) {
 	if (!_playing)
 		return;
 
@@ -148,7 +148,7 @@ void Costume::Chore::update(float time) {
 	_currTime = newTime;
 }
 
-void Costume::Chore::fade(Animation::FadeMode mode, int msecs) {
+void Chore::fade(Animation::FadeMode mode, int msecs) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
 		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
@@ -158,7 +158,7 @@ void Costume::Chore::fade(Animation::FadeMode mode, int msecs) {
 	}
 }
 
-void Costume::Chore::fadeIn(int msecs) {
+void Chore::fadeIn(int msecs) {
 	if (!_playing) {
 		_playing = true;
 		_hasPlayed = true;
@@ -168,7 +168,7 @@ void Costume::Chore::fadeIn(int msecs) {
 	fade(Animation::FadeIn, msecs);
 }
 
-void Costume::Chore::fadeOut(int msecs) {
+void Chore::fadeOut(int msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
 	fade(Animation::FadeOut, msecs);

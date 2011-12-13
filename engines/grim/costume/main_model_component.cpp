@@ -20,7 +20,6 @@
  *
  */
 
-#include "engines/grim/costume.h"
 #include "engines/grim/model.h"
 
 #include "engines/grim/costume/model_component.h"
@@ -28,7 +27,7 @@
 
 namespace Grim {
 	
-MainModelComponent::MainModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
+MainModelComponent::MainModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
 		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
 	if (parentID == -2 && prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);

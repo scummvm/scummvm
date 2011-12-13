@@ -20,10 +20,11 @@
  *
  */
 
-#include "engines/grim/costume.h"
+
 #include "engines/grim/grim.h"
 #include "engines/grim/set.h"
 #include "engines/grim/debug.h"
+#include "engines/grim/costume.h"
 
 #include "engines/grim/costume/sound_component.h"
 
@@ -32,8 +33,8 @@
 namespace Grim {
 
 
-SoundComponent::SoundComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t) {
+SoundComponent::SoundComponent(Component *p, int parentID, const char *filename, tag32 t) :
+		Component(p, parentID, t) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_soundName = Common::String(filename, comma);

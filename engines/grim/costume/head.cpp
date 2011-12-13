@@ -26,7 +26,7 @@
 
 namespace Grim {
 
-Costume::Head::Head() :
+Head::Head() :
 	_maxPitch(0),
 	_joint1(-1), _joint2(-1), _joint3(-1),
 	_joint1Node(NULL), _joint2Node(NULL), _joint3Node(NULL),
@@ -34,13 +34,13 @@ Costume::Head::Head() :
 
 }
 
-void Costume::Head::setJoints(int joint1, int joint2, int joint3) {
+void Head::setJoints(int joint1, int joint2, int joint3) {
 	_joint1 = joint1;
 	_joint2 = joint2;
 	_joint3 = joint3;
 }
 
-void Costume::Head::loadJoints(ModelNode *nodes) {
+void Head::loadJoints(ModelNode *nodes) {
 	if (_joint1 >= 0 && _joint2 >= 0 && _joint3 >= 0 && nodes) {
 		_joint1Node = nodes + _joint1;
 		_joint2Node = nodes + _joint2;
@@ -48,13 +48,13 @@ void Costume::Head::loadJoints(ModelNode *nodes) {
 	}
 }
 
-void Costume::Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
+void Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
 	_maxRoll = maxRoll;
 	_maxPitch = maxPitch;
 	_maxYaw = maxYaw;
 }
 
-void Costume::Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
+void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
 	if (_joint1Node) {
 		float step = g_grim->getPerSecond(rate);
 		float yawStep = step;
@@ -191,7 +191,7 @@ void Costume::Head::lookAt(bool entering, const Math::Vector3d &point, float rat
 	}
 }
 
-void Costume::Head::saveState(SaveGame *state) const {
+void Head::saveState(SaveGame *state) const {
 	state->writeLESint32(_joint1);
 	state->writeLESint32(_joint2);
 	state->writeLESint32(_joint3);
@@ -202,7 +202,7 @@ void Costume::Head::saveState(SaveGame *state) const {
 	state->writeFloat(_headYaw.getDegrees());
 }
 
-void Costume::Head::restoreState(SaveGame *state) {
+void Head::restoreState(SaveGame *state) {
 	_joint1 = state->readLESint32();
 	_joint2 = state->readLESint32();
 	_joint3 = state->readLESint32();

@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/grim/costume.h"
-
 #include "engines/grim/costume/lua_var_component.h"
 
 #include "engines/grim/lua/lua.h"
@@ -29,8 +27,8 @@
 namespace Grim {
 
 
-LuaVarComponent::LuaVarComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
-		Costume::Component(p, parentID, t), _name(name) {
+LuaVarComponent::LuaVarComponent(Component *p, int parentID, const char *name, tag32 t) :
+		Component(p, parentID, t), _name(name) {
 }
 
 void LuaVarComponent::setKey(int val) {
