@@ -128,7 +128,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	//_sceneText.clone();
 
 	_sceneText.setPosition(_textPos);
-	_sceneText.setPriority(0x100);
+	_sceneText.fixPriority(256);
 
 	// If subtitles are turned off, don't show the text
 	if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
@@ -148,7 +148,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 			++numWords;
 
 		_numFrames = numWords * 30 + 120;
-		setFrame(_numFrames);
+		setDelay(_numFrames);
 	} else {
 		_numFrames = 1;
 	}
@@ -182,6 +182,11 @@ void VisualSpeaker::proc16() {
 
 void VisualSpeaker::setFrame(int numFrames) {
 	_delayAmount = numFrames;
+	_frameNumber = R2_GLOBALS._events.getFrameNumber();
+}
+
+void VisualSpeaker::setDelay(int delay) {
+	_delayAmount = delay;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
 }
 

@@ -59,6 +59,8 @@ public:
 	virtual void setText(const Common::String &msg);
 	virtual void proc15() {}
 	virtual void proc16();
+
+	void setDelay(int delay);
 };
 
 class SpeakerMiranda300 : public VisualSpeaker {
