@@ -70,6 +70,7 @@ void DreamGenContext::useMon() {
 	scrollMonitor();
 	data.word(kBufferin) = 0;
 	data.word(kBufferout) = 0;
+	bool stop = false;
 	do {
 		di = data.word(kMonadx);
 		bx = data.word(kMonady);
@@ -80,10 +81,10 @@ void DreamGenContext::useMon() {
 		di = pop();
 		data.word(kMonadx) = di;
 		data.word(kMonady) = bx;
-		execCommand();
+		stop = execCommand();
 		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
 			break;
-	} while (al == 0);
+	} while (!stop);
 	getRidOfTemp();
 	getRidOfTempCharset();
 	deallocateMem(data.word(kTextfile1));
@@ -96,6 +97,73 @@ void DreamGenContext::useMon() {
 	redrawMainScrn();
 	workToScreenM();
 }
+
+bool DreamGenContext::execCommand() {
+	static const char *comlist[] = {
+		"EXIT",
+		"HELP",
+		"LIST",
+		"READ",
+		"LOGON",
+		"KEYS"
+	};
+
+	const char *inputLine = (const char *)data.ptr(kInputline, 64);
+	if (*inputLine == 0) {
+		// No input
+		scrollMonitor();
+		return false;
+	}
+
+	int cmd;
+	bool done = false;
+	// Loop over all commands in the list and see if we get a match
+	for (cmd = 0; cmd < ARRAYSIZE(comlist); ++cmd) {
+		const char *cmdStr = comlist[cmd];
+		const char *inputStr = inputLine;
+		// Compare the command, char by char, to see if we get a match.
+		// We only care about the prefix matching, though.
+		char inputChar, cmdChar;
+		do {
+			inputChar = *inputStr; inputStr += 2;
+			cmdChar = *cmdStr++;
+			if (cmdChar == 0) {
+				done = true;
+				break;
+			}
+		} while (inputChar == cmdChar);
+
+		if (done)
+			break;
+	}
+
+	// Execute the selected command
+	switch (cmd) {
+	case 0:
+		return true;
+	case 1:
+		monMessage(6);
+		break;
+	case 2:
+		dirCom();
+		break;
+	case 3:
+		read();
+		break;
+	case 4:
+		signOn();
+		break;
+	case 5:
+		showKeys();
+		break;
+	default:
+		netError();
+		break;
+	}
+	return false;
+}
+
+
 
 void DreamGenContext::monitorLogo() {
 	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {

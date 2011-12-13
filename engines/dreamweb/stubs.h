@@ -594,5 +594,6 @@
 	void dumpDiaryKeys();
 	void runEndSeq();
 	void lookAtCard();
+	bool execCommand();
 
 #endif

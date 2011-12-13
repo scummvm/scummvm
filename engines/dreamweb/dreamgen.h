@@ -32,14 +32,13 @@
 
 namespace DreamGen {
 
-static const uint16 offset_money1poke = 0x046e;
-static const uint16 offset_operand1 = 0x0444;
-static const uint16 offset_comlist = 0x039e;
-static const uint16 offset_commandline = 0x047b;
-static const uint16 offset_rootdir = 0x0452;
-static const uint16 offset_money2poke = 0x0473;
+static const uint16 offset_commandline = 0x043f;
+static const uint16 offset_rootdir = 0x0416;
+static const uint16 offset_money2poke = 0x0437;
+static const uint16 offset_operand1 = 0x0408;
+static const uint16 offset_keys = 0x039e;
+static const uint16 offset_money1poke = 0x0432;
 static const uint16 offset_openchangesize = 0x039c;
-static const uint16 offset_keys = 0x03da;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -373,15 +372,15 @@ static const uint16 kCurrentsample = 452;
 static const uint16 kRoomssample = 453;
 static const uint16 kReelroutines = 454;
 static const uint16 kBasicsample = 911;
-static const uint16 kCurrentfile = 1120;
-static const uint16 kRoomscango = 1244;
-static const uint16 kRoompics = 1260;
-static const uint16 kOplist = 1275;
-static const uint16 kInputline = 1278;
-static const uint16 kPresslist = 1406;
-static const uint16 kQuitrequested = 1412;
-static const uint16 kSubtitles = 1413;
-static const uint16 kForeignrelease = 1414;
+static const uint16 kCurrentfile = 1060;
+static const uint16 kRoomscango = 1184;
+static const uint16 kRoompics = 1200;
+static const uint16 kOplist = 1215;
+static const uint16 kInputline = 1218;
+static const uint16 kPresslist = 1346;
+static const uint16 kQuitrequested = 1352;
+static const uint16 kSubtitles = 1353;
+static const uint16 kForeignrelease = 1354;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -569,7 +568,6 @@ public:
 	void searchForFiles();
 	void getExAd();
 	void initialMonCols();
-	void execCommand();
 	void findPuzText();
 	void swapWithInv();
 	void adjustRight();
