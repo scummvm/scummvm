@@ -24,6 +24,7 @@
  */
 
 #include "common/random.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #include "pegasus/util.h"
@@ -85,6 +86,10 @@ int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, 
 		return start2;
 	else
 		return start2 + pegasusRound((current1 - start1) * (stop2 - start2), (stop1 - start1));
+}
+
+uint32 tickCount() {
+	return g_system->getMillis() * 60 / 1000;
 }
 
 } // End of namespace Pegasus

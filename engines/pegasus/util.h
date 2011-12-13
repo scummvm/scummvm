@@ -128,6 +128,8 @@ int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, 
 
 int32 pegasusRound(const int32 a, const int32 b);
 
+uint32 tickCount();
+
 } // End of namespace Pegasus
 
 #endif
