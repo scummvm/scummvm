@@ -1426,9 +1426,9 @@ public:
 
 	~ZipArchive();
 
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual bool hasFile(const String &name) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
@@ -1458,11 +1458,11 @@ ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::hasFile(const String &name) {
+bool ZipArchive::hasFile(const String &name) const {
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
-int ZipArchive::listMembers(ArchiveMemberList &list) {
+int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 	int err = unzGoToFirstFile(_zipFile);
 
@@ -1481,7 +1481,7 @@ int ZipArchive::listMembers(ArchiveMemberList &list) {
 	return matches;
 }
 
-ArchiveMemberPtr ZipArchive::getMember(const String &name) {
+const ArchiveMemberPtr ZipArchive::getMember(const String &name) const {
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 

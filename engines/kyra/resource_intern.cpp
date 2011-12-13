@@ -37,11 +37,11 @@ PlainArchive::PlainArchive(Common::ArchiveMemberPtr file)
 	: _file(file), _files() {
 }
 
-bool PlainArchive::hasFile(const Common::String &name) {
+bool PlainArchive::hasFile(const Common::String &name) const {
 	return (_files.find(name) != _files.end());
 }
 
-int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
+int PlainArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
@@ -52,7 +52,7 @@ int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -92,11 +92,11 @@ TlkArchive::~TlkArchive() {
 	delete[] _fileEntries;
 }
 
-bool TlkArchive::hasFile(const Common::String &name) {
+bool TlkArchive::hasFile(const Common::String &name) const {
 	return (findFile(name) != 0);
 }
 
-int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
+int TlkArchive::listMembers(Common::ArchiveMemberList &list) const {
 	uint count = 0;
 
 	for (; count < _entryCount; ++count) {
@@ -107,7 +107,7 @@ int TlkArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -186,11 +186,11 @@ CachedArchive::~CachedArchive() {
 	_files.clear();
 }
 
-bool CachedArchive::hasFile(const Common::String &name) {
+bool CachedArchive::hasFile(const Common::String &name) const {
 	return (_files.find(name) != _files.end());
 }
 
-int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
+int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
@@ -201,7 +201,7 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
