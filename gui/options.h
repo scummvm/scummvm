@@ -43,8 +43,6 @@ class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
 
-ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd);
-
 class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);

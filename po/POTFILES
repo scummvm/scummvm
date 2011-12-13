@@ -13,6 +13,7 @@ gui/options.cpp
 gui/saveload.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/widget.cpp
 
 base/main.cpp
 

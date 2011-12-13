@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/pixelformat.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
@@ -300,6 +301,21 @@ void ButtonWidget::drawWidget() {
 
 void ButtonWidget::setLabel(const Common::String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
+}
+
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+
+	return button;
 }
 
 #pragma mark -
