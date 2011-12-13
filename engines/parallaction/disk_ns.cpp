@@ -73,9 +73,9 @@ public:
 	~NSArchive();
 
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 };
 
 
@@ -137,23 +137,23 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 	return new Common::SeekableSubReadStream(_stream, offset, endOffset, DisposeAfterUse::NO);
 }
 
-bool NSArchive::hasFile(const Common::String &name) {
+bool NSArchive::hasFile(const Common::String &name) const {
 	if (name.empty())
 		return false;
 	return lookup(name.c_str()) != _numFiles;
 }
 
-int NSArchive::listMembers(Common::ArchiveMemberList &list) {
+int NSArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint32 i = 0; i < _numFiles; i++) {
 		list.push_back(Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(_archiveDir[i], this)));
 	}
 	return _numFiles;
 }
 
-Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) const {
 	uint32 index = lookup(name.c_str());
 
-	char *item = 0;
+	const char *item = 0;
 	if (index < _numFiles) {
 		item = _archiveDir[index];
 	}
