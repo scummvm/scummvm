@@ -579,5 +579,6 @@
 	void processTrigger();
 	void updateSymbolTop();
 	void updateSymbolBot();
+	bool execCommand();
 
 #endif

@@ -52,6 +52,8 @@ p = parser(skip_binary_data = [
 	'keypadlist',
 	'symbollist',
 	'diarylist',
+	# monitor.asm
+	'comlist',
 	# newplace.asm
 	'destlist',
 	# object.asm
@@ -371,6 +373,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'examinventory',
 	'examineob',
 	'examineobtext',
+	'execcommand',
 	'facerightway',
 	'fadecalculation',
 	'fadedos',
