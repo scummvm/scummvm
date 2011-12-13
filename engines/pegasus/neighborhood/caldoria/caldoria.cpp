@@ -35,6 +35,7 @@
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
+#include "pegasus/neighborhood/caldoria/caldoriabomb.h"
 #include "pegasus/neighborhood/caldoria/caldoriamessages.h"
 #include "pegasus/neighborhood/caldoria/caldoriamirror.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
@@ -1522,17 +1523,12 @@ GameInteraction *Caldoria::makeInteraction(const tInteractionID interactionID) {
 	switch (interactionID) {
 	case kCaldoria4DInteractionID:
 		return new Caldoria4DSystem(this);
-		break;
 	case kCaldoriaBombInteractionID:
-		// TODO
-		error("STUB: Bomb game");
-		break;
+		return new CaldoriaBomb(this, _vm);
 	case kCaldoriaMessagesInteractionID:
 		return new CaldoriaMessages(this, kCaldoriaMessagesNotificationID, _vm);
-		break;
 	case kCaldoriaMirrorInteractionID:
 		return new CaldoriaMirror(this);
-		break;
 	}
 
 	return 0;
