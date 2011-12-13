@@ -1033,22 +1033,6 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		ConfMan.removeKey(setting, _domain);
 }
 
-ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd) {
-	ButtonWidget *button;
-
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
-		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
-
-	return button;
-}
-
-
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		return kSubtitlesSpeech; // Speech only
