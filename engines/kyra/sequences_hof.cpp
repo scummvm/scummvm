@@ -2622,7 +2622,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 						while (*str2) {
 							cChar[0] = *str2;
 							_screen->printText(cChar, x, y, col1++, 0);
-							x += _screen->getCharWidth(*str2++);
+							x += _screen->getCharWidth((uint8)*str2++);
 						}
 						palCycle = true;
 					} else if (!strcmp(str, specialData[1])) {
@@ -2631,7 +2631,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 						while (*str2) {
 							cChar[0] = *str2;
 							_screen->printText(cChar, x, y, col1--, 0);
-							x += _screen->getCharWidth(*str2++);
+							x += _screen->getCharWidth((uint8)*str2++);
 						}
 						palCycle = true;
 					} else {
