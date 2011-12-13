@@ -417,6 +417,8 @@
 	void introMonks1(ReelRoutine &routine);
 	void introMonks2(ReelRoutine &routine);
 	void soldier1(ReelRoutine &routine);
+	void receptionist(ReelRoutine &routine);
+	void bartender(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();

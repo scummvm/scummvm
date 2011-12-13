@@ -499,7 +499,6 @@ public:
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void fadeDownMon();
-	void bartender();
 	void outOfOpen();
 	void dirCom();
 	void endGameSeq();
@@ -523,7 +522,6 @@ public:
 	void findInvPos();
 	void getKeyAndLogo();
 	void selectOb();
-	void receptionist();
 	void fadeUpMon();
 	void showDiaryPage();
 	void reExFromInv();

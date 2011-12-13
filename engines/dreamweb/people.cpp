@@ -29,13 +29,13 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
-	&DreamGenContext::receptionist, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	&DreamGenContext::heavy, NULL,
 	NULL, NULL,
-	&DreamGenContext::bartender, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -61,13 +61,13 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::eden, &DreamGenContext::edenInBath,
 	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
 	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
-	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::genericPerson /*maleFan*/,
+	&DreamGenContext::receptionist, &DreamGenContext::genericPerson /*maleFan*/,
 	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
 	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
 	/*&DreamGenContext::heavy*/NULL, &DreamGenContext::manAsleep /*manAsleep2*/,
 	&DreamGenContext::genericPerson /*manSatStill*/, &DreamGenContext::drinker,
-	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::genericPerson /*otherSmoker*/,
+	&DreamGenContext::bartender, &DreamGenContext::genericPerson /*otherSmoker*/,
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, &DreamGenContext::security,
@@ -774,6 +774,64 @@ void DreamGenContext::soldier1(ReelRoutine &routine) {
 	}
 
 	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::receptionist(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		if (data.byte(kCardpassflag) == 1) {
+			// Set card
+			data.byte(kCardpassflag)++;
+			routine.b7 = 1;
+			routine.b3 = 64;
+		}
+
+		if (routine.b3 != 58) {
+			// notdes1
+			if (routine.b3 != 60) {
+				// notdes2
+				if (routine.b3 != 88)
+					routine.b3++;	// not end card
+				else
+					routine.b3 = 53;
+			} else if (engine->randomNumber() >= 240) {
+				routine.b3 = 53;
+			}
+		} else if (engine->randomNumber() >= 30) {
+			routine.b3 = 55;
+		} else {
+			// notdes2
+			if (routine.b3 != 88)
+				routine.b3++;	// not end card
+			else
+				routine.b3 = 53;
+		}
+	}
+
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+	if (routine.b7 & 128)
+		data.byte(kTalkedtorecep) = 1;
+}
+
+void DreamGenContext::bartender(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		if (routine.b3 == 86) {
+			if (engine->randomNumber() >= 18)
+				routine.b3 = 81;
+			else
+				routine.b3++;	// notsmoket2
+		} else if (routine.b3 == 103) {
+			routine.b3 = 81;	// notsmoket1
+		} else {
+			routine.b3++;	// notsmoket2
+		}
+	}
+
+	showGameReel(&routine);
+	if (data.byte(kGunpassflag) == 1)
+		routine.b7 = 9;	// got gun
+
 	addToPeopleList(&routine);
 }
 
