@@ -303,18 +303,15 @@ void ButtonWidget::setLabel(const Common::String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
 }
 
-ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd) {
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
 	ButtonWidget *button;
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		if (!name.empty()) {
+		if (!name.empty())
 			button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
-		}
-		else {
-			int clearButtonWidth = g_gui.xmlEval()->getVar("Globals.Line.Height");
-			button = new PicButtonWidget(boss, 0, 0, clearButtonWidth, clearButtonWidth, _("Clear value"), cmd);
-		}
+		else
+			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
 		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
 	} else
@@ -322,7 +319,7 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 		if (!name.empty())
 			button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
 		else
-			button = new ButtonWidget(boss, 0, 0, 0, 0, "C", _("Clear value"), cmd);
+			button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
 
 	return button;
 }
