@@ -624,7 +624,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 				if (_vm->gameFlags().lang == Common::JA_JPN)
 					charStr[1] = _vm->seqTextsTable()[_seqDisplayedText][++_seqDisplayedChar];
 				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
-				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
+				_seqDisplayedTextX += _screen->getCharWidth((uint8)charStr[0]);
 				++_seqDisplayedChar;
 
 				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0')
