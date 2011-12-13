@@ -4060,16 +4060,6 @@ void DreamGenContext::findPuzText() {
 	si = ax;
 }
 
-void DreamGenContext::removeFreeObject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	getFreeAd();
-	es.byte(bx+2) = 255;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::useGun() {
 	STACK_CHECK;
 	_cmp(data.byte(kObjecttype), 4);
@@ -4245,94 +4235,6 @@ pathoktv:
 nottvsoldier:
 	showFirstUse();
 	putBackObStuff();
-}
-
-void DreamGenContext::updateSymbolTop() {
-	STACK_CHECK;
-	_cmp(data.byte(kSymboltopdir), 0);
-	if (flags.z())
-		return /* (topfinished) */;
-	_cmp(data.byte(kSymboltopdir), -1);
-	if (flags.z())
-		goto backwards;
-	_inc(data.byte(kSymboltopx));
-	_cmp(data.byte(kSymboltopx), 49);
-	if (!flags.z())
-		goto notwrapfor;
-	data.byte(kSymboltopx) = 0;
-	_dec(data.byte(kSymboltopnum));
-	_cmp(data.byte(kSymboltopnum), -1);
-	if (!flags.z())
-		return /* (topfinished) */;
-	data.byte(kSymboltopnum) = 5;
-	return;
-notwrapfor:
-	_cmp(data.byte(kSymboltopx), 24);
-	if (!flags.z())
-		return /* (topfinished) */;
-	data.byte(kSymboltopdir) = 0;
-	return;
-backwards:
-	_dec(data.byte(kSymboltopx));
-	_cmp(data.byte(kSymboltopx), -1);
-	if (!flags.z())
-		goto notwrapback;
-	data.byte(kSymboltopx) = 48;
-	_inc(data.byte(kSymboltopnum));
-	_cmp(data.byte(kSymboltopnum), 6);
-	if (!flags.z())
-		return /* (topfinished) */;
-	data.byte(kSymboltopnum) = 0;
-	return;
-notwrapback:
-	_cmp(data.byte(kSymboltopx), 24);
-	if (!flags.z())
-		return /* (topfinished) */;
-	data.byte(kSymboltopdir) = 0;
-}
-
-void DreamGenContext::updateSymbolBot() {
-	STACK_CHECK;
-	_cmp(data.byte(kSymbolbotdir), 0);
-	if (flags.z())
-		return /* (botfinished) */;
-	_cmp(data.byte(kSymbolbotdir), -1);
-	if (flags.z())
-		goto backwardsbot;
-	_inc(data.byte(kSymbolbotx));
-	_cmp(data.byte(kSymbolbotx), 49);
-	if (!flags.z())
-		goto notwrapforb;
-	data.byte(kSymbolbotx) = 0;
-	_dec(data.byte(kSymbolbotnum));
-	_cmp(data.byte(kSymbolbotnum), -1);
-	if (!flags.z())
-		return /* (botfinished) */;
-	data.byte(kSymbolbotnum) = 5;
-	return;
-notwrapforb:
-	_cmp(data.byte(kSymbolbotx), 24);
-	if (!flags.z())
-		return /* (botfinished) */;
-	data.byte(kSymbolbotdir) = 0;
-	return;
-backwardsbot:
-	_dec(data.byte(kSymbolbotx));
-	_cmp(data.byte(kSymbolbotx), -1);
-	if (!flags.z())
-		goto notwrapbackb;
-	data.byte(kSymbolbotx) = 48;
-	_inc(data.byte(kSymbolbotnum));
-	_cmp(data.byte(kSymbolbotnum), 6);
-	if (!flags.z())
-		return /* (botfinished) */;
-	data.byte(kSymbolbotnum) = 0;
-	return;
-notwrapbackb:
-	_cmp(data.byte(kSymbolbotx), 24);
-	if (!flags.z())
-		return /* (botfinished) */;
-	data.byte(kSymbolbotdir) = 0;
 }
 
 void DreamGenContext::showDiaryKeys() {

@@ -577,5 +577,7 @@
 	void entryAnims();
 	void triggerMessage(uint16 index);
 	void processTrigger();
+	void updateSymbolTop();
+	void updateSymbolBot();
 
 #endif

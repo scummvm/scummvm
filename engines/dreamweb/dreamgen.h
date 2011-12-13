@@ -547,7 +547,6 @@ public:
 	void fillOpen();
 	void findSetObject();
 	void deleteExObject();
-	void removeFreeObject();
 	void lookAtCard();
 	void helicopter();
 	void getEitherAd();
@@ -580,12 +579,10 @@ public:
 	void getExAd();
 	void initialMonCols();
 	void execCommand();
-	void updateSymbolBot();
 	void findPuzText();
 	void swapWithInv();
 	void adjustRight();
 	void transferToEx();
-	void updateSymbolTop();
 	void getPersonText();
 	void parser();
 	void emergencyPurge();

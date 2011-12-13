@@ -4511,4 +4511,78 @@ void DreamGenContext::selectSlot() {
 	delPointer();
 }
 
+void DreamGenContext::updateSymbolTop() {
+	if (!data.byte(kSymboltopdir))
+		return; // topfinished
+
+	if (data.byte(kSymboltopdir) == (byte)-1) {
+		// Backward
+		data.byte(kSymboltopx)--;
+		if (data.byte(kSymboltopx) != (byte)-1) {
+			// Not wrapping
+			if (data.byte(kSymboltopx) != 24)
+				return; // topfinished
+			data.byte(kSymboltopdir) = 0;
+		} else {
+			data.byte(kSymboltopx) = 48;
+			data.byte(kSymboltopnum)++;
+			if (data.byte(kSymboltopnum) != 6)
+				return; // topfinished
+			data.byte(kSymboltopnum) = 0;
+		}
+	} else {
+		// Forward
+		data.byte(kSymboltopx)++;
+		if (data.byte(kSymboltopx) != 49) {
+			// Not wrapping
+			if (data.byte(kSymboltopx) != 24)
+				return; // topfinished
+			data.byte(kSymboltopdir) = 0;
+		} else {
+			data.byte(kSymboltopx) = 0;
+			data.byte(kSymboltopnum)--;
+			if (data.byte(kSymboltopnum) != (byte)-1)
+				return; // topfinished
+			data.byte(kSymboltopnum) = 5;
+		}
+	}
+}
+
+void DreamGenContext::updateSymbolBot() {
+	if (!data.byte(kSymbolbotdir))
+		return; // botfinished
+
+	if (data.byte(kSymbolbotdir) == (byte)-1) {
+		// Backward
+		data.byte(kSymbolbotx)--;
+		if (data.byte(kSymbolbotx) != (byte)-1) {
+			// Not wrapping
+			if (data.byte(kSymbolbotx) != 24)
+				return; // botfinished
+			data.byte(kSymbolbotdir) = 0;
+		} else {
+			data.byte(kSymbolbotx) = 48;
+			data.byte(kSymbolbotnum)++;
+			if (data.byte(kSymbolbotnum) != 6)
+				return; // botfinished
+			data.byte(kSymbolbotnum) = 0;
+		}
+	} else {
+		// Forward
+		data.byte(kSymbolbotx)++;
+		if (data.byte(kSymbolbotx) != 49) {
+			// Not wrapping
+			if (data.byte(kSymbolbotx) != 24)
+				return; // botfinished
+			data.byte(kSymbolbotdir) = 0;
+		} else {
+			data.byte(kSymbolbotx) = 0;
+			data.byte(kSymbolbotnum)--;
+			if (data.byte(kSymbolbotnum) != (byte)-1)
+				return; // botfinished
+			data.byte(kSymbolbotnum) = 5;
+		}
+	}
+}
+
 } // End of namespace DreamGen
