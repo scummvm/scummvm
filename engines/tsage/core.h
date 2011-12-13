@@ -421,7 +421,6 @@ public:
 	virtual void destroy() {}
 	virtual bool startAction(CursorType action, Event &event);
 	virtual void doAction(int action);
-	virtual bool performAction(CursorType action, Event &event) { return startAction(action, event); }
 
 	bool contains(const Common::Point &pt);
 	void setBounds(const Rect &newBounds) { _bounds = newBounds; }

@@ -1702,6 +1702,9 @@ void cmdSetItemView(AgiGame *state, uint8 *p) {
 
 void cmdCallV1(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rLOGIC, p0);
+	// FIXME: The following instruction looks incomplete.
+	// Maybe something is meant to be assigned to, or read from,
+	// the logic_list entry?
 	state->logic_list[++state->max_logics];
 	_v[13] = 1;
 }
