@@ -554,7 +554,6 @@ public:
 	void checkInside();
 	void findPathOfPoint();
 	void getDestInfo();
-	void makeCaps();
 	void read();
 	void additionalText();
 	void mugger();

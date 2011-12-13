@@ -530,6 +530,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'mainman',
 	'mainscreen',
 	'makebackob',
+	'makecaps',
 	'makeheader',
 	'makemainscreen',
 	'makename',
