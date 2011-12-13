@@ -162,7 +162,7 @@ bool DreamGenContext::execCommand() {
 
 
 
-void DreamGenContext::monitorLogo() {
+void DreamBase::monitorLogo() {
 	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {
 		data.byte(kOldlogonum) = data.byte(kLogonum);
 		printLogo();
@@ -280,10 +280,6 @@ void DreamBase::delCurs() {
 	multiDump(x, y, width, height);
 }
 
-void DreamGenContext::hangOnCurs() {
-	hangOnCurs(cx);
-}
-
 void DreamBase::scrollMonitor() {
 	printLogo();
 	printUnderMon();
@@ -315,7 +311,7 @@ void DreamGenContext::randomAccess() {
 	randomAccess(cx);
 }
 
-void DreamGenContext::randomAccess(uint16 count) {
+void DreamBase::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
 		vSync();
@@ -332,7 +328,7 @@ void DreamGenContext::monMessage() {
 	monMessage(al);
 }
 
-void DreamGenContext::monMessage(uint8 index) {
+void DreamBase::monMessage(uint8 index) {
 	assert(index > 0);
 	const char *string = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	for (uint8 i = 0; i < index; ++i) {
@@ -342,7 +338,7 @@ void DreamGenContext::monMessage(uint8 index) {
 	monPrint(string);
 }
 
-void DreamGenContext::netError() {
+void DreamBase::netError() {
 	monMessage(5);
 	scrollMonitor();
 }

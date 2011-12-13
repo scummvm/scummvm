@@ -744,7 +744,7 @@ uint8 *DreamBase::textUnder() {
 	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
 
-uint16 DreamGenContext::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
+uint16 DreamBase::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
 	FileHeader header;
 
 	Common::File file;
@@ -758,7 +758,7 @@ uint16 DreamGenContext::standardLoad(const char *fileName, uint16 *outSizeInByte
 	return result;
 }
 
-void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBytes) {
+void *DreamBase::standardLoadCPP(const char *fileName, uint16 *outSizeInBytes) {
 	uint16 sizeInBytes;
 	uint16 seg = standardLoad(fileName, &sizeInBytes);
 	void *buffer = malloc(sizeInBytes);
@@ -769,28 +769,24 @@ void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBy
 	return buffer;
 }
 
-void DreamGenContext::loadIntoTemp() {
-	loadIntoTemp((const char *)data.ptr(dx, 0));
-}
-
-void DreamGenContext::loadIntoTemp(const char *fileName) {
+void DreamBase::loadIntoTemp(const char *fileName) {
 	data.word(kTempgraphics) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadIntoTemp2(const char *fileName) {
+void DreamBase::loadIntoTemp2(const char *fileName) {
 	data.word(kTempgraphics2) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadIntoTemp3(const char *fileName) {
+void DreamBase::loadIntoTemp3(const char *fileName) {
 	data.word(kTempgraphics3) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadTempCharset() {
-	loadTempCharset((const char *)data.ptr(dx, 0));
+void DreamBase::loadTempCharset(const char *fileName) {
+	engine->setTempCharset(standardLoadCPP(fileName));
 }
 
-void DreamGenContext::loadTempCharset(const char *fileName) {
-	engine->setTempCharset(standardLoadCPP(fileName));
+void DreamGenContext::hangOnCurs() {
+	hangOnCurs(cx);
 }
 
 void DreamGenContext::hangOnCurs(uint16 frameCount) {
@@ -970,22 +966,25 @@ void DreamGenContext::getTime() {
 	data.byte(kHourcount) = ch;
 }
 
-uint16 DreamGenContext::allocateMem(uint16 paragraphs) {
+uint16 DreamBase::allocateMem(uint16 paragraphs) {
 	uint size = (paragraphs + 2) * 16;
 	debug(1, "allocate mem, %u bytes", size);
-	flags._c = false;
 	SegmentRef seg = allocateSegment(size);
 	uint16 result = (uint16)seg;
 	debug(1, "\tsegment address -> %04x", result);
 	return result;
 }
 
-void DreamGenContext::deallocateMem(uint16 segment) {
+void DreamBase::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
 
-	//fixing invalid entries in the sprite table
-	es = data;
+
+	// FIXME: The following line used to be enabled with the comment: "fixing
+	// invalid entries in the sprite table"
+	// So if there are regressions with sprites, we may want to investigate this
+	// closer.
+//	es = data;
 	uint tsize = 16 * 32;
 	uint16 bseg = data.word(kBuffers);
 	if (!bseg)
@@ -1075,21 +1074,21 @@ void DreamGenContext::makeBackOb(SetObject *objData) {
 	sprite->animFrame = 0;
 }
 
-uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
+uint16 DreamBase::allocateAndLoad(unsigned int size) {
 	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
 	uint16 result = allocateMem(size / 16);
 	engine->readFromFile(getSegment(result).ptr(0, size), size);
 	return result;
 }
 
-void DreamGenContext::clearAndLoad(uint8 *buf, uint8 c,
+void DreamBase::clearAndLoad(uint8 *buf, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
 	memset(buf, c, maxSize);
 	engine->readFromFile(buf, size);
 }
 
-void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
+void DreamBase::clearAndLoad(uint16 seg, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
 	uint8 *buf = getSegment(seg).ptr(0, maxSize);
@@ -2027,7 +2026,7 @@ void DreamGenContext::zoomOnOff() {
 	workToScreenM();
 }
 
-void DreamGenContext::sortOutMap() {
+void DreamBase::sortOutMap() {
 	const uint8 *src = workspace();
 	uint8 *dst = (uint8 *)getSegment(data.word(kMapdata)).ptr(0, 0);
 	for (uint16 y = 0; y < kMaplength; ++y) {
@@ -2262,11 +2261,11 @@ void DreamGenContext::doLook() {
 	workToScreenM();
 }
 
-void DreamGenContext::useCharset1() {
+void DreamBase::useCharset1() {
 	engine->setCurrentCharset((Frame *)getSegment(data.word(kCharset1)).ptr(0, 0));
 }
 
-void DreamGenContext::useTempCharset() {
+void DreamBase::useTempCharset() {
 	engine->setCurrentCharset(engine->tempCharset());
 }
 
@@ -2310,7 +2309,7 @@ void DreamGenContext::getRidOfAll() {
 }
 
 // if skipDat, skip clearing and loading Setdat and Freedat
-void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
+void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
 
 	FileHeader header;

@@ -55,6 +55,10 @@ public:
 	void input();
 	byte makeCaps(byte c);
 	void delChar();
+	void monMessage(uint8 index);
+	void netError();
+	void monitorLogo();
+	void randomAccess(uint16 count);
 	void printOuterMon();
 	void showCurrentFile();
 	void accessLightOn();
@@ -154,6 +158,21 @@ public:
 	SetObject *getSetAd(uint8 index);
 	void *getAnyAd(uint8 *value1, uint8 *value2);
 	const uint8 *getTextInFile1(uint16 index);
+	uint16 allocateMem(uint16 paragraphs);
+	void deallocateMem(uint16 segment);
+	uint16 allocateAndLoad(unsigned int size);
+	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
+	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
+	void loadIntoTemp(const char *fileName);
+	void loadIntoTemp2(const char *fileName);
+	void loadIntoTemp3(const char *fileName);
+	void loadTempCharset(const char *fileName);
+	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
+	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
+	void sortOutMap();
+	void loadRoomData(const Room &room, bool skipDat);
+	void useTempCharset();
+	void useCharset1();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
