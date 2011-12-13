@@ -32,6 +32,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
 
+#include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/main_model_component.h"
 #include "engines/grim/costume/colormap_component.h"
 #include "engines/grim/costume/keyframe_component.h"
@@ -393,6 +394,14 @@ Model *Costume::getModel() {
 		return comp->getModel();
 	}
 	return NULL;
+}
+
+void Costume::setChoreLastFrame(int num) {
+	_chores[num].setLastFrame();
+}
+
+void Costume::setChoreLooping(int num, bool val) {
+	_chores[num].setLooping(val);
 }
 
 void Costume::playChoreLooping(int num) {

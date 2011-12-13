@@ -23,9 +23,13 @@
 #ifndef GRIM_CHORE_H
 #define GRIM_CHORE_H
 
+#include "engines/grim/textsplit.h"
+#include "engines/grim/animation.h"
+
 namespace Grim {
 
 class Costume;
+class Animation;
 
 struct TrackKey {
 	int time, value;
@@ -36,7 +40,6 @@ struct ChoreTrack {
 	int numKeys;
 	TrackKey *keys;
 };
-
 
 class Chore {
 public:

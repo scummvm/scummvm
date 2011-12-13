@@ -25,12 +25,8 @@
 
 #include "common/memstream.h"
 
-#include "math/matrix4.h"
-
 #include "engines/grim/object.h"
-#include "engines/grim/animation.h"
 #include "engines/grim/costume/head.h"
-#include "engines/grim/costume/chore.h"
 
 namespace Grim {
 
@@ -57,8 +53,8 @@ public:
 	void playChore(const char *name);
 	void playChore(int num);
 	void playChoreLooping(int num);
-	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
-	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
+	void setChoreLastFrame(int num);
+	void setChoreLooping(int num, bool val);
 	void stopChore(int num);
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);

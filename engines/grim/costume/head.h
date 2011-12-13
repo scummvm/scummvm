@@ -23,7 +23,12 @@
 #ifndef GRIM_HEAD_H
 #define GRIM_HEAD_H
 
+#include "math/matrix4.h"
+
 namespace Grim {
+
+class ModelNode;
+class SaveGame;
 
 class Head {
 public:
