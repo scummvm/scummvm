@@ -258,7 +258,7 @@ public:
 
 	virtual bool hasFile(const Common::String &name) const;
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
 	typedef Common::List<Common::String> FilenameList;
@@ -297,7 +297,7 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
