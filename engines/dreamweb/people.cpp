@@ -33,7 +33,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
-	&DreamGenContext::heavy, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -65,7 +65,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
 	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
-	/*&DreamGenContext::heavy*/NULL, &DreamGenContext::manAsleep /*manAsleep2*/,
+	&DreamGenContext::heavy, &DreamGenContext::manAsleep /*manAsleep2*/,
 	&DreamGenContext::genericPerson /*manSatStill*/, &DreamGenContext::drinker,
 	&DreamGenContext::bartender, &DreamGenContext::genericPerson /*otherSmoker*/,
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
@@ -832,6 +832,30 @@ void DreamGenContext::bartender(ReelRoutine &routine) {
 	if (data.byte(kGunpassflag) == 1)
 		routine.b7 = 9;	// got gun
 
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::heavy(ReelRoutine &routine) {
+	routine.b7 &= 127;
+	if (routine.reelPointer() != 43) {
+		data.word(kWatchingtime) = 10;
+		if (routine.reelPointer() == 70) {
+			// After shot
+			data.byte(kCombatcount)++;
+			if (data.byte(kCombatcount) == 80)
+				data.byte(kMandead) = 2;
+		} else {
+			if (checkSpeed(routine))
+				routine.incReelPointer();
+		}
+	} else if (data.byte(kLastweapon) == 1 && data.byte(kManspath) == 5 && data.byte(kFacing) == 4) {
+		// Heavy wait
+		data.byte(kLastweapon) = (byte)-1;
+		routine.incReelPointer();
+		data.byte(kCombatcount) = 0;
+	}
+
+	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 

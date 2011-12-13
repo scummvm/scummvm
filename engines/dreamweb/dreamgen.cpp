@@ -360,48 +360,6 @@ combatover2:
 	data.byte(kMandead) = 2;
 }
 
-void DreamGenContext::heavy() {
-	STACK_CHECK;
-	al = es.byte(bx+7);
-	_and(al, 127);
-	es.byte(bx+7) = al;
-	_cmp(es.word(bx+3), 43);
-	if (flags.z())
-		goto heavywait;
-	data.word(kWatchingtime) = 10;
-	_cmp(es.word(bx+3), 70);
-	if (!flags.z())
-		goto notafterhshot;
-	_inc(data.byte(kCombatcount));
-	_cmp(data.byte(kCombatcount), 80);
-	if (!flags.z())
-		goto gotheavyframe;
-	data.byte(kMandead) = 2;
-	goto gotheavyframe;
-notafterhshot:
-	checkSpeed();
-	if (!flags.z())
-		goto gotheavyframe;
-	_inc(es.word(bx+3));
-	goto gotheavyframe;
-heavywait:
-	_cmp(data.byte(kLastweapon), 1);
-	if (!flags.z())
-		goto gotheavyframe;
-	_cmp(data.byte(kManspath), 5);
-	if (!flags.z())
-		goto gotheavyframe;
-	_cmp(data.byte(kFacing), 4);
-	if (!flags.z())
-		goto gotheavyframe;
-	data.byte(kLastweapon) = -1;
-	_inc(es.word(bx+3));
-	data.byte(kCombatcount) = 0;
-gotheavyframe:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::endGameSeq() {
 	STACK_CHECK;
 	checkSpeed();

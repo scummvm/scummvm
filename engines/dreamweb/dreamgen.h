@@ -513,7 +513,6 @@ public:
 	void deleteExText();
 	void getFreeAd();
 	void removeObFromInv();
-	void heavy();
 	void dirFile();
 	void pickupConts();
 	void nextColon();
