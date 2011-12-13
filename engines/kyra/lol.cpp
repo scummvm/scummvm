@@ -568,41 +568,27 @@ void LoLEngine::initKeymap() {
 	Common::Action *act;
 	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
 
-	act = new Common::Action(engineKeyMap, "AT1", _("Attack 1"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0), "AT1", _("Attack 1")},
+		{Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2 , 0), "AT2", _("Attack 2")},
+		{Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F2 , 0), "AT3", _("Attack 3")},
+		{Common::KeyState(Common::KEYCODE_UP), "MVF", _("Move Forward")},
+		{Common::KeyState(Common::KEYCODE_DOWN), "MVB", _("Move Back")},
+		{Common::KeyState(Common::KEYCODE_LEFT), "SLL", _("Slide Left")},
+		{Common::KeyState(Common::KEYCODE_RIGHT), "SLR", _("Slide Right")},
+		{Common::KeyState(Common::KEYCODE_HOME), "TL", _("Turn Left")},
+		{Common::KeyState(Common::KEYCODE_PAGEUP), "TR", _("Turn Right")},
+		{Common::KeyState(Common::KEYCODE_r), "RST", _("Rest")},
+		{Common::KeyState(Common::KEYCODE_o), "OPT", _("Options")},
+		{Common::KeyState(Common::KEYCODE_SLASH), "SPL", _("Choose Spell")},
+		{Common::KeyState(), 0, 0}
+	};
 
-	act = new Common::Action(engineKeyMap, "AT2", _("Attack 2"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2 , 0));
-
-	act = new Common::Action(engineKeyMap, "AT3", _("Attack 3"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3 , 0));
-
-	act = new Common::Action(engineKeyMap, "MVF", _("Move Forward"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_UP));
-
-	act = new Common::Action(engineKeyMap, "MVB", _("Move Back"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
-
-	act = new Common::Action(engineKeyMap, "SLL", _("Slide Left"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
-
-	act = new Common::Action(engineKeyMap, "SLR", _("Slide Right"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
-
-	act = new Common::Action(engineKeyMap, "TL", _("Turn Left"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
-
-	act = new Common::Action(engineKeyMap, "TR", _("Turn Right"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
-
-	act = new Common::Action(engineKeyMap, "RST", _("Rest"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_r));
-
-	act = new Common::Action(engineKeyMap, "OPT", _("Options"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_o));
-
-	act = new Common::Action(engineKeyMap, "SPL", _("Choose Spell"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_SLASH));
+	const Common::KeyActionEntry *entry;
+	for (entry = keyActionEntries; entry->id; ++entry) {
+		act = new Common::Action(engineKeyMap, entry->id, Common::String(entry->description), Common::kGenericActionType, Common::kActionKeyType);
+		act->addKeyEvent(Common::KeyState(entry->ks));
+	}
 
 	mapper->addGameKeymap(engineKeyMap);
 
