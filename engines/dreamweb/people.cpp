@@ -783,28 +783,28 @@ void DreamGenContext::receptionist(ReelRoutine &routine) {
 			// Set card
 			data.byte(kCardpassflag)++;
 			routine.b7 = 1;
-			routine.b3 = 64;
+			routine.setReelPointer(64);
 		}
 
-		if (routine.b3 != 58) {
+		if (routine.reelPointer() != 58) {
 			// notdes1
-			if (routine.b3 != 60) {
+			if (routine.reelPointer() != 60) {
 				// notdes2
-				if (routine.b3 != 88)
-					routine.b3++;	// not end card
+				if (routine.reelPointer() != 88)
+					routine.incReelPointer();	// not end card
 				else
-					routine.b3 = 53;
+					routine.setReelPointer(53);
 			} else if (engine->randomNumber() >= 240) {
-				routine.b3 = 53;
+				routine.setReelPointer(53);
 			}
 		} else if (engine->randomNumber() >= 30) {
-			routine.b3 = 55;
+			routine.setReelPointer(55);
 		} else {
 			// notdes2
-			if (routine.b3 != 88)
-				routine.b3++;	// not end card
+			if (routine.reelPointer() != 88)
+				routine.incReelPointer();	// not end card
 			else
-				routine.b3 = 53;
+				routine.setReelPointer(53);
 		}
 	}
 
@@ -816,15 +816,15 @@ void DreamGenContext::receptionist(ReelRoutine &routine) {
 
 void DreamGenContext::bartender(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
-		if (routine.b3 == 86) {
+		if (routine.reelPointer() == 86) {
 			if (engine->randomNumber() >= 18)
-				routine.b3 = 81;
+				routine.setReelPointer(81);
 			else
-				routine.b3++;	// notsmoket2
-		} else if (routine.b3 == 103) {
-			routine.b3 = 81;	// notsmoket1
+				routine.incReelPointer();	// notsmoket2
+		} else if (routine.reelPointer() == 103) {
+			routine.setReelPointer(81);	// notsmoket1
 		} else {
-			routine.b3++;	// notsmoket2
+			routine.incReelPointer();	// notsmoket2
 		}
 	}
 
