@@ -809,8 +809,6 @@ public:
 	virtual void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
 	virtual void releaseImageStack() = 0;
-	virtual	int saveGame(const Common::String &fileName, const Common::String &saveName) = 0;
-	virtual int loadGame(const Common::String &fileName, bool checkId = true) = 0;
 
 	int _soundemu;
 
