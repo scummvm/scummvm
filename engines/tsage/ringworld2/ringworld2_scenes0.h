@@ -240,6 +240,10 @@ class Scene300: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
+	class Doorway: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3, _sequenceManager4;
 	ASoundExt _sound1;
@@ -258,7 +262,8 @@ public:
 	MirandaWorkstation _mirandaWorkstation1, _mirandaWorkstation2;
 	SceneActor _object1, _object2, _object3, _object4, _protocolDisplay;
 	SceneActor _object6, _object7, _object8, _object9;
-	SceneActor _teal, _soldier, _object12, _doorway;
+	SceneActor _teal, _soldier, _object12;
+	Doorway _doorway;
 	Miranda _miranda;
 	Seeker _seeker;
 	Quinn _quinn;

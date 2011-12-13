@@ -1707,6 +1707,25 @@ bool Scene300::Quinn::startAction(CursorType action, Event &event) {
 	}
 }
 
+bool Scene300::Doorway::startAction(CursorType action, Event &event) {
+	Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if ((R2_GLOBALS._player._characterIndex == R2_QUINN) && 
+				(!R2_GLOBALS.getFlag(44) || R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500)) {
+			R2_GLOBALS._player.disableControl();
+			scene->_sceneMode = 301;
+			scene->setAction(&scene->_sequenceManager1, scene, 301, &R2_GLOBALS._player, this, NULL);
+		} else {
+			SceneItem::display2(300, 45);
+		}
+		
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 Scene300::Scene300(): SceneExt() {
@@ -1769,7 +1788,6 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_object4.postInit();
 	_object4.setup(300, 5, 1);
 	_object4.setPosition(Common::Point(236, 48));
-
 	_object4.animate(ANIM_MODE_2, NULL);
 
 	_protocolDisplay.postInit();
