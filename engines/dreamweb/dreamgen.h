@@ -523,7 +523,6 @@ public:
 	void getKeyAndLogo();
 	void selectOb();
 	void fadeUpMon();
-	void showDiaryPage();
 	void reExFromInv();
 	void businessMan();
 	void outOfInv();

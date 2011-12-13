@@ -4260,39 +4260,6 @@ notdumpdiary:
 	multiDump();
 }
 
-void DreamGenContext::showDiaryPage() {
-	STACK_CHECK;
-	al = 0;
-	ah = 0;
-	di = (68+24);
-	bx = (48+12);
-	ds = data.word(kTempgraphics);
-	showFrame();
-	al = data.byte(kDiarypage);
-	findText1();
-	data.byte(kKerning) = 1;
-	useTempCharset();
-	di = (68+24)+48;
-	bx = (48+12)+16;
-	dl = 240;
-	ah = 16;
-	data.word(kCharshift) = 91+91;
-	printDirect();
-	di = (68+24)+129;
-	bx = (48+12)+16;
-	dl = 240;
-	ah = 16;
-	printDirect();
-	di = (68+24)+48;
-	bx = (48+12)+23;
-	dl = 240;
-	ah = 16;
-	printDirect();
-	data.byte(kKerning) = 0;
-	data.word(kCharshift) = 0;
-	useCharset1();
-}
-
 void DreamGenContext::findText1() {
 	STACK_CHECK;
 	ah = 0;

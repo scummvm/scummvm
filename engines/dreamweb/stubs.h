@@ -581,5 +581,6 @@
 	void processTrigger();
 	void updateSymbolTop();
 	void updateSymbolBot();
+	void showDiaryPage();
 
 #endif

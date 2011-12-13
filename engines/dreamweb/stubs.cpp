@@ -4582,4 +4582,21 @@ void DreamGenContext::updateSymbolBot() {
 	}
 }
 
+void DreamGenContext::showDiaryPage() {
+	showFrame(tempGraphics(), kDiaryx, kDiaryy, 0, 0);
+	data.byte(kKerning) = 1;
+	useTempCharset();
+	data.word(kCharshift) = 91+91;
+	uint16 offset = kTextstart + getSegment(data.word(kTextfile1)).word(data.byte(kDiarypage) * 2);
+	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
+	uint16 y = kDiaryy + 16;
+	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
+	printDirect(&string, kDiaryx + 129, &y, 240, 240 & 1);
+	y = kDiaryy + 23;
+	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
+	data.byte(kKerning) = 0;
+	data.word(kCharshift) = 0;
+	useCharset1();
+}
+
 } // End of namespace DreamGen
