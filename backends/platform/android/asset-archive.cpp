@@ -103,7 +103,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 	MID_mark = env->GetMethodID(cls, "mark", "(I)V");
 	assert(MID_mark);
 	MID_available = env->GetMethodID(cls, "available", "()I");
-	assert(MID_mark);
+	assert(MID_available);
 	MID_close = env->GetMethodID(cls, "close", "()V");
 	assert(MID_close);
 	MID_read = env->GetMethodID(cls, "read", "([BII)I");
