@@ -414,6 +414,36 @@ public:
 	virtual void remove();
 	virtual void signal();
 };
+
+class Scene2530 : public SceneExt {
+	class Actor2 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	SceneActor _actor1;
+	Actor2 _actor2;
+	Actor3 _actor3;
+	Exit1 _exit1;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
