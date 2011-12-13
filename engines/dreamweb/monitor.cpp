@@ -182,7 +182,7 @@ void DreamBase::printLogo() {
 	showCurrentFile();
 }
 
-void DreamGenContext::input() {
+void DreamBase::input() {
 	char *inputLine = (char *)data.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
@@ -212,9 +212,7 @@ void DreamGenContext::input() {
 			continue;
 		if ((currentKey == 32) && (data.word(kCurpos) == 0))
 			continue;
-		al = currentKey;
-		makeCaps();
-		currentKey = al;
+		currentKey = makeCaps(currentKey);
 		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
@@ -228,7 +226,18 @@ void DreamGenContext::input() {
 	}
 }
 
-void DreamGenContext::delChar() {
+void DreamGenContext::makeCaps() {
+	al = makeCaps(al);
+}
+
+byte DreamBase::makeCaps(byte c) {
+	// TODO: Replace calls to this by toupper() ?
+	if (c >= 'a')
+		c -= 'a' - 'A'; // = 32
+	return c;
+}
+
+void DreamBase::delChar() {
 	char *inputLine = (char *)data.ptr(kInputline, 0);
 	--data.word(kCurpos);
 	inputLine[data.word(kCurpos) * 2] = 0;
@@ -238,7 +247,7 @@ void DreamGenContext::delChar() {
 	uint16 offset = data.word(kCurpos);
 	offset = ((offset & 0x00ff) << 8) | ((offset & 0xff00) >> 8);
 	multiPut(mapStore() + offset, data.word(kMonadx), data.word(kMonady), 8, 8);
-	multiDump(data.word(kMonadx), data.word(kMonady), al, 8);
+	multiDump(data.word(kMonadx), data.word(kMonady), 8, 8);
 }
 
 void DreamBase::printCurs() {

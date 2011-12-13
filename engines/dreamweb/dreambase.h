@@ -52,6 +52,9 @@ public:
 
 public:
 	// from monitor.cpp
+	void input();
+	byte makeCaps(byte c);
+	void delChar();
 	void printOuterMon();
 	void showCurrentFile();
 	void accessLightOn();

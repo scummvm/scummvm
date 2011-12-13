@@ -2958,14 +2958,6 @@ emptyinterface:
 	al = 0;
 }
 
-void DreamGenContext::makeCaps() {
-	STACK_CHECK;
-	_cmp(al, 'a');
-	if (flags.c())
-		return /* (notupperc) */;
-	_sub(al, 32);
-}
-
 void DreamGenContext::dirCom() {
 	STACK_CHECK;
 	cx = 30;

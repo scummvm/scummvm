@@ -38,7 +38,6 @@
 	void loadTempCharset();
 	void loadTempCharset(const char *fileName);
 	void saveLoad();
-	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
 	void workToScreen();
@@ -265,7 +264,10 @@
 	void dumpMenu();
 	void useMenu();
 	void useMon();
-	void input();
+	void makeCaps();
+	byte makeCaps(byte c) {
+		return DreamBase::makeCaps(c);
+	}
 	void monPrint();
 	const char *monPrint(const char *string) {
 		return DreamBase::monPrint(string);
