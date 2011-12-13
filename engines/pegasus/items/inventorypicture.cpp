@@ -319,6 +319,8 @@ void InventoryItemsPicture::deactivateInventoryPicture() {
 }
 
 void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
 	Movie endMessage(0);
 
 	_shouldDrawHighlight = false;
@@ -329,7 +331,8 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 	endMessage.start();
 
 	while (endMessage.isRunning()) {
-		((PegasusEngine *)g_engine)->refreshDisplay();
+		vm->checkCallBacks();
+		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
