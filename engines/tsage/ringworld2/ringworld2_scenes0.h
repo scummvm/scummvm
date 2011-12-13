@@ -67,7 +67,7 @@ class Scene100: public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Object10: public SceneActorExt {
+	class DoorDisplay: public SceneActorExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -85,12 +85,12 @@ class Scene100: public SceneExt {
 public:
 	NamedHotspot _background, _duct, _bed, _desk;
 	Terminal _terminal;
-	SceneActor _object1, _object2, _object3, _object4, _object5;
-	SceneActor _object6;
+	SceneActor _bedLights1, _bedLights2, _object3, _object4, _object5;
+	SceneActor _wardrobe;
 	Door _door;
 	Table _table;
 	StasisNegator _stasisNegator;
-	Object10 _object10;
+	DoorDisplay _doorDisplay;
 	SteppingDisks _steppingDisks;
 	SequenceManager _sequenceManager1, _sequenceManager2;
 
@@ -155,6 +155,15 @@ public:
 	void setDetails(int resNum, int lineNum);
 	void stop();
 	Common::String parseMessage(const Common::String &msg);
+};
+
+class Scene150: public Scene100 {
+public:
+	SceneActor _emptyRoomTable;
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
 };
 
 class Scene200: public SceneExt {

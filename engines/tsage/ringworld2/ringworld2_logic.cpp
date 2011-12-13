@@ -42,8 +42,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 100: return new Scene100();
 	// Computer console
 	case 125: return new Scene125();
-	//
-	case 150:
+	// Empty Bedroom
+	case 150: return new Scene150();
 	case 160:
 	case 175:
 	case 180:

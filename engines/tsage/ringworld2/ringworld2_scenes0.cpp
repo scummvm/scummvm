@@ -94,11 +94,11 @@ bool Scene100::Door::startAction(CursorType action, Event &event) {
 		if (_state) {
 			SceneItem::display2(100, 26);
 			_state = 0;
-			scene->_object10.setFrame(1);
+			scene->_doorDisplay.setFrame(1);
 		} else {
 			SceneItem::display2(100, 27);
 			_state = 1;
-			scene->_object10.setFrame(2);
+			scene->_doorDisplay.setFrame(2);
 		}
 		return true;
 	default:
@@ -176,7 +176,7 @@ bool Scene100::StasisNegator::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene100::Object10::startAction(CursorType action, Event &event) {
+bool Scene100::DoorDisplay::startAction(CursorType action, Event &event) {
 	Scene100 *scene = (Scene100 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -242,34 +242,35 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	_door.setPosition(Common::Point(160, 84));
 	_door.setDetails(100, 3, 4, 5, 1, NULL);
 
-	_object10.postInit();
-	_object10.setup(100, 2, 1);
-	_object10.setDetails(100, -1, -1, -1, 1, NULL);
+	_doorDisplay.postInit();
+	_doorDisplay.setup(100, 2, 1);
+	_doorDisplay.setPosition(Common::Point(202, 53));
+	_doorDisplay.setDetails(100, -1, -1, -1, 1, NULL);
 
 	_table.postInit();
 	_table.setup(100, 2, 3);
 	_table.setPosition(Common::Point(175, 157));
 	_table.setDetails(100, 17, 18, 20, 1, NULL);
 
-	_object1.postInit();
-	_object1.setup(100, 3, 1);
-	_object1.setPosition(Common::Point(89, 79));
-	_object1.fixPriority(250);
-	_object1.animate(ANIM_MODE_2, NULL);
-	_object1._numFrames = 3;
+	_bedLights1.postInit();
+	_bedLights1.setup(100, 3, 1);
+	_bedLights1.setPosition(Common::Point(89, 79));
+	_bedLights1.fixPriority(250);
+	_bedLights1.animate(ANIM_MODE_2, NULL);
+	_bedLights1._numFrames = 3;
 
-	_object2.postInit();
-	_object2.setup(100, 3, 1);
-	_object2.setPosition(Common::Point(89, 147));
-	_object2.fixPriority(250);
-	_object2.animate(ANIM_MODE_7, 0, NULL); 
-	_object2._numFrames = 3;
+	_bedLights2.postInit();
+	_bedLights2.setup(100, 3, 1);
+	_bedLights2.setPosition(Common::Point(89, 147));
+	_bedLights2.fixPriority(250);
+	_bedLights2.animate(ANIM_MODE_7, 0, NULL); 
+	_bedLights2._numFrames = 3;
 
-	_object6.postInit();
-	_object6.setVisage(101);
-	_object6.setPosition(Common::Point(231, 126));
-	_object6.fixPriority(10);
-	_object6.setDetails(100, 37, -1, 39, 1, NULL);
+	_wardrobe.postInit();
+	_wardrobe.setVisage(101);
+	_wardrobe.setPosition(Common::Point(231, 126));
+	_wardrobe.fixPriority(10);
+	_wardrobe.setDetails(100, 37, -1, 39, 1, NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_STEPPING_DISKS) == 100) {
 		_steppingDisks.postInit();
@@ -296,7 +297,7 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		_object5.postInit();
 		_object4.postInit();
 		_sceneMode = 104;
-		setAction(&_sequenceManager1, this, 104, &R2_GLOBALS._player, &_object6, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager1, this, 104, &R2_GLOBALS._player, &_wardrobe, &_object4, &_object5, NULL);
 		break;
 	case 125:
 		_sceneMode = 100;
@@ -356,10 +357,10 @@ void Scene100::signal() {
 	case 110:
 		if (_door._state) {
 			_door._state = 0;
-			_object10.setFrame(1);
+			_doorDisplay.setFrame(1);
 		} else {
 			_door._state = 1;
-			_object10.setFrame(2);
+			_doorDisplay.setFrame(2);
 		}
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -1196,6 +1197,98 @@ Common::String Scene125::parseMessage(const Common::String &msg) {
 	}
 
 	return Common::String(msgP);
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 150 - Empty Bedroom
+ *
+ *--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+
+void Scene150::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(100);
+
+	_door.postInit();
+	_door._state = 0;
+	_door.setVisage(100);
+	_door.setPosition(Common::Point(160, 84));
+	_door.setDetails(100, 3, -1, -1, 1, NULL);
+
+	_doorDisplay.postInit();
+	_doorDisplay.setup(100, 2, 1);
+	_doorDisplay.setPosition(Common::Point(202, 53));
+	_doorDisplay.setDetails(100, -1, -1, -1, 1, NULL);
+
+	_emptyRoomTable.postInit();
+	_emptyRoomTable.setVisage(100);
+	_emptyRoomTable.setStrip(4);
+	_emptyRoomTable.setFrame(1);
+	_emptyRoomTable.setPosition(Common::Point(175, 157));
+	_emptyRoomTable.setDetails(150, 3, 4, 5, 1, NULL);
+
+	_wardrobe.postInit();
+	_wardrobe.setVisage(101);
+	_wardrobe.setPosition(Common::Point(231, 126));
+	_wardrobe.fixPriority(10);
+	_wardrobe.setDetails(100, 37, -1, 39, 1, NULL);
+
+	_terminal.setDetails(11, 100, 14, 15, 16);
+	_desk.setDetails(12, 100, 11, -1, 13);
+	_bed.setDetails(13, 100, 8, 9, 10);
+	_duct.setDetails(14, 100, 34, -1, 36);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+	
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 150, 0, 1, -1, 1, NULL);
+	_sceneMode = 100;
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 100:
+		setAction(&_sequenceManager1, this, 106, &R2_GLOBALS._player, NULL);
+		break;
+	case 200:
+		setAction(&_sequenceManager1, this, 100, &R2_GLOBALS._player, &_door, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.setPosition(Common::Point(180, 100));
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene150::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene150::signal() {
+	switch (_sceneMode) {
+	case 101:
+		R2_GLOBALS._sceneManager.changeScene(200);
+		break;
+	case 105:
+		R2_GLOBALS._sceneManager.changeScene(125);
+		break;
+	case 110:
+		if (_door._state) {
+			_door._state = 0;
+			_doorDisplay.setFrame(1);
+		} else {
+			_door._state = 1;
+			_doorDisplay.setFrame(2);
+		}
+		R2_GLOBALS._player.enableControl();
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
 }
 
 /*--------------------------------------------------------------------------
