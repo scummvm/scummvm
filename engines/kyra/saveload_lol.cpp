@@ -102,8 +102,8 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		}
 	}
 
-	if (!header.originalSave)
-		in.read(_wllAutomapData, 80);
+	if (header.version < 17)
+		in.skip(80);
 
 	_currentBlock = in.readUint16();
 	_partyPosX = in.readUint16();
@@ -198,12 +198,8 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		t->level = in.readSByte();
 		t->itemPropertyIndex = in.readUint16();
 		t->shpCurFrame_flg = in.readUint16();
-		if (!header.originalSave) {
-			t->destDirection = in.readByte();		
-			t->hitOffsX = in.readSByte();
-			t->hitOffsY = in.readSByte();
-			t->currentSubFrame = in.readByte();
-		}
+		if (header.version < 17)
+			in.skip(4);
 	}
 
 	for (int i = 0; i < 1024; i++) {
@@ -385,9 +381,7 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		for (int ii = 0; ii < 5; ii++)
 			out->writeByte(c->characterUpdateDelay[ii]);
 	}
-
-	out->write(_wllAutomapData, 80);
-
+	
 	out->writeUint16BE(_currentBlock);
 	out->writeUint16BE(_partyPosX);
 	out->writeUint16BE(_partyPosY);
@@ -432,11 +426,6 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		out->writeSByte(t->level);
 		out->writeUint16BE(t->itemPropertyIndex);
 		out->writeUint16BE(t->shpCurFrame_flg);
-		
-		out->writeByte(t->destDirection);
-		out->writeSByte(t->hitOffsX);
-		out->writeSByte(t->hitOffsY);
-		out->writeByte(t->currentSubFrame);
 	}
 
 	addLevelItems();

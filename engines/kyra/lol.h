@@ -118,11 +118,11 @@ struct LoLMonsterInPlay {
 	int8 shiftStep;
 	uint16 destX;
 	uint16 destY;
+
 	uint8 destDirection;
 	int8 hitOffsX;
 	int8 hitOffsY;
 	uint8 currentSubFrame;
-
 	uint8 mode;
 	int8 fightCurTick;
 	uint8 id;
@@ -130,7 +130,6 @@ struct LoLMonsterInPlay {
 	uint8 facing;
 	uint16 flags;
 	uint16 damageReceived;
-	//uint8 field_1C;
 	int16 hitPoints;
 	uint8 speedTick;
 	uint8 type;
@@ -152,10 +151,6 @@ struct ItemInPlay {
 	int8 level;
 	uint16 itemPropertyIndex;
 	uint16 shpCurFrame_flg;
-	uint8 destDirection;
-	int8 hitOffsX;
-	int8 hitOffsY;
-	uint8 currentSubFrame;
 };
 
 struct ItemProperty {
