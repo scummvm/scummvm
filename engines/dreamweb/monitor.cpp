@@ -70,6 +70,7 @@ void DreamGenContext::useMon() {
 	scrollMonitor();
 	data.word(kBufferin) = 0;
 	data.word(kBufferout) = 0;
+	bool stop = false;
 	do {
 		di = data.word(kMonadx);
 		bx = data.word(kMonady);
@@ -80,10 +81,10 @@ void DreamGenContext::useMon() {
 		di = pop();
 		data.word(kMonadx) = di;
 		data.word(kMonady) = bx;
-		execCommand();
+		stop = execCommand();
 		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
 			break;
-	} while (al == 0);
+	} while (!stop);
 	getRidOfTemp();
 	getRidOfTempCharset();
 	deallocateMem(data.word(kTextfile1));
@@ -97,7 +98,71 @@ void DreamGenContext::useMon() {
 	workToScreenM();
 }
 
-void DreamGenContext::monitorLogo() {
+bool DreamGenContext::execCommand() {
+	static const char *comlist[] = {
+		"EXIT",
+		"HELP",
+		"LIST",
+		"READ",
+		"LOGON",
+		"KEYS"
+	};
+
+	const char *inputLine = (const char *)data.ptr(kInputline, 64);
+	if (*inputLine == 0) {
+		// No input
+		scrollMonitor();
+		return false;
+	}
+
+	// Loop over all commands in the list and see if we get a match
+	int cmd = 0;
+	bool done = false;
+	for (; cmd < ARRAYSIZE(comlist) && !done; ++cmd) {
+		const char *cmdStr = comlist[cmd];
+		const char *inputStr = inputLine;
+		// Compare the command, char by char, to see if we get a match.
+		// We only care about the prefix matching, though.
+		char inputChar, cmdChar;
+		do {
+			inputChar = *inputStr; inputStr += 2;
+			cmdChar = *cmdStr++;
+			if (cmdChar == 0) {
+				done = true;
+				break;
+			}
+		} while (inputChar == cmdChar);
+	}
+
+	// Execute the selected command
+	switch (cmd) {
+	case 0:
+		return true;
+	case 1:
+		monMessage(6);
+		break;
+	case 2:
+		dirCom();
+		break;
+	case 3:
+		read();
+		break;
+	case 4:
+		signOn();
+		break;
+	case 5:
+		showKeys();
+		break;
+	default:
+		netError();
+		break;
+	}
+	return false;
+}
+
+
+
+void DreamBase::monitorLogo() {
 	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {
 		data.byte(kOldlogonum) = data.byte(kLogonum);
 		printLogo();
@@ -117,7 +182,7 @@ void DreamBase::printLogo() {
 	showCurrentFile();
 }
 
-void DreamGenContext::input() {
+void DreamBase::input() {
 	char *inputLine = (char *)data.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
@@ -147,9 +212,7 @@ void DreamGenContext::input() {
 			continue;
 		if ((currentKey == 32) && (data.word(kCurpos) == 0))
 			continue;
-		al = currentKey;
-		makeCaps();
-		currentKey = al;
+		currentKey = makeCaps(currentKey);
 		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
@@ -163,7 +226,18 @@ void DreamGenContext::input() {
 	}
 }
 
-void DreamGenContext::delChar() {
+void DreamGenContext::makeCaps() {
+	al = makeCaps(al);
+}
+
+byte DreamBase::makeCaps(byte c) {
+	// TODO: Replace calls to this by toupper() ?
+	if (c >= 'a')
+		c -= 'a' - 'A'; // = 32
+	return c;
+}
+
+void DreamBase::delChar() {
 	char *inputLine = (char *)data.ptr(kInputline, 0);
 	--data.word(kCurpos);
 	inputLine[data.word(kCurpos) * 2] = 0;
@@ -173,7 +247,7 @@ void DreamGenContext::delChar() {
 	uint16 offset = data.word(kCurpos);
 	offset = ((offset & 0x00ff) << 8) | ((offset & 0xff00) >> 8);
 	multiPut(mapStore() + offset, data.word(kMonadx), data.word(kMonady), 8, 8);
-	multiDump(data.word(kMonadx), data.word(kMonady), al, 8);
+	multiDump(data.word(kMonadx), data.word(kMonady), 8, 8);
 }
 
 void DreamBase::printCurs() {
@@ -204,10 +278,6 @@ void DreamBase::delCurs() {
 		height = 8;
 	multiPut(textUnder(), x, y, width, height);
 	multiDump(x, y, width, height);
-}
-
-void DreamGenContext::hangOnCurs() {
-	hangOnCurs(cx);
 }
 
 void DreamBase::scrollMonitor() {
@@ -241,7 +311,7 @@ void DreamGenContext::randomAccess() {
 	randomAccess(cx);
 }
 
-void DreamGenContext::randomAccess(uint16 count) {
+void DreamBase::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
 		vSync();
@@ -258,7 +328,7 @@ void DreamGenContext::monMessage() {
 	monMessage(al);
 }
 
-void DreamGenContext::monMessage(uint8 index) {
+void DreamBase::monMessage(uint8 index) {
 	assert(index > 0);
 	const char *string = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	for (uint8 i = 0; i < index; ++i) {
@@ -268,7 +338,7 @@ void DreamGenContext::monMessage(uint8 index) {
 	monPrint(string);
 }
 
-void DreamGenContext::netError() {
+void DreamBase::netError() {
 	monMessage(5);
 	scrollMonitor();
 }

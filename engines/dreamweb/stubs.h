@@ -27,18 +27,7 @@
 	void startup1();
 	void switchRyanOn();
 	void switchRyanOff();
-	uint16 allocateMem(uint16 paragraphs);
-	void deallocateMem(uint16 segment);
-	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
-	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
-	void loadIntoTemp();
-	void loadIntoTemp(const char *fileName);
-	void loadIntoTemp2(const char *fileName);
-	void loadIntoTemp3(const char *fileName);
-	void loadTempCharset();
-	void loadTempCharset(const char *fileName);
 	void saveLoad();
-	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
 	void workToScreen();
@@ -235,7 +224,6 @@
 	void getBlockOfPixel();
 	uint8 getBlockOfPixel(uint8 x, uint8 y);
 	void examineObText();
-	void sortOutMap();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
 	void convIcons();
@@ -265,16 +253,22 @@
 	void dumpMenu();
 	void useMenu();
 	void useMon();
-	void input();
+	void makeCaps();
+	byte makeCaps(byte c) {
+		return DreamBase::makeCaps(c);
+	}
 	void monPrint();
 	const char *monPrint(const char *string) {
 		return DreamBase::monPrint(string);
 	}
-	void randomAccess(uint16 count);
 	void randomAccess();
-	void monMessage(uint8 index);
+	void randomAccess(uint16 count) {
+		DreamBase::randomAccess(count);
+	}
 	void monMessage();
-	void netError();
+	void monMessage(uint8 index) {
+		DreamBase::monMessage(index);
+	}
 	void playChannel1();
 	void playChannel1(uint8 index) {
 		DreamBase::playChannel1(index);
@@ -287,8 +281,6 @@
 	void look();
 	void autoLook();
 	void doLook();
-	void useTempCharset();
-	void useCharset1();
 	void getBackFromOb();
 	void getRidOfAll();
 	void getRidOfTemp();
@@ -303,10 +295,6 @@
 	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
-	uint16 allocateAndLoad(unsigned int size);
-	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
-	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
-	void loadRoomData(const Room &room, bool skipDat);
 	void restoreAll();
 	void restoreReels();
 	void enterSymbol();
@@ -559,7 +547,6 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void monitorLogo();
 	void quitSymbol();
 	void diaryKeyP();
 	void diaryKeyN();
@@ -581,5 +568,6 @@
 	void processTrigger();
 	void updateSymbolTop();
 	void updateSymbolBot();
+	bool execCommand();
 
 #endif
