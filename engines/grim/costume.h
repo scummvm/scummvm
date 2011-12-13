@@ -25,8 +25,9 @@
 
 #include "common/memstream.h"
 
+#include "math/matrix4.h"
+
 #include "engines/grim/object.h"
-#include "engines/grim/costume/head.h"
 
 namespace Grim {
 
@@ -39,6 +40,7 @@ class TextSplitter;
 class ModelComponent;
 class Component;
 class Chore;
+class Head;
 
 class Costume : public Object {
 public:
@@ -99,7 +101,7 @@ private:
 	int _numComponents;
 	Component **_components;
 
-	Head _head;
+	Head *_head;
 
 	ObjectPtr<CMap> _cmap;
 	int _numChores;

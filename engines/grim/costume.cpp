@@ -33,6 +33,7 @@
 #include "engines/grim/model.h"
 
 #include "engines/grim/costume/chore.h"
+#include "engines/grim/costume/head.h"
 #include "engines/grim/costume/main_model_component.h"
 #include "engines/grim/costume/colormap_component.h"
 #include "engines/grim/costume/keyframe_component.h"
@@ -104,7 +105,7 @@ namespace Grim {
 // along setKey requests to the actual bitmap object.
 
 Costume::Costume(const Common::String &fname, const char *data, int len, Costume *prevCost) :
-		Object() {
+		Object(), _head(new Head()) {
 
 	_fname = fname;
 	_lookAtRate = 200;
@@ -292,6 +293,7 @@ Costume::~Costume() {
 		delete[] _components;
 		delete[] _chores;
 	}
+	delete _head;
 }
 
 Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent) {
@@ -559,13 +561,13 @@ void Costume::animate() {
 }
 
 void Costume::moveHead(bool entering, const Math::Vector3d &lookAt) {
-	_head.lookAt(entering, lookAt, _lookAtRate, _matrix);
+	_head->lookAt(entering, lookAt, _lookAtRate, _matrix);
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
-	_head.setJoints(joint1, joint2, joint3);
-	_head.loadJoints(getModelNodes());
-	_head.setMaxAngles(maxPitch, maxYaw, maxRoll);
+	_head->setJoints(joint1, joint2, joint3);
+	_head->loadJoints(getModelNodes());
+	_head->setMaxAngles(maxPitch, maxYaw, maxRoll);
 }
 
 void Costume::setLookAtRate(float rate) {
@@ -624,7 +626,7 @@ void Costume::saveState(SaveGame *state) const {
 
 	// FIXME: Decomment this!!
 // 	state.writeFloat(_lookAtRate);
-	_head.saveState(state);
+	_head->saveState(state);
 }
 
 bool Costume::restoreState(SaveGame *state) {
@@ -659,8 +661,8 @@ bool Costume::restoreState(SaveGame *state) {
 
 	// FIXME: Decomment this!!
 // 	_lookAtRate = state->readFloat();
-	_head.restoreState(state);
-	_head.loadJoints(getModelNodes());
+	_head->restoreState(state);
+	_head->loadJoints(getModelNodes());
 
 	return true;
 }
