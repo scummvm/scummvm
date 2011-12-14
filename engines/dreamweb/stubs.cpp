@@ -1785,14 +1785,12 @@ void DreamGenContext::findSetObject() {
 }
 
 uint16 DreamGenContext::findSetObject(const char *id) {
-	uint16 index = 0;
-
-	do {
+	for (uint16 index = 0; index < 128; index++) {
 		if (objectMatches(getSetAd(index), id))
 			return index;
-	} while (index++ < 128);
+	}
 
-	return index;	// 128, not found
+	return 128;
 }
 
 void DreamGenContext::findExObject() {
@@ -1807,14 +1805,12 @@ void DreamGenContext::findExObject() {
 }
 
 uint16 DreamGenContext::findExObject(const char *id) {
-	uint16 index = 0;
-
-	do {
+	for (uint16 index = 0; index < kNumexobjects; index++) {
 		if (objectMatches(getExAd(index), id))
 			return index;
-	} while (index++ < 114);
+	}
 
-	return index;	// 114, not found
+	return kNumexobjects;
 }
 
 bool DreamGenContext::isItDescribed(const ObjPos *pos) {
