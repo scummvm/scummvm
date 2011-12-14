@@ -2983,5 +2983,46 @@ void Scene2535::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2600 - Maze: Exit
+ *
+ *--------------------------------------------------------------------------*/
+Scene2600::Scene2600(): SceneExt() {
+	_rotation = NULL;
+}
+
+void Scene2600::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	SYNC_POINTER(_rotation);
+}
+
+void Scene2600::postInit(SceneObjectList *OwnerList) {
+	loadScene(2600);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+	R2_GLOBALS._sound1.fadeSound(214);
+	R2_GLOBALS._sound2.play(215);
+	_rotation = R2_GLOBALS._scenePalette.addRotation(176, 191, 1);
+	_rotation->setDelay(3);
+	_rotation->_countdown = 1;
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.disableControl();
+	_sceneMode = 2600;
+	R2_GLOBALS._player.setAction(&_sequenceManager, this, 2600, &R2_GLOBALS._player, NULL);
+}
+
+void Scene2600::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	R2_GLOBALS._sound2.fadeOut2(NULL);
+//	_rotation->remove();
+	SceneExt::remove();
+}
+
+void Scene2600::signal() {
+	if (_sceneMode == 2600)
+		g_globals->_sceneManager.changeScene(3800);
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
