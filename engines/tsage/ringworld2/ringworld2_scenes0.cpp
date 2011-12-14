@@ -2569,6 +2569,8 @@ void Scene400::signal() {
 }
 
 void Scene400::dispatch() {
+	SceneExt::dispatch();
+
 	switch (R2_GLOBALS._player.getRegionIndex() - 15) {
 	case 0:
 	case 11:
