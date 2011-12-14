@@ -20,13 +20,14 @@
  *
  */
 
-#include "engines/grim/model.h"
+#include "common/foreach.h"
 
+#include "engines/grim/model.h"
 #include "engines/grim/costume/model_component.h"
 #include "engines/grim/costume/main_model_component.h"
 
 namespace Grim {
-	
+
 MainModelComponent::MainModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
 		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
 	if (parentID == -2 && prevComponent) {
@@ -49,9 +50,10 @@ MainModelComponent::~MainModelComponent() {
 		_animation = NULL;
 	}
 
-	for (Common::List<MainModelComponent*>::iterator i = _children.begin(); i != _children.end(); ++i) {
-		(*i)->_obj = NULL;
-		(*i)->_parentModel = NULL;
+	foreach (MainModelComponent *child, _children) {
+		child->_obj = NULL;
+		child->_hier = NULL;
+		child->_parentModel = NULL;
 	}
 
 	if (_parentModel) {
