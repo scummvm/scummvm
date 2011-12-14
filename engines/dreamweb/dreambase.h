@@ -263,6 +263,7 @@ public:
 	void clearReels();
 	void getRidOfReels();
 	void liftNoise(uint8 index);
+	void checkForExit(Sprite *sprite);
 
 	// from stubs.cpp
 	bool isCD();
@@ -388,6 +389,7 @@ public:
 	void dumpTimedText();
 	void getTime();
 	void doChange(uint8 index, uint8 value, uint8 type);
+	bool isRyanHolding(const char *id);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

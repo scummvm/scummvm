@@ -384,7 +384,9 @@
 	void findExObject();
 	uint16 findExObject(const char *id);
 	void isRyanHolding();
-	bool isRyanHolding(const char *id);
+	bool isRyanHolding(const char *id) {
+		return DreamBase::isRyanHolding(id);
+	}
 	void describeOb();
 	void getOpenedSize();
 	byte getOpenedSizeCPP();

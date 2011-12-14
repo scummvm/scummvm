@@ -148,7 +148,7 @@ void DreamGenContext::mainMan(Sprite *sprite) {
 		if ((data.byte(kTurndirection) != 0) && (data.byte(kLinepointer) == 254)) {
 			data.byte(kReasseschanges) = 1;
 			if (data.byte(kFacing) == data.byte(kLeavedirection))
-				checkForExit();
+				checkForExit(sprite);
 		}
 		data.byte(kTurndirection) = 0;
 		if (data.byte(kLinepointer) == 254) {
@@ -168,7 +168,7 @@ void DreamGenContext::mainMan(Sprite *sprite) {
 				if (data.byte(kTurntoface) == data.byte(kFacing)) {
 					data.byte(kReasseschanges) = 1;
 					if (data.byte(kFacing) == data.byte(kLeavedirection))
-						checkForExit();
+						checkForExit(sprite);
 				}
 			}
 		}
@@ -1213,6 +1213,63 @@ void DreamBase::liftNoise(uint8 index) {
 		playChannel1(13);	// hiss noise
 	else
 		playChannel1(index);
+}
+
+void DreamBase::checkForExit(Sprite *sprite) {
+	uint8 flag, flagEx, type, flagX, flagY;
+	checkOne(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
+	data.byte(kLastflag) = flag;
+
+	if (flag & 64) {
+		data.byte(kAutolocation) = flagEx;
+		return;
+	}
+
+	if (!(flag & 32)) {
+		if (flag & 4) {
+			// adjust left
+			data.byte(kLastflag) = 0;
+			data.byte(kMapx) -= 11;
+			sprite->x = 16 * flagEx;
+			data.byte(kNowinnewroom) = 1;
+		} else if (flag & 2) {
+			// adjust right
+			data.byte(kMapx) += 11;
+			sprite->x = 16 * flagEx - 2;
+			data.byte(kNowinnewroom) = 1;
+		} else if (flag & 8) {
+			// adjust down
+			data.byte(kMapy) += 10;
+			sprite->y = 16 * flagEx;
+			data.byte(kNowinnewroom) = 1;
+		} else if (flag & 16) {
+			// adjust up
+			data.byte(kMapy) -= 10;
+			sprite->y = 16 * flagEx;
+			data.byte(kNowinnewroom) = 1;
+		}
+
+		return;
+	}
+
+	if (data.byte(kReallocation) == 2) {
+		// Can't leave Louis' until you found shoes
+
+		int shoeCount = 0;
+		if (isRyanHolding("WETA")) shoeCount++;
+		if (isRyanHolding("WETB")) shoeCount++;
+
+		if (shoeCount < 2) {
+			uint8 text = shoeCount ? 43 : 42;
+			setupTimedUse(text, 80, 10, 68, 64);
+
+			data.byte(kTurntoface) = (data.byte(kFacing) + 4) & 7;
+			return;
+		}
+
+	}
+
+	data.byte(kNeedtotravel) = 1;
 }
 
 } // End of namespace DreamGen

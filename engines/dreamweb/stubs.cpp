@@ -1454,7 +1454,6 @@ void DreamBase::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 	uint8 type, flagX, flagY;
 	checkOne(data.word(kMousex) - data.word(kMapadx), data.word(kMousey) - data.word(kMapady), flag, flagEx, &type, &flagX, &flagY);
 	data.byte(kLastflag) = *flag;
-	data.byte(kLastflagex) = *flagEx;
 }
 
 void DreamGenContext::walkAndExamine() {
@@ -1784,7 +1783,7 @@ void DreamGenContext::isRyanHolding() {
 	flags._z = !isRyanHolding(id);
 }
 
-bool DreamGenContext::isRyanHolding(const char *id) {
+bool DreamBase::isRyanHolding(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		DynObject *object = getExAd(index);
 		if (object->mapad[0] == 4 && objectMatches(object, id))
