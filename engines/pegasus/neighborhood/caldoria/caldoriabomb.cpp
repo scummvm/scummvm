@@ -1209,6 +1209,15 @@ void CaldoriaBomb::closeInteraction() {
 	_timer.stopDisplaying();
 	_grid.hide();
 	_grid.stopDisplaying();
+
+	// The original did not do this, but we need it here
+	// Not sure why the original worked without this; probably
+	// related to the way the List code worked in CodeWarrior.
+	// If this is not here, the notifications will later attempt
+	// to remove itself from this receiver causing a very nasty
+	// crash.
+	_timerNotification.cancelNotification(this);
+	_neighborhoodNotification->cancelNotification(this);
 }
 
 void CaldoriaBomb::startBombAmbient(Common::String ambient) {
