@@ -1755,19 +1755,64 @@ void DreamGenContext::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWid
 	printDirect(&string, x, &y, maxWidth, centered);
 }
 
+bool objectMatches(void *object, const char *id) {
+	const char *objId = (const char *)(((const uint8 *)object) + 12); // whether it is a DynObject or a SetObject
+	for (size_t i = 0; i < 4; ++i) {
+		if (id[i] != objId[i] + 'A')
+			return false;
+	}
+	return true;
+}
+
 void DreamGenContext::compare() {
 	char id[4] = { cl, ch, dl, dh };
 	flags._z = compare(al, ah, id);
 }
 
 bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
-	void *ptr = getAnyAdDir(index, flag);
-	const char *objId = (const char *)(((const uint8 *)ptr) + 12); // whether it is a DynObject or a SetObject
-	for (size_t i = 0; i < 4; ++i) {
-		if (id[i] != objId[i] + 'A')
-			return false;
-	}
-	return true;
+	return objectMatches(getAnyAdDir(index, flag), id);
+}
+
+void DreamGenContext::findSetObject() {
+	char id[5];
+	id[0] = al;
+	id[1] = ah;
+	id[2] = cl;
+	id[3] = ch;
+	id[4] = '\0';
+	al = findSetObject(id);
+}
+
+uint16 DreamGenContext::findSetObject(const char *id) {
+	uint16 index = 0;
+
+	do {
+		if (objectMatches(getSetAd(index), id))
+			return index;
+	} while (index++ < 128);
+
+	return index;	// 128, not found
+}
+
+void DreamGenContext::findExObject() {
+	char id[5];
+	id[0] = al;
+	id[1] = ah;
+	id[2] = cl;
+	id[3] = ch;
+	id[4] = '\0';
+	al = findExObject(id);
+}
+
+uint16 DreamGenContext::findExObject(const char *id) {
+	uint16 index = 0;
+
+	do {
+		if (objectMatches(getExAd(index), id))
+			return index;
+	} while (index++ < 114);
+
+	return index;	// 114, not found
 }
 
 bool DreamGenContext::isItDescribed(const ObjPos *pos) {
@@ -3344,8 +3389,7 @@ void DreamGenContext::openInv() {
 }
 
 void DreamGenContext::obsThatDoThings() {
-	char id[4] = { 'M', 'E', 'M', 'B' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kCommand), data.byte(kObjecttype), id))
+	if (!compare(data.byte(kCommand), data.byte(kObjecttype), "MEMB"))
 		return; // notlouiscard
 
 	if (DreamBase::getLocation(4) != 1) {

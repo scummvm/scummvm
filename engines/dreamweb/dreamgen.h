@@ -537,7 +537,6 @@ public:
 	void lookAtPlace();
 	void findAllOpen();
 	void showSlots();
-	void findSetObject();
 	void deleteExObject();
 	void helicopter();
 	void getEitherAd();
@@ -562,7 +561,6 @@ public:
 	void useGun();
 	void useHandle();
 	void incRyanPage();
-	void findExObject();
 	void clearChanges();
 	void searchForFiles();
 	void getExAd();

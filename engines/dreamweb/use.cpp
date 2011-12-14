@@ -747,8 +747,7 @@ bool DreamGenContext::defaultUseHandler(const char *id) {
 }
 
 void DreamGenContext::useChurchGate() {
-	char id[4] = { 'C', 'U', 'T', 'T' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("CUTT"))
 		return;
 
 	// Cut gate
@@ -784,8 +783,7 @@ void DreamGenContext::useFullCart() {
 }
 
 void DreamGenContext::useClearBox() {
-	char id[4] = { 'R', 'A', 'I', 'L' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("RAIL"))
 		return;
 
 	// Open box
@@ -800,8 +798,7 @@ void DreamGenContext::useClearBox() {
 }
 
 void DreamGenContext::openTVDoor() {
-	char id[4] = { 'U', 'L', 'O', 'K' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("ULOK"))
 		return;
 
 	// Key on TV
@@ -816,9 +813,7 @@ void DreamGenContext::usePlate() {
 		return;
 	}
 
-	char screw[4] = { 'S', 'C', 'R', 'W' };	// TODO: convert to string with trailing zero
-	char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), screw)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "SCRW")) {
 		// Unscrew plate
 		playChannel1(20);
 		showFirstUse();
@@ -828,7 +823,7 @@ void DreamGenContext::usePlate() {
 		placeFreeObject(0);
 		data.byte(kProgresspoints)++;
 		data.byte(kGetback) = 1;
-	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), "KNFE")) {
 		// Tried knife
 		showPuzText(54, 300);
 		putBackObStuff();
@@ -845,8 +840,7 @@ void DreamGenContext::usePlinth() {
 		return;
 	}
 
-	char id[4] = { 'D', 'K', 'E', 'Y' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), "DKEY")) {
 		// Wrong key
 		showFirstUse();
 		putBackObStuff();
@@ -864,8 +858,7 @@ void DreamGenContext::usePlinth() {
 }
 
 void DreamGenContext::useElvDoor() {
-	char id[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("AXED"))
 		return;
 
 	// Axe on door
@@ -899,8 +892,7 @@ void DreamGenContext::useWinch() {
 	ah = 1;
 	checkInside();
 
-	char id[4] = { 'F', 'U', 'S', 'E' };	// TODO: convert to string with trailing zero
-	if (cl == kNumexobjects || !compare(cl, 4, id)) {
+	if (cl == kNumexobjects || !compare(cl, 4, "FUSE")) {
 		// No winch
 		showFirstUse();
 		putBackObStuff();
@@ -923,8 +915,7 @@ void DreamGenContext::useWinch() {
 }
 
 void DreamGenContext::useCart() {
-	char id[4] = { 'R', 'O', 'C', 'K' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("ROCK"))
 		return;
 
 	DynObject *exObject = getExAd(data.byte(kWithobject));
@@ -959,8 +950,7 @@ void DreamGenContext::chewy() {
 }
 
 void DreamGenContext::useHole() {
-	char id[4] = { 'H', 'N', 'D', 'A' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("HNDA"))
 		return;
 
 	showFirstUse();
@@ -972,8 +962,7 @@ void DreamGenContext::useHole() {
 }
 
 void DreamGenContext::openHotelDoor() {
-	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("KEYA"))
 		return;
 
 	playChannel1(16);
@@ -983,8 +972,7 @@ void DreamGenContext::openHotelDoor() {
 }
 
 void DreamGenContext::openHotelDoor2() {
-	char id[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("KEYA"))
 		return;
 
 	playChannel1(16);
@@ -993,8 +981,7 @@ void DreamGenContext::openHotelDoor2() {
 }
 
 void DreamGenContext::grafittiDoor() {
-	char id[4] = { 'A', 'P', 'E', 'N' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("APEN"))
 		return;
 
 	showFirstUse();
@@ -1002,8 +989,7 @@ void DreamGenContext::grafittiDoor() {
 }
 
 void DreamGenContext::usePoolReader() {
-	char id[4] = { 'M', 'E', 'M', 'B' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("MEMB"))
 		return;
 
 	if (data.byte(kTalkedtoattendant) != 1) {
@@ -1019,8 +1005,7 @@ void DreamGenContext::usePoolReader() {
 }
 
 void DreamGenContext::useCardReader1() {
-	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("CSHR"))
 		return;
 
 	if (data.byte(kTalkedtosparky) == 0) {
@@ -1042,8 +1027,7 @@ void DreamGenContext::useCardReader1() {
 }
 
 void DreamGenContext::useCardReader2() {
-	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("CSHR"))
 		return;
 
 	if (data.byte(kTalkedtoboss) == 0) {
@@ -1070,8 +1054,7 @@ void DreamGenContext::useCardReader2() {
 }
 
 void DreamGenContext::useCardReader3() {
-	char id[4] = { 'C', 'S', 'H', 'R' };	// TODO: convert to string with trailing zero
-	if (defaultUseHandler(id))
+	if (defaultUseHandler("CSHR"))
 		return;
 
 	if (data.byte(kTalkedtorecep) == 0) {
@@ -1098,8 +1081,7 @@ void DreamGenContext::useLighter() {
 		return;
 	}
 
-	char id[4] = { 'S', 'M', 'K', 'E' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), "SMKE")) {
 		showFirstUse();
 		putBackObStuff();
 	} else {
@@ -1116,8 +1098,7 @@ void DreamGenContext::useWire() {
 		return;
 	}
 
-	char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "KNFE")) {
 		removeSetObject(51);
 		placeSetObject(52);
 		showPuzText(11, 300);
@@ -1126,8 +1107,7 @@ void DreamGenContext::useWire() {
 		return;
 	}
 
-	char axe[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "AXED")) {
 		showPuzText(16, 300);
 		putBackObStuff();
 		return;
@@ -1231,8 +1211,7 @@ void DreamGenContext::useControl() {
 		return;
 	}
 
-	char key[4] = { 'K', 'E', 'Y', 'A' };	// TODO: convert to string with trailing zero
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), key)) {	// Right key
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "KEYA")) {	// Right key
 		playChannel1(16);
 		if (data.byte(kLocation) == 21) {	// Going down
 			showPuzText(3, 300);
@@ -1250,10 +1229,7 @@ void DreamGenContext::useControl() {
 	}
 
 	if (data.byte(kReallocation) == 21) {
-		char knife[4] = { 'K', 'N', 'F', 'E' };	// TODO: convert to string with trailing zero
-		char   axe[4] = { 'A', 'X', 'E', 'D' };	// TODO: convert to string with trailing zero
-
-		if (compare(data.byte(kWithobject), data.byte(kWithtype), knife)) {
+		if (compare(data.byte(kWithobject), data.byte(kWithtype), "KNFE")) {
 			// Jimmy controls
 			placeSetObject(50);
 			placeSetObject(51);
@@ -1265,7 +1241,7 @@ void DreamGenContext::useControl() {
 			showPuzText(10, 300);
 			data.byte(kProgresspoints)++;
 			data.byte(kGetback) = 1;
-		} else if (compare(data.byte(kWithobject), data.byte(kWithtype), axe)) {
+		} else if (compare(data.byte(kWithobject), data.byte(kWithtype), "AXED")) {
 			// Axe on controls
 			showPuzText(16, 300);
 			data.byte(kProgresspoints)++;
@@ -1288,8 +1264,7 @@ void DreamGenContext::useSLab() {
 		return;
 	}
 
-	char id[4] = { 'J', 'E', 'W', 'L' };	// TODO: convert to string with trailing zero
-	if (!compare(data.byte(kWithobject), data.byte(kWithtype), id)) {
+	if (!compare(data.byte(kWithobject), data.byte(kWithtype), "JEWL")) {
 		showPuzText(14, 300);
 		putBackObStuff();
 		return;
@@ -1321,17 +1296,14 @@ void DreamGenContext::usePipe() {
 		return;
 	}
 
-	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
-	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
-
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPE")) {
 		// Fill cup
 		showPuzText(36, 300);
 		putBackObStuff();
 		DynObject *exObject = getExAd(data.byte(kWithobject));
 		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
 		return;
-	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+	} else if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPF")) {
 		// Already full
 		showPuzText(35, 300);
 		putBackObStuff();
@@ -1348,10 +1320,7 @@ void DreamGenContext::useOpenBox() {
 		return;
 	}
 
-	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
-	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
-
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPF")) {
 		// Destroy open box
 		data.byte(kProgresspoints)++;
 		showPuzText(37, 300);
@@ -1367,7 +1336,7 @@ void DreamGenContext::useOpenBox() {
 		return;
 	}
 
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPE")) {
 		// Open box wrong
 		showPuzText(38, 300);
 		putBackObStuff();
@@ -1383,10 +1352,7 @@ void DreamGenContext::runTap() {
 		return;
 	}
 
-	char cupEmpty[4] = { 'C', 'U', 'P', 'E' };	// TODO: convert to string with trailing zero
-	char  cupFull[4] = { 'C', 'U', 'P', 'F' };	// TODO: convert to string with trailing zero
-
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupEmpty)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPE")) {
 		// Fill cup from tap
 		DynObject *exObject = getExAd(data.byte(kWithobject));
 		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
@@ -1396,7 +1362,7 @@ void DreamGenContext::runTap() {
 		return;
 	}
 
-	if (compare(data.byte(kWithobject), data.byte(kWithtype), cupFull)) {
+	if (compare(data.byte(kWithobject), data.byte(kWithtype), "CUPF")) {
 		// Cup from tap full
 		showPuzText(58, 300);
 		putBackObStuff();
