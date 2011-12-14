@@ -483,8 +483,8 @@ public:
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
+	void fadeDownMon();
 	void identifyOb();
-	void runEndSeq();
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
@@ -497,7 +497,6 @@ public:
 	void getOpenedSize();
 	void adjustUp();
 	void fadeScreenDownHalf();
-	void fadeDownMon();
 	void outOfOpen();
 	void dirCom();
 	void endGameSeq();
@@ -547,7 +546,6 @@ public:
 	void setPickup();
 	void dropObject();
 	void openOb();
-	void drawItAll();
 	void useStereo();
 	void showDiaryKeys();
 	void useOpened();

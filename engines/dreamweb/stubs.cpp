@@ -4627,4 +4627,24 @@ void DreamGenContext::dumpDiaryKeys() {
 	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
 }
 
+void DreamGenContext::runEndSeq() {
+	atmospheres();
+	data.byte(kGetback) = 0;
+
+	do {
+		vSync();
+		spriteUpdate();
+		vSync();
+		delEverything();
+		printSprites();
+		reelsOnScreen();
+		afterIntroRoom();
+		useTimedText();
+		vSync();
+		dumpMap();
+		dumpTimedText();
+		vSync();
+	} while (data.byte(kGetback) != 1);
+}
+
 } // End of namespace DreamGen

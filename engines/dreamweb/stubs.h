@@ -584,5 +584,6 @@
 	void updateSymbolBot();
 	void showDiaryPage();
 	void dumpDiaryKeys();
+	void runEndSeq();
 
 #endif

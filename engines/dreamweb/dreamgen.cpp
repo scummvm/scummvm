@@ -864,28 +864,6 @@ void DreamGenContext::initialMonCols() {
 	showGroup();
 }
 
-void DreamGenContext::runEndSeq() {
-	STACK_CHECK;
-	atmospheres();
-	data.byte(kGetback) = 0;
-moreendseq:
-	vSync();
-	spriteUpdate();
-	vSync();
-	delEverything();
-	printSprites();
-	reelsOnScreen();
-	afterIntroRoom();
-	useTimedText();
-	vSync();
-	dumpMap();
-	dumpTimedText();
-	vSync();
-	_cmp(data.byte(kGetback), 1);
-	if (!flags.z())
-		goto moreendseq;
-}
-
 void DreamGenContext::fillOpen() {
 	STACK_CHECK;
 	delTextLine();
@@ -3473,14 +3451,6 @@ lookcolon:
 	_cmp(al, ':');
 	if (!flags.z())
 		goto lookcolon;
-}
-
-void DreamGenContext::drawItAll() {
-	STACK_CHECK;
-	createPanel();
-	drawFloor();
-	printSprites();
-	showIcon();
 }
 
 void DreamGenContext::useCashCard() {
