@@ -292,6 +292,52 @@ public:
 	virtual void signal();
 };
 
+class Scene400: public SceneExt {
+	/* Items */
+	class Terminal: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Door: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Reader: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SensorProbe: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class AttractorUnit: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	NamedHotspot _background, _equipment1, _equipment2, _equipment3;
+	NamedHotspot _equipment4, _equipment5, _equipment6;
+	NamedHotspot _desk, _desk2, _console;
+	NamedHotspot _duct, _shelves, _cabinet, _doorDisplay, _lights;
+	NamedHotspot _equalizer, _transducer, _optimizer, _soundModule, _tester;
+	NamedHotspot _helmet, _nullifier;
+	Terminal _terminal;
+	SceneActor _consoleDisplay, _testerDisplay;
+	Door _door;
+	Reader _reader;
+	SensorProbe _sensorProbe;
+	AttractorUnit _attractorUnit;
+	SequenceManager _sequenceManager1;
+	ASoundExt _sound1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

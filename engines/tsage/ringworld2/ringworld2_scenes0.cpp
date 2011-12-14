@@ -64,7 +64,7 @@ void Scene50::process(Event &event) {
 		event.handled = true;
 		warning("TODO: incomplete Scene50::process()");
 		// CursorType _oldCursorId = _cursorId;
-		g_globals->_events.setCursor(R2_2);
+		g_globals->_events.setCursor(CURSOR_ARROW);
 		// _cursorManager.sub_1D474(2, 0);
 		// sub_5566A(1);
 		// _cursorManager._fieldE = _oldCursorId;
@@ -1204,8 +1204,6 @@ Common::String Scene125::parseMessage(const Common::String &msg) {
  *
  *--------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------*/
-
 void Scene150::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(100);
@@ -1675,7 +1673,7 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 		SceneItem::display2(300, 54);
 		return true;
 
-	case R2_2:
+	case R2_READER:
 		if (!R2_GLOBALS.getFlag(2) || !R2_GLOBALS.getFlag(3) || (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 1))
 			SceneItem::display2(300, 55);
 		else {
@@ -1749,7 +1747,7 @@ bool Scene300::Seeker::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager1, scene, 310, &R2_GLOBALS._player, NULL);
 		return true;
 
-	case R2_2:
+	case R2_READER:
 		if (!R2_GLOBALS.getFlag(2) || !R2_GLOBALS.getFlag(3) || (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 1))
 			break;
 
@@ -2325,7 +2323,7 @@ void Scene300::signal() {
 
 void Scene300::signal309() {
 	if (R2_GLOBALS.getFlag(2))
-		R2_GLOBALS._stripManager_lookupList[0] = (R2_INVENTORY.getObjectScene(R2_2) == 1) ? 3 : 2;
+		R2_GLOBALS._stripManager_lookupList[0] = (R2_INVENTORY.getObjectScene(R2_READER) == 1) ? 3 : 2;
 
 	if (R2_GLOBALS.getFlag(4))
 		R2_GLOBALS._stripManager_lookupList[0] = 4;
@@ -2360,6 +2358,238 @@ void Scene300::signal309() {
 
 	if (R2_GLOBALS.getFlag(49))
 		R2_GLOBALS._stripManager_lookupList[4] = 3;
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 400 - Science Lab
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene400::Terminal::startAction(CursorType action, Event &event) {
+	Scene400 *scene = (Scene400 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 402;
+		scene->setAction(&scene->_sequenceManager1, scene, 402, &R2_GLOBALS._player, this, NULL);
+
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene400::Door::startAction(CursorType action, Event &event) {
+	Scene400 *scene = (Scene400 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 401;
+		scene->setAction(&scene->_sequenceManager1, scene, 401, &R2_GLOBALS._player, this, NULL);
+
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene400::Reader::startAction(CursorType action, Event &event) {
+	Scene400 *scene = (Scene400 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 405;
+		scene->setAction(&scene->_sequenceManager1, scene, 405, &R2_GLOBALS._player, this, NULL);
+
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene400::SensorProbe::startAction(CursorType action, Event &event) {
+	Scene400 *scene = (Scene400 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 404;
+		scene->setAction(&scene->_sequenceManager1, scene, 404, &R2_GLOBALS._player, this, NULL);
+
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene400::AttractorUnit::startAction(CursorType action, Event &event) {
+	Scene400 *scene = (Scene400 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 406;
+		scene->setAction(&scene->_sequenceManager1, scene, 406, &R2_GLOBALS._player, this, NULL);
+
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene400::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(400);
+	_sound1.play(20);
+
+	_door.postInit();
+	_door.setVisage(100);
+	_door.setPosition(Common::Point(123, 84));
+	_door.setDetails(400, 24, -1, 26, 1, NULL);
+
+	_consoleDisplay.postInit();
+	_consoleDisplay.setup(400, 4, 1);
+	_consoleDisplay.setPosition(Common::Point(236, 92));
+	_consoleDisplay.fixPriority(120);
+	_consoleDisplay.animate(ANIM_MODE_2, NULL);
+	_consoleDisplay._numFrames = 5;
+
+	_testerDisplay.postInit();
+	_testerDisplay.setup(400, 2, 1);
+	_testerDisplay.setPosition(Common::Point(198, 83));
+	_testerDisplay.animate(ANIM_MODE_2, NULL);
+	_testerDisplay._numFrames = 20;
+
+	if (R2_INVENTORY.getObjectScene(R2_READER) == 400) {
+		_reader.postInit();
+		_reader.setup(400, 5, 2);
+		_reader.setPosition(Common::Point(301, 95));
+		_reader.setDetails(400, 54, -1, 56, 1, NULL);
+	}
+
+	if (R2_INVENTORY.getObjectScene(R2_SENSOR_PROBE) == 400) {
+		_sensorProbe.postInit();
+		_sensorProbe.setup(400, 5, 1);
+		_sensorProbe.setPosition(Common::Point(251, 104));
+		_sensorProbe.fixPriority(121);
+		_sensorProbe.setDetails(400, 57, -1, 59, 1, NULL);
+	}
+
+	if (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_UNIT) == 400) {
+		_attractorUnit.postInit();
+		_attractorUnit.setup(400, 5, 3);
+		_attractorUnit.setPosition(Common::Point(265, 129));
+		_attractorUnit.setDetails(400, 60, -1, 62, 1, NULL);
+	}
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	_equipment1.setDetails(11, 400, 3, -1, -1);
+	_equipment2.setDetails(24, 400, 3, -1, -1);
+	_equipment3.setDetails(25, 400, 3, -1, -1);
+	_equipment4.setDetails(26, 400, 3, -1, -1);
+	_equipment5.setDetails(28, 400, 3, -1, -1);
+	_equipment6.setDetails(29, 400, 3, -1, -1);
+	_desk.setDetails(12, 400, 6, -1, -1);
+	_desk2.setDetails(27, 400, 6, -1, -1);
+	_terminal.setDetails(13, 400, 6, -1, 11);
+	_duct.setDetails(14, 400, 12, -1, -1);
+	_console.setDetails(15, 400, 15, -1, 17);
+	_equalizer.setDetails(Rect(284, 99, 308, 108), 400, 36, -1, 38, 1, NULL);
+	_transducer.setDetails(Rect(295, 67, 314, 79), 400, 39, -1, 41, 1, NULL);
+	_optimizer.setDetails(Rect(308, 106, 315, 113), 400, 42, -1, 44, 1, NULL);
+	_soundModule.setDetails(Rect(291, 118, 315, 131), 400, 45, -1, 47, 1, NULL);
+	_tester.setDetails(Rect(179, 62, 217, 92), 400, 30, -1, 32, 1, NULL);
+	_helmet.setDetails(Rect(181, 53, 197, 65), 400, 48, -1, 50, 1, NULL);
+	_nullifier.setDetails(Rect(201, 56, 212, 65), 400, 51, -1, 50, 1, NULL);
+	_shelves.setDetails(16, 400, 18, -1, 20);
+	_cabinet.setDetails(17, 400, 21, -1, -1);
+	_doorDisplay.setDetails(Rect(161, 43, 166, 52), 400, 27, -1, -1, 1, NULL);
+	_lights.setDetails(Rect(113, 3, 168, 14), 400, 33, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 400, 0, 1, -1, 1, NULL);
+
+	_sceneMode = 400;
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 125:
+		setAction(&_sequenceManager1, this, 403, &R2_GLOBALS._player, NULL);
+		break;
+	case 200:
+		setAction(&_sequenceManager1, this, 400, &R2_GLOBALS._player, &_door, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.setPosition(Common::Point(180, 100));
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene400::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene400::signal() {
+	switch (_sceneMode) {
+	case 400:
+	case 403:
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 401:
+		R2_GLOBALS._sceneManager.changeScene(200);
+		break;
+	case 402:
+		R2_GLOBALS._sceneManager.changeScene(125);
+		break;
+	case 404:
+		// Getting the sensor probe
+		R2_INVENTORY.setObjectScene(R2_SENSOR_PROBE, 1);
+		_sensorProbe.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 405:
+		// Getting the reader
+		R2_INVENTORY.setObjectScene(R2_READER, 1);
+		_reader.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 406:
+		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_UNIT, 1);
+		_attractorUnit.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene400::dispatch() {
+	switch (R2_GLOBALS._player.getRegionIndex() - 15) {
+	case 0:
+	case 11:
+	case 12:
+		R2_GLOBALS._player._shade = 2;
+		break;
+	case 9:
+		R2_GLOBALS._player._shade = 0;
+		break;
+	case 10:
+		R2_GLOBALS._player._shade = 1;
+		break;
+	case 13:
+		R2_GLOBALS._player._shade = 3;
+		break;
+	case 14:
+		R2_GLOBALS._player._shade = 4;
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Ringworld2

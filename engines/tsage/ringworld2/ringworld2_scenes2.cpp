@@ -1047,7 +1047,7 @@ void Scene2000::synchronize(Serializer &s) {
  *
  *--------------------------------------------------------------------------*/
 bool Scene2350::Actor2::startAction(CursorType action, Event &event) {
-	if (action != R2_6)
+	if (action != R2_SENSOR_PROBE)
 		return(SceneActor::startAction(action, event));
 	return true;
 }
@@ -1651,13 +1651,13 @@ bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case R2_34:
 		R2_GLOBALS._player.disableControl();
-		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS.setFlag(82);
 		scene->_stripManager.start(603, scene);
 		return true;
 	case R2_35:
 		R2_GLOBALS._player.disableControl();
-		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS.setFlag(82);
 		scene->_stripManager.start(602, scene);
 		R2_INVENTORY.setObjectScene(R2_35, 2000);
@@ -1665,7 +1665,7 @@ bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
 	case CURSOR_TALK:
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 20;
-		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		if ((R2_GLOBALS._player._characterIndex == 1) || (R2_GLOBALS.getFlag(82))) {
 			scene->_stripManager.start(605, scene);
 			return true;
@@ -1765,7 +1765,7 @@ void Scene2435::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 20:
-		R2_GLOBALS._player.enableControl(R2_6);
+		R2_GLOBALS._player.enableControl(CURSOR_TALK);
 		break;
 	case 30:
 		R2_GLOBALS._player._characterScene[1] = 2435;
@@ -1787,7 +1787,7 @@ void Scene2435::signal() {
 	case 2436:
 		R2_GLOBALS._walkRegions.enableRegion(2);
 		_sceneMode = 20;
-		R2_GLOBALS._events.setCursor(R2_2);
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(709, this);
 	default:
 		R2_GLOBALS._player.enableControl();

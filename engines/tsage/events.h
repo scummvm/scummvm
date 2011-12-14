@@ -83,7 +83,8 @@ enum CursorType {
 	INV_CARAVAN_KEY = 67, BF_LAST_INVENT = 68,
 
 	// Ringworld 2 objects
-	R2_OPTO_DISK = 1, R2_2 = 2, R2_NEGATOR_GUN = 3, R2_STEPPING_DISKS = 4, R2_5 = 5, R2_6 = 6, 
+	R2_OPTO_DISK = 1, R2_READER = 2, R2_NEGATOR_GUN = 3, R2_STEPPING_DISKS = 4, 
+	R2_ATTRACTOR_UNIT = 5, R2_SENSOR_PROBE = 6, 
 	R2_7 = 7, R2_8 = 8, R2_9 = 9, R2_10 = 10, R2_11 = 11, R2_12 = 12, R2_13 = 13, R2_14 = 14,
 	R2_15 = 15, R2_16 = 16, R2_17 = 17, R2_18 = 18, R2_19 = 19, R2_20 = 20, R2_21 = 21,
 	R2_22 = 22, R2_23 = 23, R2_24 = 24, R2_25 = 25, R2_26 = 26, R2_27 = 27, R2_28 = 28,

@@ -57,7 +57,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 300:
 		return new Scene300();
 	case 325:
+		error("Missing scene %d from group 0", sceneNumber);
 	case 400:
+		// Science Lab
+		return new Scene400();
 	case 500:
 	case 525:
 	case 600:
@@ -576,11 +579,11 @@ void Ringworld2InvObjectList::reset() {
 
 	// Set up default inventory
 	setObjectScene(R2_OPTO_DISK, 800);
-	setObjectScene(R2_2, 400);
+	setObjectScene(R2_READER, 400);
 	setObjectScene(R2_NEGATOR_GUN, 100);
 	setObjectScene(R2_STEPPING_DISKS, 100);
-	setObjectScene(R2_5, 400);
-	setObjectScene(R2_6, 400);
+	setObjectScene(R2_ATTRACTOR_UNIT, 400);
+	setObjectScene(R2_SENSOR_PROBE, 400);
 	setObjectScene(R2_7, 500);
 	setObjectScene(R2_8, 700);
 	setObjectScene(R2_9, 800);
