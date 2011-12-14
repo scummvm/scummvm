@@ -1213,7 +1213,8 @@ void DreamGenContext::useDiary() {
 		dumpDiaryKeys();
 		dumpTextLine();
 		checkCoords(diaryList);
-	} while (!data.byte(kGetback));
+	} while (!data.byte(kGetback) && !quitRequested());
+
 
 	getRidOfTemp();
 	getRidOfTempText();
