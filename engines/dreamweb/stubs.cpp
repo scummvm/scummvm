@@ -4591,6 +4591,7 @@ void DreamGenContext::showDiaryPage() {
 	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
 	uint16 y = kDiaryy + 16;
 	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
+	y = kDiaryy + 16;
 	printDirect(&string, kDiaryx + 129, &y, 240, 240 & 1);
 	y = kDiaryy + 23;
 	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
@@ -4659,7 +4660,8 @@ void DreamGenContext::lookAtCard() {
 	findNextColon(&obText);
 	findNextColon(&obText);
 	findNextColon(&obText);
-	printDirect(obText, 36, 124, 241, 241 & 1);
+	uint16 y = 124;
+	printDirect(&obText, 36, &y, 241, 241 & 1);
 	push(es);
 	push(si);
 	workToScreenM();
