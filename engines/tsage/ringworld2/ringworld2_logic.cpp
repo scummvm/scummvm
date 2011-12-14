@@ -36,12 +36,15 @@ namespace Ringworld2 {
 Scene *Ringworld2Game::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group #0 */
-	//
-	case 50: return new Scene50();
-	// Quinn's room
-	case 100: return new Scene100();
-	// Computer console
-	case 125: return new Scene125();
+	case 50: 
+		// Waking up cutscene
+		return new Scene50();
+	case 100: 
+		// Quinn's room
+		return new Scene100();
+	case 125: 
+		// Computer console
+		return new Scene125();
 	case 150: 
 		// Empty Bedroom #1
 		return new Scene150();
