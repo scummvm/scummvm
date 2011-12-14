@@ -79,6 +79,7 @@ private:
 class AnimManager {
 public:
 	AnimManager();
+	~AnimManager();
 	void addAnimation(Animation *anim, int pr1, int pr2);
 	void removeAnimation(Animation *anim);
 

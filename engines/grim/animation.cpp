@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/foreach.h"
+
 #include "engines/grim/animation.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
@@ -203,6 +205,14 @@ AnimManager::AnimManager() {
 
 }
 
+AnimManager::~AnimManager() {
+	foreach (const AnimationEntry &entry, _activeAnims) {
+		Animation *anim = entry._anim;
+		// Don't call deactivate() here so we don't mess with the list we're using.
+		anim->_manager = NULL;
+		anim->_active = false;
+	}
+}
 
 void AnimManager::addAnimation(Animation *anim, int priority1, int priority2) {
 	// Keep the list of animations sorted by priorities in descending order. Because
