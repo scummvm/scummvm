@@ -3306,53 +3306,6 @@ void DreamGenContext::notHeldError() {
 	putBackObStuff();
 }
 
-void DreamGenContext::useAltar() {
-	STACK_CHECK;
-	al = 'C';
-	ah = 'N';
-	cl = 'D';
-	ch = 'A';
-	findExObject();
-	_cmp(al, (114));
-	if (flags.z())
-		goto thingsonaltar;
-	al = 'C';
-	ah = 'N';
-	cl = 'D';
-	ch = 'B';
-	findExObject();
-	_cmp(al, (114));
-	if (flags.z())
-		goto thingsonaltar;
-	_cmp(data.byte(kCanmovealtar), 1);
-	if (flags.z())
-		goto movealtar;
-	cx = 300;
-	al = 23;
-	showPuzText();
-	data.byte(kGetback) = 1;
-	return;
-movealtar:
-	_inc(data.byte(kProgresspoints));
-	showSecondUse();
-	data.word(kWatchingtime) = 160;
-	data.word(kReeltowatch) = 81;
-	data.word(kEndwatchreel) = 174;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
-	al = 47;
-	bl = 52;
-	bh = 76;
-	cx = 32;
-	dx = 98;
-	setupTimedUse();
-	data.byte(kGetback) = 1;
-	return;
-thingsonaltar:
-	showFirstUse();
-	data.byte(kGetback) = 1;
-}
-
 void DreamGenContext::nextColon() {
 	STACK_CHECK;
 lookcolon:
@@ -3461,30 +3414,6 @@ numberpoke3:
 	bx = offset_money2poke;
 	_add(al, 48);
 	cs.byte(bx) = al;
-}
-
-void DreamGenContext::useHandle() {
-	STACK_CHECK;
-	al = 'C';
-	ah = 'U';
-	cl = 'T';
-	ch = 'W';
-	findSetObject();
-	al = es.byte(bx+58);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto havecutwire;
-	cx = 300;
-	al = 12;
-	showPuzText();
-	data.byte(kGetback) = 1;
-	return;
-havecutwire:
-	cx = 300;
-	al = 13;
-	showPuzText();
-	data.byte(kNewlocation) = 22;
-	data.byte(kGetback) = 1;
 }
 
 void DreamGenContext::useStereo() {

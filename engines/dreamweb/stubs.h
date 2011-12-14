@@ -345,6 +345,8 @@
 	void useCooker();
 	void useWire();
 	void useControl();
+	void useHandle();
+	void useAltar();
 	bool defaultUseHandler(const char *id);
 	void openTVDoor();
 	void wearWatch();

@@ -500,7 +500,6 @@ public:
 	void dirCom();
 	void endGameSeq();
 	void findFirstPath();
-	void useAltar();
 	void startTalk();
 	void getAnyAd();
 	void reminders();
@@ -559,7 +558,6 @@ public:
 	void searchForString();
 	void selectOpenOb();
 	void useGun();
-	void useHandle();
 	void incRyanPage();
 	void clearChanges();
 	void searchForFiles();

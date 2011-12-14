@@ -1434,4 +1434,43 @@ void DreamGenContext::useKey() {
 	}
 }
 
+void DreamGenContext::useHandle() {
+	SetObject *object = getSetAd(findSetObject("CUTW"));
+	if (object->mapad[0] == 255) {
+		// Wire not cut
+		showPuzText(12, 300);
+	} else {
+		// Wire has been cut
+		showPuzText(13, 300);
+		data.byte(kNewlocation) = 22;
+	}
+
+	data.byte(kGetback) = 1;
+}
+
+void DreamGenContext::useAltar() {
+	if (findExObject("CNDA") == 114 || findExObject("CNDB") == 114) {
+		// Things on altar
+		showFirstUse();
+		data.byte(kGetback) = 1;
+		return;
+	}
+
+	if (data.byte(kCanmovealtar) == 1) {
+		// Move altar
+		data.byte(kProgresspoints)++;
+		showSecondUse();
+		data.word(kWatchingtime) = 160;
+		data.word(kReeltowatch) = 81;
+		data.word(kEndwatchreel) = 174;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		DreamBase::setupTimedUse(47, 32, 98, 52, 76);
+		data.byte(kGetback) = 1;
+	} else {
+		showPuzText(23, 300);
+		data.byte(kGetback) = 1;
+	}
+}
+
 } // End of namespace DreamGen
