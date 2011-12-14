@@ -1781,6 +1781,7 @@ void DreamGenContext::findSetObject() {
 	id[3] = ch;
 	id[4] = '\0';
 	al = findSetObject(id);
+	bx = al * 64;
 }
 
 uint16 DreamGenContext::findSetObject(const char *id) {
@@ -1802,6 +1803,7 @@ void DreamGenContext::findExObject() {
 	id[3] = ch;
 	id[4] = '\0';
 	al = findExObject(id);
+	bx = al * 16;
 }
 
 uint16 DreamGenContext::findExObject(const char *id) {
