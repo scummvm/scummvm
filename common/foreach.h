@@ -25,6 +25,8 @@
 #ifndef COMMON_FOREACH_H
 #define COMMON_FOREACH_H
 
+#include "common/scummsys.h"
+
 namespace Common {
 
 class _Foreach_Container_Base_ {
