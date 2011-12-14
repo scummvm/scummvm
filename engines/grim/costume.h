@@ -111,7 +111,7 @@ private:
 
 	float _lookAtRate;
 
-	friend Chore;
+	friend class Chore;
 };
 
 } // end of namespace Grim
