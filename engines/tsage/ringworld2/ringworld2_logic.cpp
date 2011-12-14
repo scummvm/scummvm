@@ -42,10 +42,14 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 100: return new Scene100();
 	// Computer console
 	case 125: return new Scene125();
-	// Empty Bedroom
-	case 150: return new Scene150();
+	case 150: 
+		// Empty Bedroom #1
+		return new Scene150();
 	case 160:
+		error("Missing scene %d from group 0", sceneNumber);
 	case 175:
+		// Empty Bedroom #2
+		return new Scene175();
 	case 180:
 		error("Missing scene %d from group 0", sceneNumber);
 	case 200:

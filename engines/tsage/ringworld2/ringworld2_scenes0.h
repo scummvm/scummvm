@@ -166,6 +166,9 @@ public:
 	virtual void signal();
 };
 
+class Scene175: public Scene150 {
+};
+
 class Scene200: public SceneExt {
 	/* Objects */
 	class NorthDoor: public SceneActor {
