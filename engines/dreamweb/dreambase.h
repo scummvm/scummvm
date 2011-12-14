@@ -151,6 +151,7 @@ public:
 	SetObject *getSetAd(uint8 index);
 	void *getAnyAd(uint8 *value1, uint8 *value2);
 	const uint8 *getTextInFile1(uint16 index);
+	uint8 findNextColon(const uint8 **string);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

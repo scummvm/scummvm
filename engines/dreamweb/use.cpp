@@ -139,7 +139,7 @@ void DreamGenContext::useRoutine() {
 	}
 
 	delPointer();
-	uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStartCPP();
 	if (findNextColon(&obText) != 0) {
 		if (findNextColon(&obText) != 0) {
 			if (*obText != 0) {
@@ -178,7 +178,7 @@ void DreamGenContext::useText(const uint8 *string) {
 }
 
 void DreamGenContext::showFirstUse() {
-	uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStartCPP();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	useText(obText);
@@ -186,7 +186,7 @@ void DreamGenContext::showFirstUse() {
 }
 
 void DreamGenContext::showSecondUse() {
-	uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStartCPP();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	findNextColon(&obText);

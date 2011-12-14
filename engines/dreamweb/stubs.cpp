@@ -1917,13 +1917,13 @@ void DreamGenContext::hangOnP(uint16 count) {
 }
 
 void DreamGenContext::findNextColon() {
-	uint8 *initialString = es.ptr(si, 0);
-	uint8 *string = initialString;
+	const uint8 *initialString = es.ptr(si, 0);
+	const uint8 *string = initialString;
 	al = findNextColon(&string);
 	si += (string - initialString);
 }
 
-uint8 DreamGenContext::findNextColon(uint8 **string) {
+uint8 DreamBase::findNextColon(const uint8 **string) {
 	uint8 c;
 	do {
 		c = **string;
@@ -1932,11 +1932,11 @@ uint8 DreamGenContext::findNextColon(uint8 **string) {
 	return c;
 }
 
-uint8 *DreamGenContext::getObTextStartCPP() {
+const uint8 *DreamGenContext::getObTextStartCPP() {
 	push(es);
 	push(si);
 	getObTextStart();
-	uint8 *result = es.ptr(si, 0);
+	const uint8 *result = es.ptr(si, 0);
 	si = pop();
 	es = pop();
 	return result;
@@ -2246,7 +2246,7 @@ void DreamGenContext::doLook() {
 	dumpTextLine();
 	uint8 index = data.byte(kRoomnum) & 31;
 	uint16 offset = getSegment(data.word(kRoomdesc)).word(kIntextdat + index * 2);
-	uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
+	const uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
 	findNextColon(&string);
 	uint16 x;
 	if (data.byte(kReallocation) < 50)
@@ -4655,7 +4655,7 @@ void DreamGenContext::lookAtCard() {
 	loadKeypad();
 	createPanel2();
 	showFrame(tempGraphics(), 160, 80, 42, 128);
-	uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStartCPP();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	findNextColon(&obText);

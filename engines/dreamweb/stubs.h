@@ -227,9 +227,11 @@
 	void hangOnP();
 	void hangOnP(uint16 count);
 	void showIcon();
-	uint8 findNextColon(uint8 **string);
+	uint8 findNextColon(const uint8 **string) {
+		return DreamBase::findNextColon(string);
+	}
 	void findNextColon();
-	uint8 *getObTextStartCPP();
+	const uint8 *getObTextStartCPP();
 	void useText(const uint8 *string);
 	void useText();
 	void getBlockOfPixel();
