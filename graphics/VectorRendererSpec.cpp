@@ -880,6 +880,8 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 	} else {
 		BE_RESET();
 
+		precalcGradient(long_h);
+
 		PixelType color1, color2;
 		color1 = color2 = color;
 
@@ -889,22 +891,32 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 			if (fill_m == kFillGradient) {
 				color1 = calcGradient(real_radius - x, long_h);
 				color2 = calcGradient(real_radius - y, long_h);
+
+				gradientFill(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y);
+				gradientFill(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x);
+
+				*(ptr_tr + (y) - (px)) = color1;
+				*(ptr_tr + (x) - (py)) = color2;
+				*(ptr_tl - (x) - (py)) = color2;
+				*(ptr_tl - (y) - (px)) = color1;
+			} else {
+				colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color);
+				colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color);
+
+				*(ptr_tr + (y) - (px)) = color;
+				*(ptr_tr + (x) - (py)) = color;
+				*(ptr_tl - (x) - (py)) = color;
+				*(ptr_tl - (y) - (px)) = color;
 			}
-
-			colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color2);
-			colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color1);
-
-			*(ptr_tr + (y) - (px)) = color1;
-			*(ptr_tr + (x) - (py)) = color2;
-			*(ptr_tl - (x) - (py)) = color2;
-			*(ptr_tl - (y) - (px)) = color1;
 		}
 
 		ptr_fill += pitch * r;
 		while (short_h--) {
-			if (fill_m == kFillGradient)
-				color = calcGradient(real_radius++, long_h);
-			colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
+			if (fill_m == kFillGradient) {
+				gradientFill(ptr_fill, w + 1, x1, real_radius++);
+			} else {
+				colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
+			}
 			ptr_fill += pitch;
 		}
 	}
@@ -1390,6 +1402,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 		PixelType color1, color2, color3, color4;
 
 		if (fill_m == kFillGradient) {
+			precalcGradient(long_h);
+
 			while (x++ < y) {
 				BE_ALGORITHM();
 
@@ -1398,11 +1412,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				color3 = calcGradient(long_h - r + x, long_h);
 				color4 = calcGradient(long_h - r + y, long_h);
 
-				colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color2);
-				colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color1);
+				gradientFill(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y);
+				gradientFill(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x);
 
-				colorFill<PixelType>(ptr_bl - x + py, ptr_br + x + py, color4);
-				colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color3);
+				gradientFill(ptr_bl - x + py, w - 2 * r + 2 * x, x1 + r - x - y, long_h - r + y);
+				gradientFill(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x);
 
 				BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
@@ -1423,9 +1437,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 		ptr_fill += pitch * r;
 		while (short_h--) {
-			if (fill_m == kFillGradient)
-				color = calcGradient(real_radius++, long_h);
-			colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
+			if (fill_m == kFillGradient) {
+				gradientFill(ptr_fill, w + 1, x1, real_radius++);
+			} else {
+				colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
+			}
 			ptr_fill += pitch;
 		}
 	}
