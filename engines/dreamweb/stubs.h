@@ -585,5 +585,6 @@
 	void showDiaryPage();
 	void dumpDiaryKeys();
 	void runEndSeq();
+	void lookAtCard();
 
 #endif

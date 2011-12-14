@@ -3510,57 +3510,6 @@ _tmp1:
 	putBackObStuff();
 }
 
-void DreamGenContext::lookAtCard() {
-	STACK_CHECK;
-	data.byte(kManisoffscreen) = 1;
-	getRidOfReels();
-	loadKeypad();
-	createPanel2();
-	di = 160;
-	bx = 80;
-	ds = data.word(kTempgraphics);
-	al = 42;
-	ah = 128;
-	showFrame();
-	getObTextStart();
-	findNextColon();
-	findNextColon();
-	findNextColon();
-	di = 36;
-	bx = 124;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printDirect();
-	push(es);
-	push(si);
-	workToScreenM();
-	cx = 280;
-	hangOnW();
-	createPanel2();
-	di = 160;
-	bx = 80;
-	ds = data.word(kTempgraphics);
-	al = 42;
-	ah = 128;
-	showFrame();
-	si = pop();
-	es = pop();
-	di = 36;
-	bx = 130;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printDirect();
-	workToScreenM();
-	cx = 200;
-	hangOnW();
-	data.byte(kManisoffscreen) = 0;
-	getRidOfTemp();
-	restoreReels();
-	putBackObStuff();
-}
-
 void DreamGenContext::moneyPoke() {
 	STACK_CHECK;
 	bx = offset_money1poke;

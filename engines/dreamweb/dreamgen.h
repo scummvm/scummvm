@@ -489,7 +489,7 @@ public:
 	void getObTextStart();
 	void checkObjectSize();
 	void isRyanHolding();
-	void showSlots();
+	void fillOpen();
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
@@ -537,10 +537,9 @@ public:
 	void poolGuard();
 	void lookAtPlace();
 	void findAllOpen();
-	void fillOpen();
+	void showSlots();
 	void findSetObject();
 	void deleteExObject();
-	void lookAtCard();
 	void helicopter();
 	void getEitherAd();
 	void setPickup();

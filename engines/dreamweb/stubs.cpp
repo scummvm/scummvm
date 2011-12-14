@@ -4647,4 +4647,34 @@ void DreamGenContext::runEndSeq() {
 	} while (data.byte(kGetback) != 1);
 }
 
+void DreamGenContext::lookAtCard() {
+	//showFrame((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
+	//al = DreamBase::printDirect(&string, di, &y, dl, (bool)(dl & 1));
+	data.byte(kManisoffscreen) = 1;
+	getRidOfReels();
+	loadKeypad();
+	createPanel2();
+	showFrame(tempGraphics(), 160, 80, 42, 128);
+	uint8 *obText = getObTextStartCPP();
+	findNextColon(&obText);
+	findNextColon(&obText);
+	findNextColon(&obText);
+	printDirect(obText, 36, 124, 241, 241 & 1);
+	push(es);
+	push(si);
+	workToScreenM();
+	hangOnW(280);
+	createPanel2();
+	showFrame(tempGraphics(), 160, 80, 42, 128);
+	si = pop();
+	es = pop();
+	printDirect(obText, 36, 130, 241, 241 & 1);
+	workToScreenM();
+	hangOnW(200);
+	data.byte(kManisoffscreen) = 0;
+	getRidOfTemp();
+	restoreReels();
+	putBackObStuff();
+}
+
 } // End of namespace DreamGen
