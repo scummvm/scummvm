@@ -371,7 +371,13 @@
 	void folderHints();
 	void folderExit();
 	void getLocation();
+	uint8 getLocation(uint8 index) {
+		return DreamBase::getLocation(index);
+	}
 	void setLocation();
+	void setLocation(uint8 index) {
+		DreamBase::setLocation(index);
+	}
 	void loadTempText();
 	void loadTempText(const char *fileName);
 	void loadTravelText();

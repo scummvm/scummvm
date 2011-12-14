@@ -4587,8 +4587,7 @@ void DreamGenContext::showDiaryPage() {
 	data.byte(kKerning) = 1;
 	useTempCharset();
 	data.word(kCharshift) = 91+91;
-	uint16 offset = kTextstart + getSegment(data.word(kTextfile1)).word(data.byte(kDiarypage) * 2);
-	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
+	const uint8 *string = getTextInFile1(data.byte(kDiarypage));
 	uint16 y = kDiaryy + 16;
 	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
 	y = kDiaryy + 16;
@@ -4602,14 +4601,12 @@ void DreamGenContext::showDiaryPage() {
 
 void DreamGenContext::dumpDiaryKeys() {
 	if (data.byte(kPresscount) == 1) {
-		if (data.byte(kSartaindead) != 1 && data.byte(kDiarypage) == 5 && DreamBase::getLocation(6) != 1) {
+		if (data.byte(kSartaindead) != 1 && data.byte(kDiarypage) == 5 && getLocation(6) != 1) {
 			// Add Sartain Industries note
-			DreamBase::setLocation(6);
+			setLocation(6);
 			delPointer();
-			uint16 offset = kTextstart + getSegment(data.word(kTextfile1)).word(12 * 2);
-			const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
-			uint16 y = 106;
-			printDirect(&string, 70, &y, 241, 241 & 1);
+			const uint8 *string = getTextInFile1(12);
+			printDirect(string, 70, 106, 241, 241 & 1);
 			workToScreenM();
 			hangOnP(200);
 			createPanel();
@@ -4649,8 +4646,6 @@ void DreamGenContext::runEndSeq() {
 }
 
 void DreamGenContext::lookAtCard() {
-	//showFrame((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
-	//al = DreamBase::printDirect(&string, di, &y, dl, (bool)(dl & 1));
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
 	loadKeypad();
@@ -4662,14 +4657,10 @@ void DreamGenContext::lookAtCard() {
 	findNextColon(&obText);
 	uint16 y = 124;
 	printDirect(&obText, 36, &y, 241, 241 & 1);
-	push(es);
-	push(si);
 	workToScreenM();
 	hangOnW(280);
 	createPanel2();
 	showFrame(tempGraphics(), 160, 80, 42, 128);
-	si = pop();
-	es = pop();
 	printDirect(obText, 36, 130, 241, 241 & 1);
 	workToScreenM();
 	hangOnW(200);
