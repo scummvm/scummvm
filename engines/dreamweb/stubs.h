@@ -58,8 +58,10 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
 	void printMessage();
+	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
+	void printMessage2();
+	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count);
 	void useTimedText();
 	void dumpTimedText();
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
@@ -111,7 +113,6 @@
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void showRain();
-	void delTextLine();
 	void commandOnly();
 	void commandOnly(uint8 command);
 	void doBlocks();
@@ -590,5 +591,9 @@
 	void findExObject();
 	uint16 findExObject(const char *id);
 	void describeOb();
+	void getOpenedSize();
+	byte getOpenedSizeCPP();
+	void openOb();
+	void withWhat();
 
 #endif

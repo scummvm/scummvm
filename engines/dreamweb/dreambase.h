@@ -47,8 +47,14 @@ class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
+	// from object.cpp
+	uint16 _openChangeSize;
+
+	// from pathfind.cpp
+	Common::Point _lineData[200];		// Output of Bresenham
+
 public:
-	DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) { }
+	DreamBase(DreamWeb::DreamWebEngine *en);
 
 public:
 	// from monitor.cpp
@@ -76,7 +82,6 @@ public:
 	void obIcons();
 
 	// from pathfind.cpp
-	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
 	RoomPaths *getRoomsPaths();
 	void faceRightWay();
@@ -126,6 +131,7 @@ public:
 
 	// from stubs.cpp
 	void crosshair();
+	void delTextLine();
 	void showBlink();
 	void dumpBlink();
 	void dumpPointer();

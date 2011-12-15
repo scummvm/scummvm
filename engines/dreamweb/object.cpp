@@ -162,13 +162,13 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			break;
 		}
 		case 1: {
-			// NB: This table contains the non-constant openChangeSize!
+			// Note: This table contains the non-constant _openChangeSize!
 			RectWithCallback invList1[] = {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ 255,294,0,24,&DreamGenContext::dropObject },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
-				{ kInventx, data.word(offset_openchangesize),kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
-				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::inToInv },
+				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
+				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamGenContext::inToInv },
 				{ 0,320,0,200,&DreamGenContext::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -261,6 +261,35 @@ void DreamGenContext::getBackFromOb() {
 		getBack1();
 	else
 		blank();
+}
+
+void DreamGenContext::getOpenedSize() {
+	ax = getOpenedSizeCPP();
+}
+
+byte DreamGenContext::getOpenedSizeCPP() {
+	byte obj = data.byte(kOpenedob);
+	switch (data.byte(kOpenedtype)) {
+	case 4:
+		return getExAd(obj)->b7;
+	case 2:
+		return getFreeAd(obj)->b7;
+	default:
+		return getSetAd(obj)->b3;
+	}
+}
+
+void DreamGenContext::openOb() {
+	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
+
+	copyName(data.byte(kOpenedtype), data.byte(kOpenedob), commandLine);
+
+	printMessage(kInventx, kInventy+86, 62, 240, false);
+
+	al = printDirect(commandLine, data.word(kLastxpos) + 5, kInventy+86, 220, false);
+
+	fillOpen();
+	_openChangeSize = getOpenedSizeCPP() * kItempicsize + kInventx;
 }
 
 } // End of namespace DreamGen

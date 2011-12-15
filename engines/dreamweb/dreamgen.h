@@ -32,13 +32,11 @@
 
 namespace DreamGen {
 
-static const uint16 offset_money2poke = 0x042d;
-static const uint16 offset_rootdir = 0x040c;
-static const uint16 offset_openchangesize = 0x0392;
-static const uint16 offset_keys = 0x0394;
-static const uint16 offset_commandline = 0x0435;
-static const uint16 offset_money1poke = 0x0428;
-static const uint16 offset_operand1 = 0x03fe;
+static const uint16 offset_money1poke = 0x0426;
+static const uint16 offset_operand1 = 0x03fc;
+static const uint16 offset_rootdir = 0x040a;
+static const uint16 offset_keys = 0x0392;
+static const uint16 offset_money2poke = 0x042b;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -366,15 +364,15 @@ static const uint16 kCurrentsample = 442;
 static const uint16 kRoomssample = 443;
 static const uint16 kReelroutines = 444;
 static const uint16 kBasicsample = 901;
-static const uint16 kCurrentfile = 1050;
-static const uint16 kRoomscango = 1174;
-static const uint16 kRoompics = 1190;
-static const uint16 kOplist = 1205;
-static const uint16 kInputline = 1208;
-static const uint16 kPresslist = 1336;
-static const uint16 kQuitrequested = 1342;
-static const uint16 kSubtitles = 1343;
-static const uint16 kForeignrelease = 1344;
+static const uint16 kCurrentfile = 1048;
+static const uint16 kRoomscango = 1131;
+static const uint16 kRoompics = 1147;
+static const uint16 kOplist = 1162;
+static const uint16 kInputline = 1165;
+static const uint16 kPresslist = 1293;
+static const uint16 kQuitrequested = 1299;
+static const uint16 kSubtitles = 1300;
+static const uint16 kForeignrelease = 1301;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -478,6 +476,7 @@ public:
 
 	void fadeDownMon();
 	void identifyOb();
+	void getPersonText();
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
@@ -487,7 +486,6 @@ public:
 	void moneyPoke();
 	void doSomeTalk();
 	void resetLocation();
-	void getOpenedSize();
 	void adjustUp();
 	void fadeScreenDownHalf();
 	void outOfOpen();
@@ -506,7 +504,6 @@ public:
 	void removeObFromInv();
 	void dirFile();
 	void pickupConts();
-	void nextColon();
 	void findInvPos();
 	void getKeyAndLogo();
 	void selectOb();
@@ -520,7 +517,7 @@ public:
 	void notHeldError();
 	void getSetAd();
 	void showKeys();
-	void printmessage2();
+	void nextColon();
 	void findOpenPos();
 	void deleteExFrame();
 	void searchForSame();
@@ -533,7 +530,6 @@ public:
 	void getEitherAd();
 	void setPickup();
 	void dropObject();
-	void openOb();
 	void useStereo();
 	void showDiaryKeys();
 	void useOpened();
@@ -558,12 +554,10 @@ public:
 	void swapWithInv();
 	void adjustRight();
 	void transferToEx();
-	void getPersonText();
 	void parser();
 	void emergencyPurge();
 	void transferConToEx();
 	void adjustDown();
-	void withWhat();
 };
 
 } // End of namespace DreamGen

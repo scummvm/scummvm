@@ -1473,4 +1473,27 @@ void DreamGenContext::useAltar() {
 	}
 }
 
+void DreamGenContext::withWhat() {
+	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
+
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+
+	copyName(data.byte(kObjecttype), data.byte(kCommand), commandLine);
+	printMessage2(100, 21, 63, 200, false, 2);
+	printDirect(commandLine, data.word(kLastxpos) + 5, 21, 220, false);
+	printMessage2(data.word(kLastxpos) + 5, 21, 63, 200, false, 3);
+
+	fillRyan();
+	data.byte(kCommandtype) = 255;
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+	data.byte(kInvopen) = 2;
+}
+
+
 } // End of namespace DreamGen

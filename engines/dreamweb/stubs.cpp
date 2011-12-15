@@ -1191,7 +1191,7 @@ void DreamBase::crosshair() {
 	showFrame(engine->icons1(), kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
-void DreamGenContext::delTextLine() {
+void DreamBase::delTextLine() {
 	uint16 x = data.word(kTextaddressx);
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease) != 0)
@@ -1752,7 +1752,20 @@ void DreamGenContext::printMessage() {
 void DreamGenContext::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
 	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
-	printDirect(&string, x, &y, maxWidth, centered);
+	printDirect(string, x, y, maxWidth, centered);
+}
+
+void DreamGenContext::printMessage2() {
+	printMessage2(di, bx, al, dl, (bool)(dl & 1), ah);
+}
+
+void DreamGenContext::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
+	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
+	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
+	while (count--) {
+		findNextColon(&string);
+	}
+	printDirect(string, x, y, maxWidth, centered);
 }
 
 bool objectMatches(void *object, const char *id) {
