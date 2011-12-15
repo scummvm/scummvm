@@ -39,7 +39,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, &DreamGenContext::security,
-	&DreamGenContext::copper, /*&DreamGenContext::poolGuard*/NULL,
+	&DreamGenContext::copper, &DreamGenContext::poolGuard,
 	&DreamGenContext::rockstar, &DreamGenContext::businessMan,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
