@@ -470,6 +470,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'hangonpq',
 	'hangonw',
 	'heavy',
+	'helicopter',
 	'hotelbell',
 	'hotelcontrol',
 	'initialinv',

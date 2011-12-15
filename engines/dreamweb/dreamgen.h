@@ -530,7 +530,6 @@ public:
 	void findAllOpen();
 	void showSlots();
 	void deleteExObject();
-	void helicopter();
 	void getEitherAd();
 	void setPickup();
 	void dropObject();

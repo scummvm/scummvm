@@ -42,7 +42,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
 	NULL, NULL,
-	&DreamGenContext::mugger, &DreamGenContext::helicopter,
+	&DreamGenContext::mugger, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -74,7 +74,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::copper, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
-	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
+	/*&DreamGenContext::mugger*/NULL, &DreamGenContext::helicopter,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
@@ -857,6 +857,54 @@ void DreamGenContext::heavy(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::helicopter(ReelRoutine &routine) {
+	if (routine.reelPointer() == 203) {
+		// Won helicopter
+		data.byte(kPointermode) = 0;
+		return;
+	}
+
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 53) {
+			// Before killing helicopter
+			data.byte(kCombatcount)++;
+			if (data.byte(kCombatcount) != 8)
+				data.byte(kMandead) = 2;
+			nextReelPointer = 49;
+		} else if (nextReelPointer == 9) {
+			nextReelPointer--;
+			if (data.byte(kLastweapon) == 1) {
+				data.byte(kLastweapon) = (byte)-1;
+				nextReelPointer = 55;
+			} else {
+				nextReelPointer = 5;
+				data.byte(kCombatcount)++;
+				if (data.byte(kCombatcount) == 20) {
+					data.byte(kCombatcount) = 0;
+					nextReelPointer = 9;
+				}
+			}
+		} else {
+			// Not waiting helicopter
+			data.byte(kPointermode) = 0;
+			data.word(kWatchingtime) = 2;
+		}
+
+		routine.setReelPointer(nextReelPointer);
+	}
+
+	showGameReel(&routine);
+	routine.mapX = data.byte(kMapx);
+	if (routine.reelPointer() == 9 && data.byte(kCombatcount) != 7) {
+		data.byte(kPointermode) = 2;
+		data.word(kWatchingtime) = 0;
+	} else {
+		data.byte(kPointermode) = 0;
+		data.word(kWatchingtime) = 2;
+	}
 }
 
 } // End of namespace DreamGen
