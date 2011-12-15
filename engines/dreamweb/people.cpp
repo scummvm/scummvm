@@ -24,38 +24,6 @@
 
 namespace DreamGen {
 
-static void (DreamGenContext::*reelCallbacks[57])() = {
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, &DreamGenContext::poolGuard,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL
-};
-
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
 	&DreamGenContext::eden, &DreamGenContext::edenInBath,
@@ -93,10 +61,6 @@ void DreamGenContext::updatePeople() {
 	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
 
-	// The original callbacks are called with es:bx pointing to their reelRoutine entry.
-	// The new callbacks take a mutable ReelRoutine parameter.
-
-	es = data;
 	ReelRoutine *r = (ReelRoutine *)data.ptr(kReelroutines, 0);
 
 	for (int i = 0; r[i].reallocation != 255; ++i) {
@@ -104,35 +68,30 @@ void DreamGenContext::updatePeople() {
 		if (r[i].reallocation == data.byte(kReallocation) &&
 		        r[i].mapX == data.byte(kMapx) &&
 		        r[i].mapY == data.byte(kMapy)) {
-			if (reelCallbacks[i]) {
-				assert(!reelCallbacksCPP[i]);
-				(this->*(reelCallbacks[i]))();
-			} else {
-				assert(reelCallbacksCPP[i]);
-				(this->*(reelCallbacksCPP[i]))(r[i]);
-			}
+			assert(reelCallbacksCPP[i]);
+			(this->*(reelCallbacksCPP[i]))(r[i]);
 		}
 	}
 }
 
 void DreamGenContext::madmanText() {
+	byte origCount;
+
 	if (isCD()) {
 		if (data.byte(kSpeechcount) >= 63)
 			return;
 		if (data.byte(kCh1playing) != 255)
 			return;
-		al = data.byte(kSpeechcount);
+		origCount = data.byte(kSpeechcount);
 		++data.byte(kSpeechcount);
 	} else {
 		if (data.byte(kCombatcount) >= 61)
 			return;
-		al = data.byte(kCombatcount);
-		_and(al, 3);
-		if (!flags.z())
+		if (data.byte(kCombatcount) & 3)
 			return;
-		al = data.byte(kCombatcount) / 4;
+		origCount = data.byte(kCombatcount) / 4;
 	}
-	setupTimedTemp(47 + al, 82, 72, 80, 90, 1);
+	setupTimedTemp(47 + origCount, 82, 72, 80, 90, 1);
 }
 
 void DreamGenContext::madman(ReelRoutine &routine) {
@@ -189,10 +148,6 @@ void DreamGenContext::madMode() {
 	if (data.byte(kCombatcount) >= (isCD() ? 70 : 68))
 		return;
 	data.byte(kPointermode) = 2;
-}
-
-void DreamGenContext::addToPeopleList() {
-	addToPeopleList((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
 }
 
 void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
@@ -1046,6 +1001,80 @@ void DreamGenContext::endGameSeq(ReelRoutine &routine) {
 	if (routine.reelPointer() == 145) {
 		routine.setReelPointer(146);
 		rollEndCredits();
+	}
+}
+
+void DreamGenContext::poolGuard(ReelRoutine &routine) {
+	if (routine.reelPointer() == 214 || routine.reelPointer() == 258) {
+		// Combat over 2
+		showGameReel(&routine);
+		data.word(kWatchingtime) = 2;
+		data.byte(kPointermode) = 0;
+		data.byte(kCombatcount)++;
+		if (data.byte(kCombatcount) < 100)
+			return; // doneover2
+		data.word(kWatchingtime) = 0;
+		data.byte(kMandead) = 2;
+		return;
+	} else if (routine.reelPointer() == 185) {
+		// Combat over 1
+		data.word(kWatchingtime) = 0;
+		data.byte(kPointermode) = 0;
+		turnPathOn(0);
+		turnPathOff(1);
+		return;
+	}
+
+	if (routine.reelPointer() == 0)
+		turnPathOn(0);	// first pool
+
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		
+		if (nextReelPointer != 122) {
+			// Not end guard 1
+			if (nextReelPointer == 147) {
+				nextReelPointer--;
+				if (data.byte(kLastweapon) == 1) {
+					// Gun on pool
+					data.byte(kLastweapon) = (byte)-1;
+					nextReelPointer = 147;
+				} else {
+					// Gun not on pool
+					data.byte(kCombatcount)++;
+					if (data.byte(kCombatcount) == 40) {
+						data.byte(kCombatcount) = 0;
+						nextReelPointer = 220;
+					}
+				}
+			}
+		}
+
+		nextReelPointer--;
+
+		if (data.byte(kLastweapon) == 2) {
+			// Axe on pool
+			data.byte(kLastweapon) = (byte)-1;
+			nextReelPointer = 122;
+		} else {
+			data.byte(kCombatcount)++;
+			if (data.byte(kCombatcount) == 40) {
+				data.byte(kCombatcount) = 0;
+				nextReelPointer = 195;
+			}
+		}
+		
+		routine.setReelPointer(nextReelPointer);
+	}
+
+	showGameReel(&routine);
+	
+	if (routine.reelPointer() != 121 && routine.reelPointer() != 146) {
+		data.byte(kPointermode) = 0;
+		data.word(kWatchingtime) = 2;
+	} else {
+		data.byte(kPointermode) = 2;
+		data.word(kWatchingtime) = 0;
 	}
 }
 

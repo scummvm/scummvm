@@ -486,10 +486,6 @@ void DreamBase::showReelFrame(Reel *reel) {
 	showFrame(base, x, y, frame, 8);
 }
 
-void DreamGenContext::showGameReel() {
-	showGameReel((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
-}
-
 void DreamGenContext::showGameReel(ReelRoutine *routine) {
 	uint16 reelPointer = routine->reelPointer();
 	if (reelPointer >= 512)

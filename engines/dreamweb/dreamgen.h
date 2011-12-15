@@ -519,7 +519,6 @@ public:
 	void deleteExFrame();
 	void searchForSame();
 	void rollEm();
-	void poolGuard();
 	void lookAtPlace();
 	void findAllOpen();
 	void showSlots();

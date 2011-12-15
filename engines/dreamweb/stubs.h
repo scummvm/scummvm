@@ -92,7 +92,6 @@
 	void wideDoor(Sprite *sprite, SetObject *objData);
 	void lockedDoorway(Sprite *sprite, SetObject *objData);
 	void liftSprite(Sprite *sprite, SetObject *objData);
-	void showGameReel();
 	void showGameReel(ReelRoutine *routine);
 	void turnPathOn(uint8 param);
 	void turnPathOff(uint8 param);
@@ -176,7 +175,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
-	void addToPeopleList();
 	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
 	void compare();
@@ -385,6 +383,7 @@
 	void mugger(ReelRoutine &routine);
 	void businessMan(ReelRoutine &routine);
 	void endGameSeq(ReelRoutine &routine);
+	void poolGuard(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);

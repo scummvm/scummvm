@@ -624,6 +624,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'playchannel1',
 	'playguitar',
 	'plotreel',
+	'poolguard',
 	'powerlightoff',
 	'powerlighton',
 	'priest',
