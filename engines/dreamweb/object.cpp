@@ -24,7 +24,27 @@
 
 namespace DreamGen {
 
-void DreamGenContext::fillRyan() {
+void DreamBase::showRyanPage() {
+	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
+	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+}
+
+void DreamBase::findAllRyan(uint8 *inv) {
+	memset(inv, 0xff, 60);
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		DynObject *extra = getExAd(i);
+		if (extra->mapad[0] != 4)
+			continue;
+		if (extra->mapad[1] != 0xff)
+			continue;
+		uint8 slot = extra->mapad[2];
+		assert(slot < 30);
+		inv[2 * slot + 0] = i;
+		inv[2 * slot + 1] = 4;
+	}
+}
+
+void DreamBase::fillRyan() {
 	uint8 *inv = getSegment(data.word(kBuffers)).ptr(kRyaninvlist, 60);
 	findAllRyan(inv);
 	inv += data.byte(kRyanpage) * 2 * 10;
@@ -42,7 +62,7 @@ void DreamGenContext::isItWorn() {
 	flags._z = isItWorn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
 }
 
-bool DreamGenContext::isItWorn(const DynObject *object) {
+bool DreamBase::isItWorn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
 
@@ -72,7 +92,7 @@ void DreamGenContext::obToInv() {
 	obToInv(al, ah, di, bx);
 }
 
-void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
+void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	showFrame(engine->icons1(), x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
@@ -154,8 +174,8 @@ void DreamGenContext::examineOb(bool examineAgain) {
 				{ 260,300,0,44,&DreamGenContext::useObject },
 				{ 210,254,0,44,&DreamGenContext::selectOpenOb },
 				{ 144,176,64,96,&DreamGenContext::setPickup },
-				{ 0,50,50,200,&DreamGenContext::examineInventory },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0,50,50,200,&DreamBase::examineInventory },
+				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(examList);
@@ -169,7 +189,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
 				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
 				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamGenContext::inToInv },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(invList1);
@@ -180,7 +200,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectOb },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(withList1);
@@ -256,7 +276,7 @@ void DreamGenContext::transferText() {
 	data.word(kExtextpos) += len + 1;
 }
 
-void DreamGenContext::getBackFromOb() {
+void DreamBase::getBackFromOb() {
 	if (data.byte(kPickup) != 1)
 		getBack1();
 	else

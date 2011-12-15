@@ -94,18 +94,18 @@ void DreamBase::addToPressList() {
 
 void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	RectWithCallback keypadList[] = {
-		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttonTwo },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonThree },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFour },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFive },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonSix },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonSeven },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttonEight },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonNine },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonNought },
-		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonEnter },
-		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitKey },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamBase::buttonOne },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamBase::buttonTwo },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamBase::buttonThree },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamBase::buttonFour },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamBase::buttonFive },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamBase::buttonSix },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamBase::buttonSeven },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamBase::buttonEight },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamBase::buttonNine },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamBase::buttonNought },
+		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamBase::buttonEnter },
+		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamBase::quitKey },
 		{ 0,320,0,200,&DreamGenContext::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};

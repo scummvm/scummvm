@@ -71,7 +71,7 @@ void DreamGenContext::doLoad(int savegameId) {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualLoad },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(loadlist);
@@ -167,7 +167,7 @@ void DreamGenContext::saveGame() {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualSave },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
-				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(savelist);
@@ -216,11 +216,11 @@ void DreamGenContext::saveGame() {
 	}
 }
 
-void DreamGenContext::namesToOld() {
+void DreamBase::namesToOld() {
 	memcpy(_saveNamesOld, _saveNames, 17*7);
 }
 
-void DreamGenContext::oldToNames() {
+void DreamBase::oldToNames() {
 	memcpy(_saveNames, _saveNamesOld, 17*7);
 }
 
@@ -237,13 +237,77 @@ void DreamGenContext::saveLoad() {
 		doSaveLoad();
 }
 
-void DreamGenContext::showMainOps() {
+void DreamGenContext::doSaveLoad() {
+	data.byte(kPointerframe) = 0;
+	data.word(kTextaddressx) = 70;
+	data.word(kTextaddressy) = 182-8;
+	data.byte(kTextlen) = 181;
+	data.byte(kManisoffscreen) = 1;
+	clearWork();
+	createPanel2();
+	underTextLine();
+	getRidOfAll();
+	loadSaveBox();
+	showOpBox();
+	showMainOps();
+	workToScreenCPP();
+
+	RectWithCallback opsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
+		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
+		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
+		{ 0,320,0,200,&DreamBase::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	bool firstOps = true;
+
+	do {	// restart ops
+		if (firstOps) {
+			firstOps = false;
+		} else {
+			showOpBox();
+			showMainOps();
+			workToScreenM();
+		}
+		data.byte(kGetback) = 0;
+
+		do {	// wait ops
+			if (data.byte(kQuitrequested)) {
+				data.byte(kManisoffscreen) = 0;
+				return;
+			}
+
+			readMouse();
+			showPointer();
+			vSync();
+			dumpPointer();
+			dumpTextLine();
+			delPointer();
+			checkCoords(opsList);
+		} while (!data.byte(kGetback));
+	} while (data.byte(kGetback) == 2);
+
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	if (data.byte(kGetback) != 4) {
+		getRidOfTemp();
+		restoreAll();
+		redrawMainScrn();
+		workToScreenM();
+		data.byte(kCommandtype) = 200;
+	}
+	data.byte(kManisoffscreen) = 0;
+}
+
+void DreamBase::showMainOps() {
 	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
 	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
 	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
-void DreamGenContext::showDiscOps() {
+void DreamBase::showDiscOps() {
 	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
 	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
 	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
@@ -522,5 +586,42 @@ void DreamGenContext::checkInput() {
 	workToScreenM();
 }
 
+void DreamGenContext::selectSlot() {
+	if (data.byte(kCommandtype) != 244) {
+		data.byte(kCommandtype) = 244;
+		commandOnly(45);
+	}
+
+	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
+		return; // noselslot
+	if (data.byte(kLoadingorsave) == 3)
+		data.byte(kLoadingorsave)--;
+
+	oldToNames();
+	int y = data.word(kMousey) - (kOpsy + 4);
+	if (y < 11)
+		data.byte(kCurrentslot) = 0;
+	else
+		data.byte(kCurrentslot) = y / 11;
+
+	delPointer();
+	showOpBox();
+	showSlots();
+	showNames();
+	if (data.byte(kLoadingorsave) == 1)
+		showLoadOps();
+	else
+		showSaveOps();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::selectSlot2() {
+	if (data.word(kMousebutton))
+		data.byte(kLoadingorsave) = 2;
+	selectSlot();
+}
 
 } // End of namespace DreamGen

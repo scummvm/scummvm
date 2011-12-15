@@ -53,6 +53,10 @@ protected:
 	// from pathfind.cpp
 	Common::Point _lineData[200];		// Output of Bresenham
 
+	// from saveload.cpp
+	char _saveNames[17*7];
+	char _saveNamesOld[17*7];
+
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
@@ -109,6 +113,9 @@ public:
 
 	// from object.cpp
 	void obIcons();
+	void fillRyan();
+	void findAllRyan(uint8 *inv);
+	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
 
 	// from pathfind.cpp
 	void checkDest(const RoomPaths *roomsPaths);
@@ -135,8 +142,10 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
-	char _saveNames[17*7];
-	char _saveNamesOld[17*7];
+	void oldToNames();
+	void namesToOld();
+	void showMainOps();
+	void showDiscOps();
 	void showNames();
 
 	// from sound.cpp
@@ -157,6 +166,7 @@ public:
 	void soundOnReels(uint16 reelPointer);
 	void rollEndCredits();
 	void priestText(ReelRoutine &routine);
+	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
 
 	// from stubs.cpp
 	void crosshair();
@@ -185,6 +195,7 @@ public:
 	DynObject *getFreeAd(uint8 index);
 	DynObject *getExAd(uint8 index);
 	DynObject *getEitherAdCPP();
+	void *getAnyAdDir(uint8 index, uint8 flag);
 	void showWatch();
 	void showTime();
 	void showExit();
@@ -203,6 +214,8 @@ public:
 	void loadIntoTemp2(const char *fileName);
 	void loadIntoTemp3(const char *fileName);
 	void loadTempCharset(const char *fileName);
+	void loadTravelText();
+	void loadTempText(const char *fileName);
 	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void sortOutMap();
@@ -218,6 +231,33 @@ public:
 	void eraseOldObs();
 	void commandOnly(uint8 command);
 	void blank();
+	void setTopLeft();
+	void setTopRight();
+	void setBotLeft();
+	void setBotRight();
+	void examIcon();
+	void animPointer();
+	void getFlagUnderP(uint8 *flag, uint8 *flagEx);
+	void workToScreenM();
+	void quitKey();
+	void loadFolder();
+	void folderHints();
+	void folderExit();
+	void showFolder();
+	void showLeftPage();
+	void showRightPage();
+	void underTextLine();
+	void hangOnP(uint16 count);
+	void getUnderZoom();
+	void putUnderZoom();
+	void examineInventory();
+	void openInv();
+	void getBack1();
+	void getBackFromOb();
+	void getBackFromOps();
+	void getBackToOps();
+	void DOSReturn();
+	bool isItWorn(const DynObject *object);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

@@ -882,13 +882,13 @@ void DreamGenContext::triggerMessage(uint16 index) {
 
 void DreamGenContext::processTrigger() {
 	if (data.byte(kLasttrigger) == '1') {
-		DreamBase::setLocation(8);
+		setLocation(8);
 		triggerMessage(45);
 	} else if (data.byte(kLasttrigger) == '2') {
-		DreamBase::setLocation(9);
+		setLocation(9);
 		triggerMessage(55);
 	} else if (data.byte(kLasttrigger) == '3') {
-		DreamBase::setLocation(2);
+		setLocation(2);
 		triggerMessage(59);
 	}
 }
@@ -1000,7 +1000,7 @@ void DreamBase::deallocateMem(uint16 segment) {
 	}
 }
 
-void DreamGenContext::DOSReturn() {
+void DreamBase::DOSReturn() {
 	if (data.byte(kCommandtype) != 250) {
 		data.byte(kCommandtype) = 250;
 		commandOnly(46);
@@ -1409,7 +1409,7 @@ void *DreamBase::getAnyAd(uint8 *value1, uint8 *value2) {
 	}
 }
 
-void *DreamGenContext::getAnyAdDir(uint8 index, uint8 flag) {
+void *DreamBase::getAnyAdDir(uint8 index, uint8 flag) {
 	if (flag == 4)
 		return getExAd(index);
 	else if (flag == 2)
@@ -1488,18 +1488,11 @@ bool DreamGenContext::finishedWalkingCPP() {
 	return (data.byte(kLinepointer) == 254) && (data.byte(kFacing) == data.byte(kTurntoface));
 }
 
-void DreamGenContext::getFlagUnderP() {
-	uint8 flag, flagEx;
-	getFlagUnderP(&flag, &flagEx);
-	cl = flag;
-	ch = flagEx;
-}
-
-void DreamGenContext::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
+void DreamBase::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 	uint8 type, flagX, flagY;
 	checkOne(data.word(kMousex) - data.word(kMapadx), data.word(kMousey) - data.word(kMapady), flag, flagEx, &type, &flagX, &flagY);
-	cl = data.byte(kLastflag) = *flag;
-	ch = data.byte(kLastflagex) = *flagEx;
+	data.byte(kLastflag) = *flag;
+	data.byte(kLastflagex) = *flagEx;
 }
 
 void DreamGenContext::walkAndExamine() {
@@ -1574,7 +1567,8 @@ void DreamGenContext::obName(uint8 command, uint8 commandType) {
 		}
 	}
 
-	getFlagUnderP();
+	uint8 flag, flagEx;
+	getFlagUnderP(&flag, &flagEx);
 	if (data.byte(kLastflag) < 2) {
 		blockNameText();
 		return;
@@ -1691,7 +1685,7 @@ void DreamBase::showPointer() {
 	}
 }
 
-void DreamGenContext::animPointer() {
+void DreamBase::animPointer() {
 
 	if (data.byte(kPointermode) == 2) {
 		data.byte(kPointerframe) = 0;
@@ -1879,30 +1873,6 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamBase::showRyanPage() {
-	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
-	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
-}
-
-void DreamGenContext::findAllRyan() {
-	findAllRyan(es.ptr(di, 60));
-}
-
-void DreamGenContext::findAllRyan(uint8 *inv) {
-	memset(inv, 0xff, 60);
-	for (size_t i = 0; i < kNumexobjects; ++i) {
-		DynObject *extra = getExAd(i);
-		if (extra->mapad[0] != 4)
-			continue;
-		if (extra->mapad[1] != 0xff)
-			continue;
-		uint8 slot = extra->mapad[2];
-		assert(slot < 30);
-		inv[2 * slot + 0] = i;
-		inv[2 * slot + 1] = 4;
-	}
-}
-
 void DreamGenContext::hangOn() {
 	hangOn(cx);
 }
@@ -1938,7 +1908,7 @@ void DreamGenContext::hangOnP() {
 	hangOnP(cx);
 }
 
-void DreamGenContext::hangOnP(uint16 count) {
+void DreamBase::hangOnP(uint16 count) {
 	data.word(kMaintimer) = 0;
 	uint8 pointerFrame = data.byte(kPointerframe);
 	uint8 pickup = data.byte(kPickup);
@@ -2022,12 +1992,12 @@ void DreamGenContext::enterSymbol() {
 		dumpTextLine();
 		dumpSymbol();
 		RectWithCallback symbolList[] = {
-			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitSymbol },
-			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::setTopLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::setTopRight },
-			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setBotLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setBotRight },
-			{ 0,320,0,200,&DreamGenContext::blank },
+			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamBase::quitSymbol },
+			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamBase::setTopLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamBase::setTopRight },
+			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamBase::setBotLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamBase::setBotRight },
+			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(symbolList);
@@ -2438,7 +2408,7 @@ void DreamGenContext::restoreReels() {
 	engine->closeFile();
 }
 
-void DreamGenContext::loadFolder() {
+void DreamBase::loadFolder() {
 	loadIntoTemp("DREAMWEB.G09"); // folder graphics 1
 	loadIntoTemp2("DREAMWEB.G10"); // folder graphics 2
 	loadIntoTemp3("DREAMWEB.G11"); // folder graphics 3
@@ -2446,7 +2416,7 @@ void DreamGenContext::loadFolder() {
 	loadTempText("DREAMWEB.T50"); // folder text
 }
 
-void DreamGenContext::showFolder() {
+void DreamBase::showFolder() {
 	data.byte(kCommandtype) = 255;
 	if (data.byte(kFolderpage)) {
 		useTempCharset();
@@ -2471,7 +2441,7 @@ void DreamGenContext::showFolder() {
 	}
 }
 
-void DreamGenContext::showLeftPage() {
+void DreamBase::showLeftPage() {
 	showFrame(tempGraphics2(), 0, 12, 3, 0);
 	uint16 y = 12+5;
 	for (size_t i = 0; i < 9; ++i) {
@@ -2504,7 +2474,7 @@ void DreamGenContext::showLeftPage() {
 	}
 }
 
-void DreamGenContext::showRightPage() {
+void DreamBase::showRightPage() {
 	showFrame(tempGraphics2(), 143, 12, 0, 0);
 	uint16 y = 12+37;
 	for (size_t i = 0; i < 7; ++i) {
@@ -2552,16 +2522,12 @@ void DreamBase::panelIcons1() {
 	showWatch();
 }
 
-void DreamGenContext::examIcon() {
+void DreamBase::examIcon() {
 	showFrame(engine->icons2(), 254, 5, 3, 0);
 }
 
 uint8 DreamBase::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
-}
-
-void DreamGenContext::getLocation() {
-	al = DreamBase::getLocation(al);
 }
 
 void DreamBase::setLocation(uint8 index) {
@@ -2581,10 +2547,10 @@ const uint8 *DreamBase::getTextInFile1(uint16 index) {
 
 void DreamGenContext::checkFolderCoords() {
 	RectWithCallback folderList[] = {
-		{ 280,320,160,200, &DreamGenContext::quitKey },
+		{ 280,320,160,200, &DreamBase::quitKey },
 		{ 143,300,6,194, &DreamGenContext::nextFolder },
 		{ 0,143,6,194, &DreamGenContext::lastFolder },
-		{ 0,320,0,200, &DreamGenContext::blank },
+		{ 0,320,0,200, &DreamBase::blank },
 		{ 0xFFFF,0,0,0, 0 }
 	};
 	checkCoords(folderList);
@@ -2630,10 +2596,10 @@ void DreamGenContext::lastFolder() {
 	}
 }
 
-void DreamGenContext::folderHints() {
+void DreamBase::folderHints() {
 	if (data.byte(kFolderpage) == 5) {
-		if ((data.byte(kAidedead) != 1) && (DreamBase::getLocation(13) != 1)) {
-			DreamBase::setLocation(13);
+		if ((data.byte(kAidedead) != 1) && (getLocation(13) != 1)) {
+			setLocation(13);
 			showFolder();
 			const uint8 *string = getTextInFile1(30);
 			printDirect(string, 0, 86, 141, true);
@@ -2641,8 +2607,8 @@ void DreamGenContext::folderHints() {
 			hangOnP(200);
 		}
 	} else if (data.byte(kFolderpage) == 9) {
-		if (DreamBase::getLocation(7) != 1) {
-			DreamBase::setLocation(7);
+		if (getLocation(7) != 1) {
+			setLocation(7);
 			showFolder();
 			const uint8 *string = getTextInFile1(31);
 			printDirect(string, 0, 86, 141, true);
@@ -2652,19 +2618,15 @@ void DreamGenContext::folderHints() {
 	}
 }
 
-void DreamGenContext::folderExit() {
+void DreamBase::folderExit() {
 	showFrame(tempGraphics2(), 296, 178, 6, 0);
 }
 
-void DreamGenContext::loadTravelText() {
+void DreamBase::loadTravelText() {
 	data.word(kTraveltext) = standardLoad("DREAMWEB.T81"); // location descs
 }
 
-void DreamGenContext::loadTempText() {
-	loadTempText((const char *)data.ptr(dx, 0));
-}
-
-void DreamGenContext::loadTempText(const char *fileName) {
+void DreamBase::loadTempText(const char *fileName) {
 	data.word(kTextfile1) = standardLoad(fileName);
 }
 
@@ -2692,7 +2654,7 @@ void DreamGenContext::allocateBuffers() {
 	data.word(kSounddata2) = allocateMem(2048/16);
 }
 
-void DreamGenContext::workToScreenM() {
+void DreamBase::workToScreenM() {
 	animPointer();
 	readMouse();
 	showPointer();
@@ -2742,8 +2704,8 @@ void DreamGenContext::useMenu() {
 		dumpMenu();
 		dumpTextLine();
 		RectWithCallback menuList[] = {
-			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitKey },
-			{ 0,320,0,200,&DreamGenContext::blank },
+			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamBase::quitKey },
+			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(menuList);
@@ -3169,7 +3131,7 @@ void DreamGenContext::intro() {
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::setTopLeft() {
+void DreamBase::setTopLeft() {
 	if (data.byte(kSymboltopdir) != 0) {
 		blank();
 		return;
@@ -3184,7 +3146,7 @@ void DreamGenContext::setTopLeft() {
 		data.byte(kSymboltopdir) = 0xFF;
 }
 
-void DreamGenContext::setTopRight() {
+void DreamBase::setTopRight() {
 	if (data.byte(kSymboltopdir) != 0) {
 		blank();
 		return;
@@ -3199,7 +3161,7 @@ void DreamGenContext::setTopRight() {
 		data.byte(kSymboltopdir) = 1;
 }
 
-void DreamGenContext::setBotLeft() {
+void DreamBase::setBotLeft() {
 	if (data.byte(kSymbolbotdir) != 0) {
 		blank();
 		return;
@@ -3214,7 +3176,7 @@ void DreamGenContext::setBotLeft() {
 		data.byte(kSymbolbotdir) = 0xFF;
 }
 
-void DreamGenContext::setBotRight() {
+void DreamBase::setBotRight() {
 	if (data.byte(kSymbolbotdir) != 0) {
 		blank();
 		return;
@@ -3239,14 +3201,14 @@ void DreamGenContext::newGame() {
 		data.byte(kGetback) = 3;
 }
 
-void DreamGenContext::getBackFromOps() {
+void DreamBase::getBackFromOps() {
 	if (data.byte(kMandead) == 2)
 		blank();
 	else
 		getBack1();
 }
 
-void DreamGenContext::getBackToOps() {
+void DreamBase::getBackToOps() {
 	if (data.byte(kCommandtype) != 201) {
 		data.byte(kCommandtype) = 201;
 		commandOnly(42);
@@ -3356,12 +3318,6 @@ void DreamGenContext::redrawMainScrn() {
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::selectSlot2() {
-	if (data.word(kMousebutton))
-		data.byte(kLoadingorsave) = 2;
-	selectSlot();
-}
-
 void DreamBase::blank() {
 	if (data.byte(kCommandtype) != 199) {
 		data.byte(kCommandtype) = 199;
@@ -3392,7 +3348,7 @@ void DreamGenContext::makeMainScreen() {
 	data.byte(kManisoffscreen) = 0;
 }
 
-void DreamGenContext::openInv() {
+void DreamBase::openInv() {
 	data.byte(kInvopen) = 1;
 	printMessage(80, 58 - 10, 61, 240, (240 & 1));
 	fillRyan();
@@ -3403,8 +3359,8 @@ void DreamGenContext::obsThatDoThings() {
 	if (!compare(data.byte(kCommand), data.byte(kObjecttype), "MEMB"))
 		return; // notlouiscard
 
-	if (DreamBase::getLocation(4) != 1) {
-		DreamBase::setLocation(4);
+	if (getLocation(4) != 1) {
+		setLocation(4);
 		lookAtCard();
 	}
 }
@@ -3704,7 +3660,7 @@ void DreamGenContext::selectLocation() {
 			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
 			{ 104,216,138,192,&DreamGenContext::destSelect },
 			{ 273,320,157,198,&DreamGenContext::getBack1 },
-			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(destList);
@@ -3722,7 +3678,7 @@ void DreamGenContext::selectLocation() {
 }
 
 
-void DreamGenContext::examineInventory() {
+void DreamBase::examineInventory() {
 	if (data.byte(kCommandtype) != 249) {
 		data.byte(kCommandtype) = 249;
 		commandOnly(32);
@@ -3781,13 +3737,11 @@ void DreamBase::showDiary() {
 	showFrame(tempGraphics(), kDiaryx + 176, kDiaryy + 108, 2, 0);
 }
 
-void DreamGenContext::underTextLine() {
+void DreamBase::underTextLine() {
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kTextunder;
-	multiGet(ds.ptr(si, 0), data.byte(kTextaddressx), y, kUndertextsizex, kUndertextsizey);
+	multiGet(textUnder(), data.byte(kTextaddressx), y, kUndertextsizex, kUndertextsizey);
 }
 
 void DreamGenContext::showDecisions() {
@@ -3797,16 +3751,12 @@ void DreamGenContext::showDecisions() {
 	underTextLine();
 }
 
-void DreamGenContext::getUnderZoom() {
-	ds = data.word(kBuffers);
-	si = kZoomspace;
-	multiGet(ds.ptr(si, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+void DreamBase::getUnderZoom() {
+	multiGet(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
-void DreamGenContext::putUnderZoom() {
-	ds = data.word(kBuffers);
-	si = kZoomspace;
-	multiPut(ds.ptr(si, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+void DreamBase::putUnderZoom() {
+	multiPut(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
 void DreamGenContext::showWatchReel() {
@@ -3939,9 +3889,9 @@ void DreamGenContext::decide() {
 
 	RectWithCallback decideList[] = {
 		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
-		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
+		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
 		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -3985,7 +3935,7 @@ void DreamGenContext::talk() {
 	RectWithCallback talkList[] = {
 		{ 273,320,157,198,&DreamGenContext::getBack1 },
 		{ 240,290,2,44,&DreamGenContext::moreTalk },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -4040,7 +3990,7 @@ void DreamGenContext::discOps() {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
 		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
 		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -4058,76 +4008,12 @@ void DreamGenContext::discOps() {
 	} while (!data.byte(kGetback));
 }
 
-void DreamGenContext::doSaveLoad() {
-	data.byte(kPointerframe) = 0;
-	data.word(kTextaddressx) = 70;
-	data.word(kTextaddressy) = 182-8;
-	data.byte(kTextlen) = 181;
-	data.byte(kManisoffscreen) = 1;
-	clearWork();
-	createPanel2();
-	underTextLine();
-	getRidOfAll();
-	loadSaveBox();
-	showOpBox();
-	showMainOps();
-	workToScreenCPP();
-
-	RectWithCallback opsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
-		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
-		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
-		{ 0,320,0,200,&DreamGenContext::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	bool firstOps = true;
-
-	do {	// restart ops
-		if (firstOps) {
-			firstOps = false;
-		} else {
-			showOpBox();
-			showMainOps();
-			workToScreenM();
-		}
-		data.byte(kGetback) = 0;
-
-		do {	// wait ops
-			if (data.byte(kQuitrequested)) {
-				data.byte(kManisoffscreen) = 0;
-				return;
-			}
-
-			readMouse();
-			showPointer();
-			vSync();
-			dumpPointer();
-			dumpTextLine();
-			delPointer();
-			checkCoords(opsList);
-		} while (!data.byte(kGetback));
-	} while (data.byte(kGetback) == 2);
-
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
-	if (data.byte(kGetback) != 4) {
-		getRidOfTemp();
-		restoreAll();
-		redrawMainScrn();
-		workToScreenM();
-		data.byte(kCommandtype) = 200;
-	}
-	data.byte(kManisoffscreen) = 0;
-}
-
 void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback quitList[] = {
 		{ 273,320,157,198,&DreamGenContext::getBack1 },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -4276,7 +4162,7 @@ void DreamGenContext::cantDrop() {
 	workToScreenM();
 }
 
-void DreamGenContext::getBack1() {
+void DreamBase::getBack1() {
 	if (data.byte(kPickup) != 0) {
 		blank();
 		return;
@@ -4383,7 +4269,7 @@ void DreamGenContext::autoAppear() {
 		// In alley
 		al = 5;
 		resetLocation();
-		DreamBase::setLocation(10);
+		setLocation(10);
 		data.byte(kDestpos) = 10;
 		return;
 	}
@@ -4414,7 +4300,7 @@ void DreamGenContext::autoAppear() {
 			data.byte(kNewsitem) = 3;
 			al = 6;
 			resetLocation();
-			DreamBase::setLocation(11);
+			setLocation(11);
 			data.byte(kDestpos) = 11;
 		} else {
 			if (data.byte(kReallocation) == 2 && data.byte(kRockstardead) != 0)
@@ -4423,7 +4309,7 @@ void DreamGenContext::autoAppear() {
 	}
 }
 
-void DreamGenContext::quitKey() {
+void DreamBase::quitKey() {
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
 		commandOnly(4);
@@ -4555,38 +4441,6 @@ void DreamGenContext::entryAnims() {
 			turnAnyPathOn(2, data.byte(kRoomnum) - 1);
 		}
 	}
-}
-
-void DreamGenContext::selectSlot() {
-	if (data.byte(kCommandtype) != 244) {
-		data.byte(kCommandtype) = 244;
-		commandOnly(45);
-	}
-
-	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
-		return; // noselslot
-	if (data.byte(kLoadingorsave) == 3)
-		data.byte(kLoadingorsave)--;
-
-	oldToNames();
-	int y = data.word(kMousey) - (kOpsy + 4);
-	if (y < 11)
-		data.byte(kCurrentslot) = 0;
-	else
-		data.byte(kCurrentslot) = y / 11;
-
-	delPointer();
-	showOpBox();
-	showSlots();
-	showNames();
-	if (data.byte(kLoadingorsave) == 1)
-		showLoadOps();
-	else
-		showSaveOps();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
 }
 
 void DreamGenContext::updateSymbolTop() {
