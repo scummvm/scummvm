@@ -514,7 +514,6 @@ public:
 	void transferMap();
 	void purgeAnItem();
 	void purgeALocation();
-	void notHeldError();
 	void getSetAd();
 	void showKeys();
 	void nextColon();

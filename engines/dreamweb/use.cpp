@@ -1495,5 +1495,16 @@ void DreamGenContext::withWhat() {
 	data.byte(kInvopen) = 2;
 }
 
+void DreamGenContext::notHeldError() {
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	obIcons();
+	printMessage2(64, 100, 63, 200 + 1, true, 1);
+	workToScreenM();
+	hangOnP(50);
+	putBackObStuff();
+}
 
 } // End of namespace DreamGen

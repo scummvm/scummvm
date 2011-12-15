@@ -3088,25 +3088,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::notHeldError() {
-	STACK_CHECK;
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	obIcons();
-	di = 64;
-	bx = 100;
-	al = 63;
-	ah = 1;
-	dl = 201;
-	printMessage2();
-	workToScreenM();
-	cx = 50;
-	hangOnP();
-	putBackObStuff();
-}
-
 void DreamGenContext::nextColon() {
 	STACK_CHECK;
 lookcolon:

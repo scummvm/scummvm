@@ -107,7 +107,7 @@ void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		showFrame(engine->icons1(), x - 3, y - 2, 7, 0);
 }
 
-void DreamGenContext::obPicture() {
+void DreamBase::obPicture() {
 	if (data.byte(kObjecttype) == 1)
 		return;
 	Frame *frames;

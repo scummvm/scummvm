@@ -58,14 +58,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void printMessage();
-	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
-		DreamBase::printMessage(x, y, index, maxWidth, centered);
-	}
-	void printMessage2();
-	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
-		DreamBase::printMessage2(x, y, index, maxWidth, centered, count);
-	}
 	void useTimedText();
 	void dumpTimedText();
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
@@ -187,9 +179,10 @@
 	void addToPeopleList();
 	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
-	void obPicture();
 	void compare();
-	bool compare(uint8 index, uint8 flag, const char id[4]);
+	bool compare(uint8 index, uint8 flag, const char id[4]) {
+		return DreamBase::compare(index, flag, id);
+	}
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
@@ -211,8 +204,6 @@
 	void hangOn(uint16 frameCount) {
 		DreamBase::hangOn(frameCount);
 	}
-	void hangOnW();
-	void hangOnW(uint16 frameCount);
 	void hangOnP();
 	void hangOnP(uint16 count) {
 		DreamBase::hangOnP(count);
@@ -278,13 +269,6 @@
 	void look();
 	void autoLook();
 	void doLook();
-	void getRidOfAll();
-	void getRidOfTemp();
-	void getRidOfTempText();
-	void getRidOfTemp2();
-	void getRidOfTemp3();
-	void getRidOfTempCharset();
-	void getRidOfTempsP();
 	void showFirstUse();
 	void showSecondUse();
 	void actualSave();
@@ -292,7 +276,6 @@
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
 	void restoreAll();
-	void restoreReels();
 	void enterSymbol();
 	void viewFolder();
 	void edensCDPlayer();
@@ -422,10 +405,6 @@
 	void realCredits();
 	void runIntroSeq();
 	void intro();
-	void clearBeforeLoad();
-	void clearReels();
-	void getRidOfReels();
-	void liftNoise(uint8 index);
 	void newGame();
 	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
@@ -537,5 +516,6 @@
 	byte getOpenedSizeCPP();
 	void openOb();
 	void withWhat();
+	void notHeldError();
 
 #endif

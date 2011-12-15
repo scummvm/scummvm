@@ -1191,7 +1191,7 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 		data.word(kLastsoundreel) = (uint16)-1;
 }
 
-void DreamGenContext::clearBeforeLoad() {
+void DreamBase::clearBeforeLoad() {
 	if (data.byte(kRoomloaded) != 1)
 		return /* (noclear) */;
 
@@ -1213,13 +1213,13 @@ void DreamGenContext::clearBeforeLoad() {
 	data.byte(kRoomloaded) = 0;
 }
 
-void DreamGenContext::clearReels() {
+void DreamBase::clearReels() {
 	deallocateMem(data.word(kReel1));
 	deallocateMem(data.word(kReel2));
 	deallocateMem(data.word(kReel3));
 }
 
-void DreamGenContext::getRidOfReels() {
+void DreamBase::getRidOfReels() {
 	if (data.byte(kRoomloaded) == 0)
 		return /* (dontgetrid) */;
 
@@ -1228,7 +1228,7 @@ void DreamGenContext::getRidOfReels() {
 	deallocateMem(data.word(kReel3));
 }
 
-void DreamGenContext::liftNoise(uint8 index) {
+void DreamBase::liftNoise(uint8 index) {
 	if (data.byte(kReallocation) == 5 || data.byte(kReallocation) == 21)
 		playChannel1(13);	// hiss noise
 	else

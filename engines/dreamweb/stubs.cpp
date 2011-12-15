@@ -1739,18 +1739,10 @@ void DreamBase::animPointer() {
 	data.byte(kPointerframe) = 8;
 }
 
-void DreamGenContext::printMessage() {
-	printMessage(di, bx, al, dl, (bool)(dl & 1));
-}
-
 void DreamBase::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
 	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	printDirect(string, x, y, maxWidth, centered);
-}
-
-void DreamGenContext::printMessage2() {
-	printMessage2(di, bx, al, dl, (bool)(dl & 1), ah);
 }
 
 void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
@@ -1776,7 +1768,7 @@ void DreamGenContext::compare() {
 	flags._z = compare(al, ah, id);
 }
 
-bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
+bool DreamBase::compare(uint8 index, uint8 flag, const char id[4]) {
 	return objectMatches(getAnyAdDir(index, flag), id);
 }
 
@@ -1886,11 +1878,7 @@ void DreamBase::hangOn(uint16 frameCount) {
 	}
 }
 
-void DreamGenContext::hangOnW() {
-	hangOnW(cx);
-}
-
-void DreamGenContext::hangOnW(uint16 frameCount) {
+void DreamBase::hangOnW(uint16 frameCount) {
 	while (frameCount) {
 		delPointer();
 		readMouse();
@@ -2295,31 +2283,31 @@ void DreamBase::useTempCharset() {
 	engine->setCurrentCharset(engine->tempCharset());
 }
 
-void DreamGenContext::getRidOfTemp() {
+void DreamBase::getRidOfTemp() {
 	deallocateMem(data.word(kTempgraphics));
 }
 
-void DreamGenContext::getRidOfTempText() {
+void DreamBase::getRidOfTempText() {
 	deallocateMem(data.word(kTextfile1));
 }
 
-void DreamGenContext::getRidOfTemp2() {
+void DreamBase::getRidOfTemp2() {
 	deallocateMem(data.word(kTempgraphics2));
 }
 
-void DreamGenContext::getRidOfTemp3() {
+void DreamBase::getRidOfTemp3() {
 	deallocateMem(data.word(kTempgraphics3));
 }
 
-void DreamGenContext::getRidOfTempCharset() {
+void DreamBase::getRidOfTempCharset() {
 	engine->freeTempCharset();
 }
 
-void DreamGenContext::getRidOfTempsP() {
+void DreamBase::getRidOfTempsP() {
 	deallocateMem(data.word(kTempsprites));
 }
 
-void DreamGenContext::getRidOfAll() {
+void DreamBase::getRidOfAll() {
 	deallocateMem(data.word(kBackdrop));
 	deallocateMem(data.word(kSetframes));
 	deallocateMem(data.word(kReel1));
@@ -2381,7 +2369,7 @@ void DreamGenContext::restoreAll() {
 	setAllChanges();
 }
 
-void DreamGenContext::restoreReels() {
+void DreamBase::restoreReels() {
 	if (data.byte(kRoomloaded) == 0)
 		return;
 

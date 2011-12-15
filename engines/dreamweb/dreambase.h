@@ -116,6 +116,7 @@ public:
 	void fillRyan();
 	void findAllRyan(uint8 *inv);
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
+	void obPicture();
 
 	// from pathfind.cpp
 	void checkDest(const RoomPaths *roomsPaths);
@@ -163,10 +164,14 @@ public:
 	const Frame *findSource(uint16 &frame);
 	void showReelFrame(Reel *reel);
 	const Frame *getReelFrameAX(uint16 frame);
-	void soundOnReels(uint16 reelPointer);
 	void rollEndCredits();
 	void priestText(ReelRoutine &routine);
 	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
+	void soundOnReels(uint16 reelPointer);
+	void clearBeforeLoad();
+	void clearReels();
+	void getRidOfReels();
+	void liftNoise(uint8 index);
 
 	// from stubs.cpp
 	void crosshair();
@@ -240,6 +245,7 @@ public:
 	void getFlagUnderP(uint8 *flag, uint8 *flagEx);
 	void workToScreenM();
 	void quitKey();
+	void restoreReels();
 	void loadFolder();
 	void folderHints();
 	void folderExit();
@@ -258,6 +264,15 @@ public:
 	void getBackToOps();
 	void DOSReturn();
 	bool isItWorn(const DynObject *object);
+	bool compare(uint8 index, uint8 flag, const char id[4]);
+	void hangOnW(uint16 frameCount);
+	void getRidOfTemp();
+	void getRidOfTempText();
+	void getRidOfTemp2();
+	void getRidOfTemp3();
+	void getRidOfTempCharset();
+	void getRidOfTempsP();
+	void getRidOfAll();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
