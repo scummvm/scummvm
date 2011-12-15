@@ -135,7 +135,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
 		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
 		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
-		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'a', 't') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('m', 'd', 'a', 't') },
 		{ &QuickTimeParser::readMDHD,    MKTAG('m', 'd', 'h', 'd') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },
