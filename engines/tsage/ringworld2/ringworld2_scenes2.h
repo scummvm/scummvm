@@ -490,6 +490,63 @@ public:
 	virtual void signal();
 };
 
+class Scene2700 : public SceneExt {
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+	class Action2: public Action {
+	public:
+		void signal();
+	};
+	class Action3: public Action {
+	public:
+		void signal();
+	};
+	class Action4: public Action {
+	public:
+		void signal();
+	};
+
+	class Area1: public SceneArea {
+	public:
+		void process(Event &event);
+	};
+	class Area2: public SceneArea {
+	public:
+		void process(Event &event);
+	};
+public:
+	VisualSpeaker _quinnSpeaker;
+	VisualSpeaker _nejSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	NamedHotspot _item6;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Area1 _area1;
+	Area2 _area2;
+	Rect _rect1, _rect2, _rect3, _rect4, _rect5, _rect6;
+	SequenceManager _sequenceManager;
+	int _field412, _field414, _field416;
+
+	Scene2700();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

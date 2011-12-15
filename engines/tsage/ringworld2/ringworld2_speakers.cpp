@@ -739,5 +739,95 @@ SpeakerWebbster2500::SpeakerWebbster2500() {
 	_numFrames = 0;
 }
 
+SpeakerQuinn2700::SpeakerQuinn2700() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerQuinn2700::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &R2_GLOBALS._player;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 19:
+			_object1.setup(4022, 5, 1);
+			break;
+		case 2701:
+			_object1.setup(4022, 1, 1);
+			break;
+		default:
+			break;
+		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerNej2700::SpeakerNej2700() {
+	_speakerName = "NEJ";
+	_color1 = 171;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerNej2700::proc15() {
+	int v = _fieldF6;
+	Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 2701:
+			_object1.setup(4022, 3, 1);
+			_object1.setPosition(Common::Point(164, 163));
+			_object2->setPosition(Common::Point(-10, -10));
+			break;
+		case 2705:
+			_object1.setup(4022, 7, 1);
+			_object1.fixPriority(162);
+			break;
+		default:
+			break;
+		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

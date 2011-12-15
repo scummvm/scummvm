@@ -108,51 +108,53 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #2 */
 	//
 	case 2000:
-		// Maze
+		// Ice Maze
 		return new Scene2000();
 	case 2350:
-		// Maze: Balloon Launch Platform
+		// Ice Maze: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Maze: Large empty room
+		// Ice Maze: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Maze: 
+		// Ice Maze: 
 		return new Scene2425();
 	case 2430:
-		// Maze: Bedroom
+		// Ice Maze: Bedroom
 		return new Scene2430();
 	case 2435:
-		// Maze: Throne room
+		// Ice Maze: Throne room
 		return new Scene2435();
 	case 2440:
-		// Maze: Another bedroom
+		// Ice Maze: Another bedroom
 		return new Scene2440();
 	case 2445:
-		// Maze:
+		// Ice Maze:
 		return new Scene2445();
 	case 2450:
-		// Maze: Another bedroom
+		// Ice Maze: Another bedroom
 		return new Scene2450();
 	case 2455:
-		// Maze: Inside crevasse
+		// Ice Maze: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Maze: Large Cave
+		// Ice Maze: Large Cave
 		return new Scene2500();
 	case 2525:
-		// Maze: Furnace room
+		// Ice Maze: Furnace room
 		return new Scene2525();
 	case 2530:
-		// Maze: Well
+		// Ice Maze: Well
 		return new Scene2530();
 	case 2535:
-		// Maze: Tannery
+		// Ice Maze: Tannery
 		return new Scene2535();
 	case 2600:
-		// Maze: Exit
+		// Ice Maze: Exit
 		return new Scene2600();
 	case 2700:
+		// Forest Maze
+		return new Scene2700();
 	case 2750:
 	case 2800:
 	case 2900:
