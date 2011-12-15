@@ -40,7 +40,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, &DreamGenContext::poolGuard,
-	NULL, &DreamGenContext::businessMan,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -72,7 +72,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, &DreamGenContext::security,
 	&DreamGenContext::copper, /*&DreamGenContext::poolGuard*/NULL,
-	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
+	&DreamGenContext::rockstar, &DreamGenContext::businessMan,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
@@ -945,6 +945,70 @@ void DreamGenContext::mugger(ReelRoutine &routine) {
 		makeMainScreen();
 		DreamBase::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
 		data.byte(kBeenmugged) = 1;
+	}
+}
+
+void DreamGenContext::businessMan(ReelRoutine &routine) {
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
+	if (routine.reelPointer() == 2) {
+		// First
+		DreamBase::setupTimedUse(49, 30, 1, 68, 174);
+		return;
+	}
+
+	if (routine.reelPointer() == 95) {
+		// Bus combat won - end
+		data.byte(kPointermode) = 0;
+		data.word(kWatchingtime) = 0;
+		return;
+	}
+
+	if (routine.reelPointer() == 49)
+		return; // buscombatend
+
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 48) {
+			data.byte(kMandead) = 2;	// before dead body
+		} else if (nextReelPointer == 15) {
+			nextReelPointer--;
+			if (data.byte(kLastweapon) == 3) {
+				// Shield bonus
+				data.byte(kLastweapon) = (byte)-1;
+				data.byte(kCombatcount) = 0;
+				nextReelPointer = 51;
+			} else {
+				// No shield bonus
+				data.byte(kCombatcount)++;
+				if (data.byte(kCombatcount) == 20) {
+					data.byte(kCombatcount) = 0;
+					nextReelPointer = 15;
+				}
+			}
+		} else {
+			// Bus combat won
+			if (nextReelPointer == 91) {
+				turnPathOn(0);
+				turnPathOn(1);
+				turnPathOn(2);
+				turnPathOff(3);
+				data.byte(kManspath) = 5;
+				data.byte(kFinaldest) = 5;
+				findXYFromPath();
+				data.byte(kResetmanxy) = 1;
+				nextReelPointer = 92;
+			}
+		}
+		
+		routine.setReelPointer(nextReelPointer);
+	}
+
+	showGameReel(&routine);
+	routine.mapY = data.byte(kMapy);
+	if (routine.reelPointer() == 14) {
+		data.word(kWatchingtime) = 0;
+		data.byte(kPointermode) = 2;
 	}
 }
 

@@ -509,7 +509,6 @@ public:
 	void selectOb();
 	void fadeUpMon();
 	void reExFromInv();
-	void businessMan();
 	void outOfInv();
 	void transferMap();
 	void purgeAnItem();

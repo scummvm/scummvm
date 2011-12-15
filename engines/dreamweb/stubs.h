@@ -383,6 +383,7 @@
 	void heavy(ReelRoutine &routine);
 	void helicopter(ReelRoutine &routine);
 	void mugger(ReelRoutine &routine);
+	void businessMan(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);
