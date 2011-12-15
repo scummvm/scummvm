@@ -137,7 +137,7 @@ _seq_midi=auto
 _timidity=auto
 _zlib=auto
 _sparkle=auto
-_png=auto
+_png=no
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
@@ -2596,7 +2596,7 @@ case $_backend in
 		DEFINES="$DEFINES -D__PSP__"
 		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 		DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
-		LIBS="$LIBS -lpng"
+		_png=yes
 		LIBS="$LIBS -Wl,-Map,mapfile.txt"
 		;;
 	samsungtv)
