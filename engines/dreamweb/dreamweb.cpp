@@ -410,3 +410,13 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 }
 
 } // End of namespace DreamWeb
+
+
+namespace DreamGen {
+
+// FIXME/TODO: Move this to a better place.
+DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
+	_openChangeSize = kInventx+(4*kItempicsize);
+}
+
+} // End of namespace DreamGen

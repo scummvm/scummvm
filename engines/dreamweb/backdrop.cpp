@@ -274,7 +274,7 @@ void DreamGenContext::showAllFree() {
 	}
 }
 
-void DreamGenContext::drawFlags() {
+void DreamBase::drawFlags() {
 	uint8 *mapFlags = getSegment(data.word(kBuffers)).ptr(kMapflags, 0);
 	const uint8 *mapData = getSegment(data.word(kMapdata)).ptr(kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx), 0);
 	const uint8 *backdropFlags = getSegment(data.word(kBackdrop)).ptr(kFlags, 0);

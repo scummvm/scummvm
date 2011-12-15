@@ -24,15 +24,15 @@
 
 namespace DreamGen {
 
-void DreamGenContext::getUnderMenu() {
+void DreamBase::getUnderMenu() {
 	multiGet(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
 }
 
-void DreamGenContext::putUnderMenu() {
+void DreamBase::putUnderMenu() {
 	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
 }
 
-void DreamGenContext::singleKey(uint8 key, uint16 x, uint16 y) {
+void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {
 	if (key == data.byte(kGraphicpress)) {
 		key += 11;
 		if (data.byte(kPresscount) < 8)
@@ -42,11 +42,11 @@ void DreamGenContext::singleKey(uint8 key, uint16 x, uint16 y) {
 	showFrame(tempGraphics(), x, y, key, 0);
 }
 
-void DreamGenContext::loadKeypad() {
+void DreamBase::loadKeypad() {
 	loadIntoTemp("DREAMWEB.G02");
 }
 
-void DreamGenContext::showKeypad() {
+void DreamBase::showKeypad() {
 	singleKey(22, kKeypadx+9,  kKeypady+5);
 	singleKey(23, kKeypadx+31, kKeypady+5);
 	singleKey(24, kKeypadx+53, kKeypady+5);
@@ -75,13 +75,13 @@ void DreamGenContext::showKeypad() {
 	}
 }
 
-bool DreamGenContext::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
+bool DreamBase::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	
 	return digit0 == data.byte(kPresslist+0) && digit1 == data.byte(kPresslist+1)
 		&& digit2 == data.byte(kPresslist+2) && digit3 == data.byte(kPresslist+3);
 }
 
-void DreamGenContext::addToPressList() {
+void DreamBase::addToPressList() {
 	if (data.word(kPresspointer) == 5)
 		return;
 	uint8 pressed = data.byte(kPressed);
@@ -94,18 +94,18 @@ void DreamGenContext::addToPressList() {
 
 void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	RectWithCallback keypadList[] = {
-		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttonTwo },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonThree },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFour },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFive },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonSix },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonSeven },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttonEight },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonNine },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonNought },
-		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonEnter },
-		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitKey },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamBase::buttonOne },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamBase::buttonTwo },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamBase::buttonThree },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamBase::buttonFour },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamBase::buttonFive },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamBase::buttonSix },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamBase::buttonSeven },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamBase::buttonEight },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamBase::buttonNine },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamBase::buttonNought },
+		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamBase::buttonEnter },
+		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamBase::quitKey },
 		{ 0,320,0,200,&DreamGenContext::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
@@ -164,51 +164,51 @@ void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 	workToScreenM();
 }
 
-void DreamGenContext::buttonOne() {
+void DreamBase::buttonOne() {
 	buttonPress(1);
 }
 
-void DreamGenContext::buttonTwo() {
+void DreamBase::buttonTwo() {
 	buttonPress(2);
 }
 
-void DreamGenContext::buttonThree() {
+void DreamBase::buttonThree() {
 	buttonPress(3);
 }
 
-void DreamGenContext::buttonFour() {
+void DreamBase::buttonFour() {
 	buttonPress(4);
 }
 
-void DreamGenContext::buttonFive() {
+void DreamBase::buttonFive() {
 	buttonPress(5);
 }
 
-void DreamGenContext::buttonSix() {
+void DreamBase::buttonSix() {
 	buttonPress(6);
 }
 
-void DreamGenContext::buttonSeven() {
+void DreamBase::buttonSeven() {
 	buttonPress(7);
 }
 
-void DreamGenContext::buttonEight() {
+void DreamBase::buttonEight() {
 	buttonPress(8);
 }
 
-void DreamGenContext::buttonNine() {
+void DreamBase::buttonNine() {
 	buttonPress(9);
 }
 
-void DreamGenContext::buttonNought() {
+void DreamBase::buttonNought() {
 	buttonPress(10);
 }
 
-void DreamGenContext::buttonEnter() {
+void DreamBase::buttonEnter() {
 	buttonPress(11);
 }
 
-void DreamGenContext::buttonPress(uint8 buttonId) {
+void DreamBase::buttonPress(uint8 buttonId) {
 	uint8 commandType = 100 + buttonId;
 	if (data.byte(kCommandtype) != commandType) {
 		data.byte(kCommandtype) = commandType;
@@ -223,28 +223,28 @@ void DreamGenContext::buttonPress(uint8 buttonId) {
 	}
 }
 
-void DreamGenContext::showOuterPad() {
+void DreamBase::showOuterPad() {
 	showFrame(tempGraphics(), kKeypadx-3, kKeypady-4, 1, 0);
 	showFrame(tempGraphics(), kKeypadx+74, kKeypady+76, 37, 0);
 }
 
-void DreamGenContext::dumpKeypad() {
+void DreamBase::dumpKeypad() {
 	multiDump(kKeypadx - 3, kKeypady - 4, 120, 90);
 }
 
-void DreamGenContext::dumpSymbol() {
+void DreamBase::dumpSymbol() {
 	data.byte(kNewtextline) = 0;
 	multiDump(kSymbolx, kSymboly + 20, 104, 60);
 }
 
-void DreamGenContext::dumpSymBox() {
+void DreamBase::dumpSymBox() {
 	if (data.word(kDumpx) != 0xFFFF) {
 		multiDump(data.word(kDumpx), data.word(kDumpy), 30, 77);
 		data.word(kDumpx) = 0xFFFF;
 	}
 }
 
-void DreamGenContext::quitSymbol() {
+void DreamBase::quitSymbol() {
 	if (data.byte(kSymboltopx) != 24 || data.byte(kSymbolbotx) != 24) {
 		blank();
 		return;
