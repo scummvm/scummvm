@@ -47,10 +47,49 @@ class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
-public:
-	DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) { }
+	// from object.cpp
+	uint16 _openChangeSize;
+
+	// from pathfind.cpp
+	Common::Point _lineData[200];		// Output of Bresenham
+
+	// from saveload.cpp
+	char _saveNames[17*7];
+	char _saveNamesOld[17*7];
 
 public:
+	DreamBase(DreamWeb::DreamWebEngine *en);
+
+public:
+	// from backdrop.cpp
+	void drawFlags();
+
+	// from keypad.cpp
+	void getUnderMenu();
+	void putUnderMenu();
+	void singleKey(uint8 key, uint16 x, uint16 y);
+	void loadKeypad();
+	void showKeypad();
+	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
+	void addToPressList();
+	void buttonOne();
+	void buttonTwo();
+	void buttonThree();
+	void buttonFour();
+	void buttonFive();
+	void buttonSix();
+	void buttonSeven();
+	void buttonEight();
+	void buttonNine();
+	void buttonNought();
+	void buttonEnter();
+	void buttonPress(uint8 buttonId);
+	void showOuterPad();
+	void dumpKeypad();
+	void dumpSymbol();
+	void dumpSymBox();
+	void quitSymbol();
+
 	// from monitor.cpp
 	void input();
 	byte makeCaps(byte c);
@@ -74,9 +113,12 @@ public:
 
 	// from object.cpp
 	void obIcons();
+	void fillRyan();
+	void findAllRyan(uint8 *inv);
+	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
+	void obPicture();
 
 	// from pathfind.cpp
-	Common::Point _lineData[200];		// Output of Bresenham
 	void checkDest(const RoomPaths *roomsPaths);
 	RoomPaths *getRoomsPaths();
 	void faceRightWay();
@@ -101,8 +143,10 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
-	char _saveNames[17*7];
-	char _saveNamesOld[17*7];
+	void oldToNames();
+	void namesToOld();
+	void showMainOps();
+	void showDiscOps();
 	void showNames();
 
 	// from sound.cpp
@@ -120,12 +164,18 @@ public:
 	const Frame *findSource(uint16 &frame);
 	void showReelFrame(Reel *reel);
 	const Frame *getReelFrameAX(uint16 frame);
-	void soundOnReels(uint16 reelPointer);
 	void rollEndCredits();
 	void priestText(ReelRoutine &routine);
+	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
+	void soundOnReels(uint16 reelPointer);
+	void clearBeforeLoad();
+	void clearReels();
+	void getRidOfReels();
+	void liftNoise(uint8 index);
 
 	// from stubs.cpp
 	void crosshair();
+	void delTextLine();
 	void showBlink();
 	void dumpBlink();
 	void dumpPointer();
@@ -150,6 +200,7 @@ public:
 	DynObject *getFreeAd(uint8 index);
 	DynObject *getExAd(uint8 index);
 	DynObject *getEitherAdCPP();
+	void *getAnyAdDir(uint8 index, uint8 flag);
 	void showWatch();
 	void showTime();
 	void showExit();
@@ -168,12 +219,60 @@ public:
 	void loadIntoTemp2(const char *fileName);
 	void loadIntoTemp3(const char *fileName);
 	void loadTempCharset(const char *fileName);
+	void loadTravelText();
+	void loadTempText(const char *fileName);
 	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void sortOutMap();
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset();
 	void useCharset1();
+	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
+	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count);
+	bool isItDescribed(const ObjPos *objPos);
+	void zoomIcon();
+	void roomName();
+	void showIcon();
+	void eraseOldObs();
+	void commandOnly(uint8 command);
+	void blank();
+	void setTopLeft();
+	void setTopRight();
+	void setBotLeft();
+	void setBotRight();
+	void examIcon();
+	void animPointer();
+	void getFlagUnderP(uint8 *flag, uint8 *flagEx);
+	void workToScreenM();
+	void quitKey();
+	void restoreReels();
+	void loadFolder();
+	void folderHints();
+	void folderExit();
+	void showFolder();
+	void showLeftPage();
+	void showRightPage();
+	void underTextLine();
+	void hangOnP(uint16 count);
+	void getUnderZoom();
+	void putUnderZoom();
+	void examineInventory();
+	void openInv();
+	void getBack1();
+	void getBackFromOb();
+	void getBackFromOps();
+	void getBackToOps();
+	void DOSReturn();
+	bool isItWorn(const DynObject *object);
+	bool compare(uint8 index, uint8 flag, const char id[4]);
+	void hangOnW(uint16 frameCount);
+	void getRidOfTemp();
+	void getRidOfTempText();
+	void getRidOfTemp2();
+	void getRidOfTemp3();
+	void getRidOfTempCharset();
+	void getRidOfTempsP();
+	void getRidOfAll();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
