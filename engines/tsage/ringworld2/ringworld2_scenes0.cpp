@@ -1444,6 +1444,312 @@ void Scene200::signal() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 250 - Lift
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene250::Button::Button(): SceneActor() {
+	_floorNumber = _v2 = 0;
+}
+
+void Scene250::Button::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_floorNumber);
+	s.syncAsSint16LE(_v2);
+}
+
+bool Scene250::Button::startAction(CursorType action, Event &event) {
+	Scene250 *scene = (Scene250 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_field414) {
+			SceneItem::display2(250, 15);
+		} else {
+			switch (_floorNumber) {
+			case 1:
+			case 2:
+			case 5:
+			case 9:
+				scene->_sound1.play(14);
+				scene->changeFloor(_floorNumber);
+				break;
+			case 10:
+				// Current Floor
+				scene->_sound1.play(14);
+				R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
+				break;
+			default:
+				SceneItem::display2(250, 16);
+				break;
+			}
+		}
+		return true;
+
+	case CURSOR_LOOK:
+		switch (_floorNumber) {
+		case 1:
+		case 2:
+		case 5:
+		case 9:
+			SceneItem::display2(250, 12);
+			break;
+		case 10:
+			SceneItem::display2(250, 13);
+			break;
+		case 11:
+			SceneItem::display2(250, 14);
+			break;
+		default:
+			SceneItem::display2(250, 16);
+			break;
+		}
+		return true;
+
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+void Scene250::Button::setFloor(int floorNumber) {
+	SceneActor::postInit();
+	_floorNumber = floorNumber;
+	_v2 = 0;
+
+	if (_floorNumber <= 9) {
+		SceneObject::setup(250, 1, 4);
+
+		switch (_floorNumber) {
+		case 1:
+		case 2:
+		case 5:
+		case 9:
+			setFrame(6);
+			break;
+		default:
+			break;
+		}
+
+		setPosition(Common::Point(111, (_floorNumber - 1) * 12 + 43));
+		fixPriority(10);
+		setDetails(250, -1, -1, -1, 1, NULL);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene250::Scene250(): SceneExt() {
+	_field412 = _field414 = _field416 = _field418 = _field41A = 0;
+}
+
+void Scene250::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_field418);
+	s.syncAsSint16LE(_field41A);
+}
+
+void Scene250::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(250);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.enableControl();
+	R2_GLOBALS._player._canWalk = false;
+
+	_currentFloor.setFloor(10);
+	_currentFloor.setup(250, 1, 5);
+	_currentFloor.setDetails(250, 13, -1, -1, 1, NULL);
+
+	_button1.setFloor(11);
+	_button1.setup(250, 1, 3);
+	_button1.setPosition(Common::Point(400, 100));
+	_button1.setDetails(250, 14, -1, -1, 1, NULL);
+	_button1.fixPriority(190);
+	_button1.hide();
+
+	_floor1.setFloor(1);
+	_floor2.setFloor(2);
+	_floor3.setFloor(3);
+	_floor4.setFloor(4);
+	_floor5.setFloor(5);
+	_floor6.setFloor(6);
+	_floor7.setFloor(7);
+	_floor8.setFloor(8);
+	_floor9.setFloor(9);
+
+	_item2.setDetails(Rect(0, 0, 73, SCREEN_HEIGHT), 250, 9, -1, 9, 1, NULL);
+	_item4.setDetails(Rect(239, 16, 283, 164), 250, 6, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 250, 0, 1, -1, 1, NULL);
+
+	R2_GLOBALS._events.setCursor(CURSOR_USE);
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 200:
+		_field412 = 55;
+		break;
+	case 300:
+		_field412 = 43;
+		break;
+	case 700:
+		_field412 = 139;
+		break;
+	case 850:
+		_field412 = 91;
+		break;
+	default:
+		R2_GLOBALS._sceneManager._previousScene = 200;
+		_field412 = 55;
+		break;
+	}
+
+	_currentFloor.setPosition(Common::Point(111, _field412));
+}
+
+void Scene250::signal() {
+	if (_field41A)
+		_sceneMode = 20;
+
+	switch (_sceneMode) {
+	case 1:
+		_sound1.play(22);
+		R2_GLOBALS._player.show();
+		R2_GLOBALS._player.setup(250, 1, 2);
+		R2_GLOBALS._player.setPosition(Common::Point(261, 185));
+		ADD_MOVER(R2_GLOBALS._player, 261, 15);
+
+		_field416 = 0;
+		_sceneMode = 2;
+		break;
+	case 2:
+		_sceneMode = ((_field414 - 12) == _field412) ? 4 : 3;
+		signal();
+		break;
+	case 3:
+		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y + 12));
+		_field412 += 12;
+		R2_GLOBALS._player.setPosition(Common::Point(261, 185));
+		ADD_MOVER(R2_GLOBALS._player, 261, 15);
+		
+		if ((_field414 - 12) == _field412)
+			_sceneMode = 4;
+		break;
+	case 4:
+		_sound1.play(21);
+		
+		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y + 12));
+		R2_GLOBALS._player.setPosition(Common::Point(261, 185));
+		ADD_MOVER(R2_GLOBALS._player, 261, 15);
+		_sceneMode = 5;
+		break;
+	case 5:
+		R2_GLOBALS._player.disableControl();
+		_sceneMode = 20;
+		signal();
+		break;
+	case 6:
+		_sound1.play(22);
+		R2_GLOBALS._player.show();
+		R2_GLOBALS._player.setup(250, 1, 2);
+		R2_GLOBALS._player.setPosition(Common::Point(261, 15));
+		ADD_MOVER(R2_GLOBALS._player, 261, 185);
+		_field416 = 0;
+		_sceneMode = 7;
+		break;
+	case 7:
+		_field418 = 1;
+		if ((_field414 + 12) == _field412)
+			_sceneMode = 8;
+		signal();
+		break;
+	case 8:
+		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y - 12));
+		_field412 -= 12;
+		R2_GLOBALS._player.setPosition(Common::Point(261, 15));
+		ADD_MOVER(R2_GLOBALS._player, 261, 185);
+
+		if ((_field414 + 12) == _field412)
+			_sceneMode = 9;
+		break;
+	case 9:
+		_sound1.play(21);
+		_currentFloor.setPosition(Common::Point(111, _currentFloor._position.y - 12));
+		R2_GLOBALS._player.setPosition(Common::Point(261, 15));
+		ADD_MOVER(R2_GLOBALS._player, 261, 185);
+		_sceneMode = 10;
+		break;
+	case 10:
+		_sceneMode = 20;
+		signal();
+		break;
+	case 20:
+		// Handle changing scene
+		switch (_field414) {
+		case 55:
+			R2_GLOBALS._sceneManager.changeScene(200);
+			break;
+		case 43:
+			R2_GLOBALS._sceneManager.changeScene(300);
+			break;
+		case 139:
+			R2_GLOBALS._sceneManager.changeScene(139);
+			break;
+		case 91:
+			R2_GLOBALS._sceneManager.changeScene(91);
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene250::changeFloor(int floorNumber) {
+	_field414 = (floorNumber - 1) * 12 + 43;
+	_button1.setPosition(Common::Point(111, _field414));
+	_button1.show();
+
+	_sceneMode = (_field412 >= _field414) ? 6 : 1;
+	if (_field414 == _field412)
+		_sceneMode = 20;
+
+	signal();
+}
+
+void Scene250::process(Event &event) {
+	if (!event.handled) {
+		if (((event.eventType == EVENT_KEYPRESS) || (event.btnState != 0)) && _field418) {
+			_field41A = 1;
+			event.handled = true;
+		}
+
+		SceneExt::process(event);
+	}
+}
+
+void Scene250::dispatch() {
+	SceneExt::dispatch();
+
+	if (((_sceneMode == 2) || (_sceneMode == 7)) && (_field416 < 100)) {
+		++_field416;
+		R2_GLOBALS._player._moveDiff.y = _field416 / 5;
+	}
+
+	if (((_sceneMode == 5) || (_sceneMode == 10)) && (R2_GLOBALS._player._moveDiff.y > 4)) {
+		--_field416;
+		R2_GLOBALS._player._moveDiff.y = _field416 / 7 + 3;
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 300 - Bridge
  *
  *--------------------------------------------------------------------------*/
