@@ -517,8 +517,8 @@ class Scene2700 : public SceneExt {
 		void process(Event &event);
 	};
 public:
-	VisualSpeaker _quinnSpeaker;
-	VisualSpeaker _nejSpeaker;
+	SpeakerQuinn2700 _quinnSpeaker;
+	SpeakerNej2700 _nejSpeaker;
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
@@ -541,6 +541,83 @@ public:
 	int _field412, _field414, _field416;
 
 	Scene2700();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
+class Scene2750 : public SceneExt {
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+	class Action2: public Action {
+	public:
+		void signal();
+	};
+	class Action3: public Action {
+	public:
+		void signal();
+	};
+	class Action4: public Action {
+	public:
+		void signal();
+	};
+	class Action5: public Action {
+	public:
+		void signal();
+	};
+	class Action6: public Action {
+	public:
+		void signal();
+	};
+	class Action7: public Action {
+	public:
+		void signal();
+	};
+
+	class Area1: public SceneArea {
+	public:
+		void process(Event &event);
+	};
+	class Area2: public SceneArea {
+	public:
+		void process(Event &event);
+	};
+public:
+	SpeakerQuinn2750 _quinnSpeaker;
+	SpeakerNej2750 _nejSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SceneActor _actor8;
+	SceneActor _actor9;
+	SceneActor _actor10;
+	SceneActor _actor11;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Area1 _area1;
+	Area2 _area2;
+	Rect _rect1, _rect2, _rect3;
+	SequenceManager _sequenceManager;
+	int _field412, _field414, _field416;
+
+	Scene2750();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

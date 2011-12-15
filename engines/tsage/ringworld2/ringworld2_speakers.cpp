@@ -829,5 +829,91 @@ void SpeakerNej2700::proc15() {
 	}
 }
 
+SpeakerQuinn2750::SpeakerQuinn2750() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerQuinn2750::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &R2_GLOBALS._player;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 19:
+			_object1.setup(4022, 5, 1);
+			break;
+		case 2752:
+			_object1.setup(2752, 1, 1);
+			break;
+		default:
+			break;
+		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerNej2750::SpeakerNej2750() {
+	_speakerName = "NEJ";
+	_color1 = 171;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerNej2750::proc15() {
+	int v = _fieldF6;
+	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 2705:
+			_object1.setup(4022, 7, 1);
+			break;
+		case 2752:
+			_object1.setup(2752, 1, 1);
+			break;
+		default:
+			break;
+		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
