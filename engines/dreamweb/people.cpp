@@ -871,7 +871,7 @@ void DreamGenContext::helicopter(ReelRoutine &routine) {
 		if (nextReelPointer == 53) {
 			// Before killing helicopter
 			data.byte(kCombatcount)++;
-			if (data.byte(kCombatcount) != 8)
+			if (data.byte(kCombatcount) >= 8)
 				data.byte(kMandead) = 2;
 			nextReelPointer = 49;
 		} else if (nextReelPointer == 9) {
@@ -898,10 +898,11 @@ void DreamGenContext::helicopter(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	routine.mapX = data.byte(kMapx);
-	if (routine.reelPointer() == 9 && data.byte(kCombatcount) != 7) {
+	if (routine.reelPointer() < 9 && data.byte(kCombatcount) >= 7) {
 		data.byte(kPointermode) = 2;
 		data.word(kWatchingtime) = 0;
 	} else {
+		// Not waiting helicopter
 		data.byte(kPointermode) = 0;
 		data.word(kWatchingtime) = 2;
 	}
