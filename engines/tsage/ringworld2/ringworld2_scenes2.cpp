@@ -3071,7 +3071,7 @@ void Scene2700::Action4::signal() {
 
 void Scene2700::Area1::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos.x, event.mousePos.y))) {
+	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3121,7 +3121,7 @@ void Scene2700::Area1::process(Event &event) {
 
 void Scene2700::Area2::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos.x, event.mousePos.y))) {
+	if ((event.eventType == 1) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3536,7 +3536,7 @@ void Scene2700::signal() {
 void Scene2700::process(Event &event) {
 	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN)) {
 		if (R2_GLOBALS._events.getCursor() == R2_36) {
-			if (R2_GLOBALS._player._bounds.contains(event.mousePos.x, event.mousePos.y)) {
+			if (R2_GLOBALS._player._bounds.contains(event.mousePos)) {
 				_sceneMode = 10;
 				_field414 = 2710;
 				R2_GLOBALS._player.disableControl();
@@ -3593,38 +3593,38 @@ void Scene2700::process(Event &event) {
 				SceneItem::display(2700, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			}
 		} else if (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN) {
-			if (_rect1.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect1.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			if (_rect1.contains(event.mousePos)) {
+				if (!_rect1.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 1;
 				}
-			} else if (_rect2.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect2.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			} else if (_rect2.contains(event.mousePos)) {
+				if (!_rect2.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 2;
 				}
-			} else if (_rect3.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect3.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			} else if (_rect3.contains(event.mousePos)) {
+				if (!_rect3.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 3;
 				}
-			} else if (_rect4.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect4.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			} else if (_rect4.contains(event.mousePos)) {
+				if (!_rect4.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 4;
 				}
-			} else if (_rect5.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect5.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			} else if (_rect5.contains(event.mousePos)) {
+				if (!_rect5.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 5;
 				}
-			} else if (_rect6.contains(event.mousePos.x, event.mousePos.y)) {
-				if (!_rect6.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+			} else if (_rect6.contains(event.mousePos)) {
+				if (!_rect6.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
 					_field414 = 6;
@@ -3798,7 +3798,7 @@ void Scene2750::Action7::signal() {
 
 void Scene2750::Area1::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos.x, event.mousePos.y))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -3829,7 +3829,7 @@ void Scene2750::Area1::process(Event &event) {
 
 void Scene2750::Area2::process(Event &event) {
 	SceneArea::process(event);
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos.x, event.mousePos.y))) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
@@ -4105,20 +4105,20 @@ void Scene2750::signal() {
 
 void Scene2750::process(Event &event) {
 	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN)) {
-		if (_rect1.contains(event.mousePos.x, event.mousePos.y)) {
-			if (!_rect1.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+		if (_rect1.contains(event.mousePos)) {
+			if (!_rect1.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
 				_field414 = 1;
 			}
-		} else if (_rect2.contains(event.mousePos.x, event.mousePos.y)) {
-			if (!_rect2.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+		} else if (_rect2.contains(event.mousePos)) {
+			if (!_rect2.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
 				_field414 = 2;
 			}
-		} else if (_rect3.contains(event.mousePos.x, event.mousePos.y)) {
-			if (!_rect3.contains(R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y)) {
+		} else if (_rect3.contains(event.mousePos)) {
+			if (!_rect3.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
 				_field414 = 3;
