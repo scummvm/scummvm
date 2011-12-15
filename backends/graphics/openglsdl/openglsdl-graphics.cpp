@@ -323,8 +323,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 				_videoMode.overlayHeight = _videoMode.hardwareHeight = 240 * scaleFactor;
 			else if (_videoMode.screenWidth == 640 && _videoMode.screenHeight == 400)
 				_videoMode.overlayHeight = _videoMode.hardwareHeight = 480 * scaleFactor;
-		} else {
-			_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 		}
 	}
 
