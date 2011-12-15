@@ -540,7 +540,6 @@ public:
 	void findPathOfPoint();
 	void getDestInfo();
 	void read();
-	void mugger();
 	void searchForString();
 	void selectOpenOb();
 	void useGun();
@@ -549,7 +548,6 @@ public:
 	void searchForFiles();
 	void getExAd();
 	void initialMonCols();
-	void findPuzText();
 	void swapWithInv();
 	void adjustRight();
 	void transferToEx();

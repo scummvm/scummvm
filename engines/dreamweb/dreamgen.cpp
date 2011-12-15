@@ -26,81 +26,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::mugger() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_cmp(ax, 138);
-	if (flags.z())
-		goto endmugger1;
-	_cmp(ax, 176);
-	if (flags.z())
-		return /* (endmugger2) */;
-	_cmp(ax, 2);
-	if (!flags.z())
-		goto havesetwatch;
-	data.word(kWatchingtime) = 175*2;
-havesetwatch:
-	checkSpeed();
-	if (!flags.z())
-		goto notmugger;
-	_inc(es.word(bx+3));
-notmugger:
-	showGameReel();
-	al = data.byte(kMapx);
-	es.byte(bx+1) = al;
-	return;
-endmugger1:
-	push(es);
-	push(bx);
-	createPanel2();
-	showIcon();
-	al = 41;
-	findPuzText();
-	di = 33+20;
-	bx = 104;
-	dl = 241;
-	ah = 0;
-	printDirect();
-	workToScreen();
-	cx = 300;
-	hangOn();
-	bx = pop();
-	es = pop();
-	push(es);
-	push(bx);
-	es.word(bx+3) = 140;
-	data.byte(kManspath) = 2;
-	data.byte(kFinaldest) = 2;
-	findXYFromPath();
-	data.byte(kResetmanxy) = 1;
-	al = 'W';
-	ah = 'E';
-	cl = 'T';
-	ch = 'A';
-	findExObject();
-	data.byte(kCommand) = al;
-	data.byte(kObjecttype) = 4;
-	removeObFromInv();
-	al = 'W';
-	ah = 'E';
-	cl = 'T';
-	ch = 'B';
-	findExObject();
-	data.byte(kCommand) = al;
-	data.byte(kObjecttype) = 4;
-	removeObFromInv();
-	makeMainScreen();
-	al = 48;
-	bl = 68-32;
-	bh = 54+64;
-	cx = 70;
-	dx = 10;
-	setupTimedUse();
-	data.byte(kBeenmugged) = 1;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::businessMan() {
 	STACK_CHECK;
 	data.byte(kPointermode) = 0;
@@ -3356,17 +3281,6 @@ notfoundinside:
 	_cmp(cl, (114));
 	if (!flags.z())
 		goto insideloop;
-}
-
-void DreamGenContext::findPuzText() {
-	STACK_CHECK;
-	ah = 0;
-	si = ax;
-	_add(si, si);
-	es = data.word(kPuzzletext);
-	ax = es.word(si);
-	_add(ax, (66*2));
-	si = ax;
 }
 
 void DreamGenContext::useGun() {

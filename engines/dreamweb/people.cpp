@@ -42,7 +42,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
 	NULL, NULL,
-	&DreamGenContext::mugger, NULL,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -74,7 +74,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::copper, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
-	/*&DreamGenContext::mugger*/NULL, &DreamGenContext::helicopter,
+	&DreamGenContext::mugger, &DreamGenContext::helicopter,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
@@ -905,6 +905,46 @@ void DreamGenContext::helicopter(ReelRoutine &routine) {
 		// Not waiting helicopter
 		data.byte(kPointermode) = 0;
 		data.word(kWatchingtime) = 2;
+	}
+}
+
+void DreamGenContext::mugger(ReelRoutine &routine) {
+	if (routine.reelPointer() != 138) {
+		if (routine.reelPointer() == 176)
+			return; // endmugger2
+
+		if (routine.reelPointer() == 2)
+			data.word(kWatchingtime) = 175 * 2;	// set watch
+
+		if (checkSpeed(routine))
+			routine.incReelPointer();
+
+		showGameReel(&routine);
+		routine.mapX = data.byte(kMapx);
+	} else {
+		createPanel2();
+		showIcon();
+
+		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(41 * 2);
+		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		uint16 y = 104;
+		printDirect(&string, 33 + 20, &y, 241, 241 & 1);
+		workToScreenCPP();
+		hangOn(300);
+		routine.setReelPointer(140);
+		data.byte(kManspath) = 2;
+		data.byte(kFinaldest) = 2;
+		findXYFromPath();
+		data.byte(kResetmanxy) = 1;
+		data.byte(kCommand) = findExObject("WETA");
+		data.byte(kObjecttype) = 4;
+		removeObFromInv();
+		data.byte(kCommand) = findExObject("WETB");
+		data.byte(kObjecttype) = 4;
+		removeObFromInv();
+		makeMainScreen();
+		DreamBase::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
+		data.byte(kBeenmugged) = 1;
 	}
 }
 
