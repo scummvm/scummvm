@@ -3396,6 +3396,33 @@ void DreamGenContext::obsThatDoThings() {
 	}
 }
 
+void DreamGenContext::describeOb() {
+	const uint8 *obText = getObTextStartCPP();
+	uint16 y = 92;
+	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
+		y = 82;
+	data.word(kCharshift) = 91 + 91;
+	printDirect(obText, 33, y, 241, 241 & 1);
+	data.word(kCharshift) = 0;
+	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
+		y = 94;
+	printDirect(obText, 36, y, 241, 241 & 1);
+	obsThatDoThings();
+
+	// Additional text
+	if (compare(data.byte(kCommand), data.byte(kObjecttype), "CUPE")) {
+		// Empty cup
+		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(40 * 2);
+		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		printDirect(string, 36, y + 10, 241, 241 & 1);
+	} else if (compare(data.byte(kCommand), data.byte(kObjecttype), "CUPF")) {
+		// Full cup
+		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(39 * 2);
+		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		printDirect(string, 36, y + 10, 241, 241 & 1);
+	}
+}
+
 void DreamGenContext::delEverything() {
 	if (data.byte(kMapysize) + data.word(kMapoffsety) < 182) {
 		mapToPanel();
@@ -4272,7 +4299,6 @@ void DreamGenContext::showPuzText() {
 }
 
 void DreamGenContext::showPuzText(uint16 command, uint16 count) {
-	findPuzText(); // FIXME: Unnecessary? (Input: al, Output: es:si)
 	createPanel();
 	showPanel();
 	showMan();

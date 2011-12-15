@@ -528,7 +528,6 @@ public:
 	void showKeys();
 	void printmessage2();
 	void findOpenPos();
-	void describeOb();
 	void deleteExFrame();
 	void searchForSame();
 	void rollEm();
@@ -553,7 +552,6 @@ public:
 	void findPathOfPoint();
 	void getDestInfo();
 	void read();
-	void additionalText();
 	void mugger();
 	void searchForString();
 	void selectOpenOb();

@@ -588,5 +588,6 @@
 	uint16 findSetObject(const char *id);
 	void findExObject();
 	uint16 findExObject(const char *id);
+	void describeOb();
 
 #endif
