@@ -1015,7 +1015,7 @@ void DreamGenContext::DOSReturn() {
 void DreamGenContext::set16ColPalette() {
 }
 
-void DreamGenContext::eraseOldObs() {
+void DreamBase::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
 
@@ -1200,10 +1200,10 @@ void DreamBase::delTextLine() {
 }
 
 void DreamGenContext::commandOnly() {
-	commandOnly(al);	
+	commandOnly(al);
 }
 
-void DreamGenContext::commandOnly(uint8 command) {
+void DreamBase::commandOnly(uint8 command) {
 	delTextLine();
 	uint16 index = command * 2;
 	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index);
@@ -1749,7 +1749,7 @@ void DreamGenContext::printMessage() {
 	printMessage(di, bx, al, dl, (bool)(dl & 1));
 }
 
-void DreamGenContext::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
+void DreamBase::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
 	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	printDirect(string, x, y, maxWidth, centered);
@@ -1759,7 +1759,7 @@ void DreamGenContext::printMessage2() {
 	printMessage2(di, bx, al, dl, (bool)(dl & 1), ah);
 }
 
-void DreamGenContext::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
+void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
 	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	while (count--) {
@@ -1768,7 +1768,7 @@ void DreamGenContext::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWi
 	printDirect(string, x, y, maxWidth, centered);
 }
 
-bool objectMatches(void *object, const char *id) {
+static bool objectMatches(void *object, const char *id) {
 	const char *objId = (const char *)(((const uint8 *)object) + 12); // whether it is a DynObject or a SetObject
 	for (size_t i = 0; i < 4; ++i) {
 		if (id[i] != objId[i] + 'A')
@@ -1826,7 +1826,7 @@ uint16 DreamGenContext::findExObject(const char *id) {
 	return kNumexobjects;
 }
 
-bool DreamGenContext::isItDescribed(const ObjPos *pos) {
+bool DreamBase::isItDescribed(const ObjPos *pos) {
 	uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = getSegment(data.word(kSetdesc)).byte(kSettext + offset);
 	return result != 0;
@@ -1840,7 +1840,7 @@ bool DreamGenContext::isCD() {
 	return (data.byte(kSpeechloaded) == 1);
 }
 
-void DreamGenContext::showIcon() {
+void DreamBase::showIcon() {
 	if (data.byte(kReallocation) < 50) {
 		showPanel();
 		showMan();
@@ -2188,7 +2188,7 @@ void DreamGenContext::watchCount() {
 	}
 }
 
-void DreamGenContext::roomName() {
+void DreamBase::roomName() {
 	printMessage(88, 18, 53, 240, false);
 	uint16 textIndex = data.byte(kRoomnum);
 	if (textIndex >= 32)
@@ -2202,7 +2202,7 @@ void DreamGenContext::roomName() {
 	useCharset1();
 }
 
-void DreamGenContext::zoomIcon() {
+void DreamBase::zoomIcon() {
 	if (data.byte(kZoomon) == 0)
 		return;
 	showFrame(engine->icons1(), kZoomx, kZoomy-1, 8, 0);
@@ -3362,7 +3362,7 @@ void DreamGenContext::selectSlot2() {
 	selectSlot();
 }
 
-void DreamGenContext::blank() {
+void DreamBase::blank() {
 	if (data.byte(kCommandtype) != 199) {
 		data.byte(kCommandtype) = 199;
 		commandOnly(0);

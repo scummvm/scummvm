@@ -57,6 +57,35 @@ public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
 public:
+	// from backdrop.cpp
+	void drawFlags();
+
+	// from keypad.cpp
+	void getUnderMenu();
+	void putUnderMenu();
+	void singleKey(uint8 key, uint16 x, uint16 y);
+	void loadKeypad();
+	void showKeypad();
+	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
+	void addToPressList();
+	void buttonOne();
+	void buttonTwo();
+	void buttonThree();
+	void buttonFour();
+	void buttonFive();
+	void buttonSix();
+	void buttonSeven();
+	void buttonEight();
+	void buttonNine();
+	void buttonNought();
+	void buttonEnter();
+	void buttonPress(uint8 buttonId);
+	void showOuterPad();
+	void dumpKeypad();
+	void dumpSymbol();
+	void dumpSymBox();
+	void quitSymbol();
+
 	// from monitor.cpp
 	void input();
 	byte makeCaps(byte c);
@@ -180,6 +209,15 @@ public:
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset();
 	void useCharset1();
+	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
+	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count);
+	bool isItDescribed(const ObjPos *objPos);
+	void zoomIcon();
+	void roomName();
+	void showIcon();
+	void eraseOldObs();
+	void commandOnly(uint8 command);
+	void blank();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

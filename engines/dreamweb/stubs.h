@@ -59,9 +59,13 @@
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
 	void printMessage();
-	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
+	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
+		DreamBase::printMessage(x, y, index, maxWidth, centered);
+	}
 	void printMessage2();
-	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count);
+	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
+		DreamBase::printMessage2(x, y, index, maxWidth, centered, count);
+	}
 	void useTimedText();
 	void dumpTimedText();
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
@@ -80,7 +84,6 @@
 	}
 	void printASprite(const Sprite *sprite);
 	void width160();
-	void eraseOldObs();
 	void clearSprites();
 	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
 	void spriteUpdate();
@@ -114,7 +117,9 @@
 	void zoom();
 	void showRain();
 	void commandOnly();
-	void commandOnly(uint8 command);
+	void commandOnly(uint8 command) {
+		DreamBase::commandOnly(command);
+	}
 	void doBlocks();
 	void checkIfPerson();
 	bool checkIfPerson(uint8 x, uint8 y);
@@ -184,7 +189,6 @@
 	void obName(uint8 command, uint8 commandType);
 	void animPointer();
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
-	void drawFlags();
 	void addToPeopleList();
 	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
@@ -192,7 +196,6 @@
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]);
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
-	bool isItDescribed(const ObjPos *objPos);
 	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
 	void checkIfPathIsOn();
@@ -216,7 +219,6 @@
 	void hangOnW(uint16 frameCount);
 	void hangOnP();
 	void hangOnP(uint16 count);
-	void showIcon();
 	uint8 findNextColon(const uint8 **string) {
 		return DreamBase::findNextColon(string);
 	}
@@ -232,15 +234,11 @@
 	void convIcons();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
-	void roomName();
 	void transferText();
 	void initRain();
 	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
 	void watchCount();
-	void zoomIcon();
 	void loadRoom();
-	void getUnderMenu();
-	void putUnderMenu();
 	void textForMonk();
 	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 	void textForEnd();
@@ -422,26 +420,9 @@
 	void helicopter(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
-	void loadKeypad();
-	void showKeypad();
-	void showOuterPad();
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
 	void examIcon();
-	void buttonOne();
-	void buttonTwo();
-	void buttonThree();
-	void buttonFour();
-	void buttonFive();
-	void buttonSix();
-	void buttonSeven();
-	void buttonEight();
-	void buttonNine();
-	void buttonNought();
-	void buttonEnter();
-	void buttonPress(uint8 buttonId);
-	void addToPressList();
-	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	unsigned int scanForNames();
 	void doLoad(int slot);
@@ -481,7 +462,6 @@
 	void redrawMainScrn();
 	void selectSlot();
 	void selectSlot2();
-	void blank();
 	void allPointer();
 	void openYourNeighbour();
 	void openRyan();
@@ -525,9 +505,6 @@
 	void redes();
 	void isSetObOnMap();
 	bool isSetObOnMap(uint8 index);
-	void dumpKeypad();
-	void dumpSymbol();
-	void dumpSymBox();
 	void dumpZoom();
 	void selectLocation();
 	void showGroup();
@@ -560,7 +537,6 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void quitSymbol();
 	void diaryKeyP();
 	void diaryKeyN();
 	void checkInput();
