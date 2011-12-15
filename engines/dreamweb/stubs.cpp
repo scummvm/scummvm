@@ -3402,11 +3402,12 @@ void DreamGenContext::describeOb() {
 	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
 		y = 82;
 	data.word(kCharshift) = 91 + 91;
-	printDirect(obText, 33, y, 241, 241 & 1);
+	printDirect(&obText, 33, &y, 241, 241 & 1);
 	data.word(kCharshift) = 0;
+	y = 104;
 	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
 		y = 94;
-	printDirect(obText, 36, y, 241, 241 & 1);
+	printDirect(&obText, 36, &y, 241, 241 & 1);
 	obsThatDoThings();
 
 	// Additional text
