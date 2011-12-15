@@ -3633,7 +3633,7 @@ void Scene2700::process(Event &event) {
 				event.handled = true;
 				R2_GLOBALS._player.updateAngle(Common::Point(event.mousePos.x, event.mousePos.y));
 			}
-			if (_sceneMode = 10) {
+			if (_sceneMode == 10) {
 				R2_GLOBALS._player.disableControl();
 				switch (_field412) {
 				case 0:
