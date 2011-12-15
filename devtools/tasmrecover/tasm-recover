@@ -153,6 +153,8 @@ p = parser(skip_binary_data = [
 	'lineroutine',
 	'increment1',
 	'increment2',
+	'keypadax',
+	'keypadcx',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
