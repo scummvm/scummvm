@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
+static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
 	&DreamGenContext::eden, &DreamGenContext::edenInBath,
 	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
@@ -68,8 +68,8 @@ void DreamGenContext::updatePeople() {
 		if (r[i].reallocation == data.byte(kReallocation) &&
 		        r[i].mapX == data.byte(kMapx) &&
 		        r[i].mapY == data.byte(kMapy)) {
-			assert(reelCallbacksCPP[i]);
-			(this->*(reelCallbacksCPP[i]))(r[i]);
+			assert(reelCallbacks[i]);
+			(this->*(reelCallbacks[i]))(r[i]);
 		}
 	}
 }
