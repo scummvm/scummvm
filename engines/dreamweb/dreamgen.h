@@ -490,7 +490,6 @@ public:
 	void fadeScreenDownHalf();
 	void outOfOpen();
 	void dirCom();
-	void endGameSeq();
 	void findFirstPath();
 	void startTalk();
 	void getAnyAd();

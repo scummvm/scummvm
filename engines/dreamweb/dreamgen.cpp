@@ -123,69 +123,6 @@ combatover2:
 	data.byte(kMandead) = 2;
 }
 
-void DreamGenContext::endGameSeq() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto notendseq;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 51);
-	if (!flags.z())
-		goto gotendseq;
-	_cmp(data.byte(kIntrocount), 140);
-	if (flags.z())
-		goto gotendseq;
-	_inc(data.byte(kIntrocount));
-	push(es);
-	push(bx);
-	textForEnd();
-	bx = pop();
-	es = pop();
-	ax = 50;
-gotendseq:
-	es.word(bx+3) = ax;
-	_cmp(ax, 134);
-	if (!flags.z())
-		goto notfadedown;
-	push(es);
-	push(bx);
-	push(ax);
-	fadeScreenDownHalf();
-	ax = pop();
-	bx = pop();
-	es = pop();
-	goto notendseq;
-notfadedown:
-	_cmp(ax, 324);
-	if (!flags.z())
-		goto notfadeend;
-	push(es);
-	push(bx);
-	push(ax);
-	fadeScreenDowns();
-	data.byte(kVolumeto) = 7;
-	data.byte(kVolumedirection) = 1;
-	ax = pop();
-	bx = pop();
-	es = pop();
-notfadeend:
-	_cmp(ax, 340);
-	if (!flags.z())
-		goto notendseq;
-	data.byte(kGetback) = 1;
-notendseq:
-	showGameReel();
-	al = data.byte(kMapy);
-	es.byte(bx+2) = al;
-	ax = es.word(bx+3);
-	_cmp(ax, 145);
-	if (!flags.z())
-		return /* (notendcreds) */;
-	es.word(bx+3) = 146;
-	rollEndCredits();
-}
-
 void DreamGenContext::checkForExit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);

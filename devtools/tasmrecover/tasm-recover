@@ -374,6 +374,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'edenscdplayer',
 	'enablesoundint',
 	'endgame',
+	'endgameseq',
 	'endpaltostart',
 	'entercode',
 	'entersymbol',

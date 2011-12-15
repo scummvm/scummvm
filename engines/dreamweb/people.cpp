@@ -48,7 +48,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
-	NULL, &DreamGenContext::endGameSeq,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -80,7 +80,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
 	&DreamGenContext::introMonks1, &DreamGenContext::candles,
 	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
-	&DreamGenContext::monkAndRyan, /*&DreamGenContext::endGameSeq*/NULL,
+	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, &DreamGenContext::madman,
 	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
 	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
@@ -1009,6 +1009,43 @@ void DreamGenContext::businessMan(ReelRoutine &routine) {
 	if (routine.reelPointer() == 14) {
 		data.word(kWatchingtime) = 0;
 		data.byte(kPointermode) = 2;
+	}
+}
+
+void DreamGenContext::endGameSeq(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 51 && data.byte(kIntrocount) != 140) {
+			data.byte(kIntrocount)++;
+			textForEnd();
+			nextReelPointer = 50;
+		}
+
+		routine.setReelPointer(nextReelPointer);
+		if (nextReelPointer == 134) {
+			push(es);
+			push(bx);
+			push(ax);
+			fadeScreenDownHalf();
+			ax = pop();
+			bx = pop();
+			es = pop();
+		} else if (nextReelPointer == 324) {
+			fadeScreenDowns();
+			data.byte(kVolumeto) = 7;
+			data.byte(kVolumedirection) = 1;
+		}
+
+		if (nextReelPointer == 340)
+			data.byte(kGetback) = 1;
+	}
+
+	showGameReel(&routine);
+	routine.mapY = data.byte(kMapy);
+	
+	if (routine.reelPointer() == 145) {
+		routine.setReelPointer(146);
+		rollEndCredits();
 	}
 }
 
