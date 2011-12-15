@@ -26,8 +26,10 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/pressuredoor.h"
+#include "pegasus/neighborhood/norad/delta/noraddelta.h"
 
 namespace Pegasus {
 
@@ -338,8 +340,7 @@ void PressureDoor::receiveNotification(Notification *notification, const tNotifi
 				break;
 			case kRobotDead:
 				allowInput(true);
-				// TODO
-				//((NoradDelta *)owner)->playerBeatRobotWithDoor();
+				((NoradDelta *)owner)->playerBeatRobotWithDoor();
 				owner->requestDeleteCurrentInteraction();
 				break;
 			}

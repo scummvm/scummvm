@@ -28,6 +28,7 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/noradelevator.h"
 #include "pegasus/neighborhood/norad/pressuredoor.h"

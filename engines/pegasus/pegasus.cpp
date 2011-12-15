@@ -63,7 +63,9 @@
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/neighborhood/norad/delta/noraddelta.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
@@ -1374,7 +1376,7 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 		break;
 	case kNoradDeltaID:
 		createInterface();
-		error("TODO: Norad Delta");
+		neighborhood = new NoradDelta(g_AIArea, this);
 		break;
 	default:
 		error("Unknown neighborhood %d", neighborhoodID);

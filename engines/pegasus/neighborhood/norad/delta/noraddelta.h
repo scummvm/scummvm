@@ -23,88 +23,90 @@
  *
  */
 
-#ifndef PEGASUS_NEIGHBORHOOD_NORAD_ALPHA_NORADALPHA_H
-#define PEGASUS_NEIGHBORHOOD_NORAD_ALPHA_NORADALPHA_H
+#ifndef PEGASUS_NEIGHBORHOOD_NORAD_DELTA_NORADDELTA_H
+#define PEGASUS_NEIGHBORHOOD_NORAD_DELTA_NORADDELTA_H
 
 #include "pegasus/neighborhood/norad/norad.h"
 
 namespace Pegasus {
 
-class Item;
-
-class NoradAlpha : public Norad {
+class NoradDelta : public Norad {
 public:
-	NoradAlpha(InputHandler *, PegasusEngine *);
-	virtual ~NoradAlpha() {}
+	NoradDelta(InputHandler *, PegasusEngine *);
+	virtual ~NoradDelta() {}
 
-	virtual void init();
+	void init();
+
 	void start();
-
-	virtual bool okayToJump();
-
-	void playClawMonitorIntro();
 
 	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
 
-	void turnOnFillingStation();
-	void turnOffFillingStation();
-	Item *getFillingItem() { return _fillingStationItem; }
-	bool gasCanisterIntake();
-
-	virtual void takeItemFromRoom(Item *);
-	virtual void dropItemIntoRoom(Item *, Hotspot *);
+	void finishedGlobeGame();
 
 	virtual GameInteraction *makeInteraction(const tInteractionID);
+
+	void playClawMonitorIntro();
 
 	virtual void getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID, tHotSpotID &clawControlSpotID,
 			tHotSpotID &pinchClawSpotID, tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID,
 			tHotSpotID &moveClawLeftSpotID, tHotSpotID &moveClawUpSpotID, tHotSpotID &clawCCWSpotID,
 			tHotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
 
+	void playerBeatRobotWithClaw();
+	void playerBeatRobotWithDoor();
+
 	void loadAmbientLoops();
 
+	void setUpAIRules();
 	Common::String getEnvScanMovie();
 	uint getNumHints();
 	Common::String getHintMovie(uint);
-	void setUpAIRules();
-
-	void setSubPrepFailed(bool value) { _subPrepFailed = value; }
-	bool getSubPrepFailed() { return _subPrepFailed; }
-
 	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
-	void clickInHotspot(const Input &, const Hotspot *);
 
 	void checkContinuePoint(const tRoomID, const tDirectionConstant);
 
 	bool canSolve();
 	void doSolve();
 
+	void doorOpened();
+
 protected:
-	static const uint32 _noradAlphaClawExtras[22];
+	enum {
+		kNoradPrivateArrivedFromSubFlag,
+		kNoradPrivateFinishedGlobeGameFlag,
+		kNoradPrivateRobotHeadOpenFlag,
+		kNoradPrivateGotShieldChipFlag,
+		kNoradPrivateGotOpticalChipFlag,
+		kNoradPrivateGotRetScanChipFlag,
+		kNumNoradPrivateFlags
+	};
 
-	virtual void arriveAtNorad01();
-	virtual void arriveAtNorad01East();
-	virtual void arriveAtNorad01West();
-	virtual void arriveAtNorad04();
-	virtual void arriveAtNorad22();
-	
+	static const uint32 _noradDeltaClawExtras[22];
+
+	void getExitEntry(const tRoomID, const tDirectionConstant, ExitTable::Entry &);
+	void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
 	virtual void arriveAt(const tRoomID, const tDirectionConstant);
-	
-	virtual void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
-	virtual TimeValue getViewTime(const tRoomID, const tDirectionConstant);
-	
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
-
-	virtual void activateHotspots();
-
+	void arriveAtNorad68West();
+	void arriveAtNorad79West();
+	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
+	void openDoor();
+	void activateHotspots();
+	void clickInHotspot(const Input &, const Hotspot *);
+	void receiveNotification(Notification *, const tNotificationFlags);
+	void pickedUpItem(Item *item);
+	void takeItemFromRoom(Item *item);
+	void dropItemIntoRoom(Item *item, Hotspot *);
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
+
+	virtual bool playingAgainstRobot();
+
+	void failRetinalScan();
+	void succeedRetinalScan();
+	void getDoorEntry(const tRoomID, const tDirectionConstant, DoorTable::Entry &);
 
 	void bumpIntoWall();
 
-	Item *_fillingStationItem;
-
-	bool _subPrepFailed;
+	FlagsArray<byte, kNumNoradPrivateFlags> _privateFlags;
 
 	Common::String getSoundSpotsName();
 	Common::String getNavMovieName();

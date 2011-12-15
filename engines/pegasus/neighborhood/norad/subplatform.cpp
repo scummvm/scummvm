@@ -26,6 +26,7 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subplatform.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"

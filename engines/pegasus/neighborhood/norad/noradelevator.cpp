@@ -25,6 +25,7 @@
 
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/noradelevator.h"
 

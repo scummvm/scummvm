@@ -25,8 +25,10 @@
 
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subcontrolroom.h"
+#include "pegasus/neighborhood/norad/delta/noraddelta.h"
 
 namespace Pegasus {
 
@@ -658,8 +660,7 @@ void SubControlRoom::receiveNotification(Notification *notification, const tNoti
 				owner->startExtraSequence(kN60PlayerFollowsRobotToDoor, kExtraCompletedFlag, kFilterAllInput);
 				break;
 			case kPlayerWon:
-				// TODO
-				//((NoradDelta *)owner)->playerBeatRobotWithClaw();
+				((NoradDelta *)owner)->playerBeatRobotWithClaw();
 				owner->requestDeleteCurrentInteraction();
 				break;
 			case kRobotWon:
