@@ -561,7 +561,7 @@ void GrimEngine::updateDisplayScene() {
 
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
-		_doFlip = _refreshDrawNeeded;
+		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 	}
