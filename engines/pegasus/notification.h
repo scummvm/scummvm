@@ -41,8 +41,8 @@ struct tReceiverEntry {
 	tNotificationFlags mask;
 };
 
-int operator==(const tReceiverEntry &entry1, const tReceiverEntry &entry1);
-int operator!=(const tReceiverEntry &entry1, const tReceiverEntry &entry1);
+int operator==(const tReceiverEntry &entry1, const tReceiverEntry &entry2);
+int operator!=(const tReceiverEntry &entry1, const tReceiverEntry &entry2);
 
 typedef Common::List<tReceiverEntry> tReceiverList;
 
