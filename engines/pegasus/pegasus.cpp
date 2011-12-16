@@ -1458,6 +1458,7 @@ void PegasusEngine::showInfoScreen() {
 		TimeValue startTime, stopTime;
 		g_AIArea->getSmallInfoSegment(startTime, stopTime);
 		_smallInfoMovie.setSegment(startTime, stopTime);
+		_smallInfoMovie.setTime(startTime);
 		_smallInfoMovie.setFlags(kLoopTimeBase);
 
 		_bigInfoMovie.initFromMovieFile("Images/Items/Info Left Movie");
@@ -1632,6 +1633,7 @@ void PegasusEngine::shellGameInput(const Input &input, const Hotspot *cursorSpot
 				TimeValue startTime, stopTime;
 				g_AIArea->getSmallInfoSegment(startTime, stopTime);
 				_smallInfoMovie.setSegment(startTime, stopTime);
+				_smallInfoMovie.setTime(startTime);
 				_smallInfoMovie.setFlags(kLoopTimeBase);
 
 				_bigInfoMovie.redrawMovieWorld();
