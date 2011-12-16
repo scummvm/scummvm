@@ -38,7 +38,7 @@ private:
 	CompTable *_compTable;
 	int16 _numCompItems;
 	int _curSample;
-	Common::File *_file;
+	Common::SeekableReadStream *_file;
 	byte _compOutput[0x2000];
 	byte *_compInput;
 	int _outputSize;

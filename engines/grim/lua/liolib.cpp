@@ -198,16 +198,19 @@ static void io_readfrom() {
 		setreturn(id, FINPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
-		LuaFile *current;
+		LuaFile *current = NULL;
 		Common::SeekableReadStream *inFile = NULL;
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		inFile = saveFileMan->openForLoading(s);
-		if (!inFile)
-			current = g_resourceloader->openNewStreamLuaFile(s);
-		else {
+		if (!inFile) {
+			inFile = g_resourceloader->openNewStreamFile(s);
+		}
+		if (inFile) {
 			current = new LuaFile();
 			current->_in = inFile;
 			current->_filename = s;
+		} else {
+			warning("liolib.cpp, io_readfrom(): Could not open file %s", s);
 		}
 		if (!current) {
 			delete current;

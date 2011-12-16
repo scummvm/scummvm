@@ -51,7 +51,7 @@ McmpMgr::~McmpMgr() {
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	_file = g_resourceloader->openNewStreamFile(filename);
 
-	if (!_file || !_file->isOpen()) {
+	if (!_file) {
 		warning("McmpMgr::openSound() Can't open sound MCMP file: %s", filename);
 		return false;
 	}
@@ -100,7 +100,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 	int32 i, final_size, output_size;
 	int skip, first_block, last_block;
 
-	if (!_file || !_file->isOpen()) {
+	if (!_file) {
 		error("McmpMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}

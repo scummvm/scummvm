@@ -166,9 +166,9 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_blastTextDefaults.setJustify(TextObject::LJUSTIFY);
 	_blastTextDefaults.setDisabled(false);
 
-	// Add 'movies' subdirectory for the demo
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movies"); // Add 'movies' subdirectory for the demo
+	SearchMan.addSubDirectoryMatching(gameDataDir, "credits");
 
 	Debug::registerDebugChannels();
 }

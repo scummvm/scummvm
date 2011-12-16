@@ -67,7 +67,7 @@ public:
 	LipSync *loadLipSync(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const Common::String &filename);
-	Common::File *openNewStreamFile(const char *filename) const;
+	Common::SeekableReadStream *openNewStreamFile(const char *filename) const;
 	Common::SeekableReadStream *openNewSubStreamFile(const char *filename) const;
 	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);

@@ -187,11 +187,11 @@ LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const {
 		return l->openNewStreamLua(filename);
 }
 
-Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
+Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename) const {
 	const Lab *l = getLab(filename);
 
 	if (!l)
-		return NULL;
+		return SearchMan.createReadStreamForMember(filename);
 	else
 		return l->openNewStreamFile(filename);
 }
