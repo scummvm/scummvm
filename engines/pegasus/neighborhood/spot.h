@@ -37,7 +37,7 @@ namespace Common {
 
 namespace Pegasus {
 
-typedef tMM8BitFlags tSpotFlags;
+typedef byte tSpotFlags;
 
 enum {
 	kSpotLoopsBit,			//	Loop or once only?

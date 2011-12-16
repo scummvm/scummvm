@@ -37,7 +37,7 @@ namespace Common {
 
 namespace Pegasus {
 
-typedef tMM8BitFlags tDoorFlags;
+typedef byte tDoorFlags;
 
 enum {
 	kDoorPresentBit,				//	Bit set if there is a door here.

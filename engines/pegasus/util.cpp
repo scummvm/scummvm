@@ -31,14 +31,14 @@
 
 namespace Pegasus {
 
-IDObject::IDObject(const tMM32BitID id) {
+IDObject::IDObject(const int32 id) {
 	_objectID = id;
 }
 
 IDObject::~IDObject() {
 }
 
-tMM32BitID IDObject::getObjectID() const {
+int32 IDObject::getObjectID() const {
 	return _objectID;
 }
 

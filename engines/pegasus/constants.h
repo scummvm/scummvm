@@ -99,14 +99,7 @@ const tNotificationFlags kNoNotificationFlags = 0;
 
 const tDisplayElementID kCurrentDragSpriteID = 1000;
 
-// TODO
-//const Fixed kFixed1 = 1 << 16;
-//const Fixed kFixedMinus1 = -1 << 16;
-
 const TimeScale kDefaultTimeScale = 600;
-
-// TODO
-//const RGBColor kWhiteRGB = {0xFFFF, 0xFFFF, 0xFFFF};
 
 //	Ticks per second.
 
@@ -355,10 +348,6 @@ const tCoordType kBiochipPushTop = 192;
 const tCoordType kBiochipLidLeft = 362;
 const tCoordType kBiochipLidTop = 316;
 
-// TODO: Remove global variable needs
-//const Common::Rect kInventoryHiliteBounds(334, 76, 430, 172);
-//const Common::Rect kBiochipHiliteBounds (334, 364, 430, 460);
-
 const tCoordType kInventoryDropLeft = 0;
 const tCoordType kInventoryDropTop = 320;
 const tCoordType kInventoryDropRight = 232;
@@ -521,10 +510,10 @@ const tHotSpotFlags kJMPClickingSpotFlags = kClickSpotFlag |
 											kOpticalBiochipSpotFlag |
 											kAirMaskSpotFlag;
 
-const tMM32BitID kMainMenuID = 1;
-const tMM32BitID kPauseMenuID = 2;
-const tMM32BitID kCreditsMenuID = 3;
-const tMM32BitID kDeathMenuID = 4;
+const int32 kMainMenuID = 1;
+const int32 kPauseMenuID = 2;
+const int32 kCreditsMenuID = 3;
+const int32 kDeathMenuID = 4;
 
 /////////////////////////////////////////////
 //

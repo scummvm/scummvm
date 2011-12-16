@@ -30,53 +30,23 @@
 
 namespace Pegasus {
 
-// TODO: All of the "tMM"-prefixed defines should be replaced eventually
 // TODO: Probably all of these don't really need to be typedef'd...
-typedef int8 tMM8BitS;
-typedef uint8 tMM8BitU;
 
-typedef int16 tMM16BitS;
-typedef uint16 tMM16BitU;
+typedef int32 tDisplayElementID;
+typedef int32 tDisplayOrder;
 
-typedef int32 tMM32BitS;
-typedef uint32 tMM32BitU;
+typedef int16 tHotSpotID;
+typedef uint32 tHotSpotFlags;
 
-typedef tMM8BitS tMM8BitID;
-typedef tMM16BitS tMM16BitID;
-typedef tMM32BitS tMM32BitID;
+typedef byte tButtonState;
+typedef uint32 tInputBits;
 
-typedef tMM8BitU tMM8BitFlags;
-typedef tMM16BitU tMM16BitFlags;
-typedef tMM32BitU tMM32BitFlags;
+typedef int32 tNotificationID;
+typedef uint32 tNotificationFlags;
 
-typedef tMM32BitID tDisplayElementID;
-typedef tMM32BitS tDisplayOrder;
-
-typedef tMM16BitID tHotSpotID;
-typedef tMM32BitFlags tHotSpotFlags;
-
-typedef tMM8BitFlags tButtonState;
-typedef tMM32BitFlags tInputBits;
-
-typedef tMM8BitU tKeyMapType[16];
-typedef tMM8BitU tKeyType;
-typedef tMM8BitU tKeyMapIndexType;
-typedef tMM8BitU tKeyMapBitType;
-
-typedef tMM32BitID tNotificationID;
-typedef tMM32BitFlags tNotificationFlags;
-
-//	Mac types.
-typedef tMM16BitS tResIDType;
-typedef tMM16BitS tCoordType;
-typedef tMM16BitS tQDCopyMode;
-typedef tMM16BitS tResItemCountType;
-
-enum tCopyMode {
-	kNoMask,
-	kUseClipArea,
-	kUseTransparency
-};
+// Mac types.
+typedef int16 tResIDType;
+typedef int16 tCoordType;
 
 enum tSlideDirection {
 	kSlideLeftMask = 1,
@@ -96,40 +66,39 @@ enum tSlideDirection {
 // ScummVM QuickTime/QuickDraw replacement types
 typedef uint TimeValue;
 typedef uint TimeScale;
-// TODO: Fixed and RGBColor
 
-typedef tMM16BitID tGameID;
+typedef int16 tGameID;
 
 typedef tGameID tItemID;
 typedef tGameID tActorID;
 typedef tGameID tRoomID;
 typedef tGameID tNeighborhoodID;
-typedef tMM8BitU tAlternateID;
-typedef tMM8BitS tHotSpotActivationID;
+typedef byte tAlternateID;
+typedef int8 tHotSpotActivationID;
 
-typedef tMM16BitS tWeightType;
+typedef int16 tWeightType;
 
-typedef tMM8BitU tDirectionConstant;
-typedef tMM8BitU tTurnDirection;
+typedef byte tDirectionConstant;
+typedef byte tTurnDirection;
 
 // Meant to be room in low 16 bits and direction in high 16 bits.
-typedef tMM32BitU tRoomViewID;
+typedef uint32 tRoomViewID;
 
 #define MakeRoomView(room, direction) (((tRoomViewID) (room)) | (((tRoomViewID) (direction)) << 16))
 
-typedef tMM32BitU tExtraID;
+typedef uint32 tExtraID;
 
-typedef tMM16BitS tGameMode;
+typedef int16 tGameMode;
 
-typedef tMM16BitS tWeightType;
+typedef int16 tWeightType;
 
-typedef tMM16BitS tItemState;
+typedef int16 tItemState;
 
-typedef tMM8BitS tDeathReason;
+typedef int8 tDeathReason;
 
-typedef tMM32BitS tGameMenuCommand;
+typedef int32 tGameMenuCommand;
 
-typedef tMM32BitS tGameScoreType;
+typedef int32 tGameScoreType;
 
 typedef long tCanMoveForwardReason;
 
@@ -143,9 +112,9 @@ enum tInventoryResult {
 	kItemNotInInventory
 };
 
-typedef tMM32BitID tInteractionID;
+typedef int32 tInteractionID;
 
-typedef tMM32BitID tAIConditionID;
+typedef int32 tAIConditionID;
 
 enum tEnergyStage {
 	kStageNoStage,

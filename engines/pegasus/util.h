@@ -38,13 +38,13 @@ namespace Pegasus {
 
 class IDObject {
 public:
-	IDObject(const tMM32BitID id);
+	IDObject(const int32 id);
 	~IDObject();
 	
-	tMM32BitID getObjectID() const;
+	int32 getObjectID() const;
 
 private:
-	tMM32BitID _objectID;
+	int32 _objectID;
 };
 
 class FunctionPtr;
