@@ -381,6 +381,13 @@ public:
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void plotReel(uint16 &reelPointer);
 	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
+	void getUnderTimed();
+	void putUnderTimed();
+	void dumpTextLine();
+	void useTimedText();
+	void dumpTimedText();
+	void getTime();
+	void doChange(uint8 index, uint8 value, uint8 type);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

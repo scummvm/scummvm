@@ -46,7 +46,6 @@
 	void readCityPic();
 	void readDestIcon();
 	void seeCommandTail();
-	void randomNumber();
 	void quickQuit2();
 	void printDirect();
 	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
@@ -55,11 +54,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void useTimedText();
-	void dumpTimedText();
-	void getUnderTimed();
-	void putUnderTimed();
-	void dumpTextLine();
 	void startLoading(const Room &room);
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
@@ -86,7 +80,6 @@
 	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
 	const uint8 *findObName(uint8 type, uint8 index);
-	void copyName();
 	void copyName(uint8 type, uint8 index, uint8 *dst);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
@@ -121,7 +114,6 @@
 		return DreamBase::getSetAd(index);
 	}
 	void setAllChanges();
-	void doChange(uint8 index, uint8 value, uint8 type);
 	void deleteTaken();
 	void showAllFree();
 	void showAllEx();
@@ -350,7 +342,6 @@
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
 	}
-	void getTime();
 	void set16ColPalette();
 	void showSaveOps();
 	void showLoadOps();

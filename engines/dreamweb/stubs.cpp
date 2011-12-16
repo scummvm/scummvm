@@ -801,10 +801,6 @@ void DreamGenContext::seeCommandTail() {
 	data.byte(kBrightness) = 1;
 }
 
-void DreamGenContext::randomNumber() {
-	al = engine->randomNumber();
-}
-
 void DreamGenContext::quickQuit() {
 	engine->quit();
 }
@@ -829,7 +825,7 @@ uint16 DreamBase::readMouseState() {
 	return state;
 }
 
-void DreamGenContext::dumpTextLine() {
+void DreamBase::dumpTextLine() {
 	if (data.byte(kNewtextline) != 1)
 		return;
 	data.byte(kNewtextline) = 0;
@@ -840,22 +836,18 @@ void DreamGenContext::dumpTextLine() {
 	multiDump(x, y, 228, 13);
 }
 
-void DreamGenContext::getUnderTimed() {
+void DreamBase::getUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kUndertimedtext;
-	multiGet(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiGet(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamGenContext::putUnderTimed() {
+void DreamBase::putUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kUndertimedtext;
-	multiPut(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
 void DreamBase::getUnderCentre() {
@@ -893,7 +885,7 @@ void DreamGenContext::processTrigger() {
 	}
 }
 
-void DreamGenContext::useTimedText() {
+void DreamBase::useTimedText() {
 	if (data.word(kTimecount) == 0)
 		return;
 	--data.word(kTimecount);
@@ -908,9 +900,7 @@ void DreamGenContext::useTimedText() {
 	else if (data.word(kTimecount) > data.word(kCounttotimed))
 		return;
 
-	es = data.word(kTimedseg);
-	si = data.word(kTimedoffset);
-	const uint8 *string = es.ptr(si, 0);
+	const uint8 *string = getSegment(data.word(kTimedseg)).ptr(data.word(kTimedoffset), 0);
 	uint16 y = data.byte(kTimedy);
 	printDirect(&string, data.byte(kTimedx), &y, 237, true);
 	data.byte(kNeedtodumptimed) = 1;
@@ -943,7 +933,7 @@ void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8
 	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
 }
 
-void DreamGenContext::dumpTimedText() {
+void DreamBase::dumpTimedText() {
 	if (data.byte(kNeedtodumptimed) != 1)
 		return;
 	uint8 y = data.byte(kTimedy);
@@ -954,16 +944,13 @@ void DreamGenContext::dumpTimedText() {
 	data.byte(kNeedtodumptimed) = 0;
 }
 
-void DreamGenContext::getTime() {
+void DreamBase::getTime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
-	ch = t.tm_hour;
-	cl = t.tm_min;
-	dh = t.tm_sec;
-	data.byte(kSecondcount) = dh;
-	data.byte(kMinutecount) = cl;
-	data.byte(kHourcount) = ch;
+	data.byte(kSecondcount) = t.tm_sec;
+	data.byte(kMinutecount) = t.tm_min;
+	data.byte(kHourcount) = t.tm_hour;
 }
 
 uint16 DreamBase::allocateMem(uint16 paragraphs) {
@@ -979,12 +966,6 @@ void DreamBase::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
 
-
-	// FIXME: The following line used to be enabled with the comment: "fixing
-	// invalid entries in the sprite table"
-	// So if there are regressions with sprites, we may want to investigate this
-	// closer.
-//	es = data;
 	uint tsize = 16 * 32;
 	uint16 bseg = data.word(kBuffers);
 	if (!bseg)
@@ -1119,10 +1100,6 @@ void DreamGenContext::startLoading(const Room &room) {
 	setAllChanges();
 	autoAppear();
 //	const Room &newRoom = g_roomData[data.byte(kNewlocation)];
-	bx = 0x7fff; // TODO: bx used to be set to the offset of newRoom
-	             // It seems to be unused (like newRoom itself), but set it
-	             // to an invalid value to catch any missed use of it.
-	             // (The push/pop of bx below is likely also unnecessary)
 	data.byte(kLastweapon) = (uint8)-1;
 	data.byte(kMandead) = 0;
 	data.word(kLookcounter) = 160;
@@ -1295,10 +1272,6 @@ const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 	}
 }
 
-void DreamGenContext::copyName() {
-	copyName(ah, al, data.ptr(di, 0));
-}
-
 void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
@@ -1419,7 +1392,7 @@ SetObject *DreamBase::getSetAd(uint8 index) {
 	return (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
-void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
+void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
 		getSetAd(index)->mapad[0] = value;
 	} else if (type == 1) { //freeObject
@@ -1427,9 +1400,9 @@ void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
 		if (freeObject->mapad[0] == 0xff)
 			freeObject->mapad[0] = value;
 	} else { //path
-		bx = kPathdata + (type - 100) * 144 + index * 8;
-		es = data.word(kReels);
-		es.byte(bx+6) = value;
+//		getSegment(data.word(kReels)).byte(kPathdata + (type - 100) * 144 + index * 8 + 6) = value;
+		PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * (type - 100), 0);
+		paths[index].on = value;
 	}
 }
 
@@ -3922,11 +3895,8 @@ void DreamGenContext::talk() {
 			break;
 	} while (!data.byte(kGetback));
 
-	bx = data.word(kPersondata);
-	es = cs;
-
 	if (data.byte(kTalkpos) >= 4)
-		es.byte(bx+7) |= 128;
+		data.byte(data.word(kPersondata)+7) |= 128;
 
 	redrawMainScrn();
 	workToScreenM();
