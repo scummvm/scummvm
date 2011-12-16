@@ -975,7 +975,7 @@ void DreamGenContext::useElvDoor() {
 
 	// Axe on door
 	showPuzText(15, 300);
-	_inc(data.byte(kProgresspoints));
+	data.byte(kProgresspoints)++;
 	data.word(kWatchingtime) = 46 * 2;
 	data.word(kReeltowatch) = 31;
 	data.word(kEndwatchreel) = 77;
@@ -1288,10 +1288,10 @@ void DreamGenContext::useDiary() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback diaryList[] = {
-		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diaryKeyN },
-		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diaryKeyP },
-		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitKey },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamBase::diaryKeyN },
+		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamBase::diaryKeyP },
+		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamBase::quitKey },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 	

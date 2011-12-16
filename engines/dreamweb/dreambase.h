@@ -165,13 +165,41 @@ public:
 
 	// from sprite.cpp
 	Sprite *spriteTable();
+	void printSprites();
+	void printASprite(const Sprite *sprite);
+	void clearSprites();
+	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
+	void initMan();
+	void walking(Sprite *sprite);
+	void aboutTurn(Sprite *sprite);
+	void backObject(Sprite *sprite);
+	void constant(Sprite *sprite, SetObject *objData);
+	void randomSprite(Sprite *sprite, SetObject *objData);
+	void doorway(Sprite *sprite, SetObject *objData);
+	void wideDoor(Sprite *sprite, SetObject *objData);
+	void doDoor(Sprite *sprite, SetObject *objData, Common::Rect check);
+	void steady(Sprite *sprite, SetObject *objData);
+	void lockedDoorway(Sprite *sprite, SetObject *objData);
+	void liftSprite(Sprite *sprite, SetObject *objData);
+
 	Reel *getReelStart(uint16 reelPointer);
 	const Frame *findSource(uint16 &frame);
 	void showReelFrame(Reel *reel);
+	void showGameReel(ReelRoutine *routine);
 	const Frame *getReelFrameAX(uint16 frame);
-	void rollEndCredits();
-	void priestText(ReelRoutine &routine);
+	void moveMap(uint8 param);
 	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
+
+	uint8 getBlockOfPixel(uint8 x, uint8 y);
+	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
+	void initRain();
+
+	void rollEndCredits();
+	void monks2text();
+	void textForEnd();
+	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
+	void textForMonk();
+	void priestText(ReelRoutine &routine);
 	void soundOnReels(uint16 reelPointer);
 	void clearBeforeLoad();
 	void clearReels();
@@ -179,6 +207,7 @@ public:
 	void liftNoise(uint8 index);
 
 	// from stubs.cpp
+	bool isCD();
 	void crosshair();
 	void delTextLine();
 	void showBlink();
@@ -187,6 +216,8 @@ public:
 	void showPointer();
 	void delPointer();
 	void showRyanPage();
+	void switchRyanOn();
+	void switchRyanOff();
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
@@ -215,6 +246,7 @@ public:
 	void *getAnyAd(uint8 *value1, uint8 *value2);
 	const uint8 *getTextInFile1(uint16 index);
 	uint8 findNextColon(const uint8 **string);
+	void allocateBuffers();
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
 	uint16 allocateAndLoad(unsigned int size);
@@ -282,6 +314,15 @@ public:
 	void removeSetObject(uint8 index);
 	bool isSetObOnMap(uint8 index);
 	void dumpZoom();
+	void diaryKeyP();
+	void diaryKeyN();
+	void findRoomInLoc();
+	void loadMenu();
+	void showMenu();
+	void dumpMenu();
+	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
+	void plotReel(uint16 &reelPointer);
+	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

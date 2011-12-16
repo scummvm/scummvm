@@ -732,11 +732,11 @@ void DreamGenContext::startup1() {
 	fadeScreenUp();
 }
 
-void DreamGenContext::switchRyanOn() {
+void DreamBase::switchRyanOn() {
 	data.byte(kRyanon) = 255;
 }
 
-void DreamGenContext::switchRyanOff() {
+void DreamBase::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
@@ -916,7 +916,7 @@ void DreamGenContext::useTimedText() {
 	data.byte(kNeedtodumptimed) = 1;
 }
 
-void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
@@ -1110,7 +1110,6 @@ void DreamGenContext::startLoading(const Room &room) {
 	data.byte(kLiftpath) = room.liftPath;
 	data.byte(kDoorpath) = room.doorPath;
 	data.byte(kLastweapon) = (uint8)-1;
-	ah = data.byte(kReallocation);
 	data.byte(kReallocation) = room.realLocation;
 
 	loadRoomData(room, false);
@@ -1131,14 +1130,12 @@ void DreamGenContext::startLoading(const Room &room) {
 	data.byte(kLinepointer) = 254;
 	if (room.b27 != 255) {
 		data.byte(kManspath) = room.b27;
-		push(bx);
 		autoSetWalk();
-		bx = pop();
 	}
 	findXYFromPath();
 }
 
-void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
+void DreamBase::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	uint8 type = firstParam - 220;
 	if (type == 0) {
 		placeSetObject(secondParam);
@@ -1165,7 +1162,7 @@ void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	}
 }
 
-void DreamGenContext::plotReel(uint16 &reelPointer) {
+void DreamBase::plotReel(uint16 &reelPointer) {
 	Reel *reel = getReelStart(reelPointer);
 	while (reel->x >= 220 && reel->x != 255) {
 		dealWithSpecial(reel->x, reel->y);
@@ -1810,7 +1807,7 @@ bool DreamBase::isItDescribed(const ObjPos *pos) {
 	return result != 0;
 }
 
-bool DreamGenContext::isCD() {
+bool DreamBase::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
 	// we managed to load the speech. At least it is isolated in this function and can be changed.
@@ -2208,7 +2205,7 @@ Frame * DreamBase::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
-void DreamGenContext::findRoomInLoc() {
+void DreamBase::findRoomInLoc() {
 	uint8 x = data.byte(kMapx) / 11;
 	uint8 y = data.byte(kMapy) / 10;
 	uint8 roomNum = y * 6 + x;
@@ -2619,7 +2616,7 @@ void DreamGenContext::drawFloor() {
 	data.byte(kNewobs) = 0;
 }
 
-void DreamGenContext::allocateBuffers() {
+void DreamBase::allocateBuffers() {
 	data.word(kExtras) = allocateMem(kLengthofextra/16);
 	data.word(kMapdata) = allocateMem(kLengthofmap/16);
 	data.word(kBuffers) = allocateMem(kLengthofbuffer/16);
@@ -2639,19 +2636,19 @@ void DreamBase::workToScreenM() {
 	delPointer();
 }
 
-void DreamGenContext::loadMenu() {
+void DreamBase::loadMenu() {
 	loadIntoTemp("DREAMWEB.S02"); // sprite name 3
 	loadIntoTemp2("DREAMWEB.G07"); // mon. graphics 2
 }
 
-void DreamGenContext::showMenu() {
+void DreamBase::showMenu() {
 	++data.byte(kMenucount);
 	if (data.byte(kMenucount) == 37*2)
 		data.byte(kMenucount) = 0;
 	showFrame(tempGraphics(), kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
 }
 
-void DreamGenContext::dumpMenu() {
+void DreamBase::dumpMenu() {
 	multiDump(kMenux, kMenuy, 48, 48);
 }
 
@@ -3631,7 +3628,7 @@ void DreamGenContext::selectLocation() {
 			{ 104,124,4,44,&DreamGenContext::lastDest },
 			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
 			{ 104,216,138,192,&DreamGenContext::destSelect },
-			{ 273,320,157,198,&DreamGenContext::getBack1 },
+			{ 273,320,157,198,&DreamBase::getBack1 },
 			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
@@ -3905,7 +3902,7 @@ void DreamGenContext::talk() {
 	workToScreenCPP();
 
 	RectWithCallback talkList[] = {
-		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 240,290,2,44,&DreamGenContext::moreTalk },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
@@ -3984,7 +3981,7 @@ void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback quitList[] = {
-		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
@@ -4068,7 +4065,7 @@ void DreamGenContext::showGun() {
 	getRidOfTempText();
 }
 
-void DreamGenContext::diaryKeyP() {
+void DreamBase::diaryKeyP() {
 	if (data.byte(kCommandtype) != 214) {
 		data.byte(kCommandtype) = 214;
 		commandOnly(23);
@@ -4088,7 +4085,7 @@ void DreamGenContext::diaryKeyP() {
 		data.byte(kDiarypage) = 11;
 }
 
-void DreamGenContext::diaryKeyN() {
+void DreamBase::diaryKeyN() {
 	if (data.byte(kCommandtype) != 213) {
 		data.byte(kCommandtype) = 213;
 		commandOnly(23);
