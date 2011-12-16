@@ -107,11 +107,11 @@ void KeyframeComponent::reset() {
 	}
 }
 
-int KeyframeComponent::update(float time) {
+int KeyframeComponent::update(uint time) {
 	if (!_anim->getIsActive())
 		return 0;
 
-	return _anim->update(time);
+	return _anim->update((int)time);
 }
 
 void KeyframeComponent::init() {

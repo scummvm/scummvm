@@ -67,7 +67,7 @@ void MainModelComponent::init() {
 	_hier->_hierVisible = _visible;
 }
 
-int MainModelComponent::update(float time) {
+int MainModelComponent::update(uint time) {
 	if (!_hierShared)
 		// Otherwise, it was already initialized
 		// and reinitializing it will destroy work

@@ -47,7 +47,7 @@ public:
 	virtual void init() { }
 	virtual void setKey(int) { }
 	virtual void setMapName(char *) { }
-	virtual int update(float time) { return 0; }
+	virtual int update(uint time) { return 0; }
 	virtual void animate() { }
 	virtual void setupTexture() { }
 	virtual void draw() { }

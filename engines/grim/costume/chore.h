@@ -50,15 +50,15 @@ public:
 	void playLooping();
 	void setLooping(bool val) { _looping = val; }
 	void stop();
-	void update(float time);
+	void update(uint time);
 	void setLastFrame();
-	void fadeIn(int msecs);
-	void fadeOut(int msecs);
+	void fadeIn(uint msecs);
+	void fadeOut(uint msecs);
 	void cleanup();
 
 private:
 	void setKeys(int startTime, int stopTime);
-	void fade(Animation::FadeMode, int msecs);
+	void fade(Animation::FadeMode, uint msecs);
 
 	Costume *_owner;
 

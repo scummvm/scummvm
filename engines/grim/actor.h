@@ -423,7 +423,7 @@ public:
 	void setConstrain(bool constrain) {
 		_constrain = constrain;
 	}
-	void update(float frameTime);
+	void update(uint frameTime);
 	void draw();
 	void undraw(bool);
 

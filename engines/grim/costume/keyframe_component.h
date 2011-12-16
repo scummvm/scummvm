@@ -37,7 +37,7 @@ public:
 	void init();
 	void fade(Animation::FadeMode, int fadeLength);
 	void setKey(int val);
-	int update(float time);
+	int update(uint time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);

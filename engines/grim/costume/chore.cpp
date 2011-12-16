@@ -123,7 +123,7 @@ void Chore::setLastFrame() {
 	_currTime = -1;
 }
 
-void Chore::update(float time) {
+void Chore::update(uint time) {
 	if (!_playing)
 		return;
 
@@ -148,7 +148,7 @@ void Chore::update(float time) {
 	_currTime = newTime;
 }
 
-void Chore::fade(Animation::FadeMode mode, int msecs) {
+void Chore::fade(Animation::FadeMode mode, uint msecs) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
 		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
@@ -158,7 +158,7 @@ void Chore::fade(Animation::FadeMode mode, int msecs) {
 	}
 }
 
-void Chore::fadeIn(int msecs) {
+void Chore::fadeIn(uint msecs) {
 	if (!_playing) {
 		_playing = true;
 		_hasPlayed = true;
@@ -168,7 +168,7 @@ void Chore::fadeIn(int msecs) {
 	fade(Animation::FadeIn, msecs);
 }
 
-void Chore::fadeOut(int msecs) {
+void Chore::fadeOut(uint msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
 	fade(Animation::FadeOut, msecs);

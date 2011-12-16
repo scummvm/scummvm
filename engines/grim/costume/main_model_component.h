@@ -34,10 +34,10 @@ public:
 	MainModelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~MainModelComponent();
 	void init();
-	int update(float time);
+	int update(uint time);
 	void setColormap(CMap *cmap);
 	void reset();
-	
+
 private:
 	bool _hierShared;
 	Common::List<MainModelComponent*> _children;

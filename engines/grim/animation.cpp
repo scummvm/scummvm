@@ -107,7 +107,7 @@ Animation::FadeMode Animation::getFadeMode() const {
 
 }
 
-int Animation::update(int time) {
+int Animation::update(uint time) {
 	int newTime;
 	if (_time < 0)		// For first time through
 		newTime = 0;

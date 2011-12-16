@@ -76,7 +76,7 @@ public:
 
 	CMap *getCMap() { return _cmap; }
 
-	int update(float frameTime);
+	int update(uint frameTime);
 	void animate();
 	void setupTextures();
 	void draw();

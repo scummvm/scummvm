@@ -66,7 +66,7 @@ void MeshComponent::reset() {
 // 	_node->_meshVisible = true;
 }
 
-int MeshComponent::update(float /*time*/) {
+int MeshComponent::update(uint /*time*/) {
 	_node->setMatrix(_matrix);
 	return 0;
 }

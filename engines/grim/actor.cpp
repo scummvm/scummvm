@@ -1001,7 +1001,7 @@ void Actor::updateWalk() {
 	_pos += dir * walkAmt;
 }
 
-void Actor::update(float frameTime) {
+void Actor::update(uint frameTime) {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.

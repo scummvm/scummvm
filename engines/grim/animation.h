@@ -55,7 +55,7 @@ public:
 	bool getIsActive() const;
 	FadeMode getFadeMode() const;
 
-	int update(int time);
+	int update(uint time);
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);

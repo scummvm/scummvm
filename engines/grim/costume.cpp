@@ -529,7 +529,7 @@ void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 	}
 }
 
-int Costume::update(float time) {
+int Costume::update(uint time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update(time);
 		if (!(*i)->_playing) {
