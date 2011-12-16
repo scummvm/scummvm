@@ -1794,6 +1794,20 @@ bool DreamGenContext::isRyanHolding(const char *id) {
 	return false;
 }
 
+void DreamGenContext::checkInside() {
+	cl = checkInside(al, ah);
+}
+
+uint16 DreamGenContext::checkInside(uint16 command, uint16 type) {
+	for (uint16 index = 0; index < kNumexobjects; index++) {
+		DynObject *object = getExAd(index);
+		if (object->mapad[1] == command && object->mapad[0] == type)
+			return index;
+	}
+
+	return kNumexobjects;
+}
+
 bool DreamBase::isItDescribed(const ObjPos *pos) {
 	uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = getSegment(data.word(kSetdesc)).byte(kSettext + offset);

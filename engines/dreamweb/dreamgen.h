@@ -525,7 +525,6 @@ public:
 	void locationPic();
 	void swapWithOpen();
 	void dreamweb();
-	void checkInside();
 	void findPathOfPoint();
 	void getDestInfo();
 	void read();

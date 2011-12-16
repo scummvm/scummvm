@@ -291,6 +291,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'checkifperson',
 	'checkifset',
 	'checkinput',
+	'checkinside',
 	'checkone',
 	'checksoundint',
 	'checkspeed',

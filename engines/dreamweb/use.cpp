@@ -994,11 +994,7 @@ void DreamGenContext::useObject() {
 }
 
 void DreamGenContext::useWinch() {
-	al = 40;
-	ah = 1;
-	checkInside();
-
-	if (cl == kNumexobjects || !compare(cl, 4, "FUSE")) {
+	if (checkInside(40, 1) == kNumexobjects || !compare(cl, 4, "FUSE")) {
 		// No winch
 		showFirstUse();
 		putBackObStuff();
@@ -1244,11 +1240,7 @@ void DreamGenContext::hotelControl() {
 }
 
 void DreamGenContext::useCooker() {
-	al = data.byte(kCommand);
-	ah = data.byte(kObjecttype);
-	checkInside();
-
-	if (cl == 114)
+	if (checkInside(data.byte(kCommand), data.byte(kObjecttype)) == kNumexobjects)
 		showFirstUse();
 	else
 		showSecondUse();	// Food inside

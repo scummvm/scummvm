@@ -2837,27 +2837,6 @@ doselob:
 	useRoutine();
 }
 
-void DreamGenContext::checkInside() {
-	STACK_CHECK;
-	es = data.word(kExtras);
-	bx = (0+2080+30000);
-	cl = 0;
-insideloop:
-	_cmp(al, es.byte(bx+3));
-	if (!flags.z())
-		goto notfoundinside;
-	_cmp(ah, es.byte(bx+2));
-	if (!flags.z())
-		goto notfoundinside;
-	return;
-notfoundinside:
-	_add(bx, 16);
-	_inc(cl);
-	_cmp(cl, (114));
-	if (!flags.z())
-		goto insideloop;
-}
-
 void DreamGenContext::showDiaryKeys() {
 	STACK_CHECK;
 	_cmp(data.byte(kPresscount), 0);
