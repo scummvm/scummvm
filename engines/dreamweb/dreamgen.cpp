@@ -3004,39 +3004,6 @@ gotkeyp:
 	showDiaryPage();
 }
 
-void DreamGenContext::showSlots() {
-	STACK_CHECK;
-	di = (60)+7;
-	bx = (52)+8;
-	al = 2;
-	ds = data.word(kTempgraphics);
-	ah = 0;
-	showFrame();
-	di = (60)+10;
-	bx = (52)+11;
-	cl = 0;
-slotloop:
-	push(cx);
-	push(di);
-	push(bx);
-	_cmp(cl, data.byte(kCurrentslot));
-	if (!flags.z())
-		goto nomatchslot;
-	al = 3;
-	ds = data.word(kTempgraphics);
-	ah = 0;
-	showFrame();
-nomatchslot:
-	bx = pop();
-	di = pop();
-	cx = pop();
-	_add(bx, 10);
-	_inc(cl);
-	_cmp(cl, 7);
-	if (!flags.z())
-		goto slotloop;
-}
-
 void DreamGenContext::clearBuffers() {
 	STACK_CHECK;
 	es = data.word(kBuffers);

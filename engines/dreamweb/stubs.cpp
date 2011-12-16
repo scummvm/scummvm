@@ -3927,7 +3927,6 @@ void DreamGenContext::talk() {
 	}
 }
 
-
 void DreamGenContext::discOps() {
 	if (data.byte(kCommandtype) != 249) {
 		data.byte(kCommandtype) = 249;
@@ -4562,6 +4561,19 @@ void DreamGenContext::lookAtCard() {
 	getRidOfTemp();
 	restoreReels();
 	putBackObStuff();
+}
+
+void DreamGenContext::showSlots() {
+	showFrame(tempGraphics(), kOpsx + 7, kOpsy + 8, 2, 0);
+
+	uint16 y = kOpsy + 11;
+
+	for (int slot = 0; slot < 7; slot++) {
+		if (slot == data.byte(kCurrentslot))
+			showFrame(tempGraphics(), kOpsx + 10, y, 3, 0);
+
+		y += 10;
+	}
 }
 
 } // End of namespace DreamGen

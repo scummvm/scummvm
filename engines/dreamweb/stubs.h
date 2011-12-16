@@ -393,5 +393,6 @@
 	void notHeldError();
 	void useGun();
 	void identifyOb();
+	void showSlots();
 
 #endif

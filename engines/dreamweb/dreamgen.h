@@ -479,7 +479,7 @@ public:
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
-	void showSlots();
+	void fillOpen();
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
@@ -518,7 +518,6 @@ public:
 	void rollEm();
 	void lookAtPlace();
 	void findAllOpen();
-	void fillOpen();
 	void deleteExObject();
 	void getEitherAd();
 	void setPickup();
