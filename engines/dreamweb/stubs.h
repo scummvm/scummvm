@@ -93,14 +93,6 @@
 	void lockedDoorway(Sprite *sprite, SetObject *objData);
 	void liftSprite(Sprite *sprite, SetObject *objData);
 	void showGameReel(ReelRoutine *routine);
-	void turnPathOn(uint8 param);
-	void turnPathOff(uint8 param);
-	void turnPathOn();
-	void turnPathOff();
-	void turnAnyPathOn(uint8 param, uint8 room);
-	void turnAnyPathOff(uint8 param, uint8 room);
-	void turnAnyPathOn();
-	void turnAnyPathOff();
 	void makeBackOb(SetObject *objData);
 	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
@@ -159,10 +151,6 @@
 	void doChange(uint8 index, uint8 value, uint8 type);
 	void deleteTaken();
 	bool isCD();
-	void placeSetObject();
-	void placeSetObject(uint8 index);
-	void removeSetObject();
-	void removeSetObject(uint8 index);
 	void showAllFree();
 	void showAllEx();
 	bool finishedWalkingCPP();
@@ -184,8 +172,6 @@
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
-	void checkIfPathIsOn();
-	bool checkIfPathIsOn(uint8 index);
 	void isItWorn();
 	bool isItWorn(const DynObject *object) {
 		return DreamBase::isItWorn(object);
@@ -329,10 +315,6 @@
 	void checkFolderCoords();
 	void nextFolder();
 	void lastFolder();
-	void setLocation();
-	void setLocation(uint8 index) {
-		DreamBase::setLocation(index);
-	}
 	void drawFloor();
 	void allocateBuffers();
 	bool checkSpeed(ReelRoutine &routine);
@@ -456,9 +438,6 @@
 	void putBackObStuff();
 	void moreTalk();
 	void redes();
-	void isSetObOnMap();
-	bool isSetObOnMap(uint8 index);
-	void dumpZoom();
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();

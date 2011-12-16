@@ -1462,20 +1462,12 @@ void DreamGenContext::getExPos() {
 	di = kExdata + kNumexobjects * sizeof(DynObject);
 }
 
-void DreamGenContext::placeSetObject() {
-	placeSetObject(al);
-}
-
-void DreamGenContext::placeSetObject(uint8 index) {
+void DreamBase::placeSetObject(uint8 index) {
 	findOrMake(index, 0, 0);
 	getSetAd(index)->mapad[0] = 0;
 }
 
-void DreamGenContext::removeSetObject() {
-	removeSetObject(al);
-}
-
-void DreamGenContext::removeSetObject(uint8 index) {
+void DreamBase::removeSetObject(uint8 index) {
 	findOrMake(index, 0xff, 0);
 	getSetAd(index)->mapad[0] = 0xff;
 }
@@ -2520,10 +2512,6 @@ uint8 DreamBase::getLocation(uint8 index) {
 
 void DreamBase::setLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 1;
-}
-
-void DreamGenContext::setLocation() {
-	DreamBase::setLocation(al);
 }
 
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
@@ -3591,15 +3579,11 @@ void DreamGenContext::moreTalk() {
 	doSomeTalk();
 }
 
-bool DreamGenContext::isSetObOnMap(uint8 index) {
+bool DreamBase::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
 }
 
-void DreamGenContext::isSetObOnMap() {
-	flags._z = isSetObOnMap(al);
-}
-
-void DreamGenContext::dumpZoom() {
+void DreamBase::dumpZoom() {
 	if (data.byte(kZoomon) == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
 }

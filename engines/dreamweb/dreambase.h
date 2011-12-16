@@ -119,12 +119,17 @@ public:
 	void obPicture();
 
 	// from pathfind.cpp
-	void checkDest(const RoomPaths *roomsPaths);
+	void turnPathOn(uint8 param);
+	void turnPathOff(uint8 param);
+	void turnAnyPathOn(uint8 param, uint8 room);
+	void turnAnyPathOff(uint8 param, uint8 room);
 	RoomPaths *getRoomsPaths();
 	void faceRightWay();
 	void setWalk();
 	void autoSetWalk();
+	void checkDest(const RoomPaths *roomsPaths);
 	void findXYFromPath();
+	bool checkIfPathIsOn(uint8 index);
 	void bresenhams();
 	void workoutFrames();
 
@@ -273,6 +278,10 @@ public:
 	void getRidOfTempCharset();
 	void getRidOfTempsP();
 	void getRidOfAll();
+	void placeSetObject(uint8 index);
+	void removeSetObject(uint8 index);
+	bool isSetObOnMap(uint8 index);
+	void dumpZoom();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
