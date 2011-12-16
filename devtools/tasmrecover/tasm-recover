@@ -480,6 +480,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'helicopter',
 	'hotelbell',
 	'hotelcontrol',
+	'identifyob',
 	'initialinv',
 	'initman',
 	'initrain',

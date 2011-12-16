@@ -3104,69 +3104,6 @@ void DreamGenContext::clearChanges() {
 	_stosw(cx, true);
 }
 
-void DreamGenContext::identifyOb() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		{ blank(); return; };
-	ax = data.word(kMousex);
-	_sub(ax, data.word(kMapadx));
-	_cmp(ax, 22*8);
-	if (flags.c())
-		goto notover1;
-	blank();
-	return;
-notover1:
-	bx = data.word(kMousey);
-	_sub(bx, data.word(kMapady));
-	_cmp(bx, 20*8);
-	if (flags.c())
-		goto notover2;
-	blank();
-	return;
-notover2:
-	data.byte(kInmaparea) = 1;
-	ah = bl;
-	push(ax);
-	findPathOfPoint();
-	data.byte(kPointerspath) = dl;
-	ax = pop();
-	push(ax);
-	findFirstPath();
-	data.byte(kPointerfirstpath) = al;
-	ax = pop();
-	checkIfEx();
-	if (!flags.z())
-		return /* (finishidentify) */;
-	checkIfFree();
-	if (!flags.z())
-		return /* (finishidentify) */;
-	checkIfPerson();
-	if (!flags.z())
-		return /* (finishidentify) */;
-	checkIfSet();
-	if (!flags.z())
-		return /* (finishidentify) */;
-	ax = data.word(kMousex);
-	_sub(ax, data.word(kMapadx));
-	cl = al;
-	ax = data.word(kMousey);
-	_sub(ax, data.word(kMapady));
-	ch = al;
-	checkOne();
-	_cmp(al, 0);
-	if (flags.z())
-		goto nothingund;
-	_cmp(data.byte(kMandead), 1);
-	if (flags.z())
-		goto nothingund;
-	ah = 3;
-	obName();
-	return;
-nothingund:
-	blank();
-}
-
 void DreamGenContext::findPathOfPoint() {
 	STACK_CHECK;
 	push(ax);

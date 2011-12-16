@@ -392,5 +392,6 @@
 	void withWhat();
 	void notHeldError();
 	void useGun();
+	void identifyOb();
 
 #endif

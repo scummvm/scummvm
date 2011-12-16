@@ -475,12 +475,11 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void fadeDownMon();
-	void identifyOb();
 	void getPersonText();
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
-	void fillOpen();
+	void showSlots();
 	void useCashCard();
 	void moneyPoke();
 	void doSomeTalk();
@@ -519,7 +518,7 @@ public:
 	void rollEm();
 	void lookAtPlace();
 	void findAllOpen();
-	void showSlots();
+	void fillOpen();
 	void deleteExObject();
 	void getEitherAd();
 	void setPickup();

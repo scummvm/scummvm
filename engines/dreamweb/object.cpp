@@ -312,4 +312,42 @@ void DreamGenContext::openOb() {
 	_openChangeSize = getOpenedSizeCPP() * kItempicsize + kInventx;
 }
 
+void DreamGenContext::identifyOb() {
+	if (data.word(kWatchingtime) != 0 ||
+		data.word(kMousex) - data.word(kMapadx) >= 22 * 8 ||
+		data.word(kMousey) - data.word(kMapady) >= 20 * 8) {
+		blank();
+		return;
+	}
+
+	data.byte(kInmaparea) = 1;
+	ah = bl;
+	push(ax);
+	findPathOfPoint();
+	data.byte(kPointerspath) = dl;
+	ax = pop();
+	push(ax);
+	findFirstPath();
+	data.byte(kPointerfirstpath) = al;
+	ax = pop();
+
+	byte x = al;
+	byte y = ah;
+
+	if (checkIfEx(x, y) || checkIfFree(x, y) ||
+		checkIfPerson(x, y) || checkIfSet(x, y))
+		return; // finishidentify
+
+	x = (data.word(kMousex) - data.word(kMapadx)) & 0xFF;
+	y = (data.word(kMousey) - data.word(kMapady)) & 0xFF;
+	byte flag, flagEx, type, flagX, flagY;
+
+	checkOne(x, y, &flag, &flagEx, &type, &flagX, &flagY);
+
+	if (type != 0 && data.byte(kMandead) != 1)
+		obName(type, 3);
+	else
+		blank();
+}
+
 } // End of namespace DreamGen
