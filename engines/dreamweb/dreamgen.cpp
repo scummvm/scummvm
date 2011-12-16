@@ -2937,44 +2937,6 @@ doselob:
 	useRoutine();
 }
 
-void DreamGenContext::isRyanHolding() {
-	STACK_CHECK;
-	_sub(al, 'A');
-	_sub(ah, 'A');
-	_sub(cl, 'A');
-	_sub(ch, 'A');
-	es = data.word(kExtras);
-	bx = (0+2080+30000);
-	dl = 0;
-searchinv:
-	_cmp(es.byte(bx+2), 4);
-	if (!flags.z())
-		goto nofindininv;
-	_cmp(al, es.byte(bx+12));
-	if (!flags.z())
-		goto nofindininv;
-	_cmp(ah, es.byte(bx+13));
-	if (!flags.z())
-		goto nofindininv;
-	_cmp(cl, es.byte(bx+14));
-	if (!flags.z())
-		goto nofindininv;
-	_cmp(ch, es.byte(bx+15));
-	if (!flags.z())
-		goto nofindininv;
-	al = dl;
-	_cmp(al, (114));
-	return;
-nofindininv:
-	_add(bx, 16);
-	_inc(dl);
-	_cmp(dl, (114));
-	if (!flags.z())
-		goto searchinv;
-	al = dl;
-	_cmp(al, (114));
-}
-
 void DreamGenContext::checkInside() {
 	STACK_CHECK;
 	es = data.word(kExtras);

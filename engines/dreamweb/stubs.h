@@ -383,6 +383,8 @@
 	uint16 findSetObject(const char *id);
 	void findExObject();
 	uint16 findExObject(const char *id);
+	void isRyanHolding();
+	bool isRyanHolding(const char *id);
 	void describeOb();
 	void getOpenedSize();
 	byte getOpenedSizeCPP();

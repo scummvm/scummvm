@@ -500,6 +500,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'isitdescribed',
 	'isitright',
 	'isitworn',
+	'isryanholding',
 	'issetobonmap',
 	'keeper',
 	'kernchars',

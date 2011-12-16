@@ -625,13 +625,7 @@ void DreamGenContext::sLabDoorB() {
 		data.byte(kWatchspeed) = 1;
 		data.byte(kSpeedcount) = 1;
 	} else {
-		al = 'S';
-		ah = 'H';
-		cl = 'L';
-		ch = 'D';
-		isRyanHolding();
-
-		if (flags.z()) {
+		if (isRyanHolding("SHLD")) {
 			// No crystal
 			showPuzText(44, 200);
 			putBackObStuff();

@@ -1774,6 +1774,26 @@ uint16 DreamGenContext::findExObject(const char *id) {
 	return kNumexobjects;
 }
 
+void DreamGenContext::isRyanHolding() {
+	char id[5];
+	id[0] = al;
+	id[1] = ah;
+	id[2] = cl;
+	id[3] = ch;
+	id[4] = '\0';
+	flags._z = isRyanHolding(id);
+}
+
+bool DreamGenContext::isRyanHolding(const char *id) {
+	for (uint16 index = 0; index < kNumexobjects; index++) {
+		DynObject *object = getExAd(index);
+		if (object->mapad[0] == 4 && objectMatches(object, id))
+			return (index == kNumexobjects);
+	}
+
+	return false;
+}
+
 bool DreamBase::isItDescribed(const ObjPos *pos) {
 	uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = getSegment(data.word(kSetdesc)).byte(kSettext + offset);

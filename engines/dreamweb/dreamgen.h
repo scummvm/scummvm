@@ -480,7 +480,6 @@ public:
 	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
-	void isRyanHolding();
 	void fillOpen();
 	void useCashCard();
 	void moneyPoke();
