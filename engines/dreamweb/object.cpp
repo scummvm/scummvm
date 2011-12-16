@@ -313,9 +313,15 @@ void DreamGenContext::openOb() {
 }
 
 void DreamGenContext::identifyOb() {
-	if (data.word(kWatchingtime) != 0 ||
-		data.word(kMousex) - data.word(kMapadx) >= 22 * 8 ||
-		data.word(kMousey) - data.word(kMapady) >= 20 * 8) {
+	if (data.word(kWatchingtime) != 0) {
+		blank();
+		return;
+	}
+
+	ax = data.word(kMousex) - data.word(kMapadx);
+	bx = data.word(kMousey) - data.word(kMapady);
+
+	if (ax >= 22 * 8 || bx >= 20 * 8) {
 		blank();
 		return;
 	}
@@ -325,8 +331,6 @@ void DreamGenContext::identifyOb() {
 	push(ax);
 	findPathOfPoint();
 	data.byte(kPointerspath) = dl;
-	ax = pop();
-	push(ax);
 	findFirstPath();
 	data.byte(kPointerfirstpath) = al;
 	ax = pop();
