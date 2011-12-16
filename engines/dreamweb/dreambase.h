@@ -134,9 +134,58 @@ public:
 	void workoutFrames();
 
 	// from people.cpp
+	void madmanText();
+	void madman(ReelRoutine &routine);
 	void madMode();
 	void addToPeopleList(ReelRoutine *routine);
 	bool checkSpeed(ReelRoutine &routine);
+	void sparkyDrip(ReelRoutine &routine);
+	void genericPerson(ReelRoutine &routine);
+	void gamer(ReelRoutine &routine);
+	void eden(ReelRoutine &routine);
+	void sparky(ReelRoutine &routine);
+	void rockstar(ReelRoutine &routine);
+	void madmansTelly(ReelRoutine &routine);
+	void smokeBloke(ReelRoutine &routine);
+	void manAsleep(ReelRoutine &routine);
+	void drunk(ReelRoutine &routine);
+	void introMagic1(ReelRoutine &routine);
+	void introMagic2(ReelRoutine &routine);
+	void introMagic3(ReelRoutine &routine);
+	void introMusic(ReelRoutine &routine);
+	void candles(ReelRoutine &routine);
+	void candles1(ReelRoutine &routine);
+	void candles2(ReelRoutine &routine);
+	void smallCandle(ReelRoutine &routine);
+	void gates(ReelRoutine &routine);
+	void security(ReelRoutine &routine);
+	void edenInBath(ReelRoutine &routine);
+	void louis(ReelRoutine &routine);
+	void handClap(ReelRoutine &routine);
+	void carParkDrip(ReelRoutine &routine);
+	void foghornSound(ReelRoutine &routine);
+	void train(ReelRoutine &routine);
+	void attendant(ReelRoutine &routine);
+	void keeper(ReelRoutine &routine);
+	void interviewer(ReelRoutine &routine);
+	void drinker(ReelRoutine &routine);
+	void alleyBarkSound(ReelRoutine &routine);
+	void louisChair(ReelRoutine &routine);
+	void bossMan(ReelRoutine &routine);
+	void priest(ReelRoutine &routine);
+	void monkAndRyan(ReelRoutine &routine);
+	void copper(ReelRoutine &routine);
+	void introMonks1(ReelRoutine &routine);
+	void introMonks2(ReelRoutine &routine);
+	void soldier1(ReelRoutine &routine);
+	void receptionist(ReelRoutine &routine);
+	void bartender(ReelRoutine &routine);
+	void heavy(ReelRoutine &routine);
+	void helicopter(ReelRoutine &routine);
+	//void mugger(ReelRoutine &routine);
+	void businessMan(ReelRoutine &routine);
+	void endGameSeq(ReelRoutine &routine);
+	void poolGuard(ReelRoutine &routine);
 
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);

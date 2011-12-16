@@ -25,35 +25,35 @@
 namespace DreamGen {
 
 static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
-	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
-	&DreamGenContext::eden, &DreamGenContext::edenInBath,
-	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
-	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
-	&DreamGenContext::receptionist, &DreamGenContext::genericPerson /*maleFan*/,
-	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
-	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
-	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
-	&DreamGenContext::heavy, &DreamGenContext::manAsleep /*manAsleep2*/,
-	&DreamGenContext::genericPerson /*manSatStill*/, &DreamGenContext::drinker,
-	&DreamGenContext::bartender, &DreamGenContext::genericPerson /*otherSmoker*/,
-	&DreamGenContext::genericPerson /*tattooMan*/, &DreamGenContext::attendant,
-	&DreamGenContext::keeper, &DreamGenContext::candles1,
-	&DreamGenContext::smallCandle, &DreamGenContext::security,
-	&DreamGenContext::copper, &DreamGenContext::poolGuard,
-	&DreamGenContext::rockstar, &DreamGenContext::businessMan,
-	&DreamGenContext::train, &DreamGenContext::genericPerson /*aide*/,
-	&DreamGenContext::mugger, &DreamGenContext::helicopter,
-	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
-	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
-	&DreamGenContext::gates, &DreamGenContext::introMagic3,
-	&DreamGenContext::introMonks1, &DreamGenContext::candles,
-	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
-	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
-	&DreamGenContext::priest, &DreamGenContext::madman,
-	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
-	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
-	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
-	&DreamGenContext::carParkDrip
+	&DreamBase::gamer, &DreamBase::sparkyDrip,
+	&DreamBase::eden, &DreamBase::edenInBath,
+	&DreamBase::sparky, &DreamBase::smokeBloke,
+	&DreamBase::manAsleep, &DreamBase::drunk,
+	&DreamBase::receptionist, &DreamBase::genericPerson /*maleFan*/,
+	&DreamBase::genericPerson /*femaleFan*/, &DreamBase::louis,
+	&DreamBase::louisChair, &DreamBase::soldier1,
+	&DreamBase::bossMan, &DreamBase::interviewer,
+	&DreamBase::heavy, &DreamBase::manAsleep /*manAsleep2*/,
+	&DreamBase::genericPerson /*manSatStill*/, &DreamBase::drinker,
+	&DreamBase::bartender, &DreamBase::genericPerson /*otherSmoker*/,
+	&DreamBase::genericPerson /*tattooMan*/, &DreamBase::attendant,
+	&DreamBase::keeper, &DreamBase::candles1,
+	&DreamBase::smallCandle, &DreamBase::security,
+	&DreamBase::copper, &DreamBase::poolGuard,
+	&DreamBase::rockstar, &DreamBase::businessMan,
+	&DreamBase::train, &DreamBase::genericPerson /*aide*/,
+	&DreamGenContext::mugger, &DreamBase::helicopter,
+	&DreamBase::introMagic1, &DreamBase::introMusic,
+	&DreamBase::introMagic2, &DreamBase::candles2,
+	&DreamBase::gates, &DreamBase::introMagic3,
+	&DreamBase::introMonks1, &DreamBase::candles,
+	&DreamBase::introMonks2, &DreamBase::handClap,
+	&DreamBase::monkAndRyan, &DreamGenContext::endGameSeq,
+	&DreamBase::priest, &DreamBase::madman,
+	&DreamBase::madmansTelly, &DreamBase::alleyBarkSound,
+	&DreamBase::foghornSound, &DreamBase::carParkDrip,
+	&DreamBase::carParkDrip, &DreamBase::carParkDrip,
+	&DreamBase::carParkDrip
 };
 
 void DreamGenContext::updatePeople() {
@@ -74,7 +74,7 @@ void DreamGenContext::updatePeople() {
 	}
 }
 
-void DreamGenContext::madmanText() {
+void DreamBase::madmanText() {
 	byte origCount;
 
 	if (isCD()) {
@@ -94,7 +94,7 @@ void DreamGenContext::madmanText() {
 	setupTimedTemp(47 + origCount, 82, 72, 80, 90, 1);
 }
 
-void DreamGenContext::madman(ReelRoutine &routine) {
+void DreamBase::madman(ReelRoutine &routine) {
 	data.word(kWatchingtime) = 2;
 	if (checkSpeed(routine)) {
 		uint16 newReelPointer = routine.reelPointer();
@@ -170,17 +170,17 @@ bool DreamBase::checkSpeed(ReelRoutine &routine) {
 	return true;
 }
 
-void DreamGenContext::sparkyDrip(ReelRoutine &routine) {
+void DreamBase::sparkyDrip(ReelRoutine &routine) {
 	if (checkSpeed(routine))
 		playChannel0(14, 0);
 }
 
-void DreamGenContext::genericPerson(ReelRoutine &routine) {
+void DreamBase::genericPerson(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::gamer(ReelRoutine &routine) {
+void DreamBase::gamer(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint8 v;
 		do {
@@ -193,14 +193,14 @@ void DreamGenContext::gamer(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::eden(ReelRoutine &routine) {
+void DreamBase::eden(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::sparky(ReelRoutine &routine) {
+void DreamBase::sparky(ReelRoutine &routine) {
 	if (data.word(kCard1money))
 		routine.b7 = 3;
 	if (checkSpeed(routine)) {
@@ -222,7 +222,7 @@ void DreamGenContext::sparky(ReelRoutine &routine) {
 		data.byte(kTalkedtosparky) = 1;
 }
 
-void DreamGenContext::rockstar(ReelRoutine &routine) {
+void DreamBase::rockstar(ReelRoutine &routine) {
 	if ((routine.reelPointer() == 303) || (routine.reelPointer() == 118)) {
 		data.byte(kNewlocation) = 45;
 		showGameReel(&routine);
@@ -259,7 +259,7 @@ void DreamGenContext::rockstar(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::madmansTelly(ReelRoutine &routine) {
+void DreamBase::madmansTelly(ReelRoutine &routine) {
 	uint16 nextReelPointer = routine.reelPointer() + 1;
 	if (nextReelPointer == 307)
 		nextReelPointer = 300;
@@ -268,7 +268,7 @@ void DreamGenContext::madmansTelly(ReelRoutine &routine) {
 }
 
 
-void DreamGenContext::smokeBloke(ReelRoutine &routine) {
+void DreamBase::smokeBloke(ReelRoutine &routine) {
 	if (data.byte(kRockstardead) == 0) {
 		if (routine.b7 & 128)
 			DreamBase::setLocation(5);
@@ -288,20 +288,20 @@ void DreamGenContext::smokeBloke(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::manAsleep(ReelRoutine &routine) {
+void DreamBase::manAsleep(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::attendant(ReelRoutine &routine) {
+void DreamBase::attendant(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
 		data.byte(kTalkedtoattendant) = 1;
 }
 
-void DreamGenContext::keeper(ReelRoutine &routine) {
+void DreamBase::keeper(ReelRoutine &routine) {
 	if (data.byte(kKeeperflag) != 0) {
 		// Not waiting
 		addToPeopleList(&routine);
@@ -318,7 +318,7 @@ void DreamGenContext::keeper(ReelRoutine &routine) {
 		routine.b7 = data.byte(kDreamnumber);
 }
 
-void DreamGenContext::drunk(ReelRoutine &routine) {
+void DreamBase::drunk(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
 	routine.b7 &= 127;
@@ -326,7 +326,7 @@ void DreamGenContext::drunk(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::interviewer(ReelRoutine &routine) {
+void DreamBase::interviewer(ReelRoutine &routine) {
 	if (data.word(kReeltowatch) == 68)
 		routine.incReelPointer();
 
@@ -336,7 +336,7 @@ void DreamGenContext::interviewer(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::drinker(ReelRoutine &routine) {
+void DreamBase::drinker(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		routine.incReelPointer();
 
@@ -349,7 +349,7 @@ void DreamGenContext::drinker(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::alleyBarkSound(ReelRoutine &routine) {
+void DreamBase::alleyBarkSound(ReelRoutine &routine) {
 	uint16 prevReelPointer = routine.reelPointer() - 1;
 	if (prevReelPointer == 0) {
 		playChannel1(14);
@@ -359,7 +359,7 @@ void DreamGenContext::alleyBarkSound(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::introMagic1(ReelRoutine &routine) {
+void DreamBase::introMagic1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 145)
@@ -377,7 +377,7 @@ void DreamGenContext::introMagic1(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::introMagic2(ReelRoutine &routine) {
+void DreamBase::introMagic2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 216)
@@ -387,7 +387,7 @@ void DreamGenContext::introMagic2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::introMagic3(ReelRoutine &routine) {
+void DreamBase::introMagic3(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 218)
@@ -398,7 +398,7 @@ void DreamGenContext::introMagic3(ReelRoutine &routine) {
 	routine.mapX = data.byte(kMapx);
 }
 
-void DreamGenContext::candles1(ReelRoutine &routine) {
+void DreamBase::candles1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 44)
@@ -408,7 +408,7 @@ void DreamGenContext::candles1(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::candles2(ReelRoutine &routine) {
+void DreamBase::candles2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 238)
@@ -418,7 +418,7 @@ void DreamGenContext::candles2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::smallCandle(ReelRoutine &routine) {
+void DreamBase::smallCandle(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 37)
@@ -428,10 +428,10 @@ void DreamGenContext::smallCandle(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::introMusic(ReelRoutine &routine) {
+void DreamBase::introMusic(ReelRoutine &routine) {
 }
 
-void DreamGenContext::candles(ReelRoutine &routine) {
+void DreamBase::candles(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 167)
@@ -441,7 +441,7 @@ void DreamGenContext::candles(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::gates(ReelRoutine &routine) {
+void DreamBase::gates(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 116)
@@ -458,7 +458,7 @@ void DreamGenContext::gates(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::security(ReelRoutine &routine) {
+void DreamBase::security(ReelRoutine &routine) {
 	if (routine.reelPointer() == 32) {
 		if (data.byte(kLastweapon) == 1) {
 			data.word(kWatchingtime) = 10;
@@ -478,7 +478,7 @@ void DreamGenContext::security(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::edenInBath(ReelRoutine &routine) {
+void DreamBase::edenInBath(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead) == 0 || data.byte(kSartaindead) != 0)
 		return;
 
@@ -486,7 +486,7 @@ void DreamGenContext::edenInBath(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::louis(ReelRoutine &routine) {
+void DreamBase::louis(ReelRoutine &routine) {
 	if (data.byte(kRockstardead) != 0)
 		return;
 
@@ -494,26 +494,26 @@ void DreamGenContext::louis(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::handClap(ReelRoutine &routine) {
+void DreamBase::handClap(ReelRoutine &routine) {
 }
 
-void DreamGenContext::carParkDrip(ReelRoutine &routine) {
+void DreamBase::carParkDrip(ReelRoutine &routine) {
 	if (!checkSpeed(routine))
 		return; // cantdrip2
 
 	playChannel1(14);
 }
 
-void DreamGenContext::foghornSound(ReelRoutine &routine) {
+void DreamBase::foghornSound(ReelRoutine &routine) {
 	if (engine->randomNumber() == 198)
 		playChannel1(13);
 }
 
-void DreamGenContext::train(ReelRoutine &routine) {
+void DreamBase::train(ReelRoutine &routine) {
 	// The original code has logic for this, but it is disabled
 }
 
-void DreamGenContext::louisChair(ReelRoutine &routine) {
+void DreamBase::louisChair(ReelRoutine &routine) {
 	if (data.byte(kRockstardead) == 0)
 		return; // notlouis2
 
@@ -535,7 +535,7 @@ void DreamGenContext::louisChair(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::bossMan(ReelRoutine &routine) {
+void DreamBase::bossMan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
@@ -561,7 +561,7 @@ void DreamGenContext::bossMan(ReelRoutine &routine) {
 		data.byte(kTalkedtoboss) = 1;
 }
 
-void DreamGenContext::priest(ReelRoutine &routine) {
+void DreamBase::priest(ReelRoutine &routine) {
 	if (routine.reelPointer() == 8)
 		return; // priestspoken
 
@@ -582,7 +582,7 @@ void DreamBase::priestText(ReelRoutine &routine) {
 	setupTimedUse((reel >> 1) + 50, 54, 1, 72, 80);
 }
 
-void DreamGenContext::monkAndRyan(ReelRoutine &routine) {
+void DreamBase::monkAndRyan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 83) {
@@ -602,7 +602,7 @@ void DreamGenContext::monkAndRyan(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::copper(ReelRoutine &routine) {
+void DreamBase::copper(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 94) {
@@ -620,7 +620,7 @@ void DreamGenContext::copper(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::introMonks1(ReelRoutine &routine) {
+void DreamBase::introMonks1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
@@ -650,16 +650,12 @@ void DreamGenContext::introMonks1(ReelRoutine &routine) {
 	routine.mapY = data.byte(kMapy);
 }
 
-void DreamGenContext::introMonks2(ReelRoutine &routine) {
+void DreamBase::introMonks2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 87) {
 			data.byte(kIntrocount)++;
-			push(es);
-			push(bx);
 			monks2text();
-			bx = pop();
-			es = pop();
 
 			if (data.byte(kIntrocount), 19)
 				nextReelPointer = 87;
@@ -669,11 +665,7 @@ void DreamGenContext::introMonks2(ReelRoutine &routine) {
 
 		if (nextReelPointer == 110) {
 			data.byte(kIntrocount)++;
-			push(es);
-			push(bx);
 			monks2text();
-			bx = pop();
-			es = pop();
 		
 			if (data.byte(kIntrocount) == 35)
 				nextReelPointer = 111;
@@ -691,7 +683,7 @@ void DreamGenContext::introMonks2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamGenContext::soldier1(ReelRoutine &routine) {
+void DreamBase::soldier1(ReelRoutine &routine) {
 	if (routine.reelPointer() != 0) {
 		data.word(kWatchingtime) = 10;
 		if (routine.reelPointer() == 30) {
@@ -714,7 +706,7 @@ void DreamGenContext::soldier1(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::receptionist(ReelRoutine &routine) {
+void DreamBase::receptionist(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		if (data.byte(kCardpassflag) == 1) {
 			// Set card
@@ -751,7 +743,7 @@ void DreamGenContext::receptionist(ReelRoutine &routine) {
 		data.byte(kTalkedtorecep) = 1;
 }
 
-void DreamGenContext::bartender(ReelRoutine &routine) {
+void DreamBase::bartender(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 86) {
 			if (engine->randomNumber() >= 18)
@@ -772,7 +764,7 @@ void DreamGenContext::bartender(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::heavy(ReelRoutine &routine) {
+void DreamBase::heavy(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	if (routine.reelPointer() != 43) {
 		data.word(kWatchingtime) = 10;
@@ -796,7 +788,7 @@ void DreamGenContext::heavy(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamGenContext::helicopter(ReelRoutine &routine) {
+void DreamBase::helicopter(ReelRoutine &routine) {
 	if (routine.reelPointer() == 203) {
 		// Won helicopter
 		data.byte(kPointermode) = 0;
@@ -881,7 +873,7 @@ void DreamGenContext::mugger(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::businessMan(ReelRoutine &routine) {
+void DreamBase::businessMan(ReelRoutine &routine) {
 	data.byte(kPointermode) = 0;
 	data.word(kWatchingtime) = 2;
 	if (routine.reelPointer() == 2) {
@@ -945,7 +937,7 @@ void DreamGenContext::businessMan(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::endGameSeq(ReelRoutine &routine) {
+void DreamBase::endGameSeq(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 51 && data.byte(kIntrocount) != 140) {
@@ -956,13 +948,7 @@ void DreamGenContext::endGameSeq(ReelRoutine &routine) {
 
 		routine.setReelPointer(nextReelPointer);
 		if (nextReelPointer == 134) {
-			push(es);
-			push(bx);
-			push(ax);
 			fadeScreenDownHalf();
-			ax = pop();
-			bx = pop();
-			es = pop();
 		} else if (nextReelPointer == 324) {
 			fadeScreenDowns();
 			data.byte(kVolumeto) = 7;
@@ -982,7 +968,7 @@ void DreamGenContext::endGameSeq(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::poolGuard(ReelRoutine &routine) {
+void DreamBase::poolGuard(ReelRoutine &routine) {
 	if (routine.reelPointer() == 214 || routine.reelPointer() == 258) {
 		// Combat over 2
 		showGameReel(&routine);
