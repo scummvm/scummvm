@@ -394,5 +394,6 @@
 	void useGun();
 	void identifyOb();
 	void showSlots();
+	void useCashCard();
 
 #endif

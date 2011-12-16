@@ -108,6 +108,8 @@ p = parser(skip_binary_data = [
 	'title6graphics',
 	# use.asm
 	'uselist',
+	'money1poke',
+	'money2poke',
 	# vars.asm
 	'currentset',
 	'icons1',
@@ -566,6 +568,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'middlepanel',
 	'mode640x480',
 	'modifychar',
+	'moneypoke',
 	'monitorlogo',
 	'monkandryan',
 	'monks2text',
@@ -828,6 +831,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'usecardreader2',
 	'usecardreader3',
 	'usecart',
+	'usecashcard',
 	'usecharset1',
 	'usechurchgate',
 	'usechurchhole',

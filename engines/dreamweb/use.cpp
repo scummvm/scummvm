@@ -1613,4 +1613,33 @@ void DreamGenContext::notHeldError() {
 	putBackObStuff();
 }
 
+void DreamGenContext::useCashCard() {
+	getRidOfReels();
+	loadKeypad();
+	createPanel();
+	showPanel();
+	showExit();
+	showMan();
+	uint16 y = (!data.byte(kForeignrelease)) ? 120 : 120 - 3;
+	showFrame(tempGraphics(), 114, y, 39, 0);
+	const uint8 *obText = getObTextStartCPP();
+	findNextColon(&obText);
+	findNextColon(&obText);
+	y = 98;
+	printDirect(&obText, 36, &y, 36, 36 & 1);
+	char amountStr[10];
+	sprintf(amountStr, "%04d", data.word(kCard1money) / 10);
+	data.word(kCharshift) = 91 * 2 + 75;
+	printDirect((const uint8 *)amountStr, 160, 155, 240, 240 & 1);
+	sprintf(amountStr, "%02d", (data.word(kCard1money) % 10) * 10);
+	data.word(kCharshift) = 91 * 2 + 85;
+	printDirect((const uint8 *)amountStr, 187, 155, 240, 240 & 1);
+	data.word(kCharshift) = 0;
+	workToScreenM();
+	hangOnP(400);
+	getRidOfTemp();
+	restoreReels();
+	putBackObStuff();
+}
+
 } // End of namespace DreamGen

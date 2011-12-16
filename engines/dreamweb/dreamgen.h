@@ -32,11 +32,9 @@
 
 namespace DreamGen {
 
-static const uint16 offset_money1poke = 0x0426;
 static const uint16 offset_operand1 = 0x03fc;
-static const uint16 offset_rootdir = 0x040a;
 static const uint16 offset_keys = 0x0392;
-static const uint16 offset_money2poke = 0x042b;
+static const uint16 offset_rootdir = 0x040a;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -365,14 +363,14 @@ static const uint16 kRoomssample = 443;
 static const uint16 kReelroutines = 444;
 static const uint16 kBasicsample = 901;
 static const uint16 kCurrentfile = 1048;
-static const uint16 kRoomscango = 1131;
-static const uint16 kRoompics = 1147;
-static const uint16 kOplist = 1162;
-static const uint16 kInputline = 1165;
-static const uint16 kPresslist = 1293;
-static const uint16 kQuitrequested = 1299;
-static const uint16 kSubtitles = 1300;
-static const uint16 kForeignrelease = 1301;
+static const uint16 kRoomscango = 1123;
+static const uint16 kRoompics = 1139;
+static const uint16 kOplist = 1154;
+static const uint16 kInputline = 1157;
+static const uint16 kPresslist = 1285;
+static const uint16 kQuitrequested = 1291;
+static const uint16 kSubtitles = 1292;
+static const uint16 kForeignrelease = 1293;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -480,8 +478,6 @@ public:
 	void getObTextStart();
 	void checkObjectSize();
 	void fillOpen();
-	void useCashCard();
-	void moneyPoke();
 	void doSomeTalk();
 	void resetLocation();
 	void adjustUp();
