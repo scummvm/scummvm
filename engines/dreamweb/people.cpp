@@ -842,11 +842,7 @@ void DreamGenContext::helicopter(ReelRoutine &routine) {
 					nextReelPointer = 9;
 				}
 			}
-		} else {
-			// Not waiting helicopter
-			data.byte(kPointermode) = 0;
-			data.word(kWatchingtime) = 2;
-		}
+		} 
 
 		routine.setReelPointer(nextReelPointer);
 	}
@@ -929,12 +925,12 @@ void DreamGenContext::businessMan(ReelRoutine &routine) {
 		} else if (nextReelPointer == 15) {
 			nextReelPointer--;
 			if (data.byte(kLastweapon) == 3) {
-				// Shield bonus
+				// Shield on bus
 				data.byte(kLastweapon) = (byte)-1;
 				data.byte(kCombatcount) = 0;
 				nextReelPointer = 51;
 			} else {
-				// No shield bonus
+				// No shield on bus
 				data.byte(kCombatcount)++;
 				if (data.byte(kCombatcount) == 20) {
 					data.byte(kCombatcount) = 0;
@@ -1048,19 +1044,19 @@ void DreamGenContext::poolGuard(ReelRoutine &routine) {
 					}
 				}
 			}
-		}
-
-		nextReelPointer--;
-
-		if (data.byte(kLastweapon) == 2) {
-			// Axe on pool
-			data.byte(kLastweapon) = (byte)-1;
-			nextReelPointer = 122;
 		} else {
-			data.byte(kCombatcount)++;
-			if (data.byte(kCombatcount) == 40) {
-				data.byte(kCombatcount) = 0;
-				nextReelPointer = 195;
+			nextReelPointer--;
+
+			if (data.byte(kLastweapon) == 2) {
+				// Axe on pool
+				data.byte(kLastweapon) = (byte)-1;
+				nextReelPointer = 122;
+			} else {
+				data.byte(kCombatcount)++;
+				if (data.byte(kCombatcount) == 40) {
+					data.byte(kCombatcount) = 0;
+					nextReelPointer = 195;
+				}
 			}
 		}
 		
