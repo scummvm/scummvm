@@ -79,7 +79,7 @@ SmushDecoder::~SmushDecoder() {
 
 void SmushDecoder::init() {
 	_IACTpos = 0;
-	_curFrame = 0;
+	_curFrame = -1;
 	_videoPause = false;
 
 	if (!_demo) {
@@ -127,7 +127,7 @@ void SmushDecoder::handleFrame() {
 	int32 size;
 	int pos = 0;
 
-	if (_curFrame == 0)
+	if (_curFrame == -1)
 		_startTime = g_system->getMillis();
 
 	if (_videoPause)
@@ -191,12 +191,10 @@ void SmushDecoder::handleFrame() {
 	} while (pos < size);
 	delete[] frame;
 
-	_curFrame++;
-	if (_curFrame == _nbframes - 1) {
-		if (_videoLooping) {
-			_file->seek(_startPos, SEEK_SET);
-			_curFrame = 0;
-		}
+	++_curFrame;
+	if (_videoLooping && _curFrame == _nbframes - 1) {
+		_file->seek(_startPos, SEEK_SET);
+		_curFrame = -1;
 	}
 }
 
@@ -298,7 +296,7 @@ void SmushDecoder::handleFrameDemo() {
 		return;
 	}
 
-	if (_curFrame == 0)
+	if (_curFrame == -1)
 		_startTime = g_system->getMillis();
 
 	tag = _file->readUint32BE();

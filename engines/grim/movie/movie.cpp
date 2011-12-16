@@ -75,8 +75,9 @@ void MoviePlayer::timerCallback(void *) {
 }
 
 bool MoviePlayer::prepareFrame() {
-	if (_videoDecoder->endOfVideo())
+	if (_videoDecoder->endOfVideo()) {
 		_videoFinished = true;
+	}
 
 	if (_videoPause)
 		return false;
@@ -116,6 +117,8 @@ void MoviePlayer::init() {
 }
 
 void MoviePlayer::deinit() {
+	Debug::debug(Debug::Movie, "Deinitting video '%s'.\n", _fname.c_str());
+
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
 	if (_videoDecoder)
