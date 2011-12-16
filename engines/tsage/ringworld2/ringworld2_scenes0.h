@@ -370,6 +370,45 @@ public:
 	virtual void dispatch();
 };
 
+class Scene850: public SceneExt {
+	/* Items */
+	class Indicator: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class LiftDoor: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SickBayDoor: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Clamp: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Panel: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	NamedHotspot _background, _eastDoor, _compartment, _sickBayIndicator;
+	NamedHotspot _liftControls;
+	Indicator _indicator;
+	SceneActor _object1, _fibre;
+	LiftDoor _liftDoor;
+	SickBayDoor _sickBayDoor;
+	Clamp _clamp;
+	Panel _panel;
+	SequenceManager _sequenceManager1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

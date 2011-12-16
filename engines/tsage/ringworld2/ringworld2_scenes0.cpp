@@ -1701,7 +1701,7 @@ void Scene250::signal() {
 			R2_GLOBALS._sceneManager.changeScene(139);
 			break;
 		case 91:
-			R2_GLOBALS._sceneManager.changeScene(91);
+			R2_GLOBALS._sceneManager.changeScene(850);
 			break;
 		default:
 			break;
@@ -2896,6 +2896,180 @@ void Scene400::dispatch() {
 		R2_GLOBALS._player._shade = 4;
 		break;
 	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 850 - Deck #5 - By Lift
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene850::Indicator::startAction(CursorType action, Event &event) {
+	Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
+
+	if ((action != CURSOR_USE) || (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 850))
+		return NamedHotspot::startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 851;
+		scene->setAction(&scene->_sequenceManager1, scene, 851, &R2_GLOBALS._player, &scene->_fibre, NULL);
+		return true;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene850::LiftDoor::startAction(CursorType action, Event &event) {
+	Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 202;
+		scene->setAction(&scene->_sequenceManager1, scene, 202, &R2_GLOBALS._player, this, NULL);
+		return true;
+	}
+}
+
+bool Scene850::SickBayDoor::startAction(CursorType action, Event &event) {
+	Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 204;
+		scene->setAction(&scene->_sequenceManager1, scene, 204, &R2_GLOBALS._player, this, NULL);
+		return true;
+	}
+}
+
+bool Scene850::Clamp::startAction(CursorType action, Event &event) {
+	Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!R2_GLOBALS.getFlag(7))
+		return false;
+	else if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		scene->_object1.postInit();
+		scene->_sceneMode = 850;
+		scene->setAction(&scene->_sequenceManager1, scene, 850, &R2_GLOBALS._player, this, &scene->_object1, NULL);
+		return true;
+	}
+}
+
+bool Scene850::Panel::startAction(CursorType action, Event &event) {
+	Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
+
+	if ((action != CURSOR_USE) || R2_GLOBALS.getFlag(7))
+		return SceneActor::startAction(action, event);
+	else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 852;
+		scene->setAction(&scene->_sequenceManager1, scene, 852, &R2_GLOBALS._player, this, &scene->_object1, NULL);
+		return true;
+	}		
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene850::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(850);
+
+	_liftDoor.postInit();
+	_liftDoor.setup(850, 2, 1);
+	_liftDoor.setPosition(Common::Point(188, 79));
+	_liftDoor.setDetails(850, 3, -1, -1, 1, NULL);
+
+	_sickBayDoor.postInit();
+	_sickBayDoor.setup(850, 3, 1);
+	_sickBayDoor.setPosition(Common::Point(62, 84));
+	_sickBayDoor.setDetails(850, 9, -1, -1, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(R2_CLAMP) == 850) {
+		_clamp.postInit();
+		_clamp.setup(850, 5, 1);
+		_clamp.setPosition(Common::Point(242, 93));
+		_clamp.fixPriority(81);
+		_clamp.animate(ANIM_MODE_2, NULL);
+		_clamp.setDetails(850, 27, -1, -1, 1, NULL);
+	}
+
+	_panel.postInit();
+	_panel.setVisage(850);
+
+	if (R2_GLOBALS.getFlag(7))
+		_panel.setFrame(7);
+
+	_panel.setPosition(Common::Point(232, 119));
+	_panel.fixPriority(82);
+	_panel.setDetails(850, 24, -1, -1, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 850) {
+		_fibre.postInit();
+		_fibre.setup(850, 6, 1);
+		_fibre.setPosition(Common::Point(280, 87));
+	}
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	_eastDoor.setDetails(Rect(289, 53, 315, 125), 850, 6, -1, 8, 1, NULL);
+	_indicator.setDetails(Rect(275, 67, 286, 79), 850, 18, -1, 20, 1, NULL);
+	_sickBayIndicator.setDetails(Rect(41, 51, 48, 61), 850, 15, -1, -1, 1, NULL);
+	_liftControls.setDetails(Rect(156, 32, 166, 44), 850, 21, -1, -1, 1, NULL);
+	_compartment.setDetails(Rect(4, 88, 153, 167), 850, 12, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 850, 0, -1, -1, 1, NULL);
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 250:
+		_sceneMode = 203;
+		setAction(&_sequenceManager1, this, 203, &R2_GLOBALS._player, &_liftDoor, NULL);
+		break;
+	case 800:
+		_sceneMode = 205;
+		setAction(&_sequenceManager1, this, 205, &R2_GLOBALS._player, &_sickBayDoor, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.setPosition(Common::Point(215, 115));
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene850::signal() {
+	switch (_sceneMode) {
+	case 202:
+		R2_GLOBALS._sceneManager.changeScene(250);
+		break;
+	case 204:
+		R2_GLOBALS._sceneManager.changeScene(800);
+		break;
+	case 850:
+		R2_INVENTORY.setObjectScene(R2_CLAMP, 1);
+		_clamp.remove();
+		_object1.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 851:
+		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBRE, 1);
+		_fibre.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 852:
+		R2_GLOBALS.setFlag(7);
+		R2_GLOBALS._player.enableControl();
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
 		break;
 	}
 }

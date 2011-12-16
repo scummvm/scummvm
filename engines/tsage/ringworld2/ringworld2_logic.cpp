@@ -77,7 +77,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 700:
 	case 800:
 	case 825:
+		error("Missing scene %d from group 0", sceneNumber);
 	case 850:
+		// Deck #5 - By Lift
+		return new Scene850();
 	case 900:
 		error("Missing scene %d from group 0", sceneNumber);
 	/* Scene group #1 */
@@ -607,8 +610,8 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_11, 400);
 	setObjectScene(R2_12, 500);
 	setObjectScene(R2_13, 1550);
-	setObjectScene(R2_14, 850);
-	setObjectScene(R2_15, 850);
+	setObjectScene(R2_OPTICAL_FIBRE, 850);
+	setObjectScene(R2_CLAMP, 850);
 	setObjectScene(R2_16, 0);
 	setObjectScene(R2_17, 1550);
 	setObjectScene(R2_18, 1550);
