@@ -44,13 +44,13 @@ namespace Pegasus {
 class DisplayElement : public IDObject {
 friend class GraphicsManager;
 public:
-	DisplayElement(const tDisplayElementID);
+	DisplayElement(const DisplayElementID);
 	virtual ~DisplayElement();
 	
-	void setDisplayOrder(const tDisplayOrder);
-	tDisplayOrder getDisplayOrder() const { return _elementOrder; }
+	void setDisplayOrder(const DisplayOrder);
+	DisplayOrder getDisplayOrder() const { return _elementOrder; }
 	
-	bool validToDraw(tDisplayOrder, tDisplayOrder);
+	bool validToDraw(DisplayOrder, DisplayOrder);
 	
 	virtual void draw(const Common::Rect&) {}
 	bool isDisplaying() { return _elementIsDisplaying; }
@@ -65,15 +65,15 @@ public:
 	void triggerRedraw();
 	void setTriggeredElement(DisplayElement *);
 	
-	virtual void setBounds(const tCoordType, const tCoordType, const tCoordType, const tCoordType);
-	virtual void setBounds(const Common::Rect&);
-	virtual void getBounds(Common::Rect&) const;
-	virtual void sizeElement(const tCoordType, const tCoordType);
-	virtual void moveElementTo(const tCoordType, const tCoordType);
-	virtual void moveElement(const tCoordType, const tCoordType);
-	virtual void getLocation(tCoordType&, tCoordType&) const;
-	virtual void getCenter(tCoordType&, tCoordType&) const;
-	virtual void centerElementAt(const tCoordType, const tCoordType);
+	virtual void setBounds(const CoordType, const CoordType, const CoordType, const CoordType);
+	virtual void setBounds(const Common::Rect &);
+	virtual void getBounds(Common::Rect &) const;
+	virtual void sizeElement(const CoordType, const CoordType);
+	virtual void moveElementTo(const CoordType, const CoordType);
+	virtual void moveElement(const CoordType, const CoordType);
+	virtual void getLocation(CoordType &, CoordType &) const;
+	virtual void getCenter(CoordType &, CoordType &) const;
+	virtual void centerElementAt(const CoordType, const CoordType);
 
 protected:
 	Common::Rect _bounds;
@@ -82,7 +82,7 @@ protected:
 
 	// Used only by PegasusEngine
 	bool _elementIsDisplaying;
-	tDisplayOrder _elementOrder;
+	DisplayOrder _elementOrder;
 	DisplayElement *_nextElement;
 };
 
@@ -90,7 +90,7 @@ protected:
 // QuickDraw "hilite" :P (deal with it!)
 class DropHighlight : public DisplayElement {
 public:
-	DropHighlight(const tDisplayElementID);
+	DropHighlight(const DisplayElementID);
 	virtual ~DropHighlight() {}
 
 	void setHighlightColor(const uint32 &highlight) { _highlightColor = highlight; }
@@ -112,12 +112,12 @@ protected:
 
 class Animation : public DisplayElement, public DynamicElement {
 public:
-	Animation(const tDisplayElementID id) : DisplayElement(id) {}
+	Animation(const DisplayElementID id) : DisplayElement(id) {}
 };
 
 class IdlerAnimation : public Animation, public Idler {
 public:
-	IdlerAnimation(const tDisplayElementID);
+	IdlerAnimation(const DisplayElementID);
 	
 	virtual void startDisplaying();
 	virtual void stopDisplaying();
@@ -138,7 +138,7 @@ protected:
 
 class FrameSequence : public IdlerAnimation {
 public:
-	FrameSequence(const tDisplayElementID);
+	FrameSequence(const DisplayElementID);
 	virtual ~FrameSequence();
 
 	void useFileName(const Common::String &fileName);
@@ -169,11 +169,11 @@ class SpriteFrame;
 class Sprite : public DisplayElement {
 friend class SpriteFrame;
 public:
-	Sprite(const tDisplayElementID);
+	Sprite(const DisplayElementID);
 	virtual ~Sprite();
 
-	virtual void addPICTResourceFrame(const tResIDType, const bool, const tCoordType, const tCoordType);
-	virtual uint32 addFrame(SpriteFrame *, const tCoordType, const tCoordType);
+	virtual void addPICTResourceFrame(const ResIDType, const bool, const CoordType, const CoordType);
+	virtual uint32 addFrame(SpriteFrame *, const CoordType, const CoordType);
 	virtual void removeFrame(const uint32);
 	virtual void discardFrames();
 	
@@ -193,8 +193,8 @@ public:
 protected:
 	struct SpriteFrameRec {
 		SpriteFrame *frame;
-		tCoordType frameLeft;
-		tCoordType frameTop;
+		CoordType frameLeft;
+		CoordType frameTop;
 	};
 
 	uint32 _numFrames;
@@ -205,7 +205,7 @@ protected:
 
 class SpriteSequence : public FrameSequence {
 public:
-	SpriteSequence(const tDisplayElementID id, const tDisplayElementID spriteID);
+	SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID);
 	virtual ~SpriteSequence() {}
 
 	void useTransparent(bool transparent) { _transparent = transparent; }
@@ -234,7 +234,7 @@ public:
 
 class SoundLevel : public DisplayElement {
 public:
-	SoundLevel(const tDisplayElementID);
+	SoundLevel(const DisplayElementID);
 	virtual ~SoundLevel() {}
 	
 	void incrementLevel();

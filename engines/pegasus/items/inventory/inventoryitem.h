@@ -39,12 +39,12 @@ struct JMPInventoryInfo {
 
 class InventoryItem : public Item {
 public:
-	InventoryItem(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	InventoryItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~InventoryItem();
 	
-	virtual tItemType getItemType();
+	virtual ItemType getItemType();
 	
-	void getPanelTimes(TimeValue&, TimeValue&) const;
+	void getPanelTimes(TimeValue &, TimeValue &) const;
 	TimeValue getLeftAreaTime() const;
 	
 	void setAnimationTime(const TimeValue);

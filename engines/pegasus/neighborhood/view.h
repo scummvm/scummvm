@@ -51,13 +51,13 @@ public:
 		Entry() { time = 0xffffffff; }
 		bool isEmpty() { return time == 0xffffffff; }
 
-		tRoomID	room;
-		tDirectionConstant direction;
-		tAlternateID altCode;
+		RoomID	room;
+		DirectionConstant direction;
+		AlternateID altCode;
 		TimeValue time;
 	};
 
-	Entry findEntry(tRoomID room, tDirectionConstant direction, tAlternateID altCode);
+	Entry findEntry(RoomID room, DirectionConstant direction, AlternateID altCode);
 
 private:
 	Common::Array<Entry> _entries;

@@ -38,7 +38,7 @@
 
 namespace Pegasus {
 
-Item::Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) : IDObject(id) {
+Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) : IDObject(id) {
 	_itemNeighborhood = neighborhood;
 	_itemRoom = room;
 	_itemDirection = direction;
@@ -147,11 +147,11 @@ void Item::readFromStream(Common::ReadStream *stream) {
 	_itemState = stream->readUint16BE();
 }
 
-tActorID Item::getItemOwner() const {
+ActorID Item::getItemOwner() const {
 	return _itemOwnerID;
 }
 
-void Item::setItemOwner(const tActorID owner) {
+void Item::setItemOwner(const ActorID owner) {
 	_itemOwnerID = owner;
 
 	if (owner == kNoActorID) {
@@ -163,15 +163,15 @@ void Item::setItemOwner(const tActorID owner) {
 	}
 }
 
-tWeightType Item::getItemWeight() {
+WeightType Item::getItemWeight() {
 	return _itemWeight;
 }
 
-tItemState Item::getItemState() const {
+ItemState Item::getItemState() const {
 	return _itemState;
 }
 
-void Item::setItemState(const tItemState state) {
+void Item::setItemState(const ItemState state) {
 	if (state != _itemState) {
 		_itemState = state;
 
@@ -182,13 +182,13 @@ void Item::setItemState(const tItemState state) {
 	}
 }
 
-void Item::getItemRoom(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) const {
+void Item::getItemRoom(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) const {
 	neighborhood = _itemNeighborhood;
 	room = _itemRoom;
 	direction = _itemDirection;
 }
 
-void Item::setItemRoom(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
+void Item::setItemRoom(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
 	_itemNeighborhood = neighborhood;
 	_itemRoom = room;
 	_itemDirection = direction;
@@ -199,7 +199,7 @@ void Item::setItemRoom(const tNeighborhoodID neighborhood, const tRoomID room, c
 		dropped();
 }
 
-tNeighborhoodID Item::getItemNeighborhood() const {
+NeighborhoodID Item::getItemNeighborhood() const {
 	return _itemNeighborhood;
 }
 
@@ -208,7 +208,7 @@ TimeValue Item::getSharedAreaTime() const {
 		return 0xffffffff;
 
 	TimeValue time;
-	tItemState state;
+	ItemState state;
 
 	findItemStateEntryByState(_sharedAreaInfo, _itemState, time);
 	if (time == 0xffffffff)
@@ -241,7 +241,7 @@ void Item::deselect() {
 	}
 }
 
-void Item::getItemStateEntry(ItemStateInfo info, uint32 index, tItemState &state, TimeValue &time) {	
+void Item::getItemStateEntry(ItemStateInfo info, uint32 index, ItemState &state, TimeValue &time) {	
 	if (index < info.numEntries) {
 		state = info.entries[index].itemState;
 		time = info.entries[index].itemTime;
@@ -251,7 +251,7 @@ void Item::getItemStateEntry(ItemStateInfo info, uint32 index, tItemState &state
 	}
 }
 
-void Item::findItemStateEntryByState(ItemStateInfo info, tItemState state, TimeValue &time) {
+void Item::findItemStateEntryByState(ItemStateInfo info, ItemState state, TimeValue &time) {
 	for (uint16 i = 0; i < info.numEntries; i++) {
 		if (info.entries[i].itemState == state) {
 			time = info.entries[i].itemTime;
@@ -275,7 +275,7 @@ ItemStateInfo Item::readItemState(Common::SeekableReadStream *stream) {
 	return info;
 }
 
-Sprite *Item::getDragSprite(const tDisplayElementID id) const {
+Sprite *Item::getDragSprite(const DisplayElementID id) const {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	Sprite *result = new Sprite(id);
 	SpriteFrame *frame = new SpriteFrame();

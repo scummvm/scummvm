@@ -53,12 +53,12 @@ void ItemList::readFromStream(Common::ReadStream *stream) {
 	uint32 itemCount = stream->readUint32BE();
 
 	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
+		ItemID itemID = stream->readUint16BE();
 		g_allItems.findItemByID(itemID)->readFromStream(stream);
 	}
 }
 
-Item *ItemList::findItemByID(const tItemID id) {
+Item *ItemList::findItemByID(const ItemID id) {
 	for (ItemIterator it = begin(); it != end(); it++)
 		if ((*it)->getObjectID() == id)
 			return *it;

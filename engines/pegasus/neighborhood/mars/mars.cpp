@@ -42,13 +42,13 @@ namespace Pegasus {
 // Probably no one will know the difference.
 const int16 kMarsShieldPanelOffsetAngle = 22;
 
-const tCanMoveForwardReason kCantMoveRobotBlocking = kCantMoveLastReason + 1;
+const CanMoveForwardReason kCantMoveRobotBlocking = kCantMoveLastReason + 1;
 
-const tNotificationFlags kTimeForCanyonChaseFlag = kLastNeighborhoodNotificationFlag << 1;
-const tNotificationFlags kExplosionFinishedFlag = kTimeForCanyonChaseFlag << 1;
-const tNotificationFlags kTimeToTransportFlag = kExplosionFinishedFlag << 1;
+const NotificationFlags kTimeForCanyonChaseFlag = kLastNeighborhoodNotificationFlag << 1;
+const NotificationFlags kExplosionFinishedFlag = kTimeForCanyonChaseFlag << 1;
+const NotificationFlags kTimeToTransportFlag = kExplosionFinishedFlag << 1;
 
-const tNotificationFlags kMarsNotificationFlags = kTimeForCanyonChaseFlag |
+const NotificationFlags kMarsNotificationFlags = kTimeForCanyonChaseFlag |
 													kExplosionFinishedFlag |
 													kTimeToTransportFlag;
 
@@ -264,7 +264,7 @@ uint16 Mars::getDateResID() const {
 	return kDate2185ID;
 }
 
-TimeValue Mars::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue Mars::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry extra;
 	SpotTable::Entry spotEntry;
 	uint32 extraID = 0xffffffff;
@@ -342,7 +342,7 @@ TimeValue Mars::getViewTime(const tRoomID room, const tDirectionConstant directi
 	return extra.movieEnd - 1;
 }
 
-void Mars::getZoomEntry(const tHotSpotID spotID, ZoomTable::Entry &entry) {
+void Mars::getZoomEntry(const HotSpotID spotID, ZoomTable::Entry &entry) {
 	Neighborhood::getZoomEntry(spotID, entry);
 
 	uint32 extraID = 0xffffffff;
@@ -366,7 +366,7 @@ void Mars::getZoomEntry(const tHotSpotID spotID, ZoomTable::Entry &entry) {
 	}
 }
 
-void Mars::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &entry) {
+void Mars::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
 
 	if ((flags & (kSpotOnArrivalMask | kSpotOnTurnMask)) != 0) {
@@ -387,8 +387,8 @@ void Mars::findSpotEntry(const tRoomID room, const tDirectionConstant direction,
 	}
 }
 
-tCanMoveForwardReason Mars::canMoveForward(ExitTable::Entry &entry) {
-	tCanMoveForwardReason reason = Neighborhood::canMoveForward(entry);
+CanMoveForwardReason Mars::canMoveForward(ExitTable::Entry &entry) {
+	CanMoveForwardReason reason = Neighborhood::canMoveForward(entry);
 
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kMars48, kEast):
@@ -404,7 +404,7 @@ tCanMoveForwardReason Mars::canMoveForward(ExitTable::Entry &entry) {
 	return reason;
 }
 
-void Mars::cantMoveThatWay(tCanMoveForwardReason reason) {
+void Mars::cantMoveThatWay(CanMoveForwardReason reason) {
 	if (reason == kCantMoveRobotBlocking) {
 		startExtraSequence(kMars48RobotKillsPlayer, kExtraCompletedFlag, kFilterNoInput);
 		loadLoopSound2("");
@@ -425,7 +425,7 @@ void Mars::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
-tCanOpenDoorReason Mars::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason Mars::canOpenDoor(DoorTable::Entry &entry) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kMars05, kEast):
 	case MakeRoomView(kMars06, kEast):
@@ -468,7 +468,7 @@ tCanOpenDoorReason Mars::canOpenDoor(DoorTable::Entry &entry) {
 	return Neighborhood::canOpenDoor(entry);
 }
 
-void Mars::cantOpenDoor(tCanOpenDoorReason reason) {
+void Mars::cantOpenDoor(CanOpenDoorReason reason) {
 	switch (GameState.getCurrentRoom()) {
 	case kMars05:
 	case kMars06:
@@ -611,7 +611,7 @@ void Mars::setUpReactorEnergyDrain() {
 	}
 }
 
-void Mars::closeDoorOffScreen(const tRoomID room, const tDirectionConstant direction) {
+void Mars::closeDoorOffScreen(const RoomID room, const DirectionConstant direction) {
 	switch (room) {
 	case kMars51:
 		playSpotSoundSync(kMarsGantryDoorCloseIn, kMarsGantryDoorCloseOut);
@@ -727,7 +727,7 @@ void Mars::checkAirlockDoors() {
 	}
 }
 
-int16 Mars::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 Mars::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	int16 angle = Neighborhood::getStaticCompassAngle(room, dir);
 
 	switch (MakeRoomView(room, dir)) {
@@ -895,7 +895,7 @@ void Mars::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &co
 }
 
 void Mars::loadAmbientLoops() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 
 	if ((room >= kMars0A && room <= kMars21) || (room >= kMars41 && room <= kMars43)) {
 		if (GameState.getMarsSeenTimeStream())
@@ -1044,7 +1044,7 @@ void Mars::loadAmbientLoops() {
 	}
 }
 
-void Mars::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void Mars::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kMars02, kSouth):
 	case MakeRoomView(kMars19, kEast):
@@ -1143,7 +1143,7 @@ void Mars::timerExpired(const uint32 eventType) {
 	}
 }
 
-void Mars::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kMars18, kNorth):
 		if (GameState.getMarsPodAtUpperPlatform())
@@ -1462,7 +1462,7 @@ void Mars::shieldOff() {
 	setUpReactorEnergyDrain();
 }
 
-void Mars::turnTo(const tDirectionConstant direction) {
+void Mars::turnTo(const DirectionConstant direction) {
 	switch (MakeRoomView(GameState.getCurrentRoom(), direction)) {
 	case MakeRoomView(kMars27, kNorth):
 	case MakeRoomView(kMars27, kSouth):
@@ -1788,8 +1788,8 @@ void Mars::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	}
 }
 
-tInputBits Mars::getInputFilter() {
-	tInputBits result = Neighborhood::getInputFilter();
+InputBits Mars::getInputFilter() {
+	InputBits result = Neighborhood::getInputFilter();
 
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kMars49, kSouth):
@@ -1830,7 +1830,7 @@ tInputBits Mars::getInputFilter() {
 // the inventory is too full or because the player lets go of the item before
 // dropping it into the inventory).
 Hotspot *Mars::getItemScreenSpot(Item *item, DisplayElement *element) {
-	tHotSpotID destSpotID;
+	HotSpotID destSpotID;
 
 	switch (item->getObjectID()) {
 	case kCardBomb:
@@ -2095,7 +2095,7 @@ void Mars::turnRight() {
 	}
 }
 
-void Mars::receiveNotification(Notification *notification, const tNotificationFlags flag) {
+void Mars::receiveNotification(Notification *notification, const NotificationFlags flag) {
 	InventoryItem *item;
 	
 	Neighborhood::receiveNotification(notification, flag);
@@ -3062,7 +3062,7 @@ const int kRobotTooStrong = 1;
 const int kTractorTooWeak = 2;
 const int kCapturedRobotShip = 3;
 
-void Mars::spaceChaseClick(const Input &input, const tHotSpotID id) {
+void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 	Common::Point pt;
 
 	switch (id) {
@@ -3217,7 +3217,7 @@ void Mars::spaceChaseClick(const Input &input, const tHotSpotID id) {
 	}
 }
 
-void Mars::showBigExplosion(const Common::Rect &r, const tDisplayOrder order) {
+void Mars::showBigExplosion(const Common::Rect &r, const DisplayOrder order) {
 	if (_explosions.isMovieValid()) {
 		_explosions.setDisplayOrder(order);
 
@@ -3239,7 +3239,7 @@ void Mars::showBigExplosion(const Common::Rect &r, const tDisplayOrder order) {
 	}
 }
 
-void Mars::showLittleExplosion(const Common::Rect &r, const tDisplayOrder order) {	
+void Mars::showLittleExplosion(const Common::Rect &r, const DisplayOrder order) {	
 	if (_explosions.isMovieValid()) {
 		_explosions.setDisplayOrder(order);
 
@@ -3331,7 +3331,7 @@ void Mars::updateCursor(const Common::Point cursorLocation, const Hotspot *curso
 	}
 }
 
-tAirQuality Mars::getAirQuality(const tRoomID room) {
+AirQuality Mars::getAirQuality(const RoomID room) {
 	if ((room >= kMars36 && room <= kMars39) || (room >= kMarsMaze004 && room <= kMarsMaze200))
 		return kAirQualityVacuum;
 	if (room == kMars35 && !GameState.getMarsAirlockOpen())
@@ -3553,7 +3553,7 @@ Common::String Mars::getEnvScanMovie() {
 	Common::String movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
-		tRoomID room = GameState.getCurrentRoom();
+		RoomID room = GameState.getCurrentRoom();
 
 		if (room >= kMars0A && room <= kMars21)
 			return "Images/AI/Mars/XME1";
@@ -3624,7 +3624,7 @@ uint Mars::getNumHints() {
 			break;
 		case MakeRoomView(kMars56, kEast):
 			if (getCurrentActivation() == kActivateReactorReadyForNitrogen) {
-				if ((tExtraID)_lastExtra == kMars57LowerScreenClosed)
+				if ((ExtraID)_lastExtra == kMars57LowerScreenClosed)
 					numHints = 3;
 			} else if (getCurrentActivation() == kActivateReactorPlatformOut) {
 				if (!GameState.getShieldOn()) {

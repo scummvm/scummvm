@@ -151,15 +151,15 @@ public:
 	AILocationCondition(uint32);
 	virtual ~AILocationCondition();
 
-	void addLocation(tRoomViewID);
+	void addLocation(RoomViewID);
 	virtual bool fireCondition();
 
-	virtual void					writeAICondition(Common::WriteStream *);
-	virtual void					readAICondition(Common::ReadStream *);
+	virtual void writeAICondition(Common::WriteStream *);
+	virtual void readAICondition(Common::ReadStream *);
 
 protected:
 	uint32 _numLocations, _maxLocations;
-	tRoomViewID *_locations;
+	RoomViewID *_locations;
 };
 
 /////////////////////////////////////////////
@@ -168,13 +168,13 @@ protected:
 
 class AIDoorOpenedCondition : public AICondition {
 public:
-	AIDoorOpenedCondition(tRoomViewID);
+	AIDoorOpenedCondition(RoomViewID);
 	virtual ~AIDoorOpenedCondition() {}
 
 	virtual bool fireCondition();
 
 protected:
-	tRoomViewID _doorLocation;
+	RoomViewID _doorLocation;
 };
 
 /////////////////////////////////////////////
@@ -183,12 +183,12 @@ protected:
 
 class AIHasItemCondition : public AICondition {
 public:
-	AIHasItemCondition(const tItemID);
+	AIHasItemCondition(const ItemID);
 
 	virtual bool fireCondition();
 
 protected:
-	tItemID _item;
+	ItemID _item;
 };
 
 /////////////////////////////////////////////
@@ -197,12 +197,12 @@ protected:
 
 class AIDoesntHaveItemCondition : public AICondition {
 public:
-	AIDoesntHaveItemCondition(const tItemID);
+	AIDoesntHaveItemCondition(const ItemID);
 
 	virtual bool fireCondition();
 
 protected:
-	tItemID _item;
+	ItemID _item;
 };
 
 /////////////////////////////////////////////
@@ -211,12 +211,12 @@ protected:
 
 class AICurrentItemCondition : public AICondition {
 public:
-	AICurrentItemCondition(const tItemID);
+	AICurrentItemCondition(const ItemID);
 
 	virtual bool fireCondition();
 
 protected:
-	tItemID _item;
+	ItemID _item;
 };
 
 /////////////////////////////////////////////
@@ -225,12 +225,12 @@ protected:
 
 class AICurrentBiochipCondition : public AICondition {
 public:
-	AICurrentBiochipCondition(const tItemID);
+	AICurrentBiochipCondition(const ItemID);
 
 	virtual bool fireCondition();
 
 protected:
-	tItemID _biochip;
+	ItemID _biochip;
 };
 
 /////////////////////////////////////////////
@@ -239,13 +239,13 @@ protected:
 
 class AIItemStateCondition : public AICondition {
 public:
-	AIItemStateCondition(const tItemID, const tItemState);
+	AIItemStateCondition(const ItemID, const ItemState);
 
 	virtual bool fireCondition();
 
 protected:
-	tItemID _item;
-	tItemState _state;
+	ItemID _item;
+	ItemState _state;
 };
 
 /////////////////////////////////////////////
@@ -268,19 +268,19 @@ protected:
 
 class AILastExtraCondition : public AICondition {
 public:
-	AILastExtraCondition(const tExtraID);
+	AILastExtraCondition(const ExtraID);
 
 	virtual bool fireCondition();
 
 protected:
-	tExtraID _lastExtra;
+	ExtraID _lastExtra;
 };
 
 /////////////////////////////////////////////
 //
 //	Helper functions
 
-AICondition *makeLocationAndDoesntHaveItemCondition(const tRoomID room, const tDirectionConstant direction, const tItemID item);
+AICondition *makeLocationAndDoesntHaveItemCondition(const RoomID room, const DirectionConstant direction, const ItemID item);
 
 } // End of namespace Pegasus
 

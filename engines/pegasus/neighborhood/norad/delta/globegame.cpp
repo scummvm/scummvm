@@ -197,28 +197,27 @@ void GlobeTracker::stopGlobeMovie() {
 }
 
 //	Globe game PICTs:
+static const ResIDType kGlobeCircleLeftPICTID = 300;
+static const ResIDType kGlobeCircleRightPICTID = 301;
+static const ResIDType kGlobeCircleUpPICTID = 302;
+static const ResIDType kGlobeCircleDownPICTID = 303;
+static const ResIDType kTargetUpperLeftPICTID = 304;
+static const ResIDType kTargetUpperRightPICTID = 305;
+static const ResIDType kTargetLowerLeftPICTID = 306;
+static const ResIDType kTargetLowerRightPICTID = 307;
+static const ResIDType kMotionHiliteLeftPICTID = 308;
+static const ResIDType kMotionHiliteRightPICTID = 309;
+static const ResIDType kMotionHiliteUpPICTID = 310;
+static const ResIDType kMotionHiliteDownPICTID = 311;
 
-static const tResIDType kGlobeCircleLeftPICTID = 300;
-static const tResIDType kGlobeCircleRightPICTID = 301;
-static const tResIDType kGlobeCircleUpPICTID = 302;
-static const tResIDType kGlobeCircleDownPICTID = 303;
-static const tResIDType kTargetUpperLeftPICTID = 304;
-static const tResIDType kTargetUpperRightPICTID = 305;
-static const tResIDType kTargetLowerLeftPICTID = 306;
-static const tResIDType kTargetLowerRightPICTID = 307;
-static const tResIDType kMotionHiliteLeftPICTID = 308;
-static const tResIDType kMotionHiliteRightPICTID = 309;
-static const tResIDType kMotionHiliteUpPICTID = 310;
-static const tResIDType kMotionHiliteDownPICTID = 311;
-
-const tResIDType kGlobeCountdownDigitsID = 350;
+static const ResIDType kGlobeCountdownDigitsID = 350;
 
 static const int kGlobeCountdownWidth = 28;
 static const int kGlobeCountdownHeight = 12;
 static const int kGlobeCountdownOffset1 = 12;
 static const int kGlobeCountdownOffset2 = 20;
 
-GlobeCountdown::GlobeCountdown(const tDisplayElementID id) : IdlerAnimation(id) {	
+GlobeCountdown::GlobeCountdown(const DisplayElementID id) : IdlerAnimation(id) {	
 	_digits.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCountdownDigitsID);
 
 	Common::Rect r;
@@ -228,7 +227,7 @@ GlobeCountdown::GlobeCountdown(const tDisplayElementID id) : IdlerAnimation(id) 
 	sizeElement(kGlobeCountdownWidth, kGlobeCountdownHeight);
 }
 
-void GlobeCountdown::setDisplayOrder(const tDisplayOrder order) {
+void GlobeCountdown::setDisplayOrder(const DisplayOrder order) {
 	IdlerAnimation::setDisplayOrder(order);
 }
 
@@ -240,7 +239,7 @@ void GlobeCountdown::hide() {
 	IdlerAnimation::hide();
 }
 
-void GlobeCountdown::moveElementTo(const tCoordType x, const tCoordType y) {
+void GlobeCountdown::moveElementTo(const CoordType x, const CoordType y) {
 	IdlerAnimation::moveElementTo(x, y);
 }
 
@@ -379,11 +378,11 @@ static const TimeValue kGlobeMovieStartTime = 2 * 2 * kNumLongSlices * 600 / 15;
 
 static const TimeValue kTimePerGlobeFrame = 40;
 
-static const tNotificationFlags kGlobeSplash1Finished = 1;
-static const tNotificationFlags kGlobeTimerExpired = kGlobeSplash1Finished << 1;
-static const tNotificationFlags kMaxDeactivatedFinished = kGlobeTimerExpired << 1;
+static const NotificationFlags kGlobeSplash1Finished = 1;
+static const NotificationFlags kGlobeTimerExpired = kGlobeSplash1Finished << 1;
+static const NotificationFlags kMaxDeactivatedFinished = kGlobeTimerExpired << 1;
 
-static const tNotificationFlags kGlobeNotificationFlags = kGlobeSplash1Finished |
+static const NotificationFlags kGlobeNotificationFlags = kGlobeSplash1Finished |
 													kGlobeTimerExpired |
 													kMaxDeactivatedFinished;
 
@@ -422,7 +421,6 @@ enum {
 };
 
 // TODO: Use ScummVM equivalent
-
 static const float kPI = 3.1415926535f;
 
 float degreesToRadians(float angle) {
@@ -433,7 +431,7 @@ float radiansToDegrees(float angle) {
 	return (angle * 180) / kPI;
 }
 
-GlobeGame::GlobeGame(Neighborhood* handler) : GameInteraction(kNoradGlobeGameInteractionID, handler),
+GlobeGame::GlobeGame(Neighborhood *handler) : GameInteraction(kNoradGlobeGameInteractionID, handler),
 		_monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID), _upperNamesMovie(kGlobeUpperNamesID),
 		_lowerNamesMovie(kGlobeLowerNamesID), _globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine),
 		_globeCircleLeft(kGlobeCircleLeftID), _globeCircleRight(kGlobeCircleRightID),
@@ -614,7 +612,7 @@ void GlobeGame::closeInteraction() {
 	_neighborhoodNotification->cancelNotification(this);
 }
 
-void GlobeGame::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void GlobeGame::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	TimeScale scale = _monitorMovie.getScale();
 
 	if (notification == _neighborhoodNotification) {

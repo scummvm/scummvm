@@ -50,7 +50,7 @@ protected:
 	void handleInput(const Input &, const Hotspot *);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void setSpritesMovie();
 	void makeIslandChoice();
 	void makeRockChoice();
@@ -61,7 +61,7 @@ protected:
 	void makeAcousticChoice();
 	
 	void useIdleTime();
-	void loopExtra(const tExtraID);
+	void loopExtra(const ExtraID);
 	
 	Movie _4DSpritesMovie;
 	TimeScale _4DSpritesScale;
@@ -70,7 +70,7 @@ protected:
 	uint _audioChoice;
 	Notification *_neighborhoodNotification;
 	TimeValue _loopStart;
-	tHotSpotID _clickedHotspotID;
+	HotSpotID _clickedHotspotID;
 };
 
 } // End of namespace Pegasus

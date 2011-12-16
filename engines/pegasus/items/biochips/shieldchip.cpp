@@ -31,7 +31,7 @@ namespace Pegasus {
 
 ShieldChip *g_shield = 0;
 
-ShieldChip::ShieldChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+ShieldChip::ShieldChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction) {
 	g_shield = this;
 }

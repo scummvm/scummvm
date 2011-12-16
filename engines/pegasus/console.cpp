@@ -79,9 +79,9 @@ bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
 		return true;
 	}
 
-	tNeighborhoodID neighborhood = (tNeighborhoodID)atoi(argv[1]);
-	tRoomID room = (tRoomID)atoi(argv[2]);
-	tDirectionConstant direction = (tDirectionConstant)atoi(argv[3]);
+	NeighborhoodID neighborhood = (NeighborhoodID)atoi(argv[1]);
+	RoomID room = (RoomID)atoi(argv[2]);
+	DirectionConstant direction = (DirectionConstant)atoi(argv[3]);
 
 	if ((neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) &&
 			neighborhood != kNoradSubChaseID) {

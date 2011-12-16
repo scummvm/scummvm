@@ -55,7 +55,7 @@ struct JMPItemInfo {
 //	state of an inventory item.
 
 struct ItemStateEntry {
-	tItemState itemState;
+	ItemState itemState;
 	TimeValue itemTime;
 };
 
@@ -100,158 +100,158 @@ const uint16 kItemBaseResID = 128;
 
 //	Item IDs.
 
-const tItemID kAirMask = 7;
-const tItemID kAntidote = 8;
-const tItemID kArgonCanister = 9;
-const tItemID kCardBomb = 10;
-const tItemID kCrowbar = 11;
-const tItemID kGasCanister = 12;
-const tItemID kHistoricalLog = 13;
-const tItemID kJourneymanKey = 14;
-const tItemID kKeyCard = 15;
-const tItemID kMachineGun = 16;
-const tItemID kMarsCard = 17;
-const tItemID kNitrogenCanister = 18;
-const tItemID kOrangeJuiceGlassFull = 19;
-const tItemID kOrangeJuiceGlassEmpty = 20;
-const tItemID kPoisonDart = 21;
-const tItemID kSinclairKey = 22;
-const tItemID kStunGun = 23;
-const tItemID kArgonPickup = 24;
+const ItemID kAirMask = 7;
+const ItemID kAntidote = 8;
+const ItemID kArgonCanister = 9;
+const ItemID kCardBomb = 10;
+const ItemID kCrowbar = 11;
+const ItemID kGasCanister = 12;
+const ItemID kHistoricalLog = 13;
+const ItemID kJourneymanKey = 14;
+const ItemID kKeyCard = 15;
+const ItemID kMachineGun = 16;
+const ItemID kMarsCard = 17;
+const ItemID kNitrogenCanister = 18;
+const ItemID kOrangeJuiceGlassFull = 19;
+const ItemID kOrangeJuiceGlassEmpty = 20;
+const ItemID kPoisonDart = 21;
+const ItemID kSinclairKey = 22;
+const ItemID kStunGun = 23;
+const ItemID kArgonPickup = 24;
 
 //	Biochips.
 
-const tItemID kAIBiochip = 0;
-const tItemID kInterfaceBiochip = 1;
-const tItemID kMapBiochip = 2;
-const tItemID kOpticalBiochip = 3;
-const tItemID kPegasusBiochip = 4;
-const tItemID kRetinalScanBiochip = 5;
-const tItemID kShieldBiochip = 6;
+const ItemID kAIBiochip = 0;
+const ItemID kInterfaceBiochip = 1;
+const ItemID kMapBiochip = 2;
+const ItemID kOpticalBiochip = 3;
+const ItemID kPegasusBiochip = 4;
+const ItemID kRetinalScanBiochip = 5;
+const ItemID kShieldBiochip = 6;
 
-const tItemID kNumItems = 25;
+const ItemID kNumItems = 25;
 
 //	Item States.
 
-const tItemState kAI000 = 0;
-const tItemState kAI005 = 1;
-const tItemState kAI006 = 2;
-const tItemState kAI010 = 3;
-const tItemState kAI015 = 4;
-const tItemState kAI016 = 5;
-const tItemState kAI020 = 6;
-const tItemState kAI024 = 7;
-const tItemState kAI100 = 8;
-const tItemState kAI101 = 9;
-const tItemState kAI105 = 10;
-const tItemState kAI106 = 11;
-const tItemState kAI110 = 12;
-const tItemState kAI111 = 13;
-const tItemState kAI115 = 14;
-const tItemState kAI116 = 15;
-const tItemState kAI120 = 16;
-const tItemState kAI121 = 17;
-const tItemState kAI124 = 18;
-const tItemState kAI125 = 19;
-const tItemState kAI126 = 20;
-const tItemState kAI200 = 21;
-const tItemState kAI201 = 22;
-const tItemState kAI202 = 23;
-const tItemState kAI205 = 24;
-const tItemState kAI206 = 25;
-const tItemState kAI210 = 26;
-const tItemState kAI211 = 27;
-const tItemState kAI212 = 28;
-const tItemState kAI215 = 29;
-const tItemState kAI216 = 30;
-const tItemState kAI220 = 31;
-const tItemState kAI221 = 32;
-const tItemState kAI222 = 33;
-const tItemState kAI224 = 34;
-const tItemState kAI225 = 35;
-const tItemState kAI226 = 36;
-const tItemState kAI300 = 37;
-const tItemState kAI301 = 38;
-const tItemState kAI302 = 39;
-const tItemState kAI303 = 40;
-const tItemState kAI305 = 41;
-const tItemState kAI306 = 42;
-const tItemState kAI310 = 43;
-const tItemState kAI311 = 44;
-const tItemState kAI312 = 45;
-const tItemState kAI313 = 46;
-const tItemState kAI315 = 47;
-const tItemState kAI316 = 48;
-const tItemState kAI320 = 49;
-const tItemState kAI321 = 50;
-const tItemState kAI322 = 51;
-const tItemState kAI323 = 52;
-const tItemState kAI324 = 53;
-const tItemState kAI325 = 54;
-const tItemState kAI326 = 55;
-const tItemState kNormalItem = 56;
-const tItemState kMapUnavailable = 57;
-const tItemState kMapEngaged = 58;
-const tItemState kOptical000 = 59;
-const tItemState kOptical001 = 60;
-const tItemState kOptical002 = 61;
-const tItemState kOptical010 = 62;
-const tItemState kOptical011 = 63;
-const tItemState kOptical012 = 64;
-const tItemState kOptical020 = 65;
-const tItemState kOptical021 = 66;
-const tItemState kOptical100 = 67;
-const tItemState kOptical101 = 68;
-const tItemState kOptical102 = 69;
-const tItemState kOptical110 = 70;
-const tItemState kOptical111 = 71;
-const tItemState kOptical112 = 72;
-const tItemState kOptical120 = 73;
-const tItemState kOptical121 = 74;
-const tItemState kOptical200 = 75;
-const tItemState kOptical201 = 76;
-const tItemState kOptical210 = 77;
-const tItemState kOptical211 = 78;
-const tItemState kPegasusTSA00 = 79;
-const tItemState kPegasusTSA10 = 80;
-const tItemState kPegasusPrehistoric00 = 81;
-const tItemState kPegasusPrehistoric01 = 82;
-const tItemState kPegasusPrehistoric10 = 83;
-const tItemState kPegasusPrehistoric11 = 84;
-const tItemState kPegasusMars00 = 85;
-const tItemState kPegasusMars01 = 86;
-const tItemState kPegasusMars10 = 87;
-const tItemState kPegasusMars11 = 88;
-const tItemState kPegasusNorad00 = 89;
-const tItemState kPegasusNorad01 = 90;
-const tItemState kPegasusNorad10 = 91;
-const tItemState kPegasusNorad11 = 92;
-const tItemState kPegasusWSC00 = 93;
-const tItemState kPegasusWSC01 = 94;
-const tItemState kPegasusWSC10 = 95;
-const tItemState kPegasusWSC11 = 96;
-const tItemState kPegasusCaldoria = 97;
-const tItemState kRetinalSimulating = 98;
-const tItemState kShieldNormal = 99;
-const tItemState kShieldRadiation = 100;
-const tItemState kShieldPlasma = 101;
-const tItemState kShieldCardBomb = 102;
-const tItemState kShieldDraining = 103;
-const tItemState kAirMaskEmptyOff = 104;
-const tItemState kAirMaskEmptyFilter = 105;
-const tItemState kAirMaskLowOff = 106;
-const tItemState kAirMaskLowFilter = 107;
-const tItemState kAirMaskLowOn = 108;
-const tItemState kAirMaskFullOff = 109;
-const tItemState kAirMaskFullFilter = 110;
-const tItemState kAirMaskFullOn = 111;
-const tItemState kArgonEmpty = 112;
-const tItemState kArgonFull = 113;
-const tItemState kFlashlightOff = 114;
-const tItemState kFlashlightOn = 115;
-const tItemState kNitrogenEmpty = 116;
-const tItemState kNitrogenFull = 117;
-const tItemState kFullGlass = 118;
+const ItemState kAI000 = 0;
+const ItemState kAI005 = 1;
+const ItemState kAI006 = 2;
+const ItemState kAI010 = 3;
+const ItemState kAI015 = 4;
+const ItemState kAI016 = 5;
+const ItemState kAI020 = 6;
+const ItemState kAI024 = 7;
+const ItemState kAI100 = 8;
+const ItemState kAI101 = 9;
+const ItemState kAI105 = 10;
+const ItemState kAI106 = 11;
+const ItemState kAI110 = 12;
+const ItemState kAI111 = 13;
+const ItemState kAI115 = 14;
+const ItemState kAI116 = 15;
+const ItemState kAI120 = 16;
+const ItemState kAI121 = 17;
+const ItemState kAI124 = 18;
+const ItemState kAI125 = 19;
+const ItemState kAI126 = 20;
+const ItemState kAI200 = 21;
+const ItemState kAI201 = 22;
+const ItemState kAI202 = 23;
+const ItemState kAI205 = 24;
+const ItemState kAI206 = 25;
+const ItemState kAI210 = 26;
+const ItemState kAI211 = 27;
+const ItemState kAI212 = 28;
+const ItemState kAI215 = 29;
+const ItemState kAI216 = 30;
+const ItemState kAI220 = 31;
+const ItemState kAI221 = 32;
+const ItemState kAI222 = 33;
+const ItemState kAI224 = 34;
+const ItemState kAI225 = 35;
+const ItemState kAI226 = 36;
+const ItemState kAI300 = 37;
+const ItemState kAI301 = 38;
+const ItemState kAI302 = 39;
+const ItemState kAI303 = 40;
+const ItemState kAI305 = 41;
+const ItemState kAI306 = 42;
+const ItemState kAI310 = 43;
+const ItemState kAI311 = 44;
+const ItemState kAI312 = 45;
+const ItemState kAI313 = 46;
+const ItemState kAI315 = 47;
+const ItemState kAI316 = 48;
+const ItemState kAI320 = 49;
+const ItemState kAI321 = 50;
+const ItemState kAI322 = 51;
+const ItemState kAI323 = 52;
+const ItemState kAI324 = 53;
+const ItemState kAI325 = 54;
+const ItemState kAI326 = 55;
+const ItemState kNormalItem = 56;
+const ItemState kMapUnavailable = 57;
+const ItemState kMapEngaged = 58;
+const ItemState kOptical000 = 59;
+const ItemState kOptical001 = 60;
+const ItemState kOptical002 = 61;
+const ItemState kOptical010 = 62;
+const ItemState kOptical011 = 63;
+const ItemState kOptical012 = 64;
+const ItemState kOptical020 = 65;
+const ItemState kOptical021 = 66;
+const ItemState kOptical100 = 67;
+const ItemState kOptical101 = 68;
+const ItemState kOptical102 = 69;
+const ItemState kOptical110 = 70;
+const ItemState kOptical111 = 71;
+const ItemState kOptical112 = 72;
+const ItemState kOptical120 = 73;
+const ItemState kOptical121 = 74;
+const ItemState kOptical200 = 75;
+const ItemState kOptical201 = 76;
+const ItemState kOptical210 = 77;
+const ItemState kOptical211 = 78;
+const ItemState kPegasusTSA00 = 79;
+const ItemState kPegasusTSA10 = 80;
+const ItemState kPegasusPrehistoric00 = 81;
+const ItemState kPegasusPrehistoric01 = 82;
+const ItemState kPegasusPrehistoric10 = 83;
+const ItemState kPegasusPrehistoric11 = 84;
+const ItemState kPegasusMars00 = 85;
+const ItemState kPegasusMars01 = 86;
+const ItemState kPegasusMars10 = 87;
+const ItemState kPegasusMars11 = 88;
+const ItemState kPegasusNorad00 = 89;
+const ItemState kPegasusNorad01 = 90;
+const ItemState kPegasusNorad10 = 91;
+const ItemState kPegasusNorad11 = 92;
+const ItemState kPegasusWSC00 = 93;
+const ItemState kPegasusWSC01 = 94;
+const ItemState kPegasusWSC10 = 95;
+const ItemState kPegasusWSC11 = 96;
+const ItemState kPegasusCaldoria = 97;
+const ItemState kRetinalSimulating = 98;
+const ItemState kShieldNormal = 99;
+const ItemState kShieldRadiation = 100;
+const ItemState kShieldPlasma = 101;
+const ItemState kShieldCardBomb = 102;
+const ItemState kShieldDraining = 103;
+const ItemState kAirMaskEmptyOff = 104;
+const ItemState kAirMaskEmptyFilter = 105;
+const ItemState kAirMaskLowOff = 106;
+const ItemState kAirMaskLowFilter = 107;
+const ItemState kAirMaskLowOn = 108;
+const ItemState kAirMaskFullOff = 109;
+const ItemState kAirMaskFullFilter = 110;
+const ItemState kAirMaskFullOn = 111;
+const ItemState kArgonEmpty = 112;
+const ItemState kArgonFull = 113;
+const ItemState kFlashlightOff = 114;
+const ItemState kFlashlightOn = 115;
+const ItemState kNitrogenEmpty = 116;
+const ItemState kNitrogenFull = 117;
+const ItemState kFullGlass = 118;
 
 //	Extra IDs.
 
@@ -269,7 +269,7 @@ const uint32 kRemoveGlass = 10;
 const uint32 kRemoveDart = 11;
 const uint32 kRemoveSinclairKey = 12;
 
-enum tItemType {
+enum ItemType {
 	kInventoryItemType,
 	kBiochipItemType
 };
@@ -289,7 +289,7 @@ class Sprite;
 
 class Item : public IDObject {
 public:
-	Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 	virtual ~Item();
 	
 	// WriteToStream writes everything EXCEPT the item's ID.
@@ -297,25 +297,25 @@ public:
 	virtual void writeToStream(Common::WriteStream *stream);
 	virtual void readFromStream(Common::ReadStream *stream);
 	
-	virtual tActorID getItemOwner() const;
-	virtual void setItemOwner(const tActorID owner);
+	virtual ActorID getItemOwner() const;
+	virtual void setItemOwner(const ActorID owner);
 	
-	void getItemRoom(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) const;
-	void setItemRoom(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
-	tNeighborhoodID getItemNeighborhood() const;
+	void getItemRoom(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) const;
+	void setItemRoom(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
+	NeighborhoodID getItemNeighborhood() const;
 	
-	virtual tWeightType getItemWeight();
+	virtual WeightType getItemWeight();
 	
-	virtual void setItemState(const tItemState state);
-	virtual tItemState getItemState() const;
+	virtual void setItemState(const ItemState state);
+	virtual ItemState getItemState() const;
 
-	virtual tItemType getItemType() = 0;
+	virtual ItemType getItemType() = 0;
 	
 	TimeValue getInfoLeftTime() const;
 	void getInfoRightTimes(TimeValue &, TimeValue &) const;
 	TimeValue getSharedAreaTime() const;
 
-	Sprite *getDragSprite(const tDisplayElementID) const;
+	Sprite *getDragSprite(const DisplayElementID) const;
 	
 	/*
 		select		--	called when this item becomes current. Also called when the inventory
@@ -344,12 +344,12 @@ public:
 	void findItemExtra(const uint32 extraID, ItemExtraEntry &entry);
 
 protected:
-	tNeighborhoodID _itemNeighborhood;
-	tRoomID	_itemRoom;
-	tDirectionConstant _itemDirection;
-	tActorID _itemOwnerID;
-	tWeightType _itemWeight;
-	tItemState _itemState;
+	NeighborhoodID _itemNeighborhood;
+	RoomID	_itemRoom;
+	DirectionConstant _itemDirection;
+	ActorID _itemOwnerID;
+	WeightType _itemWeight;
+	ItemState _itemState;
 
 	JMPItemInfo _itemInfo;
 	ItemStateInfo _sharedAreaInfo;
@@ -357,8 +357,8 @@ protected:
 	bool _isActive;
 	bool _isSelected;
 
-	static void getItemStateEntry(ItemStateInfo, uint32, tItemState&, TimeValue&);
-	static void findItemStateEntryByState(ItemStateInfo, tItemState, TimeValue&);
+	static void getItemStateEntry(ItemStateInfo, uint32, ItemState &, TimeValue &);
+	static void findItemStateEntryByState(ItemStateInfo, ItemState, TimeValue &);
 	static ItemStateInfo readItemState(Common::SeekableReadStream *stream);
 };
 

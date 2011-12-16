@@ -109,7 +109,7 @@ void CaldoriaMirror::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void CaldoriaMirror::receiveNotification(Notification *, const tNotificationFlags) {
+void CaldoriaMirror::receiveNotification(Notification *, const NotificationFlags) {
 	switch (_owner->getLastExtra()) {
 	case kCaBathroomRetrothrash:
 	case kCaBathroomGeoWave:

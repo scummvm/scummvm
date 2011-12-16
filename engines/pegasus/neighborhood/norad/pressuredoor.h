@@ -37,12 +37,12 @@ const short kNormalSubRoomPressure = 2;
 
 class PressureDoor : public GameInteraction, public NotificationReceiver {
 public:
-	PressureDoor(Neighborhood *, bool isUpperDoor, const tHotSpotID, const tHotSpotID,
-			const tHotSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut,
+	PressureDoor(Neighborhood *, bool isUpperDoor, const HotSpotID, const HotSpotID,
+			const HotSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut,
 			TimeValue equalizeSoundIn, TimeValue equalizeSoundOut);
 	virtual ~PressureDoor() {}
 
-	void incrementPressure(const tHotSpotID);
+	void incrementPressure(const HotSpotID);
 	void stopChangingPressure();
 
 	void playAgainstRobot();
@@ -58,7 +58,7 @@ protected:
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	Movie _levelsMovie;
 	TimeScale _levelsScale;
@@ -70,9 +70,9 @@ protected:
 	NotificationCallBack _pressureCallBack;
 	Notification *_neighborhoodNotification;
 	int _gameState;
-	tHotSpotID _upHotspotID;
-	tHotSpotID _downHotspotID;
-	tHotSpotID _outHotspotID;
+	HotSpotID _upHotspotID;
+	HotSpotID _downHotspotID;
+	HotSpotID _outHotspotID;
 	PressureTracker _doorTracker;
 	TimeValue _pressureSoundIn;
 	TimeValue _pressureSoundOut;

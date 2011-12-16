@@ -199,7 +199,7 @@ void NoradDelta::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSp
 	}
 }
 
-GameInteraction *NoradDelta::makeInteraction(const tInteractionID interactionID) {
+GameInteraction *NoradDelta::makeInteraction(const InteractionID interactionID) {
 	if (interactionID == kNoradGlobeGameInteractionID)
 		return new GlobeGame(this);
 
@@ -210,14 +210,14 @@ void NoradDelta::playClawMonitorIntro() {
 	playSpotSoundSync(kLoadClawIntroIn, kLoadClawIntroOut);
 }
 
-void NoradDelta::getExitEntry(const tRoomID room, const tDirectionConstant direction, ExitTable::Entry &entry) {
+void NoradDelta::getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry) {
 	Norad::getExitEntry(room, direction, entry);
 
 	if (room == kNorad61 && direction == kSouth)
 		entry.movieStart += kNoradDeltaFrameDuration;
 }
 
-void NoradDelta::getZoomEntry(const tHotSpotID id, ZoomTable::Entry &zoomEntry) {
+void NoradDelta::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 	Norad::getZoomEntry(id, zoomEntry);
 
 	if (id == kNorad59WestSpotID && GameState.getNoradPlayedGlobeGame()) {
@@ -263,7 +263,7 @@ void NoradDelta::loadAmbientLoops() {
 */
 	
 	if (GameState.getNoradArrivedFromSub()) {
-		tRoomID room = GameState.getCurrentRoom();
+		RoomID room = GameState.getCurrentRoom();
 
 		if (room == kNorad79West) {
 			if (_privateFlags.getFlag(kNoradPrivateFinishedGlobeGameFlag))
@@ -304,7 +304,7 @@ void NoradDelta::loadAmbientLoops() {
 	}
 }
 
-void NoradDelta::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void NoradDelta::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kNorad41, kEast):
 	case MakeRoomView(kNorad49, kEast):
@@ -317,7 +317,7 @@ void NoradDelta::checkContinuePoint(const tRoomID room, const tDirectionConstant
 	}
 }
 
-void NoradDelta::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void NoradDelta::arriveAt(const RoomID room, const DirectionConstant direction) {
 	if (room != kNorad68)
 		GameState.setNoradRetScanGood(false);
 
@@ -411,7 +411,7 @@ void NoradDelta::succeedRetinalScan() {
 	GameState.setScoringUsedRetinalChip(true);
 }
 
-void NoradDelta::getDoorEntry(const tRoomID room, const tDirectionConstant direction, DoorTable::Entry &entry) {
+void NoradDelta::getDoorEntry(const RoomID room, const DirectionConstant direction, DoorTable::Entry &entry) {
 	Norad::getDoorEntry(room, direction, entry);
 
 	if (room == kNorad68 && direction == kWest && !GameState.getNoradRetScanGood())
@@ -430,9 +430,9 @@ bool NoradDelta::playingAgainstRobot() {
 	return GameState.getNoradPlayedGlobeGame();
 }
 
-void NoradDelta::getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID, tHotSpotID &clawControlSpotID, tHotSpotID &pinchClawSpotID,
-		tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID, tHotSpotID &moveClawLeftSpotID, tHotSpotID &moveClawUpSpotID,
-		tHotSpotID &clawCCWSpotID, tHotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
+void NoradDelta::getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
+		HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
+		HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
 	outSpotID = kNorad60MonitorOutSpotID;
 	prepSpotID = kNorad60LaunchPrepSpotID;
 	clawControlSpotID = kNorad60ClawControlSpotID;
@@ -462,7 +462,7 @@ void NoradDelta::playerBeatRobotWithClaw() {
 	g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN59WD", false, kWarningInterruption);
 }
 
-TimeValue NoradDelta::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue NoradDelta::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry entry;
 	
 	if (room == kNorad41 && direction == kSouth && !GameState.getNoradArrivedFromSub()) {
@@ -582,7 +582,7 @@ void NoradDelta::clickInHotspot(const Input &input, const Hotspot *clickedSpot) 
 	}
 }
 
-void NoradDelta::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
+void NoradDelta::receiveNotification(Notification *notification, const NotificationFlags flags) {	
 	Norad::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {
@@ -702,7 +702,7 @@ void NoradDelta::dropItemIntoRoom(Item *item, Hotspot *hotspot) {
 }
 
 Hotspot *NoradDelta::getItemScreenSpot(Item *item, DisplayElement *element) {
-	tHotSpotID id = kNoHotSpotID;
+	HotSpotID id = kNoHotSpotID;
 	
 	switch (item->getObjectID()) {
 	case kShieldBiochip:
@@ -814,7 +814,7 @@ Common::String NoradDelta::getHintMovie(uint hintNum) {
 	return movieName;
 }
 
-void NoradDelta::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
+void NoradDelta::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	switch (room) {
 	case kNorad47:
 	case kNorad48:

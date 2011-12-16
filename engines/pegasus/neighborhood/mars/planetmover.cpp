@@ -36,7 +36,7 @@ const TimeScale kRovingScale = kTractorBeamScale;
 const TimeValue kRovingTime = kTenSeconds * kRovingScale;
 const TimeValue kRovingSlop = kTwoSeconds * kRovingScale;
 
-const tCoordType kMaxVelocity = 20;
+const CoordType kMaxVelocity = 20;
 
 PlanetMover::PlanetMover() {
 	setScale(kRovingScale);
@@ -59,8 +59,8 @@ void PlanetMover::stopMoving() {
 
 void PlanetMover::dropPlanetOutOfSight() {	
 	stop();
-	tCoordType currentLoc = hermite(_p1, _p4, _r1, _r4, _lastTime, _duration);
-	tCoordType currentV = dHermite(_p1, _p4, _r1, _r4, _lastTime, _duration);
+	CoordType currentLoc = hermite(_p1, _p4, _r1, _r4, _lastTime, _duration);
+	CoordType currentV = dHermite(_p1, _p4, _r1, _r4, _lastTime, _duration);
 	_p1 = currentLoc;
 	_r1 = currentV;
 	_p4 = kPlanetStartTop;

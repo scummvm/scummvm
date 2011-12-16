@@ -30,7 +30,7 @@ namespace Pegasus {
 
 OpticalChip *g_opticalChip = 0;
 
-OpticalChip::OpticalChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+OpticalChip::OpticalChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _ariesHotspot(kAriesSpotID), _mercuryHotspot(kMercurySpotID),
 		_poseidonHotspot(kPoseidonSpotID) {
 	_ariesHotspot.setArea(Common::Rect(kAIMiddleAreaLeft + 60, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 60 + 121, kAIMiddleAreaTop + 27 + 20));
@@ -118,11 +118,11 @@ void OpticalChip::activateOpticalHotspots() {
 		_poseidonHotspot.setActive();
 }
 
-void OpticalChip::clickInOpticalHotspot(tHotSpotID id) {
+void OpticalChip::clickInOpticalHotspot(HotSpotID id) {
 	playOpMemMovie(id);
 }
 
-void OpticalChip::playOpMemMovie(tHotSpotID id) {
+void OpticalChip::playOpMemMovie(HotSpotID id) {
 	Common::String movieName;
 	switch (id) {
 	case kAriesSpotID:
@@ -136,7 +136,7 @@ void OpticalChip::playOpMemMovie(tHotSpotID id) {
 		break;
 	}
 
-	tItemState state = getItemState(), newState;
+	ItemState state = getItemState(), newState;
 	switch (state) {
 	case kOptical000:
 		// Can never happen.

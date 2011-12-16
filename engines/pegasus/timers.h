@@ -201,14 +201,14 @@ public:
 	
 	void setNotification(Notification *notifier) { _notifier = notifier; }
 
-	void setCallBackFlag(const tNotificationFlags flag) { _callBackFlag = flag; }
-	tNotificationFlags getCallBackFlag() const { return _callBackFlag; }
+	void setCallBackFlag(const NotificationFlags flag) { _callBackFlag = flag; }
+	NotificationFlags getCallBackFlag() const { return _callBackFlag; }
 	
 protected:
 	void callBack();
 	
 	Notification *_notifier;
-	tNotificationFlags _callBackFlag;
+	NotificationFlags _callBackFlag;
 };
 
 class DynamicElement : public TimeBase {
@@ -234,7 +234,7 @@ public:
 	bool isFusePaused() { return _fuseTimer.isPaused(); }
 
 protected:
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 	virtual void invokeAction() {}
 
 	TimeBase _fuseTimer;

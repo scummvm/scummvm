@@ -40,18 +40,18 @@ const TimeValue kRovingSlop = kThreeSeconds * kRovingScale;
 const int kNumSpriteColumns = 15;
 const int kNumSpriteRows = 16;
 
-const tCoordType kInitialLocationLeft = kShuttleWindowLeft - 50;
-const tCoordType kInitialLocationTop = kShuttleWindowTop - 50;
-const tCoordType kInitialLocationWidth = kShuttleWindowWidth + 100;
-const tCoordType kInitialLocationHeight = kShuttleWindowHeight + 100;
+const CoordType kInitialLocationLeft = kShuttleWindowLeft - 50;
+const CoordType kInitialLocationTop = kShuttleWindowTop - 50;
+const CoordType kInitialLocationWidth = kShuttleWindowWidth + 100;
+const CoordType kInitialLocationHeight = kShuttleWindowHeight + 100;
 
-const tCoordType kVelocityVectorLength = 100;
-const tCoordType kVelocityVectorSlop = 50;
+const CoordType kVelocityVectorLength = 100;
+const CoordType kVelocityVectorSlop = 50;
 
-const tCoordType kRovingLeft = kShuttleWindowLeft + 20;
-const tCoordType kRovingTop = kShuttleWindowTop + 20;
-const tCoordType kRovingWidth = kShuttleWindowMidH - kRovingLeft;
-const tCoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
+const CoordType kRovingLeft = kShuttleWindowLeft + 20;
+const CoordType kRovingTop = kShuttleWindowTop + 20;
+const CoordType kRovingWidth = kShuttleWindowMidH - kRovingLeft;
+const CoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
 
 RobotShip* g_robotShip = 0;
 
@@ -129,7 +129,7 @@ void RobotShip::setUpNextDropTime() {
 
 void RobotShip::timeToDropJunk() {	
 	if (g_spaceJunk) {
-		tCoordType x, y;
+		CoordType x, y;
 		_spritesMovie.getCenter(x, y);
 		g_spaceJunk->launchJunk(((PegasusEngine *)g_engine)->getRandomNumber(24), x, y);
 	}
@@ -169,7 +169,7 @@ void RobotShip::newDestination() {
 	start();
 }
 
-void RobotShip::moveRobotTo(tCoordType x, tCoordType y) {
+void RobotShip::moveRobotTo(CoordType x, CoordType y) {
 	_currentLocation.x = x;
 	_currentLocation.y = y;
 
@@ -258,8 +258,8 @@ void RobotShip::timeChanged(const TimeValue) {
 	}
 }
 
-void RobotShip::makeVelocityVector(tCoordType x1, tCoordType y1, tCoordType x2, tCoordType y2, Common::Point &vector) {	
-	tCoordType length = ((PegasusEngine *)g_engine)->getRandomNumber(kVelocityVectorSlop - 1) + kVelocityVectorLength;
+void RobotShip::makeVelocityVector(CoordType x1, CoordType y1, CoordType x2, CoordType y2, Common::Point &vector) {	
+	CoordType length = ((PegasusEngine *)g_engine)->getRandomNumber(kVelocityVectorSlop - 1) + kVelocityVectorLength;
 	vector.x = x2 - x1;
 	vector.y = y2 - y1;
 	float oldLength = sqrt(vector.x * vector.x + vector.y * vector.y);

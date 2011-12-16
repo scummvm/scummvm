@@ -51,14 +51,14 @@ public:
 	void addDisplayElement(DisplayElement *element);
 	void removeDisplayElement(DisplayElement *element);
 	void invalRect(const Common::Rect &rect);
-	tDisplayOrder getBackOfActiveLayer() const { return _backLayer; }
-	tDisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
+	DisplayOrder getBackOfActiveLayer() const { return _backLayer; }
+	DisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
 	void updateDisplay();
 	Graphics::Surface *getCurSurface() { return _curSurface; }
 	void setCurSurface(Graphics::Surface *surface) { _curSurface = surface; }
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
-	DisplayElement *findDisplayElement(const tDisplayElementID id);
+	DisplayElement *findDisplayElement(const DisplayElementID id);
 	void shakeTheWorld(TimeValue time, TimeScale scale);
 	void enableErase();
 	void disableErase();
@@ -75,7 +75,7 @@ private:
 
 	bool _modifiedScreen, _erase;
 	Common::Rect _dirtyRect;
-	tDisplayOrder _backLayer, _frontLayer;
+	DisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
 	Graphics::Surface _workArea, *_curSurface;
 

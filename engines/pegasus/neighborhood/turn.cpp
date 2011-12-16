@@ -52,7 +52,7 @@ void TurnTable::clear() {
 	_entries.clear();
 }
 
-TurnTable::Entry TurnTable::findEntry(tRoomID room, tDirectionConstant direction, tTurnDirection turnDirection, tAlternateID altCode) {
+TurnTable::Entry TurnTable::findEntry(RoomID room, DirectionConstant direction, TurnDirection turnDirection, AlternateID altCode) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].room == room && _entries[i].direction == direction && _entries[i].turnDirection == turnDirection && _entries[i].altCode == altCode)
 			return _entries[i];

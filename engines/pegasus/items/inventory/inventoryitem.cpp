@@ -31,7 +31,7 @@
 
 namespace Pegasus {
 
-InventoryItem::InventoryItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
@@ -61,7 +61,7 @@ InventoryItem::~InventoryItem() {
 	delete[] _leftAreaInfo.entries;
 }
 
-tItemType InventoryItem::getItemType() {
+ItemType InventoryItem::getItemType() {
 	return kInventoryItemType;
 }
 
@@ -70,7 +70,7 @@ TimeValue InventoryItem::getLeftAreaTime() const {
 		return 0xffffffff;
 
 	TimeValue time;
-	tItemState state;
+	ItemState state;
 
 	findItemStateEntryByState(_leftAreaInfo, _itemState, time);
 	if (time == 0xffffffff)

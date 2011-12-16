@@ -370,7 +370,7 @@ void NotificationCallBack::callBack() {
 		_notifier->setNotificationFlags(_callBackFlag, _callBackFlag);
 }
 
-static const tNotificationFlags kFuseExpiredFlag = 1;
+static const NotificationFlags kFuseExpiredFlag = 1;
 
 Fuse::Fuse() : _fuseNotification(0, (NotificationManager *)((PegasusEngine *)g_engine)) {
 	_fuseNotification.notifyMe(this, kFuseExpiredFlag, kFuseExpiredFlag);
@@ -412,7 +412,7 @@ TimeValue Fuse::getTimeRemaining() {
 	return _fuseTimer.getStop() - _fuseTimer.getTime();
 }
 
-void Fuse::receiveNotification(Notification *, const tNotificationFlags) {
+void Fuse::receiveNotification(Notification *, const NotificationFlags) {
 	stopFuse();
 	invokeAction();
 }

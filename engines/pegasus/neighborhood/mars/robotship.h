@@ -30,8 +30,8 @@
 
 namespace Pegasus {
 
-const tCoordType kShuttleMovieWidth = 114;
-const tCoordType kShuttleMovieHeight = 42;
+const CoordType kShuttleMovieWidth = 114;
+const CoordType kShuttleMovieHeight = 42;
 
 class RobotShip : IdlerTimeBase {
 friend void timeToDropJunkFunction(FunctionPtr *, void *);
@@ -65,10 +65,10 @@ public:
 
 protected:
 	void newDestination();
-	void moveRobotTo(tCoordType, tCoordType);
+	void moveRobotTo(CoordType, CoordType);
 	void timeToDropJunk();
 	virtual void timeChanged(const TimeValue);
-	void makeVelocityVector(tCoordType, tCoordType, tCoordType, tCoordType, Common::Point &);
+	void makeVelocityVector(CoordType, CoordType, CoordType, CoordType, Common::Point &);
 
 	GlowingMovie _spritesMovie;
 	Common::Rect _shipRange;

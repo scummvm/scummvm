@@ -51,12 +51,12 @@ public:
 		Entry() { movieStart = 0xffffffff; }
 		bool isEmpty() { return movieStart == 0xffffffff; }
 
-		tExtraID extra;
+		ExtraID extra;
 		TimeValue movieStart;
 		TimeValue movieEnd;
 	};
 
-	Entry findEntry(tExtraID extra);
+	Entry findEntry(ExtraID extra);
 
 private:
 	Common::Array<Entry> _entries;

@@ -37,14 +37,14 @@
 
 namespace Pegasus {
 
-const tNotificationFlags kDoneWithPressureDoorNotification = 1;
+const NotificationFlags kDoneWithPressureDoorNotification = 1;
 
-const tNotificationFlags kNoradNotificationFlags = kDoneWithPressureDoorNotification;
+const NotificationFlags kNoradNotificationFlags = kDoneWithPressureDoorNotification;
 
 // This class handles everything that Norad Alpha and Delta have in common, such as
 // oxygen mask usage, the elevator and the pressure doors.
 
-Norad::Norad(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) :
+Norad::Norad(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id) :
 		Neighborhood(nextHandler, vm, resName, id), _noradNotification(kNoradNotificationID, vm) {
 	_elevatorUpSpotID = kNoHotSpotID;
 	_elevatorDownSpotID = kNoHotSpotID;
@@ -81,36 +81,36 @@ Norad::Norad(InputHandler *nextHandler, PegasusEngine *vm, const Common::String 
 	_noradNotification.notifyMe(this, kNoradNotificationFlags, kNoradNotificationFlags);
 }
 
-GameInteraction *Norad::makeInteraction(const tInteractionID interactionID) {
+GameInteraction *Norad::makeInteraction(const InteractionID interactionID) {
 	PressureDoor *pressureDoor;
 	SubControlRoom *subControl;
 
 	switch (interactionID) {
-		case kNoradElevatorInteractionID:
-			return new NoradElevator(this, _elevatorUpRoomID, _elevatorDownRoomID, _elevatorUpSpotID, _elevatorDownSpotID);
-		case kNoradPressureDoorInteractionID:
-			if (GameState.getCurrentRoom() == _upperPressureDoorRoom)
-				pressureDoor = new PressureDoor(this, true, _upperPressureDoorUpSpotID, _upperPressureDoorDownSpotID,
-						_upperPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
-			else
-				pressureDoor = new PressureDoor(this, false, _lowerPressureDoorUpSpotID, _lowerPressureDoorDownSpotID,
-						_lowerPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
+	case kNoradElevatorInteractionID:
+		return new NoradElevator(this, _elevatorUpRoomID, _elevatorDownRoomID, _elevatorUpSpotID, _elevatorDownSpotID);
+	case kNoradPressureDoorInteractionID:
+		if (GameState.getCurrentRoom() == _upperPressureDoorRoom)
+			pressureDoor = new PressureDoor(this, true, _upperPressureDoorUpSpotID, _upperPressureDoorDownSpotID,
+					_upperPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
+		else
+			pressureDoor = new PressureDoor(this, false, _lowerPressureDoorUpSpotID, _lowerPressureDoorDownSpotID,
+					_lowerPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
 
-			if (GameState.getCurrentRoom() == kNorad59West && playingAgainstRobot())
-				pressureDoor->playAgainstRobot();
+		if (GameState.getCurrentRoom() == kNorad59West && playingAgainstRobot())
+			pressureDoor->playAgainstRobot();
 
-			return pressureDoor;
-		case kNoradSubControlRoomInteractionID:
-			subControl = new SubControlRoom(this);
+		return pressureDoor;
+	case kNoradSubControlRoomInteractionID:
+		subControl = new SubControlRoom(this);
 
-			if (GameState.getCurrentRoom() == kNorad60West && playingAgainstRobot())
-				subControl->playAgainstRobot();
+		if (GameState.getCurrentRoom() == kNorad60West && playingAgainstRobot())
+			subControl->playAgainstRobot();
 
-			return subControl;
-		case kNoradSubPlatformInteractionID:
-			return new SubPlatform(this);
-		default:
-			return 0;
+		return subControl;
+	case kNoradSubPlatformInteractionID:
+		return new SubPlatform(this);
+	default:
+		return 0;
 	}
 }
 
@@ -126,14 +126,14 @@ void Norad::start() {
 void Norad::activateHotspots() {	
 	Neighborhood::activateHotspots();
 
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 	if (room == _elevatorUpRoomID)
 		_neighborhoodHotspots.activateOneHotspot(_elevatorDownSpotID);
 	else if (room == _elevatorDownRoomID)
 		_neighborhoodHotspots.activateOneHotspot(_elevatorUpSpotID);
 }
 
-void Norad::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void Norad::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Neighborhood::arriveAt(room, direction);
 
 	if (GameState.getCurrentRoom() == _elevatorUpRoomID || GameState.getCurrentRoom() == _elevatorDownRoomID)
@@ -176,7 +176,7 @@ void Norad::arriveAtSubControlRoom() {
 	newInteraction(kNoradSubControlRoomInteractionID);
 }
 
-int16 Norad::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 Norad::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	int16 result = Neighborhood::getStaticCompassAngle(room, dir);
 
 	if (room == _elevatorUpRoomID || room == _elevatorDownRoomID)
@@ -189,7 +189,7 @@ int16 Norad::getStaticCompassAngle(const tRoomID room, const tDirectionConstant 
 	return result;
 }
 
-tCanOpenDoorReason Norad::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason Norad::canOpenDoor(DoorTable::Entry &entry) {
 	if (((GameState.getCurrentRoom() == _subRoomEntryRoom1 && GameState.getCurrentDirection() == _subRoomEntryDir1) ||
 			(GameState.getCurrentRoom() == _subRoomEntryRoom2 && GameState.getCurrentDirection() == _subRoomEntryDir2)) &&
 			GameState.getNoradSubRoomPressure() != kNormalSubRoomPressure)
@@ -198,7 +198,7 @@ tCanOpenDoorReason Norad::canOpenDoor(DoorTable::Entry &entry) {
 	return Neighborhood::canOpenDoor(entry);
 }
 
-void Norad::cantOpenDoor(tCanOpenDoorReason reason) {
+void Norad::cantOpenDoor(CanOpenDoorReason reason) {
 	if (reason == kCantOpenBadPressure)
 		playSpotSoundSync(_pressureSoundIn, _pressureSoundOut);
 	else
@@ -251,7 +251,7 @@ void Norad::checkAirMask() {
 	loadAmbientLoops();
 }
 
-void Norad::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
+void Norad::receiveNotification(Notification *notification, const NotificationFlags flags) {	
 	if (notification == &_neighborhoodNotification && (flags & kAirTimerExpiredFlag) != 0)
 		((PegasusEngine *)g_engine)->die(kDeathGassedInNorad);
 

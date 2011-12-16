@@ -54,7 +54,7 @@ void HotspotInfoTable::clear() {
 	_entries.clear();
 }
 
-HotspotInfoTable::Entry HotspotInfoTable::findEntry(tHotSpotID hotspot) {
+HotspotInfoTable::Entry HotspotInfoTable::findEntry(HotSpotID hotspot) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].hotspot == hotspot)
 			return _entries[i];

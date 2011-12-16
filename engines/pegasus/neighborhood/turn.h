@@ -51,14 +51,14 @@ public:
 		Entry() { endDirection = kNoDirection; }
 		bool isEmpty() { return endDirection == kNoDirection; }
 
-		tRoomID room;
-		tDirectionConstant direction;
-		tTurnDirection turnDirection;
-		tAlternateID altCode;
-		tDirectionConstant endDirection;
+		RoomID room;
+		DirectionConstant direction;
+		TurnDirection turnDirection;
+		AlternateID altCode;
+		DirectionConstant endDirection;
 	};
 
-	Entry findEntry(tRoomID room, tDirectionConstant direction, tTurnDirection turnDirection, tAlternateID altCode);
+	Entry findEntry(RoomID room, DirectionConstant direction, TurnDirection turnDirection, AlternateID altCode);
 
 private:
 	Common::Array<Entry> _entries;

@@ -31,7 +31,7 @@
 
 namespace Pegasus {
 
-InventoryPicture::InventoryPicture(const tDisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
+InventoryPicture::InventoryPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
 		InputHandler(nextHandler), Picture(id), _panelMovie(kNoDisplayElement){
 	_inventory = inventory;
 	_lastReferenceCount = 0xffffffff;
@@ -71,7 +71,7 @@ void InventoryPicture::throwAwayInventoryImage() {
 	}
 }
 
-void InventoryPicture::getItemXY(uint32 index, tCoordType &x, tCoordType &y) {
+void InventoryPicture::getItemXY(uint32 index, CoordType &x, CoordType &y) {
 	x = (index % _itemsPerRow) * _itemWidth + _itemX;
 	y = (index / _itemsPerRow) * _itemHeight + _itemY;
 }
@@ -130,14 +130,14 @@ void InventoryPicture::setCurrentItemIndex(int32 index) {
 	}
 }
 
-void InventoryPicture::setCurrentItemID(tItemID id) {
+void InventoryPicture::setCurrentItemID(ItemID id) {
 	int32 index = _inventory->findIndexOf(id);
 	if (index >= 0)
 		setCurrentItemIndex(index);
 }
 
-tInventoryResult InventoryPicture::addInventoryItem(Item *item) {
-	tInventoryResult result = _inventory->addItem(item);
+InventoryResult InventoryPicture::addInventoryItem(Item *item) {
+	InventoryResult result = _inventory->addItem(item);
 
 	if (result == kInventoryOK)
 		setCurrentItemIndex(_inventory->findIndexOf(item));
@@ -145,8 +145,8 @@ tInventoryResult InventoryPicture::addInventoryItem(Item *item) {
 	return result;
 }
 
-tInventoryResult InventoryPicture::removeInventoryItem(Item *item) {	
-	tInventoryResult result = _inventory->removeItem(item);
+InventoryResult InventoryPicture::removeInventoryItem(Item *item) {	
+	InventoryResult result = _inventory->removeItem(item);
 
 	if (result == kInventoryOK)
 		setCurrentItemIndex(getCurrentItemIndex());
@@ -163,7 +163,7 @@ bool InventoryPicture::itemInInventory(Item *item) {
 	return _inventory->itemInInventory(item);
 }
 
-bool InventoryPicture::itemInInventory(const tItemID id) {
+bool InventoryPicture::itemInInventory(const ItemID id) {
 	return _inventory->itemInInventory(id);
 }
 
@@ -181,7 +181,7 @@ void InventoryPicture::activateInventoryPicture() {
 	if (_lastReferenceCount != _inventory->getReferenceCount()) {
 		uint32 numItems = _inventory->getNumItems();
 
-		tCoordType x, y;
+		CoordType x, y;
 		getItemXY(0, x, y);
 		_panelMovie.moveMovieBoxTo(x, y);
 		_panelMovie.show();
@@ -251,12 +251,12 @@ void InventoryPicture::handleInput(const Input &input, const Hotspot *cursorSpot
 }
 
 void InventoryPicture::highlightCurrentItem() {
-	tCoordType x, y;
+	CoordType x, y;
 	getItemXY(_currentItemIndex, x, y);
 	_highlightBounds.moveTo(x, y);
 }
 
-InventoryItemsPicture::InventoryItemsPicture(const tDisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
+InventoryItemsPicture::InventoryItemsPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
 		InventoryPicture(id, nextHandler, inventory) {
 	_pictName = "Images/Items/Inventory/Inventory Panel";
 	_movieName = "Images/Items/Inventory/Inventory Panel Movie";
@@ -273,7 +273,7 @@ InventoryItemsPicture::InventoryItemsPicture(const tDisplayElementID id, InputHa
 
 void InventoryItemsPicture::loopCurrentItem() {
 	if (_isLooping) {
-		tCoordType x, y;
+		CoordType x, y;
 		getItemXY(_currentItemIndex, x, y);
 		_panelMovie.moveMovieBoxTo(x, y);
 		_highlightBounds.moveTo(x, y);
@@ -339,7 +339,7 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 	endMessage.stop();
 }
 
-BiochipPicture::BiochipPicture(const tDisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
+BiochipPicture::BiochipPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
 		InventoryPicture(id, nextHandler, inventory) {
 	_pictName = "Images/Items/Biochips/Biochip Panel";
 	_movieName = "Images/Items/Biochips/Biochip Panel Movie";
@@ -355,7 +355,7 @@ BiochipPicture::BiochipPicture(const tDisplayElementID id, InputHandler *nextHan
 
 void BiochipPicture::unhighlightCurrentItem() {
 	InventoryPicture::unhighlightCurrentItem();
-	tCoordType x, y;
+	CoordType x, y;
 	getItemXY(_currentItemIndex, x, y);
 	_panelMovie.show();
 	_panelMovie.moveMovieBoxTo(x, y);

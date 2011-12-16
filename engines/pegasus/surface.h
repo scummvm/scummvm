@@ -125,7 +125,7 @@ protected:
 
 class Picture : public DisplayElement, public Frame {
 public:
-	Picture(const tDisplayElementID id) : DisplayElement(id) {}
+	Picture(const DisplayElementID id) : DisplayElement(id) {}
 	virtual ~Picture() {}
 
 	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);

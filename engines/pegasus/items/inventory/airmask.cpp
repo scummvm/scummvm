@@ -40,7 +40,7 @@ void AirMask::airMaskTimerExpired(FunctionPtr *, void *) {
 		g_neighborhood->checkAirMask();
 }
 
-AirMask::AirMask(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+AirMask::AirMask(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		InventoryItem(id, neighborhood, room, direction), _toggleSpot(kAirMaskToggleSpotID) {
 	g_airMask = this;
 	_toggleSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 10, kAIMiddleAreaTop + 17, kAIMiddleAreaLeft + 110, kAIMiddleAreaTop + 57));
@@ -68,7 +68,7 @@ void AirMask::readFromStream(Common::ReadStream *stream) {
 }
 
 void AirMask::putMaskOn() {
-	tAirQuality airQuality;
+	AirQuality airQuality;
 
 	if (g_neighborhood)
 		airQuality = g_neighborhood->getAirQuality(GameState.getCurrentRoom());
@@ -76,8 +76,8 @@ void AirMask::putMaskOn() {
 		airQuality = kAirQualityGood;
 
 	uint airLevel = getAirLeft();
-	tItemState newState = getItemState();
-	tItemState oldState = newState;
+	ItemState newState = getItemState();
+	ItemState oldState = newState;
 
 	if (airLevel == 0) {
 		newState = kAirMaskEmptyFilter;
@@ -99,8 +99,8 @@ void AirMask::putMaskOn() {
 
 void AirMask::takeMaskOff() {	
 	uint airLevel = getAirLeft();
-	tItemState newState = getItemState();
-	tItemState oldState = newState;
+	ItemState newState = getItemState();
+	ItemState oldState = newState;
 
 	if (airLevel == 0)
 		newState = kAirMaskEmptyOff;
@@ -127,7 +127,7 @@ void AirMask::airQualityChanged() {
 		takeMaskOff();
 }
 
-void AirMask::setItemState(const tItemState newState) {
+void AirMask::setItemState(const ItemState newState) {
 	if (newState != getItemState()) {
 		InventoryItem::setItemState(newState);
 

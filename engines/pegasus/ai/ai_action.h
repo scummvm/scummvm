@@ -79,13 +79,13 @@ protected:
 
 class AIPlayMessageAction : public AIAction {
 public:
-	AIPlayMessageAction(const Common::String &movieName, bool keepLastFrame, const tInputBits = kWarningInterruption);
+	AIPlayMessageAction(const Common::String &movieName, bool keepLastFrame, const InputBits = kWarningInterruption);
 
 	virtual void performAIAction(AIRule *);
 
 protected:
 	Common::String _movieName;
-	tInputBits _interruptionFilter;
+	InputBits _interruptionFilter;
 	bool _keepLastFrame;
 };
 

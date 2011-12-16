@@ -54,12 +54,12 @@ public:
 	virtual void takeItemFromRoom(Item *);
 	virtual void dropItemIntoRoom(Item *, Hotspot *);
 
-	virtual GameInteraction *makeInteraction(const tInteractionID);
+	virtual GameInteraction *makeInteraction(const InteractionID);
 
-	virtual void getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID, tHotSpotID &clawControlSpotID,
-			tHotSpotID &pinchClawSpotID, tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID,
-			tHotSpotID &moveClawLeftSpotID, tHotSpotID &moveClawUpSpotID, tHotSpotID &clawCCWSpotID,
-			tHotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
+	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
+			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
+			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
 
 	void loadAmbientLoops();
 
@@ -71,11 +71,11 @@ public:
 	void setSubPrepFailed(bool value) { _subPrepFailed = value; }
 	bool getSubPrepFailed() { return _subPrepFailed; }
 
-	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
 	void clickInHotspot(const Input &, const Hotspot *);
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 	bool canSolve();
 	void doSolve();
@@ -89,12 +89,12 @@ protected:
 	virtual void arriveAtNorad04();
 	virtual void arriveAtNorad22();
 	
-	virtual void arriveAt(const tRoomID, const tDirectionConstant);
+	virtual void arriveAt(const RoomID, const DirectionConstant);
 	
-	virtual void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
-	virtual TimeValue getViewTime(const tRoomID, const tDirectionConstant);
+	virtual void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
+	virtual TimeValue getViewTime(const RoomID, const DirectionConstant);
 	
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	virtual void activateHotspots();
 

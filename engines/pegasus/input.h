@@ -41,12 +41,12 @@ public:
 	InputDevice();
 	~InputDevice();
 
-	void getInput(Input&, const tInputBits);
+	void getInput(Input &, const InputBits);
 
-	void waitInput(const tInputBits);
+	void waitInput(const InputBits);
 
 protected:
-	tInputBits _lastRawBits;
+	InputBits _lastRawBits;
 };
 
 enum {
@@ -267,9 +267,9 @@ enum {
 								kFilterMod3Button
 };
 
-static const tInputBits kHintInterruption = kFilterAllInputNoAuto;
-static const tInputBits kWarningInterruption = kFilterNoInput;
-static const tInputBits kOpticalInterruption = kFilterAllInputNoAuto;
+static const InputBits kHintInterruption = kFilterAllInputNoAuto;
+static const InputBits kWarningInterruption = kFilterNoInput;
+static const InputBits kOpticalInterruption = kFilterAllInputNoAuto;
 
 /*
 
@@ -356,7 +356,7 @@ public:
 	
 	void getInputLocation(Common::Point &where) const { where = _inputLocation; }
 	
-	bool anyInputBitSet(const tInputBits bits) const { return (_inputState & bits) != 0; }
+	bool anyInputBitSet(const InputBits bits) const { return (_inputState & bits) != 0; }
 
 	bool isAltDown() const { return _altDown; }
 	bool isConsoleRequested() const { return _consoleRequested; }
@@ -370,12 +370,12 @@ public:
 	}
 
 protected:
-	void setInputBits(const tInputBits state) { _inputState = state; }
+	void setInputBits(const InputBits state) { _inputState = state; }
 	void setInputLocation(const Common::Point &where) { _inputLocation = where; }
 	void setConsoleRequested(bool consoleRequested) { _consoleRequested = consoleRequested; }
 	void setAltDown(bool altDown) { _altDown = altDown; }
 	
-	tInputBits _inputState;
+	InputBits _inputState;
 	Common::Point _inputLocation;
 	bool _consoleRequested;
 	bool _altDown;
@@ -390,7 +390,7 @@ public:
 	static void getInput(Input&, Hotspot*&);
 	static void readInputDevice(Input&);
 	static void invalHotspots() { _invalHotspots = true; }
-	static tInputBits getCurrentFilter() { return _lastFilter; }
+	static InputBits getCurrentFilter() { return _lastFilter; }
 		
 	InputHandler(InputHandler*);
 	virtual ~InputHandler();
@@ -398,22 +398,22 @@ public:
 	virtual void setNextHandler(InputHandler *nextHandler) { _nextHandler = nextHandler; }
 	virtual InputHandler *getNextHandler() { return _nextHandler; }
 	
-	virtual void handleInput(const Input&, const Hotspot*);
-	virtual void clickInHotspot(const Input&, const Hotspot*);
+	virtual void handleInput(const Input &, const Hotspot *);
+	virtual void clickInHotspot(const Input &, const Hotspot *);
 	
 	virtual void activateHotspots();
-	virtual void updateCursor(const Common::Point, const Hotspot*);
-	virtual bool isClickInput(const Input&, const Hotspot*);
+	virtual void updateCursor(const Common::Point, const Hotspot *);
+	virtual bool isClickInput(const Input &, const Hotspot *);
 	virtual bool wantsCursor();
 	
 	virtual bool releaseInputFocus() { return true; }
 	virtual void grabInputFocus() {}
 	
 	//	This returns bits set for what kinds of input to accept.
-	virtual tInputBits getInputFilter();
+	virtual InputBits getInputFilter();
 
 	//	This returns bits defining what input constitutes a "click."
-	virtual tInputBits getClickFilter();
+	virtual InputBits getClickFilter();
 
 	virtual void allowInput(const bool allow) { _allowInput = allow; }
 
@@ -421,7 +421,7 @@ protected:
 	static InputHandler *_inputHandler;
 	static InputDevice _inputDevice; // TODO: Remove global constructor
 	static bool _invalHotspots;
-	static tInputBits _lastFilter;
+	static InputBits _lastFilter;
 	
 	InputHandler *_nextHandler;
 	bool _allowInput;
@@ -466,14 +466,14 @@ class JMPPPInput {
 public:
 	static bool isMenuButtonPressInput(const Input &input) { return input.twoButtonDown(); }
 
-	static tInputBits getClickInputFilter() { return kFilterTwoButton; }
+	static InputBits getClickInputFilter() { return kFilterTwoButton; }
 	static bool isClickInput(const Input &input) { return input.twoButtonDown(); }
 	static bool isDraggingInput(const Input &input) { return input.twoButtonAnyDown(); }
 	static bool isPressingInput(const Input &input) { return input.twoButtonAnyDown(); }
 
 	static bool isRaiseInventoryInput(const Input &input) { return input.leftFireButtonDown(); }
 	static bool isRaiseBiochipsInput(const Input &input) { return input.rightFireButtonDown(); }
-	static tInputBits getItemPanelsInputFilter() { return kFilterLeftFireButton | kFilterRightFireButton; }
+	static InputBits getItemPanelsInputFilter() { return kFilterLeftFireButton | kFilterRightFireButton; }
 
 	static bool isToggleAIMiddleInput(const Input &input) { return input.threeButtonDown(); }
 

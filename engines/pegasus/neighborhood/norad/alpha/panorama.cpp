@@ -118,13 +118,13 @@ void Panorama::setViewBounds(const Common::Rect &newView) {
 	}
 
 	if (_viewBounds != r) {
-		tCoordType stripLeft = 0;
+		CoordType stripLeft = 0;
 
 		if (r.width() != _viewBounds.width() || !_panoramaWorld.isSurfaceValid()) {
 			_panoramaWorld.deallocateSurface();
 			makeNewSurface(r);
 		} else {
-			tCoordType stripRight;
+			CoordType stripRight;
 			calcStripRange(r, stripLeft, stripRight);
 			loadStrips(stripLeft, stripRight);
 		}
@@ -159,7 +159,7 @@ void Panorama::drawPanorama(const Common::Rect &destRect) {
 //      _panoramaHeight, _stripWidth is correct.
 //      _panoramaMovie is allocated.
 void Panorama::makeNewSurface(const Common::Rect& view) {
-	tCoordType stripLeft, stripRight;	
+	CoordType stripLeft, stripRight;	
 	calcStripRange(view, stripLeft, stripRight);
 
 	Common::Rect r(0, 0, (stripRight - stripLeft + 1) * _stripWidth, _panoramaHeight);
@@ -169,7 +169,7 @@ void Panorama::makeNewSurface(const Common::Rect& view) {
 }
 
 // Assumes view is not empty.
-void Panorama::calcStripRange(const Common::Rect &view, tCoordType &stripLeft, tCoordType &stripRight) {
+void Panorama::calcStripRange(const Common::Rect &view, CoordType &stripLeft, CoordType &stripRight) {
 	stripLeft = view.left / _stripWidth;
 	stripRight = (view.left - view.left % _stripWidth + _stripWidth - 1 + view.width()) / _stripWidth;
 }
@@ -179,18 +179,18 @@ void Panorama::calcStripRange(const Common::Rect &view, tCoordType &stripLeft, t
 // Assumptions:
 //      Surface is allocated and is big enough for maximum range of
 //          stripLeft and stripRight
-void Panorama::loadStrips(tCoordType stripLeft, tCoordType stripRight) {	
+void Panorama::loadStrips(CoordType stripLeft, CoordType stripRight) {	
 	if (_stripLeft == -1) {
 		// Surface has just been allocated.
 		// Load in all strips.
-		for (tCoordType i = stripLeft; i <= stripRight; i++)
+		for (CoordType i = stripLeft; i <= stripRight; i++)
 			loadOneStrip(i, stripLeft);
 
 		_stripLeft = stripLeft;
 		_stripRight = stripRight;
 	} else if (stripLeft != _stripLeft) {
-		tCoordType overlapLeft = MAX(stripLeft, _stripLeft);
-		tCoordType overlapRight = MIN(stripRight, _stripRight);
+		CoordType overlapLeft = MAX(stripLeft, _stripLeft);
+		CoordType overlapRight = MIN(stripRight, _stripRight);
 
 		if (overlapLeft <= overlapRight) {
 			Common::Rect r1((overlapLeft - _stripLeft) * _stripWidth, 0,
@@ -202,18 +202,18 @@ void Panorama::loadStrips(tCoordType stripLeft, tCoordType stripRight) {
 				_panoramaWorld.getSurfaceBounds(bounds);
 				_panoramaWorld.getSurface()->move(bounds.right - r1.right, 0, _panoramaHeight);
 
-				for (tCoordType i = stripLeft; i < _stripLeft; i++)
+				for (CoordType i = stripLeft; i < _stripLeft; i++)
 					loadOneStrip(i, stripLeft);
 			} else {
 				_panoramaWorld.getSurface()->move(-r1.left, 0, _panoramaHeight);
 
-				for (tCoordType i = _stripRight + 1; i <= stripRight; i++)
+				for (CoordType i = _stripRight + 1; i <= stripRight; i++)
 					loadOneStrip(i, stripLeft);
 			}
 		} else {
 			// No overlap.
 			// Load everything.
-			for (tCoordType i = stripLeft; i <= stripRight; i++)
+			for (CoordType i = stripLeft; i <= stripRight; i++)
 				loadOneStrip(i, stripLeft);
 		}
 
@@ -221,7 +221,7 @@ void Panorama::loadStrips(tCoordType stripLeft, tCoordType stripRight) {
 		_stripRight = stripRight;
 	} else if (stripRight > _stripRight) {
 		// Need to add one or more strips.
-		for (tCoordType i = _stripRight + 1; i <= stripRight; i++)
+		for (CoordType i = _stripRight + 1; i <= stripRight; i++)
 			loadOneStrip(i, _stripLeft);
 
 		_stripRight = stripRight;
@@ -231,7 +231,7 @@ void Panorama::loadStrips(tCoordType stripLeft, tCoordType stripRight) {
 	}
 }
 
-void Panorama::loadOneStrip(tCoordType stripToLoad, tCoordType leftStrip) {
+void Panorama::loadOneStrip(CoordType stripToLoad, CoordType leftStrip) {
 	_panoramaMovie.moveMovieBoxTo((stripToLoad - leftStrip) * _stripWidth, 0);
 	_panoramaMovie.setTime(stripToLoad, 1);
 	_panoramaMovie.redrawMovieWorld();

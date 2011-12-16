@@ -39,7 +39,7 @@ class Transition;
 
 class InventoryPicture : public InputHandler, public Picture {
 public:
-	InventoryPicture(const tDisplayElementID, InputHandler *, Inventory *);
+	InventoryPicture(const DisplayElementID, InputHandler *, Inventory *);
 	virtual ~InventoryPicture() {}
 	
 	void initInventoryImage(Transition *);
@@ -51,18 +51,18 @@ public:
 	void handleInput(const Input &, const Hotspot *);
 	bool wantsCursor() { return false; }
 	
-	tInventoryResult addInventoryItem(Item *);
-	tInventoryResult removeInventoryItem(Item *);
+	InventoryResult addInventoryItem(Item *);
+	InventoryResult removeInventoryItem(Item *);
 	void removeAllItems();
 	Item *getCurrentItem() { return _currentItem; }
 	void setCurrentItemIndex(int32);
-	void setCurrentItemID(tItemID);
+	void setCurrentItemID(ItemID);
 	int32 getCurrentItemIndex() { return _currentItemIndex; }
 	bool itemInInventory(Item *);
-	bool itemInInventory(const tItemID);
+	bool itemInInventory(const ItemID);
 
 protected:
-	void getItemXY(uint32, tCoordType &, tCoordType &);
+	void getItemXY(uint32, CoordType &, CoordType &);
 	void draw(const Common::Rect &);
 	void drawItemHighlight(const Common::Rect &);
 	virtual void highlightCurrentItem();
@@ -91,7 +91,7 @@ protected:
 
 class InventoryItemsPicture : public InventoryPicture {
 public:
-	InventoryItemsPicture(const tDisplayElementID, InputHandler *, Inventory *);
+	InventoryItemsPicture(const DisplayElementID, InputHandler *, Inventory *);
 	virtual ~InventoryItemsPicture() {}
 
 	void deactivateInventoryPicture();
@@ -112,7 +112,7 @@ protected:
 
 class BiochipPicture : public InventoryPicture {
 public:
-	BiochipPicture(const tDisplayElementID, InputHandler *, Inventory *);
+	BiochipPicture(const DisplayElementID, InputHandler *, Inventory *);
 	virtual ~BiochipPicture() {}
 	
 protected:

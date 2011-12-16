@@ -294,11 +294,11 @@ void Interface::createInterface() {
 	}
 }
 
-tInventoryResult Interface::addInventoryItem(InventoryItem *item) {
+InventoryResult Interface::addInventoryItem(InventoryItem *item) {
 	return _inventoryPanel.addInventoryItem(item);
 }
 
-tInventoryResult Interface::removeInventoryItem(InventoryItem *item) {
+InventoryResult Interface::removeInventoryItem(InventoryItem *item) {
 	return _inventoryPanel.removeInventoryItem(item);
 }
 
@@ -314,11 +314,11 @@ void Interface::setCurrentInventoryItem(InventoryItem *item) {
 	setCurrentInventoryItemID(item->getObjectID());
 }
 
-void Interface::setCurrentInventoryItemID(tItemID id) {
+void Interface::setCurrentInventoryItemID(ItemID id) {
 	_inventoryPanel.setCurrentItemID(id);
 }
 
-tInventoryResult Interface::addBiochip(BiochipItem *item) {
+InventoryResult Interface::addBiochip(BiochipItem *item) {
 	return _biochipPanel.addInventoryItem(item);
 }
 
@@ -334,11 +334,11 @@ void Interface::setCurrentBiochip(BiochipItem *item) {
 	setCurrentBiochipID(item->getObjectID());
 }
 
-void Interface::setCurrentBiochipID(tItemID id) {
+void Interface::setCurrentBiochipID(ItemID id) {
 	_biochipPanel.setCurrentItemID(id);
 }
 
-void Interface::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void Interface::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	if (notification == &_interfaceNotification) {
 		switch (flags) {
 		case kInventoryLidOpenFlag:

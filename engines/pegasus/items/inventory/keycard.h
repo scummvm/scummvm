@@ -32,11 +32,11 @@ namespace Pegasus {
 
 class KeyCard : public InventoryItem {
 public:
-	KeyCard(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	KeyCard(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~KeyCard() {}
 	
 	virtual void toggleItemState();
-	virtual void setItemState(const tItemState);
+	virtual void setItemState(const ItemState);
 	bool isFlashlightOn();
 
 protected:

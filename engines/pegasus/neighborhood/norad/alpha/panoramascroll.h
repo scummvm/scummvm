@@ -32,7 +32,7 @@ namespace Pegasus {
 
 class PanoramaScroll : public IdlerAnimation {
 public:
-	PanoramaScroll(const tDisplayElementID);
+	PanoramaScroll(const DisplayElementID);
 	virtual ~PanoramaScroll() {}
 
 	void initFromMovieFile(const Common::String &);
@@ -52,7 +52,7 @@ protected:
 
 	Panorama _panorama;
 	Surface _mask;
-	tCoordType _totalWidth, _boundsWidth;
+	CoordType _totalWidth, _boundsWidth;
 };
 
 } // End of namespace Pegasus

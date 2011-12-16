@@ -38,13 +38,13 @@ Inventory::Inventory() {
 Inventory::~Inventory() {
 }
 
-void Inventory::setWeightLimit(tWeightType limit) {
+void Inventory::setWeightLimit(WeightType limit) {
 	_weightLimit = limit;
 	//	*** What to do if the new weight limit is greater than the current weight?
 }
 
-tWeightType Inventory::getWeight() {
-	tWeightType	result = 0;
+WeightType Inventory::getWeight() {
+	WeightType	result = 0;
 
 	for (ItemIterator it = _inventoryList.begin(); it != _inventoryList.end(); it++)
 		result += (*it)->getItemWeight();
@@ -53,7 +53,7 @@ tWeightType Inventory::getWeight() {
 }
 
 //	If the item already belongs, just return kInventoryOK.
-tInventoryResult Inventory::addItem(Item *item) {
+InventoryResult Inventory::addItem(Item *item) {
 	if (itemInInventory(item))
 		return kInventoryOK;
 
@@ -67,7 +67,7 @@ tInventoryResult Inventory::addItem(Item *item) {
 	return kInventoryOK;
 }
 
-tInventoryResult Inventory::removeItem(Item *item) {
+InventoryResult Inventory::removeItem(Item *item) {
 	for (ItemIterator it = _inventoryList.begin(); it != _inventoryList.end(); it++) {
 		if (*it == item) {
 			_inventoryList.erase(it);
@@ -81,7 +81,7 @@ tInventoryResult Inventory::removeItem(Item *item) {
 	return kItemNotInInventory;
 }
 
-tInventoryResult Inventory::removeItem(tItemID id) {
+InventoryResult Inventory::removeItem(ItemID id) {
 	Item *item = findItemByID(id);
 	
 	if (item) {
@@ -108,7 +108,7 @@ bool Inventory::itemInInventory(Item *item) {
 	return false;
 }
 
-bool Inventory::itemInInventory(tItemID id) {
+bool Inventory::itemInInventory(ItemID id) {
 	return findItemByID(id) != NULL;
 }
 
@@ -121,7 +121,7 @@ Item *Inventory::getItemAt(int32 index) {
 	return 0;
 }
 
-tItemID Inventory::getItemIDAt(int32 index) {
+ItemID Inventory::getItemIDAt(int32 index) {
 	Item *item = getItemAt(index);
 
 	if (item)
@@ -130,7 +130,7 @@ tItemID Inventory::getItemIDAt(int32 index) {
 	return kNoItemID;
 }
 
-Item *Inventory::findItemByID(tItemID id) {
+Item *Inventory::findItemByID(ItemID id) {
 	return _inventoryList.findItemByID(id);
 }
 
@@ -147,7 +147,7 @@ int32 Inventory::findIndexOf(Item *item) {
 
 //	Return -1 if not found.
 
-int32 Inventory::findIndexOf(tItemID id) {
+int32 Inventory::findIndexOf(ItemID id) {
 	uint32 i = 0;
 	for (ItemIterator it = _inventoryList.begin(); it != _inventoryList.end(); it++, i++)
 		if ((*it)->getObjectID() == id)
@@ -156,7 +156,7 @@ int32 Inventory::findIndexOf(tItemID id) {
 	return -1;
 }
 
-tWeightType Inventory::getWeightLimit() {
+WeightType Inventory::getWeightLimit() {
 	return _weightLimit;
 }
 
@@ -164,11 +164,11 @@ int32 Inventory::getNumItems() {
 	return _inventoryList.size();
 }
 
-void Inventory::setOwnerID(const tActorID id) {
+void Inventory::setOwnerID(const ActorID id) {
 	_ownerID = id;
 }
 
-tActorID Inventory::getOwnerID() const {
+ActorID Inventory::getOwnerID() const {
 	return _ownerID;
 }
 

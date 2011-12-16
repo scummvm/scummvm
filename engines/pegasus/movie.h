@@ -39,7 +39,7 @@ namespace Pegasus {
 
 class Movie : public Animation, public PixelImage {
 public:
-	Movie(const tDisplayElementID);
+	Movie(const DisplayElementID);
 	virtual ~Movie();
 
 	virtual void initFromMovieFile(const Common::String &fileName, bool transparent = false);
@@ -60,7 +60,7 @@ public:
 	virtual void resume();
 	virtual void pause();
 
-	virtual void moveMovieBoxTo(const tCoordType, const tCoordType);
+	virtual void moveMovieBoxTo(const CoordType, const CoordType);
 
 	virtual TimeValue getDuration(const TimeScale = 0) const;
 
@@ -77,7 +77,7 @@ protected:
 
 class GlowingMovie : public Movie {
 public:
-	GlowingMovie(tDisplayElementID);
+	GlowingMovie(DisplayElementID);
 	virtual ~GlowingMovie() {}
 
 	virtual void draw(const Common::Rect &);
@@ -92,7 +92,7 @@ protected:
 
 class ScalingMovie : public GlowingMovie {
 public:
-	ScalingMovie(tDisplayElementID);
+	ScalingMovie(DisplayElementID);
 	virtual ~ScalingMovie() {}
 
 	virtual void draw(const Common::Rect &);

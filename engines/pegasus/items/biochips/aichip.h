@@ -33,7 +33,7 @@ namespace Pegasus {
 
 class AIChip : public BiochipItem {
 public:
-	AIChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	AIChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~AIChip();
 
 	void select();
@@ -44,7 +44,7 @@ public:
 	// own the center area.
 	void setUpAIChipRude();
 	void activateAIHotspots();
-	void clickInAIHotspot(tHotSpotID);
+	void clickInAIHotspot(HotSpotID);
 
 	void takeSharedArea();
 

@@ -61,11 +61,11 @@ public:
 
 	bool pointInRegion(const Common::Point &point) const;
 
-	void moveTo(tCoordType h, tCoordType v);
+	void moveTo(CoordType h, CoordType v);
 	void moveTo(const Common::Point &point);
-	void translate(tCoordType h, tCoordType v);
+	void translate(CoordType h, CoordType v);
 	void translate(const Common::Point &point);
-	void getCenter(tCoordType &h, tCoordType &v) const;
+	void getCenter(CoordType &h, CoordType &v) const;
 	void getCenter(Common::Point &point) const;
 
 private:
@@ -85,20 +85,20 @@ private:
 
 class Hotspot : public IDObject {
 public:
-	Hotspot(const tHotSpotID);
+	Hotspot(const HotSpotID);
 	virtual ~Hotspot();
 
 	void setArea(const Region &region) { _spotArea = region; }
 	void setArea(const Common::Rect &);
-	void setArea(const tCoordType, const tCoordType, const tCoordType, const tCoordType);
+	void setArea(const CoordType, const CoordType, const CoordType, const CoordType);
 	void getBoundingBox(Common::Rect &) const;
 	void getArea(Region &) const;
 	void getCenter(Common::Point&) const;
-	void getCenter(tCoordType&, tCoordType&) const;
+	void getCenter(CoordType&, CoordType&) const;
 	
-	void moveSpotTo(const tCoordType, const tCoordType);
+	void moveSpotTo(const CoordType, const CoordType);
 	void moveSpotTo(const Common::Point);
-	void moveSpot(const tCoordType, const tCoordType);
+	void moveSpot(const CoordType, const CoordType);
 	void moveSpot(const Common::Point);
 	
 	bool pointInSpot(const Common::Point) const;
@@ -107,13 +107,13 @@ public:
 	void setInactive();
 	bool isSpotActive() const;
 	
-	tHotSpotFlags getHotspotFlags() const;
-	void setHotspotFlags(const tHotSpotFlags);
-	void setMaskedHotspotFlags(const tHotSpotFlags flags, const tHotSpotFlags mask);
+	HotSpotFlags getHotspotFlags() const;
+	void setHotspotFlags(const HotSpotFlags);
+	void setMaskedHotspotFlags(const HotSpotFlags flags, const HotSpotFlags mask);
 
 protected:
 	Region _spotArea;
-	tHotSpotFlags _spotFlags;
+	HotSpotFlags _spotFlags;
 	bool _spotActive;
 };
 
@@ -125,22 +125,22 @@ public:
 	void deleteHotspots();
 
 	Hotspot *findHotspot(const Common::Point);
-	tHotSpotID findHotspotID(const Common::Point);
-	Hotspot * findHotspotByID(const tHotSpotID);
-	Hotspot * findHotspotByMask(const tHotSpotFlags);
+	HotSpotID findHotspotID(const Common::Point);
+	Hotspot *findHotspotByID(const HotSpotID);
+	Hotspot *findHotspotByMask(const HotSpotFlags);
 
-	void activateMaskedHotspots(const tHotSpotFlags = kNoHotSpotFlags);
+	void activateMaskedHotspots(const HotSpotFlags = kNoHotSpotFlags);
 	void deactivateAllHotspots();
-	void deactivateMaskedHotspots(const tHotSpotFlags);
+	void deactivateMaskedHotspots(const HotSpotFlags);
 
-	void activateOneHotspot(const tHotSpotID);
-	void deactivateOneHotspot(const tHotSpotID);
+	void activateOneHotspot(const HotSpotID);
+	void deactivateOneHotspot(const HotSpotID);
 	
-	void removeOneHotspot(const tHotSpotID);
-	void removeMaskedHotspots(const tHotSpotFlags = kNoHotSpotFlags);
+	void removeOneHotspot(const HotSpotID);
+	void removeMaskedHotspots(const HotSpotFlags = kNoHotSpotFlags);
 
-	void setHotspotRect(const tHotSpotID, const Common::Rect&);
-	void getHotspotRect(const tHotSpotID, Common::Rect&);
+	void setHotspotRect(const HotSpotID, const Common::Rect&);
+	void getHotspotRect(const HotSpotID, Common::Rect&);
 };
 
 typedef HotspotList::iterator HotspotIterator;

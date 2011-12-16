@@ -37,7 +37,7 @@ class Neighborhood;
 
 class NoradElevator : public GameInteraction, private NotificationReceiver {
 public:
-	NoradElevator(Neighborhood *, const tRoomID, const tRoomID, const tHotSpotID, const tHotSpotID);
+	NoradElevator(Neighborhood *, const RoomID, const RoomID, const HotSpotID, const HotSpotID);
 	virtual ~NoradElevator() {}
 
 protected:
@@ -49,12 +49,12 @@ protected:
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 	
-	virtual void receiveNotification(Notification*, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 	
-	tRoomID _upRoom;
-	tRoomID _downRoom;
-	tHotSpotID _upHotspot;
-	tHotSpotID _downHotspot;
+	RoomID _upRoom;
+	RoomID _downRoom;
+	HotSpotID _upHotspot;
+	HotSpotID _downHotspot;
 	Sprite _elevatorControls;
 	TimeBase _elevatorTimer;
 	NotificationCallBack _elevatorCallBack;

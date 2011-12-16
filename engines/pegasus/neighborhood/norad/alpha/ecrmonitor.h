@@ -43,7 +43,7 @@ protected:
 	virtual void openInteraction();
 	virtual void closeInteraction();
 
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	void ecrSection1Finished();
 	void ecrPanFinished();

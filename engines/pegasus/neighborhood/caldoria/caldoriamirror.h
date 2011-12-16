@@ -44,7 +44,7 @@ protected:
 	void handleInput(const Input &, const Hotspot *);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 
 	Notification *_neighborhoodNotification;
 };

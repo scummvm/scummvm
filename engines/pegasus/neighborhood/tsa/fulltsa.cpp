@@ -41,35 +41,35 @@ namespace Pegasus {
 
 // TSA PICTs:
 
-const tResIDType kTBPCloseBoxPICTID = 800;
-const tResIDType kTBPRewindPICTID = 801;
-const tResIDType kUnresolvedPICTID = 802;
-const tResIDType kResolvedPICTID = 803;
-const tResIDType kJumpMenuPICTID = 804;
-const tResIDType kJumpMenuHilitedPICTID = 805;
-const tResIDType kExitPICTID = 806;
-const tResIDType kExitHilitedPICTID = 807;
-const tResIDType kLeftRipPICTID = 808;
-const tResIDType kComparisonCloseBoxPICTID = 809;
-const tResIDType kComparisonLeftRewindPICTID = 810;
-const tResIDType kComparisonRightRewindPICTID = 811;
-const tResIDType kComparisonHiliteNoradPICTID = 812;
-const tResIDType kComparisonHiliteMarsPICTID = 813;
-const tResIDType kComparisonHiliteCaldoriaPICTID = 814;
-const tResIDType kComparisonHiliteWSCPICTID = 815;
-const tResIDType kComparisonChancesNoradPICTID = 816;
-const tResIDType kComparisonChancesMarsPICTID = 817;
-const tResIDType kComparisonChancesCaldoriaPICTID = 818;
-const tResIDType kComparisonChancesWSCPICTID = 819;
-const tResIDType kRedirectionCCRolloverPICTID = 820;
-const tResIDType kRedirectionRRRolloverPICTID = 821;
-const tResIDType kRedirectionFDRolloverPICTID = 822;
-const tResIDType kRedirectionCCDoorPICTID = 823;
-const tResIDType kRedirectionRRDoorPICTID = 824;
-const tResIDType kRedirectionFDDoorPICTID = 825;
-const tResIDType kRedirectionSecuredPICTID = 826;
-const tResIDType kRedirectionNewTargetPICTID = 827;
-const tResIDType kRedirectionClosePICTID = 828;
+const ResIDType kTBPCloseBoxPICTID = 800;
+const ResIDType kTBPRewindPICTID = 801;
+const ResIDType kUnresolvedPICTID = 802;
+const ResIDType kResolvedPICTID = 803;
+const ResIDType kJumpMenuPICTID = 804;
+const ResIDType kJumpMenuHilitedPICTID = 805;
+const ResIDType kExitPICTID = 806;
+const ResIDType kExitHilitedPICTID = 807;
+const ResIDType kLeftRipPICTID = 808;
+const ResIDType kComparisonCloseBoxPICTID = 809;
+const ResIDType kComparisonLeftRewindPICTID = 810;
+const ResIDType kComparisonRightRewindPICTID = 811;
+const ResIDType kComparisonHiliteNoradPICTID = 812;
+const ResIDType kComparisonHiliteMarsPICTID = 813;
+const ResIDType kComparisonHiliteCaldoriaPICTID = 814;
+const ResIDType kComparisonHiliteWSCPICTID = 815;
+const ResIDType kComparisonChancesNoradPICTID = 816;
+const ResIDType kComparisonChancesMarsPICTID = 817;
+const ResIDType kComparisonChancesCaldoriaPICTID = 818;
+const ResIDType kComparisonChancesWSCPICTID = 819;
+const ResIDType kRedirectionCCRolloverPICTID = 820;
+const ResIDType kRedirectionRRRolloverPICTID = 821;
+const ResIDType kRedirectionFDRolloverPICTID = 822;
+const ResIDType kRedirectionCCDoorPICTID = 823;
+const ResIDType kRedirectionRRDoorPICTID = 824;
+const ResIDType kRedirectionFDDoorPICTID = 825;
+const ResIDType kRedirectionSecuredPICTID = 826;
+const ResIDType kRedirectionNewTargetPICTID = 827;
+const ResIDType kRedirectionClosePICTID = 828;
 
 const short kCompassShift = 15;
 
@@ -77,428 +77,423 @@ const TimeScale kFullTSAMovieScale = 600;
 const TimeScale kFullTSAFramesPerSecond = 15;
 const TimeScale kFullTSAFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
+const AlternateID kAltTSANormal = 0;
+const AlternateID kAltTSARobotsAtReadyRoom = 1;
+const AlternateID kAltTSARobotsAtFrontDoor = 2;
+const AlternateID kAltTSARedAlert = 3;
 
-const tAlternateID kAltTSANormal = 0;
-const tAlternateID kAltTSARobotsAtReadyRoom = 1;
-const tAlternateID kAltTSARobotsAtFrontDoor = 2;
-const tAlternateID kAltTSARedAlert = 3;
+// Room IDs.
+const RoomID kTSA01 = 1;
+const RoomID kTSA02 = 2;
+const RoomID kTSA03 = 3;
+const RoomID kTSA04 = 4;
+const RoomID kTSA05 = 5;
+const RoomID kTSA0A = 6;
+const RoomID kTSA06 = 7;
+const RoomID kTSA07 = 8;
+const RoomID kTSA08 = 9;
+const RoomID kTSA09 = 10;
+const RoomID kTSA10 = 11;
+const RoomID kTSA11 = 12;
+const RoomID kTSA12 = 13;
+const RoomID kTSA13 = 14;
+const RoomID kTSA14 = 15;
+const RoomID kTSA15 = 16;
+const RoomID kTSA16 = 17;
+const RoomID kTSA17 = 18;
+const RoomID kTSA18 = 19;
+const RoomID kTSA19 = 20;
+const RoomID kTSA0B = 21;
+const RoomID kTSA21Cyan = 22;
+const RoomID kTSA22Cyan = 23;
+const RoomID kTSA23Cyan = 24;
+const RoomID kTSA24Cyan = 25;
+const RoomID kTSA25Cyan = 26;
+const RoomID kTSA21Red = 27;
+const RoomID kTSA23Red = 29;
+const RoomID kTSA24Red = 30;
+const RoomID kTSA25Red = 31;
+const RoomID kTSA26 = 32;
+const RoomID kTSA27 = 33;
+const RoomID kTSA28 = 34;
+const RoomID kTSA29 = 35;
+const RoomID kTSA30 = 36;
+const RoomID kTSA31 = 37;
+const RoomID kTSA32 = 38;
+const RoomID kTSA33 = 39;
+const RoomID kTSA34 = 40;
+const RoomID kTSA35 = 41;
+const RoomID kTSADeathRoom = 43;
 
-//	Room IDs.
+// Hot Spot Activation IDs.
+const HotSpotActivationID kActivateTSAReadyForCard = 1;
+const HotSpotActivationID kActivateTSAReadyToTransport = 2;
+const HotSpotActivationID kActivateTSARobotsAwake = 3;
+const HotSpotActivationID kActivateTSA0BZoomedOut = 4;
+const HotSpotActivationID kActivateTSA0BZoomedIn = 5;
+const HotSpotActivationID kActivateTSA0BComparisonVideo = 6;
+const HotSpotActivationID kActivationLogReaderOpen = 7;
+const HotSpotActivationID kActivateTSA0BTBPVideo = 8;
+const HotSpotActivationID kActivationDoesntHaveKey = 9;
+const HotSpotActivationID kActivationKeyVaultOpen = 10;
+const HotSpotActivationID kActivationDoesntHaveChips = 11;
+const HotSpotActivationID kActivationChipVaultOpen = 12;
+const HotSpotActivationID kActivationJumpToPrehistoric = 13;
+const HotSpotActivationID kActivationJumpToNorad = 14;
+const HotSpotActivationID kActivationJumpToMars = 15;
+const HotSpotActivationID kActivationJumpToWSC = 16;
+const HotSpotActivationID kActivationReadyToExit = 17;
+const HotSpotActivationID kActivationReadyForJumpMenu = 18;
+const HotSpotActivationID kActivationMainJumpMenu = 19;
 
-const tRoomID kTSA01 = 1;
-const tRoomID kTSA02 = 2;
-const tRoomID kTSA03 = 3;
-const tRoomID kTSA04 = 4;
-const tRoomID kTSA05 = 5;
-const tRoomID kTSA0A = 6;
-const tRoomID kTSA06 = 7;
-const tRoomID kTSA07 = 8;
-const tRoomID kTSA08 = 9;
-const tRoomID kTSA09 = 10;
-const tRoomID kTSA10 = 11;
-const tRoomID kTSA11 = 12;
-const tRoomID kTSA12 = 13;
-const tRoomID kTSA13 = 14;
-const tRoomID kTSA14 = 15;
-const tRoomID kTSA15 = 16;
-const tRoomID kTSA16 = 17;
-const tRoomID kTSA17 = 18;
-const tRoomID kTSA18 = 19;
-const tRoomID kTSA19 = 20;
-const tRoomID kTSA0B = 21;
-const tRoomID kTSA21Cyan = 22;
-const tRoomID kTSA22Cyan = 23;
-const tRoomID kTSA23Cyan = 24;
-const tRoomID kTSA24Cyan = 25;
-const tRoomID kTSA25Cyan = 26;
-const tRoomID kTSA21Red = 27;
-const tRoomID kTSA23Red = 29;
-const tRoomID kTSA24Red = 30;
-const tRoomID kTSA25Red = 31;
-const tRoomID kTSA26 = 32;
-const tRoomID kTSA27 = 33;
-const tRoomID kTSA28 = 34;
-const tRoomID kTSA29 = 35;
-const tRoomID kTSA30 = 36;
-const tRoomID kTSA31 = 37;
-const tRoomID kTSA32 = 38;
-const tRoomID kTSA33 = 39;
-const tRoomID kTSA34 = 40;
-const tRoomID kTSA35 = 41;
-const tRoomID kTSADeathRoom = 43;
+// Hot Spot IDs.
+const HotSpotID kTSAGTCardDropSpotID = 5000;
+const HotSpotID kTSAGTTokyoSpotID = 5001;
+const HotSpotID kTSAGTCaldoriaSpotID = 5002;
+const HotSpotID kTSAGTBeachSpotID = 5003;
+const HotSpotID kTSAGTOtherSpotID = 5004;
+const HotSpotID kTSA02DoorSpotID = 5005;
+const HotSpotID kTSA03EastJimenezSpotID = 5006;
+const HotSpotID kTSA03WestCrenshawSpotID = 5007;
+const HotSpotID kTSA04EastMatsumotoSpotID = 5008;
+const HotSpotID kTSA04WestCastilleSpotID = 5009;
+const HotSpotID kTSA05EastSinclairSpotID = 5010;
+const HotSpotID kTSA05WestWhiteSpotID = 5011;
+const HotSpotID kTSA0AEastSpotID = 5012;
+const HotSpotID kTSA0AWastSpotID = 5013;
+const HotSpotID kTSA0BEastMonitorSpotID = 5014;
+const HotSpotID kTSA0BEastMonitorOutSpotID = 5015;
+const HotSpotID kTSA0BEastCompareNoradSpotID = 5016;
+const HotSpotID kTSA0BEastCompareMarsSpotID = 5017;
+const HotSpotID kTSA0BEastCompareCaldoriaSpotID = 5018;
+const HotSpotID kTSA0BEastCompareWSCSpotID = 5019;
+const HotSpotID kTSA0BEastLeftRewindSpotID = 5020;
+const HotSpotID kTSA0BEastLeftPlaySpotID = 5021;
+const HotSpotID kTSA0BEastRightRewindSpotID = 5022;
+const HotSpotID kTSA0BEastRightPlaySpotID = 5023;
+const HotSpotID kTSA0BEastCloseVideoSpotID = 5024;
+const HotSpotID kTSA0BNorthMonitorSpotID = 5025;
+const HotSpotID kTSA0BNorthMonitorOutSpotID = 5026;
+const HotSpotID kTSA0BNorthHistLogSpotID = 5027;
+const HotSpotID kTSA0BNorthRobotsToCommandCenterSpotID = 5028;
+const HotSpotID kTSA0BNorthRobotsToReadyRoomSpotID = 5029;
+const HotSpotID kTSA0BNorthRobotsToFrontDoorSpotID = 5030;
+const HotSpotID kTSA0BWestMonitorSpotID = 5031;
+const HotSpotID kTSA0BWestMonitorOutSpotID = 5032;
+const HotSpotID kTSA0BWestTheorySpotID = 5033;
+const HotSpotID kTSA0BWestBackgroundSpotID = 5034;
+const HotSpotID kTSA0BWestProcedureSpotID = 5035;
+const HotSpotID kTSA0BWestCloseVideoSpotID = 5036;
+const HotSpotID kTSA0BWestPlayVideoSpotID = 5037;
+const HotSpotID kTSA0BWestRewindVideoSpotID = 5038;
+const HotSpotID kTSA22EastMonitorSpotID = 5039;
+const HotSpotID kTSA22EastKeySpotID = 5040;
+const HotSpotID kTSA23WestMonitorSpotID = 5041;
+const HotSpotID kTSA23WestChipsSpotID = 5042;
+const HotSpotID kTSA34NorthDoorSpotID = 5043;
+const HotSpotID kTSA37NorthJumpToPrehistoricSpotID = 5044;
+const HotSpotID kTSA37NorthJumpToNoradSpotID = 5045;
+const HotSpotID kTSA37NorthCancelNoradSpotID = 5046;
+const HotSpotID kTSA37NorthJumpToMarsSpotID = 5047;
+const HotSpotID kTSA37NorthCancelMarsSpotID = 5048;
+const HotSpotID kTSA37NorthJumpToWSCSpotID = 5049;
+const HotSpotID kTSA37NorthCancelWSCSpotID = 5050;
+const HotSpotID kTSA37NorthExitSpotID = 5051;
+const HotSpotID kTSA37NorthJumpMenuSpotID = 5052;
+const HotSpotID kTSA37NorthNoradMenuSpotID = 5053;
+const HotSpotID kTSA37NorthMarsMenuSpotID = 5054;
+const HotSpotID kTSA37NorthWSCMenuSpotID = 5055;
 
-//	Hot Spot Activation IDs.
+// Extra sequence IDs.
+const ExtraID kTSATransporterArrowLoop = 0;
+const ExtraID kTSAArriveFromCaldoria = 1;
+const ExtraID kTSAGTOtherChoice = 2;
+const ExtraID kTSAGTCardSwipe = 3;
+const ExtraID kTSAGTSelectCaldoria = 4;
+const ExtraID kTSAGTGoToCaldoria = 5;
+const ExtraID kTSAGTSelectBeach = 6;
+const ExtraID kTSAGTGoToBeach = 7;
+const ExtraID kTSAGTArriveAtBeach = 8;
+const ExtraID kTSAGTSelectTokyo = 9;
+const ExtraID kTSAGTGoToTokyo = 10;
+const ExtraID kTSAGTArriveAtTokyo = 11;
+const ExtraID kTSA02NorthZoomIn = 12;
+const ExtraID kTSA02NorthTenSecondDoor = 13;
+const ExtraID kTSA02NorthZoomOut = 14;
+const ExtraID kTSA02NorthDoorWithAgent3 = 15;
+const ExtraID kTSA03JimenezZoomIn = 16;
+const ExtraID kTSA03JimenezSpeech = 17;
+const ExtraID kTSA03JimenezZoomOut = 18;
+const ExtraID kTSA03CrenshawZoomIn = 19;
+const ExtraID kTSA03CrenshawSpeech = 20;
+const ExtraID kTSA03CrenshawZoomOut = 21;
+const ExtraID kTSA03SouthRobotDeath = 22;
+const ExtraID kTSA04NorthRobotGreeting = 23;
+const ExtraID kTSA04MatsumotoZoomIn = 24;
+const ExtraID kTSA04MatsumotoSpeech = 25;
+const ExtraID kTSA04MatsumotoZoomOut = 26;
+const ExtraID kTSA04CastilleZoomIn = 27;
+const ExtraID kTSA04CastilleSpeech = 28;
+const ExtraID kTSA04CastilleZoomOut = 29;
+const ExtraID kTSA05SinclairZoomIn = 30;
+const ExtraID kTSA05SinclairSpeech = 31;
+const ExtraID kTSA05SinclairZoomOut = 32;
+const ExtraID kTSA05WhiteZoomIn = 33;
+const ExtraID kTSA05WhiteSpeech = 34;
+const ExtraID kTSA05WhiteZoomOut = 35;
+const ExtraID kTSA0AEastRobot = 36;
+const ExtraID kTSA0AWestRobot = 37;
+const ExtraID kTSA16NorthRobotDeath = 38;
+const ExtraID kTSA0BEastZoomIn = 39;
+const ExtraID kTSA0BEastZoomedView = 40;
+const ExtraID kTSA0BEastZoomOut = 41;
+const ExtraID kTSA0BEastTurnLeft = 42;
+const ExtraID kTSA0BComparisonStartup = 43;
+const ExtraID kTSA0BComparisonView0000 = 44;
+const ExtraID kTSA0BComparisonView0002 = 45;
+const ExtraID kTSA0BComparisonView0020 = 46;
+const ExtraID kTSA0BComparisonView0022 = 47;
+const ExtraID kTSA0BComparisonView0200 = 48;
+const ExtraID kTSA0BComparisonView0202 = 49;
+const ExtraID kTSA0BComparisonView0220 = 50;
+const ExtraID kTSA0BComparisonView0222 = 51;
+const ExtraID kTSA0BComparisonView2000 = 52;
+const ExtraID kTSA0BComparisonView2002 = 53;
+const ExtraID kTSA0BComparisonView2020 = 54;
+const ExtraID kTSA0BComparisonView2022 = 55;
+const ExtraID kTSA0BComparisonView2200 = 56;
+const ExtraID kTSA0BComparisonView2202 = 57;
+const ExtraID kTSA0BComparisonView2220 = 58;
+const ExtraID kTSA0BComparisonView2222 = 59;
+const ExtraID kTSA0BNoradComparisonView = 60;
+const ExtraID kTSA0BNoradUnaltered = 61;
+const ExtraID kTSA0BNoradAltered = 62;
+const ExtraID kTSA0BMarsComparisonView = 63;
+const ExtraID kTSA0BMarsUnaltered = 64;
+const ExtraID kTSA0BMarsAltered = 65;
+const ExtraID kTSA0BWSCComparisonView = 66;
+const ExtraID kTSA0BWSCUnaltered = 67;
+const ExtraID kTSA0BWSCAltered = 68;
+const ExtraID kTSA0BCaldoriaComparisonView = 69;
+const ExtraID kTSA0BCaldoriaUnaltered = 70;
+const ExtraID kTSA0BCaldoriaAltered = 71;
+const ExtraID kTSA0BNorthZoomIn = 72;
+const ExtraID kTSA0BNorthZoomedView = 73;
+const ExtraID kTSA0BNorthZoomOut = 74;
+const ExtraID kTSA0BNorthTurnLeft = 75;
+const ExtraID kTSA0BNorthTurnRight = 76;
+const ExtraID kTSA0BNorthHistLogOpen = 77;
+const ExtraID kTSA0BNorthHistLogClose = 78;
+const ExtraID kTSA0BNorthHistLogCloseWithLog = 79;
+const ExtraID kTSA0BNorthCantChangeHistory = 80;
+const ExtraID kTSA0BNorthYoureBusted = 81;
+const ExtraID kTSA0BNorthFinallyHappened = 82;
+const ExtraID kTSA0BShowRip1 = 83;
+const ExtraID kTSA0BNorthRipView1 = 84;
+const ExtraID kTSA0BShowRip2 = 85;
+const ExtraID kTSA0BShowGuardRobots = 86;
+const ExtraID kTSA0BAIInterruption = 87;
+const ExtraID kTSA0BRobotsToCommandCenter = 88;
+const ExtraID kTSA0BNorthRobotsAtCCView = 89;
+const ExtraID kTSA0BNorthRobotsAtRRView = 90;
+const ExtraID kTSA0BNorthRobotsAtFDView = 91;
+const ExtraID kTSA0BRobotsFromCommandCenterToReadyRoom = 92;
+const ExtraID kTSA0BRobotsFromReadyRoomToCommandCenter = 93;
+const ExtraID kTSA0BRobotsFromCommandCenterToFrontDoor = 94;
+const ExtraID kTSA0BRobotsFromFrontDoorToCommandCenter = 95;
+const ExtraID kTSA0BRobotsFromFrontDoorToReadyRoom = 96;
+const ExtraID kTSA0BRobotsFromReadyRoomToFrontDoor = 97;
+const ExtraID kTSA0BWestZoomIn = 98;
+const ExtraID kTSA0BWestZoomedView = 99;
+const ExtraID kTSA0BWestZoomOut = 100;
+const ExtraID kTSA0BWestTurnRight = 101;
+const ExtraID kTSA0BTBPTheoryHighlight = 102;
+const ExtraID kTSA0BTBPBackgroundHighlight = 103;
+const ExtraID kTSA0BTBPProcedureHighlight = 104;
+const ExtraID kTSA0BTBPTheory = 105;
+const ExtraID kTSA0BTBPBackground = 106;
+const ExtraID kTSA0BTBPProcedure = 107;
+const ExtraID kTSA0BRipAlarmScreen = 108;
+const ExtraID kTSA22RedEastZoomInSequence = 109;
+const ExtraID kTSA22RedEastVaultViewWithKey = 110;
+const ExtraID kTSA22RedEastVaultViewNoKey = 111;
+const ExtraID kTSA23RedWestVaultZoomInSequence = 112;
+const ExtraID kTSA23RedWestVaultViewWithChips = 113;
+const ExtraID kTSA23RedWestVaultViewNoChips = 114;
+const ExtraID kTSA25NorthDeniedNoKey = 115;
+const ExtraID kTSA25NorthDeniedNoChip = 116;
+const ExtraID kTSA25NorthPutOnSuit = 117;
+const ExtraID kTSA25NorthAlreadyHaveSuit = 118;
+const ExtraID kTSA25NorthDescending1 = 119;
+const ExtraID kTSA25NorthDescending2 = 120;
+const ExtraID kTSA37HorseToAI1 = 121;
+const ExtraID kTSA37PegasusAI1 = 122;
+const ExtraID kTSA37AI1ToCommissioner1 = 123;
+const ExtraID kTSA37Commissioner1 = 124;
+const ExtraID kTSA37Commissioner1ToZoom = 125;
+const ExtraID kTSA37ZoomToPrehistoric = 126;
+const ExtraID kTSA37PrehistoricToAI2 = 127;
+const ExtraID kTSA37PegasusAI2 = 128;
+const ExtraID kTSA37AI2ToPrehistoric = 129;
+const ExtraID kTSA37PrehistoricToDepart = 130;
+const ExtraID kTSA37PegasusDepart = 131;
+const ExtraID kTSA37TimeJumpToPegasus = 132;
+const ExtraID kTSA37RecallToDownload = 133;
+const ExtraID kTSA37DownloadToColonel1 = 134;
+const ExtraID kTSA37Colonel1 = 135;
+const ExtraID kTSA37Colonel1ToReviewRequired = 136;
+const ExtraID kTSA37ReviewRequiredToExit = 137;
+const ExtraID kTSA37ExitHilited = 138;
+const ExtraID kTSA37ExitToHorse = 139;
+const ExtraID kTSA37HorseToColonel2 = 140;
+const ExtraID kTSA37Colonel2 = 141;
+const ExtraID kTSA37PegasusAI3 = 142;
+const ExtraID kTSA37AI3ToHorse = 143;
+const ExtraID kTSA37HorseToZoom = 144;
+const ExtraID kTSA37ZoomToMainMenu = 145;
+const ExtraID kTSA37MainMenuToAI4 = 146;
+const ExtraID kTSA37PegasusAI4 = 147;
+const ExtraID kTSA37AI4ToMainMenu = 148;
+const ExtraID kTSA37JumpMenu000 = 149;
+const ExtraID kTSA37JumpMenu001 = 150;
+const ExtraID kTSA37JumpMenu010 = 151;
+const ExtraID kTSA37JumpMenu011 = 152;
+const ExtraID kTSA37JumpMenu100 = 153;
+const ExtraID kTSA37JumpMenu101 = 154;
+const ExtraID kTSA37JumpMenu110 = 155;
+const ExtraID kTSA37JumpMenu111 = 156;
+const ExtraID kTSA37JumpToWSCMenu = 157;
+const ExtraID kTSA37CancelWSC = 158;
+const ExtraID kTSA37JumpToWSC = 159;
+const ExtraID kTSA37WSCToAI5 = 160;
+const ExtraID kTSA37PegasusAI5 = 161;
+const ExtraID kTSA37AI5ToWSC = 162;
+const ExtraID kTSA37WSCToDepart = 163;
+const ExtraID kTSA37JumpToMarsMenu = 164;
+const ExtraID kTSA37CancelMars = 165;
+const ExtraID kTSA37JumpToMars = 166;
+const ExtraID kTSA37MarsToAI6 = 167;
+const ExtraID kTSA37PegasusAI6 = 168;
+const ExtraID kTSA37AI6ToMars = 169;
+const ExtraID kTSA37MarsToDepart = 170;
+const ExtraID kTSA37JumpToNoradMenu = 171;
+const ExtraID kTSA37CancelNorad = 172;
+const ExtraID kTSA37JumpToNorad = 173;
+const ExtraID kTSA37NoradToAI7 = 174;
+const ExtraID kTSA37PegasusAI7 = 175;
+const ExtraID kTSA37AI7ToNorad = 176;
+const ExtraID kTSA37NoradToDepart = 177;
+const ExtraID kTSA37EnvironmentalScan = 178;
+const ExtraID kTSA37DownloadToMainMenu = 179;
+const ExtraID kTSA37DownloadToOpMemReview = 180;
+const ExtraID kTSA37OpMemReviewToMainMenu = 181;
+const ExtraID kTSA37OpMemReviewToAllClear = 182;
+const ExtraID kTSA37AllClearToCongratulations = 183;
+const ExtraID kTSA37Congratulations = 184;
+const ExtraID kTSA37CongratulationsToExit = 185;
 
-const tHotSpotActivationID kActivateTSAReadyForCard = 1;
-const tHotSpotActivationID kActivateTSAReadyToTransport = 2;
-const tHotSpotActivationID kActivateTSARobotsAwake = 3;
-const tHotSpotActivationID kActivateTSA0BZoomedOut = 4;
-const tHotSpotActivationID kActivateTSA0BZoomedIn = 5;
-const tHotSpotActivationID kActivateTSA0BComparisonVideo = 6;
-const tHotSpotActivationID kActivationLogReaderOpen = 7;
-const tHotSpotActivationID kActivateTSA0BTBPVideo = 8;
-const tHotSpotActivationID kActivationDoesntHaveKey = 9;
-const tHotSpotActivationID kActivationKeyVaultOpen = 10;
-const tHotSpotActivationID kActivationDoesntHaveChips = 11;
-const tHotSpotActivationID kActivationChipVaultOpen = 12;
-const tHotSpotActivationID kActivationJumpToPrehistoric = 13;
-const tHotSpotActivationID kActivationJumpToNorad = 14;
-const tHotSpotActivationID kActivationJumpToMars = 15;
-const tHotSpotActivationID kActivationJumpToWSC = 16;
-const tHotSpotActivationID kActivationReadyToExit = 17;
-const tHotSpotActivationID kActivationReadyForJumpMenu = 18;
-const tHotSpotActivationID kActivationMainJumpMenu = 19;
-
-//	Hot Spot IDs.
-
-const tHotSpotID kTSAGTCardDropSpotID = 5000;
-const tHotSpotID kTSAGTTokyoSpotID = 5001;
-const tHotSpotID kTSAGTCaldoriaSpotID = 5002;
-const tHotSpotID kTSAGTBeachSpotID = 5003;
-const tHotSpotID kTSAGTOtherSpotID = 5004;
-const tHotSpotID kTSA02DoorSpotID = 5005;
-const tHotSpotID kTSA03EastJimenezSpotID = 5006;
-const tHotSpotID kTSA03WestCrenshawSpotID = 5007;
-const tHotSpotID kTSA04EastMatsumotoSpotID = 5008;
-const tHotSpotID kTSA04WestCastilleSpotID = 5009;
-const tHotSpotID kTSA05EastSinclairSpotID = 5010;
-const tHotSpotID kTSA05WestWhiteSpotID = 5011;
-const tHotSpotID kTSA0AEastSpotID = 5012;
-const tHotSpotID kTSA0AWastSpotID = 5013;
-const tHotSpotID kTSA0BEastMonitorSpotID = 5014;
-const tHotSpotID kTSA0BEastMonitorOutSpotID = 5015;
-const tHotSpotID kTSA0BEastCompareNoradSpotID = 5016;
-const tHotSpotID kTSA0BEastCompareMarsSpotID = 5017;
-const tHotSpotID kTSA0BEastCompareCaldoriaSpotID = 5018;
-const tHotSpotID kTSA0BEastCompareWSCSpotID = 5019;
-const tHotSpotID kTSA0BEastLeftRewindSpotID = 5020;
-const tHotSpotID kTSA0BEastLeftPlaySpotID = 5021;
-const tHotSpotID kTSA0BEastRightRewindSpotID = 5022;
-const tHotSpotID kTSA0BEastRightPlaySpotID = 5023;
-const tHotSpotID kTSA0BEastCloseVideoSpotID = 5024;
-const tHotSpotID kTSA0BNorthMonitorSpotID = 5025;
-const tHotSpotID kTSA0BNorthMonitorOutSpotID = 5026;
-const tHotSpotID kTSA0BNorthHistLogSpotID = 5027;
-const tHotSpotID kTSA0BNorthRobotsToCommandCenterSpotID = 5028;
-const tHotSpotID kTSA0BNorthRobotsToReadyRoomSpotID = 5029;
-const tHotSpotID kTSA0BNorthRobotsToFrontDoorSpotID = 5030;
-const tHotSpotID kTSA0BWestMonitorSpotID = 5031;
-const tHotSpotID kTSA0BWestMonitorOutSpotID = 5032;
-const tHotSpotID kTSA0BWestTheorySpotID = 5033;
-const tHotSpotID kTSA0BWestBackgroundSpotID = 5034;
-const tHotSpotID kTSA0BWestProcedureSpotID = 5035;
-const tHotSpotID kTSA0BWestCloseVideoSpotID = 5036;
-const tHotSpotID kTSA0BWestPlayVideoSpotID = 5037;
-const tHotSpotID kTSA0BWestRewindVideoSpotID = 5038;
-const tHotSpotID kTSA22EastMonitorSpotID = 5039;
-const tHotSpotID kTSA22EastKeySpotID = 5040;
-const tHotSpotID kTSA23WestMonitorSpotID = 5041;
-const tHotSpotID kTSA23WestChipsSpotID = 5042;
-const tHotSpotID kTSA34NorthDoorSpotID = 5043;
-const tHotSpotID kTSA37NorthJumpToPrehistoricSpotID = 5044;
-const tHotSpotID kTSA37NorthJumpToNoradSpotID = 5045;
-const tHotSpotID kTSA37NorthCancelNoradSpotID = 5046;
-const tHotSpotID kTSA37NorthJumpToMarsSpotID = 5047;
-const tHotSpotID kTSA37NorthCancelMarsSpotID = 5048;
-const tHotSpotID kTSA37NorthJumpToWSCSpotID = 5049;
-const tHotSpotID kTSA37NorthCancelWSCSpotID = 5050;
-const tHotSpotID kTSA37NorthExitSpotID = 5051;
-const tHotSpotID kTSA37NorthJumpMenuSpotID = 5052;
-const tHotSpotID kTSA37NorthNoradMenuSpotID = 5053;
-const tHotSpotID kTSA37NorthMarsMenuSpotID = 5054;
-const tHotSpotID kTSA37NorthWSCMenuSpotID = 5055;
-
-//	Extra sequence IDs.
-
-const tExtraID kTSATransporterArrowLoop = 0;
-const tExtraID kTSAArriveFromCaldoria = 1;
-const tExtraID kTSAGTOtherChoice = 2;
-const tExtraID kTSAGTCardSwipe = 3;
-const tExtraID kTSAGTSelectCaldoria = 4;
-const tExtraID kTSAGTGoToCaldoria = 5;
-const tExtraID kTSAGTSelectBeach = 6;
-const tExtraID kTSAGTGoToBeach = 7;
-const tExtraID kTSAGTArriveAtBeach = 8;
-const tExtraID kTSAGTSelectTokyo = 9;
-const tExtraID kTSAGTGoToTokyo = 10;
-const tExtraID kTSAGTArriveAtTokyo = 11;
-const tExtraID kTSA02NorthZoomIn = 12;
-const tExtraID kTSA02NorthTenSecondDoor = 13;
-const tExtraID kTSA02NorthZoomOut = 14;
-const tExtraID kTSA02NorthDoorWithAgent3 = 15;
-const tExtraID kTSA03JimenezZoomIn = 16;
-const tExtraID kTSA03JimenezSpeech = 17;
-const tExtraID kTSA03JimenezZoomOut = 18;
-const tExtraID kTSA03CrenshawZoomIn = 19;
-const tExtraID kTSA03CrenshawSpeech = 20;
-const tExtraID kTSA03CrenshawZoomOut = 21;
-const tExtraID kTSA03SouthRobotDeath = 22;
-const tExtraID kTSA04NorthRobotGreeting = 23;
-const tExtraID kTSA04MatsumotoZoomIn = 24;
-const tExtraID kTSA04MatsumotoSpeech = 25;
-const tExtraID kTSA04MatsumotoZoomOut = 26;
-const tExtraID kTSA04CastilleZoomIn = 27;
-const tExtraID kTSA04CastilleSpeech = 28;
-const tExtraID kTSA04CastilleZoomOut = 29;
-const tExtraID kTSA05SinclairZoomIn = 30;
-const tExtraID kTSA05SinclairSpeech = 31;
-const tExtraID kTSA05SinclairZoomOut = 32;
-const tExtraID kTSA05WhiteZoomIn = 33;
-const tExtraID kTSA05WhiteSpeech = 34;
-const tExtraID kTSA05WhiteZoomOut = 35;
-const tExtraID kTSA0AEastRobot = 36;
-const tExtraID kTSA0AWestRobot = 37;
-const tExtraID kTSA16NorthRobotDeath = 38;
-const tExtraID kTSA0BEastZoomIn = 39;
-const tExtraID kTSA0BEastZoomedView = 40;
-const tExtraID kTSA0BEastZoomOut = 41;
-const tExtraID kTSA0BEastTurnLeft = 42;
-const tExtraID kTSA0BComparisonStartup = 43;
-const tExtraID kTSA0BComparisonView0000 = 44;
-const tExtraID kTSA0BComparisonView0002 = 45;
-const tExtraID kTSA0BComparisonView0020 = 46;
-const tExtraID kTSA0BComparisonView0022 = 47;
-const tExtraID kTSA0BComparisonView0200 = 48;
-const tExtraID kTSA0BComparisonView0202 = 49;
-const tExtraID kTSA0BComparisonView0220 = 50;
-const tExtraID kTSA0BComparisonView0222 = 51;
-const tExtraID kTSA0BComparisonView2000 = 52;
-const tExtraID kTSA0BComparisonView2002 = 53;
-const tExtraID kTSA0BComparisonView2020 = 54;
-const tExtraID kTSA0BComparisonView2022 = 55;
-const tExtraID kTSA0BComparisonView2200 = 56;
-const tExtraID kTSA0BComparisonView2202 = 57;
-const tExtraID kTSA0BComparisonView2220 = 58;
-const tExtraID kTSA0BComparisonView2222 = 59;
-const tExtraID kTSA0BNoradComparisonView = 60;
-const tExtraID kTSA0BNoradUnaltered = 61;
-const tExtraID kTSA0BNoradAltered = 62;
-const tExtraID kTSA0BMarsComparisonView = 63;
-const tExtraID kTSA0BMarsUnaltered = 64;
-const tExtraID kTSA0BMarsAltered = 65;
-const tExtraID kTSA0BWSCComparisonView = 66;
-const tExtraID kTSA0BWSCUnaltered = 67;
-const tExtraID kTSA0BWSCAltered = 68;
-const tExtraID kTSA0BCaldoriaComparisonView = 69;
-const tExtraID kTSA0BCaldoriaUnaltered = 70;
-const tExtraID kTSA0BCaldoriaAltered = 71;
-const tExtraID kTSA0BNorthZoomIn = 72;
-const tExtraID kTSA0BNorthZoomedView = 73;
-const tExtraID kTSA0BNorthZoomOut = 74;
-const tExtraID kTSA0BNorthTurnLeft = 75;
-const tExtraID kTSA0BNorthTurnRight = 76;
-const tExtraID kTSA0BNorthHistLogOpen = 77;
-const tExtraID kTSA0BNorthHistLogClose = 78;
-const tExtraID kTSA0BNorthHistLogCloseWithLog = 79;
-const tExtraID kTSA0BNorthCantChangeHistory = 80;
-const tExtraID kTSA0BNorthYoureBusted = 81;
-const tExtraID kTSA0BNorthFinallyHappened = 82;
-const tExtraID kTSA0BShowRip1 = 83;
-const tExtraID kTSA0BNorthRipView1 = 84;
-const tExtraID kTSA0BShowRip2 = 85;
-const tExtraID kTSA0BShowGuardRobots = 86;
-const tExtraID kTSA0BAIInterruption = 87;
-const tExtraID kTSA0BRobotsToCommandCenter = 88;
-const tExtraID kTSA0BNorthRobotsAtCCView = 89;
-const tExtraID kTSA0BNorthRobotsAtRRView = 90;
-const tExtraID kTSA0BNorthRobotsAtFDView = 91;
-const tExtraID kTSA0BRobotsFromCommandCenterToReadyRoom = 92;
-const tExtraID kTSA0BRobotsFromReadyRoomToCommandCenter = 93;
-const tExtraID kTSA0BRobotsFromCommandCenterToFrontDoor = 94;
-const tExtraID kTSA0BRobotsFromFrontDoorToCommandCenter = 95;
-const tExtraID kTSA0BRobotsFromFrontDoorToReadyRoom = 96;
-const tExtraID kTSA0BRobotsFromReadyRoomToFrontDoor = 97;
-const tExtraID kTSA0BWestZoomIn = 98;
-const tExtraID kTSA0BWestZoomedView = 99;
-const tExtraID kTSA0BWestZoomOut = 100;
-const tExtraID kTSA0BWestTurnRight = 101;
-const tExtraID kTSA0BTBPTheoryHighlight = 102;
-const tExtraID kTSA0BTBPBackgroundHighlight = 103;
-const tExtraID kTSA0BTBPProcedureHighlight = 104;
-const tExtraID kTSA0BTBPTheory = 105;
-const tExtraID kTSA0BTBPBackground = 106;
-const tExtraID kTSA0BTBPProcedure = 107;
-const tExtraID kTSA0BRipAlarmScreen = 108;
-const tExtraID kTSA22RedEastZoomInSequence = 109;
-const tExtraID kTSA22RedEastVaultViewWithKey = 110;
-const tExtraID kTSA22RedEastVaultViewNoKey = 111;
-const tExtraID kTSA23RedWestVaultZoomInSequence = 112;
-const tExtraID kTSA23RedWestVaultViewWithChips = 113;
-const tExtraID kTSA23RedWestVaultViewNoChips = 114;
-const tExtraID kTSA25NorthDeniedNoKey = 115;
-const tExtraID kTSA25NorthDeniedNoChip = 116;
-const tExtraID kTSA25NorthPutOnSuit = 117;
-const tExtraID kTSA25NorthAlreadyHaveSuit = 118;
-const tExtraID kTSA25NorthDescending1 = 119;
-const tExtraID kTSA25NorthDescending2 = 120;
-const tExtraID kTSA37HorseToAI1 = 121;
-const tExtraID kTSA37PegasusAI1 = 122;
-const tExtraID kTSA37AI1ToCommissioner1 = 123;
-const tExtraID kTSA37Commissioner1 = 124;
-const tExtraID kTSA37Commissioner1ToZoom = 125;
-const tExtraID kTSA37ZoomToPrehistoric = 126;
-const tExtraID kTSA37PrehistoricToAI2 = 127;
-const tExtraID kTSA37PegasusAI2 = 128;
-const tExtraID kTSA37AI2ToPrehistoric = 129;
-const tExtraID kTSA37PrehistoricToDepart = 130;
-const tExtraID kTSA37PegasusDepart = 131;
-const tExtraID kTSA37TimeJumpToPegasus = 132;
-const tExtraID kTSA37RecallToDownload = 133;
-const tExtraID kTSA37DownloadToColonel1 = 134;
-const tExtraID kTSA37Colonel1 = 135;
-const tExtraID kTSA37Colonel1ToReviewRequired = 136;
-const tExtraID kTSA37ReviewRequiredToExit = 137;
-const tExtraID kTSA37ExitHilited = 138;
-const tExtraID kTSA37ExitToHorse = 139;
-const tExtraID kTSA37HorseToColonel2 = 140;
-const tExtraID kTSA37Colonel2 = 141;
-const tExtraID kTSA37PegasusAI3 = 142;
-const tExtraID kTSA37AI3ToHorse = 143;
-const tExtraID kTSA37HorseToZoom = 144;
-const tExtraID kTSA37ZoomToMainMenu = 145;
-const tExtraID kTSA37MainMenuToAI4 = 146;
-const tExtraID kTSA37PegasusAI4 = 147;
-const tExtraID kTSA37AI4ToMainMenu = 148;
-const tExtraID kTSA37JumpMenu000 = 149;
-const tExtraID kTSA37JumpMenu001 = 150;
-const tExtraID kTSA37JumpMenu010 = 151;
-const tExtraID kTSA37JumpMenu011 = 152;
-const tExtraID kTSA37JumpMenu100 = 153;
-const tExtraID kTSA37JumpMenu101 = 154;
-const tExtraID kTSA37JumpMenu110 = 155;
-const tExtraID kTSA37JumpMenu111 = 156;
-const tExtraID kTSA37JumpToWSCMenu = 157;
-const tExtraID kTSA37CancelWSC = 158;
-const tExtraID kTSA37JumpToWSC = 159;
-const tExtraID kTSA37WSCToAI5 = 160;
-const tExtraID kTSA37PegasusAI5 = 161;
-const tExtraID kTSA37AI5ToWSC = 162;
-const tExtraID kTSA37WSCToDepart = 163;
-const tExtraID kTSA37JumpToMarsMenu = 164;
-const tExtraID kTSA37CancelMars = 165;
-const tExtraID kTSA37JumpToMars = 166;
-const tExtraID kTSA37MarsToAI6 = 167;
-const tExtraID kTSA37PegasusAI6 = 168;
-const tExtraID kTSA37AI6ToMars = 169;
-const tExtraID kTSA37MarsToDepart = 170;
-const tExtraID kTSA37JumpToNoradMenu = 171;
-const tExtraID kTSA37CancelNorad = 172;
-const tExtraID kTSA37JumpToNorad = 173;
-const tExtraID kTSA37NoradToAI7 = 174;
-const tExtraID kTSA37PegasusAI7 = 175;
-const tExtraID kTSA37AI7ToNorad = 176;
-const tExtraID kTSA37NoradToDepart = 177;
-const tExtraID kTSA37EnvironmentalScan = 178;
-const tExtraID kTSA37DownloadToMainMenu = 179;
-const tExtraID kTSA37DownloadToOpMemReview = 180;
-const tExtraID kTSA37OpMemReviewToMainMenu = 181;
-const tExtraID kTSA37OpMemReviewToAllClear = 182;
-const tExtraID kTSA37AllClearToCongratulations = 183;
-const tExtraID kTSA37Congratulations = 184;
-const tExtraID kTSA37CongratulationsToExit = 185;
-
-const tDisplayOrder kRipTimerOrder = kMonitorLayer;
+const DisplayOrder kRipTimerOrder = kMonitorLayer;
 
 
-const tCoordType kUnresolvedLeft = kNavAreaLeft + 14;
-const tCoordType kUnresolvedTop = kNavAreaTop + 236;
+const CoordType kUnresolvedLeft = kNavAreaLeft + 14;
+const CoordType kUnresolvedTop = kNavAreaTop + 236;
 
-const tCoordType kResolvedLeft = kNavAreaLeft + 36;
-const tCoordType kResolvedTop = kNavAreaTop + 236;
+const CoordType kResolvedLeft = kNavAreaLeft + 36;
+const CoordType kResolvedTop = kNavAreaTop + 236;
 
-const tCoordType kJumpMenuLeft = kNavAreaLeft + 360;
-const tCoordType kJumpMenuTop = kNavAreaTop + 202;
+const CoordType kJumpMenuLeft = kNavAreaLeft + 360;
+const CoordType kJumpMenuTop = kNavAreaTop + 202;
 
-const tCoordType kJumpMenuHilitedLeft = kNavAreaLeft + 354;
-const tCoordType kJumpMenuHilitedTop = kNavAreaTop + 196;
+const CoordType kJumpMenuHilitedLeft = kNavAreaLeft + 354;
+const CoordType kJumpMenuHilitedTop = kNavAreaTop + 196;
 
-const tCoordType kExitLeft = kNavAreaLeft + 360;
-const tCoordType kExitTop = kNavAreaTop + 216;
+const CoordType kExitLeft = kNavAreaLeft + 360;
+const CoordType kExitTop = kNavAreaTop + 216;
 
-const tCoordType kExitHilitedLeft = kNavAreaLeft + 354;
-const tCoordType kExitHilitedTop = kNavAreaTop + 210;
+const CoordType kExitHilitedLeft = kNavAreaLeft + 354;
+const CoordType kExitHilitedTop = kNavAreaTop + 210;
 
-const tCoordType kRipTimerLeft = kNavAreaLeft + 95;
-const tCoordType kRipTimerTop = kNavAreaTop + 87;
+const CoordType kRipTimerLeft = kNavAreaLeft + 95;
+const CoordType kRipTimerTop = kNavAreaTop + 87;
 
-const tCoordType kTBPCloseLeft = kNavAreaLeft + 30;
-const tCoordType kTBPCloseTop = kNavAreaTop + 16;
+const CoordType kTBPCloseLeft = kNavAreaLeft + 30;
+const CoordType kTBPCloseTop = kNavAreaTop + 16;
 
-const tCoordType kTBPRewindLeft = kNavAreaLeft + 86;
-const tCoordType kTBPRewindTop = kNavAreaTop + 218;
+const CoordType kTBPRewindLeft = kNavAreaLeft + 86;
+const CoordType kTBPRewindTop = kNavAreaTop + 218;
 
-const tCoordType kComparisonCloseLeft = kNavAreaLeft + 50;
-const tCoordType kComparisonCloseTop = kNavAreaTop + 14;
+const CoordType kComparisonCloseLeft = kNavAreaLeft + 50;
+const CoordType kComparisonCloseTop = kNavAreaTop + 14;
 
-const tCoordType kComparisonLeftRewindLeft = kNavAreaLeft + 96;
-const tCoordType kComparisonLeftRewindTop = kNavAreaTop + 190;
+const CoordType kComparisonLeftRewindLeft = kNavAreaLeft + 96;
+const CoordType kComparisonLeftRewindTop = kNavAreaTop + 190;
 
-const tCoordType kComparisonRightRewindLeft = kNavAreaLeft + 282;
-const tCoordType kComparisonRightRewindTop = kNavAreaTop + 190;
+const CoordType kComparisonRightRewindLeft = kNavAreaLeft + 282;
+const CoordType kComparisonRightRewindTop = kNavAreaTop + 190;
 
-const tCoordType kComparisonHiliteSpriteLeft = kNavAreaLeft + 45;
-const tCoordType kComparisonHiliteSpriteTop = kNavAreaTop + 65;
+const CoordType kComparisonHiliteSpriteLeft = kNavAreaLeft + 45;
+const CoordType kComparisonHiliteSpriteTop = kNavAreaTop + 65;
 
-const tCoordType kComparisonHiliteNoradLeft = kNavAreaLeft + 45;
-const tCoordType kComparisonHiliteNoradTop = kNavAreaTop + 65;
+const CoordType kComparisonHiliteNoradLeft = kNavAreaLeft + 45;
+const CoordType kComparisonHiliteNoradTop = kNavAreaTop + 65;
 
-const tCoordType kComparisonHiliteMarsLeft = kNavAreaLeft + 45 + 4;
-const tCoordType kComparisonHiliteMarsTop = kNavAreaTop + 65 + 23;
+const CoordType kComparisonHiliteMarsLeft = kNavAreaLeft + 45 + 4;
+const CoordType kComparisonHiliteMarsTop = kNavAreaTop + 65 + 23;
 
-const tCoordType kComparisonHiliteCaldoriaLeft = kNavAreaLeft + 45 + 7;
-const tCoordType kComparisonHiliteCaldoriaTop = kNavAreaTop + 65 + 46;
+const CoordType kComparisonHiliteCaldoriaLeft = kNavAreaLeft + 45 + 7;
+const CoordType kComparisonHiliteCaldoriaTop = kNavAreaTop + 65 + 46;
 
-const tCoordType kComparisonHiliteWSCLeft = kNavAreaLeft + 45 + 11;
-const tCoordType kComparisonHiliteWSCTop = kNavAreaTop + 65 + 68;
+const CoordType kComparisonHiliteWSCLeft = kNavAreaLeft + 45 + 11;
+const CoordType kComparisonHiliteWSCTop = kNavAreaTop + 65 + 68;
 
-const tCoordType kComparisonChancesSpriteLeft = kNavAreaLeft + 148;
-const tCoordType kComparisonChancesSpriteTop = kNavAreaTop + 162;
+const CoordType kComparisonChancesSpriteLeft = kNavAreaLeft + 148;
+const CoordType kComparisonChancesSpriteTop = kNavAreaTop + 162;
 
-const tCoordType kComparisonChancesNoradLeft = kNavAreaLeft + 148;
-const tCoordType kComparisonChancesNoradTop = kNavAreaTop + 162;
+const CoordType kComparisonChancesNoradLeft = kNavAreaLeft + 148;
+const CoordType kComparisonChancesNoradTop = kNavAreaTop + 162;
 
-const tCoordType kComparisonChancesMarsLeft = kNavAreaLeft + 148;
-const tCoordType kComparisonChancesMarsTop = kNavAreaTop + 162;
+const CoordType kComparisonChancesMarsLeft = kNavAreaLeft + 148;
+const CoordType kComparisonChancesMarsTop = kNavAreaTop + 162;
 
-const tCoordType kComparisonChancesCaldoriaLeft = kNavAreaLeft + 148;
-const tCoordType kComparisonChancesCaldoriaTop = kNavAreaTop + 162 + 1;
+const CoordType kComparisonChancesCaldoriaLeft = kNavAreaLeft + 148;
+const CoordType kComparisonChancesCaldoriaTop = kNavAreaTop + 162 + 1;
 
-const tCoordType kComparisonChancesWSCLeft = kNavAreaLeft + 148;
-const tCoordType kComparisonChancesWSCTop = kNavAreaTop + 162;
+const CoordType kComparisonChancesWSCLeft = kNavAreaLeft + 148;
+const CoordType kComparisonChancesWSCTop = kNavAreaTop + 162;
 
-const tCoordType kRedirectionSprite1Left = kNavAreaLeft + 58;
-const tCoordType kRedirectionSprite1Top = kNavAreaTop + 16;
+const CoordType kRedirectionSprite1Left = kNavAreaLeft + 58;
+const CoordType kRedirectionSprite1Top = kNavAreaTop + 16;
 
-const tCoordType kRedirectionSprite2Left = kNavAreaLeft + 36;
-const tCoordType kRedirectionSprite2Top = kNavAreaTop + 166;
+const CoordType kRedirectionSprite2Left = kNavAreaLeft + 36;
+const CoordType kRedirectionSprite2Top = kNavAreaTop + 166;
 
-const tCoordType kRedirectionCCRolloverLeft = kNavAreaLeft + 58;
-const tCoordType kRedirectionCCRolloverTop = kNavAreaTop + 16;
+const CoordType kRedirectionCCRolloverLeft = kNavAreaLeft + 58;
+const CoordType kRedirectionCCRolloverTop = kNavAreaTop + 16;
 
-const tCoordType kRedirectionRRRolloverLeft = kNavAreaLeft + 430;
-const tCoordType kRedirectionRRRolloverTop = kNavAreaTop + 30;
+const CoordType kRedirectionRRRolloverLeft = kNavAreaLeft + 430;
+const CoordType kRedirectionRRRolloverTop = kNavAreaTop + 30;
 
-const tCoordType kRedirectionFDRolloverLeft = kNavAreaLeft + 278;
-const tCoordType kRedirectionFDRolloverTop = kNavAreaTop + 160;
+const CoordType kRedirectionFDRolloverLeft = kNavAreaLeft + 278;
+const CoordType kRedirectionFDRolloverTop = kNavAreaTop + 160;
 
-const tCoordType kRedirectionCCDoorLeft = kNavAreaLeft + 174;
-const tCoordType kRedirectionCCDoorTop = kNavAreaTop + 36;
+const CoordType kRedirectionCCDoorLeft = kNavAreaLeft + 174;
+const CoordType kRedirectionCCDoorTop = kNavAreaTop + 36;
 
-const tCoordType kRedirectionRRDoorLeft = kNavAreaLeft + 418;
-const tCoordType kRedirectionRRDoorTop = kNavAreaTop + 32;
+const CoordType kRedirectionRRDoorLeft = kNavAreaLeft + 418;
+const CoordType kRedirectionRRDoorTop = kNavAreaTop + 32;
 
-const tCoordType kRedirectionFDDoorLeft = kNavAreaLeft + 298;
-const tCoordType kRedirectionFDDoorTop = kNavAreaTop + 240;
+const CoordType kRedirectionFDDoorLeft = kNavAreaLeft + 298;
+const CoordType kRedirectionFDDoorTop = kNavAreaTop + 240;
 
-const tCoordType kRedirectionSecuredLeft = kNavAreaLeft + 36;
-const tCoordType kRedirectionSecuredTop = kNavAreaTop + 166;
+const CoordType kRedirectionSecuredLeft = kNavAreaLeft + 36;
+const CoordType kRedirectionSecuredTop = kNavAreaTop + 166;
 
-const tCoordType kRedirectionNewTargetLeft = kNavAreaLeft + 36;
-const tCoordType kRedirectionNewTargetTop = kNavAreaTop + 166;
+const CoordType kRedirectionNewTargetLeft = kNavAreaLeft + 36;
+const CoordType kRedirectionNewTargetTop = kNavAreaTop + 166;
 
-const tCoordType kRedirectionCloseLeft = kNavAreaLeft + 56;
-const tCoordType kRedirectionCloseTop = kNavAreaTop + 220;
+const CoordType kRedirectionCloseLeft = kNavAreaLeft + 56;
+const CoordType kRedirectionCloseTop = kNavAreaTop + 220;
 
 const TimeValue kTSABumpIntoWallIn = 0;
 const TimeValue kTSABumpIntoWallOut = 148;
@@ -568,7 +563,7 @@ enum {
 										kPlayingRightComparisonMask
 };
 
-static const tExtraID s_historicalLogViews[16] = {
+static const ExtraID s_historicalLogViews[16] = {
 	kTSA0BComparisonView0000,
 	kTSA0BComparisonView0002,
 	kTSA0BComparisonView0020,
@@ -630,7 +625,7 @@ void RipTimer::timeChanged(const TimeValue newTime) {
 	Common::Rect bounds;
 	getBounds(bounds);
 
-	tCoordType newMiddle = bounds.left + bounds.width() * newTime / getDuration();
+	CoordType newMiddle = bounds.left + bounds.width() * newTime / getDuration();
 
 	if (newMiddle != _middle) {
 		_middle = newMiddle;
@@ -699,7 +694,7 @@ Common::String FullTSA::getBriefingMovie() {
 	Common::String movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty()) {
-		tRoomID room = GameState.getCurrentRoom();
+		RoomID room = GameState.getCurrentRoom();
 
 		switch (GameState.getTSAState()) {
 		case kTSAPlayerNotArrived:
@@ -829,7 +824,7 @@ Common::String FullTSA::getHintMovie(uint hintNum) {
 }
 
 void FullTSA::loadAmbientLoops() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 
 	switch (GameState.getTSAState()) {
 	case kTSAPlayerDetectedRip:
@@ -856,7 +851,7 @@ void FullTSA::loadAmbientLoops() {
 	}
 }
 
-short FullTSA::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+short FullTSA::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	int16 result = Neighborhood::getStaticCompassAngle(room, dir);
 
 	switch (room) {
@@ -1010,8 +1005,8 @@ uint16 FullTSA::getDateResID() const {
 	return kDate2318ID;
 }
 
-TimeValue FullTSA::getViewTime(const tRoomID room, const tDirectionConstant direction) {
-	tExtraID extraID = 0xffffffff;
+TimeValue FullTSA::getViewTime(const RoomID room, const DirectionConstant direction) {
+	ExtraID extraID = 0xffffffff;
 	
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kTSA0B, kEast):
@@ -1084,7 +1079,7 @@ TimeValue FullTSA::getViewTime(const tRoomID room, const tDirectionConstant dire
 	return Neighborhood::getViewTime(room, direction);
 }
 
-void FullTSA::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &entry) {
+void FullTSA::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kTSA0B, kNorth):
 	case MakeRoomView(kTSA0B, kEast):
@@ -1120,7 +1115,7 @@ void FullTSA::pickedUpItem(Item *item) {
 	}
 }
 
-void FullTSA::playExtraMovie(const ExtraTable::Entry &extraEntry, const tNotificationFlags flags, const tInputBits interruptionInput) {
+void FullTSA::playExtraMovie(const ExtraTable::Entry &extraEntry, const NotificationFlags flags, const InputBits interruptionInput) {
 	switch (extraEntry.extra) {
 	case kTSA0BNorthZoomIn:
 		if (_privateFlags.getFlag(kTSAPrivateLogReaderOpenFlag)) {
@@ -1189,8 +1184,8 @@ void FullTSA::startDoorOpenMovie(const TimeValue startTime, const TimeValue stop
 	Neighborhood::startDoorOpenMovie(startTime, stopTime);
 }
 
-tInputBits FullTSA::getInputFilter() {
-	tInputBits result = Neighborhood::getInputFilter();
+InputBits FullTSA::getInputFilter() {
+	InputBits result = Neighborhood::getInputFilter();
 
 	switch (GameState.getCurrentRoom()) {
 	case kTSA0B:
@@ -1256,14 +1251,14 @@ void FullTSA::openDoor() {
 	Neighborhood::openDoor();
 }
 
-tCanMoveForwardReason FullTSA::canMoveForward(ExitTable::Entry &entry) {
+CanMoveForwardReason FullTSA::canMoveForward(ExitTable::Entry &entry) {
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kTSA25Red, kNorth))
 		return kCantMoveBlocked;
 
 	return Neighborhood::canMoveForward(entry);
 }
 
-tCanOpenDoorReason FullTSA::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason FullTSA::canOpenDoor(DoorTable::Entry &entry) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kTSA02, kNorth):
 		if (!GameState.getTSAFrontDoorUnlockedOutside())
@@ -1610,7 +1605,7 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 }
 
 void FullTSA::showMainJumpMenu() {
-	tExtraID jumpMenuView = kTSA37JumpMenu000;
+	ExtraID jumpMenuView = kTSA37JumpMenu000;
 
 	if (GameState.getNoradFinished())
 		jumpMenuView += 4;
@@ -1627,7 +1622,7 @@ void FullTSA::playTBPMonitor() {
 	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
 	
 	if ((GameState.getT0BMonitorMode() & kPlayingTBPMask) == 0) {
-		tExtraID extra;
+		ExtraID extra;
 
 		switch (GameState.getT0BMonitorMode() & kRawModeMask) {
 		case kMonitorTheory:
@@ -1662,7 +1657,7 @@ void FullTSA::playTBPMonitor() {
 	}
 }
 
-void FullTSA::initializeTBPMonitor(const int newMode, const tExtraID highlightExtra) {
+void FullTSA::initializeTBPMonitor(const int newMode, const ExtraID highlightExtra) {
 	GameState.setT0BMonitorMode(newMode);
 
 	if (newMode != kMonitorNeutral) {
@@ -1732,7 +1727,7 @@ void FullTSA::shutDownComparisonMonitor() {
 	releaseSprites();
 }
 
-void FullTSA::initializeComparisonMonitor(const int newMode, const tExtraID comparisonView) {
+void FullTSA::initializeComparisonMonitor(const int newMode, const ExtraID comparisonView) {
 	GameState.setT0BMonitorMode(newMode);
 	_privateFlags.setFlag(kTSAPrivatePlayingLeftComparisonFlag, false);
 	_privateFlags.setFlag(kTSAPrivatePlayingRightComparisonFlag, false);
@@ -1778,7 +1773,7 @@ void FullTSA::playLeftComparison() {
 	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
 
 	if ((GameState.getT0BMonitorMode() & kPlayingLeftComparisonMask) == 0) {
-		tExtraID extra;
+		ExtraID extra;
 
 		switch (GameState.getT0BMonitorMode() & kRawModeMask) {
 		case kMonitorNoradComparison:
@@ -1828,7 +1823,7 @@ void FullTSA::playRightComparison() {
 	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
 	
 	if ((GameState.getT0BMonitorMode() & kPlayingRightComparisonMask) == 0) {
-		tExtraID extra;
+		ExtraID extra;
 
 		switch (GameState.getT0BMonitorMode() & kRawModeMask) {
 		case kMonitorNoradComparison:
@@ -1951,7 +1946,7 @@ void FullTSA::setOffRipAlarm() {
 	requestExtraSequence(kTSA0BShowRip1, kExtraCompletedFlag, kFilterNoInput);
 }
 
-void FullTSA::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void FullTSA::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kTSA04, kNorth):
 	case MakeRoomView(kTSA14, kEast):
@@ -1966,7 +1961,7 @@ void FullTSA::checkContinuePoint(const tRoomID room, const tDirectionConstant di
 	}
 }
 
-void FullTSA::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void FullTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 	checkRobotLocations(room, direction);
 	Neighborhood::arriveAt(room, direction);
 
@@ -2094,7 +2089,7 @@ void FullTSA::arriveAt(const tRoomID room, const tDirectionConstant direction) {
 	}
 }
 
-void FullTSA::checkRobotLocations(const tRoomID room, const tDirectionConstant dir) {
+void FullTSA::checkRobotLocations(const RoomID room, const DirectionConstant dir) {
 	switch (room) {
 	case kTSA03:
 	case kTSA04:
@@ -2184,7 +2179,7 @@ void FullTSA::arriveAtTSA37() {
 	}
 }
 
-void FullTSA::turnTo(const tDirectionConstant newDirection) {
+void FullTSA::turnTo(const DirectionConstant newDirection) {
 	Neighborhood::turnTo(newDirection);
 
 	switch (MakeRoomView(GameState.getCurrentRoom(), newDirection)) {
@@ -2322,7 +2317,7 @@ void FullTSA::turnTo(const tDirectionConstant newDirection) {
 	GameState.setT0BMonitorMode(kMonitorNeutral);
 }
 
-void FullTSA::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
+void FullTSA::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	switch (room) {
 	case kTSA00:
 	case kTSA01:
@@ -2347,8 +2342,8 @@ void FullTSA::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
 	}
 }
 
-void FullTSA::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
-	tExtraID lastExtra = _lastExtra;
+void FullTSA::receiveNotification(Notification *notification, const NotificationFlags flags) {	
+	ExtraID lastExtra = _lastExtra;
 
 	if ((flags & kExtraCompletedFlag) != 0) {
 		switch (lastExtra) {

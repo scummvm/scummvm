@@ -70,9 +70,9 @@ void Compass::draw(const Common::Rect &r1) {
 		Common::Rect r2;
 		_compassImage.getSurfaceBounds(r2);
 
-		tCoordType width = r2.width();
-		tCoordType offsetH = width / 10 - bounds.width() / 2 + (getFaderValue() * width) / 450 - bounds.left;
-		tCoordType offsetV = -bounds.top;
+		CoordType width = r2.width();
+		CoordType offsetH = width / 10 - bounds.width() / 2 + (getFaderValue() * width) / 450 - bounds.left;
+		CoordType offsetV = -bounds.top;
 		r2 = r1;
 		r2.translate(offsetH, offsetV);
 		_compassImage.drawImage(r2, r1);

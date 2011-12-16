@@ -132,9 +132,9 @@ void NoradAlpha::start() {
 		g_energyMonitor->startEnergyDraining();
 	}
 
-	tNeighborhoodID itemNeighborhood;
-	tRoomID itemRoom;
-	tDirectionConstant itemDirection;
+	NeighborhoodID itemNeighborhood;
+	RoomID itemRoom;
+	DirectionConstant itemDirection;
 
 	Item *item = (Item *)g_allItems.findItemByID(kGasCanister);
 	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
@@ -211,7 +211,7 @@ void NoradAlpha::playClawMonitorIntro() {
 	playSpotSoundSync(kLoadClawIntroIn, kLoadClawIntroOut);
 }
 
-GameInteraction *NoradAlpha::makeInteraction(const tInteractionID interactionID) {
+GameInteraction *NoradAlpha::makeInteraction(const InteractionID interactionID) {
 	switch (interactionID) {
 	case kNoradECRMonitorInteractionID:
 		return new NoradAlphaECRMonitor(this);
@@ -250,7 +250,7 @@ void NoradAlpha::loadAmbientLoops() {
 	if (!GameState.getNoradSeenTimeStream())
 		return;
 
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 	if (GameState.getNoradGassed()) {
 		if (room >= kNorad11 && room <= kNorad19West)
 			loadLoopSound1("Sounds/Norad/NEW SUB AMB.22K.AIFF", kNoradWarningVolume * 3);
@@ -288,7 +288,7 @@ void NoradAlpha::loadAmbientLoops() {
 	
 }
 
-void NoradAlpha::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void NoradAlpha::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kNorad02, kEast):
 	case MakeRoomView(kNorad06, kEast):
@@ -301,7 +301,7 @@ void NoradAlpha::checkContinuePoint(const tRoomID room, const tDirectionConstant
 	}
 }
 
-void NoradAlpha::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void NoradAlpha::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Norad::arriveAt(room, direction);
 
 	switch (GameState.getCurrentRoom()) {
@@ -364,7 +364,7 @@ void NoradAlpha::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
-void NoradAlpha::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void NoradAlpha::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	if ((flags & kExtraCompletedFlag) != 0) {
 		switch (_lastExtra) {
 		case kNoradArriveFromTSA:
@@ -400,7 +400,7 @@ void NoradAlpha::receiveNotification(Notification *notification, const tNotifica
 	g_AIArea->checkMiddleArea();
 }
 
-void NoradAlpha::getZoomEntry(const tHotSpotID spotID, ZoomTable::Entry &entry) {
+void NoradAlpha::getZoomEntry(const HotSpotID spotID, ZoomTable::Entry &entry) {
 	Norad::getZoomEntry(spotID, entry);
 
 	ExtraTable::Entry extra;
@@ -428,7 +428,7 @@ void NoradAlpha::getZoomEntry(const tHotSpotID spotID, ZoomTable::Entry &entry) 
 	}
 }
 
-TimeValue NoradAlpha::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue NoradAlpha::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry entry;
 	
 	if (room == kNorad01 && direction == kSouth && !GameState.getNoradSeenTimeStream()) {
@@ -511,13 +511,13 @@ void NoradAlpha::activateHotspots() {
 	case MakeRoomView(kNorad01West, kWest):
 		if (_vm->getDragType() == kDragInventoryUse) {
 			if (!_fillingStationItem) {
-				tItemID itemID = _vm->getDraggingItem()->getObjectID();
+				ItemID itemID = _vm->getDraggingItem()->getObjectID();
 				if (itemID == kArgonCanister || itemID == kGasCanister || itemID == kAirMask ||
 						itemID == kNitrogenCanister)
 					g_allHotspots.activateOneHotspot(kN01GasOutletSpotID);
 			}
 		} else {
-			tHotSpotID spotID;
+			HotSpotID spotID;
 
 			if (_fillingStationItem) {
 				switch (_fillingStationItem->getObjectID()) {
@@ -596,9 +596,9 @@ void NoradAlpha::dropItemIntoRoom(Item *item, Hotspot *droppedSpot) {
 	Norad::dropItemIntoRoom(item, droppedSpot);
 }
 
-void NoradAlpha::getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID, tHotSpotID &clawControlSpotID, tHotSpotID &pinchClawSpotID,
-		tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID, tHotSpotID &moveClawLeftSpotID, tHotSpotID &moveClawUpSpotID,
-		tHotSpotID &clawCCWSpotID, tHotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
+void NoradAlpha::getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
+		HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
+		HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
 	outSpotID = kNorad22MonitorOutSpotID;
 	prepSpotID = kNorad22LaunchPrepSpotID;
 	clawControlSpotID = kNorad22ClawControlSpotID;
@@ -632,7 +632,7 @@ Common::String NoradAlpha::getEnvScanMovie() {
 	Common::String movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
-		tRoomID room = GameState.getCurrentRoom();
+		RoomID room = GameState.getCurrentRoom();
 		if (room >= kNorad01 && room <= kNorad01West)
 			return "Images/AI/Norad/XNE1";
 		else if ((room >= kNorad02 && room <= kNorad19West))
@@ -718,7 +718,7 @@ Common::String NoradAlpha::getHintMovie(uint hintNum) {
 	return movieName;
 }
 
-void NoradAlpha::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
+void NoradAlpha::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	switch (room) {
 	case kNorad12:
 	case kNorad13:
@@ -732,7 +732,7 @@ void NoradAlpha::closeDoorOffScreen(const tRoomID room, const tDirectionConstant
 	}
 }
 
-void NoradAlpha::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry) {
+void NoradAlpha::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &spotEntry) {
 	if (room == kNorad01 && direction == kSouth)
 		spotEntry.clear();
 	else

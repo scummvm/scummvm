@@ -79,18 +79,18 @@ public:
 protected:
 	void blankFields();
 	void makeNewSurface(const Common::Rect &);
-	void calcStripRange(const Common::Rect &, tCoordType &, tCoordType &);
-	void loadStrips(tCoordType, tCoordType);
-	void loadOneStrip(tCoordType, tCoordType);
+	void calcStripRange(const Common::Rect &, CoordType &, CoordType &);
+	void loadStrips(CoordType, CoordType);
+	void loadOneStrip(CoordType, CoordType);
 	
 	Movie _panoramaMovie;
 	Surface _panoramaWorld, *_mask;
 	Common::Rect _viewBounds;
 	Common::Rect _drawBounds;
-	tCoordType _panoramaWidth, _panoramaHeight;
-	tCoordType _stripWidth; // Pixels per strip.
-	tCoordType _numStrips;
-	tCoordType _stripLeft, _stripRight;
+	CoordType _panoramaWidth, _panoramaHeight;
+	CoordType _stripWidth; // Pixels per strip.
+	CoordType _numStrips;
+	CoordType _stripLeft, _stripRight;
 };
 
 } // End of namespace Pegasus

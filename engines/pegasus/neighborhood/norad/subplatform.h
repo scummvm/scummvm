@@ -48,7 +48,7 @@ protected:
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 	
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 	
 	Movie _platformMovie;
 	TimeScale _platformScale;

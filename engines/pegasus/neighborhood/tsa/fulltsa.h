@@ -32,7 +32,7 @@ namespace Pegasus {
 
 class RipTimer : public IdlerAnimation {
 public:
-	RipTimer(const tDisplayElementID id) : IdlerAnimation(id) {}
+	RipTimer(const DisplayElementID id) : IdlerAnimation(id) {}
 	virtual ~RipTimer() {}
 
 	void initImage();
@@ -43,15 +43,15 @@ public:
 protected:
 	void timeChanged(const TimeValue);
 	
-	tCoordType _middle;
+	CoordType _middle;
 	Surface _timerImage;
 };
 
 //	Room IDs.
 
-const tRoomID kTSA00 = 0;
-const tRoomID kTSA22Red = 28;
-const tRoomID kTSA37 = 42;
+const RoomID kTSA00 = 0;
+const RoomID kTSA22Red = 28;
+const RoomID kTSA37 = 42;
 
 class FullTSA : public Neighborhood {
 friend void uncreatedInTSAFunction(FunctionPtr *, void *tsa);
@@ -68,7 +68,7 @@ public:
 
 	void flushGameState();
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 	bool canSolve();
 	void doSolve();
@@ -93,33 +93,33 @@ protected:
 	void loadAmbientLoops();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
-	virtual int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *spot);
 	virtual void activateHotspots();
 	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
 	void dropItemIntoRoom(Item *, Hotspot *);
 	void downButton(const Input &);
 	void startDoorOpenMovie(const TimeValue, const TimeValue);
-	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
-	void turnTo(const tDirectionConstant);
-	tCanMoveForwardReason canMoveForward(ExitTable::Entry &);
-	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &);
+	TimeValue getViewTime(const RoomID, const DirectionConstant);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
+	void turnTo(const DirectionConstant);
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &);
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
 	void bumpIntoWall();
-	void initializeTBPMonitor(const int, const tExtraID);
+	void initializeTBPMonitor(const int, const ExtraID);
 	void playTBPMonitor();
 	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
 	void openDoor();
 	void turnRight();
 	void turnLeft();
-	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
-	void playExtraMovie(const ExtraTable::Entry &, const tNotificationFlags, const tInputBits interruptionInput);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionInput);
 	void handleInput(const Input &, const Hotspot *);
 	void arriveAtTSA25Red();
 	void startUpComparisonMonitor();
 	void shutDownComparisonMonitor();
-	void initializeComparisonMonitor(const int, const tExtraID);
+	void initializeComparisonMonitor(const int, const ExtraID);
 	void playLeftComparison();
 	void playRightComparison();
 	void startRobotGame();
@@ -134,14 +134,14 @@ protected:
 	void arriveFromMars();
 	void arriveFromWSC();
 
-	tInputBits getInputFilter();
-	void arriveAt(const tRoomID, const tDirectionConstant);
+	InputBits getInputFilter();
+	void arriveAt(const RoomID, const DirectionConstant);
 	void initializePegasusButtons(bool, bool);
 	void releaseSprites();
 	void showMainJumpMenu();
 	void arriveAtTSA37();
-	void receiveNotification(Notification *, const tNotificationFlags);
-	void checkRobotLocations(const tRoomID, const tDirectionConstant);
+	void receiveNotification(Notification *, const NotificationFlags);
+	void checkRobotLocations(const RoomID, const DirectionConstant);
 	void getExtraEntry(const uint32, ExtraTable::Entry &);
 
 	Sprite _sprite1, _sprite2, _sprite3;

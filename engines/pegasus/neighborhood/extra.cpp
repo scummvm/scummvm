@@ -47,7 +47,7 @@ void ExtraTable::clear() {
 	_entries.clear();
 }
 
-ExtraTable::Entry ExtraTable::findEntry(tExtraID extra) {
+ExtraTable::Entry ExtraTable::findEntry(ExtraID extra) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].extra == extra)
 			return _entries[i];

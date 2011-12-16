@@ -32,7 +32,7 @@ namespace Pegasus {
 
 class RetScanChip : public BiochipItem {
 public:
-	RetScanChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	RetScanChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~RetScanChip() {}
 	
 	void searchForLaser();

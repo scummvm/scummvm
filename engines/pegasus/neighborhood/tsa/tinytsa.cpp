@@ -42,71 +42,67 @@ const TimeScale kTinyTSAMovieScale = 600;
 const TimeScale kTinyTSAFramesPerSecond = 15;
 const TimeScale kTinyTSAFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
+const AlternateID kAltTinyTSANormal = 0;
 
-const tAlternateID kAltTinyTSANormal = 0;
+// Hot Spot Activation IDs.
+const HotSpotActivationID kActivationTinyTSAJumpToNorad = 1;
+const HotSpotActivationID kActivationTinyTSAJumpToMars = 2;
+const HotSpotActivationID kActivationTinyTSAJumpToWSC = 3;
+const HotSpotActivationID kActivationTinyTSAReadyForJumpMenu = 4;
+const HotSpotActivationID kActivationTinyTSAMainJumpMenu = 5;
 
-//	Hot Spot Activation IDs.
+// Hot Spot IDs.
+const HotSpotID kTinyTSA37NorthJumpToNoradSpotID = 5000;
+const HotSpotID kTinyTSA37NorthCancelNoradSpotID = 5001;
+const HotSpotID kTinyTSA37NorthJumpToMarsSpotID = 5002;
+const HotSpotID kTinyTSA37NorthCancelMarsSpotID = 5003;
+const HotSpotID kTinyTSA37NorthJumpToWSCSpotID = 5004;
+const HotSpotID kTinyTSA37NorthCancelWSCSpotID = 5005;
+const HotSpotID kTinyTSA37NorthJumpMenuSpotID = 5006;
+const HotSpotID kTinyTSA37NorthNoradMenuSpotID = 5007;
+const HotSpotID kTinyTSA37NorthMarsMenuSpotID = 5008;
+const HotSpotID kTinyTSA37NorthWSCMenuSpotID = 5009;
 
-const tHotSpotActivationID kActivationTinyTSAJumpToNorad = 1;
-const tHotSpotActivationID kActivationTinyTSAJumpToMars = 2;
-const tHotSpotActivationID kActivationTinyTSAJumpToWSC = 3;
-const tHotSpotActivationID kActivationTinyTSAReadyForJumpMenu = 4;
-const tHotSpotActivationID kActivationTinyTSAMainJumpMenu = 5;
-
-//	Hot Spot IDs.
-
-const tHotSpotID kTinyTSA37NorthJumpToNoradSpotID = 5000;
-const tHotSpotID kTinyTSA37NorthCancelNoradSpotID = 5001;
-const tHotSpotID kTinyTSA37NorthJumpToMarsSpotID = 5002;
-const tHotSpotID kTinyTSA37NorthCancelMarsSpotID = 5003;
-const tHotSpotID kTinyTSA37NorthJumpToWSCSpotID = 5004;
-const tHotSpotID kTinyTSA37NorthCancelWSCSpotID = 5005;
-const tHotSpotID kTinyTSA37NorthJumpMenuSpotID = 5006;
-const tHotSpotID kTinyTSA37NorthNoradMenuSpotID = 5007;
-const tHotSpotID kTinyTSA37NorthMarsMenuSpotID = 5008;
-const tHotSpotID kTinyTSA37NorthWSCMenuSpotID = 5009;
-
-//	Extra sequence IDs.
-
-const tExtraID kTinyTSA37PegasusDepart = 0;
-const tExtraID kTinyTSA37TimeJumpToPegasus = 1;
-const tExtraID kTinyTSA37RecallToDownload = 2;
-const tExtraID kTinyTSA37ExitHilited = 3;
-const tExtraID kTinyTSA37ExitToHorse = 4;
-const tExtraID kTinyTSA37JumpMenu000 = 5;
-const tExtraID kTinyTSA37JumpMenu001 = 6;
-const tExtraID kTinyTSA37JumpMenu010 = 7;
-const tExtraID kTinyTSA37JumpMenu011 = 8;
-const tExtraID kTinyTSA37JumpMenu100 = 9;
-const tExtraID kTinyTSA37JumpMenu101 = 10;
-const tExtraID kTinyTSA37JumpMenu110 = 11;
-const tExtraID kTinyTSA37JumpMenu111 = 12;
-const tExtraID kTinyTSA37JumpToWSCMenu = 13;
-const tExtraID kTinyTSA37CancelWSC = 14;
-const tExtraID kTinyTSA37JumpToWSC = 15;
-const tExtraID kTinyTSA37WSCToAI5 = 16;
-const tExtraID kTinyTSA37PegasusAI5 = 17;
-const tExtraID kTinyTSA37AI5ToWSC = 18;
-const tExtraID kTinyTSA37WSCToDepart = 19;
-const tExtraID kTinyTSA37JumpToMarsMenu = 20;
-const tExtraID kTinyTSA37CancelMars = 21;
-const tExtraID kTinyTSA37JumpToMars = 22;
-const tExtraID kTinyTSA37MarsToAI6 = 23;
-const tExtraID kTinyTSA37PegasusAI6 = 24;
-const tExtraID kTinyTSA37AI6ToMars = 25;
-const tExtraID kTinyTSA37MarsToDepart = 26;
-const tExtraID kTinyTSA37JumpToNoradMenu = 27;
-const tExtraID kTinyTSA37CancelNorad = 28;
-const tExtraID kTinyTSA37JumpToNorad = 29;
-const tExtraID kTinyTSA37NoradToAI7 = 30;
-const tExtraID kTinyTSA37PegasusAI7 = 31;
-const tExtraID kTinyTSA37AI7ToNorad = 32;
-const tExtraID kTinyTSA37NoradToDepart = 33;
-const tExtraID kTinyTSA37EnvironmentalScan = 34;
-const tExtraID kTinyTSA37DownloadToMainMenu = 35;
-const tExtraID kTinyTSA37DownloadToOpMemReview = 36;
-const tExtraID kTinyTSA37OpMemReviewToMainMenu = 37;
+// Extra sequence IDs.
+const ExtraID kTinyTSA37PegasusDepart = 0;
+const ExtraID kTinyTSA37TimeJumpToPegasus = 1;
+const ExtraID kTinyTSA37RecallToDownload = 2;
+const ExtraID kTinyTSA37ExitHilited = 3;
+const ExtraID kTinyTSA37ExitToHorse = 4;
+const ExtraID kTinyTSA37JumpMenu000 = 5;
+const ExtraID kTinyTSA37JumpMenu001 = 6;
+const ExtraID kTinyTSA37JumpMenu010 = 7;
+const ExtraID kTinyTSA37JumpMenu011 = 8;
+const ExtraID kTinyTSA37JumpMenu100 = 9;
+const ExtraID kTinyTSA37JumpMenu101 = 10;
+const ExtraID kTinyTSA37JumpMenu110 = 11;
+const ExtraID kTinyTSA37JumpMenu111 = 12;
+const ExtraID kTinyTSA37JumpToWSCMenu = 13;
+const ExtraID kTinyTSA37CancelWSC = 14;
+const ExtraID kTinyTSA37JumpToWSC = 15;
+const ExtraID kTinyTSA37WSCToAI5 = 16;
+const ExtraID kTinyTSA37PegasusAI5 = 17;
+const ExtraID kTinyTSA37AI5ToWSC = 18;
+const ExtraID kTinyTSA37WSCToDepart = 19;
+const ExtraID kTinyTSA37JumpToMarsMenu = 20;
+const ExtraID kTinyTSA37CancelMars = 21;
+const ExtraID kTinyTSA37JumpToMars = 22;
+const ExtraID kTinyTSA37MarsToAI6 = 23;
+const ExtraID kTinyTSA37PegasusAI6 = 24;
+const ExtraID kTinyTSA37AI6ToMars = 25;
+const ExtraID kTinyTSA37MarsToDepart = 26;
+const ExtraID kTinyTSA37JumpToNoradMenu = 27;
+const ExtraID kTinyTSA37CancelNorad = 28;
+const ExtraID kTinyTSA37JumpToNorad = 29;
+const ExtraID kTinyTSA37NoradToAI7 = 30;
+const ExtraID kTinyTSA37PegasusAI7 = 31;
+const ExtraID kTinyTSA37AI7ToNorad = 32;
+const ExtraID kTinyTSA37NoradToDepart = 33;
+const ExtraID kTinyTSA37EnvironmentalScan = 34;
+const ExtraID kTinyTSA37DownloadToMainMenu = 35;
+const ExtraID kTinyTSA37DownloadToOpMemReview = 36;
+const ExtraID kTinyTSA37OpMemReviewToMainMenu = 37;
 
 TinyTSA::TinyTSA(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Tiny TSA", kTinyTSAID) {
 }
@@ -186,16 +182,15 @@ void TinyTSA::loadAmbientLoops() {
 	loadLoopSound1("Sounds/TSA/T01NAE.NEW.22K.AIFF");
 }
 
-int16 TinyTSA::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 TinyTSA::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	return Neighborhood::getStaticCompassAngle(room, dir) - kCompassShift;
 }
-
 
 uint16 TinyTSA::getDateResID() const {
 	return kDate2318ID;
 }
 
-tInputBits TinyTSA::getInputFilter() {
+InputBits TinyTSA::getInputFilter() {
 	// Can't move forward...
 	return Neighborhood::getInputFilter() & ~(kFilterUpButton | kFilterUpAuto);
 }
@@ -204,6 +199,7 @@ void TinyTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	if (clickedSpot) {
 		switch (clickedSpot->getObjectID()) {
 		case kTinyTSA37NorthJumpMenuSpotID:
+			// This hotspot isn't accessable from Tiny TSA
 			warning("jump menu spot");
 			return;
 		case kTinyTSA37NorthJumpToNoradSpotID:
@@ -252,7 +248,7 @@ void TinyTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 }
 
 void TinyTSA::showMainJumpMenu() {
-	tExtraID jumpMenuView = kTinyTSA37JumpMenu000;
+	ExtraID jumpMenuView = kTinyTSA37JumpMenu000;
 
 	if (GameState.getNoradFinished())
 		jumpMenuView += 4;
@@ -265,11 +261,11 @@ void TinyTSA::showMainJumpMenu() {
 	setCurrentActivation(kActivationTinyTSAMainJumpMenu);
 }
 
-void TinyTSA::checkContinuePoint(const tRoomID, const tDirectionConstant) {
+void TinyTSA::checkContinuePoint(const RoomID, const DirectionConstant) {
 	makeContinuePoint();
 }
 
-void TinyTSA::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void TinyTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Neighborhood::arriveAt(room, direction);
 
 	switch (GameState.getTSAState()) {
@@ -284,8 +280,8 @@ void TinyTSA::arriveAt(const tRoomID room, const tDirectionConstant direction) {
 	}
 }
 
-void TinyTSA::receiveNotification(Notification *notification, const tNotificationFlags flags) {
-	tExtraID lastExtra = _lastExtra;
+void TinyTSA::receiveNotification(Notification *notification, const NotificationFlags flags) {
+	ExtraID lastExtra = _lastExtra;
 	
 	Neighborhood::receiveNotification(notification, flags);
 

@@ -141,15 +141,15 @@ const TimeValue kDeltaLaunchPrepStop = 30;
 
 // Right monitor times.
 
-const tNotificationFlags kAlphaSplashFinished = 1;
-const tNotificationFlags kAlphaPrepFinished = kAlphaSplashFinished << 1;
-const tNotificationFlags kPrepHighlightFinished = kAlphaPrepFinished << 1;
-const tNotificationFlags kClawHighlightFinished = kPrepHighlightFinished << 1;
-const tNotificationFlags kClawMenuFinished = kClawHighlightFinished << 1;
-const tNotificationFlags kDeltaSplashFinished = kClawMenuFinished << 1;
-const tNotificationFlags kDeltaPrepFinished = kDeltaSplashFinished << 1;
+const NotificationFlags kAlphaSplashFinished = 1;
+const NotificationFlags kAlphaPrepFinished = kAlphaSplashFinished << 1;
+const NotificationFlags kPrepHighlightFinished = kAlphaPrepFinished << 1;
+const NotificationFlags kClawHighlightFinished = kPrepHighlightFinished << 1;
+const NotificationFlags kClawMenuFinished = kClawHighlightFinished << 1;
+const NotificationFlags kDeltaSplashFinished = kClawMenuFinished << 1;
+const NotificationFlags kDeltaPrepFinished = kDeltaSplashFinished << 1;
 
-const tNotificationFlags kSubControlNotificationFlags = kAlphaSplashFinished |
+const NotificationFlags kSubControlNotificationFlags = kAlphaSplashFinished |
 														kAlphaPrepFinished |
 														kPrepHighlightFinished |
 														kClawHighlightFinished |
@@ -157,9 +157,9 @@ const tNotificationFlags kSubControlNotificationFlags = kAlphaSplashFinished |
 														kDeltaSplashFinished |
 														kDeltaPrepFinished;
 
-const tNotificationFlags kOneSecondOfMoveFinished = 1;
+const NotificationFlags kOneSecondOfMoveFinished = 1;
 
-const tNotificationFlags kGreenBallNotificationFlags = kOneSecondOfMoveFinished;
+const NotificationFlags kGreenBallNotificationFlags = kOneSecondOfMoveFinished;
 
 enum {
 	kButtonDimFrame,
@@ -414,10 +414,9 @@ enum {
 	kRobotWon
 };
 
-//	Sub Control Room button PICTs:
-
-const tResIDType kSubControlButtonBaseID = 500;
-const tResIDType kClawMonitorGreenBallBaseID = 600;
+// Sub Control Room button PICTs:
+const ResIDType kSubControlButtonBaseID = 500;
+const ResIDType kClawMonitorGreenBallBaseID = 600;
 
 // Constructor
 SubControlRoom::SubControlRoom(Neighborhood *handler) : GameInteraction(kNoradSubControlRoomInteractionID, handler),
@@ -558,7 +557,7 @@ void SubControlRoom::setSoundFXLevel(const uint16 fxLevel) {
 	_subControlMovie.setVolume(fxLevel);
 }
 
-void SubControlRoom::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
+void SubControlRoom::receiveNotification(Notification *notification, const NotificationFlags flags) {	
 	Norad *owner = (Norad *)getOwner();
 
 	if (notification == &_subControlNotification) {
@@ -780,7 +779,7 @@ void SubControlRoom::hideButtons() {
 		_buttons[i]->hide();
 }
 
-int SubControlRoom::findActionIndex(tHotSpotID id) {	
+int SubControlRoom::findActionIndex(HotSpotID id) {	
 	for (int i = 0; i < kNumClawButtons; i++)
 		if (id == _clawButtonSpotIDs[i])
 			return i;
@@ -789,7 +788,7 @@ int SubControlRoom::findActionIndex(tHotSpotID id) {
 }
 
 void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
-	tHotSpotID clickedID = spot->getObjectID();
+	HotSpotID clickedID = spot->getObjectID();
 	int actionIndex = findActionIndex(clickedID);
 
 	if (actionIndex != kNoActionIndex) {
@@ -934,7 +933,7 @@ void SubControlRoom::setControlMonitorToTime(const TimeValue newTime, const int 
 	allowInput(shouldAllowInput);
 }
 
-void SubControlRoom::playControlMonitorSection(const TimeValue in, const TimeValue out, const tNotificationFlags flags,
+void SubControlRoom::playControlMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
 		const int newState, const bool shouldAllowInput) {	
 	_subControlMovie.stop();
 	_subControlMovie.setSegment(in, out);
@@ -974,7 +973,7 @@ void SubControlRoom::setClawMonitorToTime(const TimeValue newTime) {
 	_clawMonitorMovie.redrawMovieWorld();
 }
 
-void SubControlRoom::playClawMonitorSection(const TimeValue in, const TimeValue out, const tNotificationFlags flags,
+void SubControlRoom::playClawMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
 		const int newState, const bool shouldAllowInput) {	
 	_clawMonitorMovie.stop();
 	_clawMonitorMovie.setSegment(in, out);
@@ -1168,7 +1167,7 @@ void SubControlRoom::doSolve() {
 	getOwner()->startExtraSequence(kN60ArmGrabsRobot, kExtraCompletedFlag, kFilterAllInput);
 }
 
-tInputBits SubControlRoom::getInputFilter() {
+InputBits SubControlRoom::getInputFilter() {
 	if (_playingAgainstRobot)
 		return GameInteraction::getInputFilter() & ~kFilterDownButtonAny;
 

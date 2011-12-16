@@ -47,7 +47,7 @@ public:
 	virtual void writeToStream(Common::WriteStream *stream);
 	virtual void readFromStream(Common::ReadStream *stream);
 	
-	Item *findItemByID(const tItemID id);
+	Item *findItemByID(const ItemID id);
 };
 
 typedef ItemList::iterator ItemIterator;

@@ -39,10 +39,10 @@ InputDevice::InputDevice() {
 InputDevice::~InputDevice() {
 }
 
-void InputDevice::getInput(Input &input, const tInputBits filter) {
+void InputDevice::getInput(Input &input, const InputBits filter) {
 	// TODO: Save/Load keys
 
-	tInputBits currentBits = 0;
+	InputBits currentBits = 0;
 	bool consoleRequested = false;
 	bool altDown = false;
 
@@ -126,7 +126,7 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 	input.setInputLocation(g_system->getEventManager()->getMousePos());
 
 	// Set the outgoing bits
-	tInputBits filteredBits = currentBits & filter;	
+	InputBits filteredBits = currentBits & filter;	
 	input.setInputBits((filteredBits & kAllButtonDownBits) | (filteredBits & _lastRawBits & kAllAutoBits));
 
 	// Update the last bits
@@ -140,7 +140,7 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 }
 
 //	Wait until the input device stops returning input allowed by filter...
-void InputDevice::waitInput(const tInputBits filter) {
+void InputDevice::waitInput(const InputBits filter) {
 	if (filter != 0) {
 		for (;;) {
 			Input input;
@@ -162,7 +162,7 @@ int operator!=(const Input &arg1, const Input &arg2) {
 InputHandler *InputHandler::_inputHandler = 0;
 InputDevice InputHandler::_inputDevice;
 bool InputHandler::_invalHotspots = false;
-tInputBits InputHandler::_lastFilter = kFilterNoInput;
+InputBits InputHandler::_lastFilter = kFilterNoInput;
 
 InputHandler *InputHandler::setInputHandler(InputHandler *currentHandler) {
 	InputHandler *result = 0;
@@ -255,7 +255,7 @@ void InputHandler::activateHotspots() {
 		_nextHandler->activateHotspots();
 }
 
-tInputBits InputHandler::getInputFilter() {
+InputBits InputHandler::getInputFilter() {
 	if (_allowInput) {
 		if (_nextHandler)
 			return _nextHandler->getInputFilter();
@@ -266,7 +266,7 @@ tInputBits InputHandler::getInputFilter() {
 	return kFilterNoInput;
 }
 
-tInputBits InputHandler::getClickFilter() {
+InputBits InputHandler::getClickFilter() {
 	if (_allowInput && _nextHandler)
 		return _nextHandler->getClickFilter();
 

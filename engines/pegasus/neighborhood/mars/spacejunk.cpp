@@ -31,9 +31,9 @@ namespace Pegasus {
 
 //const TimeValue kWeaponReboundTime = kTwoSeconds * kJunkTimeScale;
 //const TimeValue kCollisionReboundTime = kOneSecond * kJunkTimeScale;
-const tCoordType kMaxBounceSize = 90;
-const tCoordType kBounceTargetHRange = 640 - kMaxBounceSize - 2;
-const tCoordType kBounceTargetVRange = 480 - kMaxBounceSize - 2;
+const CoordType kMaxBounceSize = 90;
+const CoordType kBounceTargetHRange = 640 - kMaxBounceSize - 2;
+const CoordType kBounceTargetVRange = 480 - kMaxBounceSize - 2;
 
 const float kJunkXTarget = 0;
 const float kJunkYTarget = 0;
@@ -41,7 +41,7 @@ const float kJunkZTarget = kJunkMinDistance;
 
 SpaceJunk *g_spaceJunk = 0;
 
-SpaceJunk::SpaceJunk(const tDisplayElementID id) : ScalingMovie(id) {
+SpaceJunk::SpaceJunk(const DisplayElementID id) : ScalingMovie(id) {
 	_timer.setScale(kJunkTimeScale);
 	_bouncing = false;
 	g_spaceJunk = this;
@@ -51,7 +51,7 @@ SpaceJunk::~SpaceJunk() {
 	g_spaceJunk = 0;
 }
 
-void SpaceJunk::launchJunk(int16 whichJunk, tCoordType xOrigin, tCoordType yOrigin) {	
+void SpaceJunk::launchJunk(int16 whichJunk, CoordType xOrigin, CoordType yOrigin) {	
 	_bouncing = false;
 	TimeValue startTime = whichJunk * 16 * 40;
 	TimeValue stopTime = startTime + 16 * 40;
@@ -76,7 +76,7 @@ void SpaceJunk::launchJunk(int16 whichJunk, tCoordType xOrigin, tCoordType yOrig
 	_timer.start();
 }
 
-void SpaceJunk::setCenter(const tCoordType centerX, const tCoordType centerY) {
+void SpaceJunk::setCenter(const CoordType centerX, const CoordType centerY) {
 	_center.x = centerX;
 	_center.y = centerY;
 
@@ -86,7 +86,7 @@ void SpaceJunk::setCenter(const tCoordType centerX, const tCoordType centerY) {
 	setBounds(r);
 }
 
-void SpaceJunk::setScaleSize(const tCoordType size) {
+void SpaceJunk::setScaleSize(const CoordType size) {
 	Common::Rect r;
 	r.left = _center.x - (size >> 1);
 	r.top = _center.y - (size >> 1);
@@ -101,7 +101,7 @@ void SpaceJunk::useIdleTime() {
 		Common::Point pt;
 		pt.x = linearInterp(0, _bounceTime, time, _bounceStart.x, _bounceStop.x);
 		pt.y = linearInterp(0, _bounceTime, time, _bounceStart.y, _bounceStop.y);
-		tCoordType size = linearInterp(0, _bounceTime, time, _bounceSizeStart, _bounceSizeStop);
+		CoordType size = linearInterp(0, _bounceTime, time, _bounceSizeStart, _bounceSizeStop);
 		setCenter(pt.x, pt.y);
 		setScaleSize(size);
 

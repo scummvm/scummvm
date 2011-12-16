@@ -47,7 +47,7 @@ protected:
 	virtual void timeChanged(const TimeValue);
 	
 	Movie *_planetMovie;
-	tCoordType _p1, _p4, _r1, _r4;
+	CoordType _p1, _p4, _r1, _r4;
 	TimeValue _duration;
 	bool _dropping;
 };

@@ -45,7 +45,7 @@ public:
 	virtual void initShuttleWeapon();
 	virtual void cleanUpShuttleWeapon();
 
-	virtual void fireWeapon(const tCoordType, const tCoordType);
+	virtual void fireWeapon(const CoordType, const CoordType);
 
 	bool canFireWeapon();
 

@@ -30,10 +30,10 @@
 
 namespace Pegasus {
 
-static const tNotificationFlags kECRSection1FinishedFlag = 1;
-static const tNotificationFlags kECRPanFinishedFlag = kECRSection1FinishedFlag << 1;
-static const tNotificationFlags kECRSection2FinishedFlag = kECRPanFinishedFlag << 1;
-static const tNotificationFlags kECRNotificationFlags = kECRSection1FinishedFlag |
+static const NotificationFlags kECRSection1FinishedFlag = 1;
+static const NotificationFlags kECRPanFinishedFlag = kECRSection1FinishedFlag << 1;
+static const NotificationFlags kECRSection2FinishedFlag = kECRPanFinishedFlag << 1;
+static const NotificationFlags kECRNotificationFlags = kECRSection1FinishedFlag |
 													kECRPanFinishedFlag |
 													kECRSection2FinishedFlag;
 
@@ -45,7 +45,7 @@ static const TimeValue kSection2Start = 26;
 static const TimeValue kSection2Stop = 1000;
 
 // Seems to be a good value for a 20 second pan.
-static const tCoordType kPanPixelsPerFrame = 8;
+static const CoordType kPanPixelsPerFrame = 8;
 
 // Interesting times are in seconds.
 static const TimeValue s_ECRInterestingTimes[] = {
@@ -63,7 +63,7 @@ NoradAlphaECRMonitor::NoradAlphaECRMonitor(Neighborhood *nextHandler) : GameInte
 		_ecrPan(kECRPanID) {
 }
 
-void NoradAlphaECRMonitor::receiveNotification(Notification *, const tNotificationFlags flags) {
+void NoradAlphaECRMonitor::receiveNotification(Notification *, const NotificationFlags flags) {
 	if (flags & kECRSection1FinishedFlag)
 		ecrSection1Finished();
 	else if (flags & kECRPanFinishedFlag)

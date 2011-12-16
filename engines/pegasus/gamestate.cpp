@@ -40,8 +40,8 @@ Common::Error GameStateManager::writeGameState(Common::WriteStream *stream) {
 	stream->writeUint16BE(_currentNeighborhood);
 	stream->writeUint16BE(_currentRoom);
 	stream->writeByte(_currentDirection);
-	stream->writeUint16BE(_nextNeighborhoodID);
-	stream->writeUint16BE(_nextRoomID);
+	stream->writeUint16BE(_nexNeighborhoodID);
+	stream->writeUint16BE(_nexRoomID);
 	stream->writeByte(_nextDirection);
 	stream->writeUint16BE(_lastNeighborhood);
 	stream->writeUint16BE(_lastRoom);
@@ -70,8 +70,8 @@ Common::Error GameStateManager::readGameState(Common::ReadStream *stream) {
 	_currentNeighborhood = stream->readUint16BE();
 	_currentRoom = stream->readUint16BE();
 	_currentDirection = stream->readByte();
-	_nextNeighborhoodID = stream->readUint16BE();
-	_nextRoomID = stream->readUint16BE();
+	_nexNeighborhoodID = stream->readUint16BE();
+	_nexRoomID = stream->readUint16BE();
 	_nextDirection = stream->readByte();
 	_lastNeighborhood = stream->readUint16BE();
 	_lastRoom = stream->readUint16BE();
@@ -100,8 +100,8 @@ void GameStateManager::resetGameState() {
 	_currentNeighborhood = kNoNeighborhoodID;
 	_currentRoom = kNoRoomID;
 	_currentDirection = kNoDirection;
-	_nextNeighborhoodID = kNoNeighborhoodID;
-	_nextRoomID = kNoRoomID;
+	_nexNeighborhoodID = kNoNeighborhoodID;
+	_nexRoomID = kNoRoomID;
 	_nextDirection = kNoDirection;
 	_lastNeighborhood = kNoNeighborhoodID;
 	_lastRoom = kNoRoomID;
@@ -121,13 +121,13 @@ void GameStateManager::resetGameState() {
 	resetWSCState();
 }
 
-void GameStateManager::getCurrentLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) {
+void GameStateManager::getCurrentLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) {
 	neighborhood = _currentNeighborhood;
 	room = _currentRoom;
 	direction = _currentDirection;
 }
 
-void GameStateManager::setCurrentLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
+void GameStateManager::setCurrentLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
 	_lastNeighborhood = _currentNeighborhood;
 	_lastRoom = _currentRoom;
 	_lastDirection = _currentDirection;
@@ -136,140 +136,140 @@ void GameStateManager::setCurrentLocation(const tNeighborhoodID neighborhood, co
 	_currentDirection = direction;
 }
 
-tNeighborhoodID GameStateManager::getCurrentNeighborhood() {
+NeighborhoodID GameStateManager::getCurrentNeighborhood() {
 	return _currentNeighborhood;
 }
 
-void GameStateManager::setCurrentNeighborhood(const tNeighborhoodID neighborhood) {
+void GameStateManager::setCurrentNeighborhood(const NeighborhoodID neighborhood) {
 	_lastNeighborhood = _currentNeighborhood;
 	_currentNeighborhood = neighborhood;
 }
 
-tRoomID GameStateManager::getCurrentRoom() {
+RoomID GameStateManager::getCurrentRoom() {
 	return _currentRoom;
 }
 
-void GameStateManager::setCurrentRoom(const tRoomID room) {
+void GameStateManager::setCurrentRoom(const RoomID room) {
 	_lastRoom = _currentRoom;
 	_currentRoom = room;
 }
 
-tDirectionConstant GameStateManager::getCurrentDirection() {
+DirectionConstant GameStateManager::getCurrentDirection() {
 	return _currentDirection;
 }
 
-void GameStateManager::setCurrentDirection(const tDirectionConstant direction) {
+void GameStateManager::setCurrentDirection(const DirectionConstant direction) {
 	_lastDirection = _currentDirection;
 	_currentDirection = direction;
 }
 
-tRoomViewID GameStateManager::getCurrentRoomAndView() {
+RoomViewID GameStateManager::getCurrentRoomAndView() {
 	return MakeRoomView(_currentRoom, _currentDirection);
 }
 
-void GameStateManager::getNextLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) {
-	neighborhood = _nextNeighborhoodID;
-	room = _nextRoomID;
+void GameStateManager::getNextLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) {
+	neighborhood = _nexNeighborhoodID;
+	room = _nexRoomID;
 	direction = _nextDirection;
 }
 
-void GameStateManager::setNextLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
-	_nextNeighborhoodID = neighborhood;
-	_nextRoomID = room;
+void GameStateManager::setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
+	_nexNeighborhoodID = neighborhood;
+	_nexRoomID = room;
 	_nextDirection = direction;
 }
 
-tNeighborhoodID GameStateManager::getNextNeighborhood() {
-	return _nextNeighborhoodID;
+NeighborhoodID GameStateManager::getNextNeighborhood() {
+	return _nexNeighborhoodID;
 }
 
-void GameStateManager::setNextNeighborhood(const tNeighborhoodID neighborhood) {
-	_nextNeighborhoodID = neighborhood;
+void GameStateManager::setNextNeighborhood(const NeighborhoodID neighborhood) {
+	_nexNeighborhoodID = neighborhood;
 }
 
-tRoomID GameStateManager::getNextRoom() {
-	return _nextRoomID;
+RoomID GameStateManager::getNextRoom() {
+	return _nexRoomID;
 }
 
-void GameStateManager::setNextRoom(const tRoomID room) {
-	_nextRoomID = room;
+void GameStateManager::setNextRoom(const RoomID room) {
+	_nexRoomID = room;
 }
 
-tDirectionConstant GameStateManager::getNextDirection() {
+DirectionConstant GameStateManager::getNextDirection() {
 	return _nextDirection;
 }
 
-void GameStateManager::setNextDirection(const tDirectionConstant direction) {
+void GameStateManager::setNextDirection(const DirectionConstant direction) {
 	_nextDirection = direction;
 }
 
-void GameStateManager::getLastLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) {
+void GameStateManager::getLastLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) {
 	neighborhood = _currentNeighborhood;
 	room = _currentRoom;
 	direction = _currentDirection;
 }
 
-void GameStateManager::setLastLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
+void GameStateManager::setLastLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
 	_currentNeighborhood = neighborhood;
 	_currentRoom = room;
 	_currentDirection = direction;
 }
 
-tNeighborhoodID GameStateManager::getLastNeighborhood() {
+NeighborhoodID GameStateManager::getLastNeighborhood() {
 	return _lastNeighborhood;
 }
 
-void GameStateManager::setLastNeighborhood(const tNeighborhoodID neighborhood) {
+void GameStateManager::setLastNeighborhood(const NeighborhoodID neighborhood) {
 	_lastNeighborhood = neighborhood;
 }
 
-tRoomID GameStateManager::getLastRoom() {
+RoomID GameStateManager::getLastRoom() {
 	return _lastRoom;
 }
 
-void GameStateManager::setLastRoom(const tRoomID room) {
+void GameStateManager::setLastRoom(const RoomID room) {
 	_lastRoom = room;
 }
 
-tDirectionConstant GameStateManager::getLastDirection() {
+DirectionConstant GameStateManager::getLastDirection() {
 	return _lastDirection;
 }
 
-void GameStateManager::setLastDirection(const tDirectionConstant direction) {
+void GameStateManager::setLastDirection(const DirectionConstant direction) {
 	_lastDirection = direction;
 }
 
-tRoomViewID GameStateManager::getLastRoomAndView() {
+RoomViewID GameStateManager::getLastRoomAndView() {
 	return MakeRoomView(_lastRoom, _lastDirection);
 }
 
-void GameStateManager::getOpenDoorLocation(tRoomID &room, tDirectionConstant &direction) {
+void GameStateManager::getOpenDoorLocation(RoomID &room, DirectionConstant &direction) {
 	room = _openDoorRoom;
 	direction = _openDoorDirection;
 }
 
-void GameStateManager::setOpenDoorLocation(const tRoomID room, const tDirectionConstant direction) {
+void GameStateManager::setOpenDoorLocation(const RoomID room, const DirectionConstant direction) {
 	_openDoorRoom = room;
 	_openDoorDirection = direction;
 }
 
-tRoomID GameStateManager::getOpenDoorRoom() {
+RoomID GameStateManager::getOpenDoorRoom() {
 	return _openDoorRoom;
 }
 
-void GameStateManager::setOpenDoorRoom(const tRoomID room) {
+void GameStateManager::setOpenDoorRoom(const RoomID room) {
 	_openDoorRoom = room;
 }
 
-tDirectionConstant GameStateManager::getOpenDoorDirection() {
+DirectionConstant GameStateManager::getOpenDoorDirection() {
 	return _openDoorDirection;
 }
 
-void GameStateManager::setOpenDoorDirection(const tDirectionConstant direction) {
+void GameStateManager::setOpenDoorDirection(const DirectionConstant direction) {
 	_openDoorDirection = direction;
 }
 
-tRoomViewID GameStateManager::getDoorOpenRoomAndView() {
+RoomViewID GameStateManager::getDoorOpenRoomAndView() {
 	return MakeRoomView(_openDoorRoom, _openDoorDirection);
 }
 
@@ -277,8 +277,8 @@ bool GameStateManager::isCurrentDoorOpen() {
 	return _openDoorRoom == _currentRoom && _openDoorDirection == _currentDirection;
 }
 
-tGameScoreType GameStateManager::getCaldoriaTSAScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getCaldoriaTSAScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringSawINNFlag))
 		result += kSawINNScore;
@@ -358,8 +358,8 @@ tGameScoreType GameStateManager::getCaldoriaTSAScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getPrehistoricScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getPrehistoricScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringThrewBreakerFlag))
 		result += kThrewBreakerScore;
@@ -373,8 +373,8 @@ tGameScoreType GameStateManager::getPrehistoricScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getMarsScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getMarsScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringThrownByRobotFlag))
 		result += kThrownByRobotScore;
@@ -422,8 +422,8 @@ tGameScoreType GameStateManager::getMarsScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getNoradScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getNoradScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringSawSecurityMonitorFlag))
 		result += kSawSecurityMonitorScore;
@@ -459,8 +459,8 @@ tGameScoreType GameStateManager::getNoradScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getWSCScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getWSCScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringRemovedDartFlag))
 		result += kRemovedDartScore;
@@ -506,8 +506,8 @@ tGameScoreType GameStateManager::getWSCScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getGandhiScore() {
-	tGameScoreType result = 0;
+GameScoreType GameStateManager::getGandhiScore() {
+	GameScoreType result = 0;
 
 	if (_scoringFlags.getFlag(kScoringMarsGandhiFlag))
 		result += kMarsGandhiScore;
@@ -519,7 +519,7 @@ tGameScoreType GameStateManager::getGandhiScore() {
 	return result;
 }
 
-tGameScoreType GameStateManager::getTotalScore() {
+GameScoreType GameStateManager::getTotalScore() {
 	return	getCaldoriaTSAScore() +
 			getPrehistoricScore() +
 			getMarsScore() +
@@ -607,7 +607,7 @@ void GameStateManager::writeNoradState(Common::WriteStream *stream) {
 void GameStateManager::readNoradState(Common::ReadStream *stream) {
 	_noradFlags.readFromStream(stream);
 	_noradSubRoomPressure = stream->readUint16BE();
-	_noradSubPrepState = (tNoradSubPrepState)stream->readByte();
+	_noradSubPrepState = (NoradSubPrepState)stream->readByte();
 }
 
 void GameStateManager::resetNoradState() {
@@ -1524,11 +1524,11 @@ bool GameStateManager::allTimeZonesFinished() {
 	return getWSCFinished() && getMarsFinished() && getNoradFinished();
 }
 
-void GameStateManager::setTakenItemID(tItemID id, bool value) {
+void GameStateManager::setTakenItemID(ItemID id, bool value) {
 	_itemTakenFlags.setFlag(id, value);
 }
 
-bool GameStateManager::isTakenItemID(tItemID id) {
+bool GameStateManager::isTakenItemID(ItemID id) {
 	return _itemTakenFlags.getFlag(id);
 }
 
@@ -1988,11 +1988,11 @@ uint16 GameStateManager::getNoradSubRoomPressure() {
 	return _noradSubRoomPressure;
 }
 
-void GameStateManager::setNoradSubPrepState(tNoradSubPrepState state) {
+void GameStateManager::setNoradSubPrepState(NoradSubPrepState state) {
 	_noradSubPrepState = state;
 }
 
-tNoradSubPrepState GameStateManager::getNoradSubPrepState() {
+NoradSubPrepState GameStateManager::getNoradSubPrepState() {
 	return _noradSubPrepState;
 }
 

@@ -28,7 +28,7 @@
 
 namespace Pegasus {
 
-KeyCard::KeyCard(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+KeyCard::KeyCard(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 			InventoryItem(id, neighborhood, room, direction) {
 	setItemState(kFlashlightOff);
 }
@@ -40,7 +40,7 @@ void KeyCard::toggleItemState() {
 		setItemState(kFlashlightOff);
 }
 
-void KeyCard::setItemState(const tItemState newState) {
+void KeyCard::setItemState(const ItemState newState) {
 	if (newState != getItemState()) {
 		InventoryItem::setItemState(newState);
 		((PegasusEngine *)g_engine)->checkFlashlight();

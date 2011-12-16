@@ -34,13 +34,13 @@ namespace Pegasus {
 
 class AirMask : public InventoryItem, private Idler {
 public:
-	AirMask(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	AirMask(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~AirMask();
 
 	virtual void writeToStream(Common::WriteStream *);
 	virtual void readFromStream(Common::ReadStream *);
 
-	virtual void setItemState(const tItemState);
+	virtual void setItemState(const ItemState);
 	void putMaskOn();
 	void takeMaskOff();
 	void toggleItemState();

@@ -75,7 +75,7 @@ static const VertexType kEdgeOneHalf = 7;
 
 class BombTimer : public IdlerAnimation {
 public:
-	BombTimer(const tDisplayElementID);
+	BombTimer(const DisplayElementID);
 	virtual ~BombTimer() {}
 
 	void draw(const Common::Rect &);
@@ -89,7 +89,7 @@ protected:
 
 class BombGrid : public Picture {
 public:
-	BombGrid(const tDisplayElementID);
+	BombGrid(const DisplayElementID);
 	virtual ~BombGrid() {}
 
 	void drawEdges(BombEdgeList);
@@ -131,11 +131,11 @@ protected:
 	void openInteraction();
 	void initInteraction();
 	void closeInteraction();
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
 	void handleInput(const Input &, const Hotspot *);
-	tInputBits getInputFilter();
+	InputBits getInputFilter();
 	void startBombAmbient(Common::String);
 	
 	Notification *_neighborhoodNotification;

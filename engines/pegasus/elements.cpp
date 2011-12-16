@@ -32,7 +32,7 @@
 
 namespace Pegasus {
 
-DisplayElement::DisplayElement(const tDisplayElementID id) : IDObject(id) {
+DisplayElement::DisplayElement(const DisplayElementID id) : IDObject(id) {
 	_elementIsDisplaying = false;
 	_elementIsVisible = false;
 	_elementOrder = 0;
@@ -45,7 +45,7 @@ DisplayElement::~DisplayElement() {
 		((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
 }
 
-void DisplayElement::setDisplayOrder(const tDisplayOrder order) {
+void DisplayElement::setDisplayOrder(const DisplayOrder order) {
 	if (_elementOrder != order) {
 		_elementOrder = order;
 		if (isDisplaying()) {
@@ -70,7 +70,7 @@ void DisplayElement::stopDisplaying() {
 	}
 }
 
-void DisplayElement::setBounds(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
+void DisplayElement::setBounds(const CoordType left, const CoordType top, const CoordType right, const CoordType bottom) {
 	setBounds(Common::Rect(left, top, right, bottom));
 }
 
@@ -78,37 +78,37 @@ void DisplayElement::getBounds(Common::Rect &r) const {
 	r = _bounds;
 }
 
-void DisplayElement::sizeElement(const tCoordType h, const tCoordType v) {
+void DisplayElement::sizeElement(const CoordType h, const CoordType v) {
 	Common::Rect newBounds = _bounds;
 	newBounds.right = _bounds.left + h;
 	newBounds.bottom = _bounds.top + v;
 	setBounds(newBounds);
 }
 
-void DisplayElement::moveElementTo(const tCoordType h, const tCoordType v) {
+void DisplayElement::moveElementTo(const CoordType h, const CoordType v) {
 	Common::Rect newBounds = _bounds;
 	newBounds.moveTo(h, v);
 	setBounds(newBounds);
 }
 
-void DisplayElement::moveElement(const tCoordType dh, const tCoordType dv) {
+void DisplayElement::moveElement(const CoordType dh, const CoordType dv) {
 	Common::Rect newBounds = _bounds;
 	newBounds.translate(dh, dv);
 	setBounds(newBounds);
 }
 
-void DisplayElement::getLocation(tCoordType &h, tCoordType &v) const {
+void DisplayElement::getLocation(CoordType &h, CoordType &v) const {
 	h = _bounds.left;
 	v = _bounds.top;
 }
 
-void DisplayElement::centerElementAt(const tCoordType h, const tCoordType v) {
+void DisplayElement::centerElementAt(const CoordType h, const CoordType v) {
 	Common::Rect newBounds = _bounds;
 	newBounds.moveTo(h - (_bounds.width() / 2), v - (_bounds.height() / 2));
 	setBounds(newBounds);
 }
 
-void DisplayElement::getCenter(tCoordType &h, tCoordType &v) const {
+void DisplayElement::getCenter(CoordType &h, CoordType &v) const {
 	h = (_bounds.left + _bounds.right) / 2;
 	v = (_bounds.top + _bounds.bottom) / 2;
 }
@@ -158,14 +158,14 @@ void DisplayElement::setTriggeredElement(DisplayElement *element) {
 		_triggeredElement = this;
 }
 
-bool DisplayElement::validToDraw(tDisplayOrder backLayer, tDisplayOrder frontLayer) {
+bool DisplayElement::validToDraw(DisplayOrder backLayer, DisplayOrder frontLayer) {
 	return	isDisplaying() && _elementIsVisible &&
 			(getObjectID() <= kHighestReservedElementID ||
 			(getDisplayOrder() >= backLayer &&
 			getDisplayOrder() <= frontLayer));
 }
 
-DropHighlight::DropHighlight(const tDisplayElementID id) : DisplayElement(id) {
+DropHighlight::DropHighlight(const DisplayElementID id) : DisplayElement(id) {
 	_highlightColor = 0;
 	_thickness = 2;
 	_cornerDiameter = 0;
@@ -193,7 +193,7 @@ void DropHighlight::draw(const Common::Rect &) {
 	}
 }
 
-IdlerAnimation::IdlerAnimation(const tDisplayElementID id) : Animation(id) {
+IdlerAnimation::IdlerAnimation(const DisplayElementID id) : Animation(id) {
 	_lastTime = 0xffffffff;
 }
 
@@ -224,7 +224,7 @@ void IdlerAnimation::timeChanged(const TimeValue) {
 	triggerRedraw();
 }
 
-FrameSequence::FrameSequence(const tDisplayElementID id) : IdlerAnimation(id) {
+FrameSequence::FrameSequence(const DisplayElementID id) : IdlerAnimation(id) {
 	_duration = 0;
 	_currentFrameNum = 0;
 	_resFork = new Common::MacResManager();
@@ -312,7 +312,7 @@ bool FrameSequence::isSequenceOpen() const {
 	return _numFrames != 0;
 }
 
-Sprite::Sprite(const tDisplayElementID id) : DisplayElement(id) {
+Sprite::Sprite(const DisplayElementID id) : DisplayElement(id) {
 	_numFrames = 0;
 	_currentFrameNum = 0xffffffff;
 	_currentFrame = 0;
@@ -339,13 +339,13 @@ void Sprite::discardFrames() {
 	}
 }
 
-void Sprite::addPICTResourceFrame(const tResIDType pictID, bool transparent, const tCoordType left, const tCoordType top) {
+void Sprite::addPICTResourceFrame(const ResIDType pictID, bool transparent, const CoordType left, const CoordType top) {
 	SpriteFrame *frame = new SpriteFrame();
 	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, pictID, transparent);
 	addFrame(frame, left, top);
 }
 
-uint32 Sprite::addFrame(SpriteFrame *frame, const tCoordType left, const tCoordType top) {
+uint32 Sprite::addFrame(SpriteFrame *frame, const CoordType left, const CoordType top) {
 	SpriteFrameRec frameRecord;
 	frameRecord.frame = frame;
 	frameRecord.frameLeft = left;
@@ -436,7 +436,7 @@ void Sprite::draw(const Common::Rect &r) {
 	}
 }
 
-SpriteSequence::SpriteSequence(const tDisplayElementID id, const tDisplayElementID spriteID) :
+SpriteSequence::SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID) :
 		FrameSequence(id), _sprite(spriteID), _transparent(false) {
 }
 
@@ -524,7 +524,7 @@ void ScreenDimmer::draw(const Common::Rect &r) {
 #undef DRAW_PIXEL
 #undef SKIP_PIXEL
 
-SoundLevel::SoundLevel(const tDisplayElementID id) : DisplayElement(id) {
+SoundLevel::SoundLevel(const DisplayElementID id) : DisplayElement(id) {
 	_soundLevel = 0;
 }
 

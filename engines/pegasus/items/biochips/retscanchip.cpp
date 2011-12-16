@@ -28,7 +28,7 @@
 
 namespace Pegasus {
 
-RetScanChip::RetScanChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+RetScanChip::RetScanChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction) {
 }
 

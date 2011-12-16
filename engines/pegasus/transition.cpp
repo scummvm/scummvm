@@ -63,7 +63,7 @@ uint32 ScreenFader::getBlack() {
 	return g_system->getScreenFormat().RGBToColor(0, 0, 0);
 }
 
-Transition::Transition(const tDisplayElementID id) : FaderAnimation(id) {
+Transition::Transition(const DisplayElementID id) : FaderAnimation(id) {
 	_outPicture = 0;
 	_inPicture = 0;
 }

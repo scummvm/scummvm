@@ -44,7 +44,7 @@ const TimeValue kSwitchable2Stop = kSwitchable2Start + kSwitchableDuration;
 const TimeValue kSwitchable3Start = kSwitchable2Stop + kNonswitchableDuration;
 const TimeValue kSwitchable3Stop = kSwitchable3Start + kSwitchableDuration;
 
-const tNotificationFlags kVidPhoneDoneFlag = 1;
+const NotificationFlags kVidPhoneDoneFlag = 1;
 
 const TimeValue kRockMusicLoopIn = 0;
 const TimeValue kRockMusicLoopOut = 2088;
@@ -75,28 +75,28 @@ enum {
 	k4DFirstVideoChoice = k4DIslandChoice
 };
 
-tExtraID s_transitionExtras0[3][3] = {
-	{0xffffffff, k4DIsland0ToDesert0, k4DIsland0ToMountain0},
-	{k4DDesert0ToIsland0, 0xffffffff, k4DDesert0ToMountain0},
-	{k4DMountain0ToIsland0, k4DMountain0ToDesert0, 0xffffffff}
+static const ExtraID s_transitionExtras0[3][3] = {
+	{ 0xffffffff, k4DIsland0ToDesert0, k4DIsland0ToMountain0 },
+	{ k4DDesert0ToIsland0, 0xffffffff, k4DDesert0ToMountain0 },
+	{ k4DMountain0ToIsland0, k4DMountain0ToDesert0, 0xffffffff }
 };
 
-tExtraID s_transitionExtras1[3][3] = {
-	{0xffffffff, k4DIsland1ToDesert0, k4DIsland1ToMountain0},
-	{k4DDesert1ToIsland0, 0xffffffff, k4DDesert1ToMountain0},
-	{k4DMountain1ToIsland0, k4DMountain1ToDesert0, 0xffffffff}
+static const ExtraID s_transitionExtras1[3][3] = {
+	{ 0xffffffff, k4DIsland1ToDesert0, k4DIsland1ToMountain0 },
+	{ k4DDesert1ToIsland0, 0xffffffff, k4DDesert1ToMountain0 },
+	{ k4DMountain1ToIsland0, k4DMountain1ToDesert0, 0xffffffff }
 };
 
-tExtraID s_transitionExtras2[3][3] = {
-	{0xffffffff, k4DIsland2ToDesert0, k4DIsland2ToMountain0},
-	{k4DDesert2ToIsland0, 0xffffffff, k4DDesert2ToMountain0},
-	{k4DMountain2ToIsland0, k4DMountain2ToDesert0, 0xffffffff}
+static const ExtraID s_transitionExtras2[3][3] = {
+	{ 0xffffffff, k4DIsland2ToDesert0, k4DIsland2ToMountain0 },
+	{ k4DDesert2ToIsland0, 0xffffffff, k4DDesert2ToMountain0 },
+	{ k4DMountain2ToIsland0, k4DMountain2ToDesert0, 0xffffffff }
 };
 
-tExtraID s_shutDownExtras[3][3] = {
-	{0xffffffff, k4DIsland1ToIsland0, k4DIsland2ToIsland0},
-	{k4DDesert0ToIsland0, k4DDesert1ToIsland0, k4DDesert2ToIsland0},
-	{k4DMountain0ToIsland0, k4DMountain1ToIsland0, k4DMountain2ToIsland0}
+static const ExtraID s_shutDownExtras[3][3] = {
+	{ 0xffffffff, k4DIsland1ToIsland0, k4DIsland2ToIsland0 },
+	{ k4DDesert0ToIsland0, k4DDesert1ToIsland0, k4DDesert2ToIsland0 },
+	{ k4DMountain0ToIsland0, k4DMountain1ToIsland0, k4DMountain2ToIsland0 }
 };
 
 Caldoria4DSystem::Caldoria4DSystem(Neighborhood *owner) : GameInteraction(kCaldoria4DInteractionID, owner),
@@ -128,7 +128,7 @@ void Caldoria4DSystem::openInteraction() {
 	startIdling();
 }
 
-void Caldoria4DSystem::loopExtra(const tExtraID extraID) {
+void Caldoria4DSystem::loopExtra(const ExtraID extraID) {
 	ExtraTable::Entry extraEntry;
 	
 	_owner->getExtraEntry(extraID, extraEntry);
@@ -139,7 +139,7 @@ void Caldoria4DSystem::loopExtra(const tExtraID extraID) {
 void Caldoria4DSystem::useIdleTime() {
 	if (_whichMenu == k4DShuttingDown) {
 		TimeValue movieTime = _owner->getNavMovie()->getTime() - _loopStart;
-		tExtraID extraID;
+		ExtraID extraID;
 
 		if (movieTime < kSwitchable1Stop)
 			extraID = s_shutDownExtras[_videoChoice - k4DFirstVideoChoice][0];
@@ -157,7 +157,7 @@ void Caldoria4DSystem::useIdleTime() {
 		}
 	} else if (_clickedHotspotID != kNoHotSpotID) {
 		TimeValue movieTime = _owner->getNavMovie()->getTime() - _loopStart;
-		tExtraID extraID;
+		ExtraID extraID;
 
 		if (movieTime < kSwitchable1Stop) {
 			extraID = s_transitionExtras0[_videoChoice - k4DFirstVideoChoice][_clickedHotspotID - kCa4DChoice1SpotID];
@@ -289,7 +289,7 @@ void Caldoria4DSystem::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void Caldoria4DSystem::receiveNotification(Notification *, const tNotificationFlags) {
+void Caldoria4DSystem::receiveNotification(Notification *, const NotificationFlags) {
 	if (_whichMenu == k4DShuttingDown) {
 		_owner->requestDeleteCurrentInteraction();
 	} else {
@@ -364,7 +364,6 @@ void Caldoria4DSystem::makeAcousticChoice() {
 
 void Caldoria4DSystem::shutDown4DSystem() {
 	_whichMenu = k4DShuttingDown;
-
 }
 
 } // End of namespace Pegasus

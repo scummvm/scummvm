@@ -48,12 +48,12 @@ static const uint32 kOnTime3 = kOffTime2 + kFlashOnTime;
 static const uint32 kOffTime3 = kOnTime3 + kFlashOffTime;
 static const uint32 kOnTime4 = kOffTime3 + kFlashOnTime;
 
-static const tHotSpotID kVertextHotSpotBaseID = 10000;
+static const HotSpotID kVertextHotSpotBaseID = 10000;
 
-static const tCoordType kVertextHotSpotWidth = 24;
-static const tCoordType kVertextHotSpotHeight = 24;
+static const CoordType kVertextHotSpotWidth = 24;
+static const CoordType kVertextHotSpotHeight = 24;
 
-static const tNotificationFlags kBombTimerExpiredFlag = 1;
+static const NotificationFlags kBombTimerExpiredFlag = 1;
 
 static const VertexType kBombLevelOne[] = {
 	0, 1, 0, 1, 0,			// hot vertices first.
@@ -696,20 +696,20 @@ static const VertexType kBombLevelSix[] = {
 	0, 0
 };
 
-static const tCoordType kBombGridWidth = 140;
-static const tCoordType kBombGridHeight = 140;
+static const CoordType kBombGridWidth = 140;
+static const CoordType kBombGridHeight = 140;
 
-static const tCoordType kDotOriginX = 0;
-static const tCoordType kDotOriginY = 0;
+static const CoordType kDotOriginX = 0;
+static const CoordType kDotOriginY = 0;
 
-static const tCoordType kVertOriginX = 2;
-static const tCoordType kVertOriginY = 6;
+static const CoordType kVertOriginX = 2;
+static const CoordType kVertOriginY = 6;
 
-static const tCoordType kHorizOriginX = 6;
-static const tCoordType kHorizOriginY = 2;
+static const CoordType kHorizOriginX = 6;
+static const CoordType kHorizOriginY = 2;
 
-static const tCoordType kDiagOriginX = 6;
-static const tCoordType kDiagOriginY = 6;
+static const CoordType kDiagOriginX = 6;
+static const CoordType kDiagOriginY = 6;
 
 static const int g_originsX[] = {
 	kDiagOriginX,
@@ -738,11 +738,11 @@ struct HotVerticesList {
 	VertexType hotVerts[25];
 };
 
-tCoordType vertToX(VertexType vertex) {
+CoordType vertToX(VertexType vertex) {
 	return (vertex % 5) * 32;
 }
 
-tCoordType vertToY(VertexType vertex) {
+CoordType vertToY(VertexType vertex) {
 	return (vertex / 5) * 32;
 }
 
@@ -1000,7 +1000,7 @@ bool allEdgesUsed(BombEdgeList edges) {
 	return true;
 }
 
-BombGrid::BombGrid(const tDisplayElementID id) : Picture(id) {
+BombGrid::BombGrid(const DisplayElementID id) : Picture(id) {
 	Common::Rect bounds(0, 0, kBombGridWidth, kBombGridHeight);
 
 	allocateSurface(bounds);
@@ -1098,7 +1098,7 @@ void BombGrid::drawEdges(BombEdgeList edges) {
 	gfx->setCurSurface(gfx->getWorkArea());
 }
 
-BombTimer::BombTimer(const tDisplayElementID id) : IdlerAnimation(id) {	
+BombTimer::BombTimer(const DisplayElementID id) : IdlerAnimation(id) {	
 	_middle = -1;
 	_leftImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTimerLeftPICTID);
 	_rightImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTimerRightPICTID);
@@ -1224,7 +1224,7 @@ void CaldoriaBomb::startBombAmbient(Common::String ambient) {
 	_owner->loadLoopSound1(ambient);
 }
 
-void CaldoriaBomb::receiveNotification(Notification *notification, const tNotificationFlags) {	
+void CaldoriaBomb::receiveNotification(Notification *notification, const NotificationFlags) {	
 	if (notification == _neighborhoodNotification) {
 		switch (_owner->getLastExtra()) {
 		case kCaldoria56BombStage1:
@@ -1297,7 +1297,7 @@ void CaldoriaBomb::clickInHotspot(const Input &input, const Hotspot *hotspot) {
 	}
 }
 
-tInputBits CaldoriaBomb::getInputFilter() {
+InputBits CaldoriaBomb::getInputFilter() {
 	// Disallow arrow buttons.
 	return GameInteraction::getInputFilter() & kFilterAllButtons;
 }

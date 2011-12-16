@@ -52,24 +52,24 @@ namespace Pegasus {
 class PegasusEngine;
 
 // Pegasus Prime neighborhood id's
-const tNeighborhoodID kCaldoriaID = 0;
-const tNeighborhoodID kFullTSAID = 1;
-const tNeighborhoodID kFinalTSAID = 2;
-const tNeighborhoodID kTinyTSAID = 3;
-const tNeighborhoodID kPrehistoricID = 4;
-const tNeighborhoodID kMarsID = 5;
-const tNeighborhoodID kWSCID = 6;
-const tNeighborhoodID kNoradAlphaID = 7;
-const tNeighborhoodID kNoradDeltaID = 8;
+const NeighborhoodID kCaldoriaID = 0;
+const NeighborhoodID kFullTSAID = 1;
+const NeighborhoodID kFinalTSAID = 2;
+const NeighborhoodID kTinyTSAID = 3;
+const NeighborhoodID kPrehistoricID = 4;
+const NeighborhoodID kMarsID = 5;
+const NeighborhoodID kWSCID = 6;
+const NeighborhoodID kNoradAlphaID = 7;
+const NeighborhoodID kNoradDeltaID = 8;
 // The sub chase is not really a neighborhood, but we define a constant that is used
 // to allow an easy transition out of Norad Alpha.
-const tNeighborhoodID kNoradSubChaseID = 1000;
+const NeighborhoodID kNoradSubChaseID = 1000;
 
 const TimeScale kDefaultLoopFadeScale = kThirtyTicksPerSecond;
 const TimeValue kDefaultLoopFadeOut = kHalfSecondPerThirtyTicks;
 const TimeValue kDefaultLoopFadeIn = kHalfSecondPerThirtyTicks;
 
-enum tQueueRequestType {
+enum QueueRequestType {
 	kNavExtraRequest,
 	kSpotSoundRequest,
 	kDelayRequest
@@ -78,18 +78,18 @@ enum tQueueRequestType {
 // For delay requests, start is interpreted as the total delay and stop is interpreted
 // as the scale the delay is in.
 // For extra requests, start and stop are not used.
-struct tQueueRequest {
-	tQueueRequestType requestType;
-	tExtraID extra;
+struct QueueRequest {
+	QueueRequestType requestType;
+	ExtraID extra;
 	TimeValue start, stop;
-	tInputBits interruptionFilter;
+	InputBits interruptionFilter;
 	bool playing;
-	tNotificationFlags flags;
+	NotificationFlags flags;
 	Notification *notification;
 };
 
-bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
-bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
+bool operator==(const QueueRequest &arg1, const QueueRequest &arg2);
+bool operator!=(const QueueRequest &arg1, const QueueRequest &arg2);
 
 class GameInteraction;
 class Item;
@@ -106,40 +106,40 @@ protected:
 	Neighborhood *_neighborhood;
 };
 
-typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
+typedef Common::Queue<QueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler, public Idler {
 friend class StriderCallBack;
 friend void timerFunction(FunctionPtr *, void *);
 
 public:
-	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
+	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id);
 	virtual ~Neighborhood();
 
 	virtual void init();
 	virtual void start();
-	virtual void moveNavTo(const tCoordType, const tCoordType);
-	virtual void checkContinuePoint(const tRoomID, const tDirectionConstant) = 0;
+	virtual void moveNavTo(const CoordType, const CoordType);
+	virtual void checkContinuePoint(const RoomID, const DirectionConstant) = 0;
 	void makeContinuePoint();
 
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
-	virtual tCanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
-	virtual tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
-	virtual tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
+	virtual CanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
+	virtual CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir);
+	virtual CanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
 
-	virtual void cantMoveThatWay(tCanMoveForwardReason);
-	virtual void cantTurnThatWay(tCanTurnReason) {}
-	virtual void cantOpenDoor(tCanOpenDoorReason);
-	virtual void arriveAt(tRoomID room, tDirectionConstant direction);
-	virtual void turnTo(const tDirectionConstant);
+	virtual void cantMoveThatWay(CanMoveForwardReason);
+	virtual void cantTurnThatWay(CanTurnReason) {}
+	virtual void cantOpenDoor(CanOpenDoorReason);
+	virtual void arriveAt(RoomID room, DirectionConstant direction);
+	virtual void turnTo(const DirectionConstant);
 	virtual void spotCompleted();
 	virtual void doorOpened();
-	virtual void closeDoorOffScreen(const tRoomID, const tDirectionConstant) {}
+	virtual void closeDoorOffScreen(const RoomID, const DirectionConstant) {}
 
 	virtual void moveForward();
-	virtual void turn(const tTurnDirection);
+	virtual void turn(const TurnDirection);
 	virtual void turnLeft();
 	virtual void turnRight();
 	virtual void turnUp();
@@ -149,43 +149,43 @@ public:
 
 	virtual void updateViewFrame();
 	
-	void requestExtraSequence(const tExtraID, const tNotificationFlags, const tInputBits interruptionFilter);
-	void requestSpotSound(const TimeValue, const TimeValue, const tInputBits interruptionFilter, const tNotificationFlags);
+	void requestExtraSequence(const ExtraID, const NotificationFlags, const InputBits interruptionFilter);
+	void requestSpotSound(const TimeValue, const TimeValue, const InputBits interruptionFilter, const NotificationFlags);
 	void playSpotSoundSync(const TimeValue in, const TimeValue out);
-	void requestDelay(const TimeValue, const TimeScale, const tInputBits interruptionFilter, const tNotificationFlags);
+	void requestDelay(const TimeValue, const TimeScale, const InputBits interruptionFilter, const NotificationFlags);
 
 	Notification *getNeighborhoodNotification() { return &_neighborhoodNotification; }
 
 	virtual void getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry);
-	virtual void startSpotLoop(TimeValue, TimeValue, tNotificationFlags = 0);
+	virtual void startSpotLoop(TimeValue, TimeValue, NotificationFlags = 0);
 	virtual bool actionQueueEmpty() { return _actionQueue.empty(); }
 	virtual void showViewFrame(TimeValue);
-	virtual void findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry);
-	virtual void startExtraSequence(const tExtraID, const tNotificationFlags, const tInputBits interruptionFilter);
-	bool startExtraSequenceSync(const tExtraID, const tInputBits);
-	virtual void loopExtraSequence(const uint32, tNotificationFlags = 0);
+	virtual void findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &spotEntry);
+	virtual void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits interruptionFilter);
+	bool startExtraSequenceSync(const ExtraID, const InputBits);
+	virtual void loopExtraSequence(const uint32, NotificationFlags = 0);
 	int32 getLastExtra() const { return _lastExtra; }
-	virtual void scheduleNavCallBack(tNotificationFlags);
+	virtual void scheduleNavCallBack(NotificationFlags);
 	
 	Movie *getNavMovie() { return &_navMovie; }
 	bool navMoviePlaying();
 	
-	void setCurrentAlternate(const tAlternateID alt) { _currentAlternate = alt; }
-	tAlternateID getCurrentAlternate() const { return _currentAlternate; }
+	void setCurrentAlternate(const AlternateID alt) { _currentAlternate = alt; }
+	AlternateID getCurrentAlternate() const { return _currentAlternate; }
 	
-	void setCurrentActivation(const tHotSpotActivationID a) { _currentActivation = a; }
-	tHotSpotActivationID getCurrentActivation() { return _currentActivation; }
+	void setCurrentActivation(const HotSpotActivationID a) { _currentActivation = a; }
+	HotSpotActivationID getCurrentActivation() { return _currentActivation; }
 	
-	virtual void playDeathExtra(tExtraID, tDeathReason);
-	virtual void die(const tDeathReason);
+	virtual void playDeathExtra(ExtraID, DeathReason);
+	virtual void die(const DeathReason);
 
 	virtual void setSoundFXLevel(const uint16);
 	virtual void setAmbienceLevel(const uint16);
 	
-	void forceStridingStop(const tRoomID, const tDirectionConstant, const tAlternateID);
-	void restoreStriding(const tRoomID, const tDirectionConstant, const tAlternateID);
+	void forceStridingStop(const RoomID, const DirectionConstant, const AlternateID);
+	void restoreStriding(const RoomID, const DirectionConstant, const AlternateID);
 	
-	HotspotInfoTable::Entry *findHotspotEntry(const tHotSpotID);
+	HotspotInfoTable::Entry *findHotspotEntry(const HotSpotID);
 	
 	Push *getTurnPush() { return &_turnPush; }
 	Picture *getTurnPushPicture() { return &_pushIn; }
@@ -208,7 +208,7 @@ public:
 
 	virtual bool okayToJump();
 
-	virtual tAirQuality getAirQuality(const tRoomID);
+	virtual AirQuality getAirQuality(const RoomID);
 	virtual void checkAirMask() {}
 	virtual void checkFlashlight() {}
 	virtual void shieldOn() {}
@@ -229,18 +229,18 @@ public:
 	virtual void dropItemIntoRoom(Item *, Hotspot *);
 	virtual Hotspot *getItemScreenSpot(Item *, DisplayElement *) { return 0; }
 
-	virtual GameInteraction *makeInteraction(const tInteractionID);
+	virtual GameInteraction *makeInteraction(const InteractionID);
 	virtual void requestDeleteCurrentInteraction() { _doneWithInteraction = true; }
 
 	virtual uint16 getDateResID() const = 0;
 
 	virtual void showExtraView(uint32);
-	virtual void startExtraLongSequence(const uint32, const uint32, tNotificationFlags, const tInputBits interruptionFilter);
+	virtual void startExtraLongSequence(const uint32, const uint32, NotificationFlags, const InputBits interruptionFilter);
 	
-	void openCroppedMovie(const Common::String &, tCoordType, tCoordType);
-	void loopCroppedMovie(const Common::String &, tCoordType, tCoordType);
+	void openCroppedMovie(const Common::String &, CoordType, CoordType);
+	void loopCroppedMovie(const Common::String &, CoordType, CoordType);
 	void closeCroppedMovie();
-	void playCroppedMovieOnce(const Common::String &, tCoordType, tCoordType, const tInputBits interruptionFilter = kFilterNoInput);
+	void playCroppedMovieOnce(const Common::String &, CoordType, CoordType, const InputBits interruptionFilter = kFilterNoInput);
 
 	void playMovieSegment(Movie *, TimeValue = 0, TimeValue = 0xffffffff);
 
@@ -258,15 +258,15 @@ protected:
 	virtual Common::String getNavMovieName() = 0;
 
 	// Notification function.
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	// Map info functions.
-	virtual void getExitEntry(const tRoomID room, const tDirectionConstant direction, ExitTable::Entry &entry);
-	virtual TimeValue getViewTime(const tRoomID room, const tDirectionConstant direction);
-	virtual void getDoorEntry(const tRoomID room, const tDirectionConstant direction, DoorTable::Entry &doorEntry);
-	virtual tDirectionConstant getTurnEntry(const tRoomID room, const tDirectionConstant direction, const tTurnDirection turn);
-	virtual void getZoomEntry(const tHotSpotID id, ZoomTable::Entry &zoomEntry);
-	virtual void getHotspotEntry(const tHotSpotID id, HotspotInfoTable::Entry &hotspotEntry);
+	virtual void getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry);
+	virtual TimeValue getViewTime(const RoomID room, const DirectionConstant direction);
+	virtual void getDoorEntry(const RoomID room, const DirectionConstant direction, DoorTable::Entry &doorEntry);
+	virtual DirectionConstant getTurnEntry(const RoomID room, const DirectionConstant direction, const TurnDirection turn);
+	virtual void getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry);
+	virtual void getHotspotEntry(const HotSpotID id, HotspotInfoTable::Entry &hotspotEntry);
 
 	// Nav movie sequences.
 	virtual void startExitMovie(const ExitTable::Entry &);
@@ -274,20 +274,20 @@ protected:
 	virtual void stopStriding();
 	virtual void checkStriding();
 	virtual bool stillMoveForward();
-	virtual void scheduleStridingCallBack(const TimeValue, tNotificationFlags flags);
+	virtual void scheduleStridingCallBack(const TimeValue, NotificationFlags flags);
 	virtual void startZoomMovie(const ZoomTable::Entry &);
 	virtual void startDoorOpenMovie(const TimeValue, const TimeValue);
-	virtual void startTurnPush(const tTurnDirection, const TimeValue, const tDirectionConstant);
-	virtual void playExtraMovie(const ExtraTable::Entry &, const tNotificationFlags, const tInputBits interruptionFilter);
+	virtual void startTurnPush(const TurnDirection, const TimeValue, const DirectionConstant);
+	virtual void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionFilter);
 	
-	virtual void activateCurrentView(const tRoomID, const tDirectionConstant, tSpotFlags);
+	virtual void activateCurrentView(const RoomID, const DirectionConstant, SpotFlags);
 	
 	virtual void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
 	
 	virtual void startSpotOnceOnly(TimeValue, TimeValue);
 	
-	virtual void startMovieSequence(const TimeValue, const TimeValue, tNotificationFlags,
-  			bool loopSequence, const tInputBits interruptionFilter, const TimeValue strideStop = 0xffffffff);
+	virtual void startMovieSequence(const TimeValue, const TimeValue, NotificationFlags,
+  			bool loopSequence, const InputBits interruptionFilter, const TimeValue strideStop = 0xffffffff);
 	
 	virtual void createNeighborhoodSpots();
 	
@@ -298,34 +298,34 @@ protected:
 	// Action queue stuff
 	void popActionQueue();
 	void serviceActionQueue();
-	void requestAction(const tQueueRequestType, const tExtraID, const TimeValue, const TimeValue, const tInputBits, const tNotificationFlags);
+	void requestAction(const QueueRequestType, const ExtraID, const TimeValue, const TimeValue, const InputBits, const NotificationFlags);
 
-	virtual bool prepareExtraSync(const tExtraID);
-	virtual bool waitMovieFinish(Movie *, const tInputBits);
+	virtual bool prepareExtraSync(const ExtraID);
+	virtual bool waitMovieFinish(Movie *, const InputBits);
 	
-	virtual tInputBits getInputFilter();
+	virtual InputBits getInputFilter();
 
 	// Misc.
-	virtual int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant dir);
+	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant dir);
 	virtual void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
 	virtual void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec&);
 	virtual void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec&);
 
 	virtual void setUpAIRules();
-	virtual void setHotspotFlags(const tHotSpotID, const tHotSpotFlags);
-	virtual void setIsItemTaken(const tItemID);
+	virtual void setHotspotFlags(const HotSpotID, const HotSpotFlags);
+	virtual void setIsItemTaken(const ItemID);
 
 	virtual void upButton(const Input &);
 	virtual void leftButton(const Input &);
 	virtual void rightButton(const Input &);
 	virtual void downButton(const Input &);
 
-	void initOnePicture(Picture *, const Common::String &, tDisplayOrder, tCoordType, tCoordType, bool);
-	void initOneMovie(Movie *, const Common::String &, tDisplayOrder, tCoordType, tCoordType, bool);
+	void initOnePicture(Picture *, const Common::String &, DisplayOrder, CoordType, CoordType, bool);
+	void initOneMovie(Movie *, const Common::String &, DisplayOrder, CoordType, CoordType, bool);
 
 	void reinstateMonocleInterface();
 
-	virtual void newInteraction(const tInteractionID);
+	virtual void newInteraction(const InteractionID);
 	virtual void useIdleTime();
 	virtual void bumpIntoWall();
 	virtual void zoomUpOrBump();
@@ -349,11 +349,11 @@ protected:
 	TurnTable _turnTable;
 	ViewTable _viewTable;
 	ZoomTable _zoomTable;
-	tAlternateID _currentAlternate;
-	tHotSpotActivationID _currentActivation;
+	AlternateID _currentAlternate;
+	HotSpotActivationID _currentActivation;
 	
 	int32 _lastExtra;
-	tDeathReason _extraDeathReason;
+	DeathReason _extraDeathReason;
 
 	// Graphics
 	Movie _navMovie;
@@ -379,7 +379,7 @@ protected:
 	TimeBase _delayTimer;
 
 	// Interruptibility...
-	tInputBits _interruptionFilter;
+	InputBits _interruptionFilter;
 
 	// Nav hiding (for info support...)
 	bool _isRunning;

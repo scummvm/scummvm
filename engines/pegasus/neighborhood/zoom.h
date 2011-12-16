@@ -52,14 +52,14 @@ public:
 		void clear();
 		bool isEmpty() { return movieStart == 0xffffffff; }
 
-		tHotSpotID hotspot;
+		HotSpotID hotspot;
 		TimeValue movieStart;
 		TimeValue movieEnd;
-		tRoomID	room;
-		tDirectionConstant direction;
+		RoomID	room;
+		DirectionConstant direction;
 	};
 
-	Entry findEntry(tHotSpotID hotspot);
+	Entry findEntry(HotSpotID hotspot);
 
 private:
 	Common::Array<Entry> _entries;

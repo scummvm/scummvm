@@ -70,17 +70,17 @@ protected:
 
 class GlobeCountdown : public IdlerAnimation {
 public:
-	GlobeCountdown(const tDisplayElementID);
+	GlobeCountdown(const DisplayElementID);
 	virtual ~GlobeCountdown() {}
 
 	void setCountdownTime(const int);
 	void startCountdown();
 	void stopCountdown();
 
-	void setDisplayOrder(const tDisplayOrder);
+	void setDisplayOrder(const DisplayOrder);
 	void show();
 	void hide();
-	void moveElementTo(const tCoordType, const tCoordType);
+	void moveElementTo(const CoordType, const CoordType);
 
 	void draw(const Common::Rect &);
 
@@ -125,7 +125,7 @@ protected:
 	void initInteraction();
 	void closeInteraction();
 
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 
 	void spinGlobe(const Input &, const Hotspot *, GlobeTrackDirection);
 	void clickGlobe(const Input &);

@@ -36,67 +36,67 @@ const TimeScale kPrehistoricFrameDuration = 40;
 
 //	Alternate IDs.
 
-const tAlternateID kAltPrehistoricNormal = 0;
-const tAlternateID kAltPrehistoricBridgeSet = 1;
+const AlternateID kAltPrehistoricNormal = 0;
+const AlternateID kAltPrehistoricBridgeSet = 1;
 
 //	Room IDs.
 
-const tRoomID kPrehistoric01 = 0;
-const tRoomID kPrehistoric02 = 1;
-const tRoomID kPrehistoric03 = 2;
-const tRoomID kPrehistoric04 = 3;
-const tRoomID kPrehistoric05 = 4;
-const tRoomID kPrehistoric06 = 5;
-const tRoomID kPrehistoric07 = 6;
-const tRoomID kPrehistoric08 = 7;
-const tRoomID kPrehistoric09 = 8;
-const tRoomID kPrehistoric10 = 9;
-const tRoomID kPrehistoric11 = 10;
-const tRoomID kPrehistoric12 = 11;
-const tRoomID kPrehistoric13 = 12;
-const tRoomID kPrehistoric14 = 13;
-const tRoomID kPrehistoric15 = 14;
-const tRoomID kPrehistoric16 = 15;
-const tRoomID kPrehistoric17 = 16;
-const tRoomID kPrehistoric18 = 17;
-const tRoomID kPrehistoric19 = 18;
-const tRoomID kPrehistoric20 = 19;
-const tRoomID kPrehistoric21 = 20;
-const tRoomID kPrehistoric22 = 21;
-const tRoomID kPrehistoric22North = 22;
-const tRoomID kPrehistoric23 = 23;
-const tRoomID kPrehistoric24 = 24;
-const tRoomID kPrehistoric25 = 25;
-const tRoomID kPrehistoricDeath = 26;
+const RoomID kPrehistoric01 = 0;
+const RoomID kPrehistoric02 = 1;
+const RoomID kPrehistoric03 = 2;
+const RoomID kPrehistoric04 = 3;
+const RoomID kPrehistoric05 = 4;
+const RoomID kPrehistoric06 = 5;
+const RoomID kPrehistoric07 = 6;
+const RoomID kPrehistoric08 = 7;
+const RoomID kPrehistoric09 = 8;
+const RoomID kPrehistoric10 = 9;
+const RoomID kPrehistoric11 = 10;
+const RoomID kPrehistoric12 = 11;
+const RoomID kPrehistoric13 = 12;
+const RoomID kPrehistoric14 = 13;
+const RoomID kPrehistoric15 = 14;
+const RoomID kPrehistoric16 = 15;
+const RoomID kPrehistoric17 = 16;
+const RoomID kPrehistoric18 = 17;
+const RoomID kPrehistoric19 = 18;
+const RoomID kPrehistoric20 = 19;
+const RoomID kPrehistoric21 = 20;
+const RoomID kPrehistoric22 = 21;
+const RoomID kPrehistoric22North = 22;
+const RoomID kPrehistoric23 = 23;
+const RoomID kPrehistoric24 = 24;
+const RoomID kPrehistoric25 = 25;
+const RoomID kPrehistoricDeath = 26;
 
 //	Hot Spot Activation IDs.
 
-const tHotSpotActivationID kActivationVaultClosed = 1;
-const tHotSpotActivationID kActivationVaultOpen = 2;
+const HotSpotActivationID kActivationVaultClosed = 1;
+const HotSpotActivationID kActivationVaultOpen = 2;
 
 //	Hot Spot IDs.
 
-const tHotSpotID kPre18EastSpotID = 5000;
-const tHotSpotID kPre22NorthSpotID = 5001;
-const tHotSpotID kPre22NorthOutSpotID = 5002;
-const tHotSpotID kPre22NorthBreakerSpotID = 5003;
-const tHotSpotID kPrehistoricKeyDropSpotID = 5004;
-const tHotSpotID kPrehistoricHistoricalLogSpotID = 5005;
+const HotSpotID kPre18EastSpotID = 5000;
+const HotSpotID kPre22NorthSpotID = 5001;
+const HotSpotID kPre22NorthOutSpotID = 5002;
+const HotSpotID kPre22NorthBreakerSpotID = 5003;
+const HotSpotID kPrehistoricKeyDropSpotID = 5004;
+const HotSpotID kPrehistoricHistoricalLogSpotID = 5005;
 
 //	Extra sequence IDs.
 
-const tExtraID kPreArrivalFromTSA = 0;
-const tExtraID kPre18EastBridgeOut = 1;
-const tExtraID kPre18EastBridgeOn = 2;
-const tExtraID kPre18EastZoom = 3;
-const tExtraID kPre18EastZoomOut = 4;
-const tExtraID kPre22ThrowBreaker = 5;
-const tExtraID kPre25EastUnlockingVaultWithLog = 6;
-const tExtraID kPre25EastVaultOpenWithLog = 7;
-const tExtraID kPre25EastViewWithLog = 8;
-const tExtraID kPre25EastUnlockingVaultNoLog = 9;
-const tExtraID kPre25EastVaultOpenNoLog = 10;
-const tExtraID kPre25EastViewNoLog = 11;
+const ExtraID kPreArrivalFromTSA = 0;
+const ExtraID kPre18EastBridgeOut = 1;
+const ExtraID kPre18EastBridgeOn = 2;
+const ExtraID kPre18EastZoom = 3;
+const ExtraID kPre18EastZoomOut = 4;
+const ExtraID kPre22ThrowBreaker = 5;
+const ExtraID kPre25EastUnlockingVaultWithLog = 6;
+const ExtraID kPre25EastVaultOpenWithLog = 7;
+const ExtraID kPre25EastViewWithLog = 8;
+const ExtraID kPre25EastUnlockingVaultNoLog = 9;
+const ExtraID kPre25EastVaultOpenNoLog = 10;
+const ExtraID kPre25EastViewNoLog = 11;
 
 class PegasusEngine;
 
@@ -108,7 +108,7 @@ public:
 	virtual uint16 getDateResID() const;
 	virtual void init();
 	
-	virtual void arriveAt(const tRoomID, const tDirectionConstant);
+	virtual void arriveAt(const RoomID, const DirectionConstant);
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 	Common::String getBriefingMovie();
@@ -124,7 +124,7 @@ public:
 
 	void bumpIntoWall();
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 	bool canSolve();
 	void doSolve();
@@ -137,13 +137,13 @@ protected:
 	};
 
 	void setUpAIRules();
-	int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
-	void turnTo(const tDirectionConstant);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void turnTo(const DirectionConstant);
 	void zoomToVault();
-	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
+	TimeValue getViewTime(const RoomID, const DirectionConstant);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
 
 	void loadAmbientLoops();
 	

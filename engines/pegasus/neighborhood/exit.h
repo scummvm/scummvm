@@ -63,9 +63,9 @@ public:
 			exitDirection = kNoDirection;
 		}
 
-		tRoomID room;
-		tDirectionConstant direction;
-		tAlternateID altCode;
+		RoomID room;
+		DirectionConstant direction;
+		AlternateID altCode;
 		TimeValue movieStart;
 		TimeValue movieEnd;
 		//	fExitEnd is the end of the optimized run of walks.
@@ -74,11 +74,11 @@ public:
 		//	fExitLoop is the loop start time of the optimized run of walks if the run
 		//	loops back on itself (so far, only in TSA).
 		TimeValue exitLoop;
-		tRoomID exitRoom;
-		tDirectionConstant exitDirection;
+		RoomID exitRoom;
+		DirectionConstant exitDirection;
 	};
 
-	Entry findEntry(tRoomID room, tDirectionConstant direction, tAlternateID altCode);
+	Entry findEntry(RoomID room, DirectionConstant direction, AlternateID altCode);
 
 	typedef Common::Array<Entry>::iterator iterator;
 	iterator begin() { return _entries.begin(); }

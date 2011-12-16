@@ -57,7 +57,7 @@ const long kTransitionRange = kTransitionTop - kTransitionBottom;
 
 class Transition : public FaderAnimation {
 public:
-	Transition(const tDisplayElementID id);
+	Transition(const DisplayElementID id);
 	virtual ~Transition() {}
 	
 	virtual void setBounds(const Common::Rect &);
@@ -70,30 +70,30 @@ protected:
 	DisplayElement *_outPicture;
 	DisplayElement *_inPicture;
 
-	tCoordType _boundsWidth, _boundsHeight;
+	CoordType _boundsWidth, _boundsHeight;
 };
 
 class Slide : public Transition {
 public:
-	Slide(const tDisplayElementID id) : Transition(id) {}
+	Slide(const DisplayElementID id) : Transition(id) {}
 	virtual ~Slide() {}
 
-	virtual void setSlideDirection(tSlideDirection dir) { _direction = dir; }
+	virtual void setSlideDirection(SlideDirection dir) { _direction = dir; }
 	virtual void draw(const Common::Rect &);
 
-	virtual void setDirection(const tSlideDirection dir) { _direction = dir; }
+	virtual void setDirection(const SlideDirection dir) { _direction = dir; }
 
 protected:
 	virtual void adjustSlideRects(Common::Rect &, Common::Rect &);
 	virtual void drawElements(const Common::Rect &, const Common::Rect &, const Common::Rect &);
 	virtual void drawSlideElement(const Common::Rect &, const Common::Rect &, DisplayElement *);
 
-	tSlideDirection _direction;
+	SlideDirection _direction;
 };
 
 class Push : public Slide {
 public:
-	Push(const tDisplayElementID id) : Slide(id) {}
+	Push(const DisplayElementID id) : Slide(id) {}
 	virtual ~Push() {}
 
 protected:

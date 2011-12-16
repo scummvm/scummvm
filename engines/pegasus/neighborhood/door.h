@@ -37,16 +37,16 @@ namespace Common {
 
 namespace Pegasus {
 
-typedef byte tDoorFlags;
+typedef byte DoorFlags;
 
 enum {
 	kDoorPresentBit,				//	Bit set if there is a door here.
 	kDoorLockedBit					//	Bit set if door is locked, clear if unlocked.
 };
 
-const tDoorFlags kNoDoorFlags = 0;
-const tDoorFlags kDoorPresentMask = 1 << kDoorPresentBit;
-const tDoorFlags kDoorLockedMask = 1 << kDoorLockedBit;
+const DoorFlags kNoDoorFlags = 0;
+const DoorFlags kDoorPresentMask = 1 << kDoorPresentBit;
+const DoorFlags kDoorLockedMask = 1 << kDoorLockedBit;
 
 class DoorTable {
 public:
@@ -70,15 +70,15 @@ public:
 			flags = kNoDoorFlags;
 		}
 
-		tRoomID room;
-		tDirectionConstant direction;
-		tAlternateID altCode;
+		RoomID room;
+		DirectionConstant direction;
+		AlternateID altCode;
 		TimeValue movieStart;
 		TimeValue movieEnd;
-		tDoorFlags flags;
+		DoorFlags flags;
 	};
 
-	Entry findEntry(tRoomID room, tDirectionConstant direction, tAlternateID altCode);
+	Entry findEntry(RoomID room, DirectionConstant direction, AlternateID altCode);
 
 private:
 	Common::Array<Entry> _entries;

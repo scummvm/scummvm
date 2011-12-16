@@ -28,9 +28,9 @@
 
 namespace Pegasus {
 
-typedef tReceiverList::iterator tReceiverIterator;
+typedef ReceiverList::iterator ReceiverIterator;
 
-Notification::Notification(const tNotificationID id, NotificationManager *owner) : IDObject(id) {
+Notification::Notification(const NotificationID id, NotificationManager *owner) : IDObject(id) {
 	_owner = owner;
 	_currentFlags = kNoNotificationFlags;
 	if (_owner)
@@ -38,7 +38,7 @@ Notification::Notification(const tNotificationID id, NotificationManager *owner)
 }
 
 Notification::~Notification() {
-	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
+	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
 		it->receiver->newNotification(NULL);
 
 	if (_owner)
@@ -48,8 +48,8 @@ Notification::~Notification() {
 //	Selectively set or clear notificiation bits.
 //	Wherever mask is 0, leave existing bits untouched.
 //	Wherever mask is 1, set bit equivalent to flags.
-void Notification::notifyMe(NotificationReceiver *receiver, tNotificationFlags flags, tNotificationFlags mask) {
-	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++) {
+void Notification::notifyMe(NotificationReceiver *receiver, NotificationFlags flags, NotificationFlags mask) {
+	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++) {
 		if (it->receiver == receiver) {
 			it->mask = (it->mask & ~mask) | (flags & mask);
 			receiver->newNotification(this);
@@ -57,7 +57,7 @@ void Notification::notifyMe(NotificationReceiver *receiver, tNotificationFlags f
 		}
 	}
 
-	tReceiverEntry newEntry;
+	ReceiverEntry newEntry;
 	newEntry.receiver = receiver;
 	newEntry.mask = flags;
 	_receivers.push_back(newEntry);
@@ -66,7 +66,7 @@ void Notification::notifyMe(NotificationReceiver *receiver, tNotificationFlags f
 }
 
 void Notification::cancelNotification(NotificationReceiver *receiver) {
-	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end();) {
+	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end();) {
 		if (it->receiver == receiver)
 			it = _receivers.erase(it);
 		else
@@ -74,26 +74,26 @@ void Notification::cancelNotification(NotificationReceiver *receiver) {
 	}
 }
 
-void Notification::setNotificationFlags(tNotificationFlags flags, tNotificationFlags mask) {
+void Notification::setNotificationFlags(NotificationFlags flags, NotificationFlags mask) {
 	_currentFlags = (_currentFlags & ~mask) | flags;
 }
 
 void Notification::checkReceivers() {	
-	tNotificationFlags currentFlags = _currentFlags;
+	NotificationFlags currentFlags = _currentFlags;
 	_currentFlags = kNoNotificationFlags;
 
-	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
+	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
 		if (it->mask & currentFlags)
 			it->receiver->receiveNotification(this, currentFlags);
 }
 
 //	Receiver entries are equal if their receivers are equal.
 
-int operator==(const tReceiverEntry &entry1, const tReceiverEntry &entry2) {
+int operator==(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
 	return	entry1.receiver == entry2.receiver;
 }
 
-int operator!=(const tReceiverEntry &entry1, const tReceiverEntry &entry2) {
+int operator!=(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
 	return	entry1.receiver != entry2.receiver;
 }
 
@@ -106,14 +106,14 @@ NotificationReceiver::~NotificationReceiver() {
 		_notification->cancelNotification(this);
 }
 
-void NotificationReceiver::receiveNotification(Notification *, const tNotificationFlags) {
+void NotificationReceiver::receiveNotification(Notification *, const NotificationFlags) {
 }
 
 void NotificationReceiver::newNotification(Notification *notification) {
 	_notification = notification;
 }
 
-typedef tNotificationList::iterator tNotificationIterator;
+typedef NotificationList::iterator NotificationIterator;
 
 NotificationManager::NotificationManager() {
 }
@@ -127,7 +127,7 @@ void NotificationManager::addNotification(Notification *notification) {
 }
 
 void NotificationManager::removeNotification(Notification *notification) {
-	for (tNotificationIterator it = _notifications.begin(); it != _notifications.end();) {
+	for (NotificationIterator it = _notifications.begin(); it != _notifications.end();) {
 		if ((*it) == notification)
 			it = _notifications.erase(it);
 		else
@@ -136,12 +136,12 @@ void NotificationManager::removeNotification(Notification *notification) {
 }
 
 void NotificationManager::detachNotifications() {
-	for (tNotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
+	for (NotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
 		(*it)->_owner = 0;
 }
 
 void NotificationManager::checkNotifications() {
-	for (tNotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
+	for (NotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
 		if ((*it)->_currentFlags != kNoNotificationFlags)
 			(*it)->checkReceivers();
 }

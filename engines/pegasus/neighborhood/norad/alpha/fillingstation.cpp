@@ -32,18 +32,18 @@
 
 namespace Pegasus {
 
-const tNotificationFlags kFSPowerUpFinishedFlag = 1;
-const tNotificationFlags kFSSplashFinishedFlag = kFSPowerUpFinishedFlag << 1;
-const tNotificationFlags kFSIntakeWarningFinishedFlag = kFSSplashFinishedFlag << 1;
-const tNotificationFlags kFSIntakeHiliteFinishedFlag = kFSIntakeWarningFinishedFlag << 1;
-const tNotificationFlags kFSDispenseHiliteFinishedFlag = kFSIntakeHiliteFinishedFlag << 1;
-const tNotificationFlags kFSArHiliteFinishedFlag = kFSDispenseHiliteFinishedFlag << 1;
-const tNotificationFlags kFSCO2HiliteFinishedFlag = kFSArHiliteFinishedFlag << 1;
-const tNotificationFlags kFSHeHiliteFinishedFlag = kFSCO2HiliteFinishedFlag << 1;
-const tNotificationFlags kFSOHiliteFinishedFlag = kFSHeHiliteFinishedFlag << 1;
-const tNotificationFlags kFSNHiliteFinishedFlag = kFSOHiliteFinishedFlag << 1;
+const NotificationFlags kFSPowerUpFinishedFlag = 1;
+const NotificationFlags kFSSplashFinishedFlag = kFSPowerUpFinishedFlag << 1;
+const NotificationFlags kFSIntakeWarningFinishedFlag = kFSSplashFinishedFlag << 1;
+const NotificationFlags kFSIntakeHiliteFinishedFlag = kFSIntakeWarningFinishedFlag << 1;
+const NotificationFlags kFSDispenseHiliteFinishedFlag = kFSIntakeHiliteFinishedFlag << 1;
+const NotificationFlags kFSArHiliteFinishedFlag = kFSDispenseHiliteFinishedFlag << 1;
+const NotificationFlags kFSCO2HiliteFinishedFlag = kFSArHiliteFinishedFlag << 1;
+const NotificationFlags kFSHeHiliteFinishedFlag = kFSCO2HiliteFinishedFlag << 1;
+const NotificationFlags kFSOHiliteFinishedFlag = kFSHeHiliteFinishedFlag << 1;
+const NotificationFlags kFSNHiliteFinishedFlag = kFSOHiliteFinishedFlag << 1;
 
-const tNotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
+const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
 												kFSSplashFinishedFlag |
 												kFSIntakeWarningFinishedFlag |
 												kFSIntakeHiliteFinishedFlag |
@@ -61,12 +61,10 @@ const int16 kDispenseMenu = 3;
 const int16 kWaitingForDispense = 4;
 
 // Dummy itemIDs
+const ItemID kCO2Item = 10000;
+const ItemID kHeItem = 10001;
 
-const tItemID kCO2Item = 10000;
-const tItemID kHeItem = 10001;
-
-//	Interactive points.
-
+// Interactive points.
 const TimeValue kFSPowerUpStartStart = 0;
 const TimeValue kFSPowerUpStartStop = 600;
 const TimeValue kFSSplashStart = 600;
@@ -168,7 +166,7 @@ void NoradAlphaFillingStation::setStaticState(TimeValue time, int16 state) {
 	allowInput(true);
 }
 
-void NoradAlphaFillingStation::setSegmentState(TimeValue start, TimeValue stop, tNotificationFlags flag, int16 state) {	
+void NoradAlphaFillingStation::setSegmentState(TimeValue start, TimeValue stop, NotificationFlags flag, int16 state) {	
 	_rightSideMovie.stop();
 	_rightSideMovie.setSegment(start, stop);
 	_rightSideMovie.setTime(start);
@@ -316,7 +314,7 @@ void NoradAlphaFillingStation::NHighlightFinished() {
 	dispenseGas();
 }
 
-void NoradAlphaFillingStation::receiveNotification(Notification *, const tNotificationFlags flags) {
+void NoradAlphaFillingStation::receiveNotification(Notification *, const NotificationFlags flags) {
 	switch (flags) {
 	case kFSPowerUpFinishedFlag:
 		powerUpFinished();

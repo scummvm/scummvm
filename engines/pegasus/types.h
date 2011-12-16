@@ -32,23 +32,23 @@ namespace Pegasus {
 
 // TODO: Probably all of these don't really need to be typedef'd...
 
-typedef int32 tDisplayElementID;
-typedef int32 tDisplayOrder;
+typedef int32 DisplayElementID;
+typedef int32 DisplayOrder;
 
-typedef int16 tHotSpotID;
-typedef uint32 tHotSpotFlags;
+typedef int16 HotSpotID;
+typedef uint32 HotSpotFlags;
 
-typedef byte tButtonState;
-typedef uint32 tInputBits;
+typedef byte ButtonState;
+typedef uint32 InputBits;
 
-typedef int32 tNotificationID;
-typedef uint32 tNotificationFlags;
+typedef int32 NotificationID;
+typedef uint32 NotificationFlags;
 
 // Mac types.
-typedef int16 tResIDType;
-typedef int16 tCoordType;
+typedef int16 ResIDType;
+typedef int16 CoordType;
 
-enum tSlideDirection {
+enum SlideDirection {
 	kSlideLeftMask = 1,
 	kSlideRightMask = kSlideLeftMask << 1,
 	kSlideUpMask = kSlideRightMask << 1 << 1,
@@ -67,56 +67,56 @@ enum tSlideDirection {
 typedef uint TimeValue;
 typedef uint TimeScale;
 
-typedef int16 tGameID;
+typedef int16 GameID;
 
-typedef tGameID tItemID;
-typedef tGameID tActorID;
-typedef tGameID tRoomID;
-typedef tGameID tNeighborhoodID;
-typedef byte tAlternateID;
-typedef int8 tHotSpotActivationID;
+typedef GameID ItemID;
+typedef GameID ActorID;
+typedef GameID RoomID;
+typedef GameID NeighborhoodID;
+typedef byte AlternateID;
+typedef int8 HotSpotActivationID;
 
-typedef int16 tWeightType;
+typedef int16 WeightType;
 
-typedef byte tDirectionConstant;
-typedef byte tTurnDirection;
+typedef byte DirectionConstant;
+typedef byte TurnDirection;
 
 // Meant to be room in low 16 bits and direction in high 16 bits.
-typedef uint32 tRoomViewID;
+typedef uint32 RoomViewID;
 
-#define MakeRoomView(room, direction) (((tRoomViewID) (room)) | (((tRoomViewID) (direction)) << 16))
+#define MakeRoomView(room, direction) (((RoomViewID) (room)) | (((RoomViewID) (direction)) << 16))
 
-typedef uint32 tExtraID;
+typedef uint32 ExtraID;
 
-typedef int16 tGameMode;
+typedef int16 GameMode;
 
-typedef int16 tWeightType;
+typedef int16 WeightType;
 
-typedef int16 tItemState;
+typedef int16 ItemState;
 
-typedef int8 tDeathReason;
+typedef int8 DeathReason;
 
-typedef int32 tGameMenuCommand;
+typedef int32 GameMenuCommand;
 
-typedef int32 tGameScoreType;
+typedef int32 GameScoreType;
 
-typedef long tCanMoveForwardReason;
+typedef long CanMoveForwardReason;
 
-typedef long tCanTurnReason;
+typedef long CanTurnReason;
 
-typedef long tCanOpenDoorReason;
+typedef long CanOpenDoorReason;
 
-enum tInventoryResult {
+enum InventoryResult {
 	kInventoryOK,
 	kTooMuchWeight,
 	kItemNotInInventory
 };
 
-typedef int32 tInteractionID;
+typedef int32 InteractionID;
 
-typedef int32 tAIConditionID;
+typedef int32 AIConditionID;
 
-enum tEnergyStage {
+enum EnergyStage {
 	kStageNoStage,
 	kStageCasual,				//	more than 50% energy
 	kStageWorried,				//	more than 25% energy
@@ -124,32 +124,32 @@ enum tEnergyStage {
 	kStagePanicStricken			//	less than 5% energy
 };
 
-enum tNoradSubPrepState {
+enum NoradSubPrepState {
 	kSubNotPrepped,
 	kSubPrepped,
 	kSubDamaged
 };
 
-enum tLowerClientSignature {
+enum LowerClientSignature {
 	kNoClientSignature,
 	kInventorySignature,
 	kBiochipSignature,
 	kAISignature
 };
 
-enum tLowerAreaSignature {
+enum LowerAreaSignature {
 	kLeftAreaSignature,
 	kMiddleAreaSignature,
 	kRightAreaSignature
 };
 
-enum tAirQuality {
+enum AirQuality {
 	kAirQualityGood,
 	kAirQualityDirty,
 	kAirQualityVacuum
 };
 
-enum tDragType {
+enum DragType {
 	kDragNoDrag,
 	kDragInventoryPickup,
 	kDragBiochipPickup,

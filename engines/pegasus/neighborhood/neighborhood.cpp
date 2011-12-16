@@ -55,7 +55,7 @@ static const TimeValue kStridingSlop = 39;
 
 Neighborhood *g_neighborhood = 0;
 
-Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id)
+Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id)
 		: InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName), _navMovie(kNavMovieID), _stridingCallBack(this),
 		_neighborhoodNotification(kNeighborhoodNotificationID, (NotificationManager *)vm), _pushIn(kNoDisplayElement),
 		_turnPush(kTurnPushID), _croppedMovie(kCroppedMovieID) {
@@ -188,7 +188,7 @@ void Neighborhood::start() {
 	arriveAt(GameState.getNextRoom(), GameState.getNextDirection());
 }
 
-void Neighborhood::receiveNotification(Notification *, const tNotificationFlags flags) {
+void Neighborhood::receiveNotification(Notification *, const NotificationFlags flags) {
 	if ((flags & (kNeighborhoodMovieCompletedFlag | kTurnCompletedFlag)) != 0 && g_AIArea)
 		g_AIArea->unlockAI();
 	if (flags & kMoveForwardCompletedFlag)
@@ -205,7 +205,7 @@ void Neighborhood::receiveNotification(Notification *, const tNotificationFlags 
 		die(_extraDeathReason);
 }
 
-void Neighborhood::arriveAt(tRoomID room, tDirectionConstant direction) {
+void Neighborhood::arriveAt(RoomID room, DirectionConstant direction) {
 	if (g_map)
 		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), room, direction);
 
@@ -242,14 +242,14 @@ void Neighborhood::arriveAt(tRoomID room, tDirectionConstant direction) {
 
 //	These functions can be overridden to tweak the exact frames used.
 
-void Neighborhood::getExitEntry(const tRoomID room, const tDirectionConstant direction, ExitTable::Entry &entry) {
+void Neighborhood::getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry) {
 	entry = _exitTable.findEntry(room, direction, _currentAlternate);
 
 	if (entry.isEmpty())
 		entry = _exitTable.findEntry(room, direction, kNoAlternateID);
 }
 
-TimeValue Neighborhood::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue Neighborhood::getViewTime(const RoomID room, const DirectionConstant direction) {
 	if (GameState.getOpenDoorRoom() == room && GameState.getOpenDoorDirection() == direction) {
 		// If we get here, the door entry for this location must exist.
 		DoorTable::Entry doorEntry = _doorTable.findEntry(room, direction, _currentAlternate);
@@ -268,14 +268,14 @@ TimeValue Neighborhood::getViewTime(const tRoomID room, const tDirectionConstant
 	return viewEntry.time;
 }
 
-void Neighborhood::getDoorEntry(const tRoomID room, const tDirectionConstant direction, DoorTable::Entry &doorEntry) {
+void Neighborhood::getDoorEntry(const RoomID room, const DirectionConstant direction, DoorTable::Entry &doorEntry) {
 	doorEntry = _doorTable.findEntry(room, direction, _currentAlternate);
 
 	if (doorEntry.isEmpty())
 		doorEntry = _doorTable.findEntry(room, direction, kNoAlternateID);
 }
 
-tDirectionConstant Neighborhood::getTurnEntry(const tRoomID room, const tDirectionConstant direction, const tTurnDirection turnDirection) {
+DirectionConstant Neighborhood::getTurnEntry(const RoomID room, const DirectionConstant direction, const TurnDirection turnDirection) {
 	TurnTable::Entry turnEntry = _turnTable.findEntry(room, direction, turnDirection, _currentAlternate);
 
 	if (turnEntry.isEmpty())
@@ -284,18 +284,18 @@ tDirectionConstant Neighborhood::getTurnEntry(const tRoomID room, const tDirecti
 	return turnEntry.endDirection;
 }
 
-void Neighborhood::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry) {
+void Neighborhood::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &spotEntry) {
 	spotEntry = _spotTable.findEntry(room, direction, flags, _currentAlternate);
 
 	if (spotEntry.isEmpty())
 		spotEntry = _spotTable.findEntry(room, direction, flags, kNoAlternateID);
 }
 
-void Neighborhood::getZoomEntry(const tHotSpotID id, ZoomTable::Entry &zoomEntry) {
+void Neighborhood::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 	zoomEntry = _zoomTable.findEntry(id);
 }
 
-void Neighborhood::getHotspotEntry(const tHotSpotID id, HotspotInfoTable::Entry &hotspotEntry) {
+void Neighborhood::getHotspotEntry(const HotSpotID id, HotspotInfoTable::Entry &hotspotEntry) {
 	hotspotEntry = _hotspotInfoTable.findEntry(id);
 }
 
@@ -307,7 +307,7 @@ void Neighborhood::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry)
 //
 //	"Can" functions: Called to see whether or not a user is allowed to do something
 
-tCanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
+CanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	DoorTable::Entry door;
 	
 	getExitEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
@@ -333,7 +333,7 @@ tCanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	return kCanMoveForward;
 }
 
-tCanTurnReason Neighborhood::canTurn(tTurnDirection turnDirection, tDirectionConstant &nextDir) {
+CanTurnReason Neighborhood::canTurn(TurnDirection turnDirection, DirectionConstant &nextDir) {
 	nextDir = getTurnEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), turnDirection);
 
 	if (nextDir == kNoDirection)
@@ -342,7 +342,7 @@ tCanTurnReason Neighborhood::canTurn(tTurnDirection turnDirection, tDirectionCon
 	return kCanTurn;
 }
 
-tCanOpenDoorReason Neighborhood::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason Neighborhood::canOpenDoor(DoorTable::Entry &entry) {
 	getDoorEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
 
 	if (entry.flags & kDoorPresentMask) {
@@ -390,7 +390,7 @@ void Neighborhood::createNeighborhoodSpots() {
 
 void Neighborhood::popActionQueue() {	
 	if (!_actionQueue.empty()) {
-		tQueueRequest topRequest = _actionQueue.pop();
+		QueueRequest topRequest = _actionQueue.pop();
 
 		switch (topRequest.requestType) {
 		case kNavExtraRequest:
@@ -410,7 +410,7 @@ void Neighborhood::popActionQueue() {
 
 void Neighborhood::serviceActionQueue() {
 	if (!_actionQueue.empty()) {
-		tQueueRequest &topRequest = _actionQueue.front();
+		QueueRequest &topRequest = _actionQueue.front();
 
 		if (!topRequest.playing) {
 			topRequest.playing = true;
@@ -441,10 +441,10 @@ void Neighborhood::serviceActionQueue() {
 	}
 }
 
-void Neighborhood::requestAction(const tQueueRequestType requestType, const tExtraID extra, const TimeValue in, const TimeValue out,
-		const tInputBits interruptionFilter, const tNotificationFlags flags) {
+void Neighborhood::requestAction(const QueueRequestType requestType, const ExtraID extra, const TimeValue in, const TimeValue out,
+		const InputBits interruptionFilter, const NotificationFlags flags) {
 
-	tQueueRequest request;
+	QueueRequest request;
 	
 	request.requestType = requestType;
 	request.extra = extra;
@@ -459,11 +459,11 @@ void Neighborhood::requestAction(const tQueueRequestType requestType, const tExt
 		serviceActionQueue();
 }
 
-void Neighborhood::requestExtraSequence(const tExtraID whichExtra, const tNotificationFlags flags, const tInputBits interruptionFilter) {
+void Neighborhood::requestExtraSequence(const ExtraID whichExtra, const NotificationFlags flags, const InputBits interruptionFilter) {
 	requestAction(kNavExtraRequest, whichExtra, 0, 0, interruptionFilter, flags);
 }
 
-void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, const tInputBits interruptionFilter, const tNotificationFlags flags) {
+void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, const InputBits interruptionFilter, const NotificationFlags flags) {
 	requestAction(kSpotSoundRequest, 0xFFFFFFFF, in, out, interruptionFilter, flags);
 }
 
@@ -486,16 +486,16 @@ void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	}
 }
 
-void Neighborhood::requestDelay(const TimeValue delayDuration, const TimeScale delayScale, const tInputBits interruptionFilter, const tNotificationFlags flags) {
+void Neighborhood::requestDelay(const TimeValue delayDuration, const TimeScale delayScale, const InputBits interruptionFilter, const NotificationFlags flags) {
 	requestAction(kDelayRequest, 0xFFFFFFFF, delayDuration, delayScale, interruptionFilter, flags);
 }
 
-bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2) {
+bool operator==(const QueueRequest &arg1, const QueueRequest &arg2) {
 	return arg1.requestType == arg2.requestType && arg1.extra == arg2.extra &&
 			arg1.start == arg2.start && arg1.stop == arg2.stop;
 }
 
-bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2) {
+bool operator!=(const QueueRequest &arg1, const QueueRequest &arg2) {
 	return !operator==(arg1, arg2);
 }
 
@@ -543,7 +543,7 @@ bool Neighborhood::okayToJump() {
 	return !_vm->playerHasItemID(kGasCanister) && !_vm->playerHasItemID(kMachineGun);
 }
 
-tAirQuality Neighborhood::getAirQuality(const tRoomID) {
+AirQuality Neighborhood::getAirQuality(const RoomID) {
 	return kAirQualityGood;
 }
 
@@ -594,7 +594,7 @@ void Neighborhood::stopStriding() {
 }
 
 //	Compass support
-int16 Neighborhood::getStaticCompassAngle(const tRoomID, const tDirectionConstant dir) {
+int16 Neighborhood::getStaticCompassAngle(const RoomID, const DirectionConstant dir) {
 	//	North, south, east, west
 	static const int16 compassAngles[] = { 0, 180, 90, 270 };
 	return compassAngles[dir];
@@ -615,7 +615,7 @@ void Neighborhood::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMo
 	compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), exitEntry.movieStart, startAngle, exitEntry.movieEnd, stopAngle);
 }
 
-void Neighborhood::scheduleNavCallBack(tNotificationFlags flags) {
+void Neighborhood::scheduleNavCallBack(NotificationFlags flags) {
 	_navMovieCallBack.cancelCallBack();
 
 	if (flags != 0) {
@@ -624,19 +624,19 @@ void Neighborhood::scheduleNavCallBack(tNotificationFlags flags) {
 	}
 }
 
-void Neighborhood::scheduleStridingCallBack(const TimeValue strideStop, tNotificationFlags flags) {	
+void Neighborhood::scheduleStridingCallBack(const TimeValue strideStop, NotificationFlags flags) {	
 	_stridingCallBack.cancelCallBack();
 
 	if (flags != 0)
 		_stridingCallBack.scheduleCallBack(kTriggerTimeFwd, strideStop, _navMovie.getScale());
 }
 
-void Neighborhood::moveNavTo(const tCoordType h, const tCoordType v) {
-	tCoordType oldH, oldV;
+void Neighborhood::moveNavTo(const CoordType h, const CoordType v) {
+	CoordType oldH, oldV;
 	_navMovie.getLocation(oldH, oldV);
 
-	tCoordType offH = h - oldH;
-	tCoordType offV = v - oldV;
+	CoordType offH = h - oldH;
+	CoordType offV = v - oldV;
 
 	_navMovie.moveElementTo(h, v);
 	_turnPush.moveElementTo(h, v);
@@ -663,10 +663,10 @@ void Neighborhood::activateHotspots() {
 }
 
 void Neighborhood::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {	
-	tHotSpotFlags flags = clickedSpot->getHotspotFlags();
+	HotSpotFlags flags = clickedSpot->getHotspotFlags();
 
 	if ((flags & (kPickUpItemSpotFlag | kPickUpBiochipSpotFlag)) != 0) {
-		tItemID itemID = kNoItemID;
+		ItemID itemID = kNoItemID;
 
 		for (HotspotInfoTable::iterator it = _hotspotInfoTable.begin(); it != _hotspotInfoTable.end(); it++) {
 			if (it->hotspot == clickedSpot->getObjectID()) {
@@ -703,7 +703,7 @@ void Neighborhood::clickInHotspot(const Input &input, const Hotspot *clickedSpot
 	}
 }
 
-void Neighborhood::cantMoveThatWay(tCanMoveForwardReason reason) {
+void Neighborhood::cantMoveThatWay(CanMoveForwardReason reason) {
 	switch (reason) {
 	case kCantMoveDoorClosed:
 	case kCantMoveDoorLocked:
@@ -718,11 +718,11 @@ void Neighborhood::cantMoveThatWay(tCanMoveForwardReason reason) {
 	}
 }
 
-void Neighborhood::cantOpenDoor(tCanOpenDoorReason) {
+void Neighborhood::cantOpenDoor(CanOpenDoorReason) {
 	bumpIntoWall();
 }
 
-void Neighborhood::turnTo(const tDirectionConstant direction) {
+void Neighborhood::turnTo(const DirectionConstant direction) {
 	if (g_map)
 		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getCurrentRoom(), direction);
 
@@ -796,7 +796,7 @@ void Neighborhood::doorOpened() {
 
 void Neighborhood::moveForward() {
 	ExitTable::Entry exitEntry;
-	tCanMoveForwardReason moveReason = canMoveForward(exitEntry);
+	CanMoveForwardReason moveReason = canMoveForward(exitEntry);
 
 	if (moveReason == kCanMoveForward)
 		startExitMovie(exitEntry);
@@ -804,9 +804,9 @@ void Neighborhood::moveForward() {
 		cantMoveThatWay(moveReason);
 }
 
-void Neighborhood::turn(const tTurnDirection turnDirection) {
-	tDirectionConstant nextDir;	
-	tCanTurnReason turnReason = canTurn(turnDirection, nextDir);
+void Neighborhood::turn(const TurnDirection turnDirection) {
+	DirectionConstant nextDir;	
+	CanTurnReason turnReason = canTurn(turnDirection, nextDir);
 
 	if (turnReason == kCanTurn)
 		startTurnPush(turnDirection, getViewTime(GameState.getCurrentRoom(), nextDir), nextDir);
@@ -832,7 +832,7 @@ void Neighborhood::turnDown() {
 
 void Neighborhood::openDoor() {
 	DoorTable::Entry door;	
-	tCanOpenDoorReason doorReason = canOpenDoor(door);
+	CanOpenDoorReason doorReason = canOpenDoor(door);
 
 	if (doorReason == kCanOpenDoor)
 		startDoorOpenMovie(door.movieStart, door.movieEnd);
@@ -851,7 +851,7 @@ void Neighborhood::updateViewFrame() {
 	showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 }
 
-void Neighborhood::startSpotLoop(TimeValue startTime, TimeValue stopTime, tNotificationFlags flags) {
+void Neighborhood::startSpotLoop(TimeValue startTime, TimeValue stopTime, NotificationFlags flags) {
 	_turnPush.hide();
 	startMovieSequence(startTime, stopTime, flags, true, kFilterAllInput);
 }
@@ -873,7 +873,7 @@ void Neighborhood::showViewFrame(TimeValue viewTime) {
 	}
 }
 
-void Neighborhood::startExtraSequence(const tExtraID extraID, const tNotificationFlags flags, const tInputBits interruptionFilter) {
+void Neighborhood::startExtraSequence(const ExtraID extraID, const NotificationFlags flags, const InputBits interruptionFilter) {
 	ExtraTable::Entry entry;
 	getExtraEntry(extraID, entry);
 
@@ -881,12 +881,12 @@ void Neighborhood::startExtraSequence(const tExtraID extraID, const tNotificatio
 		playExtraMovie(entry, flags, interruptionFilter);
 }
 
-bool Neighborhood::startExtraSequenceSync(const tExtraID extraID, const tInputBits interruptionFilter) {
+bool Neighborhood::startExtraSequenceSync(const ExtraID extraID, const InputBits interruptionFilter) {
 	InputHandler::getCurrentInputDevice()->waitInput(interruptionFilter);
 	return prepareExtraSync(extraID) && waitMovieFinish(&_navMovie, interruptionFilter);
 }
 
-void Neighborhood::loopExtraSequence(const uint32 extraID, tNotificationFlags flags) {
+void Neighborhood::loopExtraSequence(const uint32 extraID, NotificationFlags flags) {
 	ExtraTable::Entry entry;
 	getExtraEntry(extraID, entry);
 	
@@ -900,12 +900,12 @@ bool Neighborhood::navMoviePlaying() {
 	return _navMovie.isRunning();
 }
 
-void Neighborhood::playDeathExtra(tExtraID extra, tDeathReason deathReason) {
+void Neighborhood::playDeathExtra(ExtraID extra, DeathReason deathReason) {
 	_extraDeathReason = deathReason;
 	startExtraSequence(extra, kDeathExtraCompletedFlag, kFilterNoInput);
 }
 
-void Neighborhood::die(const tDeathReason deathReason) {
+void Neighborhood::die(const DeathReason deathReason) {
 	loadLoopSound1("");
 	loadLoopSound2("");
 	_vm->die(deathReason);
@@ -930,7 +930,7 @@ void Neighborhood::setAmbienceLevel(const uint16 ambientLevel) {
 }
 
 // Force the exit taken from (room, direction, alternate) to come to a stop.
-void Neighborhood::forceStridingStop(const tRoomID room, const tDirectionConstant direction, const tAlternateID alternate) {
+void Neighborhood::forceStridingStop(const RoomID room, const DirectionConstant direction, const AlternateID alternate) {
 	ExitTable::Entry entry = _exitTable.findEntry(room, direction, alternate);
 
 	if (entry.movieStart != 0xffffffff) {
@@ -951,7 +951,7 @@ void Neighborhood::forceStridingStop(const tRoomID room, const tDirectionConstan
 }
 
 // Restore the exit taken from (room, direction, alternate) to stride.
-void Neighborhood::restoreStriding(const tRoomID room, const tDirectionConstant direction, const tAlternateID alternate) {
+void Neighborhood::restoreStriding(const RoomID room, const DirectionConstant direction, const AlternateID alternate) {
 	ExitTable::Entry entry = _exitTable.findEntry(room, direction, alternate);
 
 	if (entry.movieStart != 0xffffffff) {
@@ -971,7 +971,7 @@ void Neighborhood::restoreStriding(const tRoomID room, const tDirectionConstant 
 	}
 }
 
-HotspotInfoTable::Entry *Neighborhood::findHotspotEntry(const tHotSpotID id) {
+HotspotInfoTable::Entry *Neighborhood::findHotspotEntry(const HotSpotID id) {
 	for (HotspotInfoTable::iterator it = _hotspotInfoTable.begin(); it != _hotspotInfoTable.end(); it++)
 		if (it->hotspot == id)
 			return &(*it);
@@ -1031,7 +1031,7 @@ void Neighborhood::startDoorOpenMovie(const TimeValue startTime, const TimeValue
 	startMovieSequence(startTime, stopTime, kDoorOpenCompletedFlag, kFilterNoInput, false);
 }
 
-void Neighborhood::startTurnPush(const tTurnDirection turnDirection, const TimeValue newView, const tDirectionConstant nextDir) {
+void Neighborhood::startTurnPush(const TurnDirection turnDirection, const TimeValue newView, const DirectionConstant nextDir) {
 	if (g_AIArea)
 		g_AIArea->lockAIOut();
 
@@ -1114,7 +1114,7 @@ void Neighborhood::startTurnPush(const tTurnDirection turnDirection, const TimeV
 	_neighborhoodNotification.setNotificationFlags(kTurnCompletedFlag, kTurnCompletedFlag);
 }
 
-void Neighborhood::playExtraMovie(const ExtraTable::Entry &extraEntry, const tNotificationFlags flags, const tInputBits interruptionInput) {
+void Neighborhood::playExtraMovie(const ExtraTable::Entry &extraEntry, const NotificationFlags flags, const InputBits interruptionInput) {
 	FaderMoveSpec compassMove;
 
 	if (g_compass)
@@ -1128,7 +1128,7 @@ void Neighborhood::playExtraMovie(const ExtraTable::Entry &extraEntry, const tNo
 		g_compass->startFader(compassMove);
 }
 
-void Neighborhood::activateCurrentView(const tRoomID room, const tDirectionConstant direction, tSpotFlags flag) {
+void Neighborhood::activateCurrentView(const RoomID room, const DirectionConstant direction, SpotFlags flag) {
 	SpotTable::Entry entry;
 	findSpotEntry(room, direction, flag, entry);
 
@@ -1161,7 +1161,7 @@ void Neighborhood::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *h
 			if (item &&	item->getItemNeighborhood() == getObjectID())
 				hotspot->setActive();
 		} else {
-			tHotSpotFlags flags = hotspot->getHotspotFlags();
+			HotSpotFlags flags = hotspot->getHotspotFlags();
 
 			if ((flags & kNeighborhoodSpotFlag) != 0) {
 				if (flags & kOpenDoorSpotFlag) {
@@ -1189,8 +1189,8 @@ void Neighborhood::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 	startMovieSequence(startTime, stopTime, kSpotCompletedFlag, kFilterNoInput, false);
 }
 
-void Neighborhood::startMovieSequence(const TimeValue startTime, const TimeValue stopTime, tNotificationFlags flags, bool loopSequence,
-		const tInputBits interruptionInput, const TimeValue strideStop) {
+void Neighborhood::startMovieSequence(const TimeValue startTime, const TimeValue stopTime, NotificationFlags flags, bool loopSequence,
+		const InputBits interruptionInput, const TimeValue strideStop) {
 	if (!loopSequence && g_AIArea)
 		g_AIArea->lockAIOut();
 	
@@ -1269,7 +1269,7 @@ void Neighborhood::throwAwayInterface() {
 	delete g_interface;
 }
 
-bool Neighborhood::prepareExtraSync(const tExtraID extraID) {
+bool Neighborhood::prepareExtraSync(const ExtraID extraID) {
 	ExtraTable::Entry extraEntry;
 	FaderMoveSpec compassMove;
 	
@@ -1308,7 +1308,7 @@ bool Neighborhood::prepareExtraSync(const tExtraID extraID) {
 	return result;
 }
 
-bool Neighborhood::waitMovieFinish(Movie *movie, const tInputBits interruptionFilter) {
+bool Neighborhood::waitMovieFinish(Movie *movie, const InputBits interruptionFilter) {
 	Input input;
 	bool result = true;
 	bool saveAllowed = _vm->swapSaveAllowed(false);
@@ -1334,7 +1334,7 @@ bool Neighborhood::waitMovieFinish(Movie *movie, const tInputBits interruptionFi
 	return result;
 }
 
-tInputBits Neighborhood::getInputFilter() {
+InputBits Neighborhood::getInputFilter() {
 	return _interruptionFilter & InputHandler::getInputFilter();
 }
 
@@ -1396,14 +1396,14 @@ void Neighborhood::setUpAIRules() {
 	}
 }
 
-GameInteraction *Neighborhood::makeInteraction(const tInteractionID interactionID) {
+GameInteraction *Neighborhood::makeInteraction(const InteractionID interactionID) {
 	if (interactionID == kNoInteractionID)
 		return 0;
 
 	return new GameInteraction(interactionID, this);
 }
 
-void Neighborhood::newInteraction(const tInteractionID interactionID) {
+void Neighborhood::newInteraction(const InteractionID interactionID) {
 	GameInteraction *interaction = makeInteraction(interactionID);
 	_doneWithInteraction = false;
 
@@ -1541,8 +1541,8 @@ void Neighborhood::showExtraView(uint32 extraID) {
 		showViewFrame(entry.movieEnd - 1);
 }
 
-void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 lastExtra, tNotificationFlags flags,
-		const tInputBits interruptionFilter) {
+void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 lastExtra, NotificationFlags flags,
+		const InputBits interruptionFilter) {
 	ExtraTable::Entry firstEntry, lastEntry;
 	getExtraEntry(firstExtra, firstEntry);
 
@@ -1554,7 +1554,7 @@ void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 
 	}
 }
 
-void Neighborhood::openCroppedMovie(const Common::String &movieName, tCoordType left, tCoordType top) {
+void Neighborhood::openCroppedMovie(const Common::String &movieName, CoordType left, CoordType top) {
 	if (_croppedMovie.isMovieValid())
 		closeCroppedMovie();
 
@@ -1564,7 +1564,7 @@ void Neighborhood::openCroppedMovie(const Common::String &movieName, tCoordType 
 	_croppedMovie.show();
 }
 
-void Neighborhood::loopCroppedMovie(const Common::String &movieName, tCoordType left, tCoordType top) {
+void Neighborhood::loopCroppedMovie(const Common::String &movieName, CoordType left, CoordType top) {
 	openCroppedMovie(movieName, left, top);
 	_croppedMovie.redrawMovieWorld();
 	_croppedMovie.setFlags(kLoopTimeBase);
@@ -1575,12 +1575,12 @@ void Neighborhood::closeCroppedMovie() {
 	_croppedMovie.releaseMovie();
 }
 
-void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, tCoordType left, tCoordType top, const tInputBits interruptionFilter) {	
+void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {	
 	openCroppedMovie(movieName, left, top);
 	_croppedMovie.redrawMovieWorld();
 	_croppedMovie.start();
 
-	tInputBits oldInterruptionFilter = _interruptionFilter;
+	InputBits oldInterruptionFilter = _interruptionFilter;
 	if (oldInterruptionFilter != kFilterNoInput)
 		_interruptionFilter = kFilterNoInput;
 
@@ -1651,12 +1651,12 @@ void Neighborhood::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	InputHandler::handleInput(input, cursorSpot);
 }
 
-void Neighborhood::setHotspotFlags(const tHotSpotID id, const tHotSpotFlags flags) {
+void Neighborhood::setHotspotFlags(const HotSpotID id, const HotSpotFlags flags) {
 	Hotspot *hotspot = g_allHotspots.findHotspotByID(id);
 	hotspot->setMaskedHotspotFlags(flags, flags);
 }
 
-void Neighborhood::setIsItemTaken(const tItemID id) {
+void Neighborhood::setIsItemTaken(const ItemID id) {
 	GameState.setTakenItemID(id, _vm->playerHasItemID(id));
 }
 
@@ -1693,7 +1693,7 @@ void Neighborhood::downButton(const Input &) {
 	}
 }
 
-void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictureName, tDisplayOrder order, tCoordType left, tCoordType top, bool show) {
+void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictureName, DisplayOrder order, CoordType left, CoordType top, bool show) {
 	picture->initFromPICTFile(pictureName);
 	picture->setDisplayOrder(order);
 	picture->moveElementTo(left, top);
@@ -1702,7 +1702,7 @@ void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictur
 		picture->show();
 }
 
-void Neighborhood::initOneMovie(Movie *movie, const Common::String &movieName, tDisplayOrder order, tCoordType left, tCoordType top, bool show) {
+void Neighborhood::initOneMovie(Movie *movie, const Common::String &movieName, DisplayOrder order, CoordType left, CoordType top, bool show) {
 	movie->initFromMovieFile(movieName);
 	movie->setDisplayOrder(order);
 	movie->moveElementTo(left, top);

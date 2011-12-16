@@ -135,7 +135,7 @@ void AIArea::setAIVolume(const uint16 volume) {
 // If this function is called while a sequence is playing, it will just "remember"
 // the time value, so that when the sequence finishes, the new time is asserted.
 
-void AIArea::setAIAreaToTime(const tLowerClientSignature client, const tLowerAreaSignature area, const TimeValue time) {
+void AIArea::setAIAreaToTime(const LowerClientSignature client, const LowerAreaSignature area, const TimeValue time) {
 	switch (area) {
 	case kLeftAreaSignature:
 		// Only support kInventorySignature client, since AI never calls SetAIAreaToTime.
@@ -199,7 +199,7 @@ void AIArea::setAIAreaToTime(const tLowerClientSignature client, const tLowerAre
 //		kBiochipSignature		kRightAreaSignature
 //		kInventorySignature		kMiddleAreaSignature
 
-void AIArea::playAIAreaSequence(const tLowerClientSignature, const tLowerAreaSignature area, const TimeValue start, const TimeValue stop) {
+void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSignature area, const TimeValue start, const TimeValue stop) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	lockAIOut();
@@ -260,7 +260,7 @@ void AIArea::playAIAreaSequence(const tLowerClientSignature, const tLowerAreaSig
 	unlockAI();
 }
 
-bool AIArea::playAIMovie(const tLowerAreaSignature area, const Common::String &movieName, bool keepLastFrame, const tInputBits interruptFilter) {
+bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &movieName, bool keepLastFrame, const InputBits interruptFilter) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	
 	lockAIOut();
@@ -337,7 +337,7 @@ bool AIArea::playAIMovie(const tLowerAreaSignature area, const Common::String &m
 }
 
 //	Only implemented for kMiddleAreaSignature, kInventorySignature
-void AIArea::loopAIAreaSequence(const tLowerClientSignature owner, const tLowerAreaSignature area, const TimeValue start, const TimeValue stop) {
+void AIArea::loopAIAreaSequence(const LowerClientSignature owner, const LowerAreaSignature area, const TimeValue start, const TimeValue stop) {
 	if (area == kMiddleAreaSignature && owner == kInventorySignature && owner == _middleAreaOwner) {
 		_middleAreaMovie.stop();
 		_middleAreaMovie.setFlags(0);
@@ -361,7 +361,7 @@ void AIArea::setLeftMovieTime(const TimeValue time) {
 	_leftInventoryTime = time;
 }
 
-void AIArea::setMiddleMovieTime(const tLowerClientSignature client, const TimeValue time) {	
+void AIArea::setMiddleMovieTime(const LowerClientSignature client, const TimeValue time) {	
 	if (client == kInventorySignature) {
 		_middleInventoryTime = time;
 		if (_middleAreaOwner == kBiochipSignature) {
@@ -594,7 +594,7 @@ void AIArea::getSmallInfoSegment(TimeValue &start, TimeValue &stop) {
 	}
 }
 
-tLowerClientSignature AIArea::getMiddleAreaOwner() {
+LowerClientSignature AIArea::getMiddleAreaOwner() {
 	return _middleAreaOwner;
 }
 

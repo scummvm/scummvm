@@ -43,14 +43,14 @@ public:
 
 	void finishedGlobeGame();
 
-	virtual GameInteraction *makeInteraction(const tInteractionID);
+	virtual GameInteraction *makeInteraction(const InteractionID);
 
 	void playClawMonitorIntro();
 
-	virtual void getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID, tHotSpotID &clawControlSpotID,
-			tHotSpotID &pinchClawSpotID, tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID,
-			tHotSpotID &moveClawLeftSpotID, tHotSpotID &moveClawUpSpotID, tHotSpotID &clawCCWSpotID,
-			tHotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
+	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
+			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
+			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
 
 	void playerBeatRobotWithClaw();
 	void playerBeatRobotWithDoor();
@@ -61,9 +61,9 @@ public:
 	Common::String getEnvScanMovie();
 	uint getNumHints();
 	Common::String getHintMovie(uint);
-	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant);
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 	bool canSolve();
 	void doSolve();
@@ -83,16 +83,16 @@ protected:
 
 	static const uint32 _noradDeltaClawExtras[22];
 
-	void getExitEntry(const tRoomID, const tDirectionConstant, ExitTable::Entry &);
-	void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
-	virtual void arriveAt(const tRoomID, const tDirectionConstant);
+	void getExitEntry(const RoomID, const DirectionConstant, ExitTable::Entry &);
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
+	virtual void arriveAt(const RoomID, const DirectionConstant);
 	void arriveAtNorad68West();
 	void arriveAtNorad79West();
-	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
+	TimeValue getViewTime(const RoomID, const DirectionConstant);
 	void openDoor();
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void pickedUpItem(Item *item);
 	void takeItemFromRoom(Item *item);
 	void dropItemIntoRoom(Item *item, Hotspot *);
@@ -102,7 +102,7 @@ protected:
 
 	void failRetinalScan();
 	void succeedRetinalScan();
-	void getDoorEntry(const tRoomID, const tDirectionConstant, DoorTable::Entry &);
+	void getDoorEntry(const RoomID, const DirectionConstant, DoorTable::Entry &);
 
 	void bumpIntoWall();
 

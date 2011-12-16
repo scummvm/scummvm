@@ -32,7 +32,7 @@ namespace Pegasus {
 
 //	Room IDs.
 
-const tRoomID kTinyTSA37 = 0;
+const RoomID kTinyTSA37 = 0;
 
 class TinyTSA : public Neighborhood {
 public:
@@ -43,7 +43,7 @@ public:
 	
 	void start();
 	
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 protected:
 	Common::String getBriefingMovie();
@@ -51,16 +51,16 @@ protected:
 	void loadAmbientLoops();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 	
-	virtual int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	
 	void arriveFromNorad();
 	void arriveFromMars();
 	void arriveFromWSC();
 	
-	tInputBits getInputFilter();
-	void arriveAt(const tRoomID, const tDirectionConstant);
+	InputBits getInputFilter();
+	void arriveAt(const RoomID, const DirectionConstant);
 	void showMainJumpMenu();
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 
 	Common::String getNavMovieName();
 	Common::String getSoundSpotsName() { return ""; }

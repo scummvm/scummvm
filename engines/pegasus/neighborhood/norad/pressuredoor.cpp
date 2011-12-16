@@ -48,17 +48,17 @@ const TimeValue kDecreasingPressureTime = 5;
 const TimeValue kCautionLoopStart = 6;
 const TimeValue kCautionLoopStop = 7;
 
-const tNotificationFlags kSplashFinished = 1;
-const tNotificationFlags kPressureDroppingFlag = kSplashFinished << 1;
+const NotificationFlags kSplashFinished = 1;
+const NotificationFlags kPressureDroppingFlag = kSplashFinished << 1;
 
-const tNotificationFlags kPressureNotificationFlags = kSplashFinished |
+const NotificationFlags kPressureNotificationFlags = kSplashFinished |
 														kPressureDroppingFlag;
 
-const tNotificationFlags kDoorJumpsUpFlag = 1;
-const tNotificationFlags kDoorJumpsBackFlag = kDoorJumpsUpFlag << 1;
-const tNotificationFlags kDoorCrushedFlag = kDoorJumpsBackFlag << 1;
+const NotificationFlags kDoorJumpsUpFlag = 1;
+const NotificationFlags kDoorJumpsBackFlag = kDoorJumpsUpFlag << 1;
+const NotificationFlags kDoorCrushedFlag = kDoorJumpsBackFlag << 1;
 
-const tNotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag |
+const NotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag |
 														kDoorJumpsBackFlag |
 														kDoorCrushedFlag;
 
@@ -81,7 +81,7 @@ enum {
 	kGameOver
 };
 
-//	Pressure values range from 0 to 11.
+// Pressure values range from 0 to 11.
 const short kMinPressure = 0;
 const short kMaxPressure = 11;
 
@@ -93,20 +93,19 @@ const TimeValue kApproachPunchInTime = 122 * kNavTimePerFrame;
 const TimeValue kLoopPunchInTime = 38 * kNavTimePerFrame;
 const TimeValue kPunchThroughTime = 38 * kNavTimePerFrame;
 
-//	Pressure door PICTs:
+// Pressure door PICTs:
+const ResIDType kUpperPressureUpOffPICTID = 400;
+const ResIDType kUpperPressureUpOnPICTID = 401;
+const ResIDType kUpperPressureDownOffPICTID = 402;
+const ResIDType kUpperPressureDownOnPICTID = 403;
 
-const tResIDType kUpperPressureUpOffPICTID = 400;
-const tResIDType kUpperPressureUpOnPICTID = 401;
-const tResIDType kUpperPressureDownOffPICTID = 402;
-const tResIDType kUpperPressureDownOnPICTID = 403;
+const ResIDType kLowerPressureUpOffPICTID = 404;
+const ResIDType kLowerPressureUpOnPICTID = 405;
+const ResIDType kLowerPressureDownOffPICTID = 406;
+const ResIDType kLowerPressureDownOnPICTID = 407;
 
-const tResIDType kLowerPressureUpOffPICTID = 404;
-const tResIDType kLowerPressureUpOnPICTID = 405;
-const tResIDType kLowerPressureDownOffPICTID = 406;
-const tResIDType kLowerPressureDownOnPICTID = 407;
-
-PressureDoor::PressureDoor(Neighborhood *handler, bool isUpperDoor, const tHotSpotID upSpotID, const tHotSpotID downSpotID,
-		const tHotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,
+PressureDoor::PressureDoor(Neighborhood *handler, bool isUpperDoor, const HotSpotID upSpotID, const HotSpotID downSpotID,
+		const HotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,
 		TimeValue equalizeSoundOut) : GameInteraction(kNoradPressureDoorInteractionID, handler),
 		_levelsMovie(kPressureDoorLevelsID), _typeMovie(kPressureDoorTypeID), _upButton(kPressureDoorUpButtonID),
 		_downButton(kPressureDoorDownButtonID), _pressureNotification(kNoradPressureNotificationID, ((PegasusEngine *)g_engine)),
@@ -262,7 +261,7 @@ void PressureDoor::playAgainstRobot() {
 	_playingAgainstRobot = true;
 }
 
-void PressureDoor::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void PressureDoor::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	Neighborhood *owner = getOwner();
 
 	if (notification == _neighborhoodNotification) {
@@ -443,7 +442,7 @@ void PressureDoor::activateHotspots() {
 }
 
 void PressureDoor::clickInHotspot(const Input &input, const Hotspot *spot) {
-	tHotSpotID id = spot->getObjectID();
+	HotSpotID id = spot->getObjectID();
 
 	if (id == _upHotspotID || id == _downHotspotID) {
 		if (id == _upHotspotID)
@@ -457,7 +456,7 @@ void PressureDoor::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void PressureDoor::incrementPressure(const tHotSpotID id) {
+void PressureDoor::incrementPressure(const HotSpotID id) {
 	_typeMovie.stop();
 	_typeMovie.setSegment(0, _typeMovie.getDuration());
 	_typeMovie.setFlags(0);

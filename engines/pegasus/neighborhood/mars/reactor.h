@@ -34,7 +34,7 @@ namespace Pegasus {
 
 class ReactorGuess : public DisplayElement {
 public:
-	ReactorGuess(const tDisplayElementID);
+	ReactorGuess(const DisplayElementID);
 	virtual ~ReactorGuess() {}
 
 	void initReactorGuess();
@@ -52,7 +52,7 @@ protected:
 
 class ReactorChoiceHighlight : public DisplayElement {
 public:
-	ReactorChoiceHighlight(const tDisplayElementID);
+	ReactorChoiceHighlight(const DisplayElementID);
 	virtual ~ReactorChoiceHighlight() {}
 
 	void initReactorChoiceHighlight();
@@ -79,7 +79,7 @@ protected:
 
 class ReactorHistory : public DisplayElement {
 public:
-	ReactorHistory(const tDisplayElementID);
+	ReactorHistory(const DisplayElementID);
 	virtual ~ReactorHistory() {}
 
 	void initReactorHistory();

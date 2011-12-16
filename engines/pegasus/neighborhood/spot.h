@@ -37,7 +37,7 @@ namespace Common {
 
 namespace Pegasus {
 
-typedef byte tSpotFlags;
+typedef byte SpotFlags;
 
 enum {
 	kSpotLoopsBit,			//	Loop or once only?
@@ -46,13 +46,13 @@ enum {
 	kSpotOnDoorOpenBit
 };
 
-static const tSpotFlags kNoSpotFlags = 0;
-static const tSpotFlags kSpotLoopsMask = 1 << kSpotLoopsBit;
-static const tSpotFlags kSpotOnArrivalMask = 1 << kSpotOnArrivalBit;
-static const tSpotFlags kSpotOnTurnMask = 1 << kSpotOnTurnBit;
-static const tSpotFlags kSpotOnDoorOpenMask = 1 << kSpotOnDoorOpenBit;
+static const SpotFlags kNoSpotFlags = 0;
+static const SpotFlags kSpotLoopsMask = 1 << kSpotLoopsBit;
+static const SpotFlags kSpotOnArrivalMask = 1 << kSpotOnArrivalBit;
+static const SpotFlags kSpotOnTurnMask = 1 << kSpotOnTurnBit;
+static const SpotFlags kSpotOnDoorOpenMask = 1 << kSpotOnDoorOpenBit;
 
-static const tSpotFlags kSpotTriggers = kSpotOnArrivalMask | kSpotOnTurnMask | kSpotOnDoorOpenMask;
+static const SpotFlags kSpotTriggers = kSpotOnArrivalMask | kSpotOnTurnMask | kSpotOnDoorOpenMask;
 
 class SpotTable {
 public:
@@ -77,16 +77,16 @@ public:
 			dstFlags = kNoSpotFlags;
 		}
 
-		tRoomID room;
-		tDirectionConstant direction;
-		tSpotFlags srcFlags;
-		tAlternateID altCode;
+		RoomID room;
+		DirectionConstant direction;
+		SpotFlags srcFlags;
+		AlternateID altCode;
 		TimeValue movieStart;
 		TimeValue movieEnd;
-		tSpotFlags dstFlags;
+		SpotFlags dstFlags;
 	};
 
-	Entry findEntry(tRoomID room, tDirectionConstant direction, tSpotFlags srcFlags, tAlternateID altCode);
+	Entry findEntry(RoomID room, DirectionConstant direction, SpotFlags srcFlags, AlternateID altCode);
 
 private:
 	Common::Array<Entry> _entries;

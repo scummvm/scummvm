@@ -63,17 +63,17 @@ public:
 	bool isInventoryUp();
 	bool isInventoryDown();
 
-	tInventoryResult addInventoryItem(InventoryItem*);
-	tInventoryResult removeInventoryItem(InventoryItem*);
+	InventoryResult addInventoryItem(InventoryItem *);
+	InventoryResult removeInventoryItem(InventoryItem *);
 	void removeAllItemsFromInventory();
 	InventoryItem *getCurrentInventoryItem();
-	void setCurrentInventoryItem(InventoryItem*);
-	void setCurrentInventoryItemID(tItemID);
-	tInventoryResult addBiochip(BiochipItem*);
+	void setCurrentInventoryItem(InventoryItem *);
+	void setCurrentInventoryItemID(ItemID);
+	InventoryResult addBiochip(BiochipItem *);
 	void removeAllItemsFromBiochips();
 	BiochipItem *getCurrentBiochip();
-	void setCurrentBiochip(BiochipItem*);
-	void setCurrentBiochipID(tItemID);
+	void setCurrentBiochip(BiochipItem *);
+	void setCurrentBiochipID(ItemID);
 
 	void setDate(const uint16);
 
@@ -100,7 +100,7 @@ protected:
 	void throwAwayBiochipPanel();
 	void throwAwayEnergyMonitor();
 
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void inventoryLidOpen(const bool doCallBacks);
 	void inventoryLidClosed();
 	void inventoryDrawerUp();

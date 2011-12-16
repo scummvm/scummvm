@@ -31,16 +31,16 @@ namespace Pegasus {
 
 const TimeValue kGravitonTime = kOneSecond * kShuttleWeaponScale;
 
-const tCoordType kGravitonOriginH = kShuttleWindowLeft - 1;
-const tCoordType kGravitonOriginV = kShuttleWindowMidV;
+const CoordType kGravitonOriginH = kShuttleWindowLeft - 1;
+const CoordType kGravitonOriginV = kShuttleWindowMidV;
 
 const float kGravitonXOrigin = convertScreenHToSpaceX(kGravitonOriginH, kGravitonMinDistance);
 const float kGravitonYOrigin = convertScreenVToSpaceY(kGravitonOriginV, kGravitonMinDistance);
 const float kGravitonZOrigin = kGravitonMinDistance;
 
 //	Width of graviton sprite...
-const tCoordType kGravitonMaxScreenWidth = 78;
-const tCoordType kGravitonMaxScreenHeight = 46;
+const CoordType kGravitonMaxScreenWidth = 78;
+const CoordType kGravitonMaxScreenHeight = 46;
 
 const float kGravitonWidth = convertScreenHToSpaceX(kShuttleWindowMidH + kGravitonMaxScreenWidth / 2, kGravitonMinDistance)
 		- convertScreenHToSpaceX(kShuttleWindowMidH - kGravitonMaxScreenWidth / 2, kGravitonMinDistance);

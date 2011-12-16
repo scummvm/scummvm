@@ -59,7 +59,7 @@ void ExitTable::clear() {
 	_entries.clear();
 }
 
-ExitTable::Entry ExitTable::findEntry(tRoomID room, tDirectionConstant direction, tAlternateID altCode) {
+ExitTable::Entry ExitTable::findEntry(RoomID room, DirectionConstant direction, AlternateID altCode) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].room == room && _entries[i].direction == direction && _entries[i].altCode == altCode)
 			return _entries[i];

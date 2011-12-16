@@ -59,7 +59,7 @@ void SpotTable::clear() {
 //		In addition to having their rooms, directions and alt codes identical...
 //		They are both either loops or once only animations AND
 //		They overlap in at least one of the on arrival, on turn and on door open bits.
-SpotTable::Entry SpotTable::findEntry(tRoomID room, tDirectionConstant direction, tSpotFlags srcFlags, tAlternateID altCode) {
+SpotTable::Entry SpotTable::findEntry(RoomID room, DirectionConstant direction, SpotFlags srcFlags, AlternateID altCode) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].room == room && _entries[i].direction == direction && _entries[i].altCode == altCode && (_entries[i].srcFlags & kSpotLoopsMask) == (srcFlags & kSpotLoopsMask) && ((_entries[i].srcFlags & srcFlags) & kSpotTriggers) != 0)
 			return _entries[i];

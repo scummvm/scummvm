@@ -32,7 +32,7 @@ namespace Pegasus {
 
 class GasCanister : public InventoryItem {
 public:
-	GasCanister(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	GasCanister(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~GasCanister() {}
 	
 	void select();

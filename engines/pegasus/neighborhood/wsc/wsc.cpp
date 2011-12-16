@@ -33,11 +33,11 @@
 
 namespace Pegasus {
 
-const tCanMoveForwardReason kCantMoveWatchingDiagnosis = kCantMoveLastReason + 1;
+const CanMoveForwardReason kCantMoveWatchingDiagnosis = kCantMoveLastReason + 1;
 
-const tCanTurnReason kCantTurnWatchingDiagnosis = kCantTurnLastReason + 1;
-const tCanTurnReason kCantTurnWatchingAnalysis = kCantTurnWatchingDiagnosis + 1;
-const tCanTurnReason kCantTurnInMoleculeGame = kCantTurnWatchingAnalysis + 1;
+const CanTurnReason kCantTurnWatchingDiagnosis = kCantTurnLastReason + 1;
+const CanTurnReason kCantTurnWatchingAnalysis = kCantTurnWatchingDiagnosis + 1;
+const CanTurnReason kCantTurnInMoleculeGame = kCantTurnWatchingAnalysis + 1;
 
 const TimeScale kMoleculesMovieScale = 600;
 const TimeValue kMoleculeLoopTime = 4 * kMoleculesMovieScale;
@@ -163,319 +163,314 @@ const TimeScale kWSCMovieScale = 600;
 const TimeScale kWSCFramesPerSecond = 15;
 const TimeScale kWSCFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
+const AlternateID kAltWSCNormal = 0;
+const AlternateID kAltWSCTookMachineGun = 1;
+const AlternateID kAltWSCW0ZDoorOpen = 2;
+const AlternateID kAltWSCPeopleAtW19North = 3;
 
-const tAlternateID kAltWSCNormal = 0;
-const tAlternateID kAltWSCTookMachineGun = 1;
-const tAlternateID kAltWSCW0ZDoorOpen = 2;
-const tAlternateID kAltWSCPeopleAtW19North = 3;
+// Room IDs.
+const RoomID kWSC02 = 1;
+const RoomID kWSC03 = 4;
+const RoomID kWSC04 = 5;
+const RoomID kWSC06 = 6;
+const RoomID kWSC07 = 7;
+const RoomID kWSC08 = 8;
+const RoomID kWSC09 = 9;
+const RoomID kWSC10 = 10;
+const RoomID kWSC11 = 11;
+const RoomID kWSC13 = 12;
+const RoomID kWSC14 = 13;
+const RoomID kWSC15 = 14;
+const RoomID kWSC16 = 15;
+const RoomID kWSC17 = 16;
+const RoomID kWSC18 = 17;
+const RoomID kWSC19 = 18;
+const RoomID kWSC20 = 19;
+const RoomID kWSC21 = 20;
+const RoomID kWSC22 = 21;
+const RoomID kWSC23 = 22;
+const RoomID kWSC24 = 23;
+const RoomID kWSC25 = 24;
+const RoomID kWSC26 = 25;
+const RoomID kWSC27 = 26;
+const RoomID kWSC28 = 27;
+const RoomID kWSC29 = 28;
+const RoomID kWSC31 = 29;
+const RoomID kWSC32 = 30;
+const RoomID kWSC33 = 31;
+const RoomID kWSC34 = 32;
+const RoomID kWSC35 = 33;
+const RoomID kWSC36 = 34;
+const RoomID kWSC37 = 35;
+const RoomID kWSC38 = 36;
+const RoomID kWSC39 = 37;
+const RoomID kWSC40 = 38;
+const RoomID kWSC41 = 39;
+const RoomID kWSC42 = 40;
+const RoomID kWSC43 = 41;
+const RoomID kWSC44 = 42;
+const RoomID kWSC45 = 43;
+const RoomID kWSC46 = 44;
+const RoomID kWSC47 = 45;
+const RoomID kWSC48 = 46;
+const RoomID kWSC49 = 47;
+const RoomID kWSC50 = 48;
+const RoomID kWSC52 = 49;
+const RoomID kWSC53 = 50;
+const RoomID kWSC54 = 51;
+const RoomID kWSC55 = 52;
+const RoomID kWSC56 = 53;
+const RoomID kWSC57 = 54;
+const RoomID kWSC58 = 55;
+const RoomID kWSC60 = 56;
+const RoomID kWSC60East = 57;
+const RoomID kWSC60North = 58;
+const RoomID kWSC61 = 59;
+const RoomID kWSC61South = 60;
+const RoomID kWSC61West = 61;
+const RoomID kWSC63 = 63;
+const RoomID kWSC64 = 64;
+const RoomID kWSC65 = 65;
+const RoomID kWSC65Screen = 66;
+const RoomID kWSC66 = 67;
+const RoomID kWSC67 = 68;
+const RoomID kWSC68 = 69;
+const RoomID kWSC69 = 70;
+const RoomID kWSC70 = 71;
+const RoomID kWSC71 = 72;
+const RoomID kWSC72 = 73;
+const RoomID kWSC73 = 74;
+const RoomID kWSC74 = 75;
+const RoomID kWSC75 = 76;
+const RoomID kWSC0Z = 77;
+const RoomID kWSC76 = 78;
+const RoomID kWSC77 = 79;
+const RoomID kWSC78 = 80;
+const RoomID kWSC79 = 81;
+const RoomID kWSC80 = 82;
+const RoomID kWSC81 = 83;
+const RoomID kWSC82 = 84;
+const RoomID kWSC83 = 85;
+const RoomID kWSC84 = 86;
+const RoomID kWSC85 = 87;
+const RoomID kWSC86 = 88;
+const RoomID kWSC87 = 89;
+const RoomID kWSC88 = 90;
+const RoomID kWSC89 = 91;
+const RoomID kWSC90 = 92;
+const RoomID kWSC91 = 93;
+const RoomID kWSC92 = 94;
+const RoomID kWSC93 = 95;
+const RoomID kWSC94 = 96;
+const RoomID kWSC95 = 97;
+const RoomID kWSC96 = 98;
+const RoomID kWSC97 = 99;
+const RoomID kWSC98 = 100;
+const RoomID kWSCDeathRoom = 101;
 
-//	Room IDs.
+// Hot Spot Activation IDs.
+const HotSpotActivationID kActivationZoomedInToAnalyzer = 1;
+const HotSpotActivationID kActivationShotByRobot = 2;
+const HotSpotActivationID kActivationWarnedAboutPoison = 3;
+const HotSpotActivationID kActivationMorphScreenOff = 4;
+const HotSpotActivationID kActivationReadyForMorph = 5;
+const HotSpotActivationID kActivationMorphLooping = 6;
+const HotSpotActivationID kActivationMorphInterrupted = 7;
+const HotSpotActivationID kActivationW03NorthOff = 8;
+const HotSpotActivationID kActivationW03NorthReadyForInstructions = 9;
+const HotSpotActivationID kActivationW03NorthSawInstructions = 10;
+const HotSpotActivationID kActivationW03NorthInGame = 11;
+const HotSpotActivationID kActivationReadyForSynthesis = 12;
+const HotSpotActivationID kActivationSynthesizerLooping = 13;
+const HotSpotActivationID kActivationReadyForMap = 14;
+const HotSpotActivationID kActivationSinclairOfficeLocked = 15;
+const HotSpotActivationID kActivationW58SouthDoorLocked = 16;
+const HotSpotActivationID kActivationW61SouthOff = 17;
+const HotSpotActivationID kActivationW61SouthOn = 18;
+const HotSpotActivationID kActivationW61MessagesOff = 19;
+const HotSpotActivationID kActivationW61MessagesOn = 20;
+const HotSpotActivationID kActivationWSCRobotHeadOpen = 21;
+const HotSpotActivationID kActivationRobotTurning = 22;
+const HotSpotActivationID kActivationRobotDead = 23;
+const HotSpotActivationID kActivationRobotGone = 24;
 
-const tRoomID kWSC02 = 1;
-const tRoomID kWSC03 = 4;
-const tRoomID kWSC04 = 5;
-const tRoomID kWSC06 = 6;
-const tRoomID kWSC07 = 7;
-const tRoomID kWSC08 = 8;
-const tRoomID kWSC09 = 9;
-const tRoomID kWSC10 = 10;
-const tRoomID kWSC11 = 11;
-const tRoomID kWSC13 = 12;
-const tRoomID kWSC14 = 13;
-const tRoomID kWSC15 = 14;
-const tRoomID kWSC16 = 15;
-const tRoomID kWSC17 = 16;
-const tRoomID kWSC18 = 17;
-const tRoomID kWSC19 = 18;
-const tRoomID kWSC20 = 19;
-const tRoomID kWSC21 = 20;
-const tRoomID kWSC22 = 21;
-const tRoomID kWSC23 = 22;
-const tRoomID kWSC24 = 23;
-const tRoomID kWSC25 = 24;
-const tRoomID kWSC26 = 25;
-const tRoomID kWSC27 = 26;
-const tRoomID kWSC28 = 27;
-const tRoomID kWSC29 = 28;
-const tRoomID kWSC31 = 29;
-const tRoomID kWSC32 = 30;
-const tRoomID kWSC33 = 31;
-const tRoomID kWSC34 = 32;
-const tRoomID kWSC35 = 33;
-const tRoomID kWSC36 = 34;
-const tRoomID kWSC37 = 35;
-const tRoomID kWSC38 = 36;
-const tRoomID kWSC39 = 37;
-const tRoomID kWSC40 = 38;
-const tRoomID kWSC41 = 39;
-const tRoomID kWSC42 = 40;
-const tRoomID kWSC43 = 41;
-const tRoomID kWSC44 = 42;
-const tRoomID kWSC45 = 43;
-const tRoomID kWSC46 = 44;
-const tRoomID kWSC47 = 45;
-const tRoomID kWSC48 = 46;
-const tRoomID kWSC49 = 47;
-const tRoomID kWSC50 = 48;
-const tRoomID kWSC52 = 49;
-const tRoomID kWSC53 = 50;
-const tRoomID kWSC54 = 51;
-const tRoomID kWSC55 = 52;
-const tRoomID kWSC56 = 53;
-const tRoomID kWSC57 = 54;
-const tRoomID kWSC58 = 55;
-const tRoomID kWSC60 = 56;
-const tRoomID kWSC60East = 57;
-const tRoomID kWSC60North = 58;
-const tRoomID kWSC61 = 59;
-const tRoomID kWSC61South = 60;
-const tRoomID kWSC61West = 61;
-const tRoomID kWSC63 = 63;
-const tRoomID kWSC64 = 64;
-const tRoomID kWSC65 = 65;
-const tRoomID kWSC65Screen = 66;
-const tRoomID kWSC66 = 67;
-const tRoomID kWSC67 = 68;
-const tRoomID kWSC68 = 69;
-const tRoomID kWSC69 = 70;
-const tRoomID kWSC70 = 71;
-const tRoomID kWSC71 = 72;
-const tRoomID kWSC72 = 73;
-const tRoomID kWSC73 = 74;
-const tRoomID kWSC74 = 75;
-const tRoomID kWSC75 = 76;
-const tRoomID kWSC0Z = 77;
-const tRoomID kWSC76 = 78;
-const tRoomID kWSC77 = 79;
-const tRoomID kWSC78 = 80;
-const tRoomID kWSC79 = 81;
-const tRoomID kWSC80 = 82;
-const tRoomID kWSC81 = 83;
-const tRoomID kWSC82 = 84;
-const tRoomID kWSC83 = 85;
-const tRoomID kWSC84 = 86;
-const tRoomID kWSC85 = 87;
-const tRoomID kWSC86 = 88;
-const tRoomID kWSC87 = 89;
-const tRoomID kWSC88 = 90;
-const tRoomID kWSC89 = 91;
-const tRoomID kWSC90 = 92;
-const tRoomID kWSC91 = 93;
-const tRoomID kWSC92 = 94;
-const tRoomID kWSC93 = 95;
-const tRoomID kWSC94 = 96;
-const tRoomID kWSC95 = 97;
-const tRoomID kWSC96 = 98;
-const tRoomID kWSC97 = 99;
-const tRoomID kWSC98 = 100;
-const tRoomID kWSCDeathRoom = 101;
+// Hot Spot IDs.
+const HotSpotID kWSCDropDartSpotID = 5000;
+const HotSpotID kWSCTurnOnAnalyzerSpotID = 5001;
+const HotSpotID kWSCAnalyzerScreenSpotID = 5002;
+const HotSpotID kWSCSpinRobotSpotID = 5003;
+const HotSpotID kWSC01YesSpotID = 5004;
+const HotSpotID kWSC01NoSpotID = 5005;
+const HotSpotID kWSC01AcknowledgeWarningSpotID = 5006;
+const HotSpotID kWSC02SouthMorphSpotID = 5007;
+const HotSpotID kWSC02SouthMessagesSpotID = 5008;
+const HotSpotID kWSC02SouthMorphOutSpotID = 5009;
+const HotSpotID kWSC02ActivateMorphScreenSpotID = 5010;
+const HotSpotID kWSC02SouthStartMorphSpotID = 5011;
+const HotSpotID kWSC02SouthInterruptMorphSpotID = 5012;
+const HotSpotID kWSC02SouthMorphFinishedSpotID = 5013;
+const HotSpotID kWSC02SouthTakeArgonSpotID = 5014;
+const HotSpotID kWSC02SouthMessagesOutSpotID = 5015;
+const HotSpotID kWSC02SouthTakeNitrogenSpotID = 5016;
+const HotSpotID kWSC02SouthPlayMessagesSpotID = 5017;
+const HotSpotID kWSC03NorthActivateScreenSpotID = 5018;
+const HotSpotID kWSC03NorthBuildMoleculeSpotID = 5019;
+const HotSpotID kWSC03NorthProceedSpotID = 5020;
+const HotSpotID kWSC03NorthMolecule1SpotID = 5021;
+const HotSpotID kWSC03NorthMolecule2SpotID = 5022;
+const HotSpotID kWSC03NorthMolecule3SpotID = 5023;
+const HotSpotID kWSC03NorthMolecule4SpotID = 5024;
+const HotSpotID kWSC03NorthMolecule5SpotID = 5025;
+const HotSpotID kWSC03NorthMolecule6SpotID = 5026;
+const HotSpotID kWSC03SouthActivateSynthesizerSpotID = 5027;
+const HotSpotID kWSC03SouthPickUpAntidoteSpotID = 5028;
+const HotSpotID kWSC07SouthMapSpotID = 5029;
+const HotSpotID kW42EastUnlockDoorSpotID = 5030;
+const HotSpotID kW56NorthMapSpotID = 5031;
+const HotSpotID kW58SouthPryDoorSpotID = 5032;
+const HotSpotID kWSC60EastSpotID = 5033;
+const HotSpotID kWSC60NorthSpotID = 5034;
+const HotSpotID kWSC60EastOutSpotID = 5035;
+const HotSpotID kWSC60NorthOutSpotID = 5036;
+const HotSpotID kWSC61EastSpotID = 5037;
+const HotSpotID kWSC61SouthSpotID = 5038;
+const HotSpotID kW61SouthMachineGunSpotID = 5039;
+const HotSpotID kW61SouthDropMachineGunSpotID = 5040;
+const HotSpotID kWSC61WestSpotID = 5041;
+const HotSpotID kWSC61SouthOutSpotID = 5042;
+const HotSpotID kW61SouthActivateSpotID = 5043;
+const HotSpotID kW61SmartAlloysSpotID = 5044;
+const HotSpotID kW61MorphingSpotID = 5045;
+const HotSpotID kW61TimeBendingSpotID = 5046;
+const HotSpotID kWSC61WestOutSpotID = 5047;
+const HotSpotID kW61TurnOnMessagesSpotID = 5048;
+const HotSpotID kW61WhiteMessageSpotID = 5049;
+const HotSpotID kW61WalchekMessageSpotID = 5050;
+const HotSpotID kWSC65SouthScreenSpotID = 5051;
+const HotSpotID kWSC65SouthScreenOutSpotID = 5052;
+const HotSpotID kW98RetinalChipSpotID = 5053;
+const HotSpotID kW98MapChipSpotID = 5054;
+const HotSpotID kW98OpticalChipSpotID = 5055;
+const HotSpotID kW98DropArgonSpotID = 5056;
+const HotSpotID kW98GrabCableSpotID = 5057;
+const HotSpotID kW98OpenRobotSpotID = 5058;
+const HotSpotID kW98StunGunSpotID = 5059;
 
-//	Hot Spot Activation IDs.
+// Extra sequence IDs.
+const ExtraID kWSCArrivalFromTSA = 0;
+const ExtraID kWSCShotByRobot = 1;
+const ExtraID kWSCDartScan1 = 2;
+const ExtraID kWSCDartScan2 = 3;
+const ExtraID kWSCDartScanNo = 4;
+const ExtraID kWSCDartScan3 = 5;
+const ExtraID kWSCAnalyzerPowerUp = 6;
+const ExtraID kWSCAnalyzerPowerUpWithDart = 7;
+const ExtraID kWSCDropDartIntoAnalyzer = 8;
+const ExtraID kWSCAnalyzeDart = 9;
+const ExtraID kWSCZoomOutFromAnalyzer = 10;
+const ExtraID kWSCSpinRobot = 11;
+const ExtraID kWSC02MorphZoomNoArgon = 12;
+const ExtraID kWSC02MessagesZoomNoNitrogen = 13;
+const ExtraID kWSC02ZoomOutNoArgon = 14;
+const ExtraID kWSC02TurnOnMorphScreen = 15;
+const ExtraID kWSC02DropToMorphExperiment = 16;
+const ExtraID kWSC02MorphLoop = 17;
+const ExtraID kWSC02MorphInterruption = 18;
+const ExtraID kWSC02MorphFinished = 19;
+const ExtraID kWSC02TurnOffMorphScreen = 20;
+const ExtraID kWSC02SouthViewNoArgon = 21;
+const ExtraID kMessagesMovedToOffice = 22;
+const ExtraID kMessagesOff = 23;
+const ExtraID kMessagesZoomOutNoNitrogen = 24;
+const ExtraID kMessagesMovedToOfficeNoNitrogen = 25;
+const ExtraID kMessagesOffNoNitrogen = 26;
+const ExtraID kMessagesViewNoNitrogen = 27;
+const ExtraID kMessagesViewMachineOnNoNitrogen = 28;
+const ExtraID kW03NorthActivate = 29;
+const ExtraID kW03NorthGetData = 30;
+const ExtraID kW03NorthInstructions = 31;
+const ExtraID kW03NorthPrepMolecule1 = 32;
+const ExtraID kW03NorthPrepMolecule2 = 33;
+const ExtraID kW03NorthPrepMolecule3 = 34;
+const ExtraID kW03NorthFinishSynthesis = 35;
+const ExtraID kW03SouthCreateAntidote = 36;
+const ExtraID kW03SouthAntidoteLoop = 37;
+const ExtraID kW03SouthDeactivate = 38;
+const ExtraID kW03SouthViewNoAntidote = 39;
+const ExtraID kWSC07SouthMap = 40;
+const ExtraID kW17WestPeopleCrossing = 41;
+const ExtraID kW17WestPeopleCrossingView = 42;
+const ExtraID kW21SouthPeopleCrossing = 43;
+const ExtraID kW24SouthPeopleCrossing = 44;
+const ExtraID kW34EastPeopleCrossing = 45;
+const ExtraID kW36WestPeopleCrossing = 46;
+const ExtraID kW38NorthPeopleCrossing = 47;
+const ExtraID kW46SouthPeopleCrossing = 48;
+const ExtraID kW49NorthPeopleCrossing = 49;
+const ExtraID kW49NorthPeopleCrossingView = 50;
+const ExtraID kWSC56SouthMap = 51;
+const ExtraID kNerdAtTheDoor1 = 52;
+const ExtraID kNerdAtTheDoor2 = 53;
+const ExtraID kW61SouthZoomInNoGun = 54;
+const ExtraID kW61Brochure = 55;
+const ExtraID kW61SouthScreenOnWithGun = 56;
+const ExtraID kW61SouthScreenOffWithGun = 57;
+const ExtraID kW61SouthSmartAlloysWithGun = 58;
+const ExtraID kW61SouthMorphingWithGun = 59;
+const ExtraID kW61SouthTimeBendingWithGun = 60;
+const ExtraID kW61SouthZoomOutNoGun = 61;
+const ExtraID kW61SouthScreenOnNoGun = 62;
+const ExtraID kW61SouthScreenOffNoGun = 63;
+const ExtraID kW61SouthSmartAlloysNoGun = 64;
+const ExtraID kW61SouthMorphingNoGun = 65;
+const ExtraID kW61SouthTimeBendingNoGun = 66;
+const ExtraID kW61MessagesOn = 67;
+const ExtraID kW61MessagesOff = 68;
+const ExtraID kW61WhiteMessage = 69;
+const ExtraID kW61WalchekMessage = 70;
+const ExtraID kW61WalchekEasterEgg1 = 71;
+const ExtraID kW62SouthPlasmaRobotAppears = 72;
+const ExtraID kW62ZoomToRobot = 73;
+const ExtraID kW62ZoomOutFromRobot = 74;
+const ExtraID kW62PlasmaDodgeSurvive = 75;
+const ExtraID kW62PlasmaDodgeDie = 76;
+const ExtraID kW65SouthSinclairLecture = 77;
+const ExtraID kW73WestPeopleCrossing = 78;
+const ExtraID kW73WestPeopleCrossingView = 79;
+const ExtraID kW0ZSpottedByWomen = 80;
+const ExtraID kW95RobotShoots = 81;
+const ExtraID kW98MorphsToRobot = 82;
+const ExtraID kW98RobotShoots = 83;
+const ExtraID kW98RobotShocked = 84;
+const ExtraID kW98RobotGassed = 85;
+const ExtraID kW98RobotHeadOpensDark = 86;
+const ExtraID kW98RobotHead000Dark = 87;
+const ExtraID kW98RobotHead001Dark = 88;
+const ExtraID kW98RobotHead010Dark = 89;
+const ExtraID kW98RobotHead011Dark = 90;
+const ExtraID kW98RobotHead100Dark = 91;
+const ExtraID kW98RobotHead101Dark = 92;
+const ExtraID kW98RobotHead110Dark = 93;
+const ExtraID kW98RobotHead111Dark = 94;
+const ExtraID kW98RobotHeadClosesDark = 95;
+const ExtraID kW98WestViewWithGunDark = 96;
+const ExtraID kW98WestViewNoGunDark = 97;
+const ExtraID kW98RobotHeadOpensLight = 98;
+const ExtraID kW98RobotHead000Light = 99;
+const ExtraID kW98RobotHead001Light = 100;
+const ExtraID kW98RobotHead010Light = 101;
+const ExtraID kW98RobotHead011Light = 102;
+const ExtraID kW98RobotHead100Light = 103;
+const ExtraID kW98RobotHead101Light = 104;
+const ExtraID kW98RobotHead110Light = 105;
+const ExtraID kW98RobotHead111Light = 106;
+const ExtraID kW98RobotHeadClosesLight = 107;
+const ExtraID kW98WestViewWithGunLight = 108;
+const ExtraID kW98WestViewNoGunLight = 109;
 
-const tHotSpotActivationID kActivationZoomedInToAnalyzer = 1;
-const tHotSpotActivationID kActivationShotByRobot = 2;
-const tHotSpotActivationID kActivationWarnedAboutPoison = 3;
-const tHotSpotActivationID kActivationMorphScreenOff = 4;
-const tHotSpotActivationID kActivationReadyForMorph = 5;
-const tHotSpotActivationID kActivationMorphLooping = 6;
-const tHotSpotActivationID kActivationMorphInterrupted = 7;
-const tHotSpotActivationID kActivationW03NorthOff = 8;
-const tHotSpotActivationID kActivationW03NorthReadyForInstructions = 9;
-const tHotSpotActivationID kActivationW03NorthSawInstructions = 10;
-const tHotSpotActivationID kActivationW03NorthInGame = 11;
-const tHotSpotActivationID kActivationReadyForSynthesis = 12;
-const tHotSpotActivationID kActivationSynthesizerLooping = 13;
-const tHotSpotActivationID kActivationReadyForMap = 14;
-const tHotSpotActivationID kActivationSinclairOfficeLocked = 15;
-const tHotSpotActivationID kActivationW58SouthDoorLocked = 16;
-const tHotSpotActivationID kActivationW61SouthOff = 17;
-const tHotSpotActivationID kActivationW61SouthOn = 18;
-const tHotSpotActivationID kActivationW61MessagesOff = 19;
-const tHotSpotActivationID kActivationW61MessagesOn = 20;
-const tHotSpotActivationID kActivationWSCRobotHeadOpen = 21;
-const tHotSpotActivationID kActivationRobotTurning = 22;
-const tHotSpotActivationID kActivationRobotDead = 23;
-const tHotSpotActivationID kActivationRobotGone = 24;
-
-//	Hot Spot IDs.
-
-const tHotSpotID kWSCDropDartSpotID = 5000;
-const tHotSpotID kWSCTurnOnAnalyzerSpotID = 5001;
-const tHotSpotID kWSCAnalyzerScreenSpotID = 5002;
-const tHotSpotID kWSCSpinRobotSpotID = 5003;
-const tHotSpotID kWSC01YesSpotID = 5004;
-const tHotSpotID kWSC01NoSpotID = 5005;
-const tHotSpotID kWSC01AcknowledgeWarningSpotID = 5006;
-const tHotSpotID kWSC02SouthMorphSpotID = 5007;
-const tHotSpotID kWSC02SouthMessagesSpotID = 5008;
-const tHotSpotID kWSC02SouthMorphOutSpotID = 5009;
-const tHotSpotID kWSC02ActivateMorphScreenSpotID = 5010;
-const tHotSpotID kWSC02SouthStartMorphSpotID = 5011;
-const tHotSpotID kWSC02SouthInterruptMorphSpotID = 5012;
-const tHotSpotID kWSC02SouthMorphFinishedSpotID = 5013;
-const tHotSpotID kWSC02SouthTakeArgonSpotID = 5014;
-const tHotSpotID kWSC02SouthMessagesOutSpotID = 5015;
-const tHotSpotID kWSC02SouthTakeNitrogenSpotID = 5016;
-const tHotSpotID kWSC02SouthPlayMessagesSpotID = 5017;
-const tHotSpotID kWSC03NorthActivateScreenSpotID = 5018;
-const tHotSpotID kWSC03NorthBuildMoleculeSpotID = 5019;
-const tHotSpotID kWSC03NorthProceedSpotID = 5020;
-const tHotSpotID kWSC03NorthMolecule1SpotID = 5021;
-const tHotSpotID kWSC03NorthMolecule2SpotID = 5022;
-const tHotSpotID kWSC03NorthMolecule3SpotID = 5023;
-const tHotSpotID kWSC03NorthMolecule4SpotID = 5024;
-const tHotSpotID kWSC03NorthMolecule5SpotID = 5025;
-const tHotSpotID kWSC03NorthMolecule6SpotID = 5026;
-const tHotSpotID kWSC03SouthActivateSynthesizerSpotID = 5027;
-const tHotSpotID kWSC03SouthPickUpAntidoteSpotID = 5028;
-const tHotSpotID kWSC07SouthMapSpotID = 5029;
-const tHotSpotID kW42EastUnlockDoorSpotID = 5030;
-const tHotSpotID kW56NorthMapSpotID = 5031;
-const tHotSpotID kW58SouthPryDoorSpotID = 5032;
-const tHotSpotID kWSC60EastSpotID = 5033;
-const tHotSpotID kWSC60NorthSpotID = 5034;
-const tHotSpotID kWSC60EastOutSpotID = 5035;
-const tHotSpotID kWSC60NorthOutSpotID = 5036;
-const tHotSpotID kWSC61EastSpotID = 5037;
-const tHotSpotID kWSC61SouthSpotID = 5038;
-const tHotSpotID kW61SouthMachineGunSpotID = 5039;
-const tHotSpotID kW61SouthDropMachineGunSpotID = 5040;
-const tHotSpotID kWSC61WestSpotID = 5041;
-const tHotSpotID kWSC61SouthOutSpotID = 5042;
-const tHotSpotID kW61SouthActivateSpotID = 5043;
-const tHotSpotID kW61SmartAlloysSpotID = 5044;
-const tHotSpotID kW61MorphingSpotID = 5045;
-const tHotSpotID kW61TimeBendingSpotID = 5046;
-const tHotSpotID kWSC61WestOutSpotID = 5047;
-const tHotSpotID kW61TurnOnMessagesSpotID = 5048;
-const tHotSpotID kW61WhiteMessageSpotID = 5049;
-const tHotSpotID kW61WalchekMessageSpotID = 5050;
-const tHotSpotID kWSC65SouthScreenSpotID = 5051;
-const tHotSpotID kWSC65SouthScreenOutSpotID = 5052;
-const tHotSpotID kW98RetinalChipSpotID = 5053;
-const tHotSpotID kW98MapChipSpotID = 5054;
-const tHotSpotID kW98OpticalChipSpotID = 5055;
-const tHotSpotID kW98DropArgonSpotID = 5056;
-const tHotSpotID kW98GrabCableSpotID = 5057;
-const tHotSpotID kW98OpenRobotSpotID = 5058;
-const tHotSpotID kW98StunGunSpotID = 5059;
-
-//	Extra sequence IDs.
-
-const tExtraID kWSCArrivalFromTSA = 0;
-const tExtraID kWSCShotByRobot = 1;
-const tExtraID kWSCDartScan1 = 2;
-const tExtraID kWSCDartScan2 = 3;
-const tExtraID kWSCDartScanNo = 4;
-const tExtraID kWSCDartScan3 = 5;
-const tExtraID kWSCAnalyzerPowerUp = 6;
-const tExtraID kWSCAnalyzerPowerUpWithDart = 7;
-const tExtraID kWSCDropDartIntoAnalyzer = 8;
-const tExtraID kWSCAnalyzeDart = 9;
-const tExtraID kWSCZoomOutFromAnalyzer = 10;
-const tExtraID kWSCSpinRobot = 11;
-const tExtraID kWSC02MorphZoomNoArgon = 12;
-const tExtraID kWSC02MessagesZoomNoNitrogen = 13;
-const tExtraID kWSC02ZoomOutNoArgon = 14;
-const tExtraID kWSC02TurnOnMorphScreen = 15;
-const tExtraID kWSC02DropToMorphExperiment = 16;
-const tExtraID kWSC02MorphLoop = 17;
-const tExtraID kWSC02MorphInterruption = 18;
-const tExtraID kWSC02MorphFinished = 19;
-const tExtraID kWSC02TurnOffMorphScreen = 20;
-const tExtraID kWSC02SouthViewNoArgon = 21;
-const tExtraID kMessagesMovedToOffice = 22;
-const tExtraID kMessagesOff = 23;
-const tExtraID kMessagesZoomOutNoNitrogen = 24;
-const tExtraID kMessagesMovedToOfficeNoNitrogen = 25;
-const tExtraID kMessagesOffNoNitrogen = 26;
-const tExtraID kMessagesViewNoNitrogen = 27;
-const tExtraID kMessagesViewMachineOnNoNitrogen = 28;
-const tExtraID kW03NorthActivate = 29;
-const tExtraID kW03NorthGetData = 30;
-const tExtraID kW03NorthInstructions = 31;
-const tExtraID kW03NorthPrepMolecule1 = 32;
-const tExtraID kW03NorthPrepMolecule2 = 33;
-const tExtraID kW03NorthPrepMolecule3 = 34;
-const tExtraID kW03NorthFinishSynthesis = 35;
-const tExtraID kW03SouthCreateAntidote = 36;
-const tExtraID kW03SouthAntidoteLoop = 37;
-const tExtraID kW03SouthDeactivate = 38;
-const tExtraID kW03SouthViewNoAntidote = 39;
-const tExtraID kWSC07SouthMap = 40;
-const tExtraID kW17WestPeopleCrossing = 41;
-const tExtraID kW17WestPeopleCrossingView = 42;
-const tExtraID kW21SouthPeopleCrossing = 43;
-const tExtraID kW24SouthPeopleCrossing = 44;
-const tExtraID kW34EastPeopleCrossing = 45;
-const tExtraID kW36WestPeopleCrossing = 46;
-const tExtraID kW38NorthPeopleCrossing = 47;
-const tExtraID kW46SouthPeopleCrossing = 48;
-const tExtraID kW49NorthPeopleCrossing = 49;
-const tExtraID kW49NorthPeopleCrossingView = 50;
-const tExtraID kWSC56SouthMap = 51;
-const tExtraID kNerdAtTheDoor1 = 52;
-const tExtraID kNerdAtTheDoor2 = 53;
-const tExtraID kW61SouthZoomInNoGun = 54;
-const tExtraID kW61Brochure = 55;
-const tExtraID kW61SouthScreenOnWithGun = 56;
-const tExtraID kW61SouthScreenOffWithGun = 57;
-const tExtraID kW61SouthSmartAlloysWithGun = 58;
-const tExtraID kW61SouthMorphingWithGun = 59;
-const tExtraID kW61SouthTimeBendingWithGun = 60;
-const tExtraID kW61SouthZoomOutNoGun = 61;
-const tExtraID kW61SouthScreenOnNoGun = 62;
-const tExtraID kW61SouthScreenOffNoGun = 63;
-const tExtraID kW61SouthSmartAlloysNoGun = 64;
-const tExtraID kW61SouthMorphingNoGun = 65;
-const tExtraID kW61SouthTimeBendingNoGun = 66;
-const tExtraID kW61MessagesOn = 67;
-const tExtraID kW61MessagesOff = 68;
-const tExtraID kW61WhiteMessage = 69;
-const tExtraID kW61WalchekMessage = 70;
-const tExtraID kW61WalchekEasterEgg1 = 71;
-const tExtraID kW62SouthPlasmaRobotAppears = 72;
-const tExtraID kW62ZoomToRobot = 73;
-const tExtraID kW62ZoomOutFromRobot = 74;
-const tExtraID kW62PlasmaDodgeSurvive = 75;
-const tExtraID kW62PlasmaDodgeDie = 76;
-const tExtraID kW65SouthSinclairLecture = 77;
-const tExtraID kW73WestPeopleCrossing = 78;
-const tExtraID kW73WestPeopleCrossingView = 79;
-const tExtraID kW0ZSpottedByWomen = 80;
-const tExtraID kW95RobotShoots = 81;
-const tExtraID kW98MorphsToRobot = 82;
-const tExtraID kW98RobotShoots = 83;
-const tExtraID kW98RobotShocked = 84;
-const tExtraID kW98RobotGassed = 85;
-const tExtraID kW98RobotHeadOpensDark = 86;
-const tExtraID kW98RobotHead000Dark = 87;
-const tExtraID kW98RobotHead001Dark = 88;
-const tExtraID kW98RobotHead010Dark = 89;
-const tExtraID kW98RobotHead011Dark = 90;
-const tExtraID kW98RobotHead100Dark = 91;
-const tExtraID kW98RobotHead101Dark = 92;
-const tExtraID kW98RobotHead110Dark = 93;
-const tExtraID kW98RobotHead111Dark = 94;
-const tExtraID kW98RobotHeadClosesDark = 95;
-const tExtraID kW98WestViewWithGunDark = 96;
-const tExtraID kW98WestViewNoGunDark = 97;
-const tExtraID kW98RobotHeadOpensLight = 98;
-const tExtraID kW98RobotHead000Light = 99;
-const tExtraID kW98RobotHead001Light = 100;
-const tExtraID kW98RobotHead010Light = 101;
-const tExtraID kW98RobotHead011Light = 102;
-const tExtraID kW98RobotHead100Light = 103;
-const tExtraID kW98RobotHead101Light = 104;
-const tExtraID kW98RobotHead110Light = 105;
-const tExtraID kW98RobotHead111Light = 106;
-const tExtraID kW98RobotHeadClosesLight = 107;
-const tExtraID kW98WestViewWithGunLight = 108;
-const tExtraID kW98WestViewNoGunLight = 109;
-
-const tCoordType kMoleculesMovieLeft = kNavAreaLeft + 112;
-const tCoordType kMoleculesMovieTop = kNavAreaTop + 40;
+const CoordType kMoleculesMovieLeft = kNavAreaLeft + 112;
+const CoordType kMoleculesMovieTop = kNavAreaTop + 40;
 
 WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "WSC", kWSCID),
 		_moleculesMovie(kNoDisplayElement) {
@@ -618,7 +613,7 @@ Common::String WSC::getBriefingMovie() {
 }
 
 Common::String WSC::getEnvScanMovie() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 	
 	if (room >= kWSC01 && room <= kWSC04)
 		return "Images/AI/WSC/XWE1";
@@ -849,8 +844,8 @@ bool WSC::okayToJump() {
 	return result;
 }
 
-TimeValue WSC::getViewTime(const tRoomID room, const tDirectionConstant direction) {
-	tExtraID viewExtra = 0xffffffff;
+TimeValue WSC::getViewTime(const RoomID room, const DirectionConstant direction) {
+	ExtraID viewExtra = 0xffffffff;
 	ExtraTable::Entry extra;
 
 	switch (MakeRoomView(room, direction)) {
@@ -935,7 +930,7 @@ TimeValue WSC::getViewTime(const tRoomID room, const tDirectionConstant directio
 	return Neighborhood::getViewTime(room, direction);
 }
 
-void WSC::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry) {
+void WSC::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &spotEntry) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kWSC58, kSouth):
 	case MakeRoomView(kWSC79, kWest):
@@ -949,11 +944,11 @@ void WSC::findSpotEntry(const tRoomID room, const tDirectionConstant direction, 
 	Neighborhood::findSpotEntry(room, direction, flags, spotEntry);
 }
 
-void WSC::getZoomEntry(const tHotSpotID id, ZoomTable::Entry &zoomEntry) {
+void WSC::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 	Neighborhood::getZoomEntry(id, zoomEntry);
 
 	ExtraTable::Entry extra;
-	tExtraID zoomExtra = 0xffffffff;
+	ExtraID zoomExtra = 0xffffffff;
 
 	switch (id) {
 	case kWSC02SouthMessagesSpotID:
@@ -1037,7 +1032,7 @@ void WSC::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry) {
 	}
 }
 
-tCanMoveForwardReason WSC::canMoveForward(ExitTable::Entry &entry) {
+CanMoveForwardReason WSC::canMoveForward(ExitTable::Entry &entry) {
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kWSC01, kWest) &&
 			getCurrentActivation() != kActivateHotSpotAlways)
 		return kCantMoveWatchingDiagnosis;
@@ -1046,7 +1041,7 @@ tCanMoveForwardReason WSC::canMoveForward(ExitTable::Entry &entry) {
 }
 
 // Also add cases here for compound analyzer...
-tCanTurnReason WSC::canTurn(tTurnDirection turnDirection, tDirectionConstant &nextDir) {
+CanTurnReason WSC::canTurn(TurnDirection turnDirection, DirectionConstant &nextDir) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kWSC01, kWest):
 		if (getCurrentActivation() != kActivateHotSpotAlways)
@@ -1065,7 +1060,7 @@ tCanTurnReason WSC::canTurn(tTurnDirection turnDirection, tDirectionConstant &ne
 	return Neighborhood::canTurn(turnDirection, nextDir);
 }
 
-tCanOpenDoorReason WSC::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason WSC::canOpenDoor(DoorTable::Entry &entry) {
 	switch (GameState.getCurrentRoom()) {
 	case kWSC42:
 		if (!_privateFlags.getFlag(kWSCPrivateSinclairOfficeOpenFlag))
@@ -1085,7 +1080,7 @@ void WSC::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
-void WSC::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
+void WSC::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	Item *keyCard;
 
 	switch (room) {
@@ -1122,12 +1117,12 @@ void WSC::closeDoorOffScreen(const tRoomID room, const tDirectionConstant) {
 	}
 }
 
-void WSC::cantMoveThatWay(tCanMoveForwardReason reason) {
+void WSC::cantMoveThatWay(CanMoveForwardReason reason) {
 	if (reason != kCantMoveWatchingDiagnosis)
 		Neighborhood::cantMoveThatWay(reason);
 }
 
-void WSC::cantOpenDoor(tCanOpenDoorReason reason) {
+void WSC::cantOpenDoor(CanOpenDoorReason reason) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kWSC22, kWest):
 		playSpotSoundSync(kNakamuraNotHomeIn, kNakamuraNotHomeOut);
@@ -1294,14 +1289,14 @@ void WSC::zoomTo(const Hotspot *hotspot) {
 	Neighborhood::zoomTo(hotspot);
 }
 
-void WSC::startExtraSequence(const tExtraID extraID, const tNotificationFlags flags, const tInputBits interruptionFilter) {
+void WSC::startExtraSequence(const ExtraID extraID, const NotificationFlags flags, const InputBits interruptionFilter) {
 	if (extraID == kW61Brochure)
 		loadLoopSound1("");
 
 	Neighborhood::startExtraSequence(extraID, flags, interruptionFilter);
 }
 
-int16 WSC::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 WSC::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	int16 angle = Neighborhood::getStaticCompassAngle(room, dir);
 
 	switch (room) {
@@ -1369,7 +1364,7 @@ void WSC::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &com
 }
 
 void WSC::loadAmbientLoops() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 
 	if (room >= kWSC01 && room <= kWSC04) {
 		if (GameState.getWSCSeenTimeStream())
@@ -1385,7 +1380,7 @@ void WSC::loadAmbientLoops() {
 		loadLoopSound1("Sounds/World Science Center/WCatLoop.22K.AIFF");
 }
 
-void WSC::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void WSC::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kWSC07, kNorth):
 	case MakeRoomView(kWSC11, kSouth):
@@ -1432,7 +1427,7 @@ void WSC::checkContinuePoint(const tRoomID room, const tDirectionConstant direct
 	}
 }
 
-void WSC::arriveAt(const tRoomID room, const tDirectionConstant dir) {	
+void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {	
 	switch (MakeRoomView(room, dir)) {
 	case MakeRoomView(kWSC60, kNorth):
 	case MakeRoomView(kWSC60, kSouth):
@@ -1595,7 +1590,7 @@ void WSC::arriveAt(const tRoomID room, const tDirectionConstant dir) {
 	setUpPoison();
 }
 
-void WSC::turnTo(const tDirectionConstant direction) {
+void WSC::turnTo(const DirectionConstant direction) {
 	Neighborhood::turnTo(direction);
 
 	switch (MakeRoomView(GameState.getCurrentRoom(), direction)) {
@@ -1649,7 +1644,7 @@ void WSC::turnTo(const tDirectionConstant direction) {
 	checkPeopleCrossing();
 }
 
-void WSC::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void WSC::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	int32 currentEnergy;
 	Item *item;
 	
@@ -1916,7 +1911,7 @@ void WSC::receiveNotification(Notification *notification, const tNotificationFla
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
 
-			// Unused?
+			// Video is not present
 			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotGassed:
@@ -1925,7 +1920,7 @@ void WSC::receiveNotification(Notification *notification, const tNotificationFla
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
 
-			// Unused?
+			// Video is not present
 			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotHeadOpensLight:
@@ -2008,7 +2003,7 @@ void WSC::startMoleculeGameLevel() {
 	_moleculesMovie.start();
 }
 
-void WSC::moleculeGameClick(const tHotSpotID id) {
+void WSC::moleculeGameClick(const HotSpotID id) {
 	uint32 molecule = id - kWSC03NorthMolecule1SpotID;
 
 	_moleculeBin.highlightMolecule(molecule);
@@ -2203,7 +2198,7 @@ void WSC::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 }
 
 void WSC::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
-	tCoordType h, v;
+	CoordType h, v;
 
 	switch (item->getObjectID()) {
 	case kPoisonDart:
@@ -2297,7 +2292,7 @@ void WSC::takeItemFromRoom(Item *item) {
 }
 
 Hotspot *WSC::getItemScreenSpot(Item *item, DisplayElement *element) {
-	tHotSpotID destSpotID;
+	HotSpotID destSpotID;
 	
 	switch (item->getObjectID()) {
 	case kNitrogenCanister:

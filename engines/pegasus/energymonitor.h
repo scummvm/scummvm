@@ -98,7 +98,7 @@ protected:
 
 	uint32 _barColor;
 	Common::Rect _levelRect;
-	tEnergyStage _stage;
+	EnergyStage _stage;
 	Sprite _energyLight;
 	Blinker _lightBlinker;
 	bool _calibrating, _dontFlash;

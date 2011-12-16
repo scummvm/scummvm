@@ -49,7 +49,7 @@ public:
 	void loadGearRoomIfNecessary();
 	void loadMazeIfNecessary();
 	void unloadImage();
-	void moveToMapLocation(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	void moveToMapLocation(const NeighborhoodID, const RoomID, const DirectionConstant);
 	
 	void draw(const Common::Rect &);
 	

@@ -34,23 +34,23 @@ namespace Pegasus {
 
 class Norad : public Neighborhood {
 public:
-	Norad(InputHandler *, PegasusEngine *owner, const Common::String &resName, const tNeighborhoodID);
+	Norad(InputHandler *, PegasusEngine *owner, const Common::String &resName, const NeighborhoodID);
 	virtual ~Norad() {}
 
 	void flushGameState();
 
 	virtual void start();
 
-	virtual void getClawInfo(tHotSpotID &outSpotID, tHotSpotID &prepSpotID,
-			tHotSpotID &clawControlSpotID, tHotSpotID &pinchClawSpotID,
-			tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID,
-			tHotSpotID &moveClawLeftSpotID,tHotSpotID &moveClawUpSpotID,
-			tHotSpotID &clawCCWSpotID, tHotSpotID &clawCWSpotID, uint32 &, const uint32 *&) = 0;
+	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID,
+			HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
+			HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+			HotSpotID &moveClawLeftSpotID,HotSpotID &moveClawUpSpotID,
+			HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) = 0;
 	void checkAirMask();
 
 	virtual uint16 getDateResID() const;
 
-	virtual GameInteraction *makeInteraction(const tInteractionID);
+	virtual GameInteraction *makeInteraction(const InteractionID);
 
 	Common::String getBriefingMovie();
 
@@ -61,49 +61,49 @@ public:
 	void doneWithPressureDoor();
 
 protected:
-	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void cantOpenDoor(tCanOpenDoorReason);
-	int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
+	void cantOpenDoor(CanOpenDoorReason);
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	virtual void startExitMovie(const ExitTable::Entry &);
 	void startZoomMovie(const ZoomTable::Entry &);
 	virtual void upButton(const Input &);
 	virtual void activateHotspots();
 
-	virtual void arriveAt(const tRoomID, const tDirectionConstant);
+	virtual void arriveAt(const RoomID, const DirectionConstant);
 	virtual void arriveAtNoradElevator();
 	virtual void arriveAtUpperPressureDoorRoom();
 	virtual void arriveAtLowerPressureDoorRoom();
 	virtual void arriveAtSubPlatformRoom();
 	virtual void arriveAtSubControlRoom();
 	void setUpAirMask();
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 	virtual bool playingAgainstRobot() { return false; }
 
 	Notification _noradNotification;
 	bool _doneWithPressureDoor;
 
-	tRoomID _elevatorUpRoomID;
-	tRoomID _elevatorDownRoomID;
-	tHotSpotID _elevatorUpSpotID;
-	tHotSpotID _elevatorDownSpotID;
+	RoomID _elevatorUpRoomID;
+	RoomID _elevatorDownRoomID;
+	HotSpotID _elevatorUpSpotID;
+	HotSpotID _elevatorDownSpotID;
 
 	TimeBase _airMaskTimer;
 	NotificationCallBack _airMaskCallBack;
 
-	tRoomID _subRoomEntryRoom1;
-	tDirectionConstant _subRoomEntryDir1;
-	tRoomID _subRoomEntryRoom2;
-	tDirectionConstant _subRoomEntryDir2;
-	tRoomID _upperPressureDoorRoom;
-	tRoomID _lowerPressureDoorRoom;
+	RoomID _subRoomEntryRoom1;
+	DirectionConstant _subRoomEntryDir1;
+	RoomID _subRoomEntryRoom2;
+	DirectionConstant _subRoomEntryDir2;
+	RoomID _upperPressureDoorRoom;
+	RoomID _lowerPressureDoorRoom;
 
-	tHotSpotID _upperPressureDoorUpSpotID;
-	tHotSpotID _upperPressureDoorDownSpotID;
-	tHotSpotID _upperPressureDoorAbortSpotID;
+	HotSpotID _upperPressureDoorUpSpotID;
+	HotSpotID _upperPressureDoorDownSpotID;
+	HotSpotID _upperPressureDoorAbortSpotID;
 	
-	tHotSpotID _lowerPressureDoorUpSpotID;
-	tHotSpotID _lowerPressureDoorDownSpotID;
-	tHotSpotID _lowerPressureDoorAbortSpotID;
+	HotSpotID _lowerPressureDoorUpSpotID;
+	HotSpotID _lowerPressureDoorDownSpotID;
+	HotSpotID _lowerPressureDoorAbortSpotID;
 	
 	TimeValue _pressureSoundIn;
 	TimeValue _pressureSoundOut;
@@ -112,8 +112,8 @@ protected:
 	TimeValue _accessDeniedIn;
 	TimeValue _accessDeniedOut;
 	
-	tRoomID	 _platformRoom;
-	tRoomID _subControlRoom;
+	RoomID	 _platformRoom;
+	RoomID _subControlRoom;
 };
 
 } // End of namespace Pegasus

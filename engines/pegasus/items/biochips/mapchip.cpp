@@ -32,7 +32,7 @@ namespace Pegasus {
 
 MapChip *g_map = 0;
 
-MapChip::MapChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+MapChip::MapChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction) {
 	g_map = this;
 	setItemState(kMapUnavailable);
@@ -69,8 +69,8 @@ void MapChip::deselect() {
 	_image.unloadImage();
 }
 
-void MapChip::moveToMapLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant dir) {
-	tAirQuality airQuality;
+void MapChip::moveToMapLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant dir) {
+	AirQuality airQuality;
 
 	if (g_neighborhood)
 		airQuality = g_neighborhood->getAirQuality(room);

@@ -31,15 +31,14 @@
 
 namespace Pegasus {
 
-//	Norad elevator PICTs:
+// Norad elevator PICTs:
+const ResIDType kElevatorLabelID = 200;
+const ResIDType kElevatorButtonsID = 201;
+const ResIDType kElevatorDownOnID = 202;
+const ResIDType kElevatorUpOnID = 203;
 
-const tResIDType kElevatorLabelID = 200;
-const tResIDType kElevatorButtonsID = 201;
-const tResIDType kElevatorDownOnID = 202;
-const tResIDType kElevatorUpOnID = 203;
-
-NoradElevator::NoradElevator(Neighborhood *handler, const tRoomID upRoom, const tRoomID downRoom,
-		const tHotSpotID upHotspot, const tHotSpotID downHotspot) : GameInteraction(kNoradElevatorInteractionID, handler),
+NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const RoomID downRoom,
+		const HotSpotID upHotspot, const HotSpotID downHotspot) : GameInteraction(kNoradElevatorInteractionID, handler),
 		_elevatorControls(kNoradElevatorControlsID), _elevatorNotification(kNoradElevatorNotificationID, ((PegasusEngine *)g_engine)) {
 	_timerExpired = false;
 	_upRoom = upRoom;
@@ -110,7 +109,7 @@ void NoradElevator::activateHotspots() {
 }
 
 void NoradElevator::clickInHotspot(const Input &input, const Hotspot *spot) {
-	tHotSpotID id = spot->getObjectID();
+	HotSpotID id = spot->getObjectID();
 
 	if (id == _upHotspot || id == _downHotspot) {
 		g_neighborhood->moveForward();
@@ -123,7 +122,7 @@ void NoradElevator::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void NoradElevator::receiveNotification(Notification *, const tNotificationFlags) {
+void NoradElevator::receiveNotification(Notification *, const NotificationFlags) {
 	_elevatorControls.setCurrentFrameIndex(1);
 	_timerExpired = true;
 }

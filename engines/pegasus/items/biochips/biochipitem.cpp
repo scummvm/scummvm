@@ -32,7 +32,7 @@
 
 namespace Pegasus {
 
-BiochipItem::BiochipItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+BiochipItem::BiochipItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
@@ -59,7 +59,7 @@ BiochipItem::~BiochipItem() {
 	delete[] _rightAreaInfo.entries;
 }
 
-tItemType BiochipItem::getItemType() {
+ItemType BiochipItem::getItemType() {
 	return kBiochipItemType;
 }
 
@@ -68,7 +68,7 @@ TimeValue BiochipItem::getRightAreaTime() const {
 		return 0xffffffff;
 
 	TimeValue time;
-	tItemState state;
+	ItemState state;
 
 	findItemStateEntryByState(_rightAreaInfo, _itemState, time);
 	if (time == 0xffffffff)

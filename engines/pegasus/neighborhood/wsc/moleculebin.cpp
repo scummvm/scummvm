@@ -29,14 +29,14 @@
 
 namespace Pegasus {
 
-static const tCoordType kMoleculeBinWidth = 138;
-static const tCoordType kMoleculeBinHeight = 128;
+static const CoordType kMoleculeBinWidth = 138;
+static const CoordType kMoleculeBinHeight = 128;
 
-static const tCoordType kMoleculeWidth = 66;
-static const tCoordType kMoleculeHeight = 40;
+static const CoordType kMoleculeWidth = 66;
+static const CoordType kMoleculeHeight = 40;
 
-static const tCoordType kMoleculeBinLeft = kNavAreaLeft + 286;
-static const tCoordType kMoleculeBinTop = kNavAreaLeft + 96;
+static const CoordType kMoleculeBinLeft = kNavAreaLeft + 286;
+static const CoordType kMoleculeBinTop = kNavAreaLeft + 96;
 
 //	Layouts:
 

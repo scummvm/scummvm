@@ -55,20 +55,20 @@ static const int kGearRoomFlagHigh = ROOM_TO_FLAG(kMars39, kWest);
 static const int kMazeFlagLow = ROOM_TO_FLAG(kMars60, kNorth);
 static const int kMazeFlagHigh = ROOM_TO_FLAG(kMarsMaze200, kWest);
 
-static const tCoordType kGearRoomScreenOffsetX = 49;
-static const tCoordType kGearRoomScreenOffsetY = 47;
+static const CoordType kGearRoomScreenOffsetX = 49;
+static const CoordType kGearRoomScreenOffsetY = 47;
 
-static const tCoordType kGearRoomGridOriginX = 1;
-static const tCoordType kGearRoomGridOriginY = 4;
+static const CoordType kGearRoomGridOriginX = 1;
+static const CoordType kGearRoomGridOriginY = 4;
 
-static const tCoordType kMazeScreenOffsetX = 16;
-static const tCoordType kMazeScreenOffsetY = 20;
+static const CoordType kMazeScreenOffsetX = 16;
+static const CoordType kMazeScreenOffsetY = 20;
 
-static const tCoordType kMazeGridOriginX = 6;
-static const tCoordType kMazeGridOriginY = 1;
+static const CoordType kMazeGridOriginX = 6;
+static const CoordType kMazeGridOriginY = 1;
 
-static const tCoordType kGridWidth = 4;
-static const tCoordType kGridHeight = 4;
+static const CoordType kGridWidth = 4;
+static const CoordType kGridHeight = 4;
 
 static const uint16 kMapOfMazePICTID = 906;
 static const uint16 kMapOfGearRoomPICTID = 907;
@@ -318,7 +318,7 @@ void MapImage::unloadImage() {
 	_whichArea = kMapNoArea;
 }
 
-void MapImage::moveToMapLocation(const tNeighborhoodID, const tRoomID room, const tDirectionConstant dir) {
+void MapImage::moveToMapLocation(const NeighborhoodID, const RoomID room, const DirectionConstant dir) {
 	GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
 
 	int flag = ROOM_TO_FLAG(room, dir);
@@ -346,7 +346,7 @@ void MapImage::addFlagToMask(const int flag) {
 // This function can even be sensitive to open doors.
 // clone2727 notices that it's not, though
 void MapImage::getRevealedRects(const uint32 flag, Common::Rect &r1) {	
-	tCoordType gridX, gridY;
+	CoordType gridX, gridY;
 
 	switch (_whichArea) {
 	case kMapMaze:
@@ -371,7 +371,7 @@ void MapImage::getRevealedRects(const uint32 flag, Common::Rect &r1) {
 void MapImage::drawPlayer() {
 	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
 
-	tCoordType gridX, gridY;
+	CoordType gridX, gridY;
 
 	switch (_whichArea) {
 	case kMapMaze:

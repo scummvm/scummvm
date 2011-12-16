@@ -44,19 +44,19 @@ public:
 	virtual void becomeCurrentHandler();
 	virtual void restorePreviousHandler();
 	
-	tGameMenuCommand getLastCommand() { return _lastCommand; }
+	GameMenuCommand getLastCommand() { return _lastCommand; }
 	void clearLastCommand() { _lastCommand = kMenuCmdNoCommand; }
 
 protected:
-	void setLastCommand(const tGameMenuCommand command) { _lastCommand = command; }
+	void setLastCommand(const GameMenuCommand command) { _lastCommand = command; }
 
 	InputHandler *_previousHandler;
-	tGameMenuCommand _lastCommand;
+	GameMenuCommand _lastCommand;
 
-	void drawScore(tGameScoreType, tGameScoreType, const Common::Rect &, Surface *);
+	void drawScore(GameScoreType, GameScoreType, const Common::Rect &, Surface *);
 
 private:
-	void drawNumber(tGameScoreType, tCoordType &, tCoordType, Surface *);
+	void drawNumber(GameScoreType, CoordType &, CoordType, Surface *);
 };
 
 class Hotspot;
@@ -115,7 +115,7 @@ protected:
 
 class DeathMenu : public GameMenu {
 public:
-	DeathMenu(const tDeathReason);
+	DeathMenu(const DeathReason);
 	virtual ~DeathMenu() {}
 
 	virtual void handleInput(const Input &input, const Hotspot *);
@@ -129,7 +129,7 @@ protected:
 
 	bool _playerWon;
 	int _menuSelection;
-	tDeathReason _deathReason;
+	DeathReason _deathReason;
 
 	Picture _deathBackground;
 	Picture _continueButton;

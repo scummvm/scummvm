@@ -32,10 +32,10 @@ namespace Pegasus {
 
 class BiochipItem : public Item {
 public:
-	BiochipItem(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	BiochipItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~BiochipItem();
 	
-	virtual tItemType getItemType();
+	virtual ItemType getItemType();
 	
 	TimeValue getPanelTime() const { return _biochipInfoPanelTime; }
 	TimeValue getRightAreaTime() const;

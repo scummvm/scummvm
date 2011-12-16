@@ -99,7 +99,7 @@ protected:
 
 class FaderAnimation : public DisplayElement, public Fader {
 public:
-	FaderAnimation(const tDisplayElementID id) : DisplayElement(id) {}
+	FaderAnimation(const DisplayElementID id) : DisplayElement(id) {}
 	virtual ~FaderAnimation() {}
 
 	void setFaderValue(const int32);

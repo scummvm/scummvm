@@ -33,7 +33,7 @@
 namespace Pegasus {
 
 // indexed by [number of hints][number of solves (0, 1, or 2)][which button to highlight]
-static const tItemState s_highlightState[4][3][7] = {
+static const ItemState s_highlightState[4][3][7] = {
 	{
 		{kAI000,	-1,			-1,			-1,			-1,			kAI005,		kAI006},
 		{kAI010,	-1,			-1,			-1,			-1,			kAI015,		kAI016},
@@ -58,7 +58,7 @@ static const tItemState s_highlightState[4][3][7] = {
 
 AIChip *g_AIChip = 0;
 
-AIChip::AIChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _briefingSpot(kAIBriefingSpotID), _scanSpot(kAIScanSpotID),
 		_hint1Spot(kAIHint1SpotID), _hint2Spot(kAIHint2SpotID), _hint3Spot(kAIHint3SpotID), _solveSpot(kAISolveSpotID) {
 	_briefingSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 10, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 10 + 81, kAIMiddleAreaTop + 27 + 31));
@@ -186,7 +186,7 @@ void AIChip::showBriefingClicked() {
 		numSolves = 0;
 	}
 
-	tItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIBriefingSpotID - kAIHint1SpotID + 1];
+	ItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIBriefingSpotID - kAIHint1SpotID + 1];
 	if (newState != -1)
 		setItemState(newState);
 }
@@ -206,7 +206,7 @@ void AIChip::showEnvScanClicked() {
 		numSolves = 0;
 	}
 
-	tItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIScanSpotID - kAIHint1SpotID + 1];
+	ItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIScanSpotID - kAIHint1SpotID + 1];
 
 	if (newState != -1)
 		setItemState(newState);
@@ -217,7 +217,7 @@ void AIChip::clearClicked() {
 	setUpAIChip();
 }
 
-void AIChip::clickInAIHotspot(tHotSpotID id) {
+void AIChip::clickInAIHotspot(HotSpotID id) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	Common::String movieName;
@@ -243,7 +243,7 @@ void AIChip::clickInAIHotspot(tHotSpotID id) {
 		break;
 	}
 
-	tItemState state = getItemState();
+	ItemState state = getItemState();
 
 	if (!movieName.empty()) {
 		_playingMovie = true;
@@ -258,7 +258,7 @@ void AIChip::clickInAIHotspot(tHotSpotID id) {
 			numSolves = 0;
 		}
 
-		tItemState newState = s_highlightState[vm->getNumHints()][numSolves][id - kAIHint1SpotID + 1];
+		ItemState newState = s_highlightState[vm->getNumHints()][numSolves][id - kAIHint1SpotID + 1];
 
 		if (newState != -1)
 			setItemState(newState);

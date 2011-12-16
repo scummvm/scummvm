@@ -188,7 +188,7 @@ void GraphicsManager::clearScreen() {
 	_modifiedScreen = true;
 }
 
-DisplayElement *GraphicsManager::findDisplayElement(const tDisplayElementID id) {
+DisplayElement *GraphicsManager::findDisplayElement(const DisplayElementID id) {
 	DisplayElement *runner = _firstDisplayElement;
 
 	while (runner) {

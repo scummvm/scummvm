@@ -30,8 +30,8 @@ namespace Pegasus {
 
 const TimeValue kEnergyBeamTime = kOneSecond * kShuttleWeaponScale / 2;
 
-const tCoordType kEnergyBeamOriginH = kShuttleWindowMidH;
-const tCoordType kEnergyBeamOriginV = kShuttleWindowTop + kShuttleWindowHeight;
+const CoordType kEnergyBeamOriginH = kShuttleWindowMidH;
+const CoordType kEnergyBeamOriginV = kShuttleWindowTop + kShuttleWindowHeight;
 
 const float kBeamXOrigin = convertScreenHToSpaceX(kEnergyBeamOriginH, kEnergyBeamMinDistance);
 const float kBeamYOrigin = convertScreenVToSpaceY(kEnergyBeamOriginV, kEnergyBeamMinDistance);

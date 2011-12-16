@@ -32,7 +32,7 @@
 
 namespace Pegasus {
 
-PegasusChip::PegasusChip(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
+PegasusChip::PegasusChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		BiochipItem(id, neighborhood, room, direction), _recallSpot(kPegasusRecallSpotID) {
 	_recallSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 116, kAIMiddleAreaTop + 63, kAIMiddleAreaLeft + 184, kAIMiddleAreaTop + 91));
 	_recallSpot.setHotspotFlags(kPegasusBiochipSpotFlag);
@@ -125,8 +125,8 @@ void PegasusChip::activatePegasusHotspots() {
 void PegasusChip::clickInPegasusHotspot() {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
-	tItemState thisState = getItemState();
-	tItemState hiliteState;
+	ItemState thisState = getItemState();
+	ItemState hiliteState;
 
 	switch (thisState) {
 	case kPegasusPrehistoric00:

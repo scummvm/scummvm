@@ -27,17 +27,17 @@
 
 namespace Pegasus {
 
-tCoordType hermite(tCoordType p1, tCoordType p4, tCoordType r1, tCoordType r4, int32 time, int32 duration) {	
+CoordType hermite(CoordType p1, CoordType p4, CoordType r1, CoordType r4, int32 time, int32 duration) {	
 	float t = (float)time / duration;
 	float tsq = t * t;
 	float tcu = t * tsq;
 	float tcu2 = tcu + tcu;
 	float tsq2 = tsq + tsq;
 	float tsq3 = tsq2 + tsq;
-	return (tCoordType)((tcu2 - tsq3 + 1) * p1 + (tsq3 - tcu2) * p4 + (tcu - tsq2 + t) * r1 + (tcu - tsq) * r4);
+	return (CoordType)((tcu2 - tsq3 + 1) * p1 + (tsq3 - tcu2) * p4 + (tcu - tsq2 + t) * r1 + (tcu - tsq) * r4);
 }
 
-tCoordType dHermite(tCoordType p1, tCoordType p4, tCoordType r1, tCoordType r4, int32 time, int32 duration) {	
+CoordType dHermite(CoordType p1, CoordType p4, CoordType r1, CoordType r4, int32 time, int32 duration) {	
 	float t = (float)time / duration;
 	float t2 = t + t;
 	float t4 = t2 + t2;
@@ -45,7 +45,7 @@ tCoordType dHermite(tCoordType p1, tCoordType p4, tCoordType r1, tCoordType r4, 
 	float tsq = t * t;
 	float tsq3 = tsq + tsq + tsq;
 	float tsq6 = tsq3 + tsq3;
-	return (tCoordType)((tsq6 - t6) * p1 + (t6 - tsq6) * p4 + (tsq3 - t4 + 1) * r1 + (tsq3 - t2) * r4);
+	return (CoordType)((tsq6 - t6) * p1 + (t6 - tsq6) * p4 + (tsq3 - t4 + 1) * r1 + (tsq3 - t2) * r4);
 }
 
 void hermite(Common::Point p1, Common::Point p4, Common::Point r1, Common::Point r4, int32 time, int32 duration, Common::Point &result) {	

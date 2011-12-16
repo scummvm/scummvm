@@ -27,7 +27,7 @@
 
 namespace Pegasus {
 
-PanoramaScroll::PanoramaScroll(const tDisplayElementID id) : IdlerAnimation(id) {
+PanoramaScroll::PanoramaScroll(const DisplayElementID id) : IdlerAnimation(id) {
 	_boundsWidth = 0;
 	_totalWidth = 0;
 }
@@ -72,7 +72,7 @@ void PanoramaScroll::draw(const Common::Rect &) {
 }
 
 void PanoramaScroll::timeChanged(const TimeValue newTime) {	
-	tCoordType leftPixel = (_totalWidth - _boundsWidth) * newTime / getDuration();
+	CoordType leftPixel = (_totalWidth - _boundsWidth) * newTime / getDuration();
 
 	Common::Rect r;
 	_panorama.getViewBounds(r);

@@ -51,18 +51,18 @@ public:
 		Entry() { hotspotRoom = kNoRoomID; }
 		bool isEmpty() { return hotspotRoom == kNoRoomID; }
 
-		tHotSpotID hotspot;
-		tHotSpotActivationID hotspotActivation;
+		HotSpotID hotspot;
+		HotSpotActivationID hotspotActivation;
 		//	Location hot spot lives in:
-		tRoomID hotspotRoom;
-		tDirectionConstant hotspotDirection;
+		RoomID hotspotRoom;
+		DirectionConstant hotspotDirection;
 		//	Extra to play if this is a "play extra" hot spot.
-		tExtraID hotspotExtra;
+		ExtraID hotspotExtra;
 		//	Item corresponding to this hot spot if it is an item-related hot spot.
-		tItemID hotspotItem;
+		ItemID hotspotItem;
 	};
 
-	Entry findEntry(tHotSpotID hotspot);
+	Entry findEntry(HotSpotID hotspot);
 
 	typedef Common::Array<Entry>::iterator iterator;
 	iterator begin() { return _entries.begin(); }

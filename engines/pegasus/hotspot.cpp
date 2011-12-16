@@ -115,7 +115,7 @@ bool Region::pointInRegion(const Common::Point &point) const {
 	return true;
 }
 
-void Region::moveTo(tCoordType h, tCoordType v) {
+void Region::moveTo(CoordType h, CoordType v) {
 	_bounds.moveTo(h, v);
 }
 
@@ -123,7 +123,7 @@ void Region::moveTo(const Common::Point &point) {
 	_bounds.moveTo(point);
 }
 
-void Region::translate(tCoordType h, tCoordType v) {
+void Region::translate(CoordType h, CoordType v) {
 	_bounds.translate(h, v);
 }
 
@@ -131,7 +131,7 @@ void Region::translate(const Common::Point &point) {
 	_bounds.translate(point.x, point.y);
 }
 
-void Region::getCenter(tCoordType &h, tCoordType &v) const {
+void Region::getCenter(CoordType &h, CoordType &v) const {
 	h = (_bounds.left + _bounds.right) / 2;
 	v = (_bounds.top + _bounds.bottom) / 2;
 }
@@ -140,7 +140,7 @@ void Region::getCenter(Common::Point &point) const {
 	getCenter(point.x, point.y);
 }
 
-Hotspot::Hotspot(const tHotSpotID id) : IDObject(id) {
+Hotspot::Hotspot(const HotSpotID id) : IDObject(id) {
 	_spotFlags = kNoHotSpotFlags;
 	_spotActive = false;
 }
@@ -152,7 +152,7 @@ void Hotspot::setArea(const Common::Rect &area) {
 	_spotArea = Region(area);
 }
 
-void Hotspot::setArea(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
+void Hotspot::setArea(const CoordType left, const CoordType top, const CoordType right, const CoordType bottom) {
 	_spotArea = Region(Common::Rect(left, top, right, bottom));
 }
 
@@ -164,7 +164,7 @@ void Hotspot::getCenter(Common::Point &pt) const {
 	_spotArea.getCenter(pt);
 }
 
-void Hotspot::getCenter(tCoordType &h, tCoordType &v) const {
+void Hotspot::getCenter(CoordType &h, CoordType &v) const {
 	_spotArea.getCenter(h, v);
 }
 
@@ -176,11 +176,11 @@ void Hotspot::setInactive() {
 	_spotActive = false;
 }
 
-void Hotspot::setHotspotFlags(const tHotSpotFlags flags) {
+void Hotspot::setHotspotFlags(const HotSpotFlags flags) {
 	_spotFlags = flags;
 }
 
-void Hotspot::setMaskedHotspotFlags(const tHotSpotFlags flags, const tHotSpotFlags mask) {
+void Hotspot::setMaskedHotspotFlags(const HotSpotFlags flags, const HotSpotFlags mask) {
 	_spotFlags = (_spotFlags & ~mask) | flags;
 }
 
@@ -188,7 +188,7 @@ bool Hotspot::isSpotActive() const {
 	return _spotActive;
 }
 
-void Hotspot::moveSpotTo(const tCoordType h, const tCoordType v) {
+void Hotspot::moveSpotTo(const CoordType h, const CoordType v) {
 	_spotArea.moveTo(h, v);
 }
 
@@ -196,7 +196,7 @@ void Hotspot::moveSpotTo(const Common::Point pt) {
 	_spotArea.moveTo(pt);
 }
 
-void Hotspot::moveSpot(const tCoordType h, const tCoordType v) {
+void Hotspot::moveSpot(const CoordType h, const CoordType v) {
 	_spotArea.translate(h, v);
 }
 
@@ -208,7 +208,7 @@ bool Hotspot::pointInSpot(const Common::Point where) const {
 	return _spotActive && _spotArea.pointInRegion(where);
 }
 
-tHotSpotFlags Hotspot::getHotspotFlags() const {
+HotSpotFlags Hotspot::getHotspotFlags() const {
 	return _spotFlags;
 }
 
@@ -234,12 +234,12 @@ Hotspot *HotspotList::findHotspot(const Common::Point where) {
 	return 0;
 }
 
-tHotSpotID HotspotList::findHotspotID(const Common::Point where) {
+HotSpotID HotspotList::findHotspotID(const Common::Point where) {
 	Hotspot *hotspot = findHotspot(where);
 	return hotspot ? hotspot->getObjectID() : kNoHotSpotID;
 }
 
-Hotspot *HotspotList::findHotspotByID(const tHotSpotID id) {
+Hotspot *HotspotList::findHotspotByID(const HotSpotID id) {
 	for (HotspotIterator it = begin(); it != end(); it++)
 		if ((*it)->getObjectID() == id)
 			return *it;
@@ -247,7 +247,7 @@ Hotspot *HotspotList::findHotspotByID(const tHotSpotID id) {
 	return 0;
 }
 
-Hotspot *HotspotList::findHotspotByMask(const tHotSpotFlags flags) {
+Hotspot *HotspotList::findHotspotByMask(const HotSpotFlags flags) {
 	for (HotspotIterator it = begin(); it != end(); it++)
 		if (((*it)->getHotspotFlags() & flags) == flags)
 			return *it;
@@ -255,7 +255,7 @@ Hotspot *HotspotList::findHotspotByMask(const tHotSpotFlags flags) {
 	return 0;
 }
 
-void HotspotList::activateMaskedHotspots(const tHotSpotFlags flags) {
+void HotspotList::activateMaskedHotspots(const HotSpotFlags flags) {
 	for (HotspotIterator it = begin(); it != end(); it++)
 		if (flags == kNoHotSpotFlags || ((*it)->getHotspotFlags() & flags) != 0)
 			(*it)->setActive();
@@ -266,13 +266,13 @@ void HotspotList::deactivateAllHotspots() {
 		(*it)->setInactive();
 }
 
-void HotspotList::deactivateMaskedHotspots(const tHotSpotFlags flags) {
+void HotspotList::deactivateMaskedHotspots(const HotSpotFlags flags) {
 	for (HotspotIterator it = begin(); it != end(); it++)
 		if (((*it)->getHotspotFlags() & flags) != 0)
 			(*it)->setInactive();
 }
 
-void HotspotList::activateOneHotspot(const tHotSpotID id) {
+void HotspotList::activateOneHotspot(const HotSpotID id) {
 	for (HotspotIterator it = begin(); it != end(); it++) {
 		if ((*it)->getObjectID() == id) {
 			(*it)->setActive();
@@ -281,7 +281,7 @@ void HotspotList::activateOneHotspot(const tHotSpotID id) {
 	}
 }
 
-void HotspotList::deactivateOneHotspot(const tHotSpotID id) {
+void HotspotList::deactivateOneHotspot(const HotSpotID id) {
 	for (HotspotIterator it = begin(); it != end(); it++) {
 		if ((*it)->getObjectID() == id) {
 			(*it)->setInactive();
@@ -290,7 +290,7 @@ void HotspotList::deactivateOneHotspot(const tHotSpotID id) {
 	}
 }
 
-void HotspotList::removeOneHotspot(const tHotSpotID id) {
+void HotspotList::removeOneHotspot(const HotSpotID id) {
 	for (HotspotIterator it = begin(); it != end(); it++) {
 		if ((*it)->getObjectID() == id) {
 			erase(it);
@@ -299,7 +299,7 @@ void HotspotList::removeOneHotspot(const tHotSpotID id) {
 	}
 }
 
-void HotspotList::removeMaskedHotspots(const tHotSpotFlags flags) {
+void HotspotList::removeMaskedHotspots(const HotSpotFlags flags) {
 	if (flags != kNoHotSpotFlags) {
 		for (HotspotIterator it = begin(); it != end(); ) {
 			if (((*it)->getHotspotFlags() & flags) != 0)
@@ -312,13 +312,13 @@ void HotspotList::removeMaskedHotspots(const tHotSpotFlags flags) {
 	}
 }
 
-void HotspotList::setHotspotRect(const tHotSpotID id, const Common::Rect &r) {
+void HotspotList::setHotspotRect(const HotSpotID id, const Common::Rect &r) {
 	Hotspot *hotspot = findHotspotByID(id);
 	if (hotspot)
 		hotspot->setArea(r);
 }
 
-void HotspotList::getHotspotRect(const tHotSpotID id, Common::Rect &r) {
+void HotspotList::getHotspotRect(const HotSpotID id, Common::Rect &r) {
 	Hotspot *hotspot = findHotspotByID(id);
 	if (hotspot)
 		hotspot->getBoundingBox(r);

@@ -28,18 +28,18 @@
 
 namespace Pegasus {
 
-static const tCoordType kCurrentGuessWidth = 121;
-static const tCoordType kCurrentGuessHeight = 23;
+static const CoordType kCurrentGuessWidth = 121;
+static const CoordType kCurrentGuessHeight = 23;
 
-static const tCoordType kOneGuessWidth = 25;
-static const tCoordType kOneGuessHeight = 23;
+static const CoordType kOneGuessWidth = 25;
+static const CoordType kOneGuessHeight = 23;
 
-static const tResIDType kReactorChoicesPICTID = 905;
+static const ResIDType kReactorChoicesPICTID = 905;
 
-static const tCoordType kCurrentGuessLeft = kNavAreaLeft + 146;
-static const tCoordType kCurrentGuessTop = kNavAreaTop + 90;
+static const CoordType kCurrentGuessLeft = kNavAreaLeft + 146;
+static const CoordType kCurrentGuessTop = kNavAreaTop + 90;
 
-ReactorGuess::ReactorGuess(const tDisplayElementID id) : DisplayElement(id) {
+ReactorGuess::ReactorGuess(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kCurrentGuessLeft, kCurrentGuessTop, kCurrentGuessLeft + kCurrentGuessWidth,
 			kCurrentGuessTop + kCurrentGuessHeight);
 	setDisplayOrder(kMonitorLayer);
@@ -81,10 +81,10 @@ void ReactorGuess::draw(const Common::Rect &) {
 	}
 }
 
-static const tCoordType kReactorChoiceHiliteWidth = 166;
-static const tCoordType kReactorChoiceHiliteHeight = 26;
+static const CoordType kReactorChoiceHiliteWidth = 166;
+static const CoordType kReactorChoiceHiliteHeight = 26;
 
-static const tCoordType kChoiceHiliteLefts[6] = {
+static const CoordType kChoiceHiliteLefts[6] = {
 	0,
 	34,
 	34 + 34,
@@ -93,12 +93,12 @@ static const tCoordType kChoiceHiliteLefts[6] = {
 	34 + 34 + 32 + 34 + 32
 };
 
-static const tResIDType kReactorChoiceHilitePICTID = 901;
+static const ResIDType kReactorChoiceHilitePICTID = 901;
 
-static const tCoordType kReactorChoiceHiliteLeft = kNavAreaLeft + 116;
-static const tCoordType kReactorChoiceHiliteTop = kNavAreaTop + 158;
+static const CoordType kReactorChoiceHiliteLeft = kNavAreaLeft + 116;
+static const CoordType kReactorChoiceHiliteTop = kNavAreaTop + 158;
 
-ReactorChoiceHighlight::ReactorChoiceHighlight(const tDisplayElementID id) : DisplayElement(id) {
+ReactorChoiceHighlight::ReactorChoiceHighlight(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kReactorChoiceHiliteLeft, kReactorChoiceHiliteTop, kReactorChoiceHiliteLeft + kReactorChoiceHiliteWidth,
 			kReactorChoiceHiliteTop + kReactorChoiceHiliteHeight);
 	setDisplayOrder(kMonitorLayer);
@@ -129,14 +129,14 @@ void ReactorChoiceHighlight::draw(const Common::Rect &) {
 	}
 }
 
-static const tCoordType kReactorHistoryWidth = 128;
-static const tCoordType kReactorHistoryHeight = 168;
+static const CoordType kReactorHistoryWidth = 128;
+static const CoordType kReactorHistoryHeight = 168;
 
-static const tCoordType kColorWidths[5] = {24, 25, 25, 26, 27};
-static const tCoordType kColorHeights[5] = {14, 15, 17, 17, 19};
+static const CoordType kColorWidths[5] = { 24, 25, 25, 26, 27 };
+static const CoordType kColorHeights[5] = { 14, 15, 17, 17, 19};
 
 // TODO: Remove global construction
-static const tCoordType kColorTops[5] = {
+static const CoordType kColorTops[5] = {
 	0,
 	kColorHeights[0],
 	kColorHeights[0] + kColorHeights[1],
@@ -144,7 +144,7 @@ static const tCoordType kColorTops[5] = {
 	kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3],
 };
 
-static const tCoordType kHistoryLefts[5][3] = {
+static const CoordType kHistoryLefts[5][3] = {
 	{ 302 + kNavAreaLeft, 329 + kNavAreaLeft, 357 + kNavAreaLeft },
 	{ 302 + kNavAreaLeft, 331 + kNavAreaLeft, 360 + kNavAreaLeft },
 	{ 303 + kNavAreaLeft, 333 + kNavAreaLeft, 363 + kNavAreaLeft },
@@ -152,7 +152,7 @@ static const tCoordType kHistoryLefts[5][3] = {
 	{ 305 + kNavAreaLeft, 337 + kNavAreaLeft, 369 + kNavAreaLeft }
 };
 
-static const tCoordType kHistoryTops[5] = {
+static const CoordType kHistoryTops[5] = {
 	39 + kNavAreaTop,
 	61 + kNavAreaTop,
 	84 + kNavAreaTop,
@@ -160,13 +160,13 @@ static const tCoordType kHistoryTops[5] = {
 	137 + kNavAreaTop
 };
 
-static const tCoordType kOneAnswerWidth = 35;
-static const tCoordType kOneAnswerHeight = 27;
+static const CoordType kOneAnswerWidth = 35;
+static const CoordType kOneAnswerHeight = 27;
 
-static const tCoordType kDigitWidth = 16;
-static const tCoordType kDigitHeight = 12;
+static const CoordType kDigitWidth = 16;
+static const CoordType kDigitHeight = 12;
 
-static const tCoordType kCorrectCountLefts[5] = {
+static const CoordType kCorrectCountLefts[5] = {
 	388 + kNavAreaLeft,
 	392 + kNavAreaLeft,
 	398 + kNavAreaLeft,
@@ -174,7 +174,7 @@ static const tCoordType kCorrectCountLefts[5] = {
 	406 + kNavAreaLeft
 };
 
-static const tCoordType kCorrectCountTops[5] = {
+static const CoordType kCorrectCountTops[5] = {
 	40 + kNavAreaTop,
 	62 + kNavAreaTop,
 	86 + kNavAreaTop,
@@ -182,17 +182,17 @@ static const tCoordType kCorrectCountTops[5] = {
 	140 + kNavAreaTop
 };
 
-static const tResIDType kReactorDigitsPICTID = 902;
-static const tResIDType kReactorHistoryPICTID = 903;
-static const tResIDType kReactorAnswerPICTID = 904;
+static const ResIDType kReactorDigitsPICTID = 902;
+static const ResIDType kReactorHistoryPICTID = 903;
+static const ResIDType kReactorAnswerPICTID = 904;
 
-static const tCoordType kReactorHistoryLeft = kNavAreaLeft + 302;
-static const tCoordType kReactorHistoryTop = kNavAreaTop + 39;
+static const CoordType kReactorHistoryLeft = kNavAreaLeft + 302;
+static const CoordType kReactorHistoryTop = kNavAreaTop + 39;
 
-static const tCoordType kAnswerLeft = kNavAreaLeft + 304;
-static const tCoordType kAnswerTop = kNavAreaTop + 180;
+static const CoordType kAnswerLeft = kNavAreaLeft + 304;
+static const CoordType kAnswerTop = kNavAreaTop + 180;
 
-ReactorHistory::ReactorHistory(const tDisplayElementID id) : DisplayElement(id) {
+ReactorHistory::ReactorHistory(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kReactorHistoryLeft, kReactorHistoryTop, kReactorHistoryLeft + kReactorHistoryWidth,
 			kReactorHistoryTop + kReactorHistoryHeight);
 	setDisplayOrder(kMonitorLayer);

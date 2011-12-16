@@ -168,7 +168,7 @@ void Prehistoric::setUpAIRules() {
 	}
 }
 
-TimeValue Prehistoric::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue Prehistoric::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry extra;
 	uint32 extraID = 0xffffffff;
 
@@ -197,7 +197,7 @@ TimeValue Prehistoric::getViewTime(const tRoomID room, const tDirectionConstant 
 }
 
 
-void Prehistoric::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &entry) {
+void Prehistoric::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
 
 	switch (MakeRoomView(room, direction)) {
@@ -220,7 +220,7 @@ void Prehistoric::findSpotEntry(const tRoomID room, const tDirectionConstant dir
 	}
 }
 
-int16 Prehistoric::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 Prehistoric::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	if (room == kPrehistoricDeath)
 		return g_compass->getFaderValue();
 
@@ -260,7 +260,7 @@ void Prehistoric::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMov
 	}
 }
 
-void Prehistoric::turnTo(const tDirectionConstant newDirection) {
+void Prehistoric::turnTo(const DirectionConstant newDirection) {
 	setCurrentAlternate(kAltPrehistoricNormal);
 	_privateFlags.setFlag(kPrehistoricPrivateVaultOpenFlag, false);
 	Neighborhood::turnTo(newDirection);
@@ -308,7 +308,7 @@ void Prehistoric::zoomToVault() {
 		startExtraSequence(kPre18EastZoom, kExtraCompletedFlag, kFilterNoInput);
 }
 
-void Prehistoric::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void Prehistoric::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kPrehistoric08, kEast):
 	case MakeRoomView(kPrehistoric18, kSouth):
@@ -320,7 +320,7 @@ void Prehistoric::checkContinuePoint(const tRoomID room, const tDirectionConstan
 	}
 }
 
-void Prehistoric::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Item *keyCard;
 	
 	if (MakeRoomView(room, direction) == MakeRoomView(kPrehistoric25, kEast) &&
@@ -397,7 +397,7 @@ void Prehistoric::arriveAt(const tRoomID room, const tDirectionConstant directio
 }
 
 void Prehistoric::loadAmbientLoops() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 	
 	switch (room) {
 	case kPrehistoric02:
@@ -518,7 +518,7 @@ void Prehistoric::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void Prehistoric::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void Prehistoric::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	Neighborhood::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {

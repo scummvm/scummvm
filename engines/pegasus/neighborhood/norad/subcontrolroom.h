@@ -60,12 +60,12 @@ protected:
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
-	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	void robotKillsPlayer(const uint32, Neighborhood *);
-	tInputBits getInputFilter();
+	InputBits getInputFilter();
 
-	int findActionIndex(tHotSpotID);
+	int findActionIndex(HotSpotID);
 	void dispatchClawAction(const int);
 	void performActionImmediately(const int, const uint32, Neighborhood *);
 
@@ -80,12 +80,12 @@ protected:
 	void moveGreenBallToD();
 
 	void setControlMonitorToTime(const TimeValue, const int, const bool);
-	void playControlMonitorSection(const TimeValue, const TimeValue, const tNotificationFlags,
+	void playControlMonitorSection(const TimeValue, const TimeValue, const NotificationFlags,
 			const int, const bool);
 	
 	void updateClawMonitor();
 	void setClawMonitorToTime(const TimeValue);
-	void playClawMonitorSection(const TimeValue, const TimeValue, const tNotificationFlags,
+	void playClawMonitorSection(const TimeValue, const TimeValue, const NotificationFlags,
 			const int, const bool);
 	
 	Movie _subControlMovie;
@@ -117,10 +117,10 @@ protected:
 	Notification _greenBallNotification;
 	NotificationCallBack _greenBallCallBack;
 
-	tHotSpotID _outSpotID;
-	tHotSpotID _prepSpotID;
-	tHotSpotID _clawControlSpotID;
-	tHotSpotID _clawButtonSpotIDs[kNumClawButtons];
+	HotSpotID _outSpotID;
+	HotSpotID _prepSpotID;
+	HotSpotID _clawControlSpotID;
+	HotSpotID _clawButtonSpotIDs[kNumClawButtons];
 
 	Notification *_neighborhoodNotification;
 

@@ -32,22 +32,22 @@
 
 namespace Pegasus {
 
-const tCoordType kJunkMaxScreenSize = 250;
+const CoordType kJunkMaxScreenSize = 250;
 
 const float kJunkSize = convertScreenVToSpaceY(kShuttleWindowMidV - kJunkMaxScreenSize / 2, kJunkMinDistance) -
 		convertScreenVToSpaceY(kShuttleWindowMidV + kJunkMaxScreenSize / 2, kJunkMinDistance);
 
 class SpaceJunk : public ScalingMovie, public Idler {
 public:
-	SpaceJunk(const tDisplayElementID);
+	SpaceJunk(const DisplayElementID);
 	virtual ~SpaceJunk();
 
-	void setCenter(const tCoordType, const tCoordType);
-	void setScaleSize(const tCoordType);
+	void setCenter(const CoordType, const CoordType);
+	void setScaleSize(const CoordType);
 
 	void useIdleTime();
 	
-	void launchJunk(int16, tCoordType, tCoordType);
+	void launchJunk(int16, CoordType, CoordType);
 	
 	void getJunkPosition(Point3D &);
 	bool isJunkFlying();
@@ -67,7 +67,7 @@ protected:
 	Common::Point _center;
 	bool _bouncing;
 	Common::Point _bounceStart, _bounceStop;
-	tCoordType _bounceSizeStart, _bounceSizeStop;
+	CoordType _bounceSizeStart, _bounceSizeStop;
 	TimeValue _bounceTime;
 };
 

@@ -34,7 +34,7 @@ namespace Pegasus {
 
 class OpticalChip : public BiochipItem {
 public:
-	OpticalChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	OpticalChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~OpticalChip();
 
 	virtual void writeToStream(Common::WriteStream *);
@@ -45,8 +45,8 @@ public:
 	void addPoseidon();
 
 	void activateOpticalHotspots();
-	void clickInOpticalHotspot(tHotSpotID);
-	void playOpMemMovie(tHotSpotID);
+	void clickInOpticalHotspot(HotSpotID);
+	void playOpMemMovie(HotSpotID);
 
 protected:
 	enum {

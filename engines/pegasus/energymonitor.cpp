@@ -68,7 +68,7 @@ void Blinker::timeChanged(const TimeValue time) {
 	}
 }
 
-static const tNotificationFlags kEnergyExpiredFlag = 1;
+static const NotificationFlags kEnergyExpiredFlag = 1;
 
 EnergyMonitor *g_energyMonitor = 0;
 
@@ -167,7 +167,7 @@ void EnergyMonitor::timeChanged(const TimeValue currentTime) {
 	} else {
 		uint32 currentEnergy = kMaxJMPEnergy - currentTime;
 
-		tEnergyStage newStage;
+		EnergyStage newStage;
 		if (currentEnergy > kWorriedEnergy)
 			newStage = kStageCasual;
 		else if (currentEnergy > kNervousEnergy)

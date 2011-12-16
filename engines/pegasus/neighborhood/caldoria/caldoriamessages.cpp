@@ -30,9 +30,9 @@
 
 namespace Pegasus {
 
-const tNotificationFlags kMessageDoneFlag = 1;
+const NotificationFlags kMessageDoneFlag = 1;
 
-CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const tNotificationID id, NotificationManager *manager) :
+CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const NotificationID id, NotificationManager *manager) :
 		GameInteraction(kCaldoriaMessagesInteractionID, owner), Notification(id, manager), _messageMovie(kCaldoriaMessagesID) {
 }
 
@@ -54,7 +54,7 @@ void CaldoriaMessages::closeInteraction() {
 	_neighborhoodNotification->cancelNotification(this);
 }
 
-void CaldoriaMessages::receiveNotification(Notification *notification, const tNotificationFlags) {	
+void CaldoriaMessages::receiveNotification(Notification *notification, const NotificationFlags) {	
 	if (notification == _neighborhoodNotification) {
 		switch (GameInteraction::_owner->getLastExtra()) {
 		case kCaBedroomVidPhone:

@@ -31,8 +31,8 @@
 
 namespace Pegasus {
 
-tCoordType hermite(tCoordType p1, tCoordType p4, tCoordType r1, tCoordType r4, int32 t, int32 duration);
-tCoordType dHermite(tCoordType p1, tCoordType p4, tCoordType r1, tCoordType r4, int32 t, int32 duration);
+CoordType hermite(CoordType p1, CoordType p4, CoordType r1, CoordType r4, int32 t, int32 duration);
+CoordType dHermite(CoordType p1, CoordType p4, CoordType r1, CoordType r4, int32 t, int32 duration);
 void hermite(Common::Point p1, Common::Point p4, Common::Point r1, Common::Point r4, int32 t, int32 duration, Common::Point &result);
 void dHermite(Common::Point p1, Common::Point p4, Common::Point r1, Common::Point r4, int32 t, int32 duration, Common::Point &result);
 

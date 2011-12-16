@@ -31,13 +31,13 @@
 
 namespace Pegasus {
 
-const tDisplayOrder kWSCMoleculeBinOrder = kMonitorLayer;
-const tDisplayOrder kWSCMoleculesMovieOrder = kWSCMoleculeBinOrder + 1;
+const DisplayOrder kWSCMoleculeBinOrder = kMonitorLayer;
+const DisplayOrder kWSCMoleculesMovieOrder = kWSCMoleculeBinOrder + 1;
 
-const tRoomID kWSC01 = 0;
-const tRoomID kWSC02Morph = 2;
-const tRoomID kWSC02Messages = 3;
-const tRoomID kWSC62 = 62;
+const RoomID kWSC01 = 0;
+const RoomID kWSC02Morph = 2;
+const RoomID kWSC02Messages = 3;
+const RoomID kWSC62 = 62;
 
 class WSC : public Neighborhood {
 public:
@@ -50,7 +50,7 @@ public:
 
 	bool okayToJump();
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 	
 	bool inSynthesizerGame();
 	
@@ -104,28 +104,28 @@ protected:
 		kNumWSCPrivateFlags
 	};
 
-	void arriveAt(const tRoomID, const tDirectionConstant);
-	void turnTo(const tDirectionConstant);
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void arriveAt(const RoomID, const DirectionConstant);
+	void turnTo(const DirectionConstant);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void dropItemIntoRoom(Item *, Hotspot *);
 	void clickInHotspot(const Input &, const Hotspot *);
-	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
-	void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
-	tCanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
-	void cantMoveThatWay(tCanMoveForwardReason reason);
-	tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
+	TimeValue getViewTime(const RoomID, const DirectionConstant);
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
+	void cantMoveThatWay(CanMoveForwardReason reason);
+	CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir);
 	void zoomTo(const Hotspot *hotspot);
 	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
 	void setUpMoleculeGame();
 	void nextMoleculeGameLevel();
 	void startMoleculeGameLevel();
-	void moleculeGameClick(const tHotSpotID);
+	void moleculeGameClick(const HotSpotID);
 	void loadAmbientLoops();
-	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void cantOpenDoor(tCanOpenDoorReason);
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
+	void cantOpenDoor(CanOpenDoorReason);
 	void pickedUpItem(Item *);
 	void doorOpened();
-	void startExtraSequence(const tExtraID, const tNotificationFlags, const tInputBits);
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits);
 	void getExtraEntry(const uint32, ExtraTable::Entry &);
 	void takeItemFromRoom(Item *item);
 	void checkPeopleCrossing();
@@ -133,7 +133,7 @@ protected:
 	void turnRight();
 	void moveForward();
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
-	int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	void getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove);
 	void getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &compassMove);
 	void bumpIntoWall();
@@ -143,9 +143,9 @@ protected:
 	Common::String getEnvScanMovie();
 	uint getNumHints();
 	Common::String getHintMovie(uint);
-	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant);
 	void setUpPoison();
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
 	void timerExpired(const uint32);
 
 	Common::String getSoundSpotsName();

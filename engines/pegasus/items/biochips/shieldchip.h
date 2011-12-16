@@ -32,7 +32,7 @@ namespace Pegasus {
 
 class ShieldChip : public BiochipItem {
 public:
-	ShieldChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	ShieldChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~ShieldChip() {}
 
 	void select();

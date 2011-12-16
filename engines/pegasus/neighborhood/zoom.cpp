@@ -63,7 +63,7 @@ void ZoomTable::Entry::clear() {
 	direction = kNoDirection;
 }
 
-ZoomTable::Entry ZoomTable::findEntry(tHotSpotID hotspot) {
+ZoomTable::Entry ZoomTable::findEntry(HotSpotID hotspot) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].hotspot == hotspot)
 			return _entries[i];

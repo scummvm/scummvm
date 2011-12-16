@@ -38,7 +38,7 @@ namespace Pegasus {
 
 class MapChip : public BiochipItem {
 public:
-	MapChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	MapChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~MapChip();
 
 	void select();
@@ -46,7 +46,7 @@ public:
 	void takeSharedArea();
 	void giveUpSharedArea();
 
-	void moveToMapLocation(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	void moveToMapLocation(const NeighborhoodID, const RoomID, const DirectionConstant);
 
 	void writeToStream(Common::WriteStream *);
 	void readFromStream(Common::ReadStream *);

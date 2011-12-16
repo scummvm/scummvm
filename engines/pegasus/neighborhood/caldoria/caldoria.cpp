@@ -53,8 +53,8 @@ const TimeValue kSinclairInterruptionTime2 = 6835;
 const TimeValue kSinclairInterruptionTime3 = 9835;
 const TimeValue kSinclairInterruptionTime4 = 12555;
 
-const tInputBits kPullbackInterruptFilter = kFilterAllInput;
-const tInputBits kRecalibrationInterruptFilter = kFilterAllInput;
+const InputBits kPullbackInterruptFilter = kFilterAllInput;
+const InputBits kRecalibrationInterruptFilter = kFilterAllInput;
 
 const TimeValue kCaldoriaReplicatorIntroIn = 4933;
 const TimeValue kCaldoriaReplicatorIntroOut = 6557;
@@ -146,9 +146,9 @@ const TimeValue k5To2Time = 41240;
 
 const TimeValue k5To3Time = 41280;
 
-//	MMFuseFunction functions...
+//	FuseFunction functions...
 
-const tNotificationFlags kSinclairLoopDoneFlag = kLastNeighborhoodNotificationFlag << 1;
+const NotificationFlags kSinclairLoopDoneFlag = kLastNeighborhoodNotificationFlag << 1;
 
 void doorBombTimerExpiredFunction(FunctionPtr *, void *caldoria) {
 	((Caldoria *)caldoria)->doorBombTimerExpired();
@@ -341,7 +341,7 @@ uint16 Caldoria::getDateResID() const {
 	return kDate2318ID;
 }
 
-TimeValue Caldoria::getViewTime(const tRoomID room, const tDirectionConstant direction) {
+TimeValue Caldoria::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry extra;	
 	uint32 extraID = 0xffffffff;
 
@@ -444,7 +444,7 @@ void Caldoria::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 	}
 }
 
-void Caldoria::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &entry) {	
+void Caldoria::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {	
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
 
 	switch (room) {
@@ -506,7 +506,7 @@ void Caldoria::startDoorOpenMovie(const TimeValue startTime, const TimeValue sto
 		Neighborhood::startDoorOpenMovie(startTime, stopTime);
 }
 
-void Caldoria::startTurnPush(const tTurnDirection turnDirection, const TimeValue newViewTime, const tDirectionConstant destDirection) {
+void Caldoria::startTurnPush(const TurnDirection turnDirection, const TimeValue newViewTime, const DirectionConstant destDirection) {
 	switch (GameState.getCurrentRoom()) {
 	case kCaldoria05:
 	case kCaldoria07:
@@ -540,7 +540,7 @@ void Caldoria::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
-void Caldoria::closeDoorOffScreen(const tRoomID room, const tDirectionConstant direction) {
+void Caldoria::closeDoorOffScreen(const RoomID room, const DirectionConstant direction) {
 	switch (room) {
 	case kCaldoria08:
 		if (direction == kNorth)
@@ -570,7 +570,7 @@ void Caldoria::closeDoorOffScreen(const tRoomID room, const tDirectionConstant d
 	}
 }
 
-int16 Caldoria::getStaticCompassAngle(const tRoomID room, const tDirectionConstant dir) {
+int16 Caldoria::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
 	int16 result = Neighborhood::getStaticCompassAngle(room, dir);
 
 	switch (room) {
@@ -668,7 +668,7 @@ void Caldoria::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec
 }
 
 void Caldoria::loadAmbientLoops() {
-	tRoomID room = GameState.getCurrentRoom();
+	RoomID room = GameState.getCurrentRoom();
 
 	if (room == kCaldoria00 && GameState.getCaldoriaWokenUp())
 		loadLoopSound1("Sounds/Caldoria/Apartment Music.AIFF", 0x100 / 4);
@@ -684,7 +684,7 @@ void Caldoria::loadAmbientLoops() {
 		loadLoopSound1("Sounds/Caldoria/A50NLB00.22K.AIFF", 0x100 / 4);
 }
 
-void Caldoria::checkContinuePoint(const tRoomID room, const tDirectionConstant direction) {
+void Caldoria::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kCaldoria06, kSouth):
 	case MakeRoomView(kCaldoria13, kNorth):
@@ -706,7 +706,7 @@ void Caldoria::spotCompleted() {
 		startExtraSequence(kBinocularsZoomInOnShip, kExtraCompletedFlag, kFilterNoInput);
 }
 
-void Caldoria::arriveAt(const tRoomID room, const tDirectionConstant direction) {
+void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 	switch (room) {
 	case kCaldoria56:
 		if (!GameState.getCaldoriaGunAimed())
@@ -981,7 +981,7 @@ void Caldoria::downButton(const Input &input) {
 	}
 }
 
-void Caldoria::turnTo(const tDirectionConstant direction) {
+void Caldoria::turnTo(const DirectionConstant direction) {
 	Neighborhood::turnTo(direction);
 
 	switch (GameState.getCurrentRoom()) {
@@ -1106,7 +1106,7 @@ void Caldoria::zoomToSinclair() {
 	startExtraSequence(kCa53EastZoomToSinclair, kExtraCompletedFlag, kFilterAllInput);
 }
 
-void Caldoria::receiveNotification(Notification *notification, const tNotificationFlags flags) {	
+void Caldoria::receiveNotification(Notification *notification, const NotificationFlags flags) {	
 	Neighborhood::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {
@@ -1255,8 +1255,8 @@ void Caldoria::receiveNotification(Notification *notification, const tNotificati
 	g_AIArea->checkMiddleArea();
 }
 
-tInputBits Caldoria::getInputFilter() {
-	tInputBits result = Neighborhood::getInputFilter();
+InputBits Caldoria::getInputFilter() {
+	InputBits result = Neighborhood::getInputFilter();
 
 	switch (GameState.getCurrentRoom()) {
 	case kCaldoria00:
@@ -1471,7 +1471,7 @@ void Caldoria::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void Caldoria::clickOnDoorbell(const tHotSpotID doorBellSpotID) {
+void Caldoria::clickOnDoorbell(const HotSpotID doorBellSpotID) {
 	uint32 extra;
 	ExtraTable::Entry entry;
 
@@ -1501,7 +1501,7 @@ void Caldoria::clickOnDoorbell(const tHotSpotID doorBellSpotID) {
 	requestSpotSound(kCaldoriaNobodyHomeIn, kCaldoriaNobodyHomeOut, kFilterNoInput, kSpotSoundCompletedFlag);
 }
 
-tCanOpenDoorReason Caldoria::canOpenDoor(DoorTable::Entry &entry) {
+CanOpenDoorReason Caldoria::canOpenDoor(DoorTable::Entry &entry) {
 	switch (GameState.getCurrentRoom()) {
 	case kCaldoria16:
 	case kCaldoria38:
@@ -1519,7 +1519,7 @@ void Caldoria::doorOpened() {
 	_privateFlags.setFlag(kCaldoriaPrivateCanOpenElevatorDoorFlag, false);
 }
 
-GameInteraction *Caldoria::makeInteraction(const tInteractionID interactionID) {
+GameInteraction *Caldoria::makeInteraction(const InteractionID interactionID) {
 	switch (interactionID) {
 	case kCaldoria4DInteractionID:
 		return new Caldoria4DSystem(this);
@@ -1534,7 +1534,7 @@ GameInteraction *Caldoria::makeInteraction(const tInteractionID interactionID) {
 	return 0;
 }
 
-void Caldoria::newInteraction(const tInteractionID interactionID) {
+void Caldoria::newInteraction(const InteractionID interactionID) {
 	Neighborhood::newInteraction(interactionID);
 
 	if (!_currentInteraction) {
@@ -1552,7 +1552,7 @@ void Caldoria::newInteraction(const tInteractionID interactionID) {
 //	the inventory is too full or because the player lets go of the item before
 //	dropping it into the inventory).
 Hotspot *Caldoria::getItemScreenSpot(Item *item, DisplayElement *element) {
-	tHotSpotID destSpotID = kNoHotSpotID;
+	HotSpotID destSpotID = kNoHotSpotID;
 	
 	switch (item->getObjectID()) {
 	case kKeyCard:
@@ -1853,7 +1853,7 @@ Common::String Caldoria::getEnvScanMovie() {
 	Common::String movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
-		tRoomID room = GameState.getCurrentRoom();
+		RoomID room = GameState.getCurrentRoom();
 
 		if (room >= kCaldoria00 && room <= kCaldoria14) {
 			// Inside apartment.

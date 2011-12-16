@@ -149,20 +149,20 @@ bool AITimerCondition::fireCondition() {
 AILocationCondition::AILocationCondition(uint32 maxLocations) {
 	_numLocations = 0;
 	_maxLocations = maxLocations;
-	_locations = new tRoomViewID[maxLocations];
+	_locations = new RoomViewID[maxLocations];
 }
 
 AILocationCondition::~AILocationCondition() {
 	delete[] _locations;
 }
 
-void AILocationCondition::addLocation(const tRoomViewID location) {
+void AILocationCondition::addLocation(const RoomViewID location) {
 	if (_numLocations < _maxLocations)
 		_locations[_numLocations++] = location;
 }
 
 bool AILocationCondition::fireCondition() {
-	tRoomViewID test = GameState.getCurrentRoomAndView(), *p;
+	RoomViewID test = GameState.getCurrentRoomAndView(), *p;
 	uint32 i;
 
 	for (i = 0, p = _locations; i < _numLocations; i++, p++) {
@@ -180,7 +180,7 @@ void AILocationCondition::writeAICondition(Common::WriteStream *stream) {
 	stream->writeUint32BE(_numLocations);
 
 	uint32 i;
-	tRoomViewID *p;
+	RoomViewID *p;
 	for (i = 0, p = _locations; i < _numLocations; i++, p++)
 		stream->writeUint32BE(*p);
 }
@@ -190,19 +190,19 @@ void AILocationCondition::readAICondition(Common::ReadStream *stream) {
 
 	if (_maxLocations != maxLocations) {
 		delete[] _locations;
-		_locations = new tRoomViewID[maxLocations];
+		_locations = new RoomViewID[maxLocations];
 		_maxLocations = maxLocations;
 	}
 
 	_numLocations = stream->readUint32BE();
 
 	uint32 i;
-	tRoomViewID *p;
+	RoomViewID *p;
 	for (i = 0, p = _locations; i < _numLocations; i++, p++)
 		*p = stream->readUint32BE();
 }
 
-AIDoorOpenedCondition::AIDoorOpenedCondition(tRoomViewID doorLocation) {
+AIDoorOpenedCondition::AIDoorOpenedCondition(RoomViewID doorLocation) {
 	_doorLocation = doorLocation;
 }
 
@@ -210,7 +210,7 @@ bool AIDoorOpenedCondition::fireCondition() {
 	return GameState.getCurrentRoomAndView() == _doorLocation && GameState.isCurrentDoorOpen();
 }
 
-AIHasItemCondition::AIHasItemCondition(const tItemID item) {
+AIHasItemCondition::AIHasItemCondition(const ItemID item) {
 	_item = item;
 }
 
@@ -218,7 +218,7 @@ bool AIHasItemCondition::fireCondition() {
 	return _item == kNoItemID || GameState.isTakenItemID(_item);
 }
 
-AIDoesntHaveItemCondition::AIDoesntHaveItemCondition(const tItemID item) {
+AIDoesntHaveItemCondition::AIDoesntHaveItemCondition(const ItemID item) {
 	_item = item;
 }
 
@@ -226,7 +226,7 @@ bool AIDoesntHaveItemCondition::fireCondition() {
 	return _item == kNoItemID || !GameState.isTakenItemID(_item);
 }
 
-AICurrentItemCondition::AICurrentItemCondition(const tItemID item) {
+AICurrentItemCondition::AICurrentItemCondition(const ItemID item) {
 	_item = item;
 }
 	
@@ -239,7 +239,7 @@ bool AICurrentItemCondition::fireCondition() {
 	return item != 0 && item->getObjectID() == _item;
 }
 
-AICurrentBiochipCondition::AICurrentBiochipCondition(const tItemID biochip)  {
+AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip)  {
 	_biochip = biochip;
 }
 
@@ -252,7 +252,7 @@ bool AICurrentBiochipCondition::fireCondition() {
 	return biochip != 0 && biochip->getObjectID() == _biochip;
 }
 
-AIItemStateCondition::AIItemStateCondition(const tItemID item, const tItemState state) {
+AIItemStateCondition::AIItemStateCondition(const ItemID item, const ItemState state) {
 	_item = item;
 	_state = state;
 }
@@ -270,15 +270,15 @@ bool AIEnergyMonitorCondition::fireCondition() {
 	return g_energyMonitor != 0 && g_energyMonitor->getCurrentEnergy() < _energyThreshold;
 }
 
-AILastExtraCondition::AILastExtraCondition(const tExtraID lastExtra) {
+AILastExtraCondition::AILastExtraCondition(const ExtraID lastExtra) {
 	_lastExtra = lastExtra;
 }
 
 bool AILastExtraCondition::fireCondition() {
-	return g_neighborhood && (tExtraID)g_neighborhood->getLastExtra() == _lastExtra;
+	return g_neighborhood && (ExtraID)g_neighborhood->getLastExtra() == _lastExtra;
 }
 
-AICondition *makeLocationAndDoesntHaveItemCondition(const tRoomID room, const tDirectionConstant direction, const tItemID item) {
+AICondition *makeLocationAndDoesntHaveItemCondition(const RoomID room, const DirectionConstant direction, const ItemID item) {
 	AILocationCondition *location = new AILocationCondition(1);
 	location->addLocation(MakeRoomView(room, direction));
 	

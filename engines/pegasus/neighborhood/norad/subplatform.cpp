@@ -47,12 +47,12 @@ const TimeValue kPrepIncompleteStop = 19;
 const TimeValue kDamagedStart = 19;
 const TimeValue kDamagedStop = 28;
 
-const tNotificationFlags kNormalSplashFinished = 1;
-const tNotificationFlags kPrepSubFinished = kNormalSplashFinished << 1;
-const tNotificationFlags kPrepIncompleteFinished = kPrepSubFinished << 1;
-const tNotificationFlags kDamagedFinished = kPrepIncompleteFinished << 1;
+const NotificationFlags kNormalSplashFinished = 1;
+const NotificationFlags kPrepSubFinished = kNormalSplashFinished << 1;
+const NotificationFlags kPrepIncompleteFinished = kPrepSubFinished << 1;
+const NotificationFlags kDamagedFinished = kPrepIncompleteFinished << 1;
 
-const tNotificationFlags kPlatformNotificationFlags = kNormalSplashFinished |
+const NotificationFlags kPlatformNotificationFlags = kNormalSplashFinished |
 														kPrepSubFinished |
 														kPrepIncompleteFinished |
 														kDamagedFinished;
@@ -99,7 +99,7 @@ void SubPlatform::setSoundFXLevel(const uint16 fxLevel) {
 	_platformMovie.setVolume(fxLevel);
 }
 
-void SubPlatform::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void SubPlatform::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	FaderMoveSpec loop1Spec, loop2Spec;
 	ExtraTable::Entry entry;
 

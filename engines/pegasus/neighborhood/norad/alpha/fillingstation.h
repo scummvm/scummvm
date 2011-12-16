@@ -47,7 +47,7 @@ public:
 	void newFillingItem(Item *);
 
 protected:
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 
 	virtual void openInteraction();
 	virtual void initInteraction();
@@ -77,13 +77,13 @@ protected:
 	void dispenseGas();
 
 	void setStaticState(TimeValue, int16);
-	void setSegmentState(TimeValue, TimeValue, tNotificationFlags, int16);
+	void setSegmentState(TimeValue, TimeValue, NotificationFlags, int16);
 
 	Movie _rightSideMovie;
 	Notification _rightSideNotification;
 	NotificationCallBack _rightSideCallBack;
 	int16 _state;
-	tItemID _dispenseItemID;
+	ItemID _dispenseItemID;
 };
 
 } // End of namespace Pegasus

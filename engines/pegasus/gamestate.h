@@ -300,48 +300,48 @@ public:
 	
 	void resetGameState();
 	
-	void getCurrentLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction);
-	void setCurrentLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	void getCurrentLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
+	void setCurrentLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 	
-	tNeighborhoodID getCurrentNeighborhood();
-	void setCurrentNeighborhood(const tNeighborhoodID neighborhood);
-	tRoomID getCurrentRoom();
-	void setCurrentRoom(const tRoomID room);
-	tDirectionConstant getCurrentDirection();
-	void setCurrentDirection(const tDirectionConstant direction);
+	NeighborhoodID getCurrentNeighborhood();
+	void setCurrentNeighborhood(const NeighborhoodID neighborhood);
+	RoomID getCurrentRoom();
+	void setCurrentRoom(const RoomID room);
+	DirectionConstant getCurrentDirection();
+	void setCurrentDirection(const DirectionConstant direction);
 	
-	tRoomViewID getCurrentRoomAndView();
+	RoomViewID getCurrentRoomAndView();
 	
-	void getNextLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction);
-	void	setNextLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	void getNextLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
+	void	setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 
-	tNeighborhoodID getNextNeighborhood();
-	void setNextNeighborhood(const tNeighborhoodID neighborhood);
-	tRoomID getNextRoom();
-	void setNextRoom(const tRoomID room);
-	tDirectionConstant getNextDirection();
-	void setNextDirection(const tDirectionConstant direction);
+	NeighborhoodID getNextNeighborhood();
+	void setNextNeighborhood(const NeighborhoodID neighborhood);
+	RoomID getNextRoom();
+	void setNextRoom(const RoomID room);
+	DirectionConstant getNextDirection();
+	void setNextDirection(const DirectionConstant direction);
 	
-	void getLastLocation(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction);
-	void setLastLocation(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	void getLastLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
+	void setLastLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 	
-	tNeighborhoodID getLastNeighborhood();
-	void setLastNeighborhood(const tNeighborhoodID neighborhood);
-	tRoomID getLastRoom();
-	void setLastRoom(const tRoomID room);
-	tDirectionConstant getLastDirection();
-	void setLastDirection(const tDirectionConstant direction);
+	NeighborhoodID getLastNeighborhood();
+	void setLastNeighborhood(const NeighborhoodID neighborhood);
+	RoomID getLastRoom();
+	void setLastRoom(const RoomID room);
+	DirectionConstant getLastDirection();
+	void setLastDirection(const DirectionConstant direction);
 	
-	tRoomViewID getLastRoomAndView();
+	RoomViewID getLastRoomAndView();
 	
-	void getOpenDoorLocation(tRoomID &room, tDirectionConstant &direction);
-	void setOpenDoorLocation(const tRoomID room, const tDirectionConstant direction);
-	tRoomID getOpenDoorRoom();
-	void setOpenDoorRoom(const tRoomID room);
-	tDirectionConstant getOpenDoorDirection();
-	void setOpenDoorDirection(const tDirectionConstant direction);
+	void getOpenDoorLocation(RoomID &room, DirectionConstant &direction);
+	void setOpenDoorLocation(const RoomID room, const DirectionConstant direction);
+	RoomID getOpenDoorRoom();
+	void setOpenDoorRoom(const RoomID room);
+	DirectionConstant getOpenDoorDirection();
+	void setOpenDoorDirection(const DirectionConstant direction);
 	
-	tRoomViewID getDoorOpenRoomAndView();
+	RoomViewID getDoorOpenRoomAndView();
 	
 	bool isCurrentDoorOpen();
 
@@ -563,13 +563,13 @@ public:
 	bool					getScoringNoradGandhi();
 	bool					getScoringWSCGandhi();
 
-	tGameScoreType			getCaldoriaTSAScore();
-	tGameScoreType			getPrehistoricScore();
-	tGameScoreType			getMarsScore();
-	tGameScoreType			getNoradScore();
-	tGameScoreType			getWSCScore();
-	tGameScoreType			getGandhiScore();
-	tGameScoreType			getTotalScore();
+	GameScoreType			getCaldoriaTSAScore();
+	GameScoreType			getPrehistoricScore();
+	GameScoreType			getMarsScore();
+	GameScoreType			getNoradScore();
+	GameScoreType			getWSCScore();
+	GameScoreType			getGandhiScore();
+	GameScoreType			getTotalScore();
 
 	void					writeCaldoriaState(Common::WriteStream *stream);
 	void					readCaldoriaState(Common::ReadStream *stream);
@@ -615,10 +615,10 @@ public:
 	void						setNoradFinished(bool);
 	bool					getNoradFinished();
 	bool					allTimeZonesFinished();
-	void						setTakenItemID(tItemID, bool);
-	bool					isTakenItemID(tItemID);
-	void						setTakenItem(Item*, bool);
-	bool					isTakenItem(Item*);
+	void						setTakenItemID(ItemID, bool);
+	bool					isTakenItemID(ItemID);
+	void						setTakenItem(Item *, bool);
+	bool					isTakenItem(Item *);
 	
 	//	Caldoria
 	void						setCaldoriaFuseTimeLimit(const TimeValue);
@@ -739,8 +739,8 @@ public:
 	bool					getNoradWaitingForLaser();
 	void						setNoradSubRoomPressure(uint16);
 	uint16					getNoradSubRoomPressure();
-	void						setNoradSubPrepState(tNoradSubPrepState);
-	tNoradSubPrepState		getNoradSubPrepState();
+	void						setNoradSubPrepState(NoradSubPrepState);
+	NoradSubPrepState		getNoradSubPrepState();
 	void						setNoradArrivedFromSub(bool);
 	bool					getNoradArrivedFromSub();
 	
@@ -841,17 +841,17 @@ protected:
 
 private:
 	// Base
-	tNeighborhoodID _currentNeighborhood;
-	tRoomID _currentRoom;
-	tDirectionConstant _currentDirection;
-	tNeighborhoodID _nextNeighborhoodID;
-	tRoomID _nextRoomID;
-	tDirectionConstant _nextDirection;
-	tNeighborhoodID _lastNeighborhood;
-	tRoomID _lastRoom;
-	tDirectionConstant _lastDirection;
-	tRoomID _openDoorRoom;
-	tDirectionConstant _openDoorDirection;
+	NeighborhoodID _currentNeighborhood;
+	RoomID _currentRoom;
+	DirectionConstant _currentDirection;
+	NeighborhoodID _nexNeighborhoodID;
+	RoomID _nexRoomID;
+	DirectionConstant _nextDirection;
+	NeighborhoodID _lastNeighborhood;
+	RoomID _lastRoom;
+	DirectionConstant _lastDirection;
+	RoomID _openDoorRoom;
+	DirectionConstant _openDoorDirection;
 
 	// Pegasus Prime
 	FlagsArray<byte, kNumGlobalFlags> _globalFlags;
@@ -872,7 +872,7 @@ private:
 	
 	FlagsArray<byte, kNumNoradFlags> _noradFlags;
 	uint16 _noradSubRoomPressure;
-	tNoradSubPrepState _noradSubPrepState;
+	NoradSubPrepState _noradSubPrepState;
 	
 	FlagsArray<byte, kNumMarsFlags> _marsFlags;
 	

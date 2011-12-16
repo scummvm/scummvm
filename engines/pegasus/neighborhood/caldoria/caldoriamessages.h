@@ -38,14 +38,14 @@ class Neighborhood;
 
 class CaldoriaMessages : public GameInteraction, public Notification, public NotificationReceiver {
 public:
-	CaldoriaMessages(Neighborhood *, const tNotificationID, NotificationManager *);
+	CaldoriaMessages(Neighborhood *, const NotificationID, NotificationManager *);
 	virtual ~CaldoriaMessages() {}
 
 protected:
 	void openInteraction();
 	void initInteraction();
 	void closeInteraction();
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void clickInHotspot(const Input &, const Hotspot *);
 	void play1Message(uint);
 	

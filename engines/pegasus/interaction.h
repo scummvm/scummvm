@@ -31,13 +31,13 @@
 
 namespace Pegasus {
 
-static const tInteractionID kNoInteractionID = -1;
+static const InteractionID kNoInteractionID = -1;
 
 class Neighborhood;
 
 class GameInteraction : public IDObject, public InputHandler {
 public:
-	GameInteraction(const tInteractionID id, Neighborhood *nextHandler) : IDObject(id), InputHandler((InputHandler *)nextHandler) {
+	GameInteraction(const InteractionID id, Neighborhood *nextHandler) : IDObject(id), InputHandler((InputHandler *)nextHandler) {
 		_isInteracting = false;
 		_savedHandler = 0;
 		_owner = nextHandler;

@@ -77,12 +77,12 @@ public:
 
 	virtual uint16 getDateResID() const;
 
-	virtual tAirQuality getAirQuality(const tRoomID);
+	virtual AirQuality getAirQuality(const RoomID);
 
 	void checkAirMask();
 
-	void showBigExplosion(const Common::Rect &, const tDisplayOrder);
-	void showLittleExplosion(const Common::Rect &, const tDisplayOrder);
+	void showBigExplosion(const Common::Rect &, const DisplayOrder);
+	void showLittleExplosion(const Common::Rect &, const DisplayOrder);
 	void hitByJunk();
 	void decreaseRobotShuttleEnergy(const int, Common::Point impactPoint);
 	void setUpNextDropTime();
@@ -95,7 +95,7 @@ public:
 	virtual void shieldOn();
 	virtual void shieldOff();
 
-	void checkContinuePoint(const tRoomID, const tDirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 	void setSoundFXLevel(const uint16);
 
@@ -123,25 +123,25 @@ protected:
 	void init();
 	void start();
 	void setUpAIRules();
-	void arriveAt(const tRoomID, const tDirectionConstant);
+	void arriveAt(const RoomID, const DirectionConstant);
 	void takeItemFromRoom(Item *);
 	void dropItemIntoRoom(Item *, Hotspot *);
 	void activateHotspots();
 	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
 	void clickInHotspot(const Input &, const Hotspot *);
-	tInputBits getInputFilter();
+	InputBits getInputFilter();
 	
-	TimeValue getViewTime(const tRoomID, const tDirectionConstant);
-	void getZoomEntry(const tHotSpotID, ZoomTable::Entry &);
-	void findSpotEntry(const tRoomID, const tDirectionConstant, tSpotFlags, SpotTable::Entry &);
-	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &);
+	TimeValue getViewTime(const RoomID, const DirectionConstant);
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
 	void openDoor();
-	void closeDoorOffScreen(const tRoomID, const tDirectionConstant);
-	int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
 	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
 	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
-	void turnTo(const tDirectionConstant);
-	void receiveNotification(Notification *, const tNotificationFlags);
+	void turnTo(const DirectionConstant);
+	void receiveNotification(Notification *, const NotificationFlags);
 	void doorOpened();
 	void setUpReactorEnergyDrain();
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
@@ -155,8 +155,8 @@ protected:
 	void doReactorGuess(int32 guess);
 	void bombExplodesInGame();
 	void didntFindBomb();
-	tCanMoveForwardReason canMoveForward(ExitTable::Entry &);
-	void cantMoveThatWay(tCanMoveForwardReason);
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &);
+	void cantMoveThatWay(CanMoveForwardReason);
 	void moveForward();
 	void bumpIntoWall();
 	void turnLeft();
@@ -165,7 +165,7 @@ protected:
 	void loadAmbientLoops();
 	void checkAirlockDoors();
 	void pickedUpItem(Item *item);
-	void cantOpenDoor(tCanOpenDoorReason);
+	void cantOpenDoor(CanOpenDoorReason);
 	void launchMaze007Robot();
 	void launchMaze015Robot();
 	void launchMaze101Robot();
@@ -183,7 +183,7 @@ protected:
 	void startUpFromFinishedSpaceChase();
 	void startUpFromSpaceChase();
 	void transportToRobotShip();
-	void spaceChaseClick(const Input &, const tHotSpotID);
+	void spaceChaseClick(const Input &, const HotSpotID);
 	void updateCursor(const Common::Point, const Hotspot *);
 
 	Common::String getSoundSpotsName();

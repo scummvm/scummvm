@@ -44,31 +44,31 @@ public:
 	Inventory();
 	virtual ~Inventory();
 	
-	tWeightType getWeightLimit();
-	void setWeightLimit(tWeightType limit);
-	tWeightType getWeight();
+	WeightType getWeightLimit();
+	void setWeightLimit(WeightType limit);
+	WeightType getWeight();
 	
-	virtual tInventoryResult addItem(Item *item);
-	virtual tInventoryResult removeItem(Item *item);
-	virtual tInventoryResult removeItem(tItemID id);
+	virtual InventoryResult addItem(Item *item);
+	virtual InventoryResult removeItem(Item *item);
+	virtual InventoryResult removeItem(ItemID id);
 	virtual bool itemInInventory(Item *item);
-	virtual bool itemInInventory(tItemID id);
+	virtual bool itemInInventory(ItemID id);
 	virtual Item *getItemAt(int32 index);
-	virtual tItemID getItemIDAt(int32 index);
-	virtual Item *findItemByID(tItemID id);
+	virtual ItemID getItemIDAt(int32 index);
+	virtual Item *findItemByID(ItemID id);
 	virtual int32 findIndexOf(Item *item);
-	virtual int32 findIndexOf(tItemID id);
+	virtual int32 findIndexOf(ItemID id);
 	int32 getNumItems();
 	virtual void removeAllItems();
 	
-	void setOwnerID(const tActorID id);
-	tActorID getOwnerID() const;
+	void setOwnerID(const ActorID id);
+	ActorID getOwnerID() const;
 	
 	uint32 getReferenceCount() { return _referenceCount; }
 
 protected:
-	tWeightType _weightLimit;
-	tActorID _ownerID;
+	WeightType _weightLimit;
+	ActorID _ownerID;
 	ItemList _inventoryList;
 
 private:

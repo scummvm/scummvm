@@ -43,8 +43,8 @@ void GameMenu::restorePreviousHandler() {
 	InputHandler::setInputHandler(_previousHandler);
 }
 
-void GameMenu::drawScore(tGameScoreType score, tGameScoreType total, const Common::Rect &scoreBounds, Surface *numbers) {
-	tCoordType x = scoreBounds.right;
+void GameMenu::drawScore(GameScoreType score, GameScoreType total, const Common::Rect &scoreBounds, Surface *numbers) {
+	CoordType x = scoreBounds.right;
 	drawNumber(total, x, scoreBounds.top, numbers);
 
 	x -= 12;
@@ -55,7 +55,7 @@ void GameMenu::drawScore(tGameScoreType score, tGameScoreType total, const Commo
 	drawNumber(score, x, scoreBounds.top, numbers);
 }
 
-void GameMenu::drawNumber(tGameScoreType number, tCoordType &x, tCoordType y, Surface *numbers) {
+void GameMenu::drawNumber(GameScoreType number, CoordType &x, CoordType y, Surface *numbers) {
 	Common::Rect r1(0, 0, 12, 12); // Width, height of one digit
 	Common::Rect r2 = r1;
 	r2.moveTo(x - 12, y);
@@ -88,59 +88,59 @@ enum {
 	kLastSelection = kMainMenuQuit
 };
 
-static const tCoordType kStartLeftDemo = 44;
-static const tCoordType kStartTopDemo = 336;
+static const CoordType kStartLeftDemo = 44;
+static const CoordType kStartTopDemo = 336;
 
-static const tCoordType kStartSelectLeftDemo = 40;
-static const tCoordType kStartSelectTopDemo = 331;
+static const CoordType kStartSelectLeftDemo = 40;
+static const CoordType kStartSelectTopDemo = 331;
 
-static const tCoordType kCreditsLeftDemo = 44;
-static const tCoordType kCreditsTopDemo = 372;
+static const CoordType kCreditsLeftDemo = 44;
+static const CoordType kCreditsTopDemo = 372;
 
-static const tCoordType kCreditsSelectLeftDemo = 40;
-static const tCoordType kCreditsSelectTopDemo = 367;
+static const CoordType kCreditsSelectLeftDemo = 40;
+static const CoordType kCreditsSelectTopDemo = 367;
 
-static const tCoordType kMainMenuQuitLeftDemo = 32;
-static const tCoordType kMainMenuQuitTopDemo = 412;
+static const CoordType kMainMenuQuitLeftDemo = 32;
+static const CoordType kMainMenuQuitTopDemo = 412;
 
-static const tCoordType kMainMenuQuitSelectLeftDemo = 28;
-static const tCoordType kMainMenuQuitSelectTopDemo = 408;
+static const CoordType kMainMenuQuitSelectLeftDemo = 28;
+static const CoordType kMainMenuQuitSelectTopDemo = 408;
 
-static const tCoordType kOverviewLeft = 200;
-static const tCoordType kOverviewTop = 208;
+static const CoordType kOverviewLeft = 200;
+static const CoordType kOverviewTop = 208;
 
-static const tCoordType kOverviewSelectLeft = 152;
-static const tCoordType kOverviewSelectTop = 204;
+static const CoordType kOverviewSelectLeft = 152;
+static const CoordType kOverviewSelectTop = 204;
 
-static const tCoordType kStartLeft = 212;
-static const tCoordType kStartTop = 256;
+static const CoordType kStartLeft = 212;
+static const CoordType kStartTop = 256;
 
-static const tCoordType kStartSelectLeft = 152;
-static const tCoordType kStartSelectTop = 252;
+static const CoordType kStartSelectLeft = 152;
+static const CoordType kStartSelectTop = 252;
 
-static const tCoordType kRestoreLeft = 212;
-static const tCoordType kRestoreTop = 296;
+static const CoordType kRestoreLeft = 212;
+static const CoordType kRestoreTop = 296;
 
-static const tCoordType kRestoreSelectLeft = 152;
-static const tCoordType kRestoreSelectTop = 292;
+static const CoordType kRestoreSelectLeft = 152;
+static const CoordType kRestoreSelectTop = 292;
 
-static const tCoordType kDifficultyLeft = 320;
-static const tCoordType kDifficultyTop = 340;
+static const CoordType kDifficultyLeft = 320;
+static const CoordType kDifficultyTop = 340;
 
-static const tCoordType kDifficultySelectLeft = 152;
-static const tCoordType kDifficultySelectTop = 336;
+static const CoordType kDifficultySelectLeft = 152;
+static const CoordType kDifficultySelectTop = 336;
 
-static const tCoordType kCreditsLeft = 212;
-static const tCoordType kCreditsTop = 388;
+static const CoordType kCreditsLeft = 212;
+static const CoordType kCreditsTop = 388;
 
-static const tCoordType kCreditsSelectLeft = 152;
-static const tCoordType kCreditsSelectTop = 384;
+static const CoordType kCreditsSelectLeft = 152;
+static const CoordType kCreditsSelectTop = 384;
 
-static const tCoordType kMainMenuQuitLeft = 212;
-static const tCoordType kMainMenuQuitTop = 428;
+static const CoordType kMainMenuQuitLeft = 212;
+static const CoordType kMainMenuQuitTop = 428;
 
-static const tCoordType kMainMenuQuitSelectLeft = 152;
-static const tCoordType kMainMenuQuitSelectTop = 424;
+static const CoordType kMainMenuQuitSelectLeft = 152;
+static const CoordType kMainMenuQuitSelectTop = 424;
 
 //	Never set the current input handler to the MainMenu.
 MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButton(0),
@@ -417,29 +417,29 @@ enum {
 	kCreditsLastSelection = kCreditsMenuMainMenu
 };
 
-static const tCoordType kCreditsMovieLeft = 288;
-static const tCoordType kCreditsMovieTop = 0;
+static const CoordType kCreditsMovieLeft = 288;
+static const CoordType kCreditsMovieTop = 0;
 
-static const tCoordType kCoreTeamSelectLeft = 40;
-static const tCoordType kCoreTeamSelectTop = 223;
+static const CoordType kCoreTeamSelectLeft = 40;
+static const CoordType kCoreTeamSelectTop = 223;
 
-static const tCoordType kSupportTeamSelectLeft = 40;
-static const tCoordType kSupportTeamSelectTop = 259;
+static const CoordType kSupportTeamSelectLeft = 40;
+static const CoordType kSupportTeamSelectTop = 259;
 
-static const tCoordType kOriginalTeamSelectLeft = 40;
-static const tCoordType kOriginalTeamSelectTop = 295;
+static const CoordType kOriginalTeamSelectLeft = 40;
+static const CoordType kOriginalTeamSelectTop = 295;
 
-static const tCoordType kTalentSelectLeft = 40;
-static const tCoordType kTalentSelectTop = 331;
+static const CoordType kTalentSelectLeft = 40;
+static const CoordType kTalentSelectTop = 331;
 
-static const tCoordType kOtherTitlesSelectLeft = 40;
-static const tCoordType kOtherTitlesSelectTop = 367;
+static const CoordType kOtherTitlesSelectLeft = 40;
+static const CoordType kOtherTitlesSelectTop = 367;
 
-static const tCoordType kCreditsMainMenuLeft = 32;
-static const tCoordType kCreditsMainMenuTop = 412;
+static const CoordType kCreditsMainMenuLeft = 32;
+static const CoordType kCreditsMainMenuTop = 412;
 
-static const tCoordType kCreditsMainMenuSelectLeft = 30;
-static const tCoordType kCreditsMainMenuSelectTop = 408;
+static const CoordType kCreditsMainMenuSelectLeft = 30;
+static const CoordType kCreditsMainMenuSelectTop = 408;
 
 static const TimeValue kCoreTeamTime = 0;
 static const TimeValue kSupportTeamTime = 1920;
@@ -578,36 +578,36 @@ void CreditsMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	InputHandler::handleInput(input, cursorSpot);
 }
 
-static const tCoordType kContinueLeft = 44;
-static const tCoordType kContinueTop = 336;
+static const CoordType kContinueLeft = 44;
+static const CoordType kContinueTop = 336;
 
-static const tCoordType kContinueSelectLeft = 40;
-static const tCoordType kContinueSelectTopDemo = 331;
-static const tCoordType kContinueSelectTop = 332;
+static const CoordType kContinueSelectLeft = 40;
+static const CoordType kContinueSelectTopDemo = 331;
+static const CoordType kContinueSelectTop = 332;
 
-static const tCoordType kMainMenuLeftDemo = 44;
-static const tCoordType kMainMenuTopDemo = 372;
+static const CoordType kMainMenuLeftDemo = 44;
+static const CoordType kMainMenuTopDemo = 372;
 
-static const tCoordType kMainMenuSelectLeftDemo = 40;
-static const tCoordType kMainMenuSelectTopDemo = 367;
+static const CoordType kMainMenuSelectLeftDemo = 40;
+static const CoordType kMainMenuSelectTopDemo = 367;
 
-static const tCoordType kQuitLeftDemo = 32;
-static const tCoordType kQuitTopDemo = 412;
+static const CoordType kQuitLeftDemo = 32;
+static const CoordType kQuitTopDemo = 412;
 
-static const tCoordType kQuitSelectLeftDemo = 28;
-static const tCoordType kQuitSelectTopDemo = 408;
+static const CoordType kQuitSelectLeftDemo = 28;
+static const CoordType kQuitSelectTopDemo = 408;
 
-static const tCoordType kRestoreLeftDeath = 44;
-static const tCoordType kRestoreTopDeath = 372;
+static const CoordType kRestoreLeftDeath = 44;
+static const CoordType kRestoreTopDeath = 372;
 
-static const tCoordType kRestoreSelectLeftDeath = 40;
-static const tCoordType kRestoreSelectTopDeath = 368;
+static const CoordType kRestoreSelectLeftDeath = 40;
+static const CoordType kRestoreSelectTopDeath = 368;
 
-static const tCoordType kMainMenuLeft = 32;
-static const tCoordType kMainMenuTop = 412;
+static const CoordType kMainMenuLeft = 32;
+static const CoordType kMainMenuTop = 412;
 
-static const tCoordType kMainMenuSelectLeft = 28;
-static const tCoordType kMainMenuSelectTop = 408;
+static const CoordType kMainMenuSelectLeft = 28;
+static const CoordType kMainMenuSelectTop = 408;
 
 enum {
 	kDeathScreenContinueDemo = 0,
@@ -626,7 +626,7 @@ enum {
 };
 
 // Never set the current input handler to the DeathMenu.
-DeathMenu::DeathMenu(const tDeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
+DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
 		_mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	bool isDemo = vm->isDemo();
@@ -848,7 +848,7 @@ void DeathMenu::drawAllScores() {
 	numbers.getImageFromPICTFile("Images/Death Screens/Numbers.pict");
 
 	Common::Rect scoreBounds;
-	tGameScoreType caldoriaTotal = 0;
+	GameScoreType caldoriaTotal = 0;
 
 	switch (_deathReason) {
 	case kDeathCardBomb:
@@ -930,60 +930,60 @@ enum {
 	kLastPauseSelection = kPauseMenuQuitToMainMenu
 };
 
-const tCoordType kPauseLeft = 194;
-const tCoordType kPauseTop = 68;
+const CoordType kPauseLeft = 194;
+const CoordType kPauseTop = 68;
 
-const tCoordType kSaveGameLeft = kPauseLeft + 6;
-const tCoordType kSaveGameTop = kPauseTop + 56;
+const CoordType kSaveGameLeft = kPauseLeft + 6;
+const CoordType kSaveGameTop = kPauseTop + 56;
 
-const tCoordType kSaveGameSelectLeft = kPauseLeft - 44;
-const tCoordType kSaveGameSelectTop = kPauseTop + 52;
+const CoordType kSaveGameSelectLeft = kPauseLeft - 44;
+const CoordType kSaveGameSelectTop = kPauseTop + 52;
 
-const tCoordType kPauseContinueLeft = kPauseLeft + 18;
-const tCoordType kPauseContinueTop = kPauseTop + 100;
+const CoordType kPauseContinueLeft = kPauseLeft + 18;
+const CoordType kPauseContinueTop = kPauseTop + 100;
 
-const tCoordType kPauseContinueSelectLeft = kPauseLeft - 44;
-const tCoordType kPauseContinueSelectTop = kPauseTop + 95;
+const CoordType kPauseContinueSelectLeft = kPauseLeft - 44;
+const CoordType kPauseContinueSelectTop = kPauseTop + 95;
 
-const tCoordType kPauseRestoreLeft = kPauseLeft + 18;
-const tCoordType kPauseRestoreTop = kPauseTop + 136;
+const CoordType kPauseRestoreLeft = kPauseLeft + 18;
+const CoordType kPauseRestoreTop = kPauseTop + 136;
 
-const tCoordType kPauseRestoreSelectLeft = kPauseLeft - 44;
-const tCoordType kPauseRestoreSelectTop = kPauseTop + 131;
+const CoordType kPauseRestoreSelectLeft = kPauseLeft - 44;
+const CoordType kPauseRestoreSelectTop = kPauseTop + 131;
 
-const tCoordType kSoundFXLeft = kPauseLeft + 128;
-const tCoordType kSoundFXTop = kPauseTop + 187;
-const tCoordType kSoundFXRight = kSoundFXLeft + 96;
-const tCoordType kSoundFXBottom = kSoundFXTop + 14;
+const CoordType kSoundFXLeft = kPauseLeft + 128;
+const CoordType kSoundFXTop = kPauseTop + 187;
+const CoordType kSoundFXRight = kSoundFXLeft + 96;
+const CoordType kSoundFXBottom = kSoundFXTop + 14;
 
-const tCoordType kSoundFXSelectLeft = kPauseLeft - 44;
-const tCoordType kSoundFXSelectTop = kPauseTop + 172;
+const CoordType kSoundFXSelectLeft = kPauseLeft - 44;
+const CoordType kSoundFXSelectTop = kPauseTop + 172;
 
-const tCoordType kAmbienceLeft = kPauseLeft + 128;
-const tCoordType kAmbienceTop = kPauseTop + 227;
-const tCoordType kAmbienceRight = kAmbienceLeft + 96;
-const tCoordType kAmbienceBottom = kAmbienceTop + 14;
+const CoordType kAmbienceLeft = kPauseLeft + 128;
+const CoordType kAmbienceTop = kPauseTop + 227;
+const CoordType kAmbienceRight = kAmbienceLeft + 96;
+const CoordType kAmbienceBottom = kAmbienceTop + 14;
 
-const tCoordType kAmbienceSelectLeft = kPauseLeft - 44;
-const tCoordType kAmbienceSelectTop = kPauseTop + 212;
+const CoordType kAmbienceSelectLeft = kPauseLeft - 44;
+const CoordType kAmbienceSelectTop = kPauseTop + 212;
 
-const tCoordType kWalkthruLeft = kPauseLeft + 128;
-const tCoordType kWalkthruTop = kPauseTop + 264;
+const CoordType kWalkthruLeft = kPauseLeft + 128;
+const CoordType kWalkthruTop = kPauseTop + 264;
 
-const tCoordType kWalkthruSelectLeft = kPauseLeft - 44;
-const tCoordType kWalkthruSelectTop = kPauseTop + 255;
+const CoordType kWalkthruSelectLeft = kPauseLeft - 44;
+const CoordType kWalkthruSelectTop = kPauseTop + 255;
 
-const tCoordType kQuitLeft = kPauseLeft + 18;
-const tCoordType kQuitTop = kPauseTop + 302;
+const CoordType kQuitLeft = kPauseLeft + 18;
+const CoordType kQuitTop = kPauseTop + 302;
 
-const tCoordType kQuitSelectLeft = kPauseLeft - 44;
-const tCoordType kQuitSelectTop = kPauseTop + 297;
+const CoordType kQuitSelectLeft = kPauseLeft - 44;
+const CoordType kQuitSelectTop = kPauseTop + 297;
 
 //	These are relative to the pause background.
-const tCoordType kPauseScoreLeft = 130;
-const tCoordType kPauseScoreTop = 34;
-const tCoordType kPauseScoreRight = kPauseScoreLeft + 108;
-const tCoordType kPauseScoreBottom = kPauseScoreTop + 12;
+const CoordType kPauseScoreLeft = 130;
+const CoordType kPauseScoreTop = 34;
+const CoordType kPauseScoreRight = kPauseScoreLeft + 108;
+const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
 
 // Never set the current input handler to the CPauseMenu.
 PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),

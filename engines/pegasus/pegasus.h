@@ -104,8 +104,8 @@ public:
 	void processShell();
 	void checkCallBacks();
 	void createInterface();
-	void setGameMode(const tGameMode);
-	tGameMode getGameMode() const { return _gameMode; }
+	void setGameMode(const GameMode);
+	GameMode getGameMode() const { return _gameMode; }
 	uint getRandomBit();
 	uint getRandomNumber(uint max);
 	void shuffleArray(int32 *arr, int32 count);
@@ -116,10 +116,10 @@ public:
 	int32 getSavedEnergyValue() { return _savedEnergyValue; }
 
 	// Death
-	void setEnergyDeathReason(const tDeathReason reason) { _deathReason = reason; } 
-	tDeathReason getEnergyDeathReason() { return _deathReason; }
+	void setEnergyDeathReason(const DeathReason reason) { _deathReason = reason; } 
+	DeathReason getEnergyDeathReason() { return _deathReason; }
 	void resetEnergyDeathReason();
-	void die(const tDeathReason);
+	void die(const DeathReason);
 	void playEndMessage();
 
 	// Volume
@@ -130,27 +130,27 @@ public:
 
 	// Items
 	bool playerHasItem(const Item *);
-	bool playerHasItemID(const tItemID);
+	bool playerHasItemID(const ItemID);
 	void checkFlashlight();
-	bool itemInLocation(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	bool itemInLocation(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 
 	// Inventory Items
 	InventoryItem *getCurrentInventoryItem();
 	bool itemInInventory(InventoryItem *);
-	bool itemInInventory(tItemID);
+	bool itemInInventory(ItemID);
 	Inventory *getItemsInventory() { return &_items; }
-	tInventoryResult addItemToInventory(InventoryItem *);
+	InventoryResult addItemToInventory(InventoryItem *);
 	void removeAllItemsFromInventory();
-	tInventoryResult removeItemFromInventory(InventoryItem *);
+	InventoryResult removeItemFromInventory(InventoryItem *);
 	uint32 countInventoryItems() { return _items.getNumItems(); }
 
 	// Biochips
 	BiochipItem *getCurrentBiochip();
 	bool itemInBiochips(BiochipItem *);
-	bool itemInBiochips(tItemID);
+	bool itemInBiochips(ItemID);
 	Inventory *getBiochipsInventory() { return &_biochips; }
 	void removeAllItemsFromBiochips();
-	tInventoryResult addItemToBiochips(BiochipItem *);
+	InventoryResult addItemToBiochips(BiochipItem *);
 
 	// AI
 	Common::String getBriefingMovie();
@@ -162,13 +162,13 @@ public:
 	void cleanUpAfterAIHint(const Common::String &);
 
 	// Neighborhood
-	void jumpToNewEnvironment(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
-	tNeighborhoodID getCurrentNeighborhoodID() const;
+	void jumpToNewEnvironment(const NeighborhoodID, const RoomID, const DirectionConstant);
+	NeighborhoodID getCurrentNeighborhoodID() const;
 
 	// Dragging
-	void dragItem(const Input &, Item *, tDragType);
+	void dragItem(const Input &, Item *, DragType);
 	bool isDragging() const { return _dragType != kDragNoDrag; }
-	tDragType getDragType() const { return _dragType; }
+	DragType getDragType() const { return _dragType; }
 	Item *getDraggingItem() const { return _draggingItem; }
 	void dragTerminated(const Input &);
 	void autoDragItemIntoRoom(Item *, Sprite *);
@@ -192,11 +192,11 @@ protected:
 	void pauseEngineIntern(bool pause);
 
 	Notification _shellNotification;
-	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
+	virtual void receiveNotification(Notification *notification, const NotificationFlags flags);
 
 	void handleInput(const Input &input, const Hotspot *cursorSpot);
 	virtual bool isClickInput(const Input &, const Hotspot *);
-	virtual tInputBits getClickFilter();
+	virtual InputBits getClickFilter();
 
 	void clickInHotspot(const Input &, const Hotspot *);
 	void activateHotspots(void);
@@ -219,13 +219,13 @@ private:
 
 	// Items
 	void createItems();
-	void createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction);
+	void createItem(ItemID itemID, NeighborhoodID neighborhoodID, RoomID roomID, DirectionConstant direction);
 	Inventory _items;
 	Inventory _biochips;
-	tItemID _currentItemID;
-	tItemID _currentBiochipID;
-	void destroyInventoryItem(const tItemID itemID);
-	tItemID pickItemToDestroy();
+	ItemID _currentItemID;
+	ItemID _currentBiochipID;
+	void destroyInventoryItem(const ItemID itemID);
+	ItemID pickItemToDestroy();
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
@@ -250,7 +250,7 @@ private:
 
 	// Menu
 	GameMenu *_gameMenu;
-	void doGameMenuCommand(const tGameMenuCommand);
+	void doGameMenuCommand(const GameMenuCommand);
 	void doInterfaceOverview();
 	ScreenDimmer _screenDimmer;
 	void pauseMenu(bool menuUp);
@@ -259,32 +259,32 @@ private:
 	int32 _savedEnergyValue;
 
 	// Death
-	tDeathReason _deathReason;
+	DeathReason _deathReason;
 	void doDeath();
 
 	// Neighborhood
 	Neighborhood *_neighborhood;
 	void useNeighborhood(Neighborhood *neighborhood);
-	void performJump(tNeighborhoodID start);
+	void performJump(NeighborhoodID start);
 	void startNewGame();
 	void startNeighborhood();
-	void makeNeighborhood(tNeighborhoodID, Neighborhood *&);
+	void makeNeighborhood(NeighborhoodID, Neighborhood *&);
 
 	// Sound
 	uint16 _ambientLevel;
 	uint16 _FXLevel;
 
 	// Game Mode
-	tGameMode _gameMode;
+	GameMode _gameMode;
 	bool _switchModesSync;
-	void switchGameMode(const tGameMode, const tGameMode);
-	bool canSwitchGameMode(const tGameMode, const tGameMode);
+	void switchGameMode(const GameMode, const GameMode);
+	bool canSwitchGameMode(const GameMode, const GameMode);
 
 	// Dragging
 	ItemDragger _itemDragger;
 	Item *_draggingItem;
 	Sprite *_draggingSprite;
-	tDragType _dragType;
+	DragType _dragType;
 	AutoDragger _autoDragger;
 
 	// Interface

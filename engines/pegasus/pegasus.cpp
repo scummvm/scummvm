@@ -215,10 +215,10 @@ void PegasusEngine::createItems() {
 	uint16 entryCount = res->readUint16BE();
 
 	for (uint16 i = 0; i < entryCount; i++) {
-		tItemID itemID = res->readUint16BE();
-		tNeighborhoodID neighborhoodID = res->readUint16BE();
-		tRoomID roomID = res->readUint16BE();
-		tDirectionConstant direction = res->readByte();
+		ItemID itemID = res->readUint16BE();
+		NeighborhoodID neighborhoodID = res->readUint16BE();
+		RoomID roomID = res->readUint16BE();
+		DirectionConstant direction = res->readByte();
 		res->readByte(); // alignment
 
 		createItem(itemID, neighborhoodID, roomID, direction);
@@ -227,7 +227,7 @@ void PegasusEngine::createItems() {
 	delete res;
 }
 
-void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction) {
+void PegasusEngine::createItem(ItemID itemID, NeighborhoodID neighborhoodID, RoomID roomID, DirectionConstant direction) {
 	switch (itemID) {
 	case kInterfaceBiochip:
 		// Unused in game, but still in the data and we need to create
@@ -421,11 +421,11 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 
 	if (itemCount > 0) {
 		for (byte i = 0; i < itemCount; i++) {
-			InventoryItem *inv = (InventoryItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
+			InventoryItem *inv = (InventoryItem *)g_allItems.findItemByID((ItemID)stream->readUint16BE());
 			addItemToInventory(inv);
 		}
 
-		g_interface->setCurrentInventoryItemID((tItemID)stream->readUint16BE());
+		g_interface->setCurrentInventoryItemID((ItemID)stream->readUint16BE());
 	}
 
 	// Biochips
@@ -433,11 +433,11 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 
 	if (biochipCount > 0) {
 		for (byte i = 0; i < biochipCount; i++) {
-			BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
+			BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID((ItemID)stream->readUint16BE());
 			addItemToBiochips(biochip);
 		}
 
-		g_interface->setCurrentBiochipID((tItemID)stream->readUint16BE());
+		g_interface->setCurrentBiochipID((ItemID)stream->readUint16BE());
 	}
 
 
@@ -560,7 +560,7 @@ Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc)
 	return valid ? Common::kNoError : Common::kUnknownError;
 }
 
-void PegasusEngine::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+void PegasusEngine::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	if (&_shellNotification == notification) {
 		switch (flags) {
 		case kGameStartingFlag: {
@@ -626,7 +626,7 @@ void PegasusEngine::useMenu(GameMenu *newMenu) {
 }
 
 bool PegasusEngine::checkGameMenu() {
-	tGameMenuCommand command = kMenuCmdNoCommand;
+	GameMenuCommand command = kMenuCmdNoCommand;
 
 	if (_gameMenu) {
 		command = _gameMenu->getLastCommand();
@@ -639,7 +639,7 @@ bool PegasusEngine::checkGameMenu() {
 	return command != kMenuCmdNoCommand;
 }
 
-void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
+void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 	switch (command) {
 	case kMenuCmdStartAdventure:
 		GameState.setWalkthroughMode(false);
@@ -996,7 +996,7 @@ bool PegasusEngine::playerHasItem(const Item *item) {
 	return playerHasItemID(item->getObjectID());
 }
 
-bool PegasusEngine::playerHasItemID(const tItemID itemID) {
+bool PegasusEngine::playerHasItemID(const ItemID itemID) {
 	return itemInInventory(itemID) || itemInBiochips(itemID);
 }
 
@@ -1011,7 +1011,7 @@ bool PegasusEngine::itemInInventory(InventoryItem *item) {
 	return _items.itemInInventory(item);
 }
 
-bool PegasusEngine::itemInInventory(tItemID id) {
+bool PegasusEngine::itemInInventory(ItemID id) {
 	return _items.itemInInventory(id);
 }
 
@@ -1026,7 +1026,7 @@ bool PegasusEngine::itemInBiochips(BiochipItem *item) {
 	return _biochips.itemInInventory(item);
 }
 
-bool PegasusEngine::itemInBiochips(tItemID id) {
+bool PegasusEngine::itemInBiochips(ItemID id) {
 	return _biochips.itemInInventory(id);
 }
 
@@ -1079,7 +1079,7 @@ void PegasusEngine::cleanUpAfterAIHint(const Common::String &movieName) {
 		g_neighborhood->cleanUpAfterAIHint(movieName);
 }
 
-void PegasusEngine::jumpToNewEnvironment(const tNeighborhoodID neighborhoodID, const tRoomID roomID, const tDirectionConstant direction) {
+void PegasusEngine::jumpToNewEnvironment(const NeighborhoodID neighborhoodID, const RoomID roomID, const DirectionConstant direction) {
 	GameState.setNextLocation(neighborhoodID, roomID, direction);
 	_shellNotification.setNotificationFlags(kNeedNewJumpFlag, kNeedNewJumpFlag);
 }
@@ -1111,7 +1111,7 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 	return skipped;
 }
 
-void PegasusEngine::die(const tDeathReason reason) {
+void PegasusEngine::die(const DeathReason reason) {
 	Input dummy;
 	if (isDragging())
 		_itemDragger.stopTracking(dummy);
@@ -1160,14 +1160,14 @@ void PegasusEngine::createInterface() {
 	g_interface->createInterface();
 }
 
-void PegasusEngine::setGameMode(const tGameMode newMode) {
+void PegasusEngine::setGameMode(const GameMode newMode) {
 	if (newMode != _gameMode && canSwitchGameMode(newMode, _gameMode)) {
 		switchGameMode(newMode, _gameMode);
 		_gameMode = newMode;
 	}
 }
 
-void PegasusEngine::switchGameMode(const tGameMode newMode, const tGameMode oldMode) {
+void PegasusEngine::switchGameMode(const GameMode newMode, const GameMode oldMode) {
 	// Start raising panels before lowering panels, to give the activating panel time
 	// to set itself up without cutting into the lowering panel's animation time.
 	
@@ -1202,7 +1202,7 @@ void PegasusEngine::switchGameMode(const tGameMode newMode, const tGameMode oldM
 	}
 }
 
-bool PegasusEngine::canSwitchGameMode(const tGameMode newMode, const tGameMode oldMode) {
+bool PegasusEngine::canSwitchGameMode(const GameMode newMode, const GameMode oldMode) {
 	if (newMode == kModeInventoryPick && oldMode == kModeBiochipPick)
 		return false;
 	if (newMode == kModeBiochipPick && oldMode == kModeInventoryPick)
@@ -1210,10 +1210,10 @@ bool PegasusEngine::canSwitchGameMode(const tGameMode newMode, const tGameMode o
 	return true;
 }
 
-bool PegasusEngine::itemInLocation(const tItemID itemID, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
-	tNeighborhoodID itemNeighborhood;
-	tRoomID itemRoom;
-	tDirectionConstant itemDirection;
+bool PegasusEngine::itemInLocation(const ItemID itemID, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
+	NeighborhoodID itemNeighborhood;
+	RoomID itemRoom;
+	DirectionConstant itemDirection;
 	
 	Item *item = g_allItems.findItemByID(itemID);
 	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
@@ -1221,8 +1221,8 @@ bool PegasusEngine::itemInLocation(const tItemID itemID, const tNeighborhoodID n
 	return itemNeighborhood == neighborhood && itemRoom == room && itemDirection == direction;
 }
 
-tInventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
-	tInventoryResult result;
+InventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
+	InventoryResult result;
 	
 	do {
 		if (g_interface)
@@ -1257,7 +1257,7 @@ void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
 	}
 }
 
-void PegasusEngine::performJump(tNeighborhoodID neighborhoodID) {
+void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 	if (_neighborhood)
 		useNeighborhood(0);
 
@@ -1349,7 +1349,7 @@ void PegasusEngine::startNewGame() {
 	startNeighborhood();
 }
 
-void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhood *&neighborhood) {
+void PegasusEngine::makeNeighborhood(NeighborhoodID neighborhoodID, Neighborhood *&neighborhood) {
 	// TODO: CD check
 
 	switch (neighborhoodID) {
@@ -1404,7 +1404,7 @@ void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot)
 					_cursor->setCurrentFrameIndex(0);
 				break;
 			default:
-				tHotSpotFlags flags = cursorSpot->getHotspotFlags();
+				HotSpotFlags flags = cursorSpot->getHotspotFlags();
 
 				if (flags & kZoomInSpotFlag)
 					_cursor->setCurrentFrameIndex(1);
@@ -1540,7 +1540,7 @@ void PegasusEngine::toggleInfo() {
 
 void PegasusEngine::dragTerminated(const Input &) {
 	Hotspot *finalSpot = _itemDragger.getLastHotspot();
-	tInventoryResult result;
+	InventoryResult result;
 
 	if (_dragType == kDragInventoryPickup) {
 		if (finalSpot && finalSpot->getObjectID() == kInventoryDropSpotID)
@@ -1582,7 +1582,7 @@ void PegasusEngine::dragTerminated(const Input &) {
 }
 
 
-void PegasusEngine::dragItem(const Input &input, Item *item, tDragType type) {	
+void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {	
 	_draggingItem = item;
 	_dragType = type;
 
@@ -1622,7 +1622,7 @@ void PegasusEngine::dragItem(const Input &input, Item *item, tDragType type) {
 void PegasusEngine::shellGameInput(const Input &input, const Hotspot *cursorSpot) {
 	if (_gameMode == kModeInfoScreen) {
 		if (JMPPPInput::isToggleAIMiddleInput(input)) {
-			tLowerClientSignature middleOwner = g_AIArea->getMiddleAreaOwner();
+			LowerClientSignature middleOwner = g_AIArea->getMiddleAreaOwner();
 			g_AIArea->toggleMiddleAreaOwner();
 
 			if (middleOwner != g_AIArea->getMiddleAreaOwner()) {
@@ -1677,7 +1677,7 @@ bool PegasusEngine::isClickInput(const Input &input, const Hotspot *cursorSpot) 
 		return false;
 }
 
-tInputBits PegasusEngine::getClickFilter() {
+InputBits PegasusEngine::getClickFilter() {
 	return JMPPPInput::getClickInputFilter();
 }
 
@@ -1693,8 +1693,8 @@ void PegasusEngine::clickInHotspot(const Input &input, const Hotspot *clickedSpo
 	}
 }
 
-tInventoryResult PegasusEngine::removeItemFromInventory(InventoryItem *item) {
-	tInventoryResult result;
+InventoryResult PegasusEngine::removeItemFromInventory(InventoryItem *item) {
+	InventoryResult result;
 	
 	if (g_interface)
 		result = g_interface->removeInventoryItem(item);
@@ -1725,8 +1725,8 @@ void PegasusEngine::removeAllItemsFromInventory() {
 // Because of this we need to make sure that no more than one copy of each biochip
 // is ever added.
 
-tInventoryResult PegasusEngine::addItemToBiochips(BiochipItem *biochip) {
-	tInventoryResult result;
+InventoryResult PegasusEngine::addItemToBiochips(BiochipItem *biochip) {
+	InventoryResult result;
 
 	if (g_interface)
 		result = g_interface->addBiochip(biochip);
@@ -1858,7 +1858,7 @@ void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {
 		g_AIArea->unlockAI();
 }
 
-tNeighborhoodID PegasusEngine::getCurrentNeighborhoodID() const {
+NeighborhoodID PegasusEngine::getCurrentNeighborhoodID() const {
 	if (_neighborhood)
 		return _neighborhood->getObjectID();
 
@@ -1961,7 +1961,7 @@ void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, ui
 	scaledFrame.free();
 }
 
-void PegasusEngine::destroyInventoryItem(const tItemID itemID) {
+void PegasusEngine::destroyInventoryItem(const ItemID itemID) {
 	InventoryItem *item = (InventoryItem *)g_allItems.findItemByID(itemID);
 
 	ItemExtraEntry entry;
@@ -2012,7 +2012,7 @@ void PegasusEngine::destroyInventoryItem(const tItemID itemID) {
 	removeItemFromInventory(item);
 }
 
-tItemID PegasusEngine::pickItemToDestroy() {
+ItemID PegasusEngine::pickItemToDestroy() {
 /*
 	Must pick an item to destroy
 	

@@ -108,18 +108,18 @@ public:
 	//      kAISignature            kLeftAreaSignature
 	// Further, the kAISignature never sets a static frame time in the left area,
 	// but only plays a sequence from the AI movie.
-	void setAIAreaToTime(const tLowerClientSignature, const tLowerAreaSignature, const TimeValue);
+	void setAIAreaToTime(const LowerClientSignature, const LowerAreaSignature, const TimeValue);
 	
 	// The "Play" functions play the requested sequence synchronously.
-	void playAIAreaSequence(const tLowerClientSignature, const tLowerAreaSignature, const TimeValue, const TimeValue);
+	void playAIAreaSequence(const LowerClientSignature, const LowerAreaSignature, const TimeValue, const TimeValue);
 
 	// For PlayAIMovie, it is assumed that the client is the AI itself.
 	// This is used to play AI messages as well as Optical Memory video.
 	// Returns true if the movie played all the way through, false if it was interrupted.
-	bool playAIMovie(const tLowerAreaSignature, const Common::String &movieName, bool keepLastFrame, const tInputBits);
+	bool playAIMovie(const LowerAreaSignature, const Common::String &movieName, bool keepLastFrame, const InputBits);
 
 	// Loop the requested sequence indefinitely.
-	void loopAIAreaSequence(const tLowerClientSignature, const tLowerAreaSignature, const TimeValue, const TimeValue);
+	void loopAIAreaSequence(const LowerClientSignature, const LowerAreaSignature, const TimeValue, const TimeValue);
 
 	void addAIRule(AIRule *);
 
@@ -133,7 +133,7 @@ public:
 	void checkMiddleArea();
 	void checkRules();
 
-	tLowerClientSignature getMiddleAreaOwner();
+	LowerClientSignature getMiddleAreaOwner();
 	void toggleMiddleAreaOwner();
 
 	TimeValue getBigInfoTime();
@@ -143,7 +143,7 @@ protected:
 	void useIdleTime();
 
 	void setLeftMovieTime(const TimeValue);
-	void setMiddleMovieTime(const tLowerClientSignature, const TimeValue);
+	void setMiddleMovieTime(const LowerClientSignature, const TimeValue);
 	void setRightMovieTime(const TimeValue);
 
 	Movie _leftAreaMovie;
@@ -151,9 +151,9 @@ protected:
 	Movie _rightAreaMovie;
 	Movie _AIMovie;
 
-	tLowerClientSignature _leftAreaOwner;
-	tLowerClientSignature _middleAreaOwner;
-	tLowerClientSignature _rightAreaOwner;
+	LowerClientSignature _leftAreaOwner;
+	LowerClientSignature _middleAreaOwner;
+	LowerClientSignature _rightAreaOwner;
 
 	TimeValue _leftInventoryTime;
 	TimeValue _middleInventoryTime;
