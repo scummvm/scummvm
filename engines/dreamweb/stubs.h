@@ -93,7 +93,6 @@
 	void updatePeople();
 	void madman(ReelRoutine &routine);
 	void madmanText();
-	void madMode();
 	bool addAlong(const uint8 *mapFlags);
 	bool addLength(const uint8 *mapFlags);
 	void getDimension();
@@ -138,7 +137,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
-	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]) {
@@ -183,9 +181,6 @@
 	void transferText();
 	void watchCount();
 	void loadRoom();
-	void intro1Text();
-	void intro2Text();
-	void intro3Text();
 	void readSetData();
 	void fadeupYellows();
 	void fadeupMonFirst();
@@ -279,8 +274,6 @@
 	void nextFolder();
 	void lastFolder();
 	void drawFloor();
-	bool checkSpeed(ReelRoutine &routine);
-	void checkSpeed();
 	void sparkyDrip(ReelRoutine &routine);
 	void genericPerson(ReelRoutine &routine);
 	void gamer(ReelRoutine &routine);

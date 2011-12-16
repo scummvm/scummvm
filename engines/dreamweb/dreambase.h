@@ -133,6 +133,11 @@ public:
 	void bresenhams();
 	void workoutFrames();
 
+	// from people.cpp
+	void madMode();
+	void addToPeopleList(ReelRoutine *routine);
+	bool checkSpeed(ReelRoutine &routine);
+
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
@@ -193,6 +198,10 @@ public:
 	uint8 getBlockOfPixel(uint8 x, uint8 y);
 	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
 	void initRain();
+
+	void intro1Text();
+	void intro2Text(uint16 nextReelPointer);
+	void intro3Text(uint16 nextReelPointer);
 
 	void rollEndCredits();
 	void monks2text();

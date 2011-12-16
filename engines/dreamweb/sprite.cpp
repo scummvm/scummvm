@@ -709,7 +709,7 @@ void DreamBase::initRain() {
 	rain->x = 0xff;
 }
 
-void DreamGenContext::intro1Text() {
+void DreamBase::intro1Text() {
 	if (data.byte(kIntrocount) != 2 && data.byte(kIntrocount) != 4 && data.byte(kIntrocount) != 6)
 		return;
 
@@ -725,17 +725,17 @@ void DreamGenContext::intro1Text() {
 	}
 }
 
-void DreamGenContext::intro2Text() {
-	if (ax == 5)
+void DreamBase::intro2Text(uint16 nextReelPointer) {
+	if (nextReelPointer == 5)
 		setupTimedTemp(43, 82, 34, 40, 90, 1);
-	else if (ax == 15)
+	else if (nextReelPointer == 15)
 		setupTimedTemp(44, 82, 34, 40, 90, 1);
 }
 
-void DreamGenContext::intro3Text() {
-	if (ax == 107)
+void DreamBase::intro3Text(uint16 nextReelPointer) {
+	if (nextReelPointer == 107)
 		setupTimedTemp(45, 82, 36, 56, 100, 1);
-	else if (ax == (isCD() ? 108 : 109))
+	else if (nextReelPointer == (isCD() ? 108 : 109))
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 

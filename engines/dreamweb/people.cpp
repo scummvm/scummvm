@@ -140,7 +140,7 @@ void DreamGenContext::madman(ReelRoutine &routine) {
 	madMode();
 }
 
-void DreamGenContext::madMode() {
+void DreamBase::madMode() {
 	data.word(kWatchingtime) = 2;
 	data.byte(kPointermode) = 0;
 	if (data.byte(kCombatcount) < (isCD() ? 65 : 63))
@@ -150,7 +150,7 @@ void DreamGenContext::madMode() {
 	data.byte(kPointermode) = 2;
 }
 
-void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
+void DreamBase::addToPeopleList(ReelRoutine *routine) {
 	uint16 routinePointer = (const uint8 *)routine - data.ptr(0, 0);
 
 	People *people = (People *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
@@ -160,12 +160,7 @@ void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
 	data.word(kListpos) += sizeof(People);
 }
 
-void DreamGenContext::checkSpeed() {
-	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine));
-	flags._z = checkSpeed(*routine);
-}
-
-bool DreamGenContext::checkSpeed(ReelRoutine &routine) {
+bool DreamBase::checkSpeed(ReelRoutine &routine) {
 	if (data.byte(kLastweapon) != (uint8)-1)
 		return true;
 	++routine.counter;
@@ -372,11 +367,7 @@ void DreamGenContext::introMagic1(ReelRoutine &routine) {
 		routine.setReelPointer(nextReelPointer);
 		if (nextReelPointer == 121) {
 			++data.byte(kIntrocount);
-			push(es);
-			push(bx);
 			intro1Text();
-			bx = pop();
-			es = pop();
 			if (data.byte(kIntrocount) == 8) {
 				data.byte(kMapy) += 10;
 				data.byte(kNowinnewroom) = 1;
@@ -462,12 +453,7 @@ void DreamGenContext::gates(ReelRoutine &routine) {
 			nextReelPointer = 119;
 		}
 		routine.setReelPointer(nextReelPointer);
-		push(es);
-		push(bx);
-		ax = nextReelPointer;
-		intro3Text();
-		bx = pop();
-		es = pop();
+		intro3Text(nextReelPointer);
 	}
 	showGameReel(&routine);
 }
@@ -655,11 +641,7 @@ void DreamGenContext::introMonks1(ReelRoutine &routine) {
 			nextReelPointer == 25 || nextReelPointer == 61 ||
 			nextReelPointer == 71) {
 			// Wait step
-			push(es);
-			push(bx);
-			intro2Text();
-			bx = pop();
-			es = pop();
+			intro2Text(nextReelPointer);
 			routine.counter = (uint8)-20;
 		}
 	}
