@@ -732,11 +732,11 @@ void DreamGenContext::startup1() {
 	fadeScreenUp();
 }
 
-void DreamGenContext::switchRyanOn() {
+void DreamBase::switchRyanOn() {
 	data.byte(kRyanon) = 255;
 }
 
-void DreamGenContext::switchRyanOff() {
+void DreamBase::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
@@ -801,10 +801,6 @@ void DreamGenContext::seeCommandTail() {
 	data.byte(kBrightness) = 1;
 }
 
-void DreamGenContext::randomNumber() {
-	al = engine->randomNumber();
-}
-
 void DreamGenContext::quickQuit() {
 	engine->quit();
 }
@@ -829,7 +825,7 @@ uint16 DreamBase::readMouseState() {
 	return state;
 }
 
-void DreamGenContext::dumpTextLine() {
+void DreamBase::dumpTextLine() {
 	if (data.byte(kNewtextline) != 1)
 		return;
 	data.byte(kNewtextline) = 0;
@@ -840,22 +836,18 @@ void DreamGenContext::dumpTextLine() {
 	multiDump(x, y, 228, 13);
 }
 
-void DreamGenContext::getUnderTimed() {
+void DreamBase::getUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kUndertimedtext;
-	multiGet(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiGet(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamGenContext::putUnderTimed() {
+void DreamBase::putUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kUndertimedtext;
-	multiPut(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
 void DreamBase::getUnderCentre() {
@@ -893,7 +885,7 @@ void DreamGenContext::processTrigger() {
 	}
 }
 
-void DreamGenContext::useTimedText() {
+void DreamBase::useTimedText() {
 	if (data.word(kTimecount) == 0)
 		return;
 	--data.word(kTimecount);
@@ -908,15 +900,13 @@ void DreamGenContext::useTimedText() {
 	else if (data.word(kTimecount) > data.word(kCounttotimed))
 		return;
 
-	es = data.word(kTimedseg);
-	si = data.word(kTimedoffset);
-	const uint8 *string = es.ptr(si, 0);
+	const uint8 *string = getSegment(data.word(kTimedseg)).ptr(data.word(kTimedoffset), 0);
 	uint16 y = data.byte(kTimedy);
 	printDirect(&string, data.byte(kTimedx), &y, 237, true);
 	data.byte(kNeedtodumptimed) = 1;
 }
 
-void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
@@ -943,7 +933,7 @@ void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
 }
 
-void DreamGenContext::dumpTimedText() {
+void DreamBase::dumpTimedText() {
 	if (data.byte(kNeedtodumptimed) != 1)
 		return;
 	uint8 y = data.byte(kTimedy);
@@ -954,16 +944,13 @@ void DreamGenContext::dumpTimedText() {
 	data.byte(kNeedtodumptimed) = 0;
 }
 
-void DreamGenContext::getTime() {
+void DreamBase::getTime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
-	ch = t.tm_hour;
-	cl = t.tm_min;
-	dh = t.tm_sec;
-	data.byte(kSecondcount) = dh;
-	data.byte(kMinutecount) = cl;
-	data.byte(kHourcount) = ch;
+	data.byte(kSecondcount) = t.tm_sec;
+	data.byte(kMinutecount) = t.tm_min;
+	data.byte(kHourcount) = t.tm_hour;
 }
 
 uint16 DreamBase::allocateMem(uint16 paragraphs) {
@@ -979,12 +966,6 @@ void DreamBase::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
 
-
-	// FIXME: The following line used to be enabled with the comment: "fixing
-	// invalid entries in the sprite table"
-	// So if there are regressions with sprites, we may want to investigate this
-	// closer.
-//	es = data;
 	uint tsize = 16 * 32;
 	uint16 bseg = data.word(kBuffers);
 	if (!bseg)
@@ -1110,7 +1091,6 @@ void DreamGenContext::startLoading(const Room &room) {
 	data.byte(kLiftpath) = room.liftPath;
 	data.byte(kDoorpath) = room.doorPath;
 	data.byte(kLastweapon) = (uint8)-1;
-	ah = data.byte(kReallocation);
 	data.byte(kReallocation) = room.realLocation;
 
 	loadRoomData(room, false);
@@ -1120,10 +1100,6 @@ void DreamGenContext::startLoading(const Room &room) {
 	setAllChanges();
 	autoAppear();
 //	const Room &newRoom = g_roomData[data.byte(kNewlocation)];
-	bx = 0x7fff; // TODO: bx used to be set to the offset of newRoom
-	             // It seems to be unused (like newRoom itself), but set it
-	             // to an invalid value to catch any missed use of it.
-	             // (The push/pop of bx below is likely also unnecessary)
 	data.byte(kLastweapon) = (uint8)-1;
 	data.byte(kMandead) = 0;
 	data.word(kLookcounter) = 160;
@@ -1131,14 +1107,12 @@ void DreamGenContext::startLoading(const Room &room) {
 	data.byte(kLinepointer) = 254;
 	if (room.b27 != 255) {
 		data.byte(kManspath) = room.b27;
-		push(bx);
 		autoSetWalk();
-		bx = pop();
 	}
 	findXYFromPath();
 }
 
-void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
+void DreamBase::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	uint8 type = firstParam - 220;
 	if (type == 0) {
 		placeSetObject(secondParam);
@@ -1165,7 +1139,7 @@ void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	}
 }
 
-void DreamGenContext::plotReel(uint16 &reelPointer) {
+void DreamBase::plotReel(uint16 &reelPointer) {
 	Reel *reel = getReelStart(reelPointer);
 	while (reel->x >= 220 && reel->x != 255) {
 		dealWithSpecial(reel->x, reel->y);
@@ -1298,10 +1272,6 @@ const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 	}
 }
 
-void DreamGenContext::copyName() {
-	copyName(ah, al, data.ptr(di, 0));
-}
-
 void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
@@ -1422,7 +1392,7 @@ SetObject *DreamBase::getSetAd(uint8 index) {
 	return (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
-void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
+void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
 		getSetAd(index)->mapad[0] = value;
 	} else if (type == 1) { //freeObject
@@ -1430,9 +1400,9 @@ void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
 		if (freeObject->mapad[0] == 0xff)
 			freeObject->mapad[0] = value;
 	} else { //path
-		bx = kPathdata + (type - 100) * 144 + index * 8;
-		es = data.word(kReels);
-		es.byte(bx+6) = value;
+//		getSegment(data.word(kReels)).byte(kPathdata + (type - 100) * 144 + index * 8 + 6) = value;
+		PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * (type - 100), 0);
+		paths[index].on = value;
 	}
 }
 
@@ -1462,20 +1432,12 @@ void DreamGenContext::getExPos() {
 	di = kExdata + kNumexobjects * sizeof(DynObject);
 }
 
-void DreamGenContext::placeSetObject() {
-	placeSetObject(al);
-}
-
-void DreamGenContext::placeSetObject(uint8 index) {
+void DreamBase::placeSetObject(uint8 index) {
 	findOrMake(index, 0, 0);
 	getSetAd(index)->mapad[0] = 0;
 }
 
-void DreamGenContext::removeSetObject() {
-	removeSetObject(al);
-}
-
-void DreamGenContext::removeSetObject(uint8 index) {
+void DreamBase::removeSetObject(uint8 index) {
 	findOrMake(index, 0xff, 0);
 	getSetAd(index)->mapad[0] = 0xff;
 }
@@ -1818,7 +1780,7 @@ bool DreamBase::isItDescribed(const ObjPos *pos) {
 	return result != 0;
 }
 
-bool DreamGenContext::isCD() {
+bool DreamBase::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
 	// we managed to load the speech. At least it is isolated in this function and can be changed.
@@ -2216,7 +2178,7 @@ Frame * DreamBase::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
-void DreamGenContext::findRoomInLoc() {
+void DreamBase::findRoomInLoc() {
 	uint8 x = data.byte(kMapx) / 11;
 	uint8 y = data.byte(kMapy) / 10;
 	uint8 roomNum = y * 6 + x;
@@ -2522,10 +2484,6 @@ void DreamBase::setLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 1;
 }
 
-void DreamGenContext::setLocation() {
-	DreamBase::setLocation(al);
-}
-
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
 	SegmentRef text = getSegment(data.word(kTextfile1));
 	uint16 offset = text.word(index * 2) + kTextstart;
@@ -2631,7 +2589,7 @@ void DreamGenContext::drawFloor() {
 	data.byte(kNewobs) = 0;
 }
 
-void DreamGenContext::allocateBuffers() {
+void DreamBase::allocateBuffers() {
 	data.word(kExtras) = allocateMem(kLengthofextra/16);
 	data.word(kMapdata) = allocateMem(kLengthofmap/16);
 	data.word(kBuffers) = allocateMem(kLengthofbuffer/16);
@@ -2651,19 +2609,19 @@ void DreamBase::workToScreenM() {
 	delPointer();
 }
 
-void DreamGenContext::loadMenu() {
+void DreamBase::loadMenu() {
 	loadIntoTemp("DREAMWEB.S02"); // sprite name 3
 	loadIntoTemp2("DREAMWEB.G07"); // mon. graphics 2
 }
 
-void DreamGenContext::showMenu() {
+void DreamBase::showMenu() {
 	++data.byte(kMenucount);
 	if (data.byte(kMenucount) == 37*2)
 		data.byte(kMenucount) = 0;
 	showFrame(tempGraphics(), kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
 }
 
-void DreamGenContext::dumpMenu() {
+void DreamBase::dumpMenu() {
 	multiDump(kMenux, kMenuy, 48, 48);
 }
 
@@ -3591,15 +3549,11 @@ void DreamGenContext::moreTalk() {
 	doSomeTalk();
 }
 
-bool DreamGenContext::isSetObOnMap(uint8 index) {
+bool DreamBase::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
 }
 
-void DreamGenContext::isSetObOnMap() {
-	flags._z = isSetObOnMap(al);
-}
-
-void DreamGenContext::dumpZoom() {
+void DreamBase::dumpZoom() {
 	if (data.byte(kZoomon) == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
 }
@@ -3647,7 +3601,7 @@ void DreamGenContext::selectLocation() {
 			{ 104,124,4,44,&DreamGenContext::lastDest },
 			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
 			{ 104,216,138,192,&DreamGenContext::destSelect },
-			{ 273,320,157,198,&DreamGenContext::getBack1 },
+			{ 273,320,157,198,&DreamBase::getBack1 },
 			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
@@ -3921,7 +3875,7 @@ void DreamGenContext::talk() {
 	workToScreenCPP();
 
 	RectWithCallback talkList[] = {
-		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 240,290,2,44,&DreamGenContext::moreTalk },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
@@ -3941,11 +3895,8 @@ void DreamGenContext::talk() {
 			break;
 	} while (!data.byte(kGetback));
 
-	bx = data.word(kPersondata);
-	es = cs;
-
 	if (data.byte(kTalkpos) >= 4)
-		es.byte(bx+7) |= 128;
+		data.byte(data.word(kPersondata)+7) |= 128;
 
 	redrawMainScrn();
 	workToScreenM();
@@ -4000,7 +3951,7 @@ void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback quitList[] = {
-		{ 273,320,157,198,&DreamGenContext::getBack1 },
+		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
@@ -4084,7 +4035,7 @@ void DreamGenContext::showGun() {
 	getRidOfTempText();
 }
 
-void DreamGenContext::diaryKeyP() {
+void DreamBase::diaryKeyP() {
 	if (data.byte(kCommandtype) != 214) {
 		data.byte(kCommandtype) = 214;
 		commandOnly(23);
@@ -4104,7 +4055,7 @@ void DreamGenContext::diaryKeyP() {
 		data.byte(kDiarypage) = 11;
 }
 
-void DreamGenContext::diaryKeyN() {
+void DreamBase::diaryKeyN() {
 	if (data.byte(kCommandtype) != 213) {
 		data.byte(kCommandtype) = 213;
 		commandOnly(23);

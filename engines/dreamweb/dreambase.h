@@ -119,14 +119,73 @@ public:
 	void obPicture();
 
 	// from pathfind.cpp
-	void checkDest(const RoomPaths *roomsPaths);
+	void turnPathOn(uint8 param);
+	void turnPathOff(uint8 param);
+	void turnAnyPathOn(uint8 param, uint8 room);
+	void turnAnyPathOff(uint8 param, uint8 room);
 	RoomPaths *getRoomsPaths();
 	void faceRightWay();
 	void setWalk();
 	void autoSetWalk();
+	void checkDest(const RoomPaths *roomsPaths);
 	void findXYFromPath();
+	bool checkIfPathIsOn(uint8 index);
 	void bresenhams();
 	void workoutFrames();
+
+	// from people.cpp
+	void madmanText();
+	void madman(ReelRoutine &routine);
+	void madMode();
+	void addToPeopleList(ReelRoutine *routine);
+	bool checkSpeed(ReelRoutine &routine);
+	void sparkyDrip(ReelRoutine &routine);
+	void genericPerson(ReelRoutine &routine);
+	void gamer(ReelRoutine &routine);
+	void eden(ReelRoutine &routine);
+	void sparky(ReelRoutine &routine);
+	void rockstar(ReelRoutine &routine);
+	void madmansTelly(ReelRoutine &routine);
+	void smokeBloke(ReelRoutine &routine);
+	void manAsleep(ReelRoutine &routine);
+	void drunk(ReelRoutine &routine);
+	void introMagic1(ReelRoutine &routine);
+	void introMagic2(ReelRoutine &routine);
+	void introMagic3(ReelRoutine &routine);
+	void introMusic(ReelRoutine &routine);
+	void candles(ReelRoutine &routine);
+	void candles1(ReelRoutine &routine);
+	void candles2(ReelRoutine &routine);
+	void smallCandle(ReelRoutine &routine);
+	void gates(ReelRoutine &routine);
+	void security(ReelRoutine &routine);
+	void edenInBath(ReelRoutine &routine);
+	void louis(ReelRoutine &routine);
+	void handClap(ReelRoutine &routine);
+	void carParkDrip(ReelRoutine &routine);
+	void foghornSound(ReelRoutine &routine);
+	void train(ReelRoutine &routine);
+	void attendant(ReelRoutine &routine);
+	void keeper(ReelRoutine &routine);
+	void interviewer(ReelRoutine &routine);
+	void drinker(ReelRoutine &routine);
+	void alleyBarkSound(ReelRoutine &routine);
+	void louisChair(ReelRoutine &routine);
+	void bossMan(ReelRoutine &routine);
+	void priest(ReelRoutine &routine);
+	void monkAndRyan(ReelRoutine &routine);
+	void copper(ReelRoutine &routine);
+	void introMonks1(ReelRoutine &routine);
+	void introMonks2(ReelRoutine &routine);
+	void soldier1(ReelRoutine &routine);
+	void receptionist(ReelRoutine &routine);
+	void bartender(ReelRoutine &routine);
+	void heavy(ReelRoutine &routine);
+	void helicopter(ReelRoutine &routine);
+	//void mugger(ReelRoutine &routine);
+	void businessMan(ReelRoutine &routine);
+	void endGameSeq(ReelRoutine &routine);
+	void poolGuard(ReelRoutine &routine);
 
 	// from print.cpp
 	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
@@ -160,13 +219,45 @@ public:
 
 	// from sprite.cpp
 	Sprite *spriteTable();
+	void printSprites();
+	void printASprite(const Sprite *sprite);
+	void clearSprites();
+	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
+	void initMan();
+	void walking(Sprite *sprite);
+	void aboutTurn(Sprite *sprite);
+	void backObject(Sprite *sprite);
+	void constant(Sprite *sprite, SetObject *objData);
+	void randomSprite(Sprite *sprite, SetObject *objData);
+	void doorway(Sprite *sprite, SetObject *objData);
+	void wideDoor(Sprite *sprite, SetObject *objData);
+	void doDoor(Sprite *sprite, SetObject *objData, Common::Rect check);
+	void steady(Sprite *sprite, SetObject *objData);
+	void lockedDoorway(Sprite *sprite, SetObject *objData);
+	void liftSprite(Sprite *sprite, SetObject *objData);
+
 	Reel *getReelStart(uint16 reelPointer);
 	const Frame *findSource(uint16 &frame);
 	void showReelFrame(Reel *reel);
+	void showGameReel(ReelRoutine *routine);
 	const Frame *getReelFrameAX(uint16 frame);
-	void rollEndCredits();
-	void priestText(ReelRoutine &routine);
+	void moveMap(uint8 param);
 	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
+
+	uint8 getBlockOfPixel(uint8 x, uint8 y);
+	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
+	void initRain();
+
+	void intro1Text();
+	void intro2Text(uint16 nextReelPointer);
+	void intro3Text(uint16 nextReelPointer);
+
+	void rollEndCredits();
+	void monks2text();
+	void textForEnd();
+	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
+	void textForMonk();
+	void priestText(ReelRoutine &routine);
 	void soundOnReels(uint16 reelPointer);
 	void clearBeforeLoad();
 	void clearReels();
@@ -174,6 +265,7 @@ public:
 	void liftNoise(uint8 index);
 
 	// from stubs.cpp
+	bool isCD();
 	void crosshair();
 	void delTextLine();
 	void showBlink();
@@ -182,6 +274,8 @@ public:
 	void showPointer();
 	void delPointer();
 	void showRyanPage();
+	void switchRyanOn();
+	void switchRyanOff();
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
@@ -210,6 +304,7 @@ public:
 	void *getAnyAd(uint8 *value1, uint8 *value2);
 	const uint8 *getTextInFile1(uint16 index);
 	uint8 findNextColon(const uint8 **string);
+	void allocateBuffers();
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
 	uint16 allocateAndLoad(unsigned int size);
@@ -273,6 +368,26 @@ public:
 	void getRidOfTempCharset();
 	void getRidOfTempsP();
 	void getRidOfAll();
+	void placeSetObject(uint8 index);
+	void removeSetObject(uint8 index);
+	bool isSetObOnMap(uint8 index);
+	void dumpZoom();
+	void diaryKeyP();
+	void diaryKeyN();
+	void findRoomInLoc();
+	void loadMenu();
+	void showMenu();
+	void dumpMenu();
+	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
+	void plotReel(uint16 &reelPointer);
+	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
+	void getUnderTimed();
+	void putUnderTimed();
+	void dumpTextLine();
+	void useTimedText();
+	void dumpTimedText();
+	void getTime();
+	void doChange(uint8 index, uint8 value, uint8 type);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -297,6 +412,8 @@ public:
 	void fadeScreenUpHalf();
 	void fadeScreenDown();
 	void fadeScreenDowns();
+	void fadeScreenDownHalf();
+	void clearPalette();
 	void greyscaleSum();
 	void allPalette();
 	void dumpCurrent();

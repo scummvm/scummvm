@@ -24,11 +24,7 @@
 
 namespace DreamGen {
 
-void DreamGenContext::turnPathOn() {
-	turnPathOn(al);
-}
-
-void DreamGenContext::turnPathOn(uint8 param) {
+void DreamBase::turnPathOn(uint8 param) {
 	findOrMake(param, 0xff, data.byte(kRoomnum) + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
@@ -36,11 +32,7 @@ void DreamGenContext::turnPathOn(uint8 param) {
 	roomsPaths[param].on = 0xff;
 }
 
-void DreamGenContext::turnPathOff() {
-	turnPathOff(al);
-}
-
-void DreamGenContext::turnPathOff(uint8 param) {
+void DreamBase::turnPathOff(uint8 param) {
 	findOrMake(param, 0x00, data.byte(kRoomnum) + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
@@ -48,24 +40,16 @@ void DreamGenContext::turnPathOff(uint8 param) {
 	roomsPaths[param].on = 0x00;
 }
 
-void DreamGenContext::turnAnyPathOn(uint8 param, uint8 room) {
+void DreamBase::turnAnyPathOn(uint8 param, uint8 room) {
 	findOrMake(param, 0xff, room + 100);
 	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].on = 0xff;
 }
 
-void DreamGenContext::turnAnyPathOn() {
-	turnAnyPathOn(al, ah);
-}
-
-void DreamGenContext::turnAnyPathOff(uint8 param, uint8 room) {
+void DreamBase::turnAnyPathOff(uint8 param, uint8 room) {
 	findOrMake(param, 0x00, room + 100);
 	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].on = 0x00;
-}
-
-void DreamGenContext::turnAnyPathOff() {
-	turnAnyPathOff(al, ah);
 }
 
 RoomPaths *DreamBase::getRoomsPaths() {
@@ -150,11 +134,7 @@ void DreamBase::findXYFromPath() {
 	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
 }
 
-void DreamGenContext::checkIfPathIsOn() {
-	flags._z = checkIfPathIsOn(al);
-}
-
-bool DreamGenContext::checkIfPathIsOn(uint8 index) {
+bool DreamBase::checkIfPathIsOn(uint8 index) {
 	RoomPaths *roomsPaths = getRoomsPaths();
 	uint8 pathOn = roomsPaths->nodes[index].on;
 	return pathOn == 0xff;
