@@ -764,6 +764,118 @@ void DreamGenContext::useChurchGate() {
 		turnPathOn(2);	// Open church
 }
 
+void DreamGenContext::useGun() {
+
+	if (data.byte(kObjecttype) != 4) {
+		// gun is not taken
+		showSecondUse();
+		putBackObStuff();
+
+	} else if (data.byte(kReallocation) == 22) {
+		// in pool room
+		showPuzText(34, 300);
+		data.byte(kLastweapon) = 1;
+		data.byte(kCombatcount) = 39;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 25) {
+		// helicopter
+		showPuzText(34, 300);
+		data.byte(kLastweapon) = 1;
+		data.byte(kCombatcount) = 19;
+		data.byte(kGetback) = 1;
+		data.byte(kDreamnumber) = 2;
+		data.byte(kRoomafterdream) = 38;
+		data.byte(kSartaindead) = 1;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 27) {
+		// in rock room
+		showPuzText(46, 300);
+		data.byte(kPointermode) = 2;
+		data.byte(kRockstardead) = 1;
+		data.byte(kLastweapon) = 1;
+		data.byte(kNewsitem) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kRoomafterdream) = 32;
+		data.byte(kDreamnumber) = 0;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 8 && data.byte(kMapx) == 22 && data.byte(kMapy) == 40
+	    && !isSetObOnMap(92) && data.byte(kManspath) != 9) {
+		// by studio
+		data.byte(kDestination) = 9;
+		data.byte(kFinaldest) = 9;
+		autoSetWalk();
+		data.byte(kLastweapon) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 6 && data.byte(kMapx) == 11 && data.byte(kMapy) == 20
+	    && isSetObOnMap(5)) {
+		// sarters
+		data.byte(kDestination) = 1;
+		data.byte(kFinaldest) = 1;
+		autoSetWalk();
+		removeSetObject(5);
+		placeSetObject(6);
+		turnAnyPathOn(1, data.byte(kRoomnum) - 1);
+		data.byte(kLiftflag) = 1;
+		data.word(kWatchingtime) = 40*2;
+		data.word(kReeltowatch) = 4;
+		data.word(kEndwatchreel) = 43;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 29) {
+		// aide
+		data.byte(kGetback) = 1;
+		al = 13;
+		resetLocation();
+		setLocation(12);
+		data.byte(kDestpos) = 12;
+		data.byte(kDestination) = 2;
+		data.byte(kFinaldest) = 2;
+		autoSetWalk();
+		data.word(kWatchingtime) = 164*2;
+		data.word(kReeltowatch) = 3;
+		data.word(kEndwatchreel) = 164;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kAidedead) = 1;
+		data.byte(kDreamnumber) = 3;
+		data.byte(kRoomafterdream) = 33;
+		data.byte(kProgresspoints)++;
+
+	} else if (data.byte(kReallocation) == 23 && data.byte(kMapx) == 0 && data.byte(kMapy) == 50) {
+		// with boss
+		if (data.byte(kManspath) != 5) {
+			data.byte(kDestination) = 5;
+			data.byte(kFinaldest) = 5;
+			autoSetWalk();
+		}
+		data.byte(kLastweapon) = 1;
+		data.byte(kGetback) = 1;
+
+	} else if (data.byte(kReallocation) == 8 && data.byte(kMapx) == 11 && data.byte(kMapy) == 10) {
+		// tv soldier
+		if (data.byte(kManspath) != 2) {
+			data.byte(kDestination) = 2;
+			data.byte(kFinaldest) = 2;
+			autoSetWalk();
+		}
+		data.byte(kLastweapon) = 1;
+		data.byte(kGetback) = 1;
+
+	} else {
+		showFirstUse();
+		putBackObStuff();
+	}
+}
+
 void DreamGenContext::useFullCart() {
 	data.byte(kProgresspoints)++;
 	turnAnyPathOn(2, data.byte(kRoomnum) + 6);

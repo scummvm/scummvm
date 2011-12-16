@@ -519,5 +519,6 @@
 	void openOb();
 	void withWhat();
 	void notHeldError();
+	void useGun();
 
 #endif

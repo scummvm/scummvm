@@ -539,7 +539,6 @@ public:
 	void read();
 	void searchForString();
 	void selectOpenOb();
-	void useGun();
 	void incRyanPage();
 	void clearChanges();
 	void searchForFiles();
