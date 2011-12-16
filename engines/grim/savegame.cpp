@@ -38,7 +38,7 @@ int SaveGame::SAVEGAME_VERSION = 20;
 SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!inSaveFile) {
-		warning("SaveGame::openForLoading() Error opening savegame file");
+		warning("SaveGame::openForLoading() Error opening savegame file %s", filename.c_str());
 		return NULL;
 	}
 
@@ -57,7 +57,7 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 SaveGame *SaveGame::openForSaving(const Common::String &filename) {
 	Common::OutSaveFile *outSaveFile =  g_system->getSavefileManager()->openForSaving(filename);
 	if (!outSaveFile) {
-		warning("SaveGame::openForSaving() Error creating savegame file");
+		warning("SaveGame::openForSaving() Error creating savegame file %s", filename.c_str());
 		return NULL;
 	}
 
