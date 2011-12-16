@@ -106,7 +106,7 @@ void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamBase::buttonNought },
 		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamBase::buttonEnter },
 		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamBase::quitKey },
-		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 

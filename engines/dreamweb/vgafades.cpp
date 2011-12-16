@@ -184,7 +184,28 @@ void DreamBase::fadeScreenDowns() {
 	data.byte(kNumtofade) = 64;
 }
 
-void DreamGenContext::clearPalette() {
+void DreamBase::fadeScreenDownHalf() {
+	palToStartPal();
+	palToEndPal();
+
+	const uint8 *startPal = startPalette();
+	uint8 *endPal = endPalette();
+	for (int i = 0; i < 256 * 3; ++i) {
+		*endPal >>= 1;
+		endPal++;
+	}
+
+	memcpy(endPal + (56*3), startPal + (56*3), 3*5);
+	memcpy(endPal + (77*3), startPal + (77*3), 3*2);
+
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 31;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 32;
+}
+
+
+void DreamBase::clearPalette() {
 	data.byte(kFadedirection) = 0;
 	clearStartPal();
 	dumpCurrent();

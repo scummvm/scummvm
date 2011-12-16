@@ -487,7 +487,6 @@ public:
 	void doSomeTalk();
 	void resetLocation();
 	void adjustUp();
-	void fadeScreenDownHalf();
 	void outOfOpen();
 	void dirCom();
 	void findFirstPath();
@@ -539,7 +538,6 @@ public:
 	void read();
 	void searchForString();
 	void selectOpenOb();
-	void useGun();
 	void incRyanPage();
 	void clearChanges();
 	void searchForFiles();

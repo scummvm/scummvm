@@ -25,8 +25,6 @@
 	void screenUpdate();
 	void startup();
 	void startup1();
-	void switchRyanOn();
-	void switchRyanOff();
 	void saveLoad();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
@@ -43,13 +41,11 @@
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiDump(x, y, width, height);
 	}
-	void printSprites();
 	void quickQuit();
 	void readOneBlock();
 	void readCityPic();
 	void readDestIcon();
 	void seeCommandTail();
-	void randomNumber();
 	void quickQuit2();
 	void printDirect();
 	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
@@ -58,12 +54,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void useTimedText();
-	void dumpTimedText();
-	void setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
-	void getUnderTimed();
-	void putUnderTimed();
-	void dumpTextLine();
 	void startLoading(const Room &room);
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
@@ -72,37 +62,10 @@
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
 	}
-	void printASprite(const Sprite *sprite);
 	void width160();
-	void clearSprites();
-	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
 	void spriteUpdate();
-	void initMan();
 	void mainMan(Sprite *sprite);
-	void mainMan();
-	void walking(Sprite *sprite);
-	void aboutTurn(Sprite *sprite);
-	void backObject(Sprite *sprite);
-	void backObject();
-	void constant(Sprite *sprite, SetObject *objData);
-	void steady(Sprite *sprite, SetObject *objData);
-	void randomSprite(Sprite *sprite, SetObject *objData);
-	void doDoor(Sprite *sprite, SetObject *objData, Common::Rect check);
-	void doorway(Sprite *sprite, SetObject *objData);
-	void wideDoor(Sprite *sprite, SetObject *objData);
-	void lockedDoorway(Sprite *sprite, SetObject *objData);
-	void liftSprite(Sprite *sprite, SetObject *objData);
-	void showGameReel(ReelRoutine *routine);
-	void turnPathOn(uint8 param);
-	void turnPathOff(uint8 param);
-	void turnPathOn();
-	void turnPathOff();
-	void turnAnyPathOn(uint8 param, uint8 room);
-	void turnAnyPathOff(uint8 param, uint8 room);
-	void turnAnyPathOn();
-	void turnAnyPathOff();
 	void makeBackOb(SetObject *objData);
-	void dealWithSpecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void showRain();
 	void commandOnly();
@@ -117,15 +80,10 @@
 	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
 	const uint8 *findObName(uint8 type, uint8 index);
-	void copyName();
 	void copyName(uint8 type, uint8 index, uint8 *dst);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void updatePeople();
-	void madman(ReelRoutine &routine);
-	void madmanText();
-	void madMode();
-	void moveMap(uint8 param);
 	bool addAlong(const uint8 *mapFlags);
 	bool addLength(const uint8 *mapFlags);
 	void getDimension();
@@ -156,13 +114,7 @@
 		return DreamBase::getSetAd(index);
 	}
 	void setAllChanges();
-	void doChange(uint8 index, uint8 value, uint8 type);
 	void deleteTaken();
-	bool isCD();
-	void placeSetObject();
-	void placeSetObject(uint8 index);
-	void removeSetObject();
-	void removeSetObject(uint8 index);
 	void showAllFree();
 	void showAllEx();
 	bool finishedWalkingCPP();
@@ -175,7 +127,6 @@
 	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
-	void addToPeopleList(ReelRoutine *routine);
 	void getExPos();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]) {
@@ -184,8 +135,6 @@
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
-	void checkIfPathIsOn();
-	bool checkIfPathIsOn(uint8 index);
 	void isItWorn();
 	bool isItWorn(const DynObject *object) {
 		return DreamBase::isItWorn(object);
@@ -213,8 +162,6 @@
 	const uint8 *getObTextStartCPP();
 	void useText(const uint8 *string);
 	void useText();
-	void getBlockOfPixel();
-	uint8 getBlockOfPixel(uint8 x, uint8 y);
 	void examineObText();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
@@ -222,23 +169,11 @@
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
 	void transferText();
-	void initRain();
-	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
 	void watchCount();
 	void loadRoom();
-	void textForMonk();
-	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
-	void textForEnd();
-	void monks2text();
-	void intro1Text();
-	void intro2Text();
-	void intro3Text();
 	void readSetData();
 	void fadeupYellows();
 	void fadeupMonFirst();
-	void loadMenu();
-	void showMenu();
-	void dumpMenu();
 	void useMenu();
 	void useMon();
 	void makeCaps();
@@ -261,7 +196,6 @@
 	void playChannel1(uint8 index) {
 		DreamBase::playChannel1(index);
 	}
-	void findRoomInLoc();
 	void reelsOnScreen();
 	void reconstruct();
 	void look();
@@ -329,61 +263,8 @@
 	void checkFolderCoords();
 	void nextFolder();
 	void lastFolder();
-	void setLocation();
-	void setLocation(uint8 index) {
-		DreamBase::setLocation(index);
-	}
 	void drawFloor();
-	void allocateBuffers();
-	bool checkSpeed(ReelRoutine &routine);
-	void checkSpeed();
-	void sparkyDrip(ReelRoutine &routine);
-	void genericPerson(ReelRoutine &routine);
-	void gamer(ReelRoutine &routine);
-	void eden(ReelRoutine &routine);
-	void sparky(ReelRoutine &routine);
-	void rockstar(ReelRoutine &routine);
-	void madmansTelly(ReelRoutine &routine);
-	void smokeBloke(ReelRoutine &routine);
-	void manAsleep(ReelRoutine &routine);
-	void drunk(ReelRoutine &routine);
-	void introMagic1(ReelRoutine &routine);
-	void introMagic2(ReelRoutine &routine);
-	void introMagic3(ReelRoutine &routine);
-	void introMusic(ReelRoutine &routine);
-	void candles(ReelRoutine &routine);
-	void candles1(ReelRoutine &routine);
-	void candles2(ReelRoutine &routine);
-	void smallCandle(ReelRoutine &routine);
-	void gates(ReelRoutine &routine);
-	void security(ReelRoutine &routine);
-	void edenInBath(ReelRoutine &routine);
-	void louis(ReelRoutine &routine);
-	void handClap(ReelRoutine &routine);
-	void carParkDrip(ReelRoutine &routine);
-	void foghornSound(ReelRoutine &routine);
-	void train(ReelRoutine &routine);
-	void attendant(ReelRoutine &routine);
-	void keeper(ReelRoutine &routine);
-	void interviewer(ReelRoutine &routine);
-	void drinker(ReelRoutine &routine);
-	void alleyBarkSound(ReelRoutine &routine);
-	void louisChair(ReelRoutine &routine);
-	void bossMan(ReelRoutine &routine);
-	void priest(ReelRoutine &routine);
-	void monkAndRyan(ReelRoutine &routine);
-	void copper(ReelRoutine &routine);
-	void introMonks1(ReelRoutine &routine);
-	void introMonks2(ReelRoutine &routine);
-	void soldier1(ReelRoutine &routine);
-	void receptionist(ReelRoutine &routine);
-	void bartender(ReelRoutine &routine);
-	void heavy(ReelRoutine &routine);
-	void helicopter(ReelRoutine &routine);
 	void mugger(ReelRoutine &routine);
-	void businessMan(ReelRoutine &routine);
-	void endGameSeq(ReelRoutine &routine);
-	void poolGuard(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);
@@ -445,7 +326,6 @@
 	void obsThatDoThings();
 	void makeMainScreen();
 	void delEverything();
-	void clearPalette();
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();
@@ -456,25 +336,17 @@
 	void putBackObStuff();
 	void moreTalk();
 	void redes();
-	void isSetObOnMap();
-	bool isSetObOnMap(uint8 index);
-	void dumpZoom();
 	void selectLocation();
 	void showGroup();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
 	}
-	void getTime();
 	void set16ColPalette();
 	void showSaveOps();
 	void showLoadOps();
 	void watchReel();
 	void showWatchReel();
-	void plotReel(uint16 &reelPointer);
-	void removeFreeObject(uint8 index) {
-		DreamBase::removeFreeObject(index);
-	}
 	void afterNewRoom();
 	void madmanRun();
 	void showDecisions();
@@ -486,8 +358,6 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void diaryKeyP();
-	void diaryKeyN();
 	void checkInput();
 	void dropError();
 	void cantDrop();
@@ -519,5 +389,6 @@
 	void openOb();
 	void withWhat();
 	void notHeldError();
+	void useGun();
 
 #endif
