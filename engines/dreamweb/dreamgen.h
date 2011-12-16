@@ -487,7 +487,6 @@ public:
 	void doSomeTalk();
 	void resetLocation();
 	void adjustUp();
-	void fadeScreenDownHalf();
 	void outOfOpen();
 	void dirCom();
 	void findFirstPath();

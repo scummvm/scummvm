@@ -382,7 +382,6 @@
 	void obsThatDoThings();
 	void makeMainScreen();
 	void delEverything();
-	void clearPalette();
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();

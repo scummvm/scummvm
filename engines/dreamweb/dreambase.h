@@ -356,6 +356,8 @@ public:
 	void fadeScreenUpHalf();
 	void fadeScreenDown();
 	void fadeScreenDowns();
+	void fadeScreenDownHalf();
+	void clearPalette();
 	void greyscaleSum();
 	void allPalette();
 	void dumpCurrent();

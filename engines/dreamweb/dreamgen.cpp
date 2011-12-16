@@ -285,36 +285,6 @@ void DreamGenContext::transferMap() {
 	_add(data.word(kExframepos), cx);
 }
 
-void DreamGenContext::fadeScreenDownHalf() {
-	STACK_CHECK;
-	palToStartPal();
-	palToEndPal();
-	cx = 768;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-halfend:
-	al = es.byte(bx);
-	_shr(al, 1);
-	es.byte(bx) = al;
-	_inc(bx);
-	if (--cx)
-		goto halfend;
-	ds = data.word(kBuffers);
-	es = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(56*3);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(56*3);
-	cx = 3*5;
-	_movsb(cx, true);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(77*3);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(77*3);
-	cx = 3*2;
-	_movsb(cx, true);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 31;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 32;
-}
-
 void DreamGenContext::rollEm() {
 	STACK_CHECK;
 	cl = 160;
