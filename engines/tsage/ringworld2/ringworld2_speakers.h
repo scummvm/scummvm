@@ -237,6 +237,30 @@ public:
 	virtual Common::String getClassName() { return "SpeakerNej2750"; }
 	virtual void proc15();
 };
+
+class SpeakerQuinn2800 : public VisualSpeaker {
+public:
+	SpeakerQuinn2800();
+
+	virtual Common::String getClassName() { return "SpeakerQuinn2800"; }
+	virtual void proc15();
+};
+
+class SpeakerNej2800 : public VisualSpeaker {
+public:
+	SpeakerNej2800();
+
+	virtual Common::String getClassName() { return "SpeakerNej2800"; }
+	virtual void proc15();
+};
+
+class SpeakerGuard2800 : public VisualSpeaker {
+public:
+	SpeakerGuard2800();
+
+	virtual Common::String getClassName() { return "SpeakerGuard2800"; }
+	virtual void proc15();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

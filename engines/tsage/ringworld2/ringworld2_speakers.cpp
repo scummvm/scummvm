@@ -915,5 +915,129 @@ void SpeakerNej2750::proc15() {
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
+
+SpeakerQuinn2800::SpeakerQuinn2800() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerQuinn2800::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &R2_GLOBALS._player;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 16:
+			_object1.setZoom(75);
+			_object1.setup(4023, 5, 1);
+			break;
+		case 19:
+			_object1.setup(4023, 1, 1);
+			break;
+		case 3110:
+			_object1.setZoom(75);
+			if (_object2->_strip == 1)
+				_object1.setup(4061	, 1, 1);
+			else
+				_object1.setup(4061	, 3, 1);
+			break;
+		default:
+			break;
+		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerNej2800::SpeakerNej2800() {
+	_speakerName = "NEJ";
+	_color1 = 171;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerNej2800::proc15() {
+	int v = _fieldF6;
+	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4023, 3, 1);
+		if (_object2->_visage == 2801)
+			_object1.setPosition(Common::Point(R2_GLOBALS._player._position.x - 12, R2_GLOBALS._player._position.y));
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerGuard2800::SpeakerGuard2800() {
+	_speakerName = "GUARD";
+	_color1 = 5;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerGuard2800::proc15() {
+	int v = _fieldF6;
+	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setZoom(75);
+		_object1.setup(4060, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

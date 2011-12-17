@@ -624,6 +624,47 @@ public:
 	virtual void process(Event &event);
 };
 
+class Scene2800 : public SceneExt {
+	class Item2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor1 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+	class Action2: public Action {
+	public:
+		void signal();
+	};
+public:
+	SpeakerQuinn2800 _quinnSpeaker;
+	SpeakerNej2800 _nejSpeaker;
+	SpeakerGuard2800 _guardSpeaker;
+	NamedHotspot _item1;
+	Item2 _item2;
+	Actor1 _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneObject _object1;
+	Action1 _action1;
+	Action2 _action2;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SequenceManager _sequenceManager;
+	int _field412;
+
+	Scene2800();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
