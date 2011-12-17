@@ -41,7 +41,6 @@ protected:
 	Graphics::Surface *_externalSurface;
 	int32 _frame;
 	bool _updateNeeded;
-	int32 _speed;
 	float _movieTime;
 	int _channels;
 	int _freq;

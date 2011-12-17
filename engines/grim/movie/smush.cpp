@@ -36,7 +36,6 @@ MoviePlayer *CreateSmushPlayer(bool demo) {
 }
 
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
-	_speed = 5000;
 	_videoDecoder = new Grim::SmushDecoder();
 	getDecoder()->setDemo(_demo);
 }

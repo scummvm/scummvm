@@ -35,7 +35,6 @@ namespace Grim {
 MoviePlayer *g_movie;
 
 MoviePlayer::MoviePlayer() {
-	_speed = 0;
 	_channels = -1;
 	_freq = 22050;
 	_videoFinished = false;
@@ -49,11 +48,14 @@ MoviePlayer::MoviePlayer() {
 	_videoDecoder = NULL;
 	_internalSurface = NULL;
 	_externalSurface = new Graphics::Surface();
+
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, NULL);
 }
 
 MoviePlayer::~MoviePlayer() {
 	deinit();
 	delete _videoDecoder;
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 void MoviePlayer::pause(bool p) {
@@ -119,8 +121,6 @@ void MoviePlayer::init() {
 void MoviePlayer::deinit() {
 	Debug::debug(Debug::Movie, "Deinitting video '%s'.\n", _fname.c_str());
 
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-
 	if (_videoDecoder)
 		_videoDecoder->close();
 
@@ -147,8 +147,6 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	Debug::debug(Debug::Movie, "Playing video '%s'.\n", filename.c_str());
 
 	init();
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 	_internalSurface = NULL;
 
 	// Get the first frame immediately
