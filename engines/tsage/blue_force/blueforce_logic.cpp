@@ -255,14 +255,16 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
  * Returns true if it is currently okay to restore a game
  */
 bool BlueForceGame::canLoadGameStateCurrently() {
-	return true;
+	// Don't allow a game to be loaded if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool BlueForceGame::canSaveGameStateCurrently() {
-	return true;
+	// Don't allow a game to be saved if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 void BlueForceGame::rightClick() {
