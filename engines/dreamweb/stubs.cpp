@@ -1788,7 +1788,7 @@ bool DreamGenContext::isRyanHolding(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		DynObject *object = getExAd(index);
 		if (object->mapad[0] == 4 && objectMatches(object, id))
-			return (index == kNumexobjects);
+			return true;
 	}
 
 	return false;
