@@ -25,11 +25,24 @@
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/serializer.h"
 
 namespace DreamGen {
 
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
+
+
+void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
+	s.syncAsByte(reel->reallocation);
+	s.syncAsByte(reel->mapX);
+	s.syncAsByte(reel->mapY);
+	s.syncAsByte(reel->b3);
+	s.syncAsByte(reel->b4);
+	s.syncAsByte(reel->period);
+	s.syncAsByte(reel->counter);
+	s.syncAsByte(reel->b7);
+}
 
 void DreamGenContext::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
@@ -405,6 +418,11 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
 	outSaveFile->write(data.ptr(kRoomscango, 16), 16);
 
+	// TODO: Convert more to serializer?
+	Common::Serializer s(0, outSaveFile);
+	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
+		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
+	}
 	outSaveFile->write(data.ptr(kReelroutines, len[5]), len[5]);
 
 	outSaveFile->finalize();
@@ -454,7 +472,11 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	inSaveFile->read((uint8 *)&g_madeUpRoomDat, sizeof(Room));
 	inSaveFile->read(data.ptr(kRoomscango, 16), 16);
 
-	inSaveFile->read(data.ptr(kReelroutines, len[5]), len[5]);
+	// TODO: Use serializer for more
+	Common::Serializer s(inSaveFile, 0);
+	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
+		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
+	}
 
 	delete inSaveFile;
 }
