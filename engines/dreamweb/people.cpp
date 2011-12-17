@@ -873,24 +873,23 @@ void DreamGenContext::mugger(ReelRoutine &routine) {
 	}
 }
 
+// Exiting the elevator of Sartain's industries, Sartain (the businessman) and
+// two bodyguards are expecting Ryan.
 void DreamBase::businessMan(ReelRoutine &routine) {
 	data.byte(kPointermode) = 0;
 	data.word(kWatchingtime) = 2;
-	if (routine.reelPointer() == 2) {
-		// First
-		DreamBase::setupTimedUse(49, 30, 1, 68, 174);
-		return;
-	}
+	if (routine.reelPointer() == 2)
+		DreamBase::setupTimedUse(49, 30, 1, 68, 174);	// First
 
 	if (routine.reelPointer() == 95) {
-		// Bus combat won - end
+		// Businessman combat won - end
 		data.byte(kPointermode) = 0;
 		data.word(kWatchingtime) = 0;
 		return;
 	}
 
 	if (routine.reelPointer() == 49)
-		return; // buscombatend
+		return; // Businessman combat end
 
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
@@ -904,7 +903,7 @@ void DreamBase::businessMan(ReelRoutine &routine) {
 				data.byte(kCombatcount) = 0;
 				nextReelPointer = 51;
 			} else {
-				// No shield on bus
+				// No shield on businessman
 				data.byte(kCombatcount)++;
 				if (data.byte(kCombatcount) == 20) {
 					data.byte(kCombatcount) = 0;
@@ -912,7 +911,7 @@ void DreamBase::businessMan(ReelRoutine &routine) {
 				}
 			}
 		} else {
-			// Bus combat won
+			// Businessman combat won
 			if (nextReelPointer == 91) {
 				turnPathOn(0);
 				turnPathOn(1);
