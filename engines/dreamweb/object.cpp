@@ -401,8 +401,19 @@ void DreamGenContext::selectOb() {
 	data.byte(kWithobject) = objectId & 0x00FF;
 	data.byte(kWithtype)   = objectId >> 8;
 
-	if (objectId == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
-		data.byte(kCommandtype) = 221;
+	if (objectId == data.word(kOldsubject)) {
+		if (data.byte(kCommandtype) == 221) {
+			// Object already selected
+			if (data.word(kMousebutton) != data.word(kOldbutton) && (data.word(kMousebutton) & 1)) {
+				delPointer();
+				data.byte(kInvopen) = 0;
+				useRoutine();
+			}
+			return;
+		} else {
+			data.byte(kCommandtype) = 221;
+		}
+	}
 
 	data.word(kOldsubject) = objectId;
 	commandWithOb(0, data.byte(kWithtype), data.byte(kWithobject));
