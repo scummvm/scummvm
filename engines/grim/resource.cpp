@@ -210,17 +210,14 @@ void ResourceLoader::putIntoCache(const Common::String &fname, Block *res) {
 Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-			warning("Could not find bitmap %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str());
+	if (!stream) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
+		warning("Could not find bitmap %s", filename.c_str());
+		return NULL;
 	}
 
-	Bitmap *result = new Bitmap(filename, b->getData(), b->getLen());
+	Bitmap *result = new Bitmap(filename, stream);
 
 	return result;
 }
