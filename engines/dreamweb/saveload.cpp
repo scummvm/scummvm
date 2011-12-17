@@ -191,16 +191,16 @@ void DreamGenContext::saveGame() {
 		}
 
 		char descbuf[17] = { 2, 0 };
-		strncpy((char*)descbuf+1, game_description.c_str(), 16);
+		Common::strlcpy((char*)descbuf+1, game_description.c_str(), 16);
 		unsigned int desclen = game_description.size();
 		if (desclen > 15)
 			desclen = 15;
 		// zero terminate, and pad with ones
 		descbuf[++desclen] = 0;
-		while (desclen < 17)
+		while (desclen < 16)
 			descbuf[++desclen] = 1;
 		if (savegameId < 7)
-			memcpy(&_saveNames[17*savegameId], descbuf, 17);
+			Common::strlcpy(&_saveNames[17 * savegameId + 1], descbuf, 16);	// the first character is unused
 
 		savePosition(savegameId, descbuf);
 
@@ -464,42 +464,39 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 // Count number of save files, and load their descriptions into _saveNames
 unsigned int DreamGenContext::scanForNames() {
-	unsigned int count = 0;
-
-	FileHeader header;
-
-	// TODO: Change this to use SaveFileManager::listSavefiles()
+	// Initialize the first 7 slots (like the original code expects)
 	for (unsigned int slot = 0; slot < 7; ++slot) {
-		_saveNames[17*slot+0] = 2;
-		_saveNames[17*slot+1] = 0;
+		_saveNames[17 * slot + 0] = 2;
+		_saveNames[17 * slot + 1] = 0;
 		for (int i = 2; i < 17; ++i)
-			_saveNames[17*slot+i] = 1;
-
-		// Try opening savegame with the given slot id
-		Common::String filename = engine->getSavegameFilename(slot);
-		Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
-		if (!inSaveFile)
-			continue;
-
-		++count;
-
-		inSaveFile->read((uint8 *)&header, sizeof(FileHeader));
-
-		if (header.len(0) != 17) {
-			::warning("Error loading save: description buffer isn't 17 bytes");
-			delete inSaveFile;
-			continue;
-		}
-
-		// NB: Only possible if slot < 7
-		inSaveFile->read(&_saveNames[17*slot], 17);
-
-		delete inSaveFile;
+			_saveNames[17 * slot + i] = 1;	// initialize with 1's
 	}
 
-	al = (uint8)count;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D??");
+	Common::sort(files.begin(), files.end());
 
-	return count;
+	SaveStateList saveList;
+	for (uint i = 0; i < files.size(); ++i) {
+		const Common::String &file = files[i];
+		Common::InSaveFile *stream = saveFileMan->openForLoading(file);
+		if (!stream)
+			error("cannot open save file %s", file.c_str());
+		char name[17] = {};
+		stream->seek(0x61);
+		stream->read(name, sizeof(name) - 1);
+		delete stream;
+
+		int slotNum = atoi(file.c_str() + file.size() - 2);
+		SaveStateDescriptor sd(slotNum, name);
+		saveList.push_back(sd);
+		if (slotNum < 7)
+			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused
+	}
+
+	al = saveList.size() <= 7 ? (uint8)saveList.size() : 7;
+
+	return saveList.size();
 }
 
 void DreamGenContext::loadOld() {
