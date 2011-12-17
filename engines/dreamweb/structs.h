@@ -76,8 +76,8 @@ struct SetObject {
 	uint8 b0;
 	uint8 b1;
 	uint8 b2;
-	uint8 b3;
-	uint8 b4;
+	uint8 slotSize;
+	uint8 slotCount;
 	uint8 priority;
 	uint8 b6;
 	uint8 delay;
@@ -125,8 +125,8 @@ struct DynObject {
 	uint8 currentLocation;
 	uint8 index;
 	uint8 mapad[5];
-	uint8 b7;
-	uint8 b8;
+	uint8 slotSize;
+	uint8 slotCount;
 	uint8 b9;
 	uint8 b10;
 	uint8 initialLocation;

@@ -1363,18 +1363,22 @@ DynObject *DreamBase::getEitherAdCPP() {
 void *DreamBase::getAnyAd(uint8 *value1, uint8 *value2) {
 	if (data.byte(kObjecttype) == 4) {
 		DynObject *exObject = getExAd(data.byte(kCommand));
-		*value1 = exObject->b7;
-		*value2 = exObject->b8;
+		*value1 = exObject->slotSize;
+		*value2 = exObject->slotCount;
 		return exObject;
 	} else if (data.byte(kObjecttype) == 2) {
 		DynObject *freeObject = getFreeAd(data.byte(kCommand));
-		*value1 = freeObject->b7;
-		*value2 = freeObject->b8;
+		*value1 = freeObject->slotSize;
+		*value2 = freeObject->slotCount;
 		return freeObject;
 	} else {
 		SetObject *setObject = getSetAd(data.byte(kCommand));
-		*value1 = setObject->b4;
-		*value2 = setObject->priority;
+		// Note: the original returned slotCount/priority (bytes 4 and 5)
+		// instead of slotSize/slotCount (bytes 3 and 4).
+		// Changed this for consistency with the Ex/Free cases, and also
+		// with getOpenedSize()
+		*value1 = setObject->slotSize;
+		*value2 = setObject->slotCount;
 		return setObject;
 	}
 }

@@ -311,11 +311,11 @@ byte DreamGenContext::getOpenedSizeCPP() {
 	byte obj = data.byte(kOpenedob);
 	switch (data.byte(kOpenedtype)) {
 	case 4:
-		return getExAd(obj)->b8;
+		return getExAd(obj)->slotCount;
 	case 2:
-		return getFreeAd(obj)->b8;
+		return getFreeAd(obj)->slotCount;
 	default:
-		return getSetAd(obj)->b4;
+		return getSetAd(obj)->slotCount;
 	}
 }
 
