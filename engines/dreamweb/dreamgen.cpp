@@ -2736,68 +2736,6 @@ lookcolon:
 		goto lookcolon;
 }
 
-void DreamGenContext::useStereo() {
-	STACK_CHECK;
-	_cmp(data.byte(kLocation), 0);
-	if (flags.z())
-		goto stereook;
-	cx = 400;
-	al = 4;
-	showPuzText();
-	putBackObStuff();
-	return;
-stereook:
-	_cmp(data.byte(kMapx), 11);
-	if (!flags.z())
-		goto stereonotok;
-	_cmp(data.byte(kMapy), 0);
-	if (flags.z())
-		goto stereook2;
-stereonotok:
-	cx = 400;
-	al = 5;
-	showPuzText();
-	putBackObStuff();
-	return;
-stereook2:
-	al = 'C';
-	ah = 'D';
-	cl = 'P';
-	ch = 'L';
-	findSetObject();
-	ah = 1;
-	checkInside();
-	_cmp(cl, (114));
-	if (!flags.z())
-		goto cdinside;
-	al = 6;
-	cx = 400;
-	showPuzText();
-	putBackObStuff();
-	getAnyAd();
-	al = 255;
-	es.byte(bx+10) = al;
-	return;
-cdinside:
-	getAnyAd();
-	al = es.byte(bx+10);
-	_xor(al, 1);
-	es.byte(bx+10) = al;
-	_cmp(al, 255);
-	if (flags.z())
-		goto stereoon;
-	al = 7;
-	cx = 400;
-	showPuzText();
-	putBackObStuff();
-	return;
-stereoon:
-	al = 8;
-	cx = 400;
-	showPuzText();
-	putBackObStuff();
-}
-
 void DreamGenContext::selectOb() {
 	STACK_CHECK;
 	findInvPos();

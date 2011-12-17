@@ -869,6 +869,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'useroutine',
 	'useshield',
 	'useslab',
+	'usestereo',
 	'usetempcharset',
 	'usetext',
 	'usetimedtext',

@@ -395,6 +395,7 @@
 	void identifyOb();
 	void showSlots();
 	void useCashCard();
+	void useStereo();
 	void checkInside();
 	uint16 checkInside(uint16 command, uint16 type);
 

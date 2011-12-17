@@ -1634,4 +1634,34 @@ void DreamGenContext::useCashCard() {
 	putBackObStuff();
 }
 
+void DreamGenContext::useStereo() {
+	if (data.byte(kLocation) != 0) {
+		showPuzText(4, 400);
+		putBackObStuff();
+	} else if (data.byte(kMapx) != 11) {
+		showPuzText(5, 400);
+		putBackObStuff();
+	} else if (checkInside(findSetObject("CDPL"), 1) == kNumexobjects) {
+		// No CD inside
+		showPuzText(6, 400);
+		putBackObStuff();
+		// TODO: Use the C++ version of getAnyAd()
+		getAnyAd();
+		es.byte(bx + 10) = 255;
+	} else {
+		// CD inside
+		getAnyAd();
+		es.byte(bx + 10) ^= 1;
+		if (es.byte(bx + 10) != 255) {
+			// Stereo off
+			showPuzText(7, 400);
+		} else {
+			// Stereo on
+			showPuzText(8, 400);
+		}
+
+		putBackObStuff();
+	}
+}
+
 } // End of namespace DreamGen

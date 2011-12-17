@@ -518,7 +518,6 @@ public:
 	void getEitherAd();
 	void setPickup();
 	void dropObject();
-	void useStereo();
 	void showDiaryKeys();
 	void useOpened();
 	void signOn();
