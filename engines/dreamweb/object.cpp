@@ -294,16 +294,17 @@ void DreamGenContext::getOpenedSize() {
 	switch (data.byte(kOpenedtype)) {
 	case 4:
 		getExAd();
+		ax = es.word(bx+7);
 		break;
 	case 2:
 		getFreeAd();
+		ax = es.word(bx+7);
 		break;
 	default:
 		getSetAd();
+		ax = es.word(bx+3);
 		break;
 	}
-
-	ax = es.word(bx+7);
 }
 
 byte DreamGenContext::getOpenedSizeCPP() {
