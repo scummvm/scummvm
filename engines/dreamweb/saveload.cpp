@@ -191,7 +191,7 @@ void DreamGenContext::saveGame() {
 		}
 
 		char descbuf[17] = { 2, 0 };
-		Common::strlcpy((char*)descbuf+1, game_description.c_str(), 16);
+		Common::strlcpy((char*)descbuf + 1, game_description.c_str(), 16);
 		unsigned int desclen = game_description.size();
 		if (desclen > 15)
 			desclen = 15;
@@ -199,9 +199,6 @@ void DreamGenContext::saveGame() {
 		descbuf[++desclen] = 0;
 		while (desclen < 16)
 			descbuf[++desclen] = 1;
-		if (savegameId < 7)
-			Common::strlcpy(&_saveNames[17 * savegameId + 1], descbuf, 16);	// the first character is unused
-
 		savePosition(savegameId, descbuf);
 
 		// TODO: The below is copied from actualsave
