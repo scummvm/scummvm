@@ -2308,6 +2308,46 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 	return newHighlight ? false : true;
 }
 
+void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(dim);
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+
+	drawTextBox(dim, id);
+	const ScreenDim *dm = _screen->getScreenDim(dim);
+
+	int bx = ((dm->sx + dm->w) << 3) - ((strlen(_vm->_menuOkString) << 3) + 16);
+	int by = dm->sy + dm->h - 19;
+	int bw = (strlen(_vm->_menuOkString) << 3) + 7;
+
+	drawMenuButtonBox(bx, by, bw, 14, false, false);
+	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
+	_screen->updateScreen();
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == 199 || inputFlag == 201) {
+			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, bx, by, bx + bw, by + 14))
+				runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_o]) {
+			runLoop = false;
+		}
+	}
+
+	drawMenuButtonBox(bx, by, bw, 14, true, true);
+	_screen->updateScreen();
+	_vm->_system->delayMillis(80);
+	drawMenuButtonBox(bx, by, bw, 14, false, true);
+	_screen->updateScreen();
+
+	_screen->copyRegion(0, dm->h, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->setScreenDim(od);
+	_screen->setFont(of);
+	dm = _screen->getScreenDim(dim);
+}
+
 void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 
@@ -2496,6 +2536,15 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
+void GUI_EoB::transferWaitBox() {
+	const ScreenDim *dm = _screen->getScreenDim(11);
+	int xo = dm->sx;
+	int yo = dm->sy;
+	_screen->modifyScreenDim(11, dm->sx + 9, dm->sy + 24, dm->w, dm->h);
+	displayTextBox(-4);
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+}
+
 Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &targets) {
 	_savegameListSize = targets.size();
 	if (_savegameList) {
@@ -2542,13 +2591,14 @@ Common::String GUI_EoB::transferFileMenu(Common::String &target) {
 	int slot = 0;
 	do {
 		slot = selectSaveSlotDialogue(72, 14, 4);
-		if (slot < 6) {
-			if (_saveSlotIdTemp[slot] == -1)
-				messageDialogue(11, 65, 6);
-			else {
-				_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
-				return _vm->getSavegameFilename(target, _saveSlotIdTemp[slot]);
-			}
+		if (slot == 6)
+			break;
+		
+		if (_saveSlotIdTemp[slot] == -1)
+			messageDialogue(11, 65, 6);
+		else {
+			_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+			return _vm->getSavegameFilename(target, _saveSlotIdTemp[slot]);
 		}
 	} while (_saveSlotIdTemp[slot] == -1);
 
@@ -3486,46 +3536,6 @@ bool GUI_EoB::confirmDialogue(int id) {
 	_screen->setScreenDim(od);
 
 	return result;
-}
-
-void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
-	int od = _screen->curDimIndex();
-	_screen->setScreenDim(dim);
-	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-
-	drawTextBox(dim, id);
-	const ScreenDim *dm = _screen->getScreenDim(dim);
-
-	int bx = ((dm->sx + dm->w) << 3) - ((strlen(_vm->_menuOkString) << 3) + 16);
-	int by = dm->sy + dm->h - 19;
-	int bw = (strlen(_vm->_menuOkString) << 3) + 7;
-
-	drawMenuButtonBox(bx, by, bw, 14, false, false);
-	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
-	_screen->updateScreen();
-
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
-		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
-		_vm->removeInputTop();
-
-		if (inputFlag == 199 || inputFlag == 201) {
-			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, bx, by, bx + bw, by + 14))
-				runLoop = false;
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_o]) {
-			runLoop = false;
-		}
-	}
-
-	drawMenuButtonBox(bx, by, bw, 14, true, true);
-	_screen->updateScreen();
-	_vm->_system->delayMillis(80);
-	drawMenuButtonBox(bx, by, bw, 14, false, true);
-	_screen->updateScreen();
-
-	_screen->copyRegion(0, dm->h, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->setScreenDim(od);
-	_screen->setFont(of);
-	dm = _screen->getScreenDim(dim);
 }
 
 int GUI_EoB::selectCharacterDialogue(int id) {

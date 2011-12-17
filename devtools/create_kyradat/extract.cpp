@@ -394,7 +394,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 					}
 				}
 			}
-		
+
 		} while (input < c);
 	} else {
 		uint32 copySize = size;
@@ -1084,10 +1084,10 @@ bool extractEoB2ShapeData(PAKFile &out, const ExtractInformation *info, const by
 bool extractEoBNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	// We use one extraction routine for both EOB 1 and EOB 2 (in spite of the data format differences)
 	// since it is easy enough to generate a common output usable by both engines
-	
+
 	uint8 *buffer = 0;
 	uint32 outsize = 0;
-	
+
 	if (info->game == kEoB1) {
 		uint16 num = size / 243;
 		outsize = num * 111 + 2;
@@ -1120,7 +1120,7 @@ bool extractEoBNpcData(PAKFile &out, const ExtractInformation *info, const byte 
 			for (int ii = 0; ii < 27; ii++) {
 				WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 				src += 2; dst += 2;
-			}			
+			}
 			// skipping more zero space
 			src += 70;
 		}

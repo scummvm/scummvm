@@ -537,8 +537,14 @@ enum KyraResources {
 	kEoB1Npc7Strings,
 
 	kEoB2MainMenuStrings,
+
+	kEoB2TransferPortraitFrames,
 	kEoB2TransferConvertTable,
+	kEoB2TransferItemTable,
 	kEoB2TransferExpTable,
+	kEoB2TransferStrings1,
+	kEoB2TransferStrings2,
+	kEoB2TransferLabels,
 
 	kEoB2IntroStrings,
 	kEoB2IntroCPSFiles,

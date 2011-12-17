@@ -64,9 +64,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_beholderSpellList = 0;
 	_beholderSfx = 0;
 
-	_transferConvertTable = 0;
-	_transferExpTable = 0;
-
 	_faceShapes = 0;
 	_characters = 0;
 	_items = 0;
@@ -470,7 +467,7 @@ Common::Error EoBCoreEngine::go() {
 		}
 	}
 
-	if (!shouldQuit() && action > -3) {
+	if (!shouldQuit() && action >= -3) {
 		runLoop();
 
 		if (_playFinale) {

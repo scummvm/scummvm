@@ -69,7 +69,7 @@ private:
 	void finish();
 
 	uint8 **_chargenMagicShapes;
-	uint8 **_chargenButtonLabels;
+	uint8 *_chargenButtonLabels[17];
 	int _activeBox;
 	int _magicShapesBox;
 	int _updateBoxShapesIndex;
@@ -115,7 +115,7 @@ private:
 };
 
 CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
-	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenButtonLabels(0), _chargenMagicShapeTimer(0),
+	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenMagicShapeTimer(0),
 	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
@@ -145,11 +145,8 @@ CharacterGenerator::~CharacterGenerator() {
 		delete[] _chargenMagicShapes;
 	}
 
-	if (_chargenButtonLabels) {
-		for (int i = 0; i < 17; i++)
-			delete[] _chargenButtonLabels[i];
-		delete[] _chargenButtonLabels;
-	}
+	for (int i = 0; i < 17; i++)
+		delete[] _chargenButtonLabels[i];
 }
 
 bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
@@ -261,7 +258,6 @@ void CharacterGenerator::init() {
 	for (int i = 0; i < 10; i++)
 		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true);
 
-	_chargenButtonLabels = new uint8*[17];
 	for (int i = 0; i < 17; i++) {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
 		_chargenButtonLabels[i] = c->labelW? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true) : 0;
@@ -1322,12 +1318,8 @@ void CharacterGenerator::finish() {
 		_chargenMagicShapes = 0;
 	}
 
-	if (_chargenButtonLabels) {
-		for (int i = 0; i < 17; i++)
-			delete[] _chargenButtonLabels[i];
-		delete[] _chargenButtonLabels;
-		_chargenButtonLabels = 0;
-	}
+	for (int i = 0; i < 17; i++)
+		delete[] _chargenButtonLabels[i];
 }
 
 const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
@@ -1444,17 +1436,45 @@ private:
 	bool selectAndLoadTransferFile();
 	Common::String transferFileDialogue();
 
+	int selectCharactersMenu();
+	void drawCharPortraitWithStats(int charIndex, bool enabled);
+	void updateHighlight(int index);
+
 	void convertStats();
+	void convertInventory();
+	Item convertItem(Item eob1Item);
+	void giveKhelbensCoin();
 
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
+
+	int _highlight;
+	EoBItem *_oldItems;
+
+	const uint16 *_portraitFrames;
+	const uint8 *_convertTable;
+	const uint8 *_itemTable;
+	const uint32 *_expTable;
+	const char *const *_strings1;
+	const char *const *_strings2;
+	const char *const *_labels;
 };
 
 TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+	int temp;
+	_portraitFrames = _vm->staticres()->loadRawDataBe16(kEoB2TransferPortraitFrames, temp);
+	_convertTable = _vm->staticres()->loadRawData(kEoB2TransferConvertTable, temp);
+	_itemTable = _vm->staticres()->loadRawData(kEoB2TransferItemTable, temp);
+	_expTable = _vm->staticres()->loadRawDataBe32(kEoB2TransferExpTable, temp);
+	_strings1 = _vm->staticres()->loadStrings(kEoB2TransferStrings1, temp);
+	_strings2 = _vm->staticres()->loadStrings(kEoB2TransferStrings2, temp);
+	_labels = _vm->staticres()->loadStrings(kEoB2TransferLabels, temp);
+	_highlight = -1;
+	_oldItems = 0;
 }
 
 TransferPartyWiz::~TransferPartyWiz() {
-
+	delete[] _oldItems;
 }
 
 bool TransferPartyWiz::start() {
@@ -1465,11 +1485,39 @@ bool TransferPartyWiz::start() {
 
 	convertStats();
 
+	_oldItems = new EoBItem[600];
+	memcpy(_oldItems, _vm->_items, sizeof(EoBItem) * 600);
+	_vm->loadItemDefs();
+
+	int selection = selectCharactersMenu();
+	if (selection == 0) {
+		for (int i = 0; i < 6; i++)
+			delete[] _vm->_characters[i].faceShape;
+		memset(_vm->_characters, 0, sizeof(EoBCharacter) * 6);
+		return false;
+	}
+
+	int ch = 0;
+	for (int i = 0; i < 6; i++) {
+		if (selection & (1 << i)) {
+			if (ch != i) {
+				delete[] _vm->_characters[ch].faceShape;
+				memcpy(&_vm->_characters[ch], &_vm->_characters[i], sizeof(EoBCharacter));
+				_vm->_characters[i].faceShape = 0;
+			}
+			ch++;
+		}
+	}
+	memset(&_vm->_characters[4], 0, sizeof(EoBCharacter) * 2);
+
+	convertInventory();
+	giveKhelbensCoin();
+
 	return true;
 }
 
 bool TransferPartyWiz::selectAndLoadTransferFile() {
-	for (int numLoops = 1; numLoops; numLoops--)  {
+	for (int numLoops = 1; numLoops; numLoops--) {
 		_screen->copyPage(12, 0);
 		_vm->_savegameFilename = transferFileDialogue();
 		if (_vm->_savegameFilename.empty()) {
@@ -1493,9 +1541,14 @@ Common::String TransferPartyWiz::transferFileDialogue() {
 	Common::String tfile;
 
 	KyraEngine_v1::SaveHeader header;
+	memset(&header, 0, sizeof(KyraEngine_v1::SaveHeader));
 	Common::InSaveFile *in;
 
+	_vm->_gui->transferWaitBox();
+
 	for (Common::StringArray::iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
+		_vm->updateInput();
+
 		if (!(in = _vm->_saveFileMan->openForLoading(*i)))
 			continue;
 
@@ -1546,6 +1599,170 @@ Common::String TransferPartyWiz::transferFileDialogue() {
 	return tfile;
 }
 
+int TransferPartyWiz::selectCharactersMenu() {
+	_screen->setCurPage(2);
+	_screen->setFont(Screen::FID_6_FNT);
+	_screen->clearCurPage();
+
+	_vm->gui_drawBox(0, 0, 320, 163, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+	_screen->printText(_strings2[0], 5, 3, 15, 0);
+	_screen->printText(_strings2[1], 5, 10, 15, 0);
+
+	for (int i = 0; i < 6; i++)
+		drawCharPortraitWithStats(i, 0);
+
+	_vm->gui_drawBox(4, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+	_vm->gui_drawBox(272, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+
+	_screen->printShadedText(_labels[0], 9, 151, 15, 0);
+	_screen->printShadedText(_labels[1], 288, 151, 15, 0);
+
+	_screen->setCurPage(0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	int selection = 0;
+	int highlight = 0;
+	bool update = false;
+
+	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag) {
+			if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
+				highlight ^= 1;
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) {
+				highlight -= 2;
+				if (highlight < 0)
+					highlight += 8;
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
+				highlight += 2;
+				if (highlight >= 8)
+					highlight -= 8;
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE]) {
+				update = true;
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+				update = true;
+				highlight = 6;
+			} else if (inputFlag == 199) {
+				for (int i = 0; i < 8; i++) {
+					int t = i << 2;
+					if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, _portraitFrames[t], _portraitFrames[t + 1], _portraitFrames[t + 2], _portraitFrames[t + 3])) {
+						highlight = i;
+						update = true;
+						break;
+					}
+				}
+			}
+		}
+
+		updateHighlight(highlight);
+
+		if (!update)
+			continue;
+
+		update = false;
+
+		if (highlight < 6) {
+			if (_vm->_characters[highlight].flags & 1) {
+				selection ^= (1 << highlight);
+				drawCharPortraitWithStats(highlight, (selection & (1 << highlight)) ? true : false);
+				_screen->updateScreen();
+			}
+			continue;
+		}
+
+		int x = (highlight - 6) * 268 + 4;
+		_vm->gui_drawBox(x, 148, 43, 12, _vm->_bkgColor_1, _vm->_bkgColor_1, -1);
+		_screen->updateScreen();
+		_vm->_system->delayMillis(80);
+		_vm->gui_drawBox(x, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, -1);
+		_screen->updateScreen();
+
+		if (highlight == 6 || _vm->shouldQuit()) {
+			_screen->setFont(Screen::FID_8_FNT);
+			return 0;
+		}
+
+		int count = 0;
+		for (int i = 0; i < 6; i++) {
+			if (selection & (1 << i))
+				count++;
+		}
+
+		if (count == 4 || _vm->shouldQuit())
+			loop = false;
+		else
+			_vm->_gui->messageDialogue(16, count < 4 ? 69 : 70, 6);
+
+		_screen->updateScreen();
+	}
+
+	_screen->setFont(Screen::FID_8_FNT);
+	if (_vm->shouldQuit())
+		return 0;
+	else
+		_vm->_gui->messageDialogue(16, 71, 6);
+
+	return selection;
+}
+
+void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
+	int16 x = (charIndex % 2) * 159;
+	int16 y = (charIndex / 2) * 40;
+	EoBCharacter *c = &_vm->_characters[charIndex];
+
+	_screen->fillRect(x + 4, y + 24, x + 36, y + 57, 12);
+	_vm->gui_drawBox(x + 40, y + 24, 118, 34, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+
+	if (!(c->flags & 1))
+		return;
+
+	_screen->drawShape(_screen->_curPage, c->faceShape, x + 4, y + 25, 0);
+
+	int color1 = 15;
+	int color2 = 12;
+
+	if (enabled) {
+		color1 = 6;
+		color2 = 15;
+	} else {
+		_screen->drawShape(_screen->_curPage, _vm->_disabledCharGrid, x + 4, y + 25, 0);
+	}
+
+	_screen->printShadedText(c->name, x + 44, y + 27, color1, 0);
+	_screen->printText(_vm->_chargenRaceSexStrings[c->raceSex], x + 43, y + 36, color2, 0);
+	_screen->printText(_vm->_chargenClassStrings[c->cClass], x + 43, y + 43, color2, 0);
+
+	Common::String tmp = Common::String::format(_strings1[0], c->level[0]);
+	for (int i = 1; i < _vm->_numLevelsPerClass[c->cClass]; i++)
+		tmp += Common::String::format(_strings1[1], c->level[i]);
+	_screen->printText(tmp.c_str(), x + 43, y + 50, color2, 0);
+}
+
+void TransferPartyWiz::updateHighlight(int index) {
+	static const int16 xPos[] = { 9, 288 };
+	if (_highlight > 5 && _highlight != index)
+		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], 151, 15, 0);
+
+	if (index < 6) {
+		_vm->_gui->updateBoxFrameHighLight(14 + index);
+		_highlight = index;
+		return;
+	}
+
+	if (_highlight == index)
+		return;
+
+	if (_highlight < 6)
+		_vm->_gui->updateBoxFrameHighLight(-1);
+
+	_screen->printText(_labels[index - 6], xPos[index - 6], 151, 6, 0);
+	_screen->updateScreen();
+	_highlight = index;
+}
+
 void TransferPartyWiz::convertStats() {
 	for (int i = 0; i < 6; i++) {
 		EoBCharacter *c = &_vm->_characters[i];
@@ -1553,24 +1770,181 @@ void TransferPartyWiz::convertStats() {
 
 		for (int ii = 0; ii < 25; ii++) {
 			if (c->mageSpellsAvailableFlags & (1 << ii)) {
-				int8 f = (int8)_vm->_transferConvertTable[i + 1] - 1;
+				int8 f = (int8)_convertTable[ii + 1] - 1;
 				if (f != -1)
 					aflags |= (1 << f);
 			}
 		}
 		c->mageSpellsAvailableFlags = aflags;
 
+		c->armorClass = 0;
+		c->disabledSlots = 0;
 		c->flags &= 1;
 		c->hitPointsCur = c->hitPointsMax;
 		c->food = 100;
+
+		c->effectFlags = 0;
+		c->damageTaken = 0;
+		memset(c->clericSpells, 0, sizeof(int8) * 80);
+		memset(c->mageSpells, 0, sizeof(int8) * 80);
+		memset(c->timers, 0, sizeof(uint32) * 10);
+		memset(c->events, 0, sizeof(int8) * 10);
+		memset(c->effectsRemainder, 0, sizeof(uint8) * 4);
+		memset(c->slotStatus, 0, sizeof(int8) * 5);
 
 		for (int ii = 0; ii < 3; ii++) {
 			int t = _vm->getCharacterClassType(c->cClass, ii);
 			if (t == -1)
 				continue;
-			if (c->experience[ii] < _vm->_transferExpTable[t])
-				c->experience[ii] = _vm->_transferExpTable[t];
+			if (c->experience[ii] > _expTable[t])
+				c->experience[ii] = _expTable[t];
 		}
+	}
+}
+
+void TransferPartyWiz::convertInventory() {
+	for (int i = 0; i < 4; i++) {
+		EoBCharacter *c = &_vm->_characters[i];
+
+		for (int slot = 0; slot < 27; slot++) {
+			Item itm = c->inventory[slot];
+			if (slot == 16) {
+				Item first = itm;
+				c->inventory[slot] = 0;
+
+				for (bool forceLoop = true; (itm && (itm != first)) || forceLoop; itm = _oldItems[itm].prev) {
+					forceLoop = false;
+					_vm->setItemPosition(&c->inventory[slot], -2, convertItem(itm), 0);
+				}
+			} else {
+				c->inventory[slot] = convertItem(itm);
+			}
+		}
+	}
+}
+
+Item TransferPartyWiz::convertItem(Item eob1Item) {
+	if (!eob1Item)
+		return 0;
+
+	EoBItem *itm1 = &_oldItems[eob1Item];
+
+	if (!_itemTable[itm1->type])
+		return 0;
+
+	Item newItem = _vm->duplicateItem(1);
+	EoBItem *itm2 = &_vm->_items[newItem];
+	bool match = false;
+
+	itm2->flags = itm1->flags | 0x40;
+	itm2->icon = itm1->icon;
+	itm2->type = itm1->type;
+	itm2->level = 0xff;
+
+	switch(itm2->type) {
+	case 35:
+		itm1->value += 25;
+		// fall through
+	case 34:
+		itm2->value = _convertTable[itm1->value];
+		if (!itm2->value) {
+			itm2->block = -1;
+			return 0;
+		}
+		break;
+	case 39:
+		itm2->value = itm1->value - 1;
+		break;
+	case 48:
+		if (itm1->value == 5) {
+			memset(itm2, 0, sizeof(EoBItem));
+			itm2->block = -1;
+			return 0;
+		}
+		itm2->value = itm1->value;
+		itm2->flags = ((itm1->flags & 0x3f) + 3) | 0x40;
+		break;
+	case 18:
+		itm2->icon = 19;
+		// fall through
+	default:
+		itm2->value = itm1->value;
+		break;
+	}
+
+	switch ((_vm->_itemTypes[itm2->type].extraProperties & 0x7f) - 1) {
+	case 0:
+	case 1:
+	case 2:
+		if (itm2->value)
+			itm2->flags |= 0x80;
+		break;
+	case 4:
+	case 5:
+	case 8:
+	case 9:
+	case 13:
+	case 15:
+	case 17:
+		itm2->flags |= 0x80;
+		break;
+	default:
+		break;
+	}
+
+	for (int i = 1; i < 600; i++) {
+		if (i == 60 || i == 62 || i == 63 || i == 83)
+			continue;
+		EoBItem *tmp = &_vm->_items[i];
+		if (tmp->level || tmp->block == -2 || tmp->type != itm2->type || tmp->icon != itm2->icon)
+			continue;
+		itm2->nameUnid = tmp->nameUnid;
+		itm2->nameId = tmp->nameId;
+		match = true;
+		break;
+	}
+
+	if (!match) {
+		for (int i = 1; i < 600; i++) {
+			if (i == 60 || i == 62 || i == 63 || i == 83)
+				continue;
+			EoBItem *tmp = &_vm->_items[i];
+			if (tmp->level || tmp->block == -2 || tmp->type != itm2->type)
+				continue;
+			itm2->nameUnid = tmp->nameUnid;
+			itm2->nameId = tmp->nameId;
+			match = true;
+			break;
+		}
+	}
+
+	if (!match) {
+		memset(itm2, 0, sizeof(EoBItem));
+		itm2->block = -1;
+		return 0;
+	}
+
+	itm2->level = 0;
+	return newItem;
+}
+
+void TransferPartyWiz::giveKhelbensCoin() {
+	bool success = false;
+	for (int i = 0; i < 4 && !success; i++) {
+		EoBCharacter *c = &_vm->_characters[i];
+
+		for (int slot = 2; slot < 16; slot++) {
+			if (c->inventory[slot])
+				continue;
+			_vm->createInventoryItem(c, 93, -1, slot);
+			success = true;
+			break;
+		}
+	}
+
+	if (!success) {
+		_vm->_characters[0].inventory[2] = 0;
+		_vm->createInventoryItem(&_vm->_characters[0], 93, -1, 2);
 	}
 }
 
