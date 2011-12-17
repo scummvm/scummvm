@@ -32,18 +32,18 @@
 
 namespace Pegasus {
 
-const NotificationFlags kFSPowerUpFinishedFlag = 1;
-const NotificationFlags kFSSplashFinishedFlag = kFSPowerUpFinishedFlag << 1;
-const NotificationFlags kFSIntakeWarningFinishedFlag = kFSSplashFinishedFlag << 1;
-const NotificationFlags kFSIntakeHiliteFinishedFlag = kFSIntakeWarningFinishedFlag << 1;
-const NotificationFlags kFSDispenseHiliteFinishedFlag = kFSIntakeHiliteFinishedFlag << 1;
-const NotificationFlags kFSArHiliteFinishedFlag = kFSDispenseHiliteFinishedFlag << 1;
-const NotificationFlags kFSCO2HiliteFinishedFlag = kFSArHiliteFinishedFlag << 1;
-const NotificationFlags kFSHeHiliteFinishedFlag = kFSCO2HiliteFinishedFlag << 1;
-const NotificationFlags kFSOHiliteFinishedFlag = kFSHeHiliteFinishedFlag << 1;
-const NotificationFlags kFSNHiliteFinishedFlag = kFSOHiliteFinishedFlag << 1;
+static const NotificationFlags kFSPowerUpFinishedFlag = 1;
+static const NotificationFlags kFSSplashFinishedFlag = kFSPowerUpFinishedFlag << 1;
+static const NotificationFlags kFSIntakeWarningFinishedFlag = kFSSplashFinishedFlag << 1;
+static const NotificationFlags kFSIntakeHiliteFinishedFlag = kFSIntakeWarningFinishedFlag << 1;
+static const NotificationFlags kFSDispenseHiliteFinishedFlag = kFSIntakeHiliteFinishedFlag << 1;
+static const NotificationFlags kFSArHiliteFinishedFlag = kFSDispenseHiliteFinishedFlag << 1;
+static const NotificationFlags kFSCO2HiliteFinishedFlag = kFSArHiliteFinishedFlag << 1;
+static const NotificationFlags kFSHeHiliteFinishedFlag = kFSCO2HiliteFinishedFlag << 1;
+static const NotificationFlags kFSOHiliteFinishedFlag = kFSHeHiliteFinishedFlag << 1;
+static const NotificationFlags kFSNHiliteFinishedFlag = kFSOHiliteFinishedFlag << 1;
 
-const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
+static const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
 												kFSSplashFinishedFlag |
 												kFSIntakeWarningFinishedFlag |
 												kFSIntakeHiliteFinishedFlag |
@@ -54,75 +54,75 @@ const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
 												kFSOHiliteFinishedFlag |
 												kFSNHiliteFinishedFlag;
 
-const int16 kNoState = 0;
-const int16 kMainMenu = 1;
-const int16 kWaitingForAttach = 2;
-const int16 kDispenseMenu = 3;
-const int16 kWaitingForDispense = 4;
+static const int16 kNoState = 0;
+static const int16 kMainMenu = 1;
+static const int16 kWaitingForAttach = 2;
+static const int16 kDispenseMenu = 3;
+static const int16 kWaitingForDispense = 4;
 
 // Dummy itemIDs
-const ItemID kCO2Item = 10000;
-const ItemID kHeItem = 10001;
+static const ItemID kCO2Item = 10000;
+static const ItemID kHeItem = 10001;
 
 // Interactive points.
-const TimeValue kFSPowerUpStartStart = 0;
-const TimeValue kFSPowerUpStartStop = 600;
-const TimeValue kFSSplashStart = 600;
-const TimeValue kFSSplashStop = 7800;
-const TimeValue kFSSplashIntakeStart = 7800;
-const TimeValue kFSSplashIntakeStop = 18600;
+static const TimeValue kFSPowerUpStartStart = 0;
+static const TimeValue kFSPowerUpStartStop = 600;
+static const TimeValue kFSSplashStart = 600;
+static const TimeValue kFSSplashStop = 7800;
+static const TimeValue kFSSplashIntakeStart = 7800;
+static const TimeValue kFSSplashIntakeStop = 18600;
 
-const TimeValue kFSMainMenu = 18600;
-const TimeValue kFSIntakeHiliteStart = 19200;
-const TimeValue kFSIntakeHiliteStop = 19800;
-const TimeValue kFSDispenseHiliteStart = 19800;
-const TimeValue kFSDispenseHiliteStop = 20400;
+static const TimeValue kFSMainMenu = 18600;
+static const TimeValue kFSIntakeHiliteStart = 19200;
+static const TimeValue kFSIntakeHiliteStop = 19800;
+static const TimeValue kFSDispenseHiliteStart = 19800;
+static const TimeValue kFSDispenseHiliteStop = 20400;
 
-const TimeValue kFSDispenseMenu = 20400;
+static const TimeValue kFSDispenseMenu = 20400;
 
-const TimeValue kFSArHiliteStart = 21000;
-const TimeValue kFSArHiliteStop = 21600;
-const TimeValue kFSArAttach = 21600;
-const TimeValue kFSArFilledStart = 22200;
-const TimeValue kFSArFilledStop = 25200;
-const TimeValue kFSArIncompatibleStart = 25200;
-const TimeValue kFSArIncompatibleStop = 30000;
+static const TimeValue kFSArHiliteStart = 21000;
+static const TimeValue kFSArHiliteStop = 21600;
+static const TimeValue kFSArAttach = 21600;
+static const TimeValue kFSArFilledStart = 22200;
+static const TimeValue kFSArFilledStop = 25200;
+static const TimeValue kFSArIncompatibleStart = 25200;
+static const TimeValue kFSArIncompatibleStop = 30000;
 
-const TimeValue kFSCO2HiliteStart = 30000;
-const TimeValue kFSCO2HiliteStop = 30600;
-const TimeValue kFSCO2Attach = 30600;
-const TimeValue kFSCO2FilledStart = 31200;
-const TimeValue kFSCO2FilledStop = 34200;
-const TimeValue kFSCO2IncompatibleStart = 34200;
-const TimeValue kFSCO2IncompatibleStop = 39000;
+static const TimeValue kFSCO2HiliteStart = 30000;
+static const TimeValue kFSCO2HiliteStop = 30600;
+static const TimeValue kFSCO2Attach = 30600;
+static const TimeValue kFSCO2FilledStart = 31200;
+static const TimeValue kFSCO2FilledStop = 34200;
+static const TimeValue kFSCO2IncompatibleStart = 34200;
+static const TimeValue kFSCO2IncompatibleStop = 39000;
 
-const TimeValue kFSHeHiliteStart = 39000;
-const TimeValue kFSHeHiliteStop = 39600;
-const TimeValue kFSHeAttach = 39600;
-const TimeValue kFSHeFilledStart = 40200;
-const TimeValue kFSHeFilledStop = 43200;
-const TimeValue kFSHeIncompatibleStart = 43200;
-const TimeValue kFSHeIncompatibleStop = 48000;
+static const TimeValue kFSHeHiliteStart = 39000;
+static const TimeValue kFSHeHiliteStop = 39600;
+static const TimeValue kFSHeAttach = 39600;
+static const TimeValue kFSHeFilledStart = 40200;
+static const TimeValue kFSHeFilledStop = 43200;
+static const TimeValue kFSHeIncompatibleStart = 43200;
+static const TimeValue kFSHeIncompatibleStop = 48000;
 
-const TimeValue kFSOHiliteStart = 48000;
-const TimeValue kFSOHiliteStop = 48600;
-const TimeValue kFSOAttach = 48600;
-const TimeValue kFSOFilledStart = 49200;
-const TimeValue kFSOFilledStop = 52200;
-const TimeValue kFSOIncompatibleStart = 52200;
-const TimeValue kFSOIncompatibleStop = 57000;
+static const TimeValue kFSOHiliteStart = 48000;
+static const TimeValue kFSOHiliteStop = 48600;
+static const TimeValue kFSOAttach = 48600;
+static const TimeValue kFSOFilledStart = 49200;
+static const TimeValue kFSOFilledStop = 52200;
+static const TimeValue kFSOIncompatibleStart = 52200;
+static const TimeValue kFSOIncompatibleStop = 57000;
 
-const TimeValue kFSNHiliteStart = 57000;
-const TimeValue kFSNHiliteStop = 57600;
-const TimeValue kFSNAttach = 57600;
-const TimeValue kFSNFilledStart = 58200;
-const TimeValue kFSNFilledStop = 61200;
-const TimeValue kFSNIncompatibleStart = 61200;
-const TimeValue kFSNIncompatibleStop = 66000;
+static const TimeValue kFSNHiliteStart = 57000;
+static const TimeValue kFSNHiliteStop = 57600;
+static const TimeValue kFSNAttach = 57600;
+static const TimeValue kFSNFilledStart = 58200;
+static const TimeValue kFSNFilledStop = 61200;
+static const TimeValue kFSNIncompatibleStart = 61200;
+static const TimeValue kFSNIncompatibleStop = 66000;
 
-const TimeValue kFSIntakeMenu = 66000;
-const TimeValue kFSIntakeInProgressStart = 66600;
-const TimeValue kFSIntakeInProgressStop = 69600;
+static const TimeValue kFSIntakeMenu = 66000;
+static const TimeValue kFSIntakeInProgressStart = 66600;
+static const TimeValue kFSIntakeInProgressStop = 69600;
 
 NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner) : GameInteraction(kNoradFillingStationInteractionID, owner),
 		_rightSideMovie(kN01RightSideID), _rightSideNotification(kNoradFillingStationNotificationID, ((PegasusEngine *)g_engine)) {

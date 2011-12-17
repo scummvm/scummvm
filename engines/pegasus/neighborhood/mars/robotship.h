@@ -30,8 +30,8 @@
 
 namespace Pegasus {
 
-const CoordType kShuttleMovieWidth = 114;
-const CoordType kShuttleMovieHeight = 42;
+static const CoordType kShuttleMovieWidth = 114;
+static const CoordType kShuttleMovieHeight = 42;
 
 class RobotShip : IdlerTimeBase {
 friend void timeToDropJunkFunction(FunctionPtr *, void *);

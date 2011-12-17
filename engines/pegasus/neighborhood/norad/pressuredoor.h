@@ -33,7 +33,7 @@
 
 namespace Pegasus {
 
-const short kNormalSubRoomPressure = 2;
+static const short kNormalSubRoomPressure = 2;
 
 class PressureDoor : public GameInteraction, public NotificationReceiver {
 public:

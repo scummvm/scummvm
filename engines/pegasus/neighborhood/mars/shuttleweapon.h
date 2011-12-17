@@ -35,7 +35,7 @@ namespace Pegasus {
 // For now, no...
 // clone2727 adds: And now forever
 
-const TimeScale kShuttleWeaponScale = kFifteenTicksPerSecond;
+static const TimeScale kShuttleWeaponScale = kFifteenTicksPerSecond;
 
 class ShuttleWeapon : public IdlerAnimation {
 public:

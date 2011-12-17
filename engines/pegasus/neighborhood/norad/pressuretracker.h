@@ -33,12 +33,12 @@ namespace Pegasus {
 // This class assumes that the globe movie is built at 15 frames per second with a
 // time scale of 600, yielding 40 time unit per frame.
 
-typedef enum {
+enum PressureTrackDirection {
 	kTrackPressureUp,
 	kTrackPressureDown
-} tPressureTrackDirection;
+};
 
-const int kPressureDoorTrackInterval = 45;
+static const int kPressureDoorTrackInterval = 45;
 
 class PressureDoor;
 class Sprite;

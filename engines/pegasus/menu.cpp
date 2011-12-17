@@ -930,60 +930,60 @@ enum {
 	kLastPauseSelection = kPauseMenuQuitToMainMenu
 };
 
-const CoordType kPauseLeft = 194;
-const CoordType kPauseTop = 68;
+static const CoordType kPauseLeft = 194;
+static const CoordType kPauseTop = 68;
 
-const CoordType kSaveGameLeft = kPauseLeft + 6;
-const CoordType kSaveGameTop = kPauseTop + 56;
+static const CoordType kSaveGameLeft = kPauseLeft + 6;
+static const CoordType kSaveGameTop = kPauseTop + 56;
 
-const CoordType kSaveGameSelectLeft = kPauseLeft - 44;
-const CoordType kSaveGameSelectTop = kPauseTop + 52;
+static const CoordType kSaveGameSelectLeft = kPauseLeft - 44;
+static const CoordType kSaveGameSelectTop = kPauseTop + 52;
 
-const CoordType kPauseContinueLeft = kPauseLeft + 18;
-const CoordType kPauseContinueTop = kPauseTop + 100;
+static const CoordType kPauseContinueLeft = kPauseLeft + 18;
+static const CoordType kPauseContinueTop = kPauseTop + 100;
 
-const CoordType kPauseContinueSelectLeft = kPauseLeft - 44;
-const CoordType kPauseContinueSelectTop = kPauseTop + 95;
+static const CoordType kPauseContinueSelectLeft = kPauseLeft - 44;
+static const CoordType kPauseContinueSelectTop = kPauseTop + 95;
 
-const CoordType kPauseRestoreLeft = kPauseLeft + 18;
-const CoordType kPauseRestoreTop = kPauseTop + 136;
+static const CoordType kPauseRestoreLeft = kPauseLeft + 18;
+static const CoordType kPauseRestoreTop = kPauseTop + 136;
 
-const CoordType kPauseRestoreSelectLeft = kPauseLeft - 44;
-const CoordType kPauseRestoreSelectTop = kPauseTop + 131;
+static const CoordType kPauseRestoreSelectLeft = kPauseLeft - 44;
+static const CoordType kPauseRestoreSelectTop = kPauseTop + 131;
 
-const CoordType kSoundFXLeft = kPauseLeft + 128;
-const CoordType kSoundFXTop = kPauseTop + 187;
-const CoordType kSoundFXRight = kSoundFXLeft + 96;
-const CoordType kSoundFXBottom = kSoundFXTop + 14;
+static const CoordType kSoundFXLeft = kPauseLeft + 128;
+static const CoordType kSoundFXTop = kPauseTop + 187;
+static const CoordType kSoundFXRight = kSoundFXLeft + 96;
+static const CoordType kSoundFXBottom = kSoundFXTop + 14;
 
-const CoordType kSoundFXSelectLeft = kPauseLeft - 44;
-const CoordType kSoundFXSelectTop = kPauseTop + 172;
+static const CoordType kSoundFXSelectLeft = kPauseLeft - 44;
+static const CoordType kSoundFXSelectTop = kPauseTop + 172;
 
-const CoordType kAmbienceLeft = kPauseLeft + 128;
-const CoordType kAmbienceTop = kPauseTop + 227;
-const CoordType kAmbienceRight = kAmbienceLeft + 96;
-const CoordType kAmbienceBottom = kAmbienceTop + 14;
+static const CoordType kAmbienceLeft = kPauseLeft + 128;
+static const CoordType kAmbienceTop = kPauseTop + 227;
+static const CoordType kAmbienceRight = kAmbienceLeft + 96;
+static const CoordType kAmbienceBottom = kAmbienceTop + 14;
 
-const CoordType kAmbienceSelectLeft = kPauseLeft - 44;
-const CoordType kAmbienceSelectTop = kPauseTop + 212;
+static const CoordType kAmbienceSelectLeft = kPauseLeft - 44;
+static const CoordType kAmbienceSelectTop = kPauseTop + 212;
 
-const CoordType kWalkthruLeft = kPauseLeft + 128;
-const CoordType kWalkthruTop = kPauseTop + 264;
+static const CoordType kWalkthruLeft = kPauseLeft + 128;
+static const CoordType kWalkthruTop = kPauseTop + 264;
 
-const CoordType kWalkthruSelectLeft = kPauseLeft - 44;
-const CoordType kWalkthruSelectTop = kPauseTop + 255;
+static const CoordType kWalkthruSelectLeft = kPauseLeft - 44;
+static const CoordType kWalkthruSelectTop = kPauseTop + 255;
 
-const CoordType kQuitLeft = kPauseLeft + 18;
-const CoordType kQuitTop = kPauseTop + 302;
+static const CoordType kQuitLeft = kPauseLeft + 18;
+static const CoordType kQuitTop = kPauseTop + 302;
 
-const CoordType kQuitSelectLeft = kPauseLeft - 44;
-const CoordType kQuitSelectTop = kPauseTop + 297;
+static const CoordType kQuitSelectLeft = kPauseLeft - 44;
+static const CoordType kQuitSelectTop = kPauseTop + 297;
 
 //	These are relative to the pause background.
-const CoordType kPauseScoreLeft = 130;
-const CoordType kPauseScoreTop = 34;
-const CoordType kPauseScoreRight = kPauseScoreLeft + 108;
-const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
+static const CoordType kPauseScoreLeft = 130;
+static const CoordType kPauseScoreTop = 34;
+static const CoordType kPauseScoreRight = kPauseScoreLeft + 108;
+static const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
 
 // Never set the current input handler to the CPauseMenu.
 PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),

@@ -31,16 +31,16 @@
 
 namespace Pegasus {
 
-const int32 kFullShuttleEnergy = 100;
+static const int32 kFullShuttleEnergy = 100;
 // Low is 20 percent
-const int32 kLowShuttleEnergy = kFullShuttleEnergy * 20 / 100;
+static const int32 kLowShuttleEnergy = kFullShuttleEnergy * 20 / 100;
 
-const int32 kMinDampingEnergy = 15;
-const int32 kMinGravitonEnergy = 63;
+static const int32 kMinDampingEnergy = 15;
+static const int32 kMinGravitonEnergy = 63;
 
-const TimeScale kTractorBeamScale = kFifteenTicksPerSecond;
-const TimeValue kTractorBeamTime = kFiveSeconds * kTractorBeamScale;
-const int32 kTractorBeamEnergy = kLowShuttleEnergy;
+static const TimeScale kTractorBeamScale = kFifteenTicksPerSecond;
+static const TimeValue kTractorBeamTime = kFiveSeconds * kTractorBeamScale;
+static const int32 kTractorBeamEnergy = kLowShuttleEnergy;
 
 class ShuttleEnergyMeter : public FaderAnimation {
 public:

@@ -50,10 +50,10 @@ private:
 //	Transitions are faders that range over [0,1000], which makes their
 //	"resolution" one tenth of a percent
 
-const long kTransitionBottom = 0;
-const long kTransitionTop = 1000;
+static const int kTransitionBottom = 0;
+static const int kTransitionTop = 1000;
 
-const long kTransitionRange = kTransitionTop - kTransitionBottom;
+static const int kTransitionRange = kTransitionTop - kTransitionBottom;
 
 class Transition : public FaderAnimation {
 public:

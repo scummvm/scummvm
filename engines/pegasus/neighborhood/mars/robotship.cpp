@@ -33,25 +33,25 @@
 
 namespace Pegasus {
 
-const TimeScale kRovingScale = kTractorBeamScale;
-const TimeValue kRovingTime = kSixSeconds * kRovingScale;
-const TimeValue kRovingSlop = kThreeSeconds * kRovingScale;
+static const TimeScale kRovingScale = kTractorBeamScale;
+static const TimeValue kRovingTime = kSixSeconds * kRovingScale;
+static const TimeValue kRovingSlop = kThreeSeconds * kRovingScale;
 
-const int kNumSpriteColumns = 15;
-const int kNumSpriteRows = 16;
+static const int kNumSpriteColumns = 15;
+static const int kNumSpriteRows = 16;
 
-const CoordType kInitialLocationLeft = kShuttleWindowLeft - 50;
-const CoordType kInitialLocationTop = kShuttleWindowTop - 50;
-const CoordType kInitialLocationWidth = kShuttleWindowWidth + 100;
-const CoordType kInitialLocationHeight = kShuttleWindowHeight + 100;
+static const CoordType kInitialLocationLeft = kShuttleWindowLeft - 50;
+static const CoordType kInitialLocationTop = kShuttleWindowTop - 50;
+static const CoordType kInitialLocationWidth = kShuttleWindowWidth + 100;
+static const CoordType kInitialLocationHeight = kShuttleWindowHeight + 100;
 
-const CoordType kVelocityVectorLength = 100;
-const CoordType kVelocityVectorSlop = 50;
+static const CoordType kVelocityVectorLength = 100;
+static const CoordType kVelocityVectorSlop = 50;
 
-const CoordType kRovingLeft = kShuttleWindowLeft + 20;
-const CoordType kRovingTop = kShuttleWindowTop + 20;
-const CoordType kRovingWidth = kShuttleWindowMidH - kRovingLeft;
-const CoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
+static const CoordType kRovingLeft = kShuttleWindowLeft + 20;
+static const CoordType kRovingTop = kShuttleWindowTop + 20;
+static const CoordType kRovingWidth = kShuttleWindowMidH - kRovingLeft;
+static const CoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
 
 RobotShip* g_robotShip = 0;
 

@@ -29,34 +29,34 @@
 
 namespace Pegasus {
 
-const TimeValue kSwitchableSlop = 3 * kCaldoriaFrameDuration;
+static const TimeValue kSwitchableSlop = 3 * kCaldoriaFrameDuration;
 //	Two seconds - some slop
-const TimeValue kSwitchableDuration = kCaldoriaMovieScale * 2 - kSwitchableSlop;
+static const TimeValue kSwitchableDuration = kCaldoriaMovieScale * 2 - kSwitchableSlop;
 //	Twelve frames + some slop
-const TimeValue kNonswitchableDuration = kCaldoriaFrameDuration * 12 + kSwitchableSlop;
+static const TimeValue kNonswitchableDuration = kCaldoriaFrameDuration * 12 + kSwitchableSlop;
 
-const TimeValue kSwitchable1Start = 0;
-const TimeValue kSwitchable1Stop = kSwitchable1Start + kSwitchableDuration;
+static const TimeValue kSwitchable1Start = 0;
+static const TimeValue kSwitchable1Stop = kSwitchable1Start + kSwitchableDuration;
 
-const TimeValue kSwitchable2Start = kSwitchable1Stop + kNonswitchableDuration;
-const TimeValue kSwitchable2Stop = kSwitchable2Start + kSwitchableDuration;
+static const TimeValue kSwitchable2Start = kSwitchable1Stop + kNonswitchableDuration;
+static const TimeValue kSwitchable2Stop = kSwitchable2Start + kSwitchableDuration;
 
-const TimeValue kSwitchable3Start = kSwitchable2Stop + kNonswitchableDuration;
-const TimeValue kSwitchable3Stop = kSwitchable3Start + kSwitchableDuration;
+static const TimeValue kSwitchable3Start = kSwitchable2Stop + kNonswitchableDuration;
+static const TimeValue kSwitchable3Stop = kSwitchable3Start + kSwitchableDuration;
 
-const NotificationFlags kVidPhoneDoneFlag = 1;
+static const NotificationFlags kVidPhoneDoneFlag = 1;
 
-const TimeValue kRockMusicLoopIn = 0;
-const TimeValue kRockMusicLoopOut = 2088;
+static const TimeValue kRockMusicLoopIn = 0;
+static const TimeValue kRockMusicLoopOut = 2088;
 
-const TimeValue kOrchestralMusicLoopIn = 2088;
-const TimeValue kOrchestralMusicLoopOut = 4985;
+static const TimeValue kOrchestralMusicLoopIn = 2088;
+static const TimeValue kOrchestralMusicLoopOut = 4985;
 
-const TimeValue kRhythmsMusicLoopIn = 4985;
-const TimeValue kRhythmsMusicLoopOut = 6824;
+static const TimeValue kRhythmsMusicLoopIn = 4985;
+static const TimeValue kRhythmsMusicLoopOut = 6824;
 
-const TimeValue kAcousticMusicLoopIn = 6824;
-const TimeValue kAcousticMusicLoopOut = 9387;
+static const TimeValue kAcousticMusicLoopIn = 6824;
+static const TimeValue kAcousticMusicLoopOut = 9387;
 
 enum {
 	k4DVideoMenu,

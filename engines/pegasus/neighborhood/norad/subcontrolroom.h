@@ -31,12 +31,12 @@
 
 namespace Pegasus {
 
-const uint32 kClawAtA = 0;
-const uint32 kClawAtB = 1;
-const uint32 kClawAtC = 2;
-const uint32 kClawAtD = 3;
+static const uint32 kClawAtA = 0;
+static const uint32 kClawAtB = 1;
+static const uint32 kClawAtC = 2;
+static const uint32 kClawAtD = 3;
 
-const int kNumClawButtons = 7;
+static const int kNumClawButtons = 7;
 
 class Norad;
 

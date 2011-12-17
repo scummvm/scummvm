@@ -35,30 +35,30 @@ namespace Pegasus {
 
 // As usual, times here are in seconds.
 
-const TimeValue kNormalSplashStart = 0;
-const TimeValue kNormalSplashStop = 5;
+static const TimeValue kNormalSplashStart = 0;
+static const TimeValue kNormalSplashStop = 5;
 
-const TimeValue kPrepSubStart = 5;
-const TimeValue kPrepSubStop = 15;
+static const TimeValue kPrepSubStart = 5;
+static const TimeValue kPrepSubStop = 15;
 
-const TimeValue kPrepIncompleteStart = 15;
-const TimeValue kPrepIncompleteStop = 19;
+static const TimeValue kPrepIncompleteStart = 15;
+static const TimeValue kPrepIncompleteStop = 19;
 
-const TimeValue kDamagedStart = 19;
-const TimeValue kDamagedStop = 28;
+static const TimeValue kDamagedStart = 19;
+static const TimeValue kDamagedStop = 28;
 
-const NotificationFlags kNormalSplashFinished = 1;
-const NotificationFlags kPrepSubFinished = kNormalSplashFinished << 1;
-const NotificationFlags kPrepIncompleteFinished = kPrepSubFinished << 1;
-const NotificationFlags kDamagedFinished = kPrepIncompleteFinished << 1;
+static const NotificationFlags kNormalSplashFinished = 1;
+static const NotificationFlags kPrepSubFinished = kNormalSplashFinished << 1;
+static const NotificationFlags kPrepIncompleteFinished = kPrepSubFinished << 1;
+static const NotificationFlags kDamagedFinished = kPrepIncompleteFinished << 1;
 
-const NotificationFlags kPlatformNotificationFlags = kNormalSplashFinished |
+static const NotificationFlags kPlatformNotificationFlags = kNormalSplashFinished |
 														kPrepSubFinished |
 														kPrepIncompleteFinished |
 														kDamagedFinished;
 
-const uint16 kSubPreppedBit = (1 << 0);
-const uint16 kWaitingForPlayerBit = (1 << 1);
+static const uint16 kSubPreppedBit = (1 << 0);
+static const uint16 kWaitingForPlayerBit = (1 << 1);
 
 SubPlatform::SubPlatform(Neighborhood *handler) : GameInteraction(kNoradSubPlatformInteractionID, handler),
 		_platformMovie(kPlatformMonitorID), _platformNotification(kNoradSubPlatformNotificationID, (PegasusEngine *)g_engine) {

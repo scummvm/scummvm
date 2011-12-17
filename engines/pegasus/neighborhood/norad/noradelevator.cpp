@@ -32,10 +32,10 @@
 namespace Pegasus {
 
 // Norad elevator PICTs:
-const ResIDType kElevatorLabelID = 200;
-const ResIDType kElevatorButtonsID = 201;
-const ResIDType kElevatorDownOnID = 202;
-const ResIDType kElevatorUpOnID = 203;
+static const ResIDType kElevatorLabelID = 200;
+static const ResIDType kElevatorButtonsID = 201;
+static const ResIDType kElevatorDownOnID = 202;
+static const ResIDType kElevatorUpOnID = 203;
 
 NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const RoomID downRoom,
 		const HotSpotID upHotspot, const HotSpotID downHotspot) : GameInteraction(kNoradElevatorInteractionID, handler),

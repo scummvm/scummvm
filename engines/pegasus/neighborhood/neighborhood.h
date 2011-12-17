@@ -52,22 +52,22 @@ namespace Pegasus {
 class PegasusEngine;
 
 // Pegasus Prime neighborhood id's
-const NeighborhoodID kCaldoriaID = 0;
-const NeighborhoodID kFullTSAID = 1;
-const NeighborhoodID kFinalTSAID = 2;
-const NeighborhoodID kTinyTSAID = 3;
-const NeighborhoodID kPrehistoricID = 4;
-const NeighborhoodID kMarsID = 5;
-const NeighborhoodID kWSCID = 6;
-const NeighborhoodID kNoradAlphaID = 7;
-const NeighborhoodID kNoradDeltaID = 8;
+static const NeighborhoodID kCaldoriaID = 0;
+static const NeighborhoodID kFullTSAID = 1;
+static const NeighborhoodID kFinalTSAID = 2;
+static const NeighborhoodID kTinyTSAID = 3;
+static const NeighborhoodID kPrehistoricID = 4;
+static const NeighborhoodID kMarsID = 5;
+static const NeighborhoodID kWSCID = 6;
+static const NeighborhoodID kNoradAlphaID = 7;
+static const NeighborhoodID kNoradDeltaID = 8;
 // The sub chase is not really a neighborhood, but we define a constant that is used
 // to allow an easy transition out of Norad Alpha.
-const NeighborhoodID kNoradSubChaseID = 1000;
+static const NeighborhoodID kNoradSubChaseID = 1000;
 
-const TimeScale kDefaultLoopFadeScale = kThirtyTicksPerSecond;
-const TimeValue kDefaultLoopFadeOut = kHalfSecondPerThirtyTicks;
-const TimeValue kDefaultLoopFadeIn = kHalfSecondPerThirtyTicks;
+static const TimeScale kDefaultLoopFadeScale = kThirtyTicksPerSecond;
+static const TimeValue kDefaultLoopFadeOut = kHalfSecondPerThirtyTicks;
+static const TimeValue kDefaultLoopFadeIn = kHalfSecondPerThirtyTicks;
 
 enum QueueRequestType {
 	kNavExtraRequest,

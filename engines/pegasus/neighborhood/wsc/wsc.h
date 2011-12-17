@@ -31,13 +31,13 @@
 
 namespace Pegasus {
 
-const DisplayOrder kWSCMoleculeBinOrder = kMonitorLayer;
-const DisplayOrder kWSCMoleculesMovieOrder = kWSCMoleculeBinOrder + 1;
+static const DisplayOrder kWSCMoleculeBinOrder = kMonitorLayer;
+static const DisplayOrder kWSCMoleculesMovieOrder = kWSCMoleculeBinOrder + 1;
 
-const RoomID kWSC01 = 0;
-const RoomID kWSC02Morph = 2;
-const RoomID kWSC02Messages = 3;
-const RoomID kWSC62 = 62;
+static const RoomID kWSC01 = 0;
+static const RoomID kWSC02Morph = 2;
+static const RoomID kWSC02Messages = 3;
+static const RoomID kWSC62 = 62;
 
 class WSC : public Neighborhood {
 public:

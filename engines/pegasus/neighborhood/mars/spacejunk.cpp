@@ -29,15 +29,13 @@
 
 namespace Pegasus {
 
-//const TimeValue kWeaponReboundTime = kTwoSeconds * kJunkTimeScale;
-//const TimeValue kCollisionReboundTime = kOneSecond * kJunkTimeScale;
-const CoordType kMaxBounceSize = 90;
-const CoordType kBounceTargetHRange = 640 - kMaxBounceSize - 2;
-const CoordType kBounceTargetVRange = 480 - kMaxBounceSize - 2;
+static const CoordType kMaxBounceSize = 90;
+static const CoordType kBounceTargetHRange = 640 - kMaxBounceSize - 2;
+static const CoordType kBounceTargetVRange = 480 - kMaxBounceSize - 2;
 
-const float kJunkXTarget = 0;
-const float kJunkYTarget = 0;
-const float kJunkZTarget = kJunkMinDistance;
+static const float kJunkXTarget = 0;
+static const float kJunkYTarget = 0;
+static const float kJunkZTarget = kJunkMinDistance;
 
 SpaceJunk *g_spaceJunk = 0;
 

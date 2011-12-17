@@ -32,7 +32,7 @@ namespace Pegasus {
 
 //	Room IDs.
 
-const RoomID kTinyTSA37 = 0;
+static const RoomID kTinyTSA37 = 0;
 
 class TinyTSA : public Neighborhood {
 public:

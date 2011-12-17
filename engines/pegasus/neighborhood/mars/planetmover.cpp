@@ -32,11 +32,11 @@
 
 namespace Pegasus {
 
-const TimeScale kRovingScale = kTractorBeamScale;
-const TimeValue kRovingTime = kTenSeconds * kRovingScale;
-const TimeValue kRovingSlop = kTwoSeconds * kRovingScale;
+static const TimeScale kRovingScale = kTractorBeamScale;
+static const TimeValue kRovingTime = kTenSeconds * kRovingScale;
+static const TimeValue kRovingSlop = kTwoSeconds * kRovingScale;
 
-const CoordType kMaxVelocity = 20;
+static const CoordType kMaxVelocity = 20;
 
 PlanetMover::PlanetMover() {
 	setScale(kRovingScale);

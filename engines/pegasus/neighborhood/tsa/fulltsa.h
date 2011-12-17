@@ -49,9 +49,9 @@ protected:
 
 //	Room IDs.
 
-const RoomID kTSA00 = 0;
-const RoomID kTSA22Red = 28;
-const RoomID kTSA37 = 42;
+static const RoomID kTSA00 = 0;
+static const RoomID kTSA22Red = 28;
+static const RoomID kTSA37 = 42;
 
 class FullTSA : public Neighborhood {
 friend void uncreatedInTSAFunction(FunctionPtr *, void *tsa);

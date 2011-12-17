@@ -40,23 +40,23 @@ namespace Pegasus {
 
 // This should really be 22.5.
 // Probably no one will know the difference.
-const int16 kMarsShieldPanelOffsetAngle = 22;
+static const int16 kMarsShieldPanelOffsetAngle = 22;
 
-const CanMoveForwardReason kCantMoveRobotBlocking = kCantMoveLastReason + 1;
+static const CanMoveForwardReason kCantMoveRobotBlocking = kCantMoveLastReason + 1;
 
-const NotificationFlags kTimeForCanyonChaseFlag = kLastNeighborhoodNotificationFlag << 1;
-const NotificationFlags kExplosionFinishedFlag = kTimeForCanyonChaseFlag << 1;
-const NotificationFlags kTimeToTransportFlag = kExplosionFinishedFlag << 1;
+static const NotificationFlags kTimeForCanyonChaseFlag = kLastNeighborhoodNotificationFlag << 1;
+static const NotificationFlags kExplosionFinishedFlag = kTimeForCanyonChaseFlag << 1;
+static const NotificationFlags kTimeToTransportFlag = kExplosionFinishedFlag << 1;
 
-const NotificationFlags kMarsNotificationFlags = kTimeForCanyonChaseFlag |
+static const NotificationFlags kMarsNotificationFlags = kTimeForCanyonChaseFlag |
 													kExplosionFinishedFlag |
 													kTimeToTransportFlag;
 
-const TimeValue kLittleExplosionStart = 0 * 40;
-const TimeValue kLittleExplosionStop = 24 * 40;
+static const TimeValue kLittleExplosionStart = 0 * 40;
+static const TimeValue kLittleExplosionStop = 24 * 40;
 
-const TimeValue kBigExplosionStart = 24 * 40;
-const TimeValue kBigExplosionStop = 62 * 40;
+static const TimeValue kBigExplosionStart = 24 * 40;
+static const TimeValue kBigExplosionStop = 62 * 40;
 
 enum {
 	kMaze007RobotLoopingEvent,

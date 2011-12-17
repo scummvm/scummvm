@@ -33,32 +33,32 @@
 
 namespace Pegasus {
 
-const TimeValue kLevelsSplashStart = 0;
-const TimeValue kLevelsSplashStop = 1;
-const TimeValue kPressureBase = 1;
+static const TimeValue kLevelsSplashStart = 0;
+static const TimeValue kLevelsSplashStop = 1;
+static const TimeValue kPressureBase = 1;
 
-const TimeValue kDoorSealedTime = 0;
-const TimeValue kEqualizeTime = 1;
-const TimeValue kMaxPressureLoopStart = 2;
-const TimeValue kMaxPressureLoopStop = 3;
-const TimeValue kOpeningDoorLoopStart = 3;
-const TimeValue kOpeningDoorLoopStop = 4;
-const TimeValue kIncreasingPressureTime = 4;
-const TimeValue kDecreasingPressureTime = 5;
-const TimeValue kCautionLoopStart = 6;
-const TimeValue kCautionLoopStop = 7;
+static const TimeValue kDoorSealedTime = 0;
+static const TimeValue kEqualizeTime = 1;
+static const TimeValue kMaxPressureLoopStart = 2;
+static const TimeValue kMaxPressureLoopStop = 3;
+static const TimeValue kOpeningDoorLoopStart = 3;
+static const TimeValue kOpeningDoorLoopStop = 4;
+static const TimeValue kIncreasingPressureTime = 4;
+static const TimeValue kDecreasingPressureTime = 5;
+static const TimeValue kCautionLoopStart = 6;
+static const TimeValue kCautionLoopStop = 7;
 
-const NotificationFlags kSplashFinished = 1;
-const NotificationFlags kPressureDroppingFlag = kSplashFinished << 1;
+static const NotificationFlags kSplashFinished = 1;
+static const NotificationFlags kPressureDroppingFlag = kSplashFinished << 1;
 
-const NotificationFlags kPressureNotificationFlags = kSplashFinished |
+static const NotificationFlags kPressureNotificationFlags = kSplashFinished |
 														kPressureDroppingFlag;
 
-const NotificationFlags kDoorJumpsUpFlag = 1;
-const NotificationFlags kDoorJumpsBackFlag = kDoorJumpsUpFlag << 1;
-const NotificationFlags kDoorCrushedFlag = kDoorJumpsBackFlag << 1;
+static const NotificationFlags kDoorJumpsUpFlag = 1;
+static const NotificationFlags kDoorJumpsBackFlag = kDoorJumpsUpFlag << 1;
+static const NotificationFlags kDoorCrushedFlag = kDoorJumpsBackFlag << 1;
 
-const NotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag |
+static const NotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag |
 														kDoorJumpsBackFlag |
 														kDoorCrushedFlag;
 
@@ -82,27 +82,27 @@ enum {
 };
 
 // Pressure values range from 0 to 11.
-const short kMinPressure = 0;
-const short kMaxPressure = 11;
+static const short kMinPressure = 0;
+static const short kMaxPressure = 11;
 
-const TimeScale kNavTimeScale = 600;
-const TimeValue kNavFrameRate = 15;
-const TimeValue kNavTimePerFrame = kNavTimeScale / kNavFrameRate;
+static const TimeScale kNavTimeScale = 600;
+static const TimeValue kNavFrameRate = 15;
+static const TimeValue kNavTimePerFrame = kNavTimeScale / kNavFrameRate;
 
-const TimeValue kApproachPunchInTime = 122 * kNavTimePerFrame;
-const TimeValue kLoopPunchInTime = 38 * kNavTimePerFrame;
-const TimeValue kPunchThroughTime = 38 * kNavTimePerFrame;
+static const TimeValue kApproachPunchInTime = 122 * kNavTimePerFrame;
+static const TimeValue kLoopPunchInTime = 38 * kNavTimePerFrame;
+static const TimeValue kPunchThroughTime = 38 * kNavTimePerFrame;
 
 // Pressure door PICTs:
-const ResIDType kUpperPressureUpOffPICTID = 400;
-const ResIDType kUpperPressureUpOnPICTID = 401;
-const ResIDType kUpperPressureDownOffPICTID = 402;
-const ResIDType kUpperPressureDownOnPICTID = 403;
+static const ResIDType kUpperPressureUpOffPICTID = 400;
+static const ResIDType kUpperPressureUpOnPICTID = 401;
+static const ResIDType kUpperPressureDownOffPICTID = 402;
+static const ResIDType kUpperPressureDownOnPICTID = 403;
 
-const ResIDType kLowerPressureUpOffPICTID = 404;
-const ResIDType kLowerPressureUpOnPICTID = 405;
-const ResIDType kLowerPressureDownOffPICTID = 406;
-const ResIDType kLowerPressureDownOnPICTID = 407;
+static const ResIDType kLowerPressureUpOffPICTID = 404;
+static const ResIDType kLowerPressureUpOnPICTID = 405;
+static const ResIDType kLowerPressureDownOffPICTID = 406;
+static const ResIDType kLowerPressureDownOnPICTID = 407;
 
 PressureDoor::PressureDoor(Neighborhood *handler, bool isUpperDoor, const HotSpotID upSpotID, const HotSpotID downSpotID,
 		const HotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,

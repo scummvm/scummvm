@@ -36,19 +36,19 @@ TractorBeam::TractorBeam() : DisplayElement(kNoDisplayElement) {
 
 }
 
-const int kHalfWidth = kShuttleTractorWidth >> 1;
-const int kHalfHeight = kShuttleTractorHeight >> 1;
+static const int kHalfWidth = kShuttleTractorWidth >> 1;
+static const int kHalfHeight = kShuttleTractorHeight >> 1;
 
-const int kW3Vert = kHalfHeight * kHalfHeight * kHalfHeight;
-const int kW3Div2Vert = kW3Vert >> 1;
+static const int kW3Vert = kHalfHeight * kHalfHeight * kHalfHeight;
+static const int kW3Div2Vert = kW3Vert >> 1;
 
-const int kW3Horiz = kHalfWidth * kHalfWidth * kHalfWidth;
-const int kW3Div2Horiz = kW3Horiz >> 1;
+static const int kW3Horiz = kHalfWidth * kHalfWidth * kHalfWidth;
+static const int kW3Div2Horiz = kW3Horiz >> 1;
 
-const int kMaxLevel = 50;
+static const int kMaxLevel = 50;
 
-const int kAVert = -2 * kMaxLevel;
-const int kBVert = 3 * kMaxLevel * kHalfHeight;
+static const int kAVert = -2 * kMaxLevel;
+static const int kBVert = 3 * kMaxLevel * kHalfHeight;
 
 #define READ_PIXEL(ptr) \
 	if (screen->format.bytesPerPixel == 2) \

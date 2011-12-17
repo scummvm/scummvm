@@ -29,22 +29,22 @@
 
 namespace Pegasus {
 
-const TimeValue kGravitonTime = kOneSecond * kShuttleWeaponScale;
+static const TimeValue kGravitonTime = kOneSecond * kShuttleWeaponScale;
 
-const CoordType kGravitonOriginH = kShuttleWindowLeft - 1;
-const CoordType kGravitonOriginV = kShuttleWindowMidV;
+static const CoordType kGravitonOriginH = kShuttleWindowLeft - 1;
+static const CoordType kGravitonOriginV = kShuttleWindowMidV;
 
-const float kGravitonXOrigin = convertScreenHToSpaceX(kGravitonOriginH, kGravitonMinDistance);
-const float kGravitonYOrigin = convertScreenVToSpaceY(kGravitonOriginV, kGravitonMinDistance);
-const float kGravitonZOrigin = kGravitonMinDistance;
+static const float kGravitonXOrigin = convertScreenHToSpaceX(kGravitonOriginH, kGravitonMinDistance);
+static const float kGravitonYOrigin = convertScreenVToSpaceY(kGravitonOriginV, kGravitonMinDistance);
+static const float kGravitonZOrigin = kGravitonMinDistance;
 
 //	Width of graviton sprite...
-const CoordType kGravitonMaxScreenWidth = 78;
-const CoordType kGravitonMaxScreenHeight = 46;
+static const CoordType kGravitonMaxScreenWidth = 78;
+static const CoordType kGravitonMaxScreenHeight = 46;
 
-const float kGravitonWidth = convertScreenHToSpaceX(kShuttleWindowMidH + kGravitonMaxScreenWidth / 2, kGravitonMinDistance)
+static const float kGravitonWidth = convertScreenHToSpaceX(kShuttleWindowMidH + kGravitonMaxScreenWidth / 2, kGravitonMinDistance)
 		- convertScreenHToSpaceX(kShuttleWindowMidH - kGravitonMaxScreenWidth / 2, kGravitonMinDistance);
-const float kGravitonHeight = convertScreenVToSpaceY(kShuttleWindowMidV - kGravitonMaxScreenHeight / 2, kGravitonMinDistance)
+static const float kGravitonHeight = convertScreenVToSpaceY(kShuttleWindowMidV - kGravitonMaxScreenHeight / 2, kGravitonMinDistance)
 		- convertScreenVToSpaceY(kShuttleWindowMidV + kGravitonMaxScreenHeight / 2, kGravitonMinDistance);
 
 GravitonCannon::GravitonCannon() {

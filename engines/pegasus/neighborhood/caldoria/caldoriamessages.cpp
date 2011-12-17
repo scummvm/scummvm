@@ -30,7 +30,7 @@
 
 namespace Pegasus {
 
-const NotificationFlags kMessageDoneFlag = 1;
+static const NotificationFlags kMessageDoneFlag = 1;
 
 CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const NotificationID id, NotificationManager *manager) :
 		GameInteraction(kCaldoriaMessagesInteractionID, owner), Notification(id, manager), _messageMovie(kCaldoriaMessagesID) {

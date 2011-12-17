@@ -42,109 +42,109 @@
 
 namespace Pegasus {
 
-const short kVidPhoneAngle = 30;
-const short kReplicatorAngle = 50;
-const short kDrawersAngle = -30;
-const short kCaldoria53Angle = 45;
-const short kCaldoria55Angle = -45;
+static const int16 kVidPhoneAngle = 30;
+static const int16 kReplicatorAngle = 50;
+static const int16 kDrawersAngle = -30;
+static const int16 kCaldoria53Angle = 45;
+static const int16 kCaldoria55Angle = -45;
 
-const TimeValue kSinclairInterruptionTime1 = 2955;
-const TimeValue kSinclairInterruptionTime2 = 6835;
-const TimeValue kSinclairInterruptionTime3 = 9835;
-const TimeValue kSinclairInterruptionTime4 = 12555;
+static const TimeValue kSinclairInterruptionTime1 = 2955;
+static const TimeValue kSinclairInterruptionTime2 = 6835;
+static const TimeValue kSinclairInterruptionTime3 = 9835;
+static const TimeValue kSinclairInterruptionTime4 = 12555;
 
-const InputBits kPullbackInterruptFilter = kFilterAllInput;
-const InputBits kRecalibrationInterruptFilter = kFilterAllInput;
+static const InputBits kPullbackInterruptFilter = kFilterAllInput;
+static const InputBits kRecalibrationInterruptFilter = kFilterAllInput;
 
-const TimeValue kCaldoriaReplicatorIntroIn = 4933;
-const TimeValue kCaldoriaReplicatorIntroOut = 6557;
+static const TimeValue kCaldoriaReplicatorIntroIn = 4933;
+static const TimeValue kCaldoriaReplicatorIntroOut = 6557;
 
-const TimeValue kCaldoriaReplicatorWrongChoiceIn = 6557;
-const TimeValue kCaldoriaReplicatorWrongChoiceOut = 8586;
+static const TimeValue kCaldoriaReplicatorWrongChoiceIn = 6557;
+static const TimeValue kCaldoriaReplicatorWrongChoiceOut = 8586;
 
-const TimeValue kCaldoriaReplicatorOJChoiceIn = 8586;
-const TimeValue kCaldoriaReplicatorOJChoiceOut = 11687;
+static const TimeValue kCaldoriaReplicatorOJChoiceIn = 8586;
+static const TimeValue kCaldoriaReplicatorOJChoiceOut = 11687;
 
-const TimeValue kCaldoriaMessagesIntroIn = 11687;
-const TimeValue kCaldoriaMessagesIntroOut = 13641;
+static const TimeValue kCaldoriaMessagesIntroIn = 11687;
+static const TimeValue kCaldoriaMessagesIntroOut = 13641;
 
-const TimeValue kCaldoriaFirstMessageIn = 13641;
-const TimeValue kCaldoriaFirstMessageOut = 14203;
+static const TimeValue kCaldoriaFirstMessageIn = 13641;
+static const TimeValue kCaldoriaFirstMessageOut = 14203;
 
-const TimeValue kCaldoriaSecondMessageIn = 14203;
-const TimeValue kCaldoriaSecondMessageOut = 14750;
+static const TimeValue kCaldoriaSecondMessageIn = 14203;
+static const TimeValue kCaldoriaSecondMessageOut = 14750;
 
-const TimeValue kCaldoriaDoorCloseIn = 14750;
-const TimeValue kCaldoriaDoorCloseOut = 15472;
+static const TimeValue kCaldoriaDoorCloseIn = 14750;
+static const TimeValue kCaldoriaDoorCloseOut = 15472;
 
-const TimeValue kCaldoriaElevatorCloseIn = 15472;
-const TimeValue kCaldoriaElevatorCloseOut = 16336;
+static const TimeValue kCaldoriaElevatorCloseIn = 15472;
+static const TimeValue kCaldoriaElevatorCloseOut = 16336;
 
-const TimeValue kCaldoriaShowerCloseIn = 16336;
-const TimeValue kCaldoriaShowerCloseOut = 17101;
+static const TimeValue kCaldoriaShowerCloseIn = 16336;
+static const TimeValue kCaldoriaShowerCloseOut = 17101;
 
-const TimeValue kCaldoriaGTDoorCloseIn = 17101;
-const TimeValue kCaldoriaGTDoorCloseOut = 18523;
+static const TimeValue kCaldoriaGTDoorCloseIn = 17101;
+static const TimeValue kCaldoriaGTDoorCloseOut = 18523;
 
-const TimeValue kCaldoriaNobodyHomeIn = 18523;
-const TimeValue kCaldoriaNobodyHomeOut = 21469;
+static const TimeValue kCaldoriaNobodyHomeIn = 18523;
+static const TimeValue kCaldoriaNobodyHomeOut = 21469;
 
-const TimeValue kCaldoriaNoOtherFloorIn = 21469;
-const TimeValue kCaldoriaNoOtherFloorOut = 28013;
+static const TimeValue kCaldoriaNoOtherFloorIn = 21469;
+static const TimeValue kCaldoriaNoOtherFloorOut = 28013;
 
-const TimeValue kCaldoria4DInstructionsIn = 28013;
-const TimeValue kCaldoria4DInstructionsOut = 29730;
+static const TimeValue kCaldoria4DInstructionsIn = 28013;
+static const TimeValue kCaldoria4DInstructionsOut = 29730;
 
-const TimeValue kCaldoriaDrinkOJIn = 33910;
-const TimeValue kCaldoriaDrinkOJOut = 35846;
+static const TimeValue kCaldoriaDrinkOJIn = 33910;
+static const TimeValue kCaldoriaDrinkOJOut = 35846;
 
-const TimeValue kCaldoriaNoOtherDestinationIn = 35846;
-const TimeValue kCaldoriaNoOtherDestinationOut = 37877;
+static const TimeValue kCaldoriaNoOtherDestinationIn = 35846;
+static const TimeValue kCaldoriaNoOtherDestinationOut = 37877;
 
-const TimeValue kCaldoriaUhghIn = 37877;
-const TimeValue kCaldoriaUhghOut = 38025;
+static const TimeValue kCaldoriaUhghIn = 37877;
+static const TimeValue kCaldoriaUhghOut = 38025;
 
-const TimeValue kCaldoriaSinclairShootsOSIn = 38025;
-const TimeValue kCaldoriaSinclairShootsOSOut = 40649;
+static const TimeValue kCaldoriaSinclairShootsOSIn = 38025;
+static const TimeValue kCaldoriaSinclairShootsOSOut = 40649;
 
-const TimeValue kCaldoriaScreamingAfterIn = 40649;
-const TimeValue kCaldoriaScreamingAfterOut = 47661;
+static const TimeValue kCaldoriaScreamingAfterIn = 40649;
+static const TimeValue kCaldoriaScreamingAfterOut = 47661;
 
-const TimeValue k4FloorTime = 0;
+static const TimeValue k4FloorTime = 0;
 
-const TimeValue k4To1Start = 40;
-const TimeValue k4To1Stop = 7720;
+static const TimeValue k4To1Start = 40;
+static const TimeValue k4To1Stop = 7720;
 
-const TimeValue k4To5Start = 7720;
-const TimeValue k4To5Stop = 10280;
+static const TimeValue k4To5Start = 7720;
+static const TimeValue k4To5Stop = 10280;
 
-const TimeValue k4To2Time = 10280;
+static const TimeValue k4To2Time = 10280;
 
-const TimeValue k4To3Time = 10320;
+static const TimeValue k4To3Time = 10320;
 
-const TimeValue k1FloorTime = 10360;
+static const TimeValue k1FloorTime = 10360;
 
-const TimeValue k1To4Start = 10400;
-const TimeValue k1To4Stop = 18080;
+static const TimeValue k1To4Start = 10400;
+static const TimeValue k1To4Stop = 18080;
 
-const TimeValue k1To5Start = 18080;
-const TimeValue k1To5Stop = 28320;
+static const TimeValue k1To5Start = 18080;
+static const TimeValue k1To5Stop = 28320;
 
-const TimeValue k1To2Time = 28320;
+static const TimeValue k1To2Time = 28320;
 
-const TimeValue k1To3Time = 28360;
+static const TimeValue k1To3Time = 28360;
 
-const TimeValue k5FloorTime = 28400;
+static const TimeValue k5FloorTime = 28400;
 
-const TimeValue k5To1Start = 28440;
-const TimeValue k5To1Stop = 38680;
+static const TimeValue k5To1Start = 28440;
+static const TimeValue k5To1Stop = 38680;
 
-const TimeValue k5To4Start = 38680;
-const TimeValue k5To4Stop = 41240;
+static const TimeValue k5To4Start = 38680;
+static const TimeValue k5To4Stop = 41240;
 
-const TimeValue k5To2Time = 41240;
+static const TimeValue k5To2Time = 41240;
 
-const TimeValue k5To3Time = 41280;
+static const TimeValue k5To3Time = 41280;
 
 //	FuseFunction functions...
 

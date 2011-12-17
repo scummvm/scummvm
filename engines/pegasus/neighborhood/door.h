@@ -44,9 +44,9 @@ enum {
 	kDoorLockedBit					//	Bit set if door is locked, clear if unlocked.
 };
 
-const DoorFlags kNoDoorFlags = 0;
-const DoorFlags kDoorPresentMask = 1 << kDoorPresentBit;
-const DoorFlags kDoorLockedMask = 1 << kDoorLockedBit;
+static const DoorFlags kNoDoorFlags = 0;
+static const DoorFlags kDoorPresentMask = 1 << kDoorPresentBit;
+static const DoorFlags kDoorLockedMask = 1 << kDoorLockedBit;
 
 class DoorTable {
 public:

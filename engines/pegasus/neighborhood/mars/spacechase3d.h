@@ -32,8 +32,8 @@ namespace Pegasus {
 
 // This is approximately right for a field of view of 72 degrees
 // (Should be set to the tangent of FOV).
-//const float kTangentFOV = 0.76254;
-const float kTangentFOV = 1.0;
+//static const float kTangentFOV = 0.76254;
+static const float kTangentFOV = 1.0;
 
 // Define these as macros and they can be used to define constants...
 #define convertSpaceXToScreenH(x, z) \
@@ -63,7 +63,7 @@ struct Point3D {
 	}
 };
 
-const int kScreenWidth = kShuttleWindowWidth;
+static const int kScreenWidth = kShuttleWindowWidth;
 
 bool isNegative(int a);
 bool isPositive(int a);

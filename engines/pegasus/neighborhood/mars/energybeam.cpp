@@ -28,14 +28,14 @@
 
 namespace Pegasus {
 
-const TimeValue kEnergyBeamTime = kOneSecond * kShuttleWeaponScale / 2;
+static const TimeValue kEnergyBeamTime = kOneSecond * kShuttleWeaponScale / 2;
 
-const CoordType kEnergyBeamOriginH = kShuttleWindowMidH;
-const CoordType kEnergyBeamOriginV = kShuttleWindowTop + kShuttleWindowHeight;
+static const CoordType kEnergyBeamOriginH = kShuttleWindowMidH;
+static const CoordType kEnergyBeamOriginV = kShuttleWindowTop + kShuttleWindowHeight;
 
-const float kBeamXOrigin = convertScreenHToSpaceX(kEnergyBeamOriginH, kEnergyBeamMinDistance);
-const float kBeamYOrigin = convertScreenVToSpaceY(kEnergyBeamOriginV, kEnergyBeamMinDistance);
-const float kBeamZOrigin = kEnergyBeamMinDistance;
+static const float kBeamXOrigin = convertScreenHToSpaceX(kEnergyBeamOriginH, kEnergyBeamMinDistance);
+static const float kBeamYOrigin = convertScreenVToSpaceY(kEnergyBeamOriginV, kEnergyBeamMinDistance);
+static const float kBeamZOrigin = kEnergyBeamMinDistance;
 
 EnergyBeam::EnergyBeam() {
 	_weaponDuration = kEnergyBeamTime;

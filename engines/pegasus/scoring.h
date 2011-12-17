@@ -34,55 +34,55 @@ namespace Pegasus {
 //
 //	Scoring.
 
-const CoordType kDeathScreenScoreLeft = 151;
-const CoordType kDeathScreenScoreTop = 212;
-const CoordType kDeathScreenScoreWidth = 124;
-const CoordType kDeathScreenScoreHeight = 12;
-const CoordType kDeathScreenScoreSkipVert = -16;
+static const CoordType kDeathScreenScoreLeft = 151;
+static const CoordType kDeathScreenScoreTop = 212;
+static const CoordType kDeathScreenScoreWidth = 124;
+static const CoordType kDeathScreenScoreHeight = 12;
+static const CoordType kDeathScreenScoreSkipVert = -16;
 
 //	Caldoria & TSA
 
-const GameScoreType kSawINNScore					= 5;
-const GameScoreType kTookShowerScore				= 2;
-const GameScoreType kFixedHairScore				= 2;
-const GameScoreType kGotKeyCardScore				= 5;
-const GameScoreType kReadPaperScore				= 2;
-const GameScoreType kLookThroughTelescopeScore		= 2;
-const GameScoreType kSawCaldoriaKioskScore			= 2;
-const GameScoreType kGoToTSAScore					= 3;
+static const GameScoreType kSawINNScore					= 5;
+static const GameScoreType kTookShowerScore				= 2;
+static const GameScoreType kFixedHairScore				= 2;
+static const GameScoreType kGotKeyCardScore				= 5;
+static const GameScoreType kReadPaperScore				= 2;
+static const GameScoreType kLookThroughTelescopeScore		= 2;
+static const GameScoreType kSawCaldoriaKioskScore			= 2;
+static const GameScoreType kGoToTSAScore					= 3;
 
-const GameScoreType kEnterTSAScore					= 2;
-const GameScoreType kSawBust1Score					= 2;
-const GameScoreType kSawBust2Score					= 2;
-const GameScoreType kSawBust3Score					= 2;
-const GameScoreType kSawBust4Score					= 2;
-const GameScoreType kSawBust5Score					= 2;
-const GameScoreType kSawBust6Score					= 2;
-const GameScoreType kSawTheoryScore				= 4;
-const GameScoreType kSawBackgroundScore			= 4;
-const GameScoreType kSawProcedureScore				= 4;
-const GameScoreType kGotJourneymanKeyScore			= 5;
-const GameScoreType kGotPegasusBiochipScore		= 5;
-const GameScoreType kGotBiosuitScore				= 5;
-const GameScoreType kGoToPrehistoricScore			= 5;
+static const GameScoreType kEnterTSAScore					= 2;
+static const GameScoreType kSawBust1Score					= 2;
+static const GameScoreType kSawBust2Score					= 2;
+static const GameScoreType kSawBust3Score					= 2;
+static const GameScoreType kSawBust4Score					= 2;
+static const GameScoreType kSawBust5Score					= 2;
+static const GameScoreType kSawBust6Score					= 2;
+static const GameScoreType kSawTheoryScore				= 4;
+static const GameScoreType kSawBackgroundScore			= 4;
+static const GameScoreType kSawProcedureScore				= 4;
+static const GameScoreType kGotJourneymanKeyScore			= 5;
+static const GameScoreType kGotPegasusBiochipScore		= 5;
+static const GameScoreType kGotBiosuitScore				= 5;
+static const GameScoreType kGoToPrehistoricScore			= 5;
 
-const GameScoreType kPutLogInReaderScore			= 5;
-const GameScoreType kSawCaldoriaNormalScore		= 2;
-const GameScoreType kSawCaldoriaAlteredScore		= 2;
-const GameScoreType kSawNoradNormalScore			= 2;
-const GameScoreType kSawNoradAlteredScore			= 2;
-const GameScoreType kSawMarsNormalScore			= 2;
-const GameScoreType kSawMarsAlteredScore			= 2;
-const GameScoreType kSawWSCNormalScore				= 2;
-const GameScoreType kSawWSCAlteredScore			= 2;
-const GameScoreType kWentToReadyRoom2Score			= 5;
-const GameScoreType kWentAfterSinclairScore		= 5;
-const GameScoreType kUsedCardBombScore				= 10;
-const GameScoreType kShieldedCardBombScore			= 5;
-const GameScoreType kStunnedSinclairScore			= 10;
-const GameScoreType kDisarmedNukeScore				= 10;
+static const GameScoreType kPutLogInReaderScore			= 5;
+static const GameScoreType kSawCaldoriaNormalScore		= 2;
+static const GameScoreType kSawCaldoriaAlteredScore		= 2;
+static const GameScoreType kSawNoradNormalScore			= 2;
+static const GameScoreType kSawNoradAlteredScore			= 2;
+static const GameScoreType kSawMarsNormalScore			= 2;
+static const GameScoreType kSawMarsAlteredScore			= 2;
+static const GameScoreType kSawWSCNormalScore				= 2;
+static const GameScoreType kSawWSCAlteredScore			= 2;
+static const GameScoreType kWentToReadyRoom2Score			= 5;
+static const GameScoreType kWentAfterSinclairScore		= 5;
+static const GameScoreType kUsedCardBombScore				= 10;
+static const GameScoreType kShieldedCardBombScore			= 5;
+static const GameScoreType kStunnedSinclairScore			= 10;
+static const GameScoreType kDisarmedNukeScore				= 10;
 
-const GameScoreType kMaxCaldoriaTSAScoreBefore		=	kSawINNScore +
+static const GameScoreType kMaxCaldoriaTSAScoreBefore		=	kSawINNScore +
 														kTookShowerScore +
 														kFixedHairScore +
 														kGotKeyCardScore +
@@ -115,52 +115,52 @@ const GameScoreType kMaxCaldoriaTSAScoreBefore		=	kSawINNScore +
 														kSawWSCAlteredScore +
 														kWentToReadyRoom2Score;
 
-const GameScoreType kMaxCaldoriaTSAScoreAfter		=	kWentAfterSinclairScore +
+static const GameScoreType kMaxCaldoriaTSAScoreAfter		=	kWentAfterSinclairScore +
 														kUsedCardBombScore +
 														kShieldedCardBombScore +
 														kStunnedSinclairScore +
 														kDisarmedNukeScore;
 
-const GameScoreType kMaxCaldoriaTSAScore			=	kMaxCaldoriaTSAScoreBefore +
+static const GameScoreType kMaxCaldoriaTSAScore			=	kMaxCaldoriaTSAScoreBefore +
 														kMaxCaldoriaTSAScoreAfter;
 
 //	Prehistoric
 
-const GameScoreType kThrewBreakerScore				= 10;
-const GameScoreType kExtendedBridgeScore			= 10;
-const GameScoreType kGotHistoricalLogScore			= 5;
-const GameScoreType kFinishedPrehistoricScore		= 10;
+static const GameScoreType kThrewBreakerScore				= 10;
+static const GameScoreType kExtendedBridgeScore			= 10;
+static const GameScoreType kGotHistoricalLogScore			= 5;
+static const GameScoreType kFinishedPrehistoricScore		= 10;
 
-const GameScoreType kMaxPrehistoricScore			=	kThrewBreakerScore +
+static const GameScoreType kMaxPrehistoricScore			=	kThrewBreakerScore +
 														kExtendedBridgeScore +
 														kGotHistoricalLogScore +
 														kFinishedPrehistoricScore;
 
 //	Mars
 
-const GameScoreType kThrownByRobotScore			= 3;
-const GameScoreType kGotMarsCardScore				= 5;
-const GameScoreType kSawMarsKioskScore				= 2;
-const GameScoreType kSawTransportMapScore			= 2;
-const GameScoreType kGotCrowBarScore				= 5;
-const GameScoreType kTurnedOnTransportScore		= 5;
-const GameScoreType kGotOxygenMaskScore			= 5;
-const GameScoreType kAvoidedRobotScore				= 5;
-const GameScoreType kActivatedPlatformScore		= 2;
-const GameScoreType kUsedLiquidNitrogenScore		= 3;
-const GameScoreType kUsedCrowBarScore				= 3;
-const GameScoreType kFoundCardBombScore			= 4;
-const GameScoreType kDisarmedCardBombScore			= 8;
-const GameScoreType kGotCardBombScore				= 5;
-const GameScoreType kThreadedMazeScore				= 5;
-const GameScoreType kThreadedGearRoomScore			= 2;
-const GameScoreType kEnteredShuttleScore			= 2;
-const GameScoreType kEnteredLaunchTubeScore		= 4;
-const GameScoreType kStoppedRobotsShuttleScore		= 10;
-const GameScoreType kGotMarsOpMemChipScore			= 10;
-const GameScoreType kFinishedMarsScore				= 10;
+static const GameScoreType kThrownByRobotScore			= 3;
+static const GameScoreType kGotMarsCardScore				= 5;
+static const GameScoreType kSawMarsKioskScore				= 2;
+static const GameScoreType kSawTransportMapScore			= 2;
+static const GameScoreType kGotCrowBarScore				= 5;
+static const GameScoreType kTurnedOnTransportScore		= 5;
+static const GameScoreType kGotOxygenMaskScore			= 5;
+static const GameScoreType kAvoidedRobotScore				= 5;
+static const GameScoreType kActivatedPlatformScore		= 2;
+static const GameScoreType kUsedLiquidNitrogenScore		= 3;
+static const GameScoreType kUsedCrowBarScore				= 3;
+static const GameScoreType kFoundCardBombScore			= 4;
+static const GameScoreType kDisarmedCardBombScore			= 8;
+static const GameScoreType kGotCardBombScore				= 5;
+static const GameScoreType kThreadedMazeScore				= 5;
+static const GameScoreType kThreadedGearRoomScore			= 2;
+static const GameScoreType kEnteredShuttleScore			= 2;
+static const GameScoreType kEnteredLaunchTubeScore		= 4;
+static const GameScoreType kStoppedRobotsShuttleScore		= 10;
+static const GameScoreType kGotMarsOpMemChipScore			= 10;
+static const GameScoreType kFinishedMarsScore				= 10;
 
-const GameScoreType kMaxMarsScore					=	kThrownByRobotScore +
+static const GameScoreType kMaxMarsScore					=	kThrownByRobotScore +
 														kGotMarsCardScore +
 														kSawMarsKioskScore +
 														kSawTransportMapScore +
@@ -184,23 +184,23 @@ const GameScoreType kMaxMarsScore					=	kThrownByRobotScore +
 
 //	Norad
 
-const GameScoreType kSawSecurityMonitorScore		= 5;
-const GameScoreType kFilledOxygenCanisterScore		= 5;
-const GameScoreType kFilledArgonCanisterScore		= 5;
-const GameScoreType kSawUnconsciousOperatorScore	= 5;
-const GameScoreType kWentThroughPressureDoorScore	= 5;
-const GameScoreType kPreppedSubScore				= 5;
-const GameScoreType kEnteredSubScore				= 5;
-const GameScoreType kExitedSubScore				= 10;
-const GameScoreType kSawRobotAt54NorthScore		= 5;
-const GameScoreType kPlayedWithClawScore			= 5;
-const GameScoreType kUsedRetinalChipScore			= 5;
-const GameScoreType kFinishedGlobeGameScore		= 10;
-const GameScoreType kStoppedNoradRobotScore		= 10;
-const GameScoreType kGotNoradOpMemChipScore		= 10;
-const GameScoreType kFinishedNoradScore			= 10;
+static const GameScoreType kSawSecurityMonitorScore		= 5;
+static const GameScoreType kFilledOxygenCanisterScore		= 5;
+static const GameScoreType kFilledArgonCanisterScore		= 5;
+static const GameScoreType kSawUnconsciousOperatorScore	= 5;
+static const GameScoreType kWentThroughPressureDoorScore	= 5;
+static const GameScoreType kPreppedSubScore				= 5;
+static const GameScoreType kEnteredSubScore				= 5;
+static const GameScoreType kExitedSubScore				= 10;
+static const GameScoreType kSawRobotAt54NorthScore		= 5;
+static const GameScoreType kPlayedWithClawScore			= 5;
+static const GameScoreType kUsedRetinalChipScore			= 5;
+static const GameScoreType kFinishedGlobeGameScore		= 10;
+static const GameScoreType kStoppedNoradRobotScore		= 10;
+static const GameScoreType kGotNoradOpMemChipScore		= 10;
+static const GameScoreType kFinishedNoradScore			= 10;
 
-const GameScoreType kMaxNoradScore					=	kSawSecurityMonitorScore +
+static const GameScoreType kMaxNoradScore					=	kSawSecurityMonitorScore +
 														kFilledOxygenCanisterScore +
 														kFilledArgonCanisterScore +
 														kSawUnconsciousOperatorScore +
@@ -218,28 +218,28 @@ const GameScoreType kMaxNoradScore					=	kSawSecurityMonitorScore +
 
 //	WSC
 
-const GameScoreType kRemovedDartScore				= 5;
-const GameScoreType kAnalyzedDartScore				= 5;
-const GameScoreType kBuiltAntidoteScore			= 5;
-const GameScoreType kGotSinclairKeyScore			= 5;
-const GameScoreType kGotArgonCanisterScore 		= 5;
-const GameScoreType kGotNitrogenCanisterScore		= 5;
-const GameScoreType kPlayedWithMessagesScore		= 2;
-const GameScoreType kSawMorphExperimentScore		= 3;
-const GameScoreType kEnteredSinclairOfficeScore	= 2;
-const GameScoreType kSawBrochureScore				= 3;
-const GameScoreType kSawSinclairEntry1Score		= 3;
-const GameScoreType kSawSinclairEntry2Score		= 3;
-const GameScoreType kSawSinclairEntry3Score		= 3;
-const GameScoreType kSawWSCDirectoryScore			= 3;
-const GameScoreType kUsedCrowBarInWSCScore			= 5;
-const GameScoreType kFinishedPlasmaDodgeScore		= 10;
-const GameScoreType kOpenedCatwalkScore			= 3;
-const GameScoreType kStoppedWSCRobotScore			= 10;
-const GameScoreType kGotWSCOpMemChipScore			= 10;
-const GameScoreType kFinishedWSCScore				= 10;
+static const GameScoreType kRemovedDartScore				= 5;
+static const GameScoreType kAnalyzedDartScore				= 5;
+static const GameScoreType kBuiltAntidoteScore			= 5;
+static const GameScoreType kGotSinclairKeyScore			= 5;
+static const GameScoreType kGotArgonCanisterScore 		= 5;
+static const GameScoreType kGotNitrogenCanisterScore		= 5;
+static const GameScoreType kPlayedWithMessagesScore		= 2;
+static const GameScoreType kSawMorphExperimentScore		= 3;
+static const GameScoreType kEnteredSinclairOfficeScore	= 2;
+static const GameScoreType kSawBrochureScore				= 3;
+static const GameScoreType kSawSinclairEntry1Score		= 3;
+static const GameScoreType kSawSinclairEntry2Score		= 3;
+static const GameScoreType kSawSinclairEntry3Score		= 3;
+static const GameScoreType kSawWSCDirectoryScore			= 3;
+static const GameScoreType kUsedCrowBarInWSCScore			= 5;
+static const GameScoreType kFinishedPlasmaDodgeScore		= 10;
+static const GameScoreType kOpenedCatwalkScore			= 3;
+static const GameScoreType kStoppedWSCRobotScore			= 10;
+static const GameScoreType kGotWSCOpMemChipScore			= 10;
+static const GameScoreType kFinishedWSCScore				= 10;
 
-const GameScoreType kMaxWSCScore					=	kRemovedDartScore +
+static const GameScoreType kMaxWSCScore					=	kRemovedDartScore +
 														kAnalyzedDartScore +
 														kBuiltAntidoteScore +
 														kGotSinclairKeyScore +
@@ -262,15 +262,15 @@ const GameScoreType kMaxWSCScore					=	kRemovedDartScore +
 
 //	Gandhi
 
-const GameScoreType kMarsGandhiScore				= 10;
-const GameScoreType kNoradGandhiScore				= 10;
-const GameScoreType kWSCGandhiScore				= 10;
+static const GameScoreType kMarsGandhiScore				= 10;
+static const GameScoreType kNoradGandhiScore				= 10;
+static const GameScoreType kWSCGandhiScore				= 10;
 
-const GameScoreType kMaxGandhiScore				=	kMarsGandhiScore +
+static const GameScoreType kMaxGandhiScore				=	kMarsGandhiScore +
 														kNoradGandhiScore +
 														kWSCGandhiScore;
 
-const GameScoreType kMaxTotalScore					=	kMaxCaldoriaTSAScore +
+static const GameScoreType kMaxTotalScore					=	kMaxCaldoriaTSAScore +
 														kMaxPrehistoricScore +
 														kMaxMarsScore +
 														kMaxNoradScore +
