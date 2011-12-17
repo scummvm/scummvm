@@ -26,6 +26,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 

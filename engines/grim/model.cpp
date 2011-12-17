@@ -29,6 +29,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 

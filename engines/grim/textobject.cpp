@@ -28,6 +28,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 

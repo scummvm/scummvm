@@ -24,12 +24,12 @@
 #define GRIM_TEXTOBJECT_H
 
 #include "engines/grim/pool.h"
-#include "engines/grim/color.h"
 
 namespace Grim {
 
 class SaveGame;
 class Font;
+class PoolColor;
 
 class TextObjectCommon {
 public:

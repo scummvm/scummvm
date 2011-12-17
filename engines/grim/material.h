@@ -24,9 +24,10 @@
 #define GRIM_MATERIAL_H
 
 #include "engines/grim/object.h"
-#include "engines/grim/colormap.h"
 
 namespace Grim {
+
+class CMap;
 
 class Texture {
 public:
