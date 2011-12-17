@@ -284,7 +284,26 @@ void DreamBase::getBackFromOb() {
 }
 
 void DreamGenContext::getOpenedSize() {
-	ax = getOpenedSizeCPP();
+	//ax = getOpenedSizeCPP();
+
+	// We need to call the ASM-style versions of get*Ad, as these also set
+	// bx and es
+
+	al = data.byte(kOpenedob);
+
+	switch (data.byte(kOpenedtype)) {
+	case 4:
+		getExAd();
+		break;
+	case 2:
+		getFreeAd();
+		break;
+	default:
+		getSetAd();
+		break;
+	}
+
+	ax = es.word(bx+7);
 }
 
 byte DreamGenContext::getOpenedSizeCPP() {
