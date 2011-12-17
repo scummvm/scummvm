@@ -56,6 +56,11 @@ public:
 	}
 
 	inline ~WordRef() {
+		// FIXME: This is _too late_ to write back the
+		// value. Example: in the call
+		// printDirect(data.word(kLastxpos), .....)
+		// the destructor isn't called until after printDirect returns. This
+		// destroys the modifications to lastXPos that printDirect makes.
 		_data[0] = _value & 0xff;
 		_data[1] = _value >> 8;
 		_value = _data[0] | (_data[1] << 8);

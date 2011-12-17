@@ -1581,7 +1581,8 @@ void DreamGenContext::withWhat() {
 
 	copyName(data.byte(kObjecttype), data.byte(kCommand), commandLine);
 	printMessage2(100, 21, 63, 200, false, 2);
-	printDirect(commandLine, data.word(kLastxpos) + 5, 21, 220, false);
+	uint16 x = data.word(kLastxpos) + 5;
+	printDirect(commandLine, x, 21, 220, false);
 	printMessage2(data.word(kLastxpos) + 5, 21, 63, 200, false, 3);
 
 	fillRyan();
