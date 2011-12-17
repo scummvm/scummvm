@@ -386,7 +386,7 @@ bool EventsClass::isCursorVisible() const {
  */
 void EventsClass::delay(int numFrames) {
 	while (_frameNumber < (_prevDelayFrame + numFrames)) {
-		uint32 delayAmount = CLIP(_priorFrameTime + GAME_FRAME_TIME - g_system->getMillis(),
+		uint32 delayAmount = CLIP(_priorFrameTime + GAME_SCRIPT_TIME - g_system->getMillis(),
 			(uint32)0, (uint32)GAME_FRAME_TIME);
 		if (delayAmount > 0)
 			g_system->delayMillis(delayAmount);
