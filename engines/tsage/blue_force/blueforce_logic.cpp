@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
@@ -42,8 +43,25 @@ namespace TsAGE {
 namespace BlueForce {
 
 void BlueForceGame::start() {
-	// Start the game
-	g_globals->_sceneManager.changeScene(20);
+	int slot = -1;
+
+	// Check for a savegame to load straight from the launcher
+	if (ConfMan.hasKey("save_slot")) {
+		slot = ConfMan.getInt("save_slot");
+		Common::String file = g_vm->generateSaveName(slot);
+		Common::InSaveFile *in = g_vm->_system->getSavefileManager()->openForLoading(file);
+		if (in)
+			delete in;
+		else
+			slot = -1;
+	}
+
+	if (slot >= 0)
+		// Set the savegame slot to load in the main loop
+		g_globals->_sceneHandler->_loadGameSlot = slot;
+	else
+		// Switch to the title screen
+		g_globals->_sceneManager.setNewScene(20);
 }
 
 Scene *BlueForceGame::createScene(int sceneNumber) {
