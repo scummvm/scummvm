@@ -331,6 +331,8 @@ void DreamGenContext::identifyOb() {
 	push(ax);
 	findPathOfPoint();
 	data.byte(kPointerspath) = dl;
+	ax = pop();
+	push(ax);
 	findFirstPath();
 	data.byte(kPointerfirstpath) = al;
 	ax = pop();
@@ -352,6 +354,45 @@ void DreamGenContext::identifyOb() {
 		obName(type, 3);
 	else
 		blank();
+}
+
+uint16 DreamGenContext::findInvPosCPP() {
+	uint16 x = data.word(kMousex) - kInventx;
+	uint16 y = data.word(kMousey) - kInventy;
+	uint16 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
+	uint16 invPos = data.byte(kRyanpage) * 10 + pos;
+	data.byte(kLastinvpos) = invPos & 0xFF;
+	return invPos * 2 + kRyaninvlist;
+}
+
+void DreamGenContext::findInvPos() {
+	bx = findInvPosCPP();
+	es = data.word(kBuffers);
+}
+
+void DreamGenContext::selectOb() {
+	es = data.word(kBuffers);
+
+	uint16 objectId = es.word(findInvPosCPP());
+	if ((objectId & 0xFF) == 255) {
+		blank();
+		return;
+	}
+
+	data.byte(kWithobject) = objectId & 0x00FF;
+	data.byte(kWithtype)   = objectId & 0xFF00;
+
+	if (objectId == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
+		data.byte(kCommandtype) = 221;
+
+	data.word(kOldsubject) = objectId;
+	commandWithOb(0, data.byte(kWithtype), data.byte(kWithobject));
+
+	if (data.word(kMousebutton) != data.word(kOldbutton) && (data.word(kMousebutton) & 1)) {
+		delPointer();
+		data.byte(kInvopen) = 0;
+		useRoutine();
+	}
 }
 
 } // End of namespace DreamGen

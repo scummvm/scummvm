@@ -1091,36 +1091,6 @@ void DreamGenContext::getSetAd() {
 	es = data.word(kSetdat);
 }
 
-void DreamGenContext::findInvPos() {
-	STACK_CHECK;
-	cx = data.word(kMousex);
-	_sub(cx, (80));
-	bx = -1;
-findinv1:
-	_inc(bx);
-	_sub(cx, (44));
-	if (!flags.c())
-		goto findinv1;
-	cx = data.word(kMousey);
-	_sub(cx, (58));
-	_sub(bx, 5);
-findinv2:
-	_add(bx, 5);
-	_sub(cx, (44));
-	if (!flags.c())
-		goto findinv2;
-	al = data.byte(kRyanpage);
-	ah = 0;
-	cx = 10;
-	_mul(cx);
-	_add(bx, ax);
-	al = bl;
-	data.byte(kLastinvpos) = al;
-	_add(bx, bx);
-	es = data.word(kBuffers);
-	_add(bx, (0+(228*13)+32));
-}
-
 void DreamGenContext::findOpenPos() {
 	STACK_CHECK;
 	cx = data.word(kMousex);
@@ -2734,45 +2704,6 @@ lookcolon:
 	_cmp(al, ':');
 	if (!flags.z())
 		goto lookcolon;
-}
-
-void DreamGenContext::selectOb() {
-	STACK_CHECK;
-	findInvPos();
-	ax = es.word(bx);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto canselectob;
-	blank();
-	return;
-canselectob:
-	data.byte(kWithobject) = al;
-	data.byte(kWithtype) = ah;
-	_cmp(ax, data.word(kOldsubject));
-	if (!flags.z())
-		goto diffsub3;
-	_cmp(data.byte(kCommandtype), 221);
-	if (flags.z())
-		goto alreadyselob;
-	data.byte(kCommandtype) = 221;
-diffsub3:
-	data.word(kOldsubject) = ax;
-	bx = ax;
-	al = 0;
-	commandWithOb();
-alreadyselob:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notselob) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doselob;
-	return;
-doselob:
-	delPointer();
-	data.byte(kInvopen) = 0;
-	useRoutine();
 }
 
 void DreamGenContext::showDiaryKeys() {

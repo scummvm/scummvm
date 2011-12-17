@@ -496,9 +496,7 @@ public:
 	void removeObFromInv();
 	void dirFile();
 	void pickupConts();
-	void findInvPos();
 	void getKeyAndLogo();
-	void selectOb();
 	void fadeUpMon();
 	void reExFromInv();
 	void outOfInv();

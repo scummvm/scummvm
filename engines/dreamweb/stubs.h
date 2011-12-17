@@ -398,5 +398,8 @@
 	void useStereo();
 	void checkInside();
 	uint16 checkInside(uint16 command, uint16 type);
+	void selectOb();
+	void findInvPos();
+	uint16 findInvPosCPP();
 
 #endif
