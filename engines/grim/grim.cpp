@@ -561,21 +561,24 @@ void GrimEngine::updateDisplayScene() {
 
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
-		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 	}
 }
 
 void GrimEngine::doFlip() {
-	if (_showFps && _doFlip)
+	_frameCounter++;
+	if (!_doFlip) {
+		return;
+	}
+
+	if (_showFps && _mode != DrawMode)
 		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
-	if (_doFlip && _flipEnable)
+	if (_flipEnable)
 		g_driver->flipBuffer();
 
-	if (_showFps && _doFlip && _mode != DrawMode) {
-		_frameCounter++;
+	if (_showFps && _mode != DrawMode) {
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
 		if (delta > 500) {
