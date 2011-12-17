@@ -4234,47 +4234,47 @@ void Scene2800::Action2::signal() {
 		R2_GLOBALS._sound2.stop();
 		break;
 	case 1:
-		scene->_object2.postInit();
-		scene->_object2.setVisage(2800);
-		scene->_object2.setStrip(1);
-		scene->_object2._numFrames = 8;
-		scene->_object2._moveRate = 8;
-		scene->_object2.changeZoom(100);
-		scene->_object2.setPosition(Common::Point(1, 1));
-		scene->_object2.show();
-		scene->_object2.animate(ANIM_MODE_5, this);
+		_object2.postInit();
+		_object2.setVisage(2800);
+		_object2.setStrip(1);
+		_object2._numFrames = 8;
+		_object2._moveRate = 8;
+		_object2.changeZoom(100);
+		_object2.setPosition(Common::Point(1, 1));
+		_object2.show();
+		_object2.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
 		R2_GLOBALS._sound2.play(130);
-		scene->_object2.setVisage(2800);
-		scene->_object2.setStrip(7);
+		_object2.setVisage(2800);
+		_object2.setStrip(7);
 
-		scene->_object3.postInit();
-		scene->_object3.setVisage(2800);
-		scene->_object3.setStrip(3);
-		scene->_object3._numFrames = 8;
-		scene->_object3._moveRate = 8;
-		scene->_object3.changeZoom(100);
-		scene->_object3.setPosition(Common::Point(300, 104));
-		scene->_object3.show();
-		scene->_object3.animate(ANIM_MODE_5, this);
+		_object3.postInit();
+		_object3.setVisage(2800);
+		_object3.setStrip(3);
+		_object3._numFrames = 8;
+		_object3._moveRate = 8;
+		_object3.changeZoom(100);
+		_object3.setPosition(Common::Point(300, 104));
+		_object3.show();
+		_object3.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		R2_GLOBALS._sound1.play(241);
-		scene->_object4.postInit();
-		scene->_object4.setVisage(2800);
-		scene->_object4.setStrip(2);
-		scene->_object4._numFrames = 4;
-		scene->_object4._moveRate = 4;
-		scene->_object4.changeZoom(100);
-		scene->_object4.setPosition(Common::Point(300, 104));
-		scene->_object4.fixPriority(105);
-		scene->_object4.show();
-		scene->_object4.animate(ANIM_MODE_5, this);
+		_object4.postInit();
+		_object4.setVisage(2800);
+		_object4.setStrip(2);
+		_object4._numFrames = 4;
+		_object4._moveRate = 4;
+		_object4.changeZoom(100);
+		_object4.setPosition(Common::Point(300, 104));
+		_object4.fixPriority(105);
+		_object4.show();
+		_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
 		setDelay(18);
-		scene->_object4.setStrip(4);
+		_object4.setStrip(4);
 		scene->_actor1.setVisage(2800);
 		scene->_actor1.setStrip(5);
 		scene->_actor1.setFrame(1);
@@ -4389,23 +4389,23 @@ void Scene2800::Action2::signal() {
 		break;
 	case 17:
 		setDelay(6);
-		scene->_object4.setStrip(2);
-		scene->_object4.setFrame(11);
+		_object4.setStrip(2);
+		_object4.setFrame(11);
 		R2_GLOBALS._player.hide();
 	// No break on purpose
 	case 18:
 		R2_GLOBALS._sound1.play(241);
-		scene->_object4.animate(ANIM_MODE_6, this);
+		_object4.animate(ANIM_MODE_6, this);
 		break;
 	case 19:
-		scene->_object4.remove();
-		scene->_object3.animate(ANIM_MODE_6, this);
+		_object4.remove();
+		_object3.animate(ANIM_MODE_6, this);
 		break;
 	case 20:
 		setDelay(6);
-		scene->_object3.remove();
-		scene->_object2.setStrip(1);
-		scene->_object2.setFrame(19);
+		_object3.remove();
+		_object2.setStrip(1);
+		_object2.setFrame(19);
 		break;
 	case 21:
 		setDelay(150);
@@ -4414,7 +4414,7 @@ void Scene2800::Action2::signal() {
 		break;
 	case 22:
 		scene->_sceneMode = 12;
-		scene->_object2.animate(ANIM_MODE_6, scene);
+		_object2.animate(ANIM_MODE_6, scene);
 		break;
 	default:
 		break;

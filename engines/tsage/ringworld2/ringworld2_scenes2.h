@@ -639,6 +639,9 @@ class Scene2800 : public SceneExt {
 		void signal();
 	};
 	class Action2: public Action {
+		SceneObject _object2;
+		SceneObject _object3;
+		SceneObject _object4;
 	public:
 		void signal();
 	};
@@ -654,9 +657,6 @@ public:
 	SceneObject _object1;
 	Action1 _action1;
 	Action2 _action2;
-	SceneObject _object2;
-	SceneObject _object3;
-	SceneObject _object4;
 	SequenceManager _sequenceManager;
 	int _field412;
 
