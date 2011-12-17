@@ -25,7 +25,7 @@
 
 namespace Kyra {
 
-Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system) : Screen_v2(vm, system) {
+Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system) : Screen(vm, system), Screen_v2(vm, system) {
 }
 
 Screen_MR::~Screen_MR() {

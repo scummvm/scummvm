@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), _vm(vm) {
+Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen(vm, system), Screen_v2(vm, system), Screen_Rpg(vm, system, _screenDimTable = vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount), _vm(vm) {
 	_paletteOverlay1 = new uint8[0x100];
 	_paletteOverlay2 = new uint8[0x100];
 	_grayOverlay = new uint8[0x100];
@@ -43,55 +43,16 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 		_levelOverlays[i] = new uint8[256];
 
 	_screenDimTable = 0;
-	_customDimTable = 0;
-	_curDimIndex = 0;
 	_fadeFlag = 2;
 }
 
 Screen_LoL::~Screen_LoL() {
-	for (int i = 0; i < _screenDimTableCount; i++)
-		delete _customDimTable[i];
-	delete[] _customDimTable;
-
 	for (int i = 0; i < 8; i++)
 		delete[] _levelOverlays[i];
 
 	delete[] _paletteOverlay1;
 	delete[] _paletteOverlay2;
 	delete[] _grayOverlay;
-}
-
-bool Screen_LoL::init() {
-	if (Screen::init()) {
-		_screenDimTable = _use16ColorMode ? _screenDimTable16C : _screenDimTable256C;
-		_customDimTable = new ScreenDim*[_screenDimTableCount];
-		memset(_customDimTable, 0, sizeof(ScreenDim *)* _screenDimTableCount);
-		return true;
-	}
-	return false;
-}
-
-
-void Screen_LoL::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
-	_curDimIndex = dim;
-}
-
-const ScreenDim *Screen_LoL::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
-}
-
-void Screen_LoL::modifyScreenDim(int dim, int x, int y, int w, int h) {
-	delete _customDimTable[dim];
-	_customDimTable[dim] = new ScreenDim;
-	memcpy(_customDimTable[dim], &_screenDimTable[dim], sizeof(ScreenDim));
-	_customDimTable[dim]->sx = x;
-	_customDimTable[dim]->sy = y;
-	_customDimTable[dim]->w = w;
-	_customDimTable[dim]->h = h;
-	setScreenDim(dim);
 }
 
 void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {

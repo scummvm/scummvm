@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_rpg(engine, engine->screen()),
+TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_rpg(engine, engine->screen_rpg()),
 	_vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
@@ -337,7 +337,7 @@ KyraRpgEngine *TextDisplayer_LoL::vm() {
 	return _vm;
 }
 
-Screen *TextDisplayer_LoL::screen() {
+Screen_Rpg *TextDisplayer_LoL::screen() {
 	return _screen;
 }
 

@@ -78,6 +78,7 @@ KYRARPG_COMMON_OBJ = \
 	kyra_rpg.o \
 	saveload_rpg.o \
 	scene_rpg.o \
+	screen_rpg.o \
 	sprites_rpg.o \
 	staticres_rpg.o \
 	text_rpg.o \

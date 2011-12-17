@@ -23,6 +23,7 @@
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "kyra/kyra_rpg.h"
+#include "kyra/screen_rpg.h"
 #include "kyra/resource.h"
 #include "kyra/timer.h"
 #include "kyra/sound.h"
@@ -117,11 +118,11 @@ void KyraRpgEngine::scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim
 
 	const ScreenDim *cDim = screen()->getScreenDim(dim);
 
-	screen()->modifyScreenDim(dim, cDim->sx, y1, cDim->w, y2 - y1);
+	screen_rpg()->modifyScreenDim(dim, cDim->sx, y1, cDim->w, y2 - y1);
 }
 
 void KyraRpgEngine::drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2) {
-	screen()->modifyScreenDim(dim, x1, y1 << 3, x2 - x1, (y2 - y1) << 3);
+	screen_rpg()->modifyScreenDim(dim, x1, y1 << 3, x2 - x1, (y2 - y1) << 3);
 }
 
 void KyraRpgEngine::generateBlockDrawingBuffer() {

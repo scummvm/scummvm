@@ -51,7 +51,7 @@ public:
 
 private:
 	KyraRpgEngine *vm();
-	Screen *screen();
+	Screen_Rpg *screen();
 
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void textPageBreak();
