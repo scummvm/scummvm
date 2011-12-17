@@ -1781,7 +1781,7 @@ void DreamGenContext::isRyanHolding() {
 	id[2] = cl;
 	id[3] = ch;
 	id[4] = '\0';
-	flags._z = isRyanHolding(id);
+	flags._z = !isRyanHolding(id);
 }
 
 bool DreamGenContext::isRyanHolding(const char *id) {
