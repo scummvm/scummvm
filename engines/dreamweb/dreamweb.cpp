@@ -209,7 +209,7 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
+	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
