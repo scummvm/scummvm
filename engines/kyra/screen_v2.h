@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-class Screen_v2 : public Screen {
+class Screen_v2 : virtual public Screen {
 public:
 	Screen_v2(KyraEngine_v1 *vm, OSystem *system);
 	~Screen_v2();

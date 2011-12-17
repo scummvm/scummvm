@@ -24,7 +24,7 @@
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "kyra/kyra_rpg.h"
-#include "kyra/screen.h"
+#include "kyra/screen_rpg.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"
@@ -35,7 +35,7 @@ enum {
 	kEoBTextBufferSize = 2048
 };
 
-TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
+TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen_Rpg *scr) : _vm(engine), _screen(scr),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 
@@ -462,7 +462,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 }
 
 void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakString) {
-	const char * str = (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1]));
+	const char * str = (const char *)(_screen->getCPagePtr(5) + READ_LE_UINT16(&_screen->getCPagePtr(5)[(stringId - 1) << 1]));
 	assert (strlen(str) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
@@ -488,10 +488,10 @@ void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
 }
 
 void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
-	int tc = _textDimData[screen()->curDimIndex()].color1;
+	int tc = _textDimData[_screen->curDimIndex()].color1;
 
 	if (textColor != -1)
-		_textDimData[screen()->curDimIndex()].color1 = textColor;
+		_textDimData[_screen->curDimIndex()].color1 = textColor;
 
 	va_list args;
 	va_start(args, textColor);
@@ -501,28 +501,28 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	displayText(_dialogueBuffer);
 
 	if (vm()->game() != GI_EOB1)
-		_textDimData[screen()->curDimIndex()].color1 = tc;
+		_textDimData[_screen->curDimIndex()].color1 = tc;
 
-	if (!screen()->_curPage)
-		screen()->updateScreen();
+	if (!_screen->_curPage)
+		_screen->updateScreen();
 }
 
 int TextDisplayer_rpg::clearDim(int dim) {
-	int res = screen()->curDimIndex();
-	screen()->setScreenDim(dim);
-	_textDimData[dim].color1 = screen()->_curDim->unk8;
-	_textDimData[dim].color2 = vm()->game() == GI_LOL ? screen()->_curDim->unkA : vm()->_bkgColor_1;
+	int res = _screen->curDimIndex();
+	_screen->setScreenDim(dim);
+	_textDimData[dim].color1 = _screen->_curDim->unk8;
+	_textDimData[dim].color2 = vm()->game() == GI_LOL ? _screen->_curDim->unkA : vm()->_bkgColor_1;
 	clearCurDim();
 	return res;
 }
 
 void TextDisplayer_rpg::clearCurDim() {
-	int d = screen()->curDimIndex();
-	const ScreenDim *tmp = screen()->getScreenDim(d);
+	int d = _screen->curDimIndex();
+	const ScreenDim *tmp = _screen->getScreenDim(d);
 	if (vm()->gameFlags().use16ColorMode) {
-		screen()->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 2, (tmp->sy + tmp->h) - 2, _textDimData[d].color2);
+		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 2, (tmp->sy + tmp->h) - 2, _textDimData[d].color2);
 	} else
-		screen()->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
+		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
 
 	_lineCount = 0;
 	_textDimData[d].column = _textDimData[d].line = 0;
@@ -533,7 +533,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = screen()->setFont(vm()->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId cf = _screen->setFont(vm()->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 	if (vm()->game() == GI_LOL)
 		vm()->_timer->pauseSingleTimer(11, true);
@@ -554,7 +554,7 @@ void TextDisplayer_rpg::textPageBreak() {
 	if (vm()->speechEnabled() && vm()->_activeVoiceFileTotalTime && _numCharsTotal)
 		speechPartTime = vm()->_system->getMillis() + ((_numCharsPrinted * vm()->_activeVoiceFileTotalTime) / _numCharsTotal);
 
-	const ScreenDim *dim = screen()->getScreenDim(screen()->curDimIndex());
+	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
 
 	int x = ((dim->sx + dim->w) << 3) - (_vm->_dialogueButtonW + 3);
 	int y = 0;
@@ -579,10 +579,10 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	if (vm()->gameFlags().use16ColorMode) {
 		vm()->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xee, 0xcc, -1);
-		screen()->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
+		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
 	} else {
 		vm()->gui_drawBox(x, y, w, vm()->_dialogueButtonH, vm()->_color1_1, vm()->_color2_1, vm()->_bkgColor_1);
-		screen()->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelCol1, 0);
+		_screen->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelCol1, 0);
 	}
 
 	vm()->removeInputTop();
@@ -627,9 +627,9 @@ void TextDisplayer_rpg::textPageBreak() {
 	} while (loop && !_vm->shouldQuit());
 
 	if (vm()->gameFlags().use16ColorMode)
-		screen()->fillRect(x + 8, y, x + 57, y + 9, _textDimData[screen()->curDimIndex()].color2);
+		_screen->fillRect(x + 8, y, x + 57, y + 9, _textDimData[_screen->curDimIndex()].color2);
 	else
-		screen()->fillRect(x, y, x + w - 1, y + 8, _textDimData[screen()->curDimIndex()].color2);
+		_screen->fillRect(x, y, x + w - 1, y + 8, _textDimData[_screen->curDimIndex()].color2);
 
 	clearCurDim();
 	_screen->updateScreen();
@@ -647,8 +647,8 @@ void TextDisplayer_rpg::textPageBreak() {
 		vm()->_updatePortraitSpeechAnimDuration = updatePortraitSpeechAnimDuration;
 	}
 
-	screen()->setFont(cf);
-	screen()->setCurPage(cp);
+	_screen->setFont(cf);
+	_screen->setCurPage(cp);
 
 	if (vm()->game() != GI_LOL)
 		SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);

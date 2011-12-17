@@ -26,22 +26,17 @@
 #define KYRA_SCREEN_LOL_H
 
 #include "kyra/screen_v2.h"
+#include "kyra/screen_rpg.h"
 
 namespace Kyra {
 
 class LoLEngine;
 
-class Screen_LoL : public Screen_v2 {
+class Screen_LoL : public Screen_v2, public Screen_Rpg {
 public:
 	Screen_LoL(LoLEngine *vm, OSystem *system);
 	~Screen_LoL();
 
-	bool init();
-
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-	int curDimIndex() const { return _curDimIndex; }
-	void modifyScreenDim(int dim, int x, int y, int w, int h);
 	int screenDimTableCount() const { return _screenDimTableCount; }
 
 	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
@@ -104,9 +99,6 @@ private:
 
 	static const ScreenDim _screenDimTable256C[];
 	static const ScreenDim _screenDimTable16C[];
-
-	ScreenDim **_customDimTable;
-	int _curDimIndex;
 
 	uint8 *_levelOverlays[8];
 

@@ -26,7 +26,7 @@
 namespace Kyra {
 
 Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
-	: Screen_v2(vm, system), _vm(vm) {
+	: Screen(vm, system), Screen_v2(vm, system), _vm(vm) {
 }
 
 void Screen_HoF::setScreenDim(int dim) {

@@ -458,8 +458,6 @@ public:
 
 	virtual void setScreenDim(int dim) = 0;
 	virtual const ScreenDim *getScreenDim(int dim) = 0;
-	virtual int curDimIndex() const { return 0; }
-	virtual void modifyScreenDim(int dim, int x, int y, int w, int h) {}
 	virtual int screenDimTableCount() const = 0;
 
 	const ScreenDim *_curDim;

@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system), Screen_Rpg(vm, system, _screenDimTable, _screenDimTableCount) {
 	_shapeFadeMode[0] = _shapeFadeMode[1] = 0;
 	_shapeFadeInternal = 0;
 	_fadeData = 0;
@@ -44,9 +44,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 	_dsX1 = _dsX2 = _dsY1 = _dsY2 = 0;
 	_gfxX = _gfxY = 0;
 	_gfxCol = 0;
-	_customDimTable = 0;
 	_dsTempPage = 0;
-	_curDimIndex = 0;
 	_dsDiv = 0;
 	_dsRem = 0;
 	_dsScaleTmp = 0;
@@ -55,19 +53,11 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 
 Screen_EoB::~Screen_EoB() {
 	delete[] _fadeData;
-	if (_customDimTable) {
-		for (int i = 0; i < _screenDimTableCount; i++)
-			delete _customDimTable[i];
-	}
-	delete[] _customDimTable;
 	delete[] _dsTempPage;
 }
 
 bool Screen_EoB::init() {
 	if (Screen::init()) {
-		_customDimTable = new ScreenDim*[_screenDimTableCount];
-		memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
-
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
 		_fadeData = _vm->resource()->fileData("FADING.DAT", 0);
@@ -86,30 +76,6 @@ bool Screen_EoB::init() {
 		return true;
 	}
 	return false;
-}
-
-void Screen_EoB::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
-	_curDimIndex = dim;
-}
-
-const ScreenDim *Screen_EoB::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
-}
-
-void Screen_EoB::modifyScreenDim(int dim, int x, int y, int w, int h) {
-	if (!_customDimTable[dim])
-		_customDimTable[dim] = new ScreenDim;
-
-	memcpy(_customDimTable[dim], &_screenDimTable[dim], sizeof(ScreenDim));
-	_customDimTable[dim]->sx = x;
-	_customDimTable[dim]->sy = y;
-	_customDimTable[dim]->w = w;
-	_customDimTable[dim]->h = h;
-	if (dim == _curDimIndex)
-		setScreenDim(dim);
 }
 
 void Screen_EoB::setClearScreenDim(int dim) {

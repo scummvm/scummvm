@@ -250,6 +250,7 @@ public:
 	virtual ~EoBCoreEngine();
 
 	Screen *screen() { return _screen; }
+	Screen_Rpg *screen_rpg() { return _screen; }
 	GUI *gui() const { return _gui; }
 
 protected:
