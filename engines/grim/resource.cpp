@@ -223,16 +223,12 @@ Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 }
 
 CMap *ResourceLoader::loadColormap(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b) {
-			error("Could not find colormap %s", filename.c_str());
-        }
-		putIntoCache(filename, b);
+	Common::SeekableReadStream *stream = openNewStreamFile(filename.c_str());
+	if (!stream) {
+		error("Could not find colormap %s", filename.c_str());
 	}
 
-	CMap *result = new CMap(filename, b->getData(), b->getLen());
+	CMap *result = new CMap(filename, stream);
 	_colormaps.push_back(result);
 
 	return result;
