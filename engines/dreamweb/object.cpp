@@ -399,7 +399,7 @@ void DreamGenContext::selectOb() {
 	}
 
 	data.byte(kWithobject) = objectId & 0x00FF;
-	data.byte(kWithtype)   = objectId & 0xFF00;
+	data.byte(kWithtype)   = objectId >> 8;
 
 	if (objectId == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
 		data.byte(kCommandtype) = 221;
