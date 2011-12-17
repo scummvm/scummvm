@@ -471,7 +471,6 @@ public:
 
 	void fadeDownMon();
 	void getPersonText();
-	void clearBuffers();
 	void getObTextStart();
 	void checkObjectSize();
 	void fillOpen();
@@ -522,7 +521,6 @@ public:
 	void searchForString();
 	void selectOpenOb();
 	void incRyanPage();
-	void clearChanges();
 	void searchForFiles();
 	void getExAd();
 	void initialMonCols();

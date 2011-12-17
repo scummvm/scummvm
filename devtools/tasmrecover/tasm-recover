@@ -305,6 +305,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'checkspeed',
 	'chewy',
 	'clearbeforeload',
+	'clearbuffers',
+	'clearchanges',
 	'clearendpal',
 	'clearpalette',
 	'clearreels',

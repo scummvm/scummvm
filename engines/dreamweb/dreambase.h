@@ -390,6 +390,8 @@ public:
 	void getTime();
 	void doChange(uint8 index, uint8 value, uint8 type);
 	bool isRyanHolding(const char *id);
+	void clearBuffers();
+	void clearChanges();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
