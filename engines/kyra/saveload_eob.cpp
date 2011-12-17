@@ -74,7 +74,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		c->alignment = in.readByte();
 		c->portrait = in.readSByte();
 		if (slot == -1 && c->portrait < 0)
-			c->portrait += 43;
+			c->portrait = -c->portrait + 43;
 		c->food = in.readByte();
 		in.read(c->level, 3);
 		for (int ii = 0; ii < 3; ii++)
@@ -118,35 +118,37 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	}
 	_screen->_curPage = 0;
 
-	// No more data required for party transfer
-	if (slot == -1)
-		return Common::kNoError;
+	if (slot == -1) {
+		// Skip all settings which aren't necessary for party transfer.
+		// Jump directly to the items list.
+		in.skip(108);
+	} else {
+		_currentLevel = in.readByte();
+		_currentSub = in.readSByte();
+		_currentBlock = in.readUint16BE();
+		_currentDirection = in.readUint16BE();
+		_itemInHand = in.readSint16BE();
+		_hasTempDataFlags = in.readUint32BE();
+		_partyEffectFlags = in.readUint32BE();
 
-	_currentLevel = in.readByte();
-	_currentSub = in.readSByte();
-	_currentBlock = in.readUint16BE();
-	_currentDirection = in.readUint16BE();
-	_itemInHand = in.readSint16BE();
-	_hasTempDataFlags = in.readUint32BE();
-	_partyEffectFlags = in.readUint32BE();
+		_updateFlags = in.readUint16BE();
+		_compassDirection = in.readUint16BE();
+		_currentControlMode = in.readUint16BE();
+		_updateCharNum = in.readUint16BE();
+		_openBookSpellLevel = in.readSByte();
+		_openBookSpellSelectedItem  = in.readSByte();
+		_openBookSpellListOffset = in.readSByte();
+		_openBookChar = in.readByte();
+		_openBookType = in.readByte();
+		_openBookCharBackup = in.readByte();
+		_openBookTypeBackup = in.readByte();
+		_activeSpellCharId = in.readByte();
+		_activeSpellCharacterPos = in.readByte();
+		_activeSpell = in.readByte();
+		_returnAfterSpellCallback = in.readByte() ? true : false;
 
-	_updateFlags = in.readUint16BE();
-	_compassDirection = in.readUint16BE();
-	_currentControlMode = in.readUint16BE();
-	_updateCharNum = in.readUint16BE();
-	_openBookSpellLevel = in.readSByte();
-	_openBookSpellSelectedItem  = in.readSByte();
-	_openBookSpellListOffset = in.readSByte();
-	_openBookChar = in.readByte();
-	_openBookType = in.readByte();
-	_openBookCharBackup = in.readByte();
-	_openBookTypeBackup = in.readByte();
-	_activeSpellCharId = in.readByte();
-	_activeSpellCharacterPos = in.readByte();
-	_activeSpell = in.readByte();
-	_returnAfterSpellCallback = in.readByte() ? true : false;
-
-	_inf->loadState(in);
+		_inf->loadState(in);
+	}
 
 	for (int i = 0; i < 600; i++) {
 		EoBItem *t = &_items[i];
@@ -161,6 +163,12 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		t->prev = in.readSint16BE();
 		t->level = in.readByte();
 		t->value = in.readSByte();
+	}
+
+	// No more data needed for party transfer
+	if (slot == -1) {
+		_loading = false;
+		return Common::kNoError;
 	}
 
 	for (int i = 51; i < 65; i++) {

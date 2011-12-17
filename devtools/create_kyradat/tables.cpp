@@ -342,9 +342,9 @@ const ExtractEntrySearchData k1PlacedStringsProvider[] = {
 
 	{ IT_ITA, kPlatformPC, { 0x0000000D, 0x0000040D, { { 0x9C, 0x71, 0x53, 0x35, 0xC3, 0xE8, 0x46, 0xB9, 0xD2, 0xFA, 0x1C, 0x8C, 0xC3, 0xFF, 0xBC, 0x1F } } } }, // floppy
 	{ IT_ITA, kPlatformPC, { 0x00000011, 0x000003B8, { { 0xC8, 0xA6, 0xE4, 0x8A, 0xF7, 0x4C, 0x3F, 0xA6, 0x24, 0x7F, 0xEF, 0xE4, 0x63, 0x8B, 0x72, 0xF3 } } } }, // (fan) CD
-	
+
 	{ ES_ESP, kPlatformPC, { 0x0000000D, 0x00000439, { { 0x57, 0xAE, 0x1C, 0xC1, 0xF5, 0xE8, 0x5B, 0x9E, 0x90, 0x02, 0xB9, 0x8D, 0x86, 0x38, 0xFB, 0xA8 } } } },
-	
+
 	{ RU_RUS, kPlatformPC, { 0x00000009, 0x00000203, { { 0x7D, 0xAE, 0x67, 0x94, 0x8E, 0x73, 0x35, 0xC1, 0x11, 0xB4, 0x55, 0x6E, 0x92, 0x25, 0x39, 0xE4 } } } },
 
 	EXTRACT_END_ENTRY
@@ -563,7 +563,7 @@ const ExtractEntrySearchData k1ThePoisonStringsProvider[] = {
 	{ ES_ESP, kPlatformPC, { 0x00000059, 0x00001DF7, { { 0x16, 0x7B, 0x5F, 0x91, 0x06, 0x5B, 0xFC, 0x9C, 0x88, 0x61, 0xCC, 0x1B, 0x52, 0x4F, 0x91, 0xC5 } } } },
 
 	{ RU_RUS, kPlatformPC, { 0x00000052, 0x0000136F, { { 0xEF, 0xD2, 0xA0, 0x5F, 0xD5, 0xE6, 0x77, 0x96, 0xFA, 0xC5, 0x60, 0x7C, 0xB7, 0xA8, 0x7C, 0x7A } } } },
-	
+
 	{ EN_ANY, kPlatformAmiga, { 0x00000058, 0x00001C24, { { 0xBA, 0x1F, 0xBD, 0x5C, 0x85, 0x3D, 0x3C, 0x92, 0xD1, 0x13, 0xF3, 0x40, 0x2E, 0xBB, 0x1C, 0xE2 } } } },
 	{ DE_DEU, kPlatformAmiga, { 0x00000073, 0x00002690, { { 0x44, 0xAE, 0xC9, 0xFD, 0x9F, 0x8E, 0x1B, 0xDD, 0x3F, 0xE4, 0x4D, 0x4B, 0x5A, 0x13, 0xE5, 0x99 } } } },
 
@@ -1222,7 +1222,7 @@ const ExtractEntrySearchData k2IngamePakFilesProvider[] = {
 const ExtractEntrySearchData k2IngameSfxFilesProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x000006F1, 0x0001545E, { { 0xD3, 0x8A, 0xA1, 0xD4, 0x83, 0x77, 0x96, 0x6D, 0x87, 0xB1, 0x71, 0x8F, 0x38, 0x6A, 0x34, 0xDC } } } },
 	{ UNK_LANG, kPlatformFMTowns, { 0x00000967, 0x0002101A, { { 0x09, 0xC7, 0xB7, 0x2A, 0x76, 0xF1, 0x4B, 0x87, 0xC5, 0x83, 0xFF, 0xF3, 0xDB, 0x3C, 0x66, 0x60 } } } },
-	{ UNK_LANG, kPlatformPC98, 	{ 0x000006F1, 0x0001545E, { { 0xD3, 0x8A, 0xA1, 0xD4, 0x83, 0x77, 0x96, 0x6D, 0x87, 0xB1, 0x71, 0x8F, 0x38, 0x6A, 0x34, 0xDC } } } },
+	{ UNK_LANG, kPlatformPC98,	{ 0x000006F1, 0x0001545E, { { 0xD3, 0x8A, 0xA1, 0xD4, 0x83, 0x77, 0x96, 0x6D, 0x87, 0xB1, 0x71, 0x8F, 0x38, 0x6A, 0x34, 0xDC } } } },
 
 	EXTRACT_END_ENTRY
 };
@@ -1392,7 +1392,7 @@ const ExtractEntrySearchData kEoBBaseChargenClassMinStatsProvider[] = {
 };
 
 const ExtractEntrySearchData kEoBBaseChargenRaceMinStatsProvider[] = {
-	{ UNK_LANG, kPlatformUnknown, { 0x00000048, 0x000000B2, { { 0x08, 0xF0, 0x8F, 0x22, 0x9D, 0xD8, 0xBE, 0x52, 0x70, 0x7C, 0xCA, 0x8D, 0xB2, 0xF5, 0xC6, 0xB8 } } } },	
+	{ UNK_LANG, kPlatformUnknown, { 0x00000048, 0x000000B2, { { 0x08, 0xF0, 0x8F, 0x22, 0x9D, 0xD8, 0xBE, 0x52, 0x70, 0x7C, 0xCA, 0x8D, 0xB2, 0xF5, 0xC6, 0xB8 } } } },
 	EXTRACT_END_ENTRY
 };
 
@@ -1627,7 +1627,7 @@ const ExtractEntrySearchData kEoBBaseCancelStringsProvider[] = {
 };
 
 const ExtractEntrySearchData kEoBBaseAbortStringsProvider[] = {
-	{ EN_ANY, kPlatformUnknown, { 0x00000006, 0x00000178, { { 0xDD, 0xEC, 0x68, 0x6D, 0x2E, 0x10, 0x34, 0x94, 0x46, 0x25, 0xF9, 0xAB, 0x29, 0x27, 0x32, 0xA8 } } } }, 
+	{ EN_ANY, kPlatformUnknown, { 0x00000006, 0x00000178, { { 0xDD, 0xEC, 0x68, 0x6D, 0x2E, 0x10, 0x34, 0x94, 0x46, 0x25, 0xF9, 0xAB, 0x29, 0x27, 0x32, 0xA8 } } } },
 	{ DE_DEU, kPlatformUnknown, { 0x00000006, 0x00000145, { { 0x22, 0x45, 0x35, 0xC6, 0x28, 0x00, 0x22, 0xAA, 0xD1, 0x15, 0x48, 0xE6, 0xE5, 0x62, 0x73, 0x37 } } } },
 	EXTRACT_END_ENTRY
 };
@@ -1823,7 +1823,7 @@ const ExtractEntrySearchData kEoBBaseNumSpellsMageProvider[] = {
 };
 
 const ExtractEntrySearchData kEoBBaseCharGuiStringsHpProvider[] = {
-	{ EN_ANY, kPlatformUnknown, { 0x0000000F, 0x00000352, { { 0x9C, 0x13, 0x3D, 0x2A, 0x68, 0x11, 0x81, 0xA4, 0x77, 0x54, 0x47, 0x43, 0xA1, 0xDA, 0x55, 0x50 } } } }, 
+	{ EN_ANY, kPlatformUnknown, { 0x0000000F, 0x00000352, { { 0x9C, 0x13, 0x3D, 0x2A, 0x68, 0x11, 0x81, 0xA4, 0x77, 0x54, 0x47, 0x43, 0xA1, 0xDA, 0x55, 0x50 } } } },
 	{ DE_DEU, kPlatformUnknown, { 0x0000000E, 0x000002AC, { { 0xBB, 0xD5, 0x36, 0xB2, 0x8A, 0x60, 0x78, 0x04, 0x46, 0x2D, 0x35, 0x59, 0x3E, 0x42, 0xB9, 0x83 } } } },	// EoB 1
 	{ DE_DEU, kPlatformUnknown, { 0x0000000E, 0x000002B8, { { 0x77, 0x76, 0xA0, 0x38, 0xE9, 0xB6, 0x0C, 0x43, 0xFE, 0x5A, 0x51, 0xC7, 0x1B, 0x59, 0xD3, 0x63 } } } },	// EoB 2
 	EXTRACT_END_ENTRY
@@ -1842,7 +1842,7 @@ const ExtractEntrySearchData kEoBBaseCharGuiStringsWp2Provider[] = {
 };
 
 const ExtractEntrySearchData kEoBBaseCharGuiStringsWrProvider[] = {
-	{ EN_ANY, kPlatformUnknown, { 0x00000014, 0x00000477, { { 0xAA, 0x26, 0xD5, 0xFD, 0xE6, 0x16, 0x53, 0x19, 0x39, 0x46, 0xEB, 0xCD, 0x88, 0xEC, 0x5E, 0xCB } } } }, 
+	{ EN_ANY, kPlatformUnknown, { 0x00000014, 0x00000477, { { 0xAA, 0x26, 0xD5, 0xFD, 0xE6, 0x16, 0x53, 0x19, 0x39, 0x46, 0xEB, 0xCD, 0x88, 0xEC, 0x5E, 0xCB } } } },
 	{ DE_DEU, kPlatformUnknown, { 0x00000015, 0x000004A4, { { 0x53, 0x54, 0x37, 0x35, 0x27, 0x1F, 0xB9, 0x09, 0x9C, 0xE9, 0x5E, 0x11, 0xBD, 0x8F, 0x15, 0xAE } } } },	// EoB 1
 	{ DE_DEU, kPlatformUnknown, { 0x00000011, 0x00000402, { { 0xE0, 0x92, 0xF4, 0x49, 0xB7, 0x74, 0xBB, 0xEB, 0x90, 0x0D, 0x75, 0x65, 0xBB, 0xF6, 0xB6, 0xE9 } } } },	// EoB 2
 	EXTRACT_END_ENTRY
@@ -1861,7 +1861,7 @@ const ExtractEntrySearchData kEoBBaseCharGuiStringsSt2Provider[] = {
 };
 
 const ExtractEntrySearchData kEoBBaseCharGuiStringsInProvider[] = {
-	{ EN_ANY, kPlatformUnknown, { 0x00000023, 0x000008CB, { { 0xF0, 0xE9, 0xF1, 0x05, 0x47, 0x3A, 0x5D, 0xCA, 0x9F, 0x75, 0x9D, 0x51, 0x9E, 0xEC, 0x9B, 0x67 } } } }, 
+	{ EN_ANY, kPlatformUnknown, { 0x00000023, 0x000008CB, { { 0xF0, 0xE9, 0xF1, 0x05, 0x47, 0x3A, 0x5D, 0xCA, 0x9F, 0x75, 0x9D, 0x51, 0x9E, 0xEC, 0x9B, 0x67 } } } },
 	{ DE_DEU, kPlatformUnknown, { 0x00000020, 0x00000810, { { 0xF5, 0x39, 0x1E, 0x0E, 0x65, 0xEF, 0x09, 0xF2, 0x8D, 0x90, 0xC4, 0xF6, 0x8A, 0xED, 0xAD, 0xDF } } } },	// EoB 1
 	{ DE_DEU, kPlatformUnknown, { 0x00000023, 0x00000940, { { 0xAB, 0xF6, 0xE4, 0xD4, 0x07, 0x07, 0xDA, 0x92, 0x71, 0xE2, 0x73, 0x1F, 0x06, 0xE3, 0x12, 0xEB } } } },	// EoB 2
 	EXTRACT_END_ENTRY
@@ -2649,13 +2649,41 @@ const ExtractEntrySearchData kEoB2MainMenuStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kEoB2TransferPortraitFramesProvider[] = {
+	{ UNK_LANG, kPlatformUnknown, { 0x00000040, 0x00000B25, { { 0x13, 0x25, 0x69, 0xC6, 0xE4, 0x9D, 0x35, 0x11, 0xAB, 0xE2, 0xC1, 0xEF, 0x21, 0x8B, 0xB8, 0x28 } } } },
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kEoB2TransferConvertTableProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000031, 0x000004BC, { { 0x96, 0x53, 0xA2, 0xF1, 0x26, 0xFE, 0x1B, 0x5E, 0xDF, 0x62, 0x2C, 0x8C, 0xBD, 0x62, 0x5A, 0xF9 } } } },
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kEoB2TransferItemTableProvider[] = {
+	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x00000025, { { 0xD0, 0xA4, 0xB3, 0x7D, 0x74, 0x4D, 0x16, 0x43, 0x56, 0x07, 0x84, 0xAA, 0x96, 0xBD, 0x82, 0x25 } } } },
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kEoB2TransferExpTableProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000018, 0x0000076B, { { 0x91, 0x65, 0x5B, 0x8D, 0xE8, 0x5B, 0x28, 0x32, 0x4D, 0x7A, 0x57, 0x8E, 0x18, 0x5B, 0x1A, 0xE9 } } } },
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEoB2TransferStrings1Provider[] = {
+	{ EN_ANY, kPlatformUnknown, { 0x00000010, 0x000003D3, { { 0x31, 0xE4, 0x65, 0x69, 0x0A, 0xA1, 0x1D, 0xD1, 0xFE, 0xF8, 0x5C, 0x29, 0xB1, 0x46, 0xBD, 0xBE } } } },
+	{ DE_DEU, kPlatformUnknown, { 0x00000010, 0x000003E2, { { 0xF0, 0x10, 0xF8, 0x9F, 0x05, 0x1E, 0x31, 0x33, 0x4E, 0xC8, 0x49, 0xBC, 0x9E, 0xAD, 0xD4, 0x99 } } } },
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEoB2TransferStrings2Provider[] = {
+	{ EN_ANY, kPlatformUnknown, { 0x0000006A, 0x00002681, { { 0x12, 0x4D, 0x29, 0x9D, 0xD3, 0xFC, 0x39, 0x22, 0x73, 0x1E, 0x5C, 0xAF, 0x1F, 0xD1, 0xAA, 0x87 } } } },
+	{ DE_DEU, kPlatformUnknown, { 0x00000057, 0x00001F8E, { { 0x85, 0xD8, 0x39, 0x1E, 0x6D, 0x97, 0xBD, 0x0E, 0xDD, 0xCF, 0x19, 0x47, 0x31, 0xDC, 0x7C, 0x1A } } } },
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEoB2TransferLabelsProvider[] = {
+	{ EN_ANY, kPlatformUnknown, { 0x0000000A, 0x00000240, { { 0x2A, 0x8B, 0x54, 0x99, 0x94, 0x35, 0x2B, 0xAB, 0x7F, 0x7F, 0x98, 0xA3, 0xFD, 0x57, 0x20, 0xDE } } } },
+	{ DE_DEU, kPlatformUnknown, { 0x00000009, 0x000001DF, { { 0x47, 0x6B, 0xBA, 0xCD, 0x99, 0x74, 0xCA, 0x3C, 0xAA, 0xC6, 0xB4, 0x50, 0x38, 0x90, 0x25, 0xB8 } } } },
 	EXTRACT_END_ENTRY
 };
 
@@ -3846,8 +3874,8 @@ const ExtractEntry extractProviders[] = {
 	{ k3SfxMap, k3SfxMapProvider },
 	{ k3ItemAnimData, k3ItemAnimDataProvider },
 	{ k3ItemMagicTable, k3ItemMagicTableProvider },
-	{ k3ItemStringMap, k3ItemStringMapProvider },	
-	
+	{ k3ItemStringMap, k3ItemStringMapProvider },
+
 	{ kEoBBaseChargenStrings1, kEoBBaseChargenStrings1Provider },
 	{ kEoBBaseChargenStrings2, kEoBBaseChargenStrings2Provider },
 	{ kEoBBaseChargenStartLevels, kEoBBaseChargenStartLevelsProvider },
@@ -3867,7 +3895,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseSaveThrwLvlIndex, kEoBBaseSaveThrwLvlIndexProvider },
 	{ kEoBBaseSaveThrwModDiv, kEoBBaseSaveThrwModDivProvider },
 	{ kEoBBaseSaveThrwModExt, kEoBBaseSaveThrwModExtProvider },
-	
+
 	{ kEoBBasePryDoorStrings, kEoBBasePryDoorStringsProvider },
 	{ kEoBBaseWarningStrings, kEoBBaseWarningStringsProvider },
 
@@ -3923,7 +3951,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseMenuStringsSpec, kEoBBaseMenuStringsSpecProvider },
 	{ kEoBBaseMenuStringsSpellNo, kEoBBaseMenuStringsSpellNoProvider },
 	{ kEoBBaseMenuYesNoStrings, kEoBBaseMenuYesNoStringsProvider },
-	
+
 	{ kEoBBaseSpellLevelsMage, kEoBBaseSpellLevelsMageProvider },
 	{ kEoBBaseSpellLevelsCleric, kEoBBaseSpellLevelsClericProvider },
 	{ kEoBBaseNumSpellsCleric, kEoBBaseNumSpellsClericProvider },
@@ -3980,7 +4008,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseDscTelptrShpCoords, kEoBBaseDscTelptrShpCoordsProvider },
 
 	{ kEoBBasePortalSeqData, kEoBBasePortalSeqDataProvider },
-	{ kEoBBaseManDef, kEoBBaseManDefProvider },	
+	{ kEoBBaseManDef, kEoBBaseManDefProvider },
 	{ kEoBBaseManWord, kEoBBaseManWordProvider },
 	{ kEoBBaseManPrompt, kEoBBaseManPromptProvider },
 
@@ -4018,7 +4046,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseExpObjectTbl2, kEoBBaseExpObjectTbl2Provider },
 	{ kEoBBaseExpObjectTbl3, kEoBBaseExpObjectTbl3Provider },
 	{ kEoBBaseExpObjectY, kEoBBaseExpObjectYProvider },
-	
+
 	{ kEoBBaseSparkDefSteps, kEoBBaseSparkDefStepsProvider },
 	{ kEoBBaseSparkDefSubSteps, kEoBBaseSparkDefSubStepsProvider },
 	{ kEoBBaseSparkDefShift, kEoBBaseSparkDefShiftProvider },
@@ -4039,7 +4067,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseConeOfColdDest2, kEoBBaseConeOfColdDest2Provider },
 	{ kEoBBaseConeOfColdDest3, kEoBBaseConeOfColdDest3Provider },
 	{ kEoBBaseConeOfColdDest4, kEoBBaseConeOfColdDest4Provider },
-	{ kEoBBaseConeOfColdGfxTbl, kEoBBaseConeOfColdGfxTblProvider },	
+	{ kEoBBaseConeOfColdGfxTbl, kEoBBaseConeOfColdGfxTblProvider },
 
 	{ kEoB1MainMenuStrings, kEoB1MainMenuStringsProvider },
 	{ kEoB1BonusStrings, kEoB1BonusStringsProvider },
@@ -4093,89 +4121,95 @@ const ExtractEntry extractProviders[] = {
 	{ kEoB1Npc7Strings, kEoB1Npc7StringsProvider },
 
 	{ kEoB2MainMenuStrings, kEoB2MainMenuStringsProvider },
+
+	{ kEoB2TransferPortraitFrames, kEoB2TransferPortraitFramesProvider },
 	{ kEoB2TransferConvertTable, kEoB2TransferConvertTableProvider },
+	{ kEoB2TransferItemTable, kEoB2TransferItemTableProvider },
 	{ kEoB2TransferExpTable, kEoB2TransferExpTableProvider },
+	{ kEoB2TransferStrings1, kEoB2TransferStrings1Provider },
+	{ kEoB2TransferStrings2, kEoB2TransferStrings2Provider },
+	{ kEoB2TransferLabels, kEoB2TransferLabelsProvider },
 
 	{ kEoB2IntroStrings, kEoB2IntroStringsProvider },
 	{ kEoB2IntroCPSFiles, kEoB2IntroCPSFilesProvider },
 	{ kEoB2IntroSeqData00, kEoB2IntroSeqData00Provider },
- 	{ kEoB2IntroSeqData01, kEoB2IntroSeqData01Provider },
- 	{ kEoB2IntroSeqData02, kEoB2IntroSeqData02Provider },
- 	{ kEoB2IntroSeqData03, kEoB2IntroSeqData03Provider },
- 	{ kEoB2IntroSeqData04, kEoB2IntroSeqData04Provider },
- 	{ kEoB2IntroSeqData05, kEoB2IntroSeqData05Provider },
- 	{ kEoB2IntroSeqData06, kEoB2IntroSeqData06Provider },
- 	{ kEoB2IntroSeqData07, kEoB2IntroSeqData07Provider },
- 	{ kEoB2IntroSeqData08, kEoB2IntroSeqData08Provider },
- 	{ kEoB2IntroSeqData09, kEoB2IntroSeqData09Provider },
- 	{ kEoB2IntroSeqData10, kEoB2IntroSeqData10Provider },
- 	{ kEoB2IntroSeqData11, kEoB2IntroSeqData11Provider },
- 	{ kEoB2IntroSeqData12, kEoB2IntroSeqData12Provider },
- 	{ kEoB2IntroSeqData13, kEoB2IntroSeqData13Provider },
- 	{ kEoB2IntroSeqData14, kEoB2IntroSeqData14Provider },
- 	{ kEoB2IntroSeqData15, kEoB2IntroSeqData15Provider },
- 	{ kEoB2IntroSeqData16, kEoB2IntroSeqData16Provider },
- 	{ kEoB2IntroSeqData17, kEoB2IntroSeqData17Provider },
- 	{ kEoB2IntroSeqData18, kEoB2IntroSeqData18Provider },
- 	{ kEoB2IntroSeqData19, kEoB2IntroSeqData19Provider },
- 	{ kEoB2IntroSeqData20, kEoB2IntroSeqData20Provider },
- 	{ kEoB2IntroSeqData21, kEoB2IntroSeqData21Provider },
- 	{ kEoB2IntroSeqData22, kEoB2IntroSeqData22Provider },
- 	{ kEoB2IntroSeqData23, kEoB2IntroSeqData23Provider },
- 	{ kEoB2IntroSeqData24, kEoB2IntroSeqData24Provider },
- 	{ kEoB2IntroSeqData25, kEoB2IntroSeqData25Provider },
- 	{ kEoB2IntroSeqData26, kEoB2IntroSeqData26Provider },
- 	{ kEoB2IntroSeqData27, kEoB2IntroSeqData27Provider },
- 	{ kEoB2IntroSeqData28, kEoB2IntroSeqData28Provider },
- 	{ kEoB2IntroSeqData29, kEoB2IntroSeqData29Provider },
- 	{ kEoB2IntroSeqData30, kEoB2IntroSeqData30Provider },
- 	{ kEoB2IntroSeqData31, kEoB2IntroSeqData31Provider },
- 	{ kEoB2IntroSeqData32, kEoB2IntroSeqData32Provider },
- 	{ kEoB2IntroSeqData33, kEoB2IntroSeqData33Provider },
- 	{ kEoB2IntroSeqData34, kEoB2IntroSeqData34Provider },
- 	{ kEoB2IntroSeqData35, kEoB2IntroSeqData35Provider },
- 	{ kEoB2IntroSeqData36, kEoB2IntroSeqData36Provider },
- 	{ kEoB2IntroSeqData37, kEoB2IntroSeqData37Provider },
- 	{ kEoB2IntroSeqData38, kEoB2IntroSeqData38Provider },
- 	{ kEoB2IntroSeqData39, kEoB2IntroSeqData39Provider },
- 	{ kEoB2IntroSeqData40, kEoB2IntroSeqData40Provider },
- 	{ kEoB2IntroSeqData41, kEoB2IntroSeqData41Provider },
- 	{ kEoB2IntroSeqData42, kEoB2IntroSeqData42Provider },
- 	{ kEoB2IntroSeqData43, kEoB2IntroSeqData43Provider },
+	{ kEoB2IntroSeqData01, kEoB2IntroSeqData01Provider },
+	{ kEoB2IntroSeqData02, kEoB2IntroSeqData02Provider },
+	{ kEoB2IntroSeqData03, kEoB2IntroSeqData03Provider },
+	{ kEoB2IntroSeqData04, kEoB2IntroSeqData04Provider },
+	{ kEoB2IntroSeqData05, kEoB2IntroSeqData05Provider },
+	{ kEoB2IntroSeqData06, kEoB2IntroSeqData06Provider },
+	{ kEoB2IntroSeqData07, kEoB2IntroSeqData07Provider },
+	{ kEoB2IntroSeqData08, kEoB2IntroSeqData08Provider },
+	{ kEoB2IntroSeqData09, kEoB2IntroSeqData09Provider },
+	{ kEoB2IntroSeqData10, kEoB2IntroSeqData10Provider },
+	{ kEoB2IntroSeqData11, kEoB2IntroSeqData11Provider },
+	{ kEoB2IntroSeqData12, kEoB2IntroSeqData12Provider },
+	{ kEoB2IntroSeqData13, kEoB2IntroSeqData13Provider },
+	{ kEoB2IntroSeqData14, kEoB2IntroSeqData14Provider },
+	{ kEoB2IntroSeqData15, kEoB2IntroSeqData15Provider },
+	{ kEoB2IntroSeqData16, kEoB2IntroSeqData16Provider },
+	{ kEoB2IntroSeqData17, kEoB2IntroSeqData17Provider },
+	{ kEoB2IntroSeqData18, kEoB2IntroSeqData18Provider },
+	{ kEoB2IntroSeqData19, kEoB2IntroSeqData19Provider },
+	{ kEoB2IntroSeqData20, kEoB2IntroSeqData20Provider },
+	{ kEoB2IntroSeqData21, kEoB2IntroSeqData21Provider },
+	{ kEoB2IntroSeqData22, kEoB2IntroSeqData22Provider },
+	{ kEoB2IntroSeqData23, kEoB2IntroSeqData23Provider },
+	{ kEoB2IntroSeqData24, kEoB2IntroSeqData24Provider },
+	{ kEoB2IntroSeqData25, kEoB2IntroSeqData25Provider },
+	{ kEoB2IntroSeqData26, kEoB2IntroSeqData26Provider },
+	{ kEoB2IntroSeqData27, kEoB2IntroSeqData27Provider },
+	{ kEoB2IntroSeqData28, kEoB2IntroSeqData28Provider },
+	{ kEoB2IntroSeqData29, kEoB2IntroSeqData29Provider },
+	{ kEoB2IntroSeqData30, kEoB2IntroSeqData30Provider },
+	{ kEoB2IntroSeqData31, kEoB2IntroSeqData31Provider },
+	{ kEoB2IntroSeqData32, kEoB2IntroSeqData32Provider },
+	{ kEoB2IntroSeqData33, kEoB2IntroSeqData33Provider },
+	{ kEoB2IntroSeqData34, kEoB2IntroSeqData34Provider },
+	{ kEoB2IntroSeqData35, kEoB2IntroSeqData35Provider },
+	{ kEoB2IntroSeqData36, kEoB2IntroSeqData36Provider },
+	{ kEoB2IntroSeqData37, kEoB2IntroSeqData37Provider },
+	{ kEoB2IntroSeqData38, kEoB2IntroSeqData38Provider },
+	{ kEoB2IntroSeqData39, kEoB2IntroSeqData39Provider },
+	{ kEoB2IntroSeqData40, kEoB2IntroSeqData40Provider },
+	{ kEoB2IntroSeqData41, kEoB2IntroSeqData41Provider },
+	{ kEoB2IntroSeqData42, kEoB2IntroSeqData42Provider },
+	{ kEoB2IntroSeqData43, kEoB2IntroSeqData43Provider },
 	{ kEoB2IntroShapes00, kEoB2IntroShapes00Provider },
- 	{ kEoB2IntroShapes01, kEoB2IntroShapes01Provider },
- 	{ kEoB2IntroShapes04, kEoB2IntroShapes04Provider },
- 	{ kEoB2IntroShapes07, kEoB2IntroShapes07Provider },
+	{ kEoB2IntroShapes01, kEoB2IntroShapes01Provider },
+	{ kEoB2IntroShapes04, kEoB2IntroShapes04Provider },
+	{ kEoB2IntroShapes07, kEoB2IntroShapes07Provider },
 
 	{ kEoB2FinaleStrings, kEoB2FinaleStringsProvider },
 	{ kEoB2CreditsData, kEoB2CreditsDataProvider },
 	{ kEoB2FinaleCPSFiles, kEoB2FinaleCPSFilesProvider },
 	{ kEoB2FinaleSeqData00, kEoB2FinaleSeqData00Provider },
- 	{ kEoB2FinaleSeqData01, kEoB2FinaleSeqData01Provider },
- 	{ kEoB2FinaleSeqData02, kEoB2FinaleSeqData02Provider },
- 	{ kEoB2FinaleSeqData03, kEoB2FinaleSeqData03Provider },
- 	{ kEoB2FinaleSeqData04, kEoB2FinaleSeqData04Provider },
- 	{ kEoB2FinaleSeqData05, kEoB2FinaleSeqData05Provider },
- 	{ kEoB2FinaleSeqData06, kEoB2FinaleSeqData06Provider },
- 	{ kEoB2FinaleSeqData07, kEoB2FinaleSeqData07Provider },
- 	{ kEoB2FinaleSeqData08, kEoB2FinaleSeqData08Provider },
- 	{ kEoB2FinaleSeqData09, kEoB2FinaleSeqData09Provider },
- 	{ kEoB2FinaleSeqData10, kEoB2FinaleSeqData10Provider },
- 	{ kEoB2FinaleSeqData11, kEoB2FinaleSeqData11Provider },
- 	{ kEoB2FinaleSeqData12, kEoB2FinaleSeqData12Provider },
- 	{ kEoB2FinaleSeqData13, kEoB2FinaleSeqData13Provider },
- 	{ kEoB2FinaleSeqData14, kEoB2FinaleSeqData14Provider },
- 	{ kEoB2FinaleSeqData15, kEoB2FinaleSeqData15Provider },
- 	{ kEoB2FinaleSeqData16, kEoB2FinaleSeqData16Provider },
- 	{ kEoB2FinaleSeqData17, kEoB2FinaleSeqData17Provider },
- 	{ kEoB2FinaleSeqData18, kEoB2FinaleSeqData18Provider },
- 	{ kEoB2FinaleSeqData19, kEoB2FinaleSeqData19Provider },
- 	{ kEoB2FinaleSeqData20, kEoB2FinaleSeqData20Provider },
+	{ kEoB2FinaleSeqData01, kEoB2FinaleSeqData01Provider },
+	{ kEoB2FinaleSeqData02, kEoB2FinaleSeqData02Provider },
+	{ kEoB2FinaleSeqData03, kEoB2FinaleSeqData03Provider },
+	{ kEoB2FinaleSeqData04, kEoB2FinaleSeqData04Provider },
+	{ kEoB2FinaleSeqData05, kEoB2FinaleSeqData05Provider },
+	{ kEoB2FinaleSeqData06, kEoB2FinaleSeqData06Provider },
+	{ kEoB2FinaleSeqData07, kEoB2FinaleSeqData07Provider },
+	{ kEoB2FinaleSeqData08, kEoB2FinaleSeqData08Provider },
+	{ kEoB2FinaleSeqData09, kEoB2FinaleSeqData09Provider },
+	{ kEoB2FinaleSeqData10, kEoB2FinaleSeqData10Provider },
+	{ kEoB2FinaleSeqData11, kEoB2FinaleSeqData11Provider },
+	{ kEoB2FinaleSeqData12, kEoB2FinaleSeqData12Provider },
+	{ kEoB2FinaleSeqData13, kEoB2FinaleSeqData13Provider },
+	{ kEoB2FinaleSeqData14, kEoB2FinaleSeqData14Provider },
+	{ kEoB2FinaleSeqData15, kEoB2FinaleSeqData15Provider },
+	{ kEoB2FinaleSeqData16, kEoB2FinaleSeqData16Provider },
+	{ kEoB2FinaleSeqData17, kEoB2FinaleSeqData17Provider },
+	{ kEoB2FinaleSeqData18, kEoB2FinaleSeqData18Provider },
+	{ kEoB2FinaleSeqData19, kEoB2FinaleSeqData19Provider },
+	{ kEoB2FinaleSeqData20, kEoB2FinaleSeqData20Provider },
 	{ kEoB2FinaleShapes00, kEoB2FinaleShapes00Provider },
- 	{ kEoB2FinaleShapes03, kEoB2FinaleShapes03Provider },
- 	{ kEoB2FinaleShapes07, kEoB2FinaleShapes07Provider },
- 	{ kEoB2FinaleShapes09, kEoB2FinaleShapes09Provider },
- 	{ kEoB2FinaleShapes10, kEoB2FinaleShapes10Provider },
+	{ kEoB2FinaleShapes03, kEoB2FinaleShapes03Provider },
+	{ kEoB2FinaleShapes07, kEoB2FinaleShapes07Provider },
+	{ kEoB2FinaleShapes09, kEoB2FinaleShapes09Provider },
+	{ kEoB2FinaleShapes10, kEoB2FinaleShapes10Provider },
 
 	{ kEoB2NpcShapeData, kEoB2NpcShapeDataProvider },
 	{ kEoBBaseClassModifierFlags, kEoBBaseClassModifierFlagsProvider },
@@ -4193,7 +4227,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoBBaseMonsterCloseAttChkTable2, kEoBBaseMonsterCloseAttChkTable2Provider },
 	{ kEoBBaseMonsterCloseAttDstTable1, kEoBBaseMonsterCloseAttDstTable1Provider },
 	{ kEoBBaseMonsterCloseAttDstTable2, kEoBBaseMonsterCloseAttDstTable2Provider },
-	
+
 	{ kEoBBaseMonsterProximityTable, kEoBBaseMonsterProximityTableProvider },
 	{ kEoBBaseFindBlockMonstersTable, kEoBBaseFindBlockMonstersTableProvider },
 	{ kEoBBaseMonsterDirChangeTable, kEoBBaseMonsterDirChangeTableProvider },
@@ -4212,7 +4246,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEoB2WallOfForceNumW, kEoB2WallOfForceNumWProvider },
 	{ kEoB2WallOfForceNumH, kEoB2WallOfForceNumHProvider },
 	{ kEoB2WallOfForceShpId, kEoB2WallOfForceShpIdProvider },
-	
+
 	{ kLoLIngamePakFiles, kLoLIngamePakFilesProvider },
 	{ kLoLCharacterDefs, kLoLCharacterDefsProvider },
 	{ kLoLIngameSfxFiles, kLoLIngameSfxFilesProvider },

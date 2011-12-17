@@ -331,9 +331,6 @@ protected:
 
 	const uint8 *_classModifierFlags;
 
-	const uint8 *_transferConvertTable;
-	const uint32 *_transferExpTable;
-
 	// timers
 	void setupTimers();
 	void setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer);

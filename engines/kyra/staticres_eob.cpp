@@ -1193,9 +1193,6 @@ void EoBEngine::initSpells() {
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
-	_transferConvertTable = _staticres->loadRawData(kEoB2TransferConvertTable, temp);
-	_transferExpTable = _staticres->loadRawDataBe32(kEoB2TransferExpTable, temp);
-
 	_introStrings = _staticres->loadStrings(kEoB2IntroStrings, temp);
 	_cpsFilesIntro = _staticres->loadStrings(kEoB2IntroCPSFiles, temp);
 
@@ -1252,16 +1249,18 @@ void DarkMoonEngine::initStaticResource() {
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 
 	// ScummVM specific
-	static const char *transferStringsScummVM[3][4] = {
+	static const char *transferStringsScummVM[3][5] = {
 		{	"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
 			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
-			"Select File"
+			"Select File",
+			"\r\r   Please wait..."
 		},
 		{	"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
 			"Game ID",
 			"\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
-			"Spiel W[hlen"
+			"Spiel W[hlen",
+			"\r\r  Bitte warten..."
 		},
 		{	0, 0, 0, 0
 		}

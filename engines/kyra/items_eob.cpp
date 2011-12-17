@@ -30,6 +30,7 @@ namespace Kyra {
 
 void EoBCoreEngine::loadItemDefs() {
 	Common::SeekableReadStream *s = _res->createReadStream("item.dat");
+	memset(_items, 0, sizeof(EoBItem) * 600);
 	_numItems = s->readUint16LE();
 
 	for (int i = 0; i < 600; i++)
@@ -58,6 +59,7 @@ void EoBCoreEngine::loadItemDefs() {
 	s = _res->createReadStream("itemtype.dat");
 	uint16 numTypes = s->readUint16LE();
 
+	delete[] _itemTypes;
 	_itemTypes = new EoBItemType[65];
 	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
 

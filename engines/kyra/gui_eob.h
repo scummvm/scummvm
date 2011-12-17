@@ -63,6 +63,7 @@ public:
 	bool runLoadMenu(int x, int y);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
+	void messageDialogue(int dim, int id, int buttonTextCol);
 	void messageDialogue2(int dim, int id, int buttonTextCol);
 
 	void updateBoxFrameHighLight(int box);
@@ -70,6 +71,7 @@ public:
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
 	// Transfer party
+	void transferWaitBox();
 	Common::String transferTargetMenu(Common::Array<Common::String> &targets);
 	Common::String transferFileMenu(Common::String &target);
 
@@ -88,7 +90,6 @@ private:
 	bool restParty();
 
 	bool confirmDialogue(int id);
-	void messageDialogue(int dim, int id, int buttonTextCol);
 	int selectCharacterDialogue(int id);
 	void displayTextBox(int id);
 

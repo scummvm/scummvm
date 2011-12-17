@@ -298,7 +298,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseNumSpellsWisAdj, kTypeRawData, false },
 	{ kEoBBaseNumSpellsPal, kTypeRawData, false },
 	{ kEoBBaseNumSpellsMage, kTypeRawData, false },
-	
+
 	{ kEoBBaseCharGuiStringsHp, kTypeStringList, true },
 	{ kEoBBaseCharGuiStringsWp1, kTypeStringList, true },
 	{ kEoBBaseCharGuiStringsWp2, kTypeStringList, true },
@@ -380,7 +380,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseMagicStrings6, kTypeStringList, true },
 	{ kEoBBaseMagicStrings7, kTypeStringList, true },
 	{ kEoBBaseMagicStrings8, kTypeStringList, true },
-	
+
 	{ kEoBBaseExpObjectTlMode, kTypeRawData, false },
 	{ kEoBBaseExpObjectTblIndex, kTypeRawData, false },
 	{ kEoBBaseExpObjectShpStart, kTypeRawData, false },
@@ -463,89 +463,95 @@ const ExtractFilename extractFilenames[] = {
 
 	// EYE OF THE BEHOLDER II
 	{ kEoB2MainMenuStrings, kTypeStringList, true },
+
+	{ kEoB2TransferPortraitFrames, kLoLTypeRaw16, false },
 	{ kEoB2TransferConvertTable, kTypeRawData, false },
+	{ kEoB2TransferItemTable, kTypeRawData, false },
 	{ kEoB2TransferExpTable, kLoLTypeRaw32, false },
+	{ kEoB2TransferStrings1, kTypeStringList, true },
+	{ kEoB2TransferStrings2, kTypeStringList, true },
+	{ kEoB2TransferLabels, kTypeStringList, true },
 
 	{ kEoB2IntroStrings, k2TypeSfxList, true },
 	{ kEoB2IntroCPSFiles, kTypeStringList, true },
 	{ kEoB2IntroSeqData00, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData01, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData02, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData03, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData04, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData05, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData06, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData07, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData08, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData09, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData10, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData11, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData12, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData13, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData14, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData15, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData16, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData17, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData18, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData19, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData20, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData21, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData22, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData23, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData24, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData25, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData26, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData27, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData28, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData29, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData30, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData31, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData32, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData33, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData34, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData35, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData36, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData37, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData38, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData39, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData40, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData41, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData42, kEoB2TypeSeqData, false },
- 	{ kEoB2IntroSeqData43, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData01, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData02, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData03, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData04, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData05, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData06, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData07, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData08, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData09, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData10, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData11, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData12, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData13, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData14, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData15, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData16, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData17, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData18, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData19, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData20, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData21, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData22, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData23, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData24, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData25, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData26, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData27, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData28, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData29, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData30, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData31, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData32, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData33, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData34, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData35, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData36, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData37, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData38, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData39, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData40, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData41, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData42, kEoB2TypeSeqData, false },
+	{ kEoB2IntroSeqData43, kEoB2TypeSeqData, false },
 	{ kEoB2IntroShapes00, kEoB2TypeShapeData, false },
- 	{ kEoB2IntroShapes01, kEoB2TypeShapeData, false },
- 	{ kEoB2IntroShapes04, kEoB2TypeShapeData, false },
- 	{ kEoB2IntroShapes07, kEoB2TypeShapeData, false },
+	{ kEoB2IntroShapes01, kEoB2TypeShapeData, false },
+	{ kEoB2IntroShapes04, kEoB2TypeShapeData, false },
+	{ kEoB2IntroShapes07, kEoB2TypeShapeData, false },
 
 	{ kEoB2FinaleStrings, k2TypeSfxList, true },
 	{ kEoB2CreditsData, kTypeRawData, true },
 	{ kEoB2FinaleCPSFiles, kTypeStringList, true },
 	{ kEoB2FinaleSeqData00, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData01, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData02, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData03, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData04, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData05, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData06, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData07, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData08, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData09, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData10, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData11, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData12, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData13, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData14, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData15, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData16, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData17, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData18, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData19, kEoB2TypeSeqData, false },
- 	{ kEoB2FinaleSeqData20, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData01, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData02, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData03, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData04, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData05, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData06, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData07, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData08, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData09, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData10, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData11, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData12, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData13, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData14, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData15, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData16, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData17, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData18, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData19, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleSeqData20, kEoB2TypeSeqData, false },
 	{ kEoB2FinaleShapes00, kEoB2TypeShapeData, false },
- 	{ kEoB2FinaleShapes03, kEoB2TypeShapeData, false },
- 	{ kEoB2FinaleShapes07, kEoB2TypeShapeData, false },
- 	{ kEoB2FinaleShapes09, kEoB2TypeShapeData, false },
- 	{ kEoB2FinaleShapes10, kEoB2TypeShapeData, false },
+	{ kEoB2FinaleShapes03, kEoB2TypeShapeData, false },
+	{ kEoB2FinaleShapes07, kEoB2TypeShapeData, false },
+	{ kEoB2FinaleShapes09, kEoB2TypeShapeData, false },
+	{ kEoB2FinaleShapes10, kEoB2TypeShapeData, false },
 	{ kEoB2NpcShapeData, kTypeRawData, false },
 	{ kEoBBaseClassModifierFlags, kTypeRawData, false },
 	{ kEoBBaseMonsterStepTable01, kTypeRawData, false },
@@ -579,7 +585,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2WallOfForceNumW, kTypeRawData, false },
 	{ kEoB2WallOfForceNumH, kTypeRawData, false },
 	{ kEoB2WallOfForceShpId, kTypeRawData, false },
-	
+
 	// LANDS OF LORE
 
 	// Ingame
@@ -1434,7 +1440,7 @@ const char *getIdString(const int id) {
 	case kEoBBaseOkStrings:
 		return "kEoBBaseOkStrings";
 	case kEoBBaseNpcJoinStrings:
-		return "kEoBBaseNpcJoinStrings";		
+		return "kEoBBaseNpcJoinStrings";
 	case kEoBBaseCancelStrings:
 		return "kEoBBaseCancelStrings";
 	case kEoBBaseAbortStrings:
@@ -1782,167 +1788,177 @@ const char *getIdString(const int id) {
 		return "kEoB1Npc7Strings";
 	case kEoB2MainMenuStrings:
 		return "kEoB2MainMenuStrings";
+	case kEoB2TransferPortraitFrames:
+		return "kEoB2TransferPortraitFrames";
 	case kEoB2TransferConvertTable:
 		return "kEoB2TransferConvertTable";
+	case kEoB2TransferItemTable:
+		return "kEoB2TransferItemTable";
 	case kEoB2TransferExpTable:
 		return "kEoB2TransferExpTable";
+	case kEoB2TransferStrings1:
+		return "kEoB2TransferStrings1";
+	case kEoB2TransferStrings2:
+		return "kEoB2TransferStrings2";
+	case kEoB2TransferLabels:
+		return "kEoB2TransferLabels";
 	case kEoB2IntroStrings:
 		return "kEoB2IntroStrings";
 	case kEoB2IntroCPSFiles:
 		return "kEoB2IntroCPSFiles";
 	case kEoB2IntroSeqData00:
 		return "kEoB2IntroSeqData00";
- 	case kEoB2IntroSeqData01:
+	case kEoB2IntroSeqData01:
 		return "kEoB2IntroSeqData01";
- 	case kEoB2IntroSeqData02:
+	case kEoB2IntroSeqData02:
 		return "kEoB2IntroSeqData02";
- 	case kEoB2IntroSeqData03:
+	case kEoB2IntroSeqData03:
 		return "kEoB2IntroSeqData03";
- 	case kEoB2IntroSeqData04:
+	case kEoB2IntroSeqData04:
 		return "kEoB2IntroSeqData04";
- 	case kEoB2IntroSeqData05:
+	case kEoB2IntroSeqData05:
 		return "kEoB2IntroSeqData05";
- 	case kEoB2IntroSeqData06:
+	case kEoB2IntroSeqData06:
 		return "kEoB2IntroSeqData06";
- 	case kEoB2IntroSeqData07:
+	case kEoB2IntroSeqData07:
 		return "kEoB2IntroSeqData07";
- 	case kEoB2IntroSeqData08:
+	case kEoB2IntroSeqData08:
 		return "kEoB2IntroSeqData08";
- 	case kEoB2IntroSeqData09:
+	case kEoB2IntroSeqData09:
 		return "kEoB2IntroSeqData09";
- 	case kEoB2IntroSeqData10:
+	case kEoB2IntroSeqData10:
 		return "kEoB2IntroSeqData10";
- 	case kEoB2IntroSeqData11:
+	case kEoB2IntroSeqData11:
 		return "kEoB2IntroSeqData11";
- 	case kEoB2IntroSeqData12:
+	case kEoB2IntroSeqData12:
 		return "kEoB2IntroSeqData12";
- 	case kEoB2IntroSeqData13:
+	case kEoB2IntroSeqData13:
 		return "kEoB2IntroSeqData13";
- 	case kEoB2IntroSeqData14:
+	case kEoB2IntroSeqData14:
 		return "kEoB2IntroSeqData14";
- 	case kEoB2IntroSeqData15:
+	case kEoB2IntroSeqData15:
 		return "kEoB2IntroSeqData15";
- 	case kEoB2IntroSeqData16:
+	case kEoB2IntroSeqData16:
 		return "kEoB2IntroSeqData16";
- 	case kEoB2IntroSeqData17:
+	case kEoB2IntroSeqData17:
 		return "kEoB2IntroSeqData17";
- 	case kEoB2IntroSeqData18:
+	case kEoB2IntroSeqData18:
 		return "kEoB2IntroSeqData18";
- 	case kEoB2IntroSeqData19:
+	case kEoB2IntroSeqData19:
 		return "kEoB2IntroSeqData19";
- 	case kEoB2IntroSeqData20:
+	case kEoB2IntroSeqData20:
 		return "kEoB2IntroSeqData20";
- 	case kEoB2IntroSeqData21:
+	case kEoB2IntroSeqData21:
 		return "kEoB2IntroSeqData21";
- 	case kEoB2IntroSeqData22:
+	case kEoB2IntroSeqData22:
 		return "kEoB2IntroSeqData22";
- 	case kEoB2IntroSeqData23:
+	case kEoB2IntroSeqData23:
 		return "kEoB2IntroSeqData23";
- 	case kEoB2IntroSeqData24:
+	case kEoB2IntroSeqData24:
 		return "kEoB2IntroSeqData24";
- 	case kEoB2IntroSeqData25:
+	case kEoB2IntroSeqData25:
 		return "kEoB2IntroSeqData25";
- 	case kEoB2IntroSeqData26:
+	case kEoB2IntroSeqData26:
 		return "kEoB2IntroSeqData26";
- 	case kEoB2IntroSeqData27:
+	case kEoB2IntroSeqData27:
 		return "kEoB2IntroSeqData27";
- 	case kEoB2IntroSeqData28:
+	case kEoB2IntroSeqData28:
 		return "kEoB2IntroSeqData28";
- 	case kEoB2IntroSeqData29:
+	case kEoB2IntroSeqData29:
 		return "kEoB2IntroSeqData29";
- 	case kEoB2IntroSeqData30:
+	case kEoB2IntroSeqData30:
 		return "kEoB2IntroSeqData30";
- 	case kEoB2IntroSeqData31:
+	case kEoB2IntroSeqData31:
 		return "kEoB2IntroSeqData31";
- 	case kEoB2IntroSeqData32:
+	case kEoB2IntroSeqData32:
 		return "kEoB2IntroSeqData32";
- 	case kEoB2IntroSeqData33:
+	case kEoB2IntroSeqData33:
 		return "kEoB2IntroSeqData33";
- 	case kEoB2IntroSeqData34:
+	case kEoB2IntroSeqData34:
 		return "kEoB2IntroSeqData34";
- 	case kEoB2IntroSeqData35:
+	case kEoB2IntroSeqData35:
 		return "kEoB2IntroSeqData35";
- 	case kEoB2IntroSeqData36:
+	case kEoB2IntroSeqData36:
 		return "kEoB2IntroSeqData36";
- 	case kEoB2IntroSeqData37:
+	case kEoB2IntroSeqData37:
 		return "kEoB2IntroSeqData37";
- 	case kEoB2IntroSeqData38:
+	case kEoB2IntroSeqData38:
 		return "kEoB2IntroSeqData38";
- 	case kEoB2IntroSeqData39:
+	case kEoB2IntroSeqData39:
 		return "kEoB2IntroSeqData39";
- 	case kEoB2IntroSeqData40:
+	case kEoB2IntroSeqData40:
 		return "kEoB2IntroSeqData40";
- 	case kEoB2IntroSeqData41:
+	case kEoB2IntroSeqData41:
 		return "kEoB2IntroSeqData41";
- 	case kEoB2IntroSeqData42:
+	case kEoB2IntroSeqData42:
 		return "kEoB2IntroSeqData42";
- 	case kEoB2IntroSeqData43:
+	case kEoB2IntroSeqData43:
 		return "kEoB2IntroSeqData43";
- 	case kEoB2IntroShapes00:
+	case kEoB2IntroShapes00:
 		return "kEoB2IntroShapes00";
- 	case kEoB2IntroShapes01:
+	case kEoB2IntroShapes01:
 		return "kEoB2IntroShapes01";
- 	case kEoB2IntroShapes04:
+	case kEoB2IntroShapes04:
 		return "kEoB2IntroShapes04";
- 	case kEoB2IntroShapes07:
+	case kEoB2IntroShapes07:
 		return "kEoB2IntroShapes07";
 	case kEoB2FinaleStrings:
 		return "kEoB2FinaleStrings";
 	case kEoB2CreditsData:
 		return "kEoB2CreditsData";
 	case kEoB2FinaleCPSFiles:
-		return "kEoB2FinaleCPSFiles";		
- 	case kEoB2FinaleSeqData00:
+		return "kEoB2FinaleCPSFiles";
+	case kEoB2FinaleSeqData00:
 		return "kEoB2FinaleSeqData00";
- 	case kEoB2FinaleSeqData01:
+	case kEoB2FinaleSeqData01:
 		return "kEoB2FinaleSeqData01";
- 	case kEoB2FinaleSeqData02:
+	case kEoB2FinaleSeqData02:
 		return "kEoB2FinaleSeqData02";
- 	case kEoB2FinaleSeqData03:
+	case kEoB2FinaleSeqData03:
 		return "kEoB2FinaleSeqData03";
- 	case kEoB2FinaleSeqData04:
+	case kEoB2FinaleSeqData04:
 		return "kEoB2FinaleSeqData04";
- 	case kEoB2FinaleSeqData05:
+	case kEoB2FinaleSeqData05:
 		return "kEoB2FinaleSeqData05";
- 	case kEoB2FinaleSeqData06:
+	case kEoB2FinaleSeqData06:
 		return "kEoB2FinaleSeqData06";
- 	case kEoB2FinaleSeqData07:
+	case kEoB2FinaleSeqData07:
 		return "kEoB2FinaleSeqData07";
- 	case kEoB2FinaleSeqData08:
+	case kEoB2FinaleSeqData08:
 		return "kEoB2FinaleSeqData08";
- 	case kEoB2FinaleSeqData09:
+	case kEoB2FinaleSeqData09:
 		return "kEoB2FinaleSeqData09";
- 	case kEoB2FinaleSeqData10:
+	case kEoB2FinaleSeqData10:
 		return "kEoB2FinaleSeqData10";
- 	case kEoB2FinaleSeqData11:
+	case kEoB2FinaleSeqData11:
 		return "kEoB2FinaleSeqData11";
- 	case kEoB2FinaleSeqData12:
+	case kEoB2FinaleSeqData12:
 		return "kEoB2FinaleSeqData12";
- 	case kEoB2FinaleSeqData13:
+	case kEoB2FinaleSeqData13:
 		return "kEoB2FinaleSeqData13";
- 	case kEoB2FinaleSeqData14:
+	case kEoB2FinaleSeqData14:
 		return "kEoB2FinaleSeqData14";
- 	case kEoB2FinaleSeqData15:
+	case kEoB2FinaleSeqData15:
 		return "kEoB2FinaleSeqData15";
- 	case kEoB2FinaleSeqData16:
+	case kEoB2FinaleSeqData16:
 		return "kEoB2FinaleSeqData16";
- 	case kEoB2FinaleSeqData17:
+	case kEoB2FinaleSeqData17:
 		return "kEoB2FinaleSeqData17";
- 	case kEoB2FinaleSeqData18:
+	case kEoB2FinaleSeqData18:
 		return "kEoB2FinaleSeqData18";
- 	case kEoB2FinaleSeqData19:
+	case kEoB2FinaleSeqData19:
 		return "kEoB2FinaleSeqData19";
- 	case kEoB2FinaleSeqData20:
-		return "kEoB2FinaleSeqData20";	
- 	case kEoB2FinaleShapes00:
+	case kEoB2FinaleSeqData20:
+		return "kEoB2FinaleSeqData20";
+	case kEoB2FinaleShapes00:
 		return "kEoB2FinaleShapes00";
- 	case kEoB2FinaleShapes03:
+	case kEoB2FinaleShapes03:
 		return "kEoB2FinaleShapes03";
- 	case kEoB2FinaleShapes07:
+	case kEoB2FinaleShapes07:
 		return "kEoB2FinaleShapes07";
- 	case kEoB2FinaleShapes09:
+	case kEoB2FinaleShapes09:
 		return "kEoB2FinaleShapes09";
- 	case kEoB2FinaleShapes10:
+	case kEoB2FinaleShapes10:
 		return "kEoB2FinaleShapes10";
 	case kEoB2NpcShapeData:
 		return "kEoB2NpcShapeData";
