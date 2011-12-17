@@ -56,6 +56,85 @@ static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamBase::carParkDrip
 };
 
+#if 0
+// TODO: Enable this when the ReelRoutine list has been moved out of the
+// data segment, all ReelCallbacks are in DreamBase, and the
+// ReelRoutine::reelPointer field is a real member.
+// See also struct ReelRoutine, clearBuffers, clearChanges, syncReelRoutine
+
+static const ReelRoutine g_initialReelRoutines[] = {
+// Room number and x,y
+// reel pointer
+// speed,speed count,convers. no.
+	{ 1,44,0, 20, 2,0,1 },
+	{ 1,55,0, 0, 50,20,0 },
+	{ 24,22,0, 74, 1,0,0 },
+	{ 24,33,10, 75, 1,0,1 },
+	{ 1,44,0, 27, 2,0,2 },
+	{ 1,44,0, 96, 3,0,4 },
+	{ 1,44,0, 118, 2,0,5 },
+	{ 1,44,10, 0, 2,0,0 },
+	{ 5,22,20, 53, 3,0,0 },
+	{ 5,22,20, 40, 1,0,2 },
+	{ 5,22,20, 50, 1,0,3 },
+	{ 2,11,10, 192, 1,0,0 },
+	{ 2,11,10, 182, 2,0,1 },
+	{ 8,11,10, 0, 2,0,1 },
+	{ 23,0,50, 0, 3,0,0 },
+	{ 28,11,20, 250, 4,0,0 },
+	{ 23,0,50, 43, 2,0,8 },
+	{ 23,11,40, 130, 2,0,1 },
+	{ 23,22,40, 122, 2,0,2 },
+	{ 23,22,40, 105, 2,0,3 },
+	{ 23,22,40, 81, 2,0,4 },
+	{ 23,11,40, 135, 2,0,5 },
+	{ 23,22,40, 145, 2,0,6 },
+	{ 4,22,30, 0, 2,0,0 },
+	{ 45,22,30, 200, 0,0,20 },
+	{ 45,22,30, 39, 2,0,0 },
+	{ 45,22,30, 25, 2,0,0 },
+	{ 8,22,40, 32, 2,0,0 },
+	{ 7,11,20, 64, 2,0,0 },
+	{ 22,22,20, 82, 2,0,0 },
+	{ 27,11,30, 0, 2,0,0 },
+	{ 20,0,30, 0, 2,0,0 },
+	{ 14,33,40, 21, 1,0,0 },
+	{ 29,11,10, 0, 1,0,0 },
+	{ 2,22,0, 2, 2,0,0 },
+	{ 25,0,50, 4, 2,0,0 },
+	{ 50,22,30, 121, 2,0,0 },
+	{ 50,22,30, 0, 20,0,0 },
+	{ 52,22,30, 192, 2,0,0 },
+	{ 52,22,30, 233, 2,0,0 },
+	{ 50,22,40, 104, 55,0,0 }, // ...., 65,0,0 for German CD
+	{ 53,33,0, 99, 2,0,0 },
+	{ 50,22,40, 0, 3,0,0 },
+	{ 50,22,30, 162, 2,0,0 },
+	{ 52,22,30, 57, 2,0,0 },
+	{ 52,22,30, 0, 2,0,0 },
+	{ 54,0,0, 72, 3,0,0 },
+	{ 55,44,0, 0, 2,0,0 },
+	{ 19,0,0, 0, 28,0,0 },
+	{ 14,22,0, 2, 2,0,0 },
+	{ 14,22,0, 300, 1,0,0 },
+	{ 10,22,30, 174, 0,0,0 },
+	{ 12,22,20, 0, 1,0,0 },
+	{ 11,11,20, 0, 50,20,0 },
+	{ 11,11,30, 0, 50,20,0 },
+	{ 11,22,20, 0, 50,20,0 },
+	{ 14,33,40, 0, 50,20,0 },
+	{ 255,0,0, 0, 0,0,0 }
+};
+
+void DreamBase::setupInitialReelRoutines(ReelRoutine *dest) {
+	for (unsigned int i = 0; i < ARRAYSIZE(g_initialReelRoutines); ++i) {
+		dest[i] = g_initialReelRoutines[i];
+		if (dest[i].period == 55 && isCD() && engine->getLanguage() == Common::DE_DEU)
+			dest[i].period = 65;
+	}
+}
+#endif
+
 void DreamGenContext::updatePeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));

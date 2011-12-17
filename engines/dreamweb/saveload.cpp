@@ -37,8 +37,12 @@ void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
 	s.syncAsByte(reel->reallocation);
 	s.syncAsByte(reel->mapX);
 	s.syncAsByte(reel->mapY);
+#if 1
 	s.syncAsByte(reel->b3);
 	s.syncAsByte(reel->b4);
+#else
+	s.syncAsUint16LE(reel->_reelPointer);
+#endif
 	s.syncAsByte(reel->period);
 	s.syncAsByte(reel->counter);
 	s.syncAsByte(reel->b7);
