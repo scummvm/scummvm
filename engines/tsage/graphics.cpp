@@ -220,11 +220,10 @@ void Rect::synchronize(Serializer &s) {
 
 GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_disableUpdates = false;
-	_screenSurface = false;
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
-	_screenSurfaceP = NULL;
 	_transColor = -1;
+	_trackDirtyRects = false;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
@@ -241,12 +240,41 @@ GfxSurface::~GfxSurface() {
 }
 
 /**
- * Specifies that the surface will encapsulate the ScummVM screen surface
+ * Turns on dirty rectangle tracking for the surface
  */
-void GfxSurface::setScreenSurface() {
-	_screenSurface = true;
-	_customSurface = NULL;
-	_lockSurfaceCtr = 0;
+void GfxSurface::trackDirtyRects() {
+	_trackDirtyRects = true;
+}
+
+void GfxSurface::addDirtyRect(const Rect &r) {
+	if (_trackDirtyRects)
+		_dirtyRects.push_back(Rect(r.left, r.top, 
+		MIN(r.right + 1, SCREEN_WIDTH), MIN(r.bottom + 1, SCREEN_HEIGHT)));
+}
+
+/**
+ * Copies all areas specified by the dirty rect list to the screen
+ */
+void GfxSurface::copyToScreen() {
+	assert(_trackDirtyRects);
+
+	// Merge any overlapping dirty rects
+	mergeDirtyRects();
+
+	// Loop through the dirty rect list to copy the affected areas to the sc
+	for (Common::List<Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
+		Rect r = *i;
+
+		const byte *srcP = (const byte *)_customSurface->getBasePtr(r.left, r.top);
+		g_system->copyRectToScreen(srcP, _customSurface->pitch, r.left, r.top, 
+			r.width(), r.height());
+	}
+
+	// Update the physical screen
+	g_system->updateScreen();
+
+	// Now that the dirty rects have been copied, clear the dirty rect list
+	_dirtyRects.clear();
 }
 
 /**
@@ -254,11 +282,13 @@ void GfxSurface::setScreenSurface() {
  */
 void GfxSurface::create(int width, int height) {
 	assert((width >= 0) && (height >= 0));
-	_screenSurface = false;
+
+	// Delete any prior internal surface that may have been previously created
 	if (_customSurface) {
 		_customSurface->free();
 		delete _customSurface;
 	}
+
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
@@ -271,13 +301,7 @@ void GfxSurface::create(int width, int height) {
 Graphics::Surface GfxSurface::lockSurface() {
 	++_lockSurfaceCtr;
 
-	Graphics::Surface *src;
-	if (_screenSurface) {
-		if (_lockSurfaceCtr == 1)
-			_screenSurfaceP = g_system->lockScreen();
-		src = _screenSurfaceP;
-	} else
-		src = _customSurface;
+	Graphics::Surface *src = _customSurface;
 	assert(src);
 
 	// Setup the returned surface either as one pointing to the same pixels as the source, or
@@ -298,15 +322,10 @@ Graphics::Surface GfxSurface::lockSurface() {
 void GfxSurface::unlockSurface() {
 	assert(_lockSurfaceCtr > 0);
 	--_lockSurfaceCtr;
-
-	if ((_lockSurfaceCtr == 0) && _screenSurface) {
-		g_system->unlockScreen();
-	}
 }
 
 void GfxSurface::synchronize(Serializer &s) {
 	assert(!_lockSurfaceCtr);
-	assert(!_screenSurface);
 
 	s.syncAsByte(_disableUpdates);
 	_bounds.synchronize(s);
@@ -351,6 +370,7 @@ void GfxSurface::fillRect(const Rect &bounds, int color) {
 	Graphics::Surface surface = lockSurface();
 	surface.fillRect(bounds, color);
 	unlockSurface();
+	addDirtyRect(bounds);
 }
 
 GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
@@ -363,7 +383,6 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	}
 
 	_customSurface = s._customSurface;
-	_screenSurface = s._screenSurface;
 	_disableUpdates = s._disableUpdates;
 	_bounds = s._bounds;
 	_centroid = s._centroid;
@@ -567,10 +586,17 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 	if (destBounds.bottom > destSurface.h)
 		destBounds.bottom = destSurface.h;
 
-	if (destBounds.isValidRect()) {
+	if (destBounds.isValidRect() && (destBounds.left < SCREEN_WIDTH) && (destBounds.right >= 0) &&
+			(destBounds.top < SCREEN_HEIGHT) && (destBounds.bottom >= 0)) {
+		// Register the affected area as dirty
+		addDirtyRect(Rect(destBounds.left + _bounds.left, destBounds.top + _bounds.top,
+				destBounds.right + _bounds.left, destBounds.bottom + _bounds.top));
+
+		// Get pointers to the source and destination surface areas
 		const byte *pSrc = (const byte *)srcSurface.getBasePtr(srcX, srcY);
 		byte *pDest = (byte *)destSurface.getBasePtr(destBounds.left, destBounds.top);
 
+		// Loop through copying each row
 		for (int y = 0; y < destBounds.height(); ++y, pSrc += srcSurface.pitch, pDest += destSurface.pitch) {
 
 			if (!priorityRegion && (src._transColor == -1))
@@ -595,6 +621,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 		}
 	}
 
+	// Unlock the surfaces
 	unlockSurface();
 	srcImage.unlockSurface();
 }
@@ -611,6 +638,68 @@ void GfxSurface::draw(const Common::Point &pt, Rect *rect) {
 		// Draw image
 		g_globals->gfxManager().copyFrom(*this, tempRect, NULL);
 	}
+}
+
+/**
+ * Merges any clipping rectangles that overlap to try and reduce
+ * the total number of clip rectangles.
+ */
+void GfxSurface::mergeDirtyRects() {
+	if (_dirtyRects.size() <= 1)
+		return;
+
+	Common::List<Rect>::iterator rOuter, rInner;
+
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+
+			if (looseIntersectRectangle(*rOuter, *rInner)) {
+				// these two rectangles overlap or
+				// are next to each other - merge them
+
+				unionRectangle(*rOuter, *rOuter, *rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
+/**
+ * Check if the two rectangles are next to each other.
+ * @param pSrc1			a source rectangle
+ * @param pSrc2			a source rectangle
+ */
+bool GfxSurface::looseIntersectRectangle(const Rect &src1, const Rect &src2) {
+	Rect destRect;
+
+	destRect.left   = MAX(src1.left, src2.left);
+	destRect.top    = MAX(src1.top, src2.top);
+	destRect.right  = MIN(src1.right, src2.right);
+	destRect.bottom = MIN(src1.bottom, src2.bottom);
+
+	return destRect.isValidRect();
+}
+
+/**
+ * Creates the union of two rectangles.
+ * Returns True if there is a union.
+ * @param pDest			destination rectangle that is to receive the new union
+ * @param pSrc1			a source rectangle
+ * @param pSrc2			a source rectangle
+ */
+bool GfxSurface::unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2) {
+	destRect.left   = MIN(src1.left, src2.left);
+	destRect.top    = MIN(src1.top, src2.top);
+	destRect.right  = MAX(src1.right, src2.right);
+	destRect.bottom = MAX(src1.bottom, src2.bottom);
+
+	return !destRect.isEmpty();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -638,6 +727,9 @@ void GfxElement::highlight() {
 	// Get a lock on the surface
 	GfxManager &gfxManager = g_globals->gfxManager();
 	Graphics::Surface surface = gfxManager.lockSurface();
+
+	// Mark the area is dirty
+	gfxManager.addDirtyRect(_bounds);
 
 	// Scan through the contents of the element, switching any occurances of the foreground
 	// color with the background color and vice versa
@@ -734,6 +826,7 @@ void GfxElement::drawFrame() {
 	gfxManager.fillRect2(tempRect.right, tempRect.top + 2, 1, tempRect.height() - 3, 0);
 
 	gfxManager.unlockSurface();
+	gfxManager.addDirtyRect(_bounds);
 }
 
 /**
@@ -1090,7 +1183,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.copyToScreen();
 	}
 
 	_gfxManager.deactivate();
@@ -1172,6 +1265,11 @@ void GfxManager::fillArea(int xp, int yp, int color) {
 	_surface.setBounds(_bounds);
 	Rect tempRect(xp, yp, xp + _font._edgeSize.x, yp + _font._edgeSize.y);
 	_surface.fillRect(tempRect, color);
+}
+
+void GfxManager::addDirtyRect(const Rect &r) { 
+	_surface.addDirtyRect(Rect(r.left + _bounds.left, r.top + _bounds.top,
+		r.right + _bounds.left, r.bottom + _bounds.top));
 }
 
 void GfxManager::fillRect(const Rect &bounds, int color) {

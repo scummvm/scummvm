@@ -153,7 +153,7 @@ void RightClickDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.copyToScreen();
 	}
 
 	// Execute the specified action

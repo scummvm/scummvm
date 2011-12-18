@@ -108,9 +108,15 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_color2 = _gfxColors.foreground;
 		_color3 = _gfxColors.foreground;
 	}
-	_screenSurface.setScreenSurface();
+
+	// Set up a buffer for the screen surface
+	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_screenSurface.trackDirtyRects();
+
+	// Add the global graphics manager to the graphic manager list
 	_gfxManagers.push_back(&_gfxManagerInstance);
 
+	// Set up the global scene objects list
 	_sceneObjects = &_sceneObjectsInstance;
 	_sceneObjects_queue.push_front(_sceneObjects);
 
