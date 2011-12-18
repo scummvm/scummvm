@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
+static void (DreamBase::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamBase::gamer, &DreamBase::sparkyDrip,
 	&DreamBase::eden, &DreamBase::edenInBath,
 	&DreamBase::sparky, &DreamBase::smokeBloke,
@@ -42,7 +42,7 @@ static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamBase::copper, &DreamBase::poolGuard,
 	&DreamBase::rockstar, &DreamBase::businessMan,
 	&DreamBase::train, &DreamBase::genericPerson /*aide*/,
-	&DreamGenContext::mugger, &DreamBase::helicopter,
+	&DreamBase::mugger, &DreamBase::helicopter,
 	&DreamBase::introMagic1, &DreamBase::introMusic,
 	&DreamBase::introMagic2, &DreamBase::candles2,
 	&DreamBase::gates, &DreamBase::introMagic3,
@@ -135,7 +135,7 @@ void DreamBase::setupInitialReelRoutines(ReelRoutine *dest) {
 }
 #endif
 
-void DreamGenContext::updatePeople() {
+void DreamBase::updatePeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
@@ -147,10 +147,6 @@ void DreamGenContext::updatePeople() {
 		        r[i].mapX == data.byte(kMapx) &&
 		        r[i].mapY == data.byte(kMapy)) {
 			assert(reelCallbacks[i]);
-			// Set es:bx to the ReelRoutine, while not all ReelCallbacks are in
-			// DreamBase
-			es = data;
-			bx = kReelroutines + 8*i;
 			(this->*(reelCallbacks[i]))(r[i]);
 		}
 	}
@@ -915,7 +911,7 @@ void DreamBase::helicopter(ReelRoutine &routine) {
 	}
 }
 
-void DreamGenContext::mugger(ReelRoutine &routine) {
+void DreamBase::mugger(ReelRoutine &routine) {
 	if (routine.reelPointer() != 138) {
 		if (routine.reelPointer() == 176)
 			return; // endmugger2

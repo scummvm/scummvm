@@ -88,7 +88,7 @@ Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 fr
 	return sprite;
 }
 
-void DreamGenContext::spriteUpdate() {
+void DreamBase::spriteUpdate() {
 	Sprite *sprites = spriteTable();
 	sprites[0].hidden = data.byte(kRyanon);
 
@@ -118,30 +118,19 @@ void DreamBase::initMan() {
 	sprite->walkFrame = 0;
 }
 
-void DreamGenContext::mainMan(Sprite *sprite) {
-	push(es);
-	push(ds);
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += 32 * (sprite - sprites);
-	//
-
+void DreamBase::mainMan(Sprite *sprite) {
 	if (data.byte(kResetmanxy) == 1) {
 		data.byte(kResetmanxy) = 0;
 		sprite->x = data.byte(kRyanx);
 		sprite->y = data.byte(kRyany);
 		sprite->walkFrame = 0;
 	}
+
 	--sprite->speed;
-	if (sprite->speed != 0xff) {
-		ds = pop();
-		es = pop();
+	if (sprite->speed != 0xff)
 		return;
-	}
 	sprite->speed = 0;
+
 	if (data.byte(kTurntoface) != data.byte(kFacing)) {
 		aboutTurn(sprite);
 	} else {
@@ -177,9 +166,6 @@ void DreamGenContext::mainMan(Sprite *sprite) {
 	sprite->frameNumber = sprite->walkFrame + facelist[data.byte(kFacing)];
 	data.byte(kRyanx) = sprite->x;
 	data.byte(kRyany) = sprite->y;
-
-	ds = pop();
-	es = pop();
 }
 
 void DreamBase::walking(Sprite *sprite) {
@@ -487,25 +473,23 @@ const Frame *DreamBase::getReelFrameAX(uint16 frame) {
 	return base + frame;
 }
 
-void DreamGenContext::showRain() {
+void DreamBase::showRain() {
 	Rain *rain = (Rain *)getSegment(data.word(kBuffers)).ptr(kRainlist, 0);
 
 	// Do nothing if there's no rain at all
 	if (rain->x == 255)
 		return;
 
-	ds = data.word(kMainsprites);
-	si = 6*58; // Frame 58
-	ax = ds.word(si+2); // Frame::ptr
-	si = ax + 2080;
+	const Frame *frame = (const Frame *)getSegment(data.word(kMainsprites)).ptr(58 * sizeof(Frame), sizeof(Frame));
+	const uint8 *frameData = getSegment(data.word(kMainsprites)).ptr(kFrframes + frame->ptr(), 512);
 
 	for (; rain->x != 255; ++rain) {
 		uint16 y = rain->y + data.word(kMapady) + data.word(kMapystart);
 		uint16 x = rain->x + data.word(kMapadx) + data.word(kMapxstart);
 		uint16 size = rain->size;
-		ax = ((uint16)(rain->w3() - rain->b5)) & 511;
-		rain->setW3(ax);
-		const uint8 *src = ds.ptr(si, 0) + ax;
+		uint16 offset = (rain->w3() - rain->b5) & 511;
+		rain->setW3(offset);
+		const uint8 *src = frameData + offset;
 		uint8 *dst = workspace() + y * 320 + x;
 		for (uint16 i = 0; i < size; ++i) {
 			uint8 v = src[i];
@@ -872,7 +856,7 @@ void DreamBase::textForMonk() {
 	}
 }
 
-void DreamGenContext::reelsOnScreen() {
+void DreamBase::reelsOnScreen() {
 	reconstruct();
 	updatePeople();
 	watchReel();
@@ -880,7 +864,7 @@ void DreamGenContext::reelsOnScreen() {
 	useTimedText();
 }
 
-void DreamGenContext::reconstruct() {
+void DreamBase::reconstruct() {
 	if (data.byte(kHavedoneobs) == 0)
 		return;
 	data.byte(kNewobs) = 1;

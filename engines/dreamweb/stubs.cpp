@@ -3273,7 +3273,7 @@ void DreamGenContext::allPointer() {
 	dumpPointer();
 }
 
-void DreamGenContext::makeMainScreen() {
+void DreamBase::makeMainScreen() {
 	createPanel();
 	data.byte(kNewobs) = 1;
 	drawFloor();
@@ -3697,7 +3697,7 @@ void DreamBase::putUnderZoom() {
 	multiPut(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
-void DreamGenContext::showWatchReel() {
+void DreamBase::showWatchReel() {
 	uint16 reelPointer = data.word(kReeltowatch);
 	plotReel(reelPointer);
 	data.word(kReeltowatch) = reelPointer;
@@ -3707,7 +3707,7 @@ void DreamGenContext::showWatchReel() {
 		data.byte(kShakecounter) = 0xFF;
 }
 
-void DreamGenContext::watchReel() {
+void DreamBase::watchReel() {
 	if (data.word(kReeltowatch) != 0xFFFF) {
 		if (data.byte(kManspath) != data.byte(kFinaldest))
 			return; // Wait until stopped walking

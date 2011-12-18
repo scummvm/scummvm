@@ -158,6 +158,7 @@ public:
 	void workoutFrames();
 
 	// from people.cpp
+	void updatePeople();
 	void madmanText();
 	void madman(ReelRoutine &routine);
 	void madMode();
@@ -206,7 +207,7 @@ public:
 	void bartender(ReelRoutine &routine);
 	void heavy(ReelRoutine &routine);
 	void helicopter(ReelRoutine &routine);
-	//void mugger(ReelRoutine &routine);
+	void mugger(ReelRoutine &routine);
 	void businessMan(ReelRoutine &routine);
 	void endGameSeq(ReelRoutine &routine);
 	void poolGuard(ReelRoutine &routine);
@@ -288,6 +289,11 @@ public:
 	void getRidOfReels();
 	void liftNoise(uint8 index);
 	void checkForExit(Sprite *sprite);
+	void mainMan(Sprite *sprite);
+	void spriteUpdate();
+	void showRain();
+	void reconstruct();
+	void reelsOnScreen();
 
 	// from stubs.cpp
 	bool isCD();
@@ -422,6 +428,9 @@ public:
 	const uint8 *findObName(uint8 type, uint8 index);
 	void copyName(uint8 type, uint8 index, uint8 *dst);
 	uint16 findExObject(const char *id);
+	void makeMainScreen();
+	void showWatchReel();
+	void watchReel();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

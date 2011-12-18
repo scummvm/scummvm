@@ -61,10 +61,7 @@
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
 	}
 	void width160();
-	void spriteUpdate();
-	void mainMan(Sprite *sprite);
 	void zoom();
-	void showRain();
 	void commandOnly();
 	void commandOnly(uint8 command) {
 		DreamBase::commandOnly(command);
@@ -77,7 +74,6 @@
 	bool checkIfEx(uint8 x, uint8 y);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
-	void updatePeople();
 	void blockNameText();
 	void walkToText();
 	void personNameText();
@@ -171,8 +167,6 @@
 	void playChannel1(uint8 index) {
 		DreamBase::playChannel1(index);
 	}
-	void reelsOnScreen();
-	void reconstruct();
 	void look();
 	void autoLook();
 	void doLook();
@@ -238,7 +232,6 @@
 	void checkFolderCoords();
 	void nextFolder();
 	void lastFolder();
-	void mugger(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);
@@ -295,7 +288,6 @@
 	void openTomb();
 	void hotelControl();
 	void obsThatDoThings();
-	void makeMainScreen();
 	void delEverything();
 	void errorMessage1();
 	void errorMessage2();
@@ -316,8 +308,6 @@
 	void set16ColPalette();
 	void showSaveOps();
 	void showLoadOps();
-	void watchReel();
-	void showWatchReel();
 	void afterNewRoom();
 	void madmanRun();
 	void showDecisions();
