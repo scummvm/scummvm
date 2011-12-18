@@ -166,6 +166,9 @@ void RightClickDialog::execute() {
 		GLOBALS._screenSurface.copyToScreen();
 	}
 
+	// Deactivate the graphics manager used for the dialog
+	_gfxManager.deactivate();
+
 	// Execute the specified action
 	CursorType cursorNum = CURSOR_NONE;
 	switch (_selectedAction) {
@@ -193,8 +196,6 @@ void RightClickDialog::execute() {
 
 	if (cursorNum != CURSOR_NONE)
 		BF_GLOBALS._events.setCursor(cursorNum);
-
-	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -435,29 +436,45 @@ void OptionsDialog::show() {
 	OptionsDialog *dlg = new OptionsDialog();
 	dlg->draw();
 
+	// Show the dialog
 	GfxButton *btn = dlg->execute();
 
-	if (btn == &dlg->_btnQuit) {
+	// Get which button was pressed
+	int btnIndex = -1;
+	if (btn == &dlg->_btnRestore)
+		btnIndex = 0;
+	else if (btn == &dlg->_btnSave)
+		btnIndex = 1;
+	else if (btn == &dlg->_btnRestart)
+		btnIndex = 2;
+	else if (btn == &dlg->_btnQuit)
+		btnIndex = 3;
+	else if (btn == &dlg->_btnSound)
+		btnIndex = 4;
+
+	// Close the dialog
+	dlg->remove();
+	delete dlg;
+
+	// Execute the given selection
+	if (btnIndex == 0) {
+		// Restore button
+		g_globals->_game->restoreGame();
+	} else if (btnIndex == 1) {
+		// Save button
+		g_globals->_game->saveGame();
+	} else if (btnIndex == 2) {
+		// Restart game
+		g_globals->_game->restartGame();
+	} else if (btnIndex == 3) {
 		// Quit game
 		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
 			g_vm->quitGame();
 		}
-	} else if (btn == &dlg->_btnRestart) {
-		// Restart game
-		g_globals->_game->restartGame();
-	} else if (btn == &dlg->_btnSound) {
+	} else if (btnIndex == 4) {
 		// Sound dialog
 		SoundDialog::execute();
-	} else if (btn == &dlg->_btnSave) {
-		// Save button
-		g_globals->_game->saveGame();
-	} else if (btn == &dlg->_btnRestore) {
-		// Restore button
-		g_globals->_game->restoreGame();
 	}
-
-	dlg->remove();
-	delete dlg;
 }
 
 OptionsDialog::OptionsDialog() {
