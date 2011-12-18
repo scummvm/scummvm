@@ -561,6 +561,9 @@ void GrimEngine::updateDisplayScene() {
 
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
+		// FIXME: This should really be called only when necessary.
+		handleUserPaint();
+		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 	}
