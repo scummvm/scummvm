@@ -32,9 +32,9 @@
 
 namespace DreamGen {
 
-static const uint16 offset_rootdir = 0x0407;
-static const uint16 offset_operand1 = 0x03f9;
-static const uint16 offset_keys = 0x038f;
+static const uint16 offset_keys = 0x01c6;
+static const uint16 offset_rootdir = 0x023e;
+static const uint16 offset_operand1 = 0x0230;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -357,17 +357,16 @@ static const uint16 kCh1blockstocopy = 435;
 static const uint16 kSoundbufferwrite = 437;
 static const uint16 kCurrentsample = 439;
 static const uint16 kRoomssample = 440;
-static const uint16 kReelroutines = 441;
-static const uint16 kBasicsample = 898;
-static const uint16 kCurrentfile = 1045;
-static const uint16 kRoomscango = 1120;
-static const uint16 kRoompics = 1136;
-static const uint16 kOplist = 1151;
-static const uint16 kInputline = 1154;
-static const uint16 kPresslist = 1282;
-static const uint16 kQuitrequested = 1288;
-static const uint16 kSubtitles = 1289;
-static const uint16 kForeignrelease = 1290;
+static const uint16 kBasicsample = 441;
+static const uint16 kCurrentfile = 588;
+static const uint16 kRoomscango = 663;
+static const uint16 kRoompics = 679;
+static const uint16 kOplist = 694;
+static const uint16 kInputline = 697;
+static const uint16 kPresslist = 825;
+static const uint16 kQuitrequested = 831;
+static const uint16 kSubtitles = 832;
+static const uint16 kForeignrelease = 833;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -406,8 +405,8 @@ static const uint16 kListofchanges = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768
 static const uint16 kUndertimedtext = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 static const uint16 kRainlist = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
 static const uint16 kInitialreelrouts = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64));
-static const uint16 kInitialvars = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+898-441);
-static const uint16 kLengthofbuffer = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+898-441+68-0);
+static const uint16 kInitialvars = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+457);
+static const uint16 kLengthofbuffer = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+457+68-0);
 static const uint16 kReellist = (0+(36*144));
 static const uint16 kIntext = (0+(38*2));
 static const uint16 kLengthofmap = (0+(66*60));
@@ -440,6 +439,7 @@ static const uint16 kTablesize = (32);
 static const uint16 kScreenwidth = (320);
 static const uint16 kKeypadx = (36+112);
 static const uint16 kItempicsize = (44);
+static const uint16 kLenofreelrouts = (457);
 static const uint16 kDiaryy = (48+12);
 static const uint16 kOpsy = (52);
 static const uint16 kSymboly = (56);
@@ -458,7 +458,6 @@ static const uint16 kKeypady = (72);
 static const uint16 kZoomx = (8);
 static const uint16 kInventx = (80);
 static const uint16 kMenux = (80+40);
-static const uint16 kLenofreelrouts = (898-441);
 static const uint16 kHeaderlen = (96);
 
 

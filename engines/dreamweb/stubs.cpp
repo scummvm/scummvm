@@ -4540,10 +4540,6 @@ void DreamBase::clearBuffers() {
 
 	memset(getSegment(data.word(kExtras)).ptr(0, kLengthofextra), 0xFF, kLengthofextra);
 
-	// TODO: Remove this line 
-	// (once the ReelRoutines are no longer in the data segment)
-	memcpy(getSegment(data.word(kBuffers)).ptr(kInitialreelrouts, kLenofreelrouts), data.ptr(kReelroutines, kLenofreelrouts), kLenofreelrouts);
-
 	memcpy(getSegment(data.word(kBuffers)).ptr(kInitialvars, kLengthofvars), data.ptr(kStartvars, kLengthofvars), kLengthofvars);
 
 	clearChanges();
@@ -4552,9 +4548,7 @@ void DreamBase::clearBuffers() {
 void DreamBase::clearChanges() {
 	memset(getSegment(data.word(kBuffers)).ptr(kListofchanges, 4*kNumchanges), 0xFF, 4*kNumchanges);
 
-	// TODO: Call setupInitialReelRoutines instead
-	// (once the ReelRoutines are no longer in the data segment)
-	memcpy(data.ptr(kReelroutines, kLenofreelrouts), getSegment(data.word(kBuffers)).ptr(kInitialreelrouts, kLenofreelrouts), kLenofreelrouts);
+	setupInitialReelRoutines();
 
 	memcpy(data.ptr(kStartvars, kLengthofvars), getSegment(data.word(kBuffers)).ptr(kInitialvars, kLengthofvars), kLengthofvars);
 

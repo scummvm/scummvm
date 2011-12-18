@@ -174,8 +174,6 @@
 	void showSecondUse();
 	void actualSave();
 	void actualLoad();
-	void loadPosition(unsigned int slot);
-	void savePosition(unsigned int slot, const char *descbuf);
 	void restoreAll();
 	void enterSymbol();
 	void viewFolder();

@@ -34,6 +34,9 @@ namespace DreamWeb {
 
 namespace DreamGen {
 
+
+const unsigned int kNumReelRoutines = 57;
+
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
  * is to allow us to incrementally move things out of DreamGenContext into this
@@ -59,6 +62,9 @@ protected:
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
+
+	// from people.cpp
+	ReelRoutine _reelRoutines[kNumReelRoutines+1];
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -158,6 +164,7 @@ public:
 	void workoutFrames();
 
 	// from people.cpp
+	void setupInitialReelRoutines();
 	void updatePeople();
 	void madmanText();
 	void madman(ReelRoutine &routine);
@@ -232,6 +239,8 @@ public:
 	void showMainOps();
 	void showDiscOps();
 	void showNames();
+	void loadPosition(unsigned int slot);
+	void savePosition(unsigned int slot, const char *descbuf);
 
 	// from sound.cpp
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);

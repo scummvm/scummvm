@@ -56,12 +56,6 @@ static void (DreamBase::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamBase::carParkDrip
 };
 
-#if 0
-// TODO: Enable this when the ReelRoutine list has been moved out of the
-// data segment, all ReelCallbacks are in DreamBase, and the
-// ReelRoutine::reelPointer field is a real member.
-// See also struct ReelRoutine, clearBuffers, clearChanges, syncReelRoutine
-
 static const ReelRoutine g_initialReelRoutines[] = {
 // Room number and x,y
 // reel pointer
@@ -126,28 +120,25 @@ static const ReelRoutine g_initialReelRoutines[] = {
 	{ 255,0,0, 0, 0,0,0 }
 };
 
-void DreamBase::setupInitialReelRoutines(ReelRoutine *dest) {
-	for (unsigned int i = 0; i < ARRAYSIZE(g_initialReelRoutines); ++i) {
-		dest[i] = g_initialReelRoutines[i];
-		if (dest[i].period == 55 && isCD() && engine->getLanguage() == Common::DE_DEU)
-			dest[i].period = 65;
+void DreamBase::setupInitialReelRoutines() {
+	for (unsigned int i = 0; i < kNumReelRoutines + 1; ++i) {
+		_reelRoutines[i] = g_initialReelRoutines[i];
+		if (_reelRoutines[i].period == 55 && isCD() && engine->getLanguage() == Common::DE_DEU)
+			_reelRoutines[i].period = 65;
 	}
 }
-#endif
 
 void DreamBase::updatePeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
 
-	ReelRoutine *r = (ReelRoutine *)data.ptr(kReelroutines, 0);
-
-	for (int i = 0; r[i].reallocation != 255; ++i) {
-		if (r[i].reallocation == data.byte(kReallocation) &&
-		        r[i].mapX == data.byte(kMapx) &&
-		        r[i].mapY == data.byte(kMapy)) {
+	for (int i = 0; _reelRoutines[i].reallocation != 255; ++i) {
+		if (_reelRoutines[i].reallocation == data.byte(kReallocation) &&
+		        _reelRoutines[i].mapX == data.byte(kMapx) &&
+		        _reelRoutines[i].mapY == data.byte(kMapy)) {
 			assert(reelCallbacks[i]);
-			(this->*(reelCallbacks[i]))(r[i]);
+			(this->*(reelCallbacks[i]))(_reelRoutines[i]);
 		}
 	}
 }

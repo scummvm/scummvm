@@ -38,12 +38,7 @@ void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
 	s.syncAsByte(reel->reallocation);
 	s.syncAsByte(reel->mapX);
 	s.syncAsByte(reel->mapY);
-#if 1
-	s.syncAsByte(reel->b3);
-	s.syncAsByte(reel->b4);
-#else
 	s.syncAsUint16LE(reel->_reelPointer);
-#endif
 	s.syncAsByte(reel->period);
 	s.syncAsByte(reel->counter);
 	s.syncAsByte(reel->b7);
@@ -380,7 +375,7 @@ void DreamGenContext::actualLoad() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
+void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
 	const Room &currentRoom = g_roomData[data.byte(kLocation)];
 
@@ -411,7 +406,7 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 
 	// fill length fields in savegame file header
 	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
-	                  4*kNumchanges, 48, kLenofreelrouts };
+	                  4*kNumchanges, 48, kNumReelRoutines*8+1 };
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
@@ -432,11 +427,11 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 
 	// TODO: Convert more to serializer?
 	Common::Serializer s(0, outSaveFile);
-	for (unsigned int i = 0; 8*i < kLenofreelrouts - 1; ++i) {
-		syncReelRoutine(s, (ReelRoutine *)data.ptr(kReelroutines + 8*i, 8));
+	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
+		syncReelRoutine(s, &_reelRoutines[i]);
 	}
 	// Terminator
-	s.syncAsByte(*data.ptr(kReelroutines + kLenofreelrouts - 1, 1));
+	s.syncAsByte(_reelRoutines[kNumReelRoutines].reallocation);
 
 	// ScummVM data block
 	outSaveFile->writeUint32BE(SCUMMVM_HEADER);
@@ -460,7 +455,7 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	delete outSaveFile;
 }
 
-void DreamGenContext::loadPosition(unsigned int slot) {
+void DreamBase::loadPosition(unsigned int slot) {
 	data.word(kTimecount) = 0;
 	clearChanges();
 
@@ -500,11 +495,11 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 	// TODO: Use serializer for more
 	Common::Serializer s(inSaveFile, 0);
-	for (unsigned int i = 0; 8*i < kLenofreelrouts - 1; ++i) {
-		syncReelRoutine(s, (ReelRoutine *)data.ptr(kReelroutines + 8*i, 8));
+	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
+		syncReelRoutine(s, &_reelRoutines[i]);
 	}
 	// Terminator
-	s.syncAsByte(*data.ptr(kReelroutines + kLenofreelrouts - 1, 1));
+	s.syncAsByte(_reelRoutines[kNumReelRoutines].reallocation);
 
 	// Check if there's a ScummVM data block
 	if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {
@@ -684,12 +679,6 @@ void DreamGenContext::selectSlot() {
 	showPointer();
 	workToScreen();
 	delPointer();
-}
-
-void DreamGenContext::selectSlot2() {
-	if (data.word(kMousebutton))
-		data.byte(kLoadingorsave) = 2;
-	selectSlot();
 }
 
 } // End of namespace DreamGen

@@ -87,6 +87,7 @@ p = parser(skip_binary_data = [
 	'speechfilename',
 	'speechfile',
 	# sprite.asm
+	'reelroutines',
 	'reelcalls',
 	'facelist',
 	'rainlocations',

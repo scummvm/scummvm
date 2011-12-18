@@ -244,7 +244,7 @@ Reelroutines	db	1,44,0 	;Room number and x,y
 	db	255
 
 
-Lenofreelrouts	equ	$-reelroutines
+Lenofreelrouts	equ 457 ; $-reelroutines
 
 
 Reelcalls	dw	gamer,sparkydrip,eden,edeninbath,sparky,smokebloke

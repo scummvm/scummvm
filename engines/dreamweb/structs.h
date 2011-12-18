@@ -168,18 +168,10 @@ struct ReelRoutine {
 	uint8 reallocation;
 	uint8 mapX;
 	uint8 mapY;
-#if 0
 	uint16 _reelPointer;
 	uint16 reelPointer() const { return _reelPointer; }
 	void setReelPointer(uint16 v) { _reelPointer = v; }
 	void incReelPointer() { _reelPointer++; }
-#else
-	uint8 b3;
-	uint8 b4;
-	uint16 reelPointer() const { return READ_LE_UINT16(&b3); }
-	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b3, v); }
-	void incReelPointer() { setReelPointer(reelPointer() + 1); }
-#endif
 	uint8 period;
 	uint8 counter;
 	uint8 b7;
