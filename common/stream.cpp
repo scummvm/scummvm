@@ -73,12 +73,17 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 		_pos += offs;
 		break;
 	}
+
 	// Post-Condition
-	assert(_pos <= _size);
+	if (_pos > _size) {
+		_pos = _size;
+		_eos = true;
+		return false;
+	}
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;
-	return true;	// FIXME: STREAM REWRITE
+	return true;
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
@@ -100,10 +105,14 @@ bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
 		_pos += offs;
 		break;
 	}
-	// Post-Condition
-	assert(_pos <= _size);
 
-	return true;	// FIXME: STREAM REWRITE
+	// Post-Condition
+	if (_pos > _size) {
+		_pos = _size;
+		return false;
+	}
+
+	return true;
 }
 
 #pragma mark -
@@ -231,8 +240,11 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 		_pos += offset;
 	}
 
-	assert(_pos >= _begin);
-	assert(_pos <= _end);
+	if (_pos < _begin || _pos > _end) {
+		_pos = _end;
+		_eos = true;
+		return false;
+	}
 
 	bool ret = _parentStream->seek(_pos);
 	if (ret) _eos = false; // reset eos on successful seek
