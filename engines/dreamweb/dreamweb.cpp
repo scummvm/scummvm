@@ -330,7 +330,7 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 }
 
 void DreamWebEngine::printUnderMonitor() {
-	uint8 *dst = _base._workspace + DreamGen::kScreenwidth * 43 + 76;
+	uint8 *dst = _base.workspace() + DreamGen::kScreenwidth * 43 + 76;
 
 	Graphics::Surface *s = _system->lockScreen();
 	if (!s)

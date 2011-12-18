@@ -26,8 +26,6 @@
 	void startup();
 	void startup1();
 	void saveLoad();
-	void hangOnCurs(uint16 frameCount);
-	void hangOnCurs();
 	void workToScreen();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
@@ -65,39 +63,21 @@
 	void width160();
 	void spriteUpdate();
 	void mainMan(Sprite *sprite);
-	void makeBackOb(SetObject *objData);
 	void zoom();
 	void showRain();
 	void commandOnly();
 	void commandOnly(uint8 command) {
 		DreamBase::commandOnly(command);
 	}
-	void doBlocks();
 	void checkIfPerson();
 	bool checkIfPerson(uint8 x, uint8 y);
 	void checkIfFree();
 	bool checkIfFree(uint8 x, uint8 y);
 	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
-	const uint8 *findObName(uint8 type, uint8 index);
-	void copyName(uint8 type, uint8 index, uint8 *dst);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void updatePeople();
-	bool addAlong(const uint8 *mapFlags);
-	bool addLength(const uint8 *mapFlags);
-	void getDimension();
-	void getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
-	void getMapAd();
-	void calcMapAd();
-	uint8 getMapAd(const uint8 *setData);
-	uint8 getXAd(const uint8 *setData, uint8 *result);
-	uint8 getYAd(const uint8 *setData, uint8 *result);
-	void calcFrFrame(uint16 frame);
-	void calcFrFrame(uint16 frame, uint8* width, uint8* height);
-	void finalFrame();
-	void finalFrame(uint16 *x, uint16 *y);
-	void showAllObs();
 	void blockNameText();
 	void walkToText();
 	void personNameText();
@@ -115,8 +95,6 @@
 	}
 	void setAllChanges();
 	void deleteTaken();
-	void showAllFree();
-	void showAllEx();
 	bool finishedWalkingCPP();
 	void finishedWalking();
 	void checkOne();
@@ -161,7 +139,6 @@
 	void findNextColon();
 	const uint8 *getObTextStartCPP();
 	void useText(const uint8 *string);
-	void useText();
 	void examineObText();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
@@ -172,8 +149,6 @@
 	void watchCount();
 	void loadRoom();
 	void readSetData();
-	void fadeupYellows();
-	void fadeupMonFirst();
 	void useMenu();
 	void useMon();
 	void makeCaps();
@@ -263,7 +238,6 @@
 	void checkFolderCoords();
 	void nextFolder();
 	void lastFolder();
-	void drawFloor();
 	void mugger(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
@@ -279,9 +253,6 @@
 	void saveGame();
 	void zoomOnOff();
 	void atmospheres();
-	void loadPersonal();
-	void loadNews();
-	void loadCart();
 	void hangOne(uint16 delay);
 	void hangOne();
 	void bibleQuote();
@@ -362,8 +333,6 @@
 	void dropError();
 	void cantDrop();
 	void newPlace();
-	void showPuzText(uint16 command, uint16 count);
-	void showPuzText();
 	void monkSpeaking();
 	void rollEndCredits2();
 	void useButtonA();
@@ -379,8 +348,6 @@
 	void runEndSeq();
 	void lookAtCard();
 	bool execCommand();
-	void findSetObject();
-	uint16 findSetObject(const char *id);
 	void findExObject();
 	uint16 findExObject(const char *id);
 	void isRyanHolding();
@@ -391,15 +358,12 @@
 	void getOpenedSize();
 	byte getOpenedSizeCPP();
 	void openOb();
-	void withWhat();
 	void notHeldError();
 	void useGun();
 	void identifyOb();
 	void showSlots();
 	void useCashCard();
 	void useStereo();
-	void checkInside();
-	uint16 checkInside(uint16 command, uint16 type);
 	void selectOb();
 	void findInvPos();
 	uint16 findInvPosCPP();

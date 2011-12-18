@@ -163,10 +163,6 @@ void DreamGenContext::useRoutine() {
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::useText() {
-	useText(es.ptr(si, 0));
-}
-
 void DreamGenContext::useText(const uint8 *string) {
 	createPanel();
 	showPanel();
@@ -1408,7 +1404,6 @@ void DreamGenContext::usePipe() {
 		putBackObStuff();
 	} else {
 		showPuzText(14, 300);
-		showPuzText();
 		putBackObStuff();
 	}
 }
@@ -1572,7 +1567,7 @@ void DreamGenContext::useAltar() {
 	}
 }
 
-void DreamGenContext::withWhat() {
+void DreamBase::withWhat() {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 
 	createPanel();
@@ -1590,7 +1585,7 @@ void DreamGenContext::withWhat() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 	data.byte(kInvopen) = 2;
 }
@@ -1664,6 +1659,29 @@ void DreamGenContext::useStereo() {
 
 		putBackObStuff();
 	}
+}
+
+uint16 DreamBase::checkInside(uint16 command, uint16 type) {
+	for (uint16 index = 0; index < kNumexobjects; index++) {
+		DynObject *object = getExAd(index);
+		if (object->mapad[1] == command && object->mapad[0] == type)
+			return index;
+	}
+
+	return kNumexobjects;
+}
+
+void DreamBase::showPuzText(uint16 command, uint16 count) {
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	obIcons();
+	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(command * 2);
+	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+	printDirect(string, 36, 104, 241, 241 & 1);
+	workToScreenM();
+	hangOnP(count);
 }
 
 } // End of namespace DreamGen

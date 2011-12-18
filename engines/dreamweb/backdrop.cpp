@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-void DreamGenContext::doBlocks() {
+void DreamBase::doBlocks() {
 	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
 	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
 	const uint8 *mapData = getSegment(data.word(kMapdata)).ptr(mapOffset, 0);
@@ -49,7 +49,6 @@ void DreamGenContext::doBlocks() {
 					dst += 320;
 				}
 				dst += 4;
-				ax = 0x0dfdf;
 				memset(dst, 0xdf, 16);
 				dst += 320;
 				memset(dst, 0xdf, 16);
@@ -63,7 +62,7 @@ void DreamGenContext::doBlocks() {
 	}
 }
 
-uint8 DreamGenContext::getXAd(const uint8 *setData, uint8 *result) {
+uint8 DreamBase::getXAd(const uint8 *setData, uint8 *result) {
 	uint8 v0 = setData[0];
 	uint8 v1 = setData[1];
 	uint8 v2 = setData[2];
@@ -78,7 +77,7 @@ uint8 DreamGenContext::getXAd(const uint8 *setData, uint8 *result) {
 	return 1;
 }
 
-uint8 DreamGenContext::getYAd(const uint8 *setData, uint8 *result) {
+uint8 DreamBase::getYAd(const uint8 *setData, uint8 *result) {
 	uint8 v0 = setData[3];
 	uint8 v1 = setData[4];
 	if (v0 < data.byte(kMapy))
@@ -90,11 +89,7 @@ uint8 DreamGenContext::getYAd(const uint8 *setData, uint8 *result) {
 	return 1;
 }
 
-void DreamGenContext::getMapAd() {
-	ch = getMapAd((const uint8 *)es.ptr(si, 5));
-}
-
-uint8 DreamGenContext::getMapAd(const uint8 *setData) {
+uint8 DreamBase::getMapAd(const uint8 *setData) {
 	uint8 xad, yad;
 	if (getXAd(setData, &xad) == 0)
 		return 0;
@@ -105,14 +100,7 @@ uint8 DreamGenContext::getMapAd(const uint8 *setData) {
 	return 1;
 }
 
-void DreamGenContext::calcFrFrame(uint16 frame) {
-	uint8 width, height;
-	calcFrFrame(frame, &width, &height);
-	cl = width;
-	ch = height;
-}
-
-void DreamGenContext::calcFrFrame(uint16 frameNum, uint8* width, uint8* height) {
+void DreamBase::calcFrFrame(uint16 frameNum, uint8* width, uint8* height) {
 	const Frame *frame = (const Frame *)getSegment(data.word(kFrsegment)).ptr(frameNum * sizeof(Frame), sizeof(Frame));
 	data.word(kSavesource) = data.word(kFramesad) + frame->ptr();
 	data.byte(kSavesize+0) = frame->width;
@@ -123,21 +111,34 @@ void DreamGenContext::calcFrFrame(uint16 frameNum, uint8* width, uint8* height) 
 	*height = frame->height;
 }
 
-void DreamGenContext::finalFrame() {
-	uint16 x, y;
-	finalFrame(&x, &y);
-	di = x;
-	bx = y;
-}
-
-void DreamGenContext::finalFrame(uint16 *x, uint16 *y) {
+void DreamBase::finalFrame(uint16 *x, uint16 *y) {
 	data.byte(kSavex) = (data.word(kObjectx) + data.word(kOffsetx)) & 0xff;
 	data.byte(kSavey) = (data.word(kObjecty) + data.word(kOffsety)) & 0xff;
 	*x = data.word(kObjectx);
 	*y = data.word(kObjecty);
 }
 
-void DreamGenContext::showAllObs() {
+void DreamBase::makeBackOb(SetObject *objData) {
+	if (data.byte(kNewobs) == 0)
+		return;
+	uint8 priority = objData->priority;
+	uint8 type = objData->type;
+	Sprite *sprite = makeSprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
+
+	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
+	assert(objDataOffset % sizeof(SetObject) == 0);
+	assert(objDataOffset < 128 * sizeof(SetObject));
+	sprite->setObjData(objDataOffset);
+	if (priority == 255)
+		priority = 0;
+	sprite->priority = priority;
+	sprite->type = type;
+	sprite->b16 = 0;
+	sprite->delay = 0;
+	sprite->animFrame = 0;
+}
+
+void DreamBase::showAllObs() {
 	data.word(kListpos) = kSetlist;
 	memset(getSegment(data.word(kBuffers)).ptr(kSetlist, 0), 0xff, 128 * 5);
 	data.word(kFrsegment) = data.word(kSetframes);
@@ -153,7 +154,8 @@ void DreamGenContext::showAllObs() {
 		uint8 currentFrame = setEntry->frames[0];
 		if (currentFrame == 0xff)
 			continue;
-		calcFrFrame(currentFrame);
+		uint8 width, height;
+		calcFrFrame(currentFrame, &width, &height);
 		uint16 x, y;
 		finalFrame(&x, &y);
 		setEntry->index = setEntry->frames[0];
@@ -174,17 +176,7 @@ void DreamGenContext::showAllObs() {
 	}
 }
 
-void DreamGenContext::getDimension() {
-	uint8 mapXstart, mapYstart;
-	uint8 mapXsize, mapYsize;
-	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
-	cl = mapXstart;
-	ch = mapYstart;
-	dl = mapXsize;
-	dh = mapYsize;
-}
-
-bool DreamGenContext::addAlong(const uint8 *mapFlags) {
+bool DreamBase::addAlong(const uint8 *mapFlags) {
 	for (size_t i = 0; i < 11; ++i) {
 		if (mapFlags[3 * i] != 0)
 			return true;
@@ -192,7 +184,7 @@ bool DreamGenContext::addAlong(const uint8 *mapFlags) {
 	return false;
 }
 
-bool DreamGenContext::addLength(const uint8 *mapFlags) {
+bool DreamBase::addLength(const uint8 *mapFlags) {
 	for (size_t i = 0; i < 10; ++i) {
 		if (mapFlags[3 * 11 * i] != 0)
 			return true;
@@ -200,7 +192,7 @@ bool DreamGenContext::addLength(const uint8 *mapFlags) {
 	return false;
 }
 
-void DreamGenContext::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
+void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
 	const uint8 *mapFlags = getSegment(data.word(kBuffers)).ptr(kMapflags, 0);
 
 	uint8 yStart = 0;
@@ -229,7 +221,7 @@ void DreamGenContext::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *ma
 	data.byte(kMapysize) = *mapYsize << 4;
 }
 
-void DreamGenContext::calcMapAd() {
+void DreamBase::calcMapAd() {
 	uint8 mapXstart, mapYstart;
 	uint8 mapXsize, mapYsize;
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
@@ -237,7 +229,7 @@ void DreamGenContext::calcMapAd() {
 	data.word(kMapady) = data.word(kMapoffsety) - 8 * (mapYsize + 2 * mapYstart - 10);
 }
 
-void DreamGenContext::showAllFree() {
+void DreamBase::showAllFree() {
 	data.word(kListpos) = kFreelist;
 	ObjPos *listPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
 	memset(listPos, 0xff, 80 * sizeof(ObjPos));
@@ -290,7 +282,7 @@ void DreamBase::drawFlags() {
 	}
 }
 
-void DreamGenContext::showAllEx() {
+void DreamBase::showAllEx() {
 	data.word(kListpos) = kExlist;
 	memset(getSegment(data.word(kBuffers)).ptr(kExlist, 100 * 5), 0xff, 100 * 5);
 

@@ -57,12 +57,29 @@ protected:
 	char _saveNames[17*7];
 	char _saveNamesOld[17*7];
 
+	// from vgagrafx.cpp
+	uint8 _workspace[(0x1000 + 2) * 16];
+
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
 public:
 	// from backdrop.cpp
+	void doBlocks();
+	uint8 getXAd(const uint8 *setData, uint8 *result);
+	uint8 getYAd(const uint8 *setData, uint8 *result);
+	uint8 getMapAd(const uint8 *setData);
+	void calcFrFrame(uint16 frame, uint8* width, uint8* height);
+	void finalFrame(uint16 *x, uint16 *y);
+	void makeBackOb(SetObject *objData);
+	void showAllObs();
+	bool addAlong(const uint8 *mapFlags);
+	bool addLength(const uint8 *mapFlags);
+	void getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
+	void calcMapAd();
+	void showAllFree();
 	void drawFlags();
+	void showAllEx();
 
 	// from keypad.cpp
 	void getUnderMenu();
@@ -110,6 +127,9 @@ public:
 	const char *monPrint(const char *string);
 	void lockLightOn();
 	void lockLightOff();
+	void loadPersonal();
+	void loadNews();
+	void loadCart();
 
 	// from object.cpp
 	void obIcons();
@@ -392,11 +412,19 @@ public:
 	bool isRyanHolding(const char *id);
 	void clearBuffers();
 	void clearChanges();
+	void drawFloor();
+	uint16 findSetObject(const char *id);
+	void hangOnCurs(uint16 frameCount);
+	const uint8 *findObName(uint8 type, uint8 index);
+	void copyName(uint8 type, uint8 index, uint8 *dst);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);
 	void setupTimedUse(uint16 offset, uint16 countToTimed, uint16 timeCount, byte x, byte y);
+	void withWhat();
+	uint16 checkInside(uint16 command, uint16 type);
+	void showPuzText(uint16 command, uint16 count);
 
 	// from vgafades.cpp
 	uint8 *mainPalette();
@@ -411,6 +439,8 @@ public:
 	void fadeDOS();
 	void doFade();
 	void fadeCalculation();
+	void fadeupYellows();
+	void fadeupMonFirst();
 	void fadeScreenUp();
 	void fadeScreenUps();
 	void fadeScreenUpHalf();
@@ -423,7 +453,6 @@ public:
 	void dumpCurrent();
 
 	// from vgagrafx.cpp
-	uint8 _workspace[(0x1000 + 2) * 16];
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
