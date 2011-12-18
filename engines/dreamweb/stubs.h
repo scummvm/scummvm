@@ -61,7 +61,6 @@
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
 	}
 	void width160();
-	void zoom();
 	void commandOnly();
 	void commandOnly(uint8 command) {
 		DreamBase::commandOnly(command);
@@ -73,10 +72,9 @@
 	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
 	void commandWithOb();
-	void commandWithOb(uint8 command, uint8 type, uint8 index);
-	void blockNameText();
-	void walkToText();
-	void personNameText();
+	void commandWithOb(uint8 command, uint8 type, uint8 index) {
+		DreamBase::commandWithOb(command, type, index);
+	}
 	DynObject *getFreeAd(uint8 index) {
 		return DreamBase::getFreeAd(index);
 	}
@@ -98,7 +96,6 @@
 		DreamBase::checkOne(x, y, flag, flagEx, type, flagX, flagY);
 	}
 	void walkAndExamine();
-	void obName();
 	void obName(uint8 command, uint8 commandType);
 	void checkCoords(const RectWithCallback *rectWithCallbacks);
 	void getExPos();
@@ -106,8 +103,6 @@
 	bool compare(uint8 index, uint8 flag, const char id[4]) {
 		return DreamBase::compare(index, flag, id);
 	}
-	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
-	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
 	void isItWorn();
 	bool isItWorn(const DynObject *object) {
@@ -125,17 +120,12 @@
 	void hangOn(uint16 frameCount) {
 		DreamBase::hangOn(frameCount);
 	}
-	void hangOnP();
-	void hangOnP(uint16 count) {
-		DreamBase::hangOnP(count);
-	}
 	uint8 findNextColon(const uint8 **string) {
 		return DreamBase::findNextColon(string);
 	}
 	void findNextColon();
 	const uint8 *getObTextStartCPP();
 	void useText(const uint8 *string);
-	void examineObText();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
 	void convIcons();
