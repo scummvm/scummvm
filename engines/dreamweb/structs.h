@@ -296,6 +296,13 @@ struct Atmosphere {
 	uint8 _repeat;
 };
 
+enum ObjectTypes {
+	kSetObjectType1 = 1,
+	kFreeObjectType = 2,
+	kSetObjectType3 = 3,
+	kExObjectType = 4
+};
+
 } // End of namespace DreamWeb
 
 #endif

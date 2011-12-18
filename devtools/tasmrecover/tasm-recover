@@ -733,6 +733,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'setlocation',
 	'setmode',
 	'setmouse',
+	'setpickup',
 	'setsoundoff',
 	'settopleft',
 	'settopright',

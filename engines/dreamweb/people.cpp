@@ -941,10 +941,10 @@ void DreamGenContext::mugger(ReelRoutine &routine) {
 		findXYFromPath();
 		data.byte(kResetmanxy) = 1;
 		data.byte(kCommand) = findExObject("WETA");
-		data.byte(kObjecttype) = 4;
+		data.byte(kObjecttype) = kExObjectType;
 		removeObFromInv();
 		data.byte(kCommand) = findExObject("WETB");
-		data.byte(kObjecttype) = 4;
+		data.byte(kObjecttype) = kExObjectType;
 		removeObFromInv();
 		makeMainScreen();
 		DreamBase::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);

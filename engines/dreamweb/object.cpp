@@ -108,10 +108,10 @@ void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 }
 
 void DreamBase::obPicture() {
-	if (data.byte(kObjecttype) == 1)
+	if (data.byte(kObjecttype) == kSetObjectType1)
 		return;
 	Frame *frames;
-	if (data.byte(kObjecttype) == 4)
+	if (data.byte(kObjecttype) == kExObjectType)
 		frames = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
 	else
 		frames = (Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
@@ -133,6 +133,7 @@ void DreamBase::obIcons() {
 void DreamGenContext::examineOb(bool examineAgain) {
 	data.byte(kPointermode) = 0;
 	data.word(kTimecount) = 0;
+
 	while (true) {
 		if (examineAgain) {
 			data.byte(kInmaparea) = 0;
@@ -140,8 +141,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			data.byte(kOpenedob) = 255;
 			data.byte(kOpenedtype) = 255;
 			data.byte(kInvopen) = 0;
-			al = data.byte(kCommandtype);
-			data.byte(kObjecttype) = al;
+			data.byte(kObjecttype) = data.byte(kCommandtype);
 			data.byte(kItemframe) = 0;
 			data.byte(kPointerframe) = 0;
 			createPanel();
@@ -167,6 +167,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		dumpTextLine();
 		delPointer();
 		data.byte(kGetback) = 0;
+
 		switch (data.byte(kInvopen)) {
 		case 0: {
 			RectWithCallback examList[] = {
@@ -207,6 +208,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			break;
 		}
 		}
+
 		if (data.byte(kQuitrequested) != 0)
 			break;
 		if (data.byte(kExamagain) != 0)
@@ -424,6 +426,55 @@ void DreamGenContext::selectOb() {
 		data.byte(kInvopen) = 0;
 		useRoutine();
 	}
+}
+
+void DreamGenContext::setPickup() {
+	if (data.byte(kObjecttype) != kSetObjectType1 && data.byte(kObjecttype) != kSetObjectType3) {
+		// The original called getAnyAd() here. However, since object types
+		// 1 and 3 are excluded, the resulting object is a DynObject, so
+		// we can use getEitherAd() instead.
+		DynObject *object = getEitherAdCPP();
+		if (object->mapad[0] == 4) {
+			blank();
+			return;
+		}
+	} else {
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 209) {
+		data.byte(kCommandtype) = 209;
+		commandWithOb(33, data.byte(kObjecttype), data.byte(kCommand));
+	}
+
+	if (data.word(kMousebutton) == 1 && data.word(kMousebutton) == data.word(kOldbutton))
+		return;
+
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	examIcon();
+	data.byte(kPickup) = 1;
+	data.byte(kInvopen) = 2;
+
+	if (data.byte(kObjecttype) != kExObjectType) {
+		data.byte(kItemframe) = data.byte(kCommand);
+		data.byte(kOpenedob) = 255;
+		transferToEx();
+		data.byte(kItemframe) = data.byte(kCommand);
+		data.byte(kObjecttype) = kExObjectType;
+		DynObject *object = getEitherAdCPP();
+		object->mapad[0] = 20;
+		object->mapad[1] = 255;
+	} else {
+		data.byte(kItemframe) = data.byte(kCommand);
+		data.byte(kOpenedob) = 255;
+	}
+
+	openInv();
+	workToScreenM();
 }
 
 } // End of namespace DreamGen

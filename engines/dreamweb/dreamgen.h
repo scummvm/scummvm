@@ -506,7 +506,6 @@ public:
 	void fillOpen();
 	void deleteExObject();
 	void getEitherAd();
-	void setPickup();
 	void dropObject();
 	void showDiaryKeys();
 	void useOpened();

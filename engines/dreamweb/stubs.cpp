@@ -1354,24 +1354,24 @@ DynObject *DreamBase::getExAd(uint8 index) {
 }
 
 DynObject *DreamBase::getEitherAdCPP() {
-	if (data.byte(kObjecttype) == 4)
+	if (data.byte(kObjecttype) == kExObjectType)
 		return getExAd(data.byte(kItemframe));
 	else
 		return getFreeAd(data.byte(kItemframe));
 }
 
 void *DreamBase::getAnyAd(uint8 *value1, uint8 *value2) {
-	if (data.byte(kObjecttype) == 4) {
+	if (data.byte(kObjecttype) == kExObjectType) {
 		DynObject *exObject = getExAd(data.byte(kCommand));
 		*value1 = exObject->slotSize;
 		*value2 = exObject->slotCount;
 		return exObject;
-	} else if (data.byte(kObjecttype) == 2) {
+	} else if (data.byte(kObjecttype) == kFreeObjectType) {
 		DynObject *freeObject = getFreeAd(data.byte(kCommand));
 		*value1 = freeObject->slotSize;
 		*value2 = freeObject->slotCount;
 		return freeObject;
-	} else {
+	} else {	// 1 or 3. 0 should never happen
 		SetObject *setObject = getSetAd(data.byte(kCommand));
 		// Note: the original returned slotCount/priority (bytes 4 and 5)
 		// instead of slotSize/slotCount (bytes 3 and 4).
@@ -1615,7 +1615,7 @@ void DreamBase::showPointer() {
 	data.word(kOldpointery) = data.word(kMousey);
 	if (data.byte(kPickup) == 1) {
 		const Frame *frames;
-		if (data.byte(kObjecttype) != 4)
+		if (data.byte(kObjecttype) != kExObjectType)
 			frames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 		else
 			frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
@@ -3209,7 +3209,7 @@ void DreamBase::getBackToOps() {
 
 void DreamGenContext::pickupOb(uint8 command, uint8 pos) {
 	data.byte(kLastinvpos) = pos;
-	data.byte(kObjecttype) = 2;
+	data.byte(kObjecttype) = kFreeObjectType;
 	data.byte(kItemframe) = command;
 	data.byte(kCommand) = command;
 	getAnyAd();
@@ -3353,13 +3353,13 @@ void DreamGenContext::obsThatDoThings() {
 void DreamGenContext::describeOb() {
 	const uint8 *obText = getObTextStartCPP();
 	uint16 y = 92;
-	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
+	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
 		y = 82;
 	data.word(kCharshift) = 91 + 91;
 	printDirect(&obText, 33, &y, 241, 241 & 1);
 	data.word(kCharshift) = 0;
 	y = 104;
-	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == 1)
+	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
 		y = 94;
 	printDirect(&obText, 36, &y, 241, 241 & 1);
 	obsThatDoThings();

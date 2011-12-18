@@ -760,7 +760,7 @@ void DreamGenContext::useChurchGate() {
 
 void DreamGenContext::useGun() {
 
-	if (data.byte(kObjecttype) != 4) {
+	if (data.byte(kObjecttype) != kExObjectType) {
 		// gun is not taken
 		showSecondUse();
 		putBackObStuff();
