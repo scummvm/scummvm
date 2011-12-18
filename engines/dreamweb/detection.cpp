@@ -188,7 +188,7 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 	}
 
 	return SaveStateDescriptor();
-}	// End of namespace Toltecs
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(DREAMWEB)
 	REGISTER_PLUGIN_DYNAMIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngine);
