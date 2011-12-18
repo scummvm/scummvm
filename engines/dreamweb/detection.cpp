@@ -25,7 +25,10 @@
 #include "common/algorithm.h"
 #include "common/system.h"
 
+#include "graphics/thumbnail.h"
+
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/structs.h"
 
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
@@ -56,6 +59,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -63,6 +67,10 @@ bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	case kSupportsListSaves:
 	case kSupportsLoadingDuringStartup:
 	case kSupportsDeleteSave:
+	case kSavesSupportMetaInfo:
+	case kSavesSupportThumbnail:
+	case kSavesSupportCreationDate:
+	case kSavesSupportPlayTime:
 		return true;
 	default:
 		return false;
@@ -119,6 +127,68 @@ void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("DREAMWEB.D%02d", slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
+
+SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+	if (in) {
+		DreamGen::FileHeader header;
+		in->read((uint8 *)&header, sizeof(DreamGen::FileHeader));
+
+		Common::String saveName;
+		byte descSize = header.len(0);
+		byte i;
+
+		for (i = 0; i < descSize; i++)
+			saveName += (char)in->readByte();
+
+		SaveStateDescriptor desc(slot, saveName);
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		// Check if there is a ScummVM data block
+		if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {
+			// Skip the game data
+			for (i = 1; i <= 5; i++)
+				in->skip(header.len(i));
+
+			uint32 tag = in->readUint32BE();
+			if (tag != SCUMMVM_HEADER) {
+				warning("ScummVM data block found, but the block header is incorrect - skipping");
+				delete in;
+				return desc;
+			}
+
+			byte version = in->readByte();
+			if (version > SAVEGAME_VERSION) {
+				warning("ScummVM data block found, but it has been saved with a newer version of ScummVM - skipping");
+				delete in;
+				return desc;
+			}
+
+			uint32 saveDate = in->readUint32LE();
+			uint32 saveTime = in->readUint32LE();
+			uint32 playTime = in->readUint32LE();
+			Graphics::Surface *thumbnail = Graphics::loadThumbnail(*in);
+
+			int day = (saveDate >> 24) & 0xFF;
+			int month = (saveDate >> 16) & 0xFF;
+			int year = saveDate & 0xFFFF;
+			int hour = (saveTime >> 16) & 0xFF;
+			int minutes = (saveTime >> 8) & 0xFF;
+
+			desc.setSaveDate(year, month, day);
+			desc.setSaveTime(hour, minutes);
+			desc.setPlayTime(playTime * 1000);
+			desc.setThumbnail(thumbnail);
+		}
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
+}	// End of namespace Toltecs
 
 #if PLUGIN_ENABLED_DYNAMIC(DREAMWEB)
 	REGISTER_PLUGIN_DYNAMIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngine);

@@ -42,6 +42,10 @@
 
 #include "dreamweb/structs.h"
 
+#define SCUMMVM_HEADER MKTAG('S', 'C', 'V', 'M')
+#define SCUMMVM_BLOCK_MAGIC_SIZE 0x1234
+#define SAVEGAME_VERSION 1
+
 namespace DreamGen {
 
 // These are for ReelRoutine::reelPointer, which is a callback field.

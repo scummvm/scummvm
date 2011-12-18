@@ -22,6 +22,7 @@
 
 #include "dreamweb/dreamweb.h"
 #include "engines/metaengine.h"
+#include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -216,7 +217,6 @@ void DreamGenContext::saveGame() {
 		descbuf[++desclen] = 0;
 		while (desclen < 16)
 			descbuf[++desclen] = 1;
-		savePosition(savegameId, descbuf);
 
 		// TODO: The below is copied from actualsave
 		getRidOfTemp();
@@ -225,6 +225,12 @@ void DreamGenContext::saveGame() {
 		data.word(kTextaddressy) = 182;
 		data.byte(kTextlen) = 240;
 		redrawMainScrn();
+		workToScreenCPP();	// show the main screen without the mouse pointer
+
+		// We need to save after the scene has been redrawn, to capture the
+		// correct screen thumbnail
+		savePosition(savegameId, descbuf);
+
 		workToScreenM();
 		data.byte(kGetback) = 4;
 	}
@@ -387,9 +393,6 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	madeUpRoom.facing = data.byte(kFacing);
 	madeUpRoom.b27 = 255;
 
-
-	engine->processEvents();	// TODO: Is this necessary?
-
 	Common::String filename = engine->getSavegameFilename(slot);
 	debug(1, "savePosition: slot %d filename %s", slot, filename.c_str());
 	Common::OutSaveFile *outSaveFile = engine->getSaveFileManager()->openForSaving(filename);
@@ -412,6 +415,11 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
+	// Write a new section with data that we need for ScummVM (version,
+	// thumbnail, played time etc). We don't really care for its size,
+	// so we just set it to a magic number.
+	header.setLen(6, SCUMMVM_BLOCK_MAGIC_SIZE);
+
 	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
 	outSaveFile->write(descbuf, len[0]);
 	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
@@ -428,6 +436,19 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
 	}
 	outSaveFile->write(data.ptr(kReelroutines, len[5]), len[5]);
+
+	// ScummVM data block
+	outSaveFile->writeUint32BE(SCUMMVM_HEADER);
+	outSaveFile->writeByte(SAVEGAME_VERSION);
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint32 saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+	outSaveFile->writeUint32LE(saveDate);
+	outSaveFile->writeUint32LE(saveTime);
+	outSaveFile->writeUint32LE(playTime);
+	Graphics::saveThumbnail(*outSaveFile);
 
 	outSaveFile->finalize();
 	if (outSaveFile->err()) {
@@ -480,6 +501,30 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	Common::Serializer s(inSaveFile, 0);
 	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
 		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
+	}
+
+	// Check if there's a ScummVM data block
+	if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {
+		uint32 tag = inSaveFile->readUint32BE();
+		if (tag != SCUMMVM_HEADER) {
+			warning("ScummVM data block found, but the block header is incorrect - skipping");
+			delete inSaveFile;
+			return;
+		}
+
+		byte version = inSaveFile->readByte();
+		if (version > SAVEGAME_VERSION) {
+			warning("ScummVM data block found, but it has been saved with a newer version of ScummVM - skipping");
+			delete inSaveFile;
+			return;
+		}
+
+		inSaveFile->skip(4);	// saveDate
+		inSaveFile->skip(4);	// saveTime
+		uint32 playTime = inSaveFile->readUint32LE();
+		g_engine->setTotalPlayTime(playTime * 1000);
+
+		// The thumbnail data follows, but we don't need it here
 	}
 
 	delete inSaveFile;
