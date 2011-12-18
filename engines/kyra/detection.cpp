@@ -68,6 +68,9 @@ public:
 #ifdef ENABLE_LOL
 				"\nLands of Lore (C) Westwood Studios"
 #endif
+#ifdef ENABLE_EOB
+				"\nEye of the Beholder (C) TSR, Inc., (C) Strategic Simulations, Inc."
+#endif
 		    ;
 	}
 
