@@ -491,7 +491,6 @@ public:
 	void findOpenPos();
 	void searchForSame();
 	void rollEm();
-	void lookAtPlace();
 	void findAllOpen();
 	void fillOpen();
 	void getEitherAd();

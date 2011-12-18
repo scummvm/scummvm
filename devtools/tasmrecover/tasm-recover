@@ -562,6 +562,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'lockmon',
 	'look',
 	'lookatcard',
+	'lookatplace',
 	'lookininterface',
 	'loopchannel0',
 	'louis',

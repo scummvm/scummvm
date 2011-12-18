@@ -374,5 +374,6 @@
 		DreamBase::deleteExText(textNum);
 	}
 	void signOn();
+	void lookAtPlace();
 
 #endif

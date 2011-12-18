@@ -4584,4 +4584,36 @@ void DreamGenContext::showDiaryKeys() {
 		showDiaryPage();
 }
 
+void DreamGenContext::lookAtPlace() {
+	if (data.byte(kCommandtype) != 224) {
+		data.byte(kCommandtype) = 224;
+		commandOnly(27);
+	}
+
+	if (!(data.word(kMousebutton) & 1) ||
+		data.word(kMousebutton) == data.word(kOldbutton) ||
+		data.byte(kDestpos) >= 15)
+		return; // noinfo
+
+	delPointer();
+	delTextLine();
+	getUnderCentre();
+	showFrame(tempGraphics3(), 60, 72, 0, 0);
+	showFrame(tempGraphics3(), 60, 72 + 55, 4, 0);
+	if (data.byte(kForeignrelease))
+		showFrame(tempGraphics3(), 60, 72+55+21, 4, 0);
+
+	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
+	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
+	findNextColon(&string);
+	uint16 y = (data.byte(kForeignrelease)) ? 84 + 4 : 84;
+	printDirect(&string, 63, &y, 191, 191 & 1);
+	workToScreenM();
+	hangOnP(500);
+	data.byte(kPointermode) = 0;
+	data.byte(kPointerframe) = 0;
+	putUnderCentre();
+	workToScreenM();
+}
+
 } // End of namespace DreamGen
