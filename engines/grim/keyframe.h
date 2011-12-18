@@ -27,6 +27,10 @@
 
 #include "engines/grim/object.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 class ModelNode;
@@ -34,10 +38,10 @@ class TextSplitter;
 
 class KeyframeAnim : public Object {
 public:
-	KeyframeAnim(const Common::String &filename, const char *data, int len);
+	KeyframeAnim(const Common::String &filename, Common::SeekableReadStream *data);
 	~KeyframeAnim();
 
-	void loadBinary(const char *data, int len);
+	void loadBinary(Common::SeekableReadStream *data);
 	void loadText(TextSplitter &ts);
 	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
 	int getMarker(float startTime, float stopTime) const;
@@ -66,7 +70,7 @@ private:
 	Marker *_markers;
 
 	struct KeyframeEntry {
-		void loadBinary(const char *&data);
+		void loadBinary(const char *data);
 
 		float _frame;
 		int _flags;
@@ -75,7 +79,7 @@ private:
 	};
 
 	struct KeyframeNode {
-		void loadBinary(const char *&data);
+		void loadBinary(Common::SeekableReadStream *data, char *meshName);
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 

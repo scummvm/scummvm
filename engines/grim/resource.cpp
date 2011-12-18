@@ -279,15 +279,13 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b)
-			error("Could not find keyframe file %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	KeyframeAnim *result = new KeyframeAnim(filename, b->getData(), b->getLen());
+	stream = openNewStreamFile(filename.c_str());
+	if(!stream)
+		error("Could not find keyframe file %s", filename.c_str());
+
+	KeyframeAnim *result = new KeyframeAnim(filename, stream);
 	_keyframeAnims.push_back(result);
 
 	return result;
