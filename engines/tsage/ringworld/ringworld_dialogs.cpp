@@ -186,6 +186,8 @@ void RightClickDialog::execute() {
 		GLOBALS._screenSurface.copyToScreen();
 	}
 
+	_gfxManager.deactivate();
+
 	// Execute the specified action
 	switch (_selectedAction) {
 	case 1:
@@ -213,8 +215,6 @@ void RightClickDialog::execute() {
 		Ringworld::OptionsDialog::show();
 		break;
 	}
-
-	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/
