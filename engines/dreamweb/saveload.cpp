@@ -435,7 +435,6 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
 		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
 	}
-	outSaveFile->write(data.ptr(kReelroutines, len[5]), len[5]);
 
 	// ScummVM data block
 	outSaveFile->writeUint32BE(SCUMMVM_HEADER);
