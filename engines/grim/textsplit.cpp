@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/textconsole.h"
+#include "common/stream.h"
 
 #include "engines/grim/textsplit.h"
 
@@ -57,12 +58,13 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 			f11, f12, f13, f14, f15, f16, f17, f18, f19, f20);
 }
 
-TextSplitter::TextSplitter(const char *data, int len) {
+TextSplitter::TextSplitter(Common::SeekableReadStream *data) {
 	char *line;
 	int i;
+	uint32 len = data->size();
 
 	_stringData = new char[len + 1];
-	memcpy(_stringData, data, len);
+	data->read(_stringData, len);
 	_stringData[len] = '\0';
 	// Find out how many lines of text there are
 	_numLines = _lineIndex = 0;

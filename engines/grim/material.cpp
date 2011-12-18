@@ -29,6 +29,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/textsplit.h"
+#include "common/memstream.h"
 
 namespace Grim {
 
@@ -85,7 +86,8 @@ void MaterialData::initEMI(const Common::String &filename, const char *data, int
 	char *readFileName = new char[64];
 
 	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
-		TextSplitter *ts = new TextSplitter(data, len);
+		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)data, len);
+		TextSplitter *ts = new TextSplitter(st);
 		ts->setLineNumber(1); // Skip copyright-line
 		ts->expectString("VERSION 1.0");
 		while(!ts->checkString("END_OF_SECTION")) {

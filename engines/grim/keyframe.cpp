@@ -30,6 +30,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
+#include "common/memstream.h"
 
 namespace Grim {
 
@@ -39,7 +40,8 @@ KeyframeAnim::KeyframeAnim(const Common::String &fname, const char *data, int le
 	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('F','Y','E','K'))
 		loadBinary(data, len);
 	else {
-		TextSplitter ts(data, len);
+		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)data, len);
+		TextSplitter ts(st);
 		loadText(ts);
 	}
 }

@@ -30,6 +30,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/colormap.h"
+#include "common/memstream.h"
 
 namespace Grim {
 
@@ -54,7 +55,8 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 	} else if (len >= 4 && READ_BE_UINT32(data) == MKTAG('L','D','O','M'))
 		loadBinary(data, cmap);
 	else {
-		TextSplitter ts(data, len);
+		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)data, len);
+		TextSplitter ts(st);
 		loadText(&ts, cmap);
 	}
 

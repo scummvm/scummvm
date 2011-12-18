@@ -253,14 +253,13 @@ static Common::String fixFilename(const Common::String filename, bool append = t
 Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *prevCost) {
 	Common::String fname = fixFilename(filename);
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find costume \"%s\"", filename.c_str());
-		putIntoCache(fname, b);
+
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str());
+	if (!stream) {
+		error("Could not find costume \"%s\"", filename.c_str());
 	}
-	Costume *result = new Costume(filename, b->getData(), b->getLen(), prevCost);
+
+	Costume *result = new Costume(filename, stream, prevCost);
 
 	return result;
 }

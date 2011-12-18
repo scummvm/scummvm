@@ -44,7 +44,8 @@ Set::Set(const Common::String &sceneName, const char *buf, int len) :
 		_lightsConfigured(false) {
 
 	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
-		TextSplitter ts(buf, len);
+		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)buf, len);
+		TextSplitter ts(st);
 		loadText(ts);
 	} else {
 		Common::MemoryReadStream ms((const byte *)buf, len);
