@@ -1039,5 +1039,18 @@ void SpeakerGuard2800::proc15() {
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
+
+SpeakerGuard3100::SpeakerGuard3100() {
+	_speakerName = "GUARD";
+	_color1 = 5;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

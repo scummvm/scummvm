@@ -28,6 +28,7 @@
 #include "tsage/ringworld2/ringworld2_dialogs.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/ringworld2/ringworld2_scenes2.h"
+#include "tsage/ringworld2/ringworld2_scenes3.h"
 
 namespace TsAGE {
 
@@ -169,6 +170,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #3 */
 	//
 	case 3100:
+		return new Scene3100();
 	case 3125:
 	case 3150:
 	case 3175:
