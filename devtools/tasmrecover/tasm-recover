@@ -168,6 +168,8 @@ p = parser(skip_binary_data = [
 	'flagx',
 	'flagy',
 	'lastflagex',
+	'keynum',
+	'newlogonum',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
@@ -525,7 +527,6 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'keeper',
 	'kernchars',
 	'keyboardread',
-	'keynum',
 	'lastdest',
 	'lastfolder',
 	'liftnoise',
