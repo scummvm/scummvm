@@ -4569,5 +4569,25 @@ void DreamBase::clearChanges() {
 	memcpy(data.ptr(kRoomscango, 16), initialRoomsCanGo, 16);
 }
 
+void DreamGenContext::showDiaryKeys() {
+	if (!data.byte(kPresscount))
+		return; // nokeyatall
+
+	data.byte(kPresscount)--;
+
+	if (!data.byte(kPresscount))
+		return; // nokeyatall
+
+	if (data.byte(kPressed) == 'N') {
+		byte frame = (data.byte(kPresscount) == 1) ? 3 : 4;
+		showFrame(tempGraphics(), kDiaryx + 94, kDiaryy + 97, frame, 0);
+	} else {
+		byte frame = (data.byte(kPresscount) == 1) ? 5 : 6;
+		showFrame(tempGraphics(), kDiaryx + 151, kDiaryy + 71, frame, 0);
+	}
+
+	if (data.byte(kPresscount) == 1)
+		showDiaryPage();
+}
 
 } // End of namespace DreamGen

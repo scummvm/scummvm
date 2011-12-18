@@ -507,7 +507,6 @@ public:
 	void deleteExObject();
 	void getEitherAd();
 	void dropObject();
-	void showDiaryKeys();
 	void useOpened();
 	void signOn();
 	void locationPic();

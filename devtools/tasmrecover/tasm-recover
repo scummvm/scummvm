@@ -752,6 +752,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showcurrentfile',
 	'showdecisions',
 	'showdiary',
+	'showdiarykeys',
 	'showdiarypage',
 	'showdiscops',
 	'showexit',

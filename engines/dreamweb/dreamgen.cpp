@@ -2463,52 +2463,6 @@ lookcolon:
 		goto lookcolon;
 }
 
-void DreamGenContext::showDiaryKeys() {
-	STACK_CHECK;
-	_cmp(data.byte(kPresscount), 0);
-	if (flags.z())
-		return /* (nokeyatall) */;
-	_dec(data.byte(kPresscount));
-	_cmp(data.byte(kPresscount), 0);
-	if (flags.z())
-		return /* (nokeyatall) */;
-	_cmp(data.byte(kPressed), 'N');
-	if (!flags.z())
-		goto nokeyn;
-	al = 3;
-	_cmp(data.byte(kPresscount), 1);
-	if (flags.z())
-		goto gotkeyn;
-	al = 4;
-gotkeyn:
-	ah = 0;
-	di = (68+24)+94;
-	bx = (48+12)+97;
-	ds = data.word(kTempgraphics);
-	showFrame();
-	_cmp(data.byte(kPresscount), 1);
-	if (!flags.z())
-		return /* (notshown) */;
-	showDiaryPage();
-	return;
-nokeyn:
-	al = 5;
-	_cmp(data.byte(kPresscount), 1);
-	if (flags.z())
-		goto gotkeyp;
-	al = 6;
-gotkeyp:
-	ah = 0;
-	di = (68+24)+151;
-	bx = (48+12)+71;
-	ds = data.word(kTempgraphics);
-	showFrame();
-	_cmp(data.byte(kPresscount), 1);
-	if (!flags.z())
-		return /* (notshowp) */;
-	showDiaryPage();
-}
-
 void DreamGenContext::findPathOfPoint() {
 	STACK_CHECK;
 	push(ax);
