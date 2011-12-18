@@ -448,7 +448,7 @@ void DreamGenContext::setPickup() {
 		commandWithOb(33, data.byte(kObjecttype), data.byte(kCommand));
 	}
 
-	if (data.word(kMousebutton) == 1 && data.word(kMousebutton) == data.word(kOldbutton))
+	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
 		return;
 
 	createPanel();
@@ -463,9 +463,9 @@ void DreamGenContext::setPickup() {
 		data.byte(kItemframe) = data.byte(kCommand);
 		data.byte(kOpenedob) = 255;
 		transferToEx();
-		data.byte(kItemframe) = data.byte(kCommand);
+		data.byte(kItemframe) = al;
 		data.byte(kObjecttype) = kExObjectType;
-		DynObject *object = getEitherAdCPP();
+		DynObject *object = getExAd(data.byte(kItemframe));
 		object->mapad[0] = 20;
 		object->mapad[1] = 255;
 	} else {
