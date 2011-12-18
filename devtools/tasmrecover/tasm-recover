@@ -607,6 +607,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'neterror',
 	'newgame',
 	'newplace',
+	'nextcolon',
 	'nextdest',
 	'nextfolder',
 	'nextsymbol',

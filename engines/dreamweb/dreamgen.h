@@ -488,7 +488,6 @@ public:
 	void purgeAnItem();
 	void purgeALocation();
 	void getSetAd();
-	void nextColon();
 	void findOpenPos();
 	void searchForSame();
 	void rollEm();

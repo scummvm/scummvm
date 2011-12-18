@@ -2137,16 +2137,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::nextColon() {
-	STACK_CHECK;
-lookcolon:
-	al = es.byte(si);
-	_inc(si);
-	_cmp(al, ':');
-	if (!flags.z())
-		goto lookcolon;
-}
-
 void DreamGenContext::findPathOfPoint() {
 	STACK_CHECK;
 	push(ax);
