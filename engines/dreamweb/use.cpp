@@ -994,7 +994,8 @@ void DreamGenContext::useObject() {
 }
 
 void DreamGenContext::useWinch() {
-	if (checkInside(40, 1) == kNumexobjects || !compare(cl, 4, "FUSE")) {
+	uint16 contentIndex = checkInside(40, 1);
+	if (contentIndex == kNumexobjects || !compare(contentIndex, kExObjectType, "FUSE")) {
 		// No winch
 		showFirstUse();
 		putBackObStuff();
