@@ -184,6 +184,7 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 			desc.setThumbnail(thumbnail);
 		}
 
+		delete in;
 		return desc;
 	}
 
