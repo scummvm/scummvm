@@ -370,5 +370,6 @@
 	void setPickup();
 	void showDiaryKeys();
 	void showKeys();
+	void getKeyAndLogo();
 
 #endif

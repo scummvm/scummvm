@@ -487,7 +487,6 @@ public:
 	void removeObFromInv();
 	void dirFile();
 	void pickupConts();
-	void getKeyAndLogo();
 	void fadeUpMon();
 	void reExFromInv();
 	void outOfInv();

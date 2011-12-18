@@ -445,4 +445,22 @@ void DreamGenContext::showKeys() {
 	scrollMonitor();
 }
 
+void DreamGenContext::getKeyAndLogo() {
+	byte newLogo = es.byte(bx + 1) - 48;
+	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
+	byte keyNum = es.byte(bx + 1 + 2) - 48;
+	bx += 1 + 2 + 1;
+
+	if (monitorKeyEntries[keyNum].keyHeld == 1) {
+		// Key OK
+		data.byte(kLogonum) = newLogo;
+		al = 0;
+	} else {
+		monMessage(12);	// "Access denied, key required -"
+		monPrint(monitorKeyEntries[keyNum].userpass + 12);	// username
+		scrollMonitor();
+		al = 1;
+	}
+}
+
 } // End of namespace DreamGen

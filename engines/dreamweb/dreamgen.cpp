@@ -2298,51 +2298,6 @@ endofdir2:
 	scrollMonitor();
 }
 
-void DreamGenContext::getKeyAndLogo() {
-	STACK_CHECK;
-	_inc(bx);
-	al = es.byte(bx);
-	_sub(al, 48);
-	data.byte(kNewlogonum) = al;
-	_add(bx, 2);
-	al = es.byte(bx);
-	_sub(al, 48);
-	data.byte(kKeynum) = al;
-	_inc(bx);
-	push(es);
-	push(bx);
-	al = data.byte(kKeynum);
-	ah = 0;
-	cx = 26;
-	_mul(cx);
-	es = cs;
-	bx = offset_keys;
-	_add(bx, ax);
-	al = es.byte(bx);
-	_cmp(al, 1);
-	if (flags.z())
-		goto keyok;
-	push(bx);
-	push(es);
-	al = 12;
-	monMessage();
-	es = pop();
-	bx = pop();
-	_add(bx, 14);
-	monPrint();
-	scrollMonitor();
-	bx = pop();
-	es = pop();
-	al = 1;
-	return;
-keyok:
-	bx = pop();
-	es = pop();
-	al = data.byte(kNewlogonum);
-	data.byte(kLogonum) = al;
-	al = 0;
-}
-
 void DreamGenContext::searchForString() {
 	STACK_CHECK;
 	dl = es.byte(di);
