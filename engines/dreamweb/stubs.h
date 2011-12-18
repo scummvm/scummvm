@@ -373,5 +373,6 @@
 	void deleteExText(uint8 textNum) {
 		DreamBase::deleteExText(textNum);
 	}
+	void signOn();
 
 #endif

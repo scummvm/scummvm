@@ -32,9 +32,8 @@
 
 namespace DreamGen {
 
-static const uint16 offset_rootdir = 0x023c;
-static const uint16 offset_operand1 = 0x022e;
-static const uint16 offset_keys = 0x01c4;
+static const uint16 offset_operand1 = 0x01c4;
+static const uint16 offset_rootdir = 0x01d2;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -356,15 +355,15 @@ static const uint16 kSoundbufferwrite = 435;
 static const uint16 kCurrentsample = 437;
 static const uint16 kRoomssample = 438;
 static const uint16 kBasicsample = 439;
-static const uint16 kCurrentfile = 586;
-static const uint16 kRoomscango = 661;
-static const uint16 kRoompics = 677;
-static const uint16 kOplist = 692;
-static const uint16 kInputline = 695;
-static const uint16 kPresslist = 823;
-static const uint16 kQuitrequested = 829;
-static const uint16 kSubtitles = 830;
-static const uint16 kForeignrelease = 831;
+static const uint16 kCurrentfile = 480;
+static const uint16 kRoomscango = 555;
+static const uint16 kRoompics = 571;
+static const uint16 kOplist = 586;
+static const uint16 kInputline = 589;
+static const uint16 kPresslist = 717;
+static const uint16 kQuitrequested = 723;
+static const uint16 kSubtitles = 724;
+static const uint16 kForeignrelease = 725;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -499,7 +498,6 @@ public:
 	void getEitherAd();
 	void dropObject();
 	void useOpened();
-	void signOn();
 	void locationPic();
 	void swapWithOpen();
 	void dreamweb();

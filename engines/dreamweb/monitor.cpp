@@ -25,33 +25,28 @@
 namespace DreamGen {
 
 struct MonitorKeyEntry {
-	uint8 keyHeld;
-	uint8 b1;	// unused, for alignment
-	char  userpass[24];
-	//char  password[12];	// for the new monitor key list below
-	//char  username[12];	// for the new monitor key list below
+	uint8 keyAssigned;
+	char  username[12];
+	char  password[12];
 };
 
-#if 0
 // New monitor key list
 static MonitorKeyEntry monitorKeyEntries[4] = {
-	{ 1, "PUBLIC     ", "PUBLIC     " },
-	{ 0, "BLACKDRAGON", "RYAN       " },
-	{ 0, "HENDRIX    ", "LOUIS      " },
-	{ 0, "SEPTIMUS   ", "BECKETT    " }
+	{ 1, "PUBLIC",  "PUBLIC"      },
+	{ 0, "RYAN",    "BLACKDRAGON" },
+	{ 0, "LOUIS",   "HENDRIX"     },
+	{ 0, "BECKETT", "SEPTIMUS"    }
 };
-#endif
 
 void DreamGenContext::useMon() {
 	data.byte(kLasttrigger) = 0;
 	memset(data.ptr(kCurrentfile+1, 0), ' ', 12);
 	memset(data.ptr(offset_operand1+1, 0), ' ', 12);
 
-	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
-	monitorKeyEntries[0].keyHeld = 1;
-	monitorKeyEntries[1].keyHeld = 0;
-	monitorKeyEntries[2].keyHeld = 0;
-	monitorKeyEntries[3].keyHeld = 0;
+	monitorKeyEntries[0].keyAssigned = 1;
+	monitorKeyEntries[1].keyAssigned = 0;
+	monitorKeyEntries[2].keyAssigned = 0;
+	monitorKeyEntries[3].keyAssigned = 0;
 
 	createPanel();
 	showPanel();
@@ -434,12 +429,9 @@ void DreamGenContext::showKeys() {
 	scrollMonitor();
 	monMessage(18);
 
-	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
-
 	for (int i = 0; i < 4; i++) {
-		if (monitorKeyEntries[i].keyHeld)
-			monPrint(monitorKeyEntries[i].userpass + 12);	// username
-			//monPrint(monitorKeyEntries[i].username);
+		if (monitorKeyEntries[i].keyAssigned)
+			monPrint(monitorKeyEntries[i].username);
 	}
 
 	scrollMonitor();
@@ -447,19 +439,76 @@ void DreamGenContext::showKeys() {
 
 void DreamGenContext::getKeyAndLogo() {
 	byte newLogo = es.byte(bx + 1) - 48;
-	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
 	byte keyNum = es.byte(bx + 1 + 2) - 48;
 	bx += 1 + 2 + 1;
 
-	if (monitorKeyEntries[keyNum].keyHeld == 1) {
+	if (monitorKeyEntries[keyNum].keyAssigned == 1) {
 		// Key OK
 		data.byte(kLogonum) = newLogo;
 		al = 0;
 	} else {
 		monMessage(12);	// "Access denied, key required -"
-		monPrint(monitorKeyEntries[keyNum].userpass + 12);	// username
+		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
 		al = 1;
+	}
+}
+
+void DreamGenContext::signOn() {
+	parser();
+
+	int8 foundIndex = -1;
+	Common::String inputLine = (const char *)data.ptr(offset_operand1 + 1, 0);
+	inputLine.trim();
+
+	for (byte i = 0; i < 4; i++) {
+		if (inputLine.equalsIgnoreCase(monitorKeyEntries[i].username)) {
+			// Check if the key has already been assigned
+			if (monitorKeyEntries[i].keyAssigned) {
+				monMessage(17);
+				return;
+			} else {
+				foundIndex = i;
+				break;
+			}
+		}
+	}
+
+	if (foundIndex == -1) {
+		monMessage(13);
+		return;
+	}
+
+	monMessage(15);
+
+	uint16 prevX = data.word(kMonadx);
+	uint16 prevY = data.word(kMonady);
+	input();	// password input
+	data.word(kMonadx) = prevX;
+	data.word(kMonady) = prevY;
+
+	inputLine = (const char *)data.ptr(kInputline, 0);
+	inputLine.toUppercase();
+
+	// The entered line has zeroes in-between each character
+	uint32 len = strlen(monitorKeyEntries[foundIndex].password);
+	bool found = true;
+
+	for (uint32 i = 0; i < len; i++) {
+		if (monitorKeyEntries[foundIndex].password[i] != inputLine[i * 2]) {
+			found = false;
+			break;
+		}
+	}
+
+	if (!found) {
+		scrollMonitor();
+		monMessage(16);
+	} else {
+		monMessage(14);
+		monPrint(monitorKeyEntries[foundIndex].username);
+		scrollMonitor();
+		monitorKeyEntries[foundIndex].keyAssigned = 1;
 	}
 }
 
