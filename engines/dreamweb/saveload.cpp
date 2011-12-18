@@ -432,8 +432,8 @@ void DreamGenContext::savePosition(unsigned int slot, const char *descbuf) {
 
 	// TODO: Convert more to serializer?
 	Common::Serializer s(0, outSaveFile);
-	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
-		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
+	for (unsigned int i = 0; 8 * i < kLenofreelrouts; ++i) {
+		syncReelRoutine(s, (ReelRoutine *)data.ptr(kReelroutines + 8 * i, 8));
 	}
 
 	// ScummVM data block
@@ -498,8 +498,8 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 	// TODO: Use serializer for more
 	Common::Serializer s(inSaveFile, 0);
-	for (unsigned int i = 0; 8*i < kLenofreelrouts; ++i) {
-		syncReelRoutine(s, (ReelRoutine*)data.ptr(kReelroutines + 8*i, 8));
+	for (unsigned int i = 0; 8 * i < kLenofreelrouts; ++i) {
+		syncReelRoutine(s, (ReelRoutine *)data.ptr(kReelroutines + 8 * i, 8));
 	}
 
 	// Check if there's a ScummVM data block
