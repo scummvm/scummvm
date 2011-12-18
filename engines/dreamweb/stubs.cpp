@@ -1266,7 +1266,7 @@ void DreamGenContext::commandWithOb() {
 	commandWithOb(al, bh, bl); 
 }
 
-void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
+void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
 	uint16 commandText = kTextstart + getSegment(data.word(kCommandtext)).word(command * 2);
@@ -1283,19 +1283,19 @@ void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	data.byte(kNewtextline) = 1;
 }
 
-void DreamGenContext::examineObText() {
+void DreamBase::examineObText() {
 	commandWithOb(1, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::blockNameText() {
+void DreamBase::blockNameText() {
 	commandWithOb(0, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::personNameText() {
+void DreamBase::personNameText() {
 	commandWithOb(2, data.byte(kCommandtype), data.byte(kCommand) & 127);
 }
 
-void DreamGenContext::walkToText() {
+void DreamBase::walkToText() {
 	commandWithOb(3, data.byte(kCommandtype), data.byte(kCommand));
 }
 
@@ -1444,10 +1444,6 @@ void DreamGenContext::walkAndExamine() {
 	data.byte(kWalkandexam) = 0;
 	if (data.byte(kCommandtype) != 5)
 		examineOb();
-}
-
-void DreamGenContext::obName() {
-	obName(al, ah);
 }
 
 void DreamGenContext::obName(uint8 command, uint8 commandType) {
@@ -1796,19 +1792,15 @@ void DreamBase::showIcon() {
 	}
 }
 
-void DreamGenContext::checkIfSet() {
-	flags._z = !checkIfSet(al, ah);
-}
-
 bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 	const ObjPos *setList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
 	for (size_t i = 0; i < 128; ++i) {
 		const ObjPos *pos = setList + 127 - i;
 		if (pos->index == 0xff || !pos->contains(x,y))
 			continue;
-		if (! pixelCheckSet(pos, x, y))
+		if (!pixelCheckSet(pos, x, y))
 			continue;
-		if (! isItDescribed(pos))
+		if (!isItDescribed(pos))
 			continue;
 		obName(pos->index, 1);
 		return true;
@@ -1841,10 +1833,6 @@ void DreamBase::hangOnW(uint16 frameCount) {
 		if (quitRequested())
 			break;
 	}
-}
-
-void DreamGenContext::hangOnP() {
-	hangOnP(cx);
 }
 
 void DreamBase::hangOnP(uint16 count) {

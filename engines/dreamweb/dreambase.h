@@ -440,6 +440,12 @@ public:
 	void makeMainScreen();
 	void showWatchReel();
 	void watchReel();
+	void commandWithOb(uint8 command, uint8 type, uint8 index);
+	void examineObText();
+	void blockNameText();
+	void personNameText();
+	void walkToText();
+	void entryTexts();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -487,9 +493,8 @@ public:
 	void panelToMap();
 	void mapToPanel();
 	void dumpMap();
-
 	void transferInv();
-
+	void zoom();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
@@ -506,11 +511,11 @@ public:
 	void showPCX(const Common::String &name);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void loadPalFromIFF();
 	void createPanel();
 	void createPanel2();
 	void showPanel();
-	void entryTexts();
 };
 
 

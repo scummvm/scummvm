@@ -371,7 +371,7 @@ void DreamBase::clearWork() {
 	memset(workspace(), 0, 320*200);
 }
 
-void DreamGenContext::zoom() {
+void DreamBase::zoom() {
 	if (data.word(kWatchingtime) != 0)
 		return;
 	if (data.byte(kZoomon) != 1)
@@ -432,7 +432,7 @@ void DreamBase::transferInv() {
 	data.word(kExframepos) += byteCount;
 }
 
-bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
+bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
 	SetObject *setObject = getSetAd(pos->index);
