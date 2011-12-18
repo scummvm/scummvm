@@ -431,9 +431,9 @@ void DreamGenContext::selectOb() {
 void DreamGenContext::setPickup() {
 	if (data.byte(kObjecttype) != kSetObjectType1 && data.byte(kObjecttype) != kSetObjectType3) {
 		// The original called getAnyAd() here. However, since object types
-		// 1 and 3 are excluded, the resulting object is a DynObject, so
-		// we can use getEitherAd() instead.
-		DynObject *object = getEitherAdCPP();
+		// 1 and 3 are excluded, the resulting object is a DynObject
+		uint8 dummy;
+		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
 		if (object->mapad[0] == 4) {
 			blank();
 			return;
