@@ -143,11 +143,14 @@ void DreamGenContext::updatePeople() {
 	ReelRoutine *r = (ReelRoutine *)data.ptr(kReelroutines, 0);
 
 	for (int i = 0; r[i].reallocation != 255; ++i) {
-		bx = kReelroutines + 8*i;
 		if (r[i].reallocation == data.byte(kReallocation) &&
 		        r[i].mapX == data.byte(kMapx) &&
 		        r[i].mapY == data.byte(kMapy)) {
 			assert(reelCallbacks[i]);
+			// Set es:bx to the ReelRoutine, while not all ReelCallbacks are in
+			// DreamBase
+			es = data;
+			bx = kReelroutines + 8*i;
 			(this->*(reelCallbacks[i]))(r[i]);
 		}
 	}
