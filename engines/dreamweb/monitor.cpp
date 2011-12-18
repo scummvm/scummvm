@@ -72,15 +72,11 @@ void DreamGenContext::useMon() {
 	data.word(kBufferout) = 0;
 	bool stop = false;
 	do {
-		di = data.word(kMonadx);
-		bx = data.word(kMonady);
-		push(di);
-		push(bx);
+		uint16 oldMonadx = data.word(kMonadx);
+		uint16 oldMonady = data.word(kMonady);
 		input();
-		bx = pop();
-		di = pop();
-		data.word(kMonadx) = di;
-		data.word(kMonady) = bx;
+		data.word(kMonadx) = oldMonadx;
+		data.word(kMonady) = oldMonady;
 		stop = execCommand();
 		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
 			break;
@@ -383,14 +379,14 @@ void DreamBase::printOuterMon() {
 	showFrame(tempGraphics(), 40, 164, 4, 0);
 }
 
-void DreamGenContext::loadPersonal() {
+void DreamBase::loadPersonal() {
 	if (data.byte(kLocation) == 0 || data.byte(kLocation) == 42)
 		data.word(kTextfile1) = standardLoad("DREAMWEB.T01"); // monitor file 1
 	else
 		data.word(kTextfile1) = standardLoad("DREAMWEB.T02"); // monitor file 2
 }
 
-void DreamGenContext::loadNews() {
+void DreamBase::loadNews() {
 	// textfile2 holds information accessible by anyone
 	if (data.byte(kNewsitem) == 0)
 		data.word(kTextfile2) = standardLoad("DREAMWEB.T10"); // monitor file 10
@@ -402,7 +398,7 @@ void DreamGenContext::loadNews() {
 		data.word(kTextfile2) = standardLoad("DREAMWEB.T13"); // monitor file 13
 }
 
-void DreamGenContext::loadCart() {
+void DreamBase::loadCart() {
 	byte cartridgeId = 0;
 	uint16 objectIndex = findSetObject("INTF");
 	uint16 cartridgeIndex = checkInside(objectIndex, 1);

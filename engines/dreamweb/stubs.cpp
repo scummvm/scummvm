@@ -785,11 +785,7 @@ void DreamBase::loadTempCharset(const char *fileName) {
 	engine->setTempCharset(standardLoadCPP(fileName));
 }
 
-void DreamGenContext::hangOnCurs() {
-	hangOnCurs(cx);
-}
-
-void DreamGenContext::hangOnCurs(uint16 frameCount) {
+void DreamBase::hangOnCurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
 		printCurs();
 		vSync();
@@ -1035,26 +1031,6 @@ void DreamBase::lockMon() {
 	}
 }
 
-void DreamGenContext::makeBackOb(SetObject *objData) {
-	if (data.byte(kNewobs) == 0)
-		return;
-	uint8 priority = objData->priority;
-	uint8 type = objData->type;
-	Sprite *sprite = makeSprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
-
-	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
-	assert(objDataOffset % sizeof(SetObject) == 0);
-	assert(objDataOffset < 128 * sizeof(SetObject));
-	sprite->setObjData(objDataOffset);
-	if (priority == 255)
-		priority = 0;
-	sprite->priority = priority;
-	sprite->type = type;
-	sprite->b16 = 0;
-	sprite->delay = 0;
-	sprite->animFrame = 0;
-}
-
 uint16 DreamBase::allocateAndLoad(unsigned int size) {
 	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
 	uint16 result = allocateMem(size / 16);
@@ -1252,7 +1228,7 @@ bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
 	return false;
 }
 
-const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
+const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * 2 * (index & 127);
 		uint16 offset = getSegment(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
@@ -1272,7 +1248,7 @@ const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 	}
 }
 
-void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
+void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
 	for (i = 0; i < 28; ++i) { 
@@ -1737,19 +1713,7 @@ bool DreamBase::compare(uint8 index, uint8 flag, const char id[4]) {
 	return objectMatches(getAnyAdDir(index, flag), id);
 }
 
-void DreamGenContext::findSetObject() {
-	char id[5];
-	id[0] = al;
-	id[1] = ah;
-	id[2] = cl;
-	id[3] = ch;
-	id[4] = '\0';
-	al = findSetObject(id);
-	es = data.word(kSetdat);
-	bx = al * 64;
-}
-
-uint16 DreamGenContext::findSetObject(const char *id) {
+uint16 DreamBase::findSetObject(const char *id) {
 	for (uint16 index = 0; index < 128; index++) {
 		if (objectMatches(getSetAd(index), id))
 			return index;
@@ -1797,22 +1761,6 @@ bool DreamBase::isRyanHolding(const char *id) {
 	}
 
 	return false;
-}
-
-void DreamGenContext::checkInside() {
-	cl = checkInside(al, ah);
-	es = data.word(kExtras);
-	bx = kExdata + cl * sizeof(DynObject);
-}
-
-uint16 DreamGenContext::checkInside(uint16 command, uint16 type) {
-	for (uint16 index = 0; index < kNumexobjects; index++) {
-		DynObject *object = getExAd(index);
-		if (object->mapad[1] == command && object->mapad[0] == type)
-			return index;
-	}
-
-	return kNumexobjects;
 }
 
 bool DreamBase::isItDescribed(const ObjPos *pos) {
@@ -2184,7 +2132,14 @@ void DreamGenContext::loadRoom() {
 	loadRoomsSample();
 	switchRyanOn();
 	drawFlags();
-	getDimension();
+
+	uint8 mapXstart, mapYstart;
+	uint8 mapXsize, mapYsize;
+	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
+	cl = mapXstart;
+	ch = mapYstart;
+	dl = mapXsize;
+	dh = mapYsize;
 }
 
 void DreamGenContext::readSetData() {
@@ -2617,7 +2572,7 @@ void DreamBase::loadTempText(const char *fileName) {
 	data.word(kTextfile1) = standardLoad(fileName);
 }
 
-void DreamGenContext::drawFloor() {
+void DreamBase::drawFloor() {
 	eraseOldObs();
 	drawFlags();
 	calcMapAd();
@@ -4171,23 +4126,6 @@ void DreamGenContext::newPlace() {
 		data.byte(kNewlocation) = data.byte(kAutolocation);
 		data.byte(kAutolocation) = 0xFF;
 	}
-}
-
-void DreamGenContext::showPuzText() {
-	showPuzText(al, cx);
-}
-
-void DreamGenContext::showPuzText(uint16 command, uint16 count) {
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	obIcons();
-	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(command * 2);
-	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
-	printDirect(string, 36, 104, 241, 241 & 1);
-	workToScreenM();
-	hangOnP(count);
 }
 
 void DreamGenContext::monkSpeaking() {

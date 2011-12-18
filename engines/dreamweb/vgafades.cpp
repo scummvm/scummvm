@@ -114,7 +114,7 @@ void DreamBase::fadeCalculation() {
 	--data.byte(kFadecount);
 }
 
-void DreamGenContext::fadeupYellows() {
+void DreamBase::fadeupYellows() {
 	palToEndPal();
 	memset(endPalette() + 231 * 3, 0, 8 * 3);
 	memset(endPalette() + 246 * 3, 0, 1 * 3);
@@ -125,7 +125,7 @@ void DreamGenContext::fadeupYellows() {
 	hangOn(128);
 }
 
-void DreamGenContext::fadeupMonFirst() {
+void DreamBase::fadeupMonFirst() {
 	palToStartPal();
 	palToEndPal();
 	memset(startPalette() + 231 * 3, 0, 8 * 3);
