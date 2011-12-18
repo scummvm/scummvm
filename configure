@@ -1279,7 +1279,7 @@ wii)
 wince)
 	_host_os=wince
 	_host_cpu=arm
-	_host_alias=arm-wince-mingw32ce
+	_host_alias=arm-mingw32ce
 	;;
 *)
 	if test -n "$_host"; then
