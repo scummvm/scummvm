@@ -403,15 +403,18 @@ void DreamGenContext::loadNews() {
 }
 
 void DreamGenContext::loadCart() {
-	lookInInterface();
+	byte cartridgeId = 0;
+	uint16 objectIndex = findSetObject("INTF");
+	if (checkInside(objectIndex, 1) != kNumexobjects)
+		cartridgeId = getSetAd(objectIndex)->name[0] + 1;
 
-	if (al == 0)
+	if (cartridgeId == 0)
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T20"); // monitor file 20
-	else if (al == 1)
+	else if (cartridgeId == 1)
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T21"); // monitor file 21
-	else if (al == 2)
+	else if (cartridgeId == 2)
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T22"); // monitor file 22
-	else if (al == 3)
+	else if (cartridgeId == 3)
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T23"); // monitor file 23
 	else
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24

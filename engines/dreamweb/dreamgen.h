@@ -473,7 +473,6 @@ public:
 	void getPersonText();
 	void getObTextStart();
 	void checkObjectSize();
-	void fillOpen();
 	void doSomeTalk();
 	void resetLocation();
 	void outOfOpen();
@@ -482,7 +481,6 @@ public:
 	void startTalk();
 	void getAnyAd();
 	void reminders();
-	void lookInInterface();
 	void inToInv();
 	void deleteExText();
 	void getFreeAd();
@@ -505,6 +503,7 @@ public:
 	void rollEm();
 	void lookAtPlace();
 	void findAllOpen();
+	void fillOpen();
 	void deleteExObject();
 	void getEitherAd();
 	void setPickup();

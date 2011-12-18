@@ -2044,25 +2044,6 @@ clearedlocations:
 	es.byte(bx) = 0;
 }
 
-void DreamGenContext::lookInInterface() {
-	STACK_CHECK;
-	al = 'I';
-	ah = 'N';
-	cl = 'T';
-	ch = 'F';
-	findSetObject();
-	ah = 1;
-	checkInside();
-	_cmp(cl, (114));
-	if (flags.z())
-		goto emptyinterface;
-	al = es.byte(bx+15);
-	_inc(al);
-	return;
-emptyinterface:
-	al = 0;
-}
-
 void DreamGenContext::dirCom() {
 	STACK_CHECK;
 	cx = 30;
