@@ -477,4 +477,90 @@ void DreamGenContext::setPickup() {
 	workToScreenM();
 }
 
+void DreamGenContext::deleteExFrame() {
+	deleteExFrame(al);
+}
+
+void DreamBase::deleteExFrame(uint8 frameNum) {
+	Frame *frame = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata + sizeof(Frame)*frameNum, sizeof(Frame));
+
+	uint16 frameSize = frame->width * frame->height;
+	// Note: the original asm didn't subtract frameSize from remainder
+	uint16 remainder = kExframeslen - frame->ptr() - frameSize;
+	uint16 startOff = kExframes + frame->ptr();
+	uint16 endOff = startOff + frameSize;
+
+	// Shift frame data after this one down
+	memmove(getSegment(data.word(kExtras)).ptr(startOff, remainder), getSegment(data.word(kExtras)).ptr(endOff, remainder), remainder);
+
+	// Combined frame data is now frameSize smaller
+	data.word(kExframepos) -= frameSize;
+
+	// Adjust all frame pointers pointing into the shifted data
+	for (unsigned int i = 0; i < 3*kNumexobjects; ++i) {
+		frame = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata + sizeof(Frame)*i, sizeof(Frame));
+		if (frame->ptr() >= startOff)
+			frame->setPtr(frame->ptr() - frameSize);
+	}
+}
+
+void DreamGenContext::deleteExText() {
+	deleteExText(al);
+}
+
+void DreamBase::deleteExText(uint8 textNum) {
+	uint16 offset = getSegment(data.word(kExtras)).word(kExtextdat + 2*textNum);
+
+	uint16 startOff = kExtext + offset;
+	uint16 textSize = strlen((char *)getSegment(data.word(kExtras)).ptr(startOff, 0)) + 1;
+	uint16 endOff = startOff + textSize;
+	uint16 remainder = kExtextlen - offset - textSize;
+
+	// Shift text data after this one down
+	memmove(getSegment(data.word(kExtras)).ptr(startOff, remainder), getSegment(data.word(kExtras)).ptr(endOff, remainder), remainder);
+
+	// Combined text data is now frameSize smaller
+	data.word(kExtextpos) -= textSize;
+
+	// Adjust all text pointers pointing into the shifted data
+	for (unsigned int i = 0; i < kNumexobjects; ++i) {
+		uint16 t = getSegment(data.word(kExtras)).word(kExtextdat + 2*i);
+		if (t >= offset + textSize)
+			getSegment(data.word(kExtras)).word(kExtextdat + 2*i) = t - textSize;
+	}
+}
+
+// This takes es:di and cl as input, but es:di always points to getExAd(cl)
+void DreamGenContext::deleteExObject() {
+	deleteExObject(cl);
+}
+
+void DreamBase::deleteExObject(uint8 index) {
+	DynObject *obj = getExAd(index);
+
+	memset(obj, 0xFF, sizeof(DynObject));
+
+	deleteExFrame(3*index);
+	deleteExFrame(3*index + 1);
+
+	deleteExText(index);
+
+	for (uint8 i = 0; i < kNumexobjects; ++i) {
+		DynObject *t = getExAd(index);
+		// Is this object contained in the one we've just deleted?
+		if (t->mapad[0] == 4 && t->mapad[1] == index)
+			deleteExObject(i);
+	}
+}
+
+void DreamBase::removeObFromInv() {
+	if (data.byte(kCommand) == 100)
+		return; // object doesn't exit
+
+	assert(data.byte(kObjecttype) == kExObjectType);
+
+	deleteExObject(data.byte(kCommand));
+}
+
+
 } // End of namespace DreamGen

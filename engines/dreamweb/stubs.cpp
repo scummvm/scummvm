@@ -1734,7 +1734,7 @@ void DreamGenContext::findExObject() {
 	bx = kExdata + al * 16;
 }
 
-uint16 DreamGenContext::findExObject(const char *id) {
+uint16 DreamBase::findExObject(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		if (objectMatches(getExAd(index), id))
 			return index;

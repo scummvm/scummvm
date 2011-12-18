@@ -482,9 +482,7 @@ public:
 	void getAnyAd();
 	void reminders();
 	void inToInv();
-	void deleteExText();
 	void getFreeAd();
-	void removeObFromInv();
 	void dirFile();
 	void pickupConts();
 	void fadeUpMon();
@@ -496,13 +494,11 @@ public:
 	void getSetAd();
 	void nextColon();
 	void findOpenPos();
-	void deleteExFrame();
 	void searchForSame();
 	void rollEm();
 	void lookAtPlace();
 	void findAllOpen();
 	void fillOpen();
-	void deleteExObject();
 	void getEitherAd();
 	void dropObject();
 	void useOpened();

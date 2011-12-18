@@ -349,7 +349,9 @@
 	void lookAtCard();
 	bool execCommand();
 	void findExObject();
-	uint16 findExObject(const char *id);
+	uint16 findExObject(const char *id) {
+		return DreamBase::findExObject(id);
+	}
 	void isRyanHolding();
 	bool isRyanHolding(const char *id) {
 		return DreamBase::isRyanHolding(id);
@@ -371,5 +373,17 @@
 	void showDiaryKeys();
 	void showKeys();
 	void getKeyAndLogo();
+	void deleteExObject();
+	void deleteExObject(uint8 index) {
+		DreamBase::deleteExObject(index);
+	}
+	void deleteExFrame();
+	void deleteExFrame(uint8 frameNum) {
+		DreamBase::deleteExFrame(frameNum);
+	}
+	void deleteExText();
+	void deleteExText(uint8 textNum) {
+		DreamBase::deleteExText(textNum);
+	}
 
 #endif

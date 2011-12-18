@@ -48,7 +48,7 @@ static void (DreamGenContext::*reelCallbacks[57])(ReelRoutine &) = {
 	&DreamBase::gates, &DreamBase::introMagic3,
 	&DreamBase::introMonks1, &DreamBase::candles,
 	&DreamBase::introMonks2, &DreamBase::handClap,
-	&DreamBase::monkAndRyan, &DreamGenContext::endGameSeq,
+	&DreamBase::monkAndRyan, &DreamBase::endGameSeq,
 	&DreamBase::priest, &DreamBase::madman,
 	&DreamBase::madmansTelly, &DreamBase::alleyBarkSound,
 	&DreamBase::foghornSound, &DreamBase::carParkDrip,

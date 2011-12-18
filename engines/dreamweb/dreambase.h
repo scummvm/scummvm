@@ -137,6 +137,10 @@ public:
 	void findAllRyan(uint8 *inv);
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
 	void obPicture();
+	void removeObFromInv();
+	void deleteExObject(uint8 index);
+	void deleteExFrame(uint8 frameNum);
+	void deleteExText(uint8 textNum);
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -417,6 +421,7 @@ public:
 	void hangOnCurs(uint16 frameCount);
 	const uint8 *findObName(uint8 type, uint8 index);
 	void copyName(uint8 type, uint8 index, uint8 *dst);
+	uint16 findExObject(const char *id);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
