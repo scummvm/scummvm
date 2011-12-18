@@ -127,6 +127,11 @@ void SmushDecoder::handleFrame() {
 	int32 size;
 	int pos = 0;
 
+	if (_videoLooping && _curFrame == _nbframes - 1) {
+		_file->seek(_startPos, SEEK_SET);
+		_curFrame = -1;
+	}
+
 	if (_curFrame == -1)
 		_startTime = g_system->getMillis();
 
@@ -192,10 +197,6 @@ void SmushDecoder::handleFrame() {
 	delete[] frame;
 
 	++_curFrame;
-	if (_videoLooping && _curFrame == _nbframes - 1) {
-		_file->seek(_startPos, SEEK_SET);
-		_curFrame = -1;
-	}
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
@@ -546,6 +547,25 @@ void SmushDecoder::seekToTime(Audio::Timestamp time) { // FIXME: This will be of
 
 uint32 SmushDecoder::getDuration() const {
 	return (uint32) (getFrameCount() / getFrameRate().toDouble());
+}
+
+uint32 SmushDecoder::getTimeToNextFrame() const {
+	if (endOfVideo()) { //handle looping
+		uint32 elapsedTime = getElapsedTime();
+
+		Common::Rational beginTime = (_curFrame + 1) * 1000;
+		beginTime /= getFrameRate();
+		uint32 nextFrameStartTime = beginTime.toInt();
+
+		// If the time that the next frame should be shown has past
+		// the frame should be shown ASAP.
+		if (nextFrameStartTime <= elapsedTime)
+			return 0;
+
+		return nextFrameStartTime - elapsedTime;
+	} else {
+		return FixedRateVideoDecoder::getTimeToNextFrame();
+	}
 }
 
 } // end of namespace Grim

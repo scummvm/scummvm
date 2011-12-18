@@ -39,6 +39,7 @@ public:
 private:
 	bool loadFile(Common::String filename);
 	void handleFrame();
+	void postHandleFrame();
 	SmushDecoder* getDecoder();
 	void init();
 	bool _demo;

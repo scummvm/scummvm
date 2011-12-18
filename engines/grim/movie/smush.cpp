@@ -63,11 +63,6 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if (_demo) {
-		_x = getDecoder()->getX();
-		_y = getDecoder()->getY();
-	}
-
 	if (_videoDecoder->endOfVideo()) {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping ) {
@@ -76,8 +71,15 @@ void SmushPlayer::handleFrame() {
 			deinit();
 			return;
 		} else {
-			getDecoder()->rewind(); // This doesnt handle if looping fails.
+// 			getDecoder()->rewind(); // This doesnt handle if looping fails.
 		}
+	}
+}
+
+void SmushPlayer::postHandleFrame() {
+	if (_demo) {
+		_x = getDecoder()->getX();
+		_y = getDecoder()->getY();
 	}
 }
 

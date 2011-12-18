@@ -73,11 +73,11 @@ void MoviePlayer::stop() {
 void MoviePlayer::timerCallback(void *) {
 	Common::StackLock lock(g_movie->_frameMutex);
 	if (g_movie->prepareFrame())
-		g_movie->handleFrame();
+		g_movie->postHandleFrame();
 }
 
 bool MoviePlayer::prepareFrame() {
-	if (_videoDecoder->endOfVideo()) {
+	if (!_videoLooping && _videoDecoder->endOfVideo()) {
 		_videoFinished = true;
 	}
 
@@ -92,6 +92,8 @@ bool MoviePlayer::prepareFrame() {
 
 	if (_videoDecoder->getTimeToNextFrame() > 0)
 		return false;
+
+	handleFrame();
 
 	_internalSurface = _videoDecoder->decodeNextFrame();
 	_updateNeeded = true;

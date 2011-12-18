@@ -102,6 +102,18 @@ protected:
 	/**
 	 * Frame-handling function.
 	 *
+	 * Perform any codec-specific per-frame operations before the decoder
+	 * decodes the next frame.
+	 *
+	 * @see prepareFrame
+	 * @see clearUpdateNeeded
+	 * @see isUpdateNeeded
+	 */
+	virtual void handleFrame() {};
+
+	/**
+	 * Frame-handling function.
+	 *
 	 * Perform any codec-specific per-frame operations after prepareFrame has been
 	 * run, this function is called whenever prepareFrame returns true.
 	 *
@@ -109,7 +121,7 @@ protected:
 	 * @see clearUpdateNeeded
 	 * @see isUpdateNeeded
 	 */
-	virtual void handleFrame() {};
+	virtual void postHandleFrame() {};
 
 	/**
 	 * Initialization of buffers
