@@ -2129,33 +2129,6 @@ passpassed:
 	es.byte(bx) = 1;
 }
 
-void DreamGenContext::showKeys() {
-	STACK_CHECK;
-	cx = 10;
-	randomAccess();
-	scrollMonitor();
-	al = 18;
-	monMessage();
-	es = cs;
-	bx = offset_keys;
-	cx = 4;
-keysloop:
-	push(cx);
-	push(bx);
-	_cmp(es.byte(bx), 0);
-	if (flags.z())
-		goto notheld;
-	_add(bx, 14);
-	monPrint();
-notheld:
-	bx = pop();
-	cx = pop();
-	_add(bx, 26);
-	if (--cx)
-		goto keysloop;
-	scrollMonitor();
-}
-
 void DreamGenContext::read() {
 	STACK_CHECK;
 	cx = 40;

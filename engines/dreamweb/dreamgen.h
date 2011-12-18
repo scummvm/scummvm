@@ -495,7 +495,6 @@ public:
 	void purgeAnItem();
 	void purgeALocation();
 	void getSetAd();
-	void showKeys();
 	void nextColon();
 	void findOpenPos();
 	void deleteExFrame();

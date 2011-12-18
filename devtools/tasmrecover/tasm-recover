@@ -764,6 +764,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showgun',
 	'showicon',
 	'showkeypad',
+	'showkeys',
 	'showleftpage',
 	'showloadops',
 	'showmainops',

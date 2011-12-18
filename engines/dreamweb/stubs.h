@@ -369,5 +369,6 @@
 	uint16 findInvPosCPP();
 	void setPickup();
 	void showDiaryKeys();
+	void showKeys();
 
 #endif

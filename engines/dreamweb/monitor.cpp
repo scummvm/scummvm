@@ -25,10 +25,22 @@
 namespace DreamGen {
 
 struct MonitorKeyEntry {
-	uint8 b0;
-	uint8 b1;
-	char  b2[24];
+	uint8 keyHeld;
+	uint8 b1;	// unused, for alignment
+	char  userpass[24];
+	//char  password[12];	// for the new monitor key list below
+	//char  username[12];	// for the new monitor key list below
 };
+
+#if 0
+// New monitor key list
+static MonitorKeyEntry monitorKeyEntries[4] = {
+	{ 1, "PUBLIC     ", "PUBLIC     " },
+	{ 0, "BLACKDRAGON", "RYAN       " },
+	{ 0, "HENDRIX    ", "LOUIS      " },
+	{ 0, "SEPTIMUS   ", "BECKETT    " }
+};
+#endif
 
 void DreamGenContext::useMon() {
 	data.byte(kLasttrigger) = 0;
@@ -36,10 +48,10 @@ void DreamGenContext::useMon() {
 	memset(data.ptr(offset_operand1+1, 0), ' ', 12);
 
 	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
-	monitorKeyEntries[0].b0 = 1;
-	monitorKeyEntries[1].b0 = 0;
-	monitorKeyEntries[2].b0 = 0;
-	monitorKeyEntries[3].b0 = 0;
+	monitorKeyEntries[0].keyHeld = 1;
+	monitorKeyEntries[1].keyHeld = 0;
+	monitorKeyEntries[2].keyHeld = 0;
+	monitorKeyEntries[3].keyHeld = 0;
 
 	createPanel();
 	showPanel();
@@ -415,6 +427,22 @@ void DreamBase::loadCart() {
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T23"); // monitor file 23
 	else
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24
+}
+
+void DreamGenContext::showKeys() {
+	randomAccess(10);
+	scrollMonitor();
+	monMessage(18);
+
+	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)data.ptr(offset_keys, 0);
+
+	for (int i = 0; i < 4; i++) {
+		if (monitorKeyEntries[i].keyHeld)
+			monPrint(monitorKeyEntries[i].userpass + 12);	// username
+			//monPrint(monitorKeyEntries[i].username);
+	}
+
+	scrollMonitor();
 }
 
 } // End of namespace DreamGen
