@@ -405,8 +405,9 @@ void DreamGenContext::loadNews() {
 void DreamGenContext::loadCart() {
 	byte cartridgeId = 0;
 	uint16 objectIndex = findSetObject("INTF");
-	if (checkInside(objectIndex, 1) != kNumexobjects)
-		cartridgeId = getSetAd(objectIndex)->name[0] + 1;
+	uint16 cartridgeIndex = checkInside(objectIndex, 1);
+	if (cartridgeIndex != kNumexobjects)
+		cartridgeId = getExAd(cartridgeIndex)->id[3] + 1;
 
 	if (cartridgeId == 0)
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T20"); // monitor file 20

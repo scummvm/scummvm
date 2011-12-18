@@ -1801,6 +1801,8 @@ bool DreamBase::isRyanHolding(const char *id) {
 
 void DreamGenContext::checkInside() {
 	cl = checkInside(al, ah);
+	es = data.word(kExtras);
+	bx = kExdata + cl * sizeof(DynObject);
 }
 
 uint16 DreamGenContext::checkInside(uint16 command, uint16 type) {
