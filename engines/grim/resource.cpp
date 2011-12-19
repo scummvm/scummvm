@@ -328,15 +328,13 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 
 Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model *parent) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find model %s", filename.c_str());
-		putIntoCache(fname, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Model *result = new Model(filename, b->getData(), b->getLen(), c, parent);
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream)
+		error("Could not find model %s", filename.c_str());
+
+	Model *result = new Model(filename, stream, c, parent);
 	_models.push_back(result);
 
 	return result;
