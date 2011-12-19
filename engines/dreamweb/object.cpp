@@ -393,9 +393,7 @@ void DreamGenContext::findInvPos() {
 }
 
 void DreamGenContext::selectOb() {
-	es = data.word(kBuffers);
-
-	uint16 objectId = es.word(findInvPosCPP());
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
 	if ((objectId & 0xFF) == 255) {
 		blank();
 		return;
@@ -404,28 +402,19 @@ void DreamGenContext::selectOb() {
 	data.byte(kWithobject) = objectId & 0x00FF;
 	data.byte(kWithtype)   = objectId >> 8;
 
-	if (objectId == data.word(kOldsubject)) {
-		if (data.byte(kCommandtype) == 221) {
-			// Object already selected
-			if (data.word(kMousebutton) != data.word(kOldbutton) && (data.word(kMousebutton) & 1)) {
-				delPointer();
-				data.byte(kInvopen) = 0;
-				useRoutine();
-			}
-			return;
-		} else {
+	if (objectId != data.word(kOldsubject) || data.byte(kCommandtype) != 221) {
+		if (objectId == data.word(kOldsubject))
 			data.byte(kCommandtype) = 221;
-		}
+		data.word(kOldsubject) = objectId;
+		commandWithOb(0, data.byte(kWithtype), data.byte(kWithobject));
 	}
 
-	data.word(kOldsubject) = objectId;
-	commandWithOb(0, data.byte(kWithtype), data.byte(kWithobject));
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
 
-	if (data.word(kMousebutton) != data.word(kOldbutton) && (data.word(kMousebutton) & 1)) {
-		delPointer();
-		data.byte(kInvopen) = 0;
-		useRoutine();
-	}
+	delPointer();
+	data.byte(kInvopen) = 0;
+	useRoutine();
 }
 
 void DreamGenContext::setPickup() {
@@ -577,11 +566,12 @@ void DreamGenContext::inToInv() {
 
 	subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
 
-	if (subject == data.word(kOldsubject) && data.byte(kCommandtype) != 220)
-		data.byte(kCommandtype) = 220;
-
-	data.word(kOldsubject) = subject;
-	commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+	if (subject != data.word(kOldsubject) || data.byte(kCommandtype) != 220) {
+		if (subject == data.word(kOldsubject))
+			data.byte(kCommandtype) = 220;
+		data.word(kOldsubject) = subject;
+		commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
 		return; // notletgo2
@@ -613,18 +603,16 @@ void DreamGenContext::outOfInv() {
 		return;
 	}
 
-	if (subject == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
-		data.byte(kCommandtype) = 221;
+	if (subject != data.word(kOldsubject) || data.byte(kCommandtype) != 221) {
+		if (subject == data.word(kOldsubject))
+			data.byte(kCommandtype) = 221;
+		data.word(kOldsubject) = subject;
+		byte type = subject >> 8;
+		byte frame = subject & 0xFF;
+		commandWithOb(36, type, frame);
+	}
 
-	data.word(kOldsubject) = subject;
-	byte type = subject >> 8;
-	byte frame = subject & 0xFF;
-	commandWithOb(36, type, frame);
-
-	if (data.word(kMousebutton) == data.word(kOldbutton))
-		return; // notletgo
-
-	if (!(data.word(kMousebutton) & 1))
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
 		return;
 
 	delPointer();
