@@ -30,13 +30,12 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/gfx_base.h"
-#include "engines/grim/lab.h"
 
 namespace Grim {
 
-Font::Font(const Common::String &filename, const char *data, int len) :
+Font::Font(const Common::String &filename, Common::SeekableReadStream *data) :
 		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(0) {
-	load(filename, data, len);
+	load(filename, data);
 }
 
 Font::Font() :
@@ -53,55 +52,52 @@ Font::~Font() {
 	g_driver->destroyFont(this);
 }
 
-void Font::load(const Common::String &filename, const char *data, int len) {
+void Font::load(const Common::String &filename, Common::SeekableReadStream *data) {
 	_filename = filename;
-	_numChars = READ_LE_UINT32(data);
-	_dataSize = READ_LE_UINT32(data + 4);
-	_height = READ_LE_UINT32(data + 8);
-	_baseOffsetY = READ_LE_UINT32(data + 12);
-	_firstChar = READ_LE_UINT32(data + 24);
-	_lastChar = READ_LE_UINT32(data + 28);
+	_numChars = data->readUint32LE();
+	_dataSize = data->readUint32LE();
+	_height = data->readUint32LE();
+	_baseOffsetY = data->readUint32LE();
+	data->seek(24, SEEK_SET);
+	_firstChar = data->readUint32LE();
+	_lastChar = data->readUint32LE();
 	int8 available_height = _height - _baseOffsetY;
-
-	data += 32;
 
 	// Read character indexes - are the key/value reversed?
 	_charIndex = new uint16[_numChars];
 	if (!_charIndex)
 		error("Could not load font %s. Out of memory", _filename.c_str());
-	for (uint i = 0; i < _numChars; ++i) {
-		_charIndex[i] = READ_LE_UINT16(data + 2 * i);
-	}
-
-	data += _numChars * 2;
+	for (uint i = 0; i < _numChars; ++i)
+		_charIndex[i] = data->readUint16LE();
 
 	// Read character headers
 	_charHeaders = new CharHeader[_numChars];
 	if (!_charHeaders)
 		error("Could not load font %s. Out of memory", _filename.c_str());
 	for (uint i = 0; i < _numChars; ++i) {
-		_charHeaders[i].offset = READ_LE_UINT32(data);
-		_charHeaders[i].width = *(int8 *)(data + 4);
-		_charHeaders[i].startingCol = *(int8 *)(data + 5);
-		_charHeaders[i].startingLine = *(int8 *)(data + 6);
-		_charHeaders[i].dataWidth = READ_LE_UINT32(data + 8);
-		_charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
+		_charHeaders[i].offset = data->readUint32LE();
+		_charHeaders[i].width = data->readSByte();
+		_charHeaders[i].startingCol = data->readSByte();
+		_charHeaders[i].startingLine = data->readSByte();
+		data->seek(1, SEEK_CUR);
+		_charHeaders[i].dataWidth = data->readUint32LE();
+		_charHeaders[i].dataHeight = data->readUint32LE();
 		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
 		if (overflow > 0) {
 			warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", _filename.c_str(), i, overflow);
 			available_height += overflow;
 			_height += overflow;
 		}
-		data += 16;
 	}
 	// Read font data
 	_fontData = new byte[_dataSize];
 	if (!_fontData)
 		error("Could not load font %s. Out of memory", _filename.c_str());
 
-	memcpy(_fontData, data, _dataSize);
+	data->read(_fontData, _dataSize);
 
 	g_driver->createFont(this);
+	delete data;
 }
 
 uint16 Font::getCharIndex(unsigned char c) const {
@@ -148,8 +144,10 @@ void Font::saveState(SaveGame *state) const {
 
 void Font::restoreState(SaveGame *state) {
 	Common::String fname = state->readString();
-	Block *b = g_resourceloader->getBlock(fname);
-	load(fname, b->getData(), b->getLen());
+	Common::SeekableReadStream *stream;
+
+	stream = g_resourceloader->openNewStreamFile(fname.c_str());
+	load(fname, stream);
 }
 
 // Hardcoded default font for GUI, etc

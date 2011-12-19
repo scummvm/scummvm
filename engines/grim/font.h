@@ -25,16 +25,20 @@
 
 #include "engines/grim/pool.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 class SaveGame;
 
 class Font : public PoolObject<Font, MKTAG('F', 'O', 'N', 'T')> {
 public:
-	Font(const Common::String &filename, const char *data, int len);
+	Font(const Common::String &filename, Common::SeekableReadStream *data);
 	Font();
 	~Font();
-	void load(const Common::String &filename, const char *data, int len);
+	void load(const Common::String &filename, Common::SeekableReadStream *data);
 
 	const Common::String &getFilename() const { return _filename; }
 	int32 getHeight() const { return _height; }

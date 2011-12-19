@@ -265,15 +265,13 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 }
 
 Font *ResourceLoader::loadFont(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b)
-			error("Could not find font file %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Font *result = new Font(filename, b->getData(), b->getLen());
+	stream = openNewStreamFile(filename.c_str());
+	if(!stream)
+		error("Could not find font file %s", filename.c_str());
+
+	Font *result = new Font(filename, stream);
 
 	return result;
 }
