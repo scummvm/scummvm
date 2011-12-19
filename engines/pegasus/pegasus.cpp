@@ -306,7 +306,7 @@ void PegasusEngine::runIntro() {
 	delete video;
 }
 
-void PegasusEngine::showLoadDialog() {
+Common::Error PegasusEngine::showLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
 	slc.setSaveMode(false);
 
@@ -317,10 +317,47 @@ void PegasusEngine::showLoadDialog() {
 
 	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
-	if (slot >= 0)
-		loadGameState(slot);
+	Common::Error result;
+
+	if (slot >= 0) {
+		if (loadGameState(slot).getCode() == Common::kNoError)
+			result = Common::kNoError;
+		else
+			result = Common::kUnknownError;
+	} else {
+		result = Common::kUserCanceled;
+	}
 
 	slc.close();
+
+	return result;
+}
+
+Common::Error PegasusEngine::showSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"));
+	slc.setSaveMode(true);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+	Common::Error result;
+
+	if (slot >= 0) {
+		if (saveGameState(slot, slc.getResultString()).getCode() == Common::kNoError)
+			result = Common::kNoError;
+		else
+			result = Common::kUnknownError;
+	} else {
+		result = Common::kUserCanceled;
+	}
+
+	slc.close();
+
+	return result;
 }
 
 GUI::Debugger *PegasusEngine::getDebugger() {
@@ -640,6 +677,8 @@ bool PegasusEngine::checkGameMenu() {
 }
 
 void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
+	Common::Error result;
+
 	switch (command) {
 	case kMenuCmdStartAdventure:
 		GameState.setWalkthroughMode(false);
@@ -734,13 +773,23 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 			resetIntroTimer();
 		break;
 	case kMenuCmdPauseSave:
-		error("Save game");
+		if (showSaveDialog().getCode() != Common::kUserCanceled)
+			pauseMenu(false);
 		break;
 	case kMenuCmdPauseContinue:
 		pauseMenu(false);
 		break;
 	case kMenuCmdPauseRestore:
-		error("Load game");
+		makeContinuePoint();
+		result = showLoadDialog();
+
+		if (result.getCode() == Common::kNoError) {
+			// Successfully loaded, unpause the game
+			pauseMenu(false);
+		} else if (result.getCode() != Common::kUserCanceled) {
+			// Try to get us back to a sane state
+			loadFromContinuePoint();
+		}
 		break;
 	case kMenuCmdPauseQuit:
 		_gfx->doFadeOutSync();

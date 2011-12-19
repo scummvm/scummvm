@@ -236,11 +236,12 @@ private:
 	void loadFromContinuePoint();
 	Common::ReadStream *_continuePoint;
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
+	Common::Error showLoadDialog();
+	Common::Error showSaveDialog();
 
 	// Misc.
 	Hotspot _returnHotspot;
 	InputHandler *_savedHandler;
-	void showLoadDialog();
 	void showTempScreen(const Common::String &fileName);
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
