@@ -220,64 +220,6 @@ endearly2:
 	cx = pop();
 }
 
-void DreamGenContext::fadeDownMon() {
-	STACK_CHECK;
-	palToStartPal();
-	palToEndPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
-	cx = 3*8;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
-	_stosb();
-	_stosw();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-	cx = 64;
-	hangOn();
-}
-
-void DreamGenContext::fadeUpMon() {
-	STACK_CHECK;
-	palToStartPal();
-	palToEndPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
-	cx = 3*8;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
-	_stosb();
-	_stosw();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-	cx = 128;
-	hangOn();
-}
-
-void DreamGenContext::initialMonCols() {
-	STACK_CHECK;
-	palToStartPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
-	cx = 3*9;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
-	_stosb();
-	_stosw();
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
-	al = 230;
-	cx = 18;
-	showGroup();
-}
-
 void DreamGenContext::fillOpen() {
 	STACK_CHECK;
 	delTextLine();

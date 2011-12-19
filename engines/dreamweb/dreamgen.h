@@ -465,7 +465,6 @@ public:
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
-	void fadeDownMon();
 	void getPersonText();
 	void getObTextStart();
 	void checkObjectSize();
@@ -480,7 +479,6 @@ public:
 	void getFreeAd();
 	void dirFile();
 	void pickupConts();
-	void fadeUpMon();
 	void reExFromInv();
 	void transferMap();
 	void purgeAnItem();
@@ -505,7 +503,6 @@ public:
 	void incRyanPage();
 	void searchForFiles();
 	void getExAd();
-	void initialMonCols();
 	void swapWithInv();
 	void transferToEx();
 	void parser();
