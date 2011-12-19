@@ -76,7 +76,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 525:
 	case 600:
 	case 700:
+		error("Missing scene %d from group 0", sceneNumber);
 	case 800:
+		// Sick bay
+		return new Scene800();
 	case 825:
 		error("Missing scene %d from group 0", sceneNumber);
 	case 850:

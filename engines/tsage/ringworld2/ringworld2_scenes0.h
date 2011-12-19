@@ -370,6 +370,55 @@ public:
 	virtual void dispatch();
 };
 
+class Scene800: public SceneExt {
+	/* Items */
+	class Button: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class CableJunction: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class DeviceSlot: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Door: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Tray: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class ComScanner: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Cabinet: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	NamedHotspot _background, _autoDoc, _diskSlot, _couch;
+	NamedHotspot _medicalDatabase, _dataConduits;
+	Button _button;
+	CableJunction _cableJunction;
+	DeviceSlot _deviceSlot;
+	SceneActor _autodocCover, _opticalFibre, _reader;
+	Door _door;
+	Tray _tray;
+	ComScanner _comScanner;
+	Cabinet _cabinet;
+	SequenceManager _sequenceManager1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene850: public SceneExt {
 	/* Items */
 	class Indicator: public NamedHotspot {

@@ -2901,6 +2901,290 @@ void Scene400::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 800 - Sick Bay
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene800::Button::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE) {
+		return NamedHotspot::startAction(action, event);
+	} else {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 802;
+		scene->setAction(&scene->_sequenceManager1, scene, 802, &R2_GLOBALS._player, &scene->_autodocCover, NULL);
+		return true;
+	}
+}
+
+bool Scene800::CableJunction::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != R2_OPTICAL_FIBRE) {
+		return NamedHotspot::startAction(action, event);
+	} else {
+		R2_GLOBALS._player.disableControl();
+		scene->_opticalFibre.postInit();
+		scene->_sceneMode = 803;
+
+		if (R2_INVENTORY.getObjectScene(R2_READER) == 800)
+			scene->setAction(&scene->_sequenceManager1, scene, 813, &R2_GLOBALS._player, &scene->_opticalFibre, &scene->_reader, NULL);
+		else
+			scene->setAction(&scene->_sequenceManager1, scene, 803, &R2_GLOBALS._player, &scene->_opticalFibre, NULL);
+
+		return true;
+	}
+}
+
+bool Scene800::DeviceSlot::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (R2_INVENTORY.getObjectScene(R2_READER) != 800)
+			break;
+
+		R2_GLOBALS._player.disableControl();
+		scene->_reader.postInit();
+
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800)
+			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player, &scene->_reader, &scene->_opticalFibre, NULL);
+		else
+			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player, &scene->_reader, NULL);
+		return true;
+	default:
+		break;
+	}
+
+	return NamedHotspot::startAction(action, event);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene800::Door::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 801;
+		scene->setAction(&scene->_sequenceManager1, scene, 801, &R2_GLOBALS._player, &scene->_door, NULL);
+		return true;
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene800::Tray::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (!R2_GLOBALS.getFlag(10)) {
+			R2_GLOBALS._player.disableControl();
+			scene->_sceneMode = 806;
+			scene->setAction(&scene->_sequenceManager1, scene, 806, &R2_GLOBALS._player, &scene->_tray, NULL);
+		} else if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 825) {
+			R2_GLOBALS._player.disableControl();
+			scene->_sceneMode = 808;
+			scene->setAction(&scene->_sequenceManager1, scene, 808, &R2_GLOBALS._player, &scene->_tray, NULL);
+		} else {
+			R2_GLOBALS._player.disableControl();
+			scene->_sceneMode = 807;
+			scene->setAction(&scene->_sequenceManager1, scene, 807, &R2_GLOBALS._player, &scene->_tray, NULL);
+		}
+		return true;
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene800::ComScanner::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_cabinet._frame == 1)
+			return false;
+
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 811;
+		scene->setAction(&scene->_sequenceManager1, scene, 811, &R2_GLOBALS._player, &scene->_comScanner, NULL);
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(800, 35);
+		return true;
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene800::Cabinet::startAction(CursorType action, Event &event) {
+	Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+
+		if (scene->_cabinet._frame == 1) {
+			scene->_sceneMode = 810;
+			scene->setAction(&scene->_sequenceManager1, scene, 810, &R2_GLOBALS._player, &scene->_cabinet, NULL);
+			R2_GLOBALS.setFlag(56);
+		} else {
+			scene->_sceneMode = 812;
+			scene->setAction(&scene->_sequenceManager1, scene, 812, &R2_GLOBALS._player, &scene->_cabinet, NULL);
+			R2_GLOBALS.clearFlag(56);
+		}
+		return true;
+	default:
+		return SceneActor::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene800::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(800);
+
+	_door.postInit();
+	_door.setVisage(800);
+	_door.setPosition(Common::Point(286, 108));
+	_door.fixPriority(50);
+	_door.setDetails(800, 3, -1, -1, 1, NULL);
+
+	_autodocCover.postInit();
+	_autodocCover.setup(800, 2, 1);
+	_autodocCover.setPosition(Common::Point(119, 161));
+	_autodocCover.setDetails(800, 6, 7, -1, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
+		_opticalFibre.postInit();
+		if (R2_INVENTORY.getObjectScene(R2_READER) == 800)
+			_opticalFibre.setup(800, 4, 1);
+		else
+			_opticalFibre.setup(800, 7, 2);
+
+		_opticalFibre.setPosition(Common::Point(220, 124));
+		_opticalFibre.fixPriority(140);
+	}
+
+	if (R2_INVENTORY.getObjectScene(R2_READER) == 800) {
+		_reader.postInit();
+		
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
+			_opticalFibre.setup(800, 4, 1);
+			_reader.hide();
+		} else {
+			_reader.setup(800, 7, 1);
+		}
+
+		_reader.setPosition(Common::Point(230, 120));
+		_reader.fixPriority(140);
+	}
+
+	_cabinet.postInit();
+	_cabinet.setup(801, 1, R2_GLOBALS.getFlag(56) ? 6 : 1);
+	_cabinet.setPosition(Common::Point(169, 79));
+	_cabinet.setDetails(800, 41, -1, -1, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(R2_9) == 800) {
+		_comScanner.postInit();
+		_comScanner.setup(801, 2, 1);
+		_comScanner.setPosition(Common::Point(174, 73));
+		_comScanner.setDetails(800, 34, 35, -1, 1, NULL);
+	}
+
+	_tray.postInit();
+	_tray.setup(800, R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == 825 ? 6 : 5, 1);
+	if (R2_GLOBALS.getFlag(10))
+		_tray.setFrame(5);
+	_tray.setPosition(Common::Point(203, 144));
+	_tray.setDetails(800, 12, -1, 14, 1, NULL);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	_dataConduits.setDetails(13, 800, 21, -1, -1);
+	_cableJunction.setDetails(Rect(206, 111, 223, 125), 800, 24, -1, -1, 1, NULL);
+	_deviceSlot.setDetails(Rect(220, 108, 239, 122), 800, 27, -1, -1, 1, NULL);
+	_diskSlot.setDetails(Rect(209, 124, 226, 133), 800, 9, -1, 11, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(R2_READER) == 800)
+		_deviceSlot._lookLineNum = 33;
+
+	_button.setDetails(Rect(189, 112, 204, 124), 800, 30, -1, -1, 1, NULL);
+	_couch.setDetails(11, 800, 15, -1, 17);
+	_autoDoc.setDetails(Rect(152, 92, 247, 151), 800, 6, 7, -1, 1, NULL);
+	_medicalDatabase.setDetails(12, 800, 18, -1, -1);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 800, 0, -1, -1, 1, NULL);
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 825:
+		_sceneMode = 800;
+		setAction(&_sequenceManager1, this, 805, &R2_GLOBALS._player, &_autodocCover, NULL);
+		break;
+	case 850:
+		_sceneMode = 800;
+		setAction(&_sequenceManager1, this, 800, &R2_GLOBALS._player, &_door, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.setPosition(Common::Point(277, 132));
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene800::signal() {
+	switch (_sceneMode) {
+	case 801:
+		R2_GLOBALS._sceneManager.changeScene(850);
+		break;
+	case 802:
+		R2_GLOBALS._sceneManager.changeScene(825);
+		break;
+	case 803:
+		R2_GLOBALS._player.enableControl();
+		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBRE, 800);
+		break;
+	case 804:
+		R2_GLOBALS._player.enableControl();
+		_deviceSlot._lookLineNum = 33;
+		R2_INVENTORY.setObjectScene(R2_READER, 800);
+		break;
+	case 806:
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS.setFlag(10);
+		break;
+	case 807:
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS.clearFlag(10);
+		break;
+	case 808:
+		R2_GLOBALS._player.enableControl();
+		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 1);
+		break;
+	case 809:
+		R2_GLOBALS._player.enableControl();
+		R2_INVENTORY.setObjectScene(R2_READER, 1);
+		break;
+	case 811:
+		R2_GLOBALS._player.enableControl();
+		_comScanner.remove();
+		R2_INVENTORY.setObjectScene(R2_9, 1);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+
+/*--------------------------------------------------------------------------
  * Scene 850 - Deck #5 - By Lift
  *
  *--------------------------------------------------------------------------*/
