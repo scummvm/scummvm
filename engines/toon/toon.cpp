@@ -2297,8 +2297,7 @@ void ToonEngine::processConversationClick(Conversation *conv, int32 status) {
 	if (v8 == -1) {
 		_gameState->_mouseHidden = false;
 	} else {
-retry:
-		while (1) {
+		while (v8 != -1) {
 			v7 += 1;
 			int16 *v14 = (int16 *)((char *)_conversationData + v8);
 
@@ -2315,15 +2314,10 @@ retry:
 					v8 = READ_LE_INT16(v7);
 					if (v8 == -1)
 						return;
-
-					goto retry;
+					else
+						break; // restarts while loop;
 				}
 			}
-
-			if (v8 != -1)
-				continue;
-
-			break;
 		}
 	}
 }

@@ -515,7 +515,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	r.top = Surface::textY();
 	r.bottom = s->height() - Surface::textY() + 1;
 
-	for (;;) {
+	bool bailOut = false;
+
+	while (!bailOut) {
 		if (refreshFlag) {
 			// Set up the contents of the menu
 			s->fillRect(r, bgColor);
@@ -546,8 +548,8 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 		while (e.pollEvent()) {
 			if (engine.shouldQuit()) {
 				selectedIndex = 0xffff;
-				goto bail_out;
-
+				bailOut = true;
+				break;
 			} else if (e.type() == Common::EVENT_WHEELUP) {
 				// Scroll upwards
 				if (selectedIndex > 0) {
@@ -571,10 +573,12 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					++selectedIndex;
 					refreshFlag = true;
 				} else if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
-					goto bail_out;
+					bailOut = true;
+					break;
 				} else if (keycode == Common::KEYCODE_ESCAPE) {
 					selectedIndex = 0xffff;
-					goto bail_out;
+					bailOut = true;
+					break;
 				}
 
 #ifdef LURE_CLICKABLE_MENUS
@@ -586,46 +590,51 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				if (r.contains(x, y)) {
 					selectedIndex = (y - r.top) / FONT_HEIGHT;
 					if (e.type() == Common::EVENT_LBUTTONDOWN)
-						goto bail_out;
+						bailOut = true;
+						break;
 				}
 #else
 			} else if ((e.type() == Common::EVENT_LBUTTONDOWN) ||
 					(e.type() == Common::EVENT_MBUTTONDOWN)) {
 				//mouse.waitForRelease();
-				goto bail_out;
+				bailOut = true;
+				break;
 #endif
 			} else if (e.type() == Common::EVENT_RBUTTONDOWN) {
 				mouse.waitForRelease();
 				selectedIndex = 0xffff;
-				goto bail_out;
+				bailOut = true;
+				break;
 			}
 		}
 
+		if (!bailOut) {
 #ifndef LURE_CLICKABLE_MENUS
-		// Warping the mouse to "neutral" even if the top/bottom menu
-		// entry has been reached has both pros and cons. It makes the
-		// menu behave a bit more sensibly, but it also makes it harder
-		// to move the mouse pointer out of the ScummVM window.
+			// Warping the mouse to "neutral" even if the top/bottom menu
+			// entry has been reached has both pros and cons. It makes the
+			// menu behave a bit more sensibly, but it also makes it harder
+			// to move the mouse pointer out of the ScummVM window.
 
-		if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
-			if (selectedIndex > 0) {
-				--selectedIndex;
-				refreshFlag = true;
+			if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
+				if (selectedIndex > 0) {
+					--selectedIndex;
+					refreshFlag = true;
+				}
+				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
+			} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
+				if (selectedIndex < numEntries - 1) {
+					++selectedIndex;
+					refreshFlag = true;
+				}
+				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 			}
-			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-		} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
-			if (selectedIndex < numEntries - 1) {
-				++selectedIndex;
-				refreshFlag = true;
-			}
-			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-		}
 #endif
 
-		system.delayMillis(20);
+			system.delayMillis(20);
+		}
 	}
 
-bail_out:
+	// bailOut
 	delete s;
 
 #ifndef LURE_CLICKABLE_MENUS

@@ -486,6 +486,16 @@ static bool DoRestore() {
 	return !failed;
 }
 
+static void SaveFailure(Common::OutSaveFile *f) {
+	if (f) {
+		delete f;
+		_vm->getSaveFileMan()->removeSavefile(SaveSceneName);
+		SaveSceneName = NULL;	// Invalidate save name
+	}
+	GUI::MessageDialog dialog(_("Failed to save game state to file."));
+	dialog.runModal();
+}
+
 /**
  * DoSave
  */
@@ -524,8 +534,10 @@ static void DoSave() {
 	f = _vm->getSaveFileMan()->openForSaving(SaveSceneName);
 	Common::Serializer s(0, f);
 
-	if (f == NULL)
-		goto save_failure;
+	if (f == NULL) {
+		SaveFailure(f);
+		return;
+	}
 
 	// Write out a savegame header
 	SaveGameHeader hdr;
@@ -536,29 +548,22 @@ static void DoSave() {
 	hdr.desc[SG_DESC_LEN - 1] = 0;
 	g_system->getTimeAndDate(hdr.dateTime);
 	if (!syncSaveGameHeader(s, hdr) || f->err()) {
-		goto save_failure;
+		SaveFailure(f);
+		return;
 	}
 
 	DoSync(s);
 
 	// Write out the special Id for Discworld savegames
 	f->writeUint32LE(0xFEEDFACE);
-	if (f->err())
-		goto save_failure;
+	if (f->err()) {
+		SaveFailure(f);
+		return;
+	}
 
 	f->finalize();
 	delete f;
 	SaveSceneName = NULL;	// Invalidate save name
-	return;
-
-save_failure:
-	if (f) {
-		delete f;
-		_vm->getSaveFileMan()->removeSavefile(SaveSceneName);
-		SaveSceneName = NULL;	// Invalidate save name
-	}
-	GUI::MessageDialog dialog(_("Failed to save game state to file."));
-	dialog.runModal();
 }
 
 /**

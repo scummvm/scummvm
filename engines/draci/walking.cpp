@@ -729,20 +729,18 @@ Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement n
 
 Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path, Movement startingDirection) {
 	switch (dir) {
+	case kDirectionLeft:
+		return kStopLeft;
+	case kDirectionRight:
+		return kStopRight;
 	case kDirectionMouse:
 		if (mouse.x < hero.x) {
 			return kStopLeft;
 		} else if (mouse.x > hero.x) {
 			return kStopRight;
-		} else {
-			goto defaultCase;
 		}
-	case kDirectionLeft:
-		return kStopLeft;
-	case kDirectionRight:
-		return kStopRight;
+		// fall-through here intentional
 	default: {
-defaultCase:
 		// Find the last horizontal direction on the path.
 		int i = path.size() - 1;
 		while (i >= 0 && path[i].x == hero.x) {
