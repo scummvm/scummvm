@@ -120,7 +120,7 @@ protected:
 	uint32 _flags;
 
 	Common::Rational _time;
-	uint32 _lastMillis;
+	uint32 _lastMillis, _pauseStart;
 
 private:
 	Common::Rational getEffectiveRate() const;

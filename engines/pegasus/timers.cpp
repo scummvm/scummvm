@@ -67,6 +67,7 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 	_stopScale = 1;
 	_master = 0;
 	_pausedRate = 0;
+	_pauseStart = 0;
 	
 	((PegasusEngine *)g_engine)->addTimeBase(this);
 }
@@ -118,6 +119,7 @@ void TimeBase::pause() {
 		_pausedRate = getRate();
 		stop();
 		_paused = true;
+		_pauseStart = g_system->getMillis();
 	}
 }
 
@@ -125,6 +127,9 @@ void TimeBase::resume() {
 	if (_paused) {
 		setRate(_pausedRate);
 		_paused = false;
+
+		if (isRunning())
+			_lastMillis += g_system->getMillis() - _pauseStart;
 	}
 }
 
@@ -200,9 +205,9 @@ void TimeBase::setMasterTimeBase(TimeBase *tb) {
 
 void TimeBase::updateTime() {
 	if (_lastMillis == 0) {
-		_lastMillis = g_engine->getTotalPlayTime();
+		_lastMillis = g_system->getMillis();
 	} else {
-		uint32 curTime = g_engine->getTotalPlayTime();
+		uint32 curTime = g_system->getMillis();
 		if (_lastMillis == curTime) // No change
 			return;
 
