@@ -1006,36 +1006,47 @@ void WinnieEngine::gameLoop() {
 	WTP_ROOM_HDR hdr;
 	uint8 *roomdata = (uint8 *)malloc(4096);
 	int iBlock;
-
-phase0:
-	if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC))
-		_room = IDI_WTP_ROOM_PARTY;
-
-	readRoom(_room, roomdata, hdr);
-	drawRoomPic();
-	_gfx->doUpdate();
-
-phase1:
-	if (getObjInRoom(_room)) {
-		printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_DESC);
-		getSelection(kSelAnyKey);
-	}
-
-phase2:
-	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
-			goto phase1;
-	}
+	uint8 decodePhase = 0;
 
 	while (!shouldQuit()) {
-		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-			switch (parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
-			case IDI_WTP_PAR_GOTO:
-				goto phase0;
-				break;
-			case IDI_WTP_PAR_BACK:
-				goto phase2;
-				break;
+		if (decodePhase == 0) {
+			if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC))
+				_room = IDI_WTP_ROOM_PARTY;
+
+			readRoom(_room, roomdata, hdr);
+			drawRoomPic();
+			_gfx->doUpdate();
+			decodePhase = 1;
+		}
+
+		if (decodePhase == 1) {
+			if (getObjInRoom(_room)) {
+				printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_DESC);
+				getSelection(kSelAnyKey);
+			}
+			decodePhase = 2;
+		}
+
+		if (decodePhase == 2) {
+			for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
+				if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK) {
+					decodePhase = 1;
+					break;
+				}
+			}
+			if (decodePhase == 2)
+				decodePhase = 3;
+		}
+
+		if (decodePhase == 3) {
+			for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
+				if (parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_GOTO) {
+					decodePhase = 0;
+					break;
+				} else if (parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK) {
+					decodePhase = 2;
+					break;
+				}
 			}
 		}
 	}

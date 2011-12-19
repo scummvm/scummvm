@@ -279,6 +279,7 @@ bool Menu::keyhandler(int key) {
 	static int clockVal;
 	static int menuActive = false;
 	static int buttonUsed = 0;
+	bool exitMenu = false;
 
 	if (!_vm->getflag(fMenusWork) && !(_vm->getFeatures() & GF_MENUS))
 		return false;
@@ -288,9 +289,8 @@ bool Menu::keyhandler(int key) {
 		_vm->_game.clockEnabled = false;
 		drawMenuBar();
 	}
-	//
+	
 	// Mouse handling
-	//
 	if (_vm->_mouse.button) {
 		int hmenu, vmenu;
 
@@ -372,83 +372,84 @@ bool Menu::keyhandler(int key) {
 						debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
 						_vm->_game.controllerOccured[d->event] = true;
 						_vm->_menuSelected = true;
-
-						goto exit_menu;
+						break;
 					}
 				}
 			}
-			goto exit_menu;
+			exitMenu = true;
 		}
 	}
 
-	if (!menuActive) {
-		if (_hCurMenu >= 0) {
-			drawMenuHilite(_hCurMenu);
+	if (!exitMenu) {
+		if (!menuActive) {
+			if (_hCurMenu >= 0) {
+				drawMenuHilite(_hCurMenu);
+				drawMenuOption(_hCurMenu);
+				if (!buttonUsed && _vCurMenu >= 0)
+					drawMenuOptionHilite(_hCurMenu, _vCurMenu);
+			}
+			menuActive = true;
+		}
+
+		switch (key) {
+		case KEY_ESCAPE:
+			debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ESCAPE");
+			exitMenu = true;
+			break;
+		case KEY_ENTER:
+		{
+			debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ENTER");
+			AgiMenuOption* d = getMenuOption(_hCurMenu, _vCurMenu);
+
+			if (d->enabled) {
+				debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
+				_vm->_game.controllerOccured[d->event] = true;
+				_vm->_menuSelected = true;
+				exitMenu = true;
+			}
+			break;
+		}
+		case KEY_DOWN:
+		case KEY_UP:
+			_vCurMenu += key == KEY_DOWN ? 1 : -1;
+
+			if (_vCurMenu < 0)
+				_vCurMenu = _vMaxMenu[_hCurMenu];
+			if (_vCurMenu > _vMaxMenu[_hCurMenu])
+				_vCurMenu = 0;
+
 			drawMenuOption(_hCurMenu);
-			if (!buttonUsed && _vCurMenu >= 0)
-				drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-		}
-		menuActive = true;
-	}
+			drawMenuOptionHilite(_hCurMenu, _vCurMenu);
+			break;
+		case KEY_RIGHT:
+		case KEY_LEFT:
+			_hCurMenu += key == KEY_RIGHT ? 1 : -1;
 
-	switch (key) {
-	case KEY_ESCAPE:
-		debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ESCAPE");
-		goto exit_menu;
-	case KEY_ENTER:
-	{
-		debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ENTER");
-		AgiMenuOption* d = getMenuOption(_hCurMenu, _vCurMenu);
+			if (_hCurMenu < 0)
+				_hCurMenu = _hMaxMenu;
+			if (_hCurMenu > _hMaxMenu)
+				_hCurMenu = 0;
 
-		if (d->enabled) {
-			debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-			_vm->_game.controllerOccured[d->event] = true;
-			_vm->_menuSelected = true;
-			goto exit_menu;
-		}
-		break;
-	}
-	case KEY_DOWN:
-	case KEY_UP:
-		_vCurMenu += key == KEY_DOWN ? 1 : -1;
-
-		if (_vCurMenu < 0)
-			_vCurMenu = _vMaxMenu[_hCurMenu];
-		if (_vCurMenu > _vMaxMenu[_hCurMenu])
 			_vCurMenu = 0;
-
-		drawMenuOption(_hCurMenu);
-		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-		break;
-	case KEY_RIGHT:
-	case KEY_LEFT:
-		_hCurMenu += key == KEY_RIGHT ? 1 : -1;
-
-		if (_hCurMenu < 0)
-			_hCurMenu = _hMaxMenu;
-		if (_hCurMenu > _hMaxMenu)
-			_hCurMenu = 0;
-
-		_vCurMenu = 0;
-		newMenuSelected(_hCurMenu);
-		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-		break;
+			newMenuSelected(_hCurMenu);
+			drawMenuOptionHilite(_hCurMenu, _vCurMenu);
+			break;
+		}
 	}
 
-	return true;
+	if (exitMenu) {
+		buttonUsed = 0;
+		_picture->showPic();
+		_vm->writeStatus();
 
-exit_menu:
-	buttonUsed = 0;
-	_picture->showPic();
-	_vm->writeStatus();
+		_vm->setvar(vKey, 0);
+		_vm->_game.keypress = 0;
+		_vm->_game.clockEnabled = clockVal;
+		_vm->oldInputMode();
 
-	_vm->setvar(vKey, 0);
-	_vm->_game.keypress = 0;
-	_vm->_game.clockEnabled = clockVal;
-	_vm->oldInputMode();
-
-	debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->_game.inputMode);
-	menuActive = false;
+		debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->_game.inputMode);
+		menuActive = false;
+	}
 
 	return true;
 }
