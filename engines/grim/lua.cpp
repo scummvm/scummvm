@@ -37,7 +37,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/set.h"
@@ -288,9 +287,9 @@ void LuaBase::setMovieTime(float movieTime) {
 }
 
 int LuaBase::bundle_dofile(const char *filename) {
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b) {
-		delete b;
+	Common::SeekableReadStream *stream;
+	stream = g_resourceloader->openNewStreamFile(filename);
+	if (!stream) {
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
 		if (!strstr(filename, "Scripts\\"))
@@ -299,8 +298,12 @@ int LuaBase::bundle_dofile(const char *filename) {
 		return 2;
 	}
 
-	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
-	delete b;
+	int32 size = stream->size();
+	char *buffer = new char[size];
+	stream->read(buffer, size);
+	int result = lua_dobuffer(const_cast<char *>(buffer), size, const_cast<char *>(filename));
+	delete stream;
+	delete buffer;
 	return result;
 }
 
