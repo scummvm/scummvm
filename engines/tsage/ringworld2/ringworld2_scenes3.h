@@ -67,6 +67,44 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+class Scene3125 : public SceneExt {
+	class Item1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2 : public Item1 {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3 : public Item1 {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor1 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+
+	int _field412;
+	Item1 _item1;
+	Actor1 _actor1;
+	Item2 _item2;
+	Item3 _item3;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SequenceManager _sequenceManager1;
+	// Second sequence manager... Unused?
+	SequenceManager _sequenceManager2;
+
+	Scene3125();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

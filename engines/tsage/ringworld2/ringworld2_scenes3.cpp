@@ -202,5 +202,174 @@ void Scene3100::dispatch() {
 	Scene::dispatch();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3125 - Ghouls dormitory
+ *
+ *--------------------------------------------------------------------------*/
+Scene3125::Scene3125() {
+	_field412 = 0;
+}
+
+void Scene3125::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+}
+
+bool Scene3125::Item1::startAction(CursorType action, Event &event) {
+	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (_useLineNum != -1)
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	case CURSOR_LOOK:
+		if (_lookLineNum != -1)
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum != -1)
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	default:
+		warning("scene->display() called with two parameters");
+		return scene->display(action);
+		break;
+	}
+
+	return true;
+}
+
+bool Scene3125::Item2::startAction(CursorType action, Event &event) {
+	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 3125;
+		scene->setAction(&scene->_sequenceManager1, scene, 3125, &R2_GLOBALS._player, NULL);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display(3125, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	default:
+		return SceneHotspot::startAction(action, event);
+		break;
+	}
+
+	return true;
+}
+
+bool Scene3125::Item3::startAction(CursorType action, Event &event) {
+	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+		scene->_actor5.postInit();
+		scene->_sceneMode = 3126;
+		scene->setAction(&scene->_sequenceManager1, scene, 3126, &R2_GLOBALS._player, &scene->_actor2, &scene->_actor3, &scene->_actor4, &scene->_actor1, &scene->_actor5, NULL);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display(3125, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		break;
+	default:
+		return SceneHotspot::startAction(action, event);
+		break;
+	}
+
+	return true;
+}
+
+bool Scene3125::Actor1::startAction(CursorType action, Event &event) {
+	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 3176;
+	scene->setAction(&scene->_sequenceManager1, scene, 3176, &R2_GLOBALS._player, &scene->_actor1, NULL);
+	return true;
+}
+
+void Scene3125::postInit(SceneObjectList *OwnerList) {
+	loadScene(3125);
+	SceneExt::postInit();
+	_field412 = 0;
+
+	_actor1.postInit();
+	_actor1.setup(3175, 1, 1);
+	_actor1.setPosition(Common::Point(35, 72));
+	_actor1.setDetails(3125, 12, 13, -1, 1, NULL);
+
+	_actor2.postInit();
+	_actor2.setup(3126, 4, 1);
+	_actor2.setPosition(Common::Point(71, 110));
+	_actor2._numFrames = 20;
+
+	_actor3.postInit();
+	_actor3.setup(3126, 1, 1);
+	_actor3.setPosition(Common::Point(215, 62));
+	_actor3.fixPriority(71);
+
+	_actor4.postInit();
+	_actor4.setup(3126, 1, 1);
+	_actor4.setPosition(Common::Point(171, 160));
+	_actor4.fixPriority(201);
+	
+	_item3.setDetails(12, 3125, 9, 13, -1);
+	_item2.setDetails(11, 3125, 15, 13, -1);
+	_item1.setDetails(Rect(0, 0, 320, 200), 3125, 0, 1, 2, 1, NULL);
+
+	R2_GLOBALS._sound1.play(262);
+	R2_GLOBALS._player.postInit();
+
+	if (R2_GLOBALS._player._oldCharacterScene[3] == 3250) {
+		_sceneMode = 3175;
+		setAction(&_sequenceManager1, this, 3175, &R2_GLOBALS._player, &_actor1, NULL);
+	} else {
+		R2_GLOBALS._player.setup(30, 5, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(89, 76));
+		R2_GLOBALS._player.enableControl();
+	}
+	R2_GLOBALS._player._oldCharacterScene[3] = 3125;
+}
+
+void Scene3125::signal() {
+	switch (_sceneMode) {
+	case 3125:
+		SceneItem::display(3125, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		_sceneMode = 3127;
+		setAction(&_sequenceManager1, this, 3127, &R2_GLOBALS._player, NULL);
+		break;
+	case 3126:
+		R2_GLOBALS.setFlag(79);
+	// No break on purpose
+	case 3176:
+		R2_GLOBALS._sceneManager.changeScene(3250);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene3125::dispatch() {
+	if ((_sceneMode == 3126) && (_actor2._frame == 2) && (_field412 == 0)) {
+		_field412 = 1;
+		R2_GLOBALS._sound1.play(265);
+	}
+	Scene::dispatch();
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

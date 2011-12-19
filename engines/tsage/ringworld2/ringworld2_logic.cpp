@@ -175,6 +175,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 3100:
 		return new Scene3100();
 	case 3125:
+		// Ghouls dormitory
+		return new Scene3125();
 	case 3150:
 	case 3175:
 	case 3200:
