@@ -1232,10 +1232,8 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
  * @return 0 if script finished. Else offset where to continue.
  */
 uint16 Logic::script(uint16 scriptNo, uint16 offset) {
-	bool restartScript;
-
 	do {
-		restartScript = false;
+		bool restartScript = false;
 
 		/// process a script
 		/// low level interface to interpreter
@@ -1422,7 +1420,7 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 				error("Unknown script command: %d", command);
 			}
 		}
-	} while (restartScript);
+	} while (true);
 }
 
 bool Logic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
