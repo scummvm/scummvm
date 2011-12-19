@@ -205,7 +205,7 @@ private:
 	Common::Mutex _mutex;
 
 	void writeInstrument(int offset, const byte *data, int size);
-	void selectInstrument(int channel, int unk, int instrument, int volume);
+	void selectInstrument(int channel, int timbreGroup, int timbreNumber, int volume);
 };
 
 class PCSoundFxPlayer {
@@ -647,8 +647,11 @@ void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrum
 
 	if (!data)
 		selectInstrument(channel, 0, 0, volume);
+	// In case the instrument is a builtin instrument select it directly.
 	else if (data[0] < 0x80)
 		selectInstrument(channel, data[0] / 0x40, data[0] % 0x40, volume);
+	// In case we use a custom instrument we need to specify the timbre group
+	// 2, which means it's a timbre from the timbre memory area.
 	else
 		selectInstrument(channel, 2, instrument, volume);
 }
@@ -690,6 +693,9 @@ void MidiSoundDriverH32::playSample(const byte *data, int size, int channel, int
 void MidiSoundDriverH32::notifyInstrumentLoad(const byte *data, int size, int channel) {
 	Common::StackLock lock(_mutex);
 
+	// In case we specify a standard instrument or standard rhythm instrument
+	// do not do anything here. It might be noteworthy that the instrument
+	// selection client code does not support rhythm instruments!
 	if (data[0] < 0x80 || data[0] > 0xC0)
 		return;
 
@@ -717,18 +723,29 @@ void MidiSoundDriverH32::writeInstrument(int offset, const byte *data, int size)
 	_output->sysEx(sysEx, copySize + 8);
 }
 
-void MidiSoundDriverH32::selectInstrument(int channel, int unk, int instrument, int volume) {
-	const int offset = channel * 16 + 0x30000;
+void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timbreNumber, int volume) {
+	const int offset = channel * 16 + 0x30000; // 0x30000 is the start of the patch temp area
 
 	byte sysEx[24] = {
 		0x41, 0x10, 0x16, 0x12,
 		0x00, 0x00, 0x00,       // offset
-		0x00,                   // unk
-		0x00,                   // instrument
-		0x18, 0x32, 0x0C, 0x03, 0x01, 0x00,
-		0x00,                   // volume
-		0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00                    // checksum
+		0x00, // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
+		0x00, // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
+		0x18, // Key shift (= 0) 
+		0x32, // Fine tune (= 0)
+		0x0C, // Bender Range
+		0x03, // Assign Mode
+		0x01, // Reverb Switch (= enabled)
+		0x00, // dummy
+		0x00, // Output level 
+		0x07, // Panpot (= balanced)
+		0x00, // dummy
+		0x00, // dummy
+		0x00, // dummy
+		0x00, // dummy
+		0x00, // dummy
+		0x00, // dummy
+		0x00  // checksum
 	};
 
 
@@ -736,9 +753,8 @@ void MidiSoundDriverH32::selectInstrument(int channel, int unk, int instrument, 
 	sysEx[5] = (offset >>  8) & 0xFF;
 	sysEx[6] = (offset >>  0) & 0xFF;
 
-	sysEx[7] = unk;
-
-	sysEx[8] = instrument;
+	sysEx[7] = timbreGroup;
+	sysEx[8] = timbreNumber;
 
 	sysEx[15] = volume;
 
