@@ -375,5 +375,7 @@
 	}
 	void signOn();
 	void lookAtPlace();
+	void inToInv();
+	void outOfInv();
 
 #endif

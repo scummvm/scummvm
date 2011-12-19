@@ -562,5 +562,87 @@ void DreamBase::removeObFromInv() {
 	deleteExObject(data.byte(kCommand));
 }
 
+void DreamGenContext::inToInv() {
+	if (!data.byte(kPickup)) {
+		outOfInv();
+		return;
+	}
+
+	findInvPos();
+	ax = es.word(bx);
+
+	if (al != 255) {
+		swapWithInv();
+		return;
+	}
+
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+
+	if (ax == data.word(kOldsubject) && data.byte(kCommandtype) != 220)
+		data.byte(kCommandtype) = 220;
+
+	data.word(kOldsubject) = ax;
+	commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return; // notletgo2
+	
+	delPointer();
+	DynObject *object = getExAd(data.byte(kItemframe));
+	object->mapad[0] = 4;
+	object->mapad[1] = 255;
+	object->mapad[2] = data.byte(kLastinvpos);
+	data.byte(kPickup) = 0;
+	fillRyan();
+	readMouse();
+	showPointer();
+	outOfInv();
+	workToScreen();
+	delPointer();
+}
+
+void DreamGenContext::outOfInv() {
+	findInvPos();
+	ax = es.word(bx);
+
+	if (al == 255) {
+		blank();
+		return;
+	}
+
+	if (data.word(kMousebutton) == 2) {
+		reExFromInv();
+		return;
+	}
+
+	if (ax == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
+		data.byte(kCommandtype) = 221;
+
+	data.word(kOldsubject) = ax;
+	commandWithOb(36, ah, al);
+
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return; // notletgo
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	delPointer();
+	data.byte(kPickup) = 1;
+	findInvPos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+	DynObject *object = getExAd(data.byte(kItemframe));
+	object->mapad[0] = 20;
+	object->mapad[1] = 255;
+	fillRyan();
+	readMouse();
+	showPointer();
+	inToInv();
+	workToScreen();
+	delPointer();
+}
 
 } // End of namespace DreamGen

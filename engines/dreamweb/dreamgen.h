@@ -477,13 +477,11 @@ public:
 	void startTalk();
 	void getAnyAd();
 	void reminders();
-	void inToInv();
 	void getFreeAd();
 	void dirFile();
 	void pickupConts();
 	void fadeUpMon();
 	void reExFromInv();
-	void outOfInv();
 	void transferMap();
 	void purgeAnItem();
 	void purgeALocation();
