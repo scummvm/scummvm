@@ -338,10 +338,9 @@ void PictDecoder::unpackBitsRect(Common::SeekableReadStream *stream, bool hasPal
 	_outputSurface = new Graphics::Surface();
 	_outputSurface->create(width, height, (bytesPerPixel == 1) ? PixelFormat::createFormatCLUT8() : _pixelFormat);
 
-	// Create an temporary buffer, but allocate a bit more than we need to avoid overflow
-	// (align it to the next highest two-byte packed boundary, which may be more unpacked,
-	// as m68k and therefore QuickDraw is word-aligned)
-	byte *buffer = new byte[width * height * bytesPerPixel + (8 * 2 / packBitsData.pixMap.pixelSize)];
+	// Ensure we have enough space in the buffer to hold an entire line's worth of pixels
+	uint32 lineSize = MAX<int>(width * bytesPerPixel + (8 * 2 / packBitsData.pixMap.pixelSize), packBitsData.pixMap.rowBytes);
+	byte *buffer = new byte[lineSize * height];
 
 	// Read in amount of data per row
 	for (uint16 i = 0; i < packBitsData.pixMap.bounds.height(); i++) {
