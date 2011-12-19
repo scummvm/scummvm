@@ -22,7 +22,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/memstream.h"
 #include "common/foreach.h"
 
 #include "engines/grim/debug.h"
@@ -39,18 +38,20 @@
 
 namespace Grim {
 
-Set::Set(const Common::String &sceneName, const char *buf, int len) :
+Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
 		_lightsConfigured(false) {
 
-	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
-		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)buf, len);
-		TextSplitter ts(st);
+	char header[7];
+	data->read(header, 7);
+	data->seek(0, SEEK_SET);
+	if (memcmp(header, "section", 7) == 0) {
+		TextSplitter ts(data);
 		loadText(ts);
 	} else {
-		Common::MemoryReadStream ms((const byte *)buf, len);
-		loadBinary(&ms);
+		loadBinary(data);
 	}
+	delete data;
 }
 
 Set::Set() :
@@ -77,7 +78,7 @@ Set::~Set() {
 	}
 }
 
-void Set::loadText(TextSplitter &ts){
+void Set::loadText(TextSplitter &ts) {
 	char tempBuf[256];
 
 	ts.expectString("section: colormaps");
@@ -154,16 +155,15 @@ void Set::loadText(TextSplitter &ts){
 	}
 }
 
-void Set::loadBinary(Common::MemoryReadStream *ms)
-{
+void Set::loadBinary(Common::SeekableReadStream *data) {
 	// yes, an array of size 0
 	_cmaps = NULL;//new CMapPtr[0];
 
 
-	_numSetups = ms->readUint32LE();
+	_numSetups = data->readUint32LE();
 	_setups = new Setup[_numSetups];
 	for (int i = 0; i < _numSetups; i++)
-		_setups[i].loadBinary(ms);
+		_setups[i].loadBinary(data);
 	_currSetup = _setups;
 
 	_numSectors = 0;
@@ -176,20 +176,20 @@ void Set::loadBinary(Common::MemoryReadStream *ms)
 
 	// the rest may or may not be optional. Might be a good idea to check if there is no more data.
 
-	_numLights = ms->readUint32LE();
+	_numLights = data->readUint32LE();
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; i++)
-		_lights[i].loadBinary(ms);
+		_lights[i].loadBinary(data);
 
 	// bypass light stuff for now
 	_numLights = 0;
 
-	_numSectors = ms->readUint32LE();
+	_numSectors = data->readUint32LE();
 	// Allocate and fill an array of sector info
 	_sectors = new Sector*[_numSectors];
 	for (int i = 0; i < _numSectors; i++) {
 		_sectors[i] = new Sector();
-		_sectors[i]->loadBinary(ms);
+		_sectors[i]->loadBinary(data);
 	}
 }
 
@@ -392,30 +392,30 @@ void Set::Setup::load(TextSplitter &ts) {
 	}
 }
 
-void Set::Setup::loadBinary(Common::MemoryReadStream *ms) {
+void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	char name[128];
-	ms->read(name, 128);
+	data->read(name, 128);
 	_name = Common::String(name);
 
 	// Skip an unknown number (this is the stringlength of the following string)
 	int fNameLen = 0;
-	fNameLen = ms->readUint32LE();
+	fNameLen = data->readUint32LE();
 
 	char* fileName = new char[fNameLen];
-	ms->read(fileName,fNameLen);
+	data->read(fileName,fNameLen);
 
 	_bkgndZBm = NULL;
 	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
-	ms->read(_pos.getData(), 12);
+	data->read(_pos.getData(), 12);
 
-	ms->read(_interest.getData(), 12);
+	data->read(_interest.getData(), 12);
 
-	ms->read(&_roll, 4);
-	ms->read(&_fov, 4);
-	ms->read(&_nclip, 4);
-	ms->read(&_fclip, 4);
+	data->read(&_roll, 4);
+	data->read(&_fov, 4);
+	data->read(&_nclip, 4);
+	data->read(&_fclip, 4);
 
 }
 
@@ -449,9 +449,9 @@ void Light::load(TextSplitter &ts) {
 	_enabled = true;
 }
 
-void Light::loadBinary(Common::MemoryReadStream *ms) {
+void Light::loadBinary(Common::SeekableReadStream *data) {
 	// skip lights for now
-	ms->seek(100, SEEK_CUR);
+	data->seek(100, SEEK_CUR);
 }
 
 void Set::Setup::setupCamera() const {

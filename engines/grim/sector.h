@@ -30,7 +30,7 @@
 #include "math/line3d.h"
 
 namespace Common {
-	class MemoryReadStream;
+	class SeekableReadStream;
 }
 
 namespace Grim {
@@ -57,7 +57,7 @@ public:
 	bool restoreState(SaveGame *savedState);
 
 	void load(TextSplitter &ts);
-	void loadBinary(Common::MemoryReadStream *ms);
+	void loadBinary(Common::SeekableReadStream *data);
 	void setVisible(bool visible);
 	void shrink(float radius);
 	void unshrink();
