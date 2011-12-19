@@ -280,7 +280,6 @@
 	void moreTalk();
 	void redes();
 	void selectLocation();
-	void showGroup();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);

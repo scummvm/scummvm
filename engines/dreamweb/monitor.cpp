@@ -63,8 +63,8 @@ void DreamGenContext::useMon() {
 	printLogo();
 	workToScreenCPP();
 	turnOnPower();
-	fadeupYellows();
-	fadeupMonFirst();
+	fadeUpYellows();
+	fadeUpMonFirst();
 	data.word(kMonadx) = 76;
 	data.word(kMonady) = 141;
 	monMessage(1);
@@ -171,10 +171,12 @@ bool DreamGenContext::execCommand() {
 void DreamBase::monitorLogo() {
 	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {
 		data.byte(kOldlogonum) = data.byte(kLogonum);
+		//fadeDownMon(); // FIXME: Commented out in ASM
 		printLogo();
 		printUnderMon();
 		workToScreenCPP();
 		printLogo();
+		//fadeUpMon(); // FIXME: Commented out in ASM
 		printLogo();
 		playChannel1(26);
 		randomAccess(20);

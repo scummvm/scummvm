@@ -479,8 +479,11 @@ public:
 	void fadeDOS();
 	void doFade();
 	void fadeCalculation();
-	void fadeupYellows();
-	void fadeupMonFirst();
+	void fadeUpYellows();
+	void fadeUpMonFirst();
+	void fadeUpMon();
+	void fadeDownMon();
+	void initialMonCols();
 	void fadeScreenUp();
 	void fadeScreenUps();
 	void fadeScreenUpHalf();

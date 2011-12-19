@@ -114,7 +114,7 @@ void DreamBase::fadeCalculation() {
 	--data.byte(kFadecount);
 }
 
-void DreamBase::fadeupYellows() {
+void DreamBase::fadeUpYellows() {
 	palToEndPal();
 	memset(endPalette() + 231 * 3, 0, 8 * 3);
 	memset(endPalette() + 246 * 3, 0, 1 * 3);
@@ -125,7 +125,7 @@ void DreamBase::fadeupYellows() {
 	hangOn(128);
 }
 
-void DreamBase::fadeupMonFirst() {
+void DreamBase::fadeUpMonFirst() {
 	palToStartPal();
 	palToEndPal();
 	memset(startPalette() + 231 * 3, 0, 8 * 3);
@@ -137,6 +137,39 @@ void DreamBase::fadeupMonFirst() {
 	hangOn(64);
 	playChannel1(26);
 	hangOn(64);
+}
+
+
+void DreamBase::fadeDownMon() {
+	palToStartPal();
+	palToEndPal();
+	memset(endPalette() + 231 * 3, 0, 8 * 3);
+	memset(endPalette() + 246 * 3, 0, 1 * 3);
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangOn(64);
+}
+
+void DreamBase::fadeUpMon() {
+	palToStartPal();
+	palToEndPal();
+	memset(startPalette() + 231 * 3, 0, 8 * 3);
+	memset(startPalette() + 246 * 3, 0, 1 * 3);
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangOn(128);
+}
+
+void DreamBase::initialMonCols() {
+	palToStartPal();
+	memset(startPalette() + 230 * 3, 0, 9 * 3);
+	memset(startPalette() + 246 * 3, 0, 1 * 3);
+	engine->processEvents();
+	engine->setPalette(startPalette() + 230 * 3, 230, 18);
 }
 
 void DreamBase::fadeScreenUp() {
@@ -258,15 +291,6 @@ void DreamBase::dumpCurrent() {
 	engine->waitForVSync();
 	engine->processEvents();
 	engine->setPalette(pal, 128, 128);
-}
-
-void DreamGenContext::showGroup() {
-	engine->processEvents();
-	unsigned n = (uint16)cx;
-	uint8 *src = ds.ptr(si, n * 3);
-	engine->setPalette(src, al, n);
-	si += n * 3;
-	cx = 0;
 }
 
 void DreamGenContext::rollEndCredits2() {
