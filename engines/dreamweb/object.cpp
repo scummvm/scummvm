@@ -568,21 +568,19 @@ void DreamGenContext::inToInv() {
 		return;
 	}
 
-	findInvPos();
-	ax = es.word(bx);
+	uint16 subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
 
-	if (al != 255) {
+	if ((subject & 0xFF) != 255) {
 		swapWithInv();
 		return;
 	}
 
-	al = data.byte(kItemframe);
-	ah = data.byte(kObjecttype);
+	subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
 
-	if (ax == data.word(kOldsubject) && data.byte(kCommandtype) != 220)
+	if (subject == data.word(kOldsubject) && data.byte(kCommandtype) != 220)
 		data.byte(kCommandtype) = 220;
 
-	data.word(kOldsubject) = ax;
+	data.word(kOldsubject) = subject;
 	commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -603,10 +601,9 @@ void DreamGenContext::inToInv() {
 }
 
 void DreamGenContext::outOfInv() {
-	findInvPos();
-	ax = es.word(bx);
+	uint16 subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
 
-	if (al == 255) {
+	if ((subject & 0xFF) == 255) {
 		blank();
 		return;
 	}
@@ -616,11 +613,13 @@ void DreamGenContext::outOfInv() {
 		return;
 	}
 
-	if (ax == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
+	if (subject == data.word(kOldsubject) && data.byte(kCommandtype) != 221)
 		data.byte(kCommandtype) = 221;
 
-	data.word(kOldsubject) = ax;
-	commandWithOb(36, ah, al);
+	data.word(kOldsubject) = subject;
+	byte type = subject >> 8;
+	byte frame = subject & 0xFF;
+	commandWithOb(36, type, frame);
 
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return; // notletgo
@@ -630,10 +629,9 @@ void DreamGenContext::outOfInv() {
 
 	delPointer();
 	data.byte(kPickup) = 1;
-	findInvPos();
-	ax = es.word(bx);
-	data.byte(kItemframe) = al;
-	data.byte(kObjecttype) = ah;
+	subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
+	data.byte(kObjecttype) = subject >> 8;
+	data.byte(kItemframe) = subject & 0xFF;
 	DynObject *object = getExAd(data.byte(kItemframe));
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
