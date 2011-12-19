@@ -29,44 +29,46 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/textsplit.h"
-#include "common/memstream.h"
 
 namespace Grim {
 
 Common::List<MaterialData *> *MaterialData::_materials = NULL;
 
-MaterialData::MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) :
+MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
 	_fname(filename), _cmap(cmap), _refCount(1) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		initEMI(filename, data, len);
+		initEMI(filename, data);
 	} else {
-		initGrim(filename, data, len, cmap);
+		initGrim(filename, data, cmap);
 	}
 }
 
-void MaterialData::initGrim(const Common::String &filename, const char *data, int len, CMap *cmap) {
-	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
-			error("invalid magic loading texture");
+void MaterialData::initGrim(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
+	uint32 tag = data->readUint32BE();
+	if (tag != MKTAG('M','A','T',' '))
+		error("invalid magic loading texture");
 
-	_numImages = READ_LE_UINT32(data + 12);
+	data->seek(12, SEEK_SET);
+	_numImages = data->readUint32LE();
 	_textures = new Texture[_numImages];
 	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
 	 * Actual meaning unknown, so I prefer to use it as an enum-ish
 	 * at the moment, to detect unexpected values.
 	 */
-	uint32 offset = READ_LE_UINT32(data + 0x4c);
+	data->seek(0x4c, SEEK_SET);
+	uint32 offset = data->readUint32LE();
 	if (offset == 0x8)
-		data += 16;
+		offset = 16;
 	else if (offset != 0)
 		error("Unknown offset: %d", offset);
 
-	data += 60 + _numImages * 40;
+	data->seek(60 + _numImages * 40 + offset, SEEK_SET);
 	for (int i = 0; i < _numImages; ++i) {
 		Texture *t = _textures + i;
-		t->_width = READ_LE_UINT32(data);
-		t->_height = READ_LE_UINT32(data + 4);
-		t->_hasAlpha = READ_LE_UINT32(data + 8);
+		t->_width = data->readUint32LE();
+		t->_height = data->readUint32LE();
+		t->_hasAlpha = data->readUint32LE();
 		t->_texture = NULL;
 		t->_data = NULL;
 		if (t->_width == 0 || t->_height == 0) {
@@ -75,19 +77,18 @@ void MaterialData::initGrim(const Common::String &filename, const char *data, in
 			break;
 		}
 		t->_data = new char[t->_width * t->_height];
-		memcpy(t->_data, data + 24, t->_width * t->_height);
-
-		data += 24 + t->_width * t->_height;
+		data->seek(12, SEEK_CUR);
+		data->read(t->_data, t->_width * t->_height);
 	}
+	delete data;
 }
 
-void MaterialData::initEMI(const Common::String &filename, const char *data, int len) {
+void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
 	char *readFileName = new char[64];
 
 	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
-		Common::SeekableReadStream *st = new Common::MemoryReadStream((byte*)data, len);
-		TextSplitter *ts = new TextSplitter(st);
+		TextSplitter *ts = new TextSplitter(data);
 		ts->setLineNumber(1); // Skip copyright-line
 		ts->expectString("VERSION 1.0");
 		while(!ts->checkString("END_OF_SECTION")) {
@@ -108,7 +109,9 @@ void MaterialData::initEMI(const Common::String &filename, const char *data, int
 	}
 	return; // Leave the rest till we have models to put materials on.
 
-	int format = data[1];
+	//TODO: The following code was written when data was a data buffer, instead a stream
+	//but it wasn't adapetd since there wasn't a way to check it
+	/*int format = data[1];
 	assert(format == 2);	// Verify that we have uncompressed TGA (2)
 	data += 12;
 	_numImages = 1;
@@ -119,7 +122,7 @@ void MaterialData::initEMI(const Common::String &filename, const char *data, int
 	int bpp = data[4];
 	assert(bpp == 24); // Assure we have 24 bpp
 	data += 6;
-	g_driver->createMaterial(_textures, data, 0);
+	g_driver->createMaterial(_textures, data, 0);*/
 }
 
 MaterialData::~MaterialData() {
@@ -138,7 +141,7 @@ MaterialData::~MaterialData() {
 	delete[] _textures;
 }
 
-MaterialData *MaterialData::getMaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) {
+MaterialData *MaterialData::getMaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
 	if (!_materials) {
 		_materials = new Common::List<MaterialData *>();
 	}
@@ -151,14 +154,14 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, cons
 		}
 	}
 
-	MaterialData *m = new MaterialData(filename, data, len, cmap);
+	MaterialData *m = new MaterialData(filename, data, cmap);
 	_materials->push_back(m);
 	return m;
 }
 
-Material::Material(const Common::String &filename, const char *data, int len, CMap *cmap) :
+Material::Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
 		Object(), _currImage(0) {
-	_data = MaterialData::getMaterialData(filename, data, len, cmap);
+	_data = MaterialData::getMaterialData(filename, data, cmap);
 }
 
 void Material::reload(CMap *cmap) {

@@ -315,15 +315,13 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) {
 	Common::String fname = fixFilename(filename, false);
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find material %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Material *result = new Material(fname, b->getData(), b->getLen(), c);
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream)
+		error("Could not find material %s", filename.c_str());
+
+	Material *result = new Material(fname, stream, c);
 
 	return result;
 }
