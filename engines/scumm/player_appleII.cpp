@@ -272,17 +272,19 @@ void Player_AppleII::_soundFunc4(byte param0, byte param1, byte param2) { // D1A
 
 	while (true) {
 		--updateRemain1;
-		if (updateRemain1 == 0) {
-			updateRemain1 = updateInterval1;
-			speakerShiftReg ^= bitmask1;
-		}
-
 		--updateRemain2;
+
 		if (updateRemain2 == 0) {
 			updateRemain2 = updateInterval2;
+			// use only first voice's data (bitmask1) if both voices are triggered 
 			if (updateRemain1 != 0) {
 				speakerShiftReg ^= bitmask2;		
 			}
+		}
+
+		if (updateRemain1 == 0) {
+			updateRemain1 = updateInterval1;
+			speakerShiftReg ^= bitmask1;
 		}
 
 		if (speakerShiftReg & 0x1)
