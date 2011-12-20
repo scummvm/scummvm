@@ -87,7 +87,6 @@
 	SetObject *getSetAd(uint8 index) {
 		return DreamBase::getSetAd(index);
 	}
-	void deleteTaken();
 	bool finishedWalkingCPP();
 	void finishedWalking();
 	void checkOne();
@@ -235,7 +234,6 @@
 	void realCredits();
 	void runIntroSeq();
 	void intro();
-	void newGame();
 	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
 	void walkIntoRoom();
@@ -287,7 +285,6 @@
 	void set16ColPalette();
 	void afterNewRoom();
 	void madmanRun();
-	void showDecisions();
 	void decide();
 	void talk();
 	void discOps();

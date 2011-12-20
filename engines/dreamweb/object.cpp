@@ -171,7 +171,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		switch (data.byte(kInvopen)) {
 		case 0: {
 			RectWithCallback<DreamGenContext> examList[] = {
-				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
+				{ 273,320,157,198,&DreamBase::getBackFromOb },
 				{ 260,300,0,44,&DreamGenContext::useObject },
 				{ 210,254,0,44,&DreamGenContext::selectOpenOb },
 				{ 144,176,64,96,&DreamGenContext::setPickup },
@@ -185,7 +185,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
 			RectWithCallback<DreamGenContext> invList1[] = {
-				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
+				{ 273,320,157,198,&DreamBase::getBackFromOb },
 				{ 255,294,0,24,&DreamGenContext::dropObject },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
 				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
@@ -198,7 +198,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		}
 		default: {
 			RectWithCallback<DreamGenContext> withList1[] = {
-				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
+				{ 273,320,157,198,&DreamBase::getBackFromOb },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectOb },
 				{ 0,320,0,200,&DreamBase::blank },

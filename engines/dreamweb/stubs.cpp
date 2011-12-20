@@ -1386,7 +1386,7 @@ void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 	}
 }
 
-void DreamGenContext::deleteTaken() {
+void DreamBase::deleteTaken() {
 	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
 	DynObject *freeObjects = (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
@@ -1919,7 +1919,7 @@ void DreamGenContext::enterSymbol() {
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
-		RectWithCallback<DreamGenContext> symbolList[] = {
+		RectWithCallback<DreamBase> symbolList[] = {
 			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamBase::quitSymbol },
 			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamBase::setTopLeft },
 			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamBase::setTopRight },
@@ -2634,7 +2634,7 @@ void DreamGenContext::useMenu() {
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
-		RectWithCallback<DreamGenContext> menuList[] = {
+		RectWithCallback<DreamBase> menuList[] = {
 			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamBase::quitKey },
 			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
@@ -3122,7 +3122,7 @@ void DreamBase::setBotRight() {
 		data.byte(kSymbolbotdir) = 1;
 }
 
-void DreamGenContext::newGame() {
+void DreamBase::newGame() {
 	if (data.byte(kCommandtype) != 251) {
 		data.byte(kCommandtype) = 251;
 		commandOnly(47);
@@ -3630,13 +3630,6 @@ void DreamBase::underTextLine() {
 	multiGet(textUnder(), data.byte(kTextaddressx), y, kUndertextsizex, kUndertextsizey);
 }
 
-void DreamGenContext::showDecisions() {
-	createPanel2();
-	showOpBox();
-	showFrame(tempGraphics(), kOpsx + 17, kOpsy + 13, 6, 0);
-	underTextLine();
-}
-
 void DreamBase::getUnderZoom() {
 	multiGet(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
 }
@@ -3774,7 +3767,7 @@ void DreamGenContext::decide() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback<DreamGenContext> decideList[] = {
-		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
+		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamBase::newGame },
 		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
 		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
 		{ 0,320,0,200,&DreamBase::blank },
@@ -3854,7 +3847,7 @@ void DreamGenContext::talk() {
 void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
-	RectWithCallback<DreamGenContext> quitList[] = {
+	RectWithCallback<DreamBase> quitList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
