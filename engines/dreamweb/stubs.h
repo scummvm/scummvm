@@ -96,7 +96,7 @@
 	}
 	void walkAndExamine();
 	void obName(uint8 command, uint8 commandType);
-	void checkCoords(const RectWithCallback *rectWithCallbacks);
+
 	void getExPos();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]) {
