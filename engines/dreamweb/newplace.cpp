@@ -234,7 +234,30 @@ void DreamBase::setLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 1;
 }
 
-// TODO: Place resetLocation here
+void DreamBase::resetLocation(uint8 index) {
+	if (index == 5) {
+		// delete hotel
+		purgeALocation(5);
+		purgeALocation(21);
+		purgeALocation(22);
+		purgeALocation(27);
+	} else if (index == 8) {
+		// delete TV studio
+		purgeALocation(8);
+		purgeALocation(28);
+	} else if (index == 6) {
+		// delete sarters
+		purgeALocation(6);
+		purgeALocation(20);
+		purgeALocation(25);
+	} else if (index == 13) {
+		// delete boathouse
+		purgeALocation(13);
+		purgeALocation(29);
+	}
+
+	data.byte(kRoomscango + index) = 0;
+}
 
 void DreamGenContext::readDestIcon() {
 	loadIntoTemp("DREAMWEB.G05");
