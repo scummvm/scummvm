@@ -118,10 +118,10 @@ typedef int32 AIConditionID;
 
 enum EnergyStage {
 	kStageNoStage,
-	kStageCasual,				//	more than 50% energy
-	kStageWorried,				//	more than 25% energy
-	kStageNervous,				//	more than 5% energy
-	kStagePanicStricken			//	less than 5% energy
+	kStageCasual,       // more than 50% energy
+	kStageWorried,      // more than 25% energy
+	kStageNervous,      // more than 5% energy
+	kStagePanicStricken // less than 5% energy
 };
 
 enum NoradSubPrepState {

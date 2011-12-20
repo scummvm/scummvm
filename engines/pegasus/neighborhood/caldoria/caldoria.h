@@ -34,13 +34,13 @@ static const TimeScale kCaldoriaMovieScale = 600;
 static const TimeScale kCaldoriaFramesPerSecond = 15;
 static const TimeScale kCaldoriaFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
 
 static const AlternateID kAltCaldoriaNormal = 0;
 static const AlternateID kAltCaldoriaRoofDoorBlown = 2;
 static const AlternateID kAltCaldoriaSinclairDown = 3;
 
-//	Room IDs.
+// Room IDs.
 
 static const RoomID kCaldoria00 = 1;
 static const RoomID kCaldoria01 = 2;
@@ -106,7 +106,7 @@ static const RoomID kCaldoria55 = 61;
 static const RoomID kCaldoria56 = 62;
 static const RoomID kCaldoriaDeathRoom = 0;
 
-//	Hot Spot Activation IDs.
+// Hot Spot Activation IDs.
 
 static const HotSpotActivationID kActivate4DClosed = 1;
 static const HotSpotActivationID kActivate4DOpen = 2;
@@ -124,7 +124,7 @@ static const HotSpotActivationID kActivateReadyToTransport = 13;
 static const HotSpotActivationID kActivateRoofSlotEmpty = 14;
 static const HotSpotActivationID kActivateZoomedOnSinclair = 15;
 
-//	Hot Spot IDs.
+// Hot Spot IDs.
 
 static const HotSpotID kCa4DEnvironOpenSpotID = 5000;
 static const HotSpotID kCa4DEnvironCloseSpotID = 5001;
@@ -196,7 +196,7 @@ static const HotSpotID kCaldoriaRoofDoorSpotID = 5066;
 static const HotSpotID kCaldoriaRoofCardDropSpotID = 5067;
 static const HotSpotID kCaldoria53EastSinclairTargetSpotID = 5068;
 
-//	Extra sequence IDs.
+// Extra sequence IDs.
 
 static const ExtraID kCaldoriaWakeUpView1 = 0;
 static const ExtraID kCaldoria00WakeUp1 = 1;
@@ -310,14 +310,14 @@ static const ExtraID kCaldoria56BombStage6 = 108;
 static const ExtraID kCaldoria56BombStage7 = 109;
 static const ExtraID kCaldoria56BombExplodes = 110;
 
-//	Caldoria interactions.
+// Caldoria interactions.
 
 static const InteractionID kCaldoria4DInteractionID = 0;
 static const InteractionID kCaldoriaBombInteractionID = 1;
 static const InteractionID kCaldoriaMessagesInteractionID = 2;
 static const InteractionID kCaldoriaMirrorInteractionID = 3;
 
-//	Caldoria:
+// Caldoria:
 
 static const DisplayOrder kVidPhoneOrder = kMonitorLayer;
 static const DisplayOrder k4DSpritesOrder = kMonitorLayer;
@@ -330,7 +330,7 @@ static const DisplayOrder kCaldoriaBombTimerOrder = kCaldoriaBombGridOrder + 1;
 
 /////////////////////////////////////////////
 //
-//	Caldoria
+// Caldoria
 
 static const CoordType kCaldoriaVidPhoneLeft = kNavAreaLeft + 105;
 static const CoordType kCaldoriaVidPhoneTop = kNavAreaTop + 28;
@@ -374,7 +374,7 @@ static const CoordType kCaldoriaBombGridTop = kNavAreaTop + 58;
 static const CoordType kCaldoriaBombTimerLeft = kNavAreaLeft + 58;
 static const CoordType kCaldoriaBombTimerTop = kNavAreaTop + 204;
 
-//	Caldoria display IDs.
+// Caldoria display IDs.
 
 static const DisplayElementID kCaldoriaVidPhoneID = kNeighborhoodDisplayID;
 static const DisplayElementID kCaldoria4DSpritesID = kCaldoriaVidPhoneID + 1;

@@ -33,11 +33,11 @@ namespace Pegasus {
 
 class Item;
 
-//	Inventories have a "current item". This item is the default item the player can
-//	use. In a text adventure system, the current item would be "it", as in
-//	"Hit the troll with it," where "it" would refer to some weapon which is the current
-//	item. In a graphic adventure, the current item would be the item the user selects
-//	to use with the mouse or other pointing device.
+// Inventories have a "current item". This item is the default item the player can
+// use. In a text adventure system, the current item would be "it", as in
+// "Hit the troll with it," where "it" would refer to some weapon which is the current
+// item. In a graphic adventure, the current item would be the item the user selects
+// to use with the mouse or other pointing device.
 
 class Inventory {
 public:

@@ -275,7 +275,7 @@ void TimeBase::checkCallBacks() {
 	}
 }
 
-//	Protected functions only called by TimeBaseCallBack.
+// Protected functions only called by TimeBaseCallBack.
 
 void TimeBase::addCallBack(TimeBaseCallBack *callBack) {
 	callBack->_nextCallBack = _callBackList;

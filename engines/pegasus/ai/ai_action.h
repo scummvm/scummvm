@@ -38,7 +38,7 @@ class AITimerCondition;
 
 /////////////////////////////////////////////
 //
-//	AIAction
+// AIAction
 
 class AIAction {
 friend class AIRule;
@@ -58,7 +58,7 @@ typedef Common::List<AIAction *> AIActionList;
 
 /////////////////////////////////////////////
 //
-//	AICompoundAction
+// AICompoundAction
 
 class AICompoundAction : public AIAction {
 public:
@@ -75,7 +75,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIPlayMessageAction
+// AIPlayMessageAction
 
 class AIPlayMessageAction : public AIAction {
 public:
@@ -91,7 +91,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIStartTimerAction
+// AIStartTimerAction
 
 class AIStartTimerAction : public AIAction {
 public:
@@ -105,7 +105,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIActivateRuleAction
+// AIActivateRuleAction
 
 class AIActivateRuleAction : public AIAction {
 public:
@@ -119,7 +119,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIDeactivateRuleAction
+// AIDeactivateRuleAction
 
 class AIDeactivateRuleAction : public AIAction {
 public:

@@ -135,11 +135,11 @@ void DisplayElement::show() {
 	}
 }
 
-//	Only invalidates this element's bounding rectangle if all these conditions are true:
-//	--	The triggered element is this element.
-//	--	The element is displaying on the display list.
-//	--	The element is visible.
-//	--	The element is part of the active layer OR is one of the reserved items.
+// Only invalidates this element's bounding rectangle if all these conditions are true:
+// -- The triggered element is this element.
+// -- The element is displaying on the display list.
+// -- The element is visible.
+// -- The element is part of the active layer OR is one of the reserved items.
 void DisplayElement::triggerRedraw() {
 	GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
 

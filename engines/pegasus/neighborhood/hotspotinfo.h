@@ -53,12 +53,12 @@ public:
 
 		HotSpotID hotspot;
 		HotSpotActivationID hotspotActivation;
-		//	Location hot spot lives in:
+		// Location hot spot lives in:
 		RoomID hotspotRoom;
 		DirectionConstant hotspotDirection;
-		//	Extra to play if this is a "play extra" hot spot.
+		// Extra to play if this is a "play extra" hot spot.
 		ExtraID hotspotExtra;
-		//	Item corresponding to this hot spot if it is an item-related hot spot.
+		// Item corresponding to this hot spot if it is an item-related hot spot.
 		ItemID hotspotItem;
 	};
 

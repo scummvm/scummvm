@@ -139,7 +139,7 @@ void InputDevice::getInput(Input &input, const InputBits filter) {
 	input.setAltDown(altDown);
 }
 
-//	Wait until the input device stops returning input allowed by filter...
+// Wait until the input device stops returning input allowed by filter...
 void InputDevice::waitInput(const InputBits filter) {
 	if (filter != 0) {
 		for (;;) {

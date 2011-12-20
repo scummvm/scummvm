@@ -41,7 +41,7 @@ Movie::~Movie() {
 	releaseMovie();
 }
 
-//	*** Make sure this will stop displaying the movie.
+// *** Make sure this will stop displaying the movie.
 
 void Movie::releaseMovie() {
 	if (_video) {

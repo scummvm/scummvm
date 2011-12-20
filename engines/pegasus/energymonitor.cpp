@@ -266,7 +266,7 @@ void EnergyMonitor::calibrateEnergyBar() {
 	setEnergyValue(0);
 	setEnergyDrainRate(-(int32)kMaxJMPEnergy / 2);
 
-	//	Make sure warning light is hidden...
+	// Make sure warning light is hidden...
 	_energyLight.hide();
 	while (getCurrentEnergy() != (int32)kMaxJMPEnergy) {
 		vm->checkCallBacks();

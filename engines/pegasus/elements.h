@@ -131,10 +131,10 @@ protected:
 	TimeValue _lastTime;
 };
 
-//	This class reads PICT resources and plays them like a movie.
-//	Assumes there is a resource of type 'PFrm' describing the time values for each
-//	PICT frame, as well as the total time in the movie.
-//	Assumes that PICT frames begin at PICT 128
+// This class reads PICT resources and plays them like a movie.
+// Assumes there is a resource of type 'PFrm' describing the time values for each
+// PICT frame, as well as the total time in the movie.
+// Assumes that PICT frames begin at PICT 128
 
 class FrameSequence : public IdlerAnimation {
 public:

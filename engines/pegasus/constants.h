@@ -105,7 +105,7 @@ static const DisplayElementID kCurrentDragSpriteID = 1000;
 
 static const TimeScale kDefaultTimeScale = 600;
 
-//	Ticks per second.
+// Ticks per second.
 
 static const TimeScale kOneTickPerSecond = 1;
 static const TimeScale kTwoTicksPerSecond = 2;
@@ -114,7 +114,7 @@ static const TimeScale kThirtyTicksPerSecond = 30;
 static const TimeScale kSixtyTicksPerSecond = 60;
 static const TimeScale kMovieTicksPerSecond = 600;
 
-//	These times are in seconds.
+// These times are in seconds.
 
 static const TimeValue kOneSecond = 1;
 static const TimeValue kTwoSeconds = 2;
@@ -166,7 +166,7 @@ static const TimeValue kFiftyMinutes = kOneMinute * 50;
 static const TimeValue kOneHour = kOneMinute * 60;
 static const TimeValue kTwoHours = kOneHour * 2;
 
-//	Common times.
+// Common times.
 
 static const TimeValue kHalfSecondPerTwoTicks = kTwoTicksPerSecond / 2;
 static const TimeValue kHalfSecondPerThirtyTicks = kThirtyTicksPerSecond / 2;
@@ -188,7 +188,7 @@ static const TimeValue kOneMinutePerSixtyTicks = kOneMinute * kSixtyTicksPerSeco
 static const TimeValue kFiveMinutesPerSixtyTicks = kFiveMinutes * kSixtyTicksPerSecond;
 static const TimeValue kTenMinutesPerSixtyTicks = kTenMinutes * kSixtyTicksPerSecond;
 
-//	Time in seconds you can hang around Caldoria without going to work...
+// Time in seconds you can hang around Caldoria without going to work...
 static const TimeValue kLateWarning2TimeLimit = kFiveMinutes;
 static const TimeValue kLateWarning3TimeLimit = kTenMinutes;
 
@@ -264,14 +264,14 @@ static const uint32 kPegasusPrimeVersion = 0x00009019;
 static const char kNormalSave = 0;
 static const char kContinueSave = 1;
 
-//	Display IDs.
+// Display IDs.
 
 static const DisplayElementID kNavMovieID = 1;
 static const DisplayElementID kTurnPushID = 2;
 
 static const DisplayElementID kMaxGameShellDisplayID = kTurnPushID;
 
-//	Display ordering.
+// Display ordering.
 
 static const DisplayOrder kNavLayer = 10000;
 static const DisplayOrder kNavMovieOrder = kNavLayer;
@@ -279,7 +279,7 @@ static const DisplayOrder kTurnPushOrder = kNavMovieOrder + 1;
 
 /////////////////////////////////////////////
 //
-//	Display IDs.
+// Display IDs.
 
 static const DisplayElementID kScreenDimmerID = kMaxGameShellDisplayID + 1;
 static const DisplayElementID kInterface1ID = kScreenDimmerID + 1;
@@ -367,7 +367,7 @@ static const CoordType kFinalMessageTop = kInventoryPushTop + 24;
 
 /////////////////////////////////////////////
 //
-//	Notifications.
+// Notifications.
 
 static const NotificationID kJMPDCShellNotificationID = kLastNeighborhoodNotificationID + 1;
 static const NotificationID kInterfaceNotificationID = kJMPDCShellNotificationID + 1;
@@ -386,7 +386,7 @@ static const NotificationID kCaldoriaVidPhoneNotificationID = kNoradGlobeNotific
 static const NotificationID kCaldoriaMessagesNotificationID = kCaldoriaVidPhoneNotificationID + 1;
 static const NotificationID kCaldoriaBombTimerNotificationID = kCaldoriaMessagesNotificationID + 1;
 
-//	Sent to the shell by fShellNotification.
+// Sent to the shell by fShellNotification.
 static const NotificationFlags kGameStartingFlag = 1;
 static const NotificationFlags kNeedNewJumpFlag = kGameStartingFlag << 1;
 static const NotificationFlags kPlayerDiedFlag = kNeedNewJumpFlag << 1;
@@ -395,7 +395,7 @@ static const NotificationFlags kJMPShellNotificationFlags = kGameStartingFlag |
 														kNeedNewJumpFlag |
 														kPlayerDiedFlag;
 
-//	Sent to the interface.
+// Sent to the interface.
 static const NotificationFlags kInventoryLidOpenFlag = 1;
 static const NotificationFlags kInventoryLidClosedFlag = kInventoryLidOpenFlag << 1;
 static const NotificationFlags kInventoryDrawerUpFlag = kInventoryLidClosedFlag << 1;
@@ -414,21 +414,21 @@ static const NotificationFlags kInterfaceNotificationFlags =	kInventoryLidOpenFl
 														kBiochipDrawerUpFlag |
 														kBiochipDrawerDownFlag;
 
-//	Hot spots.
+// Hot spots.
 
-//	Neighborhood hot spots.
+// Neighborhood hot spots.
 
 static const HotSpotID kFirstNeighborhoodSpotID = 5000;
 
-//	kShellSpotFlag is a flag which marks all hot spots which belong to the shell, like
-//	the current item and current biochip spots.
+// kShellSpotFlag is a flag which marks all hot spots which belong to the shell, like
+// the current item and current biochip spots.
 static const HotSpotFlags kShellSpotFlag = 1;
-//	kNeighborhoodSpotFlag is a flag which marks all hot spots which belong to a
-//	neighborhood, like buttons on walls and so on.
+// kNeighborhoodSpotFlag is a flag which marks all hot spots which belong to a
+// neighborhood, like buttons on walls and so on.
 static const HotSpotFlags kNeighborhoodSpotFlag = kShellSpotFlag << 1;
-//	kZoomInSpotFlag is a flag which marks all hot spots which indicate a zoom.
+// kZoomInSpotFlag is a flag which marks all hot spots which indicate a zoom.
 static const HotSpotFlags kZoomInSpotFlag = kNeighborhoodSpotFlag << 1;
-//	kZoomOutSpotFlag is a flag which marks all hot spots which indicate a zoom.
+// kZoomOutSpotFlag is a flag which marks all hot spots which indicate a zoom.
 static const HotSpotFlags kZoomOutSpotFlag = kZoomInSpotFlag << 1;
 
 static const HotSpotFlags kClickSpotFlag = kZoomOutSpotFlag << 1;
@@ -443,10 +443,10 @@ static const HotSpotFlags kHighestGameShellSpotFlag = kOpenDoorSpotFlag;
 
 /////////////////////////////////////////////
 //
-//	Hot spots.
+// Hot spots.
 
-//	Shell hot spots.
-//	The shell reserves all hot spot IDs from 0 to 999
+// Shell hot spots.
+// The shell reserves all hot spot IDs from 0 to 999
 
 static const HotSpotID kCurrentItemSpotID = 0;
 static const HotSpotID kCurrentBiochipSpotID = kCurrentItemSpotID + 1;
@@ -477,28 +477,28 @@ static const HotSpotID kShuttleTractorSpotID = kShuttleGravitonSpotID + 1;
 static const HotSpotID kShuttleViewSpotID = kShuttleTractorSpotID + 1;
 static const HotSpotID kShuttleTransportSpotID = kShuttleViewSpotID + 1;
 
-//	Most of these are obsolete:
+// Most of these are obsolete:
 
-//	kInventoryDropSpotFlag is a flag which marks hot spots which are valid drop spots
-//	for inventory items.
-//	static const HotSpotFlags kInventoryDropSpotFlag = kHighestGameShellSpotFlag << 1;
+// kInventoryDropSpotFlag is a flag which marks hot spots which are valid drop spots
+// for inventory items.
+// static const HotSpotFlags kInventoryDropSpotFlag = kHighestGameShellSpotFlag << 1;
 
-//	kBiochipDropSpotFlag is a flag which marks hot spots which are valid drop spots
-//	for biochips.
-//	static const HotSpotFlags kBiochipDropSpotFlag = kInventoryDropSpotFlag << 1;
+// kBiochipDropSpotFlag is a flag which marks hot spots which are valid drop spots
+// for biochips.
+// static const HotSpotFlags kBiochipDropSpotFlag = kInventoryDropSpotFlag << 1;
 
-//	kInventorySpotFlag is a flag which marks hot spots which indicate inventory items
-//	in the environment.
-//	static const HotSpotFlags kInventorySpotFlag = kBiochipDropSpotFlag << 1;
+// kInventorySpotFlag is a flag which marks hot spots which indicate inventory items
+// in the environment.
+// static const HotSpotFlags kInventorySpotFlag = kBiochipDropSpotFlag << 1;
 
-//	kBiochipSpotFlag is a flag which marks hot spots which indicate biochips
-//	in the environment.
+// kBiochipSpotFlag is a flag which marks hot spots which indicate biochips
+// in the environment.
 static const HotSpotFlags kPickUpBiochipSpotFlag = kHighestGameShellSpotFlag << 1;
 static const HotSpotFlags kDropBiochipSpotFlag = kPickUpBiochipSpotFlag << 1;
 
 static const HotSpotFlags kInfoReturnSpotFlag = kDropBiochipSpotFlag << 1;
 
-//	Biochip and inventory hot spot flags...
+// Biochip and inventory hot spot flags...
 
 static const HotSpotFlags kAIBiochipSpotFlag = kInfoReturnSpotFlag << 1;
 static const HotSpotFlags kPegasusBiochipSpotFlag = kAIBiochipSpotFlag << 1;
@@ -521,7 +521,7 @@ static const int32 kDeathMenuID = 4;
 
 /////////////////////////////////////////////
 //
-//	Menu commands.
+// Menu commands.
 
 static const GameMenuCommand kMenuCmdOverview = kMenuCmdNoCommand + 1;
 static const GameMenuCommand kMenuCmdStartAdventure = kMenuCmdOverview + 1;
@@ -551,16 +551,16 @@ static const GameMenuCommand kMenuCmdEjectRestart = kMenuCmdCancelRestart + 1;
 static const TimeValue kMenuButtonHiliteTime = 20;
 static const TimeScale kMenuButtonHiliteScale = kSixtyTicksPerSecond;
 
-//	PICT resources:
+// PICT resources:
 
-//	Warning light PICTs:
+// Warning light PICTs:
 
 static const ResIDType kLightOffID = 128;
 static const ResIDType kLightYellowID = 129;
 static const ResIDType kLightOrangeID = 130;
 static const ResIDType kLightRedID = 131;
 
-//	Date PICTs:
+// Date PICTs:
 
 static const ResIDType kDatePrehistoricID = 138;
 static const ResIDType kDate2112ID = 139;
@@ -570,7 +570,7 @@ static const ResIDType kDate2318ID = 142;
 
 /////////////////////////////////////////////
 //
-//	Display Order
+// Display Order
 
 static const DisplayOrder kCroppedMovieLayer = 11000;
 
@@ -626,7 +626,7 @@ static const DisplayOrder kPauseSmallHiliteOrder = kPauseLargeHiliteOrder + 1;
 
 /////////////////////////////////////////////
 //
-//	Death reasons.
+// Death reasons.
 enum {
 	// Caldoria
 	kDeathUncreatedInCaldoria = 1,
@@ -697,10 +697,10 @@ static const CoordType kAIRightAreaWidth = 96;
 static const CoordType kAIRightAreaHeight = 96;
 
 enum {
-	kTSAPlayerNotArrived,				//	initial state, must be zero
-	kTSAPlayerForcedReview,				//	Player must watch TBP before rip occurs.
-	kTSAPlayerDetectedRip,				//	Player finished TBP, rip alarm just went off.
-	kTSAPlayerNeedsHistoricalLog,		//	Player is instructed to get historical log
+	kTSAPlayerNotArrived,				// initial state, must be zero
+	kTSAPlayerForcedReview,				// Player must watch TBP before rip occurs.
+	kTSAPlayerDetectedRip,				// Player finished TBP, rip alarm just went off.
+	kTSAPlayerNeedsHistoricalLog,		// Player is instructed to get historical log
 	kTSAPlayerGotHistoricalLog,
 	kTSAPlayerInstalledHistoricalLog,
 	kTSABossSawHistoricalLog,
@@ -718,7 +718,7 @@ enum {
 
 /////////////////////////////////////////////
 //
-//	Mode static constants.
+// Mode static constants.
 
 static const GameMode kModeInventoryPick = kLastGameShellMode + 1;
 static const GameMode kModeBiochipPick = kModeInventoryPick + 1;

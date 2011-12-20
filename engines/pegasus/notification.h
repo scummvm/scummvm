@@ -57,12 +57,12 @@ public:
 	Notification(const NotificationID id, NotificationManager *owner);
 	virtual ~Notification();
 
-	//	NotifyMe will have this receiver notified when any of the specified notification
-	//	flags are set.
-	//	If there is already a notification set for this receiver, NotifyMe does a bitwise
-	//	OR with the receiver's current notification flags.
+	// notifyMe will have this receiver notified when any of the specified notification
+	// flags are set.
+	// If there is already a notification set for this receiver, notifyMe does a bitwise
+	// OR with the receiver's current notification flags.
 
-	//	Can selectively set or clear notification bits by using the flags and mask argument.
+	// Can selectively set or clear notification bits by using the flags and mask argument.
 
 	void notifyMe(NotificationReceiver*, NotificationFlags flags, NotificationFlags mask);
 	void cancelNotification(NotificationReceiver *receiver);
@@ -88,8 +88,8 @@ public:
 	virtual ~NotificationReceiver();
 	
 protected:
-	//	ReceiveNotification is called automatically whenever a notification that this
-	//	receiver depends on has its flags set
+	// receiveNotification is called automatically whenever a notification that this
+	// receiver depends on has its flags set
 	
 	virtual void receiveNotification(Notification *, const NotificationFlags);
 	virtual void newNotification(Notification *notification);

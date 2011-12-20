@@ -1613,10 +1613,10 @@ void PegasusEngine::dragTerminated(const Input &) {
 			delete _draggingSprite;
 	} else if (_dragType == kDragInventoryUse) {
 		if (finalSpot && (finalSpot->getHotspotFlags() & kDropItemSpotFlag) != 0) {
-			//	*** Need to decide on a case by case basis what to do here.
-			//	the crowbar should break the cover off the Mars reactor if its frozen, the
-			//	global transport card should slide through the slot, the oxygen mask should
-			//	attach to the filling station, and so on...
+			// *** Need to decide on a case by case basis what to do here.
+			// the crowbar should break the cover off the Mars reactor if its frozen, the
+			// global transport card should slide through the slot, the oxygen mask should
+			// attach to the filling station, and so on...
 			_neighborhood->dropItemIntoRoom(_draggingItem, finalSpot);
 			delete _draggingSprite;
 		} else {
@@ -1635,7 +1635,7 @@ void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {
 	_draggingItem = item;
 	_dragType = type;
 
-	//	Create the sprite.
+	// Create the sprite.
 	_draggingSprite = _draggingItem->getDragSprite(kDraggingSpriteID);
 	Common::Point where;
 	input.getInputLocation(where);
@@ -1644,7 +1644,7 @@ void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {
 	r1 = Common::Rect::center(where.x, where.y, r1.width(), r1.height());
 	_draggingSprite->setBounds(r1);
 
-	//	Set up drag constraints.
+	// Set up drag constraints.
 	DisplayElement *navMovie = _gfx->findDisplayElement(kNavMovieID);
 	Common::Rect r2;
 	navMovie->getBounds(r2);

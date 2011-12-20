@@ -40,7 +40,7 @@ namespace Pegasus {
 typedef byte SpotFlags;
 
 enum {
-	kSpotLoopsBit,			//	Loop or once only?
+	kSpotLoopsBit, // Loop or once only?
 	kSpotOnArrivalBit,
 	kSpotOnTurnBit,
 	kSpotOnDoorOpenBit

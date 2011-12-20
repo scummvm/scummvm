@@ -40,7 +40,7 @@ namespace Common {
 
 namespace Pegasus {
 
-//	JMPItemInfo contains resource data used by all Items.
+// JMPItemInfo contains resource data used by all Items.
 
 struct JMPItemInfo {
 	TimeValue infoLeftTime;
@@ -50,23 +50,21 @@ struct JMPItemInfo {
 	uint32 dragSpriteUsedID;
 };
 
-//	ItemStateEntry contains a single state/TimeValue pair. The TimeValue is
-//	the time value to set the shared area movie that corresponds with the given
-//	state of an inventory item.
+// ItemStateEntry contains a single state/TimeValue pair. The TimeValue is
+// the time value to set the shared area movie that corresponds with the given
+// state of an inventory item.
 
 struct ItemStateEntry {
 	ItemState itemState;
 	TimeValue itemTime;
 };
 
-//	ItemStateInfoHandle is an array of ItemStateEntry.
-
 struct ItemStateInfo {
-	uint16 numEntries; //	For easy ResEdit access
+	uint16 numEntries; // For easy ResEdit access
 	ItemStateEntry *entries;
 };
 
-//	ItemExtraEntry
+// ItemExtraEntry
 
 static const short kLeftAreaExtra = 0;
 static const short kMiddleAreaExtra = 1;
@@ -79,16 +77,14 @@ struct ItemExtraEntry {
 	TimeValue extraStop;
 };
 
-//	tItemExtraInfoHandle is an array of tItemExtraEntry.
-
 struct ItemExtraInfo {
-	uint16 numEntries;		//	For easy ResEdit access
+	uint16 numEntries; // For easy ResEdit access
 	ItemExtraEntry *entries;
 };
 
-//	Inventory info resource type and ID:
-//	Individual inventory items are stored in these resource types.
-//	Resource ID is item ID + kItemBaseResID.
+// Inventory info resource type and ID:
+// Individual inventory items are stored in these resource types.
+// Resource ID is item ID + kItemBaseResID.
 
 static const uint32 kItemInfoResType = MKTAG('I', 't', 'e', 'm');       // JMPItemInfoHandle
 static const uint32 kLeftAreaInfoResType = MKTAG('L', 'e', 'f', 't');   // ItemStateInfoHandle
@@ -98,7 +94,7 @@ static const uint32 kItemExtraInfoResType = MKTAG('I', 'X', 't', 'r');	 // ItemE
 
 static const uint16 kItemBaseResID = 128;
 
-//	Item IDs.
+// Item IDs.
 
 static const ItemID kAirMask = 7;
 static const ItemID kAntidote = 8;
@@ -119,7 +115,7 @@ static const ItemID kSinclairKey = 22;
 static const ItemID kStunGun = 23;
 static const ItemID kArgonPickup = 24;
 
-//	Biochips.
+// Biochips.
 
 static const ItemID kAIBiochip = 0;
 static const ItemID kInterfaceBiochip = 1;
@@ -131,7 +127,7 @@ static const ItemID kShieldBiochip = 6;
 
 static const ItemID kNumItems = 25;
 
-//	Item States.
+// Item States.
 
 static const ItemState kAI000 = 0;
 static const ItemState kAI005 = 1;
@@ -253,7 +249,7 @@ static const ItemState kNitrogenEmpty = 116;
 static const ItemState kNitrogenFull = 117;
 static const ItemState kFullGlass = 118;
 
-//	Extra IDs.
+// Extra IDs.
 
 static const uint32 kRetinalScanSearching = 0;
 static const uint32 kRetinalScanActivated = 1;
@@ -323,8 +319,8 @@ public:
 		deselect	--	called when this item is no longer current.
 		activate	--	called on the current item when the panel is closed.
 	*/
-	//	In an override of these three member functions, you must call the inherited
-	//	member functions.
+	// In an override of these three member functions, you must call the inherited
+	// member functions.
 	virtual void select();
 	virtual void deselect();
 	virtual bool isSelected() { return _isSelected; }
@@ -336,8 +332,8 @@ public:
 	virtual void removedFromInventory() {}
 	virtual void dropped() {}
 
-	//	Called when the shared area is taken by another item, but this item is still
-	//	selected.
+	// Called when the shared area is taken by another item, but this item is still
+	// selected.
 	virtual void giveUpSharedArea() {}
 	virtual void takeSharedArea() {}
 	

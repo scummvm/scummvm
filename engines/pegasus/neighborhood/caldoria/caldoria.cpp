@@ -146,7 +146,7 @@ static const TimeValue k5To2Time = 41240;
 
 static const TimeValue k5To3Time = 41280;
 
-//	FuseFunction functions...
+// FuseFunction functions...
 
 const NotificationFlags kSinclairLoopDoneFlag = kLastNeighborhoodNotificationFlag << 1;
 
@@ -182,7 +182,7 @@ Caldoria::~Caldoria() {
 void Caldoria::init() {
 	Neighborhood::init();
 
-	//	We need this notification flag as well.
+	// We need this notification flag as well.
 	_neighborhoodNotification.notifyMe(this, kSinclairLoopDoneFlag, kSinclairLoopDoneFlag);
 
 	_sinclairInterrupt.initCallBack(&_navMovie, kCallBackAtTime);
@@ -948,7 +948,7 @@ void Caldoria::setUpRoofTop() {
 		if (GameState.getCurrentDirection() == kEast && GameState.getCaldoriaGunAimed())
 			startExtraSequence(kCa53EastShootSinclair, kExtraCompletedFlag, false);
 		else
-			//	Fall through...
+			// Fall through...
 	case kCaldoria49:
 	case kCaldoria50:
 	case kCaldoria51:
@@ -1548,9 +1548,9 @@ void Caldoria::newInteraction(const InteractionID interactionID) {
 	}
 }
 
-//	Only called when trying to pick up an item and the player can't (because
-//	the inventory is too full or because the player lets go of the item before
-//	dropping it into the inventory).
+// Only called when trying to pick up an item and the player can't (because
+// the inventory is too full or because the player lets go of the item before
+// dropping it into the inventory).
 Hotspot *Caldoria::getItemScreenSpot(Item *item, DisplayElement *element) {
 	HotSpotID destSpotID = kNoHotSpotID;
 	
@@ -1919,7 +1919,7 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 				else if (GameState.isTakenItemID(kShieldBiochip))
 					return "Images/AI/Caldoria/X48ND3";
 
-				//	*** Doesn't work yet, need global movies.
+				// *** Doesn't work yet, need global movies.
 				break;
 			} 
 

@@ -171,7 +171,7 @@ void InventoryPicture::panelUp() {
 	allowInput(true);
 }
 
-//	Must ensure that the picture matches the _inventory member variable.
+// Must ensure that the picture matches the _inventory member variable.
 void InventoryPicture::activateInventoryPicture() {
 	if (_active)
 		return;

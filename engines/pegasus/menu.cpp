@@ -142,7 +142,7 @@ static const CoordType kMainMenuQuitTop = 428;
 static const CoordType kMainMenuQuitSelectLeft = 152;
 static const CoordType kMainMenuQuitSelectTop = 424;
 
-//	Never set the current input handler to the MainMenu.
+// Never set the current input handler to the MainMenu.
 MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButton(0),
 		_restoreButton(0), _adventureButton(0), _walkthroughButton(0), _startButton(0),
 		_creditsButton(0), _quitButton(0), _largeSelect(0), _smallSelect(0) {
@@ -447,9 +447,9 @@ static const TimeValue kOriginalTeamTime = 3000;
 static const TimeValue kTalentTime = 4440;
 static const TimeValue kOtherTitlesTime = 4680;
 
-static const TimeValue kFrameIncrement = 120;		//	Three frames...
+static const TimeValue kFrameIncrement = 120; // Three frames...
 
-//	Never set the current input handler to the CreditsMenu.
+// Never set the current input handler to the CreditsMenu.
 CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _creditsMovie(0),
 		_mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
 
@@ -979,7 +979,7 @@ static const CoordType kQuitTop = kPauseTop + 302;
 static const CoordType kQuitSelectLeft = kPauseLeft - 44;
 static const CoordType kQuitSelectTop = kPauseTop + 297;
 
-//	These are relative to the pause background.
+// These are relative to the pause background.
 static const CoordType kPauseScoreLeft = 130;
 static const CoordType kPauseScoreTop = 34;
 static const CoordType kPauseScoreRight = kPauseScoreLeft + 108;

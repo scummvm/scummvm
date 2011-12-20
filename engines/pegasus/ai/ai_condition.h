@@ -37,7 +37,7 @@ namespace Pegasus {
 
 /////////////////////////////////////////////
 //
-//	AICondition
+// AICondition
 
 class AICondition {
 public:
@@ -56,7 +56,7 @@ public:
 
 /////////////////////////////////////////////
 //
-//	AIOneChildCondition
+// AIOneChildCondition
 
 class AIOneChildCondition : public AICondition {
 public:
@@ -72,7 +72,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AITwoChildrenCondition
+// AITwoChildrenCondition
 
 class AITwoChildrenCondition : public AICondition {
 public:
@@ -88,7 +88,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AINotCondition
+// AINotCondition
 
 class AINotCondition : public AIOneChildCondition {
 public:
@@ -99,7 +99,7 @@ public:
 
 /////////////////////////////////////////////
 //
-//	AIAndCondition
+// AIAndCondition
 
 class AIAndCondition : public AITwoChildrenCondition {
 public:
@@ -110,7 +110,7 @@ public:
 
 /////////////////////////////////////////////
 //
-//	AIOrCondition
+// AIOrCondition
 
 class AIOrCondition : public AITwoChildrenCondition {
 public:
@@ -121,7 +121,7 @@ public:
 
 /////////////////////////////////////////////
 //
-//	AITimerCondition
+// AITimerCondition
 
 class AITimerCondition : public AICondition {
 public:
@@ -144,7 +144,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AILocationCondition
+// AILocationCondition
 
 class AILocationCondition : public AICondition {
 public:
@@ -164,7 +164,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIDoorOpenedCondition
+// AIDoorOpenedCondition
 
 class AIDoorOpenedCondition : public AICondition {
 public:
@@ -179,7 +179,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIHasItemCondition
+// AIHasItemCondition
 
 class AIHasItemCondition : public AICondition {
 public:
@@ -193,7 +193,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIDoesntHaveItemCondition
+// AIDoesntHaveItemCondition
 
 class AIDoesntHaveItemCondition : public AICondition {
 public:
@@ -207,7 +207,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AICurrentItemCondition
+// AICurrentItemCondition
 
 class AICurrentItemCondition : public AICondition {
 public:
@@ -221,7 +221,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AICurrentBiochipCondition
+// AICurrentBiochipCondition
 
 class AICurrentBiochipCondition : public AICondition {
 public:
@@ -235,7 +235,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIItemStateCondition
+// AIItemStateCondition
 
 class AIItemStateCondition : public AICondition {
 public:
@@ -250,7 +250,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AIEnergyMonitorCondition
+// AIEnergyMonitorCondition
 
 class AIEnergyMonitorCondition : public AICondition {
 public:
@@ -264,7 +264,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	AILastExtraCondition
+// AILastExtraCondition
 
 class AILastExtraCondition : public AICondition {
 public:
@@ -278,7 +278,7 @@ protected:
 
 /////////////////////////////////////////////
 //
-//	Helper functions
+// Helper functions
 
 AICondition *makeLocationAndDoesntHaveItemCondition(const RoomID room, const DirectionConstant direction, const ItemID item);
 

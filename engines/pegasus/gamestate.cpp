@@ -41,7 +41,7 @@ Common::Error GameStateManager::writeGameState(Common::WriteStream *stream) {
 	stream->writeUint16BE(_currentRoom);
 	stream->writeByte(_currentDirection);
 	stream->writeUint16BE(_nexNeighborhoodID);
-	stream->writeUint16BE(_nexRoomID);
+	stream->writeUint16BE(_nextRoomID);
 	stream->writeByte(_nextDirection);
 	stream->writeUint16BE(_lastNeighborhood);
 	stream->writeUint16BE(_lastRoom);
@@ -71,7 +71,7 @@ Common::Error GameStateManager::readGameState(Common::ReadStream *stream) {
 	_currentRoom = stream->readUint16BE();
 	_currentDirection = stream->readByte();
 	_nexNeighborhoodID = stream->readUint16BE();
-	_nexRoomID = stream->readUint16BE();
+	_nextRoomID = stream->readUint16BE();
 	_nextDirection = stream->readByte();
 	_lastNeighborhood = stream->readUint16BE();
 	_lastRoom = stream->readUint16BE();
@@ -101,7 +101,7 @@ void GameStateManager::resetGameState() {
 	_currentRoom = kNoRoomID;
 	_currentDirection = kNoDirection;
 	_nexNeighborhoodID = kNoNeighborhoodID;
-	_nexRoomID = kNoRoomID;
+	_nextRoomID = kNoRoomID;
 	_nextDirection = kNoDirection;
 	_lastNeighborhood = kNoNeighborhoodID;
 	_lastRoom = kNoRoomID;
@@ -169,13 +169,13 @@ RoomViewID GameStateManager::getCurrentRoomAndView() {
 
 void GameStateManager::getNextLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) {
 	neighborhood = _nexNeighborhoodID;
-	room = _nexRoomID;
+	room = _nextRoomID;
 	direction = _nextDirection;
 }
 
 void GameStateManager::setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) {
 	_nexNeighborhoodID = neighborhood;
-	_nexRoomID = room;
+	_nextRoomID = room;
 	_nextDirection = direction;
 }
 
@@ -188,11 +188,11 @@ void GameStateManager::setNextNeighborhood(const NeighborhoodID neighborhood) {
 }
 
 RoomID GameStateManager::getNextRoom() {
-	return _nexRoomID;
+	return _nextRoomID;
 }
 
 void GameStateManager::setNextRoom(const RoomID room) {
-	_nexRoomID = room;
+	_nextRoomID = room;
 }
 
 DirectionConstant GameStateManager::getNextDirection() {
@@ -530,7 +530,7 @@ GameScoreType GameStateManager::getTotalScore() {
 
 /////////////////////////////////////////////
 //
-//	Caldoria data
+// Caldoria data
 	
 void GameStateManager::writeCaldoriaState(Common::WriteStream *stream) {
 	_caldoriaFlags.writeToStream(stream);
@@ -549,7 +549,7 @@ void GameStateManager::resetCaldoriaState() {
 
 /////////////////////////////////////////////
 //
-//	TSA data
+// TSA data
 
 void GameStateManager::writeTSAState(Common::WriteStream *stream) {
 	_TSAFlags.writeToStream(stream);
@@ -580,7 +580,7 @@ void GameStateManager::resetTSAState() {
 
 /////////////////////////////////////////////
 //
-//	Prehistoric data
+// Prehistoric data
 
 void GameStateManager::writePrehistoricState(Common::WriteStream *stream) {
 	_prehistoricFlags.writeToStream(stream);
@@ -596,7 +596,7 @@ void GameStateManager::resetPrehistoricState() {
 
 /////////////////////////////////////////////
 //
-//	Norad data
+// Norad data
 
 void GameStateManager::writeNoradState(Common::WriteStream *stream) {
 	_noradFlags.writeToStream(stream);
@@ -618,7 +618,7 @@ void GameStateManager::resetNoradState() {
 
 /////////////////////////////////////////////
 //
-//	Mars data
+// Mars data
 
 void GameStateManager::writeMarsState(Common::WriteStream *stream) {
 	_marsFlags.writeToStream(stream);
@@ -634,7 +634,7 @@ void GameStateManager::resetMarsState() {
 
 /////////////////////////////////////////////
 //
-//	WSC data
+// WSC data
 
 void GameStateManager::writeWSCState(Common::WriteStream *stream) {
 	_WSCFlags.writeToStream(stream);

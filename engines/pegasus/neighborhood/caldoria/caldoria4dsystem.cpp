@@ -30,9 +30,9 @@
 namespace Pegasus {
 
 static const TimeValue kSwitchableSlop = 3 * kCaldoriaFrameDuration;
-//	Two seconds - some slop
+// Two seconds - some slop
 static const TimeValue kSwitchableDuration = kCaldoriaMovieScale * 2 - kSwitchableSlop;
-//	Twelve frames + some slop
+// Twelve frames + some slop
 static const TimeValue kNonswitchableDuration = kCaldoriaFrameDuration * 12 + kSwitchableSlop;
 
 static const TimeValue kSwitchable1Start = 0;

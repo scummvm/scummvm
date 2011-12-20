@@ -32,7 +32,7 @@ namespace Pegasus {
 
 /////////////////////////////////////////////
 //
-//	Scoring.
+// Scoring.
 
 static const CoordType kDeathScreenScoreLeft = 151;
 static const CoordType kDeathScreenScoreTop = 212;
@@ -40,7 +40,7 @@ static const CoordType kDeathScreenScoreWidth = 124;
 static const CoordType kDeathScreenScoreHeight = 12;
 static const CoordType kDeathScreenScoreSkipVert = -16;
 
-//	Caldoria & TSA
+// Caldoria & TSA
 
 static const GameScoreType kSawINNScore					= 5;
 static const GameScoreType kTookShowerScore				= 2;
@@ -124,7 +124,7 @@ static const GameScoreType kMaxCaldoriaTSAScoreAfter		=	kWentAfterSinclairScore 
 static const GameScoreType kMaxCaldoriaTSAScore			=	kMaxCaldoriaTSAScoreBefore +
 														kMaxCaldoriaTSAScoreAfter;
 
-//	Prehistoric
+// Prehistoric
 
 static const GameScoreType kThrewBreakerScore				= 10;
 static const GameScoreType kExtendedBridgeScore			= 10;
@@ -136,7 +136,7 @@ static const GameScoreType kMaxPrehistoricScore			=	kThrewBreakerScore +
 														kGotHistoricalLogScore +
 														kFinishedPrehistoricScore;
 
-//	Mars
+// Mars
 
 static const GameScoreType kThrownByRobotScore			= 3;
 static const GameScoreType kGotMarsCardScore				= 5;
@@ -182,7 +182,7 @@ static const GameScoreType kMaxMarsScore					=	kThrownByRobotScore +
 														kGotMarsOpMemChipScore +
 														kFinishedMarsScore;
 
-//	Norad
+// Norad
 
 static const GameScoreType kSawSecurityMonitorScore		= 5;
 static const GameScoreType kFilledOxygenCanisterScore		= 5;
@@ -216,7 +216,7 @@ static const GameScoreType kMaxNoradScore					=	kSawSecurityMonitorScore +
 														kGotNoradOpMemChipScore +
 														kFinishedNoradScore;
 
-//	WSC
+// WSC
 
 static const GameScoreType kRemovedDartScore				= 5;
 static const GameScoreType kAnalyzedDartScore				= 5;
@@ -260,7 +260,7 @@ static const GameScoreType kMaxWSCScore					=	kRemovedDartScore +
 														kGotWSCOpMemChipScore +
 														kFinishedWSCScore;
 
-//	Gandhi
+// Gandhi
 
 static const GameScoreType kMarsGandhiScore				= 10;
 static const GameScoreType kNoradGandhiScore				= 10;

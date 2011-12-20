@@ -38,7 +38,7 @@ static const float kGravitonXOrigin = convertScreenHToSpaceX(kGravitonOriginH, k
 static const float kGravitonYOrigin = convertScreenVToSpaceY(kGravitonOriginV, kGravitonMinDistance);
 static const float kGravitonZOrigin = kGravitonMinDistance;
 
-//	Width of graviton sprite...
+// Width of graviton sprite...
 static const CoordType kGravitonMaxScreenWidth = 78;
 static const CoordType kGravitonMaxScreenHeight = 46;
 

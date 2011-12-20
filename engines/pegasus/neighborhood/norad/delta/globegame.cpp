@@ -196,7 +196,7 @@ void GlobeTracker::stopGlobeMovie() {
 	}
 }
 
-//	Globe game PICTs:
+// Globe game PICTs:
 static const ResIDType kGlobeCircleLeftPICTID = 300;
 static const ResIDType kGlobeCircleRightPICTID = 301;
 static const ResIDType kGlobeCircleUpPICTID = 302;

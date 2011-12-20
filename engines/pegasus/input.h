@@ -409,10 +409,10 @@ public:
 	virtual bool releaseInputFocus() { return true; }
 	virtual void grabInputFocus() {}
 	
-	//	This returns bits set for what kinds of input to accept.
+	// This returns bits set for what kinds of input to accept.
 	virtual InputBits getInputFilter();
 
-	//	This returns bits defining what input constitutes a "click."
+	// This returns bits defining what input constitutes a "click."
 	virtual InputBits getClickFilter();
 
 	virtual void allowInput(const bool allow) { _allowInput = allow; }

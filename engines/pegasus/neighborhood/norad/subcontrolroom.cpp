@@ -678,9 +678,9 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 						dispatchClawAction(kMoveLeftActionIndex);
 						break;
 					case kClawAtB:
-						if (_clawStartPosition == kClawAtD)				//	Norad Alpha
+						if (_clawStartPosition == kClawAtD)             // Norad Alpha
 							dispatchClawAction(kMoveLeftActionIndex);
-						else if (_clawStartPosition == kClawAtC)		//	Norad Delta
+						else if (_clawStartPosition == kClawAtC)        // Norad Delta
 							dispatchClawAction(kMoveUpActionIndex);
 						break;
 					case kClawAtC:
@@ -728,7 +728,7 @@ void SubControlRoom::activateHotspots() {
 		g_allHotspots.activateOneHotspot(_clawControlSpotID);
 		break;
 	case kClawMenu:
-		//	This could be called during a move, so use _clawNextPosition.
+		// This could be called during a move, so use _clawNextPosition.
 		if (_playingAgainstRobot) {
 			g_allHotspots.deactivateOneHotspot(_outSpotID);
 			if (_robotState != kRobotApproaching && _nextAction == kNoActionIndex)
@@ -813,9 +813,9 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 					dispatchClawAction(kMoveLeftActionIndex);
 					break;
 				case kClawAtB:
-					if (_clawStartPosition == kClawAtD)				//	Norad Alpha
+					if (_clawStartPosition == kClawAtD)             // Norad Alpha
 						dispatchClawAction(kMoveLeftActionIndex);
-					else if (_clawStartPosition == kClawAtC)		//	Norad Delta
+					else if (_clawStartPosition == kClawAtC)        // Norad Delta
 						dispatchClawAction(kMoveUpActionIndex);
 					break;
 				case kClawAtC:

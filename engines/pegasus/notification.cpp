@@ -45,9 +45,9 @@ Notification::~Notification() {
 		_owner->removeNotification(this);
 }
 
-//	Selectively set or clear notificiation bits.
-//	Wherever mask is 0, leave existing bits untouched.
-//	Wherever mask is 1, set bit equivalent to flags.
+// Selectively set or clear notificiation bits.
+// Wherever mask is 0, leave existing bits untouched.
+// Wherever mask is 1, set bit equivalent to flags.
 void Notification::notifyMe(NotificationReceiver *receiver, NotificationFlags flags, NotificationFlags mask) {
 	for (ReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++) {
 		if (it->receiver == receiver) {
@@ -87,7 +87,7 @@ void Notification::checkReceivers() {
 			it->receiver->receiveNotification(this, currentFlags);
 }
 
-//	Receiver entries are equal if their receivers are equal.
+// Receiver entries are equal if their receivers are equal.
 
 int operator==(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
 	return	entry1.receiver == entry2.receiver;

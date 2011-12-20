@@ -40,8 +40,8 @@ namespace Pegasus {
 typedef byte DoorFlags;
 
 enum {
-	kDoorPresentBit,				//	Bit set if there is a door here.
-	kDoorLockedBit					//	Bit set if door is locked, clear if unlocked.
+	kDoorPresentBit, // Bit set if there is a door here.
+	kDoorLockedBit   // Bit set if door is locked, clear if unlocked.
 };
 
 static const DoorFlags kNoDoorFlags = 0;

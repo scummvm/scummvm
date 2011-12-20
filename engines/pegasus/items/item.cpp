@@ -217,7 +217,7 @@ TimeValue Item::getSharedAreaTime() const {
 	return time;
 }
 
-//	Must affect images in shared area.
+// Must affect images in shared area.
 void Item::select() {
 	_isSelected = true;
 

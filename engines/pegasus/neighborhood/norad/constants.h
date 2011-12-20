@@ -207,7 +207,7 @@ static const int16 kElevatorCompassAngle = -40;
 static const int16 kSubPlatformCompassAngle = 45;
 static const int16 kSubControlCompassAngle = -10;
 
-//	Norad interactions.
+// Norad interactions.
 
 static const InteractionID kNoradGlobeGameInteractionID = 0;
 static const InteractionID kNoradECRMonitorInteractionID = 1;
@@ -219,7 +219,7 @@ static const InteractionID kNoradSubPlatformInteractionID = 6;
 
 /////////////////////////////////////////////
 //
-//	Norad Alpha
+// Norad Alpha
 
 static const CoordType kECRSlideShowLeft = kNavAreaLeft + 78;
 static const CoordType kECRSlideShowTop = kNavAreaTop + 1;
@@ -306,7 +306,7 @@ static const CoordType kNoradGreenBallAtDTop = kNoradClawMonitorTop + 49;
 
 /////////////////////////////////////////////
 //
-//	Norad Delta
+// Norad Delta
 
 static const CoordType kGlobeMonitorLeft = kNavAreaLeft + 360;
 static const CoordType kGlobeMonitorTop = kNavAreaTop + 144;
@@ -359,7 +359,7 @@ static const CoordType kGlobeLowerNamesTop = kNavAreaTop + 212;
 static const CoordType kGlobeCountdownLeft = kNavAreaLeft + 478;
 static const CoordType kGlobeCountdownTop = kNavAreaTop + 164;
 
-//	Norad Alpha display IDs.
+// Norad Alpha display IDs.
 
 static const DisplayElementID kECRSlideShowMovieID = kNeighborhoodDisplayID;
 static const DisplayElementID kECRPanID = kECRSlideShowMovieID + 1;
@@ -383,7 +383,7 @@ static const DisplayElementID kSubControlCCWID = kSubControlUpID + 1;
 static const DisplayElementID kSubControlCWID = kSubControlCCWID + 1;
 static const DisplayElementID kClawMonitorGreenBallID = kSubControlCWID + 1;
 
-//	Norad Delta display IDs.
+// Norad Delta display IDs.
 
 static const DisplayElementID kGlobeMonitorID = kNeighborhoodDisplayID;
 static const DisplayElementID kGlobeMovieID = kGlobeMonitorID + 14;
@@ -403,7 +403,7 @@ static const DisplayElementID kGlobeUpperNamesID = kTargetHiliteLowerRightID + 1
 static const DisplayElementID kGlobeLowerNamesID = kGlobeUpperNamesID + 1;
 static const DisplayElementID kGlobeCountdownID = kGlobeLowerNamesID + 1;
 
-//	Norad Alpha:
+// Norad Alpha:
 
 static const DisplayOrder kECRMonitorOrder = kMonitorLayer;
 static const DisplayOrder kECRPanOrder = kECRMonitorOrder + 1;
@@ -431,7 +431,7 @@ static const DisplayOrder kSubControlCCWOrder = kSubControlUpOrder + 1;
 static const DisplayOrder kSubControlCWOrder = kSubControlCCWOrder + 1;
 static const DisplayOrder kClawMonitorGreenBallOrder = kSubControlCWOrder + 1;
 
-//	Norad Delta:
+// Norad Delta:
 
 static const DisplayOrder kGlobeMonitorLayer = kMonitorLayer;
 static const DisplayOrder kGlobeMovieLayer = kGlobeMonitorLayer + 1;
@@ -441,17 +441,17 @@ static const DisplayOrder kGlobeUpperNamesLayer = kGlobeHilitesLayer + 1;
 static const DisplayOrder kGlobeLowerNamesLayer = kGlobeUpperNamesLayer + 1;
 static const DisplayOrder kGlobeCountdownLayer = kGlobeLowerNamesLayer + 1;
 
-//	Norad Alpha Tables
+// Norad Alpha Tables
 
 static const TimeScale kNoradAlphaMovieScale = 600;
 static const TimeScale kNoradAlphaFramesPerSecond = 15;
 static const TimeScale kNoradAlphaFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
 
 static const AlternateID kAltNoradAlphaNormal = 0;
 
-//	Room IDs.
+// Room IDs.
 
 static const RoomID kNorad01 = 0;
 static const RoomID kNorad01East = 1;
@@ -484,10 +484,10 @@ static const RoomID kNorad21West = 27;
 static const RoomID kNorad22 = 28;
 static const RoomID kNorad22West = 29;
 
-//	Hot Spot Activation IDs.
+// Hot Spot Activation IDs.
 
 
-//	Hot Spot IDs.
+// Hot Spot IDs.
 
 static const HotSpotID kNorad01ECRSpotID = 5000;
 static const HotSpotID kNorad01GasSpotID = 5001;
@@ -537,7 +537,7 @@ static const HotSpotID kNorad22ClawUpSpotID = 5044;
 static const HotSpotID kNorad22ClawCCWSpotID = 5045;
 static const HotSpotID kNorad22ClawCWSpotID = 5046;
 
-//	Extra sequence IDs.
+// Extra sequence IDs.
 
 static const ExtraID kNoradArriveFromTSA = 0;
 static const ExtraID kNorad01RobotTaunt = 1;
@@ -583,7 +583,7 @@ static const ExtraID kN22ClawDCounterclockwise = 40;
 static const ExtraID kN22ClawDClockwise = 41;
 
 
-//	Norad Delta Extra sequence IDs.
+// Norad Delta Extra sequence IDs.
 
 static const ExtraID kArriveFromSubChase = 0;
 static const ExtraID kN59ZoomWithRobot = 1;
@@ -654,11 +654,11 @@ static const TimeScale kNoradDeltaMovieScale = 600;
 static const TimeScale kNoradDeltaFramesPerSecond = 15;
 static const TimeScale kNoradDeltaFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
 
 static const AlternateID kAltNoradDeltaNormal = 0;
 
-//	Room IDs.
+// Room IDs.
 
 static const RoomID kNorad41 = 0;
 static const RoomID kNorad42 = 1;
@@ -700,10 +700,10 @@ static const RoomID kNorad78 = 36;
 static const RoomID kNorad79 = 37;
 static const RoomID kNorad79West = 38;
 
-//	Hot Spot Activation IDs.
+// Hot Spot Activation IDs.
 
 
-//	Hot Spot IDs.
+// Hot Spot IDs.
 
 static const HotSpotID kNorad48ElevatorSpotID = 5000;
 static const HotSpotID kNorad48ElevatorOutSpotID = 5001;

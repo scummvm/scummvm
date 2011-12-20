@@ -68,11 +68,11 @@ public:
 		AlternateID altCode;
 		TimeValue movieStart;
 		TimeValue movieEnd;
-		//	fExitEnd is the end of the optimized run of walks.
+		// exitEnd is the end of the optimized run of walks.
 		TimeValue exitEnd;
 		TimeValue originalEnd;
-		//	fExitLoop is the loop start time of the optimized run of walks if the run
-		//	loops back on itself (so far, only in TSA).
+		// exitLoop is the loop start time of the optimized run of walks if the run
+		// loops back on itself (so far, only in TSA).
 		TimeValue exitLoop;
 		RoomID exitRoom;
 		DirectionConstant exitDirection;

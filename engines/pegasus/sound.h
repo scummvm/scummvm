@@ -38,15 +38,15 @@ namespace Pegasus {
 
 class SoundFader;
 
-//	Things you might want to do with sound:
-//		Start it
-//		Stop it
-//		Loop it
-//		Pause it
-//		Set the volume
-//		Set the pitch (rate)
-//		Pan the sound
-//		Change these settings dynamically over time
+// Things you might want to do with sound:
+// - Start it
+// - Stop it
+// - Loop it
+// - Pause it
+// - Set the volume
+// - Set the pitch (rate)
+// - Pan the sound
+// - Change these settings dynamically over time
 
 class Sound {
 public:

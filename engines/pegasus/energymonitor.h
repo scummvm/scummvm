@@ -49,10 +49,10 @@ protected:
 	TimeValue _blinkDuration;
 };
 
-//	Energy monitor constants.
+// Energy monitor constants.
 
-//	These are in seconds.
-//	Max is two hours
+// These are in seconds.
+// Max is two hours
 static const uint32 kMaxJMPEnergy = 7200;
 
 static const uint32 kCasualEnergy = kMaxJMPEnergy * 100 / 100;      // 100%

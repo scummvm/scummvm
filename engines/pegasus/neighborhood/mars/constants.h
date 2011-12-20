@@ -30,7 +30,7 @@
 
 namespace Pegasus {
 
-//	Element Coordinates
+// Element Coordinates
 
 static const CoordType kUndoHiliteLeft = kNavAreaLeft + 140;
 static const CoordType kUndoHiliteTop = kNavAreaTop + 36;
@@ -136,7 +136,7 @@ static const TimeValue kLaunchTubeReachedTime = 60 * 600 + 38 * 600 - kCanyonCha
 static const TimeValue kCanyonChaseFinishedTime = kCanyonChaseStop - kCanyonChaseStart -
 											kLaunchTubeReachedTime;
 
-//	Left shuttle.
+// Left shuttle.
 
 static const TimeValue kShuttleLeftIntroStart = 0;
 static const TimeValue kShuttleLeftIntroStop = 400;
@@ -155,7 +155,7 @@ static const TimeValue kShuttleLeftGravitonTime = 600;
 
 static const TimeValue kShuttleLeftTractorTime = 640;
 
-//	Right shuttle.
+// Right shuttle.
 
 static const TimeValue kShuttleRightIntroStart = 0;
 static const TimeValue kShuttleRightIntroStop = 400;
@@ -175,7 +175,7 @@ static const TimeValue kShuttleRightGravitonTime = 1000;
 
 static const TimeValue kShuttleRightOverloadTime = 1040;
 
-//	Lower Left shuttle.
+// Lower Left shuttle.
 
 static const TimeValue kShuttleLowerLeftCollisionTime = 0;
 
@@ -183,7 +183,7 @@ static const TimeValue kShuttleLowerLeftTubeTime = 40;
 
 static const TimeValue kShuttleLowerLeftAutopilotTime = 80;
 
-//	Lower Right shuttle.
+// Lower Right shuttle.
 
 static const TimeValue kShuttleLowerRightOffTime = 0;
 
@@ -193,7 +193,7 @@ static const TimeValue kShuttleLowerRightTransportTime = 80;
 
 static const TimeValue kShuttleLowerRightTransportHiliteTime = 120;
 
-//	Center shuttle.
+// Center shuttle.
 
 static const TimeValue kShuttleCenterBoardingTime = 0;
 
@@ -223,7 +223,7 @@ static const TimeValue kShuttleCenterScanningTime = 480;
 
 static const TimeValue kShuttleCenterSafeTime = 520;
 
-//	Upper Left shuttle.
+// Upper Left shuttle.
 
 static const TimeValue kShuttleUpperLeftDimTime = 0;
 
@@ -233,7 +233,7 @@ static const TimeValue kShuttleUpperLeftGravitonTime = 80;
 
 static const TimeValue kShuttleUpperLeftTractorTime = 120;
 
-//	Upper Right shuttle.
+// Upper Right shuttle.
 
 static const TimeValue kShuttleUpperRightLockedTime = 0;
 
@@ -245,7 +245,7 @@ static const TimeValue kShuttleUpperRightOverloadTime = 120;
 
 static const TimeValue kShuttleUpperRightTargetDestroyedTime = 160;
 
-//	Shuttle distance
+// Shuttle distance
 
 static const int kShuttleDistance = 500;
 
@@ -469,7 +469,7 @@ static const TimeScale kMarsMovieScale = 600;
 static const TimeScale kMarsFramesPerSecond = 15;
 static const TimeScale kMarsFrameDuration = 40;
 
-//	Alternate IDs.
+// Alternate IDs.
 
 static const AlternateID kAltMarsNormal = 0;
 static const AlternateID kAltMarsPodAtMars34 = 1;
@@ -482,7 +482,7 @@ static const AlternateID kAltMarsMaskOnFiller = 7;
 static const AlternateID kAltMars60AirlockEast = 8;
 static const AlternateID kAltMars60AirlockWest = 9;
 
-//	Room IDs.
+// Room IDs.
 
 static const RoomID kMars0A = 0;
 static const RoomID kMars00 = 1;
@@ -711,7 +711,7 @@ static const RoomID kMarsMaze199 = 223;
 static const RoomID kMarsMaze200 = 224;
 static const RoomID kMarsDeathRoom = 225;
 
-//	Hot Spot Activation IDs.
+// Hot Spot Activation IDs.
 
 static const HotSpotActivationID kActivationReadyForKiosk = 1;
 static const HotSpotActivationID kActivationKioskChoice = 2;
@@ -738,7 +738,7 @@ static const HotSpotActivationID kActivateReactorBombExposed = 22;
 static const HotSpotActivationID kActivationRobotHeadClosed = 23;
 static const HotSpotActivationID kActivationRobotHeadOpen = 24;
 
-//	Hot Spot IDs.
+// Hot Spot IDs.
 
 static const HotSpotID kMars11NorthKioskSpotID = 5000;
 static const HotSpotID kMars11NorthKioskSightsSpotID = 5001;
@@ -814,7 +814,7 @@ static const HotSpotID kRobotShuttleMapChipSpotID = 5070;
 static const HotSpotID kRobotShuttleOpticalChipSpotID = 5071;
 static const HotSpotID kRobotShuttleShieldChipSpotID = 5072;
 
-//	Extra sequence IDs.
+// Extra sequence IDs.
 
 static const ExtraID kMarsArrivalFromTSA = 0;
 static const ExtraID kMars0AWatchShuttleDepart = 1;

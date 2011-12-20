@@ -70,7 +70,7 @@ AIArea::~AIArea() {
 	g_AIArea = 0;
 }
 
-//	Save last state of AI rules...
+// Save last state of AI rules...
 void AIArea::saveAIState() {
 	// TODO
 }
@@ -188,16 +188,16 @@ void AIArea::setAIAreaToTime(const LowerClientSignature client, const LowerAreaS
 	}
 }
 
-//	Plays a sequence on an area. When the sequence ends, the previous image
-//	is restored.
-//	Also, is input disabled or not?
-//	Easy answer: yes.
+// Plays a sequence on an area. When the sequence ends, the previous image
+// is restored.
+// Also, is input disabled or not?
+// Easy answer: yes.
 
-//	There are only so many legal combinations of client/area.
-//	Here is the list of supported pairs:
-//		kBiochipSignature		kMiddleAreaSignature
-//		kBiochipSignature		kRightAreaSignature
-//		kInventorySignature		kMiddleAreaSignature
+// There are only so many legal combinations of client/area.
+// Here is the list of supported pairs:
+//     kBiochipSignature        kMiddleAreaSignature
+// 	   kBiochipSignature        kRightAreaSignature
+// 	   kInventorySignature      kMiddleAreaSignature
 
 void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSignature area, const TimeValue start, const TimeValue stop) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
@@ -336,7 +336,7 @@ bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &mo
 	return result;
 }
 
-//	Only implemented for kMiddleAreaSignature, kInventorySignature
+// Only implemented for kMiddleAreaSignature, kInventorySignature
 void AIArea::loopAIAreaSequence(const LowerClientSignature owner, const LowerAreaSignature area, const TimeValue start, const TimeValue stop) {
 	if (area == kMiddleAreaSignature && owner == kInventorySignature && owner == _middleAreaOwner) {
 		_middleAreaMovie.stop();
@@ -387,7 +387,7 @@ void AIArea::setMiddleMovieTime(const LowerClientSignature client, const TimeVal
 	_middleAreaOwner = client;
 }
 
-//	Only called by kBiochipSignature.
+// Only called by kBiochipSignature.
 void AIArea::setRightMovieTime(const TimeValue time) {
 	if (!_AIMovie.isSurfaceValid()) {
 		// Can't do it when the AI movie is up...

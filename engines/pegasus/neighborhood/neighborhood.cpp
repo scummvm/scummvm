@@ -240,7 +240,7 @@ void Neighborhood::arriveAt(RoomID room, DirectionConstant direction) {
 	checkContinuePoint(room, direction);
 }
 
-//	These functions can be overridden to tweak the exact frames used.
+// These functions can be overridden to tweak the exact frames used.
 
 void Neighborhood::getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry) {
 	entry = _exitTable.findEntry(room, direction, _currentAlternate);
@@ -305,7 +305,7 @@ void Neighborhood::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry)
 
 /////////////////////////////////////////////
 //
-//	"Can" functions: Called to see whether or not a user is allowed to do something
+// "Can" functions: Called to see whether or not a user is allowed to do something
 
 CanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	DoorTable::Entry door;
@@ -313,8 +313,8 @@ CanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	getExitEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
 	getDoorEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), door);
 
-	//	Fixed this so that doors that don't lead anywhere can be opened, but not walked
-	//	through.
+	// Fixed this so that doors that don't lead anywhere can be opened, but not walked
+	// through.
 	if (door.flags & kDoorPresentMask) {
 		if (GameState.isCurrentDoorOpen()) {
 			if (entry.exitRoom == kNoRoomID)
@@ -593,9 +593,9 @@ void Neighborhood::stopStriding() {
 			kMoveForwardCompletedFlag, kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag);
 }
 
-//	Compass support
+// Compass support
 int16 Neighborhood::getStaticCompassAngle(const RoomID, const DirectionConstant dir) {
-	//	North, south, east, west
+	// North, south, east, west
 	static const int16 compassAngles[] = { 0, 180, 90, 270 };
 	return compassAngles[dir];
 }
@@ -1358,8 +1358,8 @@ void Neighborhood::getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec 
 }
 
 void Neighborhood::setUpAIRules() {
-	//	Set up default rules here:
-	//	--  Energy warning rules.
+	// Set up default rules here:
+	// --  Energy warning rules.
 
 	if (g_AIArea) {
 		g_AIArea->forceAIUnlocked();

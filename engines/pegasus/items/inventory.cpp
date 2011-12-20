@@ -40,7 +40,7 @@ Inventory::~Inventory() {
 
 void Inventory::setWeightLimit(WeightType limit) {
 	_weightLimit = limit;
-	//	*** What to do if the new weight limit is greater than the current weight?
+	// *** What to do if the new weight limit is greater than the current weight?
 }
 
 WeightType Inventory::getWeight() {
@@ -52,7 +52,7 @@ WeightType Inventory::getWeight() {
 	return result;
 }
 
-//	If the item already belongs, just return kInventoryOK.
+// If the item already belongs, just return kInventoryOK.
 InventoryResult Inventory::addItem(Item *item) {
 	if (itemInInventory(item))
 		return kInventoryOK;
@@ -134,7 +134,7 @@ Item *Inventory::findItemByID(ItemID id) {
 	return _inventoryList.findItemByID(id);
 }
 
-//	Return -1 if not found.
+// Return -1 if not found.
 
 int32 Inventory::findIndexOf(Item *item) {
 	uint32 i = 0;
@@ -145,7 +145,7 @@ int32 Inventory::findIndexOf(Item *item) {
 	return -1;
 }
 
-//	Return -1 if not found.
+// Return -1 if not found.
 
 int32 Inventory::findIndexOf(ItemID id) {
 	uint32 i = 0;
