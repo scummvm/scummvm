@@ -242,6 +242,7 @@ public:
 	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
+	void showDecisions();
 	void loadSaveBox();
 	void showNames();
 	void checkInput();
@@ -458,6 +459,8 @@ public:
 	void restoreAll();
 	void redrawMainScrn();
 	template <class T> void checkCoords(const RectWithCallback<T> *rectWithCallbacks);
+	void newGame();
+	void deleteTaken();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

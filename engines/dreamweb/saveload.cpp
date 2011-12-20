@@ -80,7 +80,7 @@ void DreamGenContext::doLoad(int savegameId) {
 			vSync();
 			dumpPointer();
 			dumpTextLine();
-			RectWithCallback<DreamGenContext> loadlist[] = {
+			RectWithCallback<DreamBase> loadlist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualLoad },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
@@ -176,7 +176,7 @@ void DreamGenContext::saveGame() {
 			dumpPointer();
 			dumpTextLine();
 
-			RectWithCallback<DreamGenContext> savelist[] = {
+			RectWithCallback<DreamBase> savelist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualSave },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
@@ -642,6 +642,13 @@ void DreamGenContext::loadOld() {
 	showDecisions();
 	workToScreenM();
 	data.byte(kGetback) = 0;
+}
+
+void DreamBase::showDecisions() {
+	createPanel2();
+	showOpBox();
+	showFrame(tempGraphics(), kOpsx + 17, kOpsy + 13, 6, 0);
+	underTextLine();
 }
 
 void DreamBase::loadSaveBox() {
