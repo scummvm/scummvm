@@ -1970,6 +1970,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"MONSTER.EXE"
 	},
 
+	// From GeorgeQGreg
+	{
+		{
+			"lilmonster",
+			"Demo",
+			AD_ENTRY1("MONSTER.512", "f603f04c1824d1034ec0366416a059c9"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"MONSTER.EXE"
+	},
+
 	{
 		{
 			"catinthehat",
