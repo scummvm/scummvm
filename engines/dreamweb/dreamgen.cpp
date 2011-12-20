@@ -1130,37 +1130,6 @@ void DreamGenContext::transferConToEx() {
 	ds.byte(si+2) = 255;
 }
 
-void DreamGenContext::purgeALocation() {
-	STACK_CHECK;
-	push(ax);
-	es = data.word(kExtras);
-	di = (0+2080+30000);
-	bx = pop();
-	cx = 0;
-purgeloc:
-	_cmp(bl, es.byte(di+0));
-	if (!flags.z())
-		goto dontpurge;
-	_cmp(es.byte(di+2), 0);
-	if (!flags.z())
-		goto dontpurge;
-	push(di);
-	push(es);
-	push(bx);
-	push(cx);
-	deleteExObject();
-	cx = pop();
-	bx = pop();
-	es = pop();
-	di = pop();
-dontpurge:
-	_add(di, 16);
-	_inc(cx);
-	_cmp(cx, (114));
-	if (!flags.z())
-		goto purgeloc;
-}
-
 void DreamGenContext::emergencyPurge() {
 	STACK_CHECK;
 checkpurgeagain:
@@ -1489,57 +1458,6 @@ void DreamGenContext::getDestInfo() {
 	si = 571;
 	_add(si, ax);
 	ax = pop();
-}
-
-void DreamGenContext::resetLocation() {
-	STACK_CHECK;
-	push(ax);
-	_cmp(al, 5);
-	if (!flags.z())
-		goto notdelhotel;
-	purgeALocation();
-	al = 21;
-	purgeALocation();
-	al = 22;
-	purgeALocation();
-	al = 27;
-	purgeALocation();
-	goto clearedlocations;
-notdelhotel:
-	_cmp(al, 8);
-	if (!flags.z())
-		goto notdeltvstud;
-	purgeALocation();
-	al = 28;
-	purgeALocation();
-	goto clearedlocations;
-notdeltvstud:
-	_cmp(al, 6);
-	if (!flags.z())
-		goto notdelsarters;
-	purgeALocation();
-	al = 20;
-	purgeALocation();
-	al = 25;
-	purgeALocation();
-	goto clearedlocations;
-notdelsarters:
-	_cmp(al, 13);
-	if (!flags.z())
-		goto notdelboathouse;
-	purgeALocation();
-	al = 29;
-	purgeALocation();
-	goto clearedlocations;
-notdelboathouse:
-clearedlocations:
-	ax = pop();
-	ah = 0;
-	bx = ax;
-	dx = data;
-	es = dx;
-	_add(bx, 555);
-	es.byte(bx) = 0;
 }
 
 void DreamGenContext::dirCom() {

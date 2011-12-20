@@ -823,8 +823,7 @@ void DreamGenContext::useGun() {
 	} else if (data.byte(kReallocation) == 29) {
 		// aide
 		data.byte(kGetback) = 1;
-		al = 13;
-		resetLocation();
+		resetLocation(13);
 		setLocation(12);
 		data.byte(kDestpos) = 12;
 		data.byte(kDestination) = 2;
