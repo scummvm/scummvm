@@ -1566,14 +1566,15 @@ void DreamBase::dumpPointer() {
 		multiDump(data.word(kOldpointerx), data.word(kOldpointery), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::checkCoords(const RectWithCallback *rectWithCallbacks) {
+template <class T>
+void DreamBase::checkCoords(const RectWithCallback<T> *rectWithCallbacks) {
 	if (data.byte(kNewlocation) != 0xff)
 		return;
 
-	const RectWithCallback *r;
+	const RectWithCallback<T> *r;
 	for (r = rectWithCallbacks; r->_xMin != 0xffff; ++r) {
 		if (r->contains(data.word(kMousex), data.word(kMousey))) {
-			(this->*(r->_callback))();
+			(((T *)this)->*(r->_callback))();
 			return;
 		}
 	}
@@ -1918,7 +1919,7 @@ void DreamGenContext::enterSymbol() {
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
-		RectWithCallback symbolList[] = {
+		RectWithCallback<DreamGenContext> symbolList[] = {
 			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamBase::quitSymbol },
 			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamBase::setTopLeft },
 			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamBase::setTopRight },
@@ -1998,7 +1999,7 @@ void DreamGenContext::showCity() {
 void DreamGenContext::mainScreen() {
 	data.byte(kInmaparea) = 0;
 	if (data.byte(kWatchon) == 1) {
-		RectWithCallback mainList[] = {
+		RectWithCallback<DreamGenContext> mainList[] = {
 			{ 44,70,32,46,&DreamGenContext::look },
 			{ 0,50,0,180,&DreamGenContext::inventory },
 			{ 226,244,10,26,&DreamGenContext::zoomOnOff },
@@ -2009,7 +2010,7 @@ void DreamGenContext::mainScreen() {
 		};
 		checkCoords(mainList);
 	} else {
-		RectWithCallback mainList2[] = {
+		RectWithCallback<DreamGenContext> mainList2[] = {
 			{ 44,70,32,46,&DreamGenContext::look },
 			{ 0,50,0,180,&DreamGenContext::inventory },
 			{ 226+48,244+48,10,26,&DreamGenContext::zoomOnOff },
@@ -2476,7 +2477,7 @@ const uint8 *DreamBase::getTextInFile1(uint16 index) {
 }
 
 void DreamGenContext::checkFolderCoords() {
-	RectWithCallback folderList[] = {
+	RectWithCallback<DreamGenContext> folderList[] = {
 		{ 280,320,160,200, &DreamBase::quitKey },
 		{ 143,300,6,194, &DreamGenContext::nextFolder },
 		{ 0,143,6,194, &DreamGenContext::lastFolder },
@@ -2633,7 +2634,7 @@ void DreamGenContext::useMenu() {
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
-		RectWithCallback menuList[] = {
+		RectWithCallback<DreamGenContext> menuList[] = {
 			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamBase::quitKey },
 			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
@@ -3559,7 +3560,7 @@ void DreamGenContext::selectLocation() {
 		if (data.byte(kGetback) == 1)
 			break;
 
-		RectWithCallback destList[] = {
+		RectWithCallback<DreamGenContext> destList[] = {
 			{ 238,258,4,44,&DreamGenContext::nextDest },
 			{ 104,124,4,44,&DreamGenContext::lastDest },
 			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
@@ -3772,7 +3773,7 @@ void DreamGenContext::decide() {
 	fadeScreenUp();
 	data.byte(kGetback) = 0;
 
-	RectWithCallback decideList[] = {
+	RectWithCallback<DreamGenContext> decideList[] = {
 		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
 		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
 		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
@@ -3817,7 +3818,7 @@ void DreamGenContext::talk() {
 	showPointer();
 	workToScreenCPP();
 
-	RectWithCallback talkList[] = {
+	RectWithCallback<DreamGenContext> talkList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 240,290,2,44,&DreamGenContext::moreTalk },
 		{ 0,320,0,200,&DreamBase::blank },
@@ -3853,7 +3854,7 @@ void DreamGenContext::talk() {
 void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
-	RectWithCallback quitList[] = {
+	RectWithCallback<DreamGenContext> quitList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }

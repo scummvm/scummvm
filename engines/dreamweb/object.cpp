@@ -170,7 +170,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 
 		switch (data.byte(kInvopen)) {
 		case 0: {
-			RectWithCallback examList[] = {
+			RectWithCallback<DreamGenContext> examList[] = {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ 260,300,0,44,&DreamGenContext::useObject },
 				{ 210,254,0,44,&DreamGenContext::selectOpenOb },
@@ -184,7 +184,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		}
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
-			RectWithCallback invList1[] = {
+			RectWithCallback<DreamGenContext> invList1[] = {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ 255,294,0,24,&DreamGenContext::dropObject },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
@@ -197,7 +197,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			break;
 		}
 		default: {
-			RectWithCallback withList1[] = {
+			RectWithCallback<DreamGenContext> withList1[] = {
 				{ 273,320,157,198,&DreamGenContext::getBackFromOb },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectOb },

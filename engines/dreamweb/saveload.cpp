@@ -80,7 +80,7 @@ void DreamGenContext::doLoad(int savegameId) {
 			vSync();
 			dumpPointer();
 			dumpTextLine();
-			RectWithCallback loadlist[] = {
+			RectWithCallback<DreamGenContext> loadlist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualLoad },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
@@ -176,7 +176,7 @@ void DreamGenContext::saveGame() {
 			dumpPointer();
 			dumpTextLine();
 
-			RectWithCallback savelist[] = {
+			RectWithCallback<DreamGenContext> savelist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualSave },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
@@ -267,7 +267,7 @@ void DreamGenContext::doSaveLoad() {
 	showMainOps();
 	workToScreenCPP();
 
-	RectWithCallback opsList[] = {
+	RectWithCallback<DreamGenContext> opsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::getBackFromOps },
 		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
 		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
@@ -367,7 +367,7 @@ void DreamGenContext::discOps() {
 	workToScreenM();
 	data.byte(kGetback) = 0;
 
-	RectWithCallback discOpsList[] = {
+	RectWithCallback<DreamGenContext> discOpsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
 		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
 		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },

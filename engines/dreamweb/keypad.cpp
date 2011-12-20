@@ -93,7 +93,7 @@ void DreamBase::addToPressList() {
 }
 
 void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
-	RectWithCallback keypadList[] = {
+	RectWithCallback<DreamGenContext> keypadList[] = {
 		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamBase::buttonOne },
 		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamBase::buttonTwo },
 		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamBase::buttonThree },

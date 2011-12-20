@@ -457,6 +457,7 @@ public:
 	void setAllChanges();
 	void restoreAll();
 	void redrawMainScrn();
+	template <class T> void checkCoords(const RectWithCallback<T> *rectWithCallbacks);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
