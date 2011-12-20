@@ -137,6 +137,13 @@ public:
 	void loadNews();
 	void loadCart();
 
+	// from newplace.cpp
+	void getUnderCentre();
+	void putUnderCentre();
+	void showArrows();
+	uint8 getLocation(uint8 index);
+	void setLocation(uint8 index);
+
 	// from object.cpp
 	void obIcons();
 	void fillRyan();
@@ -329,7 +336,6 @@ public:
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
-	void showArrows();
 	void middlePanel();
 	void showDiary();
 	void readMouse();
@@ -503,10 +509,6 @@ public:
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
-	uint8 getLocation(uint8 index);
-	void setLocation(uint8 index);
-	void getUnderCentre();
-	void putUnderCentre();
 	uint8 *mapStore();
 	void panelToMap();
 	void mapToPanel();

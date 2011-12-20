@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	dreamgen.o \
 	keypad.o \
 	monitor.o \
+	newplace.o \
 	object.o \
 	pathfind.o \
 	people.o \
