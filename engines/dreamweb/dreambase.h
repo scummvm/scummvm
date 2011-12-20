@@ -143,6 +143,7 @@ public:
 	void showArrows();
 	uint8 getLocation(uint8 index);
 	void setLocation(uint8 index);
+	void resetLocation(uint8 index);
 
 	// from object.cpp
 	void obIcons();
@@ -154,6 +155,7 @@ public:
 	void deleteExObject(uint8 index);
 	void deleteExFrame(uint8 frameNum);
 	void deleteExText(uint8 textNum);
+	void purgeALocation(uint8 index);
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);

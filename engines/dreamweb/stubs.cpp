@@ -3901,8 +3901,7 @@ void DreamGenContext::useButtonA() {
 void DreamGenContext::autoAppear() {
 	if (data.byte(kLocation) == 32) {
 		// In alley
-		al = 5;
-		resetLocation();
+		resetLocation(5);
 		setLocation(10);
 		data.byte(kDestpos) = 10;
 		return;
@@ -3932,8 +3931,7 @@ void DreamGenContext::autoAppear() {
 		if (data.byte(kReallocation) == 25) {
 			// Sart roof
 			data.byte(kNewsitem) = 3;
-			al = 6;
-			resetLocation();
+			resetLocation(6);
 			setLocation(11);
 			data.byte(kDestpos) = 11;
 		} else {
@@ -4013,8 +4011,7 @@ void DreamGenContext::entryAnims() {
 		data.byte(kSpeedcount) = 1;
 		break;
 	case 44:	// Sparky's
-		al = 8;
-		resetLocation();
+		resetLocation(8);
 		data.word(kWatchingtime) = 50*2;
 		data.word(kReeltowatch) = 247;
 		data.word(kEndwatchreel) = 297;
