@@ -1619,7 +1619,7 @@ void FullTSA::showMainJumpMenu() {
 }
 
 void FullTSA::playTBPMonitor() {
-	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
+	InputDevice.waitInput(kFilterAllButtons);
 	
 	if ((GameState.getT0BMonitorMode() & kPlayingTBPMask) == 0) {
 		ExtraID extra;
@@ -1770,7 +1770,7 @@ void FullTSA::initializeComparisonMonitor(const int newMode, const ExtraID compa
 }
 
 void FullTSA::playLeftComparison() {
-	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
+	InputDevice.waitInput(kFilterAllButtons);
 
 	if ((GameState.getT0BMonitorMode() & kPlayingLeftComparisonMask) == 0) {
 		ExtraID extra;
@@ -1820,7 +1820,7 @@ void FullTSA::playLeftComparison() {
 }
 
 void FullTSA::playRightComparison() {	
-	InputHandler::getCurrentInputDevice()->waitInput(kFilterAllButtons);
+	InputDevice.waitInput(kFilterAllButtons);
 	
 	if ((GameState.getT0BMonitorMode() & kPlayingRightComparisonMask) == 0) {
 		ExtraID extra;

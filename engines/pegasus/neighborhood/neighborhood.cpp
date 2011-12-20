@@ -882,7 +882,7 @@ void Neighborhood::startExtraSequence(const ExtraID extraID, const NotificationF
 }
 
 bool Neighborhood::startExtraSequenceSync(const ExtraID extraID, const InputBits interruptionFilter) {
-	InputHandler::getCurrentInputDevice()->waitInput(interruptionFilter);
+	InputDevice.waitInput(interruptionFilter);
 	return prepareExtraSync(extraID) && waitMovieFinish(&_navMovie, interruptionFilter);
 }
 
@@ -1315,7 +1315,7 @@ bool Neighborhood::waitMovieFinish(Movie *movie, const InputBits interruptionFil
 	bool openAllowed = _vm->swapLoadAllowed(false);
 
 	while (movie->isRunning()) {
-		InputHandler::getCurrentInputDevice()->getInput(input, interruptionFilter);
+		InputDevice.getInput(input, interruptionFilter);
 
 		if (input.anyInput() || _vm->shouldQuit()) {
 			result = false;
@@ -1590,7 +1590,7 @@ void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordTy
 	Input input;
 	while (_croppedMovie.isRunning() && !_vm->shouldQuit()) {
 		_vm->processShell();
-		InputHandler::getCurrentInputDevice()->getInput(input, interruptionFilter);
+		InputDevice.getInput(input, interruptionFilter);
 		if (input.anyInput() || _vm->shouldQuit()) // TODO: Save/Load request
 			break;
 		_vm->_system->delayMillis(10);

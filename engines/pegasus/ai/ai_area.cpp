@@ -265,7 +265,7 @@ bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &mo
 	
 	lockAIOut();
 
-	InputHandler::getCurrentInputDevice()->waitInput(interruptFilter);
+	InputDevice.waitInput(interruptFilter);
 	if (_AIMovie.isMovieValid())
 		_AIMovie.releaseMovie();
 
@@ -295,7 +295,7 @@ bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &mo
 
 	while (_AIMovie.isRunning()) {
 		Input input;
-		InputHandler::getCurrentInputDevice()->getInput(input, interruptFilter);
+		InputDevice.getInput(input, interruptFilter);
 
 		if (input.anyInput() || vm->shouldQuit()) {
 			result = false;

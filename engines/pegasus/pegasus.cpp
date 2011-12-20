@@ -281,7 +281,7 @@ void PegasusEngine::runIntro() {
 			}
 
 			Input input;
-			InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+			InputDevice.getInput(input, kFilterAllInput);
 			if (input.anyInput())
 				skipped = true;
 
@@ -892,7 +892,7 @@ void PegasusEngine::doInterfaceOverview() {
 	highlight.setHighlightCornerDiameter(8);
 
 	Input input;
-	InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+	InputDevice.getInput(input, kFilterAllInput);
 
 	Common::Point cursorLoc;
 	input.getInputLocation(cursorLoc);
@@ -934,7 +934,7 @@ void PegasusEngine::doInterfaceOverview() {
 	_gfx->doFadeInSync();
 
 	for (;;) {
-		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+		InputDevice.getInput(input, kFilterAllInput);
 
 		if (input.anyInput() || shouldQuit()) // TODO: Check for save/load requests too
 			break;
@@ -1150,7 +1150,7 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 		}
 
 		Input input;
-		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+		InputDevice.getInput(input, kFilterAllInput);
 		if (input.anyInput())
 			skipped = true;
 

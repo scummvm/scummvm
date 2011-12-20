@@ -30,16 +30,17 @@
 #include "pegasus/input.h"
 #include "pegasus/pegasus.h"
 
+namespace Common {
+DECLARE_SINGLETON(Pegasus::InputDeviceManager);
+}
+
 namespace Pegasus {
 
-InputDevice::InputDevice() {
+InputDeviceManager::InputDeviceManager() {
 	_lastRawBits = kAllUpBits;
 }
 
-InputDevice::~InputDevice() {
-}
-
-void InputDevice::getInput(Input &input, const InputBits filter) {
+void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	// TODO: Save/Load keys
 
 	InputBits currentBits = 0;
@@ -140,7 +141,7 @@ void InputDevice::getInput(Input &input, const InputBits filter) {
 }
 
 // Wait until the input device stops returning input allowed by filter...
-void InputDevice::waitInput(const InputBits filter) {
+void InputDeviceManager::waitInput(const InputBits filter) {
 	if (filter != 0) {
 		for (;;) {
 			Input input;
@@ -160,7 +161,6 @@ int operator!=(const Input &arg1, const Input &arg2) {
 }
 
 InputHandler *InputHandler::_inputHandler = 0;
-InputDevice InputHandler::_inputDevice;
 bool InputHandler::_invalHotspots = false;
 InputBits InputHandler::_lastFilter = kFilterNoInput;
 
@@ -198,7 +198,7 @@ void InputHandler::getInput(Input &input, Hotspot *&cursorSpot) {
 	else
 		_lastFilter = kFilterAllInput;
 
-	_inputDevice.getInput(input, _lastFilter);
+	InputDevice.getInput(input, _lastFilter);
 
 	if (_inputHandler && _inputHandler->wantsCursor() && (_lastFilter & _inputHandler->getClickFilter()) != 0) {
 		if (cursor->isVisible()) {
@@ -220,7 +220,7 @@ void InputHandler::getInput(Input &input, Hotspot *&cursorSpot) {
 }
 
 void InputHandler::readInputDevice(Input &input) {
-	_inputDevice.getInput(input, kFilterAllInput);
+	InputDevice.getInput(input, kFilterAllInput);
 }
 
 InputHandler::InputHandler(InputHandler *nextHandler) {

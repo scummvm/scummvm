@@ -27,6 +27,7 @@
 #define PEGASUS_INPUT_H
 
 #include "common/rect.h"
+#include "common/singleton.h"
 
 #include "pegasus/constants.h"
 #include "pegasus/types.h"
@@ -36,16 +37,18 @@ namespace Pegasus {
 class Hotspot;
 class Input;
 
-class InputDevice {
+class InputDeviceManager : public Common::Singleton<InputDeviceManager> {
 public:
-	InputDevice();
-	~InputDevice();
+	InputDeviceManager();
+	~InputDeviceManager() {}
 
 	void getInput(Input &, const InputBits);
 
 	void waitInput(const InputBits);
 
 protected:
+	friend class Common::Singleton<SingletonBaseType>;
+
 	InputBits _lastRawBits;
 };
 
@@ -292,7 +295,7 @@ static const InputBits kOpticalInterruption = kFilterAllInputNoAuto;
 class Input {
 friend int operator==(const Input &, const Input &);
 friend int operator!=(const Input &, const Input &);
-friend class InputDevice;
+friend class InputDeviceManager;
 
 public:
 	Input() { clearInput(); }
@@ -385,7 +388,6 @@ class InputHandler {
 public:
 	static InputHandler *setInputHandler(InputHandler*);
 	static InputHandler *getCurrentHandler() { return _inputHandler; }
-	static InputDevice *getCurrentInputDevice() { return &_inputDevice; }
 	static void pollForInput();
 	static void getInput(Input&, Hotspot*&);
 	static void readInputDevice(Input&);
@@ -419,7 +421,6 @@ public:
 
 protected:
 	static InputHandler *_inputHandler;
-	static InputDevice _inputDevice; // TODO: Remove global constructor
 	static bool _invalHotspots;
 	static InputBits _lastFilter;
 	
@@ -486,5 +487,7 @@ public:
 };
 
 } // End of namespace Pegasus
+
+#define InputDevice (::Pegasus::InputDeviceManager::instance())
 
 #endif
