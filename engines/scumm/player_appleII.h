@@ -241,10 +241,34 @@ public:
 	int getRate() const { return _sampleRate; }
 
 private:
-	struct state_t {
+	struct sound_state {
+		// sound number
+		int soundNr;
+		// type of sound
 		int type;
+		// number of loops left
 		int loop;
+		// global sound param list
 		const byte *params;
+		// local sound param list
+		const byte *localParams;
+		// speaker toggle state (0 / 1)
+		byte speakerState;
+		// processing complete
+		bool finished;
+		// sound type specific data
+		union {
+			struct {
+				byte updateRemain1;
+				byte updateRemain2;
+			} func4;
+			struct {
+				int pos;
+			} func23;
+			struct {
+				int index;
+			} func5;
+		};
 	} _state;
 
 	ScummEngine *_vm;
@@ -254,25 +278,26 @@ private:
 	Common::Mutex _mutex;
 
 private:
-	byte _speakerState;
-	int _soundNr;
 	SampleConverter _sampleConverter;
 
 private:
+	void resetState();
+	void initFuncState();
+	bool updateSound();
 	void speakerToggle();
 	void generateSamples(int cycles);
 	void wait(int interval, int count);
 	byte noise();
 
-	void soundFunc1();
+	bool soundFunc1();
 	void _soundFunc1(int interval, int count);
-	void soundFunc2();
+	bool soundFunc2();
 	void _soundFunc2(int interval, int count);
-	void soundFunc3();
+	bool soundFunc3();
 	void _soundFunc3(int interval, int count);
-	void soundFunc4();
+	bool soundFunc4();
 	void _soundFunc4(byte param0, byte param1, byte param2);
-	void soundFunc5();
+	bool soundFunc5();
 	void _soundFunc5(int interval, int count);
 };
 
