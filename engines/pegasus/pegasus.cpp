@@ -541,7 +541,7 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	byte biochipCount = _biochips.getNumItems();
 	stream->writeByte(biochipCount);
 
-	if (itemCount > 0) {
+	if (biochipCount > 0) {
 		for (uint32 i = 0; i < biochipCount; i++)
 			stream->writeUint16BE(_biochips.getItemIDAt(i));
 
