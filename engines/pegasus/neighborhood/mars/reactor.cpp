@@ -135,15 +135,6 @@ static const CoordType kReactorHistoryHeight = 168;
 static const CoordType kColorWidths[5] = { 24, 25, 25, 26, 27 };
 static const CoordType kColorHeights[5] = { 14, 15, 17, 17, 19};
 
-// TODO: Remove global construction
-static const CoordType kColorTops[5] = {
-	0,
-	kColorHeights[0],
-	kColorHeights[0] + kColorHeights[1],
-	kColorHeights[0] + kColorHeights[1] + kColorHeights[2],
-	kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3],
-};
-
 static const CoordType kHistoryLefts[5][3] = {
 	{ 302 + kNavAreaLeft, 329 + kNavAreaLeft, 357 + kNavAreaLeft },
 	{ 302 + kNavAreaLeft, 331 + kNavAreaLeft, 360 + kNavAreaLeft },
@@ -249,7 +240,15 @@ bool ReactorHistory::isSolved() {
 	return false;
 }
 
-void ReactorHistory::draw(const Common::Rect &) {	
+void ReactorHistory::draw(const Common::Rect &) {
+	static const CoordType kColorTops[5] = {
+		0,
+		kColorHeights[0],
+		kColorHeights[0] + kColorHeights[1],
+		kColorHeights[0] + kColorHeights[1] + kColorHeights[2],
+		kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3],
+	};
+
 	if (_colors.isSurfaceValid() && _digits.isSurfaceValid()) {
 		for (int i = 0; i < _numGuesses; ++i) {
 			Common::Rect r1(0, 0, kColorWidths[i], kColorHeights[i]);
