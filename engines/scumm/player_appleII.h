@@ -217,6 +217,8 @@ private:
 	DynamicMemoryStream _buffer;
 };
 
+class AppleII_SoundFunction;
+
 class Player_AppleII : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer);
@@ -240,6 +242,11 @@ public:
 	bool endOfData() const { return false; }
 	int getRate() const { return _sampleRate; }
 
+public:
+	void speakerToggle();
+	void generateSamples(int cycles);
+	void wait(int interval, int count);
+
 private:
 	struct sound_state {
 		// sound number
@@ -250,25 +257,10 @@ private:
 		int loop;
 		// global sound param list
 		const byte *params;
-		// local sound param list
-		const byte *localParams;
 		// speaker toggle state (0 / 1)
 		byte speakerState;
-		// processing complete
-		bool finished;
-		// sound type specific data
-		union {
-			struct {
-				byte updateRemain1;
-				byte updateRemain2;
-			} func4;
-			struct {
-				int pos;
-			} func23;
-			struct {
-				int index;
-			} func5;
-		};
+		// sound function
+		AppleII_SoundFunction *soundFunc;
 	} _state;
 
 	ScummEngine *_vm;
@@ -282,23 +274,17 @@ private:
 
 private:
 	void resetState();
-	void initFuncState();
 	bool updateSound();
-	void speakerToggle();
-	void generateSamples(int cycles);
-	void wait(int interval, int count);
-	byte noise();
+};
 
-	bool soundFunc1();
-	void _soundFunc1(int interval, int count);
-	bool soundFunc2();
-	void _soundFunc2(int interval, int count);
-	bool soundFunc3();
-	void _soundFunc3(int interval, int count);
-	bool soundFunc4();
-	void _soundFunc4(byte param0, byte param1, byte param2);
-	bool soundFunc5();
-	void _soundFunc5(int interval, int count);
+class AppleII_SoundFunction {
+public:
+	AppleII_SoundFunction() {}
+	virtual ~AppleII_SoundFunction() {}
+	virtual void init(Player_AppleII *player, const byte *params) = 0;
+	virtual bool update() = 0;
+protected:
+	Player_AppleII *_player;
 };
 
 } // End of namespace Scumm
