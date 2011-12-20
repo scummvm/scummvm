@@ -183,73 +183,90 @@ public:
 		_params = params;
 		_updateRemain1 = 80;
 		_updateRemain2 = 10;
+		_count = 0;
 	}
 
 	virtual bool update() { // D170
 		// while (_state.params[0] != 0x01)
 		if (_params[0] != 0x01) {
-			_update(_params[0], _params[1], _params[2]);
-			_params += 3;
+			if (_count == 0) // prepare next loop
+				nextLoop(_params[0], _params[1], _params[2]);
+			if (loopIteration()) // loop finished -> fetch next parameter set
+				_params += 3;
 			return false;
 		}
 		return true;
 	}
 
 private:
-	void _update(byte param0, byte param1, byte param2) { // D1A2
-		uint16 count = (-param2 << 8) | 0x3;
-		byte bitmask1 = 0x3;
-		byte bitmask2 = 0x3;
+	/*
+	 * prepare for next parameter set loop
+	 */
+	void nextLoop(byte param0, byte param1, byte param2) { // LD182
+		_count = (-param2 << 8) | 0x3;
+
+		_bitmask1 = 0x3;
+		_bitmask2 = 0x3;
 	
-		byte updateInterval2 = param0;
-		if (updateInterval2 == 0)
-			bitmask2 = 0x0;
+		_updateInterval2 = param0;
+		if (_updateInterval2 == 0)
+			_bitmask2 = 0x0;
 
-		byte updateInterval1 = param1;
-		if (updateInterval1 == 0) {
-			bitmask1 = 0x0;
-			if (bitmask2 != 0) {
-				bitmask1 = bitmask2;
-				bitmask2 = 0;
-				updateInterval1 = updateInterval2;
+		_updateInterval1 = param1;
+		if (_updateInterval1 == 0) {
+			_bitmask1 = 0x0;
+			if (_bitmask2 != 0) {
+				_bitmask1 = _bitmask2;
+				_bitmask2 = 0;
+				_updateInterval1 = _updateInterval2;
 			}
 		}
 
-		byte speakerShiftReg = 0;
+		_speakerShiftReg = 0;
+	}
 
-		while (true) {
-			--_updateRemain1;
-			--_updateRemain2;
+	/*
+	 * perform one loop iteration
+	 * Returns true if loop finished
+	 */
+	bool loopIteration() { // D1A2
+		--_updateRemain1;
+		--_updateRemain2;
 
-			if (_updateRemain2 == 0) {
-				_updateRemain2 = updateInterval2;
-				// use only first voice's data (bitmask1) if both voices are triggered 
-				if (_updateRemain1 != 0) {
-					speakerShiftReg ^= bitmask2;		
-				}
-			}
-
-			if (_updateRemain1 == 0) {
-				_updateRemain1 = updateInterval1;
-				speakerShiftReg ^= bitmask1;
-			}
-
-			if (speakerShiftReg & 0x1)
-				_player->speakerToggle();
-			speakerShiftReg >>= 1;
-			_player->generateSamples(42); /* actually 42.5 */
-
-			++count;
-			if (count == 0) {
-				return;
+		if (_updateRemain2 == 0) {
+			_updateRemain2 = _updateInterval2;
+			// use only first voice's data (bitmask1) if both voices are triggered 
+			if (_updateRemain1 != 0) {
+				_speakerShiftReg ^= _bitmask2;		
 			}
 		}
+
+		if (_updateRemain1 == 0) {
+			_updateRemain1 = _updateInterval1;
+			_speakerShiftReg ^= _bitmask1;
+		}
+
+		if (_speakerShiftReg & 0x1)
+			_player->speakerToggle();
+		_speakerShiftReg >>= 1;
+		_player->generateSamples(42); /* actually 42.5 */
+
+		++_count;
+		return (_count == 0);
 	}
 
 protected:
 	const byte *_params;
+	
 	byte _updateRemain1;
 	byte _updateRemain2;
+
+	uint16 _count;
+	byte _bitmask1;
+	byte _bitmask2;
+	byte _updateInterval1;
+	byte _updateInterval2;
+	byte _speakerShiftReg;
 };
 
 /*

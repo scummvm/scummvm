@@ -282,6 +282,7 @@ public:
 	AppleII_SoundFunction() {}
 	virtual ~AppleII_SoundFunction() {}
 	virtual void init(Player_AppleII *player, const byte *params) = 0;
+	/* returns true if finished */
 	virtual bool update() = 0;
 protected:
 	Player_AppleII *_player;
