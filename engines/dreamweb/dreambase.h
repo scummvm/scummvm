@@ -238,9 +238,18 @@ public:
 	void namesToOld();
 	void showMainOps();
 	void showDiscOps();
-	void showNames();
+	void actualSave();
+	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
+	void loadSaveBox();
+	void showNames();
+	void checkInput();
+	void selectSlot();
+	void showSlots();
+	void showOpBox();
+	void showSaveOps();
+	void showLoadOps();
 
 	// from sound.cpp
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);
@@ -320,7 +329,6 @@ public:
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
 	void showArrows();
-	void showOpBox();
 	void middlePanel();
 	void showDiary();
 	void readMouse();
@@ -446,6 +454,9 @@ public:
 	void personNameText();
 	void walkToText();
 	void entryTexts();
+	void setAllChanges();
+	void restoreAll();
+	void redrawMainScrn();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

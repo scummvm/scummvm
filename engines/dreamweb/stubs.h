@@ -87,7 +87,6 @@
 	SetObject *getSetAd(uint8 index) {
 		return DreamBase::getSetAd(index);
 	}
-	void setAllChanges();
 	void deleteTaken();
 	bool finishedWalkingCPP();
 	void finishedWalking();
@@ -162,9 +161,6 @@
 	void doLook();
 	void showFirstUse();
 	void showSecondUse();
-	void actualSave();
-	void actualLoad();
-	void restoreAll();
 	void enterSymbol();
 	void viewFolder();
 	void edensCDPlayer();
@@ -221,7 +217,6 @@
 	void nextFolder();
 	void lastFolder();
 	void singleKey(uint8 key, uint16 x, uint16 y);
-	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
@@ -247,9 +242,6 @@
 	void loadIntroRoom();
 	void afterIntroRoom();
 	void gettingShot();
-	void redrawMainScrn();
-	void selectSlot();
-	void selectSlot2();
 	void allPointer();
 	void openYourNeighbour();
 	void openRyan();
@@ -294,8 +286,6 @@
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
 	}
 	void set16ColPalette();
-	void showSaveOps();
-	void showLoadOps();
 	void afterNewRoom();
 	void madmanRun();
 	void showDecisions();
@@ -307,7 +297,6 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void checkInput();
 	void dropError();
 	void cantDrop();
 	void newPlace();
@@ -341,7 +330,6 @@
 	void notHeldError();
 	void useGun();
 	void identifyOb();
-	void showSlots();
 	void useCashCard();
 	void useStereo();
 	void selectOb();

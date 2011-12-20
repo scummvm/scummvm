@@ -1314,7 +1314,7 @@ void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
 	change->type = type;
 }
 
-void DreamGenContext::setAllChanges() {
+void DreamBase::setAllChanges() {
 	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change)
 		if (change->location == data.byte(kReallocation))
@@ -2309,7 +2309,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	engine->closeFile();
 }
 
-void DreamGenContext::restoreAll() {
+void DreamBase::restoreAll() {
 	const Room &room = g_roomData[data.byte(kLocation)];
 	loadRoomData(room, true);
 	setAllChanges();
@@ -3131,27 +3131,6 @@ void DreamGenContext::newGame() {
 		data.byte(kGetback) = 3;
 }
 
-void DreamBase::getBackFromOps() {
-	if (data.byte(kMandead) == 2)
-		blank();
-	else
-		getBack1();
-}
-
-void DreamBase::getBackToOps() {
-	if (data.byte(kCommandtype) != 201) {
-		data.byte(kCommandtype) = 201;
-		commandOnly(42);
-	}
-
-	if (data.word(kMousebutton) != data.word(kOldbutton)) {
-		if (data.word(kMousebutton) & 1) {
-			oldToNames();
-			data.byte(kGetback) = 2;
-		}
-	}
-}
-
 void DreamGenContext::pickupOb(uint8 command, uint8 pos) {
 	data.byte(kLastinvpos) = pos;
 	data.byte(kObjecttype) = kFreeObjectType;
@@ -3234,7 +3213,7 @@ void DreamGenContext::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamGenContext::redrawMainScrn() {
+void DreamBase::redrawMainScrn() {
 	data.word(kTimecount) = 0;
 	createPanel();
 	data.byte(kNewobs) = 0;
@@ -3630,26 +3609,6 @@ void DreamBase::showArrows() {
 	showFrame(tempGraphics(), 280, 14, 2, 0);
 }
 
-void DreamBase::showOpBox() {
-	showFrame(tempGraphics(), kOpsx, kOpsy, 0, 0);
-
-	// CHECKME: There seem to be versions of dreamweb in which this call
-	// should be removed. It displays a red dot on the ops dialogs if left in.
-	showFrame(tempGraphics(), kOpsx, kOpsy + 55, 4, 0);
-}
-
-void DreamGenContext::showLoadOps() {
-	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
-	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
-}
-
-void DreamGenContext::showSaveOps() {
-	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
-	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
-}
-
 void DreamBase::middlePanel() {
 	Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
 	showFrame(tempSprites, 72 + 47 + 20, 0, 48, 0);
@@ -3889,45 +3848,6 @@ void DreamGenContext::talk() {
 		data.byte(kVolumedirection) = (byte)-1;
 		data.byte(kVolumeto) = 0;
 	}
-}
-
-void DreamGenContext::discOps() {
-	if (data.byte(kCommandtype) != 249) {
-		data.byte(kCommandtype) = 249;
-		commandOnly(43);
-	}
-
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
-		return;
-
-	scanForNames();
-	data.byte(kLoadingorsave) = 2;
-	showOpBox();
-	showDiscOps();
-	data.byte(kCurrentslot) = 0;
-	workToScreenM();
-	data.byte(kGetback) = 0;
-
-	RectWithCallback discOpsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
-		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
-		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-		{ 0,320,0,200,&DreamBase::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	do {
-		if (data.byte(kQuitrequested) != 0)
-			return; // quitdiscops
-
-		delPointer();
-		readMouse();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		checkCoords(discOpsList);
-	} while (!data.byte(kGetback));
 }
 
 void DreamGenContext::hangOnPQ() {
@@ -4508,19 +4428,6 @@ void DreamGenContext::lookAtCard() {
 	getRidOfTemp();
 	restoreReels();
 	putBackObStuff();
-}
-
-void DreamGenContext::showSlots() {
-	showFrame(tempGraphics(), kOpsx + 7, kOpsy + 8, 2, 0);
-
-	uint16 y = kOpsy + 11;
-
-	for (int slot = 0; slot < 7; slot++) {
-		if (slot == data.byte(kCurrentslot))
-			showFrame(tempGraphics(), kOpsx + 10, y, 3, 0);
-
-		y += 10;
-	}
 }
 
 void DreamBase::clearBuffers() {

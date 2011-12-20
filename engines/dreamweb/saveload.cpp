@@ -81,9 +81,9 @@ void DreamGenContext::doLoad(int savegameId) {
 			dumpPointer();
 			dumpTextLine();
 			RectWithCallback loadlist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualLoad },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualLoad },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -177,9 +177,9 @@ void DreamGenContext::saveGame() {
 			dumpTextLine();
 
 			RectWithCallback savelist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualSave },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualSave },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -268,7 +268,7 @@ void DreamGenContext::doSaveLoad() {
 	workToScreenCPP();
 
 	RectWithCallback opsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::getBackFromOps },
 		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
 		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
 		{ 0,320,0,200,&DreamBase::blank },
@@ -316,6 +316,27 @@ void DreamGenContext::doSaveLoad() {
 	data.byte(kManisoffscreen) = 0;
 }
 
+void DreamBase::getBackFromOps() {
+	if (data.byte(kMandead) == 2)
+		blank();
+	else
+		getBack1();
+}
+
+void DreamBase::getBackToOps() {
+	if (data.byte(kCommandtype) != 201) {
+		data.byte(kCommandtype) = 201;
+		commandOnly(42);
+	}
+
+	if (data.word(kMousebutton) != data.word(kOldbutton)) {
+		if (data.word(kMousebutton) & 1) {
+			oldToNames();
+			data.byte(kGetback) = 2;
+		}
+	}
+}
+
 void DreamBase::showMainOps() {
 	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
 	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
@@ -329,7 +350,46 @@ void DreamBase::showDiscOps() {
 	showFrame(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
-void DreamGenContext::actualSave() {
+void DreamGenContext::discOps() {
+	if (data.byte(kCommandtype) != 249) {
+		data.byte(kCommandtype) = 249;
+		commandOnly(43);
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	scanForNames();
+	data.byte(kLoadingorsave) = 2;
+	showOpBox();
+	showDiscOps();
+	data.byte(kCurrentslot) = 0;
+	workToScreenM();
+	data.byte(kGetback) = 0;
+
+	RectWithCallback discOpsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
+		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
+		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
+		{ 0,320,0,200,&DreamBase::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	do {
+		if (data.byte(kQuitrequested) != 0)
+			return; // quitdiscops
+
+		delPointer();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		checkCoords(discOpsList);
+	} while (!data.byte(kGetback));
+}
+
+void DreamBase::actualSave() {
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
 		commandOnly(44);
@@ -356,7 +416,7 @@ void DreamGenContext::actualSave() {
 	data.byte(kGetback) = 4;
 }
 
-void DreamGenContext::actualLoad() {
+void DreamBase::actualLoad() {
 	if (data.byte(kCommandtype) != 221) {
 		data.byte(kCommandtype) = 221;
 		commandOnly(41);
@@ -584,7 +644,7 @@ void DreamGenContext::loadOld() {
 	data.byte(kGetback) = 0;
 }
 
-void DreamGenContext::loadSaveBox() {
+void DreamBase::loadSaveBox() {
 	loadIntoTemp("DREAMWEB.G08");
 }
 
@@ -612,7 +672,7 @@ void DreamBase::showNames() {
 	}
 }
 
-void DreamGenContext::checkInput() {
+void DreamBase::checkInput() {
 	if (data.byte(kLoadingorsave) == 3)
 		return;
 
@@ -649,7 +709,7 @@ void DreamGenContext::checkInput() {
 	workToScreenM();
 }
 
-void DreamGenContext::selectSlot() {
+void DreamBase::selectSlot() {
 	if (data.byte(kCommandtype) != 244) {
 		data.byte(kCommandtype) = 244;
 		commandOnly(45);
@@ -677,8 +737,41 @@ void DreamGenContext::selectSlot() {
 		showSaveOps();
 	readMouse();
 	showPointer();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
+}
+
+void DreamBase::showSlots() {
+	showFrame(tempGraphics(), kOpsx + 7, kOpsy + 8, 2, 0);
+
+	uint16 y = kOpsy + 11;
+
+	for (int slot = 0; slot < 7; slot++) {
+		if (slot == data.byte(kCurrentslot))
+			showFrame(tempGraphics(), kOpsx + 10, y, 3, 0);
+
+		y += 10;
+	}
+}
+
+void DreamBase::showOpBox() {
+	showFrame(tempGraphics(), kOpsx, kOpsy, 0, 0);
+
+	// CHECKME: There seem to be versions of dreamweb in which this call
+	// should be removed. It displays a red dot on the ops dialogs if left in.
+	showFrame(tempGraphics(), kOpsx, kOpsy + 55, 4, 0);
+}
+
+void DreamBase::showLoadOps() {
+	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
+}
+
+void DreamBase::showSaveOps() {
+	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 
 } // End of namespace DreamGen
