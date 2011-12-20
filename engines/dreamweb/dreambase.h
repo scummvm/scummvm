@@ -243,14 +243,22 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
-	void oldToNames();
+	void loadGame();
+	void doLoad(int slot);
+	void saveGame();
 	void namesToOld();
+	void oldToNames();
+	void saveLoad();
+	void doSaveLoad();
 	void showMainOps();
 	void showDiscOps();
+	void discOps();
 	void actualSave();
 	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
+	uint scanForNames();
+	void loadOld();
 	void showDecisions();
 	void loadSaveBox();
 	void showNames();
@@ -469,6 +477,11 @@ public:
 	template <class T> void checkCoords(const RectWithCallback<T> *rectWithCallbacks);
 	void newGame();
 	void deleteTaken();
+	void autoAppear();
+	void loadRoom();
+	void startLoading(const Room &room);
+	void startup();
+	void atmospheres();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

@@ -495,7 +495,7 @@ void DreamGenContext::dreamweb() {
 
 	while (true) {
 
-		unsigned int count = scanForNames();
+		uint count = scanForNames();
 
 		bool startNewGame = true;
 
@@ -707,7 +707,7 @@ void DreamGenContext::screenUpdate() {
 	delPointer();
 }
 
-void DreamGenContext::startup() {
+void DreamBase::startup() {
 	data.byte(kCurrentkey) = 0;
 	data.byte(kMainmode) = 0;
 	createPanel();
@@ -1044,7 +1044,7 @@ void DreamBase::clearAndLoad(uint16 seg, uint8 c,
 	clearAndLoad(buf, c, size, maxSize);
 }
 
-void DreamGenContext::startLoading(const Room &room) {
+void DreamBase::startLoading(const Room &room) {
 	data.byte(kCombatcount) = 0;
 	data.byte(kRoomssample) = room.roomsSample;
 	data.byte(kMapx) = room.mapX;
@@ -2092,7 +2092,7 @@ void DreamBase::zoomIcon() {
 	showFrame(engine->icons1(), kZoomx, kZoomy-1, 8, 0);
 }
 
-void DreamGenContext::loadRoom() {
+void DreamBase::loadRoom() {
 	data.byte(kRoomloaded) = 1;
 	data.word(kTimecount) = 0;
 	data.word(kMaintimer) = 0;
@@ -2111,10 +2111,6 @@ void DreamGenContext::loadRoom() {
 	uint8 mapXstart, mapYstart;
 	uint8 mapXsize, mapYsize;
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
-	cl = mapXstart;
-	ch = mapYstart;
-	dl = mapXsize;
-	dh = mapYsize;
 }
 
 void DreamGenContext::readSetData() {
@@ -2627,7 +2623,7 @@ void DreamGenContext::useMenu() {
 	workToScreenM();
 }
 
-void DreamGenContext::atmospheres() {
+void DreamBase::atmospheres() {
 
 	const Atmosphere *a = &g_atmosphereList[0];
 
@@ -2651,8 +2647,8 @@ void DreamGenContext::atmospheres() {
 			//  I'm interpreting this as if the cmp reallocation is below the jz
 
 			if (data.byte(kMapy) == 0) {
-					data.byte(kVolume) = 0; // "fullvol"
-					return;
+				data.byte(kVolume) = 0; // "fullvol"
+				return;
 			}
 
 			if (data.byte(kReallocation) == 2 && data.byte(kMapx) == 22 && data.byte(kMapy) == 10)
@@ -3898,7 +3894,7 @@ void DreamGenContext::useButtonA() {
 	}
 }
 
-void DreamGenContext::autoAppear() {
+void DreamBase::autoAppear() {
 	if (data.byte(kLocation) == 32) {
 		// In alley
 		resetLocation(5);

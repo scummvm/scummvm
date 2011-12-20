@@ -23,9 +23,7 @@
 #define DREAMWEB_STUBS_H
 
 	void screenUpdate();
-	void startup();
 	void startup1();
-	void saveLoad();
 	void workToScreen();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
@@ -52,7 +50,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void startLoading(const Room &room);
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
@@ -131,7 +128,6 @@
 	void dumpWatch();
 	void transferText();
 	void watchCount();
-	void loadRoom();
 	void readSetData();
 	void useMenu();
 	void useMon();
@@ -219,15 +215,9 @@
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
-	unsigned int scanForNames();
-	void doLoad(int slot);
-	void loadOld();
 	void inventory();
 	void mainScreen();
-	void loadGame();
-	void saveGame();
 	void zoomOnOff();
-	void atmospheres();
 	void hangOne(uint16 delay);
 	void hangOne();
 	void bibleQuote();
@@ -287,8 +277,6 @@
 	void madmanRun();
 	void decide();
 	void talk();
-	void discOps();
-	void doSaveLoad();
 	void useDiary();
 	void hangOnPQ();
 	void showGun();
@@ -299,7 +287,6 @@
 	void monkSpeaking();
 	void rollEndCredits2();
 	void useButtonA();
-	void autoAppear();
 	void setupTimedUse();
 	void entryAnims();
 	void triggerMessage(uint16 index);
