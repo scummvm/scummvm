@@ -535,7 +535,7 @@ void DreamBase::deleteExObject(uint8 index) {
 	deleteExText(index);
 
 	for (uint8 i = 0; i < kNumexobjects; ++i) {
-		DynObject *t = getExAd(index);
+		DynObject *t = getExAd(i);
 		// Is this object contained in the one we've just deleted?
 		if (t->mapad[0] == 4 && t->mapad[1] == index)
 			deleteExObject(i);
@@ -544,7 +544,7 @@ void DreamBase::deleteExObject(uint8 index) {
 
 void DreamBase::removeObFromInv() {
 	if (data.byte(kCommand) == 100)
-		return; // object doesn't exit
+		return; // object doesn't exist
 
 	assert(data.byte(kObjecttype) == kExObjectType);
 
