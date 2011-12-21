@@ -184,6 +184,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Autopsy room
 		return new Scene3175();
 	case 3200:
+		// Cutscene : Guard discussion
+		return new Scene3200();
 	case 3210:
 	case 3220:
 	case 3230:
