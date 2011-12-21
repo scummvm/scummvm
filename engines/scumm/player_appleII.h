@@ -35,13 +35,20 @@ namespace Scumm {
 
 class ScummEngine;
 
-class DynamicMemoryStream {
+/*
+ * Optimized for use with periodical read/write phases when the buffer 
+ * is filled in a write phase and completely read in a read phase.
+ * The growing strategy is optimized for repeated small (e.g. 2 bytes)
+ * single writes resulting in large buffers
+ * (avg.: 4KB, max: 18KB @ 16bit/22.050kHz (MM sound21)).
+ */
+class SampleBuffer {
 public:
-	DynamicMemoryStream() : _data(0) {
+	SampleBuffer() : _data(0) {
 		clear();
 	}
 
-	~DynamicMemoryStream() {
+	~SampleBuffer() {
 		free(_data);
 	}
 
@@ -49,50 +56,61 @@ public:
 		free(_data);
 		_data = 0;
 		_capacity = 0;
-		_size = 0;
-		_ptr = 0;
-		_pos = 0;
+		_writePos = 0;
 		_readPos = 0;
 	}
 
-	void ensureCapacity(uint32 new_len) {
-		if (new_len <= _capacity)
-			return;
-
-		byte *old_data = _data;
-
-		_capacity *= 2;
-		if (_capacity < new_len + 2048)
-			_capacity = new_len + 2048;
-		_data = (byte *)malloc(_capacity);
-		_ptr = _data + _pos;
-
-		if (old_data) {
-			// Copy old data
-			memcpy(_data, old_data, _size);
-			free(old_data);
+	void ensureFree(uint32 needed) {
+		// if data was read completely, reset read/write pos to front
+		if ((_writePos != 0) && (_writePos == _readPos)) {
+			_writePos = 0;
+			_readPos = 0;
 		}
 
-		_size = new_len;
+		// check for enough space at end of buffer
+		uint32 freeEndCnt = _capacity - _writePos;
+		if (needed <= freeEndCnt)
+			return;
+
+		uint32 avail = availableSize();
+
+		// check for enough space at beginning and end of buffer
+		if (needed <= _readPos + freeEndCnt) {
+			// move unread data to front of buffer
+			memmove(_data, _data + _readPos, avail);
+			_writePos = avail;
+			_readPos = 0;
+		} else { // needs a grow
+			byte *old_data = _data;
+			uint32 new_len = avail + needed;
+
+			_capacity = new_len + 2048;
+			_data = (byte *)malloc(_capacity);
+
+			if (old_data) {
+				// copy old unread data to front of new buffer
+				memcpy(_data, old_data + _readPos, avail);
+				free(old_data);
+				_writePos = avail;
+				_readPos = 0;
+			}
+		}
 	}
 
 	uint32 availableSize() const {
-		if (_readPos >= _size)
+		if (_readPos >= _writePos)
 			return 0;
-		return _size - _readPos;
+		return _writePos - _readPos;
 	}
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
-		ensureCapacity(_pos + dataSize);
-		memcpy(_ptr, dataPtr, dataSize);
-		_ptr += dataSize;
-		_pos += dataSize;
-		if (_pos > _size)
-			_size = _pos;
+		ensureFree(dataSize);
+		memcpy(_data + _writePos, dataPtr, dataSize);
+		_writePos += dataSize;
 		return dataSize;
 	}
 
-	uint32 read(byte *dataPtr, uint32 dataSize) const {
+	uint32 read(byte *dataPtr, uint32 dataSize) {
 		uint32 avail = availableSize();
 		if (avail == 0)
 			return 0;
@@ -104,12 +122,10 @@ public:
 	}
 
 private:
-	mutable uint32 _readPos;
+	uint32 _writePos;
+	uint32 _readPos;
 	uint32 _capacity;
-	uint32 _size;
-	byte *_ptr;
 	byte *_data;
-	uint32 _pos;
 };
 
 // CPU_CLOCK according to AppleWin
@@ -214,7 +230,7 @@ private:
 	int _sampleCyclesSumFP;   /* (fixed precision) */
 	int _volume; /* 0 - 256 */
 	static const int _maxVolume = 256;
-	DynamicMemoryStream _buffer;
+	SampleBuffer _buffer;
 };
 
 class AppleII_SoundFunction;
