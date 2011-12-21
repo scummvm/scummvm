@@ -21,7 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
 #include "common/config-manager.h"
 
 namespace DreamGen {
@@ -329,23 +328,23 @@ static const Atmosphere g_atmosphereList[] = {
 
 	{ 10,33,30,6,255 },
 	{ 10,22,30,6,255 },
-	
+
 	{ 9,22,10,6,255 },
 	{ 9,22,20,16,255 },
 	{ 9,22,30,16,255 },
 	{ 9,22,40,16,255 },
 	{ 9,22,50,16,255 },
-	
+
 	{ 6,11,30,6,255 },
 	{ 6,0,10,15,255 },
 	{ 6,0,20,15,255 },
 	{ 6,11,20,15,255 },
 	{ 6,22,20,15,255 },
-	
+
 	{ 7,11,20,6,255 },
 	{ 7,0,20,6,255 },
 	{ 7,0,30,6,255 },
-	
+
 	{ 55,44,0,5,255 },
 	{ 55,44,10,5,255 },
 
@@ -367,12 +366,12 @@ static const Atmosphere g_atmosphereList[] = {
 	{ 8,33,40,6,255 },
 	{ 8,22,40,6,255 },
 	{ 8,11,40,6,255 },
-    
+
 	{ 11,11,20,12,255 },
 	{ 11,11,30,12,255 },
 	{ 11,22,20,12,255 },
 	{ 11,22,30,12,255 },
-	
+
 	{ 12,22,20,12,255 },
 	{ 13,22,20,12,255 },
 	{ 13,33,20,12,255 },
@@ -384,7 +383,7 @@ static const Atmosphere g_atmosphereList[] = {
 	{ 14,33,30,12,255 },
 	{ 14,33,40,12,255 },
 	{ 14,22,0,16,255 },
-	
+
 	{ 19,0,0,12,255 },
 
 	{ 20,0,20,16,255 },
@@ -544,6 +543,7 @@ void DreamGenContext::dreamweb() {
 			// "playGame"
 
 			// "titles"
+			// TODO: In the demo version, titles() did nothing
 			clearPalette();
 			bibleQuote();
 			if (!quitRequested()) // "titlesearly"
@@ -981,9 +981,6 @@ void DreamBase::DOSReturn() {
 	}
 }
 
-void DreamGenContext::set16ColPalette() {
-}
-
 void DreamBase::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
@@ -1243,7 +1240,7 @@ const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
-	for (i = 0; i < 28; ++i) { 
+	for (i = 0; i < 28; ++i) {
 		char c = src[i];
 		if (c == ':')
 			break;
@@ -1255,7 +1252,7 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 }
 
 void DreamGenContext::commandWithOb() {
-	commandWithOb(al, bh, bl); 
+	commandWithOb(al, bh, bl);
 }
 
 void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
@@ -2724,308 +2721,6 @@ void DreamBase::readKey() {
 	data.word(kBufferout) = bufOut;
 }
 
-void DreamGenContext::hangOne(uint16 delay) {
-	do {
-		vSync();
-		if (data.byte(kLasthardkey) == 1)
-			return; // "hangonearly"
-	} while	(--delay);
-}
-
-void DreamGenContext::hangOne() {
-	hangOne(cx);
-}
-
-void DreamGenContext::bibleQuote() {
-	initGraphics(640, 480, true);
-
-	showPCX("DREAMWEB.I00");
-	fadeScreenUps();
-
-	hangOne(80);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	hangOne(560);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	fadeScreenDowns();
-
-	hangOne(200);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	cancelCh0();
-
-	data.byte(kLasthardkey) = 0;
-}
-
-void DreamGenContext::realCredits() {
-	data.byte(kRoomssample) = 33;
-	loadRoomsSample();
-	data.byte(kVolume) = 0;
-
-	initGraphics(640, 480, true);
-	hangOn(35);
-
-	showPCX("DREAMWEB.I01");
-	playChannel0(12, 0);
-
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I02");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I03");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I04");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I05");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I06");
-	fadeScreenUps();
-	hangOne(60);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	playChannel0(13, 0);
-	hangOne(350);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	data.byte(kLasthardkey) =  0;
-}
-
-void DreamGenContext::runIntroSeq() {
-	data.byte(kGetback) = 0;
-
-	do {
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		spriteUpdate();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		delEverything();
-		printSprites();
-		reelsOnScreen();
-		afterIntroRoom();
-		useTimedText();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		dumpMap();
-		dumpTimedText();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-	} while (data.byte(kGetback) != 1);
-
-
-	if (data.byte(kLasthardkey) == 1) {
-		getRidOfTempText();
-		clearBeforeLoad();
-	}
-
-	// These were not called in this program arc
-	// in the original code.. Bug?
-	//getRidOfTempText();
-	//clearBeforeLoad();
-}
-
-void DreamGenContext::intro() {
-	loadTempText("DREAMWEB.T82");
-	loadPalFromIFF();
-	setMode();
-	data.byte(kNewlocation) = 50;
-	clearPalette();
-	loadIntroRoom();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 4;
-	playChannel0(12, 255);
-	fadeScreenUps();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 52;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 53;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	allPalette();
-	data.byte(kNewlocation) = 54;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	getRidOfTempText();
-	clearBeforeLoad();
-
-	data.byte(kLasthardkey) =  0;
-}
-
 void DreamBase::setTopLeft() {
 	if (data.byte(kSymboltopdir) != 0) {
 		blank();
@@ -3133,25 +2828,6 @@ void DreamGenContext::walkIntoRoom() {
 	}
 }
 
-void DreamGenContext::loadIntroRoom() {
-	data.byte(kIntrocount) = 0;
-	data.byte(kLocation) = 255;
-	loadRoom();
-	data.word(kMapoffsetx) = 72;
-	data.word(kMapoffsety) = 16;
-	clearSprites();
-	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
-	clearWork();
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	reelsOnScreen();
-	spriteUpdate();
-	printSprites();
-	workToScreenCPP();
-}
-
 void DreamGenContext::afterIntroRoom() {
 	if (data.byte(kNowinnewroom) == 0)
 		return; // notnewintro
@@ -3165,17 +2841,6 @@ void DreamGenContext::afterIntroRoom() {
 	printSprites();
 	workToScreenCPP();
 	data.byte(kNowinnewroom) = 0;
-}
-
-void DreamGenContext::gettingShot() {
-	data.byte(kNewlocation) = 55;
-	clearPalette();
-	loadIntroRoom();
-	fadeScreenUps();
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = (byte)-1;
-	runEndSeq();
-	clearBeforeLoad();
 }
 
 void DreamBase::redrawMainScrn() {
@@ -3348,58 +3013,6 @@ void DreamGenContext::putBackObStuff() {
 	showPointer();
 	workToScreenCPP();
 	delPointer();
-}
-
-void DreamGenContext::redes() {
-	if (data.byte(kCh1playing) != 255 || data.byte(kTalkmode) != 2) {
-		blank();
-		return;
-	}
-
-	if (data.byte(kCommandtype) != 217) {
-		data.byte(kCommandtype) = 217;
-		commandOnly(50);
-	}
-
-	if (!(data.word(kMousebutton) & 1))
-		return;
-
-	delPointer();
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	convIcons();
-	startTalk();
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-	delPointer();
-}
-
-void DreamGenContext::moreTalk() {
-	if (data.byte(kTalkmode) != 0) {
-		redes();
-		return;
-	}
-
-	if (data.byte(kCommandtype) != 215) {
-		data.byte(kCommandtype) = 215;
-		commandOnly(49);
-	}
-	
-	if (data.word(kMousebutton) == data.word(kOldbutton))
-		return;	// nomore
-
-	if (!(data.word(kMousebutton) & 1))
-		return;
-
-	data.byte(kTalkmode) = 2;
-	data.byte(kTalkpos) = 4;
-	
-	if (data.byte(kCharacter) >= 100)
-		data.byte(kTalkpos) = 48; // second part
-	doSomeTalk();
 }
 
 bool DreamBase::isSetObOnMap(uint8 index) {
@@ -3616,107 +3229,6 @@ void DreamGenContext::decide() {
 	data.byte(kTextlen) = 240;
 }
 
-void DreamGenContext::talk() {
-	data.byte(kTalkpos) = 0;
-	data.byte(kInmaparea) = 0;
-	data.byte(kCharacter) = data.byte(kCommand);
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	underTextLine();
-	convIcons();
-	startTalk();
-	data.byte(kCommandtype) = 255;
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-
-	RectWithCallback<DreamGenContext> talkList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 240,290,2,44,&DreamGenContext::moreTalk },
-		{ 0,320,0,200,&DreamBase::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	do {
-		delPointer();
-		readMouse();
-		animPointer();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		data.byte(kGetback) = 0;
-		checkCoords(talkList);
-		if (data.byte(kQuitrequested))
-			break;
-	} while (!data.byte(kGetback));
-
-	if (data.byte(kTalkpos) >= 4)
-		data.byte(data.word(kPersondata)+7) |= 128;
-
-	redrawMainScrn();
-	workToScreenM();
-	if (data.byte(kSpeechloaded) == 1) {
-		cancelCh1();
-		data.byte(kVolumedirection) = (byte)-1;
-		data.byte(kVolumeto) = 0;
-	}
-}
-
-void DreamGenContext::hangOnPQ() {
-	data.byte(kGetback) = 0;
-
-	RectWithCallback<DreamBase> quitList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 0,320,0,200,&DreamBase::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	uint16 speechFlag = 0;
-
-	do {
-		delPointer();
-		readMouse();
-		animPointer();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		checkCoords(quitList);
-
-		if (data.byte(kGetback) == 1 || data.byte(kQuitrequested)) {
-			// Quit conversation
-			delPointer();
-			data.byte(kPointermode) = 0;
-			cancelCh1();
-			flags._c = true;
-			return;
-		}
-
-		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
-			speechFlag++;
-			if (speechFlag == 40)
-				break;
-		}
-	} while (!data.word(kMousebutton) || data.word(kOldbutton));
-
-	delPointer();
-	data.byte(kPointermode) = 0;
-	flags._c = false;
- }
-
-void DreamGenContext::endGame() {
-	loadTempText("DREAMWEB.T83");
-	monkSpeaking();
-	gettingShot();
-	getRidOfTempText();
-	data.byte(kVolumeto) = 7;
-	data.byte(kVolumedirection) = 1;
-	hangOn(200);
-}
-
 void DreamGenContext::showGun() {
 	data.byte(kAddtored) = 0;
 	data.byte(kAddtogreen) = 0;
@@ -3839,39 +3351,6 @@ void DreamBase::getBack1() {
 		data.byte(kGetback) = 1;
 		data.byte(kPickup) = 0;
 	}
-}
-
-void DreamGenContext::monkSpeaking() {
-	// FIXME: This is the CD version only.
-
-	data.byte(kRoomssample) = 35;
-	loadRoomsSample();
-	loadIntoTemp("DREAMWEB.G15");
-	clearWork();
-	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
-	workToScreen();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 5;
-	playChannel0(12, 255);
-	fadeScreenUps();
-	hangOn(300);
-
-	for (int i = 40; i <= 48; i++) {
-		loadSpeech('T', 83, 'T', i);
-
-		playChannel1(50 + 12);
-
-		do {
-			engine->waitForVSync();
-		} while (data.byte(kCh1playing) != 255);
-	} 
-
-	data.byte(kVolumedirection) = 1;
-	data.byte(kVolumeto) = 7;
-	fadeScreenDowns();
-	hangOn(300);
-	getRidOfTemp();
 }
 
 void DreamGenContext::useButtonA() {
@@ -4185,26 +3664,6 @@ void DreamGenContext::dumpDiaryKeys() {
 
 	multiDump(kDiaryx + 94, kDiaryy + 97, 16, 16);
 	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
-}
-
-void DreamGenContext::runEndSeq() {
-	atmospheres();
-	data.byte(kGetback) = 0;
-
-	do {
-		vSync();
-		spriteUpdate();
-		vSync();
-		delEverything();
-		printSprites();
-		reelsOnScreen();
-		afterIntroRoom();
-		useTimedText();
-		vSync();
-		dumpMap();
-		dumpTimedText();
-		vSync();
-	} while (data.byte(kGetback) != 1);
 }
 
 void DreamGenContext::lookAtCard() {
