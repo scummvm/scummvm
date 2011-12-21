@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	sprite.o \
 	stubs.o \
 	talk.o \
+	titles.o \
 	use.o \
 	vgafades.o \
 	vgagrafx.o
