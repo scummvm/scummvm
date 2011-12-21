@@ -32,21 +32,6 @@
 
 namespace Grim {
 
-//TODO: Move in resource
-class Block {
-public:
-	Block(const char *dataPtr, uint32 length, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::YES) :
-		_data(dataPtr), _len(length), _disposeMemory(disposeMemory) {}
-	const char *getData() const { return _data; }
-	int getLen() const { return _len; }
-	~Block() { if(_disposeMemory) delete[] _data; }
-
-private:
-	const char *_data;
-	uint32 _len;
-	DisposeAfterUse::Flag _disposeMemory;
-};
-
 class Lab;
 
 class LabEntry : public Common::ArchiveMember {
@@ -67,10 +52,8 @@ public:
 	~Lab() { close(); }
 
 	bool open(const Common::String &filename);
-	bool open(const Block *lab);
+	bool open(const byte *memLab, const uint32 size);
 	void close();
-	Block *getFileBlock(const Common::String &filename) const; //TODO: Move in resource
-	uint32 getFileLength(const Common::String &filename) const; //TODO: Remove
 
 	// Common::Archive implementation
 	virtual bool hasFile(const Common::String &name); //TODO: Remove at next scummvm sync
@@ -85,7 +68,7 @@ private:
 	void parseMonkey4FileTable();
 
 	Common::SeekableReadStream *_f;
-	const Block *_memLab;
+	const byte *_memLab;
 	Common::String _labFileName;
 	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
 	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;

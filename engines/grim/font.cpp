@@ -146,7 +146,7 @@ void Font::restoreState(SaveGame *state) {
 	Common::String fname = state->readString();
 	Common::SeekableReadStream *stream;
 
-	stream = g_resourceloader->openNewStreamFile(fname.c_str());
+	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	load(fname, stream);
 }
 

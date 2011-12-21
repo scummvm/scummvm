@@ -110,7 +110,7 @@ ResourceLoader::~ResourceLoader() {
 	for (Common::Array<ResourceCache>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		ResourceCache &r = *i;
 		delete[] r.fname;
-		delete r.resPtr;
+		delete[] r.resPtr;
 	}
 	clearList(_labs);
 	clearList(_models);
@@ -131,12 +131,13 @@ static int sortCallback(const void *entry1, const void *entry2) {
 	return scumm_stricmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
-Block *ResourceLoader::getFileFromCache(const Common::String &filename) {
+Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::String &filename) {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
-	if (entry)
-		return entry->resPtr;
-	else
+	if (!entry)
 		return NULL;
+
+	return new Common::MemoryReadStream(entry->resPtr, entry->len);
+
 }
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) {
@@ -158,29 +159,7 @@ bool ResourceLoader::getFileExists(const Common::String &filename) const {
 	return getLab(filename) != NULL;
 }
 
-Block *ResourceLoader::getFileBlock(const Common::String &filename) const {
-	const Lab *l = getLab(filename);
-	if (!l)
-		return NULL;
-	else
-		return l->getFileBlock(filename);
-}
-
-Block *ResourceLoader::getBlock(const Common::String &filename) {
-    Common::String fname = filename;
-    fname.toLowercase();
-    Block *b = getFileFromCache(fname);
-    if (!b) {
-        b = getFileBlock(fname);
-		if (b) {
-			putIntoCache(fname, b);
-		}
-    }
-
-    return b;
-}
-
-Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename) const {
+Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) const {
 	const Lab *l = getLab(filename);
 
 	if (!l)
@@ -189,20 +168,37 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filena
 		return l->createReadStreamForMember(filename);
 }
 
-int ResourceLoader::getFileLength(const char *filename) const {
-	const Lab *l = getLab(filename);
-	if (l)
-		return l->getFileLength(filename);
-	else
-		return 0;
+Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename, bool cache) {
+	Common::String fname = filename;
+	Common::SeekableReadStream *s;
+    fname.toLowercase();
+
+	if (cache) {
+		s = getFileFromCache(fname);
+		if (!s) {
+			s = loadFile(fname);
+			if (!s)
+				return NULL;
+
+			uint32 size = s->size();
+			byte *buf = new byte[size];
+			s->read(buf, size);
+			putIntoCache(fname, buf, size);
+			return new Common::MemoryReadStream(buf, size);
+		} else
+			return s;
+	}
+
+	return loadFile(fname);
 }
 
-void ResourceLoader::putIntoCache(const Common::String &fname, Block *res) {
+void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) {
 	ResourceCache entry;
 	entry.resPtr = res;
+	entry.len = len;
 	entry.fname = new char[fname.size() + 1];
 	strcpy(entry.fname, fname.c_str());
-	_cacheMemorySize += res->getLen();
+	_cacheMemorySize += len;
 	_cache.push_back(entry);
 	_cacheDirty = true;
 }
@@ -211,7 +207,7 @@ Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 
-	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str());
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str(), true);
 	if (!stream) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
 		warning("Could not find bitmap %s", filename.c_str());
 		return NULL;
@@ -254,7 +250,7 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 	Common::String fname = fixFilename(filename);
 	fname.toLowercase();
 
-	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str());
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str(), true);
 	if (!stream) {
 		error("Could not find costume \"%s\"", filename.c_str());
 	}
@@ -267,7 +263,7 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
-	stream = openNewStreamFile(filename.c_str());
+	stream = openNewStreamFile(filename.c_str(), true);
 	if(!stream)
 		error("Could not find font file %s", filename.c_str());
 
@@ -315,7 +311,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 	fname.toLowercase();
 	Common::SeekableReadStream *stream;
 
-	stream = openNewStreamFile(fname.c_str());
+	stream = openNewStreamFile(fname.c_str(), true);
 	if(!stream)
 		error("Could not find material %s", filename.c_str());
 
@@ -358,7 +354,7 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	Common::String fname = fixFilename(filename);
 	Common::SeekableReadStream *stream;
 
-	stream = openNewStreamFile(fname.c_str());
+	stream = openNewStreamFile(fname.c_str(), true);
 	if(!stream) {
 		warning("Could not find skeleton %s", filename.c_str());
 		return NULL;
@@ -381,8 +377,8 @@ void ResourceLoader::uncache(const char *filename) {
 	for (unsigned int i = 0; i < _cache.size(); i++) {
 		if (fname.compareTo(_cache[i].fname) == 0) {
 			delete[] _cache[i].fname;
-			_cacheMemorySize -= _cache[i].resPtr->getLen();
-			delete _cache[i].resPtr;
+			_cacheMemorySize -= _cache[i].len;
+			delete[] _cache[i].resPtr;
 			_cache.remove_at(i);
 			_cacheDirty = true;
 		}

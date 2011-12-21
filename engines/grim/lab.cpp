@@ -44,10 +44,10 @@ Common::SeekableReadStream *LabEntry::createReadStream() const {
 	return _parent->createReadStreamForMember(_name);
 }
 
-bool Lab::open(const Block *lab) {
-	_f = new Common::MemoryReadStream((byte *)lab->getData(), lab->getLen());
+bool Lab::open(const byte *memLab, const uint32 size) {
+	_f = new Common::MemoryReadStream(memLab, size);
 	_labFileName = "";
-	_memLab = lab;
+	_memLab = memLab;
 
 	return loadLab();
 }
@@ -178,29 +178,6 @@ Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) {
 	return _entries[fname];
 }
 
-Block *Lab::getFileBlock(const Common::String &filename) const {
-	if (!hasFile(filename))
-		return 0;
-
-	LabEntryPtr i = _entries[filename];
-	Block *blockData;
-
-	/*If the whole Lab has been loaded into ram, we return a pointer
-	of requested data directly, without copying them. Otherwise read them
-	from the disk.*/
-	if(_memLab) {
-		const char *data = _memLab->getData() + i->_offset;
-		blockData = new Block(data, i->_len, DisposeAfterUse::NO);
-	} else {
-		_f->seek(i->_offset, SEEK_SET);
-		char *data = new char[i->_len];
-		_f->read(data, i->_len);
-		blockData = new Block(data, i->_len, DisposeAfterUse::YES);
-	}
-
-	return blockData;
-}
-
 Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String &filename) const {
 	if (!hasFile(filename))
 		return 0;
@@ -213,18 +190,11 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 	that map requested data directly, without copying them. Otherwise open a new
 	stream from disk.*/
 	if(_memLab)
-		return new Common::MemoryReadStream((byte*)(_memLab->getData() + i->_offset), i->_len, DisposeAfterUse::NO);
+		return new Common::MemoryReadStream((_memLab + i->_offset), i->_len, DisposeAfterUse::NO);
 
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
 	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES );
-}
-
-uint32 Lab::getFileLength(const Common::String &filename) const {
-	if(!hasFile(filename))
-		return 0;
-
-	return _entries[filename]->_len;
 }
 
 void Lab::close() {

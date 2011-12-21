@@ -30,7 +30,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/gfx_base.h"
 
 namespace Grim {
@@ -344,7 +343,7 @@ void Bitmap::restoreState(SaveGame *state) {
 	freeData();
 
 	Common::String fname = state->readString();
-	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(fname.c_str());
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	_data = BitmapData::getBitmapData(fname, data);
 
 	_currImage = state->readLESint32();
