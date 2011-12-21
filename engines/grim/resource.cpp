@@ -36,65 +36,84 @@
 #include "engines/grim/skeleton.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
+#include "common/algorithm.h"
+#include "gui/message.h"
 
 namespace Grim {
 
 ResourceLoader *g_resourceloader = NULL;
 
+class LabListComperator {
+	const Common::String _labName;
+public:
+	LabListComperator() {}
+	LabListComperator(const Common::String &ln) : _labName(ln) {}
+
+	bool operator()(const Common::ArchiveMemberPtr &l) {
+		return _labName.compareToIgnoreCase(l->getName()) == 0;
+	}
+
+	bool operator()(const Common::ArchiveMemberPtr &l, const Common::ArchiveMemberPtr &r) {
+		return (l->getName().compareToIgnoreCase(r->getName()) > 0);
+	}
+};
+
 ResourceLoader::ResourceLoader() {
-	int lab_counter = 0;
 	_cacheDirty = false;
 	_cacheMemorySize = 0;
 
 	Lab *l;
 	Common::ArchiveMemberList files;
 
-	SearchMan.listMatchingMembers(files, "*.lab");
-	SearchMan.listMatchingMembers(files, "*.m4b");
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
+			SearchMan.listMatchingMembers(files, "grimdemo.mus");
+			SearchMan.listMatchingMembers(files, "sound001.lab");
+			SearchMan.listMatchingMembers(files, "voice001.lab");
+		} else {
+			SearchMan.listMatchingMembers(files, "data???.lab");
+			SearchMan.listMatchingMembers(files, "movie??.lab");
+			SearchMan.listMatchingMembers(files, "vox????.lab");
+			SearchMan.listMatchingMembers(files, "year?mus.lab");
+			SearchMan.listMatchingMembers(files, "local.lab");
+			SearchMan.listMatchingMembers(files, "credits.lab");
+
+			//Sort the archives in order to ensure that they are loaded with the correct order
+			Common::sort(files.begin(), files.end(), LabListComperator());
+
+			//Check the presence of datausr.lab and ask the user if he wants to load it.
+			//In this case put it in the top of the list
+			Common::ArchiveMemberList::iterator datausr_it = Common::find_if(files.begin(), files.end(), LabListComperator("datausr.lab"));
+			if (datausr_it != files.end()) {
+				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
+				int res = d.runModal();
+				if (res == GUI::kMessageOK)
+					files.push_front(*datausr_it);
+				files.erase(datausr_it);
+			}
+		}
+	}
+
+	if (g_grim->getGameType() == GType_MONKEY4)
+		SearchMan.listMatchingMembers(files, "*.m4b");
 
 	if (files.empty())
 		error("Cannot find game data - check configuration file");
 
+	int priority = files.size();
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String filename = (*x)->getName();
-		l = new Lab();
+		Common::String filename = (*x)->getName();
+		filename.toLowercase();
 
-		if (l->open(filename)) {
-			if (filename.equalsIgnoreCase("datausr.lab")) {
-				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
-				int res = d.runModal();
-				if (res) {
-					warning("Loading %s",filename.c_str());
-					_labs.push_front(l);
-				}
-			}
-			else if (filename.equalsIgnoreCase("data005.lab"))
-				_labs.push_front(l);
-			else
-				_labs.push_back(l);
-			lab_counter++;
-		} else {
+		l = new Lab();
+		if (l->open(filename))
+			_files.add(filename, l, priority--, true);
+		else
 			delete l;
-		}
 	}
 
 	files.clear();
-
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
-		SearchMan.listMatchingMembers(files, "*.mus");
-
-		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			const Common::String filename = (*x)->getName();
-			l = new Lab();
-
-			if (l->open(filename)) {
-				_labs.push_back(l);
-				lab_counter++;
-			} else {
-				delete l;
-			}
-		}
-	}
 }
 
 template<typename T>
@@ -112,19 +131,10 @@ ResourceLoader::~ResourceLoader() {
 		delete[] r.fname;
 		delete[] r.resPtr;
 	}
-	clearList(_labs);
 	clearList(_models);
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
 	clearList(_lipsyncs);
-}
-
-const Lab *ResourceLoader::getLab(const Common::String &filename) const {
-	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
-		if ((*i)->hasFile(filename))
-			return *i;
-
-	return NULL;
 }
 
 static int sortCallback(const void *entry1, const void *entry2) {
@@ -155,17 +165,17 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::getFileExists(const Common::String &filename) const {
-	return getLab(filename) != NULL;
+bool ResourceLoader::getFileExists(const Common::String &filename) {
+	return _files.hasFile(filename);
 }
 
-Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
+Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
+	if (_files.hasFile(filename))
+		return _files.createReadStreamForMember(filename);
+	else if (SearchMan.hasFile(filename))
 		return SearchMan.createReadStreamForMember(filename);
 	else
-		return l->createReadStreamForMember(filename);
+		return NULL;
 }
 
 Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename, bool cache) {
