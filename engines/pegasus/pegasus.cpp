@@ -88,6 +88,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_draggingItem = 0;
 	_dragType = kDragNoDrag;
 	_idlerHead = 0;
+	_currentCD = 1;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -423,6 +424,7 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	case kPegasusPrimeDisk2GameType:
 	case kPegasusPrimeDisk3GameType:
 	case kPegasusPrimeDisk4GameType:
+		_currentCD = gameType - kPegasusPrimeDisk1GameType + 1;
 		saveType = kNormalSave;
 		break;
 	case kPegasusPrimeContinueType:
@@ -505,12 +507,10 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	// Signature
 	stream->writeUint32BE(kPegasusPrimeCreator);
 
-	if (saveType == kNormalSave) {
-		// TODO: Disc check
-		stream->writeUint32BE(kPegasusPrimeDisk1GameType);
-	} else { // Continue
+	if (saveType == kNormalSave)
+		stream->writeUint32BE(kPegasusPrimeDisk1GameType + _currentCD - 1);
+	else // Continue
 		stream->writeUint32BE(kPegasusPrimeContinueType);
-	}
 
 	stream->writeUint32BE(kPegasusPrimeVersion);
 
@@ -1326,6 +1326,9 @@ void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 	Neighborhood *neighborhood;
 	makeNeighborhood(neighborhoodID, neighborhood);
 	useNeighborhood(neighborhood);
+
+	// Update the CD variable (used just for saves currently)
+	_currentCD = getNeighborhoodCD(neighborhoodID);
 }
 
 void PegasusEngine::startNeighborhood() {
@@ -2133,6 +2136,30 @@ ItemID PegasusEngine::pickItemToDestroy() {
 	error("Could not find item to delete");
 
 	return kNoItemID;
+}
+
+uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
+	switch (neighborhood) {
+	case kCaldoriaID:
+	case kNoradAlphaID:
+	case kNoradSubChaseID:
+		return 1;
+	case kFullTSAID:
+	case kPrehistoricID:
+		return 2;
+	case kMarsID:
+		return 3;
+	case kWSCID:
+	case kNoradDeltaID:
+		return 4;
+	case kTinyTSAID:
+		// Tiny TSA exists on three of the CD's, so just continue
+		// with the CD we're on
+		return _currentCD;
+	}
+
+	// Can't really happen, but it's a good fallback anyway :P
+	return 1;
 }
 
 } // End of namespace Pegasus

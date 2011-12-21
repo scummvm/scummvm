@@ -248,6 +248,8 @@ private:
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
 	Common::RandomSource *_rnd;
 	void doSubChase();
+	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
+	uint _currentCD;
 
 	// Menu
 	GameMenu *_gameMenu;
