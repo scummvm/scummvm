@@ -888,6 +888,17 @@ Speaker *StripManager::getSpeaker(const char *speakerName) {
 			return _speakerList[idx];
 	}
 
+	// TODO: Check if it necessary to make a strcmp first.
+	//
+	// If nothing is found, recheck and ignore the case as
+	// in R2R, some character names aren't in uppercase.
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		for (uint idx = 0; idx < _speakerList.size(); ++idx) {
+			if (!scumm_stricmp(_speakerList[idx]->_speakerName.c_str(), speakerName))
+				return _speakerList[idx];
+		}
+	}
+
 	return NULL;
 }
 
