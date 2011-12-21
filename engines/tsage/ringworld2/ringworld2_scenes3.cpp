@@ -793,5 +793,135 @@ void Scene3150::dispatch() {
 	Scene::dispatch();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3175 - Autopsy room
+ *
+ *--------------------------------------------------------------------------*/
+bool Scene3175::Item1::startAction(CursorType action, Event &event) {
+	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (_useLineNum != -1) {
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	case CURSOR_LOOK:
+		if (_lookLineNum != -1) {
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum != -1) {
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	warning("scene->display() called with two parameters");
+	return scene->display(action);
+}
+
+bool Scene3175::Actor3::startAction(CursorType action, Event &event) {
+	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (_useLineNum != -1) {
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	case CURSOR_LOOK:
+		if (_lookLineNum != -1) {
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum != -1) {
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	warning("scene->display() called with two parameters");
+	return scene->display(action);
+}
+
+bool Scene3175::Actor1::startAction(CursorType action, Event &event) {
+	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 3176;
+		scene->setAction(&scene->_sequenceManager, scene, 3176, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		return true;
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display(3175, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		return true;
+		break;
+	case CURSOR_TALK:
+		SceneItem::display(3175, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		return true;
+		break;
+	default:
+		return SceneActor::startAction(action, event);
+		break;
+	}
+}
+
+void Scene3175::postInit(SceneObjectList *OwnerList) {
+	loadScene(3175);
+	SceneExt::postInit();
+
+	_actor1.postInit();
+	_actor1.setup(3175, 1, 1);
+	_actor1.setPosition(Common::Point(35, 72));
+	_actor1.setDetails(3175, 9, 10, -1, 1, NULL);
+
+	_actor2.postInit();
+	_actor2.setup(3175, 2, 1);
+	_actor2.setPosition(Common::Point(87, 148));
+
+	_actor3.postInit();
+	_actor3.setup(3175, 3, 1);
+	_actor3.setPosition(Common::Point(199, 117));
+	_actor3.setDetails(3175, 15, 16, 17, 1, NULL);
+
+	_item2.setDetails(12, 3175, 3, 1, 5);
+	_item3.setDetails(11, 3175, 6, 7, 8);
+	_item1.setDetails(Rect(0, 0, 320, 200), 3175, 0, 1, 2, 1, NULL);
+
+	R2_GLOBALS._player.postInit();
+
+	if (R2_GLOBALS._player._oldCharacterScene[3] == 3250) {
+		R2_GLOBALS._player.setup(30, 5, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(126, 77));
+		R2_GLOBALS._player.enableControl();
+	} else {
+		_sceneMode = 3175;
+		setAction(&_sequenceManager, this, 3175, &R2_GLOBALS._player, &_actor1, NULL);
+	}
+
+	R2_GLOBALS._player._oldCharacterScene[3] = 3175;
+}
+
+void Scene3175::signal() {
+	if (_sceneMode == 3176)
+		R2_GLOBALS._sceneManager.changeScene(3250);
+	else
+		R2_GLOBALS._player.enableControl();
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

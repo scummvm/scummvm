@@ -159,6 +159,32 @@ public:
 	virtual void signal();
 	virtual void dispatch();
 };
+
+class Scene3175 : public SceneExt {
+	class Item1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor3 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor1 : public Actor3 {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+
+	Item1 _item1;
+	Item1 _item2;
+	Item1 _item3;
+	Actor1 _actor1;
+	SceneActor _actor2;
+	Actor3 _actor3;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

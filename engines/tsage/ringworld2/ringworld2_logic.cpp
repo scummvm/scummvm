@@ -181,6 +181,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Jail
 		return new Scene3150();
 	case 3175:
+		// Autopsy room
+		return new Scene3175();
 	case 3200:
 	case 3210:
 	case 3220:
