@@ -51,7 +51,9 @@ TextObject::TextObject() :
 
 TextObject::~TextObject() {
 	delete[] _lines;
-	g_driver->destroyTextObject(this);
+	if (_created) {
+		g_driver->destroyTextObject(this);
+	}
 }
 
 void TextObject::setText(const Common::String &text) {
