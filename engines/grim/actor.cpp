@@ -852,6 +852,13 @@ void Actor::sayLine(const char *msgId, bool background) {
 	}
 }
 
+void Actor::lineCleanup() {
+	if (_sayLineText) {
+		delete TextObject::getPool().getObject(_sayLineText);
+		_sayLineText = 0;
+	}
+}
+
 bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
