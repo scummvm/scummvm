@@ -207,20 +207,6 @@ public:
 		return _buffer.read((byte*)buffer, numSamples * 2) / 2;
 	}
 
-#if 0
-	void logToFile(Common::String fileName) {
-		FILE *f;
-		byte buffer[512];
-		int n;
-
-		f = fopen(fileName.c_str(), "wb");
-		while ((n = _buffer.read(buffer, 512)) != 0) {
-			fwrite(buffer, 1, n, f);
-		}
-		fclose(f);
-	}
-#endif
-
 private:
 	static const int PREC_SHIFT = 7;
 

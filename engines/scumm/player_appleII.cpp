@@ -372,30 +372,6 @@ Player_AppleII::~Player_AppleII() {
 	delete _state.soundFunc;
 }
 
-/*
-void logSounds() {
-	for (nr = 1; nr < 70; ++nr) {
-		switch (nr) {
-		// non-existing or invalid
-		case 3: case 4: case 5:  case 49: case 51: case 68:
-			continue;
-		}
-
-		byte *data = _vm->getResourceAddress(rtSound, nr);
-		if (data) {
-			size_t size = (data[1] << 8) | data[0];
-
-			std::stringstream s;
-			s << "d:/msound/sound" << nr << ".snd";
-			FILE *f = fopen(s.str().c_str(), "wb");
-			fwrite(data, 1, size, f);
-			fclose(f);
-			printf("sound: %d\n", nr);
-		}
-	}
-}
-*/
-
 void Player_AppleII::startSound(int nr) {
 	Common::StackLock lock(_mutex);
 
