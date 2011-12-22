@@ -849,7 +849,7 @@ bool Scene3175::Actor3::startAction(CursorType action, Event &event) {
 	default:
 		break;
 	}
-	warning("scene->display() called with two parameters");
+
 	return scene->display(action, event);
 }
 
