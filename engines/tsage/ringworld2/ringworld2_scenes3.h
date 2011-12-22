@@ -236,6 +236,19 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
+
+class Scene3240 : public SceneExt {
+public:
+	SpeakerTeal3240 _tealSpeaker;
+	SpeakerWebbster3240 _webbsterSpeaker;
+	SpeakerMiranda2500 _mirandaSpeaker;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
