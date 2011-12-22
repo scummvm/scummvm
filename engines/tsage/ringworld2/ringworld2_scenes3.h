@@ -41,7 +41,7 @@ using namespace TsAGE;
 
 
 class Scene3100 : public SceneExt {
-	class Actor6 : public SceneActor {
+	class Guard : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
@@ -55,7 +55,7 @@ public:
 	SceneActor _actor3;
 	SceneActor _actor4;
 	SceneActor _actor5;
-	Actor6 _actor6;
+	Guard _guard;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager;
 

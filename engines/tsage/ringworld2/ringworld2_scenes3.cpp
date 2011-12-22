@@ -43,7 +43,7 @@ void Scene3100::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field412);
 }
 
-bool Scene3100::Actor6::startAction(CursorType action, Event &event) {
+bool Scene3100::Guard::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
 
@@ -98,11 +98,11 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 			_sound1.fadeSound(130);
 			setAction(&_sequenceManager, this, 3102, &_actor1, &R2_GLOBALS._player, &_actor3, &_actor4, &_actor5, NULL);
 		} else {
-			_actor6.postInit();
-			_actor6.setup(3110, 5, 1);
-			_actor6.changeZoom(50);
-			_actor6.setPosition(Common::Point(10, 149));
-			_actor6.setDetails(3100, 6, -1, -1, 2, NULL);
+			_guard.postInit();
+			_guard.setup(3110, 5, 1);
+			_guard.changeZoom(50);
+			_guard.setPosition(Common::Point(10, 149));
+			_guard.setDetails(3100, 6, -1, -1, 2, NULL);
 
 			_actor4.postInit();
 			_actor4.setup(3103, 1, 1);
@@ -126,11 +126,11 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_sequenceManager, this, 3101, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
 	} else {
-		_actor6.postInit();
-		_actor6.setup(3110, 5, 1);
-		_actor6.changeZoom(50);
-		_actor6.setPosition(Common::Point(10, 149));
-		_actor6.setDetails(3100, 6, -1, -1, 2, NULL);
+		_guard.postInit();
+		_guard.setup(3110, 5, 1);
+		_guard.changeZoom(50);
+		_guard.setPosition(Common::Point(10, 149));
+		_guard.setDetails(3100, 6, -1, -1, 2, NULL);
 		
 		_actor4.postInit();
 		_actor4.setup(3103, 1, 1);
@@ -167,8 +167,7 @@ void Scene3100::remove() {
 void Scene3100::signal() {
 	switch (_sceneMode) {
 	case 10:
-		warning("TODO: Unknown cursor used (6/-6)");
-		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player.enableControl(CURSOR_TALK);
 		break;
 	case 3100:
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
