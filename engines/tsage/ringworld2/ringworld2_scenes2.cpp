@@ -35,9 +35,7 @@ namespace Ringworld2 {
  *--------------------------------------------------------------------------*/
 void Scene2000::initPlayer() {
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
 
-	warning("initPlayer: %d", _mazePlayerMode);
 	switch (_mazePlayerMode) {
 	case 0:
 		R2_GLOBALS._player.setStrip(5);
@@ -49,7 +47,6 @@ void Scene2000::initPlayer() {
 		} else
 			R2_GLOBALS._player.setPosition(Common::Point(245, 129));
 		R2_GLOBALS._player.enableControl();
-		warning("EnableControl, with 2 arguments?");
 		break;
 	case 1:
 		if (R2_GLOBALS._player._characterIndex == 1)
@@ -178,8 +175,6 @@ void Scene2000::initExits() {
 		_objList1[i].hide();
 
 	_object1.remove();
-
-	warning("initExits: %d", R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]);
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
 	case 3:
@@ -395,7 +390,6 @@ void Scene2000::Action1::signal() {
 	case 0: {
 		_actionIndex = 1;
 		Common::Point pt(-20, 127);
-		warning("TODO: Check sub_22D26");
 		NpcMover *mover = new NpcMover();
 		scene->_objList1[_state].addMover(mover, &pt, scene);
 		break;
@@ -439,7 +433,6 @@ void Scene2000::Action1::signal() {
 	case 5: {
 		_actionIndex = 6;
 		Common::Point pt(340, 127);
-		warning("TODO: Check sub_22D26");
 		NpcMover *mover = new NpcMover();
 		scene->_objList1[_state].addMover(mover, &pt, this);
 		break;
@@ -482,7 +475,6 @@ void Scene2000::Action1::signal() {
 		break;
 	case 10: {
 		Common::Point pt(290, 127);
-		warning("TODO: Check sub_22D26");
 		NpcMover *mover = new NpcMover();
 		scene->_objList1[_state].addMover(mover, &pt, this);
 		_actionIndex = 11;
@@ -508,13 +500,11 @@ void Scene2000::Action1::signal() {
 	case 15:
 		if ((R2_GLOBALS._v56605[3 + _state] == 13) || (R2_GLOBALS._v56605[3 + _state] == 22) || (R2_GLOBALS._v56605[3 + _state] == 27)) {
 			Common::Point pt(30, 127);
-			warning("TODO: Check sub_22D26");
 			NpcMover *mover = new NpcMover();
 			scene->_objList1[_state].addMover(mover, &pt, this);
 			_actionIndex = 16;
 		} else {
 			Common::Point pt(120, 127);
-			warning("TODO: Check sub_22D26");
 			NpcMover *mover = new NpcMover();
 			scene->_objList1[_state].addMover(mover, &pt, this);
 			_actionIndex = 16;
@@ -546,15 +536,12 @@ void Scene2000::Action1::signal() {
 
 void Scene2000::Exit1::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
-	warning("exit1");
 
 	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
-	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 10;
 
-	warning("TODO: Check sub_22D26");
 	Common::Point pt(-10, 129);
 	NpcMover *mover = new NpcMover();
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
@@ -564,15 +551,12 @@ void Scene2000::Exit1::changeScene() {
 
 void Scene2000::Exit2::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
-	warning("exit2");
 
 	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
-	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 11;
 
-	warning("TODO: Check sub_22D26");
 	Common::Point pt(330, 129);
 	NpcMover *mover = new NpcMover();
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
@@ -580,12 +564,10 @@ void Scene2000::Exit2::changeScene() {
 
 void Scene2000::Exit3::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
-	warning("exit13");
 
 	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
-	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 12;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
@@ -650,12 +632,10 @@ void Scene2000::Exit3::changeScene() {
 }
 void Scene2000::Exit4::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
-	warning("exit4");
 
 	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
-	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 13;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
@@ -709,11 +689,9 @@ void Scene2000::Exit4::changeScene() {
 
 void Scene2000::Exit5::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
-	warning("exit5");
 
 	scene->_sceneMode = 0;
-	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with arguments?");
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	scene->_sceneMode = 14;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
@@ -1009,6 +987,9 @@ void Scene2000::signal() {
 			g_globals->_sceneManager.changeScene(2535);
 			break;
 		default:
+			if (R2_GLOBALS._v56AAB != 0)
+				R2_GLOBALS._v56AAB = 0;
+			R2_GLOBALS._player.enableControl(CURSOR_ARROW);
 			break;
 		}
 		break;
@@ -1024,7 +1005,6 @@ void Scene2000::signal() {
 void Scene2000::process(Event &event) {
 	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && 
 			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)) {
-		warning("TODO: Check sub_22D26");
 		
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
@@ -1069,7 +1049,7 @@ bool Scene2350::Actor3::startAction(CursorType action, Event &event) {
 void Scene2350::ExitUp::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
 	
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
 	scene->_sceneMode = 12;
 	if (R2_GLOBALS._player._characterIndex == 1)
 		scene->setAction(&scene->_sequenceManager, scene, 2350, &R2_GLOBALS._player, NULL);
@@ -1080,11 +1060,10 @@ void Scene2350::ExitUp::changeScene() {
 void Scene2350::ExitWest::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
 
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
 	scene->_sceneMode = 11;
 
 	Common::Point pt(-10, 129);
-	warning("TODO: Check sub_22D26");
 	NpcMover *mover = new NpcMover();
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 
@@ -1157,7 +1136,6 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 			_sceneMode = 10;
 			R2_GLOBALS._player.setPosition(Common::Point(-20, 129));
 			Common::Point pt(20, 129);
-			warning("TODO: Check sub_22D26");
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 
