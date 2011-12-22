@@ -1346,7 +1346,7 @@ The platforms that currently have a different default directory are:
 
 6.1) Autosaves:
 ---- ----------
-For some games, (namely "Beneath a Steel Sky", "Flight of the Amazon
+For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
 Queen", all AGI games, and all SCUMM games), ScummVM will by default
 automatically save the current state every five minutes (adjustable via
 the "autosave_period" config setting). For the AGI and SCUMM engines, it
@@ -1356,8 +1356,8 @@ loaded again via Ctrl-0, or the F5 menu.
 
 6.2) Converting Savegames:
 ---- ---------------------
-Using savegames from original versions, isn't supported by all game
-engines. Only the following games, can use savegames from their original
+Using savegames from original versions isn't supported by all game
+engines. Only the following games can use savegames from their original
 versions.
 
   Elvira 1
@@ -1879,7 +1879,7 @@ the original frequency.
 ---- -------------------
 By default, the configuration file is saved in, and loaded from:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\username\AppData\Roaming\ScummVM\scummvm.ini,
 
     Windows 2000/XP:
