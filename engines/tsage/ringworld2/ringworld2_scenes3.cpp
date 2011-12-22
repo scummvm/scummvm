@@ -923,7 +923,7 @@ void Scene3175::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3200 - Cutscene : Rocko & co - Discussion
+ * Scene 3200 - Cutscene : Guards - Discussion
  *
  *--------------------------------------------------------------------------*/
 void Scene3200::postInit(SceneObjectList *OwnerList) {
@@ -975,5 +975,32 @@ void Scene3210::postInit(SceneObjectList *OwnerList) {
 void Scene3210::signal() {
 	R2_GLOBALS._sceneManager.changeScene(1200);
 }
+
+/*--------------------------------------------------------------------------
+ * Scene 3220 - Cutscene : Guards in cargo zone
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3220::postInit(SceneObjectList *OwnerList) {
+	loadScene(3220);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+
+	_stripManager.addSpeaker(&_rockoSpeaker);
+	_stripManager.addSpeaker(&_jockoSpeaker);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_actor1.postInit();
+	_actor2.postInit();
+
+	setAction(&_sequenceManager, this, 3220 + R2_GLOBALS._randomSource.getRandomNumber(1), &_actor1, &_actor2, NULL);
+}
+
+void Scene3220::signal() {
+	R2_GLOBALS._sceneManager.changeScene(1200);
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

@@ -184,12 +184,14 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Autopsy room
 		return new Scene3175();
 	case 3200:
-		// Cutscene : Cutscene : Rocko & co - Discussion
+		// Cutscene : Guards - Discussion
 		return new Scene3200();
 	case 3210:
 		// Cutscene : Captain and Private - Discussion
 		return new Scene3210();
 	case 3220:
+		// Cutscene : Guards in cargo zone
+		return new Scene3220();
 	case 3230:
 	case 3240:
 	case 3245:
