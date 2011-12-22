@@ -412,8 +412,6 @@ public:
 	Common::Point _position;
 	int _yDiff;
 	int _sceneRegionId;
-
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 public:
 	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; }
 
@@ -430,10 +428,6 @@ public:
 	static void display(int resNum, int lineNum, ...);
 	static void display2(int resNum, int lineNum);
 	static void display(const Common::String &msg);
-
-	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
-	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode = 0);
 };
 
 class SceneItemExt : public SceneItem {
@@ -449,10 +443,17 @@ public:
 
 class SceneHotspot : public SceneItem {
 public:
-	SceneHotspot() : SceneItem() {}
+	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+public:
+	SceneHotspot();
+	virtual void synchronize(Serializer &s);
 	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "SceneHotspot"; }
 	virtual void doAction(int action);
+
+	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode = 0);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,

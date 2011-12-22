@@ -1512,14 +1512,6 @@ void SceneItem::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_position.x); s.syncAsSint32LE(_position.y);
 	s.syncAsSint16LE(_yDiff);
 	s.syncAsSint32LE(_sceneRegionId);
-
-	if (g_vm->getGameID() == GType_Ringworld2) {
-		// In R2R, the following fields were moved into the SceneItem class
-		s.syncAsSint16LE(_resNum);
-		s.syncAsSint16LE(_lookLineNum);
-		s.syncAsSint16LE(_useLineNum);
-		s.syncAsSint16LE(_talkLineNum);
-	}
 }
 
 void SceneItem::remove() {
@@ -1774,59 +1766,23 @@ void SceneItem::display(const Common::String &msg) {
 		SET_EXT_FGCOLOR, 13, LIST_END);
 }
 
-void SceneItem::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
-	setBounds(ys, xe, ye, xs);
-	_resNum = resnum;
-	_lookLineNum = lookLineNum;
-	_useLineNum = useLineNum;
-	_talkLineNum = -1;
-	g_globals->_sceneItems.addItems(this, NULL);
-}
-
-void SceneItem::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	setBounds(bounds);
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void SceneItem::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
-	_sceneRegionId = sceneRegionId;
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	// Handle adding hotspot to scene items list as necessary
-	switch (mode) {
-	case 2:
-		GLOBALS._sceneItems.push_front(this);
-		break;
-	case 3:
-		break;
-	default:
-		GLOBALS._sceneItems.push_back(this);
-		break;
-	}
-}
-
 /*--------------------------------------------------------------------------*/
+
+SceneHotspot::SceneHotspot(): SceneItem() {
+	_lookLineNum = _useLineNum = _talkLineNum = 0;
+}
+
+void SceneHotspot::synchronize(Serializer &s) {
+	SceneItem::synchronize(s);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// In R2R, the following fields were moved into the SceneItem class
+		s.syncAsSint16LE(_resNum);
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_useLineNum);
+		s.syncAsSint16LE(_talkLineNum);
+	}
+}
 
 bool SceneHotspot::startAction(CursorType action, Event &event) {
 	switch (g_vm->getGameID()) {
@@ -1834,6 +1790,32 @@ bool SceneHotspot::startAction(CursorType action, Event &event) {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
 		return scene->display(action);
+	}
+	case GType_Ringworld2: {
+		switch (action) {
+		case CURSOR_LOOK:
+			if (_lookLineNum != -1) {
+				SceneItem::display2(_resNum, _lookLineNum);
+				return true;
+			}
+			break;
+		case CURSOR_USE:
+			if (_useLineNum != -1) {
+				SceneItem::display2(_resNum, _useLineNum);
+				return true;
+			}
+			break;
+		case CURSOR_TALK:
+			if (_talkLineNum != -1) {
+				SceneItem::display2(_resNum, _talkLineNum);
+				return true;
+			}
+			break;
+		default:
+			break;
+		}
+
+		return ((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display(action, event);
 	}
 	default:
 		return SceneItem::startAction(action, event);
@@ -1867,6 +1849,58 @@ void SceneHotspot::doAction(int action) {
 			SceneItem::display(DEFAULT_SCENE_HOTSPOT);
 		else
 			display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		break;
+	}
+}
+
+void SceneHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resNum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_talkLineNum = -1;
+	g_globals->_sceneItems.addItems(this, NULL);
+}
+
+void SceneHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	setBounds(bounds);
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		g_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		g_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		g_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		g_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void SceneHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+	_sceneRegionId = sceneRegionId;
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
 		break;
 	}
 }
