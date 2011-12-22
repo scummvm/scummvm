@@ -303,7 +303,7 @@ void SceneExt::loadScene(int sceneNum) {
 	}
 }
 
-bool SceneExt::display(CursorType action) {
+bool SceneExt::display(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_CROSSHAIRS:
 		return false;
@@ -316,10 +316,41 @@ bool SceneExt::display(CursorType action) {
 	case CURSOR_TALK:
 		SceneItem::display2(1, R2_GLOBALS._randomSource.getRandomNumber(4) + 10);
 		break;
+	case R2_NEGATOR_GUN:
+		if (R2_GLOBALS.getFlag(1))
+			SceneItem::display2(2, action);
+		else
+			SceneItem::display2(5, 0);
+		break;
+	case R2_7:
+		if ((R2_GLOBALS._v565F1[1] == 2) || ((R2_GLOBALS._v565F1[1] == 1) &&
+				(R2_GLOBALS._v565F1[2] == 2) && (R2_GLOBALS._sceneManager._previousScene == 300))) {
+			R2_GLOBALS._sound4.stop();
+			R2_GLOBALS._sound3.play(46);
+			SceneItem::display2(5, 15);
+		} else {
+			R2_GLOBALS._sound3.play(43, 0);
+			SceneItem::display2(2, 0);
+		}
+
+		R2_GLOBALS._sound4.play(45);
+		break;
+	case R2_9:
+	case R2_39:
+		R2_GLOBALS._sound3.play(44);
+		SceneItem::display2(2, action);
+		R2_GLOBALS._sound3.stop();
+		break;
+	case R2_44:
+		R2_GLOBALS._sound3.play(99);
+		SceneItem::display2(2, action);
+		break;
 	default:
-		return false;
+		SceneItem::display2(2, action);
+		break;
 	}
 
+	event.handled = true;
 	return true;
 }
 
@@ -840,68 +871,6 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 	}
 }
 
-void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
-	setBounds(ys, xe, ye, xs);
-	_resNum = resnum;
-	_lookLineNum = lookLineNum;
-	_useLineNum = useLineNum;
-	_talkLineNum = -1;
-	g_globals->_sceneItems.addItems(this, NULL);
-}
-
-void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	setBounds(bounds);
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
-	_sceneRegionId = sceneRegionId;
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	// Handle adding hotspot to scene items list as necessary
-	switch (mode) {
-	case 2:
-		GLOBALS._sceneItems.push_front(this);
-		break;
-	case 3:
-		break;
-	default:
-		GLOBALS._sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedHotspot::synchronize(Serializer &s) {
-	SceneHotspot::synchronize(s);
-	s.syncAsSint16LE(_resNum);
-	s.syncAsSint16LE(_lookLineNum);
-	s.syncAsSint16LE(_useLineNum);
-
-	if (g_vm->getGameID() == GType_BlueForce)
-		s.syncAsSint16LE(_talkLineNum);
-}
-
 void SceneActor::postInit(SceneObjectList *OwnerList) {
 	_lookLineNum = _talkLineNum = _useLineNum = -1;
 	SceneObject::postInit();
@@ -943,7 +912,7 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 	}
 
 	if (!handled)
-		handled = ((SceneExt *)R2_GLOBALS._sceneManager._scene)->display(action);
+		handled = ((SceneExt *)R2_GLOBALS._sceneManager._scene)->display(action, event);
 	return handled;
 }
 

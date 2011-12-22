@@ -161,7 +161,6 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 	NamedHotspot();
 
 	virtual void doAction(int action);

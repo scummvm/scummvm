@@ -338,9 +338,7 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 	NamedHotspot();
-
 
 	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "NamedHotspot"; }

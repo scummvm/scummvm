@@ -233,8 +233,7 @@ bool Scene3125::Item1::startAction(CursorType action, Event &event) {
 			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
 		break;
 	default:
-		warning("scene->display() called with two parameters");
-		return scene->display(action);
+		return scene->display(action, event);
 		break;
 	}
 
@@ -822,8 +821,8 @@ bool Scene3175::Item1::startAction(CursorType action, Event &event) {
 	default:
 		break;
 	}
-	warning("scene->display() called with two parameters");
-	return scene->display(action);
+
+	return scene->display(action, event);
 }
 
 bool Scene3175::Actor3::startAction(CursorType action, Event &event) {
@@ -852,7 +851,7 @@ bool Scene3175::Actor3::startAction(CursorType action, Event &event) {
 		break;
 	}
 	warning("scene->display() called with two parameters");
-	return scene->display(action);
+	return scene->display(action, event);
 }
 
 bool Scene3175::Actor1::startAction(CursorType action, Event &event) {

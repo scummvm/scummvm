@@ -34,6 +34,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -1511,6 +1512,14 @@ void SceneItem::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_position.x); s.syncAsSint32LE(_position.y);
 	s.syncAsSint16LE(_yDiff);
 	s.syncAsSint32LE(_sceneRegionId);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// In R2R, the following fields were moved into the SceneItem class
+		s.syncAsSint16LE(_resNum);
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_useLineNum);
+		s.syncAsSint16LE(_talkLineNum);
+	}
 }
 
 void SceneItem::remove() {
@@ -1533,25 +1542,30 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 void SceneItem::doAction(int action) {
 	const char *msg = NULL;
 
-	switch ((int)action) {
-	case CURSOR_LOOK:
-		msg = LOOK_SCENE_HOTSPOT;
-		break;
-	case CURSOR_USE:
-		msg = USE_SCENE_HOTSPOT;
-		break;
-	case CURSOR_TALK:
-		msg = TALK_SCENE_HOTSPOT;
-		break;
-	case 0x1000:
-		msg = SPECIAL_SCENE_HOTSPOT;
-		break;
-	default:
-		msg = DEFAULT_SCENE_HOTSPOT;
-		break;
-	}
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		Event dummyEvent;
+		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
+	} else {
+		switch ((int)action) {
+		case CURSOR_LOOK:
+			msg = LOOK_SCENE_HOTSPOT;
+			break;
+		case CURSOR_USE:
+			msg = USE_SCENE_HOTSPOT;
+			break;
+		case CURSOR_TALK:
+			msg = TALK_SCENE_HOTSPOT;
+			break;
+		case 0x1000:
+			msg = SPECIAL_SCENE_HOTSPOT;
+			break;
+		default:
+			msg = DEFAULT_SCENE_HOTSPOT;
+			break;
+		}
 
-	GUIErrorMessage(msg);
+		GUIErrorMessage(msg);
+	}
 }
 
 bool SceneItem::contains(const Common::Point &pt) {
@@ -1758,6 +1772,58 @@ void SceneItem::display(const Common::String &msg) {
 		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 		SET_EXT_FGCOLOR, 13, LIST_END);
+}
+
+void SceneItem::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resNum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_talkLineNum = -1;
+	g_globals->_sceneItems.addItems(this, NULL);
+}
+
+void SceneItem::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	setBounds(bounds);
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		g_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		g_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		g_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		g_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void SceneItem::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+	_sceneRegionId = sceneRegionId;
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
+		break;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

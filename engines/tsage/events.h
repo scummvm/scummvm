@@ -95,6 +95,7 @@ enum CursorType {
 	R2_36 = 36, R2_37 = 37, R2_38 = 38, R2_39 = 39, R2_40 = 40, R2_41 = 41, R2_42 = 42,
 	R2_43 = 43, R2_44 = 44, R2_45 = 45, R2_46 = 46, R2_47 = 47, R2_48 = 48, R2_49 = 49,
 	R2_50 = 50, R2_51 = 51, R2_52 = 52,
+	R2_LAST_INVENT = 53,
 
 	// Ringworld 2 cursors
 	R2CURSORS_START = 0x8000, EXITCURSOR_N  = 0x8007,  EXITCURSOR_S  = 0x8008, EXITCURSOR_W = 0x8009, 
