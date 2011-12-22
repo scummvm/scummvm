@@ -187,7 +187,7 @@ public:
 	}
 
 	virtual bool update() { // D170
-		// while (_state.params[0] != 0x01)
+		// while (_params[0] != 0x01)
 		if (_params[0] != 0x01) {
 			if (_count == 0) // prepare next loop
 				nextLoop(_params[0], _params[1], _params[2]);
@@ -355,21 +355,27 @@ const byte AppleII_SoundFunction5_Noise::_noiseTable[256] = {
  * Apple-II player
  ************************************/
 
-Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer) {
-	_mixer = mixer;
-	_vm = scumm;
-	
-	_state.soundFunc = 0;
+Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer)
+	: _mixer(mixer), _vm(scumm), _soundFunc(0) {
 	resetState();
-
 	setSampleRate(_mixer->getOutputRate());
-
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_AppleII::~Player_AppleII() {
 	_mixer->stopHandle(_soundHandle);
-	delete _state.soundFunc;
+	delete _soundFunc;
+}
+
+void Player_AppleII::resetState() {
+	_soundNr = 0;
+	_type = 0;
+	_loop = 0;
+	_params = NULL;
+	_speakerState = 0;
+	delete _soundFunc;
+	_soundFunc = 0;
+	_sampleConverter.reset();
 }
 
 void Player_AppleII::startSound(int nr) {
@@ -380,67 +386,55 @@ void Player_AppleII::startSound(int nr) {
 	byte *ptr1 = data + 4;
 
 	resetState();
-	_state.soundNr = nr;
-	_state.type = ptr1[0];
-	_state.loop = ptr1[1];
-	_state.params = &ptr1[2];
+	_soundNr = nr;
+	_type = ptr1[0];
+	_loop = ptr1[1];
+	_params = &ptr1[2];
 
-	switch (_state.type) {
+	switch (_type) {
 	case 0: // empty (nothing to play)
 		resetState();
 		return;
 	case 1: 
-		_state.soundFunc = new AppleII_SoundFunction1_FreqUpDown(); 
+		_soundFunc = new AppleII_SoundFunction1_FreqUpDown(); 
 		break;
 	case 2: 
-		_state.soundFunc = new AppleII_SoundFunction2_SymmetricWave(); 
+		_soundFunc = new AppleII_SoundFunction2_SymmetricWave(); 
 		break;
 	case 3:	
-		_state.soundFunc = new AppleII_SoundFunction3_AsymmetricWave(); 
+		_soundFunc = new AppleII_SoundFunction3_AsymmetricWave(); 
 		break;
 	case 4: 
-		_state.soundFunc = new AppleII_SoundFunction4_Polyphone(); 
+		_soundFunc = new AppleII_SoundFunction4_Polyphone(); 
 		break;
 	case 5: 
-		_state.soundFunc = new AppleII_SoundFunction5_Noise(); 
+		_soundFunc = new AppleII_SoundFunction5_Noise(); 
 		break;
 	}
-	_state.soundFunc->init(this, _state.params);
+	_soundFunc->init(this, _params);
 
-	assert(_state.loop > 0);
+	assert(_loop > 0);
 
 	debug(4, "startSound %d: type %d, loop %d",
-		  nr, _state.type, _state.loop);
+		  nr, _type, _loop);
 }
 
 bool Player_AppleII::updateSound() {
-	if (!_state.soundFunc)
+	if (!_soundFunc)
 		return false;
 
-	if (_state.soundFunc->update()) {
-		--_state.loop;
-		if (_state.loop <= 0) {
-			delete _state.soundFunc;
-			_state.soundFunc = 0;
+	if (_soundFunc->update()) {
+		--_loop;
+		if (_loop <= 0) {
+			delete _soundFunc;
+			_soundFunc = 0;
 		} else {
 			// reset function state on each loop
-			_state.soundFunc->init(this, _state.params);
+			_soundFunc->init(this, _params);
 		}
 	}
 
 	return true;
-}
-
-void Player_AppleII::resetState() {
-	_state.soundNr = 0;
-	_state.type = 0;
-	_state.loop = 0;
-	_state.params = NULL;
-	_state.speakerState = 0;
-	delete _state.soundFunc;
-	_state.soundFunc = 0;
-
-	_sampleConverter.reset();
 }
 
 void Player_AppleII::stopAllSounds() {
@@ -450,14 +444,14 @@ void Player_AppleII::stopAllSounds() {
 
 void Player_AppleII::stopSound(int nr) {
 	Common::StackLock lock(_mutex);
-	if (_state.soundNr == nr) {
+	if (_soundNr == nr) {
 		resetState();
 	}
 }
 
 int Player_AppleII::getSoundStatus(int nr) const {
 	Common::StackLock lock(_mutex);
-	return (_state.soundNr == nr);
+	return (_soundNr == nr);
 }
 
 int Player_AppleII::getMusicTimer() {
@@ -468,7 +462,7 @@ int Player_AppleII::getMusicTimer() {
 int Player_AppleII::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
-	if (!_state.soundNr)
+	if (!_soundNr)
 		return 0;
 
 	int samplesLeft = numSamples;
@@ -479,7 +473,7 @@ int Player_AppleII::readBuffer(int16 *buffer, const int numSamples) {
 	} while ((samplesLeft > 0) && updateSound());
 
 	// reset state if sound is played completely
-	if (!_state.soundFunc && (_sampleConverter.availableSize() == 0))
+	if (!_soundFunc && (_sampleConverter.availableSize() == 0))
 		resetState();
 
 	return numSamples - samplesLeft;
@@ -491,11 +485,11 @@ int Player_AppleII::readBuffer(int16 *buffer, const int numSamples) {
 
 // toggle speaker on/off
 void Player_AppleII::speakerToggle() {
-	_state.speakerState ^= 0x1; 
+	_speakerState ^= 0x1; 
 }
 
 void Player_AppleII::generateSamples(int cycles) {
-	_sampleConverter.addCycles(_state.speakerState, cycles);
+	_sampleConverter.addCycles(_speakerState, cycles);
 }
 
 void Player_AppleII::wait(int interval, int count /*y*/) {

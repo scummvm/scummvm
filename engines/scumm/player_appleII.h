@@ -131,6 +131,11 @@ private:
 // CPU_CLOCK according to AppleWin
 static const double APPLEII_CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
 
+/*
+ * Converts the 1-bit speaker state values into audio samples.
+ * This is done by aggregation of the speaker states at each 
+ * CPU cycle in a sampling period into an audio sample.
+ */
 class SampleConverter {
 private:
 	void addSampleToBuffer(int sample) {
@@ -219,7 +224,18 @@ private:
 	SampleBuffer _buffer;
 };
 
-class AppleII_SoundFunction;
+class Player_AppleII;
+
+class AppleII_SoundFunction {
+public:
+	AppleII_SoundFunction() {}
+	virtual ~AppleII_SoundFunction() {}
+	virtual void init(Player_AppleII *player, const byte *params) = 0;
+	/* returns true if finished */
+	virtual bool update() = 0;
+protected:
+	Player_AppleII *_player;
+};
 
 class Player_AppleII : public Audio::AudioStream, public MusicEngine {
 public:
@@ -250,21 +266,22 @@ public:
 	void wait(int interval, int count);
 
 private:
-	struct sound_state {
-		// sound number
-		int soundNr;
-		// type of sound
-		int type;
-		// number of loops left
-		int loop;
-		// global sound param list
-		const byte *params;
-		// speaker toggle state (0 / 1)
-		byte speakerState;
-		// sound function
-		AppleII_SoundFunction *soundFunc;
-	} _state;
+	// sound number
+	int _soundNr;
+	// type of sound
+	int _type;
+	// number of loops left
+	int _loop;
+	// global sound param list
+	const byte *_params;
+	// speaker toggle state (0 / 1)
+	byte _speakerState;
+	// sound function
+	AppleII_SoundFunction *_soundFunc;
+	// cycle to sample converter
+	SampleConverter _sampleConverter;
 
+private:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -272,22 +289,8 @@ private:
 	Common::Mutex _mutex;
 
 private:
-	SampleConverter _sampleConverter;
-
-private:
 	void resetState();
 	bool updateSound();
-};
-
-class AppleII_SoundFunction {
-public:
-	AppleII_SoundFunction() {}
-	virtual ~AppleII_SoundFunction() {}
-	virtual void init(Player_AppleII *player, const byte *params) = 0;
-	/* returns true if finished */
-	virtual bool update() = 0;
-protected:
-	Player_AppleII *_player;
 };
 
 } // End of namespace Scumm
