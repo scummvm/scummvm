@@ -169,8 +169,8 @@ void find_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK))
-		lua_error("Bad argument to find_script");
+	//if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK))
+	//	lua_error("Bad argument to find_script");
 
 	if (type == LUA_T_TASK) {
 		uint32 task = (uint32)nvalue(Address(paramObj));

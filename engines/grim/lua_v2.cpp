@@ -36,6 +36,7 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/costume.h"
+#include "engines/grim/costume/chore.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -284,9 +285,9 @@ void Lua_V2::IsChoreValid() {
 		return;
 
 	int num = (int)lua_getnumber(paramObj);
-	warning("Lua_V2::IsChoreValid: stub, got %d, returns true", num);
-	// FIXME: implement missing rest part of code
-	pushbool(true);
+
+	Chore *c = PoolChore::getPool().getObject(num);
+	pushbool(c != 0);
 }
 
 void Lua_V2::IsChorePlaying() {
@@ -296,9 +297,9 @@ void Lua_V2::IsChorePlaying() {
 		return;
 
 	int num = (int)lua_getnumber(paramObj);
-	warning("Lua_V2::IsChorePlaying: stub, got %d, returns true", num);
-	// FIXME: implement missing rest part of code
-	pushbool(true);
+
+	Chore *c = PoolChore::getPool().getObject(num);
+	pushbool(c->isPlaying());
 }
 
 void Lua_V2::StopChore() {
@@ -388,9 +389,10 @@ void Lua_V2::PutActorInOverworld() {
 }
 
 void Lua_V2::GetActorWorldPos() {
-	Lua_V1::GetActorPos();
-	// FIXME: verify
-	warning("Lua_V2::GetActorWorldPos: Currently just calls Lua_V1::GetActorPos, probably wrong");
+	warning("Lua_V2::GetActorWorldPos: Currently returns 0, 0, 0");
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+	lua_pushnumber(0);
 }
 
 void Lua_V2::MakeScreenTextures() {
@@ -515,6 +517,22 @@ void Lua_V2::ImSelectSet() {
 	}
 }
 
+void Lua_V2::GetActorChores() {
+	lua_Object actorObj = lua_getparam(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+	Actor *actor = getactor(actorObj);
+
+	lua_Object result = lua_createtable();
+	lua_pushobject(result);
+
+	lua_pushstring("count");
+	lua_pushnumber(0.0);
+	lua_settable();
+
+	lua_pushobject(result);
+}
+
 void Lua_V2::PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
@@ -544,15 +562,16 @@ void Lua_V2::PlayActorChore() {
 	const char *choreName = lua_getstring(choreObj);
 	const char *costumeName = lua_getstring(costumeObj);
 
-	warning("Lua_V2::PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f",
-			actor->getName().c_str(), choreName, costumeName, (int)mode, param);
-	// FIXME. code below is a hack, need proper implementation
 	actor->setCostume(costumeName);
 	Costume *costume = actor->getCurrentCostume();
-	warning("Lua_V2::PlayActorChore: Semi-stubbed, to allow movies to play for now");
-	// Uncomment the line below when we have gotten chores to work for EMI.
-	//costume->playChore(choreName);
-	pushbool(true);
+	Chore *chore = costume->getChore(choreName);
+	costume->playChore(choreName);
+	if (chore) {
+		lua_pushnumber(chore->getId());
+	} else {
+		lua_pushnil();
+	}
+
 }
 
 void Lua_V2::StopActorChores() {
@@ -566,10 +585,12 @@ void Lua_V2::StopActorChores() {
 	if (!actor)
 		return;
 
+	//FIXME: What does the second param actually do
 	bool p = lua_isnil(paramObj) != 0;
-	// I'm not fully sure about bool logic here
-	//actor->func(p);
-	warning("Lua_V2::StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName().c_str());
+	Costume *costume = actor->getCurrentCostume();
+	if (costume) {
+		costume->stopChores();
+	}
 }
 
 void Lua_V2::SetActorLighting() {
@@ -642,8 +663,10 @@ void Lua_V2::SetActorCollisionScale() {
 
 void Lua_V2::GetActorPuckVector() {
 	// stub this for now as the regular one crashes.
-	warning("Lua_V2::GetActorPuckVector: stubbed to L2 for now, L1 crashes");
-	lua_pushnil();
+	warning("Lua_V2::GetActorPuckVector: just returns 0, 0, 0");
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+	lua_pushnumber(0);
 }
 
 void Lua_V2::SetActorHeadLimits() {

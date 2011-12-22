@@ -208,7 +208,7 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 	Common::List<Component *>components;
 
 	_numChores = ms.readUint32LE();
-	_chores = new Chore[_numChores];
+	_chores = new PoolChore[_numChores];
 	for (int i = 0; i < _numChores; i++) {
 		uint32 nameLength;
 		Component *prevComponent = NULL;
@@ -362,6 +362,8 @@ Component *Costume::loadComponentEMI(Component *parent, int parentID, const char
 	} else if (FROM_BE_32(tag) == MKTAG('s','p','r','t')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
 		//return new SpriteComponent(parent, parentID, name, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('s','h','a','d')) {
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}
@@ -414,6 +416,15 @@ void Costume::playChoreLooping(int num) {
 	_chores[num].playLooping();
 	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[num]) == _playingChores.end())
 		_playingChores.push_back(&_chores[num]);
+}
+
+Chore *Costume::getChore(const char *name) {
+	for (int i = 0; i < _numChores; ++i) {
+		if (strcmp(_chores[i]._name, name) == 0) {
+			return &_chores[i];
+		}
+	}
+	return 0;
 }
 
 void Costume::playChore(const char *name) {
@@ -621,7 +632,7 @@ void Costume::saveState(SaveGame *state) const {
 
 	state->writeLEUint32(_playingChores.size());
 	for (Common::List<Chore*>::const_iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
-		state->writeLESint32((*i)->_id);
+		state->writeLESint32((*i)->getId());
 	}
 
 	// FIXME: Decomment this!!
