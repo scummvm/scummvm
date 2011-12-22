@@ -3073,9 +3073,22 @@ void Player::enableControl() {
 	}
 }
 
-void Player::enableControl(CursorType cursor) {
+void Player::disableControl(CursorType cursorId, CursorType objectId) {
+	if (cursorId != -1)
+		R2_GLOBALS._events.setCursor(cursorId);
+	else if (objectId != CURSOR_NONE)
+		R2_GLOBALS._events.setCursor(objectId);
+
+	disableControl();
+}
+
+void Player::enableControl(CursorType cursorId, CursorType objectId) {
 	enableControl();
-	R2_GLOBALS._events.setCursor(cursor);
+
+	if (cursorId != -1)
+		R2_GLOBALS._events.setCursor(cursorId);
+	else if (objectId != CURSOR_NONE)
+		R2_GLOBALS._events.setCursor(objectId);
 }
 
 void Player::process(Event &event) {

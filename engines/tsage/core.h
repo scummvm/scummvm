@@ -646,7 +646,8 @@ public:
 
 	void disableControl();
 	void enableControl();
-	void enableControl(CursorType cursor);
+	void disableControl(CursorType cursorId, CursorType objectId);
+	void enableControl(CursorType cursorId, CursorType objectId = CURSOR_NONE);
 };
 
 /*--------------------------------------------------------------------------*/
