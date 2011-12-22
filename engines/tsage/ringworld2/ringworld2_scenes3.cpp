@@ -1056,5 +1056,39 @@ void Scene3240::signal() {
 	R2_GLOBALS._sceneManager.changeScene(1200);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3245 - Cutscene : Discussions with Dr. Tomko
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3245::postInit(SceneObjectList *OwnerList) {
+	loadScene(3245);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+
+	_stripManager.addSpeaker(&_ralfSpeaker);
+	_stripManager.addSpeaker(&_tomkoSpeaker);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_actor1.postInit();
+	_actor2.postInit();
+
+	if (R2_GLOBALS._v56AA1 < 4)
+		++R2_GLOBALS._v56AA1;
+
+	if (R2_GLOBALS._v56AA1 >= 4) {
+		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		signal();
+	} else {
+		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._v56AA1, &_actor1, &_actor2, NULL);
+	}
+}
+
+void Scene3245::signal() {
+	R2_GLOBALS._sceneManager.changeScene(1200);
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

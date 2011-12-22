@@ -199,6 +199,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene : Teal monolog
 		return new Scene3240();
 	case 3245:
+		// Cutscene : Discussions with Dr. Tomko
+		return new Scene3245();
 	case 3250:
 	case 3255:
 	case 3260:

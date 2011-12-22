@@ -1438,5 +1438,101 @@ void SpeakerWebbster3240::proc15() {
 	}
 }
 
+SpeakerRalf3245::SpeakerRalf3245() {
+	_speakerName = "Ralf";
+	_color1 = 5;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerRalf3245::proc15() {
+	int v = _fieldF6;
+	Scene3245 *scene = (Scene3245 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 3100:
+			_object1.setup(4105, (_object2->_strip * 2) - 1, 1);
+			break;
+		case 3101:
+			_object1.setup(4108, (_object2->_strip * 2) - 1, 1);
+			break;
+		case 3102:
+			_object1.setup(4109, (_object2->_strip * 2) - 1, 1);
+			break;
+		default:
+			break;
+		}
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerTomko3245::SpeakerTomko3245() {
+	_speakerName = "Tomko";
+	_color1 = 10;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerTomko3245::proc15() {
+	int v = _fieldF6;
+	Scene3245 *scene = (Scene3245 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		switch (_object2->_visage) {
+		case 3100:
+			_object1.setup(4105, (_object2->_strip * 2) - 1, 1);
+			break;
+		case 3101:
+			_object1.setup(4108, (_object2->_strip * 2) - 1, 1);
+			break;
+		case 3102:
+			_object1.setup(4109, (_object2->_strip * 2) - 1, 1);
+			break;
+		default:
+			break;
+		}
+
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
