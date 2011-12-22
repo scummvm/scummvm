@@ -220,64 +220,6 @@ endearly2:
 	cx = pop();
 }
 
-void DreamGenContext::fadeDownMon() {
-	STACK_CHECK;
-	palToStartPal();
-	palToEndPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
-	cx = 3*8;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
-	_stosb();
-	_stosw();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-	cx = 64;
-	hangOn();
-}
-
-void DreamGenContext::fadeUpMon() {
-	STACK_CHECK;
-	palToStartPal();
-	palToEndPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
-	cx = 3*8;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
-	_stosb();
-	_stosw();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-	cx = 128;
-	hangOn();
-}
-
-void DreamGenContext::initialMonCols() {
-	STACK_CHECK;
-	palToStartPal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
-	cx = 3*9;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
-	_stosb();
-	_stosw();
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
-	al = 230;
-	cx = 18;
-	showGroup();
-}
-
 void DreamGenContext::fillOpen() {
 	STACK_CHECK;
 	delTextLine();
@@ -1241,37 +1183,6 @@ void DreamGenContext::transferConToEx() {
 	ds.byte(si+2) = 255;
 }
 
-void DreamGenContext::purgeALocation() {
-	STACK_CHECK;
-	push(ax);
-	es = data.word(kExtras);
-	di = (0+2080+30000);
-	bx = pop();
-	cx = 0;
-purgeloc:
-	_cmp(bl, es.byte(di+0));
-	if (!flags.z())
-		goto dontpurge;
-	_cmp(es.byte(di+2), 0);
-	if (!flags.z())
-		goto dontpurge;
-	push(di);
-	push(es);
-	push(bx);
-	push(cx);
-	deleteExObject();
-	cx = pop();
-	bx = pop();
-	es = pop();
-	di = pop();
-dontpurge:
-	_add(di, 16);
-	_inc(cx);
-	_cmp(cx, (114));
-	if (!flags.z())
-		goto purgeloc;
-}
-
 void DreamGenContext::emergencyPurge() {
 	STACK_CHECK;
 checkpurgeagain:
@@ -1600,57 +1511,6 @@ void DreamGenContext::getDestInfo() {
 	si = 571;
 	_add(si, ax);
 	ax = pop();
-}
-
-void DreamGenContext::resetLocation() {
-	STACK_CHECK;
-	push(ax);
-	_cmp(al, 5);
-	if (!flags.z())
-		goto notdelhotel;
-	purgeALocation();
-	al = 21;
-	purgeALocation();
-	al = 22;
-	purgeALocation();
-	al = 27;
-	purgeALocation();
-	goto clearedlocations;
-notdelhotel:
-	_cmp(al, 8);
-	if (!flags.z())
-		goto notdeltvstud;
-	purgeALocation();
-	al = 28;
-	purgeALocation();
-	goto clearedlocations;
-notdeltvstud:
-	_cmp(al, 6);
-	if (!flags.z())
-		goto notdelsarters;
-	purgeALocation();
-	al = 20;
-	purgeALocation();
-	al = 25;
-	purgeALocation();
-	goto clearedlocations;
-notdelsarters:
-	_cmp(al, 13);
-	if (!flags.z())
-		goto notdelboathouse;
-	purgeALocation();
-	al = 29;
-	purgeALocation();
-	goto clearedlocations;
-notdelboathouse:
-clearedlocations:
-	ax = pop();
-	ah = 0;
-	bx = ax;
-	dx = data;
-	es = dx;
-	_add(bx, 555);
-	es.byte(bx) = 0;
 }
 
 void DreamGenContext::dirCom() {

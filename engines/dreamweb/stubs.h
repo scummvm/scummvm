@@ -23,9 +23,7 @@
 #define DREAMWEB_STUBS_H
 
 	void screenUpdate();
-	void startup();
 	void startup1();
-	void saveLoad();
 	void workToScreen();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
@@ -52,7 +50,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void startLoading(const Room &room);
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
@@ -61,7 +58,6 @@
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
 	}
 	void width160();
-	void zoom();
 	void commandOnly();
 	void commandOnly(uint8 command) {
 		DreamBase::commandOnly(command);
@@ -73,10 +69,9 @@
 	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
 	void commandWithOb();
-	void commandWithOb(uint8 command, uint8 type, uint8 index);
-	void blockNameText();
-	void walkToText();
-	void personNameText();
+	void commandWithOb(uint8 command, uint8 type, uint8 index) {
+		DreamBase::commandWithOb(command, type, index);
+	}
 	DynObject *getFreeAd(uint8 index) {
 		return DreamBase::getFreeAd(index);
 	}
@@ -89,8 +84,6 @@
 	SetObject *getSetAd(uint8 index) {
 		return DreamBase::getSetAd(index);
 	}
-	void setAllChanges();
-	void deleteTaken();
 	bool finishedWalkingCPP();
 	void finishedWalking();
 	void checkOne();
@@ -98,16 +91,13 @@
 		DreamBase::checkOne(x, y, flag, flagEx, type, flagX, flagY);
 	}
 	void walkAndExamine();
-	void obName();
 	void obName(uint8 command, uint8 commandType);
-	void checkCoords(const RectWithCallback *rectWithCallbacks);
+
 	void getExPos();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]) {
 		return DreamBase::compare(index, flag, id);
 	}
-	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
-	void checkIfSet();
 	bool checkIfSet(uint8 x, uint8 y);
 	void isItWorn();
 	bool isItWorn(const DynObject *object) {
@@ -125,17 +115,12 @@
 	void hangOn(uint16 frameCount) {
 		DreamBase::hangOn(frameCount);
 	}
-	void hangOnP();
-	void hangOnP(uint16 count) {
-		DreamBase::hangOnP(count);
-	}
 	uint8 findNextColon(const uint8 **string) {
 		return DreamBase::findNextColon(string);
 	}
 	void findNextColon();
 	const uint8 *getObTextStartCPP();
 	void useText(const uint8 *string);
-	void examineObText();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
 	void convIcons();
@@ -143,7 +128,6 @@
 	void dumpWatch();
 	void transferText();
 	void watchCount();
-	void loadRoom();
 	void readSetData();
 	void useMenu();
 	void useMon();
@@ -172,9 +156,6 @@
 	void doLook();
 	void showFirstUse();
 	void showSecondUse();
-	void actualSave();
-	void actualLoad();
-	void restoreAll();
 	void enterSymbol();
 	void viewFolder();
 	void edensCDPlayer();
@@ -231,35 +212,24 @@
 	void nextFolder();
 	void lastFolder();
 	void singleKey(uint8 key, uint16 x, uint16 y);
-	void loadSaveBox();
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
-	unsigned int scanForNames();
-	void doLoad(int slot);
-	void loadOld();
 	void inventory();
 	void mainScreen();
-	void loadGame();
-	void saveGame();
 	void zoomOnOff();
-	void atmospheres();
 	void hangOne(uint16 delay);
 	void hangOne();
 	void bibleQuote();
 	void realCredits();
 	void runIntroSeq();
 	void intro();
-	void newGame();
 	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
 	void walkIntoRoom();
 	void loadIntroRoom();
 	void afterIntroRoom();
 	void gettingShot();
-	void redrawMainScrn();
-	void selectSlot();
-	void selectSlot2();
 	void allPointer();
 	void openYourNeighbour();
 	void openRyan();
@@ -298,33 +268,25 @@
 	void moreTalk();
 	void redes();
 	void selectLocation();
-	void showGroup();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
 	}
 	void set16ColPalette();
-	void showSaveOps();
-	void showLoadOps();
 	void afterNewRoom();
 	void madmanRun();
-	void showDecisions();
 	void decide();
 	void talk();
-	void discOps();
-	void doSaveLoad();
 	void useDiary();
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void checkInput();
 	void dropError();
 	void cantDrop();
 	void newPlace();
 	void monkSpeaking();
 	void rollEndCredits2();
 	void useButtonA();
-	void autoAppear();
 	void setupTimedUse();
 	void entryAnims();
 	void triggerMessage(uint16 index);
@@ -351,7 +313,6 @@
 	void notHeldError();
 	void useGun();
 	void identifyOb();
-	void showSlots();
 	void useCashCard();
 	void useStereo();
 	void selectOb();

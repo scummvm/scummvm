@@ -823,8 +823,7 @@ void DreamGenContext::useGun() {
 	} else if (data.byte(kReallocation) == 29) {
 		// aide
 		data.byte(kGetback) = 1;
-		al = 13;
-		resetLocation();
+		resetLocation(13);
 		setLocation(12);
 		data.byte(kDestpos) = 12;
 		data.byte(kDestination) = 2;
@@ -1270,7 +1269,7 @@ void DreamGenContext::useDiary() {
 	delPointer();
 	data.byte(kGetback) = 0;
 
-	RectWithCallback diaryList[] = {
+	RectWithCallback<DreamBase> diaryList[] = {
 		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamBase::diaryKeyN },
 		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamBase::diaryKeyP },
 		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamBase::quitKey },

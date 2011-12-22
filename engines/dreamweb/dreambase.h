@@ -137,6 +137,14 @@ public:
 	void loadNews();
 	void loadCart();
 
+	// from newplace.cpp
+	void getUnderCentre();
+	void putUnderCentre();
+	void showArrows();
+	uint8 getLocation(uint8 index);
+	void setLocation(uint8 index);
+	void resetLocation(uint8 index);
+
 	// from object.cpp
 	void obIcons();
 	void fillRyan();
@@ -147,6 +155,7 @@ public:
 	void deleteExObject(uint8 index);
 	void deleteExFrame(uint8 frameNum);
 	void deleteExText(uint8 textNum);
+	void purgeALocation(uint8 index);
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -234,13 +243,31 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
-	void oldToNames();
+	void loadGame();
+	void doLoad(int slot);
+	void saveGame();
 	void namesToOld();
+	void oldToNames();
+	void saveLoad();
+	void doSaveLoad();
 	void showMainOps();
 	void showDiscOps();
-	void showNames();
+	void discOps();
+	void actualSave();
+	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
+	uint scanForNames();
+	void loadOld();
+	void showDecisions();
+	void loadSaveBox();
+	void showNames();
+	void checkInput();
+	void selectSlot();
+	void showSlots();
+	void showOpBox();
+	void showSaveOps();
+	void showLoadOps();
 
 	// from sound.cpp
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);
@@ -319,8 +346,6 @@ public:
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
-	void showArrows();
-	void showOpBox();
 	void middlePanel();
 	void showDiary();
 	void readMouse();
@@ -440,6 +465,23 @@ public:
 	void makeMainScreen();
 	void showWatchReel();
 	void watchReel();
+	void commandWithOb(uint8 command, uint8 type, uint8 index);
+	void examineObText();
+	void blockNameText();
+	void personNameText();
+	void walkToText();
+	void entryTexts();
+	void setAllChanges();
+	void restoreAll();
+	void redrawMainScrn();
+	template <class T> void checkCoords(const RectWithCallback<T> *rectWithCallbacks);
+	void newGame();
+	void deleteTaken();
+	void autoAppear();
+	void loadRoom();
+	void startLoading(const Room &room);
+	void startup();
+	void atmospheres();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -462,8 +504,11 @@ public:
 	void fadeDOS();
 	void doFade();
 	void fadeCalculation();
-	void fadeupYellows();
-	void fadeupMonFirst();
+	void fadeUpYellows();
+	void fadeUpMonFirst();
+	void fadeUpMon();
+	void fadeDownMon();
+	void initialMonCols();
 	void fadeScreenUp();
 	void fadeScreenUps();
 	void fadeScreenUpHalf();
@@ -479,17 +524,12 @@ public:
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
-	uint8 getLocation(uint8 index);
-	void setLocation(uint8 index);
-	void getUnderCentre();
-	void putUnderCentre();
 	uint8 *mapStore();
 	void panelToMap();
 	void mapToPanel();
 	void dumpMap();
-
 	void transferInv();
-
+	void zoom();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
@@ -506,11 +546,11 @@ public:
 	void showPCX(const Common::String &name);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void loadPalFromIFF();
 	void createPanel();
 	void createPanel2();
 	void showPanel();
-	void entryTexts();
 };
 
 

@@ -62,10 +62,11 @@ struct Sprite {
 
 class DreamGenContext;
 
+template <class T = DreamGenContext>
 struct RectWithCallback {
 	uint16 _xMin, _xMax;
 	uint16 _yMin, _yMax;
-	void (DreamGenContext::*_callback)();
+	void (T::*_callback)();
 
 	bool contains(uint16 x, uint16 y) const {
 		return (x >= _xMin) && (x < _xMax) && (y >= _yMin) && (y < _yMax);
