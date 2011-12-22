@@ -325,6 +325,21 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerRocko3230 : public VisualSpeaker {
+public:
+	SpeakerRocko3230();
+
+	virtual Common::String getClassName() { return "SpeakerRocko3230"; }
+	virtual void proc15();
+};
+
+class SpeakerJocko3230 : public VisualSpeaker {
+public:
+	SpeakerJocko3230();
+
+	virtual Common::String getClassName() { return "SpeakerJocko3230"; }
+	virtual void proc15();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

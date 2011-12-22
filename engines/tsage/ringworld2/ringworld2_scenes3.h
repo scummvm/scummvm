@@ -223,6 +223,19 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
+
+class Scene3230 : public SceneExt {
+public:
+	SpeakerRocko3230 _rockoSpeaker;
+	SpeakerJocko3230 _jockoSpeaker;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

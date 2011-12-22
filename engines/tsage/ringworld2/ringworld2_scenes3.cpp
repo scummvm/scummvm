@@ -1002,5 +1002,31 @@ void Scene3220::signal() {
 	R2_GLOBALS._sceneManager.changeScene(1200);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3230 - Cutscene : Guards on duty
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3230::postInit(SceneObjectList *OwnerList) {
+	loadScene(3230);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+
+	_stripManager.addSpeaker(&_rockoSpeaker);
+	_stripManager.addSpeaker(&_jockoSpeaker);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_actor1.postInit();
+	_actor2.postInit();
+	_actor3.postInit();
+
+	setAction(&_sequenceManager, this, 3230 + R2_GLOBALS._randomSource.getRandomNumber(1), &_actor1, &_actor2, &_actor3, NULL);
+}
+
+void Scene3230::signal() {
+	R2_GLOBALS._sceneManager.changeScene(1200);
+}
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

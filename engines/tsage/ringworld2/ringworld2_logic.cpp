@@ -193,6 +193,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene : Guards in cargo zone
 		return new Scene3220();
 	case 3230:
+		// Cutscene : Guards on duty
+		return new Scene3230();
 	case 3240:
 	case 3245:
 	case 3250:
