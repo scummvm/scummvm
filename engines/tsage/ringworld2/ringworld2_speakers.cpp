@@ -1158,5 +1158,75 @@ void SpeakerSocko3200::proc15() {
 	}
 }
 
+SpeakerCaptain3210::SpeakerCaptain3210() {
+	_speakerName = "Captain";
+	_color1 = 5;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerCaptain3210::proc15() {
+	int v = _fieldF6;
+	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerPrivate3210::SpeakerPrivate3210() {
+	_speakerName = "Private";
+	_color1 = 45;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerPrivate3210::proc15() {
+	int v = _fieldF6;
+	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
