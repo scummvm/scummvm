@@ -203,6 +203,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene : Discussions with Dr. Tomko
 		return new Scene3245();
 	case 3250:
+		// Room with large stasis field negator
+		return new Scene3250();
 	case 3255:
 	case 3260:
 	case 3275:
