@@ -25,11 +25,11 @@
 namespace DreamGen {
 
 void DreamBase::getUnderMenu() {
-	multiGet(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
+	multiGet(_underTimedText, kMenux, kMenuy, 48, 48);
 }
 
 void DreamBase::putUnderMenu() {
-	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
+	multiPut(_underTimedText, kMenux, kMenuy, 48, 48);
 }
 
 void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {

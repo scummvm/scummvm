@@ -35,8 +35,17 @@ namespace DreamWeb {
 
 namespace DreamGen {
 
-
+ // Note: duplication from dreamgen.h
 const unsigned int kNumReelRoutines = 57;
+const unsigned int kUnderTextSizeX = 180;
+const unsigned int kUnderTextSizeY = 10;
+const unsigned int kUnderTimedTextSizeY = 24;
+const unsigned int kUnderTextSizeX_f = 228; // foreign version
+const unsigned int kUnderTextSizeY_f = 13; // foreign version
+const unsigned int kUnderTimedTextSizeY_f = 30;
+const unsigned int kUnderTextBufSize = kUnderTextSizeX_f * kUnderTextSizeY_f;
+const unsigned int kUnderTimedTextBufSize = 256 * kUnderTextSizeY_f;
+const unsigned int kLengthOfVars = 68;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -69,6 +78,8 @@ protected:
 	ReelRoutine *_personData;
 
 	// from Buffers
+	uint8 _textUnder[kUnderTextBufSize];
+	uint8 _pointerBack[32*32];
 	uint8 _mapFlags[11*10*3];
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
@@ -77,7 +88,10 @@ protected:
 	Common::List<ObjPos> _freeList;
 	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
+	uint8 _zoomSpace[46*40];
+	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
+	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);

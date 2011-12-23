@@ -267,7 +267,7 @@ void DreamBase::printCurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiGet(textUnder(), x, y, 6, height);
+	multiGet(_textUnder, x, y, 6, height);
 	++data.word(kMaintimer);
 	if ((data.word(kMaintimer) & 16) == 0)
 		showFrame(engine->tempCharset(), x, y, '/' - 32, 0);
@@ -284,7 +284,7 @@ void DreamBase::delCurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiPut(textUnder(), x, y, width, height);
+	multiPut(_textUnder, x, y, width, height);
 	multiDump(x, y, width, height);
 }
 

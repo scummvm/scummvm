@@ -740,10 +740,6 @@ void DreamBase::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
-uint8 *DreamBase::textUnder() {
-	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
-}
-
 uint16 DreamBase::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
 	FileHeader header;
 
@@ -833,17 +829,17 @@ void DreamBase::dumpTextLine() {
 }
 
 void DreamBase::getUnderTimed() {
-	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
-		y -= 3;
-	multiGet(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+		multiGet(_underTimedText, data.byte(kTimedx), data.byte(kTimedy) - 3, 240, kUnderTimedTextSizeY_f);
+	else
+		multiGet(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
 }
 
 void DreamBase::putUnderTimed() {
-	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
-		y -= 3;
-	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy) - 3, 240, kUnderTimedTextSizeY_f);
+	else
+		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
 }
 
 void DreamGenContext::triggerMessage(uint16 index) {
@@ -1131,11 +1127,10 @@ void DreamBase::crosshair() {
 }
 
 void DreamBase::delTextLine() {
-	uint16 x = data.word(kTextaddressx);
-	uint16 y = data.word(kTextaddressy);
-	if (data.byte(kForeignrelease) != 0)
-		y -= 3;
-	multiPut(textUnder(), x, y, kUndertextsizex, kUndertextsizey);
+	if (data.byte(kForeignrelease))
+		multiPut(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy) - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
+	else
+		multiPut(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy), kUnderTextSizeX, kUnderTextSizeY);
 }
 
 void DreamGenContext::commandOnly() {
@@ -1514,7 +1509,7 @@ void DreamBase::delPointer() {
 	data.word(kDelherey) = data.word(kOldpointery);
 	data.byte(kDelxs) = data.byte(kPointerxs);
 	data.byte(kDelys) = data.byte(kPointerys);
-	multiPut(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
+	multiPut(_pointerBack, data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
 void DreamBase::showBlink() {
@@ -1594,7 +1589,7 @@ void DreamBase::showPointer() {
 		uint16 yMin = (y >= height / 2) ? y - height / 2 : 0;
 		data.word(kOldpointerx) = xMin;
 		data.word(kOldpointery) = yMin;
-		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
+		multiGet(_pointerBack, xMin, yMin, width, height);
 		showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
 		showFrame(engine->icons1(), x, y, 3, 128);
 	} else {
@@ -1607,7 +1602,7 @@ void DreamBase::showPointer() {
 			height = 12;
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
-		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
+		multiGet(_pointerBack, x, y, width, height);
 		showFrame(engine->icons1(), x, y, data.byte(kPointerframe) + 20, 0);
 	}
 }
@@ -3059,18 +3054,18 @@ void DreamBase::showDiary() {
 }
 
 void DreamBase::underTextLine() {
-	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease))
-		y -= 3;
-	multiGet(textUnder(), data.byte(kTextaddressx), y, kUndertextsizex, kUndertextsizey);
+		multiGet(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy) - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
+	else
+		multiGet(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy), kUnderTextSizeX, kUnderTextSizeY);
 }
 
 void DreamBase::getUnderZoom() {
-	multiGet(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+	multiGet(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
 void DreamBase::putUnderZoom() {
-	multiPut(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), kZoomx + 5, kZoomy + 4, 46, 40);
+	multiPut(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
 void DreamBase::showWatchReel() {
@@ -3697,7 +3692,7 @@ void DreamBase::clearBuffers() {
 
 	memset(getSegment(data.word(kExtras)).ptr(0, kLengthofextra), 0xFF, kLengthofextra);
 
-	memcpy(getSegment(data.word(kBuffers)).ptr(kInitialvars, kLengthofvars), data.ptr(kStartvars, kLengthofvars), kLengthofvars);
+	memcpy(_initialVars, data.ptr(kStartvars, kLengthofvars), kLengthofvars);
 
 	clearChanges();
 }
@@ -3707,7 +3702,7 @@ void DreamBase::clearChanges() {
 
 	setupInitialReelRoutines();
 
-	memcpy(data.ptr(kStartvars, kLengthofvars), getSegment(data.word(kBuffers)).ptr(kInitialvars, kLengthofvars), kLengthofvars);
+	memcpy(data.ptr(kStartvars, kLengthofvars), _initialVars, kLengthofvars);
 
 	data.byte(kExpos) = 0;
 	data.word(kExframepos) = 0;
