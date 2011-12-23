@@ -100,9 +100,9 @@ uint8 DreamBase::getMapAd(const uint8 *setData) {
 	return 1;
 }
 
-void DreamBase::calcFrFrame(uint16 frameNum, uint8* width, uint8* height) {
-	const Frame *frame = (const Frame *)getSegment(data.word(kFrsegment)).ptr(frameNum * sizeof(Frame), sizeof(Frame));
-	data.word(kSavesource) = data.word(kFramesad) + frame->ptr();
+void DreamBase::calcFrFrame(uint16 frameSeg, uint16 frameNum, uint16 framesAd, uint8* width, uint8* height) {
+	const Frame *frame = (const Frame *)getSegment(frameSeg).ptr(frameNum * sizeof(Frame), sizeof(Frame));
+	data.word(kSavesource) = framesAd + frame->ptr();
 	data.byte(kSavesize+0) = frame->width;
 	data.byte(kSavesize+1) = frame->height;
 	data.word(kOffsetx) = frame->x;
@@ -139,15 +139,14 @@ void DreamBase::makeBackOb(SetObject *objData) {
 }
 
 void DreamBase::showAllObs() {
-	data.word(kListpos) = kSetlist;
-	memset(getSegment(data.word(kBuffers)).ptr(kSetlist, 0), 0xff, 128 * 5);
-	data.word(kFrsegment) = data.word(kSetframes);
-	data.word(kDataad) = kFramedata;
-	data.word(kFramesad) = kFrames;
+	const unsigned int count = 128;
 
-	const Frame *frames = (const Frame *)getSegment(data.word(kFrsegment)).ptr(0, 0);
-	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 128 * sizeof(SetObject));
-	for (size_t i = 0; i < 128; ++i) {
+	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kSetlist, count * sizeof(ObjPos));
+	memset(objPos, 0xff, count * sizeof(ObjPos));
+
+	const Frame *frameBase = (const Frame *)getSegment(data.word(kSetframes)).ptr(0, 0);
+	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, count * sizeof(SetObject));
+	for (size_t i = 0; i < count; ++i) {
 		SetObject *setEntry = setEntries + i;
 		if (getMapAd(setEntry->mapad) == 0)
 			continue;
@@ -155,24 +154,23 @@ void DreamBase::showAllObs() {
 		if (currentFrame == 0xff)
 			continue;
 		uint8 width, height;
-		calcFrFrame(currentFrame, &width, &height);
+		calcFrFrame(data.word(kSetframes), currentFrame, kFrames, &width, &height);
 		uint16 x, y;
 		finalFrame(&x, &y);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);
-			showFrame(frames, x, y, currentFrame, 0);
+			showFrame(frameBase, x, y, currentFrame, 0);
 		} else
 			makeBackOb(setEntry);
 
-		ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
 		objPos->xMin = data.byte(kSavex);
 		objPos->yMin = data.byte(kSavey);
 		objPos->xMax = data.byte(kSavex) + data.byte(kSavesize+0);
 		objPos->yMax = data.byte(kSavey) + data.byte(kSavesize+1);
 		objPos->index = i;
-		data.word(kListpos) += sizeof(ObjPos);
+		++objPos;
 	}
 }
 
@@ -230,39 +228,34 @@ void DreamBase::calcMapAd() {
 }
 
 void DreamBase::showAllFree() {
-	data.word(kListpos) = kFreelist;
-	ObjPos *listPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
-	memset(listPos, 0xff, 80 * sizeof(ObjPos));
+	const unsigned int count = 80;
 
-	data.word(kFrsegment) = data.word(kFreeframes);
-	data.word(kDataad) = kFrframedata;
-	data.word(kFramesad) = kFrframes;
-	data.byte(kCurrentfree) = 0;
+	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, count * sizeof(ObjPos));
+	memset(objPos, 0xff, count * sizeof(ObjPos));
+
 	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
-	for (size_t i = 0; i < 80; ++i) {
+	const Frame *frameBase = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
+	for (size_t i = 0; i < count; ++i) {
 		uint8 mapAd = getMapAd(freeObjects[i].mapad);
 		if (mapAd != 0) {
 			uint8 width, height;
-			uint16 currentFrame = 3 * data.byte(kCurrentfree);
-			calcFrFrame(currentFrame, &width, &height);
+			uint16 currentFrame = 3 * i;
+			calcFrFrame(data.word(kFreeframes), currentFrame, kFrframes, &width, &height);
 			uint16 x, y;
 			finalFrame(&x, &y);
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
 				assert(currentFrame < 256);
-				showFrame((Frame *)getSegment(data.word(kFrsegment)).ptr(0, 0), x, y, currentFrame, 0);
-				ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
+				showFrame(frameBase, x, y, currentFrame, 0);
 				objPos->xMin = data.byte(kSavex);
 				objPos->yMin = data.byte(kSavey);
 				objPos->xMax = data.byte(kSavex) + data.byte(kSavesize+0);
 				objPos->yMax = data.byte(kSavey) + data.byte(kSavesize+1);
 				objPos->index = i;
-				data.word(kListpos) += sizeof(ObjPos);
+				++objPos;
 			}
 		}
-
-		++data.byte(kCurrentfree);
 	}
 }
 
@@ -283,15 +276,14 @@ void DreamBase::drawFlags() {
 }
 
 void DreamBase::showAllEx() {
-	data.word(kListpos) = kExlist;
-	memset(getSegment(data.word(kBuffers)).ptr(kExlist, 100 * 5), 0xff, 100 * 5);
+	const unsigned int count = 100;
 
-	data.word(kFrsegment) = data.word(kExtras);
-	data.word(kDataad) = kExframedata;
-	data.word(kFramesad) = kExframes;
-	data.byte(kCurrentex) = 0;
+	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kExlist, count * sizeof(ObjPos));
+	memset(objPos, 0xff, count * sizeof(ObjPos));
+
 	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
-	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex)) {
+	const Frame *frameBase = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+	for (size_t i = 0; i < count; ++i) {
 		DynObject *object = objects + i;
 		if (object->mapad[0] == 0xff)
 			continue;
@@ -300,20 +292,19 @@ void DreamBase::showAllEx() {
 		if (getMapAd(object->mapad) == 0)
 			continue;
 		uint8 width, height;
-		uint16 currentFrame = 3 * data.byte(kCurrentex);
-		calcFrFrame(currentFrame, &width, &height);
+		uint16 currentFrame = 3 * i;
+		calcFrFrame(data.word(kExtras), currentFrame, kExframes, &width, &height);
 		uint16 x, y;
 		finalFrame(&x, &y);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
-			showFrame((Frame *)getSegment(data.word(kFrsegment)).ptr(0, 0), x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);
-			ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
+			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);
 			objPos->xMin = data.byte(kSavex);
 			objPos->yMin = data.byte(kSavey);
 			objPos->xMax = data.byte(kSavesize + 0) + data.byte(kSavex);
 			objPos->yMax = data.byte(kSavesize + 1) + data.byte(kSavey);
 			objPos->index = i;
-			data.word(kListpos) += sizeof(ObjPos);
+			++objPos;
 		}
 	}
 }
