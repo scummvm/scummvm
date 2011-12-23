@@ -3784,7 +3784,7 @@ void DreamGenContext::afterNewRoom() {
 	zoom();
 	workToScreenM();
 	walkIntoRoom();
-	reminders();
+	edensFlatReminders();
 	atmospheres();
 }
 
@@ -4614,6 +4614,34 @@ void DreamGenContext::lookAtPlace() {
 	data.byte(kPointerframe) = 0;
 	putUnderCentre();
 	workToScreenM();
+}
+
+void DreamGenContext::edensFlatReminders() {
+	if (data.byte(kReallocation) != 24 || data.byte(kMapx) != 44)
+		return; // not in Eden's lift
+
+	if (data.byte(kProgresspoints))
+		return; // not the first time in Eden's apartment
+
+	uint16 exObjextIndex = findExObject("CSHR");
+	if (!isRyanHolding("DKEY") || exObjextIndex == kNumexobjects) {
+		DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		return;
+	}
+
+	DynObject *object = getExAd(exObjextIndex);
+
+	if (object->mapad[0] != 4) {
+		DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		return;
+	} else if (object->mapad[1] != 255) {
+		if (!compare(object->mapad[1], object->mapad[0], "PURS")) {
+			DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+			return;
+		}
+	}
+
+	data.byte(kProgresspoints)++;	// got card
 }
 
 } // End of namespace DreamGen

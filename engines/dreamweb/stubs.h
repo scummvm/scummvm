@@ -377,5 +377,6 @@
 	void lookAtPlace();
 	void inToInv();
 	void outOfInv();
+	void edensFlatReminders();
 
 #endif

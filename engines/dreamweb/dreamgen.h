@@ -476,7 +476,6 @@ public:
 	void findFirstPath();
 	void startTalk();
 	void getAnyAd();
-	void reminders();
 	void getFreeAd();
 	void dirFile();
 	void pickupConts();

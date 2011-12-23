@@ -26,59 +26,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::reminders() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 24);
-	if (!flags.z())
-		return /* (notinedenslift) */;
-	_cmp(data.byte(kMapx), 44);
-	if (!flags.z())
-		return /* (notinedenslift) */;
-	_cmp(data.byte(kProgresspoints), 0);
-	if (!flags.z())
-		return /* (notfirst) */;
-	al = 'D';
-	ah = 'K';
-	cl = 'E';
-	ch = 'Y';
-	isRyanHolding();
-	if (flags.z())
-		goto forgotone;
-	al = 'C';
-	ah = 'S';
-	cl = 'H';
-	ch = 'R';
-	findExObject();
-	_cmp(al, (114));
-	if (flags.z())
-		goto forgotone;
-	ax = es.word(bx+2);
-	_cmp(al, 4);
-	if (!flags.z())
-		goto forgotone;
-	_cmp(ah, 255);
-	if (flags.z())
-		goto havegotcard;
-	cl = 'P';
-	ch = 'U';
-	dl = 'R';
-	dh = 'S';
-	_xchg(al, ah);
-	compare();
-	if (!flags.z())
-		goto forgotone;
-havegotcard:
-	_inc(data.byte(kProgresspoints));
-	return;
-forgotone:
-	al = 50;
-	bl = 54;
-	bh = 70;
-	cx = 48;
-	dx = 8;
-	setupTimedUse();
-}
-
 void DreamGenContext::transferMap() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
