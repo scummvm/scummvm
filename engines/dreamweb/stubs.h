@@ -104,7 +104,6 @@
 		return DreamBase::isItWorn(object);
 	}
 	void wornError();
-	void makeWorn();
 	void makeWorn(DynObject *object);
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {

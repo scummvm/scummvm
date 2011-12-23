@@ -363,8 +363,8 @@ void DreamGenContext::wearWatch() {
 		showFirstUse();
 		data.byte(kWatchon) = 1;
 		data.byte(kGetback) = 1;
-		getAnyAd();
-		makeWorn();
+		uint8 dummy;
+		makeWorn((DynObject *)getAnyAd(&dummy, &dummy));
 	}
 }
 
@@ -377,8 +377,8 @@ void DreamGenContext::wearShades() {
 		data.byte(kShadeson) = 1;
 		showFirstUse();
 		data.byte(kGetback) = 1;
-		getAnyAd();
-		makeWorn();
+		uint8 dummy;
+		makeWorn((DynObject *)getAnyAd(&dummy, &dummy));
 	}
 }
 
@@ -1027,13 +1027,13 @@ void DreamGenContext::useCart() {
 }
 
 void DreamGenContext::useTrainer() {
-	// TODO: Use the C++ version of getAnyAd()
-	getAnyAd();
-	if (es.byte(bx + 2) != 4) {
+	uint8 dummy;
+	DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
+	if (object->mapad[0] != 4) {
 		notHeldError();
 	} else {
 		data.byte(kProgresspoints)++;
-		makeWorn();
+		makeWorn(object);
 		showSecondUse();
 		putBackObStuff();
 	}

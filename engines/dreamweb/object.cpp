@@ -79,10 +79,6 @@ void DreamGenContext::wornError() {
 	workToScreenM();
 }
 
-void DreamGenContext::makeWorn() {
-	makeWorn((DynObject *)es.ptr(bx, sizeof(DynObject)));
-}
-
 void DreamGenContext::makeWorn(DynObject *object) {
 	object->id[0] = 'W'-'A';
 	object->id[1] = 'E'-'A';
@@ -419,8 +415,7 @@ void DreamGenContext::selectOb() {
 
 void DreamGenContext::setPickup() {
 	if (data.byte(kObjecttype) != kSetObjectType1 && data.byte(kObjecttype) != kSetObjectType3) {
-		// The original called getAnyAd() here. However, since object types
-		// 1 and 3 are excluded, the resulting object is a DynObject
+		// Object types 1 and 3 are excluded, so the resulting object is a DynObject
 		uint8 dummy;
 		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
 		if (object->mapad[0] == 4) {
