@@ -121,7 +121,7 @@ void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
 	assert(objDataOffset % sizeof(SetObject) == 0);
 	assert(objDataOffset < 128 * sizeof(SetObject));
-	sprite->setObjData(objDataOffset);
+	sprite->_objData = objDataOffset;
 	if (priority == 255)
 		priority = 0;
 	sprite->priority = priority;

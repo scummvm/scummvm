@@ -981,12 +981,17 @@ void DreamBase::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
 
-	Sprite *sprites = spriteTable();
-	for (size_t i = 0; i < 16; ++i) {
-		Sprite &sprite = sprites[i];
-		if (sprite.objData() != 0xffff) {
-			memset(&sprite, 0xff, sizeof(Sprite));
-		}
+	// Note: the original didn't delete sprites here, but marked the
+	// entries as unused, to be filled again by makeSprite. This can
+	// change the order of entries, but since they are drawn based on the
+	// priority field, this shouldn't matter.
+	Common::List<Sprite>::iterator i;
+	for (i = _spriteTable.begin(); i != _spriteTable.end(); ) {
+		Sprite &sprite = *i;
+		if (sprite._objData != 0xffff)
+			i = _spriteTable.erase(i);
+		else
+			++i;
 	}
 }
 

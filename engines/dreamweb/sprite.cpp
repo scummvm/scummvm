@@ -24,18 +24,12 @@
 
 namespace DreamGen {
 
-Sprite *DreamBase::spriteTable() {
-	Sprite *sprite = (Sprite *)getSegment(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
-	return sprite;
-}
-
 void DreamBase::printSprites() {
 	for (size_t priority = 0; priority < 7; ++priority) {
-		Sprite *sprites = spriteTable();
-		for (size_t j = 0; j < 16; ++j) {
-			const Sprite &sprite = sprites[j];
-			if (sprite.updateCallback() == 0x0ffff)
-				continue;
+		Common::List<Sprite>::const_iterator i;
+		for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
+			const Sprite &sprite = *i;
+			assert(sprite._updateCallback != 0x0ffff);
 			if (priority != sprite.priority)
 				continue;
 			if (sprite.hidden == 1)
@@ -64,24 +58,27 @@ void DreamBase::printASprite(const Sprite *sprite) {
 		c = 8;
 	else
 		c = 0;
-	showFrame((const Frame *)getSegment(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
+	showFrame((const Frame *)getSegment(sprite->_frameData).ptr(0, 0), x, y, sprite->frameNumber, c);
 }
 
 void DreamBase::clearSprites() {
-	memset(spriteTable(), 0xff, sizeof(Sprite) * 16);
+	_spriteTable.clear();
 }
 
 Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
-	Sprite *sprite = spriteTable();
-	while (sprite->frameNumber != 0xff) { // NB: No boundchecking in the original code either
-		++sprite;
-	}
+	// Note: the original didn't append sprites here, but filled up the
+	// first unused entry. This can change the order of entries, but since they
+	// are drawn based on the priority field, this shouldn't matter.
+	_spriteTable.push_back(Sprite());
+	Sprite *sprite = &_spriteTable.back();
 
-	sprite->setUpdateCallback(updateCallback);
+	memset(sprite, 0xff, sizeof(Sprite));
+
+	sprite->_updateCallback = updateCallback;
 	sprite->x = x;
 	sprite->y = y;
-	sprite->setFrameData(frameData);
-	WRITE_LE_UINT16(&sprite->w8, somethingInDi);
+	sprite->_frameData = frameData;
+	sprite->w8 = somethingInDi;
 	sprite->w2 = 0xffff;
 	sprite->frameNumber = 0;
 	sprite->delay = 0;
@@ -89,25 +86,25 @@ Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 fr
 }
 
 void DreamBase::spriteUpdate() {
-	Sprite *sprites = spriteTable();
-	sprites[0].hidden = data.byte(kRyanon);
+	// During the intro the sprite table can be empty
+	if (!_spriteTable.empty())
+		_spriteTable.front().hidden = data.byte(kRyanon);
 
-	Sprite *sprite = sprites;
-	for (size_t i=0; i < 16; ++i) {
-		uint16 updateCallback = sprite->updateCallback();
-		if (updateCallback != 0xffff) {
-			sprite->w24 = sprite->w2;
-			if (updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
-				mainMan(sprite);
-			else {
-				assert(updateCallback == addr_backobject);
-				backObject(sprite);
-			}
+	Common::List<Sprite>::iterator i;
+	for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
+		Sprite &sprite = *i;
+		assert(sprite._updateCallback != 0xffff);
+
+		sprite.w24 = sprite.w2;
+		if (sprite._updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
+			mainMan(&sprite);
+		else {
+			assert(sprite._updateCallback == addr_backobject);
+			backObject(&sprite);
 		}
 	
 		if (data.byte(kNowinnewroom) == 1)
 			break;
-		++sprite;
 	}
 }
 
@@ -228,7 +225,7 @@ void DreamBase::aboutTurn(Sprite *sprite) {
 }
 
 void DreamBase::backObject(Sprite *sprite) {
-	SetObject *objData = (SetObject *)getSegment(data.word(kSetdat)).ptr(sprite->objData(), 0);
+	SetObject *objData = (SetObject *)getSegment(data.word(kSetdat)).ptr(sprite->_objData, 0);
 
 	if (sprite->delay != 0) {
 		--sprite->delay;

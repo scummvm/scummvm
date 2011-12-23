@@ -30,13 +30,9 @@ namespace DreamGen {
 
 struct Sprite {
 	uint16 _updateCallback;
-	uint16 updateCallback() const { return READ_LE_UINT16(&_updateCallback); }
-	void setUpdateCallback(uint16 v) { WRITE_LE_UINT16(&_updateCallback, v); }
 	uint16 w2;
 	uint16 w4;
 	uint16 _frameData;
-	uint16 frameData() const { return READ_LE_UINT16(&_frameData); }
-	void setFrameData(uint16 v) { WRITE_LE_UINT16(&_frameData, v); }
 	uint16 w8;
 	uint8  x;
 	uint8  y;
@@ -48,8 +44,6 @@ struct Sprite {
 	uint8  delay;
 	uint8  animFrame; // index into SetObject::frames
 	uint16 _objData;
-	uint16 objData() const { return READ_LE_UINT16(&_objData); }
-	void setObjData(uint16 v) { WRITE_LE_UINT16(&_objData, v); }
 	uint8  speed;
 	uint8  priority;
 	uint16 w24;

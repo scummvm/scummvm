@@ -87,7 +87,7 @@ protected:
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
 	uint8 _mainPal[3*256];
-	// _spriteTable
+	Common::List<Sprite> _spriteTable;
 	Common::List<ObjPos> _setList;
 	Common::List<ObjPos> _freeList;
 	Common::List<ObjPos> _exList;
@@ -311,7 +311,6 @@ public:
 	void playChannel1(uint8 index);
 
 	// from sprite.cpp
-	Sprite *spriteTable();
 	void printSprites();
 	void printASprite(const Sprite *sprite);
 	void clearSprites();
