@@ -217,7 +217,8 @@ enum GameSoundTypes {
 	kSoundOGG = 5,
 	kSoundFLAC = 6,
 	kSoundAIFF = 7,
-	kSoundShorten = 8
+	kSoundShorten = 8,
+	kSoundMacSND = 9
 };
 
 enum TextStringIds {

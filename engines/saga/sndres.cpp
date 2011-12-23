@@ -30,10 +30,12 @@
 #include "saga/sound.h"
 
 #include "common/file.h"
+#include "common/substream.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/aiff.h"
+#include "audio/decoders/mac_snd.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/wave.h"
@@ -174,7 +176,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	GameSoundTypes resourceType = kSoundPCM;
 	byte *data = 0;
 	int rate = 0, size = 0;
-	Common::File* file;
+	Common::File *file;
 
 	if (resourceId == (uint32)-1) {
 		return false;
@@ -258,7 +260,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	buffer.flags = Audio::FLAG_16BITS;
 	buffer.frequency = 22050;
 	if (_vm->getGameId() == GID_ITE) {
-		if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
+		if (context->fileType() & GAME_MACBINARY) {
+			// ITE Mac has sound in the Mac snd format
+			resourceType = kSoundMacSND;
+		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
 			buffer.flags |= Audio::FLAG_UNSIGNED;
 			buffer.flags &= ~Audio::FLAG_16BITS;
 		} else {
@@ -276,16 +281,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (!context->isBigEndian())
 		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
 
-	// Older Mac versions of ITE were Macbinary packed
-	int soundOffset = (context->fileType() & GAME_MACBINARY) ? 36 : 0;
-
 	switch (resourceType) {
 	case kSoundPCM:
-		buffer.size = soundResourceLength - soundOffset;
+		buffer.size = soundResourceLength;
 		if (!onlyHeader) {
 			buffer.buffer = (byte *) malloc(buffer.size);
-			if (soundOffset > 0)
-				readS.skip(soundOffset);
 			readS.read(buffer.buffer, buffer.size);
 		}
 		result = true;
@@ -300,6 +300,31 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 		result = true;
 		break;
+	case kSoundMacSND: {
+		Audio::SeekableAudioStream *audStream = Audio::makeMacSndStream(new Common::SeekableSubReadStream(&readS, readS.pos(), readS.pos() + soundResourceLength), DisposeAfterUse::YES);
+		Audio::Timestamp length = audStream->getLength();
+		buffer.size = length.totalNumberOfFrames() * 2;
+		buffer.frequency = audStream->getRate();
+
+		if (audStream->isStereo()) {
+			buffer.size *= 2;
+			buffer.flags |= Audio::FLAG_STEREO;
+		}
+
+		buffer.buffer = (byte *)malloc(buffer.size);
+		audStream->readBuffer((int16 *)buffer.buffer, buffer.size / 2);
+
+		// The sound data is in native endian format now that we read it
+		// from the stream.
+#ifdef SCUMM_LITTLE_ENDIAN
+		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
+#else
+		buffer.flags &= ~Audio::FLAG_LITTLE_ENDIAN;
+#endif
+
+		delete audStream;
+		result = true;
+		} break;
 	case kSoundWAV:
 	case kSoundAIFF:
 	case kSoundShorten:
