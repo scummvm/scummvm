@@ -100,8 +100,8 @@ uint8 DreamBase::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
 	return 1;
 }
 
-void DreamBase::calcFrFrame(uint16 frameSeg, uint16 frameNum, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
-	const Frame *frame = (const Frame *)getSegment(frameSeg).ptr(frameNum * sizeof(Frame), sizeof(Frame));
+void DreamBase::calcFrFrame(const Frame *frameBase, uint16 frameNum, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
+	const Frame *frame = frameBase + frameNum;
 	*width = frame->width;
 	*height = frame->height;
 
@@ -148,7 +148,7 @@ void DreamBase::showAllObs() {
 		if (currentFrame == 0xff)
 			continue;
 		uint8 width, height;
-		calcFrFrame(data.word(kSetframes), currentFrame, &width, &height, x, y, objPos);
+		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
@@ -229,7 +229,7 @@ void DreamBase::showAllFree() {
 		if (mapAd != 0) {
 			uint8 width, height;
 			uint16 currentFrame = 3 * i;
-			calcFrFrame(data.word(kFreeframes), currentFrame, &width, &height, x, y, objPos);
+			calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
@@ -277,7 +277,7 @@ void DreamBase::showAllEx() {
 			continue;
 		uint8 width, height;
 		uint16 currentFrame = 3 * i;
-		calcFrFrame(data.word(kExtras), currentFrame, &width, &height, x, y, objPos);
+		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
 			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);

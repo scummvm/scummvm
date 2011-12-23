@@ -78,7 +78,7 @@ public:
 	uint8 getXAd(const uint8 *setData, uint8 *result);
 	uint8 getYAd(const uint8 *setData, uint8 *result);
 	uint8 getMapAd(const uint8 *setData, uint16 *x, uint16 *y);
-	void calcFrFrame(uint16 frameSeg, uint16 frameNum, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
+	void calcFrFrame(const Frame *frameBase, uint16 frameNum, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
 	void makeBackOb(SetObject *objData, uint16 x, uint16 y);
 	void showAllObs();
 	bool addAlong(const uint8 *mapFlags);
