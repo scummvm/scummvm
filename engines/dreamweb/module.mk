@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	dreamgen.o \
 	keypad.o \
 	monitor.o \
+	newplace.o \
 	object.o \
 	pathfind.o \
 	people.o \
@@ -17,6 +18,7 @@ MODULE_OBJS := \
 	sprite.o \
 	stubs.o \
 	talk.o \
+	titles.o \
 	use.o \
 	vgafades.o \
 	vgagrafx.o

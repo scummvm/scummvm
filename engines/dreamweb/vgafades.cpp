@@ -25,6 +25,7 @@
 namespace DreamGen {
 
 uint8 *DreamBase::mainPalette() {
+// TODO: Turn these into plain C arrays
 	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256 * 3);
 }
 

@@ -631,4 +631,14 @@ void DreamGenContext::outOfInv() {
 	delPointer();
 }
 
+void DreamBase::purgeALocation(uint8 index) {
+	// index == al
+	for (uint8 i = 0; i < kNumexobjects; ++i) {
+		DynObject *t = getExAd(i);
+		if (t->currentLocation == index && t->mapad[0] == 0) {
+			deleteExObject(i);
+		}
+	}
+}
+
 } // End of namespace DreamGen

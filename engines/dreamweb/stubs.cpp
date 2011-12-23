@@ -21,7 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
 #include "common/config-manager.h"
 
 namespace DreamGen {
@@ -329,23 +328,23 @@ static const Atmosphere g_atmosphereList[] = {
 
 	{ 10,33,30,6,255 },
 	{ 10,22,30,6,255 },
-	
+
 	{ 9,22,10,6,255 },
 	{ 9,22,20,16,255 },
 	{ 9,22,30,16,255 },
 	{ 9,22,40,16,255 },
 	{ 9,22,50,16,255 },
-	
+
 	{ 6,11,30,6,255 },
 	{ 6,0,10,15,255 },
 	{ 6,0,20,15,255 },
 	{ 6,11,20,15,255 },
 	{ 6,22,20,15,255 },
-	
+
 	{ 7,11,20,6,255 },
 	{ 7,0,20,6,255 },
 	{ 7,0,30,6,255 },
-	
+
 	{ 55,44,0,5,255 },
 	{ 55,44,10,5,255 },
 
@@ -367,12 +366,12 @@ static const Atmosphere g_atmosphereList[] = {
 	{ 8,33,40,6,255 },
 	{ 8,22,40,6,255 },
 	{ 8,11,40,6,255 },
-    
+
 	{ 11,11,20,12,255 },
 	{ 11,11,30,12,255 },
 	{ 11,22,20,12,255 },
 	{ 11,22,30,12,255 },
-	
+
 	{ 12,22,20,12,255 },
 	{ 13,22,20,12,255 },
 	{ 13,33,20,12,255 },
@@ -384,7 +383,7 @@ static const Atmosphere g_atmosphereList[] = {
 	{ 14,33,30,12,255 },
 	{ 14,33,40,12,255 },
 	{ 14,22,0,16,255 },
-	
+
 	{ 19,0,0,12,255 },
 
 	{ 20,0,20,16,255 },
@@ -495,7 +494,7 @@ void DreamGenContext::dreamweb() {
 
 	while (true) {
 
-		unsigned int count = scanForNames();
+		uint count = scanForNames();
 
 		bool startNewGame = true;
 
@@ -544,6 +543,7 @@ void DreamGenContext::dreamweb() {
 			// "playGame"
 
 			// "titles"
+			// TODO: In the demo version, titles() did nothing
 			clearPalette();
 			bibleQuote();
 			if (!quitRequested()) // "titlesearly"
@@ -707,7 +707,7 @@ void DreamGenContext::screenUpdate() {
 	delPointer();
 }
 
-void DreamGenContext::startup() {
+void DreamBase::startup() {
 	data.byte(kCurrentkey) = 0;
 	data.byte(kMainmode) = 0;
 	createPanel();
@@ -846,14 +846,6 @@ void DreamBase::putUnderTimed() {
 	multiPut(getSegment(data.word(kBuffers)).ptr(kUndertimedtext, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamBase::getUnderCentre() {
-	multiGet(mapStore(), 58, 72, 254, 110);
-}
-
-void DreamBase::putUnderCentre() {
-	multiPut(mapStore(), 58, 72, 254, 110);
-}
-
 void DreamGenContext::triggerMessage(uint16 index) {
 	multiGet(mapStore(), 174, 153, 200, 63);
 	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
@@ -989,9 +981,6 @@ void DreamBase::DOSReturn() {
 	}
 }
 
-void DreamGenContext::set16ColPalette() {
-}
-
 void DreamBase::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
@@ -1052,7 +1041,7 @@ void DreamBase::clearAndLoad(uint16 seg, uint8 c,
 	clearAndLoad(buf, c, size, maxSize);
 }
 
-void DreamGenContext::startLoading(const Room &room) {
+void DreamBase::startLoading(const Room &room) {
 	data.byte(kCombatcount) = 0;
 	data.byte(kRoomssample) = room.roomsSample;
 	data.byte(kMapx) = room.mapX;
@@ -1251,7 +1240,7 @@ const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
-	for (i = 0; i < 28; ++i) { 
+	for (i = 0; i < 28; ++i) {
 		char c = src[i];
 		if (c == ':')
 			break;
@@ -1263,7 +1252,7 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 }
 
 void DreamGenContext::commandWithOb() {
-	commandWithOb(al, bh, bl); 
+	commandWithOb(al, bh, bl);
 }
 
 void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
@@ -1990,12 +1979,6 @@ void DreamBase::sortOutMap() {
 	}
 }
 
-void DreamGenContext::showCity() {
-	clearWork();
-	showFrame(tempGraphics(), 57, 32, 0, 0);
-	showFrame(tempGraphics(), 120+57, 32, 1, 0);
-}
-
 void DreamGenContext::mainScreen() {
 	data.byte(kInmaparea) = 0;
 	if (data.byte(kWatchon) == 1) {
@@ -2106,7 +2089,7 @@ void DreamBase::zoomIcon() {
 	showFrame(engine->icons1(), kZoomx, kZoomy-1, 8, 0);
 }
 
-void DreamGenContext::loadRoom() {
+void DreamBase::loadRoom() {
 	data.byte(kRoomloaded) = 1;
 	data.word(kTimecount) = 0;
 	data.word(kMaintimer) = 0;
@@ -2125,10 +2108,6 @@ void DreamGenContext::loadRoom() {
 	uint8 mapXstart, mapYstart;
 	uint8 mapXsize, mapYsize;
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
-	cl = mapXstart;
-	ch = mapYstart;
-	dl = mapXsize;
-	dh = mapYsize;
 }
 
 void DreamGenContext::readSetData() {
@@ -2461,14 +2440,6 @@ void DreamBase::examIcon() {
 	showFrame(engine->icons2(), 254, 5, 3, 0);
 }
 
-uint8 DreamBase::getLocation(uint8 index) {
-	return data.byte(kRoomscango + index);
-}
-
-void DreamBase::setLocation(uint8 index) {
-	data.byte(kRoomscango + index) = 1;
-}
-
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
 	SegmentRef text = getSegment(data.word(kTextfile1));
 	uint16 offset = text.word(index * 2) + kTextstart;
@@ -2649,7 +2620,7 @@ void DreamGenContext::useMenu() {
 	workToScreenM();
 }
 
-void DreamGenContext::atmospheres() {
+void DreamBase::atmospheres() {
 
 	const Atmosphere *a = &g_atmosphereList[0];
 
@@ -2673,8 +2644,8 @@ void DreamGenContext::atmospheres() {
 			//  I'm interpreting this as if the cmp reallocation is below the jz
 
 			if (data.byte(kMapy) == 0) {
-					data.byte(kVolume) = 0; // "fullvol"
-					return;
+				data.byte(kVolume) = 0; // "fullvol"
+				return;
 			}
 
 			if (data.byte(kReallocation) == 2 && data.byte(kMapx) == 22 && data.byte(kMapy) == 10)
@@ -2709,16 +2680,6 @@ void DreamGenContext::atmospheres() {
 	}
 
 	cancelCh0();
-}
-
-void DreamGenContext::readCityPic() {
-	loadIntoTemp("DREAMWEB.G04");
-}
-
-void DreamGenContext::readDestIcon() {
-	loadIntoTemp("DREAMWEB.G05");
-	loadIntoTemp2("DREAMWEB.G06");
-	loadIntoTemp3("DREAMWEB.G08");
 }
 
 uint8 DreamGenContext::nextSymbol(uint8 symbol) {
@@ -2758,308 +2719,6 @@ void DreamBase::readKey() {
 	bufOut = (bufOut + 1) & 15; // The buffer has size 16
 	data.byte(kCurrentkey) = g_keyBuffer[bufOut];
 	data.word(kBufferout) = bufOut;
-}
-
-void DreamGenContext::hangOne(uint16 delay) {
-	do {
-		vSync();
-		if (data.byte(kLasthardkey) == 1)
-			return; // "hangonearly"
-	} while	(--delay);
-}
-
-void DreamGenContext::hangOne() {
-	hangOne(cx);
-}
-
-void DreamGenContext::bibleQuote() {
-	initGraphics(640, 480, true);
-
-	showPCX("DREAMWEB.I00");
-	fadeScreenUps();
-
-	hangOne(80);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	hangOne(560);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	fadeScreenDowns();
-
-	hangOne(200);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
-		return; // "biblequotearly"
-	}
-
-	cancelCh0();
-
-	data.byte(kLasthardkey) = 0;
-}
-
-void DreamGenContext::realCredits() {
-	data.byte(kRoomssample) = 33;
-	loadRoomsSample();
-	data.byte(kVolume) = 0;
-
-	initGraphics(640, 480, true);
-	hangOn(35);
-
-	showPCX("DREAMWEB.I01");
-	playChannel0(12, 0);
-
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I02");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I03");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I04");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I05");
-	playChannel0(12, 0);
-	hangOne(2);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	allPalette();
-	hangOne(80);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	showPCX("DREAMWEB.I06");
-	fadeScreenUps();
-	hangOne(60);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	playChannel0(13, 0);
-	hangOne(350);
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "realcreditsearly"
-	}
-
-	fadeScreenDowns();
-	hangOne(256);
-
-	data.byte(kLasthardkey) =  0;
-}
-
-void DreamGenContext::runIntroSeq() {
-	data.byte(kGetback) = 0;
-
-	do {
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		spriteUpdate();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		delEverything();
-		printSprites();
-		reelsOnScreen();
-		afterIntroRoom();
-		useTimedText();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-		dumpMap();
-		dumpTimedText();
-		vSync();
-
-		if (data.byte(kLasthardkey) == 1)
-			break;
-
-	} while (data.byte(kGetback) != 1);
-
-
-	if (data.byte(kLasthardkey) == 1) {
-		getRidOfTempText();
-		clearBeforeLoad();
-	}
-
-	// These were not called in this program arc
-	// in the original code.. Bug?
-	//getRidOfTempText();
-	//clearBeforeLoad();
-}
-
-void DreamGenContext::intro() {
-	loadTempText("DREAMWEB.T82");
-	loadPalFromIFF();
-	setMode();
-	data.byte(kNewlocation) = 50;
-	clearPalette();
-	loadIntroRoom();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 4;
-	playChannel0(12, 255);
-	fadeScreenUps();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 52;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	data.byte(kNewlocation) = 53;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	clearBeforeLoad();
-	allPalette();
-	data.byte(kNewlocation) = 54;
-	loadIntroRoom();
-	runIntroSeq();
-
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
-		return; // "introearly"
-	}
-
-	getRidOfTempText();
-	clearBeforeLoad();
-
-	data.byte(kLasthardkey) =  0;
 }
 
 void DreamBase::setTopLeft() {
@@ -3169,25 +2828,6 @@ void DreamGenContext::walkIntoRoom() {
 	}
 }
 
-void DreamGenContext::loadIntroRoom() {
-	data.byte(kIntrocount) = 0;
-	data.byte(kLocation) = 255;
-	loadRoom();
-	data.word(kMapoffsetx) = 72;
-	data.word(kMapoffsety) = 16;
-	clearSprites();
-	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
-	clearWork();
-	data.byte(kNewobs) = 1;
-	drawFloor();
-	reelsOnScreen();
-	spriteUpdate();
-	printSprites();
-	workToScreenCPP();
-}
-
 void DreamGenContext::afterIntroRoom() {
 	if (data.byte(kNowinnewroom) == 0)
 		return; // notnewintro
@@ -3201,17 +2841,6 @@ void DreamGenContext::afterIntroRoom() {
 	printSprites();
 	workToScreenCPP();
 	data.byte(kNowinnewroom) = 0;
-}
-
-void DreamGenContext::gettingShot() {
-	data.byte(kNewlocation) = 55;
-	clearPalette();
-	loadIntroRoom();
-	fadeScreenUps();
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = (byte)-1;
-	runEndSeq();
-	clearBeforeLoad();
 }
 
 void DreamBase::redrawMainScrn() {
@@ -3370,81 +2999,6 @@ void DreamGenContext::reExFromOpen() {
 
 }
 
-void DreamGenContext::nextDest() {
-	if (data.byte(kCommandtype) != 218) {
-		data.byte(kCommandtype) = 218;
-		commandOnly(28);
-	}
-
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
-		return;	// nodu
-
-	do {
-		data.byte(kDestpos)++;
-		if (data.byte(kDestpos) == 15)
-			data.byte(kDestpos) = 0;	// last destination
-
-		getDestInfo();
-	} while (al == 0);
-
-	data.byte(kNewtextline) = 1;
-	delTextLine();
-	delPointer();
-	showPanel();
-	showMan();
-	showArrows();
-	locationPic();
-	underTextLine();
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-	delPointer();
-}
-
-void DreamGenContext::lastDest() {
-	if (data.byte(kCommandtype) != 219) {
-		data.byte(kCommandtype) = 219;
-		commandOnly(29);
-	}
-
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
-		return;	// nodd
-
-	do {
-		data.byte(kDestpos)--;
-		if (data.byte(kDestpos) == 0xFF)
-			data.byte(kDestpos) = 15;	// first destination
-
-		getDestInfo();
-	} while (al == 0);
-
-	data.byte(kNewtextline) = 1;
-	delTextLine();
-	delPointer();
-	showPanel();
-	showMan();
-	showArrows();
-	locationPic();
-	underTextLine();
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-	delPointer();
-}
-
-void DreamGenContext::destSelect() {
-	if (data.byte(kCommandtype) != 222) {
-		data.byte(kCommandtype) = 222;
-		commandOnly(30);
-	}
-
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
-		return;	// notrav
-
-	getDestInfo();
-	data.byte(kNewlocation) = data.byte(kDestpos);
-}
-
 void DreamGenContext::putBackObStuff() {
 	createPanel();
 	showPanel();
@@ -3461,58 +3015,6 @@ void DreamGenContext::putBackObStuff() {
 	delPointer();
 }
 
-void DreamGenContext::redes() {
-	if (data.byte(kCh1playing) != 255 || data.byte(kTalkmode) != 2) {
-		blank();
-		return;
-	}
-
-	if (data.byte(kCommandtype) != 217) {
-		data.byte(kCommandtype) = 217;
-		commandOnly(50);
-	}
-
-	if (!(data.word(kMousebutton) & 1))
-		return;
-
-	delPointer();
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	convIcons();
-	startTalk();
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-	delPointer();
-}
-
-void DreamGenContext::moreTalk() {
-	if (data.byte(kTalkmode) != 0) {
-		redes();
-		return;
-	}
-
-	if (data.byte(kCommandtype) != 215) {
-		data.byte(kCommandtype) = 215;
-		commandOnly(49);
-	}
-	
-	if (data.word(kMousebutton) == data.word(kOldbutton))
-		return;	// nomore
-
-	if (!(data.word(kMousebutton) & 1))
-		return;
-
-	data.byte(kTalkmode) = 2;
-	data.byte(kTalkpos) = 4;
-	
-	if (data.byte(kCharacter) >= 100)
-		data.byte(kTalkpos) = 48; // second part
-	doSomeTalk();
-}
-
 bool DreamBase::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
 }
@@ -3521,68 +3023,6 @@ void DreamBase::dumpZoom() {
 	if (data.byte(kZoomon) == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
 }
-
-void DreamGenContext::selectLocation() {
-	data.byte(kInmaparea) = 0;
-	clearBeforeLoad();
-	data.byte(kGetback) = 0;
-	data.byte(kPointerframe) = 22;
-	readCityPic();
-	showCity();
-	getRidOfTemp();
-	readDestIcon();
-	loadTravelText();
-	showPanel();
-	showMan();
-	showArrows();
-	showExit();
-	locationPic();
-	underTextLine();
-	data.byte(kCommandtype) = 255;
-	readMouse();
-	data.byte(kPointerframe) = 0;
-	showPointer();
-	workToScreenCPP();
-	playChannel0(9, 255);
-	data.byte(kNewlocation) = 255;
-
-	while (data.byte(kNewlocation) == 255) {
-		if (quitRequested())
-			break;
-
-		delPointer();
-		readMouse();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-
-		if (data.byte(kGetback) == 1)
-			break;
-
-		RectWithCallback<DreamGenContext> destList[] = {
-			{ 238,258,4,44,&DreamGenContext::nextDest },
-			{ 104,124,4,44,&DreamGenContext::lastDest },
-			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
-			{ 104,216,138,192,&DreamGenContext::destSelect },
-			{ 273,320,157,198,&DreamBase::getBack1 },
-			{ 0,320,0,200,&DreamBase::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(destList);
-	}
-
-	if (quitRequested() || data.byte(kGetback) == 1 || data.byte(kNewlocation) == data.byte(kLocation)) {
-		data.byte(kNewlocation) = data.byte(kReallocation);
-		data.byte(kGetback) = 0;
-	}
-
-	getRidOfTemp();
-	getRidOfTemp2();
-	getRidOfTemp3();
-	deallocateMem(data.word(kTraveltext));
-}
-
 
 void DreamBase::examineInventory() {
 	if (data.byte(kCommandtype) != 249) {
@@ -3602,12 +3042,6 @@ void DreamBase::examineInventory() {
 	data.byte(kInvopen) = 2;
 	openInv();
 	workToScreenM();
-}
-
-void DreamBase::showArrows() {
-	showFrame(tempGraphics(), 116 - 12, 16, 0, 0);
-	showFrame(tempGraphics(), 226 + 12, 16, 1, 0);
-	showFrame(tempGraphics(), 280, 14, 2, 0);
 }
 
 void DreamBase::middlePanel() {
@@ -3795,107 +3229,6 @@ void DreamGenContext::decide() {
 	data.byte(kTextlen) = 240;
 }
 
-void DreamGenContext::talk() {
-	data.byte(kTalkpos) = 0;
-	data.byte(kInmaparea) = 0;
-	data.byte(kCharacter) = data.byte(kCommand);
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	underTextLine();
-	convIcons();
-	startTalk();
-	data.byte(kCommandtype) = 255;
-	readMouse();
-	showPointer();
-	workToScreenCPP();
-
-	RectWithCallback<DreamGenContext> talkList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 240,290,2,44,&DreamGenContext::moreTalk },
-		{ 0,320,0,200,&DreamBase::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	do {
-		delPointer();
-		readMouse();
-		animPointer();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		data.byte(kGetback) = 0;
-		checkCoords(talkList);
-		if (data.byte(kQuitrequested))
-			break;
-	} while (!data.byte(kGetback));
-
-	if (data.byte(kTalkpos) >= 4)
-		data.byte(data.word(kPersondata)+7) |= 128;
-
-	redrawMainScrn();
-	workToScreenM();
-	if (data.byte(kSpeechloaded) == 1) {
-		cancelCh1();
-		data.byte(kVolumedirection) = (byte)-1;
-		data.byte(kVolumeto) = 0;
-	}
-}
-
-void DreamGenContext::hangOnPQ() {
-	data.byte(kGetback) = 0;
-
-	RectWithCallback<DreamBase> quitList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 0,320,0,200,&DreamBase::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-
-	uint16 speechFlag = 0;
-
-	do {
-		delPointer();
-		readMouse();
-		animPointer();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		checkCoords(quitList);
-
-		if (data.byte(kGetback) == 1 || data.byte(kQuitrequested)) {
-			// Quit conversation
-			delPointer();
-			data.byte(kPointermode) = 0;
-			cancelCh1();
-			flags._c = true;
-			return;
-		}
-
-		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
-			speechFlag++;
-			if (speechFlag == 40)
-				break;
-		}
-	} while (!data.word(kMousebutton) || data.word(kOldbutton));
-
-	delPointer();
-	data.byte(kPointermode) = 0;
-	flags._c = false;
- }
-
-void DreamGenContext::endGame() {
-	loadTempText("DREAMWEB.T83");
-	monkSpeaking();
-	gettingShot();
-	getRidOfTempText();
-	data.byte(kVolumeto) = 7;
-	data.byte(kVolumedirection) = 1;
-	hangOn(200);
-}
-
 void DreamGenContext::showGun() {
 	data.byte(kAddtored) = 0;
 	data.byte(kAddtogreen) = 0;
@@ -4020,49 +3353,6 @@ void DreamBase::getBack1() {
 	}
 }
 
-void DreamGenContext::newPlace() {
-	if (data.byte(kNeedtotravel) == 1) {
-		data.byte(kNeedtotravel) = 0;
-		selectLocation();
-	} else if (data.byte(kAutolocation) != 0xFF) {
-		data.byte(kNewlocation) = data.byte(kAutolocation);
-		data.byte(kAutolocation) = 0xFF;
-	}
-}
-
-void DreamGenContext::monkSpeaking() {
-	// FIXME: This is the CD version only.
-
-	data.byte(kRoomssample) = 35;
-	loadRoomsSample();
-	loadIntoTemp("DREAMWEB.G15");
-	clearWork();
-	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
-	workToScreen();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 5;
-	playChannel0(12, 255);
-	fadeScreenUps();
-	hangOn(300);
-
-	for (int i = 40; i <= 48; i++) {
-		loadSpeech('T', 83, 'T', i);
-
-		playChannel1(50 + 12);
-
-		do {
-			engine->waitForVSync();
-		} while (data.byte(kCh1playing) != 255);
-	} 
-
-	data.byte(kVolumedirection) = 1;
-	data.byte(kVolumeto) = 7;
-	fadeScreenDowns();
-	hangOn(300);
-	getRidOfTemp();
-}
-
 void DreamGenContext::useButtonA() {
 	if (!isSetObOnMap(95)) {
 		showFirstUse();
@@ -4083,11 +3373,10 @@ void DreamGenContext::useButtonA() {
 	}
 }
 
-void DreamGenContext::autoAppear() {
+void DreamBase::autoAppear() {
 	if (data.byte(kLocation) == 32) {
 		// In alley
-		al = 5;
-		resetLocation();
+		resetLocation(5);
 		setLocation(10);
 		data.byte(kDestpos) = 10;
 		return;
@@ -4117,8 +3406,7 @@ void DreamGenContext::autoAppear() {
 		if (data.byte(kReallocation) == 25) {
 			// Sart roof
 			data.byte(kNewsitem) = 3;
-			al = 6;
-			resetLocation();
+			resetLocation(6);
 			setLocation(11);
 			data.byte(kDestpos) = 11;
 		} else {
@@ -4198,8 +3486,7 @@ void DreamGenContext::entryAnims() {
 		data.byte(kSpeedcount) = 1;
 		break;
 	case 44:	// Sparky's
-		al = 8;
-		resetLocation();
+		resetLocation(8);
 		data.word(kWatchingtime) = 50*2;
 		data.word(kReeltowatch) = 247;
 		data.word(kEndwatchreel) = 297;
@@ -4379,26 +3666,6 @@ void DreamGenContext::dumpDiaryKeys() {
 	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
 }
 
-void DreamGenContext::runEndSeq() {
-	atmospheres();
-	data.byte(kGetback) = 0;
-
-	do {
-		vSync();
-		spriteUpdate();
-		vSync();
-		delEverything();
-		printSprites();
-		reelsOnScreen();
-		afterIntroRoom();
-		useTimedText();
-		vSync();
-		dumpMap();
-		dumpTimedText();
-		vSync();
-	} while (data.byte(kGetback) != 1);
-}
-
 void DreamGenContext::lookAtCard() {
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
@@ -4471,38 +3738,6 @@ void DreamGenContext::showDiaryKeys() {
 
 	if (data.byte(kPresscount) == 1)
 		showDiaryPage();
-}
-
-void DreamGenContext::lookAtPlace() {
-	if (data.byte(kCommandtype) != 224) {
-		data.byte(kCommandtype) = 224;
-		commandOnly(27);
-	}
-
-	if (!(data.word(kMousebutton) & 1) ||
-		data.word(kMousebutton) == data.word(kOldbutton) ||
-		data.byte(kDestpos) >= 15)
-		return; // noinfo
-
-	delPointer();
-	delTextLine();
-	getUnderCentre();
-	showFrame(tempGraphics3(), 60, 72, 0, 0);
-	showFrame(tempGraphics3(), 60, 72 + 55, 4, 0);
-	if (data.byte(kForeignrelease))
-		showFrame(tempGraphics3(), 60, 72+55+21, 4, 0);
-
-	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
-	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
-	findNextColon(&string);
-	uint16 y = (data.byte(kForeignrelease)) ? 84 + 4 : 84;
-	printDirect(&string, 63, &y, 191, 191 & 1);
-	workToScreenM();
-	hangOnP(500);
-	data.byte(kPointermode) = 0;
-	data.byte(kPointerframe) = 0;
-	putUnderCentre();
-	workToScreenM();
 }
 
 void DreamGenContext::edensFlatReminders() {
