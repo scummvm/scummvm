@@ -111,58 +111,65 @@ const integer slire = 0x403;
 const integer sposer = 0x404;
 const integer sregarder = 0x405;
 
-  const array<0,17,byte> tabdbc
-          = {{7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9}};
-  const array<0,15,byte> tabdph
-          = {{0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10}};
-  const array<0,25,byte> typcon
-          = {{0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3}};
-  const array<0,25,byte> intcon
-          = {{1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}};
-  const array<0,363,byte> tnocon
-          = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0}};
+const array<0, 17, byte> tabdbc
+= {{7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9}};
+const array<0, 15, byte> tabdph
+= {{0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10}};
+const array<0, 25, byte> typcon
+= {{0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3}};
+const array<0, 25, byte> intcon
+= {{1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}};
+const array<0, 363, byte> tnocon
+= {{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	}
+};
 
 
-const matrix<1,8,1,4,byte> don
-        = {{{{ 7, 37, 22,  8}},
-          {{19, 33, 23,  7}},
-          {{31, 89, 10, 21}},
-          {{43, 25, 11,  5}},
-          {{55, 37,  5,  8}},
-          {{64, 13, 11,  2}},
-          {{62, 22, 13,  4}},
-          {{62, 25, 13,  5}}}};
+const matrix<1, 8, 1, 4, byte> don
+= {{{{ 7, 37, 22,  8}},
+		{{19, 33, 23,  7}},
+		{{31, 89, 10, 21}},
+		{{43, 25, 11,  5}},
+		{{55, 37,  5,  8}},
+		{{64, 13, 11,  2}},
+		{{62, 22, 13,  4}},
+		{{62, 25, 13,  5}}
+	}
+};
 
-const array<1,2,varying_string<11> > fic
-    = {{ " Sauvegarde",
-        " Chargement" }};
+const array<1, 2, varying_string<11> > fic
+= {{ " Sauvegarde",
+		" Chargement"
+	}
+};
 
-const array<0,1,byte> addv
-   = {{8,8}};
+const array<0, 1, byte> addv
+= {{8, 8}};
 
 const char recom[] = " Recommence  ";
 
-     const char f3[] = "F3: Encore";
-     const char f8[] = "F8: Suite";
+const char f3[] = "F3: Encore";
+const char f8[] = "F8: Suite";
 
-  const integer max_patt = 20;
+const integer max_patt = 20;
 
 
- const array<0,15,byte> rang
-      = {{15,14,11,7,13,12,10,6,9,5,3,1,2,4,8,0}};
+const array<0, 15, byte> rang
+= {{15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0}};
 
 
 /*---------------------------------------------------------------------------*/
@@ -177,72 +184,72 @@ typedef varying_string<30> str30;
 typedef varying_string<11> str11;
 typedef file<byte> fichier_byte;
 struct sav_chaine {
-                  integer conf;
-                  array<0,10,char> pourc;
-                 array<0,42,char> teauto;
-                   array<0,30,char> sjer;
-                 integer mlieu,iboul,ibag,icave,ivier,ipuit;
-                 integer derobj,iloic,icryp;
-                  boolean ipre;
-                 char heure;
+	integer conf;
+	array<0, 10, char> pourc;
+	array<0, 42, char> teauto;
+	array<0, 30, char> sjer;
+	integer mlieu, iboul, ibag, icave, ivier, ipuit;
+	integer derobj, iloic, icryp;
+	boolean ipre;
+	char heure;
 };
 struct registres {
-           integer ax,bx,cx,dx,bp,si,di,ds,es,flags;
+	integer ax, bx, cx, dx, bp, si, di, ds, es, flags;
 };
-typedef array<1,1410,char> phrase;
-typedef array<0,maxti,integer> tabint;
- struct ind {
-         integer indis;
-         byte point;
- };
-typedef array<0,maxtd,ind> tabind;
+typedef array<1, 1410, char> phrase;
+typedef array<0, maxti, integer> tabint;
+struct ind {
+	integer indis;
+	byte point;
+};
+typedef array<0, maxtd, ind> tabind;
 
-typedef matrix<1,7,0,24,byte> tab_mlieu;
+typedef matrix<1, 7, 0, 24, byte> tab_mlieu;
 
- typedef array<0,255,real> table;
-typedef array<0,255,integer> tablint;
+typedef array<0, 255, real> table;
+typedef array<0, 255, integer> tablint;
 
-  typedef integer word1;
+typedef integer word1;
 struct chariot {
-           integer val,
-           code,
-           acc,
-           freq,
-           rep;
+	integer val,
+	        code,
+	        acc,
+	        freq,
+	        rep;
 };
 
 struct doublet {
-        byte x,y;
+	byte x, y;
 };
-typedef array<1,16,doublet> tabdb;
-typedef array<0,107,integer> tfxx;
+typedef array<1, 16, doublet> tabdb;
+typedef array<0, 107, integer> tfxx;
 struct rectangle {
-            integer x1, x2, y1, y2;
-            boolean etat;
+	integer x1, x2, y1, y2;
+	boolean etat;
 };
 
-typedef array<1,max_rect,rectangle> mult_rect;
+typedef array<1, max_rect, rectangle> mult_rect;
 typedef varying_string<40> str40;
 
- struct pattern {
-             byte tay, tax;
-             matrix<1,max_patt, 1,max_patt,byte> des;
- };
+struct pattern {
+	byte tay, tax;
+	matrix<1, max_patt, 1, max_patt, byte> des;
+};
 
 
-  struct nhom {
-           byte n;     /* numero entre 0 et 32 */
-           array<0,3,byte> hom;
-  };
+struct nhom {
+	byte n;     /* numero entre 0 et 32 */
+	array<0, 3, byte> hom;
+};
 
-  typedef array<0,15,nhom> t_nhom;
+typedef array<0, 15, nhom> t_nhom;
 
-  struct t_pcga {
-             byte p;
-             t_nhom a;
-  };
+struct t_pcga {
+	byte p;
+	t_nhom a;
+};
 
-  typedef array<0,90,t_pcga> pal_cga;
+typedef array<0, 90, t_pcga> pal_cga;
 
 
 /*---------------------------------------------------------------------------*/
@@ -250,147 +257,147 @@ typedef varying_string<40> str40;
 /*---------------------------------------------------------------------------*/
 
 boolean blo,
-bh1,
-bf1,
-bh2,
-bh4,
-bf4,
-bh5,
-bh6,
-bh8,
-bt3,
-bt7,
-bh9,
+        bh1,
+        bf1,
+        bh2,
+        bh4,
+        bf4,
+        bh5,
+        bh6,
+        bh8,
+        bt3,
+        bt7,
+        bh9,
 
-sonoff,
-main1,
-choisi,
-test0,
-f2_all,
-imen,
-cache,
-iesc,
-perdu,
-col,
-syn,
-fouil,
-zuul,
-tesok,
-obpart,
-okdes,
-solu,
-arret,
-anyone,
-brt,
-rect,
-rech_cfiec,
-active_menu;
+        sonoff,
+        main1,
+        choisi,
+        test0,
+        f2_all,
+        imen,
+        cache,
+        iesc,
+        perdu,
+        col,
+        syn,
+        fouil,
+        zuul,
+        tesok,
+        obpart,
+        okdes,
+        solu,
+        arret,
+        anyone,
+        brt,
+        rect,
+        rech_cfiec,
+        active_menu;
 
 
 integer x,
-y,
-t,
-vj,
-li,
-vh,
-vm,
-jh,
-mh,
-cs,
-gd,                /*  Gd = graph device  */
-hdb,
-hfb,
-heu,
-jou,
-key,
-min,
-num,
-max,
-res,
-ment,
-haut,
-caff,
-maff,
-crep,
-ades,
-iouv,
-inei,
-ctrm,
-dobj,
-msg3,
-msg4,
-mlec,
-newgd,
-c_zzz,
-mchai,
-menup,
-ipers,
-ledeb,
-lefin,
-mpers,
-mnumo,
-xprec,
-yprec,
-perdep,
-prebru,
-typlec,
-num_ph,
-xwhere,
-ywhere,
-numpal,
-lderobj,
-nb_word,
-ptr_oct,
-k_tempo,
-ptr_tcph,
-ptr_word,
-color_txt;
+        y,
+        t,
+        vj,
+        li,
+        vh,
+        vm,
+        jh,
+        mh,
+        cs,
+        gd,                /*  Gd = graph device  */
+        hdb,
+        hfb,
+        heu,
+        jou,
+        key,
+        min,
+        num,
+        max,
+        res,
+        ment,
+        haut,
+        caff,
+        maff,
+        crep,
+        ades,
+        iouv,
+        inei,
+        ctrm,
+        dobj,
+        msg3,
+        msg4,
+        mlec,
+        newgd,
+        c_zzz,
+        mchai,
+        menup,
+        ipers,
+        ledeb,
+        lefin,
+        mpers,
+        mnumo,
+        xprec,
+        yprec,
+        perdep,
+        prebru,
+        typlec,
+        num_ph,
+        xwhere,
+        ywhere,
+        numpal,
+        lderobj,
+        nb_word,
+        ptr_oct,
+        k_tempo,
+        ptr_tcph,
+        ptr_word,
+        color_txt;
 
-array<0,6400,integer> t_cph;
-array<0,4000,byte> tabdon;
+array<0, 6400, integer> t_cph;
+array<0, 4000, byte> tabdon;
 /*   t_dxx  : array[0..121] of integer;*/
 str125 stpou;                               /* donne le % d'indices */
 byte is;
 char mode;
 fichier_byte ficdes;
 str125 al_mess,
-err_mess,
-ind_mess,
-al_mess2;
+       err_mess,
+       ind_mess,
+       al_mess2;
 
- array<1,8,integer> invt,
-nbrep,
-nbrepm,
- disc;
-  array<0,4,integer> msg;
- array<1,7,integer> depl;
- array<1,8,varying_string<22> > inv;
- array<1,7,varying_string<23> > dep;
- array<1,21,varying_string<10> > act;
- array<1,5,varying_string<11> > self_;
- array<1,8,varying_string<5> > dis;
- array<1,7,char> touv;
- sav_chaine s,s1;
-array<0,390,byte> bufcha;
+array<1, 8, integer> invt,
+      nbrep,
+      nbrepm,
+      disc;
+array<0, 4, integer> msg;
+array<1, 7, integer> depl;
+array<1, 8, varying_string<22> > inv;
+array<1, 7, varying_string<23> > dep;
+array<1, 21, varying_string<10> > act;
+array<1, 5, varying_string<11> > self_;
+array<1, 8, varying_string<5> > dis;
+array<1, 7, char> touv;
+sav_chaine s, s1;
+array<0, 390, byte> bufcha;
 
-matrix<1,6,0,23,byte> lettres;
+matrix<1, 6, 0, 23, byte> lettres;
 
-array<0,15,byte> palher;
+array<0, 15, byte> palher;
 
-    tabint t_mot;
+tabint t_mot;
 integer tay_tchar;
-    tabind t_rec;
-   file<ind> sauv_t;
-   untyped_file fibyte;
-   tab_mlieu v_lieu;
-        tfxx l;
-      tablint tbi;
+tabind t_rec;
+file<ind> sauv_t;
+untyped_file fibyte;
+tab_mlieu v_lieu;
+tfxx l;
+tablint tbi;
 chariot c1, c2, c3;
-   real addfix;
-   pal_cga palsav;
-   array<0,90,tabdb> tabpal;
-   pal_cga palcga;
-      array<0,14,pattern> tpt;
+real addfix;
+pal_cga palsav;
+array<0, 90, tabdb> tabpal;
+pal_cga palcga;
+array<0, 14, pattern> tpt;
 
 
 
@@ -400,86 +407,76 @@ chariot c1, c2, c3;
 
 /* procedure box(c,Gd,xo,yo,xi,yi,patt:integer); external 'c:\mc\boite.com'; */
 
-void hirs()
-{
-      const array<0,13,byte> tandy
-           = {{113,80,90,14,63,6,50,56,2,3,6,7,0,0}};
-      const array<0,12,byte> herc
-        = {{50,40,41,9,103,3,100,100,2,3,0,0,0}};
-       integer i, j;
+void hirs() {
+	const array<0, 13, byte> tandy
+	= {{113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0}};
+	const array<0, 12, byte> herc
+	= {{50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0}};
+	integer i, j;
 
-  switch (gd) {
-    case cga :
-     {
-       graphcolormode;
-       graphbackground(0);
-       palette(1);
-       res=1;
-     }
-     break;
-    case ams :
-     {
-       hires;
-       inline_((real)(0xb8)/6/0/        /*  =>  mov ax,6 */
-              0xcd/0x10);       /*  =>  int 16   */
-       port[0x3d9]=15;
-       port[0x3df]=0;
-       port[0x3dd]=15;
-       res=2;
-     }
-     break;
-    case ega :
-     {
-       inline_((real)(0xb8) / 14 / 0 /     /*  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs */
-              0xcd / 0x10);        /*  INT 16  */
-       res=2;
-     }
-     break;
-    case her :
-     {
-       port[0x3bf]=3;
-       port[0x3b8]=2;
-       for( i=0; i <= 12; i ++)
-       {
-         port[0x3b4]=i;
-         port[0x3b5]=herc[i];
-       }
-       inline_((real)(0xfc)/0xb9/0/0x80/0xb8/0/0xb0/0x8e/0xc0/0x31/0xff/0x31/0xc0/0xf3/0xab);
-       port[0x3b8]=10;
-       res=2;
-     }
-     break;
-    case tan :
-     {
-       port[0x3d8]=0;
-       port[0x3da]=3;
-       port[0x3de]=0x14;
-       for( i=0; i <= 13; i ++)
-         {
-           port[0x3d4]=i;
-           port[0x3d5]=tandy[i];
-         }
-       port[0x3da]=2;
-       port[0x3de]=0;
-       port[0x3d8]=port[0x3d8] | (11 & 0xef);
-       port[0x3dd]=port[0x3dd] | 1;
-       port[0x3df]=port[0x3df] | 0xc0;
-       box(0,gd,0,0,640,200,255);
-       res=1;
-     }
-     break;
-  }
+	switch (gd) {
+	case cga : {
+		graphcolormode;
+		graphbackground(0);
+		palette(1);
+		res = 1;
+	}
+	break;
+	case ams : {
+		hires;
+		inline_((real)(0xb8) / 6 / 0 /   /*  =>  mov ax,6 */
+		        0xcd / 0x10);     /*  =>  int 16   */
+		port[0x3d9] = 15;
+		port[0x3df] = 0;
+		port[0x3dd] = 15;
+		res = 2;
+	}
+	break;
+	case ega : {
+		inline_((real)(0xb8) / 14 / 0 /     /*  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs */
+		        0xcd / 0x10);        /*  INT 16  */
+		res = 2;
+	}
+	break;
+	case her : {
+		port[0x3bf] = 3;
+		port[0x3b8] = 2;
+		for (i = 0; i <= 12; i ++) {
+			port[0x3b4] = i;
+			port[0x3b5] = herc[i];
+		}
+		inline_((real)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
+		port[0x3b8] = 10;
+		res = 2;
+	}
+	break;
+	case tan : {
+		port[0x3d8] = 0;
+		port[0x3da] = 3;
+		port[0x3de] = 0x14;
+		for (i = 0; i <= 13; i ++) {
+			port[0x3d4] = i;
+			port[0x3d5] = tandy[i];
+		}
+		port[0x3da] = 2;
+		port[0x3de] = 0;
+		port[0x3d8] = port[0x3d8] | (11 & 0xef);
+		port[0x3dd] = port[0x3dd] | 1;
+		port[0x3df] = port[0x3df] | 0xc0;
+		box(0, gd, 0, 0, 640, 200, 255);
+		res = 1;
+	}
+	break;
+	}
 }
 
 /* procedure affput(Chx,Gd,x,y,coul,char:integer); external 'c:\mc\divaf.com'; */
 
-void affcar(integer gd,integer x,integer y,integer coul,integer char)
-{
-  if (res==1)  affput(1,gd,((cardinal)x >> 1),y,coul,char);
-           else affput(1,gd,x,y,coul,char);
+void affcar(integer gd, integer x, integer y, integer coul, integer char) {
+	if (res == 1)  affput(1, gd, ((cardinal)x >> 1), y, coul, char);
+	else affput(1, gd, x, y, coul, char);
 }
 
-void putpix(integer gd,integer x,integer y,integer coul)
-{
-  affput(0,gd,x,y,coul,0);
+void putpix(integer gd, integer x, integer y, integer coul) {
+	affput(0, gd, x, y, coul, 0);
 }
