@@ -1256,5 +1256,182 @@ void Scene3250::dispatch() {
 	Scene::dispatch();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3260 - Computer room
+ *
+ *--------------------------------------------------------------------------*/
+bool Scene3260::Actor13::startAction(CursorType action, Event &event) {
+	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 3271;
+	scene->setAction(&scene->_sequenceManager, scene, 3271, &R2_GLOBALS._player, &scene->_actor13, NULL);
+	return true;
+}
+
+bool Scene3260::Actor14::startAction(CursorType action, Event &event) {
+	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 3272;
+	scene->setAction(&scene->_sequenceManager, scene, 3272, &R2_GLOBALS._player, &scene->_actor14, NULL);
+	return true;
+}
+
+void Scene3260::Action1::signal() {
+	SceneObjectExt *fmtObj = (SceneObjectExt *) _endHandler;
+
+	fmtObj->setFrame(R2_GLOBALS._randomSource.getRandomNumber(6));
+	setDelay(120 + R2_GLOBALS._randomSource.getRandomNumber(179));
+}
+
+void Scene3260::postInit(SceneObjectList *OwnerList) {
+	loadScene(3260);
+	R2_GLOBALS._player._characterIndex = R2_MIRANDA;
+	SceneExt::postInit();
+	R2_GLOBALS._sound1.play(285);
+
+	_actor13.postInit();
+	_actor13.setup(3260, 6, 1);
+	_actor13.setPosition(Common::Point(40, 106));
+	_actor13.setDetails(3260, 18, 1, -1, 1, NULL);
+
+	if (R2_INVENTORY.getObjectScene(52) == 3260) {
+		_actor14.postInit();
+		_actor14.setup(3260, 7, 1);
+		_actor14.setPosition(Common::Point(202, 66));
+		_actor14.setDetails(3260, 12, 1, -1, 1, NULL);
+	}
+
+	_actor1.postInit();
+	_actor1.setup(3260, 1, 1);
+	_actor1.setPosition(Common::Point(93, 73));
+	_actor1.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor1.setAction(&_action1, &_actor1);
+
+	_actor2.postInit();
+	_actor2.setup(3260, 2, 1);
+	_actor2.setPosition(Common::Point(142, 63));
+	_actor2.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor2.setAction(&_action2, &_actor2);
+
+	_actor3.postInit();
+	_actor3.setup(3260, 2, 1);
+	_actor3.setPosition(Common::Point(166, 54));
+	_actor3.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor3.setAction(&_action3, &_actor3);
+
+	_actor4.postInit();
+	_actor4.setup(3260, 2, 1);
+	_actor4.setPosition(Common::Point(190, 46));
+	_actor4.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor4.setAction(&_action4, &_actor4);
+
+	_actor5.postInit();
+	_actor5.setup(3260, 2, 1);
+	_actor5.setPosition(Common::Point(142, 39));
+	_actor5.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor5.setAction(&_action5, &_actor5);
+
+	_actor6.postInit();
+	_actor6.setup(3260, 2, 1);
+	_actor6.setPosition(Common::Point(166, 30));
+	_actor6.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor6.setAction(&_action6, &_actor6);
+
+	_actor7.postInit();
+	_actor7.setup(3260, 2, 1);
+	_actor7.setPosition(Common::Point(190, 22));
+	_actor7.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor7.setAction(&_action7, &_actor7);
+
+	_actor8.postInit();
+	_actor8.setup(3260, 2, 1);
+	_actor8.setPosition(Common::Point(142, 14));
+	_actor8.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor8.setAction(&_action8, &_actor8);
+
+	_actor9.postInit();
+	_actor9.setup(3260, 2, 1);
+	_actor9.setPosition(Common::Point(166, 6));
+	_actor9.setDetails(3260, 3, 1, 5, 1, NULL);
+	_actor9.setAction(&_action9, &_actor9);
+
+	_actor10.postInit();
+	_actor10.setup(3260, 3, 1);
+	_actor10.setPosition(Common::Point(265, 163));
+	_actor10.fixPriority(180);
+	_actor10._numFrames = 10;
+	_actor10.setDetails(3260, 6, 1, 8, 1, NULL);
+	_actor10.animate(ANIM_MODE_2, NULL);
+
+	_actor11.postInit();
+	_actor11.setup(3260, 4, 1);
+	_actor11.setPosition(Common::Point(127, 108));
+	_actor11.fixPriority(120);
+	_actor11.setAction(&_action11, &_actor11);
+	_actor11._numFrames = 15;
+	_actor11.setDetails(3260, 6, 1, 8, 1, NULL);
+	_actor11.animate(ANIM_MODE_2, NULL);
+
+	_actor12.postInit();
+	_actor12.setup(3260, 5, 1);
+	_actor12.setPosition(Common::Point(274, 65));
+	_actor12.setAction(&_action12, &_actor12);
+	_actor12._numFrames = 5;
+	_actor12.setDetails(3260, 9, 1, 11, 1, NULL);
+	_actor12.animate(ANIM_MODE_2, NULL);
+
+	_item1.setDetails(Rect(0, 0, 320, 200), 3260, 0, 1, 2, 1, NULL);
+	R2_GLOBALS._player.postInit();
+
+	if (R2_GLOBALS._player._oldCharacterScene[3] == 3275) {
+		_sceneMode = 3270;
+		setAction(&_sequenceManager, this, 3270, &R2_GLOBALS._player, &_actor13, NULL);
+	} else {
+		R2_GLOBALS._player.setup(30, 5, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(53, 113));
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+		R2_GLOBALS._player.enableControl();
+	}
+	R2_GLOBALS._player._oldCharacterScene[3] = 3260;
+}
+
+void Scene3260::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene3260::signal() {
+	switch (_sceneMode) {
+	case 3271:
+		R2_GLOBALS._sceneManager.changeScene(3275);
+		break;
+	case 3272:
+		_sceneMode = 3273;
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		SceneItem::display(3260, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		R2_GLOBALS._player.disableControl();
+		R2_INVENTORY.setObjectScene(52, 3);
+		R2_INVENTORY.setObjectScene(43, 3);
+		setAction(&_sequenceManager, this, 3273, &R2_GLOBALS._player, &_actor14, NULL);
+		break;
+	case 3273:
+		_actor4.remove();
+		R2_GLOBALS._player.enableControl();
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
