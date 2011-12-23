@@ -3775,7 +3775,7 @@ void DreamGenContext::incRyanPage() {
 		commandOnly(31);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || (data.word(kMousebutton) & 1))
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
 		return;
 
 	data.byte(kRyanpage) = (data.word(kMousex) - (kInventx + 167)) / 18;
