@@ -128,11 +128,12 @@ void DreamGenContext::useRoutine() {
 	}
 
 	getAnyAd();
-	const uint8 *id = es.ptr(bx + 12, 4);
+	// CHECKME: Do the callbacks use es:bx ?
+	void *obj = es.ptr(bx, 15);
 
 	for (size_t i = 0; i < sizeof(kUseList)/sizeof(UseListEntry); ++i) {
 		const UseListEntry &entry = kUseList[i];
-		if (('A' + id[0] == entry.id[0]) && ('A' + id[1] == entry.id[1]) && ('A' + id[2] == entry.id[2]) && ('A' + id[3] == entry.id[3])) {
+		if (objectMatches(obj, entry.id)) {
 			(this->*entry.callback)();
 			return;
 		}

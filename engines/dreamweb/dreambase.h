@@ -513,6 +513,7 @@ public:
 	void startLoading(const Room &room);
 	void startup();
 	void atmospheres();
+	bool objectMatches(void *object, const char *id);
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

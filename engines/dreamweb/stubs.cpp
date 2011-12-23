@@ -1681,8 +1681,8 @@ void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, b
 	printDirect(string, x, y, maxWidth, centered);
 }
 
-static bool objectMatches(void *object, const char *id) {
-	const char *objId = (const char *)(((const uint8 *)object) + 12); // whether it is a DynObject or a SetObject
+bool DreamBase::objectMatches(void *object, const char *id) {
+	const char *objId = (const char *)object + 12; // whether it is a DynObject or a SetObject
 	for (size_t i = 0; i < 4; ++i) {
 		if (id[i] != objId[i] + 'A')
 			return false;
