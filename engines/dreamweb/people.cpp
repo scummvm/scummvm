@@ -129,8 +129,7 @@ void DreamBase::setupInitialReelRoutines() {
 }
 
 void DreamBase::updatePeople() {
-	data.word(kListpos) = kPeoplelist;
-	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
+	_peopleList.clear();
 	++data.word(kMaintimer);
 
 	for (int i = 0; _reelRoutines[i].reallocation != 255; ++i) {
@@ -220,13 +219,12 @@ void DreamBase::madMode() {
 }
 
 void DreamBase::addToPeopleList(ReelRoutine *routine) {
-	uint16 routinePointer = (const uint8 *)routine - data.ptr(0, 0);
+	People people;
+	people._reelPointer = routine->reelPointer();
+	people._routinePointer = routine;
+	people.b4 = routine->b7;
 
-	People *people = (People *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
-	people->setReelPointer(routine->reelPointer());
-	people->setRoutinePointer(routinePointer);
-	people->b4 = routine->b7;
-	data.word(kListpos) += sizeof(People);
+	_peopleList.push_back(people);
 }
 
 bool DreamBase::checkSpeed(ReelRoutine &routine) {

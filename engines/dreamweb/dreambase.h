@@ -24,6 +24,7 @@
 #define DREAMBASE_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 #include "dreamweb/segment.h"
 
@@ -65,6 +66,8 @@ protected:
 
 	// from people.cpp
 	ReelRoutine _reelRoutines[kNumReelRoutines+1];
+	Common::List<People> _peopleList;
+	ReelRoutine *_personData;
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);

@@ -1168,12 +1168,10 @@ void DreamGenContext::checkIfPerson() {
 }
 
 bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
-	People *people = (People *)getSegment(data.word(kBuffers)).ptr(kPeoplelist, 0);
-
-	for (size_t i = 0; i < 12; ++i, ++people) {
-		if (people->b4 == 255)
-			continue;
-		Reel *reel = getReelStart(people->reelPointer());
+	Common::List<People>::iterator i;
+	for (i = _peopleList.begin(); i != _peopleList.end(); ++i) {
+		People &people = *i;
+		Reel *reel = getReelStart(people._reelPointer);
 		if (reel->frame() == 0xffff)
 			++reel;
 		const Frame *frame = getReelFrameAX(reel->frame());
@@ -1189,8 +1187,8 @@ bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
 			continue;
 		if (y >= ymax)
 			continue;
-		data.word(kPersondata) = people->routinePointer();
-		obName(people->b4, 5);
+		_personData = people._routinePointer;
+		obName(people.b4, 5);
 		return true;
 	}
 	return false;
@@ -3833,7 +3831,7 @@ void DreamGenContext::talk() {
 	} while (!data.byte(kGetback));
 
 	if (data.byte(kTalkpos) >= 4)
-		data.byte(data.word(kPersondata)+7) |= 128;
+		_personData->b7 |= 128;
 
 	redrawMainScrn();
 	workToScreenM();
