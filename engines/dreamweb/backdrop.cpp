@@ -89,41 +89,34 @@ uint8 DreamBase::getYAd(const uint8 *setData, uint8 *result) {
 	return 1;
 }
 
-uint8 DreamBase::getMapAd(const uint8 *setData) {
+uint8 DreamBase::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
 	uint8 xad, yad;
 	if (getXAd(setData, &xad) == 0)
 		return 0;
-	data.word(kObjectx) = xad;
+	*x = xad;
 	if (getYAd(setData, &yad) == 0)
 		return 0;
-	data.word(kObjecty) = yad;
+	*y = yad;
 	return 1;
 }
 
-void DreamBase::calcFrFrame(uint16 frameSeg, uint16 frameNum, uint16 framesAd, uint8* width, uint8* height) {
+void DreamBase::calcFrFrame(uint16 frameSeg, uint16 frameNum, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
 	const Frame *frame = (const Frame *)getSegment(frameSeg).ptr(frameNum * sizeof(Frame), sizeof(Frame));
-	data.word(kSavesource) = framesAd + frame->ptr();
-	data.byte(kSavesize+0) = frame->width;
-	data.byte(kSavesize+1) = frame->height;
-	data.word(kOffsetx) = frame->x;
-	data.word(kOffsety) = frame->y;
 	*width = frame->width;
 	*height = frame->height;
+
+	objPos->xMin = (x + frame->x) & 0xff;
+	objPos->yMin = (y + frame->y) & 0xff;
+	objPos->xMax = objPos->xMin + frame->width;
+	objPos->yMax = objPos->yMin + frame->height;
 }
 
-void DreamBase::finalFrame(uint16 *x, uint16 *y) {
-	data.byte(kSavex) = (data.word(kObjectx) + data.word(kOffsetx)) & 0xff;
-	data.byte(kSavey) = (data.word(kObjecty) + data.word(kOffsety)) & 0xff;
-	*x = data.word(kObjectx);
-	*y = data.word(kObjecty);
-}
-
-void DreamBase::makeBackOb(SetObject *objData) {
+void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 	if (data.byte(kNewobs) == 0)
 		return;
 	uint8 priority = objData->priority;
 	uint8 type = objData->type;
-	Sprite *sprite = makeSprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
+	Sprite *sprite = makeSprite(x, y, addr_backobject, data.word(kSetframes), 0);
 
 	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
 	assert(objDataOffset % sizeof(SetObject) == 0);
@@ -148,27 +141,22 @@ void DreamBase::showAllObs() {
 	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, count * sizeof(SetObject));
 	for (size_t i = 0; i < count; ++i) {
 		SetObject *setEntry = setEntries + i;
-		if (getMapAd(setEntry->mapad) == 0)
+		uint16 x, y;
+		if (getMapAd(setEntry->mapad, &x, &y) == 0)
 			continue;
 		uint8 currentFrame = setEntry->frames[0];
 		if (currentFrame == 0xff)
 			continue;
 		uint8 width, height;
-		calcFrFrame(data.word(kSetframes), currentFrame, kFrames, &width, &height);
-		uint16 x, y;
-		finalFrame(&x, &y);
+		calcFrFrame(data.word(kSetframes), currentFrame, &width, &height, x, y, objPos);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);
 			showFrame(frameBase, x, y, currentFrame, 0);
 		} else
-			makeBackOb(setEntry);
+			makeBackOb(setEntry, x, y);
 
-		objPos->xMin = data.byte(kSavex);
-		objPos->yMin = data.byte(kSavey);
-		objPos->xMax = data.byte(kSavex) + data.byte(kSavesize+0);
-		objPos->yMax = data.byte(kSavey) + data.byte(kSavesize+1);
 		objPos->index = i;
 		++objPos;
 	}
@@ -236,22 +224,17 @@ void DreamBase::showAllFree() {
 	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	const Frame *frameBase = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 	for (size_t i = 0; i < count; ++i) {
-		uint8 mapAd = getMapAd(freeObjects[i].mapad);
+		uint16 x, y;
+		uint8 mapAd = getMapAd(freeObjects[i].mapad, &x, &y);
 		if (mapAd != 0) {
 			uint8 width, height;
 			uint16 currentFrame = 3 * i;
-			calcFrFrame(data.word(kFreeframes), currentFrame, kFrframes, &width, &height);
-			uint16 x, y;
-			finalFrame(&x, &y);
+			calcFrFrame(data.word(kFreeframes), currentFrame, &width, &height, x, y, objPos);
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
 				assert(currentFrame < 256);
 				showFrame(frameBase, x, y, currentFrame, 0);
-				objPos->xMin = data.byte(kSavex);
-				objPos->yMin = data.byte(kSavey);
-				objPos->xMax = data.byte(kSavex) + data.byte(kSavesize+0);
-				objPos->yMax = data.byte(kSavey) + data.byte(kSavesize+1);
 				objPos->index = i;
 				++objPos;
 			}
@@ -289,20 +272,15 @@ void DreamBase::showAllEx() {
 			continue;
 		if (object->currentLocation != data.byte(kReallocation))
 			continue;
-		if (getMapAd(object->mapad) == 0)
+		uint16 x, y;
+		if (getMapAd(object->mapad, &x, &y) == 0)
 			continue;
 		uint8 width, height;
 		uint16 currentFrame = 3 * i;
-		calcFrFrame(data.word(kExtras), currentFrame, kExframes, &width, &height);
-		uint16 x, y;
-		finalFrame(&x, &y);
+		calcFrFrame(data.word(kExtras), currentFrame, &width, &height, x, y, objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
 			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);
-			objPos->xMin = data.byte(kSavex);
-			objPos->yMin = data.byte(kSavey);
-			objPos->xMax = data.byte(kSavesize + 0) + data.byte(kSavex);
-			objPos->yMax = data.byte(kSavesize + 1) + data.byte(kSavey);
 			objPos->index = i;
 			++objPos;
 		}
