@@ -66,8 +66,13 @@ protected:
 
 	// from people.cpp
 	ReelRoutine _reelRoutines[kNumReelRoutines+1];
-	Common::List<People> _peopleList;
 	ReelRoutine *_personData;
+
+	// from Buffers
+	uint8 _startPal[3*256];
+	uint8 _endPal[3*256];
+	uint8 _mainPal[3*256];
+	Common::List<People> _peopleList;
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -494,9 +499,6 @@ public:
 	void showPuzText(uint16 command, uint16 count);
 
 	// from vgafades.cpp
-	uint8 *mainPalette();
-	uint8 *startPalette();
-	uint8 *endPalette();
 	void clearStartPal();
 	void clearEndPal();
 	void palToStartPal();

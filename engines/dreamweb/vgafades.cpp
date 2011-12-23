@@ -24,41 +24,28 @@
 
 namespace DreamGen {
 
-uint8 *DreamBase::mainPalette() {
-// TODO: Turn these into plain C arrays
-	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256 * 3);
-}
-
-uint8 *DreamBase::startPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256 * 3);
-}
-
-uint8 *DreamBase::endPalette() {
-	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256 * 3);
-}
-
 void DreamBase::clearStartPal() {
-	memset(startPalette(), 0, 256 * 3);
+	memset(_startPal, 0, 256 * 3);
 }
 
 void DreamBase::clearEndPal() {
-	memset(endPalette(), 0, 256 * 3);
+	memset(_endPal, 0, 256 * 3);
 }
 
 void DreamBase::palToStartPal() {
-	memcpy(startPalette(), mainPalette(), 256 * 3);
+	memcpy(_startPal, _mainPal, 256 * 3);
 }
 
 void DreamBase::endPalToStart() {
-	memcpy(startPalette(), endPalette(), 256 * 3);
+	memcpy(_startPal, _endPal, 256 * 3);
 }
 
 void DreamBase::startPalToEnd() {
-	memcpy(endPalette(), startPalette(), 256 * 3);
+	memcpy(_endPal, _startPal, 256 * 3);
 }
 
 void DreamBase::palToEndPal() {
-	memcpy(endPalette(), mainPalette(), 256 * 3);
+	memcpy(_endPal, _mainPal, 256 * 3);
 }
 
 void DreamBase::fadeDOS() {
@@ -66,7 +53,7 @@ void DreamBase::fadeDOS() {
 
 	engine->waitForVSync();
 	//processEvents will be called from vsync
-	uint8 *dst = startPalette();
+	uint8 *dst = _startPal;
 	engine->getPalette(dst, 0, 64);
 	for (int fade = 0; fade < 64; ++fade) {
 		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
@@ -84,7 +71,7 @@ void DreamBase::doFade() {
 		return;
 
 	engine->processEvents();
-	uint8 *src = startPalette() + 3 * data.byte(kColourpos);
+	uint8 *src = _startPal + 3 * data.byte(kColourpos);
 	engine->setPalette(src, data.byte(kColourpos), data.byte(kNumtofade));
 
 	data.byte(kColourpos) += data.byte(kNumtofade);
@@ -98,8 +85,8 @@ void DreamBase::fadeCalculation() {
 		return;
 	}
 
-	uint8 *startPal = startPalette();
-	const uint8 *endPal = endPalette();
+	uint8 *startPal = _startPal;
+	const uint8 *endPal = _endPal;
 	for (size_t i = 0; i < 256 * 3; ++i) {
 		uint8 s = startPal[i];
 		uint8 e = endPal[i];
@@ -117,8 +104,8 @@ void DreamBase::fadeCalculation() {
 
 void DreamBase::fadeUpYellows() {
 	palToEndPal();
-	memset(endPalette() + 231 * 3, 0, 8 * 3);
-	memset(endPalette() + 246 * 3, 0, 1 * 3);
+	memset(_endPal + 231 * 3, 0, 8 * 3);
+	memset(_endPal + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
@@ -129,8 +116,8 @@ void DreamBase::fadeUpYellows() {
 void DreamBase::fadeUpMonFirst() {
 	palToStartPal();
 	palToEndPal();
-	memset(startPalette() + 231 * 3, 0, 8 * 3);
-	memset(startPalette() + 246 * 3, 0, 1 * 3);
+	memset(_startPal + 231 * 3, 0, 8 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
@@ -144,8 +131,8 @@ void DreamBase::fadeUpMonFirst() {
 void DreamBase::fadeDownMon() {
 	palToStartPal();
 	palToEndPal();
-	memset(endPalette() + 231 * 3, 0, 8 * 3);
-	memset(endPalette() + 246 * 3, 0, 1 * 3);
+	memset(_endPal + 231 * 3, 0, 8 * 3);
+	memset(_endPal + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
@@ -156,8 +143,8 @@ void DreamBase::fadeDownMon() {
 void DreamBase::fadeUpMon() {
 	palToStartPal();
 	palToEndPal();
-	memset(startPalette() + 231 * 3, 0, 8 * 3);
-	memset(startPalette() + 246 * 3, 0, 1 * 3);
+	memset(_startPal + 231 * 3, 0, 8 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
@@ -167,10 +154,10 @@ void DreamBase::fadeUpMon() {
 
 void DreamBase::initialMonCols() {
 	palToStartPal();
-	memset(startPalette() + 230 * 3, 0, 9 * 3);
-	memset(startPalette() + 246 * 3, 0, 1 * 3);
+	memset(_startPal + 230 * 3, 0, 9 * 3);
+	memset(_startPal + 246 * 3, 0, 1 * 3);
 	engine->processEvents();
-	engine->setPalette(startPalette() + 230 * 3, 230, 18);
+	engine->setPalette(_startPal + 230 * 3, 230, 18);
 }
 
 void DreamBase::fadeScreenUp() {
@@ -222,8 +209,8 @@ void DreamBase::fadeScreenDownHalf() {
 	palToStartPal();
 	palToEndPal();
 
-	const uint8 *startPal = startPalette();
-	uint8 *endPal = endPalette();
+	const uint8 *startPal = _startPal;
+	uint8 *endPal = _endPal;
 	for (int i = 0; i < 256 * 3; ++i) {
 		*endPal >>= 1;
 		endPal++;
@@ -248,8 +235,8 @@ void DreamBase::clearPalette() {
 // Converts palette to grey scale, summed using formula
 // .20xred + .59xGreen + .11xBlue
 void DreamBase::greyscaleSum() {
-	byte *src = mainPalette();
-	byte *dst = endPalette();
+	byte *src = _mainPal;
+	byte *dst = _endPal;
 
 	for (int i = 0; i < 256; ++i) {
 		const unsigned int r = 20 * *src++;
@@ -276,12 +263,12 @@ void DreamBase::greyscaleSum() {
 }
 
 void DreamBase::allPalette() {
-	memcpy(startPalette(), mainPalette(), 3 * 256);
+	memcpy(_startPal, _mainPal, 3 * 256);
 	dumpCurrent();
 }
 
 void DreamBase::dumpCurrent() {
-	uint8 *pal = startPalette();
+	uint8 *pal = _startPal;
 
 	engine->waitForVSync();
 	engine->processEvents();

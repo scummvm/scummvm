@@ -202,7 +202,7 @@ void DreamBase::showPCX(const Common::String &name) {
 	// the color components have to be adjusted from 8 to 6 bits.
 
 	pcxFile.seek(16, SEEK_SET);
-	mainGamePal = mainPalette();
+	mainGamePal = _mainPal;
 	pcxFile.read(mainGamePal, 48);
 
 	memset(mainGamePal + 48, 0xff, 720);
@@ -448,7 +448,7 @@ void DreamBase::loadPalFromIFF() {
 	palFile.close();
 
 	const uint8 *src = mapStore() + 0x30;
-	uint8 *dst = mainPalette();
+	uint8 *dst = _mainPal;
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
 		if (data.byte(kBrightness) == 1) {
