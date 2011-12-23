@@ -273,7 +273,7 @@ void DreamBase::sparky(ReelRoutine &routine) {
 	if (data.word(kCard1money))
 		routine.b7 = 3;
 	if (checkSpeed(routine)) {
-		if (routine.reelPointer() != 34) {
+		if (routine.reelPointer() == 34) {
 			if (engine->randomNumber() < 30)
 				routine.incReelPointer();
 			else
