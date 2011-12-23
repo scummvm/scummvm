@@ -106,7 +106,7 @@ private:
 
 	ObjectPtr<CMap> _cmap;
 	int _numChores;
-	Chore *_chores;
+	Chore **_chores;
 	Common::List<Chore*> _playingChores;
 	Math::Matrix4 _matrix;
 

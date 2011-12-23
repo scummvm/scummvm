@@ -185,14 +185,15 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 
 	ts.expectString("section chores");
 	ts.scanString(" numchores %d", 1, &_numChores);
-	_chores = new Chore[_numChores];
+	_chores = new Chore *[_numChores];
 	for (int i = 0; i < _numChores; i++) {
 		int id, length, tracks;
 		char name[32];
 		ts.scanString(" %d %d %d %32s", 4, &id, &length, &tracks, name);
-		_chores[id]._length = length;
-		_chores[id]._numTracks = tracks;
-		memcpy(_chores[id]._name, name, 32);
+		_chores[id] = new Chore();
+		_chores[id]->_length = length;
+		_chores[id]->_numTracks = tracks;
+		memcpy(_chores[id]->_name, name, 32);
 		Debug::debug(Debug::Chores, "Loaded chore: %s\n", name);
 	}
 
@@ -200,7 +201,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	for (int i = 0; i < _numChores; i++) {
 		int which;
 		ts.scanString("chore %d", 1, &which);
-		_chores[which].load(i, this, ts);
+		_chores[which]->load(i, this, ts);
 	}
 }
 
@@ -208,21 +209,22 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 	Common::List<Component *>components;
 
 	_numChores = ms.readUint32LE();
-	_chores = new PoolChore[_numChores];
+	_chores = new Chore *[_numChores];
 	for (int i = 0; i < _numChores; i++) {
+		_chores[i] = new PoolChore();
 		uint32 nameLength;
 		Component *prevComponent = NULL;
 		nameLength = ms.readUint32LE();
-		ms.read(_chores[i]._name, nameLength);
+		ms.read(_chores[i]->_name, nameLength);
 		float length;
 		ms.read(&length, 4);
-		_chores[i]._length = (int)length;
+		_chores[i]->_length = (int)length;
 
-		_chores[i]._owner = this;
-		_chores[i]._numTracks = ms.readUint32LE();
-		_chores[i]._tracks = new ChoreTrack[_chores[i]._numTracks];
+		_chores[i]->_owner = this;
+		_chores[i]->_numTracks = ms.readUint32LE();
+		_chores[i]->_tracks = new ChoreTrack[_chores[i]->_numTracks];
 
-		for (int k = 0; k < _chores[i]._numTracks; k++) {
+		for (int k = 0; k < _chores[i]->_numTracks; k++) {
 			int componentNameLength = ms.readUint32LE();
 			assert(componentNameLength < 64);
 
@@ -253,7 +255,7 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 
 			components.push_back(component);
 
-			ChoreTrack &track = _chores[i]._tracks[k];
+			ChoreTrack &track = _chores[i]->_tracks[k];
 			track.numKeys = ms.readUint32LE();
 			track.keys = new TrackKey[track.numKeys];
 
@@ -291,6 +293,10 @@ Costume::~Costume() {
 				delete _components[i];
 		}
 		delete[] _components;
+
+		for (int i = 0; i < _numChores; ++i) {
+			delete _chores[i];
+		}
 		delete[] _chores;
 	}
 	delete _head;
@@ -401,11 +407,11 @@ Model *Costume::getModel() {
 }
 
 void Costume::setChoreLastFrame(int num) {
-	_chores[num].setLastFrame();
+	_chores[num]->setLastFrame();
 }
 
 void Costume::setChoreLooping(int num, bool val) {
-	_chores[num].setLooping(val);
+	_chores[num]->setLooping(val);
 }
 
 void Costume::playChoreLooping(int num) {
@@ -413,15 +419,15 @@ void Costume::playChoreLooping(int num) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num].playLooping();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[num]) == _playingChores.end())
-		_playingChores.push_back(&_chores[num]);
+	_chores[num]->playLooping();
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
+		_playingChores.push_back(_chores[num]);
 }
 
 Chore *Costume::getChore(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-		if (strcmp(_chores[i]._name, name) == 0) {
-			return &_chores[i];
+		if (strcmp(_chores[i]->_name, name) == 0) {
+			return _chores[i];
 		}
 	}
 	return 0;
@@ -429,7 +435,7 @@ Chore *Costume::getChore(const char *name) {
 
 void Costume::playChore(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
-			if (strcmp(_chores[i]._name, name) == 0) {
+			if (strcmp(_chores[i]->_name, name) == 0) {
 			playChore(i);
 			return;
 		}
@@ -443,9 +449,9 @@ void Costume::playChore(int num) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num].play();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[num]) == _playingChores.end())
-		_playingChores.push_back(&_chores[num]);
+	_chores[num]->play();
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
+		_playingChores.push_back(_chores[num]);
 }
 
 void Costume::stopChore(int num) {
@@ -453,8 +459,8 @@ void Costume::stopChore(int num) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num].stop();
-	_playingChores.remove(&_chores[num]);
+	_chores[num]->stop();
+	_playingChores.remove(_chores[num]);
 }
 
 void Costume::setColormap(const Common::String &map) {
@@ -469,8 +475,8 @@ void Costume::setColormap(const Common::String &map) {
 
 void Costume::stopChores() {
 	for (int i = 0; i < _numChores; i++) {
-		_chores[i].stop();
-		_playingChores.remove(&_chores[i]);
+		_chores[i]->stop();
+		_playingChores.remove(_chores[i]);
 	}
 }
 
@@ -481,9 +487,9 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 			return;
 		}
 	}
-	_chores[chore].fadeIn(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
-		_playingChores.push_back(&_chores[chore]);
+	_chores[chore]->fadeIn(msecs);
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
+		_playingChores.push_back(_chores[chore]);
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
@@ -493,19 +499,19 @@ void Costume::fadeChoreOut(int chore, int msecs) {
 			return;
 		}
 	}
-	_chores[chore].fadeOut(msecs);
+	_chores[chore]->fadeOut(msecs);
 }
 
 int Costume::isChoring(const char *name, bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
-		if (!strcmp(_chores[i]._name, name) && _chores[i]._playing && !(excludeLooping && _chores[i]._looping))
+		if (!strcmp(_chores[i]->_name, name) && _chores[i]->_playing && !(excludeLooping && _chores[i]->_looping))
 			return i;
 	}
 	return -1;
 }
 
 int Costume::isChoring(int num, bool excludeLooping) {
-	if (_chores[num]._playing && !(excludeLooping && _chores[num]._looping))
+	if (_chores[num]->_playing && !(excludeLooping && _chores[num]->_looping))
 		return num;
 	else
 		return -1;
@@ -513,7 +519,7 @@ int Costume::isChoring(int num, bool excludeLooping) {
 
 int Costume::isChoring(bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
-		if (_chores[i]._playing && !(excludeLooping && _chores[i]._looping))
+		if (_chores[i]->_playing && !(excludeLooping && _chores[i]->_looping))
 			return i;
 	}
 	return -1;
@@ -612,12 +618,12 @@ void Costume::saveState(SaveGame *state) const {
 	}
 
 	for (int i = 0; i < _numChores; ++i) {
-		Chore &c = _chores[i];
+		Chore *c = _chores[i];
 
-		state->writeLESint32(c._hasPlayed);
-		state->writeLESint32(c._playing);
-		state->writeLESint32(c._looping);
-		state->writeLESint32(c._currTime);
+		state->writeLESint32(c->_hasPlayed);
+		state->writeLESint32(c->_playing);
+		state->writeLESint32(c->_looping);
+		state->writeLESint32(c->_currTime);
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -647,12 +653,12 @@ bool Costume::restoreState(SaveGame *state) {
 	}
 
 	for (int i = 0; i < _numChores; ++i) {
-		Chore &c = _chores[i];
+		Chore *c = _chores[i];
 
-		c._hasPlayed = state->readLESint32();
-		c._playing = state->readLESint32();
-		c._looping = state->readLESint32();
-		c._currTime = state->readLESint32();
+		c->_hasPlayed = state->readLESint32();
+		c->_playing = state->readLESint32();
+		c->_looping = state->readLESint32();
+		c->_currTime = state->readLESint32();
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -667,7 +673,7 @@ bool Costume::restoreState(SaveGame *state) {
 	int numPlayingChores = state->readLEUint32();
 	for (int i = 0; i < numPlayingChores; ++i) {
 		int id = state->readLESint32();
-		_playingChores.push_back(&_chores[id]);
+		_playingChores.push_back(_chores[id]);
 	}
 
 	// FIXME: Decomment this!!

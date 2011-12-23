@@ -82,7 +82,7 @@ private:
 
 class PoolChore : public PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>, public Chore {
 public:
-	virtual int getId() { return PoolObject::getId(); }
+	virtual int getId() { return PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>::getId(); }
 };
 
 } // end of namespace Grim
