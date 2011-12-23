@@ -62,7 +62,7 @@ void DreamGenContext::talk() {
 	} while (!data.byte(kGetback));
 
 	if (data.byte(kTalkpos) >= 4)
-		data.byte(data.word(kPersondata)+7) |= 128;
+		_personData->b7 |= 128;
 
 	redrawMainScrn();
 	workToScreenM();
