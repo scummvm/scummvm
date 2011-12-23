@@ -474,25 +474,26 @@ const Frame *DreamBase::getReelFrameAX(uint16 frame) {
 }
 
 void DreamBase::showRain() {
-	Rain *rain = (Rain *)getSegment(data.word(kBuffers)).ptr(kRainlist, 0);
+	Common::List<Rain>::iterator i;
 
 	// Do nothing if there's no rain at all
-	if (rain->x == 255)
+	if (_rainList.empty())
 		return;
 
 	const Frame *frame = (const Frame *)getSegment(data.word(kMainsprites)).ptr(58 * sizeof(Frame), sizeof(Frame));
 	const uint8 *frameData = getSegment(data.word(kMainsprites)).ptr(kFrframes + frame->ptr(), 512);
 
-	for (; rain->x != 255; ++rain) {
-		uint16 y = rain->y + data.word(kMapady) + data.word(kMapystart);
-		uint16 x = rain->x + data.word(kMapadx) + data.word(kMapxstart);
-		uint16 size = rain->size;
-		uint16 offset = (rain->w3() - rain->b5) & 511;
-		rain->setW3(offset);
+	for (i = _rainList.begin(); i != _rainList.end(); ++i) {
+		Rain &rain = *i;
+		uint16 y = rain.y + data.word(kMapady) + data.word(kMapystart);
+		uint16 x = rain.x + data.word(kMapadx) + data.word(kMapxstart);
+		uint16 size = rain.size;
+		uint16 offset = (rain.w3 - rain.b5) & 511;
+		rain.w3 = offset;
 		const uint8 *src = frameData + offset;
 		uint8 *dst = workspace() + y * 320 + x;
-		for (uint16 i = 0; i < size; ++i) {
-			uint8 v = src[i];
+		for (uint16 j = 0; j < size; ++j) {
+			uint8 v = src[j];
 			if (v != 0)
 				*dst = v;
 			dst += 320-1; // advance diagonally
@@ -567,18 +568,20 @@ uint8 DreamBase::getBlockOfPixel(uint8 x, uint8 y) {
 		return type;
 }
 
-Rain *DreamBase::splitIntoLines(uint8 x, uint8 y, Rain *rain) {
+void DreamBase::splitIntoLines(uint8 x, uint8 y) {
 	do {
+		Rain rain;
+
 		// Look for line start
 		while (!getBlockOfPixel(x, y)) {
 			--x;
 			++y;
 			if (x == 0 || y >= data.byte(kMapysize))
-				return rain;
+				return;
 		}
 
-		rain->x = x;
-		rain->y = y;
+		rain.x = x;
+		rain.y = y;
 
 		uint8 length = 1;
 
@@ -591,14 +594,11 @@ Rain *DreamBase::splitIntoLines(uint8 x, uint8 y, Rain *rain) {
 			++length;
 		}
 
-		rain->size = length;
-		rain->w3_lo = engine->randomNumber();
-		rain->w3_hi = engine->randomNumber();
-		rain->b5 = (engine->randomNumber() & 3) + 4;
-		++rain;
+		rain.size = length;
+		rain.w3 = (engine->randomNumber() << 8) | engine->randomNumber();
+		rain.b5 = (engine->randomNumber() & 3) + 4;
+		_rainList.push_back(rain);
 	} while (x > 0 && y < data.byte(kMapysize));
-
-	return rain;
 }
 
 struct RainLocation {
@@ -640,8 +640,7 @@ static const RainLocation rainLocationList[] = {
 
 void DreamBase::initRain() {
 	const RainLocation *r = rainLocationList;
-	Rain *rainList = (Rain *)getSegment(data.word(kBuffers)).ptr(kRainlist, 0);
-	Rain *rain = rainList;
+	_rainList.clear();
 
 	uint8 rainSpacing = 0;
 
@@ -656,7 +655,6 @@ void DreamBase::initRain() {
 
 	if (rainSpacing == 0) {
 		// location not found in rainLocationList: no rain
-		rain->x = 0xff;
 		return;
 	}
 
@@ -672,7 +670,7 @@ void DreamBase::initRain() {
 		if (x >= data.byte(kMapxsize))
 			break;
 
-		rain = splitIntoLines(x, 0, rain);
+		splitIntoLines(x, 0);
 	} while (true);
 
 	// start lines of rain from side of screen
@@ -687,10 +685,8 @@ void DreamBase::initRain() {
 		if (y >= data.byte(kMapysize))
 			break;
 
-		rain = splitIntoLines(data.byte(kMapxsize) - 1, y, rain);
+		splitIntoLines(data.byte(kMapxsize) - 1, y);
 	} while (true);
-
-	rain->x = 0xff;
 }
 
 void DreamBase::intro1Text() {

@@ -77,6 +77,7 @@ protected:
 	Common::List<ObjPos> _freeList;
 	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
+	Common::List<Rain> _rainList;
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -317,7 +318,7 @@ public:
 	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
 
 	uint8 getBlockOfPixel(uint8 x, uint8 y);
-	Rain *splitIntoLines(uint8 x, uint8 y, Rain *rain);
+	void splitIntoLines(uint8 x, uint8 y);
 	void initRain();
 
 	void intro1Text();
