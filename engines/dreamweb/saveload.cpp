@@ -44,7 +44,7 @@ void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
 	s.syncAsByte(reel->b7);
 }
 
-void DreamGenContext::loadGame() {
+void DreamBase::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
 		commandOnly(41);
@@ -57,7 +57,7 @@ void DreamGenContext::loadGame() {
 
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
-void DreamGenContext::doLoad(int savegameId) {
+void DreamBase::doLoad(int savegameId) {
 	data.byte(kLoadingorsave) = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
@@ -138,7 +138,7 @@ void DreamGenContext::doLoad(int savegameId) {
 }
 
 
-void DreamGenContext::saveGame() {
+void DreamBase::saveGame() {
 	if (data.byte(kMandead) == 2) {
 		blank();
 		return;
@@ -239,7 +239,7 @@ void DreamBase::oldToNames() {
 	memcpy(_saveNames, _saveNamesOld, 17*7);
 }
 
-void DreamGenContext::saveLoad() {
+void DreamBase::saveLoad() {
 	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
 		blank();
 		return;
@@ -252,7 +252,7 @@ void DreamGenContext::saveLoad() {
 		doSaveLoad();
 }
 
-void DreamGenContext::doSaveLoad() {
+void DreamBase::doSaveLoad() {
 	data.byte(kPointerframe) = 0;
 	data.word(kTextaddressx) = 70;
 	data.word(kTextaddressy) = 182-8;
@@ -350,7 +350,7 @@ void DreamBase::showDiscOps() {
 	showFrame(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
-void DreamGenContext::discOps() {
+void DreamBase::discOps() {
 	if (data.byte(kCommandtype) != 249) {
 		data.byte(kCommandtype) = 249;
 		commandOnly(43);
@@ -368,8 +368,8 @@ void DreamGenContext::discOps() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback<DreamGenContext> discOpsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
-		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::loadGame },
+		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamBase::saveGame },
 		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
@@ -589,7 +589,7 @@ void DreamBase::loadPosition(unsigned int slot) {
 }
 
 // Count number of save files, and load their descriptions into _saveNames
-unsigned int DreamGenContext::scanForNames() {
+uint DreamBase::scanForNames() {
 	// Initialize the first 7 slots (like the original code expects)
 	for (unsigned int slot = 0; slot < 7; ++slot) {
 		_saveNames[17 * slot + 0] = 2;
@@ -620,12 +620,13 @@ unsigned int DreamGenContext::scanForNames() {
 			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused
 	}
 
-	al = saveList.size() <= 7 ? (uint8)saveList.size() : 7;
+	// FIXME: Can the following be safely removed?
+//	al = saveList.size() <= 7 ? (uint8)saveList.size() : 7;
 
 	return saveList.size();
 }
 
-void DreamGenContext::loadOld() {
+void DreamBase::loadOld() {
 	if (data.byte(kCommandtype) != 252) {
 		data.byte(kCommandtype) = 252;
 		commandOnly(48);

@@ -458,7 +458,6 @@ public:
 	void getObTextStart();
 	void checkObjectSize();
 	void doSomeTalk();
-	void resetLocation();
 	void outOfOpen();
 	void dirCom();
 	void findFirstPath();
@@ -470,7 +469,6 @@ public:
 	void reExFromInv();
 	void transferMap();
 	void purgeAnItem();
-	void purgeALocation();
 	void getSetAd();
 	void findOpenPos();
 	void searchForSame();

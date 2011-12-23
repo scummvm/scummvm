@@ -139,6 +139,14 @@ public:
 	void loadNews();
 	void loadCart();
 
+	// from newplace.cpp
+	void getUnderCentre();
+	void putUnderCentre();
+	void showArrows();
+	uint8 getLocation(uint8 index);
+	void setLocation(uint8 index);
+	void resetLocation(uint8 index);
+
 	// from object.cpp
 	void obIcons();
 	void fillRyan();
@@ -149,6 +157,7 @@ public:
 	void deleteExObject(uint8 index);
 	void deleteExFrame(uint8 frameNum);
 	void deleteExText(uint8 textNum);
+	void purgeALocation(uint8 index);
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -236,14 +245,22 @@ public:
 	void delCurs();
 
 	// from saveload.cpp
-	void oldToNames();
+	void loadGame();
+	void doLoad(int slot);
+	void saveGame();
 	void namesToOld();
+	void oldToNames();
+	void saveLoad();
+	void doSaveLoad();
 	void showMainOps();
 	void showDiscOps();
+	void discOps();
 	void actualSave();
 	void actualLoad();
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const char *descbuf);
+	uint scanForNames();
+	void loadOld();
 	void showDecisions();
 	void loadSaveBox();
 	void showNames();
@@ -331,7 +348,6 @@ public:
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
-	void showArrows();
 	void middlePanel();
 	void showDiary();
 	void readMouse();
@@ -463,6 +479,11 @@ public:
 	template <class T> void checkCoords(const RectWithCallback<T> *rectWithCallbacks);
 	void newGame();
 	void deleteTaken();
+	void autoAppear();
+	void loadRoom();
+	void startLoading(const Room &room);
+	void startup();
+	void atmospheres();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -505,10 +526,6 @@ public:
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
-	uint8 getLocation(uint8 index);
-	void setLocation(uint8 index);
-	void getUnderCentre();
-	void putUnderCentre();
 	uint8 *mapStore();
 	void panelToMap();
 	void mapToPanel();
