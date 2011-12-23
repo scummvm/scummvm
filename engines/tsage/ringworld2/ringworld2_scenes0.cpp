@@ -3183,6 +3183,364 @@ void Scene800::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 825 - Autodoc
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene825::Button::Button(): SceneObject() {
+	_buttonId = 0;
+	_v2 = 0;
+	_buttonDown = false;
+}
+
+void Scene825::Button::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	s.syncAsSint16LE(_buttonId);
+	s.syncAsSint16LE(_v2);
+	s.syncAsSint16LE(_buttonDown);
+}
+
+void Scene825::Button::process(Event &event) {
+	Scene825 *scene = (Scene825 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!event.handled) {
+		if ((event.eventType == EVENT_BUTTON_DOWN) && _bounds.contains(event.mousePos) && !_buttonDown) {
+			scene->_sound1.play(14);
+			setFrame(2);
+			_buttonDown = true;
+			event.handled = true;
+		}
+
+		if ((event.eventType == EVENT_BUTTON_UP) && _buttonDown) {
+			setFrame(1);
+			_buttonDown = false;
+			event.handled = true;
+
+			scene->doButtonPress(_buttonId);
+		}
+	}
+}
+
+bool Scene825::Button::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+	else
+		return SceneObject::startAction(action, event);
+}
+
+void Scene825::Button::setButton(int buttonId) {
+	SceneObject::postInit();
+	_v2 = buttonId;
+	_buttonDown = 0;
+	_sceneText._color1 = 92;
+	_sceneText._color2 = 0;
+	_sceneText._width = 200;
+	_sceneText.fixPriority(20);
+	_sceneText._fontNumber = 50;
+
+	switch (buttonId) {
+	case 1:
+		_sceneText.setPosition(Common::Point(95, 58));
+		break;
+	case 2:
+		_sceneText.setPosition(Common::Point(98, 75));
+		break;
+	case 3:
+		_sceneText.setPosition(Common::Point(102, 95));
+		break;
+	case 4:
+		_sceneText.setPosition(Common::Point(180, 58));
+		_sceneText._textMode = ALIGN_RIGHT;
+		break;
+	case 5:
+		_sceneText.setPosition(Common::Point(177, 75));
+		_sceneText._textMode = ALIGN_RIGHT;
+		break;
+	case 6:
+		_sceneText.setPosition(Common::Point(175, 95));
+		_sceneText._textMode = ALIGN_RIGHT;
+		break;
+	default:
+		break;
+	}
+
+	setDetails(825, 6, 7, -1, 2, NULL);
+}
+
+void Scene825::Button::setText(int textId) {
+	_buttonId = textId;
+	_lookLineNum = textId;
+
+	_sceneText.remove();
+	if (_buttonId != 0)
+		_sceneText.setup(AUTODOC_ITEMS[textId - 1]);
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene825::Scene825(): SceneExt() {
+	_menuId = _frame1 = _frame2 = 0;
+}
+
+void Scene825::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(825);
+	R2_GLOBALS._player._uiEnabled = false;
+	BF_GLOBALS._interfaceY = 200;
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player._effect = 0;
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_item2.setDetails(1, 825, 3, 4, 5);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 825, 0, -1, -1, 1, NULL);
+
+	_sceneMode = 10;
+	signal();
+}
+
+void Scene825::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_menuId);
+	s.syncAsSint16LE(_frame1);
+	s.syncAsSint16LE(_frame2);
+}
+
+void Scene825::remove() {
+	SceneExt::remove();
+	R2_GLOBALS._player._uiEnabled = true;
+}
+
+void Scene825::signal() {
+	switch (_sceneMode) {
+	case 10:
+		_button1.setButton(1);
+		_button1.setup(825, 1, 1);
+		_button1.setPosition(Common::Point(71, 71));
+		_button2.setButton(2);
+		_button2.setup(825, 3, 1);
+		_button2.setPosition(Common::Point(74, 90));
+		_button3.setButton(3);
+		_button3.setup(825, 5, 1);
+		_button3.setPosition(Common::Point(78, 109));
+		_button4.setButton(4);
+		_button4.setup(825, 2, 1);
+		_button4.setPosition(Common::Point(248, 71));
+		_button5.setButton(5);
+		_button5.setup(825, 4, 1);
+		_button5.setPosition(Common::Point(245, 90));
+		_button6.setButton(6);
+		_button6.setup(825, 6, 1);
+		_button6.setPosition(Common::Point(241, 109));
+
+		doButtonPress(1);
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 825:
+		_object5.remove();
+		_sceneText._color1 = 92;
+		_sceneText._color2 = 0;
+		_sceneText._width = 200;
+		_sceneText.fixPriority(20);
+		_sceneText._fontNumber = 50;
+		_sceneText.setPosition(Common::Point(120, 75));
+		_sceneText.setup(NO_MALADY_DETECTED);
+		_sceneMode = 826;
+		setAction(&_sequenceManager1, this, 826, &R2_GLOBALS._player, NULL);
+		break;
+	case 826:
+		_sceneText.remove();
+		doButtonPress(1);
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	case 827:
+		_object5.remove();
+		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 825);
+		_sceneText.setPosition(Common::Point(108, 75));
+		_sceneText.setup(FOREIGN_OBJECT_EXTRACTED);
+		_sceneMode = 826;
+		setAction(&_sequenceManager1, this, 826, &R2_GLOBALS._player, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player._canWalk = false;
+		break;
+	}
+}
+
+void Scene825::process(Event &event) {
+	SceneExt::process(event);
+
+	if (R2_GLOBALS._player._uiEnabled) {
+		_button1.process(event);
+		_button2.process(event);
+		_button3.process(event);
+		_button4.process(event);
+		_button5.process(event);
+		_button6.process(event);
+	}
+}
+
+void Scene825::dispatch() {
+	if (R2_GLOBALS._sceneObjects->contains(&_object4) && 
+			((_object4._frame == 1) || (_object4._frame == 3)) &&
+			(_object4._frame != _frame1)) {
+		_sound2.play(25);
+	}
+
+	if (R2_GLOBALS._sceneObjects->contains(&_object1) &&
+			(_object1._frame == 3) && (_object1._frame != _frame2)) {
+		_sound3.play(26);
+	}
+
+	_frame1 = _object4._frame;
+	_frame2 = _object1._frame;
+
+	Scene::dispatch();
+}
+
+void Scene825::doButtonPress(int buttonId) {
+	if ((_menuId != 4) || (buttonId == 5)) {
+		_button1.setText(0);
+		_button2.setText(0);
+		_button3.setText(0);
+		_button4.setText(0);
+		_button5.setText(0);
+		_button6.setText(0);
+
+		switch (buttonId) {
+		case 2:
+			R2_GLOBALS._player.disableControl();
+			_object5.postInit();
+			_sceneMode = 825;
+			setAction(&_sequenceManager1, this, 825, &R2_GLOBALS._player, &_object5, NULL);
+			break;
+		case 3:
+			R2_GLOBALS._player.disableControl();
+			_sceneText._color1 = 92;
+			_sceneText._color2 = 0;
+			_sceneText._width = 200;
+			_sceneText.fixPriority(20);
+			_sceneText._fontNumber = 50;
+			_sceneText.setPosition(Common::Point(115, 75));
+
+			if (R2_GLOBALS.getFlag(4)) {
+				if ((R2_INVENTORY.getObjectScene(R2_READER) != 800) ||
+						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 800)) {
+					_sceneText.setPosition(Common::Point(116, 75));
+					_sceneText.setup(ACCESS_CODE_REQUIRED);
+				} else if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != 800) {
+					_sceneText.setPosition(Common::Point(115, 75));
+					_sceneText.setup(NO_TREATMENT_REQUIRED);
+				} else {
+					_button6._buttonId = 5;
+					
+					_object5.postInit();
+					setAction(&_sequenceManager1, this, 827, &_object5, NULL);
+				}
+			} else {
+				R2_GLOBALS.setFlag(2);
+
+				if ((R2_INVENTORY.getObjectScene(R2_READER) != 800) ||
+						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 800)) {
+					_sceneText.setPosition(Common::Point(116, 75));
+					_sceneText.setup(ACCESS_CODE_REQUIRED);
+				} else {
+					_sceneText.setPosition(Common::Point(119, 75));
+					_sceneText.setup(INVALID_ACCESS_CODE);
+				}
+			}
+
+			if (_sceneMode != 827) {
+				_sceneMode = 826;
+				setAction(&_sequenceManager1, this, 826, &R2_GLOBALS._player, NULL);
+			}
+			break;
+		case 4:
+			_sound4.play(27);
+			_button6._buttonId = 5;
+			
+			_object1.postInit();
+			_object1.setup(826, 7, 1);
+			_object1.setPosition(Common::Point(112, 67));
+			_object1._numFrames = 1;
+			_object1.animate(ANIM_MODE_2);
+
+			_object2.postInit();
+			_object2.setup(826, 5, 1);
+			_object2.setPosition(Common::Point(158, 67));
+			_object2._numFrames = 5;
+			_object2.animate(ANIM_MODE_2);
+
+			_object3.postInit();
+			_object3.setup(826, 6, 1);
+			_object3.setPosition(Common::Point(206, 67));
+			_object3._numFrames = 1;
+			_object3.animate(ANIM_MODE_2);
+
+			_object4.postInit();
+			_object4.setup(826, 8, 1);
+			_object4.setPosition(Common::Point(158, 84));
+			_object4._numFrames = 1;
+			_object4.animate(ANIM_MODE_2);
+
+			_object5.postInit();
+			_object5.setup(826, 4, 1);
+			_object5.setPosition(Common::Point(161, 110));
+			break;
+		case 5:
+			R2_GLOBALS._player.disableControl();
+			if (_menuId == 4) {
+				_menuId = 0;
+
+				_object1.remove();
+				_object2.remove();
+				_object3.remove();
+				_object4.remove();
+				_object5.remove();
+
+				_sound2.stop();
+				_sound3.stop();
+				_sound4.stop();
+
+				doButtonPress(1);
+				R2_GLOBALS._player.enableControl();
+				R2_GLOBALS._player._canWalk = false;
+			} else {
+				R2_GLOBALS._sceneManager.changeScene(800);
+			}
+			break;
+		case 6:
+			R2_GLOBALS._player.disableControl();
+			_sceneText._color1 = 92;
+			_sceneText._color2 = 0;
+			_sceneText._width = 200;
+			_sceneText.fixPriority(20);
+			_sceneText._fontNumber = 50;
+			_sceneText.setPosition(Common::Point(115, 75));
+			_sceneText.setup(NO_TREATMENT_REQUIRED);
+
+			_sceneMode = 826;
+			setAction(&_sequenceManager1, this, 826, &R2_GLOBALS._player, NULL);
+			break;
+		default:
+			_button1.setText(2);
+			_button2.setText(3);
+			_button3.setText(4);
+			_button4.setText(6);
+			_button6.setText(5);
+			break;
+		}
+
+		_menuId = buttonId;
+	}
+}
 
 /*--------------------------------------------------------------------------
  * Scene 850 - Deck #5 - By Lift

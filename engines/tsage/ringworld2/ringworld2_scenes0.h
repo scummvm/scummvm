@@ -419,6 +419,42 @@ public:
 	virtual void signal();
 };
 
+class Scene825: public SceneExt {
+	/* Objects */
+	class Button: public SceneObject {
+	public:
+		int _buttonId, _v2;
+		bool _buttonDown;
+		SceneText _sceneText;
+	public:
+		Button();
+		void setButton(int buttonId);
+		void setText(int textId);
+
+		virtual void synchronize(Serializer &s);
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	NamedHotspot _background, _item2;
+	SceneActor _object1, _object2, _object3, _object4, _object5;
+	Button _button1, _button2, _button3, _button4, _button5, _button6;
+	ASoundExt _sound1, _sound2, _sound3, _sound4;
+	SequenceManager _sequenceManager1;
+	SceneText _sceneText;
+	int _menuId, _frame1, _frame2;
+public:
+	Scene825();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+
+	void doButtonPress(int buttonId);
+};
+
 class Scene850: public SceneExt {
 	/* Items */
 	class Indicator: public NamedHotspot {

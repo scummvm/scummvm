@@ -192,6 +192,26 @@ const char *CONSOLE_MESSAGES[] = {
 	"Mozart", "Bach", "Rossini"
 };
 
+// Scene 825 Autodoc messages
+const char *MAIN_MENU = "main menu";
+const char *DIAGNOSIS = "diagnosis";
+const char *ADVANCED_PROCEDURES = "advanced procedures";
+const char *VITAL_SIGNS = "vital signs";
+const char *OPEN_DOOR = "open door";
+const char *TREATMENTS = "treatments";
+const char *NO_MALADY_DETECTED =  "no malady detected";
+const char *NO_TREATMENT_REQUIRED = "no treatment required";
+const char *ACCESS_CODE_REQUIRED = "access code required";
+const char *INVALID_ACCESS_CODE = "invalid access code";
+const char *FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
+
+const char *AUTODOC_ITEMS[11] = { 
+	MAIN_MENU, DIAGNOSIS, ADVANCED_PROCEDURES, VITAL_SIGNS, OPEN_DOOR, TREATMENTS,
+	NO_MALADY_DETECTED, NO_TREATMENT_REQUIRED, ACCESS_CODE_REQUIRED, INVALID_ACCESS_CODE,
+	FOREIGN_OBJECT_EXTRACTED
+};
+	
+
 const char *HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
 const char *CHAR_TITLE = "\x01Select Character:";
 const char *CHAR_QUINN_MSG = "  Quinn  ";

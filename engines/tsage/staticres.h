@@ -149,6 +149,20 @@ namespace Ringworld2 {
 // Scene 125 - Console messages
 extern const char *CONSOLE_MESSAGES[];
 
+// Scene 825 - Autodoc Messages
+extern const char *MAIN_MENU;
+extern const char *DIAGNOSIS;
+extern const char *ADVANCED_PROCEDURES;
+extern const char *VITAL_SIGNS;
+extern const char *OPEN_DOOR;
+extern const char *TREATMENTS;
+extern const char *NO_MALADY_DETECTED;
+extern const char *NO_TREATMENT_REQUIRED;
+extern const char *ACCESS_CODE_REQUIRED;
+extern const char *INVALID_ACCESS_CODE;
+extern const char *FOREIGN_OBJECT_EXTRACTED;
+extern const char *AUTODOC_ITEMS[11];
+
 // Dialog messages
 extern const char *HELP_MSG;
 extern const char *CHAR_TITLE;

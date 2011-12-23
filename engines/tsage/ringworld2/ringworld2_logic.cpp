@@ -81,7 +81,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Sick bay
 		return new Scene800();
 	case 825:
-		error("Missing scene %d from group 0", sceneNumber);
+		// Autodoc
+		return new Scene825();
 	case 850:
 		// Deck #5 - By Lift
 		return new Scene850();
