@@ -179,22 +179,20 @@ bool DreamBase::addLength(const uint8 *mapFlags) {
 }
 
 void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
-	const uint8 *mapFlags = getSegment(data.word(kBuffers)).ptr(kMapflags, 0);
-
 	uint8 yStart = 0;
-	while (! addAlong(mapFlags + 3 * 11 * yStart))
+	while (! addAlong(_mapFlags + 3 * 11 * yStart))
 		++yStart;
 
 	uint8 xStart = 0;
-	while (! addLength(mapFlags + 3 * xStart))
+	while (! addLength(_mapFlags + 3 * xStart))
 		++xStart;
 
 	uint8 yEnd = 10;
-	while (! addAlong(mapFlags + 3 * 11 * (yEnd - 1)))
+	while (! addAlong(_mapFlags + 3 * 11 * (yEnd - 1)))
 		--yEnd;
 
 	uint8 xEnd = 11;
-	while (! addLength(mapFlags + 3 * (xEnd - 1)))
+	while (! addLength(_mapFlags + 3 * (xEnd - 1)))
 		--xEnd;
 
 	*mapXstart = xStart;
@@ -243,7 +241,7 @@ void DreamBase::showAllFree() {
 }
 
 void DreamBase::drawFlags() {
-	uint8 *mapFlags = getSegment(data.word(kBuffers)).ptr(kMapflags, 0);
+	uint8 *mapFlags = _mapFlags;
 	const uint8 *mapData = getSegment(data.word(kMapdata)).ptr(kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx), 0);
 	const uint8 *backdropFlags = getSegment(data.word(kBackdrop)).ptr(kFlags, 0);
 

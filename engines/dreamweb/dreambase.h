@@ -69,6 +69,7 @@ protected:
 	ReelRoutine *_personData;
 
 	// from Buffers
+	uint8 _mapFlags[11*10*3];
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
 	uint8 _mainPal[3*256];

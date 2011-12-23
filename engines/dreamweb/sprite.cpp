@@ -552,7 +552,7 @@ void DreamGenContext::checkOne() {
 void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;
-	const uint8 *tileData = getSegment(data.word(kBuffers)).ptr(kMapflags + (*flagY * 11 + *flagX) * 3, 3);
+	const uint8 *tileData = &_mapFlags[(*flagY * 11 + *flagX) * 3];
 	*flag = tileData[0];
 	*flagEx = tileData[1];
 	*type = tileData[2];
