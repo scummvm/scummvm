@@ -134,8 +134,7 @@ void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 void DreamBase::showAllObs() {
 	const unsigned int count = 128;
 
-	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kSetlist, count * sizeof(ObjPos));
-	memset(objPos, 0xff, count * sizeof(ObjPos));
+	_setList.clear();
 
 	const Frame *frameBase = (const Frame *)getSegment(data.word(kSetframes)).ptr(0, 0);
 	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, count * sizeof(SetObject));
@@ -148,7 +147,8 @@ void DreamBase::showAllObs() {
 		if (currentFrame == 0xff)
 			continue;
 		uint8 width, height;
-		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
+		ObjPos objPos;
+		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
@@ -157,8 +157,8 @@ void DreamBase::showAllObs() {
 		} else
 			makeBackOb(setEntry, x, y);
 
-		objPos->index = i;
-		++objPos;
+		objPos.index = i;
+		_setList.push_back(objPos);
 	}
 }
 
@@ -218,8 +218,7 @@ void DreamBase::calcMapAd() {
 void DreamBase::showAllFree() {
 	const unsigned int count = 80;
 
-	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, count * sizeof(ObjPos));
-	memset(objPos, 0xff, count * sizeof(ObjPos));
+	_freeList.clear();
 
 	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	const Frame *frameBase = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
@@ -228,15 +227,16 @@ void DreamBase::showAllFree() {
 		uint8 mapAd = getMapAd(freeObjects[i].mapad, &x, &y);
 		if (mapAd != 0) {
 			uint8 width, height;
+			ObjPos objPos;
 			uint16 currentFrame = 3 * i;
-			calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
+			calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
 				assert(currentFrame < 256);
 				showFrame(frameBase, x, y, currentFrame, 0);
-				objPos->index = i;
-				++objPos;
+				objPos.index = i;
+				_freeList.push_back(objPos);
 			}
 		}
 	}
@@ -261,8 +261,7 @@ void DreamBase::drawFlags() {
 void DreamBase::showAllEx() {
 	const unsigned int count = 100;
 
-	ObjPos *objPos = (ObjPos *)getSegment(data.word(kBuffers)).ptr(kExlist, count * sizeof(ObjPos));
-	memset(objPos, 0xff, count * sizeof(ObjPos));
+	_exList.clear();
 
 	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	const Frame *frameBase = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
@@ -276,13 +275,14 @@ void DreamBase::showAllEx() {
 		if (getMapAd(object->mapad, &x, &y) == 0)
 			continue;
 		uint8 width, height;
+		ObjPos objPos;
 		uint16 currentFrame = 3 * i;
-		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, objPos);
+		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
 			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);
-			objPos->index = i;
-			++objPos;
+			objPos.index = i;
+			_exList.push_back(objPos);
 		}
 	}
 }

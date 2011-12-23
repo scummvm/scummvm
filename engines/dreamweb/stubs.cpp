@@ -1188,12 +1188,13 @@ void DreamGenContext::checkIfFree() {
 }
 
 bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
-	const ObjPos *freeList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
-	for (size_t i = 0; i < 80; ++i) {
-		const ObjPos *objPos = freeList + 79 - i;
-		if (objPos->index == 0xff || !objPos->contains(x,y))
+	Common::List<ObjPos>::const_iterator i;
+	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
+		const ObjPos &pos = *i;
+		assert(pos.index != 0xff);
+		if (!pos.contains(x,y))
 			continue;
-		obName(objPos->index, 2);
+		obName(pos.index, 2);
 		return true;
 	}
 	return false;
@@ -1204,12 +1205,13 @@ void DreamGenContext::checkIfEx() {
 }
 
 bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
-	const ObjPos *exList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
-	for (size_t i = 0; i < 100; ++i) {
-		const ObjPos *objPos = exList + 99 - i;
-		if (objPos->index == 0xff || !objPos->contains(x,y))
+	Common::List<ObjPos>::const_iterator i;
+	for (i = _exList.reverse_begin(); i != _exList.end(); --i) {
+		const ObjPos &pos = *i;
+		assert(pos.index != 0xff);
+		if (!pos.contains(x,y))
 			continue;
-		obName(objPos->index, 4);
+		obName(pos.index, 4);
 		return true;
 	}
 	return false;
@@ -1781,16 +1783,17 @@ void DreamBase::showIcon() {
 }
 
 bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
-	const ObjPos *setList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
-	for (size_t i = 0; i < 128; ++i) {
-		const ObjPos *pos = setList + 127 - i;
-		if (pos->index == 0xff || !pos->contains(x,y))
+	Common::List<ObjPos>::const_iterator i;
+	for (i = _setList.reverse_begin(); i != _setList.end(); --i) {
+		const ObjPos &pos = *i;
+		assert(pos.index != 0xff);
+		if (!pos.contains(x,y))
 			continue;
-		if (!pixelCheckSet(pos, x, y))
+		if (!pixelCheckSet(&pos, x, y))
 			continue;
-		if (!isItDescribed(pos))
+		if (!isItDescribed(&pos))
 			continue;
-		obName(pos->index, 1);
+		obName(pos.index, 1);
 		return true;
 	}
 	return false;

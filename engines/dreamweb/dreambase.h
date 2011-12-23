@@ -72,6 +72,9 @@ protected:
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
 	uint8 _mainPal[3*256];
+	Common::List<ObjPos> _setList;
+	Common::List<ObjPos> _freeList;
+	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
 
 public:
