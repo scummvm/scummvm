@@ -3769,4 +3769,23 @@ void DreamGenContext::edensFlatReminders() {
 	data.byte(kProgresspoints)++;	// got card
 }
 
+void DreamGenContext::incRyanPage() {
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandOnly(31);
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || (data.word(kMousebutton) & 1))
+		return;
+
+	data.byte(kRyanpage) = (data.word(kMousex) - (kInventx + 167)) / 18;
+
+	delPointer();
+	fillRyan();
+	readMouse();
+	showPointer();
+	workToScreenCPP();
+	delPointer();
+
+}
 } // End of namespace DreamGen

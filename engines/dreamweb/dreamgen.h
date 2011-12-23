@@ -486,7 +486,6 @@ public:
 	void read();
 	void searchForString();
 	void selectOpenOb();
-	void incRyanPage();
 	void searchForFiles();
 	void getExAd();
 	void swapWithInv();

@@ -284,40 +284,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::incRyanPage() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadyincryan;
-	data.byte(kCommandtype) = 222;
-	al = 31;
-	commandOnly();
-alreadyincryan:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (noincryan) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doincryan;
-	return;
-doincryan:
-	ax = data.word(kMousex);
-	_sub(ax, (80)+167);
-	data.byte(kRyanpage) = -1;
-findnewpage:
-	_inc(data.byte(kRyanpage));
-	_sub(ax, 18);
-	if (!flags.c())
-		goto findnewpage;
-	delPointer();
-	fillRyan();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
 void DreamGenContext::getObTextStart() {
 	STACK_CHECK;
 	es = data.word(kFreedesc);
