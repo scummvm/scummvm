@@ -1284,7 +1284,7 @@ void DreamBase::walkToText() {
 }
 
 void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
-	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	Change *change = _listOfChanges;
 	for (; change->index != 0xff; ++change) {
 		if (index == change->index && data.byte(kReallocation) == change->location && type == change->type) {
 			change->value = value;
@@ -1299,7 +1299,7 @@ void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamBase::setAllChanges() {
-	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	Change *change = _listOfChanges;
 	for (; change->index != 0xff; ++change)
 		if (change->location == data.byte(kReallocation))
 			doChange(change->index, change->value, change->type);
@@ -3698,7 +3698,7 @@ void DreamBase::clearBuffers() {
 }
 
 void DreamBase::clearChanges() {
-	memset(getSegment(data.word(kBuffers)).ptr(kListofchanges, 4*kNumchanges), 0xFF, 4*kNumchanges);
+	memset(_listOfChanges, 0xFF, 4*kNumchanges);
 
 	setupInitialReelRoutines();
 

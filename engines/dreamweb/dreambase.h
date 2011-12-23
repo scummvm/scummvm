@@ -46,6 +46,7 @@ const unsigned int kUnderTimedTextSizeY_f = 30;
 const unsigned int kUnderTextBufSize = kUnderTextSizeX_f * kUnderTextSizeY_f;
 const unsigned int kUnderTimedTextBufSize = 256 * kUnderTextSizeY_f;
 const unsigned int kLengthOfVars = 68;
+const unsigned int kNumChanges = 250;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -79,16 +80,21 @@ protected:
 
 	// from Buffers
 	uint8 _textUnder[kUnderTextBufSize];
+	// _openInvList (see fillOpen/findOpenPos)
+	// _ryanInvList (see findInvPos/findInvPosCPP)
 	uint8 _pointerBack[32*32];
 	uint8 _mapFlags[11*10*3];
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
 	uint8 _mainPal[3*256];
+	// _spriteTable
 	Common::List<ObjPos> _setList;
 	Common::List<ObjPos> _freeList;
 	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
 	uint8 _zoomSpace[46*40];
+	// _printedList (unused?)
+	Change _listOfChanges[kNumChanges]; // Note: this array is saved
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
 	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary

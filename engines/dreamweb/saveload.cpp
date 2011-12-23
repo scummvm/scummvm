@@ -479,7 +479,7 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write(descbuf, len[0]);
 	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
 	outSaveFile->write(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	outSaveFile->write(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	outSaveFile->write(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
@@ -545,7 +545,7 @@ void DreamBase::loadPosition(unsigned int slot) {
 	}
 	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
 	inSaveFile->read(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	inSaveFile->read(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	inSaveFile->read(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	// Note: the values read into g_madeUpRoomDat are only used in actualLoad,
