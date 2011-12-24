@@ -58,15 +58,8 @@
 		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
 	}
 	void width160();
-	void commandOnly();
-	void commandOnly(uint8 command) {
-		DreamBase::commandOnly(command);
-	}
-	void checkIfPerson();
 	bool checkIfPerson(uint8 x, uint8 y);
-	void checkIfFree();
 	bool checkIfFree(uint8 x, uint8 y);
-	void checkIfEx();
 	bool checkIfEx(uint8 x, uint8 y);
 	void commandWithOb();
 	void commandWithOb(uint8 command, uint8 type, uint8 index) {
@@ -84,20 +77,10 @@
 	SetObject *getSetAd(uint8 index) {
 		return DreamBase::getSetAd(index);
 	}
-	bool finishedWalkingCPP();
-	void finishedWalking();
-	void checkOne();
-	void checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
-		DreamBase::checkOne(x, y, flag, flagEx, type, flagX, flagY);
-	}
 	void walkAndExamine();
 	void obName(uint8 command, uint8 commandType);
 
 	void getExPos();
-	void compare();
-	bool compare(uint8 index, uint8 flag, const char id[4]) {
-		return DreamBase::compare(index, flag, id);
-	}
 	bool checkIfSet(uint8 x, uint8 y);
 	void isItWorn();
 	bool isItWorn(const DynObject *object) {

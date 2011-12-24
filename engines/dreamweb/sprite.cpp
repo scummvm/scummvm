@@ -536,17 +536,6 @@ void DreamBase::moveMap(uint8 param) {
 	data.byte(kNowinnewroom) = 1;
 }
 
-void DreamGenContext::checkOne() {
-	uint8 flag, flagEx, type, flagX, flagY;
-	checkOne(cl, ch, &flag, &flagEx, &type, &flagX, &flagY);
-
-	cl = flag;
-	ch = flagEx;
-	dl = flagX;
-	dh = flagY;
-	al = type;
-}
-
 void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;

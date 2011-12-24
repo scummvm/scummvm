@@ -537,6 +537,7 @@ public:
 	void dropError();
 	void cantDrop();
 	void entryAnims();
+	bool finishedWalking();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

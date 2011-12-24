@@ -1138,10 +1138,6 @@ void DreamBase::delTextLine() {
 		multiPut(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy), kUnderTextSizeX, kUnderTextSizeY);
 }
 
-void DreamGenContext::commandOnly() {
-	commandOnly(al);
-}
-
 void DreamBase::commandOnly(uint8 command) {
 	delTextLine();
 	uint16 index = command * 2;
@@ -1150,10 +1146,6 @@ void DreamBase::commandOnly(uint8 command) {
 	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	printDirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
 	data.byte(kNewtextline) = 1;
-}
-
-void DreamGenContext::checkIfPerson() {
-	flags._z = !checkIfPerson(al, ah);
 }
 
 bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
@@ -1183,10 +1175,6 @@ bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamGenContext::checkIfFree() {
-	flags._z = !checkIfFree(al, ah);
-}
-
 bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
@@ -1198,10 +1186,6 @@ bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
 		return true;
 	}
 	return false;
-}
-
-void DreamGenContext::checkIfEx() {
-	flags._z = !checkIfEx(al, ah);
 }
 
 bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
@@ -1411,11 +1395,7 @@ void DreamBase::removeSetObject(uint8 index) {
 	getSetAd(index)->mapad[0] = 0xff;
 }
 
-void DreamGenContext::finishedWalking() {
-	flags._z = finishedWalkingCPP();
-}
-
-bool DreamGenContext::finishedWalkingCPP() {
+bool DreamBase::finishedWalking() {
 	return (data.byte(kLinepointer) == 254) && (data.byte(kFacing) == data.byte(kTurntoface));
 }
 
@@ -1426,7 +1406,7 @@ void DreamBase::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 }
 
 void DreamGenContext::walkAndExamine() {
-	if (!finishedWalkingCPP())
+	if (!finishedWalking())
 		return;
 	data.byte(kCommandtype) = data.byte(kWalkexamtype);
 	data.byte(kCommand) = data.byte(kWalkexamnum);
@@ -1449,7 +1429,7 @@ void DreamGenContext::obName(uint8 command, uint8 commandType) {
 				setWalk();
 				data.byte(kReasseschanges) = 1;
 				return;
-			} else if (! finishedWalkingCPP())
+			} else if (!finishedWalking())
 				return;
 			else if (data.byte(kCommandtype) == 5) {
 				if (data.word(kWatchingtime) == 0)
@@ -1688,11 +1668,6 @@ bool DreamBase::objectMatches(void *object, const char *id) {
 			return false;
 	}
 	return true;
-}
-
-void DreamGenContext::compare() {
-	char id[4] = { cl, ch, dl, dh };
-	flags._z = compare(al, ah, id);
 }
 
 bool DreamBase::compare(uint8 index, uint8 flag, const char id[4]) {

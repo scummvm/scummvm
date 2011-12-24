@@ -231,8 +231,7 @@ void DreamGenContext::inventory() {
 
 	if (data.byte(kCommandtype) != 239) {
 		data.byte(kCommandtype) = 239;
-		al = 32;
-		commandOnly();
+		commandOnly(32);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton))
