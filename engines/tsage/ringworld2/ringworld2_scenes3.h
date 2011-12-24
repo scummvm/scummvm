@@ -381,6 +381,25 @@ public:
 	virtual void signal();
 };
 
+class Scene3350 : public SceneExt {
+public:
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SceneActor _actor8;
+	SceneActor _actor9;
+	SequenceManager _sequenceManager;
+	PaletteRotation *_rotation;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

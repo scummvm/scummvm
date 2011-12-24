@@ -1635,5 +1635,68 @@ void Scene3275::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3350 - Cutscene - Ship landing
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3350::postInit(SceneObjectList *OwnerList) {
+	loadScene(3350);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+	R2_GLOBALS._sound2.play(310);
+
+	_rotation = R2_GLOBALS._scenePalette.addRotation(176, 203, 1);
+	_rotation->setDelay(3);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_actor1.postInit();
+	_actor1.hide();
+	_actor2.postInit();
+	_actor2.hide();
+	_actor3.postInit();
+	_actor3.hide();
+	_actor4.postInit();
+	_actor4.hide();
+	_actor9.postInit();
+	_actor9.hide();
+	_actor8.postInit();
+	_actor8.hide();
+	_actor5.postInit();
+	_actor5.hide();
+	_actor6.postInit();
+	_actor6.hide();
+	_actor7.postInit();
+	_actor7.hide();
+
+	_sceneMode = 3350;
+	setAction(&_sequenceManager, this, _sceneMode, &_actor5, &_actor6, &_actor7, NULL);
+}
+
+void Scene3350::remove() {
+	R2_GLOBALS._sound2.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene3350::signal() {
+	switch (_sceneMode) {
+	case 3350:
+		_sceneMode = 3351;
+		setAction(&_sequenceManager, this, 3351, &_actor4, &_actor9, &_actor8, NULL);
+		break;
+	case 3351:
+		_sceneMode = 3352;
+		setAction(&_sequenceManager, this, 3352, &_actor4, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
+	case 3352:
+		R2_GLOBALS._sceneManager.changeScene(3395);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
