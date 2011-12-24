@@ -44,7 +44,7 @@ const unsigned int kUnderTextSizeX_f = 228; // foreign version
 const unsigned int kUnderTextSizeY_f = 13; // foreign version
 const unsigned int kUnderTimedTextSizeY_f = 30;
 const unsigned int kUnderTextBufSize = kUnderTextSizeX_f * kUnderTextSizeY_f;
-const unsigned int kUnderTimedTextBufSize = 256 * kUnderTextSizeY_f;
+const unsigned int kUnderTimedTextBufSize = 256 * kUnderTimedTextSizeY_f;
 const unsigned int kLengthOfVars = 68;
 const unsigned int kNumChanges = 250;
 
