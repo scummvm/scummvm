@@ -1538,5 +1538,102 @@ void Scene3260::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3275 - Hall
+ *
+ *--------------------------------------------------------------------------*/
+bool Scene3275::Actor2::startAction(CursorType action, Event &event) {
+	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 3275;
+	scene->setAction(&scene->_sequenceManager, scene, 3275, &R2_GLOBALS._player, &scene->_actor2, NULL);
+	return true;
+}
+
+void Scene3275::Exit1::changeScene() {
+	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
+
+	scene->_sceneMode = 0;
+	g_globals->_events.setCursor(CURSOR_ARROW);
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 10;
+	Common::Point pt(418, 118);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene3275::postInit(SceneObjectList *OwnerList) {
+	loadScene(3275);
+
+	if (R2_GLOBALS._sceneManager._previousScene == -1)
+		R2_GLOBALS._sceneManager._previousScene = 3260;
+
+	if (R2_GLOBALS._sceneManager._previousScene == 3150)
+		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
+	else
+		g_globals->gfxManager()._bounds.moveTo(Common::Point(0, 0));
+
+	SceneExt::postInit();
+	_exit1.setDetails(Rect(398, 60, 439, 118), SHADECURSOR_UP, 3150);
+	_exit1.setDest(Common::Point(418, 128));
+
+	_actor1.postInit();
+	_actor1.setup(3275, 1, 7);
+	_actor1.setPosition(Common::Point(419, 119));
+
+	_actor2.postInit();
+	_actor2.setup(3275, 2, 1);
+	_actor2.setPosition(Common::Point(56, 118));
+	_actor2.setDetails(3275, 3, 4, -1, 1, NULL);
+
+	_item2.setDetails(Rect(153, 58, 200, 120), 3275, 6, 7, 8, 1, NULL);
+	_item3.setDetails(Rect(275, 58, 331, 120), 3275, 6, 7, 8, 1, NULL);
+	_item4.setDetails(Rect(0, 66, 22, 127), 3275, 9, 10, 11, 1, NULL);
+	_item5.setDetails(Rect(457, 66, 480, 127), 3275, 9, 10, 11, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 480, 200), 3275, 0, 1, 2, 1, NULL);
+
+	R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.disableControl();
+	if (R2_GLOBALS._player._oldCharacterScene[3] == 3150) {
+		_sceneMode = 11;
+		R2_GLOBALS._player.setup(30, 3, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(418, 118));
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+		Common::Point pt(418, 128);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+	} else if (R2_GLOBALS._player._oldCharacterScene[3] == 3260) {
+		_sceneMode = 3276;
+		setAction(&_sequenceManager, this, 3276, &R2_GLOBALS._player, &_actor2, NULL);
+	} else {
+		R2_GLOBALS._player.setup(30, 3, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(245, 135));
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+		R2_GLOBALS._player.enableControl();
+	}
+	R2_GLOBALS._player._oldCharacterScene[3] = 3275;
+}
+
+void Scene3275::signal() {
+	switch (_sceneMode) {
+	case 10:
+		R2_GLOBALS._sceneManager.changeScene(3150);
+		break;
+	case 3275:
+		R2_GLOBALS._sceneManager.changeScene(3260);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

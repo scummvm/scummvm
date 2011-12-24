@@ -211,6 +211,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Computer room
 		return new Scene3260();
 	case 3275:
+		// Hall
+		return new Scene3275();
 	case 3350:
 	case 3375:
 	case 3385:
