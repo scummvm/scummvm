@@ -20,7 +20,6 @@
  *
  */
 
-#include <assert.h>
 #include "engines/engine.h"
 #include "scumm/player_appleII.h"
 #include "scumm/scumm.h"
