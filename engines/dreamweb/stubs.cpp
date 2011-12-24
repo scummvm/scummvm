@@ -1708,18 +1708,6 @@ uint16 DreamBase::findSetObject(const char *id) {
 	return 128;
 }
 
-void DreamGenContext::findExObject() {
-	char id[5];
-	id[0] = al;
-	id[1] = ah;
-	id[2] = cl;
-	id[3] = ch;
-	id[4] = '\0';
-	al = findExObject(id);
-	es = data.word(kExtras);
-	bx = kExdata + al * 16;
-}
-
 uint16 DreamBase::findExObject(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		if (objectMatches(getExAd(index), id))
@@ -1727,16 +1715,6 @@ uint16 DreamBase::findExObject(const char *id) {
 	}
 
 	return kNumexobjects;
-}
-
-void DreamGenContext::isRyanHolding() {
-	char id[5];
-	id[0] = al;
-	id[1] = ah;
-	id[2] = cl;
-	id[3] = ch;
-	id[4] = '\0';
-	flags._z = !isRyanHolding(id);
 }
 
 bool DreamBase::isRyanHolding(const char *id) {
@@ -1857,13 +1835,6 @@ void DreamBase::hangOnP(uint16 count) {
 	data.byte(kPointerframe) = pointerFrame;
 	data.byte(kPickup) = pickup;
 	data.byte(kPointermode) = 0;
-}
-
-void DreamGenContext::findNextColon() {
-	const uint8 *initialString = es.ptr(si, 0);
-	const uint8 *string = initialString;
-	al = findNextColon(&string);
-	si += (string - initialString);
 }
 
 uint8 DreamBase::findNextColon(const uint8 **string) {
@@ -2572,7 +2543,7 @@ void DreamBase::dumpMenu() {
 	multiDump(kMenux, kMenuy, 48, 48);
 }
 
-void DreamGenContext::useMenu() {
+void DreamBase::useMenu() {
 	getRidOfReels();
 	loadMenu();
 	createPanel();
@@ -3296,7 +3267,7 @@ void DreamBase::diaryKeyN() {
 		data.byte(kDiarypage) = 0;
 }
 
-void DreamGenContext::dropError() {
+void DreamBase::dropError() {
 	data.byte(kCommandtype) = 255;
 	delPointer();
 	printMessage(76, 21, 56, 240, 240 & 1);
@@ -3309,7 +3280,7 @@ void DreamGenContext::dropError() {
 	workToScreenM();
 }
 
-void DreamGenContext::cantDrop() {
+void DreamBase::cantDrop() {
 	data.byte(kCommandtype) = 255;
 	delPointer();
 	printMessage(76, 21, 24, 240, 240 & 1);
@@ -3341,26 +3312,6 @@ void DreamBase::getBack1() {
 		// Get back
 		data.byte(kGetback) = 1;
 		data.byte(kPickup) = 0;
-	}
-}
-
-void DreamGenContext::useButtonA() {
-	if (!isSetObOnMap(95)) {
-		showFirstUse();
-		turnAnyPathOn(0, data.byte(kRoomnum) - 1);
-		removeSetObject(9);
-		placeSetObject(95);
-		data.word(kWatchingtime) = 15 * 2;
-		data.word(kReeltowatch) = 71;
-		data.word(kEndwatchreel) = 85;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
-		data.byte(kGetback) = 1;
-		data.byte(kProgresspoints)++;
-	} else {
-		// Done this bit
-		showSecondUse();
-		putBackObStuff();
 	}
 }
 
@@ -3417,10 +3368,6 @@ void DreamBase::quitKey() {
 		data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::setupTimedUse() {
-	DreamBase::setupTimedUse(al, cx, dx, bl, bh);
-}
-
 void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 timeCount, byte x, byte y) {
 	if (data.word(kTimecount) != 0)
 		return; // can't setup
@@ -3463,7 +3410,7 @@ void DreamBase::entryTexts() {
 	}
 }
 
-void DreamGenContext::entryAnims() {
+void DreamBase::entryAnims() {
 	data.word(kReeltowatch) = 0xFFFF;
 	data.byte(kWatchmode) = (byte)-1;
 
@@ -3731,7 +3678,7 @@ void DreamBase::showDiaryKeys() {
 		showDiaryPage();
 }
 
-void DreamGenContext::edensFlatReminders() {
+void DreamBase::edensFlatReminders() {
 	if (data.byte(kReallocation) != 24 || data.byte(kMapx) != 44)
 		return; // not in Eden's lift
 
@@ -3740,18 +3687,18 @@ void DreamGenContext::edensFlatReminders() {
 
 	uint16 exObjextIndex = findExObject("CSHR");
 	if (!isRyanHolding("DKEY") || exObjextIndex == kNumexobjects) {
-		DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		setupTimedUse(50, 48, 8, 54, 70);	// forgot something
 		return;
 	}
 
 	DynObject *object = getExAd(exObjextIndex);
 
 	if (object->mapad[0] != 4) {
-		DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		setupTimedUse(50, 48, 8, 54, 70);	// forgot something
 		return;
 	} else if (object->mapad[1] != 255) {
 		if (!compare(object->mapad[1], object->mapad[0], "PURS")) {
-			DreamBase::setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+			setupTimedUse(50, 48, 8, 54, 70);	// forgot something
 			return;
 		}
 	}
@@ -3759,7 +3706,7 @@ void DreamGenContext::edensFlatReminders() {
 	data.byte(kProgresspoints)++;	// got card
 }
 
-void DreamGenContext::incRyanPage() {
+void DreamBase::incRyanPage() {
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
 		commandOnly(31);

@@ -66,7 +66,7 @@ bool DreamBase::isItWorn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
 
-void DreamGenContext::wornError() {
+void DreamBase::wornError() {
 	data.byte(kCommandtype) = 255;
 	delPointer();
 	printMessage(76, 21, 57, 240, false);
@@ -79,7 +79,7 @@ void DreamGenContext::wornError() {
 	workToScreenM();
 }
 
-void DreamGenContext::makeWorn(DynObject *object) {
+void DreamBase::makeWorn(DynObject *object) {
 	object->id[0] = 'W'-'A';
 	object->id[1] = 'E'-'A';
 }
@@ -461,10 +461,6 @@ void DreamGenContext::setPickup() {
 	workToScreenM();
 }
 
-void DreamGenContext::deleteExFrame() {
-	deleteExFrame(al);
-}
-
 void DreamBase::deleteExFrame(uint8 frameNum) {
 	Frame *frame = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata + sizeof(Frame)*frameNum, sizeof(Frame));
 
@@ -486,10 +482,6 @@ void DreamBase::deleteExFrame(uint8 frameNum) {
 		if (frame->ptr() >= startOff)
 			frame->setPtr(frame->ptr() - frameSize);
 	}
-}
-
-void DreamGenContext::deleteExText() {
-	deleteExText(al);
 }
 
 void DreamBase::deleteExText(uint8 textNum) {
@@ -704,7 +696,7 @@ const uint8 *DreamBase::getObTextStart() {
 	}
 }
 
-void DreamGenContext::dropObject() {
+void DreamBase::dropObject() {
 	if (data.byte(kCommandtype) != 223) {
 		data.byte(kCommandtype) = 223;
 		if (!data.byte(kPickup)) {

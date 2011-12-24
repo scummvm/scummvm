@@ -426,7 +426,7 @@ void DreamBase::loadCart() {
 		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24
 }
 
-void DreamGenContext::showKeys() {
+void DreamBase::showKeys() {
 	randomAccess(10);
 	scrollMonitor();
 	monMessage(18);

@@ -103,8 +103,6 @@
 	bool isItWorn(const DynObject *object) {
 		return DreamBase::isItWorn(object);
 	}
-	void wornError();
-	void makeWorn(DynObject *object);
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		DreamBase::obToInv(index, flag, x, y);
@@ -114,11 +112,6 @@
 	void hangOn(uint16 frameCount) {
 		DreamBase::hangOn(frameCount);
 	}
-	uint8 findNextColon(const uint8 **string) {
-		return DreamBase::findNextColon(string);
-	}
-	void findNextColon();
-	const uint8 *getObTextStartCPP();
 	void showCity();
 	uint16 getPersFrame(uint8 index);
 	void convIcons();
@@ -127,7 +120,6 @@
 	void transferText();
 	void watchCount();
 	void readSetData();
-	void useMenu();
 	void useMon();
 	void makeCaps();
 	byte makeCaps(byte c) {
@@ -156,8 +148,6 @@
 	void useElevator1();
 	void useKey();
 	void useObject();
-	void wearWatch();
-	void wearShades();
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
@@ -177,7 +167,6 @@
 	void afterIntroRoom();
 	void gettingShot();
 	void allPointer();
-	void useTrainer();
 	void chewy();
 	void delEverything();
 	void errorMessage1();
@@ -201,28 +190,15 @@
 	void hangOnPQ();
 	void showGun();
 	void endGame();
-	void dropError();
-	void cantDrop();
 	void newPlace();
 	void monkSpeaking();
 	void rollEndCredits2();
-	void useButtonA();
-	void setupTimedUse();
-	void entryAnims();
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	void updateSymbolTop();
 	void updateSymbolBot();
 	void runEndSeq();
 	bool execCommand();
-	void findExObject();
-	uint16 findExObject(const char *id) {
-		return DreamBase::findExObject(id);
-	}
-	void isRyanHolding();
-	bool isRyanHolding(const char *id) {
-		return DreamBase::isRyanHolding(id);
-	}
 	void getOpenedSize();
 	byte getOpenedSizeCPP();
 	void openOb();
@@ -232,26 +208,14 @@
 	void findInvPos();
 	uint16 findInvPosCPP();
 	void setPickup();
-	void showKeys();
 	void getKeyAndLogo();
 	void deleteExObject();
 	void deleteExObject(uint8 index) {
 		DreamBase::deleteExObject(index);
 	}
-	void deleteExFrame();
-	void deleteExFrame(uint8 frameNum) {
-		DreamBase::deleteExFrame(frameNum);
-	}
-	void deleteExText();
-	void deleteExText(uint8 textNum) {
-		DreamBase::deleteExText(textNum);
-	}
 	void signOn();
 	void lookAtPlace();
 	void inToInv();
 	void outOfInv();
-	void edensFlatReminders();
-	void incRyanPage();
-	void dropObject();
 
 #endif

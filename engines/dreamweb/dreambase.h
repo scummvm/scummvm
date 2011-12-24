@@ -169,6 +169,7 @@ public:
 	void loadPersonal();
 	void loadNews();
 	void loadCart();
+	void showKeys();
 
 	// from newplace.cpp
 	void getUnderCentre();
@@ -190,6 +191,9 @@ public:
 	void deleteExText(uint8 textNum);
 	void purgeALocation(uint8 index);
 	const uint8 *getObTextStart();
+	void wornError();
+	void makeWorn(DynObject *object);
+	void dropObject();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -527,6 +531,12 @@ public:
 	void showDiaryPage();
 	void showDiaryKeys();
 	void dumpDiaryKeys();
+	void useMenu();
+	void incRyanPage();
+	void edensFlatReminders();
+	void dropError();
+	void cantDrop();
+	void entryAnims();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -610,6 +620,10 @@ public:
 	void useAltar();
 	void notHeldError();
 	void useCashCard();
+	void useButtonA();
+	void wearWatch();
+	void wearShades();
+	void useTrainer();
 
 	// from vgafades.cpp
 	void clearStartPal();

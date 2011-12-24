@@ -46,7 +46,7 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::useElevator5,            "ELVF" },
 		{ &DreamBase::useChurchGate,           "CGAT" },
 		{ &DreamGenContext::useStereo,         "REMO" },
-		{ &DreamGenContext::useButtonA,        "BUTA" },
+		{ &DreamBase::useButtonA,              "BUTA" },
 		{ &DreamBase::useWinch,                "CBOX" },
 		{ &DreamBase::useLighter,              "LITE" },
 		{ &DreamBase::usePlate,                "PLAT" },
@@ -61,7 +61,7 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::useCardReader2,          "CRBB" },
 		{ &DreamBase::useCardReader3,          "CRCC" },
 		{ &DreamBase::sitDownInBar,            "SEAT" },
-		{ &DreamGenContext::useMenu,           "MENU" },
+		{ &DreamBase::useMenu,                 "MENU" },
 		{ &DreamBase::useCooker,               "COOK" },
 		{ &DreamBase::callHotelLift,           "ELCA" },
 		{ &DreamBase::callEdensLift,           "EDCA" },
@@ -75,9 +75,9 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::openYourNeighbour,       "ENTC" },
 		{ &DreamBase::openEden,                "ENTD" },
 		{ &DreamBase::openSarters,             "ENTH" },
-		{ &DreamGenContext::wearWatch,         "WWAT" },
+		{ &DreamBase::wearWatch,               "WWAT" },
 		{ &DreamBase::usePoolReader,           "POOL" },
-		{ &DreamGenContext::wearShades,        "WSHD" },
+		{ &DreamBase::wearShades,              "WSHD" },
 		{ &DreamBase::grafittiDoor,            "GRAF" },
 		{ &DreamBase::trapDoor,                "TRAP" },
 		{ &DreamBase::edensCDPlayer,           "CDPE" },
@@ -97,8 +97,8 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::useBalcony,              "BALC" },
 		{ &DreamBase::useWindow,               "WIND" },
 		{ &DreamBase::viewFolder,              "PAPR" },
-		{ &DreamGenContext::useTrainer,        "UWTA" },
-		{ &DreamGenContext::useTrainer,        "UWTB" },
+		{ &DreamBase::useTrainer,              "UWTA" },
+		{ &DreamBase::useTrainer,              "UWTB" },
 		{ &DreamGenContext::enterSymbol,       "STAT" },
 		{ &DreamBase::openTomb,                "TLID" },
 		{ &DreamBase::useSlab,                 "SLAB" },
@@ -355,7 +355,7 @@ void DreamBase::useRailing() {
 	data.byte(kMandead) = 4;
 }
 
-void DreamGenContext::wearWatch() {
+void DreamBase::wearWatch() {
 	if (data.byte(kWatchon) == 1) {
 		// Already wearing watch
 		showSecondUse();
@@ -369,7 +369,7 @@ void DreamGenContext::wearWatch() {
 	}
 }
 
-void DreamGenContext::wearShades() {
+void DreamBase::wearShades() {
 	if (data.byte(kShadeson) == 1) {
 		// Already wearing shades
 		showSecondUse();
@@ -1027,7 +1027,7 @@ void DreamBase::useCart() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useTrainer() {
+void DreamBase::useTrainer() {
 	uint8 dummy;
 	DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
 	if (object->mapad[0] != 4) {
@@ -1683,5 +1683,26 @@ void DreamBase::showPuzText(uint16 command, uint16 count) {
 	workToScreenM();
 	hangOnP(count);
 }
+
+void DreamBase::useButtonA() {
+	if (!isSetObOnMap(95)) {
+		showFirstUse();
+		turnAnyPathOn(0, data.byte(kRoomnum) - 1);
+		removeSetObject(9);
+		placeSetObject(95);
+		data.word(kWatchingtime) = 15 * 2;
+		data.word(kReeltowatch) = 71;
+		data.word(kEndwatchreel) = 85;
+		data.byte(kWatchspeed) = 1;
+		data.byte(kSpeedcount) = 1;
+		data.byte(kGetback) = 1;
+		data.byte(kProgresspoints)++;
+	} else {
+		// Done this bit
+		showSecondUse();
+		putBackObStuff();
+	}
+}
+
 
 } // End of namespace DreamGen
