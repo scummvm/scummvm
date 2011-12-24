@@ -2438,18 +2438,18 @@ const uint8 *DreamBase::getTextInFile1(uint16 index) {
 	return string;
 }
 
-void DreamGenContext::checkFolderCoords() {
-	RectWithCallback<DreamGenContext> folderList[] = {
+void DreamBase::checkFolderCoords() {
+	RectWithCallback<DreamBase> folderList[] = {
 		{ 280,320,160,200, &DreamBase::quitKey },
-		{ 143,300,6,194, &DreamGenContext::nextFolder },
-		{ 0,143,6,194, &DreamGenContext::lastFolder },
+		{ 143,300,6,194, &DreamBase::nextFolder },
+		{ 0,143,6,194, &DreamBase::lastFolder },
 		{ 0,320,0,200, &DreamBase::blank },
 		{ 0xFFFF,0,0,0, 0 }
 	};
 	checkCoords(folderList);
 }
 
-void DreamGenContext::nextFolder() {
+void DreamBase::nextFolder() {
 	if (data.byte(kFolderpage) == 12) {
 		blank();
 		return;
@@ -2469,7 +2469,7 @@ void DreamGenContext::nextFolder() {
 	}
 }
 
-void DreamGenContext::lastFolder() {
+void DreamBase::lastFolder() {
 	if (data.byte(kFolderpage) == 0) {
 		blank();
 		return;
@@ -2885,7 +2885,7 @@ void DreamBase::openInv() {
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::obsThatDoThings() {
+void DreamBase::obsThatDoThings() {
 	if (!compare(data.byte(kCommand), data.byte(kObjecttype), "MEMB"))
 		return; // notlouiscard
 
@@ -2895,7 +2895,7 @@ void DreamGenContext::obsThatDoThings() {
 	}
 }
 
-void DreamGenContext::describeOb() {
+void DreamBase::describeOb() {
 	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
 	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
@@ -2986,11 +2986,11 @@ void DreamGenContext::errorMessage3() {
 	delPointer();
 }
 
-void DreamGenContext::reExFromOpen() {
+void DreamBase::reExFromOpen() {
 
 }
 
-void DreamGenContext::putBackObStuff() {
+void DreamBase::putBackObStuff() {
 	createPanel();
 	showPanel();
 	showMan();
@@ -3614,7 +3614,7 @@ void DreamGenContext::updateSymbolBot() {
 	}
 }
 
-void DreamGenContext::showDiaryPage() {
+void DreamBase::showDiaryPage() {
 	showFrame(tempGraphics(), kDiaryx, kDiaryy, 0, 0);
 	data.byte(kKerning) = 1;
 	useTempCharset();
@@ -3631,7 +3631,7 @@ void DreamGenContext::showDiaryPage() {
 	useCharset1();
 }
 
-void DreamGenContext::dumpDiaryKeys() {
+void DreamBase::dumpDiaryKeys() {
 	if (data.byte(kPresscount) == 1) {
 		if (data.byte(kSartaindead) != 1 && data.byte(kDiarypage) == 5 && getLocation(6) != 1) {
 			// Add Sartain Industries note
@@ -3657,7 +3657,7 @@ void DreamGenContext::dumpDiaryKeys() {
 	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
 }
 
-void DreamGenContext::lookAtCard() {
+void DreamBase::lookAtCard() {
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
 	loadKeypad();
@@ -3710,7 +3710,7 @@ void DreamBase::clearChanges() {
 	memcpy(data.ptr(kRoomscango, 16), initialRoomsCanGo, 16);
 }
 
-void DreamGenContext::showDiaryKeys() {
+void DreamBase::showDiaryKeys() {
 	if (!data.byte(kPresscount))
 		return; // nokeyatall
 
