@@ -470,7 +470,6 @@ public:
 	void purgeAnItem();
 	void getSetAd();
 	void findOpenPos();
-	void searchForSame();
 	void rollEm();
 	void findAllOpen();
 	void fillOpen();

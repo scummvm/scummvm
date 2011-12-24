@@ -284,49 +284,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::searchForSame() {
-	STACK_CHECK;
-	si = cx;
-searchagain:
-	_inc(si);
-	al = es.byte(bx);
-search:
-	_cmp(es.byte(si), al);
-	if (flags.z())
-		goto gotstartletter;
-	_inc(cx);
-	_inc(si);
-	_cmp(si, 8000);
-	if (flags.c())
-		goto search;
-	si = bx;
-	ax = pop();
-	return;
-gotstartletter:
-	push(bx);
-	push(si);
-keepchecking:
-	_inc(si);
-	_inc(bx);
-	al = es.byte(bx);
-	ah = es.byte(si);
-	_cmp(al, ':');
-	if (flags.z())
-		goto foundmatch;
-	_cmp(al, 0);
-	if (flags.z())
-		goto foundmatch;
-	_cmp(al, ah);
-	if (flags.z())
-		goto keepchecking;
-	si = pop();
-	bx = pop();
-	goto searchagain;
-foundmatch:
-	si = pop();
-	bx = pop();
-}
-
 void DreamGenContext::reExFromInv() {
 	STACK_CHECK;
 	findInvPos();
