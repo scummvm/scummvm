@@ -84,7 +84,30 @@ uint16 DreamGenContext::getPersFrame(uint8 index) {
 	return getSegment(data.word(kPeople)).word(kPersonframes + index * 2);
 }
 
-// TODO: put Starttalk here
+void DreamGenContext::startTalk() {
+	data.byte(kTalkmode) = 0;
+
+	al = (data.byte(kCharacter) & 0x7F);
+	getPersonText();
+	const uint8 *str = es.ptr(si, 0);
+	uint16 y;
+
+	data.word(kCharshift) = 91+91;
+	y = 64;
+	printDirect(&str, 66, &y, 241, true);
+
+	data.word(kCharshift) = 0;
+	y = 80;
+	printDirect(&str, 66, &y, 241, true);
+
+	data.byte(kSpeechloaded) = 0;
+	loadSpeech('R', data.byte(kReallocation), 'C', 64*(data.byte(kCharacter) & 0x7F));
+	if (data.byte(kSpeechloaded) == 1) {
+		data.byte(kVolumedirection) = 1;
+		data.byte(kVolumeto) = 6;
+		playChannel1(50 + 12);
+	}
+}
 
 // TODO: put Getpersontext here
 

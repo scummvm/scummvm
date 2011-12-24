@@ -460,7 +460,6 @@ public:
 	void outOfOpen();
 	void dirCom();
 	void findFirstPath();
-	void startTalk();
 	void getAnyAd();
 	void getFreeAd();
 	void dirFile();

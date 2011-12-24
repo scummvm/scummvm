@@ -848,6 +848,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'startdmablock',
 	'startloading',
 	'startpaltoend',
+	'starttalk',
 	'startup',
 	'startup1',
 	'steady',

@@ -975,45 +975,6 @@ cantpurge2:
 		goto lookforpurge2;
 }
 
-void DreamGenContext::startTalk() {
-	STACK_CHECK;
-	data.byte(kTalkmode) = 0;
-	al = data.byte(kCharacter);
-	_and(al, 127);
-	getPersonText();
-	data.word(kCharshift) = 91+91;
-	di = 66;
-	bx = 64;
-	dl = 241;
-	al = 0;
-	ah = 79;
-	printDirect();
-	data.word(kCharshift) = 0;
-	di = 66;
-	bx = 80;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printDirect();
-	data.byte(kSpeechloaded) = 0;
-	al = data.byte(kCharacter);
-	_and(al, 127);
-	ah = 0;
-	cx = 64;
-	_mul(cx);
-	cl = 'C';
-	dl = 'R';
-	dh = data.byte(kReallocation);
-	loadSpeech();
-	_cmp(data.byte(kSpeechloaded), 1);
-	if (!flags.z())
-		return /* (nospeech1) */;
-	data.byte(kVolumedirection) = 1;
-	data.byte(kVolumeto) = 6;
-	al = 50+12;
-	playChannel1();
-}
-
 void DreamGenContext::getPersonText() {
 	STACK_CHECK;
 	ah = 0;
