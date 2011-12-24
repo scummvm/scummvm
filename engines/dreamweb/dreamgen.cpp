@@ -284,53 +284,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::getObTextStart() {
-	STACK_CHECK;
-	es = data.word(kFreedesc);
-	si = (0);
-	cx = (0+(82*2));
-	_cmp(data.byte(kObjecttype), 2);
-	if (flags.z())
-		goto describe;
-	es = data.word(kSetdesc);
-	si = (0);
-	cx = (0+(130*2));
-	_cmp(data.byte(kObjecttype), 1);
-	if (flags.z())
-		goto describe;
-	es = data.word(kExtras);
-	si = (0+2080+30000+(16*114));
-	cx = (0+2080+30000+(16*114)+((114+2)*2));
-describe:
-	al = data.byte(kCommand);
-	ah = 0;
-	_add(ax, ax);
-	_add(si, ax);
-	ax = es.word(si);
-	_add(ax, cx);
-	si = ax;
-	bx = ax;
-tryagain:
-	push(si);
-	findNextColon();
-	al = es.byte(si);
-	cx = si;
-	si = pop();
-	_cmp(data.byte(kObjecttype), 1);
-	if (!flags.z())
-		return /* (cantmakeoneup) */;
-	_cmp(al, 0);
-	if (flags.z())
-		goto findsometext;
-	_cmp(al, ':');
-	if (flags.z())
-		goto findsometext;
-	return;
-findsometext:
-	searchForSame();
-	goto tryagain;
-}
-
 void DreamGenContext::searchForSame() {
 	STACK_CHECK;
 	si = cx;

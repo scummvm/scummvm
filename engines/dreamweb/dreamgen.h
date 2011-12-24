@@ -455,7 +455,6 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void getPersonText();
-	void getObTextStart();
 	void checkObjectSize();
 	void doSomeTalk();
 	void outOfOpen();

@@ -140,7 +140,7 @@ void DreamGenContext::useRoutine() {
 	}
 
 	delPointer();
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	if (findNextColon(&obText) != 0) {
 		if (findNextColon(&obText) != 0) {
 			if (*obText != 0) {
@@ -175,7 +175,7 @@ void DreamGenContext::useText(const uint8 *string) {
 }
 
 void DreamGenContext::showFirstUse() {
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	useText(obText);
@@ -183,7 +183,7 @@ void DreamGenContext::showFirstUse() {
 }
 
 void DreamGenContext::showSecondUse() {
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -1611,7 +1611,7 @@ void DreamGenContext::useCashCard() {
 	showMan();
 	uint16 y = (!data.byte(kForeignrelease)) ? 120 : 120 - 3;
 	showFrame(tempGraphics(), 114, y, 39, 0);
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	y = 98;

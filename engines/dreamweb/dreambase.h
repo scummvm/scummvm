@@ -188,6 +188,7 @@ public:
 	void deleteExFrame(uint8 frameNum);
 	void deleteExText(uint8 textNum);
 	void purgeALocation(uint8 index);
+	const uint8 *getObTextStart();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);

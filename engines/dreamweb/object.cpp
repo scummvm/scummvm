@@ -636,4 +636,73 @@ void DreamBase::purgeALocation(uint8 index) {
 	}
 }
 
+const uint8 *DreamBase::getObTextStart() {
+	uint16 textSeg, textDatOff, textOff;
+	if (data.byte(kObjecttype) == kFreeObjectType) {
+		textSeg = data.word(kFreedesc);
+		textDatOff = kFreetextdat;
+		textOff = kFreetext;
+	} else if (data.byte(kObjecttype) == kSetObjectType1) {
+		textSeg = data.word(kSetdesc);
+		textDatOff = kSettextdat;
+		textOff = kSettext;
+	} else {
+		textSeg = data.word(kExtras);
+		textDatOff = kExtextdat;
+		textOff = kExtext;
+	}
+	const uint8 *textBase = getSegment(textSeg).ptr(textOff, 0);
+	const uint8 *text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
+
+	if (data.byte(kObjecttype) != kSetObjectType1)
+		return text;
+
+	const uint8 *obname = text;
+	while (true) {
+		const uint8 *start = text;
+		findNextColon(&text);
+
+		// Not an empty description string?
+		if (*text != 0 && *text != ':')
+			return start;
+
+		// If the description string (of a SetObjectType1 object) is empty,
+		// look for an object with the same name.
+		// Example: Eden's garage door outside has two parts. The right part
+		// has no description of its own but uses that of the left part.
+
+		bool found = false;
+		do {
+			text++;
+			uint8 c = *obname;
+
+			// scan for matching first character
+			while (*text != c) {
+				text++;
+
+				// arbitrary give-up counter
+				if (text - (textBase - textOff) >= 8000) {
+					warning("Object description for %d/%d not found", data.byte(kObjecttype), data.byte(kCommand));
+					return obname;
+				}
+			}
+
+			// found matching first character, so match the rest
+			const uint8 *s1 = obname;
+			const uint8 *s2 = text;
+			do {
+				s1++;
+				s2++;
+			} while (*s1 != ':' && *s1 != 0 && *s1 == *s2);
+
+			if (*s1 == ':' || *s1 == 0)
+				found = true; // (prefix) matched the entire object name
+		} while (!found);
+
+		// We found an object with the same name. The next loop iteration
+		// will check if this one again has an empty description.
+	}
+}
+
+
 } // End of namespace DreamGen

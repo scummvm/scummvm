@@ -1875,16 +1875,6 @@ uint8 DreamBase::findNextColon(const uint8 **string) {
 	return c;
 }
 
-const uint8 *DreamGenContext::getObTextStartCPP() {
-	push(es);
-	push(si);
-	getObTextStart();
-	const uint8 *result = es.ptr(si, 0);
-	si = pop();
-	es = pop();
-	return result;
-}
-
 void DreamGenContext::enterSymbol() {
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
@@ -2906,7 +2896,7 @@ void DreamGenContext::obsThatDoThings() {
 }
 
 void DreamGenContext::describeOb() {
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
 	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
 		y = 82;
@@ -3673,7 +3663,7 @@ void DreamGenContext::lookAtCard() {
 	loadKeypad();
 	createPanel2();
 	showFrame(tempGraphics(), 160, 80, 42, 128);
-	const uint8 *obText = getObTextStartCPP();
+	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
 	findNextColon(&obText);
