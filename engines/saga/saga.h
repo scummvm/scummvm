@@ -208,19 +208,6 @@ enum PanelButtonType {
 	kPanelAllButtons = 0xFFFFF
 };
 
-enum GameSoundTypes {
-	kSoundPCM = 0,
-	kSoundVOX = 1,
-	kSoundVOC = 2,
-	kSoundWAV = 3,
-	kSoundMP3 = 4,
-	kSoundOGG = 5,
-	kSoundFLAC = 6,
-	kSoundAIFF = 7,
-	kSoundShorten = 8,
-	kSoundMacSND = 9
-};
-
 enum TextStringIds {
 	kTextPickUp,
 	kTextLookAt,

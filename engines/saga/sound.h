@@ -27,9 +27,11 @@
 
 #include "common/file.h"
 #include "audio/mixer.h"
-#include "audio/decoders/mp3.h"
-#include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
+#include "audio/timestamp.h"
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace Saga {
 
@@ -40,15 +42,8 @@ enum SOUND_FLAGS {
 };
 
 struct SoundBuffer {
-	uint16 frequency;
-	bool isCompressed;
-	byte flags;
-
-	byte *buffer;
-	size_t size;
-	size_t originalSize;
-	GameSoundTypes soundType;
-	size_t fileOffset;
+	Audio::RewindableAudioStream *stream;
+	Audio::Timestamp streamLength;
 };
 
 enum sndHandleType {
