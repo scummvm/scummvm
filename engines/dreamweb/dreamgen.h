@@ -475,7 +475,6 @@ public:
 	void findAllOpen();
 	void fillOpen();
 	void getEitherAd();
-	void dropObject();
 	void useOpened();
 	void locationPic();
 	void swapWithOpen();

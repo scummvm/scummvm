@@ -385,6 +385,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'drawitall',
 	'drinker',
 	'droperror',
+	'dropobject',
 	'drunk',
 	'dumpblink',
 	'dumpcurrent',

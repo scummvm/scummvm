@@ -339,5 +339,6 @@
 	void outOfInv();
 	void edensFlatReminders();
 	void incRyanPage();
+	void dropObject();
 
 #endif

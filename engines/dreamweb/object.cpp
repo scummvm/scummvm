@@ -704,5 +704,57 @@ const uint8 *DreamBase::getObTextStart() {
 	}
 }
 
+void DreamGenContext::dropObject() {
+	if (data.byte(kCommandtype) != 223) {
+		data.byte(kCommandtype) = 223;
+		if (!data.byte(kPickup)) {
+			blank();
+			return;
+		}
+		commandWithOb(37, data.byte(kObjecttype), data.byte(kItemframe));
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	if (isItWorn(getEitherAdCPP())) {
+		wornError();
+		return;
+	}
+
+	if (data.byte(kReallocation) != 47) {
+		byte flag, flagEx, type, flagX, flagY;
+		checkOne(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
+
+		if (flag >= 2) {
+			dropError();
+			return;
+		}
+	} else {
+		dropError();
+		return;
+	}
+
+	if (data.byte(kMapxsize) == 64 && data.byte(kMapysize) == 64) {
+		// Inside lift
+		dropError();
+		return;
+	}
+
+	if (compare(data.byte(kItemframe), 4, "GUNA") || compare(data.byte(kItemframe), 4, "SHLD")) {
+		cantDrop();
+		return;
+	}
+
+	data.byte(kObjecttype) = 4;
+	DynObject *object = getExAd(data.byte(kItemframe));
+	object->mapad[0] = 0;
+	object->mapad[1] = ((data.byte(kRyanx) + 4) >> 4) + data.byte(kMapx);
+	object->mapad[2] = (data.byte(kRyanx) + 4) & 0xF;
+	object->mapad[3] = ((data.byte(kRyany) + 8) >> 4) + data.byte(kMapy);
+	object->mapad[4] = (data.byte(kRyany) + 8) & 0xF;
+	data.byte(kPickup) = 0;
+	object->currentLocation = data.byte(kReallocation);
+}
 
 } // End of namespace DreamGen
