@@ -483,6 +483,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getobtextstart',
 	'getopenedsize',
 	'getpersframe',
+	'getpersontext',
 	'getreelframeax',
 	'getreelstart',
 	'getridofall',

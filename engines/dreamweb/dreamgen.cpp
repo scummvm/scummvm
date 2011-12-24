@@ -975,20 +975,6 @@ cantpurge2:
 		goto lookforpurge2;
 }
 
-void DreamGenContext::getPersonText() {
-	STACK_CHECK;
-	ah = 0;
-	cx = 64*2;
-	_mul(cx);
-	si = ax;
-	es = data.word(kPeople);
-	_add(si, (0+24));
-	cx = (0+24+(1026*2));
-	ax = es.word(si);
-	_add(ax, cx);
-	si = ax;
-}
-
 void DreamGenContext::doSomeTalk() {
 	STACK_CHECK;
 dospeech:

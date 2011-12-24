@@ -87,8 +87,7 @@ uint16 DreamGenContext::getPersFrame(uint8 index) {
 void DreamGenContext::startTalk() {
 	data.byte(kTalkmode) = 0;
 
-	al = (data.byte(kCharacter) & 0x7F);
-	getPersonText();
+	getPersonText(data.byte(kCharacter) & 0x7F);
 	const uint8 *str = es.ptr(si, 0);
 	uint16 y;
 
@@ -109,7 +108,10 @@ void DreamGenContext::startTalk() {
 	}
 }
 
-// TODO: put Getpersontext here
+void DreamGenContext::getPersonText(uint8 index) {
+	es = data.word(kPeople);
+	si = es.word((index * 64 * 2) + 24) + (1026 * 2) + 24;
+}
 
 void DreamGenContext::moreTalk() {
 	if (data.byte(kTalkmode) != 0) {
