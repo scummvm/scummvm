@@ -1706,6 +1706,35 @@ EOF
 }
 
 #
+# Check whether the system is 32-bit
+#
+pointer_is_32bit() {
+        cat > tmp_pointer_is_32bit.cpp << EOF
+int main() {
+        void *p;
+        int v = (int)p;
+        return 0;
+}
+EOF
+        $CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
+        status=$?
+        cc_check_clean tmp_pointer_is_32bit.cpp
+        return $status
+}
+
+echo_n "Checking 64-bitness... "
+pointer_is_32bit
+if test $? -eq 0; then
+        type_ptr=int32
+        echo "no"
+        add_line_to_config_h "/* #define SCUMM_64BITS */"
+else
+        type_ptr=int64
+        echo "yes"
+        add_line_to_config_h "#define SCUMM_64BITS"
+fi
+
+#
 # Determine data type sizes
 #
 echo_n "Type with 1 byte... "
@@ -1725,6 +1754,17 @@ type_4_byte=`find_type_with_size 4`
 TMPR="$?"
 echo "$type_4_byte"
 test $TMPR -eq 0 || exit 1	# check exit code of subshell
+
+echo_n "Type with 8 bytes... "
+type_8_byte=`find_type_with_size 8`
+TMPR="$?"
+echo "$type_8_byte"
+if test $TMPR -eq 0; then
+        _def_64bit_type_signed="typedef signed $type_8_byte int64;"
+        _def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
+fi
+# force cleanup after check for 8 bytes type
+cc_check_clean tmp_find_type_with_size.cpp
 
 #
 # Check whether memory alignment is required
@@ -3852,6 +3892,17 @@ typedef unsigned $type_4_byte uint32;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+
+/* 64-bit stuff */
+$_def_64bit_type_signed
+#if defined(__APPLE__) && !defined(__ppc__)
+#ifndef _UINT64
+#define _UINT64
+$_def_64bit_type_unsigned
+#endif
+#else
+$_def_64bit_type_unsigned
+#endif
 
 #endif /* CONFIG_H */
 EOF
