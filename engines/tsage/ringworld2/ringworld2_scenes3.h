@@ -291,6 +291,24 @@ public:
 	virtual void dispatch();
 };
 
+class Scene3255 : public SceneExt {
+public:
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SpeakerQuinn3255 _quinnSpeaker;
+	SpeakerMiranda3255 _mirandaSpeaker;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene3260 : public SceneExt {
 	class Actor13 : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);

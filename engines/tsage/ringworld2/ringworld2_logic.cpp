@@ -206,6 +206,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Room with large stasis field negator
 		return new Scene3250();
 	case 3255:
+		return new Scene3255();
 	case 3260:
 		// Computer room
 		return new Scene3260();

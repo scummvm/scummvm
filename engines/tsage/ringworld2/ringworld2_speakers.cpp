@@ -1534,5 +1534,73 @@ void SpeakerTomko3245::proc15() {
 	}
 }
 
+SpeakerQuinn3255::SpeakerQuinn3255() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerQuinn3255::proc15() {
+	Scene3255 *scene = (Scene3255 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor4;
+		_object2->hide();
+		_object1.postInit();
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(3257, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+SpeakerMiranda3255::SpeakerMiranda3255() {
+	_speakerName = "MIRANDA";
+	_color1 = 154;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerMiranda3255::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &R2_GLOBALS._player;
+		_object2->hide();
+		_object1.postInit();
+		_object1._effect = _object2->_effect;
+		_object1._shade = _object2->_shade;
+		_object1.setPosition(_object2->_position);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(3257, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

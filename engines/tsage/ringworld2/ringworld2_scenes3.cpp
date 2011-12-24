@@ -1257,6 +1257,111 @@ void Scene3250::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 3255 -
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3255::postInit(SceneObjectList *OwnerList) {
+	loadScene(3255);
+	SceneExt::postInit();
+
+	_stripManager.addSpeaker(&_quinnSpeaker);
+	_stripManager.addSpeaker(&_mirandaSpeaker);
+
+	if (R2_GLOBALS._sceneManager._previousScene == -1)
+		R2_GLOBALS.setFlag(79);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.disableControl();
+
+	if (R2_GLOBALS.getFlag(79)) {
+		R2_GLOBALS._sound1.play(267);
+		R2_GLOBALS._sound2.play(268);
+		_sceneMode = 3257;
+		_actor3.postInit();
+		_actor4.postInit();
+		_actor4._effect = 1;
+		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_actor4, &_actor3, NULL);
+	} else {
+		_actor1.postInit();
+		_actor1.setup(303, 1, 1);
+		_actor1.setPosition(Common::Point(208, 128));
+		_actor2.postInit();
+		_actor2.setup(3107, 3, 1);
+		_actor2.setPosition(Common::Point(230, 127));
+		_sceneMode = 3255;
+		setAction(&_sequenceManager, this, 3255, &R2_GLOBALS._player, NULL);
+	}
+	R2_GLOBALS._player._oldCharacterScene[3] = 3255;
+}
+
+void Scene3255::signal() {
+	switch (_sceneMode) {
+	case 10:
+		_sceneMode = 3258;
+		_actor5.postInit();
+		_actor6.postInit();
+		_actor7.postInit();
+		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_actor4, &_actor3, &_actor5, &_actor6, &_actor7, NULL);
+		break;
+	case 3256:
+		R2_GLOBALS._sceneManager.changeScene(3250);
+		break;
+	case 3257:
+		_sceneMode = 10;
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		_stripManager.start(607, this);
+		break;
+	case 3258:
+		R2_GLOBALS._sceneManager.changeScene(3100);
+		break;
+	default:
+		SceneItem::display(3255, 0, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		_sceneMode = 3256;
+		setAction(&_sequenceManager, this, 3256, &R2_GLOBALS._player, NULL);
+	}
+}
+
+void Scene3255::dispatch() {
+	if (R2_GLOBALS.getFlag(79)) {
+		if (_actor5._position.y >= 95) {
+			if (_actor5._position.y <= 110)
+				_actor5._shade = 6 - (_actor5._position.y - 95) / 3;
+			else
+				_actor5._effect = 1;
+		} else {
+			_actor5._effect = 6;
+			_actor5._shade = 6;
+		}
+
+		if (_actor6._position.y >= 95) {
+			if (_actor6._position.y <= 110)
+				_actor6._shade = 6 - (_actor6._position.y - 95) / 3;
+			else
+				_actor6._effect = 1;
+		} else {
+			_actor6._effect = 6;
+			_actor6._shade = 6;
+		}
+
+		if (_actor7._position.y >= 95) {
+			if (_actor7._position.y <= 110)
+				_actor7._shade = 6 - (_actor7._position.y - 95) / 3;
+			else
+				_actor7._effect = 1;
+		} else {
+			_actor7._effect = 6;
+			_actor7._shade = 6;
+		}
+	}
+
+	if ((R2_GLOBALS._player._position.x > 250) && (R2_GLOBALS._player._shade == 1)) {
+		R2_GLOBALS._player._effect = 6;
+		_actor4._effect = 6;
+	}
+	Scene::dispatch();
+}
+
+/*--------------------------------------------------------------------------
  * Scene 3260 - Computer room
  *
  *--------------------------------------------------------------------------*/
