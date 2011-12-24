@@ -55,7 +55,7 @@
 #include "scumm/player_nes.h"
 #include "scumm/player_sid.h"
 #include "scumm/player_pce.h"
-#include "scumm/player_appleII.h"
+#include "scumm/player_apple2.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2cms.h"
