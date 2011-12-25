@@ -475,56 +475,6 @@ void DreamGenContext::transferConToEx() {
 	ds.byte(si+2) = 255;
 }
 
-void DreamGenContext::purgeAnItem() {
-	STACK_CHECK;
-	es = data.word(kExtras);
-	di = (0+2080+30000);
-	bl = data.byte(kReallocation);
-	cx = 0;
-lookforpurge:
-	al = es.byte(di+2);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto cantpurge;
-	_cmp(es.byte(di+12), 2);
-	if (flags.z())
-		goto iscup;
-	_cmp(es.byte(di+12), 255);
-	if (!flags.z())
-		goto cantpurge;
-iscup:
-	_cmp(es.byte(di+11), bl);
-	if (flags.z())
-		goto cantpurge;
-	deleteExObject();
-	return;
-cantpurge:
-	_add(di, 16);
-	_inc(cx);
-	_cmp(cx, (114));
-	if (!flags.z())
-		goto lookforpurge;
-	di = (0+2080+30000);
-	bl = data.byte(kReallocation);
-	cx = 0;
-lookforpurge2:
-	al = es.byte(di+2);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto cantpurge2;
-	_cmp(es.byte(di+12), 255);
-	if (!flags.z())
-		goto cantpurge2;
-	deleteExObject();
-	return;
-cantpurge2:
-	_add(di, 16);
-	_inc(cx);
-	_cmp(cx, (114));
-	if (!flags.z())
-		goto lookforpurge2;
-}
-
 void DreamGenContext::getDestInfo() {
 	STACK_CHECK;
 	al = data.byte(kDestpos);

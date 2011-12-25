@@ -697,6 +697,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'printundermon',
 	'processtrigger',
 	'purgealocation',
+	'purgeanitem',
 	'putbackobstuff',
 	'putundercentre',
 	'putundermenu',

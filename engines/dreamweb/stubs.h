@@ -183,10 +183,6 @@
 	uint16 findInvPosCPP();
 	void setPickup();
 	void getKeyAndLogo();
-	void deleteExObject();
-	void deleteExObject(uint8 index) {
-		DreamBase::deleteExObject(index);
-	}
 	void signOn();
 	void lookAtPlace();
 	void inToInv();
@@ -199,6 +195,5 @@
 	void outOfOpen();
 	void swapWithOpen();
 	void swapWithInv();
-	void emergencyPurge();
 
 #endif

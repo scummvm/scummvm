@@ -517,11 +517,6 @@ void DreamBase::deleteExText(uint8 textNum) {
 	}
 }
 
-// This takes es:di and cl as input, but es:di always points to getExAd(cl)
-void DreamGenContext::deleteExObject() {
-	deleteExObject(cl);
-}
-
 void DreamBase::deleteExObject(uint8 index) {
 	DynObject *obj = getExAd(index);
 

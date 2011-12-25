@@ -541,6 +541,8 @@ public:
 	void cantDrop();
 	void entryAnims();
 	bool finishedWalking();
+	void emergencyPurge();
+	void purgeAnItem();
 
 	// from talk.cpp
 	void talk();

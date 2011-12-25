@@ -3701,7 +3701,7 @@ void DreamBase::incRyanPage() {
 
 }
 
-void DreamGenContext::emergencyPurge() {
+void DreamBase::emergencyPurge() {
 	while (true) {
 		if (data.word(kExframepos) + 4000 < kExframeslen) {
 			// Not near frame end
@@ -3710,6 +3710,25 @@ void DreamGenContext::emergencyPurge() {
 		}
 
 		purgeAnItem();
+	}
+}
+
+void DreamBase::purgeAnItem() {
+	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
+
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] && extraObjects[i].id[0] == 255 &&
+			extraObjects[i].initialLocation != data.byte(kReallocation)) {
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] && extraObjects[i].id[0] == 255) {
+			deleteExObject(i);
+			return;
+		}
 	}
 }
 

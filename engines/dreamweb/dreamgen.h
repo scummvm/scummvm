@@ -461,7 +461,6 @@ public:
 	void dirFile();
 	void pickupConts();
 	void transferMap();
-	void purgeAnItem();
 	void getSetAd();
 	void findOpenPos();
 	void rollEm();
