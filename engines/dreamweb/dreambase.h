@@ -403,7 +403,7 @@ public:
 	void showMan();
 	void panelIcons1();
 	SetObject *getSetAd(uint8 index);
-	void *getAnyAd(uint8 *value1, uint8 *value2);
+	void *getAnyAd(uint8 *slotSize, uint8 *slotCount);
 	const uint8 *getTextInFile1(uint16 index);
 	uint8 findNextColon(const uint8 **string);
 	void allocateBuffers();

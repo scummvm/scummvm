@@ -71,8 +71,8 @@
 	DynObject *getExAd(uint8 index) {
 		return DreamBase::getExAd(index);
 	}
-	void *getAnyAd(uint8 *value1, uint8 *value2) {
-		return DreamBase::getAnyAd(value1, value2);
+	void *getAnyAd(uint8 *slotSize, uint8 *slotCount) {
+		return DreamBase::getAnyAd(slotSize, slotCount);
 	}
 	SetObject *getSetAd(uint8 index) {
 		return DreamBase::getSetAd(index);
