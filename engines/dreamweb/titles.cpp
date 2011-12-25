@@ -43,7 +43,7 @@ void DreamGenContext::monkSpeaking() {
 	loadIntoTemp("DREAMWEB.G15");
 	clearWork();
 	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
-	workToScreenCPP();
+	workToScreen();
 	data.byte(kVolume) = 7;
 	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 5;
@@ -260,7 +260,7 @@ void DreamGenContext::loadIntroRoom() {
 	reelsOnScreen();
 	spriteUpdate();
 	printSprites();
-	workToScreenCPP();
+	workToScreen();
 }
 
 void DreamGenContext::set16ColPalette() {

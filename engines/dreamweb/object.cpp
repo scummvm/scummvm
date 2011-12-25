@@ -147,7 +147,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			data.byte(kCommandtype) = 255;
 			readMouse();
 			showPointer();
-			workToScreenCPP();
+			workToScreen();
 			delPointer();
 			examineAgain = false;
 		}
@@ -251,7 +251,7 @@ void DreamGenContext::inventory() {
 	openInv();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	data.byte(kOpenedob) = 255;
 	examineOb(false);
@@ -600,7 +600,7 @@ void DreamGenContext::inToInv() {
 	readMouse();
 	showPointer();
 	outOfInv();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -641,7 +641,7 @@ void DreamGenContext::outOfInv() {
 	readMouse();
 	showPointer();
 	inToInv();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -834,7 +834,7 @@ void DreamGenContext::selectOpenOb() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -885,7 +885,7 @@ void DreamGenContext::swapWithInv() {
 	fillRyan();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -952,7 +952,7 @@ void DreamGenContext::useOpened() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -1010,7 +1010,7 @@ void DreamGenContext::outOfOpen() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -1080,7 +1080,7 @@ void DreamGenContext::swapWithOpen() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 

@@ -86,7 +86,7 @@ void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
-void DreamBase::workToScreenCPP() {
+void DreamBase::workToScreen() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
 }
 

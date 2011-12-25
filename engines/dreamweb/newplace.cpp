@@ -54,7 +54,7 @@ void DreamBase::selectLocation() {
 	readMouse();
 	data.byte(kPointerframe) = 0;
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	playChannel0(9, 255);
 	data.byte(kNewlocation) = 255;
 
@@ -189,7 +189,7 @@ void DreamBase::nextDest() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -218,7 +218,7 @@ void DreamBase::lastDest() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 

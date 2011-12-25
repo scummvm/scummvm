@@ -118,7 +118,7 @@ void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 	showKeypad();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	data.word(kPresspointer) = 0;
 	data.byte(kGetback) = 0;

@@ -921,7 +921,7 @@ void DreamBase::mugger(ReelRoutine &routine) {
 		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
 		uint16 y = 104;
 		printDirect(&string, 33 + 20, &y, 241, 241 & 1);
-		workToScreenCPP();
+		workToScreen();
 		hangOn(300);
 		routine.setReelPointer(140);
 		data.byte(kManspath) = 2;
