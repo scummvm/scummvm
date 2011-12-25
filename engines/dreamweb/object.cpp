@@ -771,39 +771,26 @@ bool DreamGenContext::checkObjectSizeCPP() {
 	// to 6. This could be a bad idea, according to the original source.
 	byte objectSize = (object->objectSize != 255) ? object->objectSize : 6;
 
-	if (objectSize >= 100) {
-		// Special case
-		if (containerSize >= 100) {
-			// Both objects are special
-			if (containerSize == objectSize) {
-				return true;
-			} else {
-				errorMessage3();
-				return false;
-			}
-		} else {
-			if (containerSize >= (byte)(objectSize - 100)) {
-				return true;
-			} else {
-				errorMessage2();
-				return false;
-			}
-		}
-	} else if (containerSize >= 100) {	// The current object isn't special, but the container object is
+	if (containerSize >= 100) {
+		// Special type of container: only objects of the same special type fit.
+		if (containerSize == objectSize)
+			return true;
+
 		errorMessage3();
 		return false;
-	} else if (containerSize >= objectSize) {
-		return true;
-	} else {
-		// The original continues here to the special case above. It checks if
-		// cl (containerSize) < al (objectSize) and continues if this is so.
-		// However, in this case, the code subtracts 100 from objectSize, which
-		// was between 0 - 99, so it now is between 156 and 255. containerSize is
-		// smaller than 100, so comparing it with objectSize will always be true,
-		// thus this bit of code always falls through to the errorMessage2() case.
-		errorMessage2();
-		return false;
 	}
+
+	if (objectSize >= 100) {
+		// Special type of object, but a regular container.
+		// Subtract 100 from the size to get its regular size.
+		objectSize -= 100;
+	}
+
+	if (containerSize >= objectSize)
+		return true;
+
+	errorMessage2();
+	return false;
 }
 
 } // End of namespace DreamGen
