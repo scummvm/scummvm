@@ -661,6 +661,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'othersmoker',
 	'out22c',
 	'outofinv',
+	'outofopen',
 	'paltoendpal',
 	'paltostartpal',
 	'panelicons1',

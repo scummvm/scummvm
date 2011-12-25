@@ -887,9 +887,9 @@ void DreamGenContext::useOpened() {
 	}
 
 	findOpenPos();
-	ax = es.word(bx);
+	uint16 subject = es.word(bx);
 
-	if (al != 255) {
+	if ((subject & 0x00FF) != 255) {
 		swapWithOpen();
 		return;
 	}
@@ -899,7 +899,7 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
+	subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
 	if (subject == data.word(kOldsubject)) {
 		if (data.byte(kCommandtype) != 227) {
 			data.byte(kCommandtype) = 227;
@@ -945,6 +945,66 @@ void DreamGenContext::useOpened() {
 	delPointer();
 }
 
+void DreamGenContext::outOfOpen() {
+	if (data.byte(kOpenedob) == 255)
+		return;	// cannot use opened object
+
+	findOpenPos();
+	uint16 subject = es.word(bx);
+
+	if ((subject & 0x00FF) == 255) {
+		blank();
+		return;
+	}
+
+	if (subject == data.word(kOldsubject)) {
+		if (data.byte(kCommandtype) != 228) {
+			data.byte(kCommandtype) = 228;
+			data.word(kOldsubject) = subject;
+			commandWithOb(36, subject >> 8, subject & 0x00FF);
+		}
+	} else {
+		data.word(kOldsubject) = subject;
+		commandWithOb(36, subject >> 8, subject & 0x00FF);
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return;	// notletgo4
+
+	if (data.word(kMousebutton) != 1) {
+		if (data.word(kMousebutton) != 2)
+			return;	// notletgo4
+
+		reExFromOpen();
+		return;
+	}
+
+	delPointer();
+	data.byte(kPickup) = 1;
+	findOpenPos();
+	subject = es.word(bx);
+	data.byte(kObjecttype) = subject >> 8;
+	data.byte(kItemframe)  = subject & 0xFF;
+
+	if (data.byte(kObjecttype) != 4) {
+		transferToEx();
+		data.byte(kItemframe) = al;
+		data.byte(kObjecttype) = 4;
+	}
+
+	DynObject *object = getEitherAdCPP();
+	object->mapad[0] = 20;
+	object->mapad[1] = 255;
+
+	fillOpen();
+	underTextLine();
+	readMouse();
+	useOpened();
+	showPointer();
+	workToScreenCPP();
+	delPointer();
+}
+
 void DreamGenContext::swapWithOpen() {
 	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
 	if (subject == data.word(kOldsubject)) {
@@ -980,9 +1040,9 @@ void DreamGenContext::swapWithOpen() {
 	byte prevType = data.byte(kObjecttype);
 	byte prevFrame = data.byte(kItemframe);
 	findOpenPos();
-	ax = es.word(bx);
-	data.byte(kItemframe) = al;
-	data.byte(kObjecttype) = ah;
+	subject = es.word(bx);
+	data.byte(kObjecttype) = subject >> 8;
+	data.byte(kItemframe)  = subject & 0xFF;
 
 	if (data.byte(kObjecttype) != 4) {
 		transferToEx();
