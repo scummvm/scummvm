@@ -540,10 +540,15 @@ public:
 	bool finishedWalking();
 
 	// from talk.cpp
+	void talk();
 	void convIcons();
 	uint16 getPersFrame(uint8 index);
-	const uint8 *getPersonText(uint8 index);
+	const uint8 *getPersonText(uint8 index, uint8 talkPos);
 	void startTalk();
+	void moreTalk();
+	void doSomeTalk();
+	bool hangOnPQ();
+	void redes();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

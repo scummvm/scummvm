@@ -96,7 +96,6 @@
 		DreamBase::hangOn(frameCount);
 	}
 	void showCity();
-	void doSomeTalk();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
 	void transferText();
@@ -157,8 +156,6 @@
 	void nextDest();
 	void lastDest();
 	void destSelect();
-	void moreTalk();
-	void redes();
 	void selectLocation();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
@@ -168,8 +165,6 @@
 	void afterNewRoom();
 	void madmanRun();
 	void decide();
-	void talk();
-	bool hangOnPQ();
 	void showGun();
 	void endGame();
 	void newPlace();

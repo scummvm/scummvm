@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-void DreamGenContext::talk() {
+void DreamBase::talk() {
 	data.byte(kTalkpos) = 0;
 	data.byte(kInmaparea) = 0;
 	data.byte(kCharacter) = data.byte(kCommand);
@@ -42,7 +42,7 @@ void DreamGenContext::talk() {
 
 	RectWithCallback<DreamGenContext> talkList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 240,290,2,44,&DreamGenContext::moreTalk },
+		{ 240,290,2,44,&DreamBase::moreTalk },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
@@ -87,7 +87,7 @@ uint16 DreamBase::getPersFrame(uint8 index) {
 void DreamBase::startTalk() {
 	data.byte(kTalkmode) = 0;
 
-	const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F);
+	const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F, 0);
 	uint16 y;
 
 	data.word(kCharshift) = 91+91;
@@ -107,12 +107,12 @@ void DreamBase::startTalk() {
 	}
 }
 
-const uint8 *DreamBase::getPersonText(uint8 index) {
-	uint16 offset = kPersontext + getSegment(data.word(kPeople)).word((index * 64 * 2) + kPersontxtdat);
+const uint8 *DreamBase::getPersonText(uint8 index, uint8 talkPos) {
+	uint16 offset = kPersontext + getSegment(data.word(kPeople)).word(((index * 64 + talkPos) * 2) + kPersontxtdat);
 	return getSegment(data.word(kPeople)).ptr(offset, 0);
 }
 
-void DreamGenContext::moreTalk() {
+void DreamBase::moreTalk() {
 	if (data.byte(kTalkmode) != 0) {
 		redes();
 		return;
@@ -137,20 +137,15 @@ void DreamGenContext::moreTalk() {
 	doSomeTalk();
 }
 
-void DreamGenContext::doSomeTalk() {
+void DreamBase::doSomeTalk() {
 	while (true) {
-		es = data.word(kPeople);
-		si = ((data.byte(kTalkpos) + (64 * (data.byte(kCharacter) & 0x7F))) * 2) + kPersontxtdat;
-		si = es.word(si) + kPersontext;
+		const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F, data.byte(kTalkpos));
 
-		if (es.byte(si) == 0) {
+		if (*str == 0) {
 			// endheartalk
 			data.byte(kPointermode) = 0;
 			return;
 		}
-
-		push(es);
-		push(si);
 
 		createPanel();
 		showPanel();
@@ -158,12 +153,7 @@ void DreamGenContext::doSomeTalk() {
 		showExit();
 		convIcons();
 
-		si = pop();
-		es = pop();
-
-		const uint8 *str = es.ptr(si, 0);
-		uint16 y = 64;
-		printDirect(&str, 164, &y, 144, false);
+		printDirect(str, 164, 64, 144, false);
 
 		loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
 		if (data.byte(kSpeechloaded) != 0)
@@ -171,38 +161,25 @@ void DreamGenContext::doSomeTalk() {
 
 		data.byte(kPointermode) = 3;
 		workToScreenM();
-		cx = 180;
 		if (hangOnPQ())
 			return;
 
 		data.byte(kTalkpos)++;
 
-		es = data.word(kPeople);	
-		si = kPersontxtdat + (((64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos)) * 2);
-		si = es.word(si) + kPersontext;
-
-		if (es.byte(si) == 0) {
+		str = getPersonText(data.byte(kCharacter) & 0x7F, data.byte(kTalkpos));
+		if (*str == 0) {
 			// endheartalk
 			data.byte(kPointermode) = 0;
 			return;
 		}
 
-		if (es.byte(si) != ':' && es.byte(si) != 32) {
-			push(es);
-			push(si);
-
+		if (*str != ':' && *str != 32) {
 			createPanel();
 			showPanel();
 			showMan();
 			showExit();
 			convIcons();
-
-			si = pop();
-			es = pop();
-
-			str = es.ptr(si, 0);
-			y = 128;
-			printDirect(&str, 48, &y, 144, false);
+			printDirect(str, 48, 128, 144, false);
 
 			loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
 			if (data.byte(kSpeechloaded) != 0)
@@ -210,7 +187,6 @@ void DreamGenContext::doSomeTalk() {
 
 			data.byte(kPointermode) = 3;
 			workToScreenM();
-			cx = 180;
 			if (hangOnPQ())
 				return;
 		}
@@ -219,7 +195,7 @@ void DreamGenContext::doSomeTalk() {
 	}
 }
 
-bool DreamGenContext::hangOnPQ() {
+bool DreamBase::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback<DreamBase> quitList[] = {
@@ -260,7 +236,7 @@ bool DreamGenContext::hangOnPQ() {
 	return false;
 }
 
-void DreamGenContext::redes() {
+void DreamBase::redes() {
 	if (data.byte(kCh1playing) != 255 || data.byte(kTalkmode) != 2) {
 		blank();
 		return;
