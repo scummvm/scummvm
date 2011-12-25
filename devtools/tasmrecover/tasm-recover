@@ -859,6 +859,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'startup1',
 	'steady',
 	'storeit',
+	'swapwithinv',
 	'switchryanoff',
 	'switchryanon',
 	'talk',

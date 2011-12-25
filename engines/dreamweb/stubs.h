@@ -196,5 +196,6 @@
 	void reExFromInv();
 	void locationPic();
 	void useOpened();
+	void swapWithInv();
 
 #endif

@@ -477,7 +477,6 @@ public:
 	void searchForString();
 	void searchForFiles();
 	void getExAd();
-	void swapWithInv();
 	void transferToEx();
 	void parser();
 	void emergencyPurge();

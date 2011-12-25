@@ -284,66 +284,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::swapWithInv() {
-	STACK_CHECK;
-	al = data.byte(kItemframe);
-	ah = data.byte(kObjecttype);
-	_cmp(ax, data.word(kOldsubject));
-	if (!flags.z())
-		goto difsub7;
-	_cmp(data.byte(kCommandtype), 243);
-	if (flags.z())
-		goto alreadyswap1;
-	data.byte(kCommandtype) = 243;
-difsub7:
-	data.word(kOldsubject) = ax;
-	bx = ax;
-	al = 34;
-	commandWithOb();
-alreadyswap1:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (cantswap1) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doswap1;
-	return;
-doswap1:
-	ah = data.byte(kObjecttype);
-	al = data.byte(kItemframe);
-	push(ax);
-	findInvPos();
-	ax = es.word(bx);
-	data.byte(kItemframe) = al;
-	data.byte(kObjecttype) = ah;
-	getEitherAd();
-	es.byte(bx+2) = 20;
-	es.byte(bx+3) = 255;
-	bl = data.byte(kItemframe);
-	bh = data.byte(kObjecttype);
-	ax = pop();
-	data.byte(kObjecttype) = ah;
-	data.byte(kItemframe) = al;
-	push(bx);
-	findInvPos();
-	delPointer();
-	al = data.byte(kItemframe);
-	getEitherAd();
-	es.byte(bx+2) = 4;
-	es.byte(bx+3) = 255;
-	al = data.byte(kLastinvpos);
-	es.byte(bx+4) = al;
-	ax = pop();
-	data.byte(kObjecttype) = ah;
-	data.byte(kItemframe) = al;
-	fillRyan();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
 void DreamGenContext::swapWithOpen() {
 	STACK_CHECK;
 	al = data.byte(kItemframe);
