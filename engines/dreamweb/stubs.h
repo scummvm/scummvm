@@ -173,7 +173,7 @@
 	void madmanRun();
 	void decide();
 	void talk();
-	void hangOnPQ();
+	bool hangOnPQ();
 	void showGun();
 	void endGame();
 	void newPlace();

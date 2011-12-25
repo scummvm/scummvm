@@ -173,8 +173,7 @@ void DreamGenContext::doSomeTalk() {
 		data.byte(kPointermode) = 3;
 		workToScreenM();
 		cx = 180;
-		hangOnPQ();
-		if (flags.c())
+		if (hangOnPQ())
 			return;
 
 		data.byte(kTalkpos)++;
@@ -213,8 +212,7 @@ void DreamGenContext::doSomeTalk() {
 			data.byte(kPointermode) = 3;
 			workToScreenM();
 			cx = 180;
-			hangOnPQ();
-			if (flags.c())
+			if (hangOnPQ())
 				return;
 		}
 
@@ -222,7 +220,7 @@ void DreamGenContext::doSomeTalk() {
 	}
 }
 
-void DreamGenContext::hangOnPQ() {
+bool DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
 
 	RectWithCallback<DreamBase> quitList[] = {
@@ -248,8 +246,7 @@ void DreamGenContext::hangOnPQ() {
 			delPointer();
 			data.byte(kPointermode) = 0;
 			cancelCh1();
-			flags._c = true;
-			return;
+			return true;
 		}
 
 		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
@@ -261,7 +258,7 @@ void DreamGenContext::hangOnPQ() {
 
 	delPointer();
 	data.byte(kPointermode) = 0;
-	flags._c = false;
+	return false;
 }
 
 void DreamGenContext::redes() {
