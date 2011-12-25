@@ -123,7 +123,7 @@ struct DynObject {
 	uint8 slotSize;		// the size of an object's slots
 	uint8 slotCount;	// the number of slots of an object
 	uint8 objectSize;	// the size of an object
-	uint8 b10;
+	uint8 turnedOn;
 	uint8 initialLocation;
 	uint8 id[4];
 };

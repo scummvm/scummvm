@@ -45,7 +45,7 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::useElevator4,            "ELVE" },
 		{ &DreamBase::useElevator5,            "ELVF" },
 		{ &DreamBase::useChurchGate,           "CGAT" },
-		{ &DreamGenContext::useStereo,         "REMO" },
+		{ &DreamBase::useStereo,               "REMO" },
 		{ &DreamBase::useButtonA,              "BUTA" },
 		{ &DreamBase::useWinch,                "CBOX" },
 		{ &DreamBase::useLighter,              "LITE" },
@@ -113,7 +113,7 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::usePlinth,               "PLIN" },
 		{ &DreamBase::useLadder,               "LADD" },
 		{ &DreamBase::useLadderB,              "LADB" },
-		{ &DreamGenContext::chewy,             "GUMA" },
+		{ &DreamBase::chewy,                   "GUMA" },
 		{ &DreamBase::wheelSound,              "SQEE" },
 		{ &DreamBase::runTap,                  "TAPP" },
 		{ &DreamBase::playGuitar,              "GUIT" },
@@ -242,6 +242,7 @@ void DreamBase::playGuitar() {
 	putBackObStuff();
 }
 
+// TODO: Move to DreamBase once selectLocation (in reality, locationPic) is moved
 void DreamGenContext::useElevator1() {
 	showFirstUse();
 	selectLocation();
@@ -1040,11 +1041,12 @@ void DreamBase::useTrainer() {
 	}
 }
 
-void DreamGenContext::chewy() {
+void DreamBase::chewy() {
+	// Chewing a gum
 	showFirstUse();
-	// TODO: Use the C++ version of getAnyAd()
-	getAnyAd();
-	es.byte(bx + 2) = 255;
+	uint8 dummy;
+	DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
+	object->mapad[0] = 255;
 	data.byte(kGetback) = 1;
 }
 
@@ -1631,7 +1633,10 @@ void DreamBase::useCashCard() {
 	putBackObStuff();
 }
 
-void DreamGenContext::useStereo() {
+void DreamBase::useStereo() {
+	// Handles the stereo in Ryan's apartment (accessible from the remote on
+	// the couch)
+
 	if (data.byte(kLocation) != 0) {
 		showPuzText(4, 400);
 		putBackObStuff();
@@ -1642,20 +1647,18 @@ void DreamGenContext::useStereo() {
 		// No CD inside
 		showPuzText(6, 400);
 		putBackObStuff();
-		// TODO: Use the C++ version of getAnyAd()
-		getAnyAd();
-		es.byte(bx + 10) = 255;
+		uint8 dummy;
+		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
+		object->turnedOn = 255;
 	} else {
 		// CD inside
-		getAnyAd();
-		es.byte(bx + 10) ^= 1;
-		if (es.byte(bx + 10) != 255) {
-			// Stereo off
-			showPuzText(7, 400);
-		} else {
-			// Stereo on
-			showPuzText(8, 400);
-		}
+		uint8 dummy;
+		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
+		object->turnedOn ^= 1;
+		if (object->turnedOn != 255)
+			showPuzText(7, 400);	// Stereo off
+		else
+			showPuzText(8, 400);	// Stereo on
 
 		putBackObStuff();
 	}

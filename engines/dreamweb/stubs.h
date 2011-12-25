@@ -39,8 +39,6 @@
 	}
 	void quickQuit();
 	void readOneBlock();
-	void readCityPic();
-	void readDestIcon();
 	void seeCommandTail();
 	void quickQuit2();
 	void printDirect();
@@ -95,7 +93,6 @@
 	void hangOn(uint16 frameCount) {
 		DreamBase::hangOn(frameCount);
 	}
-	void showCity();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
 	void transferText();
@@ -148,7 +145,6 @@
 	void afterIntroRoom();
 	void gettingShot();
 	void allPointer();
-	void chewy();
 	void delEverything();
 	void errorMessage1();
 	void errorMessage2();
@@ -156,7 +152,6 @@
 	void nextDest();
 	void lastDest();
 	void destSelect();
-	void selectLocation();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
@@ -183,7 +178,6 @@
 	bool checkObjectSizeCPP();
 	void openOb();
 	void identifyOb();
-	void useStereo();
 	void selectOb();
 	void findInvPos();
 	uint16 findInvPosCPP();
@@ -198,5 +192,6 @@
 	void inToInv();
 	void outOfInv();
 	void selectOpenOb();
+	void selectLocation();
 
 #endif

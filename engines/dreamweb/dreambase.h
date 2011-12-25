@@ -178,6 +178,9 @@ public:
 	uint8 getLocation(uint8 index);
 	void setLocation(uint8 index);
 	void resetLocation(uint8 index);
+	void readCityPic();
+	void readDestIcon();
+	void showCity();
 
 	// from object.cpp
 	void obIcons();
@@ -636,6 +639,8 @@ public:
 	void wearWatch();
 	void wearShades();
 	void useTrainer();
+	void useStereo();
+	void chewy();
 
 	// from vgafades.cpp
 	void clearStartPal();

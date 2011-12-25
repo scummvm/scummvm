@@ -34,6 +34,7 @@ void DreamGenContext::newPlace() {
 	}
 }
 
+// TODO: Move to DreamBase once locationPic is moved
 void DreamGenContext::selectLocation() {
 	data.byte(kInmaparea) = 0;
 	clearBeforeLoad();
@@ -95,7 +96,7 @@ void DreamGenContext::selectLocation() {
 	deallocateMem(data.word(kTraveltext));
 }
 
-void DreamGenContext::showCity() {
+void DreamBase::showCity() {
 	clearWork();
 	showFrame(tempGraphics(), 57, 32, 0, 0);
 	showFrame(tempGraphics(), 120+57, 32, 1, 0);
@@ -259,13 +260,13 @@ void DreamBase::resetLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 0;
 }
 
-void DreamGenContext::readDestIcon() {
+void DreamBase::readDestIcon() {
 	loadIntoTemp("DREAMWEB.G05");
 	loadIntoTemp2("DREAMWEB.G06");
 	loadIntoTemp3("DREAMWEB.G08");
 }
 
-void DreamGenContext::readCityPic() {
+void DreamBase::readCityPic() {
 	loadIntoTemp("DREAMWEB.G04");
 }
 
