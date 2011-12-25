@@ -539,6 +539,12 @@ public:
 	void entryAnims();
 	bool finishedWalking();
 
+	// from talk.cpp
+	void convIcons();
+	uint16 getPersFrame(uint8 index);
+	const uint8 *getPersonText(uint8 index);
+	void startTalk();
+
 	// from use.cpp
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);

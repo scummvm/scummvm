@@ -96,10 +96,6 @@
 		DreamBase::hangOn(frameCount);
 	}
 	void showCity();
-	uint16 getPersFrame(uint8 index);
-	void convIcons();
-	void startTalk();
-	void getPersonText(uint8 index);
 	void doSomeTalk();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();

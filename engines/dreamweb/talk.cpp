@@ -73,22 +73,21 @@ void DreamGenContext::talk() {
 	}
 }
 
-void DreamGenContext::convIcons() {
+void DreamBase::convIcons() {
 	uint8 index = data.byte(kCharacter) & 127;
 	uint16 frame = getPersFrame(index);
 	const Frame *base = findSource(frame);
 	showFrame(base, 234, 2, frame, 0);
 }
 
-uint16 DreamGenContext::getPersFrame(uint8 index) {
+uint16 DreamBase::getPersFrame(uint8 index) {
 	return getSegment(data.word(kPeople)).word(kPersonframes + index * 2);
 }
 
-void DreamGenContext::startTalk() {
+void DreamBase::startTalk() {
 	data.byte(kTalkmode) = 0;
 
-	getPersonText(data.byte(kCharacter) & 0x7F);
-	const uint8 *str = es.ptr(si, 0);
+	const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F);
 	uint16 y;
 
 	data.word(kCharshift) = 91+91;
@@ -108,9 +107,9 @@ void DreamGenContext::startTalk() {
 	}
 }
 
-void DreamGenContext::getPersonText(uint8 index) {
-	es = data.word(kPeople);
-	si = es.word((index * 64 * 2) + kPersontxtdat) + kPersontext;
+const uint8 *DreamBase::getPersonText(uint8 index) {
+	uint16 offset = kPersontext + getSegment(data.word(kPeople)).word((index * 64 * 2) + kPersontxtdat);
+	return getSegment(data.word(kPeople)).ptr(offset, 0);
 }
 
 void DreamGenContext::moreTalk() {
