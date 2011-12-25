@@ -185,7 +185,10 @@
 	void runEndSeq();
 	bool execCommand();
 	void getOpenedSize();
-	byte getOpenedSizeCPP();
+	byte getOpenedSlotSize();
+	byte getOpenedSlotCount();
+	void checkObjectSize();
+	bool checkObjectSizeCPP();
 	void openOb();
 	void identifyOb();
 	void useStereo();

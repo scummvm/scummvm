@@ -281,7 +281,7 @@ void DreamBase::getBackFromOb() {
 }
 
 void DreamGenContext::getOpenedSize() {
-	//ax = getOpenedSizeCPP();
+	//ax = getOpenedSlotCount();
 
 	// We need to call the ASM-style versions of get*Ad, as these also set
 	// bx and es
@@ -304,7 +304,7 @@ void DreamGenContext::getOpenedSize() {
 	}
 }
 
-byte DreamGenContext::getOpenedSizeCPP() {
+byte DreamGenContext::getOpenedSlotCount() {
 	byte obj = data.byte(kOpenedob);
 	switch (data.byte(kOpenedtype)) {
 	case 4:
@@ -313,6 +313,18 @@ byte DreamGenContext::getOpenedSizeCPP() {
 		return getFreeAd(obj)->slotCount;
 	default:
 		return getSetAd(obj)->slotCount;
+	}
+}
+
+byte DreamGenContext::getOpenedSlotSize() {
+	byte obj = data.byte(kOpenedob);
+	switch (data.byte(kOpenedtype)) {
+	case 4:
+		return getExAd(obj)->slotSize;
+	case 2:
+		return getFreeAd(obj)->slotSize;
+	default:
+		return getSetAd(obj)->slotSize;
 	}
 }
 
@@ -326,7 +338,7 @@ void DreamGenContext::openOb() {
 	al = printDirect(commandLine, data.word(kLastxpos) + 5, kInventy+86, 220, false);
 
 	fillOpen();
-	_openChangeSize = getOpenedSizeCPP() * kItempicsize + kInventx;
+	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
 }
 
 void DreamGenContext::identifyOb() {
@@ -746,6 +758,52 @@ void DreamBase::dropObject() {
 	object->mapad[4] = (data.byte(kRyany) + 8) & 0xF;
 	data.byte(kPickup) = 0;
 	object->currentLocation = data.byte(kReallocation);
+}
+
+void DreamGenContext::checkObjectSize() {
+	al = checkObjectSizeCPP() ? 0 : 1;
+}
+
+bool DreamGenContext::checkObjectSizeCPP() {
+	byte containerSize = getOpenedSlotSize();
+	DynObject *object = getEitherAdCPP();
+	// If there is no size defined for the object in the editor, set its size
+	// to 6. This could be a bad idea, according to the original source.
+	byte objectSize = (object->objectSize != 255) ? object->objectSize : 6;
+
+	if (objectSize >= 100) {
+		// Special case
+		if (containerSize >= 100) {
+			// Both objects are special
+			if (containerSize == objectSize) {
+				return true;
+			} else {
+				errorMessage3();
+				return false;
+			}
+		} else {
+			if (containerSize >= (byte)(objectSize - 100)) {
+				return true;
+			} else {
+				errorMessage2();
+				return false;
+			}
+		}
+	} else if (containerSize >= 100) {	// The current object isn't special, but the container object is
+		errorMessage3();
+		return false;
+	} else if (containerSize >= objectSize) {
+		return true;
+	} else {
+		// The original continues here to the special case above. It checks if
+		// cl (containerSize) < al (objectSize) and continues if this is so.
+		// However, in this case, the code subtracts 100 from objectSize, which
+		// was between 0 - 99, so it now is between 156 and 255. containerSize is
+		// smaller than 100, so comparing it with objectSize will always be true,
+		// thus this bit of code always falls through to the errorMessage2() case.
+		errorMessage2();
+		return false;
+	}
 }
 
 } // End of namespace DreamGen

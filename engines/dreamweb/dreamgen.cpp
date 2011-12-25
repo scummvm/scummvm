@@ -677,54 +677,6 @@ sizeok1:
 	delPointer();
 }
 
-void DreamGenContext::checkObjectSize() {
-	STACK_CHECK;
-	getOpenedSize();
-	push(ax);
-	al = data.byte(kItemframe);
-	getEitherAd();
-	al = es.byte(bx+9);
-	cx = pop();
-	_cmp(al, 255);
-	if (!flags.z())
-		goto notunsized;
-	al = 6;
-notunsized:
-	_cmp(al, 100);
-	if (!flags.c())
-		goto specialcase;
-	_cmp(cl, 100);
-	if (flags.c())
-		goto isntspecial;
-	errorMessage3();
-	goto sizewrong;
-isntspecial:
-	_cmp(cl, al);
-	if (!flags.c())
-		goto sizeok;
-specialcase:
-	_sub(al, 100);
-	_cmp(cl, 100);
-	if (!flags.c())
-		goto bothspecial;
-	_cmp(cl, al);
-	if (!flags.c())
-		goto sizeok;
-	errorMessage2();
-	goto sizewrong;
-bothspecial:
-	_sub(cl, 100);
-	_cmp(al, cl);
-	if (flags.z())
-		goto sizeok;
-	errorMessage3();
-sizewrong:
-	al = 1;
-	return;
-sizeok:
-	al = 0;
-}
-
 void DreamGenContext::outOfOpen() {
 	STACK_CHECK;
 	_cmp(data.byte(kOpenedob), 255);
