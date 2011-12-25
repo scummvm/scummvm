@@ -303,19 +303,6 @@ void DreamGenContext::getExAd() {
 	_add(bx, (0+2080+30000));
 }
 
-void DreamGenContext::getEitherAd() {
-	STACK_CHECK;
-	_cmp(data.byte(kObjecttype), 4);
-	if (flags.z())
-		goto isinexlist;
-	al = data.byte(kItemframe);
-	getFreeAd();
-	return;
-isinexlist:
-	al = data.byte(kItemframe);
-	getExAd();
-}
-
 void DreamGenContext::getAnyAd() {
 	STACK_CHECK;
 	_cmp(data.byte(kObjecttype), 4);

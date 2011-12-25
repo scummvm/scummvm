@@ -465,7 +465,6 @@ public:
 	void rollEm();
 	void findAllOpen();
 	void fillOpen();
-	void getEitherAd();
 	void dreamweb();
 	void findPathOfPoint();
 	void read();
