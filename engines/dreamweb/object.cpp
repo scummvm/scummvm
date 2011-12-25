@@ -793,4 +793,37 @@ bool DreamGenContext::checkObjectSizeCPP() {
 	return false;
 }
 
+void DreamGenContext::selectOpenOb() {
+	uint8 slotSize, slotCount;
+	getAnyAd(&slotSize, &slotCount);
+	if (slotCount == 255) {
+		// Can't open the object
+		blank();
+		return;
+	}
+
+	if (data.byte(kCommandtype) != 224) {
+		data.byte(kCommandtype) = 224;
+		commandWithOb(38, data.byte(kObjecttype), data.byte(kCommand));
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	data.byte(kOpenedob) = data.byte(kCommand);
+	data.byte(kOpenedtype) = data.byte(kObjecttype);
+	createPanel();
+	showPanel();
+	showMan();
+	examIcon();
+	showExit();
+	openInv();
+	openOb();
+	underTextLine();
+	readMouse();
+	showPointer();
+	workToScreenCPP();
+	delPointer();
+}
+
 } // End of namespace DreamGen

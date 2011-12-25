@@ -197,5 +197,6 @@
 	void lookAtPlace();
 	void inToInv();
 	void outOfInv();
+	void selectOpenOb();
 
 #endif

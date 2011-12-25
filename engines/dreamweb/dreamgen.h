@@ -478,7 +478,6 @@ public:
 	void getDestInfo();
 	void read();
 	void searchForString();
-	void selectOpenOb();
 	void searchForFiles();
 	void getExAd();
 	void swapWithInv();

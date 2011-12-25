@@ -537,52 +537,6 @@ findopenp1:
 	_add(bx, (0+(228*13)));
 }
 
-void DreamGenContext::selectOpenOb() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	getAnyAd();
-	_cmp(al, 255);
-	if (!flags.z())
-		goto canopenit1;
-	blank();
-	return;
-canopenit1:
-	_cmp(data.byte(kCommandtype), 224);
-	if (flags.z())
-		goto alreadyopob;
-	data.byte(kCommandtype) = 224;
-	bl = data.byte(kCommand);
-	bh = data.byte(kObjecttype);
-	al = 38;
-	commandWithOb();
-alreadyopob:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (noopenob) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto doopenob;
-	return;
-doopenob:
-	al = data.byte(kCommand);
-	data.byte(kOpenedob) = al;
-	al = data.byte(kObjecttype);
-	data.byte(kOpenedtype) = al;
-	createPanel();
-	showPanel();
-	showMan();
-	examIcon();
-	showExit();
-	openInv();
-	openOb();
-	underTextLine();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-}
-
 void DreamGenContext::useOpened() {
 	STACK_CHECK;
 	_cmp(data.byte(kOpenedob), 255);
