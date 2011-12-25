@@ -142,11 +142,13 @@ void DreamBase::putUnderCentre() {
 }
 
 void DreamBase::locationPic() {
-	byte destFlag = data.byte(553 + data.byte(kDestpos));
-	if (destFlag >= 6)
-		showFrame(tempGraphics2(), 104, 138 + 14, destFlag - 6, 0);	// Second slot
+	const int roomPics[] = { 5, 0, 3, 2, 4, 1, 10, 9, 8, 6, 11, 4, 7, 7, 0 };
+	byte picture = roomPics[data.byte(kDestpos)];
+
+	if (picture >= 6)
+		showFrame(tempGraphics2(), 104, 138 + 14, picture - 6, 0);	// Second slot
 	else
-		showFrame(tempGraphics(),  104, 138 + 14, destFlag + 4, 0);
+		showFrame(tempGraphics(),  104, 138 + 14, picture + 4, 0);
 
 	if (data.byte(kDestpos) == data.byte(kReallocation))
 		showFrame(tempGraphics(), 104, 140 + 14, 3, 0);	// Currently in this location
@@ -155,8 +157,6 @@ void DreamBase::locationPic() {
 	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
 	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
 }
-
-// TODO: put Getdestinfo here
 
 void DreamBase::showArrows() {
 	showFrame(tempGraphics(), 116 - 12, 16, 0, 0);
@@ -177,9 +177,7 @@ void DreamGenContext::nextDest() {
 		data.byte(kDestpos)++;
 		if (data.byte(kDestpos) == 15)
 			data.byte(kDestpos) = 0;	// last destination
-
-		getDestInfo();
-	} while (al == 0);
+	} while (!data.byte(kRoomscango + data.byte(kDestpos)));
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
@@ -208,9 +206,7 @@ void DreamGenContext::lastDest() {
 		data.byte(kDestpos)--;
 		if (data.byte(kDestpos) == 0xFF)
 			data.byte(kDestpos) = 15;	// first destination
-
-		getDestInfo();
-	} while (al == 0);
+	} while (!data.byte(kRoomscango + data.byte(kDestpos)));
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
@@ -235,7 +231,6 @@ void DreamGenContext::destSelect() {
 	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
 		return;	// notrav
 
-	getDestInfo();
 	data.byte(kNewlocation) = data.byte(kDestpos);
 }
 

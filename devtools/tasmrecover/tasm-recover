@@ -50,6 +50,7 @@ p = parser(skip_binary_data = [
 	'volumetabname',
 	'commandline',
 	'openchangesize',
+	'roompics',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
@@ -474,6 +475,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getbackfromops',
 	'getbacktoops',
 	'getblockofpixel',
+	'getdestinfo',
 	'getdimension',
 	'getexpos',
 	'getflagunderp',
