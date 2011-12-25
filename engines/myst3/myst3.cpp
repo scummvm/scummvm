@@ -59,6 +59,12 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
 	DebugMan.addDebugChannel(kDebugNode, "Node", "Track Node Changes");
+
+	// Add subdirectories to the search path to allow running from a full HDD install
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "bin");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data");
+	SearchMan.addSubDirectoriesMatching(gameDataDir, "EXILE Disc ?/Data", true);
 }
 
 Myst3Engine::~Myst3Engine() {

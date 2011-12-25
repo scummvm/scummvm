@@ -36,6 +36,11 @@ static const PlainGameDescriptor myst3Games[] = {
 	{0, 0}
 };
 
+static const char *directoryGlobs[] = {
+	"M3Data",
+	0
+};
+
 using Common::GUIO_NONE;
 
 static const Myst3GameDescription gameDescriptions[] = {
@@ -62,6 +67,8 @@ public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
 		_singleid = "myst3";
 		_guioptions = Common::GUIO_NOMIDI;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {
