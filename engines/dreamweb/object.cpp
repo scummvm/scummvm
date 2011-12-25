@@ -341,6 +341,32 @@ void DreamGenContext::openOb() {
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
 }
 
+uint8 DreamGenContext::findFirstPath(uint16 param) {
+	es = data.word(kReels);
+	uint16 ptr = 144 * data.byte(kRoomnum);
+	// TODO: Replace ax, cx usage with temporary uint8/16 variables...
+	cx = param;
+
+	for (uint8 pathLoop = 0; pathLoop < 12; pathLoop++, ptr += 8) {
+		ax = es.word(ptr+2);
+
+		if (ax == 0x0ffff)
+			continue; // "nofirst"
+
+		if (cl < al || ch < ah)
+			continue; // "nofirst"
+
+		ax = es.word(ptr+4);
+
+		if (cl > al || ch > ah)
+			continue; // "nofirst"
+
+		return es.byte(ptr+6); // "gotfirst"
+	}
+
+	return 0;
+}
+
 void DreamGenContext::identifyOb() {
 	if (data.word(kWatchingtime) != 0) {
 		blank();
@@ -362,8 +388,7 @@ void DreamGenContext::identifyOb() {
 	data.byte(kPointerspath) = dl;
 	ax = pop();
 	push(ax);
-	findFirstPath();
-	data.byte(kPointerfirstpath) = al;
+	data.byte(kPointerfirstpath) = findFirstPath(ax);
 	ax = pop();
 
 	byte x = al;

@@ -447,6 +447,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'finalframe',
 	'findallryan',
 	'findexobject',
+	'findfirstpath',
 	'findinvpos',
 	'findlen',
 	'findnextcolon',

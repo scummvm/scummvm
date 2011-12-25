@@ -454,7 +454,6 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void dirCom();
-	void findFirstPath();
 	void getAnyAd();
 	void getFreeAd();
 	void dirFile();

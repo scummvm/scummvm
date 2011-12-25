@@ -790,49 +790,6 @@ flunkedit:
 	dl = 255;
 }
 
-void DreamGenContext::findFirstPath() {
-	STACK_CHECK;
-	push(ax);
-	bx = (0);
-	es = data.word(kReels);
-	al = data.byte(kRoomnum);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	_add(bx, ax);
-	cx = pop();
-	dl = 0;
-fpathloop:
-	ax = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto nofirst;
-	_cmp(cl, al);
-	if (flags.c())
-		goto nofirst;
-	_cmp(ch, ah);
-	if (flags.c())
-		goto nofirst;
-	ax = es.word(bx+4);
-	_cmp(cl, al);
-	if (!flags.c())
-		goto nofirst;
-	_cmp(ch, ah);
-	if (!flags.c())
-		goto nofirst;
-	goto gotfirst;
-nofirst:
-	_add(bx, 8);
-	_inc(dl);
-	_cmp(dl, 12);
-	if (!flags.z())
-		goto fpathloop;
-	al = 0;
-	return;
-gotfirst:
-	al = es.byte(bx+6);
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
