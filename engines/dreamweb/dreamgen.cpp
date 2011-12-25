@@ -335,23 +335,6 @@ void DreamGenContext::getSetAd() {
 	es = data.word(kSetdat);
 }
 
-void DreamGenContext::findOpenPos() {
-	STACK_CHECK;
-	cx = data.word(kMousex);
-	_sub(cx, (80));
-	bx = -1;
-findopenp1:
-	_inc(bx);
-	_sub(cx, (44));
-	if (!flags.c())
-		goto findopenp1;
-	al = bl;
-	data.byte(kLastinvpos) = al;
-	_add(bx, bx);
-	es = data.word(kBuffers);
-	_add(bx, (0+(228*13)));
-}
-
 void DreamGenContext::transferToEx() {
 	STACK_CHECK;
 	emergencyPurge();

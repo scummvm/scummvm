@@ -881,10 +881,9 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	findOpenPos();
-	uint16 subject = es.word(bx);
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
 
-	if ((subject & 0x00FF) != 255) {
+	if ((objectId & 0x00FF) != 255) {
 		swapWithOpen();
 		return;
 	}
@@ -894,15 +893,15 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
-	if (subject == data.word(kOldsubject)) {
+	objectId = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
+	if (objectId == data.word(kOldsubject)) {
 		if (data.byte(kCommandtype) != 227) {
 			data.byte(kCommandtype) = 227;
-			data.word(kOldsubject) = subject;
+			data.word(kOldsubject) = objectId;
 			commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
 		}
 	} else {
-		data.word(kOldsubject) = subject;
+		data.word(kOldsubject) = objectId;
 		commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
 	}
 
@@ -944,23 +943,22 @@ void DreamGenContext::outOfOpen() {
 	if (data.byte(kOpenedob) == 255)
 		return;	// cannot use opened object
 
-	findOpenPos();
-	uint16 subject = es.word(bx);
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
 
-	if ((subject & 0x00FF) == 255) {
+	if ((objectId & 0x00FF) == 255) {
 		blank();
 		return;
 	}
 
-	if (subject == data.word(kOldsubject)) {
+	if (objectId == data.word(kOldsubject)) {
 		if (data.byte(kCommandtype) != 228) {
 			data.byte(kCommandtype) = 228;
-			data.word(kOldsubject) = subject;
-			commandWithOb(36, subject >> 8, subject & 0x00FF);
+			data.word(kOldsubject) = objectId;
+			commandWithOb(36, objectId >> 8, objectId & 0x00FF);
 		}
 	} else {
-		data.word(kOldsubject) = subject;
-		commandWithOb(36, subject >> 8, subject & 0x00FF);
+		data.word(kOldsubject) = objectId;
+		commandWithOb(36, objectId >> 8, objectId & 0x00FF);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton))
@@ -976,10 +974,9 @@ void DreamGenContext::outOfOpen() {
 
 	delPointer();
 	data.byte(kPickup) = 1;
-	findOpenPos();
-	subject = es.word(bx);
-	data.byte(kObjecttype) = subject >> 8;
-	data.byte(kItemframe)  = subject & 0xFF;
+	objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
+	data.byte(kObjecttype) = objectId >> 8;
+	data.byte(kItemframe)  = objectId & 0xFF;
 
 	if (data.byte(kObjecttype) != 4) {
 		transferToEx();
@@ -1034,10 +1031,9 @@ void DreamGenContext::swapWithOpen() {
 
 	byte prevType = data.byte(kObjecttype);
 	byte prevFrame = data.byte(kItemframe);
-	findOpenPos();
-	subject = es.word(bx);
-	data.byte(kObjecttype) = subject >> 8;
-	data.byte(kItemframe)  = subject & 0xFF;
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
+	data.byte(kObjecttype) = objectId >> 8;
+	data.byte(kItemframe)  = objectId & 0xFF;
 
 	if (data.byte(kObjecttype) != 4) {
 		transferToEx();
@@ -1053,7 +1049,7 @@ void DreamGenContext::swapWithOpen() {
 	byte prevFrame2 = data.byte(kItemframe);
 	data.byte(kObjecttype) = prevType;
 	data.byte(kItemframe) = prevFrame;
-	findOpenPos();
+	//findOpenPos();	// was in the original source, looks to be unused
 	object = getEitherAdCPP();
 	object->mapad[0] = data.byte(kOpenedtype);
 	object->mapad[1] = data.byte(kOpenedob);
@@ -1069,6 +1065,13 @@ void DreamGenContext::swapWithOpen() {
 	showPointer();
 	workToScreenCPP();
 	delPointer();
+}
+
+uint16 DreamBase::findOpenPos() {
+	uint16 pos = (data.word(kMousex) - kInventx) / kItempicsize;
+	data.byte(kLastinvpos) = pos & 0xFF;
+
+	return pos * 2 + kOpeninvlist;	// return the object position in the inventory data
 }
 
 } // End of namespace DreamGen

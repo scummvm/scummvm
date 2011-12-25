@@ -204,6 +204,7 @@ public:
 	void wornError();
 	void makeWorn(DynObject *object);
 	void dropObject();
+	uint16 findOpenPos();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);

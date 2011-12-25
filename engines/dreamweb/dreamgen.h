@@ -461,7 +461,6 @@ public:
 	void pickupConts();
 	void transferMap();
 	void getSetAd();
-	void findOpenPos();
 	void rollEm();
 	void findAllOpen();
 	void fillOpen();
