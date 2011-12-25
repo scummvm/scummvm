@@ -43,7 +43,7 @@ void DreamGenContext::monkSpeaking() {
 	loadIntoTemp("DREAMWEB.G15");
 	clearWork();
 	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
-	workToScreen();
+	workToScreenCPP();
 	data.byte(kVolume) = 7;
 	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 5;

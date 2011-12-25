@@ -58,10 +58,6 @@ void DreamBase::fillRyan() {
 	showRyanPage();
 }
 
-void DreamGenContext::isItWorn() {
-	flags._z = isItWorn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
-}
-
 bool DreamBase::isItWorn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
@@ -604,7 +600,7 @@ void DreamGenContext::inToInv() {
 	readMouse();
 	showPointer();
 	outOfInv();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -645,7 +641,7 @@ void DreamGenContext::outOfInv() {
 	readMouse();
 	showPointer();
 	inToInv();
-	workToScreen();
+	workToScreenCPP();
 	delPointer();
 }
 
@@ -778,10 +774,6 @@ void DreamBase::dropObject() {
 	object->mapad[4] = (data.byte(kRyany) + 8) & 0xF;
 	data.byte(kPickup) = 0;
 	object->currentLocation = data.byte(kReallocation);
-}
-
-void DreamGenContext::checkObjectSize() {
-	al = checkObjectSizeCPP() ? 0 : 1;
 }
 
 bool DreamGenContext::checkObjectSizeCPP() {

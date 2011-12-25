@@ -1235,10 +1235,6 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 	dst[i] = 0;
 }
 
-void DreamGenContext::commandWithOb() {
-	commandWithOb(al, bh, bl);
-}
-
 void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
@@ -1750,10 +1746,6 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 		return true;
 	}
 	return false;
-}
-
-void DreamGenContext::hangOn() {
-	hangOn(cx);
 }
 
 void DreamBase::hangOn(uint16 frameCount) {
