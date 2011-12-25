@@ -77,6 +77,7 @@ const Game kyra2Games[] = {
 	// talkie games
 	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
 	{ kKyra2, { IT_ITA, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "130795aa8f2333250c895dae9028b9bb", "e20d0d2e500f01e399ec588247a7e213" } }, // Italian Fan Translation
+	{ kKyra2, { RU_RUS, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "c3afd22959f515355b2a33cde950f418", "e20d0d2e500f01e399ec588247a7e213" } }, // Russian Fan Translation
 
 	// FM-TOWNS games
 	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },

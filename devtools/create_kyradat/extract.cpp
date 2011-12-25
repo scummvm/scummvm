@@ -178,7 +178,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 		if (id == k2IngamePakFiles)
 			patch = 4;
 
-		if (info->lang == Common::RU_RUS) {
+		if (info->lang == Common::RU_RUS && info->special == kNoSpecial) {
 			patch = 5;
 			if (id == k2SeqplayStrings) {
 				rusFanSkipId = rusFanSkip_k2SeqplayStrings;

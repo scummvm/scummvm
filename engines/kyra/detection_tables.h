@@ -645,6 +645,20 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
+	// Russian fan translation
+	{ // CD version
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FERRY.CPS", "763e2103858347d4ffffc329910d323f"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
