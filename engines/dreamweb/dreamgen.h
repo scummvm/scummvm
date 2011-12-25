@@ -461,7 +461,6 @@ public:
 	void getFreeAd();
 	void dirFile();
 	void pickupConts();
-	void reExFromInv();
 	void transferMap();
 	void purgeAnItem();
 	void getSetAd();
@@ -471,7 +470,6 @@ public:
 	void fillOpen();
 	void getEitherAd();
 	void useOpened();
-	void locationPic();
 	void swapWithOpen();
 	void dreamweb();
 	void findPathOfPoint();

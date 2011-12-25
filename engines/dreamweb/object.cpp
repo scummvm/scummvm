@@ -826,4 +826,12 @@ void DreamGenContext::selectOpenOb() {
 	delPointer();
 }
 
+void DreamGenContext::reExFromInv() {
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
+	data.byte(kCommandtype) = objectId >> 8;
+	data.byte(kCommand)     = objectId & 0x00FF;
+	data.byte(kExamagain) = 1;
+	data.byte(kPointermode) = 0;
+}
+
 } // End of namespace DreamGen

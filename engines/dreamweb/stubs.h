@@ -193,5 +193,7 @@
 	void outOfInv();
 	void selectOpenOb();
 	void selectLocation();
+	void reExFromInv();
+	void locationPic();
 
 #endif

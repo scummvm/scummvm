@@ -242,7 +242,7 @@ void DreamBase::playGuitar() {
 	putBackObStuff();
 }
 
-// TODO: Move to DreamBase once selectLocation (in reality, locationPic) is moved
+// TODO: Move to DreamBase once selectLocation (in reality, getDestInfo) is moved
 void DreamGenContext::useElevator1() {
 	showFirstUse();
 	selectLocation();

@@ -3700,4 +3700,5 @@ void DreamBase::incRyanPage() {
 	delPointer();
 
 }
+
 } // End of namespace DreamGen

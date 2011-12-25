@@ -34,7 +34,7 @@ void DreamGenContext::newPlace() {
 	}
 }
 
-// TODO: Move to DreamBase once locationPic is moved
+// TODO: Move to DreamBase once getDestInfo is moved
 void DreamGenContext::selectLocation() {
 	data.byte(kInmaparea) = 0;
 	clearBeforeLoad();
@@ -270,6 +270,20 @@ void DreamBase::readCityPic() {
 	loadIntoTemp("DREAMWEB.G04");
 }
 
+void DreamGenContext::locationPic() {
+	getDestInfo();
+	byte destFlag = es.byte(si);
+	if (destFlag >= 6)
+		showFrame(tempGraphics2(), 104, 138 + 14, destFlag - 6, 0);	// Second slot
+	else
+		showFrame(tempGraphics(),  104, 138 + 14, destFlag + 4, 0);
 
+	if (data.byte(kDestpos) == data.byte(kReallocation))
+		showFrame(tempGraphics(), 104, 140 + 14, 3, 0);	// Currently in this location
+
+	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
+	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
+	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
+}
 
 } // End of namespace DreamGen

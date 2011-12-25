@@ -284,16 +284,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::reExFromInv() {
-	STACK_CHECK;
-	findInvPos();
-	ax = es.word(bx);
-	data.byte(kCommandtype) = ah;
-	data.byte(kCommand) = al;
-	data.byte(kExamagain) = 1;
-	data.byte(kPointermode) = 0;
-}
-
 void DreamGenContext::swapWithInv() {
 	STACK_CHECK;
 	al = data.byte(kItemframe);
@@ -879,54 +869,6 @@ cantpurge2:
 	_cmp(cx, (114));
 	if (!flags.z())
 		goto lookforpurge2;
-}
-
-void DreamGenContext::locationPic() {
-	STACK_CHECK;
-	getDestInfo();
-	al = es.byte(si);
-	push(es);
-	push(si);
-	di = 0;
-	_cmp(al, 6);
-	if (!flags.c())
-		goto secondlot;
-	ds = data.word(kTempgraphics);
-	_add(al, 4);
-	goto gotgraphic;
-secondlot:
-	_sub(al, 6);
-	ds = data.word(kTempgraphics2);
-gotgraphic:
-	_add(di, 104);
-	bx = 138+14;
-	ah = 0;
-	showFrame();
-	si = pop();
-	es = pop();
-	al = data.byte(kDestpos);
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto notinthisone;
-	al = 3;
-	di = 104;
-	bx = 140+14;
-	ds = data.word(kTempgraphics);
-	ah = 0;
-	showFrame();
-notinthisone:
-	bl = data.byte(kDestpos);
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kTraveltext);
-	si = es.word(bx);
-	_add(si, (66*2));
-	di = 50;
-	bx = 20;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printDirect();
 }
 
 void DreamGenContext::getDestInfo() {
