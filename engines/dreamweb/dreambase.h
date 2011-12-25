@@ -181,6 +181,9 @@ public:
 	void readCityPic();
 	void readDestIcon();
 	void showCity();
+	void locationPic();
+	void selectLocation();
+	void newPlace();
 
 	// from object.cpp
 	void obIcons();
@@ -569,6 +572,7 @@ public:
 	void edensCDPlayer();
 	void hotelBell();
 	void playGuitar();
+	void useElevator1();
 	void useElevator2();
 	void useElevator3();
 	void useElevator4();

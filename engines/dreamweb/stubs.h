@@ -123,7 +123,6 @@
 	void autoLook();
 	void doLook();
 	void enterSymbol();
-	void useElevator1();
 	void useKey();
 	void useObject();
 	void singleKey(uint8 key, uint16 x, uint16 y);
@@ -162,7 +161,6 @@
 	void decide();
 	void showGun();
 	void endGame();
-	void newPlace();
 	void monkSpeaking();
 	void rollEndCredits2();
 	void triggerMessage(uint16 index);
@@ -188,9 +186,7 @@
 	void inToInv();
 	void outOfInv();
 	void selectOpenOb();
-	void selectLocation();
 	void reExFromInv();
-	void locationPic();
 	void useOpened();
 	void outOfOpen();
 	void swapWithOpen();

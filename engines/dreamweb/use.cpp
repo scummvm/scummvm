@@ -39,7 +39,7 @@ void DreamGenContext::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
 		{ &DreamGenContext::useMon,            "NETW" },
-		{ &DreamGenContext::useElevator1,      "ELVA" },
+		{ &DreamBase::useElevator1,            "ELVA" },
 		{ &DreamBase::useElevator2,            "ELVB" },
 		{ &DreamBase::useElevator3,            "ELVC" },
 		{ &DreamBase::useElevator4,            "ELVE" },
@@ -242,8 +242,7 @@ void DreamBase::playGuitar() {
 	putBackObStuff();
 }
 
-// TODO: Move to DreamBase once selectLocation (in reality, getDestInfo) is moved
-void DreamGenContext::useElevator1() {
+void DreamBase::useElevator1() {
 	showFirstUse();
 	selectLocation();
 	data.byte(kGetback) = 1;
