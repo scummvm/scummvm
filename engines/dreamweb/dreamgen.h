@@ -477,7 +477,6 @@ public:
 	void getExAd();
 	void transferToEx();
 	void parser();
-	void emergencyPurge();
 	void transferConToEx();
 };
 

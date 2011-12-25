@@ -406,6 +406,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'eden',
 	'edeninbath',
 	'edenscdplayer',
+	'emergencypurge',
 	'enablesoundint',
 	'endgame',
 	'endgameseq',

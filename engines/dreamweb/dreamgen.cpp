@@ -475,26 +475,6 @@ void DreamGenContext::transferConToEx() {
 	ds.byte(si+2) = 255;
 }
 
-void DreamGenContext::emergencyPurge() {
-	STACK_CHECK;
-checkpurgeagain:
-	ax = data.word(kExframepos);
-	_add(ax, 4000);
-	_cmp(ax, (30000));
-	if (flags.c())
-		goto notnearframeend;
-	purgeAnItem();
-	goto checkpurgeagain;
-notnearframeend:
-	ax = data.word(kExtextpos);
-	_add(ax, 400);
-	_cmp(ax, (18000));
-	if (flags.c())
-		return /* (notneartextend) */;
-	purgeAnItem();
-	goto checkpurgeagain;
-}
-
 void DreamGenContext::purgeAnItem() {
 	STACK_CHECK;
 	es = data.word(kExtras);

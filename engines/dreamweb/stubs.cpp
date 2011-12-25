@@ -3701,4 +3701,16 @@ void DreamBase::incRyanPage() {
 
 }
 
+void DreamGenContext::emergencyPurge() {
+	while (true) {
+		if (data.word(kExframepos) + 4000 < kExframeslen) {
+			// Not near frame end
+			if (data.word(kExtextpos) + 400 < kExtextlen)
+				return;	// notneartextend
+		}
+
+		purgeAnItem();
+	}
+}
+
 } // End of namespace DreamGen
