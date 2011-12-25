@@ -148,9 +148,6 @@
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();
-	void nextDest();
-	void lastDest();
-	void destSelect();
 	void loadSpeech();
 	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
@@ -182,7 +179,6 @@
 	void setPickup();
 	void getKeyAndLogo();
 	void signOn();
-	void lookAtPlace();
 	void inToInv();
 	void outOfInv();
 	void selectOpenOb();

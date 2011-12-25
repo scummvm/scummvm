@@ -184,6 +184,10 @@ public:
 	void locationPic();
 	void selectLocation();
 	void newPlace();
+	void nextDest();
+	void lastDest();
+	void destSelect();
+	void lookAtPlace();
 
 	// from object.cpp
 	void obIcons();

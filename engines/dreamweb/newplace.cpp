@@ -72,11 +72,11 @@ void DreamBase::selectLocation() {
 		if (data.byte(kGetback) == 1)
 			break;
 
-		RectWithCallback<DreamGenContext> destList[] = {
-			{ 238,258,4,44,&DreamGenContext::nextDest },
-			{ 104,124,4,44,&DreamGenContext::lastDest },
-			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
-			{ 104,216,138,192,&DreamGenContext::destSelect },
+		RectWithCallback<DreamBase> destList[] = {
+			{ 238,258,4,44,&DreamBase::nextDest },
+			{ 104,124,4,44,&DreamBase::lastDest },
+			{ 280,308,4,44,&DreamBase::lookAtPlace },
+			{ 104,216,138,192,&DreamBase::destSelect },
 			{ 273,320,157,198,&DreamBase::getBack1 },
 			{ 0,320,0,200,&DreamBase::blank },
 			{ 0xFFFF,0,0,0,0 }
@@ -101,7 +101,7 @@ void DreamBase::showCity() {
 	showFrame(tempGraphics(), 120+57, 32, 1, 0);
 }
 
-void DreamGenContext::lookAtPlace() {
+void DreamBase::lookAtPlace() {
 	if (data.byte(kCommandtype) != 224) {
 		data.byte(kCommandtype) = 224;
 		commandOnly(27);
@@ -164,7 +164,7 @@ void DreamBase::showArrows() {
 	showFrame(tempGraphics(), 280, 14, 2, 0);
 }
 
-void DreamGenContext::nextDest() {
+void DreamBase::nextDest() {
 	if (data.byte(kCommandtype) != 218) {
 		data.byte(kCommandtype) = 218;
 		commandOnly(28);
@@ -193,7 +193,7 @@ void DreamGenContext::nextDest() {
 	delPointer();
 }
 
-void DreamGenContext::lastDest() {
+void DreamBase::lastDest() {
 	if (data.byte(kCommandtype) != 219) {
 		data.byte(kCommandtype) = 219;
 		commandOnly(29);
@@ -222,7 +222,7 @@ void DreamGenContext::lastDest() {
 	delPointer();
 }
 
-void DreamGenContext::destSelect() {
+void DreamBase::destSelect() {
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
 		commandOnly(30);
