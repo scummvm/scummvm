@@ -100,6 +100,7 @@
 	void convIcons();
 	void startTalk();
 	void getPersonText(uint8 index);
+	void doSomeTalk();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
 	void transferText();

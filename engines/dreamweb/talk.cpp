@@ -110,7 +110,7 @@ void DreamGenContext::startTalk() {
 
 void DreamGenContext::getPersonText(uint8 index) {
 	es = data.word(kPeople);
-	si = es.word((index * 64 * 2) + 24) + (1026 * 2) + 24;
+	si = es.word((index * 64 * 2) + kPersontxtdat) + kPersontext;
 }
 
 void DreamGenContext::moreTalk() {
@@ -138,7 +138,89 @@ void DreamGenContext::moreTalk() {
 	doSomeTalk();
 }
 
-// TODO: put Dosometalk here
+void DreamGenContext::doSomeTalk() {
+	while (true) {
+		es = data.word(kPeople);
+		si = ((data.byte(kTalkpos) + (64 * (data.byte(kCharacter) & 0x7F))) * 2) + kPersontxtdat;
+		si = es.word(si) + kPersontext;
+
+		if (es.byte(si) == 0) {
+			// endheartalk
+			data.byte(kPointermode) = 0;
+			return;
+		}
+
+		push(es);
+		push(si);
+
+		createPanel();
+		showPanel();
+		showMan();
+		showExit();
+		convIcons();
+
+		si = pop();
+		es = pop();
+
+		const uint8 *str = es.ptr(si, 0);
+		uint16 y = 64;
+		printDirect(&str, 164, &y, 144, false);
+
+		loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
+		if (data.byte(kSpeechloaded) != 0)
+			playChannel1(62);
+
+		data.byte(kPointermode) = 3;
+		workToScreenM();
+		cx = 180;
+		hangOnPQ();
+		if (flags.c())
+			return;
+
+		data.byte(kTalkpos)++;
+
+		es = data.word(kPeople);	
+		si = kPersontxtdat + (((64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos)) * 2);
+		si = es.word(si) + kPersontext;
+
+		if (es.byte(si) == 0) {
+			// endheartalk
+			data.byte(kPointermode) = 0;
+			return;
+		}
+
+		if (es.byte(si) != ':' && es.byte(si) != 32) {
+			push(es);
+			push(si);
+
+			createPanel();
+			showPanel();
+			showMan();
+			showExit();
+			convIcons();
+
+			si = pop();
+			es = pop();
+
+			str = es.ptr(si, 0);
+			y = 128;
+			printDirect(&str, 48, &y, 144, false);
+
+			loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
+			if (data.byte(kSpeechloaded) != 0)
+				playChannel1(62);
+
+			data.byte(kPointermode) = 3;
+			workToScreenM();
+			cx = 180;
+			hangOnPQ();
+			if (flags.c())
+				return;
+		}
+
+		data.byte(kTalkpos)++;
+	}
+}
 
 void DreamGenContext::hangOnPQ() {
 	data.byte(kGetback) = 0;
