@@ -834,6 +834,49 @@ void DreamGenContext::reExFromInv() {
 	data.byte(kPointermode) = 0;
 }
 
+void DreamGenContext::swapWithInv() {
+	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
+	if (subject == data.word(kOldsubject)) {
+		if (data.byte(kCommandtype) != 243) {
+			data.byte(kCommandtype) = 243;
+			data.word(kOldsubject) = subject;
+			commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+		}
+	} else {
+		data.word(kOldsubject) = subject;
+		commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	byte prevType = data.byte(kObjecttype);
+	byte prevFrame = data.byte(kItemframe);
+	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
+	data.byte(kItemframe)  = objectId & 0x00FF;
+	data.byte(kObjecttype) = objectId >> 8;
+	DynObject *object = getEitherAdCPP();
+	object->mapad[0] = 20;
+	object->mapad[1] = 255;
+	byte prevType2 = data.byte(kObjecttype);
+	byte prevFrame2 = data.byte(kItemframe);
+	data.byte(kObjecttype) = prevType;
+	data.byte(kItemframe) = prevFrame;
+	//findInvPosCPP();	// found in the original source, but it seems to be useless
+	delPointer();
+	object = getEitherAdCPP();
+	object->mapad[0] = 4;
+	object->mapad[1] = 255;
+	object->mapad[2] = data.byte(kLastinvpos);
+	data.byte(kObjecttype) = prevType2;
+	data.byte(kItemframe) = prevFrame2;
+	fillRyan();
+	readMouse();
+	showPointer();
+	workToScreenCPP();
+	delPointer();
+}
+
 void DreamGenContext::useOpened() {
 	if (data.byte(kOpenedob) == 255)
 		return;	// cannot use opened object
@@ -902,11 +945,11 @@ void DreamGenContext::useOpened() {
 	delPointer();
 }
 
-void DreamGenContext::swapWithInv() {
+void DreamGenContext::swapWithOpen() {
 	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
 	if (subject == data.word(kOldsubject)) {
-		if (data.byte(kCommandtype) != 243) {
-			data.byte(kCommandtype) = 243;
+		if (data.byte(kCommandtype) != 242) {
+			data.byte(kCommandtype) = 242;
 			data.word(kOldsubject) = subject;
 			commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
 		}
@@ -918,28 +961,56 @@ void DreamGenContext::swapWithInv() {
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
 		return;
 
+	if (isItWorn(getEitherAdCPP())) {
+		wornError();
+		return;
+	}
+
+	delPointer();
+
+	if (data.byte(kItemframe) == data.byte(kOpenedob) &&
+		data.byte(kObjecttype) == data.byte(kOpenedtype)) {
+		errorMessage1();
+		return;
+	}
+
+	if (!checkObjectSizeCPP())
+		return;
+
 	byte prevType = data.byte(kObjecttype);
 	byte prevFrame = data.byte(kItemframe);
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
-	data.byte(kItemframe)  = objectId & 0x00FF;
-	data.byte(kObjecttype) = objectId >> 8;
+	findOpenPos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+
+	if (data.byte(kObjecttype) != 4) {
+		transferToEx();
+		data.byte(kItemframe) = al;
+		data.byte(kObjecttype) = 4;
+	}
+
 	DynObject *object = getEitherAdCPP();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
+
 	byte prevType2 = data.byte(kObjecttype);
 	byte prevFrame2 = data.byte(kItemframe);
 	data.byte(kObjecttype) = prevType;
 	data.byte(kItemframe) = prevFrame;
-	//findInvPosCPP();	// found in the original source, but it seems to be useless
-	delPointer();
+	findOpenPos();
 	object = getEitherAdCPP();
-	object->mapad[0] = 4;
-	object->mapad[1] = 255;
+	object->mapad[0] = data.byte(kOpenedtype);
+	object->mapad[1] = data.byte(kOpenedob);
 	object->mapad[2] = data.byte(kLastinvpos);
+	object->mapad[3] = data.byte(kReallocation);
 	data.byte(kObjecttype) = prevType2;
 	data.byte(kItemframe) = prevFrame2;
+	fillOpen();
 	fillRyan();
+	underTextLine();
 	readMouse();
+	useOpened();
 	showPointer();
 	workToScreenCPP();
 	delPointer();

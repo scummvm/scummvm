@@ -469,7 +469,6 @@ public:
 	void findAllOpen();
 	void fillOpen();
 	void getEitherAd();
-	void swapWithOpen();
 	void dreamweb();
 	void findPathOfPoint();
 	void getDestInfo();
