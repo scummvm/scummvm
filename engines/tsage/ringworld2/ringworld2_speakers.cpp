@@ -1602,5 +1602,318 @@ void SpeakerMiranda3255::proc15() {
 	}
 }
 
+SpeakerQuinn3400::SpeakerQuinn3400() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+void SpeakerQuinn3400::proc15() {
+	Scene3400 *scene = (Scene3400 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 1) 
+			_object2 = &R2_GLOBALS._player;
+		else if (R2_GLOBALS._player._characterIndex == 2) 
+			_object2 = &scene->_actor1;
+		else
+			_object2 = &scene->_actor2;
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+		R2_GLOBALS._player.disableControl();
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4010, 5, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4010, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4012, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerSeeker3400::SpeakerSeeker3400() {
+	_speakerName = "SEEKER";
+	_color1 = 35;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerSeeker3400::proc15() {
+	Scene3400 *scene = (Scene3400 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 2) 
+			_object2 = &R2_GLOBALS._player;
+		else
+			_object2 = &scene->_actor1;
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4031, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4031, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4030, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 4:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4031, 7, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 5:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4033, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerMiranda3400::SpeakerMiranda3400() {
+	_speakerName = "MIRANDA";
+	_color1 = 154;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerMiranda3400::proc15() {
+	Scene3400 *scene = (Scene3400 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 3) 
+			_object2 = &R2_GLOBALS._player;
+		else
+			_object2 = &scene->_actor2;
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4051, 5, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4050, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerWebbster3400::SpeakerWebbster3400() {
+	_speakerName = "WEBBSTER";
+	_color1 = 27;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerWebbster3400::proc15() {
+	Scene3400 *scene = (Scene3400 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor3;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4110, 5, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4110, 7, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4110, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerTeal3400::SpeakerTeal3400() {
+	_speakerName = "TEAL";
+	_color1 = 22;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerTeal3400::proc15() {
+	Scene3400 *scene = (Scene3400 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor4;
+		_object2->hide();
+		_object1.postInit();
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+	_object1.setPosition(_object2->_position);
+	_object1.show();
+
+	if (scene ->_sceneMode == 3305) {
+		R2_GLOBALS._player.setStrip(6);
+		scene->_actor1.setStrip(6);
+		scene->_actor2.setStrip(6);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4107, 5, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4107, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4107, 7, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 4:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4107, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
