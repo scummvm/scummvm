@@ -195,5 +195,6 @@
 	void selectLocation();
 	void reExFromInv();
 	void locationPic();
+	void useOpened();
 
 #endif

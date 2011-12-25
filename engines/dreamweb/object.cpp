@@ -834,4 +834,72 @@ void DreamGenContext::reExFromInv() {
 	data.byte(kPointermode) = 0;
 }
 
+void DreamGenContext::useOpened() {
+	if (data.byte(kOpenedob) == 255)
+		return;	// cannot use opened object
+
+	if (!data.byte(kPickup)) {
+		outOfOpen();
+		return;
+	}
+
+	findOpenPos();
+	ax = es.word(bx);
+
+	if (al != 255) {
+		swapWithOpen();
+		return;
+	}
+
+	if (data.byte(kPickup) != 1) {
+		blank();
+		return;
+	}
+
+	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
+	if (subject == data.word(kOldsubject)) {
+		if (data.byte(kCommandtype) != 227) {
+			data.byte(kCommandtype) = 227;
+			data.word(kOldsubject) = subject;
+			commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+		}
+	} else {
+		data.word(kOldsubject) = subject;
+		commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+		return;
+
+	if (isItWorn(getEitherAdCPP())) {
+		wornError();
+		return;
+	}
+
+	delPointer();
+
+	if (data.byte(kItemframe) == data.byte(kOpenedob) &&
+		data.byte(kObjecttype) == data.byte(kOpenedtype)) {
+		errorMessage1();
+		return;
+	}
+
+	if (!checkObjectSizeCPP())
+		return;
+
+	data.byte(kPickup) = 0;
+	DynObject *object = getEitherAdCPP();
+	object->mapad[0] = data.byte(kOpenedtype);
+	object->mapad[1] = data.byte(kOpenedob);
+	object->mapad[2] = data.byte(kLastinvpos);
+	object->mapad[3] = data.byte(kReallocation);
+	fillOpen();
+	underTextLine();
+	readMouse();
+	useOpened();
+	showPointer();
+	workToScreenCPP();
+	delPointer();
+}
+
 } // End of namespace DreamGen
