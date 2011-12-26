@@ -291,6 +291,8 @@ public:
 	uint16 waitFrames();
 	void printCurs();
 	void delCurs();
+	void rollEndCreditsGameWon();
+	void rollEndCreditsGameLost();
 
 	// from saveload.cpp
 	void loadGame();
@@ -362,7 +364,6 @@ public:
 	void intro2Text(uint16 nextReelPointer);
 	void intro3Text(uint16 nextReelPointer);
 
-	void rollEndCredits();
 	void monks2text();
 	void textForEnd();
 	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
@@ -726,8 +727,6 @@ public:
 	void createPanel();
 	void createPanel2();
 	void showPanel();
-	void rollEndCredits2();
-	void rollEm();
 };
 
 

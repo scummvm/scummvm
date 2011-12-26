@@ -1030,7 +1030,7 @@ void DreamBase::endGameSeq(ReelRoutine &routine) {
 	
 	if (routine.reelPointer() == 145) {
 		routine.setReelPointer(146);
-		rollEndCredits();
+		rollEndCreditsGameWon();
 	}
 }
 

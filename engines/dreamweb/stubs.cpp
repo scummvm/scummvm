@@ -3190,7 +3190,7 @@ void DreamGenContext::showGun() {
 	hangOn(160);
 	playChannel0(12, 0);
 	loadTempText("DREAMWEB.T83");
-	rollEndCredits2();
+	rollEndCreditsGameLost();
 	getRidOfTempText();
 }
 
