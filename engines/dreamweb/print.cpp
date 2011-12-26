@@ -120,6 +120,15 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 	} while (true);
 }
 
+void DreamGenContext::printDirect() {
+	uint16 y = bx;
+	const uint8 *initialString = es.ptr(si, 0);
+	const uint8 *string = initialString;
+	al = DreamBase::printDirect(&string, di, &y, dl, (bool)(dl & 1));
+	si += (string - initialString);
+	bx = y;
+}
+
 uint8 DreamBase::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	return printDirect(&string, x, &y, maxWidth, centered);
 }
@@ -207,7 +216,7 @@ uint16 DreamBase::waitFrames() {
 void DreamGenContext::monPrint() {
 	uint16 originalBx = bx;
 	const char *string = (const char *)es.ptr(bx, 0);
-	const char *nextString = DreamBase::monPrint(string);
+	const char *nextString = monPrint(string);
 	bx = originalBx + (nextString - string);
 }
 

@@ -1494,7 +1494,7 @@ void DreamBase::useAxe() {
 	removeObFromInv();
 }
 
-void DreamBase::useKey() {
+void DreamGenContext::useKey() {
 	switch(data.byte(kLocation)) {
 	case 5:
 	case 30:
@@ -1512,6 +1512,7 @@ void DreamBase::useKey() {
 		if (data.byte(kMapx) == 11 && data.byte(kMapy) == 10) {
 			showPuzText(3, 300);
 			data.byte(kNewlocation) = 30;
+			al = 2;
 			fadeScreenDown();
 			showFirstUse();
 			putBackObStuff();
