@@ -1335,6 +1335,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if ((flags & 0x2000) && _vm->game() != GI_KYRA1)
 		_dsTable5 = va_arg(args, uint8 *);
 
+	va_end(args);
+
 	static const DsMarginSkipFunc dsMarginFunc[] = {
 		&Screen::drawShapeMarginNoScaleUpwind,
 		&Screen::drawShapeMarginNoScaleDownwind,
@@ -1420,7 +1422,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			warning("Missing drawShape plotting method type %d", ppc);
 		if (dsPlot3 != dsPlot2 && !dsPlot3)
 			warning("Missing drawShape plotting method type %d", (((flags >> 8) & 0xF7) & 0x3F));
-		va_end(args);
 		return;
 	}
 
@@ -1453,10 +1454,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		shapeHeight = (shapeHeight * _dsScaleH) >> 8;
 		shpWidthScaled1 = shpWidthScaled2 = (shapeWidth * _dsScaleW) >> 8;
 
-		if (!shapeHeight || !shpWidthScaled1) {
-			va_end(args);
+		if (!shapeHeight || !shpWidthScaled1)
 			return;
-		}
 	}
 
 	if (flags & DSF_CENTER) {
@@ -1486,7 +1485,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (t < 0) {
 		shapeHeight += t;
 		if (shapeHeight <= 0) {
-			va_end(args);
 			return;
 		}
 
@@ -1520,10 +1518,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	t = (flags & 2) ? y + shapeHeight - y1 : y2 - y;
-	if (t <= 0) {
-		va_end(args);
+	if (t <= 0)
 		return;
-	}
 
 	if (t < shapeHeight) {
 		shapeHeight = t;
@@ -1535,20 +1531,16 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (x < 0) {
 		shpWidthScaled1 += x;
 		_dsOffscreenLeft = -x;
-		if (_dsOffscreenLeft >= shpWidthScaled2) {
-			va_end(args);
+		if (_dsOffscreenLeft >= shpWidthScaled2)
 			return;
-		}
 		x = 0;
 	}
 
 	_dsOffscreenRight = 0;
 	t = x2 - x;
 
-	if (t <= 0) {
-		va_end(args);
+	if (t <= 0)
 		return;
-	}
 
 	if (t < shpWidthScaled1) {
 		shpWidthScaled1 = t;
@@ -1628,8 +1620,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			scaleCounterV -= 0x100;
 		} while (scaleCounterV & 0xFF00);
 	}
-
-	va_end(args);
 }
 
 int Screen::drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
