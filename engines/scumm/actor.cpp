@@ -1323,23 +1323,23 @@ static const byte v0ActorSounds[24] = {
 	0x06, // Bernard
 	0x06, // Wendy
 	0x00, // Jeff
-	0x46, // ???
+	0x46, // Radiation Suit
 	0x06, // Dr Fred
 	0x06, // Nurse Edna
 	0x06, // Weird Ed
 	0x06, // Dead Cousin Ted
 	0xFF, // Purple Tentacle
 	0xFF, // Green Tentacle
-	0x06, // Meteor
-	0xC0, // Plant
-	0x06, // ???
-	0x06, // ???
-	0x00, // ???
-	0xC0, // ???
-	0xC0, // ???
-	0x00, // ???
-	0x06, // Sandy
-	0x06, // ???
+	0x06, // Meteor police
+	0xC0, // Meteor
+	0x06, // Mark Eteer
+	0x06, // Talkshow Host
+	0x00, // Plant
+	0xC0, // Meteor Radiation
+	0xC0, // Edsel (small, outro)
+	0x00, // Meteor (small, intro)
+	0x06, // Sandy (Lab)
+	0x06, // Sandy (Cut-Scene)
 };
 
 /* Used in Scumm v5 only. Play sounds associated with actors */
@@ -2298,22 +2298,23 @@ static const char *const v0ActorNames_English[25] = {
 	"Bernard",
 	"Wendy",
 	"Jeff",
-	"",
+	"", // Radiation Suit
 	"Dr Fred",
 	"Nurse Edna",
 	"Weird Ed",
 	"Dead Cousin Ted",
 	"Purple Tentacle",
 	"Green Tentacle",
+	"", // Meteor Police
 	"Meteor",
-	"",
-	"",
-	"",
+	"", // Mark Eteer
+	"", // Talkshow Host
 	"Plant",
-	"",
-	"",
-	"",
-	"Sandy"
+	"", // Meteor Radiation
+	"", // Edsel (small, outro)
+	"", // Meteor (small, intro)
+	"Sandy", // (Lab)
+	"", // Sandy (Cut-Scene)
 };
 
 static const char *const v0ActorNames_German[25] = {
@@ -2331,15 +2332,16 @@ static const char *const v0ActorNames_German[25] = {
 	"Ted",
 	"Lila Tentakel",
 	"Gr<nes Tentakel",
-	"Meteor",
 	"",
+	"Meteor",
 	"",
 	"",
 	"Pflanze",
 	"",
 	"",
 	"",
-	"Sandy"
+	"Sandy",
+	"",
 };
 
 const byte *Actor::getActorName() {
