@@ -7,10 +7,10 @@ char readkey1() {
 	return readkey1_result;
 }
 
-integer testou() {
+int testou() {
 	char ch;
 
-	integer testou_result;
+	int testou_result;
 	input >> kbd >> ch;
 	switch (ch)  {
 	case '\23' :
@@ -19,7 +19,7 @@ integer testou() {
 	case '\1':
 	case '\3':
 	case '\5'  : {
-		newgd = (cardinal)pred(integer, ord(ch)) >> 1;
+		newgd = (cardinal)pred(int, ord(ch)) >> 1;
 		testou_result = 61;
 		return testou_result;
 	}
@@ -39,7 +39,7 @@ integer testou() {
 	case '\26' :
 		if (set::of(1, 2, eos).has(c_zzz)) {
 			zzuul(adcfiec + 161, 0, 1644);
-			c_zzz = succ(integer, c_zzz);
+			c_zzz = succ(int, c_zzz);
 			testou_result = 61;
 			return testou_result;
 		}
@@ -53,7 +53,7 @@ integer testou() {
 }
 
 void teskbd() {
-	integer dum;
+	int dum;
 
 	if (keypressed())  dum = testou();
 }

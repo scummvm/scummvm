@@ -1,17 +1,17 @@
 
 /* NIVEAU 15 */
 void copcha() {
-	integer i;
+	int i;
 
 	i = acha;
 	do {
 		tabdon[i] = tabdon[i + 390];
-		i = succ(integer, i);
+		i = succ(int, i);
 	} while (!(i == acha + 390));
 }
 
 boolean dans_rect(rectangle r) {
-	integer x, y, c;
+	int x, y, c;
 
 	boolean dans_rect_result;
 	read_pos_mouse(x, y, c);
@@ -23,8 +23,8 @@ boolean dans_rect(rectangle r) {
 	return dans_rect_result;
 }
 
-void outbloc(integer n, pattern p, t_nhom pal) {
-	integer i, j, ad;
+void outbloc(int n, pattern p, t_nhom pal) {
+	int i, j, ad;
 
 	ad = n * 404 + 0xd700;
 	{
@@ -33,13 +33,13 @@ void outbloc(integer n, pattern p, t_nhom pal) {
 		ad = ad + 4;
 		for (i = 1; i <= p.tax; i ++)
 			for (j = 1; j <= p.tay; j ++)
-				mem[0x6000 + ad + pred(integer, j)*p.tax + pred(integer, i)] = pal[n].hom[p.des[i][j]];
+				mem[0x6000 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
 	}
 }
 
 
-void writepal(integer n) {
-	integer i;
+void writepal(int n) {
+	int i;
 	t_nhom pal;
 
 
@@ -49,7 +49,7 @@ void writepal(integer n) {
 	case ams :
 		for (i = 1; i <= 16; i ++) {
 			mem[0x7000 + 2 * i] = tabpal[n][i].x;
-			mem[0x7000 + succ(integer, 2 * i)] = tabpal[n][i].y;
+			mem[0x7000 + succ(int, 2 * i)] = tabpal[n][i].y;
 		}
 		break;
 	case cga : {
@@ -62,7 +62,7 @@ void writepal(integer n) {
 }
 
 
-void pictout(integer seg, integer dep, integer x, integer y) {
+void pictout(int seg, int dep, int x, int y) {
 	decomp(seg, dep);
 	if (gd == her) {
 		mem[0x7000 + 2] = 0;
@@ -72,45 +72,45 @@ void pictout(integer seg, integer dep, integer x, integer y) {
 	afff(gd, seg, dep, x, y);
 }
 
-void putxy(integer x, integer y) {
+void putxy(int x, int y) {
 	xwhere = x;
 	ywhere = y;
 }
 /*
-function calad(x,y:integer):integer;
+function calad(x,y:int):int;
    begin
      calad:=pred(x)+320*pred(y)
    end;
   */
-void sauvecr(integer y, integer dy) {
+void sauvecr(int y, int dy) {
 	hide_mouse();
 	s_sauv(gd, y, dy);
 	show_mouse();
 }
 
-void charecr(integer y, integer dy) {
+void charecr(int y, int dy) {
 	hide_mouse();
 	s_char(gd, y, dy);
 	show_mouse();
 }
 /*
-function peek(ad:integer):integer;
+function peek(ad:int):int;
 begin
   peek:=tabdon[ad];
 end;
 
-function peekw(ad:integer):integer;
+function peekw(ad:int):int;
 begin
   peekw:=tabdon[ad] shl 8+tabdon[succ(ad)];
 end;
 
-function peekl(ad:integer):real;
+function peekl(ad:int):real;
 begin
   peekl:=tabdon[ad+3]+tabdon[ad+2] shl 8;
 end;
 
 
-procedure poke (ad,n:integer);
+procedure poke (ad,n:int);
 begin
   tabdon[ad]:=lo(n);
 end;
@@ -120,7 +120,7 @@ void adzon() {
 	untyped_file f;
 	file<byte> g;
 	byte a;
-	integer i;
+	int i;
 
 	assign(f, "don.mor");
 	reset(f, 256);
@@ -148,10 +148,10 @@ void adzon() {
 	close(f);
 }
 
-integer animof(integer ouf, integer num) {
-	integer nani, aux;
+int animof(int ouf, int num) {
+	int nani, aux;
 
-	integer animof_result;
+	int animof_result;
 	nani = mem[adani + 1];
 	aux = num;
 	if (ouf != 1)  aux = aux + nani;
@@ -163,7 +163,7 @@ integer animof(integer ouf, integer num) {
 	return animof_result;
 }
 
-/*procedure affgd(offs,dep,x,y:integer);
+/*procedure affgd(offs,dep,x,y:int);
 begin
   case Gd of
      Ams : affams(offs,dep,x,y);

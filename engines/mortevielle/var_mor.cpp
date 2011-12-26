@@ -15,101 +15,101 @@
 
 const real freq0 = 1.19318e6;
 
-const integer seg_syst = 0x6fed;
-const integer segmou = 0x6f00;
-const integer segdon = 0x6c00;
-const integer adani = 0x7314;
-const integer adword = 0x4000;
-const integer adtroct = 0x406b;
-const integer adcfiec = 0x4300;
-const integer adbruit = 0x5cb0;/*2C00;*/
-const integer adbruit1 = 0x6924;/*3874;*/
-const integer adbruit2 = 0x6b30;/*3A80;*/
-const integer adbruit3 = 0x6ba6;/*3AF6;*/
-const integer adbruit5 = 0x3b50;
-const integer adson = 0x5cb0;/*2C00;*/
-const integer adson2 = 0x60b0;/*3000;*/
-const integer offsetb1 = 6;
-const integer offsetb2 = 4;
-const integer offsetb3 = 6;
+const int seg_syst = 0x6fed;
+const int segmou = 0x6f00;
+const int segdon = 0x6c00;
+const int adani = 0x7314;
+const int adword = 0x4000;
+const int adtroct = 0x406b;
+const int adcfiec = 0x4300;
+const int adbruit = 0x5cb0;/*2C00;*/
+const int adbruit1 = 0x6924;/*3874;*/
+const int adbruit2 = 0x6b30;/*3A80;*/
+const int adbruit3 = 0x6ba6;/*3AF6;*/
+const int adbruit5 = 0x3b50;
+const int adson = 0x5cb0;/*2C00;*/
+const int adson2 = 0x60b0;/*3000;*/
+const int offsetb1 = 6;
+const int offsetb2 = 4;
+const int offsetb3 = 6;
 
-const integer null = 255;
+const int null = 255;
 
-const integer tempo_mus = 71;
-const integer tempo_bruit = 78;
-const integer tempo_f = 80;
-const integer tempo_m = 89;
+const int tempo_mus = 71;
+const int tempo_bruit = 78;
+const int tempo_f = 80;
+const int tempo_m = 89;
 
-const integer ti1 = 410;
-const integer ti2 = 250;
-const integer maxti = 7975;
-const integer maxtd = 600;
-const integer max_rect = 14;
+const int ti1 = 410;
+const int ti2 = 250;
+const int maxti = 7975;
+const int maxtd = 600;
+const int max_rect = 14;
 
-const integer ams = 0;
-const integer cga = 1;
-const integer ega = 2;
-const integer her = 3;
-const integer tan = 4;
+const int ams = 0;
+const int cga = 1;
+const int ega = 2;
+const int her = 3;
+const int tan = 4;
 
-const integer c_repon = 0;
-const integer c_st41 = 186;
-const integer c_tparler = 247;
-const integer c_paroles = 292;
-const integer c_tmlieu = 435;
-const integer c_dialpre = 456;
-const integer c_action = 476;
-const integer c_saction = 497;
-const integer c_dis = 502;
-const integer c_fin = 510;    /*  =>   n'existe pas  ; si !! */
+const int c_repon = 0;
+const int c_st41 = 186;
+const int c_tparler = 247;
+const int c_paroles = 292;
+const int c_tmlieu = 435;
+const int c_dialpre = 456;
+const int c_action = 476;
+const int c_saction = 497;
+const int c_dis = 502;
+const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */
 
-const integer arega = 0;
-const integer asoul = 154;
-const integer aouvr = 282;
-const integer achai = 387;
-const integer acha = 492;
-const integer arcf = 1272;
-const integer arep = 1314;
-const integer amzon = 1650;
-const integer fleche = 1758;
+const int arega = 0;
+const int asoul = 154;
+const int aouvr = 282;
+const int achai = 387;
+const int acha = 492;
+const int arcf = 1272;
+const int arep = 1314;
+const int amzon = 1650;
+const int fleche = 1758;
 
-const integer no_choice = 0;
-const integer invent = 1;
-const integer depla = 2;
-const integer action = 3;
-const integer saction = 4;
-const integer discut = 5;
-const integer fichier = 6;
-const integer sauve = 7;
-const integer charge = 8;
+const int no_choice = 0;
+const int invent = 1;
+const int depla = 2;
+const int action = 3;
+const int saction = 4;
+const int discut = 5;
+const int fichier = 6;
+const int sauve = 7;
+const int charge = 8;
 
-const integer attacher = 0x301;
-const integer attendre = 0x302;
-const integer defoncer = 0x303;
-const integer dormir = 0x304;
-const integer ecouter = 0x305;
-const integer entrer = 0x306;
-const integer fermer = 0x307;
-const integer fouiller = 0x308;
-const integer frapper = 0x309;
-const integer gratter = 0x30a;
-const integer lire = 0x30b;
-const integer manger = 0x30c;
-const integer mettre = 0x30d;
-const integer ouvrir = 0x30e;
-const integer prendre = 0x30f;
-const integer regarder = 0x310;
-const integer sentir = 0x311;
-const integer sonder = 0x312;
-const integer sortir = 0x313;
-const integer soulever = 0x314;
-const integer tourner = 0x315;
+const int attacher = 0x301;
+const int attendre = 0x302;
+const int defoncer = 0x303;
+const int dormir = 0x304;
+const int ecouter = 0x305;
+const int entrer = 0x306;
+const int fermer = 0x307;
+const int fouiller = 0x308;
+const int frapper = 0x309;
+const int gratter = 0x30a;
+const int lire = 0x30b;
+const int manger = 0x30c;
+const int mettre = 0x30d;
+const int ouvrir = 0x30e;
+const int prendre = 0x30f;
+const int regarder = 0x310;
+const int sentir = 0x311;
+const int sonder = 0x312;
+const int sortir = 0x313;
+const int soulever = 0x314;
+const int tourner = 0x315;
 
-const integer scacher = 0x401;
-const integer sfouiller = 0x402;
-const integer slire = 0x403;
-const integer sposer = 0x404;
-const integer sregarder = 0x405;
+const int scacher = 0x401;
+const int sfouiller = 0x402;
+const int slire = 0x403;
+const int sposer = 0x404;
+const int sregarder = 0x405;
 
 const array<0, 17, byte> tabdbc
 = {{7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9}};
@@ -165,7 +165,7 @@ const char recom[] = " Recommence  ";
 const char f3[] = "F3: Encore";
 const char f8[] = "F8: Suite";
 
-const integer max_patt = 20;
+const int max_patt = 20;
 
 
 const array<0, 15, byte> rang
@@ -177,29 +177,29 @@ const array<0, 15, byte> rang
 /*---------------------------------------------------------------------------*/
 
 typedef varying_string<11> path_chars;
-typedef real long_integer;
+typedef real long_int;
 typedef varying_string<255> str255;
 typedef varying_string<125> str125;
 typedef varying_string<30> str30;
 typedef varying_string<11> str11;
 typedef file<byte> fichier_byte;
 struct sav_chaine {
-	integer conf;
+	int conf;
 	array<0, 10, char> pourc;
 	array<0, 42, char> teauto;
 	array<0, 30, char> sjer;
-	integer mlieu, iboul, ibag, icave, ivier, ipuit;
-	integer derobj, iloic, icryp;
+	int mlieu, iboul, ibag, icave, ivier, ipuit;
+	int derobj, iloic, icryp;
 	boolean ipre;
 	char heure;
 };
 struct registres {
-	integer ax, bx, cx, dx, bp, si, di, ds, es, flags;
+	int ax, bx, cx, dx, bp, si, di, ds, es, flags;
 };
 typedef array<1, 1410, char> phrase;
-typedef array<0, maxti, integer> tabint;
+typedef array<0, maxti, int> tabint;
 struct ind {
-	integer indis;
+	int indis;
 	byte point;
 };
 typedef array<0, maxtd, ind> tabind;
@@ -207,11 +207,11 @@ typedef array<0, maxtd, ind> tabind;
 typedef matrix<1, 7, 0, 24, byte> tab_mlieu;
 
 typedef array<0, 255, real> table;
-typedef array<0, 255, integer> tablint;
+typedef array<0, 255, int> tablint;
 
-typedef integer word1;
+typedef int word1;
 struct chariot {
-	integer val,
+	int val,
 	        code,
 	        acc,
 	        freq,
@@ -222,9 +222,9 @@ struct doublet {
 	byte x, y;
 };
 typedef array<1, 16, doublet> tabdb;
-typedef array<0, 107, integer> tfxx;
+typedef array<0, 107, int> tfxx;
 struct rectangle {
-	integer x1, x2, y1, y2;
+	int x1, x2, y1, y2;
 	boolean etat;
 };
 
@@ -294,7 +294,7 @@ boolean blo,
         active_menu;
 
 
-integer x,
+int x,
         y,
         t,
         vj,
@@ -353,9 +353,9 @@ integer x,
         ptr_word,
         color_txt;
 
-array<0, 6400, integer> t_cph;
+array<0, 6400, int> t_cph;
 array<0, 4000, byte> tabdon;
-/*   t_dxx  : array[0..121] of integer;*/
+/*   t_dxx  : array[0..121] of int;*/
 str125 stpou;                               /* donne le % d'indices */
 byte is;
 char mode;
@@ -365,12 +365,12 @@ str125 al_mess,
        ind_mess,
        al_mess2;
 
-array<1, 8, integer> invt,
+array<1, 8, int> invt,
       nbrep,
       nbrepm,
       disc;
-array<0, 4, integer> msg;
-array<1, 7, integer> depl;
+array<0, 4, int> msg;
+array<1, 7, int> depl;
 array<1, 8, varying_string<22> > inv;
 array<1, 7, varying_string<23> > dep;
 array<1, 21, varying_string<10> > act;
@@ -385,7 +385,7 @@ matrix<1, 6, 0, 23, byte> lettres;
 array<0, 15, byte> palher;
 
 tabint t_mot;
-integer tay_tchar;
+int tay_tchar;
 tabind t_rec;
 file<ind> sauv_t;
 untyped_file fibyte;
@@ -405,14 +405,14 @@ array<0, 14, pattern> tpt;
 /*--------------------   PROCEDURES  ET  FONCTIONS   ------------------------*/
 /*---------------------------------------------------------------------------*/
 
-/* procedure box(c,Gd,xo,yo,xi,yi,patt:integer); external 'c:\mc\boite.com'; */
+/* procedure box(c,Gd,xo,yo,xi,yi,patt:int); external 'c:\mc\boite.com'; */
 
 void hirs() {
 	const array<0, 13, byte> tandy
 	= {{113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0}};
 	const array<0, 12, byte> herc
 	= {{50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0}};
-	integer i, j;
+	int i, j;
 
 	switch (gd) {
 	case cga : {
@@ -470,13 +470,13 @@ void hirs() {
 	}
 }
 
-/* procedure affput(Chx,Gd,x,y,coul,char:integer); external 'c:\mc\divaf.com'; */
+/* procedure affput(Chx,Gd,x,y,coul,char:int); external 'c:\mc\divaf.com'; */
 
-void affcar(integer gd, integer x, integer y, integer coul, integer char) {
+void affcar(int gd, int x, int y, int coul, int char) {
 	if (res == 1)  affput(1, gd, ((cardinal)x >> 1), y, coul, char);
 	else affput(1, gd, x, y, coul, char);
 }
 
-void putpix(integer gd, integer x, integer y, integer coul) {
+void putpix(int gd, int x, int y, int coul) {
 	affput(0, gd, x, y, coul, 0);
 }

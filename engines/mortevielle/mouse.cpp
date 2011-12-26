@@ -1,20 +1,20 @@
-const integer m_arrow = 0;
-const integer m_point_hand = 1;
+const int m_arrow = 0;
+const int m_point_hand = 1;
 
 boolean int_m,
         clic;
 
-integer m_show,
+int m_show,
         x_s,
         y_s,
         p_o_s,
         mouse_shwn;
 
-matrix<0, 5, 0, 11, integer> s_s;
+matrix<0, 5, 0, 11, int> s_s;
 
 
 void init_mouse() {
-	integer i, j;
+	int i, j;
 	registres reg;
 
 	mouse_shwn = 0;
@@ -40,13 +40,13 @@ void init_mouse() {
 	}
 }
 
-/*procedure change_mouse( t : integer );
+/*procedure change_mouse( t : int );
 begin
   m_show:= t;
 end;*/
 
-/*procedure dessine_souris(xf,yf:integer);
-  var x, xx, y :integer;
+/*procedure dessine_souris(xf,yf:int);
+  var x, xx, y :int;
 begin
   case m_show of
              m_arrow : begin
@@ -56,10 +56,10 @@ begin
 end;  */
 
 void hide_mouse() {
-	integer i, j, k, ps, ds;
+	int i, j, k, ps, ds;
 	boolean imp;
 
-	mouse_shwn = pred(integer, mouse_shwn);
+	mouse_shwn = pred(int, mouse_shwn);
 	if (mouse_shwn == 0) {
 		imp = odd(y_s);
 		j = p_o_s;
@@ -73,7 +73,7 @@ void hide_mouse() {
 				memw[0xba00 + j] = s_s[2][k];
 				memw[0xba00 + j + 2] = s_s[3][k];
 				j = j + 80;
-				k = succ(integer, k);
+				k = succ(int, k);
 			} while (!(k >= 5));
 		}
 		break;
@@ -91,7 +91,7 @@ void hide_mouse() {
 						j = j + 0x2000;
 					}
 					imp = ! imp;
-					k = succ(integer, k);
+					k = succ(int, k);
 				} while (!(k >= 8));
 			}
 		}
@@ -111,7 +111,7 @@ void hide_mouse() {
 					ps = mem[0xa000 + j + 1];
 					mem[0xa000 + j + 1] = hi(s_s[i][k]);
 					j = j + 80;
-					k = succ(integer, k);
+					k = succ(int, k);
 				} while (!(k >= 8));
 				i = i + 1;
 			} while (!(i == 4));
@@ -134,7 +134,7 @@ void hide_mouse() {
 					memw[0xb800 + 0x200 * i + j + 2] = s_s[k + 3][i + (k << 2)];
 				}
 				j = j + 160;
-				k = succ(integer, k);
+				k = succ(int, k);
 			} while (!(k == 3));
 		}
 		break;
@@ -144,7 +144,7 @@ void hide_mouse() {
 }
 
 void show_mouse() {
-	integer i, j, k, l,
+	int i, j, k, l,
 	        ps, ds;
 	boolean imp;
 	char c;
@@ -164,7 +164,7 @@ void show_mouse() {
 			s_s[2][k] = memw[0xba00 + j];
 			s_s[3][k] = memw[0xba00 + j + 2];
 			j = j + 80;
-			k = succ(integer, k);
+			k = succ(int, k);
 		} while (!(k >= 5));
 	}
 	break;
@@ -183,7 +183,7 @@ void show_mouse() {
 					j = j + 0x2000;
 				}
 				imp = ! imp;
-				k = succ(integer, k);
+				k = succ(int, k);
 			} while (!(k >= 8));
 		}
 	}
@@ -196,9 +196,9 @@ void show_mouse() {
 			k = 0;
 			j = p_o_s;
 			do {
-				s_s[l][k] = mem[0xa000 + j] + (mem[0xa000 + succ(integer, j)] << 8);
+				s_s[l][k] = mem[0xa000 + j] + (mem[0xa000 + succ(int, j)] << 8);
 				j = j + 80;
-				k = succ(integer, k);
+				k = succ(int, k);
 			} while (!(k >= 8));
 			l = l + 1;
 		} while (!(l == 4));
@@ -221,7 +221,7 @@ void show_mouse() {
 				s_s[k + 3][i + (k << 2)] = memw[0xb800 + 0x200 * i + j + 2];
 			}
 			j = j + 160;
-			k = succ(integer, k);
+			k = succ(int, k);
 		} while (!(k == 3));
 	}
 	break;
@@ -229,7 +229,7 @@ void show_mouse() {
 	affput(2, gd, x_s, y_s, 0, 0);
 }
 
-void pos_mouse(integer x, integer y) {
+void pos_mouse(int x, int y) {
 	registres reg;
 
 	if (x > 314 * res)  x = 314 * res;
@@ -264,7 +264,7 @@ void pos_mouse(integer x, integer y) {
 	show_mouse();
 }
 
-void read_pos_mouse(integer &x, integer &y, integer &c) {
+void read_pos_mouse(int &x, int &y, int &c) {
 	registres reg;
 
 	if (int_m) {
@@ -283,7 +283,7 @@ void read_pos_mouse(integer &x, integer &y, integer &c) {
 void mov_mouse(boolean &funct, char &key) {
 	boolean p_key;
 	char in1, in2;
-	integer x, y, cx, cy, cd;
+	int x, y, cx, cy, cd;
 	registres reg;
 
 	if (int_m) {
@@ -354,16 +354,16 @@ void mov_mouse(boolean &funct, char &key) {
 				input >> kbd >> in2;
 				switch (in2) {
 				case 'K' :
-					cx = pred(integer, cx);
+					cx = pred(int, cx);
 					break;
 				case 'P' :
-					cy = succ(integer, cy);
+					cy = succ(int, cy);
 					break;
 				case 'M' :
 					cx = cx + 2;
 					break;
 				case 'H' :
-					cy = pred(integer, cy);
+					cy = pred(int, cy);
 					break;
 				case RANGE_10(';', 'D') : {
 					funct = true;

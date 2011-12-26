@@ -30,9 +30,9 @@ const array<0, 31, byte> tab31
 	}
 };
 
-void deline(integer num , phrase &l , integer &tl);
+void deline(int num , phrase &l , int &tl);
 
-static void cinq_huit(char &c, integer &ind, byte &pt, boolean &the_end) {
+static void cinq_huit(char &c, int &ind, byte &pt, boolean &the_end) {
 	const array<0, 31, char> rap
 	= {{ ',', ':', '@', '!', '?', '-', '‡',
 			' ', '…', 'ƒ', '‚', 'Š', 'ˆ', '/',
@@ -41,7 +41,7 @@ static void cinq_huit(char &c, integer &ind, byte &pt, boolean &the_end) {
 			'6', '7', '8', '9'
 		}
 	};
-	integer oct, ocd;
+	int oct, ocd;
 
 	/* 5-8 */
 	oct = t_mot[ind];
@@ -88,8 +88,8 @@ static void cinq_huit(char &c, integer &ind, byte &pt, boolean &the_end) {
 	}
 }              /* 5-8 */
 
-void deline(integer num , phrase &l , integer &tl) {
-	integer i, j, ts;
+void deline(int num , phrase &l , int &tl) {
+	int i, j, ts;
 	char let;
 	byte ps, k;
 	boolean the_end;
@@ -115,27 +115,27 @@ void deline(integer num , phrase &l , integer &tl) {
 }       /* DETEX */
 
 
-void afftex(phrase ch, integer x, integer y, integer dx, integer dy, integer typ);
+void afftex(phrase ch, int x, int y, int dx, int dy, int typ);
 
 
-static integer l_motsuiv(integer p, phrase &ch, integer &tab) {
-	integer c;
+static int l_motsuiv(int p, phrase &ch, int &tab) {
+	int c;
 
-	integer l_motsuiv_result;
+	int l_motsuiv_result;
 	c = p;
 	while (!(set::of(' ', '$', '@', eos).has(ch[p])))  p = p + 1;
 	l_motsuiv_result = tab * (p - c);
 	return l_motsuiv_result;
 }
 
-void afftex(phrase ch, integer x, integer y, integer dx, integer dy, integer typ) {
+void afftex(phrase ch, int x, int y, int dx, int dy, int typ) {
 	boolean the_end;
 	char touch;
-	integer xf, yf;
-	integer xc, yc;
-	integer tab, p;
+	int xf, yf;
+	int xc, yc;
+	int tab, p;
 	varying_string<255> s;
-	integer i, j, nt;
+	int i, j, nt;
 
 
 	/*    debug('  .. Afftex');*/

@@ -19,10 +19,10 @@ void init_chariot() {
 
 
 void trait_ph() {
-	const array<0, 2, integer> deca
+	const array<0, 2, int> deca
 	= {{300, 30, 40}};
 
-	ptr_tcph = pred(integer, num_ph);
+	ptr_tcph = pred(int, num_ph);
 	ledeb = swap(t_cph[ptr_tcph]) + deca[typlec];
 	lefin = swap(t_cph[ptr_tcph + 1]) + deca[typlec];
 	nb_word = lefin - ledeb;
@@ -51,10 +51,10 @@ void trait_ph() {
 
 
 
-void parole(integer rep, integer ht, integer typ) {
-	array<0, 500, integer> savph;
-	integer i;
-	integer tempo;
+void parole(int rep, int ht, int typ) {
+	array<0, 500, int> savph;
+	int i;
+	int tempo;
 
 
 	if (sonoff)  return;

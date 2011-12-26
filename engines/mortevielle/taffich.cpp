@@ -1,5 +1,5 @@
-void chardes(str11 nom, long_integer passe, integer long_) {
-	integer i, p, l;
+void chardes(str11 nom, long_int passe, int long_) {
+	int i, p, l;
 	byte b;
 	untyped_file f;
 
@@ -28,8 +28,8 @@ void chardes(str11 nom, long_integer passe, integer long_) {
 	/*$i+*/
 }
 
-void charani(str11 nom, long_integer passe, integer long_) {
-	integer i, p, l;
+void charani(str11 nom, long_int passe, int long_) {
+	int i, p, l;
 	byte b;
 	untyped_file f;
 
@@ -67,12 +67,12 @@ void taffich() {
 			110, 159, 100, 100
 		}
 	};
-	integer i, m, a, b, cx, handle,
+	int i, m, a, b, cx, handle,
 	        npal;
-	long_integer lgt, lhandle;
+	long_int lgt, lhandle;
 	str11 nom;
-	integer palh, k, j;
-	array<0, 15, integer> alllum;
+	int palh, k, j;
+	array<0, 15, int> alllum;
 
 
 	a = caff;
@@ -144,7 +144,7 @@ void taffich() {
 	chardes(nom, lgt, handle);
 	if (gd == her) {
 		for (i = 0; i <= 15; i ++) {
-			palh = memw[0x7000 + (succ(integer, i) << 1)];
+			palh = memw[0x7000 + (succ(int, i) << 1)];
 			alllum[i] = (palh & 15) + (((cardinal)palh >> 12) & 15) + (((cardinal)palh >> 8) & 15);
 		}
 		for (i = 0; i <= 15; i ++) {

@@ -1,6 +1,6 @@
 /* NIVEAU 14*/
 
-/* overlay */ void menut(integer no, str30 nom) {
+/* overlay */ void menut(int no, str30 nom) {
 	byte h, l;
 	str30 s;
 
@@ -33,7 +33,7 @@
 	}
 }
 
-/* overlay */ void menu_disable(integer no) {
+/* overlay */ void menu_disable(int no) {
 	byte h, l;
 
 	/* debug('menu_disable'); */
@@ -62,7 +62,7 @@
 	}
 }
 
-/* overlay */ void menu_enable(integer no) {
+/* overlay */ void menu_enable(int no) {
 	byte h, l;
 
 	/* debug('menu_disable'); */
@@ -92,9 +92,9 @@
 }
 
 void menu_aff() {
-	integer ind_tabl, k, col;
+	int ind_tabl, k, col;
 	char c;
-	integer pt, x, y, color, msk,
+	int pt, x, y, color, msk,
 	        num_letr;
 
 	/* debug('menu_aff'); */
@@ -127,8 +127,8 @@ void menu_aff() {
 					msk = (cardinal)msk >> 1;
 					x = x + 1;
 				}
-				ind_tabl = succ(integer, ind_tabl);
-				k = succ(integer, k);
+				ind_tabl = succ(int, ind_tabl);
+				k = succ(int, k);
 			} while (!(k == 3));
 			y = y + 1;
 		} while (!(y == 9));
@@ -149,7 +149,7 @@ void draw_menu() {
 	test0 = false;
 }
 
-void invers(integer ix) {
+void invers(int ix) {
 	varying_string<23> s;
 
 	/* debug('invers'); */
@@ -186,8 +186,8 @@ void invers(integer ix) {
 	else msg4 = no_choice;
 }
 
-void util(integer x, integer y) {
-	integer ymx, dxcar, xmn, xmx, ix;
+void util(int x, int y) {
+	int ymx, dxcar, xmn, xmx, ix;
 
 	/* debug('util'); */
 	ymx = (don[msg3][4] << 3) + 16;
@@ -197,7 +197,7 @@ void util(integer x, integer y) {
 	else ix = 3;
 	xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = pred(integer, (cardinal)y >> 3) + (msg3 << 8);
+		ix = pred(int, (cardinal)y >> 3) + (msg3 << 8);
 		if (ix != msg4) {
 			invers(1);
 			msg4 = ix;
@@ -209,9 +209,9 @@ void util(integer x, integer y) {
 	}
 }
 
-void menu_down(integer ii) {
-	integer cx, xcc;
-	integer xco, nb_lig;
+void menu_down(int ii) {
+	int cx, xcc;
+	int xco, nb_lig;
 
 	/* debug('menu_down'); */
 	xco = don[ii][1];
@@ -228,7 +228,7 @@ void menu_down(integer ii) {
 	putxy(xco, 16);
 	cx = 0;
 	do {
-		cx = succ(integer, cx);
+		cx = succ(int, cx);
 		switch (ii) {
 		case 1 :
 			if (inv[cx][1] != '*')  writeg(inv[cx], 4);
@@ -262,7 +262,7 @@ void menu_down(integer ii) {
 	show_mouse();
 }
 
-void menu_up(integer xx) {
+void menu_up(int xx) {
 	/* debug('menu_up'); */
 	if (test0) {
 		charecr(10, succ(byte, don[xx][2]) << 1);
@@ -278,7 +278,7 @@ void erase_menu() {
 }
 
 void mdn() {
-	integer x, y, c, a, ix;
+	int x, y, c, a, ix;
 	boolean tes;
 
 	/* debug('mdn'); */

@@ -10,12 +10,12 @@ void testfi() {
 }
 
 
-integer readclock() {
+int readclock() {
 	registres r;
-	integer s, m, h;
+	int s, m, h;
 
 	/* debug('readclock');*/
-	integer readclock_result;
+	int readclock_result;
 	r.ax = 0x2c00;
 	intr(0x21, r);
 	{
@@ -29,7 +29,7 @@ integer readclock() {
 	return readclock_result;
 }
 
-void modif(integer &nu) {
+void modif(int &nu) {
 	/* debug('modif'); */
 	if (nu == 26)  nu = 25;
 	if ((nu > 29) && (nu < 36))  nu = nu - 4;
@@ -52,7 +52,7 @@ void modif(integer &nu) {
 }
 
 
-void dessine(integer ad, integer x, integer y) {
+void dessine(int ad, int x, int y) {
 	/* debug('dessine'); */
 	hide_mouse();
 	writepal(numpal);
@@ -72,17 +72,17 @@ void dessine_rouleau() {
 }
 
 
-void text_color(integer c) {
+void text_color(int c) {
 	color_txt = c;
 }
 
 /* NIVEAU 13 */
 
 
-void text1(integer x, integer y, integer nb, integer m) {
+void text1(int x, int y, int nb, int m) {
 	phrase st;
-	integer tay;
-	integer co;
+	int tay;
+	int co;
 
 
 	/* debug('text'); */
@@ -94,7 +94,7 @@ void text1(integer x, integer y, integer nb, integer m) {
 }
 
 void initouv() {
-	integer cx;
+	int cx;
 
 	/* debug('initouv'); */
 	for (cx = 1; cx <= 7; cx ++) touv[cx] = chr(0);
@@ -105,7 +105,7 @@ void ecrf1() {
 }
 
 void clsf1() {
-	integer i, j;
+	int i, j;
 
 	/* debug('clsf1'); */
 	hide_mouse();
@@ -153,7 +153,7 @@ void clsf1() {
 }
 
 void clsf2() {
-	integer i, j;
+	int i, j;
 
 	/* debug('clsf2'); */
 	hide_mouse();
@@ -175,34 +175,34 @@ void ecrf2() {
 }
 
 void ecr2(str255 str_) {
-	integer tab;
-	integer tlig;
+	int tab;
+	int tlig;
 
 	/* debug('ecr2 : '+str_);*/
 	if (res == 1)  tab = 10;
 	else tab = 6;
 	putxy(8, 177);
-	tlig = 59 + pred(integer, res) * 36;
+	tlig = 59 + pred(int, res) * 36;
 	if (length(str_) < tlig)  writeg(str_, 5);
 	else if (length(str_) < (tlig << 1)) {
 		putxy(8, 176);
-		writeg(copy(str_, 1, pred(integer, tlig)), 5);
+		writeg(copy(str_, 1, pred(int, tlig)), 5);
 		putxy(8, 182);
 		writeg(copy(str_, tlig, tlig << 1), 5);
 	} else {
 		f2_all = true;
 		clsf2();
 		putxy(8, 176);
-		writeg(copy(str_, 1, pred(integer, tlig)), 5);
+		writeg(copy(str_, 1, pred(int, tlig)), 5);
 		putxy(8, 182);
-		writeg(copy(str_, tlig, pred(integer, tlig << 1)), 5);
+		writeg(copy(str_, tlig, pred(int, tlig << 1)), 5);
 		putxy(8, 190);
 		writeg(copy(str_, tlig << 1, tlig * 3), 5);
 	}
 }
 
 void clsf3() {
-	integer i, j;
+	int i, j;
 
 	/* debug('clsf3'); */
 	hide_mouse();
@@ -232,7 +232,7 @@ void ecrf7() {
 }
 
 void clsf10() {
-	integer co, cod;
+	int co, cod;
 	varying_string<8> st;
 
 	/* debug('clsf10'); */
@@ -268,8 +268,8 @@ void stop() {
 	exit(0);
 }
 
-void paint_rect(integer x, integer y, integer dx, integer dy) {
-	integer co;
+void paint_rect(int x, int y, int dx, int dy) {
+	int co;
 
 	/* debug('paint_rect'); */
 	if (gd == cga)  co = 3;
@@ -277,20 +277,20 @@ void paint_rect(integer x, integer y, integer dx, integer dy) {
 	box(co, gd, x, y, x + dx, y + dy, 255);
 }
 
-integer hazard(integer min, integer max) {
-	integer ha1;
+int hazard(int min, int max) {
+	int ha1;
 	real ha2;
 
 	/* debug('hazard'); */
-	integer hazard_result;
+	int hazard_result;
 	ha2 = Random();
 	ha1 = trunc(ha2 * (max - min));
 	hazard_result = min + ha1;
 	return hazard_result;
 }
 
-void calch(integer &j, integer &h, integer &m) {
-	integer th, nh;
+void calch(int &j, int &h, int &m) {
+	int th, nh;
 
 	/* debug('calch');*/
 	nh = readclock();
@@ -305,15 +305,15 @@ void calch(integer &j, integer &h, integer &m) {
 	h = h - ((j - vj) * 24);
 }
 
-void conv(integer x, integer &y) {
-	integer cx;
+void conv(int x, int &y) {
+	int cx;
 
 	/* debug('conv'); */
 	cx = 1;
 	y = 128;
 	while (cx < x) {
 		y = (cardinal)y >> 1;
-		cx = succ(integer, cx);
+		cx = succ(int, cx);
 	}
 }
 
@@ -322,10 +322,10 @@ void okpas() {
 	tesok = true;
 }
 
-void modobj(integer m) {
+void modobj(int m) {
 	phrase str_;
 	str30 strp;
-	integer i, tay;
+	int i, tay;
 
 	/* debug('modobj'); */
 	strp = ' ';
@@ -337,10 +337,10 @@ void modobj(integer m) {
 	menu_disable(invt[8]);
 }
 
-void modobj2(integer m, boolean t1, boolean t2) {
+void modobj2(int m, boolean t1, boolean t2) {
 	phrase str_;
 	str30 strp;
-	integer i, tay;
+	int i, tay;
 
 	/* debug('modobj'); */
 	strp = ' ';
@@ -355,17 +355,17 @@ void modobj2(integer m, boolean t1, boolean t2) {
 }
 
 
-void repon(integer f, integer m) {
+void repon(int f, int m) {
 	str255 str_;
 	varying_string<40> str1;
 	phrase st;
 	text1 fic;
-	integer i, xco, dx, caspe, tay;
+	int i, xco, dx, caspe, tay;
 
 	/* debug('repon fenetre nø'+chr(f+48));*/
 	if ((m > 499) && (m < 563)) {
 		deline(m - 501 + c_st41, st, tay);
-		if (tay > ((58 + pred(integer, res) * 37) << 1))  f2_all = true;
+		if (tay > ((58 + pred(int, res) * 37) << 1))  f2_all = true;
 		else f2_all = false;
 		clsf2();
 		afftex(st, 8, 176, 85, 3, 5);
@@ -413,7 +413,7 @@ void repon(integer f, integer m) {
 }
 
 void f3f8() {
-	integer co;
+	int co;
 
 	if (res == 1)  co = 107;
 	else co = 64;
@@ -424,7 +424,7 @@ void f3f8() {
 	boite(0, 42, co, 16, 7);
 }
 
-void t5(integer cx) {
+void t5(int cx) {
 	/* debug('t5'); */
 	if (cx == 10)  blo = false;
 	if (cx != 1) {
@@ -444,8 +444,8 @@ void t5(integer cx) {
 	if (cx != 9)  bh9 = false;
 }
 
-void affper(integer per) {
-	integer cx;
+void affper(int per) {
+	int cx;
 
 	/* debug('affper'); */
 	for (cx = 1; cx <= 8; cx ++) menu_disable(disc[cx]);
@@ -493,10 +493,10 @@ void affper(integer per) {
 	ipers = per;
 }
 
-/* overlay */ void choix(integer min, integer max, integer &per) {
+/* overlay */ void choix(int min, int max, int &per) {
 	boolean i;
-	integer haz, cx, cy, cz;
-	long_integer per2, cz2;
+	int haz, cx, cy, cz;
+	long_int per2, cz2;
 
 	/* debug('o0 choix'); */
 	haz = hazard(min, max);
@@ -518,8 +518,8 @@ void affper(integer per) {
 	i = false;
 }
 
-/* overlay */ void cpl1(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl1(int &p) {
+	int j, h, m;
 
 	/* debug('o0 cpl1'); */
 	calch(j, h, m);
@@ -533,8 +533,8 @@ void affper(integer per) {
 	mdn();
 }
 
-/* overlay */ void cpl2(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl2(int &p) {
+	int j, h, m;
 
 	/* debug('o0 cpl2'); */
 	calch(j, h, m);
@@ -545,8 +545,8 @@ void affper(integer per) {
 	if ((h >= 0) && (h < 8))  p = 50;
 }
 
-/* overlay */ void cpl3(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl3(int &p) {
+	int j, h, m;
 
 	/* debug('o0 cpl3'); */
 	calch(j, h, m);
@@ -554,8 +554,8 @@ void affper(integer per) {
 	if (((h > 9) && (h < 20)) || ((h >= 0) && (h < 9)))  p = 0;
 }
 
-/* overlay */ void cpl5(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl5(int &p) {
+	int j, h, m;
 
 	/* debug('o0 cpl5'); */
 	calch(j, h, m);
@@ -565,8 +565,8 @@ void affper(integer per) {
 	if ((h >= 0) && (h < 7))  p = 50;
 }
 
-/* overlay */ void cpl6(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl6(int &p) {
+	int j, h, m;
 
 	/* debug('o0 cpl6'); */
 	calch(j, h, m);
@@ -580,7 +580,7 @@ void person() {
 	const char m1[] = "Vous";
 	const char m2[] = "ˆtes";
 	const char m3[] = "SEUL";
-	integer cf;
+	int cf;
 	str255 str_;
 
 	/* debug('person'); */
@@ -595,22 +595,22 @@ void person() {
 	ipers = 0;
 }
 
-void chlm(integer &per) {
+void chlm(int &per) {
 	/* debug('chlm'); */
 	per = hazard(1, 2);
 	if (per == 2)  per = 128;
 }
 
 void pendule() {
-	const matrix<1, 2, 1, 12, integer> cv
+	const matrix<1, 2, 1, 12, int> cv
 	= {{{{ 5,  8, 10,  8,  5,  0, -5,  -8, -10,  -8,  -5,   0}},
 			{{ -5, -3,  0,  3,  5,  6,  5,   3,   0,  -3,  -5,  -6}}
 		}
 	};
-	const integer x = 580;
-	const integer y = 123;
-	const integer rg = 9;
-	integer h, co;
+	const int x = 580;
+	const int y = 123;
+	const int rg = 9;
+	int h, co;
 
 
 	/* debug('pendule'); */
@@ -639,7 +639,7 @@ void pendule() {
  * NIVEAU 11 *
  *************/
 
-void debloc(integer l) {
+void debloc(int l) {
 	/* debug('debloc'); */
 	num = 0;
 	x = 0;
@@ -648,8 +648,8 @@ void debloc(integer l) {
 	mpers = ipers;
 }
 
-/* overlay */ void cpl10(integer &p, integer &h) {
-	integer j, m;
+/* overlay */ void cpl10(int &p, int &h) {
+	int j, m;
 
 	/* debug('o1 cpl10'); */
 	calch(j, h, m);
@@ -661,8 +661,8 @@ void debloc(integer l) {
 	if ((h >= 0) && (h < 8))  p = 5;
 }
 
-/* overlay */ void cpl11(integer &p, integer &h) {
-	integer j, m;
+/* overlay */ void cpl11(int &p, int &h) {
+	int j, m;
 
 	/* debug('o1 cpl11'); */
 	calch(j, h, m);
@@ -673,8 +673,8 @@ void debloc(integer l) {
 	if ((h >= 0) && (h < 9))  p = 0;
 }
 
-/* overlay */ void cpl12(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl12(int &p) {
+	int j, h, m;
 
 	/* debug('o1 cpl12'); */
 	calch(j, h, m);
@@ -684,13 +684,13 @@ void debloc(integer l) {
 	if ((h > 4) && (h < 9))  p = 15;
 }
 
-/* overlay */ void cpl13(integer &p) {
+/* overlay */ void cpl13(int &p) {
 	/* debug('o1 cpl13'); */
 	p = 0;
 }
 
-/* overlay */ void cpl15(integer &p) {
-	integer j, h, m;
+/* overlay */ void cpl15(int &p) {
+	int j, h, m;
 
 	/* debug('o1 cpl15'); */
 	calch(j, h, m);
@@ -703,8 +703,8 @@ void debloc(integer l) {
 	if ((h >= 0) && (h < 8))  p = -15;
 }
 
-/* overlay */ void cpl20(integer &p, integer &h) {
-	integer j, m;
+/* overlay */ void cpl20(int &p, int &h) {
+	int j, m;
 
 	/* debug('o1 cpl20'); */
 	calch(j, h, m);
@@ -715,8 +715,8 @@ void debloc(integer l) {
 	if ((h > 4) && (h < 10))  p = -5;
 }
 
-/* overlay */ void quelq1(integer l) {
-	integer per;
+/* overlay */ void quelq1(int l) {
+	int per;
 
 	/* debug('o1 quelq1'); */
 	per = hazard(1, 2);
@@ -742,8 +742,8 @@ void debloc(integer l) {
 	ipers = 10;
 }
 
-/* overlay */ void quelq6(integer l) {
-	integer per;
+/* overlay */ void quelq6(int l) {
+	int per;
 
 	/* debug('o1 quelq6'); */
 	if (l == 6)  bh6 = true;
@@ -751,8 +751,8 @@ void debloc(integer l) {
 	ipers = 10;
 }
 
-/* overlay */ void quelq10(integer h, integer &per) {
-	integer min, max;
+/* overlay */ void quelq10(int h, int &per) {
+	int min, max;
 
 	/* debug('o1 quelq10'); */
 	if ((h >= 0) && (h < 8))  chlm(per);
@@ -778,8 +778,8 @@ void debloc(integer l) {
 	affper(per);
 }
 
-/* overlay */ void quelq11(integer h, integer &per) {
-	integer min, max;
+/* overlay */ void quelq11(int h, int &per) {
+	int min, max;
 
 	/* debug('o1 quelq11'); */
 	if ((h >= 0) && (h < 8))  chlm(per);
@@ -801,14 +801,14 @@ void debloc(integer l) {
 	affper(per);
 }
 
-/* overlay */ void quelq12(integer &per) {
+/* overlay */ void quelq12(int &per) {
 	/* debug('o1 quelq12'); */
 	chlm(per);
 	affper(per);
 }
 
-/* overlay */ void quelq15(integer &per) {
-	integer cx;
+/* overlay */ void quelq15(int &per) {
+	int cx;
 	boolean test;
 
 
@@ -831,8 +831,8 @@ void debloc(integer l) {
 	}
 }
 
-/* overlay */ void quelq20(integer h, integer &per) {
-	integer min, max;
+/* overlay */ void quelq20(int h, int &per) {
+	int min, max;
 
 	/* debug('o1 quelq20'); */
 	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))  chlm(per);
@@ -856,7 +856,7 @@ void debloc(integer l) {
 
 
 /* overlay */void frap() {
-	integer j, h, m, haz;
+	int j, h, m, haz;
 
 	/* debug('o1 frap'); */
 	calch(j, h, m);
@@ -868,7 +868,7 @@ void debloc(integer l) {
 	}
 }
 
-/* overlay */ void nouvp(integer l, integer &p) {
+/* overlay */ void nouvp(int l, int &p) {
 	/* debug('o1 nouvp'); */
 	p = 0;
 	if (l == 1) {
@@ -889,7 +889,7 @@ void debloc(integer l) {
 
 
 
-/* overlay */ void tip(integer ip, integer &cx) {
+/* overlay */ void tip(int ip, int &cx) {
 	/* debug('o1 tip'); */
 	if (ip == 128)  cx = 1;
 	else if (ip == 64)   cx = 2;
@@ -902,7 +902,7 @@ void debloc(integer l) {
 }
 
 
-/* overlay */ void ecfren(integer &p, integer &haz, integer cf, integer l) {
+/* overlay */ void ecfren(int &p, int &haz, int cf, int l) {
 	/* debug('o1 ecfren'); */
 	if (l == 0)  person();
 	p = -500;
@@ -921,8 +921,8 @@ void debloc(integer l) {
 	}
 }
 
-/* overlay */ void becfren(integer l) {
-	integer haz;
+/* overlay */ void becfren(int l) {
+	int haz;
 
 	/* debug('o1 becfren'); */
 	if ((l == 1) || (l == 4)) {
@@ -947,24 +947,24 @@ void debloc(integer l) {
 void init_nbrepm() {
 	const array<1, 8, byte> ipm
 	= {{4, 5, 6, 7, 5, 6, 5, 8}};
-	integer i;
+	int i;
 
 	/* debug('init_nbrepm'); */
 	i = 0;
 	do {
-		i = succ(integer, i);
+		i = succ(int, i);
 		nbrepm[i] = ipm[i];
 	} while (!(i == 8));
 }
 
-void phaz(integer &haz, integer &p, integer cf) {
+void phaz(int &haz, int &p, int cf) {
 	/* debug('phaz'); */
 	p = p + cf;
 	haz = hazard(1, 100);
 }
 
 /* overlay */ void inzon() {
-	integer cx;
+	int cx;
 
 	/* debug('o2 inzon'); */
 	copcha();
@@ -1004,8 +1004,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	mh = readclock();
 }
 
-/* overlay */ void pl1(integer cf) {
-	integer p, haz;
+/* overlay */ void pl1(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl1'); */
 	if (((li == 1) && (! bh1) && (! bf1))
@@ -1017,8 +1017,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	}
 }
 
-/* overlay */ void pl2(integer cf) {
-	integer p, haz;
+/* overlay */ void pl2(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl2'); */
 	if (! bh2) {
@@ -1029,8 +1029,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	}
 }
 
-/* overlay */ void pl5(integer cf) {
-	integer p, haz;
+/* overlay */ void pl5(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl5'); */
 	if (! bh5) {
@@ -1041,8 +1041,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	}
 }
 
-/* overlay */ void pl6(integer cf) {
-	integer p, haz;
+/* overlay */ void pl6(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl6'); */
 	if (((li == 6) && (! bh6)) || ((li == 8) && (! bh8))) {
@@ -1053,8 +1053,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	}
 }
 
-/* overlayi */ void pl9(integer cf) {
-	integer p, haz;
+/* overlayi */ void pl9(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl9'); */
 	if (! bh9) {
@@ -1065,8 +1065,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	}
 }
 
-/* overlayi */ void pl10(integer cf) {
-	integer p, h, haz;
+/* overlayi */ void pl10(int cf) {
+	int p, h, haz;
 
 	/* debug('o2 pl10'); */
 	cpl10(p, h);
@@ -1075,8 +1075,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq10(h, p);
 }
 
-/* overlay */ void pl11(integer cf) {
-	integer p, h, haz;
+/* overlay */ void pl11(int cf) {
+	int p, h, haz;
 
 	/* debug('o2 pl11'); */
 	cpl11(p, h);
@@ -1085,8 +1085,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq11(h, p);
 }
 
-/* overlay */ void pl12(integer cf) {
-	integer p, haz;
+/* overlay */ void pl12(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl12'); */
 	cpl12(p);
@@ -1095,8 +1095,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq12(p);
 }
 
-/* overlay */ void pl13(integer cf) {
-	integer p, haz;
+/* overlay */ void pl13(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl13'); */
 	cpl13(p);
@@ -1105,8 +1105,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq12(p);
 }
 
-/* overlay */ void pl15(integer cf) {
-	integer p, haz;
+/* overlay */ void pl15(int cf) {
+	int p, haz;
 
 	/* debug('o2 pl15'); */
 	cpl15(p);
@@ -1115,8 +1115,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq15(p);
 }
 
-/* overlay */ void pl20(integer cf) {
-	integer p, h, haz;
+/* overlay */ void pl20(int cf) {
+	int p, h, haz;
 
 	/* debug('o2 pl20'); */
 	cpl20(p, h);
@@ -1125,8 +1125,8 @@ void phaz(integer &haz, integer &p, integer cf) {
 	else quelq20(h, p);
 }
 
-/* overlay */ void t11(integer l11, integer &a) {
-	integer p, haz, h;
+/* overlay */ void t11(int l11, int &a) {
+	int p, haz, h;
 
 	/* debug('o2 t11'); */
 	ecfren(p, haz, s.conf, l11);
@@ -1169,7 +1169,7 @@ void phaz(integer &haz, integer &p, integer cf) {
 /* overlay */ void cavegre()
 
 {
-	integer haz;
+	int haz;
 
 	/* debug('cavegre'); */
 	s.conf = s.conf + 2;
@@ -1184,12 +1184,12 @@ void phaz(integer &haz, integer &p, integer cf) {
 	person();
 }
 
-void writetp(str255 s, integer t) {
+void writetp(str255 s, int t) {
 	if (res == 2)  writeg(s, t);
 	else writeg(copy(s, 1, 25), t);
 }
 
-void messint(integer nu) {
+void messint(int nu) {
 	/* debug('messint'); */
 	clsf1();
 	clsf2();
@@ -1203,8 +1203,8 @@ void messint(integer nu) {
 	repon(7, nu);
 }
 
-void aniof(integer ouf, integer num) {
-	integer ad, offset;
+void aniof(int ouf, int num) {
+	int ad, offset;
 	char c;
 
 	/* debug('aniof'); */
@@ -1221,10 +1221,10 @@ void aniof(integer ouf, integer num) {
 	show_mouse();
 }
 
-void musique(integer so) {
+void musique(int so) {
 	boolean i;
-	integer haz;
-	/* dep: array[1..5] of long_integer;*/
+	int haz;
+	/* dep: array[1..5] of long_int;*/
 
 	/* debug('musique'); */
 	if (so == 0) { /*musik(0)*/
@@ -1275,8 +1275,8 @@ void musique(integer so) {
 }
 
 /* NIVEAU 9 */
-void dessin(integer ad) {
-	integer cx;
+void dessin(int ad) {
+	int cx;
 
 	/* debug('dessin'); */
 	if (ad != 0)  dessine(ades, ((ad % 160) * 2), (ad / 160));

@@ -1,7 +1,7 @@
 
 void dem1() {
 	untyped_file f;
-	integer k;
+	int k;
 
 	/* -- demande de disk 1 -- */
 	assign(f, "mort.005");
@@ -17,9 +17,9 @@ void dem1() {
 	close(f);
 }
 
-void takesav(integer n) {
+void takesav(int n) {
 	untyped_file f;
-	integer i;
+	int i;
 	varying_string<10> st;
 
 	dem1();
@@ -37,7 +37,7 @@ void takesav(integer n) {
 	close(f);
 }
 
-void ld_game(integer n) {
+void ld_game(int n) {
 	hide_mouse();
 	maivid();
 	takesav(n);
@@ -50,9 +50,9 @@ void ld_game(integer n) {
 	show_mouse();
 }
 
-void sv_game(integer n) {
+void sv_game(int n) {
 	untyped_file f;
-	integer i;
+	int i;
 
 	hide_mouse();
 	tmaj3();

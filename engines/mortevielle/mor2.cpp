@@ -1,4 +1,4 @@
-const array<1, 11, integer> men
+const array<1, 11, int> men
 = {{
 		scacher, attacher, defoncer, dormir,
 		entrer,  fermer,   frapper,  manger,
@@ -14,7 +14,7 @@ void tinke() {
 	const char d4 = ']';
 	const char d5 = '1';
 	const char d6[] = "OK";
-	integer cx, cy, haz, nh, cf, j, h, m, cd;
+	int cx, cy, haz, nh, cf, j, h, m, cd;
 	varying_string<3> stpo;
 	boolean am;
 
@@ -128,7 +128,7 @@ void tinke() {
 }
 
 void fenat(char ans) {
-	integer coul;
+	int coul;
 
 	hide_mouse();
 	if (gd == cga)  coul = 2;
@@ -141,7 +141,7 @@ void fenat(char ans) {
 
 
 /* NIVEAU 8 */
-void afdes(integer ad) {
+void afdes(int ad) {
 	taffich();
 	dessin(ad);
 	okdes = false;
@@ -149,8 +149,8 @@ void afdes(integer ad) {
 
 void tkey1(boolean d) {
 	boolean quest;
-	integer x, y, c;
-	integer key;
+	int x, y, c;
+	int key;
 
 	hide_mouse();
 	fenat('K');
@@ -165,8 +165,8 @@ void tkey1(boolean d) {
 	show_mouse();
 }
 
-void tmlieu(integer mli) {
-	integer cx, j, i, tail;
+void tmlieu(int mli) {
+	int cx, j, i, tail;
 	str30 nomp;
 	phrase st;
 
@@ -187,7 +187,7 @@ void tmlieu(integer mli) {
 
 
 /* NIVEAU 7 */
-void tlu(integer af, integer ob) {
+void tlu(int af, int ob) {
 	caff = 32;
 	afdes(0);
 	repon(6, ob + 4000);
@@ -198,9 +198,9 @@ void tlu(integer af, integer ob) {
 	crep = 998;
 }
 
-void delin(integer n) {
+void delin(int n) {
 	phrase s;
-	integer t;
+	int t;
 
 	deline(n, s, t);
 }
@@ -213,7 +213,7 @@ void affrep() {
 void mfouen()
 
 {
-	integer cx;
+	int cx;
 
 	tmlieu(s.mlieu);
 	for (cx = 1; cx <= 11; cx ++) menu_enable(men[cx]);
@@ -232,7 +232,7 @@ void mfouen()
 	menut(soulever, " soulever ");
 }
 
-void atf3f8(integer &key) {
+void atf3f8(int &key) {
 	do {
 		key = testou();
 	} while (!((key == 61) || (key == 66)));
@@ -241,7 +241,7 @@ void atf3f8(integer &key) {
 /* NIVEAU 6 */
 
 void tperd() {
-	integer cx;
+	int cx;
 
 	initouv();
 	ment = 0;
@@ -261,7 +261,7 @@ void tperd() {
 }
 
 void tsort() {
-	integer cx;
+	int cx;
 
 	if ((iouv > 0) && (s.mlieu != 0))
 		if (s.conf < 50)  s.conf = s.conf + 2;
@@ -273,7 +273,7 @@ void tsort() {
 	debloc(s.mlieu);
 }
 
-void st4(integer ob) {
+void st4(int ob) {
 	crep = 997;
 	switch (ob) {
 	case 114 :
@@ -296,8 +296,8 @@ void st4(integer ob) {
 	}
 }
 
-void cherjer(integer ob, boolean &d) {
-	integer cx;
+void cherjer(int ob, boolean &d) {
+	int cx;
 
 	d = false;
 	for (cx = 1; cx <= 6; cx ++) d = (d || (ord(s.sjer[cx]) == ob));
@@ -310,14 +310,14 @@ void st1sama() {
 }
 
 void modinv() {
-	integer cx, cy, tay, i, r;
+	int cx, cy, tay, i, r;
 	phrase nom;
 	str30 nomp;
 
 	cy = 0;
 	for (cx = 1; cx <= 6; cx ++)
 		if (s.sjer[cx] != chr(0)) {
-			cy = succ(integer, cy);
+			cy = succ(int, cy);
 			r = (ord(s.sjer[cx]) + 400);
 			deline(r - 501 + c_st41, nom, tay);
 			nomp = delig;
@@ -331,10 +331,10 @@ void modinv() {
 		}
 }
 
-void sparl(long_integer adr, long_integer rep) {
-	const array<1, 8, integer> haut
+void sparl(long_int adr, long_int rep) {
+	const array<1, 8, int> haut
 	= {{0, 1, -3, 6, -2, 2, 7, -1}};
-	integer key, ad, tay, repint;
+	int key, ad, tay, repint;
 	phrase st;
 
 	repint = trunc(rep);
@@ -365,7 +365,7 @@ void finfouil() {
 }
 
 void mfoudi() {
-	integer cx;
+	int cx;
 
 	for (cx = 1; cx <= 7; cx ++) menu_disable(depl[cx]);
 	for (cx = 1; cx <= 11; cx ++) menu_disable(men[cx]);
@@ -395,10 +395,10 @@ void premtet() {
 
 /* NIVEAU 5 */
 void ajchai() {
-	integer cx, cy, lderobj;
+	int cx, cy, lderobj;
 
 
-	cy = (acha + pred(integer, pred(integer, mchai) * 10));
+	cy = (acha + pred(int, pred(int, mchai) * 10));
 	cx = 0;
 	do {
 		cx = cx + 1;
@@ -409,8 +409,8 @@ void ajchai() {
 	} else crep = 192;
 }
 
-void ajjer(integer ob) {
-	integer cx;
+void ajjer(int ob) {
+	int cx;
 
 	cx = 0;
 	do {
@@ -423,7 +423,7 @@ void ajjer(integer ob) {
 }
 
 void t1sama() {    /* On entre dans le manoir */
-	integer j, h, m;
+	int j, h, m;
 	boolean d;
 
 	calch(j, h, m);
@@ -502,7 +502,7 @@ void tctrm() {
 void quelquun()
 
 {
-	integer haz, cx;
+	int haz, cx;
 
 	if (imen)  erase_menu();
 	finfouil();
@@ -546,8 +546,8 @@ L1:
 }
 
 void tsuiv() {
-	integer cx, tbcl;
-	integer cl, cy;
+	int cx, tbcl;
+	int cl, cy;
 
 	cy = acha + ((mchai - 1) * 10) - 1;
 	cx = 0;
@@ -572,7 +572,7 @@ void tsuiv() {
 void tfleche() {
 	boolean qust;
 	char touch;
-	integer dummy, cd, xmo, ymo;
+	int dummy, cd, xmo, ymo;
 
 	if (num == 9999)  return;
 	fenat(chr(152));
@@ -596,11 +596,11 @@ void tfleche() {
 	}
 }
 
-void tcoord(integer sx)
+void tcoord(int sx)
 
 {
-	integer sy, ix, iy, cb, cy, ib;
-	integer a, b, atdon;
+	int sy, ix, iy, cb, cy, ib;
+	int a, b, atdon;
 
 
 	num = 0;
@@ -611,7 +611,7 @@ void tcoord(integer sx)
 	while (cy < caff) {
 		a = a + tabdon[atdon];
 		atdon = atdon + 4;
-		cy = succ(integer, cy);
+		cy = succ(int, cy);
 	}
 	/*     for cy:=0 to caff-1 do
 	          a:=a+ tabdon[amzon+3+4*cy];
@@ -621,19 +621,19 @@ void tcoord(integer sx)
 	a = a + fleche;
 	cb = 0;
 	for (cy = 0; cy <= (sx - 2); cy ++) {
-		ib = (tabdon[a + cb] << 8) + tabdon[succ(integer, a + cb)];
+		ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
 		cb = cb + (ib * 4) + 2;
 	}
-	ib = (tabdon[a + cb] << 8) + tabdon[succ(integer, a + cb)];
+	ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
 	if (ib == 0)  goto L1;
 	cy = 1;
 	do {
 		cb = cb + 2;
 		sx = tabdon[a + cb] * res;
-		sy = tabdon[succ(integer, a + cb)];
+		sy = tabdon[succ(int, a + cb)];
 		cb = cb + 2;
 		ix = tabdon[a + cb] * res;
-		iy = tabdon[succ(integer, a + cb)];
+		iy = tabdon[succ(int, a + cb)];
 		cy = cy + 1;
 	} while (!(((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy))
 	           || (cy > ib)));
@@ -648,7 +648,7 @@ L1:
 }
 
 
-void st7(integer ob) {
+void st7(int ob) {
 	crep = 183;
 	if ((ob == 116) || (ob == 144))  crep = 104;
 	if ((ob == 126) || (ob == 111))  crep = 108;
@@ -657,8 +657,8 @@ void st7(integer ob) {
 	if (crep == 183)  st4(ob);
 }
 
-void treg(integer ob) {
-	integer mdes;
+void treg(int ob) {
+	int mdes;
 
 	mdes = caff;
 	caff = ob;
@@ -678,7 +678,7 @@ void treg(integer ob) {
 	}
 }
 
-void avpoing(integer &ob) {
+void avpoing(int &ob) {
 	crep = 999;
 	if (s.derobj != 0)  ajjer(s.derobj);
 	if (crep != 139) {
@@ -688,15 +688,15 @@ void avpoing(integer &ob) {
 	}
 }
 
-void rechai(integer &ch) {
-	integer cx;
+void rechai(int &ch) {
+	int cx;
 
 	cx = s.mlieu;
 	if (s.mlieu == 16)  cx = 14;
-	ch = tabdon[achai + (cx * 7) + pred(integer, num)];
+	ch = tabdon[achai + (cx * 7) + pred(int, num)];
 }
 
-void t23coul(integer &l) {
+void t23coul(int &l) {
 	boolean d;
 
 	cherjer(143, d);
@@ -712,7 +712,7 @@ void maivid() {
 	modobj(500);
 }
 
-void st13(integer ob) {
+void st13(int ob) {
 	if ((ob == 114) || (ob == 116) || (ob == 126) || (ob == 132) ||
 	        (ob == 111) || (ob == 106) || (ob == 102) || (ob == 100) ||
 	        (ob == 110) || (ob == 153) || (ob == 154) || (ob == 155) ||
@@ -722,7 +722,7 @@ void st13(integer ob) {
 }
 
 void aldepl() {
-	integer dummy;
+	int dummy;
 
 	dummy = do_alert("[1][Alors, utilisez le menu DEP...][ok]", 1);
 }

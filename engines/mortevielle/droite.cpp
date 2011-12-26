@@ -1,5 +1,5 @@
-void droite(integer x, integer y, integer xx, integer yy, integer coul) {
-	integer step, i;
+void droite(int x, int y, int xx, int yy, int coul) {
+	int step, i;
 	real a, b;
 	real xr, yr, xro, yro;
 
