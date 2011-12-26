@@ -177,7 +177,7 @@ void DreamBase::nextDest() {
 		data.byte(kDestpos)++;
 		if (data.byte(kDestpos) == 15)
 			data.byte(kDestpos) = 0;	// last destination
-	} while (!data.byte(kRoomscango + data.byte(kDestpos)));
+	} while (!getLocation(data.byte(kDestpos)));
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
@@ -206,7 +206,7 @@ void DreamBase::lastDest() {
 		data.byte(kDestpos)--;
 		if (data.byte(kDestpos) == 0xFF)
 			data.byte(kDestpos) = 15;	// first destination
-	} while (!data.byte(kRoomscango + data.byte(kDestpos)));
+	} while (!getLocation(data.byte(kDestpos)));
 
 	data.byte(kNewtextline) = 1;
 	delTextLine();
@@ -235,11 +235,15 @@ void DreamBase::destSelect() {
 }
 
 uint8 DreamBase::getLocation(uint8 index) {
-	return data.byte(kRoomscango + index);
+	return _roomsCanGo[index];
 }
 
 void DreamBase::setLocation(uint8 index) {
-	data.byte(kRoomscango + index) = 1;
+	_roomsCanGo[index] = 1;
+}
+
+void DreamBase::clearLocation(uint8 index) {
+	_roomsCanGo[index] = 0;
 }
 
 void DreamBase::resetLocation(uint8 index) {
@@ -264,7 +268,7 @@ void DreamBase::resetLocation(uint8 index) {
 		purgeALocation(29);
 	}
 
-	data.byte(kRoomscango + index) = 0;
+	clearLocation(index);
 }
 
 void DreamBase::readDestIcon() {

@@ -3618,7 +3618,7 @@ void DreamBase::clearChanges() {
 
 	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	memcpy(data.ptr(kRoomscango, 16), initialRoomsCanGo, 16);
+	memcpy(_roomsCanGo, initialRoomsCanGo, 16);
 }
 
 void DreamBase::showDiaryKeys() {

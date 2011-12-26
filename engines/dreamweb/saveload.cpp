@@ -483,7 +483,7 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
 	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
-	outSaveFile->write(data.ptr(kRoomscango, 16), 16);
+	outSaveFile->write(_roomsCanGo, 16);
 
 	// TODO: Convert more to serializer?
 	Common::Serializer s(0, outSaveFile);
@@ -551,7 +551,7 @@ void DreamBase::loadPosition(unsigned int slot) {
 	// Note: the values read into g_madeUpRoomDat are only used in actualLoad,
 	// which is (almost) immediately called after this function
 	inSaveFile->read((uint8 *)&g_madeUpRoomDat, sizeof(Room));
-	inSaveFile->read(data.ptr(kRoomscango, 16), 16);
+	inSaveFile->read(_roomsCanGo, 16);
 
 	// TODO: Use serializer for more
 	Common::Serializer s(inSaveFile, 0);

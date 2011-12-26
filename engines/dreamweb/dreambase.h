@@ -98,6 +98,7 @@ protected:
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
 	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary
+	uint8 _roomsCanGo[16];
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -177,6 +178,7 @@ public:
 	void showArrows();
 	uint8 getLocation(uint8 index);
 	void setLocation(uint8 index);
+	void clearLocation(uint8 index);
 	void resetLocation(uint8 index);
 	void readCityPic();
 	void readDestIcon();

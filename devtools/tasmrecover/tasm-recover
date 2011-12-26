@@ -51,6 +51,7 @@ p = parser(skip_binary_data = [
 	'commandline',
 	'openchangesize',
 	'roompics',
+	'roomscango',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
