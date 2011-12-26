@@ -78,10 +78,6 @@ void DreamBase::makeWorn(DynObject *object) {
 	object->id[1] = 'E'-'A';
 }
 
-void DreamGenContext::obToInv() {
-	obToInv(al, ah, di, bx);
-}
-
 void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	showFrame(engine->icons1(), x - 2, y - 1, 10, 0);
 	if (index == 0xff)
@@ -120,7 +116,7 @@ void DreamBase::obIcons() {
 	showFrame(engine->icons2(), 260, 1, 1, 0);
 }
 
-void DreamGenContext::examineOb(bool examineAgain) {
+void DreamBase::examineOb(bool examineAgain) {
 	data.byte(kPointermode) = 0;
 	data.word(kTimecount) = 0;
 
@@ -217,7 +213,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 	data.byte(kOpenedob) = 255;
 }
 
-void DreamGenContext::inventory() {
+void DreamBase::inventory() {
 	if (data.byte(kMandead) == 1 || data.word(kWatchingtime) != 0) {
 		blank();
 		return;
@@ -312,7 +308,7 @@ void DreamBase::openOb() {
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
 }
 
-void DreamGenContext::identifyOb() {
+void DreamBase::identifyOb() {
 	if (data.word(kWatchingtime) != 0) {
 		blank();
 		return;

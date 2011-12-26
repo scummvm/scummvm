@@ -651,7 +651,7 @@ bool DreamBase::quitRequested() {
 	return data.byte(kQuitrequested);
 }
 
-void DreamGenContext::screenUpdate() {
+void DreamBase::screenUpdate() {
 	newPlace();
 	mainScreen();
 	if (quitRequested())
@@ -722,7 +722,7 @@ void DreamBase::startup() {
 	atmospheres();
 }
 
-void DreamGenContext::startup1() {
+void DreamBase::startup1() {
 	clearPalette();
 	data.byte(kThroughdoor) = 0;
 
@@ -789,15 +789,15 @@ void DreamBase::hangOnCurs(uint16 frameCount) {
 	}
 }
 
-void DreamGenContext::seeCommandTail() {
+void DreamBase::seeCommandTail() {
 	data.byte(kBrightness) = 1;
 }
 
-void DreamGenContext::quickQuit() {
+void DreamBase::quickQuit() {
 	engine->quit();
 }
 
-void DreamGenContext::quickQuit2() {
+void DreamBase::quickQuit2() {
 	engine->quit();
 }
 
@@ -842,7 +842,7 @@ void DreamBase::putUnderTimed() {
 		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
 }
 
-void DreamGenContext::triggerMessage(uint16 index) {
+void DreamBase::triggerMessage(uint16 index) {
 	multiGet(mapStore(), 174, 153, 200, 63);
 	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
@@ -856,7 +856,7 @@ void DreamGenContext::triggerMessage(uint16 index) {
 	data.byte(kLasttrigger) = 0;
 }
 
-void DreamGenContext::processTrigger() {
+void DreamBase::processTrigger() {
 	if (data.byte(kLasttrigger) == '1') {
 		setLocation(8);
 		triggerMessage(45);
@@ -1145,7 +1145,7 @@ void DreamBase::commandOnly(uint8 command) {
 	data.byte(kNewtextline) = 1;
 }
 
-bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
+bool DreamBase::checkIfPerson(uint8 x, uint8 y) {
 	Common::List<People>::iterator i;
 	for (i = _peopleList.begin(); i != _peopleList.end(); ++i) {
 		People &people = *i;
@@ -1172,7 +1172,7 @@ bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
 	return false;
 }
 
-bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
+bool DreamBase::checkIfFree(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1185,7 +1185,7 @@ bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
 	return false;
 }
 
-bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
+bool DreamBase::checkIfEx(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _exList.reverse_begin(); i != _exList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1393,7 +1393,7 @@ void DreamBase::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 	data.byte(kLastflag) = *flag;
 }
 
-void DreamGenContext::walkAndExamine() {
+void DreamBase::walkAndExamine() {
 	if (!finishedWalking())
 		return;
 	data.byte(kCommandtype) = data.byte(kWalkexamtype);
@@ -1403,7 +1403,7 @@ void DreamGenContext::walkAndExamine() {
 		examineOb();
 }
 
-void DreamGenContext::obName(uint8 command, uint8 commandType) {
+void DreamBase::obName(uint8 command, uint8 commandType) {
 	if (data.byte(kReasseschanges) == 0) {
 		if ((commandType == data.byte(kCommandtype)) && (command == data.byte(kCommand))) {
 			if (data.byte(kWalkandexam) == 1) {
@@ -1723,7 +1723,7 @@ void DreamBase::showIcon() {
 	}
 }
 
-bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
+bool DreamBase::checkIfSet(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _setList.reverse_begin(); i != _setList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1862,7 +1862,7 @@ void DreamBase::enterSymbol() {
 	}
 }
 
-void DreamGenContext::zoomOnOff() {
+void DreamBase::zoomOnOff() {
 	if (data.word(kWatchingtime) != 0 || data.byte(kPointermode) == 2) {
 		blank();
 		return;
@@ -1900,7 +1900,7 @@ void DreamBase::sortOutMap() {
 	}
 }
 
-void DreamGenContext::mainScreen() {
+void DreamBase::mainScreen() {
 	data.byte(kInmaparea) = 0;
 	if (data.byte(kWatchon) == 1) {
 		RectWithCallback<DreamGenContext> mainList[] = {
@@ -1937,7 +1937,7 @@ void DreamBase::showWatch() {
 	}
 }
 
-void DreamGenContext::dumpWatch() {
+void DreamBase::dumpWatch() {
 	if (data.byte(kWatchdump) != 1)
 		return;
 	multiDump(256, 21, 40, 12);
@@ -1965,7 +1965,7 @@ void DreamBase::showTime() {
 	showFrame(charset, 267+5, 21, 91*3+20, 0);
 }
 
-void DreamGenContext::watchCount() {
+void DreamBase::watchCount() {
 	if (data.byte(kWatchon) == 0)
 		return;
 	++data.byte(kTimercount);
@@ -2031,7 +2031,7 @@ void DreamBase::loadRoom() {
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
 }
 
-void DreamGenContext::readSetData() {
+void DreamBase::readSetData() {
 	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
 
 	void *icons1Buffer = standardLoadCPP("DREAMWEB.G00");
@@ -2070,7 +2070,7 @@ void DreamBase::findRoomInLoc() {
 	data.byte(kRoomnum) = roomNum;
 }
 
-void DreamGenContext::autoLook() {
+void DreamBase::autoLook() {
 	if ((data.word(kMousex) != data.word(kOldx)) || (data.word(kMousey) != data.word(kOldy))) {
 		data.word(kLookcounter) = 1000;
 		return;
@@ -2084,7 +2084,7 @@ void DreamGenContext::autoLook() {
 	doLook();
 }
 
-void DreamGenContext::look() {
+void DreamBase::look() {
 	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
 		blank();
 		return;
@@ -2097,7 +2097,7 @@ void DreamGenContext::look() {
 		doLook();
 }
 
-void DreamGenContext::doLook() {
+void DreamBase::doLook() {
 	createPanel();
 	showIcon();
 	underTextLine();
@@ -2721,7 +2721,7 @@ void DreamBase::pickupOb(uint8 command, uint8 pos) {
 	transferToEx(command);
 }
 
-void DreamGenContext::initialInv() {
+void DreamBase::initialInv() {
 	if (data.byte(kReallocation) != 24)
 		return;
 
@@ -2741,7 +2741,7 @@ void DreamGenContext::initialInv() {
 	switchRyanOff();
 }
 
-void DreamGenContext::walkIntoRoom() {
+void DreamBase::walkIntoRoom() {
 	if (data.byte(kLocation) == 14 && data.byte(kMapx) == 22) {
 		data.byte(kDestination) = 1;
 		data.byte(kFinaldest) = 1;
@@ -2785,7 +2785,7 @@ void DreamBase::blank() {
 	}
 }
 
-void DreamGenContext::allPointer() {
+void DreamBase::allPointer() {
 	readMouse();
 	showPointer();
 	dumpPointer();
@@ -3050,7 +3050,7 @@ void DreamBase::watchReel() {
 	plotReel(reelPointer);
 }
 
-void DreamGenContext::afterNewRoom() {
+void DreamBase::afterNewRoom() {
 	if (data.byte(kNowinnewroom) == 0)
 		return; // notnew
 
@@ -3081,7 +3081,7 @@ void DreamGenContext::afterNewRoom() {
 	atmospheres();
 }
 
-void DreamGenContext::madmanRun() {
+void DreamBase::madmanRun() {
 	if (data.byte(kLocation)    != 14 ||
 		data.byte(kMapx)        != 22 ||
 		data.byte(kPointermode) !=  2 ||
@@ -3147,7 +3147,7 @@ void DreamBase::decide() {
 	data.byte(kTextlen) = 240;
 }
 
-void DreamGenContext::showGun() {
+void DreamBase::showGun() {
 	data.byte(kAddtored) = 0;
 	data.byte(kAddtogreen) = 0;
 	data.byte(kAddtoblue) = 0;

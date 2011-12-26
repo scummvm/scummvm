@@ -233,7 +233,7 @@ void DreamBase::input() {
 }
 
 void DreamGenContext::makeCaps() {
-	al = makeCaps(al);
+	al = DreamBase::makeCaps(al);
 }
 
 byte DreamBase::makeCaps(byte c) {
@@ -312,10 +312,6 @@ void DreamBase::accessLightOff() {
 	multiDump(74, 182, 12, 8);
 }
 
-void DreamGenContext::randomAccess() {
-	randomAccess(cx);
-}
-
 void DreamBase::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
@@ -330,7 +326,7 @@ void DreamBase::randomAccess(uint16 count) {
 }
 
 void DreamGenContext::monMessage() {
-	monMessage(al);
+	DreamBase::monMessage(al);
 }
 
 void DreamBase::monMessage(uint8 index) {
@@ -551,7 +547,7 @@ void DreamGenContext::read() {
 	}
 }
 
-void DreamGenContext::signOn() {
+void DreamBase::signOn() {
 	const char *name = parser();
 
 	int8 foundIndex = -1;
@@ -609,7 +605,7 @@ void DreamGenContext::signOn() {
 	}
 }
 
-void DreamGenContext::searchForFiles(uint16 segment) {
+void DreamBase::searchForFiles(uint16 segment) {
 	const char *filesString = (const char *)getSegment(segment).ptr(kTextstart, 0);
 	byte curChar;
 
