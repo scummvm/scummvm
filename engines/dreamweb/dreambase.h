@@ -221,6 +221,7 @@ public:
 	void bresenhams();
 	void workoutFrames();
 	byte findFirstPath(byte x, byte y);
+	byte findPathOfPoint(byte x, byte y);
 
 	// from people.cpp
 	void setupInitialReelRoutines();

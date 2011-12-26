@@ -3067,10 +3067,7 @@ void DreamGenContext::afterNewRoom() {
 	data.byte(kCommandtype) = 0;
 	findRoomInLoc();
 	if (data.byte(kRyanon) != 1) {
-		al = data.byte(kRyanx) + 12;
-		ah = data.byte(kRyany) + 12;
-		findPathOfPoint();
-		data.byte(kManspath) = dl;
+		data.byte(kManspath) = findPathOfPoint(data.byte(kRyanx) + 12, data.byte(kRyany) + 12);
 		findXYFromPath();
 		data.byte(kResetmanxy) = 1;
 	}

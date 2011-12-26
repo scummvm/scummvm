@@ -328,5 +328,26 @@ byte DreamBase::findFirstPath(byte x, byte y) {
 	return 0;
 }
 
+byte DreamBase::findPathOfPoint(byte x, byte y) {
+	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * data.byte(kRoomnum), 0);
+
+	for (uint8 index = 0; index < 12; index++) {
+		if (paths[index].on != 0xff)
+			continue; // "flunkedit"
+
+		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
+			continue; // "flunkedit"
+
+		if (x < paths[index].x1 || y < paths[index].y1)
+			continue; // "flunkedit"
+
+		if (x >= paths[index].x2 || y >= paths[index].y2)
+			continue; // "flunkedit"
+
+		return index; // "gotvalidpath"
+	}
+
+	return 0xff;
+}
 
 } // End of namespace DreamGen

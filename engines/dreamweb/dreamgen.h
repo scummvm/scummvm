@@ -463,7 +463,6 @@ public:
 	void findAllOpen();
 	void fillOpen();
 	void dreamweb();
-	void findPathOfPoint();
 	void read();
 	void searchForString();
 	void searchForFiles();

@@ -652,50 +652,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::findPathOfPoint() {
-	STACK_CHECK;
-	push(ax);
-	bx = (0);
-	es = data.word(kReels);
-	al = data.byte(kRoomnum);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	_add(bx, ax);
-	cx = pop();
-	dl = 0;
-pathloop:
-	al = es.byte(bx+6);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto flunkedit;
-	ax = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto flunkedit;
-	_cmp(cl, al);
-	if (flags.c())
-		goto flunkedit;
-	_cmp(ch, ah);
-	if (flags.c())
-		goto flunkedit;
-	ax = es.word(bx+4);
-	_cmp(cl, al);
-	if (!flags.c())
-		goto flunkedit;
-	_cmp(ch, ah);
-	if (!flags.c())
-		goto flunkedit;
-	return /* (gotvalidpath) */;
-flunkedit:
-	_add(bx, 8);
-	_inc(dl);
-	_cmp(dl, 12);
-	if (!flags.z())
-		goto pathloop;
-	dl = 255;
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

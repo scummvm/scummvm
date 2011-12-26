@@ -354,8 +354,7 @@ void DreamGenContext::identifyOb() {
 	data.byte(kInmaparea) = 1;
 	ah = bl;
 	push(ax);
-	findPathOfPoint();
-	data.byte(kPointerspath) = dl;
+	data.byte(kPointerspath) = findPathOfPoint(al, ah);
 	ax = pop();
 	push(ax);
 	data.byte(kPointerfirstpath) = findFirstPath(al, ah);
