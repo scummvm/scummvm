@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+
 namespace MORTEVIELLE {
 
 /* overlay */ int do_alert(Common::String str_, int n);
@@ -41,7 +43,7 @@ const matrix<1, 2, 1, 3, int> coord
 
 static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs) {
 	int i, k;
-	boolean v;
+	bool v;
 
 	val(s[2], nbc, i);
 	c = "";

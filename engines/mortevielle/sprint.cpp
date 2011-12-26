@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+
 namespace MORTEVIELLE {
 
 void fill_box(int x, int y, int dx) {
@@ -40,7 +42,7 @@ void writeg(Common::String l, int c)
 {
 	int i, x, xo, yo;
 	int cecr;
-	boolean t;
+	bool t;
 
 	/*  debug('writeg : '+l);*/
 
