@@ -111,16 +111,11 @@ const int slire = 0x403;
 const int sposer = 0x404;
 const int sregarder = 0x405;
 
-const array<0, 17, byte> tabdbc
-= {{7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9}};
-const array<0, 15, byte> tabdph
-= {{0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10}};
-const array<0, 25, byte> typcon
-= {{0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3}};
-const array<0, 25, byte> intcon
-= {{1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}};
-const array<0, 363, byte> tnocon
-= {{
+const byte tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+const byte tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
+const byte typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
+const byte intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+const byte tnocon[364] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -135,7 +130,6 @@ const array<0, 363, byte> tnocon
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	}
 };
 
 
@@ -168,8 +162,7 @@ const char f8[] = "F8: Suite";
 const int max_patt = 20;
 
 
-const array<0, 15, byte> rang
-= {{15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0}};
+const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 
 
 /*---------------------------------------------------------------------------*/
@@ -185,9 +178,9 @@ typedef varying_string<11> str11;
 typedef file<byte> fichier_byte;
 struct sav_chaine {
 	int conf;
-	array<0, 10, char> pourc;
-	array<0, 42, char> teauto;
-	array<0, 30, char> sjer;
+	char pourc[11];
+	char teauto[43];
+	char sjer[31];
 	int mlieu, iboul, ibag, icave, ivier, ipuit;
 	int derobj, iloic, icryp;
 	boolean ipre;
@@ -197,7 +190,6 @@ struct registres {
 	int ax, bx, cx, dx, bp, si, di, ds, es, flags;
 };
 typedef array<1, 1410, char> phrase;
-typedef array<0, maxti, int> tabint;
 struct ind {
 	int indis;
 	byte point;
@@ -205,9 +197,6 @@ struct ind {
 typedef array<0, maxtd, ind> tabind;
 
 typedef matrix<1, 7, 0, 24, byte> tab_mlieu;
-
-typedef array<0, 255, float> table;
-typedef array<0, 255, int> tablint;
 
 typedef int word1;
 struct chariot {
@@ -222,7 +211,6 @@ struct doublet {
 	byte x, y;
 };
 typedef array<1, 16, doublet> tabdb;
-typedef array<0, 107, int> tfxx;
 struct rectangle {
 	int x1, x2, y1, y2;
 	boolean etat;
@@ -384,14 +372,14 @@ matrix<1, 6, 0, 23, byte> lettres;
 
 array<0, 15, byte> palher;
 
-tabint t_mot;
+int t_mot[maxti + 1];
 int tay_tchar;
 tabind t_rec;
 file<ind> sauv_t;
 untyped_file fibyte;
 tab_mlieu v_lieu;
-tfxx l;
-tablint tbi;
+int l[108];
+int tbi[256];
 chariot c1, c2, c3;
 float addfix;
 pal_cga palsav;
@@ -408,10 +396,8 @@ array<0, 14, pattern> tpt;
 /* procedure box(c,Gd,xo,yo,xi,yi,patt:int); external 'c:\mc\boite.com'; */
 
 void hirs() {
-	const array<0, 13, byte> tandy
-	= {{113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0}};
-	const array<0, 12, byte> herc
-	= {{50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0}};
+	const byte tandy[14] = {113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0};
+	const byte herc[13] = {50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0};
 	int i, j;
 
 	switch (gd) {
