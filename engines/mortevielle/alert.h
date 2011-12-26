@@ -28,6 +28,8 @@
 #ifndef MORTEVIELLE_ALERT_H
 #define MORTEVIELLE_ALERT_H
 
+#include "common/str.h"
+
 namespace Mortevielle {
 
 int do_alert(Common::String str_, int n);
