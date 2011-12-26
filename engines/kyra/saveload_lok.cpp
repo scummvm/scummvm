@@ -163,7 +163,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		if (!queryGameFlag(0xF1)) {
 			for (int i = 0x55; i <= 0x5A; ++i) {
 				if (queryGameFlag(i))
-					seq_createAmuletJewel(i-0x55, 10, 1, 1);
+					seq_createAmuletJewel(i - 0x55, 10, 1, 1);
 			}
 		}
 

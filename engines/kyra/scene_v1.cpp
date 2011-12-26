@@ -115,7 +115,7 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 				delete[] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable1, temp*sizeof(int));
+			memcpy(&moveTable[lastUsedEntry], pathTable1, temp * sizeof(int));
 			lastUsedEntry += temp;
 		} else {
 			if (lastUsedEntry + tempValue > moveTableSize) {
@@ -123,7 +123,7 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 				delete[] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue*sizeof(int));
+			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue * sizeof(int));
 			lastUsedEntry += tempValue;
 		}
 		x = curX;
@@ -161,16 +161,16 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 	while (position != end) {
 		int newFacing2 = newFacing;
 		while (true) {
-			changePosTowardsFacing(xpos1, ypos1, facingTable1[start*8 + newFacing2]);
+			changePosTowardsFacing(xpos1, ypos1, facingTable1[start * 8 + newFacing2]);
 			if (!lineIsPassable(xpos1, ypos1)) {
-				if (facingTable1[start*8 + newFacing2] == newFacing)
+				if (facingTable1[start * 8 + newFacing2] == newFacing)
 					return 0x7D00;
-				newFacing2 = facingTable1[start*8 + newFacing2];
+				newFacing2 = facingTable1[start * 8 + newFacing2];
 				xpos1 = x;
 				ypos1 = y;
 				continue;
 			}
-			newFacing = facingTable1[start*8 + newFacing2];
+			newFacing = facingTable1[start * 8 + newFacing2];
 			break;
 		}
 		// debug drawing
@@ -200,7 +200,7 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 		if (xpos1 == xpos2 && ypos1 == ypos2)
 			break;
 
-		newFacing = facingTable3[start*8 + newFacing];
+		newFacing = facingTable3[start * 8 + newFacing];
 	}
 
 	return 0x7D00;

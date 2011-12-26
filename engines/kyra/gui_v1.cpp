@@ -224,7 +224,7 @@ void GUI_v1::processHighlights(Menu &menu) {
 		y2 = y1 + menu.item[i].height;
 
 		if (mouseX > x1 && mouseX < x2 &&
-			mouseY > y1 && mouseY < y2) {
+		        mouseY > y1 && mouseY < y2) {
 
 			if (menu.highlightedItem != i || _vm->game() == GI_LOL) {
 				if (_vm->game() != GI_LOL) {
@@ -584,15 +584,15 @@ void MainMenu::drawBox(int x, int y, int w, int h, int fill) {
 	--w; --h;
 
 	if (fill)
-		_screen->fillRect(x, y, x+w, y+h, _static.colorTable[0]);
+		_screen->fillRect(x, y, x + w, y + h, _static.colorTable[0]);
 
-	_screen->drawClippedLine(x, y+h, x+w, y+h, _static.colorTable[1]);
-	_screen->drawClippedLine(x+w, y, x+w, y+h, _static.colorTable[1]);
-	_screen->drawClippedLine(x, y, x+w, y, _static.colorTable[2]);
-	_screen->drawClippedLine(x, y, x, y+h, _static.colorTable[2]);
+	_screen->drawClippedLine(x, y + h, x + w, y + h, _static.colorTable[1]);
+	_screen->drawClippedLine(x + w, y, x + w, y + h, _static.colorTable[1]);
+	_screen->drawClippedLine(x, y, x + w, y, _static.colorTable[2]);
+	_screen->drawClippedLine(x, y, x, y + h, _static.colorTable[2]);
 
-	_screen->setPagePixel(_screen->_curPage, x, y+h, _static.colorTable[3]);
-	_screen->setPagePixel(_screen->_curPage, x+w, y, _static.colorTable[3]);
+	_screen->setPagePixel(_screen->_curPage, x, y + h, _static.colorTable[3]);
+	_screen->setPagePixel(_screen->_curPage, x + w, y, _static.colorTable[3]);
 }
 
 void MainMenu::printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {

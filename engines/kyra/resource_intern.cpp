@@ -356,7 +356,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 
 		const uint32 magic = stream.readUint32BE();
 
-		if (magic != MKTAG('S','C','V','M'))
+		if (magic != MKTAG('S', 'C', 'V', 'M'))
 			error("LINKLIST file does not contain 'SCVM' header");
 
 		const uint32 links = stream.readUint32BE();
@@ -391,10 +391,10 @@ bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::See
 	stream.seek(3, SEEK_SET);
 	int32 size = stream.readUint32LE();
 
-	if (size+7 > stream.size())
+	if (size + 7 > stream.size())
 		return false;
 
-	stream.seek(size+5, SEEK_SET);
+	stream.seek(size + 5, SEEK_SET);
 	uint8 buffer[2];
 	stream.read(&buffer, 2);
 
@@ -700,7 +700,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 			_src->copyBytes(d);
 			postprocess = false;
 			needrefresh = true;
-		} else if (mode == 0){
+		} else if (mode == 0) {
 			uint8 *d2 = _tables[0];
 			memset(d2, 8, 144);
 			memset(d2 + 144, 9, 112);
@@ -844,7 +844,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 	cnt--;
 	s = tbl1 + cnt;
 	d = &_tables16[2][cnt];
-	uint16 * bt = (uint16 *)tbl3;
+	uint16 *bt = (uint16 *)tbl3;
 	uint16 inc = 0;
 	uint16 cnt2 = 0;
 

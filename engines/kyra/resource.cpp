@@ -66,7 +66,7 @@ bool Resource::reset() {
 
 		if (!_vm->gameFlags().isDemo && _vm->gameFlags().isTalkie) {
 			// List of files in the talkie version, which can never be unload.
-			static const char * const list[] = {
+			static const char *const list[] = {
 				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
 				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK", "SND.PAK", "STARTUP.PAK", "XMI.PAK",
 				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
@@ -122,7 +122,7 @@ bool Resource::reset() {
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2, false);
 
 		if (!_vm->gameFlags().isTalkie && !_vm->gameFlags().isDemo) {
-			static const char * const list[] = {
+			static const char *const list[] = {
 				"GENERAL.PAK", 0
 			};
 
@@ -130,7 +130,7 @@ bool Resource::reset() {
 		}
 	} else if (_vm->game() != GI_EOB2) {
 		error("Unknown game id: %d", _vm->game());
-		return false;	// for compilers that don't support NORETURN
+		return false;   // for compilers that don't support NORETURN
 	}
 
 	return true;
@@ -173,7 +173,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		f->seek(filenameOffset, SEEK_SET);
 
 		uint8 buffer[13];
-		f->read(buffer, sizeof(buffer)-1);
+		f->read(buffer, sizeof(buffer) - 1);
 		buffer[12] = 0;
 		f->seek(offset + 16, SEEK_SET);
 
@@ -189,7 +189,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 			} else if (!loadPakFile(filename)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
-				return false;	// for compilers that don't support NORETURN
+				return false;   // for compilers that don't support NORETURN
 			}
 		}
 	}
@@ -198,21 +198,21 @@ bool Resource::loadFileList(const Common::String &filedata) {
 	return true;
 }
 
-bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
+bool Resource::loadFileList(const char *const *filelist, uint32 numFiles) {
 	if (!filelist)
 		return false;
 
 	while (numFiles--) {
 		if (!loadPakFile(filelist[numFiles])) {
 			error("couldn't load file '%s'", filelist[numFiles]);
-			return false;	// for compilers that don't support NORETURN
+			return false;   // for compilers that don't support NORETURN
 		}
 	}
 
 	return true;
 }
 
-bool Resource::loadProtectedFiles(const char * const * list) {
+bool Resource::loadProtectedFiles(const char *const *list) {
 	for (uint i = 0; list[i]; ++i) {
 		Common::ArchiveMemberPtr file = _files.getMember(list[i]);
 		if (!file)

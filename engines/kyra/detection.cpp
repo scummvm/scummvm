@@ -45,7 +45,7 @@ struct KYRAGameDescription {
 
 namespace {
 
-const char * const directoryGlobs[] = {
+const char *const directoryGlobs[] = {
 	"malcolm",
 	0
 };
@@ -66,12 +66,12 @@ public:
 	const char *getOriginalCopyright() const {
 		return "The Legend of Kyrandia (C) Westwood Studios"
 #ifdef ENABLE_LOL
-				"\nLands of Lore (C) Westwood Studios"
+		       "\nLands of Lore (C) Westwood Studios"
 #endif
 #ifdef ENABLE_EOB
-				"\nEye of the Beholder (C) TSR, Inc., (C) Strategic Simulations, Inc."
+		       "\nEye of the Beholder (C) TSR, Inc., (C) Strategic Simulations, Inc."
 #endif
-		    ;
+		       ;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const;
@@ -84,19 +84,19 @@ public:
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail);
 }
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	    (f == kSupportsRTL) ||
+	    (f == kSupportsLoadingDuringRuntime) ||
+	    (f == kSupportsSavingDuringRuntime) ||
+	    (f == kSupportsSubtitleOptions);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -159,7 +159,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern);
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -189,7 +189,9 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int KyraMetaEngine::getMaximumSaveSlot() const { return 999; }
+int KyraMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).

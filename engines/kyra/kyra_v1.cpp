@@ -211,7 +211,7 @@ Common::Error KyraEngine_v1::init() {
 }
 
 KyraEngine_v1::~KyraEngine_v1() {
-	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	for (Common::Array<const Opcode *>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete *i;
 	_opcodes.clear();
 	_keyMap.clear();
@@ -262,7 +262,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
-					(event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
+			        (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -440,10 +440,10 @@ void KyraEngine_v1::updateInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-				event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
-				event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
-				event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
-					_eventList.push_back(Event(event, true));
+			        event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
+			        event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
+			        event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
+				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
 			else
@@ -574,11 +574,11 @@ void KyraEngine_v1::readSettings() {
 	bool subtitles = ConfMan.getBool("subtitles");
 
 	if (!speechMute && subtitles)
-		_configVoice = 2;	// Voice & Text
+		_configVoice = 2;   // Voice & Text
 	else if (!speechMute && !subtitles)
-		_configVoice = 1;	// Voice only
+		_configVoice = 1;   // Voice only
 	else
-		_configVoice = 0;	// Text only
+		_configVoice = 0;   // Text only
 
 	setWalkspeed(_configWalkspeed);
 }
@@ -593,15 +593,15 @@ void KyraEngine_v1::writeSettings() {
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
-	case 0:		// Text only
+	case 0:     // Text only
 		speechMute = true;
 		subtitles = true;
 		break;
-	case 1:		// Voice only
+	case 1:     // Voice only
 		speechMute = false;
 		subtitles = false;
 		break;
-	default:	// Voice & Text
+	default:    // Voice & Text
 		speechMute = false;
 		subtitles = true;
 	}
