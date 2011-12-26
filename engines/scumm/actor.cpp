@@ -1355,7 +1355,10 @@ void ScummEngine::playActorSounds() {
 			} else {
 				sound = _actors[i]->_sound[0];
 			}
-			_sound->addSoundToQueue(sound);
+			// fast mode will flood the queue with walk sounds
+			if (!_fastMode) {
+				_sound->addSoundToQueue(sound);
+			}
 			for (j = 1; j < _numActors; j++) {
 				_actors[j]->_cost.soundCounter = 0;
 			}
