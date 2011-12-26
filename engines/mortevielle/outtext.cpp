@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/outtext.h"
+
 namespace Mortevielle {
 
 Common::String delig;

@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/level15.h"
+
 namespace Mortevielle {
 
 /* NIVEAU 15 */

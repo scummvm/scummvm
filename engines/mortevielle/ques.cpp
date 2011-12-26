@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/ques.h"
 #include "common/str.h"
 
 namespace Mortevielle {

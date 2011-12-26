@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/parole2.h"
+
 namespace Mortevielle {
 
 void rot_chariot() {

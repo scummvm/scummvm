@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/mouse.h"
+
 namespace Mortevielle {
 
 const int m_arrow = 0;

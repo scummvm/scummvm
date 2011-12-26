@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/sprint.h"
 #include "common/str.h"
 
 namespace Mortevielle {
