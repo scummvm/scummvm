@@ -143,5 +143,6 @@
 	void outOfOpen();
 	void swapWithOpen();
 	void swapWithInv();
+	void searchForFiles();
 
 #endif

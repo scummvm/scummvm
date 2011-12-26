@@ -514,4 +514,17 @@ void DreamGenContext::signOn() {
 	}
 }
 
+void DreamGenContext::searchForFiles() {
+	bx = kTextstart;
+
+	while (true) {
+		al = es.byte(bx);
+		bx++;
+		if (al == '*')
+			return; // "endofdir"
+		if (al == 34)
+			monPrint();
+	}
+}
+
 } // End of namespace DreamGen

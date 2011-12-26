@@ -465,7 +465,6 @@ public:
 	void dreamweb();
 	void read();
 	void searchForString();
-	void searchForFiles();
 	void getExAd();
 	void transferToEx();
 	void parser();

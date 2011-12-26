@@ -384,22 +384,6 @@ dirroot:
 	scrollMonitor();
 }
 
-void DreamGenContext::searchForFiles() {
-	STACK_CHECK;
-	bx = (66*2);
-directloop1:
-	al = es.byte(bx);
-	_inc(bx);
-	_cmp(al, '*');
-	if (flags.z())
-		return /* (endofdir) */;
-	_cmp(al, 34);
-	if (!flags.z())
-		goto directloop1;
-	monPrint();
-	goto directloop1;
-}
-
 void DreamGenContext::read() {
 	STACK_CHECK;
 	cx = 40;
