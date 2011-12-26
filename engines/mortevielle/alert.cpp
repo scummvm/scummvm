@@ -128,7 +128,7 @@ int do_alert(Common::String str_, int n) {
 	char c, dumi;
 	array<1, 2, varying_string<3> > s;
 	int cx, cy, cd, nbcol, nblig;
-	boolean touch, newaff, test, test1, test2, test3, dum;
+	bool touch, newaff, test, test1, test2, test3, dum;
 	Common::String cas;
 
 

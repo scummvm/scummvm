@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-static void cinq_huit(char &c, int &ind, byte &pt, boolean &the_end);
+static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end);
 void deline(int num , phrase &l , int &tl);
 static int l_motsuiv(int p, phrase &ch, int &tab);
 void afftex(phrase ch, int x, int y, int dx, int dy, int typ);

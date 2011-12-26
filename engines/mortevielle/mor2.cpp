@@ -178,8 +178,8 @@ void afdes(int ad) {
 	okdes = false;
 }
 
-void tkey1(boolean d) {
-	boolean quest;
+void tkey1(bool d) {
+	bool quest;
 	int x, y, c;
 	int key;
 
@@ -327,7 +327,7 @@ void st4(int ob) {
 	}
 }
 
-void cherjer(int ob, boolean &d) {
+void cherjer(int ob, bool &d) {
 	int cx;
 
 	d = false;
@@ -455,7 +455,7 @@ void ajjer(int ob) {
 
 void t1sama() {    /* On entre dans le manoir */
 	int j, h, m;
-	boolean d;
+	bool d;
 
 	calch(j, h, m);
 	if ((h < 5) && (s.mlieu > 18)) {
@@ -601,7 +601,7 @@ void tsuiv() {
 }
 
 void tfleche() {
-	boolean qust;
+	bool qust;
 	char touch;
 	int dummy, cd, xmo, ymo;
 
@@ -728,7 +728,7 @@ void rechai(int &ch) {
 }
 
 void t23coul(int &l) {
-	boolean d;
+	bool d;
 
 	cherjer(143, d);
 	l = 14;

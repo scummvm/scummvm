@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-/* overlay */ boolean ques() {
+/* overlay */ bool ques() {
 	const array<1, 10, int> ta
 	= {{
 			511, 516, 524, 531, 545,
@@ -40,7 +40,7 @@ namespace Mortevielle {
 	const array<1, 10, int> ok
 	= {{ 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 }};
 
-	boolean q, func, test;
+	bool q, func, test;
 	int i, j, k, y, memk;
 	int tay , tmax;
 	int rep, prem, der;
@@ -51,7 +51,7 @@ namespace Mortevielle {
 	int compte;
 
 
-	boolean ques_result;
+	bool ques_result;
 	test = false;
 	i = 0;
 	compte = 0;

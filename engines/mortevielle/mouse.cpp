@@ -32,7 +32,7 @@ namespace Mortevielle {
 const int m_arrow = 0;
 const int m_point_hand = 1;
 
-boolean int_m,
+bool int_m,
         clic;
 
 int m_show,
@@ -88,7 +88,7 @@ end;  */
 
 void hide_mouse() {
 	int i, j, k, ps, ds;
-	boolean imp;
+	bool imp;
 
 	mouse_shwn = pred(int, mouse_shwn);
 	if (mouse_shwn == 0) {
@@ -177,7 +177,7 @@ void hide_mouse() {
 void show_mouse() {
 	int i, j, k, l,
 	        ps, ds;
-	boolean imp;
+	bool imp;
 	char c;
 
 	mouse_shwn = mouse_shwn + 1;
@@ -311,8 +311,8 @@ void read_pos_mouse(int &x, int &y, int &c) {
 	}
 }
 
-void mov_mouse(boolean &funct, char &key) {
-	boolean p_key;
+void mov_mouse(bool &funct, char &key) {
+	bool p_key;
 	char in1, in2;
 	int x, y, cx, cy, cd;
 	registres reg;

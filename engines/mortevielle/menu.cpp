@@ -311,7 +311,7 @@ void erase_menu() {
 
 void mdn() {
 	int x, y, c, a, ix;
-	boolean tes;
+	bool tes;
 
 	/* debug('mdn'); */
 	if (! active_menu)  return;

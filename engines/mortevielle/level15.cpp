@@ -40,10 +40,10 @@ void copcha() {
 	} while (!(i == acha + 390));
 }
 
-boolean dans_rect(rectangle r) {
+bool dans_rect(rectangle r) {
 	int x, y, c;
 
-	boolean dans_rect_result;
+	bool dans_rect_result;
 	read_pos_mouse(x, y, c);
 	if ((x > r.x1) &&
 	        (x < r.x2) &&

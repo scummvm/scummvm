@@ -65,7 +65,7 @@ void ani50() {
      end;
   end;*/
 
-/* overlay */ void aff50(boolean c) {
+/* overlay */ void aff50(bool c) {
 	int k;
 
 	caff = 50;
@@ -276,7 +276,7 @@ void ani50() {
 /* overlay */ void music() {
 	untyped_file fic;
 	int k;
-	boolean fin;
+	bool fin;
 	char ch;
 	float x, y;
 

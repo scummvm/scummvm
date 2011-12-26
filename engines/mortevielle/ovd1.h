@@ -33,7 +33,7 @@ namespace Mortevielle {
 void dem2();
 void ani50();
 //void apzuul();
-void aff50(boolean c);
+void aff50(bool c);
 void init_menu();
 void charpal();
 void chartex();

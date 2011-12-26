@@ -208,7 +208,7 @@ struct sav_chaine {
 	char sjer[31];
 	int mlieu, iboul, ibag, icave, ivier, ipuit;
 	int derobj, iloic, icryp;
-	boolean ipre;
+	bool ipre;
 	char heure;
 };
 struct registres {
@@ -238,7 +238,7 @@ struct doublet {
 typedef array<1, 16, doublet> tabdb;
 struct rectangle {
 	int x1, x2, y1, y2;
-	boolean etat;
+	bool etat;
 };
 
 typedef array<1, max_rect, rectangle> mult_rect;
@@ -263,7 +263,7 @@ struct t_pcga {
 /*------------------------------   VARIABLES   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-boolean blo,
+bool blo,
         bh1,
         bf1,
         bh2,

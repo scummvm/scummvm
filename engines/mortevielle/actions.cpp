@@ -469,7 +469,7 @@ L2:
 
 /* overlay */ void tmettre() {
 	int quel;
-	boolean entre;
+	bool entre;
 	phrase st;
 	Common::String str_;
 	int i, tay;
@@ -979,13 +979,13 @@ L2:
 /* overlay */ void tparler()
 
 {
-	array<1, 46, boolean> te;
+	array<1, 46, bool> te;
 	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
 	char tou;
 	array<1, 46, varying_string<40> > lib;
 	phrase st;
-	boolean f;
+	bool f;
 
 
 

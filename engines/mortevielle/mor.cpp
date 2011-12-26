@@ -369,7 +369,7 @@ void modobj(int m) {
 	menu_disable(invt[8]);
 }
 
-void modobj2(int m, boolean t1, boolean t2) {
+void modobj2(int m, bool t1, bool t2) {
 	phrase str_;
 	Common::String strp;
 	int i, tay;
@@ -526,7 +526,7 @@ void affper(int per) {
 }
 
 /* overlay */ void choix(int min, int max, int &per) {
-	boolean i;
+	bool i;
 	int haz, cx, cy, cz;
 	long_int per2, cz2;
 
@@ -841,7 +841,7 @@ void debloc(int l) {
 
 /* overlay */ void quelq15(int &per) {
 	int cx;
-	boolean test;
+	bool test;
 
 
 	/* debug('o1 quelq15'); */
@@ -1254,7 +1254,7 @@ void aniof(int ouf, int num) {
 }
 
 void musique(int so) {
-	boolean i;
+	bool i;
 	int haz;
 	/* dep: array[1..5] of long_int;*/
 
