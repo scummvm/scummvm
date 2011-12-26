@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen(vm, system), Screen_v2(vm, system), Screen_Rpg(vm, system, _screenDimTable = vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount), _vm(vm) {
+Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system,  vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount), _vm(vm) {
 	_paletteOverlay1 = new uint8[0x100];
 	_paletteOverlay2 = new uint8[0x100];
 	_grayOverlay = new uint8[0x100];
@@ -42,7 +42,6 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen(vm, system), Scr
 	for (int i = 0; i < 8; i++)
 		_levelOverlays[i] = new uint8[256];
 
-	_screenDimTable = 0;
 	_fadeFlag = 2;
 }
 

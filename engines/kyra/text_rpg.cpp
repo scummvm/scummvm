@@ -24,7 +24,6 @@
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "kyra/kyra_rpg.h"
-#include "kyra/screen_rpg.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"
@@ -35,7 +34,7 @@ enum {
 	kEoBTextBufferSize = 2048
 };
 
-TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen_Rpg *scr) : _vm(engine), _screen(scr),
+TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 

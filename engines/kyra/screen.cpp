@@ -36,8 +36,8 @@
 
 namespace Kyra {
 
-Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
-	: _system(system), _vm(vm), _sjisInvisibleColor(0),
+Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
+	: _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
 	_cursorColorKey((vm->game() == GI_KYRA1) ? 0xFF : 0x00) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
@@ -70,6 +70,10 @@ Screen::~Screen() {
 
 	for (uint i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
+
+	for (int i = 0; i < _dimTableCount; ++i)
+		delete _customDimTable[i];
+	delete[] _customDimTable;
 }
 
 bool Screen::init() {
@@ -146,6 +150,10 @@ bool Screen::init() {
 		_system->getPaletteManager()->setPalette(palette, 16, 8);
 	}
 
+	_customDimTable = new ScreenDim *[_dimTableCount];
+	memset(_customDimTable, 0, sizeof(ScreenDim *) * _dimTableCount);
+
+	_curDimIndex = -1;
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
@@ -373,6 +381,29 @@ void Screen::mergeOverlay(int x, int y, int w, int h) {
 		dst += add;
 		src += add;
 	}
+}
+
+const ScreenDim *Screen::getScreenDim(int dim) const {
+	assert(dim < _dimTableCount);
+	return _customDimTable[dim] ? _customDimTable[dim] : &_dimTable[dim];
+}
+
+void Screen::modifyScreenDim(int dim, int x, int y, int w, int h) {
+	if (!_customDimTable[dim])
+		_customDimTable[dim] = new ScreenDim;
+
+	memcpy(_customDimTable[dim], &_dimTable[dim], sizeof(ScreenDim));
+	_customDimTable[dim]->sx = x;
+	_customDimTable[dim]->sy = y;
+	_customDimTable[dim]->w = w;
+	_customDimTable[dim]->h = h;
+	if (dim == _curDimIndex || _vm->game() == GI_LOL)
+		setScreenDim(dim);
+}
+
+void Screen::setScreenDim(int dim) {
+	_curDim = getScreenDim(dim);
+	_curDimIndex = dim;
 }
 
 uint8 *Screen::getPagePtr(int pageNum) {
@@ -3168,6 +3199,61 @@ void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int s
 			src += 640;
 		}
 	}
+}
+
+void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
+	if (srcPage > 13 || dstPage > 13)
+		error("Screen::crossFadeRegion(): attempting to use temp page as source or dest page.");
+
+	hideMouse();
+
+	uint16 *wB = (uint16*)_pagePtrs[14];
+	uint8 *hB = _pagePtrs[14] + 640;
+
+	for (int i = 0; i < w; i++)
+		wB[i] = i;
+
+	for (int i = 0; i < h; i++)
+		hB[i] = i;
+
+	for (int i = 0; i < w; i++)
+		SWAP(wB[_vm->_rnd.getRandomNumberRng(0, w - 1)], wB[i]);
+
+	for (int i = 0; i < h; i++)
+		SWAP(hB[_vm->_rnd.getRandomNumberRng(0, h - 1)], hB[i]);
+
+	uint8 *s = _pagePtrs[srcPage];
+	uint8 *d = _pagePtrs[dstPage];
+
+	for (int i = 0; i < h; i++) {
+		int iH = i;
+		uint32 end = _system->getMillis() + 3;
+		for (int ii = 0; ii < w; ii++) {
+			int sX = x1 + wB[ii];
+			int sY = y1 + hB[iH];
+			int dX = x2 + wB[ii];
+			int dY = y2 + hB[iH];
+
+			if (++iH >= h)
+				iH = 0;
+
+			d[dY * 320 + dX] = s[sY * 320 + sX];
+			addDirtyRect(dX, dY, 1, 1);
+		}
+
+		// This tries to speed things up, to get similiar speeds as in DOSBox etc.
+		// We can't write single pixels directly into the video memory like the original did.
+		// We also (unlike the original) want to aim at similiar speeds for all platforms.
+		if (!(i % 10))
+			updateScreen();
+
+		uint32 cur = _system->getMillis();
+		if (end > cur)
+			_system->delayMillis(end - cur);
+	}
+
+	updateScreen();
+	showMouse();
 }
 
 #pragma mark -

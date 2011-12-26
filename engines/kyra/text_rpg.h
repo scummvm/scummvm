@@ -29,12 +29,12 @@
 
 namespace Kyra {
 
-class Screen_Rpg;
+class Screen;
 class KyraRpgEngine;
 
 class TextDisplayer_rpg {
 public:
-	TextDisplayer_rpg(KyraRpgEngine *engine, Screen_Rpg *scr);
+	TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr);
 	virtual ~TextDisplayer_rpg();
 
 	virtual void setupField(int dim, bool mode);
@@ -57,7 +57,7 @@ public:
 
 protected:
 	virtual KyraRpgEngine *vm() { return _vm; }
-	virtual Screen_Rpg *screen() { return _screen; }
+	virtual Screen *screen() { return _screen; }
 
 	void displayText(char *str, ...);
 	char parseCommand();
@@ -102,7 +102,7 @@ protected:
 
 private:
 	KyraRpgEngine *_vm;
-	Screen_Rpg *_screen;
+	Screen *_screen;
 
 	char *_table1;
 	char *_table2;

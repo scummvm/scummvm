@@ -361,10 +361,6 @@ Screen *LoLEngine::screen() {
 	return _screen;
 }
 
-Screen_Rpg *LoLEngine::screen_rpg() {
-	return _screen;
-}
-
 GUI *LoLEngine::gui() const {
 	return _gui;
 }

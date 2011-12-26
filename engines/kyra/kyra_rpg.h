@@ -87,7 +87,6 @@ public:
 	virtual ~KyraRpgEngine();
 
 	virtual Screen *screen() = 0;
-	virtual Screen_Rpg *screen_rpg() = 0;
 	virtual GUI *gui() const = 0;
 
 protected:

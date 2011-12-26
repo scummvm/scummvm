@@ -279,7 +279,6 @@ public:
 	virtual void initKeymap();
 
 	Screen *screen();
-	Screen_Rpg *screen_rpg();
 	GUI *gui() const;
 
 private:

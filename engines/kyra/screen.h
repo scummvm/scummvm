@@ -366,7 +366,7 @@ public:
 		FID_NUM
 	};
 
-	Screen(KyraEngine_v1 *vm, OSystem *system);
+	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
 	virtual ~Screen();
 
 	// init
@@ -449,9 +449,12 @@ public:
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 
-	virtual void setScreenDim(int dim) = 0;
-	virtual const ScreenDim *getScreenDim(int dim) = 0;
-	virtual int screenDimTableCount() const = 0;
+	const ScreenDim *getScreenDim(int dim) const;
+	void modifyScreenDim(int dim, int x, int y, int w, int h);
+	int screenDimTableCount() const { return _dimTableCount; }
+
+	void setScreenDim(int dim);
+	int curDimIndex() const { return _curDimIndex; }
 
 	const ScreenDim *_curDim;
 
@@ -513,6 +516,9 @@ public:
 	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false, int bytesPerPlane = -1);
 	static void convertAmigaMsc(uint8 *data);
 
+	// RPG specific, this does not belong here
+	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
+
 protected:
 	uint8 *getPagePtr(int pageNum);
 	void updateDirtyRects();
@@ -559,6 +565,12 @@ protected:
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
+
+	// dimension handling
+	const ScreenDim * const _dimTable;
+	ScreenDim **_customDimTable;
+	const int _dimTableCount;
+	int _curDimIndex;
 
 	// mouse handling
 	int _mouseLockCount;

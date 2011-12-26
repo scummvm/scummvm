@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system), Screen_Rpg(vm, system, _screenDimTable, _screenDimTableCount) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount) {
 	_shapeFadeMode[0] = _shapeFadeMode[1] = 0;
 	_shapeFadeInternal = 0;
 	_fadeData = 0;

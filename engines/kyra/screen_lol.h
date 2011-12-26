@@ -26,18 +26,15 @@
 #define KYRA_SCREEN_LOL_H
 
 #include "kyra/screen_v2.h"
-#include "kyra/screen_rpg.h"
 
 namespace Kyra {
 
 class LoLEngine;
 
-class Screen_LoL : public Screen_v2, public Screen_Rpg {
+class Screen_LoL : public Screen_v2 {
 public:
 	Screen_LoL(LoLEngine *vm, OSystem *system);
 	~Screen_LoL();
-
-	int screenDimTableCount() const { return _screenDimTableCount; }
 
 	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) GCC_PRINTF(2, 9);
@@ -94,11 +91,9 @@ public:
 private:
 	LoLEngine *_vm;
 
-	const ScreenDim *_screenDimTable;
-	static const int _screenDimTableCount;
-
 	static const ScreenDim _screenDimTable256C[];
 	static const ScreenDim _screenDimTable16C[];
+	static const int _screenDimTableCount;
 
 	uint8 *_levelOverlays[8];
 

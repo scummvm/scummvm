@@ -30,7 +30,7 @@
 namespace Kyra {
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
-	: Screen(vm, system) {
+	: Screen(vm, system, _screenDimTable, _screenDimTableCount) {
 	_vm = vm;
 	_unkPtr1 = _unkPtr2 = 0;
 	_bitBlitNum = 0;
@@ -68,16 +68,6 @@ bool Screen_LoK::init() {
 	memset(_unkPtr2, 0, getRectSize(1, 144));
 
 	return true;
-}
-
-void Screen_LoK::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
-}
-
-const ScreenDim *Screen_LoK::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return &_screenDimTable[dim];
 }
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {

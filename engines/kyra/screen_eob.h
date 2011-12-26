@@ -25,19 +25,17 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/screen_rpg.h"
+#include "kyra/screen.h"
 
 namespace Kyra {
 
 class EoBCoreEngine;
-class Screen_EoB : public Screen_Rpg{
+class Screen_EoB : public Screen {
 public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
 	virtual ~Screen_EoB();
 
 	bool init();
-
-	int screenDimTableCount() const { return _screenDimTableCount; }
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();

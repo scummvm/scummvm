@@ -38,10 +38,6 @@ public:
 
 	int getRectSize(int w, int h);
 
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-	int screenDimTableCount() const { return _screenDimTableCount; }
-
 	void setTextColorMap(const uint8 *cmap);
 
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
