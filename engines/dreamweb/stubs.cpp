@@ -2474,7 +2474,6 @@ void DreamBase::drawFloor() {
 void DreamBase::allocateBuffers() {
 	data.word(kExtras) = allocateMem(kLengthofextra/16);
 	data.word(kMapdata) = allocateMem(kLengthofmap/16);
-	data.word(kBuffers) = allocateMem(kLengthofbuffer/16);
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
@@ -3592,8 +3591,6 @@ void DreamBase::lookAtCard() {
 }
 
 void DreamBase::clearBuffers() {
-	memset(getSegment(data.word(kBuffers)).ptr(0, kLengthofbuffer), 0, kLengthofbuffer);
-
 	memset(getSegment(data.word(kExtras)).ptr(0, kLengthofextra), 0xFF, kLengthofextra);
 
 	memcpy(_initialVars, data.ptr(kStartvars, kLengthofvars), kLengthofvars);
