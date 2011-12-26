@@ -662,5 +662,45 @@ const char *DreamBase::parser() {
 	return output;
 }
 
+void DreamGenContext::searchForString() {
+	const char *topic = (const char*)es.ptr(di, 0);
+	const char *text =  (const char*)ds.ptr(si, 0);
+	const char *found = searchForString(topic, text);
+	if (!found) {
+		al = 1;
+	} else {
+		es = ds;
+		bx = si + (found - text);
+		si = bx;
+		al = 0;
+	}
+}
+
+// input: es:di : topic
+//        ds:si : monitor text
+const char *DreamBase::searchForString(const char *topic, const char *text) {
+	char delim = *topic;
+
+	while (true) {
+		const char *s = topic;
+		int delimCount = 0;
+
+		char c;
+		do {
+			c = makeCaps(*text++);
+
+			if (c == '*' || (delim == '=' && c == 34))
+				return 0;
+
+			if (c == delim) {
+				delimCount++;
+				if (delimCount == 2)
+					return text;
+			}
+
+		} while (c == *s++);
+	}
+}
+
 
 } // End of namespace DreamGen

@@ -817,6 +817,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'scrollmonitor',
 	'searchforfiles',
 	'searchforsame',
+	'searchforstring',
 	'security',
 	'seecommandtail',
 	'selectlocation',

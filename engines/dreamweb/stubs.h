@@ -93,5 +93,9 @@
 	void getKeyAndLogo();
 	void read();
 	void dirCom();
+	void searchForString();
+	const char *searchForString(const char *topic, const char *text) {
+		return DreamBase::searchForString(topic, text);
+	}
 
 #endif

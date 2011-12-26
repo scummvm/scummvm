@@ -181,6 +181,7 @@ public:
 	void loadCart();
 	void showKeys();
 	const char *parser();
+	const char *searchForString(const char *topic, const char *text);
 
 	// from newplace.cpp
 	void getUnderCentre();

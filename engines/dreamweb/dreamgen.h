@@ -417,7 +417,6 @@ public:
 
 	void dirFile();
 	void dreamweb();
-	void searchForString();
 };
 
 } // End of namespace DreamGen

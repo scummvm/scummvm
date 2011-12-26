@@ -104,50 +104,6 @@ endofdir2:
 	scrollMonitor();
 }
 
-void DreamGenContext::searchForString() {
-	STACK_CHECK;
-	dl = es.byte(di);
-	cx = di;
-restartlook:
-	di = cx;
-	bx = si;
-	dh = 0;
-keeplooking:
-	_lodsb();
-	makeCaps();
-	_cmp(al, '*');
-	if (flags.z())
-		goto notfound;
-	_cmp(dl, '=');
-	if (!flags.z())
-		goto nofindingtopic;
-	_cmp(al, 34);
-	if (flags.z())
-		goto notfound;
-nofindingtopic:
-	ah = es.byte(di);
-	_cmp(al, dl);
-	if (!flags.z())
-		goto notbracket;
-	_inc(dh);
-	_cmp(dh, 2);
-	if (flags.z())
-		goto complete;
-notbracket:
-	_cmp(al, ah);
-	if (!flags.z())
-		goto restartlook;
-	_inc(di);
-	goto keeplooking;
-complete:
-	es = ds;
-	al = 0;
-	bx = si;
-	return;
-notfound:
-	al = 1;
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
