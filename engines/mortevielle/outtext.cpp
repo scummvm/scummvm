@@ -57,7 +57,7 @@ const byte tab31[32]= {
 
 void deline(int num , phrase &l , int &tl);
 
-static void cinq_huit(char &c, int &ind, byte &pt, boolean &the_end) {
+static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 	const unsigned char rap[32] = { 
 		',', ':', '@', '!', '?', '-', '\207',
 		'\240', '\205', '\203', '\202', '\212', '\210', '/',
@@ -153,7 +153,7 @@ static int l_motsuiv(int p, phrase &ch, int &tab) {
 }
 
 void afftex(phrase ch, int x, int y, int dx, int dy, int typ) {
-	boolean the_end;
+	bool the_end;
 	char touch;
 	int xf, yf;
 	int xc, yc;

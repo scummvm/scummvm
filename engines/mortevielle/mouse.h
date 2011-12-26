@@ -37,7 +37,7 @@ void hide_mouse();
 void show_mouse();
 void pos_mouse(int x, int y);
 void read_pos_mouse(int &x, int &y, int &c);
-void mov_mouse(boolean &funct, char &key);
+void mov_mouse(bool &funct, char &key);
 
 } // End of namespace Mortevielle
 #endif

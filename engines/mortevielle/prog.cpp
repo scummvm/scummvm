@@ -243,7 +243,7 @@ void tecran() {
 	const int lim = 20000;
 	int temps;
 	char inkey;
-	boolean oo, funct;
+	bool oo, funct;
 
 	clsf3();
 	oo = false;

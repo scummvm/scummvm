@@ -53,7 +53,7 @@
 
 namespace Mortevielle {
 
-void divers(int np, boolean b) {
+void divers(int np, bool b) {
 	teskbd();
 	do {
 		parole(np, 0, 0);

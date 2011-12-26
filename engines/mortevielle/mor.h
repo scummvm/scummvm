@@ -58,7 +58,7 @@ void conv(int x, int &y);
 /* NIVEAU 12 */
 void okpas();
 void modobj(int m);
-void modobj2(int m, boolean t1, boolean t2);
+void modobj2(int m, bool t1, bool t2);
 void repon(int f, int m);
 void f3f8();
 void t5(int cx);

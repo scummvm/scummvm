@@ -46,7 +46,7 @@ void atf3f8(int &key);
 void tperd();
 void tsort();
 void st4(int ob);
-void cherjer(int ob, boolean &d);
+void cherjer(int ob, bool &d);
 void st1sama();
 void modinv();
 void sparl(long_int adr, long_int rep);
