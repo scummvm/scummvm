@@ -1364,19 +1364,13 @@ void DreamBase::deleteTaken() {
 	}
 }
 
-DynObject *DreamGenContext::getExPos() {
-	es = data.word(kExtras);
+uint8 DreamBase::getExPos() {
 	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (objects[i].mapad[0] == 0xff) {
-			data.byte(kExpos) = i;
-			di = kExdata + i * sizeof(DynObject);
-			return &objects[i];
-		}
+		if (objects[i].mapad[0] == 0xff)
+			return i;
 	}
-	data.byte(kExpos) = kNumexobjects;
-	di = kExdata + kNumexobjects * sizeof(DynObject);
-	return 0;
+	error("Out of Ex object positions");
 }
 
 void DreamBase::placeSetObject(uint8 index) {
@@ -2717,14 +2711,14 @@ void DreamBase::newGame() {
 		data.byte(kGetback) = 3;
 }
 
-void DreamGenContext::pickupOb(uint8 command, uint8 pos) {
+void DreamBase::pickupOb(uint8 command, uint8 pos) {
 	data.byte(kLastinvpos) = pos;
 	data.byte(kObjecttype) = kFreeObjectType;
 	data.byte(kItemframe) = command;
 	data.byte(kCommand) = command;
 	//uint8 dummy;
 	//getAnyAd(&dummy, &dummy);	// was in the original source, seems useless here
-	transferToEx();
+	transferToEx(command);
 }
 
 void DreamGenContext::initialInv() {
@@ -2870,7 +2864,7 @@ void DreamBase::delEverything() {
 	}
 }
 
-void DreamGenContext::errorMessage1() {
+void DreamBase::errorMessage1() {
 	delPointer();
 	printMessage(76, 21, 58, 240, (240 & 1));
 	readMouse();
@@ -2888,7 +2882,7 @@ void DreamGenContext::errorMessage1() {
 	delPointer();
 }
 
-void DreamGenContext::errorMessage2() {
+void DreamBase::errorMessage2() {
 	data.byte(kCommandtype) = 255;
 	delPointer();
 	printMessage(76, 21, 59, 240, (240 & 1));
@@ -2907,7 +2901,7 @@ void DreamGenContext::errorMessage2() {
 	delPointer();
 }
 
-void DreamGenContext::errorMessage3() {
+void DreamBase::errorMessage3() {
 	delPointer();
 	printMessage(76, 21, 60, 240, (240 & 1));
 	workToScreenM();
@@ -3606,7 +3600,6 @@ void DreamBase::clearChanges() {
 
 	memcpy(data.ptr(kStartvars, kLengthofvars), _initialVars, kLengthofvars);
 
-	data.byte(kExpos) = 0;
 	data.word(kExframepos) = 0;
 	data.word(kExtextpos) = 0;
 

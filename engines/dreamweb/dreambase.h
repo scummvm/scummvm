@@ -222,6 +222,16 @@ public:
 	void reExFromInv();
 	void swapWithInv();
 	void transferText(uint8 from, uint8 to);
+	void pickupConts(uint8 from, uint8 containerEx);
+	byte transferToEx(uint8 from);
+	void swapWithOpen();
+	void outOfOpen();
+	void inToInv();
+	void outOfInv();
+	bool checkObjectSize();
+	void useOpened();
+	void setPickup();
+	void selectOpenOb();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -576,6 +586,10 @@ public:
 	void showSymbol();
 	void updateSymbolTop();
 	void updateSymbolBot();
+	void pickupOb(uint8 command, uint8 pos);
+	void errorMessage1();
+	void errorMessage2();
+	void errorMessage3();
 
 	// from talk.cpp
 	void talk();
@@ -600,6 +614,7 @@ public:
 	void loadIntroRoom();
 	void set16ColPalette();
 	void realCredits();
+	uint8 getExPos();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);

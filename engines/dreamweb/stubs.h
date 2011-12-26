@@ -66,7 +66,6 @@
 	void walkAndExamine();
 	void obName(uint8 command, uint8 commandType);
 
-	DynObject *getExPos();
 	bool checkIfSet(uint8 x, uint8 y);
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
@@ -103,13 +102,9 @@
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
-	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
 	void walkIntoRoom();
 	void allPointer();
-	void errorMessage1();
-	void errorMessage2();
-	void errorMessage3();
 	void afterNewRoom();
 	void madmanRun();
 	void decide();
@@ -117,21 +112,11 @@
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	bool execCommand();
-	bool checkObjectSize();
 	void identifyOb();
 	void selectOb();
-	void setPickup();
 	void getKeyAndLogo();
 	void signOn();
-	void inToInv();
-	void outOfInv();
-	void selectOpenOb();
-	void useOpened();
-	void outOfOpen();
-	void swapWithOpen();
 	void searchForFiles(uint16 segment);
-	byte transferToEx();
 	void dirCom();
-	void pickupConts();
 
 #endif

@@ -163,8 +163,8 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			RectWithCallback<DreamGenContext> examList[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
 				{ 260,300,0,44,&DreamGenContext::useObject },
-				{ 210,254,0,44,&DreamGenContext::selectOpenOb },
-				{ 144,176,64,96,&DreamGenContext::setPickup },
+				{ 210,254,0,44,&DreamBase::selectOpenOb },
+				{ 144,176,64,96,&DreamBase::setPickup },
 				{ 0,50,50,200,&DreamBase::examineInventory },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
@@ -174,12 +174,12 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		}
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
-			RectWithCallback<DreamGenContext> invList1[] = {
+			RectWithCallback<DreamBase> invList1[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ 255,294,0,24,&DreamGenContext::dropObject },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
-				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useOpened },
-				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamGenContext::inToInv },
+				{ 255,294,0,24,&DreamBase::dropObject },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamBase::incRyanPage },
+				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamBase::useOpened },
+				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamBase::inToInv },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -189,7 +189,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 		default: {
 			RectWithCallback<DreamGenContext> withList1[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incRyanPage },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamBase::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectOb },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
@@ -383,7 +383,7 @@ void DreamGenContext::selectOb() {
 	useRoutine();
 }
 
-void DreamGenContext::setPickup() {
+void DreamBase::setPickup() {
 	if (data.byte(kObjecttype) != kSetObjectType1 && data.byte(kObjecttype) != kSetObjectType3) {
 		// Object types 1 and 3 are excluded, so the resulting object is a DynObject
 		uint8 dummy;
@@ -414,9 +414,9 @@ void DreamGenContext::setPickup() {
 	data.byte(kInvopen) = 2;
 
 	if (data.byte(kObjecttype) != kExObjectType) {
-		data.byte(kItemframe) = data.byte(kCommand);
+		assert(data.byte(kObjecttype) == kFreeObjectType);
 		data.byte(kOpenedob) = 255;
-		data.byte(kItemframe) = transferToEx();
+		data.byte(kItemframe) = transferToEx(data.byte(kCommand));
 		data.byte(kObjecttype) = kExObjectType;
 		DynObject *object = getExAd(data.byte(kItemframe));
 		object->mapad[0] = 20;
@@ -502,7 +502,7 @@ void DreamBase::removeObFromInv() {
 	deleteExObject(data.byte(kCommand));
 }
 
-void DreamGenContext::inToInv() {
+void DreamBase::inToInv() {
 	if (!data.byte(kPickup)) {
 		outOfInv();
 		return;
@@ -542,7 +542,7 @@ void DreamGenContext::inToInv() {
 	delPointer();
 }
 
-void DreamGenContext::outOfInv() {
+void DreamBase::outOfInv() {
 	ObjectRef subject = findInvPos();
 
 	if (subject._index == 255) {
@@ -713,7 +713,7 @@ void DreamBase::dropObject() {
 	object->currentLocation = data.byte(kReallocation);
 }
 
-bool DreamGenContext::checkObjectSize() {
+bool DreamBase::checkObjectSize() {
 	byte containerSize = getOpenedSlotSize();
 	DynObject *object = getEitherAdCPP();
 	// If there is no size defined for the object in the editor, set its size
@@ -742,7 +742,7 @@ bool DreamGenContext::checkObjectSize() {
 	return false;
 }
 
-void DreamGenContext::selectOpenOb() {
+void DreamBase::selectOpenOb() {
 	uint8 slotSize, slotCount;
 	getAnyAd(&slotSize, &slotCount);
 	if (slotCount == 255) {
@@ -823,7 +823,7 @@ void DreamBase::swapWithInv() {
 	delPointer();
 }
 
-void DreamGenContext::useOpened() {
+void DreamBase::useOpened() {
 	if (data.byte(kOpenedob) == 255)
 		return;	// cannot use opened object
 
@@ -887,7 +887,7 @@ void DreamGenContext::useOpened() {
 	delPointer();
 }
 
-void DreamGenContext::outOfOpen() {
+void DreamBase::outOfOpen() {
 	if (data.byte(kOpenedob) == 255)
 		return;	// cannot use opened object
 
@@ -921,7 +921,8 @@ void DreamGenContext::outOfOpen() {
 	data.byte(kItemframe) = objectId._index;
 
 	if (data.byte(kObjecttype) != kExObjectType) {
-		data.byte(kItemframe) = transferToEx();
+		assert(objectId._type == kFreeObjectType);
+		data.byte(kItemframe) = transferToEx(objectId._index);
 		data.byte(kObjecttype) = kExObjectType;
 	}
 
@@ -938,7 +939,7 @@ void DreamGenContext::outOfOpen() {
 	delPointer();
 }
 
-void DreamGenContext::swapWithOpen() {
+void DreamBase::swapWithOpen() {
 	ObjectRef subject;
 	subject._type = data.byte(kObjecttype);
 	subject._index = data.byte(kItemframe);
@@ -975,7 +976,8 @@ void DreamGenContext::swapWithOpen() {
 	data.byte(kItemframe)  = objectId._index;
 
 	if (data.byte(kObjecttype) != kExObjectType) {
-		data.byte(kItemframe) = transferToEx();
+		assert(objectId._type == kFreeObjectType);
+		data.byte(kItemframe) = transferToEx(objectId._index);
 		data.byte(kObjecttype) = kExObjectType;
 	}
 
@@ -1011,30 +1013,30 @@ ObjectRef DreamBase::findOpenPos() {
 	return _openInvList[pos];
 }
 
-byte DreamGenContext::transferToEx() {
+byte DreamBase::transferToEx(uint8 from) {
 	emergencyPurge();
 
-	DynObject *exObject = getExPos(); // Also sets es:di
-	byte pos = data.byte(kExpos);
+	byte pos = getExPos();
+	DynObject *exObject = getExAd(pos);
 
-	DynObject *freeObject = getFreeAd(data.byte(kItemframe));
+	DynObject *freeObject = getFreeAd(from);
 
 	memcpy(exObject, freeObject, sizeof(DynObject));
 
 	exObject->currentLocation = data.byte(kReallocation);
 	exObject->initialLocation = data.byte(kReallocation);
-	exObject->index = data.byte(kItemframe);
+	exObject->index = from;
 	exObject->mapad[0] = 4;
 	exObject->mapad[1] = 255;
 	exObject->mapad[2] = data.byte(kLastinvpos);
 
-	transferFrame(data.byte(kItemframe), pos, 0);
-	transferFrame(data.byte(kItemframe), pos, 1);
-	transferText(data.byte(kItemframe), pos);
+	transferFrame(from, pos, 0);
+	transferFrame(from, pos, 1);
+	transferText(from, pos);
 
 	freeObject->mapad[0] = 254;
 
-	pickupConts();
+	pickupConts(from, pos);
 
 	return pos;
 }
@@ -1082,35 +1084,33 @@ void DreamBase::findAllOpen() {
 	}
 }
 
-void DreamGenContext::pickupConts() {
-	assert(data.byte(kObjecttype) == kFreeObjectType);
-	const DynObject *obj = getFreeAd(data.byte(kItemframe));
+void DreamBase::pickupConts(uint8 from, uint8 containerEx) {
+	const DynObject *obj = getFreeAd(from);
 
 	if (obj->slotCount == 255)
 		return; // not openable
 
-	uint8 expos = data.byte(kExpos);
-
 	for (uint8 index = 0; index < 80; ++index) {
 		DynObject *freeObj = getFreeAd(index);
 
-		if (freeObj->mapad[0] != data.byte(kObjecttype))
+		if (freeObj->mapad[0] != kFreeObjectType)
 			continue;
-		if (freeObj->mapad[1] != data.byte(kItemframe))
+		if (freeObj->mapad[1] != from)
 			continue;
 
-		DynObject *exObj = getExPos(); // Also sets es:di to exObj
+		uint8 pos = getExPos();
+		DynObject *exObj = getExAd(pos);
 
 		memcpy(exObj, freeObj, sizeof(DynObject));
 		exObj->currentLocation = data.byte(kReallocation);
 		exObj->initialLocation = data.byte(kReallocation);
 		exObj->index = index;
 		exObj->mapad[0] = 4; // kExObjectType?
-		exObj->mapad[1] = expos;
+		exObj->mapad[1] = containerEx;
 
-		transferFrame(index, data.byte(kExpos), 0);
-		transferFrame(index, data.byte(kExpos), 1);
-		transferText(index, data.byte(kExpos));
+		transferFrame(index, pos, 0);
+		transferFrame(index, pos, 1);
+		transferText(index, pos);
 
 		freeObj->mapad[0] = 0xFF;
 	}
