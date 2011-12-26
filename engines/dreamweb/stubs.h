@@ -107,8 +107,6 @@
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
-	void hangOne(uint16 delay);
-	void hangOne();
 	void bibleQuote();
 	void realCredits();
 	void runIntroSeq();
@@ -131,7 +129,6 @@
 	void showGun();
 	void endGame();
 	void monkSpeaking();
-	void rollEndCredits2();
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	void updateSymbolTop();

@@ -563,6 +563,9 @@ public:
 	bool hangOnPQ();
 	void redes();
 
+	// from titles.cpp
+	void hangOne(uint16 delay);
+
 	// from use.cpp
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);
@@ -710,6 +713,8 @@ public:
 	void createPanel();
 	void createPanel2();
 	void showPanel();
+	void rollEndCredits2();
+	void rollEm();
 };
 
 

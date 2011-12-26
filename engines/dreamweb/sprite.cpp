@@ -706,6 +706,8 @@ void DreamBase::intro3Text(uint16 nextReelPointer) {
 }
 
 void DreamBase::rollEndCredits() {
+	// Note: This function is very similar to rollEm() in vgafades.cpp
+
 	playChannel0(16, 255);
 	data.byte(kVolume) = 7;
 	data.byte(kVolumeto) = 0;
