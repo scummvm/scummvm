@@ -475,6 +475,82 @@ void DreamGenContext::dirCom() {
 	scrollMonitor();
 }
 
+void DreamGenContext::read() {
+	bool foundFile = false;
+
+	randomAccess(40);
+	parser();
+	if (es.byte(di+1) == 0) {
+		netError();
+		return;
+	}
+
+	es = cs;
+	di = kCurrentfile;
+
+	data.word(kMonsource) = data.word(kTextfile1);
+	ds = data.word(kMonsource);
+	si = kTextstart;
+	searchForString();
+	if (al == 0) {
+		foundFile = true;
+	} else {
+		data.word(kMonsource) = data.word(kTextfile2);
+		ds = data.word(kMonsource);
+		si = kTextstart;
+		searchForString();
+		if (al == 0) {
+			foundFile = true;
+		} else {
+			data.word(kMonsource) = data.word(kTextfile3);
+			ds = data.word(kMonsource);
+			si = kTextstart;
+			searchForString();
+			if (al == 0)
+				foundFile = true;
+		}
+	}
+
+	if (!foundFile) {
+		monMessage(7);
+		return;
+	}
+
+	// "foundfile2"
+	getKeyAndLogo();
+	if (al != 0)
+		return;
+
+	// "keyok1"
+	es = cs;
+	di = offset_operand1;
+	ds = data.word(kMonsource);
+	searchForString();
+	if (al != 0) {
+		data.byte(kLogonum) = data.byte(kOldlogonum);
+		monMessage(11);
+		return;
+	}
+
+	// "findtopictext"
+	bx++;
+
+	monitorLogo();
+	scrollMonitor();
+
+	while (true) {
+		monPrint();
+		if (es.byte(bx) == 34 || es.byte(bx) == '=' || es.byte(bx) == '*') {
+			// "endoftopic"
+			scrollMonitor();
+			return;
+		}
+
+		processTrigger();
+		randomAccess(24);
+	}
+}
+
 void DreamGenContext::signOn() {
 	parser();
 

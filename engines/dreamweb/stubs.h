@@ -117,6 +117,7 @@
 	void getKeyAndLogo();
 	void signOn();
 	void searchForFiles(uint16 segment);
+	void read();
 	void dirCom();
 
 #endif

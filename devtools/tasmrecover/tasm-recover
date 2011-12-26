@@ -763,6 +763,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'randomnum1',
 	'randomnum2',
 	'randomnumber',
+	'read',
 	'readabyte',
 	'readcitypic',
 	'readdesticon',

@@ -418,7 +418,6 @@ public:
 
 	void dirFile();
 	void dreamweb();
-	void read();
 	void searchForString();
 	void parser();
 };
