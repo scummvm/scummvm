@@ -139,5 +139,6 @@
 	void swapWithOpen();
 	void swapWithInv();
 	void searchForFiles();
+	byte transferToEx();
 
 #endif

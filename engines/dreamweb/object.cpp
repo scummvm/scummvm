@@ -446,8 +446,7 @@ void DreamGenContext::setPickup() {
 	if (data.byte(kObjecttype) != kExObjectType) {
 		data.byte(kItemframe) = data.byte(kCommand);
 		data.byte(kOpenedob) = 255;
-		transferToEx();
-		data.byte(kItemframe) = al;
+		data.byte(kItemframe) = transferToEx();
 		data.byte(kObjecttype) = kExObjectType;
 		DynObject *object = getExAd(data.byte(kItemframe));
 		object->mapad[0] = 20;
@@ -964,8 +963,7 @@ void DreamGenContext::outOfOpen() {
 	data.byte(kItemframe)  = objectId & 0xFF;
 
 	if (data.byte(kObjecttype) != 4) {
-		transferToEx();
-		data.byte(kItemframe) = al;
+		data.byte(kItemframe) = transferToEx();
 		data.byte(kObjecttype) = 4;
 	}
 
@@ -1021,8 +1019,7 @@ void DreamGenContext::swapWithOpen() {
 	data.byte(kItemframe)  = objectId & 0xFF;
 
 	if (data.byte(kObjecttype) != 4) {
-		transferToEx();
-		data.byte(kItemframe) = al;
+		data.byte(kItemframe) = transferToEx();
 		data.byte(kObjecttype) = 4;
 	}
 
@@ -1057,6 +1054,31 @@ uint16 DreamBase::findOpenPos() {
 	data.byte(kLastinvpos) = pos & 0xFF;
 
 	return pos * 2 + kOpeninvlist;	// return the object position in the inventory data
+}
+
+byte DreamGenContext::transferToEx() {
+	emergencyPurge();
+	getExPos();
+	byte pos = data.byte(kExpos);
+	DynObject *exObject = getExAd(pos);
+	DynObject *freeObject = getFreeAd(data.byte(kItemframe));
+	memcpy(exObject, freeObject, sizeof(DynObject));
+	exObject->currentLocation = data.byte(kReallocation);
+	exObject->initialLocation = data.byte(kReallocation);
+	exObject->index = data.byte(kItemframe);
+	exObject->mapad[0] = 4;
+	exObject->mapad[1] = 255;
+	exObject->mapad[2] = data.byte(kLastinvpos);
+	data.byte(kItemtotran) = data.byte(kItemframe);
+	transferMap();
+	transferInv();
+	transferText();
+	freeObject = getFreeAd(data.byte(kItemframe));
+	freeObject->mapad[0] = 254;
+	ds = data.word(kFreedat);
+	si = data.byte(kItemframe);
+	pickupConts();
+	return pos;
 }
 
 } // End of namespace DreamGen

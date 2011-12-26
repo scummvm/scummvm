@@ -908,6 +908,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'train',
 	'transferinv',
 	'transfertext',
+	'transfertoex',
 	'trapdoor',
 	'triggermessage',
 	'trysoundalloc',

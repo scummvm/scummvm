@@ -440,7 +440,6 @@ public:
 	void read();
 	void searchForString();
 	void getExAd();
-	void transferToEx();
 	void parser();
 	void transferConToEx();
 };

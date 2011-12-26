@@ -241,47 +241,6 @@ void DreamGenContext::getSetAd() {
 	es = data.word(kSetdat);
 }
 
-void DreamGenContext::transferToEx() {
-	STACK_CHECK;
-	emergencyPurge();
-	getExPos();
-	al = data.byte(kExpos);
-	push(ax);
-	push(di);
-	al = data.byte(kItemframe);
-	ah = 0;
-	bx = 16;
-	_mul(bx);
-	ds = data.word(kFreedat);
-	si = ax;
-	cx = 8;
-	_movsw(cx, true);
-	di = pop();
-	al = data.byte(kReallocation);
-	es.byte(di) = al;
-	es.byte(di+11) = al;
-	al = data.byte(kItemframe);
-	es.byte(di+1) = al;
-	es.byte(di+2) = 4;
-	es.byte(di+3) = 255;
-	al = data.byte(kLastinvpos);
-	es.byte(di+4) = al;
-	al = data.byte(kItemframe);
-	data.byte(kItemtotran) = al;
-	transferMap();
-	transferInv();
-	transferText();
-	al = data.byte(kItemframe);
-	ah = 0;
-	bx = 16;
-	_mul(bx);
-	ds = data.word(kFreedat);
-	si = ax;
-	ds.byte(si+2) = 254;
-	pickupConts();
-	ax = pop();
-}
-
 void DreamGenContext::pickupConts() {
 	STACK_CHECK;
 	al = ds.byte(si+7);
