@@ -400,8 +400,6 @@ public:
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
 
-	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
-
 	void clearPage(int pageNum);
 
 	uint8 getPagePixel(int pageNum, int x, int y);
