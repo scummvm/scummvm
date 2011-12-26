@@ -151,8 +151,7 @@ const array<1, 2, varying_string<11> > fic
 	}
 };
 
-const array<0, 1, byte> addv
-= {{8, 8}};
+const byte addv[2] = {8, 8};
 
 const char recom[] = " Recommence  ";
 
@@ -221,18 +220,13 @@ struct pattern {
 
 struct nhom {
 	byte n;     /* numero entre 0 et 32 */
-	array<0, 3, byte> hom;
+	byte hom[4];
 };
-
-typedef array<0, 15, nhom> t_nhom;
 
 struct t_pcga {
 	byte p;
-	t_nhom a;
+	nhom a[16];
 };
-
-typedef array<0, 90, t_pcga> pal_cga;
-
 
 /*---------------------------------------------------------------------------*/
 /*------------------------------   VARIABLES   ------------------------------*/
@@ -335,8 +329,8 @@ int x,
         ptr_word,
         color_txt;
 
-array<0, 6400, int> t_cph;
-array<0, 4000, byte> tabdon;
+int t_cph[6401];
+byte tabdon[4001];
 /*   t_dxx  : array[0..121] of int;*/
 Common::String stpou;                               /* donne le % d'indices */
 byte is;
@@ -351,7 +345,7 @@ array<1, 8, int> invt,
       nbrep,
       nbrepm,
       disc;
-array<0, 4, int> msg;
+int msg[5];
 array<1, 7, int> depl;
 array<1, 8, varying_string<22> > inv;
 array<1, 7, varying_string<23> > dep;
@@ -360,11 +354,11 @@ array<1, 5, varying_string<11> > self_;
 array<1, 8, varying_string<5> > dis;
 array<1, 7, char> touv;
 sav_chaine s, s1;
-array<0, 390, byte> bufcha;
+byte bufcha[391];
 
 matrix<1, 6, 0, 23, byte> lettres;
 
-array<0, 15, byte> palher;
+byte palher[16];
 
 int t_mot[maxti + 1];
 int tay_tchar;
@@ -376,10 +370,10 @@ int l[108];
 int tbi[256];
 chariot c1, c2, c3;
 float addfix;
-pal_cga palsav;
+t_pcga palsav[91];
 array<0, 90, tabdb> tabpal;
-pal_cga palcga;
-array<0, 14, pattern> tpt;
+t_pcga palcga[91];
+pattern tpt[15];
 
 
 

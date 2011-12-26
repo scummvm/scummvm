@@ -68,7 +68,7 @@ void veracf(byte b) {
 
 /* overlay */ void cctable(tablint &t) {
 	int k;
-	array<0, 256, float> tb;
+	float tb[257];
 
 
 	tb[0] = 0;
@@ -383,42 +383,3 @@ void veracf(byte b) {
 	break;
 	}     /* case c2.code  */
 }
-
-/*overlay function testprot : boolean;
-var
-   regs : registres;
- buffer : array[0..511] of char;
-  i,j,k : int;
-     st : phrase;
-    tay : int;
-   test : array[0..2] of boolean;
-const
- chaine : array[0..7] of char
-        = (' ','M','A','S','T','E','R',' ');
-
-begin
- test[0]:= false;test[1]:=false;test[2]:=false;k:=0;
- with regs do
- begin
-   while (test[k]=false) and (k<2) do
-   begin
-     k:=k+1;
-     ax:=0;intr(19,regs);
-     ax:=$0201;cx:=$0001;dx:=$0100+k-1;es:=seg(buffer);bx:=ofs(buffer);
-     intr(19,regs);
-     test[k]:=true;
-     tesok:= true;
-     i:=0;
-     while (test[k]) and (i<19) do
-      begin
-       ax:=$0201;cx:=$2700+i;dx:=$0100+k-1;es:=seg(buffer);bx:=ofs(buffer);
-       intr(19,regs);if lo(flags) mod 2=1 then test[k]:=false;i:=i+1;
-      end;
-      for j:=0 to 7 do
-       if buffer[j+504]<>chaine[j] then test[k]:=false;
-   end;
- end;
- testprot:=(test[1] or test[2]);
-end;
-*/
-

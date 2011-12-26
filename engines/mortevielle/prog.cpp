@@ -22,10 +22,10 @@
 /* overlay */ void antegame() {
 	int cx;
 	registres regs;
-	array<0, 511, char> buffer;
+	char buffer[512];
 	int i, j, k;
-	array<0, 2, boolean> test;
-	array<0, 7, char> g;
+	boolean test[3];
+	char g[8];
 
 
 	hide_mouse();
@@ -36,7 +36,7 @@
 	okdes = true;
 	test[0] = false;
 	test[1] = false;
-	g[0] = '\40';
+	g[0] = '\040';
 	col = false;
 	tesok = true;
 	test[2] = false;
