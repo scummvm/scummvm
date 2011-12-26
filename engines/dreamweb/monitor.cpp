@@ -534,20 +534,16 @@ void DreamGenContext::signOn() {
 }
 
 void DreamGenContext::searchForFiles(uint16 segment) {
-	uint16 offset = kTextstart;
+	const char *filesString = (const char *)getSegment(segment).ptr(kTextstart, 0);
 	byte curChar;
 
 	while (true) {
-		curChar = getSegment(segment).byte(offset);
-		offset++;
+		curChar = filesString[0];
+		filesString++;
 		if (curChar == '*')
 			return; // "endofdir"
-		if (curChar == 34) {
-			uint16 originalOffset = offset;
-			const char *string = (const char *)getSegment(segment).ptr(offset, 0);
-			const char *nextString = monPrint(string);
-			offset = originalOffset + (nextString - string);
-		}
+		if (curChar == 34)
+			filesString = monPrint(filesString);
 	}
 }
 
