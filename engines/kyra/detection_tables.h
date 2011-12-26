@@ -1454,7 +1454,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK)
 		},
 		EOB_FLAGS
@@ -1470,7 +1470,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK)
 		},
 		EOB_FLAGS
@@ -1486,7 +1486,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK)
 		},
 		EOB2_FLAGS
@@ -1502,7 +1502,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK)
 		},
 		EOB2_FLAGS
