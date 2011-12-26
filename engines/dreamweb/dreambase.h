@@ -64,6 +64,9 @@ protected:
 	// from keypad.cpp
 	uint8 _pressList[6];
 
+	// from monitor.cpp
+	char _inputLine[64];
+
 	// from newplace.cpp
 	uint8 _roomsCanGo[16];
 

@@ -111,8 +111,7 @@ bool DreamGenContext::execCommand() {
 		"KEYS"
 	};
 
-	const char *inputLine = (const char *)data.ptr(kInputline, 64);
-	if (*inputLine == 0) {
+	if (_inputLine[0] == 0) {
 		// No input
 		scrollMonitor();
 		return false;
@@ -123,7 +122,7 @@ bool DreamGenContext::execCommand() {
 	// Loop over all commands in the list and see if we get a match
 	for (cmd = 0; cmd < ARRAYSIZE(comlist); ++cmd) {
 		const char *cmdStr = comlist[cmd];
-		const char *inputStr = inputLine;
+		const char *inputStr = _inputLine;
 		// Compare the command, char by char, to see if we get a match.
 		// We only care about the prefix matching, though.
 		char inputChar, cmdChar;
@@ -191,8 +190,7 @@ void DreamBase::printLogo() {
 }
 
 void DreamBase::input() {
-	char *inputLine = (char *)data.ptr(kInputline, 64);
-	memset(inputLine, 0, 64);
+	memset(_inputLine, 0, 64);
 	data.word(kCurpos) = 0;
 	printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
 	multiDump(data.word(kMonadx), data.word(kMonady), 6, 8);
@@ -221,13 +219,13 @@ void DreamBase::input() {
 		if ((currentKey == 32) && (data.word(kCurpos) == 0))
 			continue;
 		currentKey = makeCaps(currentKey);
-		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
+		_inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
 		multiGet(mapStore() + data.word(kCurpos) * 256, data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
 		printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
-		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
+		_inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
 		data.word(kMonadx) += charWidth;
 		++data.word(kCurpos);
 		data.word(kCurslocx) += charWidth;
@@ -246,10 +244,9 @@ byte DreamBase::makeCaps(byte c) {
 }
 
 void DreamBase::delChar() {
-	char *inputLine = (char *)data.ptr(kInputline, 0);
 	--data.word(kCurpos);
-	inputLine[data.word(kCurpos) * 2] = 0;
-	uint8 width = inputLine[data.word(kCurpos) * 2 + 1];
+	_inputLine[data.word(kCurpos) * 2] = 0;
+	uint8 width = _inputLine[data.word(kCurpos) * 2 + 1];
 	data.word(kMonadx) -= width;
 	data.word(kCurslocx) -= width;
 	uint16 offset = data.word(kCurpos);
@@ -587,7 +584,7 @@ void DreamGenContext::signOn() {
 	data.word(kMonadx) = prevX;
 	data.word(kMonady) = prevY;
 
-	inputLine = (const char *)data.ptr(kInputline, 0);
+	inputLine = (const char *)_inputLine;
 	inputLine.toUppercase();
 
 	// The entered line has zeroes in-between each character
@@ -634,7 +631,7 @@ const char *DreamBase::parser() {
 	char *p = output;
 	*p++ = '=';
 
-	const char *in = (const char *)data.ptr(kInputline, 0);
+	const char *in = _inputLine;
 
 	uint8 c;
 

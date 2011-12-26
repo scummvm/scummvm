@@ -54,6 +54,7 @@ p = parser(skip_binary_data = [
 	'roomscango',
 	'oplist',
 	'presslist',
+	'inputline',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
