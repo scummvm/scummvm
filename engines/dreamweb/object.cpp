@@ -276,31 +276,6 @@ void DreamBase::getBackFromOb() {
 		blank();
 }
 
-void DreamGenContext::getOpenedSize() {
-	//ah = getOpenedSlotSize();
-	//ah = getOpenedSlotCount();
-
-	// We need to call the ASM-style versions of get*Ad, as these also set
-	// bx and es
-
-	al = data.byte(kOpenedob);
-
-	switch (data.byte(kOpenedtype)) {
-	case 4:
-		getExAd();
-		ax = es.word(bx+7);
-		break;
-	case 2:
-		getFreeAd();
-		ax = es.word(bx+7);
-		break;
-	default:
-		getSetAd();
-		ax = es.word(bx+3);
-		break;
-	}
-}
-
 byte DreamBase::getOpenedSlotCount() {
 	byte obj = data.byte(kOpenedob);
 	switch (data.byte(kOpenedtype)) {
@@ -1092,7 +1067,7 @@ void DreamBase::fillOpen() {
 	for (uint8 i = 0; i < size; ++i) {
 		uint8 index = openInvList[2*i]; 
 		uint8 type = openInvList[2*i + 1];
-		obToInv(index, type, kInventx + (i-1)*kItempicsize, kInventy + 96);
+		obToInv(index, type, kInventx + i * kItempicsize, kInventy + 96);
 	}
 	underTextLine();
 }

@@ -118,7 +118,6 @@
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	bool execCommand();
-	void getOpenedSize();
 	bool checkObjectSizeCPP();
 	void identifyOb();
 	void selectOb();
