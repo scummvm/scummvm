@@ -133,7 +133,7 @@ void DreamBase::doLoad(int savegameId) {
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
 	startup();
-	workToScreenCPP();
+	workToScreen();
 	data.byte(kGetback) = 4;
 }
 
@@ -220,7 +220,7 @@ void DreamBase::saveGame() {
 		data.word(kTextaddressy) = 182;
 		data.byte(kTextlen) = 240;
 		redrawMainScrn();
-		workToScreenCPP();	// show the main screen without the mouse pointer
+		workToScreen();	// show the main screen without the mouse pointer
 
 		// We need to save after the scene has been redrawn, to capture the
 		// correct screen thumbnail
@@ -265,7 +265,7 @@ void DreamBase::doSaveLoad() {
 	loadSaveBox();
 	showOpBox();
 	showMainOps();
-	workToScreenCPP();
+	workToScreen();
 
 	RectWithCallback<DreamGenContext> opsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::getBackFromOps },
@@ -745,7 +745,7 @@ void DreamBase::selectSlot() {
 		showSaveOps();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 

@@ -24,7 +24,6 @@
 
 	void screenUpdate();
 	void startup1();
-	void workToScreen();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiGet(dst, x, y, width, height);
@@ -48,21 +47,10 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void showFrame();
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
-		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag, width, height);
-	}
-	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
-		DreamBase::showFrame(frameData, x, y, frameNumber, effectsFlag);
-	}
 	void width160();
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);
-	void commandWithOb();
-	void commandWithOb(uint8 command, uint8 type, uint8 index) {
-		DreamBase::commandWithOb(command, type, index);
-	}
 	DynObject *getFreeAd(uint8 index) {
 		return DreamBase::getFreeAd(index);
 	}
@@ -80,19 +68,11 @@
 
 	void getExPos();
 	bool checkIfSet(uint8 x, uint8 y);
-	void isItWorn();
-	bool isItWorn(const DynObject *object) {
-		return DreamBase::isItWorn(object);
-	}
 	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		DreamBase::obToInv(index, flag, x, y);
 	}
 	void useRoutine();
-	void hangOn();
-	void hangOn(uint16 frameCount) {
-		DreamBase::hangOn(frameCount);
-	}
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
 	void transferText();
@@ -115,10 +95,6 @@
 	void monMessage(uint8 index) {
 		DreamBase::monMessage(index);
 	}
-	void playChannel1();
-	void playChannel1(uint8 index) {
-		DreamBase::playChannel1(index);
-	}
 	void look();
 	void autoLook();
 	void doLook();
@@ -131,45 +107,25 @@
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
-	void hangOne(uint16 delay);
-	void hangOne();
-	void bibleQuote();
-	void realCredits();
-	void runIntroSeq();
-	void intro();
 	void pickupOb(uint8 command, uint8 pos);
 	void initialInv();
 	void walkIntoRoom();
-	void loadIntroRoom();
-	void afterIntroRoom();
-	void gettingShot();
 	void allPointer();
-	void delEverything();
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();
-	void loadSpeech();
-	bool loadSpeech(byte type1, int idx1, byte type2, int idx2) {
-		return DreamBase::loadSpeech(type1, idx1, type2, idx2);
-	}
-	void set16ColPalette();
 	void afterNewRoom();
 	void madmanRun();
 	void decide();
 	void showGun();
-	void endGame();
-	void monkSpeaking();
-	void rollEndCredits2();
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	void updateSymbolTop();
 	void updateSymbolBot();
-	void runEndSeq();
 	bool execCommand();
 	void getOpenedSize();
 	byte getOpenedSlotSize();
 	byte getOpenedSlotCount();
-	void checkObjectSize();
 	bool checkObjectSizeCPP();
 	void openOb();
 	void identifyOb();

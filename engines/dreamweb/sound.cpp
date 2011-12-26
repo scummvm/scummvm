@@ -30,10 +30,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::loadSpeech() {
-	loadSpeech((uint8)dl, (uint8)dh, (uint8)cl, (uint16)ax);
-}
-
 bool DreamBase::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 	cancelCh1();
 
@@ -85,10 +81,6 @@ void DreamBase::playChannel1(uint8 index) {
 		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
 	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
-}
-
-void DreamGenContext::playChannel1() {
-	playChannel1(al);
 }
 
 void DreamBase::cancelCh0() {

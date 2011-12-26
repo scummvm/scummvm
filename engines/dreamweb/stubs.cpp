@@ -508,7 +508,7 @@ void DreamGenContext::dreamweb() {
 			clearPalette();
 
 			doLoad(savegameId);
-			workToScreenCPP();
+			workToScreen();
 			fadeScreenUp();
 			startNewGame = false;
 
@@ -728,7 +728,7 @@ void DreamGenContext::startup1() {
 
 	startup();
 
-	workToScreenCPP();
+	workToScreen();
 	fadeScreenUp();
 }
 
@@ -849,10 +849,10 @@ void DreamGenContext::triggerMessage(uint16 index) {
 	uint16 y = 156;
 	printDirect(&string, 174, &y, 141, true);
 	hangOn(140);
-	workToScreenCPP();
+	workToScreen();
 	hangOn(340);
 	multiPut(mapStore(), 174, 153, 200, 63);
-	workToScreenCPP();
+	workToScreen();
 	data.byte(kLasttrigger) = 0;
 }
 
@@ -1233,10 +1233,6 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 		dst[i] = c;
 	}
 	dst[i] = 0;
-}
-
-void DreamGenContext::commandWithOb() {
-	commandWithOb(al, bh, bl);
 }
 
 void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
@@ -1750,10 +1746,6 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 		return true;
 	}
 	return false;
-}
-
-void DreamGenContext::hangOn() {
-	hangOn(cx);
 }
 
 void DreamBase::hangOn(uint16 frameCount) {
@@ -2498,7 +2490,7 @@ void DreamBase::workToScreenM() {
 	readMouse();
 	showPointer();
 	vSync();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -2765,7 +2757,7 @@ void DreamGenContext::walkIntoRoom() {
 	}
 }
 
-void DreamGenContext::afterIntroRoom() {
+void DreamBase::afterIntroRoom() {
 	if (data.byte(kNowinnewroom) == 0)
 		return; // notnewintro
 
@@ -2776,7 +2768,7 @@ void DreamGenContext::afterIntroRoom() {
 	reelsOnScreen();
 	spriteUpdate();
 	printSprites();
-	workToScreenCPP();
+	workToScreen();
 	data.byte(kNowinnewroom) = 0;
 }
 
@@ -2869,7 +2861,7 @@ void DreamBase::describeOb() {
 	}
 }
 
-void DreamGenContext::delEverything() {
+void DreamBase::delEverything() {
 	if (data.byte(kMapysize) + data.word(kMapoffsety) < 182) {
 		mapToPanel();
 	} else {
@@ -2885,7 +2877,7 @@ void DreamGenContext::errorMessage1() {
 	printMessage(76, 21, 58, 240, (240 & 1));
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	hangOnP(50);
 	showPanel();
@@ -2894,7 +2886,7 @@ void DreamGenContext::errorMessage1() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -2904,7 +2896,7 @@ void DreamGenContext::errorMessage2() {
 	printMessage(76, 21, 59, 240, (240 & 1));
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	hangOnP(50);
 	showPanel();
@@ -2913,7 +2905,7 @@ void DreamGenContext::errorMessage2() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -2928,7 +2920,7 @@ void DreamGenContext::errorMessage3() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -2948,7 +2940,7 @@ void DreamBase::putBackObStuff() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -3133,7 +3125,7 @@ void DreamGenContext::decide() {
 	data.byte(kManisoffscreen) = 1;
 	loadSaveBox();
 	showDecisions();
-	workToScreenCPP();
+	workToScreen();
 	fadeScreenUp();
 	data.byte(kGetback) = 0;
 
@@ -3192,7 +3184,7 @@ void DreamGenContext::showGun() {
 	createPanel2();
 	showFrame(tempGraphics(), 100, 4, 0, 0);
 	showFrame(tempGraphics(), 158, 106, 1, 0);
-	workToScreenCPP();
+	workToScreen();
 	getRidOfTemp();
 	fadeScreenUp();
 	hangOn(160);
@@ -3696,7 +3688,7 @@ void DreamBase::incRyanPage() {
 	fillRyan();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 
 }

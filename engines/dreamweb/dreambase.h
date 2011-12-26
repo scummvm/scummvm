@@ -564,6 +564,19 @@ public:
 	bool hangOnPQ();
 	void redes();
 
+	// from titles.cpp
+	void endGame();
+	void monkSpeaking();
+	void gettingShot();
+	void bibleQuote();
+	void hangOne(uint16 delay);
+	void intro();
+	void runIntroSeq();
+	void runEndSeq();
+	void loadIntroRoom();
+	void set16ColPalette();
+	void realCredits();
+
 	// from use.cpp
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);
@@ -653,6 +666,8 @@ public:
 	void useTrainer();
 	void useStereo();
 	void chewy();
+	void delEverything();
+	void afterIntroRoom();
 
 	// from vgafades.cpp
 	void clearStartPal();
@@ -693,7 +708,7 @@ public:
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
-	void workToScreenCPP();
+	void workToScreen();
 	void printUnderMon();
 	void cls();
 	void frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y);
@@ -711,6 +726,8 @@ public:
 	void createPanel();
 	void createPanel2();
 	void showPanel();
+	void rollEndCredits2();
+	void rollEm();
 };
 
 

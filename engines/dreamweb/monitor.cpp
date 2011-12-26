@@ -61,7 +61,7 @@ void DreamGenContext::useMon() {
 	printOuterMon();
 	initialMonCols();
 	printLogo();
-	workToScreenCPP();
+	workToScreen();
 	turnOnPower();
 	fadeUpYellows();
 	fadeUpMonFirst();
@@ -174,7 +174,7 @@ void DreamBase::monitorLogo() {
 		//fadeDownMon(); // FIXME: Commented out in ASM
 		printLogo();
 		printUnderMon();
-		workToScreenCPP();
+		workToScreen();
 		printLogo();
 		//fadeUpMon(); // FIXME: Commented out in ASM
 		printLogo();
@@ -291,7 +291,7 @@ void DreamBase::delCurs() {
 void DreamBase::scrollMonitor() {
 	printLogo();
 	printUnderMon();
-	workToScreenCPP();
+	workToScreen();
 	playChannel1(25);
 }
 

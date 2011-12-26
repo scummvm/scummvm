@@ -281,8 +281,53 @@ void DreamBase::dumpCurrent() {
 	engine->setPalette(pal, 128, 128);
 }
 
-void DreamGenContext::rollEndCredits2() {
+void DreamBase::rollEndCredits2() {
 	rollEm();
+}
+
+void DreamBase::rollEm() {
+	// Note: This function is very similar to rollEndCredits() in sprite.cpp
+
+	multiGet(mapStore(), 25, 20, 160, 160);
+
+	const uint8 *string = getTextInFile1(49);
+	const int linespacing = data.word(kLinespacing);
+
+	for (int i = 0; i < 80; ++i) {
+		// Output the text, initially with an offset of 10 pixels,
+		// then move it up one pixel until we shifted it by a complete
+		// line of text.
+		for (int j = 0; j < linespacing; ++j) {
+			vSync();
+			multiPut(mapStore(), 25, 20, 160, 160);
+			vSync();
+
+			// Output up to 18 lines of text
+			uint16 y = 10 - j;
+			const uint8 *tmp_str = string;
+			for (int k = 0; k < 18; ++k) {
+				DreamBase::printDirect(&tmp_str, 25, &y, 160 + 1, true);
+				y += linespacing;
+			}
+
+			vSync();
+			multiDump(25, 20, 160, 160);
+
+			if (data.byte(kLasthardkey) == 1)
+				return;
+		}
+
+		// Skip to the next text line
+		byte c;
+		do {
+			c = *string++;
+		} while (c != ':' && c != 0);
+
+		if (data.byte(kLasthardkey) == 1)
+			return;
+	}
+
+	hangOne(120);
 }
 
 } // End of namespace DreamGen

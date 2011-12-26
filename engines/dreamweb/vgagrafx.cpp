@@ -86,15 +86,8 @@ void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
-void DreamBase::workToScreenCPP() {
+void DreamBase::workToScreen() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
-}
-
-void DreamGenContext::workToScreen() {
-	workToScreenCPP();
-	uint size = 320 * 200;
-	di = si = size;
-	cx = 0;
 }
 
 void DreamBase::printUnderMon() {
@@ -358,13 +351,6 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 //noEffects:
 	frameOutV(workspace(), pSrc, 320, *width, *height, x, y);
 	return;
-}
-
-void DreamGenContext::showFrame() {
-	uint8 width, height;
-	showFrame((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
-	cl = width;
-	ch = height;
 }
 
 void DreamBase::clearWork() {
