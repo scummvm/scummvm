@@ -47,30 +47,15 @@
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);
-	DynObject *getFreeAd(uint8 index) {
-		return DreamBase::getFreeAd(index);
-	}
-	DynObject *getExAd(uint8 index) {
-		return DreamBase::getExAd(index);
-	}
-	void *getAnyAd(uint8 *slotSize, uint8 *slotCount) {
-		return DreamBase::getAnyAd(slotSize, slotCount);
-	}
-	SetObject *getSetAd(uint8 index) {
-		return DreamBase::getSetAd(index);
-	}
 	void walkAndExamine();
 	void obName(uint8 command, uint8 commandType);
 
 	bool checkIfSet(uint8 x, uint8 y);
-	void obToInv();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		DreamBase::obToInv(index, flag, x, y);
 	}
 	void useRoutine();
 	void examineOb(bool examineAgain = true);
-	void dumpWatch();
-	void watchCount();
 	void readSetData();
 	void useMon();
 	void makeCaps();
@@ -94,24 +79,18 @@
 	void doLook();
 	void useKey();
 	void useObject();
-	void singleKey(uint8 key, uint16 x, uint16 y);
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
 	void initialInv();
 	void walkIntoRoom();
-	void allPointer();
 	void afterNewRoom();
 	void madmanRun();
 	void showGun();
-	void triggerMessage(uint16 index);
-	void processTrigger();
 	bool execCommand();
 	void identifyOb();
 	void selectOb();
 	void getKeyAndLogo();
-	void signOn();
-	void searchForFiles(uint16 segment);
 	void read();
 	void dirCom();
 

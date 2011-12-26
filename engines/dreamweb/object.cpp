@@ -78,10 +78,6 @@ void DreamBase::makeWorn(DynObject *object) {
 	object->id[1] = 'E'-'A';
 }
 
-void DreamGenContext::obToInv() {
-	obToInv(al, ah, di, bx);
-}
-
 void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	showFrame(engine->icons1(), x - 2, y - 1, 10, 0);
 	if (index == 0xff)

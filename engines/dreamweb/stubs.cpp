@@ -842,7 +842,7 @@ void DreamBase::putUnderTimed() {
 		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
 }
 
-void DreamGenContext::triggerMessage(uint16 index) {
+void DreamBase::triggerMessage(uint16 index) {
 	multiGet(mapStore(), 174, 153, 200, 63);
 	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
@@ -856,7 +856,7 @@ void DreamGenContext::triggerMessage(uint16 index) {
 	data.byte(kLasttrigger) = 0;
 }
 
-void DreamGenContext::processTrigger() {
+void DreamBase::processTrigger() {
 	if (data.byte(kLasttrigger) == '1') {
 		setLocation(8);
 		triggerMessage(45);
@@ -1937,7 +1937,7 @@ void DreamBase::showWatch() {
 	}
 }
 
-void DreamGenContext::dumpWatch() {
+void DreamBase::dumpWatch() {
 	if (data.byte(kWatchdump) != 1)
 		return;
 	multiDump(256, 21, 40, 12);
@@ -1965,7 +1965,7 @@ void DreamBase::showTime() {
 	showFrame(charset, 267+5, 21, 91*3+20, 0);
 }
 
-void DreamGenContext::watchCount() {
+void DreamBase::watchCount() {
 	if (data.byte(kWatchon) == 0)
 		return;
 	++data.byte(kTimercount);
@@ -2785,7 +2785,7 @@ void DreamBase::blank() {
 	}
 }
 
-void DreamGenContext::allPointer() {
+void DreamBase::allPointer() {
 	readMouse();
 	showPointer();
 	dumpPointer();

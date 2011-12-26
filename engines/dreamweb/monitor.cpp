@@ -551,7 +551,7 @@ void DreamGenContext::read() {
 	}
 }
 
-void DreamGenContext::signOn() {
+void DreamBase::signOn() {
 	const char *name = parser();
 
 	int8 foundIndex = -1;
@@ -609,7 +609,7 @@ void DreamGenContext::signOn() {
 	}
 }
 
-void DreamGenContext::searchForFiles(uint16 segment) {
+void DreamBase::searchForFiles(uint16 segment) {
 	const char *filesString = (const char *)getSegment(segment).ptr(kTextstart, 0);
 	byte curChar;
 

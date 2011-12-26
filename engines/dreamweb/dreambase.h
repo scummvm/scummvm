@@ -595,6 +595,13 @@ public:
 	void errorMessage2();
 	void errorMessage3();
 	void decide();
+	void allPointer();
+	void dumpWatch();
+	void watchCount();
+	void signOn();
+	void searchForFiles(uint16 segment);
+	void triggerMessage(uint16 index);
+	void processTrigger();
 
 	// from talk.cpp
 	void talk();
