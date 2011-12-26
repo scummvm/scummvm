@@ -2757,7 +2757,7 @@ void DreamGenContext::walkIntoRoom() {
 	}
 }
 
-void DreamGenContext::afterIntroRoom() {
+void DreamBase::afterIntroRoom() {
 	if (data.byte(kNowinnewroom) == 0)
 		return; // notnewintro
 
@@ -2861,7 +2861,7 @@ void DreamBase::describeOb() {
 	}
 }
 
-void DreamGenContext::delEverything() {
+void DreamBase::delEverything() {
 	if (data.byte(kMapysize) + data.word(kMapoffsety) < 182) {
 		mapToPanel();
 	} else {

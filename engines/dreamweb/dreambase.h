@@ -564,7 +564,17 @@ public:
 	void redes();
 
 	// from titles.cpp
+	void endGame();
+	void monkSpeaking();
+	void gettingShot();
+	void bibleQuote();
 	void hangOne(uint16 delay);
+	void intro();
+	void runIntroSeq();
+	void runEndSeq();
+	void loadIntroRoom();
+	void set16ColPalette();
+	void realCredits();
 
 	// from use.cpp
 	void placeFreeObject(uint8 index);
@@ -655,6 +665,8 @@ public:
 	void useTrainer();
 	void useStereo();
 	void chewy();
+	void delEverything();
+	void afterIntroRoom();
 
 	// from vgafades.cpp
 	void clearStartPal();

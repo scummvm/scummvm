@@ -25,7 +25,7 @@
 
 namespace DreamGen {
 
-void DreamGenContext::endGame() {
+void DreamBase::endGame() {
 	loadTempText("DREAMWEB.T83");
 	monkSpeaking();
 	gettingShot();
@@ -35,7 +35,7 @@ void DreamGenContext::endGame() {
 	hangOn(200);
 }
 
-void DreamGenContext::monkSpeaking() {
+void DreamBase::monkSpeaking() {
 	// FIXME: This is the CD version only.
 
 	data.byte(kRoomssample) = 35;
@@ -68,7 +68,7 @@ void DreamGenContext::monkSpeaking() {
 	getRidOfTemp();
 }
 
-void DreamGenContext::gettingShot() {
+void DreamBase::gettingShot() {
 	data.byte(kNewlocation) = 55;
 	clearPalette();
 	loadIntroRoom();
@@ -79,7 +79,7 @@ void DreamGenContext::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamGenContext::bibleQuote() {
+void DreamBase::bibleQuote() {
 	initGraphics(640, 480, true);
 
 	showPCX("DREAMWEB.I00");
@@ -118,7 +118,7 @@ void DreamBase::hangOne(uint16 delay) {
 	} while	(--delay);
 }
 
-void DreamGenContext::intro() {
+void DreamBase::intro() {
 	loadTempText("DREAMWEB.T82");
 	loadPalFromIFF();
 	setMode();
@@ -174,7 +174,7 @@ void DreamGenContext::intro() {
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::runIntroSeq() {
+void DreamBase::runIntroSeq() {
 	data.byte(kGetback) = 0;
 
 	do {
@@ -220,7 +220,7 @@ void DreamGenContext::runIntroSeq() {
 	//clearBeforeLoad();
 }
 
-void DreamGenContext::runEndSeq() {
+void DreamBase::runEndSeq() {
 	atmospheres();
 	data.byte(kGetback) = 0;
 
@@ -240,7 +240,7 @@ void DreamGenContext::runEndSeq() {
 	} while (data.byte(kGetback) != 1);
 }
 
-void DreamGenContext::loadIntroRoom() {
+void DreamBase::loadIntroRoom() {
 	data.byte(kIntrocount) = 0;
 	data.byte(kLocation) = 255;
 	loadRoom();
@@ -259,10 +259,10 @@ void DreamGenContext::loadIntroRoom() {
 	workToScreen();
 }
 
-void DreamGenContext::set16ColPalette() {
+void DreamBase::set16ColPalette() {
 }
 
-void DreamGenContext::realCredits() {
+void DreamBase::realCredits() {
 	data.byte(kRoomssample) = 33;
 	loadRoomsSample();
 	data.byte(kVolume) = 0;
