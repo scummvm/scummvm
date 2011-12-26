@@ -44,6 +44,9 @@ Script::Script(Myst3Engine *vm):
 	OP_3(  8, nodeFrameInitCond, 			kCondition,	kEvalValue,	kEvalValue							);
 	OP_5(  9, nodeFrameInitIndex,			kVar,		kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
 	OP_0( 11, stopWholeScript																			);
+	OP_1( 13, spotItemAdd,					kValue														);
+	OP_2( 14, spotItemAddCond,				kValue,		kCondition										);
+	OP_2( 15, spotItemAddCondFade,			kValue,		kCondition										);
 	OP_1( 17, movieInitLooping, 			kEvalValue													);
 	OP_2( 18, movieInitCondLooping,			kEvalValue,	kCondition										);
 	OP_2( 19, movieInitCond,				kEvalValue,	kCondition										);
@@ -58,7 +61,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 44, inventoryAddFront,			kVar,		kValue											);
 	OP_2( 45, inventoryAddBack,				kVar,		kValue											);
 	OP_1( 46, inventoryRemove,				kVar														);
-	OP_0( 47, inventoryReset,																			);
+	OP_0( 47, inventoryReset																			);
 	OP_1( 49, varSetZero,					kVar														);
 	OP_1( 50, varSetOne,					kVar														);
 	OP_1( 51, varSetTwo,					kVar														);
@@ -311,6 +314,24 @@ void Script::stopWholeScript(Context &c, const Opcode &cmd) {
 
 	c.result = false;
 	c.endScript = true;
+}
+
+void Script::spotItemAdd(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Draw spotitem %d", cmd.op, cmd.args[0]);
+
+	_vm->addSpotItem(cmd.args[0], 1, false);
+}
+
+void Script::spotItemAddCond(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add spotitem %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->addSpotItem(cmd.args[0], cmd.args[1], false);
+}
+
+void Script::spotItemAddCondFade(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add fading spotitem %d for var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->addSpotItem(cmd.args[0], cmd.args[1], true);
 }
 
 void Script::movieInitLooping(Context &c, const Opcode &cmd) {

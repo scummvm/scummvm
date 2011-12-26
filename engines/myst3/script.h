@@ -99,6 +99,9 @@ private:
 	DECLARE_OPCODE(nodeFrameInitCond);
 	DECLARE_OPCODE(nodeFrameInitIndex);
 	DECLARE_OPCODE(stopWholeScript);
+	DECLARE_OPCODE(spotItemAdd);
+	DECLARE_OPCODE(spotItemAddCond);
+	DECLARE_OPCODE(spotItemAddCondFade);
 	DECLARE_OPCODE(movieInitLooping);
 	DECLARE_OPCODE(movieInitCondLooping);
 	DECLARE_OPCODE(movieInitCond);

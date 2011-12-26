@@ -399,4 +399,8 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 	_drawables.pop_back();
 }
 
+void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
+	warning("Spotitems are not implemented");
+}
+
 } // end of namespace Myst3

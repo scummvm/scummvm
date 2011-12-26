@@ -78,6 +78,8 @@ public:
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playSimpleMovie(uint16 id);
 
+	void addSpotItem(uint16 id, uint16 condition, bool fade);
+
 	void processInput(bool lookOnly);
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
