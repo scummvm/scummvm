@@ -1,4 +1,4 @@
-void chardes(str11 nom, long_int passe, int long_) {
+void chardes(Common::String nom, long_int passe, int long_) {
 	int i, p, l;
 	byte b;
 	untyped_file f;
@@ -28,7 +28,7 @@ void chardes(str11 nom, long_int passe, int long_) {
 	/*$i+*/
 }
 
-void charani(str11 nom, long_int passe, int long_) {
+void charani(Common::String nom, long_int passe, int long_) {
 	int i, p, l;
 	byte b;
 	untyped_file f;
@@ -70,7 +70,7 @@ void taffich() {
 	int i, m, a, b, cx, handle,
 	        npal;
 	long_int lgt, lhandle;
-	str11 nom;
+	Common::String nom;
 	int palh, k, j;
 	array<0, 15, int> alllum;
 

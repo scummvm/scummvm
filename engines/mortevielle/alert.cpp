@@ -1,4 +1,4 @@
-/* overlay */ int do_alert(str255 str_, int n);
+/* overlay */ int do_alert(Common::String str_, int n);
 
 
 const int nligne = 7;
@@ -10,7 +10,7 @@ const matrix<1, 2, 1, 3, int> coord
 
 
 
-static void decod(str255 s, int &nbc, int &nbl, int &col, str255 &c, str30 &cs) {
+static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs) {
 	int i, k;
 	boolean v;
 
@@ -68,7 +68,7 @@ static void fait_boite(int lidep, int nli, int tx) {
 
 
 
-static void fait_choix(str30 c, int &coldep, int &nbcase, array<1, 2, varying_string<3> > &s, int &esp) {
+static void fait_choix(Common::String c, int &coldep, int &nbcase, array<1, 2, varying_string<3> > &s, int &esp) {
 	int i, l, x;
 	char ch;
 
@@ -89,15 +89,15 @@ static void fait_choix(str30 c, int &coldep, int &nbcase, array<1, 2, varying_st
 	}
 }
 
-int do_alert(str255 str_, int n) {
+int do_alert(Common::String str_, int n) {
 	int coldep, esp, i, l, nbcase, quoi, ix;
-	str255 st, chaine;
+	Common::String st, chaine;
 	matrix<1, 2, 1, 2, int> limit;
 	char c, dumi;
 	array<1, 2, varying_string<3> > s;
 	int cx, cy, cd, nbcol, nblig;
 	boolean touch, newaff, test, test1, test2, test3, dum;
-	str30 cas;
+	Common::String cas;
 
 
 	/*debug('** do_alert **');*/

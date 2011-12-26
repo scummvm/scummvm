@@ -1,4 +1,4 @@
-str255 delig;
+Common::String delig;
 const array<0, 31, byte> tabdr
 = {{
 		32, 101, 115,  97, 114, 105, 110,

@@ -1,8 +1,8 @@
 /* NIVEAU 14*/
 
-/* overlay */ void menut(int no, str30 nom) {
+/* overlay */ void menut(int no, Common::String nom) {
 	byte h, l;
-	str30 s;
+	Common::String s;
 
 
 	/* debug('menut'); */

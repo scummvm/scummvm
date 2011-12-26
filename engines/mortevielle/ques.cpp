@@ -16,7 +16,7 @@
 	phrase st;
 	char key;
 	mult_rect coor;
-	array<1, 14, str40> chaines;
+	array<1, 14, Common::String> chaines;
 	int compte;
 
 
