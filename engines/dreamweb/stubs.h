@@ -121,8 +121,6 @@
 	bool checkObjectSizeCPP();
 	void identifyOb();
 	void selectOb();
-	void findInvPos();
-	uint16 findInvPosCPP();
 	void setPickup();
 	void getKeyAndLogo();
 	void signOn();

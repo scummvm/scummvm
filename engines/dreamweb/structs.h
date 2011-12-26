@@ -281,6 +281,18 @@ enum ObjectTypes {
 	kExObjectType = 4
 };
 
+struct ObjectRef {
+	uint8 _index;
+	uint8 _type; // enum ObjectTypes
+
+	bool operator==(const ObjectRef &r) const {
+		return _index == r._index && _type == r._type;
+	}
+	bool operator!=(const ObjectRef &r) const {
+		return _index != r._index || _type != r._type;
+	}
+};
+
 } // End of namespace DreamWeb
 
 #endif

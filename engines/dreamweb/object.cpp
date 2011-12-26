@@ -29,30 +29,28 @@ void DreamBase::showRyanPage() {
 	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
 
-void DreamBase::findAllRyan(uint8 *inv) {
-	memset(inv, 0xff, 60);
+void DreamBase::findAllRyan() {
+	memset(_ryanInvList, 0xff, 60);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		DynObject *extra = getExAd(i);
-		if (extra->mapad[0] != 4)
+		const DynObject *extra = getExAd(i);
+		if (extra->mapad[0] != kExObjectType)
 			continue;
 		if (extra->mapad[1] != 0xff)
 			continue;
 		uint8 slot = extra->mapad[2];
 		assert(slot < 30);
-		inv[2 * slot + 0] = i;
-		inv[2 * slot + 1] = 4;
+		_ryanInvList[slot]._index = i;
+		_ryanInvList[slot]._type = kExObjectType;
 	}
 }
 
 void DreamBase::fillRyan() {
-	uint8 *inv = getSegment(data.word(kBuffers)).ptr(kRyaninvlist, 60);
-	findAllRyan(inv);
-	inv += data.byte(kRyanpage) * 2 * 10;
+	ObjectRef *inv = &_ryanInvList[data.byte(kRyanpage) * 10];
+	findAllRyan();
 	for (size_t i = 0; i < 2; ++i) {
 		for (size_t j = 0; j < 5; ++j) {
-			uint8 objIndex = *inv++;
-			uint8 objType = *inv++;
-			obToInv(objIndex, objType, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
+			obToInv(inv->_index, inv->_type, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
+			++inv;
 		}
 	}
 	showRyanPage();
@@ -350,35 +348,30 @@ void DreamGenContext::identifyOb() {
 		blank();
 }
 
-uint16 DreamGenContext::findInvPosCPP() {
+ObjectRef DreamBase::findInvPos() {
 	uint16 x = data.word(kMousex) - kInventx;
 	uint16 y = data.word(kMousey) - kInventy;
-	uint16 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
-	uint16 invPos = data.byte(kRyanpage) * 10 + pos;
-	data.byte(kLastinvpos) = invPos & 0xFF;
-	return invPos * 2 + kRyaninvlist;
-}
-
-void DreamGenContext::findInvPos() {
-	bx = findInvPosCPP();
-	es = data.word(kBuffers);
+	uint8 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
+	uint8 invPos = data.byte(kRyanpage) * 10 + pos;
+	data.byte(kLastinvpos) = invPos;
+	return _ryanInvList[invPos];
 }
 
 void DreamGenContext::selectOb() {
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
-	if ((objectId & 0xFF) == 255) {
+	ObjectRef objectId = findInvPos();
+	if (objectId._index == 255) {
 		blank();
 		return;
 	}
 
-	data.byte(kWithobject) = objectId & 0x00FF;
-	data.byte(kWithtype)   = objectId >> 8;
+	data.byte(kWithobject) = objectId._index;
+	data.byte(kWithtype)   = objectId._type;
 
-	if (objectId != data.word(kOldsubject) || data.byte(kCommandtype) != 221) {
-		if (objectId == data.word(kOldsubject))
+	if (objectId != _oldSubject || data.byte(kCommandtype) != 221) {
+		if (objectId == _oldSubject)
 			data.byte(kCommandtype) = 221;
-		data.word(kOldsubject) = objectId;
-		commandWithOb(0, data.byte(kWithtype), data.byte(kWithobject));
+		_oldSubject = objectId;
+		commandWithOb(0, objectId._type, objectId._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -514,20 +507,21 @@ void DreamGenContext::inToInv() {
 		return;
 	}
 
-	uint16 subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
+	ObjectRef subject = findInvPos();
 
-	if ((subject & 0xFF) != 255) {
+	if (subject._index != 255) {
 		swapWithInv();
 		return;
 	}
 
-	subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
+	subject._type = data.byte(kObjecttype);
+	subject._index = data.byte(kItemframe);
 
-	if (subject != data.word(kOldsubject) || data.byte(kCommandtype) != 220) {
-		if (subject == data.word(kOldsubject))
+	if (subject != _oldSubject || data.byte(kCommandtype) != 220) {
+		if (subject == _oldSubject)
 			data.byte(kCommandtype) = 220;
-		data.word(kOldsubject) = subject;
-		commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+		_oldSubject = subject;
+		commandWithOb(35, subject._type, subject._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -548,9 +542,9 @@ void DreamGenContext::inToInv() {
 }
 
 void DreamGenContext::outOfInv() {
-	uint16 subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
+	ObjectRef subject = findInvPos();
 
-	if ((subject & 0xFF) == 255) {
+	if (subject._index == 255) {
 		blank();
 		return;
 	}
@@ -560,13 +554,11 @@ void DreamGenContext::outOfInv() {
 		return;
 	}
 
-	if (subject != data.word(kOldsubject) || data.byte(kCommandtype) != 221) {
-		if (subject == data.word(kOldsubject))
+	if (subject != _oldSubject || data.byte(kCommandtype) != 221) {
+		if (subject == _oldSubject)
 			data.byte(kCommandtype) = 221;
-		data.word(kOldsubject) = subject;
-		byte type = subject >> 8;
-		byte frame = subject & 0xFF;
-		commandWithOb(36, type, frame);
+		_oldSubject = subject;
+		commandWithOb(36, subject._type, subject._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -574,10 +566,11 @@ void DreamGenContext::outOfInv() {
 
 	delPointer();
 	data.byte(kPickup) = 1;
-	subject = getSegment(data.word(kBuffers)).word(findInvPosCPP());
-	data.byte(kObjecttype) = subject >> 8;
-	data.byte(kItemframe) = subject & 0xFF;
-	DynObject *object = getExAd(data.byte(kItemframe));
+	subject = findInvPos();
+	data.byte(kObjecttype) = subject._type;
+	data.byte(kItemframe) = subject._index;
+	assert(subject._type == kExObjectType);
+	DynObject *object = getExAd(subject._index);
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
 	fillRyan();
@@ -782,24 +775,26 @@ void DreamGenContext::selectOpenOb() {
 }
 
 void DreamGenContext::reExFromInv() {
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
-	data.byte(kCommandtype) = objectId >> 8;
-	data.byte(kCommand)     = objectId & 0x00FF;
+	ObjectRef objectId = findInvPos();
+	data.byte(kCommandtype) = objectId._type;
+	data.byte(kCommand)     = objectId._index;
 	data.byte(kExamagain) = 1;
 	data.byte(kPointermode) = 0;
 }
 
 void DreamGenContext::swapWithInv() {
-	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
-	if (subject == data.word(kOldsubject)) {
+	ObjectRef subject;
+	subject._type = data.byte(kObjecttype);
+	subject._index = data.byte(kItemframe);
+	if (subject == _oldSubject) {
 		if (data.byte(kCommandtype) != 243) {
 			data.byte(kCommandtype) = 243;
-			data.word(kOldsubject) = subject;
-			commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+			_oldSubject = subject;
+			commandWithOb(34, subject._type, subject._index);
 		}
 	} else {
-		data.word(kOldsubject) = subject;
-		commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+		_oldSubject = subject;
+		commandWithOb(34, subject._type, subject._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -807,9 +802,9 @@ void DreamGenContext::swapWithInv() {
 
 	byte prevType = data.byte(kObjecttype);
 	byte prevFrame = data.byte(kItemframe);
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findInvPosCPP());
-	data.byte(kItemframe)  = objectId & 0x00FF;
-	data.byte(kObjecttype) = objectId >> 8;
+	ObjectRef objectId = findInvPos();
+	data.byte(kItemframe) = objectId._index;
+	data.byte(kObjecttype) = objectId._type;
 	DynObject *object = getEitherAdCPP();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
@@ -817,7 +812,6 @@ void DreamGenContext::swapWithInv() {
 	byte prevFrame2 = data.byte(kItemframe);
 	data.byte(kObjecttype) = prevType;
 	data.byte(kItemframe) = prevFrame;
-	//findInvPosCPP();	// found in the original source, but it seems to be useless
 	delPointer();
 	object = getEitherAdCPP();
 	object->mapad[0] = 4;
@@ -841,9 +835,9 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
+	ObjectRef objectId = findOpenPos();
 
-	if ((objectId & 0x00FF) != 255) {
+	if (objectId._index != 255) {
 		swapWithOpen();
 		return;
 	}
@@ -853,16 +847,17 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	objectId = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
-	if (objectId == data.word(kOldsubject)) {
+	objectId._type = data.byte(kObjecttype);
+	objectId._index = data.byte(kItemframe);
+	if (objectId == _oldSubject) {
 		if (data.byte(kCommandtype) != 227) {
 			data.byte(kCommandtype) = 227;
-			data.word(kOldsubject) = objectId;
-			commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+			_oldSubject = objectId;
+			commandWithOb(35, objectId._type, objectId._index);
 		}
 	} else {
-		data.word(kOldsubject) = objectId;
-		commandWithOb(35, data.byte(kObjecttype), data.byte(kItemframe));
+		_oldSubject = objectId;
+		commandWithOb(35, objectId._type, objectId._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -903,22 +898,22 @@ void DreamGenContext::outOfOpen() {
 	if (data.byte(kOpenedob) == 255)
 		return;	// cannot use opened object
 
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
+	ObjectRef objectId = findOpenPos();
 
-	if ((objectId & 0x00FF) == 255) {
+	if (objectId._index == 255) {
 		blank();
 		return;
 	}
 
-	if (objectId == data.word(kOldsubject)) {
+	if (objectId == _oldSubject) {
 		if (data.byte(kCommandtype) != 228) {
 			data.byte(kCommandtype) = 228;
-			data.word(kOldsubject) = objectId;
-			commandWithOb(36, objectId >> 8, objectId & 0x00FF);
+			_oldSubject = objectId;
+			commandWithOb(36, objectId._type, objectId._index);
 		}
 	} else {
-		data.word(kOldsubject) = objectId;
-		commandWithOb(36, objectId >> 8, objectId & 0x00FF);
+		_oldSubject = objectId;
+		commandWithOb(36, objectId._type, objectId._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton))
@@ -934,13 +929,13 @@ void DreamGenContext::outOfOpen() {
 
 	delPointer();
 	data.byte(kPickup) = 1;
-	objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
-	data.byte(kObjecttype) = objectId >> 8;
-	data.byte(kItemframe)  = objectId & 0xFF;
+	objectId = findOpenPos();
+	data.byte(kObjecttype) = objectId._type;
+	data.byte(kItemframe) = objectId._index;
 
-	if (data.byte(kObjecttype) != 4) {
+	if (data.byte(kObjecttype) != kExObjectType) {
 		data.byte(kItemframe) = transferToEx();
-		data.byte(kObjecttype) = 4;
+		data.byte(kObjecttype) = kExObjectType;
 	}
 
 	DynObject *object = getEitherAdCPP();
@@ -957,16 +952,18 @@ void DreamGenContext::outOfOpen() {
 }
 
 void DreamGenContext::swapWithOpen() {
-	uint16 subject = (data.byte(kObjecttype) << 8) | data.byte(kItemframe);
-	if (subject == data.word(kOldsubject)) {
+	ObjectRef subject;
+	subject._type = data.byte(kObjecttype);
+	subject._index = data.byte(kItemframe);
+	if (subject == _oldSubject) {
 		if (data.byte(kCommandtype) != 242) {
 			data.byte(kCommandtype) = 242;
-			data.word(kOldsubject) = subject;
-			commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+			_oldSubject = subject;
+			commandWithOb(34, subject._type, subject._index);
 		}
 	} else {
-		data.word(kOldsubject) = subject;
-		commandWithOb(34, data.byte(kObjecttype), data.byte(kItemframe));
+		_oldSubject = subject;
+		commandWithOb(34, subject._type, subject._index);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
@@ -990,13 +987,13 @@ void DreamGenContext::swapWithOpen() {
 
 	byte prevType = data.byte(kObjecttype);
 	byte prevFrame = data.byte(kItemframe);
-	uint16 objectId = getSegment(data.word(kBuffers)).word(findOpenPos());
-	data.byte(kObjecttype) = objectId >> 8;
-	data.byte(kItemframe)  = objectId & 0xFF;
+	ObjectRef objectId = findOpenPos();
+	data.byte(kObjecttype) = objectId._type;
+	data.byte(kItemframe)  = objectId._index;
 
-	if (data.byte(kObjecttype) != 4) {
+	if (data.byte(kObjecttype) != kExObjectType) {
 		data.byte(kItemframe) = transferToEx();
-		data.byte(kObjecttype) = 4;
+		data.byte(kObjecttype) = kExObjectType;
 	}
 
 	DynObject *object = getEitherAdCPP();
@@ -1007,7 +1004,6 @@ void DreamGenContext::swapWithOpen() {
 	byte prevFrame2 = data.byte(kItemframe);
 	data.byte(kObjecttype) = prevType;
 	data.byte(kItemframe) = prevFrame;
-	//findOpenPos();	// was in the original source, looks to be unused
 	object = getEitherAdCPP();
 	object->mapad[0] = data.byte(kOpenedtype);
 	object->mapad[1] = data.byte(kOpenedob);
@@ -1025,11 +1021,11 @@ void DreamGenContext::swapWithOpen() {
 	delPointer();
 }
 
-uint16 DreamBase::findOpenPos() {
-	uint16 pos = (data.word(kMousex) - kInventx) / kItempicsize;
-	data.byte(kLastinvpos) = pos & 0xFF;
+ObjectRef DreamBase::findOpenPos() {
+	uint8 pos = (data.word(kMousex) - kInventx) / kItempicsize;
+	data.byte(kLastinvpos) = pos;
 
-	return pos * 2 + kOpeninvlist;	// return the object position in the inventory data
+	return _openInvList[pos];
 }
 
 byte DreamGenContext::transferToEx() {
@@ -1063,24 +1059,19 @@ void DreamBase::fillOpen() {
 	if (size > 4)
 		size = 4;
 	findAllOpen();
-	uint8 *openInvList = getSegment(data.word(kBuffers)).ptr(kOpeninvlist, 32);
 	for (uint8 i = 0; i < size; ++i) {
-		uint8 index = openInvList[2*i]; 
-		uint8 type = openInvList[2*i + 1];
+		uint8 index = _openInvList[i]._index; 
+		uint8 type = _openInvList[i]._type;
 		obToInv(index, type, kInventx + i * kItempicsize, kInventy + 96);
 	}
 	underTextLine();
 }
 
 void DreamBase::findAllOpen() {
-	uint8 *openInvList = getSegment(data.word(kBuffers)).ptr(kOpeninvlist, 32);
+	memset(_openInvList, 0xFF, 32);
 
-	memset(openInvList, 0xFF, 32);
-
-	const DynObject *obj;
-
-	obj = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
-	for (uint8 i = 0; i < kNumexobjects; ++i, ++obj) {
+	for (uint8 i = 0; i < kNumexobjects; ++i) {
+		const DynObject *obj = getExAd(i);
 		if (obj->mapad[1] != data.byte(kOpenedob))
 			continue;
 		if (obj->mapad[0] != data.byte(kOpenedtype))
@@ -1089,19 +1080,19 @@ void DreamBase::findAllOpen() {
 			continue;
 		uint8 slot = obj->mapad[2];
 		assert(slot < 16);
-		openInvList[2*slot] = i;
-		openInvList[2*slot + 1] = kExObjectType;
+		_openInvList[slot]._index = i;
+		_openInvList[slot]._type = kExObjectType;
 	}
 
-	obj = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
-	for (uint8 i = 0; i < 80; ++i, ++obj) {
+	for (uint8 i = 0; i < 80; ++i) {
+		const DynObject *obj = getFreeAd(i);
 		if (obj->mapad[1] != data.byte(kOpenedob))
 			continue;
 		if (obj->mapad[0] != data.byte(kOpenedtype))
 			continue;
-		uint8 index = obj->mapad[2];
-		openInvList[2*index] = i;
-		openInvList[2*index + 1] = kFreeObjectType;
+		uint8 slot = obj->mapad[2];
+		_openInvList[slot]._index = i;
+		_openInvList[slot]._type = kFreeObjectType;
 	}
 }
 

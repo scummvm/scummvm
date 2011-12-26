@@ -69,6 +69,7 @@ protected:
 
 	// from object.cpp
 	uint16 _openChangeSize;
+	ObjectRef _oldSubject;
 
 	// from pathfind.cpp
 	Common::Point _lineData[200];		// Output of Bresenham
@@ -86,8 +87,8 @@ protected:
 
 	// from Buffers
 	uint8 _textUnder[kUnderTextBufSize];
-	// _openInvList (see fillOpen/findOpenPos)
-	// _ryanInvList (see findInvPos/findInvPosCPP)
+	ObjectRef _openInvList[16];
+	ObjectRef _ryanInvList[30];
 	uint8 _pointerBack[32*32];
 	uint8 _mapFlags[11*10*3];
 	uint8 _startPal[3*256];
@@ -199,7 +200,7 @@ public:
 	// from object.cpp
 	void obIcons();
 	void fillRyan();
-	void findAllRyan(uint8 *inv);
+	void findAllRyan();
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y);
 	void obPicture();
 	void removeObFromInv();
@@ -211,12 +212,13 @@ public:
 	void wornError();
 	void makeWorn(DynObject *object);
 	void dropObject();
-	uint16 findOpenPos();
+	ObjectRef findOpenPos();
 	byte getOpenedSlotSize();
 	byte getOpenedSlotCount();
 	void openOb();
 	void findAllOpen();
 	void fillOpen();
+	ObjectRef findInvPos();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
