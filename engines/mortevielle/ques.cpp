@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* overlay */ boolean ques() {
 	const array<1, 10, int> ta
@@ -142,4 +142,4 @@ namespace MORTEVIELLE {
 	return ques_result;
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

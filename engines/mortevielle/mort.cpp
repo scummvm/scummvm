@@ -27,7 +27,7 @@
 
 #include "ptoc.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /*$v-*/
 /*$k-*/
@@ -148,4 +148,4 @@ int main(int argc, const char *argv[]) {
 	return EXIT_SUCCESS;
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

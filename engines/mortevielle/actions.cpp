@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* NIVEAU 4 */
 const char stouinon[] = "[2][ ][OUI][NON]";
@@ -1219,4 +1219,4 @@ L2:
 	arret = (quel != 1);
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* Niveau 14 suite */
 const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";
@@ -1338,4 +1338,4 @@ void dessin(int ad) {
 	}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

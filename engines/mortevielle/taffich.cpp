@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void chardes(Common::String nom, long_int passe, int long_) {
 	int i, p, l;
@@ -226,4 +226,4 @@ void taffich() {
          end;
     end;*/
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

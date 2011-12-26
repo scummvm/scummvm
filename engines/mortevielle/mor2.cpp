@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 const array<1, 11, int> men
 = {{
@@ -756,4 +756,4 @@ void aldepl() {
 	dummy = do_alert("[1][Alors, utilisez le menu DEP...][ok]", 1);
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

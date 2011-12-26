@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* overlay */ int do_alert(Common::String str_, int n);
 
@@ -227,4 +227,4 @@ int do_alert(Common::String str_, int n) {
 	return do_alert_result;
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

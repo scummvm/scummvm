@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* NIVEAU 14*/
 
@@ -363,4 +363,4 @@ void mdn() {
 		}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

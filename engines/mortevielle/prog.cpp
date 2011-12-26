@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* overlay */ void change_gd(int ngd) {
 	int i;
@@ -346,4 +346,4 @@ void tjouer() {
 	else if (perdu)  tencore();
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

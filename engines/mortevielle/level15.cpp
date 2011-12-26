@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /* NIVEAU 15 */
 void copcha() {
@@ -202,4 +202,4 @@ begin
   end;
 end;*/
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

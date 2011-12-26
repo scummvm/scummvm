@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 Common::String delig;
 const byte tabdr[32] = {
@@ -227,4 +227,4 @@ void afftex(phrase ch, int x, int y, int dx, int dy, int typ) {
 	}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle
