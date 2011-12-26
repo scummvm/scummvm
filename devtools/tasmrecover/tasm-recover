@@ -92,6 +92,8 @@ p = parser(skip_binary_data = [
 	'dmaaddresses',
 	'speechfilename',
 	'speechfile',
+	'speechlength',
+	'soundbufferwrite',
 	# sprite.asm
 	'reelroutines',
 	'reelcalls',
@@ -213,6 +215,11 @@ p = parser(skip_binary_data = [
 	'oldsubject',
 	'buffers',
 	'itemtotran',
+	'symboltolight',
+	'symbol1',
+	'symbol2',
+	'symbol3',
+	'symbolnum',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
