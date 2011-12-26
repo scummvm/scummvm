@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/keyboard.h"
+
 namespace Mortevielle {
 
 char readkey1() {

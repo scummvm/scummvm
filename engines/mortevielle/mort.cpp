@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/mort.h"
 #include "ptoc.h"
 
 namespace Mortevielle {

@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/mor2.h"
+
 namespace Mortevielle {
 
 const array<1, 11, int> men

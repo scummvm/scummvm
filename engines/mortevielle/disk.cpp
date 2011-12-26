@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/disk.h"
+
 namespace Mortevielle {
 
 void dem1() {

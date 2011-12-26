@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/droite.h"
+
 namespace Mortevielle {
 
 void droite(int x, int y, int xx, int yy, int coul) {

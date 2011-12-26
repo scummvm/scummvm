@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/prog.h"
+
 namespace Mortevielle {
 
 /* overlay */ void change_gd(int ngd) {

@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/boite.h"
+
 namespace Mortevielle {
 
 void boite(int x, int y, int dx, int dy, int coul) {
