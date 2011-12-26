@@ -177,6 +177,7 @@ public:
 	void loadNews();
 	void loadCart();
 	void showKeys();
+	const char *parser();
 
 	// from newplace.cpp
 	void getUnderCentre();
@@ -590,6 +591,7 @@ public:
 	void errorMessage1();
 	void errorMessage2();
 	void errorMessage3();
+	void decide();
 
 	// from talk.cpp
 	void talk();

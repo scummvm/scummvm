@@ -458,8 +458,11 @@ void DreamGenContext::getKeyAndLogo() {
 
 void DreamGenContext::dirCom() {
 	randomAccess(30);
-	parser();
-	if (es.byte(di + 1)) {
+
+	const char *dirname = parser();
+	if (dirname[1]) {
+		es = cs;
+		di = offset_operand1; // cs:operand1 == dirname
 		dirFile();
 		return;
 	}
@@ -479,8 +482,8 @@ void DreamGenContext::read() {
 	bool foundFile = false;
 
 	randomAccess(40);
-	parser();
-	if (es.byte(di+1) == 0) {
+	const char *name = parser();
+	if (name[1] == 0) {
 		netError();
 		return;
 	}
@@ -552,10 +555,10 @@ void DreamGenContext::read() {
 }
 
 void DreamGenContext::signOn() {
-	parser();
+	const char *name = parser();
 
 	int8 foundIndex = -1;
-	Common::String inputLine = (const char *)data.ptr(offset_operand1 + 1, 0);
+	Common::String inputLine = name + 1;
 	inputLine.trim();
 
 	for (byte i = 0; i < 4; i++) {
@@ -622,5 +625,45 @@ void DreamGenContext::searchForFiles(uint16 segment) {
 			filesString = monPrint(filesString);
 	}
 }
+
+const char *DreamBase::parser() {
+	char *output = (char *)data.ptr(offset_operand1, 13);
+
+	memset(output, 0, 13);
+
+	char *p = output;
+	*p++ = '=';
+
+	const char *in = (const char *)data.ptr(kInputline, 0);
+
+	uint8 c;
+
+	// skip command
+	do {
+		c = *in++;
+		in++;
+
+		if (!c)
+			return output;
+	} while (c != 32);
+
+	// skip spaces between command and operand
+	do {
+		c = *in++;
+		in++;
+	} while (c == 32);
+
+	// copy first operand
+	do {
+		*p++ = c;
+		c = *in++;
+		in++;
+		if (!c)
+			return output;
+	} while (c != 32);
+
+	return output;
+}
+
 
 } // End of namespace DreamGen

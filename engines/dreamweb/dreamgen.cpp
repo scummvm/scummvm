@@ -148,45 +148,6 @@ notfound:
 	al = 1;
 }
 
-void DreamGenContext::parser() {
-	STACK_CHECK;
-	es = cs;
-	di = offset_operand1;
-	cx = 13;
-	al = 0;
-	_stosb(cx, true);
-	di = offset_operand1;
-	al = '=';
-	_stosb();
-	ds = cs;
-	si = 483;
-notspace1:
-	_lodsw();
-	_cmp(al, 32);
-	if (flags.z())
-		goto stillspace1;
-	_cmp(al, 0);
-	if (!flags.z())
-		goto notspace1;
-	goto finishpars;
-stillspace1:
-	_lodsw();
-	_cmp(al, 32);
-	if (flags.z())
-		goto stillspace1;
-copyin1:
-	_stosb();
-	_lodsw();
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishpars;
-	_cmp(al, 32);
-	if (!flags.z())
-		goto copyin1;
-finishpars:
-	di = offset_operand1;
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

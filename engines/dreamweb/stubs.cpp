@@ -3101,7 +3101,7 @@ void DreamGenContext::madmanRun() {
 }
 
 
-void DreamGenContext::decide() {
+void DreamBase::decide() {
 	setMode();
 	loadPalFromIFF();
 	clearPalette();
@@ -3118,10 +3118,10 @@ void DreamGenContext::decide() {
 	fadeScreenUp();
 	data.byte(kGetback) = 0;
 
-	RectWithCallback<DreamGenContext> decideList[] = {
+	RectWithCallback<DreamBase> decideList[] = {
 		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamBase::newGame },
 		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
-		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
+		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamBase::loadOld },
 		{ 0,320,0,200,&DreamBase::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};

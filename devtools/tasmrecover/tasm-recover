@@ -718,6 +718,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'panelicons1',
 	'paneltomap',
 	'parseblaster',
+	'parser',
 	'personnametext',
 	'pickupconts',
 	'pickupob',

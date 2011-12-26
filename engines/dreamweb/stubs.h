@@ -107,7 +107,6 @@
 	void allPointer();
 	void afterNewRoom();
 	void madmanRun();
-	void decide();
 	void showGun();
 	void triggerMessage(uint16 index);
 	void processTrigger();
