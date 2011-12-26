@@ -90,7 +90,7 @@
 	bool execCommand();
 	void identifyOb();
 	void selectOb();
-	void getKeyAndLogo();
+	bool getKeyAndLogo();
 	void read();
 	void dirCom();
 	void searchForString();

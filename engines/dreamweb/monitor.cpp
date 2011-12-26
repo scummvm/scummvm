@@ -436,7 +436,7 @@ void DreamBase::showKeys() {
 	scrollMonitor();
 }
 
-void DreamGenContext::getKeyAndLogo() {
+bool DreamGenContext::getKeyAndLogo() {
 	byte newLogo = es.byte(bx + 1) - 48;
 	byte keyNum = es.byte(bx + 1 + 2) - 48;
 	bx += 1 + 2 + 1;
@@ -444,12 +444,12 @@ void DreamGenContext::getKeyAndLogo() {
 	if (monitorKeyEntries[keyNum].keyAssigned == 1) {
 		// Key OK
 		data.byte(kLogonum) = newLogo;
-		al = 0;
+		return false;
 	} else {
 		monMessage(12);	// "Access denied, key required -"
 		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
-		al = 1;
+		return true;
 	}
 }
 
@@ -484,8 +484,7 @@ void DreamGenContext::dirFile() {
 	}
 
 	// "foundfile"
-	getKeyAndLogo();
-	if (al != 0)
+	if (getKeyAndLogo())
 		return;
 
 	// "keyok2"
@@ -572,8 +571,7 @@ void DreamGenContext::read() {
 	}
 
 	// "foundfile2"
-	getKeyAndLogo();
-	if (al != 0)
+	if (getKeyAndLogo())
 		return;
 
 	// "keyok1"
