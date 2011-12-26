@@ -55,6 +55,7 @@
 #include "scumm/player_nes.h"
 #include "scumm/player_sid.h"
 #include "scumm/player_pce.h"
+#include "scumm/player_apple2.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2cms.h"
@@ -1797,7 +1798,7 @@ void ScummEngine::setupMusic(int midi) {
 	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
 	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
-		// TODO: Add support for music format
+		_musicEngine = new Player_AppleII(this, _mixer);
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
 #ifndef DISABLE_SID
 		_musicEngine = new Player_SID(this, _mixer);
