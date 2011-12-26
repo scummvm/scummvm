@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void boite(int x, int y, int dx, int dy, int coul) {
 	int i;
@@ -57,4 +57,4 @@ void boite(int x, int y, int dx, int dy, int coul) {
 	show_mouse();
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

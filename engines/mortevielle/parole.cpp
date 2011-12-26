@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void spfrac(int wor) {
 	c3.rep = (cardinal)wor >> 12;
@@ -412,4 +412,4 @@ void veracf(byte b) {
 	}     /* case c2.code  */
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

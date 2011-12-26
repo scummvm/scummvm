@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void droite(int x, int y, int xx, int yy, int coul) {
 	int step, i;
@@ -62,4 +62,4 @@ void droite(int x, int y, int xx, int yy, int coul) {
 	}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

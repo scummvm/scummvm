@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void rot_chariot() {
 	c1 = c2;
@@ -119,4 +119,4 @@ void parole(int rep, int ht, int typ) {
 	writepal(numpal);
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

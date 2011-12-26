@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 char readkey1() {
 	char c;
@@ -87,4 +87,4 @@ void teskbd() {
 	if (keypressed())  dum = testou();
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

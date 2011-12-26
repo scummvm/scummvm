@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 /*         Constantes, Types et Variables pour le
 
@@ -485,4 +485,4 @@ void putpix(int gd, int x, int y, int coul) {
 	affput(0, gd, x, y, coul, 0);
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

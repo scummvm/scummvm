@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void fill_box(int x, int y, int dx) {
 	box(15, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
@@ -84,4 +84,4 @@ void writeg(Common::String l, int c)
 	show_mouse();
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

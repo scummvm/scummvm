@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 const int m_arrow = 0;
 const int m_point_hand = 1;
@@ -487,4 +487,4 @@ void mov_mouse(boolean &funct, char &key) {
 	}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

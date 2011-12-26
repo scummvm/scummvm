@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void dem2() {
 	untyped_file f;
@@ -365,4 +365,4 @@ void ani50() {
 	}
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle

@@ -25,7 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-namespace MORTEVIELLE {
+namespace Mortevielle {
 
 void dem1() {
 	untyped_file f;
@@ -97,4 +97,4 @@ void sv_game(int n) {
 	show_mouse();
 }
 
-} // End of namespace MORTEVIELLE
+} // End of namespace Mortevielle
