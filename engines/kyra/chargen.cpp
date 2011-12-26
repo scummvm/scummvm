@@ -1318,8 +1318,10 @@ void CharacterGenerator::finish() {
 		_chargenMagicShapes = 0;
 	}
 
-	for (int i = 0; i < 17; i++)
+	for (int i = 0; i < 17; i++) {
 		delete[] _chargenButtonLabels[i];
+		_chargenButtonLabels[i] = 0;
+	}
 }
 
 const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
