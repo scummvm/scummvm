@@ -169,12 +169,7 @@ const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 /*--------------------------------   TYPES   --------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-typedef varying_string<11> path_chars;
 typedef float long_int;
-typedef varying_string<255> str255;
-typedef varying_string<125> str125;
-typedef varying_string<30> str30;
-typedef varying_string<11> str11;
 typedef file<byte> fichier_byte;
 struct sav_chaine {
 	int conf;
@@ -217,7 +212,6 @@ struct rectangle {
 };
 
 typedef array<1, max_rect, rectangle> mult_rect;
-typedef varying_string<40> str40;
 
 struct pattern {
 	byte tay, tax;
@@ -344,11 +338,11 @@ int x,
 array<0, 6400, int> t_cph;
 array<0, 4000, byte> tabdon;
 /*   t_dxx  : array[0..121] of int;*/
-str125 stpou;                               /* donne le % d'indices */
+Common::String stpou;                               /* donne le % d'indices */
 byte is;
 char mode;
 fichier_byte ficdes;
-str125 al_mess,
+Common::String al_mess,
        err_mess,
        ind_mess,
        al_mess2;

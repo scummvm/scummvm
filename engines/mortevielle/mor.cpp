@@ -174,7 +174,7 @@ void ecrf2() {
 	/*boite(0,175,630,15,15);*/
 }
 
-void ecr2(str255 str_) {
+void ecr2(Common::String str_) {
 	int tab;
 	int tlig;
 
@@ -211,7 +211,7 @@ void clsf3() {
 	show_mouse();
 }
 
-void ecr3(str255 text) {
+void ecr3(Common::String text) {
 	/* debug('ecr3 : '+text);*/
 	clsf3();
 	putxy(8, 192);
@@ -324,7 +324,7 @@ void okpas() {
 
 void modobj(int m) {
 	phrase str_;
-	str30 strp;
+	Common::String strp;
 	int i, tay;
 
 	/* debug('modobj'); */
@@ -339,7 +339,7 @@ void modobj(int m) {
 
 void modobj2(int m, boolean t1, boolean t2) {
 	phrase str_;
-	str30 strp;
+	Common::String strp;
 	int i, tay;
 
 	/* debug('modobj'); */
@@ -356,7 +356,7 @@ void modobj2(int m, boolean t1, boolean t2) {
 
 
 void repon(int f, int m) {
-	str255 str_;
+	Common::String str_;
 	varying_string<40> str1;
 	phrase st;
 	text1 fic;
@@ -581,7 +581,7 @@ void person() {
 	const char m2[] = "ˆtes";
 	const char m3[] = "SEUL";
 	int cf;
-	str255 str_;
+	Common::String str_;
 
 	/* debug('person'); */
 	for (cf = 1; cf <= 8; cf ++) menu_disable(disc[cf]);
@@ -1184,7 +1184,7 @@ void phaz(int &haz, int &p, int cf) {
 	person();
 }
 
-void writetp(str255 s, int t) {
+void writetp(Common::String s, int t) {
 	if (res == 2)  writeg(s, t);
 	else writeg(copy(s, 1, 25), t);
 }

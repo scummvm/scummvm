@@ -6,7 +6,7 @@ void clear_box(int x, int y, int dx) {
 	box(0, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
 }
 
-void writeg(str255 l, int c)
+void writeg(Common::String l, int c)
 
 {
 	int i, x, xo, yo;

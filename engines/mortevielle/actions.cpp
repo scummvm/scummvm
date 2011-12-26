@@ -442,7 +442,7 @@ L2:
 	int quel;
 	boolean entre;
 	phrase st;
-	str255 str_;
+	Common::String str_;
 	int i, tay;
 
 	if (s.derobj == 0) {

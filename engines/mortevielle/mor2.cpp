@@ -167,7 +167,7 @@ void tkey1(boolean d) {
 
 void tmlieu(int mli) {
 	int cx, j, i, tail;
-	str30 nomp;
+	Common::String nomp;
 	phrase st;
 
 
@@ -312,7 +312,7 @@ void st1sama() {
 void modinv() {
 	int cx, cy, tay, i, r;
 	phrase nom;
-	str30 nomp;
+	Common::String nomp;
 
 	cy = 0;
 	for (cx = 1; cx <= 6; cx ++)
