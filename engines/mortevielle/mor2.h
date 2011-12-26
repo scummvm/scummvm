@@ -40,7 +40,7 @@ void tmlieu(int mli);
 void tlu(int af, int ob);
 void delin(int n);
 void affrep();
-void mfouen()
+void mfouen();
 void atf3f8(int &key);
 /* NIVEAU 6 */
 void tperd();

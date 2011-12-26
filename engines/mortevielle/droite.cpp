@@ -26,6 +26,7 @@
  */
 
 #include "mortevielle/droite.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

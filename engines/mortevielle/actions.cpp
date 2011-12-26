@@ -26,6 +26,8 @@
  */
 
 #include "mortevielle/actions.h"
+#include "mortevielle/mor.h"
+#include "mortevielle/mor2.h"
 
 namespace Mortevielle {
 
