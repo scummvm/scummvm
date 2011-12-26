@@ -26,6 +26,7 @@
  */
 
 #include "mortevielle/outtext.h"
+#include "common/str.h"
 
 namespace Mortevielle {
 

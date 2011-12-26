@@ -28,6 +28,8 @@
 #ifndef MORTEVIELLE_MENU_H
 #define MORTEVIELLE_MENU_H
 
+#include "common/str.h"
+
 namespace Mortevielle {
 
 /* NIVEAU 14*/

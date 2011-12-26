@@ -28,6 +28,8 @@
 #ifndef MORTEVIELLE_MOR_H
 #define MORTEVIELLE_MOR_H
 
+#include "common/str.h"
+
 namespace Mortevielle {
 
 /* Niveau 14 suite */
