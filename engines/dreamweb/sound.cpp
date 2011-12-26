@@ -104,6 +104,7 @@ void DreamBase::loadRoomsSample() {
 
 	assert(sample < 100);
 	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
+	data.byte(kCurrentsample) = sample;
 
 	uint8 ch0 = data.byte(kCh0playing);
 	if (ch0 >= 12 && ch0 != 255)
