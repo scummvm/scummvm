@@ -90,10 +90,9 @@
 	bool execCommand();
 	void identifyOb();
 	void selectOb();
-	bool getKeyAndLogo();
+	bool getKeyAndLogo(const char *foundString);
 	void read();
 	void dirCom();
-	void searchForString();
 	const char *searchForString(const char *topic, const char *text) {
 		return DreamBase::searchForString(topic, text);
 	}

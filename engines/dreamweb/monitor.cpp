@@ -436,74 +436,43 @@ void DreamBase::showKeys() {
 	scrollMonitor();
 }
 
-bool DreamGenContext::getKeyAndLogo() {
-	byte newLogo = es.byte(bx + 1) - 48;
-	byte keyNum = es.byte(bx + 1 + 2) - 48;
-	bx += 1 + 2 + 1;
+bool DreamGenContext::getKeyAndLogo(const char *foundString) {
+	byte newLogo = foundString[1] - 48;
+	byte keyNum = foundString[3] - 48;
 
 	if (monitorKeyEntries[keyNum].keyAssigned == 1) {
 		// Key OK
 		data.byte(kLogonum) = newLogo;
-		return false;
+		return true;
 	} else {
 		monMessage(12);	// "Access denied, key required -"
 		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
-		return true;
+		return false;
 	}
 }
 
-void DreamGenContext::dirFile() {
-	bool foundFile = false;
-
-	es.byte(di) = 34;
-
-	ds = data.word(kTextfile1);
-	si = kTextstart;
-	searchForString();
-	if (al == 0) {
-		foundFile = true;
-	} else {
-		ds = data.word(kTextfile2);
-		si = kTextstart;
-		searchForString();
-		if (al == 0) {
-			foundFile = true;
-		} else {
-			ds = data.word(kTextfile3);
-			si = kTextstart;
-			searchForString();
-			if (al == 0)
-				foundFile = true;
-		}
-	}
-
-	if (!foundFile) {
-		monMessage(7);
-		return;
-	}
-
-	// "foundfile"
-	if (getKeyAndLogo())
-		return;
-
-	// "keyok2"
-	memcpy(data.ptr(kCurrentfile+1, 0), data.ptr(offset_operand1+1, 0), 12);
-	monitorLogo();
-	scrollMonitor();
-	monMessage(10);
+const char *DreamBase::searchForString(const char *topic, const char *text) {
+	char delim = *topic;
 
 	while (true) {
-		al = es.byte(bx);
-		bx++;
-		if (al == 34 || al == '*') {
-			// "endofdir2"
-			scrollMonitor();
-			return;
-		}
+		const char *s = topic;
+		int delimCount = 0;
 
-		if (al == '=')
-			monPrint();
+		char c;
+		do {
+			c = makeCaps(*text++);
+
+			if (c == '*' || (delim == '=' && c == 34))
+				return 0;
+
+			if (c == delim) {
+				delimCount++;
+				if (delimCount == 2)
+					return text;
+			}
+
+		} while (c == *s++);
 	}
 }
 
@@ -529,9 +498,54 @@ void DreamGenContext::dirCom() {
 	scrollMonitor();
 }
 
-void DreamGenContext::read() {
-	bool foundFile = false;
+void DreamGenContext::dirFile() {
+	es.byte(di) = 34;
 
+	const char *topic = (const char*)es.ptr(di, 0);
+
+	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *found = searchForString(topic, text);
+	if (!found) {
+		text = (const char *)getSegment(data.word(kTextfile2)).ptr(kTextstart, 0);
+		found = searchForString(topic, text);
+		if (!found) {
+			text = (const char *)getSegment(data.word(kTextfile3)).ptr(kTextstart, 0);
+			found = searchForString(topic, text);
+		}
+	}
+
+	if (found) {
+		if (!getKeyAndLogo(found))
+			return;
+	} else {
+		monMessage(7);
+		return;
+	}
+
+	// "keyok2"
+	memcpy(data.ptr(kCurrentfile+1, 0), data.ptr(offset_operand1+1, 0), 12);
+	monitorLogo();
+	scrollMonitor();
+	monMessage(10);
+
+	byte curChar;
+	found += 1 + 2 + 1;
+
+	while (true) {
+		curChar = found[0];
+		found++;
+		if (curChar == 34 || curChar == '*') {
+			// "endofdir2"
+			scrollMonitor();
+			return;
+		}
+
+		if (curChar == '=')
+			found = monPrint(found);
+	}
+}
+
+void DreamGenContext::read() {
 	randomAccess(40);
 	const char *name = parser();
 	if (name[1] == 0) {
@@ -539,61 +553,45 @@ void DreamGenContext::read() {
 		return;
 	}
 
-	es = cs;
-	di = kCurrentfile;
+	const char *topic = (const char*)cs.ptr(kCurrentfile, 0);
 
-	data.word(kMonsource) = data.word(kTextfile1);
-	ds = data.word(kMonsource);
-	si = kTextstart;
-	searchForString();
-	if (al == 0) {
-		foundFile = true;
-	} else {
-		data.word(kMonsource) = data.word(kTextfile2);
-		ds = data.word(kMonsource);
-		si = kTextstart;
-		searchForString();
-		if (al == 0) {
-			foundFile = true;
-		} else {
-			data.word(kMonsource) = data.word(kTextfile3);
-			ds = data.word(kMonsource);
-			si = kTextstart;
-			searchForString();
-			if (al == 0)
-				foundFile = true;
+	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *found = searchForString(topic, text);
+	if (!found) {
+		text = (const char *)getSegment(data.word(kTextfile2)).ptr(kTextstart, 0);
+		found = searchForString(topic, text);
+		if (!found) {
+			text = (const char *)getSegment(data.word(kTextfile3)).ptr(kTextstart, 0);
+			found = searchForString(topic, text);
 		}
 	}
 
-	if (!foundFile) {
+	if (found) {
+		if (!getKeyAndLogo(found))
+			return;
+	} else {
 		monMessage(7);
 		return;
 	}
 
-	// "foundfile2"
-	if (getKeyAndLogo())
-		return;
-
 	// "keyok1"
-	es = cs;
-	di = offset_operand1;
-	ds = data.word(kMonsource);
-	searchForString();
-	if (al != 0) {
+	topic = (const char*)cs.ptr(offset_operand1, 0);
+	found = searchForString(topic, found);
+	if (!found) {
 		data.byte(kLogonum) = data.byte(kOldlogonum);
 		monMessage(11);
 		return;
 	}
 
 	// "findtopictext"
-	bx++;
-
 	monitorLogo();
 	scrollMonitor();
 
+	found++;
+
 	while (true) {
-		monPrint();
-		if (es.byte(bx) == 34 || es.byte(bx) == '=' || es.byte(bx) == '*') {
+		found = monPrint(found);
+		if (found[0] == 34 || found[0] == '=' || found[0] == '*') {
 			// "endoftopic"
 			scrollMonitor();
 			return;
@@ -714,46 +712,5 @@ const char *DreamBase::parser() {
 
 	return output;
 }
-
-void DreamGenContext::searchForString() {
-	const char *topic = (const char*)es.ptr(di, 0);
-	const char *text =  (const char*)ds.ptr(si, 0);
-	const char *found = searchForString(topic, text);
-	if (!found) {
-		al = 1;
-	} else {
-		es = ds;
-		bx = si + (found - text);
-		si = bx;
-		al = 0;
-	}
-}
-
-// input: es:di : topic
-//        ds:si : monitor text
-const char *DreamBase::searchForString(const char *topic, const char *text) {
-	char delim = *topic;
-
-	while (true) {
-		const char *s = topic;
-		int delimCount = 0;
-
-		char c;
-		do {
-			c = makeCaps(*text++);
-
-			if (c == '*' || (delim == '=' && c == 34))
-				return 0;
-
-			if (c == delim) {
-				delimCount++;
-				if (delimCount == 2)
-					return text;
-			}
-
-		} while (c == *s++);
-	}
-}
-
 
 } // End of namespace DreamGen
