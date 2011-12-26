@@ -61,6 +61,9 @@ class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
+	// from keypad.cpp
+	uint8 _pressList[6];
+
 	// from newplace.cpp
 	uint8 _roomsCanGo[16];
 

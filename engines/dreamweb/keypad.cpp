@@ -77,8 +77,8 @@ void DreamBase::showKeypad() {
 
 bool DreamBase::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	
-	return digit0 == data.byte(kPresslist+0) && digit1 == data.byte(kPresslist+1)
-		&& digit2 == data.byte(kPresslist+2) && digit3 == data.byte(kPresslist+3);
+	return digit0 == _pressList[0] && digit1 == _pressList[1]
+		&& digit2 == _pressList[2] && digit3 == _pressList[3];
 }
 
 void DreamBase::addToPressList() {
@@ -88,7 +88,7 @@ void DreamBase::addToPressList() {
 	if (pressed == 10)
 		pressed = 0;
 
-	data.byte(kPresslist + data.word(kPresspointer)) = pressed;
+	_pressList[data.word(kPresspointer)] = pressed;
 	++data.word(kPresspointer);
 }
 
