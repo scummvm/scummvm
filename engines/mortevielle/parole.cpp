@@ -1,5 +1,5 @@
 
-void spfrac(integer wor) {
+void spfrac(int wor) {
 	c3.rep = (cardinal)wor >> 12;
 	if ((typlec == 0) && (c3.code != 9))
 		if (((c3.code > 4) && (c3.val != 20) && !(set::of(3, 6, 9, eos).has(c3.rep))) ||
@@ -10,7 +10,7 @@ void spfrac(integer wor) {
 }
 
 void charg_car() {
-	integer wor, int_;
+	int wor, int_;
 
 	wor = swap(memw[adword + ptr_word]);
 	int_ = wor & 0x3f;
@@ -67,7 +67,7 @@ void veracf(byte b) {
 }
 
 /* overlay */ void cctable(tablint &t) {
-	integer k;
+	int k;
 	array<0, 256, real> tb;
 
 
@@ -79,7 +79,7 @@ void veracf(byte b) {
 }
 
 /* overlay */ void regenbruit() {
-	integer i, j;
+	int i, j;
 
 	i = offsetb3 + 8590;
 	j = 0;
@@ -113,7 +113,7 @@ void veracf(byte b) {
 
 /* overlay */   void charge_bruit() {
 	untyped_file f;
-	integer j, i;
+	int j, i;
 
 	assign(f, "bruits");
 	reset(f);
@@ -125,7 +125,7 @@ void veracf(byte b) {
 
 /* overlay */   void trait_car() {
 	byte d3;
-	integer d2, i;
+	int d2, i;
 
 	switch (c2.code) {
 	case 9 :
@@ -388,9 +388,9 @@ void veracf(byte b) {
 var
    regs : registres;
  buffer : array[0..511] of char;
-  i,j,k : integer;
+  i,j,k : int;
      st : phrase;
-    tay : integer;
+    tay : int;
    test : array[0..2] of boolean;
 const
  chaine : array[0..7] of char

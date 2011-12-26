@@ -1,16 +1,16 @@
-void fill_box(integer x, integer y, integer dx) {
-	box(15, gd, pred(integer, x) << 3, pred(integer, y) << 3, pred(integer, x + dx) << 3, y << 3, 255);
+void fill_box(int x, int y, int dx) {
+	box(15, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
 }
 
-void clear_box(integer x, integer y, integer dx) {
-	box(0, gd, pred(integer, x) << 3, pred(integer, y) << 3, pred(integer, x + dx) << 3, y << 3, 255);
+void clear_box(int x, int y, int dx) {
+	box(0, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
 }
 
-void writeg(str255 l, integer c)
+void writeg(str255 l, int c)
 
 {
-	integer i, x, xo, yo;
-	integer cecr;
+	int i, x, xo, yo;
+	int cecr;
 	boolean t;
 
 	/*  debug('writeg : '+l);*/

@@ -1,23 +1,23 @@
 
 /* overlay */ boolean ques() {
-	const array<1, 10, integer> ta
+	const array<1, 10, int> ta
 	= {{
 			511, 516, 524, 531, 545,
 			552, 559, 563, 570, 576
 		}
 	};
-	const array<1, 10, integer> ok
+	const array<1, 10, int> ok
 	= {{ 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 }};
 
 	boolean q, func, test;
-	integer i, j, k, y, memk;
-	integer tay , tmax;
-	integer rep, prem, der;
+	int i, j, k, y, memk;
+	int tay , tmax;
+	int rep, prem, der;
 	phrase st;
 	char key;
 	mult_rect coor;
 	array<1, 14, str40> chaines;
-	integer compte;
+	int compte;
 
 
 	boolean ques_result;
@@ -53,7 +53,7 @@
 			memk = memk + 1;
 			y = y + 8;
 		}
-		for (j = 1; j <= succ(integer, der - prem); j ++) {
+		for (j = 1; j <= succ(int, der - prem); j ++) {
 			{
 				rectangle &with = coor[j];
 

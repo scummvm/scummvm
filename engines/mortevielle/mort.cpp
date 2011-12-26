@@ -31,7 +31,7 @@
 
 /*  ecrihexa            utilitaire */
 
-void divers(integer np, boolean b) {
+void divers(int np, boolean b) {
 	teskbd();
 	do {
 		parole(np, 0, 0);

@@ -1,6 +1,6 @@
 void dem2() {
 	untyped_file f;
-	integer k;
+	int k;
 
 	/* -- demande de disk 2 -- */
 	while (ioresult != 0);
@@ -35,7 +35,7 @@ void ani50() {
   end;*/
 
 /* overlay */ void aff50(boolean c) {
-	integer k;
+	int k;
 
 	caff = 50;
 	maff = 0;
@@ -47,7 +47,7 @@ void ani50() {
 }
 
 /* overlay */ void init_menu() {
-	integer i, j, tai;
+	int i, j, tai;
 	phrase st;
 	untyped_file f;
 
@@ -77,7 +77,7 @@ void ani50() {
 			deline(i + c_dis, st, tai);
 			dis[i] = delig + ' ';
 		}
-		i = succ(integer, i);
+		i = succ(int, i);
 	} while (!(i == 22));
 	for (i = 1; i <= 8; i ++) {
 		disc[i] = 0x500 + i;
@@ -96,7 +96,7 @@ void ani50() {
 /* overlay */ void charpal() {
 	file<tabdb> f;
 	file<tfxx> ft;
-	integer i, j, k;
+	int i, j, k;
 	file<byte> fb;
 	byte b;
 
@@ -138,7 +138,7 @@ void ani50() {
 }
 
 /* overlay */ void chartex() {
-	integer i;
+	int i;
 	untyped_file fibyte;
 	phrase s;
 
@@ -169,7 +169,7 @@ void ani50() {
 /* overlay */ void dialpre()
 
 {
-	integer cy, tay;
+	int cy, tay;
 	phrase st;
 	real ix;
 	char ch;
@@ -244,7 +244,7 @@ void ani50() {
 
 /* overlay */ void music() {
 	untyped_file fic;
-	integer k;
+	int k;
 	boolean fin;
 	char ch;
 	real x, y;
@@ -326,7 +326,7 @@ void ani50() {
 	if (newgd != gd)  gd = newgd;
 	hirs();
 	dessine(ades, 0, 0);
-	gotoxy(20 * pred(integer, res) + 8, 24);
+	gotoxy(20 * pred(int, res) + 8, 24);
 	textcolor(7);
 	cpr = "COPYRIGHT 1989 : LANKHOR";
 	if (set::of(ega, ams, cga, eos).has(gd))  output << cpr;

@@ -5,7 +5,7 @@ const char stouinon[] = "[2][ ][OUI][NON]";
 void taller()
 
 {
-	integer mx, cx, cy;
+	int mx, cx, cy;
 
 	if ((s.mlieu == 26) && (msg[4] == depl[6])) {
 		s.mlieu = 15;
@@ -94,7 +94,7 @@ L2:
 }
 
 /* overlay */ void tprendre() {
-	integer cx, cy, cz;
+	int cx, cy, cz;
 
 	if (caff > 99) {
 		cx = caff;
@@ -115,7 +115,7 @@ L2:
 				obpart = false;
 				affrep();
 			} else {
-				tabdon[acha + (pred(integer, mchai) * 10) + pred(integer, cs)] = 0;
+				tabdon[acha + (pred(int, mchai) * 10) + pred(int, cs)] = 0;
 				tsuiv();
 				dobj = dobj + 1;
 				if (dobj > 6) {
@@ -188,7 +188,7 @@ L2:
 }
 
 /* overlay */ void tsprendre() {
-	integer cx, cy, cz;
+	int cx, cy, cz;
 
 	cx = 0;
 	do {
@@ -211,7 +211,7 @@ L2:
 /* overlay */ void tsoulever()
 
 {
-	integer cx;
+	int cx;
 
 	if (! syn)  ecr3("soulever");
 	tfleche();
@@ -230,12 +230,12 @@ L2:
 	cx = s.mlieu;
 	if (s.mlieu == 16)  cx = 14;
 	if (s.mlieu == 19)  cx = 15;
-	crep = tabdon[asoul + (cx << 3) + pred(integer, num)];
+	crep = tabdon[asoul + (cx << 3) + pred(int, num)];
 	if (crep == 255)  crep = 997;
 }
 
 /* overlay */ void tlire() {
-	integer iaff;
+	int iaff;
 
 	if (caff > 99)  st4(caff);
 	else {
@@ -254,7 +254,7 @@ L2:
 }
 
 /* overlay */ void tregarder() {
-	integer cx;
+	int cx;
 
 	if (caff > 99) {
 		crep = 103;
@@ -297,7 +297,7 @@ L2:
 	if (s.mlieu == 20)  cx = 17;
 	if ((s.mlieu > 21) && (s.mlieu < 25))  cx = cx - 4;
 	if (s.mlieu == 26)  cx = 21;
-	crep = tabdon[arega + (cx * 7) + pred(integer, num)];
+	crep = tabdon[arega + (cx * 7) + pred(int, num)];
 	if ((s.mlieu == 13) && (num == 8))  crep = 126;
 	if (s.mlieu == 19)  crep = 103;
 	if (crep == 255)  crep = 131;
@@ -315,7 +315,7 @@ L2:
 
 /* overlay */ void tfouiller() {
 	const array<0, 13, byte> r = {{123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107}};
-	integer cx;
+	int cx;
 
 	if (caff > 99) {
 		st7(caff);
@@ -386,7 +386,7 @@ L2:
 }
 
 /* overlay */ void touvrir() {
-	integer cx, haz;
+	int cx, haz;
 
 	if (! syn)  ecr3("ouvrir");
 	if (caff == 26) {
@@ -432,18 +432,18 @@ L2:
 			}
 			cx = s.mlieu;
 			if (s.mlieu == 16)  cx = 14;
-			crep = tabdon[aouvr + (cx * 7) + pred(integer, num)];
+			crep = tabdon[aouvr + (cx * 7) + pred(int, num)];
 			if (crep == 254)  crep = 999;
 		} else crep = 18;
 	}
 }
 
 /* overlay */ void tmettre() {
-	integer quel;
+	int quel;
 	boolean entre;
 	phrase st;
 	str255 str_;
-	integer i, tay;
+	int i, tay;
 
 	if (s.derobj == 0) {
 		crep = 186;
@@ -542,7 +542,7 @@ L2:
 }
 
 /* overlay */ void ttourner() {
-	integer quel;
+	int quel;
 
 	if (caff > 99) {
 		crep = 149;
@@ -608,7 +608,7 @@ L2:
 }
 
 /* overlay */ void tfermer() {
-	integer cx, chai;
+	int cx, chai;
 
 	if (! syn)  ecr3("fermer");
 	if (caff < 26) {
@@ -637,7 +637,7 @@ L2:
 }
 
 /* overlay */ void tfrapper() {
-	integer l, p, haz;
+	int l, p, haz;
 
 	if (! syn)  ecr3("frapper");
 	if (s.mlieu == 15) {
@@ -669,7 +669,7 @@ L2:
 }
 
 /* overlay */ void tposer() {
-	integer cx, chai;
+	int cx, chai;
 
 	if (! syn)  ecr3("poser");
 	if (s.derobj == 0)  crep = 186;
@@ -734,7 +734,7 @@ L2:
 }
 
 /* overlay */ void tecouter() {
-	integer l, p, haz, j, h, m;
+	int l, p, haz, j, h, m;
 
 	if (s.mlieu != 26)  crep = 101;
 	else {
@@ -759,7 +759,7 @@ L2:
 }
 
 /* overlay */ void tmanger() {
-	integer j, h, m;
+	int j, h, m;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26))
 		crep = 148;
@@ -786,7 +786,7 @@ L2:
 }
 
 /* overlay */ void tentrer() {
-	integer x, z;
+	int x, z;
 
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
 		t1sama();
@@ -840,7 +840,7 @@ L2:
 
 /* overlay */ void tdormir() {
 	const char m1[] = "D‚sirez-vous vous r‚veiller?";
-	integer z, j, h, m, quel;
+	int z, j, h, m, quel;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
 		crep = 148;
@@ -890,7 +890,7 @@ L2:
 }
 
 /* overlay */ void tsortir() {
-	integer lx;
+	int lx;
 
 	tsort();
 	crep = 0;
@@ -915,7 +915,7 @@ L2:
 }
 
 /* overlay */ void tattendre() {
-	integer quel;
+	int quel;
 
 	mpers = 0;
 	clsf3();
@@ -951,7 +951,7 @@ L2:
 
 {
 	array<1, 46, boolean> te;
-	integer ix, cy, cx, max, haz, suj, co, lig, icm,
+	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
 	char tou;
 	array<1, 46, varying_string<40> > lib;
@@ -994,7 +994,7 @@ L2:
 		co = 0;
 		lig = 0;
 		do {
-			icm = succ(integer, icm);
+			icm = succ(int, icm);
 			putxy(co, lig);
 			if (s.teauto[icm] == '*')
 				if (te[icm])  writetp(lib[icm], 1);
@@ -1014,7 +1014,7 @@ L2:
 			x = x * (3 - res);
 			if (x > 319)  cx = 41;
 			else cx = 1;
-			cy = succ(integer, (cardinal)y >> 3);                  /* 0-199 => 1-25 */
+			cy = succ(int, (cardinal)y >> 3);                  /* 0-199 => 1-25 */
 			if ((cy > 23) || ((cx == 41) && (set::of(range(20, 22), eos).has(cy)))) {
 				if (choi != 0) {
 					lig = ((choi - 1) % 23) << 3;
@@ -1173,7 +1173,7 @@ L2:
 }
 
 /* overlay */ void tencore() {         /* Perdu !!! */
-	integer quel;
+	int quel;
 
 	clsf2();
 	musique(0);

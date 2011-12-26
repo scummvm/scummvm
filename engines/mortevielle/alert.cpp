@@ -1,8 +1,8 @@
-/* overlay */ integer do_alert(str255 str_, integer n);
+/* overlay */ int do_alert(str255 str_, int n);
 
 
-const integer nligne = 7;
-const matrix<1, 2, 1, 3, integer> coord
+const int nligne = 7;
+const matrix<1, 2, 1, 3, int> coord
 = {{ {{150, 72, 103}},
 		{{143, 107, 183}}
 	}
@@ -10,8 +10,8 @@ const matrix<1, 2, 1, 3, integer> coord
 
 
 
-static void decod(str255 s, integer &nbc, integer &nbl, integer &col, str255 &c, str30 &cs) {
-	integer i, k;
+static void decod(str255 s, int &nbc, int &nbl, int &col, str255 &c, str30 &cs) {
+	int i, k;
 	boolean v;
 
 	val(s[2], nbc, i);
@@ -47,18 +47,18 @@ static void decod(str255 s, integer &nbc, integer &nbl, integer &col, str255 &c,
 
 
 
-static void posit(integer ji, integer &coldep, integer &esp) {
-	putxy(coldep + (40 + esp) *pred(integer, ji), 98);
+static void posit(int ji, int &coldep, int &esp) {
+	putxy(coldep + (40 + esp) *pred(int, ji), 98);
 }
 
 
 
-static void fait_boite(integer lidep, integer nli, integer tx) {
-	integer x, y, xx, yy;
+static void fait_boite(int lidep, int nli, int tx) {
+	int x, y, xx, yy;
 
 	if (tx > 640)  tx = 640;
 	x = 320 - ((cardinal)tx >> 1);
-	y = pred(integer, lidep) << 3;
+	y = pred(int, lidep) << 3;
 	xx = x + tx;
 	yy = y + (nli << 3);
 	box(15, gd, x, y, xx, yy, 255);
@@ -68,8 +68,8 @@ static void fait_boite(integer lidep, integer nli, integer tx) {
 
 
 
-static void fait_choix(str30 c, integer &coldep, integer &nbcase, array<1, 2, varying_string<3> > &s, integer &esp) {
-	integer i, l, x;
+static void fait_choix(str30 c, int &coldep, int &nbcase, array<1, 2, varying_string<3> > &s, int &esp) {
+	int i, l, x;
 	char ch;
 
 	i = 1;
@@ -89,24 +89,24 @@ static void fait_choix(str30 c, integer &coldep, integer &nbcase, array<1, 2, va
 	}
 }
 
-integer do_alert(str255 str_, integer n) {
-	integer coldep, esp, i, l, nbcase, quoi, ix;
+int do_alert(str255 str_, int n) {
+	int coldep, esp, i, l, nbcase, quoi, ix;
 	str255 st, chaine;
-	matrix<1, 2, 1, 2, integer> limit;
+	matrix<1, 2, 1, 2, int> limit;
 	char c, dumi;
 	array<1, 2, varying_string<3> > s;
-	integer cx, cy, cd, nbcol, nblig;
+	int cx, cy, cd, nbcol, nblig;
 	boolean touch, newaff, test, test1, test2, test3, dum;
 	str30 cas;
 
 
 	/*debug('** do_alert **');*/
-	integer do_alert_result;
+	int do_alert_result;
 	hide_mouse();
 	while (keypressed())  input >> kbd >> dumi;
 	clic = false;
 	decod(str_, nbcase, nblig, nbcol, chaine, cas);
-	sauvecr(50, succ(integer, nligne) << 4);
+	sauvecr(50, succ(int, nligne) << 4);
 
 	i = 0;
 	if (chaine == "") {
@@ -190,7 +190,7 @@ integer do_alert(str255 str_, integer n) {
 		posit(n, coldep, esp);
 		writeg(string(' ') + s[n] + ' ', 1);
 	}
-	charecr(50, succ(integer, nligne) << 4);
+	charecr(50, succ(int, nligne) << 4);
 	show_mouse();
 	do_alert_result = quoi;
 	return do_alert_result;

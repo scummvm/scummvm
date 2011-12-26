@@ -1,5 +1,5 @@
-/* overlay */ void change_gd(integer ngd) {
-	integer i;
+/* overlay */ void change_gd(int ngd) {
+	int i;
 
 	hide_mouse();
 	gd = ngd;
@@ -20,10 +20,10 @@
 }
 
 /* overlay */ void antegame() {
-	integer cx;
+	int cx;
 	registres regs;
 	array<0, 511, char> buffer;
-	integer i, j, k;
+	int i, j, k;
 	array<0, 2, boolean> test;
 	array<0, 7, char> g;
 
@@ -71,7 +71,7 @@
 	stpou = ind_mess;
 	while ((test[k] == false) && (k < 2)) {
 		regs.ax = 0;
-		k = succ(integer, k);
+		k = succ(int, k);
 		intr(19, regs);
 		{
 			regs.ax = 0x201;
@@ -118,7 +118,7 @@
 /* NIVEAU 3 */
 /* procedure PROGRAMME */
 void tmaj3() {
-	integer j, h, m;
+	int j, h, m;
 
 	calch(j, h, m);
 	if (m == 30)  m = 1;
@@ -130,7 +130,7 @@ void tmaj3() {
 void tsitu()
 
 {
-	integer h, j, m;
+	int h, j, m;
 
 	if (! col)  clsf2();
 	syn = false;
@@ -203,14 +203,14 @@ L2:
 	mennor();
 }
 
-void sv_game(integer n);
+void sv_game(int n);
 
-void ld_game(integer n);
+void ld_game(int n);
 
 void tecran() {
 	const char idem[] = "Idem";
-	const integer lim = 20000;
-	integer temps;
+	const int lim = 20000;
+	int temps;
 	char inkey;
 	boolean oo, funct;
 
@@ -235,11 +235,11 @@ void tecran() {
 		erase_menu();
 		imen = false;
 		if (set::of('\1', '\3', '\5', '\7', '\11', eos).has(inkey)) {
-			change_gd((cardinal)pred(integer, ord(inkey)) >> 1);
+			change_gd((cardinal)pred(int, ord(inkey)) >> 1);
 			return;
 		}
 		if (choisi && (msg[3] == sauve))  sv_game(msg[4] & 7);
-		if (choisi && (msg[3] == charge))  ld_game(pred(integer, msg[4] & 7));
+		if (choisi && (msg[3] == charge))  ld_game(pred(int, msg[4] & 7));
 		if (inkey == '\103') {       /* F9 */
 			temps = do_alert(stpou, 1);
 			return;
