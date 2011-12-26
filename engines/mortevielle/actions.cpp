@@ -2,9 +2,7 @@
 const char stouinon[] = "[2][ ][OUI][NON]";
 
 /* overlay */
-void taller()
-
-{
+void taller() {
 	int mx, cx, cy;
 
 	if ((s.mlieu == 26) && (msg[4] == depl[6])) {
@@ -314,7 +312,7 @@ L2:
 }
 
 /* overlay */ void tfouiller() {
-	const array<0, 13, byte> r = {{123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107}};
+	const byte[14] r = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 	int cx;
 
 	if (caff > 99) {

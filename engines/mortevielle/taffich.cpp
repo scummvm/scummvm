@@ -72,7 +72,7 @@ void taffich() {
 	long_int lgt, lhandle;
 	Common::String nom;
 	int palh, k, j;
-	array<0, 15, int> alllum;
+	int alllum[16];
 
 
 	a = caff;

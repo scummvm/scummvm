@@ -19,8 +19,7 @@ void init_chariot() {
 
 
 void trait_ph() {
-	const array<0, 2, int> deca
-	= {{300, 30, 40}};
+	const int deca[3] = {300, 30, 40};
 
 	ptr_tcph = pred(int, num_ph);
 	ledeb = swap(t_cph[ptr_tcph]) + deca[typlec];
@@ -52,7 +51,7 @@ void trait_ph() {
 
 
 void parole(int rep, int ht, int typ) {
-	array<0, 500, int> savph;
+	int savph[501];
 	int i;
 	int tempo;
 
