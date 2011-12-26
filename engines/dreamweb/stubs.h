@@ -24,15 +24,12 @@
 
 	void screenUpdate();
 	void startup1();
-	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiGet(dst, x, y, width, height);
 	}
-	void multiPut();
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiPut(src, x, y, width, height);
 	}
-	void multiDump();
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 		DreamBase::multiDump(x, y, width, height);
 	}
@@ -40,7 +37,6 @@
 	void readOneBlock();
 	void seeCommandTail();
 	void quickQuit2();
-	void printDirect();
 	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}

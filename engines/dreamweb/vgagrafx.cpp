@@ -27,13 +27,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::multiGet() {
-	multiGet(ds.ptr(si, 0), di, bx, cl, ch);
-	si += cl * ch;
-	di += bx * kScreenwidth + kScreenwidth * ch;
-	cx = 0;
-}
-
 void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
@@ -50,13 +43,6 @@ void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	}
 }
 
-void DreamGenContext::multiPut() {
-	multiPut(ds.ptr(si, 0), di, bx, cl, ch);
-	si += cl * ch;
-	di += bx * kScreenwidth + kScreenwidth * ch;
-	cx = 0;
-}
-
 void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
@@ -71,13 +57,6 @@ void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h)
 		uint8 *dst_p = dst + kScreenwidth * l;
 		memcpy(dst_p, src_p, w);
 	}
-}
-
-void DreamGenContext::multiDump() {
-	multiDump(di, bx, cl, ch);
-	unsigned offset = di + bx * kScreenwidth;
-	si = di = offset + ch * kScreenwidth;
-	cx = 0;
 }
 
 void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
