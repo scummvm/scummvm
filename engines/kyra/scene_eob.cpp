@@ -263,7 +263,7 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
+void EoBCoreEngine::loadVcnData(const char *file, const char * /*nextFile*/) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 

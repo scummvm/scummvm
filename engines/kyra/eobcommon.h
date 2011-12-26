@@ -574,7 +574,7 @@ protected:
 	void loadLevel(int level, int sub);
 	Common::String initLevelData(int sub);
 	void addLevelItems();
-	void loadVcnData(const char *file, const char */*nextFile*/);
+	void loadVcnData(const char *file, const char * /*nextFile*/);
 	void loadBlockProperties(const char *mazFile);
 	const uint8 *getBlockFileData(int levelIndex);
 	const uint8 *getBlockFileData(const char *mazFile);
