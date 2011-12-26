@@ -749,6 +749,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'restoreems',
 	'restorereels',
 	'rockstar',
+	'rollem',
 	'rollendcredits',
 	'rollendcredits2',
 	'roomname',

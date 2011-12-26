@@ -58,10 +58,6 @@ void DreamBase::fillRyan() {
 	showRyanPage();
 }
 
-void DreamGenContext::isItWorn() {
-	flags._z = isItWorn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
-}
-
 bool DreamBase::isItWorn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
@@ -151,7 +147,7 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			data.byte(kCommandtype) = 255;
 			readMouse();
 			showPointer();
-			workToScreenCPP();
+			workToScreen();
 			delPointer();
 			examineAgain = false;
 		}
@@ -255,7 +251,7 @@ void DreamGenContext::inventory() {
 	openInv();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	data.byte(kOpenedob) = 255;
 	examineOb(false);
@@ -754,10 +750,6 @@ void DreamBase::dropObject() {
 	object->currentLocation = data.byte(kReallocation);
 }
 
-void DreamGenContext::checkObjectSize() {
-	al = checkObjectSizeCPP() ? 0 : 1;
-}
-
 bool DreamGenContext::checkObjectSizeCPP() {
 	byte containerSize = getOpenedSlotSize();
 	DynObject *object = getEitherAdCPP();
@@ -816,7 +808,7 @@ void DreamGenContext::selectOpenOb() {
 	underTextLine();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -867,7 +859,7 @@ void DreamGenContext::swapWithInv() {
 	fillRyan();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -934,7 +926,7 @@ void DreamGenContext::useOpened() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -992,7 +984,7 @@ void DreamGenContext::outOfOpen() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 
@@ -1062,7 +1054,7 @@ void DreamGenContext::swapWithOpen() {
 	readMouse();
 	useOpened();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 

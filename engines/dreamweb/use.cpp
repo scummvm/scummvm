@@ -1267,7 +1267,7 @@ void DreamBase::useDiary() {
 	showDiaryPage();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	data.byte(kGetback) = 0;
 
@@ -1586,7 +1586,7 @@ void DreamBase::withWhat() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 	data.byte(kInvopen) = 2;
 }

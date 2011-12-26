@@ -38,7 +38,7 @@ void DreamBase::talk() {
 	data.byte(kCommandtype) = 255;
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 
 	RectWithCallback<DreamGenContext> talkList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
@@ -259,7 +259,7 @@ void DreamBase::redes() {
 	startTalk();
 	readMouse();
 	showPointer();
-	workToScreenCPP();
+	workToScreen();
 	delPointer();
 }
 

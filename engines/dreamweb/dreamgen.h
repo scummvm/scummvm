@@ -460,7 +460,6 @@ public:
 	void pickupConts();
 	void transferMap();
 	void getSetAd();
-	void rollEm();
 	void findAllOpen();
 	void fillOpen();
 	void dreamweb();
