@@ -425,13 +425,11 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void dirFile();
-	void pickupConts();
 	void transferMap();
 	void dreamweb();
 	void read();
 	void searchForString();
 	void parser();
-	void transferConToEx();
 };
 
 } // End of namespace DreamGen

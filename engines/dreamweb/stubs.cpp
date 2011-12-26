@@ -1364,18 +1364,19 @@ void DreamBase::deleteTaken() {
 	}
 }
 
-void DreamGenContext::getExPos() {
+DynObject *DreamGenContext::getExPos() {
 	es = data.word(kExtras);
-	const DynObject *objects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff) {
 			data.byte(kExpos) = i;
 			di = kExdata + i * sizeof(DynObject);
-			return;
+			return &objects[i];
 		}
 	}
 	data.byte(kExpos) = kNumexobjects;
 	di = kExdata + kNumexobjects * sizeof(DynObject);
+	return 0;
 }
 
 void DreamBase::placeSetObject(uint8 index) {

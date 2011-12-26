@@ -219,6 +219,8 @@ public:
 	void findAllOpen();
 	void fillOpen();
 	ObjectRef findInvPos();
+	void reExFromInv();
+	void swapWithInv();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);

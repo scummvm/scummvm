@@ -712,7 +712,7 @@ void DreamBase::dropObject() {
 	object->currentLocation = data.byte(kReallocation);
 }
 
-bool DreamGenContext::checkObjectSizeCPP() {
+bool DreamGenContext::checkObjectSize() {
 	byte containerSize = getOpenedSlotSize();
 	DynObject *object = getEitherAdCPP();
 	// If there is no size defined for the object in the editor, set its size
@@ -774,7 +774,7 @@ void DreamGenContext::selectOpenOb() {
 	delPointer();
 }
 
-void DreamGenContext::reExFromInv() {
+void DreamBase::reExFromInv() {
 	ObjectRef objectId = findInvPos();
 	data.byte(kCommandtype) = objectId._type;
 	data.byte(kCommand)     = objectId._index;
@@ -782,7 +782,7 @@ void DreamGenContext::reExFromInv() {
 	data.byte(kPointermode) = 0;
 }
 
-void DreamGenContext::swapWithInv() {
+void DreamBase::swapWithInv() {
 	ObjectRef subject;
 	subject._type = data.byte(kObjecttype);
 	subject._index = data.byte(kItemframe);
@@ -868,7 +868,7 @@ void DreamGenContext::useOpened() {
 		return;
 	}
 
-	if (!checkObjectSizeCPP())
+	if (!checkObjectSize())
 		return;
 
 	data.byte(kPickup) = 0;
@@ -964,7 +964,7 @@ void DreamGenContext::swapWithOpen() {
 		return;
 	}
 
-	if (!checkObjectSizeCPP())
+	if (!checkObjectSize())
 		return;
 
 	byte prevType = data.byte(kObjecttype);
@@ -1012,9 +1012,8 @@ ObjectRef DreamBase::findOpenPos() {
 
 byte DreamGenContext::transferToEx() {
 	emergencyPurge();
-	getExPos();
+	DynObject *exObject = getExPos(); // Also sets es:di
 	byte pos = data.byte(kExpos);
-	DynObject *exObject = getExAd(pos);
 	DynObject *freeObject = getFreeAd(data.byte(kItemframe));
 	memcpy(exObject, freeObject, sizeof(DynObject));
 	exObject->currentLocation = data.byte(kReallocation);
@@ -1029,8 +1028,6 @@ byte DreamGenContext::transferToEx() {
 	transferText();
 	freeObject = getFreeAd(data.byte(kItemframe));
 	freeObject->mapad[0] = 254;
-	ds = data.word(kFreedat);
-	si = data.byte(kItemframe) * sizeof(DynObject);
 	pickupConts();
 	return pos;
 }
@@ -1075,6 +1072,41 @@ void DreamBase::findAllOpen() {
 		uint8 slot = obj->mapad[2];
 		_openInvList[slot]._index = i;
 		_openInvList[slot]._type = kFreeObjectType;
+	}
+}
+
+void DreamGenContext::pickupConts() {
+	assert(data.byte(kObjecttype) == kFreeObjectType);
+	const DynObject *obj = getFreeAd(data.byte(kItemframe));
+
+	if (obj->slotCount == 255)
+		return; // not openable
+
+	uint8 expos = data.byte(kExpos);
+
+	for (uint16 index = 0; index < 80; ++index) {
+		DynObject *freeObj = getFreeAd(index);
+
+		if (freeObj->mapad[0] != data.byte(kObjecttype))
+			continue;
+		if (freeObj->mapad[1] != data.byte(kItemframe))
+			continue;
+		data.byte(kItemtotran) = index;
+
+		DynObject *exObj = getExPos(); // Also sets es:di to exObj
+
+		memcpy(exObj, freeObj, sizeof(DynObject));
+		exObj->currentLocation = data.byte(kReallocation);
+		exObj->initialLocation = data.byte(kReallocation);
+		exObj->index = index;
+		exObj->mapad[0] = 4; // kExObjectType?
+		exObj->mapad[1] = expos;
+
+		transferMap();
+		transferInv();
+		transferText();
+
+		freeObj->mapad[0] = 0xFF;
 	}
 }
 
