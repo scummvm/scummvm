@@ -212,6 +212,11 @@ public:
 	void makeWorn(DynObject *object);
 	void dropObject();
 	uint16 findOpenPos();
+	byte getOpenedSlotSize();
+	byte getOpenedSlotCount();
+	void openOb();
+	void findAllOpen();
+	void fillOpen();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);

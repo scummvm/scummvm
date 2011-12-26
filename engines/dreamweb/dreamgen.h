@@ -434,8 +434,6 @@ public:
 	void pickupConts();
 	void transferMap();
 	void getSetAd();
-	void findAllOpen();
-	void fillOpen();
 	void dreamweb();
 	void read();
 	void searchForString();

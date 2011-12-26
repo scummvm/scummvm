@@ -277,7 +277,8 @@ void DreamBase::getBackFromOb() {
 }
 
 void DreamGenContext::getOpenedSize() {
-	//ax = getOpenedSlotCount();
+	//ah = getOpenedSlotSize();
+	//ah = getOpenedSlotCount();
 
 	// We need to call the ASM-style versions of get*Ad, as these also set
 	// bx and es
@@ -300,7 +301,7 @@ void DreamGenContext::getOpenedSize() {
 	}
 }
 
-byte DreamGenContext::getOpenedSlotCount() {
+byte DreamBase::getOpenedSlotCount() {
 	byte obj = data.byte(kOpenedob);
 	switch (data.byte(kOpenedtype)) {
 	case 4:
@@ -312,7 +313,7 @@ byte DreamGenContext::getOpenedSlotCount() {
 	}
 }
 
-byte DreamGenContext::getOpenedSlotSize() {
+byte DreamBase::getOpenedSlotSize() {
 	byte obj = data.byte(kOpenedob);
 	switch (data.byte(kOpenedtype)) {
 	case 4:
@@ -324,14 +325,14 @@ byte DreamGenContext::getOpenedSlotSize() {
 	}
 }
 
-void DreamGenContext::openOb() {
+void DreamBase::openOb() {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 
 	copyName(data.byte(kOpenedtype), data.byte(kOpenedob), commandLine);
 
 	printMessage(kInventx, kInventy+86, 62, 240, false);
 
-	al = printDirect(commandLine, data.word(kLastxpos) + 5, kInventy+86, 220, false);
+	printDirect(commandLine, data.word(kLastxpos) + 5, kInventy+86, 220, false);
 
 	fillOpen();
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
@@ -1079,6 +1080,54 @@ byte DreamGenContext::transferToEx() {
 	si = data.byte(kItemframe);
 	pickupConts();
 	return pos;
+}
+
+void DreamBase::fillOpen() {
+	delTextLine();
+	uint8 size = getOpenedSlotCount();
+	if (size > 4)
+		size = 4;
+	findAllOpen();
+	uint8 *openInvList = getSegment(data.word(kBuffers)).ptr(kOpeninvlist, 32);
+	for (uint8 i = 0; i < size; ++i) {
+		uint8 index = openInvList[2*i]; 
+		uint8 type = openInvList[2*i + 1];
+		obToInv(index, type, kInventx + (i-1)*kItempicsize, kInventy + 96);
+	}
+	underTextLine();
+}
+
+void DreamBase::findAllOpen() {
+	uint8 *openInvList = getSegment(data.word(kBuffers)).ptr(kOpeninvlist, 32);
+
+	memset(openInvList, 0xFF, 32);
+
+	const DynObject *obj;
+
+	obj = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
+	for (uint8 i = 0; i < kNumexobjects; ++i, ++obj) {
+		if (obj->mapad[1] != data.byte(kOpenedob))
+			continue;
+		if (obj->mapad[0] != data.byte(kOpenedtype))
+			continue;
+		if (data.byte(kOpenedtype) != kExObjectType && obj->mapad[3] != data.byte(kReallocation))
+			continue;
+		uint8 slot = obj->mapad[2];
+		assert(slot < 16);
+		openInvList[2*slot] = i;
+		openInvList[2*slot + 1] = kExObjectType;
+	}
+
+	obj = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
+	for (uint8 i = 0; i < 80; ++i, ++obj) {
+		if (obj->mapad[1] != data.byte(kOpenedob))
+			continue;
+		if (obj->mapad[0] != data.byte(kOpenedtype))
+			continue;
+		uint8 index = obj->mapad[2];
+		openInvList[2*index] = i;
+		openInvList[2*index + 1] = kFreeObjectType;
+	}
 }
 
 } // End of namespace DreamGen

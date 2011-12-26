@@ -119,10 +119,7 @@
 	void processTrigger();
 	bool execCommand();
 	void getOpenedSize();
-	byte getOpenedSlotSize();
-	byte getOpenedSlotCount();
 	bool checkObjectSizeCPP();
-	void openOb();
 	void identifyOb();
 	void selectOb();
 	void findInvPos();
