@@ -110,6 +110,10 @@ private:
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
 	DECLARE_OPCODE(sunspotAdd);
+	DECLARE_OPCODE(inventoryAddFront);
+	DECLARE_OPCODE(inventoryAddBack);
+	DECLARE_OPCODE(inventoryRemove);
+	DECLARE_OPCODE(inventoryReset);
 	DECLARE_OPCODE(varSetZero);
 	DECLARE_OPCODE(varSetOne);
 	DECLARE_OPCODE(varSetTwo);

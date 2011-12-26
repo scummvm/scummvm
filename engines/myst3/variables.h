@@ -46,6 +46,10 @@ public:
 	const Common::String describeVar(uint16 var);
 	const Common::String describeCondition(int16 condition);
 
+	void inventoryReset();
+	void inventoryAdd(uint16 var, bool atEnd);
+	void inventoryRemove(uint16 var);
+
 	DECLARE_VAR(61, LocationAge)
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)
@@ -72,6 +76,8 @@ private:
 	Myst3Engine *_vm;
 
 	uint32 _vars[2048];
+
+	Common::List<uint16> _inventory;
 
 	struct Description {
 		Description() {}

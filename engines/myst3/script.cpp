@@ -55,6 +55,10 @@ Script::Script(Myst3Engine *vm):
 	OP_4( 25, movieInitOverrridePosition,	kEvalValue,	kCondition,	kValue,		kValue					);
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
+	OP_2( 44, inventoryAddFront,			kVar,		kValue											);
+	OP_2( 45, inventoryAddBack,				kVar,		kValue											);
+	OP_1( 46, inventoryRemove,				kVar														);
+	OP_0( 47, inventoryReset,																			);
 	OP_1( 49, varSetZero,					kVar														);
 	OP_1( 50, varSetOne,					kVar														);
 	OP_1( 51, varSetTwo,					kVar														);
@@ -423,6 +427,30 @@ void Script::sunspotAdd(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	warning("Unimplemented opcode %d", cmd.op);
+}
+
+void Script::inventoryAddFront(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Inventory add item %d at front", cmd.op, cmd.args[0]);
+
+	_vm->_vars->inventoryAdd(cmd.args[0], false);
+}
+
+void Script::inventoryAddBack(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Inventory add item %d at back", cmd.op, cmd.args[0]);
+
+	_vm->_vars->inventoryAdd(cmd.args[0], true);
+}
+
+void Script::inventoryRemove(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Inventory remove item %d", cmd.op, cmd.args[0]);
+
+	_vm->_vars->inventoryRemove(cmd.args[0]);
+}
+
+void Script::inventoryReset(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Reset inventory", cmd.op);
+
+	_vm->_vars->inventoryReset();
 }
 
 void Script::varSetZero(Context &c, const Opcode &cmd) {
