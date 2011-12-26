@@ -1027,6 +1027,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'zoomonoff',
 	], skip_output = [
 	# These functions are processed but not output
+	'dirfile',
 	'dreamweb',
 	], skip_dispatch_call = True, skip_addr_constants = True,
 	header_omit_blacklisted = True,

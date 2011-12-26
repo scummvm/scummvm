@@ -453,6 +453,61 @@ void DreamGenContext::getKeyAndLogo() {
 	}
 }
 
+void DreamGenContext::dirFile() {
+	bool foundFile = false;
+
+	es.byte(di) = 34;
+
+	ds = data.word(kTextfile1);
+	si = kTextstart;
+	searchForString();
+	if (al == 0) {
+		foundFile = true;
+	} else {
+		ds = data.word(kTextfile2);
+		si = kTextstart;
+		searchForString();
+		if (al == 0) {
+			foundFile = true;
+		} else {
+			ds = data.word(kTextfile3);
+			si = kTextstart;
+			searchForString();
+			if (al == 0)
+				foundFile = true;
+		}
+	}
+
+	if (!foundFile) {
+		monMessage(7);
+		return;
+	}
+
+	// "foundfile"
+	getKeyAndLogo();
+	if (al != 0)
+		return;
+
+	// "keyok2"
+	memcpy(data.ptr(kCurrentfile+1, 0), data.ptr(offset_operand1+1, 0), 12);
+	monitorLogo();
+	scrollMonitor();
+	monMessage(10);
+
+	while (true) {
+		al = es.byte(bx);
+		bx++;
+		if (al == 34 || al == '*') {
+			// "endofdir2"
+			scrollMonitor();
+			return;
+		}
+
+		if (al == '=')
+			monPrint();
+	}
+}
+
 void DreamGenContext::dirCom() {
 	randomAccess(30);
 
