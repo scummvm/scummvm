@@ -456,6 +456,25 @@ void DreamGenContext::getKeyAndLogo() {
 	}
 }
 
+void DreamGenContext::dirCom() {
+	randomAccess(30);
+	parser();
+	if (es.byte(di + 1)) {
+		dirFile();
+		return;
+	}
+
+	data.byte(kLogonum) = 0;
+	memcpy(data.ptr(kCurrentfile+1, 0), "ROOT        ", 12);
+	monitorLogo();
+	scrollMonitor();
+	monMessage(9);
+	searchForFiles(data.word(kTextfile1));
+	searchForFiles(data.word(kTextfile2));
+	searchForFiles(data.word(kTextfile3));
+	scrollMonitor();
+}
+
 void DreamGenContext::signOn() {
 	parser();
 
@@ -514,17 +533,21 @@ void DreamGenContext::signOn() {
 	}
 }
 
-void DreamGenContext::searchForFiles() {
+void DreamGenContext::searchForFiles(uint16 segment) {
 	uint16 offset = kTextstart;
 	byte curChar;
 
 	while (true) {
-		curChar = es.byte(offset);
+		curChar = getSegment(segment).byte(offset);
 		offset++;
 		if (curChar == '*')
 			return; // "endofdir"
-		if (curChar == 34)
-			monPrint();
+		if (curChar == 34) {
+			uint16 originalOffset = offset;
+			const char *string = (const char *)getSegment(segment).ptr(offset, 0);
+			const char *nextString = monPrint(string);
+			offset = originalOffset + (nextString - string);
+		}
 	}
 }
 

@@ -134,7 +134,8 @@
 	void outOfOpen();
 	void swapWithOpen();
 	void swapWithInv();
-	void searchForFiles();
+	void searchForFiles(uint16 segment);
 	byte transferToEx();
+	void dirCom();
 
 #endif

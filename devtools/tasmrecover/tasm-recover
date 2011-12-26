@@ -61,6 +61,7 @@ p = parser(skip_binary_data = [
 	# monitor.asm
 	'comlist',
 	'keys',
+	'rootdir',
 	# newplace.asm
 	'destlist',
 	# object.asm
@@ -392,6 +393,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'destselect',
 	'diarykeyp',
 	'diarykeyn',
+	'dircom',
 	'disablepath',
 	'disablesoundint',
 	'discops',

@@ -32,7 +32,6 @@
 
 namespace DreamGen {
 
-static const uint16 offset_rootdir = 0x01a6;
 static const uint16 offset_operand1 = 0x0198;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
@@ -321,11 +320,11 @@ static const uint16 kSoundbufferwrite = 391;
 static const uint16 kCurrentsample = 393;
 static const uint16 kRoomssample = 394;
 static const uint16 kBasicsample = 395;
-static const uint16 kCurrentfile = 436;
-static const uint16 kInputline = 511;
-static const uint16 kQuitrequested = 639;
-static const uint16 kSubtitles = 640;
-static const uint16 kForeignrelease = 641;
+static const uint16 kCurrentfile = 422;
+static const uint16 kInputline = 497;
+static const uint16 kQuitrequested = 625;
+static const uint16 kSubtitles = 626;
+static const uint16 kForeignrelease = 627;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -427,7 +426,6 @@ public:
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
-	void dirCom();
 	void dirFile();
 	void pickupConts();
 	void transferMap();
