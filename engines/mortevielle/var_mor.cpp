@@ -13,7 +13,7 @@
 /*-------------------------   CONSTANTES   ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-const real freq0 = 1.19318e6;
+const float freq0 = 1.19318e6;
 
 const int seg_syst = 0x6fed;
 const int segmou = 0x6f00;
@@ -177,7 +177,7 @@ const array<0, 15, byte> rang
 /*---------------------------------------------------------------------------*/
 
 typedef varying_string<11> path_chars;
-typedef real long_int;
+typedef float long_int;
 typedef varying_string<255> str255;
 typedef varying_string<125> str125;
 typedef varying_string<30> str30;
@@ -206,7 +206,7 @@ typedef array<0, maxtd, ind> tabind;
 
 typedef matrix<1, 7, 0, 24, byte> tab_mlieu;
 
-typedef array<0, 255, real> table;
+typedef array<0, 255, float> table;
 typedef array<0, 255, int> tablint;
 
 typedef int word1;
@@ -393,7 +393,7 @@ tab_mlieu v_lieu;
 tfxx l;
 tablint tbi;
 chariot c1, c2, c3;
-real addfix;
+float addfix;
 pal_cga palsav;
 array<0, 90, tabdb> tabpal;
 pal_cga palcga;
@@ -424,7 +424,7 @@ void hirs() {
 	break;
 	case ams : {
 		hires;
-		inline_((real)(0xb8) / 6 / 0 /   /*  =>  mov ax,6 */
+		inline_((float)(0xb8) / 6 / 0 /   /*  =>  mov ax,6 */
 		        0xcd / 0x10);     /*  =>  int 16   */
 		port[0x3d9] = 15;
 		port[0x3df] = 0;
@@ -433,7 +433,7 @@ void hirs() {
 	}
 	break;
 	case ega : {
-		inline_((real)(0xb8) / 14 / 0 /     /*  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs */
+		inline_((float)(0xb8) / 14 / 0 /     /*  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs */
 		        0xcd / 0x10);        /*  INT 16  */
 		res = 2;
 	}
@@ -445,7 +445,7 @@ void hirs() {
 			port[0x3b4] = i;
 			port[0x3b5] = herc[i];
 		}
-		inline_((real)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
+		inline_((float)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
 		port[0x3b8] = 10;
 		res = 2;
 	}
