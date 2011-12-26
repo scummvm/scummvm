@@ -309,4 +309,24 @@ void DreamBase::workoutFrames() {
 	data.byte(kTurndirection) = 0;
 }
 
+byte DreamBase::findFirstPath(byte x, byte y) {
+	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * data.byte(kRoomnum), 0);
+
+	for (uint8 index = 0; index < 12; index++) {
+		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
+			continue; // "nofirst"
+
+		if (x < paths[index].x1 || y < paths[index].y1)
+			continue; // "nofirst"
+
+		if (x >= paths[index].x2 || y >= paths[index].y2)
+			continue; // "nofirst"
+
+		return paths[index].on; // "gotfirst"
+	}
+
+	return 0;
+}
+
+
 } // End of namespace DreamGen

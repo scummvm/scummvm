@@ -172,7 +172,6 @@
 	void checkObjectSize();
 	bool checkObjectSizeCPP();
 	void openOb();
-	uint8 findFirstPath(uint16 param);
 	void identifyOb();
 	void selectOb();
 	void findInvPos();

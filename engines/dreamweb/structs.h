@@ -221,10 +221,10 @@ struct Change {
 struct PathNode {
 	uint8 x;
 	uint8 y;
-	uint8 b2;
-	uint8 b3;
-	uint8 b4;
-	uint8 b5;
+	uint8 x1;
+	uint8 y1;
+	uint8 x2;
+	uint8 y2;
 	uint8 on;
 	uint8 dir;
 };

@@ -220,6 +220,7 @@ public:
 	bool checkIfPathIsOn(uint8 index);
 	void bresenhams();
 	void workoutFrames();
+	byte findFirstPath(byte x, byte y);
 
 	// from people.cpp
 	void setupInitialReelRoutines();
