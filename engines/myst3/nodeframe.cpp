@@ -38,7 +38,9 @@ void NodeFrame::load(Archive &archive, uint16 index) {
 		Graphics::JPEG jpeg;
 		jpeg.read(jpegStream);
 
-		setFaceTextureJPEG(0, &jpeg);
+		_faces[0].createTexture();
+		_faces[0].setTextureFromJPEG(&jpeg);
+		_faces[0].uploadTexture();
 
 		delete jpegStream;
 	}
@@ -55,7 +57,7 @@ void NodeFrame::draw() {
 
 	glDepthMask(GL_FALSE);
 
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[0]);
+	glBindTexture(GL_TEXTURE_2D, _faces[0]._textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Z+
 		glTexCoord2f(0, v); glVertex3f( t,-s, 1.0f);
 		glTexCoord2f(u, v); glVertex3f(-t,-s, 1.0f);

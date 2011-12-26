@@ -27,38 +27,47 @@
 
 namespace Myst3 {
 
-void Node::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {
-	Graphics::Surface texture;
-	texture.create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
+	_bitmap = new Graphics::Surface();
+	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
 	byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
 	byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
 	byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
 	
-	byte *ptr = (byte *)texture.getBasePtr(0, 0);
-	for (int i = 0; i < texture.w * texture.h; i++) {
+	byte *ptr = (byte *)_bitmap->getBasePtr(0, 0);
+	for (int i = 0; i < _bitmap->w * _bitmap->h; i++) {
 		byte r, g, b;
 		Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
 		*ptr++ = r;
 		*ptr++ = g;
 		*ptr++ = b;
 	}
-	
-	setFaceTextureRGB(face, &texture);
-	
-	texture.free();
 }
 
-void Node::setFaceTextureRGB(int face, Graphics::Surface *texture) {
-	glGenTextures(1, &_cubeTextures[face]);
+void Face::createTexture() {
+	glGenTextures(1, &_textureId);
 
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[face]);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, _cubeTextureSize, _cubeTextureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texture->w, texture->h, GL_RGB, GL_UNSIGNED_BYTE, texture->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, Node::_cubeTextureSize, Node::_cubeTextureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void Face::uploadTexture() {
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _bitmap->w, _bitmap->h, GL_RGB, GL_UNSIGNED_BYTE, _bitmap->pixels);
+}
+
+void Face::unload() {
+	_bitmap->free();
+	delete _bitmap;
+	_bitmap = 0;
+
+	glDeleteTextures(1, &_textureId);
 }
 
 void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
@@ -107,7 +116,7 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 
 void Node::unload() {
 	for (int i = 0; i < 6; i++) {
-		glDeleteTextures(1, &_cubeTextures[i]);
+		_faces[i].unload();
 	}
 }
 
