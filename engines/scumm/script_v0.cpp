@@ -979,7 +979,15 @@ void ScummEngine_v0::o_setOwnerOf() {
 	owner = getVarOrDirectByte(PARAM_2);
 
 	if (obj == 0)
-		obj = _activeInventory;
+		obj = _activeObject;
+
+	// FIXME: the original interpreter seems to set the owner of 
+	// an item to remove (new owner 0) to 13 (purple tentacle).
+	// Ignore this behavior for now.
+	/*
+	if (owner == 0)
+		owner = 13;
+	*/
 
 	setOwnerOf(obj, owner);
 }
