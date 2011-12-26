@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-11-20 05:20+0100\n"
+"POT-Creation-Date: 2011-12-26 15:26+0100\n"
 "PO-Revision-Date: 2011-11-27 19:00+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
+"Language: Svenska\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Svenska\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Poedit-Language: Swedish\n"
 "X-Poedit-Country: SWEDEN\n"
@@ -47,7 +47,7 @@ msgid "Go up"
 msgstr "Uppåt"
 
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
-#: gui/launcher.cpp:319 gui/massadd.cpp:94 gui/options.cpp:1237
+#: gui/launcher.cpp:319 gui/massadd.cpp:94 gui/options.cpp:1221
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
 #: engines/engine.cpp:436 engines/scumm/dialogs.cpp:190
 #: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
@@ -89,9 +89,9 @@ msgid "Map"
 msgstr "Ställ in"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
-#: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1238
+#: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
 #: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1773 engines/agos/animation.cpp:551
+#: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:345
 #: engines/sword1/animation.cpp:355 engines/sword1/animation.cpp:361
@@ -172,7 +172,7 @@ msgstr ""
 "till en engelsk"
 
 #: gui/launcher.cpp:188 gui/launcher.cpp:202 gui/options.cpp:78
-#: gui/options.cpp:743 gui/options.cpp:753 gui/options.cpp:1208
+#: gui/options.cpp:743 gui/options.cpp:753 gui/options.cpp:1192
 #: audio/null.cpp:40
 msgid "<default>"
 msgstr "<standard>"
@@ -190,11 +190,11 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/launcher.cpp:212 gui/options.cpp:1071 gui/options.cpp:1088
+#: gui/launcher.cpp:212 gui/options.cpp:1055 gui/options.cpp:1072
 msgid "Graphics"
 msgstr "Grafik"
 
-#: gui/launcher.cpp:212 gui/options.cpp:1071 gui/options.cpp:1088
+#: gui/launcher.cpp:212 gui/options.cpp:1055 gui/options.cpp:1072
 msgid "GFX"
 msgstr "GFX"
 
@@ -207,7 +207,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Överskrid globala grafikinställningar"
 
-#: gui/launcher.cpp:224 gui/options.cpp:1094
+#: gui/launcher.cpp:224 gui/options.cpp:1078
 msgid "Audio"
 msgstr "Ljud"
 
@@ -220,11 +220,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Överskrid globala ljudinställningar"
 
-#: gui/launcher.cpp:238 gui/options.cpp:1099
+#: gui/launcher.cpp:238 gui/options.cpp:1083
 msgid "Volume"
 msgstr "Volym"
 
-#: gui/launcher.cpp:240 gui/options.cpp:1101
+#: gui/launcher.cpp:240 gui/options.cpp:1085
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volym"
@@ -238,7 +238,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Överskrid globala volyminställningar"
 
-#: gui/launcher.cpp:253 gui/options.cpp:1109
+#: gui/launcher.cpp:253 gui/options.cpp:1093
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -251,7 +251,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Överskrid globala MIDI-inställningar"
 
-#: gui/launcher.cpp:267 gui/options.cpp:1115
+#: gui/launcher.cpp:267 gui/options.cpp:1099
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -264,11 +264,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Överskrid globala MT-32 inställningar"
 
-#: gui/launcher.cpp:281 gui/options.cpp:1122
+#: gui/launcher.cpp:281 gui/options.cpp:1106
 msgid "Paths"
 msgstr "Sökvägar"
 
-#: gui/launcher.cpp:283 gui/options.cpp:1124
+#: gui/launcher.cpp:283 gui/options.cpp:1108
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Sökvägar"
@@ -282,7 +282,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Sökv. spel:"
 
-#: gui/launcher.cpp:297 gui/options.cpp:1148
+#: gui/launcher.cpp:297 gui/options.cpp:1132
 msgid "Extra Path:"
 msgstr "Sökv. extra:"
 
@@ -290,42 +290,42 @@ msgstr "Sökv. extra:"
 msgid "Specifies path to additional data used the game"
 msgstr "Bestämmer sökvägen till ytterligare data som spelet använder"
 
-#: gui/launcher.cpp:299 gui/options.cpp:1150
+#: gui/launcher.cpp:299 gui/options.cpp:1134
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Sökv. extra:"
 
-#: gui/launcher.cpp:306 gui/options.cpp:1132
+#: gui/launcher.cpp:306 gui/options.cpp:1116
 msgid "Save Path:"
 msgstr "Sökv. sparat:"
 
 #: gui/launcher.cpp:306 gui/launcher.cpp:308 gui/launcher.cpp:309
-#: gui/options.cpp:1132 gui/options.cpp:1134 gui/options.cpp:1135
+#: gui/options.cpp:1116 gui/options.cpp:1118 gui/options.cpp:1119
 msgid "Specifies where your savegames are put"
 msgstr "Bestämmer var dina spardata lagras"
 
-#: gui/launcher.cpp:308 gui/options.cpp:1134
+#: gui/launcher.cpp:308 gui/options.cpp:1118
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Sökv. sparat:"
 
 #: gui/launcher.cpp:328 gui/launcher.cpp:415 gui/launcher.cpp:468
-#: gui/launcher.cpp:522 gui/options.cpp:1143 gui/options.cpp:1151
-#: gui/options.cpp:1160 gui/options.cpp:1267 gui/options.cpp:1273
-#: gui/options.cpp:1281 gui/options.cpp:1311 gui/options.cpp:1317
-#: gui/options.cpp:1324 gui/options.cpp:1417 gui/options.cpp:1420
-#: gui/options.cpp:1432
+#: gui/launcher.cpp:522 gui/options.cpp:1127 gui/options.cpp:1135
+#: gui/options.cpp:1144 gui/options.cpp:1251 gui/options.cpp:1257
+#: gui/options.cpp:1265 gui/options.cpp:1295 gui/options.cpp:1301
+#: gui/options.cpp:1308 gui/options.cpp:1401 gui/options.cpp:1404
+#: gui/options.cpp:1416
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/launcher.cpp:333 gui/launcher.cpp:421 gui/launcher.cpp:526
-#: gui/options.cpp:1261 gui/options.cpp:1305 gui/options.cpp:1423
+#: gui/options.cpp:1245 gui/options.cpp:1289 gui/options.cpp:1407
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/launcher.cpp:461 gui/options.cpp:1426
+#: gui/launcher.cpp:461 gui/options.cpp:1410
 msgid "Select SoundFont"
 msgstr "Välj SoundFont"
 
@@ -829,99 +829,93 @@ msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Talvolym:"
 
-#: gui/options.cpp:1041 gui/options.cpp:1046
-#: backends/keymapper/remap-dialog.cpp:177
-#: backends/keymapper/remap-dialog.cpp:183
-msgid "Clear value"
-msgstr "Töm sökfältet"
-
-#: gui/options.cpp:1140
+#: gui/options.cpp:1124
 msgid "Theme Path:"
 msgstr "Sökv. tema:"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1126
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Sökv. tema:"
 
-#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
+#: gui/options.cpp:1132 gui/options.cpp:1134 gui/options.cpp:1135
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Bestämmer sökväg till andra data som används av alla spel eller ScummVM"
 
-#: gui/options.cpp:1157
+#: gui/options.cpp:1141
 msgid "Plugins Path:"
 msgstr "Sökv. tillägg:"
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1143
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Sökv. tillägg:"
 
-#: gui/options.cpp:1168
+#: gui/options.cpp:1152
 msgid "Misc"
 msgstr "Diverse"
 
-#: gui/options.cpp:1170
+#: gui/options.cpp:1154
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Diverse"
 
-#: gui/options.cpp:1172
+#: gui/options.cpp:1156
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:1176
+#: gui/options.cpp:1160
 msgid "GUI Renderer:"
 msgstr "GUI-rendering:"
 
-#: gui/options.cpp:1188
+#: gui/options.cpp:1172
 msgid "Autosave:"
 msgstr "Autospara:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1174
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autospara:"
 
-#: gui/options.cpp:1198
+#: gui/options.cpp:1182
 msgid "Keys"
 msgstr "Tangenter"
 
-#: gui/options.cpp:1205
+#: gui/options.cpp:1189
 msgid "GUI Language:"
 msgstr "GUI-språk:"
 
-#: gui/options.cpp:1205
+#: gui/options.cpp:1189
 msgid "Language of ScummVM GUI"
 msgstr "Språk för ScummVM:s användargränssnitt"
 
-#: gui/options.cpp:1356
+#: gui/options.cpp:1340
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Du måste starta om ScummVM för att ändringarna ska få effekt."
 
-#: gui/options.cpp:1369
+#: gui/options.cpp:1353
 msgid "Select directory for savegames"
 msgstr "Välj katalog för spardata"
 
-#: gui/options.cpp:1376
+#: gui/options.cpp:1360
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Det går inte att skriva till den valda katalogen. Var god välj en annan."
 
-#: gui/options.cpp:1385
+#: gui/options.cpp:1369
 msgid "Select directory for GUI themes"
 msgstr "Välj katalog för GUI-teman"
 
-#: gui/options.cpp:1395
+#: gui/options.cpp:1379
 msgid "Select directory for extra files"
 msgstr "Välj katalog för extra filer"
 
-#: gui/options.cpp:1406
+#: gui/options.cpp:1390
 msgid "Select directory for plugins"
 msgstr "Välj katalog för tillägg"
 
-#: gui/options.cpp:1459
+#: gui/options.cpp:1443
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -993,6 +987,10 @@ msgstr "Antialiserad rendering (16 bpp)"
 #: gui/ThemeEngine.cpp:332
 msgid "Antialiased (16bpp)"
 msgstr "Antialiserad (16 bpp)"
+
+#: gui/widget.cpp:312 gui/widget.cpp:314 gui/widget.cpp:320 gui/widget.cpp:322
+msgid "Clear value"
+msgstr "Töm sökfältet"
 
 #: base/main.cpp:203
 #, c-format
@@ -1366,6 +1364,27 @@ msgstr "Endast undertexter"
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Tal & text"
+
+#: engines/scumm/dialogs.cpp:653
+msgid "Select a Proficiency Level."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:655
+msgid "Refer to your Loom(TM) manual for help."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:658
+#, fuzzy
+msgid "Standard"
+msgstr "Standard (16 bpp)"
+
+#: engines/scumm/dialogs.cpp:659
+msgid "Practice"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:660
+msgid "Expert"
+msgstr ""
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -1880,7 +1899,7 @@ msgstr "Flyg åt höger"
 msgid "Fly to lower right"
 msgstr "Flyg åt nedre höger"
 
-#: engines/scumm/scumm.cpp:1771
+#: engines/scumm/scumm.cpp:1782
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1889,7 +1908,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:2261 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2272 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1900,7 +1919,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2268 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1911,7 +1930,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2280 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2291 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1922,7 +1941,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2495
+#: engines/scumm/scumm.cpp:2506
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1976,7 +1995,7 @@ msgstr "Filmscensfilen '%s' hittades ej!"
 msgid "Failed to load game state from file."
 msgstr "Kunde inte läsa spardata från filen"
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:560
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:495
 msgid "Failed to save game state to file."
 msgstr "Kunde inte skriva spardata till filen."
 
@@ -1988,51 +2007,51 @@ msgstr "Kunde inte radera filen."
 msgid "Failed to save game"
 msgstr "Kunde inte spara spelet."
 
-#: engines/kyra/lol.cpp:571
+#: engines/kyra/lol.cpp:572
 msgid "Attack 1"
 msgstr "Attack 1"
 
-#: engines/kyra/lol.cpp:574
+#: engines/kyra/lol.cpp:573
 msgid "Attack 2"
 msgstr "Attack 2"
 
-#: engines/kyra/lol.cpp:577
+#: engines/kyra/lol.cpp:574
 msgid "Attack 3"
 msgstr "Attack 3"
 
-#: engines/kyra/lol.cpp:580
+#: engines/kyra/lol.cpp:575
 msgid "Move Forward"
 msgstr "Steg framåt"
 
-#: engines/kyra/lol.cpp:583
+#: engines/kyra/lol.cpp:576
 msgid "Move Back"
 msgstr "Steg bakåt"
 
-#: engines/kyra/lol.cpp:586
+#: engines/kyra/lol.cpp:577
 msgid "Slide Left"
 msgstr "Glid vänster"
 
-#: engines/kyra/lol.cpp:589
+#: engines/kyra/lol.cpp:578
 msgid "Slide Right"
 msgstr "Glid höger"
 
-#: engines/kyra/lol.cpp:592
+#: engines/kyra/lol.cpp:579
 msgid "Turn Left"
 msgstr "Sväng vänster"
 
-#: engines/kyra/lol.cpp:595
+#: engines/kyra/lol.cpp:580
 msgid "Turn Right"
 msgstr "Sväng höger"
 
-#: engines/kyra/lol.cpp:598
+#: engines/kyra/lol.cpp:581
 msgid "Rest"
 msgstr "Vila"
 
-#: engines/kyra/lol.cpp:601
+#: engines/kyra/lol.cpp:582
 msgid "Options"
 msgstr "Inställningar"
 
-#: engines/kyra/lol.cpp:604
+#: engines/kyra/lol.cpp:583
 msgid "Choose Spell"
 msgstr "Välj trollformel"
 
@@ -2834,11 +2853,11 @@ msgstr "Visa tangentbord"
 msgid "Control Mouse"
 msgstr "Kontrollera musen"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:121
+#: backends/events/maemosdl/maemosdl-events.cpp:129
 msgid "Clicking Enabled"
 msgstr "Klickning aktiverad"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:121
+#: backends/events/maemosdl/maemosdl-events.cpp:129
 msgid "Clicking Disabled"
 msgstr "Klickning deaktiverad"
 
