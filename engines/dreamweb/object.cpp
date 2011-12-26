@@ -343,25 +343,20 @@ void DreamGenContext::identifyOb() {
 		return;
 	}
 
-	ax = data.word(kMousex) - data.word(kMapadx);
-	bx = data.word(kMousey) - data.word(kMapady);
+	uint16 initialX = data.word(kMousex) - data.word(kMapadx);
+	uint16 initialY = data.word(kMousey) - data.word(kMapady);
 
-	if (ax >= 22 * 8 || bx >= 20 * 8) {
+	if (initialX >= 22 * 8 || initialY >= 20 * 8) {
 		blank();
 		return;
 	}
 
-	data.byte(kInmaparea) = 1;
-	ah = bl;
-	push(ax);
-	data.byte(kPointerspath) = findPathOfPoint(al, ah);
-	ax = pop();
-	push(ax);
-	data.byte(kPointerfirstpath) = findFirstPath(al, ah);
-	ax = pop();
+	byte x = initialX & 0xFF;
+	byte y = initialY & 0xFF;
 
-	byte x = al;
-	byte y = ah;
+	data.byte(kInmaparea) = 1;
+	data.byte(kPointerspath) = findPathOfPoint(x, y);
+	data.byte(kPointerfirstpath) = findFirstPath(x, y);
 
 	if (checkIfEx(x, y) || checkIfFree(x, y) ||
 		checkIfPerson(x, y) || checkIfSet(x, y))
