@@ -75,7 +75,6 @@
 	void useRoutine();
 	void examineOb(bool examineAgain = true);
 	void dumpWatch();
-	void transferText();
 	void watchCount();
 	void readSetData();
 	void useMon();

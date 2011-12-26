@@ -212,6 +212,7 @@ p = parser(skip_binary_data = [
 	'timer3to',
 	'oldsubject',
 	'buffers',
+	'itemtotran',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
@@ -919,6 +920,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'train',
 	'transfercontoex',
 	'transferinv',
+	'transfermap',
 	'transfertext',
 	'transfertoex',
 	'trapdoor',

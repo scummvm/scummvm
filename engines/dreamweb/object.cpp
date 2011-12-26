@@ -255,10 +255,11 @@ void DreamGenContext::inventory() {
 	examineOb(false);
 }
 
-void DreamGenContext::transferText() {
-	getSegment(data.word(kExtras)).word(kExtextdat + data.byte(kExpos) * 2) = data.word(kExtextpos);
-	uint16 freeTextOffset = data.byte(kItemtotran) * 2;
+void DreamBase::transferText(uint8 from, uint8 to) {
+	getSegment(data.word(kExtras)).word(kExtextdat + 2*to) = data.word(kExtextpos);
+	uint16 freeTextOffset = 2*from;
 	uint16 srcOffset = getSegment(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
+
 	const char *src = (const char *)getSegment(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
 	char *dst = (char *)getSegment(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
 
@@ -1012,23 +1013,29 @@ ObjectRef DreamBase::findOpenPos() {
 
 byte DreamGenContext::transferToEx() {
 	emergencyPurge();
+
 	DynObject *exObject = getExPos(); // Also sets es:di
 	byte pos = data.byte(kExpos);
+
 	DynObject *freeObject = getFreeAd(data.byte(kItemframe));
+
 	memcpy(exObject, freeObject, sizeof(DynObject));
+
 	exObject->currentLocation = data.byte(kReallocation);
 	exObject->initialLocation = data.byte(kReallocation);
 	exObject->index = data.byte(kItemframe);
 	exObject->mapad[0] = 4;
 	exObject->mapad[1] = 255;
 	exObject->mapad[2] = data.byte(kLastinvpos);
-	data.byte(kItemtotran) = data.byte(kItemframe);
-	transferMap();
-	transferInv();
-	transferText();
-	freeObject = getFreeAd(data.byte(kItemframe));
+
+	transferFrame(data.byte(kItemframe), pos, 0);
+	transferFrame(data.byte(kItemframe), pos, 1);
+	transferText(data.byte(kItemframe), pos);
+
 	freeObject->mapad[0] = 254;
+
 	pickupConts();
+
 	return pos;
 }
 
@@ -1084,14 +1091,13 @@ void DreamGenContext::pickupConts() {
 
 	uint8 expos = data.byte(kExpos);
 
-	for (uint16 index = 0; index < 80; ++index) {
+	for (uint8 index = 0; index < 80; ++index) {
 		DynObject *freeObj = getFreeAd(index);
 
 		if (freeObj->mapad[0] != data.byte(kObjecttype))
 			continue;
 		if (freeObj->mapad[1] != data.byte(kItemframe))
 			continue;
-		data.byte(kItemtotran) = index;
 
 		DynObject *exObj = getExPos(); // Also sets es:di to exObj
 
@@ -1102,9 +1108,9 @@ void DreamGenContext::pickupConts() {
 		exObj->mapad[0] = 4; // kExObjectType?
 		exObj->mapad[1] = expos;
 
-		transferMap();
-		transferInv();
-		transferText();
+		transferFrame(index, data.byte(kExpos), 0);
+		transferFrame(index, data.byte(kExpos), 1);
+		transferText(index, data.byte(kExpos));
 
 		freeObj->mapad[0] = 0xFF;
 	}

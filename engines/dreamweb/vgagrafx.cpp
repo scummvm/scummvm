@@ -401,23 +401,6 @@ void DreamBase::dumpMap() {
 	multiDump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamBase::transferInv() {
-	const Frame *freeFrames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(kFrframedata, 0);
-	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
-	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
-	Frame *exFrame = exFrames + (3 * data.byte(kExpos) + 1);
-	exFrame->width = freeFrame->width;
-	exFrame->height = freeFrame->height;
-	exFrame->x = freeFrame->x;
-	exFrame->y = freeFrame->y;
-	uint16 byteCount = freeFrame->width * freeFrame->height;
-	const uint8 *src = getSegment(data.word(kFreeframes)).ptr(kFrframes + freeFrame->ptr(), byteCount);
-	uint8 *dst = getSegment(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
-	memcpy(dst, src, byteCount);
-	exFrame->setPtr(data.word(kExframepos));
-	data.word(kExframepos) += byteCount;
-}
-
 bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
@@ -464,6 +447,27 @@ void DreamBase::createPanel2() {
 void DreamBase::showPanel() {
 	showFrame(engine->icons1(), 72, 0, 19, 0);
 	showFrame(engine->icons1(), 192, 0, 19, 0);
+}
+
+void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
+	const Frame *freeFrames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(kFrframedata, 0);
+	const Frame &freeFrame = freeFrames[3*from + offset];
+
+	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
+	Frame &exFrame = exFrames[3*to + offset];
+
+	exFrame.width = freeFrame.width;
+	exFrame.height = freeFrame.height;
+	exFrame.x = freeFrame.x;
+	exFrame.y = freeFrame.y;
+	uint16 byteCount = freeFrame.width * freeFrame.height;
+
+	const uint8 *src = getSegment(data.word(kFreeframes)).ptr(kFrframes + freeFrame.ptr(), byteCount);
+	uint8 *dst = getSegment(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
+	memcpy(dst, src, byteCount);
+
+	exFrame.setPtr(data.word(kExframepos));
+	data.word(kExframepos) += byteCount;
 }
 
 } // End of namespace DreamGen

@@ -221,6 +221,7 @@ public:
 	ObjectRef findInvPos();
 	void reExFromInv();
 	void swapWithInv();
+	void transferText(uint8 from, uint8 to);
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -726,7 +727,7 @@ public:
 	void panelToMap();
 	void mapToPanel();
 	void dumpMap();
-	void transferInv();
+	void transferFrame(uint8 from, uint8 to, uint8 offset);
 	void zoom();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
