@@ -25,39 +25,33 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "mortevielle/mort.h"
 #include "ptoc.h"
 
-namespace Mortevielle {
-
-/*$v-*/
-/*$k-*/
-/*$x-*/
-/*$c-*/
-
-#include "var_mor.h"          /* les variables */
-#include "keyboard.h"          /* la gestion du clavier */
-#include "mouse.h"          /* la souris  */
-#include "level15.h"          /* les fonctions de base */
-#include "droite.h"          /* pour faire une droite */
-#include "boite.h"
-#include "sprint.h"          /* l'affichage des textes */
-#include "outtext.h"          /* fonctions sup‚rieures d'affichage */
-#include "parole.h"          /* les fonctions de la parole */
-#include "alert.h"
-#include "parole2.h"          /* les fonctions de la parole */
+#include "mortevielle/mort.h"
+#include "mortevielle/var_mor.h"          /* les variables */
+#include "mortevielle/keyboard.h"          /* la gestion du clavier */
+#include "mortevielle/mouse.h"          /* la souris  */
+#include "mortevielle/level15.h"          /* les fonctions de base */
+#include "mortevielle/droite.h"          /* pour faire une droite */
+#include "mortevielle/boite.h"
+#include "mortevielle/sprint.h"          /* l'affichage des textes */
+#include "mortevielle/outtext.h"          /* fonctions sup‚rieures d'affichage */
+#include "mortevielle/parole.h"          /* les fonctions de la parole */
+#include "mortevielle/alert.h"
+#include "mortevielle/parole2.h"          /* les fonctions de la parole */
 /*  debug              le debugging */
-#include "ques.h"          /* les questions */
-#include "menu.h"          /* les fonctions du menu */
-#include "mor.h"          /* divers */
-#include "taffich.h"          /* chargement des dessins */
-#include "ovd1.h"          /* les fonctions sur disque 1 */
-#include "mor2.h"          /* divers */
-#include "actions.h"          /* les actions */
-#include "prog.h"          /* fonctions toplevel */
-#include "disk.h"          /* chargements et sauvegardes */
-
+#include "mortevielle/ques.h"          /* les questions */
+#include "mortevielle/menu.h"          /* les fonctions du menu */
+#include "mortevielle/mor.h"          /* divers */
+#include "mortevielle/taffich.h"          /* chargement des dessins */
+#include "mortevielle/ovd1.h"          /* les fonctions sur disque 1 */
+#include "mortevielle/mor2.h"          /* divers */
+#include "mortevielle/actions.h"          /* les actions */
+#include "mortevielle/prog.h"          /* fonctions toplevel */
+#include "mortevielle/disk.h"          /* chargements et sauvegardes */
 /*  ecrihexa            utilitaire */
+
+namespace Mortevielle {
 
 void divers(int np, boolean b) {
 	teskbd();
