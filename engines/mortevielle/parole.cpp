@@ -68,7 +68,7 @@ void veracf(byte b) {
 
 /* overlay */ void cctable(tablint &t) {
 	int k;
-	array<0, 256, real> tb;
+	array<0, 256, float> tb;
 
 
 	tb[0] = 0;

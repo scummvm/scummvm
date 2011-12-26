@@ -1,7 +1,7 @@
 void droite(int x, int y, int xx, int yy, int coul) {
 	int step, i;
-	real a, b;
-	real xr, yr, xro, yro;
+	float a, b;
+	float xr, yr, xro, yro;
 
 	xr = x;
 	yr = y;
@@ -9,7 +9,7 @@ void droite(int x, int y, int xx, int yy, int coul) {
 	yro = yy;
 	/*writeln(le_file,'(',x:4,',',y:4,') ==> (',xx:4,',',yy:4,')');*/
 	if (abs(y - yy) > abs(x - xx)) {
-		a = (real)((x - xx)) / (y - yy);
+		a = (float)((x - xx)) / (y - yy);
 		b = (yr * xro - yro * xr) / (y - yy);
 		i = y;
 		if (y > yy)  step = -1;
@@ -20,7 +20,7 @@ void droite(int x, int y, int xx, int yy, int coul) {
 		} while (!(i == yy));
 		/*writeln(le_file,'X == ',a:3:3,' * Y + ',b:3:3);*/
 	} else {
-		a = (real)((y - yy)) / (x - xx);
+		a = (float)((y - yy)) / (x - xx);
 		b = ((yro * xr) - (yr * xro)) / (x - xx);
 		i = x;
 		if (x > xx)  step = -1;

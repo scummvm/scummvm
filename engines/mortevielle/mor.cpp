@@ -279,7 +279,7 @@ void paint_rect(int x, int y, int dx, int dy) {
 
 int hazard(int min, int max) {
 	int ha1;
-	real ha2;
+    float ha2;
 
 	/* debug('hazard'); */
 	int hazard_result;

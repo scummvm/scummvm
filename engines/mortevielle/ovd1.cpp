@@ -171,7 +171,7 @@ void ani50() {
 {
 	int cy, tay;
 	phrase st;
-	real ix;
+	float ix;
 	char ch;
 
 
@@ -247,7 +247,7 @@ void ani50() {
 	int k;
 	boolean fin;
 	char ch;
-	real x, y;
+	float x, y;
 
 
 	/* debug('o3 music'); */
@@ -260,7 +260,7 @@ void ani50() {
 	blockread(fic, mem[0x47a0 + 0], 123);
 	close(fic);
 	demus(0x3800, 0x5000, 623);
-	addfix = (real)((tempo_mus - addv[1])) / 256;
+	addfix = (float)((tempo_mus - addv[1])) / 256;
 	cctable(tbi);
 
 	fin = false;

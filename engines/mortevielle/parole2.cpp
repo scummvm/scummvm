@@ -66,7 +66,7 @@ void parole(int rep, int ht, int typ) {
 		tempo = tempo_bruit;
 	} else if (haut > 5)  tempo = tempo_f;
 	else tempo = tempo_m;
-	addfix = (real)((tempo - addv[0])) / 256;
+	addfix = (float)((tempo - addv[0])) / 256;
 	cctable(tbi);
 	switch (typ) {
 	case 1 : {
