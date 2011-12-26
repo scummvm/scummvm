@@ -950,18 +950,15 @@ void DreamBase::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
 
-	uint tsize = 16 * 32;
-	uint16 bseg = data.word(kBuffers);
-	if (!bseg)
-		return;
-	MutableSegmentRef buffers(this);
-	buffers = bseg;
-	uint8 *ptr = buffers.ptr(kSpritetable, tsize);
-	for (uint i = 0; i < tsize; i += 32) {
-		uint16 seg = READ_LE_UINT16(ptr + i + 6);
-		//debug(1, "sprite segment = %04x", seg);
-		if (seg == segment)
-			memset(ptr + i, 0xff, 32);
+	// CHECKME: Do we really need this? From brief testing it appears
+	// the sprite table is cleared entirely shortly after this happens
+	// anyway.
+	Common::List<Sprite>::iterator i;
+	for (i = _spriteTable.begin(); i != _spriteTable.end(); ) {
+		if (i->_frameData == segment)
+			i = _spriteTable.erase(i);
+		else
+			++i;
 	}
 }
 
