@@ -45,7 +45,7 @@ void tinke() {
 	const char d6[] = "OK";
 	int cx, cy, haz, nh, cf, j, h, m, cd;
 	varying_string<3> stpo;
-	boolean am;
+	bool am;
 
 	anyone = false;
 	calch(j, h, m);

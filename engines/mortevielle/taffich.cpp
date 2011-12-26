@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+
 namespace MORTEVIELLE {
 
 void chardes(Common::String nom, long_int passe, int long_) {

@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+
 namespace MORTEVIELLE {
 
 /* NIVEAU 14*/

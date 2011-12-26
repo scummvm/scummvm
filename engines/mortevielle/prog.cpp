@@ -53,7 +53,7 @@ namespace MORTEVIELLE {
 	registres regs;
 	char buffer[512];
 	int i, j, k;
-	boolean test[3];
+	bool test[3];
 	char g[8];
 
 

@@ -114,7 +114,7 @@ void deline(int num , phrase &l , int &tl) {
 	int i, j, ts;
 	char let;
 	byte ps, k;
-	boolean the_end;
+	bool the_end;
 
 	/* DETEX */
 	/*debug('  => DeLine');*/

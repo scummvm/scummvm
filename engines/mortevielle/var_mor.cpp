@@ -25,6 +25,8 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+
 namespace MORTEVIELLE {
 
 /*         Constantes, Types et Variables pour le
