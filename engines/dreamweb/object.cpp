@@ -1052,7 +1052,7 @@ byte DreamGenContext::transferToEx() {
 	freeObject = getFreeAd(data.byte(kItemframe));
 	freeObject->mapad[0] = 254;
 	ds = data.word(kFreedat);
-	si = data.byte(kItemframe);
+	si = data.byte(kItemframe) * sizeof(DynObject);
 	pickupConts();
 	return pos;
 }
