@@ -428,16 +428,12 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	void dirCom();
-	void getAnyAd();
-	void getFreeAd();
 	void dirFile();
 	void pickupConts();
 	void transferMap();
-	void getSetAd();
 	void dreamweb();
 	void read();
 	void searchForString();
-	void getExAd();
 	void parser();
 	void transferConToEx();
 };

@@ -2725,7 +2725,8 @@ void DreamGenContext::pickupOb(uint8 command, uint8 pos) {
 	data.byte(kObjecttype) = kFreeObjectType;
 	data.byte(kItemframe) = command;
 	data.byte(kCommand) = command;
-	getAnyAd();
+	//uint8 dummy;
+	//getAnyAd(&dummy, &dummy);	// was in the original source, seems useless here
 	transferToEx();
 }
 

@@ -127,9 +127,8 @@ void DreamGenContext::useRoutine() {
 		data.byte(kPointerpower) = 0;
 	}
 
-	getAnyAd();
-	// CHECKME: Do the callbacks use es:bx ?
-	void *obj = es.ptr(bx, 15);
+	uint8 dummy;
+	void *obj = getAnyAd(&dummy, &dummy);
 
 	for (size_t i = 0; i < sizeof(kUseList)/sizeof(UseListEntry); ++i) {
 		const UseListEntry &entry = kUseList[i];

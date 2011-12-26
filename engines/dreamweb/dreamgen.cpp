@@ -73,57 +73,6 @@ void DreamGenContext::transferMap() {
 	_add(data.word(kExframepos), cx);
 }
 
-void DreamGenContext::getFreeAd() {
-	STACK_CHECK;
-	ah = 0;
-	cl = 4;
-	_shl(ax, cl);
-	bx = ax;
-	es = data.word(kFreedat);
-}
-
-void DreamGenContext::getExAd() {
-	STACK_CHECK;
-	ah = 0;
-	bx = 16;
-	_mul(bx);
-	bx = ax;
-	es = data.word(kExtras);
-	_add(bx, (0+2080+30000));
-}
-
-void DreamGenContext::getAnyAd() {
-	STACK_CHECK;
-	_cmp(data.byte(kObjecttype), 4);
-	if (flags.z())
-		goto isex;
-	_cmp(data.byte(kObjecttype), 2);
-	if (flags.z())
-		goto isfree;
-	al = data.byte(kCommand);
-	getSetAd();
-	ax = es.word(bx+4);
-	return;
-isfree:
-	al = data.byte(kCommand);
-	getFreeAd();
-	ax = es.word(bx+7);
-	return;
-isex:
-	al = data.byte(kCommand);
-	getExAd();
-	ax = es.word(bx+7);
-}
-
-void DreamGenContext::getSetAd() {
-	STACK_CHECK;
-	ah = 0;
-	bx = 64;
-	_mul(bx);
-	bx = ax;
-	es = data.word(kSetdat);
-}
-
 void DreamGenContext::pickupConts() {
 	STACK_CHECK;
 	al = ds.byte(si+7);
