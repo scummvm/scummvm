@@ -515,14 +515,15 @@ void DreamGenContext::signOn() {
 }
 
 void DreamGenContext::searchForFiles() {
-	bx = kTextstart;
+	uint16 offset = kTextstart;
+	byte curChar;
 
 	while (true) {
-		al = es.byte(bx);
-		bx++;
-		if (al == '*')
+		curChar = es.byte(offset);
+		offset++;
+		if (curChar == '*')
 			return; // "endofdir"
-		if (al == 34)
+		if (curChar == 34)
 			monPrint();
 	}
 }
