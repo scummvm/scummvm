@@ -786,13 +786,9 @@ void DreamGenContext::swapWithInv() {
 	ObjectRef subject;
 	subject._type = data.byte(kObjecttype);
 	subject._index = data.byte(kItemframe);
-	if (subject == _oldSubject) {
-		if (data.byte(kCommandtype) != 243) {
+	if (subject != _oldSubject || data.byte(kCommandtype) != 243) {
+		if (subject == _oldSubject)
 			data.byte(kCommandtype) = 243;
-			_oldSubject = subject;
-			commandWithOb(34, subject._type, subject._index);
-		}
-	} else {
 		_oldSubject = subject;
 		commandWithOb(34, subject._type, subject._index);
 	}
@@ -849,13 +845,9 @@ void DreamGenContext::useOpened() {
 
 	objectId._type = data.byte(kObjecttype);
 	objectId._index = data.byte(kItemframe);
-	if (objectId == _oldSubject) {
-		if (data.byte(kCommandtype) != 227) {
+	if (objectId != _oldSubject || data.byte(kCommandtype) != 227) {
+		if (objectId == _oldSubject)
 			data.byte(kCommandtype) = 227;
-			_oldSubject = objectId;
-			commandWithOb(35, objectId._type, objectId._index);
-		}
-	} else {
 		_oldSubject = objectId;
 		commandWithOb(35, objectId._type, objectId._index);
 	}
@@ -905,13 +897,9 @@ void DreamGenContext::outOfOpen() {
 		return;
 	}
 
-	if (objectId == _oldSubject) {
-		if (data.byte(kCommandtype) != 228) {
+	if (objectId != _oldSubject || data.byte(kCommandtype) != 228) {
+		if (objectId == _oldSubject)
 			data.byte(kCommandtype) = 228;
-			_oldSubject = objectId;
-			commandWithOb(36, objectId._type, objectId._index);
-		}
-	} else {
 		_oldSubject = objectId;
 		commandWithOb(36, objectId._type, objectId._index);
 	}
@@ -920,10 +908,8 @@ void DreamGenContext::outOfOpen() {
 		return;	// notletgo4
 
 	if (data.word(kMousebutton) != 1) {
-		if (data.word(kMousebutton) != 2)
-			return;	// notletgo4
-
-		reExFromOpen();
+		if (data.word(kMousebutton) == 2)
+			reExFromOpen();
 		return;
 	}
 
@@ -955,13 +941,9 @@ void DreamGenContext::swapWithOpen() {
 	ObjectRef subject;
 	subject._type = data.byte(kObjecttype);
 	subject._index = data.byte(kItemframe);
-	if (subject == _oldSubject) {
-		if (data.byte(kCommandtype) != 242) {
+	if (subject != _oldSubject || data.byte(kCommandtype) != 242) {
+		if (subject == _oldSubject)
 			data.byte(kCommandtype) = 242;
-			_oldSubject = subject;
-			commandWithOb(34, subject._type, subject._index);
-		}
-	} else {
 		_oldSubject = subject;
 		commandWithOb(34, subject._type, subject._index);
 	}
