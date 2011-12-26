@@ -1862,7 +1862,7 @@ void Scene3400::signal() {
 		_actor4.setStrip(1);
 		_sceneMode = 3403;
 		if (R2_GLOBALS._player._characterIndex == 2)
-			setAction(&_sequenceManager, this, 3403, R2_GLOBALS._player, &_actor3, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3403, &R2_GLOBALS._player, &_actor3, &_actor7, NULL);
 		else 
 			setAction(&_sequenceManager, this, 3403, &_actor1, &_actor3, &_actor7, NULL);
 		break;
@@ -1871,7 +1871,7 @@ void Scene3400::signal() {
 		_actor4.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == 3)
-			setAction(&_sequenceManager, this, 3405, R2_GLOBALS._player, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3405, &R2_GLOBALS._player, &_actor7, NULL);
 		else 
 			setAction(&_sequenceManager, this, 3405, &_actor2, &_actor7, NULL);
 		break;
