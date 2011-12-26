@@ -103,7 +103,7 @@ public:
 		return _writePos - _readPos;
 	}
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) {
 		ensureFree(dataSize);
 		memcpy(_data + _writePos, dataPtr, dataSize);
 		_writePos += dataSize;
