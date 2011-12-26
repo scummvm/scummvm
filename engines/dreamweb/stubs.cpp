@@ -1813,7 +1813,7 @@ uint8 DreamBase::findNextColon(const uint8 **string) {
 	return c;
 }
 
-void DreamGenContext::enterSymbol() {
+void DreamBase::enterSymbol() {
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
 	loadIntoTemp("DREAMWEB.G12"); // symbol graphics
@@ -2611,7 +2611,7 @@ void DreamBase::atmospheres() {
 	cancelCh0();
 }
 
-uint8 DreamGenContext::nextSymbol(uint8 symbol) {
+uint8 DreamBase::nextSymbol(uint8 symbol) {
 	uint8 result = symbol + 1;
 	if (result == 6)
 		return 0;
@@ -2620,7 +2620,7 @@ uint8 DreamGenContext::nextSymbol(uint8 symbol) {
 	return result;
 }
 
-void DreamGenContext::showSymbol() {
+void DreamBase::showSymbol() {
 	showFrame(tempGraphics(), kSymbolx, kSymboly, 12, 0);
 
 	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx-44, kSymboly+20, data.byte(kSymboltopnum), 32);
@@ -3451,7 +3451,7 @@ void DreamBase::entryAnims() {
 	}
 }
 
-void DreamGenContext::updateSymbolTop() {
+void DreamBase::updateSymbolTop() {
 	if (!data.byte(kSymboltopdir))
 		return; // topfinished
 
@@ -3488,7 +3488,7 @@ void DreamGenContext::updateSymbolTop() {
 	}
 }
 
-void DreamGenContext::updateSymbolBot() {
+void DreamBase::updateSymbolBot() {
 	if (!data.byte(kSymbolbotdir))
 		return; // botfinished
 

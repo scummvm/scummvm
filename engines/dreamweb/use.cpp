@@ -99,7 +99,7 @@ void DreamGenContext::useRoutine() {
 		{ &DreamBase::viewFolder,              "PAPR" },
 		{ &DreamBase::useTrainer,              "UWTA" },
 		{ &DreamBase::useTrainer,              "UWTB" },
-		{ &DreamGenContext::enterSymbol,       "STAT" },
+		{ &DreamBase::enterSymbol,             "STAT" },
 		{ &DreamBase::openTomb,                "TLID" },
 		{ &DreamBase::useSlab,                 "SLAB" },
 		{ &DreamBase::useCart,                 "CART" },

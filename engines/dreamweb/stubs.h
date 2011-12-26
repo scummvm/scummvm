@@ -98,12 +98,9 @@
 	void look();
 	void autoLook();
 	void doLook();
-	void enterSymbol();
 	void useKey();
 	void useObject();
 	void singleKey(uint8 key, uint16 x, uint16 y);
-	uint8 nextSymbol(uint8 symbol);
-	void showSymbol();
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
@@ -120,8 +117,6 @@
 	void showGun();
 	void triggerMessage(uint16 index);
 	void processTrigger();
-	void updateSymbolTop();
-	void updateSymbolBot();
 	bool execCommand();
 	void getOpenedSize();
 	byte getOpenedSlotSize();

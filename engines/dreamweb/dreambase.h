@@ -61,6 +61,9 @@ class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
+	// from newplace.cpp
+	uint8 _roomsCanGo[16];
+
 	// from object.cpp
 	uint16 _openChangeSize;
 
@@ -98,7 +101,6 @@ protected:
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
 	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary
-	uint8 _roomsCanGo[16];
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -556,6 +558,11 @@ public:
 	bool finishedWalking();
 	void emergencyPurge();
 	void purgeAnItem();
+	uint8 nextSymbol(uint8 symbol);
+	void enterSymbol();
+	void showSymbol();
+	void updateSymbolTop();
+	void updateSymbolBot();
 
 	// from talk.cpp
 	void talk();
