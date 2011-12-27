@@ -244,10 +244,10 @@ struct Sound {
 	uint8 w1_hi;
 	uint16 offset() const { return READ_LE_UINT16(&w1_lo); }
 	void setOffset(uint16 v) { WRITE_LE_UINT16(&w1_lo, v); }
-	uint8 w3_lo;
-	uint8 w3_hi;
-	uint16 blockCount() const { return READ_LE_UINT16(&w3_lo); }
-	void setBlockCount(uint16 v) { WRITE_LE_UINT16(&w3_lo, v); }
+	uint8 w3_lo;	// block count (low byte) - unused in ScummVM
+	uint8 w3_hi;	// block count (high byte) - unused in ScummVM
+	//uint16 blockCount() const { return READ_LE_UINT16(&w3_lo); }
+	//void setBlockCount(uint16 v) { WRITE_LE_UINT16(&w3_lo, v); }
 	uint8 b5;
 };
 
