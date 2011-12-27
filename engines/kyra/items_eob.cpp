@@ -107,7 +107,7 @@ Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
 
 Item EoBCoreEngine::createItemOnCurrentBlock(Item itemIndex) {
 	Item itm = duplicateItem(itemIndex);
-	setItemPosition((Item*)&_levelBlockProperties[_currentBlock].drawObjects, _currentBlock, itm, _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+	setItemPosition((Item *)&_levelBlockProperties[_currentBlock].drawObjects, _currentBlock, itm, _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 	return itm;
 }
 
@@ -182,7 +182,7 @@ void EoBCoreEngine::deleteBlockItem(uint16 block, int type) {
 
 	_levelBlockProperties[block].drawObjects = 0;
 
-	for (uint16 i2 = itm, i = 0; itm != i2 || !i; i++ ) {
+	for (uint16 i2 = itm, i = 0; itm != i2 || !i; i++) {
 		if (type == _items[itm].type || type == -1) {
 			_items[itm].block = -1;
 			_items[itm].level = 0;
@@ -193,7 +193,7 @@ void EoBCoreEngine::deleteBlockItem(uint16 block, int type) {
 			uint16 i3 = itm;
 			itm = _items[itm].prev;
 			_items[i3].prev = _items[i3].next = 0;
-			setItemPosition((Item*)&_levelBlockProperties[block].drawObjects, block, i3, _items[i3].pos);
+			setItemPosition((Item *)&_levelBlockProperties[block].drawObjects, block, i3, _items[i3].pos);
 		}
 	}
 }
@@ -227,7 +227,7 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 int EoBCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems) {
 	int itemsLeft = numItems;
 
-	for (bool runloop = true; runloop && itemsLeft; ) {
+	for (bool runloop = true; runloop && itemsLeft;) {
 		runloop = false;
 		for (int i = 0; i < 6 && itemsLeft; i++) {
 			if (!testCharacter(i, 1))
@@ -371,58 +371,58 @@ void EoBCoreEngine::printFullItemName(Item item) {
 
 	if ((itm->flags & 0x40) && !strlen(nameId)) {
 		switch (f) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-				if (v == 0)
-					tmpString = nameUnid;
-				else if (v < 0)
-					tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_cursedString[0], nameUnid, v) : Common::String::format(_cursedString[0], v, nameUnid);
-				else
-					tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_enchantedString[0], nameUnid, v) : Common::String::format(_enchantedString[0], v, nameUnid);
-				break;
-
-			case 9:
-				tstr2 = _magicObjectStrings[0];
-				tstr3 = _spells[v].name;
-				correctSuffixCase = true;
-				break;
-
-			case 10:
-				tstr2 = _magicObjectStrings[1];
-				tstr3 = _spells[_flags.gameID == GI_EOB1 ? (_clericSpellOffset + v) : v].name;
-				correctSuffixCase = true;
-				break;
-
-			case 14:
-				tstr2 = _magicObjectStrings[3];
-				if (_flags.gameID == GI_EOB1)
-					v--;
-				tstr3 = _suffixStringsPotions[v];
-				break;
-
-			case 16:
-				tstr2 = _magicObjectStrings[2];
-				tstr3 = _suffixStringsRings[v];
-				break;
-
-			case 18:
-				if (_flags.gameID == GI_EOB2 && v == 5) {
-					if (_flags.lang == Common::DE_DEU)
-						tstr2 = _magicObjectString5[0];
-					else
-						tstr3 = _magicObjectString5[0];
-					correctSuffixCase = true;
-				} else {
-					tstr2 = _magicObjectStrings[4];
-				}
-				tstr3 = _suffixStringsWands[v];
-				break;
-
-			default:
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			if (v == 0)
 				tmpString = nameUnid;
-				break;
+			else if (v < 0)
+				tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_cursedString[0], nameUnid, v) : Common::String::format(_cursedString[0], v, nameUnid);
+			else
+				tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_enchantedString[0], nameUnid, v) : Common::String::format(_enchantedString[0], v, nameUnid);
+			break;
+
+		case 9:
+			tstr2 = _magicObjectStrings[0];
+			tstr3 = _spells[v].name;
+			correctSuffixCase = true;
+			break;
+
+		case 10:
+			tstr2 = _magicObjectStrings[1];
+			tstr3 = _spells[_flags.gameID == GI_EOB1 ? (_clericSpellOffset + v) : v].name;
+			correctSuffixCase = true;
+			break;
+
+		case 14:
+			tstr2 = _magicObjectStrings[3];
+			if (_flags.gameID == GI_EOB1)
+				v--;
+			tstr3 = _suffixStringsPotions[v];
+			break;
+
+		case 16:
+			tstr2 = _magicObjectStrings[2];
+			tstr3 = _suffixStringsRings[v];
+			break;
+
+		case 18:
+			if (_flags.gameID == GI_EOB2 && v == 5) {
+				if (_flags.lang == Common::DE_DEU)
+					tstr2 = _magicObjectString5[0];
+				else
+					tstr3 = _magicObjectString5[0];
+				correctSuffixCase = true;
+			} else {
+				tstr2 = _magicObjectStrings[4];
+			}
+			tstr3 = _suffixStringsWands[v];
+			break;
+
+		default:
+			tmpString = nameUnid;
+			break;
 		}
 
 
@@ -528,7 +528,7 @@ bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	if (slot == 10)
 		return false;
 
-	setItemPosition((Item*)&_levelBlockProperties[startBlock].drawObjects, startBlock, item, startPos | 4);
+	setItemPosition((Item *)&_levelBlockProperties[startBlock].drawObjects, startBlock, item, startPos | 4);
 
 	t->enable = 1;
 	t->u2 = 1;
@@ -577,8 +577,8 @@ bool EoBCoreEngine::updateObjectFlight(EoBFlyingObject *fo, int block, int pos) 
 	uint8 wallFlags = _wllWallFlags[_levelBlockProperties[block].walls[fo->direction ^ 2]];
 	if (fo->enable == 1) {
 		if ((wallFlags & 1) || (fo->u2) || ((wallFlags & 2) && (_dscItemShapeMap[_items[fo->item].icon] >= 15))) {
-			getQueuedItem((Item*)&_levelBlockProperties[fo->curBlock].drawObjects, 0, fo->item);
-			setItemPosition((Item*)&_levelBlockProperties[block].drawObjects, block, fo->item, pos | 4);
+			getQueuedItem((Item *)&_levelBlockProperties[fo->curBlock].drawObjects, 0, fo->item);
+			setItemPosition((Item *)&_levelBlockProperties[block].drawObjects, block, fo->item, pos | 4);
 			fo->curBlock = block;
 			fo->curPos = pos;
 			fo->distance--;

@@ -355,6 +355,6 @@ void EoBCoreEngine::timerUpdateMonsterIdleAnim(int timerNum) {
 	}
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

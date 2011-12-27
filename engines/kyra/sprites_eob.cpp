@@ -174,7 +174,7 @@ void EoBCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 }
 
 void EoBCoreEngine::placeMonster(EoBMonsterInPlay *m, uint16 block, int dir) {
-	if (block != 0xffff){
+	if (block != 0xffff) {
 		checkSceneUpdateNeed(m->block);
 		if (_levelBlockProperties[m->block].flags & 7) {
 			_levelBlockProperties[m->block].flags--;
@@ -201,11 +201,11 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 
 	if (m->randItem) {
 		if (rollDice(1, 10, 0) == 1)
-			setItemPosition((Item*)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->randItem), pos);
+			setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->randItem), pos);
 	}
 
 	if (m->fixedItem)
-		setItemPosition((Item*)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->fixedItem), pos);
+		setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->fixedItem), pos);
 
 	if (giveExperience)
 		increasePartyExperience(_monsterProps[m->type].experience);
@@ -223,7 +223,7 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 	}
 }
 
-bool EoBCoreEngine::killMonsterExtra(EoBMonsterInPlay*) {
+bool EoBCoreEngine::killMonsterExtra(EoBMonsterInPlay *) {
 	return true;
 }
 
@@ -439,7 +439,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 
 		o = itm->next;
 		forceLoop = false;
-		if(tile2 != -1)
+		if (tile2 != -1)
 			setLevelShapesDim(index, _shpDmX1, _shpDmX2, 5);
 	}
 }
@@ -481,7 +481,7 @@ void EoBCoreEngine::drawMonsters(int index) {
 	int cDirOffs = _currentDirection << 2;
 
 	EoBMonsterInPlay *drawObj[5];
-	memset(drawObj, 0, 5 * sizeof(EoBMonsterInPlay*));
+	memset(drawObj, 0, 5 * sizeof(EoBMonsterInPlay *));
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].block != bl)
@@ -599,7 +599,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		return;
 
 	EoBFlyingObject *drawObj[5];
-	memset(drawObj, 0, 5 * sizeof(EoBFlyingObject*));
+	memset(drawObj, 0, 5 * sizeof(EoBFlyingObject *));
 
 	for (int i = 0; i < 10; i++) {
 		if (!_flyingObjects[i].enable || blockIndex != _flyingObjects[i].curBlock)
@@ -1087,7 +1087,7 @@ void EoBCoreEngine::walkMonster(EoBMonsterInPlay *m, int destBlock) {
 	if (m->flags & 8) {
 		// Interestingly, the fear spell in EOB 1 does not expire.
 		// I don't know whether this is intended or not.
-		if (_flags.gameID == GI_EOB1 ) {
+		if (_flags.gameID == GI_EOB1) {
 			d ^= 4;
 		} else if (m->spellStatusLeft > 0) {
 			if (--m->spellStatusLeft == 0)

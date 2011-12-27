@@ -121,7 +121,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	_screen->setCurPage(0);
 }
 
-Common::String EoBCoreEngine::initLevelData(int sub){
+Common::String EoBCoreEngine::initLevelData(int sub) {
 	const uint8 *data = _screen->getCPagePtr(5) + 2;
 	const uint8 *pos = data;
 
@@ -135,10 +135,10 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 		if (_flags.gameID == GI_EOB1)
 			pos -= 3;
 
-		loadBlockProperties((const char*)pos);
+		loadBlockProperties((const char *)pos);
 		pos += slen;
 
-		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char*)pos));
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char *)pos));
 		uint16 size = s->readUint16LE();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
@@ -146,12 +146,12 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 			_vmpPtr[i] = s->readUint16LE();
 		delete s;
 
-		Common::String tmpStr = Common::String::format("%s.PAL", (const char*) pos);
-		_curGfxFile = (const char*) pos;
+		Common::String tmpStr = Common::String::format("%s.PAL", (const char *)pos);
+		_curGfxFile = (const char *)pos;
 		pos += slen;
 
 		if (*pos++ != 0xff && _flags.gameID == GI_EOB2) {
-			tmpStr = Common::String::format("%s.PAL", (const char*) pos);
+			tmpStr = Common::String::format("%s.PAL", (const char *)pos);
 			pos += 13;
 		}
 
@@ -168,19 +168,19 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 		_screen->getPalette(0).fill(224, 32, 0x3f);
 		uint8 *src = _screen->getPalette(0).getData();
 
-		_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);		// green
-		_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);	// black
-		_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);	// blue
-		_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);	// light blue
+		_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);     // green
+		_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);   // black
+		_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);    // blue
+		_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);   // light blue
 
 		_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-		_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);	// grey (shadow)
+		_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
 		_screen->setFadeTableIndex(4);
 	}
 
 	if (_flags.gameID == GI_EOB2) {
 		delay(3 * _tickLength);
-		_sound->loadSoundFile((const char*) pos);
+		_sound->loadSoundFile((const char *)pos);
 		pos += 13;
 	}
 
@@ -195,7 +195,7 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 		_scriptTimers[0].ticks = READ_LE_UINT16(pos);
 		_scriptTimers[0].func = 0;
 		_scriptTimers[0].next = _system->getMillis() + _scriptTimers[0].ticks * _tickLength;
-		pos+= 2;
+		pos += 2;
 	} else {
 		for (int i = 0; i < 2; i++) {
 			int a = (*pos == 0xEC) ? 0 : ((*pos == 0xEA) ? 1 : -1);
@@ -205,12 +205,12 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 			toggleWallState(pos[13], a);
 			_doorType[pos[13]] = pos[14];
 			_noDoorSwitch[pos[13]] = pos[15];
-			pos = loadDoorShapes((const char*)pos, pos[13], pos + 16);
+			pos = loadDoorShapes((const char *)pos, pos[13], pos + 16);
 		}
 	}
 
 	_stepsUntilScriptCall = READ_LE_UINT16(pos);
-	pos+= 2;
+	pos += 2;
 	_stepCounter = 0;
 
 	for (int i = 0; i < 2; i++) {
@@ -237,7 +237,7 @@ Common::String EoBCoreEngine::initLevelData(int sub){
 
 		for (int i = 0; i < num; i++) {
 			if (*pos++ == 0xEC) {
-				loadDecorations((const char*)pos, (const char*)(pos + slen));
+				loadDecorations((const char *)pos, (const char *)(pos + slen));
 				pos += (slen << 1);
 			} else {
 				assignWallsAndDecorations(pos[0], pos[1], (int8)pos[2], pos[3], pos[4]);
@@ -259,7 +259,7 @@ void EoBCoreEngine::addLevelItems() {
 	for (int i = 0; i < 600; i++) {
 		if (_items[i].level != _currentLevel || _items[i].block <= 0)
 			continue;
-		setItemPosition((Item*)&_levelBlockProperties[_items[i].block & 0x3ff].drawObjects, _items[i].block, i, _items[i].pos);
+		setItemPosition((Item *)&_levelBlockProperties[_items[i].block & 0x3ff].drawObjects, _items[i].block, i, _items[i].pos);
 	}
 }
 
@@ -647,13 +647,13 @@ int EoBCoreEngine::clickedNiche(uint16 block, uint16 direction) {
 		if (_dscItemShapeMap[_items[_itemInHand].icon] <= 14) {
 			_txt->printMessage(_pryDoorStrings[5]);
 		} else {
-			setItemPosition((Item*)&_levelBlockProperties[block & 0x3ff].drawObjects, block, _itemInHand, 8);
+			setItemPosition((Item *)&_levelBlockProperties[block & 0x3ff].drawObjects, block, _itemInHand, 8);
 			runLevelScript(block, 4);
 			setHandItem(0);
 			_sceneUpdateRequired = true;
 		}
 	} else {
-		int d = getQueuedItem((Item*)&_levelBlockProperties[block].drawObjects, 8, -1);
+		int d = getQueuedItem((Item *)&_levelBlockProperties[block].drawObjects, 8, -1);
 		if (!d)
 			return 1;
 		runLevelScript(block, 8);
@@ -693,7 +693,7 @@ int EoBCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
 	if (rollDice(1, 20) < forceDoorChanceTable[s]) {
 		_txt->printMessage(_pryDoorStrings[_flags.gameID == GI_EOB2 ? 2 : 1]);
 		_levelBlockProperties[block].walls[direction] = _levelBlockProperties[block].walls[direction ^ 2] =
-			(_levelBlockProperties[block].walls[direction] == (_flags.gameID == GI_EOB2 ? 51 : 30)) ? 8 : 18;
+		            (_levelBlockProperties[block].walls[direction] == (_flags.gameID == GI_EOB2 ? 51 : 30)) ? 8 : 18;
 		openDoor(block);
 	} else {
 		_txt->printMessage(_pryDoorStrings[3]);

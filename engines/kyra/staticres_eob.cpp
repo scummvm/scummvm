@@ -209,11 +209,11 @@ const uint8 EoBCoreEngine::_teleporterShapeDefs[] = {
 
 const uint8 EoBCoreEngine::_wallOfForceShapeDefs[] = {
 	0x00, 0x00, 0x04, 0x08,
-	0x00, 0x08,	0x04, 0x08,
+	0x00, 0x08, 0x04, 0x08,
 	0x04, 0x00, 0x04, 0x08,
 	0x04, 0x08, 0x04, 0x08,
 	0x08, 0x00, 0x05, 0x10,
-	0x0C, 0x00,	0x05, 0x10
+	0x0C, 0x00, 0x05, 0x10
 };
 
 const int16 EoBCoreEngine::_buttonList1[] = {
@@ -222,14 +222,14 @@ const int16 EoBCoreEngine::_buttonList1[] = {
 };
 
 const int16 EoBCoreEngine::_buttonList2[] = {
-	58, 61, 62, 63,	64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
-	90, 91,  4,  5,	6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
-	19, 20, 82, 83,	49, 50, 51, 52, 53, 54, 56, 57, -1
+	58, 61, 62, 63, 64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
+	90, 91,  4,  5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
+	19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
 const int16 EoBCoreEngine::_buttonList3[] = {
-	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,	32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60,	59, 92, 4, 5, 6, 7, 8, 49,  50,
+	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49,  50,
 	51, 52, 53, 54, 56, 57, -1
 };
 
@@ -238,8 +238,8 @@ const int16 EoBCoreEngine::_buttonList4[] = {
 };
 
 const int16 EoBCoreEngine::_buttonList5[] = {
-	58, 61, 62, 63, 64, 65, 93, 66,	67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
-	27, 28, 29, 30, 31, 32, 33, 34,	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
+	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
+	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
 	85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
 };
 
@@ -364,18 +364,18 @@ void EoBCoreEngine::initStaticResource() {
 	_npcPreset = _staticres->loadEoBNpcData(kEoBBaseNpcPresets, temp);
 
 	_teleporterShapeCoords = _staticres->loadRawData(kEoBBaseDscTelptrShpCoords, temp);
-	_portalSeq = (const int8*)_staticres->loadRawData(kEoBBasePortalSeqData, temp);
+	_portalSeq = (const int8 *)_staticres->loadRawData(kEoBBasePortalSeqData, temp);
 	_mnDef = _staticres->loadRawData(kEoBBaseManDef, temp);
 	_mnWord = _staticres->loadStrings(kEoBBaseManWord, _mnNumWord);
 	_mnPrompt = _staticres->loadStrings(kEoBBaseManPrompt, temp);
 
-	_monsterStepTable0 = (int8*) _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterStepTable02 : kEoBBaseMonsterStepTable01, temp);
-	_monsterStepTable1 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable1, temp);
-	_monsterStepTable2 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable2, temp);
-	_monsterStepTable3 = (int8*)_staticres->loadRawData(kEoBBaseMonsterStepTable3, temp);
+	_monsterStepTable0 = (int8 *)_staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterStepTable02 : kEoBBaseMonsterStepTable01, temp);
+	_monsterStepTable1 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable1, temp);
+	_monsterStepTable2 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable2, temp);
+	_monsterStepTable3 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable3, temp);
 	_monsterCloseAttPosTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttPosTable1, temp);
 	_monsterCloseAttPosTable2 = _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterCloseAttPosTable22 : kEoBBaseMonsterCloseAttPosTable21, temp);
-	_monsterCloseAttUnkTable = (int8*)_staticres->loadRawData(kEoBBaseMonsterCloseAttUnkTable, temp);
+	_monsterCloseAttUnkTable = (int8 *)_staticres->loadRawData(kEoBBaseMonsterCloseAttUnkTable, temp);
 	_monsterCloseAttChkTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable1, temp);
 	_monsterCloseAttChkTable2 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable2, temp);
 	_monsterCloseAttDstTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttDstTable1, temp);
@@ -383,26 +383,26 @@ void EoBCoreEngine::initStaticResource() {
 
 	_monsterProximityTable = _staticres->loadRawData(kEoBBaseMonsterProximityTable, temp);
 	_findBlockMonstersTable = _staticres->loadRawData(kEoBBaseFindBlockMonstersTable, temp);
-	_monsterDirChangeTable = (const int8*)_staticres->loadRawData(kEoBBaseMonsterDirChangeTable, temp);
+	_monsterDirChangeTable = (const int8 *)_staticres->loadRawData(kEoBBaseMonsterDirChangeTable, temp);
 	_monsterSpecAttStrings = _staticres->loadStrings(kEoBBaseMonsterDistAttStrings, temp);
 
-	_monsterFrmOffsTable1 = (const int8*)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl1, temp);
-	_monsterFrmOffsTable2 = (const int8*)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl2, temp);
+	_monsterFrmOffsTable1 = (const int8 *)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl1, temp);
+	_monsterFrmOffsTable2 = (const int8 *)_staticres->loadRawData(kEoBBaseDscMonsterFrmOffsTbl2, temp);
 
 	_inventorySlotsX = _staticres->loadRawDataBe16(kEoBBaseInvSlotX, temp);
 	_inventorySlotsY = _staticres->loadRawData(kEoBBaseInvSlotY, temp);
 	_slotValidationFlags = _staticres->loadRawDataBe16(kEoBBaseSlotValidationFlags, temp);
 
-	_projectileWeaponAmmoTypes = (const int8*)_staticres->loadRawData(kEoBBaseProjectileWeaponTypes, temp);
+	_projectileWeaponAmmoTypes = (const int8 *)_staticres->loadRawData(kEoBBaseProjectileWeaponTypes, temp);
 	_wandTypes = _staticres->loadRawData(kEoBBaseWandTypes, temp);
 
 	_drawObjPosIndex = _staticres->loadRawData(kEoBBaseDrawObjPosIndex, temp);
 	_flightObjFlipIndex = _staticres->loadRawData(kEoBBaseFlightObjFlipIndex, temp);
-	_flightObjShpMap = (const int8*)_staticres->loadRawData(kEoBBaseFlightObjShpMap, temp);
-	_flightObjSclIndex = (const int8*)_staticres->loadRawData(kEoBBaseFlightObjSclIndex, temp);
+	_flightObjShpMap = (const int8 *)_staticres->loadRawData(kEoBBaseFlightObjShpMap, temp);
+	_flightObjSclIndex = (const int8 *)_staticres->loadRawData(kEoBBaseFlightObjSclIndex, temp);
 
 	_wllFlagPreset = _staticres->loadRawData(kEoBBaseWllFlagPreset, _wllFlagPresetSize);
-	_dscShapeCoords = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscShapeCoords, temp);
+	_dscShapeCoords = (const int16 *)_staticres->loadRawDataBe16(kEoBBaseDscShapeCoords, temp);
 
 	_dscDoorScaleOffs = _staticres->loadRawData(kEoBBaseDscDoorScaleOffs, temp);
 	_dscDoorScaleMult1 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult1, temp);
@@ -411,8 +411,8 @@ void EoBCoreEngine::initStaticResource() {
 	_dscDoorY1 = _staticres->loadRawData(kEoBBaseDscDoorY1, temp);
 	_dscDoorXE = _staticres->loadRawData(kEoBBaseDscDoorXE, temp);
 
-	_dscItemPosIndex= _staticres->loadRawData(kEoBBaseDscItemPosIndex, temp);
-	_dscItemShpX = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscItemShpX, temp);
+	_dscItemPosIndex = _staticres->loadRawData(kEoBBaseDscItemPosIndex, temp);
+	_dscItemShpX = (const int16 *)_staticres->loadRawDataBe16(kEoBBaseDscItemShpX, temp);
 	_dscItemScaleIndex = _staticres->loadRawData(kEoBBaseDscItemScaleIndex, temp);
 	_dscItemTileIndex = _staticres->loadRawData(kEoBBaseDscItemTileIndex, temp);
 	_dscItemShapeMap = _staticres->loadRawData(kEoBBaseDscItemShapeMap, temp);
@@ -451,10 +451,10 @@ void EoBCoreEngine::initStaticResource() {
 	_magicFlightObjectProperties = _staticres->loadRawData(kEoBBaseMagicFlightProps, temp);
 	_turnUndeadEffect = _staticres->loadRawData(kEoBBaseTurnUndeadEffect, temp);
 	_burningHandsDest = _staticres->loadRawData(kEoBBaseBurningHandsDest, temp);
-	_coneOfColdDest1 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest1, temp);
-	_coneOfColdDest2 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest2, temp);
-	_coneOfColdDest3 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest3, temp);
-	_coneOfColdDest4 = (const int8*)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
+	_coneOfColdDest1 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest1, temp);
+	_coneOfColdDest2 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest2, temp);
+	_coneOfColdDest3 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest3, temp);
+	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
@@ -462,9 +462,9 @@ void EoBCoreEngine::initStaticResource() {
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
 	static const char *saveLoadStrings[3][4] = {
-		{	"Cancel",	"Empty Slot",	"Save Game",	"Load Game"		},
-		{	"Abbr.",	"Leerer Slot",	"Speichern",	"  Laden"		},
-		{	0,			0,				0,				0				}
+		{   "Cancel",   "Empty Slot",   "Save Game",    "Load Game"     },
+		{   "Abbr.",    "Leerer Slot",  "Speichern",    "  Laden"       },
+		{   0,          0,              0,              0               }
 	};
 
 	static const char *errorSlotEmptyString[3] = {
@@ -735,84 +735,84 @@ void EoBCoreEngine::initSpells() {
 		1, 546, 0, 1, // 10 mystic defense
 	};
 
-	Common::Array<const uint16*> magicTimingParaAssign;
+	Common::Array<const uint16 *> magicTimingParaAssign;
 	mpn;
 	mpn;
 	mpn;
-	mp(0);	// Detect Magic
-	mpn;	// Magic Missile
+	mp(0);  // Detect Magic
+	mpn;    // Magic Missile
 	mp1n;
-	mp(1);	// Shield
-	mp(2);	// Shocking Grasp
-	mp2(3);	// Blur
-	mp2(1);	// Detect Invis
-	mp2n;	// Imp Identify
-	mpn;	// Invis
+	mp(1);  // Shield
+	mp(2);  // Shocking Grasp
+	mp2(3); // Blur
+	mp2(1); // Detect Invis
+	mp2n;   // Imp Identify
+	mpn;    // Invis
 	mp1n;
-	mpn;	// Melf
-	mp1n;	// Stinking Cloud
-	mpn;	// Dispel Magic
-	mpn;	// Fireball
-	mp1n;	// Flame Arrow
-	mp(3);	// Haste
-	mpn;	// Hold Person
-	mpn;	// Invisibility
-	mpn;	// Lightning Bolt
-	mp(2);	// Vampiric Touch
-	mpn;	// Fear
-	mpn;	// Ice Storm
-	mp1n;	// Stone Skin
-	mp1n;	// Cloud Kill
-	mp2(4);	// Improved Invisibility
-	mp2n;	// remove Curse
-	mpn;	// Cone of Cold
-	mpn;	// Hold Monster
-	mp2n;	// Wall of Force
-	mp2n;	// Disintegrate
-	mp2n;	// Flesh To Stone
-	mp2n;	// Stone To Flesh
-	mp2(2);	// True Seeing
-	mp2n;	// Finger of Death
-	mp2n;	// Power Word Stun
-	mp2n;	// Bigby's Fist
-	mp2n;	// empty
-	mp(5);	// Bless
-	mpn;						// EOB1: cure, EOB2: cause
-	mpn;						// EOB1: cause, EOB2: cure
-	mp(0);	// Detect Magic
-	mp(6);	// Prot from Evil
-	mp(7);	// Aid
-	mp(8);	// Flame Blad
-	mpn;	// Hold Person
-	mp(9);	// Slow Poison
-	mpn;	// Create Food
-	mpn;	// Dispel Magic
-	mp(1);	// Magical Vestment
-	mp(2);	// Prayer
-	mpn;	// Remove Paralysis
-	mpn;						// EOB1: cure, EOB2: cause
-	mpn;						// EOB1: cause, EOB2: cure
-	mpn;	// Neutral Poison
-	mp(6);	// Prot From Evil 10'
-	mp1n;	// Prot From Lightning
-	mpn;						// EOB1: cure, EOB2: cause
-	mpn;						// EOB1: cause, EOB2: cure
-	mpn;	// Flame Strike
-	mpn;	// Raise Dead
-	mp2n;	// Slay Living
-	mp2(2);	// True Seeing
-	mp2n;	// Harm
-	mp2n;	// Heal
-	mp2n;	// Resurrect
-	mpn;	// Lay on Hands
-	mp2n;	// Turn Undead
-	mpn;	// Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
+	mpn;    // Melf
+	mp1n;   // Stinking Cloud
+	mpn;    // Dispel Magic
+	mpn;    // Fireball
+	mp1n;   // Flame Arrow
+	mp(3);  // Haste
+	mpn;    // Hold Person
+	mpn;    // Invisibility
+	mpn;    // Lightning Bolt
+	mp(2);  // Vampiric Touch
+	mpn;    // Fear
+	mpn;    // Ice Storm
+	mp1n;   // Stone Skin
+	mp1n;   // Cloud Kill
+	mp2(4); // Improved Invisibility
+	mp2n;   // remove Curse
+	mpn;    // Cone of Cold
+	mpn;    // Hold Monster
+	mp2n;   // Wall of Force
+	mp2n;   // Disintegrate
+	mp2n;   // Flesh To Stone
+	mp2n;   // Stone To Flesh
+	mp2(2); // True Seeing
+	mp2n;   // Finger of Death
+	mp2n;   // Power Word Stun
+	mp2n;   // Bigby's Fist
+	mp2n;   // empty
+	mp(5);  // Bless
+	mpn;                        // EOB1: cure, EOB2: cause
+	mpn;                        // EOB1: cause, EOB2: cure
+	mp(0);  // Detect Magic
+	mp(6);  // Prot from Evil
+	mp(7);  // Aid
+	mp(8);  // Flame Blad
+	mpn;    // Hold Person
+	mp(9);  // Slow Poison
+	mpn;    // Create Food
+	mpn;    // Dispel Magic
+	mp(1);  // Magical Vestment
+	mp(2);  // Prayer
+	mpn;    // Remove Paralysis
+	mpn;                        // EOB1: cure, EOB2: cause
+	mpn;                        // EOB1: cause, EOB2: cure
+	mpn;    // Neutral Poison
+	mp(6);  // Prot From Evil 10'
+	mp1n;   // Prot From Lightning
+	mpn;                        // EOB1: cure, EOB2: cause
+	mpn;                        // EOB1: cause, EOB2: cure
+	mpn;    // Flame Strike
+	mpn;    // Raise Dead
+	mp2n;   // Slay Living
+	mp2(2); // True Seeing
+	mp2n;   // Harm
+	mp2n;   // Heal
+	mp2n;   // Resurrect
+	mpn;    // Lay on Hands
+	mp2n;   // Turn Undead
+	mpn;    // Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
 	mp2(10);// Mystic Defense
-	mp2n;	// Fireball 2 passive
-	mpn;	// death spell passive
-	mpn;	// disintegrate passive
-	mp2n;	// cause critical passive
-	mp2n;	// flesh to stone passive
+	mp2n;   // Fireball 2 passive
+	mpn;    // death spell passive
+	mpn;    // disintegrate passive
+	mp2n;   // cause critical passive
+	mp2n;   // flesh to stone passive
 
 	Common::Array<SpellStartCallback> startCallback;
 	sc(empty);
@@ -828,7 +828,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(improvedIdentify);
 	sc(empty);
 	sc(melfsAcidArrow);
-	sc1(empty);		// Stinking Cloud
+	sc1(empty);     // Stinking Cloud
 	sc(dispelMagic);
 	sc(fireball);
 	sc1(flameArrow);
@@ -839,7 +839,7 @@ void EoBCoreEngine::initSpells() {
 	sc(vampiricTouch);
 	sc(fear);
 	sc(iceStorm);
-	sc1(stoneSkin);	// stone skin
+	sc1(stoneSkin); // stone skin
 	sc2(empty); // imp invisibility
 	sc1(empty); // Cloudkill
 	sc2(removeCurse);
@@ -854,7 +854,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(powerWordStun);
 	sc2(empty);
 	sc2(empty);
-	sc(empty);	// Bless
+	sc(empty);  // Bless
 	sc2(causeLightWounds);
 	sc(cureLightWounds);
 	sc1(causeLightWounds);
@@ -909,7 +909,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec(melfsAcidArrow);
-	ec1(empty);		// Stinking Cloud
+	ec1(empty);     // Stinking Cloud
 	ec(empty);
 	ec(fireball);
 	ec1(flameArrow);
@@ -920,8 +920,8 @@ void EoBCoreEngine::initSpells() {
 	ec(vampiricTouch);
 	ec(empty);
 	ec(iceStorm);
-	ec(empty);		// EOB1: stone skin, EOB2: imp invisibility
-	ec(empty);		// EOB1: cloud kill, EOB2: remove curse
+	ec(empty);      // EOB1: stone skin, EOB2: imp invisibility
+	ec(empty);      // EOB1: cloud kill, EOB2: remove curse
 	ec(empty);
 	ec(holdMonster);
 	ec2(empty);
@@ -933,7 +933,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec2(empty);
-	ec(empty);	// Bless
+	ec(empty);  // Bless
 	ec(empty);
 	ec(empty);
 	ec(detectMagic);
@@ -951,7 +951,7 @@ void EoBCoreEngine::initSpells() {
 	ec(empty);
 	ec(empty);
 	ec(empty);
-	ec1(empty);	// Prot from Lightning
+	ec1(empty); // Prot from Lightning
 	ec(empty);
 	ec(empty);
 	ec(flameStrike);
@@ -1049,7 +1049,7 @@ void EoBEngine::initStaticResource() {
 	_dscDoorY5 = _staticres->loadRawData(kEoBBaseDscDoorY5, temp);
 	_dscDoorY6 = _staticres->loadRawData(kEoBBaseDscDoorY6, temp);
 	_dscDoorY7 = _staticres->loadRawData(kEoBBaseDscDoorY7, temp);
-	_dscDoorCoordsExt = (const int16*)_staticres->loadRawDataBe16(kEoBBaseDscDoorCoordsExt, temp);
+	_dscDoorCoordsExt = (const int16 *)_staticres->loadRawDataBe16(kEoBBaseDscDoorCoordsExt, temp);
 
 	_enemyMageSpellList = _staticres->loadRawData(kEoB1EnemyMageSpellList, temp);
 	_enemyMageSfx = _staticres->loadRawData(kEoB1EnemyMageSfx, temp);
@@ -1081,7 +1081,7 @@ void EoBEngine::initStaticResource() {
 		p->dmgDc[0].base = (int8)*ps++;
 		p->dmgDc[1].times = *ps++;
 		p->dmgDc[1].pips = *ps++;
-		p->dmgDc[1].base =(int8) *ps++;
+		p->dmgDc[1].base = (int8)*ps++;
 		p->dmgDc[2].times = *ps++;
 		p->dmgDc[2].pips = *ps++;
 		p->dmgDc[2].base = (int8)*ps++;
@@ -1120,59 +1120,59 @@ void EoBEngine::initSpells() {
 	};
 
 	static const FlagTableEntry flagTable[] = {
-		{ 0x0000, 0x000000, 0x00 },	// dummy
-		{ 0x0033, 0x000001, 0x00 },	// armor
-		{ 0x0100, 0x000000, 0x21 },	// burning hands
-		{ 0x004c, 0x000002, 0x00 },	// detect magic
-		{ 0x0100, 0x000000, 0x01 },	// magic missile
-		{ 0x0000, 0x000000, 0x00 },	// dummy
-		{ 0x008b, 0x000008, 0x00 },	// shield
-		{ 0x0488, 0x000000, 0x03 },	// shocking grasp
-		{ 0x0021, 0x000040, 0x00 },	// invisibility
-		{ 0x0000, 0x000000, 0x00 },	// dummy
-		{ 0x0100, 0x000000, 0x11 },	// melf's acid arrow
-		{ 0x0000, 0x000000, 0x00 },	// STINKING CLOUD
-		{ 0x1000, 0x000000, 0x00 },	// dispel magic
-		{ 0x0100, 0x000000, 0x21 },	// fireball
-		{ 0x0100, 0x000000, 0x11 },	// FLAME ARROW
-		{ 0x0248, 0x010000, 0x00 },	// haste
-		{ 0x0100, 0x000000, 0x00 },	// hold person
-		{ 0x0240, 0x000040, 0x00 },	// inv 10'
-		{ 0x0100, 0x000000, 0x03 },	// lightning bolt
-		{ 0x0488, 0x000000, 0x01 },	// vampiric touch
-		{ 0x0100, 0x000000, 0x00 },	// fear
-		{ 0x0100, 0x000000, 0x41 },	// ice storm
-		{ 0x0033, 0x000001, 0x00 },	// STONE SKIN
-		{ 0x0000, 0x000000, 0x00 },	// CLOUD KILL
-		{ 0x0100, 0x000000, 0x41 },	// cone of cold
-		{ 0x0100, 0x000000, 0x00 },	// hold monster
-		{ 0x005c, 0x000400, 0x00 },	// bless
-		{ 0x0020, 0x000000, 0x00 },	// cure light wounds
-		{ 0x0100, 0x000000, 0x01 },	// cause light wounds
-		{ 0x004c, 0x000002, 0x00 },	// detect magic
-		{ 0x0029, 0x000800, 0x00 },	// prot from evil
-		{ 0x0039, 0x000000, 0x00 },	// aid
-		{ 0x2408, 0x000000, 0x21 },	// flame blade
-		{ 0x0100, 0x000000, 0x00 },	// hold person
-		{ 0x0028, 0x002000, 0x00 },	// slow poison
-		{ 0x0040, 0x000000, 0x00 },	// create food
-		{ 0x1000, 0x000000, 0x00 },	// dispel magic
-		{ 0x0099, 0x004000, 0x00 },	// magical vestment
-		{ 0x004c, 0x008000, 0x00 },	// prayer
-		{ 0x0040, 0x000000, 0x00 },	// remove paralysis
-		{ 0x0020, 0x000000, 0x00 },	// cure serious
-		{ 0x0100, 0x000000, 0x01 },	// cause serious
-		{ 0x0020, 0x000000, 0x00 },	// neutralize poison
-		{ 0x0248, 0x000800, 0x00 },	// prot from evil 10'
-		{ 0x0000, 0x000000, 0x00 },	// PROT FROM LIGHTNING
-		{ 0x0020, 0x000000, 0x00 },	// cure critical
-		{ 0x0100, 0x000000, 0x01 },	// cause critical
-		{ 0x0100, 0x000000, 0x21 },	// flame strike
-		{ 0x0020, 0x000000, 0x00 },	// raise dead
-		{ 0x0020, 0x000000, 0x00 },	// lay on hands
-		{ 0x0000, 0x000000, 0x00 },	// obj hit passive
-		{ 0x0000, 0x000000, 0x00 },	// disintegrate passive
-		{ 0x0000, 0x000000, 0x00 }	// death spell passive
+		{ 0x0000, 0x000000, 0x00 }, // dummy
+		{ 0x0033, 0x000001, 0x00 }, // armor
+		{ 0x0100, 0x000000, 0x21 }, // burning hands
+		{ 0x004c, 0x000002, 0x00 }, // detect magic
+		{ 0x0100, 0x000000, 0x01 }, // magic missile
+		{ 0x0000, 0x000000, 0x00 }, // dummy
+		{ 0x008b, 0x000008, 0x00 }, // shield
+		{ 0x0488, 0x000000, 0x03 }, // shocking grasp
+		{ 0x0021, 0x000040, 0x00 }, // invisibility
+		{ 0x0000, 0x000000, 0x00 }, // dummy
+		{ 0x0100, 0x000000, 0x11 }, // melf's acid arrow
+		{ 0x0000, 0x000000, 0x00 }, // STINKING CLOUD
+		{ 0x1000, 0x000000, 0x00 }, // dispel magic
+		{ 0x0100, 0x000000, 0x21 }, // fireball
+		{ 0x0100, 0x000000, 0x11 }, // FLAME ARROW
+		{ 0x0248, 0x010000, 0x00 }, // haste
+		{ 0x0100, 0x000000, 0x00 }, // hold person
+		{ 0x0240, 0x000040, 0x00 }, // inv 10'
+		{ 0x0100, 0x000000, 0x03 }, // lightning bolt
+		{ 0x0488, 0x000000, 0x01 }, // vampiric touch
+		{ 0x0100, 0x000000, 0x00 }, // fear
+		{ 0x0100, 0x000000, 0x41 }, // ice storm
+		{ 0x0033, 0x000001, 0x00 }, // STONE SKIN
+		{ 0x0000, 0x000000, 0x00 }, // CLOUD KILL
+		{ 0x0100, 0x000000, 0x41 }, // cone of cold
+		{ 0x0100, 0x000000, 0x00 }, // hold monster
+		{ 0x005c, 0x000400, 0x00 }, // bless
+		{ 0x0020, 0x000000, 0x00 }, // cure light wounds
+		{ 0x0100, 0x000000, 0x01 }, // cause light wounds
+		{ 0x004c, 0x000002, 0x00 }, // detect magic
+		{ 0x0029, 0x000800, 0x00 }, // prot from evil
+		{ 0x0039, 0x000000, 0x00 }, // aid
+		{ 0x2408, 0x000000, 0x21 }, // flame blade
+		{ 0x0100, 0x000000, 0x00 }, // hold person
+		{ 0x0028, 0x002000, 0x00 }, // slow poison
+		{ 0x0040, 0x000000, 0x00 }, // create food
+		{ 0x1000, 0x000000, 0x00 }, // dispel magic
+		{ 0x0099, 0x004000, 0x00 }, // magical vestment
+		{ 0x004c, 0x008000, 0x00 }, // prayer
+		{ 0x0040, 0x000000, 0x00 }, // remove paralysis
+		{ 0x0020, 0x000000, 0x00 }, // cure serious
+		{ 0x0100, 0x000000, 0x01 }, // cause serious
+		{ 0x0020, 0x000000, 0x00 }, // neutralize poison
+		{ 0x0248, 0x000800, 0x00 }, // prot from evil 10'
+		{ 0x0000, 0x000000, 0x00 }, // PROT FROM LIGHTNING
+		{ 0x0020, 0x000000, 0x00 }, // cure critical
+		{ 0x0100, 0x000000, 0x01 }, // cause critical
+		{ 0x0100, 0x000000, 0x21 }, // flame strike
+		{ 0x0020, 0x000000, 0x00 }, // raise dead
+		{ 0x0020, 0x000000, 0x00 }, // lay on hands
+		{ 0x0000, 0x000000, 0x00 }, // obj hit passive
+		{ 0x0000, 0x000000, 0x00 }, // disintegrate passive
+		{ 0x0000, 0x000000, 0x00 }  // death spell passive
 	};
 
 	int temp;
@@ -1201,7 +1201,7 @@ void DarkMoonEngine::initStaticResource() {
 		_seqIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroSeqData00 + i, temp);
 
 	_shapesIntro = new const EoBShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(EoBShapeDef*) * 13);
+	memset(_shapesIntro, 0, sizeof(EoBShapeDef *) * 13);
 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
@@ -1216,7 +1216,7 @@ void DarkMoonEngine::initStaticResource() {
 		_seqFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleSeqData00 + i, temp);
 
 	_shapesFinale = new const EoBShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(EoBShapeDef*) * 13);
+	memset(_shapesFinale, 0, sizeof(EoBShapeDef *) * 13);
 	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
@@ -1229,12 +1229,12 @@ void DarkMoonEngine::initStaticResource() {
 	_npcStrings[0] = _staticres->loadStrings(kEoB2Npc1Strings, temp);
 	_npcStrings[1] = _staticres->loadStrings(kEoB2Npc2Strings, temp);
 	_monsterDustStrings = _staticres->loadStrings(kEoB2MonsterDustStrings, temp);
-	_dreamSteps = (const int8*)_staticres->loadRawData(kEoB2DreamSteps, temp);
+	_dreamSteps = (const int8 *)_staticres->loadRawData(kEoB2DreamSteps, temp);
 	_kheldranStrings = _staticres->loadStrings(kEoB2KheldranStrings, temp);
 	_hornStrings = _staticres->loadStrings(kEoB2HornStrings, temp);
 	_hornSounds = _staticres->loadRawData(kEoB2HornSounds, temp);
 
-	_wallOfForceDsX = (const int16*)_staticres->loadRawDataBe16(kEoB2WallOfForceDsX, temp);
+	_wallOfForceDsX = (const int16 *)_staticres->loadRawDataBe16(kEoB2WallOfForceDsX, temp);
 	_wallOfForceDsY = _staticres->loadRawData(kEoB2WallOfForceDsY, temp);
 	_wallOfForceDsNumW = _staticres->loadRawData(kEoB2WallOfForceNumW, temp);
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
@@ -1250,19 +1250,22 @@ void DarkMoonEngine::initStaticResource() {
 
 	// ScummVM specific
 	static const char *transferStringsScummVM[3][5] = {
-		{	"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+		{
+			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
 			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
 			"Select File",
 			"\r\r   Please wait..."
 		},
-		{	"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
+		{
+			"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
 			"Game ID",
 			"\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
 			"Spiel W[hlen",
 			"\r\r  Bitte warten..."
 		},
-		{	0, 0, 0, 0
+		{
+			0, 0, 0, 0
 		}
 	};
 

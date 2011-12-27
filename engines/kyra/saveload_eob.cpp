@@ -451,9 +451,9 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);
 
-		EoBMonsterInPlay *lm = (EoBMonsterInPlay*)_lvlTempData[i]->monsters;
-		EoBFlyingObject *lf = (EoBFlyingObject*)_lvlTempData[i]->flyingObjects;
-		WallOfForce *lw = (WallOfForce*)_lvlTempData[i]->wallsOfForce;
+		EoBMonsterInPlay *lm = (EoBMonsterInPlay *)_lvlTempData[i]->monsters;
+		EoBFlyingObject *lf = (EoBFlyingObject *)_lvlTempData[i]->flyingObjects;
+		WallOfForce *lw = (WallOfForce *)_lvlTempData[i]->wallsOfForce;
 
 		for (int ii = 0; ii < 30; ii++) {
 			EoBMonsterInPlay *m = &lm[ii];
@@ -535,7 +535,7 @@ void EoBCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
 }
 
 void EoBCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	EoBMonsterInPlay *p = (EoBMonsterInPlay*)tmp->monsters;
+	EoBMonsterInPlay *p = (EoBMonsterInPlay *)tmp->monsters;
 	delete[] p;
 }
 
@@ -556,10 +556,10 @@ void EoBCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
 }
 
 void EoBCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
-	WallOfForce *p = (WallOfForce*)tmp->wallsOfForce;
+	WallOfForce *p = (WallOfForce *)tmp->wallsOfForce;
 	delete[] p;
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

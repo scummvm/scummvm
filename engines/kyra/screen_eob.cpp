@@ -198,7 +198,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 		shapesize += 4;
 
 		shp = new uint8[shapesize];
-		memset (shp, 0, shapesize);
+		memset(shp, 0, shapesize);
 		uint8 *dst = shp;
 
 		*dst++ = 0;
@@ -239,18 +239,18 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 	} else {
 		uint8 nib = 0, col = 0;
 		uint8 *colorMap = new uint8[0x100];
-		memset (colorMap, 0xff, 0x100);
+		memset(colorMap, 0xff, 0x100);
 
 		shapesize = h * (w << 2) + 20;
 		shp = new uint8[shapesize];
-		memset (shp, 0, shapesize);
+		memset(shp, 0, shapesize);
 		uint8 *dst = shp;
 
 		*dst++ = 1;
 		*dst++ = (h & 0xff);
 		*dst++ = (w & 0xff);
 		*dst++ = (h & 0xff);
-		memset (dst, 0xff, 0x10);
+		memset(dst, 0xff, 0x10);
 
 		uint8 *pal = dst;
 		dst += 0x10;
@@ -276,7 +276,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 					}
 				}
 
-				if(++nib & 1) {
+				if (++nib & 1) {
 					*dst = c << 4;
 				} else {
 					*dst++ |= c;
@@ -300,7 +300,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 	va_list args;
 	va_start(args, flags);
-	uint8 *ovl = (flags & 2) ? va_arg(args, uint8*) : 0;
+	uint8 *ovl = (flags & 2) ? va_arg(args, uint8 *) : 0;
 	va_end(args);
 
 	if (sd != -1) {
@@ -340,7 +340,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				return;
 			src += (d * (width >> 1));
 			d = dY + dH - _dsY1;
-			if (d >=0) {
+			if (d >= 0) {
 				dH = d;
 				dY = _dsY1;
 				d = _dsY2 - dY;
@@ -355,7 +355,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		if (d < dH)
 			dH = d;
 
-        int16 cnt1 = 0;
+		int16 cnt1 = 0;
 		int16 cnt2 = 0;
 		int16 dXbit1 = dX & 1;
 
@@ -488,7 +488,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 						marginLeft = marginLeft + 1 - *src++;
 				}
 			}
-            dY = _dsY1;
+			dY = _dsY1;
 		}
 
 		d = _dsY2 - dY;
@@ -523,7 +523,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		}
 
 		dst += (dY * 320 + dX);
-		uint8 * dstL = dst;
+		uint8 *dstL = dst;
 
 		if (pageNum == 0 || pageNum == 1)
 			addDirtyRect(rX, rY, rW, rH);
@@ -664,7 +664,7 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 		shp += w2;
 	}
 
-	return (const uint8 *) _dsTempPage;
+	return (const uint8 *)_dsTempPage;
 }
 
 void Screen_EoB::replaceShapePalette(uint8 *shp, const uint8 *pal) {
@@ -690,7 +690,7 @@ void Screen_EoB::setShapeFrame(int x1, int y1, int x2, int y2) {
 	_dsY2 = y2;
 }
 
-void Screen_EoB::setShapeFadeMode (uint8 i, bool b) {
+void Screen_EoB::setShapeFadeMode(uint8 i, bool b) {
 	if (!i || i == 1)
 		_shapeFadeMode[i] = b;
 }
@@ -721,13 +721,13 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 	int16 gx2 = _gfxX;
 	int16 gy2 = _gfxY;
 
-	int16 *ptr2 = (int16*)_dsTempPage;
-	int16 *ptr3 = (int16*)&_dsTempPage[300];
-	int16 *ptr4 = (int16*)&_dsTempPage[600];
-	int16 *ptr5 = (int16*)&_dsTempPage[900];
-	int16 *ptr6 = (int16*)&_dsTempPage[1200];
-	int16 *ptr7 = (int16*)&_dsTempPage[1500];
-	int16 *ptr8 = (int16*)&_dsTempPage[1800];
+	int16 *ptr2 = (int16 *)_dsTempPage;
+	int16 *ptr3 = (int16 *)&_dsTempPage[300];
+	int16 *ptr4 = (int16 *)&_dsTempPage[600];
+	int16 *ptr5 = (int16 *)&_dsTempPage[900];
+	int16 *ptr6 = (int16 *)&_dsTempPage[1200];
+	int16 *ptr7 = (int16 *)&_dsTempPage[1500];
+	int16 *ptr8 = (int16 *)&_dsTempPage[1800];
 
 	if (numElements > 150)
 		numElements = 150;
@@ -804,14 +804,14 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 }
 
 void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize) {
-	int16 *xCoords = (int16*)_dsTempPage;
-	int16 *yCoords = (int16*)&_dsTempPage[300];
-	int16 *xMod = (int16*)&_dsTempPage[600];
-	int16 *yMod = (int16*)&_dsTempPage[900];
-	int16 *pixBackup = (int16*)&_dsTempPage[1200];
-	int16 *colTableStep = (int16*)&_dsTempPage[1500];
-	int16 *colTableIndex = (int16*)&_dsTempPage[1800];
-	int16 *pixDelay = (int16*)&_dsTempPage[2100];
+	int16 *xCoords = (int16 *)_dsTempPage;
+	int16 *yCoords = (int16 *)&_dsTempPage[300];
+	int16 *xMod = (int16 *)&_dsTempPage[600];
+	int16 *yMod = (int16 *)&_dsTempPage[900];
+	int16 *pixBackup = (int16 *)&_dsTempPage[1200];
+	int16 *colTableStep = (int16 *)&_dsTempPage[1500];
+	int16 *colTableIndex = (int16 *)&_dsTempPage[1800];
+	int16 *pixDelay = (int16 *)&_dsTempPage[2100];
 
 	hideMouse();
 	int cp = _curPage;
@@ -873,7 +873,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	}
 
 	int d = 0;
-	for (int i = 2; i; ) {
+	for (int i = 2; i;) {
 		if (i != 2) {
 			for (int ii = numElements - 1; ii >= 0; ii--) {
 				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
@@ -911,7 +911,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 			int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
 			int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
 
-			uint8 tc1 =  ((disorder >> 2) <= d) ? getPagePixel(2, px, py) : 0;
+			uint8 tc1 = ((disorder >> 2) <= d) ? getPagePixel(2, px, py) : 0;
 			pixBackup[ii] = getPagePixel(0, px, py);
 			uint8 tblIndex = CLIP(colTableIndex[ii] >> 8, 0, colorTableSize - 1);
 			uint8 tc2 = colorTable[tblIndex];
@@ -942,7 +942,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 void Screen_EoB::fadeTextColor(Palette *pal, int color1, int rate) {
 	uint8 *col = pal->getData();
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		loop = true;
 		uint32 end = _system->getMillis() + _vm->tickLength();
 
@@ -1027,7 +1027,7 @@ void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 		tmp = (uint16)((*src - b) * weight) << 1;
 		tb = *src++ - ((tmp >> 8) & 0xff);
 
-		uint8 * d = palData + 3;
+		uint8 *d = palData + 3;
 		uint16 v = 0xffff;
 		uint8 col = rootColor;
 
@@ -1044,7 +1044,7 @@ void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 				col = ii ;
 			}
 		}
-        *dst++ = col;
+		*dst++ = col;
 	}
 }
 
@@ -1052,13 +1052,13 @@ uint8 *Screen_EoB::getFadeTable(int index) {
 	return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0;
 }
 
-void Screen_EoB::drawShapeSetPixel(uint8 * dst, uint8 c) {
+void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 c) {
 	if (_shapeFadeMode[0]) {
 		if (_shapeFadeMode[1]) {
 			c = *dst;
 		} else {
 			_shapeFadeInternal &= 7;
-            c = *(dst + _shapeFadeInternal++);
+			c = *(dst + _shapeFadeInternal++);
 		}
 	}
 
@@ -1134,7 +1134,7 @@ int OldDOSFont::getCharWidth(uint16 c) const {
 }
 
 void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
-	static const uint8 renderMaskTable6[] = { 0xFC, 0x00, 0x7E, 0x00, 0x3F, 0x00, 0x1F, 0x80, 0x0F, 0xC0, 0x07, 0xE0, 0x03, 0xF0, 0x01, 0xF8	};
+	static const uint8 renderMaskTable6[] = { 0xFC, 0x00, 0x7E, 0x00, 0x3F, 0x00, 0x1F, 0x80, 0x0F, 0xC0, 0x07, 0xE0, 0x03, 0xF0, 0x01, 0xF8 };
 	static const uint8 renderMaskTable8[] = { 0xFF, 0x00, 0x7F, 0x80, 0x3F, 0xC0, 0x1F, 0xE0, 0x0F, 0xF0, 0x07, 0xF8, 0x03, 0xFC, 0x01, 0xFE };
 
 	if (_width != 8 && _width != 6)
@@ -1157,7 +1157,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			// TODO: recheck this: no conversion for 'ß' ?
 			break;
 		}
-	} else if (_width == 8){
+	} else if (_width == 8) {
 		switch (c) {
 		case 0x81:
 		case 0x9a:
@@ -1197,7 +1197,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 		int cW = w;
 		const uint8 *mtbl = _width == 8 ? renderMaskTable8 : renderMaskTable6;
 
-		for (bool runWidthLoop = true; runWidthLoop; ) {
+		for (bool runWidthLoop = true; runWidthLoop;) {
 			uint8 s = *src++;
 			uint8 m = *mtbl++;
 
@@ -1233,6 +1233,6 @@ void OldDOSFont::unload() {
 	_bitmapOffsets = 0;
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

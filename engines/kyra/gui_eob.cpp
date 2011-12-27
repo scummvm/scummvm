@@ -300,26 +300,26 @@ void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 		gui_drawBox(x, y, 31, 16, _color9, _color10, _color11);
 
 	switch (status + 5) {
-		case 0:
-			tmpStr = _characterGuiStringsWp[2];
-			break;
-		case 1:
-			tmpStr = _characterGuiStringsWr[2];
-			tmpStr2 = _characterGuiStringsWr[3];
-			break;
-		case 2:
-			tmpStr = _characterGuiStringsWr[0];
-			tmpStr2 = _characterGuiStringsWr[1];
-			break;
-		case 3:
-			tmpStr = _characterGuiStringsWp[1];
-			break;
-		case 4:
-			tmpStr = _characterGuiStringsWp[0];
-			break;
-		default:
-			tmpStr = Common::String::format("%d", status);
-			break;
+	case 0:
+		tmpStr = _characterGuiStringsWp[2];
+		break;
+	case 1:
+		tmpStr = _characterGuiStringsWr[2];
+		tmpStr2 = _characterGuiStringsWr[3];
+		break;
+	case 2:
+		tmpStr = _characterGuiStringsWr[0];
+		tmpStr2 = _characterGuiStringsWr[1];
+		break;
+	case 3:
+		tmpStr = _characterGuiStringsWp[1];
+		break;
+	case 4:
+		tmpStr = _characterGuiStringsWp[0];
+		break;
+	default:
+		tmpStr = Common::String::format("%d", status);
+		break;
 	}
 
 	if (!tmpStr2.empty()) {
@@ -433,8 +433,8 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 			return;
 		}
 
-		int iX= x;
-		int iY= y;
+		int iX = x;
+		int iY = y;
 
 		for (int i = 0; i < 64; i += 16) {
 			x = iX + i;
@@ -790,11 +790,11 @@ int EoBCoreEngine::clickedSceneDropPickupItem(Button *button) {
 	int d = _dropItemDirIndex[(_currentDirection << 2) + button->arg];
 
 	if (_itemInHand) {
-		setItemPosition((Item*)&_levelBlockProperties[block & 0x3ff].drawObjects, block, _itemInHand, d);
+		setItemPosition((Item *)&_levelBlockProperties[block & 0x3ff].drawObjects, block, _itemInHand, d);
 		setHandItem(0);
 		runLevelScript(block, 4);
 	} else {
-		d = getQueuedItem((Item*)&_levelBlockProperties[block].drawObjects, d, -1);
+		d = getQueuedItem((Item *)&_levelBlockProperties[block].drawObjects, d, -1);
 		if (!d)
 			return 1;
 		setHandItem(d);
@@ -975,7 +975,7 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 		if (listIndex == 7 || _openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + listIndex] > 0) {
 			if (listIndex < 6) {
 				if (_openBookSpellListOffset + listIndex < 9)
-					_openBookSpellSelectedItem= listIndex;
+					_openBookSpellSelectedItem = listIndex;
 				else if (listIndex != 7)
 					return button->index;
 			} else if (listIndex != 7) {
@@ -994,7 +994,7 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 
 				castSpell(s, 0);
 
-			} else if ((_openBookSpellSelectedItem == 6 && listIndex == 7) || (_openBookSpellSelectedItem != 6 && listIndex == 6) ) {
+			} else if ((_openBookSpellSelectedItem == 6 && listIndex == 7) || (_openBookSpellSelectedItem != 6 && listIndex == 6)) {
 				Button b;
 				clickedSpellbookAbort(&b);
 			}
@@ -1223,81 +1223,81 @@ void EoBCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 	uint8 ep = _itemTypes[tp].extraProperties & 0x7f;
 
 	switch (ep) {
-		case 0:
-		case 16:
-			// Item automatically used when worn
-			_txt->printMessage(_itemMisuseStrings[1]);
-			break;
+	case 0:
+	case 16:
+		// Item automatically used when worn
+		_txt->printMessage(_itemMisuseStrings[1]);
+		break;
 
-		case 1:
-		case 2:
-		case 3:
-			// Weapons
-			if (!_currentControlMode)
-				useSlotWeapon(charIndex, slotIndex, itm);
-			break;
+	case 1:
+	case 2:
+	case 3:
+		// Weapons
+		if (!_currentControlMode)
+			useSlotWeapon(charIndex, slotIndex, itm);
+		break;
 
-		case 4:
-		case 8:
-		case 12:
-		case 13:
-		case 15:
-			// Item not used that way
-			_txt->printMessage(_itemMisuseStrings[2]);
-			break;
+	case 4:
+	case 8:
+	case 12:
+	case 13:
+	case 15:
+		// Item not used that way
+		_txt->printMessage(_itemMisuseStrings[2]);
+		break;
 
-		case 5:
-		case 6:
-			// Cleric holy symbol / mage spell book
-			if (!_currentControlMode)
-				useMagicBookOrSymbol(charIndex, ep == 6 ? 1 : 0);
-			break;
+	case 5:
+	case 6:
+		// Cleric holy symbol / mage spell book
+		if (!_currentControlMode)
+			useMagicBookOrSymbol(charIndex, ep == 6 ? 1 : 0);
+		break;
 
-		case 7:
-			// Food ration
-			// Don't do anything if mouse control is enabled (we don't support anything else)
-			// eatItemInHand(charIndex);
-			break;
+	case 7:
+		// Food ration
+		// Don't do anything if mouse control is enabled (we don't support anything else)
+		// eatItemInHand(charIndex);
+		break;
 
-		case 10:
-			if (_flags.gameID == GI_EOB1)
-				vl += _clericSpellOffset;
-			// drop through
-		case 9:
-			// Mage/Cleric Scroll
-			if (!_currentControlMode)
-				useMagicScroll(charIndex, vl, wslot);
-			break;
+	case 10:
+		if (_flags.gameID == GI_EOB1)
+			vl += _clericSpellOffset;
+		// drop through
+	case 9:
+		// Mage/Cleric Scroll
+		if (!_currentControlMode)
+			useMagicScroll(charIndex, vl, wslot);
+		break;
 
-		case 11:
-			// Letters, Notes, Maps
-			displayParchment(vl);
-			break;
+	case 11:
+		// Letters, Notes, Maps
+		displayParchment(vl);
+		break;
 
-		case 14:
-			// Potion
-			usePotion(charIndex, wslot);
-			break;
+	case 14:
+		// Potion
+		usePotion(charIndex, wslot);
+		break;
 
-		case 18:
-			useWand(charIndex, wslot);
-			break;
+	case 18:
+		useWand(charIndex, wslot);
+		break;
 
-		case 19:
-			// eob2 horn
-			useHorn(charIndex, wslot);
-			break;
+	case 19:
+		// eob2 horn
+		useHorn(charIndex, wslot);
+		break;
 
-		case 20:
-			if (vl == 1)
-				inflictCharacterDamage(charIndex, 200);
-			else
-				useMagicScroll(charIndex, 55, wslot);
-			deleteInventoryItem(charIndex, wslot);
-			break;
+	case 20:
+		if (vl == 1)
+			inflictCharacterDamage(charIndex, 200);
+		else
+			useMagicScroll(charIndex, 55, wslot);
+		deleteInventoryItem(charIndex, wslot);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (_flags.gameID == GI_EOB1 || (ep == 1 && charIndex >= 2))
@@ -1336,7 +1336,7 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 
 GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_menuStringsPrefsTemp = new char*[4];
-	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
+	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char *));
 
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
@@ -1429,7 +1429,7 @@ void GUI_EoB::processButton(Button *button) {
 				_screen->drawShape(_screen->_curPage, button->data1ShapePtr, fx, fy, sd);
 			} else if (button->data0Val1 == 2) {
 				if (!(button->flags2 & 4))
-					_screen->printText((const char*) button->data1ShapePtr, sx, sy, col1, col2);
+					_screen->printText((const char *)button->data1ShapePtr, sx, sy, col1, col2);
 			} else if (button->data0Val1 == 3) {
 				// nullsub (at least EOBII)
 			} else if (button->data0Val1 == 4) {
@@ -1453,9 +1453,9 @@ void GUI_EoB::processButton(Button *button) {
 				_screen->drawShape(_screen->_curPage, button->data2ShapePtr, fx, fy, sd);
 			} else if (button->data0Val1 == 2) {
 				if (button->flags2 & 1)
-					_screen->printText((const char*) button->data2ShapePtr, sx, sy, button->data3Val2, button->data3Val3);
+					_screen->printText((const char *)button->data2ShapePtr, sx, sy, button->data3Val2, button->data3Val3);
 				else
-					_screen->printText((const char*) button->data2ShapePtr, sx, sy, button->data2Val2, button->data2Val3);
+					_screen->printText((const char *)button->data2ShapePtr, sx, sy, button->data2Val2, button->data2Val3);
 			} else if (button->data0Val1 == 3) {
 				// nullsub (at least EOBII)
 			} else if (button->data0Val1 == 4) {
@@ -1476,7 +1476,7 @@ void GUI_EoB::processButton(Button *button) {
 		if (button->data0Val1 == 1) {
 			_screen->drawShape(_screen->_curPage, button->data0ShapePtr, fx, fy, sd);
 		} else if (button->data0Val1 == 2) {
-			_screen->printText((const char*) button->data0ShapePtr, sx, sy, button->data0Val2, button->data0Val3);
+			_screen->printText((const char *)button->data0ShapePtr, sx, sy, button->data0Val2, button->data0Val3);
 		} else if (button->data0Val1 == 3) {
 			// nullsub (at least EOBII)
 		} else if (button->data0Val1 == 4) {
@@ -1486,7 +1486,7 @@ void GUI_EoB::processButton(Button *button) {
 			_screen->drawBox(sx, sy, fx2, fy2, button->data0Val2);
 		} else {
 			if (!button->data0Val1) {
-				if(button->data1Val1 == 2 || button->data2Val1 == 2) {
+				if (button->data1Val1 == 2 || button->data2Val1 == 2) {
 					_screen->drawBox(sx, sy, fx2, fy2, button->data0Val2);
 				} else {
 					// nullsub (at least EOBII)
@@ -1542,7 +1542,7 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 
 			// UNUSED
 			//if (buttonList->flags2 & 0x20) {
-				// if (_processButtonListExtraCallback)
+				//if (_processButtonListExtraCallback)
 				//	this->*_processButtonListExtraCallback(buttonList);
 			//}
 
@@ -2001,7 +2001,7 @@ void GUI_EoB::runCampMenu() {
 	_needRest = false;
 	Button *buttonList = 0;
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		if (newMenu == 2)
 			updateOptionsStrings();
 
@@ -2067,7 +2067,7 @@ void GUI_EoB::runCampMenu() {
 					if (_vm->_menuButtonDefs[s - 1].flags & 2)
 						break;
 					s += dir;
-				} while(!_vm->shouldQuit());
+				} while (!_vm->shouldQuit());
 
 				highlightButton = _vm->gui_getButton(buttonList, s);
 			}
@@ -2219,7 +2219,7 @@ bool GUI_EoB::runLoadMenu(int x, int y) {
 
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
 		int slot = selectSaveSlotDialogue(x, y, 1);
 		if (slot > 5) {
@@ -2257,7 +2257,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 	for (int i = 0; i < 2; i++)
 		drawMenuButtonBox(x[i], y, 32, 14, false, false);
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		Common::Point p = _vm->getMousePos();
 		if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14))
 			newHighlight = 0;
@@ -2324,7 +2324,7 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
 	_screen->updateScreen();
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
 		_vm->removeInputTop();
 
@@ -2365,7 +2365,7 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
 	_screen->updateScreen();
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
 		_vm->removeInputTop();
 
@@ -2492,7 +2492,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		} else if (in > 31 && in < 126) {
 			if (!(in == 32 && pos == 0)) {
 				if (in >= 97 && in <= 122)
-					in -=32;
+					in -= 32;
 
 				if (pos < len) {
 					for (int i = destMaxLen - 1; i >= pos; i--)
@@ -2553,7 +2553,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 		delete[] _savegameList;
 	}
 	_savegameList = new char*[_savegameListSize];
-	memset(_savegameList, 0, _savegameListSize * sizeof(char*));
+	memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
 	Common::StringArray::iterator ii = targets.begin();
 	for (int i = 0; i < _savegameListSize; ++i) {
@@ -2593,7 +2593,7 @@ Common::String GUI_EoB::transferFileMenu(Common::String &target) {
 		slot = selectSaveSlotDialogue(72, 14, 4);
 		if (slot == 6)
 			break;
-		
+
 		if (_saveSlotIdTemp[slot] == -1)
 			messageDialogue(11, 65, 6);
 		else {
@@ -2638,7 +2638,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
 		int slot = selectSaveSlotDialogue(x, y, 0);
 		if (slot > 5) {
@@ -2656,7 +2656,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			int fx = (x + 1) << 3;
 			int fy = y + slot * 17 + 23;
 
-			for (int in = -1; in == -1 && !_vm->shouldQuit(); ) {
+			for (int in = -1; in == -1 && !_vm->shouldQuit();) {
 				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->_bkgColor_1);
 				in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
 				if (!strlen(_saveSlotStringsTemp[slot])) {
@@ -2707,7 +2707,7 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 	int newHighlight = 0;
 	int slot = -1;
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
 		_vm->removeInputTop();
 
@@ -2904,7 +2904,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 	bool updateDesc = true;
 	bool updateList = true;
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateBoxFrameHighLight(charIndex);
 
 		if (newHighLightButton < 0)
@@ -2964,7 +2964,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		} else {
 			Common::Point p = _vm->getMousePos();
 			if (_vm->posWithinRect(p.x, p.y, 8, 50, 168, 122)) {
-				newHighLightText = (p.y - 50 ) / 9;
+				newHighLightText = (p.y - 50) / 9;
 				if (menuSpellMap[lastHighLightButton * 11] - 1 < newHighLightText)
 					newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
 			}
@@ -3257,7 +3257,7 @@ bool GUI_EoB::restParty() {
 
 	restParty_updateRestTime(hours, true);
 
-	for (int l = 0; !res && restLoop && !_vm->shouldQuit(); ) {
+	for (int l = 0; !res && restLoop && !_vm->shouldQuit();) {
 		l++;
 
 		// Regenerate spells
@@ -3321,7 +3321,7 @@ bool GUI_EoB::restParty() {
 				list = 0;
 				if (crs[i] >= 48) {
 					for (int ii = 0; !list && ii < 3; ii++)
-						list = (int8*)memchr(_vm->_characters[i].clericSpells, -spells[ii], 80);
+						list = (int8 *)memchr(_vm->_characters[i].clericSpells, -spells[ii], 80);
 				}
 
 				if (list)
@@ -3380,15 +3380,15 @@ bool GUI_EoB::restParty() {
 				for (int i = 0; i < 6; i++) {
 					// Add Lay On Hands spell
 					if (_vm->_characters[i].cClass == 2) {
-						list = (int8*)memchr(_vm->_characters[i].clericSpells, spells[3], 10);
+						list = (int8 *)memchr(_vm->_characters[i].clericSpells, spells[3], 10);
 						if (list) {
 							*list = spells[3];
 						} else {
-							list = (int8*)memchr(_vm->_characters[i].clericSpells, -spells[3], 10);
+							list = (int8 *)memchr(_vm->_characters[i].clericSpells, -spells[3], 10);
 							if (list) {
 								*list = spells[3];
 							} else if (!memchr(_vm->_characters[i].clericSpells, spells[3], 10)) {
-								list = (int8*)memchr(_vm->_characters[i].clericSpells, 0, 10);
+								list = (int8 *)memchr(_vm->_characters[i].clericSpells, 0, 10);
 								*list = spells[3];
 							}
 						}
@@ -3488,7 +3488,7 @@ bool GUI_EoB::confirmDialogue(int id) {
 	int lastHighlight = -1;
 	bool result = false;
 
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		if (newHighlight != lastHighlight) {
 			if (lastHighlight != -1)
 				drawMenuButton(_vm->gui_getButton(buttonList, lastHighlight + 33), false, false, true);
@@ -3701,7 +3701,7 @@ void GUI_EoB::displayTextBox(int id) {
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
-	for (uint32 timeOut = _vm->_system->getMillis() + 1440; _vm->_system->getMillis() < timeOut && !_vm->shouldQuit(); ) {
+	for (uint32 timeOut = _vm->_system->getMillis() + 1440; _vm->_system->getMillis() < timeOut && !_vm->shouldQuit();) {
 		int in = _vm->checkInput(0, false, 0);
 		_vm->removeInputTop();
 		if (in && !(in & 0x800))
@@ -3765,7 +3765,7 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 	if (!b)
 		return;
 
-	EoBMenuButtonDef *d = (EoBMenuButtonDef*)b->extButtonDef;
+	EoBMenuButtonDef *d = (EoBMenuButtonDef *)b->extButtonDef;
 
 	if (d->flags & 1)
 		drawMenuButtonBox(b->x, b->y, b->width, b->height, clicked, noFill);
@@ -3827,9 +3827,9 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int x = _saveSlotX + 4;
 	int y = _saveSlotY + slot * 17 + 20;
 	int w = 167;
-	const char *s = (slot < 6) ?_saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0];
+	const char *s = (slot < 6) ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0];
 
-	if (slot >= 6 ) {
+	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;
 		w = 53;
@@ -4034,6 +4034,6 @@ const EoBRect16 GUI_EoB::_updateBoxFrameHighLights[] = {
 	{ 0x00A3, 0x0068, 0x00C3, 0x0089 }
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

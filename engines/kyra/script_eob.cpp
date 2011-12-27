@@ -136,7 +136,7 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	_lastScriptFlags = 0;
 
 	_subroutineStack = new int8*[10];
-	memset(_subroutineStack, 0, 10 * sizeof(int8*));
+	memset(_subroutineStack, 0, 10 * sizeof(int8 *));
 	_subroutineStackPos = 0;
 
 	_flagTable = new uint32[18];
@@ -157,8 +157,8 @@ EoBInfProcessor::~EoBInfProcessor() {
 	delete[] _flagTable;
 	delete[] _stack;
 	delete[] _scriptData;
-	for (Common::Array<const InfOpcode*>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a) {
-		delete (*a)->proc;
+	for (Common::Array<const InfOpcode *>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a) {
+		delete(*a)->proc;
 		delete *a;
 	}
 	_opcodes.clear();
@@ -190,7 +190,7 @@ void EoBInfProcessor::run(int func, int flags) {
 	_lastScriptFunc = func;
 	_lastScriptFlags = flags;
 
-	int8 *pos = (int8*)(_scriptData + o);
+	int8 *pos = (int8 *)(_scriptData + o);
 
 	do {
 		int8 cmd = *pos++;
@@ -236,12 +236,12 @@ const char *EoBInfProcessor::getString(uint16 index) {
 	int8 *res = _scriptData + READ_LE_UINT16(_scriptData);
 
 	while (index) {
-		if(*res++)
+		if (*res++)
 			continue;
 		index--;
 	}
 
-	return (const char*)res;
+	return (const char *)res;
 }
 
 int EoBInfProcessor::oeob_setWallType(int8 *data) {
@@ -418,9 +418,9 @@ int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 			int i = _vm->countQueuedItems(_vm->_levelBlockProperties[c].drawObjects, -1, (int16)b, 0, 1);
 			while (i) {
 				int p = _vm->_items[i].pos;
-				_vm->getQueuedItem((Item*)&_vm->_levelBlockProperties[c].drawObjects, 0, i);
+				_vm->getQueuedItem((Item *)&_vm->_levelBlockProperties[c].drawObjects, 0, i);
 				if (_vm->_currentLevel == f) {
-					_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[d].drawObjects, d, i, p);
+					_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[d].drawObjects, d, i, p);
 				} else {
 					_vm->_items[i].level = f;
 					_vm->_items[i].block = d;
@@ -494,7 +494,7 @@ int EoBInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 
 	if (i < 27 && itm) {
 		_vm->_characters[c].inventory[slot] = 0;
-		_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[block].drawObjects, block, itm, p);
+		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block].drawObjects, block, itm, p);
 	}
 
 	return pos - data;
@@ -506,7 +506,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	int8 *pos = data;
 
 	strcpy(col, colorConfig);
-	const char *str = (const char*) pos;
+	const char *str = (const char *)pos;
 	pos += (strlen(str) + 1);
 
 	col[1] = *pos++;
@@ -1057,7 +1057,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 				a = *pos++;
 				tempString1 = _vm->_itemNames[itm->nameId];
 				tempString1.toUppercase();
-				tempString2 = (const char*)pos;
+				tempString2 = (const char *)pos;
 				tempString2.toUppercase();
 				pos += a;
 				_stack[_stackIndex++] = tempString1.contains(tempString2) ? 1 : 0;
@@ -1067,7 +1067,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 				a = *pos++;
 				tempString1 = _vm->_itemNames[itm->nameUnid];
 				tempString1.toUppercase();
-				tempString2 = (const char*)pos;
+				tempString2 = (const char *)pos;
 				tempString2.toUppercase();
 				pos += a;
 				_stack[_stackIndex++] = tempString1.contains(tempString2) ? 1 : 0;
@@ -1296,8 +1296,8 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 	} else {
 		cmd = *pos++;
 		_vm->releaseMonsterShapes(cmd * 18, 18);
-		_vm->loadMonsterShapes((const char*)pos, cmd * 18, true, index * 18);
-		debugC(5, kDebugLevelScript, "         - loading monster shapes '%s', monster number '%d', encode type '%d'", (const char*)pos, cmd, index);
+		_vm->loadMonsterShapes((const char *)pos, cmd * 18, true, index * 18);
+		debugC(5, kDebugLevelScript, "         - loading monster shapes '%s', monster number '%d', encode type '%d'", (const char *)pos, cmd, index);
 		pos += 13;
 		_vm->gui_restorePlayField();
 		res = pos - data;
@@ -1329,7 +1329,7 @@ int EoBInfProcessor::oeob_createItem_v1(int8 *data) {
 			_vm->setHandItem(itm);
 			debugC(5, kDebugLevelScript, "         - create hand item '%d'", itm);
 		} else if (block != 0xffff) {
-			_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
 			debugC(5, kDebugLevelScript, "         - create item '%d' on block '0x%.04X', position '%d'", itm, block, itmPos);
 		}
 	}
@@ -1365,14 +1365,14 @@ int EoBInfProcessor::oeob_createItem_v2(int8 *data) {
 			_vm->setHandItem(itm);
 			debugC(5, kDebugLevelScript, "         - create hand item '%d' (value '%d', flags '0x%X', icon number '%d')", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 		} else {
-			_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[_vm->rollDice(1, 2, -1)]);
+			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[_vm->rollDice(1, 2, -1)]);
 			debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 		}
 	} else if (block == 0xfffe) {
-		_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[(_vm->_currentDirection << 2) + _vm->rollDice(1, 2, -1)]);
+		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[(_vm->_currentDirection << 2) + _vm->rollDice(1, 2, -1)]);
 		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 	} else {
-		_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
 		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on block '0x%.04X', position '%d'", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon, block, itmPos);
 	}
 
@@ -1509,35 +1509,35 @@ int EoBInfProcessor::oeob_dialogue(int8 *data) {
 	int8 *pos = data;
 
 	switch (*pos++) {
-		case -45:
-			_vm->drawSequenceBitmap((const char*)pos, pos[13], READ_LE_UINT16(pos + 14), READ_LE_UINT16(pos + 16), READ_LE_UINT16(pos + 18));
-			pos += 20;
-			break;
+	case -45:
+		_vm->drawSequenceBitmap((const char *)pos, pos[13], READ_LE_UINT16(pos + 14), READ_LE_UINT16(pos + 16), READ_LE_UINT16(pos + 18));
+		pos += 20;
+		break;
 
-		case -44:
-			_vm->restoreAfterDialogueSequence();
-			break;
+	case -44:
+		_vm->restoreAfterDialogueSequence();
+		break;
 
-		case -43:
-			_vm->initDialogueSequence();
-			break;
+	case -43:
+		_vm->initDialogueSequence();
+		break;
 
-		case -42:
-			_vm->gui_drawDialogueBox();
-			break;
+	case -42:
+		_vm->gui_drawDialogueBox();
+		break;
 
-		case -40:
-			_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xffff ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
-			pos += 8;
-			break;
+	case -40:
+		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xffff ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
+		pos += 8;
+		break;
 
-		case -8:
-			_vm->txt()->printDialogueText(READ_LE_UINT16(pos), getString(READ_LE_UINT16(pos + 2)));
-			pos += 4;
-			break;
+	case -8:
+		_vm->txt()->printDialogueText(READ_LE_UINT16(pos), getString(READ_LE_UINT16(pos + 2)));
+		pos += 4;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return pos - data;
@@ -1552,52 +1552,52 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 	int i = 0;
 
 	switch (cmd) {
-		case 0:
-			_vm->drawScene(1);
-			_screen->_curPage = 2;
-			_screen->copyRegion(72, 0, 0, 0, 32, 120, 2, 12, Screen::CR_NO_P_CHECK);
+	case 0:
+		_vm->drawScene(1);
+		_screen->_curPage = 2;
+		_screen->copyRegion(72, 0, 0, 0, 32, 120, 2, 12, Screen::CR_NO_P_CHECK);
 
-			for (; i < 4; i++) {
-				endTime = _vm->_system->getMillis() + _vm->_tickLength;
-				_vm->drawLightningColumn();
-				_screen->copyRegion(72, 0, 72, 0, 32, 120, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->updateScreen();
-				_screen->copyRegion(0, 0, 72, 0, 32, 120, 12, 2, Screen::CR_NO_P_CHECK);
-				_vm->delayUntil(endTime);
-			}
+		for (; i < 4; i++) {
+			endTime = _vm->_system->getMillis() + _vm->_tickLength;
+			_vm->drawLightningColumn();
+			_screen->copyRegion(72, 0, 72, 0, 32, 120, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			_screen->copyRegion(0, 0, 72, 0, 32, 120, 12, 2, Screen::CR_NO_P_CHECK);
+			_vm->delayUntil(endTime);
+		}
 
-			_screen->_curPage = 0;
-			_vm->_sceneUpdateRequired = true;
-			break;
+		_screen->_curPage = 0;
+		_vm->_sceneUpdateRequired = true;
+		break;
 
-		case 1:
-			_dlgResult = _vm->charSelectDialogue();
-			break;
+	case 1:
+		_dlgResult = _vm->charSelectDialogue();
+		break;
 
-		case 2:
-			_vm->characterLevelGain(_dlgResult);
-			break;
+	case 2:
+		_vm->characterLevelGain(_dlgResult);
+		break;
 
-		case 3:
-			_dlgResult = _vm->resurrectionSelectDialogue();
-			break;
+	case 3:
+		_dlgResult = _vm->resurrectionSelectDialogue();
+		break;
 
-		case 4:
-			if (_vm->prepareForNewPartyMember(33, 5))
-				_vm->initNpc(4);
-			break;
+	case 4:
+		if (_vm->prepareForNewPartyMember(33, 5))
+			_vm->initNpc(4);
+		break;
 
-		case 5:
-			_vm->deletePartyItems(46, 5);
-			_vm->deletePartyItems(46, 6);
-			break;
+	case 5:
+		_vm->deletePartyItems(46, 5);
+		_vm->deletePartyItems(46, 6);
+		break;
 
-		case 6:
-			_vm->loadVcnData(0, 0);
-			break;
+	case 6:
+		_vm->loadVcnData(0, 0);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return pos - data;
