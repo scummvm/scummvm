@@ -497,7 +497,7 @@ void DreamBase::showRain() {
 		}
 	}
 
-	if (data.word(kCh1playing) != 255)
+	if (data.byte(kCh1playing) != 255)
 		return;
 	if (data.byte(kReallocation) == 2 && data.byte(kBeenmugged) != 1)
 		return;
