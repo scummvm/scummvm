@@ -651,8 +651,13 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	_mainSprites.clear();
 
 	_exFrames.clear();
+	_exText.clear();
+
 	_setFrames.clear();
 	_freeFrames.clear();
+	_reel1.clear();
+	_reel2.clear();
+	_reel3.clear();
 
 	_textFile1.clear();
 	_textFile2.clear();
@@ -807,6 +812,23 @@ void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
 
 	f.read((uint8 *)file._frames, 2080);
 	f.read(file._data, sizeInBytes - 2080);
+}
+
+void DreamBase::loadGraphicsSegment(GraphicsFile &file, unsigned int len) {
+	assert(len >= 2080);
+	delete[] file._data;
+	file._data = new uint8[len - 2080];
+	engine->readFromFile((uint8 *)file._frames, 2080);
+	engine->readFromFile(file._data, len - 2080);
+}
+
+void DreamBase::loadTextSegment(TextFile &file, unsigned int len) {
+	unsigned int headerSize = 2 * file._size;
+	assert(len >= headerSize);
+	delete[] file._text;
+	file._text = new char[len - headerSize];
+	engine->readFromFile((uint8 *)file._offsetsLE, headerSize);
+	engine->readFromFile((uint8 *)file._text, len - headerSize);
 }
 
 void DreamBase::loadIntoTemp(const char *fileName) {
@@ -2170,9 +2192,9 @@ void DreamBase::getRidOfAll() {
 	_backdropBlocks = 0;
 
 	_setFrames.clear();
-	deallocateMem(data.word(kReel1));
-	deallocateMem(data.word(kReel2));
-	deallocateMem(data.word(kReel3));
+	_reel1.clear();
+	_reel2.clear();
+	_reel3.clear();
 	deallocateMem(data.word(kReels));
 	deallocateMem(data.word(kPeople));
 	deallocateMem(data.word(kSetdesc));
@@ -2202,13 +2224,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
 
-	// TODO: Create function for loading a GraphicsFile from a file segment
-	_setFrames.clear();
-	assert(len[2] >= 2080);
-	engine->readFromFile((uint8 *)_setFrames._frames, 2080);
-	_setFrames._data = new uint8[len[2] - 2080];
-	engine->readFromFile(_setFrames._data, len[2] - 2080);
-
+	loadGraphicsSegment(_setFrames, len[2]);
 	if (!skipDat)
 		clearAndLoad(data.word(kSetdat), 255, len[3], kSetdatlen);
 	else
@@ -2216,24 +2232,16 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	// NB: The skipDat version of this function as called by restoreall
 	// had a 'call bloc' instead of 'call loadseg' for reel1,
 	// but 'bloc' was not defined.
-	// TODO: kReel1/2/3 are also GraphicsFiles?
-	data.word(kReel1) = allocateAndLoad(len[4]);
-	data.word(kReel2) = allocateAndLoad(len[5]);
-	data.word(kReel3) = allocateAndLoad(len[6]);
+	loadGraphicsSegment(_reel1, len[4]);
+	loadGraphicsSegment(_reel2, len[5]);
+	loadGraphicsSegment(_reel3, len[6]);
 	data.word(kReels) = allocateAndLoad(len[7]);
 	data.word(kPeople) = allocateAndLoad(len[8]);
 	// TODO: kSetdesc, kBlockdesc, kRoomdesc are also TextFiles?
 	data.word(kSetdesc) = allocateAndLoad(len[9]);
 	data.word(kBlockdesc) = allocateAndLoad(len[10]);
 	data.word(kRoomdesc) = allocateAndLoad(len[11]);
-
-	// TODO: Create function for loading a GraphicsFile from a file segment
-	_freeFrames.clear();
-	assert(len[12] >= 2080);
-	engine->readFromFile((uint8 *)_freeFrames._frames, 2080);
-	_freeFrames._data = new uint8[len[12] - 2080];
-	engine->readFromFile(_freeFrames._data, len[12] - 2080);
-
+	loadGraphicsSegment(_freeFrames, len[12]);
 	if (!skipDat)
 		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
 	else
@@ -2270,9 +2278,9 @@ void DreamBase::restoreReels() {
 	engine->skipBytes(len[1]);
 	engine->skipBytes(len[2]);
 	engine->skipBytes(len[3]);
-	data.word(kReel1) = allocateAndLoad(len[4]);
-	data.word(kReel2) = allocateAndLoad(len[5]);
-	data.word(kReel3) = allocateAndLoad(len[6]);
+	loadGraphicsSegment(_reel1, len[4]);
+	loadGraphicsSegment(_reel2, len[5]);
+	loadGraphicsSegment(_reel3, len[6]);
 
 	engine->closeFile();
 }

@@ -146,6 +146,9 @@ protected:
 	// room graphics files
 	GraphicsFile _setFrames;
 	GraphicsFile _freeFrames;
+	GraphicsFile _reel1;
+	GraphicsFile _reel2;
+	GraphicsFile _reel3;
 
 	// Extras segment (NB: this is saved)
 	GraphicsFile _exFrames;
@@ -439,7 +442,7 @@ public:
 	void liftSprite(Sprite *sprite, SetObject *objData);
 
 	Reel *getReelStart(uint16 reelPointer);
-	const Frame *findSource(uint16 &frame);
+	const GraphicsFile *findSource(uint16 &frame);
 	void showReelFrame(Reel *reel);
 	void showGameReel(ReelRoutine *routine);
 	const Frame *getReelFrameAX(uint16 frame);
@@ -511,6 +514,8 @@ public:
 	uint16 allocateAndLoad(unsigned int size);
 	void loadTextFile(TextFile &file, const char *fileName);
 	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
+	void loadGraphicsSegment(GraphicsFile &file, unsigned int len);
+	void loadTextSegment(TextFile &file, unsigned int len);
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp(const char *fileName);

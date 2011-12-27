@@ -435,26 +435,24 @@ Reel *DreamBase::getReelStart(uint16 reelPointer) {
 
 // Locate the reel segment (reel1, reel2, reel3) this frame is stored in,
 // and adjust the frame number relative to this segment.
-const Frame *DreamBase::findSource(uint16 &frame) {
-	uint16 base;
+const GraphicsFile *DreamBase::findSource(uint16 &frame) {
 	if (frame < 160) {
-		base = data.word(kReel1);
+		return &_reel1;
 	} else if (frame < 320) {
 		frame -= 160;
-		base = data.word(kReel2);
+		return &_reel2;
 	} else {
 		frame -= 320;
-		base = data.word(kReel3);
+		return &_reel3;
 	}
-	return (const Frame *)getSegment(base).ptr(0, (frame+1)*sizeof(Frame));
 }
 
 void DreamBase::showReelFrame(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
 	uint16 frame = reel->frame();
-	const Frame *base = findSource(frame);
-	showFrame(base, x, y, frame, 8);
+	const GraphicsFile *base = findSource(frame);
+	showFrame(*base, x, y, frame, 8);
 }
 
 void DreamBase::showGameReel(ReelRoutine *routine) {
@@ -466,8 +464,8 @@ void DreamBase::showGameReel(ReelRoutine *routine) {
 }
 
 const Frame *DreamBase::getReelFrameAX(uint16 frame) {
-	const Frame *base = findSource(frame);
-	return base + frame;
+	const GraphicsFile *base = findSource(frame);
+	return &base->_frames[frame];
 }
 
 void DreamBase::showRain() {
@@ -1115,18 +1113,14 @@ void DreamBase::clearBeforeLoad() {
 }
 
 void DreamBase::clearReels() {
-	deallocateMem(data.word(kReel1));
-	deallocateMem(data.word(kReel2));
-	deallocateMem(data.word(kReel3));
+	_reel1.clear();
+	_reel2.clear();
+	_reel3.clear();
 }
 
 void DreamBase::getRidOfReels() {
-	if (data.byte(kRoomloaded) == 0)
-		return /* (dontgetrid) */;
-
-	deallocateMem(data.word(kReel1));
-	deallocateMem(data.word(kReel2));
-	deallocateMem(data.word(kReel3));
+	if (data.byte(kRoomloaded))
+		clearReels();
 }
 
 void DreamBase::liftNoise(uint8 index) {

@@ -256,6 +256,11 @@ p = parser(skip_binary_data = [
 	'tempsprites',
 	'charset1',
 	'extras',
+	'freeframes',
+	'setframes',
+	'reel1',
+	'reel2',
+	'reel3',
 	# vars.asm - constants
 	'openinvlist',
 	'ryaninvlist',

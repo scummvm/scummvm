@@ -76,8 +76,8 @@ void DreamBase::talk() {
 void DreamBase::convIcons() {
 	uint8 index = data.byte(kCharacter) & 127;
 	uint16 frame = getPersFrame(index);
-	const Frame *base = findSource(frame);
-	showFrame(base, 234, 2, frame, 0);
+	const GraphicsFile *base = findSource(frame);
+	showFrame(*base, 234, 2, frame, 0);
 }
 
 uint16 DreamBase::getPersFrame(uint8 index) {
