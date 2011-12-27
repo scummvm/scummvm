@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-void chardes(Common::String nom, long_int passe, int long_) {
+void chardes(Common::String nom, float passe, int long_) {
 	int i, p, l;
 	byte b;
 	untyped_file f;
@@ -60,7 +60,7 @@ void chardes(Common::String nom, long_int passe, int long_) {
 	/*$i+*/
 }
 
-void charani(Common::String nom, long_int passe, int long_) {
+void charani(Common::String nom, float passe, int long_) {
 	int i, p, l;
 	byte b;
 	untyped_file f;
@@ -101,7 +101,7 @@ void taffich() {
 	};
 	int i, m, a, b, cx, handle,
 	        npal;
-	long_int lgt, lhandle;
+	float lgt, lhandle;
 	Common::String nom;
 	int palh, k, j;
 	int alllum[16];

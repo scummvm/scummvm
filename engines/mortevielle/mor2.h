@@ -49,7 +49,7 @@ void st4(int ob);
 void cherjer(int ob, bool &d);
 void st1sama();
 void modinv();
-void sparl(long_int adr, long_int rep);
+void sparl(float adr, float rep);
 void finfouil();
 void mfoudi();
 void mennor();

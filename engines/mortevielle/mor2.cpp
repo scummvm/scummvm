@@ -362,7 +362,7 @@ void modinv() {
 		}
 }
 
-void sparl(long_int adr, long_int rep) {
+void sparl(float adr, float rep) {
 	const array<1, 8, int> haut
 	= {{0, 1, -3, 6, -2, 2, 7, -1}};
 	int key, ad, tay, repint;
