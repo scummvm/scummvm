@@ -22,6 +22,7 @@
 #ifndef DREAMWEB_STUBS_H
 #define DREAMWEB_STUBS_H
 
+	void dreamweb();
 	void screenUpdate();
 	void startup1();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height) {

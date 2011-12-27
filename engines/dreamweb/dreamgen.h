@@ -412,7 +412,6 @@ public:
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
-	void dreamweb();
 };
 
 } // End of namespace DreamGen

@@ -429,6 +429,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'drawflags',
 	'drawfloor',
 	'drawitall',
+	'dreamweb',
 	'drinker',
 	'droperror',
 	'dropobject',
@@ -1031,7 +1032,6 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'zoomonoff',
 	], skip_output = [
 	# These functions are processed but not output
-	'dreamweb',
 	], skip_dispatch_call = True, skip_addr_constants = True,
 	header_omit_blacklisted = True,
 	function_name_remapping = {
