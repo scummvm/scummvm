@@ -57,23 +57,6 @@
 	void useRoutine();
 	void examineOb(bool examineAgain = true);
 	void readSetData();
-	void useMon();
-	void makeCaps();
-	byte makeCaps(byte c) {
-		return DreamBase::makeCaps(c);
-	}
-	void monPrint();
-	const char *monPrint(const char *string) {
-		return DreamBase::monPrint(string);
-	}
-	void randomAccess();
-	void randomAccess(uint16 count) {
-		DreamBase::randomAccess(count);
-	}
-	void monMessage();
-	void monMessage(uint8 index) {
-		DreamBase::monMessage(index);
-	}
 	void look();
 	void autoLook();
 	void doLook();
@@ -87,14 +70,7 @@
 	void afterNewRoom();
 	void madmanRun();
 	void showGun();
-	bool execCommand();
 	void identifyOb();
 	void selectOb();
-	bool getKeyAndLogo(const char *foundString);
-	void read();
-	void dirCom();
-	const char *searchForString(const char *topic, const char *text) {
-		return DreamBase::searchForString(topic, text);
-	}
 
 #endif

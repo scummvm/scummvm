@@ -182,6 +182,12 @@ public:
 	void showKeys();
 	const char *parser();
 	const char *searchForString(const char *topic, const char *text);
+	const char *getKeyAndLogo(const char *foundString);
+	void read();
+	void dirFile(const char *dirName);
+	void dirCom();
+	void useMon();
+	bool execCommand();
 
 	// from newplace.cpp
 	void getUnderCentre();

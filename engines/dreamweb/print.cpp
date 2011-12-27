@@ -204,13 +204,6 @@ uint16 DreamBase::waitFrames() {
 	return data.word(kMousebutton);
 }
 
-void DreamGenContext::monPrint() {
-	uint16 originalBx = bx;
-	const char *string = (const char *)es.ptr(bx, 0);
-	const char *nextString = monPrint(string);
-	bx = originalBx + (nextString - string);
-}
-
 const char *DreamBase::monPrint(const char *string) {
 	data.byte(kKerning) = 1;
 	uint16 x = data.word(kMonadx);

@@ -25,7 +25,7 @@
 namespace DreamGen {
 
 
-typedef void (DreamGenContext::*UseCallback)(void);
+typedef void (DreamBase::*UseCallback)(void);
 
 // Note: The callback pointer has been placed before the
 // ID to keep MSVC happy (otherwise, it throws warnings
@@ -38,7 +38,7 @@ struct UseListEntry {
 void DreamGenContext::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
-		{ &DreamGenContext::useMon,            "NETW" },
+		{ &DreamBase::useMon,                  "NETW" },
 		{ &DreamBase::useElevator1,            "ELVA" },
 		{ &DreamBase::useElevator2,            "ELVB" },
 		{ &DreamBase::useElevator3,            "ELVC" },

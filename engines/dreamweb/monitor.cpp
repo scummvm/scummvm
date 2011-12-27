@@ -38,7 +38,7 @@ static MonitorKeyEntry monitorKeyEntries[4] = {
 	{ 0, "BECKETT", "SEPTIMUS"    }
 };
 
-void DreamGenContext::useMon() {
+void DreamBase::useMon() {
 	data.byte(kLasttrigger) = 0;
 	memset(data.ptr(kCurrentfile+1, 0), ' ', 12);
 	memset(data.ptr(offset_operand1+1, 0), ' ', 12);
@@ -101,7 +101,7 @@ void DreamGenContext::useMon() {
 	workToScreenM();
 }
 
-bool DreamGenContext::execCommand() {
+bool DreamBase::execCommand() {
 	static const char *comlist[] = {
 		"EXIT",
 		"HELP",
@@ -232,10 +232,6 @@ void DreamBase::input() {
 	}
 }
 
-void DreamGenContext::makeCaps() {
-	al = makeCaps(al);
-}
-
 byte DreamBase::makeCaps(byte c) {
 	// TODO: Replace calls to this by toupper() ?
 	if (c >= 'a')
@@ -312,10 +308,6 @@ void DreamBase::accessLightOff() {
 	multiDump(74, 182, 12, 8);
 }
 
-void DreamGenContext::randomAccess() {
-	randomAccess(cx);
-}
-
 void DreamBase::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
@@ -327,10 +319,6 @@ void DreamBase::randomAccess(uint16 count) {
 			accessLightOn();
 	}
 	accessLightOff();
-}
-
-void DreamGenContext::monMessage() {
-	monMessage(al);
 }
 
 void DreamBase::monMessage(uint8 index) {
@@ -436,19 +424,19 @@ void DreamBase::showKeys() {
 	scrollMonitor();
 }
 
-bool DreamGenContext::getKeyAndLogo(const char *foundString) {
+const char *DreamBase::getKeyAndLogo(const char *foundString) {
 	byte newLogo = foundString[1] - 48;
 	byte keyNum = foundString[3] - 48;
 
 	if (monitorKeyEntries[keyNum].keyAssigned == 1) {
 		// Key OK
 		data.byte(kLogonum) = newLogo;
-		return true;
+		return foundString + 4;
 	} else {
 		monMessage(12);	// "Access denied, key required -"
 		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
-		return false;
+		return 0;
 	}
 }
 
@@ -476,14 +464,12 @@ const char *DreamBase::searchForString(const char *topic, const char *text) {
 	}
 }
 
-void DreamGenContext::dirCom() {
+void DreamBase::dirCom() {
 	randomAccess(30);
 
 	const char *dirname = parser();
 	if (dirname[1]) {
-		es = cs;
-		di = offset_operand1; // cs:operand1 == dirname
-		dirFile();
+		dirFile(dirname);
 		return;
 	}
 
@@ -498,10 +484,11 @@ void DreamGenContext::dirCom() {
 	scrollMonitor();
 }
 
-void DreamGenContext::dirFile() {
-	es.byte(di) = 34;
+void DreamBase::dirFile(const char *dirName) {
+	char topic[13];
 
-	const char *topic = (const char*)es.ptr(di, 0);
+	memcpy(topic, dirName, 13);
+	topic[0] = 34;
 
 	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	const char *found = searchForString(topic, text);
@@ -515,25 +502,22 @@ void DreamGenContext::dirFile() {
 	}
 
 	if (found) {
-		if (!getKeyAndLogo(found))
-			return;
+		found = getKeyAndLogo(found);
+		if (!found)
+			return; // not logged in
 	} else {
 		monMessage(7);
 		return;
 	}
 
 	// "keyok2"
-	memcpy(data.ptr(kCurrentfile+1, 0), data.ptr(offset_operand1+1, 0), 12);
+	memcpy(data.ptr(kCurrentfile+1, 0), dirName+1, 12);
 	monitorLogo();
 	scrollMonitor();
 	monMessage(10);
 
-	byte curChar;
-	found += 4;	// originally adjusted in getKeyAndLogo()
-
 	while (true) {
-		curChar = found[0];
-		found++;
+		byte curChar = *found++;
 		if (curChar == 34 || curChar == '*') {
 			// "endofdir2"
 			scrollMonitor();
@@ -545,7 +529,7 @@ void DreamGenContext::dirFile() {
 	}
 }
 
-void DreamGenContext::read() {
+void DreamBase::read() {
 	randomAccess(40);
 	const char *name = parser();
 	if (name[1] == 0) {
@@ -553,7 +537,7 @@ void DreamGenContext::read() {
 		return;
 	}
 
-	const char *topic = (const char*)cs.ptr(kCurrentfile, 0);
+	const char *topic = (const char*)data.ptr(kCurrentfile, 0);
 
 	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	const char *found = searchForString(topic, text);
@@ -575,8 +559,7 @@ void DreamGenContext::read() {
 	}
 
 	// "keyok1"
-	topic = (const char*)cs.ptr(offset_operand1, 0);
-	found = searchForString(topic, found);
+	found = searchForString(name, found);
 	if (!found) {
 		data.byte(kLogonum) = data.byte(kOldlogonum);
 		monMessage(11);
