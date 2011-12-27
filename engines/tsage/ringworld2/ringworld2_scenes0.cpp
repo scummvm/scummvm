@@ -3265,7 +3265,7 @@ void Scene825::Button::setButton(int buttonId) {
 		break;
 	}
 
-	setDetails(825, 6, 7, -1, 2, NULL);
+	setDetails(825, 6, 7, -1, 2, (SceneItem *)NULL);
 }
 
 void Scene825::Button::setText(int textId) {
