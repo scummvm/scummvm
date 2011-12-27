@@ -442,7 +442,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_body.fixPriority(120);
 		_body.setVisage(901);
 		_body.setPosition(Common::Point(159,128));
-		_body.setDetails(900, 15, 16, 17, ANIM_MODE_1, NULL);
+		_body.setDetails(900, 15, 16, 17, ANIM_MODE_1, (SceneItem *)NULL);
 	}
 	if (BF_GLOBALS._sceneManager._previousScene == 910) {
 		_sceneBounds.moveTo(639, 0);
@@ -465,7 +465,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_dog.setVisage(902);
 	_dog.setPosition(Common::Point(845, 135));
 	_dog.fixPriority(122);
-	_dog.setDetails(900, 8, -1, 9, 1, NULL);
+	_dog.setDetails(900, 8, -1, 9, 1, (SceneItem *)NULL);
 
 	if (_dog._flag == 0) {
 		_dog.animate(ANIM_MODE_1, NULL);
@@ -524,7 +524,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			_lyle.postInit();
 			_lyle._moveDiff.y = 7;
 			_lyle._flags |= OBJFLAG_CHECK_REGION;
-			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
+			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, (SceneItem *)NULL);
 			_lyleHatSpeaker._xp = 210;
 			_jakeJacketSpeaker._xp = 75;
 			setAction(&_sequenceManager1, this, 9013, &BF_GLOBALS._player, &_lyle, NULL);
@@ -537,7 +537,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 				_lyle.setPosition(Common::Point(780, 153));
 				_lyle._moveDiff.y = 7;
 				_lyle._flags |= 0x1000;
-				_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
+				_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, (SceneItem *)NULL);
 				_lyle.animate(ANIM_MODE_1, NULL);
 				_lyle.setObjectWrapper(new SceneObjectWrapper());
 			} 
@@ -553,7 +553,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		if (BF_GLOBALS.getFlag(fWithLyle)) {
 			_lyle.postInit();
 			_lyle._flags |= 0x1000;
-			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
+			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, (SceneItem *)NULL);
 			setAction(&_sequenceManager1, this, 9014, &BF_GLOBALS._player, &_door, &_lyle, NULL);
 		} else
 			setAction(&_sequenceManager1, this, 9002, &BF_GLOBALS._player, &_door, NULL);
@@ -2019,10 +2019,10 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._v4CEE2 == 0)
 		_item16.setDetails(Rect(265, 18, 319, 102), 910, -1, -1, -1, 1, NULL);
 
-	_breakerBox.setDetails(910, 6, -1, -1, 1, NULL);
+	_breakerBox.setDetails(910, 6, -1, -1, 1, (SceneItem *)NULL);
 	_item15.setDetails(Rect(0, 0, 320, 170), 910, 0, 1, 2, 1, NULL);
-	_yellowCord.setDetails(910, 52, 53, -1, 1, NULL);
-	_blackCord.setDetails(910, 54, 55, -1, 1, NULL);
+	_yellowCord.setDetails(910, 52, 53, -1, 1, (SceneItem *)NULL);
+	_blackCord.setDetails(910, 54, 55, -1, 1, (SceneItem *)NULL);
 	_item2.setDetails(3, 910, 22, -1, 24, 1);
 	_item4.setDetails(1, 910, 16, 17, 18, 1);
 	_item8.setDetails(4, 910, 25, 26, 27, 1);
@@ -2032,7 +2032,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_item9.setDetails(Rect(266, 39, 274, 70), 910, 43, 44, 45, 1, NULL);
 	_item10.setDetails(Rect(276, 27, 288, 83), 910, 46, 47, 48, 1, NULL);
 	_item11.setDetails(Rect(295, 42, 312, 87), 910, 49, 50, 51, 1, NULL);
-	_fakeWall.setDetails(910, 28, -1, 30, 1, NULL);
+	_fakeWall.setDetails(910, 28, -1, 30, 1, (SceneItem *)NULL);
 	_item3.setDetails(7, 910, 59, 60, 61, 1);
 	_item5.setDetails(2, 910, 19, 20, 21, 1);
 	_backWall.setDetails(6, 910, 28, 29, 30, 1);
@@ -2600,7 +2600,7 @@ void Scene910::signal() {
 		BF_GLOBALS.setFlag(fBackupAt340);
 		BF_GLOBALS._v4CEE2 = 4;
 		_stuart.postInit();
-		_nico.setDetails(910, 72, 73, 74, 3, NULL);
+		_nico.setDetails(910, 72, 73, 74, 3, (SceneItem *)NULL);
 		_stuart.setDetails(910, 66, 67, 68, 5, &_nico);
 		BF_GLOBALS._v4CEE8 = 0;
 		_sceneMode = 9121;
@@ -3358,14 +3358,14 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 		_box.setVisage(930);
 		_box.setStrip(1);
 		_box.setPosition(Common::Point(223, 21));
-		_box.setDetails(930, 66, 67, 68, 1, NULL);
+		_box.setDetails(930, 66, 67, 68, 1, (SceneItem *)NULL);
 	}
 	_boots.postInit();
 	_boots.setVisage(930);
 	_boots.setStrip(2);
 	_boots.setPosition(Common::Point(9, 161));
 	_boots.fixPriority(120);
-	_boots.setDetails(930, 62, 63, 64, 1, NULL);
+	_boots.setDetails(930, 62, 63, 64, 1, (SceneItem *)NULL);
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(368);

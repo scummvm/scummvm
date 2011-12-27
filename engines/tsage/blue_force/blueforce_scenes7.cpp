@@ -172,10 +172,10 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 	_stick.animate(ANIM_MODE_2, NULL);
 	_stick.setPosition(Common::Point(650, 160));
 	_stick._moveDiff.x = 16;
-	_stick.setDetails(710, 4, -1, -1, 1, NULL);
-	_laura.setDetails(710, 2, -1, -1, 1, NULL);
-	_kid.setDetails(710, 6, -1, -1, 1, NULL);
-	_dog.setDetails(710, 0, -1, -1, 1, NULL);
+	_stick.setDetails(710, 4, -1, -1, 1, (SceneItem *)NULL);
+	_laura.setDetails(710, 2, -1, -1, 1, (SceneItem *)NULL);
+	_kid.setDetails(710, 6, -1, -1, 1, (SceneItem *)NULL);
+	_dog.setDetails(710, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_item1.setDetails(Rect(555, 68, 583, 101), 710, 7,  23, -1, 1, NULL);
 	_item2.setDetails(Rect(583, 46, 611,  78), 710, 7,  23, -1, 1, NULL);

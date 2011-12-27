@@ -201,7 +201,7 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 		_lyle.postInit();
 		_lyle.setVisage(835);
 		_lyle.setPosition(Common::Point(139, 83));
-		_lyle.setDetails(550, 29, 30, 31, 1, NULL);
+		_lyle.setDetails(550, 29, 30, 31, 1, (SceneItem *)NULL);
 		_lyle.setStrip(8);
 
 		BF_GLOBALS._player.setVisage(303);
@@ -702,14 +702,14 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 	_object13.setStrip(2);
 	_object13.setPosition(Common::Point(29, 92));
 	_object13.fixPriority(82);
-	_object13.setDetails(550, 8, -1, 9, 1, NULL);
+	_object13.setDetails(550, 8, -1, 9, 1, (SceneItem *)NULL);
 
 	if (BF_GLOBALS.getFlag(didDrunk)) {
 		_drunk._flag = 3;
 		_drunk.setStrip(3);
 
 		_object12.show();
-		_object12.setDetails(550, 25, -1, 26, 1, NULL);
+		_object12.setDetails(550, 25, -1, 26, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.push_front(&_object12);
 		
 		_harrison.postInit();
@@ -733,7 +733,7 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 		_object11.setFrame(2);
 		_object11.setPosition(Common::Point(116, 84));
 		_object11.fixPriority(77);
-		_object11.setDetails(550, 32, -1, 10, 1, NULL);
+		_object11.setDetails(550, 32, -1, 10, 1, (SceneItem *)NULL);
 
 		_drunkStanding.postInit();
 		_drunkStanding._flag = 0;
@@ -764,7 +764,7 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 		_patrolCarTrunk.setFrame(1);
 		_patrolCarTrunk.setPosition(Common::Point(149, 69));
 		_patrolCarTrunk.fixPriority(79);
-		_patrolCarTrunk.setDetails(550, 18, -1, 9, 1, NULL);
+		_patrolCarTrunk.setDetails(550, 18, -1, 9, 1, (SceneItem *)NULL);
 
 		_object11.postInit();
 		_object11.setVisage(550);
@@ -772,7 +772,7 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 		_object11.setFrame(2);
 		_object11.setPosition(Common::Point(116, 84));
 		_object11.fixPriority(77);
-		_object11.setDetails(550, 32, -1, 10, 1, NULL);
+		_object11.setDetails(550, 32, -1, 10, 1, (SceneItem *)NULL);
 
 		_drunkStanding.postInit();
 		_drunkStanding._flag = 0;
@@ -842,7 +842,7 @@ void Scene551::signal() {
 		ADD_PLAYER_MOVER_NULL(_harrison, 88, 91);
 
 		_object12.show();
-		_object12.setDetails(550, 25, -1, 26, 1, NULL);
+		_object12.setDetails(550, 25, -1, 26, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.push_front(&_object12);
 		BF_GLOBALS._player.enableControl();
 
@@ -1064,7 +1064,7 @@ void Scene560::SafeInset::postInit(SceneObjectList *OwnerList) {
 			scene->_nickel.setFrame(3);
 			scene->_nickel.fixPriority(252);
 			scene->_nickel.setPosition(Common::Point(181, 140));
-			scene->_nickel.setDetails(560, 47, 48, -1, 1, NULL);
+			scene->_nickel.setDetails(560, 47, 48, -1, 1, (SceneItem *)NULL);
 			BF_GLOBALS._sceneItems.remove(&scene->_nickel);
 			BF_GLOBALS._sceneItems.push_front(&scene->_nickel);
 		}
@@ -1201,7 +1201,7 @@ void Scene560::SafeInset::signal() {
 			scene->_nickel.setFrame(3);
 			scene->_nickel.fixPriority(252);
 			scene->_nickel.setPosition(Common::Point(181, 140));
-			scene->_nickel.setDetails(560, 47, 48, -1, 1, NULL);
+			scene->_nickel.setDetails(560, 47, 48, -1, 1, (SceneItem *)NULL);
 			BF_GLOBALS._sceneItems.remove(&scene->_nickel);
 			BF_GLOBALS._sceneItems.push_front(&scene->_nickel);
 		}
@@ -1405,7 +1405,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 		_box.setStrip(4);
 		_box.setFrame(1);
 		_box.setPosition(Common::Point(295, 37));
-		_box.setDetails(560, 41, 42, -1, 1, NULL);
+		_box.setDetails(560, 41, 42, -1, 1, (SceneItem *)NULL);
 	}
 
 	_deskChair.postInit();
@@ -1454,7 +1454,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_computer.setDetails(Rect(16, 77, 58, 107), 560, 2, -1, -1, 1, NULL);
-	_deskChair.setDetails(560, 3, -1, -1, 1, NULL);
+	_deskChair.setDetails(560, 3, -1, -1, 1, (SceneItem *)NULL);
 	_chair.setDetails(Rect(163, 64, 196, 102), 560, 13, 25, 36, 1, NULL);
 	_lamp.setDetails(Rect(197, 43, 214, 56), 560, 7, 19, 30, 1, NULL);
 	_item4.setDetails(Rect(121, 18, 156, 54), 560, 8, 20, 31, 1, NULL);
@@ -2039,7 +2039,7 @@ void Scene570::postInit(SceneObjectList *OwnerList) {
 	_powerSwitch.setStrip(4);
 	_powerSwitch.setFrame(1);
 	_powerSwitch.setPosition(Common::Point(163, 131));
-	_powerSwitch.setDetails(570, 1, 15, -1, 1, NULL);
+	_powerSwitch.setDetails(570, 1, 15, -1, 1, (SceneItem *)NULL);
 
 	_floppyDrive.setDetails(Rect(258, 111, 303, 120), 570, 0, 15, -1, 1, NULL);
 	_item11.setDetails(0, 570, 15, 15, 15, 1);
@@ -2070,7 +2070,7 @@ void Scene570::signal() {
 		_printerIcon.setFrame(3);
 		_printerIcon.setPosition(Common::Point(172, 71));
 		_printerIcon.fixPriority(2);
-		_printerIcon.setDetails(570, 14, 15, -1, 2, NULL);
+		_printerIcon.setDetails(570, 14, 15, -1, 2, (SceneItem *)NULL);
 
 		_iconManager.setup(2);
 		_folder1.setDetails(1, 1, 0, 2, SCENE570_C_DRIVE);
@@ -2201,7 +2201,7 @@ void Scene580::postInit(SceneObjectList *OwnerList) {
 	_door.setStrip(4);
 	_door.setPosition(Common::Point(168, 41));
 	_door.hide();
-	_door.setDetails(580, 5, -1, -1, 1, NULL);
+	_door.setDetails(580, 5, -1, -1, 1, (SceneItem *)NULL);
 
 	_vechile.postInit();
 	_vechile.setVisage(580);
@@ -2219,7 +2219,7 @@ void Scene580::postInit(SceneObjectList *OwnerList) {
 		_vechile.changeZoom(90);
 		_vechile.setStrip(3);
 		_vechile.setPosition(Common::Point(165, 76));
-		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
+		_vechile.setDetails(580, 2, 3, -1, 1, (SceneItem *)NULL);
 
 		BF_GLOBALS._player.setVisage(303);
 
@@ -2233,13 +2233,13 @@ void Scene580::postInit(SceneObjectList *OwnerList) {
 		if (BF_GLOBALS.getFlag(onDuty)) {
 			_vechile.setStrip(1);
 			_vechile.setFrame(2);
-			_vechile.setDetails(300, 11, 13, -1, 1, NULL);
+			_vechile.setDetails(300, 11, 13, -1, 1, (SceneItem *)NULL);
 
 			BF_GLOBALS._player.setVisage(304);
 		} else {
 			_vechile.setStrip(2);
 			_vechile.setFrame(3);
-			_vechile.setDetails(580, 0, 1, -1, 1, NULL);
+			_vechile.setDetails(580, 0, 1, -1, 1, (SceneItem *)NULL);
 
 			BF_GLOBALS._player.setVisage(303);
 		}
@@ -2468,12 +2468,12 @@ void Scene590::postInit(SceneObjectList *OwnerList) {
 			_skip.postInit();
 			_skip.setVisage(693);
 			_skip.setPosition(Common::Point(271, 117));
-			_skip.setDetails(590, 26, -1, 27, 1, NULL);
+			_skip.setDetails(590, 26, -1, 27, 1, (SceneItem *)NULL);
 
 			_laura.postInit();
 			_laura.setVisage(692);
 			_laura.setPosition(Common::Point(248, 115));
-			_laura.setDetails(590, 24, -1, 25, 1, NULL);
+			_laura.setDetails(590, 24, -1, 25, 1, (SceneItem *)NULL);
 		}
 	}
 
