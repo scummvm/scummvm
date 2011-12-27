@@ -1059,6 +1059,9 @@ int EoBCoreEngine::countCharactersWithSpecificItems(int16 itemType, int16 itemVa
 }
 
 int EoBCoreEngine::checkInventoryForItem(int character, int16 itemType, int16 itemValue) {
+	if (character < 0 )
+		return -1;
+
 	for (int i = 0; i < 27; i++) {
 		uint16 inv = _characters[character].inventory[i];
 		if (!inv)

@@ -3543,7 +3543,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	_vm->removeInputTop();
 
 	_charSelectRedraw = false;
-	bool abort = false;
+	bool starvedUnconscious = false;
 	int count = 0;
 	int result = -1;
 	int found[6];
@@ -3558,7 +3558,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 			continue;
 
 		if (id != 53 && (!_vm->_characters[i].food || !_vm->testCharacter(i, 4))) {
-			abort = true;
+			starvedUnconscious = true;
 		} else {
 			found[i] = 0;
 			result = i;
@@ -3569,9 +3569,9 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	if (!count) {
 		int eid = 0;
 		if (id == 23)
-			eid = abort ? 28 : 72;
+			eid = (starvedUnconscious || _vm->game() == GI_EOB1) ? 28 : 72;
 		else if (id == 26)
-			eid = abort ? 27 : 73;
+			eid = (starvedUnconscious || _vm->game() == GI_EOB1) ? 27 : 73;
 		else if (id == 49)
 			eid = 52;
 
