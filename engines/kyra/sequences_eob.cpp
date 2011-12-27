@@ -539,7 +539,7 @@ void EoBEngine::seq_hands() {
 		uint32 end = _system->getMillis() + _tickLength;
 		_screen->fillRect(0, 0, 167, 63, 157);
 		_screen->drawShape(2, shp1, i, 4, 0);
-		_screen->drawShape(2, shp1, 105 - i, 4, 0);
+		_screen->drawShape(2, shp2, 105 - i, 4, 0);
 		_screen->copyRegion(0, 0, 144, 32, 168, 64, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(end);
