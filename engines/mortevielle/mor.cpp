@@ -115,7 +115,7 @@ void text_color(int c) {
 
 
 void text1(int x, int y, int nb, int m) {
-	phrase st;
+	char st[1410];
 	int tay;
 	int co;
 
@@ -358,7 +358,7 @@ void okpas() {
 }
 
 void modobj(int m) {
-	phrase str_;
+	char str_[1410];
 	Common::String strp;
 	int i, tay;
 
@@ -373,7 +373,7 @@ void modobj(int m) {
 }
 
 void modobj2(int m, bool t1, bool t2) {
-	phrase str_;
+	char str_[1410];
 	Common::String strp;
 	int i, tay;
 
@@ -393,7 +393,7 @@ void modobj2(int m, bool t1, bool t2) {
 void repon(int f, int m) {
 	Common::String str_;
 	varying_string<40> str1;
-	phrase st;
+	char st[1410];
 	text1 fic;
 	int i, xco, dx, caspe, tay;
 

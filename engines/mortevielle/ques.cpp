@@ -39,7 +39,7 @@ namespace Mortevielle {
 	int i, j, k, y, memk;
 	int tay , tmax;
 	int rep, prem, der;
-	phrase st;
+	char st[1410];
 	char key;
 	mult_rect coor;
 	array<1, 14, Common::String> chaines;

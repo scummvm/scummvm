@@ -199,7 +199,7 @@ void tkey1(bool d) {
 void tmlieu(int mli) {
 	int cx, j, i, tail;
 	Common::String nomp;
-	phrase st;
+	char st[1410];
 
 
 	if (mli == 26)  mli = 15;
@@ -230,7 +230,7 @@ void tlu(int af, int ob) {
 }
 
 void delin(int n) {
-	phrase s;
+	char s[1410];
 	int t;
 
 	deline(n, s, t);
@@ -342,7 +342,7 @@ void st1sama() {
 
 void modinv() {
 	int cx, cy, tay, i, r;
-	phrase nom;
+	char nom[1410];
 	Common::String nomp;
 
 	cy = 0;
@@ -366,7 +366,7 @@ void sparl(float adr, float rep) {
 	const array<1, 8, int> haut
 	= {{0, 1, -3, 6, -2, 2, 7, -1}};
 	int key, ad, tay, repint;
-	phrase st;
+	char st[1410];
 
 	repint = trunc(rep);
 	hide_mouse();

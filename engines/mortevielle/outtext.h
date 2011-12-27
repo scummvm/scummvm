@@ -33,9 +33,9 @@
 namespace Mortevielle {
 
 static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end);
-void deline(int num , phrase &l , int &tl);
-static int l_motsuiv(int p, phrase &ch, int &tab);
-void afftex(phrase ch, int x, int y, int dx, int dy, int typ);
+void deline(int num , char *l , int &tl);
+static int l_motsuiv(int p, char *ch, int &tab);
+void afftex(char *ch, int x, int y, int dx, int dy, int typ);
 
 } // End of namespace Mortevielle
 #endif

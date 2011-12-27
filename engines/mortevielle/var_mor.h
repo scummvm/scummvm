@@ -166,22 +166,22 @@ const byte tnocon[364] = {
 };
 
 
-const matrix<1, 8, 1, 4, byte> don
-= {{{{ 7, 37, 22,  8}},
-		{{19, 33, 23,  7}},
-		{{31, 89, 10, 21}},
-		{{43, 25, 11,  5}},
-		{{55, 37,  5,  8}},
-		{{64, 13, 11,  2}},
-		{{62, 22, 13,  4}},
-		{{62, 25, 13,  5}}
-	}
+const byte don[9][5] = {
+	{ 0,  0,  0,  0, 0},
+	{ 0,  7, 37, 22,  8},
+	{0,  19, 33, 23,  7},
+	{0,  31, 89, 10, 21},
+	{0,  43, 25, 11,  5},
+	{0,  55, 37,  5,  8},
+	{0,  64, 13, 11,  2},
+	{0,  62, 22, 13,  4},
+	{0,  62, 25, 13,  5}
 };
 
-const array<1, 2, varying_string<11> > fic
-= {{ " Sauvegarde",
-		" Chargement"
-	}
+const char *fic[3] = {
+	"", 
+	" Sauvegarde",
+	 " Chargement"
 };
 
 const byte addv[2] = {8, 8};
@@ -201,7 +201,6 @@ const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 /*--------------------------------   TYPES   --------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-typedef file<byte> fichier_byte;
 struct sav_chaine {
 	int conf;
 	char pourc[11];
@@ -215,7 +214,7 @@ struct sav_chaine {
 struct registres {
 	int ax, bx, cx, dx, bp, si, di, ds, es, flags;
 };
-typedef char[1410] phrase;
+
 struct ind {
 	int indis;
 	byte point;
@@ -369,7 +368,6 @@ byte tabdon[4001];
 Common::String stpou;                               /* donne le % d'indices */
 byte is;
 char mode;
-fichier_byte ficdes;
 Common::String al_mess,
        err_mess,
        ind_mess,

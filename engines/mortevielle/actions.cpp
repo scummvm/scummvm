@@ -476,7 +476,7 @@ L2:
 /* overlay */ void tmettre() {
 	int quel;
 	bool entre;
-	phrase st;
+	char st[1410];
 	Common::String str_;
 	int i, tay;
 
@@ -990,7 +990,7 @@ L2:
 	        i, tay, choi, x, y, c;
 	char tou;
 	array<1, 46, varying_string<40> > lib;
-	phrase st;
+	char st[1410];
 	bool f;
 
 

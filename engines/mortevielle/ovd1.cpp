@@ -80,7 +80,7 @@ void ani50() {
 
 /* overlay */ void init_menu() {
 	int i, j, tai;
-	phrase st;
+	char st[1410];
 	untyped_file f;
 
 	assign(f, "menufr.mor");
@@ -172,7 +172,7 @@ void ani50() {
 /* overlay */ void chartex() {
 	int i;
 	untyped_file fibyte;
-	phrase s;
+	char s[1410];
 
 	/* debug('o3 chartex'); */
 	i = 0;
@@ -202,7 +202,7 @@ void ani50() {
 
 {
 	int cy, tay;
-	phrase st;
+	char st[1410];
 	float ix;
 	char ch;
 
