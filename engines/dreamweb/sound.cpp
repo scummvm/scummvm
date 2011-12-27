@@ -97,7 +97,7 @@ void DreamBase::cancelCh1() {
 }
 
 void DreamBase::loadRoomsSample() {
-	uint8 sample = data.byte(kRoomssample);
+	uint8 sample = _roomsSample;
 
 	if (sample == 255 || data.byte(kCurrentsample) == sample)
 		return; // loaded already

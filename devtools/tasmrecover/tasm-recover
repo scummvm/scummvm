@@ -138,6 +138,7 @@ p = parser(skip_binary_data = [
 	'currentframe',
 	'takeoff',
 	'reelpointer',
+	'roomssample',
 	'needsoundbuff',
 	'oldint8seg',
 	'oldint8add',

@@ -38,7 +38,7 @@ void DreamBase::endGame() {
 void DreamBase::monkSpeaking() {
 	// FIXME: This is the CD version only.
 
-	data.byte(kRoomssample) = 35;
+	_roomsSample = 35;
 	loadRoomsSample();
 	loadIntoTemp("DREAMWEB.G15");
 	clearWork();
@@ -263,7 +263,7 @@ void DreamBase::set16ColPalette() {
 }
 
 void DreamBase::realCredits() {
-	data.byte(kRoomssample) = 33;
+	_roomsSample = 33;
 	loadRoomsSample();
 	data.byte(kVolume) = 0;
 

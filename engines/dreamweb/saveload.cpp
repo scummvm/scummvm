@@ -440,7 +440,7 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	const Room &currentRoom = g_roomData[data.byte(kLocation)];
 
 	Room madeUpRoom = currentRoom;
-	madeUpRoom.roomsSample = data.byte(kRoomssample);
+	madeUpRoom.roomsSample = _roomsSample;
 	madeUpRoom.mapX = data.byte(kMapx);
 	madeUpRoom.mapY = data.byte(kMapy);
 	madeUpRoom.liftFlag = data.byte(kLiftflag);

@@ -1034,7 +1034,7 @@ void DreamBase::clearAndLoad(uint16 seg, uint8 c,
 
 void DreamBase::startLoading(const Room &room) {
 	data.byte(kCombatcount) = 0;
-	data.byte(kRoomssample) = room.roomsSample;
+	_roomsSample = room.roomsSample;
 	data.byte(kMapx) = room.mapX;
 	data.byte(kMapy) = room.mapY;
 	data.byte(kLiftflag) = room.liftFlag;
@@ -3159,7 +3159,7 @@ void DreamBase::showGun() {
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 128;
 	hangOn(200);
-	data.byte(kRoomssample) = 34;
+	_roomsSample = 34;
 	loadRoomsSample();
 	data.byte(kVolume) = 0;
 	loadIntoTemp("DREAMWEB.G13");

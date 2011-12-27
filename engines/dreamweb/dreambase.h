@@ -118,6 +118,8 @@ public:
 	bool _subtitles;
 	bool _foreignRelease;
 
+	uint8 _roomsSample;
+
 	// from backdrop.cpp
 	void doBlocks();
 	uint8 getXAd(const uint8 *setData, uint8 *result);
