@@ -40,8 +40,9 @@ static MonitorKeyEntry monitorKeyEntries[4] = {
 
 void DreamBase::useMon() {
 	data.byte(kLasttrigger) = 0;
-	memset(data.ptr(kCurrentfile+1, 0), ' ', 12);
-	memset(data.ptr(offset_operand1+1, 0), ' ', 12);
+	_currentFile[0] = 34;
+	memset(_currentFile+1, ' ', 12);
+	_currentFile[13] = 0;
 
 	monitorKeyEntries[0].keyAssigned = 1;
 	monitorKeyEntries[1].keyAssigned = 0;
@@ -290,7 +291,7 @@ void DreamBase::scrollMonitor() {
 
 void DreamBase::showCurrentFile() {
 	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
-	const char *currentFile = (const char *)data.ptr(kCurrentfile+1, 0);
+	const char *currentFile = _currentFile + 1;
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = engine->modifyChar(c);
@@ -474,7 +475,7 @@ void DreamBase::dirCom() {
 	}
 
 	data.byte(kLogonum) = 0;
-	memcpy(data.ptr(kCurrentfile+1, 0), "ROOT        ", 12);
+	memcpy(_currentFile+1, "ROOT        ", 12);
 	monitorLogo();
 	scrollMonitor();
 	monMessage(9);
@@ -485,9 +486,9 @@ void DreamBase::dirCom() {
 }
 
 void DreamBase::dirFile(const char *dirName) {
-	char topic[13];
+	char topic[14];
 
-	memcpy(topic, dirName, 13);
+	memcpy(topic, dirName, 14);
 	topic[0] = 34;
 
 	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
@@ -511,7 +512,7 @@ void DreamBase::dirFile(const char *dirName) {
 	}
 
 	// "keyok2"
-	memcpy(data.ptr(kCurrentfile+1, 0), dirName+1, 12);
+	memcpy(_currentFile+1, dirName+1, 12);
 	monitorLogo();
 	scrollMonitor();
 	monMessage(10);
@@ -537,7 +538,7 @@ void DreamBase::read() {
 		return;
 	}
 
-	const char *topic = (const char*)data.ptr(kCurrentfile, 0);
+	const char *topic = _currentFile;
 
 	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	const char *found = searchForString(topic, text);
@@ -658,12 +659,11 @@ void DreamBase::searchForFiles(uint16 segment) {
 }
 
 const char *DreamBase::parser() {
-	char *output = (char *)data.ptr(offset_operand1, 13);
+	char *output = _operand1;
 
-	memset(output, 0, 13);
+	memset(output, 0, 14);
 
-	char *p = output;
-	*p++ = '=';
+	*output++ = '=';
 
 	const char *in = _inputLine;
 
@@ -686,14 +686,14 @@ const char *DreamBase::parser() {
 
 	// copy first operand
 	do {
-		*p++ = c;
+		*output++ = c;
 		c = *in++;
 		in++;
 		if (!c)
-			return output;
+			return _operand1;
 	} while (c != 32);
 
-	return output;
+	return _operand1;
 }
 
 } // End of namespace DreamGen

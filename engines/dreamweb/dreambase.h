@@ -66,6 +66,8 @@ protected:
 
 	// from monitor.cpp
 	char _inputLine[64];
+	char _operand1[14];
+	char _currentFile[14];
 
 	// from newplace.cpp
 	uint8 _roomsCanGo[16];

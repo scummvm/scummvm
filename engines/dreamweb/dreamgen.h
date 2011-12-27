@@ -32,7 +32,6 @@
 
 namespace DreamGen {
 
-static const uint16 offset_operand1 = 0x0188;
 static const uint16 kStartvars = 0;
 static const uint16 kProgresspoints = 1;
 static const uint16 kWatchon = 2;
@@ -309,10 +308,9 @@ static const uint16 kCh1blockstocopy = 375;
 static const uint16 kCurrentsample = 377;
 static const uint16 kRoomssample = 378;
 static const uint16 kBasicsample = 379;
-static const uint16 kCurrentfile = 406;
-static const uint16 kQuitrequested = 481;
-static const uint16 kSubtitles = 482;
-static const uint16 kForeignrelease = 483;
+static const uint16 kQuitrequested = 453;
+static const uint16 kSubtitles = 454;
+static const uint16 kForeignrelease = 455;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
@@ -414,7 +412,6 @@ public:
 	void __start();
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
-	void dirFile();
 	void dreamweb();
 };
 

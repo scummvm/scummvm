@@ -63,6 +63,8 @@ p = parser(skip_binary_data = [
 	'comlist',
 	'keys',
 	'rootdir',
+	'operand1',
+	'currentfile',
 	# newplace.asm
 	'destlist',
 	# object.asm
@@ -406,6 +408,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'diarykeyp',
 	'diarykeyn',
 	'dircom',
+	'dirfile',
 	'disablepath',
 	'disablesoundint',
 	'discops',
@@ -1028,7 +1031,6 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'zoomonoff',
 	], skip_output = [
 	# These functions are processed but not output
-	'dirfile',
 	'dreamweb',
 	], skip_dispatch_call = True, skip_addr_constants = True,
 	header_omit_blacklisted = True,
