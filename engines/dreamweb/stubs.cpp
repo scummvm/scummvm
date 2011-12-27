@@ -658,6 +658,11 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	_reel1.clear();
 	_reel2.clear();
 	_reel3.clear();
+	_setDesc.clear();
+	_blockDesc.clear();
+	_roomDesc.clear();
+	_freeDesc.clear();
+	_personText.clear();
 
 	_textFile1.clear();
 	_textFile2.clear();
@@ -771,31 +776,6 @@ void DreamBase::switchRyanOn() {
 
 void DreamBase::switchRyanOff() {
 	data.byte(kRyanon) = 1;
-}
-
-uint16 DreamBase::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
-	FileHeader header;
-
-	Common::File file;
-	file.open(fileName);
-	file.read((uint8 *)&header, sizeof(FileHeader));
-	uint16 sizeInBytes = header.len(0);
-	if (outSizeInBytes)
-		*outSizeInBytes = sizeInBytes;
-	uint16 result = allocateMem((sizeInBytes + 15) / 16);
-	file.read(getSegment(result).ptr(0, 0), sizeInBytes);
-	return result;
-}
-
-void *DreamBase::standardLoadCPP(const char *fileName, uint16 *outSizeInBytes) {
-	uint16 sizeInBytes;
-	uint16 seg = standardLoad(fileName, &sizeInBytes);
-	void *buffer = malloc(sizeInBytes);
-	memcpy(buffer, getSegment(seg).ptr(0, 0), sizeInBytes);
-	deallocateMem(seg);
-	if (outSizeInBytes)
-		*outSizeInBytes = sizeInBytes;
-	return buffer;
 }
 
 void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
@@ -1248,20 +1228,16 @@ bool DreamBase::checkIfEx(uint8 x, uint8 y) {
 
 const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 	if (type == 5) {
-		uint16 i = 64 * 2 * (index & 127);
-		uint16 offset = getSegment(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
-		return getSegment(data.word(kPeople)).ptr(offset, 0);
+		uint16 i = 64 * (index & 127);
+		return (const uint8 *)_personText.getString(i);
 	} else if (type == 4) {
 		return (const uint8 *)_exText.getString(index);
 	} else if (type == 2) {
-		uint16 offset = getSegment(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
-		return getSegment(data.word(kFreedesc)).ptr(offset, 0);
+		return (const uint8 *)_freeDesc.getString(index);
 	} else if (type == 1) {
-		uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + index * 2) + kSettext;
-		return getSegment(data.word(kSetdesc)).ptr(offset, 0);
+		return (const uint8 *)_setDesc.getString(index);
 	} else {
-		uint16 offset = getSegment(data.word(kBlockdesc)).word(kBlocktextdat + index * 2) + kBlocktext;
-		return getSegment(data.word(kBlockdesc)).ptr(offset, 0);
+		return (const uint8 *)_blockDesc.getString(index);
 	}
 }
 
@@ -1736,9 +1712,8 @@ bool DreamBase::isRyanHolding(const char *id) {
 }
 
 bool DreamBase::isItDescribed(const ObjPos *pos) {
-	uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
-	uint8 result = getSegment(data.word(kSetdesc)).byte(kSettext + offset);
-	return result != 0;
+	const char *string = _setDesc.getString(pos->index);
+	return string[0] != 0;
 }
 
 bool DreamBase::isCD() {
@@ -2050,8 +2025,7 @@ void DreamBase::roomName() {
 		textIndex -= 32;
 	data.word(kLinespacing) = 7;
 	uint8 maxWidth = (data.byte(kWatchon) == 1) ? 120 : 160;
-	uint16 descOffset = getSegment(data.word(kRoomdesc)).word(kIntextdat + textIndex * 2);
-	const uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext + descOffset, 0);
+	const uint8 *string = (const uint8 *)_roomDesc.getString(textIndex);
 	printDirect(string, 88, 25, maxWidth, false);
 	data.word(kLinespacing) = 10;
 	useCharset1();
@@ -2142,8 +2116,7 @@ void DreamBase::doLook() {
 	data.byte(kCommandtype) = 255;
 	dumpTextLine();
 	uint8 index = data.byte(kRoomnum) & 31;
-	uint16 offset = getSegment(data.word(kRoomdesc)).word(kIntextdat + index * 2);
-	const uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
+	const uint8 *string = (const uint8 *)_roomDesc.getString(index);
 	findNextColon(&string);
 	uint16 x;
 	if (data.byte(kReallocation) < 50)
@@ -2196,12 +2169,12 @@ void DreamBase::getRidOfAll() {
 	_reel2.clear();
 	_reel3.clear();
 	deallocateMem(data.word(kReels));
-	deallocateMem(data.word(kPeople));
-	deallocateMem(data.word(kSetdesc));
-	deallocateMem(data.word(kBlockdesc));
-	deallocateMem(data.word(kRoomdesc));
+	_personText.clear();
+	_setDesc.clear();
+	_blockDesc.clear();
+	_roomDesc.clear();
 	_freeFrames.clear();
-	deallocateMem(data.word(kFreedesc));
+	_freeDesc.clear();
 }
 
 // if skipDat, skip clearing and loading Setdat and Freedat
@@ -2236,18 +2209,20 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	loadGraphicsSegment(_reel2, len[5]);
 	loadGraphicsSegment(_reel3, len[6]);
 	data.word(kReels) = allocateAndLoad(len[7]);
-	data.word(kPeople) = allocateAndLoad(len[8]);
-	// TODO: kSetdesc, kBlockdesc, kRoomdesc are also TextFiles?
-	data.word(kSetdesc) = allocateAndLoad(len[9]);
-	data.word(kBlockdesc) = allocateAndLoad(len[10]);
-	data.word(kRoomdesc) = allocateAndLoad(len[11]);
+
+	// segment 8 consists of 12 personFrames followed by a TextFile
+	engine->readFromFile((uint8 *)_personFramesLE, 24);
+	loadTextSegment(_personText, len[8] - 24);
+
+	loadTextSegment(_setDesc, len[9]);
+	loadTextSegment(_blockDesc, len[10]);
+	loadTextSegment(_roomDesc, len[11]);
 	loadGraphicsSegment(_freeFrames, len[12]);
 	if (!skipDat)
 		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
 	else
 		engine->skipBytes(len[13]);
-	// TODO: kFreedesc is also a TextFile?
-	data.word(kFreedesc) = allocateAndLoad(len[14]);
+	loadTextSegment(_freeDesc, len[14]);
 
 	engine->closeFile();
 }

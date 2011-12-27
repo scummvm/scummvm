@@ -81,7 +81,7 @@ void DreamBase::convIcons() {
 }
 
 uint16 DreamBase::getPersFrame(uint8 index) {
-	return getSegment(data.word(kPeople)).word(kPersonframes + index * 2);
+	return READ_LE_UINT16(&_personFramesLE[index]);
 }
 
 void DreamBase::startTalk() {
@@ -108,8 +108,7 @@ void DreamBase::startTalk() {
 }
 
 const uint8 *DreamBase::getPersonText(uint8 index, uint8 talkPos) {
-	uint16 offset = kPersontext + getSegment(data.word(kPeople)).word(((index * 64 + talkPos) * 2) + kPersontxtdat);
-	return getSegment(data.word(kPeople)).ptr(offset, 0);
+	return (const uint8 *)_personText.getString(index*64 + talkPos);
 }
 
 void DreamBase::moreTalk() {

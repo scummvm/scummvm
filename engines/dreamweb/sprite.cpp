@@ -1102,12 +1102,12 @@ void DreamBase::clearBeforeLoad() {
 	_backdropBlocks = 0;
 	_setFrames.clear();
 	deallocateMem(data.word(kReels));
-	deallocateMem(data.word(kPeople));
-	deallocateMem(data.word(kSetdesc));
-	deallocateMem(data.word(kBlockdesc));
-	deallocateMem(data.word(kRoomdesc));
+	_personText.clear();
+	_setDesc.clear();
+	_blockDesc.clear();
+	_roomDesc.clear();
 	_freeFrames.clear();
-	deallocateMem(data.word(kFreedesc));
+	_freeDesc.clear();
 
 	data.byte(kRoomloaded) = 0;
 }

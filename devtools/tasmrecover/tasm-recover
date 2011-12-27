@@ -261,6 +261,11 @@ p = parser(skip_binary_data = [
 	'reel1',
 	'reel2',
 	'reel3',
+	'setdesc',
+	'blockdesc',
+	'roomdesc',
+	'freedesc',
+	'people',
 	# vars.asm - constants
 	'openinvlist',
 	'ryaninvlist',

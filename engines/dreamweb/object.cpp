@@ -252,10 +252,7 @@ void DreamBase::inventory() {
 
 void DreamBase::transferText(uint8 from, uint8 to) {
 	_exText.setOffset(to, data.word(kExtextpos));
-	uint16 freeTextOffset = 2*from;
-	uint16 srcOffset = getSegment(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
-
-	const char *src = (const char *)getSegment(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
+	const char *src = _freeDesc.getString(from);
 	char *dst = _exText._text + data.word(kExtextpos);
 
 	size_t len = strlen(src);
@@ -592,17 +589,13 @@ const uint8 *DreamBase::getObTextStart() {
 	const uint8 *text;
 	uint16 textOff;
 	if (data.byte(kObjecttype) == kFreeObjectType) {
-		uint16 textSeg = data.word(kFreedesc);
-		uint16 textDatOff = kFreetextdat;
+		textBase = (const uint8 *)_freeDesc._text;
 		textOff = kFreetext;
-		textBase = getSegment(textSeg).ptr(textOff, 0);
-		text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
+		text = (const uint8 *)_freeDesc.getString(data.byte(kCommand));
 	} else if (data.byte(kObjecttype) == kSetObjectType1) {
-		uint16 textSeg = data.word(kSetdesc);
-		uint16 textDatOff = kSettextdat;
+		textBase = (const uint8 *)_setDesc._text;
 		textOff = kSettext;
-		textBase = getSegment(textSeg).ptr(textOff, 0);
-		text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
+		text = (const uint8 *)_setDesc.getString(data.byte(kCommand));
 	} else {
 		textBase = (const uint8 *)_exText._text;
 		textOff = kExtext;

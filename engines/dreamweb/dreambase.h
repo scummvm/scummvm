@@ -143,12 +143,18 @@ protected:
 	GraphicsFile _mainSprites;
 	const GraphicsFile *_currentCharset;
 
-	// room graphics files
+	// room files
 	GraphicsFile _setFrames;
 	GraphicsFile _freeFrames;
 	GraphicsFile _reel1;
 	GraphicsFile _reel2;
 	GraphicsFile _reel3;
+	TextFile _setDesc;
+	TextFile _blockDesc;
+	TextFile _roomDesc;
+	TextFile _freeDesc;
+	TextFile _personText;
+	uint16 _personFramesLE[12];
 
 	// Extras segment (NB: this is saved)
 	GraphicsFile _exFrames;
@@ -516,8 +522,6 @@ public:
 	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
 	void loadGraphicsSegment(GraphicsFile &file, unsigned int len);
 	void loadTextSegment(TextFile &file, unsigned int len);
-	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
-	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp(const char *fileName);
 	void loadIntoTemp2(const char *fileName);
 	void loadIntoTemp3(const char *fileName);
