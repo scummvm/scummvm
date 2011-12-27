@@ -2550,7 +2550,7 @@ void DreamBase::atmospheres() {
 			continue;
 		if (a->_mapX != data.byte(kMapx) || a->_mapY != data.byte(kMapy))
 			continue;
-		if (a->_sound != data.byte(kCh0playing)) {
+		if (a->_sound != _channel0Playing) {
 
 			if (data.byte(kLocation) == 45 && data.word(kReeltowatch) == 45)
 				continue; // "web"

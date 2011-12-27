@@ -172,8 +172,12 @@ public:
 	bool _subtitles;
 	bool _foreignRelease;
 
+	// sound related
 	uint8 _roomsSample;
 	uint8 _currentSample;
+	uint8 _channel0Playing;
+	uint8 _channel0Repeat;
+	uint8 _channel1Playing;
 
 	// from backdrop.cpp
 	void doBlocks();

@@ -148,7 +148,7 @@ void DreamBase::madmanText() {
 	if (isCD()) {
 		if (data.byte(kSpeechcount) >= 63)
 			return;
-		if (data.byte(kCh1playing) != 255)
+		if (_channel1Playing != 255)
 			return;
 		origCount = data.byte(kSpeechcount);
 		++data.byte(kSpeechcount);

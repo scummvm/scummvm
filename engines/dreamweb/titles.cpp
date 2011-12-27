@@ -58,7 +58,7 @@ void DreamBase::monkSpeaking() {
 
 		do {
 			engine->waitForVSync();
-		} while (data.byte(kCh1playing) != 255);
+		} while (_channel1Playing != 255);
 	}
 
 	data.byte(kVolumedirection) = 1;

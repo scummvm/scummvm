@@ -415,6 +415,9 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) :
 	_quitRequested = false;
 
 	_currentSample = 0xff;
+	_channel0Playing = 0;
+	_channel0Repeat = 0;
+	_channel1Playing = 0xff;
 
 	_backdropBlocks = 0;
 	_reelList = 0;

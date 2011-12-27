@@ -495,7 +495,7 @@ void DreamBase::showRain() {
 		}
 	}
 
-	if (data.byte(kCh1playing) != 255)
+	if (_channel1Playing != 255)
 		return;
 	if (data.byte(kReallocation) == 2 && data.byte(kBeenmugged) != 1)
 		return;
@@ -506,7 +506,7 @@ void DreamBase::showRain() {
 		return;
 
 	uint8 soundIndex;
-	if (data.byte(kCh0playing) != 6)
+	if (_channel0Playing != 6)
 		soundIndex = 4;
 	else
 		soundIndex = 7;
@@ -677,7 +677,7 @@ void DreamBase::intro1Text() {
 	if (data.byte(kIntrocount) != 2 && data.byte(kIntrocount) != 4 && data.byte(kIntrocount) != 6)
 		return;
 
-	if (isCD() && data.byte(kCh1playing) != 255) {
+	if (isCD() && _channel1Playing != 255) {
 		data.byte(kIntrocount)--;
 	} else {
 		if (data.byte(kIntrocount) == 2)
@@ -750,7 +750,7 @@ void DreamBase::textForEnd() {
 }
 
 void DreamBase::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-	if (isCD() && data.byte(kCh1playing) != 255)
+	if (isCD() && _channel1Playing != 255)
 		data.byte(kIntrocount)--;
 	else
 		setupTimedTemp(textIndex, voiceIndex, x, y, countToTimed, timeCount);

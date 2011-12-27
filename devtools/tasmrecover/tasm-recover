@@ -133,6 +133,9 @@ p = parser(skip_binary_data = [
 	# vars.asm
 	'currentset',
 	'currentsample',
+	'ch0playing',
+	'ch0repeat',
+	'ch1playing',
 	'icons1',
 	'icons2',
 	'tempcharset',

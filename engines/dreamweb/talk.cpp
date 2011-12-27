@@ -223,7 +223,7 @@ bool DreamBase::hangOnPQ() {
 			return true;
 		}
 
-		if (data.byte(kSpeechloaded) == 1 && data.byte(kCh1playing) == 255) {
+		if (data.byte(kSpeechloaded) == 1 && _channel1Playing == 255) {
 			speechFlag++;
 			if (speechFlag == 40)
 				break;
@@ -236,7 +236,7 @@ bool DreamBase::hangOnPQ() {
 }
 
 void DreamBase::redes() {
-	if (data.byte(kCh1playing) != 255 || data.byte(kTalkmode) != 2) {
+	if (_channel1Playing != 255 || data.byte(kTalkmode) != 2) {
 		blank();
 		return;
 	}

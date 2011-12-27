@@ -56,30 +56,30 @@ void DreamBase::volumeAdjust() {
 }
 
 void DreamBase::playChannel0(uint8 index, uint8 repeat) {
-	data.byte(kCh0playing) = index;
+	_channel0Playing = index;
 	if (index >= 12)
 		index -= 12;
 
-	data.byte(kCh0repeat) = repeat;
+	_channel0Repeat = repeat;
 }
 
 void DreamBase::playChannel1(uint8 index) {
-	if (data.byte(kCh1playing) == 7)
+	if (_channel1Playing == 7)
 		return;
 
-	data.byte(kCh1playing) = index;
+	_channel1Playing = index;
 	if (index >= 12)
 		index -= 12;
 }
 
 void DreamBase::cancelCh0() {
-	data.byte(kCh0repeat) = 0;
-	data.byte(kCh0playing) = 255;
+	_channel0Repeat = 0;
+	_channel0Playing = 255;
 	engine->stopSound(0);
 }
 
 void DreamBase::cancelCh1() {
-	data.byte(kCh1playing) = 255;
+	_channel1Playing = 255;
 	engine->stopSound(1);
 }
 
@@ -93,10 +93,10 @@ void DreamBase::loadRoomsSample() {
 	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
 	_currentSample = sample;
 
-	uint8 ch0 = data.byte(kCh0playing);
+	uint8 ch0 = _channel0Playing;
 	if (ch0 >= 12 && ch0 != 255)
 		cancelCh0();
-	uint8 ch1 = data.byte(kCh1playing);
+	uint8 ch1 = _channel1Playing;
 	if (ch1 >= 12)
 		cancelCh1();
 	engine->loadSounds(1, sampleName.c_str());
@@ -210,13 +210,13 @@ void DreamWebEngine::soundHandler() {
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
-	uint8 ch0 = _base.data.byte(DreamGen::kCh0playing);
+	uint8 ch0 = _base._channel0Playing;
 	if (ch0 == 255)
 		ch0 = 0;
-	uint8 ch1 = _base.data.byte(DreamGen::kCh1playing);
+	uint8 ch1 = _base._channel1Playing;
 	if (ch1 == 255)
 		ch1 = 0;
-	uint8 ch0loop = _base.data.byte(DreamGen::kCh0repeat);
+	uint8 ch0loop = _base._channel0Repeat;
 
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
@@ -231,11 +231,11 @@ void DreamWebEngine::soundHandler() {
 		}
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
-		_base.data.byte(DreamGen::kCh0playing) = 255;
+		_base._channel0Playing = 255;
 		_channel0 = 0;
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
-		_base.data.byte(DreamGen::kCh1playing) = 255;
+		_base._channel1Playing = 255;
 		_channel1 = 0;
 	}
 
