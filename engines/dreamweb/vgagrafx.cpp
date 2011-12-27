@@ -281,13 +281,13 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 		return;
 	}
 
-//notBlankShow:
+	// "notBlankShow"
 	if ((effectsFlag & 128) == 0) {
 		x += frame->x;
 		y += frame->y;
 	}
-//skipOffsets:
 
+	// "skipOffsets"
 	*width = frame->width;
 	*height = frame->height;
 	const uint8 *pSrc = ((const uint8 *)frameData) + frame->ptr() + 2080;
@@ -297,27 +297,21 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 			x -= *width / 2;
 			y -= *height / 2;
 		}
-		if (effectsFlag & 64) { //diffDest
+		if (effectsFlag & 64) { // diffDest
 			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
 			/*
 			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
 			*/
 		}
-		if (effectsFlag & 8) { //printList
-			/*
-			push(ax);
-			al = x - data.word(kMapadx);
-			ah = y - data.word(kMapady);
-			//addToPrintList(); // NB: Commented in the original asm
-			ax = pop();
-			*/
+		if (effectsFlag & 8) { // printList
+			//addToPrintList(x - data.word(kMapadx), y - data.word(kMapady)); // NB: Commented in the original asm
 		}
-		if (effectsFlag & 4) { //flippedX
+		if (effectsFlag & 4) { // flippedX
 			frameOutFx(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
-		if (effectsFlag & 2) { //noMask
+		if (effectsFlag & 2) { // noMask
 			frameOutNm(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
@@ -326,7 +320,7 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 			return;
 		}
 	}
-//noEffects:
+	// "noEffects"
 	frameOutV(workspace(), pSrc, 320, *width, *height, x, y);
 	return;
 }
