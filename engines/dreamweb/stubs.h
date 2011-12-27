@@ -43,7 +43,6 @@
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 		return DreamBase::printDirect(string, x, y, maxWidth, centered);
 	}
-	void width160();
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);
@@ -60,7 +59,6 @@
 	void look();
 	void autoLook();
 	void doLook();
-	void useKey();
 	void useObject();
 	void inventory();
 	void mainScreen();

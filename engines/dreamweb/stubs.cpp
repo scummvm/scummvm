@@ -457,8 +457,6 @@ static const Atmosphere g_atmosphereList[] = {
 };
 
 void DreamGenContext::dreamweb() {
-	STACK_CHECK;
-
 	switch(engine->getLanguage()) {
 	case Common::EN_ANY:
 	case Common::EN_GRB:

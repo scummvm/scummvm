@@ -1494,40 +1494,6 @@ void DreamBase::useAxe() {
 	removeObFromInv();
 }
 
-void DreamGenContext::useKey() {
-	switch(data.byte(kLocation)) {
-	case 5:
-	case 30:
-		if (data.byte(kMapx) == 22 && data.byte(kMapy) == 10) {
-			showPuzText(0, 300);
-			data.byte(kCounttoclose) = 100;
-			data.byte(kGetback) = 1;
-		} else {
-			// Wrong room
-			showPuzText(2, 200);
-			putBackObStuff();
-		}
-		break;
-	case 21:
-		if (data.byte(kMapx) == 11 && data.byte(kMapy) == 10) {
-			showPuzText(3, 300);
-			data.byte(kNewlocation) = 30;
-			al = 2;
-			fadeScreenDown();
-			showFirstUse();
-			putBackObStuff();
-		} else {
-			// Wrong room
-			showPuzText(2, 200);
-			putBackObStuff();
-		}
-	default:
-		showPuzText(1, 200);
-		putBackObStuff();
-		break;
-	}
-}
-
 void DreamBase::useHandle() {
 	SetObject *object = getSetAd(findSetObject("CUTW"));
 	if (object->mapad[0] == 255) {
