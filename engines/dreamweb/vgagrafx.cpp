@@ -268,12 +268,6 @@ void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wid
 	}
 }
 
-void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
-	uint8 width, height;
-	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
-}
-
-
 void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 	uint8 width, height;
 	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
@@ -310,28 +304,6 @@ void DreamBase::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 e
 	}
 	// "noEffects"
 	frameOutV(workspace(), pSrc, 320, width, height, x, y);
-}
-
-void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
-	const Frame *frame = frameData + frameNumber;
-	if ((frame->width == 0) && (frame->height == 0)) {
-		*width = 0;
-		*height = 0;
-		return;
-	}
-
-	// "notBlankShow"
-	if ((effectsFlag & 128) == 0) {
-		x += frame->x;
-		y += frame->y;
-	}
-
-	// "skipOffsets"
-	*width = frame->width;
-	*height = frame->height;
-	const uint8 *pSrc = ((const uint8 *)frameData) + frame->ptr() + 2080;
-
-	showFrameInternal(pSrc, x, y, effectsFlag, *width, *height);
 }
 
 void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
