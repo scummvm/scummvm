@@ -251,12 +251,12 @@ void DreamBase::inventory() {
 }
 
 void DreamBase::transferText(uint8 from, uint8 to) {
-	WRITE_LE_UINT16(&_exTextdatLE[to], data.word(kExtextpos));
+	_exText.setOffset(to, data.word(kExtextpos));
 	uint16 freeTextOffset = 2*from;
 	uint16 srcOffset = getSegment(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
 
 	const char *src = (const char *)getSegment(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
-	char *dst = _exText + data.word(kExtextpos);
+	char *dst = _exText._text + data.word(kExtextpos);
 
 	size_t len = strlen(src);
 	memcpy(dst, src, len + 1);
@@ -449,24 +449,24 @@ void DreamBase::deleteExFrame(uint8 frameNum) {
 }
 
 void DreamBase::deleteExText(uint8 textNum) {
-	uint16 offset = READ_LE_UINT16(&_exTextdatLE[textNum]);
+	uint16 offset = _exText.getOffset(textNum);
 
 	uint16 startOff = offset;
-	uint16 textSize = strlen(&_exText[startOff]) + 1;
+	uint16 textSize = strlen(_exText.getString(textNum)) + 1;
 	uint16 endOff = startOff + textSize;
 	uint16 remainder = kExtextlen - offset - textSize;
 
 	// Shift text data after this one down
-	memmove(&_exText[startOff], &_exText[endOff], remainder);
+	memmove(&_exText._text[startOff], &_exText._text[endOff], remainder);
 
 	// Combined text data is now frameSize smaller
 	data.word(kExtextpos) -= textSize;
 
 	// Adjust all text pointers pointing into the shifted data
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
-		uint16 t = READ_LE_UINT16(&_exTextdatLE[i]);
+		uint16 t = _exText.getOffset(i);
 		if (t >= offset + textSize)
-			WRITE_LE_UINT16(&_exTextdatLE[i], t - textSize);
+			_exText.setOffset(i, t - textSize);
 	}
 }
 
@@ -604,9 +604,9 @@ const uint8 *DreamBase::getObTextStart() {
 		textBase = getSegment(textSeg).ptr(textOff, 0);
 		text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
 	} else {
-		textBase = (const uint8 *)_exText;
+		textBase = (const uint8 *)_exText._text;
 		textOff = kExtext;
-		text = textBase + READ_LE_UINT16(&_exTextdatLE[data.byte(kCommand)]);
+		text = (const uint8 *)_exText.getString(data.byte(kCommand));
 	}
 
 	if (data.byte(kObjecttype) != kSetObjectType1)

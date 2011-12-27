@@ -407,7 +407,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 namespace DreamGen {
 
 // FIXME/TODO: Move this to a better place.
-DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
+DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en), _exText(kNumExObjects+2) {
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
 

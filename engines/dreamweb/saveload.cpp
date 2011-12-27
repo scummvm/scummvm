@@ -481,8 +481,8 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write((const uint8 *)_exFrames._frames, 2080);
 	outSaveFile->write((const uint8 *)_exFrames._data, kExframeslen);
 	outSaveFile->write((const uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
-	outSaveFile->write((const uint8 *)_exTextdatLE, 2*(kNumExObjects+2));
-	outSaveFile->write((const uint8 *)_exText, kExtextlen);
+	outSaveFile->write((const uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
+	outSaveFile->write((const uint8 *)_exText._text, kExtextlen);
 
 	outSaveFile->write(_listOfChanges, len[3]);
 
@@ -554,8 +554,8 @@ void DreamBase::loadPosition(unsigned int slot) {
 	inSaveFile->read((uint8 *)_exFrames._frames, 2080);
 	inSaveFile->read((uint8 *)_exFrames._data, kExframeslen);
 	inSaveFile->read((uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
-	inSaveFile->read((uint8 *)_exTextdatLE, 2*(kNumExObjects+2));
-	inSaveFile->read((uint8 *)_exText, kExtextlen);
+	inSaveFile->read((uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
+	inSaveFile->read((uint8 *)_exText._text, kExtextlen);
 
 	inSaveFile->read(_listOfChanges, len[3]);
 

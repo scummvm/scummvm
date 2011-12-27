@@ -1230,8 +1230,7 @@ const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 		uint16 offset = getSegment(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
 		return getSegment(data.word(kPeople)).ptr(offset, 0);
 	} else if (type == 4) {
-		uint16 offset = READ_LE_UINT16(&_exTextdatLE[index]);
-		return (const uint8 *)_exText + offset;
+		return (const uint8 *)_exText.getString(index);
 	} else if (type == 2) {
 		uint16 offset = getSegment(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
 		return getSegment(data.word(kFreedesc)).ptr(offset, 0);
@@ -2223,6 +2222,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	data.word(kReel3) = allocateAndLoad(len[6]);
 	data.word(kReels) = allocateAndLoad(len[7]);
 	data.word(kPeople) = allocateAndLoad(len[8]);
+	// TODO: kSetdesc, kBlockdesc, kRoomdesc are also TextFiles?
 	data.word(kSetdesc) = allocateAndLoad(len[9]);
 	data.word(kBlockdesc) = allocateAndLoad(len[10]);
 	data.word(kRoomdesc) = allocateAndLoad(len[11]);
@@ -2238,6 +2238,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
 	else
 		engine->skipBytes(len[13]);
+	// TODO: kFreedesc is also a TextFile?
 	data.word(kFreedesc) = allocateAndLoad(len[14]);
 
 	engine->closeFile();
@@ -2499,6 +2500,9 @@ void DreamBase::drawFloor() {
 void DreamBase::allocateBuffers() {
 	_exFrames.clear();
 	_exFrames._data = new uint8[kExframeslen];
+	_exText.clear();
+	_exText._text = new char[kExtextlen];
+
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 }
@@ -3622,8 +3626,8 @@ void DreamBase::clearChanges() {
 	memset(_exFrames._frames, 0xFF, 2080);
 	memset(_exFrames._data, 0xFF, kExframeslen);
 	memset(_exData, 0xFF, sizeof(DynObject) * kNumexobjects);
-	memset(_exTextdatLE, 0xFF, 2*(kNumexobjects+2));
-	memset(_exText, 0xFF, kExtextlen);
+	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));
+	memset(_exText._text, 0xFF, kExtextlen);
 
 	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 

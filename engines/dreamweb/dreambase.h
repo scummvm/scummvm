@@ -150,8 +150,7 @@ protected:
 	// Extras segment (NB: this is saved)
 	GraphicsFile _exFrames;
 	DynObject _exData[kNumExObjects];
-	uint16 _exTextdatLE[kNumExObjects+2]; // TODO: Convert into TextFile
-	char _exText[18000];
+	TextFile _exText;
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);

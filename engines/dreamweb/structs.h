@@ -295,14 +295,28 @@ struct MapFlag {
 };
 
 struct TextFile {
-	TextFile() : _text(0) { }
+	TextFile(unsigned int size = 66) : _size(size), _text(0) { _offsetsLE = new uint16[_size]; }
 
-	uint16 _offsetsLE[66];
+	~TextFile() {
+		delete[] _offsetsLE;
+		_offsetsLE = 0;
+		_size = 0;
+		clear();
+	}
+
+	uint16 *_offsetsLE;
+	unsigned int _size;
 	char *_text;
 
 	const char *getString(unsigned int i) const {
-		assert(i < 66);
-		return _text + READ_LE_UINT16(&_offsetsLE[i]);
+		assert(i < _size);
+		return _text + getOffset(i);
+	}
+	void setOffset(unsigned int i, uint16 offset) {
+		WRITE_LE_UINT16(&_offsetsLE[i], offset);
+	}
+	uint16 getOffset(unsigned int i) const {
+		return READ_LE_UINT16(&_offsetsLE[i]);
 	}
 	void clear() {
 		delete[] _text;
