@@ -531,7 +531,7 @@ void affper(int per) {
 /* overlay */ void choix(int min, int max, int &per) {
 	bool i;
 	int haz, cx, cy, cz;
-	long_int per2, cz2;
+	float per2, cz2;
 
 	/* debug('o0 choix'); */
 	haz = hazard(min, max);
@@ -1259,7 +1259,7 @@ void aniof(int ouf, int num) {
 void musique(int so) {
 	bool i;
 	int haz;
-	/* dep: array[1..5] of long_int;*/
+	/* dep: array[1..5] of float;*/
 
 	/* debug('musique'); */
 	if (so == 0) { /*musik(0)*/
