@@ -57,12 +57,8 @@ void DreamBase::volumeAdjust() {
 
 void DreamBase::playChannel0(uint8 index, uint8 repeat) {
 	data.byte(kCh0playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
+	if (index >= 12)
 		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
 	data.byte(kCh0repeat) = repeat;
 }
@@ -72,12 +68,8 @@ void DreamBase::playChannel1(uint8 index) {
 		return;
 
 	data.byte(kCh1playing) = index;
-	Sound *soundBank;
-	if (index >= 12) {
-		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
+	if (index >= 12)
 		index -= 12;
-	} else
-		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 }
 
 void DreamBase::cancelCh0() {

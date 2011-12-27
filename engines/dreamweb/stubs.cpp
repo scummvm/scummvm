@@ -2465,8 +2465,6 @@ void DreamBase::allocateBuffers() {
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
-	data.word(kSounddata) = allocateMem(2048/16);
-	data.word(kSounddata2) = allocateMem(2048/16);
 }
 
 void DreamBase::workToScreenM() {

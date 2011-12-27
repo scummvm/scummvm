@@ -239,6 +239,8 @@ p = parser(skip_binary_data = [
 	'cursorstate',
 	'ch0blockstocopy',
 	'ch1blockstocopy',
+	'sounddata',
+	'sounddata2',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
