@@ -31,8 +31,8 @@
 namespace Mortevielle {
 
 /* overlay */ bool ques() {
-	const int ta[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
-	const int ok[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
+	const int ta[11] = {0, 511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
+	const int ok[11] = {0, 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
 	bool q, func, test;
 	int i, j, k, y, memk;
