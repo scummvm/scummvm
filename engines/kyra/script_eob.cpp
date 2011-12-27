@@ -157,10 +157,10 @@ EoBInfProcessor::~EoBInfProcessor() {
 	delete[] _flagTable;
 	delete[] _stack;
 	delete[] _scriptData;
-	for (Common::Array<const InfOpcode *>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a) {
-		delete(*a)->proc;
+
+	for (Common::Array<const InfOpcode *>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a)
 		delete *a;
-	}
+
 	_opcodes.clear();
 }
 

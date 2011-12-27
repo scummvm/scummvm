@@ -91,8 +91,10 @@ private:
 	Screen_EoB *_screen;
 
 	typedef Common::Functor1Mem<int8*, int, EoBInfProcessor> InfProc;
-	struct InfOpcode {
+	struct InfOpcode : private Common::NonCopyable {
 		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
+		~InfOpcode() { delete proc; }
+
 		InfProc *proc;
 		Common::String desc;
 	};
