@@ -57,7 +57,7 @@ const byte tab31[32]= {
 	119,   0,   0,   0,   0,   0,   0,   0
 };
 
-void deline(int num , phrase &l , int &tl);
+void deline(int num , char *l , int &tl);
 
 static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 	const unsigned char rap[32] = { 
@@ -114,7 +114,7 @@ static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 	}
 }              /* 5-8 */
 
-void deline(int num , phrase &l , int &tl) {
+void deline(int num , char *l , int &tl) {
 	int i, j, ts;
 	char let;
 	byte ps, k;
@@ -141,10 +141,10 @@ void deline(int num , phrase &l , int &tl) {
 }       /* DETEX */
 
 
-void afftex(phrase ch, int x, int y, int dx, int dy, int typ);
+void afftex(char *ch, int x, int y, int dx, int dy, int typ);
 
 
-static int l_motsuiv(int p, phrase &ch, int &tab) {
+static int l_motsuiv(int p, char *ch, int &tab) {
 	int c;
 
 	int l_motsuiv_result;
@@ -154,7 +154,7 @@ static int l_motsuiv(int p, phrase &ch, int &tab) {
 	return l_motsuiv_result;
 }
 
-void afftex(phrase ch, int x, int y, int dx, int dy, int typ) {
+void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	bool the_end;
 	char touch;
 	int xf, yf;

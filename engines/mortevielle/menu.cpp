@@ -182,7 +182,7 @@ void draw_menu() {
 }
 
 void invers(int ix) {
-	varying_string<23> s;
+	Common::String s;
 
 	/* debug('invers'); */
 	if (msg4 == no_choice)  return;
