@@ -28,6 +28,8 @@
 #ifndef MORTEVIELLE_OUTTEXT_H
 #define MORTEVIELLE_OUTTEXT_H
 
+#include "mortevielle/var_mor.h"
+
 namespace Mortevielle {
 
 static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end);
