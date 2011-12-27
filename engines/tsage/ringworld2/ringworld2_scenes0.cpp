@@ -423,7 +423,7 @@ void Scene125::Icon::postInit(SceneObjectList *OwnerList) {
 	_sceneText2._color1 = 0;
 	_sceneText2._color2 = 0;
 	_sceneText2._width = 200;
-	setDetails(125, -1, -1, -1, 2, NULL);
+	setDetails(125, -1, -1, -1, 2, (SceneItem *)NULL);
 }
 
 void Scene125::Icon::synchronize(Serializer &s) {
