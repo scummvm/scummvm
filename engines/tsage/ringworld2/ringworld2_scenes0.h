@@ -443,6 +443,7 @@ public:
 	SequenceManager _sequenceManager1;
 	SceneText _sceneText;
 	int _menuId, _frame1, _frame2;
+	const char *_autodocItems[11];
 public:
 	Scene825();
 	virtual void synchronize(Serializer &s);

@@ -161,7 +161,6 @@ extern const char *NO_TREATMENT_REQUIRED;
 extern const char *ACCESS_CODE_REQUIRED;
 extern const char *INVALID_ACCESS_CODE;
 extern const char *FOREIGN_OBJECT_EXTRACTED;
-extern const char *const AUTODOC_ITEMS[11];
 
 // Dialog messages
 extern const char *HELP_MSG;

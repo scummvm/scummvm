@@ -3269,18 +3269,33 @@ void Scene825::Button::setButton(int buttonId) {
 }
 
 void Scene825::Button::setText(int textId) {
+	Scene825 *scene = (Scene825 *)R2_GLOBALS._sceneManager._scene;
+
 	_buttonId = textId;
 	_lookLineNum = textId;
 
 	_sceneText.remove();
 	if (_buttonId != 0)
-		_sceneText.setup(AUTODOC_ITEMS[textId - 1]);
+		_sceneText.setup(scene->_autodocItems[textId - 1]);
 }
 
 /*--------------------------------------------------------------------------*/
 
 Scene825::Scene825(): SceneExt() {
 	_menuId = _frame1 = _frame2 = 0;
+
+	// Setup Autodoc items list
+	_autodocItems[0] = MAIN_MENU;
+	_autodocItems[1] = DIAGNOSIS;
+	_autodocItems[2] = ADVANCED_PROCEDURES;
+	_autodocItems[3] = VITAL_SIGNS;
+	_autodocItems[4] = OPEN_DOOR;
+	_autodocItems[5] = TREATMENTS;
+	_autodocItems[6] = NO_MALADY_DETECTED;
+	_autodocItems[7] = NO_TREATMENT_REQUIRED;
+	_autodocItems[8] = ACCESS_CODE_REQUIRED;
+	_autodocItems[9] = INVALID_ACCESS_CODE;
+	_autodocItems[10] = FOREIGN_OBJECT_EXTRACTED;
 }
 
 void Scene825::postInit(SceneObjectList *OwnerList) {
