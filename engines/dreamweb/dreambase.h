@@ -48,6 +48,9 @@ const unsigned int kUnderTimedTextBufSize = 256 * kUnderTimedTextSizeY_f;
 const unsigned int kLengthOfVars = 68;
 const unsigned int kNumChanges = 250;
 const unsigned int kLenOfMapStore = 22*8*20*8;
+const unsigned int kMapWidth = 66;
+const unsigned int kMapHeight = 60;
+const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -61,6 +64,9 @@ const unsigned int kLenOfMapStore = 22*8*20*8;
 class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
+
+	// from backdrop.cpp
+	uint8 _mapData[kLengthOfMap + 32];
 
 	// from keypad.cpp
 	uint8 _pressList[6];

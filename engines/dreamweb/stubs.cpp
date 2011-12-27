@@ -1885,7 +1885,7 @@ void DreamBase::zoomOnOff() {
 
 void DreamBase::sortOutMap() {
 	const uint8 *src = workspace();
-	uint8 *dst = (uint8 *)getSegment(data.word(kMapdata)).ptr(0, 0);
+	uint8 *dst = _mapData;
 	for (uint16 y = 0; y < kMaplength; ++y) {
 		memcpy(dst, src, kMapwidth);
 		dst += kMapwidth;
@@ -2461,7 +2461,6 @@ void DreamBase::drawFloor() {
 
 void DreamBase::allocateBuffers() {
 	data.word(kExtras) = allocateMem(kLengthofextra/16);
-	data.word(kMapdata) = allocateMem(kLengthofmap/16);
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 }

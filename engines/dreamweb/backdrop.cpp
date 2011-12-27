@@ -27,7 +27,7 @@ namespace DreamGen {
 void DreamBase::doBlocks() {
 	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
 	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
-	const uint8 *mapData = getSegment(data.word(kMapdata)).ptr(mapOffset, 0);
+	const uint8 *mapData = _mapData + mapOffset;
 	const uint8 *blocks = getSegment(data.word(kBackdrop)).ptr(kBlocks, 0);
 	uint8 *dstBuffer = workspace() + dstOffset;
 
@@ -242,7 +242,8 @@ void DreamBase::showAllFree() {
 
 void DreamBase::drawFlags() {
 	uint8 *mapFlags = _mapFlags;
-	const uint8 *mapData = getSegment(data.word(kMapdata)).ptr(kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx), 0);
+	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
+	const uint8 *mapData = _mapData + mapOffset;
 	const uint8 *backdropFlags = getSegment(data.word(kBackdrop)).ptr(kFlags, 0);
 
 	for (size_t i = 0; i < 10; ++i) {

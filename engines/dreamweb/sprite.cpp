@@ -1100,8 +1100,7 @@ void DreamBase::clearBeforeLoad() {
 	clearReels();
 
 	//clearRest
-	uint8 *dst = (uint8 *)getSegment(data.word(kMapdata)).ptr(0, 0);
-	memset(dst, 0, kMaplen);
+	memset(_mapData, 0, kMaplen);
 	deallocateMem(data.word(kBackdrop));
 	deallocateMem(data.word(kSetframes));
 	deallocateMem(data.word(kReels));
