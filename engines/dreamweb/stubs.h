@@ -53,13 +53,10 @@
 	void obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		DreamBase::obToInv(index, flag, x, y);
 	}
-	void useRoutine();
-	void examineOb(bool examineAgain = true);
 	void readSetData();
 	void look();
 	void autoLook();
 	void doLook();
-	void useObject();
 	void inventory();
 	void mainScreen();
 	void zoomOnOff();
@@ -69,6 +66,5 @@
 	void madmanRun();
 	void showGun();
 	void identifyOb();
-	void selectOb();
 
 #endif

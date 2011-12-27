@@ -245,6 +245,8 @@ public:
 	void useOpened();
 	void setPickup();
 	void selectOpenOb();
+	void examineOb(bool examineAgain = true);
+	void selectOb();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -638,6 +640,8 @@ public:
 	uint8 getExPos();
 
 	// from use.cpp
+	void useRoutine();
+	void useObject();
 	void placeFreeObject(uint8 index);
 	void removeFreeObject(uint8 index);
 	void setupTimedUse(uint16 offset, uint16 countToTimed, uint16 timeCount, byte x, byte y);

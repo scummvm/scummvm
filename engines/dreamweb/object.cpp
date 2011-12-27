@@ -116,7 +116,7 @@ void DreamBase::obIcons() {
 	showFrame(engine->icons2(), 260, 1, 1, 0);
 }
 
-void DreamGenContext::examineOb(bool examineAgain) {
+void DreamBase::examineOb(bool examineAgain) {
 	data.byte(kPointermode) = 0;
 	data.word(kTimecount) = 0;
 
@@ -156,9 +156,9 @@ void DreamGenContext::examineOb(bool examineAgain) {
 
 		switch (data.byte(kInvopen)) {
 		case 0: {
-			RectWithCallback<DreamGenContext> examList[] = {
+			RectWithCallback<DreamBase> examList[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ 260,300,0,44,&DreamGenContext::useObject },
+				{ 260,300,0,44,&DreamBase::useObject },
 				{ 210,254,0,44,&DreamBase::selectOpenOb },
 				{ 144,176,64,96,&DreamBase::setPickup },
 				{ 0,50,50,200,&DreamBase::examineInventory },
@@ -183,10 +183,10 @@ void DreamGenContext::examineOb(bool examineAgain) {
 			break;
 		}
 		default: {
-			RectWithCallback<DreamGenContext> withList1[] = {
+			RectWithCallback<DreamBase> withList1[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamBase::incRyanPage },
-				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectOb },
+				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamBase::selectOb },
 				{ 0,320,0,200,&DreamBase::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -354,7 +354,7 @@ ObjectRef DreamBase::findInvPos() {
 	return _ryanInvList[invPos];
 }
 
-void DreamGenContext::selectOb() {
+void DreamBase::selectOb() {
 	ObjectRef objectId = findInvPos();
 	if (objectId._index == 255) {
 		blank();

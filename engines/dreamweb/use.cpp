@@ -35,7 +35,7 @@ struct UseListEntry {
 	const char *id;
 };
 
-void DreamGenContext::useRoutine() {
+void DreamBase::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
 		{ &DreamBase::useMon,                  "NETW" },
@@ -973,7 +973,7 @@ void DreamBase::useElvDoor() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::useObject() {
+void DreamBase::useObject() {
 	data.byte(kWithobject) = 255;
 
 	if (data.byte(kCommandtype) != 229) {
