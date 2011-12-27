@@ -400,7 +400,7 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 }
 
 void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
-	warning("Spotitems are not implemented");
+	_node->loadSpotItem(*_archive, id, condition, fade);
 }
 
 } // end of namespace Myst3

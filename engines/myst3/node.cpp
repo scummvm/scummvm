@@ -115,8 +115,105 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 }
 
 void Node::unload() {
+	for (uint i = 0; i < _spotItems.size(); i++) {
+		delete _spotItems[i];
+	}
+	_spotItems.clear();
+
 	for (int i = 0; i < 6; i++) {
 		_faces[i].unload();
+	}
+}
+
+void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade) {
+	SpotItem *spotItem = new SpotItem();
+
+	spotItem->setCondition(condition);
+	spotItem->setFade(fade);
+	spotItem->setFadeVar(abs(condition));
+
+	for (int i = 0; i < 6; i++) {
+		const DirectorySubEntry *jpegDesc = archive.getDescription(id, i + 1, DirectorySubEntry::kSpotItem);
+
+		if (!jpegDesc) continue;
+
+		SpotItemFace *spotItemFace = new SpotItemFace(
+				jpegDesc->getFace(),
+				jpegDesc->getSpotItemData().u,
+				jpegDesc->getSpotItemData().v);
+
+		Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
+
+		Graphics::JPEG jpeg;
+		jpeg.read(jpegStream);
+
+		spotItemFace->loadData(&jpeg, _faces[i]._bitmap);
+
+		delete jpegStream;
+
+		spotItem->addFace(spotItemFace);
+	}
+
+	_spotItems.push_back(spotItem);
+}
+
+SpotItem::~SpotItem() {
+	for (uint i = 0; i < _faces.size(); i++) {
+		delete _faces[i];
+	}
+}
+
+SpotItemFace::SpotItemFace(uint16 face, uint16 posX, uint16 posY):
+	_face(face),
+	_posX(posX),
+	_posY(posY),
+	_drawn(false),
+	_bitmap(0),
+	_notDrawnBitmap(0),
+	_fadeValue(0)
+{
+}
+
+SpotItemFace::~SpotItemFace() {
+	if (_bitmap) {
+		_bitmap->free();
+		delete _bitmap;
+		_bitmap = 0;
+	}
+
+	if (_notDrawnBitmap) {
+		_notDrawnBitmap->free();
+		delete _notDrawnBitmap;
+		_notDrawnBitmap = 0;
+	}
+}
+
+void SpotItemFace::loadData(Graphics::JPEG *jpeg, Graphics::Surface *faceBitmap) {
+	// Convert active SpotItem image to raw data
+	_bitmap = new Graphics::Surface();
+	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+
+	byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
+	byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
+	byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
+
+	byte *ptr = (byte *)_bitmap->getBasePtr(0, 0);
+	for (int i = 0; i < _bitmap->w * _bitmap->h; i++) {
+		byte r, g, b;
+		Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
+		*ptr++ = r;
+		*ptr++ = g;
+		*ptr++ = b;
+	}
+
+	// Copy not drawn SpotItem image from face
+	_notDrawnBitmap = new Graphics::Surface();
+	_notDrawnBitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+
+	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
+		memcpy(_notDrawnBitmap->getBasePtr(0, i),
+				faceBitmap->getBasePtr(_posX, _posY + i),
+				_notDrawnBitmap->w * 3);
 	}
 }
 

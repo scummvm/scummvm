@@ -49,14 +49,48 @@ class Face {
 		void unload();
 };
 
+class SpotItemFace {
+	public:
+		SpotItemFace(uint16 face, uint16 posX, uint16 posY);
+		~SpotItemFace();
+
+		void loadData(Graphics::JPEG *jpeg, Graphics::Surface *_faceBitmap);
+	private:
+		uint16 _face;
+		bool _drawn;
+		uint16 _fadeValue;
+		uint16 _posX;
+		uint16 _posY;
+
+		Graphics::Surface *_bitmap;
+		Graphics::Surface *_notDrawnBitmap;
+};
+
+class SpotItem {
+	public:
+		void setCondition(uint16 condition) { _condition = condition; }
+		void setFade(bool fade) { _enableFade = fade; }
+		void setFadeVar(uint16 var) { _fadeVar = var; }
+		void addFace(SpotItemFace *face) { _faces.push_back(face); }
+		~SpotItem();
+
+	private:
+		uint16 _condition;
+		uint16 _fadeVar;
+		bool _enableFade;
+
+		Common::Array<SpotItemFace *> _faces;
+};
 
 class Node {
 	protected:
 		Face _faces[6];
+		Common::Array<SpotItem *> _spotItems;
 
 	public:
 		virtual void draw() = 0;
 		virtual void load(Archive &archive, uint16 id) = 0;
+		void loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade);
 		virtual void unload();
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
 		virtual ~Node() {};

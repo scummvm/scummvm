@@ -53,8 +53,8 @@ class DirectorySubEntry {
 		void dump();
 		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
 		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream) const;
-		uint16 getFace() { return _face; }
-		ResourceType getType() { return _type; }
+		uint16 getFace() const { return _face; }
+		ResourceType getType() const { return _type; }
 		const SpotItemData &getSpotItemData() const { return _spotItemData; }
 		const VideoData &getVideoData() const { return _videoData; }
 
