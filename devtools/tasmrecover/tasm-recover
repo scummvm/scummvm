@@ -221,6 +221,7 @@ p = parser(skip_binary_data = [
 	'symbol2',
 	'symbol3',
 	'symbolnum',
+	'monsource',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

@@ -529,7 +529,7 @@ void DreamGenContext::dirFile() {
 	monMessage(10);
 
 	byte curChar;
-	found += 1 + 2 + 1;
+	found += 4;	// originally adjusted in getKeyAndLogo()
 
 	while (true) {
 		curChar = found[0];
