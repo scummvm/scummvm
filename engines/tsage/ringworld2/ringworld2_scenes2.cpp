@@ -137,10 +137,10 @@ void Scene2000::initPlayer() {
 		_object1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_object1.setup(20, 5, 1);
-			_object1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_object1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_object1.setup(2008, 5, 1);
-			_object1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_object1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		if (_exit1._enabled) {
 			if (_exit2._enabled)
@@ -806,47 +806,47 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 
 	_objList1[0].setVisage(2000);
 	_objList1[0].setStrip(2);
-	_objList1[0].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[0].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[1].setVisage(2001);
 	_objList1[1].setStrip(2);
-	_objList1[1].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[1].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[2].setVisage(2003);
 	_objList1[2].setStrip(1);
-	_objList1[2].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[2].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[3].setVisage(2007);
 	_objList1[3].setStrip(2);
-	_objList1[3].setDetails(2001, 12, -1, -1, 1, NULL);
+	_objList1[3].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[4].setVisage(2004);
 	_objList1[4].setStrip(2);
-	_objList1[4].setDetails(2001, 19, -1, -1, 1, NULL);
+	_objList1[4].setDetails(2001, 19, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[5].setVisage(2003);
 	_objList1[5].setStrip(2);
-	_objList1[5].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[5].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[6].setVisage(2000);
 	_objList1[6].setStrip(1);
-	_objList1[6].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[6].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[7].setVisage(2000);
 	_objList1[7].setStrip(2);
-	_objList1[7].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[7].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[8].setVisage(2000);
 	_objList1[8].setStrip(2);
-	_objList1[8].setDetails(2001, 0, -1, -1, 1, NULL);
+	_objList1[8].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[9].setVisage(2006);
 	_objList1[9].setStrip(1);
-	_objList1[9].setDetails(2001, 6, -1, -1, 1, NULL);
+	_objList1[9].setDetails(2001, 6, -1, -1, 1, (SceneItem *)NULL);
 
 	_objList1[10].setVisage(2007);
 	_objList1[10].setStrip(1);
-	_objList1[10].setDetails(2001, 12, -1, -1, 1, NULL);
+	_objList1[10].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
 
 	for (int i = 0; i < 11; i++) {
 		_objList1[i].animate(ANIM_MODE_1, NULL);
@@ -1099,10 +1099,10 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 		_actor2.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor2.setup(20, 5, 1);
-			_actor2.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor2.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor2.setup(2008, 5, 1);
-			_actor2.setDetails(9001, 0, 5, 3, 1,  NULL);
+			_actor2.setDetails(9001, 0, 5, 3, 1,  (SceneItem *)NULL);
 		}
 		_actor2.setPosition(Common::Point(135, 128));
 	}
@@ -1115,11 +1115,11 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_actor3.setup(2350, 0, 1);
 		_actor3.setPosition(Common::Point(197, 101));
-		_actor3.setDetails(2000, 12, -1, -1, 1, NULL);
+		_actor3.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
 		_actor3.fixPriority(10);
 		_actor4.setup(2350, 1, 2);
 		_actor4.setPosition(Common::Point(199, 129));
-		_actor4.setDetails(2000, 12, -1, -1, 1, NULL);
+		_actor4.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
 		_actor4.fixPriority(10);
 	}
 	_item1.setDetails(Rect(0, 0, 320, 200), 2000, 9, -1, -1, 1, NULL);
@@ -1392,10 +1392,10 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 		_actor2.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor2.setup(20, 5, 1);
-			_actor2.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor2.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor2.setup(2008, 5, 1);
-			_actor2.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor2.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor2.setPosition(Common::Point(250, 185));
 	}
@@ -1408,7 +1408,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	
 	_actor1.setPosition(Common::Point(290, 9));
 	_actor1.fixPriority(20);
-	_actor1.setDetails(2455, 12, -1, -1, 1, NULL);
+	_actor1.setDetails(2455, 12, -1, -1, 1, (SceneItem *)NULL);
 	_item1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
 	_item2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
 
@@ -1532,14 +1532,14 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(2435, 1, 5);
 		_actor2.setPosition(Common::Point(205, 119));
 		_actor2.fixPriority(152);
-		_actor2.setDetails(2430, 51, -1, 53, 1, NULL);
+		_actor2.setDetails(2430, 51, -1, 53, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(50) == 2435) {
 		_actor3.postInit();
 		_actor3.setup(2435, 1, 1);
 		_actor3.setPosition(Common::Point(31, 65));
-		_actor3.setDetails(2430, 48, -1, -1, 1, NULL);
+		_actor3.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -1557,10 +1557,10 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(189, 137));
 		R2_GLOBALS._walkRegions.enableRegion(4);
@@ -1685,7 +1685,7 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 	_actor2.postInit();
 	_actor2.setup(2005, 3, 1);
 	_actor2.setPosition(Common::Point(219, 106));
-	_actor2.setDetails(2001, 25, 26, -1, 1, NULL);
+	_actor2.setDetails(2001, 25, 26, -1, 1, (SceneItem *)NULL);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 	if (R2_GLOBALS._player._characterIndex == 1) {
@@ -1700,10 +1700,10 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(107, 145));
 		R2_GLOBALS._walkRegions.enableRegion(2);
@@ -1818,7 +1818,7 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(2435, 1, 1);
 		_actor2.setPosition(Common::Point(94, 80));
 		_actor2.fixPriority(106);
-		_actor2.setDetails(2430, 48, -1, -1, 1, NULL);
+		_actor2.setDetails(2430, 48, -1, -1, 1, (SceneItem *)NULL);
 	}
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.enableControl();
@@ -1836,10 +1836,10 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9002, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(38, 119));
 	}
@@ -1983,7 +1983,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 		_actor2.setVisage(2009);
 		_actor2.setPosition(Common::Point(190, 119));
 		_actor2.fixPriority(50);
-		_actor2.setDetails(2450, 0, -1, -1, 1, NULL);
+		_actor2.setDetails(2450, 0, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -2006,7 +2006,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 				_actor1.postInit();
 				_actor1.setup(20, 6, 1);
 				_actor1.setPosition(Common::Point(240, 120));
-				_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+				_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 			}
 			setAction(&_sequenceManager, this, 2451, &R2_GLOBALS._player, NULL);
 		} else {
@@ -2018,7 +2018,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 					_actor1.setup(2008, 6, 1);
 				else
 					_actor1.setup(10, 6, 1);
-				_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+				_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 				_actor1.setPosition(Common::Point(106, 111));
 			}
 			setAction(&_sequenceManager, this, 2456, &R2_GLOBALS._player, NULL);
@@ -2039,18 +2039,18 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 					_actor1.postInit();
 					_actor1.setup(20, 6, 1);
 					_actor1.setPosition(Common::Point(240, 120));
-					_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+					_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 				}
 			} else {
 				_actor1.postInit();
 				_actor1.setup(20, 8, 1);
 				_actor1.setPosition(Common::Point(93, 158));
-				_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+				_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 
 				_actor3.postInit();
 				_actor3.setup(2001, 7, 1);
 				_actor3.setPosition(Common::Point(34, 153));
-				_actor3.setDetails(2001, 40, -1, -1, 1, NULL);
+				_actor3.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
 				_exit1._enabled = false;
 			}
@@ -2068,7 +2068,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 						_actor1.setup(10, 6, 1);
 					}
 					_actor1.setPosition(Common::Point(106, 111));
-					_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+					_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 				}
 			} else {
 				_actor1.postInit();
@@ -2078,12 +2078,12 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 					_actor1.setup(10, 6, 1);
 				}
 				_actor1.setPosition(Common::Point(106, 111));
-				_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+				_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 
 				_actor3.postInit();
 				_actor3.setup(2001, 7, 1);
 				_actor3.setPosition(Common::Point(34, 153));
-				_actor3.setDetails(2001, 40, -1, -1, 1, NULL);
+				_actor3.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
 				_exit1._enabled = false;
 			}
@@ -2187,9 +2187,9 @@ void Scene2450::signal() {
 		break;
 	default:
 		_actor1.postInit();
-		_actor1.setDetails(9002, 0, 4, 3, 2, NULL);
+		_actor1.setDetails(9002, 0, 4, 3, 2, (SceneItem *)NULL);
 		_actor3.postInit();
-		_actor3.setDetails(2001, 40, -1, -1, 2, NULL);
+		_actor3.setDetails(2001, 40, -1, -1, 2, (SceneItem *)NULL);
 		_sceneMode = 2453;
 		setAction(&_sequenceManager, this, 2453, &_actor3, &_actor1, NULL);
 		break;
@@ -2211,7 +2211,7 @@ bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
 			scene->_actor2._lookLineNum = 9;
 			scene->_actor1.remove();
 			scene->_actor3.postInit();
-			scene->_actor3.setDetails(2455, 16, 1, -1, 2, NULL);
+			scene->_actor3.setDetails(2455, 16, 1, -1, 2, (SceneItem *)NULL);
 			scene->setAction(&scene->_sequenceManager, scene, 2458, &R2_GLOBALS._player, &scene->_actor2, &scene->_actor3, NULL);
 			return true;
 		}
@@ -2230,7 +2230,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 			scene->_actor1.postInit();
 			scene->_actor1.setup(2456, 3, 3);
 			scene->_actor1.setPosition(Common::Point(162, 165));
-			scene->_actor1.setDetails(2455, 15, 1, -1, 2, NULL);
+			scene->_actor1.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
 			scene->_sceneMode = 11;
 			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
 			return true;
@@ -2242,7 +2242,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 			scene->_actor1.postInit();
 			scene->_actor1.setup(2456, 3, 3);
 			scene->_actor1.setPosition(Common::Point(162, 165));
-			scene->_actor1.setDetails(2455, 15, 1, -1, 2, NULL);
+			scene->_actor1.setDetails(2455, 15, 1, -1, 2, (SceneItem *)NULL);
 			scene->_sceneMode = 12;
 			scene->setAction(&scene->_sequenceManager, scene, 2457, &R2_GLOBALS._player, &scene->_actor2, NULL);
 			return true;
@@ -2295,25 +2295,25 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 			_actor1.postInit();
 			_actor1.setup(2456, 3, 3);
 			_actor1.setPosition(Common::Point(162, 165));
-			_actor1.setDetails(2455, 15, 1, -1, 1, NULL);
+			_actor1.setDetails(2455, 15, 1, -1, 1, (SceneItem *)NULL);
 		}	
 	} else {
 		_actor3.postInit();
 		_actor3.setup(2456, 3, 1);
 		_actor3.setPosition(Common::Point(176, 165));
-		_actor3.setDetails(2455, 16, 1, -1, 1, NULL);
+		_actor3.setDetails(2455, 16, 1, -1, 1, (SceneItem *)NULL);
 	}
 
 	_actor2.postInit();
 	if (R2_INVENTORY.getObjectScene(29) == 2455) {
 		_actor2.setup(2456, 3, 2);
-		_actor2.setDetails(2455, 9, 1, -1, 1, NULL);
+		_actor2.setDetails(2455, 9, 1, -1, 1, (SceneItem *)NULL);
 	} else {
 		if ((R2_INVENTORY.getObjectScene(50) != 2455) && (R2_INVENTORY.getObjectScene(49) != 2455)) 
 			_actor2.setup(2455, 1, 1);
 		else 
 			_actor2.setup(2456, 1, 1);
-		_actor2.setDetails(2455, 3, 1, -1, 1, NULL);
+		_actor2.setDetails(2455, 3, 1, -1, 1, (SceneItem *)NULL);
 	}
 	_actor2.setPosition(Common::Point(162, 165));
 	_actor2.fixPriority(20);
@@ -2426,11 +2426,11 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(21, 3, 1);
-			_actor1.setDetails(9002, 1, -1, -1, 1, NULL);
+			_actor1.setDetails(9002, 1, -1, -1, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 3, 1);
 			_actor1.changeZoom(50);
-			_actor1.setDetails(9001, 0, -1, -1, 1, NULL);
+			_actor1.setDetails(9001, 0, -1, -1, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(141, 94));
 	}
@@ -2540,13 +2540,13 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 		_actor3.setup(2435, 1, 2);
 		_actor3.setPosition(Common::Point(78, 155));
 		_actor3.fixPriority(155);
-		_actor3.setDetails(2525, 27, -1, -1, 1, NULL);
+		_actor3.setDetails(2525, 27, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	_actor2.postInit();
 	_actor2.setup(2525, 1, 1);
 	_actor2.setPosition(Common::Point(183, 114));
-	_actor2.setDetails(2525, 15, -1, -1, 1, NULL);
+	_actor2.setDetails(2525, 15, -1, -1, 1, (SceneItem *)NULL);
 	_actor2.animate(ANIM_MODE_2, NULL);
 	_actor2._numFrames = 3;
 
@@ -2564,10 +2564,10 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(209, 162));
 
@@ -2696,7 +2696,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(2435, 1, 3);
 		_actor2.setPosition(Common::Point(299, 80));
 		_actor2.fixPriority(80);
-		_actor2.setDetails(2530, 28, -1, -1, 1, NULL);
+		_actor2.setDetails(2530, 28, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	_actor3.postInit();
@@ -2707,7 +2707,7 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 		_actor3.setup(2531, 4, 1);
 		_actor3.setPosition(Common::Point(173, 131));
 	}
-	_actor3.setDetails(2530, 22, -1, -1, 1, NULL);
+	_actor3.setDetails(2530, 22, -1, -1, 1, (SceneItem *)NULL);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -2725,10 +2725,10 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(20, 130));
 		R2_GLOBALS._walkRegions.enableRegion(1);
@@ -2849,14 +2849,14 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_actor4.setup(2435, 1, 4);
 		_actor4.setPosition(Common::Point(47, 74));
 		_actor4.fixPriority(74);
-		_actor4.setDetails(2535, 21, -1, -1, 1, NULL);
+		_actor4.setDetails(2535, 21, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(20) == 2535) {
 		_actor3.postInit();
 		_actor3.setup(2535, 3, 1);
 		_actor3.setPosition(Common::Point(203, 131));
-		_actor3.setDetails(3, 20, -1, -1, 1, NULL);
+		_actor3.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
 		R2_GLOBALS._walkRegions.enableRegion(6);
 	}
 
@@ -2864,7 +2864,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_actor3.postInit();
 		_actor3.setup(2536, 1, 2);
 		_actor3.setPosition(Common::Point(164, 133));
-		_actor3.setDetails(3, 20, -1, -1, 1, NULL);
+		_actor3.setDetails(3, 20, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_GLOBALS.getFlag(73)) {
@@ -2872,7 +2872,7 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(2536, 1, 1);
 		_actor2.setPosition(Common::Point(160, 130));
 		_actor2.fixPriority(122);
-		_actor2.setDetails(2535, 37, -1, -1, 1, NULL);
+		_actor2.setDetails(2535, 37, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -2890,10 +2890,10 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		_actor1.postInit();
 		if (R2_GLOBALS._player._characterIndex == 1) {
 			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, NULL);
+			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
 			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, NULL);
+			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		_actor1.setPosition(Common::Point(245, 115));
 		R2_GLOBALS._walkRegions.enableRegion(2);
@@ -2940,7 +2940,7 @@ void Scene2535::signal() {
 			_sceneMode = 20;
 			_actor3.show();
 			_actor3.setup(2536, 1, 2);
-			_actor3.setDetails(3, 20, -1, -1, 3, NULL);
+			_actor3.setDetails(3, 20, -1, -1, 3, (SceneItem *)NULL);
 			_actor3.setPosition(Common::Point(164, 150));
 			_actor3.fixPriority(130);
 			_actor3._moveDiff.y = 1;
@@ -4430,7 +4430,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		_actor1._moveDiff = Common::Point(2, 1);
 		_actor1.setPosition(Common::Point(122, 82));
 		_actor1.animate(ANIM_MODE_NONE, NULL);
-		_actor1.setDetails(2800, -1, -1, -1, 1, NULL);
+		_actor1.setDetails(2800, -1, -1, -1, 1, (SceneItem *)NULL);
 	}
 	
 	_item1.setDetails(Rect(0, 0, 320, 200), 2800, -1, -1, -1, 1, NULL);

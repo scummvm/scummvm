@@ -121,7 +121,7 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 				scene->_stasisNegator.setup(100, 7, 2);
 			} else {
 				scene->_stasisNegator.setup(100, 7, 1);
-				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, NULL);
+				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, (SceneItem *)NULL);
 			}
 
 			scene->setAction(&scene->_sequenceManager2, scene, 108, this, &scene->_object3, 
@@ -145,7 +145,7 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 				scene->_stasisNegator.setup(100, 7, 2);
 			} else {
 				scene->_stasisNegator.setup(100, 7, 1);
-				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, NULL);
+				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, (SceneItem *)NULL);
 			}
 
 			scene->setAction(&scene->_sequenceManager2, scene, 102, this, &scene->_object3, 
@@ -240,17 +240,17 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	_door._state = 0;
 	_door.setVisage(100);
 	_door.setPosition(Common::Point(160, 84));
-	_door.setDetails(100, 3, 4, 5, 1, NULL);
+	_door.setDetails(100, 3, 4, 5, 1, (SceneItem *)NULL);
 
 	_doorDisplay.postInit();
 	_doorDisplay.setup(100, 2, 1);
 	_doorDisplay.setPosition(Common::Point(202, 53));
-	_doorDisplay.setDetails(100, -1, -1, -1, 1, NULL);
+	_doorDisplay.setDetails(100, -1, -1, -1, 1, (SceneItem *)NULL);
 
 	_table.postInit();
 	_table.setup(100, 2, 3);
 	_table.setPosition(Common::Point(175, 157));
-	_table.setDetails(100, 17, 18, 20, 1, NULL);
+	_table.setDetails(100, 17, 18, 20, 1, (SceneItem *)NULL);
 
 	_bedLights1.postInit();
 	_bedLights1.setup(100, 3, 1);
@@ -270,13 +270,13 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	_wardrobe.setVisage(101);
 	_wardrobe.setPosition(Common::Point(231, 126));
 	_wardrobe.fixPriority(10);
-	_wardrobe.setDetails(100, 37, -1, 39, 1, NULL);
+	_wardrobe.setDetails(100, 37, -1, 39, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_STEPPING_DISKS) == 100) {
 		_steppingDisks.postInit();
 		_steppingDisks.setup(100, 8, 1);
 		_steppingDisks.setPosition(Common::Point(274, 130));
-		_steppingDisks.setDetails(100, 40, -1, 42, 1, NULL);
+		_steppingDisks.setDetails(100, 40, -1, 42, 1, (SceneItem *)NULL);
 	}
 
 	_terminal.setDetails(11, 100, 14, 15, 16);
@@ -1212,25 +1212,25 @@ void Scene150::postInit(SceneObjectList *OwnerList) {
 	_door._state = 0;
 	_door.setVisage(100);
 	_door.setPosition(Common::Point(160, 84));
-	_door.setDetails(100, 3, -1, -1, 1, NULL);
+	_door.setDetails(100, 3, -1, -1, 1, (SceneItem *)NULL);
 
 	_doorDisplay.postInit();
 	_doorDisplay.setup(100, 2, 1);
 	_doorDisplay.setPosition(Common::Point(202, 53));
-	_doorDisplay.setDetails(100, -1, -1, -1, 1, NULL);
+	_doorDisplay.setDetails(100, -1, -1, -1, 1, (SceneItem *)NULL);
 
 	_emptyRoomTable.postInit();
 	_emptyRoomTable.setVisage(100);
 	_emptyRoomTable.setStrip(4);
 	_emptyRoomTable.setFrame(1);
 	_emptyRoomTable.setPosition(Common::Point(175, 157));
-	_emptyRoomTable.setDetails(150, 3, 4, 5, 1, NULL);
+	_emptyRoomTable.setDetails(150, 3, 4, 5, 1, (SceneItem *)NULL);
 
 	_wardrobe.postInit();
 	_wardrobe.setVisage(101);
 	_wardrobe.setPosition(Common::Point(231, 126));
 	_wardrobe.fixPriority(10);
-	_wardrobe.setDetails(100, 37, -1, 39, 1, NULL);
+	_wardrobe.setDetails(100, 37, -1, 39, 1, (SceneItem *)NULL);
 
 	_terminal.setDetails(11, 100, 14, 15, 16);
 	_desk.setDetails(12, 100, 11, -1, 13);
@@ -1367,19 +1367,19 @@ void Scene200::postInit(SceneObjectList *OwnerList) {
 	_northDoor.postInit();
 	_northDoor.setVisage(200);
 	_northDoor.setPosition(Common::Point(188, 79));
-	_northDoor.setDetails(200, 3, -1, -1, 1, NULL);
+	_northDoor.setDetails(200, 3, -1, -1, 1, (SceneItem *)NULL);
 
 	_eastDoor.postInit();
 	_eastDoor.setVisage(200);
 	_eastDoor.setStrip(2);
 	_eastDoor.setPosition(Common::Point(305, 124));
-	_eastDoor.setDetails(200, 6, -1, -1, 1, NULL);
+	_eastDoor.setDetails(200, 6, -1, -1, 1, (SceneItem *)NULL);
 
 	_westDoor.postInit();
 	_westDoor.setVisage(200);
 	_westDoor.setStrip(3);
 	_westDoor.setPosition(Common::Point(62, 84));
-	_westDoor.setDetails(200, 9, -1, -1, 1, NULL);
+	_westDoor.setDetails(200, 9, -1, -1, 1, (SceneItem *)NULL);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(10);
@@ -1533,7 +1533,7 @@ void Scene250::Button::setFloor(int floorNumber) {
 
 		setPosition(Common::Point(111, (_floorNumber - 1) * 12 + 43));
 		fixPriority(10);
-		setDetails(250, -1, -1, -1, 1, NULL);
+		setDetails(250, -1, -1, -1, 1, (SceneItem *)NULL);
 	}
 }
 
@@ -1565,12 +1565,12 @@ void Scene250::postInit(SceneObjectList *OwnerList) {
 
 	_currentFloor.setFloor(10);
 	_currentFloor.setup(250, 1, 5);
-	_currentFloor.setDetails(250, 13, -1, -1, 1, NULL);
+	_currentFloor.setDetails(250, 13, -1, -1, 1, (SceneItem *)NULL);
 
 	_button1.setFloor(11);
 	_button1.setup(250, 1, 3);
 	_button1.setPosition(Common::Point(400, 100));
-	_button1.setDetails(250, 14, -1, -1, 1, NULL);
+	_button1.setDetails(250, 14, -1, -1, 1, (SceneItem *)NULL);
 	_button1.fixPriority(190);
 	_button1.hide();
 
@@ -2229,7 +2229,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_miranda.setup(302, 2, 1);
 		_miranda.setPosition(Common::Point(47, 128));
 		_miranda.setAction(&_action3);
-		_miranda.setDetails(300, 39, 40, 41, 1, NULL);
+		_miranda.setDetails(300, 39, 40, 41, 1, (SceneItem *)NULL);
 
 		if ((R2_GLOBALS._player._characterScene[2] == 300) || (R2_GLOBALS._player._characterScene[2] == 325)) {
 			_seeker.postInit();
@@ -2237,7 +2237,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			_seeker.setPosition(Common::Point(158, 108));
 			_seeker.fixPriority(130);
 			_seeker.setAction(&_action2);
-			_seeker.setDetails(300, 42, 43, 44, 1, NULL);
+			_seeker.setDetails(300, 42, 43, 44, 1, (SceneItem *)NULL);
 		}
 
 		R2_GLOBALS._player.postInit();
@@ -2251,14 +2251,14 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_miranda.setup(302, 2, 1);
 		_miranda.setPosition(Common::Point(47, 128));
 		_miranda.setAction(&_action3);
-		_miranda.setDetails(300, 39, 40, 41, 1, NULL);
+		_miranda.setDetails(300, 39, 40, 41, 1, (SceneItem *)NULL);
 
 		if ((R2_GLOBALS._player._characterScene[1] == 300) || (R2_GLOBALS._player._characterScene[1] == 325)) {
 			_quinn.postInit();
 			_quinn.setup(302, 3, 1);
 			_quinn.setPosition(Common::Point(271, 150));
 			_quinn.setAction(&_action1);
-			_quinn.setDetails(300, 50, 51, 52, 1, NULL);
+			_quinn.setDetails(300, 50, 51, 52, 1, (SceneItem *)NULL);
 		}
 
 		R2_GLOBALS._player.postInit();
@@ -2275,7 +2275,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			_seeker.setPosition(Common::Point(158, 108));
 			_seeker.fixPriority(130);
 			_seeker.setAction(&_action2);
-			_seeker.setDetails(300, 42, 43, 44, 1, NULL);
+			_seeker.setDetails(300, 42, 43, 44, 1, (SceneItem *)NULL);
 		}
 
 		if ((R2_GLOBALS._player._characterScene[1] == 300) || (R2_GLOBALS._player._characterScene[1] == 325)) {
@@ -2283,7 +2283,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			_quinn.setup(302, 3, 1);
 			_quinn.setPosition(Common::Point(271, 150));
 			_quinn.setAction(&_action1);
-			_quinn.setDetails(300, 50, 51, 52, 1, NULL);
+			_quinn.setDetails(300, 50, 51, 52, 1, (SceneItem *)NULL);
 		}
 
 		R2_GLOBALS._player.postInit();
@@ -2305,11 +2305,11 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_manualOverrides.setDetails(14, 300, 15, -1, 17);
 	_scanners1.setDetails(Rect(126, 15, 183, 25), 300, 18, -1, 20, 1, NULL);
 	_scanners2.setDetails(Rect(126, 80, 183, 90), 300, 18, -1, 20, 1, NULL);
-	_protocolDisplay.setDetails(300, 27, -1, 29, 1, NULL);
+	_protocolDisplay.setDetails(300, 27, -1, 29, 1, (SceneItem *)NULL);
 	_indirectLighting1.setDetails(Rect(74, 71, 122, 89), 300, 21, -1, -1, 1, NULL);
 	_indirectLighting2.setDetails(Rect(197, 71, 245, 89), 300, 21, -1, -1, 1, NULL);
 	_lighting.setDetails(Rect(129, 3, 190, 14), 300, 24, -1, -1, 1, NULL);
-	_doorway.setDetails(300, 3, -1, 5, 1, NULL);
+	_doorway.setDetails(300, 3, -1, 5, 1, (SceneItem *)NULL);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 300, 0, -1, -1, 1, NULL);
 
 	switch (R2_GLOBALS._player._characterIndex) {
@@ -2753,7 +2753,7 @@ void Scene400::postInit(SceneObjectList *OwnerList) {
 	_door.postInit();
 	_door.setVisage(100);
 	_door.setPosition(Common::Point(123, 84));
-	_door.setDetails(400, 24, -1, 26, 1, NULL);
+	_door.setDetails(400, 24, -1, 26, 1, (SceneItem *)NULL);
 
 	_consoleDisplay.postInit();
 	_consoleDisplay.setup(400, 4, 1);
@@ -2772,7 +2772,7 @@ void Scene400::postInit(SceneObjectList *OwnerList) {
 		_reader.postInit();
 		_reader.setup(400, 5, 2);
 		_reader.setPosition(Common::Point(301, 95));
-		_reader.setDetails(400, 54, -1, 56, 1, NULL);
+		_reader.setDetails(400, 54, -1, 56, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_SENSOR_PROBE) == 400) {
@@ -2780,14 +2780,14 @@ void Scene400::postInit(SceneObjectList *OwnerList) {
 		_sensorProbe.setup(400, 5, 1);
 		_sensorProbe.setPosition(Common::Point(251, 104));
 		_sensorProbe.fixPriority(121);
-		_sensorProbe.setDetails(400, 57, -1, 59, 1, NULL);
+		_sensorProbe.setDetails(400, 57, -1, 59, 1, (SceneItem *)NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_UNIT) == 400) {
 		_attractorUnit.postInit();
 		_attractorUnit.setup(400, 5, 3);
 		_attractorUnit.setPosition(Common::Point(265, 129));
-		_attractorUnit.setDetails(400, 60, -1, 62, 1, NULL);
+		_attractorUnit.setDetails(400, 60, -1, 62, 1, (SceneItem *)NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -3052,12 +3052,12 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 	_door.setVisage(800);
 	_door.setPosition(Common::Point(286, 108));
 	_door.fixPriority(50);
-	_door.setDetails(800, 3, -1, -1, 1, NULL);
+	_door.setDetails(800, 3, -1, -1, 1, (SceneItem *)NULL);
 
 	_autodocCover.postInit();
 	_autodocCover.setup(800, 2, 1);
 	_autodocCover.setPosition(Common::Point(119, 161));
-	_autodocCover.setDetails(800, 6, 7, -1, 1, NULL);
+	_autodocCover.setDetails(800, 6, 7, -1, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
 		_opticalFibre.postInit();
@@ -3087,13 +3087,13 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 	_cabinet.postInit();
 	_cabinet.setup(801, 1, R2_GLOBALS.getFlag(56) ? 6 : 1);
 	_cabinet.setPosition(Common::Point(169, 79));
-	_cabinet.setDetails(800, 41, -1, -1, 1, NULL);
+	_cabinet.setDetails(800, 41, -1, -1, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_9) == 800) {
 		_comScanner.postInit();
 		_comScanner.setup(801, 2, 1);
 		_comScanner.setPosition(Common::Point(174, 73));
-		_comScanner.setDetails(800, 34, 35, -1, 1, NULL);
+		_comScanner.setDetails(800, 34, 35, -1, 1, (SceneItem *)NULL);
 	}
 
 	_tray.postInit();
@@ -3101,7 +3101,7 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS.getFlag(10))
 		_tray.setFrame(5);
 	_tray.setPosition(Common::Point(203, 144));
-	_tray.setDetails(800, 12, -1, 14, 1, NULL);
+	_tray.setDetails(800, 12, -1, 14, 1, (SceneItem *)NULL);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(10);
@@ -3641,12 +3641,12 @@ void Scene850::postInit(SceneObjectList *OwnerList) {
 	_liftDoor.postInit();
 	_liftDoor.setup(850, 2, 1);
 	_liftDoor.setPosition(Common::Point(188, 79));
-	_liftDoor.setDetails(850, 3, -1, -1, 1, NULL);
+	_liftDoor.setDetails(850, 3, -1, -1, 1, (SceneItem *)NULL);
 
 	_sickBayDoor.postInit();
 	_sickBayDoor.setup(850, 3, 1);
 	_sickBayDoor.setPosition(Common::Point(62, 84));
-	_sickBayDoor.setDetails(850, 9, -1, -1, 1, NULL);
+	_sickBayDoor.setDetails(850, 9, -1, -1, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_CLAMP) == 850) {
 		_clamp.postInit();
@@ -3654,7 +3654,7 @@ void Scene850::postInit(SceneObjectList *OwnerList) {
 		_clamp.setPosition(Common::Point(242, 93));
 		_clamp.fixPriority(81);
 		_clamp.animate(ANIM_MODE_2, NULL);
-		_clamp.setDetails(850, 27, -1, -1, 1, NULL);
+		_clamp.setDetails(850, 27, -1, -1, 1, (SceneItem *)NULL);
 	}
 
 	_panel.postInit();
@@ -3665,7 +3665,7 @@ void Scene850::postInit(SceneObjectList *OwnerList) {
 
 	_panel.setPosition(Common::Point(232, 119));
 	_panel.fixPriority(82);
-	_panel.setDetails(850, 24, -1, -1, 1, NULL);
+	_panel.setDetails(850, 24, -1, -1, 1, (SceneItem *)NULL);
 
 	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 850) {
 		_fibre.postInit();
