@@ -255,6 +255,7 @@ p = parser(skip_binary_data = [
 	'tempgraphics3',
 	'tempsprites',
 	'charset1',
+	'extras',
 	# vars.asm - constants
 	'openinvlist',
 	'ryaninvlist',

@@ -453,9 +453,7 @@ void DreamBase::showPanel() {
 
 void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	const Frame &freeFrame = _freeFrames._frames[3*from + offset];
-
-	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
-	Frame &exFrame = exFrames[3*to + offset];
+	Frame &exFrame = _exFrames._frames[3*to + offset];
 
 	exFrame.width = freeFrame.width;
 	exFrame.height = freeFrame.height;
@@ -464,7 +462,7 @@ void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	uint16 byteCount = freeFrame.width * freeFrame.height;
 
 	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
-	uint8 *dst = getSegment(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
+	uint8 *dst = _exFrames._data + data.word(kExframepos);
 	memcpy(dst, src, byteCount);
 
 	exFrame.setPtr(data.word(kExframepos));

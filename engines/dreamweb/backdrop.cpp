@@ -259,8 +259,8 @@ void DreamBase::showAllEx() {
 
 	_exList.clear();
 
-	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
-	const Frame *frameBase = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+	DynObject *objects = _exData;
+	const GraphicsFile &frameBase = _exFrames;
 	for (size_t i = 0; i < count; ++i) {
 		DynObject *object = objects + i;
 		if (object->mapad[0] == 0xff)
@@ -273,7 +273,7 @@ void DreamBase::showAllEx() {
 		uint8 width, height;
 		ObjPos objPos;
 		uint16 currentFrame = 3 * i;
-		calcFrFrame(frameBase[currentFrame], &width, &height, x, y, &objPos);
+		calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
 			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);

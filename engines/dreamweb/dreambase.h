@@ -51,6 +51,7 @@ const unsigned int kLenOfMapStore = 22*8*20*8;
 const unsigned int kMapWidth = 66;
 const unsigned int kMapHeight = 60;
 const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
+const unsigned int kNumExObjects = 114;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -145,6 +146,12 @@ protected:
 	// room graphics files
 	GraphicsFile _setFrames;
 	GraphicsFile _freeFrames;
+
+	// Extras segment (NB: this is saved)
+	GraphicsFile _exFrames;
+	DynObject _exData[kNumExObjects];
+	uint16 _exTextdatLE[kNumExObjects+2]; // TODO: Convert into TextFile
+	char _exText[18000];
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -845,10 +852,10 @@ public:
 	void setMode();
 	void showPCX(const Common::String &name);
 	void showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height);
-	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
-	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
+	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
+	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);
 	void loadPalFromIFF();
 	void createPanel();

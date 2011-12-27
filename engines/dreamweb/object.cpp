@@ -83,12 +83,11 @@ void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	if (index == 0xff)
 		return;
 
-	if (flag == kExObjectType) {
-		Frame *extras = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-		showFrame(extras, x + 18, y + 19, 3 * index + 1, 128);
-	} else {
+	if (flag == kExObjectType)
+		showFrame(_exFrames, x + 18, y + 19, 3 * index + 1, 128);
+	else
 		showFrame(_freeFrames, x + 18, y + 19, 3 * index + 1, 128);
-	}
+
 	const DynObject *object = (const DynObject *)getAnyAdDir(index, flag);
 	bool worn = isItWorn(object);
 	if (worn)
@@ -99,12 +98,10 @@ void DreamBase::obPicture() {
 	if (data.byte(kObjecttype) == kSetObjectType1)
 		return;
 	uint8 frame = 3 * data.byte(kCommand) + 1;
-	if (data.byte(kObjecttype) == kExObjectType) {
-		const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-		showFrame(frames, 160, 68, frame, 0x80);
-	} else {
+	if (data.byte(kObjecttype) == kExObjectType)
+		showFrame(_exFrames, 160, 68, frame, 0x80);
+	else
 		showFrame(_freeFrames, 160, 68, frame, 0x80);
-	}
 }
 
 void DreamBase::obIcons() {
@@ -254,12 +251,12 @@ void DreamBase::inventory() {
 }
 
 void DreamBase::transferText(uint8 from, uint8 to) {
-	getSegment(data.word(kExtras)).word(kExtextdat + 2*to) = data.word(kExtextpos);
+	WRITE_LE_UINT16(&_exTextdatLE[to], data.word(kExtextpos));
 	uint16 freeTextOffset = 2*from;
 	uint16 srcOffset = getSegment(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
 
 	const char *src = (const char *)getSegment(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
-	char *dst = (char *)getSegment(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
+	char *dst = _exText + data.word(kExtextpos);
 
 	size_t len = strlen(src);
 	memcpy(dst, src, len + 1);
@@ -429,47 +426,47 @@ void DreamBase::setPickup() {
 }
 
 void DreamBase::deleteExFrame(uint8 frameNum) {
-	Frame *frame = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata + sizeof(Frame)*frameNum, sizeof(Frame));
+	Frame *frame = &_exFrames._frames[frameNum];
 
 	uint16 frameSize = frame->width * frame->height;
 	// Note: the original asm didn't subtract frameSize from remainder
 	uint16 remainder = kExframeslen - frame->ptr() - frameSize;
-	uint16 startOff = kExframes + frame->ptr();
+	uint16 startOff = frame->ptr();
 	uint16 endOff = startOff + frameSize;
 
 	// Shift frame data after this one down
-	memmove(getSegment(data.word(kExtras)).ptr(startOff, remainder), getSegment(data.word(kExtras)).ptr(endOff, remainder), remainder);
+	memmove(&_exFrames._data[startOff], &_exFrames._data[endOff], remainder);
 
 	// Combined frame data is now frameSize smaller
 	data.word(kExframepos) -= frameSize;
 
 	// Adjust all frame pointers pointing into the shifted data
 	for (unsigned int i = 0; i < 3*kNumexobjects; ++i) {
-		frame = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata + sizeof(Frame)*i, sizeof(Frame));
+		frame = &_exFrames._frames[i];
 		if (frame->ptr() >= startOff)
 			frame->setPtr(frame->ptr() - frameSize);
 	}
 }
 
 void DreamBase::deleteExText(uint8 textNum) {
-	uint16 offset = getSegment(data.word(kExtras)).word(kExtextdat + 2*textNum);
+	uint16 offset = READ_LE_UINT16(&_exTextdatLE[textNum]);
 
-	uint16 startOff = kExtext + offset;
-	uint16 textSize = strlen((char *)getSegment(data.word(kExtras)).ptr(startOff, 0)) + 1;
+	uint16 startOff = offset;
+	uint16 textSize = strlen(&_exText[startOff]) + 1;
 	uint16 endOff = startOff + textSize;
 	uint16 remainder = kExtextlen - offset - textSize;
 
 	// Shift text data after this one down
-	memmove(getSegment(data.word(kExtras)).ptr(startOff, remainder), getSegment(data.word(kExtras)).ptr(endOff, remainder), remainder);
+	memmove(&_exText[startOff], &_exText[endOff], remainder);
 
 	// Combined text data is now frameSize smaller
 	data.word(kExtextpos) -= textSize;
 
 	// Adjust all text pointers pointing into the shifted data
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
-		uint16 t = getSegment(data.word(kExtras)).word(kExtextdat + 2*i);
+		uint16 t = READ_LE_UINT16(&_exTextdatLE[i]);
 		if (t >= offset + textSize)
-			getSegment(data.word(kExtras)).word(kExtextdat + 2*i) = t - textSize;
+			WRITE_LE_UINT16(&_exTextdatLE[i], t - textSize);
 	}
 }
 
@@ -591,22 +588,26 @@ void DreamBase::purgeALocation(uint8 index) {
 }
 
 const uint8 *DreamBase::getObTextStart() {
-	uint16 textSeg, textDatOff, textOff;
+	const uint8 *textBase;
+	const uint8 *text;
+	uint16 textOff;
 	if (data.byte(kObjecttype) == kFreeObjectType) {
-		textSeg = data.word(kFreedesc);
-		textDatOff = kFreetextdat;
+		uint16 textSeg = data.word(kFreedesc);
+		uint16 textDatOff = kFreetextdat;
 		textOff = kFreetext;
+		textBase = getSegment(textSeg).ptr(textOff, 0);
+		text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
 	} else if (data.byte(kObjecttype) == kSetObjectType1) {
-		textSeg = data.word(kSetdesc);
-		textDatOff = kSettextdat;
+		uint16 textSeg = data.word(kSetdesc);
+		uint16 textDatOff = kSettextdat;
 		textOff = kSettext;
+		textBase = getSegment(textSeg).ptr(textOff, 0);
+		text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
 	} else {
-		textSeg = data.word(kExtras);
-		textDatOff = kExtextdat;
+		textBase = (const uint8 *)_exText;
 		textOff = kExtext;
+		text = textBase + READ_LE_UINT16(&_exTextdatLE[data.byte(kCommand)]);
 	}
-	const uint8 *textBase = getSegment(textSeg).ptr(textOff, 0);
-	const uint8 *text = textBase + getSegment(textSeg).word(textDatOff + 2*data.byte(kCommand));
 
 	if (data.byte(kObjecttype) != kSetObjectType1)
 		return text;
@@ -635,6 +636,7 @@ const uint8 *DreamBase::getObTextStart() {
 				text++;
 
 				// arbitrary give-up counter
+				// FIXME: Make this more precise to avoid reading out of bounds
 				if (text - (textBase - textOff) >= 8000) {
 					warning("Object description for %d/%d not found", data.byte(kObjecttype), data.byte(kCommand));
 					return obname;

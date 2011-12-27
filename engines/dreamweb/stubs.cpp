@@ -650,6 +650,10 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	_tempCharset.clear();
 	_mainSprites.clear();
 
+	_exFrames.clear();
+	_setFrames.clear();
+	_freeFrames.clear();
+
 	_textFile1.clear();
 	_textFile2.clear();
 	_textFile3.clear();
@@ -1226,8 +1230,8 @@ const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 		uint16 offset = getSegment(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
 		return getSegment(data.word(kPeople)).ptr(offset, 0);
 	} else if (type == 4) {
-		uint16 offset = getSegment(data.word(kExtras)).word(kExtextdat + index * 2) + kExtext;
-		return getSegment(data.word(kExtras)).ptr(offset, 0);
+		uint16 offset = READ_LE_UINT16(&_exTextdatLE[index]);
+		return (const uint8 *)_exText + offset;
 	} else if (type == 2) {
 		uint16 offset = getSegment(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
 		return getSegment(data.word(kFreedesc)).ptr(offset, 0);
@@ -1313,7 +1317,7 @@ DynObject *DreamBase::getFreeAd(uint8 index) {
 }
 
 DynObject *DreamBase::getExAd(uint8 index) {
-	return (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0) + index;
+	return &_exData[index];
 }
 
 DynObject *DreamBase::getEitherAdCPP() {
@@ -1374,7 +1378,7 @@ void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamBase::deleteTaken() {
-	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
+	const DynObject *extraObjects = _exData;
 	DynObject *freeObjects = (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		uint8 location = extraObjects[i].initialLocation;
@@ -1386,7 +1390,7 @@ void DreamBase::deleteTaken() {
 }
 
 uint8 DreamBase::getExPos() {
-	DynObject *objects = (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	DynObject *objects = _exData;
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff)
 			return i;
@@ -1565,13 +1569,13 @@ void DreamBase::showPointer() {
 	uint16 y = data.word(kMousey);
 	data.word(kOldpointery) = data.word(kMousey);
 	if (data.byte(kPickup) == 1) {
-		const Frame *frame;
-		if (data.byte(kObjecttype) != kExObjectType) {
-			frame = &_freeFrames._frames[(3 * data.byte(kItemframe) + 1)];
-		} else {
-			const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-			frame = frames + (3 * data.byte(kItemframe) + 1);
-		}
+		const GraphicsFile *frames;
+		if (data.byte(kObjecttype) != kExObjectType)
+			frames = &_freeFrames;
+		else
+			frames = &_exFrames;
+		const Frame *frame = &frames->_frames[(3 * data.byte(kItemframe) + 1)];
+
 		uint8 width = frame->width;
 		uint8 height = frame->height;
 		if (width < 12)
@@ -1585,12 +1589,7 @@ void DreamBase::showPointer() {
 		data.word(kOldpointerx) = xMin;
 		data.word(kOldpointery) = yMin;
 		multiGet(_pointerBack, xMin, yMin, width, height);
-		if (data.byte(kObjecttype) != kExObjectType) {
-			showFrame(_freeFrames, x, y, 3 * data.byte(kItemframe) + 1, 128);
-		} else {
-			const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-			showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
-		}
+		showFrame(*frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
 		showFrame(_icons1, x, y, 3, 128);
 	} else {
 		const Frame *frame = &_icons1._frames[data.byte(kPointerframe) + 20];
@@ -2498,7 +2497,8 @@ void DreamBase::drawFloor() {
 }
 
 void DreamBase::allocateBuffers() {
-	data.word(kExtras) = allocateMem(kLengthofextra/16);
+	_exFrames.clear();
+	_exFrames._data = new uint8[kExframeslen];
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 }
@@ -3604,8 +3604,6 @@ void DreamBase::lookAtCard() {
 }
 
 void DreamBase::clearBuffers() {
-	memset(getSegment(data.word(kExtras)).ptr(0, kLengthofextra), 0xFF, kLengthofextra);
-
 	memcpy(_initialVars, data.ptr(kStartvars, kLengthofvars), kLengthofvars);
 
 	clearChanges();
@@ -3621,7 +3619,11 @@ void DreamBase::clearChanges() {
 	data.word(kExframepos) = 0;
 	data.word(kExtextpos) = 0;
 
-	memset(getSegment(data.word(kExtras)).ptr(0, kLengthofextra), 0xFF, kLengthofextra);
+	memset(_exFrames._frames, 0xFF, 2080);
+	memset(_exFrames._data, 0xFF, kExframeslen);
+	memset(_exData, 0xFF, sizeof(DynObject) * kNumexobjects);
+	memset(_exTextdatLE, 0xFF, 2*(kNumexobjects+2));
+	memset(_exText, 0xFF, kExtextlen);
 
 	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -3710,7 +3712,7 @@ void DreamBase::emergencyPurge() {
 }
 
 void DreamBase::purgeAnItem() {
-	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
+	const DynObject *extraObjects = _exData;
 
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] && extraObjects[i].id[0] == 255 &&

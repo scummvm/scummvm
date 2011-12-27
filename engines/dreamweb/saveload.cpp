@@ -476,7 +476,14 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
 	outSaveFile->write(descbuf, len[0]);
 	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
-	outSaveFile->write(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+
+	// the Extras segment:
+	outSaveFile->write((const uint8 *)_exFrames._frames, 2080);
+	outSaveFile->write((const uint8 *)_exFrames._data, kExframeslen);
+	outSaveFile->write((const uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
+	outSaveFile->write((const uint8 *)_exTextdatLE, 2*(kNumExObjects+2));
+	outSaveFile->write((const uint8 *)_exText, kExtextlen);
+
 	outSaveFile->write(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
@@ -542,7 +549,14 @@ void DreamBase::loadPosition(unsigned int slot) {
 		inSaveFile->read(namebuf, 17);
 	}
 	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
-	inSaveFile->read(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+
+	// the Extras segment:
+	inSaveFile->read((uint8 *)_exFrames._frames, 2080);
+	inSaveFile->read((uint8 *)_exFrames._data, kExframeslen);
+	inSaveFile->read((uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
+	inSaveFile->read((uint8 *)_exTextdatLE, 2*(kNumExObjects+2));
+	inSaveFile->read((uint8 *)_exText, kExtextlen);
+
 	inSaveFile->read(_listOfChanges, len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
