@@ -809,7 +809,7 @@ void DreamBase::reconstruct() {
 	drawFloor();
 	spriteUpdate();
 	printSprites();
-	if ((data.byte(kForeignrelease) != 0) && (data.byte(kReallocation) == 20))
+	if (_foreignRelease && (data.byte(kReallocation) == 20))
 		underTextLine();
 	data.byte(kHavedoneobs) = 0;
 }

@@ -41,6 +41,7 @@ p = parser(skip_binary_data = [
 	'recname',
 	'fileheader',
 	'filedata',
+	'foreignrelease',
 	'extradata',
 	'keybuffer',
 	'spritename1',

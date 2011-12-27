@@ -256,7 +256,7 @@ void DreamBase::printCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);
 	uint16 height;
-	if (data.byte(kForeignrelease)) {
+	if (_foreignRelease) {
 		y -= 3;
 		height = 11;
 	} else
@@ -273,7 +273,7 @@ void DreamBase::delCurs() {
 	uint16 y = data.word(kCurslocy);
 	uint16 width = 6;
 	uint16 height;
-	if (data.byte(kForeignrelease)) {
+	if (_foreignRelease) {
 		y -= 3;
 		height = 11;
 	} else

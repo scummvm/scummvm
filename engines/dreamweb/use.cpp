@@ -1575,7 +1575,7 @@ void DreamBase::useCashCard() {
 	showPanel();
 	showExit();
 	showMan();
-	uint16 y = (!data.byte(kForeignrelease)) ? 120 : 120 - 3;
+	uint16 y = (!_foreignRelease) ? 120 : 120 - 3;
 	showFrame(tempGraphics(), 114, y, 39, 0);
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);

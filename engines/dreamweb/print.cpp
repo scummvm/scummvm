@@ -66,7 +66,7 @@ void DreamBase::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, ui
 		width = &dummyWidth;
 	if (height == NULL)
 		height = &dummyHeight;
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		y -= 3;
 	uint16 tmp = c - 32 + data.word(kCharshift);
 	showFrame(charSet, *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);

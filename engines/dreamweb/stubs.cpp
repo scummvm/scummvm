@@ -461,10 +461,10 @@ void DreamBase::dreamweb() {
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::EN_USA:
-		// Implicit data.byte(kForeignrelease) = 0
+		_foreignRelease = false;
 		break;
 	default:
-		data.byte(kForeignrelease) = 1;
+		_foreignRelease = true;
 		break;
 	}
 
@@ -816,20 +816,20 @@ void DreamBase::dumpTextLine() {
 	data.byte(kNewtextline) = 0;
 	uint16 x = data.word(kTextaddressx);
 	uint16 y = data.word(kTextaddressy);
-	if (data.byte(kForeignrelease) != 0)
+	if (_foreignRelease)
 		y -= 3;
 	multiDump(x, y, 228, 13);
 }
 
 void DreamBase::getUnderTimed() {
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		multiGet(_underTimedText, data.byte(kTimedx), data.byte(kTimedy) - 3, 240, kUnderTimedTextSizeY_f);
 	else
 		multiGet(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
 }
 
 void DreamBase::putUnderTimed() {
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy) - 3, 240, kUnderTimedTextSizeY_f);
 	else
 		multiPut(_underTimedText, data.byte(kTimedx), data.byte(kTimedy), 240, kUnderTimedTextSizeY);
@@ -914,7 +914,7 @@ void DreamBase::dumpTimedText() {
 	if (data.byte(kNeedtodumptimed) != 1)
 		return;
 	uint8 y = data.byte(kTimedy);
-	if (data.byte(kForeignrelease) != 0)
+	if (_foreignRelease)
 		y -= 3;
 
 	multiDump(data.byte(kTimedx), y, 240, kUndertimedysize);
@@ -1122,7 +1122,7 @@ void DreamBase::crosshair() {
 }
 
 void DreamBase::delTextLine() {
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		multiPut(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy) - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiPut(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy), kUnderTextSizeX, kUnderTextSizeY);
@@ -2821,13 +2821,13 @@ void DreamBase::obsThatDoThings() {
 void DreamBase::describeOb() {
 	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
-	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
+	if (_foreignRelease && data.byte(kObjecttype) == kSetObjectType1)
 		y = 82;
 	data.word(kCharshift) = 91 + 91;
 	printDirect(&obText, 33, &y, 241, 241 & 1);
 	data.word(kCharshift) = 0;
 	y = 104;
-	if (data.byte(kForeignrelease) && data.byte(kObjecttype) == kSetObjectType1)
+	if (_foreignRelease && data.byte(kObjecttype) == kSetObjectType1)
 		y = 94;
 	printDirect(&obText, 36, &y, 241, 241 & 1);
 	obsThatDoThings();
@@ -2972,7 +2972,7 @@ void DreamBase::showDiary() {
 }
 
 void DreamBase::underTextLine() {
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		multiGet(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy) - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiGet(_textUnder, data.byte(kTextaddressx), data.word(kTextaddressy), kUnderTextSizeX, kUnderTextSizeY);

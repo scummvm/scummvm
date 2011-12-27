@@ -117,13 +117,13 @@ void DreamBase::lookAtPlace() {
 	getUnderCentre();
 	showFrame(tempGraphics3(), 60, 72, 0, 0);
 	showFrame(tempGraphics3(), 60, 72 + 55, 4, 0);
-	if (data.byte(kForeignrelease))
+	if (_foreignRelease)
 		showFrame(tempGraphics3(), 60, 72+55+21, 4, 0);
 
 	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
 	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
 	findNextColon(&string);
-	uint16 y = (data.byte(kForeignrelease)) ? 84 + 4 : 84;
+	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
 	printDirect(&string, 63, &y, 191, 191 & 1);
 	workToScreenM();
 	hangOnP(500);

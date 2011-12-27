@@ -116,6 +116,7 @@ public:
 
 	bool _quitRequested;
 	bool _subtitles;
+	bool _foreignRelease;
 
 	// from backdrop.cpp
 	void doBlocks();

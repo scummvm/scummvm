@@ -307,7 +307,6 @@ static const uint16 kCh1playing = 374;
 static const uint16 kCh1blockstocopy = 375;
 static const uint16 kCurrentsample = 377;
 static const uint16 kRoomssample = 378;
-static const uint16 kForeignrelease = 379;
 static const uint16 kBlocktextdat = (0);
 static const uint16 kPersonframes = (0);
 static const uint16 kDebuglevel1 = (0);
