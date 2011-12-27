@@ -260,9 +260,6 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual bool startAction(CursorType action, Event &event);
-
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class SceneActorExt: public SceneActor {

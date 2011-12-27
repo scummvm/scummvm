@@ -936,35 +936,6 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 	return handled;
 }
 
-void SceneActor::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void SceneActor::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-}
-
 /*--------------------------------------------------------------------------*/
 
 SceneArea::SceneArea(): EventHandler() {
