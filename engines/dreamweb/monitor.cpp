@@ -86,7 +86,7 @@ void DreamBase::useMon() {
 		data.word(kMonadx) = oldMonadx;
 		data.word(kMonady) = oldMonady;
 		stop = execCommand();
-		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
+		if (_quitRequested) //TODO : Check why it crashes when put before the execcommand
 			break;
 	} while (!stop);
 	getRidOfTemp();
@@ -203,7 +203,7 @@ void DreamBase::input() {
 		vSync();
 		delCurs();
 		readKey();
-		if (quitRequested())
+		if (_quitRequested)
 			return;
 		uint8 currentKey = data.byte(kCurrentkey);
 		if (currentKey == 0)

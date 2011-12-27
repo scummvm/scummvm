@@ -199,7 +199,7 @@ void DreamBase::viewFolder() {
 	workToScreenM();
 	data.byte(kGetback) = 0;
 	do {
-		if (quitRequested())
+		if (_quitRequested)
 			break;
 		delPointer();
 		readMouse();
@@ -1288,7 +1288,7 @@ void DreamBase::useDiary() {
 		dumpDiaryKeys();
 		dumpTextLine();
 		checkCoords(diaryList);
-	} while (!data.byte(kGetback) && !quitRequested());
+	} while (!data.byte(kGetback) && !_quitRequested);
 
 
 	getRidOfTemp();

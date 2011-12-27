@@ -139,7 +139,7 @@ void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 		dumpKeypad();
 		dumpTextLine();
 		checkCoords(keypadList);
-		if (quitRequested() || (data.byte(kGetback) == 1))
+		if (_quitRequested || (data.byte(kGetback) == 1))
 			break;
 		if (data.byte(kLightcount) == 1) {
 			if (data.byte(kLockstatus) == 0)

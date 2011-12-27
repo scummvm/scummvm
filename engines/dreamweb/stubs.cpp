@@ -527,7 +527,7 @@ void DreamBase::dreamweb() {
 			cls();
 			setMode();
 			decide();
-			if (quitRequested())
+			if (_quitRequested)
 				goto done;
 
 			if (data.byte(kGetback) == 4)
@@ -544,17 +544,17 @@ void DreamBase::dreamweb() {
 			// TODO: In the demo version, titles() did nothing
 			clearPalette();
 			bibleQuote();
-			if (!quitRequested()) // "titlesearly"
+			if (!_quitRequested) // "titlesearly"
 				intro();
 
-			if (quitRequested())
+			if (_quitRequested)
 				goto done;
 
 			// "credits"
 			clearPalette();
 			realCredits();
 
-			if (quitRequested())
+			if (_quitRequested)
 				goto done;
 
 			clearChanges();
@@ -581,13 +581,12 @@ void DreamBase::dreamweb() {
 
 		// main loop
 		while (true) {
-
-			if (quitRequested())
+			if (_quitRequested)
 				goto done;
 
 			screenUpdate();
 
-			if (quitRequested())
+			if (_quitRequested)
 				goto done;
 
 			if (data.byte(kWongame) != 0) {
@@ -645,14 +644,10 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	engine->freeIcons2();
 }
 
-bool DreamBase::quitRequested() {
-	return data.byte(kQuitrequested);
-}
-
 void DreamBase::screenUpdate() {
 	newPlace();
 	mainScreen();
-	if (quitRequested())
+	if (_quitRequested)
 		return;
 	animPointer();
 
@@ -1742,7 +1737,7 @@ void DreamBase::hangOn(uint16 frameCount) {
 	while (frameCount) {
 		vSync();
 		--frameCount;
-		if (quitRequested())
+		if (_quitRequested)
 			break;
 	}
 }
@@ -1756,7 +1751,7 @@ void DreamBase::hangOnW(uint16 frameCount) {
 		vSync();
 		dumpPointer();
 		--frameCount;
-		if (quitRequested())
+		if (_quitRequested)
 			break;
 	}
 }
@@ -1782,7 +1777,7 @@ void DreamBase::hangOnP(uint16 count) {
 		showPointer();
 		vSync();
 		dumpPointer();
-		if (quitRequested())
+		if (_quitRequested)
 			break;
 		if (data.word(kMousebutton) != 0 && data.word(kMousebutton) != data.word(kOldbutton))
 			break;
@@ -1837,7 +1832,7 @@ void DreamBase::enterSymbol() {
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(symbolList);
-	} while ((data.byte(kGetback) == 0) && !quitRequested());
+	} while ((data.byte(kGetback) == 0) && !_quitRequested);
 	if ((data.byte(kSymbolbotnum) == 3) && (data.byte(kSymboltopnum) == 5)) {
 		removeSetObject(43);
 		placeSetObject(46);
@@ -2529,7 +2524,7 @@ void DreamBase::useMenu() {
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(menuList);
-	} while ((data.byte(kGetback) != 1) && !quitRequested());
+	} while ((data.byte(kGetback) != 1) && !_quitRequested);
 	data.byte(kManisoffscreen) = 0;
 	redrawMainScrn();
 	getRidOfTemp();
@@ -3125,7 +3120,7 @@ void DreamBase::decide() {
 	};
 
 	do {
-		if (data.byte(kQuitrequested) != 0)
+		if (_quitRequested)
 			return;
 
 		readMouse();

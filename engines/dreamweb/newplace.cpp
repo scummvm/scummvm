@@ -59,7 +59,7 @@ void DreamBase::selectLocation() {
 	data.byte(kNewlocation) = 255;
 
 	while (data.byte(kNewlocation) == 255) {
-		if (quitRequested())
+		if (_quitRequested)
 			break;
 
 		delPointer();
@@ -84,7 +84,7 @@ void DreamBase::selectLocation() {
 		checkCoords(destList);
 	}
 
-	if (quitRequested() || data.byte(kGetback) == 1 || data.byte(kNewlocation) == data.byte(kLocation)) {
+	if (_quitRequested || data.byte(kGetback) == 1 || data.byte(kNewlocation) == data.byte(kLocation)) {
 		data.byte(kNewlocation) = data.byte(kReallocation);
 		data.byte(kGetback) = 0;
 	}

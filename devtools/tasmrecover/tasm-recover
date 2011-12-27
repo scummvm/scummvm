@@ -59,6 +59,7 @@ p = parser(skip_binary_data = [
 	'id',
 	'place',
 	'blinktab',
+	'quitrequested',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',

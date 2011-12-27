@@ -114,7 +114,8 @@ protected:
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
-public:
+	bool _quitRequested;
+
 	// from backdrop.cpp
 	void doBlocks();
 	uint8 getXAd(const uint8 *setData, uint8 *result);
@@ -446,7 +447,6 @@ public:
 	void readMouse();
 	uint16 readMouseState();
 	void hangOn(uint16 frameCount);
-	bool quitRequested();
 	void lockMon();
 	uint8 *textUnder();
 	void readKey();

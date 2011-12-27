@@ -102,7 +102,7 @@ void DreamWebEngine::waitForVSync() {
 }
 
 void DreamWebEngine::quit() {
-	_base.data.byte(DreamGen::kQuitrequested) = 1;
+	_base._quitRequested = true;
 	_base.data.byte(DreamGen::kLasthardkey) = 1;
 }
 
@@ -213,7 +213,7 @@ Common::Error DreamWebEngine::run() {
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
-	_base.data.byte(DreamGen::kQuitrequested) = 0;
+	_base._quitRequested = false;
 
 	_timer->removeTimerProc(vSyncInterrupt);
 
@@ -417,6 +417,7 @@ namespace DreamGen {
 // FIXME/TODO: Move this to a better place.
 DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
 	_openChangeSize = kInventx+(4*kItempicsize);
+	_quitRequested = false;
 }
 
 } // End of namespace DreamGen

@@ -195,7 +195,7 @@ void DreamBase::examineOb(bool examineAgain) {
 		}
 		}
 
-		if (data.byte(kQuitrequested) != 0)
+		if (_quitRequested)
 			break;
 		if (data.byte(kExamagain) != 0)
 			examineAgain = true;

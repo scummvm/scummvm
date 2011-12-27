@@ -103,7 +103,7 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 				data.word(kCharshift) = 0;
 				for (int i=0; i<2; ++i) {
 					uint16 mouseState = waitFrames();
-					if (data.byte(kQuitrequested))
+					if (_quitRequested)
 						return 0;
 					if (mouseState == 0)
 						continue;

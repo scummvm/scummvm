@@ -72,7 +72,7 @@ void DreamBase::doLoad(int savegameId) {
 		data.byte(kGetback) = 0;
 
 		while (data.byte(kGetback) == 0) {
-			if (quitRequested())
+			if (_quitRequested)
 				return;
 			delPointer();
 			readMouse();
@@ -166,7 +166,7 @@ void DreamBase::saveGame() {
 		data.byte(kGetback) = 0;
 
 		while (data.byte(kGetback) == 0) {
-			if (quitRequested())
+			if (_quitRequested)
 				return;
 			delPointer();
 			checkInput();
@@ -288,7 +288,7 @@ void DreamBase::doSaveLoad() {
 		data.byte(kGetback) = 0;
 
 		do {	// wait ops
-			if (data.byte(kQuitrequested)) {
+			if (_quitRequested) {
 				data.byte(kManisoffscreen) = 0;
 				return;
 			}
@@ -376,7 +376,7 @@ void DreamBase::discOps() {
 	};
 
 	do {
-		if (data.byte(kQuitrequested) != 0)
+		if (_quitRequested)
 			return; // quitdiscops
 
 		delPointer();
@@ -637,7 +637,7 @@ void DreamBase::loadOld() {
 
 	doLoad(-1);
 
-	if (data.byte(kGetback) == 4 || quitRequested())
+	if (data.byte(kGetback) == 4 || _quitRequested)
 		return;
 
 	showDecisions();

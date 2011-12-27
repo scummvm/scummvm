@@ -57,7 +57,7 @@ void DreamBase::talk() {
 		dumpTextLine();
 		data.byte(kGetback) = 0;
 		checkCoords(talkList);
-		if (data.byte(kQuitrequested))
+		if (_quitRequested)
 			break;
 	} while (!data.byte(kGetback));
 
@@ -216,7 +216,7 @@ bool DreamBase::hangOnPQ() {
 		dumpTextLine();
 		checkCoords(quitList);
 
-		if (data.byte(kGetback) == 1 || data.byte(kQuitrequested)) {
+		if (data.byte(kGetback) == 1 || _quitRequested) {
 			// Quit conversation
 			delPointer();
 			data.byte(kPointermode) = 0;
