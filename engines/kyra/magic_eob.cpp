@@ -711,7 +711,7 @@ Item EoBCoreEngine::createMagicWeaponItem(int flags, int icon, int value, int ty
 void EoBCoreEngine::removeMagicWeaponItem(Item item) {
 	_itemTypes[_items[item].type].armorClass = -30;
 	_items[item].block = -2;
-	_items[item].level = -1;
+	_items[item].level = 0xff;
 }
 
 void EoBCoreEngine::updateWallOfForceTimers() {
