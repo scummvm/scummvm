@@ -47,6 +47,7 @@ const unsigned int kUnderTextBufSize = kUnderTextSizeX_f * kUnderTextSizeY_f;
 const unsigned int kUnderTimedTextBufSize = 256 * kUnderTimedTextSizeY_f;
 const unsigned int kLengthOfVars = 68;
 const unsigned int kNumChanges = 250;
+const unsigned int kLenOfMapStore = 22*8*20*8;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -85,6 +86,7 @@ protected:
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
+	uint8 _mapStore[kLenOfMapStore + 32];
 
 	// from people.cpp
 	ReelRoutine _reelRoutines[kNumReelRoutines+1];
@@ -794,7 +796,6 @@ public:
 	inline uint8 *workspace() { return _workspace; }
 	void clearWork();
 
-	uint8 *mapStore();
 	void panelToMap();
 	void mapToPanel();
 	void dumpMap();

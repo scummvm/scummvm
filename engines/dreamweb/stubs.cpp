@@ -836,7 +836,7 @@ void DreamBase::putUnderTimed() {
 }
 
 void DreamBase::triggerMessage(uint16 index) {
-	multiGet(mapStore(), 174, 153, 200, 63);
+	multiGet(_mapStore, 174, 153, 200, 63);
 	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
 	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
 	uint16 y = 156;
@@ -844,7 +844,7 @@ void DreamBase::triggerMessage(uint16 index) {
 	hangOn(140);
 	workToScreen();
 	hangOn(340);
-	multiPut(mapStore(), 174, 153, 200, 63);
+	multiPut(_mapStore, 174, 153, 200, 63);
 	workToScreen();
 	data.byte(kLasttrigger) = 0;
 }
@@ -2464,7 +2464,6 @@ void DreamBase::allocateBuffers() {
 	data.word(kMapdata) = allocateMem(kLengthofmap/16);
 	data.word(kFreedat) = allocateMem(kFreedatlen/16);
 	data.word(kSetdat) = allocateMem(kSetdatlen/16);
-	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
 }
 
 void DreamBase::workToScreenM() {

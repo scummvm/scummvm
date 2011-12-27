@@ -357,16 +357,12 @@ void DreamBase::zoom() {
 	data.byte(kDidzoom) = 1;
 }
 
-uint8 *DreamBase::mapStore() {
-	return getSegment(data.word(kMapstore)).ptr(0, 0);
-}
-
 void DreamBase::panelToMap() {
-	multiGet(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiGet(_mapStore, data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamBase::mapToPanel() {
-	multiPut(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiPut(_mapStore, data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamBase::dumpMap() {
@@ -384,11 +380,12 @@ bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 
 void DreamBase::loadPalFromIFF() {
 	Common::File palFile;
+	uint8* buf = new uint8[2000];
 	palFile.open("DREAMWEB.PAL");
-	palFile.read(mapStore(), 2000);
+	palFile.read(buf, 2000);
 	palFile.close();
 
-	const uint8 *src = mapStore() + 0x30;
+	const uint8 *src = buf + 0x30;
 	uint8 *dst = _mainPal;
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
@@ -401,6 +398,8 @@ void DreamBase::loadPalFromIFF() {
 		}
 		dst[i] = c;
 	}
+
+	delete[] buf;
 }
 
 void DreamBase::createPanel() {

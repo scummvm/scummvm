@@ -284,6 +284,7 @@ p = parser(skip_binary_data = [
 	'endtextname',
 	'gungraphic',
 	'monkface',
+	'mapstore',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')

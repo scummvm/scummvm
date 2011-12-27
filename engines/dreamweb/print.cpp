@@ -253,7 +253,7 @@ void DreamBase::rollEndCreditsGameWon() {
 	data.byte(kVolumeto) = 0;
 	data.byte(kVolumedirection) = (byte)-1;
 
-	multiGet(mapStore(), 75, 20, 160, 160);
+	multiGet(_mapStore, 75, 20, 160, 160);
 
 	const uint8 *string = getTextInFile1(3);
 	const int linespacing = data.word(kLinespacing);
@@ -264,7 +264,7 @@ void DreamBase::rollEndCreditsGameWon() {
 		// line of text.
 		for (int j = 0; j < linespacing; ++j) {
 			vSync();
-			multiPut(mapStore(), 75, 20, 160, 160);
+			multiPut(_mapStore, 75, 20, 160, 160);
 			vSync();
 
 			// Output up to 18 lines of text
@@ -292,7 +292,7 @@ void DreamBase::rollEndCreditsGameWon() {
 }
 
 void DreamBase::rollEndCreditsGameLost() {
-	multiGet(mapStore(), 25, 20, 160, 160);
+	multiGet(_mapStore, 25, 20, 160, 160);
 
 	const uint8 *string = getTextInFile1(49);
 	const int linespacing = data.word(kLinespacing);
@@ -303,7 +303,7 @@ void DreamBase::rollEndCreditsGameLost() {
 		// line of text.
 		for (int j = 0; j < linespacing; ++j) {
 			vSync();
-			multiPut(mapStore(), 25, 20, 160, 160);
+			multiPut(_mapStore, 25, 20, 160, 160);
 			vSync();
 
 			// Output up to 18 lines of text

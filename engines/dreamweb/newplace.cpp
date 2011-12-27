@@ -134,11 +134,11 @@ void DreamBase::lookAtPlace() {
 }
 
 void DreamBase::getUnderCentre() {
-	multiGet(mapStore(), 58, 72, 254, 110);
+	multiGet(_mapStore, 58, 72, 254, 110);
 }
 
 void DreamBase::putUnderCentre() {
-	multiPut(mapStore(), 58, 72, 254, 110);
+	multiPut(_mapStore, 58, 72, 254, 110);
 }
 
 void DreamBase::locationPic() {
