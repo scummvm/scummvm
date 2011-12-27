@@ -420,6 +420,9 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
 	_quitRequested = false;
 
 	_currentSample = 0xff;
+
+	_oldSubject._type = 0;
+	_oldSubject._index = 0;
 }
 
 } // End of namespace DreamGen
