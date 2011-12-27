@@ -21,7 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "dreamweb/stubs.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 

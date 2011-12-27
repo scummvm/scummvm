@@ -653,10 +653,6 @@ public:
 			self.hd.write(
 """	void __dispatch_call(uint16 addr);
 """)
-		self.hd.write(
-"""#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
-
-""")
 
 
 		for p in set(self.methods):

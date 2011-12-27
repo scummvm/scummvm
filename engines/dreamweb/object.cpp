@@ -213,7 +213,7 @@ void DreamBase::examineOb(bool examineAgain) {
 	data.byte(kOpenedob) = 255;
 }
 
-void DreamGenContext::inventory() {
+void DreamBase::inventory() {
 	if (data.byte(kMandead) == 1 || data.word(kWatchingtime) != 0) {
 		blank();
 		return;
@@ -308,7 +308,7 @@ void DreamBase::openOb() {
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
 }
 
-void DreamGenContext::identifyOb() {
+void DreamBase::identifyOb() {
 	if (data.word(kWatchingtime) != 0) {
 		blank();
 		return;

@@ -410,8 +410,6 @@ public:
 	DreamGenContext(DreamWeb::DreamWebEngine *en) : DreamBase(en), Context(this) {}
 
 	void __start();
-#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
-
 };
 
 } // End of namespace DreamGen

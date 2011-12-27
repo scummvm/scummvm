@@ -40,7 +40,7 @@ void DreamBase::talk() {
 	showPointer();
 	workToScreen();
 
-	RectWithCallback<DreamGenContext> talkList[] = {
+	RectWithCallback<DreamBase> talkList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
 		{ 240,290,2,44,&DreamBase::moreTalk },
 		{ 0,320,0,200,&DreamBase::blank },

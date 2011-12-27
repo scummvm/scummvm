@@ -247,6 +247,8 @@ public:
 	void selectOpenOb();
 	void examineOb(bool examineAgain = true);
 	void selectOb();
+	void inventory();
+	void identifyOb();
 
 	// from pathfind.cpp
 	void turnPathOn(uint8 param);
@@ -613,6 +615,30 @@ public:
 	void searchForFiles(uint16 segment);
 	void triggerMessage(uint16 index);
 	void processTrigger();
+	void dreamweb();
+	void screenUpdate();
+	void startup1();
+	void quickQuit();
+	void readOneBlock();
+	void seeCommandTail();
+	void quickQuit2();
+	bool checkIfPerson(uint8 x, uint8 y);
+	bool checkIfFree(uint8 x, uint8 y);
+	bool checkIfEx(uint8 x, uint8 y);
+	void walkAndExamine();
+	void obName(uint8 command, uint8 commandType);
+	bool checkIfSet(uint8 x, uint8 y);
+	void readSetData();
+	void look();
+	void autoLook();
+	void doLook();
+	void mainScreen();
+	void zoomOnOff();
+	void initialInv();
+	void walkIntoRoom();
+	void afterNewRoom();
+	void madmanRun();
+	void showGun();
 
 	// from talk.cpp
 	void talk();
