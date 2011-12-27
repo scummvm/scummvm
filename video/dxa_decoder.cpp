@@ -115,9 +115,9 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
-		memset(_scaledBuffer, 0, _frameSize);
 		if (!_scaledBuffer)
 			error("Error allocating scale buffer (size %u)", _frameSize);
+		memset(_scaledBuffer, 0, _frameSize);
 	}
 
 #ifdef DXA_EXPERIMENT_MAXD
@@ -489,9 +489,9 @@ const Graphics::Surface *DXADecoder::decodeNextFrame() {
 		if ((_inBuffer == NULL) || (_inBufferSize < size)) {
 			free(_inBuffer);
 			_inBuffer = (byte *)malloc(size);
-			memset(_inBuffer, 0, size);
 			if (_inBuffer == NULL)
 				error("Error allocating input buffer (size %u)", size);
+			memset(_inBuffer, 0, size);
 			_inBufferSize = size;
 		}
 
