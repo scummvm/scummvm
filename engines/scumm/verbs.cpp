@@ -1083,6 +1083,10 @@ void ScummEngine_v0::checkExecVerbs() {
 			int prevInventory = _activeInventory;
 			int invOff = _inventoryOffset;
 
+			// GIVE: actor must be selected (not possible via inventory)
+			if ((_activeVerb == 3) && (_activeObject || _activeInventory))
+				return;
+
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
 
@@ -1136,13 +1140,6 @@ void ScummEngine_v0::checkExecVerbs() {
 			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
 			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
 			int objIdx = findObjectIndex(_virtualMouse.x, _virtualMouse.y);
-
-			// If we already have an object selected, and we just clicked an actor
-			// Clear any object we may of also clicked on
-			if ((_activeObject || _activeInventory) && act) {
-				obj = 0;
-				objIdx = 0;
-			}
 
 			if (a->_miscflags & 0x80) {
 				if (_activeVerb != 7 && over != 7) {
@@ -1208,14 +1205,27 @@ void ScummEngine_v0::checkExecVerbs() {
 				return;
 			}
 
-			// Only allowing targetting actors if its the GIVE/USE verb
-			if (_activeVerb == 3 || _activeVerb == 11) {
-				// Different actor selected?
-				if (act) {
-					if (_activeActor != act) {
-						_activeActor = act;
+			// Only allowing targetting actors if its the GIVE verb
+			if (_activeVerb == 3) {
+				if (_activeObject || _activeInventory) {
+					// Once selected the object cannot be changed
+					obj = 0;
+					objIdx = 0;
+
+					// Different actor selected?
+					if (act) {
+						if (_activeActor != act) {
+							_activeActor = act;
+							return;
+						}
+					} else {
 						return;
 					}
+				} else {
+					// An object has to be selected first
+					act = 0;
+					if (!obj)
+						return;
 				}
 			}
 
@@ -1224,9 +1234,12 @@ void ScummEngine_v0::checkExecVerbs() {
 					if (_activeInventory)
 						_activeInvExecute = true;
 
-				// USE
+				// USE / UNLOCK
 				if (_activeVerb == 11 || _activeVerb == 8) {
-					if (obj != _activeObject || obj != _activeObject2) {
+					if (obj != _activeObject && obj != _activeObject2) {
+						if (_activeObject || _activeInventory) {
+							//verbPrep(
+						}
 						if (!_activeObject || _activeInventory) {
 							_activeObject = obj;
 							_activeObjectIndex = objIdx;
