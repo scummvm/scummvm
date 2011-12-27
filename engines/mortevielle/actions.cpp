@@ -26,8 +26,12 @@
  */
 
 #include "mortevielle/actions.h"
+#include "mortevielle/alert.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
+#include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

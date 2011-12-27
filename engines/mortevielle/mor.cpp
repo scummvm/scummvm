@@ -25,7 +25,10 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/alert.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/outtext.h"
+#include "mortevielle/var_mor.h"
 #include "common/str.h"
 
 namespace Mortevielle {
