@@ -921,7 +921,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	_lyle._moveDiff.x = 2;
 	_lyle._moveDiff.y = 1;
 	_lyle.hide();
-	_lyle.setDetails(114, 2, -1, -1, 1, NULL);
+	_lyle.setDetails(114, 2, -1, -1, 1, (SceneItem *)NULL);
 
 	_vechile.postInit();
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -962,7 +962,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.enableControl();
 	}
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, (SceneItem *)NULL);
 }
 
 void Scene114::signal() {
@@ -2830,7 +2830,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		_vechile.setStrip(2);
 		_vechile.setPosition(Common::Point(262, 131));
 		_vechile.setZoom(65);
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_object1.setVisage(182);
@@ -2845,7 +2845,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 
@@ -2997,7 +2997,7 @@ void Scene180::signal() {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_sceneMode = 1801;
@@ -3249,7 +3249,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	_flag.fixPriority(200);
 	_flag.setPosition(Common::Point(170, 31));
 	_flag.animate(ANIM_MODE_7, 0, NULL);
-	_flag.setDetails(190, 8, 26, 19, 1, NULL);
+	_flag.setDetails(190, 8, 26, 19, 1, (SceneItem *)NULL);
 
 	_fieldB52 = true;
 
@@ -3263,7 +3263,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		_lyleCar.setVisage(444);
 		_lyleCar.setFrame(2);
 		_lyleCar.setPosition(Common::Point(54, 114));
-		_lyleCar.setDetails(190, -1, -1, -1, 1, NULL);
+		_lyleCar.setDetails(190, -1, -1, -1, 1, (SceneItem *)NULL);
 
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {

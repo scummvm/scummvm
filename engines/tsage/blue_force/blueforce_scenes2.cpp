@@ -983,17 +983,17 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 	_fireplace.animate(ANIM_MODE_2, NULL);
 
 	_fridge.setDetails(Rect(0, 56, 56, 130), 270, 9, 10, 11, 1, NULL);
-	_object3.setDetails(270, 12, 13, 14, 1, NULL);
-	_laura.setDetails(270, 15, -1, -1, 1, NULL);
-	_skip.setDetails(270, 14, -1, -1, 1, NULL);
-	_lyle.setDetails(270, 34, 35, 36, 1, NULL);
-	_tv.setDetails(270, 3, 4, 5, 1, NULL);
-	_fireplace.setDetails(270, 6, 7, 8, 1, NULL);
+	_object3.setDetails(270, 12, 13, 14, 1, (SceneItem *)NULL);
+	_laura.setDetails(270, 15, -1, -1, 1, (SceneItem *)NULL);
+	_skip.setDetails(270, 14, -1, -1, 1, (SceneItem *)NULL);
+	_lyle.setDetails(270, 34, 35, 36, 1, (SceneItem *)NULL);
+	_tv.setDetails(270, 3, 4, 5, 1, (SceneItem *)NULL);
+	_fireplace.setDetails(270, 6, 7, 8, 1, (SceneItem *)NULL);
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 710) && (BF_GLOBALS._bookmark == bTalkedToGrannyAboutSkipsCard)) {
-		_grandma.setDetails(270, 15, 16, 17, 1, NULL);
+		_grandma.setDetails(270, 15, 16, 17, 1, (SceneItem *)NULL);
 	} else {
-		_grandma.setDetails(270, 40, 16, 17, 1, NULL);
+		_grandma.setDetails(270, 40, 16, 17, 1, (SceneItem *)NULL);
 	}
 
 	_afgan.setDetails(4, 270, 27, 28, 29, 1);
@@ -1420,13 +1420,13 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 	_object5.hide();
 
 	_item5.setDetails(Rect(0, 56, 56, 130), 270, 9, 10, 11, 1, NULL);
-	_object6.setDetails(270, 12, 13, 14, 1, NULL);
-	_object7.setDetails(270, 15, -1, -1, 1, NULL);
-	_object8.setDetails(270, 14, -1, -1, 1, NULL);
-	_object11.setDetails(270, -1, -1, -1, 1, NULL);
-	_tv.setDetails(270, 3, 4, 5, 1, NULL);
-	_object10.setDetails(270, 6, 7, 8, 1, NULL);
-	_object12.setDetails(270, 15, 16, 17, 1, NULL);
+	_object6.setDetails(270, 12, 13, 14, 1, (SceneItem *)NULL);
+	_object7.setDetails(270, 15, -1, -1, 1, (SceneItem *)NULL);
+	_object8.setDetails(270, 14, -1, -1, 1, (SceneItem *)NULL);
+	_object11.setDetails(270, -1, -1, -1, 1, (SceneItem *)NULL);
+	_tv.setDetails(270, 3, 4, 5, 1, (SceneItem *)NULL);
+	_object10.setDetails(270, 6, 7, 8, 1, (SceneItem *)NULL);
+	_object12.setDetails(270, 15, 16, 17, 1, (SceneItem *)NULL);
 	_item3.setDetails(4, 270, 27, 28, 29, 1);
 	_item1.setDetails(1, 270, 18, 19, 20, 1);
 	_item6.setDetails(Rect(278, 50, 318, 72), 270, 21, 22, 23, 1, NULL);
