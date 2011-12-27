@@ -418,6 +418,8 @@ namespace DreamGen {
 DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
+
+	_currentSample = 0xff;
 }
 
 } // End of namespace DreamGen

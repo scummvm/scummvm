@@ -99,12 +99,12 @@ void DreamBase::cancelCh1() {
 void DreamBase::loadRoomsSample() {
 	uint8 sample = _roomsSample;
 
-	if (sample == 255 || data.byte(kCurrentsample) == sample)
+	if (sample == 255 || _currentSample == sample)
 		return; // loaded already
 
 	assert(sample < 100);
 	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
-	data.byte(kCurrentsample) = sample;
+	_currentSample = sample;
 
 	uint8 ch0 = data.byte(kCh0playing);
 	if (ch0 >= 12 && ch0 != 255)

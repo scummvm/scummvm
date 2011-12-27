@@ -119,6 +119,7 @@ public:
 	bool _foreignRelease;
 
 	uint8 _roomsSample;
+	uint8 _currentSample;
 
 	// from backdrop.cpp
 	void doBlocks();

@@ -132,6 +132,7 @@ p = parser(skip_binary_data = [
 	'money2poke',
 	# vars.asm
 	'currentset',
+	'currentsample',
 	'icons1',
 	'icons2',
 	'tempcharset',
