@@ -36,9 +36,12 @@
 
 namespace Kyra {
 
-EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
-	_numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26), _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9), _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
-	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
+EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
+	: KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
+	  _numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26),
+	  _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
+	  _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
+	  _teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
 	_gui = 0;
 	_debugger = 0;
@@ -52,10 +55,10 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_flashShapeTimer = 0;
 	_drawSceneTimer = 0;
 
-	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
-		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
-	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = _blackBoxSmallGrid =
-		_weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
+	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
+	_itemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
+	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
+	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 	_tempIconShape = 0;
 
 	_monsterDustStrings = 0;
@@ -149,42 +152,62 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_wallsOfForce = 0;
 
 	_rrCount = 0;
-	memset(_rrNames, 0, 10 * sizeof(const char*));
+	memset(_rrNames, 0, 10 * sizeof(const char *));
 	memset(_rrId, 0, 10 * sizeof(int8));
 
-	_mainMenuStrings = _levelGainStrings = _monsterSpecAttStrings = _characterGuiStringsHp = _characterGuiStringsWp = _characterGuiStringsWr = _characterGuiStringsSt =
-		_characterGuiStringsIn = _characterStatusStrings7 = _characterStatusStrings8 = _characterStatusStrings9 = _characterStatusStrings12 = _characterStatusStrings13 = 0;
-	_classModifierFlags = _saveThrowLevelIndex = _saveThrowModDiv = _saveThrowModExt = _wandTypes = _drawObjPosIndex = _flightObjFlipIndex = _expObjectTblIndex =
-		_expObjectShpStart = _expObjectTlMode = _expObjectAnimTbl1 = _expObjectAnimTbl2 = _expObjectAnimTbl3 = 0;
-	_monsterStepTable0 = _monsterStepTable1 = _monsterStepTable2 = _monsterStepTable3 = _projectileWeaponAmmoTypes = _flightObjShpMap = _flightObjSclIndex = 0;
-	_monsterCloseAttPosTable1 = _monsterCloseAttPosTable2 = _monsterCloseAttChkTable1 = _monsterCloseAttChkTable2 = _monsterCloseAttDstTable1 = _monsterCloseAttDstTable2 = 0;
-	_monsterProximityTable = _findBlockMonstersTable = _wallOfForceDsY = _wallOfForceDsNumW = _wallOfForceDsNumH = _wallOfForceShpId = _wllFlagPreset = _teleporterShapeCoords = 0;
-		_monsterCloseAttUnkTable = _monsterFrmOffsTable1 = _monsterFrmOffsTable2 = _monsterDirChangeTable = _portalSeq = 0;
+	_mainMenuStrings = _levelGainStrings = _monsterSpecAttStrings = _characterGuiStringsHp = 0;
+	_characterGuiStringsWp = _characterGuiStringsWr = _characterGuiStringsSt = 0;
+	_characterGuiStringsIn = _characterStatusStrings7 = _characterStatusStrings8 = 0;
+	_characterStatusStrings9 = _characterStatusStrings12 = _characterStatusStrings13 = 0;
+	_classModifierFlags = _saveThrowLevelIndex = _saveThrowModDiv = _saveThrowModExt = 0;
+	_wandTypes = _drawObjPosIndex = _flightObjFlipIndex = _expObjectTblIndex = 0;
+	_expObjectShpStart = _expObjectTlMode = _expObjectAnimTbl1 = _expObjectAnimTbl2 = _expObjectAnimTbl3 = 0;
+	_monsterStepTable0 = _monsterStepTable1 = _monsterStepTable2 = _monsterStepTable3 = 0;
+	_projectileWeaponAmmoTypes = _flightObjShpMap = _flightObjSclIndex = 0;
+	_monsterCloseAttPosTable1 = _monsterCloseAttPosTable2 = _monsterCloseAttChkTable1 = 0;
+	_monsterCloseAttChkTable2 = _monsterCloseAttDstTable1 = _monsterCloseAttDstTable2 = 0;
+	_monsterProximityTable = _findBlockMonstersTable = _wallOfForceDsY = _wallOfForceDsNumW = 0;
+	_wallOfForceDsNumH = _wallOfForceShpId = _wllFlagPreset = _teleporterShapeCoords = 0;
+	_monsterCloseAttUnkTable = _monsterFrmOffsTable1 = _monsterFrmOffsTable2 = 0;
+	_monsterDirChangeTable = _portalSeq = 0;
 	_wallOfForceDsX = 0;
-	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = _wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size =
-		_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = _buttonList7Size = _buttonList8Size = 0;
+	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = 0;
+	_wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size = 0;
+	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
+	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
 	_npcPreset = 0;
-	_chargenStatStrings	= _chargenRaceSexStrings = _chargenClassStrings = _chargenAlignmentStrings = _pryDoorStrings = _warningStrings = _ripItemStrings =
-		_cursedString = _enchantedString = _magicObjectStrings = _magicObjectString5 = _patternSuffix = _patternGrFix1 = _patternGrFix2 = _validateArmorString =
-		_validateCursedString = _validateNoDropString = _potionStrings = _wandStrings = _itemMisuseStrings = _suffixStringsRings = _suffixStringsPotions =
-		_suffixStringsWands	= _takenStrings	= _potionEffectStrings = _yesNoStrings = _npcMaxStrings = _okStrings = _npcJoinStrings = _cancelStrings	=
-		_abortStrings = _saveLoadStrings = _mnWord = _mnPrompt = _bookNumbers = _mageSpellList = _clericSpellList = _spellNames = _magicStrings1 = _magicStrings2 =
-		_magicStrings3 = _magicStrings4 = _magicStrings6 = _magicStrings7 = _magicStrings8 = 0;
+	_chargenStatStrings = _chargenRaceSexStrings = _chargenClassStrings = 0;
+	_chargenAlignmentStrings = _pryDoorStrings = _warningStrings = _ripItemStrings = 0;
+	_cursedString = _enchantedString = _magicObjectStrings = _magicObjectString5 = 0;
+	_patternSuffix = _patternGrFix1 = _patternGrFix2 = _validateArmorString = 0;
+	_validateCursedString = _validateNoDropString = _potionStrings = _wandStrings = 0;
+	_itemMisuseStrings = _suffixStringsRings = _suffixStringsPotions = 0;
+	_suffixStringsWands = _takenStrings = _potionEffectStrings = _yesNoStrings = 0;
+	_npcMaxStrings = _okStrings = _npcJoinStrings = _cancelStrings = 0;
+	_abortStrings = _saveLoadStrings = _mnWord = _mnPrompt = _bookNumbers = 0;
+	_mageSpellList = _clericSpellList = _spellNames = _magicStrings1 = 0;
+	_magicStrings2 = _magicStrings3 = _magicStrings4 = _magicStrings6 = 0;
+	_magicStrings7 = _magicStrings8 = 0;
 	_spellAnimBuffer = 0;
-	_sparkEffectDefSteps = _sparkEffectDefSubSteps = _sparkEffectDefShift = _sparkEffectDefAdd = _sparkEffectDefX = _sparkEffectDefY = _sparkEffectOfShift =
-		_sparkEffectOfX	= _sparkEffectOfY = _magicFlightObjectProperties = _turnUndeadEffect = _burningHandsDest = _coneOfColdGfxTbl = 0;
+	_sparkEffectDefSteps = _sparkEffectDefSubSteps = _sparkEffectDefShift = 0;
+	_sparkEffectDefAdd = _sparkEffectDefX = _sparkEffectDefY = _sparkEffectOfShift = 0;
+	_sparkEffectOfX = _sparkEffectOfY = _magicFlightObjectProperties = 0;
+	_turnUndeadEffect = _burningHandsDest = _coneOfColdGfxTbl = 0;
 	_sparkEffectOfFlags1 = _sparkEffectOfFlags2 = 0;
 	_coneOfColdDest1 = _coneOfColdDest2 = _coneOfColdDest3 = _coneOfColdDest4 = 0;
 	_coneOfColdGfxTblSize = 0;
 	_menuButtonDefs = 0;
-	_menuStringsMain = _menuStringsSaveLoad	= _menuStringsOnOff	= _menuStringsSpells = _menuStringsRest	= _menuStringsDrop = _menuStringsExit = _menuStringsStarve =
-		_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = _menuStringsMgc = _menuStringsPrefs = _menuStringsRest2 = _menuStringsRest3 =
-		_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = _menuStringsSpellNo = _menuYesNoStrings = 0;
+	_menuStringsMain = _menuStringsSaveLoad = _menuStringsOnOff = _menuStringsSpells = 0;
+	_menuStringsRest = _menuStringsDrop = _menuStringsExit = _menuStringsStarve = 0;
+	_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = 0;
+	_menuStringsMgc = _menuStringsPrefs = _menuStringsRest2 = _menuStringsRest3 = 0;
+	_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = 0;
+	_menuStringsSpellNo = _menuYesNoStrings = 0;
 	_errorSlotEmptyString = _errorSlotNoNameString = _menuOkString = 0;
-	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj	= _numSpellsPal	= _numSpellsMage = 0;
+	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj = _numSpellsPal = _numSpellsMage = 0;
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -197,15 +220,15 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 #define DWM0 _dscWallMapping.push_back(0)
 #define DWM(x) _dscWallMapping.push_back(&_sceneDrawVar##x)
-	DWM0;		DWM0;		DWM(Down);	DWM(Right);
-	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
-	DWM(Down);	DWM(Left);	DWM(Down);	DWM(Left);
-	DWM0;		DWM0;		DWM(Down);	DWM(Right);
-	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
-	DWM(Down);	DWM(Left);	DWM(Down);	DWM(Left);
-	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
-	DWM(Down);	DWM(Left);	DWM0;		DWM(Right);
-	DWM(Down);	DWM0;		DWM0;		DWM(Left);
+	DWM0;       DWM0;       DWM(Down);  DWM(Right);
+	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
+	DWM(Down);  DWM(Left);  DWM(Down);  DWM(Left);
+	DWM0;       DWM0;       DWM(Down);  DWM(Right);
+	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
+	DWM(Down);  DWM(Left);  DWM(Down);  DWM(Left);
+	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
+	DWM(Down);  DWM(Left);  DWM0;       DWM(Right);
+	DWM(Down);  DWM0;       DWM0;       DWM(Left);
 #undef DWM
 #undef DWM0
 }
@@ -402,7 +425,7 @@ Common::Error EoBCoreEngine::init() {
 	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
 
 	_monsterShapes = new uint8*[36];
-	memset(_monsterShapes, 0, 36 * sizeof(uint8*));
+	memset(_monsterShapes, 0, 36 * sizeof(uint8 *));
 	_monsterDecorations = new SpriteDecoration[36];
 	memset(_monsterDecorations, 0, 36 * sizeof(SpriteDecoration));
 	_monsterPalettes = new uint8*[24];
@@ -1153,7 +1176,7 @@ int EoBCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		gui_drawDialogueBox();
 		_txt->printDialogueText(_npcMaxStrings[0]);
 		int r = runDialogue(-1, 7, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
-			_characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
+		                    _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
 
 		if (r == 6)
 			return 0;
@@ -1187,12 +1210,12 @@ void EoBCoreEngine::removeCharacterFromParty(int charIndex) {
 		if (i == 16 || !c->inventory[i])
 			continue;
 
-		setItemPosition((Item*)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, c->inventory[i], _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, c->inventory[i], _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 		c->inventory[i] = 0;
 	}
 
 	while (c->inventory[16])
-		setItemPosition((Item*)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, getQueuedItem(&c->inventory[16], 0, -1), _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, getQueuedItem(&c->inventory[16], 0, -1), _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 
 	c->inventory[16] = 0;
 
@@ -1281,7 +1304,7 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 	_dialogueHighlightedButton = 0;
 
 	for (int i = 0; i < numStr; i++) {
-		const char *s = va_arg(args, const char*);
+		const char *s = va_arg(args, const char *);
 		if (s)
 			_dialogueButtonString[i] = s;
 		else
@@ -1549,7 +1572,7 @@ void EoBCoreEngine::displayParchment(int id) {
 
 int EoBCoreEngine::countResurrectionCandidates() {
 	_rrCount = 0;
-	memset(_rrNames, 0, 10 * sizeof(const char*));
+	memset(_rrNames, 0, 10 * sizeof(const char *));
 
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
@@ -1617,7 +1640,7 @@ void EoBCoreEngine::seq_portal() {
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 5, 2, Screen::CR_NO_P_CHECK);
 	delay(30 * _tickLength);
 
-	for (const int8 *pos = _portalSeq; *pos > -1 && !shouldQuit(); ) {
+	for (const int8 *pos = _portalSeq; *pos > -1 && !shouldQuit();) {
 		int s = *pos++;
 		_screen->drawShape(0, shapes3[s], 28, 9, 0);
 		_screen->drawShape(0, shapes1[s], 34, 28, 0);
@@ -1814,7 +1837,7 @@ int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 	} else {
 		for (int i = 0; i < 27; i++) {
 			if (_items[_characters[charIndex].inventory[i]].type == t) {
-				SWAP(ammoItem, _characters[charIndex].inventory[i] );
+				SWAP(ammoItem, _characters[charIndex].inventory[i]);
 				if (i < 2)
 					gui_drawCharPortraitWithStats(charIndex);
 				break;
@@ -1954,7 +1977,7 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	int d = (p < 1 || p > 3) ? 0 : _items[item].value;
 
 	if (_flags.gameID == GI_EOB2) {
-		if ((p > 0 && p < 4) || !item ){
+		if ((p > 0 && p < 4) || !item) {
 			if (((_monsterProps[t].immunityFlags & 0x200) && (d <= 0)) || ((_monsterProps[t].immunityFlags & 0x1000) && (d <= 1)))
 				return false;
 		}
@@ -2006,7 +2029,7 @@ bool EoBCoreEngine::flyingObjectMonsterHit(EoBFlyingObject *fo, int monsterIndex
 		if (!characterAttackHitTest(fo->attackerId, monsterIndex, fo->item, 0))
 			return false;
 	}
-	calcAndInflictMonsterDamage(&_monsters[monsterIndex], fo->attackerId, fo->item, 0, (fo->attackerId == -1) ? 0x110: 0x910, 5, 3);
+	calcAndInflictMonsterDamage(&_monsters[monsterIndex], fo->attackerId, fo->item, 0, (fo->attackerId == -1) ? 0x110 : 0x910, 5, 3);
 	return true;
 }
 
@@ -2150,10 +2173,9 @@ int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, i
 			s = 1;
 	}
 
-	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)) &&
-		((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) ||
-		(_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
-			s >>= 1;
+	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/))
+	    && ((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
+		s >>= 1;
 
 	if (p->immunityFlags & 0x2000) {
 		if (flags & 0x100) {
@@ -2191,8 +2213,8 @@ int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int it
 	if (item) {
 		EoBItemType *p = &_itemTypes[itemType];
 		int t = m ? m->type : 0;
-		s += ((m && (_monsterProps[t].capsFlags & 1)) ?	rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
-			rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
+		s += ((m && (_monsterProps[t].capsFlags & 1)) ? rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
+		      rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
 		s += _items[item].value;
 	} else {
 		s += rollDice(1, 2);
@@ -2209,7 +2231,7 @@ bool EoBCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int 
 
 	int s = getSaveThrowModifier(hpModifier, level, type);
 	if (((race == 3 || race == 5) && (type == 4 || type == 1 || type == 0)) || (race == 4 && (type == 4 || type == 1))) {
-		EoBCharacter *c = (EoBCharacter*)target;
+		EoBCharacter *c = (EoBCharacter *)target;
 		s -= constMod[c->constitutionCur];
 	}
 
@@ -2319,6 +2341,6 @@ void EoBCoreEngine::snd_stopSound() {
 	_sound->playSoundEffect(0);
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

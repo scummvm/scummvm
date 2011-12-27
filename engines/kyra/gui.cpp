@@ -53,9 +53,9 @@ void GUI::updateSaveFileList(Common::String targetName, bool excludeQuickSaves) 
 
 	for (Common::StringArray::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
 		char s1 = 0, s2 = 0, s3 = 0;
-		s1 = (*i)[i->size()-3];
-		s2 = (*i)[i->size()-2];
-		s3 = (*i)[i->size()-1];
+		s1 = (*i)[i->size() - 3];
+		s2 = (*i)[i->size() - 2];
+		s3 = (*i)[i->size() - 1];
 		if (!isdigit(static_cast<unsigned char>(s1)) || !isdigit(static_cast<unsigned char>(s2)) || !isdigit(static_cast<unsigned char>(s3)))
 			continue;
 		s1 -= '0';
@@ -63,7 +63,7 @@ void GUI::updateSaveFileList(Common::String targetName, bool excludeQuickSaves) 
 		s3 -= '0';
 		if (excludeQuickSaves && s1 == 9 && s2 == 9)
 			continue;
-		_saveSlots.push_back(s1*100+s2*10+s3);
+		_saveSlots.push_back(s1 * 100 + s2 * 10 + s3);
 	}
 
 	if (_saveSlots.begin() == _saveSlots.end())
@@ -75,7 +75,7 @@ void GUI::updateSaveFileList(Common::String targetName, bool excludeQuickSaves) 
 void GUI::sortSaveSlots() {
 	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
 	if (_saveSlots.size() > 2)
-		Common::sort(_saveSlots.begin()+1, _saveSlots.end(), Common::Greater<int>());
+		Common::sort(_saveSlots.begin() + 1, _saveSlots.end(), Common::Greater<int>());
 }
 
 int GUI::getNextSavegameSlot() {
@@ -117,11 +117,11 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 		Common::InSaveFile *in;
 
 		_savegameList = new char*[_savegameListSize];
-		memset(_savegameList, 0, _savegameListSize * sizeof(char*));
+		memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
 		for (int i = 0; i < numSaves; i++) {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(targetName, _saveSlots[i]).c_str(), header, targetName == _vm->_targetName);
-			char **listEntry = &_savegameList[allowEmptySlots? _saveSlots[i] : i];
+			char **listEntry = &_savegameList[allowEmptySlots ? _saveSlots[i] : i];
 			if (in) {
 				*listEntry = new char[header.description.size() + 1];
 				Common::strlcpy(*listEntry, header.description.c_str(), header.description.size() + 1);

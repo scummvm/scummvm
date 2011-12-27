@@ -57,7 +57,7 @@ int KyraEngine_v2::o2_setCharacterFacingOverwrite(EMCState *script) {
 
 int KyraEngine_v2::o2_trySceneChange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
 	_unkHandleSceneChangeFlag = 1;
 	int success = inputSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -87,7 +87,7 @@ int KyraEngine_v2::o2_checkForItem(EMCState *script) {
 
 int KyraEngine_v2::o2_defineItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineItem(%p) (%d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int freeItem = findFreeItem();
 
 	if (freeItem >= 0) {
@@ -102,13 +102,13 @@ int KyraEngine_v2::o2_defineItem(EMCState *script) {
 
 int KyraEngine_v2::o2_addSpecialExit(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addSpecialExit(%p) (%d, %d, %d, %d, %d)", (const void *)script,
-		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	if (_specialExitCount < 5) {
-		_specialExitTable[_specialExitCount+0] = stackPos(0);
-		_specialExitTable[_specialExitCount+5] = stackPos(1);
-		_specialExitTable[_specialExitCount+10] = stackPos(2) + stackPos(0) - 1;
-		_specialExitTable[_specialExitCount+15] = stackPos(3) + stackPos(1) - 1;
-		_specialExitTable[_specialExitCount+20] = stackPos(4);
+		_specialExitTable[_specialExitCount + 0] = stackPos(0);
+		_specialExitTable[_specialExitCount + 5] = stackPos(1);
+		_specialExitTable[_specialExitCount + 10] = stackPos(2) + stackPos(0) - 1;
+		_specialExitTable[_specialExitCount + 15] = stackPos(3) + stackPos(1) - 1;
+		_specialExitTable[_specialExitCount + 20] = stackPos(4);
 		++_specialExitCount;
 	}
 	return 0;
@@ -226,7 +226,7 @@ int KyraEngine_v2::o2_defineRoomEntrance(EMCState *script) {
 
 int KyraEngine_v2::o2_runAnimationScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_runAnimationScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
-			stackPos(2), stackPos(3));
+	       stackPos(2), stackPos(3));
 
 	runAnimationScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
 	return 0;
@@ -241,7 +241,7 @@ int KyraEngine_v2::o2_setSpecialSceneScriptRunTime(EMCState *script) {
 
 int KyraEngine_v2::o2_defineScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
-		(const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	       (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	const int scene = stackPos(0);
 	strcpy(_sceneList[scene].filename1, stackPosString(1));
 	strcpy(_sceneList[scene].filename2, stackPosString(1));
@@ -323,7 +323,7 @@ int KyraEngine_v2::o2_getVocHigh(EMCState *script) {
 
 int KyraEngine_v2::o2a_setAnimationShapes(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2a_setAnimationShapes(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script,
-			stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	       stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	strcpy(_animShapeFilename, stackPosString(0));
 	_animShapeLastEntry = stackPos(1);
 	_animShapeWidth = stackPos(2);

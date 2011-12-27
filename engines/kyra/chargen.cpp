@@ -169,7 +169,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	_vm->sound()->playTrack(_vm->game() == GI_EOB1 ? 20 : 13);
 	_activeBox = 0;
 
-	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
+	for (bool loop = true; loop && (!_vm->shouldQuit());) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		int inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
@@ -260,7 +260,7 @@ void CharacterGenerator::init() {
 
 	for (int i = 0; i < 17; i++) {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
-		_chargenButtonLabels[i] = c->labelW? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true) : 0;
+		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true) : 0;
 	}
 
 	_screen->copyPage(3, 2);
@@ -380,7 +380,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 	printStats(_activeBox, 2);
 
 	int res = 0;
-	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit(); ) {
+	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit();) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		int inputFlag = getInput(_vm->_activeButtons);
 		int cbx = _activeBox;
@@ -467,7 +467,7 @@ void CharacterGenerator::createPartyMember() {
 		generateStats(_activeBox);
 		statsAndFacesMenu();
 
-		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit(); ) {
+		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit();) {
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
 			_screen->printShadedText(_chargenStrings2[11], 149, 100, 9, 0);
@@ -594,10 +594,10 @@ int CharacterGenerator::getInput(Button *buttonList) {
 	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
 		_vm->sound()->resetTrigger();
 		_vm->sound()->playTrack(20);
-	// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
-	// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
-	// so that the music will not loop. We simply check whether the sound driver is still playing.
 	} else if (_vm->game() == GI_EOB2 && !_vm->sound()->isPlaying()) {
+		// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
+		// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
+		// so that the music will not loop. We simply check whether the sound driver is still playing.
 		_vm->delay(3 * _vm->_tickLength);
 		_vm->sound()->playTrack(13);
 	}
@@ -678,7 +678,7 @@ void CharacterGenerator::modifyMenu() {
 	EoBCharacter *c = &_characters[_activeBox];
 	int8 hpLO = c->hitPointsCur;
 
-	for (int i = 0; i >= 0 && i < 7; ) {
+	for (int i = 0; i >= 0 && i < 7;) {
 		switch (i) {
 		case 0:
 			i = modifyStat(i, &c->strengthCur, &c->strengthExtCur);
@@ -959,8 +959,8 @@ int CharacterGenerator::rollDice() {
 }
 
 int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
-	uint8 *s1 = (uint8*) stat1;
-	uint8 *s2 = (uint8*) stat2;
+	uint8 *s1 = (uint8 *)stat1;
+	uint8 *s2 = (uint8 *)stat2;
 
 	initButtonsFromList(31, 10);
 	Button *b = _vm->gui_getButton(_vm->_activeButtons, index + 1);
@@ -984,10 +984,10 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 		_chargenMinStats[6] = getMinHp(c->cClass, c->constitutionCur, c->level[0], c->level[1], c->level[2]);
 	}
 
-	for (bool loop = true; loop && !_vm->shouldQuit(); ) {
+	for (bool loop = true; loop && !_vm->shouldQuit();) {
 		uint8 v1 = *s1;
 		updateMagicShapes();
-		int	inputFlag = getInput(_vm->_activeButtons);
+		int inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == 0x8009) {
@@ -1139,9 +1139,19 @@ void CharacterGenerator::finish() {
 	_screen->updateScreen();
 
 	if (_vm->game() == GI_EOB1) {
-		static const int8 classDefaultItemsList[] = { 1, 17, 2, 17, 46, -1, 4, -1, 5, -1, 6, 2, 7, -1, 8, -1, 9, 21, 10, 2, 31, 2 };
-		static const int8 classDefaultItemsListIndex[] = { 4, 8, 0, -1, 4, 3, 0, -1, 4, 10, 0, 8, 3, 6, 1, -1, 2, 7, 0, -1,
-			4, 5, 0, -1, 4, 7, 0, 8, 4, 5, 0, 8, 4, 6, 8, 8, 4, 6, 5, 8, 3, 6, 5, -1, 2, 7, 5, 0, 4, 6, 7, 0, 4, 3, 7, 0, 2, 6, 7, 1 };
+		static const int8 classDefaultItemsList[] = {
+			 1, 17,  2, 17, 46, -1,  4, -1,  5, -1,  6,
+			 2,  7, -1,  8, -1,  9, 21, 10,  2, 31,  2
+		};
+
+		static const int8 classDefaultItemsListIndex[] = {
+			 4,  8,  0, -1,  4,  3,  0, -1,  4, 10,
+			 0,  8,  3,  6,  1, -1,  2,  7,  0, -1,
+			 4,  5,  0, -1,  4,  7,  0,  8,  4,  5,
+			 0,  8,  4,  6,  8,  8,  4,  6,  5,  8,
+			 3,  6,  5, -1,  2,  7,  5,  0,  4,  6,
+			 7,  0,  4,  3,  7,  0,  2,  6,  7,  1
+		};
 
 		_characters[0].inventory[2] = _vm->duplicateItem(35);
 
@@ -1416,13 +1426,13 @@ const int32 CharacterGenerator::_classMenuMasks[] = {
 };
 
 const int32 CharacterGenerator::_alignmentMenuMasks[] = {
-	0x01FF, 0x0007, 0x0001, 0x01FF,	0x01FF, 0x01FE, 0x01FF, 0x01FE,
-	0x01FF, 0x01FE, 0x01FE, 0x01FE, 0x01FF,	0x0007,	0x01FF
+	0x01FF, 0x0007, 0x0001, 0x01FF, 0x01FF, 0x01FE, 0x01FF, 0x01FE,
+	0x01FF, 0x01FE, 0x01FE, 0x01FE, 0x01FF, 0x0007, 0x01FF
 };
 
 const int16 CharacterGenerator::_raceModifiers[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0,	1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, 0, 0
+	0, 0, 0, 0, 1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, 0, 0
 };
 
 // Transfer Party
@@ -1627,7 +1637,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 	int highlight = 0;
 	bool update = false;
 
-	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
+	for (bool loop = true; loop && (!_vm->shouldQuit());) {
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
 		_vm->removeInputTop();
 
@@ -1843,7 +1853,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	itm2->type = itm1->type;
 	itm2->level = 0xff;
 
-	switch(itm2->type) {
+	switch (itm2->type) {
 	case 35:
 		itm1->value += 25;
 		// fall through
@@ -1960,6 +1970,6 @@ bool EoBCoreEngine::startPartyTransfer() {
 	return TransferPartyWiz(this, _screen).start();
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
