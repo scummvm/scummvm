@@ -464,8 +464,8 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 		}
 
 	} else {
-		_screen->drawClippedLine(x, y, x + 62, y, guiSettings()->colors.frame1);
-		_screen->drawClippedLine(x, y + 49, x + 62, y + 49, guiSettings()->colors.frame2);
+		_screen->drawClippedLine(x, y, x + 62, y, guiSettings()->colors.frame2);
+		_screen->drawClippedLine(x, y + 49, x + 62, y + 49, guiSettings()->colors.frame1);
 		_screen->drawClippedLine(x - 1, y, x - 1, y + 50, 12);
 		_screen->drawClippedLine(x + 63, y, x + 63, y + 50, 12);
 	}
