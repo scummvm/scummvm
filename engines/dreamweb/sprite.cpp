@@ -429,7 +429,7 @@ void DreamBase::liftSprite(Sprite *sprite, SetObject *objData) {
 }
 
 Reel *DreamBase::getReelStart(uint16 reelPointer) {
-	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + reelPointer * sizeof(Reel) * 8, sizeof(Reel));
+	Reel *reel = &_reelList[reelPointer * 8];
 	return reel;
 }
 
@@ -1101,7 +1101,8 @@ void DreamBase::clearBeforeLoad() {
 	delete[] _backdropBlocks;
 	_backdropBlocks = 0;
 	_setFrames.clear();
-	deallocateMem(data.word(kReels));
+	delete[] _reelList;
+	_reelList = 0;
 	_personText.clear();
 	_setDesc.clear();
 	_blockDesc.clear();

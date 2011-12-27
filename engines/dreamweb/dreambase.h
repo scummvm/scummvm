@@ -155,6 +155,8 @@ protected:
 	TextFile _freeDesc;
 	TextFile _personText;
 	uint16 _personFramesLE[12];
+	RoomPaths _pathData[36];
+	Reel *_reelList;
 
 	// Extras segment (NB: this is saved)
 	GraphicsFile _exFrames;
@@ -517,7 +519,6 @@ public:
 	void allocateBuffers();
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
-	uint16 allocateAndLoad(unsigned int size);
 	void loadTextFile(TextFile &file, const char *fileName);
 	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
 	void loadGraphicsSegment(GraphicsFile &file, unsigned int len);

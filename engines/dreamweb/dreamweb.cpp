@@ -417,6 +417,7 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) :
 	_currentSample = 0xff;
 
 	_backdropBlocks = 0;
+	_reelList = 0;
 
 	_oldSubject._type = 0;
 	_oldSubject._index = 0;

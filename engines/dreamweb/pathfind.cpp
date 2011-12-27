@@ -42,19 +42,16 @@ void DreamBase::turnPathOff(uint8 param) {
 
 void DreamBase::turnAnyPathOn(uint8 param, uint8 room) {
 	findOrMake(param, 0xff, room + 100);
-	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].on = 0xff;
+	_pathData[room].nodes[param].on = 0xff;
 }
 
 void DreamBase::turnAnyPathOff(uint8 param, uint8 room) {
 	findOrMake(param, 0x00, room + 100);
-	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].on = 0x00;
+	_pathData[room].nodes[param].on = 0x00;
 }
 
 RoomPaths *DreamBase::getRoomsPaths() {
-	void *result = getSegment(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
-	return (RoomPaths *)result;
+	return &_pathData[data.byte(kRoomnum)];
 }
 
 void DreamBase::faceRightWay() {
@@ -310,7 +307,7 @@ void DreamBase::workoutFrames() {
 }
 
 byte DreamBase::findFirstPath(byte x, byte y) {
-	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * data.byte(kRoomnum), 0);
+	PathNode *paths = _pathData[data.byte(kRoomnum)].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
 		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
@@ -329,7 +326,7 @@ byte DreamBase::findFirstPath(byte x, byte y) {
 }
 
 byte DreamBase::findPathOfPoint(byte x, byte y) {
-	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * data.byte(kRoomnum), 0);
+	PathNode *paths = _pathData[data.byte(kRoomnum)].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
 		if (paths[index].on != 0xff)

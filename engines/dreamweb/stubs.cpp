@@ -1049,13 +1049,6 @@ void DreamBase::lockMon() {
 	}
 }
 
-uint16 DreamBase::allocateAndLoad(unsigned int size) {
-	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
-	uint16 result = allocateMem(size / 16);
-	engine->readFromFile(getSegment(result).ptr(0, size), size);
-	return result;
-}
-
 void DreamBase::clearAndLoad(uint8 *buf, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
@@ -1368,9 +1361,7 @@ void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 		if (freeObject->mapad[0] == 0xff)
 			freeObject->mapad[0] = value;
 	} else { //path
-//		getSegment(data.word(kReels)).byte(kPathdata + (type - 100) * 144 + index * 8 + 6) = value;
-		PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * (type - 100), 0);
-		paths[index].on = value;
+		_pathData[type - 100].nodes[index].on = value;
 	}
 }
 
@@ -2168,7 +2159,8 @@ void DreamBase::getRidOfAll() {
 	_reel1.clear();
 	_reel2.clear();
 	_reel3.clear();
-	deallocateMem(data.word(kReels));
+	delete[] _reelList;
+	_reelList = 0;
 	_personText.clear();
 	_setDesc.clear();
 	_blockDesc.clear();
@@ -2208,7 +2200,14 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	loadGraphicsSegment(_reel1, len[4]);
 	loadGraphicsSegment(_reel2, len[5]);
 	loadGraphicsSegment(_reel3, len[6]);
-	data.word(kReels) = allocateAndLoad(len[7]);
+
+	// segment 7 consists of 36*38 pathNodes followed by 'reelList'
+	engine->readFromFile((uint8 *)_pathData, 36*sizeof(RoomPaths));
+	unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
+	unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
+	delete[] _reelList;
+	_reelList = new Reel[reelCount];
+	engine->readFromFile((uint8 *)_reelList, reelLen);
 
 	// segment 8 consists of 12 personFrames followed by a TextFile
 	engine->readFromFile((uint8 *)_personFramesLE, 24);
