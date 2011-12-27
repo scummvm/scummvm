@@ -313,7 +313,7 @@ uint16 KyraRpgEngine::processDialogue() {
 	return res;
 }
 
-void KyraRpgEngine::delayUntil(uint32 time, bool doUpdate, bool isMainLoop) {
+void KyraRpgEngine::delayUntil(uint32 time, bool doUpdate, bool isMainLoop, bool) {
 	uint32 curTime = _system->getMillis();
 	if (time > curTime)
 		delay(time - curTime, doUpdate, isMainLoop);

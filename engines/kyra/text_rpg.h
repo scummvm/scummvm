@@ -37,7 +37,7 @@ public:
 	TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr);
 	virtual ~TextDisplayer_rpg();
 
-	virtual void setupField(int dim, bool mode);
+	void setupField(int dim, bool mode);
 
 	void printDialogueText(int stringId, const char *pageBreakString);
 	void printDialogueText(const char *str, bool wait = false);
