@@ -39,7 +39,7 @@ void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {
 			key -= 11;
 	}
 	key -= 20;
-	showFrame(tempGraphics(), x, y, key, 0);
+	showFrame(_tempGraphics, x, y, key, 0);
 }
 
 void DreamBase::loadKeypad() {
@@ -71,7 +71,7 @@ void DreamBase::showKeypad() {
 		}
 		if ((data.byte(kLightcount) >= 60) && (data.byte(kLightcount) < 100))
 			--frameIndex;
-		showFrame(tempGraphics(), kKeypadx+60, y, frameIndex, 0);
+		showFrame(_tempGraphics, kKeypadx+60, y, frameIndex, 0);
 	}
 }
 
@@ -224,8 +224,8 @@ void DreamBase::buttonPress(uint8 buttonId) {
 }
 
 void DreamBase::showOuterPad() {
-	showFrame(tempGraphics(), kKeypadx-3, kKeypady-4, 1, 0);
-	showFrame(tempGraphics(), kKeypadx+74, kKeypady+76, 37, 0);
+	showFrame(_tempGraphics, kKeypadx-3, kKeypady-4, 1, 0);
+	showFrame(_tempGraphics, kKeypadx+74, kKeypady+76, 37, 0);
 }
 
 void DreamBase::dumpKeypad() {

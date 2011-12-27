@@ -28,11 +28,13 @@
 
 namespace DreamGen {
 
+struct GraphicsFile;
+
 struct Sprite {
 	uint16 _updateCallback;
 	uint16 w2;
 	uint16 w4;
-	uint16 _frameData;
+	const GraphicsFile *_frameData;
 	uint16 w8;
 	uint8  x;
 	uint8  y;
@@ -305,6 +307,24 @@ struct TextFile {
 	void clear() {
 		delete[] _text;
 		_text = 0;
+	}
+};
+
+struct GraphicsFile {
+	GraphicsFile() : _data(0) { }
+
+	Frame _frames[347];
+	uint8 *_data;
+
+	const uint8 *getFrameData(unsigned int i) const {
+		// There is 2080 bytes of Frame data, but that is between 346 and 347
+		// frames
+		assert(i < 346);
+		return _data + _frames[i].ptr();
+	}
+	void clear() {
+		delete[] _data;
+		_data = 0;
 	}
 };
 

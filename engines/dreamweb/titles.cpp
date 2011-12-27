@@ -42,7 +42,7 @@ void DreamBase::monkSpeaking() {
 	loadRoomsSample();
 	loadIntoTemp("DREAMWEB.G15");
 	clearWork();
-	showFrame(tempGraphics(), 160, 72, 0, 128);	// show monk
+	showFrame(_tempGraphics, 160, 72, 0, 128);	// show monk
 	workToScreen();
 	data.byte(kVolume) = 7;
 	data.byte(kVolumedirection) = (byte)-1;

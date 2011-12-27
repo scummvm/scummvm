@@ -188,14 +188,14 @@ void DreamBase::monitorLogo() {
 }
 
 void DreamBase::printLogo() {
-	showFrame(tempGraphics(), 56, 32, 0, 0);
+	showFrame(_tempGraphics, 56, 32, 0, 0);
 	showCurrentFile();
 }
 
 void DreamBase::input() {
 	memset(_inputLine, 0, 64);
 	data.word(kCurpos) = 0;
-	printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
+	printChar(_tempCharset, data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
 	multiDump(data.word(kMonadx), data.word(kMonady), 6, 8);
 	data.word(kMonadx) += 6;
 	data.word(kCurslocx) = data.word(kMonadx);
@@ -227,7 +227,7 @@ void DreamBase::input() {
 			continue;
 		multiGet(_mapStore + data.word(kCurpos) * 256, data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
-		printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
+		printChar(_tempCharset, data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		_inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
 		data.word(kMonadx) += charWidth;
 		++data.word(kCurpos);
@@ -266,7 +266,7 @@ void DreamBase::printCurs() {
 	multiGet(_textUnder, x, y, 6, height);
 	++data.word(kMaintimer);
 	if ((data.word(kMaintimer) & 16) == 0)
-		showFrame(engine->tempCharset(), x, y, '/' - 32, 0);
+		showFrame(_tempCharset, x, y, '/' - 32, 0);
 	multiDump(x - 6, y, 12, height);
 }
 
@@ -297,17 +297,17 @@ void DreamBase::showCurrentFile() {
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = engine->modifyChar(c);
-		printChar(engine->tempCharset(), &x, 37, c, 0, NULL, NULL);
+		printChar(_tempCharset, &x, 37, c, 0, NULL, NULL);
 	}
 }
 
 void DreamBase::accessLightOn() {
-	showFrame(tempGraphics(), 74, 182, 8, 0);
+	showFrame(_tempGraphics, 74, 182, 8, 0);
 	multiDump(74, 182, 12, 8);
 }
 
 void DreamBase::accessLightOff() {
-	showFrame(tempGraphics(), 74, 182, 7, 0);
+	showFrame(_tempGraphics, 74, 182, 7, 0);
 	multiDump(74, 182, 12, 8);
 }
 
@@ -340,22 +340,22 @@ void DreamBase::netError() {
 }
 
 void DreamBase::powerLightOn() {
-	showFrame(tempGraphics(), 257+4, 182, 6, 0);
+	showFrame(_tempGraphics, 257+4, 182, 6, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
 void DreamBase::powerLightOff() {
-	showFrame(tempGraphics(), 257+4, 182, 5, 0);
+	showFrame(_tempGraphics, 257+4, 182, 5, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
 void DreamBase::lockLightOn() {
-	showFrame(tempGraphics(), 56, 182, 10, 0);
+	showFrame(_tempGraphics, 56, 182, 10, 0);
 	multiDump(58, 182, 12, 8);
 }
 
 void DreamBase::lockLightOff() {
-	showFrame(tempGraphics(), 56, 182, 9, 0);
+	showFrame(_tempGraphics, 56, 182, 9, 0);
 	multiDump(58, 182, 12, 8);
 }
 
@@ -370,10 +370,10 @@ void DreamBase::turnOnPower() {
 }
 
 void DreamBase::printOuterMon() {
-	showFrame(tempGraphics(), 40, 32, 1, 0);
-	showFrame(tempGraphics(), 264, 32, 2, 0);
-	showFrame(tempGraphics(), 40, 12, 3, 0);
-	showFrame(tempGraphics(), 40, 164, 4, 0);
+	showFrame(_tempGraphics, 40, 32, 1, 0);
+	showFrame(_tempGraphics, 264, 32, 2, 0);
+	showFrame(_tempGraphics, 40, 12, 3, 0);
+	showFrame(_tempGraphics, 40, 164, 4, 0);
 }
 
 void DreamBase::loadPersonal() {

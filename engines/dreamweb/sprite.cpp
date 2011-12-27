@@ -58,14 +58,14 @@ void DreamBase::printASprite(const Sprite *sprite) {
 		c = 8;
 	else
 		c = 0;
-	showFrame((const Frame *)getSegment(sprite->_frameData).ptr(0, 0), x, y, sprite->frameNumber, c);
+	showFrame(*sprite->_frameData, x, y, sprite->frameNumber, c);
 }
 
 void DreamBase::clearSprites() {
 	_spriteTable.clear();
 }
 
-Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
+Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
 	// Note: the original didn't append sprites here, but filled up the
 	// first unused entry. This can change the order of entries, but since they
 	// are drawn based on the priority field, this shouldn't matter.
@@ -109,7 +109,7 @@ void DreamBase::spriteUpdate() {
 }
 
 void DreamBase::initMan() {
-	Sprite *sprite = makeSprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, data.word(kMainsprites), 0);
+	Sprite *sprite = makeSprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, &_mainSprites, 0);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;
@@ -477,8 +477,7 @@ void DreamBase::showRain() {
 	if (_rainList.empty())
 		return;
 
-	const Frame *frame = (const Frame *)getSegment(data.word(kMainsprites)).ptr(58 * sizeof(Frame), sizeof(Frame));
-	const uint8 *frameData = getSegment(data.word(kMainsprites)).ptr(kFrframes + frame->ptr(), 512);
+	const uint8 *frameData = _mainSprites.getFrameData(58);
 
 	for (i = _rainList.begin(); i != _rainList.end(); ++i) {
 		Rain &rain = *i;
@@ -1102,13 +1101,14 @@ void DreamBase::clearBeforeLoad() {
 	//clearRest
 	memset(_mapData, 0, kMaplen);
 	delete[] _backdropBlocks;
-	deallocateMem(data.word(kSetframes));
+	_backdropBlocks = 0;
+	_setFrames.clear();
 	deallocateMem(data.word(kReels));
 	deallocateMem(data.word(kPeople));
 	deallocateMem(data.word(kSetdesc));
 	deallocateMem(data.word(kBlockdesc));
 	deallocateMem(data.word(kRoomdesc));
-	deallocateMem(data.word(kFreeframes));
+	_freeFrames.clear();
 	deallocateMem(data.word(kFreedesc));
 
 	data.byte(kRoomloaded) = 0;

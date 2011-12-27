@@ -250,6 +250,11 @@ p = parser(skip_binary_data = [
 	'puzzletext',
 	'commandtext',
 	'traveltext',
+	'tempgraphics',
+	'tempgraphics2',
+	'tempgraphics3',
+	'tempsprites',
+	'charset1',
 	# vars.asm - constants
 	'openinvlist',
 	'ryaninvlist',

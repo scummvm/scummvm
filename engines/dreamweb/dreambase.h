@@ -131,6 +131,21 @@ protected:
 	TextFile _puzzleText;
 	TextFile _commandText;
 
+	// graphics files
+	GraphicsFile _tempGraphics;
+	GraphicsFile _tempGraphics2;
+	GraphicsFile _tempGraphics3;
+	GraphicsFile _icons1;
+	GraphicsFile _icons2;
+	GraphicsFile _tempCharset;
+	GraphicsFile _charset1;
+	GraphicsFile _mainSprites;
+	const GraphicsFile *_currentCharset;
+
+	// room graphics files
+	GraphicsFile _setFrames;
+	GraphicsFile _freeFrames;
+
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
@@ -146,7 +161,7 @@ public:
 	uint8 getXAd(const uint8 *setData, uint8 *result);
 	uint8 getYAd(const uint8 *setData, uint8 *result);
 	uint8 getMapAd(const uint8 *setData, uint16 *x, uint16 *y);
-	void calcFrFrame(const Frame *frameBase, uint16 frameNum, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
+	void calcFrFrame(const Frame &frame, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
 	void makeBackOb(SetObject *objData, uint16 x, uint16 y);
 	void showAllObs();
 	void getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
@@ -348,13 +363,13 @@ public:
 	void poolGuard(ReelRoutine &routine);
 
 	// from print.cpp
-	uint8 getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
-	void printChar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
-	void printChar(const Frame* charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
-	void printBoth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
+	uint8 getNextWord(const GraphicsFile &charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
+	void printChar(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
+	void printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
+	void printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
 	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
 	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
-	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
+	uint8 getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	uint16 waitFrames();
@@ -403,7 +418,7 @@ public:
 	void printSprites();
 	void printASprite(const Sprite *sprite);
 	void clearSprites();
-	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
+	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi);
 	void initMan();
 	void walking(Sprite *sprite);
 	void aboutTurn(Sprite *sprite);
@@ -462,9 +477,6 @@ public:
 	void showRyanPage();
 	void switchRyanOn();
 	void switchRyanOff();
-	Frame *tempGraphics();
-	Frame *tempGraphics2();
-	Frame *tempGraphics3();
 	void middlePanel();
 	void showDiary();
 	void readMouse();
@@ -492,6 +504,7 @@ public:
 	void deallocateMem(uint16 segment);
 	uint16 allocateAndLoad(unsigned int size);
 	void loadTextFile(TextFile &file, const char *fileName);
+	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp(const char *fileName);
@@ -550,7 +563,6 @@ public:
 	void getRidOfTemp2();
 	void getRidOfTemp3();
 	void getRidOfTempCharset();
-	void getRidOfTempsP();
 	void getRidOfAll();
 	void placeSetObject(uint8 index);
 	void removeSetObject(uint8 index);
@@ -832,6 +844,9 @@ public:
 	void vSync();
 	void setMode();
 	void showPCX(const Common::String &name);
+	void showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height);
+	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
+	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	bool pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y);

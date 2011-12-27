@@ -25,8 +25,8 @@
 namespace DreamGen {
 
 void DreamBase::showRyanPage() {
-	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
-	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+	showFrame(_icons1, kInventx + 167, kInventy - 12, 12, 0);
+	showFrame(_icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
 
 void DreamBase::findAllRyan() {
@@ -79,30 +79,32 @@ void DreamBase::makeWorn(DynObject *object) {
 }
 
 void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
-	showFrame(engine->icons1(), x - 2, y - 1, 10, 0);
+	showFrame(_icons1, x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
 
-	Frame *extras = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-	Frame *frees = (Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
-	Frame *frames = (flag == 4) ? extras : frees;
-	showFrame(frames, x + 18, y + 19, 3 * index + 1, 128);
+	if (flag == kExObjectType) {
+		Frame *extras = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+		showFrame(extras, x + 18, y + 19, 3 * index + 1, 128);
+	} else {
+		showFrame(_freeFrames, x + 18, y + 19, 3 * index + 1, 128);
+	}
 	const DynObject *object = (const DynObject *)getAnyAdDir(index, flag);
 	bool worn = isItWorn(object);
 	if (worn)
-		showFrame(engine->icons1(), x - 3, y - 2, 7, 0);
+		showFrame(_icons1, x - 3, y - 2, 7, 0);
 }
 
 void DreamBase::obPicture() {
 	if (data.byte(kObjecttype) == kSetObjectType1)
 		return;
-	Frame *frames;
-	if (data.byte(kObjecttype) == kExObjectType)
-		frames = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-	else
-		frames = (Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 	uint8 frame = 3 * data.byte(kCommand) + 1;
-	showFrame(frames, 160, 68, frame, 0x80);
+	if (data.byte(kObjecttype) == kExObjectType) {
+		const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+		showFrame(frames, 160, 68, frame, 0x80);
+	} else {
+		showFrame(_freeFrames, 160, 68, frame, 0x80);
+	}
 }
 
 void DreamBase::obIcons() {
@@ -110,10 +112,10 @@ void DreamBase::obIcons() {
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {
 		// can open it
-		showFrame(engine->icons2(), 210, 1, 4, 0);
+		showFrame(_icons2, 210, 1, 4, 0);
 	}
 
-	showFrame(engine->icons2(), 260, 1, 1, 0);
+	showFrame(_icons2, 260, 1, 1, 0);
 }
 
 void DreamBase::examineOb(bool examineAgain) {

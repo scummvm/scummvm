@@ -273,6 +273,45 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
 }
 
+
+void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+	uint8 width, height;
+	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
+}
+
+void DreamBase::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height) {
+	if (effectsFlag) {
+		if (effectsFlag & 128) { //centred
+			x -= width / 2;
+			y -= height / 2;
+		}
+		if (effectsFlag & 64) { // diffDest
+			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
+			/*
+			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
+			return;
+			*/
+		}
+		if (effectsFlag & 8) { // printList
+			//addToPrintList(x - data.word(kMapadx), y - data.word(kMapady)); // NB: Commented in the original asm
+		}
+		if (effectsFlag & 4) { // flippedX
+			frameOutFx(workspace(), pSrc, 320, width, height, x, y);
+			return;
+		}
+		if (effectsFlag & 2) { // noMask
+			frameOutNm(workspace(), pSrc, 320, width, height, x, y);
+			return;
+		}
+		if (effectsFlag & 32) {
+			frameOutBh(workspace(), pSrc, 320, width, height, x, y);
+			return;
+		}
+	}
+	// "noEffects"
+	frameOutV(workspace(), pSrc, 320, width, height, x, y);
+}
+
 void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	const Frame *frame = frameData + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
@@ -292,37 +331,29 @@ void DreamBase::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 fra
 	*height = frame->height;
 	const uint8 *pSrc = ((const uint8 *)frameData) + frame->ptr() + 2080;
 
-	if (effectsFlag) {
-		if (effectsFlag & 128) { //centred
-			x -= *width / 2;
-			y -= *height / 2;
-		}
-		if (effectsFlag & 64) { // diffDest
-			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
-			/*
-			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
-			return;
-			*/
-		}
-		if (effectsFlag & 8) { // printList
-			//addToPrintList(x - data.word(kMapadx), y - data.word(kMapady)); // NB: Commented in the original asm
-		}
-		if (effectsFlag & 4) { // flippedX
-			frameOutFx(workspace(), pSrc, 320, *width, *height, x, y);
-			return;
-		}
-		if (effectsFlag & 2) { // noMask
-			frameOutNm(workspace(), pSrc, 320, *width, *height, x, y);
-			return;
-		}
-		if (effectsFlag & 32) {
-			frameOutBh(workspace(), pSrc, 320, *width, *height, x, y);
-			return;
-		}
+	showFrameInternal(pSrc, x, y, effectsFlag, *width, *height);
+}
+
+void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+	const Frame *frame = &frameData._frames[frameNumber];
+	if ((frame->width == 0) && (frame->height == 0)) {
+		*width = 0;
+		*height = 0;
+		return;
 	}
-	// "noEffects"
-	frameOutV(workspace(), pSrc, 320, *width, *height, x, y);
-	return;
+
+	// "notBlankShow"
+	if ((effectsFlag & 128) == 0) {
+		x += frame->x;
+		y += frame->y;
+	}
+
+	// "skipOffsets"
+	*width = frame->width;
+	*height = frame->height;
+	const uint8 *pSrc = frameData.getFrameData(frameNumber);
+
+	showFrameInternal(pSrc, x, y, effectsFlag, *width, *height);
 }
 
 void DreamBase::clearWork() {
@@ -373,8 +404,8 @@ bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
 	SetObject *setObject = getSetAd(pos->index);
-	Frame *frame = (Frame *)getSegment(data.word(kSetframes)).ptr(kFramedata, 0) + setObject->index;
-	const uint8 *ptr = getSegment(data.word(kSetframes)).ptr(kFrames, 0) + frame->ptr() + y * frame->width + x;
+	const Frame &frame = _setFrames._frames[setObject->index];
+	const uint8 *ptr = _setFrames.getFrameData(setObject->index) + y * frame.width + x;
 	return *ptr != 0;
 }
 
@@ -403,26 +434,25 @@ void DreamBase::loadPalFromIFF() {
 }
 
 void DreamBase::createPanel() {
-	showFrame(engine->icons2(), 0, 8, 0, 2);
-	showFrame(engine->icons2(), 160, 8, 0, 2);
-	showFrame(engine->icons2(), 0, 104, 0, 2);
-	showFrame(engine->icons2(), 160, 104, 0, 2);
+	showFrame(_icons2, 0, 8, 0, 2);
+	showFrame(_icons2, 160, 8, 0, 2);
+	showFrame(_icons2, 0, 104, 0, 2);
+	showFrame(_icons2, 160, 104, 0, 2);
 }
 
 void DreamBase::createPanel2() {
 	createPanel();
-	showFrame(engine->icons2(), 0, 0, 5, 2);
-	showFrame(engine->icons2(), 160, 0, 5, 2);
+	showFrame(_icons2, 0, 0, 5, 2);
+	showFrame(_icons2, 160, 0, 5, 2);
 }
 
 void DreamBase::showPanel() {
-	showFrame(engine->icons1(), 72, 0, 19, 0);
-	showFrame(engine->icons1(), 192, 0, 19, 0);
+	showFrame(_icons1, 72, 0, 19, 0);
+	showFrame(_icons1, 192, 0, 19, 0);
 }
 
 void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
-	const Frame *freeFrames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(kFrframedata, 0);
-	const Frame &freeFrame = freeFrames[3*from + offset];
+	const Frame &freeFrame = _freeFrames._frames[3*from + offset];
 
 	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
 	Frame &exFrame = exFrames[3*to + offset];
@@ -433,7 +463,7 @@ void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	exFrame.y = freeFrame.y;
 	uint16 byteCount = freeFrame.width * freeFrame.height;
 
-	const uint8 *src = getSegment(data.word(kFreeframes)).ptr(kFrframes + freeFrame.ptr(), byteCount);
+	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
 	uint8 *dst = getSegment(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
 	memcpy(dst, src, byteCount);
 

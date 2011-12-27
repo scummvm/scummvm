@@ -58,18 +58,10 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel0 = 0;
 	_channel1 = 0;
 
-	_icons1 = NULL;
-	_icons2 = NULL;
-	_tempCharset = NULL;
-
 	_language = gameDesc->desc.language;
 }
 
 DreamWebEngine::~DreamWebEngine() {
-	assert(_icons1 == NULL);
-	assert(_icons2 == NULL);
-	assert(_tempCharset == NULL);
-
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 }
@@ -420,6 +412,8 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) : engine(en) {
 	_quitRequested = false;
 
 	_currentSample = 0xff;
+
+	_backdropBlocks = 0;
 
 	_oldSubject._type = 0;
 	_oldSubject._index = 0;

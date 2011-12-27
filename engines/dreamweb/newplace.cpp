@@ -98,8 +98,8 @@ void DreamBase::selectLocation() {
 
 void DreamBase::showCity() {
 	clearWork();
-	showFrame(tempGraphics(), 57, 32, 0, 0);
-	showFrame(tempGraphics(), 120+57, 32, 1, 0);
+	showFrame(_tempGraphics, 57, 32, 0, 0);
+	showFrame(_tempGraphics, 120+57, 32, 1, 0);
 }
 
 void DreamBase::lookAtPlace() {
@@ -116,10 +116,10 @@ void DreamBase::lookAtPlace() {
 	delPointer();
 	delTextLine();
 	getUnderCentre();
-	showFrame(tempGraphics3(), 60, 72, 0, 0);
-	showFrame(tempGraphics3(), 60, 72 + 55, 4, 0);
+	showFrame(_tempGraphics3, 60, 72, 0, 0);
+	showFrame(_tempGraphics3, 60, 72 + 55, 4, 0);
 	if (_foreignRelease)
-		showFrame(tempGraphics3(), 60, 72+55+21, 4, 0);
+		showFrame(_tempGraphics3, 60, 72+55+21, 4, 0);
 
 	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
 	findNextColon(&string);
@@ -146,21 +146,21 @@ void DreamBase::locationPic() {
 	byte picture = roomPics[data.byte(kDestpos)];
 
 	if (picture >= 6)
-		showFrame(tempGraphics2(), 104, 138 + 14, picture - 6, 0);	// Second slot
+		showFrame(_tempGraphics2, 104, 138 + 14, picture - 6, 0);	// Second slot
 	else
-		showFrame(tempGraphics(),  104, 138 + 14, picture + 4, 0);
+		showFrame(_tempGraphics,  104, 138 + 14, picture + 4, 0);
 
 	if (data.byte(kDestpos) == data.byte(kReallocation))
-		showFrame(tempGraphics(), 104, 140 + 14, 3, 0);	// Currently in this location
+		showFrame(_tempGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
 
 	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
 	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
 }
 
 void DreamBase::showArrows() {
-	showFrame(tempGraphics(), 116 - 12, 16, 0, 0);
-	showFrame(tempGraphics(), 226 + 12, 16, 1, 0);
-	showFrame(tempGraphics(), 280, 14, 2, 0);
+	showFrame(_tempGraphics, 116 - 12, 16, 0, 0);
+	showFrame(_tempGraphics, 226 + 12, 16, 1, 0);
+	showFrame(_tempGraphics, 280, 14, 2, 0);
 }
 
 void DreamBase::nextDest() {

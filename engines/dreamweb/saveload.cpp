@@ -118,9 +118,7 @@ void DreamBase::doLoad(int savegameId) {
 	// If we reach this point, loadPosition() has just been called.
 	// Among other things, it will have filled g_MadeUpRoomDat.
 
-	// kTempgraphics might not have been allocated if we bypassed all menus
-	if (data.word(kTempgraphics) != 0xFFFF)
-		getRidOfTemp();
+	getRidOfTemp();
 
 	startLoading(g_madeUpRoomDat);
 	loadRoomsSample();
@@ -338,16 +336,16 @@ void DreamBase::getBackToOps() {
 }
 
 void DreamBase::showMainOps() {
-	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
-	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
-	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 8, 0);
+	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 7, 0);
+	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
 void DreamBase::showDiscOps() {
-	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
-	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
-	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
-	showFrame(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
+	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 9, 0);
+	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 10, 0);
+	showFrame(_tempGraphics, kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
 void DreamBase::discOps() {
@@ -648,7 +646,7 @@ void DreamBase::loadOld() {
 void DreamBase::showDecisions() {
 	createPanel2();
 	showOpBox();
-	showFrame(tempGraphics(), kOpsx + 17, kOpsy + 13, 6, 0);
+	showFrame(_tempGraphics, kOpsx + 17, kOpsy + 13, 6, 0);
 	underTextLine();
 }
 
@@ -750,35 +748,35 @@ void DreamBase::selectSlot() {
 }
 
 void DreamBase::showSlots() {
-	showFrame(tempGraphics(), kOpsx + 7, kOpsy + 8, 2, 0);
+	showFrame(_tempGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
 
 	uint16 y = kOpsy + 11;
 
 	for (int slot = 0; slot < 7; slot++) {
 		if (slot == data.byte(kCurrentslot))
-			showFrame(tempGraphics(), kOpsx + 10, y, 3, 0);
+			showFrame(_tempGraphics, kOpsx + 10, y, 3, 0);
 
 		y += 10;
 	}
 }
 
 void DreamBase::showOpBox() {
-	showFrame(tempGraphics(), kOpsx, kOpsy, 0, 0);
+	showFrame(_tempGraphics, kOpsx, kOpsy, 0, 0);
 
 	// CHECKME: There seem to be versions of dreamweb in which this call
 	// should be removed. It displays a red dot on the ops dialogs if left in.
-	showFrame(tempGraphics(), kOpsx, kOpsy + 55, 4, 0);
+	showFrame(_tempGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 
 void DreamBase::showLoadOps() {
-	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
 }
 
 void DreamBase::showSaveOps() {
-	showFrame(tempGraphics(), kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(tempGraphics(), kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 

@@ -24,7 +24,7 @@
 
 namespace DreamGen {
 
-void DreamBase::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
+void DreamBase::printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
 	printChar(charSet, &newX, y, c, nextChar, &width, &height);
@@ -32,7 +32,7 @@ void DreamBase::printBoth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, ui
 	*x = newX;
 }
 
-uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
+uint8 DreamBase::getNextWord(const GraphicsFile &charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
 	while (true) {
@@ -50,14 +50,14 @@ uint8 DreamBase::getNextWord(const Frame *charSet, const uint8 *string, uint8 *t
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = *string;
-			uint8 width = charSet[firstChar - 32 + data.word(kCharshift)].width;
+			uint8 width = charSet._frames[firstChar - 32 + data.word(kCharshift)].width;
 			width = kernChars(firstChar, secondChar, width);
 			*totalWidth += width;
 		}
 	}
 }
 
-void DreamBase::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamBase::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 
@@ -75,23 +75,22 @@ void DreamBase::printChar(const Frame *charSet, uint16* x, uint16 y, uint8 c, ui
 	(*x) += *width;
 }
 
-void DreamBase::printChar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamBase::printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	printChar(charSet, &x, y, c, nextChar, width, height);
 }
 
 uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
-	const Frame* charSet = (const Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
 	do {
 		uint16 offset = x;
-		uint16 charCount = getNumber(charSet, string, maxWidth, centered, &offset);
+		uint16 charCount = getNumber(_charset1, string, maxWidth, centered, &offset);
 		do {
 			uint8 c0 = string[0];
 			uint8 c1 = string[1];
 			uint8 c2 = string[2];
 			c0 = engine->modifyChar(c0);
-			printBoth(charSet, &offset, y, c0, c1);
+			printBoth(_charset1, &offset, y, c0, c1);
 			if ((c1 == 0) || (c1 == ':')) {
 				return 0;
 			}
@@ -99,7 +98,7 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
 				uint16 offset2 = offset;
-				printBoth(charSet, &offset2, y, c1, c2);
+				printBoth(_charset1, &offset2, y, c1, c2);
 				data.word(kCharshift) = 0;
 				for (int i=0; i<2; ++i) {
 					uint16 mouseState = waitFrames();
@@ -126,7 +125,7 @@ uint8 DreamBase::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxW
 
 uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
-	const Frame *charSet = engine->currentCharset();
+	const GraphicsFile &charSet = *_currentCharset;
 	while (true) {
 		uint16 offset = x;
 		uint8 charCount = getNumber(charSet, *string, maxWidth, centered, &offset);
@@ -148,7 +147,7 @@ uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 ma
 	}
 }
 
-uint8 DreamBase::getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
+uint8 DreamBase::getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
 	while (true) {
@@ -207,12 +206,11 @@ uint16 DreamBase::waitFrames() {
 const char *DreamBase::monPrint(const char *string) {
 	data.byte(kKerning) = 1;
 	uint16 x = data.word(kMonadx);
-	Frame *charset = engine->tempCharset();
 	const char *iterator = string;
 	bool done = false;
 	while (!done) {
 
-		uint16 count = getNumber(charset, (const uint8 *)iterator, 166, false, &x);
+		uint16 count = getNumber(_tempCharset, (const uint8 *)iterator, 166, false, &x);
 		do {	
 			char c = *iterator++;
 			if (c == ':')
@@ -228,7 +226,7 @@ const char *DreamBase::monPrint(const char *string) {
 				break;
 			}
 			c = engine->modifyChar(c);
-			printChar(charset, &x, data.word(kMonady), c, 0, NULL, NULL);
+			printChar(_tempCharset, &x, data.word(kMonady), c, 0, NULL, NULL);
 			data.word(kCurslocx) = x;
 			data.word(kCurslocy) = data.word(kMonady);
 			data.word(kMaintimer) = 1;

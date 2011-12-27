@@ -99,15 +99,14 @@ uint8 DreamBase::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
 	return 1;
 }
 
-void DreamBase::calcFrFrame(const Frame *frameBase, uint16 frameNum, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
-	const Frame *frame = frameBase + frameNum;
-	*width = frame->width;
-	*height = frame->height;
+void DreamBase::calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
+	*width = frame.width;
+	*height = frame.height;
 
-	objPos->xMin = (x + frame->x) & 0xff;
-	objPos->yMin = (y + frame->y) & 0xff;
-	objPos->xMax = objPos->xMin + frame->width;
-	objPos->yMax = objPos->yMin + frame->height;
+	objPos->xMin = (x + frame.x) & 0xff;
+	objPos->yMin = (y + frame.y) & 0xff;
+	objPos->xMax = objPos->xMin + frame.width;
+	objPos->yMax = objPos->yMin + frame.height;
 }
 
 void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
@@ -115,7 +114,7 @@ void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 		return;
 	uint8 priority = objData->priority;
 	uint8 type = objData->type;
-	Sprite *sprite = makeSprite(x, y, addr_backobject, data.word(kSetframes), 0);
+	Sprite *sprite = makeSprite(x, y, addr_backobject, &_setFrames, 0);
 
 	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
 	assert(objDataOffset % sizeof(SetObject) == 0);
@@ -135,7 +134,7 @@ void DreamBase::showAllObs() {
 
 	_setList.clear();
 
-	const Frame *frameBase = (const Frame *)getSegment(data.word(kSetframes)).ptr(0, 0);
+	const GraphicsFile &frameBase = _setFrames;
 	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, count * sizeof(SetObject));
 	for (size_t i = 0; i < count; ++i) {
 		SetObject *setEntry = setEntries + i;
@@ -147,7 +146,7 @@ void DreamBase::showAllObs() {
 			continue;
 		uint8 width, height;
 		ObjPos objPos;
-		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
+		calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
@@ -218,7 +217,7 @@ void DreamBase::showAllFree() {
 	_freeList.clear();
 
 	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
-	const Frame *frameBase = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
+	const GraphicsFile &frameBase = _freeFrames;
 	for (size_t i = 0; i < count; ++i) {
 		uint16 x, y;
 		uint8 mapAd = getMapAd(freeObjects[i].mapad, &x, &y);
@@ -226,7 +225,7 @@ void DreamBase::showAllFree() {
 			uint8 width, height;
 			ObjPos objPos;
 			uint16 currentFrame = 3 * i;
-			calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
+			calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
@@ -274,7 +273,7 @@ void DreamBase::showAllEx() {
 		uint8 width, height;
 		ObjPos objPos;
 		uint16 currentFrame = 3 * i;
-		calcFrFrame(frameBase, currentFrame, &width, &height, x, y, &objPos);
+		calcFrFrame(frameBase[currentFrame], &width, &height, x, y, &objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
 			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);

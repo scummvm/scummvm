@@ -640,8 +640,22 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	// FIXME: This triggers "Deallocating non existent segment" errors when
 	// quitting from a menu.
 	getRidOfAll();
-	engine->freeIcons1();
-	engine->freeIcons2();
+
+	_icons1.clear();
+	_icons2.clear();
+	_charset1.clear();
+	_tempGraphics.clear();
+	_tempGraphics2.clear();
+	_tempGraphics3.clear();
+	_tempCharset.clear();
+	_mainSprites.clear();
+
+	_textFile1.clear();
+	_textFile2.clear();
+	_textFile3.clear();
+	_travelText.clear();
+	_puzzleText.clear();
+	_commandText.clear();
 }
 
 void DreamBase::loadTextFile(TextFile &file, const char *fileName)
@@ -775,20 +789,36 @@ void *DreamBase::standardLoadCPP(const char *fileName, uint16 *outSizeInBytes) {
 	return buffer;
 }
 
+void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
+	FileHeader header;
+
+	Common::File f;
+	f.open(fileName);
+	f.read((uint8 *)&header, sizeof(FileHeader));
+	uint16 sizeInBytes = header.len(0);
+
+	assert(sizeInBytes >= 2080);
+	delete[] file._data;
+	file._data = new uint8[sizeInBytes - 2080];
+
+	f.read((uint8 *)file._frames, 2080);
+	f.read(file._data, sizeInBytes - 2080);
+}
+
 void DreamBase::loadIntoTemp(const char *fileName) {
-	data.word(kTempgraphics) = standardLoad(fileName);
+	loadGraphicsFile(_tempGraphics, fileName);
 }
 
 void DreamBase::loadIntoTemp2(const char *fileName) {
-	data.word(kTempgraphics2) = standardLoad(fileName);
+	loadGraphicsFile(_tempGraphics2, fileName);
 }
 
 void DreamBase::loadIntoTemp3(const char *fileName) {
-	data.word(kTempgraphics3) = standardLoad(fileName);
+	loadGraphicsFile(_tempGraphics3, fileName);
 }
 
 void DreamBase::loadTempCharset(const char *fileName) {
-	engine->setTempCharset(standardLoadCPP(fileName));
+	loadGraphicsFile(_tempCharset, fileName);
 }
 
 void DreamBase::hangOnCurs(uint16 frameCount) {
@@ -955,17 +985,6 @@ uint16 DreamBase::allocateMem(uint16 paragraphs) {
 void DreamBase::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
-
-	// CHECKME: Do we really need this? From brief testing it appears
-	// the sprite table is cleared entirely shortly after this happens
-	// anyway.
-	Common::List<Sprite>::iterator i;
-	for (i = _spriteTable.begin(); i != _spriteTable.end(); ) {
-		if (i->_frameData == segment)
-			i = _spriteTable.erase(i);
-		else
-			++i;
-	}
 }
 
 void DreamBase::DOSReturn() {
@@ -1131,7 +1150,7 @@ void DreamBase::crosshair() {
 	} else {
 		frame = 29;
 	}
-	showFrame(engine->icons1(), kZoomx + 24, kZoomy + 19, frame, 0);
+	showFrame(_icons1, kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
 void DreamBase::delTextLine() {
@@ -1505,7 +1524,7 @@ void DreamBase::showBlink() {
 		blinkFrame = 6;
 	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
 	uint8 width, height;
-	showFrame(engine->icons1(), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
+	showFrame(_icons1, 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
 void DreamBase::dumpBlink() {
@@ -1546,12 +1565,13 @@ void DreamBase::showPointer() {
 	uint16 y = data.word(kMousey);
 	data.word(kOldpointery) = data.word(kMousey);
 	if (data.byte(kPickup) == 1) {
-		const Frame *frames;
-		if (data.byte(kObjecttype) != kExObjectType)
-			frames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
-		else
-			frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
-		const Frame *frame = frames + (3 * data.byte(kItemframe) + 1);
+		const Frame *frame;
+		if (data.byte(kObjecttype) != kExObjectType) {
+			frame = &_freeFrames._frames[(3 * data.byte(kItemframe) + 1)];
+		} else {
+			const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+			frame = frames + (3 * data.byte(kItemframe) + 1);
+		}
 		uint8 width = frame->width;
 		uint8 height = frame->height;
 		if (width < 12)
@@ -1565,10 +1585,15 @@ void DreamBase::showPointer() {
 		data.word(kOldpointerx) = xMin;
 		data.word(kOldpointery) = yMin;
 		multiGet(_pointerBack, xMin, yMin, width, height);
-		showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
-		showFrame(engine->icons1(), x, y, 3, 128);
+		if (data.byte(kObjecttype) != kExObjectType) {
+			showFrame(_freeFrames, x, y, 3 * data.byte(kItemframe) + 1, 128);
+		} else {
+			const Frame *frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+			showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
+		}
+		showFrame(_icons1, x, y, 3, 128);
 	} else {
-		const Frame *frame = engine->icons1() + (data.byte(kPointerframe) + 20);
+		const Frame *frame = &_icons1._frames[data.byte(kPointerframe) + 20];
 		uint8 width = frame->width;
 		uint8 height = frame->height;
 		if (width < 12)
@@ -1578,7 +1603,7 @@ void DreamBase::showPointer() {
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
 		multiGet(_pointerBack, x, y, width, height);
-		showFrame(engine->icons1(), x, y, data.byte(kPointerframe) + 20, 0);
+		showFrame(_icons1, x, y, data.byte(kPointerframe) + 20, 0);
 	}
 }
 
@@ -1712,6 +1737,9 @@ void DreamBase::showIcon() {
 		panelIcons1();
 		zoomIcon();
 	} else {
+		error("Unimplemented tempsprites code called");
+		// the tempsprites segment is never initialized, but used here.
+/*
 		Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
 		showFrame(tempSprites, 72, 2, 45, 0);
 		showFrame(tempSprites, 72+47, 2, 46, 0);
@@ -1719,7 +1747,13 @@ void DreamBase::showIcon() {
 		showFrame(tempSprites, 160+88, 2, 45, 4 & 0xfe);
 		showFrame(tempSprites, 160+43, 2, 46, 4 & 0xfe);
 		showFrame(tempSprites, 160+101, 21, 49, 4 & 0xfe);
-		middlePanel();
+
+		// middle panel
+		showFrame(tempSprites, 72 + 47 + 20, 0, 48, 0);
+		showFrame(tempSprites, 72 + 19, 21, 47, 0);
+		showFrame(tempSprites, 160 + 23, 0, 48, 4);
+		showFrame(tempSprites, 160 + 71, 21, 47, 4);
+*/
 	}
 }
 
@@ -1932,7 +1966,7 @@ void DreamBase::mainScreen() {
 
 void DreamBase::showWatch() {
 	if (data.byte(kWatchon)) {
-		showFrame(engine->icons1(), 250, 1, 6, 0);
+		showFrame(_icons1, 250, 1, 6, 0);
 		showTime();
 	}
 }
@@ -1947,22 +1981,21 @@ void DreamBase::dumpWatch() {
 void DreamBase::showTime() {
 	if (data.byte(kWatchon) == 0)
 		return;
-	Frame *charset = (Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
 
 	int seconds = data.byte(kSecondcount);
 	int minutes = data.byte(kMinutecount);
 	int hours = data.byte(kHourcount);
 
-	showFrame(charset, 282+5, 21, 91*3+10 + seconds / 10, 0);
-	showFrame(charset, 282+9, 21, 91*3+10 + seconds % 10, 0);
+	showFrame(_charset1, 282+5, 21, 91*3+10 + seconds / 10, 0);
+	showFrame(_charset1, 282+9, 21, 91*3+10 + seconds % 10, 0);
 
-	showFrame(charset, 270+5, 21, 91*3 + minutes / 10, 0);
-	showFrame(charset, 270+11, 21, 91*3 + minutes % 10, 0);
+	showFrame(_charset1, 270+5, 21, 91*3 + minutes / 10, 0);
+	showFrame(_charset1, 270+11, 21, 91*3 + minutes % 10, 0);
 
-	showFrame(charset, 256+5, 21, 91*3 + hours / 10, 0);
-	showFrame(charset, 256+11, 21, 91*3 + hours % 10, 0);
+	showFrame(_charset1, 256+5, 21, 91*3 + hours / 10, 0);
+	showFrame(_charset1, 256+11, 21, 91*3 + hours % 10, 0);
 
-	showFrame(charset, 267+5, 21, 91*3+20, 0);
+	showFrame(_charset1, 267+5, 21, 91*3+20, 0);
 }
 
 void DreamBase::watchCount() {
@@ -1970,7 +2003,7 @@ void DreamBase::watchCount() {
 		return;
 	++data.byte(kTimercount);
 	if (data.byte(kTimercount) == 9) {
-		showFrame((Frame *)getSegment(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
+		showFrame(_charset1, 268+4, 21, 91*3+21, 0);
 		data.byte(kWatchdump) = 1;
 	} else if (data.byte(kTimercount) == 18) {
 		data.byte(kTimercount) = 0;
@@ -2007,7 +2040,7 @@ void DreamBase::roomName() {
 void DreamBase::zoomIcon() {
 	if (data.byte(kZoomon) == 0)
 		return;
-	showFrame(engine->icons1(), kZoomx, kZoomy-1, 8, 0);
+	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamBase::loadRoom() {
@@ -2032,14 +2065,10 @@ void DreamBase::loadRoom() {
 }
 
 void DreamBase::readSetData() {
-	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
-
-	void *icons1Buffer = standardLoadCPP("DREAMWEB.G00");
-	engine->setIcons1(icons1Buffer);
-	void *icons2Buffer = standardLoadCPP("DREAMWEB.G01");
-	engine->setIcons2(icons2Buffer);
-
-	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
+	loadGraphicsFile(_charset1, "DREAMWEB.C00");
+	loadGraphicsFile(_icons1, "DREAMWEB.G00");
+	loadGraphicsFile(_icons2, "DREAMWEB.G01");
+	loadGraphicsFile(_mainSprites, "DREAMWEB.S00");
 	loadTextFile(_puzzleText, "DREAMWEB.T80");
 	loadTextFile(_commandText, "DREAMWEB.T84");
 	useCharset1();
@@ -2049,18 +2078,6 @@ void DreamBase::readSetData() {
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
 	//engine->readFromFile(volumeTab, 2048-256);
 	//engine->closeFile();
-}
-
-Frame * DreamBase::tempGraphics() {
-	return (Frame *)getSegment(data.word(kTempgraphics)).ptr(0, 0);
-}
-
-Frame * DreamBase::tempGraphics2() {
-	return (Frame *)getSegment(data.word(kTempgraphics2)).ptr(0, 0);
-}
-
-Frame * DreamBase::tempGraphics3() {
-	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
 void DreamBase::findRoomInLoc() {
@@ -2123,15 +2140,15 @@ void DreamBase::doLook() {
 }
 
 void DreamBase::useCharset1() {
-	engine->setCurrentCharset((Frame *)getSegment(data.word(kCharset1)).ptr(0, 0));
+	_currentCharset = &_charset1;
 }
 
 void DreamBase::useTempCharset() {
-	engine->setCurrentCharset(engine->tempCharset());
+	_currentCharset = &_tempCharset;
 }
 
 void DreamBase::getRidOfTemp() {
-	deallocateMem(data.word(kTempgraphics));
+	_tempGraphics.clear();
 }
 
 void DreamBase::getRidOfTempText() {
@@ -2139,24 +2156,22 @@ void DreamBase::getRidOfTempText() {
 }
 
 void DreamBase::getRidOfTemp2() {
-	deallocateMem(data.word(kTempgraphics2));
+	_tempGraphics2.clear();
 }
 
 void DreamBase::getRidOfTemp3() {
-	deallocateMem(data.word(kTempgraphics3));
+	_tempGraphics3.clear();
 }
 
 void DreamBase::getRidOfTempCharset() {
-	engine->freeTempCharset();
-}
-
-void DreamBase::getRidOfTempsP() {
-	deallocateMem(data.word(kTempsprites));
+	_tempCharset.clear();
 }
 
 void DreamBase::getRidOfAll() {
 	delete[] _backdropBlocks;
-	deallocateMem(data.word(kSetframes));
+	_backdropBlocks = 0;
+
+	_setFrames.clear();
 	deallocateMem(data.word(kReel1));
 	deallocateMem(data.word(kReel2));
 	deallocateMem(data.word(kReel3));
@@ -2165,7 +2180,7 @@ void DreamBase::getRidOfAll() {
 	deallocateMem(data.word(kSetdesc));
 	deallocateMem(data.word(kBlockdesc));
 	deallocateMem(data.word(kRoomdesc));
-	deallocateMem(data.word(kFreeframes));
+	_freeFrames.clear();
 	deallocateMem(data.word(kFreedesc));
 }
 
@@ -2188,7 +2203,14 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 
 	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
-	data.word(kSetframes) = allocateAndLoad(len[2]);
+
+	// TODO: Create function for loading a GraphicsFile from a file segment
+	_setFrames.clear();
+	assert(len[2] >= 2080);
+	engine->readFromFile((uint8 *)_setFrames._frames, 2080);
+	_setFrames._data = new uint8[len[2] - 2080];
+	engine->readFromFile(_setFrames._data, len[2] - 2080);
+
 	if (!skipDat)
 		clearAndLoad(data.word(kSetdat), 255, len[3], kSetdatlen);
 	else
@@ -2196,6 +2218,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	// NB: The skipDat version of this function as called by restoreall
 	// had a 'call bloc' instead of 'call loadseg' for reel1,
 	// but 'bloc' was not defined.
+	// TODO: kReel1/2/3 are also GraphicsFiles?
 	data.word(kReel1) = allocateAndLoad(len[4]);
 	data.word(kReel2) = allocateAndLoad(len[5]);
 	data.word(kReel3) = allocateAndLoad(len[6]);
@@ -2204,7 +2227,14 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	data.word(kSetdesc) = allocateAndLoad(len[9]);
 	data.word(kBlockdesc) = allocateAndLoad(len[10]);
 	data.word(kRoomdesc) = allocateAndLoad(len[11]);
-	data.word(kFreeframes) = allocateAndLoad(len[12]);
+
+	// TODO: Create function for loading a GraphicsFile from a file segment
+	_freeFrames.clear();
+	assert(len[12] >= 2080);
+	engine->readFromFile((uint8 *)_freeFrames._frames, 2080);
+	_freeFrames._data = new uint8[len[12] - 2080];
+	engine->readFromFile(_freeFrames._data, len[12] - 2080);
+
 	if (!skipDat)
 		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
 	else
@@ -2260,10 +2290,10 @@ void DreamBase::showFolder() {
 	if (data.byte(kFolderpage)) {
 		useTempCharset();
 		createPanel2();
-		showFrame(tempGraphics(), 0, 0, 0, 0);
-		showFrame(tempGraphics(), 143, 0, 1, 0);
-		showFrame(tempGraphics(), 0, 92, 2, 0);
-		showFrame(tempGraphics(), 143, 92, 3, 0);
+		showFrame(_tempGraphics, 0, 0, 0, 0);
+		showFrame(_tempGraphics, 143, 0, 1, 0);
+		showFrame(_tempGraphics, 0, 92, 2, 0);
+		showFrame(_tempGraphics, 143, 92, 3, 0);
 		folderExit();
 		if (data.byte(kFolderpage) != 1)
 			showLeftPage();
@@ -2273,21 +2303,21 @@ void DreamBase::showFolder() {
 		underTextLine();
 	} else {
 		createPanel2();
-		showFrame(tempGraphics3(), 143-28, 0, 0, 0);
-		showFrame(tempGraphics3(), 143-28, 92, 1, 0);
+		showFrame(_tempGraphics3, 143-28, 0, 0, 0);
+		showFrame(_tempGraphics3, 143-28, 92, 1, 0);
 		folderExit();
 		underTextLine();
 	}
 }
 
 void DreamBase::showLeftPage() {
-	showFrame(tempGraphics2(), 0, 12, 3, 0);
+	showFrame(_tempGraphics2, 0, 12, 3, 0);
 	uint16 y = 12+5;
 	for (size_t i = 0; i < 9; ++i) {
-		showFrame(tempGraphics2(), 0, y, 4, 0);
+		showFrame(_tempGraphics2, 0, y, 4, 0);
 		y += 16;
 	}
-	showFrame(tempGraphics2(), 0, y, 5, 0);
+	showFrame(_tempGraphics2, 0, y, 5, 0);
 	data.word(kLinespacing) = 8;
 	data.word(kCharshift) = 91;
 	data.byte(kKerning) = 1;
@@ -2314,14 +2344,14 @@ void DreamBase::showLeftPage() {
 }
 
 void DreamBase::showRightPage() {
-	showFrame(tempGraphics2(), 143, 12, 0, 0);
+	showFrame(_tempGraphics2, 143, 12, 0, 0);
 	uint16 y = 12+37;
 	for (size_t i = 0; i < 7; ++i) {
-		showFrame(tempGraphics2(), 143, y, 1, 0);
+		showFrame(_tempGraphics2, 143, y, 1, 0);
 		y += 16;
 	}
 
-	showFrame(tempGraphics2(), 143, y, 2, 0);
+	showFrame(_tempGraphics2, 143, y, 2, 0);
 	data.word(kLinespacing) = 8;
 	data.byte(kKerning) = 1;
 	uint8 pageIndex = data.byte(kFolderpage) - 1;
@@ -2339,14 +2369,14 @@ void DreamBase::showRightPage() {
 }
 
 void DreamBase::showExit() {
-	showFrame(engine->icons1(), 274, 154, 11, 0);
+	showFrame(_icons1, 274, 154, 11, 0);
 }
 
 void DreamBase::showMan() {
-	showFrame(engine->icons1(), 0, 0, 0, 0);
-	showFrame(engine->icons1(), 0, 114, 1, 0);
+	showFrame(_icons1, 0, 0, 0, 0);
+	showFrame(_icons1, 0, 114, 1, 0);
 	if (data.byte(kShadeson))
-		showFrame(engine->icons1(), 28, 25, 2, 0);
+		showFrame(_icons1, 28, 25, 2, 0);
 }
 
 void DreamBase::panelIcons1() {
@@ -2355,14 +2385,14 @@ void DreamBase::panelIcons1() {
 		x = 48;
 	else
 		x = 0;
-	showFrame(engine->icons2(), 204 + x, 4, 2, 0);
+	showFrame(_icons2, 204 + x, 4, 2, 0);
 	if (data.byte(kZoomon) != 1)
-		showFrame(engine->icons1(), 228 + x, 8, 5, 0);
+		showFrame(_icons1, 228 + x, 8, 5, 0);
 	showWatch();
 }
 
 void DreamBase::examIcon() {
-	showFrame(engine->icons2(), 254, 5, 3, 0);
+	showFrame(_icons2, 254, 5, 3, 0);
 }
 
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
@@ -2443,7 +2473,7 @@ void DreamBase::folderHints() {
 }
 
 void DreamBase::folderExit() {
-	showFrame(tempGraphics2(), 296, 178, 6, 0);
+	showFrame(_tempGraphics2, 296, 178, 6, 0);
 }
 
 void DreamBase::loadTravelText() {
@@ -2491,7 +2521,7 @@ void DreamBase::showMenu() {
 	++data.byte(kMenucount);
 	if (data.byte(kMenucount) == 37*2)
 		data.byte(kMenucount) = 0;
-	showFrame(tempGraphics(), kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
+	showFrame(_tempGraphics, kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
 }
 
 void DreamBase::dumpMenu() {
@@ -2507,9 +2537,9 @@ void DreamBase::useMenu() {
 	data.byte(kNewobs) = 0;
 	drawFloor();
 	printSprites();
-	showFrame(tempGraphics2(), kMenux-48, kMenuy-4, 4, 0);
+	showFrame(_tempGraphics2, kMenux-48, kMenuy-4, 4, 0);
 	getUnderMenu();
-	showFrame(tempGraphics2(), kMenux+54, kMenuy+72, 5, 0);
+	showFrame(_tempGraphics2, kMenux+54, kMenuy+72, 5, 0);
 	workToScreenM();
 	data.byte(kGetback) = 0;
 	do {
@@ -2609,19 +2639,19 @@ uint8 DreamBase::nextSymbol(uint8 symbol) {
 }
 
 void DreamBase::showSymbol() {
-	showFrame(tempGraphics(), kSymbolx, kSymboly, 12, 0);
+	showFrame(_tempGraphics, kSymbolx, kSymboly, 12, 0);
 
-	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx-44, kSymboly+20, data.byte(kSymboltopnum), 32);
+	showFrame(_tempGraphics, data.byte(kSymboltopx) + kSymbolx-44, kSymboly+20, data.byte(kSymboltopnum), 32);
 	uint8 nextTopSymbol = nextSymbol(data.byte(kSymboltopnum));
-	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx+5, kSymboly+20, nextTopSymbol, 32);
+	showFrame(_tempGraphics, data.byte(kSymboltopx) + kSymbolx+5, kSymboly+20, nextTopSymbol, 32);
 	uint8 nextNextTopSymbol = nextSymbol(nextTopSymbol);
-	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx+54, kSymboly+20, nextNextTopSymbol, 32);
+	showFrame(_tempGraphics, data.byte(kSymboltopx) + kSymbolx+54, kSymboly+20, nextNextTopSymbol, 32);
 
-	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx-44, kSymboly+49, 6 + data.byte(kSymbolbotnum), 32);
+	showFrame(_tempGraphics, data.byte(kSymbolbotx) + kSymbolx-44, kSymboly+49, 6 + data.byte(kSymbolbotnum), 32);
 	uint8 nextBotSymbol = nextSymbol(data.byte(kSymbolbotnum));
-	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx+5, kSymboly+49, 6 + nextBotSymbol, 32);
+	showFrame(_tempGraphics, data.byte(kSymbolbotx) + kSymbolx+5, kSymboly+49, 6 + nextBotSymbol, 32);
 	uint8 nextNextBotSymbol = nextSymbol(nextBotSymbol);
-	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
+	showFrame(_tempGraphics, data.byte(kSymbolbotx) + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
 }
 
 void DreamBase::readKey() {
@@ -2961,16 +2991,11 @@ void DreamBase::examineInventory() {
 }
 
 void DreamBase::middlePanel() {
-	Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
-	showFrame(tempSprites, 72 + 47 + 20, 0, 48, 0);
-	showFrame(tempSprites, 72 + 19, 21, 47, 0);
-	showFrame(tempSprites, 160 + 23, 0, 48, 4);
-	showFrame(tempSprites, 160 + 71, 21, 47, 4);
 }
 
 void DreamBase::showDiary() {
-	showFrame(tempGraphics(), kDiaryx, kDiaryy + 37, 1, 0);
-	showFrame(tempGraphics(), kDiaryx + 176, kDiaryy + 108, 2, 0);
+	showFrame(_tempGraphics, kDiaryx, kDiaryy + 37, 1, 0);
+	showFrame(_tempGraphics, kDiaryx + 176, kDiaryy + 108, 2, 0);
 }
 
 void DreamBase::underTextLine() {
@@ -3166,8 +3191,8 @@ void DreamBase::showGun() {
 	data.byte(kVolume) = 0;
 	loadIntoTemp("DREAMWEB.G13");
 	createPanel2();
-	showFrame(tempGraphics(), 100, 4, 0, 0);
-	showFrame(tempGraphics(), 158, 106, 1, 0);
+	showFrame(_tempGraphics, 100, 4, 0, 0);
+	showFrame(_tempGraphics, 158, 106, 1, 0);
 	workToScreen();
 	getRidOfTemp();
 	fadeScreenUp();
@@ -3511,7 +3536,7 @@ void DreamBase::updateSymbolBot() {
 }
 
 void DreamBase::showDiaryPage() {
-	showFrame(tempGraphics(), kDiaryx, kDiaryy, 0, 0);
+	showFrame(_tempGraphics, kDiaryx, kDiaryy, 0, 0);
 	data.byte(kKerning) = 1;
 	useTempCharset();
 	data.word(kCharshift) = 91+91;
@@ -3558,7 +3583,7 @@ void DreamBase::lookAtCard() {
 	getRidOfReels();
 	loadKeypad();
 	createPanel2();
-	showFrame(tempGraphics(), 160, 80, 42, 128);
+	showFrame(_tempGraphics, 160, 80, 42, 128);
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -3568,7 +3593,7 @@ void DreamBase::lookAtCard() {
 	workToScreenM();
 	hangOnW(280);
 	createPanel2();
-	showFrame(tempGraphics(), 160, 80, 42, 128);
+	showFrame(_tempGraphics, 160, 80, 42, 128);
 	printDirect(obText, 36, 130, 241, 241 & 1);
 	workToScreenM();
 	hangOnW(200);
@@ -3614,10 +3639,10 @@ void DreamBase::showDiaryKeys() {
 
 	if (data.byte(kPressed) == 'N') {
 		byte frame = (data.byte(kPresscount) == 1) ? 3 : 4;
-		showFrame(tempGraphics(), kDiaryx + 94, kDiaryy + 97, frame, 0);
+		showFrame(_tempGraphics, kDiaryx + 94, kDiaryy + 97, frame, 0);
 	} else {
 		byte frame = (data.byte(kPresscount) == 1) ? 5 : 6;
-		showFrame(tempGraphics(), kDiaryx + 151, kDiaryy + 71, frame, 0);
+		showFrame(_tempGraphics, kDiaryx + 151, kDiaryy + 71, frame, 0);
 	}
 
 	if (data.byte(kPresscount) == 1)
