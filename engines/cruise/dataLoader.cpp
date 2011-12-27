@@ -369,13 +369,13 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	destPtr = filesDatabase[fileIndex].subData.ptr;
 
-	memcpy(destPtr, ptr2, loadFileVar1);
-
-	//fontSize = READ_BE_UINT32(ptr2);
-
 	if (destPtr != NULL) {
 		int32 i;
 		uint8 *currentPtr;
+
+		memcpy(destPtr, ptr2, loadFileVar1);
+
+		//fontSize = READ_BE_UINT32(ptr2);
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
