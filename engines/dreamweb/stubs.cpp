@@ -2148,7 +2148,7 @@ void DreamBase::getRidOfTempsP() {
 }
 
 void DreamBase::getRidOfAll() {
-	deallocateMem(data.word(kBackdrop));
+	delete[] _backdropBlocks;
 	deallocateMem(data.word(kSetframes));
 	deallocateMem(data.word(kReel1));
 	deallocateMem(data.word(kReel2));
@@ -2174,7 +2174,11 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	for (int i = 0; i < 15; ++i)
 		len[i] = header.len(i);
 
-	data.word(kBackdrop) = allocateAndLoad(len[0]);
+	assert(len[0] >= 192);
+	_backdropBlocks = new uint8[len[0] - 192];
+	engine->readFromFile((uint8 *)_backdropFlags, 192);
+	engine->readFromFile(_backdropBlocks, len[0] - 192);
+
 	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
 	data.word(kSetframes) = allocateAndLoad(len[2]);

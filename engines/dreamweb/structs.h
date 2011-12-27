@@ -281,6 +281,17 @@ struct ObjectRef {
 	}
 };
 
+struct BackdropMapFlag {
+	uint8 _flag;
+	uint8 _flagEx;
+};
+
+struct MapFlag {
+	uint8 _flag;
+	uint8 _flagEx;
+	uint8 _type;
+};
+
 } // End of namespace DreamWeb
 
 #endif

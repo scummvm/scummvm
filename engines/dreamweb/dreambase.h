@@ -66,6 +66,8 @@ protected:
 	DreamWeb::DreamWebEngine *engine;
 
 	// from backdrop.cpp
+	uint8 *_backdropBlocks;
+	BackdropMapFlag _backdropFlags[96];
 	uint8 _mapData[kLengthOfMap + 32];
 
 	// from keypad.cpp
@@ -103,7 +105,7 @@ protected:
 	ObjectRef _openInvList[16];
 	ObjectRef _ryanInvList[30];
 	uint8 _pointerBack[32*32];
-	uint8 _mapFlags[11*10*3];
+	MapFlag _mapFlags[11*10];
 	uint8 _startPal[3*256];
 	uint8 _endPal[3*256];
 	uint8 _mainPal[3*256];
@@ -137,8 +139,6 @@ public:
 	void calcFrFrame(const Frame *frameBase, uint16 frameNum, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
 	void makeBackOb(SetObject *objData, uint16 x, uint16 y);
 	void showAllObs();
-	bool addAlong(const uint8 *mapFlags);
-	bool addLength(const uint8 *mapFlags);
 	void getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
 	void calcMapAd();
 	void showAllFree();

@@ -28,7 +28,6 @@ void DreamBase::doBlocks() {
 	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
 	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
 	const uint8 *mapData = _mapData + mapOffset;
-	const uint8 *blocks = getSegment(data.word(kBackdrop)).ptr(kBlocks, 0);
 	uint8 *dstBuffer = workspace() + dstOffset;
 
 	for (size_t i = 0; i < 10; ++i) {
@@ -36,7 +35,7 @@ void DreamBase::doBlocks() {
 			uint16 blockType = mapData[j];
 			if (blockType != 0) {
 				uint8 *dst = dstBuffer + i * 320 * 16 + j * 16;
-				const uint8 *block = blocks + blockType * 256;
+				const uint8 *block = _backdropBlocks + blockType * 256;
 				for (size_t k = 0; k < 4; ++k) {
 					memcpy(dst, block, 16);
 					block += 16;
@@ -162,17 +161,17 @@ void DreamBase::showAllObs() {
 	}
 }
 
-bool DreamBase::addAlong(const uint8 *mapFlags) {
+static bool addAlong(const MapFlag *mapFlags) {
 	for (size_t i = 0; i < 11; ++i) {
-		if (mapFlags[3 * i] != 0)
+		if (mapFlags[i]._flag != 0)
 			return true;
 	}
 	return false;
 }
 
-bool DreamBase::addLength(const uint8 *mapFlags) {
+static bool addLength(const MapFlag *mapFlags) {
 	for (size_t i = 0; i < 10; ++i) {
-		if (mapFlags[3 * 11 * i] != 0)
+		if (mapFlags[11 * i]._flag != 0)
 			return true;
 	}
 	return false;
@@ -180,19 +179,19 @@ bool DreamBase::addLength(const uint8 *mapFlags) {
 
 void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
 	uint8 yStart = 0;
-	while (! addAlong(_mapFlags + 3 * 11 * yStart))
+	while (! addAlong(_mapFlags + 11 * yStart))
 		++yStart;
 
 	uint8 xStart = 0;
-	while (! addLength(_mapFlags + 3 * xStart))
+	while (! addLength(_mapFlags + xStart))
 		++xStart;
 
 	uint8 yEnd = 10;
-	while (! addAlong(_mapFlags + 3 * 11 * (yEnd - 1)))
+	while (! addAlong(_mapFlags + 11 * (yEnd - 1)))
 		--yEnd;
 
 	uint8 xEnd = 11;
-	while (! addLength(_mapFlags + 3 * (xEnd - 1)))
+	while (! addLength(_mapFlags + (xEnd - 1)))
 		--xEnd;
 
 	*mapXstart = xStart;
@@ -241,18 +240,17 @@ void DreamBase::showAllFree() {
 }
 
 void DreamBase::drawFlags() {
-	uint8 *mapFlags = _mapFlags;
+	MapFlag *mapFlag = _mapFlags;
 	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
 	const uint8 *mapData = _mapData + mapOffset;
-	const uint8 *backdropFlags = getSegment(data.word(kBackdrop)).ptr(kFlags, 0);
 
 	for (size_t i = 0; i < 10; ++i) {
 		for (size_t j = 0; j < 11; ++j) {
 			uint8 tile = mapData[i * kMapwidth + j];
-			mapFlags[0] = backdropFlags[2 * tile + 0];
-			mapFlags[1] = backdropFlags[2 * tile + 1];
-			mapFlags[2] = tile;
-			mapFlags += 3;
+			mapFlag->_flag = _backdropFlags[tile]._flag;
+			mapFlag->_flagEx = _backdropFlags[tile]._flagEx;
+			mapFlag->_type = tile;
+			mapFlag++;
 		}
 	}
 }

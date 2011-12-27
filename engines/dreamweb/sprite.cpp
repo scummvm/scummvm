@@ -539,10 +539,10 @@ void DreamBase::moveMap(uint8 param) {
 void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;
-	const uint8 *tileData = &_mapFlags[(*flagY * 11 + *flagX) * 3];
-	*flag = tileData[0];
-	*flagEx = tileData[1];
-	*type = tileData[2];
+	const MapFlag &tileData = _mapFlags[*flagY * 11 + *flagX];
+	*flag = tileData._flag;
+	*flagEx = tileData._flagEx;
+	*type = tileData._type;
 }
 
 uint8 DreamBase::getBlockOfPixel(uint8 x, uint8 y) {
@@ -1101,7 +1101,7 @@ void DreamBase::clearBeforeLoad() {
 
 	//clearRest
 	memset(_mapData, 0, kMaplen);
-	deallocateMem(data.word(kBackdrop));
+	delete[] _backdropBlocks;
 	deallocateMem(data.word(kSetframes));
 	deallocateMem(data.word(kReels));
 	deallocateMem(data.word(kPeople));
