@@ -55,6 +55,10 @@ p = parser(skip_binary_data = [
 	'oplist',
 	'presslist',
 	'inputline',
+	'flashmousetab',
+	'id',
+	'place',
+	'blinktab',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
@@ -85,6 +89,7 @@ p = parser(skip_binary_data = [
 	'gameerror8',
 	'error2patch',
 	'error6patch',
+	'error8patch',
 	'gameinfo',
 	'endgametext1',
 	'savefiles',
@@ -263,7 +268,7 @@ p = parser(skip_binary_data = [
 	'diarytext',
 	'title7graphics',
 	'handle',
-	# 'basicsample', # This can't be removed due to tasm-recover limitations
+	'basicsample',
 	'endtextname',
 	'gungraphic',
 	'monkface',
