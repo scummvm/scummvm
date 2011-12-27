@@ -708,8 +708,8 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	if (_flags.gameID == GI_EOB1) {
 		// EOB1 spellbook modifications
 		if (index > 60 && index < 66) {
-			d = &_buttonDefs[index + 33];
-			b->buttonCallback = _buttonCallbacks[index + 33];
+			d = &_buttonDefs[index + 34];
+			b->buttonCallback = _buttonCallbacks[index + 34];
 		} else if (index == 88) {
 			d = &_buttonDefs[index + 12];
 			b->buttonCallback = _buttonCallbacks[index + 12];
