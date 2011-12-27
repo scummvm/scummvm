@@ -146,9 +146,6 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	memset(_stack, 0, 30 * sizeof(int16));
 	_stackIndex = 0;
 
-	memset(_subroutineStack, 0, sizeof(_subroutineStack));
-	_subroutineStackPos = 0;
-
 	_activeCharacter = -1;
 }
 
