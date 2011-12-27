@@ -139,6 +139,10 @@ private:
 	bool checkPartyStatusExtra();
 	int resurrectionSelectDialogue();
 	void healParty();
+
+	const KyraRpgGUISettings *guiSettings();
+
+	static const KyraRpgGUISettings _guiSettings;
 };
 
 

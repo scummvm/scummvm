@@ -128,8 +128,12 @@ private:
 	int charSelectDialogue();
 	void characterLevelGain(int charIndex);
 
+	const KyraRpgGUISettings *guiSettings();
+
 	const char *const *_hornStrings;
 	const uint8 *_hornSounds;
+
+	static const KyraRpgGUISettings _guiSettings;
 };
 
 }	// End of namespace Kyra

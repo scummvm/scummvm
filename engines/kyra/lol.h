@@ -1149,12 +1149,16 @@ private:
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 
+	const KyraRpgGUISettings *guiSettings();
+
 	uint8 _compassBroken;
 	uint8 _drainMagic;
 	uint16 _globalScriptVars2[8];
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
+
+	static const KyraRpgGUISettings _guiSettings;
 
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell *, int, LoLEngine> SpellProc;

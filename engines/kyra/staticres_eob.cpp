@@ -1190,6 +1190,11 @@ void EoBEngine::initSpells() {
 	}
 }
 
+const KyraRpgGUISettings EoBEngine::_guiSettings = {
+	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180	}
+};
+
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
@@ -1310,6 +1315,11 @@ const char *DarkMoonEngine::_palFilesFinale[] = {
 	"FINALE_6.PAL",
 	"FINALE_7.PAL",
 	0
+};
+
+const KyraRpgGUISettings DarkMoonEngine::_guiSettings = {
+	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
 };
 
 #endif // ENABLE_EOB

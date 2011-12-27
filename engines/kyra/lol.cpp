@@ -380,17 +380,7 @@ Common::Error LoLEngine::init() {
 	assert(_gui);
 	_gui->initStaticData();
 
-	_dialogueButtonLabelCol1 = 144;
-	_dialogueButtonLabelCol2 = 254;
-	_dialogueButtonW = 74;
-	_dialogueButtonH = 9;
-	_waitButtonReverveW = 80;
-
 	_txt = new TextDisplayer_LoL(this, _screen);
-
-	_bkgColor_1 = -1;
-	_color1_1 = 136;
-	_color2_1 = 251;
 
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
@@ -1941,7 +1931,7 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 		_dialogueButtonPosY = posY;
 
 		if (numStr == 1) {
-			posX[0] = posX[1] = posX[2] = d->sx + d->w - (_dialogueButtonW + 3);
+			posX[0] = posX[1] = posX[2] = d->sx + d->w - (_dialogueButtonWidth + 3);
 		} else {
 			int xOffs = d->w / numStr;
 			posX[0] = d->sx + (xOffs >> 1) - 37;
@@ -1987,6 +1977,10 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 		_system->delayMillis(step);
 		millis -= step;
 	}
+}
+
+const KyraRpgGUISettings *LoLEngine::guiSettings() {
+	return &_guiSettings;
 }
 
 // spells

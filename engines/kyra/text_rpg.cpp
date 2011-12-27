@@ -73,7 +73,7 @@ TextDisplayer_rpg::~TextDisplayer_rpg() {
 void TextDisplayer_rpg::setupField(int dim, bool mode) {
 	setPageBreakFlag();
 
-	_textDimData[dim].color2 = _vm->_bkgColor_1;
+	_textDimData[dim].color2 = _vm->guiSettings()->colors.fill;
 	_screen->setScreenDim(dim);
 
 	if (mode)
@@ -335,13 +335,13 @@ void TextDisplayer_rpg::printLine(char *str) {
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1 - (_waitButtonSpace << 1)) <= _lineCount)
 				// cut off line to leave space for "MORE" button
-				w -= vm()->_waitButtonReverveW;
+				w -= vm()->guiSettings()->buttons.waitReserve;
 		} else {
 			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
 				// cut off line to leave space for "MORE" button
-				w -= vm()->_waitButtonReverveW;
+				w -= vm()->guiSettings()->buttons.waitReserve;
 		}
 
 		if (ct) {
@@ -363,7 +363,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
-				w -= vm()->_waitButtonReverveW;
+				w -= vm()->guiSettings()->buttons.waitReserve;
 
 			w -= _textDimData[sdx].column;
 
@@ -510,7 +510,7 @@ int TextDisplayer_rpg::clearDim(int dim) {
 	int res = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
 	_textDimData[dim].color1 = _screen->_curDim->unk8;
-	_textDimData[dim].color2 = vm()->game() == GI_LOL ? _screen->_curDim->unkA : vm()->_bkgColor_1;
+	_textDimData[dim].color2 = vm()->game() == GI_LOL ? _screen->_curDim->unkA : vm()->guiSettings()->colors.fill;
 	clearCurDim();
 	return res;
 }
@@ -529,7 +529,7 @@ void TextDisplayer_rpg::clearCurDim() {
 
 void TextDisplayer_rpg::textPageBreak() {
 	if (vm()->game() != GI_LOL)
-		SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
+		SWAP(vm()->_dialogueButtonLabelColor1, vm()->_dialogueButtonLabelColor2);
 
 	int cp = _screen->setCurPage(0);
 	Screen::FontId cf = _screen->setFont(vm()->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
@@ -555,9 +555,9 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
 
-	int x = ((dim->sx + dim->w) << 3) - (_vm->_dialogueButtonW + 3);
+	int x = ((dim->sx + dim->w) << 3) - (_vm->_dialogueButtonWidth + 3);
 	int y = 0;
-	int w = vm()->_dialogueButtonW;
+	int w = vm()->_dialogueButtonWidth;
 
 	if (vm()->game() == GI_LOL) {
 		if (vm()->_needSceneRestore && (vm()->_updateFlags & 2)) {
@@ -571,17 +571,17 @@ void TextDisplayer_rpg::textPageBreak() {
 			y = dim->sy + dim->h - 10;
 		}
 	} else {
-		y = vm()->_waitButtonPresY[_waitButtonMode];
-		x = vm()->_waitButtonPresX[_waitButtonMode];
-		w = vm()->_waitButtonPresW[_waitButtonMode];
+		y = vm()->guiSettings()->buttons.waitY[_waitButtonMode];
+		x = vm()->guiSettings()->buttons.waitX[_waitButtonMode];
+		w = vm()->guiSettings()->buttons.waitWidth[_waitButtonMode];
 	}
 
 	if (vm()->gameFlags().use16ColorMode) {
 		vm()->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xee, 0xcc, -1);
 		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
 	} else {
-		vm()->gui_drawBox(x, y, w, vm()->_dialogueButtonH, vm()->_color1_1, vm()->_color2_1, vm()->_bkgColor_1);
-		_screen->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelCol1, 0);
+		vm()->gui_drawBox(x, y, w, vm()->guiSettings()->buttons.height, vm()->guiSettings()->colors.frame1, vm()->guiSettings()->colors.frame2, vm()->guiSettings()->colors.fill);
+		_screen->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelColor1, 0);
 	}
 
 	vm()->removeInputTop();
@@ -650,7 +650,7 @@ void TextDisplayer_rpg::textPageBreak() {
 	_screen->setCurPage(cp);
 
 	if (vm()->game() != GI_LOL)
-		SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
+		SWAP(vm()->_dialogueButtonLabelColor1, vm()->_dialogueButtonLabelColor2);
 
 	vm()->removeInputTop();
 }
@@ -662,12 +662,12 @@ void TextDisplayer_rpg::displayWaitButton() {
 	vm()->_dialogueButtonString[2] = 0;
 	vm()->_dialogueHighlightedButton = 0;
 
-	vm()->_dialogueButtonPosX = &vm()->_waitButtonPresX[_waitButtonMode];
-	vm()->_dialogueButtonPosY = &vm()->_waitButtonPresY[_waitButtonMode];
-	vm()->_dialogueButtonW = vm()->_waitButtonPresW[_waitButtonMode];
+	vm()->_dialogueButtonPosX = &vm()->guiSettings()->buttons.waitX[_waitButtonMode];
+	vm()->_dialogueButtonPosY = &vm()->guiSettings()->buttons.waitY[_waitButtonMode];
+	vm()->_dialogueButtonWidth = vm()->guiSettings()->buttons.waitWidth[_waitButtonMode];
 	vm()->_dialogueButtonYoffs = 0;
 
-	SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
+	SWAP(vm()->_dialogueButtonLabelColor1, vm()->_dialogueButtonLabelColor2);
 	vm()->drawDialogueButtons();
 
 	if (!vm()->shouldQuit())
@@ -675,10 +675,10 @@ void TextDisplayer_rpg::displayWaitButton() {
 
 	while (!vm()->processDialogue() && !vm()->shouldQuit()) {}
 
-	_screen->fillRect(vm()->_dialogueButtonPosX[0], vm()->_dialogueButtonPosY[0], vm()->_dialogueButtonPosX[0] + vm()->_dialogueButtonW - 1, vm()->_dialogueButtonPosY[0] + vm()->_dialogueButtonH - 1, vm()->_bkgColor_1);
+	_screen->fillRect(vm()->_dialogueButtonPosX[0], vm()->_dialogueButtonPosY[0], vm()->_dialogueButtonPosX[0] + vm()->_dialogueButtonWidth - 1, vm()->_dialogueButtonPosY[0] + vm()->guiSettings()->buttons.height - 1, vm()->guiSettings()->colors.fill);
 	_screen->updateScreen();
-	vm()->_dialogueButtonW = 95;
-	SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
+	vm()->_dialogueButtonWidth = 95;
+	SWAP(vm()->_dialogueButtonLabelColor1, vm()->_dialogueButtonLabelColor2);
 	clearCurDim();
 }
 

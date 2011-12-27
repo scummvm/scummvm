@@ -166,7 +166,7 @@ void EoBEngine::seq_playFinale() {
 	_txt->resetPageBreakString();
 	_txt->setWaitButtonMode(1);
 	_txt->setupField(12, true);
-	gui_drawBox(0, 0, 176, 175, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->printDialogueText(51, _moreStrings[0]);
 
 	if (!checkScriptFlags(0x1ffe)) {

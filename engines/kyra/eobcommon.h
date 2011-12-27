@@ -764,18 +764,6 @@ protected:
 	char _dialogueLastBitmap[13];
 	int _moveCounter;
 
-	uint8 _color4;
-	uint8 _color5;
-	uint8 _color6;
-	uint8 _color7;
-	uint8 _color8;
-	uint8 _color9;
-	uint8 _color10;
-	uint8 _color11;
-	uint8 _color12;
-	uint8 _color13;
-	uint8 _color14;
-
 	const char *const *_chargenStatStrings;
 	const char *const *_chargenRaceSexStrings;
 	const char *const *_chargenClassStrings;

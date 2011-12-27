@@ -107,11 +107,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorY1 = 0;
 	_dscDoorXE = 0;
 
-	_color9 = 17;
-	_color10 = 23;
-	_color11 = 20;
-	_color4 = _color5 = _color6 = _color7 = _color8 = _color12 = _color13 = _color14 = 0;
-
 	_menuDefs = 0;
 
 	_exchangeCharacterId = -1;
@@ -1106,7 +1101,7 @@ void EoBCoreEngine::npcSequence(int npcIndex) {
 	_screen->loadFileDataToPage(s, 5, 32000);
 	delete s;
 
-	gui_drawBox(0, 121, 320, 79, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->setupField(9, true);
 	_txt->resetPageBreakString();
 
@@ -1544,7 +1539,7 @@ void EoBCoreEngine::displayParchment(int id) {
 		// display text
 		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 		_screen->loadFileDataToPage(s, 5, 32000);
-		gui_drawBox(0, 0, 176, 175, _color1_1, _color2_1, _bkgColor_1);
+		gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 		_txt->setupField(12, 1);
 		if (_flags.gameID == GI_EOB2)
 			id++;
@@ -1686,21 +1681,21 @@ bool EoBCoreEngine::checkPassword() {
 	_screen->copyPage(0, 10);
 
 	_screen->setScreenDim(13);
-	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, _color1_1, _color2_1, -1);
-	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
+	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_screen->modifyScreenDim(13, _screen->_curDim->sx + 1, _screen->_curDim->sy + 2, _screen->_curDim->w - 2, _screen->_curDim->h - 16);
 
 	for (int i = 0; i < 3; i++) {
-		_screen->fillRect(_screen->_curDim->sx << 3, _screen->_curDim->sy, ((_screen->_curDim->sx + _screen->_curDim->w) << 3) - 1, (_screen->_curDim->sy + _screen->_curDim->h) - 1, _bkgColor_1);
+		_screen->fillRect(_screen->_curDim->sx << 3, _screen->_curDim->sy, ((_screen->_curDim->sx + _screen->_curDim->w) << 3) - 1, (_screen->_curDim->sy + _screen->_curDim->h) - 1, guiSettings()->colors.fill);
 		int c = rollDice(1, _mnNumWord - 1, -1);
 		const uint8 *shp = (_mnDef[c << 2] < _numLargeItemShapes) ? _largeItemShapes[_mnDef[c << 2]] : (_mnDef[c << 2] < 15 ? 0 : _smallItemShapes[_mnDef[c << 2] - 15]);
 		assert(shp);
 		_screen->drawShape(0, shp, 100, 2, 13);
-		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, _bkgColor_1);
+		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, guiSettings()->colors.fill);
 		memset(answ, 0, 20);
-		gui_drawBox(76, 100, 133, 14, _color2_1, _color1_1, -1);
-		gui_drawBox(77, 101, 131, 12, _color2_1, _color1_1, -1);
-		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, _bkgColor_1, 8) < 0)
+		gui_drawBox(76, 100, 133, 14, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
+		gui_drawBox(77, 101, 131, 12, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
+		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, guiSettings()->colors.fill, 8) < 0)
 			i = 3;
 		if (!scumm_stricmp(_mnWord[c], answ))
 			break;

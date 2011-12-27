@@ -1616,15 +1616,15 @@ int TransferPartyWiz::selectCharactersMenu() {
 	_screen->setFont(Screen::FID_6_FNT);
 	_screen->clearCurPage();
 
-	_vm->gui_drawBox(0, 0, 320, 163, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+	_vm->gui_drawBox(0, 0, 320, 163, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 	_screen->printText(_strings2[0], 5, 3, 15, 0);
 	_screen->printText(_strings2[1], 5, 10, 15, 0);
 
 	for (int i = 0; i < 6; i++)
 		drawCharPortraitWithStats(i, 0);
 
-	_vm->gui_drawBox(4, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
-	_vm->gui_drawBox(272, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+	_vm->gui_drawBox(4, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	_vm->gui_drawBox(272, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
 	_screen->printShadedText(_labels[0], 9, 151, 15, 0);
 	_screen->printShadedText(_labels[1], 288, 151, 15, 0);
@@ -1686,10 +1686,10 @@ int TransferPartyWiz::selectCharactersMenu() {
 		}
 
 		int x = (highlight - 6) * 268 + 4;
-		_vm->gui_drawBox(x, 148, 43, 12, _vm->_bkgColor_1, _vm->_bkgColor_1, -1);
+		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
 		_screen->updateScreen();
 		_vm->_system->delayMillis(80);
-		_vm->gui_drawBox(x, 148, 43, 12, _vm->_color1_1, _vm->_color2_1, -1);
+		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_screen->updateScreen();
 
 		if (highlight == 6 || _vm->shouldQuit()) {
@@ -1726,7 +1726,7 @@ void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 	EoBCharacter *c = &_vm->_characters[charIndex];
 
 	_screen->fillRect(x + 4, y + 24, x + 36, y + 57, 12);
-	_vm->gui_drawBox(x + 40, y + 24, 118, 34, _vm->_color1_1, _vm->_color2_1, _vm->_bkgColor_1);
+	_vm->gui_drawBox(x + 40, y + 24, 118, 34, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
 	if (!(c->flags & 1))
 		return;

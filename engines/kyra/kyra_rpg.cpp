@@ -103,15 +103,6 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_dialogueNumButtons = _dialogueButtonYoffs = _dialogueHighlightedButton = 0;
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;
-	_dialogueButtonLabelCol1 = 0;
-	_dialogueButtonLabelCol2 = 0;
-	_dialogueButtonW = 0;
-	_dialogueButtonH = 0;
-	_waitButtonPresX = 0;
-	_waitButtonPresY = 0;
-	_waitButtonPresW = 0;
-	_waitButtonReverveW = 0;
-
 	_updateCharNum = -1;
 	_activeVoiceFileTotalTime = 0;
 	_updatePortraitSpeechAnimDuration = _resetPortraitAfterSpeechAnim = _needSceneRestore = 0;
@@ -193,6 +184,10 @@ Common::Error KyraRpgEngine::init() {
 
 	_envSfxDistThreshold = (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : 3;
 
+	_dialogueButtonLabelColor1 = guiSettings()->buttons.labelColor1;
+	_dialogueButtonLabelColor2 = guiSettings()->buttons.labelColor2;
+	_dialogueButtonWidth = guiSettings()->buttons.width;
+
 	return Common::kNoError;
 }
 
@@ -213,9 +208,9 @@ void KyraRpgEngine::drawDialogueButtons() {
 			screen()->printText(_dialogueButtonString[i], (x + 37 - (screen()->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
 				((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
 		} else {
-			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonW, _dialogueButtonH, _color1_1, _color2_1, _bkgColor_1);
-			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonW >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
-				(_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2, _dialogueHighlightedButton == i ? _dialogueButtonLabelCol1 : _dialogueButtonLabelCol2, 0);
+			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
+				(_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
 		}
 	}
 	screen()->setFont(of);
@@ -230,7 +225,7 @@ uint16 KyraRpgEngine::processDialogue() {
 		int x = _dialogueButtonPosX[i];
 		int y = (gameFlags().use16ColorMode ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 		Common::Point p = getMousePos();
-		if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonW, y + _dialogueButtonH)) {
+		if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 			_dialogueHighlightedButton = i;
 			break;
 		}
@@ -266,7 +261,7 @@ uint16 KyraRpgEngine::processDialogue() {
 				int x = _dialogueButtonPosX[i];
 				int y = (gameFlags().use16ColorMode ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));
 				Common::Point p = getMousePos();
-				if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonW, y + _dialogueButtonH)) {
+				if (posWithinRect(p.x, p.y, x, y, x + _dialogueButtonWidth, y + guiSettings()->buttons.height)) {
 					_dialogueHighlightedButton = i;
 					res = _dialogueHighlightedButton + 1;
 					break;

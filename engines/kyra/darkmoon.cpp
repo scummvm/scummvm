@@ -58,31 +58,6 @@ Common::Error DarkMoonEngine::init() {
 
 	_monsterProps = new EoBMonsterProperty[10];
 
-	static const uint16 wX[] = { 221, 76 };
-	static const uint8 wY[] = { 189, 162 };
-	static const uint16 wW[] = { 95, 95 };
-
-	_dialogueButtonLabelCol1 = 9;
-	_dialogueButtonLabelCol2 = 15;
-	_dialogueButtonW = 95;
-	_dialogueButtonH = 9;
-	_waitButtonPresX = wX;
-	_waitButtonPresY = wY;
-	_waitButtonPresW = wW;
-	_waitButtonReverveW = 7;
-
-	_bkgColor_1 = 183;
-	_color1_1 = 186;
-	_color2_1 = 181;
-	_color4 = 133;
-	_color5 = 184;
-	_color6 = 183;
-	_color7 = 181;
-	_color8 = 186;
-	_color12 = 180;
-	_color13 = 177;
-	_color14 = 182;
-
 	return Common::kNoError;
 }
 
@@ -473,6 +448,10 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 
 		increaseCharacterExperience(charIndex, er - c->experience[i] + 1);
 	}
+}
+
+const KyraRpgGUISettings *DarkMoonEngine::guiSettings() {
+	return &_guiSettings;
 }
 
 }	// End of namespace Kyra

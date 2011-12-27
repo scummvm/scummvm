@@ -80,6 +80,40 @@ struct EoBFlyingObject {
 	uint8 unused;
 };
 
+struct KyraRpgGUISettings {
+	struct DialogueButtons {
+		uint8 labelColor1;
+		uint8 labelColor2;
+		uint16 width;
+		uint16 height;
+		int waitReserve;
+		const uint16 waitX[2];
+		const uint8 waitY[2];
+		const uint16 waitWidth[2];
+	} buttons;
+
+	struct Colors {
+		uint8 frame1;
+		uint8 frame2;
+		int fill;
+
+		uint8 unused;
+		uint8 barGraph;
+
+		uint8 warningFrame1;
+		uint8 warningFrame2;
+		int warningFill;
+
+		uint8 extraFrame1;
+		uint8 extraFrame2;
+		int extraFill;
+
+		uint8 inactiveTabFrame1;
+		uint8 inactiveTabFrame2;
+		int inactiveTabFill;
+	} colors;
+};
+
 class KyraRpgEngine : public KyraEngine_v1 {
 friend class TextDisplayer_rpg;
 public:
@@ -251,6 +285,8 @@ protected:
 
 	bool clickedShape(int shapeIndex);
 
+	virtual const KyraRpgGUISettings *guiSettings() = 0;
+
 	int _clickedShapeXOffs;
 	int _clickedShapeYOffs;
 
@@ -283,22 +319,13 @@ protected:
 	const uint16 *_dialogueButtonPosX;
 	const uint8 *_dialogueButtonPosY;
 	int16 _dialogueButtonYoffs;
-	uint16 _dialogueButtonW;
-	uint16 _dialogueButtonH;
-	const uint16 *_waitButtonPresX;
-	const uint8 *_waitButtonPresY;
-	const uint16 *_waitButtonPresW;
-	int _waitButtonReverveW;
+	uint16 _dialogueButtonWidth;
 	int _dialogueNumButtons;
 	int _dialogueHighlightedButton;
 	int _currentControlMode;
 	int _specialSceneFlag;
-	uint8 _dialogueButtonLabelCol1;
-	uint8 _dialogueButtonLabelCol2;
-
-	int _bkgColor_1;
-	uint8 _color1_1;
-	uint8 _color2_1;
+	uint8 _dialogueButtonLabelColor1;
+	uint8 _dialogueButtonLabelColor2;
 
 	const char *const *_moreStrings;
 

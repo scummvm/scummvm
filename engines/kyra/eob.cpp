@@ -61,32 +61,6 @@ Common::Error EoBEngine::init() {
 
 	_itemsOverlay = _res->fileData("ITEMRMP.VGA", 0);
 
-	static const uint16 wX[] = { 285, 139 };
-	static const uint8 wY[] = { 189, 162 };
-	static const uint16 wW[] = { 31, 31 };
-
-	_dialogueButtonLabelCol1 = 9;
-	_dialogueButtonLabelCol2 = 15;
-	_dialogueButtonW = 95;
-	_dialogueButtonH = 9;
-	_waitButtonPresX = wX;
-	_waitButtonPresY = wY;
-	_waitButtonPresW = wW;
-	_waitButtonReverveW = 7;
-
-	_bkgColor_1 = 132;
-	_color1_1 = 135;
-	_color2_1 = 130;
-	_color4 = 133;
-	_color5 = 133;
-	_color6 = 180;
-	_color7 = 177;
-	_color8 = 184;
-
-	_color14 = _color8;
-	_color13 = _color7;
-	_color12 = _color6;
-
 	_screen->modifyScreenDim(7, 0x01, 0xB3, 0x22, 0x12);
 	_screen->modifyScreenDim(9, 0x01, 0x7D, 0x26, 0x3F);
 	_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
@@ -520,7 +494,7 @@ void EoBEngine::turnUndeadAutoHit() {
 bool EoBEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
 	int cd = _screen->curDimIndex();
-	gui_drawBox(0, 121, 320, 80, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(0, 121, 320, 80, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->setupField(9, false);
 	_txt->printMessage(_menuStringsDefeat[0]);
 	while (!shouldQuit()) {
@@ -571,6 +545,10 @@ void EoBEngine::healParty() {
 		if (_characters[i].hitPointsCur > _characters[i].hitPointsMax)
 			_characters[i].hitPointsCur = _characters[i].hitPointsMax;
 	}
+}
+
+const KyraRpgGUISettings *EoBEngine::guiSettings() {
+	return &_guiSettings;
 }
 
 } // End of namespace Kyra

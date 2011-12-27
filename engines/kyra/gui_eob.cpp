@@ -100,9 +100,9 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		int cp = _screen->setCurPage(2);
 
 		if (index == _exchangeCharacterId)
-			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, 8, _bkgColor_1);
+			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, 8, guiSettings()->colors.fill);
 		else
-			_screen->printText(c->name, x2 + 2, y2 + 2, txtCol1, _bkgColor_1);
+			_screen->printText(c->name, x2 + 2, y2 + 2, txtCol1, guiSettings()->colors.fill);
 
 		gui_drawFaceShape(index);
 		gui_drawWeaponSlot(index, 0);
@@ -129,23 +129,23 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->_curPage = 2;
 		gui_drawFaceShape(index);
-		_screen->printShadedText(c->name, 219, 6, txtCol2, _bkgColor_1);
+		_screen->printShadedText(c->name, 219, 6, txtCol2, guiSettings()->colors.fill);
 		gui_drawHitpoints(index);
 		gui_drawFoodStatusGraph(index);
 
 		if (_currentControlMode == 1) {
 			if (c->hitPointsCur == -10)
-				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, 6, guiSettings()->colors.extraFill);
 			else if (c->hitPointsCur < 1)
-				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, 6, guiSettings()->colors.extraFill);
 			else if (c->effectFlags & (_flags.gameID == GI_EOB1 ? 0x80 : 0x2000))
-				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, 6, guiSettings()->colors.extraFill);
 			else if (c->flags & 2)
-				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, 6, guiSettings()->colors.extraFill);
 			else if (c->flags & 4)
-				_screen->printShadedText(_characterGuiStringsSt[5], 232, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[5], 232, 158, 6, guiSettings()->colors.extraFill);
 			else if (c->flags & 8)
-				_screen->printShadedText(_characterGuiStringsSt[6], 232, 158, 6, _color6);
+				_screen->printShadedText(_characterGuiStringsSt[6], 232, 158, 6, guiSettings()->colors.extraFill);
 
 			for (int i = 0; i < 27; i++)
 				gui_drawInventoryItem(i, 0, 2);
@@ -158,38 +158,38 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			static const uint16 cm2Y2[] = { 165, 165, 147 };
 
 			for (int i = 0; i < 3; i++)
-				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], _color6);
+				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.extraFill);
 
-			_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, 15, _color6);
-			_screen->printText(_chargenClassStrings[c->cClass], 183, 55, 12, _color6);
-			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 62, 12, _color6);
-			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 69, 12, _color6);
+			_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, 15, guiSettings()->colors.extraFill);
+			_screen->printText(_chargenClassStrings[c->cClass], 183, 55, 12, guiSettings()->colors.extraFill);
+			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 62, 12, guiSettings()->colors.extraFill);
+			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 69, 12, guiSettings()->colors.extraFill);
 
 			for (int i = 0; i < 6; i++)
-				_screen->printText(_chargenStatStrings[6 + i], 183, 82 + i * 7, 12, _color6);
+				_screen->printText(_chargenStatStrings[6 + i], 183, 82 + i * 7, 12, guiSettings()->colors.extraFill);
 
-			_screen->printText(_characterGuiStringsIn[1], 183, 124, 12, _color6);
-			_screen->printText(_characterGuiStringsIn[2], 239, 138, 12, _color6);
-			_screen->printText(_characterGuiStringsIn[3], 278, 138, 12, _color6);
+			_screen->printText(_characterGuiStringsIn[1], 183, 124, 12, guiSettings()->colors.extraFill);
+			_screen->printText(_characterGuiStringsIn[2], 239, 138, 12, guiSettings()->colors.extraFill);
+			_screen->printText(_characterGuiStringsIn[3], 278, 138, 12, guiSettings()->colors.extraFill);
 
-			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, 15, _color6);
-			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, 15, _color6);
+			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, 15, guiSettings()->colors.extraFill);
+			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, 15, guiSettings()->colors.extraFill);
 
 			for (int i = 0; i < 3; i++) {
 				int t = getCharacterClassType(c->cClass, i);
 				if (t == -1)
 					continue;
 
-				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, 12, _color6);
+				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, 12, guiSettings()->colors.extraFill);
 				Common::String tmpStr = Common::String::format("%d", c->experience[i]);
-				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, 15, _color6);
+				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, 15, guiSettings()->colors.extraFill);
 				tmpStr = Common::String::format("%d", c->level[i]);
-				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, 15, _color6);
+				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, 15, guiSettings()->colors.extraFill);
 			}
 		}
 
@@ -272,7 +272,7 @@ void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 		x += 176;
 
 	int itm = _characters[charIndex].inventory[slot];
-	gui_drawBox(x, y, 31, 16, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(x, y, 31, 16, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 
 	if (_characters[charIndex].slotStatus[slot]) {
 		gui_drawWeaponSlotStatus(x, y, _characters[charIndex].slotStatus[slot]);
@@ -297,7 +297,7 @@ void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 	if (status > -3 || status == -5)
 		_screen->drawShape(_screen->_curPage, _greenSplatShape, x - 1, y, 0);
 	else
-		gui_drawBox(x, y, 31, 16, _color9, _color10, _color11);
+		gui_drawBox(x, y, 31, 16, guiSettings()->colors.warningFrame1, guiSettings()->colors.warningFrame2, guiSettings()->colors.warningFill);
 
 	switch (status + 5) {
 	case 0:
@@ -369,7 +369,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, 12, 0);
 
 
-		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, barColor[col], _color5);
+		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, barColor[col], guiSettings()->colors.barGraph);
 
 	} else {
 		Common::String tmpString = Common::String::format(_characterGuiStringsHp[1], c->hitPointsCur, c->hitPointsMax);
@@ -379,7 +379,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 			y -= 1;
 		}
 
-		_screen->printText(tmpString.c_str(), x, y, 12, _bkgColor_1);
+		_screen->printText(tmpString.c_str(), x, y, 12, guiSettings()->colors.fill);
 	}
 }
 
@@ -398,11 +398,11 @@ void EoBCoreEngine::gui_drawFoodStatusGraph(int index) {
 		return;
 
 	uint8 col = c->food < 20 ? 8 : (c->food < 33 ? 5 : 3);
-	gui_drawHorizontalBarGraph(250, 25, 51, 5, c->food, 100, col, _color5);
+	gui_drawHorizontalBarGraph(250, 25, 51, 5, c->food, 100, col, guiSettings()->colors.barGraph);
 }
 
 void EoBCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) {
-	gui_drawBox(x - 1, y - 1, w + 3, h + 2, _color2_1, _color1_1, -1);
+	gui_drawBox(x - 1, y - 1, w + 3, h + 2, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
 	KyraRpgEngine::gui_drawHorizontalBarGraph(x, y, w + 2, h, curVal, maxVal, col1, col2);
 }
 
@@ -464,8 +464,8 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 		}
 
 	} else {
-		_screen->drawClippedLine(x, y, x + 62, y, _color1_1);
-		_screen->drawClippedLine(x, y + 49, x + 62, y + 49, _color2_1);
+		_screen->drawClippedLine(x, y, x + 62, y, guiSettings()->colors.frame1);
+		_screen->drawClippedLine(x, y + 49, x + 62, y + 49, guiSettings()->colors.frame2);
 		_screen->drawClippedLine(x - 1, y, x - 1, y + 50, 12);
 		_screen->drawClippedLine(x + 63, y, x + 63, y + 50, 12);
 	}
@@ -480,7 +480,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 
 	if (special) {
 		int wh = (slot == 25 || slot == 26) ? 10 : 18;
-		gui_drawBox(x - 1, y - 1, wh, wh, _color1_1, _color2_1, slot == 16 ? -1 : _bkgColor_1);
+		gui_drawBox(x - 1, y - 1, wh, wh, guiSettings()->colors.frame1, guiSettings()->colors.frame2, slot == 16 ? -1 : guiSettings()->colors.fill);
 
 		if (slot == 16) {
 			_screen->fillRect(227, 65, 238, 69, 12);
@@ -517,7 +517,7 @@ void EoBCoreEngine::gui_drawCompass(bool force) {
 }
 
 void EoBCoreEngine::gui_drawDialogueBox() {
-	gui_drawBox(0, 121, 320, 79, _color1_1, _color2_1, _bkgColor_1);
+	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	txt()->clearCurDim();
 }
 
@@ -527,14 +527,14 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	_screen->copyRegion(64, 121, 64, 121, 112, 56, 0, 2, Screen::CR_NO_P_CHECK);
 
 	for (int i = 0; i < numTab; i++) {
-		int col1 = _color14;
-		int col2 = _color13;
-		int col3 = _color12;
+		int col1 = guiSettings()->colors.inactiveTabFrame1;
+		int col2 = guiSettings()->colors.inactiveTabFrame2;
+		int col3 = guiSettings()->colors.inactiveTabFill;
 
 		if (i == _openBookSpellLevel) {
-			col1 =  _color1_1;
-			col2 =  _color2_1;
-			col3 =  _bkgColor_1;
+			col1 =  guiSettings()->colors.frame1;
+			col2 =  guiSettings()->colors.frame2;
+			col3 =  guiSettings()->colors.fill;
 		}
 
 		if (_flags.gameID == GI_EOB1) {
@@ -547,12 +547,12 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	}
 
 	if (_flags.gameID == GI_EOB1)
-		gui_drawBox(71, 131, 105, 44, _color1_1, _color2_1, _bkgColor_1);
+		gui_drawBox(71, 131, 105, 44, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	else {
-		gui_drawBox(68, 130, 108, 47, _color1_1, _color2_1, _bkgColor_1);
-		gui_drawBox(68, 168, 78, 9, _color8, _color7, _color6);
-		gui_drawBox(146, 168, 14, 9, _color8, _color7, _color6);
-		gui_drawBox(160, 168, 16, 9, _color8, _color7, _color6);
+		gui_drawBox(68, 130, 108, 47, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+		gui_drawBox(68, 168, 78, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
+		gui_drawBox(146, 168, 14, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
+		gui_drawBox(160, 168, 16, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
 		gui_drawSpellbookScrollArrow(150, 169, 0);
 		gui_drawSpellbookScrollArrow(165, 169, 1);
 	}
@@ -562,14 +562,14 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	int textXa = 74;
 	int textXs = 71;
 	int textY = 170;
-	int col3 = _bkgColor_1;
-	int col4 = _color6;
+	int col3 = guiSettings()->colors.fill;
+	int col4 = guiSettings()->colors.extraFill;
 
 	if (_flags.gameID == GI_EOB1) {
 		textCol2 = 11;
 		textXa = textXs = 73;
 		textY = 168;
-		col4 = _bkgColor_1;
+		col4 = guiSettings()->colors.fill;
 	}
 
 	for (int i = 0; i < 7; i++) {
@@ -2377,7 +2377,7 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 		}
 	}
 
-	_vm->gui_drawBox(x, y, w, 14, _vm->_color2_1, _vm->_bkgColor_1, -1);
+	_vm->gui_drawBox(x, y, w, 14, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill, -1);
 	_screen->updateScreen();
 	_vm->_system->delayMillis(80);
 	drawMenuButtonBox(x, y, w, 14, false, false);
@@ -2657,7 +2657,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			int fy = y + slot * 17 + 23;
 
 			for (int in = -1; in == -1 && !_vm->shouldQuit();) {
-				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->_bkgColor_1);
+				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
 				if (!strlen(_saveSlotStringsTemp[slot])) {
 					messageDialogue(11, 54, 6);
@@ -2665,7 +2665,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 				}
 			};
 
-			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->_bkgColor_1);
+			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, 15, 0);
 
 			Graphics::Surface thumb;
@@ -2778,7 +2778,7 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
 			_screen->setFont(Screen::FID_6_FNT);
 			int sli = (newHighlight == 6) ?  _savegameOffset : (_savegameOffset + newHighlight);
-			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->_color2_1, _vm->_bkgColor_1);
+			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 			_screen->setFont(Screen::FID_8_FNT);
 
 			_screen->updateScreen();
@@ -2937,7 +2937,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 
 		if (updateDesc) {
 			updateDesc = false;
-			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->_bkgColor_1);
+			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill);
 		}
 
 		if (newHighLightText < 0)
@@ -3721,7 +3721,7 @@ Button *GUI_EoB::initMenu(int id) {
 
 	if (m->dim) {
 		const ScreenDim *dm = _screen->getScreenDim(m->dim);
-		_screen->fillRect(dm->sx << 3, dm->sy, ((dm->sx + dm->w) << 3) - 1, (dm->sy + dm->h) - 1, _vm->_bkgColor_1);
+		_screen->fillRect(dm->sx << 3, dm->sy, ((dm->sx + dm->w) << 3) - 1, (dm->sy + dm->h) - 1, _vm->guiSettings()->colors.fill);
 		_screen->setScreenDim(m->dim);
 		drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
 	}
@@ -3789,14 +3789,14 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 }
 
 void GUI_EoB::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill) {
-	uint8 col1 = _vm->_color1_1;
-	uint8 col2 = _vm->_color2_1;
+	uint8 col1 = _vm->guiSettings()->colors.frame1;
+	uint8 col2 = _vm->guiSettings()->colors.frame2;
 
 	if (clicked)
-		col1 = col2 = _vm->_bkgColor_1;
+		col1 = col2 = _vm->guiSettings()->colors.fill;
 
 	_vm->gui_drawBox(x, y, w, h, col1, col2, -1);
-	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
+	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, noFill ? -1 : _vm->guiSettings()->colors.fill);
 }
 
 void GUI_EoB::drawTextBox(int dim, int id) {
@@ -3852,10 +3852,10 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		if (noFill)
 			_screen->printText(s.c_str(), 8, y, highLight ? 6 : 15, 0);
 		else
-			_screen->printShadedText(s.c_str(), 8, y, highLight ? 6 : 15, _vm->_bkgColor_1);
+			_screen->printShadedText(s.c_str(), 8, y, highLight ? 6 : 15, _vm->guiSettings()->colors.fill);
 
 	} else {
-		_screen->fillRect(6, y, 168, y + 8,  _vm->_bkgColor_1);
+		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
 	}
 }
 
@@ -4000,7 +4000,7 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	}
 
 	_screen->setCurPage(2);
-	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->_bkgColor_1);
+	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->guiSettings()->colors.fill);
 	_screen->setCurPage(0);
 	_screen->copyRegion(((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, ((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, 144, 8, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
