@@ -115,6 +115,7 @@ public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
 
 	bool _quitRequested;
+	bool _subtitles;
 
 	// from backdrop.cpp
 	void doBlocks();

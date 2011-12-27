@@ -44,6 +44,7 @@ p = parser(skip_binary_data = [
 	'extradata',
 	'keybuffer',
 	'spritename1',
+	'subtitles',
 	'icongraphics0',
 	'icongraphics1',
 	'savenames',

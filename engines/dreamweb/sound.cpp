@@ -204,7 +204,7 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 }
 
 void DreamWebEngine::soundHandler() {
-	_base.data.byte(DreamGen::kSubtitles) = ConfMan.getBool("subtitles");
+	_base._subtitles = ConfMan.getBool("subtitles");
 	_base.volumeAdjust();
 
 	uint volume = _base.data.byte(DreamGen::kVolume);
