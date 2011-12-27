@@ -267,6 +267,8 @@ p = parser(skip_binary_data = [
 	'freedesc',
 	'people',
 	'reels',
+	'setdat',
+	'freedat',
 	# vars.asm - constants
 	'openinvlist',
 	'ryaninvlist',

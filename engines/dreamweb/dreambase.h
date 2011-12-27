@@ -157,6 +157,8 @@ protected:
 	uint16 _personFramesLE[12];
 	RoomPaths _pathData[36];
 	Reel *_reelList;
+	SetObject _setDat[128];
+	DynObject _freeDat[80];
 
 	// Extras segment (NB: this is saved)
 	GraphicsFile _exFrames;
@@ -530,7 +532,6 @@ public:
 	void loadTravelText();
 	void loadTempText(const char *fileName);
 	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
-	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void sortOutMap();
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset();

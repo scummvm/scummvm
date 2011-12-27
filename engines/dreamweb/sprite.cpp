@@ -82,6 +82,7 @@ Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const Gra
 	sprite->w2 = 0xffff;
 	sprite->frameNumber = 0;
 	sprite->delay = 0;
+	sprite->_objData = 0;
 	return sprite;
 }
 
@@ -225,7 +226,7 @@ void DreamBase::aboutTurn(Sprite *sprite) {
 }
 
 void DreamBase::backObject(Sprite *sprite) {
-	SetObject *objData = (SetObject *)getSegment(data.word(kSetdat)).ptr(sprite->_objData, 0);
+	SetObject *objData = sprite->_objData;
 
 	if (sprite->delay != 0) {
 		--sprite->delay;

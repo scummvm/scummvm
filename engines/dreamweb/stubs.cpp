@@ -1016,7 +1016,7 @@ void DreamBase::eraseOldObs() {
 	Common::List<Sprite>::iterator i;
 	for (i = _spriteTable.begin(); i != _spriteTable.end(); ) {
 		Sprite &sprite = *i;
-		if (sprite._objData != 0xffff)
+		if (sprite._objData)
 			i = _spriteTable.erase(i);
 		else
 			++i;
@@ -1054,13 +1054,6 @@ void DreamBase::clearAndLoad(uint8 *buf, uint8 c,
 	assert(size <= maxSize);
 	memset(buf, c, maxSize);
 	engine->readFromFile(buf, size);
-}
-
-void DreamBase::clearAndLoad(uint16 seg, uint8 c,
-                                   unsigned int size, unsigned int maxSize) {
-	assert(size <= maxSize);
-	uint8 *buf = getSegment(seg).ptr(0, maxSize);
-	clearAndLoad(buf, c, size, maxSize);
 }
 
 void DreamBase::startLoading(const Room &room) {
@@ -1303,7 +1296,7 @@ void DreamBase::setAllChanges() {
 }
 
 DynObject *DreamBase::getFreeAd(uint8 index) {
-	return (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0) + index;
+	return &_freeDat[index];
 }
 
 DynObject *DreamBase::getExAd(uint8 index) {
@@ -1350,7 +1343,7 @@ void *DreamBase::getAnyAdDir(uint8 index, uint8 flag) {
 }
 
 SetObject *DreamBase::getSetAd(uint8 index) {
-	return (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 0) + index;
+	return &_setDat[index];
 }
 
 void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
@@ -1366,13 +1359,11 @@ void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamBase::deleteTaken() {
-	const DynObject *extraObjects = _exData;
-	DynObject *freeObjects = (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		uint8 location = extraObjects[i].initialLocation;
+		uint8 location = _exData[i].initialLocation;
 		if (location == data.byte(kReallocation)) {
-			uint8 index = extraObjects[i].index;
-			freeObjects[index].mapad[0] = 0xfe;
+			uint8 index = _exData[i].index;
+			_freeDat[index].mapad[0] = 0xfe;
 		}
 	}
 }
@@ -2191,7 +2182,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 
 	loadGraphicsSegment(_setFrames, len[2]);
 	if (!skipDat)
-		clearAndLoad(data.word(kSetdat), 255, len[3], kSetdatlen);
+		clearAndLoad((uint8 *)_setDat, 255, len[3], kSetdatlen);
 	else
 		engine->skipBytes(len[3]);
 	// NB: The skipDat version of this function as called by restoreall
@@ -2218,7 +2209,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	loadTextSegment(_roomDesc, len[11]);
 	loadGraphicsSegment(_freeFrames, len[12]);
 	if (!skipDat)
-		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
+		clearAndLoad((uint8 *)_freeDat, 255, len[13], kFreedatlen);
 	else
 		engine->skipBytes(len[13]);
 	loadTextSegment(_freeDesc, len[14]);
@@ -2484,9 +2475,6 @@ void DreamBase::allocateBuffers() {
 	_exFrames._data = new uint8[kExframeslen];
 	_exText.clear();
 	_exText._text = new char[kExtextlen];
-
-	data.word(kFreedat) = allocateMem(kFreedatlen/16);
-	data.word(kSetdat) = allocateMem(kSetdatlen/16);
 }
 
 void DreamBase::workToScreenM() {

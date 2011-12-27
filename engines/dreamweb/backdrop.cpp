@@ -116,10 +116,7 @@ void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 	uint8 type = objData->type;
 	Sprite *sprite = makeSprite(x, y, addr_backobject, &_setFrames, 0);
 
-	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
-	assert(objDataOffset % sizeof(SetObject) == 0);
-	assert(objDataOffset < 128 * sizeof(SetObject));
-	sprite->_objData = objDataOffset;
+	sprite->_objData = objData;
 	if (priority == 255)
 		priority = 0;
 	sprite->priority = priority;
@@ -135,9 +132,8 @@ void DreamBase::showAllObs() {
 	_setList.clear();
 
 	const GraphicsFile &frameBase = _setFrames;
-	SetObject *setEntries = (SetObject *)getSegment(data.word(kSetdat)).ptr(0, count * sizeof(SetObject));
 	for (size_t i = 0; i < count; ++i) {
-		SetObject *setEntry = setEntries + i;
+		SetObject *setEntry = &_setDat[i];
 		uint16 x, y;
 		if (getMapAd(setEntry->mapad, &x, &y) == 0)
 			continue;
@@ -216,7 +212,7 @@ void DreamBase::showAllFree() {
 
 	_freeList.clear();
 
-	const DynObject *freeObjects = (const DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
+	const DynObject *freeObjects = _freeDat;
 	const GraphicsFile &frameBase = _freeFrames;
 	for (size_t i = 0; i < count; ++i) {
 		uint16 x, y;

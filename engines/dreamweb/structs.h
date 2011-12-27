@@ -29,6 +29,7 @@
 namespace DreamGen {
 
 struct GraphicsFile;
+struct SetObject;
 
 struct Sprite {
 	uint16 _updateCallback;
@@ -45,7 +46,7 @@ struct Sprite {
 	uint8  b17;
 	uint8  delay;
 	uint8  animFrame; // index into SetObject::frames
-	uint16 _objData;
+	SetObject *_objData;
 	uint8  speed;
 	uint8  priority;
 	uint16 w24;
