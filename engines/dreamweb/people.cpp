@@ -917,8 +917,7 @@ void DreamBase::mugger(ReelRoutine &routine) {
 		createPanel2();
 		showIcon();
 
-		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(41 * 2);
-		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		const uint8 *string = (const uint8 *)_puzzleText.getString(41);
 		uint16 y = 104;
 		printDirect(&string, 33 + 20, &y, 241, 241 & 1);
 		workToScreen();

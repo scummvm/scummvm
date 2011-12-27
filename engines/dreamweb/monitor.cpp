@@ -91,9 +91,11 @@ void DreamBase::useMon() {
 	} while (!stop);
 	getRidOfTemp();
 	getRidOfTempCharset();
-	deallocateMem(data.word(kTextfile1));
-	deallocateMem(data.word(kTextfile2));
-	deallocateMem(data.word(kTextfile3));
+
+	_textFile1.clear();
+	_textFile2.clear();
+	_textFile3.clear();
+
 	data.byte(kGetback) = 1;
 	playChannel1(26);
 	data.byte(kManisoffscreen) = 0;
@@ -324,7 +326,7 @@ void DreamBase::randomAccess(uint16 count) {
 
 void DreamBase::monMessage(uint8 index) {
 	assert(index > 0);
-	const char *string = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *string = _textFile1._text;
 	for (uint8 i = 0; i < index; ++i) {
 		while (*string++ != '+') {
 		}
@@ -376,21 +378,21 @@ void DreamBase::printOuterMon() {
 
 void DreamBase::loadPersonal() {
 	if (data.byte(kLocation) == 0 || data.byte(kLocation) == 42)
-		data.word(kTextfile1) = standardLoad("DREAMWEB.T01"); // monitor file 1
+		loadTextFile(_textFile1, "DREAMWEB.T01"); // monitor file 1
 	else
-		data.word(kTextfile1) = standardLoad("DREAMWEB.T02"); // monitor file 2
+		loadTextFile(_textFile1, "DREAMWEB.T02"); // monitor file 2
 }
 
 void DreamBase::loadNews() {
 	// textfile2 holds information accessible by anyone
 	if (data.byte(kNewsitem) == 0)
-		data.word(kTextfile2) = standardLoad("DREAMWEB.T10"); // monitor file 10
+		loadTextFile(_textFile2, "DREAMWEB.T10"); // monitor file 10
 	else if (data.byte(kNewsitem) == 1)
-		data.word(kTextfile2) = standardLoad("DREAMWEB.T11"); // monitor file 11
+		loadTextFile(_textFile2, "DREAMWEB.T11"); // monitor file 11
 	else if (data.byte(kNewsitem) == 2)
-		data.word(kTextfile2) = standardLoad("DREAMWEB.T12"); // monitor file 12
+		loadTextFile(_textFile2, "DREAMWEB.T12"); // monitor file 12
 	else
-		data.word(kTextfile2) = standardLoad("DREAMWEB.T13"); // monitor file 13
+		loadTextFile(_textFile2, "DREAMWEB.T13"); // monitor file 13
 }
 
 void DreamBase::loadCart() {
@@ -401,15 +403,15 @@ void DreamBase::loadCart() {
 		cartridgeId = getExAd(cartridgeIndex)->id[3] + 1;
 
 	if (cartridgeId == 0)
-		data.word(kTextfile3) = standardLoad("DREAMWEB.T20"); // monitor file 20
+		loadTextFile(_textFile3, "DREAMWEB.T20"); // monitor file 20
 	else if (cartridgeId == 1)
-		data.word(kTextfile3) = standardLoad("DREAMWEB.T21"); // monitor file 21
+		loadTextFile(_textFile3, "DREAMWEB.T21"); // monitor file 21
 	else if (cartridgeId == 2)
-		data.word(kTextfile3) = standardLoad("DREAMWEB.T22"); // monitor file 22
+		loadTextFile(_textFile3, "DREAMWEB.T22"); // monitor file 22
 	else if (cartridgeId == 3)
-		data.word(kTextfile3) = standardLoad("DREAMWEB.T23"); // monitor file 23
+		loadTextFile(_textFile3, "DREAMWEB.T23"); // monitor file 23
 	else
-		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24
+		loadTextFile(_textFile3, "DREAMWEB.T24"); // monitor file 24
 }
 
 void DreamBase::showKeys() {
@@ -479,9 +481,9 @@ void DreamBase::dirCom() {
 	monitorLogo();
 	scrollMonitor();
 	monMessage(9);
-	searchForFiles(data.word(kTextfile1));
-	searchForFiles(data.word(kTextfile2));
-	searchForFiles(data.word(kTextfile3));
+	searchForFiles(_textFile1._text);
+	searchForFiles(_textFile2._text);
+	searchForFiles(_textFile3._text);
 	scrollMonitor();
 }
 
@@ -491,13 +493,13 @@ void DreamBase::dirFile(const char *dirName) {
 	memcpy(topic, dirName, 14);
 	topic[0] = 34;
 
-	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *text = _textFile1._text;
 	const char *found = searchForString(topic, text);
 	if (!found) {
-		text = (const char *)getSegment(data.word(kTextfile2)).ptr(kTextstart, 0);
+		text = _textFile2._text;
 		found = searchForString(topic, text);
 		if (!found) {
-			text = (const char *)getSegment(data.word(kTextfile3)).ptr(kTextstart, 0);
+			text = _textFile3._text;
 			found = searchForString(topic, text);
 		}
 	}
@@ -540,13 +542,13 @@ void DreamBase::read() {
 
 	const char *topic = _currentFile;
 
-	const char *text = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *text = _textFile1._text;
 	const char *found = searchForString(topic, text);
 	if (!found) {
-		text = (const char *)getSegment(data.word(kTextfile2)).ptr(kTextstart, 0);
+		text = _textFile2._text;
 		found = searchForString(topic, text);
 		if (!found) {
-			text = (const char *)getSegment(data.word(kTextfile3)).ptr(kTextstart, 0);
+			text = _textFile3._text;
 			found = searchForString(topic, text);
 		}
 	}
@@ -644,8 +646,7 @@ void DreamBase::signOn() {
 	}
 }
 
-void DreamBase::searchForFiles(uint16 segment) {
-	const char *filesString = (const char *)getSegment(segment).ptr(kTextstart, 0);
+void DreamBase::searchForFiles(const char *filesString) {
 	byte curChar;
 
 	while (true) {

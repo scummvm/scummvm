@@ -1644,8 +1644,7 @@ void DreamBase::showPuzText(uint16 command, uint16 count) {
 	showMan();
 	showExit();
 	obIcons();
-	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(command * 2);
-	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_puzzleText.getString(command);
 	printDirect(string, 36, 104, 241, 241 & 1);
 	workToScreenM();
 	hangOnP(count);

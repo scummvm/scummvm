@@ -244,6 +244,12 @@ p = parser(skip_binary_data = [
 	'mapstore',
 	'mapdata',
 	'backdrops',
+	'textfile1',
+	'textfile2',
+	'textfile3',
+	'puzzletext',
+	'commandtext',
+	'traveltext',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

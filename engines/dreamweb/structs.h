@@ -292,6 +292,23 @@ struct MapFlag {
 	uint8 _type;
 };
 
+struct TextFile {
+	TextFile() : _text(0) { }
+
+	uint16 _offsetsLE[66];
+	char *_text;
+
+	const char *getString(unsigned int i) const {
+		assert(i < 66);
+		return _text + READ_LE_UINT16(&_offsetsLE[i]);
+	}
+	void clear() {
+		delete[] _text;
+		_text = 0;
+	}
+};
+
+
 } // End of namespace DreamWeb
 
 #endif

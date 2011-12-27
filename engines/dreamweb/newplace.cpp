@@ -92,7 +92,8 @@ void DreamBase::selectLocation() {
 	getRidOfTemp();
 	getRidOfTemp2();
 	getRidOfTemp3();
-	deallocateMem(data.word(kTraveltext));
+
+	_travelText.clear();
 }
 
 void DreamBase::showCity() {
@@ -120,8 +121,7 @@ void DreamBase::lookAtPlace() {
 	if (_foreignRelease)
 		showFrame(tempGraphics3(), 60, 72+55+21, 4, 0);
 
-	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
-	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
 	findNextColon(&string);
 	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
 	printDirect(&string, 63, &y, 191, 191 & 1);
@@ -153,8 +153,7 @@ void DreamBase::locationPic() {
 	if (data.byte(kDestpos) == data.byte(kReallocation))
 		showFrame(tempGraphics(), 104, 140 + 14, 3, 0);	// Currently in this location
 
-	uint16 offset = kTextstart + getSegment(data.word(kTraveltext)).word(data.byte(kDestpos) * 2);
-	const uint8 *string = getSegment(data.word(kTraveltext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
 	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
 }
 

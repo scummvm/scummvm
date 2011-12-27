@@ -644,6 +644,23 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	engine->freeIcons2();
 }
 
+void DreamBase::loadTextFile(TextFile &file, const char *fileName)
+{
+	FileHeader header;
+
+	Common::File f;
+	f.open(fileName);
+	f.read((uint8 *)&header, sizeof(FileHeader));
+	uint16 sizeInBytes = header.len(0);
+	assert(sizeInBytes >= 2*66);
+
+	delete[] file._text;
+	file._text = new char[sizeInBytes - 2*66];
+
+	f.read(file._offsetsLE, 2*66);
+	f.read(file._text, sizeInBytes - 2*66);
+}
+
 void DreamBase::screenUpdate() {
 	newPlace();
 	mainScreen();
@@ -837,8 +854,7 @@ void DreamBase::putUnderTimed() {
 
 void DreamBase::triggerMessage(uint16 index) {
 	multiGet(_mapStore, 174, 153, 200, 63);
-	uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(index * 2);
-	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_puzzleText.getString(index);
 	uint16 y = 156;
 	printDirect(&string, 174, &y, 141, true);
 	hangOn(140);
@@ -877,9 +893,8 @@ void DreamBase::useTimedText() {
 	else if (data.word(kTimecount) > data.word(kCounttotimed))
 		return;
 
-	const uint8 *string = getSegment(data.word(kTimedseg)).ptr(data.word(kTimedoffset), 0);
-	uint16 y = data.byte(kTimedy);
-	printDirect(&string, data.byte(kTimedx), &y, 237, true);
+	const uint8 *string = (const uint8 *)_timedString;
+	printDirect(string, data.byte(kTimedx), data.byte(kTimedy), 237, true);
 	data.byte(kNeedtodumptimed) = 1;
 }
 
@@ -904,10 +919,8 @@ void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8
 	data.byte(kTimedx) = x;
 	data.word(kCounttotimed) = countToTimed;
 	data.word(kTimecount) = timeCount + countToTimed;
-	data.word(kTimedseg) = data.word(kTextfile1);
-	data.word(kTimedoffset) = kTextstart + getSegment(data.word(kTextfile1)).word(textIndex * 2);
-	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(data.word(kTimedoffset), 0);
-	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
+	_timedString = _textFile1.getString(textIndex);
+	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, _timedString);
 }
 
 void DreamBase::dumpTimedText() {
@@ -1130,11 +1143,8 @@ void DreamBase::delTextLine() {
 
 void DreamBase::commandOnly(uint8 command) {
 	delTextLine();
-	uint16 index = command * 2;
-	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index);
-	uint16 y = data.word(kTextaddressy);
-	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
-	printDirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
+	const uint8 *string = (const uint8 *)_commandText.getString(command);
+	printDirect(string, data.word(kTextaddressx), data.word(kTextaddressy), data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
 	data.byte(kNewtextline) = 1;
 }
 
@@ -1228,12 +1238,11 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
-	uint16 commandText = kTextstart + getSegment(data.word(kCommandtext)).word(command * 2);
 	uint8 textLen = data.byte(kTextlen);
-	{
-		const uint8 *string = getSegment(data.word(kCommandtext)).ptr(commandText, 0);
-		printDirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
-	}
+
+	const uint8 *string = (const uint8 *)_commandText.getString(command);
+	printDirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
+
 	copyName(type, index, commandLine);
 	uint16 x = data.word(kLastxpos);
 	if (command != 0)
@@ -1628,14 +1637,12 @@ void DreamBase::animPointer() {
 }
 
 void DreamBase::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
-	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
-	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_commandText.getString(index);
 	printDirect(string, x, y, maxWidth, centered);
 }
 
 void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
-	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
-	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
+	const uint8 *string = (const uint8 *)_commandText.getString(index);
 	while (count--) {
 		findNextColon(&string);
 	}
@@ -2033,8 +2040,8 @@ void DreamBase::readSetData() {
 	engine->setIcons2(icons2Buffer);
 
 	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
-	data.word(kPuzzletext) = standardLoad("DREAMWEB.T80");
-	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
+	loadTextFile(_puzzleText, "DREAMWEB.T80");
+	loadTextFile(_commandText, "DREAMWEB.T84");
 	useCharset1();
 
 	// FIXME: Why is this commented out?
@@ -2128,7 +2135,7 @@ void DreamBase::getRidOfTemp() {
 }
 
 void DreamBase::getRidOfTempText() {
-	deallocateMem(data.word(kTextfile1));
+	_textFile1.clear();
 }
 
 void DreamBase::getRidOfTemp2() {
@@ -2359,10 +2366,7 @@ void DreamBase::examIcon() {
 }
 
 const uint8 *DreamBase::getTextInFile1(uint16 index) {
-	SegmentRef text = getSegment(data.word(kTextfile1));
-	uint16 offset = text.word(index * 2) + kTextstart;
-	const uint8 *string = text.ptr(offset, 0);
-	return string;
+	return (const uint8 *)_textFile1.getString(index);
 }
 
 void DreamBase::checkFolderCoords() {
@@ -2443,11 +2447,11 @@ void DreamBase::folderExit() {
 }
 
 void DreamBase::loadTravelText() {
-	data.word(kTraveltext) = standardLoad("DREAMWEB.T81"); // location descs
+	loadTextFile(_travelText, "DREAMWEB.T81"); // location descs
 }
 
 void DreamBase::loadTempText(const char *fileName) {
-	data.word(kTextfile1) = standardLoad(fileName);
+	loadTextFile(_textFile1, fileName);
 }
 
 void DreamBase::drawFloor() {
@@ -2835,13 +2839,11 @@ void DreamBase::describeOb() {
 	// Additional text
 	if (compare(data.byte(kCommand), data.byte(kObjecttype), "CUPE")) {
 		// Empty cup
-		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(40 * 2);
-		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		const uint8 *string = (const uint8 *)_puzzleText.getString(40);
 		printDirect(string, 36, y + 10, 241, 241 & 1);
 	} else if (compare(data.byte(kCommand), data.byte(kObjecttype), "CUPF")) {
 		// Full cup
-		uint16 offset = kTextstart + getSegment(data.word(kPuzzletext)).word(39 * 2);
-		const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(offset, 0);
+		const uint8 *string = (const uint8 *)_puzzleText.getString(39);
 		printDirect(string, 36, y + 10, 241, 241 & 1);
 	}
 }
@@ -3325,10 +3327,8 @@ void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 time
 	data.byte(kTimedx) = x;
 	data.word(kCounttotimed) = countToTimed;
 	data.word(kTimecount) = timeCount + countToTimed;
-	data.word(kTimedseg) = data.word(kPuzzletext);
-	data.word(kTimedoffset) = kTextstart + getSegment(data.word(kPuzzletext)).word(textIndex * 2);
-	const uint8 *string = getSegment(data.word(kPuzzletext)).ptr(data.word(kTimedoffset), 0);
-	debug(1, "setupTimedUse: %d => '%s'", textIndex, string);
+	_timedString = _puzzleText.getString(textIndex);
+	debug(1, "setupTimedUse: %d => '%s'", textIndex, _timedString);
 }
 
 void DreamBase::entryTexts() {

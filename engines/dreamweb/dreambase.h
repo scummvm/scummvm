@@ -65,6 +65,8 @@ class DreamBase : public SegmentManager {
 protected:
 	DreamWeb::DreamWebEngine *engine;
 
+	const char *_timedString;
+
 	// from backdrop.cpp
 	uint8 *_backdropBlocks;
 	BackdropMapFlag _backdropFlags[96];
@@ -120,6 +122,14 @@ protected:
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
 	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary
+
+	// textfiles
+	TextFile _textFile1;
+	TextFile _textFile2;
+	TextFile _textFile3;
+	TextFile _travelText;
+	TextFile _puzzleText;
+	TextFile _commandText;
 
 public:
 	DreamBase(DreamWeb::DreamWebEngine *en);
@@ -481,6 +491,7 @@ public:
 	uint16 allocateMem(uint16 paragraphs);
 	void deallocateMem(uint16 segment);
 	uint16 allocateAndLoad(unsigned int size);
+	void loadTextFile(TextFile &file, const char *fileName);
 	uint16 standardLoad(const char *fileName, uint16 *outSizeInBytes = NULL); // Returns a segment handle which needs to be freed with deallocatemem for symmetry
 	void *standardLoadCPP(const char *fileName, uint16 *outSizeInBytes = NULL); // And this one should be 'free'd
 	void loadIntoTemp(const char *fileName);
@@ -625,7 +636,7 @@ public:
 	void dumpWatch();
 	void watchCount();
 	void signOn();
-	void searchForFiles(uint16 segment);
+	void searchForFiles(const char *filesString);
 	void triggerMessage(uint16 index);
 	void processTrigger();
 	void dreamweb();
