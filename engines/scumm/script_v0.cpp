@@ -777,7 +777,12 @@ void ScummEngine_v0::o_putActorAtObject() {
 void ScummEngine_v0::o_pickupObject() {
 	int obj = fetchScriptByte();
 	if (obj == 0) {
-		obj = _activeObject;
+		if (_activeObject) {
+			obj = _activeObject;
+		} else {
+			// might happen if an inventory item was picked again
+			return;
+		}
 	}
 
 	if (obj < 1) {
