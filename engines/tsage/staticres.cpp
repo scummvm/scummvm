@@ -64,126 +64,126 @@ const byte CURSOR_WALK_DATA[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09
 };
 
-const char *LOOK_SCENE_HOTSPOT = "You see nothing special.";
-const char *USE_SCENE_HOTSPOT = "That accomplishes nothing.";
-const char *TALK_SCENE_HOTSPOT = "Yak, yak.";
-const char *SPECIAL_SCENE_HOTSPOT = "That is a unique use for that.";
-const char *DEFAULT_SCENE_HOTSPOT = "That accomplishes nothing.";
-const char *SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to restore this game!";
-const char *SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
-const char *RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
-const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
+char const *const LOOK_SCENE_HOTSPOT = "You see nothing special.";
+char const *const USE_SCENE_HOTSPOT = "That accomplishes nothing.";
+char const *const TALK_SCENE_HOTSPOT = "Yak, yak.";
+char const *const SPECIAL_SCENE_HOTSPOT = "That is a unique use for that.";
+char const *const DEFAULT_SCENE_HOTSPOT = "That accomplishes nothing.";
+char const *const SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to restore this game!";
+char const *const SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
+char const *const RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
+char const *const INV_EMPTY_MSG = "You have nothing in your possesion.";
 
-const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
-const char *RESTART_MSG = "Do you want to restart this game?";
-const char *GAME_PAUSED_MSG = "Game is paused.";
-const char *OK_BTN_STRING = " Ok ";
-const char *CANCEL_BTN_STRING = "Cancel";
-const char *QUIT_BTN_STRING = " Quit ";
-const char *RESTART_BTN_STRING = "Restart";
-const char *SAVE_BTN_STRING = "Save";
-const char *RESTORE_BTN_STRING = "Restore";
-const char *SOUND_BTN_STRING = "Sound";
-const char *RESUME_BTN_STRING = " Resume \rplay";
-const char *LOOK_BTN_STRING = "Look";
-const char *PICK_BTN_STRING = "Pick";
+char const *const QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
+char const *const RESTART_MSG = "Do you want to restart this game?";
+char const *const GAME_PAUSED_MSG = "Game is paused.";
+char const *const OK_BTN_STRING = " Ok ";
+char const *const CANCEL_BTN_STRING = "Cancel";
+char const *const QUIT_BTN_STRING = " Quit ";
+char const *const RESTART_BTN_STRING = "Restart";
+char const *const SAVE_BTN_STRING = "Save";
+char const *const RESTORE_BTN_STRING = "Restore";
+char const *const SOUND_BTN_STRING = "Sound";
+char const *const RESUME_BTN_STRING = " Resume \rplay";
+char const *const LOOK_BTN_STRING = "Look";
+char const *const PICK_BTN_STRING = "Pick";
 
 
 namespace Ringworld {
 
 // Dialog resources
-const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
+char const *const HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
 \x01 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
 F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
-const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
-const char *START_PLAY_BTN_STRING = " Start Play ";
-const char *INTRODUCTION_BTN_STRING = "Introduction";
-const char *OPTIONS_MSG = "\x01Options...";
+char const *const WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
+char const *const START_PLAY_BTN_STRING = " Start Play ";
+char const *const INTRODUCTION_BTN_STRING = "Introduction";
+char const *const OPTIONS_MSG = "\x01Options...";
 
 // Scene specific resources
-const char *EXIT_MSG = "   EXIT   ";
-const char *SCENE6100_CAREFUL = "Be careful! The probe cannot handle too much of that.";
-const char *SCENE6100_TOUGHER = "Hey! This is tougher than it looks!";
-const char *SCENE6100_ONE_MORE_HIT = "You had better be more careful. One more hit like that \
+char const *const EXIT_MSG = "   EXIT   ";
+char const *const SCENE6100_CAREFUL = "Be careful! The probe cannot handle too much of that.";
+char const *const SCENE6100_TOUGHER = "Hey! This is tougher than it looks!";
+char const *const SCENE6100_ONE_MORE_HIT = "You had better be more careful. One more hit like that \
 and the probe may be destroyed.";
-const char *SCENE6100_DOING_BEST = "I'm doing the best I can. I just hope it holds together!";
-const char *SCENE6100_REPAIR = "\r\rQuinn and Seeker repair the probe....";
-const char *SCENE6100_ROCKY_AREA = "The rocky area should be directly ahead of you. Do you see it?";
-const char *SCENE6100_REPLY = "Yes. Now if I can just avoid those sunbeams.";
-const char *SCENE6100_TAKE_CONTROLS = "You had better take the controls Seeker. My hands are sweating.";
-const char *SCENE6100_SURPRISE = "You surprise me Quinn. I would have thought you of hardier stock.";
-const char *SCENE6100_SWEAT = "Humans sweat, Kzin twitch their tail. What's the difference?";
-const char *SCENE6100_VERY_WELL = "Very well. I will retrieve the stasis box and return the probe. \
+char const *const SCENE6100_DOING_BEST = "I'm doing the best I can. I just hope it holds together!";
+char const *const SCENE6100_REPAIR = "\r\rQuinn and Seeker repair the probe....";
+char const *const SCENE6100_ROCKY_AREA = "The rocky area should be directly ahead of you. Do you see it?";
+char const *const SCENE6100_REPLY = "Yes. Now if I can just avoid those sunbeams.";
+char const *const SCENE6100_TAKE_CONTROLS = "You had better take the controls Seeker. My hands are sweating.";
+char const *const SCENE6100_SURPRISE = "You surprise me Quinn. I would have thought you of hardier stock.";
+char const *const SCENE6100_SWEAT = "Humans sweat, Kzin twitch their tail. What's the difference?";
+char const *const SCENE6100_VERY_WELL = "Very well. I will retrieve the stasis box and return the probe. \
 Wait for it's return in the lander bay.";
 
-const char *DEMO_HELP_MSG = " Help...\rF2 - Sound Options\rF3 - Exit demo\r\rPress ENTER\rto continue";
-const char *DEMO_PAUSED_MSG = "Ringworld\x14 demo is paused";
-const char *DEMO_EXIT_MSG = "Press ENTER to resume the Ringworld\x14 demo. Press ESC to exit";
-const char *EXIT_BTN_STRING = "Exit";
-const char *DEMO_BTN_STRING = "Demo";
-const char *DEMO_RESUME_BTN_STRING = "Resume";
+char const *const DEMO_HELP_MSG = " Help...\rF2 - Sound Options\rF3 - Exit demo\r\rPress ENTER\rto continue";
+char const *const DEMO_PAUSED_MSG = "Ringworld\x14 demo is paused";
+char const *const DEMO_EXIT_MSG = "Press ENTER to resume the Ringworld\x14 demo. Press ESC to exit";
+char const *const EXIT_BTN_STRING = "Exit";
+char const *const DEMO_BTN_STRING = "Demo";
+char const *const DEMO_RESUME_BTN_STRING = "Resume";
 
 } // End of namespace Ringworld
 
 namespace BlueForce {
 
 // Dialog resources
-const char *HELP_MSG = "Blue Force\x14\rScummVM Version\r\r\
+char const *const HELP_MSG = "Blue Force\x14\rScummVM Version\r\r\
 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
 F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
-const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
-const char *START_PLAY_BTN_STRING = " Play ";
-const char *INTRODUCTION_BTN_STRING = " Watch ";
-const char *OPTIONS_MSG = "Options...";
+char const *const WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
+char const *const START_PLAY_BTN_STRING = " Play ";
+char const *const INTRODUCTION_BTN_STRING = " Watch ";
+char const *const OPTIONS_MSG = "Options...";
 
 // Blue Force general messages
-const char *BF_NAME = "Blue Force";
-const char *BF_COPYRIGHT = " Copyright, 1993 Tsunami Media, Inc.";
-const char *BF_ALL_RIGHTS_RESERVED = "All Rights Reserved";
-const char *BF_19840518 = "May 18, 1984";
-const char *BF_19840515 = "May 15, 1984";
-const char *BF_3_DAYS = "Three days later";
-const char *BF_11_YEARS = "Eleven years later.";
-const char *BF_NEXT_DAY = "The Next Day";
-const char *BF_ACADEMY = "Here we are at the Academy";
+char const *const BF_NAME = "Blue Force";
+char const *const BF_COPYRIGHT = " Copyright, 1993 Tsunami Media, Inc.";
+char const *const BF_ALL_RIGHTS_RESERVED = "All Rights Reserved";
+char const *const BF_19840518 = "May 18, 1984";
+char const *const BF_19840515 = "May 15, 1984";
+char const *const BF_3_DAYS = "Three days later";
+char const *const BF_11_YEARS = "Eleven years later.";
+char const *const BF_NEXT_DAY = "The Next Day";
+char const *const BF_ACADEMY = "Here we are at the Academy";
 
 // Scene 50 hotspots
-const char *GRANDMA_FRANNIE = "Grandma Frannie";
-const char *MARINA = "Marina";
-const char *POLICE_DEPARTMENT = "Police Department";
-const char *TONYS_BAR = "Tony's Bar";
-const char *CHILD_PROTECTIVE_SERVICES = "Child Protective Services";
-const char *ALLEY_CAT = "Alley Cat";
-const char *CITY_HALL_JAIL = "City Hall & Jail";
-const char *JAMISON_RYAN = "Jamison & Ryan";
-const char *BIKINI_HUT = "Bikini Hut";
+char const *const GRANDMA_FRANNIE = "Grandma Frannie";
+char const *const MARINA = "Marina";
+char const *const POLICE_DEPARTMENT = "Police Department";
+char const *const TONYS_BAR = "Tony's Bar";
+char const *const CHILD_PROTECTIVE_SERVICES = "Child Protective Services";
+char const *const ALLEY_CAT = "Alley Cat";
+char const *const CITY_HALL_JAIL = "City Hall & Jail";
+char const *const JAMISON_RYAN = "Jamison & Ryan";
+char const *const BIKINI_HUT = "Bikini Hut";
 
 // Scene 60 radio messages
-const char *RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
+char const *const RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
 
 // Scene 570 computer messageS
-const char *SCENE570_PASSWORD = "PASSWORD -> ";
-const char *SCENE570_C_DRIVE = "C:\\";
-const char *SCENE570_RING = "RING";
-const char *SCENE570_PROTO = "PROTO";
-const char *SCENE570_WACKY = "WACKY";
-const char *SCENE570_COBB = "COBB";
-const char *SCENE570_LETTER = "LETTER";
-const char *SCENE570_RINGEXE = "RINGEXE";
-const char *SCENE570_RINGDATA = "RINGDATA";
-const char *SCENE570_PROTOEXE = "PROTOEXE";
-const char *SCENE570_PROTODATA = "PROTODATA";
-const char *SCENE570_WACKYEXE = "WACKYEXE";
-const char *SCENE570_WACKYDATA = "WACKYDATA";
+char const *const SCENE570_PASSWORD = "PASSWORD -> ";
+char const *const SCENE570_C_DRIVE = "C:\\";
+char const *const SCENE570_RING = "RING";
+char const *const SCENE570_PROTO = "PROTO";
+char const *const SCENE570_WACKY = "WACKY";
+char const *const SCENE570_COBB = "COBB";
+char const *const SCENE570_LETTER = "LETTER";
+char const *const SCENE570_RINGEXE = "RINGEXE";
+char const *const SCENE570_RINGDATA = "RINGDATA";
+char const *const SCENE570_PROTOEXE = "PROTOEXE";
+char const *const SCENE570_PROTODATA = "PROTODATA";
+char const *const SCENE570_WACKYEXE = "WACKYEXE";
+char const *const SCENE570_WACKYDATA = "WACKYDATA";
 
 // Scene 180 messages
-const char *THE_NEXT_DAY = "The Next Day";
+char const *const THE_NEXT_DAY = "The Next Day";
 
 } // End of namespace BlueForce
 
 namespace Ringworld2 {
 
-const char *CONSOLE_MESSAGES[] = {
+char const *const CONSOLE_MESSAGES[] = {
 	NULL, "Select Language", "Computer Services", "Food Services", "Entertainment Services",
 	"Main Menu", "Exit Menu", "Previous Menu", "Interworld", "Hero's Tongue", "Personal Log",
 	"Database", "Starchart", "Iso-Opto Disk Reader", "Eject Disk", "Meals", "Snacks",
@@ -193,41 +193,41 @@ const char *CONSOLE_MESSAGES[] = {
 };
 
 // Scene 825 Autodoc messages
-const char *MAIN_MENU = "main menu";
-const char *DIAGNOSIS = "diagnosis";
-const char *ADVANCED_PROCEDURES = "advanced procedures";
-const char *VITAL_SIGNS = "vital signs";
-const char *OPEN_DOOR = "open door";
-const char *TREATMENTS = "treatments";
-const char *NO_MALADY_DETECTED =  "no malady detected";
-const char *NO_TREATMENT_REQUIRED = "no treatment required";
-const char *ACCESS_CODE_REQUIRED = "access code required";
-const char *INVALID_ACCESS_CODE = "invalid access code";
-const char *FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
+char const *const MAIN_MENU = "main menu";
+char const *const DIAGNOSIS = "diagnosis";
+char const *const ADVANCED_PROCEDURES = "advanced procedures";
+char const *const VITAL_SIGNS = "vital signs";
+char const *const OPEN_DOOR = "open door";
+char const *const TREATMENTS = "treatments";
+char const *const NO_MALADY_DETECTED =  "no malady detected";
+char const *const NO_TREATMENT_REQUIRED = "no treatment required";
+char const *const ACCESS_CODE_REQUIRED = "access code required";
+char const *const INVALID_ACCESS_CODE = "invalid access code";
+char const *const FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
 
-const char *HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
-const char *CHAR_TITLE = "\x01Select Character:";
-const char *CHAR_QUINN_MSG = "  Quinn  ";
-const char *CHAR_SEEKER_MSG = "  Seeker  ";
-const char *CHAR_MIRANDA_MSG = "Miranda";
-const char *CHAR_CANCEL_MSG = "  Cancel  ";
+char const *const HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
+char const *const CHAR_TITLE = "\x01Select Character:";
+char const *const CHAR_QUINN_MSG = "  Quinn  ";
+char const *const CHAR_SEEKER_MSG = "  Seeker  ";
+char const *const CHAR_MIRANDA_MSG = "Miranda";
+char const *const CHAR_CANCEL_MSG = "  Cancel  ";
 
-const char *GAME_VERSION = "ScummVM Version";
-const char *SOUND_OPTIONS = "Sound options";
-const char *QUIT_GAME = "Quit";
-const char *RESTART_GAME = "Restart";
-const char *SAVE_GAME = "Save game";
-const char *RESTORE_GAME = "Restore game";
-const char *SHOW_CREDITS = "Show credits";
-const char *PAUSE_GAME = "Pause game";
-const char *RESUME_PLAY = "  Resume play  ";
-const char *F2 = "F2";
-const char *F3 = "F3";
-const char *F4 = "F4";
-const char *F5 = "F5";
-const char *F7 = "F7";
-const char *F8 = "F8";
-const char *F10 = "F10";
+char const *const GAME_VERSION = "ScummVM Version";
+char const *const SOUND_OPTIONS = "Sound options";
+char const *const QUIT_GAME = "Quit";
+char const *const RESTART_GAME = "Restart";
+char const *const SAVE_GAME = "Save game";
+char const *const RESTORE_GAME = "Restore game";
+char const *const SHOW_CREDITS = "Show credits";
+char const *const PAUSE_GAME = "Pause game";
+char const *const RESUME_PLAY = "  Resume play  ";
+char const *const F2 = "F2";
+char const *const F3 = "F3";
+char const *const F4 = "F4";
+char const *const F5 = "F5";
+char const *const F7 = "F7";
+char const *const F8 = "F8";
+char const *const F10 = "F10";
 
 } // End of namespace Ringworld2
 
