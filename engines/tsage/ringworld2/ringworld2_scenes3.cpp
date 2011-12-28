@@ -2009,6 +2009,7 @@ void Scene3700::signal() {
 			_sceneMode = 3328;
 			_stripManager.start(3328, this);
 		}
+		break;
 	case 3701:
 		R2_GLOBALS._sceneManager.changeScene(1000);
 		break;
