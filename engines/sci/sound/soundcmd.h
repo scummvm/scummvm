@@ -111,7 +111,9 @@ private:
 	SciMusic *_music;
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
-	bool _bMultiMidi;
+	// If true and an alternative digital sound effect exists, the digital
+	// sound effect is preferred instead
+	bool _useDigitalSFX;
 
 	void processInitSound(reg_t obj);
 	void processDisposeSound(reg_t obj);

@@ -35,17 +35,19 @@ namespace Sci {
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
-	_music = new SciMusic(_soundVersion);
-	_music->init();
 	// Check if the user wants synthesized or digital sound effects in SCI1.1
 	// or later games
-	_bMultiMidi = ConfMan.getBool("multi_midi");
+	_useDigitalSFX = ConfMan.getBool("multi_midi");
+
 	// In SCI2 and later games, this check should always be true - there was
 	// always only one version of each sound effect or digital music track
 	// (e.g. the menu music in GK1 - there is a sound effect with the same
 	// resource number, but it's totally unrelated to the menu music).
 	if (getSciVersion() >= SCI_VERSION_2)
-		_bMultiMidi = true;
+		_useDigitalSFX = true;
+
+	_music = new SciMusic(_soundVersion, _useDigitalSFX);
+	_music->init();
 }
 
 SoundCommandParser::~SoundCommandParser() {
@@ -93,7 +95,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 		// Found a relevant audio resource, create an audio stream if there is
 		// no associated sound resource, or if both resources exist and the
 		// user wants the digital version.
-		if (_bMultiMidi || !newSound->soundRes) {
+		if (_useDigitalSFX || !newSound->soundRes) {
 			int sampleLen;
 			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
 			newSound->soundType = Audio::Mixer::kSpeechSoundType;
@@ -485,7 +487,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 	} else {
 		// Slot actually has no data (which would mean that a sound-resource w/
 		// unsupported data is used.
-		//  (example lsl5 - sound resource 744 - it's roland exclusive
+		//  (example lsl5 - sound resource 744 - it's Roland exclusive
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		// If we don't set signal here, at least the switch to the mud wrestling
 		// room in lsl5 will not work.
