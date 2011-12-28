@@ -828,6 +828,9 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
 	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
 
+	if (src == dst)
+		return;
+
 	if (dstPage == 0 || dstPage == 1)
 		addDirtyRect(x2, y2, w, h);
 
@@ -835,7 +838,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 
 	if (flags & CR_NO_P_CHECK) {
 		while (h--) {
-			memcpy(dst, src, w);
+			memmove(dst, src, w);
 			src += SCREEN_W;
 			dst += SCREEN_W;
 		}
