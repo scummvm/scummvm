@@ -2054,7 +2054,7 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	file.read((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
-	int len[15];
+	unsigned int len[15];
 	for (int i = 0; i < 15; ++i)
 		len[i] = header.len(i);
 
@@ -2085,13 +2085,18 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	loadGraphicsSegment(_reel2, file, len[5]);
 	loadGraphicsSegment(_reel3, file, len[6]);
 
-	// segment 7 consists of 36*38 pathNodes followed by 'reelList'
-	file.read((uint8 *)_pathData, 36*sizeof(RoomPaths));
-	unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
-	unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
+	// segment 7 consists of 36 RoomPaths followed by 'reelList'
 	delete[] _reelList;
-	_reelList = new Reel[reelCount];
-	file.read((uint8 *)_reelList, reelLen);
+	if (len[7] <= 36*sizeof(RoomPaths)) {
+		file.read((uint8 *)_pathData, len[7]);
+		_reelList = 0;
+	} else {
+		file.read((uint8 *)_pathData, 36*sizeof(RoomPaths));
+		unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
+		unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
+		_reelList = new Reel[reelCount];
+		file.read((uint8 *)_reelList, reelLen);
+	}
 
 	// segment 8 consists of 12 personFrames followed by a TextFile
 	file.read((uint8 *)_personFramesLE, 24);
