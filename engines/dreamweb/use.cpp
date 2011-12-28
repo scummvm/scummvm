@@ -1396,7 +1396,7 @@ void DreamWebEngine::usePipe() {
 		showPuzText(36, 300);
 		putBackObStuff();
 		DynObject *exObject = getExAd(_withObject);
-		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		exObject->objId[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
 		return;
 	} else if (compare(_withObject, _withType, "CUPF")) {
 		// Already full
@@ -1419,7 +1419,7 @@ void DreamWebEngine::useOpenBox() {
 		_vars._progressPoints++;
 		showPuzText(37, 300);
 		DynObject *exObject = getExAd(_withObject);
-		exObject->id[3] = 'E'-'A';	// CUPF (full cup) -> CUPE (empty cup)
+		exObject->objId[3] = 'E'-'A';	// CUPF (full cup) -> CUPE (empty cup)
 		_vars._watchingTime = 140;
 		_vars._reelToWatch = 105;
 		_vars._endWatchReel = 181;
@@ -1449,7 +1449,7 @@ void DreamWebEngine::runTap() {
 	if (compare(_withObject, _withType, "CUPE")) {
 		// Fill cup from tap
 		DynObject *exObject = getExAd(_withObject);
-		exObject->id[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		exObject->objId[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
 		playChannel1(8);
 		showPuzText(57, 300);
 		putBackObStuff();

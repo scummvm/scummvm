@@ -1034,13 +1034,6 @@ void DreamWebEngine::lockMon() {
 	}
 }
 
-void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
-                                   unsigned int size, unsigned int maxSize) {
-	assert(size <= maxSize);
-	memset(buf, c, maxSize);
-	readFromFile(buf, size);
-}
-
 void DreamWebEngine::startLoading(const Room &room) {
 	_vars._combatCount = 0;
 	_roomsSample = room.roomsSample;
@@ -1278,7 +1271,7 @@ DynObject *DreamWebEngine::getExAd(uint8 index) {
 	return &_exData[index];
 }
 
-DynObject *DreamWebEngine::getEitherAdCPP() {
+DynObject *DreamWebEngine::getEitherAd() {
 	if (_objectType == kExObjectType)
 		return getExAd(_itemFrame);
 	else
@@ -1309,9 +1302,9 @@ void *DreamWebEngine::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
 }
 
 void *DreamWebEngine::getAnyAdDir(uint8 index, uint8 flag) {
-	if (flag == 4)
+	if (flag == kExObjectType)
 		return getExAd(index);
-	else if (flag == 2)
+	else if (flag == kFreeObjectType)
 		return getFreeAd(index);
 	else
 		return getSetAd(index);
@@ -2107,10 +2100,17 @@ void DreamWebEngine::getRidOfAll() {
 	_freeDesc.clear();
 }
 
+void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
+                                   unsigned int size, unsigned int maxSize) {
+	assert(size <= maxSize);
+	memset(buf, c, maxSize);
+	readFromFile(buf, size);
+}
+
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
-	const uint16 kSetdatlen = 64*128;
-	const uint16 kFreedatlen = 16*80;
+	const uint16 kSetdatlen = 64*128; // == sizeof(_setDat)
+	const uint16 kFreedatlen = 16*80; // == sizeof(_freeDat)
 
 	openFile(room.name);
 
@@ -3686,7 +3686,7 @@ void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].id[0] == 255 &&
+		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255 &&
 			extraObjects[i].initialLocation != _realLocation) {
 			deleteExObject(i);
 			return;
@@ -3694,7 +3694,7 @@ void DreamWebEngine::purgeAnItem() {
 	}
 
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].id[0] == 255) {
+		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
 			deleteExObject(i);
 			return;
 		}

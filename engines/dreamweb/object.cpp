@@ -57,7 +57,7 @@ void DreamWebEngine::fillRyan() {
 }
 
 bool DreamWebEngine::isItWorn(const DynObject *object) {
-	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
+	return (object->objId[0] == 'W'-'A') && (object->objId[1] == 'E'-'A');
 }
 
 void DreamWebEngine::wornError() {
@@ -74,8 +74,8 @@ void DreamWebEngine::wornError() {
 }
 
 void DreamWebEngine::makeWorn(DynObject *object) {
-	object->id[0] = 'W'-'A';
-	object->id[1] = 'E'-'A';
+	object->objId[0] = 'W'-'A';
+	object->objId[1] = 'E'-'A';
 }
 
 void DreamWebEngine::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
@@ -105,9 +105,9 @@ void DreamWebEngine::obPicture() {
 }
 
 void DreamWebEngine::obIcons() {
-	uint8 value1, value2;
-	getAnyAd(&value1, &value2);
-	if (value1 != 0xff) {
+	uint8 slotSize, slotCount;
+	getAnyAd(&slotSize, &slotCount);
+	if (slotSize != 0xff) {
 		// can open it
 		showFrame(_icons2, 210, 1, 4, 0);
 	}
@@ -270,9 +270,9 @@ void DreamWebEngine::getBackFromOb() {
 byte DreamWebEngine::getOpenedSlotCount() {
 	byte obj = _openedOb;
 	switch (_openedType) {
-	case 4:
+	case kExObjectType:
 		return getExAd(obj)->slotCount;
-	case 2:
+	case kFreeObjectType:
 		return getFreeAd(obj)->slotCount;
 	default:
 		return getSetAd(obj)->slotCount;
@@ -282,9 +282,9 @@ byte DreamWebEngine::getOpenedSlotCount() {
 byte DreamWebEngine::getOpenedSlotSize() {
 	byte obj = _openedOb;
 	switch (_openedType) {
-	case 4:
+	case kExObjectType:
 		return getExAd(obj)->slotSize;
-	case 2:
+	case kFreeObjectType:
 		return getFreeAd(obj)->slotSize;
 	default:
 		return getSetAd(obj)->slotSize;
@@ -662,7 +662,7 @@ void DreamWebEngine::dropObject() {
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	if (isItWorn(getEitherAdCPP())) {
+	if (isItWorn(getEitherAd())) {
 		wornError();
 		return;
 	}
@@ -704,7 +704,7 @@ void DreamWebEngine::dropObject() {
 
 bool DreamWebEngine::checkObjectSize() {
 	byte containerSize = getOpenedSlotSize();
-	DynObject *object = getEitherAdCPP();
+	DynObject *object = getEitherAd();
 	// If there is no size defined for the object in the editor, set its size
 	// to 6. This could be a bad idea, according to the original source.
 	byte objectSize = (object->objectSize != 255) ? object->objectSize : 6;
@@ -791,7 +791,7 @@ void DreamWebEngine::swapWithInv() {
 	ObjectRef objectId = findInvPos();
 	_itemFrame = objectId._index;
 	_objectType = objectId._type;
-	DynObject *object = getEitherAdCPP();
+	DynObject *object = getEitherAd();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
 	byte prevType2 = _objectType;
@@ -799,7 +799,7 @@ void DreamWebEngine::swapWithInv() {
 	_objectType = prevType;
 	_itemFrame = prevFrame;
 	delPointer();
-	object = getEitherAdCPP();
+	object = getEitherAd();
 	object->mapad[0] = 4;
 	object->mapad[1] = 255;
 	object->mapad[2] = _lastInvPos;
@@ -845,7 +845,7 @@ void DreamWebEngine::useOpened() {
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	if (isItWorn(getEitherAdCPP())) {
+	if (isItWorn(getEitherAd())) {
 		wornError();
 		return;
 	}
@@ -862,7 +862,7 @@ void DreamWebEngine::useOpened() {
 		return;
 
 	_pickUp = 0;
-	DynObject *object = getEitherAdCPP();
+	DynObject *object = getEitherAd();
 	object->mapad[0] = _openedType;
 	object->mapad[1] = _openedOb;
 	object->mapad[2] = _lastInvPos;
@@ -915,7 +915,7 @@ void DreamWebEngine::outOfOpen() {
 		_objectType = kExObjectType;
 	}
 
-	DynObject *object = getEitherAdCPP();
+	DynObject *object = getEitherAd();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
 
@@ -942,7 +942,7 @@ void DreamWebEngine::swapWithOpen() {
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	if (isItWorn(getEitherAdCPP())) {
+	if (isItWorn(getEitherAd())) {
 		wornError();
 		return;
 	}
@@ -970,7 +970,7 @@ void DreamWebEngine::swapWithOpen() {
 		_objectType = kExObjectType;
 	}
 
-	DynObject *object = getEitherAdCPP();
+	DynObject *object = getEitherAd();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
 
@@ -978,7 +978,7 @@ void DreamWebEngine::swapWithOpen() {
 	byte prevFrame2 = _itemFrame;
 	_objectType = prevType;
 	_itemFrame = prevFrame;
-	object = getEitherAdCPP();
+	object = getEitherAd();
 	object->mapad[0] = _openedType;
 	object->mapad[1] = _openedOb;
 	object->mapad[2] = _lastInvPos;

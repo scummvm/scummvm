@@ -792,7 +792,7 @@ public:
 	void findOrMake(uint8 index, uint8 value, uint8 type);
 	DynObject *getFreeAd(uint8 index);
 	DynObject *getExAd(uint8 index);
-	DynObject *getEitherAdCPP();
+	DynObject *getEitherAd();
 	void *getAnyAdDir(uint8 index, uint8 flag);
 	void showWatch();
 	void showTime();
