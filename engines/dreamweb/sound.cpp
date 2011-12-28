@@ -37,7 +37,7 @@ bool DreamBase::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 	//debug("name = %s", name.c_str());
 	bool result = engine->loadSpeech(name);
 
-	data.byte(kSpeechloaded) = result;
+	_speechLoaded = result;
 	return result;
 }
 

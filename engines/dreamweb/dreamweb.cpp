@@ -419,6 +419,8 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) :
 	_channel0Repeat = 0;
 	_channel1Playing = 0xff;
 
+	_speechLoaded = false;
+
 	_backdropBlocks = 0;
 	_reelList = 0;
 

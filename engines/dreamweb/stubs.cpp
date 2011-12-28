@@ -944,7 +944,7 @@ void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8
 		// FIXME: This fallthrough does not properly support subtitles+speech
 		// mode. The parameters to setuptimedtemp() are sometimes different
 		// for speech and for subtitles. See e.g., madmantext()
-		if ((data.byte(kSpeechloaded) == 1) && !_subtitles)
+		if (_speechLoaded && !_subtitles)
 			return;
 	}
 #endif
@@ -1703,7 +1703,7 @@ bool DreamBase::isCD() {
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
 	// we managed to load the speech. At least it is isolated in this function and can be changed.
 	// Maybe detect the version during game id?
-	return (data.byte(kSpeechloaded) == 1);
+	return (_speechLoaded);
 }
 
 void DreamBase::showIcon() {

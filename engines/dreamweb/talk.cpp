@@ -66,7 +66,7 @@ void DreamBase::talk() {
 
 	redrawMainScrn();
 	workToScreenM();
-	if (data.byte(kSpeechloaded) == 1) {
+	if (_speechLoaded) {
 		cancelCh1();
 		data.byte(kVolumedirection) = (byte)-1;
 		data.byte(kVolumeto) = 0;
@@ -98,9 +98,9 @@ void DreamBase::startTalk() {
 	y = 80;
 	printDirect(&str, 66, &y, 241, true);
 
-	data.byte(kSpeechloaded) = 0;
+	_speechLoaded = false;
 	loadSpeech('R', data.byte(kReallocation), 'C', 64*(data.byte(kCharacter) & 0x7F));
-	if (data.byte(kSpeechloaded) == 1) {
+	if (_speechLoaded) {
 		data.byte(kVolumedirection) = 1;
 		data.byte(kVolumeto) = 6;
 		playChannel1(50 + 12);
@@ -155,7 +155,7 @@ void DreamBase::doSomeTalk() {
 		printDirect(str, 164, 64, 144, false);
 
 		loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
-		if (data.byte(kSpeechloaded) != 0)
+		if (_speechLoaded)
 			playChannel1(62);
 
 		data.byte(kPointermode) = 3;
@@ -181,7 +181,7 @@ void DreamBase::doSomeTalk() {
 			printDirect(str, 48, 128, 144, false);
 
 			loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
-			if (data.byte(kSpeechloaded) != 0)
+			if (_speechLoaded)
 				playChannel1(62);
 
 			data.byte(kPointermode) = 3;
@@ -223,7 +223,7 @@ bool DreamBase::hangOnPQ() {
 			return true;
 		}
 
-		if (data.byte(kSpeechloaded) == 1 && _channel1Playing == 255) {
+		if (_speechLoaded && _channel1Playing == 255) {
 			speechFlag++;
 			if (speechFlag == 40)
 				break;

@@ -181,6 +181,8 @@ public:
 	uint8 _channel0Repeat;
 	uint8 _channel1Playing;
 
+	bool _speechLoaded;
+
 	// from backdrop.cpp
 	void doBlocks();
 	uint8 getXAd(const uint8 *setData, uint8 *result);

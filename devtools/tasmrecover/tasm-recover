@@ -179,6 +179,7 @@ p = parser(skip_binary_data = [
 	'ch1blocksplayed',
 	'soundemmpage',
 	'speechemmpage',
+	'speechloaded',
 	'lineroutine',
 	'increment1',
 	'increment2',
