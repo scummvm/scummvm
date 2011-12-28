@@ -24,6 +24,9 @@
 
 namespace DreamGen {
 
+const uint16 kKeypadx = 36+112;
+const uint16 kKeypady = 72;
+
 void DreamBase::getUnderMenu() {
 	multiGet(_underTimedText, kMenux, kMenuy, 48, 48);
 }

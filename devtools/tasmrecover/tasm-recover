@@ -477,6 +477,22 @@ p = parser(skip_binary_data = [
 	'initialvars',
 	'lengthofbuffer',
 	'lenofreelrouts',
+	'reellist',
+	'intext',
+	'lengthofmap',
+	'blocktext',
+	'blocks',
+	'frframes',
+	'frames',
+	'persontxtdat',
+	'persontext',
+	'tablesize',
+	'undertextsizex',	# defined in dreambase.h
+	'undertextsizey',	# defined in dreambase.h
+	#'lengthofvars',	# kept to verify savegame validity
+	'lenofmapstore',	# defined in dreambase.h
+	'keypadx',
+	'keypady',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',
