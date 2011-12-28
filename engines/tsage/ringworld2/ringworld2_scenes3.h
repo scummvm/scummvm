@@ -451,8 +451,8 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();
-	virtual void Scene3375::dispatch();
-	virtual void Scene3375::synchronize(Serializer &s);
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene3400 : public SceneExt {
