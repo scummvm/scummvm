@@ -36,8 +36,6 @@ void DreamWebEngine::endGame() {
 }
 
 void DreamWebEngine::monkSpeaking() {
-	// FIXME: This is the CD version only.
-
 	_roomsSample = 35;
 	loadRoomsSample();
 	loadIntoTemp("DREAMWEB.G15");
@@ -46,19 +44,35 @@ void DreamWebEngine::monkSpeaking() {
 	workToScreen();
 	_volume = 7;
 	_volumeDirection = -1;
-	_volumeTo = 5;
+	_volumeTo = isCD() ? 5 : 0;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	hangOn(300);
 
-	for (int i = 40; i <= 48; i++) {
-		loadSpeech('T', 83, 'T', i);
+	if (isCD()) {
+		for (int i = 40; i <= 48; i++) {
+			loadSpeech('T', 83, 'T', i);
 
-		playChannel1(50 + 12);
+			playChannel1(50 + 12);
 
-		do {
-			waitForVSync();
-		} while (_channel1Playing != 255);
+			do {
+				waitForVSync();
+			} while (_channel1Playing != 255);
+		}
+	} else {
+		for (int i = 40; i <= 44; i++) {
+			uint8 printResult = 0;
+			const uint8 *string = getTextInFile1(i);
+			uint16 y = 140;
+
+			do {
+				printResult = printDirect(&string, 36, &y, 239, 239 & 1);
+				workToScreen();
+				clearWork();
+				showFrame(_tempGraphics, 160, 72, 0, 128);	// show monk
+				hangOnP(240);
+			} while (printResult != 0);
+		}
 	}
 
 	_volumeDirection = 1;
