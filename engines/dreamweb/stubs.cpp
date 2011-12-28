@@ -2977,7 +2977,7 @@ void DreamWebEngine::clearBuffers() {
 }
 
 void DreamWebEngine::clearChanges() {
-	memset(_listOfChanges, 0xFF, 4*kNumChanges);
+	memset(_listOfChanges, 0xFF, sizeof(_listOfChanges));
 
 	setupInitialReelRoutines();
 
@@ -2988,13 +2988,14 @@ void DreamWebEngine::clearChanges() {
 
 	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
 	memset(_exFrames._data, 0xFF, kExframeslen);
-	memset(_exData, 0xFF, sizeof(DynObject) * kNumexobjects);
+	memset(_exData, 0xFF, sizeof(_exData));
 	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));
 	memset(_exText._text, 0xFF, kExtextlen);
 
-	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	const uint8 initialRoomsCanGo[16] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	memcpy(_roomsCanGo, initialRoomsCanGo, 16);
+	assert(sizeof(_roomsCanGo) == sizeof(initialRoomsCanGo));
+	memcpy(_roomsCanGo, initialRoomsCanGo, sizeof(initialRoomsCanGo));
 }
 
 void DreamWebEngine::setupInitialVars() {
