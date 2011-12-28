@@ -269,7 +269,7 @@ void DreamWebEngine::rollEndCreditsGameWon() {
 			uint16 y = 10 - j;
 			const uint8 *tmp_str = string;
 			for (int k = 0; k < 18; ++k) {
-				DreamWebEngine::printDirect(&tmp_str, 75, &y, 160 + 1, true);
+				printDirect(&tmp_str, 75, &y, 160 + 1, true);
 				y += linespacing;
 			}
 
@@ -308,7 +308,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 			uint16 y = 10 - j;
 			const uint8 *tmp_str = string;
 			for (int k = 0; k < 18; ++k) {
-				DreamWebEngine::printDirect(&tmp_str, 25, &y, 160 + 1, true);
+				printDirect(&tmp_str, 25, &y, 160 + 1, true);
 				y += linespacing;
 			}
 

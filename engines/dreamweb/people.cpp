@@ -343,7 +343,7 @@ void DreamWebEngine::madmansTelly(ReelRoutine &routine) {
 void DreamWebEngine::smokeBloke(ReelRoutine &routine) {
 	if (_vars._rockstarDead == 0) {
 		if (routine.b7 & 128)
-			DreamWebEngine::setLocation(5);
+			setLocation(5);
 	}
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 100) {
@@ -939,7 +939,7 @@ void DreamWebEngine::mugger(ReelRoutine &routine) {
 		_objectType = kExObjectType;
 		removeObFromInv();
 		makeMainScreen();
-		DreamWebEngine::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
+		setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
 		_vars._beenMugged = 1;
 	}
 }
@@ -950,7 +950,7 @@ void DreamWebEngine::businessMan(ReelRoutine &routine) {
 	_pointerMode = 0;
 	_vars._watchingTime = 2;
 	if (routine.reelPointer() == 2)
-		DreamWebEngine::setupTimedUse(49, 30, 1, 68, 174);	// First
+		setupTimedUse(49, 30, 1, 68, 174);	// First
 
 	if (routine.reelPointer() == 95) {
 		// Businessman combat won - end

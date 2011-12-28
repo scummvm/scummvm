@@ -979,10 +979,7 @@ void DreamWebEngine::getTime() {
 }
 
 void DreamWebEngine::DOSReturn() {
-	if (_commandType != 250) {
-		_commandType = 250;
-		commandOnly(46);
-	}
+	commandOnlyCond(46, 250);
 
 	if (_mouseButton & 1) {
 		_mouseButton = 0;
@@ -1120,6 +1117,13 @@ void DreamWebEngine::delTextLine() {
 		multiPut(_textUnder, _textAddressX, _textAddressY, kUnderTextSizeX, kUnderTextSizeY);
 }
 
+void DreamWebEngine::commandOnlyCond(uint8 command, uint8 commandType) {
+	if (_commandType != commandType) {
+		_commandType = commandType;
+		commandOnly(command);
+	}
+}
+
 void DreamWebEngine::commandOnly(uint8 command) {
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
@@ -1181,16 +1185,16 @@ bool DreamWebEngine::checkIfEx(uint8 x, uint8 y) {
 }
 
 const uint8 *DreamWebEngine::findObName(uint8 type, uint8 index) {
-	if (type == 5) {
-		uint16 i = 64 * (index & 127);
-		return (const uint8 *)_personText.getString(i);
-	} else if (type == 4) {
+	switch (type) {
+	case 5:
+		return (const uint8 *)_personText.getString(64 * (index & 127));
+	case kExObjectType:
 		return (const uint8 *)_exText.getString(index);
-	} else if (type == 2) {
+	case kFreeObjectType:
 		return (const uint8 *)_freeDesc.getString(index);
-	} else if (type == 1) {
+	case kSetObjectType1:
 		return (const uint8 *)_setDesc.getString(index);
-	} else {
+	default:
 		return (const uint8 *)_blockDesc.getString(index);
 	}
 }
@@ -1768,10 +1772,7 @@ void DreamWebEngine::zoomOnOff() {
 		return;
 	}
 
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(39);
-	}
+	commandOnlyCond(39, 222);
 
 	if (!(_mouseButton & 1) || (_mouseButton == _oldButton))
 		return;
@@ -1965,10 +1966,7 @@ void DreamWebEngine::look() {
 		blank();
 		return;
 	}
-	if (_commandType != 241) {
-		_commandType = 241;
-		commandOnly(25);
-	}
+	commandOnlyCond(25, 241);
 	if ((_mouseButton == 1) && (_mouseButton != _oldButton))
 		doLook();
 }
@@ -2300,10 +2298,7 @@ void DreamWebEngine::readKey() {
 }
 
 void DreamWebEngine::newGame() {
-	if (_commandType != 251) {
-		_commandType = 251;
-		commandOnly(47);
-	}
+	commandOnlyCond(47, 251);
 
 	if (_mouseButton == 1)
 		_getBack = 3;
@@ -2377,10 +2372,7 @@ void DreamWebEngine::redrawMainScrn() {
 }
 
 void DreamWebEngine::blank() {
-	if (_commandType != 199) {
-		_commandType = 199;
-		commandOnly(0);
-	}
+	commandOnlyCond(0, 199);
 }
 
 void DreamWebEngine::allPointer() {
@@ -2537,10 +2529,7 @@ bool DreamWebEngine::isSetObOnMap(uint8 index) {
 }
 
 void DreamWebEngine::examineInventory() {
-	if (_commandType != 249) {
-		_commandType = 249;
-		commandOnly(32);
-	}
+	commandOnlyCond(32, 249);
 
 	if (!(_mouseButton & 1))
 		return;
@@ -2663,10 +2652,7 @@ void DreamWebEngine::madmanRun() {
 		return;
 	}
 
-	if (_commandType != 211) {
-		_commandType = 211;
-		commandOnly(52);
-	}
+	commandOnlyCond(52, 211);
 
 	if (_mouseButton == 1 &&
 		_mouseButton != _oldButton)
@@ -2789,10 +2775,7 @@ void DreamWebEngine::getBack1() {
 	}
 
 
-	if (_commandType != 202) {
-		_commandType = 202;
-		commandOnly(26);
-	}
+	commandOnlyCond(26, 202);
 
 	if (_mouseButton == _oldButton)
 		return;
@@ -2994,7 +2977,7 @@ void DreamWebEngine::clearBuffers() {
 }
 
 void DreamWebEngine::clearChanges() {
-	memset(_listOfChanges, 0xFF, 4*kNumChanges);
+	memset(_listOfChanges, 0xFF, sizeof(_listOfChanges));
 
 	setupInitialReelRoutines();
 
@@ -3005,13 +2988,14 @@ void DreamWebEngine::clearChanges() {
 
 	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
 	memset(_exFrames._data, 0xFF, kExframeslen);
-	memset(_exData, 0xFF, sizeof(DynObject) * kNumexobjects);
+	memset(_exData, 0xFF, sizeof(_exData));
 	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));
 	memset(_exText._text, 0xFF, kExtextlen);
 
-	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	const uint8 initialRoomsCanGo[16] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	memcpy(_roomsCanGo, initialRoomsCanGo, 16);
+	assert(sizeof(_roomsCanGo) == sizeof(initialRoomsCanGo));
+	memcpy(_roomsCanGo, initialRoomsCanGo, sizeof(initialRoomsCanGo));
 }
 
 void DreamWebEngine::setupInitialVars() {
@@ -3105,10 +3089,7 @@ void DreamWebEngine::edensFlatReminders() {
 }
 
 void DreamWebEngine::incRyanPage() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(31);
-	}
+	commandOnlyCond(31, 222);
 
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;

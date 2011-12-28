@@ -196,6 +196,20 @@ protected:
 
 	// from keypad.cpp
 	uint8 _pressList[6];
+	uint8 _pressed;
+	uint16 _pressPointer;
+	uint8 _graphicPress;
+	uint8 _pressCount;
+	uint8 _lightCount;
+	uint8 _folderPage;
+	uint8 _diaryPage;
+	uint8 _menuCount;
+	uint8 _symbolTopX;
+	uint8 _symbolTopNum;
+	int8 _symbolTopDir;
+	uint8 _symbolBotX;
+	uint8 _symbolBotNum;
+	int8 _symbolBotDir;
 
 	// from monitor.cpp
 	char _inputLine[64];
@@ -393,22 +407,6 @@ public:
 	uint8 _watchDump;
 	uint8 _logoNum;
 	uint8 _oldLogoNum;
-	uint8 _pressed;
-	uint16 _pressPointer;
-	uint8 _graphicPress;
-	uint8 _pressCount;
-	uint8 _lightCount;
-	uint8 _folderPage;
-	uint8 _diaryPage;
-	uint8 _menuCount;
-	uint8 _symbolTopX;
-	uint8 _symbolTopNum;
-	uint8 _symbolTopDir;
-	uint8 _symbolBotX;
-	uint8 _symbolBotNum;
-	uint8 _symbolBotDir;
-	uint16 _dumpX;
-	uint16 _dumpY;
 	uint8 _walkAndExam;
 	uint8 _walkExamType;
 	uint8 _walkExamNum;
@@ -489,7 +487,6 @@ public:
 	void showOuterPad();
 	void dumpKeypad();
 	void dumpSymbol();
-	void dumpSymBox();
 	void quitSymbol();
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 
@@ -817,7 +814,9 @@ public:
 	void roomName();
 	void showIcon();
 	void eraseOldObs();
+	void commandOnlyCond(uint8 command, uint8 commandType);
 	void commandOnly(uint8 command);
+	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void blank();
 	void setTopLeft();
 	void setTopRight();
@@ -887,7 +886,6 @@ public:
 	void makeMainScreen();
 	void showWatchReel();
 	void watchReel();
-	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void examineObText();
 	void blockNameText();
 	void personNameText();

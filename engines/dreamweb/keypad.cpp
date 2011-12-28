@@ -112,10 +112,7 @@ void DreamWebEngine::loadKeypad() {
 }
 
 void DreamWebEngine::quitKey() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(4);
-	}
+	commandOnlyCond(4, 222);
 
 	if (_mouseButton != _oldButton && (_mouseButton & 1))
 		_getBack = 1;
@@ -177,11 +174,7 @@ void DreamWebEngine::buttonEnter() {
 }
 
 void DreamWebEngine::buttonPress(uint8 buttonId) {
-	uint8 commandType = 100 + buttonId;
-	if (_commandType != commandType) {
-		_commandType = commandType;
-		commandOnly(buttonId + 4);
-	}
+	commandOnlyCond(buttonId + 4, buttonId + 100);
 	if ((_mouseButton & 1) && (_mouseButton != _oldButton)) {
 		_pressed = buttonId;
 		_graphicPress = buttonId + 21;
@@ -338,10 +331,7 @@ void DreamWebEngine::nextFolder() {
 		blank();
 		return;
 	}
-	if (_commandType != 201) {
-		_commandType = 201;
-		commandOnly(16);
-	}
+	commandOnlyCond(16, 201);
 	if ((_mouseButton == 1) && (_mouseButton != _oldButton)) {
 		++_folderPage;
 		folderHints();
@@ -380,10 +370,7 @@ void DreamWebEngine::lastFolder() {
 		blank();
 		return;
 	}
-	if (_commandType != 202) {
-		_commandType = 202;
-		commandOnly(17);
-	}
+	commandOnlyCond(17, 202);
 
 	if ((_mouseButton == 1) && (_mouseButton != _oldButton)) {
 		--_folderPage;
@@ -564,10 +551,7 @@ void DreamWebEngine::quitSymbol() {
 		return;
 	};
 
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(18);
-	}
+	commandOnlyCond(18, 222);
 
 	if (_mouseButton == _oldButton)
 		return;	// notqs
@@ -584,13 +568,10 @@ void DreamWebEngine::setTopLeft() {
 		return;
 	}
 
-	if (_commandType != 210) {
-		_commandType = 210;
-		commandOnly(19);
-	}
+	commandOnlyCond(19, 210);
 
 	if (_mouseButton != 0)
-		_symbolTopDir = 0xFF;
+		_symbolTopDir = -1;
 }
 
 void DreamWebEngine::setTopRight() {
@@ -599,13 +580,10 @@ void DreamWebEngine::setTopRight() {
 		return;
 	}
 
-	if (_commandType != 211) {
-		_commandType = 211;
-		commandOnly(20);
-	}
+	commandOnlyCond(20, 211);
 
 	if (_mouseButton != 0)
-		_symbolTopDir = 1;
+		_symbolTopDir = +1;
 }
 
 void DreamWebEngine::setBotLeft() {
@@ -614,13 +592,10 @@ void DreamWebEngine::setBotLeft() {
 		return;
 	}
 
-	if (_commandType != 212) {
-		_commandType = 212;
-		commandOnly(21);
-	}
+	commandOnlyCond(21, 212);
 
 	if (_mouseButton != 0)
-		_symbolBotDir = 0xFF;
+		_symbolBotDir = -1;
 }
 
 void DreamWebEngine::setBotRight() {
@@ -629,13 +604,10 @@ void DreamWebEngine::setBotRight() {
 		return;
 	}
 
-	if (_commandType != 213) {
-		_commandType = 213;
-		commandOnly(22);
-	}
+	commandOnlyCond(22, 213);
 
 	if (_mouseButton != 0)
-		_symbolBotDir = 1;
+		_symbolBotDir = +1;
 }
 
 void DreamWebEngine::dumpSymbol() {
@@ -672,7 +644,7 @@ void DreamWebEngine::updateSymbolTop() {
 	if (!_symbolTopDir)
 		return; // topfinished
 
-	if (_symbolTopDir == (byte)-1) {
+	if (_symbolTopDir == -1) {
 		// Backward
 		_symbolTopX--;
 		if (_symbolTopX != (byte)-1) {
@@ -709,7 +681,7 @@ void DreamWebEngine::updateSymbolBot() {
 	if (!_symbolBotDir)
 		return; // botfinished
 
-	if (_symbolBotDir == (byte)-1) {
+	if (_symbolBotDir == -1) {
 		// Backward
 		_symbolBotX--;
 		if (_symbolBotX != (byte)-1) {
@@ -739,13 +711,6 @@ void DreamWebEngine::updateSymbolBot() {
 				return; // botfinished
 			_symbolBotNum = 5;
 		}
-	}
-}
-
-void DreamWebEngine::dumpSymBox() {
-	if (_dumpX != 0xFFFF) {
-		multiDump(_dumpX, _dumpY, 30, 77);
-		_dumpX = 0xFFFF;
 	}
 }
 
@@ -848,10 +813,7 @@ void DreamWebEngine::dumpDiaryKeys() {
 }
 
 void DreamWebEngine::diaryKeyP() {
-	if (_commandType != 214) {
-		_commandType = 214;
-		commandOnly(23);
-	}
+	commandOnlyCond(23, 214);
 
 	if (!_mouseButton ||
 		_oldButton == _mouseButton ||
@@ -868,10 +830,7 @@ void DreamWebEngine::diaryKeyP() {
 }
 
 void DreamWebEngine::diaryKeyN() {
-	if (_commandType != 213) {
-		_commandType = 213;
-		commandOnly(23);
-	}
+	commandOnlyCond(23, 213);
 
 	if (!_mouseButton ||
 		_oldButton == _mouseButton ||

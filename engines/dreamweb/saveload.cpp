@@ -107,10 +107,7 @@ void syncGameVars(Common::Serializer &s, GameVars &vars) {
 }
 
 void DreamWebEngine::loadGame() {
-	if (_commandType != 246) {
-		_commandType = 246;
-		commandOnly(41);
-	}
+	commandOnlyCond(41, 246);
 	if (_mouseButton == _oldButton)
 		return; // "noload"
 	if (_mouseButton == 1)
@@ -204,10 +201,7 @@ void DreamWebEngine::saveGame() {
 		return;
 	}
 
-	if (_commandType != 247) {
-		_commandType = 247;
-		commandOnly(44);
-	}
+	commandOnlyCond(44, 247);
 	if (_mouseButton != 1)
 		return;
 
@@ -304,10 +298,7 @@ void DreamWebEngine::saveLoad() {
 		blank();
 		return;
 	}
-	if (_commandType != 253) {
-		_commandType = 253;
-		commandOnly(43);
-	}
+	commandOnlyCond(43, 253);
 	if ((_mouseButton != _oldButton) && (_mouseButton & 1))
 		doSaveLoad();
 }
@@ -384,10 +375,7 @@ void DreamWebEngine::getBackFromOps() {
 }
 
 void DreamWebEngine::getBackToOps() {
-	if (_commandType != 201) {
-		_commandType = 201;
-		commandOnly(42);
-	}
+	commandOnlyCond(42, 201);
 
 	if (_mouseButton != _oldButton) {
 		if (_mouseButton & 1) {
@@ -411,10 +399,7 @@ void DreamWebEngine::showDiscOps() {
 }
 
 void DreamWebEngine::discOps() {
-	if (_commandType != 249) {
-		_commandType = 249;
-		commandOnly(43);
-	}
+	commandOnlyCond(43, 249);
 
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
@@ -450,10 +435,7 @@ void DreamWebEngine::discOps() {
 }
 
 void DreamWebEngine::actualSave() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(44);
-	}
+	commandOnlyCond(44, 222);
 
 	if (!(_mouseButton & 1))
 		return;
@@ -477,10 +459,7 @@ void DreamWebEngine::actualSave() {
 }
 
 void DreamWebEngine::actualLoad() {
-	if (_commandType != 221) {
-		_commandType = 221;
-		commandOnly(41);
-	}
+	commandOnlyCond(41, 221);
 
 	if (_mouseButton == _oldButton || _mouseButton != 1)
 		return;
@@ -702,10 +681,7 @@ uint DreamWebEngine::scanForNames() {
 }
 
 void DreamWebEngine::loadOld() {
-	if (_commandType != 252) {
-		_commandType = 252;
-		commandOnly(48);
-	}
+	commandOnlyCond(48, 252);
 
 	if (!(_mouseButton & 1))
 		return;
@@ -793,10 +769,7 @@ void DreamWebEngine::checkInput() {
 }
 
 void DreamWebEngine::selectSlot() {
-	if (_commandType != 244) {
-		_commandType = 244;
-		commandOnly(45);
-	}
+	commandOnlyCond(45, 244);
 
 	if (_mouseButton != 1 || _mouseButton == _oldButton)
 		return; // noselslot

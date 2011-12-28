@@ -1450,7 +1450,7 @@ void DreamWebEngine::useAltar() {
 		_vars._endWatchReel = 174;
 		_vars._watchSpeed = 1;
 		_vars._speedCount = 1;
-		DreamWebEngine::setupTimedUse(47, 32, 98, 52, 76);
+		setupTimedUse(47, 32, 98, 52, 76);
 		_getBack = 1;
 	} else {
 		showPuzText(23, 300);
