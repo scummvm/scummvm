@@ -2407,6 +2407,7 @@ void Scene3700::signal() {
 	// No break on purpose
 	case 3329:
 		warning("STUB: sub_1D227()");
+		_sceneMode = 3701;
 		setAction(&_sequenceManager, this, 3701, &_actor2, &_actor3, &_actor4, NULL);
 		break;
 	case 3700:
