@@ -42,15 +42,15 @@ void DreamBase::printSprites() {
 void DreamBase::printASprite(const Sprite *sprite) {
 	uint16 x, y;
 	if (sprite->y >= 220) {
-		y = data.word(kMapady) - (256 - sprite->y);
+		y = _mapAdY - (256 - sprite->y);
 	} else {
-		y = sprite->y + data.word(kMapady);
+		y = sprite->y + _mapAdY;
 	}
 
 	if (sprite->x >= 220) {
-		x = data.word(kMapadx) - (256 - sprite->x);
+		x = _mapAdX - (256 - sprite->x);
 	} else {
-		x = sprite->x + data.word(kMapadx);
+		x = sprite->x + _mapAdX;
 	}
 	
 	uint8 c;
@@ -104,23 +104,23 @@ void DreamBase::spriteUpdate() {
 			backObject(&sprite);
 		}
 	
-		if (data.byte(kNowinnewroom) == 1)
+		if (_nowInNewRoom == 1)
 			break;
 	}
 }
 
 void DreamBase::initMan() {
-	Sprite *sprite = makeSprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, &_mainSprites, 0);
+	Sprite *sprite = makeSprite(_ryanX, _ryanY, addr_mainman, &_mainSprites, 0);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;
 }
 
 void DreamBase::mainMan(Sprite *sprite) {
-	if (data.byte(kResetmanxy) == 1) {
-		data.byte(kResetmanxy) = 0;
-		sprite->x = data.byte(kRyanx);
-		sprite->y = data.byte(kRyany);
+	if (_resetManXY == 1) {
+		_resetManXY = 0;
+		sprite->x = _ryanX;
+		sprite->y = _ryanY;
 		sprite->walkFrame = 0;
 	}
 
@@ -129,84 +129,84 @@ void DreamBase::mainMan(Sprite *sprite) {
 		return;
 	sprite->speed = 0;
 
-	if (data.byte(kTurntoface) != data.byte(kFacing)) {
+	if (_turnToFace != _facing) {
 		aboutTurn(sprite);
 	} else {
-		if ((data.byte(kTurndirection) != 0) && (data.byte(kLinepointer) == 254)) {
-			data.byte(kReasseschanges) = 1;
-			if (data.byte(kFacing) == data.byte(kLeavedirection))
+		if ((_turnDirection != 0) && (_linePointer == 254)) {
+			_reAssesChanges = 1;
+			if (_facing == _leaveDirection)
 				checkForExit(sprite);
 		}
-		data.byte(kTurndirection) = 0;
-		if (data.byte(kLinepointer) == 254) {
+		_turnDirection = 0;
+		if (_linePointer == 254) {
 			sprite->walkFrame = 0;
 		} else {
 			++sprite->walkFrame;
 			if (sprite->walkFrame == 11)
 				sprite->walkFrame = 1;
 			walking(sprite);
-			if (data.byte(kLinepointer) != 254) {
-				if ((data.byte(kFacing) & 1) == 0)
+			if (_linePointer != 254) {
+				if ((_facing & 1) == 0)
 					walking(sprite);
 				else if ((sprite->walkFrame != 2) && (sprite->walkFrame != 7))
 					walking(sprite);
 			}
-			if (data.byte(kLinepointer) == 254) {
-				if (data.byte(kTurntoface) == data.byte(kFacing)) {
-					data.byte(kReasseschanges) = 1;
-					if (data.byte(kFacing) == data.byte(kLeavedirection))
+			if (_linePointer == 254) {
+				if (_turnToFace == _facing) {
+					_reAssesChanges = 1;
+					if (_facing == _leaveDirection)
 						checkForExit(sprite);
 				}
 			}
 		}
 	}
 	static const uint8 facelist[] = { 0,60,33,71,11,82,22,93 };
-	sprite->frameNumber = sprite->walkFrame + facelist[data.byte(kFacing)];
-	data.byte(kRyanx) = sprite->x;
-	data.byte(kRyany) = sprite->y;
+	sprite->frameNumber = sprite->walkFrame + facelist[_facing];
+	_ryanX = sprite->x;
+	_ryanY = sprite->y;
 }
 
 void DreamBase::walking(Sprite *sprite) {
 	uint8 comp;
-	if (data.byte(kLinedirection) != 0) {
-		--data.byte(kLinepointer);
+	if (_lineDirection != 0) {
+		--_linePointer;
 		comp = 200;
 	} else {
-		++data.byte(kLinepointer);
-		comp = data.byte(kLinelength);
+		++_linePointer;
+		comp = _lineLength;
 	}
-	if (data.byte(kLinepointer) < comp) {
-		sprite->x = (uint8)_lineData[data.byte(kLinepointer)].x;
-		sprite->y = (uint8)_lineData[data.byte(kLinepointer)].y;
+	if (_linePointer < comp) {
+		sprite->x = (uint8)_lineData[_linePointer].x;
+		sprite->y = (uint8)_lineData[_linePointer].y;
 		return;
 	}
 
-	data.byte(kLinepointer) = 254;
-	data.byte(kManspath) = data.byte(kDestination);
-	if (data.byte(kDestination) == data.byte(kFinaldest)) {
+	_linePointer = 254;
+	_mansPath = _destination;
+	if (_destination == _finalDest) {
 		faceRightWay();
 		return;
 	}
-	data.byte(kDestination) = data.byte(kFinaldest);
+	_destination = _finalDest;
 	autoSetWalk();
 }
 
 void DreamBase::aboutTurn(Sprite *sprite) {
 	bool incdir = true;
 
-	if (data.byte(kTurndirection) == 1)
+	if (_turnDirection == 1)
 		incdir = true;
-	else if ((int8)data.byte(kTurndirection) == -1)
+	else if ((int8)_turnDirection == -1)
 		incdir = false;
 	else {
-		if (data.byte(kFacing) < data.byte(kTurntoface)) {
-			uint8 delta = data.byte(kTurntoface) - data.byte(kFacing);
+		if (_facing < _turnToFace) {
+			uint8 delta = _turnToFace - _facing;
 			if (delta >= 4)
 				incdir = false;
 			else
 				incdir = true;
 		} else {
-			uint8 delta = data.byte(kFacing) - data.byte(kTurntoface);
+			uint8 delta = _facing - _turnToFace;
 			if (delta >= 4)
 				incdir = true;
 			else
@@ -215,12 +215,12 @@ void DreamBase::aboutTurn(Sprite *sprite) {
 	}
 
 	if (incdir) {
-		data.byte(kTurndirection) = 1;
-		data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
+		_turnDirection = 1;
+		_facing = (_facing + 1) & 7;
 		sprite->walkFrame = 0;
 	} else {
-		data.byte(kTurndirection) = (uint8)-1;
-		data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
+		_turnDirection = (uint8)-1;
+		_facing = (_facing - 1) & 7;
 		sprite->walkFrame = 0;
 	}
 }
@@ -276,8 +276,8 @@ void DreamBase::wideDoor(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
-	int ryanx = data.byte(kRyanx);
-	int ryany = data.byte(kRyany);
+	int ryanx = _ryanX;
+	int ryany = _ryanY;
 
 	// Automatically opening doors: check if Ryan is in range
 
@@ -292,7 +292,7 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 		++sprite->animFrame;
 		if (sprite->animFrame == 1) { // doorsound2
 			uint8 soundIndex;
-			if (data.byte(kReallocation) == 5) // hoteldoor2
+			if (_realLocation == 5) // hoteldoor2
 				soundIndex = 13;
 			else
 				soundIndex = 0;
@@ -309,7 +309,7 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 
 		if (sprite->animFrame == 5) { // doorsound1;
 			uint8 soundIndex;
-			if (data.byte(kReallocation) == 5) // hoteldoor1
+			if (_realLocation == 5) // hoteldoor1
 				soundIndex = 13;
 			else
 				soundIndex = 1;
@@ -331,8 +331,8 @@ void DreamBase::steady(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
-	int ryanx = data.byte(kRyanx);
-	int ryany = data.byte(kRyany);
+	int ryanx = _ryanX;
+	int ryany = _ryanY;
 
 	Common::Rect check(-24, -30, 10, 12);
 	check.translate(sprite->x, sprite->y);
@@ -449,8 +449,8 @@ const GraphicsFile *DreamBase::findSource(uint16 &frame) {
 }
 
 void DreamBase::showReelFrame(Reel *reel) {
-	uint16 x = reel->x + data.word(kMapadx);
-	uint16 y = reel->y + data.word(kMapady);
+	uint16 x = reel->x + _mapAdX;
+	uint16 y = reel->y + _mapAdY;
 	uint16 frame = reel->frame();
 	const GraphicsFile *base = findSource(frame);
 	showFrame(*base, x, y, frame, 8);
@@ -480,8 +480,8 @@ void DreamBase::showRain() {
 
 	for (i = _rainList.begin(); i != _rainList.end(); ++i) {
 		Rain &rain = *i;
-		uint16 y = rain.y + data.word(kMapady) + data.word(kMapystart);
-		uint16 x = rain.x + data.word(kMapadx) + data.word(kMapxstart);
+		uint16 y = rain.y + _mapAdY + _mapYStart;
+		uint16 x = rain.x + _mapAdX + _mapXStart;
 		uint16 size = rain.size;
 		uint16 offset = (rain.w3 - rain.b5) & 511;
 		rain.w3 = offset;
@@ -497,9 +497,9 @@ void DreamBase::showRain() {
 
 	if (_channel1Playing != 255)
 		return;
-	if (data.byte(kReallocation) == 2 && data.byte(kBeenmugged) != 1)
+	if (_realLocation == 2 && data.byte(kBeenmugged) != 1)
 		return;
-	if (data.byte(kReallocation) == 55)
+	if (_realLocation == 55)
 		return;
 
 	if (engine->randomNumber() >= 1) // play thunder with 1 in 256 chance
@@ -516,22 +516,22 @@ void DreamBase::showRain() {
 void DreamBase::moveMap(uint8 param) {
 	switch (param) {
 	case 32:
-		data.byte(kMapy) -= 20;
+		_mapY -= 20;
 		break;
 	case 16:
-		data.byte(kMapy) -= 10;
+		_mapY -= 10;
 		break;
 	case 8:
-		data.byte(kMapy) += 10;
+		_mapY += 10;
 		break;
 	case 2:
-		data.byte(kMapx) += 11;
+		_mapX += 11;
 		break;
 	default:
-		data.byte(kMapx) -= 11;
+		_mapX -= 11;
 		break;
 	}
-	data.byte(kNowinnewroom) = 1;
+	_nowInNewRoom = 1;
 }
 
 void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
@@ -545,7 +545,7 @@ void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *ty
 
 uint8 DreamBase::getBlockOfPixel(uint8 x, uint8 y) {
 	uint8 flag, flagEx, type, flagX, flagY;
-	checkOne(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
+	checkOne(x + _mapXStart, y + _mapYStart, &flag, &flagEx, &type, &flagX, &flagY);
 	if (flag & 1)
 		return 0;
 	else
@@ -560,7 +560,7 @@ void DreamBase::splitIntoLines(uint8 x, uint8 y) {
 		while (!getBlockOfPixel(x, y)) {
 			--x;
 			++y;
-			if (x == 0 || y >= data.byte(kMapysize))
+			if (x == 0 || y >= _mapYSize)
 				return;
 		}
 
@@ -573,7 +573,7 @@ void DreamBase::splitIntoLines(uint8 x, uint8 y) {
 		while (getBlockOfPixel(x, y)) {
 			--x;
 			++y;
-			if (x == 0 || y >= data.byte(kMapysize))
+			if (x == 0 || y >= _mapYSize)
 				break;
 			++length;
 		}
@@ -582,7 +582,7 @@ void DreamBase::splitIntoLines(uint8 x, uint8 y) {
 		rain.w3 = (engine->randomNumber() << 8) | engine->randomNumber();
 		rain.b5 = (engine->randomNumber() & 3) + 4;
 		_rainList.push_back(rain);
-	} while (x > 0 && y < data.byte(kMapysize));
+	} while (x > 0 && y < _mapYSize);
 }
 
 struct RainLocation {
@@ -630,8 +630,8 @@ void DreamBase::initRain() {
 
 	// look up location in rainLocationList to determine rainSpacing
 	for (r = rainLocationList; r->location != 0xff; ++r) {
-		if (r->location == data.byte(kReallocation) &&
-		        r->x == data.byte(kMapx) && r->y == data.byte(kMapy)) {
+		if (r->location == _realLocation &&
+		        r->x == _mapX && r->y == _mapY) {
 			rainSpacing = r->rainSpacing;
 			break;
 		}
@@ -651,7 +651,7 @@ void DreamBase::initRain() {
 		} while (delta >= rainSpacing);
 
 		x += delta;
-		if (x >= data.byte(kMapxsize))
+		if (x >= _mapXSize)
 			break;
 
 		splitIntoLines(x, 0);
@@ -666,25 +666,25 @@ void DreamBase::initRain() {
 		} while (delta >= rainSpacing);
 
 		y += delta;
-		if (y >= data.byte(kMapysize))
+		if (y >= _mapYSize)
 			break;
 
-		splitIntoLines(data.byte(kMapxsize) - 1, y);
+		splitIntoLines(_mapXSize - 1, y);
 	} while (true);
 }
 
 void DreamBase::intro1Text() {
-	if (data.byte(kIntrocount) != 2 && data.byte(kIntrocount) != 4 && data.byte(kIntrocount) != 6)
+	if (_introCount != 2 && _introCount != 4 && _introCount != 6)
 		return;
 
 	if (isCD() && _channel1Playing != 255) {
-		data.byte(kIntrocount)--;
+		_introCount--;
 	} else {
-		if (data.byte(kIntrocount) == 2)
+		if (_introCount == 2)
 			setupTimedTemp(40, 82, 34, 130, 90, 1);
-		else if (data.byte(kIntrocount) == 4)
+		else if (_introCount == 4)
 			setupTimedTemp(41, 82, 34, 130, 90, 1);
-		else if (data.byte(kIntrocount) == 6)
+		else if (_introCount == 6)
 			setupTimedTemp(42, 82, 34, 130, 90, 1);
 	}
 }
@@ -706,84 +706,84 @@ void DreamBase::intro3Text(uint16 nextReelPointer) {
 void DreamBase::monks2text() {
 	bool isGermanCD = isCD() && engine->getLanguage() == Common::DE_DEU;
 
-	if (data.byte(kIntrocount) == 1)
+	if (_introCount == 1)
 		setupTimedTemp(8, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 5 : 4))
+	else if (_introCount == (isGermanCD ? 5 : 4))
 		setupTimedTemp(9, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 9 : 7))
+	else if (_introCount == (isGermanCD ? 9 : 7))
 		setupTimedTemp(10, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 10 && !isGermanCD) {
+	else if (_introCount == 10 && !isGermanCD) {
 		if (isCD())
-			data.byte(kIntrocount) = 12;
+			_introCount = 12;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	} else if (data.byte(kIntrocount) == 13 && isGermanCD) {
-		data.byte(kIntrocount) = 14;
+	} else if (_introCount == 13 && isGermanCD) {
+		_introCount = 14;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	} else if (data.byte(kIntrocount) == 13 && !isGermanCD) {
+	} else if (_introCount == 13 && !isGermanCD) {
 		if (isCD())
-			data.byte(kIntrocount) = 17;
+			_introCount = 17;
 		else
 			setupTimedTemp(12, 82, 0, 120, 120, 1);
-	} else if (data.byte(kIntrocount) == 16 && !isGermanCD)
+	} else if (_introCount == 16 && !isGermanCD)
 		setupTimedTemp(13, 82, 0, 135, 120, 1);
-	else if (data.byte(kIntrocount) == 19)
+	else if (_introCount == 19)
 		setupTimedTemp(14, 82, 36, 160, 100, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 23 : 22))
+	else if (_introCount == (isGermanCD ? 23 : 22))
 		setupTimedTemp(15, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 27 : 25))
+	else if (_introCount == (isGermanCD ? 27 : 25))
 		setupTimedTemp(16, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 27 : 28) && !isGermanCD)
+	else if (_introCount == (isCD() ? 27 : 28) && !isGermanCD)
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == 30 && isGermanCD)
+	else if (_introCount == 30 && isGermanCD)
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
-	else if (data.byte(kIntrocount) == (isGermanCD ? 35 : 31))
+	else if (_introCount == (isGermanCD ? 35 : 31))
 		setupTimedTemp(18, 82, 36, 160, 120, 1);
 }
 
 void DreamBase::textForEnd() {
-	if (data.byte(kIntrocount) == 20)
+	if (_introCount == 20)
 		setupTimedTemp(0, 83, 34, 20, 60, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 50 : 65))
+	else if (_introCount == (isCD() ? 50 : 65))
 		setupTimedTemp(1, 83, 34, 20, 60, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 85 : 110))
+	else if (_introCount == (isCD() ? 85 : 110))
 		setupTimedTemp(2, 83, 34, 20, 60, 1);
 }
 
 void DreamBase::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 	if (isCD() && _channel1Playing != 255)
-		data.byte(kIntrocount)--;
+		_introCount--;
 	else
 		setupTimedTemp(textIndex, voiceIndex, x, y, countToTimed, timeCount);
 }
 
 void DreamBase::textForMonk() {
-	if (data.byte(kIntrocount) == 1)
+	if (_introCount == 1)
 		textForMonkHelper(19, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 5)
+	else if (_introCount == 5)
 		textForMonkHelper(20, 82, 68, 38, 120, 1);
-	else if (data.byte(kIntrocount) == 9)
+	else if (_introCount == 9)
 		textForMonkHelper(21, 82, 48, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 13)
+	else if (_introCount == 13)
 		textForMonkHelper(22, 82, 68, 38, 120, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 15 : 17))
+	else if (_introCount == (isCD() ? 15 : 17))
 		textForMonkHelper(23, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 21)
+	else if (_introCount == 21)
 		textForMonkHelper(24, 82, 68, 38, 120, 1);
-	else if (data.byte(kIntrocount) == 25)
+	else if (_introCount == 25)
 		textForMonkHelper(25, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 29)
+	else if (_introCount == 29)
 		textForMonkHelper(26, 82, 68, 38, 120, 1);
-	else if (data.byte(kIntrocount) == 33)
+	else if (_introCount == 33)
 		textForMonkHelper(27, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 37)
+	else if (_introCount == 37)
 		textForMonkHelper(28, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == 41)
+	else if (_introCount == 41)
 		textForMonkHelper(29, 82, 68, 38, 120, 1);
-	else if (data.byte(kIntrocount) == 45)
+	else if (_introCount == 45)
 		textForMonkHelper(30, 82, 68, 154, 120, 1);
-	else if (data.byte(kIntrocount) == (isCD() ? 52 : 49))
+	else if (_introCount == (isCD() ? 52 : 49))
 		textForMonkHelper(31, 82, 68, 154, 220, 1);
-	else if (data.byte(kIntrocount) == 53) {
+	else if (_introCount == 53) {
 		fadeScreenDowns();
 		if (isCD()) {
 			_volumeTo = 7;
@@ -801,15 +801,15 @@ void DreamBase::reelsOnScreen() {
 }
 
 void DreamBase::reconstruct() {
-	if (data.byte(kHavedoneobs) == 0)
+	if (_haveDoneObs == 0)
 		return;
 	data.byte(kNewobs) = 1;
 	drawFloor();
 	spriteUpdate();
 	printSprites();
-	if (_foreignRelease && (data.byte(kReallocation) == 20))
+	if (_foreignRelease && (_realLocation == 20))
 		underTextLine();
-	data.byte(kHavedoneobs) = 0;
+	_haveDoneObs = 0;
 }
 
 
@@ -1065,7 +1065,7 @@ static const ReelSound *g_roomByRoom[] = {
 
 
 void DreamBase::soundOnReels(uint16 reelPointer) {
-	const ReelSound *r = g_roomByRoom[data.byte(kReallocation)];
+	const ReelSound *r = g_roomByRoom[_realLocation];
 
 	if (engine->getLanguage() == Common::DE_DEU && r == g_roomSound29)
 		r = g_roomSound29_German;
@@ -1073,9 +1073,9 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 	for (; r->_sample != 255; ++r) {
 		if (r->_reelPointer != reelPointer)
 			continue;
-		if (r->_reelPointer == data.word(kLastsoundreel))
+		if (r->_reelPointer == _lastSoundReel)
 			continue;
-		data.word(kLastsoundreel) = r->_reelPointer;
+		_lastSoundReel = r->_reelPointer;
 		if (r->_sample < 64) {
 			playChannel1(r->_sample);
 			return;
@@ -1087,12 +1087,12 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 		playChannel0(r->_sample & 63, 255);
 	}
 
-	if (data.word(kLastsoundreel) != reelPointer)
-		data.word(kLastsoundreel) = (uint16)-1;
+	if (_lastSoundReel != reelPointer)
+		_lastSoundReel = (uint16)-1;
 }
 
 void DreamBase::clearBeforeLoad() {
-	if (data.byte(kRoomloaded) != 1)
+	if (_roomLoaded != 1)
 		return /* (noclear) */;
 
 	clearReels();
@@ -1111,7 +1111,7 @@ void DreamBase::clearBeforeLoad() {
 	_freeFrames.clear();
 	_freeDesc.clear();
 
-	data.byte(kRoomloaded) = 0;
+	_roomLoaded = 0;
 }
 
 void DreamBase::clearReels() {
@@ -1121,12 +1121,12 @@ void DreamBase::clearReels() {
 }
 
 void DreamBase::getRidOfReels() {
-	if (data.byte(kRoomloaded))
+	if (_roomLoaded)
 		clearReels();
 }
 
 void DreamBase::liftNoise(uint8 index) {
-	if (data.byte(kReallocation) == 5 || data.byte(kReallocation) == 21)
+	if (_realLocation == 5 || _realLocation == 21)
 		playChannel1(13);	// hiss noise
 	else
 		playChannel1(index);
@@ -1134,42 +1134,42 @@ void DreamBase::liftNoise(uint8 index) {
 
 void DreamBase::checkForExit(Sprite *sprite) {
 	uint8 flag, flagEx, type, flagX, flagY;
-	checkOne(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
-	data.byte(kLastflag) = flag;
+	checkOne(_ryanX + 12, _ryanY + 12, &flag, &flagEx, &type, &flagX, &flagY);
+	_lastFlag = flag;
 
 	if (flag & 64) {
-		data.byte(kAutolocation) = flagEx;
+		_autoLocation = flagEx;
 		return;
 	}
 
 	if (!(flag & 32)) {
 		if (flag & 4) {
 			// adjust left
-			data.byte(kLastflag) = 0;
-			data.byte(kMapx) -= 11;
+			_lastFlag = 0;
+			_mapX -= 11;
 			sprite->x = 16 * flagEx;
-			data.byte(kNowinnewroom) = 1;
+			_nowInNewRoom = 1;
 		} else if (flag & 2) {
 			// adjust right
-			data.byte(kMapx) += 11;
+			_mapX += 11;
 			sprite->x = 16 * flagEx - 2;
-			data.byte(kNowinnewroom) = 1;
+			_nowInNewRoom = 1;
 		} else if (flag & 8) {
 			// adjust down
-			data.byte(kMapy) += 10;
+			_mapY += 10;
 			sprite->y = 16 * flagEx;
-			data.byte(kNowinnewroom) = 1;
+			_nowInNewRoom = 1;
 		} else if (flag & 16) {
 			// adjust up
-			data.byte(kMapy) -= 10;
+			_mapY -= 10;
 			sprite->y = 16 * flagEx;
-			data.byte(kNowinnewroom) = 1;
+			_nowInNewRoom = 1;
 		}
 
 		return;
 	}
 
-	if (data.byte(kReallocation) == 2) {
+	if (_realLocation == 2) {
 		// Can't leave Louis' until you found shoes
 
 		int shoeCount = 0;
@@ -1180,7 +1180,7 @@ void DreamBase::checkForExit(Sprite *sprite) {
 			uint8 text = shoeCount ? 43 : 42;
 			setupTimedUse(text, 80, 10, 68, 64);
 
-			data.byte(kTurntoface) = (data.byte(kFacing) + 4) & 7;
+			_turnToFace = (_facing + 4) & 7;
 			return;
 		}
 

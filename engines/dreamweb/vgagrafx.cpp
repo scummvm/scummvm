@@ -287,7 +287,7 @@ void DreamBase::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 e
 			*/
 		}
 		if (effectsFlag & 8) { // printList
-			//addToPrintList(x - data.word(kMapadx), y - data.word(kMapady)); // NB: Commented in the original asm
+			//addToPrintList(x - _mapAdX, y - _mapAdY); // NB: Commented in the original asm
 		}
 		if (effectsFlag & 4) { // flippedX
 			frameOutFx(workspace(), pSrc, 320, width, height, x, y);
@@ -337,11 +337,11 @@ void DreamBase::zoom() {
 		return;
 	if (data.byte(kZoomon) != 1)
 		return;
-	if (data.byte(kCommandtype) >= 199) {
+	if (_commandType >= 199) {
 		putUnderZoom();
 		return;
 	}
-	uint16 srcOffset = (data.word(kOldpointery) - 9) * 320 + (data.word(kOldpointerx) - 11);
+	uint16 srcOffset = (_oldPointerY - 9) * 320 + (_oldPointerX - 11);
 	uint16 dstOffset = (kZoomy + 4) * 320 + (kZoomx + 5);
 	const uint8 *src = workspace() + srcOffset;
 	uint8 *dst = workspace() + dstOffset;
@@ -357,19 +357,19 @@ void DreamBase::zoom() {
 		dst += 320*2;
 	}
 	crosshair();
-	data.byte(kDidzoom) = 1;
+	_didZoom = 1;
 }
 
 void DreamBase::panelToMap() {
-	multiGet(_mapStore, data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiGet(_mapStore, _mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
 void DreamBase::mapToPanel() {
-	multiPut(_mapStore, data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiPut(_mapStore, _mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
 void DreamBase::dumpMap() {
-	multiDump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiDump(_mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
 bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
@@ -392,7 +392,7 @@ void DreamBase::loadPalFromIFF() {
 	uint8 *dst = _mainPal;
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
-		if (data.byte(kBrightness) == 1) {
+		if (_brightness == 1) {
 			if (c) {
 				c = c + c / 2 + c / 4;
 				if (c > 63)

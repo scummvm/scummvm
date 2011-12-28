@@ -61,7 +61,7 @@ bool DreamBase::isItWorn(const DynObject *object) {
 }
 
 void DreamBase::wornError() {
-	data.byte(kCommandtype) = 255;
+	_commandType = 255;
 	delPointer();
 	printMessage(76, 21, 57, 240, false);
 	workToScreenM();
@@ -69,7 +69,7 @@ void DreamBase::wornError() {
 	showPanel();
 	showMan();
 	examIcon();
-	data.byte(kCommandtype) = 255;
+	_commandType = 255;
 	workToScreenM();
 }
 
@@ -95,10 +95,10 @@ void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 }
 
 void DreamBase::obPicture() {
-	if (data.byte(kObjecttype) == kSetObjectType1)
+	if (_objectType == kSetObjectType1)
 		return;
-	uint8 frame = 3 * data.byte(kCommand) + 1;
-	if (data.byte(kObjecttype) == kExObjectType)
+	uint8 frame = 3 * _command + 1;
+	if (_objectType == kExObjectType)
 		showFrame(_exFrames, 160, 68, frame, 0x80);
 	else
 		showFrame(_freeFrames, 160, 68, frame, 0x80);
@@ -116,19 +116,19 @@ void DreamBase::obIcons() {
 }
 
 void DreamBase::examineOb(bool examineAgain) {
-	data.byte(kPointermode) = 0;
-	data.word(kTimecount) = 0;
+	_pointerMode = 0;
+	_timeCount = 0;
 
 	while (true) {
 		if (examineAgain) {
-			data.byte(kInmaparea) = 0;
-			data.byte(kExamagain) = 0;
-			data.byte(kOpenedob) = 255;
-			data.byte(kOpenedtype) = 255;
-			data.byte(kInvopen) = 0;
-			data.byte(kObjecttype) = data.byte(kCommandtype);
-			data.byte(kItemframe) = 0;
-			data.byte(kPointerframe) = 0;
+			_inMapArea = 0;
+			_examAgain = 0;
+			_openedOb = 255;
+			_openedType = 255;
+			_invOpen = 0;
+			_objectType = _commandType;
+			_itemFrame = 0;
+			_pointerFrame = 0;
 			createPanel();
 			showPanel();
 			showMan();
@@ -137,7 +137,7 @@ void DreamBase::examineOb(bool examineAgain) {
 			obPicture();
 			describeOb();
 			underTextLine();
-			data.byte(kCommandtype) = 255;
+			_commandType = 255;
 			readMouse();
 			showPointer();
 			workToScreen();
@@ -151,9 +151,9 @@ void DreamBase::examineOb(bool examineAgain) {
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
-		data.byte(kGetback) = 0;
+		_getBack = 0;
 
-		switch (data.byte(kInvopen)) {
+		switch (_invOpen) {
 		case 0: {
 			RectWithCallback<DreamBase> examList[] = {
 				{ 273,320,157,198,&DreamBase::getBackFromOb },
@@ -196,20 +196,20 @@ void DreamBase::examineOb(bool examineAgain) {
 
 		if (_quitRequested)
 			break;
-		if (data.byte(kExamagain) != 0)
+		if (_examAgain != 0)
 			examineAgain = true;
-		else if (data.byte(kGetback) != 0)
+		else if (_getBack != 0)
 			break;
 	}
 
-	data.byte(kPickup) = 0;
-	if (data.word(kWatchingtime) != 0 || data.byte(kNewlocation) == 255) {
+	_pickUp = 0;
+	if (data.word(kWatchingtime) != 0 || _newLocation == 255) {
 		// isWatching
 		makeMainScreen();
 	}
 
-	data.byte(kInvopen) = 0;
-	data.byte(kOpenedob) = 255;
+	_invOpen = 0;
+	_openedOb = 255;
 }
 
 void DreamBase::inventory() {
@@ -218,20 +218,20 @@ void DreamBase::inventory() {
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 239) {
-		data.byte(kCommandtype) = 239;
+	if (_commandType != 239) {
+		_commandType = 239;
 		commandOnly(32);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton == _oldButton)
 		return;
-	if (!(data.word(kMousebutton) & 1)) // only on left mouse button
+	if (!(_mouseButton & 1)) // only on left mouse button
 		return;
 
 
-	data.word(kTimecount) = 0;
-	data.byte(kPointermode) = 0;
-	data.byte(kInmaparea) = 0;
+	_timeCount = 0;
+	_pointerMode = 0;
+	_inMapArea = 0;
 	animPointer();
 	createPanel();
 	showPanel();
@@ -239,14 +239,14 @@ void DreamBase::inventory() {
 	showMan();
 	showExit();
 	underTextLine();
-	data.byte(kPickup) = 0;
-	data.byte(kInvopen) = 2;
+	_pickUp = 0;
+	_invOpen = 2;
 	openInv();
 	readMouse();
 	showPointer();
 	workToScreen();
 	delPointer();
-	data.byte(kOpenedob) = 255;
+	_openedOb = 255;
 	examineOb(false);
 }
 
@@ -261,15 +261,15 @@ void DreamBase::transferText(uint8 from, uint8 to) {
 }
 
 void DreamBase::getBackFromOb() {
-	if (data.byte(kPickup) != 1)
+	if (_pickUp != 1)
 		getBack1();
 	else
 		blank();
 }
 
 byte DreamBase::getOpenedSlotCount() {
-	byte obj = data.byte(kOpenedob);
-	switch (data.byte(kOpenedtype)) {
+	byte obj = _openedOb;
+	switch (_openedType) {
 	case 4:
 		return getExAd(obj)->slotCount;
 	case 2:
@@ -280,8 +280,8 @@ byte DreamBase::getOpenedSlotCount() {
 }
 
 byte DreamBase::getOpenedSlotSize() {
-	byte obj = data.byte(kOpenedob);
-	switch (data.byte(kOpenedtype)) {
+	byte obj = _openedOb;
+	switch (_openedType) {
 	case 4:
 		return getExAd(obj)->slotSize;
 	case 2:
@@ -294,11 +294,11 @@ byte DreamBase::getOpenedSlotSize() {
 void DreamBase::openOb() {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 
-	copyName(data.byte(kOpenedtype), data.byte(kOpenedob), commandLine);
+	copyName(_openedType, _openedOb, commandLine);
 
 	printMessage(kInventx, kInventy+86, 62, 240, false);
 
-	printDirect(commandLine, data.word(kLastxpos) + 5, kInventy+86, 220, false);
+	printDirect(commandLine, _lastXPos + 5, kInventy+86, 220, false);
 
 	fillOpen();
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
@@ -310,8 +310,8 @@ void DreamBase::identifyOb() {
 		return;
 	}
 
-	uint16 initialX = data.word(kMousex) - data.word(kMapadx);
-	uint16 initialY = data.word(kMousey) - data.word(kMapady);
+	uint16 initialX = _mouseX - _mapAdX;
+	uint16 initialY = _mouseY - _mapAdY;
 
 	if (initialX >= 22 * 8 || initialY >= 20 * 8) {
 		blank();
@@ -321,16 +321,16 @@ void DreamBase::identifyOb() {
 	byte x = initialX & 0xFF;
 	byte y = initialY & 0xFF;
 
-	data.byte(kInmaparea) = 1;
-	data.byte(kPointerspath) = findPathOfPoint(x, y);
-	data.byte(kPointerfirstpath) = findFirstPath(x, y);
+	_inMapArea = 1;
+	_pointersPath = findPathOfPoint(x, y);
+	_pointerFirstPath = findFirstPath(x, y);
 
 	if (checkIfEx(x, y) || checkIfFree(x, y) ||
 		checkIfPerson(x, y) || checkIfSet(x, y))
 		return; // finishidentify
 
-	x = (data.word(kMousex) - data.word(kMapadx)) & 0xFF;
-	y = (data.word(kMousey) - data.word(kMapady)) & 0xFF;
+	x = (_mouseX - _mapAdX) & 0xFF;
+	y = (_mouseY - _mapAdY) & 0xFF;
 	byte flag, flagEx, type, flagX, flagY;
 
 	checkOne(x, y, &flag, &flagEx, &type, &flagX, &flagY);
@@ -342,11 +342,11 @@ void DreamBase::identifyOb() {
 }
 
 ObjectRef DreamBase::findInvPos() {
-	uint16 x = data.word(kMousex) - kInventx;
-	uint16 y = data.word(kMousey) - kInventy;
+	uint16 x = _mouseX - kInventx;
+	uint16 y = _mouseY - kInventy;
 	uint8 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
 	uint8 invPos = data.byte(kRyanpage) * 10 + pos;
-	data.byte(kLastinvpos) = invPos;
+	_lastInvPos = invPos;
 	return _ryanInvList[invPos];
 }
 
@@ -357,26 +357,26 @@ void DreamBase::selectOb() {
 		return;
 	}
 
-	data.byte(kWithobject) = objectId._index;
-	data.byte(kWithtype)   = objectId._type;
+	_withObject = objectId._index;
+	_withType   = objectId._type;
 
-	if (objectId != _oldSubject || data.byte(kCommandtype) != 221) {
+	if (objectId != _oldSubject || _commandType != 221) {
 		if (objectId == _oldSubject)
-			data.byte(kCommandtype) = 221;
+			_commandType = 221;
 		_oldSubject = objectId;
 		commandWithOb(0, objectId._type, objectId._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	delPointer();
-	data.byte(kInvopen) = 0;
+	_invOpen = 0;
 	useRoutine();
 }
 
 void DreamBase::setPickup() {
-	if (data.byte(kObjecttype) != kSetObjectType1 && data.byte(kObjecttype) != kSetObjectType3) {
+	if (_objectType != kSetObjectType1 && _objectType != kSetObjectType3) {
 		// Object types 1 and 3 are excluded, so the resulting object is a DynObject
 		uint8 dummy;
 		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
@@ -389,12 +389,12 @@ void DreamBase::setPickup() {
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 209) {
-		data.byte(kCommandtype) = 209;
-		commandWithOb(33, data.byte(kObjecttype), data.byte(kCommand));
+	if (_commandType != 209) {
+		_commandType = 209;
+		commandWithOb(33, _objectType, _command);
 	}
 
-	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton != 1 || _mouseButton == _oldButton)
 		return;
 
 	createPanel();
@@ -402,20 +402,20 @@ void DreamBase::setPickup() {
 	showMan();
 	showExit();
 	examIcon();
-	data.byte(kPickup) = 1;
-	data.byte(kInvopen) = 2;
+	_pickUp = 1;
+	_invOpen = 2;
 
-	if (data.byte(kObjecttype) != kExObjectType) {
-		assert(data.byte(kObjecttype) == kFreeObjectType);
-		data.byte(kOpenedob) = 255;
-		data.byte(kItemframe) = transferToEx(data.byte(kCommand));
-		data.byte(kObjecttype) = kExObjectType;
-		DynObject *object = getExAd(data.byte(kItemframe));
+	if (_objectType != kExObjectType) {
+		assert(_objectType == kFreeObjectType);
+		_openedOb = 255;
+		_itemFrame = transferToEx(_command);
+		_objectType = kExObjectType;
+		DynObject *object = getExAd(_itemFrame);
 		object->mapad[0] = 20;
 		object->mapad[1] = 255;
 	} else {
-		data.byte(kItemframe) = data.byte(kCommand);
-		data.byte(kOpenedob) = 255;
+		_itemFrame = _command;
+		_openedOb = 255;
 	}
 
 	openInv();
@@ -486,16 +486,16 @@ void DreamBase::deleteExObject(uint8 index) {
 }
 
 void DreamBase::removeObFromInv() {
-	if (data.byte(kCommand) == 100)
+	if (_command == 100)
 		return; // object doesn't exist
 
-	assert(data.byte(kObjecttype) == kExObjectType);
+	assert(_objectType == kExObjectType);
 
-	deleteExObject(data.byte(kCommand));
+	deleteExObject(_command);
 }
 
 void DreamBase::inToInv() {
-	if (!data.byte(kPickup)) {
+	if (!_pickUp) {
 		outOfInv();
 		return;
 	}
@@ -507,25 +507,25 @@ void DreamBase::inToInv() {
 		return;
 	}
 
-	subject._type = data.byte(kObjecttype);
-	subject._index = data.byte(kItemframe);
+	subject._type = _objectType;
+	subject._index = _itemFrame;
 
-	if (subject != _oldSubject || data.byte(kCommandtype) != 220) {
+	if (subject != _oldSubject || _commandType != 220) {
 		if (subject == _oldSubject)
-			data.byte(kCommandtype) = 220;
+			_commandType = 220;
 		_oldSubject = subject;
 		commandWithOb(35, subject._type, subject._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return; // notletgo2
 	
 	delPointer();
-	DynObject *object = getExAd(data.byte(kItemframe));
+	DynObject *object = getExAd(_itemFrame);
 	object->mapad[0] = 4;
 	object->mapad[1] = 255;
-	object->mapad[2] = data.byte(kLastinvpos);
-	data.byte(kPickup) = 0;
+	object->mapad[2] = _lastInvPos;
+	_pickUp = 0;
 	fillRyan();
 	readMouse();
 	showPointer();
@@ -542,26 +542,26 @@ void DreamBase::outOfInv() {
 		return;
 	}
 
-	if (data.word(kMousebutton) == 2) {
+	if (_mouseButton == 2) {
 		reExFromInv();
 		return;
 	}
 
-	if (subject != _oldSubject || data.byte(kCommandtype) != 221) {
+	if (subject != _oldSubject || _commandType != 221) {
 		if (subject == _oldSubject)
-			data.byte(kCommandtype) = 221;
+			_commandType = 221;
 		_oldSubject = subject;
 		commandWithOb(36, subject._type, subject._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	delPointer();
-	data.byte(kPickup) = 1;
+	_pickUp = 1;
 	subject = findInvPos();
-	data.byte(kObjecttype) = subject._type;
-	data.byte(kItemframe) = subject._index;
+	_objectType = subject._type;
+	_itemFrame = subject._index;
 	assert(subject._type == kExObjectType);
 	DynObject *object = getExAd(subject._index);
 	object->mapad[0] = 20;
@@ -588,21 +588,21 @@ const uint8 *DreamBase::getObTextStart() {
 	const uint8 *textBase;
 	const uint8 *text;
 	uint16 textOff;
-	if (data.byte(kObjecttype) == kFreeObjectType) {
+	if (_objectType == kFreeObjectType) {
 		textBase = (const uint8 *)_freeDesc._text;
 		textOff = kFreetext;
-		text = (const uint8 *)_freeDesc.getString(data.byte(kCommand));
-	} else if (data.byte(kObjecttype) == kSetObjectType1) {
+		text = (const uint8 *)_freeDesc.getString(_command);
+	} else if (_objectType == kSetObjectType1) {
 		textBase = (const uint8 *)_setDesc._text;
 		textOff = kSettext;
-		text = (const uint8 *)_setDesc.getString(data.byte(kCommand));
+		text = (const uint8 *)_setDesc.getString(_command);
 	} else {
 		textBase = (const uint8 *)_exText._text;
 		textOff = kExtext;
-		text = (const uint8 *)_exText.getString(data.byte(kCommand));
+		text = (const uint8 *)_exText.getString(_command);
 	}
 
-	if (data.byte(kObjecttype) != kSetObjectType1)
+	if (_objectType != kSetObjectType1)
 		return text;
 
 	const uint8 *obname = text;
@@ -631,7 +631,7 @@ const uint8 *DreamBase::getObTextStart() {
 				// arbitrary give-up counter
 				// FIXME: Make this more precise to avoid reading out of bounds
 				if (text - (textBase - textOff) >= 8000) {
-					warning("Object description for %d/%d not found", data.byte(kObjecttype), data.byte(kCommand));
+					warning("Object description for %d/%d not found", _objectType, _command);
 					return obname;
 				}
 			}
@@ -654,16 +654,16 @@ const uint8 *DreamBase::getObTextStart() {
 }
 
 void DreamBase::dropObject() {
-	if (data.byte(kCommandtype) != 223) {
-		data.byte(kCommandtype) = 223;
-		if (!data.byte(kPickup)) {
+	if (_commandType != 223) {
+		_commandType = 223;
+		if (!_pickUp) {
 			blank();
 			return;
 		}
-		commandWithOb(37, data.byte(kObjecttype), data.byte(kItemframe));
+		commandWithOb(37, _objectType, _itemFrame);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	if (isItWorn(getEitherAdCPP())) {
@@ -671,9 +671,9 @@ void DreamBase::dropObject() {
 		return;
 	}
 
-	if (data.byte(kReallocation) != 47) {
+	if (_realLocation != 47) {
 		byte flag, flagEx, type, flagX, flagY;
-		checkOne(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
+		checkOne(_ryanX + 12, _ryanY + 12, &flag, &flagEx, &type, &flagX, &flagY);
 
 		if (flag >= 2) {
 			dropError();
@@ -684,26 +684,26 @@ void DreamBase::dropObject() {
 		return;
 	}
 
-	if (data.byte(kMapxsize) == 64 && data.byte(kMapysize) == 64) {
+	if (_mapXSize == 64 && _mapYSize == 64) {
 		// Inside lift
 		dropError();
 		return;
 	}
 
-	if (compare(data.byte(kItemframe), 4, "GUNA") || compare(data.byte(kItemframe), 4, "SHLD")) {
+	if (compare(_itemFrame, 4, "GUNA") || compare(_itemFrame, 4, "SHLD")) {
 		cantDrop();
 		return;
 	}
 
-	data.byte(kObjecttype) = 4;
-	DynObject *object = getExAd(data.byte(kItemframe));
+	_objectType = 4;
+	DynObject *object = getExAd(_itemFrame);
 	object->mapad[0] = 0;
-	object->mapad[1] = ((data.byte(kRyanx) + 4) >> 4) + data.byte(kMapx);
-	object->mapad[2] = (data.byte(kRyanx) + 4) & 0xF;
-	object->mapad[3] = ((data.byte(kRyany) + 8) >> 4) + data.byte(kMapy);
-	object->mapad[4] = (data.byte(kRyany) + 8) & 0xF;
-	data.byte(kPickup) = 0;
-	object->currentLocation = data.byte(kReallocation);
+	object->mapad[1] = ((_ryanX + 4) >> 4) + _mapX;
+	object->mapad[2] = (_ryanX + 4) & 0xF;
+	object->mapad[3] = ((_ryanY + 8) >> 4) + _mapY;
+	object->mapad[4] = (_ryanY + 8) & 0xF;
+	_pickUp = 0;
+	object->currentLocation = _realLocation;
 }
 
 bool DreamBase::checkObjectSize() {
@@ -744,16 +744,16 @@ void DreamBase::selectOpenOb() {
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 224) {
-		data.byte(kCommandtype) = 224;
-		commandWithOb(38, data.byte(kObjecttype), data.byte(kCommand));
+	if (_commandType != 224) {
+		_commandType = 224;
+		commandWithOb(38, _objectType, _command);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	data.byte(kOpenedob) = data.byte(kCommand);
-	data.byte(kOpenedtype) = data.byte(kObjecttype);
+	_openedOb = _command;
+	_openedType = _objectType;
 	createPanel();
 	showPanel();
 	showMan();
@@ -770,45 +770,45 @@ void DreamBase::selectOpenOb() {
 
 void DreamBase::reExFromInv() {
 	ObjectRef objectId = findInvPos();
-	data.byte(kCommandtype) = objectId._type;
-	data.byte(kCommand)     = objectId._index;
-	data.byte(kExamagain) = 1;
-	data.byte(kPointermode) = 0;
+	_commandType = objectId._type;
+	_command     = objectId._index;
+	_examAgain = 1;
+	_pointerMode = 0;
 }
 
 void DreamBase::swapWithInv() {
 	ObjectRef subject;
-	subject._type = data.byte(kObjecttype);
-	subject._index = data.byte(kItemframe);
-	if (subject != _oldSubject || data.byte(kCommandtype) != 243) {
+	subject._type = _objectType;
+	subject._index = _itemFrame;
+	if (subject != _oldSubject || _commandType != 243) {
 		if (subject == _oldSubject)
-			data.byte(kCommandtype) = 243;
+			_commandType = 243;
 		_oldSubject = subject;
 		commandWithOb(34, subject._type, subject._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	byte prevType = data.byte(kObjecttype);
-	byte prevFrame = data.byte(kItemframe);
+	byte prevType = _objectType;
+	byte prevFrame = _itemFrame;
 	ObjectRef objectId = findInvPos();
-	data.byte(kItemframe) = objectId._index;
-	data.byte(kObjecttype) = objectId._type;
+	_itemFrame = objectId._index;
+	_objectType = objectId._type;
 	DynObject *object = getEitherAdCPP();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
-	byte prevType2 = data.byte(kObjecttype);
-	byte prevFrame2 = data.byte(kItemframe);
-	data.byte(kObjecttype) = prevType;
-	data.byte(kItemframe) = prevFrame;
+	byte prevType2 = _objectType;
+	byte prevFrame2 = _itemFrame;
+	_objectType = prevType;
+	_itemFrame = prevFrame;
 	delPointer();
 	object = getEitherAdCPP();
 	object->mapad[0] = 4;
 	object->mapad[1] = 255;
-	object->mapad[2] = data.byte(kLastinvpos);
-	data.byte(kObjecttype) = prevType2;
-	data.byte(kItemframe) = prevFrame2;
+	object->mapad[2] = _lastInvPos;
+	_objectType = prevType2;
+	_itemFrame = prevFrame2;
 	fillRyan();
 	readMouse();
 	showPointer();
@@ -817,10 +817,10 @@ void DreamBase::swapWithInv() {
 }
 
 void DreamBase::useOpened() {
-	if (data.byte(kOpenedob) == 255)
+	if (_openedOb == 255)
 		return;	// cannot use opened object
 
-	if (!data.byte(kPickup)) {
+	if (!_pickUp) {
 		outOfOpen();
 		return;
 	}
@@ -832,21 +832,21 @@ void DreamBase::useOpened() {
 		return;
 	}
 
-	if (data.byte(kPickup) != 1) {
+	if (_pickUp != 1) {
 		blank();
 		return;
 	}
 
-	objectId._type = data.byte(kObjecttype);
-	objectId._index = data.byte(kItemframe);
-	if (objectId != _oldSubject || data.byte(kCommandtype) != 227) {
+	objectId._type = _objectType;
+	objectId._index = _itemFrame;
+	if (objectId != _oldSubject || _commandType != 227) {
 		if (objectId == _oldSubject)
-			data.byte(kCommandtype) = 227;
+			_commandType = 227;
 		_oldSubject = objectId;
 		commandWithOb(35, objectId._type, objectId._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	if (isItWorn(getEitherAdCPP())) {
@@ -856,8 +856,8 @@ void DreamBase::useOpened() {
 
 	delPointer();
 
-	if (data.byte(kItemframe) == data.byte(kOpenedob) &&
-		data.byte(kObjecttype) == data.byte(kOpenedtype)) {
+	if (_itemFrame == _openedOb &&
+		_objectType == _openedType) {
 		errorMessage1();
 		return;
 	}
@@ -865,12 +865,12 @@ void DreamBase::useOpened() {
 	if (!checkObjectSize())
 		return;
 
-	data.byte(kPickup) = 0;
+	_pickUp = 0;
 	DynObject *object = getEitherAdCPP();
-	object->mapad[0] = data.byte(kOpenedtype);
-	object->mapad[1] = data.byte(kOpenedob);
-	object->mapad[2] = data.byte(kLastinvpos);
-	object->mapad[3] = data.byte(kReallocation);
+	object->mapad[0] = _openedType;
+	object->mapad[1] = _openedOb;
+	object->mapad[2] = _lastInvPos;
+	object->mapad[3] = _realLocation;
 	fillOpen();
 	underTextLine();
 	readMouse();
@@ -881,7 +881,7 @@ void DreamBase::useOpened() {
 }
 
 void DreamBase::outOfOpen() {
-	if (data.byte(kOpenedob) == 255)
+	if (_openedOb == 255)
 		return;	// cannot use opened object
 
 	ObjectRef objectId = findOpenPos();
@@ -891,32 +891,32 @@ void DreamBase::outOfOpen() {
 		return;
 	}
 
-	if (objectId != _oldSubject || data.byte(kCommandtype) != 228) {
+	if (objectId != _oldSubject || _commandType != 228) {
 		if (objectId == _oldSubject)
-			data.byte(kCommandtype) = 228;
+			_commandType = 228;
 		_oldSubject = objectId;
 		commandWithOb(36, objectId._type, objectId._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton == _oldButton)
 		return;	// notletgo4
 
-	if (data.word(kMousebutton) != 1) {
-		if (data.word(kMousebutton) == 2)
+	if (_mouseButton != 1) {
+		if (_mouseButton == 2)
 			reExFromOpen();
 		return;
 	}
 
 	delPointer();
-	data.byte(kPickup) = 1;
+	_pickUp = 1;
 	objectId = findOpenPos();
-	data.byte(kObjecttype) = objectId._type;
-	data.byte(kItemframe) = objectId._index;
+	_objectType = objectId._type;
+	_itemFrame = objectId._index;
 
-	if (data.byte(kObjecttype) != kExObjectType) {
+	if (_objectType != kExObjectType) {
 		assert(objectId._type == kFreeObjectType);
-		data.byte(kItemframe) = transferToEx(objectId._index);
-		data.byte(kObjecttype) = kExObjectType;
+		_itemFrame = transferToEx(objectId._index);
+		_objectType = kExObjectType;
 	}
 
 	DynObject *object = getEitherAdCPP();
@@ -934,16 +934,16 @@ void DreamBase::outOfOpen() {
 
 void DreamBase::swapWithOpen() {
 	ObjectRef subject;
-	subject._type = data.byte(kObjecttype);
-	subject._index = data.byte(kItemframe);
-	if (subject != _oldSubject || data.byte(kCommandtype) != 242) {
+	subject._type = _objectType;
+	subject._index = _itemFrame;
+	if (subject != _oldSubject || _commandType != 242) {
 		if (subject == _oldSubject)
-			data.byte(kCommandtype) = 242;
+			_commandType = 242;
 		_oldSubject = subject;
 		commandWithOb(34, subject._type, subject._index);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	if (isItWorn(getEitherAdCPP())) {
@@ -953,8 +953,8 @@ void DreamBase::swapWithOpen() {
 
 	delPointer();
 
-	if (data.byte(kItemframe) == data.byte(kOpenedob) &&
-		data.byte(kObjecttype) == data.byte(kOpenedtype)) {
+	if (_itemFrame == _openedOb &&
+		_objectType == _openedType) {
 		errorMessage1();
 		return;
 	}
@@ -962,33 +962,33 @@ void DreamBase::swapWithOpen() {
 	if (!checkObjectSize())
 		return;
 
-	byte prevType = data.byte(kObjecttype);
-	byte prevFrame = data.byte(kItemframe);
+	byte prevType = _objectType;
+	byte prevFrame = _itemFrame;
 	ObjectRef objectId = findOpenPos();
-	data.byte(kObjecttype) = objectId._type;
-	data.byte(kItemframe)  = objectId._index;
+	_objectType = objectId._type;
+	_itemFrame  = objectId._index;
 
-	if (data.byte(kObjecttype) != kExObjectType) {
+	if (_objectType != kExObjectType) {
 		assert(objectId._type == kFreeObjectType);
-		data.byte(kItemframe) = transferToEx(objectId._index);
-		data.byte(kObjecttype) = kExObjectType;
+		_itemFrame = transferToEx(objectId._index);
+		_objectType = kExObjectType;
 	}
 
 	DynObject *object = getEitherAdCPP();
 	object->mapad[0] = 20;
 	object->mapad[1] = 255;
 
-	byte prevType2 = data.byte(kObjecttype);
-	byte prevFrame2 = data.byte(kItemframe);
-	data.byte(kObjecttype) = prevType;
-	data.byte(kItemframe) = prevFrame;
+	byte prevType2 = _objectType;
+	byte prevFrame2 = _itemFrame;
+	_objectType = prevType;
+	_itemFrame = prevFrame;
 	object = getEitherAdCPP();
-	object->mapad[0] = data.byte(kOpenedtype);
-	object->mapad[1] = data.byte(kOpenedob);
-	object->mapad[2] = data.byte(kLastinvpos);
-	object->mapad[3] = data.byte(kReallocation);
-	data.byte(kObjecttype) = prevType2;
-	data.byte(kItemframe) = prevFrame2;
+	object->mapad[0] = _openedType;
+	object->mapad[1] = _openedOb;
+	object->mapad[2] = _lastInvPos;
+	object->mapad[3] = _realLocation;
+	_objectType = prevType2;
+	_itemFrame = prevFrame2;
 	fillOpen();
 	fillRyan();
 	underTextLine();
@@ -1000,8 +1000,8 @@ void DreamBase::swapWithOpen() {
 }
 
 ObjectRef DreamBase::findOpenPos() {
-	uint8 pos = (data.word(kMousex) - kInventx) / kItempicsize;
-	data.byte(kLastinvpos) = pos;
+	uint8 pos = (_mouseX - kInventx) / kItempicsize;
+	_lastInvPos = pos;
 
 	return _openInvList[pos];
 }
@@ -1016,12 +1016,12 @@ byte DreamBase::transferToEx(uint8 from) {
 
 	memcpy(exObject, freeObject, sizeof(DynObject));
 
-	exObject->currentLocation = data.byte(kReallocation);
-	exObject->initialLocation = data.byte(kReallocation);
+	exObject->currentLocation = _realLocation;
+	exObject->initialLocation = _realLocation;
 	exObject->index = from;
 	exObject->mapad[0] = 4;
 	exObject->mapad[1] = 255;
-	exObject->mapad[2] = data.byte(kLastinvpos);
+	exObject->mapad[2] = _lastInvPos;
 
 	transferFrame(from, pos, 0);
 	transferFrame(from, pos, 1);
@@ -1053,11 +1053,11 @@ void DreamBase::findAllOpen() {
 
 	for (uint8 i = 0; i < kNumexobjects; ++i) {
 		const DynObject *obj = getExAd(i);
-		if (obj->mapad[1] != data.byte(kOpenedob))
+		if (obj->mapad[1] != _openedOb)
 			continue;
-		if (obj->mapad[0] != data.byte(kOpenedtype))
+		if (obj->mapad[0] != _openedType)
 			continue;
-		if (data.byte(kOpenedtype) != kExObjectType && obj->mapad[3] != data.byte(kReallocation))
+		if (_openedType != kExObjectType && obj->mapad[3] != _realLocation)
 			continue;
 		uint8 slot = obj->mapad[2];
 		assert(slot < 16);
@@ -1067,9 +1067,9 @@ void DreamBase::findAllOpen() {
 
 	for (uint8 i = 0; i < 80; ++i) {
 		const DynObject *obj = getFreeAd(i);
-		if (obj->mapad[1] != data.byte(kOpenedob))
+		if (obj->mapad[1] != _openedOb)
 			continue;
-		if (obj->mapad[0] != data.byte(kOpenedtype))
+		if (obj->mapad[0] != _openedType)
 			continue;
 		uint8 slot = obj->mapad[2];
 		_openInvList[slot]._index = i;
@@ -1095,8 +1095,8 @@ void DreamBase::pickupConts(uint8 from, uint8 containerEx) {
 		DynObject *exObj = getExAd(pos);
 
 		memcpy(exObj, freeObj, sizeof(DynObject));
-		exObj->currentLocation = data.byte(kReallocation);
-		exObj->initialLocation = data.byte(kReallocation);
+		exObj->currentLocation = _realLocation;
+		exObj->initialLocation = _realLocation;
 		exObj->index = index;
 		exObj->mapad[0] = 4; // kExObjectType?
 		exObj->mapad[1] = containerEx;

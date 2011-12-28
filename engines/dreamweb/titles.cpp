@@ -69,7 +69,7 @@ void DreamBase::monkSpeaking() {
 }
 
 void DreamBase::gettingShot() {
-	data.byte(kNewlocation) = 55;
+	_newLocation = 55;
 	clearPalette();
 	loadIntroRoom();
 	fadeScreenUps();
@@ -86,34 +86,34 @@ void DreamBase::bibleQuote() {
 	fadeScreenUps();
 
 	hangOne(80);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
+	if (_lastHardKey == 1) {
+		_lastHardKey = 0;
 		return; // "biblequotearly"
 	}
 
 	hangOne(560);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
+	if (_lastHardKey == 1) {
+		_lastHardKey = 0;
 		return; // "biblequotearly"
 	}
 
 	fadeScreenDowns();
 
 	hangOne(200);
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) = 0;
+	if (_lastHardKey == 1) {
+		_lastHardKey = 0;
 		return; // "biblequotearly"
 	}
 
 	cancelCh0();
 
-	data.byte(kLasthardkey) = 0;
+	_lastHardKey = 0;
 }
 
 void DreamBase::hangOne(uint16 delay) {
 	do {
 		vSync();
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			return; // "hangonearly"
 	} while	(--delay);
 }
@@ -122,7 +122,7 @@ void DreamBase::intro() {
 	loadTempText("DREAMWEB.T82");
 	loadPalFromIFF();
 	setMode();
-	data.byte(kNewlocation) = 50;
+	_newLocation = 50;
 	clearPalette();
 	loadIntroRoom();
 	_volume = 7;
@@ -132,61 +132,61 @@ void DreamBase::intro() {
 	fadeScreenUps();
 	runIntroSeq();
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "introearly"
 	}
 
 	clearBeforeLoad();
-	data.byte(kNewlocation) = 52;
+	_newLocation = 52;
 	loadIntroRoom();
 	runIntroSeq();
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "introearly"
 	}
 
 	clearBeforeLoad();
-	data.byte(kNewlocation) = 53;
+	_newLocation = 53;
 	loadIntroRoom();
 	runIntroSeq();
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "introearly"
 	}
 
 	clearBeforeLoad();
 	allPalette();
-	data.byte(kNewlocation) = 54;
+	_newLocation = 54;
 	loadIntroRoom();
 	runIntroSeq();
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "introearly"
 	}
 
 	getRidOfTempText();
 	clearBeforeLoad();
 
-	data.byte(kLasthardkey) =  0;
+	_lastHardKey =  0;
 }
 
 void DreamBase::runIntroSeq() {
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 
 	do {
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			break;
 
 		spriteUpdate();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			break;
 
 		delEverything();
@@ -196,20 +196,20 @@ void DreamBase::runIntroSeq() {
 		useTimedText();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			break;
 
 		dumpMap();
 		dumpTimedText();
 		vSync();
 
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			break;
 
-	} while (data.byte(kGetback) != 1);
+	} while (_getBack != 1);
 
 
-	if (data.byte(kLasthardkey) == 1) {
+	if (_lastHardKey == 1) {
 		getRidOfTempText();
 		clearBeforeLoad();
 	}
@@ -222,7 +222,7 @@ void DreamBase::runIntroSeq() {
 
 void DreamBase::runEndSeq() {
 	atmospheres();
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 
 	do {
 		vSync();
@@ -237,19 +237,19 @@ void DreamBase::runEndSeq() {
 		dumpMap();
 		dumpTimedText();
 		vSync();
-	} while (data.byte(kGetback) != 1);
+	} while (_getBack != 1);
 }
 
 void DreamBase::loadIntroRoom() {
-	data.byte(kIntrocount) = 0;
+	_introCount = 0;
 	data.byte(kLocation) = 255;
 	loadRoom();
-	data.word(kMapoffsetx) = 72;
-	data.word(kMapoffsety) = 16;
+	_mapOffsetX = 72;
+	_mapOffsetY = 16;
 	clearSprites();
 	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
+	_currentKey = '0';
+	_mainMode = 0;
 	clearWork();
 	data.byte(kNewobs) = 1;
 	drawFloor();
@@ -275,24 +275,24 @@ void DreamBase::realCredits() {
 
 	hangOne(2);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	allPalette();
 	hangOne(80);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
@@ -300,24 +300,24 @@ void DreamBase::realCredits() {
 	playChannel0(12, 0);
 	hangOne(2);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	allPalette();
 	hangOne(80);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
@@ -325,24 +325,24 @@ void DreamBase::realCredits() {
 	playChannel0(12, 0);
 	hangOne(2);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	allPalette();
 	hangOne(80);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
@@ -350,24 +350,24 @@ void DreamBase::realCredits() {
 	playChannel0(12, 0);
 	hangOne(2);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	allPalette();
 	hangOne(80);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
@@ -375,24 +375,24 @@ void DreamBase::realCredits() {
 	playChannel0(12, 0);
 	hangOne(2);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	allPalette();
 	hangOne(80);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
@@ -400,23 +400,23 @@ void DreamBase::realCredits() {
 	fadeScreenUps();
 	hangOne(60);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	playChannel0(13, 0);
 	hangOne(350);
 
-	if (data.byte(kLasthardkey) == 1) {
-		data.byte(kLasthardkey) =  0;
+	if (_lastHardKey == 1) {
+		_lastHardKey =  0;
 		return; // "realcreditsearly"
 	}
 
 	fadeScreenDowns();
 	hangOne(256);
 
-	data.byte(kLasthardkey) =  0;
+	_lastHardKey =  0;
 }
 
 } // End of namespace DreamGen

@@ -67,21 +67,21 @@ void DreamBase::fadeDOS() {
 }
 
 void DreamBase::doFade() {
-	if (data.byte(kFadedirection) == 0)
+	if (_fadeDirection == 0)
 		return;
 
 	engine->processEvents();
-	uint8 *src = _startPal + 3 * data.byte(kColourpos);
-	engine->setPalette(src, data.byte(kColourpos), data.byte(kNumtofade));
+	uint8 *src = _startPal + 3 * _colourPos;
+	engine->setPalette(src, _colourPos, _numToFade);
 
-	data.byte(kColourpos) += data.byte(kNumtofade);
-	if (data.byte(kColourpos) == 0)
+	_colourPos += _numToFade;
+	if (_colourPos == 0)
 		fadeCalculation();
 }
 
 void DreamBase::fadeCalculation() {
-	if (data.byte(kFadecount) == 0) {
-		data.byte(kFadedirection) = 0;
+	if (_fadeCount == 0) {
+		_fadeDirection = 0;
 		return;
 	}
 
@@ -95,21 +95,21 @@ void DreamBase::fadeCalculation() {
 		else if (s > e)
 			--startPal[i];
 		else {
-			if (data.byte(kFadecount) <= e)
+			if (_fadeCount <= e)
 				++startPal[i];
 		}
 	}
-	--data.byte(kFadecount);
+	--_fadeCount;
 }
 
 void DreamBase::fadeUpYellows() {
 	palToEndPal();
 	memset(_endPal + 231 * 3, 0, 8 * 3);
 	memset(_endPal + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(128);
 }
 
@@ -118,10 +118,10 @@ void DreamBase::fadeUpMonFirst() {
 	palToEndPal();
 	memset(_startPal + 231 * 3, 0, 8 * 3);
 	memset(_startPal + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(64);
 	playChannel1(26);
 	hangOn(64);
@@ -133,10 +133,10 @@ void DreamBase::fadeDownMon() {
 	palToEndPal();
 	memset(_endPal + 231 * 3, 0, 8 * 3);
 	memset(_endPal + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(64);
 }
 
@@ -145,10 +145,10 @@ void DreamBase::fadeUpMon() {
 	palToEndPal();
 	memset(_startPal + 231 * 3, 0, 8 * 3);
 	memset(_startPal + 246 * 3, 0, 1 * 3);
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 	hangOn(128);
 }
 
@@ -163,46 +163,46 @@ void DreamBase::initialMonCols() {
 void DreamBase::fadeScreenUp() {
 	clearStartPal();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 }
 
 void DreamBase::fadeScreenUps() {
 	clearStartPal();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 64;
 }
 
 void DreamBase::fadeScreenUpHalf() {
 	endPalToStart();
 	palToEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 31;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 32;
+	_fadeDirection = 1;
+	_fadeCount = 31;
+	_colourPos = 0;
+	_numToFade = 32;
 }
 
 void DreamBase::fadeScreenDown() {
 	palToStartPal();
 	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 128;
 }
 
 void DreamBase::fadeScreenDowns() {
 	palToStartPal();
 	clearEndPal();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 64;
+	_fadeDirection = 1;
+	_fadeCount = 63;
+	_colourPos = 0;
+	_numToFade = 64;
 }
 
 void DreamBase::fadeScreenDownHalf() {
@@ -219,15 +219,15 @@ void DreamBase::fadeScreenDownHalf() {
 	memcpy(endPal + (56*3), startPal + (56*3), 3*5);
 	memcpy(endPal + (77*3), startPal + (77*3), 3*2);
 
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 31;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 32;
+	_fadeDirection = 1;
+	_fadeCount = 31;
+	_colourPos = 0;
+	_numToFade = 32;
 }
 
 
 void DreamBase::clearPalette() {
-	data.byte(kFadedirection) = 0;
+	_fadeDirection = 0;
 	clearStartPal();
 	dumpCurrent();
 }
@@ -247,17 +247,17 @@ void DreamBase::greyscaleSum() {
 
 		tmp = grey;
 		//if (tmp != 0)	// FIXME: The assembler code has this check commented out. Bug or feature?
-			tmp += data.byte(kAddtored);
+			tmp += _addToRed;
 		*dst++ = tmp;
 
 		tmp = grey;
 		if (tmp != 0)
-			tmp += data.byte(kAddtogreen);
+			tmp += _addToGreen;
 		*dst++ = tmp;
 
 		tmp = grey;
 		if (tmp != 0)
-			tmp += data.byte(kAddtoblue);
+			tmp += _addToBlue;
 		*dst++ = tmp;
 	}
 }

@@ -25,8 +25,8 @@
 namespace DreamGen {
 
 void DreamBase::doBlocks() {
-	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
-	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
+	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
+	uint16 mapOffset = kMap + _mapY * kMapwidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 	uint8 *dstBuffer = workspace() + dstOffset;
 
@@ -67,9 +67,9 @@ uint8 DreamBase::getXAd(const uint8 *setData, uint8 *result) {
 	uint8 v2 = setData[2];
 	if (v0 != 0)
 		return 0;
-	if (v1 < data.byte(kMapx))
+	if (v1 < _mapX)
 		return 0;
-	v1 -= data.byte(kMapx);
+	v1 -= _mapX;
 	if (v1 >= 11)
 		return 0;
 	*result = (v1 << 4) | v2;
@@ -79,9 +79,9 @@ uint8 DreamBase::getXAd(const uint8 *setData, uint8 *result) {
 uint8 DreamBase::getYAd(const uint8 *setData, uint8 *result) {
 	uint8 v0 = setData[3];
 	uint8 v1 = setData[4];
-	if (v0 < data.byte(kMapy))
+	if (v0 < _mapY)
 		return 0;
-	v0 -= data.byte(kMapy);
+	v0 -= _mapY;
 	if (v0 >= 10)
 		return 0;
 	*result = (v0 << 4) | v1;
@@ -145,8 +145,8 @@ void DreamBase::showAllObs() {
 		calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
-			x += data.word(kMapadx);
-			y += data.word(kMapady);
+			x += _mapAdX;
+			y += _mapAdY;
 			showFrame(frameBase, x, y, currentFrame, 0);
 		} else
 			makeBackOb(setEntry, x, y);
@@ -193,18 +193,18 @@ void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize
 	*mapYstart = yStart;
 	*mapXsize = xEnd - xStart;
 	*mapYsize = yEnd - yStart;
-	data.word(kMapxstart) = xStart << 4;
-	data.word(kMapystart) = yStart << 4;
-	data.byte(kMapxsize) = *mapXsize << 4;
-	data.byte(kMapysize) = *mapYsize << 4;
+	_mapXStart = xStart << 4;
+	_mapYStart = yStart << 4;
+	_mapXSize = *mapXsize << 4;
+	_mapYSize = *mapYsize << 4;
 }
 
 void DreamBase::calcMapAd() {
 	uint8 mapXstart, mapYstart;
 	uint8 mapXsize, mapYsize;
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
-	data.word(kMapadx) = data.word(kMapoffsetx) - 8 * (mapXsize + 2 * mapXstart - 11);
-	data.word(kMapady) = data.word(kMapoffsety) - 8 * (mapYsize + 2 * mapYstart - 10);
+	_mapAdX = _mapOffsetX - 8 * (mapXsize + 2 * mapXstart - 11);
+	_mapAdY = _mapOffsetY - 8 * (mapYsize + 2 * mapYstart - 10);
 }
 
 void DreamBase::showAllFree() {
@@ -223,8 +223,8 @@ void DreamBase::showAllFree() {
 			uint16 currentFrame = 3 * i;
 			calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 			if ((width != 0) || (height != 0)) {
-				x += data.word(kMapadx);
-				y += data.word(kMapady);
+				x += _mapAdX;
+				y += _mapAdY;
 				assert(currentFrame < 256);
 				showFrame(frameBase, x, y, currentFrame, 0);
 				objPos.index = i;
@@ -236,7 +236,7 @@ void DreamBase::showAllFree() {
 
 void DreamBase::drawFlags() {
 	MapFlag *mapFlag = _mapFlags;
-	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
+	uint16 mapOffset = kMap + _mapY * kMapwidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 
 	for (size_t i = 0; i < 10; ++i) {
@@ -261,7 +261,7 @@ void DreamBase::showAllEx() {
 		DynObject *object = objects + i;
 		if (object->mapad[0] == 0xff)
 			continue;
-		if (object->currentLocation != data.byte(kReallocation))
+		if (object->currentLocation != _realLocation)
 			continue;
 		uint16 x, y;
 		if (getMapAd(object->mapad, &x, &y) == 0)
@@ -272,7 +272,7 @@ void DreamBase::showAllEx() {
 		calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 		if ((width != 0) || (height != 0)) {
 			assert(currentFrame < 256);
-			showFrame(frameBase, x + data.word(kMapadx), y + data.word(kMapady), currentFrame, 0);
+			showFrame(frameBase, x + _mapAdX, y + _mapAdY, currentFrame, 0);
 			objPos.index = i;
 			_exList.push_back(objPos);
 		}

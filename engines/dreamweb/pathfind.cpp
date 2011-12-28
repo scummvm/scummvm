@@ -25,7 +25,7 @@
 namespace DreamGen {
 
 void DreamBase::turnPathOn(uint8 param) {
-	findOrMake(param, 0xff, data.byte(kRoomnum) + 100);
+	findOrMake(param, 0xff, _roomNum + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
 		return;
@@ -33,7 +33,7 @@ void DreamBase::turnPathOn(uint8 param) {
 }
 
 void DreamBase::turnPathOff(uint8 param) {
-	findOrMake(param, 0x00, data.byte(kRoomnum) + 100);
+	findOrMake(param, 0x00, _roomNum + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
 		return;
@@ -51,84 +51,84 @@ void DreamBase::turnAnyPathOff(uint8 param, uint8 room) {
 }
 
 RoomPaths *DreamBase::getRoomsPaths() {
-	return &_pathData[data.byte(kRoomnum)];
+	return &_pathData[_roomNum];
 }
 
 void DreamBase::faceRightWay() {
 	PathNode *paths = getRoomsPaths()->nodes;
-	uint8 dir = paths[data.byte(kManspath)].dir;
-	data.byte(kTurntoface) = dir;
-	data.byte(kLeavedirection) = dir;
+	uint8 dir = paths[_mansPath].dir;
+	_turnToFace = dir;
+	_leaveDirection = dir;
 }
 
 void DreamBase::setWalk() {
-	if (data.byte(kLinepointer) != 254) {
+	if (_linePointer != 254) {
 		// Already walking
-		data.byte(kFinaldest) = data.byte(kPointerspath);
-	} else if (data.byte(kPointerspath) == data.byte(kManspath)) {
+		_finalDest = _pointersPath;
+	} else if (_pointersPath == _mansPath) {
 		// Can't walk
 		faceRightWay();
 	} else if (data.byte(kWatchmode) == 1) {
 		// Holding reel
-		data.byte(kDestafterhold) = data.byte(kPointerspath);
+		data.byte(kDestafterhold) = _pointersPath;
 		data.byte(kWatchmode) = 2;
 	} else if (data.byte(kWatchmode) == 2) {
 		// Can't walk
 	} else {
-		data.byte(kDestination) = data.byte(kPointerspath);
-		data.byte(kFinaldest) = data.byte(kPointerspath);
-		if (data.word(kMousebutton) != 2 || data.word(kCommandtype) == 3) {
+		_destination = _pointersPath;
+		_finalDest = _pointersPath;
+		if (_mouseButton != 2 || _commandType == 3) {
 			autoSetWalk();
 		} else {
-			data.byte(kWalkandexam) = 1;
-			data.byte(kWalkexamtype) = data.byte(kCommandtype);
-			data.byte(kWalkexamnum) = data.byte(kCommand);
+			_walkAndExam = 1;
+			_walkExamType = _commandType;
+			_walkExamNum = _command;
 			autoSetWalk();
 		}
 	}
 }
 
 void DreamBase::autoSetWalk() {
-	if (data.byte(kFinaldest) == data.byte(kManspath))
+	if (_finalDest == _mansPath)
 		return;
 	const RoomPaths *roomsPaths = getRoomsPaths();
 	checkDest(roomsPaths);
-	data.word(kLinestartx) = roomsPaths->nodes[data.byte(kManspath)].x - 12;
-	data.word(kLinestarty) = roomsPaths->nodes[data.byte(kManspath)].y - 12;
-	data.word(kLineendx) = roomsPaths->nodes[data.byte(kDestination)].x - 12;
-	data.word(kLineendy) = roomsPaths->nodes[data.byte(kDestination)].y - 12;
+	_lineStartX = roomsPaths->nodes[_mansPath].x - 12;
+	_lineStartY = roomsPaths->nodes[_mansPath].y - 12;
+	_lineEndX = roomsPaths->nodes[_destination].x - 12;
+	_lineEndY = roomsPaths->nodes[_destination].y - 12;
 	bresenhams();
-	if (data.byte(kLinedirection) != 0) {
-		data.byte(kLinepointer) = data.byte(kLinelength) - 1;
-		data.byte(kLinedirection) = 1;
+	if (_lineDirection != 0) {
+		_linePointer = _lineLength - 1;
+		_lineDirection = 1;
 		return;
 	}
-	data.byte(kLinepointer) = 0;
+	_linePointer = 0;
 }
 
 void DreamBase::checkDest(const RoomPaths *roomsPaths) {
 	const PathSegment *segments = roomsPaths->segments;
-	const uint8 tmp = data.byte(kManspath) << 4;
-	uint8 destination = data.byte(kDestination);
+	const uint8 tmp = _mansPath << 4;
+	uint8 destination = _destination;
 	for (size_t i = 0; i < 24; ++i) {
 		if ((segments[i].b0 & 0xf0) == tmp &&
-		    (segments[i].b0 & 0x0f) == data.byte(kDestination)) {
-			data.byte(kDestination) = segments[i].b1 & 0x0f;
+		    (segments[i].b0 & 0x0f) == _destination) {
+			_destination = segments[i].b1 & 0x0f;
 			return;
 		}
 
 		if (((segments[i].b0 & 0x0f) << 4) == tmp &&
-		    ((segments[i].b0 & 0xf0) >> 4) == data.byte(kDestination)) {
+		    ((segments[i].b0 & 0xf0) >> 4) == _destination) {
 			destination = segments[i].b1 & 0x0f;
 		}
 	}
-	data.byte(kDestination) = destination;
+	_destination = destination;
 }
 
 void DreamBase::findXYFromPath() {
 	const PathNode *roomsPaths = getRoomsPaths()->nodes;
-	data.byte(kRyanx) = roomsPaths[data.byte(kManspath)].x - 12;
-	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
+	_ryanX = roomsPaths[_mansPath].x - 12;
+	_ryanY = roomsPaths[_mansPath].y - 12;
 }
 
 bool DreamBase::checkIfPathIsOn(uint8 index) {
@@ -140,10 +140,10 @@ bool DreamBase::checkIfPathIsOn(uint8 index) {
 void DreamBase::bresenhams() {
 	workoutFrames();
 	Common::Point *lineData = &_lineData[0];
-	int16 startX = (int16)data.word(kLinestartx);
-	int16 startY = (int16)data.word(kLinestarty);
-	int16 endX = (int16)data.word(kLineendx);
-	int16 endY = (int16)data.word(kLineendy);
+	int16 startX = (int16)_lineStartX;
+	int16 startY = (int16)_lineStartY;
+	int16 endX = (int16)_lineEndX;
+	int16 endY = (int16)_lineEndY;
 
 	if (endX == startX) {
 		uint16 deltaY;
@@ -151,15 +151,15 @@ void DreamBase::bresenhams() {
 		if (endY < startY) {
 			deltaY = startY - endY;
 			y = (int8)endY;
-			data.byte(kLinedirection) = 1;
+			_lineDirection = 1;
 		} else {
 			deltaY = endY - startY;
 			y = (int8)startY;
-			data.byte(kLinedirection) = 0;
+			_lineDirection = 0;
 		}
 		++deltaY;
 		int8 x = (int8)startX;
-		data.byte(kLinelength) = deltaY;
+		_lineLength = deltaY;
 		for (; deltaY; --deltaY) {
 			lineData->x = x;
 			lineData->y = y;
@@ -173,14 +173,14 @@ void DreamBase::bresenhams() {
 		deltaX = startX - endX;
 		SWAP(startX, endX);
 		SWAP(startY, endY);
-		data.word(kLinestartx) = (uint16)startX;
-		data.word(kLinestarty) = (uint16)startY;
-		data.word(kLineendx) = (uint16)endX;
-		data.word(kLineendy) = (uint16)endY;
-		data.byte(kLinedirection) = 1;
+		_lineStartX = (uint16)startX;
+		_lineStartY = (uint16)startY;
+		_lineEndX = (uint16)endX;
+		_lineEndY = (uint16)endY;
+		_lineDirection = 1;
 	} else {
 		deltaX = endX - startX;
-		data.byte(kLinedirection) = 0;
+		_lineDirection = 0;
 	}
 
 	int16 increment;
@@ -188,7 +188,7 @@ void DreamBase::bresenhams() {
 		int8 x = (int8)startX;
 		int8 y = (int8)startY;
 		++deltaX;
-		data.byte(kLinelength) = deltaX;
+		_lineLength = deltaX;
 		for (; deltaX; --deltaX) {
 			lineData->x = x;
 			lineData->y = y;
@@ -225,7 +225,7 @@ void DreamBase::bresenhams() {
 	++delta1;
 	int8 x = (int8)startX;
 	int8 y = (int8)startY;
-	data.byte(kLinelength) = delta1;
+	_lineLength = delta1;
 	if (lineRoutine != 1) {
 		for (; delta1; --delta1) {
 			lineData->x = x;
@@ -261,10 +261,10 @@ void DreamBase::workoutFrames() {
 
 	// We have to use signed arithmetic here because these values can
 	// be slightly negative when walking off-screen
-	int lineStartX = (int16)data.word(kLinestartx);
-	int lineStartY = (int16)data.word(kLinestarty);
-	int lineEndX = (int16)data.word(kLineendx);
-	int lineEndY = (int16)data.word(kLineendy);
+	int lineStartX = (int16)_lineStartX;
+	int lineStartY = (int16)_lineStartY;
+	int lineEndX = (int16)_lineEndX;
+	int lineEndY = (int16)_lineEndY;
 
 
 	diffx = ABS(lineStartX - lineEndX);
@@ -302,12 +302,12 @@ void DreamBase::workoutFrames() {
 		}
 	}
 
-	data.byte(kTurntoface) = tmp & 7;
-	data.byte(kTurndirection) = 0;
+	_turnToFace = tmp & 7;
+	_turnDirection = 0;
 }
 
 byte DreamBase::findFirstPath(byte x, byte y) {
-	PathNode *paths = _pathData[data.byte(kRoomnum)].nodes;
+	PathNode *paths = _pathData[_roomNum].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
 		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
@@ -326,7 +326,7 @@ byte DreamBase::findFirstPath(byte x, byte y) {
 }
 
 byte DreamBase::findPathOfPoint(byte x, byte y) {
-	PathNode *paths = _pathData[data.byte(kRoomnum)].nodes;
+	PathNode *paths = _pathData[_roomNum].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
 		if (paths[index].on != 0xff)

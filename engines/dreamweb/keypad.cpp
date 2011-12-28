@@ -33,9 +33,9 @@ void DreamBase::putUnderMenu() {
 }
 
 void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {
-	if (key == data.byte(kGraphicpress)) {
+	if (key == _graphicPress) {
 		key += 11;
-		if (data.byte(kPresscount) < 8)
+		if (_pressCount < 8)
 			key -= 11;
 	}
 	key -= 20;
@@ -58,8 +58,8 @@ void DreamBase::showKeypad() {
 	singleKey(30, kKeypadx+53, kKeypady+41);
 	singleKey(31, kKeypadx+9,  kKeypady+59);
 	singleKey(32, kKeypadx+31, kKeypady+59);
-	if (data.byte(kLightcount)) {
-		--data.byte(kLightcount);
+	if (_lightCount) {
+		--_lightCount;
 		uint8 frameIndex;
 		uint16 y;
 		if (data.byte(kLockstatus)) {
@@ -69,7 +69,7 @@ void DreamBase::showKeypad() {
 			frameIndex = 41;
 			y = kKeypady+4+63;
 		}
-		if ((data.byte(kLightcount) >= 60) && (data.byte(kLightcount) < 100))
+		if ((_lightCount >= 60) && (_lightCount < 100))
 			--frameIndex;
 		showFrame(_tempGraphics, kKeypadx+60, y, frameIndex, 0);
 	}
@@ -82,14 +82,14 @@ bool DreamBase::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 }
 
 void DreamBase::addToPressList() {
-	if (data.word(kPresspointer) == 5)
+	if (_pressPointer == 5)
 		return;
-	uint8 pressed = data.byte(kPressed);
+	uint8 pressed = _pressed;
 	if (pressed == 10)
 		pressed = 0;
 
-	_pressList[data.word(kPresspointer)] = pressed;
-	++data.word(kPresspointer);
+	_pressList[_pressPointer] = pressed;
+	++_pressPointer;
 }
 
 void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
@@ -120,44 +120,44 @@ void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 	showPointer();
 	workToScreen();
 	delPointer();
-	data.word(kPresspointer) = 0;
-	data.byte(kGetback) = 0;
+	_pressPointer = 0;
+	_getBack = 0;
 	while (true) {
 		delPointer();
 		readMouse();
 		showKeypad();
 		showPointer();
 		vSync();
-		if (data.byte(kPresscount) == 0) {
-			data.byte(kPressed) = 255;
-			data.byte(kGraphicpress) = 255;
+		if (_pressCount == 0) {
+			_pressed = 255;
+			_graphicPress = 255;
 			vSync();
 		} else
-			--data.byte(kPresscount);
+			--_pressCount;
 
 		dumpPointer();
 		dumpKeypad();
 		dumpTextLine();
 		checkCoords(keypadList);
-		if (_quitRequested || (data.byte(kGetback) == 1))
+		if (_quitRequested || (_getBack == 1))
 			break;
-		if (data.byte(kLightcount) == 1) {
+		if (_lightCount == 1) {
 			if (data.byte(kLockstatus) == 0)
 				break;
 		} else {
-			if (data.byte(kPresscount) == 40) {
+			if (_pressCount == 40) {
 				addToPressList();
-				if (data.byte(kPressed) == 11) {
+				if (_pressed == 11) {
 					if (isItRight(digit0, digit1, digit2, digit3))
 						data.byte(kLockstatus) = 0;
 					playChannel1(11);
-					data.byte(kLightcount) = 120;
-					data.word(kPresspointer) = 0;
+					_lightCount = 120;
+					_pressPointer = 0;
 				}
 			}
 		}
 	}
-	data.byte(kManisoffscreen) = 0;
+	_manIsOffScreen = 0;
 	getRidOfTemp();
 	restoreReels();
 	redrawMainScrn();
@@ -210,14 +210,14 @@ void DreamBase::buttonEnter() {
 
 void DreamBase::buttonPress(uint8 buttonId) {
 	uint8 commandType = 100 + buttonId;
-	if (data.byte(kCommandtype) != commandType) {
-		data.byte(kCommandtype) = commandType;
+	if (_commandType != commandType) {
+		_commandType = commandType;
 		commandOnly(buttonId + 4);
 	}
-	if ((data.word(kMousebutton) & 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
-		data.byte(kPressed) = buttonId;
-		data.byte(kGraphicpress) = buttonId + 21;
-		data.byte(kPresscount) = 40;
+	if ((_mouseButton & 1) && (_mouseButton != _oldButton)) {
+		_pressed = buttonId;
+		_graphicPress = buttonId + 21;
+		_pressCount = 40;
 		if (buttonId != 11)
 			playChannel1(10);
 	}
@@ -233,35 +233,35 @@ void DreamBase::dumpKeypad() {
 }
 
 void DreamBase::dumpSymbol() {
-	data.byte(kNewtextline) = 0;
+	_newTextLine = 0;
 	multiDump(kSymbolx, kSymboly + 20, 104, 60);
 }
 
 void DreamBase::dumpSymBox() {
-	if (data.word(kDumpx) != 0xFFFF) {
-		multiDump(data.word(kDumpx), data.word(kDumpy), 30, 77);
-		data.word(kDumpx) = 0xFFFF;
+	if (_dumpX != 0xFFFF) {
+		multiDump(_dumpX, _dumpY, 30, 77);
+		_dumpX = 0xFFFF;
 	}
 }
 
 void DreamBase::quitSymbol() {
-	if (data.byte(kSymboltopx) != 24 || data.byte(kSymbolbotx) != 24) {
+	if (_symbolTopX != 24 || _symbolBotX != 24) {
 		blank();
 		return;
 	};
 
-	if (data.byte(kCommandtype) != 222) {
-		data.byte(kCommandtype) = 222;
+	if (_commandType != 222) {
+		_commandType = 222;
 		commandOnly(18);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton == _oldButton)
 		return;	// notqs
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
-	data.byte(kGetback) = 1;
+	_getBack = 1;
 }
 
 } // End of namespace DreamGen

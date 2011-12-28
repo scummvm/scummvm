@@ -28,17 +28,17 @@ void DreamBase::newPlace() {
 	if (data.byte(kNeedtotravel) == 1) {
 		data.byte(kNeedtotravel) = 0;
 		selectLocation();
-	} else if (data.byte(kAutolocation) != 0xFF) {
-		data.byte(kNewlocation) = data.byte(kAutolocation);
-		data.byte(kAutolocation) = 0xFF;
+	} else if (_autoLocation != 0xFF) {
+		_newLocation = _autoLocation;
+		_autoLocation = 0xFF;
 	}
 }
 
 void DreamBase::selectLocation() {
-	data.byte(kInmaparea) = 0;
+	_inMapArea = 0;
 	clearBeforeLoad();
-	data.byte(kGetback) = 0;
-	data.byte(kPointerframe) = 22;
+	_getBack = 0;
+	_pointerFrame = 22;
 	readCityPic();
 	showCity();
 	getRidOfTemp();
@@ -50,15 +50,15 @@ void DreamBase::selectLocation() {
 	showExit();
 	locationPic();
 	underTextLine();
-	data.byte(kCommandtype) = 255;
+	_commandType = 255;
 	readMouse();
-	data.byte(kPointerframe) = 0;
+	_pointerFrame = 0;
 	showPointer();
 	workToScreen();
 	playChannel0(9, 255);
-	data.byte(kNewlocation) = 255;
+	_newLocation = 255;
 
-	while (data.byte(kNewlocation) == 255) {
+	while (_newLocation == 255) {
 		if (_quitRequested)
 			break;
 
@@ -69,7 +69,7 @@ void DreamBase::selectLocation() {
 		dumpPointer();
 		dumpTextLine();
 
-		if (data.byte(kGetback) == 1)
+		if (_getBack == 1)
 			break;
 
 		RectWithCallback<DreamBase> destList[] = {
@@ -84,9 +84,9 @@ void DreamBase::selectLocation() {
 		checkCoords(destList);
 	}
 
-	if (_quitRequested || data.byte(kGetback) == 1 || data.byte(kNewlocation) == data.byte(kLocation)) {
-		data.byte(kNewlocation) = data.byte(kReallocation);
-		data.byte(kGetback) = 0;
+	if (_quitRequested || _getBack == 1 || _newLocation == data.byte(kLocation)) {
+		_newLocation = _realLocation;
+		_getBack = 0;
 	}
 
 	getRidOfTemp();
@@ -103,14 +103,14 @@ void DreamBase::showCity() {
 }
 
 void DreamBase::lookAtPlace() {
-	if (data.byte(kCommandtype) != 224) {
-		data.byte(kCommandtype) = 224;
+	if (_commandType != 224) {
+		_commandType = 224;
 		commandOnly(27);
 	}
 
-	if (!(data.word(kMousebutton) & 1) ||
-		data.word(kMousebutton) == data.word(kOldbutton) ||
-		data.byte(kDestpos) >= 15)
+	if (!(_mouseButton & 1) ||
+		_mouseButton == _oldButton ||
+		_destPos >= 15)
 		return; // noinfo
 
 	delPointer();
@@ -121,14 +121,14 @@ void DreamBase::lookAtPlace() {
 	if (_foreignRelease)
 		showFrame(_tempGraphics3, 60, 72+55+21, 4, 0);
 
-	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
+	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	findNextColon(&string);
 	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
 	printDirect(&string, 63, &y, 191, 191 & 1);
 	workToScreenM();
 	hangOnP(500);
-	data.byte(kPointermode) = 0;
-	data.byte(kPointerframe) = 0;
+	_pointerMode = 0;
+	_pointerFrame = 0;
 	putUnderCentre();
 	workToScreenM();
 }
@@ -143,17 +143,17 @@ void DreamBase::putUnderCentre() {
 
 void DreamBase::locationPic() {
 	const int roomPics[] = { 5, 0, 3, 2, 4, 1, 10, 9, 8, 6, 11, 4, 7, 7, 0 };
-	byte picture = roomPics[data.byte(kDestpos)];
+	byte picture = roomPics[_destPos];
 
 	if (picture >= 6)
 		showFrame(_tempGraphics2, 104, 138 + 14, picture - 6, 0);	// Second slot
 	else
 		showFrame(_tempGraphics,  104, 138 + 14, picture + 4, 0);
 
-	if (data.byte(kDestpos) == data.byte(kReallocation))
+	if (_destPos == _realLocation)
 		showFrame(_tempGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
 
-	const uint8 *string = (const uint8 *)_travelText.getString(data.byte(kDestpos));
+	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
 }
 
@@ -164,21 +164,21 @@ void DreamBase::showArrows() {
 }
 
 void DreamBase::nextDest() {
-	if (data.byte(kCommandtype) != 218) {
-		data.byte(kCommandtype) = 218;
+	if (_commandType != 218) {
+		_commandType = 218;
 		commandOnly(28);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
+	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// nodu
 
 	do {
-		data.byte(kDestpos)++;
-		if (data.byte(kDestpos) == 15)
-			data.byte(kDestpos) = 0;	// last destination
-	} while (!getLocation(data.byte(kDestpos)));
+		_destPos++;
+		if (_destPos == 15)
+			_destPos = 0;	// last destination
+	} while (!getLocation(_destPos));
 
-	data.byte(kNewtextline) = 1;
+	_newTextLine = 1;
 	delTextLine();
 	delPointer();
 	showPanel();
@@ -193,21 +193,21 @@ void DreamBase::nextDest() {
 }
 
 void DreamBase::lastDest() {
-	if (data.byte(kCommandtype) != 219) {
-		data.byte(kCommandtype) = 219;
+	if (_commandType != 219) {
+		_commandType = 219;
 		commandOnly(29);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
+	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// nodd
 
 	do {
-		data.byte(kDestpos)--;
-		if (data.byte(kDestpos) == 0xFF)
-			data.byte(kDestpos) = 15;	// first destination
-	} while (!getLocation(data.byte(kDestpos)));
+		_destPos--;
+		if (_destPos == 0xFF)
+			_destPos = 15;	// first destination
+	} while (!getLocation(_destPos));
 
-	data.byte(kNewtextline) = 1;
+	_newTextLine = 1;
 	delTextLine();
 	delPointer();
 	showPanel();
@@ -222,15 +222,15 @@ void DreamBase::lastDest() {
 }
 
 void DreamBase::destSelect() {
-	if (data.byte(kCommandtype) != 222) {
-		data.byte(kCommandtype) = 222;
+	if (_commandType != 222) {
+		_commandType = 222;
 		commandOnly(30);
 	}
 
-	if (!(data.word(kMousebutton) & 1) || data.word(kOldbutton) == 1)
+	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// notrav
 
-	data.byte(kNewlocation) = data.byte(kDestpos);
+	_newLocation = _destPos;
 }
 
 uint8 DreamBase::getLocation(uint8 index) {

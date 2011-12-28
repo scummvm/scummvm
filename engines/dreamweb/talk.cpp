@@ -25,9 +25,9 @@
 namespace DreamGen {
 
 void DreamBase::talk() {
-	data.byte(kTalkpos) = 0;
-	data.byte(kInmaparea) = 0;
-	data.byte(kCharacter) = data.byte(kCommand);
+	_talkPos = 0;
+	_inMapArea = 0;
+	_character = _command;
 	createPanel();
 	showPanel();
 	showMan();
@@ -35,7 +35,7 @@ void DreamBase::talk() {
 	underTextLine();
 	convIcons();
 	startTalk();
-	data.byte(kCommandtype) = 255;
+	_commandType = 255;
 	readMouse();
 	showPointer();
 	workToScreen();
@@ -55,13 +55,13 @@ void DreamBase::talk() {
 		vSync();
 		dumpPointer();
 		dumpTextLine();
-		data.byte(kGetback) = 0;
+		_getBack = 0;
 		checkCoords(talkList);
 		if (_quitRequested)
 			break;
-	} while (!data.byte(kGetback));
+	} while (!_getBack);
 
-	if (data.byte(kTalkpos) >= 4)
+	if (_talkPos >= 4)
 		_personData->b7 |= 128;
 
 	redrawMainScrn();
@@ -74,7 +74,7 @@ void DreamBase::talk() {
 }
 
 void DreamBase::convIcons() {
-	uint8 index = data.byte(kCharacter) & 127;
+	uint8 index = _character & 127;
 	uint16 frame = getPersFrame(index);
 	const GraphicsFile *base = findSource(frame);
 	showFrame(*base, 234, 2, frame, 0);
@@ -85,21 +85,21 @@ uint16 DreamBase::getPersFrame(uint8 index) {
 }
 
 void DreamBase::startTalk() {
-	data.byte(kTalkmode) = 0;
+	_talkMode = 0;
 
-	const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F, 0);
+	const uint8 *str = getPersonText(_character & 0x7F, 0);
 	uint16 y;
 
-	data.word(kCharshift) = 91+91;
+	_charShift = 91+91;
 	y = 64;
 	printDirect(&str, 66, &y, 241, true);
 
-	data.word(kCharshift) = 0;
+	_charShift = 0;
 	y = 80;
 	printDirect(&str, 66, &y, 241, true);
 
 	_speechLoaded = false;
-	loadSpeech('R', data.byte(kReallocation), 'C', 64*(data.byte(kCharacter) & 0x7F));
+	loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
 	if (_speechLoaded) {
 		_volumeDirection = 1;
 		_volumeTo = 6;
@@ -112,37 +112,37 @@ const uint8 *DreamBase::getPersonText(uint8 index, uint8 talkPos) {
 }
 
 void DreamBase::moreTalk() {
-	if (data.byte(kTalkmode) != 0) {
+	if (_talkMode != 0) {
 		redes();
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 215) {
-		data.byte(kCommandtype) = 215;
+	if (_commandType != 215) {
+		_commandType = 215;
 		commandOnly(49);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton == _oldButton)
 		return;	// nomore
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
-	data.byte(kTalkmode) = 2;
-	data.byte(kTalkpos) = 4;
+	_talkMode = 2;
+	_talkPos = 4;
 
-	if (data.byte(kCharacter) >= 100)
-		data.byte(kTalkpos) = 48; // second part
+	if (_character >= 100)
+		_talkPos = 48; // second part
 	doSomeTalk();
 }
 
 void DreamBase::doSomeTalk() {
 	while (true) {
-		const uint8 *str = getPersonText(data.byte(kCharacter) & 0x7F, data.byte(kTalkpos));
+		const uint8 *str = getPersonText(_character & 0x7F, _talkPos);
 
 		if (*str == 0) {
 			// endheartalk
-			data.byte(kPointermode) = 0;
+			_pointerMode = 0;
 			return;
 		}
 
@@ -154,21 +154,21 @@ void DreamBase::doSomeTalk() {
 
 		printDirect(str, 164, 64, 144, false);
 
-		loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
+		loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
 		if (_speechLoaded)
 			playChannel1(62);
 
-		data.byte(kPointermode) = 3;
+		_pointerMode = 3;
 		workToScreenM();
 		if (hangOnPQ())
 			return;
 
-		data.byte(kTalkpos)++;
+		_talkPos++;
 
-		str = getPersonText(data.byte(kCharacter) & 0x7F, data.byte(kTalkpos));
+		str = getPersonText(_character & 0x7F, _talkPos);
 		if (*str == 0) {
 			// endheartalk
-			data.byte(kPointermode) = 0;
+			_pointerMode = 0;
 			return;
 		}
 
@@ -180,22 +180,22 @@ void DreamBase::doSomeTalk() {
 			convIcons();
 			printDirect(str, 48, 128, 144, false);
 
-			loadSpeech('R', data.byte(kReallocation), 'C', (64 * (data.byte(kCharacter) & 0x7F)) + data.byte(kTalkpos));
+			loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
 			if (_speechLoaded)
 				playChannel1(62);
 
-			data.byte(kPointermode) = 3;
+			_pointerMode = 3;
 			workToScreenM();
 			if (hangOnPQ())
 				return;
 		}
 
-		data.byte(kTalkpos)++;
+		_talkPos++;
 	}
 }
 
 bool DreamBase::hangOnPQ() {
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 
 	RectWithCallback<DreamBase> quitList[] = {
 		{ 273,320,157,198,&DreamBase::getBack1 },
@@ -215,10 +215,10 @@ bool DreamBase::hangOnPQ() {
 		dumpTextLine();
 		checkCoords(quitList);
 
-		if (data.byte(kGetback) == 1 || _quitRequested) {
+		if (_getBack == 1 || _quitRequested) {
 			// Quit conversation
 			delPointer();
-			data.byte(kPointermode) = 0;
+			_pointerMode = 0;
 			cancelCh1();
 			return true;
 		}
@@ -228,25 +228,25 @@ bool DreamBase::hangOnPQ() {
 			if (speechFlag == 40)
 				break;
 		}
-	} while (!data.word(kMousebutton) || data.word(kOldbutton));
+	} while (!_mouseButton || _oldButton);
 
 	delPointer();
-	data.byte(kPointermode) = 0;
+	_pointerMode = 0;
 	return false;
 }
 
 void DreamBase::redes() {
-	if (_channel1Playing != 255 || data.byte(kTalkmode) != 2) {
+	if (_channel1Playing != 255 || _talkMode != 2) {
 		blank();
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 217) {
-		data.byte(kCommandtype) = 217;
+	if (_commandType != 217) {
+		_commandType = 217;
 		commandOnly(50);
 	}
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
 	delPointer();

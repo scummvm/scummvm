@@ -95,7 +95,7 @@ void DreamWebEngine::waitForVSync() {
 
 void DreamWebEngine::quit() {
 	_base._quitRequested = true;
-	_base.data.byte(DreamGen::kLasthardkey) = 1;
+	_base._lastHardKey = 1;
 }
 
 void DreamWebEngine::processEvents() {
@@ -130,8 +130,8 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_c: //skip statue puzzle
-					_base.data.byte(DreamGen::kSymbolbotnum) = 3;
-					_base.data.byte(DreamGen::kSymboltopnum) = 5;
+					_base._symbolBotNum = 3;
+					_base._symbolTopNum = 5;
 					break;
 
 				default:
@@ -161,7 +161,7 @@ void DreamWebEngine::processEvents() {
 				break;
 			}
 
-			_base.data.byte(DreamGen::kLasthardkey) = hardKey;
+			_base._lastHardKey = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want
@@ -267,13 +267,13 @@ Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint16 in = (_base.data.word(DreamGen::kBufferin) + 1) & 0x0f;
-	uint16 out = _base.data.word(DreamGen::kBufferout);
+	uint16 in = (_base._bufferIn + 1) & 0x0f;
+	uint16 out = _base._bufferOut;
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
-	_base.data.word(DreamGen::kBufferin) = in;
+	_base._bufferIn = in;
 	DreamGen::g_keyBuffer[in] = ascii;
 }
 
@@ -431,6 +431,149 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) :
 
 	_oldSubject._type = 0;
 	_oldSubject._index = 0;
+
+	// misc variables
+	_speechCount = 0;
+	_charShift = 0;
+	_kerning = 0;
+	_brightness = 0;
+	_roomLoaded = 0;
+	_didZoom = 0;
+	_lineSpacing = 10;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 0;
+	_lastXPos = 0;
+	_itemFrame = 0;
+	_withObject = 0;
+	_withType = 0;
+	_lookCounter = 0;
+	_command = 0;
+	_commandType = 0;
+	_objectType = 0;
+	_getBack = 0;
+	_invOpen = 0;
+	_mainMode = 0;
+	_pickUp = 0;
+	_lastInvPos = 0;
+	_examAgain = 0;
+	_newTextLine = 0;
+	_openedOb = 0;
+	_openedType = 0;
+	_mapAdX = 0;
+	_mapAdY = 0;
+	_mapOffsetX = 104;
+	_mapOffsetY = 38;
+	_mapXStart = 0;
+	_mapYStart = 0;
+	_mapXSize = 0;
+	_mapYSize = 0;
+	_haveDoneObs = 0;
+	_manIsOffScreen = 0;
+	_facing = 0;
+	_leaveDirection = 0;
+	_turnToFace = 0;
+	_turnDirection = 0;
+	_mainTimer = 0;
+	_introCount = 0;
+	_currentKey = 0;
+	_timerCount = 0;
+	_mapX = 0;
+	_mapY = 0;
+	_ryanX = 0;
+	_ryanY = 0;
+	_lastFlag = 0;
+	_destPos = 0;
+	_realLocation = 0;
+	_roomNum = 0;
+	_nowInNewRoom = 0;
+	_resetManXY = 0;
+	_newLocation = 0xFF;
+	_autoLocation = 0xFF;
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButton = 0;
+	_oldButton = 0;
+	_oldX = 0;
+	_oldY = 0;
+	_oldPointerX = 0;
+	_oldPointerY = 0;
+	_delHereX = 0;
+	_delHereY = 0;
+	_pointerXS = 32;
+	_pointerYS = 32;
+	_delXS = 0;
+	_delYS = 0;
+	_pointerFrame = 0;
+	_pointerPower = 0;
+	_pointerMode = 0;
+	_pointerSpeed = 0;
+	_pointerCount = 0;
+	_inMapArea = 0;
+	_talkMode = 0;
+	_talkPos = 0;
+	_character = 0;
+	_watchDump = 0;
+	_logoNum = 0;
+	_oldLogoNum = 0;
+	_pressed = 0;
+	_pressPointer = 0;
+	_graphicPress = 0;
+	_pressCount = 0;
+	_lightCount = 0;
+	_folderPage = 0;
+	_diaryPage = 0;
+	_menuCount = 0;
+	_symbolTopX = 0;
+	_symbolTopNum = 0;
+	_symbolTopDir = 0;
+	_symbolBotX = 0;
+	_symbolBotNum = 0;
+	_symbolBotDir = 0;
+	_dumpX = 0;
+	_dumpY = 0;
+	_walkAndExam = 0;
+	_walkExamType = 0;
+	_walkExamNum = 0;
+	_cursLocX = 0;
+	_cursLocY = 0;
+	_curPos = 0;
+	_monAdX = 0;
+	_monAdY = 0;
+	_timeCount = 0;
+	_countToTimed = 0;
+	_timedY = 0;
+	_timedX = 0;
+	_needToDumpTimed = 0;
+	_loadingOrSave = 0;
+	_currentSlot = 0;
+	_cursorPos = 0;
+	_colourPos = 0;
+	_fadeDirection = 0;
+	_numToFade = 0;
+	_fadeCount = 0;
+	_addToGreen = 0;
+	_addToRed = 0;
+	_addToBlue = 0;
+	_lastSoundReel = 0;
+	_lastHardKey = 0;
+	_bufferIn = 0;
+	_bufferOut = 0;
+	_blinkFrame = 23;
+	_blinkCount = 0;
+	_reAssesChanges = 0;
+	_pointersPath = 0;
+	_mansPath = 0;
+	_pointerFirstPath = 0;
+	_finalDest = 0;
+	_destination = 0;
+	_lineStartX = 0;
+	_lineStartY = 0;
+	_lineEndX = 0;
+	_lineEndY = 0;
+	_linePointer = 0;
+	_lineDirection = 0;
+	_lineLength = 0;
 }
 
 } // End of namespace DreamGen

@@ -50,7 +50,7 @@ uint8 DreamBase::getNextWord(const GraphicsFile &charSet, const uint8 *string, u
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = *string;
-			uint8 width = charSet._frames[firstChar - 32 + data.word(kCharshift)].width;
+			uint8 width = charSet._frames[firstChar - 32 + _charShift].width;
 			width = kernChars(firstChar, secondChar, width);
 			*totalWidth += width;
 		}
@@ -68,9 +68,9 @@ void DreamBase::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint
 		height = &dummyHeight;
 	if (_foreignRelease)
 		y -= 3;
-	uint16 tmp = c - 32 + data.word(kCharshift);
+	uint16 tmp = c - 32 + _charShift;
 	showFrame(charSet, *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);
-	if (data.byte(kKerning), 0)
+	if (_kerning == 0)
 		*width = kernChars(c, nextChar, *width);
 	(*x) += *width;
 }
@@ -80,8 +80,8 @@ void DreamBase::printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8
 }
 
 uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
-	data.byte(kPointerframe) = 1;
-	data.byte(kPointermode) = 3;
+	_pointerFrame = 1;
+	_pointerMode = 3;
 	do {
 		uint16 offset = x;
 		uint16 charCount = getNumber(_charset1, string, maxWidth, centered, &offset);
@@ -96,17 +96,17 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 			}
 			if (charCount != 1) {
 				c1 = engine->modifyChar(c1);
-				data.word(kCharshift) = 91;
+				_charShift = 91;
 				uint16 offset2 = offset;
 				printBoth(_charset1, &offset2, y, c1, c2);
-				data.word(kCharshift) = 0;
+				_charShift = 0;
 				for (int i=0; i<2; ++i) {
 					uint16 mouseState = waitFrames();
 					if (_quitRequested)
 						return 0;
 					if (mouseState == 0)
 						continue;
-					if (mouseState != data.word(kOldbutton)) {
+					if (mouseState != _oldButton) {
 						return 1;
 					}
 				}
@@ -124,7 +124,7 @@ uint8 DreamBase::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxW
 }
 
 uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
-	data.word(kLastxpos) = x;
+	_lastXPos = x;
 	const GraphicsFile &charSet = *_currentCharset;
 	while (true) {
 		uint16 offset = x;
@@ -140,10 +140,10 @@ uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 ma
 			c = engine->modifyChar(c);
 			uint8 width, height;
 			printChar(charSet, &i, *y, c, nextChar, &width, &height);
-			data.word(kLastxpos) = i;
+			_lastXPos = i;
 			--charCount;
 		} while (charCount);
-		*y += data.word(kLinespacing);
+		*y += _lineSpacing;
 	}
 }
 
@@ -200,12 +200,12 @@ uint16 DreamBase::waitFrames() {
 	vSync();
 	dumpPointer();
 	delPointer();
-	return data.word(kMousebutton);
+	return _mouseButton;
 }
 
 const char *DreamBase::monPrint(const char *string) {
-	data.byte(kKerning) = 1;
-	uint16 x = data.word(kMonadx);
+	_kerning = 1;
+	uint16 x = _monAdX;
 	const char *iterator = string;
 	bool done = false;
 	while (!done) {
@@ -226,22 +226,22 @@ const char *DreamBase::monPrint(const char *string) {
 				break;
 			}
 			c = engine->modifyChar(c);
-			printChar(_tempCharset, &x, data.word(kMonady), c, 0, NULL, NULL);
-			data.word(kCurslocx) = x;
-			data.word(kCurslocy) = data.word(kMonady);
-			data.word(kMaintimer) = 1;
+			printChar(_tempCharset, &x, _monAdY, c, 0, NULL, NULL);
+			_cursLocX = x;
+			_cursLocY = _monAdY;
+			_mainTimer = 1;
 			printCurs();
 			vSync();
 			lockMon();
 			delCurs();
 		} while (--count);
 
-		x = data.word(kMonadx);
+		x = _monAdX;
 		scrollMonitor();
-		data.word(kCurslocx) = data.word(kMonadx);
+		_cursLocX = _monAdX;
 	}
 
-	data.byte(kKerning) = 0;
+	_kerning = 0;
 	return iterator;
 }
 
@@ -254,7 +254,7 @@ void DreamBase::rollEndCreditsGameWon() {
 	multiGet(_mapStore, 75, 20, 160, 160);
 
 	const uint8 *string = getTextInFile1(3);
-	const int linespacing = data.word(kLinespacing);
+	const int linespacing = _lineSpacing;
 
 	for (int i = 0; i < 254; ++i) {
 		// Output the text, initially with an offset of 10 pixels,
@@ -293,7 +293,7 @@ void DreamBase::rollEndCreditsGameLost() {
 	multiGet(_mapStore, 25, 20, 160, 160);
 
 	const uint8 *string = getTextInFile1(49);
-	const int linespacing = data.word(kLinespacing);
+	const int linespacing = _lineSpacing;
 
 	for (int i = 0; i < 80; ++i) {
 		// Output the text, initially with an offset of 10 pixels,
@@ -315,7 +315,7 @@ void DreamBase::rollEndCreditsGameLost() {
 			vSync();
 			multiDump(25, 20, 160, 160);
 
-			if (data.byte(kLasthardkey) == 1)
+			if (_lastHardKey == 1)
 				return;
 		}
 
@@ -325,7 +325,7 @@ void DreamBase::rollEndCreditsGameLost() {
 			c = *string++;
 		} while (c != ':' && c != 0);
 
-		if (data.byte(kLasthardkey) == 1)
+		if (_lastHardKey == 1)
 			return;
 	}
 

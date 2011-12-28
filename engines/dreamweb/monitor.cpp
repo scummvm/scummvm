@@ -66,8 +66,8 @@ void DreamBase::useMon() {
 	turnOnPower();
 	fadeUpYellows();
 	fadeUpMonFirst();
-	data.word(kMonadx) = 76;
-	data.word(kMonady) = 141;
+	_monAdX = 76;
+	_monAdY = 141;
 	monMessage(1);
 	hangOnCurs(120);
 	monMessage(2);
@@ -76,15 +76,15 @@ void DreamBase::useMon() {
 	hangOnCurs(100);
 	printLogo();
 	scrollMonitor();
-	data.word(kBufferin) = 0;
-	data.word(kBufferout) = 0;
+	_bufferIn = 0;
+	_bufferOut = 0;
 	bool stop = false;
 	do {
-		uint16 oldMonadx = data.word(kMonadx);
-		uint16 oldMonady = data.word(kMonady);
+		uint16 oldMonadx = _monAdX;
+		uint16 oldMonady = _monAdY;
 		input();
-		data.word(kMonadx) = oldMonadx;
-		data.word(kMonady) = oldMonady;
+		_monAdX = oldMonadx;
+		_monAdY = oldMonady;
 		stop = execCommand();
 		if (_quitRequested) //TODO : Check why it crashes when put before the execcommand
 			break;
@@ -96,9 +96,9 @@ void DreamBase::useMon() {
 	_textFile2.clear();
 	_textFile3.clear();
 
-	data.byte(kGetback) = 1;
+	_getBack = 1;
 	playChannel1(26);
-	data.byte(kManisoffscreen) = 0;
+	_manIsOffScreen = 0;
 	restoreAll();
 	redrawMainScrn();
 	workToScreenM();
@@ -171,8 +171,8 @@ bool DreamBase::execCommand() {
 
 
 void DreamBase::monitorLogo() {
-	if (data.byte(kLogonum) != data.byte(kOldlogonum)) {
-		data.byte(kOldlogonum) = data.byte(kLogonum);
+	if (_logoNum != _oldLogoNum) {
+		_oldLogoNum = _logoNum;
 		//fadeDownMon(); // FIXME: Commented out in ASM
 		printLogo();
 		printUnderMon();
@@ -194,12 +194,12 @@ void DreamBase::printLogo() {
 
 void DreamBase::input() {
 	memset(_inputLine, 0, 64);
-	data.word(kCurpos) = 0;
-	printChar(_tempCharset, data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
-	multiDump(data.word(kMonadx), data.word(kMonady), 6, 8);
-	data.word(kMonadx) += 6;
-	data.word(kCurslocx) = data.word(kMonadx);
-	data.word(kCurslocy) = data.word(kMonady);
+	_curPos = 0;
+	printChar(_tempCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
+	multiDump(_monAdX, _monAdY, 6, 8);
+	_monAdX += 6;
+	_cursLocX = _monAdX;
+	_cursLocY = _monAdY;
 	while (true) {
 		printCurs();
 		vSync();
@@ -207,31 +207,31 @@ void DreamBase::input() {
 		readKey();
 		if (_quitRequested)
 			return;
-		uint8 currentKey = data.byte(kCurrentkey);
+		uint8 currentKey = _currentKey;
 		if (currentKey == 0)
 			continue;
 		if (currentKey == 13)
 			return;
 		if (currentKey == 8) {
-			if (data.word(kCurpos) > 0)
+			if (_curPos > 0)
 				delChar();
 			continue;
 		}
-		if (data.word(kCurpos) == 28)
+		if (_curPos == 28)
 			continue;
-		if ((currentKey == 32) && (data.word(kCurpos) == 0))
+		if ((currentKey == 32) && (_curPos == 0))
 			continue;
 		currentKey = makeCaps(currentKey);
-		_inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
+		_inputLine[_curPos * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
-		multiGet(_mapStore + data.word(kCurpos) * 256, data.word(kMonadx), data.word(kMonady), 8, 8);
+		multiGet(_mapStore + _curPos * 256, _monAdX, _monAdY, 8, 8);
 		uint8 charWidth;
-		printChar(_tempCharset, data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
-		_inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
-		data.word(kMonadx) += charWidth;
-		++data.word(kCurpos);
-		data.word(kCurslocx) += charWidth;
+		printChar(_tempCharset, _monAdX, _monAdY, currentKey, 0, &charWidth, NULL);
+		_inputLine[_curPos * 2 + 1] = charWidth;
+		_monAdX += charWidth;
+		++_curPos;
+		_cursLocX += charWidth;
 	}
 }
 
@@ -243,20 +243,20 @@ byte DreamBase::makeCaps(byte c) {
 }
 
 void DreamBase::delChar() {
-	--data.word(kCurpos);
-	_inputLine[data.word(kCurpos) * 2] = 0;
-	uint8 width = _inputLine[data.word(kCurpos) * 2 + 1];
-	data.word(kMonadx) -= width;
-	data.word(kCurslocx) -= width;
-	uint16 offset = data.word(kCurpos);
+	--_curPos;
+	_inputLine[_curPos * 2] = 0;
+	uint8 width = _inputLine[_curPos * 2 + 1];
+	_monAdX -= width;
+	_cursLocX -= width;
+	uint16 offset = _curPos;
 	offset = ((offset & 0x00ff) << 8) | ((offset & 0xff00) >> 8);
-	multiPut(_mapStore + offset, data.word(kMonadx), data.word(kMonady), 8, 8);
-	multiDump(data.word(kMonadx), data.word(kMonady), 8, 8);
+	multiPut(_mapStore + offset, _monAdX, _monAdY, 8, 8);
+	multiDump(_monAdX, _monAdY, 8, 8);
 }
 
 void DreamBase::printCurs() {
-	uint16 x = data.word(kCurslocx);
-	uint16 y = data.word(kCurslocy);
+	uint16 x = _cursLocX;
+	uint16 y = _cursLocY;
 	uint16 height;
 	if (_foreignRelease) {
 		y -= 3;
@@ -264,15 +264,15 @@ void DreamBase::printCurs() {
 	} else
 		height = 8;
 	multiGet(_textUnder, x, y, 6, height);
-	++data.word(kMaintimer);
-	if ((data.word(kMaintimer) & 16) == 0)
+	++_mainTimer;
+	if ((_mainTimer & 16) == 0)
 		showFrame(_tempCharset, x, y, '/' - 32, 0);
 	multiDump(x - 6, y, 12, height);
 }
 
 void DreamBase::delCurs() {
-	uint16 x = data.word(kCurslocx);
-	uint16 y = data.word(kCurslocy);
+	uint16 x = _cursLocX;
+	uint16 y = _cursLocY;
 	uint16 width = 6;
 	uint16 height;
 	if (_foreignRelease) {
@@ -433,7 +433,7 @@ const char *DreamBase::getKeyAndLogo(const char *foundString) {
 
 	if (monitorKeyEntries[keyNum].keyAssigned == 1) {
 		// Key OK
-		data.byte(kLogonum) = newLogo;
+		_logoNum = newLogo;
 		return foundString + 4;
 	} else {
 		monMessage(12);	// "Access denied, key required -"
@@ -476,7 +476,7 @@ void DreamBase::dirCom() {
 		return;
 	}
 
-	data.byte(kLogonum) = 0;
+	_logoNum = 0;
 	memcpy(_currentFile+1, "ROOT        ", 12);
 	monitorLogo();
 	scrollMonitor();
@@ -564,7 +564,7 @@ void DreamBase::read() {
 	// "keyok1"
 	found = searchForString(name, found);
 	if (!found) {
-		data.byte(kLogonum) = data.byte(kOldlogonum);
+		_logoNum = _oldLogoNum;
 		monMessage(11);
 		return;
 	}
@@ -615,11 +615,11 @@ void DreamBase::signOn() {
 
 	monMessage(15);
 
-	uint16 prevX = data.word(kMonadx);
-	uint16 prevY = data.word(kMonady);
+	uint16 prevX = _monAdX;
+	uint16 prevY = _monAdY;
 	input();	// password input
-	data.word(kMonadx) = prevX;
-	data.word(kMonady) = prevY;
+	_monAdX = prevX;
+	_monAdY = prevY;
 
 	inputLine = (const char *)_inputLine;
 	inputLine.toUppercase();

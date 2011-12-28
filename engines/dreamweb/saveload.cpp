@@ -45,33 +45,33 @@ void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
 }
 
 void DreamBase::loadGame() {
-	if (data.byte(kCommandtype) != 246) {
-		data.byte(kCommandtype) = 246;
+	if (_commandType != 246) {
+		_commandType = 246;
 		commandOnly(41);
 	}
-	if (data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton == _oldButton)
 		return; // "noload"
-	if (data.word(kMousebutton) == 1)
+	if (_mouseButton == 1)
 		doLoad(-1);
 }
 
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
 void DreamBase::doLoad(int savegameId) {
-	data.byte(kLoadingorsave) = 1;
+	_loadingOrSave = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
 		showOpBox();
 		showLoadOps();
-		data.byte(kCurrentslot) = 0;
+		_currentSlot = 0;
 		showSlots();
 		showNames();
-		data.byte(kPointerframe) = 0;
+		_pointerFrame = 0;
 		workToScreenM();
 		namesToOld();
-		data.byte(kGetback) = 0;
+		_getBack = 0;
 
-		while (data.byte(kGetback) == 0) {
+		while (_getBack == 0) {
 			if (_quitRequested)
 				return;
 			delPointer();
@@ -88,7 +88,7 @@ void DreamBase::doLoad(int savegameId) {
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(loadlist);
-			if (data.byte(kGetback) == 2)
+			if (_getBack == 2)
 				return; // "quitloaded"
 		}
 	} else {
@@ -106,13 +106,13 @@ void DreamBase::doLoad(int savegameId) {
 		}
 
 		if (savegameId < 0) {
-			data.byte(kGetback) = 0;
+			_getBack = 0;
 			return;
 		}
 
 		loadPosition(savegameId);
 
-		data.byte(kGetback) = 1;
+		_getBack = 1;
 	}
 
 	// If we reach this point, loadPosition() has just been called.
@@ -122,17 +122,17 @@ void DreamBase::doLoad(int savegameId) {
 
 	startLoading(g_madeUpRoomDat);
 	loadRoomsSample();
-	data.byte(kRoomloaded) = 1;
-	data.byte(kNewlocation) = 255;
+	_roomLoaded = 1;
+	_newLocation = 255;
 	clearSprites();
 	initMan();
 	initRain();
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
 	startup();
 	workToScreen();
-	data.byte(kGetback) = 4;
+	_getBack = 4;
 }
 
 
@@ -142,28 +142,28 @@ void DreamBase::saveGame() {
 		return;
 	}
 
-	if (data.byte(kCommandtype) != 247) {
-		data.byte(kCommandtype) = 247;
+	if (_commandType != 247) {
+		_commandType = 247;
 		commandOnly(44);
 	}
-	if (data.word(kMousebutton) != 1)
+	if (_mouseButton != 1)
 		return;
 
-	data.byte(kLoadingorsave) = 2;
+	_loadingOrSave = 2;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload")) {
 		showOpBox();
 		showSaveOps();
-		data.byte(kCurrentslot) = 0;
+		_currentSlot = 0;
 		showSlots();
 		showNames();
 		workToScreenM();
 		namesToOld();
-		data.word(kBufferin) = 0;
-		data.word(kBufferout) = 0;
-		data.byte(kGetback) = 0;
+		_bufferIn = 0;
+		_bufferOut = 0;
+		_getBack = 0;
 
-		while (data.byte(kGetback) == 0) {
+		while (_getBack == 0) {
 			if (_quitRequested)
 				return;
 			delPointer();
@@ -197,7 +197,7 @@ void DreamBase::saveGame() {
 		delete dialog;
 
 		if (savegameId < 0) {
-			data.byte(kGetback) = 0;
+			_getBack = 0;
 			return;
 		}
 
@@ -214,9 +214,9 @@ void DreamBase::saveGame() {
 		// TODO: The below is copied from actualsave
 		getRidOfTemp();
 		restoreAll(); // reels
-		data.word(kTextaddressx) = 13;
-		data.word(kTextaddressy) = 182;
-		data.byte(kTextlen) = 240;
+		_textAddressX = 13;
+		_textAddressY = 182;
+		_textLen = 240;
 		redrawMainScrn();
 		workToScreen();	// show the main screen without the mouse pointer
 
@@ -225,7 +225,7 @@ void DreamBase::saveGame() {
 		savePosition(savegameId, descbuf);
 
 		workToScreenM();
-		data.byte(kGetback) = 4;
+		_getBack = 4;
 	}
 }
 
@@ -238,24 +238,24 @@ void DreamBase::oldToNames() {
 }
 
 void DreamBase::saveLoad() {
-	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
+	if (data.word(kWatchingtime) || (_pointerMode == 2)) {
 		blank();
 		return;
 	}
-	if (data.byte(kCommandtype) != 253) {
-		data.byte(kCommandtype) = 253;
+	if (_commandType != 253) {
+		_commandType = 253;
 		commandOnly(43);
 	}
-	if ((data.word(kMousebutton) != data.word(kOldbutton)) && (data.word(kMousebutton) & 1))
+	if ((_mouseButton != _oldButton) && (_mouseButton & 1))
 		doSaveLoad();
 }
 
 void DreamBase::doSaveLoad() {
-	data.byte(kPointerframe) = 0;
-	data.word(kTextaddressx) = 70;
-	data.word(kTextaddressy) = 182-8;
-	data.byte(kTextlen) = 181;
-	data.byte(kManisoffscreen) = 1;
+	_pointerFrame = 0;
+	_textAddressX = 70;
+	_textAddressY = 182-8;
+	_textLen = 181;
+	_manIsOffScreen = 1;
 	clearWork();
 	createPanel2();
 	underTextLine();
@@ -283,11 +283,11 @@ void DreamBase::doSaveLoad() {
 			showMainOps();
 			workToScreenM();
 		}
-		data.byte(kGetback) = 0;
+		_getBack = 0;
 
 		do {	// wait ops
 			if (_quitRequested) {
-				data.byte(kManisoffscreen) = 0;
+				_manIsOffScreen = 0;
 				return;
 			}
 
@@ -298,20 +298,20 @@ void DreamBase::doSaveLoad() {
 			dumpTextLine();
 			delPointer();
 			checkCoords(opsList);
-		} while (!data.byte(kGetback));
-	} while (data.byte(kGetback) == 2);
+		} while (!_getBack);
+	} while (_getBack == 2);
 
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
-	if (data.byte(kGetback) != 4) {
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
+	if (_getBack != 4) {
 		getRidOfTemp();
 		restoreAll();
 		redrawMainScrn();
 		workToScreenM();
-		data.byte(kCommandtype) = 200;
+		_commandType = 200;
 	}
-	data.byte(kManisoffscreen) = 0;
+	_manIsOffScreen = 0;
 }
 
 void DreamBase::getBackFromOps() {
@@ -322,15 +322,15 @@ void DreamBase::getBackFromOps() {
 }
 
 void DreamBase::getBackToOps() {
-	if (data.byte(kCommandtype) != 201) {
-		data.byte(kCommandtype) = 201;
+	if (_commandType != 201) {
+		_commandType = 201;
 		commandOnly(42);
 	}
 
-	if (data.word(kMousebutton) != data.word(kOldbutton)) {
-		if (data.word(kMousebutton) & 1) {
+	if (_mouseButton != _oldButton) {
+		if (_mouseButton & 1) {
 			oldToNames();
-			data.byte(kGetback) = 2;
+			_getBack = 2;
 		}
 	}
 }
@@ -349,21 +349,21 @@ void DreamBase::showDiscOps() {
 }
 
 void DreamBase::discOps() {
-	if (data.byte(kCommandtype) != 249) {
-		data.byte(kCommandtype) = 249;
+	if (_commandType != 249) {
+		_commandType = 249;
 		commandOnly(43);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || !(data.word(kMousebutton) & 1))
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
 	scanForNames();
-	data.byte(kLoadingorsave) = 2;
+	_loadingOrSave = 2;
 	showOpBox();
 	showDiscOps();
-	data.byte(kCurrentslot) = 0;
+	_currentSlot = 0;
 	workToScreenM();
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 
 	RectWithCallback<DreamBase> discOpsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::loadGame },
@@ -384,19 +384,19 @@ void DreamBase::discOps() {
 		dumpPointer();
 		dumpTextLine();
 		checkCoords(discOpsList);
-	} while (!data.byte(kGetback));
+	} while (!_getBack);
 }
 
 void DreamBase::actualSave() {
-	if (data.byte(kCommandtype) != 222) {
-		data.byte(kCommandtype) = 222;
+	if (_commandType != 222) {
+		_commandType = 222;
 		commandOnly(44);
 	}
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
-	unsigned int slot = data.byte(kCurrentslot);
+	unsigned int slot = _currentSlot;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
@@ -406,31 +406,31 @@ void DreamBase::actualSave() {
 
 	getRidOfTemp();
 	restoreAll(); // reels
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 240;
 	redrawMainScrn();
 	workToScreenM();
-	data.byte(kGetback) = 4;
+	_getBack = 4;
 }
 
 void DreamBase::actualLoad() {
-	if (data.byte(kCommandtype) != 221) {
-		data.byte(kCommandtype) = 221;
+	if (_commandType != 221) {
+		_commandType = 221;
 		commandOnly(41);
 	}
 
-	if (data.word(kMousebutton) == data.word(kOldbutton) || data.word(kMousebutton) != 1)
+	if (_mouseButton == _oldButton || _mouseButton != 1)
 		return;
 
-	unsigned int slot = data.byte(kCurrentslot);
+	unsigned int slot = _currentSlot;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	loadPosition(data.byte(kCurrentslot));
-	data.byte(kGetback) = 1;
+	loadPosition(_currentSlot);
+	_getBack = 1;
 }
 
 void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
@@ -439,11 +439,11 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
 	Room madeUpRoom = currentRoom;
 	madeUpRoom.roomsSample = _roomsSample;
-	madeUpRoom.mapX = data.byte(kMapx);
-	madeUpRoom.mapY = data.byte(kMapy);
+	madeUpRoom.mapX = _mapX;
+	madeUpRoom.mapY = _mapY;
 	madeUpRoom.liftFlag = data.byte(kLiftflag);
-	madeUpRoom.b21 = data.byte(kManspath);
-	madeUpRoom.facing = data.byte(kFacing);
+	madeUpRoom.b21 = _mansPath;
+	madeUpRoom.facing = _facing;
 	madeUpRoom.b27 = 255;
 
 	Common::String filename = engine->getSavegameFilename(slot);
@@ -521,7 +521,7 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 }
 
 void DreamBase::loadPosition(unsigned int slot) {
-	data.word(kTimecount) = 0;
+	_timeCount = 0;
 	clearChanges();
 
 	Common::String filename = engine->getSavegameFilename(slot);
@@ -639,22 +639,22 @@ uint DreamBase::scanForNames() {
 }
 
 void DreamBase::loadOld() {
-	if (data.byte(kCommandtype) != 252) {
-		data.byte(kCommandtype) = 252;
+	if (_commandType != 252) {
+		_commandType = 252;
 		commandOnly(48);
 	}
 
-	if (!(data.word(kMousebutton) & 1))
+	if (!(_mouseButton & 1))
 		return;
 
 	doLoad(-1);
 
-	if (data.byte(kGetback) == 4 || _quitRequested)
+	if (_getBack == 4 || _quitRequested)
 		return;
 
 	showDecisions();
 	workToScreenM();
-	data.byte(kGetback) = 0;
+	_getBack = 0;
 }
 
 void DreamBase::showDecisions() {
@@ -674,52 +674,52 @@ void DreamBase::showNames() {
 		// The first character of the savegame name is unused
 		Common::String name(&_saveNames[17*slot + 1]);
 
-		if (slot != data.byte(kCurrentslot)) {
+		if (slot != _currentSlot) {
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
 			continue;
 		}
-		if (data.byte(kLoadingorsave) != 2) {
-			data.word(kCharshift) = 91;
+		if (_loadingOrSave != 2) {
+			_charShift = 91;
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
-			data.word(kCharshift) = 0;
+			_charShift = 0;
 			continue;
 		}
 
 		int pos = name.size();
-		data.byte(kCursorpos) = pos;
+		_cursorPos = pos;
 		name += '/'; // cursor character
 		printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
 	}
 }
 
 void DreamBase::checkInput() {
-	if (data.byte(kLoadingorsave) == 3)
+	if (_loadingOrSave == 3)
 		return;
 
 	readKey();
 
 	// The first character of the savegame name is unused
-	char *name = &_saveNames[17*data.byte(kCurrentslot) + 1];
+	char *name = &_saveNames[17*_currentSlot + 1];
 
-	if (data.byte(kCurrentkey) == 0) {
+	if (_currentKey == 0) {
 		return;
-	} else if (data.byte(kCurrentkey) == 13) {
-		data.byte(kLoadingorsave) = 3;
-	} else if (data.byte(kCurrentkey) == 8) {
-		if (data.byte(kCursorpos) == 0)
+	} else if (_currentKey == 13) {
+		_loadingOrSave = 3;
+	} else if (_currentKey == 8) {
+		if (_cursorPos == 0)
 			return;
 
-		--data.byte(kCursorpos);
-		name[data.byte(kCursorpos)] = 0;
-		name[data.byte(kCursorpos)+1] = 1;
+		--_cursorPos;
+		name[_cursorPos] = 0;
+		name[_cursorPos+1] = 1;
 	} else {
-		if (data.byte(kCursorpos) == 14)
+		if (_cursorPos == 14)
 			return;
 
-		name[data.byte(kCursorpos)] = data.byte(kCurrentkey);
-		name[data.byte(kCursorpos)+1] = 0;
-		name[data.byte(kCursorpos)+2] = 1;
-		++data.byte(kCursorpos);
+		name[_cursorPos] = _currentKey;
+		name[_cursorPos+1] = 0;
+		name[_cursorPos+2] = 1;
+		++_cursorPos;
 	}
 
 	showOpBox();
@@ -730,28 +730,28 @@ void DreamBase::checkInput() {
 }
 
 void DreamBase::selectSlot() {
-	if (data.byte(kCommandtype) != 244) {
-		data.byte(kCommandtype) = 244;
+	if (_commandType != 244) {
+		_commandType = 244;
 		commandOnly(45);
 	}
 
-	if (data.word(kMousebutton) != 1 || data.word(kMousebutton) == data.word(kOldbutton))
+	if (_mouseButton != 1 || _mouseButton == _oldButton)
 		return; // noselslot
-	if (data.byte(kLoadingorsave) == 3)
-		data.byte(kLoadingorsave)--;
+	if (_loadingOrSave == 3)
+		_loadingOrSave--;
 
 	oldToNames();
-	int y = data.word(kMousey) - (kOpsy + 4);
+	int y = _mouseY - (kOpsy + 4);
 	if (y < 11)
-		data.byte(kCurrentslot) = 0;
+		_currentSlot = 0;
 	else
-		data.byte(kCurrentslot) = y / 11;
+		_currentSlot = y / 11;
 
 	delPointer();
 	showOpBox();
 	showSlots();
 	showNames();
-	if (data.byte(kLoadingorsave) == 1)
+	if (_loadingOrSave == 1)
 		showLoadOps();
 	else
 		showSaveOps();
@@ -767,7 +767,7 @@ void DreamBase::showSlots() {
 	uint16 y = kOpsy + 11;
 
 	for (int slot = 0; slot < 7; slot++) {
-		if (slot == data.byte(kCurrentslot))
+		if (slot == _currentSlot)
 			showFrame(_tempGraphics, kOpsx + 10, y, 3, 0);
 
 		y += 10;
