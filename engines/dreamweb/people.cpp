@@ -123,7 +123,7 @@ static const ReelRoutine g_initialReelRoutines[] = {
 void DreamWebEngine::setupInitialReelRoutines() {
 	for (unsigned int i = 0; i < kNumReelRoutines + 1; ++i) {
 		_reelRoutines[i] = g_initialReelRoutines[i];
-		if (_reelRoutines[i].period == 55 && isCD() && getLanguage() == Common::DE_DEU)
+		if (_reelRoutines[i].period == 55 && hasSpeech() && getLanguage() == Common::DE_DEU)
 			_reelRoutines[i].period = 65;
 	}
 }
@@ -145,7 +145,7 @@ void DreamWebEngine::updatePeople() {
 void DreamWebEngine::madmanText() {
 	byte origCount;
 
-	if (isCD()) {
+	if (hasSpeech()) {
 		if (_speechCount >= 63)
 			return;
 		if (_channel1Playing != 255)
@@ -188,12 +188,12 @@ void DreamWebEngine::madman(ReelRoutine &routine) {
 			++_vars._combatCount;
 			madmanText();
 			newReelPointer = 53;
-			if (_vars._combatCount >= (isCD() ? 64 : 62)) {
-				if (_vars._combatCount == (isCD() ? 70 : 68))
+			if (_vars._combatCount >= (hasSpeech() ? 64 : 62)) {
+				if (_vars._combatCount == (hasSpeech() ? 70 : 68))
 					newReelPointer = 310;
 				else {
 					if (_vars._lastWeapon == 8) {
-						_vars._combatCount = isCD() ? 72 : 70;
+						_vars._combatCount = hasSpeech() ? 72 : 70;
 						_vars._lastWeapon = (uint8)-1;
 						_vars._madmanFlag = 1;
 						newReelPointer = 67;
@@ -211,9 +211,9 @@ void DreamWebEngine::madman(ReelRoutine &routine) {
 void DreamWebEngine::madMode() {
 	_vars._watchingTime = 2;
 	_pointerMode = 0;
-	if (_vars._combatCount < (isCD() ? 65 : 63))
+	if (_vars._combatCount < (hasSpeech() ? 65 : 63))
 		return;
-	if (_vars._combatCount >= (isCD() ? 70 : 68))
+	if (_vars._combatCount >= (hasSpeech() ? 70 : 68))
 		return;
 	_pointerMode = 2;
 }

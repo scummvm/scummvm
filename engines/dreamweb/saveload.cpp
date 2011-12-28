@@ -840,9 +840,11 @@ void DreamWebEngine::showSlots() {
 void DreamWebEngine::showOpBox() {
 	showFrame(_tempGraphics, kOpsx, kOpsy, 0, 0);
 
-	// CHECKME: There seem to be versions of dreamweb in which this call
-	// should be removed. It displays a red dot on the ops dialogs if left in.
-	showFrame(_tempGraphics, kOpsx, kOpsy + 55, 4, 0);
+	// This call displays half of the ops dialog in the CD version. It's not
+	// in the floppy version, and if it's called, a stray red dot is shown in
+	// the game dialogs.
+	if (isCD())
+		showFrame(_tempGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 
 void DreamWebEngine::showLoadOps() {

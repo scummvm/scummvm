@@ -670,7 +670,7 @@ void DreamWebEngine::intro1Text() {
 	if (_introCount != 2 && _introCount != 4 && _introCount != 6)
 		return;
 
-	if (isCD() && _channel1Playing != 255) {
+	if (hasSpeech() && _channel1Playing != 255) {
 		_introCount--;
 	} else {
 		if (_introCount == 2)
@@ -692,12 +692,12 @@ void DreamWebEngine::intro2Text(uint16 nextReelPointer) {
 void DreamWebEngine::intro3Text(uint16 nextReelPointer) {
 	if (nextReelPointer == 107)
 		setupTimedTemp(45, 82, 36, 56, 100, 1);
-	else if (nextReelPointer == (isCD() ? 108 : 109))
+	else if (nextReelPointer == (hasSpeech() ? 108 : 109))
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 
 void DreamWebEngine::monks2text() {
-	bool isGermanCD = isCD() && getLanguage() == Common::DE_DEU;
+	bool isGermanCD = hasSpeech() && getLanguage() == Common::DE_DEU;
 
 	if (_introCount == 1)
 		setupTimedTemp(8, 82, 36, 160, 120, 1);
@@ -706,14 +706,14 @@ void DreamWebEngine::monks2text() {
 	else if (_introCount == (isGermanCD ? 9 : 7))
 		setupTimedTemp(10, 82, 36, 160, 120, 1);
 	else if (_introCount == 10 && !isGermanCD) {
-		if (isCD())
+		if (hasSpeech())
 			_introCount = 12;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
 	} else if (_introCount == 13 && isGermanCD) {
 		_introCount = 14;
 		setupTimedTemp(11, 82, 0, 105, 120, 1);
 	} else if (_introCount == 13 && !isGermanCD) {
-		if (isCD())
+		if (hasSpeech())
 			_introCount = 17;
 		else
 			setupTimedTemp(12, 82, 0, 120, 120, 1);
@@ -725,7 +725,7 @@ void DreamWebEngine::monks2text() {
 		setupTimedTemp(15, 82, 36, 160, 120, 1);
 	else if (_introCount == (isGermanCD ? 27 : 25))
 		setupTimedTemp(16, 82, 36, 160, 120, 1);
-	else if (_introCount == (isCD() ? 27 : 28) && !isGermanCD)
+	else if (_introCount == (hasSpeech() ? 27 : 28) && !isGermanCD)
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
 	else if (_introCount == 30 && isGermanCD)
 		setupTimedTemp(17, 82, 36, 160, 120, 1);
@@ -736,14 +736,14 @@ void DreamWebEngine::monks2text() {
 void DreamWebEngine::textForEnd() {
 	if (_introCount == 20)
 		setupTimedTemp(0, 83, 34, 20, 60, 1);
-	else if (_introCount == (isCD() ? 50 : 65))
+	else if (_introCount == (hasSpeech() ? 50 : 65))
 		setupTimedTemp(1, 83, 34, 20, 60, 1);
-	else if (_introCount == (isCD() ? 85 : 110))
+	else if (_introCount == (hasSpeech() ? 85 : 110))
 		setupTimedTemp(2, 83, 34, 20, 60, 1);
 }
 
 void DreamWebEngine::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-	if (isCD() && _channel1Playing != 255)
+	if (hasSpeech() && _channel1Playing != 255)
 		_introCount--;
 	else
 		setupTimedTemp(textIndex, voiceIndex, x, y, countToTimed, timeCount);
@@ -758,7 +758,7 @@ void DreamWebEngine::textForMonk() {
 		textForMonkHelper(21, 82, 48, 154, 120, 1);
 	else if (_introCount == 13)
 		textForMonkHelper(22, 82, 68, 38, 120, 1);
-	else if (_introCount == (isCD() ? 15 : 17))
+	else if (_introCount == (hasSpeech() ? 15 : 17))
 		textForMonkHelper(23, 82, 68, 154, 120, 1);
 	else if (_introCount == 21)
 		textForMonkHelper(24, 82, 68, 38, 120, 1);
@@ -774,11 +774,11 @@ void DreamWebEngine::textForMonk() {
 		textForMonkHelper(29, 82, 68, 38, 120, 1);
 	else if (_introCount == 45)
 		textForMonkHelper(30, 82, 68, 154, 120, 1);
-	else if (_introCount == (isCD() ? 52 : 49))
+	else if (_introCount == (hasSpeech() ? 52 : 49))
 		textForMonkHelper(31, 82, 68, 154, 220, 1);
 	else if (_introCount == 53) {
 		fadeScreenDowns();
-		if (isCD()) {
+		if (hasSpeech()) {
 			_volumeTo = 7;
 			_volumeDirection = 1;
 		}

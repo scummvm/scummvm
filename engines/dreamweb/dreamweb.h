@@ -136,6 +136,8 @@ public:
 	void processEvents();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
 	void cls();
+	bool isCD();
+	bool hasSpeech();
 
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
@@ -299,6 +301,7 @@ public:
 	bool _foreignRelease;
 
 	bool _wonGame;
+	bool _hasSpeech;
 
 	// sound related
 	uint8 _roomsSample;
@@ -768,7 +771,6 @@ public:
 
 	// from stubs.cpp
 	void setupInitialVars();
-	bool isCD();
 	void crosshair();
 	void delTextLine();
 	void showBlink();

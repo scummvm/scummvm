@@ -935,8 +935,7 @@ void DreamWebEngine::useTimedText() {
 }
 
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-#if 1	// if cd - TODO: replace with a proper CD check
-	if (voiceIndex != 0) {
+	if (hasSpeech() && voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
 			playChannel1(50+12);
 		}
@@ -947,7 +946,6 @@ void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, 
 		if (_speechLoaded && !_subtitles)
 			return;
 	}
-#endif
 
 	if (_timeCount != 0)
 		return;
@@ -1659,14 +1657,6 @@ bool DreamWebEngine::isRyanHolding(const char *id) {
 bool DreamWebEngine::isItDescribed(const ObjPos *pos) {
 	const char *string = _setDesc.getString(pos->index);
 	return string[0] != 0;
-}
-
-bool DreamWebEngine::isCD() {
-	// The original sources has two codepaths depending if the game is 'if cd' or not
-	// This is a hack to guess which version to use with the assumption that if we have a cd version
-	// we managed to load the speech. At least it is isolated in this function and can be changed.
-	// Maybe detect the version during game id?
-	return (_speechLoaded);
 }
 
 void DreamWebEngine::showIcon() {
@@ -2532,7 +2522,7 @@ void DreamWebEngine::atmospheres() {
 			if (_realLocation == 2 && _mapX == 22 && _mapY == 10)
 				_volume = 5; // "louisvol"
 
-			if (isCD() && _realLocation == 14) {
+			if (hasSpeech() && _realLocation == 14) {
 				if (_mapX == 33) {
 					_volume = 0; // "ismad2"
 					return;

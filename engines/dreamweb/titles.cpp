@@ -44,12 +44,12 @@ void DreamWebEngine::monkSpeaking() {
 	workToScreen();
 	_volume = 7;
 	_volumeDirection = -1;
-	_volumeTo = isCD() ? 5 : 0;
+	_volumeTo = hasSpeech() ? 5 : 0;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	hangOn(300);
 
-	if (isCD()) {
+	if (hasSpeech()) {
 		for (int i = 40; i <= 48; i++) {
 			loadSpeech('T', 83, 'T', i);
 
@@ -141,7 +141,7 @@ void DreamWebEngine::intro() {
 	loadIntroRoom();
 	_volume = 7;
 	_volumeDirection = -1;
-	_volumeTo = isCD() ? 4 : 0;
+	_volumeTo = hasSpeech() ? 4 : 0;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	runIntroSeq();

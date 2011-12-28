@@ -369,6 +369,7 @@ Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
 
 	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
+	_hasSpeech = Common::File::exists("speech/r01c0000.raw");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	dreamweb();
@@ -568,4 +569,11 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	}
 }
 
+bool DreamWebEngine::isCD() {
+	return _gameDescription->desc.flags & ADGF_CD;
+}
+
+bool DreamWebEngine::hasSpeech() {
+	return isCD() && _hasSpeech;
+}
 } // End of namespace DreamWeb

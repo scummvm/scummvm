@@ -98,15 +98,15 @@ void DreamWebEngine::startTalk() {
 	y = 80;
 	printDirect(&str, 66, &y, 241, true);
 
-#if 1	// if cd - TODO: replace with a proper CD check
-	_speechLoaded = false;
-	loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
-	if (_speechLoaded) {
-		_volumeDirection = 1;
-		_volumeTo = 6;
-		playChannel1(50 + 12);
+	if (hasSpeech()) {
+		_speechLoaded = false;
+		loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
+		if (_speechLoaded) {
+			_volumeDirection = 1;
+			_volumeTo = 6;
+			playChannel1(50 + 12);
+		}
 	}
-#endif
 }
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
