@@ -127,11 +127,6 @@ public:
 
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
-	void openFile(const Common::String &name);
-	uint32 readFromFile(uint8 *data, unsigned size);
-	uint32 skipBytes(uint32 bytes);
-	void closeFile();
-
 	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
 	void processEvents();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
@@ -165,9 +160,6 @@ private:
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
-
-	Common::File _file;
-	Common::InSaveFile *_inSaveFile;
 
 	uint _speed;
 	bool _turbo;
@@ -804,15 +796,14 @@ public:
 	void allocateBuffers();
 	void loadTextFile(TextFile &file, const char *fileName);
 	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
-	void loadGraphicsSegment(GraphicsFile &file, unsigned int len);
-	void loadTextSegment(TextFile &file, unsigned int len);
+	void loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len);
+	void loadTextSegment(TextFile &file, Common::File &inFile, unsigned int len);
 	void loadIntoTemp(const char *fileName);
 	void loadIntoTemp2(const char *fileName);
 	void loadIntoTemp3(const char *fileName);
 	void loadTempCharset(const char *fileName);
 	void loadTravelText();
 	void loadTempText(const char *fileName);
-	void clearAndLoad(uint8 *buf, uint8 c, unsigned int size, unsigned int maxSize);
 	void sortOutMap();
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset();
