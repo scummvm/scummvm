@@ -1280,7 +1280,7 @@ DynObject *DreamWebEngine::getExAd(uint8 index) {
 	return &_exData[index];
 }
 
-DynObject *DreamWebEngine::getEitherAdCPP() {
+DynObject *DreamWebEngine::getEitherAd() {
 	if (_objectType == kExObjectType)
 		return getExAd(_itemFrame);
 	else
@@ -1311,9 +1311,9 @@ void *DreamWebEngine::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
 }
 
 void *DreamWebEngine::getAnyAdDir(uint8 index, uint8 flag) {
-	if (flag == 4)
+	if (flag == kExObjectType)
 		return getExAd(index);
-	else if (flag == 2)
+	else if (flag == kFreeObjectType)
 		return getFreeAd(index);
 	else
 		return getSetAd(index);
