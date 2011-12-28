@@ -141,7 +141,7 @@ void DreamWebEngine::intro() {
 	loadIntroRoom();
 	_volume = 7;
 	_volumeDirection = -1;
-	_volumeTo = 4;
+	_volumeTo = isCD() ? 4 : 0;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	runIntroSeq();

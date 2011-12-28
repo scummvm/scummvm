@@ -935,7 +935,7 @@ void DreamWebEngine::useTimedText() {
 }
 
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-#if 1 // if cd
+#if 1	// if cd - TODO: replace with a proper CD check
 	if (voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
 			playChannel1(50+12);

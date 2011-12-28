@@ -98,6 +98,7 @@ void DreamWebEngine::startTalk() {
 	y = 80;
 	printDirect(&str, 66, &y, 241, true);
 
+#if 1	// if cd - TODO: replace with a proper CD check
 	_speechLoaded = false;
 	loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
 	if (_speechLoaded) {
@@ -105,6 +106,7 @@ void DreamWebEngine::startTalk() {
 		_volumeTo = 6;
 		playChannel1(50 + 12);
 	}
+#endif
 }
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
@@ -137,6 +139,8 @@ void DreamWebEngine::moreTalk() {
 }
 
 void DreamWebEngine::doSomeTalk() {
+	// FIXME: This is for the CD version only
+
 	while (true) {
 		const uint8 *str = getPersonText(_character & 0x7F, _talkPos);
 
