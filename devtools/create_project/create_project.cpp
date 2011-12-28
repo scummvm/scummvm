@@ -539,6 +539,8 @@ int main(int argc, char *argv[]) {
 		projectWarnings["lure"].push_back("4355");
 
 		projectWarnings["kyra"].push_back("4355");
+		projectWarnings["kyra"].push_back("4510");
+		projectWarnings["kyra"].push_back("4610");
 
 		projectWarnings["m4"].push_back("4355");
 
