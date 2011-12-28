@@ -227,20 +227,29 @@ void DreamWebEngine::backObject(Sprite *sprite) {
 	}
 
 	sprite->delay = objData->delay;
-	if (objData->type == 6)
+	switch (objData->type) {
+	case 6:
 		wideDoor(sprite, objData);
-	else if (objData->type == 5)
+		break;
+	case 5:
 		randomSprite(sprite, objData);
-	else if (objData->type == 4)
+		break;
+	case 4:
 		lockedDoorway(sprite, objData);
-	else if (objData->type == 3)
+		break;
+	case 3:
 		liftSprite(sprite, objData);
-	else if (objData->type == 2)
+		break;
+	case 2:
 		doorway(sprite, objData);
-	else if (objData->type == 1)
+		break;
+	case 1:
 		constant(sprite, objData);
-	else
+		break;
+	default:
 		steady(sprite, objData);
+		break;
+	}
 }
 
 void DreamWebEngine::constant(Sprite *sprite, SetObject *objData) {

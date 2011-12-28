@@ -126,12 +126,10 @@ void DreamWebEngine::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 }
 
 void DreamWebEngine::showAllObs() {
-	const unsigned int count = 128;
-
 	_setList.clear();
 
 	const GraphicsFile &frameBase = _setFrames;
-	for (size_t i = 0; i < count; ++i) {
+	for (size_t i = 0; i < 128; ++i) {
 		SetObject *setEntry = &_setDat[i];
 		uint16 x, y;
 		if (getMapAd(setEntry->mapad, &x, &y) == 0)

@@ -400,7 +400,7 @@ void DreamWebEngine::loadCart() {
 	uint16 objectIndex = findSetObject("INTF");
 	uint16 cartridgeIndex = checkInside(objectIndex, 1);
 	if (cartridgeIndex != kNumexobjects)
-		cartridgeId = getExAd(cartridgeIndex)->id[3] + 1;
+		cartridgeId = getExAd(cartridgeIndex)->objId[3] + 1;
 
 	if (cartridgeId == 0)
 		loadTextFile(_textFile3, "DREAMWEB.T20"); // monitor file 20
