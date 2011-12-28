@@ -794,21 +794,21 @@ void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *fileName) 
 	f.read(file._data, sizeInBytes - kFrameBlocksize);
 }
 
-void DreamWebEngine::loadGraphicsSegment(GraphicsFile &file, unsigned int len) {
+void DreamWebEngine::loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len) {
 	assert(len >= kFrameBlocksize);
 	delete[] file._data;
 	file._data = new uint8[len - kFrameBlocksize];
-	readFromFile((uint8 *)file._frames, kFrameBlocksize);
-	readFromFile(file._data, len - kFrameBlocksize);
+	inFile.read((uint8 *)file._frames, kFrameBlocksize);
+	inFile.read(file._data, len - kFrameBlocksize);
 }
 
-void DreamWebEngine::loadTextSegment(TextFile &file, unsigned int len) {
-	unsigned int headerSize = 2 * file._size;
+void DreamWebEngine::loadTextSegment(TextFile &file, Common::File &inFile, unsigned int len) {
+	const uint headerSize = 2 * file._size;
 	assert(len >= headerSize);
 	delete[] file._text;
 	file._text = new char[len - headerSize];
-	readFromFile((uint8 *)file._offsetsLE, headerSize);
-	readFromFile((uint8 *)file._text, len - headerSize);
+	inFile.read((uint8 *)file._offsetsLE, headerSize);
+	inFile.read((uint8 *)file._text, len - headerSize);
 }
 
 void DreamWebEngine::loadIntoTemp(const char *fileName) {
@@ -2043,22 +2043,15 @@ void DreamWebEngine::getRidOfAll() {
 	_freeDesc.clear();
 }
 
-void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
-                                   unsigned int size, unsigned int maxSize) {
-	assert(size <= maxSize);
-	memset(buf, c, maxSize);
-	readFromFile(buf, size);
-}
-
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
-	const uint16 kSetdatlen = 64*128; // == sizeof(_setDat)
-	const uint16 kFreedatlen = 16*80; // == sizeof(_freeDat)
-
-	openFile(room.name);
+	processEvents();
+	Common::File file;
+	if (!file.open(room.name))
+		error("cannot open file %s", room.name);
 
 	FileHeader header;
-	readFromFile((uint8 *)&header, sizeof(FileHeader));
+	file.read((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
@@ -2067,47 +2060,58 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 
 	assert(len[0] >= 192);
 	_backdropBlocks = new uint8[len[0] - 192];
-	readFromFile((uint8 *)_backdropFlags, 192);
-	readFromFile(_backdropBlocks, len[0] - 192);
+	file.read((uint8 *)_backdropFlags, 192);
+	file.read(_backdropBlocks, len[0] - 192);
 
-	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
+	assert(len[1] <= 132*66); // 132*66 = maplen
+	memset(workspace(), 0, 132*66);
+	file.read(workspace(), len[1]);
+
 	sortOutMap();
 
-	loadGraphicsSegment(_setFrames, len[2]);
-	if (!skipDat)
-		clearAndLoad((uint8 *)_setDat, 255, len[3], kSetdatlen);
-	else
-		skipBytes(len[3]);
+	loadGraphicsSegment(_setFrames, file, len[2]);
+	if (!skipDat) {
+		const uint16 kSetdatlen = 64*128;
+		assert(len[3] <= kSetdatlen);
+		memset(_setDat, 255, kSetdatlen);
+		file.read(_setDat, len[3]);
+	} else {
+		file.skip(len[3]);
+	}
 	// NB: The skipDat version of this function as called by restoreall
 	// had a 'call bloc' instead of 'call loadseg' for reel1,
 	// but 'bloc' was not defined.
-	loadGraphicsSegment(_reel1, len[4]);
-	loadGraphicsSegment(_reel2, len[5]);
-	loadGraphicsSegment(_reel3, len[6]);
+	loadGraphicsSegment(_reel1, file, len[4]);
+	loadGraphicsSegment(_reel2, file, len[5]);
+	loadGraphicsSegment(_reel3, file, len[6]);
 
 	// segment 7 consists of 36*38 pathNodes followed by 'reelList'
-	readFromFile((uint8 *)_pathData, 36*sizeof(RoomPaths));
+	file.read((uint8 *)_pathData, 36*sizeof(RoomPaths));
 	unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
 	unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
 	delete[] _reelList;
 	_reelList = new Reel[reelCount];
-	readFromFile((uint8 *)_reelList, reelLen);
+	file.read((uint8 *)_reelList, reelLen);
 
 	// segment 8 consists of 12 personFrames followed by a TextFile
-	readFromFile((uint8 *)_personFramesLE, 24);
-	loadTextSegment(_personText, len[8] - 24);
+	file.read((uint8 *)_personFramesLE, 24);
+	loadTextSegment(_personText, file, len[8] - 24);
 
-	loadTextSegment(_setDesc, len[9]);
-	loadTextSegment(_blockDesc, len[10]);
-	loadTextSegment(_roomDesc, len[11]);
-	loadGraphicsSegment(_freeFrames, len[12]);
-	if (!skipDat)
-		clearAndLoad((uint8 *)_freeDat, 255, len[13], kFreedatlen);
-	else
-		skipBytes(len[13]);
-	loadTextSegment(_freeDesc, len[14]);
+	loadTextSegment(_setDesc, file, len[9]);
+	loadTextSegment(_blockDesc, file, len[10]);
+	loadTextSegment(_roomDesc, file, len[11]);
+	loadGraphicsSegment(_freeFrames, file, len[12]);
+	if (!skipDat) {
+		const uint16 kFreedatlen = 16*80;
+		assert(len[13] <= kFreedatlen);
+		memset(_freeDat, 255, kFreedatlen);
+		file.read(_freeDat, len[13]);
+	} else {
+		file.skip(len[13]);
+	}
+	loadTextSegment(_freeDesc, file, len[14]);
 
-	closeFile();
+	processEvents();
 }
 
 void DreamWebEngine::restoreAll() {
@@ -2122,25 +2126,28 @@ void DreamWebEngine::restoreReels() {
 
 	const Room &room = g_roomData[_realLocation];
 
-	openFile(room.name);
+	processEvents();
+	Common::File file;
+	if (!file.open(room.name))
+		error("cannot open file %s", room.name);
 
 	FileHeader header;
-	readFromFile((uint8 *)&header, sizeof(FileHeader));
+	file.read((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
 	for (int i = 0; i < 15; ++i)
 		len[i] = header.len(i);
 
-	skipBytes(len[0]);
-	skipBytes(len[1]);
-	skipBytes(len[2]);
-	skipBytes(len[3]);
-	loadGraphicsSegment(_reel1, len[4]);
-	loadGraphicsSegment(_reel2, len[5]);
-	loadGraphicsSegment(_reel3, len[6]);
+	file.skip(len[0]);
+	file.skip(len[1]);
+	file.skip(len[2]);
+	file.skip(len[3]);
+	loadGraphicsSegment(_reel1, file, len[4]);
+	loadGraphicsSegment(_reel2, file, len[5]);
+	loadGraphicsSegment(_reel3, file, len[6]);
 
-	closeFile();
+	processEvents();
 }
 
 void DreamWebEngine::showExit() {
