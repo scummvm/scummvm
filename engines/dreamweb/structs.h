@@ -58,6 +58,10 @@ struct RectWithCallback {
 	}
 };
 
+
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct SetObject {
 	uint8 b0;
 	uint8 b1;
@@ -105,7 +109,7 @@ struct SetObject {
 	uint8 b57;
 	uint8 mapad[5];
 	uint8 b63;
-};
+} PACKED_STRUCT;
 
 struct DynObject {
 	uint8 currentLocation;
@@ -117,7 +121,7 @@ struct DynObject {
 	uint8 turnedOn;
 	uint8 initialLocation;
 	uint8 objId[4];
-};
+} PACKED_STRUCT;
 
 struct ObjPos {
 	uint8 xMin;
@@ -128,7 +132,7 @@ struct ObjPos {
 	bool contains(uint8 x, uint8 y) const {
 		return (x >= xMin) && (x < xMax) && (y >= yMin) && (y < yMax);
 	}
-};
+} PACKED_STRUCT;
 
 struct Frame {
 	uint8  width;
@@ -138,7 +142,7 @@ struct Frame {
 	void setPtr(uint16 v) { WRITE_LE_UINT16(&_ptr, v); }
 	uint8  x;
 	uint8  y;
-};
+} PACKED_STRUCT;
 
 struct Reel {
 	uint8 frame_lo;
@@ -148,7 +152,11 @@ struct Reel {
 	uint8 x;
 	uint8 y;
 	uint8 b4;
-};
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
 
 struct ReelRoutine {
 	uint8 reallocation;
@@ -167,8 +175,11 @@ struct People {
 	uint16 _reelPointer;
 	ReelRoutine *_routinePointer;
 	uint8 b4;
-
 };
+
+
+
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct Room {
 	char  name[13];
@@ -191,7 +202,8 @@ struct Room {
 	uint8 b29;
 	uint8 b30;
 	uint8 realLocation;
-};
+} PACKED_STRUCT;
+
 extern const Room g_roomData[];
 
 struct Rain {
@@ -200,14 +212,14 @@ struct Rain {
 	uint8 size;
 	uint16 w3;
 	uint8 b5;
-};
+} PACKED_STRUCT;
 
 struct Change {
 	uint8 index;
 	uint8 location;
 	uint8 value;
 	uint8 type;
-};
+} PACKED_STRUCT;
 
 struct PathNode {
 	uint8 x;
@@ -218,17 +230,17 @@ struct PathNode {
 	uint8 y2;
 	uint8 on;
 	uint8 dir;
-};
+} PACKED_STRUCT;
 
 struct PathSegment {
 	uint8 b0;
 	uint8 b1;
-};
+} PACKED_STRUCT;
 
 struct RoomPaths {
 	PathNode    nodes[12];
 	PathSegment segments[24];
-};
+} PACKED_STRUCT;
 
 struct FileHeader {
 	char _desc[50];
@@ -243,7 +255,7 @@ struct FileHeader {
 		assert(i < 20);
 		WRITE_LE_UINT16(&_len[i], length);
 	}
-};
+} PACKED_STRUCT;
 
 struct Atmosphere {
 	uint8 _location;
@@ -251,7 +263,11 @@ struct Atmosphere {
 	uint8 _mapY;
 	uint8 _sound;
 	uint8 _repeat;
-};
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
 
 enum ObjectTypes {
 	kSetObjectType1 = 1,
@@ -272,16 +288,26 @@ struct ObjectRef {
 	}
 };
 
+
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct BackdropMapFlag {
 	uint8 _flag;
 	uint8 _flagEx;
-};
+} PACKED_STRUCT;
 
 struct MapFlag {
 	uint8 _flag;
 	uint8 _flagEx;
 	uint8 _type;
-};
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
+
+
 
 struct TextFile {
 	TextFile(unsigned int size = 66) : _size(size), _text(0) { _offsetsLE = new uint16[_size]; }
@@ -392,7 +418,6 @@ struct GameVars {
 	uint8 _roomAfterDream;
 	uint8 _shakeCounter;
 };
-
 
 } // End of namespace DreamWeb
 
