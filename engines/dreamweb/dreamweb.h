@@ -94,9 +94,6 @@ const unsigned int kNumexobjects = (114);
 const unsigned int kExtextlen = (18000);
 const unsigned int kExframeslen = (30000);
 const unsigned int kItempicsize = (44);
-// These are for ReelRoutine::reelPointer, which is a callback field.
-const uint16 addr_backobject = 0xc170;
-const uint16 addr_mainman = 0xc138;
 
 // Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
 // into this, making it a ring buffer
@@ -729,7 +726,7 @@ public:
 	void printSprites();
 	void printASprite(const Sprite *sprite);
 	void clearSprites();
-	Sprite *makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi);
+	Sprite *makeSprite(uint8 x, uint8 y, bool _mainManCallback, const GraphicsFile *frameData, uint16 somethingInDi);
 	void initMan();
 	void walking(Sprite *sprite);
 	void aboutTurn(Sprite *sprite);

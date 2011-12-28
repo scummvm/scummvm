@@ -29,7 +29,6 @@ void DreamWebEngine::printSprites() {
 		Common::List<Sprite>::const_iterator i;
 		for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
 			const Sprite &sprite = *i;
-			assert(sprite._updateCallback != 0x0ffff);
 			if (priority != sprite.priority)
 				continue;
 			if (sprite.hidden == 1)
@@ -65,7 +64,7 @@ void DreamWebEngine::clearSprites() {
 	_spriteTable.clear();
 }
 
-Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
+Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, bool mainManCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
 	// Note: the original didn't append sprites here, but filled up the
 	// first unused entry. This can change the order of entries, but since they
 	// are drawn based on the priority field, this shouldn't matter.
@@ -74,7 +73,7 @@ Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, uint16 updateCallback, cons
 
 	memset(sprite, 0xff, sizeof(Sprite));
 
-	sprite->_updateCallback = updateCallback;
+	sprite->_mainManCallback = mainManCallback;
 	sprite->x = x;
 	sprite->y = y;
 	sprite->_frameData = frameData;
@@ -94,13 +93,10 @@ void DreamWebEngine::spriteUpdate() {
 	Common::List<Sprite>::iterator i;
 	for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
 		Sprite &sprite = *i;
-		assert(sprite._updateCallback != 0xffff);
-
 		sprite.w24 = sprite.w2;
-		if (sprite._updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
+		if (sprite._mainManCallback)
 			mainMan(&sprite);
 		else {
-			assert(sprite._updateCallback == addr_backobject);
 			backObject(&sprite);
 		}
 	
@@ -110,7 +106,7 @@ void DreamWebEngine::spriteUpdate() {
 }
 
 void DreamWebEngine::initMan() {
-	Sprite *sprite = makeSprite(_ryanX, _ryanY, addr_mainman, &_mainSprites, 0);
+	Sprite *sprite = makeSprite(_ryanX, _ryanY, true, &_mainSprites, 0);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;

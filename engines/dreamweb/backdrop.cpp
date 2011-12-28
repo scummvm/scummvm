@@ -114,7 +114,7 @@ void DreamWebEngine::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 		return;
 	uint8 priority = objData->priority;
 	uint8 type = objData->type;
-	Sprite *sprite = makeSprite(x, y, addr_backobject, &_setFrames, 0);
+	Sprite *sprite = makeSprite(x, y, false, &_setFrames, 0);
 
 	sprite->_objData = objData;
 	if (priority == 255)

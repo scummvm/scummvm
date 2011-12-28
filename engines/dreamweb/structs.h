@@ -32,7 +32,7 @@ struct GraphicsFile;
 struct SetObject;
 
 struct Sprite {
-	uint16 _updateCallback;
+	bool _mainManCallback;
 	uint16 w2;
 	uint16 w4;
 	const GraphicsFile *_frameData;
