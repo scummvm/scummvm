@@ -493,6 +493,13 @@ p = parser(skip_binary_data = [
 	'lenofmapstore',	# defined in dreambase.h
 	'keypadx',
 	'keypady',
+	'settext',
+	'freetext',
+	'setdatlen',
+	'textstart',
+	'maplen',
+	'maplength',
+	'undertimedysize',
 	# vgagrafx.asm
 	'cityname',
 	'extragraphics1',

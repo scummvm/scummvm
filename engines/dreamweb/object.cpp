@@ -585,6 +585,9 @@ void DreamBase::purgeALocation(uint8 index) {
 }
 
 const uint8 *DreamBase::getObTextStart() {
+	const uint16 kSettext = 130*2;
+	const uint16 kFreetext = 82*2;
+
 	const uint8 *textBase;
 	const uint8 *text;
 	uint16 textOff;

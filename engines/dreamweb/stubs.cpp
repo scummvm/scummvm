@@ -960,6 +960,7 @@ void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8
 }
 
 void DreamBase::dumpTimedText() {
+	const uint16 kUndertimedysize = 30;
 	if (_needToDumpTimed != 1)
 		return;
 	uint8 y = _timedY;
@@ -1888,6 +1889,7 @@ void DreamBase::zoomOnOff() {
 }
 
 void DreamBase::sortOutMap() {
+	const uint16 kMaplength = 60;
 	const uint8 *src = workspace();
 	uint8 *dst = _mapData;
 	for (uint16 y = 0; y < kMaplength; ++y) {
@@ -2148,6 +2150,8 @@ void DreamBase::getRidOfAll() {
 
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamBase::loadRoomData(const Room &room, bool skipDat) {
+	const uint16 kSetdatlen = 64*128;
+
 	engine->openFile(room.name);
 
 	FileHeader header;

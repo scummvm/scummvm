@@ -1092,8 +1092,9 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 }
 
 void DreamBase::clearBeforeLoad() {
+	const uint16 kMaplen = 66*60;
 	if (_roomLoaded != 1)
-		return /* (noclear) */;
+		return; // noclear
 
 	clearReels();
 
