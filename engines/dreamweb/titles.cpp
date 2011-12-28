@@ -63,9 +63,9 @@ void DreamWebEngine::monkSpeaking() {
 		for (int i = 40; i <= 44; i++) {
 			uint8 printResult = 0;
 			const uint8 *string = getTextInFile1(i);
-			uint16 y = 140;
 
 			do {
+				uint16 y = 140;
 				printResult = printDirect(&string, 36, &y, 239, 239 & 1);
 				workToScreen();
 				clearWork();
