@@ -590,7 +590,7 @@ void DreamWebEngine::setTopLeft() {
 	}
 
 	if (_mouseButton != 0)
-		_symbolTopDir = 0xFF;
+		_symbolTopDir = -1;
 }
 
 void DreamWebEngine::setTopRight() {
@@ -605,7 +605,7 @@ void DreamWebEngine::setTopRight() {
 	}
 
 	if (_mouseButton != 0)
-		_symbolTopDir = 1;
+		_symbolTopDir = +1;
 }
 
 void DreamWebEngine::setBotLeft() {
@@ -620,7 +620,7 @@ void DreamWebEngine::setBotLeft() {
 	}
 
 	if (_mouseButton != 0)
-		_symbolBotDir = 0xFF;
+		_symbolBotDir = -1;
 }
 
 void DreamWebEngine::setBotRight() {
@@ -635,7 +635,7 @@ void DreamWebEngine::setBotRight() {
 	}
 
 	if (_mouseButton != 0)
-		_symbolBotDir = 1;
+		_symbolBotDir = +1;
 }
 
 void DreamWebEngine::dumpSymbol() {
@@ -672,7 +672,7 @@ void DreamWebEngine::updateSymbolTop() {
 	if (!_symbolTopDir)
 		return; // topfinished
 
-	if (_symbolTopDir == (byte)-1) {
+	if (_symbolTopDir == -1) {
 		// Backward
 		_symbolTopX--;
 		if (_symbolTopX != (byte)-1) {
@@ -709,7 +709,7 @@ void DreamWebEngine::updateSymbolBot() {
 	if (!_symbolBotDir)
 		return; // botfinished
 
-	if (_symbolBotDir == (byte)-1) {
+	if (_symbolBotDir == -1) {
 		// Backward
 		_symbolBotX--;
 		if (_symbolBotX != (byte)-1) {
@@ -739,13 +739,6 @@ void DreamWebEngine::updateSymbolBot() {
 				return; // botfinished
 			_symbolBotNum = 5;
 		}
-	}
-}
-
-void DreamWebEngine::dumpSymBox() {
-	if (_dumpX != 0xFFFF) {
-		multiDump(_dumpX, _dumpY, 30, 77);
-		_dumpX = 0xFFFF;
 	}
 }
 
