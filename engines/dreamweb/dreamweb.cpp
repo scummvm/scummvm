@@ -39,8 +39,10 @@ namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"),
-	_exText(kNumExObjects+2),
-	_setDesc(130), _blockDesc(98), _roomDesc(38), _freeDesc(82), _personText(1026) {
+	_exText(kNumExTexts),
+	_setDesc(kNumSetTexts), _blockDesc(kNumBlockTexts),
+	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
+	_personText(kNumPersonTexts) {
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));

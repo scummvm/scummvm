@@ -585,23 +585,16 @@ void DreamWebEngine::purgeALocation(uint8 index) {
 }
 
 const uint8 *DreamWebEngine::getObTextStart() {
-	const uint16 kSettext = 130*2;
-	const uint16 kFreetext = 82*2;
-
-	const uint8 *textBase;
+	const uint8 *textBase = 0;
 	const uint8 *text;
-	uint16 textOff;
+	uint16 textOff = 0;
 	if (_objectType == kFreeObjectType) {
-		textBase = (const uint8 *)_freeDesc._text;
-		textOff = kFreetext;
 		text = (const uint8 *)_freeDesc.getString(_command);
 	} else if (_objectType == kSetObjectType1) {
 		textBase = (const uint8 *)_setDesc._text;
-		textOff = kSettext;
+		textOff = kNumSetTexts * 2;
 		text = (const uint8 *)_setDesc.getString(_command);
 	} else {
-		textBase = (const uint8 *)_exText._text;
-		textOff = kExtext;
 		text = (const uint8 *)_exText.getString(_command);
 	}
 

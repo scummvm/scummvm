@@ -786,20 +786,20 @@ void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *fileName) 
 	f.read((uint8 *)&header, sizeof(FileHeader));
 	uint16 sizeInBytes = header.len(0);
 
-	assert(sizeInBytes >= 2080);
+	assert(sizeInBytes >= kFrameBlocksize);
 	delete[] file._data;
-	file._data = new uint8[sizeInBytes - 2080];
+	file._data = new uint8[sizeInBytes - kFrameBlocksize];
 
-	f.read((uint8 *)file._frames, 2080);
-	f.read(file._data, sizeInBytes - 2080);
+	f.read((uint8 *)file._frames, kFrameBlocksize);
+	f.read(file._data, sizeInBytes - kFrameBlocksize);
 }
 
 void DreamWebEngine::loadGraphicsSegment(GraphicsFile &file, unsigned int len) {
-	assert(len >= 2080);
+	assert(len >= kFrameBlocksize);
 	delete[] file._data;
-	file._data = new uint8[len - 2080];
-	readFromFile((uint8 *)file._frames, 2080);
-	readFromFile(file._data, len - 2080);
+	file._data = new uint8[len - kFrameBlocksize];
+	readFromFile((uint8 *)file._frames, kFrameBlocksize);
+	readFromFile(file._data, len - kFrameBlocksize);
 }
 
 void DreamWebEngine::loadTextSegment(TextFile &file, unsigned int len) {
@@ -3538,7 +3538,7 @@ void DreamWebEngine::clearChanges() {
 	_vars._exFramePos = 0;
 	_vars._exTextPos = 0;
 
-	memset(_exFrames._frames, 0xFF, 2080);
+	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
 	memset(_exFrames._data, 0xFF, kExframeslen);
 	memset(_exData, 0xFF, sizeof(DynObject) * kNumexobjects);
 	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));

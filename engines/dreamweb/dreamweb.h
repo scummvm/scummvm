@@ -75,25 +75,18 @@ const unsigned int kOpsy = 52;
 const unsigned int kSymbolx = 64;
 const unsigned int kSymboly = 56;
 const unsigned int kLengthofvars = 68;
-const unsigned int kDebuglevel1 = (0);
-const unsigned int kDebuglevel2 = (0);
-const unsigned int kPlayback = (0);
-const unsigned int kSpanish = (0);
-const unsigned int kRecording = (0);
-const unsigned int kGerman = (0);
-const unsigned int kDemo = (0);
-const unsigned int kExframedata = (0);
-const unsigned int kExframes = (0+2080);
-const unsigned int kExdata = (0+2080+30000);
-const unsigned int kExtextdat = (0+2080+30000+(16*114));
-const unsigned int kExtext = (0+2080+30000+(16*114)+((114+2)*2));
-const unsigned int kLengthofextra = (0+2080+30000+(16*114)+((114+2)*2)+18000);
-const unsigned int kForeign = (1);
-const unsigned int kCd = (1);
-const unsigned int kNumexobjects = (114);
-const unsigned int kExtextlen = (18000);
-const unsigned int kExframeslen = (30000);
-const unsigned int kItempicsize = (44);
+const unsigned int kFrameBlocksize = 2080;
+const unsigned int kNumexobjects = 114;
+const unsigned int kNumExTexts = kNumexobjects + 2;
+const uint16 kExtextlen = 18000;
+const uint16 kExframeslen = 30000;
+const unsigned int kLengthofextra = kFrameBlocksize + kExframeslen + sizeof(DynObject)*kNumexobjects + sizeof(uint16)*kNumExTexts + kExtextlen;
+const unsigned int kItempicsize = 44;
+const unsigned int kNumSetTexts = 130;
+const unsigned int kNumBlockTexts = 98;
+const unsigned int kNumRoomTexts = 38;
+const unsigned int kNumFreeTexts = 82;
+const unsigned int kNumPersonTexts = 1026;
 
 // Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
 // into this, making it a ring buffer

@@ -542,7 +542,7 @@ void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 	syncGameVars(s, _vars);
 
 	// the Extras segment:
-	outSaveFile->write((const uint8 *)_exFrames._frames, 2080);
+	outSaveFile->write((const uint8 *)_exFrames._frames, kFrameBlocksize);
 	outSaveFile->write((const uint8 *)_exFrames._data, kExframeslen);
 	outSaveFile->write((const uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
 	outSaveFile->write((const uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
@@ -616,7 +616,7 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	syncGameVars(s, _vars);
 
 	// the Extras segment:
-	inSaveFile->read((uint8 *)_exFrames._frames, kExframes);
+	inSaveFile->read((uint8 *)_exFrames._frames, kFrameBlocksize);
 	inSaveFile->read((uint8 *)_exFrames._data, kExframeslen);
 	inSaveFile->read((uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
 	inSaveFile->read((uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
