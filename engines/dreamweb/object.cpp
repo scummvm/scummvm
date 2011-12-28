@@ -155,7 +155,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 
 		switch (_invOpen) {
 		case 0: {
-			RectWithCallback<DreamWebEngine> examList[] = {
+			RectWithCallback examList[] = {
 				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
 				{ 260,300,0,44,&DreamWebEngine::useObject },
 				{ 210,254,0,44,&DreamWebEngine::selectOpenOb },
@@ -169,7 +169,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 		}
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
-			RectWithCallback<DreamWebEngine> invList1[] = {
+			RectWithCallback invList1[] = {
 				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
 				{ 255,294,0,24,&DreamWebEngine::dropObject },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
@@ -182,7 +182,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 			break;
 		}
 		default: {
-			RectWithCallback<DreamWebEngine> withList1[] = {
+			RectWithCallback withList1[] = {
 				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
 				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
 				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::selectOb },

@@ -47,11 +47,10 @@ struct Sprite {
 	uint8  hidden;
 };
 
-template <class T = DreamWebEngine>
 struct RectWithCallback {
 	uint16 _xMin, _xMax;
 	uint16 _yMin, _yMax;
-	void (T::*_callback)();
+	void (DreamWebEngine::*_callback)();
 
 	bool contains(uint16 x, uint16 y) const {
 		return (x >= _xMin) && (x < _xMax) && (y >= _yMin) && (y < _yMax);

@@ -142,7 +142,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			vSync();
 			dumpPointer();
 			dumpTextLine();
-			RectWithCallback<DreamWebEngine> loadlist[] = {
+			RectWithCallback loadlist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualLoad },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
@@ -236,7 +236,7 @@ void DreamWebEngine::saveGame() {
 			dumpPointer();
 			dumpTextLine();
 
-			RectWithCallback<DreamWebEngine> savelist[] = {
+			RectWithCallback savelist[] = {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualSave },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
@@ -327,7 +327,7 @@ void DreamWebEngine::doSaveLoad() {
 	showMainOps();
 	workToScreen();
 
-	RectWithCallback<DreamWebEngine> opsList[] = {
+	RectWithCallback opsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::getBackFromOps },
 		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
 		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamWebEngine::discOps },
@@ -427,7 +427,7 @@ void DreamWebEngine::discOps() {
 	workToScreenM();
 	_getBack = 0;
 
-	RectWithCallback<DreamWebEngine> discOpsList[] = {
+	RectWithCallback discOpsList[] = {
 		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::loadGame },
 		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamWebEngine::saveGame },
 		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },

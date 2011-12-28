@@ -1803,7 +1803,7 @@ void DreamWebEngine::sortOutMap() {
 void DreamWebEngine::mainScreen() {
 	_inMapArea = 0;
 	if (_vars._watchOn == 1) {
-		RectWithCallback<DreamWebEngine> mainList[] = {
+		RectWithCallback mainList[] = {
 			{ 44,70,32,46,&DreamWebEngine::look },
 			{ 0,50,0,180,&DreamWebEngine::inventory },
 			{ 226,244,10,26,&DreamWebEngine::zoomOnOff },
@@ -1814,7 +1814,7 @@ void DreamWebEngine::mainScreen() {
 		};
 		checkCoords(mainList);
 	} else {
-		RectWithCallback<DreamWebEngine> mainList2[] = {
+		RectWithCallback mainList2[] = {
 			{ 44,70,32,46,&DreamWebEngine::look },
 			{ 0,50,0,180,&DreamWebEngine::inventory },
 			{ 226+48,244+48,10,26,&DreamWebEngine::zoomOnOff },
@@ -2679,7 +2679,7 @@ void DreamWebEngine::decide() {
 	fadeScreenUp();
 	_getBack = 0;
 
-	RectWithCallback<DreamWebEngine> decideList[] = {
+	RectWithCallback decideList[] = {
 		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamWebEngine::newGame },
 		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
 		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamWebEngine::loadOld },
@@ -3138,6 +3138,18 @@ void DreamWebEngine::purgeAnItem() {
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
 			deleteExObject(i);
+			return;
+		}
+	}
+}
+
+void DreamWebEngine::checkCoords(const RectWithCallback *rectWithCallbacks) {
+	if (_newLocation != 0xff)
+		return;
+	const RectWithCallback *r;
+	for (r = rectWithCallbacks; r->_xMin != 0xffff; ++r) {
+		if (r->contains(_mouseX, _mouseY)) {
+			(this->*(r->_callback))();
 			return;
 		}
 	}

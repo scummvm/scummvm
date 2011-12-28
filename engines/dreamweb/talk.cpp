@@ -40,7 +40,7 @@ void DreamWebEngine::talk() {
 	showPointer();
 	workToScreen();
 
-	RectWithCallback<DreamWebEngine> talkList[] = {
+	RectWithCallback talkList[] = {
 		{ 273,320,157,198,&DreamWebEngine::getBack1 },
 		{ 240,290,2,44,&DreamWebEngine::moreTalk },
 		{ 0,320,0,200,&DreamWebEngine::blank },
@@ -201,7 +201,7 @@ void DreamWebEngine::doSomeTalk() {
 bool DreamWebEngine::hangOnPQ() {
 	_getBack = 0;
 
-	RectWithCallback<DreamWebEngine> quitList[] = {
+	RectWithCallback quitList[] = {
 		{ 273,320,157,198,&DreamWebEngine::getBack1 },
 		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }

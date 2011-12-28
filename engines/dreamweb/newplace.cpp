@@ -72,7 +72,7 @@ void DreamWebEngine::selectLocation() {
 		if (_getBack == 1)
 			break;
 
-		RectWithCallback<DreamWebEngine> destList[] = {
+		RectWithCallback destList[] = {
 			{ 238,258,4,44,&DreamWebEngine::nextDest },
 			{ 104,124,4,44,&DreamWebEngine::lastDest },
 			{ 280,308,4,44,&DreamWebEngine::lookAtPlace },

@@ -28,7 +28,7 @@ const uint16 kKeypadx = 36+112;
 const uint16 kKeypady = 72;
 
 void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
-	RectWithCallback<DreamWebEngine> keypadList[] = {
+	RectWithCallback keypadList[] = {
 		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonOne },
 		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonTwo },
 		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonThree },
@@ -263,7 +263,7 @@ void DreamWebEngine::useMenu() {
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
-		RectWithCallback<DreamWebEngine> menuList[] = {
+		RectWithCallback menuList[] = {
 			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamWebEngine::quitKey },
 			{ 0,320,0,200,&DreamWebEngine::blank },
 			{ 0xFFFF,0,0,0,0 }
@@ -396,7 +396,7 @@ void DreamWebEngine::lastFolder() {
 }
 
 void DreamWebEngine::checkFolderCoords() {
-	RectWithCallback<DreamWebEngine> folderList[] = {
+	RectWithCallback folderList[] = {
 		{ 280,320,160,200, &DreamWebEngine::quitKey },
 		{ 143,300,6,194, &DreamWebEngine::nextFolder },
 		{ 0,143,6,194, &DreamWebEngine::lastFolder },
@@ -525,7 +525,7 @@ void DreamWebEngine::enterSymbol() {
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
-		RectWithCallback<DreamWebEngine> symbolList[] = {
+		RectWithCallback symbolList[] = {
 			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamWebEngine::quitSymbol },
 			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopLeft },
 			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopRight },
@@ -765,7 +765,7 @@ void DreamWebEngine::useDiary() {
 	delPointer();
 	_getBack = 0;
 
-	RectWithCallback<DreamWebEngine> diaryList[] = {
+	RectWithCallback diaryList[] = {
 		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamWebEngine::diaryKeyN },
 		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamWebEngine::diaryKeyP },
 		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamWebEngine::quitKey },

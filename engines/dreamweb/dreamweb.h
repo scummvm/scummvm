@@ -905,21 +905,7 @@ public:
 	void setAllChanges();
 	void restoreAll();
 	void redrawMainScrn();
-
-	template <class T>
-	void checkCoords(const RectWithCallback<T> *rectWithCallbacks) {
-		if (_newLocation != 0xff)
-			return;
-
-		const RectWithCallback<T> *r;
-		for (r = rectWithCallbacks; r->_xMin != 0xffff; ++r) {
-			if (r->contains(_mouseX, _mouseY)) {
-				(((T *)this)->*(r->_callback))();
-				return;
-			}
-		}
-	}
-
+	void checkCoords(const RectWithCallback *rectWithCallbacks);
 	void newGame();
 	void deleteTaken();
 	void autoAppear();
