@@ -1529,14 +1529,13 @@ bool TransferPartyWiz::start() {
 }
 
 bool TransferPartyWiz::selectAndLoadTransferFile() {
-	for (int numLoops = 1; numLoops; numLoops--) {
+	do {
 		_screen->copyPage(12, 0);
 		_vm->_savegameFilename = transferFileDialogue();
-		if (_vm->_savegameFilename.empty()) {
-			if (_vm->_gui->confirmDialogue2(15, 68, 1))
-				numLoops++;
-		}
-	}
+	} while (_vm->_savegameFilename.empty() && _vm->_gui->confirmDialogue2(15, 68, 1));
+
+	if (_vm->_savegameFilename.empty())
+		return false;
 
 	if (_vm->_savegameFilename.equals(_vm->_saveLoadStrings[1]))
 		return false;
@@ -1586,7 +1585,7 @@ Common::String TransferPartyWiz::transferFileDialogue() {
 			targets.push_back(*i);
 	}
 
-	if (targets.begin() == targets.end())
+	if (targets.empty())
 		return tfile;
 
 	Common::String target = _vm->_gui->transferTargetMenu(targets);
