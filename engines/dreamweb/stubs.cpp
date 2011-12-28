@@ -456,6 +456,44 @@ static const Atmosphere g_atmosphereList[] = {
 
 };
 
+void DreamWebEngine::dreamwebFinalize() {
+	// The engine will need some cleaner finalization (destructor?), let's put it here for now
+
+	// FIXME: This triggers "Deallocating non existent segment" errors when
+	// quitting from a menu.
+	getRidOfAll();
+
+	_icons1.clear();
+	_icons2.clear();
+	_charset1.clear();
+	_tempGraphics.clear();
+	_tempGraphics2.clear();
+	_tempGraphics3.clear();
+	_tempCharset.clear();
+	_mainSprites.clear();
+
+	_exFrames.clear();
+	_exText.clear();
+
+	_setFrames.clear();
+	_freeFrames.clear();
+	_reel1.clear();
+	_reel2.clear();
+	_reel3.clear();
+	_setDesc.clear();
+	_blockDesc.clear();
+	_roomDesc.clear();
+	_freeDesc.clear();
+	_personText.clear();
+
+	_textFile1.clear();
+	_textFile2.clear();
+	_textFile3.clear();
+	_travelText.clear();
+	_puzzleText.clear();
+	_commandText.clear();
+}
+
 void DreamWebEngine::dreamweb() {
 	switch(getLanguage()) {
 	case Common::EN_ANY:
@@ -491,13 +529,11 @@ void DreamWebEngine::dreamweb() {
 	int savegameId = Common::ConfigManager::instance().getInt("save_slot");
 
 	while (true) {
-
 		uint count = scanForNames();
 
 		bool startNewGame = true;
 
 		if (firstLoop && savegameId >= 0) {
-
 			// loading a savegame requested from launcher/command line
 
 			cls();
@@ -527,12 +563,13 @@ void DreamWebEngine::dreamweb() {
 			cls();
 			setMode();
 			decide();
-			if (_quitRequested)
-				goto done;
+			if (_quitRequested) {
+				dreamwebFinalize();
+				return;
+			}
 
 			if (_getBack == 4)
 				startNewGame = false; // savegame has been loaded
-
 		}
 
 		firstLoop = false;
@@ -547,15 +584,19 @@ void DreamWebEngine::dreamweb() {
 			if (!_quitRequested) // "titlesearly"
 				intro();
 
-			if (_quitRequested)
-				goto done;
+			if (_quitRequested) {
+				dreamwebFinalize();
+				return;
+			}
 
 			// "credits"
 			clearPalette();
 			realCredits();
 
-			if (_quitRequested)
-				goto done;
+			if (_quitRequested) {
+				dreamwebFinalize();
+				return;
+			}
 
 			clearChanges();
 			setMode();
@@ -581,13 +622,17 @@ void DreamWebEngine::dreamweb() {
 
 		// main loop
 		while (true) {
-			if (_quitRequested)
-				goto done;
+			if (_quitRequested) {
+				dreamwebFinalize();
+				return;
+			}
 
 			screenUpdate();
 
-			if (_quitRequested)
-				goto done;
+			if (_quitRequested) {
+				dreamwebFinalize();
+				return;
+			}
 
 			if (_wonGame) {
 				// "endofgame"
@@ -596,7 +641,8 @@ void DreamWebEngine::dreamweb() {
 				hangOn(200);
 				endGame();
 				quickQuit2();
-				goto done;
+				dreamwebFinalize();
+				return;
 			}
 
 			if (_vars._manDead == 1 || _vars._manDead == 2)
@@ -636,40 +682,8 @@ void DreamWebEngine::dreamweb() {
 		hangOn(100);
 
 	}
-done: // The engine will need some cleaner finalization, let's put it here for now
-	// FIXME: This triggers "Deallocating non existent segment" errors when
-	// quitting from a menu.
-	getRidOfAll();
 
-	_icons1.clear();
-	_icons2.clear();
-	_charset1.clear();
-	_tempGraphics.clear();
-	_tempGraphics2.clear();
-	_tempGraphics3.clear();
-	_tempCharset.clear();
-	_mainSprites.clear();
-
-	_exFrames.clear();
-	_exText.clear();
-
-	_setFrames.clear();
-	_freeFrames.clear();
-	_reel1.clear();
-	_reel2.clear();
-	_reel3.clear();
-	_setDesc.clear();
-	_blockDesc.clear();
-	_roomDesc.clear();
-	_freeDesc.clear();
-	_personText.clear();
-
-	_textFile1.clear();
-	_textFile2.clear();
-	_textFile3.clear();
-	_travelText.clear();
-	_puzzleText.clear();
-	_commandText.clear();
+	dreamwebFinalize();
 }
 
 void DreamWebEngine::loadTextFile(TextFile &file, const char *fileName)

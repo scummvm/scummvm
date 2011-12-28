@@ -940,6 +940,7 @@ public:
 	void searchForFiles(const char *filesString);
 	void triggerMessage(uint16 index);
 	void processTrigger();
+	void dreamwebFinalize();
 	void dreamweb();
 	void screenUpdate();
 	void startup1();
