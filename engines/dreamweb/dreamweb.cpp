@@ -181,8 +181,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_symbolBotX = 0;
 	_symbolBotNum = 0;
 	_symbolBotDir = 0;
-	_dumpX = 0;
-	_dumpY = 0;
 	_walkAndExam = 0;
 	_walkExamType = 0;
 	_walkExamNum = 0;
