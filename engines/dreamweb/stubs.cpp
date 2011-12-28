@@ -563,7 +563,7 @@ void DreamBase::dreamweb() {
 			data.byte(kLocation) = 255;
 			data.byte(kRoomafterdream) = 1;
 			data.byte(kNewlocation) = 35;
-			data.byte(kVolume) = 7;
+			_volume = 7;
 			loadRoom();
 			clearSprites();
 			initMan();
@@ -573,8 +573,8 @@ void DreamBase::dreamweb() {
 			initialInv();
 			data.byte(kLastflag) = 32;
 			startup1();
-			data.byte(kVolumeto) = 0;
-			data.byte(kVolumedirection) = (byte)-1;
+			_volumeTo = 0;
+			_volumeDirection = -1;
 			data.byte(kCommandtype) = 255;
 
 		}
@@ -2565,21 +2565,21 @@ void DreamBase::atmospheres() {
 			//  I'm interpreting this as if the cmp reallocation is below the jz
 
 			if (data.byte(kMapy) == 0) {
-				data.byte(kVolume) = 0; // "fullvol"
+				_volume = 0; // "fullvol"
 				return;
 			}
 
 			if (data.byte(kReallocation) == 2 && data.byte(kMapx) == 22 && data.byte(kMapy) == 10)
-				data.byte(kVolume) = 5; // "louisvol"
+				_volume = 5; // "louisvol"
 
 			if (isCD() && data.byte(kReallocation) == 14) {
 				if (data.byte(kMapx) == 33) {
-					data.byte(kVolume) = 0; // "ismad2"
+					_volume = 0; // "ismad2"
 					return;
 				}
 
 				if (data.byte(kMapx) == 22) {
-					data.byte(kVolume) = 5;
+					_volume = 5;
 					return;
 				}
 
@@ -2588,12 +2588,12 @@ void DreamBase::atmospheres() {
 
 		if (data.byte(kReallocation) == 2) {
 			if (data.byte(kMapx) == 22) {
-				data.byte(kVolume) = 5; // "louisvol"
+				_volume = 5; // "louisvol"
 				return;
 			}
 
 			if (data.byte(kMapx) == 11) {
-				data.byte(kVolume) = 0; // "fullvol"
+				_volume = 0; // "fullvol"
 				return;
 			}
 		}
@@ -3162,7 +3162,7 @@ void DreamBase::showGun() {
 	hangOn(200);
 	_roomsSample = 34;
 	loadRoomsSample();
-	data.byte(kVolume) = 0;
+	_volume = 0;
 	loadIntoTemp("DREAMWEB.G13");
 	createPanel2();
 	showFrame(_tempGraphics, 100, 4, 0, 0);

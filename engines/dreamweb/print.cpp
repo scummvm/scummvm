@@ -247,9 +247,9 @@ const char *DreamBase::monPrint(const char *string) {
 
 void DreamBase::rollEndCreditsGameWon() {
 	playChannel0(16, 255);
-	data.byte(kVolume) = 7;
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = (byte)-1;
+	_volume = 7;
+	_volumeTo = 0;
+	_volumeDirection = -1;
 
 	multiGet(_mapStore, 75, 20, 160, 160);
 

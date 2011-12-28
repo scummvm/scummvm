@@ -43,15 +43,15 @@ bool DreamBase::loadSpeech(byte type1, int idx1, byte type2, int idx2) {
 
 
 void DreamBase::volumeAdjust() {
-	if (data.byte(kVolumedirection) == 0)
+	if (_volumeDirection == 0)
 		return;
-	if (data.byte(kVolume) != data.byte(kVolumeto)) {
-		data.byte(kVolumecount) += 64;
+	if (_volume != _volumeTo) {
+		_volumeCount += 64;
 		// Only modify the volume every 256/64 = 4th time around
-		if (data.byte(kVolumecount) == 0)
-			data.byte(kVolume) += data.byte(kVolumedirection);
+		if (_volumeCount == 0)
+			_volume += _volumeDirection;
 	} else {
-		data.byte(kVolumedirection) = 0;
+		_volumeDirection = 0;
 	}
 }
 
@@ -194,7 +194,7 @@ void DreamWebEngine::soundHandler() {
 	_base._subtitles = ConfMan.getBool("subtitles");
 	_base.volumeAdjust();
 
-	uint volume = _base.data.byte(DreamGen::kVolume);
+	uint volume = _base._volume;
 	//.vol file loaded into soundbuf:0x4000
 	//volume table at (volume * 0x100 + 0x3f00)
 	//volume value could be from 1 to 7

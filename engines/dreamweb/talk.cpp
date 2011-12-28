@@ -68,8 +68,8 @@ void DreamBase::talk() {
 	workToScreenM();
 	if (_speechLoaded) {
 		cancelCh1();
-		data.byte(kVolumedirection) = (byte)-1;
-		data.byte(kVolumeto) = 0;
+		_volumeDirection = -1;
+		_volumeTo = 0;
 	}
 }
 
@@ -101,8 +101,8 @@ void DreamBase::startTalk() {
 	_speechLoaded = false;
 	loadSpeech('R', data.byte(kReallocation), 'C', 64*(data.byte(kCharacter) & 0x7F));
 	if (_speechLoaded) {
-		data.byte(kVolumedirection) = 1;
-		data.byte(kVolumeto) = 6;
+		_volumeDirection = 1;
+		_volumeTo = 6;
 		playChannel1(50 + 12);
 	}
 }

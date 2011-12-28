@@ -786,8 +786,8 @@ void DreamBase::textForMonk() {
 	else if (data.byte(kIntrocount) == 53) {
 		fadeScreenDowns();
 		if (isCD()) {
-			data.byte(kVolumeto) = 7;
-			data.byte(kVolumedirection) = 1;
+			_volumeTo = 7;
+			_volumeDirection = 1;
 		}
 	}
 }

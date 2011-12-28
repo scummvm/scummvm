@@ -419,6 +419,11 @@ DreamBase::DreamBase(DreamWeb::DreamWebEngine *en) :
 	_channel0Repeat = 0;
 	_channel1Playing = 0xff;
 
+	_volume = 0;
+	_volumeTo = 0;
+	_volumeDirection = 0;
+	_volumeCount = 0;
+
 	_speechLoaded = false;
 
 	_backdropBlocks = 0;

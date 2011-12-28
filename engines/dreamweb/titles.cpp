@@ -30,8 +30,8 @@ void DreamBase::endGame() {
 	monkSpeaking();
 	gettingShot();
 	getRidOfTempText();
-	data.byte(kVolumeto) = 7;
-	data.byte(kVolumedirection) = 1;
+	_volumeTo = 7;
+	_volumeDirection = 1;
 	hangOn(200);
 }
 
@@ -44,9 +44,9 @@ void DreamBase::monkSpeaking() {
 	clearWork();
 	showFrame(_tempGraphics, 160, 72, 0, 128);	// show monk
 	workToScreen();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 5;
+	_volume = 7;
+	_volumeDirection = -1;
+	_volumeTo = 5;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	hangOn(300);
@@ -61,8 +61,8 @@ void DreamBase::monkSpeaking() {
 		} while (_channel1Playing != 255);
 	}
 
-	data.byte(kVolumedirection) = 1;
-	data.byte(kVolumeto) = 7;
+	_volumeDirection = 1;
+	_volumeTo = 7;
 	fadeScreenDowns();
 	hangOn(300);
 	getRidOfTemp();
@@ -73,8 +73,8 @@ void DreamBase::gettingShot() {
 	clearPalette();
 	loadIntroRoom();
 	fadeScreenUps();
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = (byte)-1;
+	_volumeTo = 0;
+	_volumeDirection = -1;
 	runEndSeq();
 	clearBeforeLoad();
 }
@@ -125,9 +125,9 @@ void DreamBase::intro() {
 	data.byte(kNewlocation) = 50;
 	clearPalette();
 	loadIntroRoom();
-	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = (byte)-1;
-	data.byte(kVolumeto) = 4;
+	_volume = 7;
+	_volumeDirection = -1;
+	_volumeTo = 4;
 	playChannel0(12, 255);
 	fadeScreenUps();
 	runIntroSeq();
@@ -265,7 +265,7 @@ void DreamBase::set16ColPalette() {
 void DreamBase::realCredits() {
 	_roomsSample = 33;
 	loadRoomsSample();
-	data.byte(kVolume) = 0;
+	_volume = 0;
 
 	initGraphics(640, 480, true);
 	hangOn(35);

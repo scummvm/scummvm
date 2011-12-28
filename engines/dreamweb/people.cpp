@@ -1016,8 +1016,8 @@ void DreamBase::endGameSeq(ReelRoutine &routine) {
 			fadeScreenDownHalf();
 		} else if (nextReelPointer == 324) {
 			fadeScreenDowns();
-			data.byte(kVolumeto) = 7;
-			data.byte(kVolumedirection) = 1;
+			_volumeTo = 7;
+			_volumeDirection = 1;
 		}
 
 		if (nextReelPointer == 340)

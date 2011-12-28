@@ -181,6 +181,11 @@ public:
 	uint8 _channel0Repeat;
 	uint8 _channel1Playing;
 
+	uint8 _volume;
+	uint8 _volumeTo;
+	int8 _volumeDirection;
+	uint8 _volumeCount;
+
 	bool _speechLoaded;
 
 	// from backdrop.cpp
