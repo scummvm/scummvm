@@ -1036,13 +1036,6 @@ void DreamWebEngine::lockMon() {
 	}
 }
 
-void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
-                                   unsigned int size, unsigned int maxSize) {
-	assert(size <= maxSize);
-	memset(buf, c, maxSize);
-	readFromFile(buf, size);
-}
-
 void DreamWebEngine::startLoading(const Room &room) {
 	_vars._combatCount = 0;
 	_roomsSample = room.roomsSample;
@@ -2117,10 +2110,17 @@ void DreamWebEngine::getRidOfAll() {
 	_freeDesc.clear();
 }
 
+void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
+                                   unsigned int size, unsigned int maxSize) {
+	assert(size <= maxSize);
+	memset(buf, c, maxSize);
+	readFromFile(buf, size);
+}
+
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
-	const uint16 kSetdatlen = 64*128;
-	const uint16 kFreedatlen = 16*80;
+	const uint16 kSetdatlen = 64*128; // == sizeof(_setDat)
+	const uint16 kFreedatlen = 16*80; // == sizeof(_freeDat)
 
 	openFile(room.name);
 
