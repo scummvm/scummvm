@@ -170,7 +170,7 @@ public:
 
 	void setSampleRate(int rate) {
 		/* ~46 CPU cycles per sample @ 22.05kHz */
-		_cyclesPerSampleFP = APPLEII_CPU_CLOCK * (1 << PREC_SHIFT) / rate;
+		_cyclesPerSampleFP = int(APPLEII_CPU_CLOCK * (1 << PREC_SHIFT) / rate);
 		reset();
 	}
 
