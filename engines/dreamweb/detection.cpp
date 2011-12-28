@@ -133,8 +133,8 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
 	if (in) {
-		DreamGen::FileHeader header;
-		in->read((uint8 *)&header, sizeof(DreamGen::FileHeader));
+		DreamWeb::FileHeader header;
+		in->read((uint8 *)&header, sizeof(DreamWeb::FileHeader));
 
 		Common::String saveName;
 		byte descSize = header.len(0);

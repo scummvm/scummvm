@@ -22,20 +22,20 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 const uint16 kKeypadx = 36+112;
 const uint16 kKeypady = 72;
 
-void DreamBase::getUnderMenu() {
+void DreamWebEngine::getUnderMenu() {
 	multiGet(_underTimedText, kMenux, kMenuy, 48, 48);
 }
 
-void DreamBase::putUnderMenu() {
+void DreamWebEngine::putUnderMenu() {
 	multiPut(_underTimedText, kMenux, kMenuy, 48, 48);
 }
 
-void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {
+void DreamWebEngine::singleKey(uint8 key, uint16 x, uint16 y) {
 	if (key == _graphicPress) {
 		key += 11;
 		if (_pressCount < 8)
@@ -45,11 +45,11 @@ void DreamBase::singleKey(uint8 key, uint16 x, uint16 y) {
 	showFrame(_tempGraphics, x, y, key, 0);
 }
 
-void DreamBase::loadKeypad() {
+void DreamWebEngine::loadKeypad() {
 	loadIntoTemp("DREAMWEB.G02");
 }
 
-void DreamBase::showKeypad() {
+void DreamWebEngine::showKeypad() {
 	singleKey(22, kKeypadx+9,  kKeypady+5);
 	singleKey(23, kKeypadx+31, kKeypady+5);
 	singleKey(24, kKeypadx+53, kKeypady+5);
@@ -78,13 +78,13 @@ void DreamBase::showKeypad() {
 	}
 }
 
-bool DreamBase::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
+bool DreamWebEngine::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	
 	return digit0 == _pressList[0] && digit1 == _pressList[1]
 		&& digit2 == _pressList[2] && digit3 == _pressList[3];
 }
 
-void DreamBase::addToPressList() {
+void DreamWebEngine::addToPressList() {
 	if (_pressPointer == 5)
 		return;
 	uint8 pressed = _pressed;
@@ -95,21 +95,21 @@ void DreamBase::addToPressList() {
 	++_pressPointer;
 }
 
-void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
-	RectWithCallback<DreamBase> keypadList[] = {
-		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamBase::buttonOne },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamBase::buttonTwo },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamBase::buttonThree },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamBase::buttonFour },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamBase::buttonFive },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamBase::buttonSix },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamBase::buttonSeven },
-		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamBase::buttonEight },
-		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamBase::buttonNine },
-		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamBase::buttonNought },
-		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamBase::buttonEnter },
-		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamBase::quitKey },
-		{ 0,320,0,200,&DreamBase::blank },
+void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
+	RectWithCallback<DreamWebEngine> keypadList[] = {
+		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonOne },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonTwo },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamWebEngine::buttonThree },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamWebEngine::buttonFour },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamWebEngine::buttonFive },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamWebEngine::buttonSix },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamWebEngine::buttonSeven },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamWebEngine::buttonEight },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamWebEngine::buttonNine },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamWebEngine::buttonNought },
+		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamWebEngine::buttonEnter },
+		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamWebEngine::quitKey },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -167,51 +167,51 @@ void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 	workToScreenM();
 }
 
-void DreamBase::buttonOne() {
+void DreamWebEngine::buttonOne() {
 	buttonPress(1);
 }
 
-void DreamBase::buttonTwo() {
+void DreamWebEngine::buttonTwo() {
 	buttonPress(2);
 }
 
-void DreamBase::buttonThree() {
+void DreamWebEngine::buttonThree() {
 	buttonPress(3);
 }
 
-void DreamBase::buttonFour() {
+void DreamWebEngine::buttonFour() {
 	buttonPress(4);
 }
 
-void DreamBase::buttonFive() {
+void DreamWebEngine::buttonFive() {
 	buttonPress(5);
 }
 
-void DreamBase::buttonSix() {
+void DreamWebEngine::buttonSix() {
 	buttonPress(6);
 }
 
-void DreamBase::buttonSeven() {
+void DreamWebEngine::buttonSeven() {
 	buttonPress(7);
 }
 
-void DreamBase::buttonEight() {
+void DreamWebEngine::buttonEight() {
 	buttonPress(8);
 }
 
-void DreamBase::buttonNine() {
+void DreamWebEngine::buttonNine() {
 	buttonPress(9);
 }
 
-void DreamBase::buttonNought() {
+void DreamWebEngine::buttonNought() {
 	buttonPress(10);
 }
 
-void DreamBase::buttonEnter() {
+void DreamWebEngine::buttonEnter() {
 	buttonPress(11);
 }
 
-void DreamBase::buttonPress(uint8 buttonId) {
+void DreamWebEngine::buttonPress(uint8 buttonId) {
 	uint8 commandType = 100 + buttonId;
 	if (_commandType != commandType) {
 		_commandType = commandType;
@@ -226,28 +226,28 @@ void DreamBase::buttonPress(uint8 buttonId) {
 	}
 }
 
-void DreamBase::showOuterPad() {
+void DreamWebEngine::showOuterPad() {
 	showFrame(_tempGraphics, kKeypadx-3, kKeypady-4, 1, 0);
 	showFrame(_tempGraphics, kKeypadx+74, kKeypady+76, 37, 0);
 }
 
-void DreamBase::dumpKeypad() {
+void DreamWebEngine::dumpKeypad() {
 	multiDump(kKeypadx - 3, kKeypady - 4, 120, 90);
 }
 
-void DreamBase::dumpSymbol() {
+void DreamWebEngine::dumpSymbol() {
 	_newTextLine = 0;
 	multiDump(kSymbolx, kSymboly + 20, 104, 60);
 }
 
-void DreamBase::dumpSymBox() {
+void DreamWebEngine::dumpSymBox() {
 	if (_dumpX != 0xFFFF) {
 		multiDump(_dumpX, _dumpY, 30, 77);
 		_dumpX = 0xFFFF;
 	}
 }
 
-void DreamBase::quitSymbol() {
+void DreamWebEngine::quitSymbol() {
 	if (_symbolTopX != 24 || _symbolBotX != 24) {
 		blank();
 		return;
@@ -267,4 +267,4 @@ void DreamBase::quitSymbol() {
 	_getBack = 1;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

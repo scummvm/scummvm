@@ -22,7 +22,7 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 struct MonitorKeyEntry {
 	uint8 keyAssigned;
@@ -38,7 +38,7 @@ static MonitorKeyEntry monitorKeyEntries[4] = {
 	{ 0, "BECKETT", "SEPTIMUS"    }
 };
 
-void DreamBase::useMon() {
+void DreamWebEngine::useMon() {
 	_vars._lastTrigger = 0;
 	_currentFile[0] = 34;
 	memset(_currentFile+1, ' ', 12);
@@ -104,7 +104,7 @@ void DreamBase::useMon() {
 	workToScreenM();
 }
 
-bool DreamBase::execCommand() {
+bool DreamWebEngine::execCommand() {
 	static const char *comlist[] = {
 		"EXIT",
 		"HELP",
@@ -170,7 +170,7 @@ bool DreamBase::execCommand() {
 
 
 
-void DreamBase::monitorLogo() {
+void DreamWebEngine::monitorLogo() {
 	if (_logoNum != _oldLogoNum) {
 		_oldLogoNum = _logoNum;
 		//fadeDownMon(); // FIXME: Commented out in ASM
@@ -187,12 +187,12 @@ void DreamBase::monitorLogo() {
 	}
 }
 
-void DreamBase::printLogo() {
+void DreamWebEngine::printLogo() {
 	showFrame(_tempGraphics, 56, 32, 0, 0);
 	showCurrentFile();
 }
 
-void DreamBase::input() {
+void DreamWebEngine::input() {
 	memset(_inputLine, 0, 64);
 	_curPos = 0;
 	printChar(_tempCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
@@ -235,14 +235,14 @@ void DreamBase::input() {
 	}
 }
 
-byte DreamBase::makeCaps(byte c) {
+byte DreamWebEngine::makeCaps(byte c) {
 	// TODO: Replace calls to this by toupper() ?
 	if (c >= 'a')
 		c -= 'a' - 'A'; // = 32
 	return c;
 }
 
-void DreamBase::delChar() {
+void DreamWebEngine::delChar() {
 	--_curPos;
 	_inputLine[_curPos * 2] = 0;
 	uint8 width = _inputLine[_curPos * 2 + 1];
@@ -254,7 +254,7 @@ void DreamBase::delChar() {
 	multiDump(_monAdX, _monAdY, 8, 8);
 }
 
-void DreamBase::printCurs() {
+void DreamWebEngine::printCurs() {
 	uint16 x = _cursLocX;
 	uint16 y = _cursLocY;
 	uint16 height;
@@ -270,7 +270,7 @@ void DreamBase::printCurs() {
 	multiDump(x - 6, y, 12, height);
 }
 
-void DreamBase::delCurs() {
+void DreamWebEngine::delCurs() {
 	uint16 x = _cursLocX;
 	uint16 y = _cursLocY;
 	uint16 width = 6;
@@ -284,38 +284,38 @@ void DreamBase::delCurs() {
 	multiDump(x, y, width, height);
 }
 
-void DreamBase::scrollMonitor() {
+void DreamWebEngine::scrollMonitor() {
 	printLogo();
 	printUnderMon();
 	workToScreen();
 	playChannel1(25);
 }
 
-void DreamBase::showCurrentFile() {
+void DreamWebEngine::showCurrentFile() {
 	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
 	const char *currentFile = _currentFile + 1;
 	while (*currentFile) {
 		char c = *currentFile++;
-		c = engine->modifyChar(c);
+		c = modifyChar(c);
 		printChar(_tempCharset, &x, 37, c, 0, NULL, NULL);
 	}
 }
 
-void DreamBase::accessLightOn() {
+void DreamWebEngine::accessLightOn() {
 	showFrame(_tempGraphics, 74, 182, 8, 0);
 	multiDump(74, 182, 12, 8);
 }
 
-void DreamBase::accessLightOff() {
+void DreamWebEngine::accessLightOff() {
 	showFrame(_tempGraphics, 74, 182, 7, 0);
 	multiDump(74, 182, 12, 8);
 }
 
-void DreamBase::randomAccess(uint16 count) {
+void DreamWebEngine::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
 		vSync();
 		vSync();
-		uint16 v = engine->randomNumber() & 15;
+		uint16 v = randomNumber() & 15;
 		if (v < 10)
 			accessLightOff();
 		else
@@ -324,7 +324,7 @@ void DreamBase::randomAccess(uint16 count) {
 	accessLightOff();
 }
 
-void DreamBase::monMessage(uint8 index) {
+void DreamWebEngine::monMessage(uint8 index) {
 	assert(index > 0);
 	const char *string = _textFile1._text;
 	for (uint8 i = 0; i < index; ++i) {
@@ -334,32 +334,32 @@ void DreamBase::monMessage(uint8 index) {
 	monPrint(string);
 }
 
-void DreamBase::netError() {
+void DreamWebEngine::netError() {
 	monMessage(5);
 	scrollMonitor();
 }
 
-void DreamBase::powerLightOn() {
+void DreamWebEngine::powerLightOn() {
 	showFrame(_tempGraphics, 257+4, 182, 6, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamBase::powerLightOff() {
+void DreamWebEngine::powerLightOff() {
 	showFrame(_tempGraphics, 257+4, 182, 5, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamBase::lockLightOn() {
+void DreamWebEngine::lockLightOn() {
 	showFrame(_tempGraphics, 56, 182, 10, 0);
 	multiDump(58, 182, 12, 8);
 }
 
-void DreamBase::lockLightOff() {
+void DreamWebEngine::lockLightOff() {
 	showFrame(_tempGraphics, 56, 182, 9, 0);
 	multiDump(58, 182, 12, 8);
 }
 
-void DreamBase::turnOnPower() {
+void DreamWebEngine::turnOnPower() {
 	for (size_t i = 0; i < 3; ++i) {
 		powerLightOn();
 		hangOn(30);
@@ -369,21 +369,21 @@ void DreamBase::turnOnPower() {
 	powerLightOn();
 }
 
-void DreamBase::printOuterMon() {
+void DreamWebEngine::printOuterMon() {
 	showFrame(_tempGraphics, 40, 32, 1, 0);
 	showFrame(_tempGraphics, 264, 32, 2, 0);
 	showFrame(_tempGraphics, 40, 12, 3, 0);
 	showFrame(_tempGraphics, 40, 164, 4, 0);
 }
 
-void DreamBase::loadPersonal() {
+void DreamWebEngine::loadPersonal() {
 	if (_vars._location == 0 || _vars._location == 42)
 		loadTextFile(_textFile1, "DREAMWEB.T01"); // monitor file 1
 	else
 		loadTextFile(_textFile1, "DREAMWEB.T02"); // monitor file 2
 }
 
-void DreamBase::loadNews() {
+void DreamWebEngine::loadNews() {
 	// textfile2 holds information accessible by anyone
 	if (_vars._newsItem == 0)
 		loadTextFile(_textFile2, "DREAMWEB.T10"); // monitor file 10
@@ -395,7 +395,7 @@ void DreamBase::loadNews() {
 		loadTextFile(_textFile2, "DREAMWEB.T13"); // monitor file 13
 }
 
-void DreamBase::loadCart() {
+void DreamWebEngine::loadCart() {
 	byte cartridgeId = 0;
 	uint16 objectIndex = findSetObject("INTF");
 	uint16 cartridgeIndex = checkInside(objectIndex, 1);
@@ -414,7 +414,7 @@ void DreamBase::loadCart() {
 		loadTextFile(_textFile3, "DREAMWEB.T24"); // monitor file 24
 }
 
-void DreamBase::showKeys() {
+void DreamWebEngine::showKeys() {
 	randomAccess(10);
 	scrollMonitor();
 	monMessage(18);
@@ -427,7 +427,7 @@ void DreamBase::showKeys() {
 	scrollMonitor();
 }
 
-const char *DreamBase::getKeyAndLogo(const char *foundString) {
+const char *DreamWebEngine::getKeyAndLogo(const char *foundString) {
 	byte newLogo = foundString[1] - 48;
 	byte keyNum = foundString[3] - 48;
 
@@ -443,7 +443,7 @@ const char *DreamBase::getKeyAndLogo(const char *foundString) {
 	}
 }
 
-const char *DreamBase::searchForString(const char *topic, const char *text) {
+const char *DreamWebEngine::searchForString(const char *topic, const char *text) {
 	char delim = *topic;
 
 	while (true) {
@@ -467,7 +467,7 @@ const char *DreamBase::searchForString(const char *topic, const char *text) {
 	}
 }
 
-void DreamBase::dirCom() {
+void DreamWebEngine::dirCom() {
 	randomAccess(30);
 
 	const char *dirname = parser();
@@ -487,7 +487,7 @@ void DreamBase::dirCom() {
 	scrollMonitor();
 }
 
-void DreamBase::dirFile(const char *dirName) {
+void DreamWebEngine::dirFile(const char *dirName) {
 	char topic[14];
 
 	memcpy(topic, dirName, 14);
@@ -532,7 +532,7 @@ void DreamBase::dirFile(const char *dirName) {
 	}
 }
 
-void DreamBase::read() {
+void DreamWebEngine::read() {
 	randomAccess(40);
 	const char *name = parser();
 	if (name[1] == 0) {
@@ -588,7 +588,7 @@ void DreamBase::read() {
 	}
 }
 
-void DreamBase::signOn() {
+void DreamWebEngine::signOn() {
 	const char *name = parser();
 
 	int8 foundIndex = -1;
@@ -646,7 +646,7 @@ void DreamBase::signOn() {
 	}
 }
 
-void DreamBase::searchForFiles(const char *filesString) {
+void DreamWebEngine::searchForFiles(const char *filesString) {
 	byte curChar;
 
 	while (true) {
@@ -659,7 +659,7 @@ void DreamBase::searchForFiles(const char *filesString) {
 	}
 }
 
-const char *DreamBase::parser() {
+const char *DreamWebEngine::parser() {
 	char *output = _operand1;
 
 	memset(output, 0, 14);
@@ -697,4 +697,4 @@ const char *DreamBase::parser() {
 	return _operand1;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

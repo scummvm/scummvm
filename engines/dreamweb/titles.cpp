@@ -23,9 +23,9 @@
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::endGame() {
+void DreamWebEngine::endGame() {
 	loadTempText("DREAMWEB.T83");
 	monkSpeaking();
 	gettingShot();
@@ -35,7 +35,7 @@ void DreamBase::endGame() {
 	hangOn(200);
 }
 
-void DreamBase::monkSpeaking() {
+void DreamWebEngine::monkSpeaking() {
 	// FIXME: This is the CD version only.
 
 	_roomsSample = 35;
@@ -57,7 +57,7 @@ void DreamBase::monkSpeaking() {
 		playChannel1(50 + 12);
 
 		do {
-			engine->waitForVSync();
+			waitForVSync();
 		} while (_channel1Playing != 255);
 	}
 
@@ -68,7 +68,7 @@ void DreamBase::monkSpeaking() {
 	getRidOfTemp();
 }
 
-void DreamBase::gettingShot() {
+void DreamWebEngine::gettingShot() {
 	_newLocation = 55;
 	clearPalette();
 	loadIntroRoom();
@@ -79,7 +79,7 @@ void DreamBase::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamBase::bibleQuote() {
+void DreamWebEngine::bibleQuote() {
 	initGraphics(640, 480, true);
 
 	showPCX("DREAMWEB.I00");
@@ -110,7 +110,7 @@ void DreamBase::bibleQuote() {
 	_lastHardKey = 0;
 }
 
-void DreamBase::hangOne(uint16 delay) {
+void DreamWebEngine::hangOne(uint16 delay) {
 	do {
 		vSync();
 		if (_lastHardKey == 1)
@@ -118,7 +118,7 @@ void DreamBase::hangOne(uint16 delay) {
 	} while	(--delay);
 }
 
-void DreamBase::intro() {
+void DreamWebEngine::intro() {
 	loadTempText("DREAMWEB.T82");
 	loadPalFromIFF();
 	setMode();
@@ -174,7 +174,7 @@ void DreamBase::intro() {
 	_lastHardKey =  0;
 }
 
-void DreamBase::runIntroSeq() {
+void DreamWebEngine::runIntroSeq() {
 	_getBack = 0;
 
 	do {
@@ -220,7 +220,7 @@ void DreamBase::runIntroSeq() {
 	//clearBeforeLoad();
 }
 
-void DreamBase::runEndSeq() {
+void DreamWebEngine::runEndSeq() {
 	atmospheres();
 	_getBack = 0;
 
@@ -240,7 +240,7 @@ void DreamBase::runEndSeq() {
 	} while (_getBack != 1);
 }
 
-void DreamBase::loadIntroRoom() {
+void DreamWebEngine::loadIntroRoom() {
 	_introCount = 0;
 	_vars._location = 255;
 	loadRoom();
@@ -259,10 +259,10 @@ void DreamBase::loadIntroRoom() {
 	workToScreen();
 }
 
-void DreamBase::set16ColPalette() {
+void DreamWebEngine::set16ColPalette() {
 }
 
-void DreamBase::realCredits() {
+void DreamWebEngine::realCredits() {
 	_roomsSample = 33;
 	loadRoomsSample();
 	_volume = 0;
@@ -419,4 +419,4 @@ void DreamBase::realCredits() {
 	_lastHardKey =  0;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

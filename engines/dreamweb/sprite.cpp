@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::printSprites() {
+void DreamWebEngine::printSprites() {
 	for (size_t priority = 0; priority < 7; ++priority) {
 		Common::List<Sprite>::const_iterator i;
 		for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
@@ -39,7 +39,7 @@ void DreamBase::printSprites() {
 	}
 }
 
-void DreamBase::printASprite(const Sprite *sprite) {
+void DreamWebEngine::printASprite(const Sprite *sprite) {
 	uint16 x, y;
 	if (sprite->y >= 220) {
 		y = _mapAdY - (256 - sprite->y);
@@ -61,11 +61,11 @@ void DreamBase::printASprite(const Sprite *sprite) {
 	showFrame(*sprite->_frameData, x, y, sprite->frameNumber, c);
 }
 
-void DreamBase::clearSprites() {
+void DreamWebEngine::clearSprites() {
 	_spriteTable.clear();
 }
 
-Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
+Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
 	// Note: the original didn't append sprites here, but filled up the
 	// first unused entry. This can change the order of entries, but since they
 	// are drawn based on the priority field, this shouldn't matter.
@@ -86,7 +86,7 @@ Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const Gra
 	return sprite;
 }
 
-void DreamBase::spriteUpdate() {
+void DreamWebEngine::spriteUpdate() {
 	// During the intro the sprite table can be empty
 	if (!_spriteTable.empty())
 		_spriteTable.front().hidden = _vars._ryanOn;
@@ -109,14 +109,14 @@ void DreamBase::spriteUpdate() {
 	}
 }
 
-void DreamBase::initMan() {
+void DreamWebEngine::initMan() {
 	Sprite *sprite = makeSprite(_ryanX, _ryanY, addr_mainman, &_mainSprites, 0);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;
 }
 
-void DreamBase::mainMan(Sprite *sprite) {
+void DreamWebEngine::mainMan(Sprite *sprite) {
 	if (_resetManXY == 1) {
 		_resetManXY = 0;
 		sprite->x = _ryanX;
@@ -166,7 +166,7 @@ void DreamBase::mainMan(Sprite *sprite) {
 	_ryanY = sprite->y;
 }
 
-void DreamBase::walking(Sprite *sprite) {
+void DreamWebEngine::walking(Sprite *sprite) {
 	uint8 comp;
 	if (_lineDirection != 0) {
 		--_linePointer;
@@ -191,7 +191,7 @@ void DreamBase::walking(Sprite *sprite) {
 	autoSetWalk();
 }
 
-void DreamBase::aboutTurn(Sprite *sprite) {
+void DreamWebEngine::aboutTurn(Sprite *sprite) {
 	bool incdir = true;
 
 	if (_turnDirection == 1)
@@ -225,7 +225,7 @@ void DreamBase::aboutTurn(Sprite *sprite) {
 	}
 }
 
-void DreamBase::backObject(Sprite *sprite) {
+void DreamWebEngine::backObject(Sprite *sprite) {
 	SetObject *objData = sprite->_objData;
 
 	if (sprite->delay != 0) {
@@ -250,7 +250,7 @@ void DreamBase::backObject(Sprite *sprite) {
 		steady(sprite, objData);
 }
 
-void DreamBase::constant(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::constant(Sprite *sprite, SetObject *objData) {
 	++sprite->animFrame;
 	if (objData->frames[sprite->animFrame] == 255) {
 		sprite->animFrame = 0;
@@ -260,22 +260,22 @@ void DreamBase::constant(Sprite *sprite, SetObject *objData) {
 	sprite->frameNumber = frame;
 }
 
-void DreamBase::randomSprite(Sprite *sprite, SetObject *objData) {
-	uint8 r = engine->randomNumber();
+void DreamWebEngine::randomSprite(Sprite *sprite, SetObject *objData) {
+	uint8 r = randomNumber();
 	sprite->frameNumber = objData->frames[r&7];
 }
 
-void DreamBase::doorway(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::doorway(Sprite *sprite, SetObject *objData) {
 	Common::Rect check(-24, -30, 10, 10);
 	doDoor(sprite, objData, check);
 }
 
-void DreamBase::wideDoor(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::wideDoor(Sprite *sprite, SetObject *objData) {
 	Common::Rect check(-24, -30, 24, 24);
 	doDoor(sprite, objData, check);
 }
 
-void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
+void DreamWebEngine::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 	int ryanx = _ryanX;
 	int ryany = _ryanY;
 
@@ -324,13 +324,13 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 	}
 }
 
-void DreamBase::steady(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::steady(Sprite *sprite, SetObject *objData) {
 	uint8 frame = objData->frames[0];
 	objData->index = frame;
 	sprite->frameNumber = frame;
 }
 
-void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::lockedDoorway(Sprite *sprite, SetObject *objData) {
 	int ryanx = _ryanX;
 	int ryany = _ryanY;
 
@@ -381,7 +381,7 @@ void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
 	}
 }
 
-void DreamBase::liftSprite(Sprite *sprite, SetObject *objData) {
+void DreamWebEngine::liftSprite(Sprite *sprite, SetObject *objData) {
 	uint8 liftFlag = _vars._liftFlag;
 	if (liftFlag == 0) { //liftclosed
 		turnPathOff(_vars._liftPath);
@@ -429,14 +429,14 @@ void DreamBase::liftSprite(Sprite *sprite, SetObject *objData) {
 	}
 }
 
-Reel *DreamBase::getReelStart(uint16 reelPointer) {
+Reel *DreamWebEngine::getReelStart(uint16 reelPointer) {
 	Reel *reel = &_reelList[reelPointer * 8];
 	return reel;
 }
 
 // Locate the reel segment (reel1, reel2, reel3) this frame is stored in,
 // and adjust the frame number relative to this segment.
-const GraphicsFile *DreamBase::findSource(uint16 &frame) {
+const GraphicsFile *DreamWebEngine::findSource(uint16 &frame) {
 	if (frame < 160) {
 		return &_reel1;
 	} else if (frame < 320) {
@@ -448,7 +448,7 @@ const GraphicsFile *DreamBase::findSource(uint16 &frame) {
 	}
 }
 
-void DreamBase::showReelFrame(Reel *reel) {
+void DreamWebEngine::showReelFrame(Reel *reel) {
 	uint16 x = reel->x + _mapAdX;
 	uint16 y = reel->y + _mapAdY;
 	uint16 frame = reel->frame();
@@ -456,7 +456,7 @@ void DreamBase::showReelFrame(Reel *reel) {
 	showFrame(*base, x, y, frame, 8);
 }
 
-void DreamBase::showGameReel(ReelRoutine *routine) {
+void DreamWebEngine::showGameReel(ReelRoutine *routine) {
 	uint16 reelPointer = routine->reelPointer();
 	if (reelPointer >= 512)
 		return;
@@ -464,12 +464,12 @@ void DreamBase::showGameReel(ReelRoutine *routine) {
 	routine->setReelPointer(reelPointer);
 }
 
-const Frame *DreamBase::getReelFrameAX(uint16 frame) {
+const Frame *DreamWebEngine::getReelFrameAX(uint16 frame) {
 	const GraphicsFile *base = findSource(frame);
 	return &base->_frames[frame];
 }
 
-void DreamBase::showRain() {
+void DreamWebEngine::showRain() {
 	Common::List<Rain>::iterator i;
 
 	// Do nothing if there's no rain at all
@@ -502,7 +502,7 @@ void DreamBase::showRain() {
 	if (_realLocation == 55)
 		return;
 
-	if (engine->randomNumber() >= 1) // play thunder with 1 in 256 chance
+	if (randomNumber() >= 1) // play thunder with 1 in 256 chance
 		return;
 
 	uint8 soundIndex;
@@ -513,7 +513,7 @@ void DreamBase::showRain() {
 	playChannel1(soundIndex);
 }
 
-void DreamBase::moveMap(uint8 param) {
+void DreamWebEngine::moveMap(uint8 param) {
 	switch (param) {
 	case 32:
 		_mapY -= 20;
@@ -534,7 +534,7 @@ void DreamBase::moveMap(uint8 param) {
 	_nowInNewRoom = 1;
 }
 
-void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
+void DreamWebEngine::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;
 	const MapFlag &tileData = _mapFlags[*flagY * 11 + *flagX];
@@ -543,7 +543,7 @@ void DreamBase::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *ty
 	*type = tileData._type;
 }
 
-uint8 DreamBase::getBlockOfPixel(uint8 x, uint8 y) {
+uint8 DreamWebEngine::getBlockOfPixel(uint8 x, uint8 y) {
 	uint8 flag, flagEx, type, flagX, flagY;
 	checkOne(x + _mapXStart, y + _mapYStart, &flag, &flagEx, &type, &flagX, &flagY);
 	if (flag & 1)
@@ -552,7 +552,7 @@ uint8 DreamBase::getBlockOfPixel(uint8 x, uint8 y) {
 		return type;
 }
 
-void DreamBase::splitIntoLines(uint8 x, uint8 y) {
+void DreamWebEngine::splitIntoLines(uint8 x, uint8 y) {
 	do {
 		Rain rain;
 
@@ -579,8 +579,8 @@ void DreamBase::splitIntoLines(uint8 x, uint8 y) {
 		}
 
 		rain.size = length;
-		rain.w3 = (engine->randomNumber() << 8) | engine->randomNumber();
-		rain.b5 = (engine->randomNumber() & 3) + 4;
+		rain.w3 = (randomNumber() << 8) | randomNumber();
+		rain.b5 = (randomNumber() & 3) + 4;
 		_rainList.push_back(rain);
 	} while (x > 0 && y < _mapYSize);
 }
@@ -622,7 +622,7 @@ static const RainLocation rainLocationList[] = {
 	{ 255,0,0,0 }
 };
 
-void DreamBase::initRain() {
+void DreamWebEngine::initRain() {
 	const RainLocation *r = rainLocationList;
 	_rainList.clear();
 
@@ -647,7 +647,7 @@ void DreamBase::initRain() {
 	do {
 		uint8 delta;
 		do {
-			delta = (engine->randomNumber() & 31) + 3;
+			delta = (randomNumber() & 31) + 3;
 		} while (delta >= rainSpacing);
 
 		x += delta;
@@ -662,7 +662,7 @@ void DreamBase::initRain() {
 	do {
 		uint8 delta;
 		do {
-			delta = (engine->randomNumber() & 31) + 3;
+			delta = (randomNumber() & 31) + 3;
 		} while (delta >= rainSpacing);
 
 		y += delta;
@@ -673,7 +673,7 @@ void DreamBase::initRain() {
 	} while (true);
 }
 
-void DreamBase::intro1Text() {
+void DreamWebEngine::intro1Text() {
 	if (_introCount != 2 && _introCount != 4 && _introCount != 6)
 		return;
 
@@ -689,22 +689,22 @@ void DreamBase::intro1Text() {
 	}
 }
 
-void DreamBase::intro2Text(uint16 nextReelPointer) {
+void DreamWebEngine::intro2Text(uint16 nextReelPointer) {
 	if (nextReelPointer == 5)
 		setupTimedTemp(43, 82, 34, 40, 90, 1);
 	else if (nextReelPointer == 15)
 		setupTimedTemp(44, 82, 34, 40, 90, 1);
 }
 
-void DreamBase::intro3Text(uint16 nextReelPointer) {
+void DreamWebEngine::intro3Text(uint16 nextReelPointer) {
 	if (nextReelPointer == 107)
 		setupTimedTemp(45, 82, 36, 56, 100, 1);
 	else if (nextReelPointer == (isCD() ? 108 : 109))
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 
-void DreamBase::monks2text() {
-	bool isGermanCD = isCD() && engine->getLanguage() == Common::DE_DEU;
+void DreamWebEngine::monks2text() {
+	bool isGermanCD = isCD() && getLanguage() == Common::DE_DEU;
 
 	if (_introCount == 1)
 		setupTimedTemp(8, 82, 36, 160, 120, 1);
@@ -740,7 +740,7 @@ void DreamBase::monks2text() {
 		setupTimedTemp(18, 82, 36, 160, 120, 1);
 }
 
-void DreamBase::textForEnd() {
+void DreamWebEngine::textForEnd() {
 	if (_introCount == 20)
 		setupTimedTemp(0, 83, 34, 20, 60, 1);
 	else if (_introCount == (isCD() ? 50 : 65))
@@ -749,14 +749,14 @@ void DreamBase::textForEnd() {
 		setupTimedTemp(2, 83, 34, 20, 60, 1);
 }
 
-void DreamBase::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+void DreamWebEngine::textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 	if (isCD() && _channel1Playing != 255)
 		_introCount--;
 	else
 		setupTimedTemp(textIndex, voiceIndex, x, y, countToTimed, timeCount);
 }
 
-void DreamBase::textForMonk() {
+void DreamWebEngine::textForMonk() {
 	if (_introCount == 1)
 		textForMonkHelper(19, 82, 68, 154, 120, 1);
 	else if (_introCount == 5)
@@ -792,7 +792,7 @@ void DreamBase::textForMonk() {
 	}
 }
 
-void DreamBase::reelsOnScreen() {
+void DreamWebEngine::reelsOnScreen() {
 	reconstruct();
 	updatePeople();
 	watchReel();
@@ -800,7 +800,7 @@ void DreamBase::reelsOnScreen() {
 	useTimedText();
 }
 
-void DreamBase::reconstruct() {
+void DreamWebEngine::reconstruct() {
 	if (_haveDoneObs == 0)
 		return;
 	_vars._newObs = 1;
@@ -1064,10 +1064,10 @@ static const ReelSound *g_roomByRoom[] = {
 };
 
 
-void DreamBase::soundOnReels(uint16 reelPointer) {
+void DreamWebEngine::soundOnReels(uint16 reelPointer) {
 	const ReelSound *r = g_roomByRoom[_realLocation];
 
-	if (engine->getLanguage() == Common::DE_DEU && r == g_roomSound29)
+	if (getLanguage() == Common::DE_DEU && r == g_roomSound29)
 		r = g_roomSound29_German;
 
 	for (; r->_sample != 255; ++r) {
@@ -1091,7 +1091,7 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 		_lastSoundReel = (uint16)-1;
 }
 
-void DreamBase::clearBeforeLoad() {
+void DreamWebEngine::clearBeforeLoad() {
 	if (_roomLoaded != 1)
 		return; // noclear
 
@@ -1114,25 +1114,25 @@ void DreamBase::clearBeforeLoad() {
 	_roomLoaded = 0;
 }
 
-void DreamBase::clearReels() {
+void DreamWebEngine::clearReels() {
 	_reel1.clear();
 	_reel2.clear();
 	_reel3.clear();
 }
 
-void DreamBase::getRidOfReels() {
+void DreamWebEngine::getRidOfReels() {
 	if (_roomLoaded)
 		clearReels();
 }
 
-void DreamBase::liftNoise(uint8 index) {
+void DreamWebEngine::liftNoise(uint8 index) {
 	if (_realLocation == 5 || _realLocation == 21)
 		playChannel1(13);	// hiss noise
 	else
 		playChannel1(index);
 }
 
-void DreamBase::checkForExit(Sprite *sprite) {
+void DreamWebEngine::checkForExit(Sprite *sprite) {
 	uint8 flag, flagEx, type, flagX, flagY;
 	checkOne(_ryanX + 12, _ryanY + 12, &flag, &flagEx, &type, &flagX, &flagY);
 	_lastFlag = flag;
@@ -1189,4 +1189,4 @@ void DreamBase::checkForExit(Sprite *sprite) {
 	_vars._needToTravel = 1;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

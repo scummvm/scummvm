@@ -22,38 +22,38 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-static void (DreamBase::*reelCallbacks[57])(ReelRoutine &) = {
-	&DreamBase::gamer, &DreamBase::sparkyDrip,
-	&DreamBase::eden, &DreamBase::edenInBath,
-	&DreamBase::sparky, &DreamBase::smokeBloke,
-	&DreamBase::manAsleep, &DreamBase::drunk,
-	&DreamBase::receptionist, &DreamBase::genericPerson /*maleFan*/,
-	&DreamBase::genericPerson /*femaleFan*/, &DreamBase::louis,
-	&DreamBase::louisChair, &DreamBase::soldier1,
-	&DreamBase::bossMan, &DreamBase::interviewer,
-	&DreamBase::heavy, &DreamBase::manAsleep /*manAsleep2*/,
-	&DreamBase::genericPerson /*manSatStill*/, &DreamBase::drinker,
-	&DreamBase::bartender, &DreamBase::genericPerson /*otherSmoker*/,
-	&DreamBase::genericPerson /*tattooMan*/, &DreamBase::attendant,
-	&DreamBase::keeper, &DreamBase::candles1,
-	&DreamBase::smallCandle, &DreamBase::security,
-	&DreamBase::copper, &DreamBase::poolGuard,
-	&DreamBase::rockstar, &DreamBase::businessMan,
-	&DreamBase::train, &DreamBase::genericPerson /*aide*/,
-	&DreamBase::mugger, &DreamBase::helicopter,
-	&DreamBase::introMagic1, &DreamBase::introMusic,
-	&DreamBase::introMagic2, &DreamBase::candles2,
-	&DreamBase::gates, &DreamBase::introMagic3,
-	&DreamBase::introMonks1, &DreamBase::candles,
-	&DreamBase::introMonks2, &DreamBase::handClap,
-	&DreamBase::monkAndRyan, &DreamBase::endGameSeq,
-	&DreamBase::priest, &DreamBase::madman,
-	&DreamBase::madmansTelly, &DreamBase::alleyBarkSound,
-	&DreamBase::foghornSound, &DreamBase::carParkDrip,
-	&DreamBase::carParkDrip, &DreamBase::carParkDrip,
-	&DreamBase::carParkDrip
+static void (DreamWebEngine::*reelCallbacks[57])(ReelRoutine &) = {
+	&DreamWebEngine::gamer, &DreamWebEngine::sparkyDrip,
+	&DreamWebEngine::eden, &DreamWebEngine::edenInBath,
+	&DreamWebEngine::sparky, &DreamWebEngine::smokeBloke,
+	&DreamWebEngine::manAsleep, &DreamWebEngine::drunk,
+	&DreamWebEngine::receptionist, &DreamWebEngine::genericPerson /*maleFan*/,
+	&DreamWebEngine::genericPerson /*femaleFan*/, &DreamWebEngine::louis,
+	&DreamWebEngine::louisChair, &DreamWebEngine::soldier1,
+	&DreamWebEngine::bossMan, &DreamWebEngine::interviewer,
+	&DreamWebEngine::heavy, &DreamWebEngine::manAsleep /*manAsleep2*/,
+	&DreamWebEngine::genericPerson /*manSatStill*/, &DreamWebEngine::drinker,
+	&DreamWebEngine::bartender, &DreamWebEngine::genericPerson /*otherSmoker*/,
+	&DreamWebEngine::genericPerson /*tattooMan*/, &DreamWebEngine::attendant,
+	&DreamWebEngine::keeper, &DreamWebEngine::candles1,
+	&DreamWebEngine::smallCandle, &DreamWebEngine::security,
+	&DreamWebEngine::copper, &DreamWebEngine::poolGuard,
+	&DreamWebEngine::rockstar, &DreamWebEngine::businessMan,
+	&DreamWebEngine::train, &DreamWebEngine::genericPerson /*aide*/,
+	&DreamWebEngine::mugger, &DreamWebEngine::helicopter,
+	&DreamWebEngine::introMagic1, &DreamWebEngine::introMusic,
+	&DreamWebEngine::introMagic2, &DreamWebEngine::candles2,
+	&DreamWebEngine::gates, &DreamWebEngine::introMagic3,
+	&DreamWebEngine::introMonks1, &DreamWebEngine::candles,
+	&DreamWebEngine::introMonks2, &DreamWebEngine::handClap,
+	&DreamWebEngine::monkAndRyan, &DreamWebEngine::endGameSeq,
+	&DreamWebEngine::priest, &DreamWebEngine::madman,
+	&DreamWebEngine::madmansTelly, &DreamWebEngine::alleyBarkSound,
+	&DreamWebEngine::foghornSound, &DreamWebEngine::carParkDrip,
+	&DreamWebEngine::carParkDrip, &DreamWebEngine::carParkDrip,
+	&DreamWebEngine::carParkDrip
 };
 
 static const ReelRoutine g_initialReelRoutines[] = {
@@ -120,15 +120,15 @@ static const ReelRoutine g_initialReelRoutines[] = {
 	{ 255,0,0, 0, 0,0,0 }
 };
 
-void DreamBase::setupInitialReelRoutines() {
+void DreamWebEngine::setupInitialReelRoutines() {
 	for (unsigned int i = 0; i < kNumReelRoutines + 1; ++i) {
 		_reelRoutines[i] = g_initialReelRoutines[i];
-		if (_reelRoutines[i].period == 55 && isCD() && engine->getLanguage() == Common::DE_DEU)
+		if (_reelRoutines[i].period == 55 && isCD() && getLanguage() == Common::DE_DEU)
 			_reelRoutines[i].period = 65;
 	}
 }
 
-void DreamBase::updatePeople() {
+void DreamWebEngine::updatePeople() {
 	_peopleList.clear();
 	++_mainTimer;
 
@@ -142,7 +142,7 @@ void DreamBase::updatePeople() {
 	}
 }
 
-void DreamBase::madmanText() {
+void DreamWebEngine::madmanText() {
 	byte origCount;
 
 	if (isCD()) {
@@ -162,7 +162,7 @@ void DreamBase::madmanText() {
 	setupTimedTemp(47 + origCount, 82, 72, 80, 90, 1);
 }
 
-void DreamBase::madman(ReelRoutine &routine) {
+void DreamWebEngine::madman(ReelRoutine &routine) {
 	_vars._watchingTime = 2;
 	if (checkSpeed(routine)) {
 		uint16 newReelPointer = routine.reelPointer();
@@ -208,7 +208,7 @@ void DreamBase::madman(ReelRoutine &routine) {
 	madMode();
 }
 
-void DreamBase::madMode() {
+void DreamWebEngine::madMode() {
 	_vars._watchingTime = 2;
 	_pointerMode = 0;
 	if (_vars._combatCount < (isCD() ? 65 : 63))
@@ -218,7 +218,7 @@ void DreamBase::madMode() {
 	_pointerMode = 2;
 }
 
-void DreamBase::addToPeopleList(ReelRoutine *routine) {
+void DreamWebEngine::addToPeopleList(ReelRoutine *routine) {
 	People people;
 	people._reelPointer = routine->reelPointer();
 	people._routinePointer = routine;
@@ -227,7 +227,7 @@ void DreamBase::addToPeopleList(ReelRoutine *routine) {
 	_peopleList.push_back(people);
 }
 
-bool DreamBase::checkSpeed(ReelRoutine &routine) {
+bool DreamWebEngine::checkSpeed(ReelRoutine &routine) {
 	if (_vars._lastWeapon != (uint8)-1)
 		return true;
 	++routine.counter;
@@ -237,21 +237,21 @@ bool DreamBase::checkSpeed(ReelRoutine &routine) {
 	return true;
 }
 
-void DreamBase::sparkyDrip(ReelRoutine &routine) {
+void DreamWebEngine::sparkyDrip(ReelRoutine &routine) {
 	if (checkSpeed(routine))
 		playChannel0(14, 0);
 }
 
-void DreamBase::genericPerson(ReelRoutine &routine) {
+void DreamWebEngine::genericPerson(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamBase::gamer(ReelRoutine &routine) {
+void DreamWebEngine::gamer(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint8 v;
 		do {
-			v = 20 + engine->randomNumber() % 5;
+			v = 20 + randomNumber() % 5;
 		} while (v == routine.reelPointer());
 		routine.setReelPointer(v);
 	}
@@ -260,19 +260,19 @@ void DreamBase::gamer(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::eden(ReelRoutine &routine) {
+void DreamWebEngine::eden(ReelRoutine &routine) {
 	if (_vars._generalDead)
 		return;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamBase::sparky(ReelRoutine &routine) {
+void DreamWebEngine::sparky(ReelRoutine &routine) {
 	if (_vars._card1Money)
 		routine.b7 = 3;
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 34) {
-			if (engine->randomNumber() < 30)
+			if (randomNumber() < 30)
 				routine.incReelPointer();
 			else
 				routine.setReelPointer(27);
@@ -289,7 +289,7 @@ void DreamBase::sparky(ReelRoutine &routine) {
 		_vars._talkedToSparky = 1;
 }
 
-void DreamBase::rockstar(ReelRoutine &routine) {
+void DreamWebEngine::rockstar(ReelRoutine &routine) {
 	if ((routine.reelPointer() == 303) || (routine.reelPointer() == 118)) {
 		_newLocation = 45;
 		showGameReel(&routine);
@@ -326,7 +326,7 @@ void DreamBase::rockstar(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::madmansTelly(ReelRoutine &routine) {
+void DreamWebEngine::madmansTelly(ReelRoutine &routine) {
 	uint16 nextReelPointer = routine.reelPointer() + 1;
 	if (nextReelPointer == 307)
 		nextReelPointer = 300;
@@ -335,14 +335,14 @@ void DreamBase::madmansTelly(ReelRoutine &routine) {
 }
 
 
-void DreamBase::smokeBloke(ReelRoutine &routine) {
+void DreamWebEngine::smokeBloke(ReelRoutine &routine) {
 	if (_vars._rockstarDead == 0) {
 		if (routine.b7 & 128)
-			DreamBase::setLocation(5);
+			DreamWebEngine::setLocation(5);
 	}
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 100) {
-			if (engine->randomNumber() < 30)
+			if (randomNumber() < 30)
 				routine.incReelPointer();
 			else
 				routine.setReelPointer(96);
@@ -355,20 +355,20 @@ void DreamBase::smokeBloke(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::manAsleep(ReelRoutine &routine) {
+void DreamWebEngine::manAsleep(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
-void DreamBase::attendant(ReelRoutine &routine) {
+void DreamWebEngine::attendant(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
 		_vars._talkedToAttendant = 1;
 }
 
-void DreamBase::keeper(ReelRoutine &routine) {
+void DreamWebEngine::keeper(ReelRoutine &routine) {
 	if (_vars._keeperFlag != 0) {
 		// Not waiting
 		addToPeopleList(&routine);
@@ -385,7 +385,7 @@ void DreamBase::keeper(ReelRoutine &routine) {
 		routine.b7 = _vars._dreamNumber;
 }
 
-void DreamBase::drunk(ReelRoutine &routine) {
+void DreamWebEngine::drunk(ReelRoutine &routine) {
 	if (_vars._generalDead)
 		return;
 	routine.b7 &= 127;
@@ -393,7 +393,7 @@ void DreamBase::drunk(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::interviewer(ReelRoutine &routine) {
+void DreamWebEngine::interviewer(ReelRoutine &routine) {
 	if (_vars._reelToWatch == 68)
 		routine.incReelPointer();
 
@@ -403,12 +403,12 @@ void DreamBase::interviewer(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::drinker(ReelRoutine &routine) {
+void DreamWebEngine::drinker(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		routine.incReelPointer();
 
 		if ( routine.reelPointer() == 115 ||
-			(routine.reelPointer() == 106 && engine->randomNumber() >= 3))
+			(routine.reelPointer() == 106 && randomNumber() >= 3))
 			routine.setReelPointer(105);
 	}
 
@@ -416,7 +416,7 @@ void DreamBase::drinker(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::alleyBarkSound(ReelRoutine &routine) {
+void DreamWebEngine::alleyBarkSound(ReelRoutine &routine) {
 	uint16 prevReelPointer = routine.reelPointer() - 1;
 	if (prevReelPointer == 0) {
 		playChannel1(14);
@@ -426,7 +426,7 @@ void DreamBase::alleyBarkSound(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::introMagic1(ReelRoutine &routine) {
+void DreamWebEngine::introMagic1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 145)
@@ -444,7 +444,7 @@ void DreamBase::introMagic1(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::introMagic2(ReelRoutine &routine) {
+void DreamWebEngine::introMagic2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 216)
@@ -454,7 +454,7 @@ void DreamBase::introMagic2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::introMagic3(ReelRoutine &routine) {
+void DreamWebEngine::introMagic3(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 218)
@@ -465,7 +465,7 @@ void DreamBase::introMagic3(ReelRoutine &routine) {
 	routine.mapX = _mapX;
 }
 
-void DreamBase::candles1(ReelRoutine &routine) {
+void DreamWebEngine::candles1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 44)
@@ -475,7 +475,7 @@ void DreamBase::candles1(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::candles2(ReelRoutine &routine) {
+void DreamWebEngine::candles2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 238)
@@ -485,7 +485,7 @@ void DreamBase::candles2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::smallCandle(ReelRoutine &routine) {
+void DreamWebEngine::smallCandle(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 37)
@@ -495,10 +495,10 @@ void DreamBase::smallCandle(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::introMusic(ReelRoutine &routine) {
+void DreamWebEngine::introMusic(ReelRoutine &routine) {
 }
 
-void DreamBase::candles(ReelRoutine &routine) {
+void DreamWebEngine::candles(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 167)
@@ -508,7 +508,7 @@ void DreamBase::candles(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::gates(ReelRoutine &routine) {
+void DreamWebEngine::gates(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 116)
@@ -525,7 +525,7 @@ void DreamBase::gates(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::security(ReelRoutine &routine) {
+void DreamWebEngine::security(ReelRoutine &routine) {
 	if (routine.reelPointer() == 32) {
 		if (_vars._lastWeapon == 1) {
 			_vars._watchingTime = 10;
@@ -545,7 +545,7 @@ void DreamBase::security(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::edenInBath(ReelRoutine &routine) {
+void DreamWebEngine::edenInBath(ReelRoutine &routine) {
 	if (_vars._generalDead == 0 || _vars._sartainDead != 0)
 		return;
 
@@ -553,7 +553,7 @@ void DreamBase::edenInBath(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::louis(ReelRoutine &routine) {
+void DreamWebEngine::louis(ReelRoutine &routine) {
 	if (_vars._rockstarDead != 0)
 		return;
 
@@ -561,26 +561,26 @@ void DreamBase::louis(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::handClap(ReelRoutine &routine) {
+void DreamWebEngine::handClap(ReelRoutine &routine) {
 }
 
-void DreamBase::carParkDrip(ReelRoutine &routine) {
+void DreamWebEngine::carParkDrip(ReelRoutine &routine) {
 	if (!checkSpeed(routine))
 		return; // cantdrip2
 
 	playChannel1(14);
 }
 
-void DreamBase::foghornSound(ReelRoutine &routine) {
-	if (engine->randomNumber() == 198)
+void DreamWebEngine::foghornSound(ReelRoutine &routine) {
+	if (randomNumber() == 198)
 		playChannel1(13);
 }
 
-void DreamBase::train(ReelRoutine &routine) {
+void DreamWebEngine::train(ReelRoutine &routine) {
 	// The original code has logic for this, but it is disabled
 }
 
-void DreamBase::louisChair(ReelRoutine &routine) {
+void DreamWebEngine::louisChair(ReelRoutine &routine) {
 	if (_vars._rockstarDead == 0)
 		return; // notlouis2
 
@@ -591,7 +591,7 @@ void DreamBase::louisChair(ReelRoutine &routine) {
 		} else if (nextReelPointer != 185) {
 			routine.setReelPointer(nextReelPointer);
 		} else {
-			if (engine->randomNumber() < 245)
+			if (randomNumber() < 245)
 				routine.setReelPointer(182);	// Restart Louis
 			else
 				routine.setReelPointer(nextReelPointer);
@@ -602,12 +602,12 @@ void DreamBase::louisChair(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::bossMan(ReelRoutine &routine) {
+void DreamWebEngine::bossMan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
 		if (nextReelPointer == 4) {
-			if (_vars._gunPassFlag != 1 && engine->randomNumber() >= 10)
+			if (_vars._gunPassFlag != 1 && randomNumber() >= 10)
 				nextReelPointer = 0;
 		} else if (nextReelPointer == 20) {
 			if (_vars._gunPassFlag != 1)
@@ -628,7 +628,7 @@ void DreamBase::bossMan(ReelRoutine &routine) {
 		_vars._talkedToBoss = 1;
 }
 
-void DreamBase::priest(ReelRoutine &routine) {
+void DreamWebEngine::priest(ReelRoutine &routine) {
 	if (routine.reelPointer() == 8)
 		return; // priestspoken
 
@@ -641,7 +641,7 @@ void DreamBase::priest(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::priestText(ReelRoutine &routine) {
+void DreamWebEngine::priestText(ReelRoutine &routine) {
 	uint16 reel = routine.reelPointer();
 	if (reel < 2 || reel >= 7 || (reel & 1))
 		return; // nopriesttext
@@ -649,7 +649,7 @@ void DreamBase::priestText(ReelRoutine &routine) {
 	setupTimedUse((reel >> 1) + 50, 54, 1, 72, 80);
 }
 
-void DreamBase::monkAndRyan(ReelRoutine &routine) {
+void DreamWebEngine::monkAndRyan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 83) {
@@ -669,14 +669,14 @@ void DreamBase::monkAndRyan(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::copper(ReelRoutine &routine) {
+void DreamWebEngine::copper(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 94) {
 			nextReelPointer = 64;
 		} else if (nextReelPointer == 81 || nextReelPointer == 66) {
 			// Might wait
-			if (engine->randomNumber() >= 7)
+			if (randomNumber() >= 7)
 				nextReelPointer--;
 		}
 
@@ -687,7 +687,7 @@ void DreamBase::copper(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::introMonks1(ReelRoutine &routine) {
+void DreamWebEngine::introMonks1(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
@@ -717,7 +717,7 @@ void DreamBase::introMonks1(ReelRoutine &routine) {
 	routine.mapY = _mapY;
 }
 
-void DreamBase::introMonks2(ReelRoutine &routine) {
+void DreamWebEngine::introMonks2(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 87) {
@@ -750,7 +750,7 @@ void DreamBase::introMonks2(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-void DreamBase::soldier1(ReelRoutine &routine) {
+void DreamWebEngine::soldier1(ReelRoutine &routine) {
 	if (routine.reelPointer() != 0) {
 		_vars._watchingTime = 10;
 		if (routine.reelPointer() == 30) {
@@ -773,7 +773,7 @@ void DreamBase::soldier1(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::receptionist(ReelRoutine &routine) {
+void DreamWebEngine::receptionist(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		if (_vars._cardPassFlag == 1) {
 			// Set card
@@ -790,10 +790,10 @@ void DreamBase::receptionist(ReelRoutine &routine) {
 					routine.incReelPointer();	// not end card
 				else
 					routine.setReelPointer(53);
-			} else if (engine->randomNumber() >= 240) {
+			} else if (randomNumber() >= 240) {
 				routine.setReelPointer(53);
 			}
-		} else if (engine->randomNumber() >= 30) {
+		} else if (randomNumber() >= 30) {
 			routine.setReelPointer(55);
 		} else {
 			// notdes2
@@ -810,10 +810,10 @@ void DreamBase::receptionist(ReelRoutine &routine) {
 		_vars._talkedToRecep = 1;
 }
 
-void DreamBase::bartender(ReelRoutine &routine) {
+void DreamWebEngine::bartender(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 86) {
-			if (engine->randomNumber() >= 18)
+			if (randomNumber() >= 18)
 				routine.setReelPointer(81);
 			else
 				routine.incReelPointer();	// notsmoket2
@@ -831,7 +831,7 @@ void DreamBase::bartender(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::heavy(ReelRoutine &routine) {
+void DreamWebEngine::heavy(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	if (routine.reelPointer() != 43) {
 		_vars._watchingTime = 10;
@@ -855,7 +855,7 @@ void DreamBase::heavy(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 }
 
-void DreamBase::helicopter(ReelRoutine &routine) {
+void DreamWebEngine::helicopter(ReelRoutine &routine) {
 	if (routine.reelPointer() == 203) {
 		// Won helicopter
 		_pointerMode = 0;
@@ -900,7 +900,7 @@ void DreamBase::helicopter(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::mugger(ReelRoutine &routine) {
+void DreamWebEngine::mugger(ReelRoutine &routine) {
 	if (routine.reelPointer() != 138) {
 		if (routine.reelPointer() == 176)
 			return; // endmugger2
@@ -934,18 +934,18 @@ void DreamBase::mugger(ReelRoutine &routine) {
 		_objectType = kExObjectType;
 		removeObFromInv();
 		makeMainScreen();
-		DreamBase::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
+		DreamWebEngine::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
 		_vars._beenMugged = 1;
 	}
 }
 
 // Exiting the elevator of Sartain's industries, Sartain (the businessman) and
 // two bodyguards are expecting Ryan.
-void DreamBase::businessMan(ReelRoutine &routine) {
+void DreamWebEngine::businessMan(ReelRoutine &routine) {
 	_pointerMode = 0;
 	_vars._watchingTime = 2;
 	if (routine.reelPointer() == 2)
-		DreamBase::setupTimedUse(49, 30, 1, 68, 174);	// First
+		DreamWebEngine::setupTimedUse(49, 30, 1, 68, 174);	// First
 
 	if (routine.reelPointer() == 95) {
 		// Businessman combat won - end
@@ -1002,7 +1002,7 @@ void DreamBase::businessMan(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::endGameSeq(ReelRoutine &routine) {
+void DreamWebEngine::endGameSeq(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 51 && _introCount != 140) {
@@ -1033,7 +1033,7 @@ void DreamBase::endGameSeq(ReelRoutine &routine) {
 	}
 }
 
-void DreamBase::poolGuard(ReelRoutine &routine) {
+void DreamWebEngine::poolGuard(ReelRoutine &routine) {
 	if (routine.reelPointer() == 214 || routine.reelPointer() == 258) {
 		// Combat over 2
 		showGameReel(&routine);
@@ -1107,4 +1107,4 @@ void DreamBase::poolGuard(ReelRoutine &routine) {
 	}
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

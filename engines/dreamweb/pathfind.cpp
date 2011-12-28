@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::turnPathOn(uint8 param) {
+void DreamWebEngine::turnPathOn(uint8 param) {
 	findOrMake(param, 0xff, _roomNum + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
@@ -32,7 +32,7 @@ void DreamBase::turnPathOn(uint8 param) {
 	roomsPaths[param].on = 0xff;
 }
 
-void DreamBase::turnPathOff(uint8 param) {
+void DreamWebEngine::turnPathOff(uint8 param) {
 	findOrMake(param, 0x00, _roomNum + 100);
 	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
@@ -40,28 +40,28 @@ void DreamBase::turnPathOff(uint8 param) {
 	roomsPaths[param].on = 0x00;
 }
 
-void DreamBase::turnAnyPathOn(uint8 param, uint8 room) {
+void DreamWebEngine::turnAnyPathOn(uint8 param, uint8 room) {
 	findOrMake(param, 0xff, room + 100);
 	_pathData[room].nodes[param].on = 0xff;
 }
 
-void DreamBase::turnAnyPathOff(uint8 param, uint8 room) {
+void DreamWebEngine::turnAnyPathOff(uint8 param, uint8 room) {
 	findOrMake(param, 0x00, room + 100);
 	_pathData[room].nodes[param].on = 0x00;
 }
 
-RoomPaths *DreamBase::getRoomsPaths() {
+RoomPaths *DreamWebEngine::getRoomsPaths() {
 	return &_pathData[_roomNum];
 }
 
-void DreamBase::faceRightWay() {
+void DreamWebEngine::faceRightWay() {
 	PathNode *paths = getRoomsPaths()->nodes;
 	uint8 dir = paths[_mansPath].dir;
 	_turnToFace = dir;
 	_leaveDirection = dir;
 }
 
-void DreamBase::setWalk() {
+void DreamWebEngine::setWalk() {
 	if (_linePointer != 254) {
 		// Already walking
 		_finalDest = _pointersPath;
@@ -88,7 +88,7 @@ void DreamBase::setWalk() {
 	}
 }
 
-void DreamBase::autoSetWalk() {
+void DreamWebEngine::autoSetWalk() {
 	if (_finalDest == _mansPath)
 		return;
 	const RoomPaths *roomsPaths = getRoomsPaths();
@@ -106,7 +106,7 @@ void DreamBase::autoSetWalk() {
 	_linePointer = 0;
 }
 
-void DreamBase::checkDest(const RoomPaths *roomsPaths) {
+void DreamWebEngine::checkDest(const RoomPaths *roomsPaths) {
 	const PathSegment *segments = roomsPaths->segments;
 	const uint8 tmp = _mansPath << 4;
 	uint8 destination = _destination;
@@ -125,19 +125,19 @@ void DreamBase::checkDest(const RoomPaths *roomsPaths) {
 	_destination = destination;
 }
 
-void DreamBase::findXYFromPath() {
+void DreamWebEngine::findXYFromPath() {
 	const PathNode *roomsPaths = getRoomsPaths()->nodes;
 	_ryanX = roomsPaths[_mansPath].x - 12;
 	_ryanY = roomsPaths[_mansPath].y - 12;
 }
 
-bool DreamBase::checkIfPathIsOn(uint8 index) {
+bool DreamWebEngine::checkIfPathIsOn(uint8 index) {
 	RoomPaths *roomsPaths = getRoomsPaths();
 	uint8 pathOn = roomsPaths->nodes[index].on;
 	return pathOn == 0xff;
 }
 
-void DreamBase::bresenhams() {
+void DreamWebEngine::bresenhams() {
 	workoutFrames();
 	Common::Point *lineData = &_lineData[0];
 	int16 startX = (int16)_lineStartX;
@@ -255,7 +255,7 @@ void DreamBase::bresenhams() {
 	}
 }
 
-void DreamBase::workoutFrames() {
+void DreamWebEngine::workoutFrames() {
 	byte tmp;
 	int diffx, diffy;
 
@@ -306,7 +306,7 @@ void DreamBase::workoutFrames() {
 	_turnDirection = 0;
 }
 
-byte DreamBase::findFirstPath(byte x, byte y) {
+byte DreamWebEngine::findFirstPath(byte x, byte y) {
 	PathNode *paths = _pathData[_roomNum].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
@@ -325,7 +325,7 @@ byte DreamBase::findFirstPath(byte x, byte y) {
 	return 0;
 }
 
-byte DreamBase::findPathOfPoint(byte x, byte y) {
+byte DreamWebEngine::findPathOfPoint(byte x, byte y) {
 	PathNode *paths = _pathData[_roomNum].nodes;
 
 	for (uint8 index = 0; index < 12; index++) {
@@ -347,4 +347,4 @@ byte DreamBase::findPathOfPoint(byte x, byte y) {
 	return 0xff;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

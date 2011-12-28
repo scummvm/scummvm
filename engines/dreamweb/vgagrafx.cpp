@@ -24,12 +24,12 @@
 #include "engines/util.h"
 #include "graphics/surface.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 const uint16 kZoomx = 8;
 const uint16 kZoomy = 132;
 
-void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamWebEngine::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	const uint8 *src = workspace() + x + y * kScreenwidth;
@@ -45,7 +45,7 @@ void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	}
 }
 
-void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamWebEngine::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	uint8 *dst = workspace() + x + y * kScreenwidth;
@@ -61,25 +61,21 @@ void DreamBase::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h)
 	}
 }
 
-void DreamBase::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
+void DreamWebEngine::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
-	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
+	blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
-void DreamBase::workToScreen() {
-	engine->blit(workspace(), 320, 0, 0, 320, 200);
+void DreamWebEngine::workToScreen() {
+	blit(workspace(), 320, 0, 0, 320, 200);
 }
 
-void DreamBase::printUnderMon() {
-	engine->printUnderMonitor();
+void DreamWebEngine::printUnderMon() {
+	printUnderMonitor();
 }
 
-void DreamBase::cls() {
-	engine->cls();
-}
-
-void DreamBase::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamWebEngine::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	dst += pitch * y + x;
 
 	for (uint16 j = 0; j < height; ++j) {
@@ -89,7 +85,7 @@ void DreamBase::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wi
 	}
 }
 
-void DreamBase::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamWebEngine::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 
@@ -105,7 +101,7 @@ void DreamBase::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wi
 	}
 }
 
-void DreamBase::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamWebEngine::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 	dst -= width;
@@ -122,7 +118,7 @@ void DreamBase::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wi
 	}
 }
 
-void DreamBase::doShake() {
+void DreamWebEngine::doShake() {
 	uint8 &counter = _vars._shakeCounter;
 	if (counter == 48)
 		return;
@@ -149,19 +145,19 @@ void DreamBase::doShake() {
 	};
 	assert(counter < ARRAYSIZE(shakeTable));
 	int offset = shakeTable[counter];
-	engine->setShakePos(offset >= 0 ? offset : -offset);
+	setShakePos(offset >= 0 ? offset : -offset);
 }
 
-void DreamBase::vSync() {
-	engine->waitForVSync();
+void DreamWebEngine::vSync() {
+	waitForVSync();
 }
 
-void DreamBase::setMode() {
-	engine->waitForVSync();
+void DreamWebEngine::setMode() {
+	waitForVSync();
 	initGraphics(320, 200, false);
 }
 
-void DreamBase::showPCX(const Common::String &name) {
+void DreamWebEngine::showPCX(const Common::String &name) {
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
@@ -229,7 +225,7 @@ void DreamBase::showPCX(const Common::String &name) {
 	pcxFile.close();
 }
 
-void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
+void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
@@ -271,19 +267,19 @@ void DreamBase::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wid
 	}
 }
 
-void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 	uint8 width, height;
 	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
 }
 
-void DreamBase::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height) {
+void DreamWebEngine::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height) {
 	if (effectsFlag) {
 		if (effectsFlag & 128) { //centred
 			x -= width / 2;
 			y -= height / 2;
 		}
 		if (effectsFlag & 64) { // diffDest
-			error("Unsupported DreamBase::showFrame effectsFlag %d", effectsFlag);
+			error("Unsupported DreamWebEngine::showFrame effectsFlag %d", effectsFlag);
 			/*
 			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
@@ -309,7 +305,7 @@ void DreamBase::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 e
 	frameOutV(workspace(), pSrc, 320, width, height, x, y);
 }
 
-void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	const Frame *frame = &frameData._frames[frameNumber];
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
@@ -331,16 +327,16 @@ void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uin
 	showFrameInternal(pSrc, x, y, effectsFlag, *width, *height);
 }
 
-void DreamBase::clearWork() {
+void DreamWebEngine::clearWork() {
 	memset(workspace(), 0, 320*200);
 }
 
-void DreamBase::dumpZoom() {
+void DreamWebEngine::dumpZoom() {
 	if (_vars._zoomOn == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
-void DreamBase::crosshair() {
+void DreamWebEngine::crosshair() {
 	uint8 frame;
 	if ((_commandType != 3) && (_commandType < 10)) {
 		frame = 9;
@@ -350,21 +346,21 @@ void DreamBase::crosshair() {
 	showFrame(_icons1, kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
-void DreamBase::getUnderZoom() {
+void DreamWebEngine::getUnderZoom() {
 	multiGet(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
-void DreamBase::putUnderZoom() {
+void DreamWebEngine::putUnderZoom() {
 	multiPut(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
-void DreamBase::zoomIcon() {
+void DreamWebEngine::zoomIcon() {
 	if (_vars._zoomOn == 0)
 		return;
 	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
 }
 
-void DreamBase::zoom() {
+void DreamWebEngine::zoom() {
 	if (_vars._watchingTime != 0)
 		return;
 	if (_vars._zoomOn != 1)
@@ -392,19 +388,19 @@ void DreamBase::zoom() {
 	_didZoom = 1;
 }
 
-void DreamBase::panelToMap() {
+void DreamWebEngine::panelToMap() {
 	multiGet(_mapStore, _mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
-void DreamBase::mapToPanel() {
+void DreamWebEngine::mapToPanel() {
 	multiPut(_mapStore, _mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
-void DreamBase::dumpMap() {
+void DreamWebEngine::dumpMap() {
 	multiDump(_mapXStart + _mapAdX, _mapYStart + _mapAdY, _mapXSize, _mapYSize);
 }
 
-bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
+bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
 	SetObject *setObject = getSetAd(pos->index);
@@ -413,7 +409,7 @@ bool DreamBase::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	return *ptr != 0;
 }
 
-void DreamBase::loadPalFromIFF() {
+void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
 	uint8* buf = new uint8[2000];
 	palFile.open("DREAMWEB.PAL");
@@ -437,25 +433,25 @@ void DreamBase::loadPalFromIFF() {
 	delete[] buf;
 }
 
-void DreamBase::createPanel() {
+void DreamWebEngine::createPanel() {
 	showFrame(_icons2, 0, 8, 0, 2);
 	showFrame(_icons2, 160, 8, 0, 2);
 	showFrame(_icons2, 0, 104, 0, 2);
 	showFrame(_icons2, 160, 104, 0, 2);
 }
 
-void DreamBase::createPanel2() {
+void DreamWebEngine::createPanel2() {
 	createPanel();
 	showFrame(_icons2, 0, 0, 5, 2);
 	showFrame(_icons2, 160, 0, 5, 2);
 }
 
-void DreamBase::showPanel() {
+void DreamWebEngine::showPanel() {
 	showFrame(_icons1, 72, 0, 19, 0);
 	showFrame(_icons1, 192, 0, 19, 0);
 }
 
-void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
+void DreamWebEngine::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	const Frame &freeFrame = _freeFrames._frames[3*from + offset];
 	Frame &exFrame = _exFrames._frames[3*to + offset];
 
@@ -473,4 +469,4 @@ void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	_vars._exFramePos += byteCount;
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

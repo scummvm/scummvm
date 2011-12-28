@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
+void DreamWebEngine::printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
 	printChar(charSet, &newX, y, c, nextChar, &width, &height);
@@ -32,7 +32,7 @@ void DreamBase::printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint
 	*x = newX;
 }
 
-uint8 DreamBase::getNextWord(const GraphicsFile &charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
+uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
 	while (true) {
@@ -47,7 +47,7 @@ uint8 DreamBase::getNextWord(const GraphicsFile &charSet, const uint8 *string, u
 			*totalWidth += 6;
 			return 0;
 		}
-		firstChar = engine->modifyChar(firstChar);
+		firstChar = modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = *string;
 			uint8 width = charSet._frames[firstChar - 32 + _charShift].width;
@@ -57,7 +57,7 @@ uint8 DreamBase::getNextWord(const GraphicsFile &charSet, const uint8 *string, u
 	}
 }
 
-void DreamBase::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 
@@ -75,11 +75,11 @@ void DreamBase::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint
 	(*x) += *width;
 }
 
-void DreamBase::printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	printChar(charSet, &x, y, c, nextChar, width, height);
 }
 
-uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamWebEngine::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	_pointerFrame = 1;
 	_pointerMode = 3;
 	do {
@@ -89,13 +89,13 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 			uint8 c0 = string[0];
 			uint8 c1 = string[1];
 			uint8 c2 = string[2];
-			c0 = engine->modifyChar(c0);
+			c0 = modifyChar(c0);
 			printBoth(_charset1, &offset, y, c0, c1);
 			if ((c1 == 0) || (c1 == ':')) {
 				return 0;
 			}
 			if (charCount != 1) {
-				c1 = engine->modifyChar(c1);
+				c1 = modifyChar(c1);
 				_charShift = 91;
 				uint16 offset2 = offset;
 				printBoth(_charset1, &offset2, y, c1, c2);
@@ -119,11 +119,11 @@ uint8 DreamBase::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWid
 	} while (true);
 }
 
-uint8 DreamBase::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamWebEngine::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	return printDirect(&string, x, &y, maxWidth, centered);
 }
 
-uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	_lastXPos = x;
 	const GraphicsFile &charSet = *_currentCharset;
 	while (true) {
@@ -137,7 +137,7 @@ uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 ma
 			if ((c == 0) || (c == ':')) {
 				return c;
 			}
-			c = engine->modifyChar(c);
+			c = modifyChar(c);
 			uint8 width, height;
 			printChar(charSet, &i, *y, c, nextChar, &width, &height);
 			_lastXPos = i;
@@ -147,7 +147,7 @@ uint8 DreamBase::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 ma
 	}
 }
 
-uint8 DreamBase::getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
+uint8 DreamWebEngine::getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
 	while (true) {
@@ -186,7 +186,7 @@ uint8 DreamBase::getNumber(const GraphicsFile &charSet, const uint8 *string, uin
 	}
 }
 
-uint8 DreamBase::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
+uint8 DreamWebEngine::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	if ((firstChar == 'a') || (firstChar == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
 			return width-1;
@@ -194,7 +194,7 @@ uint8 DreamBase::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	return width;
 }
 
-uint16 DreamBase::waitFrames() {
+uint16 DreamWebEngine::waitFrames() {
 	readMouse();
 	showPointer();
 	vSync();
@@ -203,7 +203,7 @@ uint16 DreamBase::waitFrames() {
 	return _mouseButton;
 }
 
-const char *DreamBase::monPrint(const char *string) {
+const char *DreamWebEngine::monPrint(const char *string) {
 	_kerning = 1;
 	uint16 x = _monAdX;
 	const char *iterator = string;
@@ -225,7 +225,7 @@ const char *DreamBase::monPrint(const char *string) {
 				done = true;
 				break;
 			}
-			c = engine->modifyChar(c);
+			c = modifyChar(c);
 			printChar(_tempCharset, &x, _monAdY, c, 0, NULL, NULL);
 			_cursLocX = x;
 			_cursLocY = _monAdY;
@@ -245,7 +245,7 @@ const char *DreamBase::monPrint(const char *string) {
 	return iterator;
 }
 
-void DreamBase::rollEndCreditsGameWon() {
+void DreamWebEngine::rollEndCreditsGameWon() {
 	playChannel0(16, 255);
 	_volume = 7;
 	_volumeTo = 0;
@@ -269,7 +269,7 @@ void DreamBase::rollEndCreditsGameWon() {
 			uint16 y = 10 - j;
 			const uint8 *tmp_str = string;
 			for (int k = 0; k < 18; ++k) {
-				DreamBase::printDirect(&tmp_str, 75, &y, 160 + 1, true);
+				DreamWebEngine::printDirect(&tmp_str, 75, &y, 160 + 1, true);
 				y += linespacing;
 			}
 
@@ -289,7 +289,7 @@ void DreamBase::rollEndCreditsGameWon() {
 	fadeScreenUpHalf();
 }
 
-void DreamBase::rollEndCreditsGameLost() {
+void DreamWebEngine::rollEndCreditsGameLost() {
 	multiGet(_mapStore, 25, 20, 160, 160);
 
 	const uint8 *string = getTextInFile1(49);
@@ -308,7 +308,7 @@ void DreamBase::rollEndCreditsGameLost() {
 			uint16 y = 10 - j;
 			const uint8 *tmp_str = string;
 			for (int k = 0; k < 18; ++k) {
-				DreamBase::printDirect(&tmp_str, 25, &y, 160 + 1, true);
+				DreamWebEngine::printDirect(&tmp_str, 25, &y, 160 + 1, true);
 				y += linespacing;
 			}
 
@@ -332,4 +332,4 @@ void DreamBase::rollEndCreditsGameLost() {
 	hangOne(120);
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

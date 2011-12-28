@@ -22,14 +22,14 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::showRyanPage() {
+void DreamWebEngine::showRyanPage() {
 	showFrame(_icons1, kInventx + 167, kInventy - 12, 12, 0);
 	showFrame(_icons1, kInventx + 167 + 18 * _vars._ryanPage, kInventy - 12, 13 + _vars._ryanPage, 0);
 }
 
-void DreamBase::findAllRyan() {
+void DreamWebEngine::findAllRyan() {
 	memset(_ryanInvList, 0xff, 60);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		const DynObject *extra = getExAd(i);
@@ -44,7 +44,7 @@ void DreamBase::findAllRyan() {
 	}
 }
 
-void DreamBase::fillRyan() {
+void DreamWebEngine::fillRyan() {
 	ObjectRef *inv = &_ryanInvList[_vars._ryanPage * 10];
 	findAllRyan();
 	for (size_t i = 0; i < 2; ++i) {
@@ -56,11 +56,11 @@ void DreamBase::fillRyan() {
 	showRyanPage();
 }
 
-bool DreamBase::isItWorn(const DynObject *object) {
+bool DreamWebEngine::isItWorn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
 
-void DreamBase::wornError() {
+void DreamWebEngine::wornError() {
 	_commandType = 255;
 	delPointer();
 	printMessage(76, 21, 57, 240, false);
@@ -73,12 +73,12 @@ void DreamBase::wornError() {
 	workToScreenM();
 }
 
-void DreamBase::makeWorn(DynObject *object) {
+void DreamWebEngine::makeWorn(DynObject *object) {
 	object->id[0] = 'W'-'A';
 	object->id[1] = 'E'-'A';
 }
 
-void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
+void DreamWebEngine::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	showFrame(_icons1, x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
@@ -94,7 +94,7 @@ void DreamBase::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		showFrame(_icons1, x - 3, y - 2, 7, 0);
 }
 
-void DreamBase::obPicture() {
+void DreamWebEngine::obPicture() {
 	if (_objectType == kSetObjectType1)
 		return;
 	uint8 frame = 3 * _command + 1;
@@ -104,7 +104,7 @@ void DreamBase::obPicture() {
 		showFrame(_freeFrames, 160, 68, frame, 0x80);
 }
 
-void DreamBase::obIcons() {
+void DreamWebEngine::obIcons() {
 	uint8 value1, value2;
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {
@@ -115,7 +115,7 @@ void DreamBase::obIcons() {
 	showFrame(_icons2, 260, 1, 1, 0);
 }
 
-void DreamBase::examineOb(bool examineAgain) {
+void DreamWebEngine::examineOb(bool examineAgain) {
 	_pointerMode = 0;
 	_timeCount = 0;
 
@@ -155,13 +155,13 @@ void DreamBase::examineOb(bool examineAgain) {
 
 		switch (_invOpen) {
 		case 0: {
-			RectWithCallback<DreamBase> examList[] = {
-				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ 260,300,0,44,&DreamBase::useObject },
-				{ 210,254,0,44,&DreamBase::selectOpenOb },
-				{ 144,176,64,96,&DreamBase::setPickup },
-				{ 0,50,50,200,&DreamBase::examineInventory },
-				{ 0,320,0,200,&DreamBase::blank },
+			RectWithCallback<DreamWebEngine> examList[] = {
+				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
+				{ 260,300,0,44,&DreamWebEngine::useObject },
+				{ 210,254,0,44,&DreamWebEngine::selectOpenOb },
+				{ 144,176,64,96,&DreamWebEngine::setPickup },
+				{ 0,50,50,200,&DreamWebEngine::examineInventory },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(examList);
@@ -169,24 +169,24 @@ void DreamBase::examineOb(bool examineAgain) {
 		}
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
-			RectWithCallback<DreamBase> invList1[] = {
-				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ 255,294,0,24,&DreamBase::dropObject },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamBase::incRyanPage },
-				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamBase::useOpened },
-				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamBase::inToInv },
-				{ 0,320,0,200,&DreamBase::blank },
+			RectWithCallback<DreamWebEngine> invList1[] = {
+				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
+				{ 255,294,0,24,&DreamWebEngine::dropObject },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
+				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamWebEngine::useOpened },
+				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::inToInv },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(invList1);
 			break;
 		}
 		default: {
-			RectWithCallback<DreamBase> withList1[] = {
-				{ 273,320,157,198,&DreamBase::getBackFromOb },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamBase::incRyanPage },
-				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamBase::selectOb },
-				{ 0,320,0,200,&DreamBase::blank },
+			RectWithCallback<DreamWebEngine> withList1[] = {
+				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
+				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::selectOb },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(withList1);
@@ -212,7 +212,7 @@ void DreamBase::examineOb(bool examineAgain) {
 	_openedOb = 255;
 }
 
-void DreamBase::inventory() {
+void DreamWebEngine::inventory() {
 	if (_vars._manDead == 1 || _vars._watchingTime != 0) {
 		blank();
 		return;
@@ -250,7 +250,7 @@ void DreamBase::inventory() {
 	examineOb(false);
 }
 
-void DreamBase::transferText(uint8 from, uint8 to) {
+void DreamWebEngine::transferText(uint8 from, uint8 to) {
 	_exText.setOffset(to, _vars._exTextPos);
 	const char *src = _freeDesc.getString(from);
 	char *dst = _exText._text + _vars._exTextPos;
@@ -260,14 +260,14 @@ void DreamBase::transferText(uint8 from, uint8 to) {
 	_vars._exTextPos += len + 1;
 }
 
-void DreamBase::getBackFromOb() {
+void DreamWebEngine::getBackFromOb() {
 	if (_pickUp != 1)
 		getBack1();
 	else
 		blank();
 }
 
-byte DreamBase::getOpenedSlotCount() {
+byte DreamWebEngine::getOpenedSlotCount() {
 	byte obj = _openedOb;
 	switch (_openedType) {
 	case 4:
@@ -279,7 +279,7 @@ byte DreamBase::getOpenedSlotCount() {
 	}
 }
 
-byte DreamBase::getOpenedSlotSize() {
+byte DreamWebEngine::getOpenedSlotSize() {
 	byte obj = _openedOb;
 	switch (_openedType) {
 	case 4:
@@ -291,7 +291,7 @@ byte DreamBase::getOpenedSlotSize() {
 	}
 }
 
-void DreamBase::openOb() {
+void DreamWebEngine::openOb() {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 
 	copyName(_openedType, _openedOb, commandLine);
@@ -304,7 +304,7 @@ void DreamBase::openOb() {
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
 }
 
-void DreamBase::identifyOb() {
+void DreamWebEngine::identifyOb() {
 	if (_vars._watchingTime != 0) {
 		blank();
 		return;
@@ -341,7 +341,7 @@ void DreamBase::identifyOb() {
 		blank();
 }
 
-ObjectRef DreamBase::findInvPos() {
+ObjectRef DreamWebEngine::findInvPos() {
 	uint16 x = _mouseX - kInventx;
 	uint16 y = _mouseY - kInventy;
 	uint8 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
@@ -350,7 +350,7 @@ ObjectRef DreamBase::findInvPos() {
 	return _ryanInvList[invPos];
 }
 
-void DreamBase::selectOb() {
+void DreamWebEngine::selectOb() {
 	ObjectRef objectId = findInvPos();
 	if (objectId._index == 255) {
 		blank();
@@ -375,7 +375,7 @@ void DreamBase::selectOb() {
 	useRoutine();
 }
 
-void DreamBase::setPickup() {
+void DreamWebEngine::setPickup() {
 	if (_objectType != kSetObjectType1 && _objectType != kSetObjectType3) {
 		// Object types 1 and 3 are excluded, so the resulting object is a DynObject
 		uint8 dummy;
@@ -422,7 +422,7 @@ void DreamBase::setPickup() {
 	workToScreenM();
 }
 
-void DreamBase::deleteExFrame(uint8 frameNum) {
+void DreamWebEngine::deleteExFrame(uint8 frameNum) {
 	Frame *frame = &_exFrames._frames[frameNum];
 
 	uint16 frameSize = frame->width * frame->height;
@@ -445,7 +445,7 @@ void DreamBase::deleteExFrame(uint8 frameNum) {
 	}
 }
 
-void DreamBase::deleteExText(uint8 textNum) {
+void DreamWebEngine::deleteExText(uint8 textNum) {
 	uint16 offset = _exText.getOffset(textNum);
 
 	uint16 startOff = offset;
@@ -467,7 +467,7 @@ void DreamBase::deleteExText(uint8 textNum) {
 	}
 }
 
-void DreamBase::deleteExObject(uint8 index) {
+void DreamWebEngine::deleteExObject(uint8 index) {
 	DynObject *obj = getExAd(index);
 
 	memset(obj, 0xFF, sizeof(DynObject));
@@ -485,7 +485,7 @@ void DreamBase::deleteExObject(uint8 index) {
 	}
 }
 
-void DreamBase::removeObFromInv() {
+void DreamWebEngine::removeObFromInv() {
 	if (_command == 100)
 		return; // object doesn't exist
 
@@ -494,7 +494,7 @@ void DreamBase::removeObFromInv() {
 	deleteExObject(_command);
 }
 
-void DreamBase::inToInv() {
+void DreamWebEngine::inToInv() {
 	if (!_pickUp) {
 		outOfInv();
 		return;
@@ -534,7 +534,7 @@ void DreamBase::inToInv() {
 	delPointer();
 }
 
-void DreamBase::outOfInv() {
+void DreamWebEngine::outOfInv() {
 	ObjectRef subject = findInvPos();
 
 	if (subject._index == 255) {
@@ -574,7 +574,7 @@ void DreamBase::outOfInv() {
 	delPointer();
 }
 
-void DreamBase::purgeALocation(uint8 index) {
+void DreamWebEngine::purgeALocation(uint8 index) {
 	// index == al
 	for (uint8 i = 0; i < kNumexobjects; ++i) {
 		DynObject *t = getExAd(i);
@@ -584,7 +584,7 @@ void DreamBase::purgeALocation(uint8 index) {
 	}
 }
 
-const uint8 *DreamBase::getObTextStart() {
+const uint8 *DreamWebEngine::getObTextStart() {
 	const uint16 kSettext = 130*2;
 	const uint16 kFreetext = 82*2;
 
@@ -656,7 +656,7 @@ const uint8 *DreamBase::getObTextStart() {
 	}
 }
 
-void DreamBase::dropObject() {
+void DreamWebEngine::dropObject() {
 	if (_commandType != 223) {
 		_commandType = 223;
 		if (!_pickUp) {
@@ -709,7 +709,7 @@ void DreamBase::dropObject() {
 	object->currentLocation = _realLocation;
 }
 
-bool DreamBase::checkObjectSize() {
+bool DreamWebEngine::checkObjectSize() {
 	byte containerSize = getOpenedSlotSize();
 	DynObject *object = getEitherAdCPP();
 	// If there is no size defined for the object in the editor, set its size
@@ -738,7 +738,7 @@ bool DreamBase::checkObjectSize() {
 	return false;
 }
 
-void DreamBase::selectOpenOb() {
+void DreamWebEngine::selectOpenOb() {
 	uint8 slotSize, slotCount;
 	getAnyAd(&slotSize, &slotCount);
 	if (slotCount == 255) {
@@ -771,7 +771,7 @@ void DreamBase::selectOpenOb() {
 	delPointer();
 }
 
-void DreamBase::reExFromInv() {
+void DreamWebEngine::reExFromInv() {
 	ObjectRef objectId = findInvPos();
 	_commandType = objectId._type;
 	_command     = objectId._index;
@@ -779,7 +779,7 @@ void DreamBase::reExFromInv() {
 	_pointerMode = 0;
 }
 
-void DreamBase::swapWithInv() {
+void DreamWebEngine::swapWithInv() {
 	ObjectRef subject;
 	subject._type = _objectType;
 	subject._index = _itemFrame;
@@ -819,7 +819,7 @@ void DreamBase::swapWithInv() {
 	delPointer();
 }
 
-void DreamBase::useOpened() {
+void DreamWebEngine::useOpened() {
 	if (_openedOb == 255)
 		return;	// cannot use opened object
 
@@ -883,7 +883,7 @@ void DreamBase::useOpened() {
 	delPointer();
 }
 
-void DreamBase::outOfOpen() {
+void DreamWebEngine::outOfOpen() {
 	if (_openedOb == 255)
 		return;	// cannot use opened object
 
@@ -935,7 +935,7 @@ void DreamBase::outOfOpen() {
 	delPointer();
 }
 
-void DreamBase::swapWithOpen() {
+void DreamWebEngine::swapWithOpen() {
 	ObjectRef subject;
 	subject._type = _objectType;
 	subject._index = _itemFrame;
@@ -1002,14 +1002,14 @@ void DreamBase::swapWithOpen() {
 	delPointer();
 }
 
-ObjectRef DreamBase::findOpenPos() {
+ObjectRef DreamWebEngine::findOpenPos() {
 	uint8 pos = (_mouseX - kInventx) / kItempicsize;
 	_lastInvPos = pos;
 
 	return _openInvList[pos];
 }
 
-byte DreamBase::transferToEx(uint8 from) {
+byte DreamWebEngine::transferToEx(uint8 from) {
 	emergencyPurge();
 
 	byte pos = getExPos();
@@ -1037,7 +1037,7 @@ byte DreamBase::transferToEx(uint8 from) {
 	return pos;
 }
 
-void DreamBase::fillOpen() {
+void DreamWebEngine::fillOpen() {
 	delTextLine();
 	uint8 size = getOpenedSlotCount();
 	if (size > 4)
@@ -1051,7 +1051,7 @@ void DreamBase::fillOpen() {
 	underTextLine();
 }
 
-void DreamBase::findAllOpen() {
+void DreamWebEngine::findAllOpen() {
 	memset(_openInvList, 0xFF, 32);
 
 	for (uint8 i = 0; i < kNumexobjects; ++i) {
@@ -1080,7 +1080,7 @@ void DreamBase::findAllOpen() {
 	}
 }
 
-void DreamBase::pickupConts(uint8 from, uint8 containerEx) {
+void DreamWebEngine::pickupConts(uint8 from, uint8 containerEx) {
 	const DynObject *obj = getFreeAd(from);
 
 	if (obj->slotCount == 255)
@@ -1112,4 +1112,4 @@ void DreamBase::pickupConts(uint8 from, uint8 containerEx) {
 	}
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

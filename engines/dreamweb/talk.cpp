@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::talk() {
+void DreamWebEngine::talk() {
 	_talkPos = 0;
 	_inMapArea = 0;
 	_character = _command;
@@ -40,10 +40,10 @@ void DreamBase::talk() {
 	showPointer();
 	workToScreen();
 
-	RectWithCallback<DreamBase> talkList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 240,290,2,44,&DreamBase::moreTalk },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> talkList[] = {
+		{ 273,320,157,198,&DreamWebEngine::getBack1 },
+		{ 240,290,2,44,&DreamWebEngine::moreTalk },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -73,18 +73,18 @@ void DreamBase::talk() {
 	}
 }
 
-void DreamBase::convIcons() {
+void DreamWebEngine::convIcons() {
 	uint8 index = _character & 127;
 	uint16 frame = getPersFrame(index);
 	const GraphicsFile *base = findSource(frame);
 	showFrame(*base, 234, 2, frame, 0);
 }
 
-uint16 DreamBase::getPersFrame(uint8 index) {
+uint16 DreamWebEngine::getPersFrame(uint8 index) {
 	return READ_LE_UINT16(&_personFramesLE[index]);
 }
 
-void DreamBase::startTalk() {
+void DreamWebEngine::startTalk() {
 	_talkMode = 0;
 
 	const uint8 *str = getPersonText(_character & 0x7F, 0);
@@ -107,11 +107,11 @@ void DreamBase::startTalk() {
 	}
 }
 
-const uint8 *DreamBase::getPersonText(uint8 index, uint8 talkPos) {
+const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
 	return (const uint8 *)_personText.getString(index*64 + talkPos);
 }
 
-void DreamBase::moreTalk() {
+void DreamWebEngine::moreTalk() {
 	if (_talkMode != 0) {
 		redes();
 		return;
@@ -136,7 +136,7 @@ void DreamBase::moreTalk() {
 	doSomeTalk();
 }
 
-void DreamBase::doSomeTalk() {
+void DreamWebEngine::doSomeTalk() {
 	while (true) {
 		const uint8 *str = getPersonText(_character & 0x7F, _talkPos);
 
@@ -194,12 +194,12 @@ void DreamBase::doSomeTalk() {
 	}
 }
 
-bool DreamBase::hangOnPQ() {
+bool DreamWebEngine::hangOnPQ() {
 	_getBack = 0;
 
-	RectWithCallback<DreamBase> quitList[] = {
-		{ 273,320,157,198,&DreamBase::getBack1 },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> quitList[] = {
+		{ 273,320,157,198,&DreamWebEngine::getBack1 },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -235,7 +235,7 @@ bool DreamBase::hangOnPQ() {
 	return false;
 }
 
-void DreamBase::redes() {
+void DreamWebEngine::redes() {
 	if (_channel1Playing != 255 || _talkMode != 2) {
 		blank();
 		return;
@@ -262,4 +262,4 @@ void DreamBase::redes() {
 	delPointer();
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::doBlocks() {
+void DreamWebEngine::doBlocks() {
 	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
 	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
@@ -61,7 +61,7 @@ void DreamBase::doBlocks() {
 	}
 }
 
-uint8 DreamBase::getXAd(const uint8 *setData, uint8 *result) {
+uint8 DreamWebEngine::getXAd(const uint8 *setData, uint8 *result) {
 	uint8 v0 = setData[0];
 	uint8 v1 = setData[1];
 	uint8 v2 = setData[2];
@@ -76,7 +76,7 @@ uint8 DreamBase::getXAd(const uint8 *setData, uint8 *result) {
 	return 1;
 }
 
-uint8 DreamBase::getYAd(const uint8 *setData, uint8 *result) {
+uint8 DreamWebEngine::getYAd(const uint8 *setData, uint8 *result) {
 	uint8 v0 = setData[3];
 	uint8 v1 = setData[4];
 	if (v0 < _mapY)
@@ -88,7 +88,7 @@ uint8 DreamBase::getYAd(const uint8 *setData, uint8 *result) {
 	return 1;
 }
 
-uint8 DreamBase::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
+uint8 DreamWebEngine::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
 	uint8 xad, yad;
 	if (getXAd(setData, &xad) == 0)
 		return 0;
@@ -99,7 +99,7 @@ uint8 DreamBase::getMapAd(const uint8 *setData, uint16 *x, uint16 *y) {
 	return 1;
 }
 
-void DreamBase::calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
+void DreamWebEngine::calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos) {
 	*width = frame.width;
 	*height = frame.height;
 
@@ -109,7 +109,7 @@ void DreamBase::calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uin
 	objPos->yMax = objPos->yMin + frame.height;
 }
 
-void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
+void DreamWebEngine::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 	if (_vars._newObs == 0)
 		return;
 	uint8 priority = objData->priority;
@@ -126,7 +126,7 @@ void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
 	sprite->animFrame = 0;
 }
 
-void DreamBase::showAllObs() {
+void DreamWebEngine::showAllObs() {
 	const unsigned int count = 128;
 
 	_setList.clear();
@@ -172,7 +172,7 @@ static bool addLength(const MapFlag *mapFlags) {
 	return false;
 }
 
-void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
+void DreamWebEngine::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
 	uint8 yStart = 0;
 	while (! addAlong(_mapFlags + 11 * yStart))
 		++yStart;
@@ -199,7 +199,7 @@ void DreamBase::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize
 	_mapYSize = *mapYsize << 4;
 }
 
-void DreamBase::calcMapAd() {
+void DreamWebEngine::calcMapAd() {
 	uint8 mapXstart, mapYstart;
 	uint8 mapXsize, mapYsize;
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
@@ -207,7 +207,7 @@ void DreamBase::calcMapAd() {
 	_mapAdY = _mapOffsetY - 8 * (mapYsize + 2 * mapYstart - 10);
 }
 
-void DreamBase::showAllFree() {
+void DreamWebEngine::showAllFree() {
 	const unsigned int count = 80;
 
 	_freeList.clear();
@@ -234,7 +234,7 @@ void DreamBase::showAllFree() {
 	}
 }
 
-void DreamBase::drawFlags() {
+void DreamWebEngine::drawFlags() {
 	MapFlag *mapFlag = _mapFlags;
 	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
@@ -250,7 +250,7 @@ void DreamBase::drawFlags() {
 	}
 }
 
-void DreamBase::showAllEx() {
+void DreamWebEngine::showAllEx() {
 	const unsigned int count = 100;
 
 	_exList.clear();
@@ -279,4 +279,4 @@ void DreamBase::showAllEx() {
 	}
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

@@ -26,7 +26,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 struct GraphicsFile;
 struct SetObject;
@@ -57,9 +57,7 @@ struct Sprite {
 	uint8  hidden;
 };
 
-class DreamGenContext;
-
-template <class T = DreamGenContext>
+template <class T = DreamWebEngine>
 struct RectWithCallback {
 	uint16 _xMin, _xMax;
 	uint16 _yMin, _yMax;

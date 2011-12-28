@@ -22,9 +22,9 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamBase::newPlace() {
+void DreamWebEngine::newPlace() {
 	if (_vars._needToTravel == 1) {
 		_vars._needToTravel = 0;
 		selectLocation();
@@ -34,7 +34,7 @@ void DreamBase::newPlace() {
 	}
 }
 
-void DreamBase::selectLocation() {
+void DreamWebEngine::selectLocation() {
 	_inMapArea = 0;
 	clearBeforeLoad();
 	_getBack = 0;
@@ -72,13 +72,13 @@ void DreamBase::selectLocation() {
 		if (_getBack == 1)
 			break;
 
-		RectWithCallback<DreamBase> destList[] = {
-			{ 238,258,4,44,&DreamBase::nextDest },
-			{ 104,124,4,44,&DreamBase::lastDest },
-			{ 280,308,4,44,&DreamBase::lookAtPlace },
-			{ 104,216,138,192,&DreamBase::destSelect },
-			{ 273,320,157,198,&DreamBase::getBack1 },
-			{ 0,320,0,200,&DreamBase::blank },
+		RectWithCallback<DreamWebEngine> destList[] = {
+			{ 238,258,4,44,&DreamWebEngine::nextDest },
+			{ 104,124,4,44,&DreamWebEngine::lastDest },
+			{ 280,308,4,44,&DreamWebEngine::lookAtPlace },
+			{ 104,216,138,192,&DreamWebEngine::destSelect },
+			{ 273,320,157,198,&DreamWebEngine::getBack1 },
+			{ 0,320,0,200,&DreamWebEngine::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(destList);
@@ -96,13 +96,13 @@ void DreamBase::selectLocation() {
 	_travelText.clear();
 }
 
-void DreamBase::showCity() {
+void DreamWebEngine::showCity() {
 	clearWork();
 	showFrame(_tempGraphics, 57, 32, 0, 0);
 	showFrame(_tempGraphics, 120+57, 32, 1, 0);
 }
 
-void DreamBase::lookAtPlace() {
+void DreamWebEngine::lookAtPlace() {
 	if (_commandType != 224) {
 		_commandType = 224;
 		commandOnly(27);
@@ -133,15 +133,15 @@ void DreamBase::lookAtPlace() {
 	workToScreenM();
 }
 
-void DreamBase::getUnderCentre() {
+void DreamWebEngine::getUnderCentre() {
 	multiGet(_mapStore, 58, 72, 254, 110);
 }
 
-void DreamBase::putUnderCentre() {
+void DreamWebEngine::putUnderCentre() {
 	multiPut(_mapStore, 58, 72, 254, 110);
 }
 
-void DreamBase::locationPic() {
+void DreamWebEngine::locationPic() {
 	const int roomPics[] = { 5, 0, 3, 2, 4, 1, 10, 9, 8, 6, 11, 4, 7, 7, 0 };
 	byte picture = roomPics[_destPos];
 
@@ -154,16 +154,16 @@ void DreamBase::locationPic() {
 		showFrame(_tempGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
-	DreamBase::printDirect(string, 50, 20, 241, 241 & 1);
+	DreamWebEngine::printDirect(string, 50, 20, 241, 241 & 1);
 }
 
-void DreamBase::showArrows() {
+void DreamWebEngine::showArrows() {
 	showFrame(_tempGraphics, 116 - 12, 16, 0, 0);
 	showFrame(_tempGraphics, 226 + 12, 16, 1, 0);
 	showFrame(_tempGraphics, 280, 14, 2, 0);
 }
 
-void DreamBase::nextDest() {
+void DreamWebEngine::nextDest() {
 	if (_commandType != 218) {
 		_commandType = 218;
 		commandOnly(28);
@@ -192,7 +192,7 @@ void DreamBase::nextDest() {
 	delPointer();
 }
 
-void DreamBase::lastDest() {
+void DreamWebEngine::lastDest() {
 	if (_commandType != 219) {
 		_commandType = 219;
 		commandOnly(29);
@@ -221,7 +221,7 @@ void DreamBase::lastDest() {
 	delPointer();
 }
 
-void DreamBase::destSelect() {
+void DreamWebEngine::destSelect() {
 	if (_commandType != 222) {
 		_commandType = 222;
 		commandOnly(30);
@@ -233,19 +233,19 @@ void DreamBase::destSelect() {
 	_newLocation = _destPos;
 }
 
-uint8 DreamBase::getLocation(uint8 index) {
+uint8 DreamWebEngine::getLocation(uint8 index) {
 	return _roomsCanGo[index];
 }
 
-void DreamBase::setLocation(uint8 index) {
+void DreamWebEngine::setLocation(uint8 index) {
 	_roomsCanGo[index] = 1;
 }
 
-void DreamBase::clearLocation(uint8 index) {
+void DreamWebEngine::clearLocation(uint8 index) {
 	_roomsCanGo[index] = 0;
 }
 
-void DreamBase::resetLocation(uint8 index) {
+void DreamWebEngine::resetLocation(uint8 index) {
 	if (index == 5) {
 		// delete hotel
 		purgeALocation(5);
@@ -270,14 +270,14 @@ void DreamBase::resetLocation(uint8 index) {
 	clearLocation(index);
 }
 
-void DreamBase::readDestIcon() {
+void DreamWebEngine::readDestIcon() {
 	loadIntoTemp("DREAMWEB.G05");
 	loadIntoTemp2("DREAMWEB.G06");
 	loadIntoTemp3("DREAMWEB.G08");
 }
 
-void DreamBase::readCityPic() {
+void DreamWebEngine::readCityPic() {
 	loadIntoTemp("DREAMWEB.G04");
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

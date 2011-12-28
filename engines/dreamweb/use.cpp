@@ -22,10 +22,10 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 
-typedef void (DreamBase::*UseCallback)(void);
+typedef void (DreamWebEngine::*UseCallback)(void);
 
 // Note: The callback pointer has been placed before the
 // ID to keep MSVC happy (otherwise, it throws warnings
@@ -35,90 +35,90 @@ struct UseListEntry {
 	const char *id;
 };
 
-void DreamBase::useRoutine() {
+void DreamWebEngine::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
-		{ &DreamBase::useMon,                  "NETW" },
-		{ &DreamBase::useElevator1,            "ELVA" },
-		{ &DreamBase::useElevator2,            "ELVB" },
-		{ &DreamBase::useElevator3,            "ELVC" },
-		{ &DreamBase::useElevator4,            "ELVE" },
-		{ &DreamBase::useElevator5,            "ELVF" },
-		{ &DreamBase::useChurchGate,           "CGAT" },
-		{ &DreamBase::useStereo,               "REMO" },
-		{ &DreamBase::useButtonA,              "BUTA" },
-		{ &DreamBase::useWinch,                "CBOX" },
-		{ &DreamBase::useLighter,              "LITE" },
-		{ &DreamBase::usePlate,                "PLAT" },
-		{ &DreamBase::useControl,              "LIFT" },
-		{ &DreamBase::useWire,                 "WIRE" },
-		{ &DreamBase::useHandle,               "HNDL" },
-		{ &DreamBase::useHatch,                "HACH" },
-		{ &DreamBase::useElvDoor,              "DOOR" },
-		{ &DreamBase::useCashCard,             "CSHR" },
-		{ &DreamBase::useGun,                  "GUNA" },
-		{ &DreamBase::useCardReader1,          "CRAA" },
-		{ &DreamBase::useCardReader2,          "CRBB" },
-		{ &DreamBase::useCardReader3,          "CRCC" },
-		{ &DreamBase::sitDownInBar,            "SEAT" },
-		{ &DreamBase::useMenu,                 "MENU" },
-		{ &DreamBase::useCooker,               "COOK" },
-		{ &DreamBase::callHotelLift,           "ELCA" },
-		{ &DreamBase::callEdensLift,           "EDCA" },
-		{ &DreamBase::callEdensDLift,          "DDCA" },
-		{ &DreamBase::useAltar,                "ALTR" },
-		{ &DreamBase::openHotelDoor,           "LOKA" },
-		{ &DreamBase::openHotelDoor2,          "LOKB" },
-		{ &DreamBase::openLouis,               "ENTA" },
-		{ &DreamBase::openRyan,                "ENTB" },
-		{ &DreamBase::openPoolBoss,            "ENTE" },
-		{ &DreamBase::openYourNeighbour,       "ENTC" },
-		{ &DreamBase::openEden,                "ENTD" },
-		{ &DreamBase::openSarters,             "ENTH" },
-		{ &DreamBase::wearWatch,               "WWAT" },
-		{ &DreamBase::usePoolReader,           "POOL" },
-		{ &DreamBase::wearShades,              "WSHD" },
-		{ &DreamBase::grafittiDoor,            "GRAF" },
-		{ &DreamBase::trapDoor,                "TRAP" },
-		{ &DreamBase::edensCDPlayer,           "CDPE" },
-		{ &DreamBase::openTVDoor,              "DLOK" },
-		{ &DreamBase::useHole,                 "HOLE" },
-		{ &DreamBase::useDryer,                "DRYR" },
-		{ &DreamBase::useChurchHole,           "HOLY" },
-		{ &DreamBase::useWall,                 "WALL" },
-		{ &DreamBase::useDiary,                "BOOK" },
-		{ &DreamBase::useAxe,                  "AXED" },
-		{ &DreamBase::useShield,               "SHLD" },
-		{ &DreamBase::useRailing,              "BCNY" },
-		{ &DreamBase::useCoveredBox,           "LIDC" },
-		{ &DreamBase::useClearBox,             "LIDU" },
-		{ &DreamBase::useOpenBox,              "LIDO" },
-		{ &DreamBase::usePipe,                 "PIPE" },
-		{ &DreamBase::useBalcony,              "BALC" },
-		{ &DreamBase::useWindow,               "WIND" },
-		{ &DreamBase::viewFolder,              "PAPR" },
-		{ &DreamBase::useTrainer,              "UWTA" },
-		{ &DreamBase::useTrainer,              "UWTB" },
-		{ &DreamBase::enterSymbol,             "STAT" },
-		{ &DreamBase::openTomb,                "TLID" },
-		{ &DreamBase::useSlab,                 "SLAB" },
-		{ &DreamBase::useCart,                 "CART" },
-		{ &DreamBase::useFullCart,             "FCAR" },
-		{ &DreamBase::slabDoorA,               "SLBA" },
-		{ &DreamBase::slabDoorB,               "SLBB" },
-		{ &DreamBase::slabDoorC,               "SLBC" },
-		{ &DreamBase::slabDoorD,               "SLBD" },
-		{ &DreamBase::slabDoorE,               "SLBE" },
-		{ &DreamBase::slabDoorF,               "SLBF" },
-		{ &DreamBase::usePlinth,               "PLIN" },
-		{ &DreamBase::useLadder,               "LADD" },
-		{ &DreamBase::useLadderB,              "LADB" },
-		{ &DreamBase::chewy,                   "GUMA" },
-		{ &DreamBase::wheelSound,              "SQEE" },
-		{ &DreamBase::runTap,                  "TAPP" },
-		{ &DreamBase::playGuitar,              "GUIT" },
-		{ &DreamBase::hotelControl,            "CONT" },
-		{ &DreamBase::hotelBell,               "BELL" },
+		{ &DreamWebEngine::useMon,                  "NETW" },
+		{ &DreamWebEngine::useElevator1,            "ELVA" },
+		{ &DreamWebEngine::useElevator2,            "ELVB" },
+		{ &DreamWebEngine::useElevator3,            "ELVC" },
+		{ &DreamWebEngine::useElevator4,            "ELVE" },
+		{ &DreamWebEngine::useElevator5,            "ELVF" },
+		{ &DreamWebEngine::useChurchGate,           "CGAT" },
+		{ &DreamWebEngine::useStereo,               "REMO" },
+		{ &DreamWebEngine::useButtonA,              "BUTA" },
+		{ &DreamWebEngine::useWinch,                "CBOX" },
+		{ &DreamWebEngine::useLighter,              "LITE" },
+		{ &DreamWebEngine::usePlate,                "PLAT" },
+		{ &DreamWebEngine::useControl,              "LIFT" },
+		{ &DreamWebEngine::useWire,                 "WIRE" },
+		{ &DreamWebEngine::useHandle,               "HNDL" },
+		{ &DreamWebEngine::useHatch,                "HACH" },
+		{ &DreamWebEngine::useElvDoor,              "DOOR" },
+		{ &DreamWebEngine::useCashCard,             "CSHR" },
+		{ &DreamWebEngine::useGun,                  "GUNA" },
+		{ &DreamWebEngine::useCardReader1,          "CRAA" },
+		{ &DreamWebEngine::useCardReader2,          "CRBB" },
+		{ &DreamWebEngine::useCardReader3,          "CRCC" },
+		{ &DreamWebEngine::sitDownInBar,            "SEAT" },
+		{ &DreamWebEngine::useMenu,                 "MENU" },
+		{ &DreamWebEngine::useCooker,               "COOK" },
+		{ &DreamWebEngine::callHotelLift,           "ELCA" },
+		{ &DreamWebEngine::callEdensLift,           "EDCA" },
+		{ &DreamWebEngine::callEdensDLift,          "DDCA" },
+		{ &DreamWebEngine::useAltar,                "ALTR" },
+		{ &DreamWebEngine::openHotelDoor,           "LOKA" },
+		{ &DreamWebEngine::openHotelDoor2,          "LOKB" },
+		{ &DreamWebEngine::openLouis,               "ENTA" },
+		{ &DreamWebEngine::openRyan,                "ENTB" },
+		{ &DreamWebEngine::openPoolBoss,            "ENTE" },
+		{ &DreamWebEngine::openYourNeighbour,       "ENTC" },
+		{ &DreamWebEngine::openEden,                "ENTD" },
+		{ &DreamWebEngine::openSarters,             "ENTH" },
+		{ &DreamWebEngine::wearWatch,               "WWAT" },
+		{ &DreamWebEngine::usePoolReader,           "POOL" },
+		{ &DreamWebEngine::wearShades,              "WSHD" },
+		{ &DreamWebEngine::grafittiDoor,            "GRAF" },
+		{ &DreamWebEngine::trapDoor,                "TRAP" },
+		{ &DreamWebEngine::edensCDPlayer,           "CDPE" },
+		{ &DreamWebEngine::openTVDoor,              "DLOK" },
+		{ &DreamWebEngine::useHole,                 "HOLE" },
+		{ &DreamWebEngine::useDryer,                "DRYR" },
+		{ &DreamWebEngine::useChurchHole,           "HOLY" },
+		{ &DreamWebEngine::useWall,                 "WALL" },
+		{ &DreamWebEngine::useDiary,                "BOOK" },
+		{ &DreamWebEngine::useAxe,                  "AXED" },
+		{ &DreamWebEngine::useShield,               "SHLD" },
+		{ &DreamWebEngine::useRailing,              "BCNY" },
+		{ &DreamWebEngine::useCoveredBox,           "LIDC" },
+		{ &DreamWebEngine::useClearBox,             "LIDU" },
+		{ &DreamWebEngine::useOpenBox,              "LIDO" },
+		{ &DreamWebEngine::usePipe,                 "PIPE" },
+		{ &DreamWebEngine::useBalcony,              "BALC" },
+		{ &DreamWebEngine::useWindow,               "WIND" },
+		{ &DreamWebEngine::viewFolder,              "PAPR" },
+		{ &DreamWebEngine::useTrainer,              "UWTA" },
+		{ &DreamWebEngine::useTrainer,              "UWTB" },
+		{ &DreamWebEngine::enterSymbol,             "STAT" },
+		{ &DreamWebEngine::openTomb,                "TLID" },
+		{ &DreamWebEngine::useSlab,                 "SLAB" },
+		{ &DreamWebEngine::useCart,                 "CART" },
+		{ &DreamWebEngine::useFullCart,             "FCAR" },
+		{ &DreamWebEngine::slabDoorA,               "SLBA" },
+		{ &DreamWebEngine::slabDoorB,               "SLBB" },
+		{ &DreamWebEngine::slabDoorC,               "SLBC" },
+		{ &DreamWebEngine::slabDoorD,               "SLBD" },
+		{ &DreamWebEngine::slabDoorE,               "SLBE" },
+		{ &DreamWebEngine::slabDoorF,               "SLBF" },
+		{ &DreamWebEngine::usePlinth,               "PLIN" },
+		{ &DreamWebEngine::useLadder,               "LADD" },
+		{ &DreamWebEngine::useLadderB,              "LADB" },
+		{ &DreamWebEngine::chewy,                   "GUMA" },
+		{ &DreamWebEngine::wheelSound,              "SQEE" },
+		{ &DreamWebEngine::runTap,                  "TAPP" },
+		{ &DreamWebEngine::playGuitar,              "GUIT" },
+		{ &DreamWebEngine::hotelControl,            "CONT" },
+		{ &DreamWebEngine::hotelBell,               "BELL" },
 	};
 
 	if (_realLocation >= 50) {
@@ -163,7 +163,7 @@ void DreamBase::useRoutine() {
 	_commandType = 255;
 }
 
-void DreamBase::useText(const uint8 *string) {
+void DreamWebEngine::useText(const uint8 *string) {
 	createPanel();
 	showPanel();
 	showMan();
@@ -173,7 +173,7 @@ void DreamBase::useText(const uint8 *string) {
 	workToScreenM();
 }
 
-void DreamBase::showFirstUse() {
+void DreamWebEngine::showFirstUse() {
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -181,7 +181,7 @@ void DreamBase::showFirstUse() {
 	hangOnP(400);
 }
 
-void DreamBase::showSecondUse() {
+void DreamWebEngine::showSecondUse() {
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -190,7 +190,7 @@ void DreamBase::showSecondUse() {
 	hangOnP(400);
 }
 
-void DreamBase::viewFolder() {
+void DreamWebEngine::viewFolder() {
 	_manIsOffScreen = 1;
 	getRidOfAll();
 	loadFolder();
@@ -219,7 +219,7 @@ void DreamBase::viewFolder() {
 	workToScreenM();
 }
 
-void DreamBase::edensCDPlayer() {
+void DreamWebEngine::edensCDPlayer() {
 	showFirstUse();
 	_vars._watchingTime = 18 * 2;
 	_vars._reelToWatch = 25;
@@ -229,25 +229,25 @@ void DreamBase::edensCDPlayer() {
 	_getBack = 1;
 }
 
-void DreamBase::hotelBell() {
+void DreamWebEngine::hotelBell() {
 	playChannel1(12);
 	showFirstUse();
 	putBackObStuff();
 }
 
-void DreamBase::playGuitar() {
+void DreamWebEngine::playGuitar() {
 	playChannel1(14);
 	showFirstUse();
 	putBackObStuff();
 }
 
-void DreamBase::useElevator1() {
+void DreamWebEngine::useElevator1() {
 	showFirstUse();
 	selectLocation();
 	_getBack = 1;
 }
 
-void DreamBase::useElevator2() {
+void DreamWebEngine::useElevator2() {
 	showFirstUse();
 
 	if (_vars._location == 23)	// In pool hall
@@ -261,7 +261,7 @@ void DreamBase::useElevator2() {
 	_getBack = 1;
 }
 
-void DreamBase::useElevator3() {
+void DreamWebEngine::useElevator3() {
 	showFirstUse();
 	_vars._countToClose = 20;
 	_newLocation = 34;
@@ -273,7 +273,7 @@ void DreamBase::useElevator3() {
 	_getBack = 1;
 }
 
-void DreamBase::useElevator4() {
+void DreamWebEngine::useElevator4() {
 	showFirstUse();
 	_vars._reelToWatch = 0;
 	_vars._endWatchReel = 11;
@@ -285,7 +285,7 @@ void DreamBase::useElevator4() {
 	_newLocation = 24;
 }
 
-void DreamBase::useElevator5() {
+void DreamWebEngine::useElevator5() {
 	placeSetObject(4);
 	removeSetObject(0);
 	_newLocation = 20;
@@ -295,19 +295,19 @@ void DreamBase::useElevator5() {
 	_getBack = 1;
 }
 
-void DreamBase::useHatch() {
+void DreamWebEngine::useHatch() {
 	showFirstUse();
 	_newLocation = 40;
 	_getBack = 1;
 }
 
-void DreamBase::wheelSound() {
+void DreamWebEngine::wheelSound() {
 	playChannel1(17);
 	showFirstUse();
 	putBackObStuff();
 }
 
-void DreamBase::callHotelLift() {
+void DreamWebEngine::callHotelLift() {
 	playChannel1(12);
 	showFirstUse();
 	_vars._countToOpen = 8;
@@ -318,7 +318,7 @@ void DreamBase::callHotelLift() {
 	turnPathOn(4);
 }
 
-void DreamBase::useShield() {
+void DreamWebEngine::useShield() {
 	if (_realLocation != 20 || _vars._combatCount == 0) {
 		// Not in Sart room
 		showFirstUse();
@@ -332,7 +332,7 @@ void DreamBase::useShield() {
 	}
 }
 
-void DreamBase::useCoveredBox() {
+void DreamWebEngine::useCoveredBox() {
 	_vars._progressPoints++;
 	showFirstUse();
 	_vars._watchingTime = 50;
@@ -343,7 +343,7 @@ void DreamBase::useCoveredBox() {
 	_getBack = 1;
 }
 
-void DreamBase::useRailing() {
+void DreamWebEngine::useRailing() {
 	showFirstUse();
 	_vars._watchingTime = 80;
 	_vars._reelToWatch = 0;
@@ -354,7 +354,7 @@ void DreamBase::useRailing() {
 	_vars._manDead = 4;
 }
 
-void DreamBase::wearWatch() {
+void DreamWebEngine::wearWatch() {
 	if (_vars._watchOn == 1) {
 		// Already wearing watch
 		showSecondUse();
@@ -368,7 +368,7 @@ void DreamBase::wearWatch() {
 	}
 }
 
-void DreamBase::wearShades() {
+void DreamWebEngine::wearShades() {
 	if (_vars._shadesOn == 1) {
 		// Already wearing shades
 		showSecondUse();
@@ -382,7 +382,7 @@ void DreamBase::wearShades() {
 	}
 }
 
-void DreamBase::useChurchHole() {
+void DreamWebEngine::useChurchHole() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchingTime = 28;
@@ -392,7 +392,7 @@ void DreamBase::useChurchHole() {
 	_vars._speedCount = 1;
 }
 
-void DreamBase::sitDownInBar() {
+void DreamWebEngine::sitDownInBar() {
 	if (_vars._watchMode != 0xFF) {
 		// Sat down
 		showSecondUse();
@@ -410,13 +410,13 @@ void DreamBase::sitDownInBar() {
 	}
 }
 
-void DreamBase::useDryer() {
+void DreamWebEngine::useDryer() {
 	playChannel1(12);
 	showFirstUse();
 	_getBack = 1;
 }
 
-void DreamBase::useBalcony() {
+void DreamWebEngine::useBalcony() {
 	showFirstUse();
 	turnPathOn(6);
 	turnPathOff(0);
@@ -440,7 +440,7 @@ void DreamBase::useBalcony() {
 	_getBack = 1;
 }
 
-void DreamBase::useWindow() {
+void DreamWebEngine::useWindow() {
 	if (_mansPath != 6) {
 		// Not on balcony
 		showSecondUse();
@@ -453,7 +453,7 @@ void DreamBase::useWindow() {
 	}
 }
 
-void DreamBase::trapDoor() {
+void DreamWebEngine::trapDoor() {
 	_vars._progressPoints++;
 	showFirstUse();
 	switchRyanOff();
@@ -466,14 +466,14 @@ void DreamBase::trapDoor() {
 	_getBack = 1;
 }
 
-void DreamBase::callEdensLift() {
+void DreamWebEngine::callEdensLift() {
 	showFirstUse();
 	_vars._countToOpen = 8;
 	_getBack = 1;
 	turnPathOn(2);
 }
 
-void DreamBase::callEdensDLift() {
+void DreamWebEngine::callEdensDLift() {
 	if (_vars._liftFlag == 1) {
 		// Eden's D here
 		showSecondUse();
@@ -486,38 +486,38 @@ void DreamBase::callEdensDLift() {
 	}
 }
 
-void DreamBase::openYourNeighbour() {
+void DreamWebEngine::openYourNeighbour() {
 	enterCode(255, 255, 255, 255);
 	_getBack = 1;
 }
 
-void DreamBase::openRyan() {
+void DreamWebEngine::openRyan() {
 	enterCode(5, 1, 0, 6);
 	_getBack = 1;
 }
 
-void DreamBase::openPoolBoss() {
+void DreamWebEngine::openPoolBoss() {
 	enterCode(5, 2, 2, 2);
 	_getBack = 1;
 }
 
-void DreamBase::openEden() {
+void DreamWebEngine::openEden() {
 	enterCode(2, 8, 6, 5);
 	_getBack = 1;
 }
 
-void DreamBase::openSarters() {
+void DreamWebEngine::openSarters() {
 	enterCode(7, 8, 3, 3);
 	_getBack = 1;
 }
 
-void DreamBase::openLouis() {
+void DreamWebEngine::openLouis() {
 	enterCode(5, 2, 3, 8);
 	_getBack = 1;
 }
 
 
-void DreamBase::useWall() {
+void DreamWebEngine::useWall() {
 	showFirstUse();
 
 	if (_mansPath != 3) {
@@ -560,7 +560,7 @@ void DreamBase::useWall() {
 	}
 }
 
-void DreamBase::useLadder() {
+void DreamWebEngine::useLadder() {
 	showFirstUse();
 	_mapX = _mapX - 11;
 	findRoomInLoc();
@@ -574,7 +574,7 @@ void DreamBase::useLadder() {
 	_getBack = 1;
 }
 
-void DreamBase::useLadderB() {
+void DreamWebEngine::useLadderB() {
 	showFirstUse();
 	_mapX = _mapX + 11;
 	findRoomInLoc();
@@ -588,7 +588,7 @@ void DreamBase::useLadderB() {
 	_getBack = 1;
 }
 
-void DreamBase::slabDoorA() {
+void DreamWebEngine::slabDoorA() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchSpeed = 1;
@@ -608,7 +608,7 @@ void DreamBase::slabDoorA() {
 	}
 }
 
-void DreamBase::slabDoorB() {
+void DreamWebEngine::slabDoorB() {
 	if (_vars._dreamNumber != 1) {
 		// Wrong
 		showFirstUse();
@@ -640,7 +640,7 @@ void DreamBase::slabDoorB() {
 	}
 }
 
-void DreamBase::slabDoorC() {
+void DreamWebEngine::slabDoorC() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchSpeed = 1;
@@ -660,7 +660,7 @@ void DreamBase::slabDoorC() {
 	}
 }
 
-void DreamBase::slabDoorD() {
+void DreamWebEngine::slabDoorD() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchSpeed = 1;
@@ -680,7 +680,7 @@ void DreamBase::slabDoorD() {
 	}
 }
 
-void DreamBase::slabDoorE() {
+void DreamWebEngine::slabDoorE() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchSpeed = 1;
@@ -700,7 +700,7 @@ void DreamBase::slabDoorE() {
 	}
 }
 
-void DreamBase::slabDoorF() {
+void DreamWebEngine::slabDoorF() {
 	showFirstUse();
 	_getBack = 1;
 	_vars._watchSpeed = 1;
@@ -720,7 +720,7 @@ void DreamBase::slabDoorF() {
 	}
 }
 
-bool DreamBase::defaultUseHandler(const char *id) {
+bool DreamWebEngine::defaultUseHandler(const char *id) {
 	if (_withObject == 255) {
 		withWhat();
 		return true;	// event handled
@@ -736,7 +736,7 @@ bool DreamBase::defaultUseHandler(const char *id) {
 	return false;	// continue with the original event
 }
 
-void DreamBase::useChurchGate() {
+void DreamWebEngine::useChurchGate() {
 	if (defaultUseHandler("CUTT"))
 		return;
 
@@ -754,7 +754,7 @@ void DreamBase::useChurchGate() {
 		turnPathOn(2);	// Open church
 }
 
-void DreamBase::useGun() {
+void DreamWebEngine::useGun() {
 
 	if (_objectType != kExObjectType) {
 		// gun is not taken
@@ -865,7 +865,7 @@ void DreamBase::useGun() {
 	}
 }
 
-void DreamBase::useFullCart() {
+void DreamWebEngine::useFullCart() {
 	_vars._progressPoints++;
 	turnAnyPathOn(2, _roomNum + 6);
 	_mansPath = 4;
@@ -883,7 +883,7 @@ void DreamBase::useFullCart() {
 	_getBack = 1;
 }
 
-void DreamBase::useClearBox() {
+void DreamWebEngine::useClearBox() {
 	if (defaultUseHandler("RAIL"))
 		return;
 
@@ -898,7 +898,7 @@ void DreamBase::useClearBox() {
 	_getBack = 1;
 }
 
-void DreamBase::openTVDoor() {
+void DreamWebEngine::openTVDoor() {
 	if (defaultUseHandler("ULOK"))
 		return;
 
@@ -908,7 +908,7 @@ void DreamBase::openTVDoor() {
 	_getBack = 1;
 }
 
-void DreamBase::usePlate() {
+void DreamWebEngine::usePlate() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -935,7 +935,7 @@ void DreamBase::usePlate() {
 	}
 }
 
-void DreamBase::usePlinth() {
+void DreamWebEngine::usePlinth() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -958,7 +958,7 @@ void DreamBase::usePlinth() {
 	}
 }
 
-void DreamBase::useElvDoor() {
+void DreamWebEngine::useElvDoor() {
 	if (defaultUseHandler("AXED"))
 		return;
 
@@ -973,7 +973,7 @@ void DreamBase::useElvDoor() {
 	_getBack = 1;
 }
 
-void DreamBase::useObject() {
+void DreamWebEngine::useObject() {
 	_withObject = 255;
 
 	if (_commandType != 229) {
@@ -988,7 +988,7 @@ void DreamBase::useObject() {
 		useRoutine();
 }
 
-void DreamBase::useWinch() {
+void DreamWebEngine::useWinch() {
 	uint16 contentIndex = checkInside(40, 1);
 	if (contentIndex == kNumexobjects || !compare(contentIndex, kExObjectType, "FUSE")) {
 		// No winch
@@ -1012,7 +1012,7 @@ void DreamBase::useWinch() {
 	_vars._progressPoints++;
 }
 
-void DreamBase::useCart() {
+void DreamWebEngine::useCart() {
 	if (defaultUseHandler("ROCK"))
 		return;
 
@@ -1026,7 +1026,7 @@ void DreamBase::useCart() {
 	_getBack = 1;
 }
 
-void DreamBase::useTrainer() {
+void DreamWebEngine::useTrainer() {
 	uint8 dummy;
 	DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
 	if (object->mapad[0] != 4) {
@@ -1039,7 +1039,7 @@ void DreamBase::useTrainer() {
 	}
 }
 
-void DreamBase::chewy() {
+void DreamWebEngine::chewy() {
 	// Chewing a gum
 	showFirstUse();
 	uint8 dummy;
@@ -1048,7 +1048,7 @@ void DreamBase::chewy() {
 	_getBack = 1;
 }
 
-void DreamBase::useHole() {
+void DreamWebEngine::useHole() {
 	if (defaultUseHandler("HNDA"))
 		return;
 
@@ -1060,7 +1060,7 @@ void DreamBase::useHole() {
 	_getBack = 1;
 }
 
-void DreamBase::openHotelDoor() {
+void DreamWebEngine::openHotelDoor() {
 	if (defaultUseHandler("KEYA"))
 		return;
 
@@ -1070,7 +1070,7 @@ void DreamBase::openHotelDoor() {
 	_getBack = 1;
 }
 
-void DreamBase::openHotelDoor2() {
+void DreamWebEngine::openHotelDoor2() {
 	if (defaultUseHandler("KEYA"))
 		return;
 
@@ -1079,7 +1079,7 @@ void DreamBase::openHotelDoor2() {
 	putBackObStuff();
 }
 
-void DreamBase::grafittiDoor() {
+void DreamWebEngine::grafittiDoor() {
 	if (defaultUseHandler("APEN"))
 		return;
 
@@ -1087,7 +1087,7 @@ void DreamBase::grafittiDoor() {
 	putBackObStuff();
 }
 
-void DreamBase::usePoolReader() {
+void DreamWebEngine::usePoolReader() {
 	if (defaultUseHandler("MEMB"))
 		return;
 
@@ -1103,7 +1103,7 @@ void DreamBase::usePoolReader() {
 	}
 }
 
-void DreamBase::useCardReader1() {
+void DreamWebEngine::useCardReader1() {
 	if (defaultUseHandler("CSHR"))
 		return;
 
@@ -1125,7 +1125,7 @@ void DreamBase::useCardReader1() {
 	}
 }
 
-void DreamBase::useCardReader2() {
+void DreamWebEngine::useCardReader2() {
 	if (defaultUseHandler("CSHR"))
 		return;
 
@@ -1152,7 +1152,7 @@ void DreamBase::useCardReader2() {
 	}
 }
 
-void DreamBase::useCardReader3() {
+void DreamWebEngine::useCardReader3() {
 	if (defaultUseHandler("CSHR"))
 		return;
 
@@ -1174,7 +1174,7 @@ void DreamBase::useCardReader3() {
 	}
 }
 
-void DreamBase::useLighter() {
+void DreamWebEngine::useLighter() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1191,7 +1191,7 @@ void DreamBase::useLighter() {
 	}
 }
 
-void DreamBase::useWire() {
+void DreamWebEngine::useWire() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1216,7 +1216,7 @@ void DreamBase::useWire() {
 	putBackObStuff();
 }
 
-void DreamBase::openTomb() {
+void DreamWebEngine::openTomb() {
 	_vars._progressPoints++;
 	showFirstUse();
 	_vars._watchingTime = 35 * 2;
@@ -1227,7 +1227,7 @@ void DreamBase::openTomb() {
 	_getBack = 1;
 }
 
-void DreamBase::hotelControl() {
+void DreamWebEngine::hotelControl() {
 	if (_realLocation != 21 || _mapX != 33)
 		showSecondUse();	// Not right control
 	else
@@ -1236,7 +1236,7 @@ void DreamBase::hotelControl() {
 	putBackObStuff();
 }
 
-void DreamBase::useCooker() {
+void DreamWebEngine::useCooker() {
 	if (checkInside(_command, _objectType) == kNumexobjects)
 		showFirstUse();
 	else
@@ -1245,16 +1245,16 @@ void DreamBase::useCooker() {
 	putBackObStuff();
 }
 
-void DreamBase::placeFreeObject(uint8 index) {
+void DreamWebEngine::placeFreeObject(uint8 index) {
 	findOrMake(index, 0, 1);
 	getFreeAd(index)->mapad[0] = 0;
 }
 
-void DreamBase::removeFreeObject(uint8 index) {
+void DreamWebEngine::removeFreeObject(uint8 index) {
 	getFreeAd(index)->mapad[0] = 0xFF;
 }
 
-void DreamBase::useDiary() {
+void DreamWebEngine::useDiary() {
 	getRidOfReels();
 	loadIntoTemp("DREAMWEB.G14");
 	loadTempText("DREAMWEB.T51");
@@ -1270,11 +1270,11 @@ void DreamBase::useDiary() {
 	delPointer();
 	_getBack = 0;
 
-	RectWithCallback<DreamBase> diaryList[] = {
-		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamBase::diaryKeyN },
-		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamBase::diaryKeyP },
-		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamBase::quitKey },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> diaryList[] = {
+		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamWebEngine::diaryKeyN },
+		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamWebEngine::diaryKeyP },
+		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamWebEngine::quitKey },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 	
@@ -1300,7 +1300,7 @@ void DreamBase::useDiary() {
 	workToScreenM();
 }
 
-void DreamBase::useControl() {
+void DreamWebEngine::useControl() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1353,7 +1353,7 @@ void DreamBase::useControl() {
 	}
 }
 
-void DreamBase::useSlab() {
+void DreamWebEngine::useSlab() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1385,7 +1385,7 @@ void DreamBase::useSlab() {
 	_getBack = 1;
 }
 
-void DreamBase::usePipe() {
+void DreamWebEngine::usePipe() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1408,7 +1408,7 @@ void DreamBase::usePipe() {
 	}
 }
 
-void DreamBase::useOpenBox() {
+void DreamWebEngine::useOpenBox() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1440,7 +1440,7 @@ void DreamBase::useOpenBox() {
 	showFirstUse();
 }
 
-void DreamBase::runTap() {
+void DreamWebEngine::runTap() {
 	if (_withObject == 255) {
 		withWhat();
 		return;
@@ -1467,7 +1467,7 @@ void DreamBase::runTap() {
 	putBackObStuff();
 }
 
-void DreamBase::useAxe() {
+void DreamWebEngine::useAxe() {
 	if (_realLocation != 22) {
 		// Not in pool
 		showFirstUse();
@@ -1494,7 +1494,7 @@ void DreamBase::useAxe() {
 	removeObFromInv();
 }
 
-void DreamBase::useHandle() {
+void DreamWebEngine::useHandle() {
 	SetObject *object = getSetAd(findSetObject("CUTW"));
 	if (object->mapad[0] == 255) {
 		// Wire not cut
@@ -1508,7 +1508,7 @@ void DreamBase::useHandle() {
 	_getBack = 1;
 }
 
-void DreamBase::useAltar() {
+void DreamWebEngine::useAltar() {
 	if (findExObject("CNDA") == 114 || findExObject("CNDB") == 114) {
 		// Things on altar
 		showFirstUse();
@@ -1525,7 +1525,7 @@ void DreamBase::useAltar() {
 		_vars._endWatchReel = 174;
 		_vars._watchSpeed = 1;
 		_vars._speedCount = 1;
-		DreamBase::setupTimedUse(47, 32, 98, 52, 76);
+		DreamWebEngine::setupTimedUse(47, 32, 98, 52, 76);
 		_getBack = 1;
 	} else {
 		showPuzText(23, 300);
@@ -1533,7 +1533,7 @@ void DreamBase::useAltar() {
 	}
 }
 
-void DreamBase::withWhat() {
+void DreamWebEngine::withWhat() {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 
 	createPanel();
@@ -1556,7 +1556,7 @@ void DreamBase::withWhat() {
 	_invOpen = 2;
 }
 
-void DreamBase::notHeldError() {
+void DreamWebEngine::notHeldError() {
 	createPanel();
 	showPanel();
 	showMan();
@@ -1568,7 +1568,7 @@ void DreamBase::notHeldError() {
 	putBackObStuff();
 }
 
-void DreamBase::useCashCard() {
+void DreamWebEngine::useCashCard() {
 	getRidOfReels();
 	loadKeypad();
 	createPanel();
@@ -1597,7 +1597,7 @@ void DreamBase::useCashCard() {
 	putBackObStuff();
 }
 
-void DreamBase::useStereo() {
+void DreamWebEngine::useStereo() {
 	// Handles the stereo in Ryan's apartment (accessible from the remote on
 	// the couch)
 
@@ -1628,7 +1628,7 @@ void DreamBase::useStereo() {
 	}
 }
 
-uint16 DreamBase::checkInside(uint16 command, uint16 type) {
+uint16 DreamWebEngine::checkInside(uint16 command, uint16 type) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		DynObject *object = getExAd(index);
 		if (object->mapad[1] == command && object->mapad[0] == type)
@@ -1638,7 +1638,7 @@ uint16 DreamBase::checkInside(uint16 command, uint16 type) {
 	return kNumexobjects;
 }
 
-void DreamBase::showPuzText(uint16 command, uint16 count) {
+void DreamWebEngine::showPuzText(uint16 command, uint16 count) {
 	createPanel();
 	showPanel();
 	showMan();
@@ -1650,7 +1650,7 @@ void DreamBase::showPuzText(uint16 command, uint16 count) {
 	hangOnP(count);
 }
 
-void DreamBase::useButtonA() {
+void DreamWebEngine::useButtonA() {
 	if (!isSetObOnMap(95)) {
 		showFirstUse();
 		turnAnyPathOn(0, _roomNum - 1);
@@ -1671,4 +1671,4 @@ void DreamBase::useButtonA() {
 }
 
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

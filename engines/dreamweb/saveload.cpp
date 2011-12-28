@@ -28,7 +28,7 @@
 #include "common/translation.h"
 #include "common/serializer.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 // Temporary storage for loading the room from a savegame
 Room g_madeUpRoomDat;
@@ -106,7 +106,7 @@ void syncGameVars(Common::Serializer &s, GameVars &vars) {
 	s.syncAsByte(vars._shakeCounter);
 }
 
-void DreamBase::loadGame() {
+void DreamWebEngine::loadGame() {
 	if (_commandType != 246) {
 		_commandType = 246;
 		commandOnly(41);
@@ -119,7 +119,7 @@ void DreamBase::loadGame() {
 
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
-void DreamBase::doLoad(int savegameId) {
+void DreamWebEngine::doLoad(int savegameId) {
 	_loadingOrSave = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
@@ -142,11 +142,11 @@ void DreamBase::doLoad(int savegameId) {
 			vSync();
 			dumpPointer();
 			dumpTextLine();
-			RectWithCallback<DreamBase> loadlist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualLoad },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
-				{ 0,320,0,200,&DreamBase::blank },
+			RectWithCallback<DreamWebEngine> loadlist[] = {
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualLoad },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(loadlist);
@@ -198,7 +198,7 @@ void DreamBase::doLoad(int savegameId) {
 }
 
 
-void DreamBase::saveGame() {
+void DreamWebEngine::saveGame() {
 	if (_vars._manDead == 2) {
 		blank();
 		return;
@@ -236,11 +236,11 @@ void DreamBase::saveGame() {
 			dumpPointer();
 			dumpTextLine();
 
-			RectWithCallback<DreamBase> savelist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamBase::actualSave },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamBase::selectSlot },
-				{ 0,320,0,200,&DreamBase::blank },
+			RectWithCallback<DreamWebEngine> savelist[] = {
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualSave },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(savelist);
@@ -291,15 +291,15 @@ void DreamBase::saveGame() {
 	}
 }
 
-void DreamBase::namesToOld() {
+void DreamWebEngine::namesToOld() {
 	memcpy(_saveNamesOld, _saveNames, 17*7);
 }
 
-void DreamBase::oldToNames() {
+void DreamWebEngine::oldToNames() {
 	memcpy(_saveNames, _saveNamesOld, 17*7);
 }
 
-void DreamBase::saveLoad() {
+void DreamWebEngine::saveLoad() {
 	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
@@ -312,7 +312,7 @@ void DreamBase::saveLoad() {
 		doSaveLoad();
 }
 
-void DreamBase::doSaveLoad() {
+void DreamWebEngine::doSaveLoad() {
 	_pointerFrame = 0;
 	_textAddressX = 70;
 	_textAddressY = 182-8;
@@ -327,11 +327,11 @@ void DreamBase::doSaveLoad() {
 	showMainOps();
 	workToScreen();
 
-	RectWithCallback<DreamBase> opsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::getBackFromOps },
-		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
-		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamBase::discOps },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> opsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::getBackFromOps },
+		{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
+		{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamWebEngine::discOps },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -376,14 +376,14 @@ void DreamBase::doSaveLoad() {
 	_manIsOffScreen = 0;
 }
 
-void DreamBase::getBackFromOps() {
+void DreamWebEngine::getBackFromOps() {
 	if (_vars._manDead == 2)
 		blank();
 	else
 		getBack1();
 }
 
-void DreamBase::getBackToOps() {
+void DreamWebEngine::getBackToOps() {
 	if (_commandType != 201) {
 		_commandType = 201;
 		commandOnly(42);
@@ -397,20 +397,20 @@ void DreamBase::getBackToOps() {
 	}
 }
 
-void DreamBase::showMainOps() {
+void DreamWebEngine::showMainOps() {
 	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 8, 0);
 	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 7, 0);
 	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
-void DreamBase::showDiscOps() {
+void DreamWebEngine::showDiscOps() {
 	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
 	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 9, 0);
 	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 10, 0);
 	showFrame(_tempGraphics, kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
-void DreamBase::discOps() {
+void DreamWebEngine::discOps() {
 	if (_commandType != 249) {
 		_commandType = 249;
 		commandOnly(43);
@@ -427,11 +427,11 @@ void DreamBase::discOps() {
 	workToScreenM();
 	_getBack = 0;
 
-	RectWithCallback<DreamBase> discOpsList[] = {
-		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamBase::loadGame },
-		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamBase::saveGame },
-		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamBase::getBackToOps },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> discOpsList[] = {
+		{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamWebEngine::loadGame },
+		{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamWebEngine::saveGame },
+		{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -449,7 +449,7 @@ void DreamBase::discOps() {
 	} while (!_getBack);
 }
 
-void DreamBase::actualSave() {
+void DreamWebEngine::actualSave() {
 	if (_commandType != 222) {
 		_commandType = 222;
 		commandOnly(44);
@@ -476,7 +476,7 @@ void DreamBase::actualSave() {
 	_getBack = 4;
 }
 
-void DreamBase::actualLoad() {
+void DreamWebEngine::actualLoad() {
 	if (_commandType != 221) {
 		_commandType = 221;
 		commandOnly(41);
@@ -495,7 +495,7 @@ void DreamBase::actualLoad() {
 	_getBack = 1;
 }
 
-void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
+void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 
 	const Room &currentRoom = g_roomData[_vars._location];
 
@@ -508,9 +508,9 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	madeUpRoom.facing = _facing;
 	madeUpRoom.b27 = 255;
 
-	Common::String filename = engine->getSavegameFilename(slot);
+	Common::String filename = getSavegameFilename(slot);
 	debug(1, "savePosition: slot %d filename %s", slot, filename.c_str());
-	Common::OutSaveFile *outSaveFile = engine->getSaveFileManager()->openForSaving(filename);
+	Common::OutSaveFile *outSaveFile = getSaveFileManager()->openForSaving(filename);
 	if (!outSaveFile)	// TODO: Do proper error handling!
 		error("save could not be opened for writing");
 
@@ -582,13 +582,13 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	delete outSaveFile;
 }
 
-void DreamBase::loadPosition(unsigned int slot) {
+void DreamWebEngine::loadPosition(unsigned int slot) {
 	_timeCount = 0;
 	clearChanges();
 
-	Common::String filename = engine->getSavegameFilename(slot);
+	Common::String filename = getSavegameFilename(slot);
 	debug(1, "loadPosition: slot %d filename %s", slot, filename.c_str());
-	Common::InSaveFile *inSaveFile = engine->getSaveFileManager()->openForLoading(filename);
+	Common::InSaveFile *inSaveFile = getSaveFileManager()->openForLoading(filename);
 	if (!inSaveFile)	// TODO: Do proper error handling!
 		error("save could not be opened for reading");
 
@@ -664,13 +664,13 @@ void DreamBase::loadPosition(unsigned int slot) {
 }
 
 // Count number of save files, and load their descriptions into _saveNames
-uint DreamBase::scanForNames() {
+uint DreamWebEngine::scanForNames() {
 	// Initialize the first 7 slots (like the original code expects)
 	for (unsigned int slot = 0; slot < 7; ++slot) {
 		_saveNames[17 * slot + 0] = 2;
 		_saveNames[17 * slot + 1] = 0;
 		for (int i = 2; i < 17; ++i)
-			_saveNames[17 * slot + i] = 1;	// initialize with 1's
+			_saveNames[17 * slot + i] = 1;	// initialize with 1'sdrea
 	}
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -701,7 +701,7 @@ uint DreamBase::scanForNames() {
 	return saveList.size();
 }
 
-void DreamBase::loadOld() {
+void DreamWebEngine::loadOld() {
 	if (_commandType != 252) {
 		_commandType = 252;
 		commandOnly(48);
@@ -720,19 +720,19 @@ void DreamBase::loadOld() {
 	_getBack = 0;
 }
 
-void DreamBase::showDecisions() {
+void DreamWebEngine::showDecisions() {
 	createPanel2();
 	showOpBox();
 	showFrame(_tempGraphics, kOpsx + 17, kOpsy + 13, 6, 0);
 	underTextLine();
 }
 
-void DreamBase::loadSaveBox() {
+void DreamWebEngine::loadSaveBox() {
 	loadIntoTemp("DREAMWEB.G08");
 }
 
 // show savegame names (original interface), and set kCursorpos
-void DreamBase::showNames() {
+void DreamWebEngine::showNames() {
 	for (int slot = 0; slot < 7; ++slot) {
 		// The first character of the savegame name is unused
 		Common::String name(&_saveNames[17*slot + 1]);
@@ -755,7 +755,7 @@ void DreamBase::showNames() {
 	}
 }
 
-void DreamBase::checkInput() {
+void DreamWebEngine::checkInput() {
 	if (_loadingOrSave == 3)
 		return;
 
@@ -792,7 +792,7 @@ void DreamBase::checkInput() {
 	workToScreenM();
 }
 
-void DreamBase::selectSlot() {
+void DreamWebEngine::selectSlot() {
 	if (_commandType != 244) {
 		_commandType = 244;
 		commandOnly(45);
@@ -824,7 +824,7 @@ void DreamBase::selectSlot() {
 	delPointer();
 }
 
-void DreamBase::showSlots() {
+void DreamWebEngine::showSlots() {
 	showFrame(_tempGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
 
 	uint16 y = kOpsy + 11;
@@ -837,7 +837,7 @@ void DreamBase::showSlots() {
 	}
 }
 
-void DreamBase::showOpBox() {
+void DreamWebEngine::showOpBox() {
 	showFrame(_tempGraphics, kOpsx, kOpsy, 0, 0);
 
 	// CHECKME: There seem to be versions of dreamweb in which this call
@@ -845,16 +845,16 @@ void DreamBase::showOpBox() {
 	showFrame(_tempGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 
-void DreamBase::showLoadOps() {
+void DreamWebEngine::showLoadOps() {
 	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
 	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
 }
 
-void DreamBase::showSaveOps() {
+void DreamWebEngine::showSaveOps() {
 	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
 	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb

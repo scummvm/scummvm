@@ -23,7 +23,7 @@
 #include "dreamweb/dreamweb.h"
 #include "common/config-manager.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
 // Keyboard buffer. _bufferIn and _bufferOut are indexes
 // into this, making it a ring buffer
@@ -456,8 +456,8 @@ static const Atmosphere g_atmosphereList[] = {
 
 };
 
-void DreamBase::dreamweb() {
-	switch(engine->getLanguage()) {
+void DreamWebEngine::dreamweb() {
+	switch(getLanguage()) {
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::EN_USA:
@@ -484,7 +484,7 @@ void DreamBase::dreamweb() {
 	readSetData();
 	_wonGame = false;
 
-	engine->loadSounds(0, "DREAMWEB.V99"); // basic sample
+	loadSounds(0, "DREAMWEB.V99"); // basic sample
 
 	bool firstLoop = true;
 
@@ -672,7 +672,7 @@ done: // The engine will need some cleaner finalization, let's put it here for n
 	_commandText.clear();
 }
 
-void DreamBase::loadTextFile(TextFile &file, const char *fileName)
+void DreamWebEngine::loadTextFile(TextFile &file, const char *fileName)
 {
 	FileHeader header;
 
@@ -689,7 +689,7 @@ void DreamBase::loadTextFile(TextFile &file, const char *fileName)
 	f.read(file._text, sizeInBytes - 2*66);
 }
 
-void DreamBase::screenUpdate() {
+void DreamWebEngine::screenUpdate() {
 	newPlace();
 	mainScreen();
 	if (_quitRequested)
@@ -745,7 +745,7 @@ void DreamBase::screenUpdate() {
 	delPointer();
 }
 
-void DreamBase::startup() {
+void DreamWebEngine::startup() {
 	_currentKey = 0;
 	_mainMode = 0;
 	createPanel();
@@ -760,7 +760,7 @@ void DreamBase::startup() {
 	atmospheres();
 }
 
-void DreamBase::startup1() {
+void DreamWebEngine::startup1() {
 	clearPalette();
 	_vars._throughDoor = 0;
 
@@ -770,15 +770,15 @@ void DreamBase::startup1() {
 	fadeScreenUp();
 }
 
-void DreamBase::switchRyanOn() {
+void DreamWebEngine::switchRyanOn() {
 	_vars._ryanOn = 255;
 }
 
-void DreamBase::switchRyanOff() {
+void DreamWebEngine::switchRyanOff() {
 	_vars._ryanOn = 1;
 }
 
-void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
+void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
 	FileHeader header;
 
 	Common::File f;
@@ -794,40 +794,40 @@ void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
 	f.read(file._data, sizeInBytes - 2080);
 }
 
-void DreamBase::loadGraphicsSegment(GraphicsFile &file, unsigned int len) {
+void DreamWebEngine::loadGraphicsSegment(GraphicsFile &file, unsigned int len) {
 	assert(len >= 2080);
 	delete[] file._data;
 	file._data = new uint8[len - 2080];
-	engine->readFromFile((uint8 *)file._frames, 2080);
-	engine->readFromFile(file._data, len - 2080);
+	readFromFile((uint8 *)file._frames, 2080);
+	readFromFile(file._data, len - 2080);
 }
 
-void DreamBase::loadTextSegment(TextFile &file, unsigned int len) {
+void DreamWebEngine::loadTextSegment(TextFile &file, unsigned int len) {
 	unsigned int headerSize = 2 * file._size;
 	assert(len >= headerSize);
 	delete[] file._text;
 	file._text = new char[len - headerSize];
-	engine->readFromFile((uint8 *)file._offsetsLE, headerSize);
-	engine->readFromFile((uint8 *)file._text, len - headerSize);
+	readFromFile((uint8 *)file._offsetsLE, headerSize);
+	readFromFile((uint8 *)file._text, len - headerSize);
 }
 
-void DreamBase::loadIntoTemp(const char *fileName) {
+void DreamWebEngine::loadIntoTemp(const char *fileName) {
 	loadGraphicsFile(_tempGraphics, fileName);
 }
 
-void DreamBase::loadIntoTemp2(const char *fileName) {
+void DreamWebEngine::loadIntoTemp2(const char *fileName) {
 	loadGraphicsFile(_tempGraphics2, fileName);
 }
 
-void DreamBase::loadIntoTemp3(const char *fileName) {
+void DreamWebEngine::loadIntoTemp3(const char *fileName) {
 	loadGraphicsFile(_tempGraphics3, fileName);
 }
 
-void DreamBase::loadTempCharset(const char *fileName) {
+void DreamWebEngine::loadTempCharset(const char *fileName) {
 	loadGraphicsFile(_tempCharset, fileName);
 }
 
-void DreamBase::hangOnCurs(uint16 frameCount) {
+void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
 		printCurs();
 		vSync();
@@ -835,35 +835,35 @@ void DreamBase::hangOnCurs(uint16 frameCount) {
 	}
 }
 
-void DreamBase::seeCommandTail() {
+void DreamWebEngine::seeCommandTail() {
 	_brightness = 1;
 }
 
-void DreamBase::quickQuit() {
-	engine->quit();
+void DreamWebEngine::quickQuit() {
+	quit();
 }
 
-void DreamBase::quickQuit2() {
-	engine->quit();
+void DreamWebEngine::quickQuit2() {
+	quit();
 }
 
-void DreamBase::readMouse() {
+void DreamWebEngine::readMouse() {
 	_oldButton = _mouseButton;
 	uint16 state = readMouseState();
 	_mouseButton = state;
 }
 
-uint16 DreamBase::readMouseState() {
+uint16 DreamWebEngine::readMouseState() {
 	_oldX = _mouseX;
 	_oldY = _mouseY;
 	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
+	mouseCall(&x, &y, &state);
 	_mouseX = x;
 	_mouseY = y;
 	return state;
 }
 
-void DreamBase::dumpTextLine() {
+void DreamWebEngine::dumpTextLine() {
 	if (_newTextLine != 1)
 		return;
 	_newTextLine = 0;
@@ -874,21 +874,21 @@ void DreamBase::dumpTextLine() {
 	multiDump(x, y, 228, 13);
 }
 
-void DreamBase::getUnderTimed() {
+void DreamWebEngine::getUnderTimed() {
 	if (_foreignRelease)
 		multiGet(_underTimedText, _timedX, _timedY - 3, 240, kUnderTimedTextSizeY_f);
 	else
 		multiGet(_underTimedText, _timedX, _timedY, 240, kUnderTimedTextSizeY);
 }
 
-void DreamBase::putUnderTimed() {
+void DreamWebEngine::putUnderTimed() {
 	if (_foreignRelease)
 		multiPut(_underTimedText, _timedX, _timedY - 3, 240, kUnderTimedTextSizeY_f);
 	else
 		multiPut(_underTimedText, _timedX, _timedY, 240, kUnderTimedTextSizeY);
 }
 
-void DreamBase::triggerMessage(uint16 index) {
+void DreamWebEngine::triggerMessage(uint16 index) {
 	multiGet(_mapStore, 174, 153, 200, 63);
 	const uint8 *string = (const uint8 *)_puzzleText.getString(index);
 	uint16 y = 156;
@@ -901,7 +901,7 @@ void DreamBase::triggerMessage(uint16 index) {
 	_vars._lastTrigger = 0;
 }
 
-void DreamBase::processTrigger() {
+void DreamWebEngine::processTrigger() {
 	if (_vars._lastTrigger == '1') {
 		setLocation(8);
 		triggerMessage(45);
@@ -914,7 +914,7 @@ void DreamBase::processTrigger() {
 	}
 }
 
-void DreamBase::useTimedText() {
+void DreamWebEngine::useTimedText() {
 	if (_timeCount == 0)
 		return;
 	--_timeCount;
@@ -934,7 +934,7 @@ void DreamBase::useTimedText() {
 	_needToDumpTimed = 1;
 }
 
-void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
@@ -959,7 +959,7 @@ void DreamBase::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8
 	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, _timedString);
 }
 
-void DreamBase::dumpTimedText() {
+void DreamWebEngine::dumpTimedText() {
 	const uint16 kUndertimedysize = 30;
 	if (_needToDumpTimed != 1)
 		return;
@@ -971,7 +971,7 @@ void DreamBase::dumpTimedText() {
 	_needToDumpTimed = 0;
 }
 
-void DreamBase::getTime() {
+void DreamWebEngine::getTime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
@@ -980,21 +980,7 @@ void DreamBase::getTime() {
 	_vars._hourCount = t.tm_hour;
 }
 
-uint16 DreamBase::allocateMem(uint16 paragraphs) {
-	uint size = (paragraphs + 2) * 16;
-	debug(1, "allocate mem, %u bytes", size);
-	SegmentRef seg = allocateSegment(size);
-	uint16 result = (uint16)seg;
-	debug(1, "\tsegment address -> %04x", result);
-	return result;
-}
-
-void DreamBase::deallocateMem(uint16 segment) {
-	debug(1, "deallocating segment %04x", segment);
-	deallocateSegment(segment);
-}
-
-void DreamBase::DOSReturn() {
+void DreamWebEngine::DOSReturn() {
 	if (_commandType != 250) {
 		_commandType = 250;
 		commandOnly(46);
@@ -1002,11 +988,11 @@ void DreamBase::DOSReturn() {
 
 	if (_mouseButton & 1) {
 		_mouseButton = 0;
-		engine->quit();
+		quit();
 	}
 }
 
-void DreamBase::eraseOldObs() {
+void DreamWebEngine::eraseOldObs() {
 	if (_vars._newObs == 0)
 		return;
 
@@ -1024,7 +1010,7 @@ void DreamBase::eraseOldObs() {
 	}
 }
 
-void DreamBase::lockMon() {
+void DreamWebEngine::lockMon() {
 	// Pressing space pauses text output in the monitor. We use the "hard"
 	// key because calling readkey() drains characters from the input
 	// buffer, we we want the user to be able to type ahead while the text
@@ -1037,8 +1023,8 @@ void DreamBase::lockMon() {
 		} while (_currentKey != 0);
 
 		lockLightOn();
-		while (!engine->shouldQuit()) {
-			engine->waitForVSync();
+		while (!shouldQuit()) {
+			waitForVSync();
 			readKey();
 			if (_currentKey == ' ')
 				break;
@@ -1050,14 +1036,14 @@ void DreamBase::lockMon() {
 	}
 }
 
-void DreamBase::clearAndLoad(uint8 *buf, uint8 c,
+void DreamWebEngine::clearAndLoad(uint8 *buf, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
 	memset(buf, c, maxSize);
-	engine->readFromFile(buf, size);
+	readFromFile(buf, size);
 }
 
-void DreamBase::startLoading(const Room &room) {
+void DreamWebEngine::startLoading(const Room &room) {
 	_vars._combatCount = 0;
 	_roomsSample = room.roomsSample;
 	_mapX = room.mapX;
@@ -1093,7 +1079,7 @@ void DreamBase::startLoading(const Room &room) {
 	findXYFromPath();
 }
 
-void DreamBase::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
+void DreamWebEngine::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	uint8 type = firstParam - 220;
 	if (type == 0) {
 		placeSetObject(secondParam);
@@ -1120,7 +1106,7 @@ void DreamBase::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	}
 }
 
-void DreamBase::plotReel(uint16 &reelPointer) {
+void DreamWebEngine::plotReel(uint16 &reelPointer) {
 	Reel *reel = getReelStart(reelPointer);
 	while (reel->x >= 220 && reel->x != 255) {
 		dealWithSpecial(reel->x, reel->y);
@@ -1136,21 +1122,21 @@ void DreamBase::plotReel(uint16 &reelPointer) {
 	soundOnReels(reelPointer);
 }
 
-void DreamBase::delTextLine() {
+void DreamWebEngine::delTextLine() {
 	if (_foreignRelease)
 		multiPut(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiPut(_textUnder, _textAddressX, _textAddressY, kUnderTextSizeX, kUnderTextSizeY);
 }
 
-void DreamBase::commandOnly(uint8 command) {
+void DreamWebEngine::commandOnly(uint8 command) {
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
 	_newTextLine = 1;
 }
 
-bool DreamBase::checkIfPerson(uint8 x, uint8 y) {
+bool DreamWebEngine::checkIfPerson(uint8 x, uint8 y) {
 	Common::List<People>::iterator i;
 	for (i = _peopleList.begin(); i != _peopleList.end(); ++i) {
 		People &people = *i;
@@ -1177,7 +1163,7 @@ bool DreamBase::checkIfPerson(uint8 x, uint8 y) {
 	return false;
 }
 
-bool DreamBase::checkIfFree(uint8 x, uint8 y) {
+bool DreamWebEngine::checkIfFree(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1190,7 +1176,7 @@ bool DreamBase::checkIfFree(uint8 x, uint8 y) {
 	return false;
 }
 
-bool DreamBase::checkIfEx(uint8 x, uint8 y) {
+bool DreamWebEngine::checkIfEx(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _exList.reverse_begin(); i != _exList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1203,7 +1189,7 @@ bool DreamBase::checkIfEx(uint8 x, uint8 y) {
 	return false;
 }
 
-const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
+const uint8 *DreamWebEngine::findObName(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * (index & 127);
 		return (const uint8 *)_personText.getString(i);
@@ -1218,7 +1204,7 @@ const uint8 *DreamBase::findObName(uint8 type, uint8 index) {
 	}
 }
 
-void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
+void DreamWebEngine::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
 	size_t i;
 	for (i = 0; i < 28; ++i) {
@@ -1232,7 +1218,7 @@ void DreamBase::copyName(uint8 type, uint8 index, uint8 *dst) {
 	dst[i] = 0;
 }
 
-void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
+void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
 	uint8 textLen = _textLen;
@@ -1248,23 +1234,23 @@ void DreamBase::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	_newTextLine = 1;
 }
 
-void DreamBase::examineObText() {
+void DreamWebEngine::examineObText() {
 	commandWithOb(1, _commandType, _command);
 }
 
-void DreamBase::blockNameText() {
+void DreamWebEngine::blockNameText() {
 	commandWithOb(0, _commandType, _command);
 }
 
-void DreamBase::personNameText() {
+void DreamWebEngine::personNameText() {
 	commandWithOb(2, _commandType, _command & 127);
 }
 
-void DreamBase::walkToText() {
+void DreamWebEngine::walkToText() {
 	commandWithOb(3, _commandType, _command);
 }
 
-void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
+void DreamWebEngine::findOrMake(uint8 index, uint8 value, uint8 type) {
 	Change *change = _listOfChanges;
 	for (; change->index != 0xff; ++change) {
 		if (index == change->index && _realLocation == change->location && type == change->type) {
@@ -1279,29 +1265,29 @@ void DreamBase::findOrMake(uint8 index, uint8 value, uint8 type) {
 	change->type = type;
 }
 
-void DreamBase::setAllChanges() {
+void DreamWebEngine::setAllChanges() {
 	Change *change = _listOfChanges;
 	for (; change->index != 0xff; ++change)
 		if (change->location == _realLocation)
 			doChange(change->index, change->value, change->type);
 }
 
-DynObject *DreamBase::getFreeAd(uint8 index) {
+DynObject *DreamWebEngine::getFreeAd(uint8 index) {
 	return &_freeDat[index];
 }
 
-DynObject *DreamBase::getExAd(uint8 index) {
+DynObject *DreamWebEngine::getExAd(uint8 index) {
 	return &_exData[index];
 }
 
-DynObject *DreamBase::getEitherAdCPP() {
+DynObject *DreamWebEngine::getEitherAdCPP() {
 	if (_objectType == kExObjectType)
 		return getExAd(_itemFrame);
 	else
 		return getFreeAd(_itemFrame);
 }
 
-void *DreamBase::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
+void *DreamWebEngine::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
 	if (_objectType == kExObjectType) {
 		DynObject *exObject = getExAd(_command);
 		*slotSize = exObject->slotSize;
@@ -1324,7 +1310,7 @@ void *DreamBase::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
 	}
 }
 
-void *DreamBase::getAnyAdDir(uint8 index, uint8 flag) {
+void *DreamWebEngine::getAnyAdDir(uint8 index, uint8 flag) {
 	if (flag == 4)
 		return getExAd(index);
 	else if (flag == 2)
@@ -1333,11 +1319,11 @@ void *DreamBase::getAnyAdDir(uint8 index, uint8 flag) {
 		return getSetAd(index);
 }
 
-SetObject *DreamBase::getSetAd(uint8 index) {
+SetObject *DreamWebEngine::getSetAd(uint8 index) {
 	return &_setDat[index];
 }
 
-void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
+void DreamWebEngine::doChange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
 		getSetAd(index)->mapad[0] = value;
 	} else if (type == 1) { //freeObject
@@ -1349,7 +1335,7 @@ void DreamBase::doChange(uint8 index, uint8 value, uint8 type) {
 	}
 }
 
-void DreamBase::deleteTaken() {
+void DreamWebEngine::deleteTaken() {
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		uint8 location = _exData[i].initialLocation;
 		if (location == _realLocation) {
@@ -1359,7 +1345,7 @@ void DreamBase::deleteTaken() {
 	}
 }
 
-uint8 DreamBase::getExPos() {
+uint8 DreamWebEngine::getExPos() {
 	DynObject *objects = _exData;
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff)
@@ -1368,27 +1354,27 @@ uint8 DreamBase::getExPos() {
 	error("Out of Ex object positions");
 }
 
-void DreamBase::placeSetObject(uint8 index) {
+void DreamWebEngine::placeSetObject(uint8 index) {
 	findOrMake(index, 0, 0);
 	getSetAd(index)->mapad[0] = 0;
 }
 
-void DreamBase::removeSetObject(uint8 index) {
+void DreamWebEngine::removeSetObject(uint8 index) {
 	findOrMake(index, 0xff, 0);
 	getSetAd(index)->mapad[0] = 0xff;
 }
 
-bool DreamBase::finishedWalking() {
+bool DreamWebEngine::finishedWalking() {
 	return (_linePointer == 254) && (_facing == _turnToFace);
 }
 
-void DreamBase::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
+void DreamWebEngine::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 	uint8 type, flagX, flagY;
 	checkOne(_mouseX - _mapAdX, _mouseY - _mapAdY, flag, flagEx, &type, &flagX, &flagY);
 	_lastFlag = *flag;
 }
 
-void DreamBase::walkAndExamine() {
+void DreamWebEngine::walkAndExamine() {
 	if (!finishedWalking())
 		return;
 	_commandType = _walkExamType;
@@ -1398,7 +1384,7 @@ void DreamBase::walkAndExamine() {
 		examineOb();
 }
 
-void DreamBase::obName(uint8 command, uint8 commandType) {
+void DreamWebEngine::obName(uint8 command, uint8 commandType) {
 	if (_reAssesChanges == 0) {
 		if ((commandType == _commandType) && (command == _command)) {
 			if (_walkAndExam == 1) {
@@ -1470,7 +1456,7 @@ void DreamBase::obName(uint8 command, uint8 commandType) {
 	}
 }
 
-void DreamBase::delPointer() {
+void DreamWebEngine::delPointer() {
 	if (_oldPointerX == 0xffff)
 		return;
 	_delHereX = _oldPointerX;
@@ -1480,7 +1466,7 @@ void DreamBase::delPointer() {
 	multiPut(_pointerBack, _delHereX, _delHereY, _pointerXS, _pointerYS);
 }
 
-void DreamBase::showBlink() {
+void DreamWebEngine::showBlink() {
 	if (_manIsOffScreen == 1)
 		return;
 	++_blinkCount;
@@ -1501,7 +1487,7 @@ void DreamBase::showBlink() {
 	showFrame(_icons1, 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
-void DreamBase::dumpBlink() {
+void DreamWebEngine::dumpBlink() {
 	if (_vars._shadesOn != 0)
 		return;
 	if (_blinkCount != 0)
@@ -1511,14 +1497,14 @@ void DreamBase::dumpBlink() {
 	multiDump(44, 32, 16, 12);
 }
 
-void DreamBase::dumpPointer() {
+void DreamWebEngine::dumpPointer() {
 	dumpBlink();
 	multiDump(_delHereX, _delHereY, _delXS, _delYS);
 	if ((_oldPointerX != _delHereX) || (_oldPointerY != _delHereY))
 		multiDump(_oldPointerX, _oldPointerY, _pointerXS, _pointerYS);
 }
 
-void DreamBase::showPointer() {
+void DreamWebEngine::showPointer() {
 	showBlink();
 	uint16 x = _mouseX;
 	_oldPointerX = _mouseX;
@@ -1562,7 +1548,7 @@ void DreamBase::showPointer() {
 	}
 }
 
-void DreamBase::animPointer() {
+void DreamWebEngine::animPointer() {
 
 	if (_pointerMode == 2) {
 		_pointerFrame = 0;
@@ -1616,12 +1602,12 @@ void DreamBase::animPointer() {
 	_pointerFrame = 8;
 }
 
-void DreamBase::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
+void DreamWebEngine::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
 	const uint8 *string = (const uint8 *)_commandText.getString(index);
 	printDirect(string, x, y, maxWidth, centered);
 }
 
-void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
+void DreamWebEngine::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count) {
 	const uint8 *string = (const uint8 *)_commandText.getString(index);
 	while (count--) {
 		findNextColon(&string);
@@ -1629,7 +1615,7 @@ void DreamBase::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, b
 	printDirect(string, x, y, maxWidth, centered);
 }
 
-bool DreamBase::objectMatches(void *object, const char *id) {
+bool DreamWebEngine::objectMatches(void *object, const char *id) {
 	const char *objId = (const char *)object + 12; // whether it is a DynObject or a SetObject
 	for (size_t i = 0; i < 4; ++i) {
 		if (id[i] != objId[i] + 'A')
@@ -1638,11 +1624,11 @@ bool DreamBase::objectMatches(void *object, const char *id) {
 	return true;
 }
 
-bool DreamBase::compare(uint8 index, uint8 flag, const char id[4]) {
+bool DreamWebEngine::compare(uint8 index, uint8 flag, const char id[4]) {
 	return objectMatches(getAnyAdDir(index, flag), id);
 }
 
-uint16 DreamBase::findSetObject(const char *id) {
+uint16 DreamWebEngine::findSetObject(const char *id) {
 	for (uint16 index = 0; index < 128; index++) {
 		if (objectMatches(getSetAd(index), id))
 			return index;
@@ -1651,7 +1637,7 @@ uint16 DreamBase::findSetObject(const char *id) {
 	return 128;
 }
 
-uint16 DreamBase::findExObject(const char *id) {
+uint16 DreamWebEngine::findExObject(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		if (objectMatches(getExAd(index), id))
 			return index;
@@ -1660,7 +1646,7 @@ uint16 DreamBase::findExObject(const char *id) {
 	return kNumexobjects;
 }
 
-bool DreamBase::isRyanHolding(const char *id) {
+bool DreamWebEngine::isRyanHolding(const char *id) {
 	for (uint16 index = 0; index < kNumexobjects; index++) {
 		DynObject *object = getExAd(index);
 		if (object->mapad[0] == 4 && objectMatches(object, id))
@@ -1670,12 +1656,12 @@ bool DreamBase::isRyanHolding(const char *id) {
 	return false;
 }
 
-bool DreamBase::isItDescribed(const ObjPos *pos) {
+bool DreamWebEngine::isItDescribed(const ObjPos *pos) {
 	const char *string = _setDesc.getString(pos->index);
 	return string[0] != 0;
 }
 
-bool DreamBase::isCD() {
+bool DreamWebEngine::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
 	// we managed to load the speech. At least it is isolated in this function and can be changed.
@@ -1683,7 +1669,7 @@ bool DreamBase::isCD() {
 	return (_speechLoaded);
 }
 
-void DreamBase::showIcon() {
+void DreamWebEngine::showIcon() {
 	if (_realLocation < 50) {
 		showPanel();
 		showMan();
@@ -1711,7 +1697,7 @@ void DreamBase::showIcon() {
 	}
 }
 
-bool DreamBase::checkIfSet(uint8 x, uint8 y) {
+bool DreamWebEngine::checkIfSet(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
 	for (i = _setList.reverse_begin(); i != _setList.end(); --i) {
 		const ObjPos &pos = *i;
@@ -1728,7 +1714,7 @@ bool DreamBase::checkIfSet(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamBase::hangOn(uint16 frameCount) {
+void DreamWebEngine::hangOn(uint16 frameCount) {
 	while (frameCount) {
 		vSync();
 		--frameCount;
@@ -1737,7 +1723,7 @@ void DreamBase::hangOn(uint16 frameCount) {
 	}
 }
 
-void DreamBase::hangOnW(uint16 frameCount) {
+void DreamWebEngine::hangOnW(uint16 frameCount) {
 	while (frameCount) {
 		delPointer();
 		readMouse();
@@ -1751,7 +1737,7 @@ void DreamBase::hangOnW(uint16 frameCount) {
 	}
 }
 
-void DreamBase::hangOnP(uint16 count) {
+void DreamWebEngine::hangOnP(uint16 count) {
 	_mainTimer = 0;
 	uint8 pointerFrame = _pointerFrame;
 	uint8 pickup = _pickUp;
@@ -1784,7 +1770,7 @@ void DreamBase::hangOnP(uint16 count) {
 	_pointerMode = 0;
 }
 
-uint8 DreamBase::findNextColon(const uint8 **string) {
+uint8 DreamWebEngine::findNextColon(const uint8 **string) {
 	uint8 c;
 	do {
 		c = **string;
@@ -1793,7 +1779,7 @@ uint8 DreamBase::findNextColon(const uint8 **string) {
 	return c;
 }
 
-void DreamBase::enterSymbol() {
+void DreamWebEngine::enterSymbol() {
 	_manIsOffScreen = 1;
 	getRidOfReels();
 	loadIntoTemp("DREAMWEB.G12"); // symbol graphics
@@ -1817,13 +1803,13 @@ void DreamBase::enterSymbol() {
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
-		RectWithCallback<DreamBase> symbolList[] = {
-			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamBase::quitSymbol },
-			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamBase::setTopLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamBase::setTopRight },
-			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamBase::setBotLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamBase::setBotRight },
-			{ 0,320,0,200,&DreamBase::blank },
+		RectWithCallback<DreamWebEngine> symbolList[] = {
+			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamWebEngine::quitSymbol },
+			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopRight },
+			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotRight },
+			{ 0,320,0,200,&DreamWebEngine::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(symbolList);
@@ -1850,7 +1836,7 @@ void DreamBase::enterSymbol() {
 	}
 }
 
-void DreamBase::zoomOnOff() {
+void DreamWebEngine::zoomOnOff() {
 	if (_vars._watchingTime != 0 || _pointerMode == 2) {
 		blank();
 		return;
@@ -1878,7 +1864,7 @@ void DreamBase::zoomOnOff() {
 	workToScreenM();
 }
 
-void DreamBase::sortOutMap() {
+void DreamWebEngine::sortOutMap() {
 	const uint8 *src = workspace();
 	uint8 *dst = _mapData;
 	for (uint16 y = 0; y < kMapHeight; ++y) {
@@ -1888,27 +1874,27 @@ void DreamBase::sortOutMap() {
 	}
 }
 
-void DreamBase::mainScreen() {
+void DreamWebEngine::mainScreen() {
 	_inMapArea = 0;
 	if (_vars._watchOn == 1) {
-		RectWithCallback<DreamBase> mainList[] = {
-			{ 44,70,32,46,&DreamBase::look },
-			{ 0,50,0,180,&DreamBase::inventory },
-			{ 226,244,10,26,&DreamBase::zoomOnOff },
-			{ 226,244,26,40,&DreamBase::saveLoad },
-			{ 240,260,100,124,&DreamBase::madmanRun },
-			{ 0,320,0,200,&DreamBase::identifyOb },
+		RectWithCallback<DreamWebEngine> mainList[] = {
+			{ 44,70,32,46,&DreamWebEngine::look },
+			{ 0,50,0,180,&DreamWebEngine::inventory },
+			{ 226,244,10,26,&DreamWebEngine::zoomOnOff },
+			{ 226,244,26,40,&DreamWebEngine::saveLoad },
+			{ 240,260,100,124,&DreamWebEngine::madmanRun },
+			{ 0,320,0,200,&DreamWebEngine::identifyOb },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(mainList);
 	} else {
-		RectWithCallback<DreamBase> mainList2[] = {
-			{ 44,70,32,46,&DreamBase::look },
-			{ 0,50,0,180,&DreamBase::inventory },
-			{ 226+48,244+48,10,26,&DreamBase::zoomOnOff },
-			{ 226+48,244+48,26,40,&DreamBase::saveLoad },
-			{ 240,260,100,124,&DreamBase::madmanRun },
-			{ 0,320,0,200,&DreamBase::identifyOb },
+		RectWithCallback<DreamWebEngine> mainList2[] = {
+			{ 44,70,32,46,&DreamWebEngine::look },
+			{ 0,50,0,180,&DreamWebEngine::inventory },
+			{ 226+48,244+48,10,26,&DreamWebEngine::zoomOnOff },
+			{ 226+48,244+48,26,40,&DreamWebEngine::saveLoad },
+			{ 240,260,100,124,&DreamWebEngine::madmanRun },
+			{ 0,320,0,200,&DreamWebEngine::identifyOb },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(mainList2);
@@ -1918,21 +1904,21 @@ void DreamBase::mainScreen() {
 		walkAndExamine();
 }
 
-void DreamBase::showWatch() {
+void DreamWebEngine::showWatch() {
 	if (_vars._watchOn) {
 		showFrame(_icons1, 250, 1, 6, 0);
 		showTime();
 	}
 }
 
-void DreamBase::dumpWatch() {
+void DreamWebEngine::dumpWatch() {
 	if (_watchDump != 1)
 		return;
 	multiDump(256, 21, 40, 12);
 	_watchDump = 0;
 }
 
-void DreamBase::showTime() {
+void DreamWebEngine::showTime() {
 	if (_vars._watchOn == 0)
 		return;
 
@@ -1952,7 +1938,7 @@ void DreamBase::showTime() {
 	showFrame(_charset1, 267+5, 21, 91*3+20, 0);
 }
 
-void DreamBase::watchCount() {
+void DreamWebEngine::watchCount() {
 	if (_vars._watchOn == 0)
 		return;
 	++_timerCount;
@@ -1977,7 +1963,7 @@ void DreamBase::watchCount() {
 	}
 }
 
-void DreamBase::roomName() {
+void DreamWebEngine::roomName() {
 	printMessage(88, 18, 53, 240, false);
 	uint16 textIndex = _roomNum;
 	if (textIndex >= 32)
@@ -1990,7 +1976,7 @@ void DreamBase::roomName() {
 	useCharset1();
 }
 
-void DreamBase::loadRoom() {
+void DreamWebEngine::loadRoom() {
 	_roomLoaded = 1;
 	_timeCount = 0;
 	_mainTimer = 0;
@@ -2011,7 +1997,7 @@ void DreamBase::loadRoom() {
 	getDimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
 }
 
-void DreamBase::readSetData() {
+void DreamWebEngine::readSetData() {
 	loadGraphicsFile(_charset1, "DREAMWEB.C00");
 	loadGraphicsFile(_icons1, "DREAMWEB.G00");
 	loadGraphicsFile(_icons2, "DREAMWEB.G01");
@@ -2021,20 +2007,20 @@ void DreamBase::readSetData() {
 	useCharset1();
 
 	// FIXME: Why is this commented out?
-	//engine->openFile("DREAMWEB.VOL");
+	//openFile("DREAMWEB.VOL");
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
-	//engine->readFromFile(volumeTab, 2048-256);
-	//engine->closeFile();
+	//readFromFile(volumeTab, 2048-256);
+	//closeFile();
 }
 
-void DreamBase::findRoomInLoc() {
+void DreamWebEngine::findRoomInLoc() {
 	uint8 x = _mapX / 11;
 	uint8 y = _mapY / 10;
 	uint8 roomNum = y * 6 + x;
 	_roomNum = roomNum;
 }
 
-void DreamBase::autoLook() {
+void DreamWebEngine::autoLook() {
 	if ((_mouseX != _oldX) || (_mouseY != _oldY)) {
 		_lookCounter = 1000;
 		return;
@@ -2048,7 +2034,7 @@ void DreamBase::autoLook() {
 	doLook();
 }
 
-void DreamBase::look() {
+void DreamWebEngine::look() {
 	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
@@ -2061,7 +2047,7 @@ void DreamBase::look() {
 		doLook();
 }
 
-void DreamBase::doLook() {
+void DreamWebEngine::doLook() {
 	createPanel();
 	showIcon();
 	underTextLine();
@@ -2085,35 +2071,35 @@ void DreamBase::doLook() {
 	workToScreenM();
 }
 
-void DreamBase::useCharset1() {
+void DreamWebEngine::useCharset1() {
 	_currentCharset = &_charset1;
 }
 
-void DreamBase::useTempCharset() {
+void DreamWebEngine::useTempCharset() {
 	_currentCharset = &_tempCharset;
 }
 
-void DreamBase::getRidOfTemp() {
+void DreamWebEngine::getRidOfTemp() {
 	_tempGraphics.clear();
 }
 
-void DreamBase::getRidOfTempText() {
+void DreamWebEngine::getRidOfTempText() {
 	_textFile1.clear();
 }
 
-void DreamBase::getRidOfTemp2() {
+void DreamWebEngine::getRidOfTemp2() {
 	_tempGraphics2.clear();
 }
 
-void DreamBase::getRidOfTemp3() {
+void DreamWebEngine::getRidOfTemp3() {
 	_tempGraphics3.clear();
 }
 
-void DreamBase::getRidOfTempCharset() {
+void DreamWebEngine::getRidOfTempCharset() {
 	_tempCharset.clear();
 }
 
-void DreamBase::getRidOfAll() {
+void DreamWebEngine::getRidOfAll() {
 	delete[] _backdropBlocks;
 	_backdropBlocks = 0;
 
@@ -2132,14 +2118,14 @@ void DreamBase::getRidOfAll() {
 }
 
 // if skipDat, skip clearing and loading Setdat and Freedat
-void DreamBase::loadRoomData(const Room &room, bool skipDat) {
+void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	const uint16 kSetdatlen = 64*128;
 	const uint16 kFreedatlen = 16*80;
 
-	engine->openFile(room.name);
+	openFile(room.name);
 
 	FileHeader header;
-	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
+	readFromFile((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
@@ -2148,8 +2134,8 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 
 	assert(len[0] >= 192);
 	_backdropBlocks = new uint8[len[0] - 192];
-	engine->readFromFile((uint8 *)_backdropFlags, 192);
-	engine->readFromFile(_backdropBlocks, len[0] - 192);
+	readFromFile((uint8 *)_backdropFlags, 192);
+	readFromFile(_backdropBlocks, len[0] - 192);
 
 	clearAndLoad(workspace(), 0, len[1], 132*66); // 132*66 = maplen
 	sortOutMap();
@@ -2158,7 +2144,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	if (!skipDat)
 		clearAndLoad((uint8 *)_setDat, 255, len[3], kSetdatlen);
 	else
-		engine->skipBytes(len[3]);
+		skipBytes(len[3]);
 	// NB: The skipDat version of this function as called by restoreall
 	// had a 'call bloc' instead of 'call loadseg' for reel1,
 	// but 'bloc' was not defined.
@@ -2167,15 +2153,15 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	loadGraphicsSegment(_reel3, len[6]);
 
 	// segment 7 consists of 36*38 pathNodes followed by 'reelList'
-	engine->readFromFile((uint8 *)_pathData, 36*sizeof(RoomPaths));
+	readFromFile((uint8 *)_pathData, 36*sizeof(RoomPaths));
 	unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
 	unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
 	delete[] _reelList;
 	_reelList = new Reel[reelCount];
-	engine->readFromFile((uint8 *)_reelList, reelLen);
+	readFromFile((uint8 *)_reelList, reelLen);
 
 	// segment 8 consists of 12 personFrames followed by a TextFile
-	engine->readFromFile((uint8 *)_personFramesLE, 24);
+	readFromFile((uint8 *)_personFramesLE, 24);
 	loadTextSegment(_personText, len[8] - 24);
 
 	loadTextSegment(_setDesc, len[9]);
@@ -2185,46 +2171,46 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	if (!skipDat)
 		clearAndLoad((uint8 *)_freeDat, 255, len[13], kFreedatlen);
 	else
-		engine->skipBytes(len[13]);
+		skipBytes(len[13]);
 	loadTextSegment(_freeDesc, len[14]);
 
-	engine->closeFile();
+	closeFile();
 }
 
-void DreamBase::restoreAll() {
+void DreamWebEngine::restoreAll() {
 	const Room &room = g_roomData[_vars._location];
 	loadRoomData(room, true);
 	setAllChanges();
 }
 
-void DreamBase::restoreReels() {
+void DreamWebEngine::restoreReels() {
 	if (_roomLoaded == 0)
 		return;
 
 	const Room &room = g_roomData[_realLocation];
 
-	engine->openFile(room.name);
+	openFile(room.name);
 
 	FileHeader header;
-	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
+	readFromFile((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
 	for (int i = 0; i < 15; ++i)
 		len[i] = header.len(i);
 
-	engine->skipBytes(len[0]);
-	engine->skipBytes(len[1]);
-	engine->skipBytes(len[2]);
-	engine->skipBytes(len[3]);
+	skipBytes(len[0]);
+	skipBytes(len[1]);
+	skipBytes(len[2]);
+	skipBytes(len[3]);
 	loadGraphicsSegment(_reel1, len[4]);
 	loadGraphicsSegment(_reel2, len[5]);
 	loadGraphicsSegment(_reel3, len[6]);
 
-	engine->closeFile();
+	closeFile();
 }
 
-void DreamBase::loadFolder() {
+void DreamWebEngine::loadFolder() {
 	loadIntoTemp("DREAMWEB.G09"); // folder graphics 1
 	loadIntoTemp2("DREAMWEB.G10"); // folder graphics 2
 	loadIntoTemp3("DREAMWEB.G11"); // folder graphics 3
@@ -2232,7 +2218,7 @@ void DreamBase::loadFolder() {
 	loadTempText("DREAMWEB.T50"); // folder text
 }
 
-void DreamBase::showFolder() {
+void DreamWebEngine::showFolder() {
 	_commandType = 255;
 	if (_folderPage) {
 		useTempCharset();
@@ -2257,7 +2243,7 @@ void DreamBase::showFolder() {
 	}
 }
 
-void DreamBase::showLeftPage() {
+void DreamWebEngine::showLeftPage() {
 	showFrame(_tempGraphics2, 0, 12, 3, 0);
 	uint16 y = 12+5;
 	for (size_t i = 0; i < 9; ++i) {
@@ -2290,7 +2276,7 @@ void DreamBase::showLeftPage() {
 	}
 }
 
-void DreamBase::showRightPage() {
+void DreamWebEngine::showRightPage() {
 	showFrame(_tempGraphics2, 143, 12, 0, 0);
 	uint16 y = 12+37;
 	for (size_t i = 0; i < 7; ++i) {
@@ -2315,18 +2301,18 @@ void DreamBase::showRightPage() {
 	_lineSpacing = 10;
 }
 
-void DreamBase::showExit() {
+void DreamWebEngine::showExit() {
 	showFrame(_icons1, 274, 154, 11, 0);
 }
 
-void DreamBase::showMan() {
+void DreamWebEngine::showMan() {
 	showFrame(_icons1, 0, 0, 0, 0);
 	showFrame(_icons1, 0, 114, 1, 0);
 	if (_vars._shadesOn)
 		showFrame(_icons1, 28, 25, 2, 0);
 }
 
-void DreamBase::panelIcons1() {
+void DreamWebEngine::panelIcons1() {
 	uint16 x;
 	if (_vars._watchOn != 1)
 		x = 48;
@@ -2338,26 +2324,26 @@ void DreamBase::panelIcons1() {
 	showWatch();
 }
 
-void DreamBase::examIcon() {
+void DreamWebEngine::examIcon() {
 	showFrame(_icons2, 254, 5, 3, 0);
 }
 
-const uint8 *DreamBase::getTextInFile1(uint16 index) {
+const uint8 *DreamWebEngine::getTextInFile1(uint16 index) {
 	return (const uint8 *)_textFile1.getString(index);
 }
 
-void DreamBase::checkFolderCoords() {
-	RectWithCallback<DreamBase> folderList[] = {
-		{ 280,320,160,200, &DreamBase::quitKey },
-		{ 143,300,6,194, &DreamBase::nextFolder },
-		{ 0,143,6,194, &DreamBase::lastFolder },
-		{ 0,320,0,200, &DreamBase::blank },
+void DreamWebEngine::checkFolderCoords() {
+	RectWithCallback<DreamWebEngine> folderList[] = {
+		{ 280,320,160,200, &DreamWebEngine::quitKey },
+		{ 143,300,6,194, &DreamWebEngine::nextFolder },
+		{ 0,143,6,194, &DreamWebEngine::lastFolder },
+		{ 0,320,0,200, &DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0, 0 }
 	};
 	checkCoords(folderList);
 }
 
-void DreamBase::nextFolder() {
+void DreamWebEngine::nextFolder() {
 	if (_folderPage == 12) {
 		blank();
 		return;
@@ -2377,7 +2363,7 @@ void DreamBase::nextFolder() {
 	}
 }
 
-void DreamBase::lastFolder() {
+void DreamWebEngine::lastFolder() {
 	if (_folderPage == 0) {
 		blank();
 		return;
@@ -2397,7 +2383,7 @@ void DreamBase::lastFolder() {
 	}
 }
 
-void DreamBase::folderHints() {
+void DreamWebEngine::folderHints() {
 	if (_folderPage == 5) {
 		if ((_vars._aideDead != 1) && (getLocation(13) != 1)) {
 			setLocation(13);
@@ -2419,19 +2405,19 @@ void DreamBase::folderHints() {
 	}
 }
 
-void DreamBase::folderExit() {
+void DreamWebEngine::folderExit() {
 	showFrame(_tempGraphics2, 296, 178, 6, 0);
 }
 
-void DreamBase::loadTravelText() {
+void DreamWebEngine::loadTravelText() {
 	loadTextFile(_travelText, "DREAMWEB.T81"); // location descs
 }
 
-void DreamBase::loadTempText(const char *fileName) {
+void DreamWebEngine::loadTempText(const char *fileName) {
 	loadTextFile(_textFile1, fileName);
 }
 
-void DreamBase::drawFloor() {
+void DreamWebEngine::drawFloor() {
 	eraseOldObs();
 	drawFlags();
 	calcMapAd();
@@ -2444,14 +2430,14 @@ void DreamBase::drawFloor() {
 	_vars._newObs = 0;
 }
 
-void DreamBase::allocateBuffers() {
+void DreamWebEngine::allocateBuffers() {
 	_exFrames.clear();
 	_exFrames._data = new uint8[kExframeslen];
 	_exText.clear();
 	_exText._text = new char[kExtextlen];
 }
 
-void DreamBase::workToScreenM() {
+void DreamWebEngine::workToScreenM() {
 	animPointer();
 	readMouse();
 	showPointer();
@@ -2460,23 +2446,23 @@ void DreamBase::workToScreenM() {
 	delPointer();
 }
 
-void DreamBase::loadMenu() {
+void DreamWebEngine::loadMenu() {
 	loadIntoTemp("DREAMWEB.S02"); // sprite name 3
 	loadIntoTemp2("DREAMWEB.G07"); // mon. graphics 2
 }
 
-void DreamBase::showMenu() {
+void DreamWebEngine::showMenu() {
 	++_menuCount;
 	if (_menuCount == 37*2)
 		_menuCount = 0;
 	showFrame(_tempGraphics, kMenux, kMenuy, _menuCount / 2, 0);
 }
 
-void DreamBase::dumpMenu() {
+void DreamWebEngine::dumpMenu() {
 	multiDump(kMenux, kMenuy, 48, 48);
 }
 
-void DreamBase::useMenu() {
+void DreamWebEngine::useMenu() {
 	getRidOfReels();
 	loadMenu();
 	createPanel();
@@ -2500,9 +2486,9 @@ void DreamBase::useMenu() {
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
-		RectWithCallback<DreamBase> menuList[] = {
-			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamBase::quitKey },
-			{ 0,320,0,200,&DreamBase::blank },
+		RectWithCallback<DreamWebEngine> menuList[] = {
+			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamWebEngine::quitKey },
+			{ 0,320,0,200,&DreamWebEngine::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(menuList);
@@ -2515,7 +2501,7 @@ void DreamBase::useMenu() {
 	workToScreenM();
 }
 
-void DreamBase::atmospheres() {
+void DreamWebEngine::atmospheres() {
 
 	const Atmosphere *a = &g_atmosphereList[0];
 
@@ -2577,7 +2563,7 @@ void DreamBase::atmospheres() {
 	cancelCh0();
 }
 
-uint8 DreamBase::nextSymbol(uint8 symbol) {
+uint8 DreamWebEngine::nextSymbol(uint8 symbol) {
 	uint8 result = symbol + 1;
 	if (result == 6)
 		return 0;
@@ -2586,7 +2572,7 @@ uint8 DreamBase::nextSymbol(uint8 symbol) {
 	return result;
 }
 
-void DreamBase::showSymbol() {
+void DreamWebEngine::showSymbol() {
 	showFrame(_tempGraphics, kSymbolx, kSymboly, 12, 0);
 
 	showFrame(_tempGraphics, _symbolTopX + kSymbolx-44, kSymboly+20, _symbolTopNum, 32);
@@ -2602,7 +2588,7 @@ void DreamBase::showSymbol() {
 	showFrame(_tempGraphics, _symbolBotX + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
 }
 
-void DreamBase::readKey() {
+void DreamWebEngine::readKey() {
 	uint16 bufOut = _bufferOut;
 
 	if (bufOut == _bufferIn) {
@@ -2616,7 +2602,7 @@ void DreamBase::readKey() {
 	_bufferOut = bufOut;
 }
 
-void DreamBase::setTopLeft() {
+void DreamWebEngine::setTopLeft() {
 	if (_symbolTopDir != 0) {
 		blank();
 		return;
@@ -2631,7 +2617,7 @@ void DreamBase::setTopLeft() {
 		_symbolTopDir = 0xFF;
 }
 
-void DreamBase::setTopRight() {
+void DreamWebEngine::setTopRight() {
 	if (_symbolTopDir != 0) {
 		blank();
 		return;
@@ -2646,7 +2632,7 @@ void DreamBase::setTopRight() {
 		_symbolTopDir = 1;
 }
 
-void DreamBase::setBotLeft() {
+void DreamWebEngine::setBotLeft() {
 	if (_symbolBotDir != 0) {
 		blank();
 		return;
@@ -2661,7 +2647,7 @@ void DreamBase::setBotLeft() {
 		_symbolBotDir = 0xFF;
 }
 
-void DreamBase::setBotRight() {
+void DreamWebEngine::setBotRight() {
 	if (_symbolBotDir != 0) {
 		blank();
 		return;
@@ -2676,7 +2662,7 @@ void DreamBase::setBotRight() {
 		_symbolBotDir = 1;
 }
 
-void DreamBase::newGame() {
+void DreamWebEngine::newGame() {
 	if (_commandType != 251) {
 		_commandType = 251;
 		commandOnly(47);
@@ -2686,7 +2672,7 @@ void DreamBase::newGame() {
 		_getBack = 3;
 }
 
-void DreamBase::pickupOb(uint8 command, uint8 pos) {
+void DreamWebEngine::pickupOb(uint8 command, uint8 pos) {
 	_lastInvPos = pos;
 	_objectType = kFreeObjectType;
 	_itemFrame = command;
@@ -2696,7 +2682,7 @@ void DreamBase::pickupOb(uint8 command, uint8 pos) {
 	transferToEx(command);
 }
 
-void DreamBase::initialInv() {
+void DreamWebEngine::initialInv() {
 	if (_realLocation != 24)
 		return;
 
@@ -2716,7 +2702,7 @@ void DreamBase::initialInv() {
 	switchRyanOff();
 }
 
-void DreamBase::walkIntoRoom() {
+void DreamWebEngine::walkIntoRoom() {
 	if (_vars._location == 14 && _mapX == 22) {
 		_destination = 1;
 		_finalDest = 1;
@@ -2724,7 +2710,7 @@ void DreamBase::walkIntoRoom() {
 	}
 }
 
-void DreamBase::afterIntroRoom() {
+void DreamWebEngine::afterIntroRoom() {
 	if (_nowInNewRoom == 0)
 		return; // notnewintro
 
@@ -2739,7 +2725,7 @@ void DreamBase::afterIntroRoom() {
 	_nowInNewRoom = 0;
 }
 
-void DreamBase::redrawMainScrn() {
+void DreamWebEngine::redrawMainScrn() {
 	_timeCount = 0;
 	createPanel();
 	_vars._newObs = 0;
@@ -2753,20 +2739,20 @@ void DreamBase::redrawMainScrn() {
 	_commandType = 255;
 }
 
-void DreamBase::blank() {
+void DreamWebEngine::blank() {
 	if (_commandType != 199) {
 		_commandType = 199;
 		commandOnly(0);
 	}
 }
 
-void DreamBase::allPointer() {
+void DreamWebEngine::allPointer() {
 	readMouse();
 	showPointer();
 	dumpPointer();
 }
 
-void DreamBase::makeMainScreen() {
+void DreamWebEngine::makeMainScreen() {
 	createPanel();
 	_vars._newObs = 1;
 	drawFloor();
@@ -2783,14 +2769,14 @@ void DreamBase::makeMainScreen() {
 	_manIsOffScreen = 0;
 }
 
-void DreamBase::openInv() {
+void DreamWebEngine::openInv() {
 	_invOpen = 1;
 	printMessage(80, 58 - 10, 61, 240, (240 & 1));
 	fillRyan();
 	_commandType = 255;
 }
 
-void DreamBase::obsThatDoThings() {
+void DreamWebEngine::obsThatDoThings() {
 	if (!compare(_command, _objectType, "MEMB"))
 		return; // notlouiscard
 
@@ -2800,7 +2786,7 @@ void DreamBase::obsThatDoThings() {
 	}
 }
 
-void DreamBase::describeOb() {
+void DreamWebEngine::describeOb() {
 	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
 	if (_foreignRelease && _objectType == kSetObjectType1)
@@ -2826,7 +2812,7 @@ void DreamBase::describeOb() {
 	}
 }
 
-void DreamBase::delEverything() {
+void DreamWebEngine::delEverything() {
 	if (_mapYSize + _mapOffsetY < 182) {
 		mapToPanel();
 	} else {
@@ -2837,7 +2823,7 @@ void DreamBase::delEverything() {
 	}
 }
 
-void DreamBase::errorMessage1() {
+void DreamWebEngine::errorMessage1() {
 	delPointer();
 	printMessage(76, 21, 58, 240, (240 & 1));
 	readMouse();
@@ -2855,7 +2841,7 @@ void DreamBase::errorMessage1() {
 	delPointer();
 }
 
-void DreamBase::errorMessage2() {
+void DreamWebEngine::errorMessage2() {
 	_commandType = 255;
 	delPointer();
 	printMessage(76, 21, 59, 240, (240 & 1));
@@ -2874,7 +2860,7 @@ void DreamBase::errorMessage2() {
 	delPointer();
 }
 
-void DreamBase::errorMessage3() {
+void DreamWebEngine::errorMessage3() {
 	delPointer();
 	printMessage(76, 21, 60, 240, (240 & 1));
 	workToScreenM();
@@ -2889,11 +2875,11 @@ void DreamBase::errorMessage3() {
 	delPointer();
 }
 
-void DreamBase::reExFromOpen() {
+void DreamWebEngine::reExFromOpen() {
 
 }
 
-void DreamBase::putBackObStuff() {
+void DreamWebEngine::putBackObStuff() {
 	createPanel();
 	showPanel();
 	showMan();
@@ -2909,11 +2895,11 @@ void DreamBase::putBackObStuff() {
 	delPointer();
 }
 
-bool DreamBase::isSetObOnMap(uint8 index) {
+bool DreamWebEngine::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
 }
 
-void DreamBase::examineInventory() {
+void DreamWebEngine::examineInventory() {
 	if (_commandType != 249) {
 		_commandType = 249;
 		commandOnly(32);
@@ -2933,22 +2919,22 @@ void DreamBase::examineInventory() {
 	workToScreenM();
 }
 
-void DreamBase::middlePanel() {
+void DreamWebEngine::middlePanel() {
 }
 
-void DreamBase::showDiary() {
+void DreamWebEngine::showDiary() {
 	showFrame(_tempGraphics, kDiaryx, kDiaryy + 37, 1, 0);
 	showFrame(_tempGraphics, kDiaryx + 176, kDiaryy + 108, 2, 0);
 }
 
-void DreamBase::underTextLine() {
+void DreamWebEngine::underTextLine() {
 	if (_foreignRelease)
 		multiGet(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiGet(_textUnder, _textAddressX, _textAddressY, kUnderTextSizeX, kUnderTextSizeY);
 }
 
-void DreamBase::showWatchReel() {
+void DreamWebEngine::showWatchReel() {
 	uint16 reelPointer = _vars._reelToWatch;
 	plotReel(reelPointer);
 	_vars._reelToWatch = reelPointer;
@@ -2958,7 +2944,7 @@ void DreamBase::showWatchReel() {
 		_vars._shakeCounter = 0xFF;
 }
 
-void DreamBase::watchReel() {
+void DreamWebEngine::watchReel() {
 	if (_vars._reelToWatch != 0xFFFF) {
 		if (_mansPath != _finalDest)
 			return; // Wait until stopped walking
@@ -3005,7 +2991,7 @@ void DreamBase::watchReel() {
 	plotReel(reelPointer);
 }
 
-void DreamBase::afterNewRoom() {
+void DreamWebEngine::afterNewRoom() {
 	if (_nowInNewRoom == 0)
 		return; // notnew
 
@@ -3036,7 +3022,7 @@ void DreamBase::afterNewRoom() {
 	atmospheres();
 }
 
-void DreamBase::madmanRun() {
+void DreamWebEngine::madmanRun() {
 	if (_vars._location    != 14 ||
 		_mapX        != 22 ||
 		_pointerMode !=  2 ||
@@ -3056,7 +3042,7 @@ void DreamBase::madmanRun() {
 }
 
 
-void DreamBase::decide() {
+void DreamWebEngine::decide() {
 	setMode();
 	loadPalFromIFF();
 	clearPalette();
@@ -3073,11 +3059,11 @@ void DreamBase::decide() {
 	fadeScreenUp();
 	_getBack = 0;
 
-	RectWithCallback<DreamBase> decideList[] = {
-		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamBase::newGame },
-		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamBase::DOSReturn },
-		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamBase::loadOld },
-		{ 0,320,0,200,&DreamBase::blank },
+	RectWithCallback<DreamWebEngine> decideList[] = {
+		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamWebEngine::newGame },
+		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
+		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamWebEngine::loadOld },
+		{ 0,320,0,200,&DreamWebEngine::blank },
 		{ 0xFFFF,0,0,0,0 }
 	};
 
@@ -3102,7 +3088,7 @@ void DreamBase::decide() {
 	_textLen = 240;
 }
 
-void DreamBase::showGun() {
+void DreamWebEngine::showGun() {
 	_addToRed = 0;
 	_addToGreen = 0;
 	_addToBlue = 0;
@@ -3138,7 +3124,7 @@ void DreamBase::showGun() {
 	getRidOfTempText();
 }
 
-void DreamBase::diaryKeyP() {
+void DreamWebEngine::diaryKeyP() {
 	if (_commandType != 214) {
 		_commandType = 214;
 		commandOnly(23);
@@ -3158,7 +3144,7 @@ void DreamBase::diaryKeyP() {
 		_diaryPage = 11;
 }
 
-void DreamBase::diaryKeyN() {
+void DreamWebEngine::diaryKeyN() {
 	if (_commandType != 213) {
 		_commandType = 213;
 		commandOnly(23);
@@ -3178,7 +3164,7 @@ void DreamBase::diaryKeyN() {
 		_diaryPage = 0;
 }
 
-void DreamBase::dropError() {
+void DreamWebEngine::dropError() {
 	_commandType = 255;
 	delPointer();
 	printMessage(76, 21, 56, 240, 240 & 1);
@@ -3191,7 +3177,7 @@ void DreamBase::dropError() {
 	workToScreenM();
 }
 
-void DreamBase::cantDrop() {
+void DreamWebEngine::cantDrop() {
 	_commandType = 255;
 	delPointer();
 	printMessage(76, 21, 24, 240, 240 & 1);
@@ -3204,7 +3190,7 @@ void DreamBase::cantDrop() {
 	workToScreenM();
 }
 
-void DreamBase::getBack1() {
+void DreamWebEngine::getBack1() {
 	if (_pickUp != 0) {
 		blank();
 		return;
@@ -3226,7 +3212,7 @@ void DreamBase::getBack1() {
 	}
 }
 
-void DreamBase::autoAppear() {
+void DreamWebEngine::autoAppear() {
 	if (_vars._location == 32) {
 		// In alley
 		resetLocation(5);
@@ -3269,7 +3255,7 @@ void DreamBase::autoAppear() {
 	}
 }
 
-void DreamBase::quitKey() {
+void DreamWebEngine::quitKey() {
 	if (_commandType != 222) {
 		_commandType = 222;
 		commandOnly(4);
@@ -3279,7 +3265,7 @@ void DreamBase::quitKey() {
 		_getBack = 1;
 }
 
-void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 timeCount, byte x, byte y) {
+void DreamWebEngine::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 timeCount, byte x, byte y) {
 	if (_timeCount != 0)
 		return; // can't setup
 
@@ -3291,7 +3277,7 @@ void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 time
 	debug(1, "setupTimedUse: %d => '%s'", textIndex, _timedString);
 }
 
-void DreamBase::entryTexts() {
+void DreamWebEngine::entryTexts() {
 	switch (_vars._location) {
 	case 21:
 		setupTimedUse(28, 60, 11, 68, 64);
@@ -3319,7 +3305,7 @@ void DreamBase::entryTexts() {
 	}
 }
 
-void DreamBase::entryAnims() {
+void DreamWebEngine::entryAnims() {
 	_vars._reelToWatch = 0xFFFF;
 	_vars._watchMode = (byte)-1;
 
@@ -3396,7 +3382,7 @@ void DreamBase::entryAnims() {
 	}
 }
 
-void DreamBase::updateSymbolTop() {
+void DreamWebEngine::updateSymbolTop() {
 	if (!_symbolTopDir)
 		return; // topfinished
 
@@ -3433,7 +3419,7 @@ void DreamBase::updateSymbolTop() {
 	}
 }
 
-void DreamBase::updateSymbolBot() {
+void DreamWebEngine::updateSymbolBot() {
 	if (!_symbolBotDir)
 		return; // botfinished
 
@@ -3470,7 +3456,7 @@ void DreamBase::updateSymbolBot() {
 	}
 }
 
-void DreamBase::showDiaryPage() {
+void DreamWebEngine::showDiaryPage() {
 	showFrame(_tempGraphics, kDiaryx, kDiaryy, 0, 0);
 	_kerning = 1;
 	useTempCharset();
@@ -3487,7 +3473,7 @@ void DreamBase::showDiaryPage() {
 	useCharset1();
 }
 
-void DreamBase::dumpDiaryKeys() {
+void DreamWebEngine::dumpDiaryKeys() {
 	if (_pressCount == 1) {
 		if (_vars._sartainDead != 1 && _diaryPage == 5 && getLocation(6) != 1) {
 			// Add Sartain Industries note
@@ -3513,7 +3499,7 @@ void DreamBase::dumpDiaryKeys() {
 	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
 }
 
-void DreamBase::lookAtCard() {
+void DreamWebEngine::lookAtCard() {
 	_manIsOffScreen = 1;
 	getRidOfReels();
 	loadKeypad();
@@ -3538,11 +3524,11 @@ void DreamBase::lookAtCard() {
 	putBackObStuff();
 }
 
-void DreamBase::clearBuffers() {
+void DreamWebEngine::clearBuffers() {
 	clearChanges();
 }
 
-void DreamBase::clearChanges() {
+void DreamWebEngine::clearChanges() {
 	memset(_listOfChanges, 0xFF, 4*kNumChanges);
 
 	setupInitialReelRoutines();
@@ -3563,7 +3549,7 @@ void DreamBase::clearChanges() {
 	memcpy(_roomsCanGo, initialRoomsCanGo, 16);
 }
 
-void DreamBase::setupInitialVars() {
+void DreamWebEngine::setupInitialVars() {
 	_vars._startVars = 0;
 	_vars._progressPoints = 0;
 	_vars._watchOn = 0;
@@ -3625,7 +3611,7 @@ void DreamBase::setupInitialVars() {
 	_vars._shakeCounter = 48;
 }
 
-void DreamBase::showDiaryKeys() {
+void DreamWebEngine::showDiaryKeys() {
 	if (!_pressCount)
 		return; // nokeyatall
 
@@ -3646,7 +3632,7 @@ void DreamBase::showDiaryKeys() {
 		showDiaryPage();
 }
 
-void DreamBase::edensFlatReminders() {
+void DreamWebEngine::edensFlatReminders() {
 	if (_realLocation != 24 || _mapX != 44)
 		return; // not in Eden's lift
 
@@ -3674,7 +3660,7 @@ void DreamBase::edensFlatReminders() {
 	_vars._progressPoints++;	// got card
 }
 
-void DreamBase::incRyanPage() {
+void DreamWebEngine::incRyanPage() {
 	if (_commandType != 222) {
 		_commandType = 222;
 		commandOnly(31);
@@ -3694,7 +3680,7 @@ void DreamBase::incRyanPage() {
 
 }
 
-void DreamBase::emergencyPurge() {
+void DreamWebEngine::emergencyPurge() {
 	while (true) {
 		if (_vars._exFramePos + 4000 < kExframeslen) {
 			// Not near frame end
@@ -3706,7 +3692,7 @@ void DreamBase::emergencyPurge() {
 	}
 }
 
-void DreamBase::purgeAnItem() {
+void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
 	for (size_t i = 0; i < kNumexobjects; ++i) {
@@ -3725,4 +3711,4 @@ void DreamBase::purgeAnItem() {
 	}
 }
 
-} // End of namespace DreamGen
+} // End of namespace DreamWeb
