@@ -64,7 +64,7 @@ void DreamWebEngine::clearSprites() {
 	_spriteTable.clear();
 }
 
-Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, bool mainManCallback, const GraphicsFile *frameData, uint16 somethingInDi) {
+Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, bool mainManCallback, const GraphicsFile *frameData) {
 	// Note: the original didn't append sprites here, but filled up the
 	// first unused entry. This can change the order of entries, but since they
 	// are drawn based on the priority field, this shouldn't matter.
@@ -77,8 +77,6 @@ Sprite *DreamWebEngine::makeSprite(uint8 x, uint8 y, bool mainManCallback, const
 	sprite->x = x;
 	sprite->y = y;
 	sprite->_frameData = frameData;
-	sprite->w8 = somethingInDi;
-	sprite->w2 = 0xffff;
 	sprite->frameNumber = 0;
 	sprite->delay = 0;
 	sprite->_objData = 0;
@@ -93,7 +91,6 @@ void DreamWebEngine::spriteUpdate() {
 	Common::List<Sprite>::iterator i;
 	for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
 		Sprite &sprite = *i;
-		sprite.w24 = sprite.w2;
 		if (sprite._mainManCallback)
 			mainMan(&sprite);
 		else {
@@ -106,7 +103,7 @@ void DreamWebEngine::spriteUpdate() {
 }
 
 void DreamWebEngine::initMan() {
-	Sprite *sprite = makeSprite(_ryanX, _ryanY, true, &_mainSprites, 0);
+	Sprite *sprite = makeSprite(_ryanX, _ryanY, true, &_mainSprites);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;

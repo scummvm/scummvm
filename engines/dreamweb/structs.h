@@ -33,25 +33,15 @@ struct SetObject;
 
 struct Sprite {
 	bool _mainManCallback;
-	uint16 w2;
-	uint16 w4;
 	const GraphicsFile *_frameData;
-	uint16 w8;
 	uint8  x;
 	uint8  y;
-	uint16 w12;
-	uint8  b14;
 	uint8  frameNumber;
-	uint8  b16;
-	uint8  b17;
 	uint8  delay;
 	uint8  animFrame; // index into SetObject::frames
 	SetObject *_objData;
 	uint8  speed;
 	uint8  priority;
-	uint16 w24;
-	uint16 w26;
-	uint8  b28;
 	uint8  walkFrame;
 	uint8  type;
 	uint8  hidden;

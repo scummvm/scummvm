@@ -726,7 +726,7 @@ public:
 	void printSprites();
 	void printASprite(const Sprite *sprite);
 	void clearSprites();
-	Sprite *makeSprite(uint8 x, uint8 y, bool _mainManCallback, const GraphicsFile *frameData, uint16 somethingInDi);
+	Sprite *makeSprite(uint8 x, uint8 y, bool _mainManCallback, const GraphicsFile *frameData);
 	void initMan();
 	void walking(Sprite *sprite);
 	void aboutTurn(Sprite *sprite);
