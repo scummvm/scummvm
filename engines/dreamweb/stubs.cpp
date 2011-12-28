@@ -1527,20 +1527,6 @@ void DreamBase::dumpPointer() {
 		multiDump(_oldPointerX, _oldPointerY, _pointerXS, _pointerYS);
 }
 
-template <class T>
-void DreamBase::checkCoords(const RectWithCallback<T> *rectWithCallbacks) {
-	if (_newLocation != 0xff)
-		return;
-
-	const RectWithCallback<T> *r;
-	for (r = rectWithCallbacks; r->_xMin != 0xffff; ++r) {
-		if (r->contains(_mouseX, _mouseY)) {
-			(((T *)this)->*(r->_callback))();
-			return;
-		}
-	}
-}
-
 void DreamBase::showPointer() {
 	showBlink();
 	uint16 x = _mouseX;
