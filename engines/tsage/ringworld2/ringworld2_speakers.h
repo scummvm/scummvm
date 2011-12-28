@@ -428,6 +428,32 @@ public:
 	virtual Common::String getClassName() { return "SpeakerTeal3400"; }
 	virtual void proc15();
 };
+
+class SpeakerQuinn3700 : public VisualSpeaker {
+public:
+	SpeakerQuinn3700();
+
+	virtual Common::String getClassName() { return "SpeakerQuinn3700"; }
+	virtual void setText(const Common::String &msg);
+	virtual void proc15();
+};
+
+class SpeakerSeeker3700 : public VisualSpeaker {
+public:
+	SpeakerSeeker3700();
+
+	virtual Common::String getClassName() { return "SpeakerSeeker3700"; }
+	virtual void setText(const Common::String &msg);
+	virtual void proc15();
+};
+
+class SpeakerMiranda3700 : public VisualSpeaker {
+public:
+	SpeakerMiranda3700();
+
+	virtual Common::String getClassName() { return "SpeakerMiranda3700"; }
+	virtual void proc15();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

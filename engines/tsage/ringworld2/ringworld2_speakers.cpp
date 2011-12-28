@@ -1915,5 +1915,222 @@ void SpeakerTeal3400::proc15() {
 	}
 }
 
+SpeakerQuinn3700::SpeakerQuinn3700() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerQuinn3700::setText(const Common::String &msg) {
+	Scene3700 *scene = (Scene3700 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_fieldF6) {
+	case 2:
+		scene->_actor3.setup(30, 1, 1);
+		R2_GLOBALS._sound2.play(44);
+		break;
+	case 3:
+		scene->_actor3.setup(30, 1, 1);
+		break;
+	default:
+		scene->_actor3.setup(30, 7, 1);
+		break;
+	}
+	VisualSpeaker::setText(msg);
+}
+
+void SpeakerQuinn3700::proc15() {
+	Scene3700 *scene = (Scene3700 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor1;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	_object1.setPosition(_object2->_position);
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		R2_GLOBALS._sound2.stop();
+		scene->_actor1.setup(10, 4, 1);
+		scene->_actor3.setup(30, 7, 1);
+		_object1.setup(3701, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor2.setup(20, 1, 1);
+		scene->_actor3.setup(30, 1, 1);
+		_object1.setup(3701, 2, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor1.setup(10, 2, 1);
+		scene->_actor3.setup(30, 1, 1);
+		_object1.setup(4011, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerSeeker3700::SpeakerSeeker3700() {
+	_speakerName = "SEEKER";
+	_color1 = 35;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerSeeker3700::setText(const Common::String &msg) {
+	Scene3700 *scene = (Scene3700 *)R2_GLOBALS._sceneManager._scene;
+
+	if (_fieldF6 == 1) {
+		R2_GLOBALS._sound2.play(44);
+		scene->_actor3.setup(30, 8, 1);
+	} else {
+		scene->_actor3.setup(30, 2, 1);
+	}
+	VisualSpeaker::setText(msg);
+}
+
+void SpeakerSeeker3700::proc15() {
+	Scene3700 *scene = (Scene3700 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	_object1.setPosition(_object2->_position);
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		R2_GLOBALS._sound2.stop();
+		scene->_actor1.setup(10, 8, 1);
+		scene->_actor2.setup(20, 7, 1);
+		scene->_actor3.setup(30, 8, 1);
+		_object1.setup(3701, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor1.setup(10, 2, 1);
+		scene->_actor2.setup(20, 1, 1);
+		scene->_actor3.setup(30, 1, 1);
+		_object1.setup(4031, 1, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+SpeakerMiranda3700::SpeakerMiranda3700() {
+	_speakerName = "MIRANDA";
+	_color1 = 154;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerMiranda3700::proc15() {
+	Scene3700 *scene = (Scene3700 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_actor3;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	_object1.setPosition(_object2->_position);
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor1.setup(10, 6, 1);
+		scene->_actor2.setup(20, 5, 1);
+		_object2->setup(30, 1, 1);
+		scene->_actor4.setup(40, 1, 1);
+		_object1.setup(4050, 5, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor3.setup(30, 8, 1);
+		_object1.setup(4052, 3, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		scene->_actor2.setup(20, 1, 1);
+		scene->_actor3.setup(30, 1, 1);
+		_object1.setup(4051, 7, 1);
+		_object1.animate(ANIM_MODE_5, NULL);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

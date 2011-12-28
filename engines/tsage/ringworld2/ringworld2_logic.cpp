@@ -224,7 +224,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		return new Scene3400();
 	case 3500:
 	case 3600:
+		error("Missing scene %d from group 3", sceneNumber);
 	case 3700:
+		// Cutscene - Teleport outside
+		return new Scene3700();
 	case 3800:
 	case 3900:
 		error("Missing scene %d from group 3", sceneNumber);

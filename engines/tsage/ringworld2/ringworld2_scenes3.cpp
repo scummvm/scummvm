@@ -1945,5 +1945,78 @@ void Scene3400::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3700 - Cutscene - Teleport outside
+ *
+ *--------------------------------------------------------------------------*/
+void Scene3700::postInit(SceneObjectList *OwnerList) {
+	loadScene(3700);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+
+	_stripManager.setColors(60, 255);
+	_stripManager.setFontNumber(3);
+	_stripManager.addSpeaker(&_quinnSpeaker);
+	_stripManager.addSpeaker(&_seekerSpeaker);
+	_stripManager.addSpeaker(&_mirandaSpeaker);
+
+	_actor1.postInit();
+	_actor1._moveDiff = Common::Point(3, 2);
+
+	_actor2.postInit();
+	_actor2._numFrames = 7;
+	_actor2._moveDiff = Common::Point(5, 3);
+	_actor2.hide();
+
+	_actor3.postInit();
+	_actor3._moveDiff = Common::Point(3, 2);
+	_actor3.hide();
+
+	_actor4.postInit();
+	_actor4._numFrames = 7;
+	_actor4._moveDiff = Common::Point(5, 3);
+	_actor4.hide();
+
+	_actor5.postInit();
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._sound1.play(332);
+
+	_sceneMode = 3700;
+	setAction(&_sequenceManager, this, 3700, &_actor1, &_actor2, &_actor3, &_actor4, &_actor5, NULL);
+}
+
+void Scene3700::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene3700::signal() {
+	switch (_sceneMode) {
+	case 3328:
+	// No break on purpose
+	case 3329:
+		warning("STUB: sub_1D227()");
+		setAction(&_sequenceManager, this, 3701, &_actor2, &_actor3, &_actor4, NULL);
+		break;
+	case 3700:
+		_actor1.setup(10, 6, 1);
+		_actor2.setup(20, 5, 1);
+		if (R2_GLOBALS.getFlag(71)) {
+			_sceneMode = 3329;
+			_stripManager.start(3329, this);
+		} else {
+			_sceneMode = 3328;
+			_stripManager.start(3328, this);
+		}
+	case 3701:
+		R2_GLOBALS._sceneManager.changeScene(1000);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

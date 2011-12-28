@@ -424,6 +424,23 @@ public:
 	virtual void signal();
 	virtual void synchronize(Serializer &s);
 };
+
+class Scene3700 : public SceneExt {
+public:
+	SpeakerQuinn3700 _quinnSpeaker;
+	SpeakerSeeker3700 _seekerSpeaker;
+	SpeakerMiranda3700 _mirandaSpeaker;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
