@@ -1344,6 +1344,8 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	std::stack<bool> shouldInclude;
 	shouldInclude.push(true);
 
+	StringList filesInVariableList;
+
 	bool hadModule = false;
 	std::string line;
 	for (;;) {
@@ -1397,6 +1399,30 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 					std::getline(moduleMk, line);
 					tokens = tokenize(line);
 					i = tokens.begin();
+				} else if (*i == "$(KYRARPG_COMMON_OBJ)") {
+					// HACK to fix EOB/LOL compilation in the kyra engine:
+					// replace the variable name with the stored files.
+					// This assumes that the file list has already been defined.
+					if (filesInVariableList.size() == 0)
+						error("$(KYRARPG_COMMON_OBJ) found, but the variable hasn't been set before it");
+					// Construct file list and replace the variable
+					for (StringList::iterator j = filesInVariableList.begin(); j != filesInVariableList.end(); ++j) {
+						const std::string filename = *j;
+
+						if (shouldInclude.top()) {
+							// In case we should include a file, we need to make
+							// sure it is not in the exclude list already. If it
+							// is we just drop it from the exclude list.
+							excludeList.remove(filename);
+
+							includeList.push_back(filename);
+						} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+							// We only add the file to the exclude list in case it
+							// has not yet been added to the include list.
+							excludeList.push_back(filename);
+						}
+					}
+					++i;
 				} else {
 					const std::string filename = moduleDir + "/" + unifyPath(*i);
 
@@ -1412,6 +1438,29 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 						// has not yet been added to the include list.
 						excludeList.push_back(filename);
 					}
+					++i;
+				}
+			}
+		} else if (*i == "KYRARPG_COMMON_OBJ") {
+			// HACK to fix EOB/LOL compilation in the kyra engine: add the
+			// files defined in the KYRARPG_COMMON_OBJ variable in a list
+			if (tokens.size() < 3)
+				error("Malformed KYRARPG_COMMON_OBJ definition in " + moduleMkFile);
+			++i;
+
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed KYRARPG_COMMON_OBJ definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+					filesInVariableList.push_back(filename);
 					++i;
 				}
 			}
