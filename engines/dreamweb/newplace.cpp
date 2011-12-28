@@ -151,7 +151,7 @@ void DreamWebEngine::locationPic() {
 		showFrame(_tempGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
-	DreamWebEngine::printDirect(string, 50, 20, 241, 241 & 1);
+	printDirect(string, 50, 20, 241, 241 & 1);
 }
 
 void DreamWebEngine::showArrows() {
