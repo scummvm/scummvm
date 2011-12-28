@@ -1879,12 +1879,11 @@ void DreamBase::zoomOnOff() {
 }
 
 void DreamBase::sortOutMap() {
-	const uint16 kMaplength = 60;
 	const uint8 *src = workspace();
 	uint8 *dst = _mapData;
-	for (uint16 y = 0; y < kMaplength; ++y) {
-		memcpy(dst, src, kMapwidth);
-		dst += kMapwidth;
+	for (uint16 y = 0; y < kMapHeight; ++y) {
+		memcpy(dst, src, kMapWidth);
+		dst += kMapWidth;
 		src += 132;
 	}
 }
@@ -2135,6 +2134,7 @@ void DreamBase::getRidOfAll() {
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 	const uint16 kSetdatlen = 64*128;
+	const uint16 kFreedatlen = 16*80;
 
 	engine->openFile(room.name);
 
@@ -3545,7 +3545,7 @@ void DreamBase::clearBuffers() {
 }
 
 void DreamBase::clearChanges() {
-	memset(_listOfChanges, 0xFF, 4*kNumchanges);
+	memset(_listOfChanges, 0xFF, 4*kNumChanges);
 
 	setupInitialReelRoutines();
 

@@ -52,6 +52,17 @@ const unsigned int kMapWidth = 66;
 const unsigned int kMapHeight = 60;
 const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
 const unsigned int kNumExObjects = 114;
+const unsigned int kScreenwidth = 320;
+const unsigned int kDiaryx = (68+24);
+const unsigned int kDiaryy = (48+12);
+const unsigned int kInventx = 80;
+const unsigned int kInventy = 58;
+const unsigned int kMenux = (80+40);
+const unsigned int kMenuy = 60;
+const unsigned int kOpsx = 60;
+const unsigned int kOpsy = 52;
+const unsigned int kSymbolx = 64;
+const unsigned int kSymboly = 56;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose

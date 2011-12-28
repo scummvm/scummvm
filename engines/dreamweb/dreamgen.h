@@ -105,25 +105,10 @@ static const uint16 kLengthofextra = (0+2080+30000+(16*114)+((114+2)*2)+18000);
 static const uint16 kForeign = (1);
 static const uint16 kCd = (1);
 static const uint16 kNumexobjects = (114);
-static const uint16 kFreedatlen = (16*80);
 static const uint16 kExtextlen = (18000);
-static const uint16 kNumchanges = (250);
 static const uint16 kExframeslen = (30000);
-static const uint16 kScreenwidth = (320);
 static const uint16 kItempicsize = (44);
-static const uint16 kDiaryy = (48+12);
-static const uint16 kOpsy = (52);
-static const uint16 kSymboly = (56);
-static const uint16 kInventy = (58);
-static const uint16 kMenuy = (60);
-static const uint16 kOpsx = (60);
-static const uint16 kSymbolx = (64);
-static const uint16 kMapwidth = (66);
-static const uint16 kDiaryx = (68+24);
 static const uint16 kLengthofvars = (68-0);
-static const uint16 kInventx = (80);
-static const uint16 kMenux = (80+40);
-static const uint16 kHeaderlen = (96);
 
 
 class DreamGenContext : public DreamBase, public Context {

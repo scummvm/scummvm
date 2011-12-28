@@ -1092,14 +1092,13 @@ void DreamBase::soundOnReels(uint16 reelPointer) {
 }
 
 void DreamBase::clearBeforeLoad() {
-	const uint16 kMaplen = 66*60;
 	if (_roomLoaded != 1)
 		return; // noclear
 
 	clearReels();
 
 	//clearRest
-	memset(_mapData, 0, kMaplen);
+	memset(_mapData, 0, kLengthOfMap);
 	delete[] _backdropBlocks;
 	_backdropBlocks = 0;
 	_setFrames.clear();

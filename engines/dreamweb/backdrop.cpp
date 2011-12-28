@@ -26,7 +26,7 @@ namespace DreamGen {
 
 void DreamBase::doBlocks() {
 	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
-	uint16 mapOffset = _mapY * kMapwidth + _mapX;
+	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 	uint8 *dstBuffer = workspace() + dstOffset;
 
@@ -57,7 +57,7 @@ void DreamBase::doBlocks() {
 				memset(dst, 0xdf, 16);
 			}
 		}
-		mapData += kMapwidth;
+		mapData += kMapWidth;
 	}
 }
 
@@ -236,12 +236,12 @@ void DreamBase::showAllFree() {
 
 void DreamBase::drawFlags() {
 	MapFlag *mapFlag = _mapFlags;
-	uint16 mapOffset = _mapY * kMapwidth + _mapX;
+	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 
 	for (size_t i = 0; i < 10; ++i) {
 		for (size_t j = 0; j < 11; ++j) {
-			uint8 tile = mapData[i * kMapwidth + j];
+			uint8 tile = mapData[i * kMapWidth + j];
 			mapFlag->_flag = _backdropFlags[tile]._flag;
 			mapFlag->_flagEx = _backdropFlags[tile]._flagEx;
 			mapFlag->_type = tile;

@@ -464,7 +464,7 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
 	// fill length fields in savegame file header
 	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
-	                  4*kNumchanges, 48, kNumReelRoutines*8+1 };
+	                  4*kNumChanges, 48, kNumReelRoutines*8+1 };
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
@@ -551,7 +551,7 @@ void DreamBase::loadPosition(unsigned int slot) {
 	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
 
 	// the Extras segment:
-	inSaveFile->read((uint8 *)_exFrames._frames, 2080);
+	inSaveFile->read((uint8 *)_exFrames._frames, kExframes);
 	inSaveFile->read((uint8 *)_exFrames._data, kExframeslen);
 	inSaveFile->read((uint8 *)_exData, sizeof(DynObject)*kNumexobjects);
 	inSaveFile->read((uint8 *)_exText._offsetsLE, 2*(kNumExObjects+2));
