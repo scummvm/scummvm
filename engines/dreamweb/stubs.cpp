@@ -1136,16 +1136,6 @@ void DreamBase::plotReel(uint16 &reelPointer) {
 	soundOnReels(reelPointer);
 }
 
-void DreamBase::crosshair() {
-	uint8 frame;
-	if ((_commandType != 3) && (_commandType < 10)) {
-		frame = 9;
-	} else {
-		frame = 29;
-	}
-	showFrame(_icons1, kZoomx + 24, kZoomy + 19, frame, 0);
-}
-
 void DreamBase::delTextLine() {
 	if (_foreignRelease)
 		multiPut(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
@@ -1999,12 +1989,6 @@ void DreamBase::roomName() {
 	printDirect(string, 88, 25, maxWidth, false);
 	_lineSpacing = 10;
 	useCharset1();
-}
-
-void DreamBase::zoomIcon() {
-	if (data.byte(kZoomon) == 0)
-		return;
-	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamBase::loadRoom() {
@@ -2929,11 +2913,6 @@ bool DreamBase::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
 }
 
-void DreamBase::dumpZoom() {
-	if (data.byte(kZoomon) == 1)
-		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
-}
-
 void DreamBase::examineInventory() {
 	if (_commandType != 249) {
 		_commandType = 249;
@@ -2967,14 +2946,6 @@ void DreamBase::underTextLine() {
 		multiGet(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiGet(_textUnder, _textAddressX, _textAddressY, kUnderTextSizeX, kUnderTextSizeY);
-}
-
-void DreamBase::getUnderZoom() {
-	multiGet(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
-}
-
-void DreamBase::putUnderZoom() {
-	multiPut(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
 void DreamBase::showWatchReel() {

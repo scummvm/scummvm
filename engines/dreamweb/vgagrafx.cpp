@@ -26,6 +26,9 @@
 
 namespace DreamGen {
 
+const uint16 kZoomx = 8;
+const uint16 kZoomy = 132;
+
 void DreamBase::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
@@ -330,6 +333,35 @@ void DreamBase::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uin
 
 void DreamBase::clearWork() {
 	memset(workspace(), 0, 320*200);
+}
+
+void DreamBase::dumpZoom() {
+	if (data.byte(kZoomon) == 1)
+		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
+void DreamBase::crosshair() {
+	uint8 frame;
+	if ((_commandType != 3) && (_commandType < 10)) {
+		frame = 9;
+	} else {
+		frame = 29;
+	}
+	showFrame(_icons1, kZoomx + 24, kZoomy + 19, frame, 0);
+}
+
+void DreamBase::getUnderZoom() {
+	multiGet(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
+void DreamBase::putUnderZoom() {
+	multiPut(_zoomSpace, kZoomx + 5, kZoomy + 4, 46, 40);
+}
+
+void DreamBase::zoomIcon() {
+	if (data.byte(kZoomon) == 0)
+		return;
+	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamBase::zoom() {

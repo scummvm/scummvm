@@ -26,7 +26,7 @@ namespace DreamGen {
 
 void DreamBase::doBlocks() {
 	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
-	uint16 mapOffset = kMap + _mapY * kMapwidth + _mapX;
+	uint16 mapOffset = _mapY * kMapwidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 	uint8 *dstBuffer = workspace() + dstOffset;
 
@@ -236,7 +236,7 @@ void DreamBase::showAllFree() {
 
 void DreamBase::drawFlags() {
 	MapFlag *mapFlag = _mapFlags;
-	uint16 mapOffset = kMap + _mapY * kMapwidth + _mapX;
+	uint16 mapOffset = _mapY * kMapwidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 
 	for (size_t i = 0; i < 10; ++i) {
