@@ -498,11 +498,11 @@ void EoBEngine::seq_king() {
 				_screen->copyRegion(0, dy[i] - 2, (advEncX[i] + 8) << 3, dy[i] - 2, advEncW[i] << 3, 182 - dy[i], 4, 0, Screen::CR_NO_P_CHECK);
 			}
 
-			if (_rnd.getRandomNumber(255) & 3)
-				_sound->playTrack(7);
-
 			runloop = true;
 		}
+
+		if (!(_rnd.getRandomNumber(255) & 3))
+			_sound->playTrack(7);
 
 		_screen->updateScreen();
 		delayUntil(end);
