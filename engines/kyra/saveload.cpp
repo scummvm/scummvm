@@ -60,6 +60,9 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 		bool saveOk = false;
 
 		for (uint i = 0; i < ARRAYSIZE(descriptionSize) && !saveOk; ++i) {
+			if (in->size() < descriptionSize[i] + 6)
+				continue;
+
 			in->seek(0, SEEK_SET);
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
