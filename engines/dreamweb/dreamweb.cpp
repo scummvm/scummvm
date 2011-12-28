@@ -54,7 +54,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	_inSaveFile = 0;
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
@@ -385,43 +384,6 @@ void DreamWebEngine::setSpeed(uint speed) {
 	_speed = speed;
 	_timer->removeTimerProc(vSyncInterrupt);
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
-}
-
-void DreamWebEngine::openFile(const Common::String &name) {
-	processEvents();
-	closeFile();
-	if (_file.open(name))
-		return;
-	// File not found? See if there is a save state with this name
-	// FIXME: Is this really needed? If yes, document why; if not,
-	// remove all traces of _inSaveFile.
-	_inSaveFile = _saveFileMan->openForLoading(name);
-	if (_inSaveFile)
-		return;
-	error("cannot open file %s", name.c_str());
-}
-
-uint32 DreamWebEngine::skipBytes(uint32 bytes) {
-	if (!_file.seek(bytes, SEEK_CUR))
-		error("seek failed");
-	return _file.pos();
-}
-
-uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
-	processEvents();
-	if (_file.isOpen())
-		return _file.read(dst, size);
-	if (_inSaveFile)
-		return _inSaveFile->read(dst, size);
-	error("file was not opened (read before open)");
-}
-
-void DreamWebEngine::closeFile() {
-	processEvents();
-	if (_file.isOpen())
-		_file.close();
-	delete _inSaveFile;
-	_inSaveFile = 0;
 }
 
 Common::String DreamWebEngine::getSavegameFilename(int slot) const {
