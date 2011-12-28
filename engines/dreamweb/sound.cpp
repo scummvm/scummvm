@@ -173,7 +173,7 @@ void DreamWebEngine::stopSound(uint8 channel) {
 }
 
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
-	if (ConfMan.getBool("speech_mute"))
+	if (!hasSpeech())
 		return false;
 
 	Common::File file;
