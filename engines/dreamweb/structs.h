@@ -71,7 +71,7 @@ struct SetObject {
 	uint8 b9;
 	uint8 b10;
 	uint8 b11;
-	uint8 name[4];
+	uint8 objId[4];
 	uint8 b16;
 	uint8 index;
 	uint8 frames[13]; // Table mapping animFrame to sprite frame number
@@ -116,7 +116,7 @@ struct DynObject {
 	uint8 objectSize;	// the size of an object
 	uint8 turnedOn;
 	uint8 initialLocation;
-	uint8 id[4];
+	uint8 objId[4];
 };
 
 struct ObjPos {

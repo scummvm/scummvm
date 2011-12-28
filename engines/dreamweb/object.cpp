@@ -57,7 +57,7 @@ void DreamWebEngine::fillRyan() {
 }
 
 bool DreamWebEngine::isItWorn(const DynObject *object) {
-	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
+	return (object->objId[0] == 'W'-'A') && (object->objId[1] == 'E'-'A');
 }
 
 void DreamWebEngine::wornError() {
@@ -74,8 +74,8 @@ void DreamWebEngine::wornError() {
 }
 
 void DreamWebEngine::makeWorn(DynObject *object) {
-	object->id[0] = 'W'-'A';
-	object->id[1] = 'E'-'A';
+	object->objId[0] = 'W'-'A';
+	object->objId[1] = 'E'-'A';
 }
 
 void DreamWebEngine::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
