@@ -218,10 +218,7 @@ void DreamWebEngine::inventory() {
 		return;
 	}
 
-	if (_commandType != 239) {
-		_commandType = 239;
-		commandOnly(32);
-	}
+	commandOnlyCond(32, 239);
 
 	if (_mouseButton == _oldButton)
 		return;

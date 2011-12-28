@@ -814,7 +814,9 @@ public:
 	void roomName();
 	void showIcon();
 	void eraseOldObs();
+	void commandOnlyCond(uint8 command, uint8 commandType);
 	void commandOnly(uint8 command);
+	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void blank();
 	void setTopLeft();
 	void setTopRight();
@@ -884,7 +886,6 @@ public:
 	void makeMainScreen();
 	void showWatchReel();
 	void watchReel();
-	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void examineObText();
 	void blockNameText();
 	void personNameText();

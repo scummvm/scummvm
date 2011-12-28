@@ -979,10 +979,7 @@ void DreamWebEngine::getTime() {
 }
 
 void DreamWebEngine::DOSReturn() {
-	if (_commandType != 250) {
-		_commandType = 250;
-		commandOnly(46);
-	}
+	commandOnlyCond(46, 250);
 
 	if (_mouseButton & 1) {
 		_mouseButton = 0;
@@ -1118,6 +1115,13 @@ void DreamWebEngine::delTextLine() {
 		multiPut(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
 	else
 		multiPut(_textUnder, _textAddressX, _textAddressY, kUnderTextSizeX, kUnderTextSizeY);
+}
+
+void DreamWebEngine::commandOnlyCond(uint8 command, uint8 commandType) {
+	if (_commandType != commandType) {
+		_commandType = commandType;
+		commandOnly(command);
+	}
 }
 
 void DreamWebEngine::commandOnly(uint8 command) {
@@ -1768,10 +1772,7 @@ void DreamWebEngine::zoomOnOff() {
 		return;
 	}
 
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(39);
-	}
+	commandOnlyCond(39, 222);
 
 	if (!(_mouseButton & 1) || (_mouseButton == _oldButton))
 		return;
@@ -1965,10 +1966,7 @@ void DreamWebEngine::look() {
 		blank();
 		return;
 	}
-	if (_commandType != 241) {
-		_commandType = 241;
-		commandOnly(25);
-	}
+	commandOnlyCond(25, 241);
 	if ((_mouseButton == 1) && (_mouseButton != _oldButton))
 		doLook();
 }
@@ -2300,10 +2298,7 @@ void DreamWebEngine::readKey() {
 }
 
 void DreamWebEngine::newGame() {
-	if (_commandType != 251) {
-		_commandType = 251;
-		commandOnly(47);
-	}
+	commandOnlyCond(47, 251);
 
 	if (_mouseButton == 1)
 		_getBack = 3;
@@ -2377,10 +2372,7 @@ void DreamWebEngine::redrawMainScrn() {
 }
 
 void DreamWebEngine::blank() {
-	if (_commandType != 199) {
-		_commandType = 199;
-		commandOnly(0);
-	}
+	commandOnlyCond(0, 199);
 }
 
 void DreamWebEngine::allPointer() {
@@ -2537,10 +2529,7 @@ bool DreamWebEngine::isSetObOnMap(uint8 index) {
 }
 
 void DreamWebEngine::examineInventory() {
-	if (_commandType != 249) {
-		_commandType = 249;
-		commandOnly(32);
-	}
+	commandOnlyCond(32, 249);
 
 	if (!(_mouseButton & 1))
 		return;
@@ -2663,10 +2652,7 @@ void DreamWebEngine::madmanRun() {
 		return;
 	}
 
-	if (_commandType != 211) {
-		_commandType = 211;
-		commandOnly(52);
-	}
+	commandOnlyCond(52, 211);
 
 	if (_mouseButton == 1 &&
 		_mouseButton != _oldButton)
@@ -2789,10 +2775,7 @@ void DreamWebEngine::getBack1() {
 	}
 
 
-	if (_commandType != 202) {
-		_commandType = 202;
-		commandOnly(26);
-	}
+	commandOnlyCond(26, 202);
 
 	if (_mouseButton == _oldButton)
 		return;
@@ -3105,10 +3088,7 @@ void DreamWebEngine::edensFlatReminders() {
 }
 
 void DreamWebEngine::incRyanPage() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(31);
-	}
+	commandOnlyCond(31, 222);
 
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;

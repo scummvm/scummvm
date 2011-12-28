@@ -103,10 +103,7 @@ void DreamWebEngine::showCity() {
 }
 
 void DreamWebEngine::lookAtPlace() {
-	if (_commandType != 224) {
-		_commandType = 224;
-		commandOnly(27);
-	}
+	commandOnlyCond(27, 224);
 
 	if (!(_mouseButton & 1) ||
 		_mouseButton == _oldButton ||
@@ -164,10 +161,7 @@ void DreamWebEngine::showArrows() {
 }
 
 void DreamWebEngine::nextDest() {
-	if (_commandType != 218) {
-		_commandType = 218;
-		commandOnly(28);
-	}
+	commandOnlyCond(28, 218);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// nodu
@@ -193,10 +187,7 @@ void DreamWebEngine::nextDest() {
 }
 
 void DreamWebEngine::lastDest() {
-	if (_commandType != 219) {
-		_commandType = 219;
-		commandOnly(29);
-	}
+	commandOnlyCond(29, 219);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// nodd
@@ -222,10 +213,7 @@ void DreamWebEngine::lastDest() {
 }
 
 void DreamWebEngine::destSelect() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(30);
-	}
+	commandOnlyCond(30, 222);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
 		return;	// notrav

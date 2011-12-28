@@ -119,10 +119,7 @@ void DreamWebEngine::moreTalk() {
 		return;
 	}
 
-	if (_commandType != 215) {
-		_commandType = 215;
-		commandOnly(49);
-	}
+	commandOnlyCond(49, 215);
 
 	if (_mouseButton == _oldButton)
 		return;	// nomore
@@ -245,10 +242,7 @@ void DreamWebEngine::redes() {
 		return;
 	}
 
-	if (_commandType != 217) {
-		_commandType = 217;
-		commandOnly(50);
-	}
+	commandOnlyCond(50, 217);
 
 	if (!(_mouseButton & 1))
 		return;
