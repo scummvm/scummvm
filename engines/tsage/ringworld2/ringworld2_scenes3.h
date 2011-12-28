@@ -400,6 +400,61 @@ public:
 	virtual void signal();
 };
 
+class Scene3375 : public SceneExt {
+	class Actor1 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor2 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor4 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit3 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	void signalCase3379();
+public:
+	SpeakerQuinn3375 _quinnSpeaker;
+	SpeakerSeeker3375 _seekerSpeaker;
+	SpeakerMiranda3375 _mirandaSpeaker;
+	SpeakerWebbster3375 _webbsterSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _itemArray[13];
+	Actor1 _actor1;
+	Actor2 _actor2;
+	Actor3 _actor3;
+	Actor4 _actor4;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	Exit3 _exit3;
+	SequenceManager _sequenceManager;
+	int _field1488;
+	int _field148A[4];
+	int _field1492;
+
+	Scene3375();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void Scene3375::dispatch();
+	virtual void Scene3375::synchronize(Serializer &s);
+};
+
 class Scene3400 : public SceneExt {
 public:
 	SpeakerQuinn3400 _quinnSpeaker;
