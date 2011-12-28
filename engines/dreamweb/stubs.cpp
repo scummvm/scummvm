@@ -1185,16 +1185,16 @@ bool DreamWebEngine::checkIfEx(uint8 x, uint8 y) {
 }
 
 const uint8 *DreamWebEngine::findObName(uint8 type, uint8 index) {
-	if (type == 5) {
-		uint16 i = 64 * (index & 127);
-		return (const uint8 *)_personText.getString(i);
-	} else if (type == 4) {
+	switch (type) {
+	case 5:
+		return (const uint8 *)_personText.getString(64 * (index & 127));
+	case kExObjectType:
 		return (const uint8 *)_exText.getString(index);
-	} else if (type == 2) {
+	case kFreeObjectType:
 		return (const uint8 *)_freeDesc.getString(index);
-	} else if (type == 1) {
+	case kSetObjectType1:
 		return (const uint8 *)_setDesc.getString(index);
-	} else {
+	default:
 		return (const uint8 *)_blockDesc.getString(index);
 	}
 }

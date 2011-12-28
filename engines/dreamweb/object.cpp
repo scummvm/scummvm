@@ -30,7 +30,7 @@ void DreamWebEngine::showRyanPage() {
 }
 
 void DreamWebEngine::findAllRyan() {
-	memset(_ryanInvList, 0xff, 60);
+	memset(_ryanInvList, 0xff, sizeof(_ryanInvList));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		const DynObject *extra = getExAd(i);
 		if (extra->mapad[0] != kExObjectType)
@@ -683,12 +683,12 @@ void DreamWebEngine::dropObject() {
 		return;
 	}
 
-	if (compare(_itemFrame, 4, "GUNA") || compare(_itemFrame, 4, "SHLD")) {
+	if (compare(_itemFrame, kExObjectType, "GUNA") || compare(_itemFrame, kExObjectType, "SHLD")) {
 		cantDrop();
 		return;
 	}
 
-	_objectType = 4;
+	_objectType = kExObjectType;
 	DynObject *object = getExAd(_itemFrame);
 	object->mapad[0] = 0;
 	object->mapad[1] = ((_ryanX + 4) >> 4) + _mapX;
