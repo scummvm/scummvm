@@ -225,6 +225,7 @@ p = parser(skip_binary_data = [
 	'timer2',
 	'timer3',
 	'wholetimer',
+	'wongame',
 	'timer1to',
 	'timer2to',
 	'timer3to',

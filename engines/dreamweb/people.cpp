@@ -178,8 +178,8 @@ void DreamBase::madman(ReelRoutine &routine) {
 		}
 		++newReelPointer;
 		if (newReelPointer == 294) {
-			if (data.byte(kWongame) != 1) {
-				data.byte(kWongame) = 1;
+			if (!_wonGame) {
+				_wonGame = true;
 				getRidOfTempText();
 			}
 			return;

@@ -482,7 +482,7 @@ void DreamBase::dreamweb() {
 	clearPalette();
 	set16ColPalette();
 	readSetData();
-	data.byte(kWongame) = 0;
+	_wonGame = false;
 
 	engine->loadSounds(0, "DREAMWEB.V99"); // basic sample
 
@@ -589,7 +589,7 @@ void DreamBase::dreamweb() {
 			if (_quitRequested)
 				goto done;
 
-			if (data.byte(kWongame) != 0) {
+			if (_wonGame) {
 				// "endofgame"
 				clearBeforeLoad();
 				fadeScreenDowns();
@@ -712,7 +712,7 @@ void DreamBase::screenUpdate() {
 	zoom();
 
 	showPointer();
-	if (data.byte(kWongame))
+	if (_wonGame)
 		return;
 	vSync();
 	mouseState |= readMouseState();

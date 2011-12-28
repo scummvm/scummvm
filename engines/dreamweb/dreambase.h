@@ -172,6 +172,8 @@ public:
 	bool _subtitles;
 	bool _foreignRelease;
 
+	bool _wonGame;
+
 	// sound related
 	uint8 _roomsSample;
 	uint8 _currentSample;
