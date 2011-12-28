@@ -190,35 +190,6 @@ void DreamWebEngine::showSecondUse() {
 	hangOnP(400);
 }
 
-void DreamWebEngine::viewFolder() {
-	_manIsOffScreen = 1;
-	getRidOfAll();
-	loadFolder();
-	_folderPage = 0;
-	showFolder();
-	workToScreenM();
-	_getBack = 0;
-	do {
-		if (_quitRequested)
-			break;
-		delPointer();
-		readMouse();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		checkFolderCoords();
-	} while (_getBack == 0);
-	_manIsOffScreen = 0;
-	getRidOfTemp();
-	getRidOfTemp2();
-	getRidOfTemp3();
-	getRidOfTempCharset();
-	restoreAll();
-	redrawMainScrn();
-	workToScreenM();
-}
-
 void DreamWebEngine::edensCDPlayer() {
 	showFirstUse();
 	_vars._watchingTime = 18 * 2;
@@ -1241,7 +1212,7 @@ void DreamWebEngine::useCooker() {
 		showFirstUse();
 	else
 		showSecondUse();	// Food inside
-		
+
 	putBackObStuff();
 }
 
@@ -1252,52 +1223,6 @@ void DreamWebEngine::placeFreeObject(uint8 index) {
 
 void DreamWebEngine::removeFreeObject(uint8 index) {
 	getFreeAd(index)->mapad[0] = 0xFF;
-}
-
-void DreamWebEngine::useDiary() {
-	getRidOfReels();
-	loadIntoTemp("DREAMWEB.G14");
-	loadTempText("DREAMWEB.T51");
-	loadTempCharset("DREAMWEB.C02");
-	createPanel();
-	showIcon();
-	showDiary();
-	underTextLine();
-	showDiaryPage();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-	_getBack = 0;
-
-	RectWithCallback<DreamWebEngine> diaryList[] = {
-		{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamWebEngine::diaryKeyN },
-		{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamWebEngine::diaryKeyP },
-		{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamWebEngine::quitKey },
-		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
-	};
-	
-	do {
-		delPointer();
-		readMouse();
-		showDiaryKeys();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpDiaryKeys();
-		dumpTextLine();
-		checkCoords(diaryList);
-	} while (!_getBack && !_quitRequested);
-
-
-	getRidOfTemp();
-	getRidOfTempText();
-	getRidOfTempCharset();
-	restoreReels();
-	_manIsOffScreen = 0;
-	redrawMainScrn();
-	workToScreenM();
 }
 
 void DreamWebEngine::useControl() {

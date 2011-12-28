@@ -1762,63 +1762,6 @@ uint8 DreamWebEngine::findNextColon(const uint8 **string) {
 	return c;
 }
 
-void DreamWebEngine::enterSymbol() {
-	_manIsOffScreen = 1;
-	getRidOfReels();
-	loadIntoTemp("DREAMWEB.G12"); // symbol graphics
-	_symbolTopX = 24;
-	_symbolTopDir = 0;
-	_symbolBotX = 24;
-	_symbolBotDir = 0;
-	redrawMainScrn();
-	showSymbol();
-	underTextLine();
-	workToScreenM();
-	_getBack = 0;
-	do {
-		delPointer();
-		updateSymbolTop();
-		updateSymbolBot();
-		showSymbol();
-		readMouse();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpTextLine();
-		dumpSymbol();
-		RectWithCallback<DreamWebEngine> symbolList[] = {
-			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamWebEngine::quitSymbol },
-			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamWebEngine::setTopRight },
-			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamWebEngine::setBotRight },
-			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(symbolList);
-	} while ((_getBack == 0) && !_quitRequested);
-	if ((_symbolBotNum == 3) && (_symbolTopNum == 5)) {
-		removeSetObject(43);
-		placeSetObject(46);
-		turnAnyPathOn(0, _roomNum + 12);
-		_manIsOffScreen = 0;
-		redrawMainScrn();
-		getRidOfTemp();
-		restoreReels();
-		workToScreenM();
-		playChannel1(13);
-	} else {
-		removeSetObject(46);
-		placeSetObject(43);
-		turnAnyPathOff(0, _roomNum + 12);
-		_manIsOffScreen = 0;
-		redrawMainScrn();
-		getRidOfTemp();
-		restoreReels();
-		workToScreenM();
-	}
-}
-
 void DreamWebEngine::zoomOnOff() {
 	if (_vars._watchingTime != 0 || _pointerMode == 2) {
 		blank();
@@ -2200,97 +2143,6 @@ void DreamWebEngine::restoreReels() {
 	closeFile();
 }
 
-void DreamWebEngine::loadFolder() {
-	loadIntoTemp("DREAMWEB.G09"); // folder graphics 1
-	loadIntoTemp2("DREAMWEB.G10"); // folder graphics 2
-	loadIntoTemp3("DREAMWEB.G11"); // folder graphics 3
-	loadTempCharset("DREAMWEB.C02"); // character set 3
-	loadTempText("DREAMWEB.T50"); // folder text
-}
-
-void DreamWebEngine::showFolder() {
-	_commandType = 255;
-	if (_folderPage) {
-		useTempCharset();
-		createPanel2();
-		showFrame(_tempGraphics, 0, 0, 0, 0);
-		showFrame(_tempGraphics, 143, 0, 1, 0);
-		showFrame(_tempGraphics, 0, 92, 2, 0);
-		showFrame(_tempGraphics, 143, 92, 3, 0);
-		folderExit();
-		if (_folderPage != 1)
-			showLeftPage();
-		if (_folderPage != 12)
-			showRightPage();
-		useCharset1();
-		underTextLine();
-	} else {
-		createPanel2();
-		showFrame(_tempGraphics3, 143-28, 0, 0, 0);
-		showFrame(_tempGraphics3, 143-28, 92, 1, 0);
-		folderExit();
-		underTextLine();
-	}
-}
-
-void DreamWebEngine::showLeftPage() {
-	showFrame(_tempGraphics2, 0, 12, 3, 0);
-	uint16 y = 12+5;
-	for (size_t i = 0; i < 9; ++i) {
-		showFrame(_tempGraphics2, 0, y, 4, 0);
-		y += 16;
-	}
-	showFrame(_tempGraphics2, 0, y, 5, 0);
-	_lineSpacing = 8;
-	_charShift = 91;
-	_kerning = 1;
-	uint8 pageIndex = _folderPage - 2;
-	const uint8 *string = getTextInFile1(pageIndex * 2);
-	y = 48;
-	for (size_t i = 0; i < 2; ++i) {
-		uint8 lastChar;
-		do {
-			lastChar = printDirect(&string, 2, &y, 140, false);
-			y += _lineSpacing;
-		} while (lastChar != '\0');
-	}
-	_kerning = 0;
-	_charShift = 0;
-	_lineSpacing = 10;
-	uint8 *bufferToSwap = workspace() + (48*320)+2;
-	for (size_t i = 0; i < 120; ++i) {
-		for (size_t j = 0; j < 65; ++j) {
-			SWAP(bufferToSwap[j], bufferToSwap[130 - j]);
-		}
-		bufferToSwap += 320;
-	}
-}
-
-void DreamWebEngine::showRightPage() {
-	showFrame(_tempGraphics2, 143, 12, 0, 0);
-	uint16 y = 12+37;
-	for (size_t i = 0; i < 7; ++i) {
-		showFrame(_tempGraphics2, 143, y, 1, 0);
-		y += 16;
-	}
-
-	showFrame(_tempGraphics2, 143, y, 2, 0);
-	_lineSpacing = 8;
-	_kerning = 1;
-	uint8 pageIndex = _folderPage - 1;
-	const uint8 *string = getTextInFile1(pageIndex * 2);
-	y = 48;
-	for (size_t i = 0; i < 2; ++i) {
-		uint8 lastChar;
-		do {
-			lastChar = printDirect(&string, 152, &y, 140, false);
-			y += _lineSpacing;
-		} while (lastChar != '\0');
-	}
-	_kerning = 0;
-	_lineSpacing = 10;
-}
-
 void DreamWebEngine::showExit() {
 	showFrame(_icons1, 274, 154, 11, 0);
 }
@@ -2320,83 +2172,6 @@ void DreamWebEngine::examIcon() {
 
 const uint8 *DreamWebEngine::getTextInFile1(uint16 index) {
 	return (const uint8 *)_textFile1.getString(index);
-}
-
-void DreamWebEngine::checkFolderCoords() {
-	RectWithCallback<DreamWebEngine> folderList[] = {
-		{ 280,320,160,200, &DreamWebEngine::quitKey },
-		{ 143,300,6,194, &DreamWebEngine::nextFolder },
-		{ 0,143,6,194, &DreamWebEngine::lastFolder },
-		{ 0,320,0,200, &DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0, 0 }
-	};
-	checkCoords(folderList);
-}
-
-void DreamWebEngine::nextFolder() {
-	if (_folderPage == 12) {
-		blank();
-		return;
-	}
-	if (_commandType != 201) {
-		_commandType = 201;
-		commandOnly(16);
-	}
-	if ((_mouseButton == 1) && (_mouseButton != _oldButton)) {
-		++_folderPage;
-		folderHints();
-		delPointer();
-		showFolder();
-		_mouseButton = 0;
-		checkFolderCoords();
-		workToScreenM();
-	}
-}
-
-void DreamWebEngine::lastFolder() {
-	if (_folderPage == 0) {
-		blank();
-		return;
-	}
-	if (_commandType != 202) {
-		_commandType = 202;
-		commandOnly(17);
-	}
-
-	if ((_mouseButton == 1) && (_mouseButton != _oldButton)) {
-		--_folderPage;
-		delPointer();
-		showFolder();
-		_mouseButton = 0;
-		checkFolderCoords();
-		workToScreenM();
-	}
-}
-
-void DreamWebEngine::folderHints() {
-	if (_folderPage == 5) {
-		if ((_vars._aideDead != 1) && (getLocation(13) != 1)) {
-			setLocation(13);
-			showFolder();
-			const uint8 *string = getTextInFile1(30);
-			printDirect(string, 0, 86, 141, true);
-			workToScreenM();
-			hangOnP(200);
-		}
-	} else if (_folderPage == 9) {
-		if (getLocation(7) != 1) {
-			setLocation(7);
-			showFolder();
-			const uint8 *string = getTextInFile1(31);
-			printDirect(string, 0, 86, 141, true);
-			workToScreenM();
-			hangOnP(200);
-		}
-	}
-}
-
-void DreamWebEngine::folderExit() {
-	showFrame(_tempGraphics2, 296, 178, 6, 0);
 }
 
 void DreamWebEngine::loadTravelText() {
@@ -2434,61 +2209,6 @@ void DreamWebEngine::workToScreenM() {
 	vSync();
 	workToScreen();
 	delPointer();
-}
-
-void DreamWebEngine::loadMenu() {
-	loadIntoTemp("DREAMWEB.S02"); // sprite name 3
-	loadIntoTemp2("DREAMWEB.G07"); // mon. graphics 2
-}
-
-void DreamWebEngine::showMenu() {
-	++_menuCount;
-	if (_menuCount == 37*2)
-		_menuCount = 0;
-	showFrame(_tempGraphics, kMenux, kMenuy, _menuCount / 2, 0);
-}
-
-void DreamWebEngine::dumpMenu() {
-	multiDump(kMenux, kMenuy, 48, 48);
-}
-
-void DreamWebEngine::useMenu() {
-	getRidOfReels();
-	loadMenu();
-	createPanel();
-	showPanel();
-	showIcon();
-	_vars._newObs = 0;
-	drawFloor();
-	printSprites();
-	showFrame(_tempGraphics2, kMenux-48, kMenuy-4, 4, 0);
-	getUnderMenu();
-	showFrame(_tempGraphics2, kMenux+54, kMenuy+72, 5, 0);
-	workToScreenM();
-	_getBack = 0;
-	do {
-		delPointer();
-		putUnderMenu();
-		showMenu();
-		readMouse();
-		showPointer();
-		vSync();
-		dumpPointer();
-		dumpMenu();
-		dumpTextLine();
-		RectWithCallback<DreamWebEngine> menuList[] = {
-			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamWebEngine::quitKey },
-			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(menuList);
-	} while ((_getBack != 1) && !_quitRequested);
-	_manIsOffScreen = 0;
-	redrawMainScrn();
-	getRidOfTemp();
-	getRidOfTemp2();
-	restoreReels();
-	workToScreenM();
 }
 
 void DreamWebEngine::atmospheres() {
@@ -2553,31 +2273,6 @@ void DreamWebEngine::atmospheres() {
 	cancelCh0();
 }
 
-uint8 DreamWebEngine::nextSymbol(uint8 symbol) {
-	uint8 result = symbol + 1;
-	if (result == 6)
-		return 0;
-	if (result == 12)
-		return 6;
-	return result;
-}
-
-void DreamWebEngine::showSymbol() {
-	showFrame(_tempGraphics, kSymbolx, kSymboly, 12, 0);
-
-	showFrame(_tempGraphics, _symbolTopX + kSymbolx-44, kSymboly+20, _symbolTopNum, 32);
-	uint8 nextTopSymbol = nextSymbol(_symbolTopNum);
-	showFrame(_tempGraphics, _symbolTopX + kSymbolx+5, kSymboly+20, nextTopSymbol, 32);
-	uint8 nextNextTopSymbol = nextSymbol(nextTopSymbol);
-	showFrame(_tempGraphics, _symbolTopX + kSymbolx+54, kSymboly+20, nextNextTopSymbol, 32);
-
-	showFrame(_tempGraphics, _symbolBotX + kSymbolx-44, kSymboly+49, 6 + _symbolBotNum, 32);
-	uint8 nextBotSymbol = nextSymbol(_symbolBotNum);
-	showFrame(_tempGraphics, _symbolBotX + kSymbolx+5, kSymboly+49, 6 + nextBotSymbol, 32);
-	uint8 nextNextBotSymbol = nextSymbol(nextBotSymbol);
-	showFrame(_tempGraphics, _symbolBotX + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
-}
-
 void DreamWebEngine::readKey() {
 	uint16 bufOut = _bufferOut;
 
@@ -2590,66 +2285,6 @@ void DreamWebEngine::readKey() {
 	bufOut = (bufOut + 1) & 15; // The buffer has size 16
 	_currentKey = g_keyBuffer[bufOut];
 	_bufferOut = bufOut;
-}
-
-void DreamWebEngine::setTopLeft() {
-	if (_symbolTopDir != 0) {
-		blank();
-		return;
-	}
-
-	if (_commandType != 210) {
-		_commandType = 210;
-		commandOnly(19);
-	}
-
-	if (_mouseButton != 0)
-		_symbolTopDir = 0xFF;
-}
-
-void DreamWebEngine::setTopRight() {
-	if (_symbolTopDir != 0) {
-		blank();
-		return;
-	}
-
-	if (_commandType != 211) {
-		_commandType = 211;
-		commandOnly(20);
-	}
-
-	if (_mouseButton != 0)
-		_symbolTopDir = 1;
-}
-
-void DreamWebEngine::setBotLeft() {
-	if (_symbolBotDir != 0) {
-		blank();
-		return;
-	}
-
-	if (_commandType != 212) {
-		_commandType = 212;
-		commandOnly(21);
-	}
-
-	if (_mouseButton != 0)
-		_symbolBotDir = 0xFF;
-}
-
-void DreamWebEngine::setBotRight() {
-	if (_symbolBotDir != 0) {
-		blank();
-		return;
-	}
-
-	if (_commandType != 213) {
-		_commandType = 213;
-		commandOnly(22);
-	}
-
-	if (_mouseButton != 0)
-		_symbolBotDir = 1;
 }
 
 void DreamWebEngine::newGame() {
@@ -2912,11 +2547,6 @@ void DreamWebEngine::examineInventory() {
 void DreamWebEngine::middlePanel() {
 }
 
-void DreamWebEngine::showDiary() {
-	showFrame(_tempGraphics, kDiaryx, kDiaryy + 37, 1, 0);
-	showFrame(_tempGraphics, kDiaryx + 176, kDiaryy + 108, 2, 0);
-}
-
 void DreamWebEngine::underTextLine() {
 	if (_foreignRelease)
 		multiGet(_textUnder, _textAddressX, _textAddressY - 3, kUnderTextSizeX_f, kUnderTextSizeY_f);
@@ -3114,46 +2744,6 @@ void DreamWebEngine::showGun() {
 	getRidOfTempText();
 }
 
-void DreamWebEngine::diaryKeyP() {
-	if (_commandType != 214) {
-		_commandType = 214;
-		commandOnly(23);
-	}
-
-	if (!_mouseButton ||
-		_oldButton == _mouseButton ||
-		_pressCount)
-		return; // notkeyp
-
-	playChannel1(16);
-	_pressCount = 12;
-	_pressed = 'P';
-	_diaryPage--;
-
-	if (_diaryPage == 0xFF)
-		_diaryPage = 11;
-}
-
-void DreamWebEngine::diaryKeyN() {
-	if (_commandType != 213) {
-		_commandType = 213;
-		commandOnly(23);
-	}
-
-	if (!_mouseButton ||
-		_oldButton == _mouseButton ||
-		_pressCount)
-		return; // notkeyn
-
-	playChannel1(16);
-	_pressCount = 12;
-	_pressed = 'N';
-	_diaryPage++;
-
-	if (_diaryPage == 12)
-		_diaryPage = 0;
-}
-
 void DreamWebEngine::dropError() {
 	_commandType = 255;
 	delPointer();
@@ -3243,16 +2833,6 @@ void DreamWebEngine::autoAppear() {
 				placeSetObject(23);
 		}
 	}
-}
-
-void DreamWebEngine::quitKey() {
-	if (_commandType != 222) {
-		_commandType = 222;
-		commandOnly(4);
-	}
-
-	if (_mouseButton != _oldButton && (_mouseButton & 1))
-		_getBack = 1;
 }
 
 void DreamWebEngine::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 timeCount, byte x, byte y) {
@@ -3372,123 +2952,6 @@ void DreamWebEngine::entryAnims() {
 	}
 }
 
-void DreamWebEngine::updateSymbolTop() {
-	if (!_symbolTopDir)
-		return; // topfinished
-
-	if (_symbolTopDir == (byte)-1) {
-		// Backward
-		_symbolTopX--;
-		if (_symbolTopX != (byte)-1) {
-			// Not wrapping
-			if (_symbolTopX != 24)
-				return; // topfinished
-			_symbolTopDir = 0;
-		} else {
-			_symbolTopX = 48;
-			_symbolTopNum++;
-			if (_symbolTopNum != 6)
-				return; // topfinished
-			_symbolTopNum = 0;
-		}
-	} else {
-		// Forward
-		_symbolTopX++;
-		if (_symbolTopX != 49) {
-			// Not wrapping
-			if (_symbolTopX != 24)
-				return; // topfinished
-			_symbolTopDir = 0;
-		} else {
-			_symbolTopX = 0;
-			_symbolTopNum--;
-			if (_symbolTopNum != (byte)-1)
-				return; // topfinished
-			_symbolTopNum = 5;
-		}
-	}
-}
-
-void DreamWebEngine::updateSymbolBot() {
-	if (!_symbolBotDir)
-		return; // botfinished
-
-	if (_symbolBotDir == (byte)-1) {
-		// Backward
-		_symbolBotX--;
-		if (_symbolBotX != (byte)-1) {
-			// Not wrapping
-			if (_symbolBotX != 24)
-				return; // botfinished
-			_symbolBotDir = 0;
-		} else {
-			_symbolBotX = 48;
-			_symbolBotNum++;
-			if (_symbolBotNum != 6)
-				return; // botfinished
-			_symbolBotNum = 0;
-		}
-	} else {
-		// Forward
-		_symbolBotX++;
-		if (_symbolBotX != 49) {
-			// Not wrapping
-			if (_symbolBotX != 24)
-				return; // botfinished
-			_symbolBotDir = 0;
-		} else {
-			_symbolBotX = 0;
-			_symbolBotNum--;
-			if (_symbolBotNum != (byte)-1)
-				return; // botfinished
-			_symbolBotNum = 5;
-		}
-	}
-}
-
-void DreamWebEngine::showDiaryPage() {
-	showFrame(_tempGraphics, kDiaryx, kDiaryy, 0, 0);
-	_kerning = 1;
-	useTempCharset();
-	_charShift = 91+91;
-	const uint8 *string = getTextInFile1(_diaryPage);
-	uint16 y = kDiaryy + 16;
-	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
-	y = kDiaryy + 16;
-	printDirect(&string, kDiaryx + 129, &y, 240, 240 & 1);
-	y = kDiaryy + 23;
-	printDirect(&string, kDiaryx + 48, &y, 240, 240 & 1);
-	_kerning = 0;
-	_charShift = 0;
-	useCharset1();
-}
-
-void DreamWebEngine::dumpDiaryKeys() {
-	if (_pressCount == 1) {
-		if (_vars._sartainDead != 1 && _diaryPage == 5 && getLocation(6) != 1) {
-			// Add Sartain Industries note
-			setLocation(6);
-			delPointer();
-			const uint8 *string = getTextInFile1(12);
-			printDirect(string, 70, 106, 241, 241 & 1);
-			workToScreenM();
-			hangOnP(200);
-			createPanel();
-			showIcon();
-			showDiary();
-			showDiaryPage();
-			workToScreenM();
-			showPointer();
-			return;
-		} else {
-			multiDump(kDiaryx + 48, kDiaryy + 15, 200, 16);
-		}
-	}
-
-	multiDump(kDiaryx + 94, kDiaryy + 97, 16, 16);
-	multiDump(kDiaryx + 151, kDiaryy + 71, 16, 16);
-}
-
 void DreamWebEngine::lookAtCard() {
 	_manIsOffScreen = 1;
 	getRidOfReels();
@@ -3599,27 +3062,6 @@ void DreamWebEngine::setupInitialVars() {
 	_vars._dreamNumber = 0;
 	_vars._roomAfterDream = 0;
 	_vars._shakeCounter = 48;
-}
-
-void DreamWebEngine::showDiaryKeys() {
-	if (!_pressCount)
-		return; // nokeyatall
-
-	_pressCount--;
-
-	if (!_pressCount)
-		return; // nokeyatall
-
-	if (_pressed == 'N') {
-		byte frame = (_pressCount == 1) ? 3 : 4;
-		showFrame(_tempGraphics, kDiaryx + 94, kDiaryy + 97, frame, 0);
-	} else {
-		byte frame = (_pressCount == 1) ? 5 : 6;
-		showFrame(_tempGraphics, kDiaryx + 151, kDiaryy + 71, frame, 0);
-	}
-
-	if (_pressCount == 1)
-		showDiaryPage();
 }
 
 void DreamWebEngine::edensFlatReminders() {
