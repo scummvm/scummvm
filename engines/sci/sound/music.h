@@ -120,7 +120,7 @@ typedef Common::Array<uint32> MidiCommandQueue;
 class SciMusic : public Common::Serializable {
 
 public:
-	SciMusic(SciVersion soundVersion);
+	SciMusic(SciVersion soundVersion, bool useDigitalSFX);
 	~SciMusic();
 
 	void init();
@@ -210,9 +210,8 @@ protected:
 	MidiPlayer *_pMidiDrv;
 
 	uint32 _dwTempo;
-	// Mixed AdLib/MIDI mode: when enabled from the ScummVM sound options screen,
-	// and a sound has a digital track, the sound from the AdLib track is played
-	bool _bMultiMidi;
+	// If true and a sound has a digital track, the sound from the AdLib track is played
+	bool _useDigitalSFX;
 
 private:
 	MusicList _playList;
