@@ -13,6 +13,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Fixed race condition in SCI1.1 palette changes. This fixes an error in
      QFG1VGA, when sleeping at Erana's place.
+   - The option to toggle sound effect types between digitized and synthesized
+     has been disabled until a more user-friendly GUI option is possible.
+     Digital sound effects are always preferred for now.
 
 1.4.0 (2011-11-11)
  New Games:
