@@ -65,7 +65,7 @@ void DreamBase::showKeypad() {
 		--_lightCount;
 		uint8 frameIndex;
 		uint16 y;
-		if (data.byte(kLockstatus)) {
+		if (_vars._lockStatus) {
 			frameIndex = 36;
 			y = kKeypady-1+63;
 		} else {
@@ -145,14 +145,14 @@ void DreamBase::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3
 		if (_quitRequested || (_getBack == 1))
 			break;
 		if (_lightCount == 1) {
-			if (data.byte(kLockstatus) == 0)
+			if (_vars._lockStatus == 0)
 				break;
 		} else {
 			if (_pressCount == 40) {
 				addToPressList();
 				if (_pressed == 11) {
 					if (isItRight(digit0, digit1, digit2, digit3))
-						data.byte(kLockstatus) = 0;
+						_vars._lockStatus = 0;
 					playChannel1(11);
 					_lightCount = 120;
 					_pressPointer = 0;

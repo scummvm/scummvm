@@ -153,27 +153,27 @@ void DreamBase::madmanText() {
 		origCount = _speechCount;
 		++_speechCount;
 	} else {
-		if (data.byte(kCombatcount) >= 61)
+		if (_vars._combatCount >= 61)
 			return;
-		if (data.byte(kCombatcount) & 3)
+		if (_vars._combatCount & 3)
 			return;
-		origCount = data.byte(kCombatcount) / 4;
+		origCount = _vars._combatCount / 4;
 	}
 	setupTimedTemp(47 + origCount, 82, 72, 80, 90, 1);
 }
 
 void DreamBase::madman(ReelRoutine &routine) {
-	data.word(kWatchingtime) = 2;
+	_vars._watchingTime = 2;
 	if (checkSpeed(routine)) {
 		uint16 newReelPointer = routine.reelPointer();
 		if (newReelPointer >= 364) {
-			data.byte(kMandead) = 2;
+			_vars._manDead = 2;
 			showGameReel(&routine);
 			return;
 		}
 		if (newReelPointer == 10) {
 			loadTempText("DREAMWEB.T82");
-			data.byte(kCombatcount) = (uint8)-1;
+			_vars._combatCount = (uint8)-1;
 			_speechCount = 0;
 		}
 		++newReelPointer;
@@ -185,17 +185,17 @@ void DreamBase::madman(ReelRoutine &routine) {
 			return;
 		}
 		if (newReelPointer == 66) {
-			++data.byte(kCombatcount);
+			++_vars._combatCount;
 			madmanText();
 			newReelPointer = 53;
-			if (data.byte(kCombatcount) >= (isCD() ? 64 : 62)) {
-				if (data.byte(kCombatcount) == (isCD() ? 70 : 68))
+			if (_vars._combatCount >= (isCD() ? 64 : 62)) {
+				if (_vars._combatCount == (isCD() ? 70 : 68))
 					newReelPointer = 310;
 				else {
-					if (data.byte(kLastweapon) == 8) {
-						data.byte(kCombatcount) = isCD() ? 72 : 70;
-						data.byte(kLastweapon) = (uint8)-1;
-						data.byte(kMadmanflag) = 1;
+					if (_vars._lastWeapon == 8) {
+						_vars._combatCount = isCD() ? 72 : 70;
+						_vars._lastWeapon = (uint8)-1;
+						_vars._madmanFlag = 1;
 						newReelPointer = 67;
 					}
 				}
@@ -209,11 +209,11 @@ void DreamBase::madman(ReelRoutine &routine) {
 }
 
 void DreamBase::madMode() {
-	data.word(kWatchingtime) = 2;
+	_vars._watchingTime = 2;
 	_pointerMode = 0;
-	if (data.byte(kCombatcount) < (isCD() ? 65 : 63))
+	if (_vars._combatCount < (isCD() ? 65 : 63))
 		return;
-	if (data.byte(kCombatcount) >= (isCD() ? 70 : 68))
+	if (_vars._combatCount >= (isCD() ? 70 : 68))
 		return;
 	_pointerMode = 2;
 }
@@ -228,7 +228,7 @@ void DreamBase::addToPeopleList(ReelRoutine *routine) {
 }
 
 bool DreamBase::checkSpeed(ReelRoutine &routine) {
-	if (data.byte(kLastweapon) != (uint8)-1)
+	if (_vars._lastWeapon != (uint8)-1)
 		return true;
 	++routine.counter;
 	if (routine.counter != routine.period)
@@ -261,14 +261,14 @@ void DreamBase::gamer(ReelRoutine &routine) {
 }
 
 void DreamBase::eden(ReelRoutine &routine) {
-	if (data.byte(kGeneraldead))
+	if (_vars._generalDead)
 		return;
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }
 
 void DreamBase::sparky(ReelRoutine &routine) {
-	if (data.word(kCard1money))
+	if (_vars._card1Money)
 		routine.b7 = 3;
 	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 34) {
@@ -286,7 +286,7 @@ void DreamBase::sparky(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
-		data.byte(kTalkedtosparky) = 1;
+		_vars._talkedToSparky = 1;
 }
 
 void DreamBase::rockstar(ReelRoutine &routine) {
@@ -298,17 +298,17 @@ void DreamBase::rockstar(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 118) {
-			data.byte(kMandead) = 2;
+			_vars._manDead = 2;
 		} else if (nextReelPointer == 79) {
 			--nextReelPointer;
-			if (data.byte(kLastweapon) != 1) {
-				++data.byte(kCombatcount);
-				if (data.byte(kCombatcount) == 40) {
-					data.byte(kCombatcount) = 0;
+			if (_vars._lastWeapon != 1) {
+				++_vars._combatCount;
+				if (_vars._combatCount == 40) {
+					_vars._combatCount = 0;
 					nextReelPointer = 79;
 				}
 			} else {
-				data.byte(kLastweapon) = (uint8)-1;
+				_vars._lastWeapon = (uint8)-1;
 				nextReelPointer = 123;
 			}
 		}
@@ -318,9 +318,9 @@ void DreamBase::rockstar(ReelRoutine &routine) {
 	if (routine.reelPointer() == 78) {
 		addToPeopleList(&routine);
 		_pointerMode = 2;
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 	} else {
-		data.word(kWatchingtime) = 2;
+		_vars._watchingTime = 2;
 		_pointerMode = 0;
 		routine.mapY = _mapY;
 	}
@@ -336,7 +336,7 @@ void DreamBase::madmansTelly(ReelRoutine &routine) {
 
 
 void DreamBase::smokeBloke(ReelRoutine &routine) {
-	if (data.byte(kRockstardead) == 0) {
+	if (_vars._rockstarDead == 0) {
 		if (routine.b7 & 128)
 			DreamBase::setLocation(5);
 	}
@@ -365,28 +365,28 @@ void DreamBase::attendant(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
-		data.byte(kTalkedtoattendant) = 1;
+		_vars._talkedToAttendant = 1;
 }
 
 void DreamBase::keeper(ReelRoutine &routine) {
-	if (data.byte(kKeeperflag) != 0) {
+	if (_vars._keeperFlag != 0) {
 		// Not waiting
 		addToPeopleList(&routine);
 		showGameReel(&routine);
 		return;
 	}
 
-	if (data.word(kReeltowatch) < 190)
+	if (_vars._reelToWatch < 190)
 		return; // waiting
 
-	data.byte(kKeeperflag)++;
+	_vars._keeperFlag++;
 
-	if ((routine.b7 & 127) != data.byte(kDreamnumber))
-		routine.b7 = data.byte(kDreamnumber);
+	if ((routine.b7 & 127) != _vars._dreamNumber)
+		routine.b7 = _vars._dreamNumber;
 }
 
 void DreamBase::drunk(ReelRoutine &routine) {
-	if (data.byte(kGeneraldead))
+	if (_vars._generalDead)
 		return;
 	routine.b7 &= 127;
 	showGameReel(&routine);
@@ -394,7 +394,7 @@ void DreamBase::drunk(ReelRoutine &routine) {
 }
 
 void DreamBase::interviewer(ReelRoutine &routine) {
-	if (data.word(kReeltowatch) == 68)
+	if (_vars._reelToWatch == 68)
 		routine.incReelPointer();
 
 	if (routine.reelPointer() != 250 && routine.reelPointer() != 259 && checkSpeed(routine))
@@ -527,17 +527,17 @@ void DreamBase::gates(ReelRoutine &routine) {
 
 void DreamBase::security(ReelRoutine &routine) {
 	if (routine.reelPointer() == 32) {
-		if (data.byte(kLastweapon) == 1) {
-			data.word(kWatchingtime) = 10;
+		if (_vars._lastWeapon == 1) {
+			_vars._watchingTime = 10;
 			if ((_mansPath == 9) && (_facing == 0)) {
-				data.byte(kLastweapon) = (uint8)-1;
+				_vars._lastWeapon = (uint8)-1;
 				routine.incReelPointer();
 			}
 		}
 	} else if (routine.reelPointer() == 69)
 		return;
 	else {
-		data.word(kWatchingtime) = 10;
+		_vars._watchingTime = 10;
 		if (checkSpeed(routine))
 			routine.incReelPointer();
 	}
@@ -546,7 +546,7 @@ void DreamBase::security(ReelRoutine &routine) {
 }
 
 void DreamBase::edenInBath(ReelRoutine &routine) {
-	if (data.byte(kGeneraldead) == 0 || data.byte(kSartaindead) != 0)
+	if (_vars._generalDead == 0 || _vars._sartainDead != 0)
 		return;
 
 	showGameReel(&routine);
@@ -554,7 +554,7 @@ void DreamBase::edenInBath(ReelRoutine &routine) {
 }
 
 void DreamBase::louis(ReelRoutine &routine) {
-	if (data.byte(kRockstardead) != 0)
+	if (_vars._rockstarDead != 0)
 		return;
 
 	showGameReel(&routine);
@@ -581,7 +581,7 @@ void DreamBase::train(ReelRoutine &routine) {
 }
 
 void DreamBase::louisChair(ReelRoutine &routine) {
-	if (data.byte(kRockstardead) == 0)
+	if (_vars._rockstarDead == 0)
 		return; // notlouis2
 
 	if (checkSpeed(routine)) {
@@ -607,14 +607,14 @@ void DreamBase::bossMan(ReelRoutine &routine) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 
 		if (nextReelPointer == 4) {
-			if (data.byte(kGunpassflag) != 1 && engine->randomNumber() >= 10)
+			if (_vars._gunPassFlag != 1 && engine->randomNumber() >= 10)
 				nextReelPointer = 0;
 		} else if (nextReelPointer == 20) {
-			if (data.byte(kGunpassflag) != 1)
+			if (_vars._gunPassFlag != 1)
 				nextReelPointer = 0;
 		} else if (nextReelPointer == 41) {
 			nextReelPointer = 0;
-			data.byte(kGunpassflag)++;
+			_vars._gunPassFlag++;
 			routine.b7 = 10;
 		}
 
@@ -625,7 +625,7 @@ void DreamBase::bossMan(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 
 	if (routine.b7 & 128)
-		data.byte(kTalkedtoboss) = 1;
+		_vars._talkedToBoss = 1;
 }
 
 void DreamBase::priest(ReelRoutine &routine) {
@@ -633,7 +633,7 @@ void DreamBase::priest(ReelRoutine &routine) {
 		return; // priestspoken
 
 	_pointerMode = 0;
-	data.word(kWatchingtime) = 2;
+	_vars._watchingTime = 2;
 
 	if (checkSpeed(routine)) {
 		routine.incReelPointer();
@@ -752,21 +752,21 @@ void DreamBase::introMonks2(ReelRoutine &routine) {
 
 void DreamBase::soldier1(ReelRoutine &routine) {
 	if (routine.reelPointer() != 0) {
-		data.word(kWatchingtime) = 10;
+		_vars._watchingTime = 10;
 		if (routine.reelPointer() == 30) {
-			data.byte(kCombatcount)++;
-			if (data.byte(kCombatcount) == 40)
-				data.byte(kMandead) = 2;
+			_vars._combatCount++;
+			if (_vars._combatCount == 40)
+				_vars._manDead = 2;
 		} else if (checkSpeed(routine)) {
 			// Not after shot
 			routine.incReelPointer();
 		}
-	} else if (data.byte(kLastweapon) == 1) {
-		data.word(kWatchingtime) = 10;
+	} else if (_vars._lastWeapon == 1) {
+		_vars._watchingTime = 10;
 		if (_mansPath == 2 && _facing == 4)
 			routine.incReelPointer();
-		data.byte(kLastweapon) = 0xFF;
-		data.byte(kCombatcount) = 0;
+		_vars._lastWeapon = 0xFF;
+		_vars._combatCount = 0;
 	}
 
 	showGameReel(&routine);
@@ -775,9 +775,9 @@ void DreamBase::soldier1(ReelRoutine &routine) {
 
 void DreamBase::receptionist(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
-		if (data.byte(kCardpassflag) == 1) {
+		if (_vars._cardPassFlag == 1) {
 			// Set card
-			data.byte(kCardpassflag)++;
+			_vars._cardPassFlag++;
 			routine.b7 = 1;
 			routine.setReelPointer(64);
 		}
@@ -807,7 +807,7 @@ void DreamBase::receptionist(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
-		data.byte(kTalkedtorecep) = 1;
+		_vars._talkedToRecep = 1;
 }
 
 void DreamBase::bartender(ReelRoutine &routine) {
@@ -825,7 +825,7 @@ void DreamBase::bartender(ReelRoutine &routine) {
 	}
 
 	showGameReel(&routine);
-	if (data.byte(kGunpassflag) == 1)
+	if (_vars._gunPassFlag == 1)
 		routine.b7 = 9;	// got gun
 
 	addToPeopleList(&routine);
@@ -834,21 +834,21 @@ void DreamBase::bartender(ReelRoutine &routine) {
 void DreamBase::heavy(ReelRoutine &routine) {
 	routine.b7 &= 127;
 	if (routine.reelPointer() != 43) {
-		data.word(kWatchingtime) = 10;
+		_vars._watchingTime = 10;
 		if (routine.reelPointer() == 70) {
 			// After shot
-			data.byte(kCombatcount)++;
-			if (data.byte(kCombatcount) == 80)
-				data.byte(kMandead) = 2;
+			_vars._combatCount++;
+			if (_vars._combatCount == 80)
+				_vars._manDead = 2;
 		} else {
 			if (checkSpeed(routine))
 				routine.incReelPointer();
 		}
-	} else if (data.byte(kLastweapon) == 1 && _mansPath == 5 && _facing == 4) {
+	} else if (_vars._lastWeapon == 1 && _mansPath == 5 && _facing == 4) {
 		// Heavy wait
-		data.byte(kLastweapon) = (byte)-1;
+		_vars._lastWeapon = (byte)-1;
 		routine.incReelPointer();
-		data.byte(kCombatcount) = 0;
+		_vars._combatCount = 0;
 	}
 
 	showGameReel(&routine);
@@ -866,20 +866,20 @@ void DreamBase::helicopter(ReelRoutine &routine) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 53) {
 			// Before killing helicopter
-			data.byte(kCombatcount)++;
-			if (data.byte(kCombatcount) >= 8)
-				data.byte(kMandead) = 2;
+			_vars._combatCount++;
+			if (_vars._combatCount >= 8)
+				_vars._manDead = 2;
 			nextReelPointer = 49;
 		} else if (nextReelPointer == 9) {
 			nextReelPointer--;
-			if (data.byte(kLastweapon) == 1) {
-				data.byte(kLastweapon) = (byte)-1;
+			if (_vars._lastWeapon == 1) {
+				_vars._lastWeapon = (byte)-1;
 				nextReelPointer = 55;
 			} else {
 				nextReelPointer = 5;
-				data.byte(kCombatcount)++;
-				if (data.byte(kCombatcount) == 20) {
-					data.byte(kCombatcount) = 0;
+				_vars._combatCount++;
+				if (_vars._combatCount == 20) {
+					_vars._combatCount = 0;
 					nextReelPointer = 9;
 				}
 			}
@@ -890,13 +890,13 @@ void DreamBase::helicopter(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	routine.mapX = _mapX;
-	if (routine.reelPointer() < 9 && data.byte(kCombatcount) >= 7) {
+	if (routine.reelPointer() < 9 && _vars._combatCount >= 7) {
 		_pointerMode = 2;
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 	} else {
 		// Not waiting helicopter
 		_pointerMode = 0;
-		data.word(kWatchingtime) = 2;
+		_vars._watchingTime = 2;
 	}
 }
 
@@ -906,7 +906,7 @@ void DreamBase::mugger(ReelRoutine &routine) {
 			return; // endmugger2
 
 		if (routine.reelPointer() == 2)
-			data.word(kWatchingtime) = 175 * 2;	// set watch
+			_vars._watchingTime = 175 * 2;	// set watch
 
 		if (checkSpeed(routine))
 			routine.incReelPointer();
@@ -935,7 +935,7 @@ void DreamBase::mugger(ReelRoutine &routine) {
 		removeObFromInv();
 		makeMainScreen();
 		DreamBase::setupTimedUse(48, 70, 10, 68 - 32, 54 + 64);
-		data.byte(kBeenmugged) = 1;
+		_vars._beenMugged = 1;
 	}
 }
 
@@ -943,14 +943,14 @@ void DreamBase::mugger(ReelRoutine &routine) {
 // two bodyguards are expecting Ryan.
 void DreamBase::businessMan(ReelRoutine &routine) {
 	_pointerMode = 0;
-	data.word(kWatchingtime) = 2;
+	_vars._watchingTime = 2;
 	if (routine.reelPointer() == 2)
 		DreamBase::setupTimedUse(49, 30, 1, 68, 174);	// First
 
 	if (routine.reelPointer() == 95) {
 		// Businessman combat won - end
 		_pointerMode = 0;
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 		return;
 	}
 
@@ -960,19 +960,19 @@ void DreamBase::businessMan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 48) {
-			data.byte(kMandead) = 2;	// before dead body
+			_vars._manDead = 2;	// before dead body
 		} else if (nextReelPointer == 15) {
 			nextReelPointer--;
-			if (data.byte(kLastweapon) == 3) {
+			if (_vars._lastWeapon == 3) {
 				// Shield on bus
-				data.byte(kLastweapon) = (byte)-1;
-				data.byte(kCombatcount) = 0;
+				_vars._lastWeapon = (byte)-1;
+				_vars._combatCount = 0;
 				nextReelPointer = 51;
 			} else {
 				// No shield on businessman
-				data.byte(kCombatcount)++;
-				if (data.byte(kCombatcount) == 20) {
-					data.byte(kCombatcount) = 0;
+				_vars._combatCount++;
+				if (_vars._combatCount == 20) {
+					_vars._combatCount = 0;
 					nextReelPointer = 15;
 				}
 			}
@@ -997,7 +997,7 @@ void DreamBase::businessMan(ReelRoutine &routine) {
 	showGameReel(&routine);
 	routine.mapY = _mapY;
 	if (routine.reelPointer() == 14) {
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 		_pointerMode = 2;
 	}
 }
@@ -1037,17 +1037,17 @@ void DreamBase::poolGuard(ReelRoutine &routine) {
 	if (routine.reelPointer() == 214 || routine.reelPointer() == 258) {
 		// Combat over 2
 		showGameReel(&routine);
-		data.word(kWatchingtime) = 2;
+		_vars._watchingTime = 2;
 		_pointerMode = 0;
-		data.byte(kCombatcount)++;
-		if (data.byte(kCombatcount) < 100)
+		_vars._combatCount++;
+		if (_vars._combatCount < 100)
 			return; // doneover2
-		data.word(kWatchingtime) = 0;
-		data.byte(kMandead) = 2;
+		_vars._watchingTime = 0;
+		_vars._manDead = 2;
 		return;
 	} else if (routine.reelPointer() == 185) {
 		// Combat over 1
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 		_pointerMode = 0;
 		turnPathOn(0);
 		turnPathOff(1);
@@ -1064,15 +1064,15 @@ void DreamBase::poolGuard(ReelRoutine &routine) {
 			// Not end guard 1
 			if (nextReelPointer == 147) {
 				nextReelPointer--;
-				if (data.byte(kLastweapon) == 1) {
+				if (_vars._lastWeapon == 1) {
 					// Gun on pool
-					data.byte(kLastweapon) = (byte)-1;
+					_vars._lastWeapon = (byte)-1;
 					nextReelPointer = 147;
 				} else {
 					// Gun not on pool
-					data.byte(kCombatcount)++;
-					if (data.byte(kCombatcount) == 40) {
-						data.byte(kCombatcount) = 0;
+					_vars._combatCount++;
+					if (_vars._combatCount == 40) {
+						_vars._combatCount = 0;
 						nextReelPointer = 220;
 					}
 				}
@@ -1080,14 +1080,14 @@ void DreamBase::poolGuard(ReelRoutine &routine) {
 		} else {
 			nextReelPointer--;
 
-			if (data.byte(kLastweapon) == 2) {
+			if (_vars._lastWeapon == 2) {
 				// Axe on pool
-				data.byte(kLastweapon) = (byte)-1;
+				_vars._lastWeapon = (byte)-1;
 				nextReelPointer = 122;
 			} else {
-				data.byte(kCombatcount)++;
-				if (data.byte(kCombatcount) == 40) {
-					data.byte(kCombatcount) = 0;
+				_vars._combatCount++;
+				if (_vars._combatCount == 40) {
+					_vars._combatCount = 0;
 					nextReelPointer = 195;
 				}
 			}
@@ -1100,10 +1100,10 @@ void DreamBase::poolGuard(ReelRoutine &routine) {
 	
 	if (routine.reelPointer() != 121 && routine.reelPointer() != 146) {
 		_pointerMode = 0;
-		data.word(kWatchingtime) = 2;
+		_vars._watchingTime = 2;
 	} else {
 		_pointerMode = 2;
-		data.word(kWatchingtime) = 0;
+		_vars._watchingTime = 0;
 	}
 }
 

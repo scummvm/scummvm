@@ -39,7 +39,7 @@ static MonitorKeyEntry monitorKeyEntries[4] = {
 };
 
 void DreamBase::useMon() {
-	data.byte(kLasttrigger) = 0;
+	_vars._lastTrigger = 0;
 	_currentFile[0] = 34;
 	memset(_currentFile+1, ' ', 12);
 	_currentFile[13] = 0;
@@ -377,7 +377,7 @@ void DreamBase::printOuterMon() {
 }
 
 void DreamBase::loadPersonal() {
-	if (data.byte(kLocation) == 0 || data.byte(kLocation) == 42)
+	if (_vars._location == 0 || _vars._location == 42)
 		loadTextFile(_textFile1, "DREAMWEB.T01"); // monitor file 1
 	else
 		loadTextFile(_textFile1, "DREAMWEB.T02"); // monitor file 2
@@ -385,11 +385,11 @@ void DreamBase::loadPersonal() {
 
 void DreamBase::loadNews() {
 	// textfile2 holds information accessible by anyone
-	if (data.byte(kNewsitem) == 0)
+	if (_vars._newsItem == 0)
 		loadTextFile(_textFile2, "DREAMWEB.T10"); // monitor file 10
-	else if (data.byte(kNewsitem) == 1)
+	else if (_vars._newsItem == 1)
 		loadTextFile(_textFile2, "DREAMWEB.T11"); // monitor file 11
-	else if (data.byte(kNewsitem) == 2)
+	else if (_vars._newsItem == 2)
 		loadTextFile(_textFile2, "DREAMWEB.T12"); // monitor file 12
 	else
 		loadTextFile(_textFile2, "DREAMWEB.T13"); // monitor file 13

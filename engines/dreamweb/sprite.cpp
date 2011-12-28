@@ -89,7 +89,7 @@ Sprite *DreamBase::makeSprite(uint8 x, uint8 y, uint16 updateCallback, const Gra
 void DreamBase::spriteUpdate() {
 	// During the intro the sprite table can be empty
 	if (!_spriteTable.empty())
-		_spriteTable.front().hidden = data.byte(kRyanon);
+		_spriteTable.front().hidden = _vars._ryanOn;
 
 	Common::List<Sprite>::iterator i;
 	for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
@@ -286,7 +286,7 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 
 	if (openDoor) {
 
-		if ((data.byte(kThroughdoor) == 1) && (sprite->animFrame == 0))
+		if ((_vars._throughDoor == 1) && (sprite->animFrame == 0))
 			sprite->animFrame = 6;
 
 		++sprite->animFrame;
@@ -302,7 +302,7 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 			--sprite->animFrame;
 
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
-		data.byte(kThroughdoor) = 1;
+		_vars._throughDoor = 1;
 
 	} else {
 		// shut door
@@ -320,7 +320,7 @@ void DreamBase::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 		if (sprite->animFrame == 5) // nearly
-			data.byte(kThroughdoor) = 0;
+			_vars._throughDoor = 0;
 	}
 }
 
@@ -338,7 +338,7 @@ void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
 	check.translate(sprite->x, sprite->y);
 	bool openDoor = check.contains(ryanx, ryany);
 
-	if (data.byte(kThroughdoor) != 1 && data.byte(kLockstatus) == 1)
+	if (_vars._throughDoor != 1 && _vars._lockStatus == 1)
 		openDoor = false;
 
 	if (openDoor) {
@@ -348,9 +348,9 @@ void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
 		}
 
 		if (sprite->animFrame == 6)
-			turnPathOn(data.byte(kDoorpath));
+			turnPathOn(_vars._doorPath);
 
-		if (data.byte(kThroughdoor) == 1 && sprite->animFrame == 0)
+		if (_vars._throughDoor == 1 && sprite->animFrame == 0)
 			sprite->animFrame = 6;
 
 		++sprite->animFrame;
@@ -359,7 +359,7 @@ void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
 
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 		if (sprite->animFrame == 5)
-			data.byte(kThroughdoor) = 1;
+			_vars._throughDoor = 1;
 
 	} else {
 		// shut door
@@ -371,43 +371,43 @@ void DreamBase::lockedDoorway(Sprite *sprite, SetObject *objData) {
 		if (sprite->animFrame != 0)
 			--sprite->animFrame;
 	
-		data.byte(kThroughdoor) = 0;
+		_vars._throughDoor = 0;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 
 		if (sprite->animFrame == 0) {
-			turnPathOff(data.byte(kDoorpath));
-			data.byte(kLockstatus) = 1;
+			turnPathOff(_vars._doorPath);
+			_vars._lockStatus = 1;
 		}
 	}
 }
 
 void DreamBase::liftSprite(Sprite *sprite, SetObject *objData) {
-	uint8 liftFlag = data.byte(kLiftflag);
+	uint8 liftFlag = _vars._liftFlag;
 	if (liftFlag == 0) { //liftclosed
-		turnPathOff(data.byte(kLiftpath));
+		turnPathOff(_vars._liftPath);
 
-		if (data.byte(kCounttoopen) != 0) {
-			data.byte(kCounttoopen)--;
-			if (data.byte(kCounttoopen) == 0)
-				data.byte(kLiftflag) = 3;
+		if (_vars._countToOpen != 0) {
+			_vars._countToOpen--;
+			if (_vars._countToOpen == 0)
+				_vars._liftFlag = 3;
 		}
 		sprite->animFrame = 0;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
 	else if (liftFlag == 1) {  //liftopen
-		turnPathOn(data.byte(kLiftpath));
+		turnPathOn(_vars._liftPath);
 
-		if (data.byte(kCounttoclose) != 0) {
-			data.byte(kCounttoclose)--;
-			if (data.byte(kCounttoclose) == 0)
-				data.byte(kLiftflag) = 2;
+		if (_vars._countToClose != 0) {
+			_vars._countToClose--;
+			if (_vars._countToClose == 0)
+				_vars._liftFlag = 2;
 		}
 		sprite->animFrame = 12;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}	
 	else if (liftFlag == 3) { //openlift
 		if (sprite->animFrame == 12) {
-			data.byte(kLiftflag) = 1;
+			_vars._liftFlag = 1;
 			return;
 		}
 		++sprite->animFrame;
@@ -418,7 +418,7 @@ void DreamBase::liftSprite(Sprite *sprite, SetObject *objData) {
 	} else { //closeLift
 		assert(liftFlag == 2);
 		if (sprite->animFrame == 0) {
-			data.byte(kLiftflag) = 0;
+			_vars._liftFlag = 0;
 			return;
 		}
 		--sprite->animFrame;
@@ -497,7 +497,7 @@ void DreamBase::showRain() {
 
 	if (_channel1Playing != 255)
 		return;
-	if (_realLocation == 2 && data.byte(kBeenmugged) != 1)
+	if (_realLocation == 2 && _vars._beenMugged != 1)
 		return;
 	if (_realLocation == 55)
 		return;
@@ -803,7 +803,7 @@ void DreamBase::reelsOnScreen() {
 void DreamBase::reconstruct() {
 	if (_haveDoneObs == 0)
 		return;
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	spriteUpdate();
 	printSprites();
@@ -1186,7 +1186,7 @@ void DreamBase::checkForExit(Sprite *sprite) {
 
 	}
 
-	data.byte(kNeedtotravel) = 1;
+	_vars._needToTravel = 1;
 }
 
 } // End of namespace DreamGen

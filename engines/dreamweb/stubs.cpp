@@ -560,8 +560,8 @@ void DreamBase::dreamweb() {
 			clearChanges();
 			setMode();
 			loadPalFromIFF();
-			data.byte(kLocation) = 255;
-			data.byte(kRoomafterdream) = 1;
+			_vars._location = 255;
+			_vars._roomAfterDream = 1;
 			_newLocation = 35;
 			_volume = 7;
 			loadRoom();
@@ -599,18 +599,18 @@ void DreamBase::dreamweb() {
 				goto done;
 			}
 
-			if (data.byte(kMandead) == 1 || data.byte(kMandead) == 2)
+			if (_vars._manDead == 1 || _vars._manDead == 2)
 				break;
 
-			if (data.word(kWatchingtime) > 0) {
+			if (_vars._watchingTime > 0) {
 				if (_finalDest == _mansPath)
-					data.word(kWatchingtime)--;
+					_vars._watchingTime--;
 			}
 
-			if (data.word(kWatchingtime) == 0) {
+			if (_vars._watchingTime == 0) {
 				// "notWatching"
 
-				if (data.byte(kMandead) == 4)
+				if (_vars._manDead == 4)
 					break;
 
 				if (_newLocation != 255) {
@@ -697,7 +697,7 @@ void DreamBase::screenUpdate() {
 	animPointer();
 
 	showPointer();
-	if ((data.word(kWatchingtime) == 0) && (_newLocation != 0xff))
+	if ((_vars._watchingTime == 0) && (_newLocation != 0xff))
 		return;
 	vSync();
 	uint16 mouseState = 0;
@@ -749,7 +749,7 @@ void DreamBase::startup() {
 	_currentKey = 0;
 	_mainMode = 0;
 	createPanel();
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	showIcon();
 	getUnderZoom();
@@ -762,7 +762,7 @@ void DreamBase::startup() {
 
 void DreamBase::startup1() {
 	clearPalette();
-	data.byte(kThroughdoor) = 0;
+	_vars._throughDoor = 0;
 
 	startup();
 
@@ -771,11 +771,11 @@ void DreamBase::startup1() {
 }
 
 void DreamBase::switchRyanOn() {
-	data.byte(kRyanon) = 255;
+	_vars._ryanOn = 255;
 }
 
 void DreamBase::switchRyanOff() {
-	data.byte(kRyanon) = 1;
+	_vars._ryanOn = 1;
 }
 
 void DreamBase::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
@@ -898,17 +898,17 @@ void DreamBase::triggerMessage(uint16 index) {
 	hangOn(340);
 	multiPut(_mapStore, 174, 153, 200, 63);
 	workToScreen();
-	data.byte(kLasttrigger) = 0;
+	_vars._lastTrigger = 0;
 }
 
 void DreamBase::processTrigger() {
-	if (data.byte(kLasttrigger) == '1') {
+	if (_vars._lastTrigger == '1') {
 		setLocation(8);
 		triggerMessage(45);
-	} else if (data.byte(kLasttrigger) == '2') {
+	} else if (_vars._lastTrigger == '2') {
 		setLocation(9);
 		triggerMessage(55);
-	} else if (data.byte(kLasttrigger) == '3') {
+	} else if (_vars._lastTrigger == '3') {
 		setLocation(2);
 		triggerMessage(59);
 	}
@@ -975,9 +975,9 @@ void DreamBase::getTime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
-	data.byte(kSecondcount) = t.tm_sec;
-	data.byte(kMinutecount) = t.tm_min;
-	data.byte(kHourcount) = t.tm_hour;
+	_vars._secondCount = t.tm_sec;
+	_vars._minuteCount = t.tm_min;
+	_vars._hourCount = t.tm_hour;
 }
 
 uint16 DreamBase::allocateMem(uint16 paragraphs) {
@@ -1007,7 +1007,7 @@ void DreamBase::DOSReturn() {
 }
 
 void DreamBase::eraseOldObs() {
-	if (data.byte(kNewobs) == 0)
+	if (_vars._newObs == 0)
 		return;
 
 	// Note: the original didn't delete sprites here, but marked the
@@ -1058,20 +1058,20 @@ void DreamBase::clearAndLoad(uint8 *buf, uint8 c,
 }
 
 void DreamBase::startLoading(const Room &room) {
-	data.byte(kCombatcount) = 0;
+	_vars._combatCount = 0;
 	_roomsSample = room.roomsSample;
 	_mapX = room.mapX;
 	_mapY = room.mapY;
-	data.byte(kLiftflag) = room.liftFlag;
+	_vars._liftFlag = room.liftFlag;
 	_mansPath = room.b21;
 	_destination = room.b21;
 	_finalDest = room.b21;
 	_facing = room.facing;
 	_turnToFace = room.facing;
-	data.byte(kCounttoopen) = room.countToOpen;
-	data.byte(kLiftpath) = room.liftPath;
-	data.byte(kDoorpath) = room.doorPath;
-	data.byte(kLastweapon) = (uint8)-1;
+	_vars._countToOpen = room.countToOpen;
+	_vars._liftPath = room.liftPath;
+	_vars._doorPath = room.doorPath;
+	_vars._lastWeapon = (uint8)-1;
 	_realLocation = room.realLocation;
 
 	loadRoomData(room, false);
@@ -1081,8 +1081,8 @@ void DreamBase::startLoading(const Room &room) {
 	setAllChanges();
 	autoAppear();
 //	const Room &newRoom = g_roomData[_newLocation];
-	data.byte(kLastweapon) = (uint8)-1;
-	data.byte(kMandead) = 0;
+	_vars._lastWeapon = (uint8)-1;
+	_vars._manDead = 0;
 	_lookCounter = 160;
 	_newLocation = 255;
 	_linePointer = 254;
@@ -1415,11 +1415,11 @@ void DreamBase::obName(uint8 command, uint8 commandType) {
 			} else if (!finishedWalking())
 				return;
 			else if (_commandType == 5) {
-				if (data.word(kWatchingtime) == 0)
+				if (_vars._watchingTime == 0)
 					talk();
 				return;
 			} else {
-				if (data.word(kWatchingtime) == 0)
+				if (_vars._watchingTime == 0)
 					examineOb();
 				return;
 			}
@@ -1429,7 +1429,7 @@ void DreamBase::obName(uint8 command, uint8 commandType) {
 
 	_command = command;
 	_commandType = commandType;
-	if ((_linePointer != 254) || (data.word(kWatchingtime) != 0) || (_facing != _turnToFace)) {
+	if ((_linePointer != 254) || (_vars._watchingTime != 0) || (_facing != _turnToFace)) {
 		blockNameText();
 		return;
 	} else if (_commandType != 3) {
@@ -1484,7 +1484,7 @@ void DreamBase::showBlink() {
 	if (_manIsOffScreen == 1)
 		return;
 	++_blinkCount;
-	if (data.byte(kShadeson) != 0)
+	if (_vars._shadesOn != 0)
 		return;
 	if (_realLocation >= 50) // eyesshut
 		return;
@@ -1502,7 +1502,7 @@ void DreamBase::showBlink() {
 }
 
 void DreamBase::dumpBlink() {
-	if (data.byte(kShadeson) != 0)
+	if (_vars._shadesOn != 0)
 		return;
 	if (_blinkCount != 0)
 		return;
@@ -1582,7 +1582,7 @@ void DreamBase::animPointer() {
 		_pointerFrame = flashMouseTab[_pointerCount];
 		return;
 	}
-	if (data.word(kWatchingtime) != 0) {
+	if (_vars._watchingTime != 0) {
 		_pointerFrame = 11;
 		return;
 	}
@@ -1851,7 +1851,7 @@ void DreamBase::enterSymbol() {
 }
 
 void DreamBase::zoomOnOff() {
-	if (data.word(kWatchingtime) != 0 || _pointerMode == 2) {
+	if (_vars._watchingTime != 0 || _pointerMode == 2) {
 		blank();
 		return;
 	}
@@ -1864,9 +1864,9 @@ void DreamBase::zoomOnOff() {
 	if (!(_mouseButton & 1) || (_mouseButton == _oldButton))
 		return;
 
-	data.byte(kZoomon) ^= 1;
+	_vars._zoomOn ^= 1;
 	createPanel();
-	data.byte(kNewobs) = 0;
+	_vars._newObs = 0;
 	drawFloor();
 	printSprites();
 	reelsOnScreen();
@@ -1890,7 +1890,7 @@ void DreamBase::sortOutMap() {
 
 void DreamBase::mainScreen() {
 	_inMapArea = 0;
-	if (data.byte(kWatchon) == 1) {
+	if (_vars._watchOn == 1) {
 		RectWithCallback<DreamBase> mainList[] = {
 			{ 44,70,32,46,&DreamBase::look },
 			{ 0,50,0,180,&DreamBase::inventory },
@@ -1919,7 +1919,7 @@ void DreamBase::mainScreen() {
 }
 
 void DreamBase::showWatch() {
-	if (data.byte(kWatchon)) {
+	if (_vars._watchOn) {
 		showFrame(_icons1, 250, 1, 6, 0);
 		showTime();
 	}
@@ -1933,12 +1933,12 @@ void DreamBase::dumpWatch() {
 }
 
 void DreamBase::showTime() {
-	if (data.byte(kWatchon) == 0)
+	if (_vars._watchOn == 0)
 		return;
 
-	int seconds = data.byte(kSecondcount);
-	int minutes = data.byte(kMinutecount);
-	int hours = data.byte(kHourcount);
+	int seconds = _vars._secondCount;
+	int minutes = _vars._minuteCount;
+	int hours = _vars._hourCount;
 
 	showFrame(_charset1, 282+5, 21, 91*3+10 + seconds / 10, 0);
 	showFrame(_charset1, 282+9, 21, 91*3+10 + seconds % 10, 0);
@@ -1953,7 +1953,7 @@ void DreamBase::showTime() {
 }
 
 void DreamBase::watchCount() {
-	if (data.byte(kWatchon) == 0)
+	if (_vars._watchOn == 0)
 		return;
 	++_timerCount;
 	if (_timerCount == 9) {
@@ -1961,15 +1961,15 @@ void DreamBase::watchCount() {
 		_watchDump = 1;
 	} else if (_timerCount == 18) {
 		_timerCount = 0;
-		++data.byte(kSecondcount);
-		if (data.byte(kSecondcount) == 60) {
-			data.byte(kSecondcount) = 0;
-			++data.byte(kMinutecount);
-			if (data.byte(kMinutecount) == 60) {
-				data.byte(kMinutecount) = 0;
-				++data.byte(kHourcount);
-				if (data.byte(kHourcount) == 24)
-					data.byte(kHourcount) = 0;
+		++_vars._secondCount;
+		if (_vars._secondCount == 60) {
+			_vars._secondCount = 0;
+			++_vars._minuteCount;
+			if (_vars._minuteCount == 60) {
+				_vars._minuteCount = 0;
+				++_vars._hourCount;
+				if (_vars._hourCount == 24)
+					_vars._hourCount = 0;
 			}
 		}
 		showTime();
@@ -1983,7 +1983,7 @@ void DreamBase::roomName() {
 	if (textIndex >= 32)
 		textIndex -= 32;
 	_lineSpacing = 7;
-	uint8 maxWidth = (data.byte(kWatchon) == 1) ? 120 : 160;
+	uint8 maxWidth = (_vars._watchOn == 1) ? 120 : 160;
 	const uint8 *string = (const uint8 *)_roomDesc.getString(textIndex);
 	printDirect(string, 88, 25, maxWidth, false);
 	_lineSpacing = 10;
@@ -1999,7 +1999,7 @@ void DreamBase::loadRoom() {
 	_textAddressX = 13;
 	_textAddressY = 182;
 	_textLen = 240;
-	data.byte(kLocation) = _newLocation;
+	_vars._location = _newLocation;
 	const Room &room = g_roomData[_newLocation];
 	startLoading(room);
 	loadRoomsSample();
@@ -2043,13 +2043,13 @@ void DreamBase::autoLook() {
 	--_lookCounter;
 	if (_lookCounter)
 		return;
-	if (data.word(kWatchingtime))
+	if (_vars._watchingTime)
 		return;
 	doLook();
 }
 
 void DreamBase::look() {
-	if (data.word(kWatchingtime) || (_pointerMode == 2)) {
+	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
 	}
@@ -2192,7 +2192,7 @@ void DreamBase::loadRoomData(const Room &room, bool skipDat) {
 }
 
 void DreamBase::restoreAll() {
-	const Room &room = g_roomData[data.byte(kLocation)];
+	const Room &room = g_roomData[_vars._location];
 	loadRoomData(room, true);
 	setAllChanges();
 }
@@ -2322,18 +2322,18 @@ void DreamBase::showExit() {
 void DreamBase::showMan() {
 	showFrame(_icons1, 0, 0, 0, 0);
 	showFrame(_icons1, 0, 114, 1, 0);
-	if (data.byte(kShadeson))
+	if (_vars._shadesOn)
 		showFrame(_icons1, 28, 25, 2, 0);
 }
 
 void DreamBase::panelIcons1() {
 	uint16 x;
-	if (data.byte(kWatchon) != 1)
+	if (_vars._watchOn != 1)
 		x = 48;
 	else
 		x = 0;
 	showFrame(_icons2, 204 + x, 4, 2, 0);
-	if (data.byte(kZoomon) != 1)
+	if (_vars._zoomOn != 1)
 		showFrame(_icons1, 228 + x, 8, 5, 0);
 	showWatch();
 }
@@ -2399,7 +2399,7 @@ void DreamBase::lastFolder() {
 
 void DreamBase::folderHints() {
 	if (_folderPage == 5) {
-		if ((data.byte(kAidedead) != 1) && (getLocation(13) != 1)) {
+		if ((_vars._aideDead != 1) && (getLocation(13) != 1)) {
 			setLocation(13);
 			showFolder();
 			const uint8 *string = getTextInFile1(30);
@@ -2441,7 +2441,7 @@ void DreamBase::drawFloor() {
 	showAllEx();
 	panelToMap();
 	initRain();
-	data.byte(kNewobs) = 0;
+	_vars._newObs = 0;
 }
 
 void DreamBase::allocateBuffers() {
@@ -2482,7 +2482,7 @@ void DreamBase::useMenu() {
 	createPanel();
 	showPanel();
 	showIcon();
-	data.byte(kNewobs) = 0;
+	_vars._newObs = 0;
 	drawFloor();
 	printSprites();
 	showFrame(_tempGraphics2, kMenux-48, kMenuy-4, 4, 0);
@@ -2526,7 +2526,7 @@ void DreamBase::atmospheres() {
 			continue;
 		if (a->_sound != _channel0Playing) {
 
-			if (data.byte(kLocation) == 45 && data.word(kReeltowatch) == 45)
+			if (_vars._location == 45 && _vars._reelToWatch == 45)
 				continue; // "web"
 
 			playChannel0(a->_sound, a->_repeat);
@@ -2708,16 +2708,16 @@ void DreamBase::initialInv() {
 	pickupOb(19, 1);
 	pickupOb(20, 9);
 	pickupOb(16, 2);
-	data.byte(kWatchmode) = 1;
-	data.word(kReeltohold) = 0;
-	data.word(kEndofholdreel) = 6;
-	data.byte(kWatchspeed) = 1;
-	data.byte(kSpeedcount) = 1;
+	_vars._watchMode = 1;
+	_vars._reelToHold = 0;
+	_vars._endOfHoldReel = 6;
+	_vars._watchSpeed = 1;
+	_vars._speedCount = 1;
 	switchRyanOff();
 }
 
 void DreamBase::walkIntoRoom() {
-	if (data.byte(kLocation) == 14 && _mapX == 22) {
+	if (_vars._location == 14 && _mapX == 22) {
 		_destination = 1;
 		_finalDest = 1;
 		autoSetWalk();
@@ -2730,7 +2730,7 @@ void DreamBase::afterIntroRoom() {
 
 	clearWork();
 	findRoomInLoc();
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	reelsOnScreen();
 	spriteUpdate();
@@ -2742,7 +2742,7 @@ void DreamBase::afterIntroRoom() {
 void DreamBase::redrawMainScrn() {
 	_timeCount = 0;
 	createPanel();
-	data.byte(kNewobs) = 0;
+	_vars._newObs = 0;
 	drawFloor();
 	printSprites();
 	reelsOnScreen();
@@ -2768,7 +2768,7 @@ void DreamBase::allPointer() {
 
 void DreamBase::makeMainScreen() {
 	createPanel();
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	spriteUpdate();
 	printSprites();
@@ -2949,59 +2949,59 @@ void DreamBase::underTextLine() {
 }
 
 void DreamBase::showWatchReel() {
-	uint16 reelPointer = data.word(kReeltowatch);
+	uint16 reelPointer = _vars._reelToWatch;
 	plotReel(reelPointer);
-	data.word(kReeltowatch) = reelPointer;
+	_vars._reelToWatch = reelPointer;
 
 	// check for shake
 	if (_realLocation == 26 && reelPointer == 104)
-		data.byte(kShakecounter) = 0xFF;
+		_vars._shakeCounter = 0xFF;
 }
 
 void DreamBase::watchReel() {
-	if (data.word(kReeltowatch) != 0xFFFF) {
+	if (_vars._reelToWatch != 0xFFFF) {
 		if (_mansPath != _finalDest)
 			return; // Wait until stopped walking
 		if (_turnToFace != _facing)
 			return;
 
-		if (--data.byte(kSpeedcount) != 0xFF) {
+		if (--_vars._speedCount != 0xFF) {
 			showWatchReel();
 			return;
 		}
-		data.byte(kSpeedcount) = data.byte(kWatchspeed);
-		if (data.word(kReeltowatch) != data.word(kEndwatchreel)) {
-			++data.word(kReeltowatch);
+		_vars._speedCount = _vars._watchSpeed;
+		if (_vars._reelToWatch != _vars._endWatchReel) {
+			++_vars._reelToWatch;
 			showWatchReel();
 			return;
 		}
-		if (data.word(kWatchingtime)) {
+		if (_vars._watchingTime) {
 			showWatchReel();
 			return;
 		}
-		data.word(kReeltowatch) = 0xFFFF;
-		data.byte(kWatchmode) = 0xFF;
-		if (data.word(kReeltohold) == 0xFFFF)
+		_vars._reelToWatch = 0xFFFF;
+		_vars._watchMode = 0xFF;
+		if (_vars._reelToHold == 0xFFFF)
 			return; // No more reel
-		data.byte(kWatchmode) = 1;
-	} else if (data.byte(kWatchmode) != 1) {
-		if (data.byte(kWatchmode) != 2)
+		_vars._watchMode = 1;
+	} else if (_vars._watchMode != 1) {
+		if (_vars._watchMode != 2)
 			return; // "notreleasehold"
-		if (--data.byte(kSpeedcount) == 0xFF) {
-			data.byte(kSpeedcount) = data.byte(kWatchspeed);
-			++data.word(kReeltohold);
+		if (--_vars._speedCount == 0xFF) {
+			_vars._speedCount = _vars._watchSpeed;
+			++_vars._reelToHold;
 		}
-		if (data.word(kReeltohold) == data.word(kEndofholdreel)) {
-			data.word(kReeltohold) = 0xFFFF;
-			data.byte(kWatchmode) = 0xFF;
-			_destination = data.byte(kDestafterhold);
-			_finalDest = data.byte(kDestafterhold);
+		if (_vars._reelToHold == _vars._endOfHoldReel) {
+			_vars._reelToHold = 0xFFFF;
+			_vars._watchMode = 0xFF;
+			_destination = _vars._destAfterHold;
+			_finalDest = _vars._destAfterHold;
 			autoSetWalk();
 			return;
 		}
 	}
 
-	uint16 reelPointer = data.word(kReeltohold);
+	uint16 reelPointer = _vars._reelToHold;
 	plotReel(reelPointer);
 }
 
@@ -3013,12 +3013,12 @@ void DreamBase::afterNewRoom() {
 	createPanel();
 	_commandType = 0;
 	findRoomInLoc();
-	if (data.byte(kRyanon) != 1) {
+	if (_vars._ryanOn != 1) {
 		_mansPath = findPathOfPoint(_ryanX + 12, _ryanY + 12);
 		findXYFromPath();
 		_resetManXY = 1;
 	}
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	_lookCounter = 160;
 	_nowInNewRoom = 0;
@@ -3037,10 +3037,10 @@ void DreamBase::afterNewRoom() {
 }
 
 void DreamBase::madmanRun() {
-	if (data.byte(kLocation)    != 14 ||
+	if (_vars._location    != 14 ||
 		_mapX        != 22 ||
 		_pointerMode !=  2 ||
-		data.byte(kMadmanflag)  !=  0) {
+		_vars._madmanFlag  !=  0) {
 		identifyOb();
 		return;
 	}
@@ -3052,7 +3052,7 @@ void DreamBase::madmanRun() {
 
 	if (_mouseButton == 1 &&
 		_mouseButton != _oldButton)
-		data.byte(kLastweapon) = 8;
+		_vars._lastWeapon = 8;
 }
 
 
@@ -3061,7 +3061,7 @@ void DreamBase::decide() {
 	loadPalFromIFF();
 	clearPalette();
 	_pointerMode = 0;
-	data.word(kWatchingtime) = 0;
+	_vars._watchingTime = 0;
 	_pointerFrame = 0;
 	_textAddressX = 70;
 	_textAddressY = 182 - 8;
@@ -3227,7 +3227,7 @@ void DreamBase::getBack1() {
 }
 
 void DreamBase::autoAppear() {
-	if (data.byte(kLocation) == 32) {
+	if (_vars._location == 32) {
 		// In alley
 		resetLocation(5);
 		setLocation(10);
@@ -3237,8 +3237,8 @@ void DreamBase::autoAppear() {
 
 	if (_realLocation == 24) {
 		// In Eden's apartment
-		if (data.byte(kGeneraldead) == 1) {
-			data.byte(kGeneraldead)++;
+		if (_vars._generalDead == 1) {
+			_vars._generalDead++;
 			placeSetObject(44);
 			placeSetObject(18);
 			placeSetObject(93);
@@ -3247,23 +3247,23 @@ void DreamBase::autoAppear() {
 			removeSetObject(75);
 			removeSetObject(84);
 			removeSetObject(85);
-		} else if (data.byte(kSartaindead) == 1) {
+		} else if (_vars._sartainDead == 1) {
 			// Eden's part 2
 			removeSetObject(44);
 			removeSetObject(93);
 			placeSetObject(55);
-			data.byte(kSartaindead)++;
+			_vars._sartainDead++;
 		}
 	} else {
 		// Not in Eden's
 		if (_realLocation == 25) {
 			// Sart roof
-			data.byte(kNewsitem) = 3;
+			_vars._newsItem = 3;
 			resetLocation(6);
 			setLocation(11);
 			_destPos = 11;
 		} else {
-			if (_realLocation == 2 && data.byte(kRockstardead) != 0)
+			if (_realLocation == 2 && _vars._rockstarDead != 0)
 				placeSetObject(23);
 		}
 	}
@@ -3292,7 +3292,7 @@ void DreamBase::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16 time
 }
 
 void DreamBase::entryTexts() {
-	switch (data.byte(kLocation)) {
+	switch (_vars._location) {
 	case 21:
 		setupTimedUse(28, 60, 11, 68, 64);
 		break;
@@ -3320,33 +3320,33 @@ void DreamBase::entryTexts() {
 }
 
 void DreamBase::entryAnims() {
-	data.word(kReeltowatch) = 0xFFFF;
-	data.byte(kWatchmode) = (byte)-1;
+	_vars._reelToWatch = 0xFFFF;
+	_vars._watchMode = (byte)-1;
 
-	switch (data.byte(kLocation)) {
+	switch (_vars._location) {
 	case 33:	// beach
 		switchRyanOff();
-		data.word(kWatchingtime) = 76 * 2;
-		data.word(kReeltowatch) = 0;
-		data.word(kEndwatchreel) = 76;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
+		_vars._watchingTime = 76 * 2;
+		_vars._reelToWatch = 0;
+		_vars._endWatchReel = 76;
+		_vars._watchSpeed = 1;
+		_vars._speedCount = 1;
 		break;
 	case 44:	// Sparky's
 		resetLocation(8);
-		data.word(kWatchingtime) = 50*2;
-		data.word(kReeltowatch) = 247;
-		data.word(kEndwatchreel) = 297;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
+		_vars._watchingTime = 50*2;
+		_vars._reelToWatch = 247;
+		_vars._endWatchReel = 297;
+		_vars._watchSpeed = 1;
+		_vars._speedCount = 1;
 		switchRyanOff();
 		break;
 	case 22:	// lift
-		data.word(kWatchingtime) = 31 * 2;
-		data.word(kReeltowatch) = 0;
-		data.word(kEndwatchreel) = 30;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
+		_vars._watchingTime = 31 * 2;
+		_vars._reelToWatch = 0;
+		_vars._endWatchReel = 30;
+		_vars._watchSpeed = 1;
+		_vars._speedCount = 1;
 		switchRyanOff();
 		break;
 	case 26:	// under church
@@ -3354,18 +3354,18 @@ void DreamBase::entryAnims() {
 		_symbolBotNum = 1;
 		break;
 	case 45:	// entered Dreamweb
-		data.byte(kKeeperflag) = 0;
-		data.word(kWatchingtime) = 296;
-		data.word(kReeltowatch) = 45;
-		data.word(kEndwatchreel) = 198;
-		data.byte(kWatchspeed) = 1;
-		data.byte(kSpeedcount) = 1;
+		_vars._keeperFlag = 0;
+		_vars._watchingTime = 296;
+		_vars._reelToWatch = 45;
+		_vars._endWatchReel = 198;
+		_vars._watchSpeed = 1;
+		_vars._speedCount = 1;
 		switchRyanOff();
 		break;
 	default:
-		if (_realLocation == 46 && data.byte(kSartaindead) == 1) {	// Crystal
+		if (_realLocation == 46 && _vars._sartainDead == 1) {	// Crystal
 			removeFreeObject(0);
-		} else if (data.byte(kLocation) == 9 && !checkIfPathIsOn(2) && data.byte(kAidedead) != 0) {
+		} else if (_vars._location == 9 && !checkIfPathIsOn(2) && _vars._aideDead != 0) {
 			// Top of church
 			if (checkIfPathIsOn(3))
 				turnPathOn(2);
@@ -3373,24 +3373,24 @@ void DreamBase::entryAnims() {
 			// Make doors open
 			removeSetObject(4);
 			placeSetObject(5);
-		} else if (data.byte(kLocation) == 47) {	// Dream centre
+		} else if (_vars._location == 47) {	// Dream centre
 			placeSetObject(4);
 			placeSetObject(5);
-		} else if (data.byte(kLocation) == 38) {	// Car park
-			data.word(kWatchingtime) = 57 * 2;
-			data.word(kReeltowatch) = 4;
-			data.word(kEndwatchreel) = 57;
-			data.byte(kWatchspeed) = 1;
-			data.byte(kSpeedcount) = 1;
+		} else if (_vars._location == 38) {	// Car park
+			_vars._watchingTime = 57 * 2;
+			_vars._reelToWatch = 4;
+			_vars._endWatchReel = 57;
+			_vars._watchSpeed = 1;
+			_vars._speedCount = 1;
 			switchRyanOff();
-		} else if (data.byte(kLocation) == 32) {	// Alley
-			data.word(kWatchingtime) = 66 * 2;
-			data.word(kReeltowatch) = 0;
-			data.word(kEndwatchreel) = 66;
-			data.byte(kWatchspeed) = 1;
-			data.byte(kSpeedcount) = 1;
+		} else if (_vars._location == 32) {	// Alley
+			_vars._watchingTime = 66 * 2;
+			_vars._reelToWatch = 0;
+			_vars._endWatchReel = 66;
+			_vars._watchSpeed = 1;
+			_vars._speedCount = 1;
 			switchRyanOff();
-		} else if (data.byte(kLocation) == 24) {	// Eden's again
+		} else if (_vars._location == 24) {	// Eden's again
 			turnAnyPathOn(2, _roomNum - 1);
 		}
 	}
@@ -3489,7 +3489,7 @@ void DreamBase::showDiaryPage() {
 
 void DreamBase::dumpDiaryKeys() {
 	if (_pressCount == 1) {
-		if (data.byte(kSartaindead) != 1 && _diaryPage == 5 && getLocation(6) != 1) {
+		if (_vars._sartainDead != 1 && _diaryPage == 5 && getLocation(6) != 1) {
 			// Add Sartain Industries note
 			setLocation(6);
 			delPointer();
@@ -3539,8 +3539,6 @@ void DreamBase::lookAtCard() {
 }
 
 void DreamBase::clearBuffers() {
-	memcpy(_initialVars, data.ptr(kStartvars, kLengthofvars), kLengthofvars);
-
 	clearChanges();
 }
 
@@ -3549,10 +3547,10 @@ void DreamBase::clearChanges() {
 
 	setupInitialReelRoutines();
 
-	memcpy(data.ptr(kStartvars, kLengthofvars), _initialVars, kLengthofvars);
+	setupInitialVars();
 
-	data.word(kExframepos) = 0;
-	data.word(kExtextpos) = 0;
+	_vars._exFramePos = 0;
+	_vars._exTextPos = 0;
 
 	memset(_exFrames._frames, 0xFF, 2080);
 	memset(_exFrames._data, 0xFF, kExframeslen);
@@ -3563,6 +3561,68 @@ void DreamBase::clearChanges() {
 	const uint8 initialRoomsCanGo[] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	memcpy(_roomsCanGo, initialRoomsCanGo, 16);
+}
+
+void DreamBase::setupInitialVars() {
+	_vars._startVars = 0;
+	_vars._progressPoints = 0;
+	_vars._watchOn = 0;
+	_vars._shadesOn = 0;
+	_vars._secondCount = 0;
+	_vars._minuteCount = 30;
+	_vars._hourCount = 19;
+	_vars._zoomOn = 1;
+	_vars._location = 0;
+	_vars._exPos = 0;
+	_vars._exFramePos = 0;
+	_vars._exTextPos = 0;
+	_vars._card1Money = 0;
+	_vars._listPos = 0;
+	_vars._ryanPage = 0;
+	_vars._watchingTime = 0;
+	_vars._reelToWatch = (uint16)-1;
+	_vars._endWatchReel = 0;
+	_vars._speedCount = 0;
+	_vars._watchSpeed = 0;
+	_vars._reelToHold = (uint16)-1;
+	_vars._endOfHoldReel = (uint16)-1;
+	_vars._watchMode = (uint8)-1;
+	_vars._destAfterHold = 0;
+	_vars._newsItem = 0;
+	_vars._liftFlag = 0;
+	_vars._liftPath = 0;
+	_vars._lockStatus = 1;
+	_vars._doorPath = 0;
+	_vars._countToOpen = 0;
+	_vars._countToClose = 0;
+	_vars._rockstarDead = 0;
+	_vars._generalDead = 0;
+	_vars._sartainDead = 0;
+	_vars._aideDead = 0;
+	_vars._beenMugged = 0;
+	_vars._gunPassFlag = 0;
+	_vars._canMoveAltar = 0;
+	_vars._talkedToAttendant = 0;
+	_vars._talkedToSparky = 0;
+	_vars._talkedToBoss = 0;
+	_vars._talkedToRecep = 0;
+	_vars._cardPassFlag = 0;
+	_vars._madmanFlag = 0;
+	_vars._keeperFlag = 0;
+	_vars._lastTrigger = 0;
+	_vars._manDead = 0;
+	_vars._seed1 = 1;
+	_vars._seed2 = 2;
+	_vars._seed3 = 3;
+	_vars._needToTravel = 0;
+	_vars._throughDoor = 0;
+	_vars._newObs = 0;
+	_vars._ryanOn = 255;
+	_vars._combatCount = 0;
+	_vars._lastWeapon = (uint8)-1;
+	_vars._dreamNumber = 0;
+	_vars._roomAfterDream = 0;
+	_vars._shakeCounter = 48;
 }
 
 void DreamBase::showDiaryKeys() {
@@ -3590,7 +3650,7 @@ void DreamBase::edensFlatReminders() {
 	if (_realLocation != 24 || _mapX != 44)
 		return; // not in Eden's lift
 
-	if (data.byte(kProgresspoints))
+	if (_vars._progressPoints)
 		return; // not the first time in Eden's apartment
 
 	uint16 exObjextIndex = findExObject("CSHR");
@@ -3611,7 +3671,7 @@ void DreamBase::edensFlatReminders() {
 		}
 	}
 
-	data.byte(kProgresspoints)++;	// got card
+	_vars._progressPoints++;	// got card
 }
 
 void DreamBase::incRyanPage() {
@@ -3623,7 +3683,7 @@ void DreamBase::incRyanPage() {
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return;
 
-	data.byte(kRyanpage) = (_mouseX - (kInventx + 167)) / 18;
+	_vars._ryanPage = (_mouseX - (kInventx + 167)) / 18;
 
 	delPointer();
 	fillRyan();
@@ -3636,9 +3696,9 @@ void DreamBase::incRyanPage() {
 
 void DreamBase::emergencyPurge() {
 	while (true) {
-		if (data.word(kExframepos) + 4000 < kExframeslen) {
+		if (_vars._exFramePos + 4000 < kExframeslen) {
 			// Not near frame end
-			if (data.word(kExtextpos) + 400 < kExtextlen)
+			if (_vars._exTextPos + 400 < kExtextlen)
 				return;	// notneartextend
 		}
 

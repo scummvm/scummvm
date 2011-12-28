@@ -220,7 +220,7 @@ const char *DreamBase::monPrint(const char *string) {
 				break;
 			}
 			if (c == '%') {
-				data.byte(kLasttrigger) = *iterator;
+				_vars._lastTrigger = *iterator;
 				iterator += 2;
 				done = true;
 				break;

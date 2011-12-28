@@ -63,6 +63,7 @@ const unsigned int kOpsx = 60;
 const unsigned int kOpsy = 52;
 const unsigned int kSymbolx = 64;
 const unsigned int kSymboly = 56;
+const unsigned int kLengthofvars = 68;
 
 /**
  * This class is one of the parent classes of DreamGenContext. Its sole purpose
@@ -78,6 +79,7 @@ protected:
 	DreamWeb::DreamWebEngine *engine;
 
 	const char *_timedString;
+	GameVars _vars; // saved variables
 
 	// from backdrop.cpp
 	uint8 *_backdropBlocks;
@@ -133,7 +135,6 @@ protected:
 	Change _listOfChanges[kNumChanges]; // Note: this array is saved
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
-	uint8 _initialVars[kLengthOfVars]; // TODO: This shouldn't be necessary
 
 	// textfiles
 	TextFile _textFile1;
@@ -652,6 +653,7 @@ public:
 	void reelsOnScreen();
 
 	// from stubs.cpp
+	void setupInitialVars();
 	bool isCD();
 	void crosshair();
 	void delTextLine();

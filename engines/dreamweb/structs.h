@@ -343,6 +343,68 @@ struct GraphicsFile {
 	}
 };
 
+struct GameVars {
+	uint8 _startVars;
+	uint8 _progressPoints;
+	uint8 _watchOn;
+	uint8 _shadesOn;
+	uint8 _secondCount;
+	uint8 _minuteCount;
+	uint8 _hourCount;
+	uint8 _zoomOn;
+	uint8 _location;
+	uint8 _exPos;
+	uint16 _exFramePos;
+	uint16 _exTextPos;
+	uint16 _card1Money;
+	uint16 _listPos;
+	uint8 _ryanPage;
+	uint16 _watchingTime;
+	uint16 _reelToWatch; // reel plays from here in mode 0
+	uint16 _endWatchReel; // and stops here. Mode set to 1
+	uint8 _speedCount;
+	uint8 _watchSpeed;
+	uint16 _reelToHold; // if mode is 1 hold on this reel
+	uint16 _endOfHoldReel; // if mode is 2 then play to endOfHoldReel and reset mode to -1
+	uint8 _watchMode;
+	uint8 _destAfterHold; // set walking destination
+	uint8 _newsItem;
+	uint8 _liftFlag;
+	uint8 _liftPath;
+	uint8 _lockStatus;
+	uint8 _doorPath;
+	uint8 _countToOpen;
+	uint8 _countToClose;
+	uint8 _rockstarDead;
+	uint8 _generalDead;
+	uint8 _sartainDead;
+	uint8 _aideDead;
+	uint8 _beenMugged;
+	uint8 _gunPassFlag;
+	uint8 _canMoveAltar;
+	uint8 _talkedToAttendant;
+	uint8 _talkedToSparky;
+	uint8 _talkedToBoss;
+	uint8 _talkedToRecep;
+	uint8 _cardPassFlag;
+	uint8 _madmanFlag;
+	uint8 _keeperFlag;
+	uint8 _lastTrigger;
+	uint8 _manDead;
+	uint8 _seed1;
+	uint8 _seed2;
+	uint8 _seed3;
+	uint8 _needToTravel;
+	uint8 _throughDoor;
+	uint8 _newObs;
+	uint8 _ryanOn;
+	uint8 _combatCount;
+	uint8 _lastWeapon;
+	uint8 _dreamNumber;
+	uint8 _roomAfterDream;
+	uint8 _shakeCounter;
+};
+
 
 } // End of namespace DreamWeb
 

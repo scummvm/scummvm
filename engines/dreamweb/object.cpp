@@ -26,7 +26,7 @@ namespace DreamGen {
 
 void DreamBase::showRyanPage() {
 	showFrame(_icons1, kInventx + 167, kInventy - 12, 12, 0);
-	showFrame(_icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+	showFrame(_icons1, kInventx + 167 + 18 * _vars._ryanPage, kInventy - 12, 13 + _vars._ryanPage, 0);
 }
 
 void DreamBase::findAllRyan() {
@@ -45,7 +45,7 @@ void DreamBase::findAllRyan() {
 }
 
 void DreamBase::fillRyan() {
-	ObjectRef *inv = &_ryanInvList[data.byte(kRyanpage) * 10];
+	ObjectRef *inv = &_ryanInvList[_vars._ryanPage * 10];
 	findAllRyan();
 	for (size_t i = 0; i < 2; ++i) {
 		for (size_t j = 0; j < 5; ++j) {
@@ -203,7 +203,7 @@ void DreamBase::examineOb(bool examineAgain) {
 	}
 
 	_pickUp = 0;
-	if (data.word(kWatchingtime) != 0 || _newLocation == 255) {
+	if (_vars._watchingTime != 0 || _newLocation == 255) {
 		// isWatching
 		makeMainScreen();
 	}
@@ -213,7 +213,7 @@ void DreamBase::examineOb(bool examineAgain) {
 }
 
 void DreamBase::inventory() {
-	if (data.byte(kMandead) == 1 || data.word(kWatchingtime) != 0) {
+	if (_vars._manDead == 1 || _vars._watchingTime != 0) {
 		blank();
 		return;
 	}
@@ -251,13 +251,13 @@ void DreamBase::inventory() {
 }
 
 void DreamBase::transferText(uint8 from, uint8 to) {
-	_exText.setOffset(to, data.word(kExtextpos));
+	_exText.setOffset(to, _vars._exTextPos);
 	const char *src = _freeDesc.getString(from);
-	char *dst = _exText._text + data.word(kExtextpos);
+	char *dst = _exText._text + _vars._exTextPos;
 
 	size_t len = strlen(src);
 	memcpy(dst, src, len + 1);
-	data.word(kExtextpos) += len + 1;
+	_vars._exTextPos += len + 1;
 }
 
 void DreamBase::getBackFromOb() {
@@ -305,7 +305,7 @@ void DreamBase::openOb() {
 }
 
 void DreamBase::identifyOb() {
-	if (data.word(kWatchingtime) != 0) {
+	if (_vars._watchingTime != 0) {
 		blank();
 		return;
 	}
@@ -335,7 +335,7 @@ void DreamBase::identifyOb() {
 
 	checkOne(x, y, &flag, &flagEx, &type, &flagX, &flagY);
 
-	if (type != 0 && data.byte(kMandead) != 1)
+	if (type != 0 && _vars._manDead != 1)
 		obName(type, 3);
 	else
 		blank();
@@ -345,7 +345,7 @@ ObjectRef DreamBase::findInvPos() {
 	uint16 x = _mouseX - kInventx;
 	uint16 y = _mouseY - kInventy;
 	uint8 pos = (x / kItempicsize) + (y / kItempicsize) * 5;
-	uint8 invPos = data.byte(kRyanpage) * 10 + pos;
+	uint8 invPos = _vars._ryanPage * 10 + pos;
 	_lastInvPos = invPos;
 	return _ryanInvList[invPos];
 }
@@ -435,7 +435,7 @@ void DreamBase::deleteExFrame(uint8 frameNum) {
 	memmove(&_exFrames._data[startOff], &_exFrames._data[endOff], remainder);
 
 	// Combined frame data is now frameSize smaller
-	data.word(kExframepos) -= frameSize;
+	_vars._exFramePos -= frameSize;
 
 	// Adjust all frame pointers pointing into the shifted data
 	for (unsigned int i = 0; i < 3*kNumexobjects; ++i) {
@@ -457,7 +457,7 @@ void DreamBase::deleteExText(uint8 textNum) {
 	memmove(&_exText._text[startOff], &_exText._text[endOff], remainder);
 
 	// Combined text data is now frameSize smaller
-	data.word(kExtextpos) -= textSize;
+	_vars._exTextPos -= textSize;
 
 	// Adjust all text pointers pointing into the shifted data
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {

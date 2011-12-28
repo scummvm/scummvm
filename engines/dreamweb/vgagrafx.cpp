@@ -123,7 +123,7 @@ void DreamBase::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 wi
 }
 
 void DreamBase::doShake() {
-	uint8 &counter = data.byte(kShakecounter);
+	uint8 &counter = _vars._shakeCounter;
 	if (counter == 48)
 		return;
 
@@ -336,7 +336,7 @@ void DreamBase::clearWork() {
 }
 
 void DreamBase::dumpZoom() {
-	if (data.byte(kZoomon) == 1)
+	if (_vars._zoomOn == 1)
 		multiDump(kZoomx + 5, kZoomy + 4, 46, 40);
 }
 
@@ -359,15 +359,15 @@ void DreamBase::putUnderZoom() {
 }
 
 void DreamBase::zoomIcon() {
-	if (data.byte(kZoomon) == 0)
+	if (_vars._zoomOn == 0)
 		return;
 	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamBase::zoom() {
-	if (data.word(kWatchingtime) != 0)
+	if (_vars._watchingTime != 0)
 		return;
-	if (data.byte(kZoomon) != 1)
+	if (_vars._zoomOn != 1)
 		return;
 	if (_commandType >= 199) {
 		putUnderZoom();
@@ -466,11 +466,11 @@ void DreamBase::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	uint16 byteCount = freeFrame.width * freeFrame.height;
 
 	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
-	uint8 *dst = _exFrames._data + data.word(kExframepos);
+	uint8 *dst = _exFrames._data + _vars._exFramePos;
 	memcpy(dst, src, byteCount);
 
-	exFrame.setPtr(data.word(kExframepos));
-	data.word(kExframepos) += byteCount;
+	exFrame.setPtr(_vars._exFramePos);
+	_vars._exFramePos += byteCount;
 }
 
 } // End of namespace DreamGen

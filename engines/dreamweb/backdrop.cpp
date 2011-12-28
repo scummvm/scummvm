@@ -110,7 +110,7 @@ void DreamBase::calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uin
 }
 
 void DreamBase::makeBackOb(SetObject *objData, uint16 x, uint16 y) {
-	if (data.byte(kNewobs) == 0)
+	if (_vars._newObs == 0)
 		return;
 	uint8 priority = objData->priority;
 	uint8 type = objData->type;

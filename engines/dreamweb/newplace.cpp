@@ -25,8 +25,8 @@
 namespace DreamGen {
 
 void DreamBase::newPlace() {
-	if (data.byte(kNeedtotravel) == 1) {
-		data.byte(kNeedtotravel) = 0;
+	if (_vars._needToTravel == 1) {
+		_vars._needToTravel = 0;
 		selectLocation();
 	} else if (_autoLocation != 0xFF) {
 		_newLocation = _autoLocation;
@@ -84,7 +84,7 @@ void DreamBase::selectLocation() {
 		checkCoords(destList);
 	}
 
-	if (_quitRequested || _getBack == 1 || _newLocation == data.byte(kLocation)) {
+	if (_quitRequested || _getBack == 1 || _newLocation == _vars._location) {
 		_newLocation = _realLocation;
 		_getBack = 0;
 	}

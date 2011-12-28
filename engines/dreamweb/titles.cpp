@@ -242,16 +242,16 @@ void DreamBase::runEndSeq() {
 
 void DreamBase::loadIntroRoom() {
 	_introCount = 0;
-	data.byte(kLocation) = 255;
+	_vars._location = 255;
 	loadRoom();
 	_mapOffsetX = 72;
 	_mapOffsetY = 16;
 	clearSprites();
-	data.byte(kThroughdoor) = 0;
+	_vars._throughDoor = 0;
 	_currentKey = '0';
 	_mainMode = 0;
 	clearWork();
-	data.byte(kNewobs) = 1;
+	_vars._newObs = 1;
 	drawFloor();
 	reelsOnScreen();
 	spriteUpdate();

@@ -44,6 +44,68 @@ void syncReelRoutine(Common::Serializer &s, ReelRoutine *reel) {
 	s.syncAsByte(reel->b7);
 }
 
+void syncGameVars(Common::Serializer &s, GameVars &vars) {
+	s.syncAsByte(vars._startVars);
+	s.syncAsByte(vars._progressPoints);
+	s.syncAsByte(vars._watchOn);
+	s.syncAsByte(vars._shadesOn);
+	s.syncAsByte(vars._secondCount);
+	s.syncAsByte(vars._minuteCount);
+	s.syncAsByte(vars._hourCount);
+	s.syncAsByte(vars._zoomOn);
+	s.syncAsByte(vars._location);
+	s.syncAsByte(vars._exPos);
+	s.syncAsUint16LE(vars._exFramePos);
+	s.syncAsUint16LE(vars._exTextPos);
+	s.syncAsUint16LE(vars._card1Money);
+	s.syncAsUint16LE(vars._listPos);
+	s.syncAsByte(vars._ryanPage);
+	s.syncAsUint16LE(vars._watchingTime);
+	s.syncAsUint16LE(vars._reelToWatch);
+	s.syncAsUint16LE(vars._endWatchReel);
+	s.syncAsByte(vars._speedCount);
+	s.syncAsByte(vars._watchSpeed);
+	s.syncAsUint16LE(vars._reelToHold);
+	s.syncAsUint16LE(vars._endOfHoldReel);
+	s.syncAsByte(vars._watchMode);
+	s.syncAsByte(vars._destAfterHold);
+	s.syncAsByte(vars._newsItem);
+	s.syncAsByte(vars._liftFlag);
+	s.syncAsByte(vars._liftPath);
+	s.syncAsByte(vars._lockStatus);
+	s.syncAsByte(vars._doorPath);
+	s.syncAsByte(vars._countToOpen);
+	s.syncAsByte(vars._countToClose);
+	s.syncAsByte(vars._rockstarDead);
+	s.syncAsByte(vars._generalDead);
+	s.syncAsByte(vars._sartainDead);
+	s.syncAsByte(vars._aideDead);
+	s.syncAsByte(vars._beenMugged);
+	s.syncAsByte(vars._gunPassFlag);
+	s.syncAsByte(vars._canMoveAltar);
+	s.syncAsByte(vars._talkedToAttendant);
+	s.syncAsByte(vars._talkedToSparky);
+	s.syncAsByte(vars._talkedToBoss);
+	s.syncAsByte(vars._talkedToRecep);
+	s.syncAsByte(vars._cardPassFlag);
+	s.syncAsByte(vars._madmanFlag);
+	s.syncAsByte(vars._keeperFlag);
+	s.syncAsByte(vars._lastTrigger);
+	s.syncAsByte(vars._manDead);
+	s.syncAsByte(vars._seed1);
+	s.syncAsByte(vars._seed2);
+	s.syncAsByte(vars._seed3);
+	s.syncAsByte(vars._needToTravel);
+	s.syncAsByte(vars._throughDoor);
+	s.syncAsByte(vars._newObs);
+	s.syncAsByte(vars._ryanOn);
+	s.syncAsByte(vars._combatCount);
+	s.syncAsByte(vars._lastWeapon);
+	s.syncAsByte(vars._dreamNumber);
+	s.syncAsByte(vars._roomAfterDream);
+	s.syncAsByte(vars._shakeCounter);
+}
+
 void DreamBase::loadGame() {
 	if (_commandType != 246) {
 		_commandType = 246;
@@ -137,7 +199,7 @@ void DreamBase::doLoad(int savegameId) {
 
 
 void DreamBase::saveGame() {
-	if (data.byte(kMandead) == 2) {
+	if (_vars._manDead == 2) {
 		blank();
 		return;
 	}
@@ -238,7 +300,7 @@ void DreamBase::oldToNames() {
 }
 
 void DreamBase::saveLoad() {
-	if (data.word(kWatchingtime) || (_pointerMode == 2)) {
+	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
 	}
@@ -315,7 +377,7 @@ void DreamBase::doSaveLoad() {
 }
 
 void DreamBase::getBackFromOps() {
-	if (data.byte(kMandead) == 2)
+	if (_vars._manDead == 2)
 		blank();
 	else
 		getBack1();
@@ -435,13 +497,13 @@ void DreamBase::actualLoad() {
 
 void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
-	const Room &currentRoom = g_roomData[data.byte(kLocation)];
+	const Room &currentRoom = g_roomData[_vars._location];
 
 	Room madeUpRoom = currentRoom;
 	madeUpRoom.roomsSample = _roomsSample;
 	madeUpRoom.mapX = _mapX;
 	madeUpRoom.mapY = _mapY;
-	madeUpRoom.liftFlag = data.byte(kLiftflag);
+	madeUpRoom.liftFlag = _vars._liftFlag;
 	madeUpRoom.b21 = _mansPath;
 	madeUpRoom.facing = _facing;
 	madeUpRoom.b27 = 255;
@@ -475,7 +537,9 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 
 	outSaveFile->write((const uint8 *)&header, sizeof(FileHeader));
 	outSaveFile->write(descbuf, len[0]);
-	outSaveFile->write(data.ptr(kStartvars, len[1]), len[1]);
+	// TODO: Convert more to serializer?
+	Common::Serializer s(0, outSaveFile);
+	syncGameVars(s, _vars);
 
 	// the Extras segment:
 	outSaveFile->write((const uint8 *)_exFrames._frames, 2080);
@@ -490,8 +554,6 @@ void DreamBase::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->write((const uint8 *)&madeUpRoom, sizeof(Room));
 	outSaveFile->write(_roomsCanGo, 16);
 
-	// TODO: Convert more to serializer?
-	Common::Serializer s(0, outSaveFile);
 	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
 		syncReelRoutine(s, &_reelRoutines[i]);
 	}
@@ -548,7 +610,10 @@ void DreamBase::loadPosition(unsigned int slot) {
 		uint8 namebuf[17];
 		inSaveFile->read(namebuf, 17);
 	}
-	inSaveFile->read(data.ptr(kStartvars, len[1]), len[1]);
+
+	// TODO: Use serializer for more?
+	Common::Serializer s(inSaveFile, 0);
+	syncGameVars(s, _vars);
 
 	// the Extras segment:
 	inSaveFile->read((uint8 *)_exFrames._frames, kExframes);
@@ -565,8 +630,6 @@ void DreamBase::loadPosition(unsigned int slot) {
 	inSaveFile->read((uint8 *)&g_madeUpRoomDat, sizeof(Room));
 	inSaveFile->read(_roomsCanGo, 16);
 
-	// TODO: Use serializer for more
-	Common::Serializer s(inSaveFile, 0);
 	for (unsigned int i = 0; i < kNumReelRoutines; ++i) {
 		syncReelRoutine(s, &_reelRoutines[i]);
 	}

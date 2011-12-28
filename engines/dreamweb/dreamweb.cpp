@@ -204,7 +204,7 @@ Common::Error DreamWebEngine::run() {
 	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
-	_context.__start();
+	_context.dreamweb();
 	_base._quitRequested = false;
 
 	_timer->removeTimerProc(vSyncInterrupt);

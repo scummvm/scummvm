@@ -68,11 +68,11 @@ void DreamBase::setWalk() {
 	} else if (_pointersPath == _mansPath) {
 		// Can't walk
 		faceRightWay();
-	} else if (data.byte(kWatchmode) == 1) {
+	} else if (_vars._watchMode == 1) {
 		// Holding reel
-		data.byte(kDestafterhold) = _pointersPath;
-		data.byte(kWatchmode) = 2;
-	} else if (data.byte(kWatchmode) == 2) {
+		_vars._destAfterHold = _pointersPath;
+		_vars._watchMode = 2;
+	} else if (_vars._watchMode == 2) {
 		// Can't walk
 	} else {
 		_destination = _pointersPath;
