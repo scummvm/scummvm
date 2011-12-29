@@ -104,7 +104,7 @@ Script::Script(Myst3Engine *vm):
 	OP_3( 99, varClipChangeBound,			kVar,		kValue,		kValue								);
 	OP_2(100, varAbsoluteSubValue,			kVar,		kValue											);
 	OP_2(101, varAbsoluteSubVar,			kVar,		kVar											);
-	OP_3(102, varRatioToPercents,			kVar,		kVar,		kValue								);
+	OP_3(102, varRatioToPercents,			kVar,		kValue,		kValue								);
 	OP_4(103, varRotateValue3,				kVar,		kValue,		kValue, 	kValue					);
 	OP_0(104, ifElse																					);
 	OP_1(105, ifCondition, 					kCondition													);
@@ -886,8 +886,8 @@ void Script::varRatioToPercents(Context &c, const Opcode &cmd) {
 
 	int32 value = _vm->_vars->get(cmd.args[0]);
 
-	value = 100 * (cmd.args[2] - abs(value) - _vm->_vars->get(cmd.args[1])) / cmd.args[2];
-	value = MIN(0, value);
+	value = 100 * (cmd.args[2] - abs(value - cmd.args[1])) / cmd.args[2];
+	value = MAX(0, value);
 
 	_vm->_vars->set(cmd.args[0], value);
 }
