@@ -21,6 +21,8 @@
  */
 
 #include "engines/myst3/node.h"
+#include "engines/myst3/myst3.h"
+#include "engines/myst3/variables.h"
 
 #include "common/debug.h"
 #include "common/rect.h"
@@ -142,7 +144,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 		if (!jpegDesc) continue;
 
 		SpotItemFace *spotItemFace = new SpotItemFace(
-				&_faces[jpegDesc->getFace()],
+				&_faces[i],
 				jpegDesc->getSpotItemData().u,
 				jpegDesc->getSpotItemData().v);
 
@@ -161,6 +163,12 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 	_spotItems.push_back(spotItem);
 }
 
+void Node::update() {
+	for (uint i = 0; i < _spotItems.size(); i++) {
+		_spotItems[i]->update();
+	}
+}
+
 SpotItem::SpotItem(Myst3Engine *vm) :
 	_vm(vm) {
 }
@@ -168,6 +176,32 @@ SpotItem::SpotItem(Myst3Engine *vm) :
 SpotItem::~SpotItem() {
 	for (uint i = 0; i < _faces.size(); i++) {
 		delete _faces[i];
+	}
+}
+
+void SpotItem::update() {
+	// First undraw ...
+	for (uint i = 0; i < _faces.size(); i++) {
+		if (!_vm->_vars->evaluate(_condition) && _faces[i]->isDrawn()) {
+			_faces[i]->undraw();
+		}
+	}
+
+	// ... then redraw
+	for (uint i = 0; i < _faces.size(); i++) {
+		uint16 newFadeValue = _vm->_vars->get(_fadeVar);
+
+		if (_enableFade && _faces[i]->getFadeValue() != newFadeValue) {
+			_faces[i]->setFadeValue(newFadeValue);
+			_faces[i]->setDrawn(false);
+		}
+
+		if (_vm->_vars->evaluate(_condition) && !_faces[i]->isDrawn()) {
+			if (_enableFade)
+				_faces[i]->fadeDraw();
+			else
+				_faces[i]->draw();
+		}
 	}
 }
 
@@ -201,17 +235,20 @@ void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
-	byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
-	byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
-	byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
+	for (int i = 0; i < _bitmap->h; i++) {
+		byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, i);
+		byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, i);
+		byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, i);
 
-	byte *ptr = (byte *)_bitmap->getBasePtr(0, 0);
-	for (int i = 0; i < _bitmap->w * _bitmap->h; i++) {
-		byte r, g, b;
-		Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
-		*ptr++ = r;
-		*ptr++ = g;
-		*ptr++ = b;
+		byte *ptr = (byte *)_bitmap->getBasePtr(0, i);
+
+		for (int j = 0; j < _bitmap->w; j++) {
+			byte r, g, b;
+			Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
+			*ptr++ = r;
+			*ptr++ = g;
+			*ptr++ = b;
+		}
 	}
 
 	// Copy not drawn SpotItem image from face
@@ -223,6 +260,59 @@ void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
 				_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_notDrawnBitmap->w * 3);
 	}
+}
+
+void SpotItemFace::draw() {
+	for (uint i = 0; i < _bitmap->h; i++) {
+		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
+				_bitmap->getBasePtr(0, i),
+				_bitmap->w * 3);
+	}
+
+	_drawn = true;
+
+	// TODO: Upload the texture at most once per frame
+	_face->uploadTexture();
+}
+
+void SpotItemFace::undraw() {
+	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
+		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
+				_notDrawnBitmap->getBasePtr(0, i),
+				_notDrawnBitmap->w * 3);
+	}
+
+	_drawn = false;
+
+	// TODO: Upload the texture at most once per frame
+	_face->uploadTexture();
+}
+
+void SpotItemFace::fadeDraw() {
+	for (int i = 0; i < _bitmap->h; i++) {
+		byte *ptrND = (byte *)_notDrawnBitmap->getBasePtr(0, i);
+		byte *ptrD = (byte *)_bitmap->getBasePtr(0, i);
+		byte *ptrDest = (byte *)_face->_bitmap->getBasePtr(_posX, _posY + i);
+
+		for (int j = 0; j < _bitmap->w; j++) {
+			byte rND = *ptrND++;
+			byte gND = *ptrND++;
+			byte bND = *ptrND++;
+			byte rD = *ptrD++;
+			byte gD = *ptrD++;
+			byte bD = *ptrD++;
+
+			// TODO: optimize ?
+			*ptrDest++ = rND * (100 - _fadeValue) / 100 + rD * _fadeValue / 100;
+			*ptrDest++ = gND * (100 - _fadeValue) / 100 + gD * _fadeValue / 100;
+			*ptrDest++ = bND * (100 - _fadeValue) / 100 + bD * _fadeValue / 100;
+		}
+	}
+
+	_drawn = true;
+
+	// TODO: Upload the texture at most once per frame
+	_face->uploadTexture();
 }
 
 } // end of namespace Myst3

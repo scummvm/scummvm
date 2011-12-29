@@ -57,6 +57,16 @@ class SpotItemFace {
 		~SpotItemFace();
 
 		void loadData(Graphics::JPEG *jpeg);
+
+		void draw();
+		void undraw();
+		void fadeDraw();
+
+		bool isDrawn() { return _drawn; }
+		void setDrawn(bool drawn) { _drawn = drawn; }
+		uint16 getFadeValue() { return _fadeValue; }
+		void setFadeValue(uint16 value) { _fadeValue = value; }
+
 	private:
 		Face *_face;
 		bool _drawn;
@@ -78,6 +88,7 @@ class SpotItem {
 		void setFadeVar(uint16 var) { _fadeVar = var; }
 		void addFace(SpotItemFace *face) { _faces.push_back(face); }
 
+		void update();
 	private:
 		Myst3Engine *_vm;
 
@@ -98,6 +109,7 @@ class Node {
 		Node(Myst3Engine *vm, Archive *archive, uint16 id);
 		virtual ~Node();
 
+		void update();
 		virtual void draw() = 0;
 		void loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade);
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
