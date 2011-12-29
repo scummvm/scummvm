@@ -110,7 +110,6 @@ Common::Error Myst3Engine::run() {
 	}
 	_movies.clear();
 
-	_node->unload();
 	delete _node;
 
 	_archive->close();
@@ -206,7 +205,6 @@ void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 		}
 		_movies.clear();
 
-		_node->unload();
 		delete _node;
 		_node = 0;
 	}
@@ -268,8 +266,7 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 
 	_system->showMouse(false);
 
-	_node = new NodeCube();
-	_node->load(*_archive, nodeID);
+	_node = new NodeCube(this, _archive, nodeID);
 }
 
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
@@ -277,8 +274,7 @@ void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 
 	_system->showMouse(true);
 
-	_node = new NodeFrame();
-	_node->load(*_archive, nodeID);
+	_node = new NodeFrame(this, _archive, nodeID);
 }
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) {

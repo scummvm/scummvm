@@ -29,11 +29,9 @@ namespace Myst3 {
 
 class NodeCube: public Myst3::Node {
 public:
-	NodeCube();
+	NodeCube(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~NodeCube();
 
-	void load(Archive &archive, uint16 id);
-	void unload();
 	void draw();
 };
 

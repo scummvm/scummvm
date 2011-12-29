@@ -29,10 +29,9 @@ namespace Myst3 {
 
 class NodeFrame : public Node {
 public:
-	NodeFrame();
+	NodeFrame(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~NodeFrame();
 
-	void load(Archive &archive, uint16 id);
 	void draw();
 };
 

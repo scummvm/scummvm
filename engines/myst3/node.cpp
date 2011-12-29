@@ -70,6 +70,10 @@ void Face::unload() {
 	glDeleteTextures(1, &_textureId);
 }
 
+Node::Node(Myst3Engine *vm, Archive *archive, uint16 id) :
+	_vm(vm) {
+}
+
 void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	byte *mask = new byte[640 * 640];
 	memset(mask, 0, sizeof(mask));
@@ -114,7 +118,7 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	delete[] mask;
 }
 
-void Node::unload() {
+Node::~Node() {
 	for (uint i = 0; i < _spotItems.size(); i++) {
 		delete _spotItems[i];
 	}
@@ -126,7 +130,7 @@ void Node::unload() {
 }
 
 void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade) {
-	SpotItem *spotItem = new SpotItem();
+	SpotItem *spotItem = new SpotItem(_vm);
 
 	spotItem->setCondition(condition);
 	spotItem->setFade(fade);
@@ -138,7 +142,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 		if (!jpegDesc) continue;
 
 		SpotItemFace *spotItemFace = new SpotItemFace(
-				jpegDesc->getFace(),
+				&_faces[jpegDesc->getFace()],
 				jpegDesc->getSpotItemData().u,
 				jpegDesc->getSpotItemData().v);
 
@@ -147,7 +151,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 		Graphics::JPEG jpeg;
 		jpeg.read(jpegStream);
 
-		spotItemFace->loadData(&jpeg, _faces[i]._bitmap);
+		spotItemFace->loadData(&jpeg);
 
 		delete jpegStream;
 
@@ -157,13 +161,17 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 	_spotItems.push_back(spotItem);
 }
 
+SpotItem::SpotItem(Myst3Engine *vm) :
+	_vm(vm) {
+}
+
 SpotItem::~SpotItem() {
 	for (uint i = 0; i < _faces.size(); i++) {
 		delete _faces[i];
 	}
 }
 
-SpotItemFace::SpotItemFace(uint16 face, uint16 posX, uint16 posY):
+SpotItemFace::SpotItemFace(Face *face, uint16 posX, uint16 posY):
 	_face(face),
 	_posX(posX),
 	_posY(posY),
@@ -188,7 +196,7 @@ SpotItemFace::~SpotItemFace() {
 	}
 }
 
-void SpotItemFace::loadData(Graphics::JPEG *jpeg, Graphics::Surface *faceBitmap) {
+void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
 	// Convert active SpotItem image to raw data
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
@@ -212,7 +220,7 @@ void SpotItemFace::loadData(Graphics::JPEG *jpeg, Graphics::Surface *faceBitmap)
 
 	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
 		memcpy(_notDrawnBitmap->getBasePtr(0, i),
-				faceBitmap->getBasePtr(_posX, _posY + i),
+				_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_notDrawnBitmap->w * 3);
 	}
 }

@@ -38,6 +38,8 @@
 
 namespace Myst3 {
 
+class Myst3Engine;
+
 class Face {
 	public:
 		Graphics::Surface *_bitmap;
@@ -51,12 +53,12 @@ class Face {
 
 class SpotItemFace {
 	public:
-		SpotItemFace(uint16 face, uint16 posX, uint16 posY);
+		SpotItemFace(Face *face, uint16 posX, uint16 posY);
 		~SpotItemFace();
 
-		void loadData(Graphics::JPEG *jpeg, Graphics::Surface *_faceBitmap);
+		void loadData(Graphics::JPEG *jpeg);
 	private:
-		uint16 _face;
+		Face *_face;
 		bool _drawn;
 		uint16 _fadeValue;
 		uint16 _posX;
@@ -68,13 +70,17 @@ class SpotItemFace {
 
 class SpotItem {
 	public:
+		SpotItem(Myst3Engine *vm);
+		~SpotItem();
+
 		void setCondition(uint16 condition) { _condition = condition; }
 		void setFade(bool fade) { _enableFade = fade; }
 		void setFadeVar(uint16 var) { _fadeVar = var; }
 		void addFace(SpotItemFace *face) { _faces.push_back(face); }
-		~SpotItem();
 
 	private:
+		Myst3Engine *_vm;
+
 		uint16 _condition;
 		uint16 _fadeVar;
 		bool _enableFade;
@@ -84,16 +90,17 @@ class SpotItem {
 
 class Node {
 	protected:
+		Myst3Engine *_vm;
 		Face _faces[6];
 		Common::Array<SpotItem *> _spotItems;
 
 	public:
+		Node(Myst3Engine *vm, Archive *archive, uint16 id);
+		virtual ~Node();
+
 		virtual void draw() = 0;
-		virtual void load(Archive &archive, uint16 id) = 0;
 		void loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade);
-		virtual void unload();
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
-		virtual ~Node() {};
 
 		static const int _cubeTextureSize = 1024;
 };

@@ -24,15 +24,10 @@
 
 namespace Myst3 {
 
-NodeFrame::NodeFrame() {
-}
-
-NodeFrame::~NodeFrame() {
-}
-
-void NodeFrame::load(Archive &archive, uint16 index) {
-	const DirectorySubEntry *jpegDesc = archive.getDescription(index, 1, DirectorySubEntry::kFrame);
-	Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
+NodeFrame::NodeFrame(Myst3Engine *vm, Archive *archive, uint16 id) :
+	Node(vm, archive, id) {
+	const DirectorySubEntry *jpegDesc = archive->getDescription(id, 1, DirectorySubEntry::kFrame);
+	Common::MemoryReadStream *jpegStream = archive->getData(jpegDesc);
 
 	if (jpegStream) {
 		Graphics::JPEG jpeg;
@@ -44,6 +39,9 @@ void NodeFrame::load(Archive &archive, uint16 index) {
 
 		delete jpegStream;
 	}
+}
+
+NodeFrame::~NodeFrame() {
 }
 
 void NodeFrame::draw() {

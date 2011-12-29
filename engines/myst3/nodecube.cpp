@@ -26,17 +26,11 @@
 
 namespace Myst3 {
 
-NodeCube::NodeCube() {
-
-}
-
-NodeCube::~NodeCube() {
-}
-
-void NodeCube::load(Archive &archive, uint16 index) {
+NodeCube::NodeCube(Myst3Engine *vm, Archive *archive, uint16 id) :
+	Node(vm, archive, id) {
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = archive.getDescription(index, i + 1, DirectorySubEntry::kCubeFace);
-		Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
+		const DirectorySubEntry *jpegDesc = archive->getDescription(id, i + 1, DirectorySubEntry::kCubeFace);
+		Common::MemoryReadStream *jpegStream = archive->getData(jpegDesc);
 
 		if (jpegStream) {
 			Graphics::JPEG jpeg;
@@ -49,6 +43,9 @@ void NodeCube::load(Archive &archive, uint16 index) {
 			delete jpegStream;
 		}
 	}
+}
+
+NodeCube::~NodeCube() {
 }
 
 void NodeCube::draw() {
@@ -109,10 +106,6 @@ void NodeCube::draw() {
 	glEnd();
 
 	glDepthMask(GL_TRUE);
-}
-
-void NodeCube::unload() {
-	Node::unload();
 }
 
 } /* namespace Myst3 */
