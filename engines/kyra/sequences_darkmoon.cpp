@@ -96,55 +96,55 @@ int DarkMoonEngine::mainMenu() {
 
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
-			case 0: {
-				s = _res->createReadStream("XENU.CPS");
-				if (s) {
-					s->read(_screen->getPalette(0).getData(), 768);
-					_screen->loadFileDataToPage(s, 3, 64000);
-					delete s;
-				} else {
-					_screen->loadBitmap("MENU.CPS", 3, 2, &_screen->getPalette(0));
-				}
+		case 0: {
+			s = _res->createReadStream("XENU.CPS");
+			if (s) {
+				s->read(_screen->getPalette(0).getData(), 768);
+				_screen->loadFileDataToPage(s, 3, 64000);
+				delete s;
+			} else {
+				_screen->loadBitmap("MENU.CPS", 3, 2, &_screen->getPalette(0));
+			}
 
-				_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->setScreenPalette(_screen->getPalette(0));
 
-				of = _screen->setFont(Screen::FID_6_FNT);
-				op = _screen->setCurPage(2);
-				Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
-				_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, 160, 13, 0);
-				_screen->setFont(of);
-				_screen->_curPage = op;
-				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->updateScreen();
-				menuChoice = mainMenuLoop();
-				} break;
+			of = _screen->setFont(Screen::FID_6_FNT);
+			op = _screen->setCurPage(2);
+			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, 160, 13, 0);
+			_screen->setFont(of);
+			_screen->_curPage = op;
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			menuChoice = mainMenuLoop();
+		} break;
 
-			case 1:
-				// load game in progress
-				menuChoice = -1;
-				break;
+		case 1:
+			// load game in progress
+			menuChoice = -1;
+			break;
 
-			case 2:
-				// create new party
-				menuChoice = -2;
-				break;
+		case 2:
+			// create new party
+			menuChoice = -2;
+			break;
 
-			case 3:
-				// transfer party
-				//seq_playFinale();
-				menuChoice = -3;
-				break;
+		case 3:
+			// transfer party
+			//seq_playFinale();
+			menuChoice = -3;
+			break;
 
-			case 4:
-				// play intro
-				seq_playIntro();
-				menuChoice = 0;
-				break;
+		case 4:
+			// play intro
+			seq_playIntro();
+			menuChoice = 0;
+			break;
 
-			case 5:
-				// quit
-				menuChoice = -5;
-				break;
+		case 5:
+			// quit
+			menuChoice = -5;
+			break;
 		}
 	}
 
@@ -219,22 +219,22 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.runSequence(40);
 	sq.runSequence(7, 18);
 
-	sq.printText(0, 16);	// You were settling...
+	sq.printText(0, 16);    // You were settling...
 	sq.runSequence(7, 90);
 	sq.fadeText();
 
-	sq.printText(1, 16);	// Then a note was slipped to you
+	sq.printText(1, 16);    // Then a note was slipped to you
 	sq.runSequence(8);
 	sq.runSequence(2, 72);
 	sq.fadeText();
 
-	sq.printText(2, 16);	// It was from your friend Khelben Blackstaff...
+	sq.printText(2, 16);    // It was from your friend Khelben Blackstaff...
 	sq.runSequence(2);
 	sq.runSequence(6, 36);
 	sq.runSequence(3);
 	sq.fadeText();
 
-	sq.printText(3, 16);	// The message was urgent.
+	sq.printText(3, 16);    // The message was urgent.
 
 	sq.loadScene(1, 2);
 	sq.waitForSongNotifier(4);
@@ -261,7 +261,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 	sq.delay(10);
 
-	sq.printText(4, 16);	// What could Khelben want?
+	sq.printText(4, 16);    // What could Khelben want?
 	sq.delay(25);
 
 	sq.loadScene(3, 2);
@@ -270,14 +270,14 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
 
-	sq.printText(5, 15);	// Welcome, please come in
+	sq.printText(5, 15);    // Welcome, please come in
 	sq.runSequence(10);
 	sq.runSequence(10);
 	sq.runSequence(9);
 	sq.runSequence(9);
 	sq.fadeText();
 
-	sq.printText(6, 15);	// Khelben awaits you in his study
+	sq.printText(6, 15);    // Khelben awaits you in his study
 	for (int i = 0; i < 3; i++)
 		sq.runSequence(10);
 	sq.runSequence(9);
@@ -299,7 +299,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 
 	sq.runSequence(16);
-	sq.printText(7, 15);	// Thank you for coming so quickly
+	sq.printText(7, 15);    // Thank you for coming so quickly
 	sq.runSequence(16);
 	sq.runSequence(17);
 	for (int i = 0; i < 3; i++)
@@ -310,14 +310,14 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(8, 2);
 	sq.update(2);
 	sq.runSequence(32);
-	sq.printText(8, 15);	// I am troubled my friend
+	sq.printText(8, 15);    // I am troubled my friend
 	sq.runSequence(33);
 	sq.runSequence(33);
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(32);
 	sq.fadeText();
 
-	sq.printText(9, 15);	// Ancient evil stirs in the Temple Darkmoon
+	sq.printText(9, 15);    // Ancient evil stirs in the Temple Darkmoon
 	sq.runSequence(33);
 	sq.runSequence(43);
 	sq.runSequence(33);
@@ -325,7 +325,7 @@ void DarkMoonEngine::seq_playIntro() {
 		sq.runSequence(32);
 	sq.fadeText();
 
-	sq.printText(10, 15);	// I fear for the safety of our city
+	sq.printText(10, 15);   // I fear for the safety of our city
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(33);
 	sq.runSequence(32);
@@ -339,7 +339,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 	sq.runSequence(34);
 
-	sq.printText(11, 15);	// I need your help
+	sq.printText(11, 15);   // I need your help
 	for (int i = 0; i < 3; i++)
 		sq.runSequence(34);
 	sq.runSequence(35);
@@ -352,7 +352,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(6, 2);
 	sq.runSequence(18);
 
-	sq.printText(12, 15);	// Three nights ago I sent forth a scout
+	sq.printText(12, 15);   // Three nights ago I sent forth a scout
 	sq.runSequence(19);
 	sq.runSequence(20);
 	sq.runSequence(22);
@@ -361,7 +361,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.runSequence(18);
 	sq.fadeText();
 
-	sq.printText(13, 15);	// She has not yet returned
+	sq.printText(13, 15);   // She has not yet returned
 	sq.runSequence(20);
 	sq.runSequence(19);
 	sq.runSequence(23);
@@ -372,7 +372,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.runSequence(18);
 	sq.fadeText();
 
-	sq.printText(14, 15);	// I fear for her safety
+	sq.printText(14, 15);   // I fear for her safety
 	sq.runSequence(19);
 	sq.runSequence(20);
 	sq.runSequence(20);
@@ -384,7 +384,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.runSequence(18);
 	sq.runSequence(18);
 
-	sq.printText(15, 15);	// Take this coin
+	sq.printText(15, 15);   // Take this coin
 	sq.runSequence(28);
 	sq.runSequence(19);
 	sq.runSequence(20);
@@ -404,7 +404,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 
 	sq.loadScene(11, 2);
-	sq.printText(16, 15);	// I will use it to contact you
+	sq.printText(16, 15);   // I will use it to contact you
 	sq.runSequence(19);
 	sq.runSequence(20);
 	sq.runSequence(20);
@@ -412,7 +412,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.runSequence(18);
 	sq.fadeText();
 
-	sq.printText(17, 15);	// You must act quickly
+	sq.printText(17, 15);   // You must act quickly
 	sq.runSequence(19);
 	sq.runSequence(20);
 	sq.runSequence(19);
@@ -421,7 +421,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.runSequence(18);
 
-	sq.printText(18, 15);	// I will teleport you near Darkmoon
+	sq.printText(18, 15);   // I will teleport you near Darkmoon
 	sq.runSequence(20);
 	sq.runSequence(27);
 	sq.runSequence(20);
@@ -431,7 +431,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.runSequence(18);
 
-	sq.printText(19, 15);	// May luck be with you my friend
+	sq.printText(19, 15);   // May luck be with you my friend
 	sq.runSequence(19);
 	sq.runSequence(19);
 	sq.runSequence(20);
@@ -492,7 +492,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(2);
 	sq.runSequence(2);
 
-	sq.printText(0, 10);			// Finally, Dran has been defeated
+	sq.printText(0, 10);            // Finally, Dran has been defeated
 	for (int i = 0; i < 7; i++)
 		sq.runSequence(2);
 	sq.fadeText();
@@ -500,13 +500,13 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.waitForSongNotifier(1);
 
-	sq.printText(1, 10);			// Suddenly, your friend Khelben appears
+	sq.printText(1, 10);            // Suddenly, your friend Khelben appears
 	sq.runSequence(4);
 	for (int i = 0; i < 3; i++)
 		sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(2, 15);			// Greetings, my victorious friends
+	sq.printText(2, 15);            // Greetings, my victorious friends
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
@@ -514,42 +514,42 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.runSequence(6);
 
-	sq.printText(3, 15);			// You have defeated Dran
+	sq.printText(3, 15);            // You have defeated Dran
 	for (int i = 0; i < 5; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
 	sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(4, 15);			// I did not know Dran was a dragon
+	sq.printText(4, 15);            // I did not know Dran was a dragon
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
 	sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(5, 15);			// He must have been over 300 years old
+	sq.printText(5, 15);            // He must have been over 300 years old
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
 	sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(6, 15);			// His power is gone
+	sq.printText(6, 15);            // His power is gone
 	for (int i = 0; i < 3; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
 	sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(7, 15);			// But Darkmoon is still a source of great evil
+	sq.printText(7, 15);            // But Darkmoon is still a source of great evil
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
 	sq.runSequence(2);
 	sq.fadeText();
 
-	sq.printText(8, 15);			// And many of his minions remain
+	sq.printText(8, 15);            // And many of his minions remain
 	for (int i = 0; i < 4; i++)
 		sq.runSequence(5);
 	sq.runSequence(2);
@@ -561,14 +561,14 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(3, 2);
 	_screen->copyRegion(8, 8, 0, 0, 304, 128, 0, 2, Screen::CR_NO_P_CHECK);
 
-	sq.printText(9, 15);			// Now we must leave this place
+	sq.printText(9, 15);            // Now we must leave this place
 	sq.runSequence(7);
 	sq.runSequence(8);
 	sq.runSequence(7);
 	sq.runSequence(7, 36);
 	sq.fadeText();
 
-	sq.printText(10, 15);			// So my forces can destroy it..
+	sq.printText(10, 15);           // So my forces can destroy it..
 	for (int i = 0; i < 3; i++)
 		sq.runSequence(7);
 	sq.runSequence(8);
@@ -577,7 +577,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(8, 18);
 	sq.fadeText();
 
-	sq.printText(11, 15);			// Follow me
+	sq.printText(11, 15);           // Follow me
 	sq.runSequence(7, 18);
 	sq.runSequence(9, 18);
 	sq.runSequence(8, 18);
@@ -596,7 +596,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(6, 6);
 	sq.delay(10);
 
-	sq.printText(12, 10);			// Powerful mages stand ready for the final assault...
+	sq.printText(12, 10);           // Powerful mages stand ready for the final assault...
 	sq.delay(90);
 	sq.fadeText();
 
@@ -624,11 +624,11 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(15);
 	sq.runSequence(11);
 
-	sq.printText(13, 10);			// The temple's evil is very strong
+	sq.printText(13, 10);           // The temple's evil is very strong
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.printText(14, 10);			// It must not be allowed...
+	sq.printText(14, 10);           // It must not be allowed...
 	sq.delay(72);
 	sq.fadeText();
 
@@ -655,7 +655,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(17);
 	sq.runSequence(18);
 
-	sq.printText(15, 10);			// The temple ceases to exist
+	sq.printText(15, 10);           // The temple ceases to exist
 	sq.initDelayedPaletteFade(6, 1);
 	sq.delay(36);
 
@@ -675,7 +675,7 @@ void DarkMoonEngine::seq_playFinale() {
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
 	sq.delay(18);
 
-	sq.printText(16, 15);			// My friends, our work is done
+	sq.printText(16, 15);           // My friends, our work is done
 	sq.runSequence(20);
 	sq.runSequence(19);
 	sq.runSequence(19, 36);
@@ -683,12 +683,12 @@ void DarkMoonEngine::seq_playFinale() {
 		_sound->playTrack(12);
 	sq.fadeText();
 
-	sq.printText(17, 15);			// Thank you
+	sq.printText(17, 15);           // Thank you
 	sq.runSequence(19);
 	sq.runSequence(20, 36);
 	sq.fadeText();
 
-	sq.printText(18, 15);			// You have earned my deepest respect
+	sq.printText(18, 15);           // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
 		_sound->playTrack(11);
 	sq.runSequence(20);
@@ -699,7 +699,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(36);
 	sq.fadeText();
 
-	sq.printText(19, 15);			// We will remember you always
+	sq.printText(19, 15);           // We will remember you always
 	sq.runSequence(19);
 	sq.runSequence(19, 18);
 	if (!skipFlag() && !shouldQuit())
@@ -809,7 +809,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 	int i = 0;
 
 	do {
-		for (bool loop = true; loop; ) {
+		for (bool loop = true; loop;) {
 			sq->processDelayedPaletteFade();
 			cur = _system->getMillis();
 			if (end <= cur)
@@ -868,7 +868,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		for (int h = 0; h < i; h++) {
 			if (items[h + 1].y < dm->h) {
 				if (items[h + 1].dataType == 1) {
-					_screen->drawShape(tempPage, (const uint8*)items[h + 1].data, items[h + 1].x, items[h + 1].y, sd);
+					_screen->drawShape(tempPage, (const uint8 *)items[h + 1].data, items[h + 1].x, items[h + 1].y, sd);
 				} else {
 					_screen->setCurPage(tempPage);
 
@@ -930,7 +930,7 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 	_palettes[11]->fill(0, 256, 0);
 
 	_shapes = new const uint8*[30];
-	memset(_shapes, 0, 30 * sizeof(uint8*));
+	memset(_shapes, 0, 30 * sizeof(uint8 *));
 
 	_fadePalTimer = 0;
 	_fadePalRate = 0;
@@ -992,7 +992,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 	int cp = _screen->setCurPage(pageNum);
 
 	if (_shapeDefs[index]) {
-		for (const EoBShapeDef *df = _shapeDefs[index]; df->w; df++ ) {
+		for (const EoBShapeDef *df = _shapeDefs[index]; df->w; df++) {
 			uint16 shapeIndex = (df->index < 0) ? df->index * -1 : df->index;
 			if (_shapes[shapeIndex])
 				delete[] _shapes[shapeIndex];
@@ -1021,7 +1021,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 		uint16 shapeW = 0;
 		uint16 shapeH = 0;
 
-		switch(s->command) {
+		switch (s->command) {
 		case 0:
 			// flash palette
 			if (s->pal)
@@ -1072,7 +1072,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 
 			if (s->pal)
 				setPaletteWithoutTextColor(palIndex);
-			else if(!_screen->_curPage)
+			else if (!_screen->_curPage)
 				_screen->updateScreen();
 
 			delay(s->delay);
@@ -1345,6 +1345,6 @@ void DarkMoonEngine::seq_dranDragonTransformation() {
 	_screen->setFont(of);
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB

@@ -284,7 +284,7 @@ const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex,
 		shapeDefs += 8;
 		_doorSwitches[doorIndex * 3 + i].x = *shapeDefs;
 		shapeDefs += 2;
-		_doorSwitches[doorIndex * 3 + i].y= *shapeDefs;
+		_doorSwitches[doorIndex * 3 + i].y = *shapeDefs;
 		shapeDefs += 2;
 	}
 	_screen->_curPage = 0;
@@ -415,7 +415,7 @@ int DarkMoonEngine::resurrectionSelectDialogue() {
 int DarkMoonEngine::charSelectDialogue() {
 	int cnt = 0;
 	const char *namesList[7];
-	memset(namesList, 0, 7 * sizeof(const char*));
+	memset(namesList, 0, 7 * sizeof(const char *));
 
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 3))
@@ -454,6 +454,6 @@ const KyraRpgGUISettings *DarkMoonEngine::guiSettings() {
 	return &_guiSettings;
 }
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
