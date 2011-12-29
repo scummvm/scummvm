@@ -421,6 +421,38 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerQuinn3385 : public VisualSpeaker {
+public:
+	SpeakerQuinn3385();
+
+	virtual Common::String getClassName() { return "SpeakerQuinn3385"; }
+	virtual void proc15();
+};
+
+class SpeakerSeeker3385 : public VisualSpeaker {
+public:
+	SpeakerSeeker3385();
+
+	virtual Common::String getClassName() { return "SpeakerSeeker3385"; }
+	virtual void proc15();
+};
+
+class SpeakerMiranda3385 : public VisualSpeaker {
+public:
+	SpeakerMiranda3385();
+
+	virtual Common::String getClassName() { return "SpeakerMiranda3385"; }
+	virtual void proc15();
+};
+
+class SpeakerWebbster3385 : public VisualSpeaker {
+public:
+	SpeakerWebbster3385();
+
+	virtual Common::String getClassName() { return "SpeakerWebbster3385"; }
+	virtual void proc15();
+};
+
 class SpeakerQuinn3400 : public VisualSpeaker {
 public:
 	SpeakerQuinn3400();

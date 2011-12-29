@@ -457,6 +457,53 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+class Scene3385 : public SceneExt {
+	class Actor1 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor2 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor4 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+
+public:
+	SpeakerQuinn3385 _quinnSpeaker;
+	SpeakerSeeker3385 _seekerSpeaker;
+	SpeakerMiranda3385 _mirandaSpeaker;
+	SpeakerWebbster3385 _webbsterSpeaker;
+	NamedHotspot _item1;
+	Actor1 _actor1;
+	Actor2 _actor2;
+	Actor3 _actor3;
+	Actor4 _actor4;
+	Exit1 _exit1;
+	Action1 _action1;
+	SequenceManager _sequenceManager;
+	
+	int _field11B2;
+
+	Scene3385();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void synchronize(Serializer &s);
+};
+
 class Scene3400 : public SceneExt {
 public:
 	SpeakerQuinn3400 _quinnSpeaker;
