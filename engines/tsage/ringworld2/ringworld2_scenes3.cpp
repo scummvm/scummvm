@@ -2050,9 +2050,9 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	_actor3.setup(40, tmpStrip, 1);
 	_actor3.animate(ANIM_MODE_1, NULL);
 	
-	_actor2.setDetails(3375, -1, -1, -1, 1, NULL);
-	_actor3.setDetails(3375, 21, -1, -1, 1, NULL);
-	_actor1.setDetails(3375, -1, -1, -1, 1, NULL);
+	_actor2.setDetails(3375, -1, -1, -1, 1, (SceneItem *)NULL);
+	_actor3.setDetails(3375, 21, -1, -1, 1, (SceneItem *)NULL);
+	_actor1.setDetails(3375, -1, -1, -1, 1, (SceneItem *)NULL);
 	
 	_actor4.postInit();
 	_actor4.setup(3375, 1, 1);
