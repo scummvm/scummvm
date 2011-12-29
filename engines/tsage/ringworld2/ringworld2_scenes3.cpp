@@ -1961,7 +1961,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[2] = 3375;
 	R2_GLOBALS._player._characterScene[3] = 3375;
 
-	setZoomPercents(55, 126, 167, 200);
+	setZoomPercents(126, 55, 200, 167);
 	R2_GLOBALS._player.postInit();
 	
 	if (R2_GLOBALS._player._characterIndex == 2) {

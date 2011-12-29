@@ -1657,7 +1657,7 @@ void SpeakerQuinn3375::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(4010, 5, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
@@ -1718,7 +1718,7 @@ void SpeakerSeeker3375::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(4031, 1, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
@@ -1780,7 +1780,7 @@ void SpeakerMiranda3375::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(4051, 5, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
@@ -1837,7 +1837,7 @@ void SpeakerWebbster3375::proc15() {
 	case 1:
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(4110, 5, 1);
-		_object1.animate(ANIM_MODE_5, NULL);
+		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		signal();
