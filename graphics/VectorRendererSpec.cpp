@@ -665,6 +665,9 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if ((r * 2) > w || (r * 2) > h)
 		r = MIN(w /2, h / 2);
 
+	if (r <= 0)
+		return;
+
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h) {
