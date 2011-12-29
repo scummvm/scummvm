@@ -855,6 +855,7 @@ const Feature s_features[] = {
 	{     "taskbar",     "USE_TASKBAR",         "", true, "Taskbar integration support" },
 	{ "translation", "USE_TRANSLATION",         "", true, "Translation support" },
 	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
+	{   "keymapper","ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                            // is just no current way of properly detecting this...
 };
