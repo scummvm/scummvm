@@ -28,6 +28,8 @@ namespace DreamWeb {
 void DreamWebEngine::endGame() {
 	loadTempText("DREAMWEB.T83");
 	monkSpeaking();
+	if (_quitRequested)
+		return;
 	gettingShot();
 	getRidOfTempText();
 	_volumeTo = 7;
@@ -57,6 +59,8 @@ void DreamWebEngine::monkSpeaking() {
 
 			do {
 				waitForVSync();
+				if (_quitRequested)
+					return;
 			} while (_channel1Playing != 255);
 		}
 	} else {
@@ -71,6 +75,8 @@ void DreamWebEngine::monkSpeaking() {
 				clearWork();
 				showFrame(_tempGraphics, 160, 72, 0, 128);	// show monk
 				hangOnP(240);
+				if (_quitRequested)
+					return;
 			} while (printResult != 0);
 		}
 	}
@@ -251,7 +257,7 @@ void DreamWebEngine::runEndSeq() {
 		dumpMap();
 		dumpTimedText();
 		vSync();
-	} while (_getBack != 1);
+	} while (_getBack != 1 && !_quitRequested);
 }
 
 void DreamWebEngine::loadIntroRoom() {
