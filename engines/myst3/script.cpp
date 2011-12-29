@@ -129,6 +129,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
+	OP_2(174, runScriptWhileCond,			kCondition,	kValue											);
+	OP_3(175, runScriptWhileCondEachXFrames,kCondition,	kValue,		kValue								);
 	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
 	OP_5(177, runScriptForVarEachXFrames,	kVar,		kValue,		kValue,		kValue,		kValue		);
 	OP_4(178, runScriptForVarStartVar,		kVar,		kVar,		kValue,		kValue					);
@@ -558,13 +560,13 @@ void Script::varCopy(Context &c, const Opcode &cmd) {
 }
 
 void Script::varSetBitsFromVar(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set bits from var %d on var %d", cmd.op, cmd.args[1], cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set bits from var %d on var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	uint32 value = _vm->_vars->get(cmd.args[1]);
 
-	value |= _vm->_vars->get(cmd.args[1]);
+	value |= _vm->_vars->get(cmd.args[0]);
 
-	_vm->_vars->set(cmd.args[0], value);
+	_vm->_vars->set(cmd.args[1], value);
 }
 
 void Script::varSetBits(Context &c, const Opcode &cmd) {
@@ -1136,6 +1138,46 @@ void Script::moviePlaySynchronized(Context &c, const Opcode &cmd) {
 
 	_vm->_vars->setMovieSynchronized(1);
 	_vm->playSimpleMovie(_vm->_vars->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::runScriptWhileCond(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: While condition %d, run script %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	while (_vm->_vars->evaluate(cmd.args[0])) {
+		_vm->runScriptsFromNode(cmd.args[1]);
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
+
+	_vm->processInput(true);
+	_vm->drawFrame();
+}
+
+void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: While condition %d, run script %d each %d frames", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint step = cmd.args[2] % 100;
+
+	uint firstStep = cmd.args[2];
+	if (firstStep > 100)
+		firstStep /= 100;
+
+	uint nextScript = _vm->getFrameCount() + firstStep;
+
+	while (_vm->_vars->evaluate(cmd.args[0])) {
+
+		if (_vm->getFrameCount() >= nextScript) {
+			nextScript = _vm->getFrameCount() + step;
+
+			_vm->runScriptsFromNode(cmd.args[1]);
+		}
+
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
+
+	_vm->processInput(true);
+	_vm->drawFrame();
 }
 
 void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {

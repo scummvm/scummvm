@@ -155,11 +155,10 @@ const Common::String Variables::describeCondition(int16 condition) {
 	uint16 var = unsignedCond & 2047;
 	int16 value = (unsignedCond >> 11) - 1;
 
-	if (value < 0)
-		value = 1;
-
 	return Common::String::format("c[%s %s %d]",
-			describeVar(var).c_str(), condition > 0 ? "==" : "!=", value);
+			describeVar(var).c_str(),
+			(condition >= 0 && value >= 0) || (condition < 0 && value < 0) ? "==" : "!=",
+			value >= 0 ? value : 0);
 }
 
 void Variables::inventoryReset() {
