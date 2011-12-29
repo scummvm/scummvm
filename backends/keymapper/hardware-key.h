@@ -97,8 +97,12 @@ public:
 		List<const HardwareKey*>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if ((*it)->key == keystate)
-				return (*it);
+			if ((*it)->key.keycode == keystate.keycode) {
+				// Only check for control/alt/shift modifiers, not for sticky
+				// modifiers like num lock/caps lock/scroll lock
+				if ((*it)->key.flags == (keystate.flags & 7))
+					return (*it);
+			}
 		}
 		return 0;
 	}
