@@ -1777,7 +1777,7 @@ void Scene3375::subFC696(int sceneMode) {
 		R2_GLOBALS._sceneItems.remove(&_item1);
 
 		_actor4.show();
-		_actor4.setDetails(3375, 9, 10, -1, 1, NULL);
+		_actor4.setDetails(3375, 9, 10, -1, 1, (SceneItem *)NULL);
 
 		for (int i = 0; i <= 12; i++)
 			_itemArray[i].setDetails(3375, 3, -1, -1);
