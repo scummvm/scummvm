@@ -88,7 +88,7 @@ void QuickTimeAudioDecoder::init() {
 			// Initialize the codec (if necessary)
 			entry->initCodec();
 
-			if (_tracks[_audioTrackIndex]->editCount != 1)
+			if (_tracks[_audioTrackIndex]->editCount > 1)
 				warning("Multiple edit list entries in an audio track. Things may go awry");
 		}
 	}
