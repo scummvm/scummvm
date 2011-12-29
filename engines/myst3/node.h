@@ -45,10 +45,11 @@ class Face {
 		Graphics::Surface *_bitmap;
 		GLuint _textureId;
 
-		void createTexture();
+		Face();
+		~Face();
+
 		void setTextureFromJPEG(Graphics::JPEG *jpeg);
 		void uploadTexture();
-		void unload();
 };
 
 class SpotItemFace {
@@ -102,7 +103,7 @@ class SpotItem {
 class Node {
 	protected:
 		Myst3Engine *_vm;
-		Face _faces[6];
+		Face *_faces[6];
 		Common::Array<SpotItem *> _spotItems;
 
 	public:

@@ -89,10 +89,10 @@ Script::Script(Myst3Engine *vm):
 	OP_3( 83, varCopyRange,					kVar,		kVar,		kValue								);
 	OP_3( 84, varSetRange,					kVar,		kVar,		kValue								);
 	OP_1( 85, varIncrementMaxTen,			kVar														);
-	OP_2( 86, varAddValue,					kVar,		kValue											);
+	OP_2( 86, varAddValue,					kValue,		kVar											);
 	OP_3( 87, varArrayAddValue, 			kValue, 	kVar, 		kVar								);
 	OP_2( 88, varAddVarValue,				kVar,		kVar											);
-	OP_2( 89, varSubValue,					kVar,		kValue											);
+	OP_2( 89, varSubValue,					kValue,		kVar											);
 	OP_2( 90, varSubVarValue,				kVar,		kVar											);
 	OP_2( 91, varModValue,					kVar,		kValue											);
 	OP_2( 92, varMultValue,					kVar,		kValue											);

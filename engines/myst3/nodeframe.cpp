@@ -33,9 +33,9 @@ NodeFrame::NodeFrame(Myst3Engine *vm, Archive *archive, uint16 id) :
 		Graphics::JPEG jpeg;
 		jpeg.read(jpegStream);
 
-		_faces[0].createTexture();
-		_faces[0].setTextureFromJPEG(&jpeg);
-		_faces[0].uploadTexture();
+		_faces[0] = new Face();
+		_faces[0]->setTextureFromJPEG(&jpeg);
+		_faces[0]->uploadTexture();
 
 		delete jpegStream;
 	}
@@ -55,7 +55,7 @@ void NodeFrame::draw() {
 
 	glDepthMask(GL_FALSE);
 
-	glBindTexture(GL_TEXTURE_2D, _faces[0]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[0]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Z+
 		glTexCoord2f(0, v); glVertex3f( t,-s, 1.0f);
 		glTexCoord2f(u, v); glVertex3f(-t,-s, 1.0f);

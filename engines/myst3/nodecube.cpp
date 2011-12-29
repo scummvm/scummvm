@@ -36,9 +36,9 @@ NodeCube::NodeCube(Myst3Engine *vm, Archive *archive, uint16 id) :
 			Graphics::JPEG jpeg;
 			jpeg.read(jpegStream);
 
-			_faces[i].createTexture();
-			_faces[i].setTextureFromJPEG(&jpeg);
-			_faces[i].uploadTexture();
+			_faces[i] = new Face();
+			_faces[i]->setTextureFromJPEG(&jpeg);
+			_faces[i]->uploadTexture();
 
 			delete jpegStream;
 		}
@@ -57,7 +57,7 @@ void NodeCube::draw() {
 
 	glDepthMask(GL_FALSE);
 
-	glBindTexture(GL_TEXTURE_2D, _faces[4]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[4]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// X-
 		glTexCoord2f(0, s); glVertex3f(-t,-t, t);
 		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
@@ -65,7 +65,7 @@ void NodeCube::draw() {
 		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, _faces[3]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[3]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// X+
 		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
 		glTexCoord2f(s, s); glVertex3f( t,-t, t);
@@ -73,7 +73,7 @@ void NodeCube::draw() {
 		glTexCoord2f(s, 0); glVertex3f( t, t, t);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, _faces[1]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[1]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Y-
 		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
 		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
@@ -81,7 +81,7 @@ void NodeCube::draw() {
 		glTexCoord2f(s, 0); glVertex3f(-t,-t, t);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, _faces[5]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[5]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Y+
 		glTexCoord2f(0, s); glVertex3f( t, t, t);
 		glTexCoord2f(s, s); glVertex3f(-t, t, t);
@@ -89,7 +89,7 @@ void NodeCube::draw() {
 		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, _faces[0]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[0]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Z-
 		glTexCoord2f(0, s); glVertex3f(-t,-t,-t);
 		glTexCoord2f(s, s); glVertex3f( t,-t,-t);
@@ -97,7 +97,7 @@ void NodeCube::draw() {
 		glTexCoord2f(s, 0); glVertex3f( t, t,-t);
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, _faces[2]._textureId);
+	glBindTexture(GL_TEXTURE_2D, _faces[2]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Z+
 		glTexCoord2f(0, s); glVertex3f( t,-t, t);
 		glTexCoord2f(s, s); glVertex3f(-t,-t, t);

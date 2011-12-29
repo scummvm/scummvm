@@ -47,7 +47,7 @@ void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
 	}
 }
 
-void Face::createTexture() {
+Face::Face() {
 	glGenTextures(1, &_textureId);
 
 	glBindTexture(GL_TEXTURE_2D, _textureId);
@@ -64,7 +64,7 @@ void Face::uploadTexture() {
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _bitmap->w, _bitmap->h, GL_RGB, GL_UNSIGNED_BYTE, _bitmap->pixels);
 }
 
-void Face::unload() {
+Face::~Face() {
 	_bitmap->free();
 	delete _bitmap;
 	_bitmap = 0;
@@ -74,6 +74,8 @@ void Face::unload() {
 
 Node::Node(Myst3Engine *vm, Archive *archive, uint16 id) :
 	_vm(vm) {
+	for (uint i = 0; i < 6; i++)
+		_faces[i] = 0;
 }
 
 void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
@@ -127,7 +129,7 @@ Node::~Node() {
 	_spotItems.clear();
 
 	for (int i = 0; i < 6; i++) {
-		_faces[i].unload();
+		delete _faces[i];
 	}
 }
 
@@ -144,7 +146,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 		if (!jpegDesc) continue;
 
 		SpotItemFace *spotItemFace = new SpotItemFace(
-				&_faces[i],
+				_faces[i],
 				jpegDesc->getSpotItemData().u,
 				jpegDesc->getSpotItemData().v);
 
