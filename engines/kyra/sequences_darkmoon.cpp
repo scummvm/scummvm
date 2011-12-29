@@ -96,7 +96,7 @@ int DarkMoonEngine::mainMenu() {
 
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
-			case 0:
+			case 0: {
 				s = _res->createReadStream("XENU.CPS");
 				if (s) {
 					s->read(_screen->getPalette(0).getData(), 768);
@@ -110,13 +110,14 @@ int DarkMoonEngine::mainMenu() {
 
 				of = _screen->setFont(Screen::FID_6_FNT);
 				op = _screen->setCurPage(2);
-				_screen->printText(gScummVMVersion, 267 - strlen(gScummVMVersion) * 6, 160, 13, 0);
+				Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+				_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, 160, 13, 0);
 				_screen->setFont(of);
 				_screen->_curPage = op;
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
 				menuChoice = mainMenuLoop();
-				break;
+				} break;
 
 			case 1:
 				// load game in progress

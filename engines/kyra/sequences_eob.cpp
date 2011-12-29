@@ -41,13 +41,14 @@ int EoBEngine::mainMenu() {
 
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
-		case 0:
+		case 0: {
 			_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
 			_screen->loadEoBBitmap("INTRO", 0, 5, 3, 2);
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_screen->_curPage = 2;
 			of = _screen->setFont(Screen::FID_6_FNT);
-			_screen->printText(gScummVMVersion, 280 - strlen(gScummVMVersion) * 6, 153, _screen->getPagePixel(2, 0, 0), 0);
+			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153, _screen->getPagePixel(2, 0, 0), 0);
 			_screen->setFont(of);
 			_screen->fillRect(0, 159, 319, 199, _screen->getPagePixel(2, 0, 0));
 			gui_drawBox(77, 165, 173, 29, 13, 14, 12);
@@ -56,7 +57,7 @@ int EoBEngine::mainMenu() {
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 			menuChoice = mainMenuLoop();
-			break;
+			} break;
 
 		case 1:
 			// load game in progress

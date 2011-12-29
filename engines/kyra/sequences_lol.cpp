@@ -55,6 +55,8 @@ int LoLEngine::processPrologue() {
 
 	preInit();
 
+	Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
 		_screen->loadBitmap("TITLE.CPS", 2, 2, &_screen->getPalette(0));
@@ -62,8 +64,8 @@ int LoLEngine::processPrologue() {
 
 		_screen->setFont(Screen::FID_6_FNT);
 		// Original version: (260|193) "V CD1.02 D"
-		const int width = _screen->getTextWidth(gScummVMVersion);
-		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		const int width = _screen->getTextWidth(versionString.c_str());
+		_screen->fprintString(versionString.c_str(), 320 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
 		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
