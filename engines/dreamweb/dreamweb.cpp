@@ -370,6 +370,7 @@ Common::Error DreamWebEngine::run() {
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	dreamweb();
+	dreamwebFinalize();
 	_quitRequested = false;
 
 	_timer->removeTimerProc(vSyncInterrupt);

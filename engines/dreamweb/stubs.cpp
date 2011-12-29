@@ -507,8 +507,6 @@ void DreamWebEngine::dreamweb() {
 	}
 
 	seeCommandTail();
-	// soundStartup used to be done here...
-	// setKeyboardInt used to be done here...
 	allocateBuffers();
 
 	// setMouse
@@ -563,10 +561,8 @@ void DreamWebEngine::dreamweb() {
 			cls();
 			setMode();
 			decide();
-			if (_quitRequested) {
-				dreamwebFinalize();
+			if (_quitRequested)
 				return;
-			}
 
 			if (_getBack == 4)
 				startNewGame = false; // savegame has been loaded
@@ -584,19 +580,15 @@ void DreamWebEngine::dreamweb() {
 			if (!_quitRequested) // "titlesearly"
 				intro();
 
-			if (_quitRequested) {
-				dreamwebFinalize();
+			if (_quitRequested)
 				return;
-			}
 
 			// "credits"
 			clearPalette();
 			realCredits();
 
-			if (_quitRequested) {
-				dreamwebFinalize();
+			if (_quitRequested)
 				return;
-			}
 
 			clearChanges();
 			setMode();
@@ -617,22 +609,17 @@ void DreamWebEngine::dreamweb() {
 			_volumeTo = 0;
 			_volumeDirection = -1;
 			_commandType = 255;
-
 		}
 
 		// main loop
 		while (true) {
-			if (_quitRequested) {
-				dreamwebFinalize();
+			if (_quitRequested)
 				return;
-			}
 
 			screenUpdate();
 
-			if (_quitRequested) {
-				dreamwebFinalize();
+			if (_quitRequested)
 				return;
-			}
 
 			if (_wonGame) {
 				// "endofgame"
@@ -641,7 +628,6 @@ void DreamWebEngine::dreamweb() {
 				hangOn(200);
 				endGame();
 				quickQuit2();
-				dreamwebFinalize();
 				return;
 			}
 
@@ -682,8 +668,6 @@ void DreamWebEngine::dreamweb() {
 		hangOn(100);
 
 	}
-
-	dreamwebFinalize();
 }
 
 void DreamWebEngine::loadTextFile(TextFile &file, const char *fileName)
