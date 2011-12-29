@@ -944,10 +944,8 @@ public:
 	void dreamweb();
 	void screenUpdate();
 	void startup1();
-	void quickQuit();
 	void readOneBlock();
 	void seeCommandTail();
-	void quickQuit2();
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);

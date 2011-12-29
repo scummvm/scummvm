@@ -457,10 +457,9 @@ static const Atmosphere g_atmosphereList[] = {
 };
 
 void DreamWebEngine::dreamwebFinalize() {
-	// The engine will need some cleaner finalization (destructor?), let's put it here for now
+	// The engine will need some cleaner finalization (destructor?), let's put
+	// it here for now
 
-	// FIXME: This triggers "Deallocating non existent segment" errors when
-	// quitting from a menu.
 	getRidOfAll();
 
 	_icons1.clear();
@@ -627,7 +626,6 @@ void DreamWebEngine::dreamweb() {
 				fadeScreenDowns();
 				hangOn(200);
 				endGame();
-				quickQuit2();
 				return;
 			}
 
@@ -835,14 +833,6 @@ void DreamWebEngine::hangOnCurs(uint16 frameCount) {
 
 void DreamWebEngine::seeCommandTail() {
 	_brightness = 1;
-}
-
-void DreamWebEngine::quickQuit() {
-	quit();
-}
-
-void DreamWebEngine::quickQuit2() {
-	quit();
 }
 
 void DreamWebEngine::readMouse() {
