@@ -292,7 +292,12 @@ void DreamWebEngine::scrollMonitor() {
 }
 
 void DreamWebEngine::showCurrentFile() {
-	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
+	uint16 x;
+	// Monitor Frame position differs between Floppy and CD version
+	if (isCD())
+		x = 178;
+	else
+		x = 199;
 	const char *currentFile = _currentFile + 1;
 	while (*currentFile) {
 		char c = *currentFile++;
