@@ -65,7 +65,7 @@ int LoLEngine::processPrologue() {
 		_screen->setFont(Screen::FID_6_FNT);
 		// Original version: (260|193) "V CD1.02 D"
 		const int width = _screen->getTextWidth(versionString.c_str());
-		_screen->fprintString(versionString.c_str(), 320 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		_screen->fprintString("%s", 320 - width, 193, 0x67, 0x00, 0x04, versionString.c_str());
 		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
