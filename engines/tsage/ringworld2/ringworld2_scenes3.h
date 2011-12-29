@@ -428,6 +428,8 @@ class Scene3375 : public SceneExt {
 	};
 
 	void signalCase3379();
+	void subFC696(int sceneMode);
+
 public:
 	SpeakerQuinn3375 _quinnSpeaker;
 	SpeakerSeeker3375 _seekerSpeaker;

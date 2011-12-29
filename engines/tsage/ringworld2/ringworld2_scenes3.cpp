@@ -1717,6 +1717,83 @@ void Scene3375::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_field148A[i]);
 }
 
+void Scene3375::subFC696(int sceneMode) {
+	switch (sceneMode) {
+	case 3379:
+		R2_GLOBALS._player.setPosition(Common::Point(0, 155));
+		_actor1.setPosition(Common::Point(-20, 163));
+		_actor2.setPosition(Common::Point(-5, 150));
+		_actor3.setPosition(Common::Point(-20, 152));
+		break;
+	case 3380:
+		++R2_GLOBALS._v56A9E;
+		if (R2_GLOBALS._v56A9E >= 4)
+			R2_GLOBALS._v56A9E = 0;
+
+		loadScene(_field148A[R2_GLOBALS._v56A9E]);
+
+		R2_GLOBALS._uiElements.show();
+		R2_GLOBALS._player.setStrip(4);
+		R2_GLOBALS._player.setPosition(Common::Point(148, 230));
+
+		_actor1.setPosition(Common::Point(191, 274));
+		_actor1._effect = 1;
+		_actor2.setPosition(Common::Point(124, 255));
+		_actor2._effect = 1;
+		_actor3.setPosition(Common::Point(155, 245));
+		_actor3._effect = 1;
+		break;
+	case 3381:
+		--R2_GLOBALS._v56A9E;
+		if (R2_GLOBALS._v56A9E < 0)
+			R2_GLOBALS._v56A9E = 3;
+
+		loadScene(_field148A[R2_GLOBALS._v56A9E]);
+
+		R2_GLOBALS._uiElements.show();
+		R2_GLOBALS._player.setStrip(6);
+		R2_GLOBALS._player.setPosition(Common::Point(201, 131));
+
+		_actor1.setPosition(Common::Point(231, 127));
+		_actor1._effect = 1;
+		_actor2.setPosition(Common::Point(231, 127));
+		_actor2._effect = 1;
+		_actor3.setPosition(Common::Point(231, 127));
+		_actor3._effect = 1;
+		break;
+	default:
+		R2_GLOBALS._player.setPosition(Common::Point(192, 155));
+
+		_actor1.setPosition(Common::Point(138, 134));
+		_actor2.setPosition(Common::Point(110, 139));
+		_actor3.setPosition(Common::Point(125, 142));
+		break;
+	}
+
+	if (R2_GLOBALS._v56A9E == 2) {
+		R2_GLOBALS._sceneItems.remove(&_actor4);
+		for (int i = 0; i <= 12; i++)
+			R2_GLOBALS._sceneItems.remove(&_itemArray[i]);
+		R2_GLOBALS._sceneItems.remove(&_item1);
+
+		_actor4.show();
+		_actor4.setDetails(3375, 9, 10, -1, 1, NULL);
+
+		for (int i = 0; i <= 12; i++)
+			_itemArray[i].setDetails(3375, 3, -1, -1);
+
+		_item1.setDetails(Rect(0, 0, 320, 200), 3375, 0, -1, -1, 1, NULL);
+	} else {
+		_actor4.hide();
+		R2_GLOBALS._sceneItems.remove(&_actor4);
+	}
+
+	if (_sceneMode == 0)
+		signal();
+	else
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
+}
+
 bool Scene3375::Actor1::startAction(CursorType action, Event &event) {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
@@ -2000,7 +2077,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	else
 		_sceneMode = 0;
 	
-	warning("sub_FC696(_sceneMode)");
+	subFC696(_sceneMode);
 }
 
 void Scene3375::remove() {
@@ -2064,7 +2141,7 @@ void Scene3375::signal() {
 		_actor2._shade = 4;
 		_actor3._effect = 6;
 		_actor3._shade = 4;
-		warning("sub_FC696(_sceneMode)");
+		subFC696(_sceneMode);
 		break;
 	case 3379:
 		signalCase3379();
