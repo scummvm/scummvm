@@ -33,10 +33,6 @@
 namespace Mortevielle {
 
 int do_alert(Common::String str_, int n);
-static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs);
-static void posit(int ji, int &coldep, int &esp);
-static void fait_boite(int lidep, int nli, int tx);
-static void fait_choix(Common::String c, int &coldep, int &nbcase, array<1, 2, varying_string<3> > &s, int &esp);
 int do_alert(Common::String str_, int n);
 
 } // End of namespace Mortevielle

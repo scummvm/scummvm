@@ -219,9 +219,6 @@ struct ind {
 	int indis;
 	byte point;
 };
-typedef ind[maxtd + 1] tabind;
-
-typedef matrix<1, 7, 0, 24, byte> tab_mlieu;
 
 typedef int word1;
 struct chariot {
@@ -236,18 +233,14 @@ struct doublet {
 	byte x, y;
 };
 
-typedef doublet[16] tabdb;
-
 struct rectangle {
 	int x1, x2, y1, y2;
 	bool etat;
 };
 
-typedef rectangle[max_rect] mult_rect;
-
 struct pattern {
 	byte tay, tax;
-	matrix<1, max_patt, 1, max_patt, byte> des;
+	byte des[max_patt+1][max_patt+1];
 };
 
 
@@ -376,34 +369,34 @@ Common::String al_mess,
 int invt[8];
 int nbrep[8];
 int nbrepm[8];
-int disc[8]
+int disc[8];
 int msg[5];
 int depl[7];
-array<1, 8, varying_string<22> > inv;
-array<1, 7, varying_string<23> > dep;
-array<1, 21, varying_string<10> > act;
-array<1, 5, varying_string<11> > self_;
-array<1, 8, varying_string<5> > dis;
+Common::String inv[9];
+Common::String dep[8];
+Common::String act[22];
+Common::String self_[6];
+Common::String dis[9];
 char touv[7];
 sav_chaine s, s1;
 byte bufcha[391];
 
-matrix<1, 6, 0, 23, byte> lettres;
+byte lettres[7][24];
 
 byte palher[16];
 
 int t_mot[maxti + 1];
 int tay_tchar;
-tabind t_rec;
-file<ind> sauv_t;
-untyped_file fibyte;
-tab_mlieu v_lieu;
+ind t_rec[maxtd + 1];
+//file<ind> sauv_t;
+//untyped_file fibyte;
+byte v_lieu[8][25];
 int l[108];
 int tbi[256];
 chariot c1, c2, c3;
 float addfix;
 t_pcga palsav[91];
-tabdb tabpal[91];
+doublet tabpal[91][16];
 t_pcga palcga[91];
 pattern tpt[15];
 
@@ -412,7 +405,7 @@ pattern tpt[15];
 /*---------------------------------------------------------------------------*/
 
 void hirs();
-void affcar(int gd, int x, int y, int coul, int char);
+void affcar(int gd, int x, int y, int coul, int chr);
 void putpix(int gd, int x, int y, int coul);
 
 } // End of namespace Mortevielle

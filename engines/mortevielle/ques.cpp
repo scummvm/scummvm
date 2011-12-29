@@ -41,7 +41,7 @@ namespace Mortevielle {
 	int rep, prem, der;
 	char st[1410];
 	char key;
-	mult_rect coor;
+	rectangle coor[max_rect];
 	array<1, 14, Common::String> chaines;
 	int compte;
 
