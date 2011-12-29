@@ -582,8 +582,8 @@ protected:
 	void releaseDecorations();
 	void releaseDoorShapes();
 	void toggleWallState(int wall, int flags);
-	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {}
-	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8*shapeDefs) { return (const uint8*)filename; }
+	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) = 0;
+	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
 
 	void drawScene(int refresh);
 	void drawSceneShapes(int start = 0);

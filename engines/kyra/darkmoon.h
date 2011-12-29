@@ -111,6 +111,7 @@ private:
 	bool killMonsterExtra(EoBMonsterInPlay *m);
 
 	// Level
+	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {}
 	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs);
 	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16);
 

@@ -112,6 +112,7 @@ private:
 	void updateScriptTimersExtra();
 
 	// Level
+	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) { return 0; }
 	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2);
 	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2);
 
