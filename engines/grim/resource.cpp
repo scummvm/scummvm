@@ -337,42 +337,38 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model 
 
 	return result;
 }
-	
+
 EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel *parent) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {
-			warning("Could not find model %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream) {
+		warning("Could not find model %s", filename.c_str());
+		return NULL;
 	}
-	
-	EMIModel *result = new EMIModel(filename, b->getData(), b->getLen(), parent);
+
+	EMIModel *result = new EMIModel(filename, stream, parent);
 	_emiModels.push_back(result);
-	
+
 	return result;
 }
 
 Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {
-			warning("Could not find skeleton %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream) {
+		warning("Could not find skeleton %s", filename.c_str());
+		return NULL;
 	}
-	
-	Skeleton *result = new Skeleton(filename, b->getData(), b->getLen());
-	
+
+	Skeleton *result = new Skeleton(filename, stream);
+
 	return result;
 }
-	
+
 void ResourceLoader::uncache(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();

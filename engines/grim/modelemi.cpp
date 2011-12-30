@@ -82,31 +82,31 @@ Math::Vector4d *readVector4d(Common::ReadStream &ms) {
 	vec4d->set(x,y,z,w);
 	return vec4d;
 }
-	
-void EMIMeshFace::loadFace(Common::MemoryReadStream &ms) {
-	_flags = ms.readUint32LE();
-	_hasTexture = ms.readUint32LE();
+
+void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
+	_flags = data->readUint32LE();
+	_hasTexture = data->readUint32LE();
 	if(_hasTexture > 1) {
 		warning("We have this many textures: %d", _hasTexture);
 	}
 	if(_hasTexture)
-		_texID = ms.readUint32LE();
-	_faceLength = ms.readUint32LE();
+		_texID = data->readUint32LE();
+	_faceLength = data->readUint32LE();
 	_faceLength = _faceLength / 3;
 	short x = 0, y = 0, z = 0;
 	_indexes = new Vector3int[_faceLength];
 	int j = 0;
 	for (int i = 0; i < _faceLength; i ++) {
-		ms.read((char *)&x, 2);
-		ms.read((char *)&y, 2);
-		ms.read((char *)&z, 2);
+		data->read((char *)&x, 2);
+		data->read((char *)&y, 2);
+		data->read((char *)&z, 2);
 		_indexes[j++].setVal(x,y,z);
 	}
 }
-	
+
 void EMIModel::setTex(int index) {
 	_mats[index]->select();
-}	
+}
 
 // May be removed when I get through the conversion
 void EMIMeshFace::render() {
@@ -117,62 +117,61 @@ void EMIMeshFace::render() {
 	}
 	//glDrawElements(GL_TRIANGLES, _faceLength * 3, GL_UNSIGNED_INT, _indexes);
 }
-	
-	
-void EMIModel::loadMesh(Common::MemoryReadStream &ms) {
+
+void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	int strLength = 0;
 	
-	Common::String nameString = readLAString(ms);
+	Common::String nameString = readLAString(*data);
 	
-	_sphereData = readVector4d(ms);
+	_sphereData = readVector4d(*data);
 
-	_boxData = readVector3d(ms);
-	_boxData2 = readVector3d(ms);
+	_boxData = readVector3d(*data);
+	_boxData2 = readVector3d(*data);
 	
-	_numTexSets = ms.readUint32LE();
-	_setType = ms.readUint32LE();
-	_numTextures = ms.readUint32LE();
+	_numTexSets = data->readUint32LE();
+	_setType = data->readUint32LE();
+	_numTextures = data->readUint32LE();
 	
 	_texNames = new Common::String[_numTextures];
 	
 	for(int i = 0;i < _numTextures; i++) {
-		_texNames[i] = readLAString(ms);
+		_texNames[i] = readLAString(*data);
 		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
 		// this is intentional)
-		ms.skip(4);
+		data->skip(4);
 	}
 	
 	// 4 unknown bytes - usually with value 19
-	ms.skip(4);
+	data->skip(4);
 	
-	_numVertices = ms.readUint32LE();
+	_numVertices = data->readUint32LE();
 	
 	float x = 0, y = 0;
 	int r = 0, g = 0, b = 0, a = 0;
 	// Vertices
-	_vertices = readVector3d(ms, _numVertices);
-	_normals = readVector3d(ms, _numVertices);
+	_vertices = readVector3d(*data, _numVertices);
+	_normals = readVector3d(*data, _numVertices);
 	_colorMap = new EMIColormap[_numVertices];
 	for (int i = 0; i < _numVertices; ++i) {
-		_colorMap[i].r = ms.readByte();
-		_colorMap[i].g = ms.readByte();
-		_colorMap[i].b = ms.readByte();
-		_colorMap[i].a = ms.readByte();
+		_colorMap[i].r = data->readByte();
+		_colorMap[i].g = data->readByte();
+		_colorMap[i].b = data->readByte();
+		_colorMap[i].a = data->readByte();
 	}
-	_texVerts = readVector2d(ms, _numVertices);
+	_texVerts = readVector2d(*data, _numVertices);
 	
 	// Faces
 	
-	_numFaces = ms.readUint32LE();
+	_numFaces = data->readUint32LE();
 
 	_faces = new EMIMeshFace[_numFaces];
 	int faceLength = 0;
 	for(int j = 0;j < _numFaces; j++) {
 		_faces[j].setParent(this);
-		_faces[j].loadFace(ms);
+		_faces[j].loadFace(data);
 	}
 	
-	int hasBones = ms.readUint32LE();
+	int hasBones = data->readUint32LE();
 	
 	// TODO add in the bone-stuff, as well as the skeleton
 	//prepare(); // <- Initialize materials etc.
@@ -200,9 +199,9 @@ void EMIModel::draw() {
 	}
 }
 
-EMIModel::EMIModel(const Common::String &filename, const char *data, int len, EMIModel *parent) {
-	Common::MemoryReadStream ms((const byte *)data, len);
-	loadMesh(ms);
+EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) {
+	loadMesh(data);
+	delete data;
 }
 	
 } // end of namespace Grim
