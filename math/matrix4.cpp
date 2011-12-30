@@ -23,6 +23,7 @@
  */
 
 #include "math/matrix4.h"
+#include "math/vector4d.h"
 
 namespace Math {
 
@@ -37,7 +38,7 @@ Matrix<4, 4>::Matrix(const MatrixBase<4, 4> &m) :
 }
 
 void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
-	Matrix<4, 1> m;
+	Vector4d m;
 	m(0, 0) = v->x();
 	m(1, 0) = v->y();
 	m(2, 0) = v->z();
