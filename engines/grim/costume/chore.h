@@ -46,7 +46,7 @@ struct ChoreTrack {
 class Chore {
 public:
 	Chore();
-	~Chore();
+	virtual ~Chore();
 	void load(int id, Costume *owner, TextSplitter &ts);
 	void play();
 	void playLooping();
