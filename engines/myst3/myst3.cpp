@@ -101,6 +101,7 @@ Common::Error Myst3Engine::run() {
 	goToNode(1, 245); // LEIS
 	
 	while (!_shouldQuit) {
+		runNodeBackgroundScripts();
 		processInput(false);
 		drawFrame();
 	}
@@ -137,7 +138,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 				Common::Point mouse = _scene->getMousePos();
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-					if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
+					if (nodeData->hotspots[j].isPointInRectsCube(mouse)
+							&& _vars->evaluate(nodeData->hotspots[j].condition)) {
 						_scriptEngine->run(&nodeData->hotspots[j].script);
 
 					}
@@ -154,7 +156,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 								- (originalHeight - 360) / 2, 0, frameHeight));
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-					if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
+					if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)
+							&& _vars->evaluate(nodeData->hotspots[j].condition)) {
 						_scriptEngine->run(&nodeData->hotspots[j].script);
 					}
 				}
@@ -259,6 +262,28 @@ void Myst3Engine::runNodeInitScripts() {
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {
 		if (_vars->evaluate(nodeData->scripts[j].condition)) {
 			_scriptEngine->run(&nodeData->scripts[j].script);
+		}
+	}
+}
+
+void Myst3Engine::runNodeBackgroundScripts() {
+	NodePtr nodeDataRoom = _db->getNodeData(32675);
+
+	if (nodeDataRoom) {
+		for (uint j = 0; j < nodeDataRoom->hotspots.size(); j++) {
+			if (nodeDataRoom->hotspots[j].condition == -1) {
+				if (!_scriptEngine->run(&nodeDataRoom->hotspots[j].script))
+					break;
+			}
+		}
+	}
+
+	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
+
+	for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+		if (nodeData->hotspots[j].condition == -1) {
+			if (!_scriptEngine->run(&nodeData->hotspots[j].script))
+				break;
 		}
 	}
 }

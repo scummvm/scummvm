@@ -72,8 +72,9 @@ public:
 	void loadNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
-	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void runNodeInitScripts();
+	void runNodeBackgroundScripts();
+	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playSimpleMovie(uint16 id);
