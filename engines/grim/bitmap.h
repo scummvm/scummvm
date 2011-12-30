@@ -129,6 +129,10 @@ private:
 	void freeData();
 
 	BitmapData *_data;
+	/** 
+	 * Specifies a one-based index to the current image in BitmapData.
+	 * _currImage==0 means a null image is chosen.
+	 */
 	int _currImage;
 	int _x, _y;
 };

@@ -35,7 +35,7 @@
 
 namespace Grim {
 
-static void decompress_codec3(const char *compressed, char *result);
+static bool decompress_codec3(const char *compressed, char *result, int maxBytes);
 
 Common::HashMap<Common::String, BitmapData *> *BitmapData::_bitmaps = NULL;
 
@@ -137,6 +137,7 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
 	_colorFormat = BM_RGB565;
+	_hasTransparency = false;
 
 	_data = new char *[_numImages];
 	int pos = 0x88;
@@ -147,9 +148,17 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 			pos += _bpp / 8 * _width * _height + 8;
 		} else if (codec == 3) {
 			int compressed_len = READ_LE_UINT32(data + pos);
-			decompress_codec3(data + pos + 4, _data[i]);
+			bool success = decompress_codec3(data + pos + 4, _data[i], _bpp / 8 * _width * _height);
+			if (!success)
+				warning(".. when loading image %s.\n", fname.c_str());
+			char *temp = new char[_bpp / 8 * _width * _height];
+			memcpy(temp, _data[i], _bpp / 8 * _width * _height);
+			delete[] _data[i];
+			_data[i] = temp;
 			pos += compressed_len + 12;
 		}
+		else
+			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
 
 #ifdef SCUMM_BIG_ENDIAN
 		if (_format == 1)
@@ -158,6 +167,11 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 			}
 #endif
 	}
+
+	// Initially, no GPU-side textures created. the createBitmap
+	// function will allocate some if necessary (and successful)
+	_numTex = 0;
+	_texIds = NULL;
 
 	g_driver->createBitmap(this);
 }
@@ -185,8 +199,8 @@ BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fnam
 }
 
 BitmapData::BitmapData() :
-		_data(NULL), _refCount(1) {
-
+	_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0), 
+	_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL), _refCount(1) {
 }
 
 BitmapData::~BitmapData() {
@@ -265,10 +279,12 @@ bool BitmapData::loadTile(const char *data, int len) {
 
 	g_driver->createBitmap(this);
 #endif // ENABLE_MONKEY4
-    return true;
+	return true;
 }
 
 char *BitmapData::getImageData(int num) const {
+	assert(num >= 0);
+	assert(num < _numImages);
 	return _data[num];
 }
 
@@ -323,6 +339,7 @@ void Bitmap::draw() const {
 }
 
 void Bitmap::setActiveImage(int n) {
+	assert(n >= 0);
 	if ((n - 1) >= _data->_numImages) {
 		warning("Bitmap::setNumber: no anim image: %d. (%s)", n, _data->_fname.c_str());
 	} else {
@@ -334,6 +351,7 @@ void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {
 		delete _data;
+		_data = 0;
 	}
 }
 
@@ -456,16 +474,24 @@ void BitmapData::convertToColorFormat(int num, int format) {
 	} \
 } while (0)
 
-static void decompress_codec3(const char *compressed, char *result) {
+static bool decompress_codec3(const char *compressed, char *result, int maxBytes) {
 	int bitstr_value = READ_LE_UINT16(compressed);
 	int bitstr_len = 16;
 	compressed += 2;
 	bool bit;
 
+	int byteIndex = 0;
 	for (;;) {
 		GET_BIT;
-		if (bit == 1)
-			*result++ = *compressed++;
+		if (bit == 1) {
+			if (byteIndex >= maxBytes) {
+				warning("Buffer overflow when decoding image: decompress_codec3 walked past the input buffer!");
+				return false;
+			}
+			else
+				*result++ = *compressed++;
+			++byteIndex;
+		}
 		else {
 			GET_BIT;
 			int copy_len, copy_offset;
@@ -482,16 +508,26 @@ static void decompress_codec3(const char *compressed, char *result) {
 				if (copy_len == 3) {
 					copy_len = *(uint8 *)(compressed++) + 1;
 					if (copy_len == 1)
-						return;
+						return true;
 				}
 			}
 			while (copy_len > 0) {
-				*result = result[copy_offset];
-				result++;
+				if (byteIndex >= maxBytes) {
+					warning("Buffer overflow when decoding image: decompress_codec3 walked past the input buffer!");
+					return false;
+				}
+				else {
+					assert(byteIndex + copy_offset >= 0);
+					assert(byteIndex + copy_offset < maxBytes);
+					*result = result[copy_offset];
+					result++;
+				}
+				++byteIndex;
 				copy_len--;
 			}
 		}
 	}
+	return true;
 }
 
 } // end of namespace Grim

@@ -59,18 +59,21 @@ Rotation3D<T>::Rotation3D() :
 
 }
 
+// NOTE: Builds a rotation matrix of form R_Yaw * R_Pitch * R_Roll (i.e. R_z * R_x * R_y).
+// The order of rotations is of the form Matrix * Vector, so roll is applied first, then pitch, then yaw.
 template<class T>
 void Rotation3D<T>::buildFromPitchYawRoll(const Angle &pitch, const Angle &yaw, const Angle &roll) {
 	T temp;
 
-	buildAroundYaw(yaw);
-	temp.buildAroundPitch(pitch);
+	buildAroundYaw(yaw); // Rotate about +Z
+	temp.buildAroundPitch(pitch); // Rotate about +X
 	this->getMatrix() = this->getMatrix() * temp;
-	temp.buildAroundRoll(roll);
+	temp.buildAroundRoll(roll); // Rotate about +Y
 	this->getMatrix() = this->getMatrix() * temp;
+	// The created matrix has the Euler order ZXY. (M*v)
 }
 
-// at, around x-axis
+// at. Rotates about the +X axis.
 template<class T>
 void Rotation3D<T>::buildAroundPitch(const Angle &pitch) {
 	float cosa = pitch.getCosine();
@@ -81,7 +84,7 @@ void Rotation3D<T>::buildAroundPitch(const Angle &pitch) {
 	this->getMatrix().getRow(2) << 0.f << sina << cosa;
 }
 
-// right
+// right. Rotates about the +Y axis.
 template<class T>
 void Rotation3D<T>::buildAroundRoll(const Angle &roll) {
 	float cosa = roll.getCosine();
@@ -92,7 +95,7 @@ void Rotation3D<T>::buildAroundRoll(const Angle &roll) {
 	this->getMatrix().getRow(2) << -sina << 0.f << cosa;
 }
 
-// up
+// up. Rotates about the +Z axis.
 template<class T>
 void Rotation3D<T>::buildAroundYaw(const Angle &yaw) {
 	float cosa = yaw.getCosine();
