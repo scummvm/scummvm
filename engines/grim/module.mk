@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	costume/colormap_component.o \
 	costume/component.o \
 	costume/emimesh_component.o \
+	costume/emiskel_component.o \
 	costume/head.o \
 	costume/keyframe_component.o \
 	costume/lua_var_component.o \
@@ -92,6 +93,7 @@ MODULE_OBJS := \
 	set.o \
 	scx.o \
 	sector.o \
+	skeleton.o \
 	textobject.o \
 	textsplit.o \
 	object.o

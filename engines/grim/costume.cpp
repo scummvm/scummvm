@@ -37,6 +37,7 @@
 #include "engines/grim/costume/main_model_component.h"
 #include "engines/grim/costume/colormap_component.h"
 #include "engines/grim/costume/emimesh_component.h"
+#include "engines/grim/costume/emiskel_component.h"
 #include "engines/grim/costume/keyframe_component.h"
 #include "engines/grim/costume/mesh_component.h"
 #include "engines/grim/costume/lua_var_component.h"
@@ -348,7 +349,7 @@ Component *Costume::loadComponentEMI(Component *parent, int parentID, const char
 		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','k','e','l')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
-		//return new ModelComponent(parent, parentID, name, prevComponent, tag);
+		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('t','e','x','i')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
 		//return new MaterialComponent(parent, parentID, name, tag);

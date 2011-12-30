@@ -33,6 +33,7 @@
 #include "engines/grim/font.h"
 #include "engines/grim/model.h"
 #include "engines/grim/modelemi.h"
+#include "engines/grim/skeleton.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
 
@@ -395,6 +396,23 @@ EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel 
 	return result;
 }
 
+Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
+	Common::String fname = fixFilename(filename);
+	Block *b = getFileFromCache(fname);
+	if (!b) {
+		b = getFileBlock(fname);
+		if (!b) {
+			warning("Could not find skeleton %s", filename.c_str());
+			return NULL;
+		}
+		putIntoCache(fname, b);
+	}
+	
+	Skeleton *result = new Skeleton(filename, b->getData(), b->getLen());
+	
+	return result;
+}
+	
 void ResourceLoader::uncache(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();

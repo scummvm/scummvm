@@ -41,6 +41,7 @@ class EMIModel;
 class LipSync;
 class TrackedObject;
 class SaveGame;
+class Skeleton;
 class Block;
 class LuaFile;
 class Lab;
@@ -67,6 +68,7 @@ public:
 	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
 	EMIModel *loadModelEMI(const Common::String &fname, EMIModel *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
+	Skeleton *loadSkeleton(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(const char *filename) const;
