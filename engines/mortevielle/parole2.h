@@ -30,10 +30,10 @@
 
 namespace Mortevielle {
 
-void rot_chariot();
-void init_chariot();
-void trait_ph();
-void parole(int rep, int ht, int typ);
+extern void rot_chariot();
+extern void init_chariot();
+extern void trait_ph();
+extern void parole(int rep, int ht, int typ);
 
 } // End of namespace Mortevielle
 

@@ -33,17 +33,17 @@
 namespace Mortevielle {
 
 /* NIVEAU 14*/
-void menut(int no, Common::String nom);
-void menu_disable(int no);
-void menu_enable(int no);
-void menu_aff();
-void draw_menu();
-void invers(int ix);
-void util(int x, int y);
-void menu_down(int ii);
-void menu_up(int xx);
-void erase_menu();
-void mdn();
+extern void menut(int no, Common::String nom);
+extern void menu_disable(int no);
+extern void menu_enable(int no);
+extern void menu_aff();
+extern void draw_menu();
+extern void invers(int ix);
+extern void util(int x, int y);
+extern void menu_down(int ii);
+extern void menu_up(int xx);
+extern void erase_menu();
+extern void mdn();
 
 } // End of namespace Mortevielle
 #endif

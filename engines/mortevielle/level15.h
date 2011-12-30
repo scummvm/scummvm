@@ -28,25 +28,27 @@
 #ifndef MORTEVIELLE_LEVEL15_H
 #define MORTEVIELLE_LEVEL15_H
 
+#include "mortevielle/var_mor.h"
+
 namespace Mortevielle {
 
 /* NIVEAU 15 */
-void copcha();
-bool dans_rect(rectangle r);
-void outbloc(int n, pattern p, t_nhom pal);
-void writepal(int n);
-void pictout(int seg, int dep, int x, int y);
-void putxy(int x, int y);
-// int calad(int x, int y);
-void sauvecr(int y, int dy);
-void charecr(int y, int dy);
-// int peek(int ad);
-// int peekw(int ad);
-// real peekl(int ad);
-// void procedure poke(int ad, int n);
-void adzon();
-int animof(int ouf, int num);
-// void affgd(int offs, int dep, int x, int y);
+extern void copcha();
+extern bool dans_rect(rectangle r);
+extern void outbloc(int n, pattern p, t_nhom pal);
+extern void writepal(int n);
+extern void pictout(int seg, int dep, int x, int y);
+extern void putxy(int x, int y);
+// extern int calad(int x, int y);
+extern void sauvecr(int y, int dy);
+extern void charecr(int y, int dy);
+// extern int peek(int ad);
+// extern int peekw(int ad);
+// extern real peekl(int ad);
+// extern void procedure poke(int ad, int n);
+extern void adzon();
+extern int animof(int ouf, int num);
+// extern void affgd(int offs, int dep, int x, int y);
 
 } // End of namespace Mortevielle
 #endif

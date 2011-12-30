@@ -30,9 +30,9 @@
 
 namespace Mortevielle {
 
-char readkey1();
-int testou();
-void teskbd();
+extern char readkey1();
+extern int testou();
+extern void teskbd();
 
 } // End of namespace Mortevielle
 #endif

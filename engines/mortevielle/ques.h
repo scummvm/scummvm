@@ -32,7 +32,7 @@
 
 namespace Mortevielle {
 
-bool ques();
+extern bool ques();
 
 } // End of namespace Mortevielle
 #endif

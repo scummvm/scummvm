@@ -32,8 +32,8 @@
 
 namespace Mortevielle {
 
-int do_alert(Common::String str_, int n);
-int do_alert(Common::String str_, int n);
+extern int do_alert(Common::String str_, int n);
+extern int do_alert(Common::String str_, int n);
 
 } // End of namespace Mortevielle
 #endif

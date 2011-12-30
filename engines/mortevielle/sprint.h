@@ -32,8 +32,9 @@
 
 namespace Mortevielle {
 
-void fill_box(int x, int y, int dx);
-void clear_box(int x, int y, int dx);
-void writeg(Common::String l, int c);
+extern void fill_box(int x, int y, int dx);
+extern void clear_box(int x, int y, int dx);
+extern void writeg(Common::String l, int c);
+
 } // End of namespace Mortevielle
 #endif

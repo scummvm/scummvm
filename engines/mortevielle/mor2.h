@@ -30,52 +30,52 @@
 
 namespace Mortevielle {
 
-void tinke();
-void fenat(char ans);
+extern void tinke();
+extern void fenat(char ans);
 /* NIVEAU 8 */
-void afdes(int ad);
-void tkey1(bool d);
-void tmlieu(int mli);
+extern void afdes(int ad);
+extern void tkey1(bool d);
+extern void tmlieu(int mli);
 /* NIVEAU 7 */
-void tlu(int af, int ob);
-void delin(int n);
-void affrep();
-void mfouen();
-void atf3f8(int &key);
+extern void tlu(int af, int ob);
+extern void delin(int n);
+extern void affrep();
+extern void mfouen();
+extern void atf3f8(int &key);
 /* NIVEAU 6 */
-void tperd();
-void tsort();
-void st4(int ob);
-void cherjer(int ob, bool &d);
-void st1sama();
-void modinv();
-void sparl(float adr, float rep);
-void finfouil();
-void mfoudi();
-void mennor();
-void premtet();
+extern void tperd();
+extern void tsort();
+extern void st4(int ob);
+extern void cherjer(int ob, bool &d);
+extern void st1sama();
+extern void modinv();
+extern void sparl(float adr, float rep);
+extern void finfouil();
+extern void mfoudi();
+extern void mennor();
+extern void premtet();
 /* NIVEAU 5 */
-void ajchai();
-void ajjer(int ob);
-void t1sama();
-void t1vier();
-void t1neig();
-void t1deva();
-void t1derr();
-void t1deau();
-void tctrm();
-void quelquun();
-void tsuiv();
-void tfleche();
-void tcoord(int sx);
-void st7(int ob);
-void treg(int ob);
-void avpoing(int &ob);
-void rechai(int &ch);
-void t23coul(int &l);
-void maivid();
-void st13(int ob);
-void aldepl();
+extern void ajchai();
+extern void ajjer(int ob);
+extern void t1sama();
+extern void t1vier();
+extern void t1neig();
+extern void t1deva();
+extern void t1derr();
+extern void t1deau();
+extern void tctrm();
+extern void quelquun();
+extern void tsuiv();
+extern void tfleche();
+extern void tcoord(int sx);
+extern void st7(int ob);
+extern void treg(int ob);
+extern void avpoing(int &ob);
+extern void rechai(int &ch);
+extern void t23coul(int &l);
+extern void maivid();
+extern void st13(int ob);
+extern void aldepl();
 
 } // End of namespace Mortevielle
 #endif

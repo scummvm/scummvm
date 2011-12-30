@@ -31,38 +31,38 @@
 namespace Mortevielle {
 
 /* NIVEAU 4 */
-void taller();
-void tprendre();
-void tsprendre();
-void tsoulever();
-void tlire();
-void tslire();
-void tregarder();
-void tsregarder();
-void tfouiller();
-void tsfouiller();
-void touvrir();
-void tmettre();
-void ttourner();
-void tcacher();
-void tattacher();
-void tfermer();
-void tfrapper();
-void tposer();
-void tecouter();
-void tmanger();
-void tentrer();
-void tdormir();
-void tdefoncer();
-void tsortir();
-void tattendre();
-void tsonder();
-void tparler();
-void tsentir();
-void tgratter();
+extern void taller();
+extern void tprendre();
+extern void tsprendre();
+extern void tsoulever();
+extern void tlire();
+extern void tslire();
+extern void tregarder();
+extern void tsregarder();
+extern void tfouiller();
+extern void tsfouiller();
+extern void touvrir();
+extern void tmettre();
+extern void ttourner();
+extern void tcacher();
+extern void tattacher();
+extern void tfermer();
+extern void tfrapper();
+extern void tposer();
+extern void tecouter();
+extern void tmanger();
+extern void tentrer();
+extern void tdormir();
+extern void tdefoncer();
+extern void tsortir();
+extern void tattendre();
+extern void tsonder();
+extern void tparler();
+extern void tsentir();
+extern void tgratter();
 /* NIVEAU 2 */
-void tmaj1();
-void tencore();
+extern void tmaj1();
+extern void tencore();
 
 } // End of namespace Mortevielle
 #endif

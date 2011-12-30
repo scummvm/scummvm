@@ -25,8 +25,9 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "mortevielle/alert.h"
 #include "common/str.h"
+#include "mortevielle/alert.h"
+#include "mortevielle/level15.h"
 
 namespace Mortevielle {
 
