@@ -101,23 +101,23 @@ static void fait_boite(int lidep, int nli, int tx) {
 
 
 
-static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String[] &s, int &esp) {
+static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String *&str, int &esp) {
 	int i, l, x;
 	char ch;
 
 	i = 1;
 	x = coldep;
 	for (l = 1; l <= nbcase; l ++) {
-		s[l] = "";
+		str[l] = "";
 		do {
 			i = i + 1;
 			ch = c[i];
-			s[l] = s[l] + ch;
+			str[l] = str[l] + ch;
 		} while (!(c[i + 1] == ']'));
 		i = i + 2;
-		while (length(s[l]) < 3)  s[l] = s[l] + ' ';
+		while (length(str[l]) < 3)  str[l] = str[l] + ' ';
 		putxy(x, 98);
-		writeg(string(' ') + s[l] + ' ', 0);
+		writeg(string(' ') + str[l] + ' ', 0);
 		x = x + esp + 40;
 	}
 }

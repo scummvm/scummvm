@@ -25,9 +25,10 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/sprint.h"
-#include "common/str.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

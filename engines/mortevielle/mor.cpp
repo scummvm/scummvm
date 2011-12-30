@@ -25,11 +25,12 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/str.h"
+#include "common/textconsole.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/var_mor.h"
-#include "common/str.h"
 
 namespace Mortevielle {
 
@@ -40,7 +41,7 @@ const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";
 void testfi() {
 	if (ioresult != 0) {
 		caff = do_alert(err_mess, 1);
-		exit(0);
+		mortevielle_exit(0);
 	}
 }
 
@@ -300,7 +301,7 @@ void stop() {
 	hirs();
 	gd = ams;
 	hirs();
-	exit(0);
+	mortevielle_exit(0);
 }
 
 void paint_rect(int x, int y, int dx, int dy) {
