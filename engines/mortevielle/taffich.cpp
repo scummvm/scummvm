@@ -177,7 +177,7 @@ void taffich() {
 	if (gd == her) {
 		for (i = 0; i <= 15; i ++) {
 			palh = memw[0x7000 + (succ(int, i) << 1)];
-			alllum[i] = (palh & 15) + (((cardinal)palh >> 12) & 15) + (((cardinal)palh >> 8) & 15);
+			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (i = 0; i <= 15; i ++) {
 			k = 0;

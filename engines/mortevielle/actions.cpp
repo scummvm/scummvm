@@ -1049,7 +1049,7 @@ L2:
 			x = x * (3 - res);
 			if (x > 319)  cx = 41;
 			else cx = 1;
-			cy = succ(int, (cardinal)y >> 3);                  /* 0-199 => 1-25 */
+			cy = succ(int, (uint)y >> 3);                  /* 0-199 => 1-25 */
 			if ((cy > 23) || ((cx == 41) && (set::of(range(20, 22), eos).has(cy)))) {
 				if (choi != 0) {
 					lig = ((choi - 1) % 23) << 3;

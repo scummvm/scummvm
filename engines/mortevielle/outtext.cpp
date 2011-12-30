@@ -71,15 +71,15 @@ static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 
 	/* 5-8 */
 	oct = t_mot[ind];
-	oct = (cardinal)(oct << (16 - pt)) >> (16 - pt);
+	oct = (uint)(oct << (16 - pt)) >> (16 - pt);
 	if (pt < 6) {
 		ind = ind + 1;
 		oct = oct << (5 - pt);
 		pt = pt + 11;
-		oct = oct | ((cardinal)t_mot[ind] >> pt);
+		oct = oct | ((uint)t_mot[ind] >> pt);
 	} else {
 		pt = pt - 5;
-		oct = (cardinal)oct >> pt;
+		oct = (uint)oct >> pt;
 	}
 
 	switch (oct) {
@@ -91,15 +91,15 @@ static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 	case 30:
 	case 31 : {
 		ocd = t_mot[ind];
-		ocd = (cardinal)(ocd << (16 - pt)) >> (16 - pt);
+		ocd = (uint)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
 			ind = ind + 1;
 			ocd = ocd << (5 - pt);
 			pt = pt + 11;
-			ocd = ocd | ((cardinal)t_mot[ind] >> pt);
+			ocd = ocd | ((uint)t_mot[ind] >> pt);
 		} else {
 			pt = pt - 5;
-			ocd = (cardinal)ocd >> pt;
+			ocd = (uint)ocd >> pt;
 		}
 		if (oct == 30)  c = chr(tab30[ocd]);
 		else c = chr(tab31[ocd]);

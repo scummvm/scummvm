@@ -297,7 +297,7 @@ void hirs() {
 /* procedure affput(Chx,Gd,x,y,coul,char:int); external 'c:\mc\divaf.com'; */
 
 void affcar(int gd, int x, int y, int coul, int chr) {
-	if (res == 1)  affput(1, gd, ((cardinal)x >> 1), y, coul, chr);
+	if (res == 1)  affput(1, gd, ((uint)x >> 1), y, coul, chr);
 	else affput(1, gd, x, y, coul, chr);
 }
 

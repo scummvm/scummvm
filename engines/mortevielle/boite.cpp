@@ -38,8 +38,8 @@ void boite(int x, int y, int dx, int dy, int coul) {
 	/* debug('boite'); */
 	hide_mouse();
 	if (res == 1) {
-		x = (cardinal)x >> 1;
-		dx = (cardinal)dx >> 1;
+		x = (uint)x >> 1;
+		dx = (uint)dx >> 1;
 	}
 	xi = x;
 	yi = y;

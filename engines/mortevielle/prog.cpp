@@ -267,7 +267,7 @@ void tecran() {
 		erase_menu();
 		imen = false;
 		if (set::of('\1', '\3', '\5', '\7', '\11', eos).has(inkey)) {
-			change_gd((cardinal)pred(int, ord(inkey)) >> 1);
+			change_gd((uint)pred(int, ord(inkey)) >> 1);
 			return;
 		}
 		if (choisi && (msg[3] == sauve))  sv_game(msg[4] & 7);

@@ -156,7 +156,7 @@ void menu_aff() {
 						putpix(gd, x, y + 1, 0);
 						putpix(gd, x, y, color);
 					}
-					msk = (cardinal)msk >> 1;
+					msk = (uint)msk >> 1;
 					x = x + 1;
 				}
 				ind_tabl = succ(int, ind_tabl);
@@ -229,7 +229,7 @@ void util(int x, int y) {
 	else ix = 3;
 	xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = pred(int, (cardinal)y >> 3) + (msg3 << 8);
+		ix = pred(int, (uint)y >> 3) + (msg3 << 8);
 		if (ix != msg4) {
 			invers(1);
 			msg4 = ix;
