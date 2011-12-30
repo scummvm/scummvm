@@ -116,7 +116,7 @@ public:
 	 * @param name		name of the keymap to return
 	 * @param global	set to true if returned keymap is global, false if game
 	 */
-	Keymap *getKeymap(const String& name, bool &global);
+	Keymap *getKeymap(const String& name, bool *global = 0);
 
 	/**
 	 * Push a new keymap to the top of the active stack, activating

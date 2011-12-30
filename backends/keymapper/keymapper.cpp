@@ -128,21 +128,24 @@ void Keymapper::cleanupGameKeymaps() {
 	_activeMaps = newStack;
 }
 
-Keymap *Keymapper::getKeymap(const String& name, bool &global) {
+Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
-	global = false;
+	bool global = false;
 
 	if (!keymap) {
 		keymap = _globalDomain.getKeymap(name);
 		global = true;
 	}
 
+	if (globalReturn)
+		*globalReturn = global;
+
 	return keymap;
 }
 
 bool Keymapper::pushKeymap(const String& name, bool inherit) {
 	bool global;
-	Keymap *newMap = getKeymap(name, global);
+	Keymap *newMap = getKeymap(name, &global);
 
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());

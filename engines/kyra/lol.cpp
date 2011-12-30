@@ -467,11 +467,10 @@ Common::Error LoLEngine::init() {
 void LoLEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
 
-	bool tmp;
 	Common::Keymapper *mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName, tmp) != 0)
+	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
 	Common::Action *act;

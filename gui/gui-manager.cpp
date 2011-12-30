@@ -103,11 +103,10 @@ GuiManager::~GuiManager() {
 void GuiManager::initKeymap() {
 	using namespace Common;
 
-	bool tmp;
 	Keymapper *mapper = _system->getEventManager()->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kGuiKeymapName, tmp) != 0)
+	if (mapper->getKeymap(kGuiKeymapName) != 0)
 		return;
 
 	Action *act;
