@@ -472,7 +472,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	int *indices = (int*)face->_indexes;
 	tglDisable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-	
+	tglDisable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
 		
@@ -489,7 +489,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		tglVertex3f(vertex.x(), vertex.y(), vertex.z());
 	}
 	tglEnd();
-	
+	tglEnable(TGL_TEXTURE_2D);	
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);	
 }
