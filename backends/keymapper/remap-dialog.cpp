@@ -138,18 +138,19 @@ void RemapDialog::reflowLayout() {
 
 	int16 areaX, areaY;
 	uint16 areaW, areaH;
+	g_gui.xmlEval()->getWidgetData((const String&)String("KeyMapper.KeymapArea"), areaX, areaY, areaW, areaH);
+
 	int spacing = g_gui.xmlEval()->getVar("Globals.KeyMapper.Spacing");
-	int labelWidth =  g_gui.xmlEval()->getVar("Globals.KeyMapper.LabelWidth");
 	int keyButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ButtonWidth");
 	int clearButtonWidth = g_gui.xmlEval()->getVar("Globals.Line.Height");
 	int clearButtonHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	int colWidth = labelWidth + keyButtonWidth + clearButtonWidth + spacing;
 
-	g_gui.xmlEval()->getWidgetData((const String&)String("KeyMapper.KeymapArea"), areaX, areaY, areaW, areaH);
+	int colWidth = areaW - scrollbarWidth;
+	int labelWidth =  colWidth - (keyButtonWidth + spacing + clearButtonWidth + spacing);
 
-	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	if (_colCount <= 0 || _rowCount <= 0)
+	debug("rowCount = %d" , _rowCount);
+	if (colWidth <= 0  || _rowCount <= 0)
 		error("Remap dialog too small to display any keymaps");
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
@@ -160,7 +161,7 @@ void RemapDialog::reflowLayout() {
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
 	uint clearButtonYOff = (buttonHeight - clearButtonHeight) / 2;
 	uint oldSize = _keymapWidgets.size();
-	uint newSize = _rowCount * _colCount;
+	uint newSize = _rowCount;
 
 	_keymapWidgets.reserve(newSize);
 
@@ -178,8 +179,8 @@ void RemapDialog::reflowLayout() {
 			widg = _keymapWidgets[i];
 		}
 
-		uint x = areaX + (i % _colCount) * colWidth;
-		uint y = areaY + (i / _colCount) * (buttonHeight + spacing);
+		uint x = areaX;
+		uint y = areaY + (i) * (buttonHeight + spacing);
 
 		widg.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
 		widg.keyButton->resize(x + labelWidth, y, keyButtonWidth, buttonHeight);
@@ -362,7 +363,7 @@ void RemapDialog::loadKeymap() {
 
 	// refresh scroll bar
 	_scrollBar->_currentPos = 0;
-	_scrollBar->_numEntries = (_currentActions.size() + _colCount - 1) / _colCount;
+	_scrollBar->_numEntries = _currentActions.size();
 	_scrollBar->recalc();
 
 	// force refresh
@@ -371,7 +372,7 @@ void RemapDialog::loadKeymap() {
 }
 
 void RemapDialog::refreshKeymap() {
-	int newTopAction = _scrollBar->_currentPos * _colCount;
+	int newTopAction = _scrollBar->_currentPos;
 
 	if (newTopAction == _topAction)
 		return;

@@ -82,7 +82,7 @@ protected:
 	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;
 
-	uint _colCount, _rowCount;
+	uint _rowCount;
 
 	Array<ActionWidgets> _keymapWidgets;
 	Action *_activeRemapAction;
