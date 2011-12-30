@@ -25,8 +25,11 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "mortevielle/menu.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/textconsole.h"
+#include "mortevielle/menu.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
@@ -43,7 +46,7 @@ namespace Mortevielle {
 	s = nom;
 	if (! tesok) {
 		clrscr;
-		exit(0);
+		mortevielle_exit(0);
 	}
 	while (length(s) < 30)  s = s + ' ';
 	switch (h) {

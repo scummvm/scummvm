@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/scummsys.h"
 #include "mortevielle/actions.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/mor.h"
@@ -349,7 +350,7 @@ L2:
 }
 
 /* overlay */ void tfouiller() {
-	const byte[14] r = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
+	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 	int cx;
 
 	if (caff > 99) {

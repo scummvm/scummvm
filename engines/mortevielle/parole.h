@@ -28,6 +28,8 @@
 #ifndef MORTEVIELLE_PAROLE_H
 #define MORTEVIELLE_PAROLE_H
 
+#include "common/scummsys.h"
+
 namespace Mortevielle {
 
 extern void spfrac(int wor);

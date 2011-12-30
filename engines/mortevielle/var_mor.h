@@ -47,6 +47,10 @@ namespace Mortevielle {
 
 #define pred(type, v) (v - 1)
 #define succ(type, v) (v + 1)
+#define ord(v) ((int) v)
+
+// TODO: Replace with a cleaner shutdown mechanism
+#define mortevielle_exit(ret) error("Exit the game")
 
 /*---------------------------------------------------------------------------*/
 /*-------------------------    CONSTANTS   ----------------------------------*/

@@ -26,6 +26,7 @@
  */
 
 #include "mortevielle/parole2.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
