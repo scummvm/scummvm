@@ -170,7 +170,7 @@ void RemapDialog::reflowLayout() {
 
 		if (i >= _keymapWidgets.size()) {
 			widg.actionText =
-				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignRight);
+				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignLeft);
 			widg.keyButton =
 				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", 0, kRemapCmd + i);
 			widg.clearButton = addClearButton(this, "", kClearCmd + i, 0, 0, clearButtonWidth, clearButtonHeight);
@@ -182,9 +182,10 @@ void RemapDialog::reflowLayout() {
 		uint x = areaX;
 		uint y = areaY + (i) * (buttonHeight + spacing);
 
-		widg.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
-		widg.keyButton->resize(x + labelWidth, y, keyButtonWidth, buttonHeight);
-		widg.clearButton->resize(x + labelWidth + keyButtonWidth + spacing, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+		widg.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
+		widg.clearButton->resize(x + keyButtonWidth + spacing, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+		widg.actionText->resize(x + keyButtonWidth + spacing + clearButtonWidth + spacing, y + textYOff, labelWidth, kLineHeight);
+
 	}
 	while (oldSize > newSize) {
 		ActionWidgets widg = _keymapWidgets.remove_at(--oldSize);
@@ -391,7 +392,7 @@ void RemapDialog::refreshKeymap() {
 			debug(8, "RemapDialog::refreshKeymap actionI=%u", actionI);
 			ActionInfo&    info = _currentActions[actionI];
 
-			widg.actionText->setLabel(info.description + ": ");
+			widg.actionText->setLabel(info.description);
 			widg.actionText->setEnabled(!info.inherited);
 
 			const HardwareKey *mappedKey = info.action->getMappedKey();
