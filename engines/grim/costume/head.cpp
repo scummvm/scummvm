@@ -207,25 +207,41 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		}
 		p->setMatrix(matrix);
 		p->update();
-
+		
+		bool yFront = true; // If true, the character head coordinate frame is: +Y forward, +Z up, +X right.
+		if (this->_fname.compareTo("gunar_meshes.cos") == 0 || this->_fname.compareTo("slisko_meshes.cos") == 0)
+			yFront = false; // For these characters, the head coordinate frame is: -Z front, -X up, +Y right.
+		
+		// yFront == true for about every character in the game.
+		// yFront == false for those two revolutionistas in Blue Casket. Perhaps the artist wanted to be 
+		//                 a revolutionist as well ;) OR, there is a bug in the way how transform hierarchies
+		//                 are concatenated. (it is possible, at the present I do not understand all the details of
+		//                 the animation mechanism)
 		// v is the world space direction vector this character should be looking towards.
-		Math::Vector3d v =  point - _joint3Node->_pivotMatrix.getPosition();
-		if (!lookingMode)
-			v = Math::Vector3d(_joint1Node->_matrix(0,1), _joint1Node->_matrix(1,1), _joint1Node->_matrix(2,1)); // Look straight ahead.
-		if (v.isZero()) {
-			return;
+		Math::Vector3d v = point - _joint3Node->_pivotMatrix.getPosition();
+		if (!lookingMode) {
+			if (yFront)
+				v = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
+			else
+				v = Math::Vector3d(-_joint3Node->_matrix(0,2), -_joint3Node->_matrix(1,2), -_joint3Node->_matrix(2,2)); // Look straight ahead. (-Z)
 		}
+		if (v.isZero())
+			return;
 
 		v.normalize();
 		
 		// The vector v is in world space, so generate the world space lookat matrix for the desired head facing
 		// orientation.
-		Math::Matrix4 lookAtTM = lookAtMatrix(Math::Vector3d(0,1,0), v, Math::Vector3d(0,0,1), Math::Vector3d(0,0,1));
+		Math::Matrix4 lookAtTM;
+		if (yFront)
+			lookAtTM = lookAtMatrix(Math::Vector3d(0,1,0), v, Math::Vector3d(0,0,1), Math::Vector3d(0,0,1));
+		else
+			lookAtTM = lookAtMatrix(Math::Vector3d(0,0,-1), v, Math::Vector3d(-1,0,0), Math::Vector3d(0,0,1));
 		// The above specifies the world space orientation of this bone, but we need to output
 		// the orientation in parent space (as yaw/pitch/roll). 
 		
 		// Get the coordinate frame in which we need to produce the character head yaw/pitch/roll values.
-		Math::Matrix4 parentWorldTM = _joint1Node->_parent->_matrix;
+		Math::Matrix4 parentWorldTM = _joint3Node->_parent->_matrix;
 		
 		// While we could compute the desired lookat direction directly in the above coordinate frame,
 		// it is preferrable to compute the lookat direction with respect to the head orientation in
@@ -234,8 +250,8 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// directly in the space of the parent, we couldn't apply the head maxYaw/Pitch/Roll constraints 
 		// properly. So, compute the coordinate frame of this bone in the keyframe animation.
 		Math::Matrix4 animFrame;
-		animFrame.buildFromPitchYawRoll(_joint1Node->_pitch, _joint1Node->_yaw, _joint1Node->_roll);
-		animFrame.setPosition(Math::Vector3d(0, 0, 0));
+		animFrame.buildFromPitchYawRoll(_joint3Node->_pitch, _joint3Node->_yaw, _joint3Node->_roll);
+		animFrame.setPosition(Math::Vector3d(0, 0 ,0));
 		parentWorldTM = parentWorldTM * animFrame;
 		invertAffineOrthonormal(parentWorldTM);
 		
@@ -282,9 +298,9 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		lookAtTM = animFrame * lookAtTM;
 		
 		extractEulerZXY(lookAtTM, y, pt, r);
-		_joint1Node->_animYaw = y;
-		_joint1Node->_animPitch = pt;
-		_joint1Node->_animRoll = r;
+		_joint3Node->_animYaw = y;
+		_joint3Node->_animPitch = pt;
+		_joint3Node->_animRoll = r;
 		
 		// hack hack:
 		_joint1Node->_animYaw -= _joint1Node->_yaw;
