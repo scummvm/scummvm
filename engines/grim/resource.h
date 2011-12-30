@@ -68,7 +68,7 @@ public:
 	EMIModel *loadModelEMI(const Common::String &fname, EMIModel *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Skeleton *loadSkeleton(const Common::String &fname);
-	Common::SeekableReadStream *openNewStreamFile(const char *filename, bool cache = false);
+	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false);
 	void uncache(const char *fname);
 	bool getFileExists(const Common::String &filename);  //TODO: make it const again at next scummvm sync
 
@@ -92,8 +92,10 @@ private:
 	Common::SeekableReadStream *getFileFromCache(const Common::String &filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename);
 	void putIntoCache(const Common::String &fname, byte *res, uint32 len);
+	void loadPatches();
 
 	Common::SearchSet _files;
+	Common::List<Common::String> _patches;
 
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;

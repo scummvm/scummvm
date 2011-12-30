@@ -36,6 +36,7 @@
 #include "engines/grim/skeleton.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
+#include "engines/grim/patchr.h"
 #include "common/algorithm.h"
 #include "gui/message.h"
 
@@ -78,6 +79,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "year?mus.lab");
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
+			SearchMan.listMatchingMembers(files, "residual-grim-patch.lab");
 
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
@@ -116,6 +118,20 @@ ResourceLoader::ResourceLoader() {
 	}
 
 	files.clear();
+
+	loadPatches();
+}
+
+void ResourceLoader::loadPatches() {
+	Common::ArchiveMemberList patches;
+	_patches.clear();
+	_files.listMatchingMembers(patches, "*.patchr");
+	SearchMan.listMatchingMembers(patches, "*.patchr");
+	for (Common::ArchiveMemberList::const_iterator x = patches.begin(); x != patches.end(); ++x) {
+		Common::String filename = (*x)->getName();
+		filename = Common::String(filename.c_str(), filename.size() - 7); //remove the .patchr extension
+		_patches.push_back(filename);
+	}
 }
 
 template<typename T>
@@ -172,16 +188,30 @@ bool ResourceLoader::getFileExists(const Common::String &filename) {
 }
 
 Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
+	Common::SeekableReadStream *rs = NULL;
 	if (_files.hasFile(filename))
-		return _files.createReadStreamForMember(filename);
+		rs = _files.createReadStreamForMember(filename);
 	else if (SearchMan.hasFile(filename))
-		return SearchMan.createReadStreamForMember(filename);
+		rs = SearchMan.createReadStreamForMember(filename);
 	else
 		return NULL;
+
+	//Patch a file, if needed
+	if ((Common::find(_patches.begin(), _patches.end(), filename)) != _patches.end()) {
+		Debug::debug(Debug::Patchr, "Patch requested for %s", filename.c_str());
+		Patchr p;
+		p.loadPatch(openNewStreamFile(filename + ".patchr"));
+		bool success = p.patchFile(rs, filename);
+		if (success)
+			Debug::debug(Debug::Patchr, "%s successfully patched", filename.c_str());
+		else
+			warning("Patching of %s failed", filename.c_str());
+		rs->seek(0, SEEK_SET);
+	}
+	return rs;
 }
 
-Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename, bool cache) {
-	Common::String fname = filename;
+Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fname, bool cache) {
 	Common::SeekableReadStream *s;
     fname.toLowercase();
 

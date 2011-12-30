@@ -49,6 +49,7 @@ public:
 		Scripts = 2 << 14,
 		Sets = 2 << 15,
 		TextObjects = 2 << 16,
+		Patchr = 2 << 17,
 		All = 0xFFFFFF
 	};
 
