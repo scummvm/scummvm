@@ -196,7 +196,7 @@ void EMIModel::draw() {
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for(int i = 0; i < _numFaces; i++) {
-		//g_driver->drawEMIModelFace(this, &_faces[i]);
+		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}
 }
 

@@ -34,6 +34,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/modelemi.h"
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 
@@ -467,6 +468,32 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 	*b = _shadowColorB;
 }
 
+void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	int *indices = (int*)face->_indexes;
+	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_ALPHA_TEST);
+	
+	tglBegin(TGL_TRIANGLES);
+	for (int j = 0; j < face->_faceLength * 3; j++) {
+		
+		int index = indices[j];
+		if (face->_hasTexture) {
+			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+		}
+		//tglColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		
+		Math::Vector3d normal = model->_normals[index];
+		Math::Vector3d vertex = model->_vertices[index];
+		
+		tglNormal3f(normal.x(), normal.y(), normal.z());
+		tglVertex3f(vertex.x(), vertex.y(), vertex.z());
+	}
+	tglEnd();
+	
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_ALPHA_TEST);	
+}
+	
 void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	tglNormal3fv(const_cast<float *>(face->_normal.getData()));
 	tglBegin(TGL_POLYGON);

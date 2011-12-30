@@ -40,6 +40,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/modelemi.h"
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 
@@ -426,6 +427,34 @@ void GfxOpenGL::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
+void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	int *indices = (int*)face->_indexes;
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
+
+	glBegin(GL_TRIANGLES);
+	for (int j = 0; j < face->_faceLength * 3; j++) {
+		
+		int index = indices[j];
+		if (face->_hasTexture) {
+			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+		}
+		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		
+		Math::Vector3d normal = model->_normals[index];
+		Math::Vector3d vertex = model->_vertices[index];
+		
+		// Transform vertices (or maybe we should have done this already?)
+		
+		glNormal3fv(normal.getData());
+		glVertex3fv(vertex.getData());
+	}
+	glEnd();
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
+	glColor3f(1.0f,1.0f,1.0f);
+}
+	
 void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office

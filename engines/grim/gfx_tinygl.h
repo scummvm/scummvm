@@ -69,6 +69,7 @@ public:
 	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis);
 	void translateViewpointFinish();
 
+	void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face);
 	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 

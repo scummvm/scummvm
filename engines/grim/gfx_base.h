@@ -41,6 +41,8 @@ class PrimitiveObject;
 class Font;
 class TextObject;
 class Material;
+class EMIModel;
+class EMIMeshFace;
 class ModelNode;
 class Mesh;
 class MeshFace;
@@ -106,6 +108,7 @@ public:
 	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) = 0;
 	virtual void translateViewpointFinish() = 0;
 
+	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) = 0;
 	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
