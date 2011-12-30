@@ -75,11 +75,9 @@ Math::Vector3d *readVector3d(Common::ReadStream &ms, int count = 1) {
 
 Math::Vector4d *readVector4d(Common::ReadStream &ms) {
 	Math::Vector4d *vec4d = new Math::Vector4d();
-	float x, y, z, w;
 	char buf[16];
 	ms.read(buf, 16);
 	*vec4d = Math::Vector4d::get_vector4d(buf);
-	vec4d->set(x,y,z,w);
 	return vec4d;
 }
 
