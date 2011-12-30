@@ -327,7 +327,8 @@ void mdn() {
 			xprec = x;
 			yprec = y;
 		}
-		tes = (y < 11) && ((set::of(range(28 * res, 28 * res + 24), range(76 * res, 76 * res + 24), eos).has(x))
+		tes = (y < 11) && ((x >= (28 * res) && x <= (28 * res + 24)) 
+						   || (x >= (76 * res) && x <= (76 * res + 24))
 		                   || ((x > 124 * res) && (x < 124 * res + 24))
 		                   || ((x > 172 * res) && (x < 172 * res + 24))
 		                   || ((x > 220 * res) && (x < 220 * res + 24))
@@ -340,7 +341,7 @@ void mdn() {
 			else if (x < 268 * res)  ix = discut;
 			else ix = fichier;
 			if ((ix != msg3) || (! test0))
-				if (!((ix == fichier) && (set::of(sauve, charge, eos).has(msg3)))) {
+				if (!((ix == fichier) && ((msg3 == sauve) || (msg3 == charge)))) {
 					menu_up(msg3);
 					menu_down(ix);
 					msg3 = ix;

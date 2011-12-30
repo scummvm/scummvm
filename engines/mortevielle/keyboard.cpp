@@ -69,7 +69,7 @@ int testou() {
 	}
 	break;
 	case '\26' :
-		if (set::of(1, 2, eos).has(c_zzz)) {
+		if ((c_zzz == 1) && (c_zzz == 2)) {
 			zzuul(adcfiec + 161, 0, 1644);
 			c_zzz = succ(int, c_zzz);
 			testou_result = 61;
