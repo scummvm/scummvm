@@ -30,11 +30,16 @@
 #include "kyra/debugger.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Kyra {
+
+const char *const EoBCoreEngine::kKeymapName = "eob";
 
 EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	: KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
@@ -308,6 +313,50 @@ EoBCoreEngine::~EoBCoreEngine() {
 	_txt = 0;
 }
 
+void EoBCoreEngine::initKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kKeymapName) != 0)
+		return;
+
+	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{ Common::KeyState(Common::KEYCODE_UP), "MVF", _("Move Forward") },
+		{ Common::KeyState(Common::KEYCODE_DOWN), "MVB", _("Move Back") },
+		{ Common::KeyState(Common::KEYCODE_LEFT), "MVL", _("Move Left") },
+		{ Common::KeyState(Common::KEYCODE_RIGHT), "MVR", _("Move Right") },
+		{ Common::KeyState(Common::KEYCODE_HOME), "TL", _("Turn Left") },
+		{ Common::KeyState(Common::KEYCODE_PAGEUP), "TR", _("Turn Right") },
+		{ Common::KeyState(Common::KEYCODE_i), "INV", _("Open/Close Inventory") },
+		{ Common::KeyState(Common::KEYCODE_p), "SCE", _("Switch Inventory/Character screen") },
+		{ Common::KeyState(Common::KEYCODE_c), "CMP", _("Camp") },
+		{ Common::KeyState(Common::KEYCODE_SPACE), "CSP", _("Cast Spell") },
+		// TODO: Spell cursor, but this needs more thought, since different
+		// game versions use different keycodes.
+		{ Common::KeyState(Common::KEYCODE_1), "SL1", _("Spell Level 1") },
+		{ Common::KeyState(Common::KEYCODE_2), "SL2", _("Spell Level 2") },
+		{ Common::KeyState(Common::KEYCODE_3), "SL3", _("Spell Level 3") },
+		{ Common::KeyState(Common::KEYCODE_4), "SL4", _("Spell Level 4") },
+		{ Common::KeyState(Common::KEYCODE_5), "SL5", _("Spell Level 5") }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
+		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description, Common::kGenericActionType, Common::kActionKeyType);
+		act->addKeyEvent(keyActionEntries[i].ks);
+	}
+	
+	if (_flags.gameID == GI_EOB2) {
+		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"), Common::kGenericActionType, Common::kActionKeyType);
+		act->addKeyEvent(Common::KeyState(Common::KEYCODE_6));
+	}
+
+	mapper->addGameKeymap(engineKeyMap);
+#endif
+}
+
 Common::Error EoBCoreEngine::init() {
 	// In EOB the timer proc is directly invoked via interrupt 0x1c, 18.2 times per second.
 	// This makes a tick length of 54.94.
@@ -438,6 +487,10 @@ Common::Error EoBCoreEngine::init() {
 
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
+
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->pushKeymap(kKeymapName, true);
+#endif
 
 	return Common::kNoError;
 }

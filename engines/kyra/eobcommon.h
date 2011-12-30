@@ -250,6 +250,8 @@ public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	virtual ~EoBCoreEngine();
 
+	virtual void initKeymap();
+
 	Screen *screen() { return _screen; }
 	GUI *gui() const { return _gui; }
 
@@ -1127,9 +1129,12 @@ protected:
 	// sound
 	void snd_playSoundEffect(int id, int volume=0xFF);
 	void snd_stopSound();
+
+	// keymap
+	static const char *const kKeymapName;
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
 
