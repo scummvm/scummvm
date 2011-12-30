@@ -45,6 +45,8 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
@@ -497,6 +499,12 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void Engine::deinitKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->cleanupGameKeymaps();
+#endif
 }
 
 void Engine::flipMute() {

@@ -212,10 +212,6 @@ LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
 	releaseTempData();
 
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->cleanupGameKeymaps();
-#endif
-
 	delete[] _landsFile;
 	delete[] _levelLangFile;
 
@@ -461,7 +457,9 @@ Common::Error LoLEngine::init() {
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
 
-	initKeymap();
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->pushKeymap(kKeymapName, true);
+#endif
 
 	return Common::kNoError;
 }
@@ -502,8 +500,6 @@ void LoLEngine::initKeymap() {
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
-
-	mapper->pushKeymap(kKeymapName, true);
 
 #endif
 }

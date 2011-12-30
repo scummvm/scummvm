@@ -203,6 +203,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 
+	// Initialize any game-specific keymaps
+	engine->initKeymap();
+
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
@@ -211,6 +214,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Inform backend that the engine finished
 	system.engineDone();
+
+	// Clean up any game-specific keymaps
+	engine->deinitKeymap();
 
 	// Free up memory
 	delete engine;
