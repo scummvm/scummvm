@@ -95,7 +95,9 @@ ResourceLoader::ResourceLoader() {
 		}
 	}
 
-	if (g_grim->getGameType() == GType_MONKEY4)
+	if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() == ADGF_DEMO)
+		SearchMan.listMatchingMembers(files, "*.lab");
+	else if (g_grim->getGameType() == GType_MONKEY4)
 		SearchMan.listMatchingMembers(files, "*.m4b");
 
 	if (files.empty())
