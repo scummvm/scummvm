@@ -986,7 +986,7 @@ L2:
 /* overlay */ void tparler()
 
 {
-	array<1, 46, bool> te;
+	bool te[47];
 	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
 	char tou;

@@ -25,8 +25,9 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "mortevielle/taffich.h"
 #include "common/str.h"
+#include "mortevielle/taffich.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

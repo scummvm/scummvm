@@ -49,8 +49,9 @@ namespace Mortevielle {
 #define succ(type, v) (v + 1)
 #define ord(v) ((int) v)
 
-// TODO: Replace with a cleaner shutdown mechanism
+// TODO: Replace the following with proper implementations
 #define mortevielle_exit(ret) error("Exit the game")
+#define clrscr {}
 
 /*---------------------------------------------------------------------------*/
 /*-------------------------    CONSTANTS   ----------------------------------*/
@@ -221,6 +222,8 @@ struct nhom {
 	byte n;     /* numero entre 0 et 32 */
 	byte hom[4];
 };
+
+typedef nhom t_nhom[16];
 
 struct t_pcga {
 	byte p;
