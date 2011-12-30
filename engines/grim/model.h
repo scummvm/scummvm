@@ -174,6 +174,8 @@ public:
 	int _depth, _numChildren;
 	ModelNode *_parent, *_child, *_sibling;
 	Math::Vector3d _pos, _pivot;
+	// Specifies the bind pose YPR values for this node. This data
+	// is read from the model file and never altered (could be const).
 	Math::Angle _pitch, _yaw, _roll;
 	Math::Vector3d _animPos;
 	Math::Angle _animPitch, _animYaw, _animRoll;

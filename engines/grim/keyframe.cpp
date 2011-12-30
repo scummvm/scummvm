@@ -270,6 +270,13 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 	Math::Angle pitch = _entries[low]._pitch;
 	Math::Angle yaw = _entries[low]._yaw;
 	Math::Angle roll = _entries[low]._roll;
+
+	/** @bug Interpolating between two orientations specified by Euler angles (yaw/pitch/roll)
+	 *	by linearly interpolating the YPR values does not compute proper in-between 
+	 *	poses, i.e. the rotation from start to finish does not go via the shortest arc.
+	 *	Though, if the start and end poses are very similar to each other, this can look 
+	 *	acceptable without visual artifacts. 
+	 */
 	if (useDelta) {
 		pos += dt * _entries[low]._dpos;
 		pitch += dt * _entries[low]._dpitch;
