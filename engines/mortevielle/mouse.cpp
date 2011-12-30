@@ -98,7 +98,7 @@ void hide_mouse() {
 		switch (gd) {
 		case cga : {
 			k = 0;
-			j = ((cardinal)y_s >> 1) * 80 + ((cardinal)x_s >> 2);
+			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
 				memw[0xb000 + j] = s_s[0][k];
 				memw[0xb800 + j + 2] = s_s[1][k];
@@ -150,7 +150,7 @@ void hide_mouse() {
 		}
 		break;
 		case her : {
-			j = ((cardinal)y_s >> 1) * 80 + ((cardinal)x_s >> 3);
+			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 			for (i = 0; i <= 5; i ++) {
 				for (k = 0; k <= 3; k ++) memw[0xb000 + k * 0x200 + j] = s_s[i][k];
 				j = j + 80;
@@ -158,7 +158,7 @@ void hide_mouse() {
 		}
 		break;
 		case tan : {
-			j = ((cardinal)y_s >> 2) * 160 + ((cardinal)x_s >> 1);
+			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 			k = 0;
 			do {
 				for (i = 0; i <= 3; i ++) {
@@ -189,7 +189,7 @@ void show_mouse() {
 	switch (gd) {
 	case cga : {
 		k = 0;
-		j = ((cardinal)y_s >> 1) * 80 + ((cardinal)x_s >> 2);
+		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 		do {
 			s_s[0][k] = memw[0xb800 + j];
 			s_s[1][k] = memw[0xb800 + j + 2];
@@ -237,7 +237,7 @@ void show_mouse() {
 	}
 	break;
 	case her : {
-		j = ((cardinal)y_s >> 1) * 80 + ((cardinal)x_s >> 3);
+		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 		for (i = 0; i <= 5; i ++) {
 			for (k = 0; k <= 3; k ++) s_s[i][k] = memw[0xb000 + k * 0x200 + j];
 			j = j + 80;
@@ -245,7 +245,7 @@ void show_mouse() {
 	}
 	break;
 	case tan : {
-		j = ((cardinal)y_s >> 2) * 160 + ((cardinal)x_s >> 1);
+		j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 		k = 0;
 		do {
 			for (i = 0; i <= 3; i ++) {
@@ -282,14 +282,14 @@ void pos_mouse(int x, int y) {
 	y_s = y;
 	switch (gd) {
 	case ams : {
-		p_o_s = ((cardinal)y_s >> 1) * 80 + ((cardinal)x_s >> 3) + (y_s & 1) * 0x2000;
+		p_o_s = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3) + (y_s & 1) * 0x2000;
 	}
 	break;
 	/*cga : begin
 	        P_O_S:=(Y_S shr 1)*80+X_S shr 2+(Y_S and 1)*$2000;
 	      end;*/
 	case ega : {
-		p_o_s = y_s * 80 + ((cardinal)x_s >> 3);
+		p_o_s = y_s * 80 + ((uint)x_s >> 3);
 	}
 	break;
 	}    /*  case Gd   */

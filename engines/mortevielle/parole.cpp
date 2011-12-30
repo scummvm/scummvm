@@ -30,13 +30,13 @@
 namespace Mortevielle {
 
 void spfrac(int wor) {
-	c3.rep = (cardinal)wor >> 12;
+	c3.rep = (uint)wor >> 12;
 	if ((typlec == 0) && (c3.code != 9))
 		if (((c3.code > 4) && (c3.val != 20) && !(set::of(3, 6, 9, eos).has(c3.rep))) ||
 		        ((c3.code < 5) && !(set::of(19, 22, eos).has(c3.val)) && !(set::of(4, 9, eos).has(c3.rep))))
 			c3.rep = c3.rep + 1;
-	c3.freq = ((cardinal)wor >> 6) & 7;
-	c3.acc = ((cardinal)wor >> 9) & 7;
+	c3.freq = ((uint)wor >> 6) & 7;
+	c3.acc = ((uint)wor >> 9) & 7;
 }
 
 void charg_car() {

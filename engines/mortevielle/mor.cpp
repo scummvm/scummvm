@@ -54,9 +54,9 @@ int readclock() {
 	r.ax = 0x2c00;
 	intr(0x21, r);
 	{
-		h = (cardinal)r.cx >> 8;
+		h = (uint)r.cx >> 8;
 		m = r.cx % 256;
-		s = (cardinal)r.dx >> 8;
+		s = (uint)r.dx >> 8;
 	}
 	m = m * 60;
 	h = h * 3600;
@@ -285,7 +285,7 @@ void clsf10() {
 	else if (s.conf > 65)  st = "Malsaine";
 	if (res == 1)  co = 10;
 	else co = 6;
-	co = 574 - ((cardinal)co * length(st) >> 1);
+	co = 574 - ((uint)co * length(st) >> 1);
 	putxy(co, 92);
 	writeg(st, 4);
 	if (res == 1)  co = 620;
@@ -331,7 +331,7 @@ void calch(int &j, int &h, int &m) {
 	nh = readclock();
 	th = jh + ((nh - mh) / t);
 	m = ((th % 2) + vm) * 30;
-	h = ((cardinal)th >> 1) + vh;
+	h = ((uint)th >> 1) + vh;
 	if (m == 60) {
 		m = 0;
 		h = h + 1;
@@ -347,7 +347,7 @@ void conv(int x, int &y) {
 	cx = 1;
 	y = 128;
 	while (cx < x) {
-		y = (cardinal)y >> 1;
+		y = (uint)y >> 1;
 		cx = succ(int, cx);
 	}
 }
@@ -656,12 +656,12 @@ void pendule() {
 	paint_rect(578, 114, 6, 18);
 	if (set::of(cga, her, eos).has(gd))  co = 0;
 	else co = 1;
-	if (min == 0)  droite(((cardinal)x >> 1)*res, y, ((cardinal)x >> 1)*res, (y - rg), co);
-	else droite(((cardinal)x >> 1)*res, y, ((cardinal)x >> 1)*res, (y + rg), co);
+	if (min == 0)  droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
+	else droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
 	h = heu;
 	if (h > 12)  h = h - 12;
 	if (h == 0)  h = 12;
-	droite(((cardinal)x >> 1)*res, y, ((cardinal)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
+	droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
 	show_mouse();
 	putxy(568, 154);
 	if (heu > 11)  writeg("PM ", 1);

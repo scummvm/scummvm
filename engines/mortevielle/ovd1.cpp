@@ -153,8 +153,8 @@ void ani50() {
 			nhom &with = palcga[j].a[i];
 
 			fb >> b;
-			with.n = (cardinal)b >> 4;
-			with.hom[0] = ((cardinal)b >> 2) & 3;
+			with.n = (uint)b >> 4;
+			with.hom[0] = ((uint)b >> 2) & 3;
 			with.hom[1] = b & 3;
 		}
 	}
@@ -236,7 +236,7 @@ void ani50() {
 	case '\1':
 	case '\3':
 	case '\5' :
-		gd = (cardinal)ord(ch) >> 1;
+		gd = (uint)ord(ch) >> 1;
 		break;
 	case '\10' :
 		gd = her;

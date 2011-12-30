@@ -56,13 +56,13 @@ void trait_ph() {
 	ledeb = swap(t_cph[ptr_tcph]) + deca[typlec];
 	lefin = swap(t_cph[ptr_tcph + 1]) + deca[typlec];
 	nb_word = lefin - ledeb;
-	ptr_tcph = (cardinal)ledeb >> 1;
+	ptr_tcph = (uint)ledeb >> 1;
 	ptr_word = 0;
 	do {
 		memw[adword + ptr_word] = t_cph[ptr_tcph];
 		ptr_word = ptr_word + 2;
 		ptr_tcph = ptr_tcph + 1;
-	} while (!(ptr_tcph >= ((cardinal)lefin >> 1)));
+	} while (!(ptr_tcph >= ((uint)lefin >> 1)));
 
 	ptr_oct = 0;
 	ptr_word = 0;

@@ -89,7 +89,7 @@ static void fait_boite(int lidep, int nli, int tx) {
 	int x, y, xx, yy;
 
 	if (tx > 640)  tx = 640;
-	x = 320 - ((cardinal)tx >> 1);
+	x = 320 - ((uint)tx >> 1);
 	y = pred(int, lidep) << 3;
 	xx = x + tx;
 	yy = y + (nli << 3);
@@ -163,15 +163,15 @@ int do_alert(Common::String str_, int n) {
 		} while (!(chaine[i] == ']'));
 	}
 	if (nbcase == 1)  esp = nbcol - 40;
-	else esp = (cardinal)(nbcol - nbcase * 40) >> 1;
-	coldep = 320 - ((cardinal)nbcol >> 1) + ((cardinal)esp >> 1);
+	else esp = (uint)(nbcol - nbcase * 40) >> 1;
+	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
 	fait_choix(cas, coldep, nbcase, s, esp);
-	limit[1][1] = ((cardinal)(coldep) >> 1) * res;
+	limit[1][1] = ((uint)(coldep) >> 1) * res;
 	limit[1][2] = limit[1][1] + 40;
 	if (nbcase == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((cardinal)(320 + ((cardinal)esp >> 1)) >> 1) * res;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	show_mouse();

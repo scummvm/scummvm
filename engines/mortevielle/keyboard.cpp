@@ -50,7 +50,7 @@ int testou() {
 	case '\1':
 	case '\3':
 	case '\5'  : {
-		newgd = (cardinal)pred(int, ord(ch)) >> 1;
+		newgd = (uint)pred(int, ord(ch)) >> 1;
 		testou_result = 61;
 		return testou_result;
 	}
