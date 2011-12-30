@@ -466,15 +466,13 @@ Common::Error LoLEngine::init() {
 
 void LoLEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
-
-	Common::Keymapper *mapper = _eventMan->getKeymapper();
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
 	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
-	Common::Action *act;
-	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "AT1", _("Attack 1")},
@@ -492,14 +490,12 @@ void LoLEngine::initKeymap() {
 		{Common::KeyState(), 0, 0}
 	};
 
-	const Common::KeyActionEntry *entry;
-	for (entry = keyActionEntries; entry->id; ++entry) {
-		act = new Common::Action(engineKeyMap, entry->id, Common::String(entry->description), Common::kGenericActionType, Common::kActionKeyType);
-		act->addKeyEvent(Common::KeyState(entry->ks));
+	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
+		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description, Common::kGenericActionType, Common::kActionKeyType);
+		act->addKeyEvent(entry->ks);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
-
 #endif
 }
 
