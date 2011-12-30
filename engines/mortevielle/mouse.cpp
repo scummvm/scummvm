@@ -42,7 +42,7 @@ int m_show,
         p_o_s,
         mouse_shwn;
 
-matrix<0, 5, 0, 11, int> s_s;
+int s_s[12][6];
 
 
 void init_mouse() {

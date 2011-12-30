@@ -28,7 +28,9 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -48,7 +50,7 @@ namespace Mortevielle {
 		clrscr;
 		mortevielle_exit(0);
 	}
-	while (length(s) < 30)  s = s + ' ';
+	while (s.size() < 30)  s = s + ' ';
 	switch (h) {
 	case invent  :
 		if (l != 7)  inv[l] = string(' ') + s;

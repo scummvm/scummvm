@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/mouse.h"
 
 namespace Mortevielle {
 
@@ -35,12 +36,12 @@ namespace Mortevielle {
 
 
 const int nligne = 7;
-const matrix<1, 2, 1, 3, int> coord
-= {{ {{150, 72, 103}},
-		{{143, 107, 183}}
-	}
-};
 
+const int coord[3][4] = {
+	{0, 0, 0, 0},
+	{0, 150, 72, 103),
+	{0, 143, 107, 183}
+};
 
 
 static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs) {
@@ -115,7 +116,7 @@ static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::Strin
 			str[l] = str[l] + ch;
 		} while (!(c[i + 1] == ']'));
 		i = i + 2;
-		while (length(str[l]) < 3)  str[l] = str[l] + ' ';
+		while (str[l].size() < 3)  str[l] = str[l] + ' ';
 		putxy(x, 98);
 		writeg(string(' ') + str[l] + ' ', 0);
 		x = x + esp + 40;

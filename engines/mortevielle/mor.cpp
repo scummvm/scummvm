@@ -28,8 +28,14 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
+#include "mortevielle/boite.h"
+#include "mortevielle/droite.h
+#include "mortevielle/level15.h"
+#include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
+#include "mortevielle/parole2.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -219,8 +225,8 @@ void ecr2(Common::String str_) {
 	else tab = 6;
 	putxy(8, 177);
 	tlig = 59 + pred(int, res) * 36;
-	if (length(str_) < tlig)  writeg(str_, 5);
-	else if (length(str_) < (tlig << 1)) {
+	if (str_.size() < tlig)  writeg(str_, 5);
+	else if (str_.size() < (tlig << 1)) {
 		putxy(8, 176);
 		writeg(copy(str_, 1, pred(int, tlig)), 5);
 		putxy(8, 182);
@@ -286,7 +292,7 @@ void clsf10() {
 	else if (s.conf > 65)  st = "Malsaine";
 	if (res == 1)  co = 10;
 	else co = 6;
-	co = 574 - ((uint)co * length(st) >> 1);
+	co = 574 - ((uint)co * st.size() >> 1);
 	putxy(co, 92);
 	writeg(st, 4);
 	if (res == 1)  co = 620;
@@ -638,10 +644,10 @@ void chlm(int &per) {
 }
 
 void pendule() {
-	const matrix<1, 2, 1, 12, int> cv
-	= {{{{ 5,  8, 10,  8,  5,  0, -5,  -8, -10,  -8,  -5,   0}},
-			{{ -5, -3,  0,  3,  5,  6,  5,   3,   0,  -3,  -5,  -6}}
-		}
+	const int cv[3][13] = {
+		{ 0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0 },
+		{ 0,  5,  8, 10,  8,  5,  0, -5, -8, -10, -8, -5,  0 },
+		{ 0, -5, -3,  0,  3,  5,  6,  5,  3,   0, -3, -5, -6 }
 	};
 	const int x = 580;
 	const int y = 123;
@@ -983,8 +989,7 @@ void debloc(int l) {
 
 /* NIVEAU 10 */
 void init_nbrepm() {
-	const array<1, 8, byte> ipm
-	= {{4, 5, 6, 7, 5, 6, 5, 8}};
+	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
 	int i;
 
 	/* debug('init_nbrepm'); */
