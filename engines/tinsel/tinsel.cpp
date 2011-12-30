@@ -1177,7 +1177,7 @@ void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_d:
 		// Checks for CTRL flag, ignoring all the sticky flags
-		if ((Common::KBD_CTRL == (event.kbd.flags & ~(Common::KBD_NUM|Common::KBD_CAPS|Common::KBD_SCRL))) && (event.type == Common::EVENT_KEYDOWN)) {
+		if (event.kbd.hasFlags(Common::KBD_CTRL) && event.type == Common::EVENT_KEYDOWN) {
 			// Activate the debugger
 			assert(_console);
 			_console->attach();
