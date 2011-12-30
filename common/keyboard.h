@@ -292,7 +292,7 @@ struct KeyState {
 	 *    if (keystate.flags & KBD_CTRL) { ... }
 	 */
 	bool hasFlags(byte f) const {
-		assert (!(f & KBD_STICKY));
+		assert(!(f & KBD_STICKY));
 		return f == (flags & ~KBD_STICKY);
 	}
 
