@@ -6,3 +6,8 @@ List of fixed bug in GF scripts:
 
 	-Fix the behaviour of dofile statement
 	In _system.lua there is a re-definition of dofile, used to load scripts from some others positions ("Scripts\" and "d:\\grimFandango\\Scripts\\"). This cause a lot of warnings when an non-existant file is required. Moreover this function is bugged: it returns everytime nil, even if the file has correctly loaded. So it's has been modified to load scripts only from the main path and it returns nil when the file has succesfully loaded, otherwise the numer one (which is a boolean true). The last modification is requied, since the others scripts expect this behavior.
+
++Untriggered contents:
+	-Fix the missing dialogue with Domino at third year
+	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this prevents the correct load of this script.
+	See http://residual.scummvm.org/viewtopic.php?t=108
