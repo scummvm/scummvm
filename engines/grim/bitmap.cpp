@@ -118,7 +118,10 @@ BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *
 		case(MKTAG('B','M',' ',' ')):				//Grim bitmap
 			loadGrimBm(fname, data);
 			break;
-		case(MKTAG('\x1f','\x8b','\x08','\0')):		//MI4 bitmap
+		case(MKTAG('\x1f','\x8b','\x08','\0')):		// MI4 bitmap
+			loadTile(fname, data);
+			break;
+		case(529205248): // FIXME, this is the value MKTAG should create
 			loadTile(fname, data);
 			break;
 		default:
@@ -251,7 +254,8 @@ bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStrea
 	_x = 0;
 	_y = 0;
 	_format = 1;
-	//warning("Loading TILE: %s",filename);
+	data->seek(0, SEEK_SET);
+	//warning("Loading TILE: %s",fname.c_str());
 	Common::SeekableReadStream *o = Common::wrapCompressedReadStream(data);
 
 	uint32 id, bmoffset;
