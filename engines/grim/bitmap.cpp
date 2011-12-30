@@ -30,7 +30,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/gfx_base.h"
 
 namespace Grim {
@@ -94,7 +93,7 @@ char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 
 #endif
 
-BitmapData *BitmapData::getBitmapData(const Common::String &fname, const char *data, int len) {
+BitmapData *BitmapData::getBitmapData(const Common::String &fname, Common::SeekableReadStream *data) {
 	Common::String str(fname);
 	if (_bitmaps && _bitmaps->contains(str)) {
 		BitmapData *b = (*_bitmaps)[str];
@@ -102,7 +101,7 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname, const char *d
 		return b;
 	}
 
-	BitmapData *b = new BitmapData(fname, data, len);
+	BitmapData *b = new BitmapData(fname, data);
 	if (!_bitmaps) {
 		_bitmaps = new Common::HashMap<Common::String, BitmapData *>();
 	}
@@ -110,52 +109,73 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname, const char *d
 	return b;
 }
 
-BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
+BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *data) {
 	_fname = fname;
 	_refCount = 1;
-	if (len > 4 && memcmp(data, "\x1f\x8b\x08\0", 4) == 0) {
-		loadTile(data, len);
-		return;
-	} else if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
-		Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
-	}
 
-	int codec = READ_LE_UINT32(data + 8);
-	//	_paletteIncluded = READ_LE_UINT32(data + 12);
-	_numImages = READ_LE_UINT32(data + 16);
-	_x = READ_LE_UINT32(data + 20);
-	_y = READ_LE_UINT32(data + 24);
-	//	_transparentColor = READ_LE_UINT32(data + 28);
-	_format = READ_LE_UINT32(data + 32);
-	_bpp = READ_LE_UINT32(data + 36);
-	//	_blueBits = READ_LE_UINT32(data + 40);
-	//	_greenBits = READ_LE_UINT32(data + 44);
-	//	_redBits = READ_LE_UINT32(data + 48);
-	//	_blueShift = READ_LE_UINT32(data + 52);
-	//	_greenShift = READ_LE_UINT32(data + 56);
-	//	_redShift = READ_LE_UINT32(data + 60);
-	_width = READ_LE_UINT32(data + 128);
-	_height = READ_LE_UINT32(data + 132);
+	uint32 tag = data->readUint32BE();
+	switch(tag) {
+		case(MKTAG('B','M',' ',' ')):				//Grim bitmap
+			loadGrimBm(fname, data);
+			break;
+		case(MKTAG('\x1f','\x8b','\x08','\0')):		//MI4 bitmap
+			loadTile(fname, data);
+			break;
+		default:
+			assert(false);
+			Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
+			break;
+	}
+	delete data;
+}
+
+
+bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStream *data) {
+	uint32 tag2 = data->readUint32BE();
+	if(tag2 != (MKTAG('F','\0','\0','\0')))
+		return false;
+
+	int codec = data->readUint32LE();
+	data->readUint32LE(); 				//_paletteIncluded
+	_numImages = data->readUint32LE();
+	_x = data->readUint32LE();
+	_y = data->readUint32LE();
+	data->readUint32LE(); 				//_transparentColor
+	_format = data->readUint32LE();
+	_bpp = data->readUint32LE();
+	//	_blueBits = data->readUint32LE();
+	//	_greenBits = data->readUint32LE();
+	//	_redBits = data->readUint32LE();
+	//	_blueShift = data->readUint32LE();
+	//	_greenShift = data->readUint32LE();
+	//	_redShift = data->readUint32LE();
+
+	data->seek(128, SEEK_SET);
+	_width = data->readUint32LE();
+	_height = data->readUint32LE();
 	_colorFormat = BM_RGB565;
 	_hasTransparency = false;
 
 	_data = new char *[_numImages];
-	int pos = 0x88;
+	data->seek(0x80, SEEK_SET);
 	for (int i = 0; i < _numImages; i++) {
+		data->seek(8, SEEK_CUR);
 		_data[i] = new char[_bpp / 8 * _width * _height];
 		if (codec == 0) {
-			memcpy(_data[i], data + pos, _bpp / 8 * _width * _height);
-			pos += _bpp / 8 * _width * _height + 8;
+			uint32 dsize = _bpp / 8 * _width * _height;
+			data->read(_data[i], dsize);
 		} else if (codec == 3) {
-			int compressed_len = READ_LE_UINT32(data + pos);
-			bool success = decompress_codec3(data + pos + 4, _data[i], _bpp / 8 * _width * _height);
+			int compressed_len = data->readUint32LE();
+			char *compressed = new char[compressed_len];
+			data->read(compressed, compressed_len);
+			bool success = decompress_codec3(compressed, _data[i], _bpp / 8 * _width * _height);
+			delete[] compressed;
 			if (!success)
 				warning(".. when loading image %s.\n", fname.c_str());
 			char *temp = new char[_bpp / 8 * _width * _height];
 			memcpy(temp, _data[i], _bpp / 8 * _width * _height);
 			delete[] _data[i];
 			_data[i] = temp;
-			pos += compressed_len + 12;
 		}
 		else
 			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
@@ -174,6 +194,7 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 	_texIds = NULL;
 
 	g_driver->createBitmap(this);
+	return true;
 }
 
 BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fname) {
@@ -225,14 +246,13 @@ BitmapData::~BitmapData() {
 	}
 }
 
-bool BitmapData::loadTile(const char *data, int len) {
+bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStream *data) {
 #ifdef ENABLE_MONKEY4
 	_x = 0;
 	_y = 0;
 	_format = 1;
 	//warning("Loading TILE: %s",filename);
-	Common::MemoryReadStream stream((const byte *)data, len);
-	Common::SeekableReadStream *o = Common::wrapCompressedReadStream(&stream);
+	Common::SeekableReadStream *o = Common::wrapCompressedReadStream(data);
 
 	uint32 id, bmoffset;
 	id = o->readUint32LE();
@@ -290,9 +310,9 @@ char *BitmapData::getImageData(int num) const {
 
 // Bitmap
 
-Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
+Bitmap::Bitmap(const Common::String &fname, Common::SeekableReadStream *data) :
 		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
-	_data = BitmapData::getBitmapData(fname, data, len);
+	_data = BitmapData::getBitmapData(fname, data);
 	_x = _data->_x;
 	_y = _data->_y;
 	_currImage = 1;
@@ -323,8 +343,8 @@ void Bitmap::restoreState(SaveGame *state) {
 	freeData();
 
 	Common::String fname = state->readString();
-	Block *b = g_resourceloader->getBlock(fname);
-	_data = BitmapData::getBitmapData(fname, b->getData(), b->getLen());
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(fname.c_str(), true);
+	_data = BitmapData::getBitmapData(fname, data);
 
 	_currImage = state->readLESint32();
 	_x = state->readLESint32();

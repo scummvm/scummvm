@@ -104,19 +104,19 @@ namespace Grim {
 // marked OBJSTATE_OVERLAY.  So the BitmapComponent just needs to pass
 // along setKey requests to the actual bitmap object.
 
-Costume::Costume(const Common::String &fname, const char *data, int len, Costume *prevCost) :
+Costume::Costume(const Common::String &fname, Common::SeekableReadStream *data, Costume *prevCost) :
 		Object(), _head(new Head()), _chores(NULL) {
 
 	_fname = fname;
 	_lookAtRate = 200;
 	_prevCostume = prevCost;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Common::MemoryReadStream ms((const byte *)data, len);
-		loadEMI(ms, prevCost);
+		loadEMI(data, prevCost);
 	} else {
-		TextSplitter ts(data, len);
+		TextSplitter ts(data);
 		loadGRIM(ts, prevCost);
 	}
+	delete data;
 }
 
 void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
@@ -205,34 +205,34 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	}
 }
 
-void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
+void Costume::loadEMI(Common::SeekableReadStream *data, Costume *prevCost) {
 	Common::List<Component *>components;
 
-	_numChores = ms.readUint32LE();
+	_numChores = data->readUint32LE();
 	_chores = new Chore *[_numChores];
 	for (int i = 0; i < _numChores; i++) {
 		_chores[i] = new PoolChore();
 		uint32 nameLength;
 		Component *prevComponent = NULL;
-		nameLength = ms.readUint32LE();
-		ms.read(_chores[i]->_name, nameLength);
+		nameLength = data->readUint32LE();
+		data->read(_chores[i]->_name, nameLength);
 		float length;
-		ms.read(&length, 4);
+		data->read(&length, 4);
 		_chores[i]->_length = (int)length;
 
 		_chores[i]->_owner = this;
-		_chores[i]->_numTracks = ms.readUint32LE();
+		_chores[i]->_numTracks = data->readUint32LE();
 		_chores[i]->_tracks = new ChoreTrack[_chores[i]->_numTracks];
 
 		for (int k = 0; k < _chores[i]->_numTracks; k++) {
-			int componentNameLength = ms.readUint32LE();
+			int componentNameLength = data->readUint32LE();
 			assert(componentNameLength < 64);
 
 			char name[64];
-			ms.read(name, componentNameLength);
+			data->read(name, componentNameLength);
 
-			ms.readUint32LE();
-			int parentID = ms.readUint32LE();
+			data->readUint32LE();
+			int parentID = data->readUint32LE();
 			if (parentID == -1 && prevCost) {
 				MainModelComponent *mmc;
 
@@ -256,15 +256,15 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 			components.push_back(component);
 
 			ChoreTrack &track = _chores[i]->_tracks[k];
-			track.numKeys = ms.readUint32LE();
+			track.numKeys = data->readUint32LE();
 			track.keys = new TrackKey[track.numKeys];
 
 			// this is probably wrong
 			track.compID = 0;
 			for (int j = 0; j < track.numKeys; j++) {
 				float time, value;
-				ms.read(&time, 4);
-				ms.read(&value, 4);
+				data->read(&time, 4);
+				data->read(&value, 4);
 				track.keys[j].time = (int)time;
 				track.keys[j].value = (int)value;
 			}

@@ -25,12 +25,16 @@
 
 #include "engines/grim/object.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 class CMap : public Object {
 public:
 	// Load a colormap from the given data.
-	CMap(const Common::String &fileName, const char *data, int len);
+	CMap(const Common::String &fileName, Common::SeekableReadStream *data);
 	~CMap();
 	const Common::String &getFilename() const { return _fname; }
 

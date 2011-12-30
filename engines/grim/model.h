@@ -23,9 +23,12 @@
 #ifndef GRIM_MODEL_H
 #define GRIM_MODEL_H
 
-#include "common/memstream.h"
 #include "engines/grim/object.h"
 #include "math/matrix4.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Grim {
 
@@ -49,10 +52,10 @@ struct Sprite {
 class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
-	Model(const Common::String &filename, const char *data, int len, CMap *cmap, Model *parent = NULL);
-	void loadBinary(const char *&data, CMap *cmap);
+	Model(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, Model *parent = NULL);
+	void loadBinary(Common::SeekableReadStream *data, CMap *cmap);
 	void loadText(TextSplitter *ts, CMap *cmap);
-	void loadEMI(Common::MemoryReadStream &ms);
+	void loadEMI(Common::SeekableReadStream *data);
 	void reload(CMap *cmap);
 	void draw() const;
 	Material *findMaterial(const char *name, CMap *cmap) const;
@@ -67,7 +70,7 @@ public:
 
 //private:
 	struct Geoset {
-		void loadBinary(const char *&data, Material *materials[]);
+		void loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 		void loadText(TextSplitter *ts, Material *materials[]);
 		void changeMaterials(Material *materials[]);
 		Geoset() : _numMeshes(0) { }
@@ -96,7 +99,7 @@ public:
 
 class MeshFace {
 public:
-	int loadBinary(const char *&data, Material *materials[]);
+	int loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 	void draw(float *vertices, float *vertNormals, float *textureVerts) const;
 	void changeMaterial(Material *material);
 	~MeshFace();
@@ -111,7 +114,7 @@ public:
 
 class Mesh {
 public:
-	void loadBinary(const char *&data, Material *materials[]);
+	void loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 	void loadText(TextSplitter *ts, Material *materials[]);
 	void changeMaterials(Material *materials[]);
 	void draw() const;
@@ -142,7 +145,7 @@ class ModelNode {
 public:
 	ModelNode() : _initialized(false) { }
 	~ModelNode();
-	void loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g);
+	void loadBinary(Common::SeekableReadStream *data, ModelNode *hierNodes, const Model::Geoset *g);
 	void draw() const;
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 	void addChild(ModelNode *child);

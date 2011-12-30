@@ -60,7 +60,6 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/localize.h"
 #include "engines/grim/gfx_base.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/primitives.h"
@@ -959,11 +958,12 @@ Set *GrimEngine::loadSet(const Common::String &name) {
 		if (g_grim->getGameType() == GType_MONKEY4) {
 			filename += "b";
 		}
-		Block *b = g_resourceloader->getFileBlock(filename);
-		if (!b)
+		Common::SeekableReadStream *stream;
+		stream = g_resourceloader->openNewStreamFile(filename.c_str());
+		if(!stream)
 			warning("Could not find scene file %s", name.c_str());
-		s = new Set(name, b->getData(), b->getLen());
-		delete b;
+
+		s = new Set(name, stream);
 	}
 
 	return s;

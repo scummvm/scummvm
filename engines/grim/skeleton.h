@@ -23,15 +23,18 @@
 #ifndef GRIM_SKELETON_H
 #define GRIM_SKELETON_H
 
-#include "common/memstream.h"
 #include "engines/grim/object.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Grim {
 
 class Skeleton : public Object {
-	void loadSkeleton(Common::MemoryReadStream &ms);
+	void loadSkeleton(Common::SeekableReadStream *data);
 public:
-	Skeleton(const Common::String &filename, const char *data, int len);
+	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 };
 	
 } // end of namespace Grim

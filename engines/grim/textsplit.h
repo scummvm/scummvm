@@ -23,6 +23,10 @@
 #ifndef GRIM_TEXTSPLIT_HH
 #define GRIM_TEXTSPLIT_HH
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 // A utility class to help in parsing the text-format files.  Splits
@@ -31,7 +35,7 @@ namespace Grim {
 
 class TextSplitter {
 public:
-	TextSplitter(const char *data, int len);
+	TextSplitter(Common::SeekableReadStream *data);
 	~TextSplitter();
 
 	char *nextLine() {

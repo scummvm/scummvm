@@ -43,18 +43,12 @@ McmpMgr::McmpMgr() {
 }
 
 McmpMgr::~McmpMgr() {
-	delete _file;
 	delete[] _compTable;
 	delete[] _compInput;
 }
 
-bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
-	_file = g_resourceloader->openNewStreamFile(filename);
-
-	if (!_file) {
-		warning("McmpMgr::openSound() Can't open sound MCMP file: %s", filename);
-		return false;
-	}
+bool McmpMgr::openSound(const char *filename, Common::SeekableReadStream *data, int &offsetData) {
+	_file = data;
 
 	uint32 tag = _file->readUint32BE();
 	if (tag != 'MCMP') {
@@ -90,9 +84,8 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	_file->seek(sizeCodecs, SEEK_CUR);
 	// hack: two more bytes at the end of input buffer
 	_compInput = new byte[maxSize + 2];
-	_file->read(_compInput, headerSize);
-	*resPtr = _compInput;
 	offsetData = headerSize;
+
 	return true;
 }
 

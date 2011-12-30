@@ -40,10 +40,10 @@ public:
 
 class MaterialData {
 public:
-	MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap);
+	MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
 	~MaterialData();
 
-	static MaterialData *getMaterialData(const Common::String &filename, const char *data, int len, CMap *cmap);
+	static MaterialData *getMaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
 	static Common::List<MaterialData *> *_materials;
 
 	Common::String _fname;
@@ -53,14 +53,14 @@ public:
 	int _refCount;
 
 private:
-	void initGrim(const Common::String &filename, const char *data, int len, CMap *cmap);
-	void initEMI(const Common::String &filename, const char *data, int len);
+	void initGrim(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
+	void initEMI(const Common::String &filename, Common::SeekableReadStream *data);
 };
 
 class Material : public Object {
 public:
 	// Load a texture from the given data.
-	Material(const Common::String &filename, const char *data, int len, CMap *cmap);
+	Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
 
 	void reload(CMap *cmap);
 	// Load this texture into the GL context

@@ -29,7 +29,6 @@
 namespace Grim {
 
 class McmpMgr;
-class Block;
 
 class ImuseSndMgr {
 public:
@@ -73,11 +72,11 @@ public:
 		bool inUse;
 		char name[32];
 		McmpMgr *mcmpMgr;
-		Block *blockRes;
 		int type;
 		int volGroupId;
-		byte *resPtr;
 		bool mcmpData;
+		uint32 headerSize;
+		Common::SeekableReadStream *inStream;
 	};
 
 private:
@@ -87,8 +86,8 @@ private:
 
 	bool checkForProperHandle(SoundDesc *soundDesc);
 	SoundDesc *allocSlot();
-	void parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize);
-	void countElements(byte *ptr, int &numRegions, int &numJumps);
+	void parseSoundHeader(SoundDesc *sound, int &headerSize);
+	void countElements(SoundDesc *sound);
 
 public:
 

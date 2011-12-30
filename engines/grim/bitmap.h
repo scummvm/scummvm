@@ -36,7 +36,7 @@ namespace Grim {
  */
 class BitmapData {
 public:
-	BitmapData(const Common::String &fname, const char *data, int len);
+	BitmapData(const Common::String &fname, Common::SeekableReadStream *data);
 	BitmapData(const char *data, int w, int h, int bpp, const char *fname);
 	BitmapData();
 	~BitmapData();
@@ -47,9 +47,10 @@ public:
 	 * @param data		the data for the TILE.
 	 * @param len		the length of the data.
 	 */
-	bool loadTile(const char *data, int len);
+	bool loadTile(const Common::String &fname, Common::SeekableReadStream *data);
+	bool loadGrimBm(const Common::String &fname, Common::SeekableReadStream *data);
 
-	static BitmapData *getBitmapData(const Common::String &fname, const char *data, int len);
+	static BitmapData *getBitmapData(const Common::String &fname, Common::SeekableReadStream *data);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	char *getImageData(int num) const;
@@ -89,7 +90,7 @@ public:
 	 * @param data		the actual data to construct from
 	 * @param len		the length of the data
 	 */
-	Bitmap(const Common::String &filename, const char *data, int len);
+	Bitmap(const Common::String &filename, Common::SeekableReadStream *data);
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 

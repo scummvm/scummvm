@@ -30,7 +30,7 @@
 #include "engines/grim/objectstate.h"
 
 namespace Common {
-	class MemoryReadStream;
+	class SeekableReadStream;
 }
 namespace Grim {
 
@@ -40,12 +40,12 @@ class Light;
 
 class Set : public PoolObject<Set, MKTAG('S', 'E', 'T', ' ')> {
 public:
-	Set(const Common::String &name, const char *buf, int len);
+	Set(const Common::String &name, Common::SeekableReadStream *data);
 	Set();
 	~Set();
 
 	void loadText(TextSplitter &ts);
-	void loadBinary(Common::MemoryReadStream *ms);
+	void loadBinary(Common::SeekableReadStream *data);
 
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
@@ -107,7 +107,7 @@ public:
 
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);
-		void loadBinary(Common::MemoryReadStream *ms);
+		void loadBinary(Common::SeekableReadStream *data);
 		void setupCamera() const;
 		Common::String _name;
 		Bitmap::Ptr _bkgndBm, _bkgndZBm;
@@ -145,7 +145,7 @@ private:
 class Light {		// Set lighting data
 public:
 	void load(TextSplitter &ts);
-	void loadBinary(Common::MemoryReadStream *ms);
+	void loadBinary(Common::SeekableReadStream *data);
 	Common::String _name;
 	Common::String _type;
 	Math::Vector3d _pos, _dir;

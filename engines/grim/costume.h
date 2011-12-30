@@ -44,10 +44,10 @@ class Head;
 
 class Costume : public Object {
 public:
-	Costume(const Common::String &filename, const char *data, int len, Costume *prevCost);
+	Costume(const Common::String &filename, Common::SeekableReadStream *data, Costume *prevCost);
 
 	void loadGRIM(TextSplitter &ts, Costume *prevCost);
-	void loadEMI(Common::MemoryReadStream &ms, Costume *prevCost);
+	void loadEMI(Common::SeekableReadStream *data, Costume *prevCost);
 
 	virtual ~Costume();
 

@@ -23,7 +23,6 @@
 #include "common/endian.h"
 
 #include "engines/grim/resource.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/colormap.h"
 
 #include "engines/grim/imuse/imuse_sndmgr.h"
@@ -44,95 +43,109 @@ ImuseSndMgr::~ImuseSndMgr() {
 	}
 }
 
-void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
+void ImuseSndMgr::countElements(SoundDesc *sound) {
 	uint32 tag;
 	int32 size = 0;
+	uint32 pos = sound->inStream->pos();
 
 	do {
-		tag = READ_BE_UINT32(ptr); ptr += 4;
+		tag = sound->inStream->readUint32BE();
 		switch(tag) {
 		case MKTAG('T','E','X','T'):
 		case MKTAG('S','T','O','P'):
 		case MKTAG('F','R','M','T'):
-		case MKTAG('D','A','T','A'):
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			size = sound->inStream->readUint32BE();
+			sound->inStream->seek(size, SEEK_CUR);
 			break;
 		case MKTAG('R','E','G','N'):
-			numRegions++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			sound->numRegions++;
+			size = sound->inStream->readUint32BE();
+			sound->inStream->seek(size, SEEK_CUR);
 			break;
 		case MKTAG('J','U','M','P'):
-			numJumps++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			sound->numJumps++;
+			size = sound->inStream->readUint32BE();
+			sound->inStream->seek(size, SEEK_CUR);
+			break;
+		case MKTAG('D','A','T','A'):
 			break;
 		default:
 			error("ImuseSndMgr::countElements() Unknown MAP tag '%s'", Common::tag2string(tag).c_str());
 		}
 	} while (tag != MKTAG('D','A','T','A'));
+
+	sound->inStream->seek(pos, SEEK_SET);
 }
 
-void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize) {
-	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F')) {
+void ImuseSndMgr::parseSoundHeader(SoundDesc *sound, int &headerSize) {
+	Common::SeekableReadStream *data = sound->inStream;
+
+	uint32 tag = data->readUint32BE();
+	if (tag == MKTAG('R','I','F','F')) {
 		sound->region = new Region[1];
 		sound->jump = new Jump[1];
 		sound->numJumps = 0;
 		sound->numRegions = 1;
 		sound->region[0].offset = 0;
-		sound->region[0].length = READ_LE_UINT32(ptr + 40);
-		sound->bits = *(ptr + 34);
-		sound->freq = READ_LE_UINT32(ptr + 24);
-		sound->channels = *(ptr + 22);
+		data->seek(18, SEEK_CUR);
+		sound->channels = data->readByte();
+		data->readByte();
+		sound->freq = data->readUint32LE();
+		data->seek(6, SEEK_CUR);
+		sound->bits = data->readByte();
+		data->seek(5, SEEK_CUR);
+		sound->region[0].length = data->readUint32LE();
 		headerSize = 44;
-	} else if (READ_BE_UINT32(ptr) == MKTAG('i','M','U','S')) {
-		uint32 tag;
+	} else if (tag == MKTAG('i','M','U','S')) {
 		int32 size = 0;
-		byte *s_ptr = ptr;
-		ptr += 16;
+		int32 headerStart = data->pos();
+		data->seek(12, SEEK_CUR);
 
 		int curIndexRegion = 0;
 		int curIndexJump = 0;
 
 		sound->numRegions = 0;
 		sound->numJumps = 0;
-		countElements(ptr, sound->numRegions, sound->numJumps);
+		countElements(sound);
 		sound->region = new Region [sound->numRegions];
 		sound->jump = new Jump [sound->numJumps];
 
 		do {
-			tag = READ_BE_UINT32(ptr); ptr += 4;
+			tag = data->readUint32BE();
 			switch(tag) {
 			case MKTAG('F','R','M','T'):
-				ptr += 12;
-				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
-				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
-				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
+				data->seek(12, SEEK_CUR);
+				sound->bits = data->readUint32BE();
+				sound->freq = data->readUint32BE();
+				sound->channels = data->readUint32BE();
 				break;
 			case MKTAG('T','E','X','T'):
 			case MKTAG('S','T','O','P'):
-				size = READ_BE_UINT32(ptr); ptr += size + 4;
+				size = data->readUint32BE();
+				data->seek(size, SEEK_CUR);
 				break;
 			case MKTAG('R','E','G','N'):
-				ptr += 4;
-				sound->region[curIndexRegion].offset = READ_BE_UINT32(ptr); ptr += 4;
-				sound->region[curIndexRegion].length = READ_BE_UINT32(ptr); ptr += 4;
+				data->seek(4, SEEK_CUR);
+				sound->region[curIndexRegion].offset = data->readUint32BE();
+				sound->region[curIndexRegion].length = data->readUint32BE();
 				curIndexRegion++;
 				break;
 			case MKTAG('J','U','M','P'):
-				ptr += 4;
-				sound->jump[curIndexJump].offset = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].dest = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].hookId = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
+				data->seek(4, SEEK_CUR);
+				sound->jump[curIndexJump].offset = data->readUint32BE();
+				sound->jump[curIndexJump].dest = data->readUint32BE();
+				sound->jump[curIndexJump].hookId = data->readUint32BE();
+				sound->jump[curIndexJump].fadeDelay = data->readUint32BE();
 				curIndexJump++;
 				break;
 			case MKTAG('D','A','T','A'):
-				ptr += 4;
+				data->seek(4, SEEK_CUR);
 				break;
 			default:
 				error("ImuseSndMgr::prepareSound(%s) Unknown MAP tag '%s'", sound->name, Common::tag2string(tag).c_str());
 			}
 		} while (tag != MKTAG('D','A','T','A'));
-		headerSize = ptr - s_ptr;
+		headerSize = data->pos() - headerStart;
 		int i;
 		for (i = 0; i < sound->numRegions; i++) {
 			sound->region[i].offset -= headerSize;
@@ -162,7 +175,6 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	s.toLowercase();
 	soundName = s.c_str();
 	const char *extension = soundName + strlen(soundName) - 3;
-	byte *ptr = NULL;
 	int headerSize = 0;
 
 	SoundDesc *sound = allocSlot();
@@ -172,26 +184,26 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 
 	strcpy(sound->name, soundName);
 	sound->volGroupId = volGroupId;
+	sound->inStream = NULL;
+
+	sound->inStream = g_resourceloader->openNewStreamFile(soundName);
+	if (!sound->inStream) {
+		closeSound(sound);
+		return NULL;
+	}
 
 	if (!_demo && scumm_stricmp(extension, "imu") == 0) {
-		sound->blockRes = g_resourceloader->getFileBlock(soundName);
-		if (sound->blockRes) {
-			ptr = (byte *)sound->blockRes->getData();
-			parseSoundHeader(ptr, sound, headerSize);
-			sound->mcmpData = false;
-			sound->resPtr = ptr + headerSize;
-		} else {
-			closeSound(sound);
-			return NULL;
-		}
+		parseSoundHeader(sound, headerSize);
+		sound->mcmpData = false;
+		sound->headerSize = headerSize;
 	} else if (scumm_stricmp(extension, "wav") == 0 || scumm_stricmp(extension, "imc") == 0 ||
 			(_demo && scumm_stricmp(extension, "imu") == 0)) {
 		sound->mcmpMgr = new McmpMgr();
-		if (!sound->mcmpMgr->openSound(soundName, &ptr, headerSize)) {
+		if (!sound->mcmpMgr->openSound(soundName, sound->inStream, headerSize)) {
 			closeSound(sound);
 			return NULL;
 		}
-		parseSoundHeader(ptr, sound, headerSize);
+		parseSoundHeader(sound, headerSize);
 		sound->mcmpData = true;
 	} else {
 		error("ImuseSndMgr::openSound() Unrecognized extension for sound file %s", soundName);
@@ -208,11 +220,6 @@ void ImuseSndMgr::closeSound(SoundDesc *sound) {
 		sound->mcmpMgr = NULL;
 	}
 
-	if (sound->blockRes) {
-		delete sound->blockRes;
-		sound->blockRes = NULL;
-	}
-
 	if (sound->region) {
 		delete[] sound->region;
 		sound->region = NULL;
@@ -221,6 +228,11 @@ void ImuseSndMgr::closeSound(SoundDesc *sound) {
 	if (sound->jump) {
 		delete[] sound->jump;
 		sound->jump = NULL;
+	}
+
+	if (sound->inStream) {
+		delete sound->inStream;
+		sound->inStream = NULL;
 	}
 
 	memset(sound, 0, sizeof(SoundDesc));
@@ -345,7 +357,8 @@ int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, i
 		size = sound->mcmpMgr->decompressSample(region_offset + offset, size, buf);
 	} else {
 		*buf = (byte *)malloc(sizeof(byte) * size);
-		memcpy(*buf, sound->resPtr + region_offset + offset, size);
+		sound->inStream->seek(region_offset + offset + sound->headerSize, SEEK_SET);
+		sound->inStream->read(*buf, size);
 	}
 
 	return size;

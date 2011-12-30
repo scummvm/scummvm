@@ -36,65 +36,84 @@
 #include "engines/grim/skeleton.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
+#include "common/algorithm.h"
+#include "gui/message.h"
 
 namespace Grim {
 
 ResourceLoader *g_resourceloader = NULL;
 
+class LabListComperator {
+	const Common::String _labName;
+public:
+	LabListComperator() {}
+	LabListComperator(const Common::String &ln) : _labName(ln) {}
+
+	bool operator()(const Common::ArchiveMemberPtr &l) {
+		return _labName.compareToIgnoreCase(l->getName()) == 0;
+	}
+
+	bool operator()(const Common::ArchiveMemberPtr &l, const Common::ArchiveMemberPtr &r) {
+		return (l->getName().compareToIgnoreCase(r->getName()) > 0);
+	}
+};
+
 ResourceLoader::ResourceLoader() {
-	int lab_counter = 0;
 	_cacheDirty = false;
 	_cacheMemorySize = 0;
 
 	Lab *l;
 	Common::ArchiveMemberList files;
 
-	SearchMan.listMatchingMembers(files, "*.lab");
-	SearchMan.listMatchingMembers(files, "*.m4b");
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
+			SearchMan.listMatchingMembers(files, "grimdemo.mus");
+			SearchMan.listMatchingMembers(files, "sound001.lab");
+			SearchMan.listMatchingMembers(files, "voice001.lab");
+		} else {
+			SearchMan.listMatchingMembers(files, "data???.lab");
+			SearchMan.listMatchingMembers(files, "movie??.lab");
+			SearchMan.listMatchingMembers(files, "vox????.lab");
+			SearchMan.listMatchingMembers(files, "year?mus.lab");
+			SearchMan.listMatchingMembers(files, "local.lab");
+			SearchMan.listMatchingMembers(files, "credits.lab");
+
+			//Sort the archives in order to ensure that they are loaded with the correct order
+			Common::sort(files.begin(), files.end(), LabListComperator());
+
+			//Check the presence of datausr.lab and ask the user if he wants to load it.
+			//In this case put it in the top of the list
+			Common::ArchiveMemberList::iterator datausr_it = Common::find_if(files.begin(), files.end(), LabListComperator("datausr.lab"));
+			if (datausr_it != files.end()) {
+				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
+				int res = d.runModal();
+				if (res == GUI::kMessageOK)
+					files.push_front(*datausr_it);
+				files.erase(datausr_it);
+			}
+		}
+	}
+
+	if (g_grim->getGameType() == GType_MONKEY4)
+		SearchMan.listMatchingMembers(files, "*.m4b");
 
 	if (files.empty())
 		error("Cannot find game data - check configuration file");
 
+	int priority = files.size();
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String filename = (*x)->getName();
-		l = new Lab();
+		Common::String filename = (*x)->getName();
+		filename.toLowercase();
 
-		if (l->open(filename)) {
-			if (filename.equalsIgnoreCase("datausr.lab")) {
-				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
-				int res = d.runModal();
-				if (res) {
-					warning("Loading %s",filename.c_str());
-					_labs.push_front(l);
-				}
-			}
-			else if (filename.equalsIgnoreCase("data005.lab"))
-				_labs.push_front(l);
-			else
-				_labs.push_back(l);
-			lab_counter++;
-		} else {
+		l = new Lab();
+		if (l->open(filename))
+			_files.add(filename, l, priority--, true);
+		else
 			delete l;
-		}
 	}
 
 	files.clear();
-
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
-		SearchMan.listMatchingMembers(files, "*.mus");
-
-		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			const Common::String filename = (*x)->getName();
-			l = new Lab();
-
-			if (l->open(filename)) {
-				_labs.push_back(l);
-				lab_counter++;
-			} else {
-				delete l;
-			}
-		}
-	}
 }
 
 template<typename T>
@@ -110,33 +129,25 @@ ResourceLoader::~ResourceLoader() {
 	for (Common::Array<ResourceCache>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		ResourceCache &r = *i;
 		delete[] r.fname;
-		delete r.resPtr;
+		delete[] r.resPtr;
 	}
-	clearList(_labs);
 	clearList(_models);
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
 	clearList(_lipsyncs);
 }
 
-const Lab *ResourceLoader::getLab(const Common::String &filename) const {
-	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
-		if ((*i)->getFileExists(filename))
-			return *i;
-
-	return NULL;
-}
-
 static int sortCallback(const void *entry1, const void *entry2) {
 	return scumm_stricmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
-Block *ResourceLoader::getFileFromCache(const Common::String &filename) {
+Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::String &filename) {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
-	if (entry)
-		return entry->resPtr;
-	else
+	if (!entry)
 		return NULL;
+
+	return new Common::MemoryReadStream(entry->resPtr, entry->len);
+
 }
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) {
@@ -154,73 +165,50 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::getFileExists(const Common::String &filename) const {
-	return getLab(filename) != NULL;
+bool ResourceLoader::getFileExists(const Common::String &filename) {
+	return _files.hasFile(filename);
 }
 
-Block *ResourceLoader::getFileBlock(const Common::String &filename) const {
-	const Lab *l = getLab(filename);
-	if (!l)
-		return NULL;
-	else
-		return l->getFileBlock(filename);
-}
-
-Block *ResourceLoader::getBlock(const Common::String &filename) {
-    Common::String fname = filename;
-    fname.toLowercase();
-    Block *b = getFileFromCache(fname);
-    if (!b) {
-        b = getFileBlock(fname);
-		if (b) {
-			putIntoCache(fname, b);
-		}
-    }
-
-    return b;
-}
-
-LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
-		return NULL;
-	else
-		return l->openNewStreamLua(filename);
-}
-
-Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
+Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
+	if (_files.hasFile(filename))
+		return _files.createReadStreamForMember(filename);
+	else if (SearchMan.hasFile(filename))
 		return SearchMan.createReadStreamForMember(filename);
 	else
-		return l->openNewStreamFile(filename);
-}
-
-Common::SeekableReadStream *ResourceLoader::openNewSubStreamFile(const char *filename) const {
-	const Lab *l = getLab(filename);
-
-	if (!l)
 		return NULL;
-	else
-		return l->openNewSubStreamFile(filename);
 }
 
-int ResourceLoader::getFileLength(const char *filename) const {
-	const Lab *l = getLab(filename);
-	if (l)
-		return l->getFileLength(filename);
-	else
-		return 0;
+Common::SeekableReadStream *ResourceLoader::openNewStreamFile(const char *filename, bool cache) {
+	Common::String fname = filename;
+	Common::SeekableReadStream *s;
+    fname.toLowercase();
+
+	if (cache) {
+		s = getFileFromCache(fname);
+		if (!s) {
+			s = loadFile(fname);
+			if (!s)
+				return NULL;
+
+			uint32 size = s->size();
+			byte *buf = new byte[size];
+			s->read(buf, size);
+			putIntoCache(fname, buf, size);
+			return new Common::MemoryReadStream(buf, size);
+		} else
+			return s;
+	}
+
+	return loadFile(fname);
 }
 
-void ResourceLoader::putIntoCache(const Common::String &fname, Block *res) {
+void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) {
 	ResourceCache entry;
 	entry.resPtr = res;
+	entry.len = len;
 	entry.fname = new char[fname.size() + 1];
 	strcpy(entry.fname, fname.c_str());
-	_cacheMemorySize += res->getLen();
+	_cacheMemorySize += len;
 	_cache.push_back(entry);
 	_cacheDirty = true;
 }
@@ -228,32 +216,25 @@ void ResourceLoader::putIntoCache(const Common::String &fname, Block *res) {
 Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-			warning("Could not find bitmap %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str(), true);
+	if (!stream) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
+		warning("Could not find bitmap %s", filename.c_str());
+		return NULL;
 	}
 
-	Bitmap *result = new Bitmap(filename, b->getData(), b->getLen());
+	Bitmap *result = new Bitmap(filename, stream);
 
 	return result;
 }
 
 CMap *ResourceLoader::loadColormap(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b) {
-			error("Could not find colormap %s", filename.c_str());
-        }
-		putIntoCache(filename, b);
+	Common::SeekableReadStream *stream = openNewStreamFile(filename.c_str());
+	if (!stream) {
+		error("Could not find colormap %s", filename.c_str());
 	}
 
-	CMap *result = new CMap(filename, b->getData(), b->getLen());
+	CMap *result = new CMap(filename, stream);
 	_colormaps.push_back(result);
 
 	return result;
@@ -278,42 +259,37 @@ static Common::String fixFilename(const Common::String filename, bool append = t
 Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *prevCost) {
 	Common::String fname = fixFilename(filename);
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find costume \"%s\"", filename.c_str());
-		putIntoCache(fname, b);
+
+	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str(), true);
+	if (!stream) {
+		error("Could not find costume \"%s\"", filename.c_str());
 	}
-	Costume *result = new Costume(filename, b->getData(), b->getLen(), prevCost);
+
+	Costume *result = new Costume(filename, stream, prevCost);
 
 	return result;
 }
 
 Font *ResourceLoader::loadFont(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b)
-			error("Could not find font file %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Font *result = new Font(filename, b->getData(), b->getLen());
+	stream = openNewStreamFile(filename.c_str(), true);
+	if(!stream)
+		error("Could not find font file %s", filename.c_str());
+
+	Font *result = new Font(filename, stream);
 
 	return result;
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
-	Block *b = getFileFromCache(filename);
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b)
-			error("Could not find keyframe file %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	KeyframeAnim *result = new KeyframeAnim(filename, b->getData(), b->getLen());
+	stream = openNewStreamFile(filename.c_str());
+	if(!stream)
+		error("Could not find keyframe file %s", filename.c_str());
+
+	KeyframeAnim *result = new KeyframeAnim(filename, stream);
 	_keyframeAnims.push_back(result);
 
 	return result;
@@ -321,25 +297,19 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
 
 LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 	LipSync *result;
-	Block *b = getFileFromCache(filename);
-	bool cached = true;
-	if (!b) {
-		b = getFileBlock(filename);
-		if (!b)
-			return NULL;
-		cached = false;
-	}
+	Common::SeekableReadStream *stream;
 
-	result = new LipSync(filename, b->getData(), b->getLen());
+	stream = openNewStreamFile(filename.c_str());
+	if(!stream)
+		return NULL;
+
+	result = new LipSync(filename, stream);
 
 	// Some lipsync files have no data
-	if (result->isValid()) {
-		if (!cached)
-			putIntoCache(filename, b);
+	if (result->isValid())
 		_lipsyncs.push_back(result);
-	} else {
+	else {
 		delete result;
-		delete b;
 		result = NULL;
 	}
 
@@ -349,70 +319,62 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) {
 	Common::String fname = fixFilename(filename, false);
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find material %s", filename.c_str());
-		putIntoCache(filename, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Material *result = new Material(fname, b->getData(), b->getLen(), c);
+	stream = openNewStreamFile(fname.c_str(), true);
+	if(!stream)
+		error("Could not find material %s", filename.c_str());
+
+	Material *result = new Material(fname, stream, c);
 
 	return result;
 }
 
 Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model *parent) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b)
-			error("Could not find model %s", filename.c_str());
-		putIntoCache(fname, b);
-	}
+	Common::SeekableReadStream *stream;
 
-	Model *result = new Model(filename, b->getData(), b->getLen(), c, parent);
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream)
+		error("Could not find model %s", filename.c_str());
+
+	Model *result = new Model(filename, stream, c, parent);
 	_models.push_back(result);
 
 	return result;
 }
-	
+
 EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel *parent) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {
-			warning("Could not find model %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str());
+	if(!stream) {
+		warning("Could not find model %s", filename.c_str());
+		return NULL;
 	}
-	
-	EMIModel *result = new EMIModel(filename, b->getData(), b->getLen(), parent);
+
+	EMIModel *result = new EMIModel(filename, stream, parent);
 	_emiModels.push_back(result);
-	
+
 	return result;
 }
 
 Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname);
-	if (!b) {
-		b = getFileBlock(fname);
-		if (!b) {
-			warning("Could not find skeleton %s", filename.c_str());
-			return NULL;
-		}
-		putIntoCache(fname, b);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str(), true);
+	if(!stream) {
+		warning("Could not find skeleton %s", filename.c_str());
+		return NULL;
 	}
-	
-	Skeleton *result = new Skeleton(filename, b->getData(), b->getLen());
-	
+
+	Skeleton *result = new Skeleton(filename, stream);
+
 	return result;
 }
-	
+
 void ResourceLoader::uncache(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
@@ -425,8 +387,8 @@ void ResourceLoader::uncache(const char *filename) {
 	for (unsigned int i = 0; i < _cache.size(); i++) {
 		if (fname.compareTo(_cache[i].fname) == 0) {
 			delete[] _cache[i].fname;
-			_cacheMemorySize -= _cache[i].resPtr->getLen();
-			delete _cache[i].resPtr;
+			_cacheMemorySize -= _cache[i].len;
+			delete[] _cache[i].resPtr;
 			_cache.remove_at(i);
 			_cacheDirty = true;
 		}

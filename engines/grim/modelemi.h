@@ -23,12 +23,15 @@
 #ifndef GRIM_MODELEMI_H
 #define GRIM_MODELEMI_H
 
-#include "common/memstream.h"
 #include "engines/grim/object.h"
 #include "math/matrix4.h"
 #include "math/vector2d.h"
 #include "math/vector3d.h"
 #include "math/vector4d.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Grim {
 
@@ -54,7 +57,7 @@ public:
 	EMIModel *_parent;
 	
 	EMIMeshFace() : _numFaces(0), _hasTexture(0), _texID(0), _flags(0) { }
-	void loadFace(Common::MemoryReadStream &ms);
+	void loadFace(Common::SeekableReadStream *data);
 	void setParent(EMIModel *m) { _parent = m; }
 	void render();
 };
@@ -86,9 +89,9 @@ public:
 	int _setType;
 	
 public:
-	EMIModel(const Common::String &filename, const char *data, int len, EMIModel *parent = NULL);
+	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);
 	void setTex(int index); 
-	void loadMesh(Common::MemoryReadStream &ms);
+	void loadMesh(Common::SeekableReadStream *data);
 	void prepareForRender();
 	void prepare();
 	void draw();

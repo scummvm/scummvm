@@ -24,12 +24,11 @@
 
 namespace Grim {
 
-Skeleton::Skeleton(const Common::String &filename, const char *data, int len) {
-	Common::MemoryReadStream ms((const byte *)data, len);
-	loadSkeleton(ms);
+Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
+	loadSkeleton(data);
 }
 
-void Skeleton::loadSkeleton(Common::MemoryReadStream &ms) {
+void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
 	
 }
 
