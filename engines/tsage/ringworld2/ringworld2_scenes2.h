@@ -106,8 +106,8 @@ class Scene2350 : public SceneExt {
 	};
 public:
 
-	SpeakerQuinn2350 _quinnSpeaker;
-	SpeakerPharisha2350 _pharishaSpeaker;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerPharisha _pharishaSpeaker;
 	NamedHotspot _item1;
 	SceneActor _actor1;
 	Actor2 _actor2;
@@ -368,9 +368,9 @@ class Scene2500 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	SpeakerQuinn2500 _quinnSpeaker;
-	SpeakerSeeker2500 _seekerSpeaker;
-	SpeakerMiranda2500 _mirandaSpeaker;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	SpeakerMiranda _mirandaSpeaker;
 	SpeakerWebbster2500 _webbsterSpeaker;
 	NamedHotspot _item1;
 	SceneActor _actor1;
@@ -665,6 +665,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

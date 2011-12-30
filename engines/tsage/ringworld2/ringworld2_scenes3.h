@@ -47,7 +47,7 @@ class Scene3100 : public SceneExt {
 public:
 
 	int _field412;
-	SpeakerGuard3100 _guardSpeaker;
+	SpeakerGuard _guardSpeaker;
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	SceneActor _actor1;
@@ -241,7 +241,7 @@ class Scene3240 : public SceneExt {
 public:
 	SpeakerTeal3240 _tealSpeaker;
 	SpeakerWebbster3240 _webbsterSpeaker;
-	SpeakerMiranda2500 _mirandaSpeaker;
+	SpeakerMiranda _mirandaSpeaker;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SequenceManager _sequenceManager;
