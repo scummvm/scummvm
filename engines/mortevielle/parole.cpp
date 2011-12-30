@@ -32,8 +32,8 @@ namespace Mortevielle {
 void spfrac(int wor) {
 	c3.rep = (uint)wor >> 12;
 	if ((typlec == 0) && (c3.code != 9))
-		if (((c3.code > 4) && (c3.val != 20) && !(set::of(3, 6, 9, eos).has(c3.rep))) ||
-		        ((c3.code < 5) && !(set::of(19, 22, eos).has(c3.val)) && !(set::of(4, 9, eos).has(c3.rep))))
+		if (((c3.code > 4) && (c3.val != 20) && ((c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
+				((c3.code < 5) && ((c3.rep != 19) && (c3.rep != 22) && (c3.rep != 4) && (c3.rep != 9))))) {
 			c3.rep = c3.rep + 1;
 	c3.freq = ((uint)wor >> 6) & 7;
 	c3.acc = ((uint)wor >> 9) & 7;
@@ -346,7 +346,7 @@ void veracf(byte b) {
 			entroct(d3);
 			entroct(c2.val);
 			entroct(5);
-		} else if (!(set::of(range(0, 1), 4, eos).has(c3.code))) {
+		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
 			veracf(c3.acc);
 			switch (c3.code) {
 			case 3 :
@@ -388,7 +388,7 @@ void veracf(byte b) {
 			entroct(2);
 			entroct(c2.val);
 			entroct(5);
-		} else if (!(set::of(range(0, 1), 4, eos).has(c3.code))) {
+		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
 			veracf(c3.acc);
 			switch (c3.code) {
 			case 3 :

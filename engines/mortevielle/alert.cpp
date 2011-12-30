@@ -151,7 +151,7 @@ int do_alert(Common::String str_, int n) {
 		do {
 			cx = 320;
 			st = "";
-			while (!(set::of('\174', '\135', eos).has(chaine[i + 1]))) {
+			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
 				i = i + 1;
 				st = st + chaine[i];
 				if (res == 2)  cx = cx - 3;

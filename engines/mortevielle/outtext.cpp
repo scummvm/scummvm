@@ -149,7 +149,8 @@ static int l_motsuiv(int p, char *ch, int &tab) {
 
 	int l_motsuiv_result;
 	c = p;
-	while (!(set::of(' ', '$', '@', eos).has(ch[p])))  p = p + 1;
+	while ((ch[p] != ' ') && (ch[p] != '$') && (ch[p] != '@'))
+		++p;
 	l_motsuiv_result = tab * (p - c);
 	return l_motsuiv_result;
 }

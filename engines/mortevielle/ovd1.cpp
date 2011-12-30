@@ -231,7 +231,7 @@ void ani50() {
 	output << "Ctrl       C      E            H             T           A";
 	do {
 		input >> kbd >> ch;
-	} while (!(set::of('\1', '\3', '\5', '\24', '\10', eos).has(ch)));
+	} while ((ch != '\1') && (ch != '\3') && (ch != '\5') && (ch != '\24') && (ch != '\10'));
 	switch (ch) {
 	case '\1':
 	case '\3':
@@ -258,7 +258,7 @@ void ani50() {
 	output << 'S';
 	do {
 		input >> kbd >> ch;
-	} while (!(set::of('C', 'S', eos).has(upcase(ch))));
+	} while ((ch != 'C') && (ch != 'S'));
 	int_m = (upcase(ch) == 'S');
 }
 
@@ -361,7 +361,8 @@ void ani50() {
 	gotoxy(20 * pred(int, res) + 8, 24);
 	textcolor(7);
 	cpr = "COPYRIGHT 1989 : LANKHOR";
-	if (set::of(ega, ams, cga, eos).has(gd))  output << cpr;
+	if ((gd == ega) || (gd == ams) || (gd == cga))
+		output << cpr;
 	else {
 		putxy(104 + 72 * res, 190);
 		writeg(cpr, 0);

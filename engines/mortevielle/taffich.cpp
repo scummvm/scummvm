@@ -109,8 +109,10 @@ void taffich() {
 
 
 	a = caff;
-	if (set::of(range(153, 161), eos).has(a))  a = tran2[a];
-	else if (set::of(range(136, 140), eos).has(a))  a = tran1[a];
+	if ((a >= 153) && (a <= 161))
+		a = tran2[a];
+	else if ((a >= 136) && (a <= 140))
+		a = tran1[a];
 	b = a;
 	if (maff == a)  return;
 	if (a == 16) {

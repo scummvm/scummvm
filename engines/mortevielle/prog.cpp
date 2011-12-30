@@ -267,7 +267,7 @@ void tecran() {
 
 		erase_menu();
 		imen = false;
-		if (set::of('\1', '\3', '\5', '\7', '\11', eos).has(inkey)) {
+		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
 			change_gd((uint)pred(int, ord(inkey)) >> 1);
 			return;
 		}

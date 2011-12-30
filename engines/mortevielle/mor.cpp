@@ -422,7 +422,7 @@ void repon(int f, int m) {
 				}
 			}
 		}
-		if (set::of(6, 9, eos).has(f)) {
+		if ((f >= 6) && (f <= 9)) {
 			deline(m, st, tay);
 			if (f == 6)  i = 4;
 			else i = 5;
@@ -655,7 +655,8 @@ void pendule() {
 	paint_rect(577,114,6,20);*/
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
-	if (set::of(cga, her, eos).has(gd))  co = 0;
+	if ((gd == cga) || (gd == her))
+		co = 0;
 	else co = 1;
 	if (min == 0)  droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
 	else droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
@@ -668,7 +669,8 @@ void pendule() {
 	if (heu > 11)  writeg("PM ", 1);
 	else writeg("AM ", 1);
 	putxy(550, 160);
-	if (set::of(range(0, 8), eos).has(jou))  writeg(string(chr(jou + 49)) + "& jour", 1);
+	if ((jou >= 0) && (jou <= 8))
+		writeg(string(chr(jou + 49)) + "& jour", 1);
 }
 
 /*************
