@@ -525,7 +525,18 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
-			textObject->setFont(g_resourceloader->loadFont(lua_getstring(keyObj)));
+			const char *str = lua_getstring(keyObj);
+			Font *font = 0;
+			foreach (Font *f, Font::getPool()) {
+				if (f->getFilename() == str) {
+					font = f;
+				}
+			}
+			if (!font) {
+				font = g_resourceloader->loadFont(str);
+			}
+
+			textObject->setFont(font);
 		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
 		}

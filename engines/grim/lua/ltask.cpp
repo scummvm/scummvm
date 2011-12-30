@@ -11,6 +11,7 @@
 #include "engines/grim/lua/lmem.h"
 #include "engines/grim/lua/ldo.h"
 #include "engines/grim/lua/lvm.h"
+#include "engines/grim/grim.h"
 
 #include "common/textconsole.h"
 
@@ -169,8 +170,13 @@ void find_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK))
-		lua_error("Bad argument to find_script");
+	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK)) {
+		if (g_grim->getGameType() == GType_GRIM) {
+			lua_error("Bad argument to find_script");
+		} else {
+			warning("find_script with no paramiters");
+		}
+	}
 
 	if (type == LUA_T_TASK) {
 		uint32 task = (uint32)nvalue(Address(paramObj));

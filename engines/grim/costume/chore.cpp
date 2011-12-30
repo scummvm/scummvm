@@ -46,7 +46,7 @@ void Chore::load(int id, Costume *owner, TextSplitter &ts) {
 	_owner = owner;
 	_tracks = new ChoreTrack[_numTracks];
 	_hasPlayed = _playing = false;
-	_id = id;
+	_choreId = id;
 	for (int i = 0; i < _numTracks; i++) {
 		int compID, numKeys;
 		ts.scanString(" %d %d", 2, &compID, &numKeys);
@@ -151,7 +151,7 @@ void Chore::update(uint time) {
 void Chore::fade(Animation::FadeMode mode, uint msecs) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+		if (comp && FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
 			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
 			kf->fade(mode, msecs);
 		}

@@ -26,6 +26,8 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/animation.h"
 
+#include "engines/grim/pool.h"
+
 namespace Grim {
 
 class Costume;
@@ -56,13 +58,17 @@ public:
 	void fadeOut(uint msecs);
 	void cleanup();
 
+	bool isPlaying() { return _playing; }
+
+	virtual int getId() { return _choreId; }
+
 private:
 	void setKeys(int startTime, int stopTime);
 	void fade(Animation::FadeMode, uint msecs);
 
 	Costume *_owner;
 
-	int _id;
+	int _choreId;
 	int _length;
 	int _numTracks;
 	ChoreTrack *_tracks;
@@ -72,6 +78,11 @@ private:
 	int _currTime;
 
 	friend class Costume;
+};
+
+class PoolChore : public PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>, public Chore {
+public:
+	virtual int getId() { return PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>::getId(); }
 };
 
 } // end of namespace Grim
