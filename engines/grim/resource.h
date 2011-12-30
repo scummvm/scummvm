@@ -37,6 +37,7 @@ class Font;
 class KeyframeAnim;
 class Material;
 class Model;
+class EMIModel;
 class LipSync;
 class TrackedObject;
 class SaveGame;
@@ -64,6 +65,7 @@ public:
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
 	Material *loadMaterial(const Common::String &fname, CMap *c);
 	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
+	EMIModel *loadModelEMI(const Common::String &fname, EMIModel *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const Common::String &filename);
@@ -102,6 +104,7 @@ private:
 	bool _cacheDirty;
 	int32 _cacheMemorySize;
 
+	Common::List<EMIModel *> _emiModels;
 	Common::List<Model *> _models;
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;

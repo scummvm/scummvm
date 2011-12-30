@@ -32,6 +32,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/model.h"
+#include "engines/grim/modelemi.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
 
@@ -373,6 +374,24 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model 
 	Model *result = new Model(filename, b->getData(), b->getLen(), c, parent);
 	_models.push_back(result);
 
+	return result;
+}
+	
+EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel *parent) {
+	Common::String fname = fixFilename(filename);
+	Block *b = getFileFromCache(fname);
+	if (!b) {
+		b = getFileBlock(fname);
+		if (!b) {
+			warning("Could not find model %s", filename.c_str());
+			return NULL;
+		}
+		putIntoCache(fname, b);
+	}
+	
+	EMIModel *result = new EMIModel(filename, b->getData(), b->getLen(), parent);
+	_emiModels.push_back(result);
+	
 	return result;
 }
 

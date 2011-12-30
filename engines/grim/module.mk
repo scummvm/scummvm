@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	costume/chore.o \
 	costume/colormap_component.o \
 	costume/component.o \
+	costume/emimesh_component.o \
 	costume/head.o \
 	costume/keyframe_component.o \
 	costume/lua_var_component.o \
@@ -82,6 +83,7 @@ MODULE_OBJS := \
 	lua_v2.o \
 	material.o \
 	model.o \
+	modelemi.o \
 	objectstate.o \
 	primitives.o \
 	registry.o \
