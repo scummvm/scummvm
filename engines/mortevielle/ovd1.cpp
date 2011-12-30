@@ -348,7 +348,7 @@ void ani50() {
 
 
 /* overlay */ void suite() {
-	varying_string<25> cpr;
+	Common::String cpr;
 
 	hirs();
 	repon(7, 2035);
