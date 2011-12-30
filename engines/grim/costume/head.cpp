@@ -208,25 +208,31 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		}
 		p->setMatrix(matrix);
 		p->update();
-		
-		bool yFront = true; // If true, the character head coordinate frame is: +Y forward, +Z up, +X right.
-		if (fname.compareTo("gunar_meshes.cos") == 0 || fname.compareTo("slisko_meshes.cos") == 0)
-			yFront = false; // For these characters, the head coordinate frame is: -Z front, -X up, +Y right.
-		
+			
 		Math::Vector3d localFront; // Character front direction vector in local space.
 		Math::Vector3d localUp; // Character up direction vector in local space.
 		Math::Vector3d frontDir; // Character front facing direction vector in world space (global scene coordinate space)
-		if (yFront)
-		{
-			frontDir = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
-			localFront = Math::Vector3d(0,1,0);
-			localUp = Math::Vector3d(0,0,1);
-		}
-		else
-		{
+
+		if (fname.compareTo("gunar_meshes.cos") == 0 || fname.compareTo("slisko_meshes.cos") == 0) {
+			// For these characters, the head coordinate frame is: -Z front, -X up, +Y right.
 			frontDir = Math::Vector3d(-_joint3Node->_matrix(0,2), -_joint3Node->_matrix(1,2), -_joint3Node->_matrix(2,2)); // Look straight ahead. (-Z)
 			localFront = Math::Vector3d(0,0,-1);
 			localUp = Math::Vector3d(-1,0,0);
+		} else if (fname.compareTo("meche_island.cos") == 0)	{
+			// For Meche inside her office, the head coordinate frame is: -Y forward, +Z up, -X right.
+			// NOTE: I suspect that the above is not strictly correct, but that the coordinate frame here
+			// is the same as for most of the characters (the case below), but it seems that the LUA scripts
+			// actually are asking for Meche to look straight backwards! Which causes the maxYaw/maxPitch/maxRoll logic
+			// to constrain the head in an awkward angle. Instead, try to orient the back of Meche's head towards the
+			// desired direction.
+			frontDir = Math::Vector3d(-_joint3Node->_matrix(0,1), -_joint3Node->_matrix(1,1), -_joint3Node->_matrix(2,1)); // Look straight ahead. (-Y)
+			localFront = Math::Vector3d(0,-1,0);
+			localUp = Math::Vector3d(0,0,1);
+		} else {
+			// the character head coordinate frame is: +Y forward, +Z up, +X right.
+			frontDir = Math::Vector3d(_joint3Node->_matrix(0,1), _joint3Node->_matrix(1,1), _joint3Node->_matrix(2,1)); // Look straight ahead. (+Y)
+			localFront = Math::Vector3d(0,1,0);
+			localUp = Math::Vector3d(0,0,1);
 		}
 		
 		// yFront == true for about every character in the game.
