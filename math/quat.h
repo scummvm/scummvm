@@ -22,46 +22,34 @@
  * $Id$
  */
 
-#ifndef MATH_VECTOR4D_H
-#define MATH_VECTOR4D_H
+// Quaternion-math borrowed from plib http://plib.sourceforge.net/index.html
+// Which is covered by LGPL2
+
+#ifndef MATH_QUAT_H
+#define MATH_QUAT_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"
 
 #include "math/vector.h"
 #include "math/angle.h"
+#include "math/vector4d.h"
+#include "matrix4.h"
 
 namespace Math {
 
-typedef Matrix<4, 1> Vector4d;
-
-template<>
-class Matrix<4, 1> : public MatrixType<4, 1> {
+class Quaternion : public Vector4d {
 public:
-	float& x() { return value(0); }
-	float x() const { return value(0); }
-	float& y() { return value(1); }
-	float y() const { return value(1); }
-	float& z() { return value(2); }
-	float z() const { return value(2); }
-	float& w() { return value(3); }
-	float w() const { return value(3); }
+	Quaternion() : Vector4d(0, 0, 0, 0) {}
+	Quaternion(float lx, float ly, float lz, float lw) : Vector4d(lx, ly, lz, lw) {}
+	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
+
+	Matrix4 toMatrix();
+	void slerpQuat(Quaternion dst, const Quaternion from, const Quaternion to, const float t);
 	
-	Matrix();
-	Matrix(float lx, float ly, float lz, float lw);
-	Matrix(const MatrixBase<4, 1> &m);
-	Matrix(const float *data);
-
-	void set(float lx, float ly, float lz, float lw);
-
-	inline float scalarProduct(const Vector4d b) const {
-		return x()*b.x() + y()*b.y() + z()*b.z() + w()*b.w();
+	inline static Quaternion get_quaternion(const char *data) {
+		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
 	}
-	
-	inline static Vector4d get_vector4d(const char *data) {
-		return Vector4d(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
-	}
-
 };
 
 } // end of namespace Math

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	matrix4.o \
 	line3d.o \
 	line2d.o \
+	quat.o \
 	rect2d.o \
 	vector2d.o \
 	vector3d.o \
