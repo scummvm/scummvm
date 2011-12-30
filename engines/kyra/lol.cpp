@@ -477,9 +477,9 @@ void LoLEngine::initKeymap() {
 	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1, 0), "AT1", _("Attack 1")},
-		{Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2, 0), "AT2", _("Attack 2")},
-		{Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F2, 0), "AT3", _("Attack 3")},
+		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "AT1", _("Attack 1")},
+		{Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2), "AT2", _("Attack 2")},
+		{Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "AT3", _("Attack 3")},
 		{Common::KeyState(Common::KEYCODE_UP), "MVF", _("Move Forward")},
 		{Common::KeyState(Common::KEYCODE_DOWN), "MVB", _("Move Back")},
 		{Common::KeyState(Common::KEYCODE_LEFT), "SLL", _("Slide Left")},
