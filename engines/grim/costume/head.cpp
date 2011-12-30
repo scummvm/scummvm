@@ -247,9 +247,12 @@ void Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const 
 		// orientation.
 		Math::Matrix4 lookAtTM;
 		const Math::Vector3d worldUp(0,0,1); // The Residual scene convention: +Z is world space up.
-		if (fabs(Math::Vector3d::dotProduct(v, Math::Vector3d(0,0,1))) >= 0.98f) // Avoid singularity if trying to look straight up.
+		if (Math::Vector3d::dotProduct(v, Math::Vector3d(0,0,1)) >= 0.98f) // Avoid singularity if trying to look straight up.
 			lookAtTM = lookAtMatrix(localFront, v, localUp, -frontDir); // Instead of orienting head towards scene up, orient head towards character "back",
 		                                                                // i.e. when you look straight up, your head up vector tilts/arches to point straight backwards.
+		else if (Math::Vector3d::dotProduct(v, Math::Vector3d(0,0,1)) <= -0.98f) // Avoid singularity if trying to look straight down.
+			lookAtTM = lookAtMatrix(localFront, v, localUp, frontDir); // Instead of orienting head towards scene down, orient head towards character "front",
+																	   // i.e. when you look straight down, your head up vector tilts/arches to point straight forwards.
 		else
 			lookAtTM = lookAtMatrix(localFront, v, localUp, worldUp);
 		// The above specifies the world space orientation of this bone, but we need to output
