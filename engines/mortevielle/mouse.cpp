@@ -336,7 +336,7 @@ void mov_mouse(bool &funct, char &key) {
 	while (p_key) {
 		input >> kbd >> in1;
 		read_pos_mouse(cx, cy, cd);
-		switch (upcase(in1)) {
+		switch (toupper(in1)) {
 		case '4' :
 			cx = cx - 8;
 			break;
@@ -382,6 +382,13 @@ void mov_mouse(bool &funct, char &key) {
 		break;
 		case '\33' : {
 			p_key = keypressed();
+
+			if ((p_key >= ';') && (p_key <= 'D')) {
+				funct = true;
+				key = in2;
+				return;
+			}
+
 			if (p_key) {
 				input >> kbd >> in2;
 				switch (in2) {
@@ -397,12 +404,6 @@ void mov_mouse(bool &funct, char &key) {
 				case 'H' :
 					cy = pred(int, cy);
 					break;
-				case RANGE_10(';', 'D') : {
-					funct = true;
-					key = in2;
-					return;
-				}
-				break;
 				case 'G' : {
 					cx = cx - 1;
 					cy = cy - 1;

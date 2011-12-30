@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-void droite(int x, int y, int xx, int yy, int coul);
+extern void droite(int x, int y, int xx, int yy, int coul);
 
 } // End of namespace Mortevielle
 #endif

@@ -30,10 +30,10 @@
 
 namespace Mortevielle {
 
-void dem1();
-void takesav(int n);
-void ld_game(int n);
-void sv_game(int n);
+extern void dem1();
+extern void takesav(int n);
+extern void ld_game(int n);
+extern void sv_game(int n);
 
 } // End of namespace Mortevielle
 #endif

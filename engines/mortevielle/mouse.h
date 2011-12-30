@@ -31,13 +31,13 @@
 namespace Mortevielle {
 
 void init_mouse();
-//void change_mouse(int t);
-//void dessine_souris(int xf, int yf);
-void hide_mouse();
-void show_mouse();
-void pos_mouse(int x, int y);
-void read_pos_mouse(int &x, int &y, int &c);
-void mov_mouse(bool &funct, char &key);
+//extern void change_mouse(int t);
+//extern void dessine_souris(int xf, int yf);
+extern void hide_mouse();
+extern void show_mouse();
+extern void pos_mouse(int x, int y);
+extern void read_pos_mouse(int &x, int &y, int &c);
+extern void mov_mouse(bool &funct, char &key);
 
 } // End of namespace Mortevielle
 #endif

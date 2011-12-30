@@ -30,20 +30,20 @@
 
 namespace Mortevielle {
 
-void dem2();
-void ani50();
-//void apzuul();
-void aff50(bool c);
-void init_menu();
-void charpal();
-void chartex();
-void dialpre();
-void init_lieu();
-void music();
-void charge_bruit5();
-void charge_cfiec();
-void charge_cfiph();
-void suite();
+extern void dem2();
+extern void ani50();
+//extern void apzuul();
+extern void aff50(bool c);
+extern void init_menu();
+extern void charpal();
+extern void chartex();
+extern void dialpre();
+extern void init_lieu();
+extern void music();
+extern void charge_bruit5();
+extern void charge_cfiec();
+extern void charge_cfiph();
+extern void suite();
 
 } // End of namespace Mortevielle
 #endif

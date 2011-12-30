@@ -30,18 +30,18 @@
 
 namespace Mortevielle {
 
-void change_gd(int ngd);
-void antegame();
+extern void change_gd(int ngd);
+extern void antegame();
 
 /* NIVEAU 3 */
 /* procedure PROGRAMME */
-void tmaj3();
-void tsitu();
-void tecran();
+extern void tmaj3();
+extern void tsitu();
+extern void tecran();
 
 /* NIVEAU 1 */
-void theure();
-void tjouer();
+extern void theure();
+extern void tjouer();
 
 } // End of namespace Mortevielle
 #endif

@@ -30,16 +30,16 @@
 
 namespace Mortevielle {
 
-void spfrac(int wor);
-void charg_car();
-void entroct(byte o);
-void veracf(byte b);
-void cctable(tablint &t);
-void regenbruit();
-void charge_son();
-void charge_phbruit();
-void charge_bruit();
-void trait_car();
+extern void spfrac(int wor);
+extern void charg_car();
+extern void entroct(byte o);
+extern void veracf(byte b);
+extern void cctable(tablint &t);
+extern void regenbruit();
+extern void charge_son();
+extern void charge_phbruit();
+extern void charge_bruit();
+extern void trait_car();
 
 } // End of namespace Mortevielle
 #endif

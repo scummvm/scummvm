@@ -30,9 +30,9 @@
 
 namespace Mortevielle {
 
-void divers(int np, bool b);
+extern void divers(int np, bool b);
 /* NIVEAU 0 */
-int main(int argc, const char *argv[]);
+extern int main(int argc, const char *argv[]);
 } // End of namespace Mortevielle
 
 #endif
