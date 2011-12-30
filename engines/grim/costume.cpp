@@ -463,7 +463,7 @@ void Costume::animate() {
 }
 
 void Costume::moveHead(bool entering, const Math::Vector3d &lookAt) {
-	_head->lookAt(entering, lookAt, _lookAtRate, _matrix);
+	_head->lookAt(entering, lookAt, _lookAtRate, _matrix, _fname);
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {

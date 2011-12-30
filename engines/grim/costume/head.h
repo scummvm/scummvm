@@ -38,7 +38,7 @@ public:
 	void loadJoints(ModelNode *nodes);
 	void setMaxAngles(float maxPitch, float maxYaw, float maxRoll);
 
-	void lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix);
+	void lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix, const Common::String &fname);
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
@@ -61,6 +61,7 @@ private:
 
 	Math::Angle _headPitch;
 	Math::Angle _headYaw;
+	Math::Angle _headRoll;
 };
 
 } // end of namespace Grim
