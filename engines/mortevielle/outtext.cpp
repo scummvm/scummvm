@@ -160,7 +160,7 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	int xf, yf;
 	int xc, yc;
 	int tab, p;
-	varying_string<255> s;
+	Common::String s;
 	int i, j, nt;
 
 

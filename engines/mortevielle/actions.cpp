@@ -989,7 +989,7 @@ L2:
 	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
 	char tou;
-	array<1, 46, varying_string<40> > lib;
+	Common::String lib[47];
 	char st[1410];
 	bool f;
 

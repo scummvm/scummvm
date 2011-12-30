@@ -50,7 +50,7 @@ void dem1() {
 void takesav(int n) {
 	untyped_file f;
 	int i;
-	varying_string<10> st;
+	Common::String st;
 
 	dem1();
 	/* -- chargement du fichier 'sauve#n.mor' -- */

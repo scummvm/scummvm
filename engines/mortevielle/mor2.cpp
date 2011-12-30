@@ -46,7 +46,7 @@ void tinke() {
 	const char d5 = '1';
 	const char d6[] = "OK";
 	int cx, cy, haz, nh, cf, j, h, m, cd;
-	varying_string<3> stpo;
+	Common::String stpo;
 	bool am;
 
 	anyone = false;

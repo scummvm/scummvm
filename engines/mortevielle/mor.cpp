@@ -268,7 +268,7 @@ void ecrf7() {
 
 void clsf10() {
 	int co, cod;
-	varying_string<8> st;
+	Common::String st;
 
 	/* debug('clsf10'); */
 	hide_mouse();
@@ -392,7 +392,7 @@ void modobj2(int m, bool t1, bool t2) {
 
 void repon(int f, int m) {
 	Common::String str_;
-	varying_string<40> str1;
+	Common::String str1;
 	char st[1410];
 	text1 fic;
 	int i, xco, dx, caspe, tay;

@@ -100,7 +100,7 @@ static void fait_boite(int lidep, int nli, int tx) {
 
 
 
-static void fait_choix(Common::String c, int &coldep, int &nbcase, array<1, 2, varying_string<3> > &s, int &esp) {
+static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String[] &s, int &esp) {
 	int i, l, x;
 	char ch;
 
@@ -126,7 +126,7 @@ int do_alert(Common::String str_, int n) {
 	Common::String st, chaine;
 	matrix<1, 2, 1, 2, int> limit;
 	char c, dumi;
-	array<1, 2, varying_string<3> > s;
+	Common::String s[3];
 	int cx, cy, cd, nbcol, nblig;
 	bool touch, newaff, test, test1, test2, test3, dum;
 	Common::String cas;
