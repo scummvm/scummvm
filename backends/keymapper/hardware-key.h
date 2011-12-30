@@ -97,7 +97,7 @@ public:
 		List<const HardwareKey*>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if (keystate.keycode == (*it)->key.keycode && keystate.hasFlags((*it)->key.flags))
+			if ((*it)->key == keystate)
 				return (*it);
 		}
 		return 0;
