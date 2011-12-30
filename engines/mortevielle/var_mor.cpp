@@ -31,6 +31,205 @@
 namespace Mortevielle {
 
 /*---------------------------------------------------------------------------*/
+/*------------------------------   CONSTANTS   ------------------------------*/
+/*---------------------------------------------------------------------------*/
+
+const byte tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+const byte tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
+const byte typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
+const byte intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+const byte tnocon[364] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+
+const byte don[9][5] = {
+	{ 0,  0,  0,  0, 0},
+	{ 0,  7, 37, 22,  8},
+	{0,  19, 33, 23,  7},
+	{0,  31, 89, 10, 21},
+	{0,  43, 25, 11,  5},
+	{0,  55, 37,  5,  8},
+	{0,  64, 13, 11,  2},
+	{0,  62, 22, 13,  4},
+	{0,  62, 25, 13,  5}
+};
+
+const char *fic[3] = {
+	"", 
+	" Sauvegarde",
+	 " Chargement"
+};
+
+const byte addv[2] = {8, 8};
+
+const char recom[] = " Recommence  ";
+
+const char f3[] = "F3: Encore";
+const char f8[] = "F8: Suite";
+
+const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
+
+/*---------------------------------------------------------------------------*/
+/*------------------------------   VARIABLES   ------------------------------*/
+/*---------------------------------------------------------------------------*/
+
+bool blo,
+        bh1,
+        bf1,
+        bh2,
+        bh4,
+        bf4,
+        bh5,
+        bh6,
+        bh8,
+        bt3,
+        bt7,
+        bh9,
+
+        sonoff,
+        main1,
+        choisi,
+        test0,
+        f2_all,
+        imen,
+        cache,
+        iesc,
+        perdu,
+        col,
+        syn,
+        fouil,
+        zuul,
+        tesok,
+        obpart,
+        okdes,
+        solu,
+        arret,
+        anyone,
+        brt,
+        rect,
+        rech_cfiec,
+        active_menu;
+
+
+int x,
+        y,
+        t,
+        vj,
+        li,
+        vh,
+        vm,
+        jh,
+        mh,
+        cs,
+        gd,                /*  Gd = graph device  */
+        hdb,
+        hfb,
+        heu,
+        jou,
+        key,
+        min,
+        num,
+        max,
+        res,
+        ment,
+        haut,
+        caff,
+        maff,
+        crep,
+        ades,
+        iouv,
+        inei,
+        ctrm,
+        dobj,
+        msg3,
+        msg4,
+        mlec,
+        newgd,
+        c_zzz,
+        mchai,
+        menup,
+        ipers,
+        ledeb,
+        lefin,
+        mpers,
+        mnumo,
+        xprec,
+        yprec,
+        perdep,
+        prebru,
+        typlec,
+        num_ph,
+        xwhere,
+        ywhere,
+        numpal,
+        lderobj,
+        nb_word,
+        ptr_oct,
+        k_tempo,
+        ptr_tcph,
+        ptr_word,
+        color_txt;
+
+int t_cph[6401];
+byte tabdon[4001];
+/*   t_dxx  : array[0..121] of int;*/
+Common::String stpou;                               /* donne le % d'indices */
+byte is;
+char mode;
+Common::String al_mess,
+       err_mess,
+       ind_mess,
+       al_mess2;
+
+int invt[8];
+int nbrep[8];
+int nbrepm[8];
+int disc[8];
+int msg[5];
+int depl[7];
+Common::String inv[9];
+Common::String dep[8];
+Common::String act[22];
+Common::String self_[6];
+Common::String dis[9];
+char touv[7];
+sav_chaine s, s1;
+byte bufcha[391];
+
+byte lettres[7][24];
+
+byte palher[16];
+
+int t_mot[maxti + 1];
+int tay_tchar;
+ind t_rec[maxtd + 1];
+//file<ind> sauv_t;
+//untyped_file fibyte;
+byte v_lieu[8][25];
+int l[108];
+int tbi[256];
+chariot c1, c2, c3;
+float addfix;
+t_pcga palsav[91];
+doublet tabpal[91][16];
+t_pcga palcga[91];
+pattern tpt[15];
+
+/*---------------------------------------------------------------------------*/
 /*--------------------   PROCEDURES  AND  FONCTIONS   -----------------------*/
 /*---------------------------------------------------------------------------*/
 

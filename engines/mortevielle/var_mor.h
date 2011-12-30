@@ -43,7 +43,7 @@ namespace Mortevielle {
 
 
 /*---------------------------------------------------------------------------*/
-/*-------------------------   CONSTANTES   ----------------------------------*/
+/*-------------------------    CONSTANTS   ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
 const float freq0 = 1.19318e6;
@@ -78,12 +78,6 @@ const int ti2 = 250;
 const int maxti = 7975;
 const int maxtd = 600;
 const int max_rect = 14;
-
-const int ams = 0;
-const int cga = 1;
-const int ega = 2;
-const int her = 3;
-const int tan = 4;
 
 const int c_repon = 0;
 const int c_st41 = 186;
@@ -144,57 +138,26 @@ const int slire = 0x403;
 const int sposer = 0x404;
 const int sregarder = 0x405;
 
-const byte tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
-const byte tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
-const byte typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
-const byte intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-const byte tnocon[364] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
-
-const byte don[9][5] = {
-	{ 0,  0,  0,  0, 0},
-	{ 0,  7, 37, 22,  8},
-	{0,  19, 33, 23,  7},
-	{0,  31, 89, 10, 21},
-	{0,  43, 25, 11,  5},
-	{0,  55, 37,  5,  8},
-	{0,  64, 13, 11,  2},
-	{0,  62, 22, 13,  4},
-	{0,  62, 25, 13,  5}
-};
-
-const char *fic[3] = {
-	"", 
-	" Sauvegarde",
-	 " Chargement"
-};
-
-const byte addv[2] = {8, 8};
-
-const char recom[] = " Recommence  ";
-
-const char f3[] = "F3: Encore";
-const char f8[] = "F8: Suite";
-
 const int max_patt = 20;
 
+extern const byte tabdbc[18];
+extern const byte tabdph[16];
+extern const byte typcon[26];
+extern const byte intcon[26];
+extern const byte tnocon[364];
 
-const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
+extern const byte don[9][5];
+
+extern const char *fic[3];
+
+extern const byte addv[2];
+
+extern const char recom[];
+
+extern const char f3[];
+extern const char f8[];
+
+extern const byte rang[16];
 
 
 /*---------------------------------------------------------------------------*/
@@ -255,10 +218,16 @@ struct t_pcga {
 };
 
 /*---------------------------------------------------------------------------*/
+/*------------------------------     ENUMS     ------------------------------*/
+/*---------------------------------------------------------------------------*/
+
+enum GraphicModes { ams = 0, cga = 1, ega = 2, her = 3, tan = 4 };
+
+/*---------------------------------------------------------------------------*/
 /*------------------------------   VARIABLES   ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-bool blo,
+extern bool blo,
         bh1,
         bf1,
         bh2,
@@ -296,7 +265,7 @@ bool blo,
         active_menu;
 
 
-int x,
+extern int x,
         y,
         t,
         vj,
@@ -355,50 +324,50 @@ int x,
         ptr_word,
         color_txt;
 
-int t_cph[6401];
-byte tabdon[4001];
+extern int t_cph[6401];
+extern byte tabdon[4001];
 /*   t_dxx  : array[0..121] of int;*/
-Common::String stpou;                               /* donne le % d'indices */
-byte is;
-char mode;
-Common::String al_mess,
+extern Common::String stpou;                               /* donne le % d'indices */
+extern byte is;
+extern char mode;
+extern Common::String al_mess,
        err_mess,
        ind_mess,
        al_mess2;
 
-int invt[8];
-int nbrep[8];
-int nbrepm[8];
-int disc[8];
-int msg[5];
-int depl[7];
-Common::String inv[9];
-Common::String dep[8];
-Common::String act[22];
-Common::String self_[6];
-Common::String dis[9];
-char touv[7];
-sav_chaine s, s1;
-byte bufcha[391];
+extern int invt[8];
+extern int nbrep[8];
+extern int nbrepm[8];
+extern int disc[8];
+extern int msg[5];
+extern int depl[7];
+extern Common::String inv[9];
+extern Common::String dep[8];
+extern Common::String act[22];
+extern Common::String self_[6];
+extern Common::String dis[9];
+extern char touv[7];
+extern sav_chaine s, s1;
+extern byte bufcha[391];
 
-byte lettres[7][24];
+extern byte lettres[7][24];
 
-byte palher[16];
+extern byte palher[16];
 
-int t_mot[maxti + 1];
-int tay_tchar;
-ind t_rec[maxtd + 1];
+extern int t_mot[maxti + 1];
+extern int tay_tchar;
+extern ind t_rec[maxtd + 1];
 //file<ind> sauv_t;
 //untyped_file fibyte;
-byte v_lieu[8][25];
-int l[108];
-int tbi[256];
-chariot c1, c2, c3;
-float addfix;
-t_pcga palsav[91];
-doublet tabpal[91][16];
-t_pcga palcga[91];
-pattern tpt[15];
+extern byte v_lieu[8][25];
+extern int l[108];
+extern int tbi[256];
+extern chariot c1, c2, c3;
+extern float addfix;
+extern t_pcga palsav[91];
+extern doublet tabpal[91][16];
+extern t_pcga palcga[91];
+extern pattern tpt[15];
 
 /*---------------------------------------------------------------------------*/
 /*-------------------   PROCEDURES  AND  FONCTIONS   ------------------------*/
