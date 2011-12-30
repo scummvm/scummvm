@@ -27,6 +27,7 @@
 
 #include "mortevielle/level15.h"
 #include "mortevielle/var_mor.h"
+#include "mortevielle/mouse.h"
 
 namespace Mortevielle {
 

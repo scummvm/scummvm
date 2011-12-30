@@ -32,6 +32,12 @@ namespace Mortevielle {
 
 extern bool clic;
 
+extern int m_show,
+        x_s,
+        y_s,
+        p_o_s,
+        mouse_shwn;
+
 void init_mouse();
 //extern void change_mouse(int t);
 //extern void dessine_souris(int xf, int yf);

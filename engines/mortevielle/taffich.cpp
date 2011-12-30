@@ -26,6 +26,7 @@
  */
 
 #include "common/str.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 

@@ -26,9 +26,15 @@
  */
 
 #include "mortevielle/mor2.h"
+#include "mortevielle/alert.h"
+#include "mortevielle/boite.h"
 #include "mortevielle/var_mor.h"
+#include "mortevielle/menu.h"
+#include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
+#include "mortevielle/parole2.h"
+#include "mortevielle/taffich.h"
 
 namespace Mortevielle {
 
@@ -211,7 +217,7 @@ void tmlieu(int mli) {
 		cx = v_lieu[i][mli];
 		deline(cx + c_tmlieu, st, tail);
 		nomp = delig;
-		while (length(nomp) < 30)  nomp = nomp + ' ';
+		while (nomp.size() < 30)  nomp = nomp + ' ';
 		menut(depl[i], nomp);
 		i = i + 1;
 	}

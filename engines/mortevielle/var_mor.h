@@ -48,6 +48,10 @@ namespace Mortevielle {
 #define pred(type, v) (v - 1)
 #define succ(type, v) (v + 1)
 #define ord(v) ((int) v)
+#define chr(v) ((char) v)
+#define lo(v) (v & 0xff)
+#define hi(v) ((v >> 8) & 0xff)
+#define odd(v) ((v % 2) == 1)
 
 // TODO: Replace the following with proper implementations
 #define mortevielle_exit(ret) error("Exit the game")

@@ -55,7 +55,7 @@ void writeg(Common::String l, int c)
 	yo = ywhere;
 	if (res == 2)  i = 6;
 	else i = 10;
-	x = xo + i * length(l);
+	x = xo + i * l.size();
 	switch (c) {
 	case 1:
 	case 3  : {
@@ -80,7 +80,7 @@ void writeg(Common::String l, int c)
 	}
 	xo = xo + 1;
 	yo = yo + 1;
-	for (x = 1; x <= length(l); x ++) {
+	for (x = 1; x <= l.size(); x ++) {
 		affcar(gd, xo, yo, cecr, ord(l[x]));
 		xo = xo + i;
 	}

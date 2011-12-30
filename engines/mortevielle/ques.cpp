@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
 #include "common/str.h"
@@ -89,7 +90,7 @@ namespace Mortevielle {
 				with.y2 = 34 + j * 8;
 				with.etat = true;
 			}
-			while (length(chaines[j]) < tmax) {
+			while (chaines[j].size() < tmax) {
 				chaines[j] = chaines[j] + ' ';
 			}
 		}
