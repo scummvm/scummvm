@@ -45,7 +45,6 @@ namespace Audio {
 
 /**
  * This is a stream, which allows for playing raw PCM data from a stream.
- * It also features playback of multiple blocks from a given stream.
  */
 template<bool is16Bit, bool isUnsigned, bool isLE>
 class RawStream : public SeekableAudioStream {
