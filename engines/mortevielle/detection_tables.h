@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,20 +20,19 @@
  *
  */
 
-/*
- * This code is based on original Mortville Manor DOS source code
- * Copyright (c) 1988-1989 Lankhor
- */
-
-#ifndef MORTEVIELLE_MORT_H
-#define MORTEVIELLE_MORT_H
-
 namespace Mortevielle {
 
-extern void divers(int np, bool b);
-/* NIVEAU 0 */
-extern int mortevielle_main(int argc, const char *argv[]);
+static const ADGameDescription gameDescriptions[] = {
+	{
+		"mortevielle",
+		"",
+		AD_ENTRY1s("mortvielle.txt", "d41d8cd98f00b204e9800998ecf8427e", 0),
+		Common::FR_FRA,
+		Common::kPlatformPC,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	AD_TABLE_END_MARKER
+};
 
 } // End of namespace Mortevielle
-
-#endif

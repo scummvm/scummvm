@@ -20,20 +20,28 @@
  *
  */
 
-/*
- * This code is based on original Mortville Manor DOS source code
- * Copyright (c) 1988-1989 Lankhor
- */
-
-#ifndef MORTEVIELLE_MORT_H
-#define MORTEVIELLE_MORT_H
+#include "mortevielle/mortevielle.h"
+#include "mortevielle/mort.h"
 
 namespace Mortevielle {
 
-extern void divers(int np, bool b);
-/* NIVEAU 0 */
-extern int mortevielle_main(int argc, const char *argv[]);
+MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc):
+		Engine(system), _gameDescription(gameDesc) {
+}
+
+MortevielleEngine::~MortevielleEngine() {
+}
+
+bool MortevielleEngine::hasFeature(EngineFeature f) const {
+	return false;
+}
+
+Common::Error MortevielleEngine::run() {
+	// Dispatch to the game's main routine
+	const char *argv[] = { "" };
+	mortevielle_main(1, argv);
+
+	return Common::kNoError;
+}
 
 } // End of namespace Mortevielle
-
-#endif
