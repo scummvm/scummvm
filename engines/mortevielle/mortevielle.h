@@ -20,19 +20,35 @@
  *
  */
 
-/*
- * This code is based on original Mortville Manor DOS source code
- * Copyright (c) 1988-1989 Lankhor
- */
+#ifndef MORTEVIELLE_H
+#define MORTEVIELLE_H
 
-#ifndef MORTEVIELLE_MORT_H
-#define MORTEVIELLE_MORT_H
+#include "engines/advancedDetector.h"
+#include "engines/engine.h"
+#include "common/error.h"
 
 namespace Mortevielle {
 
-extern void divers(int np, bool b);
-/* NIVEAU 0 */
-extern int mortevielle_main(int argc, const char *argv[]);
+enum {
+	kMortevielleCore = 1 << 0
+};
+
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+
+class MortevielleEngine : public Engine {
+private:
+	const ADGameDescription *_gameDescription;
+public:
+	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
+	~MortevielleEngine();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run();
+
+	uint32 getGameFlags() const;
+};
+
+extern MortevielleEngine *g_vm;
 
 } // End of namespace Mortevielle
 

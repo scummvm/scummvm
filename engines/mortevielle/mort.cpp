@@ -66,7 +66,7 @@ void divers(int np, bool b) {
 
 /* NIVEAU 0 */
 
-int main(int argc, const char *argv[]) {
+int mortevielle_main(int argc, const char *argv[]) {
 	/*init_debug;*/
 	/*  ecri_seg;*/
 	//pio_initialize(argc, argv);

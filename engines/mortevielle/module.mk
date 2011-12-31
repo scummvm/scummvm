@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actions.o \
 	alert.o \
 	boite.o \
+	detection.o \
 	disk.o \
 	droite.o \
 	keyboard.o \
@@ -12,6 +13,7 @@ MODULE_OBJS := \
 	mor.o \
 	mor2.o \
 	mort.o \
+	mortevielle.o \
 	mouse.o \
 	outtext.o \
 	ovd1.o \
