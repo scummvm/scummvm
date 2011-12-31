@@ -29,6 +29,7 @@
 #include "mortevielle/alert.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/sprint.h"
 
 namespace Mortevielle {
 
@@ -48,7 +49,10 @@ static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 	int i, k;
 	bool v;
 
-	val(s[2], nbc, i);
+	//val(s[2], nbc, i);
+	sscanf(s.c_str() + 1, "%d", nbc);
+	i = 0;
+
 	c = "";
 	nbl = 0;
 	i = 5;
@@ -102,7 +106,7 @@ static void fait_boite(int lidep, int nli, int tx) {
 
 
 
-static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String *&str, int &esp) {
+static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String[3] &str, int &esp) {
 	int i, l, x;
 	char ch;
 

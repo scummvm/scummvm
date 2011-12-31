@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
@@ -98,14 +99,9 @@ void charani(Common::String nom, float passe, int long_) {
 }
 
 void taffich() {
-	const array<136, 140, byte> tran1
-	= {{ 121, 121, 138, 139, 120 }};
-	const array<153, 161, byte> tran2
-	= {{
-			150, 150, 152, 152, 100,
-			110, 159, 100, 100
-		}
-	};
+	byte tran1[] = { 121, 121, 138, 139, 120 };	// array<136, 140, byte>
+	byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };	// array<153, 161, byte>
+
 	int i, m, a, b, cx, handle,
 	        npal;
 	float lgt, lhandle;
@@ -116,9 +112,9 @@ void taffich() {
 
 	a = caff;
 	if ((a >= 153) && (a <= 161))
-		a = tran2[a];
+		a = tran2[a - 153];
 	else if ((a >= 136) && (a <= 140))
-		a = tran1[a];
+		a = tran1[a - 136];
 	b = a;
 	if (maff == a)  return;
 	if (a == 16) {

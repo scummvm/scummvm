@@ -26,10 +26,18 @@
  */
 
 #include "common/file.h"
+#include "mortevielle/alert.h"
+#include "mortevielle/level15.h"
+#include "mortevielle/mor.h"
+#include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
+#include "mortevielle/traffich.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
+
+// For ScummVM, we need to do check for file errors where we do the file access
+const int ioresult = 0;
 
 void dem2() {
 	/* Deprecated check for disk 2
@@ -142,7 +150,7 @@ void ani50() {
 	reset(ft);
 	if (ioresult != 0) {
 		caff = do_alert(err_mess, 1);
-		exit(0);
+		mortevielle_exit(0);
 	}
 	ft >> l;
 	close(ft);
@@ -176,24 +184,27 @@ void ani50() {
 
 /* overlay */ void chartex() {
 	int i;
-	Common::File fibyte;
+	Common::File f;
 	char s[1410];
 
 	/* debug('o3 chartex'); */
 	i = 0;
-	if (!fibyte.open("TXX.INP"))
-		error("missing file - TXX.INP");
+	if (!f.open("TXX.INP"))
+		error("Missing file - TXX.INP");
 
-	fibyte.read(&t_mot, 125);
+	f.read(&t_mot, 125);
+	f.close();
 
-	close(fibyte);
-	assign(sauv_t, "TXX.NTP");
-	reset(sauv_t);
+	if (!f.open("TXX.NTP"))
+		error("Missing file - TXX.NTP");
 	do {
-		sauv_t >> t_rec[i];
+		t_rec[i].indis = f.readSint16LE();
+		t_rec[i].point = f.readByte();
+
 		i = i + 1;
-	} while (!(eof(sauv_t)));
-	close(sauv_t);
+	} while (!f.eos());
+	f.close();
+
 	deline(578, s, i);
 	al_mess = delig;
 	deline(579, s, i);
@@ -265,7 +276,7 @@ void ani50() {
 	do {
 		input >> kbd >> ch;
 	} while ((ch != 'C') && (ch != 'S'));
-	int_m = (upcase(ch) == 'S');
+	int_m = (toupper(ch) == 'S');
 }
 
 /* overlay */ void init_lieu() {

@@ -25,8 +25,6 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "ptoc.h"
-
 #include "mortevielle/mort.h"
 #include "mortevielle/var_mor.h"          /* les variables */
 #include "mortevielle/keyboard.h"          /* la gestion du clavier */

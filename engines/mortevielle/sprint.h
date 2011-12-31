@@ -35,6 +35,7 @@ namespace Mortevielle {
 extern void fill_box(int x, int y, int dx);
 extern void clear_box(int x, int y, int dx);
 extern void writeg(Common::String l, int c);
+extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
 
 } // End of namespace Mortevielle
 #endif

@@ -25,8 +25,10 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#include "mortevielle/var_mor.h"
 #include "common/str.h"
+#include "common/textconsole.h"
+#include "mortevielle/sprint.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
@@ -248,11 +250,13 @@ void hirs() {
 	break;
 	case ams : {
 		hires;
-		inline_((float)(0xb8) / 6 / 0 /   /*  =>  mov ax,6 */
-		        0xcd / 0x10);     /*  =>  int 16   */
+		/* 
+		inline_((float)(0xb8) / 6 / 0 / //  =>  mov ax,6
+		        0xcd / 0x10);			//  =>  int 16
 		port[0x3d9] = 15;
 		port[0x3df] = 0;
 		port[0x3dd] = 15;
+		*/
 		res = 2;
 	}
 	break;
@@ -295,6 +299,9 @@ void hirs() {
 }
 
 /* procedure affput(Chx,Gd,x,y,coul,char:int); external 'c:\mc\divaf.com'; */
+void affput(int Chx, int Gd, int x, int y, int coul, int char_) {
+	warning("TODO: Implement affput");
+}
 
 void affcar(int gd, int x, int y, int coul, int chr) {
 	if (res == 1)  affput(1, gd, ((uint)x >> 1), y, coul, chr);
@@ -304,5 +311,28 @@ void affcar(int gd, int x, int y, int coul, int chr) {
 void putpix(int gd, int x, int y, int coul) {
 	affput(0, gd, x, y, coul, 0);
 }
+
+/**
+ * Returns a substring of the given string
+ * @param s		Source string
+ * @param idx	Starting index (1 based)
+ * @param size	Number of characters to return
+ */
+Common::String copy(const Common::String &s, int idx, size_t size) {
+	// Copy the substring into a temporary buffer
+	char *tmp = new char[size + 1];
+	strncpy(tmp, s.c_str() + idx - 1, size);
+	tmp[size] = '\0';
+
+	Common::String result(tmp);
+	delete tmp;
+	return result;
+}
+
+/*---------------------------------------------------------------------------*/
+/*------------------------------     STUBS     ------------------------------*/
+/*---------------------------------------------------------------------------*/
+
+int port[0xfff];
 
 } // End of namespace Mortevielle
