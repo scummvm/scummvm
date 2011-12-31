@@ -189,6 +189,8 @@ Common::Error Saver::restore(int slot) {
 	// Read in the savegame header
 	tSageSavegameHeader header;
 	readSavegameHeader(saveFile, header);
+	if (header.thumbnail)
+		header.thumbnail->free();
 	delete header.thumbnail;
 
 	serializer.setSaveVersion(header.version);
