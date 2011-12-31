@@ -363,20 +363,15 @@ Common::Error EoBCoreEngine::init() {
 	_tickLength = 55;
 
 	_screen = new Screen_EoB(this, _system);
-
 	assert(_screen);
 	_screen->setResolution();
-
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
 	assert(_sound);
 	_sound->init();
 
+	// Setup volume settings
 	syncSoundSettings();
 
 	_res = new Resource(this);
@@ -398,6 +393,7 @@ Common::Error EoBCoreEngine::init() {
 	}
 
 	setupKeyMap();
+
 	_gui = new GUI_EoB(this);
 	assert(_gui);
 	_txt = new TextDisplayer_rpg(this, _screen);
