@@ -118,7 +118,12 @@ static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::Strin
 		i = i + 2;
 		while (str[l].size() < 3)  str[l] = str[l] + ' ';
 		putxy(x, 98);
-		writeg(string(' ') + str[l] + ' ', 0);
+
+		Common::String tmp(" ");
+		tmp += str[l];
+		tmp += " ";
+
+		writeg(tmp, 0);
 		x = x + esp + 40;
 	}
 }
@@ -198,10 +203,19 @@ int do_alert(Common::String str_, int n) {
 					hide_mouse();
 					if (quoi != 0) {
 						posit(quoi, coldep, esp);
-						writeg(string(' ') + s[quoi] + ' ', 0);
+
+						Common::String tmp(" ");
+						tmp += s[quoi];
+						tmp += " ";
+						writeg(tmp, 0);
 					}
 					posit(ix, coldep, esp);
-					writeg(string(' ') + s[ix] + ' ', 1);
+
+					Common::String tmp2 = " ";
+					tmp2 += s[ix];
+					tmp2 += " ";
+					writeg(tmp2, 1);
+
 					quoi = ix;
 					show_mouse();
 				}
@@ -210,7 +224,12 @@ int do_alert(Common::String str_, int n) {
 		if ((quoi != 0) && ! newaff) {
 			hide_mouse();
 			posit(quoi, coldep, esp);
-			writeg(string(' ') + s[quoi] + ' ', 0);
+
+			Common::String tmp3(" ");
+			tmp3 += s[quoi];
+			tmp3 += " ";
+			writeg(tmp3, 0);
+
 			quoi = 0;
 			show_mouse();
 		}
@@ -222,7 +241,10 @@ int do_alert(Common::String str_, int n) {
 	if (! test3)  {
 		quoi = n;
 		posit(n, coldep, esp);
-		writeg(string(' ') + s[n] + ' ', 1);
+		Common::String tmp4(" ");
+		tmp4 += s[n];
+		tmp4 += " ";
+		writeg(tmp4, 1);
 	}
 	charecr(50, succ(int, nligne) << 4);
 	show_mouse();
