@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/file.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/var_mor.h"
 #include "mortevielle/mouse.h"
@@ -149,35 +150,37 @@ end;
   */
 
 void adzon() {
-	untyped_file f;
-	file<byte> g;
+	Common::File f;
+//	Common::File g;
 	byte a;
 	int i;
 
-	assign(f, "don.mor");
-	reset(f, 256);
-	blockread(f, tabdon, 7);
-	close(f);
-	assign(f, "bmor.mor");
-	reset(f, 1916);
-	blockread(f, tabdon[fleche], 1);
+	if (!f.open("don.mor"))
+		error("Missing file - don.mor");
+	f.read(tabdon, 7);
+	f.close();
+
+	if (!f.open("bmor.mor"))
+		error("Missing file - bmor.mor");
+	f.read(&tabdon[fleche], 1);
 	/*i:=fleche;
 	repeat
 	  read(g,a);
 	  tabdon[i]:=a;
 	  i:=succ(i);
 	until i=fleche + 1916;*/
-	close(f);
-	assign(f, "dec.mor");
-	reset(f, 1664);
-	blockread(f, mem[0x73a2 + 0], 1);
+	f.close();
+
+	if (!f.open("dec.mor"))
+		error("Missing files - dec.moir");
+	f.read(mem[0x73a2 + 0], 1);
 	/*i:=0;
 	repeat
 	  read(g,a);
 	  mem[$73A2:i]:=a;
 	  i:=succ(i);
 	until eof(g);*/
-	close(f);
+	f.close();
 }
 
 int animof(int ouf, int num) {
