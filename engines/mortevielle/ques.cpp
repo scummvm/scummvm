@@ -27,6 +27,7 @@
 
 #include "common/str.h"
 #include "mortevielle/boite.h"
+#include "mortevielle/level15.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
@@ -92,7 +93,7 @@ namespace Mortevielle {
 				with.y2 = 34 + j * 8;
 				with.etat = true;
 			}
-			while (chaines[j].size() < tmax) {
+			while ((int)chaines[j].size() < tmax) {
 				chaines[j] = chaines[j] + ' ';
 			}
 		}

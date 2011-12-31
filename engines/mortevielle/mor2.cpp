@@ -206,7 +206,7 @@ void tkey1(bool d) {
 }
 
 void tmlieu(int mli) {
-	int cx, j, i, tail;
+	int cx, i, tail;
 	Common::String nomp;
 	char st[1410];
 
@@ -354,7 +354,7 @@ void st1sama() {
 }
 
 void modinv() {
-	int cx, cy, tay, i, r;
+	int cx, cy, tay, r;
 	char nom[1410];
 	Common::String nomp;
 
@@ -377,7 +377,7 @@ void modinv() {
 
 void sparl(float adr, float rep) {
 	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
-	int key, ad, tay, repint;
+	int key, tay, repint;
 	char st[1410];
 
 	repint = abs((int)rep);
@@ -615,7 +615,7 @@ void tsuiv() {
 void tfleche() {
 	bool qust;
 	char touch;
-	int dummy, cd, xmo, ymo;
+	int dummy;
 
 	if (num == 9999)  return;
 	fenat(chr(152));

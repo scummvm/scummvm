@@ -34,7 +34,7 @@ char readkey1() {
 	char c;
 
 	char readkey1_result;
-	input >> kbd >> c;
+	c = get_ch();	// input >> kbd >> c;
 	readkey1_result = c;
 	return readkey1_result;
 }
@@ -43,7 +43,7 @@ int testou() {
 	char ch;
 
 	int testou_result;
-	input >> kbd >> ch;
+	ch = get_ch();	// input >> kbd >> ch;
 	switch (ch)  {
 	case '\23' :
 		sonoff = ! sonoff;
@@ -77,7 +77,7 @@ int testou() {
 		}
 		break;
 	case '\33' :
-		if (keypressed())  input >> kbd >> ch;
+		if (keypressed())  ch = get_ch();	// input >> kbd >> ch;
 		break;
 	}
 	testou_result = ord(ch);

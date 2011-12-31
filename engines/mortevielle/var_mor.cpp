@@ -227,7 +227,7 @@ int tbi[256];
 chariot c1, c2, c3;
 float addfix;
 t_pcga palsav[91];
-doublet tabpal[91][16];
+doublet tabpal[91][17];
 t_pcga palcga[91];
 pattern tpt[15];
 
@@ -238,7 +238,7 @@ pattern tpt[15];
 void hirs() {
 	const byte tandy[14] = {113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0};
 	const byte herc[13] = {50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0};
-	int i, j;
+	int i;
 
 	switch (gd) {
 	case cga : {
@@ -261,8 +261,10 @@ void hirs() {
 	}
 	break;
 	case ega : {
-		inline_((float)(0xb8) / 14 / 0 /     /*  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs */
-		        0xcd / 0x10);        /*  INT 16  */
+		/*
+		inline_((float)(0xb8) / 14 / 0 /     //  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs
+		        0xcd / 0x10);				//   INT 16
+		*/
 		res = 2;
 	}
 	break;
@@ -273,7 +275,9 @@ void hirs() {
 			port[0x3b4] = i;
 			port[0x3b5] = herc[i];
 		}
+		/*
 		inline_((float)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
+		*/
 		port[0x3b8] = 10;
 		res = 2;
 	}
@@ -344,7 +348,22 @@ void textcolor(int c) {
 }
 void output(const Common::String &s) {
 }
+void graphbackground(int c) {
+}
+
 void intr(int intNum, registres &regs) {
+}
+
+int get_random_number(int minval, int maxval) {
+	// TODO: Replace with a proper random source in the engine
+	return minval;
+}
+
+bool keypressed() {
+	return false;	// Hardcoded currently for no keypress pending
+}
+char get_ch() {
+	return '\0';	// hardcoded currently for no keypress
 }
 
 void palette(int v1) {
@@ -380,9 +399,20 @@ void decomp(int seg, int dep) {
 void afff(int Gd, int seg, int dep, int x, int y) {
 	warning("TODO: afff");
 }
+
 // (* external 'c:\mc\reusint.com'; *)
 void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");
+}
+
+// (* external 'c:\mc\demus.com'; *)
+void demus(int Src, int Dst, int Tay) {
+	warning("TODO: demus");
+}
+
+// (* external 'c:\mc\phint.com'; *)
+void litph(tablint &t, int typ, int tempo) {
+	warning("TODO: litph");
 }
 
 } // End of namespace Mortevielle
