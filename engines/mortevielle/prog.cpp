@@ -38,8 +38,6 @@
 namespace Mortevielle {
 
 /* overlay */ void change_gd(int ngd) {
-	int i;
-
 	hide_mouse();
 	gd = ngd;
 	hirs();
@@ -59,7 +57,6 @@ namespace Mortevielle {
 }
 
 /* overlay */ void antegame() {
-	int cx;
 	registres regs;
 	char buffer[512];
 	int i, j, k;
@@ -249,9 +246,9 @@ void ld_game(int n);
 void tecran() {
 	const char idem[] = "Idem";
 	const int lim = 20000;
-	int temps;
-	char inkey;
-	bool oo, funct;
+	int temps = 0;
+	char inkey = '\0';
+	bool oo, funct = 0;
 
 	clsf3();
 	oo = false;

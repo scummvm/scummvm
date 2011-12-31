@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "mortevielle/level15.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/taffich.h"
@@ -36,7 +37,7 @@ namespace Mortevielle {
 
 void chardes(Common::String nom, float passe, int long_) {
 	int i, p, l;
-	byte b;
+//	byte b;
 	Common::File f;
 
 	/* debug('chardes'); */
@@ -51,11 +52,11 @@ void chardes(Common::String nom, float passe, int long_) {
 	}
 	if (p != 0)
 		f.seek(p);
-	p = trunc(passe);
+	p = abs((int)passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		f.read(mem[0x6000 + i], 1);
+		f.read(&mem[0x6000 + i], 1);
 		testfi();
 		l = l - 128;
 		i = i + 128;
@@ -68,7 +69,7 @@ void chardes(Common::String nom, float passe, int long_) {
 
 void charani(Common::String nom, float passe, int long_) {
 	int i, p, l;
-	byte b;
+//	byte b;
 	Common::File f;
 
 	/* debug('charani'); */
@@ -84,11 +85,11 @@ void charani(Common::String nom, float passe, int long_) {
 	if (p != 0)
 		f.seek(p);
 
-	p = trunc(passe);
+	p = abs((int)passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		f.read(mem[0x6000 + i], 1);
+		f.read(&mem[0x6000 + i], 1);
 		testfi();
 		l = l - 128;
 		i = i + 128;

@@ -150,7 +150,7 @@ void ecrf1() {
 }
 
 void clsf1() {
-	int i, j;
+//	int i, j;
 
 	/* debug('clsf1'); */
 	hide_mouse();
@@ -198,7 +198,7 @@ void clsf1() {
 }
 
 void clsf2() {
-	int i, j;
+//	int i, j;
 
 	/* debug('clsf2'); */
 	hide_mouse();
@@ -247,7 +247,7 @@ void ecr2(Common::String str_) {
 }
 
 void clsf3() {
-	int i, j;
+//	int i, j;
 
 	/* debug('clsf3'); */
 	hide_mouse();
@@ -323,15 +323,8 @@ void paint_rect(int x, int y, int dx, int dy) {
 }
 
 int hazard(int min, int max) {
-	int ha1;
-    float ha2;
-
 	/* debug('hazard'); */
-	int hazard_result;
-	ha2 = Random();
-	ha1 = abs((int)(ha2 * (max - min)));
-	hazard_result = min + ha1;
-	return hazard_result;
+	return get_random_number(min, max);
 }
 
 void calch(int &j, int &h, int &m) {
@@ -370,7 +363,7 @@ void okpas() {
 void modobj(int m) {
 	char str_[1410];
 	Common::String strp;
-	int i, tay;
+	int tay;
 
 	/* debug('modobj'); */
 	strp = ' ';
@@ -385,7 +378,7 @@ void modobj(int m) {
 void modobj2(int m, bool t1, bool t2) {
 	char str_[1410];
 	Common::String strp;
-	int i, tay;
+	int tay;
 
 	/* debug('modobj'); */
 	strp = ' ';
@@ -541,7 +534,6 @@ void affper(int per) {
 /* overlay */ void choix(int min, int max, int &per) {
 	bool i;
 	int haz, cx, cy, cz;
-	float per2, cz2;
 
 	/* debug('o0 choix'); */
 	haz = hazard(min, max);
@@ -793,8 +785,6 @@ void debloc(int l) {
 }
 
 /* overlay */ void quelq6(int l) {
-	int per;
-
 	/* debug('o1 quelq6'); */
 	if (l == 6)  bh6 = true;
 	if (l == 8)  bh8 = true;
@@ -802,7 +792,7 @@ void debloc(int l) {
 }
 
 /* overlay */ void quelq10(int h, int &per) {
-	int min, max;
+	int min = 0, max = 0;
 
 	/* debug('o1 quelq10'); */
 	if ((h >= 0) && (h < 8))  chlm(per);
@@ -829,7 +819,7 @@ void debloc(int l) {
 }
 
 /* overlay */ void quelq11(int h, int &per) {
-	int min, max;
+	int min = 0, max = 0;
 
 	/* debug('o1 quelq11'); */
 	if ((h >= 0) && (h < 8))  chlm(per);
@@ -882,7 +872,7 @@ void debloc(int l) {
 }
 
 /* overlay */ void quelq20(int h, int &per) {
-	int min, max;
+	int min = 0, max = 0;
 
 	/* debug('o1 quelq20'); */
 	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))  chlm(per);
@@ -1175,7 +1165,7 @@ void phaz(int &haz, int &p, int cf) {
 }
 
 /* overlay */ void t11(int l11, int &a) {
-	int p, haz, h;
+	int p, haz, h = 0;
 
 	/* debug('o2 t11'); */
 	ecfren(p, haz, s.conf, l11);
@@ -1254,7 +1244,6 @@ void messint(int nu) {
 
 void aniof(int ouf, int num) {
 	int ad, offset;
-	char c;
 
 	/* debug('aniof'); */
 	if ((caff == 7) && ((num == 4) || (num == 5)))  return;

@@ -332,7 +332,7 @@ void mov_mouse(bool &funct, char &key) {
 	key = '\377';
 	p_key = keypressed();
 	while (p_key) {
-		input >> kbd >> in1;
+		in1 = get_ch();	// input >> kbd >> in1;
 		read_pos_mouse(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4' :
@@ -381,48 +381,49 @@ void mov_mouse(bool &funct, char &key) {
 		case '\33' : {
 			p_key = keypressed();
 
-			if ((in2 >= ';') && (in2 <= 'D')) {
-				funct = true;
-				key = in2;
-				return;
-			}
-
 			if (p_key) {
-				input >> kbd >> in2;
-				switch (in2) {
-				case 'K' :
-					cx = pred(int, cx);
+				in2 = get_ch();	// input >> kbd >> in2;
+
+				if ((in2 >= ';') && (in2 <= 'D')) {
+					funct = true;
+					key = in2;
+					return;
+				} else {
+					switch (in2) {
+					case 'K' :
+						cx = pred(int, cx);
+						break;
+					case 'P' :
+						cy = succ(int, cy);
+						break;
+					case 'M' :
+						cx = cx + 2;
+						break;
+					case 'H' :
+						cy = pred(int, cy);
+						break;
+					case 'G' : {
+						cx = cx - 1;
+						cy = cy - 1;
+					}
 					break;
-				case 'P' :
-					cy = succ(int, cy);
+					case 'I' : {
+						cx = cx + 1;
+						cy = cy - 1;
+					}
 					break;
-				case 'M' :
-					cx = cx + 2;
+					case 'O' : {
+						cx = cx - 1;
+						cy = cy + 1;
+					}
 					break;
-				case 'H' :
-					cy = pred(int, cy);
+					case 'Q' : {
+						cx = cx + 1;
+						cy = cy + 1;
+					}
 					break;
-				case 'G' : {
-					cx = cx - 1;
-					cy = cy - 1;
+					}    /* case */
 				}
-				break;
-				case 'I' : {
-					cx = cx + 1;
-					cy = cy - 1;
-				}
-				break;
-				case 'O' : {
-					cx = cx - 1;
-					cy = cy + 1;
-				}
-				break;
-				case 'Q' : {
-					cx = cx + 1;
-					cy = cy + 1;
-				}
-				break;
-				}    /* case */
 			}
 		}
 		break;

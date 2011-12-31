@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/file.h"
 #include "mortevielle/parole.h"
 
 namespace Mortevielle {
@@ -46,44 +47,40 @@ void charg_car() {
 
 	wor = swap(memw[adword + ptr_word]);
 	int_ = wor & 0x3f;
-	switch (int_) {
-	case 60 : {
-		c3.val = 32;  /*  " "  */
-		c3.code = 9;
-	}
-	break;
-	case 61 : {
-		c3.val = 46;  /*  "."  */
-		c3.code = 9;
-	}
-	break;
-	case 62 : {
-		c3.val = 35;  /*  "#"  */
-		c3.code = 9;
-	}
-	break;
-	case RANGE_26(22, 47) : {
+
+	if ((int_ >= 0) && (int_ <= 13)) {
+		c3.val = int_;
+		c3.code = 5;
+	} else if ((int_ >= 14) && (int_ <= 21)) {
+		c3.val = int_;
+		c3.code = 6;
+	} else if ((int_ >= 22) && (int_ <= 47)) {
 		int_ = int_ - 22;
 		c3.val = int_;
 		c3.code = typcon[int_];
-	}
-	break;
-	case RANGE_9(48, 56) : {
+	} else if ((int_ >= 48) && (int_ <= 56)) {
 		c3.val = int_ - 22;
 		c3.code = 4;
+	} else {
+		switch (int_) {
+		case 60 : {
+			c3.val = 32;  /*  " "  */
+			c3.code = 9;
+		}
+		break;
+		case 61 : {
+			c3.val = 46;  /*  "."  */
+			c3.code = 9;
+		}
+		break;
+		case 62 : {
+			c3.val = 35;  /*  "#"  */
+			c3.code = 9;
+		}
+		break;
+		}
 	}
-	break;
-	case RANGE_8(14, 21) : {
-		c3.val = int_;
-		c3.code = 6;
-	}
-	break;
-	case RANGE_14(0, 13) : {
-		c3.val = int_;
-		c3.code = 5;
-	}
-	break;
-	}
+
 	spfrac(wor);
 	ptr_word = ptr_word + 2;
 }
@@ -106,7 +103,7 @@ void veracf(byte b) {
 	tb[0] = 0;
 	for (k = 0; k <= 255; k ++) {
 		tb[k + 1] = addfix + tb[k];
-		t[255 - k] = trunc(tb[k]) + 1;
+		t[255 - k] = abs((int)tb[k] + 1);
 	}
 }
 
@@ -123,36 +120,42 @@ void veracf(byte b) {
 }
 
 /* overlay */   void charge_son() {
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "sonmus.mor");
-	reset(f);
-	blockread(f, mem[0x7414 + 0], 273);
+	if (!f.open("sonmus.mor"))
+		error("Missing file - sonmus.mor");
+	
+	f.read(&mem[0x7414 + 0], 273);
 	/*blockread(f,mem[adson+0],300);
 	blockread(f,mem[adson+2400+0],245);*/
 	demus(0x7414, adson, 273);
-	close(f);
+	f.close();
 }
 
 /* overlay */   void charge_phbruit() {
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "phbrui.mor");
-	reset(f);
-	blockread(f, t_cph, 3);
-	close(f);
+	if (!f.open("phbrui.mor"))
+		error("Missing file - phbrui.mor");
+
+	for (int i = 1; i <= 3; ++i)
+		t_cph[i] = f.readSint16LE();
+
+	f.close();
 }
 
 /* overlay */   void charge_bruit() {
-	untyped_file f;
-	int j, i;
+	Common::File f;
+	int i;
 
-	assign(f, "bruits");
-	reset(f);
-	blockread(f, mem[adbruit + 0], 250);
+	if (!f.open("bruits"))
+		error("Missing file - bruits");
+
+	f.read(&mem[adbruit + 0], 250);
 	for (i = 0; i <= 19013; i ++) mem[adbruit + 32000 + i] = mem[adbruit5 + i];
-	blockread(f, mem[adbruit1 + offsetb1], 149);
-	close(f);
+	f.read(&mem[adbruit1 + offsetb1], 149);
+
+	f.close();
 }
 
 /* overlay */   void trait_car() {

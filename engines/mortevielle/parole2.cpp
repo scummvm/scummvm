@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "mortevielle/level15.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/parole.h"
 #include "mortevielle/var_mor.h"
@@ -64,7 +65,7 @@ void trait_ph() {
 		memw[adword + ptr_word] = t_cph[ptr_tcph];
 		ptr_word = ptr_word + 2;
 		ptr_tcph = ptr_tcph + 1;
-	} while (!(ptr_tcph >= ((uint)lefin >> 1)));
+	} while (!(ptr_tcph >= (int)((uint)lefin >> 1)));
 
 	ptr_oct = 0;
 	ptr_word = 0;

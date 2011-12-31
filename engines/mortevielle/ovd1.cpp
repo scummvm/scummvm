@@ -35,6 +35,7 @@
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
 #include "mortevielle/parole.h"
+#include "mortevielle/sprint.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 
@@ -155,8 +156,12 @@ void ani50() {
 
 	if (!f.open("plxx.mor"))
 		error("Missing file - plxx.mor");
-	for (i = 0; i <= 90; i ++) 
-		tabpal[i] = f.readSint16LE();
+	for (i = 0; i <= 90; ++i) {
+		for (j = 1; j <= 16; ++j) {
+			tabpal[i][j].x = f.readByte();
+			tabpal[i][j].y = f.readByte();
+		}
+	}
 	f.close();
 	
 	if (!fb.open("cxx.mor"))
@@ -234,7 +239,7 @@ void ani50() {
 		cy = cy + 1;
 		deline(cy + c_dialpre, st, tay);
 		gotoxy(40 - tay / 2, wherey + 1);
-		output << delig;
+		output(delig);
 	} while (!(cy == 20));
 	ix = 0;
 	do {
@@ -249,7 +254,7 @@ void ani50() {
 	gotoxy(12, 24);
 	output("Ctrl       C      E            H             T           A");
 	do {
-		input >> kbd >> ch;
+		ch = get_ch();	// input >> kbd >> ch;
 	} while ((ch != '\1') && (ch != '\3') && (ch != '\5') && (ch != '\24') && (ch != '\10'));
 	switch (ch) {
 	case '\1':
@@ -276,7 +281,7 @@ void ani50() {
 	gotoxy(48, 23);
 	output("S");
 	do {
-		input >> kbd >> ch;
+		ch = get_ch();	// input >> kbd >> ch;
 	} while ((ch != 'C') && (ch != 'S'));
 	int_m = (toupper(ch) == 'S');
 }
@@ -291,7 +296,7 @@ void ani50() {
 	for (int i = 1; i < 8; ++i)
 		f_lieu.read(&v_lieu[i][1], 24);
 
-	f.close();
+	f_lieu.close();
 }
 
 
@@ -300,19 +305,19 @@ void ani50() {
 	int k;
 	bool fin;
 	char ch;
-	float x, y;
+//	float x, y;
 
 
 	/* debug('o3 music'); */
 	if (sonoff)  return;
 	rech_cfiec = true;
 	
-	if (!f.open("mort.img"))
+	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
 	fic.read(&mem[0x3800 + 0], 500);
 	fic.read(&mem[0x47a0 + 0], 123);
-	f.close();
+	fic.close();
 
 	demus(0x3800, 0x5000, 623);
 	addfix = (float)((tempo_mus - addv[1])) / 256;
@@ -326,7 +331,7 @@ void ani50() {
 		k = k + 1;
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);
-	while (keypressed())  input >> kbd >> ch;
+	while (keypressed())  ch = get_ch();	// input >> kbd >> ch;
 }
 
 

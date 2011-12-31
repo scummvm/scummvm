@@ -162,12 +162,11 @@ static int l_motsuiv(int p, char *ch, int &tab) {
 
 void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	bool the_end;
-	char touch;
 	int xf, yf;
 	int xc, yc;
 	int tab, p;
 	Common::String s;
-	int i, j, nt;
+	int i, j;
 
 
 	/*    debug('  .. Afftex');*/

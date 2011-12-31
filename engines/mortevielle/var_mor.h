@@ -383,7 +383,7 @@ extern int tbi[256];
 extern chariot c1, c2, c3;
 extern float addfix;
 extern t_pcga palsav[91];
-extern doublet tabpal[91][16];
+extern doublet tabpal[91][17];
 extern t_pcga palcga[91];
 extern pattern tpt[15];
 
@@ -413,13 +413,20 @@ extern int memw[0xffff];
 // Text screen functions not relevant for ScummVM
 #define clrscr {}
 #define clreol {}
+#define graphcolormode {}
 extern void gotoxy(int x, int y);
 extern void textcolor(int c);
 extern void output(const Common::String &s);
+extern void graphbackground(int c);
 extern int wherey;
+
+// Stubs for input functions
+extern bool keypressed();
+extern char get_ch();
 
 extern void palette(int v1);
 extern void intr(int intNum, registres &regs);
+extern int get_random_number(int minval, int maxval);
 
 // (* external 'c:\mc\charecr.com'; *)
 extern void s_char(int Gd, int y, int dy);
@@ -435,6 +442,10 @@ extern void decomp(int seg, int dep);
 extern void afff(int Gd, int seg, int dep, int x, int y); 
 // (* external 'c:\mc\reusint.com'; *)
 extern void musyc(tablint &tb, int nbseg, int att);  
+// (* external 'c:\mc\demus.com'; *)
+extern void demus(int Src, int Dst, int Tay);
+// (* external 'c:\mc\phint.com'; *)
+extern void litph(tablint &t, int typ, int tempo); 
 
 } // End of namespace Mortevielle
 

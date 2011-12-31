@@ -133,20 +133,23 @@ static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::Strin
 }
 
 int do_alert(Common::String str_, int n) {
-	int coldep, esp, i, l, nbcase, quoi, ix;
+	int coldep, esp, i, nbcase, quoi, ix;
 	Common::String st, chaine;
 	int limit[3][3];
-	char c, dumi;
+	char dumi;
 	Common::String s[3];
-	int cx, cy, cd, nbcol, nblig;
-	bool touch, newaff, test, test1, test2, test3, dum;
+	int cx, cy, nbcol, nblig;
+	bool newaff, test, test1, test2, test3, dum;
 	Common::String cas;
 
 
 	/*debug('** do_alert **');*/
+	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 	int do_alert_result;
 	hide_mouse();
-	while (keypressed())  input >> kbd >> dumi;
+	while (keypressed())
+		dumi = get_ch();	// input >> kbd >> dumi;
+
 	clic = false;
 	decod(str_, nbcase, nblig, nbcol, chaine, cas);
 	sauvecr(50, succ(int, nligne) << 4);
