@@ -325,7 +325,11 @@ void st4(int ob) {
 	case 158 :
 		crep = 113;
 		break;
-	case RANGE_5(152, 156):
+	case 152:
+	case 153:
+	case 154:
+	case 155:
+	case 156:
 	case 150:
 	case 100:
 	case 157:

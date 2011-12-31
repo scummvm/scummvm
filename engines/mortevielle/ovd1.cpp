@@ -25,19 +25,22 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/file.h"
 #include "mortevielle/ovd1.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
 void dem2() {
+	/* Deprecated check for disk 2
+
 	untyped_file f;
 	int k;
 
-	/* -- demande de disk 2 -- */
+	// -- demande de disk 2 --
 	while (ioresult != 0);
 	assign(f, "mort.001");
-	/*$i-*/
+	//$i-
 	reset(f);
 	while (ioresult != 0) {
 		show_mouse();
@@ -46,6 +49,7 @@ void dem2() {
 		reset(f);
 	}
 	close(f);
+	*/
 }
 
 void ani50() {
@@ -81,13 +85,14 @@ void ani50() {
 /* overlay */ void init_menu() {
 	int i, j, tai;
 	char st[1410];
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "menufr.mor");
-	/*$i-*/
-	reset(f, 144);
-	blockread(f, lettres, 1);
-	close(f);
+	if (!f.open("menufr.mor"))
+		error("Missing file - menufr.mor");
+
+	f.read(lettres, 7 * 24);
+	f.close();
+
 	/* ----  Demande de changement de disquette  ---- */
 	dem2();
 
@@ -171,15 +176,16 @@ void ani50() {
 
 /* overlay */ void chartex() {
 	int i;
-	untyped_file fibyte;
+	Common::File fibyte;
 	char s[1410];
 
 	/* debug('o3 chartex'); */
 	i = 0;
-	assign(fibyte, "TXX.INP");
-	/*$i-*/
-	reset(fibyte);
-	blockread(fibyte, t_mot, 125);
+	if (!fibyte.open("TXX.INP"))
+		error("missing file - TXX.INP");
+
+	fibyte.read(&t_mot, 125);
+
 	close(fibyte);
 	assign(sauv_t, "TXX.NTP");
 	reset(sauv_t);
@@ -275,7 +281,7 @@ void ani50() {
 
 
 /* overlay */ void music() {
-	untyped_file fic;
+	Common::File fic;
 	int k;
 	bool fin;
 	char ch;
@@ -285,12 +291,14 @@ void ani50() {
 	/* debug('o3 music'); */
 	if (sonoff)  return;
 	rech_cfiec = true;
-	assign(fic, "mort.img");
-	/*$i-*/
-	reset(fic);
-	blockread(fic, mem[0x3800 + 0], 500);
-	blockread(fic, mem[0x47a0 + 0], 123);
-	close(fic);
+	
+	if (!f.open("mort.img"))
+		error("Missing file - mort.img");
+
+	fic.read(mem[0x3800 + 0], 500);
+	fic.read(mem[0x47a0 + 0], 123);
+	f.close();
+
 	demus(0x3800, 0x5000, 623);
 	addfix = (float)((tempo_mus - addv[1])) / 256;
 	cctable(tbi);
@@ -308,41 +316,39 @@ void ani50() {
 
 
 /* overlay */ void charge_bruit5() {
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "bruit5");
-	/*$i-*/
-	reset(f);
-	if (ioresult != 0) {
-		caff = do_alert(err_mess, 1);
-		exit(0);
-	}
-	blockread(f, mem[adbruit5 + 0], 149);
+	if (!f.open("bruit5"))
+		error("Missing file - bruit5");
+
+	f.read(mem[adbruit5 + 0], 149);
 	/*blockread(f,mem[$5CB0:0],100);
 	blockread(f,mem[$3D1F:0],49);*/
-	close(f);
+	f.close();
 }
 
 /* overlay */ void charge_cfiec() {
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "cfiec.mor");
+	if (!f.open("cfiec.mor"))
+		error("Missing file - cfiec.mor");
+
 	/*$i-*/
-	reset(f);
-	blockread(f, mem[adcfiec + 0], 511);
-	blockread(f, mem[adcfiec + 4088 + 0], 311);
-	close(f);
+	f.read(mem[adcfiec + 0], 511);
+	f.read(mem[adcfiec + 4088 + 0], 311);
+	f.close();
+
 	rech_cfiec = false;
 }
 
 
 /* overlay */ void charge_cfiph() {
-	untyped_file f;
+	Common::File f;
 
-	assign(f, "cfiph.mor");
-	/*$i-*/
-	reset(f, 256);
-	blockread(f, t_cph, 50);
+	if (!f.open("cfiph.mor"))
+		error("Missing file - cfiph.mor");
+
+	f.read(t_cph, 50);
 	close(f);
 }
 

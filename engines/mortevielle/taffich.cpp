@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/file.h"
 #include "common/str.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/taffich.h"
@@ -35,29 +36,31 @@ namespace Mortevielle {
 void chardes(Common::String nom, float passe, int long_) {
 	int i, p, l;
 	byte b;
-	untyped_file f;
+	Common::File f;
 
 	/* debug('chardes'); */
-	assign(f, nom);
-	/*$i-*/
-	reset(f);
+	if (!f.open(nom))
+		error("Missing file %s", nom.c_str());
+
 	testfi();
 	p = 0;
 	while (passe > 127) {
 		p = p + 1;
 		passe = passe - 128;
 	}
-	if (p != 0)  seek(f, p);
+	if (p != 0)
+		f.seek(p);
 	p = trunc(passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		blockread(f, mem[0x6000 + i], 1);
+		f.read(mem[0x6000 + i], 1);
 		testfi();
 		l = l - 128;
 		i = i + 128;
 	}
-	close(f);
+	f.close();
+
 	for (i = p; i <= long_ + p; i ++) mem[0x7000 + i - p] = mem[0x6000 + i];
 	/*$i+*/
 }
@@ -65,31 +68,33 @@ void chardes(Common::String nom, float passe, int long_) {
 void charani(Common::String nom, float passe, int long_) {
 	int i, p, l;
 	byte b;
-	untyped_file f;
+	Common::File f;
 
 	/* debug('charani'); */
-	assign(f, nom);
-	/*$i-*/
-	reset(f);
+	if (!f.open(nom))
+		error("Missing file - %s", nom.c_str());
+
 	testfi();
 	p = 0;
 	while (passe > 127) {
 		passe = passe - 128;
 		p = p + 1;
 	}
-	if (p != 0)  seek(f, p);
+	if (p != 0)
+		f.seek(p);
+
 	p = trunc(passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		blockread(f, mem[0x6000 + i], 1);
+		f.read(mem[0x6000 + i], 1);
 		testfi();
 		l = l - 128;
 		i = i + 128;
 	}
-	close(f);
+	f.close();
+
 	for (i = p; i <= long_ + p; i ++) mem[0x7314 + i - p] = mem[0x6000 + i];
-	/*$i+*/
 }
 
 void taffich() {

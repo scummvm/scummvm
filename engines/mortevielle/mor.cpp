@@ -29,7 +29,7 @@
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/boite.h"
-#include "mortevielle/droite.h
+#include "mortevielle/droite.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"

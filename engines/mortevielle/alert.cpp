@@ -39,7 +39,7 @@ const int nligne = 7;
 
 const int coord[3][4] = {
 	{0, 0, 0, 0},
-	{0, 150, 72, 103),
+	{0, 150, 72, 103},
 	{0, 143, 107, 183}
 };
 
@@ -126,7 +126,7 @@ static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::Strin
 int do_alert(Common::String str_, int n) {
 	int coldep, esp, i, l, nbcase, quoi, ix;
 	Common::String st, chaine;
-	matrix<1, 2, 1, 2, int> limit;
+	int limit[3][3];
 	char c, dumi;
 	Common::String s[3];
 	int cx, cy, cd, nbcol, nblig;
