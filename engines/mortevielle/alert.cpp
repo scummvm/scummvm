@@ -106,7 +106,7 @@ static void fait_boite(int lidep, int nli, int tx) {
 
 
 
-static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String[3] &str, int &esp) {
+static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::String *str, int &esp) {
 	int i, l, x;
 	char ch;
 
@@ -176,7 +176,7 @@ int do_alert(Common::String str_, int n) {
 	if (nbcase == 1)  esp = nbcol - 40;
 	else esp = (uint)(nbcol - nbcase * 40) >> 1;
 	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
-	fait_choix(cas, coldep, nbcase, s, esp);
+	fait_choix(cas, coldep, nbcase, &s[0], esp);
 	limit[1][1] = ((uint)(coldep) >> 1) * res;
 	limit[1][2] = limit[1][1] + 40;
 	if (nbcase == 1) {

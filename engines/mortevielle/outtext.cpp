@@ -62,7 +62,8 @@ const byte tab31[32]= {
 void deline(int num , char *l , int &tl);
 typedef unsigned char uchar;
 
-static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
+static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
+/*
 	const uchar rap[32] = { 
 		(uchar)',', (uchar)':', (uchar)'@', (uchar)'!', (uchar)'?', (uchar)'-', (uchar)'\207',
 		(uchar)'\240', (uchar)'\205', (uchar)'\203', (uchar)'\202', (uchar)'\212', (uchar)'\210', (uchar)'/',
@@ -70,16 +71,17 @@ static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 		(uchar)'\226', (uchar)'0', (uchar)'1', (uchar)'2', (uchar)'3', (uchar)'4', (uchar)'5',
 		(uchar)'6', (uchar)'7', (uchar)'8', (uchar)'9'
 	};
+*/
 	int oct, ocd;
 
 	/* 5-8 */
-	oct = t_mot[ind];
+	oct = t_mot[idx];
 	oct = (uint)(oct << (16 - pt)) >> (16 - pt);
 	if (pt < 6) {
-		ind = ind + 1;
+		idx = idx + 1;
 		oct = oct << (5 - pt);
 		pt = pt + 11;
-		oct = oct | ((uint)t_mot[ind] >> pt);
+		oct = oct | ((uint)t_mot[idx] >> pt);
 	} else {
 		pt = pt - 5;
 		oct = (uint)oct >> pt;
@@ -93,13 +95,13 @@ static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
 	break;
 	case 30:
 	case 31 : {
-		ocd = t_mot[ind];
+		ocd = t_mot[idx];
 		ocd = (uint)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
-			ind = ind + 1;
+			idx = idx + 1;
 			ocd = ocd << (5 - pt);
 			pt = pt + 11;
-			ocd = ocd | ((uint)t_mot[ind] >> pt);
+			ocd = ocd | ((uint)t_mot[idx] >> pt);
 		} else {
 			pt = pt - 5;
 			ocd = (uint)ocd >> pt;

@@ -69,7 +69,7 @@ void divers(int np, bool b) {
 int main(int argc, const char *argv[]) {
 	/*init_debug;*/
 	/*  ecri_seg;*/
-	pio_initialize(argc, argv);
+	//pio_initialize(argc, argv);
 	gd = cga;
 	newgd = gd;
 	zuul = false;

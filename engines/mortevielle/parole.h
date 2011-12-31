@@ -29,6 +29,7 @@
 #define MORTEVIELLE_PAROLE_H
 
 #include "common/scummsys.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 

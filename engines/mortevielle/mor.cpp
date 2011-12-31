@@ -329,7 +329,7 @@ int hazard(int min, int max) {
 	/* debug('hazard'); */
 	int hazard_result;
 	ha2 = Random();
-	ha1 = trunc(ha2 * (max - min));
+	ha1 = abs((int)(ha2 * (max - min)));
 	hazard_result = min + ha1;
 	return hazard_result;
 }
@@ -404,7 +404,7 @@ void repon(int f, int m) {
 	Common::String str_;
 	Common::String str1;
 	char st[1410];
-	text1 fic;
+//	text1 fic;
 	int i, xco, dx, caspe, tay;
 
 	/* debug('repon fenetre nø'+chr(f+48));*/

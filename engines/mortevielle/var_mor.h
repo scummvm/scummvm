@@ -231,6 +231,10 @@ struct t_pcga {
 	nhom a[16];
 };
 
+typedef int tablint[256];
+typedef doublet tabdb[17];
+typedef int tfxx[108];
+
 /*---------------------------------------------------------------------------*/
 /*------------------------------     ENUMS     ------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -400,13 +404,37 @@ void affput(int Chx, int Gd, int x, int y, int coul, int char_);
 // TODO: Replace the following with proper implementations, or refactor out the code using them
 
 extern int port[0xfff];
+extern byte mem[0xffff];
+extern int memw[0xffff];
 
 #define hires {}
-
 #define mortevielle_exit(ret) error("Exit the game")
+
 // Text screen functions not relevant for ScummVM
 #define clrscr {}
-#define gotoxy(x,y) {}
+#define clreol {}
+extern void gotoxy(int x, int y);
+extern void textcolor(int c);
+extern void output(const Common::String &s);
+extern int wherey;
+
+extern void palette(int v1);
+extern void intr(int intNum, registres &regs);
+
+// (* external 'c:\mc\charecr.com'; *)
+extern void s_char(int Gd, int y, int dy);
+// (* external 'c:\mc\sauvecr.com'; *)
+extern void s_sauv(int Gd, int y, int dy);
+// (* external 'c:\mc\boite.com'; *)
+extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
+// (* external 'c:\mc\zuul.com'; *)
+extern void zzuul(int ad, int seg, int tai); 
+// (* external 'c:\mc\decomp.com'; *)
+extern void decomp(int seg, int dep); 
+// (* external 'c:\mc\affich.com'; *)
+extern void afff(int Gd, int seg, int dep, int x, int y); 
+// (* external 'c:\mc\reusint.com'; *)
+extern void musyc(tablint &tb, int nbseg, int att);  
 
 } // End of namespace Mortevielle
 

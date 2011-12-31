@@ -27,11 +27,15 @@
 
 #include "common/file.h"
 #include "mortevielle/alert.h"
+#include "mortevielle/keyboard.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
-#include "mortevielle/traffich.h"
+#include "mortevielle/parole.h"
+#include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -79,8 +83,6 @@ void ani50() {
   end;*/
 
 /* overlay */ void aff50(bool c) {
-	int k;
-
 	caff = 50;
 	maff = 0;
 	taffich();
@@ -91,7 +93,7 @@ void ani50() {
 }
 
 /* overlay */ void init_menu() {
-	int i, j, tai;
+	int i, tai;
 	char st[1410];
 	Common::File f;
 
@@ -139,33 +141,33 @@ void ani50() {
 
 
 /* overlay */ void charpal() {
-	file<tabdb> f;
-	file<tfxx> ft;
+	Common::File f;		// tabdb records
+	Common::File ft;	// tfxx
 	int i, j, k;
-	file<byte> fb;
+	Common::File fb;	// byte values
 	byte b;
 
-	assign(ft, "fxx.mor");
-	/*$i-*/
-	reset(ft);
-	if (ioresult != 0) {
-		caff = do_alert(err_mess, 1);
-		mortevielle_exit(0);
-	}
-	ft >> l;
-	close(ft);
-	assign(f, "plxx.mor");
-	reset(f);
-	for (i = 0; i <= 90; i ++) f >> tabpal[i];
-	close(f);
-	assign(fb,  "cxx.mor");
-	reset(fb);
+	if (!ft.open("fxx.mor"))
+		error("Missing file - fxx.mor");
+	for (int i = 1; i < 108; ++i)
+		l[i] = ft.readSint16LE();
+	ft.close();
+
+	if (!f.open("plxx.mor"))
+		error("Missing file - plxx.mor");
+	for (i = 0; i <= 90; i ++) 
+		tabpal[i] = f.readSint16LE();
+	f.close();
+	
+	if (!fb.open("cxx.mor"))
+		error("Missing file - cxx.mor");
+
 	for (j = 0; j <= 90; j ++) {
-		fb >> palcga[j].p;
+		palcga[j].p = fb.readByte();
 		for (i = 0; i <= 15; i ++) {
 			nhom &with = palcga[j].a[i];
 
-			fb >> b;
+			b = fb.readByte();
 			with.n = (uint)b >> 4;
 			with.hom[0] = ((uint)b >> 2) & 3;
 			with.hom[1] = b & 3;
@@ -173,13 +175,13 @@ void ani50() {
 	}
 	palcga[10].a[9] = palcga[10].a[5];
 	for (j = 0; j <= 14; j ++) {
-		fb >> tpt[j].tax;
-		fb >> tpt[j].tay;
+		tpt[j].tax = fb.readByte();
+		tpt[j].tay = fb.readByte();
 		for (i = 1; i <= 20; i ++)
 			for (k = 1; k <= 20; k ++)
-				fb >> tpt[j].des[i][k];
+				tpt[j].des[i][k] = fb.readByte();
 	}
-	close(fb);
+	fb.close();
 }
 
 /* overlay */ void chartex() {
@@ -243,9 +245,9 @@ void ani50() {
 	gotoxy(1, 21);
 	clreol;
 	gotoxy(1, 23);
-	output << "CARTE GRAPHIQUE      CGA    EGA    HERCULE/AT&T400    TANDY    AMSTRAD1512";
+	output("CARTE GRAPHIQUE      CGA    EGA    HERCULE/AT&T400    TANDY    AMSTRAD1512");
 	gotoxy(12, 24);
-	output << "Ctrl       C      E            H             T           A";
+	output("Ctrl       C      E            H             T           A");
 	do {
 		input >> kbd >> ch;
 	} while ((ch != '\1') && (ch != '\3') && (ch != '\5') && (ch != '\24') && (ch != '\10'));
@@ -267,12 +269,12 @@ void ani50() {
 	gotoxy(1, 23);
 	clreol;
 	gotoxy(26, 23);
-	output << "Jeu au Clavier / … la Souris";
+	output("Jeu au Clavier / … la Souris");
 	textcolor(4);
 	gotoxy(33, 23);
-	output << 'C';
+	output("C");
 	gotoxy(48, 23);
-	output << 'S';
+	output("S");
 	do {
 		input >> kbd >> ch;
 	} while ((ch != 'C') && (ch != 'S'));
@@ -280,14 +282,16 @@ void ani50() {
 }
 
 /* overlay */ void init_lieu() {
-	file<tab_mlieu> f_lieu;
+	Common::File f_lieu;	// tab_mlieu
 
 	/* debug('o3 init_lieu'); */
-	assign(f_lieu, "MXX.mor");
-	/*$i-*/
-	reset(f_lieu);
-	f_lieu >> v_lieu;
-	close(f_lieu);
+	if (!f_lieu.open("MXX.mor"))
+		error("Missing file - MXX.mor");
+
+	for (int i = 1; i < 8; ++i)
+		f_lieu.read(&v_lieu[i][1], 24);
+
+	f.close();
 }
 
 
@@ -306,8 +310,8 @@ void ani50() {
 	if (!f.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(mem[0x3800 + 0], 500);
-	fic.read(mem[0x47a0 + 0], 123);
+	fic.read(&mem[0x3800 + 0], 500);
+	fic.read(&mem[0x47a0 + 0], 123);
 	f.close();
 
 	demus(0x3800, 0x5000, 623);
@@ -332,7 +336,7 @@ void ani50() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(mem[adbruit5 + 0], 149);
+	f.read(&mem[adbruit5 + 0], 149);
 	/*blockread(f,mem[$5CB0:0],100);
 	blockread(f,mem[$3D1F:0],49);*/
 	f.close();
@@ -345,8 +349,8 @@ void ani50() {
 		error("Missing file - cfiec.mor");
 
 	/*$i-*/
-	f.read(mem[adcfiec + 0], 511);
-	f.read(mem[adcfiec + 4088 + 0], 311);
+	f.read(&mem[adcfiec + 0], 511);
+	f.read(&mem[adcfiec + 4088 + 0], 311);
 	f.close();
 
 	rech_cfiec = false;
@@ -360,7 +364,7 @@ void ani50() {
 		error("Missing file - cfiph.mor");
 
 	f.read(t_cph, 50);
-	close(f);
+	f.close();
 }
 
 
@@ -379,7 +383,7 @@ void ani50() {
 	textcolor(7);
 	cpr = "COPYRIGHT 1989 : LANKHOR";
 	if ((gd == ega) || (gd == ams) || (gd == cga))
-		output << cpr;
+		output(cpr);
 	else {
 		putxy(104 + 72 * res, 190);
 		writeg(cpr, 0);

@@ -334,5 +334,55 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 /*---------------------------------------------------------------------------*/
 
 int port[0xfff];
+byte mem[0xffff];
+int memw[0xffff];
+int wherey;
+
+void gotoxy(int x, int y) {
+}
+void textcolor(int c) {
+}
+void output(const Common::String &s) {
+}
+void intr(int intNum, registres &regs) {
+}
+
+void palette(int v1) {
+	warning("TODO: s_sauv");
+}
+
+// (* external 'c:\mc\charecr.com'; *)
+void s_char(int Gd, int y, int dy) {
+		warning("TODO: s_char");
+}
+
+// (* external 'c:\mc\sauvecr.com'; *)
+void s_sauv(int Gd, int y, int dy) {
+	warning("TODO: s_sauv");
+}
+
+// (* external 'c:\mc\boite.com'; *)
+void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
+	warning("TODO: box method not yet implemented");
+}
+
+// (* external 'c:\mc\zuul.com'; *)
+void zzuul(int ad, int seg, int tai) {
+	warning("TODO: zzuul");
+}
+
+// (* external 'c:\mc\decomp.com'; *)
+void decomp(int seg, int dep) {
+	warning("TODO: decomp");
+}
+
+// (* external 'c:\mc\affich.com'; *)
+void afff(int Gd, int seg, int dep, int x, int y) {
+	warning("TODO: afff");
+}
+// (* external 'c:\mc\reusint.com'; *)
+void musyc(tablint &tb, int nbseg, int att) {
+	warning("TODO: musyc");
+}
 
 } // End of namespace Mortevielle
