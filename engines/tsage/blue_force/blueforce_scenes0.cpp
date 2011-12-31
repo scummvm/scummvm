@@ -209,6 +209,11 @@ void Scene50::Tooltip::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 	_bounds.synchronize(s);
 	s.syncString(_msg);
+
+	if (s.getVersion() >= 10) {
+		s.syncAsSint16LE(_newSceneNumber);
+		s.syncAsSint16LE(_locationId);
+	}
 }
 
 void Scene50::Tooltip2::signal() {
@@ -322,6 +327,18 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+Scene50::Scene50() {
+	_sceneNumber = 0;
+}
+
+
+void Scene50::synchronize(Serializer &s) {
+	if (s.getVersion() >= 10) {
+		SceneExt::synchronize(s);
+		s.syncAsSint16LE(_sceneNumber);
+	}
+}
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
