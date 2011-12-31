@@ -65,7 +65,6 @@ Math::Vector2d *readVector2d(Common::ReadStream &ms, int count = 1) {
 Math::Vector3d *readVector3d(Common::ReadStream &ms, int count = 1) {
 	Math::Vector3d *vec3d = new Math::Vector3d[count];
 	char buf[12];
-	float x, y, z;
 	for (int i = 0; i < count; i++) {
 		ms.read(buf, 12);
 		vec3d[i] = Math::Vector3d::get_vector3d(buf);
@@ -94,7 +93,7 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	short x = 0, y = 0, z = 0;
 	_indexes = new Vector3int[_faceLength];
 	int j = 0;
-	for (int i = 0; i < _faceLength; i ++) {
+	for (uint32 i = 0; i < _faceLength; i ++) {
 		data->read((char *)&x, 2);
 		data->read((char *)&y, 2);
 		data->read((char *)&z, 2);
@@ -117,7 +116,7 @@ void EMIMeshFace::render() {
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
-	int strLength = 0;
+	int strLength = 0; // Usefull for PS2-strings
 	
 	Common::String nameString = readLAString(*data);
 	
@@ -125,27 +124,25 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	_boxData = readVector3d(*data);
 	_boxData2 = readVector3d(*data);
-	
+
 	_numTexSets = data->readUint32LE();
 	_setType = data->readUint32LE();
 	_numTextures = data->readUint32LE();
-	
+
 	_texNames = new Common::String[_numTextures];
-	
-	for(int i = 0;i < _numTextures; i++) {
+
+	for(uint32 i = 0;i < _numTextures; i++) {
 		_texNames[i] = readLAString(*data);
 		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
 		// this is intentional)
 		data->skip(4);
 	}
-	
+
 	// 4 unknown bytes - usually with value 19
 	data->skip(4);
-	
+
 	_numVertices = data->readUint32LE();
-	
-	float x = 0, y = 0;
-	int r = 0, g = 0, b = 0, a = 0;
+
 	// Vertices
 	_vertices = readVector3d(*data, _numVertices);
 	_normals = readVector3d(*data, _numVertices);
@@ -157,20 +154,27 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_colorMap[i].a = data->readByte();
 	}
 	_texVerts = readVector2d(*data, _numVertices);
-	
+
 	// Faces
-	
+
 	_numFaces = data->readUint32LE();
 
+	// Handle the empty-faced fx/screen?.mesh-files
+	if (data->eos()) {
+		_numFaces = 0;
+		_faces = NULL;
+		return;
+	}
+
 	_faces = new EMIMeshFace[_numFaces];
-	int faceLength = 0;
-	for(int j = 0;j < _numFaces; j++) {
+
+	for(uint32 j = 0;j < _numFaces; j++) {
 		_faces[j].setParent(this);
 		_faces[j].loadFace(data);
 	}
-	
+
 	int hasBones = data->readUint32LE();
-	
+
 	// TODO add in the bone-stuff, as well as the skeleton
 	//prepare(); // <- Initialize materials etc.
 }
@@ -181,7 +185,7 @@ void EMIModel::prepareForRender() {
 
 void EMIModel::prepare() {
 	_mats = new Material*[_numTextures];
-	for (int i = 0; i < _numTextures; i++) {
+	for (uint32 i = 0; i < _numTextures; i++) {
 		_mats[i] = g_resourceloader->loadMaterial(_texNames[i].c_str(), NULL);
 	}
 	prepareForRender();
@@ -192,12 +196,12 @@ void EMIModel::draw() {
 	prepareForRender();
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
-	for(int i = 0; i < _numFaces; i++) {
+	for(uint32 i = 0; i < _numFaces; i++) {
 		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}
 }
 
-EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) {
+EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
 	loadMesh(data);
 	delete data;
 }

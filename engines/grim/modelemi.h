@@ -88,6 +88,7 @@ public:
 	int _numTexSets;
 	int _setType;
 	
+	Common::String _fname;
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);
 	void setTex(int index); 
