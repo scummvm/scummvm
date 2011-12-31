@@ -86,7 +86,8 @@ void writepal(int n) {
 		}
 		break;
 	case cga : {
-		pal = palcga[n].a;
+		warning("TODO: If this code is needed, resolve the incompatible types");
+//		pal = palcga[n].a;
 		if (n < 89)  palette(palcga[n].p);
 		for (i = 0; i <= 15; i ++) outbloc(i, tpt[pal[i].n], pal);
 	}
@@ -152,8 +153,8 @@ end;
 void adzon() {
 	Common::File f;
 //	Common::File g;
-	byte a;
-	int i;
+//	byte a;
+//	int i;
 
 	if (!f.open("don.mor"))
 		error("Missing file - don.mor");
@@ -173,7 +174,7 @@ void adzon() {
 
 	if (!f.open("dec.mor"))
 		error("Missing files - dec.moir");
-	f.read(mem[0x73a2 + 0], 1);
+	f.read(&mem[0x73a2 + 0], 1);
 	/*i:=0;
 	repeat
 	  read(g,a);

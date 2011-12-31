@@ -35,6 +35,8 @@ void spfrac(int wor) {
 		if (((c3.code > 4) && (c3.val != 20) && ((c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
 				((c3.code < 5) && ((c3.rep != 19) && (c3.rep != 22) && (c3.rep != 4) && (c3.rep != 9))))) {
 			c3.rep = c3.rep + 1;
+		}
+
 	c3.freq = ((uint)wor >> 6) & 7;
 	c3.acc = ((uint)wor >> 9) & 7;
 }

@@ -29,12 +29,14 @@
 #include "mortevielle/actions.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
 #include "mortevielle/parole2.h"
+#include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -827,7 +829,7 @@ L2:
 }
 
 /* overlay */ void tentrer() {
-	int x, z;
+	int x, z = 0;
 
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
 		t1sama();
@@ -931,7 +933,7 @@ L2:
 }
 
 /* overlay */ void tsortir() {
-	int lx;
+	int lx = 0;
 
 	tsort();
 	crep = 0;
@@ -1055,7 +1057,7 @@ L2:
 			x = x * (3 - res);
 			if (x > 319)  cx = 41;
 			else cx = 1;
-			cy = succ(int, (uint)y >> 3);                  /* 0-199 => 1-25 */
+			cy = succ(int, ((uint)y >> 3));                  /* 0-199 => 1-25 */
 			if ((cy > 23) || ((cx == 41) && ((cy >= 20) && (cy <= 22)))) {
 				if (choi != 0) {
 					lig = ((choi - 1) % 23) << 3;

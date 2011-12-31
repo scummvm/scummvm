@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-extern bool clic;
+extern bool clic, int_m;
 
 extern int m_show,
         x_s,

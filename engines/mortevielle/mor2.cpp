@@ -53,7 +53,7 @@ void tinke() {
 	const char d4 = ']';
 	const char d5 = '1';
 	const char d6[] = "OK";
-	int cx, cy, haz, nh, cf, j, h, m, cd;
+	int cx, haz, nh, cf, j, h, m;
 	Common::String stpo;
 	bool am;
 
@@ -380,7 +380,7 @@ void sparl(float adr, float rep) {
 	int key, ad, tay, repint;
 	char st[1410];
 
-	repint = trunc(rep);
+	repint = abs((int)rep);
 	hide_mouse();
 	deline(repint + c_paroles, st, tay);
 	afftex(st, 230, 4, 65, 24, 5);

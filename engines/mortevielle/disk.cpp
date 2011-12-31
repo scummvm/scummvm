@@ -30,9 +30,12 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "mortevielle/alert.h"
-#include "mortevielle/ovd1.h"
 #include "mortevielle/disk.h"
+#include "mortevielle/mor.h"
+#include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/ovd1.h"
+#include "mortevielle/prog.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -41,9 +44,9 @@ namespace Mortevielle {
  * Ensure disk 1 data is available
  */
 void dem1() {
+/* Deprecated in ScummVM
 	int k;
 
-/* Deprecated in ScummVM
 	// -- demande de disk 1 --
 	assign(f, "mort.005");
 	//*$i-*
@@ -83,13 +86,13 @@ void takesav(int n) {
 
 	dem1();
 	// -- Load the file  'sauve#n.mor'
-		Common::String saveName = Common::String::format("sav%d.mor", n);
-	Common::InSaveFile *f = g_system->getSaveManager().openForLoading(st);
+	Common::String saveName = Common::String::format("sav%d.mor", n);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(saveName);
 
 	Common::Serializer sz(f, NULL);
 	sync_save(sz);
 
-	if (f.err()) {
+	if (f->err()) {
 		i = do_alert(err_mess, 1);
 		mortevielle_exit(0);
 	}
@@ -125,7 +128,7 @@ void sv_game(int n) {
 	if (s1.mlieu == 26)  s1.mlieu = 15;
 	
 	Common::String saveName = Common::String::format("sav%d.mor", n);
-	f = g_system->getSaveFileManager().openForSaving(saveName);
+	f = g_system->getSavefileManager()->openForSaving(saveName);
 
 	Common::Serializer sz(NULL, f);
 	sync_save(sz);

@@ -46,7 +46,7 @@ int s_s[12][6];
 
 
 void init_mouse() {
-	int i, j;
+//	int i, j;
 	registres reg;
 
 	mouse_shwn = 0;
@@ -88,7 +88,7 @@ begin
 end;  */
 
 void hide_mouse() {
-	int i, j, k, ps, ds;
+	int i, j, k, ps;;
 	bool imp;
 
 	mouse_shwn = pred(int, mouse_shwn);
@@ -176,10 +176,8 @@ void hide_mouse() {
 }
 
 void show_mouse() {
-	int i, j, k, l,
-	        ps, ds;
+	int i, j, k, l;
 	bool imp;
-	char c;
 
 	mouse_shwn = mouse_shwn + 1;
 	if (mouse_shwn != 1)  return;
@@ -383,7 +381,7 @@ void mov_mouse(bool &funct, char &key) {
 		case '\33' : {
 			p_key = keypressed();
 
-			if ((p_key >= ';') && (p_key <= 'D')) {
+			if ((in2 >= ';') && (in2 <= 'D')) {
 				funct = true;
 				key = in2;
 				return;

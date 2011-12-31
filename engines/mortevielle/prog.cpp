@@ -31,7 +31,7 @@
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/prog.h"
-#include "mortevielle/traffich.h"
+#include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 #include "mortevielle/mouse.h"
 
@@ -116,8 +116,8 @@ namespace Mortevielle {
 			regs.ax = 0x201;
 			regs.cx = 0x1;
 			regs.dx = 0x100 + k - 1;
-			regs.es = seg(buffer);
-			regs.bx = ofs(buffer);
+			//regs.es = seg(buffer);
+			//regs.bx = ofs(buffer);
 			intr(19, regs);
 			test[k] = ! imen;
 			i = 0;
@@ -126,8 +126,8 @@ namespace Mortevielle {
 				syn = false;
 				regs.cx = 0x2700 + i;
 				regs.dx = 0x100 + k - 1;
-				regs.es = seg(buffer);
-				regs.bx = ofs(buffer);
+				//regs.es = seg(buffer);
+				//regs.bx = ofs(buffer);
 				intr(19, regs);
 				if (lo(regs.flags) % 2 == 1)  test[k] = false;
 				i = i + 1;
