@@ -199,7 +199,9 @@ void ani50() {
 	if (!f.open("TXX.INP"))
 		error("Missing file - TXX.INP");
 
-	f.read(&t_mot, 125);
+	for (int i = 0; i < 125; ++i)
+		t_mot[i] = f.readSint16LE();
+
 	f.close();
 
 	if (!f.open("TXX.NTP"))
