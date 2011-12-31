@@ -378,9 +378,9 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	int spellLevels = 0;
 	if (_availableSpells[_selectedSpell] != -1) {
 		for (int i = 0; i < 4; i++) {
-			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur &&
-				_spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
-					spellLevels++;
+			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur
+			    && _spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
+				spellLevels++;
 		}
 	}
 
@@ -1160,7 +1160,7 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 int LoLEngine::clickedLiveMagicBarsLeft(Button *button) {
 	gui_highlightPortraitFrame(button->arg);
 	_txt->printMessage(0, getLangString(0x4047), _characters[button->arg].name, _characters[button->arg].hitPointsCur,
-		_characters[button->arg].hitPointsMax, _characters[button->arg].magicPointsCur, _characters[button->arg].magicPointsMax);
+	                   _characters[button->arg].hitPointsMax, _characters[button->arg].magicPointsCur, _characters[button->arg].magicPointsMax);
 	return 1;
 }
 
@@ -1334,7 +1334,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 	int hItem = _itemInHand;
 
 	if ((_itemsInPlay[hItem].itemPropertyIndex == 281 || _itemsInPlay[slotItem].itemPropertyIndex == 281) &&
-		(_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
+	        (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
 		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
@@ -2014,7 +2014,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 		bool progress = false;
 
-		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
+		if (mouseX >= x && mouseY >= y && mouseX <= x + buttonList->width && mouseY <= y + buttonList->height)
 			progress = true;
 
 		buttonList->flags2 &= ~0x80;
@@ -2564,7 +2564,7 @@ int GUI_LoL::getInput() {
 
 	int inputFlag = _vm->checkInput(_menuButtonList);
 
-	if (_currentMenu == &_savenameMenu && _keyPressed.ascii){
+	if (_currentMenu == &_savenameMenu && _keyPressed.ascii) {
 		char inputKey = _keyPressed.ascii;
 		Util::convertISOToDOS(inputKey);
 
@@ -2714,7 +2714,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		delete[] _vm->_landsFile;
 		_vm->_landsFile = _vm->resource()->fileData(filename.c_str(), 0);
 		_newMenu = _lastMenu;
-		} break;
+	} break;
 	default:
 		// TODO: Is there anything we should do if we hit this case?
 		break;
@@ -2833,7 +2833,7 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 				if (*i >= 990)
 					break;
 				Common::String oldName = _vm->getSavegameFilename(*i);
-				Common::String newName = _vm->getSavegameFilename(*i-1);
+				Common::String newName = _vm->getSavegameFilename(*i - 1);
 				_vm->_saveFileMan->renameSavefile(oldName, newName);
 			}
 			_newMenu = &_mainMenu;

@@ -300,15 +300,15 @@ LoLEngine::~LoLEngine() {
 
 	delete[] _automapShapes;
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
 	_timIntroOpcodes.clear();
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timOutroOpcodes.begin(); i != _timOutroOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timOutroOpcodes.begin(); i != _timOutroOpcodes.end(); ++i)
 		delete *i;
 	_timOutroOpcodes.clear();
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timIngameOpcodes.begin(); i != _timIngameOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timIngameOpcodes.begin(); i != _timIngameOpcodes.end(); ++i)
 		delete *i;
 	_timIngameOpcodes.clear();
 
@@ -341,7 +341,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _mapCursorOverlay;
 	delete[] _mapOverlay;
 
-	for (Common::Array<const SpellProc*>::iterator i = _spellProcs.begin(); i != _spellProcs.end(); ++i)
+	for (Common::Array<const SpellProc *>::iterator i = _spellProcs.begin(); i != _spellProcs.end(); ++i)
 		delete *i;
 	_spellProcs.clear();
 
@@ -425,11 +425,11 @@ Common::Error LoLEngine::init() {
 	_clickedSpecialFlag = 0x40;
 
 	_monsterShapes = new uint8*[48];
-	memset(_monsterShapes, 0, 48 * sizeof(uint8*));
+	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
 	_monsterPalettes = new uint8*[48];
-	memset(_monsterPalettes, 0, 48 * sizeof(uint8*));
+	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
 	_monsterDecorationShapes = new uint8*[576];
-	memset(_monsterDecorationShapes, 0, 576 * sizeof(uint8*));
+	memset(_monsterDecorationShapes, 0, 576 * sizeof(uint8 *));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_activeMagicMenu = -1;
@@ -1013,7 +1013,7 @@ uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
 	if (!buffer)
 		return 0;
 
-	return buffer + READ_LE_UINT16(buffer + (id<<1));
+	return buffer + READ_LE_UINT16(buffer + (id << 1));
 }
 
 void LoLEngine::decodeSjis(const char *src, char *dst) {
@@ -1041,7 +1041,7 @@ void LoLEngine::decodeSjis(const char *src, char *dst) {
 
 int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 	static const uint8 decodeTable1[] = {
-		0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD,	0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
+		0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD, 0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
 		0xA4, 0xAC, 0xAA, 0xE3, 0x2E
 	};
 
@@ -1088,8 +1088,10 @@ int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 }
 
 bool LoLEngine::addCharacter(int id) {
-	const uint16 *cdf[] = { _charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
-		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel };
+	const uint16 *cdf[] = {
+		_charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
+		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel
+	};
 
 	int numChars = countActiveCharacters();
 	if (numChars == 4)
@@ -1803,7 +1805,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 		charId = 0;
 	} else {
 		int i = 0;
-		for (;i < 4; i++) {
+		for (; i < 4; i++) {
 			if (charId != _characters[i].id || !(_characters[i].flags & 1))
 				continue;
 			charId = i;
@@ -1946,7 +1948,7 @@ void LoLEngine::giveItemToMonster(LoLMonster *monster, Item item) {
 }
 
 const uint16 *LoLEngine::getCharacterOrMonsterStats(int id) {
-	return (id & 0x8000) ? (const uint16*)_monsters[id & 0x7fff].properties->fightingStats : _characters[id].defaultModifiers;
+	return (id & 0x8000) ? (const uint16 *)_monsters[id & 0x7fff].properties->fightingStats : _characters[id].defaultModifiers;
 }
 
 uint16 *LoLEngine::getCharacterOrMonsterItemsMight(int id) {
@@ -2204,7 +2206,7 @@ int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	int ch = 0;
 	int n = 4;
 
-	if (charNum != -1){
+	if (charNum != -1) {
 		ch = charNum;
 		n = charNum + 1;
 	}
@@ -2865,7 +2867,7 @@ int LoLEngine::processMagicVaelansCube() {
 			uint16 a = sp1[i * 3 + 1] + 16;
 			tmpPal2[i * 3 + 1] = (a > 58) ? 58 : a;
 			tmpPal2[i * 3] = sp1[i * 3];
-			a =	sp1[i * 3 + 2] + 16;
+			a = sp1[i * 3 + 2] + 16;
 			tmpPal2[i * 3 + 2] = (a > 63) ? 63 : a;
 		}
 	} else {
@@ -2873,7 +2875,7 @@ int LoLEngine::processMagicVaelansCube() {
 			uint16 a = sp1[i * 3] + 16;
 			tmpPal2[i * 3] = (a > 60) ? 60 : a;
 			tmpPal2[i * 3 + 1] = sp1[i * 3 + 1];
-			a =	sp1[i * 3 + 2] + 19;
+			a = sp1[i * 3 + 2] + 19;
 			tmpPal2[i * 3 + 2] = (a > 60) ? 60 : a;
 		}
 	}
@@ -4057,7 +4059,7 @@ void LoLEngine::displayAutomap() {
 
 		if (f == 0x30) {
 			for (int i = 0; i < 1024; i++)
-				 _levelBlockProperties[i].flags |= 7;
+				_levelBlockProperties[i].flags |= 7;
 			_mapUpdateNeeded = true;
 		} else if (f == _keyMap[Common::KEYCODE_ESCAPE]) {
 			exitAutomap = true;
@@ -4138,7 +4140,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 }
 
 void LoLEngine::loadMapLegendData(int level) {
-	uint16 *legendData= (uint16*)_tempBuffer5120;
+	uint16 *legendData = (uint16 *)_tempBuffer5120;
 	for (int i = 0; i < 32; i++) {
 		legendData[i * 6] = 0xffff;
 		legendData[i * 6 + 5] = 0xffff;
@@ -4192,7 +4194,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 
 		for (; bl < 1024; bl++) {
 			uint8 *w = _levelBlockProperties[bl].walls;
-			if ((_levelBlockProperties[bl].flags & 7) == 7 && (!(_wllAutomapData[w[0]] & 0xc0)) && (!(_wllAutomapData[w[2]] & 0xc0)) && (!(_wllAutomapData[w[1]] & 0xc0))&& (!(_wllAutomapData[w[3]] & 0xc0))) {
+			if ((_levelBlockProperties[bl].flags & 7) == 7 && (!(_wllAutomapData[w[0]] & 0xc0)) && (!(_wllAutomapData[w[2]] & 0xc0)) && (!(_wllAutomapData[w[1]] & 0xc0)) && (!(_wllAutomapData[w[3]] & 0xc0))) {
 				uint16 b0 = calcNewBlockPosition(bl, 0);
 				uint16 b2 = calcNewBlockPosition(bl, 2);
 				uint16 b1 = calcNewBlockPosition(bl, 1);
@@ -4248,7 +4250,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		sx = mapGetStartPosX();
 		sy = mapGetStartPosY();
 
-		uint16 *legendData = (uint16*)_tempBuffer5120;
+		uint16 *legendData = (uint16 *)_tempBuffer5120;
 		uint8 yOffset = _flags.use16ColorMode ? 4 : 0;
 
 		for (int ii = 0; ii < 32; ii++)  {

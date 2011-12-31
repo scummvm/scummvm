@@ -97,7 +97,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 			uint8 *cl = (uint8 *)memchr(tmpPal1, tmpPal2[1 + ii], 64);
 			if (!cl)
 				continue;
-			tmpPal3[ii] = (uint16) (cl - tmpPal1);
+			tmpPal3[ii] = (uint16)(cl - tmpPal1);
 		}
 
 		for (int ii = 0; ii < 8; ii++) {
@@ -594,7 +594,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 
 			} else {
 				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] :
-					_itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
+				      _itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
 			}
 
 			if (shp)
@@ -625,7 +625,7 @@ void LoLEngine::drawMonster(uint16 id) {
 		uint8 *monsterPalette = d ? _monsterPalettes[(m->properties->shapeIndex << 4) + (curFrm & 0x0f)] + (shp[10] * (d - 1)) : 0;
 		uint8 *brightnessOverlay = drawItemOrMonster(shp, monsterPalette, m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], 0, 0, flg | 1, -1, flip);
 
-		for (int i = 0; i <	4; i++) {
+		for (int i = 0; i < 4; i++) {
 			int v = m->equipmentShapes[i] - 1;
 			if (v == -1)
 				break;
@@ -808,7 +808,7 @@ void LoLEngine::redrawSceneItem() {
 							fy -= ((item->flyingHeight - 1) * 6);
 
 						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] :
-							_itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
+						             _itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
 
 						drawItemOrMonster(shp, 0, item->x, item->y, fx, fy, 0, t, 0);
 						_screen->updateScreen();
@@ -855,7 +855,7 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, 
 
 	if (flags & 1) {
 		// TODO / UNUSED
-		flags |=1;
+		flags |= 1;
 	}
 
 	int u = 0;
@@ -1127,7 +1127,7 @@ void LoLEngine::updateMonster(LoLMonster *monster) {
 		// first recovery phase after delivering an attack
 		if (++monster->fightCurTick > 2) {
 			setMonsterMode(monster, 5);
-			monster->fightCurTick = (int8) ((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers[6 + _monsterDifficulty]) >> 8);
+			monster->fightCurTick = (int8)((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers[6 + _monsterDifficulty]) >> 8);
 		}
 		checkSceneUpdateNeed(monster->block);
 		break;
@@ -1310,7 +1310,7 @@ void LoLEngine::chasePartyWithCloseAttacks(LoLMonster *monster) {
 
 				if (hit) {
 					int mx = calcInflictableDamage(m, dst, hit);
-					int dmg = rollDice(2, mx );
+					int dmg = rollDice(2, mx);
 					inflictDamage(dst, dmg, m, 0, 0);
 					applyMonsterAttackSkill(monster, dst, dmg);
 				}

@@ -104,8 +104,8 @@ void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, u
 		x -= getTextWidth(buffer);
 
 	if ((flags & 0x00F0) == 0x20) {
-		printText(buffer, x-1, y, c3, c2);
-		printText(buffer, x, y+1, c3, c2);
+		printText(buffer, x - 1, y, c3, c2);
+		printText(buffer, x, y + 1, c3, c2);
 	}
 
 	printText(buffer, x, y, c1, c2);

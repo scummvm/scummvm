@@ -439,8 +439,8 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);
 
-		LoLMonster *lm = (LoLMonster*)_lvlTempData[i]->monsters;
-		FlyingObject *lf = (FlyingObject*)_lvlTempData[i]->flyingObjects;
+		LoLMonster *lm = (LoLMonster *)_lvlTempData[i]->monsters;
+		FlyingObject *lf = (FlyingObject *)_lvlTempData[i]->flyingObjects;
 
 		for (int ii = 0; ii < 30; ii++) {
 			LoLMonster *m = &lm[ii];
@@ -574,7 +574,7 @@ void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
 }
 
 void LoLEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	LoLMonster *p = (LoLMonster*)tmp->monsters;
+	LoLMonster *p = (LoLMonster *)tmp->monsters;
 	delete[] p;
 }
 

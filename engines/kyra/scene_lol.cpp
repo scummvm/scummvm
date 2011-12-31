@@ -122,7 +122,7 @@ void LoLEngine::assignBlockItem(LevelBlockProperty *l, uint16 item) {
 	}
 
 	tmp = findObject(item);
-	((LoLItem*)tmp)->level = -1;
+	((LoLItem *)tmp)->level = -1;
 
 	uint16 ix = *index;
 
@@ -277,7 +277,7 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 	delete[] _levelDecorationData;
 	_levelDecorationData = new LevelDecorationProperty[_levelDecorationDataSize];
 	for (int i = 0; i < _levelDecorationDataSize; i++) {
-		LevelDecorationProperty * l = &_levelDecorationData[i];
+		LevelDecorationProperty *l = &_levelDecorationData[i];
 		for (int ii = 0; ii < 10; ii++)
 			l->shapeIndex[ii] = s->readUint16LE();
 		for (int ii = 0; ii < 10; ii++)
@@ -1511,7 +1511,7 @@ void LoLEngine::drawDecorations(int index) {
 						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						if (ix == _dscShapeIndex[s]) {
 							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) -
-								_screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
+							     _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
 						}
 						flags = 0x105;
 					} else {

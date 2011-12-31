@@ -351,7 +351,7 @@ void LoLEngine::initStaticResource() {
 		_staticres->unloadId(kLoLLightningDefs);
 	}
 
-	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLoLFireballCoords, tempSize);
+	_fireBallCoords = (const int16 *)_staticres->loadRawDataBe16(kLoLFireballCoords, tempSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);
@@ -465,7 +465,7 @@ void GUI_LoL::initStaticData() {
 
 	if (_vm->gameFlags().isTalkie)
 		GUI_LOL_MENU(_mainMenu, 9, 0x4000, 0, 7, -1, -1, -1, -1);
-	 else
+	else
 		GUI_LOL_MENU(_mainMenu, 17, 0x4000, 0, 6, -1, -1, -1, -1);
 
 	GUI_LOL_MENU_ITEM(_mainMenu.item[0], 0x4001, 16, 23, 176, 15, 0, 0);
@@ -627,7 +627,7 @@ const ScreenDim Screen_LoL::_screenDimTable16C[] = {
 
 const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable256C);
 
-const char * const LoLEngine::_languageExt[] = {
+const char *const LoLEngine::_languageExt[] = {
 	"ENG",
 	"FRE",
 	"GER"
@@ -777,7 +777,7 @@ const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {
 	{  0,  16,  16,  17, 175 },
 };
 
-const char * const LoLEngine::_outroShapeFileTable[] = {
+const char *const LoLEngine::_outroShapeFileTable[] = {
 	"AMAZON.SHP", "ARCHRSLG.SHP", "AVIANWRM.SHP", "BANDIT.SHP", "BOAR.SHP", "CABAL.SHP",
 	"GUARD.SHP", "HAG.SHP", "HORNET.SHP", "HURZELL.SHP", "IRONGRZR.SHP", "KNOWLES.SHP",
 	"LIZARD.SHP", "MANTHA.SHP", "MINOTAUR.SHP", "MORIBUND.SHP", "ORC.SHP", "ORCLDR.SHP",

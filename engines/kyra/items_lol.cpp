@@ -397,7 +397,7 @@ bool LoLEngine::launchObject(int objectType, Item item, int startX, int startY, 
 		}
 
 		int csp = checkDrawObjectSpace(_partyPosX, _partyPosY, t->x, t->y);
-		if (csp > sp){
+		if (csp > sp) {
 			sp = csp;
 			slot = i;
 		}
@@ -528,7 +528,7 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	getNextStepCoords(t->x, t->y, x, y, t->direction);
 	/* WORKAROUND:
 	Large fireballs cast by the "birds" in white tower level 2 and by the "wraith knights" in castle cimmeria
-	level 1	(or possible other objects with flag 0x4000) could not fly through corridors in ScummVM and would
+	level 1 (or possible other objects with flag 0x4000) could not fly through corridors in ScummVM and would
 	be terminated prematurely. The original code (all versions) involuntarily circumvents this via a bug in the
 	next line of code.
 	The original checks for _itemProperties[t->item].flags instead of _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags.
@@ -539,7 +539,7 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	at least.
 
 	Other methods of working around this issue don't make too much sense. An object with a width of 256
-	could never	fly through corridors, since 256 is also the width of a block. Aligning the fireballs to the
+	could never fly through corridors, since 256 is also the width of a block. Aligning the fireballs to the
 	middle of a block (or making the monsters align to the middle before casting them) wouldn't help here
 	(and wouldn't be faithful to the original either).
 	*/
@@ -563,7 +563,7 @@ void LoLEngine::assignItemToBlock(uint16 *assignedBlockObjects, int id) {
 
 	LoLObject *newObject = findObject(id);
 	newObject->nextAssignedObject = *assignedBlockObjects;
-	((LoLItem*)newObject)->level = -1;
+	((LoLItem *)newObject)->level = -1;
 	*assignedBlockObjects = id;
 }
 
