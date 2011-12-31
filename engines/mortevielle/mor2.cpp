@@ -77,7 +77,8 @@ void tinke() {
 		for (cx = 1; cx <= 10; cx ++) if (s.pourc[cx] == '*')  cf = cf + 1;
 		if (cf == 10)  stpo = "10";
 		else stpo = chr(cf + 48);
-		stpou = string(d3) + d5 + d4 + d3 + d1 + stpo + '0' + d2 + d4 + d3 + d6 + d4;
+
+		stpou = Common::String(d3) + d5 + d4 + d3 + d1 + stpo + '0' + d2 + d4 + d3 + d6 + d4;
 	}
 	if (m > min) {
 		min = 30;

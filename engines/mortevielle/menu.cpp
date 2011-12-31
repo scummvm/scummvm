@@ -53,7 +53,10 @@ namespace Mortevielle {
 	while (s.size() < 30)  s = s + ' ';
 	switch (h) {
 	case invent  :
-		if (l != 7)  inv[l] = string(' ') + s;
+		if (l != 7) {
+			inv[l] = s;
+			inv[l].insertChar(' ', 0);
+		}
 		break;
 	case depla   :
 		dep[l] = s;

@@ -675,8 +675,11 @@ void pendule() {
 	if (heu > 11)  writeg("PM ", 1);
 	else writeg("AM ", 1);
 	putxy(550, 160);
-	if ((jou >= 0) && (jou <= 8))
-		writeg(string(chr(jou + 49)) + "& jour", 1);
+	if ((jou >= 0) && (jou <= 8)) {
+		Common::String tmp("& jour");
+		tmp.insertChar((char)(jou + 49), 0);
+		writeg(tmp, 1);
+	}
 }
 
 /*************
