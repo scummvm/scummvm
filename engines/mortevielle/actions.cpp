@@ -33,6 +33,7 @@
 #include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
+#include "mortevielle/ques.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/var_mor.h"
 
@@ -43,7 +44,8 @@ const char stouinon[] = "[2][ ][OUI][NON]";
 
 /* overlay */
 void taller() {
-	int mx, cx, cy;
+	//int mx, cx, cy;
+	int cx;
 
 	if ((s.mlieu == 26) && (msg[4] == depl[6])) {
 		s.mlieu = 15;
@@ -132,7 +134,8 @@ L2:
 }
 
 /* overlay */ void tprendre() {
-	int cx, cy, cz;
+	//int cx, cy, cz;
+	int cx;
 
 	if (caff > 99) {
 		cx = caff;
@@ -273,7 +276,7 @@ L2:
 }
 
 /* overlay */ void tlire() {
-	int iaff;
+//	int iaff;
 
 	if (caff > 99)  st4(caff);
 	else {

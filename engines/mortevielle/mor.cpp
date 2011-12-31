@@ -36,6 +36,7 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/parole2.h"
+#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -43,6 +44,8 @@ namespace Mortevielle {
 /* Niveau 14 suite */
 const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";
 
+// For ScummVM, we need to do check for file errors where we do the file access
+const int ioresult = 0;
 
 void testfi() {
 	if (ioresult != 0) {
@@ -225,8 +228,8 @@ void ecr2(Common::String str_) {
 	else tab = 6;
 	putxy(8, 177);
 	tlig = 59 + pred(int, res) * 36;
-	if (str_.size() < tlig)  writeg(str_, 5);
-	else if (str_.size() < (tlig << 1)) {
+	if ((int)str_.size() < tlig)  writeg(str_, 5);
+	else if ((int)str_.size() < (tlig << 1)) {
 		putxy(8, 176);
 		writeg(copy(str_, 1, pred(int, tlig)), 5);
 		putxy(8, 182);
@@ -237,7 +240,7 @@ void ecr2(Common::String str_) {
 		putxy(8, 176);
 		writeg(copy(str_, 1, pred(int, tlig)), 5);
 		putxy(8, 182);
-		writeg(copy(str_, tlig, pred(int, tlig << 1)), 5);
+		writeg(copy(str_, tlig, pred(int, (tlig << 1))), 5);
 		putxy(8, 190);
 		writeg(copy(str_, tlig << 1, tlig * 3), 5);
 	}

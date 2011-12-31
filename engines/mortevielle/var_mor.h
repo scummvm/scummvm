@@ -51,11 +51,8 @@ namespace Mortevielle {
 #define chr(v) ((char) v)
 #define lo(v) (v & 0xff)
 #define hi(v) ((v >> 8) & 0xff)
+#define swap(v) (((lo(v)) << 8) | ((hi(v)) >> 8)) 
 #define odd(v) ((v % 2) == 1)
-
-// TODO: Replace the following with proper implementations
-#define mortevielle_exit(ret) error("Exit the game")
-#define clrscr {}
 
 /*---------------------------------------------------------------------------*/
 /*-------------------------    CONSTANTS   ----------------------------------*/
@@ -393,6 +390,23 @@ extern pattern tpt[15];
 void hirs();
 void affcar(int gd, int x, int y, int coul, int chr);
 void putpix(int gd, int x, int y, int coul);
+Common::String copy(const Common::String &s, int idx, size_t size);
+void Val(const Common::String &s, int &V, int Code);
+void affput(int Chx, int Gd, int x, int y, int coul, int char_);
+
+/*---------------------------------------------------------------------------*/
+/*------------------------------     STUBS     ------------------------------*/
+/*---------------------------------------------------------------------------*/
+// TODO: Replace the following with proper implementations, or refactor out the code using them
+
+extern int port[0xfff];
+
+#define hires {}
+
+#define mortevielle_exit(ret) error("Exit the game")
+// Text screen functions not relevant for ScummVM
+#define clrscr {}
+#define gotoxy(x,y) {}
 
 } // End of namespace Mortevielle
 

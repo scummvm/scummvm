@@ -31,6 +31,7 @@
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -82,22 +83,22 @@ namespace Mortevielle {
 	switch (h) {
 	case invent : {
 		if (l > 6)  {
-			inv[l][1] = '<';
-			inv[l][22] = '>';
-		} else inv[l][1] = '*';
+			inv[l].setChar('<', 1);
+			inv[l].setChar('>', 22);
+		} else inv[l].setChar('*', 1);
 	}
 	break;
 	case depla :
-		dep[l][1] = '*';
+		dep[l].setChar('*', 1);
 		break;
 	case action :
-		act[l][1] = '*';
+		act[l].setChar('*', 1);
 		break;
 	case saction :
-		self_[l][1] = '*';
+		self_[l].setChar('*', 1);
 		break;
 	case discut :
-		dis[l][1] = '*';
+		dis[l].setChar('*', 1);
 		break;
 	}
 }
@@ -110,30 +111,30 @@ namespace Mortevielle {
 	l = lo(no);
 	switch (h) {
 	case invent : {
-		inv[l][1] = ' ';
-		inv[l][22] = ' ';
+		inv[l].setChar(' ', 1);
+		inv[l].setChar(' ', 22);
 	}
 	break;
 	case depla :
-		dep[l][1] = ' ';
+		dep[l].setChar(' ', 1);
 		break;
 	case action :
-		act[l][1] = ' ';
+		act[l].setChar(' ', 1);
 		break;
 	case saction : {
-		self_[l][1] = ' ';
-		self_[l][1] = ' ';
+		self_[l].setChar(' ', 1);
+		self_[l].setChar(' ', 1);
 	}
 	break;
 	case discut :
-		dis[l][1] = ' ';
+		dis[l].setChar(' ', 1);
 		break;
 	}
 }
 
 void menu_aff() {
 	int ind_tabl, k, col;
-	char c;
+//	char c;
 	int pt, x, y, color, msk,
 	        num_letr;
 
@@ -237,7 +238,7 @@ void util(int x, int y) {
 	else ix = 3;
 	xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = pred(int, (uint)y >> 3) + (msg3 << 8);
+		ix = pred(int, ((uint)y >> 3)) + (msg3 << 8);
 		if (ix != msg4) {
 			invers(1);
 			msg4 = ix;
@@ -318,7 +319,8 @@ void erase_menu() {
 }
 
 void mdn() {
-	int x, y, c, a, ix;
+	//int x, y, c, a, ix;
+	int x, y, ix;
 	bool tes;
 
 	/* debug('mdn'); */

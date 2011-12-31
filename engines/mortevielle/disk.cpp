@@ -29,7 +29,10 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "mortevielle/alert.h"
+#include "mortevielle/ovd1.h"
 #include "mortevielle/disk.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {

@@ -32,5 +32,6 @@ namespace Mortevielle {
 
 extern void boite(int x, int y, int dx, int dy, int coul);
 
+
 } // End of namespace Mortevielle
 #endif

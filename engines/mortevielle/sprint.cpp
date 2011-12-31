@@ -26,6 +26,7 @@
  */
 
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
@@ -86,5 +87,10 @@ void writeg(Common::String l, int c)
 	}
 	show_mouse();
 }
+
+void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
+	warning("TODO: box method not yet implemented");
+}
+
 
 } // End of namespace Mortevielle

@@ -27,6 +27,7 @@
 
 #include "mortevielle/outtext.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 #include "common/str.h"
 
@@ -59,14 +60,15 @@ const byte tab31[32]= {
 };
 
 void deline(int num , char *l , int &tl);
+typedef unsigned char uchar;
 
 static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end) {
-	const unsigned char rap[32] = { 
-		',', ':', '@', '!', '?', '-', '\207',
-		'\240', '\205', '\203', '\202', '\212', '\210', '/',
-		'\213', '\214', '\242', '\047', '\223', '"', '\227',
-		'\226', '0', '1', '2', '3', '4', '5',
-		'6', '7', '8', '9'
+	const uchar rap[32] = { 
+		(uchar)',', (uchar)':', (uchar)'@', (uchar)'!', (uchar)'?', (uchar)'-', (uchar)'\207',
+		(uchar)'\240', (uchar)'\205', (uchar)'\203', (uchar)'\202', (uchar)'\212', (uchar)'\210', (uchar)'/',
+		(uchar)'\213', (uchar)'\214', (uchar)'\242', (uchar)'\047', (uchar)'\223', (uchar)'"', (uchar)'\227',
+		(uchar)'\226', (uchar)'0', (uchar)'1', (uchar)'2', (uchar)'3', (uchar)'4', (uchar)'5',
+		(uchar)'6', (uchar)'7', (uchar)'8', (uchar)'9'
 	};
 	int oct, ocd;
 

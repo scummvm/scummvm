@@ -26,10 +26,12 @@
  */
 
 #include "mortevielle/actions.h"
+#include "mortevielle/alert.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/prog.h"
+#include "mortevielle/traffich.h"
 #include "mortevielle/var_mor.h"
 #include "mortevielle/mouse.h"
 

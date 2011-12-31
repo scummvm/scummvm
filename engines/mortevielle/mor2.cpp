@@ -28,22 +28,21 @@
 #include "mortevielle/mor2.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/boite.h"
-#include "mortevielle/var_mor.h"
+#include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/taffich.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
-const array<1, 11, int> men
-= {{
-		scacher, attacher, defoncer, dormir,
+const int men[12] = { 0,
+		scacher, attacher, defoncer, dormir, 
 		entrer,  fermer,   frapper,  manger,
 		mettre,  ouvrir,   sortir
-	}
 };
 
 void tinke() {
@@ -377,8 +376,7 @@ void modinv() {
 }
 
 void sparl(float adr, float rep) {
-	const array<1, 8, int> haut
-	= {{0, 1, -3, 6, -2, 2, 7, -1}};
+	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 	int key, ad, tay, repint;
 	char st[1410];
 
