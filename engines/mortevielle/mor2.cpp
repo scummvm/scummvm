@@ -46,9 +46,9 @@ const int men[12] = { 0,
 };
 
 void tinke() {
-	const char m1[] = "Mince! Vous entendez du bruit...";
-	const char d1[] = " | Vous devriez avoir remarqu‚|       ";
-	const char d2[] = "% des indices...";
+	const char m1[] = "Mince! Vous entendez du bruit...";       //Translation: Gosh! You hear some noise...
+	const char d1[] = " | Vous devriez avoir remarqu‚|       "; //Translation: You should have noticed
+	const char d2[] = "% des indices...";                       //Translation: %s of hints
 	const char d3 = '[';
 	const char d4 = ']';
 	const char d5 = '1';
@@ -465,18 +465,18 @@ void ajjer(int ob) {
 	} else crep = 139;
 }
 
-void t1sama() {    /* On entre dans le manoir */
+void t1sama() {    /* On entre dans le manoir */                 //Translation: Entering manor
 	int j, h, m;
 	bool d;
 
 	calch(j, h, m);
 	if ((h < 5) && (s.mlieu > 18)) {
 		cherjer(137, d);
-		if (! d) {        /* On n'a pas les cl‚s et il est tard */
+		if (! d) {        /* On n'a pas les cl‚s et il est tard */   //Translation: You don't have the keys, and it's late
 			crep = 1511;
 			tperd();
 		} else st1sama();
-	} else if (! s.ipre) {     /* c'est votre premiŠre fois ? */
+	} else if (! s.ipre) {     /* c'est votre premiŠre fois ? */   //Translation: Is it your first time?
 		ipers = 255;
 		affper(ipers);
 		caff = 77;
@@ -767,7 +767,7 @@ void st13(int ob) {
 void aldepl() {
 	int dummy;
 
-	dummy = do_alert("[1][Alors, utilisez le menu DEP...][ok]", 1);
+	dummy = do_alert("[1][Alors, utilisez le menu DEP...][ok]", 1);       //Translation: [1] [So, use the DEP menu] [Ok]
 }
 
 } // End of namespace Mortevielle

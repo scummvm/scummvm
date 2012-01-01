@@ -32,6 +32,9 @@
 
 namespace Mortevielle {
 
+// Constants, types and variables used by Mortville Manor.
+// version Nov.'88, Music and speech Oct.'88
+
 /*         Constantes, Types et Variables pour le
 
               M A N O I R   DE   M O R T E V I E L L E
@@ -100,7 +103,7 @@ const int c_dialpre = 456;
 const int c_action = 476;
 const int c_saction = 497;
 const int c_dis = 502;
-const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */
+const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */ // Translation: "=> doesn't exist ; yes !!" 
 
 const int arega = 0;
 const int asoul = 154;
@@ -345,7 +348,7 @@ extern int x,
 extern int t_cph[6401];
 extern byte tabdon[4001];
 /*   t_dxx  : array[0..121] of int;*/
-extern Common::String stpou;                               /* donne le % d'indices */
+extern Common::String stpou;            /* donne le % d'indices */  // Translation: "provides the % of hints"
 extern byte is;
 extern char mode;
 extern Common::String al_mess,

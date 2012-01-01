@@ -42,7 +42,7 @@
 namespace Mortevielle {
 
 /* Niveau 14 suite */
-const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";
+const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";       //Translation: Someone enters, looks surised, but says nothing
 
 // For ScummVM, we need to do check for file errors where we do the file access
 const int ioresult = 0;
@@ -146,7 +146,7 @@ void initouv() {
 }
 
 void ecrf1() {
-	boite(0, 11, 512, 163, 15);           /* grand dessin */
+	boite(0, 11, 512, 163, 15);           /* grand dessin */         //Translation: Large drawing
 }
 
 void clsf1() {
@@ -614,9 +614,9 @@ void affper(int per) {
 }
 
 void person() {
-	const char m1[] = "Vous";
-	const char m2[] = "ˆtes";
-	const char m3[] = "SEUL";
+	const char m1[] = "Vous"; //Translation: You
+	const char m2[] = "ˆtes"; //Translation: are
+	const char m3[] = "SEUL"; //Translation: ALONE
 	int cf;
 	Common::String str_;
 
@@ -671,7 +671,7 @@ void pendule() {
 	else writeg("AM ", 1);
 	putxy(550, 160);
 	if ((jou >= 0) && (jou <= 8)) {
-		Common::String tmp("& jour");
+		Common::String tmp("& jour");                 //Translation: Day
 		tmp.insertChar((char)(jou + 49), 0);
 		writeg(tmp, 1);
 	}
@@ -1322,9 +1322,9 @@ void dessin(int ad) {
 		clsf1();
 		if (caff > 99) {
 			dessine(ades, 60, 33);
-			boite(118, 32, 291, 121, 15);         /* cadre moyen */
+			boite(118, 32, 291, 121, 15);         /* cadre moyen */          //Translation: Medium box
 		} else if (caff > 69) {
-			dessine(ades, 112, 48);           /* tˆtes */
+			dessine(ades, 112, 48);           /* tˆtes */                    //Translation: Heads
 			boite(222, 47, 155, 91, 15);
 		} else {
 			dessine(ades, 0, 12);

@@ -148,7 +148,7 @@ void veracf(byte b) {
 	Common::File f;
 	int i;
 
-	if (!f.open("bruits"))
+	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
 	f.read(&mem[adbruit + 0], 250);
@@ -263,7 +263,7 @@ void veracf(byte b) {
 
 	case 2:
 	case 3 : {
-		d3 = c2.code + 5; /*  7 ou 8  => voyelle correspondante  */
+		d3 = c2.code + 5; /*  7 ou 8  => voyelle correspondante  */ //Translation: Corresponding vowel
 		if (c1.code > 4) {
 			veracf(c2.acc);
 			if (c1.code == 9) {
@@ -318,7 +318,7 @@ void veracf(byte b) {
 		else d3 = 6;
 		if (c2.rep >= 5) {
 			c2.rep = c2.rep - 5;
-			d3 = 8 - d3;       /*  echange 2 et 6  */
+			d3 = 8 - d3;       /*  echange 2 et 6  */    //Translation: swap 2 and 6
 		}
 		if (c2.code == 0) {
 			i = c2.rep;

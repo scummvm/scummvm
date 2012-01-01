@@ -26,28 +26,28 @@
  */
 
 #include "mortevielle/mort.h"
-#include "mortevielle/var_mor.h"          /* les variables */
-#include "mortevielle/keyboard.h"          /* la gestion du clavier */
-#include "mortevielle/mouse.h"          /* la souris  */
-#include "mortevielle/level15.h"          /* les fonctions de base */
-#include "mortevielle/droite.h"          /* pour faire une droite */
-#include "mortevielle/boite.h"
-#include "mortevielle/sprint.h"          /* l'affichage des textes */
-#include "mortevielle/outtext.h"          /* fonctions sup‚rieures d'affichage */
-#include "mortevielle/parole.h"          /* les fonctions de la parole */
+#include "mortevielle/var_mor.h"          /* les variables */                       //Translation: Variables
+#include "mortevielle/keyboard.h"          /* la gestion du clavier */              //Translation: Keyboard manager
+#include "mortevielle/mouse.h"          /* la souris  */                            //Translation: Mouse
+#include "mortevielle/level15.h"          /* les fonctions de base */               //Translation: Lowlevel functions
+#include "mortevielle/droite.h"          /* pour faire une droite */                //Translation: Display a lign
+#include "mortevielle/boite.h"                                                      //Translation: Box
+#include "mortevielle/sprint.h"          /* l'affichage des textes */               //Translation: Display texts
+#include "mortevielle/outtext.h"          /* fonctions sup‚rieures d'affichage */   //Translation: Highlevel display functions
+#include "mortevielle/parole.h"          /* les fonctions de la parole */           //Translation: Speech functions
 #include "mortevielle/alert.h"
-#include "mortevielle/parole2.h"          /* les fonctions de la parole */
-/*  debug              le debugging */
-#include "mortevielle/ques.h"          /* les questions */
-#include "mortevielle/menu.h"          /* les fonctions du menu */
-#include "mortevielle/mor.h"          /* divers */
-#include "mortevielle/taffich.h"          /* chargement des dessins */
-#include "mortevielle/ovd1.h"          /* les fonctions sur disque 1 */
-#include "mortevielle/mor2.h"          /* divers */
-#include "mortevielle/actions.h"          /* les actions */
-#include "mortevielle/prog.h"          /* fonctions toplevel */
-#include "mortevielle/disk.h"          /* chargements et sauvegardes */
-/*  ecrihexa            utilitaire */
+#include "mortevielle/parole2.h"          /* les fonctions de la parole */          //Translation: Speech functions
+/*  debug              le debugging */                                              //Translation: Debugger
+#include "mortevielle/ques.h"          /* les questions */                          //Translation: Questions
+#include "mortevielle/menu.h"          /* les fonctions du menu */                  //Translation: Menu functions
+#include "mortevielle/mor.h"          /* divers */                                  //Translation: Misc
+#include "mortevielle/taffich.h"          /* chargement des dessins */              //Translation: pictures loader
+#include "mortevielle/ovd1.h"          /* les fonctions sur disque 1 */             //Translation: Disk functions
+#include "mortevielle/mor2.h"          /* divers */                                 //Translation: Misc
+#include "mortevielle/actions.h"          /* les actions */                         //Translation: Actions
+#include "mortevielle/prog.h"          /* fonctions toplevel */                     //Translation: toplevel functions
+#include "mortevielle/disk.h"          /* chargements et sauvegardes */             //Translation: Load/Save
+/*  ecrihexa            utilitaire */                                               //Translation: Toolbox
 
 namespace Mortevielle {
 
