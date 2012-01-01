@@ -659,7 +659,7 @@ void GfxSurface::mergeDirtyRects() {
 		rInner = rOuter;
 		while (++rInner != _dirtyRects.end()) {
 
-			if (looseIntersectRectangle(*rOuter, *rInner)) {
+			if ((*rOuter).intersects(*rInner)) {
 				// these two rectangles overlap or
 				// are next to each other - merge them
 
@@ -676,22 +676,6 @@ void GfxSurface::mergeDirtyRects() {
 }
 
 /**
- * Check if the two rectangles are next to each other.
- * @param pSrc1			a source rectangle
- * @param pSrc2			a source rectangle
- */
-bool GfxSurface::looseIntersectRectangle(const Rect &src1, const Rect &src2) {
-	Rect destRect;
-
-	destRect.left   = MAX(src1.left, src2.left);
-	destRect.top    = MAX(src1.top, src2.top);
-	destRect.right  = MIN(src1.right, src2.right);
-	destRect.bottom = MIN(src1.bottom, src2.bottom);
-
-	return destRect.isValidRect();
-}
-
-/**
  * Creates the union of two rectangles.
  * Returns True if there is a union.
  * @param pDest			destination rectangle that is to receive the new union
@@ -699,10 +683,8 @@ bool GfxSurface::looseIntersectRectangle(const Rect &src1, const Rect &src2) {
  * @param pSrc2			a source rectangle
  */
 bool GfxSurface::unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2) {
-	destRect.left   = MIN(src1.left, src2.left);
-	destRect.top    = MIN(src1.top, src2.top);
-	destRect.right  = MAX(src1.right, src2.right);
-	destRect.bottom = MAX(src1.bottom, src2.bottom);
+	destRect = src1;
+	destRect.extend(src2);
 
 	return !destRect.isEmpty();
 }
