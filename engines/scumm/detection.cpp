@@ -585,7 +585,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 					// Print some debug info
 					int filesize = tmp->size();
-					if (d.md5Entry->filesize != filesize)
 					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
 						file.c_str(), md5str.c_str(), filesize);
 
