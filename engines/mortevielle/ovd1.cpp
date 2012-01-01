@@ -373,7 +373,9 @@ void ani50() {
 	if (!f.open("cfiph.mor"))
 		error("Missing file - cfiph.mor");
 
-	f.read(t_cph, 50);
+	for (int i = 0; i < (f.size() / 2); ++i)
+		t_cph[i] = f.readSint16LE();
+
 	f.close();
 }
 
