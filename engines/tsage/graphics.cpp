@@ -595,7 +595,8 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 	if (destBounds.bottom > destSurface.h)
 		destBounds.bottom = destSurface.h;
 
-	if (destBounds.isValidRect()) {
+	if (destBounds.isValidRect() && !((destBounds.right < 0) || (destBounds.bottom < 0)
+			|| (destBounds.left >= SCREEN_WIDTH) || (destBounds.top >= SCREEN_HEIGHT))) {
 		// Register the affected area as dirty
 		addDirtyRect(destBounds);
 
