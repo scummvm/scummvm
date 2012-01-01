@@ -183,7 +183,7 @@ void RightClickDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.copyToScreen();
+		g_system->updateScreen();
 	}
 
 	_gfxManager.deactivate();
@@ -394,7 +394,7 @@ void InventoryDialog::execute() {
 		Event event;
 		while (!g_globals->_events.getEvent(event) && !g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
-			GLOBALS._screenSurface.copyToScreen();
+			g_system->updateScreen();
 		}
 		if (g_vm->shouldQuit())
 			break;

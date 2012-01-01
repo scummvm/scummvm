@@ -133,7 +133,7 @@ void SceneManager::fadeInIfNecessary() {
 				percent = 100;
 
 			g_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
-			GLOBALS._screenSurface.copyToScreen();
+			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 

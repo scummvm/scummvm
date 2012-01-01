@@ -163,7 +163,7 @@ void RightClickDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.copyToScreen();
+		g_system->updateScreen();
 	}
 
 	// Deactivate the graphics manager used for the dialog
@@ -244,7 +244,7 @@ void AmmoBeltDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.copyToScreen();
+		g_system->updateScreen();
 	}
 
 	_gfxManager.deactivate();

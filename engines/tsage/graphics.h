@@ -74,16 +74,12 @@ public:
 class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
+	Graphics::Surface *_screenSurfaceP;
 	int _lockSurfaceCtr;
+	bool _screenSurface;
 
 	bool _disableUpdates;
 	Rect _bounds;
-	bool _trackDirtyRects;
-	Common::List<Rect> _dirtyRects;
-
-	void mergeDirtyRects();
-	bool looseIntersectRectangle(const Rect &src1, const Rect &src2);
-	bool unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2);
 public:
 	Common::Point _centroid;
 	int _transColor;
@@ -92,9 +88,7 @@ public:
 	GfxSurface(const GfxSurface &s);
 	~GfxSurface();
 
-	void trackDirtyRects();
-	void addDirtyRect(const Rect &r);
-	void copyToScreen();
+	void setScreenSurface();
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
@@ -280,7 +274,6 @@ public:
 		return _surface.lockSurface();
 	}
 	void unlockSurface() { _surface.unlockSurface(); }
-	void addDirtyRect(const Rect &r);
 	void fillArea(int xp, int yp, int color);
 	void fillRect(const Rect &bounds, int color);
 	void fillRect2(int xs, int ys, int width, int height, int color);
@@ -308,6 +301,7 @@ public:
 	void copyFrom(GfxSurface &src, int destX, int destY) {
 		_surface.setBounds(_bounds);
 		_surface.copyFrom(src, destX, destY);
+		g_system->updateScreen();
 	}
 	GfxSurface &getSurface() {
 		_surface.setBounds(_bounds);
