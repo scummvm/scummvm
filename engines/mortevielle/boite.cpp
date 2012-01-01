@@ -31,6 +31,7 @@
 
 namespace Mortevielle {
 
+//Translation: box()
 void boite(int x, int y, int dx, int dy, int coul) {
 	int i;
 	int xi, yi, xo, yo;

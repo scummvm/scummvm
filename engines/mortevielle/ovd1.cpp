@@ -104,7 +104,7 @@ void ani50() {
 	f.read(lettres, 7 * 24);
 	f.close();
 
-	/* ----  Demande de changement de disquette  ---- */
+	// Ask to swap floppy
 	dem2();
 
 
@@ -279,6 +279,7 @@ void ani50() {
 	gotoxy(1, 23);
 	clreol;
 	gotoxy(26, 23);
+	// "Play using keyboard / ... mouse"
 	output("Jeu au Clavier / … la Souris");
 	textcolor(4);
 	gotoxy(33, 23);

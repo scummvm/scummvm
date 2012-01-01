@@ -142,7 +142,7 @@ void deline(int num , char *l , int &tl) {
 		j = j + 1;
 	} while (!the_end);
 	tl = j - 1;
-	if (tl < 255)  delig = copy(delig, 1, tl - 1); /* enleve le $ */
+	if (tl < 255)  delig = copy(delig, 1, tl - 1); /* enleve le $ */ //Translation: Remove '$'
 }       /* DETEX */
 
 

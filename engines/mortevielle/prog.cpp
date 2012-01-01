@@ -178,38 +178,38 @@ void tsitu()
 			ctrm = 4;
 			goto L2;
 		}
-	if (msg[3] == depla)       taller();
-	if (msg[3] == discut)      tparler();
-	if (msg[3] == invent)      tsprendre();
-	if (msg[4] == attacher)    tattacher();
-	if (msg[4] == attendre)    tattendre();
-	if (msg[4] == defoncer)    tdefoncer();
-	if (msg[4] == dormir)      tdormir();
-	if (msg[4] == ecouter)     tecouter();
-	if (msg[4] == entrer)      tentrer();
-	if (msg[4] == fermer)      tfermer();
-	if (msg[4] == fouiller)    tfouiller();
-	if (msg[4] == frapper)     tfrapper();
-	if (msg[4] == gratter)     tgratter();
-	if (msg[4] == lire)        tlire();
-	if (msg[4] == manger)      tmanger();
-	if (msg[4] == mettre)      tmettre();
-	if (msg[4] == ouvrir)      touvrir();
-	if (msg[4] == prendre)     tprendre();
-	if (msg[4] == regarder)    tregarder();
-	if (msg[4] == sentir)      tsentir();
-	if (msg[4] == sonder)      tsonder();
-	if (msg[4] == sortir)      tsortir();
-	if (msg[4] == soulever)    tsoulever();
-	if (msg[4] == tourner)     ttourner();
-	if (msg[4] == scacher) {
+	if (msg[3] == depla)       taller();    //Translation: go to
+	if (msg[3] == discut)      tparler();   //Translation: talk
+	if (msg[3] == invent)      tsprendre(); //Translation: inventory/take
+	if (msg[4] == attacher)    tattacher(); //Translation: tie
+	if (msg[4] == attendre)    tattendre(); //Translation: wait
+	if (msg[4] == defoncer)    tdefoncer(); //Translation: smash
+	if (msg[4] == dormir)      tdormir();   //Translation: sleep
+	if (msg[4] == ecouter)     tecouter();  //Translation: listen
+	if (msg[4] == entrer)      tentrer();   //Translation: enter
+	if (msg[4] == fermer)      tfermer();   //Translation: close
+	if (msg[4] == fouiller)    tfouiller(); //Translation: search
+	if (msg[4] == frapper)     tfrapper();  //Translation: hit
+	if (msg[4] == gratter)     tgratter();  //Translation: scratch
+	if (msg[4] == lire)        tlire();     //Translation: read
+	if (msg[4] == manger)      tmanger();   //Translation: eat
+	if (msg[4] == mettre)      tmettre();   //Translation: put
+	if (msg[4] == ouvrir)      touvrir();   //Translation: open
+	if (msg[4] == prendre)     tprendre();  //Translation: take
+	if (msg[4] == regarder)    tregarder(); //Translation: look
+	if (msg[4] == sentir)      tsentir();   //Translation: smell
+	if (msg[4] == sonder)      tsonder();   //Translation: probe
+	if (msg[4] == sortir)      tsortir();   //Translation: exit
+	if (msg[4] == soulever)    tsoulever(); //Translation: lift
+	if (msg[4] == tourner)     ttourner();  //Translation: turn
+	if (msg[4] == scacher) {                //Translation: hide
 		tcacher();
 		goto L1;
 	}
-	if (msg[4] == sfouiller)   tsfouiller();
-	if (msg[4] == slire)       tslire();
-	if (msg[4] == sposer)      tposer();
-	if (msg[4] == sregarder)   tsregarder();
+	if (msg[4] == sfouiller)   tsfouiller();//Translation: search 
+	if (msg[4] == slire)       tslire();    //Translation: read
+	if (msg[4] == sposer)      tposer();    //Translation: put
+	if (msg[4] == sregarder)   tsregarder();//Translation: look
 	cache = false;
 L1:
 	if (anyone) {

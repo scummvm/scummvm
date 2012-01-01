@@ -47,7 +47,7 @@ void dem1() {
 /* Deprecated in ScummVM
 	int k;
 
-	// -- demande de disk 1 --
+	// -- demande de disk 1 --           //Translation: Ask for disk #1
 	assign(f, "mort.005");
 	//*$i-*
 	k = ioresult;
@@ -106,9 +106,9 @@ void ld_game(int n) {
 	hide_mouse();
 	maivid();
 	takesav(n);
-	/* -- disquette 2 -- */
+	/* -- disquette 2 -- */                    //Translation: Floppy #2
 	dem2();
-	/* -- mises en place -- */
+	/* -- mises en place -- */                 //Translation: Initialization
 	theure();
 	dprog();
 	antegame();
@@ -122,7 +122,7 @@ void sv_game(int n) {
 	hide_mouse();
 	tmaj3();
 	dem1();
-	/* -- sauvegarde du fichier 'sauve#n.mor' -- */
+	/* -- sauvegarde du fichier 'sauve#n.mor' -- */               //Translation: save file 'sauve%d.mor'
 	for (i = 0; i <= 389; i ++) bufcha[i] = tabdon[i + acha];
 	s1 = s;
 	if (s1.mlieu == 26)  s1.mlieu = 15;

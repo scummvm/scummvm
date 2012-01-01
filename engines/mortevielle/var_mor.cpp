@@ -72,16 +72,16 @@ const byte don[9][5] = {
 
 const char *fic[3] = {
 	"", 
-	" Sauvegarde",
-	 " Chargement"
+	" Sauvegarde",  // Translation: "Save"
+	 " Chargement"  // Translation: "Load"
 };
 
 const byte addv[2] = {8, 8};
 
-const char recom[] = " Recommence  ";
+const char recom[] = " Recommence  "; // Translation: "Restart"
 
-const char f3[] = "F3: Encore";
-const char f8[] = "F8: Suite";
+const char f3[] = "F3: Encore";       // Translation: "F3: More"
+const char f8[] = "F8: Suite";        // Translation: "F8: Next"
 
 const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 
@@ -189,7 +189,7 @@ int x,
 int t_cph[6401];
 byte tabdon[4001];
 /*   t_dxx  : array[0..121] of int;*/
-Common::String stpou;                               /* donne le % d'indices */
+Common::String stpou;               /* donne le % d'indices */ //Translation: "Provides the % of hints"
 byte is;
 char mode;
 Common::String al_mess,

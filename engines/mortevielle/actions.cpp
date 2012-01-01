@@ -42,7 +42,7 @@
 namespace Mortevielle {
 
 /* NIVEAU 4 */
-const char stouinon[] = "[2][ ][OUI][NON]";
+const char stouinon[] = "[2][ ][OUI][NON]";   //Translation: [2] [ ] [YES] [NO]
 
 /* overlay */
 void taller() {
@@ -56,7 +56,7 @@ void taller() {
 		repon(2, s.mlieu);
 	}
 	if ((s.mlieu == 15) && (msg[4] == depl[6])) {
-		if (! syn)  ecr3("aller");
+		if (! syn)  ecr3("aller");                //Translation: Go to
 		tfleche();
 		if (iesc)  okdes = false;
 		if ((anyone) || (iesc))  return;
@@ -169,7 +169,7 @@ L2:
 		}
 		return;
 	}
-	if (! syn)  ecr3("prendre");
+	if (! syn)  ecr3("prendre");                 //Translation: Take
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	if (caff == 3) {
@@ -256,7 +256,7 @@ L2:
 {
 	int cx;
 
-	if (! syn)  ecr3("soulever");
+	if (! syn)  ecr3("soulever");                //Translation: Lift
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(3);
@@ -282,7 +282,7 @@ L2:
 
 	if (caff > 99)  st4(caff);
 	else {
-		if (! syn)  ecr3("lire");
+		if (! syn)  ecr3("lire");                //Translation: Read
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(4);
@@ -303,7 +303,7 @@ L2:
 		crep = 103;
 		return;
 	}
-	if (! syn)  ecr3("regarder");
+	if (! syn)  ecr3("regarder");            //Translation: Look
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(5);
@@ -364,7 +364,7 @@ L2:
 		st7(caff);
 		return;
 	}
-	if (! syn)  ecr3("fouiller");
+	if (! syn)  ecr3("fouiller");            //Translation: Search
 	tfleche();
 	if (anyone || iesc)  return;
 	if (s.mlieu == 23) {
@@ -431,7 +431,7 @@ L2:
 /* overlay */ void touvrir() {
 	int cx, haz;
 
-	if (! syn)  ecr3("ouvrir");
+	if (! syn)  ecr3("ouvrir");                  //Translation: Open
 	if (caff == 26) {
 		if (ment != 0) {
 			msg[4] = entrer;
@@ -492,7 +492,7 @@ L2:
 		crep = 186;
 		return;
 	}
-	if (! syn)  ecr3("mettre");
+	if (! syn)  ecr3("mettre");               //Translation: Put
 	tfleche();
 	if (iesc)  crep = 998;
 	if ((anyone) || (iesc))  return;
@@ -591,7 +591,7 @@ L2:
 		crep = 149;
 		return;
 	}
-	if (! syn)  ecr3("tourner");
+	if (! syn)  ecr3("tourner");             //Translation: Turn
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(9);
@@ -618,7 +618,7 @@ L2:
 }
 
 /* overlay */ void tcacher() {
-	if (! syn)  ecr3("se cacher");
+	if (! syn)  ecr3("se cacher");             //Translation: Hide self
 	tfleche();
 	if (!(anyone) && !(iesc)) {
 		tcoord(10);
@@ -633,7 +633,7 @@ L2:
 /* overlay */ void tattacher() {
 	if (s.derobj == 0)  crep = 186;
 	else {
-		if (! syn)  ecr3("attacher");
+		if (! syn)  ecr3("attacher");           //Translation: Tie
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(8);
@@ -653,7 +653,7 @@ L2:
 /* overlay */ void tfermer() {
 	int cx, chai;
 
-	if (! syn)  ecr3("fermer");
+	if (! syn)  ecr3("fermer");              //Translation: Close
 	if (caff < 26) {
 		tfleche();
 		if (iesc)  crep = 998;
@@ -682,9 +682,9 @@ L2:
 /* overlay */ void tfrapper() {
 	int l, p, haz;
 
-	if (! syn)  ecr3("frapper");
+	if (! syn)  ecr3("frapper");          //Translation: Hit
 	if (s.mlieu == 15) {
-		l = do_alert("[1][ | Avant, utilisez le menu DEP...][ok]", 1);
+		l = do_alert("[1][ | Avant, utilisez le menu DEP...][ok]", 1);  //Translation: [1] [ | Before, use the DEP menu...] [Ok]
 		return;
 	}
 	if (s.mlieu < 25) {
@@ -882,7 +882,7 @@ L2:
 }
 
 /* overlay */ void tdormir() {
-	const char m1[] = "D‚sirez-vous vous r‚veiller?";
+	const char m1[] = "D‚sirez-vous vous r‚veiller?";       //Translation: Do you want to wake up?
 	int z, j, h, m, quel;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
@@ -922,7 +922,7 @@ L2:
 }
 
 /* overlay */ void tdefoncer() {
-	if (! syn)  ecr3("d‚foncer");
+	if (! syn)  ecr3("d‚foncer");                     //Translation: Smash
 	if (caff < 25)  tfleche();
 	if ((! anyone) && (! iesc))
 		if (s.mlieu != 26)  crep = 997;
@@ -982,7 +982,7 @@ L2:
 }
 
 /* overlay */ void tsonder() {
-	if (! syn)  ecr3("sonder");
+	if (! syn)  ecr3("sonder");            //Translation: Probe
 	if (caff < 27) {
 		tfleche();
 		if (!(anyone) && (! iesc))  crep = 145;
@@ -1166,7 +1166,7 @@ L2:
 /* overlay */ void tsentir() {
 	crep = 119;
 	if (caff < 26) {
-		if (! syn)  ecr3("sentir");
+		if (! syn)  ecr3("sentir");        //Translation: Smell
 		tfleche();
 		if (!(anyone) && !(iesc))
 			if (caff == 16)  crep = 153;
@@ -1177,14 +1177,14 @@ L2:
 /* overlay */ void tgratter() {
 	crep = 155;
 	if (caff < 27) {
-		if (! syn)  ecr3("gratter");
+		if (! syn)  ecr3("gratter");       //Translation: Scratch
 		tfleche();
 	}
 	num = 0;
 }
 
 /* NIVEAU 2 */
-/* overlay */ void tmaj1() {           /* Le jeu est termin‚ !!! */
+/* overlay */ void tmaj1() {           /* Le jeu est termin‚ !!! */   //Translation: The game is over!!!
 	arret = true;
 	tlu(13, 152);
 	maivid();
@@ -1215,7 +1215,7 @@ L2:
 	inzon();
 }
 
-/* overlay */ void tencore() {         /* Perdu !!! */
+/* overlay */ void tencore() {         /* Perdu !!! */         //Translation: You lost!
 	int quel;
 
 	clsf2();
