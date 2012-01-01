@@ -852,7 +852,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox", "JAMESDEM", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyfox", "renard", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "spyfox", "Spydemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyfox", "Spydemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox", "Spydemo", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "spyfox", "SPYFox", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "SPYFoxDC", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox", "SPYFoxDC", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
