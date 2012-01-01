@@ -150,7 +150,7 @@ void ani50() {
 
 	if (!ft.open("fxx.mor"))
 		error("Missing file - fxx.mor");
-	for (int i = 1; i < 108; ++i)
+	for (int i = 0; i < 108; ++i)
 		l[i] = ft.readSint16LE();
 	ft.close();
 
