@@ -74,9 +74,8 @@ public:
 class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
-	Graphics::Surface *_screenSurfaceP;
 	int _lockSurfaceCtr;
-	bool _screenSurface;
+	bool _trackDirtyRects;
 
 	bool _disableUpdates;
 	Rect _bounds;
@@ -89,6 +88,7 @@ public:
 	~GfxSurface();
 
 	void setScreenSurface();
+	void updateScreen();
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
@@ -301,7 +301,6 @@ public:
 	void copyFrom(GfxSurface &src, int destX, int destY) {
 		_surface.setBounds(_bounds);
 		_surface.copyFrom(src, destX, destY);
-		g_system->updateScreen();
 	}
 	GfxSurface &getSurface() {
 		_surface.setBounds(_bounds);

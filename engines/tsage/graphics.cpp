@@ -220,10 +220,8 @@ void Rect::synchronize(Serializer &s) {
 
 GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_disableUpdates = false;
-	_screenSurface = false;
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
-	_screenSurfaceP = NULL;
 	_transColor = -1;
 }
 
@@ -244,9 +242,17 @@ GfxSurface::~GfxSurface() {
  * Specifies that the surface will encapsulate the ScummVM screen surface
  */
 void GfxSurface::setScreenSurface() {
-	_screenSurface = true;
-	_customSurface = NULL;
-	_lockSurfaceCtr = 0;
+	_trackDirtyRects = true;
+	create(SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+/**
+ * Updates the physical screen with the screen surface buffer
+ */
+void GfxSurface::updateScreen() {
+	g_system->copyRectToScreen((const byte *)this->_customSurface->pixels,
+		SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->updateScreen();
 }
 
 /**
@@ -254,7 +260,7 @@ void GfxSurface::setScreenSurface() {
  */
 void GfxSurface::create(int width, int height) {
 	assert((width >= 0) && (height >= 0));
-	_screenSurface = false;
+
 	if (_customSurface) {
 		_customSurface->free();
 		delete _customSurface;
@@ -271,13 +277,7 @@ void GfxSurface::create(int width, int height) {
 Graphics::Surface GfxSurface::lockSurface() {
 	++_lockSurfaceCtr;
 
-	Graphics::Surface *src;
-	if (_screenSurface) {
-		if (_lockSurfaceCtr == 1)
-			_screenSurfaceP = g_system->lockScreen();
-		src = _screenSurfaceP;
-	} else
-		src = _customSurface;
+	Graphics::Surface *src = _customSurface;
 	assert(src);
 
 	// Setup the returned surface either as one pointing to the same pixels as the source, or
@@ -298,15 +298,10 @@ Graphics::Surface GfxSurface::lockSurface() {
 void GfxSurface::unlockSurface() {
 	assert(_lockSurfaceCtr > 0);
 	--_lockSurfaceCtr;
-
-	if ((_lockSurfaceCtr == 0) && _screenSurface) {
-		g_system->unlockScreen();
-	}
 }
 
 void GfxSurface::synchronize(Serializer &s) {
 	assert(!_lockSurfaceCtr);
-	assert(!_screenSurface);
 
 	s.syncAsByte(_disableUpdates);
 	_bounds.synchronize(s);
@@ -363,7 +358,6 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	}
 
 	_customSurface = s._customSurface;
-	_screenSurface = s._screenSurface;
 	_disableUpdates = s._disableUpdates;
 	_bounds = s._bounds;
 	_centroid = s._centroid;
@@ -1090,7 +1084,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.updateScreen();
 	}
 
 	_gfxManager.deactivate();

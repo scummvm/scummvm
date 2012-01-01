@@ -1416,7 +1416,7 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 
 	// Set the altered pale4tte
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
-	g_system->updateScreen();
+	GLOBALS._screenSurface.updateScreen();
 }
 
 PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode, int duration, Action *action) {
@@ -1714,7 +1714,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 

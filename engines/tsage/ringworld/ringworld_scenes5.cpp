@@ -2810,7 +2810,7 @@ void Scene4150::Action1::signal() {
 	case 4: {
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 
@@ -2838,7 +2838,7 @@ void Scene4150::Action1::signal() {
 	case 7:
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 

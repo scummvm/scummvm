@@ -50,7 +50,7 @@ bool EventsClass::pollEvent() {
 		++_frameNumber;
 
 		// Update screen
-		g_system->updateScreen();
+		GLOBALS._screenSurface.updateScreen();
 	}
 
 	if (!g_system->getEventManager()->pollEvent(_event)) return false;
@@ -395,7 +395,7 @@ void EventsClass::delay(int numFrames) {
 		_priorFrameTime = g_system->getMillis();
 	}
 
-	g_system->updateScreen();
+	GLOBALS._screenSurface.updateScreen();
 	_prevDelayFrame = _frameNumber;
 	_priorFrameTime = g_system->getMillis();
 }
