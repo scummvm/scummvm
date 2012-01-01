@@ -199,19 +199,22 @@ void ani50() {
 	if (!f.open("TXX.INP"))
 		error("Missing file - TXX.INP");
 
-	for (int i = 0; i < 125; ++i)
+	assert(f.size() <= (maxti * 2));
+	for (i = 0; i < f.size() / 2; ++i)
 		t_mot[i] = f.readSint16LE();
 
 	f.close();
 
 	if (!f.open("TXX.NTP"))
 		error("Missing file - TXX.NTP");
-	do {
+	
+	assert(f.size() <= (maxtd * 4));
+	for (i = 0; i < (f.size() + 3) / 4; ++i) {
 		t_rec[i].indis = f.readSint16LE();
 		t_rec[i].point = f.readByte();
+		f.readByte();
+	}
 
-		i = i + 1;
-	} while (!f.eos());
 	f.close();
 
 	deline(578, s, i);
