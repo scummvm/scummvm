@@ -75,10 +75,17 @@ class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
 	int _lockSurfaceCtr;
-	bool _trackDirtyRects;
 
 	bool _disableUpdates;
 	Rect _bounds;
+
+	bool _trackDirtyRects;
+	Common::List<Rect> _dirtyRects;
+
+	void mergeDirtyRects();
+	bool looseIntersectRectangle(const Rect &src1, const Rect &src2);
+	bool unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2);
+
 public:
 	Common::Point _centroid;
 	int _transColor;
@@ -89,6 +96,7 @@ public:
 
 	void setScreenSurface();
 	void updateScreen();
+	void addDirtyRect(const Rect &r);
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
