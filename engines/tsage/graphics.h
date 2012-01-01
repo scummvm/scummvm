@@ -83,7 +83,6 @@ private:
 	Common::List<Rect> _dirtyRects;
 
 	void mergeDirtyRects();
-	bool looseIntersectRectangle(const Rect &src1, const Rect &src2);
 	bool unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2);
 
 public:
@@ -302,14 +301,9 @@ public:
 	virtual void set(byte *dest, int size, byte val) {
 		Common::fill(dest, dest + size, val);
 	}
-	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
-		_surface.setBounds(_bounds);
-		_surface.copyFrom(src, destBounds, priorityRegion);
-	}
-	void copyFrom(GfxSurface &src, int destX, int destY) {
-		_surface.setBounds(_bounds);
-		_surface.copyFrom(src, destX, destY);
-	}
+	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL);
+	void copyFrom(GfxSurface &src, int destX, int destY);
+
 	GfxSurface &getSurface() {
 		_surface.setBounds(_bounds);
 		return _surface;

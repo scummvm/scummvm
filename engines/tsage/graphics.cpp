@@ -1301,6 +1301,25 @@ int GfxManager::getAngle(const Common::Point &p1, const Common::Point &p2) {
 		return result;
 	}
 }
+
+
+void GfxManager::copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion) {
+	if (&_surface == &(GLOBALS._screenSurface))
+		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
+	else
+		_surface.setBounds(_bounds);
+
+	_surface.copyFrom(src, destBounds, priorityRegion);
+}
+void GfxManager::copyFrom(GfxSurface &src, int destX, int destY) {
+	if (&_surface == &(GLOBALS._screenSurface))
+		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
+	else
+		_surface.setBounds(_bounds);
+
+	_surface.copyFrom(src, destX, destY);
+}
+
 /*--------------------------------------------------------------------------*/
 
 
