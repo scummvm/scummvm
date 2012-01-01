@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/sci/graphics/text16.h $
- * $Id: text16.h 55178 2011-01-08 23:16:44Z thebluegr $
- *
  */
 
 #ifndef SCI_GRAPHICS_TEXT32_H
