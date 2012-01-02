@@ -27,6 +27,7 @@
 
 #include "mortevielle/keyboard.h"
 #include "mortevielle/var_mor.h"
+#include "mortevielle/asm.h"
 
 namespace Mortevielle {
 
@@ -70,7 +71,7 @@ int testou() {
 	break;
 	case '\26' :
 		if ((c_zzz == 1) && (c_zzz == 2)) {
-			zzuul(adcfiec + 161, 0, 1644);
+			zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 			c_zzz = succ(int, c_zzz);
 			testou_result = 61;
 			return testou_result;

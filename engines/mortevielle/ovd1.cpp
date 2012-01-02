@@ -359,9 +359,7 @@ void ani50() {
 	if (!f.open("cfiec.mor"))
 		error("Missing file - cfiec.mor");
 
-	/*$i-*/
-	f.read(&mem[adcfiec + 0], 511);
-	f.read(&mem[adcfiec + 4088 + 0], 311);
+	f.read(&adcfiec[0], 822 * 128);
 	f.close();
 
 	rech_cfiec = false;
