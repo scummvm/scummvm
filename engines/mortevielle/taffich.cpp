@@ -105,7 +105,7 @@ void taffich() {
 
 	int i, m, a, b, cx, handle,
 	        npal;
-	float lgt, lhandle;
+	float lgt;
 	Common::String nom;
 	int palh, k, j;
 	int alllum[16];

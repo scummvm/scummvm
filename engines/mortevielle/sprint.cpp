@@ -45,8 +45,7 @@ void writeg(Common::String l, int c)
 
 {
 	int i, x, xo, yo;
-	int cecr;
-	bool t;
+	int cecr = 0;
 
 	/*  debug('writeg : '+l);*/
 
@@ -81,7 +80,7 @@ void writeg(Common::String l, int c)
 	}
 	xo = xo + 1;
 	yo = yo + 1;
-	for (x = 1; x <= l.size(); x ++) {
+	for (x = 1; x <= (int)l.size(); x ++) {
 		affcar(gd, xo, yo, cecr, ord(l[x]));
 		xo = xo + i;
 	}
