@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/debug.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "mortevielle/sprint.h"
@@ -216,7 +217,7 @@ byte lettres[7][24];
 
 byte palher[16];
 
-int t_mot[maxti + 1];
+uint16 t_mot[maxti + 1];
 int tay_tchar;
 ind t_rec[maxtd + 1];
 //file<ind> sauv_t;
@@ -349,6 +350,7 @@ void gotoxy(int x, int y) {
 void textcolor(int c) {
 }
 void output(const Common::String &s) {
+	debug(s.c_str());
 }
 void graphbackground(int c) {
 }

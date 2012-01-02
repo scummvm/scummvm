@@ -370,7 +370,7 @@ extern byte lettres[7][24];
 
 extern byte palher[16];
 
-extern int t_mot[maxti + 1];
+extern uint16 t_mot[maxti + 1];
 extern int tay_tchar;
 extern ind t_rec[maxtd + 1];
 //file<ind> sauv_t;

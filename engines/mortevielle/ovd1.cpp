@@ -201,18 +201,17 @@ void ani50() {
 
 	assert(f.size() <= (maxti * 2));
 	for (i = 0; i < f.size() / 2; ++i)
-		t_mot[i] = f.readSint16LE();
+		t_mot[i] = f.readUint16LE();
 
 	f.close();
 
 	if (!f.open("TXX.NTP"))
 		error("Missing file - TXX.NTP");
 	
-	assert(f.size() <= (maxtd * 4));
-	for (i = 0; i < (f.size() + 3) / 4; ++i) {
+	assert(f.size() <= (maxtd * 3));
+	for (i = 0; i < (f.size() / 3); ++i) {
 		t_rec[i].indis = f.readSint16LE();
 		t_rec[i].point = f.readByte();
-		f.readByte();
 	}
 
 	f.close();
