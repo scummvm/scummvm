@@ -989,11 +989,8 @@ void init_nbrepm() {
 	int i;
 
 	/* debug('init_nbrepm'); */
-	i = 0;
-	do {
-		i = succ(int, i);
-		nbrepm[i] = ipm[i];
-	} while (!(i == 8));
+	for (int idx = 0; idx < 9; ++idx)
+		nbrepm[idx] = ipm[idx];
 }
 
 void phaz(int &haz, int &p, int cf) {
