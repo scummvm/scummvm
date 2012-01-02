@@ -72,11 +72,11 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 		(uchar)'6', (uchar)'7', (uchar)'8', (uchar)'9'
 	};
 */
-	int oct, ocd;
+	uint16 oct, ocd;
 
 	/* 5-8 */
 	oct = t_mot[idx];
-	oct = (uint)(oct << (16 - pt)) >> (16 - pt);
+	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
 	if (pt < 6) {
 		idx = idx + 1;
 		oct = oct << (5 - pt);
@@ -96,7 +96,7 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	case 30:
 	case 31 : {
 		ocd = t_mot[idx];
-		ocd = (uint)(ocd << (16 - pt)) >> (16 - pt);
+		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
 			idx = idx + 1;
 			ocd = ocd << (5 - pt);
@@ -119,7 +119,10 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	}
 }              /* 5-8 */
 
-void deline(int num , char *l , int &tl) {
+/**
+ * Decode and extract the line with the given Id
+ */
+void deline(int num, char *l , int &tl) {
 	int i, j, ts;
 	char let;
 	byte ps, k;
@@ -142,7 +145,8 @@ void deline(int num , char *l , int &tl) {
 		j = j + 1;
 	} while (!the_end);
 	tl = j - 1;
-	if (tl < 255)  delig = copy(delig, 1, tl - 1); /* enleve le $ */ //Translation: Remove '$'
+	if (tl < 255)
+		delig.deleteLastChar();		// Remove trailing '$'
 }       /* DETEX */
 
 
