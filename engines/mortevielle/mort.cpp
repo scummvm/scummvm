@@ -27,6 +27,7 @@
 
 #include "mortevielle/mort.h"
 #include "mortevielle/var_mor.h"          /* les variables */                       //Translation: Variables
+#include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"          /* la gestion du clavier */              //Translation: Keyboard manager
 #include "mortevielle/mouse.h"          /* la souris  */                            //Translation: Mouse
 #include "mortevielle/level15.h"          /* les fonctions de base */               //Translation: Lowlevel functions
@@ -78,7 +79,7 @@ int mortevielle_main(int argc, const char *argv[]) {
 	charpal();
 	charge_cfiph();
 	charge_cfiec();
-	zzuul(adcfiec + 161, 0, 1644);
+	zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	c_zzz = 1;
 	init_nbrepm();
 	init_mouse();
@@ -123,7 +124,8 @@ int mortevielle_main(int argc, const char *argv[]) {
 	adzon();
 	takesav(0);
 	if (rech_cfiec)  charge_cfiec();
-	for (crep = 1; crep <= c_zzz; crep ++) zzuul(adcfiec + 161, 0, 1644);
+	for (crep = 1; crep <= c_zzz; crep ++) 
+		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	charge_bruit5();
 	init_menu();
 

@@ -32,9 +32,6 @@
 
 namespace Mortevielle {
 
-// Constants, types and variables used by Mortville Manor.
-// version Nov.'88, Music and speech Oct.'88
-
 /*         Constantes, Types et Variables pour le
 
               M A N O I R   DE   M O R T E V I E L L E
@@ -69,7 +66,6 @@ const int segdon = 0x6c00;
 const int adani = 0x7314;
 const int adword = 0x4000;
 const int adtroct = 0x406b;
-const int adcfiec = 0x4300;
 const int adbruit = 0x5cb0;/*2C00;*/
 const int adbruit1 = 0x6924;/*3874;*/
 const int adbruit2 = 0x6b30;/*3A80;*/
@@ -103,7 +99,7 @@ const int c_dialpre = 456;
 const int c_action = 476;
 const int c_saction = 497;
 const int c_dis = 502;
-const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */ // Translation: "=> doesn't exist ; yes !!" 
+const int c_fin = 510;    /*  =>   n'existe pas  ; si !! */
 
 const int arega = 0;
 const int asoul = 154;
@@ -173,7 +169,6 @@ extern const char f3[];
 extern const char f8[];
 
 extern const byte rang[16];
-
 
 /*---------------------------------------------------------------------------*/
 /*--------------------------------   TYPES   --------------------------------*/
@@ -348,7 +343,7 @@ extern int x,
 extern int t_cph[6401];
 extern byte tabdon[4001];
 /*   t_dxx  : array[0..121] of int;*/
-extern Common::String stpou;            /* donne le % d'indices */  // Translation: "provides the % of hints"
+extern Common::String stpou;                               /* donne le % d'indices */
 extern byte is;
 extern char mode;
 extern Common::String al_mess,
@@ -389,6 +384,8 @@ extern t_pcga palsav[91];
 extern doublet tabpal[91][17];
 extern t_pcga palcga[91];
 extern pattern tpt[15];
+
+extern byte adcfiec[822 * 128];
 
 /*---------------------------------------------------------------------------*/
 /*-------------------   PROCEDURES  AND  FONCTIONS   ------------------------*/
@@ -437,8 +434,6 @@ extern void s_char(int Gd, int y, int dy);
 extern void s_sauv(int Gd, int y, int dy);
 // (* external 'c:\mc\boite.com'; *)
 extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
-// (* external 'c:\mc\zuul.com'; *)
-extern void zzuul(int ad, int seg, int tai); 
 // (* external 'c:\mc\decomp.com'; *)
 extern void decomp(int seg, int dep); 
 // (* external 'c:\mc\affich.com'; *)

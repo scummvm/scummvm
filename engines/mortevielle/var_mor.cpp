@@ -231,6 +231,8 @@ doublet tabpal[91][17];
 t_pcga palcga[91];
 pattern tpt[15];
 
+byte adcfiec[(4088 * 16) + (311 * 0x80)];
+
 /*---------------------------------------------------------------------------*/
 /*--------------------   PROCEDURES  AND  FONCTIONS   -----------------------*/
 /*---------------------------------------------------------------------------*/
@@ -383,11 +385,6 @@ void s_sauv(int Gd, int y, int dy) {
 // (* external 'c:\mc\boite.com'; *)
 void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
 	warning("TODO: box method not yet implemented");
-}
-
-// (* external 'c:\mc\zuul.com'; *)
-void zzuul(int ad, int seg, int tai) {
-	warning("TODO: zzuul");
 }
 
 // (* external 'c:\mc\decomp.com'; *)
