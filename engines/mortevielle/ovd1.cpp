@@ -300,7 +300,8 @@ void ani50() {
 		error("Missing file - MXX.mor");
 
 	for (int i = 1; i < 8; ++i)
-		f_lieu.read(&v_lieu[i][1], 24);
+		for (int j = 0; j < 25; ++j)
+			v_lieu[i][j] = f_lieu.readByte(); 
 
 	f_lieu.close();
 }
