@@ -431,7 +431,9 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	int *indices = (int*)face->_indexes;
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
-
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);	// Right now, textures are semi-work on some models
+								// while for instance the catapult will become invisible.
 	glBegin(GL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
 		
@@ -450,8 +452,10 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		glVertex3fv(vertex.getData());
 	}
 	glEnd();
+	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_LIGHTING);
 	glColor3f(1.0f,1.0f,1.0f);
 }
 	
@@ -981,30 +985,42 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
-	for (int y = 0; y < material->_height; y++) {
-		for (int x = 0; x < material->_width; x++) {
-			uint8 col = *(uint8 *)(data);
-			if (col == 0) {
-				memset(texdatapos, 0, 4); // transparent
-				if (!material->_hasAlpha) {
+	
+	if (cmap != NULL) { // EMI doesn't have colour-maps
+		for (int y = 0; y < material->_height; y++) {
+			for (int x = 0; x < material->_width; x++) {
+				uint8 col = *(uint8 *)(data);
+				if (col == 0) {
+					memset(texdatapos, 0, 4); // transparent
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
+				} else {
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-			} else {
-				memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
-				texdatapos[3] = '\xff'; // fully opaque
+				texdatapos += 4;
+				data++;
 			}
-			texdatapos += 4;
-			data++;
 		}
+	} else {
+		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
 	}
-
+	
+	GLuint format = 0;
+	if (material->_colorFormat == BM_RGBA) {
+		format = GL_RGBA;
+	} else {
+		format = GL_RGB;
+	}
+	
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 

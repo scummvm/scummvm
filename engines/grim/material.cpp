@@ -70,6 +70,7 @@ void MaterialData::initGrim(const Common::String &filename, Common::SeekableRead
 		t->_height = data->readUint32LE();
 		t->_hasAlpha = data->readUint32LE();
 		t->_texture = NULL;
+		t->_colorFormat = BM_RGBA;
 		t->_data = NULL;
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
@@ -83,46 +84,77 @@ void MaterialData::initGrim(const Common::String &filename, Common::SeekableRead
 	delete data;
 }
 
+void loadTGA(Common::SeekableReadStream *data, Texture *t) {
+	data->seek(2, SEEK_CUR);
+	
+	int format = data->readByte();
+	assert(format == 2); // We only support uncompressed TGA
+	
+	data->seek(9, SEEK_CUR);
+	t->_width = data->readUint16LE();
+	t->_height = data->readUint16LE();;
+	t->_hasAlpha = false;
+	t->_texture = NULL;
+	
+	int bpp = data->readByte();
+	if (bpp == 32) {
+		t->_colorFormat = BM_RGBA;
+		t->_bpp = 4;
+	} else {
+		t->_colorFormat = BM_RGB888;
+		t->_bpp = 3;
+	}
+	
+	assert(bpp == 24 || bpp == 32); // Assure we have 24/32 bpp
+	data->seek(1, SEEK_CUR);
+	t->_data = new char[t->_width * t->_height * (bpp/8)];
+	data->read(t->_data, t->_width * t->_height * (bpp/8));
+}
+	
 void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
 	char *readFileName = new char[64];
 
 	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
 		TextSplitter *ts = new TextSplitter(data);
-		ts->setLineNumber(1); // Skip copyright-line
-		ts->expectString("VERSION 1.0");
+		ts->setLineNumber(2); // Skip copyright-line
+		ts->expectString("version\t1.0");
+		if (ts->checkString("name:"))
+			ts->scanString("name:\t%s", 1, readFileName);
+		
 		while(!ts->checkString("END_OF_SECTION")) {
-			ts->scanString("TEX:\t\t\t%s", 1, readFileName);
+			ts->scanString("tex:\t%s", 1, readFileName);
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(mFileName);
 		}
+		Common::SeekableReadStream *texData;
+		_textures = new Texture[texFileNames.size()];
 		for (uint i = 0; i < texFileNames.size(); i++) {
 			warning("SUR-file texture: %s", texFileNames[i].c_str());
+			texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
+			if (!texData) {
+				warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
+				_textures[i]._width = 0;
+				_textures[i]._height = 0;
+				_textures[i]._texture = new int(1); // HACK to avoid initializing.
+				continue;
+			}
+			loadTGA(texData, _textures + i);
+			//return;
 			// TODO: Add the necessary loading here.
 		}
 		_numImages = texFileNames.size();
-	} if(!filename.hasSuffix(".tga")) {
+		return;
+	} else if(filename.hasSuffix(".tga")) {
 		_numImages = 1;
-		texFileNames.push_back(filename);
+		_textures = new Texture();
+		loadTGA(data, _textures);
+		//	texFileNames.push_back(filename);
+		return;
+		
 	} else {
 		warning("Unknown material-format: %s", filename.c_str());
 	}
-	return; // Leave the rest till we have models to put materials on.
-
-	//TODO: The following code was written when data was a data buffer, instead a stream
-	//but it wasn't adapetd since there wasn't a way to check it
-	/*int format = data[1];
-	assert(format == 2);	// Verify that we have uncompressed TGA (2)
-	data += 12;
-	_numImages = 1;
-	_textures = new Texture();
-	_textures->_width = READ_LE_UINT16(data);
-	_textures->_height = READ_LE_UINT16(data + 2);
-	_textures->_hasAlpha = false;
-	int bpp = data[4];
-	assert(bpp == 24); // Assure we have 24 bpp
-	data += 6;
-	g_driver->createMaterial(_textures, data, 0);*/
 }
 
 MaterialData::~MaterialData() {
@@ -148,6 +180,10 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, Comm
 
 	for (Common::List<MaterialData *>::iterator i = _materials->begin(); i != _materials->end(); ++i) {
 		MaterialData *m = *i;
+		if (m->_fname == filename && g_grim->getGameType() == GType_MONKEY4) {
+			++m->_refCount;
+			return m;
+		}
 		if (m->_fname == filename && m->_cmap->getFilename() == cmap->getFilename()) {
 			++m->_refCount;
 			return m;

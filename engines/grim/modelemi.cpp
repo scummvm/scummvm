@@ -176,7 +176,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	int hasBones = data->readUint32LE();
 
 	// TODO add in the bone-stuff, as well as the skeleton
-	//prepare(); // <- Initialize materials etc.
+	prepare(); // <- Initialize materials etc.
 }
 
 void EMIModel::prepareForRender() {
@@ -197,6 +197,7 @@ void EMIModel::draw() {
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for(uint32 i = 0; i < _numFaces; i++) {
+		//_faces[i].render();
 		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}
 }
