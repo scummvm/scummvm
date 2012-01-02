@@ -3,6 +3,7 @@ MODULE := engines/mortevielle
 MODULE_OBJS := \
 	actions.o \
 	alert.o \
+	asm.o \
 	boite.o \
 	detection.o \
 	disk.o \
