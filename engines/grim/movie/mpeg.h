@@ -44,6 +44,7 @@ private:
 	Video::BaseAnimationState *_videoBase;
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_stream;
+	int _speed;	// <- Quickfix to fix compile, verify when fixing the decoder properly.
 public:
 	MpegPlayer();
 
