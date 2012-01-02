@@ -835,7 +835,8 @@ spyfox	SPY Fox 1: Dry Cereal
 	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	-1	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	-1	de	All	-	Demo	-	Joachim Eberhard
-	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	Windows	HE 98.5	Demo	-	Kirben
+	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	All	HE 98.5	Demo	-	Kirben
+	f2ec78e50bdc63b70044e9758be10914	-1	nl	Mac	HE 98.5	Demo	-	Ben Castricum
 	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	-1	en	All	HE 100	Demo	-	khalek
 
 spyfox2	SPY Fox 2: Some Assembly Required
