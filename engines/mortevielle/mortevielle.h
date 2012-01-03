@@ -33,8 +33,8 @@ enum {
 	kMortevielleCore = 1 << 0
 };
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 200
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 400
 
 class MortevielleEngine : public Engine {
 private:
