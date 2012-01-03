@@ -668,6 +668,7 @@ ScummVM může také hru spustit přímo pomocí argumentů příkazové řádky
   --themepath=CESTA        Cesta kde jsou vzhledy rozhraní uloženy
   --list-themes            Zobrazí seznam všech použitelných vzhledů  
   -e, --music-driver=REŽIM Vybere ovladač hudby (viz také část 7.0)
+  --list-audio-devices     Zobrazí seznam všech dostupných zvukových zařízení
   -q, --language=JAZYK     Vybere jazyk hry (viz také část 5.2)
   -m, --music-volume=Č.    Nastaví hlasitost hudby, 0-255 (výchozí: 192)
   -s, --sfx-volume=Č.      Nastaví hlasitost zvuků, 0-255 (výchozí: 192)
@@ -1370,7 +1371,7 @@ Použití kmitočtů mezi není doporučeno. Za prvé Vaše zvuková karta ho ne
 ---- --------------------
 Standardně je soubor s nastavením uložen a načítán:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\jméno uživatele\AppData\Roaming\ScummVM\scummvm.ini,
 
     Windows 2000/XP:
@@ -1574,3 +1575,4 @@ Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
