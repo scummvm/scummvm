@@ -313,10 +313,16 @@ bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
 		return parseRect(_mode->displayArea, coords);
 	} else if (shape.equalsIgnoreCase("rect")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parseRectAsPolygon(*poly, coords);
+		if (!poly)
+			return parserError(Common::String::format("Cannot define area '%s' again", target.c_str()));
+		else
+			return parseRectAsPolygon(*poly, coords);
 	} else if (shape.equalsIgnoreCase("poly")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parsePolygon(*poly, coords);
+		if (!poly)
+			return parserError(Common::String::format("Cannot define area '%s' again", target.c_str()));
+		else
+			return parsePolygon(*poly, coords);
 	}
 	return parserError("Area shape '" + shape + "' not known");
 }
