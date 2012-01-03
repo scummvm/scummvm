@@ -166,6 +166,12 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerMiranda3600 : public SpeakerMiranda {
+public:
+	virtual Common::String getClassName() { return "SpeakerMiranda3600"; }
+	virtual void proc15();
+};
+
 class SpeakerMiranda3700 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3700"; }
@@ -297,6 +303,12 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerQuinn3600 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn3600"; }
+	virtual void proc15();
+};
+
 class SpeakerQuinn3700 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3700"; }
@@ -399,6 +411,12 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerSeeker3600 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker3600"; }
+	virtual void proc15();
+};
+
 class SpeakerSeeker3700 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3700"; }
@@ -443,6 +461,12 @@ public:
 	virtual Common::String getClassName() { return "SpeakerTeal"; }
 };
 
+class SpeakerTealMode7 : public SpeakerTeal {
+public:
+	SpeakerTealMode7();
+	virtual Common::String getClassName() { return "SpeakerTealMode7"; }
+};
+
 class SpeakerTeal300 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal300"; }
@@ -458,6 +482,12 @@ public:
 class SpeakerTeal3400 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal3400"; }
+	virtual void proc15();
+};
+
+class SpeakerTeal3600 : public SpeakerTealMode7 {
+public:
+	virtual Common::String getClassName() { return "SpeakerTeal3600"; }
 	virtual void proc15();
 };
 

@@ -249,6 +249,7 @@ public:
 	StripProxy _stripProxy;
 	int _insetUp;
 	Rect _v558B6;
+	int _v558C2;
 	int _v565F5;
 	int _v5657C;
 	byte _v565AE;

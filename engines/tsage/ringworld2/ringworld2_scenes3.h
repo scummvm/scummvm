@@ -571,6 +571,75 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+class Scene3600 : public SceneExt {
+	class Action3600: public ActionExt {
+	public:
+		int _field1E, _field20;
+		
+		Action3600();
+		virtual void synchronize(Serializer &s);
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+	class Item5 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor13 : public SceneActorExt {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	Action3600 _action1;
+	Action2 _action2;
+	SpeakerQuinn3600 _quinnSpeaker;
+	SpeakerSeeker3600 _seekerSpeaker;
+	SpeakerMiranda3600 _mirandaSpeaker;
+	SpeakerTeal3600 _tealSpeaker;
+	VisualSpeaker _protectorSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	Item5 _item5;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SceneActor _actor8;
+	SceneActor _actor9;
+	SceneActor _actor10;
+	SceneActor _actor11;
+	SceneActor _actor12;
+	Actor13 _actor13;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager3;
+	SequenceManager _sequenceManager4;
+	ScenePalette _palette1;
+
+	int _field2548;
+	int _field254A;
+	int _field254C;
+	int _field254E;
+	bool _field2550;
+
+	Scene3600();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
+};
+
 class Scene3700 : public SceneExt {
 public:
 	SpeakerQuinn3700 _quinnSpeaker;
