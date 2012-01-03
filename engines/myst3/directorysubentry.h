@@ -46,7 +46,9 @@ class DirectorySubEntry {
 			kFaceMask = 1,
 			kSpotItem = 5,
 			kFrame = 6,
-			kMovie = 8
+			kMovie = 8,
+			kStillMovie = 10,
+			kImagerMovie = 72
 		};
 
 		void readFromStream(Common::SeekableReadStream &inStream);

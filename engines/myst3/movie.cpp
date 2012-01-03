@@ -34,6 +34,12 @@ Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
 	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
+		binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kStillMovie);
+
+		if (!binkDesc)
+		binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kImagerMovie);
+
+	if (!binkDesc)
 		error("Movie %d does not exist", id);
 
 	loadPosition(binkDesc->getVideoData());
