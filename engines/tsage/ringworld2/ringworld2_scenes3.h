@@ -600,7 +600,7 @@ public:
 	SpeakerSeeker3600 _seekerSpeaker;
 	SpeakerMiranda3600 _mirandaSpeaker;
 	SpeakerTeal3600 _tealSpeaker;
-	VisualSpeaker _protectorSpeaker;
+	SpeakerProtector3600 _protectorSpeaker;
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;

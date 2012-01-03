@@ -229,6 +229,16 @@ public:
 	virtual void proc15();
 };
 
+// Classes related to Protector
+
+class SpeakerProtector3600 : public VisualSpeaker {
+public:
+	SpeakerProtector3600();
+
+	virtual Common::String getClassName() { return "SpeakerProtector3600"; }
+	virtual void proc15();
+};
+
 // Classes related to Quinn
 
 class SpeakerQuinn : public VisualSpeaker {

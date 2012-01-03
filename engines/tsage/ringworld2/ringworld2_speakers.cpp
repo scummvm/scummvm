@@ -923,6 +923,67 @@ void SpeakerPrivate3210::proc15() {
 }
 
 //----------------------------------------------------------------------------
+// Classes related to PROTECTOR
+//----------------------------------------------------------------------------
+
+SpeakerProtector3600::SpeakerProtector3600() {
+	_speakerName = "Protector";
+	_color1 = 170;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 7;
+	_numFrames = 0;
+}
+
+void SpeakerProtector3600::proc15() {
+	int v = _fieldF6;
+	Scene3600 *scene = (Scene3600 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor13;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+		_object1._effect = 1;
+		_object1.changeZoom(-1);
+
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	_object1.setPosition(_object2->_position);
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		if (scene->_sceneMode != 3324) {
+			_object1.setup(4125, 3, 1);
+			_object1.animate(ANIM_MODE_5, this);
+		} else {
+			_object1.setup(3258, 6, 1);
+			_object1.animate(ANIM_MODE_2, NULL);
+			_object1.hide();
+			_object2->setup(3258, 6, 1);
+			_object2->show();
+		}
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+//----------------------------------------------------------------------------
 // Classes related to QUINN
 //----------------------------------------------------------------------------
 
