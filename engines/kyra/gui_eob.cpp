@@ -2546,12 +2546,13 @@ void GUI_EoB::transferWaitBox() {
 }
 
 Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &targets) {
-	_savegameListSize = targets.size();
 	if (_savegameList) {
 		for (int i = 0; i < _savegameListSize; i++)
 			delete[] _savegameList[i];
 		delete[] _savegameList;
 	}
+
+	_savegameListSize = targets.size();
 	_savegameList = new char*[_savegameListSize];
 	memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
@@ -2576,12 +2577,16 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 	_screen->copyRegion(72, 14, 72, 14, 176, 144, 12, 0, Screen::CR_NO_P_CHECK);
 	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 
-	return (slot < 6) ? _savegameList[_savegameOffset + slot] : _vm->_saveLoadStrings[1];
+	return (slot < 6) ? _savegameList[_savegameOffset + slot] : Common::String();
 }
 
-Common::String GUI_EoB::transferFileMenu(Common::String &target) {
-	updateSaveSlotsList(target, true);
+bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selection) {
+	updateSaveSlotsList(targetName, true);
 	_saveSlotsListUpdateNeeded = true;
+	selection.clear();
+
+	if (!_savegameListSize)
+		return false;
 
 	const ScreenDim *dm = _screen->getScreenDim(11);
 	int xo = dm->sx;
@@ -2598,12 +2603,13 @@ Common::String GUI_EoB::transferFileMenu(Common::String &target) {
 			messageDialogue(11, 65, 6);
 		else {
 			_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
-			return _vm->getSavegameFilename(target, _saveSlotIdTemp[slot]);
+			selection = _vm->getSavegameFilename(targetName, _saveSlotIdTemp[slot]);
+			return true;
 		}
 	} while (_saveSlotIdTemp[slot] == -1);
 
 	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
-	return _vm->_saveLoadStrings[1];
+	return true;
 }
 
 void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {

@@ -29,6 +29,11 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 
+#include "common/config-manager.h"
+#include "base/plugins.h"
+#include "engines/metaengine.h"
+#include "engines/game.h"
+
 namespace Kyra {
 
 // Character Generator
@@ -1446,7 +1451,8 @@ public:
 
 private:
 	bool selectAndLoadTransferFile();
-	Common::String transferFileDialogue();
+	bool transferFileDialogue(Common::String &dest);
+
 
 	int selectCharactersMenu();
 	void drawCharPortraitWithStats(int charIndex, bool enabled);
@@ -1531,13 +1537,11 @@ bool TransferPartyWiz::start() {
 bool TransferPartyWiz::selectAndLoadTransferFile() {
 	do {
 		_screen->copyPage(12, 0);
-		_vm->_savegameFilename = transferFileDialogue();
-	} while (_vm->_savegameFilename.empty() && _vm->_gui->confirmDialogue2(15, 68, 1));
+		 if (transferFileDialogue(_vm->_savegameFilename))
+			 break;
+	} while (_vm->_gui->confirmDialogue2(15, 68, 1));
 
 	if (_vm->_savegameFilename.empty())
-		return false;
-
-	if (_vm->_savegameFilename.equals(_vm->_saveLoadStrings[1]))
 		return false;
 
 	if (_vm->loadGameState(-1).getCode() != Common::kNoError)
@@ -1546,68 +1550,41 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 	return true;
 }
 
-Common::String TransferPartyWiz::transferFileDialogue() {
-	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles("*.*");
-	Common::StringArray targets;
-	Common::String tfile;
-
-	KyraEngine_v1::SaveHeader header;
-	memset(&header, 0, sizeof(KyraEngine_v1::SaveHeader));
-	Common::InSaveFile *in;
-
+ bool TransferPartyWiz::transferFileDialogue(Common::String &dest) {
 	_vm->_gui->transferWaitBox();
 
-	for (Common::StringArray::iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
+	Common::Array<Common::String> eobTargets;
+	const Common::ConfigManager::DomainMap dom = ConfMan.getGameDomains();
+
+	for (Common::ConfigManager::DomainMap::const_iterator i = dom.begin(); i != dom.end(); ++i) {
+		if (ConfMan.get("gameid", i->_key).equals("eob"))
+			eobTargets.push_back(i->_key);
 		_vm->updateInput();
-
-		if (!(in = _vm->_saveFileMan->openForLoading(*i)))
-			continue;
-
-		if (KyraEngine_v1::readSaveHeader(in, false, header)) {
-			delete in;
-			continue;
-		}
-
-		delete in;
-
-		if (header.gameID != GI_EOB1)
-			continue;
-
-		i->insertChar('\0', i->size() - 4);
-
-		Common::StringArray::iterator ii = targets.begin();
-		for (; ii != targets.end(); ++ii) {
-			if (!i->compareToIgnoreCase(*ii))
-				break;
-		}
-
-		if (ii == targets.end())
-			targets.push_back(*i);
 	}
 
-	if (targets.empty())
-		return tfile;
+	if (eobTargets.empty())
+		return false;
 
-	Common::String target = _vm->_gui->transferTargetMenu(targets);
+	Common::String target = _vm->_gui->transferTargetMenu(eobTargets);
 	_screen->copyPage(12, 0);
 
-	if (target.equals(_vm->_saveLoadStrings[1]))
-		return target;
+	if (target.empty())
+		return true;
 
-	tfile = target + ".fin";
-	in = _vm->_saveFileMan->openForLoading(tfile);
+	dest = target + ".fin";
+	Common::InSaveFile *in = _vm->_saveFileMan->openForLoading(dest);
 	if (in) {
 		delete in;
 		if (_vm->_gui->confirmDialogue2(15, -2, 1))
-			return tfile;
+			return true;
 	}
 
 	_screen->copyPage(12, 0);
 
-	tfile = _vm->_gui->transferFileMenu(target);
+	bool result = _vm->_gui->transferFileMenu(target, dest);
 	_screen->copyPage(12, 0);
 
-	return tfile;
+	return result;
 }
 
 int TransferPartyWiz::selectCharactersMenu() {

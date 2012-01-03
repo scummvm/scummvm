@@ -73,7 +73,7 @@ public:
 	// Transfer party
 	void transferWaitBox();
 	Common::String transferTargetMenu(Common::Array<Common::String> &targets);
-	Common::String transferFileMenu(Common::String &target);
+	bool transferFileMenu(Common::String &targetName, Common::String &selection);
 
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst);
