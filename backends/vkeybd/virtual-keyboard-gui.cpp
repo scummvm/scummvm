@@ -435,10 +435,10 @@ void VirtualKeyboardGUI::updateDisplay() {
 
 void VirtualKeyboardGUI::setupCursor() {
 	const byte palette[] = {
-		255, 255, 255, 0,
-		255, 255, 255, 0,
-		171, 171, 171, 0,
-		87,  87,  87, 0
+		255, 255, 255,
+		255, 255, 255,
+		171, 171, 171,
+		87,  87,  87
 	};
 
 	CursorMan.pushCursorPalette(palette, 0, 4);
