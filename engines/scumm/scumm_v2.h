@@ -85,6 +85,7 @@ protected:
 	void ifNotStateCommon(byte type);
 	void setStateCommon(byte type);
 	void clearStateCommon(byte type);
+	void stopScriptCommon(int script);
 
 	virtual void resetSentence(bool walking);
 	void setUserState(byte state);
