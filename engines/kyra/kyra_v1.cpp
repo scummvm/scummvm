@@ -420,8 +420,18 @@ void KyraEngine_v1::setupKeyMap() {
 		{ KC(KP_MINUS), 105, 0/*unknown*/ },
 		{ KC(PLUS), 13, 0/*unknown*/ },
 		{ KC(KP_PLUS), 106, 0/*unknown*/ },
+
+		// Multiple mappings for the keys to the right of the 'M' key,
+		// since these are different for QWERTZ, QWERTY and AZERTY keyboards.
+		// QWERTZ
 		{ KC(COMMA), 53, 0/*unknown*/ },
-		{ KC(PERIOD), 54, 0/*unknown*/ }
+		{ KC(PERIOD), 54, 0/*unknown*/ },
+		// AZERTY
+		{ KC(SEMICOLON), 53, 0/*unknown*/ },
+		{ KC(COLON), 54, 0/*unknown*/ },
+		// QWERTY
+		{ KC(LESS), 53, 0/*unknown*/ },
+		{ KC(GREATER), 54, 0/*unknown*/ }
 	};
 #undef KC
 
