@@ -62,7 +62,12 @@ struct ObjectData {
 	byte parentstate;
 	byte state;
 	byte fl_object_index;
-	byte flags;
+	// extra engine specific data
+	union {
+		byte extra;
+		byte obj_type; // v0
+		byte flags; // v8
+	};
 };
 
 #include "common/pack-start.h"	// START STRUCT PACKING

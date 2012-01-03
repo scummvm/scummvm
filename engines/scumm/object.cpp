@@ -316,7 +316,7 @@ int ScummEngine::getObjectIndex(int object) const {
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
 		if (_game.version == 0 )
-			if( _objs[i].flags != _v0ObjectFlag )
+			if( _objs[i].obj_type != _v0ObjectFlag )
 				continue;
 
 		if (_objs[i].obj_nr == object)
@@ -492,14 +492,6 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	return getDist(x, y, x2, y2);
 }
 
-int ScummEngine_v0::findObjectIndex(int x, int y) {
-	int objIdx;
-	_v0ObjectIndex = true;
-	objIdx = findObject(x, y);
-	_v0ObjectIndex = false;
-	return objIdx;
-}
-
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
@@ -510,7 +502,7 @@ int ScummEngine::findObject(int x, int y) {
 			continue;
 
 		if (_game.version == 0) {
-			if (_objs[i].flags == 0 && _objs[i].state & kObjectStateUntouchable)
+			if (_objs[i].obj_type == 0 && _objs[i].state & kObjectStateUntouchable)
 				continue;
 		} else {
 			if (_game.version <= 2 && _objs[i].state & kObjectStateUntouchable)
@@ -532,7 +524,7 @@ int ScummEngine::findObject(int x, int y) {
 				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
 					// MMC64: Set the object search flag
 					if (_game.version == 0)
-						_v0ObjectFlag = _objs[i].flags;
+						_v0ObjectFlag = _objs[i].obj_type;
 					if (_game.version == 0 && _v0ObjectIndex)
 						return i;
 					else
@@ -844,7 +836,7 @@ void ScummEngine_v3old::resetRoomObjects() {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
 			if (_game.version == 0)
-				sprintf(buf + 11, "%d-", od->flags);
+				sprintf(buf + 11, "%d-", od->obj_type);
 
 			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
 		}
@@ -912,7 +904,7 @@ void ScummEngine_v0::resetRoomObject(ObjectData *od, const byte *room, const byt
 	ptr -= 2;
 
 	od->obj_nr = *(ptr + 6);
-	od->flags = *(ptr + 7);
+	od->obj_type = *(ptr + 7);
 
 	od->x_pos = *(ptr + 8) * 8;
 	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
@@ -1072,8 +1064,8 @@ void ScummEngine::updateObjectStates() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {
-		// V0 MM, Room objects with Flag == 1 are objects with 'no-state' (room specific objects, non-pickup)
-		if (_game.version == 0 && od->flags == 1)
+		// V0 MM, objects with type == 1 are room objects (room specific objects, non-pickup)
+		if (_game.version == 0 && od->obj_type == 1)
 			continue;
 
 		if (od->obj_nr > 0)

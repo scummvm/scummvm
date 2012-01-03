@@ -822,7 +822,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(ObjectData, parent, sleByte, VER(8)),
 		MKLINE(ObjectData, state, sleByte, VER(8)),
 		MKLINE(ObjectData, fl_object_index, sleByte, VER(8)),
-		MKLINE(ObjectData, flags, sleByte, VER(46)),
+		MKLINE(ObjectData, extra, sleByte, VER(46)),
 		MKEND()
 	};
 
