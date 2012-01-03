@@ -953,6 +953,41 @@ void ScummEngine_v2::o2_doSentence() {
 	}
 }
 
+void ScummEngine_v2::drawPreposition(int index) {
+		// The prepositions, like the fonts, were hard code in the engine. Thus
+		// we have to do that, too, and provde localized versions for all the
+		// languages MM/Zak are available in.
+		const char *prepositions[][5] = {
+			{ " ", " in", " with", " on", " to" },   // English
+			{ " ", " mit", " mit", " mit", " zu" },  // German
+			{ " ", " dans", " avec", " sur", " <" }, // French
+			{ " ", " in", " con", " su", " a" },     // Italian
+			{ " ", " en", " con", " en", " a" },     // Spanish
+			};
+		int lang;
+		switch (_language) {
+		case Common::DE_DEU:
+			lang = 1;
+			break;
+		case Common::FR_FRA:
+			lang = 2;
+			break;
+		case Common::IT_ITA:
+			lang = 3;
+			break;
+		case Common::ES_ESP:
+			lang = 4;
+			break;
+		default:
+			lang = 0;	// Default to english
+		}
+
+		if (_game.platform == Common::kPlatformNES) {
+			_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
+		} else
+			_sentenceBuf += prepositions[lang][index];
+}
+
 void ScummEngine_v2::o2_drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
@@ -986,38 +1021,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 
 	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
-		// The prepositions, like the fonts, were hard code in the engine. Thus
-		// we have to do that, too, and provde localized versions for all the
-		// languages MM/Zak are available in.
-		const char *prepositions[][5] = {
-			{ " ", " in", " with", " on", " to" },   // English
-			{ " ", " mit", " mit", " mit", " zu" },  // German
-			{ " ", " dans", " avec", " sur", " <" }, // French
-			{ " ", " in", " con", " su", " a" },     // Italian
-			{ " ", " en", " con", " en", " a" },     // Spanish
-			};
-		int lang;
-		switch (_language) {
-		case Common::DE_DEU:
-			lang = 1;
-			break;
-		case Common::FR_FRA:
-			lang = 2;
-			break;
-		case Common::IT_ITA:
-			lang = 3;
-			break;
-		case Common::ES_ESP:
-			lang = 4;
-			break;
-		default:
-			lang = 0;	// Default to english
-		}
-
-		if (_game.platform == Common::kPlatformNES) {
-			_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
-		} else
-			_sentenceBuf += prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)];
+		drawPreposition(VAR(VAR_SENTENCE_PREPOSITION));
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {

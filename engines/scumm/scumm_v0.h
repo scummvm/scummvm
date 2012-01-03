@@ -32,20 +32,25 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
+	enum ObjectType {
+		kObjectTypeInventory = 0,
+		kObjectTypeRoom = 1,
+		kObjectTypeActor = 2
+	};
+
+protected:
 	byte _currentMode;
 	bool _verbExecuting;			// is a verb executing
 	bool _verbPickup;				// are we picking up an object during a verb execute
 
-	int _activeActor;				// Actor Number
+	int _activeVerb;
+	int _activeObject;				// 1st Object Number
+	int _activeObjectType;			// 1st Object Type (0: inventory, 1: room)
 	int _activeObject2;				// 2nd Object Number
+	int _activeObject2Type;			// 2nd Object Type (0: inventory, 1: room, 2: actor)
 
-	bool _activeInvExecute;			// is activeInventory first to be executed
-	bool _activeObject2Inv;			// is activeobject2 in the inventory
 	bool _activeObjectObtained;		// collected _activeobject?
 	bool _activeObject2Obtained;	// collected _activeObject2?
-
-	int _activeObjectIndex;
-	int _activeObject2Index;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -68,21 +73,21 @@ protected:
 	virtual void saveOrLoad(Serializer *s);
 
 	// V0 MM Verb commands
-	int  verbPrep(int object);
-	bool verbMove(int object, int objectIndex, bool invObject);
+	int  verbPrep();
+	bool verbMove(int object, bool invObject);
 	bool verbMoveToActor(int actor);
-	bool verbObtain(int object, int objIndex);
+	bool verbObtain(int object, int objType);
 	bool verbExecutes(int object, bool inventory = false);
 	bool verbExec();
-
-	int findObjectIndex(int x, int y);
 
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
 	void resetVerbs();
 	void setNewKidVerbs();
 
-	void drawSentenceWord(int object, bool usePrep, bool objInInventory);
+	const byte *getObjectName(int object, int type);
+
+	void drawSentenceObject(int object, int type);
 	void drawSentence();
 
 	void switchActor(int slot);
@@ -95,6 +100,10 @@ protected:
 	virtual void resetSentence(bool walking);
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
+
+	virtual void setActiveInventory(int object);
+
+	bool ifEqualActiveObject2Common(bool ignoreType);
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();
@@ -123,8 +132,8 @@ protected:
 	void o_getBitVar();
 	void o_setBitVar();
 	void o_doSentence();
-	void o_unknown2();
-	void o_ifActiveObject();
+	void o_ifEqualActiveObject2();
+	void o_ifNotEqualActiveObject2();
 	void o_getClosestObjActor();
 	void o_printEgo_c64();
 	void o_print_c64();

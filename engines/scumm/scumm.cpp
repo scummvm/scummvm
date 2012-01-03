@@ -701,10 +701,6 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 
 	_inventoryOffset = 0;
 
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 0;
-
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
 	VAR_SENTENCE_OBJECT2 = 0xFF;
@@ -723,11 +719,11 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_verbPickup = false;
 	_currentMode = 0;
 
+	_activeVerb = 0;
+	_activeObject = 0;
 	_activeObject2 = 0;
-	_activeObjectIndex = 0;
-	_activeObject2Index = 0;
-	_activeInvExecute = false;
-	_activeObject2Inv = false;
+	_activeObjectType = kObjectTypeRoom;
+	_activeObject2Type = kObjectTypeRoom;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
 

@@ -79,7 +79,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x22, o4_saveLoadGame);
 	OPCODE(0x23, o_stopCurrentScript);
 	/* 24 */
-	OPCODE(0x24, o_unknown2);
+	OPCODE(0x24, o_ifNotEqualActiveObject2);
 	OPCODE(0x25, o5_loadRoom);
 	OPCODE(0x26, o_getClosestObjActor);
 	OPCODE(0x27, o2_getActorY);
@@ -159,7 +159,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x62, o2_stopScript);
 	OPCODE(0x63, o_stopCurrentScript);
 	/* 64 */
-	OPCODE(0x64, o_ifActiveObject);
+	OPCODE(0x64, o_ifEqualActiveObject2);
 	OPCODE(0x65, o_stopCurrentScript);
 	OPCODE(0x66, o_getClosestObjActor);
 	OPCODE(0x67, o5_getActorFacing);
@@ -239,7 +239,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0xa2, o4_saveLoadGame);
 	OPCODE(0xa3, o_stopCurrentScript);
 	/* A4 */
-	OPCODE(0xa4, o_unknown2);
+	OPCODE(0xa4, o_ifNotEqualActiveObject2);
 	OPCODE(0xa5, o5_loadRoom);
 	OPCODE(0xa6, o_stopCurrentScript);
 	OPCODE(0xa7, o2_getActorY);
@@ -319,7 +319,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0xe2, o2_stopScript);
 	OPCODE(0xe3, o_stopCurrentScript);
 	/* E4 */
-	OPCODE(0xe4, o_ifActiveObject);
+	OPCODE(0xe4, o_ifEqualActiveObject2);
 	OPCODE(0xe5, o_loadRoomWithEgo);
 	OPCODE(0xe6, o_stopCurrentScript);
 	OPCODE(0xe7, o5_getActorFacing);
@@ -406,128 +406,65 @@ void ScummEngine_v0::decodeParseString() {
 	actorTalk(buffer);
 }
 
-void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInventory) {
+const byte *ScummEngine_v0::getObjectName(int object, int type) {
 	const byte *temp;
-	int sentencePrep = 0;
 
-	// If object not in inventory, we except an index
-	if (!objInInventory)
-		_v0ObjectIndex = true;
-	else
+	if (type == kObjectTypeInventory)
 		_v0ObjectInInventory = true;
 
 	temp = getObjOrActorName(object);
 
 	_v0ObjectInInventory = false;
-	_v0ObjectIndex = false;
 
-	// Append the 'object-name'
+	return temp;
+}
+
+void ScummEngine_v0::drawSentenceObject(int object, int type) {
+	const byte *temp;
+	temp = getObjectName(object, type);
 	if (temp) {
 		_sentenceBuf += " ";
 		_sentenceBuf += (const char *)temp;
-	}
-
-	// Append the modifier? (With / On / To / In)
-	if (!usePrep)
-		return;
-
-	if (_verbs[_activeVerb].prep == 0xFF) {
-		_v0ObjectInInventory = objInInventory;
-		sentencePrep = verbPrep(object);
-	} else {
-		sentencePrep = _verbs[_activeVerb].prep;
-	}
-
-	if (sentencePrep > 0 && sentencePrep <= 4) {
-		// The prepositions, like the fonts, were hard code in the engine. Thus
-		// we have to do that, too, and provde localized versions for all the
-		// languages MM/Zak are available in.
-		static const char *const prepositions[][5] = {
-			{ " ", " in", " with", " on", " to" },   // English
-			{ " ", " mit", " mit", " mit", " zu" },  // German
-			{ " ", " dans", " avec", " sur", " <" }, // French
-			{ " ", " in", " con", " su", " a" },     // Italian
-			{ " ", " en", " con", " en", " a" },     // Spanish
-			};
-		int lang;
-		switch (_language) {
-		case Common::DE_DEU:
-			lang = 1;
-			break;
-		case Common::FR_FRA:
-			lang = 2;
-			break;
-		case Common::IT_ITA:
-			lang = 3;
-			break;
-		case Common::ES_ESP:
-			lang = 4;
-			break;
-		default:
-			lang = 0;	// Default to english
-		}
-
-		_sentenceBuf += prepositions[lang][sentencePrep];
 	}
 }
 
 void ScummEngine_v0::drawSentence() {
 	Common::Rect sentenceline;
-	bool		 inventoryFirst = false;
 
 	if (!(_userState & 32))
 		return;
 
-	// Current Verb, Walk/Use
+	// Current Verb
+	if (_activeVerb == 0)
+		_activeVerb = 13;
 	if (getResourceAddress(rtVerb, _activeVerb)) {
 		_sentenceBuf = (char *)getResourceAddress(rtVerb, _activeVerb);
 	} else {
 		return;
 	}
 
-	// If using inventory first, draw it first
-	if (_activeInvExecute && _activeInventory) {
-		drawSentenceWord(_activeInventory, true, true);
-	} else {
-		// Not using inventory, use selected object
-		if (_activeObject)
-			drawSentenceWord(_activeObjectIndex, true, false);
-		else
-			inventoryFirst = true;
-	}
+	if (_activeObject) {
+		// Draw the 1st active object
+		drawSentenceObject(_activeObject, _activeObjectType);
 
+		// Append verb preposition
+		int sentencePrep = verbPrep();
+		if (sentencePrep) {
+			drawPreposition(sentencePrep);
 
-	// Draw the inventory?
-	if (_activeInventory > 0 && _activeObject2 == 0) {
-		// Only if inventory isnt first (it will already be drawn by now)
-		if (!_activeInvExecute) {
-			drawSentenceWord(_activeInventory, inventoryFirst, true);
-		} else {
-			// Draw the active object, which could be inventory based, or room based
-			if (_activeObject && !_activeObjectIndex) {
-				drawSentenceWord(_activeObject, inventoryFirst, true);
-			} else // Room based
-				drawSentenceWord(_activeObjectIndex, inventoryFirst, false);
+			// Draw the 2nd active object
+			if (_activeObject2) {
+				// 2nd Object is an actor
+				if (_activeObject2Type == kObjectTypeActor) {
+					Actor *a = derefActor(_activeObject2, "");
+					_sentenceBuf += " ";
+					_sentenceBuf += (const char *)a->getActorName();
+				// 2nd Object is an inventory or room object
+				} else {
+					drawSentenceObject(_activeObject2, _activeObject2Type);
+				}
+			}
 		}
-
-	// Draw the 2nd active object
-	} else if (_activeObject2) {
-
-		// 2nd Object is in inventory
-		if (_activeObject2Inv) {
-			_v0ObjectInInventory = true;
-			drawSentenceWord(_activeObject2, inventoryFirst, true);
-		} else {
-			drawSentenceWord(_activeObject2Index, inventoryFirst, false);
-		}
-	}
-
-	// Draw the active actor
-	if (_activeActor) {
-		Actor *a = derefActor(_activeActor, "");
-
-		_sentenceBuf += " ";
-		_sentenceBuf += (const char *)a->getActorName();
 	}
 
 	_string[2].charset = 1;
@@ -890,15 +827,21 @@ void ScummEngine_v0::o_doSentence() {
 	runObjectScript(obj, entry, false, false, NULL);
 }
 
-void ScummEngine_v0::o_unknown2() {
-	byte var1 = fetchScriptByte();
-	error("STUB: o_unknown2(%d)", var1);
+bool ScummEngine_v0::ifEqualActiveObject2Common(bool inventoryObject) {
+	byte obj = fetchScriptByte();
+	if (!inventoryObject || (_activeObject2Type == kObjectTypeInventory))
+		return (obj == _activeObject2);
+	return false;
 }
 
-void ScummEngine_v0::o_ifActiveObject() {
-	byte obj = fetchScriptByte();
+void ScummEngine_v0::o_ifEqualActiveObject2() {
+	bool equal = ifEqualActiveObject2Common((_opcode & 0x80) == 0);
+	jumpRelative(equal);
+}
 
-	jumpRelative(obj == _activeInventory);
+void ScummEngine_v0::o_ifNotEqualActiveObject2() {
+	bool equal = ifEqualActiveObject2Common((_opcode & 0x80) == 0);
+	jumpRelative(!equal);
 }
 
 void ScummEngine_v0::o_getClosestObjActor() {
@@ -1004,19 +947,15 @@ void ScummEngine_v0::resetSentence(bool walking) {
 	// Then reset all active objects (stops the radio crash, bug #3077966)
 	if (!walking || !(_userState & 32)) {
 		_v0ObjectFlag = 0;
-		_activeInventory = 0;
 		_activeObject = 0;
 		_activeObject2 = 0;
-		_activeObjectIndex = 0;
-		_activeObject2Index = 0;
 	}
 
 	_verbExecuting = false;
 	_verbPickup = false;
 
-	_activeActor = 0;
-	_activeInvExecute = false;
-	_activeObject2Inv = false;
+	_activeObjectType = kObjectTypeRoom;
+	_activeObject2Type = kObjectTypeRoom;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
 }
