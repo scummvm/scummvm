@@ -70,6 +70,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1( 54, varToggle,					kVar														);
 	OP_1( 55, varSetOneIfZero,				kVar														);
 	OP_3( 61, varRandRange,					kVar,		kValue,		kValue								);
+	OP_5( 63, polarToRect,					kVar,		kVar,		kValue,		kValue, 	kValue		); // Ten args
 	OP_2( 67, varRemoveBits,				kVar,		kValue											);
 	OP_2( 68, varToggleBits,				kVar,		kValue											);
 	OP_2( 69, varCopy,						kVar,		kVar											);
@@ -531,6 +532,35 @@ void Script::varRandRange(Context &c, const Opcode &cmd) {
 		value = cmd.args[1];
 
 	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::polarToRect(Context &c, const Opcode &cmd)	{
+	debugC(kDebugScript, "Opcode %d: Complex polar to rect transformation for angle in var %d", cmd.op, cmd.args[8]);
+
+	int32 angleDeg = _vm->_vars->get(cmd.args[8]);
+	float angleRad = 2 * M_PI / (cmd.args[9] * angleDeg);
+	float angleSin = sin(angleRad);
+	float angleCos = cos(angleRad);
+
+	float radiusX;
+	float radiusY;
+	if (angleSin < 0)
+		radiusX = cmd.args[4];
+	else
+		radiusX = cmd.args[5];
+	if (angleCos > 0)
+		radiusY = cmd.args[6];
+	else
+		radiusY = cmd.args[7];
+
+	int32 offsetX = cmd.args[2];
+	int32 offsetY = cmd.args[3];
+
+	int32 posX = offsetX + (radiusX - 0.1f) * angleSin;
+	int32 posY = offsetY - (radiusY - 0.1f) * angleCos;
+
+	_vm->_vars->set(cmd.args[0], posX);
+	_vm->_vars->set(cmd.args[1], posY);
 }
 
 void Script::varRemoveBits(Context &c, const Opcode &cmd) {

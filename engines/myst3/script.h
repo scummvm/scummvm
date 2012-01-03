@@ -125,6 +125,7 @@ private:
 	DECLARE_OPCODE(varToggle);
 	DECLARE_OPCODE(varSetOneIfZero);
 	DECLARE_OPCODE(varRandRange);
+	DECLARE_OPCODE(polarToRect);
 	DECLARE_OPCODE(varRemoveBits);
 	DECLARE_OPCODE(varToggleBits);
 	DECLARE_OPCODE(varCopy);
