@@ -331,7 +331,7 @@ protected:
 
 	// misc
 	virtual void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) = 0;
-	void delayUntil(uint32 time, bool doUpdate = false, bool isMainLoop = false, bool unused = false);
+	void delayUntil(uint32 time, bool unused = false, bool doUpdate = false, bool isMainLoop = false);
 	int rollDice(int times, int pips, int inc = 0);
 
 	virtual Common::Error loadGameState(int slot) = 0;
