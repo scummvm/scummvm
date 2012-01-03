@@ -55,6 +55,7 @@ void NodeCube::draw() {
 	// Used fragment of the textures
 	float s = 640 / (float)_cubeTextureSize;
 
+	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, _faces[4]->_textureId);

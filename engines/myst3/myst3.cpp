@@ -181,9 +181,9 @@ void Myst3Engine::drawFrame() {
 	_scene->clear();
 
 	if (_viewType == kCube) {
-		_scene->setupCameraCube();
+		_scene->setupCameraPerspective();
 	} else {
-		_scene->setupCameraFrame();
+		_scene->setupCameraOrtho2D();
 	}
 
 	_node->update();
@@ -197,6 +197,12 @@ void Myst3Engine::drawFrame() {
 	for (uint i = 0; i < _drawables.size(); i++) {
 		_drawables[i]->draw();
 	}
+
+	if (_viewType == kCube) {
+		_scene->setupCameraOrtho2D();
+	}
+
+	_scene->drawBlackBorders();
 
 	_system->updateScreen();
 	_system->delayMillis(10);

@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/nodeframe.h"
+#include "engines/myst3/scene.h"
 
 namespace Myst3 {
 
@@ -46,16 +47,17 @@ NodeFrame::~NodeFrame() {
 
 void NodeFrame::draw() {
 	// Size of the frame
-	static const float w = _originalWidth;
-	static const float h = _frameHeight;
+	static const float w = Scene::_originalWidth;
+	static const float h = Scene::_frameHeight;
 
 	// Position of the frame
-	static const float top = _topBorderHeight;
+	static const float top = Scene::_topBorderHeight;
 
 	// Used fragment of texture
 	const float u = w / (float)_cubeTextureSize;
 	const float v = h / (float)_cubeTextureSize;
 
+	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, _faces[0]->_textureId);

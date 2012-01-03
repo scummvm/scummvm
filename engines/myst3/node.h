@@ -116,12 +116,6 @@ class Node {
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
 
 		static const int _cubeTextureSize = 1024;
-
-		static const int _originalWidth = 640;
-		static const int _originalHeight = 480;
-		static const int _topBorderHeight = 30;
-		static const int _bottomBorderHeight = 90;
-		static const int _frameHeight = 360;
 };
 
 } // end of namespace Myst3

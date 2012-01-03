@@ -40,17 +40,27 @@ class Scene {
 		float _cameraHeading;
 		Common::Point _mouseOld;
 
+		void drawBlackRect(const Common::Rect &r);
+
 	public:
 		Scene();
 
 		void init(int width, int height);
 		void clear();
-		void setupCameraCube();
-		void setupCameraFrame();
+		void setupCameraPerspective();
+		void setupCameraOrtho2D();
 		void updateCamera(Common::Point &mouse);
 		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
 
 		void lookAt(float pitch, float heading);
+
+		void drawBlackBorders();
+
+		static const int _originalWidth = 640;
+		static const int _originalHeight = 480;
+		static const int _topBorderHeight = 30;
+		static const int _bottomBorderHeight = 90;
+		static const int _frameHeight = 360;
 };
 
 } // end of namespace Myst3

@@ -46,19 +46,19 @@ void Scene::clear() {
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void Scene::setupCameraFrame() {
+void Scene::setupCameraOrtho2D() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, 640.0, 480.0, 0.0);
+	gluOrtho2D(0.0, _originalWidth, _originalHeight, 0.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
-void Scene::setupCameraCube() {
+void Scene::setupCameraPerspective() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(65.0, (GLfloat)640 /(GLfloat)480, 0.1, 100.0);
+	gluPerspective(65.0, (GLfloat)_originalWidth /(GLfloat)_originalHeight, 0.1, 100.0);
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);
@@ -84,6 +84,28 @@ void Scene::updateCamera(Common::Point &mouse) {
 void Scene::lookAt(float pitch, float heading) {
 	_cameraPitch = pitch;
 	_cameraHeading = heading;
+}
+
+void Scene::drawBlackRect(const Common::Rect &r) {
+	glDisable(GL_TEXTURE_2D);
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glVertex3f( r.left, r.bottom, 1.0f);
+		glVertex3f( r.right, r.bottom, 1.0f);
+		glVertex3f( r.left, r.top, 1.0f);
+		glVertex3f( r.right, r.top, 1.0f);
+	glEnd();
+}
+
+void Scene::drawBlackBorders() {
+	Common::Rect top = Common::Rect(_originalWidth, _topBorderHeight);
+
+	Common::Rect bottom = Common::Rect(_originalWidth, _bottomBorderHeight);
+	bottom.translate(0, _topBorderHeight + _frameHeight);
+
+	drawBlackRect(top);
+	drawBlackRect(bottom);
 }
 
 } // end of namespace Myst3
