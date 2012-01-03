@@ -81,7 +81,7 @@ void writeg(Common::String l, int c)
 	xo = xo + 1;
 	yo = yo + 1;
 	for (x = 1; x <= (int)l.size(); x ++) {
-		affcar(gd, xo, yo, cecr, ord(l[x]));
+		affcar(gd, xo, yo, cecr, ord(l[x - 1]));
 		xo = xo + i;
 	}
 	show_mouse();
