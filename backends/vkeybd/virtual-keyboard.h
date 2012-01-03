@@ -172,13 +172,13 @@ protected:
 		byte _flags;
 		String _flagsStr;
 
-
-		List<VirtualKeyPress> _keys;
+		typedef List<VirtualKeyPress> KeyPressList;
+		KeyPressList _keys;
 		String _keysStr;
 
 		bool _strChanged;
 
-		List<VirtualKeyPress>::iterator _keyPos;
+		KeyPressList::iterator _keyPos;
 		uint _strPos;
 	};
 
