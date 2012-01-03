@@ -53,19 +53,18 @@ void ImageMap::removeArea(const String &id) {
 }
 
 void ImageMap::removeAllAreas() {
-	HashMap<String, Polygon *>::iterator it;
-	for (it = _areas.begin(); it != _areas.end(); ++it) {
+	for (AreaMap::iterator it = _areas.begin(); it != _areas.end(); ++it) {
 		delete it->_value;
 	}
 	_areas.clear();
 }
 
 String ImageMap::findMapArea(int16 x, int16 y) {
-	HashMap<String, Polygon *>::iterator it;
-	for (it = _areas.begin(); it != _areas.end(); ++it) {
+	for (AreaMap::iterator it = _areas.begin(); it != _areas.end(); ++it) {
 		if (it->_value->contains(x, y))
 			return it->_key;
 	}
+
 	return String();
 }
 
