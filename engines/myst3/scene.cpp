@@ -32,7 +32,6 @@ Scene::Scene():
 void Scene::init(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(65.0, (GLfloat)width/(GLfloat)height, 0.1, 100.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -48,13 +47,21 @@ void Scene::clear() {
 }
 
 void Scene::setupCameraFrame() {
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glRotatef(0.0, -1.0f, 0.0f, 0.0f);
-	glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+	gluOrtho2D(0.0, 640.0, 480.0, 0.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 void Scene::setupCameraCube() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(65.0, (GLfloat)640 /(GLfloat)480, 0.1, 100.0);
+
 	// Rotate the model to simulate the rotation of the camera
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glRotatef(_cameraPitch, -1.0f, 0.0f, 0.0f);
 	glRotatef(_cameraHeading - 180.0f, 0.0f, 1.0f, 0.0f);

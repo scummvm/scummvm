@@ -153,7 +153,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				Common::Point scaledMouse = Common::Point(
 						mouse.x * originalWidth / _system->getWidth(),
 						CLIP<uint>(mouse.y * originalHeight / _system->getHeight()
-								- (originalHeight - 360) / 2, 0, frameHeight));
+								- 30, 0, frameHeight));
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 					if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)

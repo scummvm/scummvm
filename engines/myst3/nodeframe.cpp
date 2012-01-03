@@ -46,21 +46,24 @@ NodeFrame::~NodeFrame() {
 
 void NodeFrame::draw() {
 	// Size of the frame
-	float t = 0.85f;
-	float s = 360.0f / 640.0f * t;
+	static const float w = _originalWidth;
+	static const float h = _frameHeight;
+
+	// Position of the frame
+	static const float top = _topBorderHeight;
 
 	// Used fragment of texture
-	float u = 640 / (float)_cubeTextureSize;
-	float v = 360 / (float)_cubeTextureSize;
+	const float u = w / (float)_cubeTextureSize;
+	const float v = h / (float)_cubeTextureSize;
 
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, _faces[0]->_textureId);
 	glBegin(GL_TRIANGLE_STRIP);			// Z+
-		glTexCoord2f(0, v); glVertex3f( t,-s, 1.0f);
-		glTexCoord2f(u, v); glVertex3f(-t,-s, 1.0f);
-		glTexCoord2f(0, 0); glVertex3f( t, s, 1.0f);
-		glTexCoord2f(u, 0); glVertex3f(-t, s, 1.0f);
+		glTexCoord2f(0, v); glVertex3f( 0, top + h, 1.0f);
+		glTexCoord2f(u, v); glVertex3f( w, top + h, 1.0f);
+		glTexCoord2f(0, 0); glVertex3f( 0, top + 0, 1.0f);
+		glTexCoord2f(u, 0); glVertex3f( w, top + 0, 1.0f);
 	glEnd();
 
 	glDepthMask(GL_TRUE);
