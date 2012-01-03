@@ -40,8 +40,8 @@ public:
 
 	~ImageMap();
 
-	Polygon *createArea(const String& id);
-	void removeArea(const String& id);
+	Polygon *createArea(const String &id);
+	void removeArea(const String &id);
 	void removeAllAreas();
 	String findMapArea(int16 x, int16 y);
 

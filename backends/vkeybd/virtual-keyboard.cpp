@@ -160,7 +160,7 @@ String VirtualKeyboard::findArea(int16 x, int16 y) {
 	return _currentMode->imageMap.findMapArea(x, y);
 }
 
-void VirtualKeyboard::processAreaClick(const String& area) {
+void VirtualKeyboard::processAreaClick(const String &area) {
 	if (!_currentMode->events.contains(area))
 		return;
 
@@ -169,10 +169,10 @@ void VirtualKeyboard::processAreaClick(const String& area) {
 	switch (evt->type) {
 	case kVKEventKey:
 		// add virtual keypress to queue
-		_keyQueue.insertKey(*(KeyState*)evt->data);
+		_keyQueue.insertKey(*(KeyState *)evt->data);
 		break;
 	case kVKEventModifier:
-		_keyQueue.toggleFlags(*(byte*)(evt->data));
+		_keyQueue.toggleFlags(*(byte *)(evt->data));
 		break;
 	case kVKEventSwitchMode:
 		// switch to new mode
