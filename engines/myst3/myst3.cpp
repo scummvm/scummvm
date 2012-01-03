@@ -180,10 +180,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 void Myst3Engine::drawFrame() {
 	_scene->clear();
 
-	if (_viewType == kFrame) {
-		_scene->setupCameraFrame();
-	} else {
+	if (_viewType == kCube) {
 		_scene->setupCameraCube();
+	} else {
+		_scene->setupCameraFrame();
 	}
 
 	_node->update();
@@ -258,6 +258,9 @@ void Myst3Engine::runNodeInitScripts() {
 	NodePtr nodeDataInit = _db->getNodeData(32765);
 	if (nodeDataInit)
 		runScriptsFromNode(32765);
+
+	if (!nodeData)
+		error("Node %d unknown in the database", _vars->getLocationNode());
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {
 		if (_vars->evaluate(nodeData->scripts[j].condition)) {

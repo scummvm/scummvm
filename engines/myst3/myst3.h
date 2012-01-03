@@ -49,7 +49,8 @@ enum {
 // View type
 enum ViewType {
 	kCube = 1,
-	kFrame = 2
+	kFrame = 2,
+	kMenu = 3
 };
 
 class Console;
