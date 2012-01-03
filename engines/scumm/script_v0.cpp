@@ -501,14 +501,7 @@ void ScummEngine_v0::drawSentence() {
 }
 
 void ScummEngine_v0::o_stopCurrentScript() {
-	int script;
-
-	script = vm.slot[_currentScript].number;
-
-	if (_currentScript != 0 && vm.slot[_currentScript].number == script)
-		stopObjectCode();
-	else
-		stopScript(script);
+	stopScriptCommon(0);
 }
 
 void ScummEngine_v0::o_loadSound() {

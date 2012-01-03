@@ -1190,11 +1190,7 @@ void ScummEngine_v2::o2_startScript() {
 	runScript(script, 0, 0, 0);
 }
 
-void ScummEngine_v2::o2_stopScript() {
-	int script;
-
-	script = getVarOrDirectByte(PARAM_1);
-
+void ScummEngine_v2::stopScriptCommon(int script) {
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
@@ -1213,6 +1209,10 @@ void ScummEngine_v2::o2_stopScript() {
 		stopObjectCode();
 	else
 		stopScript(script);
+}
+
+void ScummEngine_v2::o2_stopScript() {
+	stopScriptCommon(getVarOrDirectByte(PARAM_1));
 }
 
 void ScummEngine_v2::o2_panCameraTo() {
