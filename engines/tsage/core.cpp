@@ -2022,6 +2022,8 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_frame = 0;
 	_effect = 0;
 	_shade = 0;
+
+	_field8A = Common::Point(0, 0);
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2396,6 +2398,10 @@ void SceneObject::synchronize(Serializer &s) {
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_moveRate);
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_field8A.x);
+		s.syncAsSint16LE(_field8A.y);
+	}
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
 

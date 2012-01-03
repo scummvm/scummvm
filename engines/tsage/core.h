@@ -540,6 +540,7 @@ public:
 	EventHandler *_mover;
 	Common::Point _moveDiff;
 	int _moveRate;
+	Common::Point _field8A;
 	Action *_endAction;
 	uint32 _regionBitList;
 

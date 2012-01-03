@@ -2961,17 +2961,14 @@ void Scene3600::Action2::signal() {
 		R2_GLOBALS._events.proc1();
 		R2_GLOBALS._player.enableControl();
 		_actionIndex = 3619;
-		scene->_sequenceManager1._action = NULL;
-		warning("CHECKME: use of scene->_sequenceManager1._action");
+		scene->_actor13._state = 0;
 	// No break on purpose
 	case 3619: {
 		++_actionIndex;
 		scene->_actor13.setup(3127, 2, 1);
 		scene->_actor13.animate(ANIM_MODE_1, NULL);
-		Common::Point pt(226, 152);
-		warning("TODO: Fix use of SceneActor::_field8A and SceneActor::_field8C");
 		NpcMover *mover = new NpcMover();
-		scene->_actor13.addMover(mover, &scene->_actor13._position, scene);
+		scene->_actor13.addMover(mover, &scene->_actor13._field8A, scene);
 		}
 		break;
 	default:
@@ -3193,7 +3190,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		if (!R2_GLOBALS.getFlag(71)) {
 			_actor13.postInit();
 			_actor13._state = 0;
-			warning("TODO: Fix use of SceneActor::_field8A and SceneActor::_field8C in postInit()");
+			_actor13._field8A = Common::Point(226, 152);
 			_actor13._moveDiff = Common::Point(3, 2);
 			_actor13.setPosition(Common::Point(284, 152));
 			_actor13.setup(3127, 2, 1);
@@ -3367,8 +3364,7 @@ void Scene3600::signal() {
 
 		_actor13.postInit();
 		_actor13._state = 0;
-		warning("_actor13._field8A = 226");
-		warning("_actor13._field8C = 152");
+		_actor13._field8A = Common::Point(226, 152);
 		_actor13._moveDiff = Common::Point(5, 3);
 		_actor13.setup(3403, 7, 1);
 		_actor13.setPosition(Common::Point(405, 155));
