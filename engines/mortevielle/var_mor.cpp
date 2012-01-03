@@ -239,6 +239,8 @@ byte adcfiec[(4088 * 16) + (311 * 0x80)];
 /*---------------------------------------------------------------------------*/
 
 void hirs() {
+	/* Deprecated set graphics 
+
 	const byte tandy[14] = {113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0};
 	const byte herc[13] = {50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0};
 	int i;
@@ -253,21 +255,19 @@ void hirs() {
 	break;
 	case ams : {
 		hires;
-		/* 
-		inline_((float)(0xb8) / 6 / 0 / //  =>  mov ax,6
-		        0xcd / 0x10);			//  =>  int 16
+		//inline_((float)(0xb8) / 6 / 0 / //  =>  mov ax,6
+		//        0xcd / 0x10);			//  =>  int 16
 		port[0x3d9] = 15;
 		port[0x3df] = 0;
 		port[0x3dd] = 15;
-		*/
+
 		res = 2;
 	}
 	break;
 	case ega : {
-		/*
-		inline_((float)(0xb8) / 14 / 0 /     //  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs
-		        0xcd / 0x10);				//   INT 16
-		*/
+		//inline_((float)(0xb8) / 14 / 0 /     //  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs
+		//        0xcd / 0x10);				//   INT 16
+
 		res = 2;
 	}
 	break;
@@ -278,9 +278,9 @@ void hirs() {
 			port[0x3b4] = i;
 			port[0x3b5] = herc[i];
 		}
-		/*
-		inline_((float)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
-		*/
+
+		//inline_((float)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
+
 		port[0x3b8] = 10;
 		res = 2;
 	}
@@ -303,6 +303,7 @@ void hirs() {
 	}
 	break;
 	}
+	*/
 }
 
 /* procedure affput(Chx,Gd,x,y,coul,char:int); external 'c:\mc\divaf.com'; */

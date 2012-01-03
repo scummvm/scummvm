@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/util.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mort.h"
 
@@ -37,6 +38,9 @@ bool MortevielleEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MortevielleEngine::run() {
+	// Initialise graphics mode
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
+
 	// Dispatch to the game's main routine
 	const char *argv[] = { "" };
 	mortevielle_main(1, argv);

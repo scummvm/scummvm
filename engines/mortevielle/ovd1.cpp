@@ -232,7 +232,7 @@ void ani50() {
 	int cy, tay;
 	char st[1410];
 	float ix;
-	char ch;
+//	char ch;
 
 
 	/* debug('o3 dialpre'); */
@@ -257,6 +257,8 @@ void ani50() {
 	output("CARTE GRAPHIQUE      CGA    EGA    HERCULE/AT&T400    TANDY    AMSTRAD1512");
 	gotoxy(12, 24);
 	output("Ctrl       C      E            H             T           A");
+
+/*
 	do {
 		ch = get_ch();	// input >> kbd >> ch;
 	} while ((ch != '\1') && (ch != '\3') && (ch != '\5') && (ch != '\24') && (ch != '\10'));
@@ -272,7 +274,10 @@ void ani50() {
 	case '\24' :
 		gd = tan;
 		break;
-	}
+	}*/
+	// Hardcode display mode to EGA
+	gd = ega;
+
 	gotoxy(1, 24);
 	clreol;
 	gotoxy(1, 23);
@@ -285,10 +290,13 @@ void ani50() {
 	output("C");
 	gotoxy(48, 23);
 	output("S");
+	/*
 	do {
 		ch = get_ch();	// input >> kbd >> ch;
 	} while ((ch != 'C') && (ch != 'S'));
 	int_m = (toupper(ch) == 'S');
+	*/
+	int_m = true;
 }
 
 /* overlay */ void init_lieu() {
