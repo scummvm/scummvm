@@ -3,6 +3,7 @@ MODULE := engines/myst3
 MODULE_OBJS := \
 	archive.o \
 	console.o \
+	cursor.o \
 	database.o \
 	detection.o \
 	directoryentry.o \

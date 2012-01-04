@@ -183,6 +183,8 @@ private:
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
 	DECLARE_OPCODE(goToNode);
 	DECLARE_OPCODE(goToRoomNode);
+	DECLARE_OPCODE(zipToNode);
+	DECLARE_OPCODE(zipToRoomNode);
 	DECLARE_OPCODE(moviePlay);
 	DECLARE_OPCODE(moviePlaySynchronized);
 	DECLARE_OPCODE(runScriptWhileCond);

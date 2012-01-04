@@ -128,6 +128,8 @@ Script::Script(Myst3Engine *vm):
 	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
 	OP_1(138, goToNode,						kValue														);
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
+	OP_1(140, zipToNode,					kValue														);
+	OP_2(141, zipToRoomNode,				kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
 	OP_2(174, runScriptWhileCond,			kCondition,	kValue											);
@@ -1153,6 +1155,18 @@ void Script::goToNode(Context &c, const Opcode &cmd) {
 
 void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->goToNode(cmd.args[1], cmd.args[0]);
+}
+
+void Script::zipToNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Zip to node %d", cmd.op, cmd.args[0]);
+
+	_vm->goToNode(cmd.args[0]);
+}
+
+void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Zip to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->goToNode(cmd.args[1], cmd.args[0]);
 }
