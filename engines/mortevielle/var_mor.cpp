@@ -28,6 +28,7 @@
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 
@@ -306,18 +307,25 @@ void hirs() {
 	*/
 }
 
-/* procedure affput(Chx,Gd,x,y,coul,char:int); external 'c:\mc\divaf.com'; */
-void affput(int Chx, int Gd, int x, int y, int coul, int char_) {
-	warning("TODO: Implement affput");
+/**
+ * Draws either a single pixel or a character to the screen
+ */
+void affput(const Common::Point &pt, int palIndex, int ch) {
+	if (ch == 0)
+		g_vm->setPixel(pt, palIndex);
+	else
+		g_vm->writeCharacter(pt, ch, palIndex);
 }
 
 void affcar(int gd, int x, int y, int coul, int chr) {
-	if (res == 1)  affput(1, gd, ((uint)x >> 1), y, coul, chr);
-	else affput(1, gd, x, y, coul, chr);
+	if (res == 1)  
+		affput(Common::Point(((uint)x >> 1), y), coul, chr);
+	else 
+		affput(Common::Point(x, y), coul, chr);
 }
 
 void putpix(int gd, int x, int y, int coul) {
-	affput(0, gd, x, y, coul, 0);
+	affput(Common::Point(x, y), coul, 0);
 }
 
 /**
