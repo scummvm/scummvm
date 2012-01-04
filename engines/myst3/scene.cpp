@@ -91,10 +91,10 @@ void Scene::drawBlackRect(const Common::Rect &r) {
 	glColor3f(0.0f, 0.0f, 0.0f);
 
 	glBegin(GL_TRIANGLE_STRIP);
-		glVertex3f( r.left, r.bottom, 1.0f);
-		glVertex3f( r.right, r.bottom, 1.0f);
-		glVertex3f( r.left, r.top, 1.0f);
-		glVertex3f( r.right, r.top, 1.0f);
+		glVertex3f( r.left, r.bottom, 0.0f);
+		glVertex3f( r.right, r.bottom, 0.0f);
+		glVertex3f( r.left, r.top, 0.0f);
+		glVertex3f( r.right, r.top, 0.0f);
 	glEnd();
 }
 

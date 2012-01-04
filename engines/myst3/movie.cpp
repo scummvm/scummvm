@@ -81,9 +81,6 @@ void Movie::loadPosition(const VideoData &videoData) {
 }
 
 void Movie::initTexture() {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
 	glGenTextures(1, &_texture);
 
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -97,6 +94,9 @@ void Movie::initTexture() {
 void Movie::draw() {
 	const float w = _bink.getWidth() / (float)(_movieTextureSize);
 	const float h = _bink.getHeight() / (float)(_movieTextureSize);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 
 	glBindTexture(GL_TEXTURE_2D, _texture);
 
@@ -113,6 +113,8 @@ void Movie::draw() {
 		glTexCoord2f(w, h);
 		glVertex3f(-_pBottomRight.x(), _pBottomRight.y(), _pBottomRight.z());
 	glEnd();
+
+	glDisable(GL_BLEND);
 }
 
 void Movie::drawNextFrameToTexture() {

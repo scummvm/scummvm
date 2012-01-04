@@ -22,6 +22,7 @@
 
 #include "engines/myst3/archive.h"
 #include "engines/myst3/cursor.h"
+#include "engines/myst3/scene.h"
 
 #include "graphics/surface.h"
 #include "graphics/imagedec.h"
@@ -53,7 +54,8 @@ static CursorData availableCursors[13] = {
 };
 
 Cursor::Cursor(Archive *archive) :
-	_position(320, 210) {
+	_position(320, 210),
+	_lockedAtCenter(false) {
 
 	// Load available cursors
 	loadAvailableCursors(archive);
@@ -121,6 +123,24 @@ void Cursor::changeCursor(uint32 index) {
 	}
 }
 
+void Cursor::lockPosition(bool lock) {
+	_lockedAtCenter = lock;
+
+	if (_lockedAtCenter) {
+		_position.x = 320;
+		_position.y = 210;
+	}
+}
+
+void Cursor::updatePosition(Common::Point &mouse) {
+	if (!_lockedAtCenter) {
+		_position += mouse;
+
+		_position.x = CLIP<int16>(_position.x, 0, Scene::_originalWidth);
+		_position.y = CLIP<int16>(_position.y, 0, Scene::_originalHeight);
+	}
+}
+
 void Cursor::uploadTexture() {
 	Graphics::Surface *bitmap = availableCursors[_currentCursorID].surface;
 
@@ -156,6 +176,7 @@ void Cursor::draw()
 		glTexCoord2f(u, 0); glVertex3f( left + w, top + 0, 1.0f);
 	glEnd();
 
+	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 }
 

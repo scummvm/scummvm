@@ -40,6 +40,10 @@ public:
 	virtual ~Cursor();
 
 	void changeCursor(uint32 index);
+	void lockPosition(bool lock);
+
+	Common::Point getPosition() { return _position; }
+	void updatePosition(Common::Point &mouse);
 	void draw();
 private:
 	uint32 _currentCursorID;
@@ -48,6 +52,8 @@ private:
 
 	/** Position of the cursor */
 	Common::Point _position;
+
+	bool _lockedAtCenter;
 
 	void loadAvailableCursors(Archive *archive);
 	void generateTexture();

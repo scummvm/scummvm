@@ -93,6 +93,7 @@ Common::Error Myst3Engine::run() {
 	_archive = new Archive();
 
 	_system->setupScreen(w, h, false, true);
+	_system->showMouse(false);
 
 	Archive *archiveRSRC = new Archive();
 	archiveRSRC->open("RSRC.m3r");
@@ -138,7 +139,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots() {
 			}
 		}
 	} else if (_viewType == kFrame) {
-		Common::Point mouse = _system->getEventManager()->getMousePos();
+		Common::Point mouse = _cursor->getPosition();
 		Common::Point scaledMouse = Common::Point(
 				mouse.x * Scene::_originalWidth / _system->getWidth(),
 				CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight()
@@ -175,6 +176,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 			if (_viewType == kCube) {
 				_scene->updateCamera(event.relMouse);
 			}
+
+			_cursor->updatePosition(event.relMouse);
 
 			updateCursor();
 
@@ -329,8 +332,8 @@ void Myst3Engine::runNodeBackgroundScripts() {
 void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 	_viewType = kCube;
 
+	_cursor->lockPosition(true);
 	updateCursor();
-	_system->showMouse(false);
 
 	_node = new NodeCube(this, _archive, nodeID);
 }
@@ -338,8 +341,8 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 	_viewType = kFrame;
 
+	_cursor->lockPosition(false);
 	updateCursor();
-	_system->showMouse(true);
 
 	_node = new NodeFrame(this, _archive, nodeID);
 }
