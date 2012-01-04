@@ -253,11 +253,7 @@ public:
 
 class SceneActor: public SceneObject {
 public:
-	int _resNum;
-	int _lookLineNum, _talkLineNum, _useLineNum;
-
 	virtual Common::String getClassName() { return "SceneActor"; }
-	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual bool startAction(CursorType action, Event &event);
 };

@@ -897,17 +897,11 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
 void SceneActor::postInit(SceneObjectList *OwnerList) {
 	_lookLineNum = _talkLineNum = _useLineNum = -1;
 	SceneObject::postInit();
-}
-
-void SceneActor::synchronize(Serializer &s) {
-	SceneObject::synchronize(s);
-	s.syncAsSint16LE(_resNum);
-	s.syncAsSint16LE(_lookLineNum);
-	s.syncAsSint16LE(_talkLineNum);
-	s.syncAsSint16LE(_useLineNum);
 }
 
 bool SceneActor::startAction(CursorType action, Event &event) {

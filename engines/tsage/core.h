@@ -545,8 +545,9 @@ public:
 	uint32 _regionBitList;
 
 	// Ringworld 2 specific fields
-	int _shade;
+	int _shade, _shade2;
 	int _effect;
+	SceneObject *_linkedActor;
 public:
 	SceneObject();
 	SceneObject(const SceneObject &so);

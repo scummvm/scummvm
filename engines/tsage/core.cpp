@@ -2021,7 +2021,8 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_strip = 0;
 	_frame = 0;
 	_effect = 0;
-	_shade = 0;
+	_shade = _shade2 = 0;
+	_linkedActor = NULL;
 
 	_field8A = Common::Point(0, 0);
 }
@@ -2408,6 +2409,8 @@ void SceneObject::synchronize(Serializer &s) {
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_effect);
 		s.syncAsSint16LE(_shade);
+		s.syncAsSint16LE(_shade2);
+		SYNC_POINTER(_linkedActor);
 	}
 }
 
@@ -2451,6 +2454,12 @@ void SceneObject::remove() {
 }
 
 void SceneObject::dispatch() {
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (_shade != _shade2)
+			_flags |= OBJFLAG_PANES;
+		_shade2 = _shade;
+	}
+
 	uint32 currTime = g_globals->_events.getFrameNumber();
 	if (_action)
 		_action->dispatch();
@@ -2557,6 +2566,17 @@ void SceneObject::dispatch() {
 	}
 	if (!(_flags & OBJFLAG_FIXED_PRIORITY)) {
 		setPriority(_position.y);
+	}
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (_linkedActor) {
+			_linkedActor->setPosition(_position);
+			_linkedActor->setStrip(_strip);
+			_linkedActor->setFrame(_frame);
+		}
+
+		if ((_effect == 1) && (getRegionIndex() < 11))
+			_shade = 0;
 	}
 }
 
