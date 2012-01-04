@@ -117,18 +117,23 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream, const Pixel
 	assert(newSurf);
 	newSurf->create(info.width, info.height, format);
 	assert(newSurf->pixels);
-	OverlayColor *curPixel = (OverlayColor*)newSurf->pixels + (newSurf->h-1) * newSurf->w;
+	byte *curPixel = (byte*)newSurf->pixels + (newSurf->h-1) * newSurf->pitch;
 	int pitchAdd = info.width % 4;
 	for (int i = 0; i < newSurf->h; ++i) {
 		for (int i2 = 0; i2 < newSurf->w; ++i2) {
 			b = stream.readByte();
 			g = stream.readByte();
 			r = stream.readByte();
-			*curPixel = format.RGBToColor(r, g, b);
-			++curPixel;
+
+			if (format.bytesPerPixel == 2)
+				*((uint16 *)curPixel) = format.RGBToColor(r, g, b);
+			else
+				*((uint32 *)curPixel) = format.RGBToColor(r, g, b);
+
+			curPixel += format.bytesPerPixel;
 		}
 		stream.seek(pitchAdd, SEEK_CUR);
-		curPixel -= newSurf->w*2;
+		curPixel -= newSurf->pitch * 2;
 	}
 
 	stream.seek(0);
