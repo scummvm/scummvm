@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/foreach.h"
+
 #include "engines/grim/animation.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
@@ -63,6 +65,11 @@ void Animation::play(RepeatMode repeatMode) {
 	if (_repeatMode != Looping)
 		_time = -1;
 	_paused = false;
+	// Reset the fading, so that a fading out a chore and playing another one with an animation in common
+	// results in the animation being actually played. (You can check that with Olivia by the car in set me,
+	// when jumping with j+ts; me.olivia_search_idles() in me.lua)
+	if (_fadeMode == FadeOut)
+		_fadeMode = None;
 	activate();
 }
 
@@ -100,7 +107,7 @@ Animation::FadeMode Animation::getFadeMode() const {
 
 }
 
-int Animation::update(int time) {
+int Animation::update(uint time) {
 	int newTime;
 	if (_time < 0)		// For first time through
 		newTime = 0;
@@ -198,6 +205,14 @@ AnimManager::AnimManager() {
 
 }
 
+AnimManager::~AnimManager() {
+	foreach (const AnimationEntry &entry, _activeAnims) {
+		Animation *anim = entry._anim;
+		// Don't call deactivate() here so we don't mess with the list we're using.
+		anim->_manager = NULL;
+		anim->_active = false;
+	}
+}
 
 void AnimManager::addAnimation(Animation *anim, int priority1, int priority2) {
 	// Keep the list of animations sorted by priorities in descending order. Because

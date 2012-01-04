@@ -43,6 +43,8 @@ public:
 	Debug &operator<<(const char *str);
 	Debug &operator<<(char str);
 	Debug &operator<<(int number);
+	Debug &operator<<(unsigned int number);
+	Debug &operator<<(double number);
 	Debug &operator<<(float number);
 	Debug &operator<<(bool value);
 	Debug &operator<<(void *p);

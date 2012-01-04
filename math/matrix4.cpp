@@ -23,6 +23,7 @@
  */
 
 #include "math/matrix4.h"
+#include "math/vector4d.h"
 
 namespace Math {
 
@@ -37,7 +38,7 @@ Matrix<4, 4>::Matrix(const MatrixBase<4, 4> &m) :
 }
 
 void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
-	Matrix<4, 1> m;
+	Vector4d m;
 	m(0, 0) = v->x();
 	m(1, 0) = v->y();
 	m(2, 0) = v->z();
@@ -49,22 +50,22 @@ void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
 }
 
 Vector3d Matrix<4, 4>::getPosition() const {
-	return Vector3d(getValue(3, 0), getValue(3, 1), getValue(3, 2));
+	return Vector3d(getValue(0, 3), getValue(1, 3), getValue(2, 3));
 }
 
 void Matrix<4, 4>::setPosition(const Vector3d &v) {
-	setValue(3, 0, v.x());
-	setValue(3, 1, v.y());
-	setValue(3, 2, v.z());
+	setValue(0, 3, v.x());
+	setValue(1, 3, v.y());
+	setValue(2, 3, v.z());
 }
 
 void Matrix<4, 4>::translate(const Vector3d &vec) {
 	Vector3d v(vec);
 	transform(&v, false);
 
-	operator()(3, 0) += v.x();
-	operator()(3, 1) += v.y();
-	operator()(3, 2) += v.z();
+	operator()(0, 3) += v.x();
+	operator()(1, 3) += v.y();
+	operator()(2, 3) += v.z();
 }
 
 } // end of namespace Math

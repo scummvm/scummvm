@@ -32,29 +32,29 @@ template class ObjectPtr<LipSync>;
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
-LipSync::LipSync(const Common::String &filename, const char *data, int len) :
+LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *data) :
 	Object() {
 	_fname = filename;
 	uint16 readPhoneme;
 	int j;
 
-	if (READ_BE_UINT32(data) != MKTAG('L','I','P','!')) {
+	if (data->readUint32BE() != MKTAG('L','I','P','!')) {
 		error("Invalid file format in %s", _fname.c_str());
 	} else {
-		_numEntries = (len - 8) / 4;
+		_numEntries = (data->size() - 8) / 4;
 
 		// There are cases where the lipsync file has no entries
 		if (_numEntries == 0) {
 			_entries = NULL;
 		} else {
-			data += 8;
+			data->readUint32LE();
 #ifdef DEBUG_VERBOSE
 			printf("Reading LipSync %s, %d entries\n", filename, _numEntries);
 #endif
 			_entries = new LipEntry[_numEntries];
 			for (int i = 0; i < _numEntries; i++) {
-				_entries[i].frame = READ_LE_UINT16(data);
-				readPhoneme = READ_LE_UINT16(data + 2);
+				_entries[i].frame = data->readUint16LE();
+				readPhoneme = data->readUint16LE();
 
 				// Look for the animation corresponding to the phoneme
 				for (j = 0; j < _animTableSize; j++) {
@@ -69,7 +69,6 @@ LipSync::LipSync(const Common::String &filename, const char *data, int len) :
 					_entries[i].anim = 1;
 				}
 
-				data += 4;
 			}
 #ifdef DEBUG_VERBOSE
 			for (int j = 0; j < _numEntries; j++)
@@ -77,6 +76,8 @@ LipSync::LipSync(const Common::String &filename, const char *data, int len) :
 #endif
 		}
 	}
+
+	delete data;
 }
 
 LipSync::~LipSync() {

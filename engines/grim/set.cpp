@@ -22,7 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/memstream.h"
+#include "common/foreach.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
@@ -38,17 +38,20 @@
 
 namespace Grim {
 
-Set::Set(const Common::String &sceneName, const char *buf, int len) :
+Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
 		_lightsConfigured(false) {
 
-	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
-		TextSplitter ts(buf, len);
+	char header[7];
+	data->read(header, 7);
+	data->seek(0, SEEK_SET);
+	if (memcmp(header, "section", 7) == 0) {
+		TextSplitter ts(data);
 		loadText(ts);
 	} else {
-		Common::MemoryReadStream ms((const byte *)buf, len);
-		loadBinary(&ms);
+		loadBinary(data);
 	}
+	delete data;
 }
 
 Set::Set() :
@@ -64,24 +67,18 @@ Set::~Set() {
 			delete _setups[i]._bkgndZBm;
 		}
 		delete[] _setups;
+		turnOffLights();
 		delete[] _lights;
 		for (int i = 0; i < _numSectors; ++i) {
 			delete _sectors[i];
 		}
 		delete[] _sectors;
-		for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
-			delete (*i);
+		foreach (ObjectState *s, _states)
+			delete s;
 	}
 }
 
-void Set::resetInternalData() {
-	for (int i = 0; i < _numSetups; ++i) {
-		_setups[i]._bkgndBm = NULL;
-		_setups[i]._bkgndZBm = NULL;
-	}
-}
-
-void Set::loadText(TextSplitter &ts){
+void Set::loadText(TextSplitter &ts) {
 	char tempBuf[256];
 
 	ts.expectString("section: colormaps");
@@ -158,16 +155,15 @@ void Set::loadText(TextSplitter &ts){
 	}
 }
 
-void Set::loadBinary(Common::MemoryReadStream *ms)
-{
+void Set::loadBinary(Common::SeekableReadStream *data) {
 	// yes, an array of size 0
 	_cmaps = NULL;//new CMapPtr[0];
 
 
-	_numSetups = ms->readUint32LE();
+	_numSetups = data->readUint32LE();
 	_setups = new Setup[_numSetups];
 	for (int i = 0; i < _numSetups; i++)
-		_setups[i].loadBinary(ms);
+		_setups[i].loadBinary(data);
 	_currSetup = _setups;
 
 	_numSectors = 0;
@@ -180,23 +176,22 @@ void Set::loadBinary(Common::MemoryReadStream *ms)
 
 	// the rest may or may not be optional. Might be a good idea to check if there is no more data.
 
-	_numLights = ms->readUint32LE();
+	_numLights = data->readUint32LE();
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; i++)
-		_lights[i].loadBinary(ms);
+		_lights[i].loadBinary(data);
 
 	// bypass light stuff for now
 	_numLights = 0;
 
-	_numSectors = ms->readUint32LE();
+	_numSectors = data->readUint32LE();
 	// Allocate and fill an array of sector info
 	_sectors = new Sector*[_numSectors];
 	for (int i = 0; i < _numSectors; i++) {
 		_sectors[i] = new Sector();
-		_sectors[i]->loadBinary(ms);
+		_sectors[i]->loadBinary(data);
 	}
 }
-
 
 void Set::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
@@ -293,7 +288,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
 		int32 id = savedState->readLEUint32();
-		ObjectState *o = ObjectState::getPool()->getObject(id);
+		ObjectState *o = ObjectState::getPool().getObject(id);
 		_states.push_back(o);
 	}
 
@@ -306,8 +301,8 @@ bool Set::restoreState(SaveGame *savedState) {
 
 		set._name = savedState->readString();
 
-		set._bkgndBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
-		set._bkgndZBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
+		set._bkgndBm = Bitmap::getPool().getObject(savedState->readLEUint32());
+		set._bkgndZBm = Bitmap::getPool().getObject(savedState->readLEUint32());
 
 		set._pos      = savedState->readVector3d();
 		set._interest = savedState->readVector3d();
@@ -397,30 +392,30 @@ void Set::Setup::load(TextSplitter &ts) {
 	}
 }
 
-void Set::Setup::loadBinary(Common::MemoryReadStream *ms) {
+void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	char name[128];
-	ms->read(name, 128);
+	data->read(name, 128);
 	_name = Common::String(name);
 
 	// Skip an unknown number (this is the stringlength of the following string)
 	int fNameLen = 0;
-	fNameLen = ms->readUint32LE();
+	fNameLen = data->readUint32LE();
 
 	char* fileName = new char[fNameLen];
-	ms->read(fileName,fNameLen);
+	data->read(fileName,fNameLen);
 
 	_bkgndZBm = NULL;
 	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
-	ms->read(_pos.getData(), 12);
+	data->read(_pos.getData(), 12);
 
-	ms->read(_interest.getData(), 12);
+	data->read(_interest.getData(), 12);
 
-	ms->read(&_roll, 4);
-	ms->read(&_fov, 4);
-	ms->read(&_nclip, 4);
-	ms->read(&_fclip, 4);
+	data->read(&_roll, 4);
+	data->read(&_fov, 4);
+	data->read(&_nclip, 4);
+	data->read(&_fclip, 4);
 
 }
 
@@ -454,9 +449,9 @@ void Light::load(TextSplitter &ts) {
 	_enabled = true;
 }
 
-void Light::loadBinary(Common::MemoryReadStream *ms) {
+void Light::loadBinary(Common::SeekableReadStream *data) {
 	// skip lights for now
-	ms->seek(100, SEEK_CUR);
+	data->seek(100, SEEK_CUR);
 }
 
 void Set::Setup::setupCamera() const {
@@ -486,6 +481,18 @@ void Set::setupLights() {
 		Light *l = &_lights[i];
 		if (l->_enabled) {
 			g_driver->setupLight(l, count);
+			++count;
+		}
+	}
+}
+
+void Set::turnOffLights() {
+	_enableLights = false;
+	int count = 0;
+	for (int i = 0; i < _numLights; i++) {
+		Light *l = &_lights[i];
+		if (l->_enabled) {
+			g_driver->turnOffLight(count);
 			++count;
 		}
 	}
@@ -569,21 +576,6 @@ void Set::unshrinkBoxes() {
 		Sector *sector = _sectors[i];
 		sector->unshrink();
 	}
-}
-
-ObjectState *Set::findState(const char *filename) {
-	// Check the different state objects for the bitmap
-	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-		const Common::String &file = (*i)->getBitmapFilename();
-
-		if (file == filename)
-			return *i;
-		if (file.compareToIgnoreCase(filename) == 0) {
-			Debug::warning(Debug::Sets, "State object request '%s' matches object '%s' but is the wrong case", filename, file.c_str());
-			return *i;
-		}
-	}
-	return NULL;
 }
 
 void Set::setLightsDirty() {
@@ -692,11 +684,39 @@ void Set::getSoundParameters(int *minVolume, int *maxVolume) {
 	*maxVolume = _maxVolume;
 }
 
-void Set::addObjectState(ObjectState *s) {
+void Set::addObjectState(const ObjectState::Ptr &s) {
 	_states.push_front(s);
 }
 
-void Set::moveObjectStateToFront(ObjectState *s) {
+ObjectState *Set::addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency) {
+	ObjectState *state = findState(bitmap);
+
+	if (state) {
+		return state;
+	}
+
+	state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
+	addObjectState(state);
+
+	return state;
+}
+
+ObjectState *Set::findState(const Common::String &filename) {
+	// Check the different state objects for the bitmap
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
+		const Common::String &file = (*i)->getBitmapFilename();
+
+		if (file == filename)
+			return *i;
+		if (file.compareToIgnoreCase(filename) == 0) {
+			Debug::warning(Debug::Sets, "State object request '%s' matches object '%s' but is the wrong case", filename.c_str(), file.c_str());
+			return *i;
+		}
+	}
+	return NULL;
+}
+
+void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_front(s);
 	// Make the state invisible. This hides the deadbolt when brennis closes the switcher door
@@ -704,7 +724,7 @@ void Set::moveObjectStateToFront(ObjectState *s) {
 	s->setActiveImage(0);
 }
 
-void Set::moveObjectStateToBack(ObjectState *s) {
+void Set::moveObjectStateToBack(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_back(s);
 }

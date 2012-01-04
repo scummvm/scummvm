@@ -27,6 +27,10 @@
 
 #include "engines/grim/object.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 class ModelNode;
@@ -34,10 +38,10 @@ class TextSplitter;
 
 class KeyframeAnim : public Object {
 public:
-	KeyframeAnim(const Common::String &filename, const char *data, int len);
+	KeyframeAnim(const Common::String &filename, Common::SeekableReadStream *data);
 	~KeyframeAnim();
 
-	void loadBinary(const char *data, int len);
+	void loadBinary(Common::SeekableReadStream *data);
 	void loadText(TextSplitter &ts);
 	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
 	int getMarker(float startTime, float stopTime) const;
@@ -47,7 +51,14 @@ public:
 
 private:
 	Common::String _fname;
-	unsigned int _flags, _type;
+	unsigned int _flags;
+	/**
+	 * A bitfield ID which specifies which joints of the skeleton hierarchy this
+	 * KeyFrameAnim can animate on. This is ANDed against the _type of the ModelNode
+	 * to test whether this KeyFrameAnim can animate that ModelNode, or if it is to 
+	 * be ignored.
+	 */
+	unsigned int _type;
 	int _numFrames, _numJoints;
 	float _fps;
 	int _numMarkers;
@@ -59,7 +70,7 @@ private:
 	Marker *_markers;
 
 	struct KeyframeEntry {
-		void loadBinary(const char *&data);
+		void loadBinary(const char *data);
 
 		float _frame;
 		int _flags;
@@ -68,7 +79,7 @@ private:
 	};
 
 	struct KeyframeNode {
-		void loadBinary(const char *&data);
+		void loadBinary(Common::SeekableReadStream *data, char *meshName);
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 

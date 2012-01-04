@@ -36,14 +36,13 @@ MoviePlayer *CreateSmushPlayer(bool demo) {
 }
 
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
-	_speed = 5000;
 	_videoDecoder = new Grim::SmushDecoder();
 	getDecoder()->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(Common::String filename) {
 	if (!_demo)
-		return _videoDecoder->loadStream(g_resourceloader->openNewSubStreamFile(filename.c_str()));
+		return _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
 	else
 		return _videoDecoder->loadFile(filename);
 }
@@ -64,11 +63,6 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if (_demo) {
-		_x = getDecoder()->getX();
-		_y = getDecoder()->getY();
-	}
-
 	if (_videoDecoder->endOfVideo()) {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping ) {
@@ -77,8 +71,15 @@ void SmushPlayer::handleFrame() {
 			deinit();
 			return;
 		} else {
-			getDecoder()->rewind(); // This doesnt handle if looping fails.
+// 			getDecoder()->rewind(); // This doesnt handle if looping fails.
 		}
+	}
+}
+
+void SmushPlayer::postHandleFrame() {
+	if (_demo) {
+		_x = getDecoder()->getX();
+		_y = getDecoder()->getY();
 	}
 }
 

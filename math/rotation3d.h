@@ -59,40 +59,43 @@ Rotation3D<T>::Rotation3D() :
 
 }
 
+// NOTE: Builds a rotation matrix of form R_Yaw * R_Pitch * R_Roll (i.e. R_z * R_x * R_y).
+// The order of rotations is of the form Matrix * Vector, so roll is applied first, then pitch, then yaw.
 template<class T>
 void Rotation3D<T>::buildFromPitchYawRoll(const Angle &pitch, const Angle &yaw, const Angle &roll) {
 	T temp;
 
-	buildAroundYaw(yaw);
-	temp.buildAroundPitch(pitch);
+	buildAroundYaw(yaw); // Rotate about +Z
+	temp.buildAroundPitch(pitch); // Rotate about +X
 	this->getMatrix() = this->getMatrix() * temp;
-	temp.buildAroundRoll(roll);
+	temp.buildAroundRoll(roll); // Rotate about +Y
 	this->getMatrix() = this->getMatrix() * temp;
+	// The created matrix has the Euler order ZXY. (M*v)
 }
 
-// at, around x-axis
+// at. Rotates about the +X axis.
 template<class T>
-void Rotation3D<T>::buildAroundRoll(const Angle &roll) {
-	float cosa = roll.getCosine();
-	float sina = roll.getSine();
+void Rotation3D<T>::buildAroundPitch(const Angle &pitch) {
+	float cosa = pitch.getCosine();
+	float sina = pitch.getSine();
 
 	this->getMatrix().getRow(0) << 1.f << 0.f  << 0.f;
 	this->getMatrix().getRow(1) << 0.f << cosa << -sina;
 	this->getMatrix().getRow(2) << 0.f << sina << cosa;
 }
 
-// right
+// right. Rotates about the +Y axis.
 template<class T>
-void Rotation3D<T>::buildAroundPitch(const Angle &pitch) {
-	float cosa = pitch.getCosine();
-	float sina = pitch.getSine();
+void Rotation3D<T>::buildAroundRoll(const Angle &roll) {
+	float cosa = roll.getCosine();
+	float sina = roll.getSine();
 
 	this->getMatrix().getRow(0) << cosa  << 0.f << sina;
 	this->getMatrix().getRow(1) << 0.f   << 1.f << 0.f;
 	this->getMatrix().getRow(2) << -sina << 0.f << cosa;
 }
 
-// up
+// up. Rotates about the +Z axis.
 template<class T>
 void Rotation3D<T>::buildAroundYaw(const Angle &yaw) {
 	float cosa = yaw.getCosine();
@@ -111,15 +114,15 @@ void Rotation3D<T>::getPitchYawRoll(Angle *pPitch, Angle *pYaw, Angle *pRoll) co
 									  this->getMatrix().getValue(0, 0));
 	}
 
-	if (pPitch) {
+	if (pRoll) {
 		float a = this->getMatrix().getValue(2, 1);
 		float b = this->getMatrix().getValue(2, 2);
 		float mag = sqrt(a * a + b * b);
-		*pPitch = Angle::arcTangent2(-this->getMatrix().getValue(2, 0), mag);
+		*pRoll = Angle::arcTangent2(-this->getMatrix().getValue(2, 0), mag);
 	}
 
-	if (pRoll) {
-		*pRoll = Angle::arcTangent2(this->getMatrix().getValue(2, 1),
+	if (pPitch) {
+		*pPitch = Angle::arcTangent2(this->getMatrix().getValue(2, 1),
 									   this->getMatrix().getValue(2, 2));
 	}
 }

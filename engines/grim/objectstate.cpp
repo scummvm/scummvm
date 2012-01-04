@@ -57,12 +57,8 @@ void ObjectState::setActiveImage(int val) {
 	if (val) {
 		assert(_bitmap);
 		_bitmap->setActiveImage(val);
-		if (_zbitmap) {
-			if (val > _zbitmap->getNumImages()) {
-				_zbitmap->setActiveImage(0);
-			} else {
-				_zbitmap->setActiveImage(val);
-			}
+		if (_zbitmap && val <= _zbitmap->getNumImages()) {
+			_zbitmap->setActiveImage(val);
 		}
 	}
 
@@ -72,6 +68,7 @@ void ObjectState::setActiveImage(int val) {
 void ObjectState::draw() {
 	if (!_visibility)
 		return;
+
 	assert(_bitmap);
 	_bitmap->draw();
 	if (_zbitmap)
@@ -103,8 +100,8 @@ bool ObjectState::restoreState(SaveGame *savedState) {
 	_setupID    = savedState->readLEUint32();
 	_pos        = (Position) savedState->readLEUint32();
 
-	_bitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
-	_zbitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
+	_bitmap = Bitmap::getPool().getObject(savedState->readLESint32());
+	_zbitmap = Bitmap::getPool().getObject(savedState->readLESint32());
 
 	return true;
 }

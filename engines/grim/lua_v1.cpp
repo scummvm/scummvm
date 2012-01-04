@@ -48,6 +48,15 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
+// Windows.h badness: Remove #defines to the following Win32 API MultiByte/Unicode functions.
+#ifdef GetDiskFreeSpace
+#undef GetDiskFreeSpace
+#endif
+
+#ifdef PlaySound
+#undef PlaySound
+#endif
+
 namespace Grim {
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
@@ -355,13 +364,13 @@ void Lua_V1::RotateVector() {
 
 	lua_pushobject(rotObj);
 	lua_pushstring("x");
-	Math::Angle roll = lua_getnumber(lua_gettable());
+	Math::Angle pitch = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("y");
 	Math::Angle yaw = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("z");
-	Math::Angle pitch = lua_getnumber(lua_gettable());
+	Math::Angle roll = lua_getnumber(lua_gettable());
 
 	Math::Matrix3 mat;
 	mat.buildFromPitchYawRoll(pitch, yaw, roll);
@@ -818,8 +827,7 @@ void Lua_V1::NewObjectState() {
 		zbitmap = lua_getstring(lua_getparam(4));
 	bool transparency = getbool(5);
 
-	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
-	g_grim->getCurrSet()->addObjectState(state);
+	ObjectState *state = g_grim->getCurrSet()->addObjectState(setupID, pos, bitmap, zbitmap, transparency);
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 
@@ -884,6 +892,7 @@ void Lua_V1::GetSaveGameImage() {
 		data[l] = savedState->readLEUint16();
 	}
 	screenshot = new Bitmap((char *)data, width, height, 16, "screenshot");
+	delete[] data;
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {

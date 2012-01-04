@@ -441,24 +441,28 @@ bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
+static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) {
+	return x.getSaveSlot() < y.getSaveSlot();
+}
+
+
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = "grim??.gsv";
+	Common::String pattern = "grim*.gsv";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	char str[256];
 	int32 strSize;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		// Obtain the last digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + 4);
 
-		if (slotNum >= 0 && slotNum <= 99) {
-			SaveGame *savedState = SaveGame::openForLoading((*file).c_str());
+		if (slotNum >= 0) {
+			SaveGame *savedState = SaveGame::openForLoading(*file);
 			if (savedState) {
 				if (savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
 					delete savedState;
@@ -475,6 +479,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), cmpSave);
 	return saveList;
 }
 

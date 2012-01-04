@@ -27,6 +27,7 @@
 #include "engines/grim/localize.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 
@@ -37,31 +38,24 @@ static int sortCallback(const void *entry1, const void *entry2) {
 }
 
 Localizer::Localizer() {
-	Common::File f;
-	const char *namesToTry[] = { "GRIM.TAB", "Grim.tab", "grim.tab" };
-
 	_data = 0;
 
 	if (g_grim->getGameFlags() & ADGF_DEMO || g_grim->getGameType() == GType_MONKEY4)
 		return;
 
-	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {
-		f.open(namesToTry[i]);
-		if (f.isOpen())
-			break;
-	}
-	if (!f.isOpen()) {
+	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile("grim.tab");
+	if (!f) {
 		error("Localizer::Localizer: Unable to find localization information (grim.tab)");
 		return;
 	}
 
-	long filesize = f.size();
+	long filesize = f->size();
 
 	// Read in the data
 	_data = new char[filesize + 1];
-	f.read(_data, filesize);
+	f->read(_data, filesize);
 	_data[filesize] = '\0';
-	f.close();
+	delete f;
 
 	if (filesize < 4 || READ_BE_UINT32(_data) != MKTAG('R','C','N','E'))
 		error("Invalid magic reading grim.tab");

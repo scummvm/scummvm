@@ -41,6 +41,8 @@ class PrimitiveObject;
 class Font;
 class TextObject;
 class Material;
+class EMIModel;
+class EMIMeshFace;
 class ModelNode;
 class Mesh;
 class MeshFace;
@@ -54,7 +56,8 @@ class Texture;
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
-	BM_RGBA = 3      // EMI-PC
+	BM_RGBA = 3,      // EMI-PC (Also internal Material-format for Grim)
+	BM_RGB888 = 4	  // EMI-TGA-materials (888)
 };
 class GfxBase {
 public:
@@ -93,24 +96,27 @@ public:
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
 	virtual void drawShadowPlanes() = 0;
-	virtual void setShadowMode() = 0;
-	virtual void clearShadowMode() = 0;
+	virtual void setShadowMode();
+	virtual void clearShadowMode();
+	bool isShadowModeActive();
 	virtual void setShadowColor(byte r, byte g, byte b) = 0;
 	virtual void getShadowColor(byte *r, byte *g, byte *b) = 0;
 
 	virtual void set3DMode() = 0;
 
-	virtual void translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										 const Math::Angle &yaw, const Math::Angle &roll) = 0;
+	virtual void translateViewpointStart() = 0;
+	virtual void translateViewpoint(const Math::Vector3d &vec) = 0;
+	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) = 0;
 	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
 	virtual void setupLight(Light *light, int lightId) = 0;
+	virtual void turnOffLight(int lightId) = 0;
 
 	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap) = 0;
 	virtual void selectMaterial(const Texture *material) = 0;
@@ -226,6 +232,7 @@ protected:
 	unsigned char _shadowColorB;
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
+	bool _shadowModeActive;
 };
 
 // Factory-like functions:

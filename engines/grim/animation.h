@@ -55,7 +55,7 @@ public:
 	bool getIsActive() const;
 	FadeMode getFadeMode() const;
 
-	int update(int time);
+	int update(uint time);
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
@@ -79,6 +79,7 @@ private:
 class AnimManager {
 public:
 	AnimManager();
+	~AnimManager();
 	void addAnimation(Animation *anim, int pr1, int pr2);
 	void removeAnimation(Animation *anim);
 

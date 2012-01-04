@@ -36,6 +36,7 @@ public:
 	Matrix();
 	Matrix(float x, float y);
 	Matrix(const MatrixBase<2, 1> &vec);
+	Matrix(const float *data);
 
 	inline float getX() const { return getValue(0); }
 	inline float getY() const { return getValue(1); }

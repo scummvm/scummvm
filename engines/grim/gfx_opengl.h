@@ -73,17 +73,19 @@ public:
 
 	void set3DMode();
 
-	void translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-								 const Math::Angle &yaw, const Math::Angle &roll);
+	void translateViewpointStart();
+	void translateViewpoint(const Math::Vector3d &vec);
+	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis);
 	void translateViewpointFinish();
 
-	void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2);
+	void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face);
 	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 
 	void enableLights();
 	void disableLights();
 	void setupLight(Light *light, int lightId);
+	void turnOffLight(int lightId);
 
 	void createMaterial(Texture *material, const char *data, const CMap *cmap);
 	void selectMaterial(const Texture *material);

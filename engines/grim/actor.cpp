@@ -45,11 +45,13 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
+#include "common/foreach.h"
+
 namespace Grim {
 
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
-		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
+		_talkColor(PoolColor::getPool().getObject(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -61,7 +63,6 @@ Actor::Actor(const Common::String &actorName) :
 		_lastTurnDir(0), _currTurnDir(0),
 		_sayLineText(0) {
 	_lookingMode = false;
-	_lookAtRate = 200;
 	_constrain = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
@@ -72,7 +73,7 @@ Actor::Actor(const Common::String &actorName) :
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
-	_collisionScale = 0.f;
+	_collisionScale = 1.f;
 	_puckOrient = false;
 
 	for (int i = 0; i < 5; i++) {
@@ -222,7 +223,8 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLEUint32(_sayLineText);
 
 	savedState->writeVector3d(_lookAtVector);
-	savedState->writeFloat(_lookAtRate);
+	// FIXME Remove this!!
+	savedState->writeFloat(0);
 
 	savedState->writeLESint32(_path.size());
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
@@ -240,7 +242,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor = PoolColor::getPool()->getObject(savedState->readLEUint32());
+	_talkColor = PoolColor::getPool().getObject(savedState->readLEUint32());
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();
@@ -316,6 +318,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	_mumbleChore.restoreState(savedState, this);
 
+	clearShadowPlanes();
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
 		shadow.name = savedState->readString();
@@ -323,7 +326,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLESint32();
-		shadow.planeList.clear();
 		Set *scene = NULL;
 		for (int j = 0; j < size; ++j) {
 			Common::String setName = savedState->readString();
@@ -354,7 +356,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_sayLineText = savedState->readLEUint32();
 
 	_lookAtVector = savedState->readVector3d();
-	_lookAtRate = savedState->readFloat();
+	// FIXME: Remove this!!
+	savedState->readFloat();
 
 	size = savedState->readLESint32();
 	for (int i = 0; i < size; ++i) {
@@ -549,22 +552,23 @@ bool Actor::isTurning() const {
 }
 
 void Actor::moveTo(const Math::Vector3d &pos) {
-	// This is necessary for collisions in set hl to work, since
-	// Manny's collision mode isn't set.
-	if (_collisionScale == 0.f) {
-		_pos = pos;
-		return;
-	}
-
+	// The walking actor doesn't always have the collision mode set, but it must however check
+	// the collisions. E.g. the set hl doesn't set Manny's mode, but it must check for
+	// collisions with Raoul.
+	// On the other hand, it must not *set* the sphere mode, it must just use it for this call:
+	// the set xb sets Manny's collision scale as 1 and mode as Off. If you then go to set tb
+	// and talk to Doug at the photo window, Manny's mode *must be* Off, otherwise Doug will
+	// collide, miss the target point and will walk away, leaving Manny waiting for him at
+	// the window forever.
+	CollisionMode mode = _collisionMode;
 	if (_collisionMode == CollisionOff) {
-		_collisionMode = CollisionSphere;
+		mode = CollisionSphere;
 	}
 
 	Math::Vector3d v = pos - _pos;
-	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
+	foreach (Actor *a, Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
-			collidesWith(a, &v);
+			handleCollisionWith(a, mode, &v);
 		}
 	}
 	_pos += v;
@@ -812,7 +816,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	g_grim->setTalkingActor(this);
 
 	if (_sayLineText) {
-		delete TextObject::getPool()->getObject(_sayLineText);
+		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 
@@ -822,7 +826,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			return;
 
 		if (g_grim->getMode() == GrimEngine::SmushMode)
-			TextObject::getPool()->deleteObjects();
+			TextObject::getPool().deleteObjects();
 
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
@@ -848,12 +852,19 @@ void Actor::sayLine(const char *msgId, bool background) {
 	}
 }
 
+void Actor::lineCleanup() {
+	if (_sayLineText) {
+		delete TextObject::getPool().getObject(_sayLineText);
+		_sayLineText = 0;
+	}
+}
+
 bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	TextObject *textObject = NULL;
 	if (_sayLineText)
-		textObject = TextObject::getPool()->getObject(_sayLineText);
+		textObject = TextObject::getPool().getObject(_sayLineText);
 	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
@@ -881,7 +892,7 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		delete TextObject::getPool()->getObject(_sayLineText);
+		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 	if (g_grim->getTalkingActor() == this) {
@@ -948,6 +959,14 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
+void Actor::setLookAtRate(float rate) {
+	_costumeStack.back()->setLookAtRate(rate);
+}
+
+float Actor::getLookAtRate() const {
+	return _costumeStack.back()->getLookAtRate();
+}
+
 Costume *Actor::findCostume(const Common::String &n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if ((*i)->getFilename().compareToIgnoreCase(n) == 0)
@@ -989,7 +1008,7 @@ void Actor::updateWalk() {
 	_pos += dir * walkAmt;
 }
 
-void Actor::update(float frameTime) {
+void Actor::update(uint frameTime) {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
@@ -1133,7 +1152,7 @@ void Actor::update(float frameTime) {
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		c->moveHead(_lookingMode, _lookAtVector, _lookAtRate);
+		c->moveHead(_lookingMode, _lookAtVector);
 	}
 }
 
@@ -1153,61 +1172,38 @@ void Actor::draw() {
 		}
 	}
 
-	int x1, y1, x2, y2;
-	int *px1, *py1, *px2, *py2;
-	if (_mustPlaceText) {
-		px1 = &x1;
-		py1 = &y1;
-		px2 = &x2;
-		py2 = &y2;
-
-		x1 = y1 = 1000;
-		x2 = y2 = -1000;
-	} else {
-		px1 = py1 = px2 = py2 = NULL;
-	}
-
 	if (!_costumeStack.empty()) {
 		Costume *costume = _costumeStack.back();
-		if (!g_driver->isHardwareAccelerated()) {
-			for (int l = 0; l < 5; l++) {
-				if (!shouldDrawShadow(l))
-					continue;
-				g_driver->setShadow(&_shadowArray[l]);
-				g_driver->setShadowMode();
-				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-				costume->draw();
-				g_driver->finishActorDraw();
-				g_driver->clearShadowMode();
-				g_driver->setShadow(NULL);
-			}
-			// normal draw actor
-			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw(px1, py1, px2, py2);
-			g_driver->finishActorDraw();
-		} else {
-			// normal draw actor
-			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw(px1, py1, px2, py2);
-			g_driver->finishActorDraw();
-
-			for (int l = 0; l < 5; l++) {
-				if (!shouldDrawShadow(l))
-					continue;
-				g_driver->setShadow(&_shadowArray[l]);
-				g_driver->setShadowMode();
+		for (int l = 0; l < 5; l++) {
+			if (!shouldDrawShadow(l))
+				continue;
+			g_driver->setShadow(&_shadowArray[l]);
+			g_driver->setShadowMode();
+			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-				costume->draw();
-				g_driver->finishActorDraw();
-				g_driver->clearShadowMode();
-				g_driver->setShadow(NULL);
-			}
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+			costume->draw();
+			g_driver->finishActorDraw();
+			g_driver->clearShadowMode();
+			g_driver->setShadow(NULL);
 		}
+		// normal draw actor
+		g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+		costume->draw();
+		g_driver->finishActorDraw();
 	}
 
 	if (_mustPlaceText) {
-		TextObject *textObject = TextObject::getPool()->getObject(_sayLineText);
+		int x1, y1, x2, y2;
+		x1 = y1 = 1000;
+		x2 = y2 = -1000;
+		if (!_costumeStack.empty()) {
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
+			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
+			g_driver->finishActorDraw();
+		}
+
+		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
 			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
 				textObject->setX(640 / 2);
@@ -1362,8 +1358,7 @@ Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::
 	}
 
 	Math::Vector3d p = pos;
-	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
+	foreach (Actor *a, Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			p = a->getTangentPos(from, p);
 		}
@@ -1406,7 +1401,7 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 	return dest;
 }
 
-bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
+bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const {
 	if (actor->_collisionMode == CollisionOff) {
 		return false;
 	}
@@ -1420,7 +1415,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 	float size1 = model1->_radius * _collisionScale;
 	float size2 = model2->_radius * actor->_collisionScale;
 
-	CollisionMode mode1 = _collisionMode;
+	CollisionMode mode1 = mode;
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
@@ -1445,6 +1440,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 
 		Math::Vector3d bboxPos;
 		Math::Vector3d size;
+		float scale;
 		Math::Vector3d pos;
 		Math::Vector3d circlePos;
 		Math::Angle yaw;
@@ -1455,7 +1451,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		if (mode1 == CollisionBox) {
 			pos = p1 + *vec;
 			bboxPos = pos + model1->_bboxPos;
-			size = model1->_bboxSize * _collisionScale;
+			size = model1->_bboxSize;
+			scale = _collisionScale;
 			yaw = _yaw;
 
 			circle.setX(p2.x());
@@ -1465,7 +1462,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		} else {
 			pos = p2;
 			bboxPos = p2 + model2->_bboxPos;
-			size = model2->_bboxSize * actor->_collisionScale;
+			size = model2->_bboxSize;
+			scale = actor->_collisionScale;
 			yaw = actor->_yaw;
 
 			circle.setX(p1.x() + vec->x());
@@ -1478,6 +1476,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		rect._topRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
 		rect._bottomLeft = Math::Vector2d(bboxPos.x(), bboxPos.y());
 		rect._bottomRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
+
+		rect.scale(scale);
 		rect.rotateAround(Math::Vector2d(pos.x(), pos.y()), yaw);
 
 		if (rect.intersectsCircle(circle, radius)) {

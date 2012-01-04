@@ -25,11 +25,15 @@
 
 #include "engines/grim/object.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Grim {
 
 class LipSync : public Object {
 public:
-	LipSync(const Common::String &filename, const char *data, int len);
+	LipSync(const Common::String &filename, Common::SeekableReadStream *data);
 	~LipSync();
 
 	struct LipEntry {

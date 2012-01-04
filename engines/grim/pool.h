@@ -3,6 +3,8 @@
 #define GRIM_POOL_H
 
 #include "common/hashmap.h"
+#include "common/list.h"
+#include "common/foreach.h"
 
 #include "engines/grim/savegame.h"
 
@@ -22,7 +24,34 @@ class PoolObject : public PoolObjectBase {
 public:
 	class Pool {
 	public:
-		typedef typename Common::HashMap<int32, T *>::iterator Iterator;
+		template<class it, class Type>
+		class Iterator {
+		public:
+			Iterator(const Iterator &i) : _i(i._i) { }
+			Iterator(const it &i) : _i(i) { }
+
+			int32 getId() const { return _i->_key; }
+			Type &getValue() const { return _i->_value; }
+
+			Type &operator*() const { return _i->_value; }
+
+			Iterator &operator=(const Iterator &i) { _i = i._i; return *this; }
+
+			bool operator==(const Iterator i) const { return _i == i._i; }
+			bool operator!=(const Iterator i) const { return _i != i._i; }
+
+			Iterator &operator++() { ++_i; return *this; }
+			Iterator operator++(int) { Iterator iter = *this; ++_i; return iter; }
+
+			Iterator &operator--() { --_i; return *this; }
+			Iterator operator--(int) { Iterator iter = *this; --_i; return iter; }
+
+		private:
+			it _i;
+		};
+
+		typedef Iterator<typename Common::HashMap<int32, T *>::iterator, T *> iterator;
+		typedef Iterator<typename Common::HashMap<int32, T *>::const_iterator, T *const> const_iterator;
 
 		Pool();
 		~Pool();
@@ -31,8 +60,10 @@ public:
 		void removeObject(int32 id);
 
 		T *getObject(int32 id);
-		Iterator getBegin();
-		Iterator getEnd();
+		iterator begin();
+		const_iterator begin() const;
+		iterator end();
+		const_iterator end() const;
 		int getSize() const;
 		void deleteObjects();
 		void saveObjects(SaveGame *save);
@@ -43,28 +74,83 @@ public:
 		Common::HashMap<int32, T*> _map;
 	};
 
+	/**
+	 * @short Smart pointer class
+	 * This class wraps a C pointer to T, subclass of PoolObject, which gets reset to NULL as soon as
+	 * the object is deleted, e.g by Pool::restoreObjects().
+	 * Its operator overloads allows the Ptr class to be used as if it was a raw C pointer.
+	 */
+	class Ptr {
+	public:
+		Ptr() : _obj(NULL) { }
+		Ptr(T *obj) : _obj(obj) {
+			if (_obj)
+				_obj->addPointer(this);
+		}
+		Ptr(const Ptr &ptr) : _obj(ptr._obj) {
+			if (_obj)
+				_obj->addPointer(this);
+		}
+		~Ptr() {
+			if (_obj)
+				_obj->removePointer(this);
+		}
+
+		Ptr &operator=(T *obj);
+		Ptr &operator=(const Ptr &ptr);
+
+		inline operator bool() const { return _obj; }
+		inline bool operator!() const { return !_obj; }
+		inline bool operator==(T *obj) const { return _obj == obj; }
+		inline bool operator!=(T *obj) const { return _obj != obj; }
+
+		inline T *operator->() const { return _obj; }
+		inline T &operator*() const { return *_obj; }
+		inline operator T*() const { return _obj; }
+
+	private:
+		inline void reset() { _obj = NULL; }
+
+		T *_obj;
+
+		friend class PoolObject;
+	};
+
 	virtual ~PoolObject();
 
 	int getId() const;
 	int32 getTag() const;
 	static int32 getTagStatic();
 
-	static Pool *getPool();
+	static Pool &getPool();
 
 protected:
 	PoolObject();
 
-	virtual void resetInternalData();
-
 private:
 	void setId(int id);
+	void addPointer(Ptr *pointer) { _pointers.push_back(pointer); }
+	void removePointer(Ptr *pointer) { _pointers.remove(pointer); }
 
 	int _id;
 	static int s_id;
 	static Pool *s_pool;
 
+	Common::List<Ptr *> _pointers;
+
 	friend class Pool;
+	friend class Ptr;
 };
+
+template <class T, int32 tag>
+bool operator==(T *obj, const typename PoolObject<T, tag>::Ptr &ptr) {
+	return obj == ptr._obj;
+}
+
+template <class T, int32 tag>
+bool operator!=(T *obj, const typename PoolObject<T, tag>::Ptr &ptr) {
+	return obj != ptr._obj;
+}
 
 template <class T, int32 tag>
 int PoolObject<T, tag>::s_id = 0;
@@ -86,6 +172,10 @@ PoolObject<T, tag>::PoolObject() {
 template <class T, int32 tag>
 PoolObject<T, tag>::~PoolObject() {
 	s_pool->removeObject(_id);
+
+	for (typename Common::List<Ptr *>::iterator i = _pointers.begin(); i != _pointers.end(); ++i) {
+		(*i)->reset();
+	}
 }
 
 template <class T, int32 tag>
@@ -102,16 +192,11 @@ int PoolObject<T, tag>::getId() const {
 }
 
 template <class T, int32 tag>
-void PoolObject<T, tag>::resetInternalData() {
-
-}
-
-template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool *PoolObject<T, tag>::getPool() {
+typename PoolObject<T, tag>::Pool &PoolObject<T, tag>::getPool() {
 	if (!s_pool) {
 		s_pool = new Pool();
 	}
-	return s_pool;
+	return *s_pool;
 }
 
 template <class T, int32 tag>
@@ -157,13 +242,23 @@ T *PoolObject<T, tag>::Pool::getObject(int32 id) {
 }
 
 template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool::Iterator PoolObject<T, tag>::Pool::getBegin() {
-	return _map.begin();
+typename PoolObject<T, tag>::Pool::iterator PoolObject<T, tag>::Pool::begin() {
+	return iterator(_map.begin());
 }
 
 template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool::Iterator PoolObject<T, tag>::Pool::getEnd() {
-	return _map.end();
+typename PoolObject<T, tag>::Pool::const_iterator PoolObject<T, tag>::Pool::begin() const {
+	return const_iterator(_map.begin());
+}
+
+template <class T, int32 tag>
+typename PoolObject<T, tag>::Pool::iterator PoolObject<T, tag>::Pool::end() {
+	return iterator(_map.end());
+}
+
+template <class T, int32 tag>
+typename PoolObject<T, tag>::Pool::const_iterator PoolObject<T, tag>::Pool::end() const {
+	return const_iterator(_map.end());
 }
 
 template <class T, int32 tag>
@@ -174,7 +269,7 @@ int PoolObject<T, tag>::Pool::getSize() const {
 template <class T, int32 tag>
 void PoolObject<T, tag>::Pool::deleteObjects() {
 	while (!_map.empty()) {
-		delete getBegin()->_value;
+		delete *begin();
 	}
 	delete this;
 }
@@ -184,9 +279,9 @@ void PoolObject<T, tag>::Pool::saveObjects(SaveGame *state) {
 	state->beginSection(tag);
 
 	state->writeLEUint32(_map.size());
-	for (Iterator i = getBegin(); i != getEnd(); ++i) {
-		T *a = i->_value;
-		state->writeLESint32(i->_key);
+	for (iterator i = begin(); i != end(); ++i) {
+		T *a = *i;
+		state->writeLESint32(i.getId());
 
 		a->saveState(state);
 	}
@@ -212,17 +307,39 @@ void PoolObject<T, tag>::Pool::restoreObjects(SaveGame *state) {
 		tempMap[id] = t;
 		t->restoreState(state);
 	}
-	for (Iterator i = getBegin(); i != getEnd(); i++) {
-		// Can't use T directly here, since resetInternalData() is protected and
-		// Pool is friend of PoolObject, not of T.
-		PoolObject<T, tag> *t = i->_value;
-		t->resetInternalData();
-		delete t;
+	for (iterator i = begin(); i != end(); i++) {
+		delete *i;
 	}
 	_map = tempMap;
 	_restoring = false;
 
 	state->endSection();
+}
+
+template<class T, int32 tag>
+typename PoolObject<T, tag>::Ptr &PoolObject<T, tag>::Ptr::operator=(T *obj) {
+	if (_obj) {
+		_obj->removePointer(this);
+	}
+	_obj = obj;
+	if (obj) {
+		obj->addPointer(this);
+	}
+
+	return *this;
+}
+
+template<class T, int32 tag>
+typename PoolObject<T, tag>::Ptr &PoolObject<T, tag>::Ptr::operator=(const Ptr &ptr) {
+	if (_obj) {
+		_obj->removePointer(this);
+	}
+	_obj = ptr._obj;
+	if (_obj) {
+		_obj->addPointer(this);
+	}
+
+	return *this;
 }
 
 }

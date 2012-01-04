@@ -28,12 +28,8 @@
 #include "math/matrix4.h"
 
 #include "engines/grim/object.h"
-#include "engines/grim/animation.h"
-
 
 namespace Grim {
-
-#define DEFAULT_COLORMAP "item.cmp"
 
 typedef uint32 tag32;
 
@@ -41,13 +37,17 @@ class CMap;
 class Model;
 class ModelNode;
 class TextSplitter;
+class ModelComponent;
+class Component;
+class Chore;
+class Head;
 
 class Costume : public Object {
 public:
-	Costume(const Common::String &filename, const char *data, int len, Costume *prevCost);
+	Costume(const Common::String &filename, Common::SeekableReadStream *data, Costume *prevCost);
 
 	void loadGRIM(TextSplitter &ts, Costume *prevCost);
-	void loadEMI(Common::MemoryReadStream &ms, Costume *prevCost);
+	void loadEMI(Common::SeekableReadStream *data, Costume *prevCost);
 
 	virtual ~Costume();
 
@@ -55,8 +55,8 @@ public:
 	void playChore(const char *name);
 	void playChore(int num);
 	void playChoreLooping(int num);
-	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
-	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
+	void setChoreLastFrame(int num);
+	void setChoreLooping(int num, bool val);
 	void stopChore(int num);
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);
@@ -68,15 +68,20 @@ public:
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 	int getNumChores() const { return _numChores; }
+	Chore *getChore(const char *name);
 
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
-	void moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rate);
+	void setLookAtRate(float rate);
+	float getLookAtRate() const;
+	void moveHead(bool entering, const Math::Vector3d &lookAt);
 
-	int update(float frameTime);
+	CMap *getCMap() { return _cmap; }
+
+	int update(uint frameTime);
 	void animate();
 	void setupTextures();
 	void draw();
-	void draw(int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
 					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
@@ -86,48 +91,10 @@ public:
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
 
-	class Component {
-	public:
-		Component(Component *parent, int parentID, tag32 tag);
-
-		tag32 getTag() { return _tag; }
-		CMap *getCMap();
-		virtual void setColormap(CMap *c);
-		bool isVisible();
-		Component *getParent() { return _parent; }
-		virtual void setMatrix(Math::Matrix4) { };
-		virtual void init() { }
-		virtual void setKey(int) { }
-		virtual void setMapName(char *) { }
-		virtual int update(float time) { return 0; }
-		virtual void animate() { }
-		virtual void setupTexture() { }
-		virtual void draw(int *x1, int *y1, int *x2, int *y2) { }
-		virtual void reset() { }
-		virtual void resetColormap() { }
-		virtual void saveState(SaveGame *) { }
-		virtual void restoreState(SaveGame *) { }
-		virtual ~Component();
-
-	protected:
-		ObjectPtr<CMap> _cmap, _previousCmap;
-		tag32 _tag;
-		int _parentID;
-		bool _visible;
-		Component *_parent, *_child, *_sibling;
-		Math::Matrix4 _matrix;
-		Costume *_cost;
-		void setCostume(Costume *cost) { _cost = cost; }
-		void setParent(Component *newParent);
-		void removeChild(Component *child);
-		void resetHierCMap();
-
-		friend class Costume;
-	};
-
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	Component *loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent);
+	Component *loadComponentEMI(Component *parent, int parentID, const char *name, Component *prevComponent);
+	ModelComponent *getMainModelComponent() const;
 
 	Common::String _fname;
 	Costume *_prevCostume;
@@ -135,69 +102,17 @@ private:
 	int _numComponents;
 	Component **_components;
 
-	struct TrackKey {
-		int time, value;
-	};
-
-	struct ChoreTrack {
-		int compID;
-		int numKeys;
-		TrackKey *keys;
-	};
-
-	struct Head {
-		int joint1;
-		int joint2;
-		int joint3;
-		float maxRoll;
-		float maxPitch;
-		float maxYaw;
-	} _head;
-
-	class Chore {
-	public:
-		Chore();
-		~Chore();
-		void load(int id, Costume *owner, TextSplitter &ts);
-		void play();
-		void playLooping();
-		void setLooping(bool val) { _looping = val; }
-		void stop();
-		void update(float time);
-		void setLastFrame();
-		void fadeIn(int msecs);
-		void fadeOut(int msecs);
-		void cleanup();
-
-	private:
-		void setKeys(int startTime, int stopTime);
-		void fade(Animation::FadeMode, int msecs);
-
-		Costume *_owner;
-
-		int _id;
-		int _length;
-		int _numTracks;
-		ChoreTrack *_tracks;
-		char _name[32];
-
-		bool _hasPlayed, _playing, _looping;
-		int _currTime;
-
-		friend class Costume;
-	};
+	Head *_head;
 
 	ObjectPtr<CMap> _cmap;
 	int _numChores;
-	Chore *_chores;
+	Chore **_chores;
 	Common::List<Chore*> _playingChores;
 	Math::Matrix4 _matrix;
-	ModelNode *_joint1Node;
-	ModelNode *_joint2Node;
-	ModelNode *_joint3Node;
 
-	Math::Angle _headPitch;
-	Math::Angle _headYaw;
+	float _lookAtRate;
+
+	friend class Chore;
 };
 
 } // end of namespace Grim

@@ -68,7 +68,7 @@ void Lua_V1::FreeImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = Bitmap::getPool()->getObject(lua_getuserdata(param));
+	Bitmap *bitmap = getbitmap(param);
 	delete bitmap;
 }
 
@@ -76,7 +76,7 @@ void Lua_V1::BlastImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = Bitmap::getPool()->getObject(lua_getuserdata(param));
+	Bitmap *bitmap = getbitmap(param);
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
@@ -157,7 +157,7 @@ void Lua_V1::PauseMovie() {
 }
 
 void Lua_V1::PurgePrimitiveQueue() {
-	PrimitiveObject::getPool()->deleteObjects();
+	PrimitiveObject::getPool().deleteObjects();
 }
 
 void Lua_V1::DrawPolygon() {
@@ -280,9 +280,7 @@ void Lua_V1::ChangePrimitive() {
 
 	psearch = getprimitive(param1);
 
-	for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
-		 i != PrimitiveObject::getPool()->getEnd(); ++i) {
-		PrimitiveObject *p = i->_value;
+	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
 			pmodify = p;

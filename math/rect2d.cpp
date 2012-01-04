@@ -64,6 +64,30 @@ void Rect2d::rotateAroundCenter(const Angle &angle) {
 	rotateAround(center, angle);
 }
 
+void Rect2d::moveCenterTo(const Vector2d &pos) {
+	Vector2d vec(pos - getCenter());
+	translate(vec);
+}
+
+void Rect2d::scale(float amount) {
+	Vector2d c = getCenter();
+	moveCenterTo(Vector2d(0, 0));
+
+	_topLeft *= amount;
+	_topRight *= amount;
+	_bottomLeft *= amount;
+	_bottomRight *= amount;
+
+	moveCenterTo(c);
+}
+
+void Rect2d::translate(const Vector2d &vec) {
+	_topLeft += vec;
+	_topRight += vec;
+	_bottomLeft += vec;
+	_bottomRight += vec;
+}
+
 bool Rect2d::intersectsRect(const Rect2d &rect) const {
 	// TODO: implement this;
 	error("Rect2d::intersectsRect not implemented");

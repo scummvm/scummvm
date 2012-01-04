@@ -79,7 +79,7 @@ SmushDecoder::~SmushDecoder() {
 
 void SmushDecoder::init() {
 	_IACTpos = 0;
-	_curFrame = 0;
+	_curFrame = -1;
 	_videoPause = false;
 
 	if (!_demo) {
@@ -127,7 +127,12 @@ void SmushDecoder::handleFrame() {
 	int32 size;
 	int pos = 0;
 
-	if (_curFrame == 0)
+	if (_videoLooping && _curFrame == _nbframes - 1) {
+		_file->seek(_startPos, SEEK_SET);
+		_curFrame = -1;
+	}
+
+	if (_curFrame == -1)
 		_startTime = g_system->getMillis();
 
 	if (_videoPause)
@@ -191,13 +196,7 @@ void SmushDecoder::handleFrame() {
 	} while (pos < size);
 	delete[] frame;
 
-	_curFrame++;
-	if (_curFrame == _nbframes - 1) {
-		if (_videoLooping) {
-			_file->seek(_startPos, SEEK_SET);
-			_curFrame = 0;
-		}
-	}
+	++_curFrame;
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
@@ -298,7 +297,7 @@ void SmushDecoder::handleFrameDemo() {
 		return;
 	}
 
-	if (_curFrame == 0)
+	if (_curFrame == -1)
 		_startTime = g_system->getMillis();
 
 	tag = _file->readUint32BE();
@@ -548,6 +547,25 @@ void SmushDecoder::seekToTime(Audio::Timestamp time) { // FIXME: This will be of
 
 uint32 SmushDecoder::getDuration() const {
 	return (uint32) (getFrameCount() / getFrameRate().toDouble());
+}
+
+uint32 SmushDecoder::getTimeToNextFrame() const {
+	if (endOfVideo()) { //handle looping
+		uint32 elapsedTime = getElapsedTime();
+
+		Common::Rational beginTime = (_curFrame + 1) * 1000;
+		beginTime /= getFrameRate();
+		uint32 nextFrameStartTime = beginTime.toInt();
+
+		// If the time that the next frame should be shown has past
+		// the frame should be shown ASAP.
+		if (nextFrameStartTime <= elapsedTime)
+			return 0;
+
+		return nextFrameStartTime - elapsedTime;
+	} else {
+		return FixedRateVideoDecoder::getTimeToNextFrame();
+	}
 }
 
 } // end of namespace Grim

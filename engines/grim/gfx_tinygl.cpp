@@ -34,6 +34,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/modelemi.h"
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 
@@ -433,10 +434,12 @@ void GfxTinyGL::drawShadowPlanes() {
 }
 
 void GfxTinyGL::setShadowMode() {
+	GfxBase::setShadowMode();
 	tglEnable(TGL_SHADOW_MODE);
 }
 
 void GfxTinyGL::clearShadowMode() {
+	GfxBase::clearShadowMode();
 	tglDisable(TGL_SHADOW_MODE);
 }
 
@@ -465,6 +468,32 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 	*b = _shadowColorB;
 }
 
+void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	int *indices = (int*)face->_indexes;
+	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_ALPHA_TEST);
+	tglDisable(TGL_TEXTURE_2D);
+	tglBegin(TGL_TRIANGLES);
+	for (int j = 0; j < face->_faceLength * 3; j++) {
+		
+		int index = indices[j];
+		if (face->_hasTexture) {
+			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+		}
+		//tglColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		
+		Math::Vector3d normal = model->_normals[index];
+		Math::Vector3d vertex = model->_vertices[index];
+		
+		tglNormal3f(normal.x(), normal.y(), normal.z());
+		tglVertex3f(vertex.x(), vertex.y(), vertex.z());
+	}
+	tglEnd();
+	tglEnable(TGL_TEXTURE_2D);	
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_ALPHA_TEST);	
+}
+	
 void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	tglNormal3fv(const_cast<float *>(face->_normal.getData()));
 	tglBegin(TGL_POLYGON);
@@ -519,54 +548,21 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										const Math::Angle &yaw, const Math::Angle &roll) {
+void GfxTinyGL::translateViewpointStart() {
+	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
+}
 
-	tglTranslatef(pos.x(), pos.y(), pos.z());
-	tglRotatef(yaw.getDegrees(), 0, 0, 1);
-	tglRotatef(pitch.getDegrees(), 1, 0, 0);
-	tglRotatef(roll.getDegrees(), 0, 1, 0);
+void GfxTinyGL::translateViewpoint(const Math::Vector3d &vec) {
+	tglTranslatef(vec.x(), vec.y(), vec.z());
+}
+
+void GfxTinyGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) {
+	tglRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
 void GfxTinyGL::translateViewpointFinish() {
 	tglPopMatrix();
-}
-
-void GfxTinyGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
-	Math::Vector3d animPos = node->_pos + node->_animPos;
-	Math::Angle animPitch = node->_pitch + node->_animPitch;
-	Math::Angle animYaw = node->_yaw + node->_animYaw;
-	Math::Angle animRoll = node->_roll + node->_animRoll;
-	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
-	if (node->_hierVisible) {
-		tglPushMatrix();
-		tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-
-		if (!_currentShadowArray) {
-			Sprite* sprite = node->_sprite;
-			while (sprite) {
-				sprite->draw();
-				sprite = sprite->_next;
-			}
-		}
-
-		if (node->_mesh && node->_meshVisible) {
-			node->_mesh->draw(x1, y1, x2, y2);
-		}
-
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPopMatrix();
-
-		if (node->_child) {
-			node->_child->draw(x1, y1, x2, y2);
-			tglMatrixMode(TGL_MODELVIEW);
-		}
-	}
-	translateViewpointFinish();
-
-	if (node->_sibling)
-		node->_sibling->draw(x1, y1, x2, y2);
 }
 
 void GfxTinyGL::enableLights() {
@@ -621,6 +617,10 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
 	tglEnable(TGL_LIGHT0 + lightId);
+}
+
+void GfxTinyGL::turnOffLight(int lightId) {
+	tglDisable(TGL_LIGHT0 + lightId);
 }
 
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {

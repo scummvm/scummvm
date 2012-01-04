@@ -38,7 +38,7 @@ private:
 	CompTable *_compTable;
 	int16 _numCompItems;
 	int _curSample;
-	Common::File *_file;
+	Common::SeekableReadStream *_file;
 	byte _compOutput[0x2000];
 	byte *_compInput;
 	int _outputSize;
@@ -49,7 +49,7 @@ public:
 	McmpMgr();
 	~McmpMgr();
 
-	bool openSound(const char *filename, byte **resPtr, int &offsetData);
+	bool openSound(const char *filename, Common::SeekableReadStream *data, int &offsetData);
 	int32 decompressSample(int32 offset, int32 size, byte **comp_final);
 };
 

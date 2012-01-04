@@ -38,7 +38,7 @@ int SaveGame::SAVEGAME_VERSION = 20;
 SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!inSaveFile) {
-		warning("SaveGame::openForLoading() Error opening savegame file");
+		warning("SaveGame::openForLoading() Error opening savegame file %s", filename.c_str());
 		return NULL;
 	}
 
@@ -57,7 +57,7 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 SaveGame *SaveGame::openForSaving(const Common::String &filename) {
 	Common::OutSaveFile *outSaveFile =  g_system->getSavefileManager()->openForSaving(filename);
 	if (!outSaveFile) {
-		warning("SaveGame::openForSaving() Error creating savegame file");
+		warning("SaveGame::openForSaving() Error creating savegame file %s", filename.c_str());
 		return NULL;
 	}
 
@@ -85,11 +85,11 @@ SaveGame::~SaveGame() {
 		_outSaveFile->finalize();
 		if (_outSaveFile->err())
 			warning("SaveGame::~SaveGame() Can't write file. (Disk full?)");
-		free(_sectionBuffer);
 		delete _outSaveFile;
 	} else {
 		delete _inSaveFile;
 	}
+	free(_sectionBuffer);
 }
 
 int SaveGame::saveVersion() const {
@@ -113,7 +113,11 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 			_sectionSize = _inSaveFile->readUint32BE();
 			_inSaveFile->seek(_sectionSize, SEEK_CUR);
 		}
-		_sectionBuffer = (byte *)malloc(_sectionSize);
+		if (!_sectionBuffer || _sectionAlloc < _sectionSize) {
+			_sectionAlloc = _sectionSize;
+			_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionAlloc);
+		}
+
 		_inSaveFile->seek(-(int32)_sectionSize, SEEK_CUR);
 		_inSaveFile->read(_sectionBuffer, _sectionSize);
 

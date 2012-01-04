@@ -40,6 +40,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/modelemi.h"
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 
@@ -67,7 +68,9 @@ GfxBase *CreateGfxOpenGL() {
 // Simple ARB fragment program that writes the value from a texture to the Z-buffer.
 static char fragSrc[] =
 	"!!ARBfp1.0\n\
-	TEX result.depth, fragment.texcoord[0], texture[0], 2D;\n\
+	TEMP d;\n\
+	TEX d, fragment.texcoord[0], texture[0], 2D;\n\
+	MOV result.depth, d.r;\n\
 	END\n";
 
 GfxOpenGL::GfxOpenGL() {
@@ -154,6 +157,7 @@ void GfxOpenGL::initExtensions()
 		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errorPos);
 		if (errorPos != -1) {
 			warning("Error compiling fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+			_useDepthShader = false;
 		}
 	}
 #endif
@@ -332,7 +336,7 @@ void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angl
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-		//glColor3f(0.0f, 1.0f, 0.0f);
+// 		glColor3f(0.0f, 1.0f, 0.0f);
 		glColor3f(_shadowColorR / 255.0f, _shadowColorG / 255.0f, _shadowColorB / 255.0f);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
@@ -361,7 +365,7 @@ void GfxOpenGL::drawShadowPlanes() {
 /*	glColor3f(1.0f, 1.0f, 1.0f);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
-		Sector *shadowSector = *i;
+		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
 			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
@@ -369,6 +373,7 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 */
+
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
@@ -379,7 +384,6 @@ void GfxOpenGL::drawShadowPlanes() {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
-	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
@@ -389,17 +393,20 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_TRUE);
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
 void GfxOpenGL::setShadowMode() {
+	GfxBase::setShadowMode();
 }
 
 void GfxOpenGL::clearShadowMode() {
+	GfxBase::clearShadowMode();
+
 	glDisable(GL_STENCIL_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
@@ -420,6 +427,38 @@ void GfxOpenGL::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
+void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	int *indices = (int*)face->_indexes;
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);	// Right now, textures are semi-work on some models
+								// while for instance the catapult will become invisible.
+	glBegin(GL_TRIANGLES);
+	for (int j = 0; j < face->_faceLength * 3; j++) {
+		
+		int index = indices[j];
+		if (face->_hasTexture) {
+			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+		}
+		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		
+		Math::Vector3d normal = model->_normals[index];
+		Math::Vector3d vertex = model->_vertices[index];
+		
+		// Transform vertices (or maybe we should have done this already?)
+		
+		glNormal3fv(normal.getData());
+		glVertex3fv(vertex.getData());
+	}
+	glEnd();
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_LIGHTING);
+	glColor3f(1.0f,1.0f,1.0f);
+}
+	
 void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
@@ -483,55 +522,22 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glPopMatrix();
 }
 
-void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
-										const Math::Angle &yaw, const Math::Angle &roll) {
+void GfxOpenGL::translateViewpointStart() {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+}
 
-	glTranslatef(pos.x(), pos.y(), pos.z());
-	glRotatef(yaw.getDegrees(), 0, 0, 1);
-	glRotatef(pitch.getDegrees(), 1, 0, 0);
-	glRotatef(roll.getDegrees(), 0, 1, 0);
+void GfxOpenGL::translateViewpoint(const Math::Vector3d &vec) {
+	glTranslatef(vec.x(), vec.y(), vec.z());
+}
+
+void GfxOpenGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) {
+	glRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
 void GfxOpenGL::translateViewpointFinish() {
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-}
-
-void GfxOpenGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
-	Math::Vector3d animPos = node->_pos + node->_animPos;
-	Math::Angle animPitch = node->_pitch + node->_animPitch;
-	Math::Angle animYaw = node->_yaw + node->_animYaw;
-	Math::Angle animRoll = node->_roll + node->_animRoll;
-	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
-	if (node->_hierVisible) {
-		glPushMatrix();
-		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-
-		if (!_currentShadowArray) {
-			Sprite* sprite = node->_sprite;
-			while (sprite) {
-				sprite->draw();
-				sprite = sprite->_next;
-			}
-		}
-
-		if (node->_mesh && node->_meshVisible) {
-			node->_mesh->draw(x1, y1, x2, y2);
-		}
-
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-
-		if (node->_child) {
-			node->_child->draw(x1, y1, x2, y2);
-			glMatrixMode(GL_MODELVIEW);
-		}
-	}
-	translateViewpointFinish();
-
-	if (node->_sibling)
-		node->_sibling->draw(x1, y1, x2, y2);
 }
 
 void GfxOpenGL::enableLights() {
@@ -581,6 +587,10 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
 	glEnable(GL_LIGHT0 + lightId);
+}
+
+void GfxOpenGL::turnOffLight(int lightId) {
+	glDisable(GL_LIGHT0 + lightId);
 }
 
 #define BITMAP_TEXTURE_SIZE 256
@@ -783,6 +793,7 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	if (textures) {
 		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
 		delete[] textures;
+		bitmap->_texIds = 0;
 	}
 }
 
@@ -974,30 +985,42 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
-	for (int y = 0; y < material->_height; y++) {
-		for (int x = 0; x < material->_width; x++) {
-			uint8 col = *(uint8 *)(data);
-			if (col == 0) {
-				memset(texdatapos, 0, 4); // transparent
-				if (!material->_hasAlpha) {
+	
+	if (cmap != NULL) { // EMI doesn't have colour-maps
+		for (int y = 0; y < material->_height; y++) {
+			for (int x = 0; x < material->_width; x++) {
+				uint8 col = *(uint8 *)(data);
+				if (col == 0) {
+					memset(texdatapos, 0, 4); // transparent
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
+				} else {
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-			} else {
-				memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
-				texdatapos[3] = '\xff'; // fully opaque
+				texdatapos += 4;
+				data++;
 			}
-			texdatapos += 4;
-			data++;
 		}
+	} else {
+		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
 	}
-
+	
+	GLuint format = 0;
+	if (material->_colorFormat == BM_RGBA) {
+		format = GL_RGBA;
+	} else {
+		format = GL_RGB;
+	}
+	
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 

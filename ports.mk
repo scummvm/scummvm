@@ -130,8 +130,7 @@ residual-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB) \
-		$(OSX_ICONV) \
-		-lSystemStubs
+		$(OSX_ICONV) 
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -190,7 +189,7 @@ endif
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/icons/residual.ico $(WIN32PATH)
-	cp $(srcdir)/dists/win32/residual.iss $(WIN32PATH)
+	cp $(srcdir)/dists/residual.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain

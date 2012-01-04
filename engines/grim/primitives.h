@@ -26,11 +26,11 @@
 #include "common/rect.h"
 
 #include "engines/grim/pool.h"
+#include "engines/grim/bitmap.h"
 
 namespace Grim {
 
 class SaveGame;
-class Bitmap;
 class PoolColor;
 
 class PrimitiveObject : public PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')> {
@@ -68,7 +68,7 @@ private:
 	PoolColor *_color;
 	bool _filled;
 	int _type;
-	Bitmap *_bitmap;
+	Bitmap::Ptr _bitmap;
 
 	friend class GrimEngine;
 };

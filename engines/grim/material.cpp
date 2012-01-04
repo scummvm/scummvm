@@ -34,86 +34,127 @@ namespace Grim {
 
 Common::List<MaterialData *> *MaterialData::_materials = NULL;
 
-MaterialData::MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) :
+MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
 	_fname(filename), _cmap(cmap), _refCount(1) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		initEMI(filename, data, len);
+		initEMI(filename, data);
 	} else {
-		initGrim(filename, data, len, cmap);
+		initGrim(filename, data, cmap);
 	}
 }
 
-void MaterialData::initGrim(const Common::String &filename, const char *data, int len, CMap *cmap) {
-	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
-			error("invalid magic loading texture");
+void MaterialData::initGrim(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
+	uint32 tag = data->readUint32BE();
+	if (tag != MKTAG('M','A','T',' '))
+		error("invalid magic loading texture");
 
-	_numImages = READ_LE_UINT32(data + 12);
+	data->seek(12, SEEK_SET);
+	_numImages = data->readUint32LE();
 	_textures = new Texture[_numImages];
 	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
 	 * Actual meaning unknown, so I prefer to use it as an enum-ish
 	 * at the moment, to detect unexpected values.
 	 */
-	uint32 offset = READ_LE_UINT32(data + 0x4c);
+	data->seek(0x4c, SEEK_SET);
+	uint32 offset = data->readUint32LE();
 	if (offset == 0x8)
-		data += 16;
+		offset = 16;
 	else if (offset != 0)
 		error("Unknown offset: %d", offset);
 
-	data += 60 + _numImages * 40;
+	data->seek(60 + _numImages * 40 + offset, SEEK_SET);
 	for (int i = 0; i < _numImages; ++i) {
 		Texture *t = _textures + i;
-		t->_width = READ_LE_UINT32(data);
-		t->_height = READ_LE_UINT32(data + 4);
-		t->_hasAlpha = READ_LE_UINT32(data + 8);
+		t->_width = data->readUint32LE();
+		t->_height = data->readUint32LE();
+		t->_hasAlpha = data->readUint32LE();
+		t->_texture = NULL;
+		t->_colorFormat = BM_RGBA;
+		t->_data = NULL;
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
 						t->_width, t->_height, i, _fname.c_str());
 			break;
 		}
-		g_driver->createMaterial(t, data + 24, cmap);
-		data += 24 + t->_width * t->_height;
+		t->_data = new char[t->_width * t->_height];
+		data->seek(12, SEEK_CUR);
+		data->read(t->_data, t->_width * t->_height);
 	}
+	delete data;
 }
 
-void MaterialData::initEMI(const Common::String &filename, const char *data, int len) {
+void loadTGA(Common::SeekableReadStream *data, Texture *t) {
+	data->seek(2, SEEK_CUR);
+	
+	int format = data->readByte();
+	assert(format == 2); // We only support uncompressed TGA
+	
+	data->seek(9, SEEK_CUR);
+	t->_width = data->readUint16LE();
+	t->_height = data->readUint16LE();;
+	t->_hasAlpha = false;
+	t->_texture = NULL;
+	
+	int bpp = data->readByte();
+	if (bpp == 32) {
+		t->_colorFormat = BM_RGBA;
+		t->_bpp = 4;
+	} else {
+		t->_colorFormat = BM_RGB888;
+		t->_bpp = 3;
+	}
+	
+	assert(bpp == 24 || bpp == 32); // Assure we have 24/32 bpp
+	data->seek(1, SEEK_CUR);
+	t->_data = new char[t->_width * t->_height * (bpp/8)];
+	data->read(t->_data, t->_width * t->_height * (bpp/8));
+}
+	
+void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
 	char *readFileName = new char[64];
 
 	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
-		TextSplitter *ts = new TextSplitter(data, len);
-		ts->setLineNumber(1); // Skip copyright-line
-		ts->expectString("VERSION 1.0");
+		TextSplitter *ts = new TextSplitter(data);
+		ts->setLineNumber(2); // Skip copyright-line
+		ts->expectString("version\t1.0");
+		if (ts->checkString("name:"))
+			ts->scanString("name:\t%s", 1, readFileName);
+		
 		while(!ts->checkString("END_OF_SECTION")) {
-			ts->scanString("TEX:\t\t\t%s", 1, readFileName);
+			ts->scanString("tex:\t%s", 1, readFileName);
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(mFileName);
 		}
+		Common::SeekableReadStream *texData;
+		_textures = new Texture[texFileNames.size()];
 		for (uint i = 0; i < texFileNames.size(); i++) {
 			warning("SUR-file texture: %s", texFileNames[i].c_str());
+			texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
+			if (!texData) {
+				warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
+				_textures[i]._width = 0;
+				_textures[i]._height = 0;
+				_textures[i]._texture = new int(1); // HACK to avoid initializing.
+				continue;
+			}
+			loadTGA(texData, _textures + i);
+			//return;
 			// TODO: Add the necessary loading here.
 		}
 		_numImages = texFileNames.size();
-	} if(!filename.hasSuffix(".tga")) {
+		return;
+	} else if(filename.hasSuffix(".tga")) {
 		_numImages = 1;
-		texFileNames.push_back(filename);
+		_textures = new Texture();
+		loadTGA(data, _textures);
+		//	texFileNames.push_back(filename);
+		return;
+		
 	} else {
 		warning("Unknown material-format: %s", filename.c_str());
 	}
-	return; // Leave the rest till we have models to put materials on.
-
-	int format = data[1];
-	assert(format == 2);	// Verify that we have uncompressed TGA (2)
-	data += 12;
-	_numImages = 1;
-	_textures = new Texture();
-	_textures->_width = READ_LE_UINT16(data);
-	_textures->_height = READ_LE_UINT16(data + 2);
-	_textures->_hasAlpha = false;
-	int bpp = data[4];
-	assert(bpp == 24); // Assure we have 24 bpp
-	data += 6;
-	g_driver->createMaterial(_textures, data, 0);
 }
 
 MaterialData::~MaterialData() {
@@ -125,33 +166,38 @@ MaterialData::~MaterialData() {
 
 	for (int i = 0; i < _numImages; ++i) {
 		Texture *t = _textures + i;
-		if (t->_width && t->_height)
+		if (t->_width && t->_height && t->_texture)
 			g_driver->destroyMaterial(t);
+		delete[] t->_data;
 	}
 	delete[] _textures;
 }
 
-MaterialData *MaterialData::getMaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) {
+MaterialData *MaterialData::getMaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
 	if (!_materials) {
 		_materials = new Common::List<MaterialData *>();
 	}
 
 	for (Common::List<MaterialData *>::iterator i = _materials->begin(); i != _materials->end(); ++i) {
 		MaterialData *m = *i;
+		if (m->_fname == filename && g_grim->getGameType() == GType_MONKEY4) {
+			++m->_refCount;
+			return m;
+		}
 		if (m->_fname == filename && m->_cmap->getFilename() == cmap->getFilename()) {
 			++m->_refCount;
 			return m;
 		}
 	}
 
-	MaterialData *m = new MaterialData(filename, data, len, cmap);
+	MaterialData *m = new MaterialData(filename, data, cmap);
 	_materials->push_back(m);
 	return m;
 }
 
-Material::Material(const Common::String &filename, const char *data, int len, CMap *cmap) :
+Material::Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
 		Object(), _currImage(0) {
-	_data = MaterialData::getMaterialData(filename, data, len, cmap);
+	_data = MaterialData::getMaterialData(filename, data, cmap);
 }
 
 void Material::reload(CMap *cmap) {
@@ -170,8 +216,14 @@ void Material::reload(CMap *cmap) {
 
 void Material::select() const {
 	Texture *t = _data->_textures + _currImage;
-	if (t->_width && t->_height)
+	if (t->_width && t->_height) {
+		if (!t->_texture) {
+			g_driver->createMaterial(t, t->_data, _data->_cmap);
+			delete[] t->_data;
+			t->_data = NULL;
+		}
 		g_driver->selectMaterial(t);
+	}
 }
 
 Material::~Material() {

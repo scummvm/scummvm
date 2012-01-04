@@ -94,6 +94,8 @@ public:
 	void seekToTime(Audio::Timestamp time);
 	uint32 getDuration() const;
 
+	uint32 getTimeToNextFrame() const;
+
 private:
 	void pauseVideoIntern(bool p);
 	void parseNextFrame();

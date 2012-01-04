@@ -37,7 +37,6 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/lab.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/set.h"
@@ -288,9 +287,9 @@ void LuaBase::setMovieTime(float movieTime) {
 }
 
 int LuaBase::bundle_dofile(const char *filename) {
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b) {
-		delete b;
+	Common::SeekableReadStream *stream;
+	stream = g_resourceloader->openNewStreamFile(filename);
+	if (!stream) {
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
 		if (!strstr(filename, "Scripts\\"))
@@ -299,8 +298,12 @@ int LuaBase::bundle_dofile(const char *filename) {
 		return 2;
 	}
 
-	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
-	delete b;
+	int32 size = stream->size();
+	char *buffer = new char[size];
+	stream->read(buffer, size);
+	int result = lua_dobuffer(const_cast<char *>(buffer), size, const_cast<char *>(filename));
+	delete stream;
+	delete buffer;
 	return result;
 }
 
@@ -377,27 +380,31 @@ void LuaBase::pushobject(const PoolObjectBase *o) {
 }
 
 Actor *LuaBase::getactor(lua_Object obj) {
-	return Actor::getPool()->getObject(lua_getuserdata(obj));
+	return Actor::getPool().getObject(lua_getuserdata(obj));
+}
+
+Bitmap *LuaBase::getbitmap(lua_Object obj) {
+	return Bitmap::getPool().getObject(lua_getuserdata(obj));
 }
 
 TextObject *LuaBase::gettextobject(lua_Object obj) {
-	return TextObject::getPool()->getObject(lua_getuserdata(obj));
+	return TextObject::getPool().getObject(lua_getuserdata(obj));
 }
 
 Font *LuaBase::getfont(lua_Object obj) {
-	return Font::getPool()->getObject(lua_getuserdata(obj));
+	return Font::getPool().getObject(lua_getuserdata(obj));
 }
 
 PoolColor *LuaBase::getcolor(lua_Object obj) {
-	return PoolColor::getPool()->getObject(lua_getuserdata(obj));
+	return PoolColor::getPool().getObject(lua_getuserdata(obj));
 }
 
 PrimitiveObject *LuaBase::getprimitive(lua_Object obj) {
-	return PrimitiveObject::getPool()->getObject(lua_getuserdata(obj));
+	return PrimitiveObject::getPool().getObject(lua_getuserdata(obj));
 }
 
 ObjectState *LuaBase::getobjectstate(lua_Object obj) {
-	return ObjectState::getPool()->getObject(lua_getuserdata(obj));
+	return ObjectState::getPool().getObject(lua_getuserdata(obj));
 }
 
 void LuaBase::dummyHandler() {
@@ -521,7 +528,18 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
-			textObject->setFont(g_resourceloader->loadFont(lua_getstring(keyObj)));
+			const char *str = lua_getstring(keyObj);
+			Font *font = 0;
+			foreach (Font *f, Font::getPool()) {
+				if (f->getFilename() == str) {
+					font = f;
+				}
+			}
+			if (!font) {
+				font = g_resourceloader->loadFont(str);
+			}
+
+			textObject->setFont(font);
 		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
 		}

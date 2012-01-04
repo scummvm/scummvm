@@ -35,7 +35,6 @@ namespace Grim {
 MoviePlayer *g_movie;
 
 MoviePlayer::MoviePlayer() {
-	_speed = 0;
 	_channels = -1;
 	_freq = 22050;
 	_videoFinished = false;
@@ -49,33 +48,38 @@ MoviePlayer::MoviePlayer() {
 	_videoDecoder = NULL;
 	_internalSurface = NULL;
 	_externalSurface = new Graphics::Surface();
+
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, NULL);
 }
 
 MoviePlayer::~MoviePlayer() {
 	deinit();
 	delete _videoDecoder;
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 void MoviePlayer::pause(bool p) {
+	Common::StackLock lock(_frameMutex);
 	_videoPause = p;
 	_videoDecoder->pauseVideo(p);
 }
 
 void MoviePlayer::stop() {
+	Common::StackLock lock(_frameMutex);
 	deinit();
 	g_grim->setMode(GrimEngine::NormalMode);
 }
 
 void MoviePlayer::timerCallback(void *) {
-	g_movie->_frameMutex.lock();
+	Common::StackLock lock(g_movie->_frameMutex);
 	if (g_movie->prepareFrame())
-		g_movie->handleFrame();
-	g_movie->_frameMutex.unlock();
+		g_movie->postHandleFrame();
 }
 
 bool MoviePlayer::prepareFrame() {
-	if (_videoDecoder->endOfVideo())
+	if (!_videoLooping && _videoDecoder->endOfVideo()) {
 		_videoFinished = true;
+	}
 
 	if (_videoPause)
 		return false;
@@ -89,6 +93,8 @@ bool MoviePlayer::prepareFrame() {
 	if (_videoDecoder->getTimeToNextFrame() > 0)
 		return false;
 
+	handleFrame();
+
 	_internalSurface = _videoDecoder->decodeNextFrame();
 	_updateNeeded = true;
 
@@ -99,11 +105,10 @@ bool MoviePlayer::prepareFrame() {
 }
 
 Graphics::Surface *MoviePlayer::getDstSurface() {
-	_frameMutex.lock();
+	Common::StackLock lock(_frameMutex);
 	if (_updateNeeded && _internalSurface) {
 		_externalSurface->copyFrom(*_internalSurface);
 	}
-	_frameMutex.unlock();
 
 	return _externalSurface;
 }
@@ -116,17 +121,22 @@ void MoviePlayer::init() {
 }
 
 void MoviePlayer::deinit() {
-	_frameMutex.unlock();
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-	_videoDecoder->close();
+	Debug::debug(Debug::Movie, "Deinitting video '%s'.\n", _fname.c_str());
+
+	if (_videoDecoder)
+		_videoDecoder->close();
+
 	_internalSurface = NULL;
-	_externalSurface->free();
+
+	if (_externalSurface)
+		_externalSurface->free();
 
 	_videoPause = false;
 	_videoFinished = true;
 }
 
 bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
+	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;
 	_y = y;
@@ -139,9 +149,10 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	Debug::debug(Debug::Movie, "Playing video '%s'.\n", filename.c_str());
 
 	init();
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 	_internalSurface = NULL;
+
+	// Get the first frame immediately
+	timerCallback(0);
 
 	return true;
 }
@@ -179,7 +190,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	int x = state->readLESint32();
 	int y = state->readLESint32();
 
-	if (!videoFinished) {
+	if (!videoFinished && !_fname.empty()) {
 		play(_fname.c_str(), videoLooping, x, y);
 	}
 	_frame = frame;
@@ -202,13 +213,16 @@ public:
 		_videoFinished = true; // Rigs all movies to be completed.
 	}
 	~NullPlayer() {}
-	bool play(const char* filename, bool looping, int x, int y) {return true;}
+	bool play(Common::String filename, bool looping, int x, int y) {return true;}
+	bool loadFile(Common::String filename) { return true; }
 	void stop() {}
+	void pause(bool p) {}
 	void saveState(SaveGame *state) {}
 	void restoreState(SaveGame *state) {}
 private:
 	static void timerCallback(void *ptr) {}
 	void handleFrame() {}
+	bool prepareFrame() { return false; }
 	void init() {}
 	void deinit() {}
 };
@@ -221,13 +235,13 @@ MoviePlayer *CreateMpegPlayer() {
 #endif
 
 #ifndef USE_SMUSH
-MoviePlayer *CreateSmushPlayer() {
+MoviePlayer *CreateSmushPlayer(bool demo) {
 	return new NullPlayer("SMUSH");
 }
 #endif
 
 #ifndef USE_BINK
-MoviePlayer *CreateBinkPlayer() {
+MoviePlayer *CreateBinkPlayer(bool demo) {
 	return new NullPlayer("BINK");
 }
 #endif

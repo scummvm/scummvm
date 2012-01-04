@@ -20,12 +20,8 @@ MODULE_OBJS := \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
-	softsynth/appleiigs.o \
 	softsynth/fluidsynth.o \
-	softsynth/mt32.o \
-	softsynth/pcspk.o \
-	softsynth/sid.o \
-	softsynth/wave6581.o
+	softsynth/mt32.o 
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \

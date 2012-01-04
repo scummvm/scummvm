@@ -67,6 +67,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetGroupVolume);
 	DECLARE_LUA_OPCODE(EnableAudioGroup);
 	DECLARE_LUA_OPCODE(ImSelectSet);
+	DECLARE_LUA_OPCODE(GetActorChores);
 	DECLARE_LUA_OPCODE(PlayActorChore);
 	DECLARE_LUA_OPCODE(StopActorChores);
 	DECLARE_LUA_OPCODE(SetActorLighting);

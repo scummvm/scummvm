@@ -43,7 +43,7 @@ public:
 		*vec = this->getThis() * *vec;
 	}
 
-	Matrix<dim, dim> operator=(float i);
+	Matrix<dim, dim> &operator=(float i);
 
 protected:
 	MatrixType() : MatrixBase<dim, dim>() { setToIdentity(); }
@@ -52,7 +52,7 @@ protected:
 };
 
 template<int dim>
-Matrix<dim, dim> MatrixType<dim, dim>::operator=(float i) {
+Matrix<dim, dim> &MatrixType<dim, dim>::operator=(float i) {
 	for (int row = 0; row < dim; ++row) {
 		for (int col = 0; col < dim; ++col) {
 			this->setValue(row, col, (row == col ? i : 0.f));

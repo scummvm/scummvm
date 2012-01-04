@@ -29,7 +29,6 @@
 namespace Grim {
 
 class McmpMgr;
-class Block;
 
 class ImuseSndMgr {
 public:
@@ -41,10 +40,10 @@ public:
 // and it also allows Manny to get the info for Mercedes
 // Colomar, without this the game hangs at these points!
 #define IMUSE_VOLGRP_BGND   0
-#define IMUSE_VOLGRP_ACTION 1
-#define IMUSE_VOLGRP_SFX    2
+#define IMUSE_VOLGRP_SFX    1
+#define IMUSE_VOLGRP_VOICE  2
 #define IMUSE_VOLGRP_MUSIC  3
-#define IMUSE_VOLGRP_VOICE  4
+#define IMUSE_VOLGRP_ACTION 4
 
 private:
 	struct Region {
@@ -73,11 +72,11 @@ public:
 		bool inUse;
 		char name[32];
 		McmpMgr *mcmpMgr;
-		Block *blockRes;
 		int type;
 		int volGroupId;
-		byte *resPtr;
 		bool mcmpData;
+		uint32 headerSize;
+		Common::SeekableReadStream *inStream;
 	};
 
 private:
@@ -87,8 +86,8 @@ private:
 
 	bool checkForProperHandle(SoundDesc *soundDesc);
 	SoundDesc *allocSlot();
-	void parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize);
-	void countElements(byte *ptr, int &numRegions, int &numJumps);
+	void parseSoundHeader(SoundDesc *sound, int &headerSize);
+	void countElements(SoundDesc *sound);
 
 public:
 

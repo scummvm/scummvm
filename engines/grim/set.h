@@ -30,7 +30,7 @@
 #include "engines/grim/objectstate.h"
 
 namespace Common {
-	class MemoryReadStream;
+	class SeekableReadStream;
 }
 namespace Grim {
 
@@ -40,12 +40,12 @@ class Light;
 
 class Set : public PoolObject<Set, MKTAG('S', 'E', 'T', ' ')> {
 public:
-	Set(const Common::String &name, const char *buf, int len);
+	Set(const Common::String &name, Common::SeekableReadStream *data);
 	Set();
 	~Set();
 
 	void loadText(TextSplitter &ts);
-	void loadBinary(Common::MemoryReadStream *ms);
+	void loadBinary(Common::SeekableReadStream *data);
 
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
@@ -79,6 +79,7 @@ public:
 	void setLightPosition(int light, const Math::Vector3d &pos);
 	void setLightEnabled(const char *light, bool enabled);
 	void setLightEnabled(int light, bool enabled);
+	void turnOffLights();
 
 	void setSetup(int num);
 	int getSetup() const { return _currSetup - _setups; }
@@ -93,22 +94,23 @@ public:
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
 
-	void addObjectState(ObjectState *s);
-	void deleteObjectState(ObjectState *s) {
+	void addObjectState(const ObjectState::Ptr &s);
+	void deleteObjectState(const ObjectState::Ptr &s) {
 		_states.remove(s);
 	}
 
-	void moveObjectStateToFront(ObjectState *s);
-	void moveObjectStateToBack(ObjectState *s);
+	void moveObjectStateToFront(const ObjectState::Ptr &s);
+	void moveObjectStateToBack(const ObjectState::Ptr &s);
 
-	ObjectState *findState(const char *filename);
+	ObjectState *addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency);
+	ObjectState *findState(const Common::String &filename);
 
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);
-		void loadBinary(Common::MemoryReadStream *ms);
+		void loadBinary(Common::SeekableReadStream *data);
 		void setupCamera() const;
 		Common::String _name;
-		Bitmap *_bkgndBm, *_bkgndZBm;
+		Bitmap::Ptr _bkgndBm, _bkgndZBm;
 		Math::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
@@ -120,9 +122,6 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
-
-protected:
-	void resetInternalData();
 
 private:
 	bool _locked;
@@ -137,7 +136,7 @@ private:
 	bool _lightsConfigured;
 
 	Setup *_currSetup;
-	typedef Common::List<ObjectState*> StateList;
+	typedef Common::List<ObjectState::Ptr> StateList;
 	StateList _states;
 
 	friend class GrimEngine;
@@ -146,7 +145,7 @@ private:
 class Light {		// Set lighting data
 public:
 	void load(TextSplitter &ts);
-	void loadBinary(Common::MemoryReadStream *ms);
+	void loadBinary(Common::SeekableReadStream *data);
 	Common::String _name;
 	Common::String _type;
 	Math::Vector3d _pos, _dir;

@@ -30,8 +30,7 @@ namespace Math {
 
 Vector2d::Matrix() :
 	MatrixType<2, 1>() {
-	setValue(0, 0.f);
-	setValue(1, 0.f);
+
 }
 
 Vector2d::Matrix(float x, float y) :
@@ -43,6 +42,10 @@ Vector2d::Matrix(float x, float y) :
 Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
 	MatrixType<2, 1>(vec) {
 
+}
+
+Vector2d::Matrix(const float *data) :
+	MatrixType<2, 1>(data) {
 }
 
 void Vector2d::rotateAround(const Vector2d &point, const Angle &angle) {

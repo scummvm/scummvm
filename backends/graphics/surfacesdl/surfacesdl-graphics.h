@@ -104,6 +104,12 @@ protected:
 	GLuint *_overlayTexIds;
 #endif
 
+#ifdef USE_OPENGL
+	// Antialiasing
+	int _antialiasing;
+	void setAntialiasing(bool enable);
+#endif
+
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 

@@ -371,7 +371,7 @@ public:
 	void sayLine(const char *msgId, bool background);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
-	void lineCleanup() { _sayLineText = 0; }
+	void lineCleanup();
 	/**
 	 * Makes the actor discard any subtitle and voice.
 	 *
@@ -423,7 +423,7 @@ public:
 	void setConstrain(bool constrain) {
 		_constrain = constrain;
 	}
-	void update(float frameTime);
+	void update(uint frameTime);
 	void draw();
 	void undraw(bool);
 
@@ -439,18 +439,14 @@ public:
 	Math::Vector3d getLookAtVector() {
 		return _lookAtVector;
 	}
-	void setLookAtRate(float rate) {
-		_lookAtRate = rate;
-	}
-	float getLookAtRate() {
-		return _lookAtRate;
-	}
+	void setLookAtRate(float rate);
+	float getLookAtRate() const;
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
 
-	bool collidesWith(Actor *actor, Math::Vector3d *vec) const;
+	bool handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const;
 
 	bool _toClean;
 
@@ -558,7 +554,6 @@ private:
 
 	// lookAt
 	Math::Vector3d _lookAtVector;
-	float _lookAtRate;
 
 	// struct used for path finding
 	struct PathNode {

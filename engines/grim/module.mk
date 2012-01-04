@@ -1,6 +1,21 @@
 MODULE := engines/grim
 
 MODULE_OBJS := \
+	costume/bitmap_component.o \
+	costume/chore.o \
+	costume/colormap_component.o \
+	costume/component.o \
+	costume/emimesh_component.o \
+	costume/emiskel_component.o \
+	costume/head.o \
+	costume/keyframe_component.o \
+	costume/lua_var_component.o \
+	costume/main_model_component.o \
+	costume/material_component.o \
+	costume/mesh_component.o \
+	costume/model_component.o \
+	costume/sound_component.o \
+	costume/sprite_component.o \
 	imuse/imuse.o \
 	imuse/imuse_mcmp_mgr.o \
 	imuse/imuse_music.o \
@@ -69,6 +84,7 @@ MODULE_OBJS := \
 	lua_v2.o \
 	material.o \
 	model.o \
+	modelemi.o \
 	objectstate.o \
 	primitives.o \
 	registry.o \
@@ -77,6 +93,7 @@ MODULE_OBJS := \
 	set.o \
 	scx.o \
 	sector.o \
+	skeleton.o \
 	textobject.o \
 	textsplit.o \
 	object.o

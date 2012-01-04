@@ -33,58 +33,76 @@
 
 namespace Grim {
 
-KeyframeAnim::KeyframeAnim(const Common::String &fname, const char *data, int len) :
+KeyframeAnim::KeyframeAnim(const Common::String &fname, Common::SeekableReadStream *data) :
 	Object(), _fname(fname) {
 
-	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('F','Y','E','K'))
-		loadBinary(data, len);
+	uint32 tag = data->readUint32BE();
+	if (tag == MKTAG('F','Y','E','K'))
+		loadBinary(data);
 	else {
-		TextSplitter ts(data, len);
+		data->seek(0, SEEK_SET);
+		TextSplitter ts(data);
 		loadText(ts);
 	}
+	delete data;
 }
 
-void KeyframeAnim::loadBinary(const char *data, int len) {
+void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// First four bytes are the FYEK Keyframe identifier code
 	// Next 36 bytes are the filename
 	Debug::debug(Debug::Keyframes, "Loading Keyframe '%s'.", _fname.c_str());
 	// Next four bytes are the flags
-	_flags = READ_LE_UINT32(data + 40);
+	data->seek(40, SEEK_SET);
+	_flags = data->readUint32LE();
 	// Next four bytes are a duplicate of _numJoints (?)
 	// Next four bytes are the type
-	_type = READ_LE_UINT32(data + 48);
+	data->readUint32LE();
+	_type = data->readUint32LE();
 	// Next four bytes are the frames per second
 	// The fps value seems to be ignored and causes the animation the first time manny
 	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
 // 	_fps = get_float(data + 52);
 	_fps = 15.;
 	// Next four bytes are the number of frames
-	_numFrames = READ_LE_UINT32(data + 56);
+	data->seek(56, SEEK_SET);
+	_numFrames = data->readUint32LE();
 	// Next four bytes are the number of joints
-	_numJoints = READ_LE_UINT32(data + 60);
+	_numJoints = data->readUint32LE();
 	// Next four bytes are unknown (?)
 	// Next four bytes are the number of markers
-	_numMarkers = READ_LE_UINT32(data + 68);
+	data->readUint32LE();
+	_numMarkers = data->readUint32LE();
 	_markers = new Marker[_numMarkers];
+	data->seek(72, SEEK_SET);
 	for (int i = 0; i < _numMarkers; i++) {
-		_markers[i].frame = get_float(data + 72 + 4 * i);
-		_markers[i].val = READ_LE_UINT32(data + 104 + 4 * i);
+		char f[4];
+		data->read(f, 4);
+		_markers[i].frame = get_float(f);
 	}
 
+	data->seek(104, SEEK_SET);
+	for (int i = 0; i < _numMarkers; i++)
+		_markers[i].val = data->readUint32LE();
+
 	_nodes = new KeyframeNode *[_numJoints];
-	for (int i = 0; i < _numJoints; i++)
-		_nodes[i] = NULL;
-	const char *dataEnd = data + len;
 	// The first 136 bytes are for the header, this was originally
 	// listed as 180 bytes since the first operation is usually a
 	// "null" key, however ma_card_hold.key showed that this is
 	// not always the case so we should not skip this operation
-	data += 136;
-	while (data < dataEnd) {
+	data->seek(136, SEEK_SET);
+	for (int i = 0; i < _numJoints; i++) {
+		_nodes[i] = NULL;
 		int nodeNum;
 		// The first 32 bytes (of a keyframe) are the name handle
+		char nameHandle[32];
+		data->read(nameHandle, 32);
+		// If the name handle is entirely null (like ma_rest.key)
+		// then we shouldn't try to set the name
+		if(nameHandle[0] == 0)
+			memcpy(nameHandle, "(null)", 7);
+
 		// The next four bytes are the node number identifier
-		nodeNum = READ_LE_UINT32(data + 32);
+		nodeNum = data->readUint32LE();
 
 		// Because of the issue above ma_card_hold.key used to crash
 		// at this part without checking to make sure nodeNum is a
@@ -97,11 +115,11 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 		}
 		if (_nodes[nodeNum]) {
 			// Null node. Usually 7, 13 and 27 are null nodes.
-			data += 44;
+			data->seek(8, SEEK_CUR);
 			continue;
 		}
-		_nodes[nodeNum] = new KeyframeNode;
-		_nodes[nodeNum]->loadBinary(data);
+		_nodes[nodeNum] = new KeyframeNode();
+		_nodes[nodeNum]->loadBinary(data, nameHandle);
 	}
 }
 
@@ -180,7 +198,7 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 	return 0;
 }
 
-void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
+void KeyframeAnim::KeyframeEntry::loadBinary(const char *data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);
 	_pos = Math::Vector3d::get_vector3d(data + 8);
@@ -191,21 +209,19 @@ void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 	_dpitch = get_float(data + 44);
 	_dyaw = get_float(data + 48);
 	_droll = get_float(data + 52);
-	data += 56;
 }
 
-void KeyframeAnim::KeyframeNode::loadBinary(const char *&data) {
-	// If the name handle is entirely null (like ma_rest.key)
-	// then we shouldn't try to set the name
-	if (READ_LE_UINT32(data) == 0)
-		memcpy(_meshName, "(null)", 7);
-	else
-		memcpy(_meshName, data, 32);
-	_numEntries = READ_LE_UINT32(data + 36);
-	data += 44;
+void KeyframeAnim::KeyframeNode::loadBinary(Common::SeekableReadStream *data, char *meshName) {
+	memcpy(_meshName, meshName, 32);
+
+	_numEntries = data->readUint32LE();
+	data->seek(4, SEEK_CUR);
 	_entries = new KeyframeEntry[_numEntries];
-	for (int i = 0; i < _numEntries; i++)
-		_entries[i].loadBinary(data);
+	char kfEntry[56];
+	for (int i = 0; i < _numEntries; i++) {
+		data->read(kfEntry, 56);
+		_entries[i].loadBinary(kfEntry);
+	}
 }
 
 void KeyframeAnim::KeyframeNode::loadText(TextSplitter &ts) {

@@ -35,7 +35,6 @@ MoviePlayer *CreateBinkPlayer(bool demo) {
 
 BinkPlayer::BinkPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_videoDecoder = new Video::BinkDecoder();
-	_speed = 1000;
 }
 
 bool BinkPlayer::loadFile(Common::String filename) {

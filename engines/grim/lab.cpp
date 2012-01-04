@@ -23,23 +23,51 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/memstream.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lab.h"
-#include "engines/grim/lua/lua.h"
-#include "engines/grim/colormap.h"
 
 namespace Grim {
+
+LabEntry::LabEntry()
+	: _name(Common::String()), _offset(0), _len(0), _parent(NULL) {
+}
+
+LabEntry::LabEntry(Common::String name, uint32 offset, uint32 len, Lab *parent)
+	: _offset(offset), _len(len), _parent(parent) {
+	_name = name;
+	_name.toLowercase();
+}
+
+Common::SeekableReadStream *LabEntry::createReadStream() const {
+	return _parent->createReadStreamForMember(_name);
+}
+
+bool Lab::open(const byte *memLab, const uint32 size) {
+	_f = new Common::MemoryReadStream(memLab, size);
+	_labFileName = "";
+	_memLab = memLab;
+
+	return loadLab();
+}
 
 bool Lab::open(const Common::String &filename) {
 	_labFileName = filename;
 
 	close();
 
-	_f = new Common::File();
-	if (!_f->open(filename))
+	Common::File *file = new Common::File();
+	if (!file->open(filename)) {
+		delete file;
 		return false;
+	}
 
+	_f = (Common::SeekableReadStream *)file;
+	return loadLab();
+}
+
+bool Lab::loadLab() {
 	if (_f->readUint32BE() != MKTAG('L','A','B','N')) {
 		close();
 		return false;
@@ -71,12 +99,10 @@ void Lab::parseGrimFileTable() {
 		_f->readUint32LE();
 
 		Common::String fname = stringTable + fnameOffset;
+		fname.toLowercase();
 
-		LabEntry entry;
-		entry.offset = start;
-		entry.len = size;
-
-		_entries[fname] = entry;
+		LabEntry *entry = new LabEntry(fname, start, size, this);
+		_entries[fname] = LabEntryPtr(entry);
 	}
 
 	delete[] stringTable;
@@ -111,83 +137,72 @@ void Lab::parseMonkey4FileTable() {
 				str[l] = '/';
 		}
 		Common::String fname = str;
+		fname.toLowercase();
 
-		LabEntry entry;
-		entry.offset = start;
-		entry.len = size;
-
-		_entries[fname] = entry;
+		LabEntry *entry = new LabEntry(fname, start, size, this);
+		_entries[fname] = LabEntryPtr(entry);
 	}
 
 	delete[] stringTable;
 }
 
-bool Lab::getFileExists(const Common::String &filename) const {
-	return _entries.contains(filename);
+bool Lab::hasFile(const Common::String &filename) {
+	Common::String fname(filename);
+	fname.toLowercase();
+	return _entries.contains(fname);
 }
 
-bool Lab::isOpen() const {
-	return _f && _f->isOpen();
+bool Lab::hasFile(const Common::String &filename) const {
+	Common::String fname(filename);
+	fname.toLowercase();
+	return _entries.contains(fname);
 }
 
-Block *Lab::getFileBlock(const Common::String &filename) const {
-	if (!getFileExists(filename))
+int Lab::listMembers(Common::ArchiveMemberList &list) {
+	int count = 0;
+
+	for (LabMap::const_iterator i = _entries.begin(); i != _entries.end(); ++i) {
+		list.push_back(Common::ArchiveMemberList::value_type(i->_value));
+		++count;
+	}
+
+	return count;
+}
+
+Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	Common::String fname(name);
+	fname.toLowercase();
+	return _entries[fname];
+}
+
+Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String &filename) const {
+	if (!hasFile(filename))
 		return 0;
 
-	const LabEntry &i = _entries[filename];
+	Common::String fname(filename);
+	fname.toLowercase();
+	LabEntryPtr i = _entries[fname];
 
-	_f->seek(i.offset, SEEK_SET);
-	char *data = new char[i.len];
-	_f->read(data, i.len);
-	return new Block(data, i.len);
-}
-
-LuaFile *Lab::openNewStreamLua(const Common::String &filename) const {
-	if (!getFileExists(filename))
-		return 0;
+	/*If the whole Lab has been loaded into ram, we return a MemoryReadStream
+	that map requested data directly, without copying them. Otherwise open a new
+	stream from disk.*/
+	if(_memLab)
+		return new Common::MemoryReadStream((_memLab + i->_offset), i->_len, DisposeAfterUse::NO);
 
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
-	file->seek(_entries[filename].offset, SEEK_SET);
-
-	LuaFile *filehandle = new LuaFile();
-	filehandle->_in = file;
-
-	return filehandle;
-}
-
-Common::File *Lab::openNewStreamFile(const Common::String &filename) const {
-	if (!getFileExists(filename))
-		return 0;
-
-	Common::File *file = new Common::File();
-	file->open(_labFileName);
-	file->seek(_entries[filename].offset, SEEK_SET);
-
-	return file;
-}
-// SubStream, for usage with GZipReadStream
-Common::SeekableReadStream *Lab::openNewSubStreamFile(const Common::String &filename) const {
-	if (!getFileExists(filename))
-		return 0;
-
-	Common::File *file = new Common::File();
-	file->open(_labFileName);
-	Common::SeekableSubReadStream *substream;
-	substream = new Common::SeekableSubReadStream(file, _entries[filename].offset, _entries[filename].offset + _entries[filename].len, DisposeAfterUse::YES );
-	return substream;
-}
-
-int Lab::getFileLength(const Common::String &filename) const {
-	if (!getFileExists(filename))
-		return -1;
-
-	return _entries[filename].len;
+	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES );
 }
 
 void Lab::close() {
 	delete _f;
 	_f = NULL;
+
+	if(_memLab)
+		delete _memLab;
 
 	_entries.clear();
 }

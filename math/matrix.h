@@ -25,6 +25,7 @@
 #ifndef MATH_MATRIX_H
 #define MATH_MATRIX_H
 
+#include <string.h>
 #include <assert.h>
 
 #include "common/streamdebug.h"
@@ -120,7 +121,7 @@ public:
 	/**
 	 * Sets the internal data of this matrix.
 	 */
-	void setData(float *data);
+	void setData(const float *data);
 	inline float getValue(int row, int col) const;
 	inline void setValue(int row, int col, float value);
 
@@ -143,7 +144,7 @@ public:
 
 protected:
 	MatrixBase();
-	MatrixBase(float *data);
+	MatrixBase(const float *data);
 	MatrixBase(const MatrixBase<rows, cols> &m);
 
 	inline const Matrix<rows, cols> &getThis() const {
@@ -152,7 +153,7 @@ protected:
 		return *static_cast<Matrix<rows, cols> *>(this); }
 
 private:
-	float _values[rows][cols];
+	float _values[rows * cols];
 };
 
 /**
@@ -163,7 +164,7 @@ template<int r, int c>
 class MatrixType : public MatrixBase<r, c> {
 protected:
 	MatrixType() : MatrixBase<r, c>() { }
-	MatrixType(float *data) : MatrixBase<r, c>(data) { }
+	MatrixType(const float *data) : MatrixBase<r, c>(data) { }
 	MatrixType(const MatrixBase<r, c> &m) : MatrixBase<r, c>(m) { }
 };
 
@@ -178,7 +179,7 @@ template<int r, int c>
 class Matrix : public MatrixType<r, c> {
 public:
 	Matrix() : MatrixType<r, c>() { }
-	Matrix(float *data) : MatrixType<r, c>(data) { }
+	Matrix(const float *data) : MatrixType<r, c>(data) { }
 	Matrix(const MatrixBase<r, c> &m) : MatrixType<r, c>(m) { }
 };
 
@@ -211,16 +212,19 @@ bool operator==(const Matrix<r, c> &m1, const Matrix<r, c> &m2);
 // Constructors
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase() {
+	for (int i = 0; i < rows * cols; ++i) {
+		_values[i] = 0.f;
+	}
 }
 
 template<int rows, int cols>
-MatrixBase<rows, cols>::MatrixBase(float *data) {
+MatrixBase<rows, cols>::MatrixBase(const float *data) {
 	setData(data);
 }
 
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase(const MatrixBase<rows, cols> &m) {
-	*this = m;
+	setData(m._values);
 }
 
 
@@ -229,27 +233,23 @@ MatrixBase<rows, cols>::MatrixBase(const MatrixBase<rows, cols> &m) {
 // Data management
 template<int rows, int cols>
 float *MatrixBase<rows, cols>::getData() {
-	return _values[0];
+	return _values;
 }
 
 template<int rows, int cols>
 const float *MatrixBase<rows, cols>::getData() const {
-	return _values[0];
+	return _values;
 }
 
 template<int rows, int cols>
-void MatrixBase<rows, cols>::setData(float *data) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			setValue(row, col, data[row * rows + col]);
-		}
-	}
+void MatrixBase<rows, cols>::setData(const float *data) {
+	::memcpy(_values, data, rows * cols * sizeof(float));
 }
 
 template<int rows, int cols>
 float MatrixBase<rows, cols>::getValue(int row, int col) const {
 	assert(rows > row && cols > col && row >= 0 && col >= 0);
-	return _values[row][col];
+	return _values[row * cols + col];
 }
 
 template<int rows, int cols>
@@ -262,10 +262,9 @@ void MatrixBase<rows, cols>::setValue(int row, int col, float v) {
 // Operations helpers
 template<int rows, int cols>
 bool MatrixBase<rows, cols>::isZero() const {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			if (getValue(row, col))
-				return false;
+	for (int i = 0; i < rows * cols; ++i) {
+		if (_values[i] != 0.f) {
+			return false;
 		}
 	}
 	return true;
@@ -274,10 +273,8 @@ bool MatrixBase<rows, cols>::isZero() const {
 template <int r, int c>
 Matrix<r, c> MatrixBase<r, c>::getNegative() const {
 	Matrix<r, c> result;
-	for (int row = 0; row < r; ++row) {
-		for (int col = 0; col < c; ++col) {
-			result(row, col) = -getValue(row, col);
-		}
+	for (int i = 0; i < r * c; ++i) {
+		result._values[i] = -_values[i];
 	}
 	return result;
 }
@@ -285,10 +282,8 @@ Matrix<r, c> MatrixBase<r, c>::getNegative() const {
 template <int r, int c>
 Matrix<r, c> MatrixBase<r, c>::sum(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 	Matrix<r, c> result;
-	for (int row = 0; row < r; ++row) {
-		for (int col = 0; col < c; ++col) {
-			result(row, col) = m1(row, col) + m2(row, col);
-		}
+	for (int i = 0; i < r * c; ++i) {
+		result._values[i] = m1._values[i] + m2._values[i];
 	}
 	return result;
 }
@@ -296,10 +291,8 @@ Matrix<r, c> MatrixBase<r, c>::sum(const Matrix<r, c> &m1, const Matrix<r, c> &m
 template <int r, int c>
 Matrix<r, c> MatrixBase<r, c>::difference(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 	Matrix<r, c> result;
-	for (int row = 0; row < r; ++row) {
-		for (int col = 0; col < c; ++col) {
-			result(row, col) = m1(row, col) - m2(row, col);
-		}
+	for (int i = 0; i < r * c; ++i) {
+		result._values[i] = m1._values[i] - m2._values[i];
 	}
 	return result;
 }
@@ -307,10 +300,8 @@ Matrix<r, c> MatrixBase<r, c>::difference(const Matrix<r, c> &m1, const Matrix<r
 template <int r, int c>
 Matrix<r, c> MatrixBase<r, c>::product(const Matrix<r, c> &m1, float factor) {
 	Matrix<r, c> result;
-	for (int row = 0; row < r; ++row) {
-		for (int col = 0; col < c; ++col) {
-			result(row, col) = m1(row, col) * factor;
-		}
+	for (int i = 0; i < r * c; ++i) {
+		result._values[i] = m1._values[i] * factor;
 	}
 	return result;
 }
@@ -318,10 +309,8 @@ Matrix<r, c> MatrixBase<r, c>::product(const Matrix<r, c> &m1, float factor) {
 template <int r, int c>
 Matrix<r, c> MatrixBase<r, c>::quotient(const Matrix<r, c> &m1, float factor) {
 	Matrix<r, c> result;
-	for (int row = 0; row < r; ++row) {
-		for (int col = 0; col < c; ++col) {
-			result(row, col) = m1(row, col) / factor;
-		}
+	for (int i = 0; i < r * c; ++i) {
+		result._values[i] = m1._values[i] / factor;
 	}
 	return result;
 }
@@ -333,7 +322,7 @@ Matrix<r, c> MatrixBase<r, c>::quotient(const Matrix<r, c> &m1, float factor) {
 template<int rows, int cols>
 float &MatrixBase<rows, cols>::operator()(int row, int col) {
 	assert(rows > row && cols > col && row >= 0 && col >= 0);
-	return _values[row][col];
+	return _values[row * cols + col];
 }
 
 template<int rows, int cols>
@@ -343,21 +332,15 @@ float MatrixBase<rows, cols>::operator()(int row, int col) const {
 
 template<int rows, int cols>
 Matrix<rows, cols> &MatrixBase<rows, cols>::operator=(const Matrix<rows, cols> &m) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			setValue(row, col, m(row, col));
-		}
-	}
+	setData(m._values);
 
 	return getThis();
 }
 
 template<int rows, int cols>
 Matrix<rows, cols> &MatrixBase<rows, cols>::operator+=(const Matrix<rows, cols> &m) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			operator()(row, col) += m(row, col);
-		}
+	for (int i = 0; i < rows * cols; ++i) {
+		_values[i] += m._values[i];
 	}
 
 	return getThis();
@@ -365,10 +348,8 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator+=(const Matrix<rows, cols> 
 
 template<int rows, int cols>
 Matrix<rows, cols> &MatrixBase<rows, cols>::operator-=(const Matrix<rows, cols> &m) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			operator()(row, col) -= m(row, col);
-		}
+	for (int i = 0; i < rows * cols; ++i) {
+		_values[i] -= m._values[i];
 	}
 
 	return getThis();
@@ -376,10 +357,8 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator-=(const Matrix<rows, cols> 
 
 template<int rows, int cols>
 Matrix<rows, cols> &MatrixBase<rows, cols>::operator*=(float factor) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			operator()(row, col) *= factor;
-		}
+	for (int i = 0; i < rows * cols; ++i) {
+		_values[i] *= factor;
 	}
 
 	return getThis();
@@ -387,10 +366,8 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator*=(float factor) {
 
 template<int rows, int cols>
 Matrix<rows, cols> &MatrixBase<rows, cols>::operator/=(float factor) {
-	for (int row = 0; row < rows; ++row) {
-		for (int col = 0; col < cols; ++col) {
-			operator()(row, col) /= factor;
-		}
+	for (int i = 0; i < rows * cols; ++i) {
+		_values[i] /= factor;
 	}
 
 	return getThis();
