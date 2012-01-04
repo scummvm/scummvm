@@ -49,7 +49,7 @@ class HotSpot {
 public:
 	int16 condition;
 	Common::Array<PolarRect> rects;
-	int16 unk2;
+	int16 cursor;
 	Common::Array<Opcode> script;
 
 	bool isPointInRectsCube(const Common::Point &p);

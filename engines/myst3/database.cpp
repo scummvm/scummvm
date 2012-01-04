@@ -279,7 +279,7 @@ HotSpot Database::loadHotspot(Common::ReadStream &s) {
 
 	if (hotspot.condition != -1) {
 		hotspot.rects = loadRects(s);
-		hotspot.unk2 = s.readUint16LE();
+		hotspot.cursor = s.readUint16LE();
 	}
 
 	hotspot.script = loadOpcodes(s);

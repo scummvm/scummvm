@@ -70,6 +70,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _cursor;
 	delete _scene;
 	delete _archive;
 	delete _db;
@@ -80,8 +81,8 @@ Myst3Engine::~Myst3Engine() {
 }
 
 Common::Error Myst3Engine::run() {
-	const int w = 800;
-	const int h = 600;
+	const int w = 640;
+	const int h = 480;
 
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
@@ -92,6 +93,12 @@ Common::Error Myst3Engine::run() {
 	_archive = new Archive();
 
 	_system->setupScreen(w, h, false, true);
+
+	Archive *archiveRSRC = new Archive();
+	archiveRSRC->open("RSRC.m3r");
+	_cursor = new Cursor(archiveRSRC);
+	archiveRSRC->close();
+	delete archiveRSRC;
 
 	_scene->init(w, h);
 
@@ -118,6 +125,45 @@ Common::Error Myst3Engine::run() {
 	return Common::kNoError;
 }
 
+Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots() {
+	Common::Array<HotSpot *> hovered;
+
+	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
+	if (_viewType == kCube) {
+		Common::Point mouse = _scene->getMousePos();
+
+		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+			if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
+				hovered.push_back(&nodeData->hotspots[j]);
+			}
+		}
+	} else if (_viewType == kFrame) {
+		Common::Point mouse = _system->getEventManager()->getMousePos();
+		Common::Point scaledMouse = Common::Point(
+				mouse.x * Scene::_originalWidth / _system->getWidth(),
+				CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight()
+						- Scene::_topBorderHeight, 0, Scene::_frameHeight));
+
+		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
+				hovered.push_back(&nodeData->hotspots[j]);
+			}
+		}
+	}
+
+	return hovered;
+}
+
+void Myst3Engine::updateCursor() {
+	Common::Array<HotSpot *> hovered = listHoveredHotspots();
+	if (hovered.size() > 0) {
+		HotSpot *h = hovered.back();
+		_cursor->changeCursor(h->cursor);
+	} else {
+		_cursor->changeCursor(8);
+	}
+}
+
 void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
@@ -129,39 +175,21 @@ void Myst3Engine::processInput(bool lookOnly) {
 			if (_viewType == kCube) {
 				_scene->updateCamera(event.relMouse);
 			}
+
+			updateCursor();
+
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Skip the event when in look only mode
 			if (lookOnly) continue;
 
-			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
-			if (_viewType == kCube) {
-				Common::Point mouse = _scene->getMousePos();
+			Common::Array<HotSpot *> hovered = listHoveredHotspots();
 
-				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-					if (nodeData->hotspots[j].isPointInRectsCube(mouse)
-							&& _vars->evaluate(nodeData->hotspots[j].condition)) {
-						_scriptEngine->run(&nodeData->hotspots[j].script);
-
-					}
-				}
-			} else if (_viewType == kFrame) {
-				static const uint originalWidth = 640;
-				static const uint originalHeight = 480;
-				static const uint frameHeight = 360;
-
-				Common::Point mouse = _system->getEventManager()->getMousePos();
-				Common::Point scaledMouse = Common::Point(
-						mouse.x * originalWidth / _system->getWidth(),
-						CLIP<uint>(mouse.y * originalHeight / _system->getHeight()
-								- 30, 0, frameHeight));
-
-				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-					if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)
-							&& _vars->evaluate(nodeData->hotspots[j].condition)) {
-						_scriptEngine->run(&nodeData->hotspots[j].script);
-					}
+			for (uint j = 0; j < hovered.size(); j++) {
+				if (_vars->evaluate(hovered[j]->condition)) {
+					_scriptEngine->run(&hovered[j]->script);
 				}
 			}
+			
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_d:
@@ -203,6 +231,7 @@ void Myst3Engine::drawFrame() {
 	}
 
 	_scene->drawBlackBorders();
+	_cursor->draw();
 
 	_system->updateScreen();
 	_system->delayMillis(10);
@@ -300,6 +329,7 @@ void Myst3Engine::runNodeBackgroundScripts() {
 void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 	_viewType = kCube;
 
+	updateCursor();
 	_system->showMouse(false);
 
 	_node = new NodeCube(this, _archive, nodeID);
@@ -308,6 +338,7 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 	_viewType = kFrame;
 
+	updateCursor();
 	_system->showMouse(true);
 
 	_node = new NodeFrame(this, _archive, nodeID);

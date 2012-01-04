@@ -35,6 +35,7 @@
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
 #include "engines/myst3/script.h"
+#include "engines/myst3/cursor.h"
 
 namespace Myst3 {
 
@@ -55,6 +56,7 @@ enum ViewType {
 
 class Console;
 class Variables;
+class HotSpot;
 
 class Myst3Engine : public Engine {
 
@@ -94,6 +96,7 @@ private:
 	Archive *_archive;
 	Script *_scriptEngine;
 	Database *_db;
+	Cursor *_cursor;
 
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;
@@ -102,6 +105,9 @@ private:
 
 	uint _frameCount;
 	bool _shouldQuit;
+
+	Common::Array<HotSpot *> listHoveredHotspots();
+	void updateCursor();
 
 	friend class Console;
 };

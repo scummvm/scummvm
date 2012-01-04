@@ -46,6 +46,7 @@ class DirectorySubEntry {
 			kFaceMask = 1,
 			kSpotItem = 5,
 			kFrame = 6,
+			kCursor = 7,
 			kMovie = 8,
 			kStillMovie = 10,
 			kImagerMovie = 72
