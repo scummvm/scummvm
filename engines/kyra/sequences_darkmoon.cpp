@@ -177,7 +177,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.delay(1);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSong(12);
 
 	_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	sq.setPalette(9);
@@ -447,18 +447,17 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.waitForSongNotifier(8, true);
 
 	if (skipFlag() || shouldQuit()) {
-		_sound->playTrack(15);
+		snd_fadeOut();
 	} else {
 		_screen->setScreenDim(17);
 		_screen->clearCurDim();
-		_sound->playTrack(14);
+		snd_playSoundEffect(14);
 		sq.fadePalette(10, 1);
 		_screen->setClearScreenDim(18);
 		sq.delay(6);
 		sq.fadePalette(9, 1);
 		_screen->clearCurPage();
 	}
-
 	sq.fadePalette(9, 10);
 }
 
@@ -479,7 +478,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(18);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(1);
+		snd_playSong(1);
 	sq.update(2);
 
 	sq.loadScene(1, 2);
@@ -603,7 +602,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.waitForSongNotifier(3);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(7);
+		snd_playSoundEffect(7);
 	sq.delay(8);
 
 	sq.runSequence(10);
@@ -635,7 +634,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.waitForSongNotifier(4);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(7);
+		snd_playSoundEffect(7);
 	sq.delay(8);
 
 	sq.runSequence(10);
@@ -660,7 +659,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(36);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 
 	sq.delay(54);
 	sq.fadeText();
@@ -669,7 +668,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(6);
+		snd_playSoundEffect(6);
 
 	if (!skipFlag() && !shouldQuit())
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
@@ -680,7 +679,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(19);
 	sq.runSequence(19, 36);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSoundEffect(12);
 	sq.fadeText();
 
 	sq.printText(17, 15);           // Thank you
@@ -690,12 +689,12 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.printText(18, 15);           // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 	sq.runSequence(20);
 	sq.runSequence(19);
 	sq.runSequence(19);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 	sq.delay(36);
 	sq.fadeText();
 
@@ -703,37 +702,37 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.runSequence(19);
 	sq.runSequence(19, 18);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 	sq.runSequence(20, 18);
 	sq.fadeText();
 
 	sq.delay(28);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSoundEffect(12);
 	sq.delay(3);
 
 	sq.loadScene(5, 2);
 	if (skipFlag() || shouldQuit()) {
 		_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	} else {
-		_sound->playTrack(6);
+		snd_playSoundEffect(6);
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
 	}
 
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSoundEffect(12);
 	sq.delay(5);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 	sq.delay(11);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSoundEffect(12);
 	sq.delay(7);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(11);
+		snd_playSoundEffect(11);
 	sq.delay(12);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(12);
+		snd_playSoundEffect(12);
 
 	removeInputTop();
 	resetSkipFlag(true);
@@ -747,7 +746,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.delay(18);
 	if (!skipFlag() && !shouldQuit())
-		_sound->playTrack(1);
+		snd_playSong(1);
 
 	seq_playCredits(&sq, _creditsData, 18, 2, 6, 2);
 
@@ -1121,7 +1120,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 		case 6:
 			// play sound effect
 			if (s->obj != 0xff)
-				_vm->sound()->playSoundEffect(s->obj);
+				_vm->snd_playSoundEffect(s->obj);
 			break;
 
 		default:

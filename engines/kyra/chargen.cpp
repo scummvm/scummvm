@@ -171,7 +171,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	checkForCompleteParty();
 	initButtonsFromList(0, 5);
 
-	_vm->sound()->playTrack(_vm->game() == GI_EOB1 ? 20 : 13);
+	_vm->snd_playSong(_vm->game() == GI_EOB1 ? 20 : 13);
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
@@ -186,7 +186,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 				_activeBox ^= 2;
 			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
 				// Unlike the original we allow returning to the main menu
-				_vm->sound()->haltTrack();
+				_vm->snd_stopSound();
 				return false;
 			}
 			_vm->_gui->updateBoxFrameHighLight(-1);
@@ -232,7 +232,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	}
 
 	if (_vm->game() == GI_EOB2)
-		_vm->sound()->playTrack(15);
+		_vm->snd_fadeOut();
 
 	*faceShapes = _faceShapes;
 	return true;
@@ -372,7 +372,7 @@ void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int page
 
 void CharacterGenerator::processSpecialButton(int index) {
 	toggleSpecialButton(index, 1, 0);
-	_vm->sound()->playSoundEffect(76);
+	_vm->snd_playSoundEffect(76);
 	_vm->_system->delayMillis(80);
 	toggleSpecialButton(index, 0, 0);
 }
@@ -598,13 +598,13 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 int CharacterGenerator::getInput(Button *buttonList) {
 	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
 		_vm->sound()->resetTrigger();
-		_vm->sound()->playTrack(20);
+		_vm->snd_playSong(20);
 	} else if (_vm->game() == GI_EOB2 && !_vm->sound()->isPlaying()) {
 		// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
 		// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
 		// so that the music will not loop. We simply check whether the sound driver is still playing.
 		_vm->delay(3 * _vm->_tickLength);
-		_vm->sound()->playTrack(13);
+		_vm->snd_playSong(13);
 	}
 	return _vm->checkInput(buttonList, false, 0);
 }

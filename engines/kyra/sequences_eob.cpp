@@ -112,7 +112,7 @@ void EoBEngine::seq_playOpeningCredits() {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
-	_sound->playTrack(1);
+	snd_playSong(1);
 	delay(_introOpeningFrmDelay[0] * _tickLength);
 
 	for (int i = 0; i < 4 && !shouldQuit() && !skipFlag(); i++) {
@@ -129,7 +129,7 @@ void EoBEngine::seq_playIntro() {
 	_allowSkip = true;
 
 	if (!shouldQuit() && !skipFlag()) {
-		_sound->playTrack(2);
+		snd_playSong(2);
 		_screen->loadBitmap("TITLE-V.CMP", 5, 3, 0);
 		_screen->crossFadeRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		delay(120 * _tickLength);
@@ -295,7 +295,7 @@ void EoBEngine::seq_orb() {
 	_screen->copyPage(3, 4);
 	_screen->clearCurPage();
 
-	_sound->playTrack(6);
+	snd_playSoundEffect(6);
 
 	for (int i = -1; i < 4 && !shouldQuit() && !skipFlag(); i++) {
 		uint32 end = _system->getMillis() + 3 * _tickLength;
@@ -311,7 +311,7 @@ void EoBEngine::seq_orb() {
 	_screen->updateScreen();
 	delay(40 * _tickLength);
 
-	_sound->playTrack(6);
+	snd_playSoundEffect(6);
 
 	for (int i = 3; i > -2 && !shouldQuit() && !skipFlag(); i--) {
 		uint32 end = _system->getMillis() + 3 * _tickLength;
@@ -350,7 +350,7 @@ void EoBEngine::seq_waterdeepEntry() {
 
 	_screen->copyPage(3, 4);
 	_screen->fillRect(0, 168, 319, 199, 12, 0);
-	_sound->playTrack(6);
+	snd_playSoundEffect(6);
 
 	for (int i = 0; i < 4 && !shouldQuit() && !skipFlag(); i++) {
 		uint32 end = _system->getMillis() + 3 * _tickLength;
@@ -415,7 +415,7 @@ void EoBEngine::seq_waterdeepEntry() {
 		}
 
 		if (!(_rnd.getRandomNumber(255) & 7))
-			_sound->playTrack(_rnd.getRandomBit() ? 5 : 14);
+			snd_playSoundEffect(_rnd.getRandomBit() ? 5 : 14);
 
 		_screen->updateScreen();
 		delayUntil(end);
@@ -502,7 +502,7 @@ void EoBEngine::seq_king() {
 		}
 
 		if (!(_rnd.getRandomNumber(255) & 3))
-			_sound->playTrack(7);
+			snd_playSoundEffect(7);
 
 		_screen->updateScreen();
 		delayUntil(end);
@@ -534,7 +534,7 @@ void EoBEngine::seq_hands() {
 
 	_screen->updateScreen();
 	delay(15 * _tickLength);
-	_sound->playTrack(11);
+	snd_playSoundEffect(11);
 
 	for (int i = -22; i <= 20 && !shouldQuit() && !skipFlag(); i += 4) {
 		uint32 end = _system->getMillis() + _tickLength;
@@ -546,7 +546,7 @@ void EoBEngine::seq_hands() {
 		delayUntil(end);
 	}
 
-	_sound->playTrack(10);
+	snd_playSoundEffect(10);
 
 	delete[] shp1;
 	delete[] shp2;
@@ -574,7 +574,7 @@ void EoBEngine::seq_hands() {
 		delayUntil(end);
 	}
 
-	_sound->playTrack(12);
+	snd_playSoundEffect(12);
 	delay(5 * _tickLength);
 
 	for (int i = 0; i > -54 && !shouldQuit() && !skipFlag(); i -= 4) {
@@ -602,7 +602,7 @@ void EoBEngine::seq_hands() {
 	_screen->drawShape(2, shp2, 52, 49, 0);
 	boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
 	delay(15 * _tickLength);
-	_sound->playTrack(11);
+	snd_playSoundEffect(11);
 
 	for (int i = -56; i <= -8 && !shouldQuit() && !skipFlag(); i += 4) {
 		uint32 end = _system->getMillis() + _tickLength;
@@ -614,7 +614,7 @@ void EoBEngine::seq_hands() {
 		delayUntil(end);
 	}
 
-	_sound->playTrack(10);
+	snd_playSoundEffect(10);
 	delete[] shp1;
 	delete[] shp2;
 	delay(30 * _tickLength);
@@ -640,7 +640,7 @@ void EoBEngine::seq_hands() {
 		dy -= 5;
 	}
 
-	_sound->playTrack(13);
+	snd_playSoundEffect(13);
 
 	for (int i = -40; i <= 0 && !shouldQuit() && !skipFlag(); i += 4) {
 		uint32 end = _system->getMillis() + _tickLength;
@@ -701,7 +701,7 @@ void EoBEngine::seq_waterdeepExit() {
 		}
 
 		if (!(_rnd.getRandomNumber(255) & 7))
-			_sound->playTrack(_rnd.getRandomBit() ? 5 : 14);
+			snd_playSoundEffect(_rnd.getRandomBit() ? 5 : 14);
 
 		_screen->updateScreen();
 		delayUntil(end);
@@ -742,7 +742,7 @@ void EoBEngine::seq_waterdeepExit() {
 		delayUntil(end);
 	}
 
-	_sound->playTrack(3);
+	snd_playSong(3);
 	delay(60 * _tickLength);
 
 	for (int i = 0; i < 56 && !shouldQuit() && !skipFlag(); i++) {
@@ -787,11 +787,11 @@ void EoBEngine::seq_tunnel() {
 	for (int i = 0; i < 3 && !shouldQuit() && !skipFlag(); i++) {
 		uint32 end = _system->getMillis() + 8 * _tickLength;
 		_screen->copyRegion(0, 0, 80, 32, 160, 120, 4, 0, Screen::CR_NO_P_CHECK);
-		_sound->playTrack(7);
+		snd_playSoundEffect(7);
 		_screen->updateScreen();
 		delayUntil(end);
 		_screen->copyRegion(0, 0, 80, 32, 160, 120, 2, 0, Screen::CR_NO_P_CHECK);
-		_sound->playTrack(7);
+		snd_playSoundEffect(7);
 		end = _system->getMillis() + 8 * _tickLength;
 		_screen->updateScreen();
 		delayUntil(end);
@@ -820,11 +820,11 @@ void EoBEngine::seq_tunnel() {
 	delay(40 * _tickLength);
 
 	_screen->copyRegion(264, 0, 136, 56, 48, 48, 4, 0, Screen::CR_NO_P_CHECK);
-	_sound->playTrack(8);
+	snd_playSoundEffect(8);
 	_screen->copyRegion(0, 0, 0, 0, 320, 184, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	delay(16 * _tickLength);
-	_sound->playTrack(4);
+	snd_playSoundEffect(4);
 
 	for (int i = 0; i < 30 && !shouldQuit() && !skipFlag(); i++) {
 		uint32 end = _system->getMillis() + _tickLength;
@@ -835,7 +835,7 @@ void EoBEngine::seq_tunnel() {
 		delayUntil(end);
 	}
 
-	_sound->playTrack(9);
+	snd_playSoundEffect(9);
 
 	for (int i = 0; i < 6 && !shouldQuit() && !skipFlag(); i++) {
 		uint32 end = _system->getMillis() + _tickLength;
@@ -853,7 +853,7 @@ void EoBEngine::seq_tunnel() {
 
 	_screen->loadBitmap(_introFilesTunnel[1], 5, 3, 0);
 	_screen->copyPage(3, 4);
-	_sound->playTrack(6);
+	snd_playSoundEffect(6);
 	_screen->copyRegion(0, 0, 80, 32, 160, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	delay(2 * _tickLength);

@@ -2405,7 +2405,7 @@ void SoundAdLibPC::play(uint8 track, uint8 volume) {
 }
 
 void SoundAdLibPC::beginFadeOut() {
-	play(1, 0xff);
+	play(_version > 2 ? 1 : 15, 0xff);
 }
 
 int SoundAdLibPC::checkTrigger() {

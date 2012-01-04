@@ -1403,7 +1403,7 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_screen->setScreenDim(7);
 
 	if (_flags.gameID == GI_EOB2)
-		_sound->playTrack(2);
+		snd_playSoundEffect(2);
 
 	_sceneUpdateRequired = true;
 }
@@ -2377,15 +2377,24 @@ void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 	m->flags &= ~2;
 }
 
-void EoBCoreEngine::snd_playSoundEffect(int id, int volume) {
-	if ((id < 1) || (_flags.gameID == GI_EOB2 && id > 119) || shouldQuit())
+void EoBCoreEngine::snd_playSong(int track) {
+	_sound->playTrack(track);
+}
+
+void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {
+	if ((track < 1) || (_flags.gameID == GI_EOB2 && track > 119) || shouldQuit())
 		return;
 
-	_sound->playSoundEffect(id, volume);
+	_sound->playSoundEffect(track, volume);
 }
 
 void EoBCoreEngine::snd_stopSound() {
-	_sound->playSoundEffect(0);
+	_sound->haltTrack();
+	_sound->stopAllSoundEffects();
+}
+
+void EoBCoreEngine::snd_fadeOut() {
+	_sound->beginFadeOut();
 }
 
 } // End of namespace Kyra

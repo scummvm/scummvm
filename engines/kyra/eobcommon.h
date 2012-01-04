@@ -1127,8 +1127,10 @@ protected:
 	const uint8 *_numSpellsMage;
 
 	// sound
+	void snd_playSong(int id);
 	void snd_playSoundEffect(int id, int volume=0xFF);
 	void snd_stopSound();
+	void snd_fadeOut();
 
 	// keymap
 	static const char *const kKeymapName;
