@@ -109,8 +109,10 @@ protected:
 
 	/**
 	 * Assigns the mouse coords to the mouse event
+	 *
+	 * The parameters relx and rely for relative mouse movement are Residual specific
 	 */
-	virtual void fillMouseEvent(Common::Event &event, int x, int y, int relx, int rely);
+	virtual void fillMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0);
 
 	/**
 	 * Remaps key events. This allows platforms to configure

@@ -101,6 +101,8 @@ struct Event {
 
 	/**
 	 * Mouse movement since the last mouse movement event.
+	 *
+	 * This field is Residual specific
 	 */
 	Common::Point relMouse;
 

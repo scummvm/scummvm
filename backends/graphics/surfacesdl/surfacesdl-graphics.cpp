@@ -68,8 +68,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		sdlFlags ^= SDL_INIT_VIDEO;
 	}
 #endif
-
-        // SDL_ShowCursor(SDL_DISABLE);
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {

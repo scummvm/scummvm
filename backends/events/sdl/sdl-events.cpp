@@ -388,7 +388,7 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else
 		return false;
 
-	fillMouseEvent(event, ev.button.x, ev.button.y, 0, 0);
+	fillMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -404,7 +404,7 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #endif
 	else
 		return false;
-	fillMouseEvent(event, ev.button.x, ev.button.y, 0, 0);
+	fillMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -412,10 +412,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y, 0, 0);
+		fillMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y, 0, 0);
+		fillMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
@@ -443,10 +443,10 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y, 0, 0);
+		fillMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y, 0, 0);
+		fillMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
@@ -514,7 +514,7 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 #endif
 	}
 
-	fillMouseEvent(event, _km.x, _km.y, 0, 0);
+	fillMouseEvent(event, _km.x, _km.y);
 
 	return true;
 }
