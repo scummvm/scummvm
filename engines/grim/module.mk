@@ -58,6 +58,10 @@ MODULE_OBJS := \
 	emisound/vimatrack.o \
 	emisound/track.o \
 	emisound/emisound.o \
+	update/packfile.o \
+	update/mscab.o \
+	update/lang_filter.o \
+	update/update.o \
 	actor.o \
 	animation.o \
 	bitmap.o \
