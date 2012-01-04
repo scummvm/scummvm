@@ -656,6 +656,52 @@ public:
 	virtual void remove();
 	virtual void signal();
 };
+
+class Scene3800 : public SceneExt {
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit3 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit4 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+public:
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneActor _actor1;
+	NamedHotspot _item1;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	Exit3 _exit3;
+	Exit4 _exit4;
+	Rect _rect1;
+	SequenceManager _sequenceManager1;
+
+	int _field412;
+
+	Scene3800();
+	void initScene3800();
+	void sub110BBD();
+	void sub1B007(int arg1, int arg2, int arg3);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void synchronize(Serializer &s);
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

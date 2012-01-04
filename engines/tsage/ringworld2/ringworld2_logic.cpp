@@ -232,6 +232,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Teleport outside
 		return new Scene3700();
 	case 3800:
+		return new Scene3800();
 	case 3900:
 		error("Missing scene %d from group 3", sceneNumber);
 	default:
@@ -262,6 +263,8 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
+	for (int i = 0; i < 44; i++)
+		_field312[i] = 0;
 	_field372 = _field37A = 0;
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;

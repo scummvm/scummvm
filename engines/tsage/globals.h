@@ -254,6 +254,12 @@ public:
 	int _v5657C;
 	byte _v565AE;
 	byte _v56605[14];
+	int _v566A6;
+	byte _v566A8;
+	byte _v566A9;
+	byte _v566AA;
+	byte _v566AB[1000];
+	int _v56A93;
 	byte _v56A99;
 	int _v56A9E;
 	byte _v56AA0;

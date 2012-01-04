@@ -382,6 +382,13 @@ void Ringworld2Globals::reset() {
 	_v565AE = 0;
 	for (int i = 0; i < 14; i++)
 		_v56605[i] = 0;
+	_v566A6 = 3800;
+	_v566A8 = 0;
+	_v566A9 = 0;
+	_v566AA = 0;
+	for (int i = 0; i < 1000; i++)
+		_v566AB[i] = 0;
+	_v56A93 = 0;
 	_v56A99 = 0;
 	_v56A9E = 0;
 	_v56AA0 = 0;
@@ -422,6 +429,8 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_v565F5);
+	s.syncAsSint16LE(_v566A6);
+	s.syncAsSint16LE(_v56A93);
 	s.syncAsSint16LE(_v56A9E);
 	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_v57C2C);
@@ -432,11 +441,16 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_v565F1[i]);
 	
 	s.syncAsByte(_v565AE);
+	s.syncAsByte(_v566A8);
+	s.syncAsByte(_v566A9);
+	s.syncAsByte(_v566AA);
 	s.syncAsByte(_v56AA0);
 	s.syncAsByte(_v56AA1);
 
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_v56605[i]);
+	for (i = 0; i < 1000; ++i)
+		s.syncAsByte(_v566AB[i]);
 	s.syncAsByte(_v56A99);
 	for (i = 0; i < 12; ++i)
 		s.syncAsByte(_stripManager_lookupList[i]);

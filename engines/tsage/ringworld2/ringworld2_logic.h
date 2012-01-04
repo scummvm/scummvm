@@ -79,6 +79,7 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
+	byte _field312[44];
 	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;

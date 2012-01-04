@@ -545,6 +545,7 @@ public:
 	uint32 _regionBitList;
 
 	// Ringworld 2 specific fields
+	byte *_field9C;
 	int _shade, _shade2;
 	int _effect;
 	SceneObject *_linkedActor;

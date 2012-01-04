@@ -3651,5 +3651,428 @@ void Scene3700::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 3800 - 
+ *
+ *--------------------------------------------------------------------------*/
+Scene3800::Scene3800() {
+	_field412 = 0;
+}
+void Scene3800::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+}
+
+void Scene3800::Exit1::changeScene() {
+	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+	scene->_field412 = 1;
+
+	if (R2_GLOBALS.getFlag(46)) {
+		if (scene->_field412 == R2_GLOBALS._v566A9) {
+			R2_GLOBALS._v566AA = 3;
+			if (R2_GLOBALS._v56A93 + 1 == 0) {
+				R2_GLOBALS._v566A8--;
+				R2_GLOBALS._v566A9 = 0;
+			} else {
+				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
+				R2_GLOBALS._v56A93--;
+			}
+		} else {
+			++R2_GLOBALS._v56A93;
+			if (R2_GLOBALS._v56A93 > 999)
+				R2_GLOBALS._v56A93 = 999;
+			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
+			R2_GLOBALS._v566A9 = 3;
+		}
+	}
+
+	if (R2_GLOBALS._v566A8 == 0)
+		scene->_sceneMode = 16;
+	else
+		scene->_sceneMode = 11;
+
+	Common::Point pt(160, 115);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene3800::Exit2::changeScene() {
+	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+	scene->_field412 = 2;
+
+	if (R2_GLOBALS.getFlag(46)) {
+		if (scene->_field412 == R2_GLOBALS._v566A9) {
+			R2_GLOBALS._v566AA = 4;
+			if (R2_GLOBALS._v56A93 + 1 == 0) {
+				R2_GLOBALS._v566A8--;
+				R2_GLOBALS._v566A9 = 0;
+			} else {
+				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
+				R2_GLOBALS._v56A93--;
+			}
+		} else {
+			++R2_GLOBALS._v56A93;
+			if (R2_GLOBALS._v56A93 > 999)
+				R2_GLOBALS._v56A93 = 999;
+			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
+			R2_GLOBALS._v566A9 = 4;
+		}
+	}
+
+	if (R2_GLOBALS._v566A8 == 0)
+		scene->_sceneMode = 16;
+	else
+		scene->_sceneMode = 12;
+
+	Common::Point pt(330, 145);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene3800::Exit3::changeScene() {
+	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+	scene->_field412 = 3;
+
+	if (R2_GLOBALS.getFlag(46)) {
+		if (scene->_field412 == R2_GLOBALS._v566A9) {
+			R2_GLOBALS._v566AA = 1;
+			if (R2_GLOBALS._v56A93 + 1 == 0) {
+				R2_GLOBALS._v566A8--;
+				R2_GLOBALS._v566A9 = 0;
+			} else {
+				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
+				R2_GLOBALS._v56A93--;
+			}
+		} else {
+			++R2_GLOBALS._v56A93;
+			if (R2_GLOBALS._v56A93 > 999)
+				R2_GLOBALS._v56A93 = 999;
+			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
+			R2_GLOBALS._v566A9 = 1;
+		}
+	}
+
+	if (R2_GLOBALS._v566A8 == 0)
+		scene->_sceneMode = 16;
+	else
+		scene->_sceneMode = 13;
+
+	Common::Point pt(160, 220);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene3800::Exit4::changeScene() {
+	Scene3800 *scene = (Scene3800 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+	scene->_field412 = 4;
+
+	if (R2_GLOBALS.getFlag(46)) {
+		if (scene->_field412 == R2_GLOBALS._v566A9) {
+			R2_GLOBALS._v566AA = 2;
+			if (R2_GLOBALS._v56A93 + 1 == 0) {
+				R2_GLOBALS._v566A8--;
+				R2_GLOBALS._v566A9 = 0;
+			} else {
+				R2_GLOBALS._v566A9 = R2_GLOBALS._v566AB[R2_GLOBALS._v56A93];
+				R2_GLOBALS._v56A93--;
+			}
+		} else {
+			++R2_GLOBALS._v56A93;
+			if (R2_GLOBALS._v56A93 > 999)
+				R2_GLOBALS._v56A93 = 999;
+			R2_GLOBALS._v566AB[R2_GLOBALS._v56A93] = R2_GLOBALS._v566A9;
+			R2_GLOBALS._v566A9 = 2;
+		}
+	}
+
+	if (R2_GLOBALS._v566A8 == 0)
+		scene->_sceneMode = 16;
+	else
+		scene->_sceneMode = 14;
+
+	Common::Point pt(-10, 145);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene3800::initScene3800() {
+	_exit1._enabled = true;
+	_exit2._enabled = true;
+	_exit3._enabled = true;
+	_exit4._enabled = true;
+	_exit1._insideArea = false;
+	_exit2._insideArea = false;
+	_exit3._insideArea = false;
+	_exit4._insideArea = false;
+	_exit1._moving = false;
+	_exit2._moving = false;
+	_exit3._moving = false;
+	_exit4._moving = false;
+
+	loadScene(R2_GLOBALS._v566A6);
+
+	R2_GLOBALS._uiElements.draw();
+}
+
+void Scene3800::sub110BBD() {
+	R2_GLOBALS._player.disableControl();
+	switch (_field412) {
+	case 0:
+		R2_GLOBALS._player.postInit();
+		R2_GLOBALS._player.setVisage(10);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.setPosition(Common::Point(160, 145));
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.changeZoom(-1);
+		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
+		_actor1.postInit();
+		_actor1.fixPriority(10);
+		_actor1.changeZoom(-1);
+		_actor1.setVisage(1110);
+		_actor1._effect = 5;
+		_actor1._field9C = this->_field312;
+		R2_GLOBALS._player._linkedActor = &_actor1;
+		switch (R2_GLOBALS._sceneManager._previousScene) {
+		case 2600:
+			_object1.postInit();
+			_object2.postInit();
+			_actor1.hide();
+			_sceneMode = 3800;
+			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player, &_object1, &_object2, NULL);
+			break;
+		case 3900:
+			_sceneMode = 15;
+			switch (R2_GLOBALS._v566AA - 1) {
+			case 0: {
+				R2_GLOBALS._player.setPosition(Common::Point(160, 220));
+				Common::Point pt(160, 160);
+				NpcMover *mover = new NpcMover();
+				R2_GLOBALS._player.addMover(mover, &pt, this);
+				}
+				break;
+			case 1: {
+				R2_GLOBALS._player.setPosition(Common::Point(-10, 145));
+				Common::Point pt(19, 145);
+				NpcMover *mover = new NpcMover();
+				R2_GLOBALS._player.addMover(mover, &pt, this);
+				}
+				break;
+			case 2: {
+				R2_GLOBALS._player.setPosition(Common::Point(160, 115));
+				Common::Point pt(160, 120);
+				NpcMover *mover = new NpcMover();
+				R2_GLOBALS._player.addMover(mover, &pt, this);
+				}
+				break;
+			case 3: {
+				R2_GLOBALS._player.setPosition(Common::Point(330, 145));
+				Common::Point pt(300, 145);
+				NpcMover *mover = new NpcMover();
+				R2_GLOBALS._player.addMover(mover, &pt, this);
+				}
+				break;
+			default:
+				break;
+			}
+		default:
+			R2_GLOBALS._player.enableControl(CURSOR_ARROW);
+			break;
+		}
+		break;
+	case 1: {
+		_sceneMode = 15;
+		R2_GLOBALS._player.setPosition(Common::Point(160, 220));
+		Common::Point pt(160, 160);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+		}
+		break;
+	case 2: {
+		_sceneMode = 15;
+		R2_GLOBALS._player.setPosition(Common::Point(-10, 145));
+		Common::Point pt(19, 145);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+		}
+		break;
+	case 3: {
+		_sceneMode = 15;
+		R2_GLOBALS._player.setPosition(Common::Point(160, 115));
+		Common::Point pt(160, 120);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+		}
+		break;
+	case 4: {
+		_sceneMode = 15;
+		R2_GLOBALS._player.setPosition(Common::Point(330, 145));
+		Common::Point pt(300, 145);
+		NpcMover *mover = new NpcMover();
+		R2_GLOBALS._player.addMover(mover, &pt, this);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene3800::sub1B007(int arg1, int arg2, int arg3) {
+	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
+	byte newR, newG, newB;
+	int tmp, varC, varD = 0;
+
+	for (int i = 0; i < 256; i++) {
+		newR = (arg1 * tmpPal[(3 * i)]) / 100;
+		newG = (arg2 * tmpPal[(3 * i) + 1]) / 100;
+		newB = (arg3 * tmpPal[(3 * i) + 2]) / 100;
+
+		varC = 769;
+		for (int j = 255; j >= 0; j--) {
+			tmp = abs(tmpPal[(3 * j)] - newR);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 1] - newG);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 2] - newB);
+			if (tmp >= varC)
+				continue;
+			
+			varC = tmp;
+			varD = j;
+		}
+		this->_field312[i] = varD;
+	}
+}
+
+void Scene3800::postInit(SceneObjectList *OwnerList) {
+	_field412 = 0;
+
+	initScene3800();
+	
+	SceneExt::postInit();
+	R2_GLOBALS._sound1.play(231);
+
+	warning("sub_1B007(65, 65, 65)");
+
+	setZoomPercents(87, 40, 144, 100);
+
+	_exit1.setDetails(Rect(14, 87, 305, 125), SHADECURSOR_UP, 3800);
+	_exit1.setDest(Common::Point(160, 126));
+	_exit2.setDetails(Rect(305, 87, 320, 128), EXITCURSOR_E, 3800);
+	_exit2.setDest(Common::Point(312, 145));
+	_exit3.setDetails(Rect(14, 160, 305, 168), SHADECURSOR_DOWN, 3800);
+	_exit3.setDest(Common::Point(160, 165));
+	_exit4.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
+	_exit4.setDest(Common::Point(7, 145));
+
+	_rect1.set(0, 0, 320, 87);
+	_item1.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
+
+	sub110BBD();
+}
+
+void Scene3800::signal() {
+	switch (_sceneMode) {
+	case 11:
+		R2_GLOBALS._v566A6 += 15;
+		if (R2_GLOBALS._v566A6 > 3815)
+			R2_GLOBALS._v566A6 -= 20;
+		initScene3800();
+		sub110BBD();
+		break;
+	case 12:
+		R2_GLOBALS._v566A6 += 5;
+		if (R2_GLOBALS._v566A6 > 3815)
+			R2_GLOBALS._v566A6 = 3800;
+		initScene3800();
+		sub110BBD();
+		break;
+	case 13:
+		R2_GLOBALS._v566A6 -= 15;
+		if (R2_GLOBALS._v566A6 < 3800)
+			R2_GLOBALS._v566A6 += 20;
+		initScene3800();
+		sub110BBD();
+		break;
+	case 14:
+		R2_GLOBALS._v566A6 -= 5;
+		if (R2_GLOBALS._v566A6 < 3800)
+			R2_GLOBALS._v566A6 = 3815;
+		initScene3800();
+		sub110BBD();
+		break;
+	case 15:
+		R2_GLOBALS._v56AAB = 0;
+		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		break;
+	case 16:
+		g_globals->_sceneManager.changeScene(3900);
+		break;
+	case 3800:
+		_actor1.show();
+		_object1.remove();
+		_object2.remove();
+		R2_GLOBALS._v56AAB = 0;
+		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		break;
+	case 3805:
+		_exit1._enabled = false;
+		_exit2._enabled = false;
+		_exit3._enabled = false;
+		_exit4._enabled = false;
+		R2_GLOBALS._player._canWalk = false;
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+		break;
+	case 3806:
+		_exit1._enabled = true;
+		_exit2._enabled = true;
+		_exit3._enabled = true;
+		_exit4._enabled = true;
+		R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene3800::process(Event &event) {
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == 1) && (_rect1.contains(event.mousePos))) {
+		event.handled = true;
+		switch (R2_GLOBALS._events.getCursor()) {
+		case R2_NEGATOR_GUN:
+			R2_GLOBALS._player.addMover(NULL);
+			R2_GLOBALS._player.updateAngle(event.mousePos);
+			break;
+		case R2_STEPPING_DISKS:
+			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			break;
+		case R2_ATTRACTOR_UNIT:
+			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			break;
+		default:
+			event.handled = false;
+			break;
+		}
+	}
+
+	Scene::process(event);
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
