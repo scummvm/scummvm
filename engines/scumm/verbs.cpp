@@ -882,7 +882,6 @@ bool ScummEngine_v0::verbExecutes(int object, bool inventory) {
 }
 
 bool ScummEngine_v0::verbExec() {
-	int prep = 0;
 	int entry = (_currentMode != 0 && _currentMode != 1) ? _activeVerb : 15;
 
 	if (_activeObject && getObjectIndex(_activeObject) == -1) {
@@ -892,8 +891,6 @@ bool ScummEngine_v0::verbExec() {
 
 	// Lets try walk to the object
 	if (_activeObject && !_activeObjectObtained && _currentMode != 0) {
-		prep = verbPrep();
-
 		if (verbObtain(_activeObject, _activeObjectType))
 			return true;
 
