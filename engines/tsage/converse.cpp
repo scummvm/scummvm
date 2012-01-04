@@ -25,6 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
+#include "ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 
@@ -835,6 +836,9 @@ void StripManager::signal() {
 				_callbackObject->stripCallback(obj44._callbackId[idx]);
 			}
 		}
+
+		if ((g_vm->getGameID() == GType_Ringworld2) && (_obj44List.size() > 0))
+			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->proc15();
 
 		_textShown = true;
 		_activeSpeaker->setText(choiceList[strIndex]);
