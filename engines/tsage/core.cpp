@@ -941,6 +941,8 @@ int PlayerMover::findDistance(const Common::Point &pt1, const Common::Point &pt2
 	return (int)sqrt(xx + yy);
 }
 
+// Calculate intersection of the line segments pt1-pt2 and pt3-pt4.
+// Return true if they intersect, and return the intersection in ptOut.
 bool PlayerMover::sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
 						  const Common::Point &pt4, Common::Point *ptOut) {
 	double diffX1 = pt2.x - pt1.x;
