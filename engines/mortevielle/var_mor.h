@@ -28,6 +28,7 @@
 #ifndef MORTEVIELLE_VAR_H
 #define MORTEVIELLE_VAR_H
 
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Mortevielle {
@@ -396,7 +397,7 @@ void affcar(int gd, int x, int y, int coul, int chr);
 void putpix(int gd, int x, int y, int coul);
 Common::String copy(const Common::String &s, int idx, size_t size);
 void Val(const Common::String &s, int &V, int Code);
-void affput(int Chx, int Gd, int x, int y, int coul, int char_);
+void affput(const Common::Point &pt, int palIndex, int ch);
 
 /*---------------------------------------------------------------------------*/
 /*------------------------------     STUBS     ------------------------------*/

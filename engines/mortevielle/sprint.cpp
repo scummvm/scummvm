@@ -27,6 +27,7 @@
 
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
@@ -85,6 +86,9 @@ void writeg(Common::String l, int c)
 		xo = xo + i;
 	}
 	show_mouse();
+
+	// TODO: Move screen updates to main loop once constructed
+	g_vm->updateScreen();
 }
 
 } // End of namespace Mortevielle

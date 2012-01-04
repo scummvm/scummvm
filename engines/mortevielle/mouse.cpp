@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/rect.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
@@ -256,7 +257,7 @@ void show_mouse() {
 	}
 	break;
 	}    /*  case Gd   */
-	affput(2, gd, x_s, y_s, 0, 0);
+	affput(Common::Point(x_s, y_s), 0, 0);
 }
 
 void pos_mouse(int x, int y) {

@@ -107,7 +107,7 @@ void openOutputFile(const char *outFilename) {
 	outputFile.open(outFilename, kFileWriteMode);
 
 	// Write header
-	outputFile.write("mort", 4);
+	outputFile.write("MORT", 4);
 	outputFile.writeByte(VERSION_MAJOR);
 	outputFile.writeByte(VERSION_MINOR);
 }
@@ -132,7 +132,9 @@ void process() {
 
 	// Write out a section header to the output file and the font data
 	char fontHeader[4] = { 'F', 'O', 'N', 'T' };
-	outputFile.write(fontHeader, 4);
+	outputFile.write(fontHeader, 4);	// Section Id
+	outputFile.writeWord(121 * 6);		// Section size
+
 	outputFile.write(fontBuffer, 121 * 6);
 }
 

@@ -275,8 +275,6 @@ void ani50() {
 		gd = tan;
 		break;
 	}*/
-	// Hardcode display mode to EGA
-	gd = ega;
 
 	gotoxy(1, 24);
 	clreol;
