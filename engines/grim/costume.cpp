@@ -407,10 +407,18 @@ Model *Costume::getModel() {
 }
 
 void Costume::setChoreLastFrame(int num) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
 	_chores[num]->setLastFrame();
 }
 
 void Costume::setChoreLooping(int num, bool val) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
 	_chores[num]->setLooping(val);
 }
 
@@ -511,6 +519,10 @@ int Costume::isChoring(const char *name, bool excludeLooping) {
 }
 
 int Costume::isChoring(int num, bool excludeLooping) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return -1;
+	}
 	if (_chores[num]->_playing && !(excludeLooping && _chores[num]->_looping))
 		return num;
 	else
