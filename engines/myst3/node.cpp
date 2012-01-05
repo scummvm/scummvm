@@ -72,19 +72,19 @@ Face::~Face() {
 	glDeleteTextures(1, &_textureId);
 }
 
-Node::Node(Myst3Engine *vm, Archive *archive, uint16 id) :
+Node::Node(Myst3Engine *vm, uint16 id) :
 	_vm(vm) {
 	for (uint i = 0; i < 6; i++)
 		_faces[i] = 0;
 }
 
-void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
+void Node::dumpFaceMask(uint16 index, int face) {
 	byte *mask = new byte[640 * 640];
 	memset(mask, 0, sizeof(mask));
 	uint32 headerOffset = 0;
 	uint32 dataOffset = 0;
 
-	const DirectorySubEntry *maskDesc = archive.getDescription(index, face, DirectorySubEntry::kFaceMask);
+	const DirectorySubEntry *maskDesc = _vm->getFileDescription(index, face, DirectorySubEntry::kFaceMask);
 	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
 	while (headerOffset < 400) {
@@ -133,7 +133,7 @@ Node::~Node() {
 	}
 }
 
-void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade) {
+void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	SpotItem *spotItem = new SpotItem(_vm);
 
 	spotItem->setCondition(condition);
@@ -141,7 +141,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 	spotItem->setFadeVar(abs(condition));
 
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = archive.getDescription(id, i + 1, DirectorySubEntry::kSpotItem);
+		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kSpotItem);
 
 		if (!jpegDesc) continue;
 

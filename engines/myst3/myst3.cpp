@@ -54,6 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
+		_archiveRSRC(0), _archiveOVER(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -73,6 +74,8 @@ Myst3Engine::~Myst3Engine() {
 	delete _cursor;
 	delete _scene;
 	delete _archive;
+	delete _archiveRSRC;
+	delete _archiveOVER;
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
@@ -91,15 +94,23 @@ Common::Error Myst3Engine::run() {
 	_vars = new Variables(this);
 	_scene = new Scene();
 	_archive = new Archive();
+	_archiveRSRC = new Archive();
+	_archiveOVER = new Archive();
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
 
-	Archive *archiveRSRC = new Archive();
-	archiveRSRC->open("RSRC.m3r");
-	_cursor = new Cursor(archiveRSRC);
-	archiveRSRC->close();
-	delete archiveRSRC;
+	if (!_archiveRSRC->open("RSRC.m3r")) {
+		error("Unable to open archive RSRC.m3r");
+	}
+
+	if (!_archiveOVER->open("OVER101.m3o")) {
+		// OVER101 is not required
+		delete _archiveOVER;
+		_archiveOVER = 0;
+	}
+
+	_cursor = new Cursor(this);
 
 	_scene->init(w, h);
 
@@ -335,7 +346,7 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 	_cursor->lockPosition(true);
 	updateCursor();
 
-	_node = new NodeCube(this, _archive, nodeID);
+	_node = new NodeCube(this, nodeID);
 }
 
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
@@ -344,7 +355,7 @@ void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 	_cursor->lockPosition(false);
 	updateCursor();
 
-	_node = new NodeFrame(this, _archive, nodeID);
+	_node = new NodeFrame(this, nodeID);
 }
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
@@ -359,7 +370,7 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) 
 }
 
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
-	ScriptedMovie *movie = new ScriptedMovie(this, _archive, id);
+	ScriptedMovie *movie = new ScriptedMovie(this, id);
 	movie->setCondition(condition);
 	movie->setDisableWhenComplete(resetCond);
 	movie->setLoop(loop);
@@ -438,7 +449,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 }
 
 void Myst3Engine::playSimpleMovie(uint16 id) {
-	SimpleMovie movie = SimpleMovie(this, _archive, id);
+	SimpleMovie movie = SimpleMovie(this, id);
 
 	if (_vars->getMovieSynchronized()) {
 		movie.setSynchronized(_vars->getMovieSynchronized());
@@ -466,12 +477,28 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 }
 
 void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
-	_node->loadSpotItem(*_archive, id, condition, fade);
+	_node->loadSpotItem(id, condition, fade);
 }
 
 void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
 	warning("Sunspots are not implemented");
 }
+
+const DirectorySubEntry *Myst3Engine::getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
+	const DirectorySubEntry *desc = 0;
+
+	if (_archiveOVER)
+		desc = _archiveOVER->getDescription(index, face, type);
+
+	if (!desc && _archiveRSRC)
+		desc = _archiveRSRC->getDescription(index, face, type);
+
+	if (!desc && _archive)
+		desc = _archive->getDescription(index, face, type);
+
+	return desc;
+}
+
 
 } // end of namespace Myst3

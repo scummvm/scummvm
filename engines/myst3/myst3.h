@@ -71,6 +71,8 @@ public:
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();
 
+	const DirectorySubEntry *getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+
 	void goToNode(uint16 nodeID, uint8 roomID = 0);
 	void loadNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void loadNodeCubeFaces(uint16 nodeID);
@@ -96,6 +98,8 @@ private:
 	Node *_node;
 	Scene *_scene;
 	Archive *_archive;
+	Archive *_archiveRSRC;
+	Archive *_archiveOVER;
 	Script *_scriptEngine;
 	Database *_db;
 	Cursor *_cursor;

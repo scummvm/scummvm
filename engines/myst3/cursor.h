@@ -34,9 +34,11 @@
 
 namespace Myst3 {
 
+class Myst3Engine;
+
 class Cursor {
 public:
-	Cursor(Archive *archive);
+	Cursor(Myst3Engine *vm);
 	virtual ~Cursor();
 
 	void changeCursor(uint32 index);
@@ -46,6 +48,8 @@ public:
 	void updatePosition(Common::Point &mouse);
 	void draw();
 private:
+	Myst3Engine *_vm;
+
 	uint32 _currentCursorID;
 	GLuint _textureId;
 	static const uint _textureSize = 32;
@@ -55,7 +59,7 @@ private:
 
 	bool _lockedAtCenter;
 
-	void loadAvailableCursors(Archive *archive);
+	void loadAvailableCursors();
 	void generateTexture();
     void uploadTexture();
 };

@@ -21,15 +21,17 @@
  */
 
 #include "engines/myst3/nodecube.h"
+#include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/myst3.h"
 
 #include "common/debug.h"
 
 namespace Myst3 {
 
-NodeCube::NodeCube(Myst3Engine *vm, Archive *archive, uint16 id) :
-	Node(vm, archive, id) {
+NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
+	Node(vm, id) {
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = archive->getDescription(id, i + 1, DirectorySubEntry::kCubeFace);
+		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kCubeFace);
 		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 		if (jpegStream) {

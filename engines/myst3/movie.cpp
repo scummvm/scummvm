@@ -26,18 +26,18 @@
 
 namespace Myst3 {
 
-Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
+Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_vm(vm),
 	_startFrame(0),
 	_endFrame(0) {
 
-	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
+	const DirectorySubEntry *binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
-		binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kStillMovie);
+		binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kStillMovie);
 
 		if (!binkDesc)
-		binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kImagerMovie);
+		binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kImagerMovie);
 
 	if (!binkDesc)
 		error("Movie %d does not exist", id);
@@ -128,8 +128,8 @@ Movie::~Movie() {
 	glDeleteTextures(1, &_texture);
 }
 
-ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
-	Movie(vm, archive, id),
+ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
+	Movie(vm, id),
 	_condition(0),
 	_conditionBit(0),
 	_startFrameVar(0),
@@ -256,8 +256,8 @@ void ScriptedMovie::update() {
 ScriptedMovie::~ScriptedMovie() {
 }
 
-SimpleMovie::SimpleMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
-	Movie(vm, archive, id),
+SimpleMovie::SimpleMovie(Myst3Engine *vm, uint16 id) :
+	Movie(vm, id),
 	_synchronized(false) {
 	_startFrame = 1;
 	_endFrame = _bink.getFrameCount();

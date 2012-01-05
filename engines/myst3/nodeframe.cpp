@@ -20,14 +20,16 @@
  *
  */
 
+#include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/myst3.h"
 #include "engines/myst3/nodeframe.h"
 #include "engines/myst3/scene.h"
 
 namespace Myst3 {
 
-NodeFrame::NodeFrame(Myst3Engine *vm, Archive *archive, uint16 id) :
-	Node(vm, archive, id) {
-	const DirectorySubEntry *jpegDesc = archive->getDescription(id, 1, DirectorySubEntry::kFrame);
+NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
+	Node(vm, id) {
+	const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, 1, DirectorySubEntry::kFrame);
 	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 	if (jpegStream) {

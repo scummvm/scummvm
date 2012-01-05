@@ -31,11 +31,12 @@
 
 namespace Myst3 {
 
+struct VideoData;
 class Myst3Engine;
 
 class Movie : public Drawable {
 public:
-	Movie(Myst3Engine *vm, Archive *archive, uint16 id);
+	Movie(Myst3Engine *vm, uint16 id);
 	virtual ~Movie();
 
 	virtual void draw();
@@ -64,7 +65,7 @@ protected:
 
 class ScriptedMovie : public Movie {
 public:
-	ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id);
+	ScriptedMovie(Myst3Engine *vm, uint16 id);
 	virtual ~ScriptedMovie();
 
 	void draw();
@@ -110,7 +111,7 @@ private:
 
 class SimpleMovie : public Movie {
 public:
-	SimpleMovie(Myst3Engine *vm, Archive *archive, uint16 id);
+	SimpleMovie(Myst3Engine *vm, uint16 id);
 	virtual ~SimpleMovie();
 
 	bool update();

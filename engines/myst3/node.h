@@ -30,7 +30,7 @@
 #include <GL/glu.h>
 #endif
 
-#include "engines/myst3/archive.h"
+#include "common/array.h"
 
 #include "graphics/surface.h"
 #include "graphics/jpeg.h"
@@ -107,13 +107,13 @@ class Node {
 		Common::Array<SpotItem *> _spotItems;
 
 	public:
-		Node(Myst3Engine *vm, Archive *archive, uint16 id);
+		Node(Myst3Engine *vm, uint16 id);
 		virtual ~Node();
 
 		void update();
 		virtual void draw() = 0;
-		void loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade);
-		void dumpFaceMask(Archive &archive, uint16 index, int face);
+		void loadSpotItem(uint16 id, uint16 condition, bool fade);
+		void dumpFaceMask(uint16 index, int face);
 
 		static const int _cubeTextureSize = 1024;
 };

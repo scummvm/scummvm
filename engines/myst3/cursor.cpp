@@ -20,8 +20,9 @@
  *
  */
 
-#include "engines/myst3/archive.h"
 #include "engines/myst3/cursor.h"
+#include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/myst3.h"
 #include "engines/myst3/scene.h"
 
 #include "graphics/surface.h"
@@ -53,12 +54,13 @@ static CursorData availableCursors[13] = {
 		{    0,  0,  0, 0, 0    }
 };
 
-Cursor::Cursor(Archive *archive) :
+Cursor::Cursor(Myst3Engine *vm) :
+	_vm(vm),
 	_position(320, 210),
 	_lockedAtCenter(false) {
 
 	// Load available cursors
-	loadAvailableCursors(archive);
+	loadAvailableCursors();
 
 	// Generate texture
 	generateTexture();
@@ -67,10 +69,10 @@ Cursor::Cursor(Archive *archive) :
 	changeCursor(8);
 }
 
-void Cursor::loadAvailableCursors(Archive *archive) {
+void Cursor::loadAvailableCursors() {
 	// Load available cursors
 	for (uint i = 0; availableCursors[i].nodeID; i++) {
-		const DirectorySubEntry *cursorDesc = archive->getDescription(availableCursors[i].nodeID, 0, DirectorySubEntry::kCursor);
+		const DirectorySubEntry *cursorDesc = _vm->getFileDescription(availableCursors[i].nodeID, 0, DirectorySubEntry::kCursor);
 
 		if (!cursorDesc)
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
