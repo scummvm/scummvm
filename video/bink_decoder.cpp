@@ -293,8 +293,9 @@ void BinkDecoder::videoPacket(VideoFrame &video) {
 	}
 
 	// Convert the YUV data we have to our format
-	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
-	Graphics::convertYUVA420ToRGBA(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
+	// We're ignoring alpha for now
+	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
+	Graphics::convertYUV420ToRGB(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
 			_surface.w, _surface.h, _surface.w, _surface.w >> 1);
 
 	// And swap the planes with the reference planes
@@ -1643,57 +1644,6 @@ void BinkDecoder::IDCTPut(DecodeContext &ctx, int16 *block) {
 	for (i = 0; i < 8; i++) {
 		IDCT_ROW( (&ctx.dest[i*ctx.pitch]), (&temp[8*i]) );
 	}
-}
-
-uint32 BinkDecoder::getDuration() const
-{
-	Common::Rational duration = getFrameCount() * 1000 / getFrameRate();
-	return duration.toInt();
-}
-
-uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
-	for (int i = frame; i >= 0; i--) {
-		if (_frames[i].keyFrame)
-				return i;
-	}
-
-	// If none found, we'll assume the requested frame is a key frame
-	return frame;
-}
-
-void BinkDecoder::seekToFrame(uint32 frame) {
-	assert(frame < _frames.size());
-
-	// Fast path
-	if ((int32)frame == _curFrame + 1)
-		return;
-
-	// Stop all audio (for now)
-	stopAudio();
-
-	// Track down the keyframe
-	_curFrame = findKeyFrame(frame) - 1;
-	while (_curFrame < (int32)frame - 1)
-		decodeNextFrame();
-
-	// Map out the starting point
-	Common::Rational startTime = frame * 1000 / getFrameRate();
-	_startTime = g_system->getMillis() - startTime.toInt();
-	resetPauseStartTime();
-
-	// Adjust the audio starting point
-	if (_audioTrack < _audioTracks.size()) {
-		_audioStartOffset = startTime.toInt();
-	}
-
-	// Restart the audio
-	startAudio();
-}
-
-void BinkDecoder::seekToTime(Audio::Timestamp time) {
-	// Try to find the last frame that should have been decoded
-	Common::Rational frame = time.msecs() * getFrameRate() / 1000;
-	seekToFrame(frame.toInt());
 }
 
 } // End of namespace Video

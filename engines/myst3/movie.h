@@ -27,7 +27,7 @@
 #include "engines/myst3/node.h"
 
 #include "math/vector3d.h"
-#include "video/bink_decoder.h"
+#include "video/bink_decoder_seek.h"
 
 namespace Myst3 {
 
@@ -51,7 +51,7 @@ protected:
 	Math::Vector3d _pBottomLeft;
 	Math::Vector3d _pBottomRight;
 	Math::Vector3d _pTopRight;
-	Video::BinkDecoder _bink;
+	Video::SeekableBinkDecoder _bink;
 	GLuint _texture;
 
 	int32 _startFrame;

@@ -54,8 +54,10 @@ namespace Video {
  *
  * Video decoder used in engines:
  *  - scumm (he)
+ *
+ * This class is overriden in Residual to provide seek support
  */
-class BinkDecoder : public FixedRateVideoDecoder, public SeekableVideoDecoder {
+class BinkDecoder : public FixedRateVideoDecoder {
 public:
 	BinkDecoder();
 	~BinkDecoder();
@@ -75,12 +77,7 @@ public:
 	// FixedRateVideoDecoder
 	Common::Rational getFrameRate() const { return _frameRate; }
 
-	// SeekableVideoDecoder API
-	void seekToFrame(uint32 frame);
-	void seekToTime(Audio::Timestamp time);
-	uint32 getDuration() const;
-
-private:
+protected:
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
 
@@ -260,8 +257,14 @@ private:
 
 	/** Decode an audio packet. */
 	void audioPacket(AudioTrack &audio);
-	/** Decode a video packet. */
-	void videoPacket(VideoFrame &video);
+
+	/**
+	 * Decode a video packet.
+	 *
+	 * This method is virtual because it is overriden in Residual
+	 * to export the alpha channel of the video
+	 */
+	virtual void videoPacket(VideoFrame &video);
 
 	/** Decode a plane. */
 	void decodePlane(VideoFrame &video, int planeIdx, bool isChroma);
@@ -330,10 +333,7 @@ private:
 	void IDCTPut(DecodeContext &ctx, int16 *block);
 	void IDCTAdd(DecodeContext &ctx, int16 *block);
 
-	/** Find the keyframe needed to decode a frame */
-	uint32 findKeyFrame(uint32 frame) const;
-
-	/** Start playing the autio track */
+	/** Start playing the audio track */
 	void startAudio();
 	/** Stop playing the audio track */
 	void stopAudio();
