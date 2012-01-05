@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MYST3_DIRECTORYSUBENTRY_H
+#define MYST3_DIRECTORYSUBENTRY_H
+
 #include "common/memstream.h"
 #include "math/vector3d.h"
 
@@ -39,6 +42,8 @@ struct VideoData {
 	int32 height;
 };
 
+class Archive;
+
 class DirectorySubEntry {
 	public:
 		enum ResourceType {
@@ -52,10 +57,13 @@ class DirectorySubEntry {
 			kImagerMovie = 72
 		};
 
+		DirectorySubEntry() {}
+		DirectorySubEntry(Archive *archive);
+
 		void readFromStream(Common::SeekableReadStream &inStream);
 		void dump();
 		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
-		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream) const;
+		Common::MemoryReadStream *getData() const;
 		uint16 getFace() const { return _face; }
 		ResourceType getType() const { return _type; }
 		const SpotItemData &getSpotItemData() const { return _spotItemData; }
@@ -71,6 +79,10 @@ class DirectorySubEntry {
 		// Metadata
 		SpotItemData _spotItemData;
 		VideoData _videoData;
+
+		Archive *_archive;
 };
 
 } // end of namespace Myst3
+
+#endif // MYST3_DIRECTORYSUBENTRY_H

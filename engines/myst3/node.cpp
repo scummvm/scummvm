@@ -85,7 +85,7 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	uint32 dataOffset = 0;
 
 	const DirectorySubEntry *maskDesc = archive.getDescription(index, face, DirectorySubEntry::kFaceMask);
-	Common::MemoryReadStream *maskStream = archive.getData(maskDesc);
+	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
 	while (headerOffset < 400) {
 		int blockX = (headerOffset / sizeof(dataOffset)) % 10;
@@ -150,7 +150,7 @@ void Node::loadSpotItem(Archive &archive, uint16 id, uint16 condition, bool fade
 				jpegDesc->getSpotItemData().u,
 				jpegDesc->getSpotItemData().v);
 
-		Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
+		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 		Graphics::JPEG jpeg;
 		jpeg.read(jpegStream);

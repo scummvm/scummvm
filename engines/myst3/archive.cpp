@@ -52,7 +52,7 @@ void Archive::_readDirectory() {
 	directory.skip(sizeof(uint32));
 	
 	while (directory.pos() < directory.size()) {
-		DirectoryEntry entry;
+		DirectoryEntry entry(this);
 		entry.readFromStream(directory);
 		if (entry.hasSubEntries()) {
 			_directory.push_back(entry);
@@ -72,6 +72,11 @@ void Archive::dumpToFiles() {
 	}
 }
 
+Common::MemoryReadStream *Archive::dumpToMemory(uint32 offset, uint32 size) {
+	_file.seek(offset);
+	return static_cast<Common::MemoryReadStream *>(_file.readStream(size));
+}
+
 const DirectorySubEntry *Archive::getDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _directory.size(); i++) {
 		if (_directory[i].getIndex() == index) {
@@ -80,10 +85,6 @@ const DirectorySubEntry *Archive::getDescription(uint16 index, uint16 face, Dire
 	}
 	
 	return 0;
-}
-
-Common::MemoryReadStream *Archive::getData(const DirectorySubEntry *description) {
-	return description->dumpToMemory(_file);
 }
 
 bool Archive::open(const char *fileName) {

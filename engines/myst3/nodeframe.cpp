@@ -28,7 +28,7 @@ namespace Myst3 {
 NodeFrame::NodeFrame(Myst3Engine *vm, Archive *archive, uint16 id) :
 	Node(vm, archive, id) {
 	const DirectorySubEntry *jpegDesc = archive->getDescription(id, 1, DirectorySubEntry::kFrame);
-	Common::MemoryReadStream *jpegStream = archive->getData(jpegDesc);
+	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 	if (jpegStream) {
 		Graphics::JPEG jpeg;

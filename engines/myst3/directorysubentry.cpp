@@ -20,13 +20,19 @@
  *
  */
 
+#include "engines/myst3/archive.h"
 #include "engines/myst3/directorysubentry.h"
+
 #include "common/str.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
 
 namespace Myst3 {
+
+DirectorySubEntry::DirectorySubEntry(Archive *archive) :
+	_archive(archive) {
+}
 
 void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_offset = inStream.readUint32LE();
@@ -100,9 +106,8 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 
 	outFile.close();
 }
 
-Common::MemoryReadStream *DirectorySubEntry::dumpToMemory(Common::SeekableReadStream &inStream) const {
-	inStream.seek(_offset);
-	return static_cast<Common::MemoryReadStream *>(inStream.readStream(_size));
+Common::MemoryReadStream *DirectorySubEntry::getData() const {
+	return _archive->dumpToMemory(_offset, _size);
 }
 
 } // end of namespace Myst3

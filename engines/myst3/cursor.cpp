@@ -75,7 +75,7 @@ void Cursor::loadAvailableCursors(Archive *archive) {
 		if (!cursorDesc)
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
 
-		Common::MemoryReadStream *bmpStream = archive->getData(cursorDesc);
+		Common::MemoryReadStream *bmpStream = cursorDesc->getData();
 		availableCursors[i].surface = Graphics::ImageDecoder::loadFile(*bmpStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 		// Apply the colorkey for transparency

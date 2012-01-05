@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MYST3_DIRECTORYENTRY_H
+#define MYST3_DIRECTORYENTRY_H
+
 #include "engines/myst3/directorysubentry.h"
 #include "common/stream.h"
 #include "common/array.h"
@@ -32,7 +35,12 @@ class DirectoryEntry {
 		uint8 _unk;
 		Common::Array<DirectorySubEntry> _subentries;
 
+		Archive *_archive;
+
 	public:
+		DirectoryEntry() {}
+		DirectoryEntry(Archive *archive);
+
 		void readFromStream(Common::SeekableReadStream &inStream);
 		void dump();
 		void dumpToFiles(Common::SeekableReadStream &inStream);
@@ -42,3 +50,5 @@ class DirectoryEntry {
 };
 
 } // end of namespace Myst3
+
+#endif // MYST3_DIRECTORYENTRY_H

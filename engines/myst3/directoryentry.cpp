@@ -25,6 +25,10 @@
 
 namespace Myst3 {
 
+DirectoryEntry::DirectoryEntry(Archive *archive) :
+	_archive(archive) {
+}
+
 void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_index = inStream.readUint16LE();
 	_unk = inStream.readByte();
@@ -37,7 +41,7 @@ void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream) {
 
 	_subentries.clear();
 	for (uint i = 0; i < subItemCount ; i++) {
-		DirectorySubEntry subEntry;
+		DirectorySubEntry subEntry(_archive);
 		subEntry.readFromStream(inStream);
 		_subentries.push_back(subEntry);
 	}

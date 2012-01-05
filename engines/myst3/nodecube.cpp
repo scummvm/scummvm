@@ -30,7 +30,7 @@ NodeCube::NodeCube(Myst3Engine *vm, Archive *archive, uint16 id) :
 	Node(vm, archive, id) {
 	for (int i = 0; i < 6; i++) {
 		const DirectorySubEntry *jpegDesc = archive->getDescription(id, i + 1, DirectorySubEntry::kCubeFace);
-		Common::MemoryReadStream *jpegStream = archive->getData(jpegDesc);
+		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 		if (jpegStream) {
 			Graphics::JPEG jpeg;

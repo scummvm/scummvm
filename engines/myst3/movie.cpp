@@ -45,7 +45,7 @@ Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
 	loadPosition(binkDesc->getVideoData());
 	initTexture();
 
-	Common::MemoryReadStream *binkStream = archive->getData(binkDesc);
+	Common::MemoryReadStream *binkStream = binkDesc->getData();
 	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 }
 

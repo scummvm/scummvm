@@ -40,7 +40,7 @@ class Archive {
 	public:
 
 		const DirectorySubEntry *getDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
-		Common::MemoryReadStream *getData(const DirectorySubEntry *description);
+		Common::MemoryReadStream *dumpToMemory(uint32 offset, uint32 size);
 		void dumpDirectory();
 		void dumpToFiles();
 		
