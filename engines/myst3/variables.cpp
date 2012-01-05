@@ -32,6 +32,10 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(62, LocationRoom, false)
 	VAR(63, LocationNode, false)
 
+	VAR(115, SunspotIntensity, false)
+	VAR(116, SunspotColor, false)
+	VAR(117, SunspotRadius, false)
+
 	VAR(142, MovieOverrideStartFrame, true)
 	VAR(143, MovieOverrideEndFrame, true)
 	VAR(144, MovieVolume1, true)

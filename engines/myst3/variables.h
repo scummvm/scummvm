@@ -54,6 +54,10 @@ public:
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)
 
+	DECLARE_VAR(115, SunspotIntensity)
+	DECLARE_VAR(116, SunspotColor)
+	DECLARE_VAR(117, SunspotRadius)
+
 	DECLARE_VAR(142, MovieStartFrame)
 	DECLARE_VAR(143, MovieEndFrame)
 	DECLARE_VAR(149, MovieConditionBit)

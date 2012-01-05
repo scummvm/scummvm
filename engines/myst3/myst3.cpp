@@ -469,4 +469,9 @@ void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
 	_node->loadSpotItem(*_archive, id, condition, fade);
 }
 
+void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
+		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
+	warning("Sunspots are not implemented");
+}
+
 } // end of namespace Myst3

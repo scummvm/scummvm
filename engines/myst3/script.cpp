@@ -58,6 +58,14 @@ Script::Script(Myst3Engine *vm):
 	OP_4( 25, movieInitOverrridePosition,	kEvalValue,	kCondition,	kValue,		kValue					);
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
+	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
+	OP_3( 37, sunspotAddVarIntensity,		kValue,		kValue,		kVar								);
+	OP_4( 38, sunspotAddIntensityColor,		kValue,		kValue,		kValue,		kValue					);
+	OP_5( 39, sunspotAddVarIntensityColor,	kValue,		kValue,		kValue,		kValue, 	kVar		);
+	OP_4( 40, sunspotAddIntensityRadius,	kValue,		kValue,		kValue,		kValue					);
+	OP_5( 41, sunspotAddVarIntensityRadius,	kValue,		kValue,		kValue,		kVar, 		kValue		);
+	OP_5( 42, sunspotAddIntColorRadius,		kValue,		kValue,		kValue,		kValue, 	kValue		);
+	OP_5( 43, sunspotAddVarIntColorRadius,	kValue,		kValue,		kValue,		kValue, 	kVar		); // Six args
 	OP_2( 44, inventoryAddFront,			kVar,		kValue											);
 	OP_2( 45, inventoryAddBack,				kVar,		kValue											);
 	OP_1( 46, inventoryRemove,				kVar														);
@@ -452,7 +460,91 @@ void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	warning("Unimplemented opcode %d", cmd.op);
+	uint16 intensity = _vm->_vars->getSunspotIntensity();
+	uint16 color = _vm->_vars->getSunspotColor();
+	uint16 radius = _vm->_vars->getSunspotRadius();
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, 1, false, radius);
+}
+
+void Script::sunspotAddIntensity(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = _vm->_vars->getSunspotColor();
+	uint16 radius = _vm->_vars->getSunspotRadius();
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, 1, false, radius);
+}
+
+void Script::sunspotAddVarIntensity(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = _vm->_vars->getSunspotColor();
+	uint16 radius = _vm->_vars->getSunspotRadius();
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, cmd.args[3], true, radius);
+}
+
+void Script::sunspotAddIntensityColor(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = cmd.args[3];
+	uint16 radius = _vm->_vars->getSunspotRadius();
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, 1, false, radius);
+}
+
+void Script::sunspotAddVarIntensityColor(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = cmd.args[3];
+	uint16 radius = _vm->_vars->getSunspotRadius();
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, cmd.args[4], true, radius);
+}
+
+void Script::sunspotAddIntensityRadius(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = _vm->_vars->getSunspotColor();
+	uint16 radius = cmd.args[3];
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, 1, false, radius);
+}
+
+void Script::sunspotAddVarIntensityRadius(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = _vm->_vars->getSunspotColor();
+	uint16 radius = cmd.args[4];
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, cmd.args[3], true, radius);
+}
+
+void Script::sunspotAddIntColorRadius(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = cmd.args[3];
+	uint16 radius = cmd.args[4];
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, 1, false, radius);
+}
+
+void Script::sunspotAddVarIntColorRadius(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add sunspot: pitch %d heading %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 intensity = cmd.args[2];
+	uint16 color = cmd.args[3];
+	uint16 radius = cmd.args[5];
+
+	_vm->addSunSpot(cmd.args[0], cmd.args[1], intensity, color, cmd.args[4], true, radius);
 }
 
 void Script::inventoryAddFront(Context &c, const Opcode &cmd) {

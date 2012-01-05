@@ -113,6 +113,14 @@ private:
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
 	DECLARE_OPCODE(sunspotAdd);
+	DECLARE_OPCODE(sunspotAddIntensity);
+	DECLARE_OPCODE(sunspotAddVarIntensity);
+	DECLARE_OPCODE(sunspotAddIntensityColor);
+	DECLARE_OPCODE(sunspotAddVarIntensityColor);
+	DECLARE_OPCODE(sunspotAddIntensityRadius);
+	DECLARE_OPCODE(sunspotAddVarIntensityRadius);
+	DECLARE_OPCODE(sunspotAddIntColorRadius);
+	DECLARE_OPCODE(sunspotAddVarIntColorRadius);
 	DECLARE_OPCODE(inventoryAddFront);
 	DECLARE_OPCODE(inventoryAddBack);
 	DECLARE_OPCODE(inventoryRemove);
