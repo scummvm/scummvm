@@ -317,4 +317,57 @@ void SpotItemFace::fadeDraw() {
 	_face->uploadTexture();
 }
 
+void Node::addSunSpot(const SunSpot &sunspot) {
+	SunSpot *sunSpot = new SunSpot(sunspot);
+	_sunspots.push_back(sunSpot);
+}
+
+static Math::Vector3d directionToVector(const Common::Point &lookAt) {
+	Math::Vector3d v;
+
+	float heading = Math::degreeToRadian(lookAt.x);
+	float pitch = Math::degreeToRadian(lookAt.y);
+
+	v.setValue(0, cos(pitch) * cos(heading));
+	v.setValue(1, sin(pitch));
+	v.setValue(2, cos(pitch) * sin(heading));
+
+	return v;
+}
+
+SunSpot Node::computeSunspotsIntensity(const Common::Point &lookAt) {
+	SunSpot result;
+	result.intensity = -1;
+	result.color = 0;
+	result.radius = 0;
+
+	for (uint i = 0; i < _sunspots.size(); i++) {
+		SunSpot *s = _sunspots[i];
+
+		uint32 value = _vm->_vars->get(s->var);
+
+		// Skip disabled items
+		if (value == 0) continue;
+
+		Math::Vector3d vLookAt = directionToVector(lookAt);
+		Math::Vector3d vSun = -directionToVector(Common::Point(s->heading, s->pitch));
+		float dotProduct = Math::Vector3d::dotProduct(vLookAt, vSun);
+
+		float distance = (0.05 * s->radius - (dotProduct + 1.0) * 90) / (0.05 * s->radius);
+		distance = CLIP<float>(distance, 0.0, 1.0);
+
+		if (distance > result.radius) {
+			result.radius = distance;
+			result.color = s->color;
+			result.intensity = s->intensity;
+
+			if (s->variableIntensity) {
+				result.radius = value * distance / 100;
+			}
+		}
+	}
+
+	return result;
+}
+
 } // end of namespace Myst3

@@ -244,6 +244,10 @@ void Myst3Engine::drawFrame() {
 		_scene->setupCameraOrtho2D();
 	}
 
+	SunSpot flare = _node->computeSunspotsIntensity(_scene->getMousePos());
+	if (flare.intensity >= 0)
+		_scene->drawSunspotFlare(flare);
+
 	_scene->drawBlackBorders();
 	_cursor->draw();
 
@@ -482,7 +486,23 @@ void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
 
 void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
-	warning("Sunspots are not implemented");
+
+	SunSpot s;
+
+	s.pitch = pitch;
+	s.heading = heading;
+	s.intensity = intensity * 2.55;
+	s.color = color & 0xF | 16
+			* (color & 0xF | 16
+			* ((color >> 4) & 0xF | 16
+			* ((color >> 4) & 0xF | 16
+			* ((color >> 8) & 0xF | 16
+			* ((color >> 8) & 0xF)))));
+	s.var = var;
+	s.variableIntensity = varControlledIntensity;
+	s.radius = radius;
+
+	_node->addSunSpot(s);
 }
 
 const DirectorySubEntry *Myst3Engine::getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {

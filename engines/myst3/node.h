@@ -31,6 +31,7 @@
 #endif
 
 #include "common/array.h"
+#include "common/rect.h"
 
 #include "graphics/surface.h"
 #include "graphics/jpeg.h"
@@ -100,11 +101,23 @@ class SpotItem {
 		Common::Array<SpotItemFace *> _faces;
 };
 
+class SunSpot {
+	public:
+		uint16 pitch;
+		uint16 heading;
+		float intensity;
+		uint32 color;
+		uint16 var;
+		bool variableIntensity;
+		float radius;
+};
+
 class Node {
 	protected:
 		Myst3Engine *_vm;
 		Face *_faces[6];
 		Common::Array<SpotItem *> _spotItems;
+		Common::Array<SunSpot *> _sunspots;
 
 	public:
 		Node(Myst3Engine *vm, uint16 id);
@@ -112,6 +125,10 @@ class Node {
 
 		void update();
 		virtual void draw() = 0;
+
+		void addSunSpot(const SunSpot &sunspot);
+		SunSpot computeSunspotsIntensity(const Common::Point &lookAt);
+
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void dumpFaceMask(uint16 index, int face);
 

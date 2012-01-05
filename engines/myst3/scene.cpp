@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/scene.h"
+#include "engines/myst3/node.h"
 
 namespace Myst3 {
 
@@ -106,6 +107,31 @@ void Scene::drawBlackBorders() {
 
 	drawBlackRect(top);
 	drawBlackRect(bottom);
+}
+
+void Scene::drawSunspotFlare(const SunSpot &s) {
+	Common::Rect frame = Common::Rect(_originalWidth, _frameHeight);
+	frame.translate(0, _topBorderHeight);
+
+	float r = ((s.color >> 16) & 0xFF) / 255.0;
+	float g = ((s.color >>  8) & 0xFF) / 255.0;
+	float b = ((s.color >>  0) & 0xFF) / 255.0;
+	float a = s.intensity * s.radius / 255.0;
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(r, g, b, a);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glVertex3f( frame.left, frame.bottom, 0.0f);
+		glVertex3f( frame.right, frame.bottom, 0.0f);
+		glVertex3f( frame.left, frame.top, 0.0f);
+		glVertex3f( frame.right, frame.top, 0.0f);
+	glEnd();
+
+	glDisable(GL_BLEND);
 }
 
 } // end of namespace Myst3

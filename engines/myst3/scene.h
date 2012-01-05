@@ -34,6 +34,8 @@
 
 namespace Myst3 {
 
+class SunSpot;
+
 class Scene {
 	private:
 		float _cameraPitch;
@@ -55,6 +57,7 @@ class Scene {
 		void lookAt(float pitch, float heading);
 
 		void drawBlackBorders();
+		void drawSunspotFlare(const SunSpot &s);
 
 		static const int _originalWidth = 640;
 		static const int _originalHeight = 480;
