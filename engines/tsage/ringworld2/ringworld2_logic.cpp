@@ -27,6 +27,7 @@
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_dialogs.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
+#include "tsage/ringworld2/ringworld2_scenes1.h"
 #include "tsage/ringworld2/ringworld2_scenes2.h"
 #include "tsage/ringworld2/ringworld2_scenes3.h"
 
@@ -91,7 +92,9 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	/* Scene group #1 */
 	//
 	case 1000:
+		error("Missing scene %d from group 1", sceneNumber);
 	case 1010:
+		return new Scene1010();
 	case 1020:
 	case 1100:
 	case 1200:
