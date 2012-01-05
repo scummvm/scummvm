@@ -9,7 +9,9 @@ Residual Team
     Grim:
        James Brown           - Core developer  (retired)
        Giulio Camuffo        - Core developer
-       Pawel Kolodziejski    - Core developer
+       Pawel Kolodziejski    - Core developer (suspended)
+       Einar Johan T. Somaae - Initial EMI support, various code fixes and
+                               improvements
 
     Grim Contributors:
        If you have contributed to this engine then you deserve to be on this
@@ -17,25 +19,36 @@ Residual Team
 
        Torbjorn Andersson    - Various code fixes
        Ori Avtalion          - Lipsync, LAF support, various code fixes
+       Robert Biro           - Fixes to antiliasing
+       Bastien Bouclet       - Various fixes to engine
        Marcus Comstedt       - Initial Dreamcast port
-       Andrea Corna          - Improved font support, patch extractor
+       Andrea Corna          - Improved font support, patch extractor, few
+                               code improvements
        Jonathan Gray         - Various code fixes
        Vincent Hamm          - Various engine code fixes and improvements
+       Sven Hesse            - Various compilation fixes
        Erich Hoover          - x86-64 fixes, various code fixes and
                                improvements
+       Max Horn              - Minor code fixes
        Travis Howell         - Various code fixes, Windows port
+       Filippos Karapetis    - Compilation fixes
        Joost Peters          - Various code fixes
+       George Macon          - Compilation fixes
+       Josh Matthews         - Few fixes to engine
        Matthieu Milan        - Few code improvements
        Christian Neumair     - Various optimisation patches
+       Vincent Pelletier     - Various engine improvementts and code fixes
        Daniel Schepler       - Initial engine codebase, LUA support
-       Einar Johan T. Somaae - Initial EMI support, various code fixes and
-                               improvements
        Yaron Tausky          - Fixes to subtitles
-       Joel Teichroeb        - Initial EMI support, various code fixes
+       Joel Teichroeb        - Initial EMI support, various code fixes and
+                               improvements
+       Julien Templier       - create_project tool
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
-       Joni Vahamaki         - Various code fixes and improvements
-       vpelletier            - Various code fixes and improvements
+       Joni Vahamaki         - A lot engine improvements and fixes
+       clone2727             - Some engine improvements, some work on EMI
+                               support
+       JenniBee              - Compilation fixes
 
 ScummVM code
 ************

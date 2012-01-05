@@ -54,8 +54,8 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2003-2011 The Residual project",
-"C0""http://residual.sourceforge.net",
+"C0""Copyright (C) 2003-2012 The Residual project",
+"C0""http://www.residualvm.org",
 "",
 "C0""Residual is the legal property of its developers, whose names are too numerous to list here. Please refer to the AUTHORS file distributed with this binary.",
 "",
