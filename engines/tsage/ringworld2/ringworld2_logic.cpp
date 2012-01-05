@@ -234,7 +234,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 3800:
 		return new Scene3800();
 	case 3900:
-		error("Missing scene %d from group 3", sceneNumber);
+		return new Scene3900();
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;

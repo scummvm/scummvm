@@ -702,6 +702,47 @@ public:
 	virtual void process(Event &event);
 	virtual void synchronize(Serializer &s);
 };
+
+class Scene3900 : public SceneExt {
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit3 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit4 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+
+	class Exit5 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	SceneActor _actor1;
+	NamedHotspot _item1;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	Exit3 _exit3;
+	Exit4 _exit4;
+	Exit5 _exit5;
+	Rect _rect1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
