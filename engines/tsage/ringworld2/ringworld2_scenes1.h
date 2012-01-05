@@ -47,6 +47,15 @@ public:
 	virtual void signal();
 };
 
+class Scene1020 : public SceneExt {
+public:
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

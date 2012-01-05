@@ -94,8 +94,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1000:
 		error("Missing scene %d from group 1", sceneNumber);
 	case 1010:
+		// Cutscene - trip in space
 		return new Scene1010();
 	case 1020:
+		return new Scene1020();
 	case 1100:
 	case 1200:
 	case 1330:
