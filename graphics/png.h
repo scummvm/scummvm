@@ -23,7 +23,6 @@
 /*
  * PNG decoder used in engines:
  *  - sword25
- *  - ScummVM GUI
  * Dependencies:
  *  - zlib
  */
