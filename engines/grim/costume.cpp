@@ -489,11 +489,9 @@ void Costume::stopChores() {
 }
 
 void Costume::fadeChoreIn(int chore, int msecs) {
-	if (chore >= _numChores) {
-		if (chore < 0 || chore >= _numChores) {
-			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
-			return;
-		}
+	if (chore < 0 || chore >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+		return;
 	}
 	_chores[chore]->fadeIn(msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
@@ -501,11 +499,9 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
-	if (chore >= _numChores) {
-		if (chore < 0 || chore >= _numChores) {
-			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
-			return;
-		}
+	if (chore < 0 || chore >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+		return;
 	}
 	_chores[chore]->fadeOut(msecs);
 }
