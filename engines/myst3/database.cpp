@@ -91,17 +91,31 @@ Database::Database(const Common::String &executable) :
 	_nodeInitScript = loadOpcodes(file);
 
 	file.close();
+
+	preloadCommonRooms();
+}
+
+void Database::preloadCommonRooms() {
+	static const uint16 commonRooms[3] = { 101, 133, 134 };
+
+	for (uint i = 0; i < 3; i++) {
+		RoomData *data = findRoomData(commonRooms[i]);
+		_roomNodesCache.setVal(commonRooms[i], loadRoomScripts(data));
+	}
 }
 
 Common::Array<uint16> Database::listRoomNodes(uint8 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 	Common::Array<uint16> list;
 
-	if (roomID != 0 && roomID != _currentRoomID) {
+	if (roomID == 0)
+		roomID = _currentRoomID;
+
+	if (_roomNodesCache.contains(roomID)) {
+		nodes = _roomNodesCache.getVal(roomID);
+	} else {
 		RoomData *data = findRoomData(roomID);
 		nodes = loadRoomScripts(data);
-	} else {
-		nodes = _currentRoomNodes;
 	}
 
 	for (uint i = 0; i < nodes.size(); i++) {
@@ -114,11 +128,14 @@ Common::Array<uint16> Database::listRoomNodes(uint8 roomID, uint32 ageID) {
 NodePtr Database::getNodeData(uint16 nodeID, uint8 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 
-	if (roomID != 0 && roomID != _currentRoomID) {
+	if (roomID == 0)
+		roomID = _currentRoomID;
+
+	if (_roomNodesCache.contains(roomID)) {
+		nodes = _roomNodesCache.getVal(roomID);
+	} else {
 		RoomData *data = findRoomData(roomID);
 		nodes = loadRoomScripts(data);
-	} else {
-		nodes = _currentRoomNodes;
 	}
 
 	for (uint i = 0; i < nodes.size(); i++) {
@@ -202,8 +219,11 @@ void Database::setCurrentRoom(const uint8 roomID) {
 	if (!_currentRoomData || !_currentRoomData->scriptsOffset)
 		return;
 
+	// Remove old room from cache and add the new one
+	_roomNodesCache.erase(_currentRoomID);
+	_roomNodesCache.setVal(roomID, loadRoomScripts(_currentRoomData));
+
 	_currentRoomID = roomID;
-	_currentRoomNodes = loadRoomScripts(_currentRoomData);
 }
 
 Common::Array<CondScript> Database::loadCondScripts(Common::ReadStream &s) {

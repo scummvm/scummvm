@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/ptr.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/stream.h"
 
 namespace Myst3 {
@@ -121,12 +122,13 @@ private:
 
 	uint16 _currentRoomID;
 	RoomData *_currentRoomData;
-	Common::Array<NodePtr> _currentRoomNodes;
+	Common::HashMap< uint16, Common::Array<NodePtr> > _roomNodesCache;
 
 	Common::Array<Opcode> _nodeInitScript;
 
 	RoomData *findRoomData(const uint8 & roomID);
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
+	void preloadCommonRooms();
 
 	Common::Array<AgeData> loadAges(Common::ReadStream &s);
 	RoomData loadRoomDescription(Common::ReadStream &s);
