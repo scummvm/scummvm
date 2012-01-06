@@ -472,6 +472,7 @@ begin_credits("Credits");
 		add_person("Jonathan Gray", "khalek", "Various code fixes");
 		add_person("Vincent Hamm", "yazoo", "Various engine code fixes and improvements");
 		add_person("Sven Hesse", "DrMcCoy", "Various compilation fixes");
+		add_person("Matthew Hoops", "clone2727", "Some engine improvements, some work on EMI support");
 		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various code fixes and improvements");
 		add_person("Max Horn", "fingolfin", "Minor code fixes");
 		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
@@ -489,7 +490,6 @@ begin_credits("Credits");
 		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
 		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "A lot engine improvements and fixes");
-		add_person("", "clone2727", "Some engine improvements, some work on EMI support");
 		add_person("", "JenniBee", "Compilation fixes");
 	    end_section();
 
