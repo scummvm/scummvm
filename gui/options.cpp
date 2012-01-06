@@ -434,7 +434,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 
 	_enableVolumeSettings = enabled;
 
-	ena = enabled && !_muteCheckbox->getState();
+	ena = enabled;
 	if (_guioptions.contains(GUIO_NOMUSIC))
 		ena = false;
 
