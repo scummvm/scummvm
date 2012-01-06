@@ -570,7 +570,7 @@ bool AgiEngine::matchWord() {
 	int hi = _predictiveDictLineCount - 1;
 	int lo = 0;
 	int line = 0;
-	while (lo < hi) {
+	while (lo <= hi) {
 		line = (lo + hi) / 2;
 		int cmpVal = strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size());
 		if (cmpVal > 0)
