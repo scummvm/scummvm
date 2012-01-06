@@ -124,7 +124,7 @@ Common::Error Myst3Engine::run() {
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
-	goToNode(1, 245); // LEIS
+	goToNode(1, 501); // LEIS
 	
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
@@ -277,7 +277,7 @@ void Myst3Engine::drawFrame() {
 	_frameCount++;
 }
 
-void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
+void Myst3Engine::goToNode(uint16 nodeID, uint32 roomID) {
 	if (_node) {
 		for (uint i = 0; i < _movies.size(); i++) {
 			delete _movies[i];
@@ -291,7 +291,7 @@ void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 	loadNode(nodeID, roomID);
 }
 
-void Myst3Engine::loadNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
+void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	_scriptEngine->run(&_db->getNodeInitScript());
 
 	if (nodeID)
@@ -392,7 +392,7 @@ void Myst3Engine::loadNodeMenu(uint16 nodeID) {
 	_node = new NodeFrame(this, nodeID);
 }
 
-void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
+void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {

@@ -47,7 +47,7 @@ void Console::describeScript(const Common::Array<Opcode> &script) {
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	uint16 nodeId = _vm->_vars->getLocationNode();
-	uint16 roomId = _vm->_vars->getLocationRoom();
+	uint32 roomId = _vm->_vars->getLocationRoom();
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
@@ -150,7 +150,7 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 
 bool Console::Cmd_ListNodes(int argc, const char **argv) {
 
-	uint16 roomID = 0;
+	uint32 roomID = 0;
 
 	if (argc == 2) {
 		roomID = _vm->_db->getRoomId(argv[1]);
@@ -173,7 +173,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 
 bool Console::Cmd_Run(int argc, const char **argv) {
 	uint16 nodeId = _vm->_vars->getLocationNode();
-	uint16 roomId = 0;
+	uint32 roomId = 0;
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
@@ -201,7 +201,7 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 		return true;
 	}
 
-	uint8 roomID = _vm->_db->getRoomId(argv[1]);
+	uint32 roomID = _vm->_db->getRoomId(argv[1]);
 	uint16 nodeId = atoi(argv[2]);
 
 	if (roomID == 0) {

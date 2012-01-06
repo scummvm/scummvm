@@ -46,10 +46,7 @@ typedef Common::SharedPtr<NodeData> NodePtr;
 
 struct RoomData
 {
-	uint8 id;
-	uint8 roomUnk1;
-	uint8 roomUnk2;
-	uint8 roomUnk3;
+	uint32 id;
 	char name[8];
 	uint32 scriptsOffset;
 	uint32 ambSoundsOffset;
@@ -80,12 +77,12 @@ public:
 	/**
 	 * Loads a room's nodes into the database
 	 */
-	void setCurrentRoom(uint8 roomID);
+	void setCurrentRoom(uint32 roomID);
 
 	/**
 	 * Returns a node's hotspots and scripts from the currently loaded room
 	 */
-	NodePtr getNodeData(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
+	NodePtr getNodeData(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
 
 	/**
 	 * Returns the generic node init script
@@ -95,17 +92,17 @@ public:
 	/**
 	 * Returns the name of the currently loaded room
 	 */
-	void getRoomName(char name[8], uint8 roomID = 0);
+	void getRoomName(char name[8], uint32 roomID = 0);
 
 	/**
 	 * Returns the id of a room from its name
 	 */
-	uint8 getRoomId(const char *name);
+	uint32 getRoomId(const char *name);
 
 	/**
 	 * Returns the list of the nodes of a room
 	 */
-	Common::Array<uint16> listRoomNodes(uint8 roomID = 0, uint32 ageID = 0);
+	Common::Array<uint16> listRoomNodes(uint32 roomID = 0, uint32 ageID = 0);
 private:
 	struct GameVersion {
 		const char *description;
@@ -120,13 +117,13 @@ private:
 
 	Common::Array<AgeData> _ages;
 
-	uint16 _currentRoomID;
+	uint32 _currentRoomID;
 	RoomData *_currentRoomData;
 	Common::HashMap< uint16, Common::Array<NodePtr> > _roomNodesCache;
 
 	Common::Array<Opcode> _nodeInitScript;
 
-	RoomData *findRoomData(const uint8 & roomID);
+	RoomData *findRoomData(const uint32 &roomID);
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
 	void preloadCommonRooms();
 

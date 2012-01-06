@@ -96,7 +96,8 @@ Database::Database(const Common::String &executable) :
 }
 
 void Database::preloadCommonRooms() {
-	static const uint16 commonRooms[3] = { 101, 133, 134 };
+	// XXXX, MENU, JRNL
+	static const uint32 commonRooms[3] = { 101, 901, 902 };
 
 	for (uint i = 0; i < 3; i++) {
 		RoomData *data = findRoomData(commonRooms[i]);
@@ -104,7 +105,7 @@ void Database::preloadCommonRooms() {
 	}
 }
 
-Common::Array<uint16> Database::listRoomNodes(uint8 roomID, uint32 ageID) {
+Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 	Common::Array<uint16> list;
 
@@ -125,7 +126,7 @@ Common::Array<uint16> Database::listRoomNodes(uint8 roomID, uint32 ageID) {
 	return list;
 }
 
-NodePtr Database::getNodeData(uint16 nodeID, uint8 roomID, uint32 ageID) {
+NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 
 	if (roomID == 0)
@@ -146,7 +147,7 @@ NodePtr Database::getNodeData(uint16 nodeID, uint8 roomID, uint32 ageID) {
 	return NodePtr();
 }
 
-RoomData *Database::findRoomData(const uint8 & roomID)
+RoomData *Database::findRoomData(const uint32 & roomID)
 {
 	for (uint i = 0; i < _ages.size(); i++)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
@@ -210,7 +211,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	return nodes;
 }
 
-void Database::setCurrentRoom(const uint8 roomID) {
+void Database::setCurrentRoom(const uint32 roomID) {
 	if (roomID == _currentRoomID)
 		return;
 
@@ -277,7 +278,7 @@ Common::Array<Opcode> Database::loadOpcodes(Common::ReadStream &s)
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::ReadStream & s)
+CondScript Database::loadCondScript(Common::ReadStream &s)
 {
 	CondScript script;
 	script.condition = s.readUint16LE();
@@ -351,10 +352,7 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 	RoomData room;
 
-	room.id = s.readByte();
-	room.roomUnk1 = s.readByte();
-	room.roomUnk2 = s.readByte();
-	room.roomUnk3 = s.readByte();
+	room.id = s.readUint32LE();
 	s.read(&room.name, 8);
 	room.scriptsOffset = s.readUint32LE();
 	room.ambSoundsOffset = s.readUint32LE();
@@ -374,16 +372,16 @@ RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 	return room;
 }
 
-void Database::getRoomName(char name[8], uint8 roomID) {
+void Database::getRoomName(char name[8], uint32 roomID) {
 	if (roomID != 0 && roomID != _currentRoomID) {
-		RoomData * data = findRoomData(roomID);
+		RoomData *data = findRoomData(roomID);
 		memcpy(&name[0], &data->name, 8);
 	} else if (_currentRoomData) {
 		memcpy(&name[0], &_currentRoomData->name, 8);
 	}
 }
 
-uint8 Database::getRoomId(const char *name) {
+uint32 Database::getRoomId(const char *name) {
 	for (uint i = 0; i < _ages.size(); i++)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (!scumm_stricmp(_ages[i].rooms[j].name, name)) {
