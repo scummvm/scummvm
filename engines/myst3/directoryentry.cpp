@@ -35,7 +35,7 @@ void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	byte subItemCount = inStream.readByte();
 	
 	// End of directory marker ?
-	if (_unk != 0) {
+	if (_unk > 2) {
 		subItemCount = 0;
 	}
 

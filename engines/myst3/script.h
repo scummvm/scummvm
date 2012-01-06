@@ -98,6 +98,7 @@ private:
 	DECLARE_OPCODE(nodeFrameInit);
 	DECLARE_OPCODE(nodeFrameInitCond);
 	DECLARE_OPCODE(nodeFrameInitIndex);
+	DECLARE_OPCODE(nodeMenuInit);
 	DECLARE_OPCODE(stopWholeScript);
 	DECLARE_OPCODE(spotItemAdd);
 	DECLARE_OPCODE(spotItemAddCond);

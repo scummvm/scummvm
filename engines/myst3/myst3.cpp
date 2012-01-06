@@ -54,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
-		_archiveRSRC(0), _archiveOVER(0),
+		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -65,6 +65,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "bin");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data/TEXT");
 	SearchMan.addSubDirectoriesMatching(gameDataDir, "EXILE Disc ?/Data", true);
 }
 
@@ -76,6 +77,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _archive;
 	delete _archiveRSRC;
 	delete _archiveOVER;
+	delete _archiveLANG;
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
@@ -96,9 +98,14 @@ Common::Error Myst3Engine::run() {
 	_archive = new Archive();
 	_archiveRSRC = new Archive();
 	_archiveOVER = new Archive();
+	_archiveLANG = new Archive();
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
+
+	if (!_archiveLANG->open("ENGLISH.m3t")) {
+		error("Unable to open archive ENGLISH.m3t");
+	}
 
 	if (!_archiveRSRC->open("RSRC.m3r")) {
 		error("Unable to open archive RSRC.m3r");
@@ -137,10 +144,9 @@ Common::Error Myst3Engine::run() {
 	return Common::kNoError;
 }
 
-Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots() {
+Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 	Common::Array<HotSpot *> hovered;
 
-	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
 	if (_viewType == kCube) {
 		Common::Point mouse = _scene->getMousePos();
 
@@ -167,7 +173,9 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots() {
 }
 
 void Myst3Engine::updateCursor() {
-	Common::Array<HotSpot *> hovered = listHoveredHotspots();
+	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
+
+	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 	if (hovered.size() > 0) {
 		HotSpot *h = hovered.back();
 		_cursor->changeCursor(h->cursor);
@@ -196,7 +204,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 			// Skip the event when in look only mode
 			if (lookOnly) continue;
 
-			Common::Array<HotSpot *> hovered = listHoveredHotspots();
+			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
+			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 
 			for (uint j = 0; j < hovered.size(); j++) {
 				if (_vars->evaluate(hovered[j]->condition)) {
@@ -334,7 +343,7 @@ void Myst3Engine::runNodeBackgroundScripts() {
 		}
 	}
 
-	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
+	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
 
 	for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 		if (nodeData->hotspots[j].condition == -1) {
@@ -510,6 +519,9 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(uint16 index, uint16 fa
 
 	if (_archiveOVER)
 		desc = _archiveOVER->getDescription(index, face, type);
+
+	if (!desc && _archiveLANG)
+		desc = _archiveLANG->getDescription(index, face, type);
 
 	if (!desc && _archiveRSRC)
 		desc = _archiveRSRC->getDescription(index, face, type);

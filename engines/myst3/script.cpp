@@ -43,6 +43,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(  7, nodeFrameInit, 				kEvalValue													);
 	OP_3(  8, nodeFrameInitCond, 			kCondition,	kEvalValue,	kEvalValue							);
 	OP_5(  9, nodeFrameInitIndex,			kVar,		kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
+	OP_1( 10, nodeMenuInit, 				kEvalValue													);
 	OP_0( 11, stopWholeScript																			);
 	OP_1( 13, spotItemAdd,					kValue														);
 	OP_2( 14, spotItemAddCond,				kValue,		kCondition										);
@@ -59,7 +60,7 @@ Script::Script(Myst3Engine *vm):
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
 	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
-	OP_3( 37, sunspotAddVarIntensity,		kValue,		kValue,		kVar								);
+	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar								);
 	OP_4( 38, sunspotAddIntensityColor,		kValue,		kValue,		kValue,		kValue					);
 	OP_5( 39, sunspotAddVarIntensityColor,	kValue,		kValue,		kValue,		kValue, 	kVar		);
 	OP_4( 40, sunspotAddIntensityRadius,	kValue,		kValue,		kValue,		kValue					);
@@ -318,6 +319,14 @@ void Script::nodeFrameInitIndex(Context &c, const Opcode &cmd) {
 	uint16 value = cmd.args[var + 1];
 
 	uint16 nodeId = _vm->_vars->valueOrVarValue(value);
+	_vm->loadNodeFrame(nodeId);
+	// TODO: Load rects
+}
+
+void Script::nodeMenuInit(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node menu init %d", cmd.op, cmd.args[0]);
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(cmd.args[0]);
 	_vm->loadNodeFrame(nodeId);
 	// TODO: Load rects
 }
@@ -1464,7 +1473,7 @@ void Script::drawFramesForVarStartEndVarEachTwoFrames(Context &c, const Opcode &
 void Script::runScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
-	_vm->runScriptsFromNode(cmd.args[0]);
+	_vm->runScriptsFromNode(cmd.args[0], _vm->_vars->getLocationRoom());
 }
 
 } /* namespace Myst3 */

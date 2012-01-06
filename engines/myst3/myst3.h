@@ -97,9 +97,12 @@ private:
 	
 	Node *_node;
 	Scene *_scene;
+
 	Archive *_archive;
 	Archive *_archiveRSRC;
 	Archive *_archiveOVER;
+	Archive *_archiveLANG;
+
 	Script *_scriptEngine;
 	Database *_db;
 	Cursor *_cursor;
@@ -112,7 +115,7 @@ private:
 	uint _frameCount;
 	bool _shouldQuit;
 
-	Common::Array<HotSpot *> listHoveredHotspots();
+	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();
 
 	friend class Console;

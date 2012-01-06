@@ -30,6 +30,13 @@ namespace Myst3 {
 NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 	Node(vm, id) {
 	const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, 1, DirectorySubEntry::kFrame);
+
+	if (!jpegDesc)
+		jpegDesc = _vm->getFileDescription(id, 1, DirectorySubEntry::kMenuFrame);
+
+	if (!jpegDesc)
+		error("Frame %d does not exist", id);
+
 	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 	if (jpegStream) {
