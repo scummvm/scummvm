@@ -206,7 +206,7 @@ endif
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/README ResidualVMWin32/README.txt
-	cp $(srcdir)/dists/residualvm.iss ResidualWin32
+	cp $(srcdir)/dists/residualvm.iss ResidualVMWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	toms ResidualVMWin32/*.txt
