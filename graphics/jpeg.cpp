@@ -224,7 +224,7 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 bool JPEG::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
-	if (tag != MKTAG('J','F','I','F')) {
+	if (tag != MKTAG('J', 'F', 'I', 'F')) {
 		warning("JPEG::readJFIF() tag mismatch");
 		return false;
 	}
@@ -234,7 +234,7 @@ bool JPEG::readJFIF() {
 	}
 	byte majorVersion = _stream->readByte();
 	byte minorVersion = _stream->readByte();
-	if(majorVersion != 1 || minorVersion != 1)
+	if (majorVersion != 1 || minorVersion != 1)
 		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
 	/* byte densityUnits = */ _stream->readByte();
 	/* uint16 xDensity = */ _stream->readUint16BE();
@@ -304,7 +304,7 @@ bool JPEG::readDHT() {
 		// Free the Huffman table
 		delete[] _huff[tableNum].values; _huff[tableNum].values = NULL;
 		delete[] _huff[tableNum].sizes; _huff[tableNum].sizes = NULL;
-		delete[] _huff[tableNum].codes;	_huff[tableNum].codes = NULL;
+		delete[] _huff[tableNum].codes; _huff[tableNum].codes = NULL;
 
 		// Read the number of values for each length
 		uint8 numValues[16];
@@ -511,13 +511,13 @@ void JPEG::idct8x8(float result[64], const int16 dct[64]) {
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 			tmp[y + x * 8] = dct[0] * _idct8x8[x][0]
-							+ dct[1] * _idct8x8[x][1]
-							+ dct[2] * _idct8x8[x][2]
-							+ dct[3] * _idct8x8[x][3]
-							+ dct[4] * _idct8x8[x][4]
-							+ dct[5] * _idct8x8[x][5]
-							+ dct[6] * _idct8x8[x][6]
-							+ dct[7] * _idct8x8[x][7];
+			                 + dct[1] * _idct8x8[x][1]
+			                 + dct[2] * _idct8x8[x][2]
+			                 + dct[3] * _idct8x8[x][3]
+			                 + dct[4] * _idct8x8[x][4]
+			                 + dct[5] * _idct8x8[x][5]
+			                 + dct[6] * _idct8x8[x][6]
+			                 + dct[7] * _idct8x8[x][7];
 		}
 
 		dct += 8;
@@ -528,13 +528,13 @@ void JPEG::idct8x8(float result[64], const int16 dct[64]) {
 		const float *u = tmp + x * 8;
 		for (int y = 0; y < 8; y++) {
 			result[y * 8 + x] = u[0] * _idct8x8[y][0]
-								+ u[1] * _idct8x8[y][1]
-								+ u[2] * _idct8x8[y][2]
-								+ u[3] * _idct8x8[y][3]
-								+ u[4] * _idct8x8[y][4]
-								+ u[5] * _idct8x8[y][5]
-								+ u[6] * _idct8x8[y][6]
-								+ u[7] * _idct8x8[y][7];
+			                    + u[1] * _idct8x8[y][1]
+			                    + u[2] * _idct8x8[y][2]
+			                    + u[3] * _idct8x8[y][3]
+			                    + u[4] * _idct8x8[y][4]
+			                    + u[5] * _idct8x8[y][5]
+			                    + u[6] * _idct8x8[y][6]
+			                    + u[7] * _idct8x8[y][7];
 		}
 	}
 }
@@ -654,9 +654,8 @@ int16 JPEG::readSignedBits(uint8 numBits) {
 		ret = (ret << 1) + readBit();
 
 	// Extend sign bits (PAG109)
-	if (!(ret >> (numBits - 1)))
-	{
-		uint16 tmp = ((uint16)-1 << numBits) + 1;
+	if (!(ret >> (numBits - 1))) {
+		uint16 tmp = ((uint16) - 1 << numBits) + 1;
 		ret = ret + tmp;
 	}
 	return ret;
