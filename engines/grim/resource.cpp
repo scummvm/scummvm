@@ -79,7 +79,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "year?mus.lab");
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
-			SearchMan.listMatchingMembers(files, "residual-grim-patch.lab");
+			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());

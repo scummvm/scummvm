@@ -1,6 +1,6 @@
-Residual Patch (patchr)
+ResidualVM Patch (patchr)
 
-The Residual Patch (patchr) is a binary patch engine, useful for small changes in games files.
+The ResidualVM Patch (patchr) is a binary patch engine, useful for small changes in games files.
 Its mainly used to fix bugs in scripts of games, when the distribution of patched script is
 forbidden due to copyright. The patching is done in ram, after the file is loaded, before the file
 it's provided to the engine.

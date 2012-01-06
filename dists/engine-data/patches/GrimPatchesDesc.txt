@@ -12,15 +12,15 @@ List of fixed bug in GF scripts:
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this prevents the correct load of this script.
 	See http://residual.scummvm.org/viewtopic.php?t=108
 
-Contents of residual-grim-patches.lab and its rebuild:
+Contents of residualvm-grim-patches.lab and its rebuild:
 
-residual-grim-patches.lab contains all .patchr files in dists/engine-data/pacthes/grim/ directory.
+residualvm-grim-patches.lab contains all .patchr files in dists/engine-data/pacthes/grim/ directory.
 If you add a new patch in that directory, you have to update this file with a detailed
 description of what that patch does.
-Then you have to rebuild residual-grim-patches.lab with mklab from residualvm-tools repo.
+Then you have to rebuild residualvm-grim-patches.lab with mklab from residualvm-tools repo.
 The rebuild command is (assuming that you are launching it in dists/engine-data/):
 
-mklab --grim patches/grim residual-grim-patch.lab
+mklab --grim patches/grim residualvm-grim-patch.lab
 
 Please check that there aren't any files different from .patchr inside that directory before the rebuild,
 so delete all junk, backup and system files, like namepatch.patchr~, namepatch.patchr.bak, .DS_Store, Thumbs.db and so on.
