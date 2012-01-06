@@ -458,6 +458,7 @@ bool AgiEngine::predictiveDialog() {
 					_currentCode.clear();
 					_currentWord.clear();
 					memset(repeatcount, 0, sizeof(repeatcount));
+					_predictiveDictActLine = NULL;
 				} else {
 					enterPredictiveResult = true;
 					closeDialog = true;
