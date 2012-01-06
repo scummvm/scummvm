@@ -1,7 +1,7 @@
-/* ScummVM - Graphic Adventure Engine
+/* Residual - A 3D game interpreter
  *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * Residual is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -93,16 +90,17 @@
 
 namespace Graphics {
 
-class YUVToRGBLookup {
+class YUVAToRGBALookup {
 public:
-	YUVToRGBLookup(Graphics::PixelFormat format);
-	~YUVToRGBLookup();
+	YUVAToRGBALookup(Graphics::PixelFormat format);
+	~YUVAToRGBALookup();
 
 	int16 *_colorTab;
 	uint32 *_rgbToPix;
+	uint32 *_alphaToPix;
 };
 
-YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format) {
+YUVAToRGBALookup::YUVAToRGBALookup(Graphics::PixelFormat format) {
 	_colorTab = new int16[4 * 256]; // 2048 bytes
 
 	int16 *Cr_r_tab = &_colorTab[0 * 256];
@@ -115,6 +113,8 @@ YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format) {
 	uint32 *r_2_pix_alloc = &_rgbToPix[0 * 768];
 	uint32 *g_2_pix_alloc = &_rgbToPix[1 * 768];
 	uint32 *b_2_pix_alloc = &_rgbToPix[2 * 768];
+
+	_alphaToPix = new uint32[256]; // 958 bytes
 
 	int16 CR, CB;
 	int i;
@@ -134,9 +134,14 @@ YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format) {
 
 	// Set up entries 0-255 in rgb-to-pixel value tables.
 	for (i = 0; i < 256; i++) {
-		r_2_pix_alloc[i + 256] = format.RGBToColor(i, 0, 0);
-		g_2_pix_alloc[i + 256] = format.RGBToColor(0, i, 0);
-		b_2_pix_alloc[i + 256] = format.RGBToColor(0, 0, i);
+		r_2_pix_alloc[i + 256] = format.ARGBToColor(0, i, 0, 0);
+		g_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, i, 0);
+		b_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, 0, i);
+	}
+
+	// Set up entries 0-255 in alpha-to-pixel value table.
+	for (i = 0; i < 256; i++) {
+		_alphaToPix[i] = format.ARGBToColor(i, 0, 0, 0);
 	}
 
 	// Spread out the values we have to the rest of the array so that we do
@@ -151,38 +156,39 @@ YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format) {
 	}
 }
 
-YUVToRGBLookup::~YUVToRGBLookup() {
+YUVAToRGBALookup::~YUVAToRGBALookup() {
 	delete[] _rgbToPix;
 	delete[] _colorTab;
+	delete[] _alphaToPix;
 }
 
-class YUVToRGBManager : public Common::Singleton<YUVToRGBManager> {
+class YUVAToRGBAManager : public Common::Singleton<YUVAToRGBAManager> {
 public:
-	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format);
+	const YUVAToRGBALookup *getLookup(Graphics::PixelFormat format);
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
-	YUVToRGBManager();
-	~YUVToRGBManager();
+	YUVAToRGBAManager();
+	~YUVAToRGBAManager();
 
 	Graphics::PixelFormat _lastFormat;
-	YUVToRGBLookup *_lookup;
+	YUVAToRGBALookup *_lookup;
 };
 
-YUVToRGBManager::YUVToRGBManager() {
+YUVAToRGBAManager::YUVAToRGBAManager() {
 	_lookup = 0;
 }
 
-YUVToRGBManager::~YUVToRGBManager() {
+YUVAToRGBAManager::~YUVAToRGBAManager() {
 	delete _lookup;
 }
 
-const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format) {
+const YUVAToRGBALookup *YUVAToRGBAManager::getLookup(Graphics::PixelFormat format) {
 	if (_lastFormat == format)
 		return _lookup;
 
 	delete _lookup;
-	_lookup = new YUVToRGBLookup(format);
+	_lookup = new YUVAToRGBALookup(format);
 	_lastFormat = format;
 	return _lookup;
 }
@@ -190,19 +196,19 @@ const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format) {
 } // End of namespace Graphics
 
 namespace Common {
-DECLARE_SINGLETON(Graphics::YUVToRGBManager);
+DECLARE_SINGLETON(Graphics::YUVAToRGBAManager);
 }
 
-#define YUVToRGBMan (Graphics::YUVToRGBManager::instance())
+#define YUVAToRGBAMan (Graphics::YUVAToRGBAManager::instance())
 
 namespace Graphics {
 
-#define PUT_PIXEL(s, d) \
+#define PUT_PIXELA(s, a, d) \
 	L = &rgbToPix[(s)]; \
-	*((PixelInt *)(d)) = (L[cr_r] | L[crb_g] | L[cb_b])
+	*((PixelInt *)(d)) = (L[cr_r] | L[crb_g] | L[cb_b] | aToPix[a])
 
 template<typename PixelInt>
-void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	int halfHeight = yHeight >> 1;
 	int halfWidth = yWidth >> 1;
 
@@ -212,6 +218,7 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
 	const uint32 *rgbToPix = lookup->_rgbToPix;
+	const uint32 *aToPix = lookup->_alphaToPix;
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
@@ -223,38 +230,42 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 			++uSrc;
 			++vSrc;
 
-			PUT_PIXEL(*ySrc, dstPtr);
-			PUT_PIXEL(*(ySrc + yPitch), dstPtr + dstPitch);
+			PUT_PIXELA(*ySrc, *aSrc, dstPtr);
+			PUT_PIXELA(*(ySrc + yPitch), *(aSrc + yPitch), dstPtr + dstPitch);
 			ySrc++;
+			aSrc++;
 			dstPtr += sizeof(PixelInt);
-			PUT_PIXEL(*ySrc, dstPtr);
-			PUT_PIXEL(*(ySrc + yPitch), dstPtr + dstPitch);
+			PUT_PIXELA(*ySrc, *aSrc, dstPtr);
+			PUT_PIXELA(*(ySrc + yPitch), *(aSrc + yPitch), dstPtr + dstPitch);
 			ySrc++;
+			aSrc++;
 			dstPtr += sizeof(PixelInt);
+
 		}
 
 		dstPtr += dstPitch;
 		ySrc += (yPitch << 1) - yWidth;
+		aSrc += (yPitch << 1) - yWidth;
 		uSrc += uvPitch - halfWidth;
 		vSrc += uvPitch - halfWidth;
 	}
 }
 
-void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void convertYUVA420ToRGBA(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
 	assert(dst && dst->pixels);
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
-	assert(ySrc && uSrc && vSrc);
+	assert(ySrc && uSrc && vSrc && aSrc);
 	assert((yWidth & 1) == 0);
 	assert((yHeight & 1) == 0);
 
-	const YUVToRGBLookup *lookup = YUVToRGBMan.getLookup(dst->format);
+	const YUVAToRGBALookup *lookup = YUVAToRGBAMan.getLookup(dst->format);
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUV420ToRGB<uint16>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint16>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUV420ToRGB<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 } // End of namespace Graphics

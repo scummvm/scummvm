@@ -1,7 +1,7 @@
-/* ScummVM - Graphic Adventure Engine
+/* Residual - A 3D game interpreter
  *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * Residual is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /**
@@ -30,8 +27,8 @@
  * - sword25
  */
 
-#ifndef GRAPHICS_YUV_TO_RGB_H
-#define GRAPHICS_YUV_TO_RGB_H
+#ifndef GRAPHICS_YUVA_TO_RGBA_H
+#define GRAPHICS_YUVA_TO_RGBA_H
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
@@ -41,18 +38,19 @@ namespace Graphics {
 struct Surface;
 
 /**
- * Convert a YUV420 image to an RGB surface
+ * Convert a YUVA420 image to an RGBA surface
  *
  * @param dst     the destination surface
  * @param ySrc    the source of the y component
  * @param uSrc    the source of the u component
  * @param vSrc    the source of the v component
+ * @param aSrc    the source of the a component
  * @param yWidth  the width of the y surface (must be divisible by 2)
  * @param yHeight the height of the y surface (must be divisible by 2)
  * @param yPitch  the pitch of the y surface
  * @param uvPitch the pitch of the u and v surfaces
  */
-void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+void convertYUVA420ToRGBA(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 } // End of namespace Graphics
 

@@ -25,7 +25,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
-#include "graphics/yuv_to_rgb.h"
+#include "graphics/yuva_to_rgba.h"
 
 #include "video/bink_decoder_seek.h"
 
