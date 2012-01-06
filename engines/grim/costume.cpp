@@ -407,10 +407,18 @@ Model *Costume::getModel() {
 }
 
 void Costume::setChoreLastFrame(int num) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
 	_chores[num]->setLastFrame();
 }
 
 void Costume::setChoreLooping(int num, bool val) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
 	_chores[num]->setLooping(val);
 }
 
@@ -481,11 +489,9 @@ void Costume::stopChores() {
 }
 
 void Costume::fadeChoreIn(int chore, int msecs) {
-	if (chore >= _numChores) {
-		if (chore < 0 || chore >= _numChores) {
-			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
-			return;
-		}
+	if (chore < 0 || chore >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+		return;
 	}
 	_chores[chore]->fadeIn(msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
@@ -493,11 +499,9 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
-	if (chore >= _numChores) {
-		if (chore < 0 || chore >= _numChores) {
-			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
-			return;
-		}
+	if (chore < 0 || chore >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+		return;
 	}
 	_chores[chore]->fadeOut(msecs);
 }
@@ -511,6 +515,10 @@ int Costume::isChoring(const char *name, bool excludeLooping) {
 }
 
 int Costume::isChoring(int num, bool excludeLooping) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return -1;
+	}
 	if (_chores[num]->_playing && !(excludeLooping && _chores[num]->_looping))
 		return num;
 	else

@@ -294,9 +294,11 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				// testing specular buffer code
 				// dot_spec= pow(dot_spec,m->shininess)
 				specbuf = specbuf_get_buffer(c, m->shininess_i, m->shininess);
-				idx = (int)(dot_spec * SPECULAR_BUFFER_SIZE);
-				if (idx > SPECULAR_BUFFER_SIZE)
+				tmp = dot_spec * SPECULAR_BUFFER_SIZE;
+				if (tmp > SPECULAR_BUFFER_SIZE)
 					idx = SPECULAR_BUFFER_SIZE;
+				else
+					idx = (int)tmp;
 
 				dot_spec = specbuf->buf[idx];
 				lR += dot_spec * l->specular.v[0] * m->specular.v[0];
