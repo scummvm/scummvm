@@ -27,6 +27,8 @@ Residual Team
        Jonathan Gray         - Various code fixes
        Vincent Hamm          - Various engine code fixes and improvements
        Sven Hesse            - Various compilation fixes
+       Matthew Hoops         - Some engine improvements, some work on EMI
+                               support
        Erich Hoover          - x86-64 fixes, various code fixes and
                                improvements
        Max Horn              - Minor code fixes
@@ -46,8 +48,6 @@ Residual Team
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
        Joni Vahamaki         - A lot engine improvements and fixes
-       clone2727             - Some engine improvements, some work on EMI
-                               support
        JenniBee              - Compilation fixes
 
 ScummVM code
