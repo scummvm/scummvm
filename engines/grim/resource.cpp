@@ -73,13 +73,16 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "sound001.lab");
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
+			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
+				error("residualvm-grim-patch.lab not found");
+
+			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 			SearchMan.listMatchingMembers(files, "data???.lab");
 			SearchMan.listMatchingMembers(files, "movie??.lab");
 			SearchMan.listMatchingMembers(files, "vox????.lab");
 			SearchMan.listMatchingMembers(files, "year?mus.lab");
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
-			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
