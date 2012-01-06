@@ -655,7 +655,7 @@ int16 JPEG::readSignedBits(uint8 numBits) {
 
 	// Extend sign bits (PAG109)
 	if (!(ret >> (numBits - 1))) {
-		uint16 tmp = ((uint16) - 1 << numBits) + 1;
+		uint16 tmp = ((uint16)-1 << numBits) + 1;
 		ret = ret + tmp;
 	}
 	return ret;
