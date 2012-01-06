@@ -207,7 +207,7 @@ already have been reported, but should you find a new one, don't hesitate to rep
 7.1 - How, and where do I report bugs?
 -------------------------------------------------
 You can report bugs at our github-issue-tracker:
-http://www.github.com/residual/residual/issues
+http://www.github.com/residualvm/residualvm/issues
 
 Please read the Wiki regarding how to report bugs properly first though:
 http://sourceforge.net/apps/mediawiki/residual/index.php?title=Reporting_Bugs

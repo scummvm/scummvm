@@ -174,7 +174,7 @@ VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/
 VER_REV := $(shell cd $(srcdir); git describe --always --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
-GITROOT := git://github.com/residual/residual.git
+GITROOT := git://github.com/residualvm/residualvm.git
 endif
 
 # Define the Subversion revision if available, either autodetected or
