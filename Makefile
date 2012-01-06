@@ -24,7 +24,7 @@ ifeq "$(HAVE_GCC)" "1"
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
-	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wextra -pedantic
+	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings
 
 	# Currently we disable this gcc flag, since it will also warn in cases,
 	# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
@@ -32,7 +32,7 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable exceptions
+	# Disable exceptions (ResidualVM use RTTI)
 	CXXFLAGS+= -fno-exceptions
 
 ifneq "$(HAVE_CLANG)" "1"
@@ -90,4 +90,3 @@ endif
 ifneq ($(origin port_mk), undefined)
 include $(srcdir)/$(port_mk)
 endif
-

@@ -424,7 +424,7 @@ private:
  * are interesting for that matter.
  */
 template<class Arg, class Res>
-struct Functor1 : public Common::UnaryFunction<Arg, Res> {
+struct Functor1 : public UnaryFunction<Arg, Res> {
 	virtual ~Functor1() {}
 
 	virtual bool isValid() const = 0;
@@ -460,7 +460,7 @@ private:
  * @see Functor1
  */
 template<class Arg1, class Arg2, class Res>
-struct Functor2 : public Common::BinaryFunction<Arg1, Arg2, Res> {
+struct Functor2 : public BinaryFunction<Arg1, Arg2, Res> {
 	virtual ~Functor2() {}
 
 	virtual bool isValid() const = 0;
@@ -538,4 +538,3 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 }	// End of namespace Common
 
 #endif
-

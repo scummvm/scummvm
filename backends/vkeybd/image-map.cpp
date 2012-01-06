@@ -35,7 +35,7 @@ ImageMap::~ImageMap() {
 	removeAllAreas();
 }
 
-Polygon *ImageMap::createArea(const String& id) {
+Polygon *ImageMap::createArea(const String &id) {
 	if (_areas.contains(id)) {
 		warning("Image map already contains an area with target of '%s'", id.c_str());
 		return 0;
@@ -45,7 +45,7 @@ Polygon *ImageMap::createArea(const String& id) {
 	return p;
 }
 
-void ImageMap::removeArea(const String& id) {
+void ImageMap::removeArea(const String &id) {
 	if (!_areas.contains(id))
 		return;
 	delete _areas[id];
@@ -53,19 +53,18 @@ void ImageMap::removeArea(const String& id) {
 }
 
 void ImageMap::removeAllAreas() {
-	HashMap<String, Polygon*>::iterator it;
-	for (it = _areas.begin(); it != _areas.end(); ++it) {
+	for (AreaMap::iterator it = _areas.begin(); it != _areas.end(); ++it) {
 		delete it->_value;
 	}
 	_areas.clear();
 }
 
 String ImageMap::findMapArea(int16 x, int16 y) {
-	HashMap<String, Polygon*>::iterator it;
-	for (it = _areas.begin(); it != _areas.end(); ++it) {
+	for (AreaMap::iterator it = _areas.begin(); it != _areas.end(); ++it) {
 		if (it->_value->contains(x, y))
 			return it->_key;
 	}
+
 	return String();
 }
 

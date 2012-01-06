@@ -128,21 +128,24 @@ void Keymapper::cleanupGameKeymaps() {
 	_activeMaps = newStack;
 }
 
-Keymap *Keymapper::getKeymap(const String& name, bool &global) {
+Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
-	global = false;
+	bool global = false;
 
 	if (!keymap) {
 		keymap = _globalDomain.getKeymap(name);
 		global = true;
 	}
 
+	if (globalReturn)
+		*globalReturn = global;
+
 	return keymap;
 }
 
 bool Keymapper::pushKeymap(const String& name, bool inherit) {
 	bool global;
-	Keymap *newMap = getKeymap(name, global);
+	Keymap *newMap = getKeymap(name, &global);
 
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
@@ -192,10 +195,10 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
-
+			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
 			action = mr.keymap->getMappedAction(key);
 
-			if (action || mr.inherit == false)
+			if (action || !mr.inherit)
 				break;
 		}
 

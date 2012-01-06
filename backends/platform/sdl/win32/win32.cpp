@@ -256,9 +256,9 @@ class Win32ResourceArchive : public Common::Archive {
 public:
 	Win32ResourceArchive();
 
-	virtual bool hasFile(const Common::String &name);
-	virtual int listMembers(Common::ArchiveMemberList &list);
-	virtual Common::ArchiveMemberPtr getMember(const Common::String &name);
+	virtual bool hasFile(const Common::String &name) const;
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
 	typedef Common::List<Common::String> FilenameList;
@@ -279,7 +279,7 @@ Win32ResourceArchive::Win32ResourceArchive() {
 	EnumResourceNames(NULL, MAKEINTRESOURCE(256), &EnumResNameProc, (LONG_PTR)this);
 }
 
-bool Win32ResourceArchive::hasFile(const Common::String &name) {
+bool Win32ResourceArchive::hasFile(const Common::String &name) const {
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
 		if (i->equalsIgnoreCase(name))
 			return true;
@@ -288,7 +288,7 @@ bool Win32ResourceArchive::hasFile(const Common::String &name) {
 	return false;
 }
 
-int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) {
+int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i, ++count)
@@ -297,7 +297,7 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 

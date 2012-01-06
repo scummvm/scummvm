@@ -49,6 +49,12 @@ protected:
 	Part	_draggingPart;
 	int		_sliderDeltaMouseDownPos;
 
+	enum {
+		kRepeatInitialDelay = 500,
+		kRepeatDelay = 100
+	};
+	uint32	_repeatTimer;
+
 public:
 	int		_numEntries;
 	int		_entriesPerPage;

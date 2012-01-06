@@ -122,4 +122,3 @@ const char *gResidualVMFeatures = ""
 	"AAC "
 #endif
 	;
-

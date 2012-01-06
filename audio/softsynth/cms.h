@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_SOFTSYNTH_CMS_H
-#define SOUND_SOFTSYNTH_CMS_H
+#ifndef AUDIO_SOFTSYNTH_CMS_H
+#define AUDIO_SOFTSYNTH_CMS_H
 
 #include "common/scummsys.h"
 

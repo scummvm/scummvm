@@ -43,8 +43,6 @@ static const PlainGameDescriptor grimGames[] = {
 	{0, 0}
 };
 
-using Common::GUIO_NONE;
-
 static const GrimGameDescription gameDescriptions[] = {
 	{
 		// Grim Fandango English version (patched)
@@ -399,7 +397,7 @@ class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
 		_singleid = "grim";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO_NOMIDI;
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {

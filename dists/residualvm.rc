@@ -5,8 +5,11 @@
 #endif
 
 #define FILE 256
+#define IDI_ICON  1001
+#define IDI_COUNT 1002
 
 IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
+IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
 modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION
@@ -14,8 +17,8 @@ translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     0,0,7,0
- PRODUCTVERSION  0,0,7,0
+ FILEVERSION     0,0,8,0
+ PRODUCTVERSION  0,0,8,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG

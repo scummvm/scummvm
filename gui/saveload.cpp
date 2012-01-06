@@ -92,7 +92,7 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportThumbnail);
 	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportCreationDate);
 	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportPlayTime);
-	_resultString = "";
+	_resultString.clear();
 	reflowLayout();
 	updateSaveList();
 
@@ -240,7 +240,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	_time->setLabel(_("No time saved"));
 	_playtime->setLabel(_("No playtime saved"));
 
-	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
+	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;

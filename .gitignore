@@ -19,6 +19,7 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /Residual.app
+/residualvm-ps3.pkg
 /*.ipk
 /.project
 /.cproject
@@ -28,6 +29,10 @@ lib*.a
 
 /build
 /staging
+/portdist
+
+
+/dists/rpl.exe
 
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
@@ -97,3 +102,6 @@ ResidualVM.config
 ResidualVM.creator
 ResidualVM.files
 ResidualVM.includes
+
+#Ignore Komodo IDE/Edit project files
+*.komodoproject

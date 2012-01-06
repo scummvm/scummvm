@@ -93,7 +93,7 @@ public:
 	 * underscores. In particular, white space and "#", "=", "[", "]"
 	 * are not valid!
 	 */
-	static bool isValidName(const Common::String &name);
+	static bool isValidName(const String &name);
 
 	/** Reset everything stored in this config file. */
 	void	clear();

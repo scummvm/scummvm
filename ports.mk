@@ -33,6 +33,7 @@ ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/residualvm/"
 endif
 
+#ResidualVM only:
 deb:
 	ln -sf dists/debian;
 	debian/prepare
@@ -45,6 +46,11 @@ bundle: residualvm-static
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
+ifdef USE_SPARKLE
+	mkdir -p $(bundle_name)/Contents/Frameworks
+	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
+	cp -R $(STATICLIBPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+endif
 	cp $(srcdir)/icons/residualvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
@@ -98,6 +104,7 @@ ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
+#ResidualVM use it:
 ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
@@ -118,6 +125,10 @@ ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
 
+ifdef USE_SPARKLE
+OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
+endif
+
 ifdef USE_TERMCONV
 OSX_ICONV ?= -liconv
 endif
@@ -130,7 +141,7 @@ residualvm-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB) \
-		$(OSX_ICONV) 
+		$(OSX_ICONV)
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -191,6 +202,44 @@ endif
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/residualvm.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
+# Special target to create a win32 NSIS installer
+win32setup: $(EXECUTABLE)
+	mkdir -p $(srcdir)/$(STAGINGPATH)
+	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(STAGINGPATH)/$(EXECUTABLE)
+	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
+	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/residualvm.nsi
+
+
+#
+# Special target to generate project files for various IDEs
+# Mainly Win32-specific
+#
+
+# The release branch is in form 'heads/branch-1-4-1', for this case
+# $CUR_BRANCH will be equal to '1', for the rest cases it will be empty
+CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
+
+ideprojects: devtools/create_project
+ifeq ($(VER_DIRTY), -dirty)
+	$(error You have uncommitted changes) 
+endif 
+ifeq "$(CUR_BRANCH)" "heads/master"
+	$(error You cannot do it on master) 
+else ifeq "$(CUR_BRANCH)" ""
+	$(error You must be on a release branch) 
+endif
+	@echo Creating Code::Blocks project files...
+	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f *.workspace *.cbp
+	@echo Creating MSVC8 project files...
+	@cd $(srcdir)/dists/msvc8 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 8 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC9 project files...
+	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC10 project files...
+	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo
+	@echo All is done.
+	@echo Now run
+	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
 crosswin32dist: $(EXECUTABLE)
@@ -250,6 +299,11 @@ endif
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ residualvm-ps3.pkg
 	package_finalize residual-ps3.pkg
 
+ps3run: $(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE)
+	sprxlinker $(EXECUTABLE)
+	make_self $(EXECUTABLE) $(EXECUTABLE).self
+	ps3load $(EXECUTABLE).self
+
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
-

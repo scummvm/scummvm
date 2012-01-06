@@ -66,9 +66,9 @@ private:
 		Symbol(uint32 c, uint32 s);
 	};
 
-	typedef Common::List<Symbol> CodeList;
-	typedef Common::Array<CodeList> CodeLists;
-	typedef Common::Array<Symbol *> SymbolList;
+	typedef List<Symbol> CodeList;
+	typedef Array<CodeList> CodeLists;
+	typedef Array<Symbol*> SymbolList;
 
 	/** Lists of codes and their symbols, sorted by code length. */
 	CodeLists _codes;

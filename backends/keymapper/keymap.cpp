@@ -145,7 +145,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 		const HardwareKey *hwKey = hwKeys->findHardwareKey(it->_value.c_str());
 
 		if (!hwKey) {
-			warning("HardwareKey with ID %s not known", it->_value.c_str());
+			warning("HardwareKey with ID '%s' not known", it->_value.c_str());
 			_configDomain->erase(key);
 			continue;
 		}
@@ -199,6 +199,7 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 //     - if an action finds a key with required type but a parent action with
 //       higher priority is using it, that key is never used
 void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
+#if 0 //disabling the broken automapper for now
 	// Create copies of action and key lists.
 	List<Action*> actions(_actions);
 	List<const HardwareKey*> keys(hwKeys->getHardwareKeys());
@@ -318,6 +319,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 			break;
 		}
 	}
+#endif
 }
 
 Action *Keymap::getParentMappedAction(KeyState key) {

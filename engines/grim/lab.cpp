@@ -158,7 +158,7 @@ bool Lab::hasFile(const Common::String &filename) const {
 	return _entries.contains(fname);
 }
 
-int Lab::listMembers(Common::ArchiveMemberList &list) {
+int Lab::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (LabMap::const_iterator i = _entries.begin(); i != _entries.end(); ++i) {
@@ -169,7 +169,7 @@ int Lab::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 

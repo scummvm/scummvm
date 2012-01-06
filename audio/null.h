@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_NULL_H
-#define SOUND_NULL_H
+#ifndef AUDIO_NULL_H
+#define AUDIO_NULL_H
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"

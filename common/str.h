@@ -219,14 +219,14 @@ public:
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static Common::String format(const char *fmt, ...) GCC_PRINTF(1,2);
+	static String format(const char *fmt, ...) GCC_PRINTF(1,2);
 
 	/**
 	 * Print formatted data into a String object. Similar to vsprintf,
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static Common::String vformat(const char *fmt, va_list args);
+	static String vformat(const char *fmt, va_list args);
 
 public:
 	typedef char *        iterator;
@@ -293,7 +293,7 @@ extern char *trim(char *t);
  * @param sep character used to separate path components
  * @return The last component of the path.
  */
-Common::String lastPathComponent(const Common::String &path, const char sep);
+String lastPathComponent(const String &path, const char sep);
 
 /**
  * Normalize a given path to a canonical form. In particular:
@@ -307,7 +307,7 @@ Common::String lastPathComponent(const Common::String &path, const char sep);
  * @param sep   the separator token (usually '/' on Unix-style systems, or '\\' on Windows based stuff)
  * @return      the normalized path
  */
-Common::String normalizePath(const Common::String &path, const char sep);
+String normalizePath(const String &path, const char sep);
 
 
 /**

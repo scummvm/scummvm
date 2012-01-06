@@ -26,7 +26,7 @@
 
 namespace GUI {
 
-	EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
+EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
 	: EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;

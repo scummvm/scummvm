@@ -81,7 +81,7 @@ void XMLParser::close() {
 	_stream = 0;
 }
 
-bool XMLParser::parserError(const Common::String &errStr) {
+bool XMLParser::parserError(const String &errStr) {
 	_state = kParserError;
 
 	const int startPosition = _stream->pos();

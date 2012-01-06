@@ -93,16 +93,19 @@ _alsa=auto
 _seq_midi=auto
 _timidity=auto
 _zlib=auto
+_sparkle=auto
 _mpeg2=no
 _fluidsynth=auto
 _opengl=auto
 _opengles=no
 _readline=auto
 _taskbar=yes
+_updates=no
 _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
+_optimizations=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=no
@@ -119,12 +122,15 @@ _keymapper=no
 _translation=no
 # Default platform settings
 _backend=sdl
+_savegame_timestamp=auto
 _dynamic_modules=no
 _elf_loader=no
 _plugins_default=static
 _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
+_optimization_level=
+_default_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -147,11 +153,10 @@ _posix=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
-_arm_asm=no
 
 
 
-# Directories for installing Residual.
+# Directories for installing ResidualVM.
 # This list is closely based on what GNU autoconf does,
 # although the default value for datadir differs.
 # Like GNU autoconf, we distinguish datadir and datarootdir
@@ -361,17 +366,37 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
+	if test "${3}" != "" ; then
+		tmpopt_prefix="${3}"
+	else
+		tmpopt_prefix="--"
+	fi
 	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
 
 # Show an error about an unknown option
 option_error() {
-	echo "error: unrecognised option: $ac_option
+	echo "error: unrecognized option: $ac_option
 Try \`$0 --help' for more information." >&2
 	exit 1
 }
+
+# Show an error about an unknown engine
+engine_option_error() {
+	echo "error: unrecognized engine: $1
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
+# Show an error about an invalid subengine option
+subengine_option_error() {
+	echo "error: this option is invalid for the subengine $1: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
 
 
 #
@@ -424,9 +449,9 @@ engine_disable_all() {
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
-	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
-		eng=`echo $1 | cut -d '=' -f 1`
-		opt=`echo $1 | cut -d '=' -f 2`
+	if ( echo $1 | grep ':' ) 2> /dev/null > /dev/null ; then
+		eng=`echo $1 | cut -d ':' -f 1`
+		opt=`echo $1 | cut -d ':' -f 2`
 	else
 		eng=$1
 		opt=yes
@@ -435,7 +460,7 @@ engine_enable() {
 
 	# Filter the parameter for the subengines
 	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
-		option_error
+		subengine_option_error ${engine}
 		return
 	fi
 
@@ -443,7 +468,7 @@ engine_enable() {
 		if test "`get_engine_name ${engine}`" != "" ; then
 			set_var _engine_${engine}_build "$opt"
 		else
-			option_error
+			engine_option_error ${engine}
 		fi
 	else
 		option_error
@@ -462,21 +487,14 @@ engine_disable() {
 	if test "`get_engine_name ${engine}`" != "" ; then
 		set_var _engine_${engine}_build "no"
 	else
-		option_error
+		engine_option_error ${engine}
 	fi
 }
 
 # Show the configure help line for a given engine
 show_engine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="don't "
-	else
-		option="enable"
-		do=""
-	fi
 	name=`get_engine_name $1`
-	option_help ${option}-${1} "${do}build the ${name} engine"
+	option_help "${1}" "${name} engine" "  "
 	for sub in `get_engine_subengines $1`; do
 		show_subengine_help $sub $1
 	done
@@ -484,16 +502,9 @@ show_engine_help() {
 
 # Show the configure help line for a given subengine
 show_subengine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="exclude"
-	else
-		option="enable"
-		do="include"
-	fi
 	name=`get_engine_name $1`
 	parent=`get_engine_name $2`
-	option_help ${option}-${1} "${do} the ${name} in ${parent} engine"
+	option_help "${1}" "${name} in ${parent} engine" "  "
 }
 
 # Prepare the strings about the engines to build
@@ -612,6 +623,24 @@ get_subengines_build_string() {
 	echo $subengine_string
 }
 
+# Engine specific build strings
+get_scumm_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip ; then
+			base="[v0-v6 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
+get_saga_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[ITE]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
 
 #
 # Greet user
@@ -641,8 +670,8 @@ for parm in "$@" ; do
 Usage: $0 [OPTIONS]...
 
 Configuration:
-  -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, null) [sdl]
+  -h, --help              display this help and exit
+  --backend=BACKEND       backend to build (sdl, null) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -673,18 +702,29 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
+  --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
+  --enable-engine-static=<engine name>[,<engine name>...] 
+      enable engine(s) listed as static builtin (when plugins are enabled)
+  --enable-engine-dynamic=<engine name>[,<engine name>...]
+      enable engine(s) listed as dynamic plugin (when plugins are enabled)
+    The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
+  --enable-release-mode    enable building in release mode (without optimizations)
+  --enable-optimizations   enable optimizations
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
@@ -708,6 +748,7 @@ Optional Libraries:
   --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
+  --disable-zlib           disable zlib (compression) support [autodetect]
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
@@ -717,6 +758,9 @@ Optional Libraries:
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
+
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
+  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
@@ -747,6 +791,7 @@ done # for parm in ...
 
 for ac_option in $@; do
 	case "$ac_option" in
+	--disable-savegame-timestamp) _savegame_timestamp=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
@@ -761,6 +806,10 @@ for ac_option in $@; do
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
+	--enable-zlib)            _zlib=yes       ;;
+	--disable-zlib)           _zlib=no        ;;
+	--enable-sparkle)         _sparkle=yes    ;;
+	--disable-sparkle)        _sparkle=no     ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
@@ -769,6 +818,8 @@ for ac_option in $@; do
 	--disable-readline)       _readline=no    ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-updates)         _updates=yes    ;;
+	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
@@ -833,6 +884,11 @@ for ac_option in $@; do
 		ZLIB_CFLAGS="-I$arg/include"
 		ZLIB_LIBS="-L$arg/lib"
 		;;
+	--with-sparkle-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SPARKLE_CFLAGS="-F$arg"
+		SPARKLE_LIBS="-F$arg"
+		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
@@ -855,11 +911,25 @@ for ac_option in $@; do
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
 		;;
+	--enable-release-mode)
+		_release_build=yes
+		;;
+	--disable-release-mode)
+		_release_build=no
+		;;
 	--enable-release)
 		_release_build=yes
+		_optimizations=yes
 		;;
 	--disable-release)
 		_release_build=no
+		_optimizations=no
+		;;
+	--enable-optimizations)
+		_optimizations=yes
+		;;
+	--disable-optimizations)
+		_optimizations=no
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -908,11 +978,25 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
-	--enable-*)
-		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine=* | --enable-engines=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}"
+		done
 		;;
-	--disable-*)
-		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine-static=* | --enable-engines-static=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:static"
+		done
+		;;
+	--enable-engine-dynamic=* | --enable-engines-dynamic=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:dynamic"
+		done
+		;;
+	--disable-engine=* | --disable-engines=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+			engine_disable ${engine_name}
+		done
 		;;
 	*)
 		option_error
@@ -933,6 +1017,16 @@ android | android-v7a)
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	;;
+bada)
+	_host_os=bada
+	if test "$_debug_build" = yes; then
+		_host_cpu=i686
+		_host_alias=i686-mingw32
+	else
+		_host_cpu=arm
+		_host_alias=arm-samsung-nucleuseabi
+	fi
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -984,6 +1078,22 @@ linupy)
 	_host_os=linux
 	_host_cpu=arm
 	;;
+maemo)
+	_host_os=maemo
+	_host_cpu=arm
+	_host_alias=arm-linux
+
+	# The prefix is always the same on Maemo so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=/opt/scummvm
+	# Maemo apps are installed into app-specific directories. The
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode Maemo specific directories here.
+	datarootdir='${prefix}/share'
+	datadir=/opt/scummvm/share
+	docdir='${datarootdir}/doc/scummvm'
+	;;
 motoezx)
 	_host_os=linux
 	_host_cpu=arm
@@ -1021,12 +1131,12 @@ ps3)
 	_host_os=ps3
 	_host_cpu=ppc
 	_host_alias=powerpc64-ps3-elf
-	
+
 	# The prefix is always the same on PS3 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
-	# PS3 apps are installed into app-specific directories. The 
+	# PS3 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PS3 specific directories here.
 	datarootdir='${prefix}/data'
@@ -1051,7 +1161,7 @@ webos)
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.residualvm.residualvm
-	# WebOS apps are installed into app-specific directories. The 
+	# WebOS apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
@@ -1066,7 +1176,7 @@ wii)
 wince)
 	_host_os=wince
 	_host_cpu=arm
-	_host_alias=arm-wince-mingw32ce
+	_host_alias=arm-mingw32ce
 	;;
 *)
 	if test -n "$_host"; then
@@ -1104,6 +1214,11 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 		# Enable release build by default.
 		_release_build=yes
 	fi
+
+	if test "$_optimizations" = auto; then
+		# Enable optimizations by default.
+		_optimizations=yes
+	fi
 	;;
 esac
 
@@ -1113,12 +1228,8 @@ if test "$_debug_build" != no; then
 fi
 
 if test "$_release_build" = yes; then
-	# Release mode enabled: enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
-	# We will also add a define, which indicates we are doing
+	# Add a define, which indicates we are doing
 	# an build for a release version.
-	CXXFLAGS="$CXXFLAGS -O2"
-	CXXFLAGS="$CXXFLAGS -Wuninitialized"
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
@@ -1153,6 +1264,12 @@ android)
 	fi
 	if test -z "$ANDROID_NDK"; then
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
+		exit 1
+	fi
+	;;
+bada)
+	if test -z "$BADA_SDK"; then
+		echo "Please set BADA_SDK in your environment. export BADA_SDK=<path to Bada SDK>"
 		exit 1
 	fi
 	;;
@@ -1353,7 +1470,7 @@ fi
 echo "$cxx_version"
 
 #
-# Bail out now if now useable compiler was found.
+# Bail out now if no useable compiler was found.
 #
 if test "$cxx_verc_fail" = yes ; then
 	echo
@@ -1372,7 +1489,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
+		amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
 			;;
 		*)
 			CXXFLAGS="$CXXFLAGS -ansi"
@@ -1590,38 +1707,40 @@ echo "$_need_memalign"
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 #
-# Check whether we can use x86 asm routines
+# Check the CPU architecture
 #
-echo_n "Compiling for x86... "
-case $_host_cpu in
-	i386|i486|i586|i686|x86_64)
-		_have_x86=yes
-		;;
-	*)
-		_have_x86=no
-		;;
-esac
-echo "$_have_x86"
-define_in_config_h_if_yes $_have_x86 'HAVE_X86'
-
-#
-# Check whether to use optimized ARM asm
-#
-echo_n "Compiling for ARM... "
+echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
-		_arm_asm=yes
+		echo "ARM"
+		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+
+		DEFINES="$DEFINES -DARM_TARGET"
+		;;
+	i[3-6]86)
+		echo "x86"
+		_have_x86=yes
+		define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+		;;
+	mips*)
+		echo "MIPS"
+		DEFINES="$DEFINES -DMIPS_TARGET"
+		;;
+	ppc*)
+		echo "PowerPC"
+		DEFINES="$DEFINES -DPPC_TARGET"
+		;;
+	x86_64)
+		echo "x86_64"
 		;;
 	*)
-		_arm_asm=no
+		echo "unknown ($_host_cpu)"
 		;;
 esac
-echo "$_arm_asm"
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
 
 
 #
@@ -1664,7 +1783,7 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS -fstrict-aliasing"
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
@@ -1677,6 +1796,16 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
+		;;
+	bada)
+		BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"
+		add_line_to_config_mk "BADA_SDK = $BADA_SDK"
+		add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
+
+		# assume dependencies have been installed in cygwin's /usr/local
+		CYGWIN_USR_LOCAL="`cygpath -m /usr/local`"
+		LDFLAGS="$LDFLAGS -L${CYGWIN_USR_LOCAL}/lib"
+		CXXFLAGS="$CXXFLAGS -I${CYGWIN_USR_LOCAL}/include"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1695,6 +1824,28 @@ case $_host_os in
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
+
+		# Now we may have MacPorts or Fink installed
+		# Which put libraries and headers in non-standard places
+		# Checking them here
+		
+		# MacPorts
+		# There is no way to get the prefix, so implementing a hack here
+		macport_version=`port version 2>/dev/null`
+		if test "$?" -eq 0; then
+			macport_version="`echo "${macport_version}" | sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
+			echo_n "You seem to be running MacPorts version ${macport_version}..."
+
+			macport_prefix=`which port`
+			# strip off /bin/port from /opt/local/bin/port
+			macport_prefix=`dirname ${macport_prefix}`
+			macport_prefix=`dirname ${macport_prefix}`
+
+			echo "adding ${macport_prefix} to paths"
+
+			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+		fi
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__"
@@ -1735,7 +1886,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		;;
 	gamecube)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mogc"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -1774,6 +1925,9 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
 		;;
+	maemo)
+		DEFINES="$DEFINES -DMAEMO"
+		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
@@ -1805,7 +1959,7 @@ case $_host_os in
 	ps3)
 		# Force use of SDL from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
-	
+
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
@@ -1818,7 +1972,7 @@ case $_host_os in
 		fi
 		LDFLAGS="$LDFLAGS -L$PSPSDK/lib"
 		LDFLAGS="$LDFLAGS -specs=$_srcdir/backends/platform/psp/psp.spec"
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D_PSP_FW_VERSION=150"
@@ -1845,7 +1999,7 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	wii)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mrvl"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -1866,7 +2020,7 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -fno-inline-functions"
 		CXXFLAGS="$CXXFLAGS -march=armv4"
 		CXXFLAGS="$CXXFLAGS -mtune=xscale"
@@ -1876,9 +2030,11 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNICODE"
 		DEFINES="$DEFINES -DFPM_DEFAULT"
 		DEFINES="$DEFINES -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DWRAP_MALLOC"
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -Dcdecl="
 		DEFINES="$DEFINES -D__cdecl__="
+		add_line_to_config_mk "WRAP_MALLOC = 1"
 		;;
 esac
 
@@ -1904,6 +2060,22 @@ if test -n "$_host"; then
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
 			;;
+		bada)
+			_unix=yes
+			_backend="bada"
+			_port_mk="backends/platform/bada/bada.mk"
+			if test "$_debug_build" = yes; then
+				_arm_asm=no
+			else
+				_arm_asm=yes
+			fi
+			_taskbar=no
+			_build_scalers=no
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
+			_vkeybd=yes
+			;;
 		bfin*)
 			;;
 		caanoo)
@@ -1915,13 +2087,14 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
 				# Use -O3 on the Caanoo for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -1957,7 +2130,7 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes; then
 				DEFINES="$DEFINES -DNOSERIAL"
 			fi
-			CXXFLAGS="$CXXFLAGS -O3"
+			_optimization_level=-O3
 			CXXFLAGS="$CXXFLAGS -funroll-loops"
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
@@ -2001,7 +2174,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"	
+			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
@@ -2012,6 +2185,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -2031,6 +2205,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -2048,6 +2223,24 @@ if test -n "$_host"; then
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
+			;;
+		maemo)
+			_optimization_level=-Os
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+			INCLUDES="$INCLUDES -I/usr/X11R6/include"
+			LIBS="$LIBS -lX11"
+			LIBS="$LIBS -L/usr/lib"
+			
+			_backend="maemo"
+			_vkeybd=yes
+			_keymapper=yes
+			_build_hq_scalers=no
+			_mt32emu=no
+			_alsa=no
+			_mad=yes
+			_tremor=yes
+			_zlib=yes
 			;;
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
@@ -2097,6 +2290,7 @@ if test -n "$_host"; then
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
+			_savegame_timestamp=no
 			_translation=no
 			_keymapper=no
 			_text_console=no
@@ -2122,7 +2316,7 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
 				# Use -O3 on the OpenPandora for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
@@ -2193,12 +2387,14 @@ if test -n "$_host"; then
 		webos)
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
-			_build_scalers=no
+			_build_scalers=yes
+			_build_hq_scalers=no
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
 			_vkeybd=no
 			_keymapper=yes
+			add_line_to_config_mk "HOST_COMPILER = `uname`"
 			;;
 		wii)
 			_backend="wii"
@@ -2236,6 +2432,35 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
+		;;
+	bada)
+		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
+		DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
+		INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
+		INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
+		if test "$_debug_build" = yes; then
+			# debug using with the simulator
+			CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
+		else
+			# created a shared library for inclusion via the eclipse build
+			CXXFLAGS="$CXXFLAGS -DSHP"
+			CXXFLAGS="$CXXFLAGS -fpic"
+			CXXFLAGS="$CXXFLAGS -fshort-wchar"
+			CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
+			CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
+			CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
+			CXXFLAGS="$CXXFLAGS -mlittle-endian"
+			CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+			CXXFLAGS="$CXXFLAGS -Wno-psabi"
+			CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fno-short-enums"
+		fi
+		HOSTEXEPRE=lib
+		HOSTEXEEXT=.a
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
@@ -2270,6 +2495,9 @@ case $_backend in
 		;;
 	linuxmoto)
 		DEFINES="$DEFINES -DLINUXMOTO"
+		;;
+	maemo)
+		DEFINES="$DEFINES -DMAEMO"
 		;;
 	n64)
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
@@ -2314,7 +2542,8 @@ case $_backend in
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		LIBS="$LIBS -lSDL"
+		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
+		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
@@ -2353,7 +2582,7 @@ MODULES="$MODULES backends/platform/$_backend"
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
-	dingux | gp2x | gph | linuxmoto | openpandora | samsungtv | sdl)
+	dingux | gp2x | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -2376,7 +2605,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2385,6 +2614,26 @@ case $_backend in
 		;;
 	*)
 		_16bit=no
+		;;
+esac
+
+#
+# Disable savegame timestamp support for backends which don't have a reliable real time clock
+#
+case $_backend in
+	gph | n64)
+		if test "$_savegame_timestamp" = auto ; then
+			_savegame_timestamp=no
+		else
+			_savegame_timestamp=yes
+		fi
+		;;
+	*)
+		if test "$_savegame_timestamp" = auto ; then
+			_savegame_timestamp=yes
+		else
+			_savegame_timestamp=no
+		fi
 		;;
 esac
 
@@ -2402,7 +2651,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -2430,6 +2679,29 @@ fi
 echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
+
+
+#
+# If a specific optimization level was requested, enable optimizations
+#
+if test -n "$_optimization_level" ; then
+	# Ports will specify an optimization level and expect that to be enabled
+	if test "$_optimizations" != no ; then
+		_optimizations=yes
+	fi
+else
+	_optimization_level=$_default_optimization_level
+fi
+
+#
+# Check whether to enable optimizations
+#
+if test "$_optimizations" = yes ; then
+	# Enable optimizations. This also
+	# makes it possible to use -Wuninitialized, so let's do that.
+	CXXFLAGS="$CXXFLAGS $_optimization_level"
+	CXXFLAGS="$CXXFLAGS -Wuninitialized"
+fi
 
 #
 # Check whether plugin support is requested and possible
@@ -2484,7 +2756,9 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		;;
 	ds)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS -DELF_NO_MEM_MANAGER"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
 '
@@ -2502,7 +2776,8 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		;;
 	gamecube | wii)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
@@ -2519,6 +2794,19 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
+	irix*)
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -shared -static-libgcc
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+
 	linux*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
@@ -2555,7 +2843,6 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		;;
 	ps2)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
 LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
 PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
@@ -2563,7 +2850,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		;;
 	psp)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
@@ -2627,6 +2914,11 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 # Check whether 16bit color support is requested
 #
 define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
+
+#
+# Check whether save games use the current time as default description
+#
+define_in_config_if_yes "$_savegame_timestamp" 'USE_SAVEGAME_TIMESTAMP'
 
 #
 # Check whether to enable the (hq) scalers
@@ -2824,6 +3116,30 @@ if test "$_zlib" = no; then
 fi
 
 #
+# Check for Sparkle if updates support is enabled
+#
+echocheck "Sparkle"
+if test "$_updates" = no; then
+	_sparkle=no
+else
+if test "$_sparkle" = auto ; then
+	_sparkle=no
+	cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+#include <Sparkle/Sparkle.h>
+int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
+EOF
+	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+fi
+if test "$_sparkle" = yes ; then
+	LIBS="$LIBS $SPARKLE_LIBS -framework Sparkle"
+	INCLUDES="$INCLUDES $SPARKLE_CFLAGS"
+fi
+define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+fi
+echo "$_sparkle"
+
+#
 # Check for LibMPEG2
 #
 echocheck "libmpeg2 >= 0.3.2"
@@ -2971,6 +3287,7 @@ echo "$_libunity"
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
+#ResidualVM: specific changes in detection
 if test "$_opengl" = auto || test "$_opengl" = yes ; then
 	_opengl=no
 
@@ -3168,6 +3485,21 @@ define_in_config_if_yes $_bink 'USE_BINK'
 echo "$_bink"
 
 #
+# Check whether to build updates support
+#
+echo_n "Building updates support... "
+define_in_config_if_yes $_updates 'USE_UPDATES'
+if test "$_updates" = yes; then
+	if test "$_sparkle" = yes; then
+		echo "Sparkle"
+	else
+		echo "$_updates"
+	fi
+else
+	echo "$_updates"
+fi
+
+#
 # Check whether to build SMUSH video support
 #
 echo_n "Building SMUSH video support... "
@@ -3194,8 +3526,8 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
-	webos)
-		# The WebOS app wants the plugins in the "lib" directory
+	maemo | webos)
+		# The WebOS and Maemo apps want the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
@@ -3223,6 +3555,10 @@ fi
 
 if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
+fi
+
+if test "$_savegame_timestamp" = yes ; then
+	echo_n ", savegame timestamp"
 fi
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
@@ -3274,7 +3610,7 @@ case $_backend in
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
+		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		LIBS="$LIBS -lc -lgcc -lnosys"
 		;;
@@ -3287,6 +3623,15 @@ esac
 _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
+
+# Show a message if looping over engines takes longer than 5 secs
+sh -c "
+	touch config.gnomes
+	sleep 5
+	if test -f config.gnomes; then
+		printf 'Employing little gnomes...'
+		rm -f config.gnomes
+	fi" 2>/dev/null &
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
@@ -3341,16 +3686,20 @@ done
 for engine in $_engines; do
 	engine_build=`get_engine_build $engine`
 	engine_build_default=`get_engine_build_default $engine`
-	engine_wip=false
 	if test $engine_build != no -a $engine_build_default = no ; then
-		engine_wip=true
 		set_var _tainted_build "yes"
 	fi
-	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
-	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
+
+# Complete the message on slow systems
+if test -f config.gnomes ; then
+	# Kill does not work well here as it produces nasty 'Killed' message
+	rm -rf config.gnomes
+else
+	echo " work is done"
+fi
 
 #
 # Show which engines ("frontends") are to be built
@@ -3378,7 +3727,7 @@ s/#/    /g'
 fi
 
 if test -n "$_engines_built_wip" ; then
-	echo "WARNING: This Residual build contains the following UNSTABLE engines:"
+	echo "WARNING: This ResidualVM build contains the following UNSTABLE engines:"
 	echo $_engines_built_wip | sed 's/@/\
 /g
 s/#/    /g'
@@ -3416,9 +3765,6 @@ $_def_64bit_type_unsigned
 $_def_64bit_type_unsigned
 #endif
 typedef $type_ptr residualvmptr;
-
-/* Plugin settings */
-$_def_plugin
 
 #endif /* CONFIG_H */
 EOF

@@ -107,8 +107,8 @@ Rational &Rational::operator-=(const Rational &right) {
 Rational &Rational::operator*=(const Rational &right) {
 	// Cross-cancel to avoid unnecessary overflow;
 	// the result then is automatically normalized
-	const int gcd1 = Common::gcd(_num, right._denom);
-	const int gcd2 = Common::gcd(right._num, _denom);
+	const int gcd1 = gcd(_num, right._denom);
+	const int gcd2 = gcd(right._num, _denom);
 
 	_num   = (_num    / gcd1) * (right._num    / gcd2);
 	_denom = (_denom  / gcd2) * (right._denom  / gcd1);

@@ -5,8 +5,11 @@
 #endif
 
 #define FILE 256
+#define IDI_ICON  1001
+#define IDI_COUNT 1002
 
 IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
+IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
 modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION

@@ -71,7 +71,7 @@ Imuse::Imuse(int fps, bool demo) {
 		_stateMusicTable = grimStateMusicTable;
 		_seqMusicTable = grimSeqMusicTable;
 	}
-	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
+	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this, "imuseCallback");
 }
 
 Imuse::~Imuse() {

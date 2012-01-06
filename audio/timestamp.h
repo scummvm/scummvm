@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_TIMESTAMP_H
-#define SOUND_TIMESTAMP_H
+#ifndef AUDIO_TIMESTAMP_H
+#define AUDIO_TIMESTAMP_H
 
 #include "common/scummsys.h"
 

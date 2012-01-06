@@ -49,7 +49,7 @@ MoviePlayer::MoviePlayer() {
 	_internalSurface = NULL;
 	_externalSurface = new Graphics::Surface();
 
-	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, NULL);
+	g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, NULL, "movieLoop");
 }
 
 MoviePlayer::~MoviePlayer() {

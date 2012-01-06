@@ -192,4 +192,3 @@ FM_OPL *makeAdLibOPL(int rate) {
 
 	return opl;
 }
-

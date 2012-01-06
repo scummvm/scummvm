@@ -58,8 +58,8 @@ public:
 	// Common::Archive implementation
 	virtual bool hasFile(const Common::String &name); //TODO: Remove at next scummvm sync
 	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list);
-	virtual Common::ArchiveMemberPtr getMember(const Common::String &name);
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:

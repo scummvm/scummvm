@@ -97,7 +97,7 @@ public:
 	 * @param	name		a string describing the 'file' corresponding to stream
 	 * @return	true if stream was non-zero, false otherwise
 	 */
-	virtual bool open(SeekableReadStream *stream, const Common::String &name);
+	virtual bool open(SeekableReadStream *stream, const String &name);
 
 	/**
 	 * Close the file, if open.

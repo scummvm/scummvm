@@ -13,7 +13,7 @@
 	<key>CFBundleIconFile</key>
 	<string>residualvm.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.residualvm</string>
+	<string>org.residualvm.residualvm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

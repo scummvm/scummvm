@@ -39,6 +39,8 @@
 
 #include "gui/ThemeEngine.h"
 
+#include "audio/musicplugin.h"
+
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
@@ -603,6 +605,21 @@ static void listThemes() {
 		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
 }
 
+/** Lists all output devices */
+static void listAudioDevices() {
+	MusicPlugin::List pluginList = MusicMan.getPlugins();
+
+	printf("ID                             Description\n");
+	printf("------------------------------ ------------------------------------------------\n");
+
+	for (MusicPlugin::List::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
+		MusicDevices deviceList = (**i)->getDevices();
+		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
+			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
+		}
+	}
+}
+
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -819,6 +836,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "list-themes") {
 		listThemes();
+		return true;
+	} else if (command == "list-audio-devices") {
+		listAudioDevices();
 		return true;
 	} else if (command == "version") {
 		printf("%s\n", gResidualVMFullVersion);

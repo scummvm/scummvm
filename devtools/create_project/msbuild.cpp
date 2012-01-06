@@ -58,9 +58,9 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 	           "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(std::ostream &project, const std::string &name, const std::string &config) {
+inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
-	           "\t\t<ConfigurationType>" << (name == PROJECT_NAME ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
+	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
 	           "\t</PropertyGroup>\n";
 }
 
@@ -103,23 +103,23 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	outputConfigurationType(project, name, "Release|Win32");
-	outputConfigurationType(project, name, "Analysis|Win32");
-	outputConfigurationType(project, name, "Debug|Win32");
-	outputConfigurationType(project, name, "Release|x64");
-	outputConfigurationType(project, name, "Analysis|x64");
-	outputConfigurationType(project, name, "Debug|x64");
+	outputConfigurationType(setup, project, name, "Release|Win32");
+	outputConfigurationType(setup, project, name, "Analysis|Win32");
+	outputConfigurationType(setup, project, name, "Debug|Win32");
+	outputConfigurationType(setup, project, name, "Release|x64");
+	outputConfigurationType(setup, project, name, "Analysis|x64");
+	outputConfigurationType(setup, project, name, "Debug|x64");
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	           "\t</ImportGroup>\n";
 
-	outputProperties(project, "Release|Win32",  PROJECT_DESCRIPTION "_Release.props");
-	outputProperties(project, "Analysis|Win32", PROJECT_DESCRIPTION "_Analysis.props");
-	outputProperties(project, "Debug|Win32",    PROJECT_DESCRIPTION "_Debug.props");
-	outputProperties(project, "Release|x64",    PROJECT_DESCRIPTION "_Release64.props");
-	outputProperties(project, "Analysis|x64",   PROJECT_DESCRIPTION "_Analysis64.props");
-	outputProperties(project, "Debug|x64",      PROJECT_DESCRIPTION "_Debug64.props");
+	outputProperties(project, "Release|Win32",  setup.projectDescription + "_Release.props");
+	outputProperties(project, "Analysis|Win32", setup.projectDescription + "_Analysis.props");
+	outputProperties(project, "Debug|Win32",    setup.projectDescription + "_Debug.props");
+	outputProperties(project, "Release|x64",    setup.projectDescription + "_Release64.props");
+	outputProperties(project, "Analysis|x64",   setup.projectDescription + "_Analysis64.props");
+	outputProperties(project, "Debug|x64",      setup.projectDescription + "_Debug64.props");
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
@@ -145,8 +145,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	// Output references for the main project
-	if (name == PROJECT_NAME)
-		writeReferences(project);
+	if (name == setup.projectName)
+		writeReferences(setup, project);
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionTargets\">\n"
@@ -213,11 +213,11 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 	}
 }
 
-void MSBuildProvider::writeReferences(std::ofstream &output) {
+void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == PROJECT_NAME)
+		if (i->first == setup.projectName)
 			continue;
 
 		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
@@ -235,7 +235,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
 
 	// Nothing to add here, move along!
-	if (name != PROJECT_NAME && name != "sword25" && name != "tinsel" && name != "grim" && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && name != setup.projectName && name != "sword25" && name != "tinsel" && name != "grim" && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -247,7 +247,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	           "\t\t<ClCompile>\n";
 
 	// Compile configuration
-	if (name == PROJECT_NAME || name == "sword25" || name == "grim") {
+	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
 		if (name == "tinsel" && !isRelease)
@@ -260,18 +260,18 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t\t</ClCompile>\n";
 
 	// Link configuration for main project
-	if (name == PROJECT_NAME) {
+	if (name == setup.projectName || setup.devTools) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
 		project << "\t\t<Link>\n"
-		           "\t\t\t<OutputFile>$(OutDir)" << PROJECT_NAME << ".exe</OutputFile>\n"
+		           "\t\t\t<OutputFile>$(OutDir)" << (setup.devTools ? name : setup.projectName) << ".exe</OutputFile>\n"
 		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
 		           "\t\t</Link>\n";
 
-		if (setup.runBuildEvents) {
+		if (!setup.devTools && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
 			           "\t\t\t<Message>Generate revision</Message>\n"
 			           "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
@@ -288,7 +288,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
@@ -306,7 +306,7 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>\n"
-	              "\t\t<_PropertySheetDisplayName>" << PROJECT_DESCRIPTION << "_Global</_PropertySheetDisplayName>\n"
+	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(ExecutablePath)</ExecutablePath>\n"
 	              "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
 	              "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(IncludePath)</IncludePath>\n"
@@ -319,7 +319,7 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;" << prefix << ";" << prefix << "\\engines;$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "\t\t\t<ExceptionHandling></ExceptionHandling>\n";
+	              "\t\t\t<ExceptionHandling>" << (setup.devTools ? "Sync" : "") << "</ExceptionHandling>\n";
 
 #if NEEDS_RTTI
 	properties << "\t\t\t<RuntimeTypeInfo>true</RuntimeTypeInfo>\n";
@@ -333,9 +333,12 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
-	              "\t\t\t<SubSystem>Console</SubSystem>\n"
-	              "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
-	              "\t\t</Link>\n"
+	              "\t\t\t<SubSystem>Console</SubSystem>\n";
+
+	if (!setup.devTools)
+		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
+
+	properties << "\t\t</Link>\n"
 	              "\t\t<ResourceCompile>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t</ResourceCompile>\n"
@@ -349,18 +352,18 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	const std::string outputType = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
 	const std::string outputBitness = (isWin32 ? "32" : "64");
 
-	std::ofstream properties((setup.outputDir + '/' + PROJECT_DESCRIPTION "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<ImportGroup Label=\"PropertySheets\">\n"
-	              "\t\t<Import Project=\"" << PROJECT_DESCRIPTION << "_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
+	              "\t\t<Import Project=\"" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>\n"
-	              "\t\t<_PropertySheetDisplayName>" << PROJECT_DESCRIPTION << "_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
+	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"

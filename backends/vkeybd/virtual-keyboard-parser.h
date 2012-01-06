@@ -56,31 +56,31 @@ keyboard layouts for different screen resolutions.
         <area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="q" />
         <area shape="poly" coords="105,50,107,48,134,48,136,50,136,77,134,79,107,79,105,77" target="w" />
         <area shape="poly" coords="146,50,148,48,174,48,176,50,176,77,174,79,148,79,146,77" target="e" />
-		...
+        ...
         <area shape="poly" coords="11,89,12,88,69,88,70,89,70,116,69,117,12,117,11,116" target="caps" />
       </map>
-	</layout>
-	<layout resolution="320x200" bitmap="normal_320x200.bmp" transparent_color="255,0,255">
-	  ...
-	</layout>
+    </layout>
+    <layout resolution="320x200" bitmap="normal_320x200.bmp" transparent_color="255,0,255">
+      ...
+    </layout>
     <event name="a" type="key" code="97" ascii="97" modifiers="" />
     <event name="b" type="key" code="98" ascii="98" modifiers="" />
     <event name="c" type="key" code="99" ascii="99" modifiers="" />
-	...
-	<event name="caps" type="switch_mode" mode="caps" />
+    ...
+    <event name="caps" type="switch_mode" mode="caps" />
   </mode>
 
   <mode name="caps" resolutions="640x400">
     <layout resolution="640x400" bitmap="caps_640x480.bmp" transparent_color="255,0,255">
       <map>
         <area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="Q" />
-		...
+        ...
       </map>
     </layout>
     <event name="A" type="key" code="97" ascii="65" modifiers="shift" />
     <event name="B" type="key" code="98" ascii="66" modifiers="shift" />
     <event name="C" type="key" code="99" ascii="67" modifiers="shift" />
-	...
+    ...
   </mode>
 </keyboard>
 
@@ -188,6 +188,7 @@ public:
 		 * Full parse - when loading keyboard pack for first time
 		 */
 		kParseFull,
+
 		/**
 		 * Just check resolutions and reload layouts if needed - following a
 		 * change in screen size
@@ -257,10 +258,10 @@ protected:
 	virtual bool closedKeyCallback(ParserNode *node);
 
 	/** Parse helper functions */
-	byte parseFlags(const String& flags);
-	bool parseRect(Rect &rect, const String& coords);
-	bool parsePolygon(Polygon &poly, const String& coords);
-	bool parseRectAsPolygon(Polygon &poly, const String& coords);
+	byte parseFlags(const String &flags);
+	bool parseRect(Rect &rect, const String &coords);
+	bool parsePolygon(Polygon &poly, const String &coords);
+	bool parseRectAsPolygon(Polygon &poly, const String &coords);
 };
 
 } // End of namespace GUI
