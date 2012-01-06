@@ -190,6 +190,7 @@ private:
 	DECLARE_OPCODE(ifVarHasAllBitsSet);
 	DECLARE_OPCODE(ifVarHasNoBitsSet);
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
+	DECLARE_OPCODE(ifMouseIsInRect);
 	DECLARE_OPCODE(goToNode);
 	DECLARE_OPCODE(goToRoomNode);
 	DECLARE_OPCODE(zipToNode);

@@ -67,6 +67,7 @@ protected:
 public:
 	ViewType _viewType;
 	Variables *_vars;
+	Cursor *_cursor;
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
@@ -108,7 +109,6 @@ private:
 
 	Script *_scriptEngine;
 	Database *_db;
-	Cursor *_cursor;
 
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;

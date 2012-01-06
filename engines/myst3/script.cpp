@@ -135,6 +135,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(120, ifVarHasAllBitsSet,			kVar,		kValue											);
 	OP_2(121, ifVarHasNoBitsSet,			kVar,		kValue											);
 	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
+	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
 	OP_1(138, goToNode,						kValue														);
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
 	OP_1(140, zipToNode,					kValue														);
@@ -1243,6 +1244,19 @@ void Script::ifVarHasSomeBitsSet(Context &c, const Opcode &cmd) {
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	if ((_vm->_vars->get(cmd.args[0]) & cmd.args[1]) == cmd.args[2])
+		return;
+
+	goToElse(c);
+}
+
+void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: If mouse in rect l%d t%d w%d h%d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	Common::Rect r = Common::Rect(cmd.args[2], cmd.args[3]);
+	r.translate(cmd.args[0], cmd.args[1]);
+
+	if (r.contains(_vm->_cursor->getPosition()))
 		return;
 
 	goToElse(c);
