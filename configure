@@ -132,8 +132,8 @@ _ar="ar cru"
 _as="as"
 _windres=windres
 _stagingpath="staging"
-_win32path="C:/residual"
-_aos4path="Games:Residual"
+_win32path="C:/residualvm"
+_aos4path="Games:ResidualVM"
 _staticlibpath=/sw
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
@@ -157,15 +157,15 @@ _arm_asm=no
 # Like GNU autoconf, we distinguish datadir and datarootdir
 # to make it possible to change e.g. the location of the
 # man pages independently of that of the engine data files,
-# which are placed inside $datadir/residual
+# which are placed inside $datadir/residualvm
 prefix=NONE
 exec_prefix=NONE
 bindir='${exec_prefix}/bin'
 libdir='${exec_prefix}/lib'
 datarootdir='${prefix}/share'
-datadir='${datarootdir}/residual'
+datadir='${datarootdir}/residualvm'
 mandir='${datarootdir}/man'
-docdir='${datarootdir}/doc/residual'
+docdir='${datarootdir}/doc/residualvm'
 #localedir='${datarootdir}/locale'
 
 # For cross compiling
@@ -179,7 +179,7 @@ _srcdir=`dirname $0`
 _port_mk="ports.mk"
 
 # Use temp files in the build directory
-TMPO=./residual-conf
+TMPO=./residualvm-conf
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
@@ -662,9 +662,9 @@ Fine tuning of the installation directories:
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
   --datadir=DIR           read-only architecture-independent data
-                          [DATAROOTDIR/residual]
+                          [DATAROOTDIR/residualvm]
   --mandir=DIR            man documentation [DATAROOTDIR/man]
-  --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/residualvm]
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
@@ -1050,7 +1050,7 @@ webos)
 	# The prefix is always the same on WebOS so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
-	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
+	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.residualvm.residualvm
 	# WebOS apps are installed into app-specific directories. The 
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode WebOS specific directories here.
@@ -1779,7 +1779,7 @@ case $_host_os in
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
 		LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
 		LIBS="$LIBS -lmingw32 -lwinmm -lgdi32"
-		OBJS="$OBJS residualwinres.o"
+		OBJS="$OBJS residualvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
 	mint*)
@@ -2093,7 +2093,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -mno-crt0"
 			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64"
 			LDFLAGS="$LDFLAGS -L$N64SDK/lib"
-			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
+			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker residualvm.map"
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
@@ -2455,8 +2455,8 @@ if test "$_dynamic_modules" = yes ; then
 # (otherwise unnecessary) dependency from plugins back
 # to the main libscummvm.so.
 _mak_plugins='
-PLUGIN_EXTRA_DEPS = libscummvm.so
-PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lscummvm
+PLUGIN_EXTRA_DEPS = libresidualvm.so
+PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lresidualvm
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
@@ -2536,9 +2536,9 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_suffix=".dll"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
+PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libresidualvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libresidualvm.a
 '
 		;;
 	wince)
@@ -2548,9 +2548,9 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		_plugin_suffix=".plugin"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		:= -shared -lscummvm -L.
+PLUGIN_LDFLAGS		:= -shared -lresidualvm -L.
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libresidualvm.a -shared
 '
 		;;
 	ps2)
@@ -2951,7 +2951,7 @@ if test "$_libunity" = auto ; then
 			cat > $TMPC << EOF
 #include <unity.h>
 int main(void) {
-	unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	unity_launcher_entry_get_for_desktop_id("residualvm.desktop");
 	return 0;
 }
 EOF
@@ -3200,7 +3200,7 @@ case $_backend in
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
 	*)
-		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/residual\\\""
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/residualvm\\\""
 		;;
 esac
 
@@ -3415,7 +3415,7 @@ $_def_64bit_type_unsigned
 #else
 $_def_64bit_type_unsigned
 #endif
-typedef $type_ptr residualptr;
+typedef $type_ptr residualvmptr;
 
 /* Plugin settings */
 $_def_plugin

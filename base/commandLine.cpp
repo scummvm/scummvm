@@ -58,9 +58,9 @@ static const char USAGE_STRING[] =
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
-	"Residual - Virtual machine to run 3D adventure games\n"
+	"ResidualVM - Virtual machine to run 3D adventure games\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
-	"  -v, --version            Display Residual version information and exit\n"
+	"  -v, --version            Display ResidualVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
@@ -106,7 +106,7 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-static const char *s_appName = "residual";
+static const char *s_appName = "residualvm";
 
 static void usage(const char *s, ...) GCC_PRINTF(1, 2);
 
@@ -821,8 +821,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listThemes();
 		return true;
 	} else if (command == "version") {
-		printf("%s\n", gResidualFullVersion);
-		printf("Features compiled in: %s\n", gResidualFeatures);
+		printf("%s\n", gResidualVMFullVersion);
+		printf("Features compiled in: %s\n", gResidualVMFeatures);
 		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);

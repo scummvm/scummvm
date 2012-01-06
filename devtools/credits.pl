@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # This tools is kind of a hack to be able to maintain the credits list of
-# Residual in a single central location. We then generate the various versions
+# ResidualVM in a single central location. We then generate the various versions
 # of the credits in other places from this source. In particular:
 # - The AUTHORS file
 # - The gui/credits.h header file
@@ -444,7 +444,7 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-    begin_section("Residual Team");
+    begin_section("ResidualVM Team");
 	begin_section("Project Leader");
 	    begin_persons();
 		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
@@ -498,7 +498,7 @@ begin_credits("Credits");
 
     begin_section("ScummVM code");
 	  add_paragraph(
-	  "Residual use a lot of ScummVM code. ".
+	  "ResidualVM use a lot of ScummVM code. ".
 	  "For a list of authors look into COPYRIGHT file. ");
     end_section();
 

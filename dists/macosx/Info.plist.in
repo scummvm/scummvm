@@ -5,19 +5,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>Residual</string>
+	<string>ResidualVM</string>
 	<key>CFBundleExecutable</key>
-	<string>residual</string>
+	<string>residualvm</string>
 	<key>CFBundleGetInfoString</key>
 	<string>@VERSION@</string>
 	<key>CFBundleIconFile</key>
-	<string>residual.icns</string>
+	<string>residualvm.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.residual</string>
+	<string>org.residualvm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Residual</string>
+	<string>ResidualVM</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

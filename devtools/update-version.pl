@@ -32,7 +32,7 @@ print "Setting version to '$VERSION'\n";
 # List of the files in which we need to perform substitution.
 my @subs_files = qw(
 	base/internal_version.h
-	dists/residual.rc
+	dists/residualvm.rc
 	dists/macosx/Info.plist
 	);
 

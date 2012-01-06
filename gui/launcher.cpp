@@ -544,17 +544,17 @@ LauncherDialog::LauncherDialog()
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
-		new StaticTextWidget(this, "Launcher.Version", gResidualVersionDate);
+		new StaticTextWidget(this, "Launcher.Version", gResidualVMVersionDate);
 	} else
-		new StaticTextWidget(this, "Launcher.Version", gResidualFullVersion);
+		new StaticTextWidget(this, "Launcher.Version", gResidualVMFullVersion);
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", gResidualFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", gResidualVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit Residual"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About Residual"), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global Residual options"), kOptionsCmd);
+	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ResidualVM"), kQuitCmd);
+	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ResidualVM"), kAboutCmd);
+	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ResidualVM options"), kOptionsCmd);
 	_startButton =
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
@@ -769,7 +769,7 @@ void LauncherDialog::addGame() {
 			Common::FSNode dir(_browser->getResult());
 			Common::FSList files;
 			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-				MessageDialog alert(_("Residual couldn't open the specified directory!"));
+				MessageDialog alert(_("ResidualVM couldn't open the specified directory!"));
 				alert.runModal();
 				return;
 			}
@@ -781,7 +781,7 @@ void LauncherDialog::addGame() {
 			int idx;
 			if (candidates.empty()) {
 				// No game was found in the specified directory
-				MessageDialog alert(_("Residual could not find any game in the specified directory!"));
+				MessageDialog alert(_("ResidualVM could not find any game in the specified directory!"));
 				alert.runModal();
 				idx = -1;
 
@@ -937,7 +937,7 @@ void LauncherDialog::loadGame(int item) {
 			dialog.runModal();
 		}
 	} else {
-		MessageDialog dialog(_("Residual could not find any engine capable of running the selected game!"), _("OK"));
+		MessageDialog dialog(_("ResidualVM could not find any engine capable of running the selected game!"), _("OK"));
 		dialog.runModal();
 	}
 }
@@ -1064,7 +1064,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
-			ver->setLabel(gResidualVersionDate);
+			ver->setLabel(gResidualVMVersionDate);
 		}
 
 		if (!_logo)
@@ -1075,7 +1075,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
-			ver->setLabel(gResidualFullVersion);
+			ver->setLabel(gResidualVMFullVersion);
 		}
 
 		if (_logo) {

@@ -76,7 +76,7 @@ echo Removing all project files
 del /Q *.vcproj* > NUL 2>&1
 del /Q *.vsprops > NUL 2>&1
 del /Q *.sln* > NUL 2>&1
-del /Q scummvm* > NUL 2>&1
+del /Q residual* > NUL 2>&1
 goto done
 
 :done

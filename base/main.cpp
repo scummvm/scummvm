@@ -20,9 +20,9 @@
  *
  */
 
-/*! \mainpage %Residual Source Reference
+/*! \mainpage %ResidualVM Source Reference
  *
- * These pages contains a cross referenced documentation for the %Residual source code,
+ * These pages contains a cross referenced documentation for the %ResidualVM source code,
  * generated with Doxygen (http://www.doxygen.org) directly from the source.
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
@@ -232,7 +232,7 @@ static void setupGraphics(OSystem &system) {
 	GUI::GuiManager::instance();
 
 	// Set initial window caption
-	system.setWindowCaption(gResidualFullVersion);
+	system.setWindowCaption(gResidualVMFullVersion);
 
 	// Clear the main screen
 	//system.fillScreen(0);
@@ -279,7 +279,7 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
-extern "C" int residual_main(int argc, const char * const argv[]) {
+extern "C" int residualvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
 
@@ -303,7 +303,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	}
 
 	// Update the config file
-	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("versioninfo", gResidualVMVersion, Common::ConfigManager::kApplicationDomain);
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if

@@ -833,10 +833,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or Residual"), kChooseExtraDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ResidualVM"), kChooseExtraDirCmd);
 	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or Residual"), kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or Residual"));
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ResidualVM"), kChooseExtraDirCmd);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ResidualVM"));
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)
@@ -888,7 +888,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 
 #ifdef USE_TRANSLATION
-	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of Residual GUI"));
+	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of ResidualVM GUI"));
 	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
 #ifdef USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
@@ -1037,7 +1037,7 @@ void GlobalOptionsDialog::close() {
 			// only become active *after* the options dialog has closed.
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 #else
-			MessageDialog error(_("You have to restart Residual before your changes will take effect."));
+			MessageDialog error(_("You have to restart ResidualVM before your changes will take effect."));
 			error.runModal();
 #endif
 		}

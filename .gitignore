@@ -7,8 +7,8 @@ lib*.a
 .deps
 
 /config.log
-/residual
-/residual-static
+/residualvm
+/residualvm-static
 /config.h
 /config.mk
 /.gdb_history
@@ -32,16 +32,16 @@ lib*.a
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout
-/dists/codeblocks/residual*
+/dists/codeblocks/residualvm*
 
 #Ignore XCode user data and build files
 xcuserdata
 project.xcworkspace
 /dists/iphone/build
-/dists/iphone/residual.xcodeproj
+/dists/iphone/residualvm.xcodeproj
 /dists/iphone/create_project
 /dists/macosx/build
-/dists/macosx/residual.xcodeproj
+/dists/macosx/residualvm.xcodeproj
 /dists/macosx/create_project
 
 /dists/msvc*/[Dd]ebug*/
@@ -93,7 +93,7 @@ ipch/
 [Rr]elease*/
 
 #Ignore Qt Creator project files
-Residual.config
-Residual.creator
-Residual.files
-Residual.includes
+ResidualVM.config
+ResidualVM.creator
+ResidualVM.files
+ResidualVM.includes

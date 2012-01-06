@@ -70,15 +70,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gResidualVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gResidualVMVersionDate);
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
@@ -199,7 +199,7 @@ void MainMenuDialog::reflowLayout() {
 	} else {
 		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 

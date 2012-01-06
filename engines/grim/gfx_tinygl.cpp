@@ -168,7 +168,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(!fullscreen);
 
-	g_system->setWindowCaption("Residual: Software 3D Renderer");
+	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
 
 	_zb = TinyGL::ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
 	TinyGL::glInit(_zb);

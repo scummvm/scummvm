@@ -29,7 +29,7 @@
 namespace Grim {
 
 // FIXME: Replace this with a proper parser (this is just too dodgy :)
-int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {
+int residualvm_vsscanf(const char *str, int field_count, const char *format, va_list ap) {
 	unsigned int f01 = va_arg(ap, long);
 	unsigned int f02 = va_arg(ap, long);
 	unsigned int f03 = va_arg(ap, long);
@@ -52,7 +52,7 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 	unsigned int f20 = va_arg(ap, long);
 
 	if (field_count > 20)
-		error("Too many fields requested of residual_vsscanf (%d)", field_count);
+		error("Too many fields requested of residualvm_vsscanf (%d)", field_count);
 
 	return sscanf(str, format, f01, f02, f03, f04, f05, f06, f07, f08, f09, f10,
 			f11, f12, f13, f14, f15, f16, f17, f18, f19, f20);
@@ -123,7 +123,7 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	va_start(va, field_count);
 
 #ifdef WIN32
-	if (residual_vsscanf(getCurrentLine(), field_count, fmt, va) < field_count)
+	if (residualvm_vsscanf(getCurrentLine(), field_count, fmt, va) < field_count)
 #else
 	if (vsscanf(getCurrentLine(), fmt, va) < field_count)
 #endif

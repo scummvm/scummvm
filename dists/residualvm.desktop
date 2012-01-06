@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Residual
+Name=ResidualVM
 Comment=Interpreter for several 3D games
-Exec=residual
-Icon=residual
+Exec=residualvm
+Icon=residualvm
 Terminal=false
 Type=Application
 Categories=Game;AdventureGame;

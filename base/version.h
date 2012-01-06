@@ -22,10 +22,10 @@
 #ifndef BASE_VERSION_H
 #define BASE_VERSION_H
 
-extern const char *gResidualVersion;		// e.g. "0.0.6"
-extern const char *gResidualBuildDate;		// e.g. "2008-06-15"
-extern const char *gResidualVersionDate;	// e.g. "0.0.6 (2008-06-15)"
-extern const char *gResidualFullVersion;	// e.g. "Residual 0.0.6 (2008-06-15)"
-extern const char *gResidualFeatures;		// e.g. "ALSA MPEG2 zLib"
+extern const char *gResidualVMVersion;		// e.g. "0.0.6"
+extern const char *gResidualVMBuildDate;	// e.g. "2008-06-15"
+extern const char *gResidualVMVersionDate;	// e.g. "0.0.6 (2008-06-15)"
+extern const char *gResidualVMFullVersion;	// e.g. "Residual 0.0.6 (2008-06-15)"
+extern const char *gResidualVMFeatures;		// e.g. "ALSA MPEG2 zLib"
 
 #endif

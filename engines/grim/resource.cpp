@@ -86,7 +86,7 @@ ResourceLoader::ResourceLoader() {
 			//In this case put it in the top of the list
 			Common::ArchiveMemberList::iterator datausr_it = Common::find_if(files.begin(), files.end(), LabListComperator("datausr.lab"));
 			if (datausr_it != files.end()) {
-				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
+				Grim::InputDialog d("User-patch detected, the ResidualVM-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
 				int res = d.runModal();
 				if (res == GUI::kMessageOK)
 					files.push_front(*datausr_it);

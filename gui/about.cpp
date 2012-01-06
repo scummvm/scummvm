@@ -54,10 +54,10 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2003-2012 The Residual project",
+"C0""Copyright (C) 2003-2012 The ResidualVM project",
 "C0""http://www.residualvm.org",
 "",
-"C0""Residual is the legal property of its developers, whose names are too numerous to list here. Please refer to the AUTHORS file distributed with this binary.",
+"C0""ResidualVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the AUTHORS file distributed with this binary.",
 "",
 };
 
@@ -84,11 +84,11 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
 
-	Common::String version("C0""Residual ");
-	version += gResidualVersion;
+	Common::String version("C0""ResidualVM ");
+	version += gResidualVMVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::format(_("(built on %s)"), gResidualBuildDate);
+	Common::String date = Common::String::format(_("(built on %s)"), gResidualVMBuildDate);
 	_lines.push_back("C2" + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
@@ -98,7 +98,7 @@ AboutDialog::AboutDialog()
 	features += _("Features compiled in:");
 	addLine(features.c_str());
 	Common::String featureList("C0");
-	featureList += gResidualFeatures;
+	featureList += gResidualVMFeatures;
 	addLine(featureList.c_str());
 
 	_lines.push_back("");

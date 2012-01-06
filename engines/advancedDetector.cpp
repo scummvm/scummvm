@@ -294,7 +294,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
 	Common::String report = Common::String::format(_("The game in '%s' seems to be unknown."), path.getPath().c_str()) + "\n";
-	report += _("Please, report the following data to the Residual team along with name");
+	report += _("Please, report the following data to the ResidualVM team along with name");
 	report += "\n";
 	report += _("of the game you tried to add and its version/language/etc.:");
 	report += "\n";

@@ -3,7 +3,7 @@
 #
 
 ######################################################################
-# The default build target: just build the residual executable
+# The default build target: just build the residualvm executable
 ######################################################################
 
 all: $(EXECUTABLE) plugins
@@ -75,7 +75,7 @@ endif
 endif
 endif
 
-# The build rule for the Residual executable
+# The build rule for the ResidualVM executable
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
@@ -154,7 +154,7 @@ endif
 # Get the current version information
 ######################################################################
 
-VERSION = $(shell grep RESIDUAL_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+VERSION = $(shell grep RESIDUALVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
@@ -180,7 +180,7 @@ endif
 # Define the Subversion revision if available, either autodetected or
 # specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_REV), undefined)
-base/version.o: CXXFLAGS:=$(CXXFLAGS) -DRESIDUAL_REVISION=\"$(VER_REV)\"
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DRESIDUALVM_REVISION=\"$(VER_REV)\"
 endif
 
 ######################################################################
@@ -197,7 +197,7 @@ else
 DISTVERSION = $(VERSION)
 endif
 
-DISTNAME := residual-$(DISTVERSION)
+DISTNAME := residualvm-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
@@ -209,7 +209,7 @@ $(VERFILE): $(srcdir)/base/internal_version.h
 ifneq ($(origin VER_REV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
 	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
-		"s/^#define RESIDUAL_REVISION$$/#define RESIDUAL_REVISION \"$(VER_REV)\"/g" \
+		"s/^#define RESIDUALVM_REVISION$$/#define RESIDUALVM_REVISION \"$(VER_REV)\"/g" \
 		> $(VERFILE)
 endif
 

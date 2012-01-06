@@ -70,7 +70,7 @@ MidiDriver_CoreMIDI::MidiDriver_CoreMIDI()
 	: mClient(0), mOutPort(0), mDest(0) {
 
 	OSStatus err;
-	err = MIDIClientCreate(CFSTR("Residual MIDI Driver for OS X"), NULL, NULL, &mClient);
+	err = MIDIClientCreate(CFSTR("ResidualVM MIDI Driver for OS X"), NULL, NULL, &mClient);
 }
 
 MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {
@@ -91,7 +91,7 @@ int MidiDriver_CoreMIDI::open() {
 	if (dests > 0 && mClient) {
 		mDest = MIDIGetDestination(0);
 		err = MIDIOutputPortCreate( mClient,
-									CFSTR("residual_output_port"),
+									CFSTR("residualvm_output_port"),
 									&mOutPort);
 	} else {
 		return MERR_DEVICE_NOT_AVAILABLE;

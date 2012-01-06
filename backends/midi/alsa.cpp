@@ -102,7 +102,7 @@ int MidiDriver_ALSA::open() {
 	}
 
 	my_client = snd_seq_client_id(seq_handle);
-	if (snd_seq_set_client_name(seq_handle, "RESIDUAL") < 0) {
+	if (snd_seq_set_client_name(seq_handle, "RESIDUALVM") < 0) {
 		error("Can't set sequencer client name");
 	}
 	snd_seq_set_client_group(seq_handle, "input");
@@ -113,7 +113,7 @@ int MidiDriver_ALSA::open() {
 	// to be able to record the sound, but I can't get that to work even
 	// with those capabilities.
 
-	my_port = snd_seq_create_simple_port(seq_handle, "RESIDUAL port 0", 0,
+	my_port = snd_seq_create_simple_port(seq_handle, "RESIDUALVM port 0", 0,
 	                                     SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
 
 	if (my_port < 0) {
@@ -433,9 +433,9 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 	// The SCUMMVM_PORT environment variable can still be used to override
 	// any config setting.
 
-	var = getenv("RESIDUAL_PORT");
+	var = getenv("RESIDUALVM_PORT");
 	if (var) {
-		warning("AlsaMusicPlugin: RESIDUAL_PORT environment variable overrides config settings");
+		warning("AlsaMusicPlugin: RESIDUALVM_PORT environment variable overrides config settings");
 		if (parse_addr(var, &seq_client, &seq_port) >= 0) {
 			found = true;
 		} else {

@@ -231,8 +231,8 @@ int MidiDriver_TIMIDITY::open() {
 	/*
 	 * From seq.cpp
 	 */
-	if (getenv("RESIDUAL_MIDIPORT"))
-		_device_num = atoi(getenv("RESIDUAL_MIDIPORT"));
+	if (getenv("RESIDUALVM_MIDIPORT"))
+		_device_num = atoi(getenv("RESIDUALVM_MIDIPORT"));
 
 	return 0;
 }

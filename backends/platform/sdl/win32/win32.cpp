@@ -69,7 +69,7 @@ void OSystem_Win32::initBackend() {
 			freopen("CONOUT$","w",stdout);
 			freopen("CONOUT$","w",stderr);
 		}
-		SetConsoleTitle("Residual Status Window");
+		SetConsoleTitle("ResidualVM Status Window");
 	} else {
 		FreeConsole();
 	}
@@ -173,7 +173,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		strcat(configFile, "\\Residual");
 		if (!CreateDirectory(configFile, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				error("Cannot create Residual application data folder");
+				error("Cannot create ResidualVM application data folder");
 		}
 
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
@@ -232,11 +232,11 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 			CreateDirectory(logFile, NULL);
 		}
 
-		strcat(logFile, "\\Residual");
+		strcat(logFile, "\\ResidualVM");
 		CreateDirectory(logFile, NULL);
 		strcat(logFile, "\\Logs");
 		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\residual.log");
+		strcat(logFile, "\\residualvm.log");
 
 		Common::FSNode file(logFile);
 		Common::WriteStream *stream = file.createWriteStream();

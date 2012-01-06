@@ -340,7 +340,7 @@ void TranslationManager::loadLanguageDat(int index) {
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 	if (nbTranslations != (int)_langs.size()) {
-		warning("The 'translations.dat' file has changed since starting Residual. GUI translation will not be available");
+		warning("The 'translations.dat' file has changed since starting ResidualVM. GUI translation will not be available");
 		return;
 	}
 

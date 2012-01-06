@@ -1,12 +1,12 @@
 .\"	$Id$
 .Dd May 28, 2011
-.Dt RESIDUAL 6
+.Dt RESIDUALVM 6
 .Os
 .Sh NAME
-.Nm residual
+.Nm residualvm
 .Nd interpreter for several 3D games
 .Sh SYNOPSIS
-.Nm residual
+.Nm residualvm
 .Op Ar options
 .Op Ar game
 .Sh DESCRIPTION
@@ -44,7 +44,7 @@ range 0-127 (default: 127).
 .It Fl t
 Display list of configured targets and exit.
 .It Fl v
-Display Residual version information and exit.
+Display ResidualVM version information and exit.
 .It Fl x Ar slot
 Save game
 .Ar slot
@@ -68,18 +68,18 @@ Quit (Most platforms)
 .El
 .Sh FILES
 .Bl -tag -width Ds
-.It Pa $HOME/.residualrc
+.It Pa $HOME/.residualvmrc
 Configuration file on UNIX.
-.It Pa "$HOME/Library/Preferences/Residual Preferences"
+.It Pa "$HOME/Library/Preferences/ResidualVM Preferences"
 Configuration file on Mac OS X.
 .El
 .Sh EXAMPLES
 Running the builtin game launcher:
 .Pp
-.Dl $ residual
+.Dl $ residualvm
 .Pp
 .Sh SEE ALSO
 More information can be found in the README and on the website
-.Pa http://residual.sourceforge.net .
+.Pa http://residualvm.org .
 .Sh AUTHORS
 See AUTHORS file for more information.

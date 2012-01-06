@@ -48,7 +48,7 @@
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-#include "icons/residual.xpm"
+#include "icons/residualvm.xpm"
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -363,8 +363,8 @@ void OSystem_SDL::setupIcon() {
 	unsigned int rgba[256];
 	unsigned int *icon;
 
-	if (sscanf(residual_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
-		warning("Wrong format of residual_icon[0] (%s)", residual_icon[0]);
+	if (sscanf(residualvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
+		warning("Wrong format of residual_icon[0] (%s)", residualvm_icon[0]);
 
 		return;
 	}
@@ -383,8 +383,8 @@ void OSystem_SDL::setupIcon() {
 		char color[32];
 		memset(color, 0, sizeof(color));
 		unsigned int col;
-		if (sscanf(residual_icon[1 + i], "%c c %s", &code, color) != 2) {
-			warning("Wrong format of residual_icon[%d] (%s)", 1 + i, residual_icon[1 + i]);
+		if (sscanf(residualvm_icon[1 + i], "%c c %s", &code, color) != 2) {
+			warning("Wrong format of residualvm_icon[%d] (%s)", 1 + i, residualvm_icon[1 + i]);
 		}
 		if (!strcmp(color, "None"))
 			col = 0x00000000;
@@ -396,7 +396,7 @@ void OSystem_SDL::setupIcon() {
 			}
 			col |= 0xFF000000;
 		} else {
-			warning("Could not load the built-in icon (%d %s - %s) ", code, color, residual_icon[1 + i]);
+			warning("Could not load the built-in icon (%d %s - %s) ", code, color, residualvm_icon[1 + i]);
 			free(icon);
 			return;
 		}
@@ -404,7 +404,7 @@ void OSystem_SDL::setupIcon() {
 		rgba[code] = col;
 	}
 	for (y = 0; y < h; y++) {
-		const char *line = residual_icon[1 + ncols + y];
+		const char *line = residualvm_icon[1 + ncols + y];
 		for (x = 0; x < w; x++) {
 			icon[x + w * y] = rgba[(int)line[x]];
 		}

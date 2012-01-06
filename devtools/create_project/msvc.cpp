@@ -165,7 +165,7 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) 
 
 	cmdLine += (isWin32) ? "x86" : "x64";
 
-	cmdLine += " %RESIDUAL_LIBS% ";
+	cmdLine += " %RESIDUALVM_LIBS% ";
 
 	// Specify if installer needs to be built or not
 	cmdLine += (createInstaller ? "1" : "0");

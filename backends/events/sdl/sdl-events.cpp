@@ -53,7 +53,7 @@ SdlEventSource::SdlEventSource()
     : _scrollLock(false), _joystick(0), _lastScreenID(0), EventSource() {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
-/* Residual doesn't support this
+/* ResidualVM doesn't support this
 	int joystick_num = ConfMan.getInt("joystick_num");
 	if (joystick_num > -1) {
 		// Initialize SDL joystick subsystem
@@ -70,7 +70,7 @@ SdlEventSource::SdlEventSource()
 }
 
 SdlEventSource::~SdlEventSource() {
-/*	Residual doesn't support this
+/*	ResidualVM doesn't support this
 	if (_joystick)
 		SDL_JoystickClose(_joystick);*/
 }
@@ -165,7 +165,7 @@ void SdlEventSource::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			// Residual: disable wrap mouse for now, it's really annoying
+			// ResidualVM: disable wrap mouse for now, it's really annoying
 			//SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
 		}
 	}
@@ -198,7 +198,7 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
-/* Residual doesn't support this
+/* ResidualVM doesn't support this
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
 	if (screenID != _lastScreenID) {

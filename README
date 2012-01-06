@@ -1,4 +1,4 @@
-Residual: A 3D game interpreter
+ResidualVM: A 3D game interpreter
 
 Contents:
 1. What is Residual?
@@ -38,7 +38,7 @@ Grim Fandango                    - Completable with glitches
 Grim Fandango (demo)             - Completable with glitches
 
 Specifics can be found at
-http://residual.sourceforge.net/compatibility/
+http://www.residualvm.org/compatibility/
 
 * It is possible, but far from promised, that 'Escape from Monkey Island'
   may be supported in the distant future.
@@ -112,7 +112,7 @@ F1         : Menu
 -----------------
 5 - Configuration
 -----------------
-Currently, not all the settings for residual are available through the GUI,
+Currently, not all the settings for ResidualVM are available through the GUI,
 if you have problems with getting anything to work, first try to pass the settings
 from the command line, then, if that doesn't work, try to change your configuration file
 manually
@@ -131,7 +131,7 @@ By default, the configuration file is saved in, and loaded from:
         <windir>\Profiles\username\Application Data\Residual\residual.ini
 
         Windows 95/98/ME:
-       <windir>\residual.ini
+        <windir>\residual.ini
 
         Unix:
         ~/.residualrc
@@ -146,7 +146,7 @@ By default, the configuration file is saved in, and loaded from:
 ------------------------------------
 The following settings are currently available in the config-file,
 however some of them might not work with your current build. And 
-some of them might make residual crash, or behave in weird ways.
+some of them might make ResidualVM crash, or behave in weird ways.
 
 |-------------------|-------------|-----------------------------------------------------|
 |Setting            | Values      | Effect                                              |
@@ -222,7 +222,7 @@ Remember to always have the following information in your bug reports:
 ----------
 8. Contact
 ----------
-Homepage: http://residual.sourceforge.net/
+Homepage: http://www.residualvm.org/
 Wiki: http://sourceforge.net/apps/mediawiki/residual/index.php?title=Main_Page
 Forums: http://residual.scummvm.org/
 IRC: #residual on freenode
@@ -232,7 +232,7 @@ IRC: #residual on freenode
 9. Debugging
 ------------
 WARNING: This section contains information about the various tools that
-are included for debugging residual, this should not be necessary for
+are included for debugging ResidualVM, this should not be necessary for
 normal play at all. But the curious might like to know how. Use at your
 own risk.
 

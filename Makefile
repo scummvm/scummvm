@@ -70,7 +70,7 @@ ZIP     ?= zip -q
 # Misc stuff - you should never have to edit this                     #
 #######################################################################
 
-EXECUTABLE  := $(EXEPRE)residual$(EXEEXT)
+EXECUTABLE  := $(EXEPRE)residualvm$(EXEEXT)
 
 include $(srcdir)/Makefile.common
 

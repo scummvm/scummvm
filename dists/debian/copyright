@@ -1,6 +1,6 @@
-Residual was debianized by Pino Toscano <pino@kde.org> the 4th Oct 2008.
+ResidualVM was debianized by Pino Toscano <pino@kde.org> the 4th Oct 2008.
 
-Upstream Authors: see `/usr/share/doc/residual/AUTHORS'.
+Upstream Authors: see `/usr/share/doc/residualvm/AUTHORS'.
 
 Copyright:
 
@@ -9,7 +9,7 @@ Some other source files are released under GNU Lesser General Public
 License v2.
 The Debian packaging is licensed under the GPL.
 
-Residual includes Lua licensed code:
+ResidualVM includes Lua licensed code:
 /******************************************************************************
 * Copyright (c) 1994-1998 TeCGraf, PUC-Rio.  All rights reserved.
 * 
@@ -45,7 +45,7 @@ Residual includes Lua licensed code:
 ******************************************************************************/
 
 
-Residual include also TinyGL code:
+ResidualVM include also TinyGL code:
 /******************************************************************************/
 Copyright notice:
 

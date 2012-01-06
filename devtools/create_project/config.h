@@ -23,10 +23,10 @@
 #ifndef TOOLS_CREATE_PROJECT_CONFIG_H
 #define TOOLS_CREATE_PROJECT_CONFIG_H
 
-#define PROJECT_DESCRIPTION "Residual"    // Used in console output and build configuration
-#define PROJECT_NAME "residual"           // Used for folders, icons, resources and project/solution name
-#define LIBS_DEFINE "RESIDUAL_LIBS"       // Name of the include environment variable
-#define REVISION_DEFINE "RESIDUAL_INTERNAL_REVISION"
+#define PROJECT_DESCRIPTION "ResidualVM"  // Used in console output and build configuration
+#define PROJECT_NAME "residualvm"         // Used for folders, icons, resources and project/solution name
+#define LIBS_DEFINE "RESIDUALVM_LIBS"     // Name of the include environment variable
+#define REVISION_DEFINE "RESIDUALVM_INTERNAL_REVISION"
 
 #define HAS_VIDEO_FOLDER 1
 #define ADDITIONAL_LIBRARY "glu32"

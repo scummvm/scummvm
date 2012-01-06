@@ -6,7 +6,7 @@
 
 #define FILE 256
 
-IDI_ICON               ICON    DISCARDABLE     "icons/residual.ico"
+IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
 
 modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION
@@ -33,12 +33,12 @@ BEGIN
         BLOCK "040904b0" // US English, Unicode
         BEGIN
             VALUE "Comments", "\0"
-            VALUE "FileDescription", "http://residual.sourceforge.net/\0"
+            VALUE "FileDescription", "http://www.residualvm.org/\0"
             VALUE "FileVersion", "@VERSION@\0"
-            VALUE "InternalName", "residual\0"
+            VALUE "InternalName", "residualvm\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
-            VALUE "OriginalFilename", "residual.exe\0"
-            VALUE "ProductName", "Residual\0"
+            VALUE "OriginalFilename", "residualvm.exe\0"
+            VALUE "ProductName", "ResidualVM\0"
             VALUE "ProductVersion", "@VERSION@\0"
         END
     END

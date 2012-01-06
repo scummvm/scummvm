@@ -718,7 +718,7 @@ bool ThemeEngine::loadDefaultXML() {
 	if (!_parser->loadBuffer((const byte *)defaultXML, strlen(defaultXML)))
 		return false;
 
-	_themeName = "Residual Classic Theme (Builtin Version)";
+	_themeName = "ResidualVM Classic Theme (Builtin Version)";
 	_themeId = "builtin";
 	_themeFile.clear();
 
@@ -1272,7 +1272,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
-	return true; // Residual doesn's support cursor palette mode
+	return true; // ResidualVM doesn's support cursor palette mode
 
 	// Try to locate the specified file among all loaded bitmaps
 	const Graphics::Surface *cursor = _bitmaps[filename];
@@ -1493,7 +1493,7 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 
 	Common::StringTokenizer tok(header, ":");
 
-	if (tok.nextToken() != RESIDUAL_THEME_VERSION_STR)
+	if (tok.nextToken() != RESIDUALVM_THEME_VERSION_STR)
 		return false;
 
 	themeName = tok.nextToken();
@@ -1572,7 +1572,7 @@ struct TDComparator {
 void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 #ifndef DISABLE_GUI_BUILTIN_THEME
 	ThemeDescriptor th;
-	th.name = "Residual Classic Theme (Builtin Version)";
+	th.name = "ResidualVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
 	th.filename.clear();
 	list.push_back(th);

@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define RESIDUAL_THEME_VERSION_STR "RESIDUAL_STX0.8.3"
+#define RESIDUALVM_THEME_VERSION_STR "RESIDUAL_STX0.8.3"
 
 class OSystem;
 
