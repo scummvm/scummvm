@@ -570,35 +570,19 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 		_texts[textId]->_fontPtr = _font;
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
-		// Try built-in fonts
-		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
+		// Try localized fonts
+		_texts[textId]->_fontPtr = loadFont(localized);
 
 		if (!_texts[textId]->_fontPtr) {
-			// First try to load localized font
-			_texts[textId]->_fontPtr = loadFont(localized);
+			// Try standard fonts
+			_texts[textId]->_fontPtr = loadFont(file);
 
-			if (_texts[textId]->_fontPtr)
-				FontMan.assignFontToName(localized, _texts[textId]->_fontPtr);
-
-			// Fallback to non-localized font and default translation
-			else {
-				// Try built-in fonts
-				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
-
-				// Try to load it
-				if (!_texts[textId]->_fontPtr) {
-					_texts[textId]->_fontPtr = loadFont(file);
-
-					if (!_texts[textId]->_fontPtr)
-						error("Couldn't load font '%s'", file.c_str());
-
-					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
-				}
+			if (!_texts[textId]->_fontPtr)
+				error("Couldn't load font '%s'", file.c_str());
 #ifdef USE_TRANSLATION
-				TransMan.setLanguage("C");
+			TransMan.setLanguage("C");
 #endif
-				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
-			}
+			warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
 		}
 	}
 
@@ -1402,7 +1386,11 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  *********************************************************/
 
 const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
-	const Graphics::Font *font = 0;
+	// Try already loaded fonts.
+	const Graphics::Font *font = FontMan.getFontByName(filename);
+	if (font)
+		return font;
+
 	Common::String cacheFilename = genCacheFilename(filename);
 
 	Common::ArchiveMemberList members;
@@ -1428,6 +1416,9 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 			break;
 	}
 
+	// If the font is successfully loaded store it in the font manager.
+	if (font)
+		FontMan.assignFontToName(filename, font);
 	return font;
 }
 
