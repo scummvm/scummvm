@@ -261,7 +261,8 @@ void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
 ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system(0), _vectorRenderer(0),
 	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
+	_font(0), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
+	_cursor(0) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -294,6 +295,9 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_graphicsMode = mode;
 	_themeArchive = 0;
 	_initOk = false;
+
+	// We prefer files in archive bundles over the common search paths.
+	_themeFiles.add("default", &SearchMan, 0, false);
 }
 
 ThemeEngine::~ThemeEngine() {
@@ -317,7 +321,6 @@ ThemeEngine::~ThemeEngine() {
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
-	delete _themeArchive;
 }
 
 
@@ -406,6 +409,9 @@ bool ThemeEngine::init() {
 				}
 			}
 		}
+
+		if (_themeArchive)
+			_themeFiles.add("theme_archive", _themeArchive, 1, true);
 	}
 
 	// Load the theme
@@ -623,12 +629,16 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		return true;
 
 	// If not, try to load the bitmap via the ImageDecoder class.
-	surf = Graphics::ImageDecoder::loadFile(filename, _overlayFormat);
-	if (!surf && _themeArchive) {
-		Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
+	Common::ArchiveMemberList members;
+	_themeFiles.listMatchingMembers(members, filename);
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
 			surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
 			delete stream;
+
+			if (surf)
+				break;
 		}
 	}
 
@@ -1391,66 +1401,31 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  * External data loading
  *********************************************************/
 
-const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
-	Common::SeekableReadStream *stream = 0;
-	const Graphics::Font *font = 0;
-
-	if (_themeArchive)
-		stream = _themeArchive->createReadStreamForMember(filename);
-	if (stream) {
-		font = Graphics::BdfFont::loadFont(*stream);
-		delete stream;
-	}
-
-	return font;
-}
-
-const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::String &filename) {
-	Common::SeekableReadStream *stream = 0;
-	const Graphics::Font *font = 0;
-
-	if (_themeArchive)
-		stream = _themeArchive->createReadStreamForMember(filename);
-	if (stream) {
-		font = Graphics::BdfFont::loadFromCache(*stream);
-		delete stream;
-	}
-
-	return font;
-}
-
 const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	const Graphics::Font *font = 0;
 	Common::String cacheFilename = genCacheFilename(filename);
-	Common::File fontFile;
 
-	if (!cacheFilename.empty()) {
-		if (fontFile.open(cacheFilename)) {
-			font = Graphics::BdfFont::loadFromCache(fontFile);
+	Common::ArchiveMemberList members;
+	_themeFiles.listMatchingMembers(members, cacheFilename);
+	_themeFiles.listMatchingMembers(members, filename);
+
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
+		if (stream) {
+			if ((*i)->getName() == cacheFilename) {
+				font = Graphics::BdfFont::loadFromCache(*stream);
+			} else {
+				font = Graphics::BdfFont::loadFont(*stream);
+				if (font && !cacheFilename.empty()) {
+					if (!Graphics::BdfFont::cacheFontData(*(const Graphics::BdfFont *)font, cacheFilename))
+						warning("Couldn't create cache file for font '%s'", filename.c_str());
+				}
+			}
+			delete stream;
 		}
 
 		if (font)
-			return font;
-
-		if ((font = loadCachedFontFromArchive(cacheFilename)))
-			return font;
-	}
-
-	// normal open
-	if (fontFile.open(filename)) {
-		font = Graphics::BdfFont::loadFont(fontFile);
-	}
-
-	if (!font) {
-		font = loadFontFromArchive(filename);
-	}
-
-	if (font) {
-		if (!cacheFilename.empty()) {
-			if (!Graphics::BdfFont::cacheFontData(*(const Graphics::BdfFont *)font, cacheFilename)) {
-				warning("Couldn't create cache file for font '%s'", filename.c_str());
-			}
-		}
+			break;
 	}
 
 	return font;
