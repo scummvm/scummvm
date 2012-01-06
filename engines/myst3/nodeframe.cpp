@@ -45,7 +45,7 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 
 		_faces[0] = new Face();
 		_faces[0]->setTextureFromJPEG(&jpeg);
-		_faces[0]->uploadTexture();
+		_faces[0]->markTextureDirty();
 
 		delete jpegStream;
 	}
@@ -69,6 +69,9 @@ void NodeFrame::draw() {
 		h = Scene::_frameHeight;
 		top = Scene::_topBorderHeight;
 	}
+
+	// Update the OpenGL texture if needed
+	_faces[0]->uploadTexture();
 
 	// Used fragment of texture
 	const float u = w / (float)_cubeTextureSize;

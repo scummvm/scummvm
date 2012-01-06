@@ -50,7 +50,12 @@ class Face {
 		~Face();
 
 		void setTextureFromJPEG(Graphics::JPEG *jpeg);
+
+		void markTextureDirty() { _textureDirty = true; }
 		void uploadTexture();
+
+	private:
+		bool _textureDirty;
 };
 
 class SpotItemFace {

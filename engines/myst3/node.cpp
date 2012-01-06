@@ -47,7 +47,8 @@ void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
 	}
 }
 
-Face::Face() {
+Face::Face() :
+	_textureDirty(true) {
 	glGenTextures(1, &_textureId);
 
 	glBindTexture(GL_TEXTURE_2D, _textureId);
@@ -59,9 +60,12 @@ Face::Face() {
 }
 
 void Face::uploadTexture() {
-	glBindTexture(GL_TEXTURE_2D, _textureId);
+	if (_textureDirty) {
+		glBindTexture(GL_TEXTURE_2D, _textureId);
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _bitmap->w, _bitmap->h, GL_RGB, GL_UNSIGNED_BYTE, _bitmap->pixels);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _bitmap->w, _bitmap->h, GL_RGB, GL_UNSIGNED_BYTE, _bitmap->pixels);
+		_textureDirty = false;
+	}
 }
 
 Face::~Face() {
@@ -283,9 +287,7 @@ void SpotItemFace::draw() {
 	}
 
 	_drawn = true;
-
-	// TODO: Upload the texture at most once per frame
-	_face->uploadTexture();
+	_face->markTextureDirty();
 }
 
 void SpotItemFace::undraw() {
@@ -296,9 +298,7 @@ void SpotItemFace::undraw() {
 	}
 
 	_drawn = false;
-
-	// TODO: Upload the texture at most once per frame
-	_face->uploadTexture();
+	_face->markTextureDirty();
 }
 
 void SpotItemFace::fadeDraw() {
@@ -323,9 +323,7 @@ void SpotItemFace::fadeDraw() {
 	}
 
 	_drawn = true;
-
-	// TODO: Upload the texture at most once per frame
-	_face->uploadTexture();
+	_face->markTextureDirty();
 }
 
 void Node::addSunSpot(const SunSpot &sunspot) {

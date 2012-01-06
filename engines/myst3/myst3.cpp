@@ -124,7 +124,7 @@ Common::Error Myst3Engine::run() {
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
-	goToNode(1, 501); // LEIS
+	goToNode(3, 501); // LEIS
 	
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();

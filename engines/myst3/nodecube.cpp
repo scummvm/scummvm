@@ -44,7 +44,7 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 
 			_faces[i] = new Face();
 			_faces[i]->setTextureFromJPEG(&jpeg);
-			_faces[i]->uploadTexture();
+			_faces[i]->markTextureDirty();
 
 			delete jpegStream;
 		}
@@ -60,6 +60,10 @@ void NodeCube::draw() {
 
 	// Used fragment of the textures
 	float s = 640 / (float)_cubeTextureSize;
+
+	// Update the OpenGL textures if needed
+	for (uint i = 0; i < 6; i++)
+		_faces[i]->uploadTexture();
 
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
