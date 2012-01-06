@@ -90,7 +90,8 @@ class SpotItem {
 		void setFadeVar(uint16 var) { _fadeVar = var; }
 		void addFace(SpotItemFace *face) { _faces.push_back(face); }
 
-		void update();
+		void updateUndraw();
+		void updateDraw();
 	private:
 		Myst3Engine *_vm;
 

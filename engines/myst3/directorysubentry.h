@@ -54,6 +54,7 @@ class DirectorySubEntry {
 			kCursor = 7,
 			kMovie = 8,
 			kStillMovie = 10,
+			kMenuSpotItem = 69,
 			kMenuFrame = 70,
 			kImagerMovie = 72
 		};

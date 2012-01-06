@@ -143,6 +143,9 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	for (int i = 0; i < 6; i++) {
 		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kSpotItem);
 
+		if (!jpegDesc)
+			jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kMenuSpotItem);
+
 		if (!jpegDesc) continue;
 
 		SpotItemFace *spotItemFace = new SpotItemFace(
@@ -166,8 +169,14 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 }
 
 void Node::update() {
+	// First undraw ...
 	for (uint i = 0; i < _spotItems.size(); i++) {
-		_spotItems[i]->update();
+		_spotItems[i]->updateUndraw();
+	}
+
+	// ... then redraw
+	for (uint i = 0; i < _spotItems.size(); i++) {
+		_spotItems[i]->updateDraw();
 	}
 }
 
@@ -181,21 +190,23 @@ SpotItem::~SpotItem() {
 	}
 }
 
-void SpotItem::update() {
-	// First undraw ...
+void SpotItem::updateUndraw() {
 	for (uint i = 0; i < _faces.size(); i++) {
 		if (!_vm->_vars->evaluate(_condition) && _faces[i]->isDrawn()) {
 			_faces[i]->undraw();
 		}
 	}
+}
 
-	// ... then redraw
+void SpotItem::updateDraw() {
 	for (uint i = 0; i < _faces.size(); i++) {
-		uint16 newFadeValue = _vm->_vars->get(_fadeVar);
+		if (_enableFade) {
+			uint16 newFadeValue = _vm->_vars->get(_fadeVar);
 
-		if (_enableFade && _faces[i]->getFadeValue() != newFadeValue) {
-			_faces[i]->setFadeValue(newFadeValue);
-			_faces[i]->setDrawn(false);
+			if (_faces[i]->getFadeValue() != newFadeValue) {
+				_faces[i]->setFadeValue(newFadeValue);
+				_faces[i]->setDrawn(false);
+			}
 		}
 
 		if (_vm->_vars->evaluate(_condition) && !_faces[i]->isDrawn()) {
