@@ -33,6 +33,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("listNodes",			WRAP_METHOD(Console, Cmd_ListNodes));
 	DCmd_Register("run",				WRAP_METHOD(Console, Cmd_Run));
 	DCmd_Register("go",					WRAP_METHOD(Console, Cmd_Go));
+	DCmd_Register("extract",			WRAP_METHOD(Console, Cmd_Extract));
 }
 
 Console::~Console() {
@@ -212,6 +213,46 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 	_vm->goToNode(nodeId, roomID);
 
 	return false;
+}
+
+bool Console::Cmd_Extract(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Extract a file from the game's archives\n");
+		DebugPrintf("Usage :\n");
+		DebugPrintf("extract [node id] [face number] [object type]\n");
+		return true;
+	}
+
+	uint16 id = atoi(argv[1]);
+	uint16 face = atoi(argv[2]);
+	DirectorySubEntry::ResourceType type = (DirectorySubEntry::ResourceType) atoi(argv[3]);
+
+	const DirectorySubEntry *desc = _vm->getFileDescription(id, face, type);
+
+	if (!desc) {
+		DebugPrintf("File with %d, face %d and type %d does not exist\n", id, face, type);
+		return true;
+	}
+
+	Common::MemoryReadStream *s = desc->getData();
+	Common::String filename = Common::String::format("node%d_face%d.%d", id, face, type);
+	Common::DumpFile f;
+	f.open(filename);
+
+	uint8 *buf = new uint8[s->size()];
+
+	s->read(buf, s->size());
+	f.write(buf, s->size());
+
+	delete[] buf;
+
+	f.close();
+
+	delete s;
+
+	DebugPrintf("File '%s' successfully written\n", filename.c_str());
+
+	return true;
 }
 
 } /* namespace Myst3 */
