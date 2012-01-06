@@ -35,7 +35,6 @@
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
 #include "engines/myst3/script.h"
-#include "engines/myst3/cursor.h"
 
 namespace Myst3 {
 
@@ -57,6 +56,8 @@ enum ViewType {
 class Console;
 class Variables;
 class HotSpot;
+class Cursor;
+class Inventory;
 
 class Myst3Engine : public Engine {
 
@@ -68,6 +69,7 @@ public:
 	ViewType _viewType;
 	Variables *_vars;
 	Cursor *_cursor;
+	Inventory *_inventory;
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);

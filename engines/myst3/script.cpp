@@ -24,6 +24,8 @@
 #include "engines/myst3/script.h"
 #include "engines/myst3/hotspot.h"
 #include "engines/myst3/variables.h"
+#include "engines/myst3/cursor.h"
+#include "engines/myst3/inventory.h"
 
 namespace Myst3 {
 
@@ -560,25 +562,25 @@ void Script::sunspotAddVarIntColorRadius(Context &c, const Opcode &cmd) {
 void Script::inventoryAddFront(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Inventory add item %d at front", cmd.op, cmd.args[0]);
 
-	_vm->_vars->inventoryAdd(cmd.args[0], false);
+	_vm->_inventory->addItem(cmd.args[0], false);
 }
 
 void Script::inventoryAddBack(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Inventory add item %d at back", cmd.op, cmd.args[0]);
 
-	_vm->_vars->inventoryAdd(cmd.args[0], true);
+	_vm->_inventory->addItem(cmd.args[0], true);
 }
 
 void Script::inventoryRemove(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Inventory remove item %d", cmd.op, cmd.args[0]);
 
-	_vm->_vars->inventoryRemove(cmd.args[0]);
+	_vm->_inventory->removeItem(cmd.args[0]);
 }
 
 void Script::inventoryReset(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Reset inventory", cmd.op);
 
-	_vm->_vars->inventoryReset();
+	_vm->_inventory->reset();
 }
 
 void Script::varSetZero(Context &c, const Opcode &cmd) {

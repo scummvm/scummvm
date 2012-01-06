@@ -164,26 +164,4 @@ const Common::String Variables::describeCondition(int16 condition) {
 			value >= 0 ? value : 0);
 }
 
-void Variables::inventoryReset() {
-	_inventory.clear();
-}
-
-void Variables::inventoryAdd(uint16 var, bool atEnd) {
-	// Only add objects once to the inventory
-	if (Common::find(_inventory.begin(), _inventory.end(), var) == _inventory.end()) {
-		set(var, 1);
-		
-		if (atEnd) {
-			_inventory.push_back(var);
-		} else {
-			_inventory.push_front(var);
-		}
-	}
-}
-
-void Variables::inventoryRemove(uint16 var) {
-	set(var, 0);
-	_inventory.remove(var);
-}
-
 } /* namespace Myst3 */

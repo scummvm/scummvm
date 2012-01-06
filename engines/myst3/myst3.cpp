@@ -37,6 +37,8 @@
 #include "engines/myst3/nodecube.h"
 #include "engines/myst3/nodeframe.h"
 #include "engines/myst3/variables.h"
+#include "engines/myst3/cursor.h"
+#include "engines/myst3/inventory.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -55,6 +57,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
+		_cursor(0), _inventory(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -72,6 +75,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _inventory;
 	delete _cursor;
 	delete _scene;
 	delete _archive;
@@ -118,6 +122,7 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_cursor = new Cursor(this);
+	_inventory = new Inventory(this);
 
 	_scene->init(w, h);
 
