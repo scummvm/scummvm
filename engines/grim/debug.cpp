@@ -44,6 +44,7 @@ void Debug::registerDebugChannels() {
 	DebugMan.addDebugChannel(Scripts, "scripts", "");
 	DebugMan.addDebugChannel(Sets, "sets", "");
 	DebugMan.addDebugChannel(TextObjects, "textobjects", "");
+	DebugMan.addDebugChannel(Patchr, "patchr", "");
 	DebugMan.addDebugChannel(All, "all", "");
 }
 

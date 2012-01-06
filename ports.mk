@@ -17,7 +17,7 @@ install:
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) "$(DESTDIR)$(datadir)/"
-	#$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/residualvm/"
 	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/residualvm/"

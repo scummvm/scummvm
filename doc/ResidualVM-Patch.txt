@@ -1,0 +1,78 @@
+ResidualVM Patch (patchr)
+
+The ResidualVM Patch (patchr) is a binary patch engine, useful for small changes in games files.
+Its mainly used to fix bugs in scripts of games, when the distribution of patched script is
+forbidden due to copyright. The patching is done in ram, after the file is loaded, before the file
+it's provided to the engine.
+
+A patch come in form of a textual file, with .patchr extension. The filename must match the file that
+you want to patch (for example, the patch of dlg_dom2.lua has to be called dlg_dom2.lua.patchr).
+The patch came as sequence of instruction, one per line. An instruction is composed by a keyword, followed by
+the arguments, separated by spaces (INST ARG1 ARG2 ....). Patchr is incase-sensitive; numerical arguments
+are hexadecimal (without the 0x prefix).
+A sharp (#) starts a comment, at every position in a line. The comment end with a newline.
+
+A block of instructions must be enclused between a BEGIN and an END statements (see their description below)
+
+Availables instructions:
+
+-BEGIN
+Args: md5
+Indicates the start of a block of instructions. It takes the MD5 sum of the original flawed file as
+argument. This sum is performed only on the firsts 5000 bytes of the file. Under an unix system it could be
+calculated with:
+dd if=FILENAME count=5000 bs=1 2> /dev/null | md5sum | cut -d" " -f 1
+Every block must be terminated by an END statement.
+If there are multiple different versions of the original file, you could provied differents patching instructions
+with a block for each version. The right instruction sequence is selected by the MD5.
+
+-END
+Args: None
+This statement close a sequence of instructions; it follows every BEGIN.
+
+-REPLACE
+Args: offset byte1 [byte2 ... byteN]
+It changes the N bytes at the position specified by offset, with those specified by byte1 ... byteN.
+The bytes in the new sequence have to be separed by spaces (1A 1B ok, 1A1B wrong).
+The total size of file is not changed.
+
+-FILL
+Args: offset size byte
+It's similar to REPLACE, it overwrite the bytes in the range [offset,offset + size) with the one specified by 'byte'.
+The total size of file is not changed.
+
+-COPY
+Args: offset size dest_offset
+Copy the region in the range [offset,offset + size) to dest_offset. The destination region is overwritten and
+the total size of file is not changed.
+
+-INSERT
+Args: offset size
+It expand the size of file by the amount specified by size, by inserting 'size' bytes at 'offset'. These bytes are
+uninitialized, so a REPLACE, FILL or COPY are required.
+
+-DELETE
+Args: offset size
+It shrinks the dimension of the file by the amount specified by size, by deleting 'size' bytes at 'offset'.
+
+Example:
+
+#This is a comment!
+
+#Version 1
+BEGIN 0123456789abcdef0123456789abcdef		#A begin with the checksum of the file
+INSERT 100 100								#Insert 256 bytes at 0x100
+FILL 100 80 FF								#Fill the first half with FF
+REPLACE 180 AA BB CC						#Insert a specific sequence
+COPY 0 10 183								#Copy 16 bytes from the start of the file
+DELETE 0 10									#Delte the copied sequence
+END											#The end of the chunk
+
+#Version 2
+BEGIN fedcba9876543210fedcba9876543210		#A begin with the checksum of the file of another version
+INSERT 200 100								#The same instructions with a different offset
+FILL 200 80 FF
+REPLACE 280 AA BB CC
+COPY 0 10 283
+DELETE 0 10
+END

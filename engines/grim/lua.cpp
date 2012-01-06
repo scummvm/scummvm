@@ -290,11 +290,7 @@ int LuaBase::bundle_dofile(const char *filename) {
 	Common::SeekableReadStream *stream;
 	stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream) {
-		// Don't print warnings on Scripts\foo.lua,
-		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\"))
-			Debug::warning(Debug::Engine, "Cannot find script %s", filename);
-
+		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
 		return 2;
 	}
 
