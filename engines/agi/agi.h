@@ -1085,7 +1085,7 @@ private:
 	void blitTextbox(const char *p, int y, int x, int len);
 	void eraseTextbox();
 	void loadDict();
-	bool matchWord();
+	bool matchWord(bool onlyExact = false);
 
 	// Predictive dialog
 	// TODO: Move this to a separate class

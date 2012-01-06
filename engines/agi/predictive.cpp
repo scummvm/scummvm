@@ -556,7 +556,7 @@ void AgiEngine::loadDict() {
 	debug("Time to parse pred.dic: %d, total: %d", time3-time2, time3-time1);
 }
 
-bool AgiEngine::matchWord() {
+bool AgiEngine::matchWord(bool onlyExact) {
 	// If no text has been entered, then there is no match.
 	if (_currentCode.empty())
 		return false;
@@ -565,14 +565,29 @@ bool AgiEngine::matchWord() {
 	if (_currentCode.size() > MAXWORDLEN)
 		return false;
 
-	// Perform a binary search on the dictionary to find the first
-	// entry that has _currentCode as a prefix.
+	if (!onlyExact) {
+		// First always try an exact match.
+		bool ret = matchWord(true);
+		if (ret)
+			return true;
+	}
+
+	// The entries in the dictionary consist of a code, a space, and then
+	// a space-separated list of words matching this code.
+	// To exactly match a code, we therefore match the code plus the trailing
+	// space in the dictionary.
+	Common::String code = _currentCode;
+	if (onlyExact)
+		code += " ";
+
+	// Perform a binary search on the dictionary to find an entry that has
+	// _currentCode as a prefix.
 	int hi = _predictiveDictLineCount - 1;
 	int lo = 0;
 	int line = 0;
 	while (lo <= hi) {
 		line = (lo + hi) / 2;
-		int cmpVal = strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size());
+		int cmpVal = strncmp(_predictiveDictLine[line], code.c_str(), code.size());
 		if (cmpVal > 0)
 			hi = line - 1;
 		else if (cmpVal < 0)
@@ -585,7 +600,7 @@ bool AgiEngine::matchWord() {
 
 	_currentWord.clear();
 	_wordNumber = 0;
-	if (0 == strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size())) {
+	if (0 == strncmp(_predictiveDictLine[line], code.c_str(), code.size())) {
 		_predictiveDictActLine = _predictiveDictLine[line];
 		char tmp[MAXLINELEN];
 		strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
