@@ -32,9 +32,9 @@ clean-devtools:
 # Build rules for the devtools
 #
 
-devtools/convbdf$(EXEEXT): $(srcdir)/devtools/convbdf.c
+devtools/convbdf$(EXEEXT): $(srcdir)/devtools/convbdf.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
+	$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
 
 devtools/md5table$(EXEEXT): $(srcdir)/devtools/md5table.c
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
