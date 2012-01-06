@@ -482,6 +482,9 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	return new BdfFont(font, DisposeAfterUse::YES);
 }
 
+#define BDF_FONTCACHE_TAG MKTAG('S', 'V', 'F', 'C')
+#define BDF_FONTCACHE_VERSION 1
+
 bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename) {
 	Common::DumpFile cacheFile;
 	if (!cacheFile.open(filename)) {
@@ -491,8 +494,8 @@ bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename)
 
 	const BdfFontData &data = font._data;
 
-	cacheFile.writeUint32BE(MKTAG('S', 'V', 'F', 'C'));
-	cacheFile.writeUint32BE(1);
+	cacheFile.writeUint32BE(BDF_FONTCACHE_TAG);
+	cacheFile.writeUint32BE(BDF_FONTCACHE_VERSION);
 	cacheFile.writeUint16BE(data.maxAdvance);
 	cacheFile.writeByte(data.height);
 	cacheFile.writeByte(data.defaultBox.width);
@@ -541,11 +544,11 @@ bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename)
 
 BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	const uint32 magic = stream.readUint32BE();
-	if (magic != MKTAG('S', 'V', 'F', 'C'))
+	if (magic != BDF_FONTCACHE_TAG)
 		return 0;
 
 	const uint32 version = stream.readUint32BE();
-	if (version != 1)
+	if (version != BDF_FONTCACHE_VERSION)
 		return 0;
 
 	BdfFontData data;
