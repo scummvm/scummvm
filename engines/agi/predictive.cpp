@@ -112,7 +112,7 @@ bool AgiEngine::predictiveDialog() {
 		"(#)next",    "add",
 		"<",
 		"Cancel",  "OK",
-		"Pre", "(0) ", NULL
+		"(*)Pre", "(0) ", NULL
 	};
 	const int colors[] = {
 		15, 0, 15, 0, 15, 0,
@@ -556,7 +556,7 @@ void AgiEngine::loadDict() {
 	debug("Time to parse pred.dic: %d, total: %d", time3-time2, time3-time1);
 }
 
-bool AgiEngine::matchWord(bool onlyExact) {
+bool AgiEngine::matchWord() {
 	// If no text has been entered, then there is no match.
 	if (_currentCode.empty())
 		return false;
@@ -565,23 +565,13 @@ bool AgiEngine::matchWord(bool onlyExact) {
 	if (_currentCode.size() > MAXWORDLEN)
 		return false;
 
-	if (!onlyExact) {
-		// First always try an exact match.
-		bool ret = matchWord(true);
-		if (ret)
-			return true;
-	}
-
 	// The entries in the dictionary consist of a code, a space, and then
 	// a space-separated list of words matching this code.
 	// To exactly match a code, we therefore match the code plus the trailing
 	// space in the dictionary.
-	Common::String code = _currentCode;
-	if (onlyExact)
-		code += " ";
+	Common::String code = _currentCode + " ";
 
-	// Perform a binary search on the dictionary to find an entry that has
-	// _currentCode as a prefix.
+	// Perform a binary search on the dictionary.
 	int hi = _predictiveDictLineCount - 1;
 	int lo = 0;
 	int line = 0;
@@ -593,24 +583,32 @@ bool AgiEngine::matchWord(bool onlyExact) {
 		else if (cmpVal < 0)
 			lo = line + 1;
 		else {
-			hi = line;
 			break;
 		}
 	}
 
+	bool partial = hi < lo;
+	if (partial) {
+		// Didn't find an exact match, but 'lo' now points to the first entry
+		// lexicographically greater than the current code, so that will
+		// be the first entry with the current code as a prefix, if it exists.
+		line = lo;
+		_predictiveDictActLine = NULL;
+	} else {
+		_predictiveDictActLine = _predictiveDictLine[line];
+	}
+
 	_currentWord.clear();
 	_wordNumber = 0;
-	if (0 == strncmp(_predictiveDictLine[line], code.c_str(), code.size())) {
-		_predictiveDictActLine = _predictiveDictLine[line];
+	if (0 == strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size())) {
 		char tmp[MAXLINELEN];
-		strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+		strncpy(tmp, _predictiveDictLine[line], MAXLINELEN);
 		tmp[MAXLINELEN - 1] = 0;
 		char *tok = strtok(tmp, " ");
 		tok = strtok(NULL, " ");
 		_currentWord = Common::String(tok, _currentCode.size());
 		return true;
 	} else {
-		_predictiveDictActLine = NULL;
 		return false;
 	}
 }
