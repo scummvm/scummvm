@@ -65,6 +65,7 @@ protected:
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
+	ViewType _viewType;
 	Variables *_vars;
 	Common::RandomSource *_rnd;
 
@@ -77,6 +78,8 @@ public:
 	void loadNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
+	void loadNodeMenu(uint16 nodeID);
+
 	void runNodeInitScripts();
 	void runNodeBackgroundScripts();
 	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
@@ -109,8 +112,6 @@ private:
 
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;
-
-	ViewType _viewType;
 
 	uint _frameCount;
 	bool _shouldQuit;

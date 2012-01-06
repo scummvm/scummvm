@@ -55,12 +55,20 @@ NodeFrame::~NodeFrame() {
 }
 
 void NodeFrame::draw() {
-	// Size of the frame
-	static const float w = Scene::_originalWidth;
-	static const float h = Scene::_frameHeight;
+	// Size and position of the frame
+	float w;
+	float h;
+	float top;
 
-	// Position of the frame
-	static const float top = Scene::_topBorderHeight;
+	if (_vm->_viewType == kMenu) {
+		w = Scene::_originalWidth;
+		h = Scene::_originalHeight;
+		top = 0;
+	} else {
+		w = Scene::_originalWidth;
+		h = Scene::_frameHeight;
+		top = Scene::_topBorderHeight;
+	}
 
 	// Used fragment of texture
 	const float u = w / (float)_cubeTextureSize;

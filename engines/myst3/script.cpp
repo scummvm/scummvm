@@ -327,7 +327,7 @@ void Script::nodeMenuInit(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Node menu init %d", cmd.op, cmd.args[0]);
 
 	uint16 nodeId = _vm->_vars->valueOrVarValue(cmd.args[0]);
-	_vm->loadNodeFrame(nodeId);
+	_vm->loadNodeMenu(nodeId);
 	// TODO: Load rects
 }
 

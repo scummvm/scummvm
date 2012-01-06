@@ -155,12 +155,21 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
-	} else if (_viewType == kFrame) {
+	} else {
 		Common::Point mouse = _cursor->getPosition();
-		Common::Point scaledMouse = Common::Point(
-				mouse.x * Scene::_originalWidth / _system->getWidth(),
-				CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight()
-						- Scene::_topBorderHeight, 0, Scene::_frameHeight));
+		Common::Point scaledMouse;
+
+		if (_viewType == kMenu)  {
+			scaledMouse = Common::Point(
+					mouse.x * Scene::_originalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight(),
+							0, Scene::_originalHeight));
+		} else {
+			scaledMouse = Common::Point(
+					mouse.x * Scene::_originalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight()
+							- Scene::_topBorderHeight, 0, Scene::_frameHeight));
+		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
@@ -253,11 +262,14 @@ void Myst3Engine::drawFrame() {
 		_scene->setupCameraOrtho2D();
 	}
 
-	SunSpot flare = _node->computeSunspotsIntensity(_scene->getMousePos());
-	if (flare.intensity >= 0)
-		_scene->drawSunspotFlare(flare);
+	if (_viewType != kMenu) {
+		SunSpot flare = _node->computeSunspotsIntensity(_scene->getMousePos());
+		if (flare.intensity >= 0)
+			_scene->drawSunspotFlare(flare);
 
-	_scene->drawBlackBorders();
+		_scene->drawBlackBorders();
+	}
+
 	_cursor->draw();
 
 	_system->updateScreen();
@@ -364,6 +376,15 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 	_viewType = kFrame;
+
+	_cursor->lockPosition(false);
+	updateCursor();
+
+	_node = new NodeFrame(this, nodeID);
+}
+
+void Myst3Engine::loadNodeMenu(uint16 nodeID) {
+	_viewType = kMenu;
 
 	_cursor->lockPosition(false);
 	updateCursor();

@@ -47,7 +47,7 @@ void Console::describeScript(const Common::Array<Opcode> &script) {
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	uint16 nodeId = _vm->_vars->getLocationNode();
-	uint16 roomId = 0;
+	uint16 roomId = _vm->_vars->getLocationRoom();
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
