@@ -152,7 +152,7 @@ void Cursor::uploadTexture() {
 
 void Cursor::draw()
 {
-	CursorData & cursor = availableCursors[_currentCursorID];
+	CursorData &cursor = availableCursors[_currentCursorID];
 	// Size of the cursor
 	const float w = cursor.surface->w;
 	const float h = cursor.surface->h;
@@ -163,11 +163,17 @@ void Cursor::draw()
 	const float left = _position.x - cursor.hotspotX;
 	const float top = _position.y - cursor.hotspotY;
 
+	float transparency;
+	if (_lockedAtCenter)
+		transparency = cursor.transparency;
+	else
+		transparency = 1.0f;
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 
 	glEnable(GL_TEXTURE_2D);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, transparency);
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, _textureId);
