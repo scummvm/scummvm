@@ -610,6 +610,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 		delete[] bitmaps;
 		delete[] advances;
 		delete[] boxes;
+		return 0;
 	}
 
 	data.bitmaps = bitmaps;
