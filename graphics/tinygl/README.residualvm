@@ -1,8 +1,8 @@
-This is a modified version of TinyGL 0.4 intended for use with Residual.
+This is a modified version of TinyGL 0.4 intended for use with ResidualVM.
 The changes made from the original version of TinyGL 0.4 are:
 
 * Changed file extensions from *.c to *.cpp to compile as C++.
-* Included only files needed by Residual.
+* Included only files needed by ResidualVM.
 * Changed include paths in source files.
 * Added needed type casts and fixes for proper compile.
 * Added 't/T' prefix to prevent OpenGL name clashes.
