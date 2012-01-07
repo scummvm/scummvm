@@ -422,8 +422,8 @@ void ScummEngine_v0::drawSentence() {
 		return;
 
 	// Current Verb
-	if (_activeVerb == 0)
-		_activeVerb = 13;
+	if (_activeVerb == kVerbNone)
+		_activeVerb = kVerbWalkTo;
 	if (getResourceAddress(rtVerb, _activeVerb)) {
 		_sentenceBuf = (char *)getResourceAddress(rtVerb, _activeVerb);
 	} else {
@@ -602,15 +602,15 @@ void ScummEngine_v0::o_cursorCommand() {
 
 	_currentMode = fetchScriptByte();
 	switch (_currentMode) {
-	case 0:
+	case kModeCutscene:
 		state = 15;
 		break;
-	case 1:
+	case kModeKeypad:
 		state = 31;
 		break;
-	case 2:
+	case kModeNoNewKid:
 		break;
-	case 3:
+	case kModeNormal:
 		state = 247;
 		break;
 	}
@@ -908,7 +908,7 @@ void ScummEngine_v0::o_setOwnerOf() {
 }
 
 void ScummEngine_v0::resetSentence(bool walking) {
-	_activeVerb = 13;
+	_activeVerb = kVerbWalkTo;
 
 	// If the actor is walking, or the screen is a keypad (no sentence verbs/objects are drawn)
 	// Then reset all active objects (stops the radio crash, bug #3077966)

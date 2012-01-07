@@ -716,7 +716,7 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_verbPickup = false;
 	_currentMode = 0;
 
-	_activeVerb = 0;
+	_activeVerb = kVerbNone;
 	_activeObjectNr = 0;
 	_activeObject2Nr = 0;
 	_activeObjectType = kObjectTypeBG;

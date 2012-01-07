@@ -37,25 +37,6 @@ enum {
 	kSentenceLine = 6
 };
 
-enum VerbsV0 {
-	kVerbNone    = 0,
-	kVerbOpen    = 1,
-	kVerbClose   = 2,
-	kVerbGive    = 3,
-	kVerbTurnOn  = 4,
-	kVerbTurnOff = 5,
-	kVerbFix     = 6,
-	kVerbNewKid  = 7,
-	kVerbUnlock  = 8,
-	kVerbPush    = 9,
-	kVerbPull    = 10,
-	kVerbUse     = 11,
-	kVerbRead    = 12,
-	kVerbWalkTo  = 13,
-	kVerbPickUp  = 14,
-	kVerbWhatIs  = 15
-};
-
 struct VerbSettings {
 	int id;
 	int x_pos;
@@ -103,13 +84,13 @@ static const VerbSettings v0VerbTable_German[] = {
 int ScummEngine_v0::verbPrepIdType(int verbid) {
 	switch (verbid) {
 	case kVerbUse: // depends on object1
-		return 0xFF;
+		return kVerbPrepObject;
 	case kVerbGive: 
-		return 4;
+		return kVerbPrepTo;
 	case kVerbUnlock: case kVerbFix:
-		return 2;
+		return kVerbPrepWith;
 	default:
-		return 0;
+		return kVerbPrepNone;
 	}
 }
 
@@ -192,7 +173,7 @@ void ScummEngine_v0::switchActor(int slot) {
 		return;
 
 	// verbs disabled? or just new kid button?
-	if (_currentMode == 0 || _currentMode == 1 || _currentMode == 2)
+	if (_currentMode == kModeCutscene || _currentMode == kModeKeypad || _currentMode == kModeNoNewKid)
 		return;
 
 	VAR(VAR_EGO) = VAR(97 + slot);
@@ -785,7 +766,7 @@ bool ScummEngine_v0::verbMove(int object, bool invObject) {
 	int x, y, dir;
 	Actor *a = derefActor(VAR(VAR_EGO), "verbMove");
 
-	if (_currentMode != 3 && _currentMode != 2)
+	if (_currentMode != kModeNormal && _currentMode != kModeNoNewKid)
 		return false;
 
 	getObjectXYPos(object, x, y, dir);
@@ -837,8 +818,8 @@ bool ScummEngine_v0::verbObtain(int obj) {
 	if (where != WIO_INVENTORY) {
 		prep = activeVerbPrep();
 
-		if (prep == 1 || prep == 4) {
-			if (_activeVerb != 13 && _activeVerb != 14) {
+		if (prep == kVerbPrepIn || prep == kVerbPrepTo) {
+			if (_activeVerb != kVerbWalkTo && _activeVerb != kVerbPickUp) {
 				_verbPickup = true;
 				didPickup = true;
 			}
@@ -857,8 +838,8 @@ bool ScummEngine_v0::verbObtain(int obj) {
 		if (verbMove(obj, false))
 			return true;
 
-		if (didPickup && (prep == 1 || prep == 4))
-			if (_activeVerb != 13 && _activeVerb != 14) {
+		if (didPickup && (prep == kVerbPrepIn || prep == kVerbPrepTo))
+			if (_activeVerb != kVerbWalkTo && _activeVerb != kVerbPickUp) {
 // TODO(TOBIAS)
 #if 0
 				if (whereIsObject(obj) == WIO_INVENTORY)
@@ -889,7 +870,7 @@ int ScummEngine_v0::activeVerbPrep() {
 }
 
 bool ScummEngine_v0::verbExec() {
-	int entry = (_currentMode != 0 && _currentMode != 1) ? _activeVerb : 15;
+	int entry = (_currentMode != kModeCutscene && _currentMode != kModeKeypad) ? _activeVerb : kVerbWhatIs;
 
 	if (_activeObjectNr && getObjectIndex(OBJECT_V0(_activeObjectNr, _activeObjectType)) == -1) {
 		resetSentence(false);
@@ -897,7 +878,7 @@ bool ScummEngine_v0::verbExec() {
 	}
 
 	// Lets try walk to the object
-	if (_activeObjectNr && !_activeObjectObtained && _currentMode != 0) {
+	if (_activeObjectNr && !_activeObjectObtained && _currentMode != kModeCutscene) {
 		if (verbObtain(OBJECT_V0(_activeObjectNr, _activeObjectType)))
 			return true;
 
@@ -905,7 +886,7 @@ bool ScummEngine_v0::verbExec() {
 	}
 
 	// Attempt to obtain/reach object2
-	if (_activeObject2Nr && !_activeObject2Obtained && _currentMode != 0) {
+	if (_activeObject2Nr && !_activeObject2Obtained && _currentMode != kModeCutscene) {
 		if (verbObtain(OBJECT_V0(_activeObject2Nr, _activeObject2Type)))
 			return true;
 
@@ -913,7 +894,7 @@ bool ScummEngine_v0::verbExec() {
 	}
 
 	// Give-To
-	if (_activeVerb == 3 && _activeObjectNr && _activeObject2Nr && _activeObject2Type == kObjectTypeActor) {
+	if (_activeVerb == kVerbGive && _activeObjectNr && _activeObject2Nr && _activeObject2Type == kObjectTypeActor) {
 		// FIXME: Actors need to turn and face each other
 		if (verbMoveToActor(_activeObject2Nr)) {
 			// Ignore verbs?
@@ -942,11 +923,11 @@ bool ScummEngine_v0::verbExec() {
 	}
 
 	// If we've finished walking (now near target), execute the action
-	if (_activeObjectNr && activeVerbPrep() == 2) {
+	if (_activeObjectNr && activeVerbPrep() == kVerbPrepWith) {
 		runObject(OBJECT_V0(_activeObjectNr, _activeObjectType), entry);
 		_verbExecuting = false;
 
-		if ((_currentMode == 3 || _currentMode == 2) && _activeVerb == 13)
+		if ((_currentMode == kModeNormal || _currentMode == kModeNoNewKid) && _activeVerb == kVerbWalkTo)
 			return false;
 
 		resetSentence(false);
@@ -954,12 +935,12 @@ bool ScummEngine_v0::verbExec() {
 	}
 
 	// We acted on an inventory item
-	if (_activeVerb != 3) {
+	if (_activeVerb != kVerbGive) {
 		runObject(OBJECT_V0(_activeObjectNr/*2*/, _activeObjectType/*2*/), _activeVerb);
 
 		_verbExecuting = false;
 
-		if (_currentMode == 3 && _activeVerb == 13) {
+		if (_currentMode == kModeNormal && _activeVerb == kVerbWalkTo) {
 			resetSentence(true);
 			return false;
 		}
@@ -974,7 +955,7 @@ bool ScummEngine_v0::verbExec() {
 
 	_verbExecuting = false;
 
-	if (_activeVerb == 13) {
+	if (_activeVerb == kVerbWalkTo) {
 		resetSentence(true);
 		return false;
 	}
@@ -1058,10 +1039,8 @@ void ScummEngine_v0::checkExecVerbs() {
 		}
 	}
 
-	// mode 1: kid selection, 3: normal
-	if (_currentMode != 0) {
-		if (_currentMode == 1) {
-			// kid selection or dial pad
+	if (_currentMode != kModeCutscene) {
+		if (_currentMode == kModeKeypad) {
 			_activeVerb = kVerbPush;
 		}
 
@@ -1097,13 +1076,15 @@ void ScummEngine_v0::checkExecVerbs() {
 				if (!id) {
 					if (_activeVerb == kVerbWalkTo) {
 						_activeObjectNr = 0;
+						_activeObjectType = 0;
 						_activeObject2Nr = 0;
+						_activeObject2Type = 0;
 					}
 				} else {
 					//_activeVerbPrep:
 					// 0: no activeObject or activeObject but no prep
 					// > 0: activeObject + prep
-					if (activeVerbPrep() == 0) {
+					if (activeVerbPrep() == kVerbPrepNone) {
 						if (id == _activeObjectNr && type == _activeObjectType) {
 							_verbExecuting = true;
 						} else {
@@ -1111,7 +1092,7 @@ void ScummEngine_v0::checkExecVerbs() {
 							_activeObjectType = type;
 						}
 						//sentenceLineChanged = true;
-						if (_currentMode == 1)
+						if (_currentMode == kModeKeypad)
 							_verbExecuting = true;
 					} else {
 						if (id == _activeObject2Nr && type == _activeObject2Type)
@@ -1119,7 +1100,7 @@ void ScummEngine_v0::checkExecVerbs() {
 						if (!(id == _activeObjectNr && type == _activeObjectType)) {
 							_activeObject2Nr = id;
 							_activeObject2Type = type;
-							if (_currentMode == 1)
+							if (_currentMode == kModeKeypad)
 								_verbExecuting = true;
 						}
 					}
@@ -1139,7 +1120,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 	if (_activeVerb == kVerbNewKid) {
 		// TODO
-		if (_currentMode == 3) {
+		if (_currentMode == kModeNormal) {
 			// get kid
 			_activeVerb = kVerbWalkTo;
 			resetSentence(false);
@@ -1155,7 +1136,7 @@ void ScummEngine_v0::checkExecVerbs() {
 	/*
 	if (_activeVerbPrep == 0) {
 		int prep = activeVerbPrep();
-		if (prep == 0)
+		if (prep == kVerbPrepNone)
 			; //exec();
 		else {
 			_activeVerbPrep = prep;
@@ -1200,7 +1181,7 @@ void ScummEngine_v0::checkExecVerbs() {
 	...
 
 			// Clicked on nothing, walk here?
-			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
+			if (!over && !act && _activeVerb == kVerbWalkTo && !obj && _currentMode != kMode_0) {
 				// Clear all selected
 				resetSentence(false);
 
