@@ -22,6 +22,7 @@
 
 #include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/inventory.h"
 #include "engines/myst3/variables.h"
 
 namespace Myst3 {
@@ -35,6 +36,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("run",				WRAP_METHOD(Console, Cmd_Run));
 	DCmd_Register("go",					WRAP_METHOD(Console, Cmd_Go));
 	DCmd_Register("extract",			WRAP_METHOD(Console, Cmd_Extract));
+	DCmd_Register("fillInventory",		WRAP_METHOD(Console, Cmd_FillInventory));
 }
 
 Console::~Console() {
@@ -254,6 +256,11 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 	DebugPrintf("File '%s' successfully written\n", filename.c_str());
 
 	return true;
+}
+
+bool Console::Cmd_FillInventory(int argc, const char **argv) {
+	_vm->_inventory->addAll();
+	return false;
 }
 
 } /* namespace Myst3 */

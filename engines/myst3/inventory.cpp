@@ -91,10 +91,17 @@ void Inventory::drawItem(const Common::Rect &screenRect, const Common::Rect &tex
 
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(tleft, ttop + theight); glVertex3f( left + 0, top + h, 1.0f);
-		glTexCoord2f(tleft + twidth, ttop + theight); glVertex3f( left + w, top + h, 1.0f);
-		glTexCoord2f(tleft, ttop); glVertex3f( left + 0, top + 0, 1.0f);
-		glTexCoord2f(tleft + twidth, ttop); glVertex3f( left + w, top + 0, 1.0f);
+		glTexCoord2f(tleft, ttop + theight);
+		glVertex3f( left + 0, top + h, 1.0f);
+
+		glTexCoord2f(tleft + twidth, ttop + theight);
+		glVertex3f( left + w, top + h, 1.0f);
+
+		glTexCoord2f(tleft, ttop);
+		glVertex3f( left + 0, top + 0, 1.0f);
+
+		glTexCoord2f(tleft + twidth, ttop);
+		glVertex3f( left + w, top + 0, 1.0f);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -135,6 +142,11 @@ void Inventory::removeItem(uint16 var) {
 	}
 
 	reflow();
+}
+
+void Inventory::addAll() {
+	for (uint i = 0; _availableItems[i].var; i++)
+		addItem(_availableItems[i].var, true);
 }
 
 bool Inventory::hasItem(uint16 var) {

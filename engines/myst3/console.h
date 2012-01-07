@@ -50,6 +50,7 @@ private:
 	bool Cmd_Run(int argc, const char **argv);
 	bool Cmd_Go(int argc, const char **argv);
 	bool Cmd_Extract(int argc, const char **argv);
+	bool Cmd_FillInventory(int argc, const char **argv);
 };
 
 } /* namespace Myst3 */
