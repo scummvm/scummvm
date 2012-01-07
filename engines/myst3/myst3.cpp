@@ -190,9 +190,13 @@ void Myst3Engine::updateCursor() {
 	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
 
 	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
+	uint16 hoveredInventory = _inventory->hoveredItem();
+
 	if (hovered.size() > 0) {
 		HotSpot *h = hovered.back();
 		_cursor->changeCursor(h->cursor);
+	} else if (hoveredInventory > 0) {
+		_cursor->changeCursor(1);
 	} else {
 		_cursor->changeCursor(8);
 	}
@@ -273,6 +277,7 @@ void Myst3Engine::drawFrame() {
 			_scene->drawSunspotFlare(flare);
 
 		_scene->drawBlackBorders();
+		_inventory->draw();
 	}
 
 	_cursor->draw();
@@ -558,5 +563,44 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(uint16 index, uint16 fa
 	return desc;
 }
 
+Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
+	const DirectorySubEntry *desc = getFileDescription(id, 0, DirectorySubEntry::kCursor);
+
+	if (!desc)
+		error("Texture %d does not exist", id);
+
+	Common::MemoryReadStream *data = desc->getData();
+
+	uint32 magic = data->readUint32LE();
+	if (magic != 0x2E544558)
+		error("Wrong texture format", id);
+
+	data->readUint32LE(); // unk 1
+	uint32 width = data->readUint32LE();
+	uint32 height = data->readUint32LE();
+	data->readUint32LE(); // unk 2
+	data->readUint32LE(); // unk 3
+
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	data->read(s->pixels, height * s->pitch);
+	delete data;
+
+	// ARGB => RGBA
+	uint32 *p = (uint32 *)s->pixels;
+	for (uint i = 0; i < width * height; i++) {
+		uint8 a = (*p >> 0) & 0xFF;
+		uint8 r = (*p >> 24) & 0xFF;
+		uint8 g = (*p >> 16) & 0xFF;
+		uint8 b = (*p >>  8) & 0xFF;
+
+		*p = (a << 24) | (r << 16) | (g << 8) | b;
+
+		p++;
+	}
+
+	return s;
+}
 
 } // end of namespace Myst3

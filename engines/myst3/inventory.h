@@ -23,7 +23,15 @@
 #ifndef INVENTORY_H_
 #define INVENTORY_H_
 
+#ifdef SDL_BACKEND
+#include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #include "common/list.h"
+#include "common/rect.h"
 
 namespace Myst3 {
 
@@ -34,14 +42,41 @@ public:
 	Inventory(Myst3Engine *vm);
 	virtual ~Inventory();
 
-	void reset();
 	void addItem(uint16 var, bool atEnd);
 	void removeItem(uint16 var);
+	void reset();
 
+	uint16 hoveredItem();
+
+	void draw();
 private:
+	struct InventoryItem {
+		uint16 var;
+		Common::Rect rect;
+	};
+
+	typedef Common::List<InventoryItem> ItemList;
+
+	struct ItemData {
+		uint16 textureX;
+		uint16 textureWidth;
+		uint16 textureHeight;
+		uint16 var;
+	};
+
+	static const ItemData _availableItems[8];
+	const ItemData &getData(uint16 var);
+
 	Myst3Engine *_vm;
 
-	Common::List<uint16> _inventory;
+	GLuint _textureId;
+	ItemList _inventory;
+
+	void initializeTexture();
+
+	bool hasItem(uint16 var);
+	void drawItem(const Common::Rect &screenRect, const Common::Rect &textureRect, bool hovered);
+	void reflow();
 };
 
 } /* namespace Myst3 */

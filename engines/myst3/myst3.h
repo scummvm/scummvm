@@ -30,11 +30,14 @@
 
 #include "engines/myst3/archive.h"
 #include "engines/myst3/console.h"
-#include "engines/myst3/database.h"
 #include "engines/myst3/movie.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
 #include "engines/myst3/script.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Myst3 {
 
@@ -58,6 +61,10 @@ class Variables;
 class HotSpot;
 class Cursor;
 class Inventory;
+class Database;
+struct NodeData;
+
+typedef Common::SharedPtr<NodeData> NodePtr;
 
 class Myst3Engine : public Engine {
 
@@ -76,6 +83,7 @@ public:
 	virtual ~Myst3Engine();
 
 	const DirectorySubEntry *getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+	Graphics::Surface *loadTexture(uint16 id);
 
 	void goToNode(uint16 nodeID, uint32 roomID = 0);
 	void loadNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
