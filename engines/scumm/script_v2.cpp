@@ -1223,8 +1223,6 @@ void ScummEngine_v2::o2_walkActorToObject() {
 	int obj;
 	Actor *a;
 
-	_v0ObjectFlag = 0;
-
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorToObject");
 	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {

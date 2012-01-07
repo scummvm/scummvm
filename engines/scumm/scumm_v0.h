@@ -33,9 +33,16 @@ namespace Scumm {
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
 	enum ObjectType {
-		kObjectTypeInventory = 0,
-		kObjectTypeRoom = 1,
-		kObjectTypeActor = 2
+		kObjectTypeFG = 0,    // foreground object
+		                      //   - with owner/state, might (but has not to) be pickupable
+		                      //     -> with entry in _objectOwner/StateTable
+		                      //     -> all objects in _inventory have this type
+		                      //   - image can be exchanged (background overlay)
+		kObjectTypeBG = 1,    // background object
+		                      //   - without owner/state, not pickupable  (room only)
+		                      //     -> without entry in _objectOwner/StateTable
+		                      //   - image cannot be exchanged (part of background image)
+		kObjectTypeActor = 2  // object is an actor
 	};
 
 protected:
@@ -44,10 +51,10 @@ protected:
 	bool _verbPickup;				// are we picking up an object during a verb execute
 
 	int _activeVerb;
-	int _activeObject;				// 1st Object Number
-	int _activeObjectType;			// 1st Object Type (0: inventory, 1: room)
-	int _activeObject2;				// 2nd Object Number
-	int _activeObject2Type;			// 2nd Object Type (0: inventory, 1: room, 2: actor)
+	int _activeObjectNr;			// 1st Object Number
+	int _activeObjectType;			// 1st Object Type (0: inventory (or room), 1: room)
+	int _activeObject2Nr;			// 2nd Object Number
+	int _activeObject2Type;			// 2nd Object Type (0: inventory (or room), 1: room, 2: actor)
 
 	bool _activeObjectObtained;		// collected _activeobject?
 	bool _activeObject2Obtained;	// collected _activeObject2?
@@ -73,19 +80,19 @@ protected:
 	virtual void saveOrLoad(Serializer *s);
 
 	// V0 MM Verb commands
-	int  verbPrep();
+	int getVerbPrepId();
+	int activeVerbPrep();
 	bool verbMove(int object, bool invObject);
 	bool verbMoveToActor(int actor);
-	bool verbObtain(int object, int objType);
+	bool verbObtain(int object);
 	bool verbExecutes(int object, bool inventory = false);
 	bool verbExec();
 
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
+	int verbPrepIdType(int verbid);
 	void resetVerbs();
 	void setNewKidVerbs();
-
-	const byte *getObjectName(int object, int type);
 
 	void drawSentenceObject(int object, int type);
 	void drawSentence();

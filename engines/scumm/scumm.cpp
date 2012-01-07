@@ -151,9 +151,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_fileHandle = 0;
 
 	// Init all vars
-	_v0ObjectIndex = false;
-	_v0ObjectInInventory = false;
-	_v0ObjectFlag = 0;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -720,10 +717,10 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_currentMode = 0;
 
 	_activeVerb = 0;
-	_activeObject = 0;
-	_activeObject2 = 0;
-	_activeObjectType = kObjectTypeRoom;
-	_activeObject2Type = kObjectTypeRoom;
+	_activeObjectNr = 0;
+	_activeObject2Nr = 0;
+	_activeObjectType = kObjectTypeBG;
+	_activeObject2Type = kObjectTypeBG;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
 

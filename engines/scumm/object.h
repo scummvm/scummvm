@@ -24,6 +24,14 @@
 
 namespace Scumm {
 
+static inline int OBJECT_V0(int id, byte type) {
+	assert(id < 255);
+	return (type << 8 | id);
+}
+#define OBJECT_V0_NR(obj)	(obj & 0xFF)
+#define OBJECT_V0_TYPE(obj)	((obj >> 8) & 0xFF)
+
+
 enum ObjectClass {
 	kObjectClassNeverClip = 20,
 	kObjectClassAlwaysClip = 21,
