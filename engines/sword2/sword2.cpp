@@ -255,6 +255,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sword2");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX video
 
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		_features = GF_DEMO;
