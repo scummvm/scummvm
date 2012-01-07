@@ -355,7 +355,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_chiefSpeaker);
 
-	warning("sub1B007(65, 65, 65);");
+	scalePalette(65, 65, 65);
 
 	_actor2.postInit();
 	_actor2.setup(1100, 1, 1);

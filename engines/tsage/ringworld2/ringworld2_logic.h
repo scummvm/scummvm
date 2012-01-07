@@ -79,7 +79,7 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
-	byte _field312[44];
+	byte _field312[256];
 	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
@@ -106,6 +106,7 @@ public:
 	bool display(CursorType action, Event &event);
 	void fadeOut();
 	void clearScreen();
+	void scalePalette(int RFactor, int GFactor, int BFactor);
 };
 
 class SceneHandlerExt: public SceneHandler {

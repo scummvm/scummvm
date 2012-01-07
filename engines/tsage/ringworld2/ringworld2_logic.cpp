@@ -270,7 +270,7 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
-	for (int i = 0; i < 44; i++)
+	for (int i = 0; i < 256; i++)
 		_field312[i] = 0;
 	_field372 = _field37A = 0;
 	_savedPlayerEnabled = false;
@@ -476,6 +476,37 @@ void SceneExt::saveCharacter(int characterIndex) {
 	R2_GLOBALS._player._characterPos[characterIndex] = R2_GLOBALS._player._position;
 	R2_GLOBALS._player._characterStrip[characterIndex] = R2_GLOBALS._player._strip;
 	R2_GLOBALS._player._characterFrame[characterIndex] = R2_GLOBALS._player._frame;
+}
+
+void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
+	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
+	byte newR, newG, newB;
+	int tmp, varC, varD = 0;
+
+	for (int i = 0; i < 256; i++) {
+		newR = (RFactor * tmpPal[(3 * i)]) / 100;
+		newG = (GFactor * tmpPal[(3 * i) + 1]) / 100;
+		newB = (BFactor * tmpPal[(3 * i) + 2]) / 100;
+
+		varC = 769;
+		for (int j = 255; j >= 0; j--) {
+			tmp = abs(tmpPal[(3 * j)] - newR);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 1] - newG);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 2] - newB);
+			if (tmp >= varC)
+				continue;
+			
+			varC = tmp;
+			varD = j;
+		}
+		this->_field312[i] = varD;
+	}
 }
 
 /*--------------------------------------------------------------------------*/
