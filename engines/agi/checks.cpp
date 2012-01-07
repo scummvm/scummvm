@@ -113,6 +113,22 @@ int AgiEngine::checkPriority(VtEntry *v) {
 
 	water = 1;
 
+	// Check if any picture is loaded before checking for priority below.
+	// If no picture has been loaded, the priority buffer won't be initialized,
+	// thus the check below will always fail. This case causes an infinite loop
+	// in the fanmade game Nick's Quest (bug #3451122), as the game attempts to
+	// draw a sprite (view 4, floating Nick) before it loads any picture. This
+	// causes the checks below to always fail, and the engine keeps readjusting
+	// the sprite's position in fixPosition() forever, as there is no valid
+	// position to place it (the default visual and priority screen is set to
+	// zero, i.e. unconditional black). To remedy this situation, we always
+	// return true here if no picture has been loaded and no priority screen
+	// has been set up.
+	if (!_game._vm->_picture->isPictureLoaded()) {
+		warning("checkPriority: no picture loaded");
+		return pass;
+	}
+
 	p0 = &_game.sbuf16c[v->xPos + v->yPos * _WIDTH];
 
 	for (i = 0; i < v->xSize; i++, p0++) {
