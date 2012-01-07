@@ -56,6 +56,67 @@ public:
 	virtual void dispatch();
 };
 
+class Scene1100 : public SceneExt {
+	class Actor16 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Actor17 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Actor18 : public SceneActor {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+
+public:
+	int _field412, _field414;
+	SpeakerSeeker1100 _seekerSpeaker;
+	SpeakerQuinn1100 _quinnSpeaker;
+	SpeakerChief1100 _chiefSpeaker;
+	ScenePalette _palette1;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	NamedHotspot _item6;
+	NamedHotspot _item7;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SceneActor _actor8;
+	SceneActor _actor9;
+	SceneActor _actor10;
+	SceneActor _actor11;
+	SceneActor _actor12;
+	SceneActor _actor13;
+	SceneActor _actor14;
+	SceneActor _actor15;
+	BackgroundSceneObject _object1;
+	BackgroundSceneObject _object2;
+	Actor16 _actor16;
+	Actor17 _actor17;
+	Actor18 _actor18;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager3;
+
+	Scene1100();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+	virtual void saveCharacter(int characterIndex);
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

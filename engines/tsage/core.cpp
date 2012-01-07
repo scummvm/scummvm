@@ -2702,6 +2702,20 @@ void BackgroundSceneObject::draw() {
 	g_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
 }
 
+void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority, int32 arg10) {
+	warning("TODO: Implement properly BackgroundSceneObject::setup2()");
+	postInit();
+	setVisage(visage);
+	setStrip(stripFrameNum);
+	setFrame(frameNum);
+	setPosition(Common::Point(posX, posY), 0);
+	fixPriority(priority);
+}
+
+void BackgroundSceneObject::proc27() {
+	warning("STUB: BackgroundSceneObject::proc27()");
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneObjectList::draw() {

@@ -375,6 +375,7 @@ void Ringworld2Globals::reset() {
 	T2_GLOBALS._uiElements._active = false;
 
 	// Reset fields
+	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;
 	_v5657C = 0;
@@ -424,6 +425,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
 	int i;
 
+	_v5589E.synchronize(s);
 	_v558B6.synchronize(s);
 
 	s.syncAsSint16LE(_v558C2);

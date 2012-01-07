@@ -82,6 +82,16 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCaretaker2450"; }
 };
 
+// Classes related to Chief
+
+class SpeakerChief1100 : public VisualSpeaker {
+public:
+	SpeakerChief1100();
+
+	virtual Common::String getClassName() { return "SpeakerChief1100"; }
+	virtual void proc15();
+};
+
 // Classes related to Guard
 
 class SpeakerGuard : public VisualSpeaker {
@@ -253,6 +263,12 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerQuinn1100 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn1100"; }
+	virtual void proc15();
+};
+
 class SpeakerQuinn2435 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2435"; }
@@ -382,6 +398,12 @@ public:
 class SpeakerSeeker300 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker300"; }
+	virtual void proc15();
+};
+
+class SpeakerSeeker1100 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker1100"; }
 	virtual void proc15();
 };
 
