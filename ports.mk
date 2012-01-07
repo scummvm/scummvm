@@ -74,7 +74,7 @@ endif
 	$(STRIP) residualvm
 	ldid -S residualvm
 	chmod 755 residualvm
-	cp residual $(bundle_name)/ResidualVM
+	cp residualvm $(bundle_name)/ResidualVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
