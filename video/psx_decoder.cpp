@@ -499,7 +499,7 @@ void PSXStreamDecoder::dequantizeBlock(int *coefficients, float *block, uint16 s
 		if (i == 0) // Special case for the DC coefficient
 			block[i] = coefficients[i] * s_quantizationTable[i];
 		else
-			block[i] = (float)coefficients[s_zigZagTable[i]] * s_quantizationTable[s_zigZagTable[i]] * scale / 8;
+			block[i] = (float)coefficients[s_zigZagTable[i]] * s_quantizationTable[i] * scale / 8;
 	}
 }
 
