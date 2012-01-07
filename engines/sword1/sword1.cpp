@@ -62,8 +62,9 @@ SwordEngine::SwordEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smackshi");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "english");//PSX Demo
-	SearchMan.addSubDirectoryMatching(gameDataDir, "italian");//PSX Demo
+	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX videos
+	SearchMan.addSubDirectoryMatching(gameDataDir, "english"); // PSX Demo
+	SearchMan.addSubDirectoryMatching(gameDataDir, "italian"); // PSX Demo
 
 	_console = new SwordConsole(this);
 }
