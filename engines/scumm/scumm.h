@@ -502,10 +502,6 @@ protected:
 	int32 *_scummVars;
 	byte *_bitVars;
 
-	bool _v0ObjectIndex;			// V0 Use object index, instead of object number
-	bool _v0ObjectInInventory;		// V0 Use object number from inventory
-	byte _v0ObjectFlag;
-
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
@@ -799,7 +795,6 @@ protected:
 	int getObjNewDir(int obj);
 	int getObjectIndex(int object) const;
 	int getObjectImageCount(int object);
-	int whereIsObjectInventory(int object);
 	int whereIsObject(int object) const;
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
@@ -820,7 +815,7 @@ protected:
 	virtual void clearDrawQueues();
 
 	uint32 getOBCDOffs(int object) const;
-	byte *getOBCDFromObject(int obj);
+	byte *getOBCDFromObject(int obj, bool v0CheckInventory = true);
 	const byte *getOBIMFromObjectData(const ObjectData &od);
 	const byte *getObjectImage(const byte *ptr, int state);
 	virtual int getObjectIdFromOBIM(const byte *obim);

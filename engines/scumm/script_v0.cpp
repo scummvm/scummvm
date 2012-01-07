@@ -365,7 +365,7 @@ uint ScummEngine_v0::fetchScriptWord() {
 
 int ScummEngine_v0::getActiveObject() {
 	if (_opcode & PARAM_2)
-		return _activeObject;
+		return _activeObjectNr;
 
 	return fetchScriptByte();
 }
@@ -406,22 +406,9 @@ void ScummEngine_v0::decodeParseString() {
 	actorTalk(buffer);
 }
 
-const byte *ScummEngine_v0::getObjectName(int object, int type) {
-	const byte *temp;
-
-	if (type == kObjectTypeInventory)
-		_v0ObjectInInventory = true;
-
-	temp = getObjOrActorName(object);
-
-	_v0ObjectInInventory = false;
-
-	return temp;
-}
-
 void ScummEngine_v0::drawSentenceObject(int object, int type) {
 	const byte *temp;
-	temp = getObjectName(object, type);
+	temp = getObjOrActorName(OBJECT_V0(object, type));
 	if (temp) {
 		_sentenceBuf += " ";
 		_sentenceBuf += (const char *)temp;
@@ -443,25 +430,25 @@ void ScummEngine_v0::drawSentence() {
 		return;
 	}
 
-	if (_activeObject) {
+	if (_activeObjectNr) {
 		// Draw the 1st active object
-		drawSentenceObject(_activeObject, _activeObjectType);
+		drawSentenceObject(_activeObjectNr, _activeObjectType);
 
 		// Append verb preposition
-		int sentencePrep = verbPrep();
+		int sentencePrep = activeVerbPrep();
 		if (sentencePrep) {
 			drawPreposition(sentencePrep);
 
 			// Draw the 2nd active object
-			if (_activeObject2) {
+			if (_activeObject2Nr) {
 				// 2nd Object is an actor
 				if (_activeObject2Type == kObjectTypeActor) {
-					Actor *a = derefActor(_activeObject2, "");
+					Actor *a = derefActor(_activeObject2Nr, "");
 					_sentenceBuf += " ";
 					_sentenceBuf += (const char *)a->getActorName();
 				// 2nd Object is an inventory or room object
 				} else {
-					drawSentenceObject(_activeObject2, _activeObject2Type);
+					drawSentenceObject(_activeObject2Nr, _activeObject2Type);
 				}
 			}
 		}
@@ -705,25 +692,12 @@ void ScummEngine_v0::o_putActorAtObject() {
 }
 
 void ScummEngine_v0::o_pickupObject() {
-	int obj = fetchScriptByte();
-	if (obj == 0) {
-		if (_activeObject) {
-			obj = _activeObject;
-		} else {
-			// might happen if an inventory item was picked again
-			return;
-		}
-	}
+	int objNr = fetchScriptByte();
+	int obj = OBJECT_V0((objNr ? objNr : _activeObjectNr), 0);
 
-	if (obj < 1) {
-		error("pickupObject received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
-	}
-
-	if (getObjectIndex(obj) == -1)
+	/* Don't take an object twice */
+	if (whereIsObject(obj) == WIO_INVENTORY)
 		return;
-
-	if (whereIsObjectInventory(_activeObject2) == WIO_INVENTORY)	/* Don't take an */
-		return;					/* object twice */
 
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
@@ -822,8 +796,8 @@ void ScummEngine_v0::o_doSentence() {
 
 bool ScummEngine_v0::ifEqualActiveObject2Common(bool inventoryObject) {
 	byte obj = fetchScriptByte();
-	if (!inventoryObject || (_activeObject2Type == kObjectTypeInventory))
-		return (obj == _activeObject2);
+	if (!inventoryObject || (_activeObject2Type == kObjectTypeFG))
+		return (obj == _activeObject2Nr);
 	return false;
 }
 
@@ -920,7 +894,7 @@ void ScummEngine_v0::o_setOwnerOf() {
 	owner = getVarOrDirectByte(PARAM_2);
 
 	if (obj == 0)
-		obj = _activeObject;
+		obj = _activeObjectNr;
 
 	// FIXME: the original interpreter seems to set the owner of 
 	// an item to remove (new owner 0) to 13 (purple tentacle).
@@ -939,16 +913,15 @@ void ScummEngine_v0::resetSentence(bool walking) {
 	// If the actor is walking, or the screen is a keypad (no sentence verbs/objects are drawn)
 	// Then reset all active objects (stops the radio crash, bug #3077966)
 	if (!walking || !(_userState & 32)) {
-		_v0ObjectFlag = 0;
-		_activeObject = 0;
-		_activeObject2 = 0;
+		_activeObjectNr = 0;
+		_activeObjectType = kObjectTypeBG;
+		_activeObject2Nr = 0;
+		_activeObject2Type = kObjectTypeBG;
 	}
 
 	_verbExecuting = false;
 	_verbPickup = false;
 
-	_activeObjectType = kObjectTypeRoom;
-	_activeObject2Type = kObjectTypeRoom;
 	_activeObjectObtained = false;
 	_activeObject2Obtained = false;
 }
