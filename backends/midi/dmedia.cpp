@@ -91,8 +91,8 @@ int MidiDriver_DMEDIA::open() {
 		return -1;
 	}
 
-	if (getenv("RESIDUAL_MIDIPORT")) {
-		_deviceNum = atoi(getenv("RESIDUAL_MIDIPORT"));
+	if (getenv("RESIDUALVM_MIDIPORT")) {
+		_deviceNum = atoi(getenv("RESIDUALVM_MIDIPORT"));
 		_midiportName = mdGetName(_deviceNum);
 	} else {
 		var = ConfMan.get("dmedia_port").c_str();

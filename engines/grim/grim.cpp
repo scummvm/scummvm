@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -977,7 +977,7 @@ void GrimEngine::setSet(Set *scene) {
 	if (scene == _currSet)
 		return;
 
-	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
+	// Stop the actors. This fixes bug #289 (https://github.com/residualvm/residualvm/issues/289)
 	// and it makes sense too, since when changing set the directions
 	// and coords change too.
 	foreach (Actor *a, Actor::getPool()) {

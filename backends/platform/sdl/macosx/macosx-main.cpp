@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual Residual main entry point:
-	int res = residual_main(argc, argv);
+	// Invoke the actual ResidualVM main entry point:
+	int res = residualvm_main(argc, argv);
 
 	// Free OSystem
 	delete (OSystem_MacOSX *)g_system;

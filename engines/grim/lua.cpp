@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -290,11 +290,7 @@ int LuaBase::bundle_dofile(const char *filename) {
 	Common::SeekableReadStream *stream;
 	stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream) {
-		// Don't print warnings on Scripts\foo.lua,
-		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\"))
-			Debug::warning(Debug::Engine, "Cannot find script %s", filename);
-
+		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
 		return 2;
 	}
 

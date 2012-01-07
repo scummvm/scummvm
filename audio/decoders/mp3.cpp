@@ -25,6 +25,7 @@
 #ifdef USE_MAD
 
 #include "common/debug.h"
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -52,8 +53,7 @@ protected:
 		MP3_STATE_EOS		// end of data reached (may need to loop)
 	};
 
-	Common::SeekableReadStream *_inStream;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<Common::SeekableReadStream> _inStream;
 
 	uint _posInFrame;
 	State _state;
@@ -95,8 +95,7 @@ protected:
 };
 
 MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
-	_inStream(inStream),
-	_disposeAfterUse(dispose),
+	_inStream(inStream, dispose),
 	_posInFrame(0),
 	_state(MP3_STATE_INIT),
 	_length(0, 1000),
@@ -134,9 +133,6 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 
 MP3Stream::~MP3Stream() {
 	deinitStream();
-
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _inStream;
 }
 
 void MP3Stream::decodeMP3Data() {

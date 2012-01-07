@@ -74,7 +74,7 @@ Sub CreateInstaller()
 	                                " /Dtop_srcdir=""" & rootFolder & """" & _
 	                                " /Dstaging_dir=""" & targetFolder & """" & _
 	                                " /DARCH=""" & arch & """" & _
-	                                " """ & rootFolder & "\dists\win32\residual.nsi"""
+	                                " """ & rootFolder & "\dists\win32\residualvm.nsi"""
 
 	Dim oExec: Set oExec = WshShell.Exec(commandline)
 	If Err.Number <> 0 Then

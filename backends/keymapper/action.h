@@ -40,6 +40,12 @@ class Keymap;
 
 #define ACTION_ID_SIZE (4)
 
+struct KeyActionEntry {
+	const KeyState ks;
+	const char *id;
+	const char *description;
+};
+
 struct Action {
 	/** unique id used for saving/loading to config */
 	char id[ACTION_ID_SIZE];

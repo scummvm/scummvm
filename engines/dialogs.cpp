@@ -70,15 +70,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gResidualVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gResidualVMVersionDate);
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
@@ -199,7 +199,7 @@ void MainMenuDialog::reflowLayout() {
 	} else {
 		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ResidualVM");
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
@@ -228,7 +228,15 @@ void MainMenuDialog::save() {
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			Common::String buf;
+			#if defined(USE_SAVEGAME_TIMESTAMP)
+			TimeDate curTime;
+			g_system->getTimeAndDate(curTime);
+			curTime.tm_year += 1900; // fixup year
+			curTime.tm_mon++; // fixup month
+			buf = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			#else
 			buf = Common::String::format("Save %d", slot + 1);
+			#endif
 			_engine->saveGameState(slot, buf);
 		} else {
 			_engine->saveGameState(slot, result);
@@ -338,4 +346,3 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
-

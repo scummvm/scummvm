@@ -68,15 +68,15 @@ public:
 	static const Version kLastVersion = 0xFFFFFFFF;
 
 protected:
-	Common::SeekableReadStream *_loadStream;
-	Common::WriteStream *_saveStream;
+	SeekableReadStream *_loadStream;
+	WriteStream *_saveStream;
 
 	uint _bytesSynced;
 
 	Version _version;
 
 public:
-	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out)
+	Serializer(SeekableReadStream *in, WriteStream *out)
 		: _loadStream(in), _saveStream(out), _bytesSynced(0), _version(0) {
 		assert(in || out);
 	}
@@ -214,7 +214,7 @@ public:
 	 * Sync a C-string, by treating it as a zero-terminated byte sequence.
 	 * @todo Replace this method with a special Syncer class for Common::String
 	 */
-	void syncString(Common::String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
+	void syncString(String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
 			return;	// Ignore anything which is not supposed to be present in this save game version
 

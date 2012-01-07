@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # This tools is kind of a hack to be able to maintain the credits list of
-# Residual in a single central location. We then generate the various versions
+# ResidualVM in a single central location. We then generate the various versions
 # of the credits in other places from this source. In particular:
 # - The AUTHORS file
 # - The gui/credits.h header file
@@ -444,7 +444,7 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-    begin_section("Residual Team");
+    begin_section("ResidualVM Team");
 	begin_section("Project Leader");
 	    begin_persons();
 		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
@@ -455,7 +455,8 @@ begin_credits("Credits");
 	    begin_section("Grim");
 		add_person("James Brown", "ender", "Core developer  (retired)");
 		add_person("Giulio Camuffo", "giucam", "Core developer");
-		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer");
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer (suspended)");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Initial EMI support, various code fixes and improvements");
 	    end_section();
 
 	    begin_section("Grim Contributors");
@@ -464,23 +465,32 @@ begin_credits("Credits");
 		"list. Contact us and we'll add you.");
 		add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
 		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support, various code fixes");
+		add_person("Robert Biro", "DarthJDG", "Fixes to antiliasing");
+		add_person("Bastien Bouclet", "bgK", "Various fixes to engine");
 		add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
-		add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
+		add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor, few code improvements");
 		add_person("Jonathan Gray", "khalek", "Various code fixes");
 		add_person("Vincent Hamm", "yazoo", "Various engine code fixes and improvements");
+		add_person("Sven Hesse", "DrMcCoy", "Various compilation fixes");
+		add_person("Matthew Hoops", "clone2727", "Some engine improvements, some work on EMI support");
 		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various code fixes and improvements");
+		add_person("Max Horn", "fingolfin", "Minor code fixes");
 		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
+		add_person("Filippos Karapetis", "bluegr", "Compilation fixes");
 		add_person("Joost Peters", "joostp", "Various code fixes");
+		add_person("George Macon", "gmacon", "Compilation fixes");
+		add_person("Josh Matthews", "jdm", "Few fixes to engine");
 		add_person("Matthieu Milan", "usineur", "Few code improvements");
 		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
+		add_person("Vincent Pelletier", "vpelletier", "Various engine improvementts and code fixes");
 		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
-		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Initial EMI support, various code fixes and improvements");
 		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
-		add_person("Joel Teichroeb ", "klusark", "Initial EMI support, various code fixes");
+		add_person("Joel Teichroeb ", "klusark", "Initial EMI support, various code fixes and improvements");
+		add_person("Julien Templier", "Littleboy", "create_project tool");
 		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
-		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "Various code fixes and improvements");
-		add_person("", "vpelletier", "Various code fixes and improvements");
+		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "A lot engine improvements and fixes");
+		add_person("", "JenniBee", "Compilation fixes");
 	    end_section();
 
 	end_section();
@@ -488,7 +498,7 @@ begin_credits("Credits");
 
     begin_section("ScummVM code");
 	  add_paragraph(
-	  "Residual use a lot of ScummVM code. ".
+	  "ResidualVM use a lot of ScummVM code. ".
 	  "For a list of authors look into COPYRIGHT file. ");
     end_section();
 

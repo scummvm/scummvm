@@ -1,0 +1,3 @@
+?package(residualvm):needs="x11" section="Games/Adventure" \
+  title="ResidualVM" command="/usr/games/residualvm" \
+  icon="/usr/share/pixmaps/residualvm.xpm"

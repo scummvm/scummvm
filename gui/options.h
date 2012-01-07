@@ -172,7 +172,7 @@ protected:
 	//
 	// Game GUI options
 	//
-	uint32 _guioptions;
+	Common::String _guioptions;
 	Common::String _guioptionsString;
 
 	//
@@ -196,8 +196,11 @@ protected:
 	KeysDialog *_keysDialog;
 #endif
 	StaticTextWidget *_savePath;
+	ButtonWidget	 *_savePathClearButton;
 	StaticTextWidget *_themePath;
+	ButtonWidget	 *_themePathClearButton;
 	StaticTextWidget *_extraPath;
+	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
 #endif

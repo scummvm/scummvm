@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 
 //
-// The residual main entry point, to be invoked by ports
+// The residualvm main entry point, to be invoked by ports
 //
-extern "C" int residual_main(int argc, const char *const argv[]);
+extern "C" int residualvm_main(int argc, const char *const argv[]);
 
 #endif

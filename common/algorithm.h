@@ -73,25 +73,25 @@ Out copy_if(In first, In last, Out dst, Op op) {
 	return dst;
 }
 
-// Our 'specialized' 'set_to' template for char, signed char and unsigned char arrays.
+// Our 'specialized' 'fill' template for char, signed char and unsigned char arrays.
 // Since C++ doesn't support partial specialized template functions (currently) we
 // are going this way...
 // With this we assure the usage of memset for those, which should be
-// faster than a simple loop like for the generic 'set_to'.
+// faster than a simple loop like for the generic 'fill'.
 template<class Value>
-signed char *set_to(signed char *first, signed char *last, Value val) {
+signed char *fill(signed char *first, signed char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
 }
 
 template<class Value>
-unsigned char *set_to(unsigned char *first, unsigned char *last, Value val) {
+unsigned char *fill(unsigned char *first, unsigned char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
 }
 
 template<class Value>
-char *set_to(char *first, char *last, Value val) {
+char *fill(char *first, char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
 }
@@ -100,7 +100,7 @@ char *set_to(char *first, char *last, Value val) {
  * Sets all elements in the range [first, last) to val.
  */
 template<class In, class Value>
-In set_to(In first, In last, Value val) {
+In fill(In first, In last, const Value &val) {
 	while (first != last)
 		*first++ = val;
 	return first;
@@ -226,12 +226,12 @@ void sort(T first, T last, StrictWeakOrdering comp) {
  */
 template<typename T>
 void sort(T *first, T *last) {
-	sort(first, last, Common::Less<T>());
+	sort(first, last, Less<T>());
 }
 
 template<class T>
 void sort(T first, T last) {
-	sort(first, last, Common::Less<typename T::ValueType>());
+	sort(first, last, Less<typename T::ValueType>());
 }
 
 // MSVC is complaining about the minus operator being applied to an unsigned type
@@ -269,4 +269,3 @@ T gcd(T a, T b) {
 
 } // End of namespace Common
 #endif
-

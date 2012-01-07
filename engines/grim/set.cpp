@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -720,7 +720,7 @@ void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_front(s);
 	// Make the state invisible. This hides the deadbolt when brennis closes the switcher door
-	// in the server room (tu), and therefore fixes https://github.com/residual/residual/issues/24
+	// in the server room (tu), and therefore fixes https://github.com/residualvm/residualvm/issues/24
 	s->setActiveImage(0);
 }
 

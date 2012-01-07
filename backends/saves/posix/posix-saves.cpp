@@ -51,7 +51,7 @@
 POSIXSaveFileManager::POSIXSaveFileManager() {
 	// Register default savepath based on HOME
 #if defined(SAMSUNGTV)
-	ConfMan.registerDefault("savepath", "/mtd_wiselink/residual savegames");
+	ConfMan.registerDefault("savepath", "/mtd_wiselink/residualvm savegames");
 #else
 	Common::String savePath;
 	const char *home = getenv("HOME");
@@ -69,13 +69,13 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	// we only set the value in the transient domain if it is not
 	// yet present there.
 	if (!ConfMan.hasKey("savepath", Common::ConfigManager::kTransientDomain)) {
-		const char *dir = getenv("RESIDUAL_SAVEPATH");
+		const char *dir = getenv("RESIDUALVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
 			Common::FSNode saveDir(dir);
 			if (!saveDir.exists()) {
-				warning("Ignoring non-existent RESIDUAL_SAVEPATH '%s'", dir);
+				warning("Ignoring non-existent RESIDUALVM_SAVEPATH '%s'", dir);
 			} else if (!saveDir.isWritable()) {
-				warning("Ignoring non-writable RESIDUAL_SAVEPATH '%s'", dir);
+				warning("Ignoring non-writable RESIDUALVM_SAVEPATH '%s'", dir);
 			} else {
 				ConfMan.set("savepath", dir, Common::ConfigManager::kTransientDomain);
 			}

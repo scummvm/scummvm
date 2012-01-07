@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -102,7 +102,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->showMouse(!fullscreen);
 
 	char GLDriver[1024];
-	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	sprintf(GLDriver, "ResidualVM: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	g_system->setWindowCaption(GLDriver);
 
 	// Load emergency built-in font
@@ -429,11 +429,11 @@ void GfxOpenGL::set3DMode() {
 
 void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
 	int *indices = (int*)face->_indexes;
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_2D);	// Right now, textures are semi-work on some models
-								// while for instance the catapult will become invisible.
+	glEnable(GL_TEXTURE_2D);
+
 	glBegin(GL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
 		
@@ -1027,9 +1027,13 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 void GfxOpenGL::selectMaterial(const Texture *material) {
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
-	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+	
+	// Grim has inverted tex-coords, EMI doesn't
+	if (g_grim->getGameType() != GType_MONKEY4) {
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+	}
 }
 
 void GfxOpenGL::destroyMaterial(Texture *material) {

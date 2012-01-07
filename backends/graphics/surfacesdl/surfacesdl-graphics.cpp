@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -42,7 +42,7 @@
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
-	_sdlEventSource(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource),
 	_screen(0),
 	_overlayVisible(false),
 	_overlayscreen(0),
@@ -549,5 +549,17 @@ void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
 	}
 }
 #endif
+
+void SurfaceSdlGraphicsManager::notifyVideoExpose() {
+	_forceFull = true;
+}
+
+void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+}
+
+void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+	transformMouseCoordinates(mouse);
+	//setMousePos(mouse.x, mouse.y);
+}
 
 #endif

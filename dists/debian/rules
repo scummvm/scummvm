@@ -1,10 +1,10 @@
 #!/usr/bin/make -f
 
-build: residual
+build: residualvm
 
-residual:
+residualvm:
 	dh_testdir
-	./configure --enable-release --prefix=/usr --bindir=/usr/games --datadir=/usr/share/residual --mandir=/usr/share/man
+	./configure --enable-release --prefix=/usr --bindir=/usr/games --datadir=/usr/share/residualvm --mandir=/usr/share/man
 	$(MAKE)
 
 clean:
@@ -18,9 +18,9 @@ install: build
 	dh_testroot
 	dh_clean
 	dh_installdirs
-	$(MAKE) install DESTDIR=debian/residual
-	install -m 644 dists/residual.desktop debian/residual/usr/share/applications
-	#install -m 644 icons/residual.svg debian/residual/usr/share/pixmaps
+	$(MAKE) install DESTDIR=debian/residualvm
+	install -m 644 dists/residualvm.desktop debian/residualvm/usr/share/applications
+	#install -m 644 icons/residualvm.svg debian/residualvm/usr/share/pixmaps
 
 binary: binary-arch
 

@@ -41,8 +41,6 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-using Common::GUIO_NONE;
-
 static const Myst3GameDescription gameDescriptions[] = {
 	{
 		// Myst 3 All PC / Mac Versions
@@ -66,7 +64,7 @@ class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
 		_singleid = "myst3";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO_NOMIDI;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

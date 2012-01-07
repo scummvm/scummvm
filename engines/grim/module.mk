@@ -87,6 +87,7 @@ MODULE_OBJS := \
 	modelemi.o \
 	objectstate.o \
 	primitives.o \
+	patchr.o \
 	registry.o \
 	resource.o \
 	savegame.o \

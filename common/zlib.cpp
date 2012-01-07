@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/zlib.h"
+#include "common/ptr.h"
 #include "common/util.h"
 #include "common/stream.h"
 
@@ -48,12 +49,41 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
 	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
 }
 
+bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen) {
+	if (!dst || !dstLen || !src || !srcLen)
+		return false;
+
+	// Initialize zlib
+	z_stream stream;
+	stream.next_in = const_cast<byte *>(src);
+	stream.avail_in = srcLen;
+	stream.next_out = dst;
+	stream.avail_out = dstLen;
+	stream.zalloc = Z_NULL;
+	stream.zfree = Z_NULL;
+	stream.opaque = Z_NULL;
+
+	// Negative MAX_WBITS tells zlib there's no zlib header
+	int err = inflateInit2(&stream, -MAX_WBITS);
+	if (err != Z_OK)
+		return false;
+
+	err = inflate(&stream, Z_SYNC_FLUSH);
+	if (err != Z_OK && err != Z_STREAM_END) {
+		inflateEnd(&stream);
+		return false;
+	}
+
+	inflateEnd(&stream);
+	return true;
+}
+
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
  * other SeekableReadStream and will then provide on-the-fly decompression support.
  * Assumes the compressed data to be in gzip format.
  */
-class GZipReadStream : public Common::SeekableReadStream {
+class GZipReadStream : public SeekableReadStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
@@ -61,7 +91,7 @@ protected:
 
 	byte	_buf[BUFSIZE];
 
-	Common::SeekableReadStream *_wrapped;
+	ScopedPtr<SeekableReadStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
 	uint32 _pos;
@@ -70,12 +100,8 @@ protected:
 
 public:
 
-	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w) {
+	GZipReadStream(SeekableReadStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
-
-		_stream.zalloc = Z_NULL;
-		_stream.zfree = Z_NULL;
-		_stream.opaque = Z_NULL;
 
 		// Verify file header is correct
 		w->seek(0, SEEK_SET);
@@ -111,7 +137,6 @@ public:
 
 	~GZipReadStream() {
 		inflateEnd(&_stream);
-		delete _wrapped;
 	}
 
 	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
@@ -201,14 +226,14 @@ public:
  * other WriteStream and will then provide on-the-fly compression support.
  * The compressed data is written in the gzip format.
  */
-class GZipWriteStream : public Common::WriteStream {
+class GZipWriteStream : public WriteStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
 	};
 
 	byte	_buf[BUFSIZE];
-	Common::WriteStream *_wrapped;
+	ScopedPtr<WriteStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
 
@@ -228,11 +253,8 @@ protected:
 	}
 
 public:
-	GZipWriteStream(Common::WriteStream *w) : _wrapped(w) {
+	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
-		_stream.zalloc = Z_NULL;
-		_stream.zfree = Z_NULL;
-		_stream.opaque = Z_NULL;
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
 		// write gzip headers. This feature was added in zlib 1.2.0.4,
@@ -255,7 +277,6 @@ public:
 	~GZipWriteStream() {
 		finalize();
 		deflateEnd(&_stream);
-		delete _wrapped;
 	}
 
 	bool err() const {
@@ -308,7 +329,7 @@ public:
 
 #endif	// USE_ZLIB
 
-Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream *toBeWrapped) {
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
@@ -323,7 +344,7 @@ Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream 
 	return toBeWrapped;
 }
 
-Common::WriteStream *wrapCompressedWriteStream(Common::WriteStream *toBeWrapped) {
+WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped)
 		return new GZipWriteStream(toBeWrapped);

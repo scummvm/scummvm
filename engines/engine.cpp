@@ -41,8 +41,11 @@
 #include "common/list.h"
 #include "common/list_intern.h"
 #include "common/scummsys.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+
+#include "backends/keymapper/keymapper.h"
 
 #include "gui/debugger.h"
 #include "gui/dialog.h"
@@ -79,10 +82,21 @@ static void defaultErrorHandler(const char *msg) {
 		if (isSmartphone())
 			debugger = 0;
 #endif
+
+#if defined(USE_TASKBAR)
+		g_system->getTaskbarManager()->notifyError();
+#endif
+
 		if (debugger && !debugger->isActive()) {
 			debugger->attach(msg);
 			debugger->onFrame();
 		}
+
+
+#if defined(USE_TASKBAR)
+		g_system->getTaskbarManager()->clearError();
+#endif
+
 	}
 }
 
@@ -272,9 +286,9 @@ void Engine::openMainMenuDialog() {
 bool Engine::warnUserAboutUnsupportedGame() {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
-			" not yet fully supported by Residual. As such, it is likely to be"
+			" not yet fully supported by ResidualVM. As such, it is likely to be"
 			" unstable, and any saves you make might not work in future"
-			" versions of Residual."), _("Start anyway"), _("Cancel"));
+			" versions of ResidualVM."), _("Start anyway"), _("Cancel"));
 		return alert.runModal() == GUI::kMessageOK;
 	}
 	return true;
@@ -320,14 +334,30 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
+	// We need to handle the speech mute separately here. This is because the
+	// engine code should be able to rely on all speech sounds muted when the
+	// user specified subtitles only mode, which results in "speech_mute" to
+	// be set to "true". The global mute setting has precedence over the
+	// speech mute setting though.
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
 	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
 	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
 	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
-	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void Engine::deinitKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->cleanupGameKeymaps();
+#endif
 }
 
 void Engine::flipMute() {

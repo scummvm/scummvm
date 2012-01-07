@@ -36,6 +36,8 @@
 #include "common/array.h"
 #include "common/rational.h"
 
+#include "graphics/surface.h"
+
 #include "video/video_decoder.h"
 
 namespace Common {

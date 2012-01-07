@@ -82,7 +82,7 @@ int MidiDriver_CAMD::open() {
 	}
 
 	struct MidiNode *midi_node;
-	midi_node = _ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "residual", TAG_END);
+	midi_node = _ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "residualvm", TAG_END);
 	if (!midi_node) {
 		closeAll();
 		error("Could not create CAMD MIDI node");

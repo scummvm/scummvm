@@ -60,6 +60,16 @@ public:
 	bool assignFontToName(const Common::String &name, const Font *font);
 
 	/**
+	 * Associates a BDF font object with an 'usage'. This is useful for platforms
+	 * with a screen DPI much larger than a regular desktop workstation.
+	 *
+	 * @param name	the name of the font
+	 * @param font	the font object
+	 * @return true on success, false on failure
+	 */
+  bool setFont(FontUsage usage, const Font *font);
+
+	/**
 	 * Removes binding from name to font
 	 *
 	 * @param name	name which should be removed

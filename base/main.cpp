@@ -20,9 +20,9 @@
  *
  */
 
-/*! \mainpage %Residual Source Reference
+/*! \mainpage %ResidualVM Source Reference
  *
- * These pages contains a cross referenced documentation for the %Residual source code,
+ * These pages contains a cross referenced documentation for the %ResidualVM source code,
  * generated with Doxygen (http://www.doxygen.org) directly from the source.
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
@@ -103,7 +103,7 @@ static const EnginePlugin *detectPlugin() {
 
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("%s", "  Looking for a plugin supporting this gameid... ");
+	printf("  Looking for a plugin supporting this gameid... ");
 
  	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
@@ -111,10 +111,7 @@ static const EnginePlugin *detectPlugin() {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 	} else {
-		printf("%s\n", plugin->getName());
-
-		// FIXME: Do we really need this one?
-		printf("  Starting '%s'\n", game.description().c_str());
+		printf("%s\n  Starting '%s'\n", plugin->getName(), game.description().c_str());
 	}
 
 	return plugin;
@@ -186,9 +183,15 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	// If a second extrapath is specified on the app domain level, add that as well.
+	// However, since the default hasKey() and get() check the app domain level,
+	// verify that it's not already there before adding it. The search manager will
+	// check for that too, so this check is mostly to avoid a warning message.
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
-		dir = Common::FSNode(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
-		SearchMan.addDirectory(dir.getPath(), dir);
+		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
+		if (!SearchMan.hasArchive(extraPath)) {
+			dir = Common::FSNode(extraPath);
+			SearchMan.addDirectory(dir.getPath(), dir);
+		}
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
@@ -200,6 +203,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 
+	// Initialize any game-specific keymaps
+	engine->initKeymap();
+
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
@@ -208,6 +214,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Inform backend that the engine finished
 	system.engineDone();
+
+	// Clean up any game-specific keymaps
+	engine->deinitKeymap();
 
 	// Free up memory
 	delete engine;
@@ -232,7 +241,7 @@ static void setupGraphics(OSystem &system) {
 	GUI::GuiManager::instance();
 
 	// Set initial window caption
-	system.setWindowCaption(gResidualFullVersion);
+	system.setWindowCaption(gResidualVMFullVersion);
 
 	// Clear the main screen
 	//system.fillScreen(0);
@@ -274,12 +283,12 @@ static void setupKeymapper(OSystem &system) {
 
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global");
+	mapper->pushKeymap("global", true);
 #endif
 
 }
 
-extern "C" int residual_main(int argc, const char * const argv[]) {
+extern "C" int residualvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
 
@@ -303,7 +312,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	}
 
 	// Update the config file
-	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("versioninfo", gResidualVMVersion, Common::ConfigManager::kApplicationDomain);
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
@@ -388,6 +397,10 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
+
+			// Flush Event recorder file. The recorder does not get reinitialized for next game
+			// which is intentional. Only single game per session is allowed.
+			g_eventRec.deinit();
 
 		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can

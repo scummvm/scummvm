@@ -13,6 +13,7 @@ gui/options.cpp
 gui/saveload.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/widget.cpp
 
 base/main.cpp
 
@@ -39,3 +40,4 @@ backends/midi/windows.cpp
 backends/platform/sdl/macosx/appMenu_osx.mm
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/events/default/default-events.cpp
+backends/updates/macosx/macosx-updates.mm

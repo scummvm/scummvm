@@ -4,16 +4,16 @@
 
 // Reads revision number from file
 // (this is used when building with Visual Studio)
-#ifdef RESIDUAL_INTERNAL_REVISION
+#ifdef RESIDUALVM_INTERNAL_REVISION
 #include "internal_revision.h"
 #endif
 
 #ifdef RELEASE_BUILD
-#undef RESIDUAL_REVISION
+#undef RESIDUALVM_REVISION
 #endif
 
-#ifndef RESIDUAL_REVISION
-#define RESIDUAL_REVISION
+#ifndef RESIDUALVM_REVISION
+#define RESIDUALVM_REVISION
 #endif
 
-#define RESIDUAL_VERSION "0.0.7git" RESIDUAL_REVISION
+#define RESIDUALVM_VERSION "0.0.8git" RESIDUALVM_REVISION

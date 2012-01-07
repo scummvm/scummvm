@@ -801,7 +801,7 @@ void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
 			}
 		}
 		if (regionNum == NUM_REGIONS) {
-			printDebug("Sysex write to unrecognised address %06x, len %d", MT32EMU_SYSEXMEMADDR(addr), len);
+			printDebug("Sysex write to unrecognized address %06x, len %d", MT32EMU_SYSEXMEMADDR(addr), len);
 			break;
 		}
 		Bit32u next = region->next(addr, len);

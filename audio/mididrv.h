@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MIDIDRV_H
-#define SOUND_MIDIDRV_H
+#ifndef AUDIO_MIDIDRV_H
+#define AUDIO_MIDIDRV_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -146,7 +146,7 @@ public:
 		kDeviceId
 	};
 
-	static uint32 musicType2GUIO(uint32 musicType);
+	static Common::String musicType2GUIO(uint32 musicType);
 
 	/** Create music driver matching the given device handle, or NULL if there is no match. */
 	static MidiDriver *createMidi(DeviceHandle handle);

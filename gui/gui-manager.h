@@ -126,6 +126,8 @@ protected:
 	byte	_cursor[2048];
 
 	void initKeymap();
+	void pushKeymap();
+	void popKeymap();
 
 	void saveState();
 	void restoreState();

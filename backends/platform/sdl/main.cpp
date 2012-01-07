@@ -26,7 +26,7 @@
 // of this file. The following "#if" ensures that.
 #if !defined(POSIX) && \
     !defined(WIN32) && \
-    !defined(__MAEMO__) && \
+    !defined(MAEMO) && \
     !defined(__SYMBIAN32__) && \
     !defined(_WIN32_WCE) && \
     !defined(__amigaos4__) && \
@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual Residual main entry point:
-	int res = residual_main(argc, argv);
+	// Invoke the actual ResidualVM main entry point:
+	int res = residualvm_main(argc, argv);
 
 	// Free OSystem
 	delete (OSystem_SDL *)g_system;

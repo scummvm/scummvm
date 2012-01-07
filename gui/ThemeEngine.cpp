@@ -45,6 +45,7 @@ namespace GUI {
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
 const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
 const char * const ThemeEngine::kImageSearch = "search.bmp";
+const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -590,7 +591,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 #ifdef USE_TRANSLATION
 				TransMan.setLanguage("C");
 #endif
-				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
+				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
 			}
 		}
 	}
@@ -660,6 +661,8 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 void ThemeEngine::loadTheme(const Common::String &themeId) {
 	unloadTheme();
 
+	debug(6, "Loading theme %s", themeId.c_str());
+
 	if (themeId == "builtin") {
 		_themeOk = loadDefaultXML();
 	} else {
@@ -718,7 +721,7 @@ bool ThemeEngine::loadDefaultXML() {
 	if (!_parser->loadBuffer((const byte *)defaultXML, strlen(defaultXML)))
 		return false;
 
-	_themeName = "Residual Classic Theme (Builtin Version)";
+	_themeName = "ResidualVM Classic Theme (Builtin Version)";
 	_themeId = "builtin";
 	_themeFile.clear();
 
@@ -969,7 +972,7 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	r2.left += 1;
 	r2.right -= 1;
 	r2.top += sliderY;
-	r2.bottom = r2.top + sliderHeight - 1;
+	r2.bottom = r2.top + sliderHeight;
 
 	r2.top += r.width() / 5;
 	r2.bottom -= r.width() / 5;
@@ -1272,7 +1275,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
-	return true; // Residual doesn's support cursor palette mode
+	return true; // ResidualVM doesn's support cursor palette mode
 
 	// Try to locate the specified file among all loaded bitmaps
 	const Graphics::Surface *cursor = _bitmaps[filename];
@@ -1493,7 +1496,7 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 
 	Common::StringTokenizer tok(header, ":");
 
-	if (tok.nextToken() != RESIDUAL_THEME_VERSION_STR)
+	if (tok.nextToken() != RESIDUALVM_THEME_VERSION_STR)
 		return false;
 
 	themeName = tok.nextToken();
@@ -1572,7 +1575,7 @@ struct TDComparator {
 void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 #ifndef DISABLE_GUI_BUILTIN_THEME
 	ThemeDescriptor th;
-	th.name = "Residual Classic Theme (Builtin Version)";
+	th.name = "ResidualVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
 	th.filename.clear();
 	list.push_back(th);

@@ -44,9 +44,9 @@ void Log::open(Common::WriteStream *stream) {
 
 	// Output information about the ScummVM version at the start of the log
 	// file
-	print(gResidualFullVersion);
+	print(gResidualVMFullVersion);
 	print("\n");
-	print(gResidualFeatures);
+	print(gResidualVMFeatures);
 	print("\n");
 	print("--- Log opened.\n");
 	_startOfLine = true;
@@ -102,4 +102,3 @@ void Log::printTimeStamp() {
 
 } // End of namespace Log
 } // End of namespace Backends
-

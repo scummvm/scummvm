@@ -1,14 +1,14 @@
-POTFILE := $(srcdir)/po/residual.pot
+POTFILE := $(srcdir)/po/residualvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d residual --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d residualvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c \
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
-		--copyright-holder="Residual Team" --package-name=Residual \
-		--package-version=$(VERSION) --msgid-bugs-address=residual-devel@lists.sf.net -o $(POTFILE)_
+		--copyright-holder="ResidualVM Team" --package-name=ResidualVM \
+		--package-version=$(VERSION) --msgid-bugs-address=residualvm-devel@lists.sf.net -o $(POTFILE)_
 
-	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for Residual/' \
-		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/Residual/' $(POTFILE)_ > $(POTFILE).new
+	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for ResidualVM/' \
+		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/ResidualVM/' $(POTFILE)_ > $(POTFILE).new
 
 	rm $(POTFILE)_
 	if test -f $(POTFILE); then \

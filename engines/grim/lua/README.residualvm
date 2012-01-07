@@ -1,4 +1,4 @@
-This is a modified version of Lua 3.1 intended for use with Residual.
+This is a modified version of Lua 3.1 intended for use with ResidualVM.
 The major changes made from the original version of Lua 3.1 are:
 
 * Applied differences from RCS labeled 3.1-alpha from lua.org.

@@ -5,19 +5,21 @@
 #endif
 
 #define FILE 256
+#define IDI_ICON  1001
+#define IDI_COUNT 1002
 
-IDI_ICON               ICON    DISCARDABLE     "icons/residual.ico"
+IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
+IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
+residualvm-grim-patch.lab        FILE    "dists/engine-data/residualvm-grim-patch.lab"
 modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
-#endif
-
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
- PRODUCTVERSION  @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
+ FILEVERSION     0,0,8,0
+ PRODUCTVERSION  0,0,8,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG
@@ -33,13 +35,13 @@ BEGIN
         BLOCK "040904b0" // US English, Unicode
         BEGIN
             VALUE "Comments", "\0"
-            VALUE "FileDescription", "http://residual.sourceforge.net/\0"
-            VALUE "FileVersion", "@VERSION@\0"
-            VALUE "InternalName", "residual\0"
+            VALUE "FileDescription", "http://www.residualvm.org/\0"
+            VALUE "FileVersion", "0.0.8git\0"
+            VALUE "InternalName", "residualvm\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
-            VALUE "OriginalFilename", "residual.exe\0"
-            VALUE "ProductName", "Residual\0"
-            VALUE "ProductVersion", "@VERSION@\0"
+            VALUE "OriginalFilename", "residualvm.exe\0"
+            VALUE "ProductName", "ResidualVM\0"
+            VALUE "ProductVersion", "0.0.8git\0"
         END
     END
 

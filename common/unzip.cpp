@@ -1426,9 +1426,9 @@ public:
 
 	~ZipArchive();
 
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual bool hasFile(const String &name) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
@@ -1458,11 +1458,11 @@ ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::hasFile(const Common::String &name) {
+bool ZipArchive::hasFile(const String &name) const {
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
-int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
+int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 	int err = unzGoToFirstFile(_zipFile);
 
@@ -1481,14 +1481,14 @@ int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 	return matches;
 }
 
-ArchiveMemberPtr ZipArchive::getMember(const String &name) {
+const ArchiveMemberPtr ZipArchive::getMember(const String &name) const {
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::String &name) const {
+SeekableReadStream *ZipArchive::createReadStreamForMember(const String &name) const {
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
 		return 0;
 
@@ -1512,7 +1512,7 @@ Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::
 		return 0;
 	}
 
-	return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size, DisposeAfterUse::YES);
+	return new MemoryReadStream(buffer, fileInfo.uncompressed_size, DisposeAfterUse::YES);
 
 	// FIXME: instead of reading all into a memory stream, we could
 	// instead create a new ZipStream class. But then we have to be

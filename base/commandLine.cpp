@@ -39,6 +39,8 @@
 
 #include "gui/ThemeEngine.h"
 
+#include "audio/musicplugin.h"
+
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
@@ -58,9 +60,9 @@ static const char USAGE_STRING[] =
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
-	"Residual - Virtual machine to run 3D adventure games\n"
+	"ResidualVM - Virtual machine to run 3D adventure games\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
-	"  -v, --version            Display Residual version information and exit\n"
+	"  -v, --version            Display ResidualVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
@@ -106,7 +108,7 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-static const char *s_appName = "residual";
+static const char *s_appName = "residualvm";
 
 static void usage(const char *s, ...) GCC_PRINTF(1, 2);
 
@@ -603,6 +605,21 @@ static void listThemes() {
 		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
 }
 
+/** Lists all output devices */
+static void listAudioDevices() {
+	MusicPlugin::List pluginList = MusicMan.getPlugins();
+
+	printf("ID                             Description\n");
+	printf("------------------------------ ------------------------------------------------\n");
+
+	for (MusicPlugin::List::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
+		MusicDevices deviceList = (**i)->getDevices();
+		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
+			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
+		}
+	}
+}
+
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -820,9 +837,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "list-themes") {
 		listThemes();
 		return true;
+	} else if (command == "list-audio-devices") {
+		listAudioDevices();
+		return true;
 	} else if (command == "version") {
-		printf("%s\n", gResidualFullVersion);
-		printf("Features compiled in: %s\n", gResidualFeatures);
+		printf("%s\n", gResidualVMFullVersion);
+		printf("Features compiled in: %s\n", gResidualVMFeatures);
 		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);

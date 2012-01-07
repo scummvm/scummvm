@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -168,7 +168,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(!fullscreen);
 
-	g_system->setWindowCaption("Residual: Software 3D Renderer");
+	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
 
 	_zb = TinyGL::ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
 	TinyGL::glInit(_zb);
@@ -813,6 +813,8 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 }
 
 void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
 	material->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -844,6 +846,8 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 }
 
 void GfxTinyGL::selectMaterial(const Texture *material) {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 	tglPushMatrix();

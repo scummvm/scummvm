@@ -65,12 +65,12 @@ enum GameSupportLevel {
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions = 0);
+	GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
 	GameDescriptor(const Common::String &gameid,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  uint32 guioptions = 0,
+				  Common::String guioptions = Common::String(),
 				  GameSupportLevel gsl = kStableGame);
 
 	/**
@@ -80,7 +80,7 @@ public:
 	 */
 	void updateDesc(const char *extra = 0);
 
-	void setGUIOptions(uint32 options);
+	void setGUIOptions(Common::String options);
 	void appendGUIOptions(const Common::String &str);
 
 	/**

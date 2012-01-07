@@ -1,0 +1,13 @@
+#Fix issue with cd check function and the lua override of dofile (which cause a lot of warnings)
+
+BEGIN 9ca3e57ac3a372da8e3f610053f980d3  #v1.00
+REPLACE A945 6D 3B		#Cd check
+REPLACE 941F 68				#DoFile
+FILL 9420 24 FF
+END
+
+BEGIN 00cad86d3eba11c54a2515381a1169d5  #v1.01
+REPLACE AA2C 6D 3B		#Cd check
+REPLACE 9506 68				#DoFile
+FILL 9507 24 FF
+END

@@ -379,7 +379,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  *                 theme description format.
  * @param force Sets if the key is optional or necessary.
  */
-#define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
+#define PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
 		if (!parseIntegerKey(stepNode->values[key_name], 1, &x)) \
 			return parserError("Error parsing key value for '" + Common::String(key_name) + "'."); \
@@ -398,7 +398,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  * @param key_name Name as STRING of the key identifier as it appears in the
  *                 theme description format.
  */
-#define __PARSER_ASSIGN_RGB(struct_name, key_name) \
+#define PARSER_ASSIGN_RGB(struct_name, key_name) \
 	if (stepNode->values.contains(key_name)) { \
 		val = stepNode->values[key_name]; \
 		if (_palette.contains(val)) { \
@@ -415,16 +415,16 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		drawstep->struct_name.set = true; \
 	}
 
-	__PARSER_ASSIGN_INT(stroke, "stroke", false);
-	__PARSER_ASSIGN_INT(bevel, "bevel", false);
-	__PARSER_ASSIGN_INT(shadow, "shadow", false);
-	__PARSER_ASSIGN_INT(factor, "gradient_factor", false);
+	PARSER_ASSIGN_INT(stroke, "stroke", false);
+	PARSER_ASSIGN_INT(bevel, "bevel", false);
+	PARSER_ASSIGN_INT(shadow, "shadow", false);
+	PARSER_ASSIGN_INT(factor, "gradient_factor", false);
 
-	__PARSER_ASSIGN_RGB(fgColor, "fg_color");
-	__PARSER_ASSIGN_RGB(bgColor, "bg_color");
-	__PARSER_ASSIGN_RGB(gradColor1, "gradient_start");
-	__PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
-	__PARSER_ASSIGN_RGB(bevelColor, "bevel_color");
+	PARSER_ASSIGN_RGB(fgColor, "fg_color");
+	PARSER_ASSIGN_RGB(bgColor, "bg_color");
+	PARSER_ASSIGN_RGB(gradColor1, "gradient_start");
+	PARSER_ASSIGN_RGB(gradColor2, "gradient_end");
+	PARSER_ASSIGN_RGB(bevelColor, "bevel_color");
 
 	if (functionSpecific) {
 		assert(stepNode->values.contains("func"));
@@ -444,7 +444,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("radius") && stepNode->values["radius"] == "auto") {
 				drawstep->radius = 0xFF;
 			} else {
-				__PARSER_ASSIGN_INT(radius, "radius", true);
+				PARSER_ASSIGN_INT(radius, "radius", true);
 			}
 		}
 
@@ -544,9 +544,19 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		else
 			return parserError("'" + stepNode->values["fill"] + "' is not a valid fill mode for a shape.");
 	}
+	
+	if (stepNode->values.contains("padding")) {
+		val = stepNode->values["padding"];
+		int pr, pt, pl, pb;
+		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb)) 
+			drawstep->padding.left = pl,
+			drawstep->padding.top = pt,
+			drawstep->padding.right = pr,
+			drawstep->padding.bottom = pb;
+	}
 
-#undef __PARSER_ASSIGN_INT
-#undef __PARSER_ASSIGN_RGB
+#undef PARSER_ASSIGN_INT
+#undef PARSER_ASSIGN_RGB
 
 	return true;
 }

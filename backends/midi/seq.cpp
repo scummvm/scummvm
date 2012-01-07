@@ -79,10 +79,10 @@ int MidiDriver_SEQ::open() {
 	_isOpen = true;
 	device = 0;
 
-	device_name = getenv("RESIDUAL_MIDI");
+	device_name = getenv("RESIDUALVM_MIDI");
 
 	if (device_name == NULL) {
-		warning("RESIDUAL_MIDI environment variable not set, using /dev/sequencer");
+		warning("RESIDUALVM_MIDI environment variable not set, using /dev/sequencer");
 		device_name = dev_seq;
 	}
 
@@ -99,8 +99,8 @@ int MidiDriver_SEQ::open() {
 			error("Cannot open /dev/null to dump midi output");
 	}
 
-	if (getenv("RESIDUAL_MIDIPORT"))
-		_device_num = atoi(getenv("RESIDUAL_MIDIPORT"));
+	if (getenv("RESIDUALVM_MIDIPORT"))
+		_device_num = atoi(getenv("RESIDUALVM_MIDIPORT"));
 	return 0;
 }
 

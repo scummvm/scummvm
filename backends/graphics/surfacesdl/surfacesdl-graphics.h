@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -29,6 +29,7 @@
 #undef ARRAYSIZE
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
 #include "common/events.h"
@@ -38,11 +39,15 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
+#ifndef RELEASE_BUILD
+// Define this to allow for focus rectangle debugging
+#define USE_SDL_DEBUG_FOCUSRECT
+#endif
 
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public GraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -83,8 +88,13 @@ public:
 	// Override from Common::EventObserver
 	bool notifyEvent(const Common::Event &event);
 
+	// SdlGraphicsManager interface
+	virtual void notifyVideoExpose();
+	virtual void transformMouseCoordinates(Common::Point &point);
+	virtual void notifyMousePos(Common::Point mouse);
+
 protected:
-	SdlEventSource *_sdlEventSource;
+
 
 	SDL_Surface *_screen;
 

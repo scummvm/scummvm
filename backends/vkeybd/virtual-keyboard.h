@@ -102,21 +102,21 @@ protected:
 		}
 	};
 
-	typedef HashMap<String, VKEvent*> VKEventMap;
+	typedef HashMap<String, VKEvent *> VKEventMap;
 
 	/**
 	 * Mode struct encapsulates all the data for each mode of the keyboard
 	 */
 	struct Mode {
-		String				name;
-		String				resolution;
-		String				bitmapName;
-		Graphics::Surface	*image;
-		OverlayColor		transparentColor;
-		ImageMap			imageMap;
-		VKEventMap			events;
-		Rect				displayArea;
-		OverlayColor		displayFontColor;
+		String              name;
+		String              resolution;
+		String              bitmapName;
+		Graphics::Surface   *image;
+		OverlayColor        transparentColor;
+		ImageMap            imageMap;
+		VKEventMap          events;
+		Rect                displayArea;
+		OverlayColor        displayFontColor;
 
 		Mode() : image(0) {}
 		~Mode() {
@@ -172,13 +172,13 @@ protected:
 		byte _flags;
 		String _flagsStr;
 
-
-		List<VirtualKeyPress> _keys;
+		typedef List<VirtualKeyPress> KeyPressList;
+		KeyPressList _keys;
 		String _keysStr;
 
 		bool _strChanged;
 
-		List<VirtualKeyPress>::iterator _keyPos;
+		KeyPressList::iterator _keyPos;
 		uint _strPos;
 	};
 
@@ -193,7 +193,7 @@ public:
 	 * The system first looks for an uncompressed keyboard pack by searching
 	 * for packName.xml in the filesystem, if this does not exist then it
 	 * searches for a compressed keyboard pack by looking for packName.zip.
-	 * @param packName	name of the keyboard pack
+	 * @param packName  name of the keyboard pack
 	 */
 	bool loadKeyboardPack(const String &packName);
 
@@ -206,8 +206,8 @@ public:
 
 	/**
 	 * Hides the keyboard, ending the event loop.
-	 * @param submit	if true all accumulated key presses are submitted to
-	 *					the event manager
+	 * @param submit    if true all accumulated key presses are submitted to
+	 *                  the event manager
 	 */
 	void close(bool submit);
 
@@ -229,7 +229,7 @@ protected:
 	Archive *_fileArchive;
 
 	friend class VirtualKeyboardGUI;
-	VirtualKeyboardGUI	*_kbdGUI;
+	VirtualKeyboardGUI *_kbdGUI;
 
 	KeyPressQueue _keyQueue;
 
@@ -241,7 +241,7 @@ protected:
 	void deleteEvents();
 	bool checkModeResolutions();
 	void switchMode(Mode *newMode);
-	void switchMode(const String& newMode);
+	void switchMode(const String &newMode);
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
 	String findArea(int16 x, int16 y);

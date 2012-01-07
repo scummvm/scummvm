@@ -135,7 +135,7 @@ static int eatSystemEvents() {
 }
 
 static void drawProgress(float progress) {
-	// TODO implement in Residual
+	// TODO implement in ResidualVM
 	/*const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
@@ -176,7 +176,7 @@ static void drawProgress(float progress) {
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	// TODO implement in Residual
+	// TODO implement in ResidualVM
 	/* const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
@@ -317,7 +317,7 @@ int MidiDriver_MT32::open() {
 
 	_synth = new MT32Emu::Synth();
 
-	// TODO implement in Residual
+	// TODO implement in ResidualVM
 	Graphics::PixelFormat screenFormat; /*= g_system->getScreenFormat();*/
 
 	if (screenFormat.bytesPerPixel == 1) {
@@ -327,7 +327,7 @@ int MidiDriver_MT32::open() {
 			171, 0, 0	// fill
 		};
 
-		// TODO implement in Residual
+		// TODO implement in ResidualVM
 		//g_system->setPalette(dummy_palette, 0, 3);
 	}
 
@@ -337,7 +337,7 @@ int MidiDriver_MT32::open() {
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initializing = false;
 
-	// TODO implement in Residual
+	// TODO implement in ResidualVM
 /*	if (screenFormat.bytesPerPixel > 1)
 		g_system->fillScreen(screenFormat.RGBToColor(0, 0, 0));
 	else
@@ -493,7 +493,7 @@ void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, TimerManager::
 			_vm->_timer->removeTimerProc(_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			_vm->_timer->installTimerProc(timer_proc, getBaseTempo(), timer_param);
+			_vm->_timer->installTimerProc(timer_proc, getBaseTempo(), timer_param, "MT32tempo");
 	}
 }
 
@@ -568,7 +568,7 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
 		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
-			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
+			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ResidualVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
 			return false;
 	}
 

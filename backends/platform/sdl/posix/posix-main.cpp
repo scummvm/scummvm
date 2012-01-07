@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3)
+#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3)
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual Residual main entry point:
-	int res = residual_main(argc, argv);
+	// Invoke the actual ResidualVM main entry point:
+	int res = residualvm_main(argc, argv);
 
 	// Free OSystem
 	delete (OSystem_POSIX *)g_system;

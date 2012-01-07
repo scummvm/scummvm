@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -42,8 +42,6 @@ static const PlainGameDescriptor grimGames[] = {
 	{"monkey4", "Escape From Monkey Island"},
 	{0, 0}
 };
-
-using Common::GUIO_NONE;
 
 static const GrimGameDescription gameDescriptions[] = {
 	{
@@ -399,7 +397,7 @@ class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
 		_singleid = "grim";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO_NOMIDI;
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {

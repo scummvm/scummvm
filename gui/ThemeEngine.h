@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define RESIDUAL_THEME_VERSION_STR "RESIDUAL_STX0.8.3"
+#define RESIDUALVM_THEME_VERSION_STR "RESIDUAL_STX0.8.7"
 
 class OSystem;
 
@@ -228,6 +228,7 @@ public:
 	static const char *const kImageLogo;      ///< ScummVM logo used in the launcher
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
 	static const char *const kImageSearch;    ///< Search tool image used in the launcher
+	static const char *const kImageEraser;     ///< Clear input image used in the launcher
 
 	/**
 	 * Graphics mode enumeration.

@@ -58,13 +58,13 @@ void replaceApplicationMenuItems() {
 #endif
 	
 	// Add "About ScummVM" menu item
-	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ScummVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
+	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ResidualVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
 
 	// Add separator
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Hide ScummVM" menu item
-	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Hide ScummVM") encoding:stringEncoding] action:@selector(hide:) keyEquivalent:@"h"];
+	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Hide ResidualVM") encoding:stringEncoding] action:@selector(hide:) keyEquivalent:@"h"];
 
 	// Add "Hide Others" menu item
 	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:[NSString stringWithCString:_("Hide Others") encoding:stringEncoding] action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
@@ -77,7 +77,7 @@ void replaceApplicationMenuItems() {
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Quit ScummVM" menu item
-	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Quit ScummVM") encoding:stringEncoding] action:@selector(terminate:) keyEquivalent:@"q"];
+	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Quit ResidualVM") encoding:stringEncoding] action:@selector(terminate:) keyEquivalent:@"q"];
 
 	// Put application menu into the menubar
 	menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
