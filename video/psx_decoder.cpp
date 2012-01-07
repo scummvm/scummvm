@@ -509,7 +509,7 @@ void PSXStreamDecoder::dequantizeBlock(int *coefficients, float *block, uint16 s
 
 void PSXStreamDecoder::readAC(Common::BitStream *bits, int *block) {
 	// Clear the block first
-	for (int i = 0; i < 64; i++)
+	for (int i = 0; i < 63; i++)
 		block[i] = 0;
 
 	int count = 0;
