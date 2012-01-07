@@ -48,6 +48,7 @@ public:
 	void reset();
 
 	uint16 hoveredItem();
+	void useItem(uint16 var);
 
 	void draw();
 private:

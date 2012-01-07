@@ -38,12 +38,13 @@ const Inventory::ItemData Inventory::_availableItems[8] = {
 };
 
 Inventory::Inventory(Myst3Engine *vm) :
-	_vm(vm){
+	_vm(vm) {
 
 	initializeTexture();
 }
 
 Inventory::~Inventory() {
+	glDeleteTextures(1, &_textureId);
 }
 
 void Inventory::initializeTexture() {
@@ -54,6 +55,9 @@ void Inventory::initializeTexture() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	s->free();
+	delete s;
 }
 
 void Inventory::draw() {
@@ -209,6 +213,10 @@ uint16 Inventory::hoveredItem() {
 	}
 
 	return 0;
+}
+
+void Inventory::useItem(uint16 var) {
+	debug("Used inventory item %d which is not implemented", var);
 }
 
 } /* namespace Myst3 */

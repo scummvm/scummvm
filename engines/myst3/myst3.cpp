@@ -224,6 +224,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 			// Skip the event when in look only mode
 			if (lookOnly) continue;
 
+			uint16 hoveredInventory = _inventory->hoveredItem();
+			if (hoveredInventory > 0) {
+				_inventory->useItem(hoveredInventory);
+				continue;
+			}
+
 			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
 			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 
