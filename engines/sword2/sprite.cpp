@@ -500,6 +500,16 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				recomposePsxSprite(s);
 			}
 
+			// If the height is not an even value, fix it.
+			// Apparently it's a problem in the data of a few sprites
+			// of the PSX version. This should fix an evident problem
+			// in the foyer at the beginning of the game, where a line
+			// of pixels is missing near the stairs. But it should also
+			// fix a more subtle one in the glease gallery and in quaramonte
+			// police office.
+			if (s->h % 2)
+				s->h++;
+
 			freeSprite = true;
 			byte *tempBuf = (byte *)malloc(s->w * s->h * 2);
 			memset(tempBuf, 0, s->w * s->h * 2);
