@@ -335,10 +335,21 @@ protected:
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 };
 
+enum ActorC64MiscFlags {
+	kActorMiscFlagStrong   = 0x01, // Kid is strong (Hunk-O-Matic used)
+	kActorMiscFlag_02      = 0x02, // ???
+	kActorMiscFlag_04      = 0x04, // ???
+	kActorMiscFlagEdsEnemy = 0x08, // Kid is not Weird Ed's friend
+	kActorMiscFlag_10      = 0x10, // ???
+	kActorMiscFlag_20      = 0x20, // ???
+	kActorMiscFlagFreeze   = 0x40, // Stop moving
+	kActorMiscFlagHide     = 0x80, // Hide actor (e.g. dead or wearing radiation suit)
+};
+
 class ActorC64 : public Actor_v2 {
 public:
 	byte _costCommand, _costFrame;
-	byte _miscflags; // 0x1: strong, 0x8: Ed's enemy, 0x40: stop moving, 0x80: hide(dead/radiation suit)
+	byte _miscflags;
 	byte _speaking, _speakingPrev;
 
 public:

@@ -542,16 +542,16 @@ void ScummEngine_v0::o_loadRoom() {
 }
 
 void ScummEngine_v0::o_loadRoomWithEgo() {
-	Actor *a;
+	ActorC64 *a;
 	int obj, room, x, y, dir;
 
 	obj = fetchScriptByte();
 	room = fetchScriptByte();
 
-	a = derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
+	a = (ActorC64 *)derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
 
 	//0x634F
-	if (((ActorC64 *)a)->_miscflags & 0x40) {
+	if (a->_miscflags & kActorMiscFlagFreeze) {
 		// TODO: Check if this is the correct function
 		// to be calling here
 		stopObjectCode();
@@ -734,9 +734,9 @@ void ScummEngine_v0::o_setActorBitVar() {
 		a->_miscflags &= ~mask;
 
 	// This flag causes the actor to stop moving (used by script #158, Green Tentacle 'Oomph!')
-	if (a->_miscflags & 0x40)
+	if (a->_miscflags & kActorMiscFlagFreeze)
 		a->stopActorMoving();
-	if (a->_miscflags & 0x80)
+	if (a->_miscflags & kActorMiscFlagHide)
 		a->setActorCostume(0);
 
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
