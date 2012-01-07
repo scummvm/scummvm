@@ -108,8 +108,6 @@ protected:
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
-	virtual void setActiveInventory(int object);
-
 	bool ifEqualActiveObject2Common(bool ignoreType);
 
 	/* Version C64 script opcodes */

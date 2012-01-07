@@ -50,7 +50,7 @@ public:
 	virtual void resetScumm();
 
 	void checkV2MouseOver(Common::Point pos);
-	void checkV2Inventory(int x, int y);
+	int checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
 protected:
