@@ -389,19 +389,14 @@ void ScummEngine_v2::setActiveInventory(int object) {
 	runInputScript(kInventoryClickArea, object, 0);
 }
 
-void ScummEngine_v0::setActiveInventory(int object) {
-	// TODO
-	//_activeInventory = object;
-}
-
-void ScummEngine_v2::checkV2Inventory(int x, int y) {
+int ScummEngine_v2::checkV2Inventory(int x, int y) {
 	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
 	y -= _virtscr[kVerbVirtScreen].topline;
 
 	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK))
-		return;
+		return 0;
 
 	if (_mouseOverBoxesV2[kInventoryUpArrow].rect.contains(x, y)) {
 		if (_inventoryOffset >= 2) {
@@ -422,11 +417,9 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	}
 
 	if (object >= 4)
-		return;
+		return 0;
 
-	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
-	if (object > 0)
-		setActiveInventory(object);
+	return findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 }
 
 void ScummEngine_v2::redrawV2Inventory() {
@@ -706,7 +699,7 @@ void ScummEngine_v2::checkExecVerbs() {
 		if (object != -1) {
 			object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 			if (object > 0)
-				setActiveInventory(object);
+				runInputScript(kInventoryClickArea, object, 0);
 			return;
 		}
 
@@ -727,7 +720,9 @@ void ScummEngine_v2::checkExecVerbs() {
 			runInputScript(kSentenceClickArea, 0, 0);
 		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
-			checkV2Inventory(_mouse.x, _mouse.y);
+			int object = checkV2Inventory(_mouse.x, _mouse.y);
+			if (object > 0)
+				runInputScript(kInventoryClickArea, object, 0);
 		} else {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
@@ -1070,53 +1065,71 @@ void ScummEngine_v0::checkExecVerbs() {
 			_activeVerb = kVerbPush;
 		}
 
-		if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
-			int id;
-			byte type;
-			if (_activeVerb == kVerbGive && _activeObjectNr) {
-				id = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
-				type = kObjectTypeActor;
+		if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
+			// TODO:  Check keypresses
+		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
+			if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+				// TODO: handle click into sentence line
 			} else {
-				int obj = findObject(_virtualMouse.x, _virtualMouse.y);
-				id = OBJECT_V0_NR(obj);
-				type = OBJECT_V0_TYPE(obj);
-				debug("found 0x%03x", obj);
-			}
-			if (!id) {
-				if (_activeVerb == kVerbWalkTo) {
-					_activeObjectNr = 0;
-					_activeObject2Nr = 0;
-				}
-			} else {
-				//_activeVerbPrep:
-				// 0: no activeObject or activeObject but no prep
-				// > 0: activeObject + prep
-				if (activeVerbPrep() == 0) {
-					if (id == _activeObjectNr && type == _activeObjectType) {
-						_verbExecuting = true;
-					} else {
-						_activeObjectNr = id;
-						_activeObjectType = type;
+				int obj = 0;
+
+				if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+					// click into inventory
+					int invOff = _inventoryOffset;
+					obj = checkV2Inventory(_mouse.x, _mouse.y);
+					if (invOff != _inventoryOffset) {
+						// inventory position changed (arrows pressed, do nothing)
+						return;
 					}
-					//sentenceLineChanged = true;
-					if (_currentMode == 1)
-						_verbExecuting = true;
+				} else if (zone->number == kMainVirtScreen) {
+					// click into main screen
+					if (_activeVerb == kVerbGive && _activeObjectNr) {
+						obj = OBJECT_V0(getActorFromPos(_virtualMouse.x, _virtualMouse.y), kObjectTypeActor);
+					} else {
+						obj = findObject(_virtualMouse.x, _virtualMouse.y);
+					}
+				}
+
+				int id = OBJECT_V0_NR(obj);
+				int type = OBJECT_V0_TYPE(obj);
+				debug("found 0x%03x", obj);
+
+				if (!id) {
+					if (_activeVerb == kVerbWalkTo) {
+						_activeObjectNr = 0;
+						_activeObject2Nr = 0;
+					}
 				} else {
-					if (id == _activeObject2Nr && type == _activeObject2Type)
-						_verbExecuting = true;
-					if (!(id == _activeObjectNr && type == _activeObjectType)) {
-						_activeObject2Nr = id;
-						_activeObject2Type = type;
+					//_activeVerbPrep:
+					// 0: no activeObject or activeObject but no prep
+					// > 0: activeObject + prep
+					if (activeVerbPrep() == 0) {
+						if (id == _activeObjectNr && type == _activeObjectType) {
+							_verbExecuting = true;
+						} else {
+							_activeObjectNr = id;
+							_activeObjectType = type;
+						}
+						//sentenceLineChanged = true;
 						if (_currentMode == 1)
 							_verbExecuting = true;
+					} else {
+						if (id == _activeObject2Nr && type == _activeObject2Type)
+							_verbExecuting = true;
+						if (!(id == _activeObjectNr && type == _activeObjectType)) {
+							_activeObject2Nr = id;
+							_activeObject2Type = type;
+							if (_currentMode == 1)
+								_verbExecuting = true;
+						}
 					}
 				}
-			}
 
-			sentenceLineChanged = true;
-			if (_activeVerb == kVerbWalkTo) {
-				scriptUpdateSkip = 0;
-				_verbExecuting = true;
+				sentenceLineChanged = true;
+				if (_activeVerb == kVerbWalkTo) {
+					scriptUpdateSkip = 0;
+					_verbExecuting = true;
+				}
 			}
 		}
 	}
@@ -1184,29 +1197,7 @@ void ScummEngine_v0::checkExecVerbs() {
 		}
 	}
 
-	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
-		return;
-
-	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
-		/* Check keypresses */
-		// TODO
-	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
-			// TODO
-		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
-			int invOff = _inventoryOffset;
-
-			// Click into V2 inventory
-			checkV2Inventory(_mouse.x, _mouse.y);
-
-			// Did the Inventory position changed (arrows pressed, do nothing)
-			if (invOff != _inventoryOffset)
-				return;
-		} else {
-			int over = findVerbAtPos(_mouse.x, _mouse.y);
-			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
-			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
-
+	...
 
 			// Clicked on nothing, walk here?
 			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
