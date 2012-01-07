@@ -762,7 +762,7 @@ bool ScummEngine_v0::verbMoveToActor(int actor) {
 	return true;
 }
 
-bool ScummEngine_v0::verbMove(int object, bool invObject) {
+bool ScummEngine_v0::verbMove(int object) {
 	int x, y, dir;
 	Actor *a = derefActor(VAR(VAR_EGO), "verbMove");
 
@@ -835,7 +835,7 @@ bool ScummEngine_v0::verbObtain(int obj) {
 		}
 
 		//attempt move to object
-		if (verbMove(obj, false))
+		if (verbMove(obj))
 			return true;
 
 		if (didPickup && (prep == kVerbPrepIn || prep == kVerbPrepTo))
