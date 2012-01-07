@@ -31,13 +31,13 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_startFrame(0),
 	_endFrame(0) {
 
-	const DirectorySubEntry *binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kMovie);
+	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kStillMovie);
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kStillMovie);
 
 		if (!binkDesc)
-		binkDesc = _vm->getFileDescription(id, 0, DirectorySubEntry::kImagerMovie);
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kImagerMovie);
 
 	if (!binkDesc)
 		error("Movie %d does not exist", id);

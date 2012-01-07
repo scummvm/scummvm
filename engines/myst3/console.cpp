@@ -222,23 +222,27 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 	if (argc != 4) {
 		DebugPrintf("Extract a file from the game's archives\n");
 		DebugPrintf("Usage :\n");
-		DebugPrintf("extract [node id] [face number] [object type]\n");
+		DebugPrintf("extract [room] [node id] [face number] [object type]\n");
 		return true;
 	}
 
-	uint16 id = atoi(argv[1]);
-	uint16 face = atoi(argv[2]);
-	DirectorySubEntry::ResourceType type = (DirectorySubEntry::ResourceType) atoi(argv[3]);
+	// Room names are uppercase
+	Common::String room = Common::String(argv[1]);
+	room.toUppercase();
 
-	const DirectorySubEntry *desc = _vm->getFileDescription(id, face, type);
+	uint16 id = atoi(argv[2]);
+	uint16 face = atoi(argv[3]);
+	DirectorySubEntry::ResourceType type = (DirectorySubEntry::ResourceType) atoi(argv[4]);
+
+	const DirectorySubEntry *desc = _vm->getFileDescription(room.c_str(), id, face, type);
 
 	if (!desc) {
-		DebugPrintf("File with %d, face %d and type %d does not exist\n", id, face, type);
+		DebugPrintf("File with room %s, id %d, face %d and type %d does not exist\n", room.c_str(), id, face, type);
 		return true;
 	}
 
 	Common::MemoryReadStream *s = desc->getData();
-	Common::String filename = Common::String::format("node%d_face%d.%d", id, face, type);
+	Common::String filename = Common::String::format("node%s_%d_face%d.%d", room.c_str(), id, face, type);
 	Common::DumpFile f;
 	f.open(filename);
 

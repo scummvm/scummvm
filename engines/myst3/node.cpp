@@ -88,7 +88,7 @@ void Node::dumpFaceMask(uint16 index, int face) {
 	uint32 headerOffset = 0;
 	uint32 dataOffset = 0;
 
-	const DirectorySubEntry *maskDesc = _vm->getFileDescription(index, face, DirectorySubEntry::kFaceMask);
+	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, DirectorySubEntry::kFaceMask);
 	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
 	while (headerOffset < 400) {
@@ -145,10 +145,10 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	spotItem->setFadeVar(abs(condition));
 
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kSpotItem);
+		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kSpotItem);
 
 		if (!jpegDesc)
-			jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kMenuSpotItem);
+			jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kMenuSpotItem);
 
 		if (!jpegDesc) continue;
 

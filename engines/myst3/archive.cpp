@@ -80,9 +80,10 @@ Common::MemoryReadStream *Archive::dumpToMemory(uint32 offset, uint32 size) {
 	return static_cast<Common::MemoryReadStream *>(_file.readStream(size));
 }
 
-const DirectorySubEntry *Archive::getDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
+const DirectorySubEntry *Archive::getDescription(const char *room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _directory.size(); i++) {
-		if (_directory[i].getIndex() == index) {
+		if (_directory[i].getIndex() == index
+				&& !strcmp(_directory[i].getRoom(), room)) {
 			return _directory[i].getItemDescription(face, type);
 		}
 	}

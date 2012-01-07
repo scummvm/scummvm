@@ -31,7 +31,7 @@ namespace Myst3 {
 NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 	Node(vm, id) {
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(id, i + 1, DirectorySubEntry::kCubeFace);
+		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kCubeFace);
 
 		if (!jpegDesc)
 			error("Face %d does not exist", id);

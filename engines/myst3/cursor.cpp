@@ -72,7 +72,7 @@ Cursor::Cursor(Myst3Engine *vm) :
 void Cursor::loadAvailableCursors() {
 	// Load available cursors
 	for (uint i = 0; availableCursors[i].nodeID; i++) {
-		const DirectorySubEntry *cursorDesc = _vm->getFileDescription(availableCursors[i].nodeID, 0, DirectorySubEntry::kCursor);
+		const DirectorySubEntry *cursorDesc = _vm->getFileDescription("GLOB", availableCursors[i].nodeID, 0, DirectorySubEntry::kCursor);
 
 		if (!cursorDesc)
 			error("Cursor %d does not exist", availableCursors[i].nodeID);

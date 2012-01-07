@@ -47,6 +47,7 @@ class DirectoryEntry {
 		void dumpToFiles(Common::SeekableReadStream &inStream);
 		DirectorySubEntry *getItemDescription(uint16 face, DirectorySubEntry::ResourceType type);
 		uint16 getIndex() { return _index; }
+		const char *getRoom() { return _roomName; }
 };
 
 } // end of namespace Myst3

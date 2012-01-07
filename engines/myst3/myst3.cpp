@@ -551,26 +551,32 @@ void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 	_node->addSunSpot(s);
 }
 
-const DirectorySubEntry *Myst3Engine::getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
+const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
+	char currentRoom[8];
+	if (!room) {
+		_db->getRoomName(currentRoom, _vars->getLocationRoom());
+		room = currentRoom;
+	}
+
 	const DirectorySubEntry *desc = 0;
 
 	if (_archiveOVER)
-		desc = _archiveOVER->getDescription(index, face, type);
+		desc = _archiveOVER->getDescription(room, index, face, type);
 
 	if (!desc && _archiveLANG)
-		desc = _archiveLANG->getDescription(index, face, type);
+		desc = _archiveLANG->getDescription(room, index, face, type);
 
 	if (!desc && _archiveRSRC)
-		desc = _archiveRSRC->getDescription(index, face, type);
+		desc = _archiveRSRC->getDescription(room, index, face, type);
 
 	if (!desc && _archive)
-		desc = _archive->getDescription(index, face, type);
+		desc = _archive->getDescription(room, index, face, type);
 
 	return desc;
 }
 
 Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
-	const DirectorySubEntry *desc = getFileDescription(id, 0, DirectorySubEntry::kCursor);
+	const DirectorySubEntry *desc = getFileDescription("GLOB", id, 0, DirectorySubEntry::kCursor);
 
 	if (!desc)
 		error("Texture %d does not exist", id);

@@ -82,7 +82,7 @@ public:
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();
 
-	const DirectorySubEntry *getFileDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
 	Graphics::Surface *loadTexture(uint16 id);
 
 	void goToNode(uint16 nodeID, uint32 roomID = 0);
