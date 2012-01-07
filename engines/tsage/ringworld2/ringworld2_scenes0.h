@@ -324,6 +324,58 @@ public:
 	virtual void signal();
 };
 
+class Scene325: public SceneExt {
+	class Icon: public SceneActor {
+	public:
+		int _lookLineNum, _field98;
+		bool _pressed;
+		SceneObject _object1, _object2;
+		SceneText _sceneText1, _sceneText2;
+
+		Icon();
+		virtual Common::String getClassName() { return "Scene325_Icon"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void synchronize(Serializer &s);
+		virtual void process(Event &event);
+
+		void setIcon(int id);
+		void showIcon();
+		void hideIcon();
+	};
+	
+private:
+	void removeText();
+	void consoleAction(int id);
+	void setMessage(int resNum, int lineNum);
+	Common::String parseMessage(const Common::String &msg);
+public:
+	int _field412, _iconFontNumber, _field416, _field418;
+	int _field41A, _field41C, _field41E, _field420;
+	int _soundCount, _soundIndex;
+	int _soundQueue[10];
+	SpeakerQuinn _quinnSpeaker;
+	ScenePalette _palette;
+	SceneHotspot _background, _item2;
+	SceneObject _object1, _object2, _object3, _object4, _object5;
+	SceneObject _object6, _object7, _object8, _object9, _object10;
+	SceneObject _object11, _object12, _object13;
+	SceneObject _objList[4];
+	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
+	ASoundExt _sound1;
+	SequenceManager _sequenceManager1;
+	SceneText _text1;
+public:
+	Scene325();
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+
 class Scene400: public SceneExt {
 	/* Items */
 	class Terminal: public NamedHotspot {

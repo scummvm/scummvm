@@ -183,13 +183,21 @@ char const *const THE_NEXT_DAY = "The Next Day";
 
 namespace Ringworld2 {
 
-char const *const CONSOLE_MESSAGES[] = {
+char const *const CONSOLE125_MESSAGES[] = {
 	NULL, "Select Language", "Computer Services", "Food Services", "Entertainment Services",
 	"Main Menu", "Exit Menu", "Previous Menu", "Interworld", "Hero's Tongue", "Personal Log",
 	"Database", "Starchart", "Iso-Opto Disk Reader", "Eject Disk", "Meals", "Snacks",
 	"Beverages", "Human Basic Snacks", "Kzin Basic Snacks", "Hot Beverages", "Cold Beverages",
 	"Music", "Outpost Alpha", " ", " ", "Done", "A-G", "H-O", "P-S", "T-Z", "Tchaikovsky",
 	"Mozart", "Bach", "Rossini"
+};
+
+char const *const CONSOLE325_MESSAGES[] = {
+	NULL, "Select Language", "Database", "Star Chart", "Scan Ops", "Deep Scan",
+	"Short Scan", "Main Menu", "Previous Menu", "Exit Menu", "Interworld", "Hero's Tongue",
+	"Done", " ", " ", "Passive Enabled", "Active Enabled", "Technological", "Biological",
+	"Geographical", "Astronomical", "Dipole Anomaly Sweep", "Structural Analysis",
+	"A-G", "N-O", "P-S", "T-Z", "Tchaikovsky", "Mozart", "Bach", "Rossini"
 };
 
 // Scene 825 Autodoc messages

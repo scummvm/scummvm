@@ -69,7 +69,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Bridge
 		return new Scene300();
 	case 325:
-		error("Missing scene %d from group 0", sceneNumber);
+		// Bridge Console
+		return new Scene325();
 	case 400:
 		// Science Lab
 		return new Scene400();

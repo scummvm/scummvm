@@ -147,7 +147,10 @@ extern char const *const THE_NEXT_DAY;
 namespace Ringworld2 {
 
 // Scene 125 - Console messages
-extern char const *const CONSOLE_MESSAGES[];
+extern char const *const CONSOLE125_MESSAGES[];
+
+// Scene 325 - Console messages
+extern char const *const CONSOLE325_MESSAGES[];
 
 // Scene 825 - Autodoc Messages
 extern char const *const MAIN_MENU;
