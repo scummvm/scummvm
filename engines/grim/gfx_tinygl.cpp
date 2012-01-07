@@ -813,6 +813,8 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 }
 
 void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
 	material->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -844,6 +846,8 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 }
 
 void GfxTinyGL::selectMaterial(const Texture *material) {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 	tglPushMatrix();

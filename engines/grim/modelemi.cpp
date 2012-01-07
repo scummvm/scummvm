@@ -109,8 +109,6 @@ void EMIModel::setTex(int index) {
 void EMIMeshFace::render() {
 	if(_hasTexture) {
 		_parent->setTex(_texID);
-	} else {
-		//glDisable(GL_TEXTURE_2D);
 	}
 	//glDrawElements(GL_TRIANGLES, _faceLength * 3, GL_UNSIGNED_INT, _indexes);
 }
@@ -191,13 +189,12 @@ void EMIModel::prepare() {
 	prepareForRender();
 }
 
-// TODO, fix a better timing-solution than this.
 void EMIModel::draw() {
 	prepareForRender();
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for(uint32 i = 0; i < _numFaces; i++) {
-		//_faces[i].render();
+		_faces[i].render();
 		g_driver->drawEMIModelFace(this, &_faces[i]);
 	}
 }
