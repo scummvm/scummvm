@@ -56,8 +56,6 @@ namespace Video {
  *
  * Video decoder used in engines:
  *  - scumm (he)
- *
- * This class is overriden in Residual to provide seek support
  */
 class BinkDecoder : public FixedRateVideoDecoder {
 public:
@@ -66,7 +64,6 @@ public:
 
 	// VideoDecoder API
 	bool loadStream(Common::SeekableReadStream *stream);
-	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
 	void close();
 	bool isVideoLoaded() const { return _bink != 0; }
 	uint16 getWidth() const { return _surface.w; }
@@ -79,6 +76,8 @@ public:
 	// FixedRateVideoDecoder
 	Common::Rational getFrameRate() const { return _frameRate; }
 
+	// Bink specific
+	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
 protected:
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
@@ -259,13 +258,7 @@ protected:
 
 	/** Decode an audio packet. */
 	void audioPacket(AudioTrack &audio);
-
-	/**
-	 * Decode a video packet.
-	 *
-	 * This method is virtual because it is overriden in Residual
-	 * to export the alpha channel of the video
-	 */
+	/** Decode a video packet. */
 	virtual void videoPacket(VideoFrame &video);
 
 	/** Decode a plane. */
