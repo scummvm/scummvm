@@ -156,7 +156,8 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 		Common::Point mouse = _scene->getMousePos();
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
+			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
+					&& _vars->evaluate(nodeData->hotspots[j].condition)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -177,7 +178,8 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
+			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)
+					&& _vars->evaluate(nodeData->hotspots[j].condition)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -226,9 +228,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 
 			for (uint j = 0; j < hovered.size(); j++) {
-				if (_vars->evaluate(hovered[j]->condition)) {
-					_scriptEngine->run(&hovered[j]->script);
-				}
+				_scriptEngine->run(&hovered[j]->script);
 			}
 			
 		} else if (event.type == Common::EVENT_KEYDOWN) {
