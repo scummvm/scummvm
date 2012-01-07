@@ -847,8 +847,8 @@ bool ScummEngine_v0::verbObtain(int obj) {
 		}
 
 		// Ignore verbs?
-		Actor *a = derefActor(VAR(VAR_EGO), "verbObtain");
-		if (((ActorC64 *)a)->_miscflags & 0x40) {
+		ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "verbObtain");
+		if (a->_miscflags & kActorMiscFlagFreeze) {
 			resetSentence(false);
 			return false;
 		}
@@ -918,7 +918,7 @@ bool ScummEngine_v0::verbExec() {
 		if (verbMoveToActor(_activeObject2Nr)) {
 			// Ignore verbs?
 			Actor *a = derefActor(VAR(VAR_EGO), "verbExec");
-			if (((ActorC64 *)a)->_miscflags & 0x40) {
+			if (((ActorC64 *)a)->_miscflags & kActorMiscFlagFreeze) {
 				resetSentence(false);
 				return false;
 			}
@@ -1052,7 +1052,7 @@ void ScummEngine_v0::checkExecVerbs() {
 		}
 	}
 
-	if (a->_miscflags & 0x80) {
+	if (a->_miscflags & kActorMiscFlagHide) {
 		if (_activeVerb != kVerbNewKid) {
 			_activeVerb = kVerbNone;
 		}
@@ -1210,7 +1210,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 				if (zone->number == kMainVirtScreen) {
 					// Ignore verbs?
-					if (a->_miscflags & 0x40) {
+					if (a->_miscflags & kActorMiscFlagFreeze) {
 						resetSentence(false);
 						return;
 					}
