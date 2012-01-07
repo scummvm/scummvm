@@ -43,6 +43,14 @@ public:
 	};
 
 	/**
+	 * Sets the localized font name.
+	 *
+	 * @param name the name of the localized font.
+	 * @return true when the font was present, false otherwise.
+	 */
+	bool setLocalizedFont(const Common::String &name);
+
+	/**
 	 * Retrieve a font object based on its 'name'.
 	 *
 	 * @param name	the name of the font to be retrieved.
@@ -96,22 +104,13 @@ public:
 
 	//const Font *getFontBySize(int size???) const;
 
-protected:
-	/**
-	 * Get the name of the localized font for the given usage. There is no garanty that
-	 * the font exists. If the usage is kLocalizedFont it returns an empty string.
-	 *
-	 * @param usage	a FontUsage enum value indicating what the font will be used for.
-	 * @return the name of a localized font or an empty string if no suitable font was found.
-	 */
-	Common::String getLocalizedFontNameByUsage(FontUsage usage) const;
-
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
 	~FontManager();
 
 	Common::HashMap<Common::String, const Font *> _fontMap;
+	Common::String _localizedFontName;
 };
 
 

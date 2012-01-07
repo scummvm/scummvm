@@ -536,7 +536,7 @@ protected:
 	 */
 	void unloadTheme();
 
-	const Graphics::Font *loadFont(const Common::String &filename);
+	const Graphics::Font *loadFont(const Common::String &filename, const bool makeLocalizedFont);
 	Common::String genCacheFilename(const Common::String &filename) const;
 
 	/**

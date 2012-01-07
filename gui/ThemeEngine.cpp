@@ -571,14 +571,15 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
 		// Try localized fonts
-		_texts[textId]->_fontPtr = loadFont(localized);
+		_texts[textId]->_fontPtr = loadFont(localized, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
 			// Try standard fonts
-			_texts[textId]->_fontPtr = loadFont(file);
+			_texts[textId]->_fontPtr = loadFont(file, textId == kTextDataDefault);
 
 			if (!_texts[textId]->_fontPtr)
 				error("Couldn't load font '%s'", file.c_str());
+
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
 #endif
@@ -1385,7 +1386,7 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  * External data loading
  *********************************************************/
 
-const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const bool makeLocalizedFont) {
 	// Try already loaded fonts.
 	const Graphics::Font *font = FontMan.getFontByName(filename);
 	if (font)
@@ -1417,8 +1418,13 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	}
 
 	// If the font is successfully loaded store it in the font manager.
-	if (font)
+	if (font) {
 		FontMan.assignFontToName(filename, font);
+		// If this font should be the new default localized font, we set it up
+		// for that.
+		if (makeLocalizedFont)
+			FontMan.setLocalizedFont(filename);
+	}
 	return font;
 }
 
