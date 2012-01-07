@@ -51,12 +51,15 @@ void Archive::_readDirectory() {
 	Common::MemoryReadStream directory(buf.getData(), buf.size());
 	directory.skip(sizeof(uint32));
 	
-	while (directory.pos() < directory.size()) {
+	while (directory.pos() + 4 < directory.size()) {
 		DirectoryEntry entry(this);
-		entry.readFromStream(directory);
-		if (entry.hasSubEntries()) {
-			_directory.push_back(entry);
-		}
+		
+		if (_multipleRoom)
+			entry.readFromStream(directory, 0);
+		else
+			entry.readFromStream(directory, _roomName);
+		
+		_directory.push_back(entry);
 	}
 }
 
@@ -87,7 +90,14 @@ const DirectorySubEntry *Archive::getDescription(uint16 index, uint16 face, Dire
 	return 0;
 }
 
-bool Archive::open(const char *fileName) {
+bool Archive::open(const char *fileName, const char *room) {
+	// Copy the room name if provided
+	// If the room name is not provided, it is assumed that
+	// we are opening a multi-room archive
+	_multipleRoom = room == 0;
+	if (!_multipleRoom)
+		Common::strlcpy(_roomName, room, sizeof(_roomName));
+
 	if (_file.open(fileName)) {
 		_readDirectory();
 		return true;

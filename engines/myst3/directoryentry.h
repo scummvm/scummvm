@@ -31,6 +31,7 @@ namespace Myst3 {
 
 class DirectoryEntry {
 	private:
+		char _roomName[5];
 		uint16 _index;
 		uint8 _unk;
 		Common::Array<DirectorySubEntry> _subentries;
@@ -41,11 +42,10 @@ class DirectoryEntry {
 		DirectoryEntry() {}
 		DirectoryEntry(Archive *archive);
 
-		void readFromStream(Common::SeekableReadStream &inStream);
+		void readFromStream(Common::SeekableReadStream &inStream, const char *room);
 		void dump();
 		void dumpToFiles(Common::SeekableReadStream &inStream);
 		DirectorySubEntry *getItemDescription(uint16 face, DirectorySubEntry::ResourceType type);
-		bool hasSubEntries();
 		uint16 getIndex() { return _index; }
 };
 

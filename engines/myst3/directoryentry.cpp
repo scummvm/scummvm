@@ -27,9 +27,15 @@ namespace Myst3 {
 
 DirectoryEntry::DirectoryEntry(Archive *archive) :
 	_archive(archive) {
+	memset(_roomName, 0, sizeof(_roomName));
 }
 
-void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream) {
+void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream, const char *room) {
+	if (room == 0)
+		inStream.read(_roomName, 4);
+	else
+		Common::strlcpy(_roomName, room, sizeof(_roomName));
+
 	_index = inStream.readUint16LE();
 	_unk = inStream.readByte();
 	byte subItemCount = inStream.readByte();
@@ -53,10 +59,6 @@ void DirectoryEntry::dump() {
 	for (uint i = 0; i < _subentries.size(); i++) {
 		_subentries[i].dump();
 	}
-}
-
-bool DirectoryEntry::hasSubEntries() {
-	return !_subentries.empty();
 }
 
 void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {

@@ -32,6 +32,8 @@ namespace Myst3 {
 
 class Archive {
 	private:
+		bool _multipleRoom;
+		char _roomName[5];
 		Common::File _file;
 		Common::Array<DirectoryEntry> _directory;
 		
@@ -44,7 +46,7 @@ class Archive {
 		void dumpDirectory();
 		void dumpToFiles();
 		
-		bool open(const char *fileName);
+		bool open(const char *fileName, const char *room);
 		void close();
 };
 

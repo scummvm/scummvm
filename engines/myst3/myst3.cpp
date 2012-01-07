@@ -107,15 +107,15 @@ Common::Error Myst3Engine::run() {
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
 
-	if (!_archiveLANG->open("ENGLISH.m3t")) {
+	if (!_archiveLANG->open("ENGLISH.m3t", 0)) {
 		error("Unable to open archive ENGLISH.m3t");
 	}
 
-	if (!_archiveRSRC->open("RSRC.m3r")) {
+	if (!_archiveRSRC->open("RSRC.m3r", 0)) {
 		error("Unable to open archive RSRC.m3r");
 	}
 
-	if (!_archiveOVER->open("OVER101.m3o")) {
+	if (!_archiveOVER->open("OVER101.m3o", 0)) {
 		// OVER101 is not required
 		delete _archiveOVER;
 		_archiveOVER = 0;
@@ -331,7 +331,7 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName);
 
 		_archive->close();
-		if (!_archive->open(nodeFile.c_str())) {
+		if (!_archive->open(nodeFile.c_str(), newRoomName)) {
 			error("Unable to open archive %s", nodeFile.c_str());
 		}
 	}
