@@ -406,9 +406,9 @@ void ScummEngine_v0::decodeParseString() {
 	actorTalk(buffer);
 }
 
-void ScummEngine_v0::drawSentenceObject(int object, int type) {
+void ScummEngine_v0::drawSentenceObject(int object) {
 	const byte *temp;
-	temp = getObjOrActorName(OBJECT_V0(object, type));
+	temp = getObjOrActorName(object);
 	if (temp) {
 		_sentenceBuf += " ";
 		_sentenceBuf += (const char *)temp;
@@ -432,7 +432,7 @@ void ScummEngine_v0::drawSentence() {
 
 	if (_activeObjectNr) {
 		// Draw the 1st active object
-		drawSentenceObject(_activeObjectNr, _activeObjectType);
+		drawSentenceObject(OBJECT_V0(_activeObjectNr, _activeObjectType));
 
 		// Append verb preposition
 		int sentencePrep = activeVerbPrep();
@@ -448,7 +448,7 @@ void ScummEngine_v0::drawSentence() {
 					_sentenceBuf += (const char *)a->getActorName();
 				// 2nd Object is an inventory or room object
 				} else {
-					drawSentenceObject(_activeObject2Nr, _activeObject2Type);
+					drawSentenceObject(OBJECT_V0(_activeObject2Nr, _activeObject2Type));
 				}
 			}
 		}

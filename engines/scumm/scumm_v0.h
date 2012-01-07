@@ -89,10 +89,9 @@ protected:
 	// V0 MM Verb commands
 	int getVerbPrepId();
 	int activeVerbPrep();
-	bool verbMove(int object, bool invObject);
+	bool verbMove(int object);
 	bool verbMoveToActor(int actor);
 	bool verbObtain(int object);
-	bool verbExecutes(int object, bool inventory = false);
 	bool verbExec();
 
 	virtual void checkExecVerbs();
@@ -101,7 +100,7 @@ protected:
 	void resetVerbs();
 	void setNewKidVerbs();
 
-	void drawSentenceObject(int object, int type);
+	void drawSentenceObject(int object);
 	void drawSentence();
 
 	void switchActor(int slot);
