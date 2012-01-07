@@ -161,7 +161,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	static const uint8 rusFanSkip_k1GUIStrings[] = { 1, 3, 6, 8, 11, 13, 18 };
 	uint32 rusFanSkipIdLen = 0;
 	const uint8 *rusFanSkipId = 0;
-	int rusFanEmptyId = 10000;
+	uint rusFanEmptyId = 10000;
 	uint32 skipCount = 0;
 
 	int patch = 0;

@@ -666,7 +666,7 @@ enum kGame {
 	kKyra3,
 	kLoL,
 	kEoB1,
-	kEoB2,
+	kEoB2
 };
 
 struct Game {
