@@ -99,7 +99,7 @@ protected:
 
 	void drawPreposition(int index);
 
-	virtual void setActiveInventory(int object);
+	void walkActorToObject(int actor, int obj);
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();

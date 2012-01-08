@@ -54,8 +54,6 @@ protected:
 
 protected:
 	byte _currentMode;
-	bool _verbExecuting;			// is a verb executing
-	bool _verbPickup;				// are we picking up an object during a verb execute
 
 	int _activeVerb;
 	int _activeObjectNr;			// 1st Object Number
@@ -63,8 +61,14 @@ protected:
 	int _activeObject2Nr;			// 2nd Object Number
 	int _activeObject2Type;			// 2nd Object Type (0: inventory (or room), 1: room, 2: actor)
 
-	bool _activeObjectObtained;		// collected _activeobject?
-	bool _activeObject2Obtained;	// collected _activeObject2?
+	int _cmdVerb;
+	int _cmdObjectNr;
+	int _cmdObjectType;
+	int _cmdObject2Nr;
+	int _cmdObject2Type;
+
+	int _walkToObject;
+	int _walkToObjectIdx;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -83,17 +87,16 @@ protected:
 
 	virtual void processInput();
 
-	virtual void runObject(int obj, int entry);
 	virtual void saveOrLoad(Serializer *s);
 
 	// V0 MM Verb commands
 	int getVerbPrepId();
 	int activeVerbPrep();
-	bool verbMove(int object);
-	bool verbMoveToActor(int actor);
-	bool verbObtain(int object);
-	bool verbExec();
+	void walkToActorOrObject(int object);
+	void verbExec();
 
+	virtual void runSentenceScript();
+	virtual void checkAndRunSentenceScript();
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
@@ -138,6 +141,7 @@ protected:
 	void o_unlockScript();
 	void o_decrement();
 	void o_nop();
+	void o_getObjectOwner();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
 	void o_getBitVar();
