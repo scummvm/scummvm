@@ -275,7 +275,9 @@ void Scene::load(ResourcePackId packId) {
 
 	_polygons = new Polygons(fd);
 
-	getScript()->load(fd);
+	ScriptManager *script = getScript();
+	script->resetAll();
+	script->load(fd);
 
 	fd->close();
 	delete fd;
