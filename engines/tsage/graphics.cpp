@@ -1302,19 +1302,31 @@ int GfxManager::getAngle(const Common::Point &p1, const Common::Point &p2) {
 	}
 }
 
+// FIXME: The two checks for screenSurface inside these two copyFrom() methods
+// are meant for Ringworld 2, but the corresponding setBounds case causes a lot
+// of issues with the popup menus when right clicking in all games (i.e. the
+// popup menu is always shown on the top left of the screen). For now, these checks
+// are limited for R2R only (as was the original intent), but they should be
+// investigated, as they cause the same glitches with the popup menu there as with
+// the other games.
 
 void GfxManager::copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion) {
+#if 0
 	if (&_surface == &(GLOBALS._screenSurface))
 		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
 	else
+#endif
 		_surface.setBounds(_bounds);
 
 	_surface.copyFrom(src, destBounds, priorityRegion);
 }
+
 void GfxManager::copyFrom(GfxSurface &src, int destX, int destY) {
+#if 0
 	if (&_surface == &(GLOBALS._screenSurface))
 		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
 	else
+#endif
 		_surface.setBounds(_bounds);
 
 	_surface.copyFrom(src, destX, destY);
