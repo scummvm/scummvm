@@ -1219,20 +1219,23 @@ void ScummEngine_v2::o2_panCameraTo() {
 	panCameraTo(getVarOrDirectByte(PARAM_1) * V12_X_MULTIPLIER, 0);
 }
 
+void ScummEngine_v2::walkActorToObject(int actor, int obj) {
+	int x, y, dir;
+	getObjectXYPos(obj, x, y, dir);
+
+	Actor *a = derefActor(actor, "walkActorToObject");
+	AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+	x = r.x;
+	y = r.y;
+
+	a->startWalkActor(x, y, dir);
+}
+
 void ScummEngine_v2::o2_walkActorToObject() {
-	int obj;
-	Actor *a;
-
-	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorToObject");
-	obj = getVarOrDirectWord(PARAM_2);
+	int actor = getVarOrDirectByte(PARAM_1);
+	int obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		int x, y, dir;
-		getObjectXYPos(obj, x, y, dir);
-		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
-		x = r.x;
-		y = r.y;
-
-		a->startWalkActor(x, y, dir);
+		walkActorToObject(actor, obj);
 	}
 }
 

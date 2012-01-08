@@ -177,7 +177,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x70, o_lights);
 	OPCODE(0x71, o_getBitVar);
 	OPCODE(0x72, o_nop);
-	OPCODE(0x73, o5_getObjectOwner);
+	OPCODE(0x73, o_getObjectOwner);
 	/* 74 */
 	OPCODE(0x74, o5_getDist);
 	OPCODE(0x75, o_printEgo_c64);
@@ -337,7 +337,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0xf0, o_lights);
 	OPCODE(0xf1, o_getBitVar);
 	OPCODE(0xf2, o_nop);
-	OPCODE(0xf3, o5_getObjectOwner);
+	OPCODE(0xf3, o_getObjectOwner);
 	/* F4 */
 	OPCODE(0xf4, o5_getDist);
 	OPCODE(0xf5, o_stopCurrentScript);
@@ -365,7 +365,7 @@ uint ScummEngine_v0::fetchScriptWord() {
 
 int ScummEngine_v0::getActiveObject() {
 	if (_opcode & PARAM_2)
-		return _activeObjectNr;
+		return _cmdObjectNr;
 
 	return fetchScriptByte();
 }
@@ -693,7 +693,7 @@ void ScummEngine_v0::o_putActorAtObject() {
 
 void ScummEngine_v0::o_pickupObject() {
 	int objNr = fetchScriptByte();
-	int obj = OBJECT_V0((objNr ? objNr : _activeObjectNr), 0);
+	int obj = OBJECT_V0((objNr ? objNr : _cmdObjectNr), 0);
 
 	/* Don't take an object twice */
 	if (whereIsObject(obj) == WIO_INVENTORY)
@@ -742,6 +742,12 @@ void ScummEngine_v0::o_setActorBitVar() {
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }
 
+void ScummEngine_v0::o_getObjectOwner() {
+	getResultPos();
+	int obj = getVarOrDirectWord(PARAM_1);
+	setResult(getOwner(obj ? obj : _cmdObjectNr));
+}
+
 void ScummEngine_v0::o_getActorBitVar() {
 	getResultPos();
 	byte act = getVarOrDirectByte(PARAM_1);
@@ -787,17 +793,35 @@ void ScummEngine_v0::o_printEgo_c64() {
 }
 
 void ScummEngine_v0::o_doSentence() {
-	byte entry = fetchScriptByte();
-	byte obj = fetchScriptByte();
-	fetchScriptByte();
+	byte verb = fetchScriptByte();
+	int obj, obj2;
+	byte b;
 
-	runObjectScript(obj, entry, false, false, NULL);
+	b = fetchScriptByte();
+	if (b == 0xFF) {
+		obj = OBJECT_V0(_cmdObject2Nr, _cmdObject2Type);
+	} else if (b == 0xFE) {
+		obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
+	} else {
+		obj = OBJECT_V0(b, (_opcode & 0x80) ? 1 : 0);
+	}
+
+	b = fetchScriptByte();
+	if (b == 0xFF) {
+		obj2 = OBJECT_V0(_cmdObject2Nr, _cmdObject2Type);
+	} else if (b == 0xFE) {
+		obj2 = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
+	} else {
+		obj2 = OBJECT_V0(b, (_opcode & 0x40) ? 1 : 0);
+	}
+
+	doSentence(verb, obj, obj2);
 }
 
-bool ScummEngine_v0::ifEqualActiveObject2Common(bool inventoryObject) {
+bool ScummEngine_v0::ifEqualActiveObject2Common(bool ignoreType) {
 	byte obj = fetchScriptByte();
-	if (!inventoryObject || (_activeObject2Type == kObjectTypeFG))
-		return (obj == _activeObject2Nr);
+	if (!ignoreType || (_cmdObject2Type == kObjectTypeFG))
+		return (obj == _cmdObject2Nr);
 	return false;
 }
 
@@ -894,7 +918,7 @@ void ScummEngine_v0::o_setOwnerOf() {
 	owner = getVarOrDirectByte(PARAM_2);
 
 	if (obj == 0)
-		obj = _activeObjectNr;
+		obj = _cmdObjectNr;
 
 	// FIXME: the original interpreter seems to set the owner of 
 	// an item to remove (new owner 0) to 13 (purple tentacle).
@@ -909,21 +933,11 @@ void ScummEngine_v0::o_setOwnerOf() {
 
 void ScummEngine_v0::resetSentence(bool walking) {
 	_activeVerb = kVerbWalkTo;
-
-	// If the actor is walking, or the screen is a keypad (no sentence verbs/objects are drawn)
-	// Then reset all active objects (stops the radio crash, bug #3077966)
-	if (!walking || !(_userState & 32)) {
-		_activeObjectNr = 0;
-		_activeObjectType = kObjectTypeBG;
-		_activeObject2Nr = 0;
-		_activeObject2Type = kObjectTypeBG;
-	}
-
-	_verbExecuting = false;
-	_verbPickup = false;
-
-	_activeObjectObtained = false;
-	_activeObject2Obtained = false;
+	_activeObjectNr = 0;
+	_activeObjectType = kObjectTypeBG;
+	_activeObject2Nr = 0;
+	_activeObject2Type = kObjectTypeBG;
+	_walkToObjectIdx = 0;
 }
 
 } // End of namespace Scumm

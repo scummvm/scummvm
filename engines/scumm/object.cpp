@@ -434,8 +434,15 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else if (_game.version <= 2) {
-		x = od.walk_x >> V12_X_SHIFT;
-		y = od.walk_y >> V12_Y_SHIFT;
+		if (od.actordir) {
+			x = od.walk_x;
+			y = od.walk_y;
+		} else {
+			x = od.x_pos + od.width/2;
+			y = od.y_pos + od.height/2;
+		}
+		x = x >> V12_X_SHIFT;
+		y = y >> V12_Y_SHIFT;
 	} else {
 		x = od.walk_x;
 		y = od.walk_y;

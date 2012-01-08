@@ -712,17 +712,19 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
-	_verbExecuting = false;
-	_verbPickup = false;
 	_currentMode = 0;
 
 	_activeVerb = kVerbNone;
 	_activeObjectNr = 0;
+	_activeObjectType = 0;
 	_activeObject2Nr = 0;
-	_activeObjectType = kObjectTypeBG;
-	_activeObject2Type = kObjectTypeBG;
-	_activeObjectObtained = false;
-	_activeObject2Obtained = false;
+	_activeObject2Type = 0;
+
+	_cmdVerb = kVerbNone;
+	_cmdObjectNr = 0;
+	_cmdObjectType = 0;
+	_cmdObject2Nr = 0;
+	_cmdObject2Type = 0;
 
 	VAR_ACTIVE_ACTOR = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
