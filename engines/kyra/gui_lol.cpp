@@ -35,6 +35,8 @@
 
 #include "graphics/scaler.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "base/version.h"
 
 namespace Kyra {
@@ -2549,6 +2551,11 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->pushKeymap(Common::kGlobalKeymapName);
+#endif
+
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
 	_vm->_mouseY = p.y;
@@ -2585,6 +2592,11 @@ int GUI_LoL::getInput() {
 		_displayMenu = false;
 
 	_vm->delay(8);
+
+#ifdef ENABLE_KEYMAPPER
+	keymapper->popKeymap(Common::kGlobalKeymapName);
+#endif
+
 	return inputFlag & 0x8000 ? 1 : 0;
 }
 
