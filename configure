@@ -1711,9 +1711,7 @@ EOF
 pointer_is_32bit() {
         cat > tmp_pointer_is_32bit.cpp << EOF
 int main() {
-        void *p;
-        int v = (int)p;
-        return 0;
+        static int test_array[1 - 2 * !(sizeof(void *) == 4)];
 }
 EOF
         $CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
