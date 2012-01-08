@@ -137,6 +137,11 @@ public:
 	bool process();
 
 	/**
+	 * Fully resets script manager state (used while changing scenes)
+	 */
+	void resetAll();
+
+	/**
 	 * Resets the queue and local variables
 	 */
 	void reset(uint32 count = 0);
