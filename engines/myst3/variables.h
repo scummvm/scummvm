@@ -72,6 +72,10 @@ public:
 	DECLARE_VAR(168, MovieOverridePosV)
 	DECLARE_VAR(173, MoviePlayingVar)
 
+	DECLARE_VAR(189, LocationNextNode)
+	DECLARE_VAR(190, LocationNextRoom)
+	DECLARE_VAR(191, LocationNextAge)
+
 private:
 	Myst3Engine *_vm;
 

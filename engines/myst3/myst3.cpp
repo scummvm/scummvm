@@ -129,7 +129,9 @@ Common::Error Myst3Engine::run() {
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
-	goToNode(3, 501); // LEIS
+	_vars->setLocationNextRoom(501); // LEIS
+	_vars->setLocationNextNode(3);
+	goToNode(0, 1);
 	
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
@@ -195,7 +197,7 @@ void Myst3Engine::updateCursor() {
 	uint16 hoveredInventory = _inventory->hoveredItem();
 
 	if (hovered.size() > 0) {
-		HotSpot *h = hovered.back();
+		HotSpot *h = hovered.front();
 		_cursor->changeCursor(h->cursor);
 	} else if (hoveredInventory > 0) {
 		_cursor->changeCursor(1);
@@ -233,8 +235,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
 			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 
-			for (uint j = 0; j < hovered.size(); j++) {
-				_scriptEngine->run(&hovered[j]->script);
+			if (hovered.size() > 0) {
+				_scriptEngine->run(&hovered.front()->script);
 			}
 			
 		} else if (event.type == Common::EVENT_KEYDOWN) {
@@ -293,7 +295,7 @@ void Myst3Engine::drawFrame() {
 	_frameCount++;
 }
 
-void Myst3Engine::goToNode(uint16 nodeID, uint32 roomID) {
+void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 	if (_node) {
 		for (uint i = 0; i < _movies.size(); i++) {
 			delete _movies[i];
@@ -304,7 +306,18 @@ void Myst3Engine::goToNode(uint16 nodeID, uint32 roomID) {
 		_node = 0;
 	}
 
-	loadNode(nodeID, roomID);
+	uint16 node = _vars->getLocationNextNode();
+	if (node == 0)
+		node = nodeID;
+
+	uint16 room = _vars->getLocationNextRoom();
+	uint16 age = _vars->getLocationNextAge();
+
+	loadNode(node, room, age);
+
+	_vars->setLocationNextNode(0);
+	_vars->setLocationNextRoom(0);
+	_vars->setLocationNextAge(0);
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {

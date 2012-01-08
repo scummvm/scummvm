@@ -85,7 +85,7 @@ public:
 	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
 	Graphics::Surface *loadTexture(uint16 id);
 
-	void goToNode(uint16 nodeID, uint32 roomID = 0);
+	void goToNode(uint16 nodeID, uint transition);
 	void loadNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);

@@ -71,6 +71,9 @@ Variables::Variables(Myst3Engine *vm):
 
 	VAR(178, MovieUnk178, true)
 
+	VAR(189, LocationNextNode, false)
+	VAR(190, LocationNextRoom, false)
+	VAR(191, LocationNextAge, false)
 
 #undef VAR
 

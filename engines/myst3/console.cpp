@@ -213,7 +213,10 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->goToNode(nodeId, roomID);
+	_vm->_vars->setLocationNextRoom(roomID);
+	_vm->_vars->setLocationNextNode(nodeId);
+
+	_vm->goToNode(0, 1);
 
 	return false;
 }

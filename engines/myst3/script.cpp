@@ -1267,25 +1267,31 @@ void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 void Script::goToNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
-	_vm->goToNode(cmd.args[0]);
+	_vm->goToNode(cmd.args[0], 1);
 }
 
 void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	_vm->goToNode(cmd.args[1], cmd.args[0]);
+	_vm->_vars->setLocationNextRoom(cmd.args[0]);
+	_vm->_vars->setLocationNextNode(cmd.args[1]);
+
+	_vm->goToNode(0, 1);
 }
 
 void Script::zipToNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Zip to node %d", cmd.op, cmd.args[0]);
 
-	_vm->goToNode(cmd.args[0]);
+	_vm->goToNode(cmd.args[0], 3);
 }
 
 void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Zip to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	_vm->goToNode(cmd.args[1], cmd.args[0]);
+	_vm->_vars->setLocationNextRoom(cmd.args[0]);
+	_vm->_vars->setLocationNextNode(cmd.args[1]);
+
+	_vm->goToNode(0, 3);
 }
 
 void Script::moviePlay(Context &c, const Opcode &cmd) {
