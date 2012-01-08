@@ -45,7 +45,7 @@ void spfrac(int wor) {
 void charg_car() {
 	int wor, int_;
 
-	wor = swap(memw[adword + ptr_word]);
+	wor = swap(READ_LE_UINT16(&mem[adword + ptr_word]));
 	int_ = wor & 0x3f;
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -113,7 +113,7 @@ void veracf(byte b) {
 	i = offsetb3 + 8590;
 	j = 0;
 	do {
-		t_cph[j] = memw[adbruit3 + i];
+		t_cph[j] = READ_LE_UINT16(&mem[adbruit3 + i]);
 		i = i + 2;
 		j = j + 1;
 	} while (!(i >= offsetb3 + 8790));

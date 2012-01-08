@@ -351,7 +351,6 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 
 int port[0xfff];
 byte mem[65536 * 16];
-int memw[0xffff];
 int wherey;
 
 void gotoxy(int x, int y) {

@@ -406,7 +406,6 @@ void affput(const Common::Point &pt, int palIndex, int ch);
 
 extern int port[0xfff];
 extern byte mem[65536 * 16];
-extern int memw[0xffff];
 
 #define hires {}
 #define mortevielle_exit(ret) error("Exit the game")

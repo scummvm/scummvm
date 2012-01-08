@@ -83,9 +83,9 @@ int mortevielle_main(int argc, const char *argv[]) {
 	c_zzz = 1;
 	init_nbrepm();
 	init_mouse();
-	/*  crep:=memw[$7f00:0];
-	  memw[$7f00:0]:= crep+1;
-	  if (memw[$7f00:0]<> crep+1) then
+	/*  crep:=WRITE_LE_UINT16(&mem[$7f00:0];
+	  WRITE_LE_UINT16(&mem[$7f00:0]:= crep+1;
+	  if (WRITE_LE_UINT16(&mem[$7f00:0]<> crep+1) then
 	     begin
 	       hirs;
 	       show_mouse;

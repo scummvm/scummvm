@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/endian.h"
 #include "common/rect.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
@@ -57,7 +58,7 @@ void init_mouse() {
 	/*int_m:= False;*/
 	clic = false;
 	m_show = m_arrow;
-	if ((memw[0xcc] == 0) && (memw[0xce] == 0))  int_m = false;
+	if ((READ_LE_UINT16(&mem[0xcc]) == 0) && (READ_LE_UINT16(&mem[0xce]) == 0))  int_m = false;
 	if (int_m) {
 		reg.ax = 0;
 		intr(0x33, reg);
@@ -101,10 +102,10 @@ void hide_mouse() {
 			k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
-				memw[0xb000 + j] = s_s[0][k];
-				memw[0xb800 + j + 2] = s_s[1][k];
-				memw[0xba00 + j] = s_s[2][k];
-				memw[0xba00 + j + 2] = s_s[3][k];
+				WRITE_LE_UINT16(&mem[0xb000 + j], s_s[0][k]);
+				WRITE_LE_UINT16(&mem[0xb800 + j + 2], s_s[1][k]);
+				WRITE_LE_UINT16(&mem[0xba00 + j], s_s[2][k]);
+				WRITE_LE_UINT16(&mem[0xba00 + j + 2], s_s[3][k]);
 				j = j + 80;
 				k = succ(int, k);
 			} while (!(k >= 5));
@@ -117,10 +118,10 @@ void hide_mouse() {
 				j = p_o_s;
 				do {
 					if (imp) {
-						memw[0xb800 + j] = s_s[i][k];
+						WRITE_LE_UINT16(&mem[0xb800 + j], s_s[i][k]);
 						j = j + 80 - 0x2000;
 					} else {
-						memw[0xb800 + j] = s_s[i][k];
+						WRITE_LE_UINT16(&mem[0xb800 + j], s_s[i][k]);
 						j = j + 0x2000;
 					}
 					imp = ! imp;
@@ -153,7 +154,8 @@ void hide_mouse() {
 		case her : {
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 			for (i = 0; i <= 5; i ++) {
-				for (k = 0; k <= 3; k ++) memw[0xb000 + k * 0x200 + j] = s_s[i][k];
+				for (k = 0; k <= 3; k ++) 
+					WRITE_LE_UINT16(&mem[0xb000 + k * 0x200 + j], s_s[i][k]);
 				j = j + 80;
 			}
 		}
@@ -163,8 +165,8 @@ void hide_mouse() {
 			k = 0;
 			do {
 				for (i = 0; i <= 3; i ++) {
-					memw[0xb800 + 0x200 * i + j] = s_s[k][i + (k << 2)];
-					memw[0xb800 + 0x200 * i + j + 2] = s_s[k + 3][i + (k << 2)];
+					WRITE_LE_UINT16(&mem[0xb800 + 0x200 * i + j], s_s[k][i + (k << 2)]);
+					WRITE_LE_UINT16(&mem[0xb800 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j = j + 160;
 				k = succ(int, k);
@@ -190,10 +192,10 @@ void show_mouse() {
 		k = 0;
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 		do {
-			s_s[0][k] = memw[0xb800 + j];
-			s_s[1][k] = memw[0xb800 + j + 2];
-			s_s[2][k] = memw[0xba00 + j];
-			s_s[3][k] = memw[0xba00 + j + 2];
+			s_s[0][k] = READ_LE_UINT16(&mem[0xb800 + j]);
+			s_s[1][k] = READ_LE_UINT16(&mem[0xb800 + j + 2]);
+			s_s[2][k] = READ_LE_UINT16(&mem[0xba00 + j]);
+			s_s[3][k] = READ_LE_UINT16(&mem[0xba00 + j + 2]);
 			j = j + 80;
 			k = succ(int, k);
 		} while (!(k >= 5));
@@ -207,10 +209,10 @@ void show_mouse() {
 			k = 0;
 			do {
 				if (imp) {
-					s_s[i][k] = memw[0xb800 + j];
+					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 + j]);
 					j = j + 80 - 0x2000;
 				} else {
-					s_s[i][k] = memw[0xb800 + j];
+					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 + j]);
 					j = j + 0x2000;
 				}
 				imp = ! imp;
@@ -238,7 +240,8 @@ void show_mouse() {
 	case her : {
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 		for (i = 0; i <= 5; i ++) {
-			for (k = 0; k <= 3; k ++) s_s[i][k] = memw[0xb000 + k * 0x200 + j];
+			for (k = 0; k <= 3; k ++)
+				s_s[i][k] = READ_LE_UINT16(&mem[0xb000 + k * 0x200 + j]);
 			j = j + 80;
 		}
 	}
@@ -248,8 +251,8 @@ void show_mouse() {
 		k = 0;
 		do {
 			for (i = 0; i <= 3; i ++) {
-				s_s[k][i + (k << 2)] = memw[0xb800 + 0x200 * i + j];
-				s_s[k + 3][i + (k << 2)] = memw[0xb800 + 0x200 * i + j + 2];
+				s_s[k][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 + 0x200 * i + j]);
+				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 + 0x200 * i + j + 2]);
 			}
 			j = j + 160;
 			k = succ(int, k);

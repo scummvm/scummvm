@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/endian.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/parole.h"
@@ -62,7 +63,7 @@ void trait_ph() {
 	ptr_tcph = (uint)ledeb >> 1;
 	ptr_word = 0;
 	do {
-		memw[adword + ptr_word] = t_cph[ptr_tcph];
+		WRITE_LE_UINT16(&mem[adword + ptr_word], t_cph[ptr_tcph]);
 		ptr_word = ptr_word + 2;
 		ptr_tcph = ptr_tcph + 1;
 	} while (!(ptr_tcph >= (int)((uint)lefin >> 1)));
