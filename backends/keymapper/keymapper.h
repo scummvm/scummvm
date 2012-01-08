@@ -131,8 +131,11 @@ public:
 
 	/**
 	 * Pop the top keymap off the active stack.
+	 * @param name	(optional) name of keymap expected to be popped
+	 * 				if provided, will not pop unless name is the same
+	 * 				as the top keymap
 	 */
-	void popKeymap();
+	void popKeymap(const char *name = 0);
 
 	// Implementation of the EventMapper interface
 	bool notifyEvent(const Common::Event &ev);

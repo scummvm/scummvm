@@ -132,15 +132,7 @@ void GuiManager::pushKeymap() {
 }
 
 void GuiManager::popKeymap() {
-	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
-	if (!keymapper->getActiveStack().empty()) {
-		Common::Keymapper::MapRecord topKeymap = keymapper->getActiveStack().top();
-		// TODO: Don't use the keymap name as a way to discriminate GUI maps
-		if(topKeymap.keymap->getName().equals(Common::kGuiKeymapName))
-			keymapper->popKeymap();
-		else
-			warning("An attempt to pop non-gui keymap %s was blocked", topKeymap.keymap->getName().c_str());
-	}
+	_system->getEventManager()->getKeymapper()->popKeymap(Common::kGuiKeymapName);
 }
 #endif
 

@@ -163,9 +163,19 @@ void Keymapper::pushKeymap(Keymap *newMap, bool transparent, bool global) {
 	_activeMaps.push(mr);
 }
 
-void Keymapper::popKeymap() {
-	if (!_activeMaps.empty())
-		_activeMaps.pop();
+void Keymapper::popKeymap(const char *name) {
+	if (!_activeMaps.empty()) {
+		if (name) {
+			String topKeymapName = _activeMaps.top().keymap->getName();
+			if (topKeymapName.equals(name))
+				_activeMaps.pop();
+			else
+				warning("An attempt to pop wrong keymap was blocked (expected %s but was %s)", name, topKeymapName.c_str());
+		} else {
+			_activeMaps.pop();
+		}
+	}
+
 }
 
 bool Keymapper::notifyEvent(const Common::Event &ev) {
