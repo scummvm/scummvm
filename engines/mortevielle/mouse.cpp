@@ -102,10 +102,10 @@ void hide_mouse() {
 			k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
-				WRITE_LE_UINT16(&mem[0xb000 + j], s_s[0][k]);
-				WRITE_LE_UINT16(&mem[0xb800 + j + 2], s_s[1][k]);
-				WRITE_LE_UINT16(&mem[0xba00 + j], s_s[2][k]);
-				WRITE_LE_UINT16(&mem[0xba00 + j + 2], s_s[3][k]);
+				WRITE_LE_UINT16(&mem[0xb000 * 16 + j], s_s[0][k]);
+				WRITE_LE_UINT16(&mem[0xb800 * 16 + j + 2], s_s[1][k]);
+				WRITE_LE_UINT16(&mem[0xba00 * 16 + j], s_s[2][k]);
+				WRITE_LE_UINT16(&mem[0xba00 * 16 + j + 2], s_s[3][k]);
 				j = j + 80;
 				k = succ(int, k);
 			} while (!(k >= 5));
@@ -118,10 +118,10 @@ void hide_mouse() {
 				j = p_o_s;
 				do {
 					if (imp) {
-						WRITE_LE_UINT16(&mem[0xb800 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&mem[0xb800 * 16 + j], s_s[i][k]);
 						j = j + 80 - 0x2000;
 					} else {
-						WRITE_LE_UINT16(&mem[0xb800 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&mem[0xb800 * 16 + j], s_s[i][k]);
 						j = j + 0x2000;
 					}
 					imp = ! imp;
@@ -155,7 +155,7 @@ void hide_mouse() {
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 			for (i = 0; i <= 5; i ++) {
 				for (k = 0; k <= 3; k ++) 
-					WRITE_LE_UINT16(&mem[0xb000 + k * 0x200 + j], s_s[i][k]);
+					WRITE_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j = j + 80;
 			}
 		}
@@ -165,8 +165,8 @@ void hide_mouse() {
 			k = 0;
 			do {
 				for (i = 0; i <= 3; i ++) {
-					WRITE_LE_UINT16(&mem[0xb800 + 0x200 * i + j], s_s[k][i + (k << 2)]);
-					WRITE_LE_UINT16(&mem[0xb800 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
+					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
+					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j = j + 160;
 				k = succ(int, k);
@@ -192,10 +192,10 @@ void show_mouse() {
 		k = 0;
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 		do {
-			s_s[0][k] = READ_LE_UINT16(&mem[0xb800 + j]);
-			s_s[1][k] = READ_LE_UINT16(&mem[0xb800 + j + 2]);
-			s_s[2][k] = READ_LE_UINT16(&mem[0xba00 + j]);
-			s_s[3][k] = READ_LE_UINT16(&mem[0xba00 + j + 2]);
+			s_s[0][k] = READ_LE_UINT16(&mem[0xb800 * 16 + j]);
+			s_s[1][k] = READ_LE_UINT16(&mem[0xb800 * 16 + j + 2]);
+			s_s[2][k] = READ_LE_UINT16(&mem[0xba00 * 16 + j]);
+			s_s[3][k] = READ_LE_UINT16(&mem[0xba00 * 16 + j + 2]);
 			j = j + 80;
 			k = succ(int, k);
 		} while (!(k >= 5));
@@ -209,10 +209,10 @@ void show_mouse() {
 			k = 0;
 			do {
 				if (imp) {
-					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 + j]);
+					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 * 16 + j]);
 					j = j + 80 - 0x2000;
 				} else {
-					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 + j]);
+					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 * 16 + j]);
 					j = j + 0x2000;
 				}
 				imp = ! imp;
@@ -229,7 +229,7 @@ void show_mouse() {
 			k = 0;
 			j = p_o_s;
 			do {
-				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[0xa000 + succ(int, j)] << 8);
+				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[0xa000 * 16 + succ(int, j)] << 8);
 				j = j + 80;
 				k = succ(int, k);
 			} while (!(k >= 8));
@@ -241,7 +241,7 @@ void show_mouse() {
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 		for (i = 0; i <= 5; i ++) {
 			for (k = 0; k <= 3; k ++)
-				s_s[i][k] = READ_LE_UINT16(&mem[0xb000 + k * 0x200 + j]);
+				s_s[i][k] = READ_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j]);
 			j = j + 80;
 		}
 	}
@@ -251,8 +251,8 @@ void show_mouse() {
 		k = 0;
 		do {
 			for (i = 0; i <= 3; i ++) {
-				s_s[k][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 + 0x200 * i + j]);
-				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 + 0x200 * i + j + 2]);
+				s_s[k][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j]);
+				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2]);
 			}
 			j = j + 160;
 			k = succ(int, k);

@@ -63,7 +63,7 @@ void chardes(Common::String nom, float passe, int long_) {
 	}
 	f.close();
 
-	for (i = p; i <= long_ + p; i ++) mem[0x7000 * 16 + i - p] = mem[0x6000 + i];
+	for (i = p; i <= long_ + p; i ++) mem[0x7000 * 16 + i - p] = mem[0x6000 * 16 + i];
 	/*$i+*/
 }
 
@@ -96,7 +96,7 @@ void charani(Common::String nom, float passe, int long_) {
 	}
 	f.close();
 
-	for (i = p; i <= long_ + p; i ++) mem[0x7314 * 16 + i - p] = mem[0x6000 + i];
+	for (i = p; i <= long_ + p; i ++) mem[0x7314 * 16 + i - p] = mem[0x6000 * 16 + i];
 }
 
 void taffich() {
@@ -182,7 +182,7 @@ void taffich() {
 	chardes(nom, lgt, handle);
 	if (gd == her) {
 		for (i = 0; i <= 15; i ++) {
-			palh = READ_LE_UINT16(&mem[0x7000 + (succ(int, i) << 1)]);
+			palh = READ_LE_UINT16(&mem[0x7000 * 16 + (succ(int, i) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (i = 0; i <= 15; i ++) {
