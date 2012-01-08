@@ -109,6 +109,8 @@ public:
 
 	virtual int getCharWidth(byte chr) const;
 
+	virtual int getKerningOffset(byte left, byte right) const;
+
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 private:
 	bool _initialized;
@@ -126,16 +128,19 @@ private:
 		int advance;
 	};
 
-	bool cacheGlyph(Glyph &glyph, byte chr);
+	bool cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr);
 	typedef Common::HashMap<byte, Glyph> GlyphCache;
 	GlyphCache _glyphs;
 
+	FT_UInt _glyphSlots[256];
+
 	bool _monochrome;
+	bool _hasKerning;
 };
 
 TTFFont::TTFFont()
     : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _monochrome(false) {
+      _descent(0), _glyphs(), _glyphSlots(), _monochrome(false), _hasKerning(false) {
 }
 
 TTFFont::~TTFFont() {
@@ -187,6 +192,9 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome
 		return false;
 	}
 
+	// Check whether we have kerning support
+	_hasKerning = (FT_HAS_KERNING(_face) != 0);
+
 	if (FT_Set_Char_Size(_face, 0, size * 64, 0, 0)) {
 		delete[] _ttfFile;
 		_ttfFile = 0;
@@ -204,8 +212,10 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome
 	_height = _ascent - _descent + 1;
 
 	// Load all ISO-8859-1 characters.
-	for (uint i = 0; i < 256; ++i)
-		cacheGlyph(_glyphs[i], i);
+	for (uint i = 0; i < 256; ++i) {
+		if (!cacheGlyph(_glyphs[i], _glyphSlots[i], i))
+			_glyphSlots[i] = 0;
+	}
 
 	_initialized = (_glyphs.size() != 0);
 	return _initialized;
@@ -225,6 +235,21 @@ int TTFFont::getCharWidth(byte chr) const {
 		return 0;
 	else
 		return glyphEntry->_value.advance;
+}
+
+int TTFFont::getKerningOffset(byte left, byte right) const {
+	if (!_hasKerning)
+		return 0;
+
+	FT_UInt leftGlyph = _glyphSlots[left];
+	FT_UInt rightGlyph = _glyphSlots[right];
+
+	if (!leftGlyph || !rightGlyph)
+		return 0;
+
+	FT_Vector kerningVector;
+	FT_Get_Kerning(_face, leftGlyph, rightGlyph, FT_KERNING_DEFAULT, &kerningVector);
+	return (kerningVector.x / 64);
 }
 
 namespace {
@@ -311,8 +336,8 @@ void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 	}
 }
 
-bool TTFFont::cacheGlyph(Glyph &glyph, byte chr) {
-	FT_UInt slot = FT_Get_Char_Index(_face, chr);
+bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
+	slot = FT_Get_Char_Index(_face, chr);
 	if (!slot)
 		return false;
 
