@@ -856,5 +856,164 @@ void Scene1100::saveCharacter(int characterIndex) {
 		R2_GLOBALS._sound1.fadeOut2(NULL);
 	SceneExt::saveCharacter(characterIndex);
 }
+
+/*--------------------------------------------------------------------------
+ * Scene 1500 -
+ *
+ *--------------------------------------------------------------------------*/
+void Scene1500::postInit(SceneObjectList *OwnerList) {
+	loadScene(1500);
+	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._v5589E.top = 0;
+	R2_GLOBALS._v5589E.bottom = 200;
+	setZoomPercents(170, 13, 240, 100);
+	SceneExt::postInit();
+	scalePalette(65, 65, 65);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.disableControl();
+
+	_actor2.postInit();
+	_actor2.setup(1401, 1, 1);
+	_actor2._effect = 5;
+	_actor2.fixPriority(10);
+	_actor2._field9C = _field312;
+
+	_actor1.postInit();
+	_actor1.setup(1400, 1, 1);
+	_actor1._moveDiff = Common::Point(1, 1);
+	_actor1._linkedActor = &_actor2;
+
+	if (R2_GLOBALS._sceneManager._previousScene != 1010) {
+		_actor4.postInit();
+		_actor4.setup(1401, 2, 1);
+		_actor4._effect = 5;
+		_actor4.fixPriority(10);
+		_actor4._field9C = _field312;
+
+		_actor3.postInit();
+		_actor3._moveRate = 30;
+		_actor3._moveDiff = Common::Point(1, 1);
+		_actor3._linkedActor = &_actor4;
+	}
+
+	if (R2_GLOBALS._sceneManager._previousScene == 300) {
+		_actor1.setPosition(Common::Point(189, 139), 5);
+
+		_actor3.setup(1400, 1, 2);
+		_actor3.setPosition(Common::Point(148, 108), 0);
+
+		_sceneMode = 20;
+		R2_GLOBALS._sound1.play(110);
+	} else if (R2_GLOBALS._sceneManager._previousScene == 1550) {
+		_actor1.setPosition(Common::Point(189, 139), 5);
+		
+		_actor3.setup(1400, 2, 1);
+		_actor3.changeZoom(-1);
+		_actor3.setPosition(Common::Point(298, 258), 5);
+
+		_sceneMode = 10;
+		R2_GLOBALS._sound1.play(106);
+	} else {
+		_actor1.setPosition(Common::Point(289, 239), -30);
+		_sceneMode = 0;
+		R2_GLOBALS._sound1.play(102);
+	}
+	signal();
+}
+
+void Scene1500::remove() {
+	R2_GLOBALS._v5589E.top = 3;
+	R2_GLOBALS._v5589E.bottom = 168;
+	R2_GLOBALS._v58CE2 = 1;
+
+	SceneExt::remove();
+}
+
+void Scene1500::signal() {
+	switch(_sceneMode++) {
+	case 0:
+		R2_GLOBALS.setFlag(25);
+		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
+	// No break on purpose
+	case 1:
+		if (_actor1._yDiff < 50) {
+			_actor1.setPosition(Common::Point(289, 239), _actor1._yDiff + 1);
+			_sceneMode = 1;
+		}
+		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
+		break;
+	case 2: {
+		Common::Point pt(189, 139);
+		NpcMover *mover = new NpcMover();
+		_actor1.addMover(mover, &pt, this);
+		}
+		break;
+	case 3:
+		if (_actor1._yDiff > 5) {
+			_actor1.setPosition(Common::Point(189, 139), _actor1._yDiff - 1);
+			_sceneMode = 3;
+		}
+		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
+		break;
+	case 13:
+		R2_GLOBALS._player._characterIndex = R2_MIRANDA;
+	// No break on purpose
+	case 4:
+		R2_GLOBALS._sceneManager.changeScene(300);
+		break;
+	case 10:
+	// No break on purpose
+	case 20:
+		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
+		break;
+	case 11: {
+		Common::Point pt(148, 108);
+		NpcMover *mover = new NpcMover();
+		_actor3.addMover(mover, &pt, this);
+		}
+		break;
+	case 12:
+		setAction(&_sequenceManager, this, 2, &R2_GLOBALS._player, NULL);
+		break;
+	case 21: {
+		Common::Point pt(-2, -42);
+		NpcMover *mover = new NpcMover();
+		_actor3.addMover(mover, &pt, NULL);
+		signal();
+		}
+		break;
+	case 22:
+		if (_actor1._yDiff < 50) {
+			_actor1.setPosition(Common::Point(189, 139), _actor1._yDiff + 1);
+			_sceneMode = 22;
+		}
+		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
+		break;
+	case 23: {
+		Common::Point pt(-13, -61);
+		NpcMover *mover = new NpcMover();
+		_actor1.addMover(mover, &pt, this);
+		}
+		break;
+	case 24:
+		R2_GLOBALS._sceneManager.changeScene(300);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1500::dispatch() {
+	if (_sceneMode > 10) {
+		float yDiff = sqrt((float) (_actor3._position.x * _actor3._position.x) + (_actor3._position.y * _actor3._position.y));
+		if (yDiff > 6)
+			_actor3.setPosition(_actor3._position, yDiff);
+	}
+
+	Scene::dispatch();
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

@@ -117,6 +117,19 @@ public:
 	virtual void saveCharacter(int characterIndex);
 };
 
+class Scene1500 : public SceneExt {
+public:
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
