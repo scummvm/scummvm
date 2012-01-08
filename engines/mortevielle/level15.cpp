@@ -61,8 +61,8 @@ void outbloc(int n, pattern p, t_nhom pal) {
 
 	ad = n * 404 + 0xd700;
 	{
-		WRITE_LE_UINT16(&mem[0x6000 + ad], p.tax);
-		WRITE_LE_UINT16(&mem[0x6000 + ad + 2], p.tay);
+		WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p.tax);
+		WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p.tay);
 		ad = ad + 4;
 		for (i = 1; i <= p.tax; i ++)
 			for (j = 1; j <= p.tay; j ++)
@@ -102,8 +102,8 @@ void pictout(int seg, int dep, int x, int y) {
 		mem[0x7000 * 16 + 2] = 0;
 		mem[0x7000 * 16 + 32] = 15;
 	}
-	if ((caff != 51) && (READ_LE_UINT16(&mem[0x7000 + 0x4138]) > 0x100))
-		WRITE_LE_UINT16(&mem[0x7000 + 0x4138], 0x100);
+	if ((caff != 51) && (READ_LE_UINT16(&mem[0x7000 * 16 + 0x4138]) > 0x100))
+		WRITE_LE_UINT16(&mem[0x7000 * 16 + 0x4138], 0x100);
 	afff(gd, seg, dep, x, y);
 }
 
@@ -192,7 +192,7 @@ int animof(int ouf, int num) {
 	nani = mem[adani * 16 + 1];
 	aux = num;
 	if (ouf != 1)  aux = aux + nani;
-	animof_result = (nani << 2) + 2 + swap(READ_LE_UINT16(&mem[adani + (aux << 1)]));
+	animof_result = (nani << 2) + 2 + swap(READ_LE_UINT16(&mem[adani * 16 + (aux << 1)]));
 	/*aux:= nani shl 2 + 2;
 	if ouf=1 then aux:= aux+ swap(WRITE_LE_UINT16(&mem[adani: num shl 1])
 	         else aux:= aux+ swap(WRITE_LE_UINT16(&mem[adani: (nani+num) shl 1]);

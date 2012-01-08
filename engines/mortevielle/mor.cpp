@@ -1231,8 +1231,8 @@ void messint(int nu) {
 	clsf2();
 	clsf3();
 	decomp(0x73a2, 1008);
-	WRITE_LE_UINT16(&mem[0x7413 + 12], 80);
-	WRITE_LE_UINT16(&mem[0x7413 + 14], 40);
+	WRITE_LE_UINT16(&mem[0x7413 * 16 + 12], 80);
+	WRITE_LE_UINT16(&mem[0x7413 * 16 + 14], 40);
 	writepal(90);
 	afff(gd, 0x73a2, 1008, 0, 0);
 	afff(gd, 0x73a2, 1008, 0, 70);
