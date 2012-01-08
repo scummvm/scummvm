@@ -858,7 +858,7 @@ void Scene1100::saveCharacter(int characterIndex) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1500 -
+ * Scene 1500 - Cutscene: Ship landing
  *
  *--------------------------------------------------------------------------*/
 void Scene1500::postInit(SceneObjectList *OwnerList) {
@@ -1013,6 +1013,48 @@ void Scene1500::dispatch() {
 	}
 
 	Scene::dispatch();
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 1525 - Cutscene - Ship
+ *
+ *--------------------------------------------------------------------------*/
+void Scene1525::postInit(SceneObjectList *OwnerList) {
+	loadScene(1525);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+
+	R2_GLOBALS._player.postInit();
+	if (R2_GLOBALS._sceneManager._previousScene == 525)
+		R2_GLOBALS._player.setup(1525, 1, 1);
+	else
+		R2_GLOBALS._player.setup(1525, 1, 16);
+	R2_GLOBALS._player.setPosition(Common::Point(244, 148));
+	R2_GLOBALS._player.disableControl();
+
+	_sceneMode = 0;
+	setAction(&_sequenceManager, this, 2, &R2_GLOBALS._player, NULL);
+}
+
+void Scene1525::signal() {
+	switch (_sceneMode++) {
+	case 0:
+		if (R2_GLOBALS._sceneManager._previousScene == 525)
+			setAction(&_sequenceManager, this, 1525, &R2_GLOBALS._player, NULL);
+		else
+			setAction(&_sequenceManager, this, 1526, &R2_GLOBALS._player, NULL);
+		break;
+	case 1:
+		setAction(&_sequenceManager, this, 2, &R2_GLOBALS._player, NULL);
+		break;
+	case 2:
+		if (R2_GLOBALS._sceneManager._previousScene == 1530)
+			R2_GLOBALS._sceneManager.changeScene(1550);
+		else
+			R2_GLOBALS._sceneManager.changeScene(1530);
+	default:
+		break;
+	}
 }
 
 } // End of namespace Ringworld2

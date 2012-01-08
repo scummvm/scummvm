@@ -107,8 +107,11 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1330:
 		error("Missing scene %d from group 1", sceneNumber);
 	case 1500:
+		// Cutscene: Ship landing
 		return new Scene1500();
 	case 1525:
+		// Cutscene - Ship
+		return new Scene1525();
 	case 1530:
 	case 1550:
 	case 1575:
