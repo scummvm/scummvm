@@ -1373,6 +1373,10 @@ int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
 
+int ThemeEngine::getKerningOffset(byte left, byte right, FontStyle font) const {
+	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getKerningOffset(left, right) : 0;
+}
+
 TextData ThemeEngine::getTextData(DrawData ddId) const {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 }
