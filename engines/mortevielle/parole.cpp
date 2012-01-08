@@ -87,7 +87,7 @@ void charg_car() {
 
 
 void entroct(byte o) {
-	mem[adtroct + ptr_oct] = o;
+	mem[adtroct * 16 + ptr_oct] = o;
 	ptr_oct = ptr_oct + 1;
 }
 
@@ -125,9 +125,9 @@ void veracf(byte b) {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 	
-	f.read(&mem[0x7414 + 0], 273);
-	/*blockread(f,mem[adson+0],300);
-	blockread(f,mem[adson+2400+0],245);*/
+	f.read(&mem[0x7414 * 16 + 0], 273);
+	/*blockread(f,mem[adson * 16+0],300);
+	blockread(f,mem[adson * 16+2400+0],245);*/
 	demus(0x7414, adson, 273);
 	f.close();
 }
@@ -151,9 +151,9 @@ void veracf(byte b) {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&mem[adbruit + 0], 250);
-	for (i = 0; i <= 19013; i ++) mem[adbruit + 32000 + i] = mem[adbruit5 + i];
-	f.read(&mem[adbruit1 + offsetb1], 149);
+	f.read(&mem[adbruit * 16 + 0], 250);
+	for (i = 0; i <= 19013; i ++) mem[adbruit * 16 + 32000 + i] = mem[adbruit5 + i];
+	f.read(&mem[adbruit1 * 16 + offsetb1], 149);
 
 	f.close();
 }

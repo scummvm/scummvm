@@ -327,8 +327,8 @@ void ani50() {
 	if (!fic.open("mort.img"))
 		error("Missing file - mort.img");
 
-	fic.read(&mem[0x3800 + 0], 500);
-	fic.read(&mem[0x47a0 + 0], 123);
+	fic.read(&mem[0x3800 * 16 + 0], 500);
+	fic.read(&mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
 	demus(0x3800, 0x5000, 623);
@@ -353,7 +353,7 @@ void ani50() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&mem[adbruit5 + 0], 149);
+	f.read(&mem[adbruit5 * 16 + 0], 149);
 	/*blockread(f,mem[$5CB0:0],100);
 	blockread(f,mem[$3D1F:0],49);*/
 	f.close();

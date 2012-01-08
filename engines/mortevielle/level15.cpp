@@ -66,7 +66,7 @@ void outbloc(int n, pattern p, t_nhom pal) {
 		ad = ad + 4;
 		for (i = 1; i <= p.tax; i ++)
 			for (j = 1; j <= p.tay; j ++)
-				mem[0x6000 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
+				mem[0x6000 * 16 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
 	}
 }
 
@@ -81,8 +81,8 @@ void writepal(int n) {
 	case ega:
 	case ams :
 		for (i = 1; i <= 16; i ++) {
-			mem[0x7000 + 2 * i] = tabpal[n][i].x;
-			mem[0x7000 + succ(int, 2 * i)] = tabpal[n][i].y;
+			mem[0x7000 * 16 + 2 * i] = tabpal[n][i].x;
+			mem[0x7000 * 16 + succ(int, 2 * i)] = tabpal[n][i].y;
 		}
 		break;
 	case cga : {
@@ -99,8 +99,8 @@ void writepal(int n) {
 void pictout(int seg, int dep, int x, int y) {
 	decomp(seg, dep);
 	if (gd == her) {
-		mem[0x7000 + 2] = 0;
-		mem[0x7000 + 32] = 15;
+		mem[0x7000 * 16 + 2] = 0;
+		mem[0x7000 * 16 + 32] = 15;
 	}
 	if ((caff != 51) && (memw[0x7000 + 0x4138] > 0x100))  memw[0x7000 + 0x4138] = 0x100;
 	afff(gd, seg, dep, x, y);
@@ -174,7 +174,7 @@ void adzon() {
 
 	if (!f.open("dec.mor"))
 		error("Missing files - dec.moir");
-	f.read(&mem[0x73a2 + 0], 1);
+	f.read(&mem[0x73a2 * 16 + 0], 1);
 	/*i:=0;
 	repeat
 	  read(g,a);
@@ -188,7 +188,7 @@ int animof(int ouf, int num) {
 	int nani, aux;
 
 	int animof_result;
-	nani = mem[adani + 1];
+	nani = mem[adani * 16 + 1];
 	aux = num;
 	if (ouf != 1)  aux = aux + nani;
 	animof_result = (nani << 2) + 2 + swap(memw[adani + (aux << 1)]);

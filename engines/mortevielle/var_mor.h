@@ -405,7 +405,7 @@ void affput(const Common::Point &pt, int palIndex, int ch);
 // TODO: Replace the following with proper implementations, or refactor out the code using them
 
 extern int port[0xfff];
-extern byte mem[0xffff];
+extern byte mem[65536 * 16];
 extern int memw[0xffff];
 
 #define hires {}
