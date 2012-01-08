@@ -987,7 +987,6 @@ void debloc(int l) {
 /* NIVEAU 10 */
 void init_nbrepm() {
 	const byte ipm[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
-	int i;
 
 	/* debug('init_nbrepm'); */
 	for (int idx = 0; idx < 9; ++idx)
