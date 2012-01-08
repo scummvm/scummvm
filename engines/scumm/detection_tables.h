@@ -778,7 +778,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttcircus", "ToffToffGZZ", kGenHEPC, Common::DE_DEU, UNK, 0 },
 
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "puttrace", "500demo", kGenHEPC, Common::NL_NLD, Common::kPlatformWindows, 0 },
 	{ "puttrace", "course", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttrace", "CourseDemo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "puttrace", "racedemo", kGenHEPC, UNK_LANG, UNK, 0 },
