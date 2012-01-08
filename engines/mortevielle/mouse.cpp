@@ -139,10 +139,10 @@ void hide_mouse() {
 				k = 0;
 				j = p_o_s;
 				do {
-					ps = mem[0xa000 + j];
-					mem[0xa000 + j] = lo(s_s[i][k]);
-					ps = mem[0xa000 + j + 1];
-					mem[0xa000 + j + 1] = hi(s_s[i][k]);
+					ps = mem[0xa000 * 16 + j];
+					mem[0xa000 * 16 + j] = lo(s_s[i][k]);
+					ps = mem[0xa000 * 16 + j + 1];
+					mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j = j + 80;
 					k = succ(int, k);
 				} while (!(k >= 8));
@@ -227,7 +227,7 @@ void show_mouse() {
 			k = 0;
 			j = p_o_s;
 			do {
-				s_s[l][k] = mem[0xa000 + j] + (mem[0xa000 + succ(int, j)] << 8);
+				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[0xa000 + succ(int, j)] << 8);
 				j = j + 80;
 				k = succ(int, k);
 			} while (!(k >= 8));

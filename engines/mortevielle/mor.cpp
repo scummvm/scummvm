@@ -109,7 +109,7 @@ void dessine_rouleau() {
 	/* debug('dessine_rouleau'); */
 	writepal(89);
 	if (gd == her) {
-		mem[0x7000 + 14] = 15;
+		mem[0x7000 * 16 + 14] = 15;
 	}
 	hide_mouse();
 	pictout(0x73a2, 0, 0, 0);
