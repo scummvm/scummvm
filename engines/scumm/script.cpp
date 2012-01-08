@@ -29,6 +29,7 @@
 #include "scumm/resource.h"
 #include "scumm/util.h"
 #include "scumm/scumm_v2.h"
+#include "scumm/sound.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -935,6 +936,17 @@ void ScummEngine::runExitScript() {
 	}
 	if (VAR_EXIT_SCRIPT2 != 0xFF && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
+
+#ifdef ENABLE_SCUMM_7_8
+	// WORKAROUND: The spider lair (room 44) will optionally play the sound
+	// of trickling water (sound 215), but it never stops it. The same sound
+	// effect is also used in room 33, so let's do the same fade out that it
+	// does in that room's exit script.
+	if (_game.id == GID_DIG && _currentRoom == 44) {
+		int scriptCmds[] = { 14, 215, 0x600, 0, 30 };
+		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
+	}
+#endif
 }
 
 void ScummEngine::runEntryScript() {
