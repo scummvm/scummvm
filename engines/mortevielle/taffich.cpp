@@ -182,7 +182,7 @@ void taffich() {
 	chardes(nom, lgt, handle);
 	if (gd == her) {
 		for (i = 0; i <= 15; i ++) {
-			palh = memw[0x7000 + (succ(int, i) << 1)];
+			palh = READ_LE_UINT16(&mem[0x7000 + (succ(int, i) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (i = 0; i <= 15; i ++) {
@@ -221,7 +221,7 @@ void taffich() {
 /*    begin
       for i:=0 to 15 do
          begin
-           PalH:=memw[$7000:succ(i) shl 1];
+           PalH:=WRITE_LE_UINT16(&mem[$7000:succ(i) shl 1];
            Alllum[i]:=PalH and 15 + PalH shr 4 and 15 + PalH shr 8 and 15;
          end;
       for i:=0 to 15 do

@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/endian.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
@@ -1231,8 +1232,8 @@ void messint(int nu) {
 	clsf2();
 	clsf3();
 	decomp(0x73a2, 1008);
-	memw[0x7413 + 12] = 80;
-	memw[0x7413 + 14] =  40;
+	WRITE_LE_UINT16(&mem[0x7413 + 12], 80);
+	WRITE_LE_UINT16(&mem[0x7413 + 14], 40);
 	writepal(90);
 	afff(gd, 0x73a2, 1008, 0, 0);
 	afff(gd, 0x73a2, 1008, 0, 70);
