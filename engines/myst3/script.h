@@ -191,7 +191,10 @@ private:
 	DECLARE_OPCODE(ifVarHasNoBitsSet);
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
 	DECLARE_OPCODE(ifMouseIsInRect);
-	DECLARE_OPCODE(goToNode);
+	DECLARE_OPCODE(chooseNextNode);
+	DECLARE_OPCODE(goToNodeTransition);
+	DECLARE_OPCODE(goToNodeTrans2);
+	DECLARE_OPCODE(goToNodeTrans1);
 	DECLARE_OPCODE(goToRoomNode);
 	DECLARE_OPCODE(zipToNode);
 	DECLARE_OPCODE(zipToRoomNode);

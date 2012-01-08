@@ -138,7 +138,10 @@ Script::Script(Myst3Engine *vm):
 	OP_2(121, ifVarHasNoBitsSet,			kVar,		kValue											);
 	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
-	OP_1(138, goToNode,						kValue														);
+	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
+	OP_2(136, goToNodeTransition,			kValue,		kValue											);
+	OP_1(137, goToNodeTrans2,				kValue														);
+	OP_1(138, goToNodeTrans1,				kValue														);
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
 	OP_1(140, zipToNode,					kValue														);
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
@@ -1264,7 +1267,28 @@ void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 	goToElse(c);
 }
 
-void Script::goToNode(Context &c, const Opcode &cmd) {
+void Script::chooseNextNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Choose next node using condition %d", cmd.op, cmd.args[0]);
+
+	if (_vm->_vars->evaluate(cmd.args[0]))
+		_vm->_vars->setLocationNextNode(cmd.args[1]);
+	else
+		_vm->_vars->setLocationNextNode(cmd.args[2]);
+}
+
+void Script::goToNodeTransition(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d with transition %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->goToNode(cmd.args[0], cmd.args[1]);
+}
+
+void Script::goToNodeTrans2(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
+
+	_vm->goToNode(cmd.args[0], 2);
+}
+
+void Script::goToNodeTrans1(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
 	_vm->goToNode(cmd.args[0], 1);
