@@ -530,7 +530,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 
 	cb1559e8405d17a5a278a6b5ad9338d1	22718	en	All	-	Demo	-	khalek, sev
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
-	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
+	754feb59d3bf86b8a00840df74fd7b26	-1	nl	All	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
 	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
