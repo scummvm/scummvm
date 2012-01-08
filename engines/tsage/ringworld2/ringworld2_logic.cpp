@@ -113,6 +113,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship
 		return new Scene1525();
 	case 1530:
+		return new Scene1530();
 	case 1550:
 	case 1575:
 	case 1580:
