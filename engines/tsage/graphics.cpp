@@ -259,6 +259,12 @@ void GfxSurface::updateScreen() {
 	for (Common::List<Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		Rect r = *i;
 
+		// Make sure that there is something to update. If not, skip this
+		// rectangle. An example case is the speedbike closeup at the beginning
+		// of Ringworld (third screen).
+		if (r.isEmpty())
+			continue;
+
 		const byte *srcP = (const byte *)_customSurface->getBasePtr(r.left, r.top);
 		g_system->copyRectToScreen(srcP, _customSurface->pitch, r.left, r.top, 
 			r.width(), r.height());
