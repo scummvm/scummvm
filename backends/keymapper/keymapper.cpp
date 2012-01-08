@@ -143,7 +143,7 @@ Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 	return keymap;
 }
 
-bool Keymapper::pushKeymap(const String& name, bool inherit) {
+bool Keymapper::pushKeymap(const String& name, bool transparent) {
 	bool global;
 	Keymap *newMap = getKeymap(name, &global);
 
@@ -152,13 +152,13 @@ bool Keymapper::pushKeymap(const String& name, bool inherit) {
 		return false;
 	}
 
-	pushKeymap(newMap, inherit, global);
+	pushKeymap(newMap, transparent, global);
 
 	return true;
 }
 
-void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
-	MapRecord mr = {newMap, inherit, global};
+void Keymapper::pushKeymap(Keymap *newMap, bool transparent, bool global) {
+	MapRecord mr = {newMap, transparent, global};
 
 	_activeMaps.push(mr);
 }
@@ -198,7 +198,7 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
 			action = mr.keymap->getMappedAction(key);
 
-			if (action || !mr.inherit)
+			if (action || !mr.transparent)
 				break;
 		}
 

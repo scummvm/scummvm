@@ -43,7 +43,7 @@ public:
 
 	struct MapRecord {
 		Keymap* keymap;
-		bool inherit;
+		bool transparent;
 		bool global;
 	};
 
@@ -121,12 +121,12 @@ public:
 	/**
 	 * Push a new keymap to the top of the active stack, activating
 	 * it for use.
-	 * @param name		name of the keymap to push
-	 * @param inherit	if true keymapper will iterate down the
-	 *					stack if it cannot find a key in the new map
-	 * @return			true if succesful
+	 * @param name			name of the keymap to push
+	 * @param transparent	if true keymapper will iterate down the
+	 *						stack if it cannot find a key in the new map
+	 * @return				true if succesful
 	 */
-	bool pushKeymap(const String& name, bool inherit = false);
+	bool pushKeymap(const String& name, bool transparent = false);
 
 	/**
 	 * Pop the top keymap off the active stack.
@@ -182,7 +182,7 @@ private:
 
 	HardwareKeySet *_hardwareKeys;
 
-	void pushKeymap(Keymap *newMap, bool inherit, bool global);
+	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
 	Action *getAction(const KeyState& key);
 	void executeAction(const Action *act, bool keyDown);
