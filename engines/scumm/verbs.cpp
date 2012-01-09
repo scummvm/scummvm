@@ -740,6 +740,7 @@ void ScummEngine_v0::verbExec() {
 		if (_activeVerb != kVerbWalkTo) {
 			_activeVerb = kVerbWalkTo;
 			_activeObjectNr = 0;
+			_activeObjectType = 0;
 		}
 		_walkToObjectIdx = 0;
 		return;
@@ -841,6 +842,7 @@ void ScummEngine_v0::checkExecVerbs() {
 							_activeObjectNr = id;
 							_activeObjectType = type;
 						}
+						// immediately execute action in keypad/selection mode
 						if (_currentMode == kModeKeypad)
 							execute = true;
 					} else {
