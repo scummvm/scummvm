@@ -32,6 +32,7 @@
 
 #include "engines/engine.h"
 
+#include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/nodecube.h"
@@ -39,6 +40,7 @@
 #include "engines/myst3/variables.h"
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
+#include "engines/myst3/script.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"

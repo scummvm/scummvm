@@ -28,6 +28,7 @@
 namespace Myst3 {
 
 class Myst3Engine;
+class Puzzles;
 struct Opcode;
 
 #define DECLARE_OPCODE(x) void x(Context &c, const Opcode &cmd)
@@ -80,6 +81,8 @@ private:
 	};
 
 	Myst3Engine *_vm;
+	Puzzles *_puzzles;
+
 	Common::Array<Command> _commands;
 
 	const Command &findCommand(uint16 op);
@@ -214,6 +217,11 @@ private:
 	DECLARE_OPCODE(drawFramesForVarEachTwoFrames);
 	DECLARE_OPCODE(drawFramesForVarStartEndVarEachTwoFrames);
 	DECLARE_OPCODE(runScript);
+	DECLARE_OPCODE(runPuzzle1);
+	DECLARE_OPCODE(runPuzzle2);
+	DECLARE_OPCODE(runPuzzle3);
+	DECLARE_OPCODE(runPuzzle4);
+
 };
 
 } /* namespace Myst3 */

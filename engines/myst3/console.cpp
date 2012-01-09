@@ -23,6 +23,7 @@
 #include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
 #include "engines/myst3/inventory.h"
+#include "engines/myst3/script.h"
 #include "engines/myst3/variables.h"
 
 namespace Myst3 {

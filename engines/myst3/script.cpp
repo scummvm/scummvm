@@ -26,11 +26,14 @@
 #include "engines/myst3/variables.h"
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
+#include "engines/myst3/puzzles.h"
 
 namespace Myst3 {
 
 Script::Script(Myst3Engine *vm):
 	_vm(vm) {
+
+	_puzzles = new Puzzles(_vm);
 
 #define OP_0(op, x) _commands.push_back(Command(op, &Script::x, #x, 0))
 #define OP_1(op, x, type1) _commands.push_back(Command(op, &Script::x, #x, 1, type1))
@@ -161,6 +164,10 @@ Script::Script(Myst3Engine *vm):
 	OP_3(185, drawFramesForVarEachTwoFrames,			kVar,		kValue,		kValue					);
 	OP_3(186, drawFramesForVarStartEndVarEachTwoFrames, kVar, 		kVar,		kVar					);
 	OP_1(187, runScript,					kValue														);
+	OP_1(194, runPuzzle1,					kValue														);
+	OP_2(195, runPuzzle2,					kValue,		kValue											);
+	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
+	OP_4(197, runPuzzle4,					kValue,		kValue,		kValue,		kValue					);
 
 #undef OP_0
 #undef OP_1
@@ -171,6 +178,7 @@ Script::Script(Myst3Engine *vm):
 }
 
 Script::~Script() {
+	delete _puzzles;
 }
 
 bool Script::run(const Common::Array<Opcode> *script) {
@@ -1520,6 +1528,30 @@ void Script::runScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
 	_vm->runScriptsFromNode(cmd.args[0], _vm->_vars->getLocationRoom());
+}
+
+void Script::runPuzzle1(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+
+	_puzzles->run(cmd.args[0]);
+}
+
+void Script::runPuzzle2(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+
+	_puzzles->run(cmd.args[0], cmd.args[1]);
+}
+
+void Script::runPuzzle3(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+
+	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2]);
+}
+
+void Script::runPuzzle4(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+
+	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 }
 
 } /* namespace Myst3 */

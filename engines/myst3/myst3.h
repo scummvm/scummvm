@@ -29,11 +29,9 @@
 #include "common/random.h"
 
 #include "engines/myst3/archive.h"
-#include "engines/myst3/console.h"
 #include "engines/myst3/movie.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
-#include "engines/myst3/script.h"
 
 namespace Graphics {
 struct Surface;
@@ -62,6 +60,7 @@ class HotSpot;
 class Cursor;
 class Inventory;
 class Database;
+class Script;
 struct NodeData;
 
 typedef Common::SharedPtr<NodeData> NodePtr;

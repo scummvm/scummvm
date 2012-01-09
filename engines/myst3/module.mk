@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	node.o \
 	nodecube.o \
 	nodeframe.o \
+	puzzles.o \
 	scene.o \
 	script.o \
 	variables.o
