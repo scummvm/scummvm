@@ -1,12 +1,12 @@
 # Copyright (C) 2010-2012 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Steffen Nyeland <steffen@nyeland.dk>, 2010.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-12-26 15:26+0100\n"
+"POT-Creation-Date: 2012-01-28 21:48+0100\n"
 "PO-Revision-Date: 2011-01-08 22:53+0100\n"
 "Last-Translator: Steffen Nyeland <steffen@nyeland.dk>\n"
 "Language-Team: Steffen Nyeland <steffen@nyeland.dk>\n"
@@ -45,7 +45,7 @@ msgstr "Gå op"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:319 gui/massadd.cpp:94 gui/options.cpp:1221
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/engine.cpp:436 engines/scumm/dialogs.cpp:190
+#: engines/engine.cpp:438 engines/scumm/dialogs.cpp:190
 #: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
 #: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
@@ -57,22 +57,22 @@ msgstr "Fortryd"
 msgid "Choose"
 msgstr "Vælg"
 
-#: gui/gui-manager.cpp:116 engines/scumm/help.cpp:125
+#: gui/gui-manager.cpp:115 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 #: backends/keymapper/remap-dialog.cpp:52
 msgid "Close"
 msgstr "Luk"
 
-#: gui/gui-manager.cpp:119
+#: gui/gui-manager.cpp:118
 msgid "Mouse click"
 msgstr "Muse klik"
 
-#: gui/gui-manager.cpp:122 base/main.cpp:283
+#: gui/gui-manager.cpp:121 base/main.cpp:289
 msgid "Display keyboard"
 msgstr "Vis tastatur"
 
-#: gui/gui-manager.cpp:125 base/main.cpp:286
+#: gui/gui-manager.cpp:124 base/main.cpp:292
 msgid "Remap keys"
 msgstr "Kortlæg taster"
 
@@ -86,11 +86,11 @@ msgstr "Kortlæg"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
 #: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
-#: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:192
+#: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
 #: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:345
-#: engines/sword1/animation.cpp:355 engines/sword1/animation.cpp:361
+#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:449
+#: engines/sword1/animation.cpp:459 engines/sword1/animation.cpp:465
 #: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:379 engines/sword2/animation.cpp:389
 #: engines/sword2/animation.cpp:398 engines/parallaction/saveload.cpp:281
@@ -345,7 +345,7 @@ msgstr "Dette spil ID er allerede i brug. Vælg venligst et andet."
 msgid "~Q~uit"
 msgstr "~A~fslut"
 
-#: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:80
+#: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:96
 msgid "Quit ScummVM"
 msgstr "Afslut ScummVM"
 
@@ -353,7 +353,7 @@ msgstr "Afslut ScummVM"
 msgid "A~b~out..."
 msgstr "~O~m..."
 
-#: gui/launcher.cpp:579 backends/platform/sdl/macosx/appmenu_osx.mm:61
+#: gui/launcher.cpp:579 backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
@@ -956,28 +956,28 @@ msgstr "Unavngivet gemmetilstand"
 msgid "Select a Theme"
 msgstr "Vælg et tema"
 
-#: gui/ThemeEngine.cpp:329
+#: gui/ThemeEngine.cpp:333
 msgid "Disabled GFX"
 msgstr "Deaktiveret GFX"
 
-#: gui/ThemeEngine.cpp:329
+#: gui/ThemeEngine.cpp:333
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Deaktiveret GFX"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:334
 msgid "Standard Renderer (16bpp)"
 msgstr "Standard renderer (16bpp)"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:334
 msgid "Standard (16bpp)"
 msgstr "Standard (16bpp)"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:336
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Antialias renderer (16bpp)"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:336
 msgid "Antialiased (16bpp)"
 msgstr "Antialias (16bpp)"
 
@@ -990,30 +990,30 @@ msgstr "Slet værdi"
 msgid "Engine does not support debug level '%s'"
 msgstr "Motor understøtter ikke fejlfindingsniveau '%s'"
 
-#: base/main.cpp:271
+#: base/main.cpp:277
 msgid "Menu"
 msgstr "Menu"
 
-#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Spring over"
 
-#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:283 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:280
+#: base/main.cpp:286
 msgid "Skip line"
 msgstr "Spring linje over"
 
-#: base/main.cpp:439
+#: base/main.cpp:445
 msgid "Error running game:"
 msgstr "Fejl ved kørsel af spil:"
 
-#: base/main.cpp:463
+#: base/main.cpp:469
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finde nogen motor istand til at afvikle det valgte spil"
 
@@ -1189,25 +1189,25 @@ msgstr "~F~ortryd"
 msgid "~K~eys"
 msgstr "~T~aster"
 
-#: engines/engine.cpp:233
+#: engines/engine.cpp:235
 msgid "Could not initialize color format."
 msgstr ""
 
-#: engines/engine.cpp:241
+#: engines/engine.cpp:243
 #, fuzzy
 msgid "Could not switch to video mode: '"
 msgstr "Aktuel videotilstand:"
 
-#: engines/engine.cpp:250
+#: engines/engine.cpp:252
 #, fuzzy
 msgid "Could not apply aspect ratio setting."
 msgstr "Skift billedformat korrektion"
 
-#: engines/engine.cpp:255
+#: engines/engine.cpp:257
 msgid "Could not apply fullscreen setting."
 msgstr ""
 
-#: engines/engine.cpp:355
+#: engines/engine.cpp:357
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1216,7 +1216,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:366
+#: engines/engine.cpp:368
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1225,14 +1225,14 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:433
+#: engines/engine.cpp:435
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:436
+#: engines/engine.cpp:438
 msgid "Start anyway"
 msgstr ""
 
@@ -2012,56 +2012,56 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/kyra/lol.cpp:572
+#: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr ""
 
-#: engines/kyra/lol.cpp:573
+#: engines/kyra/lol.cpp:479
 msgid "Attack 2"
 msgstr ""
 
-#: engines/kyra/lol.cpp:574
+#: engines/kyra/lol.cpp:480
 msgid "Attack 3"
 msgstr ""
 
-#: engines/kyra/lol.cpp:575
+#: engines/kyra/lol.cpp:481
 msgid "Move Forward"
 msgstr ""
 
-#: engines/kyra/lol.cpp:576
+#: engines/kyra/lol.cpp:482
 msgid "Move Back"
 msgstr ""
 
-#: engines/kyra/lol.cpp:577
+#: engines/kyra/lol.cpp:483
 msgid "Slide Left"
 msgstr ""
 
-#: engines/kyra/lol.cpp:578
+#: engines/kyra/lol.cpp:484
 #, fuzzy
 msgid "Slide Right"
 msgstr "Højre"
 
-#: engines/kyra/lol.cpp:579
+#: engines/kyra/lol.cpp:485
 #, fuzzy
 msgid "Turn Left"
 msgstr "Sluk"
 
-#: engines/kyra/lol.cpp:580
+#: engines/kyra/lol.cpp:486
 #, fuzzy
 msgid "Turn Right"
 msgstr "Pil til højre"
 
-#: engines/kyra/lol.cpp:581
+#: engines/kyra/lol.cpp:487
 #, fuzzy
 msgid "Rest"
 msgstr "Gendan"
 
-#: engines/kyra/lol.cpp:582
+#: engines/kyra/lol.cpp:488
 #, fuzzy
 msgid "Options"
 msgstr "~I~ndstillinger"
 
-#: engines/kyra/lol.cpp:583
+#: engines/kyra/lol.cpp:489
 #, fuzzy
 msgid "Choose Spell"
 msgstr "Vælg"
@@ -2087,15 +2087,15 @@ msgid ""
 "Please (re)download it from www.scummvm.org"
 msgstr ""
 
-#: engines/sword1/animation.cpp:345 engines/sword2/animation.cpp:379
+#: engines/sword1/animation.cpp:449 engines/sword2/animation.cpp:379
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr ""
 
-#: engines/sword1/animation.cpp:355 engines/sword2/animation.cpp:389
+#: engines/sword1/animation.cpp:459 engines/sword2/animation.cpp:389
 msgid "MPEG2 cutscenes are no longer supported"
 msgstr ""
 
-#: engines/sword1/animation.cpp:360 engines/sword2/animation.cpp:397
+#: engines/sword1/animation.cpp:464 engines/sword2/animation.cpp:397
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr ""
@@ -2357,26 +2357,26 @@ msgstr "Pegeplade tilstand aktiveret."
 msgid "Touchpad mode disabled."
 msgstr "Pegeplade tilstand deaktiveret."
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:67
+#: backends/platform/sdl/macosx/appmenu_osx.mm:78
 #, fuzzy
 msgid "Hide ScummVM"
 msgstr "Afslut ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:70
+#: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:74
+#: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:92
-#: backends/platform/sdl/macosx/appmenu_osx.mm:99
+#: backends/platform/sdl/macosx/appmenu_osx.mm:110
+#: backends/platform/sdl/macosx/appmenu_osx.mm:121
 #, fuzzy
 msgid "Window"
 msgstr "Windows MIDI"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:95
+#: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
 msgstr ""
 

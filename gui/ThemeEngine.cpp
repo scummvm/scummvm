@@ -1399,12 +1399,6 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
 
 const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name) {
 #ifdef USE_FREETYPE2
-	// We only support ISO-8859-1 for TTF right now.
-	if (!charset.empty()
-	    && !charset.equalsIgnoreCase("iso-8859-1")
-	    && !charset.equalsIgnoreCase("ascii"))
-		return 0;
-
 	name = Common::String::format("%s-%s@%d", filename.c_str(), charset.c_str(), pointsize);
 
 	// Try already loaded fonts.
@@ -1418,7 +1412,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			font = Graphics::loadTTFFont(*stream, pointsize, false);
+			font = Graphics::loadTTFFont(*stream, pointsize, false, TransMan.getCharsetMapping());
 			delete stream;
 
 			if (font)

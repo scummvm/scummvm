@@ -18,25 +18,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * This is a utility for create the translations.dat file from all the po files.
+ * The generated files is used by ScummVM to propose translation of its GUI.
  */
 
-#ifndef GRAPHICS_FONTS_TTF_H
-#define GRAPHICS_FONTS_TTF_H
+#ifndef CP_PARSER_H
+#define CP_PARSER_H
 
-#include "common/scummsys.h"
+#include "create_translations.h"
 
-#ifdef USE_FREETYPE2
+#include <string>
 
-#include "common/stream.h"
+/**
+ * Codepage description.
+ *
+ * This includes a name, and the codepage -> unicode mapping.
+ */
+class Codepage {
+public:
+	Codepage(const std::string &name, const uint32 *mapping);
 
-namespace Graphics {
+	const std::string &getName() const { return _name; }
 
-class Font;
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome = false, const uint32 *mapping = 0);
+	uint32 getMapping(unsigned char src) const { return _mapping[src]; }
+private:
+	std::string _name;
+	uint32 _mapping[256];
+};
 
-} // End of namespace Graphics
+/**
+ * Parse the codepage file and create a codepage.
+ */
+Codepage *parseCodepageMapping(const std::string &filename);
 
 #endif
-
-#endif
-
