@@ -196,12 +196,8 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	} else if (_game.version <= 2) {
 		do {
 			const int kFallbackEntry = (_game.version == 0 ? 0x0F : 0xFF);
-			if (!*verbptr) {
-				if (_game.version == 0 && entry == kVerbWalkTo)
-					return 13;
-				else
-					return 0;
-			}
+			if (!*verbptr)
+				return 0;
 			if (*verbptr == entry || *verbptr == kFallbackEntry)
 				break;
 			verbptr += 2;
@@ -1160,8 +1156,6 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 }
 
 void ScummEngine_v0::checkAndRunSentenceScript() {
-	const ScriptSlot *ss;
-
 	if (_walkToObjectIdx) {
 		ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkAndRunSentenceScript");
 		if (a->_moving)
@@ -1175,7 +1169,6 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	if (!_sentenceNum || _sentence[_sentenceNum - 1].freezeCount)
 		return;
 
-	//_sentenceNum--;
 	SentenceTab &st = _sentence[_sentenceNum - 1];
 
 	if (st.preposition && st.objectB == st.objectA)
@@ -1232,29 +1225,26 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 void ScummEngine_v0::runSentenceScript() {
 	int obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
 
-	// FIXME: should it really ever return 0xD on WalkTo, seems wrong?
 	if (getVerbEntrypoint(obj, _cmdVerb) != 0) {
-		if (_cmdVerb == kVerbRead && VAR(VAR_CURRENT_LIGHTS) == 0) {
-			//slot = 0xFF;
-			VAR(VAR_ACTIVE_VERB) = _cmdVerb;
-			runScript(3, 0, 0, 0);
-			return;
-		} else {
-			VAR(VAR_ACTIVE_ACTOR) = _cmdObject2Nr;
+		// do not read in the dark
+		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
+			VAR(VAR_ACTIVE_OBJECT2) = _cmdObject2Nr;
 			runObjectScript(obj, _cmdVerb, false, false, NULL);
 			return;
 		}
 	} else {
 		if (_cmdVerb == kVerbGive) {
+			// no "give to"-script: give to other kid or ignore
 			if (_cmdObject2Nr < 8)
 				setOwnerOf(obj, _cmdObject2Nr);
 			return;
-		} else if (_cmdVerb == kVerbWalkTo) {
-			//slot = 0xFF;
-			VAR(VAR_ACTIVE_VERB) = _cmdVerb;
-			runScript(3, 0, 0, 0);
-			return;
 		}
+	}
+
+	if (_cmdVerb != kVerbWalkTo) {
+		// perform verb's fallback action
+		VAR(VAR_ACTIVE_VERB) = _cmdVerb;
+		runScript(3, 0, 0, 0);
 	}
 }
 
