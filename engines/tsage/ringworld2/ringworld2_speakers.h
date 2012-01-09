@@ -269,6 +269,11 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerQuinn1530 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn1530"; }
+};
+
 class SpeakerQuinn2435 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2435"; }
@@ -405,6 +410,11 @@ class SpeakerSeeker1100 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker1100"; }
 	virtual void proc15();
+};
+
+class SpeakerSeeker1530 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker1530"; }
 };
 
 class SpeakerSeeker2435 : public SpeakerSeeker {

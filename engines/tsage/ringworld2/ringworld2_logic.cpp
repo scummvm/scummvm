@@ -36,6 +36,8 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 Scene *Ringworld2Game::createScene(int sceneNumber) {
+	warning("Switching to scene %d", sceneNumber);
+
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	case 50: 
@@ -103,9 +105,15 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		return new Scene1100();
 	case 1200:
 	case 1330:
+		error("Missing scene %d from group 1", sceneNumber);
 	case 1500:
+		// Cutscene: Ship landing
+		return new Scene1500();
 	case 1525:
+		// Cutscene - Ship
+		return new Scene1525();
 	case 1530:
+		return new Scene1530();
 	case 1550:
 	case 1575:
 	case 1580:

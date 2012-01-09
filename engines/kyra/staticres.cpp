@@ -247,7 +247,7 @@ bool StaticResource::init() {
 
 		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
 		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
-		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
+		{ k2ItemAnimDefinition, proc(loadItemAnimDefinition), proc(freeItemAnimDefinition) },
 
 #ifdef ENABLE_LOL
 		{ kLoLCharData, proc(loadCharData), proc(freeCharData) },
@@ -316,8 +316,8 @@ const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries
 	return (const ItemAnimData_v1 *)getData(id, k2ShpAnimDataV1, entries);
 }
 
-const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries) {
-	return (const ItemAnimData_v2 *)getData(id, k2ShpAnimDataV2, entries);
+const ItemAnimDefinition *StaticResource::loadItemAnimDefinition(int id, int &entries) {
+	return (const ItemAnimDefinition *)getData(id, k2ItemAnimDefinition, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -610,9 +610,9 @@ bool StaticResource::loadShapeAnimData_v1(Common::SeekableReadStream &stream, vo
 	return true;
 }
 
-bool StaticResource::loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadItemAnimDefinition(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.readByte();
-	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
+	ItemAnimDefinition *loadTo = new ItemAnimDefinition[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
@@ -699,8 +699,8 @@ void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 	size = 0;
 }
 
-void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
-	ItemAnimData_v2 *d = (ItemAnimData_v2 *)ptr;
+void StaticResource::freeItemAnimDefinition(void *&ptr, int &size) {
+	ItemAnimDefinition *d = (ItemAnimDefinition *)ptr;
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
@@ -1007,7 +1007,7 @@ void KyraEngine_HoF::initStaticResource() {
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
 	_ingameTalkObjIndex = (const uint16 *)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
-	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
+	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k2IngameShapeAnimData, _itemAnimDefinitionSize);
 
 	// replace sequence talkie files with localized versions
 	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
@@ -1143,7 +1143,7 @@ void KyraEngine_MR::initStaticResource() {
 	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);
 	_sfxFileList = _staticres->loadStrings(k3SfxFiles, _sfxFileListSize);
 	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);
-	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
+	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k3ItemAnimData, tmp);
 	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
 	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
 }

@@ -219,7 +219,7 @@ private:
 	bool _nextIdleType;
 	void showIdleAnim();
 
-	const ItemAnimData_v2 *_itemAnimData;
+	const ItemAnimDefinition *_itemAnimDefinition;
 	ActiveItemAnim _activeItemAnim[10];
 	int _nextAnimItem;
 

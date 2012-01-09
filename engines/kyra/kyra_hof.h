@@ -874,8 +874,8 @@ protected:
 	const char * const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
 	const HofSeqData *_sequences;
-	const ItemAnimData_v2 *_itemAnimData;
-	int _itemAnimDataSize;
+	const ItemAnimDefinition *_itemAnimDefinition;
+	int _itemAnimDefinitionSize;
 	const ItemAnimData_v1 *_demoAnimData;
 	int _demoAnimSize;
 

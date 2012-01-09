@@ -259,6 +259,12 @@ void GfxSurface::updateScreen() {
 	for (Common::List<Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		Rect r = *i;
 
+		// Make sure that there is something to update. If not, skip this
+		// rectangle. An example case is the speedbike closeup at the beginning
+		// of Ringworld (third screen).
+		if (r.isEmpty())
+			continue;
+
 		const byte *srcP = (const byte *)_customSurface->getBasePtr(r.left, r.top);
 		g_system->copyRectToScreen(srcP, _customSurface->pitch, r.left, r.top, 
 			r.width(), r.height());
@@ -1302,19 +1308,29 @@ int GfxManager::getAngle(const Common::Point &p1, const Common::Point &p2) {
 	}
 }
 
+// FIXME: The two checks for screenSurface inside these two copyFrom() methods
+// are meant for Ringworld 2, but the corresponding setBounds cases cause
+// issues with the popup menus when right clicking in all games (e.g. the popup
+// menu is always shown on the top left of the screen). Therefore, these two
+// code fragments are disabled for now, till the glitches they cause are fixed.
 
 void GfxManager::copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion) {
+#if 0
 	if (&_surface == &(GLOBALS._screenSurface))
 		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
 	else
+#endif
 		_surface.setBounds(_bounds);
 
 	_surface.copyFrom(src, destBounds, priorityRegion);
 }
+
 void GfxManager::copyFrom(GfxSurface &src, int destX, int destY) {
+#if 0
 	if (&_surface == &(GLOBALS._screenSurface))
 		_surface.setBounds(Rect(0, 0, _bounds.width(), _bounds.height()));
 	else
+#endif
 		_surface.setBounds(_bounds);
 
 	_surface.copyFrom(src, destX, destY);
