@@ -101,7 +101,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, bool monochrome);
+	bool load(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
 
@@ -157,7 +157,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -211,10 +211,24 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome
 	_width = ftCeil26_6(FT_MulFix(_face->max_advance_width, _face->size->metrics.x_scale));
 	_height = _ascent - _descent + 1;
 
-	// Load all ISO-8859-1 characters.
-	for (uint i = 0; i < 256; ++i) {
-		if (!cacheGlyph(_glyphs[i], _glyphSlots[i], i))
-			_glyphSlots[i] = 0;
+	if (!mapping) {
+		// Load all ISO-8859-1 characters.
+		for (uint i = 0; i < 256; ++i) {
+			if (!cacheGlyph(_glyphs[i], _glyphSlots[i], i))
+				_glyphSlots[i] = 0;
+		}
+	} else {
+		for (uint i = 0; i < 256; ++i) {
+			const uint32 unicode = mapping[i] & 0x7FFFFFFF;
+			const bool isRequired = (mapping[i] & 0x80000000) != 0;
+			// Check whether loading an important glyph fails and error out if
+			// that is the case.
+			if (!cacheGlyph(_glyphs[i], _glyphSlots[i], unicode)) {
+				_glyphSlots[i] = 0;
+				if (isRequired)
+					return false;
+			}
+		}
 	}
 
 	_initialized = (_glyphs.size() != 0);
@@ -422,10 +436,10 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 	return true;
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, monochrome)) {
+	if (!font->load(stream, size, monochrome, mapping)) {
 		delete font;
 		return 0;
 	}
