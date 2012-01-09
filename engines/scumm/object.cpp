@@ -1223,7 +1223,7 @@ uint32 ScummEngine::getOBCDOffs(int object) const {
 		return 0;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		if (_objs[i].obj_nr == object) {
+		if (_objs[i].obj_nr == OBJECT_V0_NR(object)) {
 			if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
 				continue;
 			if (_objs[i].fl_object_index != 0)
