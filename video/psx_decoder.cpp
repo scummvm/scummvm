@@ -58,17 +58,53 @@ PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) {
 PSXStreamDecoder::~PSXStreamDecoder() {
 	close();
 	delete _surface;
-	delete _huffman;
+	delete _acHuffman;
+	delete _dcHuffmanLuma;
+	delete _dcHuffmanChroma;
 }
 
-#define CODE_COUNT 113
-#define HUFFVAL(z, a) ((z << 8) | a)
+// Here are the codes/lengths/symbols that are used for decoding
+// DC coefficients (version 3 frames only)
+
+#define DC_CODE_COUNT 9
+#define DC_HUFF_VAL(b, n, p) (((b) << 16) | ((n) << 8) | (p))
+#define GET_DC_BITS(x) ((x) >> 16)
+#define GET_DC_NEG(x) ((int)(((x) >> 8) & 0xff))
+#define GET_DC_POS(x) ((int)((x) & 0xff))
+
+static const uint32 s_huffmanDCChromaCodes[DC_CODE_COUNT] = {
+	254, 126, 62, 30, 14, 6, 2, 1, 0
+};
+
+static const byte s_huffmanDCChromaLengths[DC_CODE_COUNT] = {
+	8, 7, 6, 5, 4, 3, 2, 2, 2
+};
+
+static const uint32 s_huffmanDCLumaCodes[DC_CODE_COUNT] = {
+	126, 62, 30, 14, 6, 5, 1, 0, 4
+};
+
+static const byte s_huffmanDCLumaLengths[DC_CODE_COUNT] = {
+	7, 6, 5, 4, 3, 3, 2, 2, 3
+};
+
+static const uint32 s_huffmanDCSymbols[DC_CODE_COUNT] = {
+	DC_HUFF_VAL(8, 255, 128), DC_HUFF_VAL(7, 127, 64), DC_HUFF_VAL(6, 63, 32),
+	DC_HUFF_VAL(5, 31, 16), DC_HUFF_VAL(4, 15, 8), DC_HUFF_VAL(3, 7, 4),
+	DC_HUFF_VAL(2, 3, 2), DC_HUFF_VAL(1, 1, 1), DC_HUFF_VAL(0, 0, 0)
+};
+
+// Here are the codes/lengths/symbols that are used for decoding
+// DC coefficients (version 2 and 3 frames)
+
+#define AC_CODE_COUNT 113
+#define AC_HUFF_VAL(z, a) ((z << 8) | a)
 #define ESCAPE_CODE  ((uint32)-1) // arbitrary, just so we can tell what code it is
 #define END_OF_BLOCK ((uint32)-2) // arbitrary, just so we can tell what code it is
-#define GET_ZEROES(code) (code >> 8)
-#define GET_AC(code) ((int)(code & 0xff))
+#define GET_AC_ZERO_RUN(code) (code >> 8)
+#define GET_AC_COEFFICIENT(code) ((int)(code & 0xff))
 
-static const uint32 s_huffmanCodes[CODE_COUNT] = {
+static const uint32 s_huffmanACCodes[AC_CODE_COUNT] = {
 	// Regular codes
 	3, 3, 4, 5, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7,
 	32, 33, 34, 35, 36, 37, 38, 39, 8, 9, 10, 11,
@@ -87,7 +123,7 @@ static const uint32 s_huffmanCodes[CODE_COUNT] = {
 	2
 };
 
-static const byte s_huffmanLengths[CODE_COUNT] = {
+static const byte s_huffmanACLengths[AC_CODE_COUNT] = {
 	// Regular codes
 	2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
 	8, 8, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10,
@@ -106,31 +142,31 @@ static const byte s_huffmanLengths[CODE_COUNT] = {
 	2
 };
 
-static const uint32 s_huffmanSymbols[CODE_COUNT] = {
+static const uint32 s_huffmanACSymbols[AC_CODE_COUNT] = {
 	// Regular codes
-	HUFFVAL(0, 1), HUFFVAL(1, 1), HUFFVAL(0, 2), HUFFVAL(2, 1), HUFFVAL(0, 3),
-	HUFFVAL(4, 1), HUFFVAL(3, 1), HUFFVAL(7, 1), HUFFVAL(6, 1), HUFFVAL(1, 2),
-	HUFFVAL(5, 1), HUFFVAL(2, 2), HUFFVAL(9, 1), HUFFVAL(0, 4), HUFFVAL(8, 1),
-	HUFFVAL(13, 1), HUFFVAL(0, 6), HUFFVAL(12, 1), HUFFVAL(11, 1), HUFFVAL(3, 2),
-	HUFFVAL(1, 3), HUFFVAL(0, 5), HUFFVAL(10, 1), HUFFVAL(16, 1), HUFFVAL(5, 2),
-	HUFFVAL(0, 7), HUFFVAL(2, 3), HUFFVAL(1, 4), HUFFVAL(15, 1), HUFFVAL(14, 1),
-	HUFFVAL(4, 2), HUFFVAL(0, 11), HUFFVAL(8, 2), HUFFVAL(4, 3), HUFFVAL(0, 10),
-	HUFFVAL(2, 4), HUFFVAL(7, 2), HUFFVAL(21, 1), HUFFVAL(20, 1), HUFFVAL(0, 9),
-	HUFFVAL(19, 1), HUFFVAL(18, 1), HUFFVAL(1, 5), HUFFVAL(3, 3), HUFFVAL(0, 8),
-	HUFFVAL(6, 2), HUFFVAL(17, 1), HUFFVAL(10, 2), HUFFVAL(9, 2), HUFFVAL(5, 3),
-	HUFFVAL(3, 4), HUFFVAL(2, 5), HUFFVAL(1, 7), HUFFVAL(1, 6), HUFFVAL(0, 15),
-	HUFFVAL(0, 14), HUFFVAL(0, 13), HUFFVAL(0, 12), HUFFVAL(26, 1), HUFFVAL(25, 1),
-	HUFFVAL(24, 1), HUFFVAL(23, 1), HUFFVAL(22, 1), HUFFVAL(0, 31), HUFFVAL(0, 30),
-	HUFFVAL(0, 29), HUFFVAL(0, 28), HUFFVAL(0, 27), HUFFVAL(0, 26), HUFFVAL(0, 25),
-	HUFFVAL(0, 24), HUFFVAL(0, 23), HUFFVAL(0, 22), HUFFVAL(0, 21), HUFFVAL(0, 20),
-	HUFFVAL(0, 19), HUFFVAL(0, 18), HUFFVAL(0, 17), HUFFVAL(0, 16), HUFFVAL(0, 40),
-	HUFFVAL(0, 39), HUFFVAL(0, 38), HUFFVAL(0, 37), HUFFVAL(0, 36), HUFFVAL(0, 35),
-	HUFFVAL(0, 34), HUFFVAL(0, 33), HUFFVAL(0, 32), HUFFVAL(1, 14), HUFFVAL(1, 13),
-	HUFFVAL(1, 12), HUFFVAL(1, 11), HUFFVAL(1, 10), HUFFVAL(1, 9), HUFFVAL(1, 8),
-	HUFFVAL(1, 18), HUFFVAL(1, 17), HUFFVAL(1, 16), HUFFVAL(1, 15), HUFFVAL(6, 3),
-	HUFFVAL(16, 2), HUFFVAL(15, 2), HUFFVAL(14, 2), HUFFVAL(13, 2), HUFFVAL(12, 2),
-	HUFFVAL(11, 2), HUFFVAL(31, 1), HUFFVAL(30, 1), HUFFVAL(29, 1), HUFFVAL(28, 1),
-	HUFFVAL(27, 1),
+	AC_HUFF_VAL(0, 1), AC_HUFF_VAL(1, 1), AC_HUFF_VAL(0, 2), AC_HUFF_VAL(2, 1), AC_HUFF_VAL(0, 3),
+	AC_HUFF_VAL(4, 1), AC_HUFF_VAL(3, 1), AC_HUFF_VAL(7, 1), AC_HUFF_VAL(6, 1), AC_HUFF_VAL(1, 2),
+	AC_HUFF_VAL(5, 1), AC_HUFF_VAL(2, 2), AC_HUFF_VAL(9, 1), AC_HUFF_VAL(0, 4), AC_HUFF_VAL(8, 1),
+	AC_HUFF_VAL(13, 1), AC_HUFF_VAL(0, 6), AC_HUFF_VAL(12, 1), AC_HUFF_VAL(11, 1), AC_HUFF_VAL(3, 2),
+	AC_HUFF_VAL(1, 3), AC_HUFF_VAL(0, 5), AC_HUFF_VAL(10, 1), AC_HUFF_VAL(16, 1), AC_HUFF_VAL(5, 2),
+	AC_HUFF_VAL(0, 7), AC_HUFF_VAL(2, 3), AC_HUFF_VAL(1, 4), AC_HUFF_VAL(15, 1), AC_HUFF_VAL(14, 1),
+	AC_HUFF_VAL(4, 2), AC_HUFF_VAL(0, 11), AC_HUFF_VAL(8, 2), AC_HUFF_VAL(4, 3), AC_HUFF_VAL(0, 10),
+	AC_HUFF_VAL(2, 4), AC_HUFF_VAL(7, 2), AC_HUFF_VAL(21, 1), AC_HUFF_VAL(20, 1), AC_HUFF_VAL(0, 9),
+	AC_HUFF_VAL(19, 1), AC_HUFF_VAL(18, 1), AC_HUFF_VAL(1, 5), AC_HUFF_VAL(3, 3), AC_HUFF_VAL(0, 8),
+	AC_HUFF_VAL(6, 2), AC_HUFF_VAL(17, 1), AC_HUFF_VAL(10, 2), AC_HUFF_VAL(9, 2), AC_HUFF_VAL(5, 3),
+	AC_HUFF_VAL(3, 4), AC_HUFF_VAL(2, 5), AC_HUFF_VAL(1, 7), AC_HUFF_VAL(1, 6), AC_HUFF_VAL(0, 15),
+	AC_HUFF_VAL(0, 14), AC_HUFF_VAL(0, 13), AC_HUFF_VAL(0, 12), AC_HUFF_VAL(26, 1), AC_HUFF_VAL(25, 1),
+	AC_HUFF_VAL(24, 1), AC_HUFF_VAL(23, 1), AC_HUFF_VAL(22, 1), AC_HUFF_VAL(0, 31), AC_HUFF_VAL(0, 30),
+	AC_HUFF_VAL(0, 29), AC_HUFF_VAL(0, 28), AC_HUFF_VAL(0, 27), AC_HUFF_VAL(0, 26), AC_HUFF_VAL(0, 25),
+	AC_HUFF_VAL(0, 24), AC_HUFF_VAL(0, 23), AC_HUFF_VAL(0, 22), AC_HUFF_VAL(0, 21), AC_HUFF_VAL(0, 20),
+	AC_HUFF_VAL(0, 19), AC_HUFF_VAL(0, 18), AC_HUFF_VAL(0, 17), AC_HUFF_VAL(0, 16), AC_HUFF_VAL(0, 40),
+	AC_HUFF_VAL(0, 39), AC_HUFF_VAL(0, 38), AC_HUFF_VAL(0, 37), AC_HUFF_VAL(0, 36), AC_HUFF_VAL(0, 35),
+	AC_HUFF_VAL(0, 34), AC_HUFF_VAL(0, 33), AC_HUFF_VAL(0, 32), AC_HUFF_VAL(1, 14), AC_HUFF_VAL(1, 13),
+	AC_HUFF_VAL(1, 12), AC_HUFF_VAL(1, 11), AC_HUFF_VAL(1, 10), AC_HUFF_VAL(1, 9), AC_HUFF_VAL(1, 8),
+	AC_HUFF_VAL(1, 18), AC_HUFF_VAL(1, 17), AC_HUFF_VAL(1, 16), AC_HUFF_VAL(1, 15), AC_HUFF_VAL(6, 3),
+	AC_HUFF_VAL(16, 2), AC_HUFF_VAL(15, 2), AC_HUFF_VAL(14, 2), AC_HUFF_VAL(13, 2), AC_HUFF_VAL(12, 2),
+	AC_HUFF_VAL(11, 2), AC_HUFF_VAL(31, 1), AC_HUFF_VAL(30, 1), AC_HUFF_VAL(29, 1), AC_HUFF_VAL(28, 1),
+	AC_HUFF_VAL(27, 1),
 
 	// Escape code
 	ESCAPE_CODE,
@@ -143,7 +179,9 @@ void PSXStreamDecoder::initCommon() {
 	_audStream = 0;
 	_surface = new Graphics::Surface();
 	_yBuffer = _cbBuffer = _crBuffer = 0;
-	_huffman = new Common::Huffman(0, CODE_COUNT, s_huffmanCodes, s_huffmanLengths, s_huffmanSymbols);
+	_acHuffman = new Common::Huffman(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
+	_dcHuffmanChroma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
+	_dcHuffmanLuma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
 }
 
 #define RAW_CD_SECTOR_SIZE 2352
@@ -448,6 +486,9 @@ void PSXStreamDecoder::decodeFrame(Common::SeekableReadStream *frame) {
 	if (version != 2 && version != 3)
 		error("Unknown PSX stream frame version");
 
+	// Initalize default v3 DC here
+	_lastDC[0] = _lastDC[1] = _lastDC[2] = 0;
+
 	for (int mbX = 0; mbX < _macroBlocksW; mbX++)
 		for (int mbY = 0; mbY < _macroBlocksH; mbY++)
 			decodeMacroBlock(&bits, mbX, mbY, scale, version);
@@ -461,12 +502,12 @@ void PSXStreamDecoder::decodeMacroBlock(Common::BitStream *bits, int mbX, int mb
 	int pitchC = _macroBlocksW * 8;
 
 	// Note the strange order of red before blue
-	decodeBlock(bits, _crBuffer + (mbY * pitchC + mbX) * 8, pitchC, scale, version);
-	decodeBlock(bits, _cbBuffer + (mbY * pitchC + mbX) * 8, pitchC, scale, version);
-	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16, pitchY, scale, version);
-	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8, pitchY, scale, version);
-	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8 * pitchY, pitchY, scale, version);
-	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8 * pitchY + 8, pitchY, scale, version);
+	decodeBlock(bits, _crBuffer + (mbY * pitchC + mbX) * 8, pitchC, scale, version, kPlaneV);
+	decodeBlock(bits, _cbBuffer + (mbY * pitchC + mbX) * 8, pitchC, scale, version, kPlaneU);
+	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16, pitchY, scale, version, kPlaneY);
+	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8, pitchY, scale, version, kPlaneY);
+	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8 * pitchY, pitchY, scale, version, kPlaneY);
+	decodeBlock(bits, _yBuffer + (mbY * pitchY + mbX) * 16 + 8 * pitchY + 8, pitchY, scale, version, kPlaneY);
 }
 
 // Standard JPEG/MPEG zig zag table
@@ -503,6 +544,32 @@ void PSXStreamDecoder::dequantizeBlock(int *coefficients, float *block, uint16 s
 	}
 }
 
+int PSXStreamDecoder::readDC(Common::BitStream *bits, uint16 version, PlaneType plane) {
+	// Version 2 just has its coefficient as 10-bits
+	if (version == 2)
+		return readSignedCoefficient(bits);
+
+	// Version 3 has it stored as huffman codes as a difference from the previous DC value
+
+	Common::Huffman *huffman = (plane == kPlaneY) ? _dcHuffmanLuma : _dcHuffmanChroma;
+
+	uint32 symbol = huffman->getSymbol(*bits);
+	int dc = 0;
+
+	if (GET_DC_BITS(symbol) != 0) {
+		bool negative = (bits->getBit() == 0);
+		dc = bits->getBits(GET_DC_BITS(symbol) - 1);
+
+		if (negative)
+			dc -= GET_DC_NEG(symbol);
+		else
+			dc += GET_DC_POS(symbol);
+	}
+
+	_lastDC[plane] += dc * 4; // convert from 8-bit to 10-bit
+	return _lastDC[plane];
+}
+
 #define BLOCK_OVERFLOW_CHECK() \
 	if (count > 63) \
 		error("PSXStreamDecoder::readAC(): Too many coefficients")
@@ -515,7 +582,7 @@ void PSXStreamDecoder::readAC(Common::BitStream *bits, int *block) {
 	int count = 0;
 
 	while (!bits->eos()) {
-		uint32 symbol = _huffman->getSymbol(*bits);
+		uint32 symbol = _acHuffman->getSymbol(*bits);
 
 		if (symbol == ESCAPE_CODE) {
 			// The escape code!
@@ -529,15 +596,15 @@ void PSXStreamDecoder::readAC(Common::BitStream *bits, int *block) {
 			break;
 		} else {
 			// Normal huffman code
-			int zeroes = GET_ZEROES(symbol);
+			int zeroes = GET_AC_ZERO_RUN(symbol);
 			count += zeroes + 1;
 			BLOCK_OVERFLOW_CHECK();
 			block += zeroes;
 
 			if (bits->getBit())
-				*block++ = -GET_AC(symbol);
+				*block++ = -GET_AC_COEFFICIENT(symbol);
 			else
-				*block++ = GET_AC(symbol);
+				*block++ = GET_AC_COEFFICIENT(symbol);
 		}
 	}
 }
@@ -603,18 +670,11 @@ void PSXStreamDecoder::idct(float *dequantData, float *result) {
 	}
 }
 
-void PSXStreamDecoder::decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version) {
-	int dc;
-
-	if (version == 2) {
-		dc = readSignedCoefficient(bits);
-	} else {
-		// TODO
-		error("Unhandled PSX stream version 3 DC");
-	}
-
+void PSXStreamDecoder::decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane) {
+	// Version 2 just has signed 10 bits for DC
+	// Version 3 has them huffman coded
 	int coefficients[8 * 8];
-	coefficients[0] = dc; // Start us off with the DC
+	coefficients[0] = readDC(bits, version, plane);
 	readAC(bits, &coefficients[1]); // Read in the AC
 
 	// Dequantize

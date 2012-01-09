@@ -96,15 +96,26 @@ private:
 	Audio::QueuingAudioStream *_audStream;
 	void queueAudioFromSector(Common::SeekableReadStream *sector);
 
-	Common::Huffman *_huffman;
+	enum PlaneType {
+		kPlaneY = 0,
+		kPlaneU = 1,
+		kPlaneV = 2
+	};
+
 	uint16 _macroBlocksW, _macroBlocksH;
 	byte *_yBuffer, *_cbBuffer, *_crBuffer;
 	void decodeFrame(Common::SeekableReadStream *frame);
 	void decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version);
-	void decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version);
+	void decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
+
+	void readAC(Common::BitStream *bits, int *block);
+	Common::Huffman *_acHuffman;
+
+	int readDC(Common::BitStream *bits, uint16 version, PlaneType plane);
+	Common::Huffman *_dcHuffmanLuma, *_dcHuffmanChroma;
+	int _lastDC[3];
 
 	void dequantizeBlock(int *coefficients, float *block, uint16 scale);
-	void readAC(Common::BitStream *bits, int *block);
 	void idct(float *dequantData, float *result);
 	int readSignedCoefficient(Common::BitStream *bits);
 
