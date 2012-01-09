@@ -159,7 +159,7 @@ protected:
 	void o_beginOverride();
 	void o_setOwnerOf();
 
-	byte VAR_ACTIVE_ACTOR;
+	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_IS_SOUND_RUNNING;
 	byte VAR_ACTIVE_VERB;
 };
