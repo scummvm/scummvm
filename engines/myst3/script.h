@@ -129,6 +129,7 @@ private:
 	DECLARE_OPCODE(inventoryAddBack);
 	DECLARE_OPCODE(inventoryRemove);
 	DECLARE_OPCODE(inventoryReset);
+	DECLARE_OPCODE(inventoryAddSaavChapter);
 	DECLARE_OPCODE(varSetZero);
 	DECLARE_OPCODE(varSetOne);
 	DECLARE_OPCODE(varSetTwo);

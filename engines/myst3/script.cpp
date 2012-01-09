@@ -76,6 +76,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 45, inventoryAddBack,				kVar,		kValue											);
 	OP_1( 46, inventoryRemove,				kVar														);
 	OP_0( 47, inventoryReset																			);
+	OP_1( 48, inventoryAddSaavChapter,		kVar														);
 	OP_1( 49, varSetZero,					kVar														);
 	OP_1( 50, varSetOne,					kVar														);
 	OP_1( 51, varSetTwo,					kVar														);
@@ -592,6 +593,12 @@ void Script::inventoryReset(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Reset inventory", cmd.op);
 
 	_vm->_inventory->reset();
+}
+
+void Script::inventoryAddSaavChapter(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Get new Saavedro chapter %d", cmd.op, cmd.args[0]);
+
+	_vm->_inventory->addSaavedroChapter(cmd.args[0]);
 }
 
 void Script::varSetZero(Context &c, const Opcode &cmd) {

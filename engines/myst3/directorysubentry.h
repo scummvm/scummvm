@@ -42,6 +42,8 @@ struct VideoData {
 	int32 height;
 };
 
+typedef uint32 MiscData[20];
+
 class Archive;
 
 class DirectorySubEntry {
@@ -54,6 +56,7 @@ class DirectorySubEntry {
 			kCursor = 7,
 			kMovie = 8,
 			kStillMovie = 10,
+			kMetadata = 13,
 			kMenuSpotItem = 69,
 			kMenuFrame = 70,
 			kImagerMovie = 72
@@ -70,6 +73,7 @@ class DirectorySubEntry {
 		ResourceType getType() const { return _type; }
 		const SpotItemData &getSpotItemData() const { return _spotItemData; }
 		const VideoData &getVideoData() const { return _videoData; }
+		uint32 getMiscData(uint index) const;
 
 	private:
 		uint32 _offset;
@@ -81,6 +85,7 @@ class DirectorySubEntry {
 		// Metadata
 		SpotItemData _spotItemData;
 		VideoData _videoData;
+		MiscData _miscData;
 
 		Archive *_archive;
 };

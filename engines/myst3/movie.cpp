@@ -36,7 +36,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	if (!binkDesc)
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kStillMovie);
 
-		if (!binkDesc)
+	if (!binkDesc)
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kImagerMovie);
 
 	if (!binkDesc)

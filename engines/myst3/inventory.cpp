@@ -222,12 +222,12 @@ void Inventory::useItem(uint16 var) {
 	switch (var) {
 	case 277: // Atrus
 		closeAllBooks();
-		_vm->_vars->setJournalStateAtrus(2);
+		_vm->_vars->setJournalAtrusState(2);
 		openBook(9, 902, 100);
 		break;
 	case 279: // Saavedro
 		closeAllBooks();
-		_vm->_vars->setJournalStateSaavedro(2);
+		_vm->_vars->setJournalSaavedroState(2);
 		openBook(9, 902, 200);
 		break;
 	case 480: // Tomahna
@@ -246,10 +246,10 @@ void Inventory::useItem(uint16 var) {
 }
 
 void Inventory::closeAllBooks() {
-	if (_vm->_vars->getJournalStateAtrus())
-		_vm->_vars->setJournalStateAtrus(1);
-	if (_vm->_vars->getJournalStateSaavedro())
-		_vm->_vars->setJournalStateSaavedro(1);
+	if (_vm->_vars->getJournalAtrusState())
+		_vm->_vars->setJournalAtrusState(1);
+	if (_vm->_vars->getJournalSaavedroState())
+		_vm->_vars->setJournalSaavedroState(1);
 	if (_vm->_vars->getBookStateTomahna())
 		_vm->_vars->setBookStateTomahna(1);
 	if (_vm->_vars->getBookStateReleeshahn())
@@ -266,6 +266,14 @@ void Inventory::openBook(uint16 age, uint16 room, uint16 node) {
 	_vm->_vars->setLocationNextAge(age);
 	_vm->_vars->setLocationNextRoom(room);
 	_vm->goToNode(node, 1);
+}
+
+void Inventory::addSaavedroChapter(uint16 var) {
+	_vm->_vars->set(var, 1);
+	_vm->_vars->setJournalSaavedroState(2);
+	_vm->_vars->setJournalSaavedroChapter(var - 285);
+	_vm->_vars->setJournalSaavedroPageInChapter(0);
+	openBook(9, 902, 200);
 }
 
 } /* namespace Myst3 */

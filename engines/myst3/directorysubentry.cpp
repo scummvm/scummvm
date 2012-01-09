@@ -32,6 +32,9 @@ namespace Myst3 {
 
 DirectorySubEntry::DirectorySubEntry(Archive *archive) :
 	_archive(archive) {
+	for (uint i = 0; i < 20; i++) {
+		_miscData[i] = 0;
+	}
 }
 
 void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
@@ -60,8 +63,13 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 		_videoData.width = inStream.readSint32LE();
 		_videoData.height = inStream.readSint32LE();
 	} else {
-		warning("Unknown metadata type");
-		inStream.skip(_metadataSize * sizeof(uint32));
+		if (_metadataSize > 20) {
+			warning("Too much metadata, skipping");
+			return;
+		}
+
+		for (uint i = 0; i < _metadataSize; i++)
+			_miscData[i] = inStream.readUint32LE();
 	}
 }
 
@@ -108,6 +116,17 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 
 
 Common::MemoryReadStream *DirectorySubEntry::getData() const {
 	return _archive->dumpToMemory(_offset, _size);
+}
+
+uint32 DirectorySubEntry::getMiscData(uint index) const {
+	assert(index < 23);
+
+	if (index == 0)
+		return _offset;
+	else if (index == 1)
+		return _size;
+	else
+		return _miscData[index - 2];
 }
 
 } // end of namespace Myst3

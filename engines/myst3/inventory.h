@@ -43,6 +43,7 @@ public:
 	virtual ~Inventory();
 
 	void addItem(uint16 var, bool atEnd);
+	void addSaavedroChapter(uint16 var);
 	void addAll();
 	void removeItem(uint16 var);
 	void reset();

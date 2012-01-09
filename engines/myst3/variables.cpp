@@ -78,8 +78,13 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(190, LocationNextRoom, false)
 	VAR(191, LocationNextAge, false)
 
-	VAR(277, JournalStateAtrus, false)
-	VAR(279, JournalStateSaavedro, false)
+	VAR(277, JournalAtrusState, false)
+	VAR(279, JournalSaavedroState, false)
+	VAR(280, JournalSaavedroClosed, false)
+	VAR(281, JournalSaavedroOpen, false)
+	VAR(282, JournalSaavedroLastPage, false)
+	VAR(283, JournalSaavedroChapter, false)
+	VAR(284, JournalSaavedroPageInChapter, false)
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 

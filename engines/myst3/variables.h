@@ -79,8 +79,13 @@ public:
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)
 
-	DECLARE_VAR(277, JournalStateAtrus)
-	DECLARE_VAR(279, JournalStateSaavedro)
+	DECLARE_VAR(277, JournalAtrusState)
+	DECLARE_VAR(279, JournalSaavedroState)
+	DECLARE_VAR(280, JournalSaavedroClosed)
+	DECLARE_VAR(281, JournalSaavedroOpen)
+	DECLARE_VAR(282, JournalSaavedroLastPage)
+	DECLARE_VAR(283, JournalSaavedroChapter)
+	DECLARE_VAR(284, JournalSaavedroPageInChapter)
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 

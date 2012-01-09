@@ -38,6 +38,14 @@ public:
 
 private:
 	Myst3Engine *_vm;
+
+	void journalSaavedro(int16 move);
+	uint16 _journalSaavedroGetNode(uint16 chapter);
+	uint16 _journalSaavedroPageCount(uint16 chapter);
+	bool _journalSaavedroHasChapter(uint16 chapter);
+	uint16 _journalSaavedroNextChapter(uint16 chapter, bool forward);
+
+	void journalAtrus(uint16 node, uint16 var);
 };
 
 } /* namespace Myst3 */
