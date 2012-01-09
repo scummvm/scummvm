@@ -222,7 +222,7 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Extract(int argc, const char **argv) {
-	if (argc != 4) {
+	if (argc != 5) {
 		DebugPrintf("Extract a file from the game's archives\n");
 		DebugPrintf("Usage :\n");
 		DebugPrintf("extract [room] [node id] [face number] [object type]\n");

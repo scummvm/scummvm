@@ -49,6 +49,9 @@ public:
 	DECLARE_VAR(61, LocationAge)
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)
+	DECLARE_VAR(64, BookSavedAge)
+	DECLARE_VAR(65, BookSavedRoom)
+	DECLARE_VAR(66, BookSavedNode)
 
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
@@ -75,6 +78,11 @@ public:
 	DECLARE_VAR(189, LocationNextNode)
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)
+
+	DECLARE_VAR(277, JournalStateAtrus)
+	DECLARE_VAR(279, JournalStateSaavedro)
+	DECLARE_VAR(480, BookStateTomahna)
+	DECLARE_VAR(481, BookStateReleeshahn)
 
 private:
 	Myst3Engine *_vm;

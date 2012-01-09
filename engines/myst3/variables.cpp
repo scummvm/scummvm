@@ -31,6 +31,9 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(61, LocationAge, false)
 	VAR(62, LocationRoom, false)
 	VAR(63, LocationNode, false)
+	VAR(64, BookSavedAge, false)
+	VAR(65, BookSavedRoom, false)
+	VAR(66, BookSavedNode, false)
 
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
@@ -74,6 +77,11 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(189, LocationNextNode, false)
 	VAR(190, LocationNextRoom, false)
 	VAR(191, LocationNextAge, false)
+
+	VAR(277, JournalStateAtrus, false)
+	VAR(279, JournalStateSaavedro, false)
+	VAR(480, BookStateTomahna, false)
+	VAR(481, BookStateReleeshahn, false)
 
 #undef VAR
 

@@ -70,7 +70,10 @@ void Inventory::draw() {
 				item.textureHeight);
 		textureRect.translate(item.textureX, 0);
 
-		drawItem(it->rect, textureRect, it->rect.contains(mouse));
+		bool itemHighlighted = it->rect.contains(mouse)
+				|| (_vm->_vars->get(it->var) == 2);
+
+		drawItem(it->rect, textureRect, itemHighlighted);
 	}
 }
 
@@ -216,7 +219,53 @@ uint16 Inventory::hoveredItem() {
 }
 
 void Inventory::useItem(uint16 var) {
-	debug("Used inventory item %d which is not implemented", var);
+	switch (var) {
+	case 277: // Atrus
+		closeAllBooks();
+		_vm->_vars->setJournalStateAtrus(2);
+		openBook(9, 902, 100);
+		break;
+	case 279: // Saavedro
+		closeAllBooks();
+		_vm->_vars->setJournalStateSaavedro(2);
+		openBook(9, 902, 200);
+		break;
+	case 480: // Tomahna
+		closeAllBooks();
+		_vm->_vars->setBookStateTomahna(2);
+		openBook(8, 801, 220);
+		break;
+	case 481: // Releeshahn
+		closeAllBooks();
+		_vm->_vars->setBookStateReleeshahn(2);
+		openBook(9, 902, 300);
+		break;
+	default:
+		debug("Used inventory item %d which is not implemented", var);
+	}
+}
+
+void Inventory::closeAllBooks() {
+	if (_vm->_vars->getJournalStateAtrus())
+		_vm->_vars->setJournalStateAtrus(1);
+	if (_vm->_vars->getJournalStateSaavedro())
+		_vm->_vars->setJournalStateSaavedro(1);
+	if (_vm->_vars->getBookStateTomahna())
+		_vm->_vars->setBookStateTomahna(1);
+	if (_vm->_vars->getBookStateReleeshahn())
+		_vm->_vars->setBookStateReleeshahn(1);
+}
+
+void Inventory::openBook(uint16 age, uint16 room, uint16 node) {
+	if (!_vm->_vars->getBookSavedNode()) {
+		_vm->_vars->setBookSavedAge(_vm->_vars->getLocationAge());
+		_vm->_vars->setBookSavedRoom(_vm->_vars->getLocationRoom());
+		_vm->_vars->setBookSavedNode(_vm->_vars->getLocationNode());
+	}
+
+	_vm->_vars->setLocationNextAge(age);
+	_vm->_vars->setLocationNextRoom(room);
+	_vm->goToNode(node, 1);
 }
 
 } /* namespace Myst3 */

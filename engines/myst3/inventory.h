@@ -79,6 +79,9 @@ private:
 	bool hasItem(uint16 var);
 	void drawItem(const Common::Rect &screenRect, const Common::Rect &textureRect, bool hovered);
 	void reflow();
+
+	void openBook(uint16 age, uint16 room, uint16 node);
+	void closeAllBooks();
 };
 
 } /* namespace Myst3 */
