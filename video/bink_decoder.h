@@ -76,7 +76,9 @@ public:
 	// FixedRateVideoDecoder
 	Common::Rational getFrameRate() const { return _frameRate; }
 
-private:
+	// Bink specific
+	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
+protected:
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
 
@@ -221,14 +223,12 @@ private:
 
 	Audio::SoundHandle _audioHandle;
 	Audio::QueuingAudioStream *_audioStream;
-	bool _audioStarted;
+	int32 _audioStartOffset;
 
 	uint32 _videoFlags; ///< Video frame features.
 
 	bool _hasAlpha;   ///< Do video frames have alpha?
 	bool _swapPlanes; ///< Are the planes ordered (A)YVU instead of (A)YUV?
-
-	uint32 _audioFrame;
 
 	Common::Array<AudioTrack> _audioTracks; ///< All audio tracks.
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
@@ -259,7 +259,7 @@ private:
 	/** Decode an audio packet. */
 	void audioPacket(AudioTrack &audio);
 	/** Decode a video packet. */
-	void videoPacket(VideoFrame &video);
+	virtual void videoPacket(VideoFrame &video);
 
 	/** Decode a plane. */
 	void decodePlane(VideoFrame &video, int planeIdx, bool isChroma);
@@ -327,6 +327,11 @@ private:
 	void IDCT(int16 *block);
 	void IDCTPut(DecodeContext &ctx, int16 *block);
 	void IDCTAdd(DecodeContext &ctx, int16 *block);
+
+	/** Start playing the audio track */
+	void startAudio();
+	/** Stop playing the audio track */
+	void stopAudio();
 };
 
 } // End of namespace Video
