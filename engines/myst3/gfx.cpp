@@ -40,10 +40,10 @@ namespace Myst3 {
 
 class OpenGLTexture : public Texture {
 public:
-	OpenGLTexture(Graphics::Surface *surface);
+	OpenGLTexture(const Graphics::Surface *surface);
 	virtual ~OpenGLTexture();
 
-	void update(Graphics::Surface *surface);
+	void update(const Graphics::Surface *surface);
 
 	GLuint id;
 	GLuint internalFormat;
@@ -64,7 +64,7 @@ static uint32 upperPowerOfTwo(uint32 v)
     return v;
 }
 
-OpenGLTexture::OpenGLTexture(Graphics::Surface *surface) {
+OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
@@ -92,7 +92,7 @@ OpenGLTexture::~OpenGLTexture() {
 	glDeleteTextures(1, &id);
 }
 
-void OpenGLTexture::update(Graphics::Surface *surface) {
+void OpenGLTexture::update(const Graphics::Surface *surface) {
 	glBindTexture(GL_TEXTURE_2D, id);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, GL_UNSIGNED_BYTE, surface->pixels);
 }
@@ -104,7 +104,7 @@ Renderer::Renderer(OSystem *system) :
 Renderer::~Renderer() {
 }
 
-Texture *Renderer::createTexture(Graphics::Surface *surface) {
+Texture *Renderer::createTexture(const Graphics::Surface *surface) {
 	return new OpenGLTexture(surface);
 }
 
@@ -280,5 +280,36 @@ void Renderer::drawCube(Texture **textures) {
 
 	glDepthMask(GL_TRUE);
 }
+
+void Renderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
+
+	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
+
+	const float w = glTexture->width / (float) glTexture->internalWidth;
+	const float h = glTexture->height / (float)glTexture->internalHeight;
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
+	glBindTexture(GL_TEXTURE_2D, glTexture->id);
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(0, 0);
+		glVertex3f(-topLeft.x(), topLeft.y(), topLeft.z());
+
+		glTexCoord2f(0, h);
+		glVertex3f(-bottomLeft.x(), bottomLeft.y(), bottomLeft.z());
+
+		glTexCoord2f(w, 0);
+		glVertex3f(-topRight.x(), topRight.y(), topRight.z());
+
+		glTexCoord2f(w, h);
+		glVertex3f(-bottomRight.x(), bottomRight.y(), bottomRight.z());
+	glEnd();
+
+	glDisable(GL_BLEND);
+}
+
 
 } // end of namespace Myst3

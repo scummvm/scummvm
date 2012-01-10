@@ -29,17 +29,11 @@
 #include "math/vector3d.h"
 #include "video/bink_decoder_seek.h"
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 namespace Myst3 {
 
 struct VideoData;
 class Myst3Engine;
+class Texture;
 
 class Movie : public Drawable {
 public:
@@ -51,8 +45,6 @@ public:
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
 protected:
-	static const int _movieTextureSize = 1024;
-
 	Myst3Engine *_vm;
 
 	Math::Vector3d _pTopLeft;
@@ -60,13 +52,12 @@ protected:
 	Math::Vector3d _pBottomRight;
 	Math::Vector3d _pTopRight;
 	Video::SeekableBinkDecoder _bink;
-	GLuint _texture;
+	Texture *_texture;
 
 	int32 _startFrame;
 	int32 _endFrame;
 
 	void loadPosition(const VideoData &videoData);
-	void initTexture();
 	void drawNextFrameToTexture();
 };
 

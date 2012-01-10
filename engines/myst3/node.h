@@ -131,8 +131,6 @@ class Node {
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void dumpFaceMask(uint16 index, int face);
-
-		static const int _cubeTextureSize = 1024;
 };
 
 } // end of namespace Myst3

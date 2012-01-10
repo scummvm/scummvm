@@ -29,7 +29,8 @@ namespace Myst3 {
 Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_vm(vm),
 	_startFrame(0),
-	_endFrame(0) {
+	_endFrame(0),
+	_texture(0) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
@@ -43,7 +44,6 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		error("Movie %d does not exist", id);
 
 	loadPosition(binkDesc->getVideoData());
-	initTexture();
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
 	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
@@ -80,52 +80,22 @@ void Movie::loadPosition(const VideoData &videoData) {
 	_pTopRight = planeOrigin + vTop + vRight;
 }
 
-void Movie::initTexture() {
-	glGenTextures(1, &_texture);
-
-	glBindTexture(GL_TEXTURE_2D, _texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _movieTextureSize, _movieTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
 void Movie::draw() {
-	const float w = _bink.getWidth() / (float)(_movieTextureSize);
-	const float h = _bink.getHeight() / (float)(_movieTextureSize);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
-	glBindTexture(GL_TEXTURE_2D, _texture);
-
-	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(0, 0);
-		glVertex3f(-_pTopLeft.x(), _pTopLeft.y(), _pTopLeft.z());
-
-		glTexCoord2f(0, h);
-		glVertex3f(-_pBottomLeft.x(), _pBottomLeft.y(), _pBottomLeft.z());
-
-		glTexCoord2f(w, 0);
-		glVertex3f(-_pTopRight.x(), _pTopRight.y(), _pTopRight.z());
-
-		glTexCoord2f(w, h);
-		glVertex3f(-_pBottomRight.x(), _pBottomRight.y(), _pBottomRight.z());
-	glEnd();
-
-	glDisable(GL_BLEND);
+	_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
 }
 
 void Movie::drawNextFrameToTexture() {
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 
-	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
+	if (_texture)
+		_texture->update(frame);
+	else
+		_texture = _vm->_gfx->createTexture(frame);
 }
 
 Movie::~Movie() {
-	glDeleteTextures(1, &_texture);
+	if (_texture)
+		_vm->_gfx->freeTexture(_texture);
 }
 
 ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :

@@ -24,6 +24,7 @@
 #define GFX_H_
 
 #include "common/system.h"
+#include "math/vector3d.h"
 
 namespace Myst3 {
 
@@ -39,7 +40,7 @@ public:
 	uint height;
 	Graphics::PixelFormat format;
 
-	virtual void update(Graphics::Surface *surface) = 0;
+	virtual void update(const Graphics::Surface *surface) = 0;
 protected:
 	Texture() {}
 	virtual ~Texture() {}
@@ -55,11 +56,13 @@ public:
 	void setupCameraOrtho2D();
 	void setupCameraPerspective(float pitch, float heading);
 
-	Texture *createTexture(Graphics::Surface *surface);
+	Texture *createTexture(const Graphics::Surface *surface);
 	void freeTexture(Texture *texture);
 
 	void drawRect2D(const Common::Rect &rect, uint32 color);
 	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
+	void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+			const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture);
 
 	void drawCube(Texture **textures);
 
