@@ -23,30 +23,23 @@
 #ifndef MYST3_ROOM_H
 #define MYST3_ROOM_H
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/array.h"
 #include "common/rect.h"
 
 #include "graphics/surface.h"
 #include "graphics/jpeg.h"
-#include "graphics/conversion.h"
 
 namespace Myst3 {
 
+class Texture;
 class Myst3Engine;
 
 class Face {
 	public:
 		Graphics::Surface *_bitmap;
-		GLuint _textureId;
+		Texture *_texture;
 
-		Face();
+		Face(Myst3Engine *vm);
 		~Face();
 
 		void setTextureFromJPEG(Graphics::JPEG *jpeg);
@@ -56,6 +49,7 @@ class Face {
 
 	private:
 		bool _textureDirty;
+		Myst3Engine *_vm;
 };
 
 class SpotItemFace {

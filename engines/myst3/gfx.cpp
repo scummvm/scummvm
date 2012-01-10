@@ -43,15 +43,35 @@ public:
 	OpenGLTexture(Graphics::Surface *surface);
 	virtual ~OpenGLTexture();
 
+	void update(Graphics::Surface *surface);
+
 	GLuint id;
+	GLuint internalFormat;
+	uint32 internalWidth;
+	uint32 internalHeight;
 };
+
+// From Bit Twiddling Hacks
+static uint32 upperPowerOfTwo(uint32 v)
+{
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+}
 
 OpenGLTexture::OpenGLTexture(Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
 
-	GLuint internalFormat;
+	internalHeight = upperPowerOfTwo(height);
+	internalWidth = upperPowerOfTwo(width);
+
 	if (format.bytesPerPixel == 4)
 		internalFormat = GL_RGBA;
 	else if (format.bytesPerPixel == 3)
@@ -61,13 +81,20 @@ OpenGLTexture::OpenGLTexture(Graphics::Surface *surface) {
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	update(surface);
 }
 
 OpenGLTexture::~OpenGLTexture() {
 	glDeleteTextures(1, &id);
+}
+
+void OpenGLTexture::update(Graphics::Surface *surface) {
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, GL_UNSIGNED_BYTE, surface->pixels);
 }
 
 Renderer::Renderer(OSystem *system) :
@@ -151,10 +178,10 @@ void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
-	const float tLeft = textureRect.left / (float) glTexture->width;
-	const float tWidth = textureRect.width() / (float) glTexture->width;
-	const float tTop = textureRect.top / (float) glTexture->height;
-	const float tHeight = textureRect.height() / (float) glTexture->height;
+	const float tLeft = textureRect.left / (float) glTexture->internalWidth;
+	const float tWidth = textureRect.width() / (float) glTexture->internalWidth;
+	const float tTop = textureRect.top / (float) glTexture->internalHeight;
+	const float tHeight = textureRect.height() / (float) glTexture->internalHeight;
 
 	const float sLeft = screenRect.left;
 	const float sTop = screenRect.top;
@@ -188,6 +215,69 @@ void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::
 	glEnd();
 
 	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+}
+
+void Renderer::drawCube(Texture **textures) {
+	OpenGLTexture *texture0 = static_cast<OpenGLTexture *>(textures[0]);
+
+	// Size of the cube
+	float t = 1.0f;
+
+	// Used fragment of the textures
+	float s = texture0->width / (float) texture0->internalWidth;
+
+	glEnable(GL_TEXTURE_2D);
+	glDepthMask(GL_FALSE);
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[4])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// X-
+		glTexCoord2f(0, s); glVertex3f(-t,-t, t);
+		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
+		glTexCoord2f(0, 0); glVertex3f(-t, t, t);
+		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[3])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// X+
+		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
+		glTexCoord2f(s, s); glVertex3f( t,-t, t);
+		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
+		glTexCoord2f(s, 0); glVertex3f( t, t, t);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[1])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// Y-
+		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
+		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
+		glTexCoord2f(0, 0); glVertex3f( t,-t, t);
+		glTexCoord2f(s, 0); glVertex3f(-t,-t, t);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[5])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// Y+
+		glTexCoord2f(0, s); glVertex3f( t, t, t);
+		glTexCoord2f(s, s); glVertex3f(-t, t, t);
+		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
+		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[0])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// Z-
+		glTexCoord2f(0, s); glVertex3f(-t,-t,-t);
+		glTexCoord2f(s, s); glVertex3f( t,-t,-t);
+		glTexCoord2f(0, 0); glVertex3f(-t, t,-t);
+		glTexCoord2f(s, 0); glVertex3f( t, t,-t);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[2])->id);
+	glBegin(GL_TRIANGLE_STRIP);			// Z+
+		glTexCoord2f(0, s); glVertex3f( t,-t, t);
+		glTexCoord2f(s, s); glVertex3f(-t,-t, t);
+		glTexCoord2f(0, 0); glVertex3f( t, t, t);
+		glTexCoord2f(s, 0); glVertex3f(-t, t, t);
+	glEnd();
+
 	glDepthMask(GL_TRUE);
 }
 

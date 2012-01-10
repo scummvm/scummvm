@@ -39,6 +39,7 @@ public:
 	uint height;
 	Graphics::PixelFormat format;
 
+	virtual void update(Graphics::Surface *surface) = 0;
 protected:
 	Texture() {}
 	virtual ~Texture() {}
@@ -59,6 +60,8 @@ public:
 
 	void drawRect2D(const Common::Rect &rect, uint32 color);
 	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
+
+	void drawCube(Texture **textures);
 
 protected:
 	OSystem *_system;

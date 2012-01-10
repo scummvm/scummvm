@@ -29,6 +29,13 @@
 #include "math/vector3d.h"
 #include "video/bink_decoder_seek.h"
 
+#ifdef SDL_BACKEND
+#include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 namespace Myst3 {
 
 struct VideoData;
