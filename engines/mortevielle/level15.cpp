@@ -26,6 +26,7 @@
  */
 
 #include "common/file.h"
+#include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
@@ -97,6 +98,10 @@ void writepal(int n) {
 
 
 void pictout(int seg, int dep, int x, int y) {
+	GfxSurface surface;
+	surface.decode(&mem[0x7000 * 16]);
+
+warning("TODO: complete picture decoding");
 	decomp(seg, dep);
 	if (gd == her) {
 		mem[0x7000 * 16 + 2] = 0;
