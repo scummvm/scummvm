@@ -117,6 +117,65 @@ public:
 	virtual void saveCharacter(int characterIndex);
 };
 
+class Scene1200 : public SceneExt {
+	class Area1: public SceneArea {
+	public:
+		class Actor3 : public SceneActorExt {
+		public:
+			void init(int state);
+			bool startAction(CursorType action, Event &event);
+		};
+
+		SceneActor _actor2;
+		Actor3 _actor3;
+		Actor3 _actor4;
+		Actor3 _actor5;
+
+		byte _field20;
+
+		Area1();
+		void synchronize(Serializer &s);
+
+		virtual void postInit();
+		virtual void remove();
+		virtual void process(Event &event);
+		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+	};
+
+	class Object1 : public SavedObject {
+	public:
+		Rect rect1;
+		Rect rect2;
+
+		int sub51AF8(Common::Point pt);
+		virtual Common::String getClassName() { return "UnkObject1200"; }
+	};
+		
+public:
+	NamedHotspot _item1;
+	SceneActor _actor1;
+	Area1 _area1;
+	Object1 _object1;
+	SequenceManager _sequenceManager;
+
+	int _field412;
+	int _field414;
+	int _field416;
+	int _field418;
+	int _field41A;
+	int _field41C;
+
+	Scene1200();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void saveCharacter(int characterIndex);
+};
+
 class Scene1500 : public SceneExt {
 public:
 	SceneActor _actor1;
