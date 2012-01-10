@@ -781,13 +781,15 @@ void ScummEngine_v0::checkExecVerbs() {
 							kid = 1;
 						else
 							kid = 2;
-						// TODO: get clicked kid
 						_activeVerb = kVerbWalkTo;
 						drawSentenceLine();
 						switchActor(kid);
 					}
 					_activeVerb = kVerbWalkTo;
 					return;
+				} else if (_activeVerb && _activeVerb != kVerbWalkTo && _activeVerb != kVerbWhatIs) {
+					if (_activeObjectNr && (!activeVerbPrep() || _activeObject2Nr))
+						execute = true;
 				}
 			} else {
 				int obj = 0;
