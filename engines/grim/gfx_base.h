@@ -57,7 +57,7 @@ enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
 	BM_RGBA = 3,      // EMI-PC (Also internal Material-format for Grim)
-	BM_RGB888 = 4	  // EMI-TGA-materials (888)
+	BM_BGR888 = 4	  // EMI-TGA-materials (888)
 };
 class GfxBase {
 public:

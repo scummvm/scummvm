@@ -89,7 +89,9 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	data->seek(1, SEEK_CUR);
 	
 	int format = data->readByte();
-	assert(format == 2); // We only support uncompressed TGA
+	if (format != 2) { // We only support uncompressed TGA, but should also support atleast RLE-RGB
+		error("Unsupported TGA-format detected: %d", format);
+	}
 	
 	data->seek(9, SEEK_CUR);
 	t->_width = data->readUint16LE();
@@ -102,34 +104,27 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 		t->_colorFormat = BM_RGBA;
 		t->_bpp = 4;
 	} else {
-		t->_colorFormat = BM_RGB888;	// Really a lie, as it should be BGR888, but we convert.
+		t->_colorFormat = BM_BGR888;
 		t->_bpp = 3;
 	}
+	
 	char desc = data->readByte();
 	char flipped = !(desc & 32);
+	
 	assert(bpp == 24 || bpp == 32); // Assure we have 24/32 bpp
-	t->_data = new char[t->_width * t->_height * (bpp/8)];
-	char *writePtr = t->_data + (t->_width * (t->_height - 1) * bpp/8);
+	t->_data = new char[t->_width * t->_height * (bpp / 8)];
+	char *writePtr = t->_data + (t->_width * (t->_height - 1) * bpp / 8);
 	
 	// Since certain TGA's are flipped (relative to the tex-coords) and others not
 	// We'll have to handle that here, otherwise we could just do 1.0f - texCoords
 	// When drawing/loading
 	if (flipped) {
 		for (int i = 0; i < t->_height; i++) {
-			data->read(writePtr, t->_width * (bpp/8));
-			writePtr -= (t->_width * bpp/8);
+			data->read(writePtr, t->_width * (bpp / 8));
+			writePtr -= (t->_width * bpp / 8);
 		}
 	} else {
-		data->read(t->_data, t->_width * t->_height * (bpp/8));		
-	}
-	
-	// The TGAs are BGR, not RGB, which is supported from GL 1.2 on
-	// TinyGL doesn't support either, so, for now, we convert RGB->BGR here.
-	unsigned char x;
-	for (int i = 0; i < t->_width * t->_height * t->_bpp; i += t->_bpp) {
-		x = t->_data[i];
-		t->_data[i] = t->_data[i + 2];
-		t->_data[i + 2] = x;
+		data->read(t->_data, t->_width * t->_height * (bpp / 8));		
 	}
 }
 	

@@ -1008,10 +1008,13 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	}
 	
 	GLuint format = 0;
+	GLuint internalFormat = 0;
 	if (material->_colorFormat == BM_RGBA) {
 		format = GL_RGBA;
-	} else {
-		format = GL_RGB;
+		internalFormat = GL_RGBA;
+	} else {	// The only other colorFormat we load right now is BGR
+		format = GL_BGR;
+		internalFormat = GL_RGB;
 	}
 	
 	GLuint *textures = (GLuint *)material->_texture;
@@ -1020,7 +1023,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
