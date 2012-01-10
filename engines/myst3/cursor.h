@@ -23,13 +23,6 @@
 #ifndef CURSOR_H_
 #define CURSOR_H_
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/rect.h"
 
 namespace Myst3 {
@@ -51,8 +44,6 @@ private:
 	Myst3Engine *_vm;
 
 	uint32 _currentCursorID;
-	GLuint _textureId;
-	static const uint _textureSize = 32;
 
 	/** Position of the cursor */
 	Common::Point _position;
@@ -60,8 +51,6 @@ private:
 	bool _lockedAtCenter;
 
 	void loadAvailableCursors();
-	void generateTexture();
-    void uploadTexture();
 };
 
 } /* namespace Myst3 */

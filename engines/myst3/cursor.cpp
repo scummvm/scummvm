@@ -34,7 +34,7 @@ struct CursorData {
 	uint32 nodeID;
 	uint16 hotspotX;
 	uint16 hotspotY;
-	Graphics::Surface *surface;
+	Texture *texture;
 	double transparency;
 };
 
@@ -62,9 +62,6 @@ Cursor::Cursor(Myst3Engine *vm) :
 	// Load available cursors
 	loadAvailableCursors();
 
-	// Generate texture
-	generateTexture();
-
 	// Set default cursor
 	changeCursor(8);
 }
@@ -78,51 +75,40 @@ void Cursor::loadAvailableCursors() {
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
 
 		Common::MemoryReadStream *bmpStream = cursorDesc->getData();
-		availableCursors[i].surface = Graphics::ImageDecoder::loadFile(*bmpStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		Graphics::Surface *surface = Graphics::ImageDecoder::loadFile(*bmpStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		delete bmpStream;
 
 		// Apply the colorkey for transparency
-		for (uint u = 0; u < availableCursors[i].surface->w; u++) {
-			for (uint v = 0; v < availableCursors[i].surface->h; v++) {
-				uint32 *pixel = (uint32*)(availableCursors[i].surface->getBasePtr(u, v));
+		for (uint u = 0; u < surface->w; u++) {
+			for (uint v = 0; v < surface->h; v++) {
+				uint32 *pixel = (uint32*)(surface->getBasePtr(u, v));
 				if (*pixel == 0xFF00FF00)
 					*pixel = 0x0000FF00;
 
 			}
 		}
 
-		delete bmpStream;
-	}
-}
+		availableCursors[i].texture = _vm->_gfx->createTexture(surface);
 
-void Cursor::generateTexture() {
-	glGenTextures(1, &_textureId);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _textureSize, _textureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		surface->free();
+		delete surface;
+	}
 }
 
 Cursor::~Cursor() {
 	// Free available cursors
 	for (uint i = 0; availableCursors[i].nodeID; i++) {
-		if (availableCursors[i].surface) {
-			availableCursors[i].surface->free();
-			delete availableCursors[i].surface;
-			availableCursors[i].surface = 0;
+		if (availableCursors[i].texture) {
+			_vm->_gfx->freeTexture(availableCursors[i].texture);
+			availableCursors[i].texture = 0;
 		}
 	}
-
-	// Delete texture
-	glDeleteTextures(1, &_textureId);
 }
 
 void Cursor::changeCursor(uint32 index) {
 	assert(index >= 0 && index <= 12);
 
-	if (_currentCursorID != index) {
-		_currentCursorID = index;
-		uploadTexture();
-	}
+	_currentCursorID = index;
 }
 
 void Cursor::lockPosition(bool lock) {
@@ -143,25 +129,16 @@ void Cursor::updatePosition(Common::Point &mouse) {
 	}
 }
 
-void Cursor::uploadTexture() {
-	Graphics::Surface *bitmap = availableCursors[_currentCursorID].surface;
-
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap->w, bitmap->h, GL_RGBA, GL_UNSIGNED_BYTE, bitmap->pixels);
-}
-
 void Cursor::draw()
 {
 	CursorData &cursor = availableCursors[_currentCursorID];
-	// Size of the cursor
-	const float w = cursor.surface->w;
-	const float h = cursor.surface->h;
-	// Used fragment of texture
-	const float u = w / (float)(_textureSize);
-	const float v = h / (float)(_textureSize);
 
-	const float left = _position.x - cursor.hotspotX;
-	const float top = _position.y - cursor.hotspotY;
+	// Rect where to draw the cursor
+	Common::Rect screenRect = Common::Rect(cursor.texture->width, cursor.texture->height);
+	screenRect.translate(_position.x - cursor.hotspotX, _position.y - cursor.hotspotY);
+
+	// Rect where to draw the cursor
+	Common::Rect textureRect = Common::Rect(cursor.texture->width, cursor.texture->height);
 
 	float transparency;
 	if (_lockedAtCenter)
@@ -169,23 +146,7 @@ void Cursor::draw()
 	else
 		transparency = 1.0f;
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
-	glEnable(GL_TEXTURE_2D);
-	glColor4f(1.0f, 1.0f, 1.0f, transparency);
-	glDepthMask(GL_FALSE);
-
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(0, v); glVertex3f( left + 0, top + h, 1.0f);
-		glTexCoord2f(u, v); glVertex3f( left + w, top + h, 1.0f);
-		glTexCoord2f(0, 0); glVertex3f( left + 0, top + 0, 1.0f);
-		glTexCoord2f(u, 0); glVertex3f( left + w, top + 0, 1.0f);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, cursor.texture, transparency);
 }
 
 } /* namespace Myst3 */

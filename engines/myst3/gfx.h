@@ -23,12 +23,39 @@
 #ifndef GFX_H_
 #define GFX_H_
 
+#include "common\system.h"
+
 namespace Myst3 {
 
 class Drawable {
 public:
 	virtual void draw() = 0;
 	virtual ~Drawable() {};
+};
+
+class Texture {
+public:
+	uint width;
+	uint height;
+	Graphics::PixelFormat format;
+
+protected:
+	Texture() {}
+	virtual ~Texture() {}
+};
+
+class Renderer {
+public:
+	Renderer(OSystem *_system);
+	virtual ~Renderer();
+
+	Texture *createTexture(Graphics::Surface *surface);
+	void freeTexture(Texture *texture);
+
+	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
+
+protected:
+	OSystem *_system;
 };
 
 } // end of namespace Myst3

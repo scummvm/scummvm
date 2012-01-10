@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	detection.o \
 	directoryentry.o \
 	directorysubentry.o \
+	gfx.o \
 	hotspot.o \
 	inventory.o \
 	movie.o \

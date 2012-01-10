@@ -38,23 +38,20 @@ const Inventory::ItemData Inventory::_availableItems[8] = {
 };
 
 Inventory::Inventory(Myst3Engine *vm) :
-	_vm(vm) {
+	_vm(vm),
+	_texture(0) {
 
 	initializeTexture();
 }
 
 Inventory::~Inventory() {
-	glDeleteTextures(1, &_textureId);
+	_vm->_gfx->freeTexture(_texture);
 }
 
 void Inventory::initializeTexture() {
 	Graphics::Surface *s = _vm->loadTexture(1204);
 
-	glGenTextures(1, &_textureId);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	_texture = _vm->_gfx->createTexture(s);
 
 	s->free();
 	delete s;
@@ -73,46 +70,11 @@ void Inventory::draw() {
 		bool itemHighlighted = it->rect.contains(mouse)
 				|| (_vm->_vars->get(it->var) == 2);
 
-		drawItem(it->rect, textureRect, itemHighlighted);
+		if (itemHighlighted)
+			textureRect.translate(0, _texture->height / 2);
+
+		_vm->_gfx->drawTexturedRect2D(it->rect, textureRect, _texture);
 	}
-}
-
-void Inventory::drawItem(const Common::Rect &screenRect, const Common::Rect &textureRect, bool hovered) {
-	// Used fragment of texture
-	const float tleft = textureRect.left / (float)(256);
-	const float twidth = textureRect.width() / (float)(256);
-	float ttop = textureRect.top / (float)(128);
-	const float theight = textureRect.height() / (float)(128);
-
-	const float left = screenRect.left;
-	const float top = screenRect.top;
-	const float w = screenRect.width();
-	const float h = screenRect.height();
-
-	if (hovered)
-		ttop += 64.0 / 128.0;
-
-	glEnable(GL_TEXTURE_2D);
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glDepthMask(GL_FALSE);
-
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(tleft, ttop + theight);
-		glVertex3f( left + 0, top + h, 1.0f);
-
-		glTexCoord2f(tleft + twidth, ttop + theight);
-		glVertex3f( left + w, top + h, 1.0f);
-
-		glTexCoord2f(tleft, ttop);
-		glVertex3f( left + 0, top + 0, 1.0f);
-
-		glTexCoord2f(tleft + twidth, ttop);
-		glVertex3f( left + w, top + 0, 1.0f);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
 }
 
 void Inventory::reset() {

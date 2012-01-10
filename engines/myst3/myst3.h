@@ -61,6 +61,7 @@ class Cursor;
 class Inventory;
 class Database;
 class Script;
+class Renderer;
 struct NodeData;
 
 typedef Common::SharedPtr<NodeData> NodePtr;
@@ -76,6 +77,7 @@ public:
 	Variables *_vars;
 	Cursor *_cursor;
 	Inventory *_inventory;
+	Renderer *_gfx;
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);

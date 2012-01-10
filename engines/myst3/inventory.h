@@ -23,19 +23,13 @@
 #ifndef INVENTORY_H_
 #define INVENTORY_H_
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/list.h"
 #include "common/rect.h"
 
 namespace Myst3 {
 
 class Myst3Engine;
+class Texture;
 
 class Inventory {
 public:
@@ -72,13 +66,12 @@ private:
 
 	Myst3Engine *_vm;
 
-	GLuint _textureId;
+	Texture *_texture;
 	ItemList _inventory;
 
 	void initializeTexture();
 
 	bool hasItem(uint16 var);
-	void drawItem(const Common::Rect &screenRect, const Common::Rect &textureRect, bool hovered);
 	void reflow();
 
 	void openBook(uint16 age, uint16 room, uint16 node);

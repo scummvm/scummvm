@@ -45,13 +45,6 @@
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
@@ -59,7 +52,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
-		_cursor(0), _inventory(0),
+		_cursor(0), _inventory(0), _gfx(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -89,12 +82,14 @@ Myst3Engine::~Myst3Engine() {
 	delete _console;
 	delete _vars;
 	delete _rnd;
+	delete _gfx;
 }
 
 Common::Error Myst3Engine::run() {
 	const int w = 640;
 	const int h = 480;
 
+	_gfx = new Renderer(_system);
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
