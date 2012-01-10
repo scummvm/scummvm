@@ -145,8 +145,19 @@ class Scene1200 : public SceneExt {
 
 	class Object1 : public SavedObject {
 	public:
-		Rect rect1;
-		Rect rect2;
+		Rect _rect1;
+		Rect _rect2;
+
+		int _field16;
+		int _field26;
+		int _field28;
+		int _field2A;
+		int _field2C;
+		int _field2E;
+		int _field30;
+
+		Object1();
+		void synchronize(Serializer &s);
 
 		int sub51AF8(Common::Point pt);
 		virtual Common::String getClassName() { return "UnkObject1200"; }

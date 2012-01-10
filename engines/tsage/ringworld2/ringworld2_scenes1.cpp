@@ -1097,9 +1097,33 @@ void Scene1200::Area1::proc13(int resNum, int lookLineNum, int talkLineNum, int 
 	_actor2.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
+Scene1200::Object1::Object1() {
+	_field16 = _field26 = _field28 = _field2A = _field2C = _field2E = _field30 = 0;
+}
+
+void Scene1200::Object1::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
+
+	s.syncAsSint16LE(_field16);
+	s.syncAsSint16LE(_field26);
+	s.syncAsSint16LE(_field28);
+	s.syncAsSint16LE(_field2A);
+	s.syncAsSint16LE(_field2C);
+	s.syncAsSint16LE(_field2E);
+	s.syncAsSint16LE(_field30);
+}
+
 int Scene1200::Object1::sub51AF8(Common::Point pt) {
-	warning("STUB: sub1AF8()");
-	return 0;
+	if (!_rect1.contains(pt))
+		return -1;
+	
+	int tmp1 = (pt.x - _rect1.left + _field2E) / _field2A;
+	int tmp2 = (pt.y - _rect1.top + _field30) / _field2C;
+
+	if ((tmp1 >= 0) && (tmp2 >= 0) && (_field26 > tmp1) && (_field28 > tmp2))
+		return _field16 + (((_field26 * tmp2) + tmp1)* 2);
+
+	return -1;
 }
 
 
@@ -1119,13 +1143,13 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_field41A = 0;
 	_field41C = 0;
 
-	if ((R2_GLOBALS._v56AA6 == 1) && (R2_GLOBALS._v56AA8 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	if ((R2_GLOBALS._v56AA6 == 1) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
 		_field418 = 1;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA8 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
 		_field418 = 2;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA8 == 1) && (R2_GLOBALS._v56AA8 == 2))
+	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 2))
 		_field418 = 3;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA8 == 3) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 3) && (R2_GLOBALS._v56AA8 == 1))
 		_field418 = 4;
 
 	R2_GLOBALS._player.postInit();
@@ -1764,7 +1788,7 @@ void Scene1500::dispatch() {
 	if (_sceneMode > 10) {
 		float yDiff = sqrt((float) (_actor3._position.x * _actor3._position.x) + (_actor3._position.y * _actor3._position.y));
 		if (yDiff > 6)
-			_actor3.setPosition(_actor3._position, yDiff);
+			_actor3.setPosition(_actor3._position, (int) yDiff);
 	}
 
 	Scene::dispatch();
