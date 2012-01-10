@@ -1126,7 +1126,7 @@ void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
 	bool result = false;
 
 	do {
-		result |= _vm->_vars->get(var);
+		result |= _vm->_vars->get(var) != 0;
 		var++;
 	} while (var <= end);
 

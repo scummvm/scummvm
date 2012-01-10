@@ -105,10 +105,10 @@ public:
 	Common::Array<uint16> listRoomNodes(uint32 roomID = 0, uint32 ageID = 0);
 private:
 	struct GameVersion {
-		const char *description;
-		const char *md5;
-		const uint32 ageTableOffset;
-		const uint32 nodeInitScriptOffset;
+		char *description;
+		char *md5;
+		uint32 ageTableOffset;
+		uint32 nodeInitScriptOffset;
 	};
 
 	static const uint32 _baseOffset = 0x400000;
