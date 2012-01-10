@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #include "engines/myst3/variables.h"
 
 namespace Myst3 {
