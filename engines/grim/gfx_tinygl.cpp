@@ -470,9 +470,12 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 
 void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
 	int *indices = (int*)face->_indexes;
-	tglDisable(TGL_DEPTH_TEST);
+	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-	tglEnable(TGL_TEXTURE_2D);
+	if (face->_hasTexture) 
+		tglEnable(TGL_TEXTURE_2D);
+	else
+		tglDisable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
 		
@@ -480,13 +483,13 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		if (face->_hasTexture) {
 			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		//tglColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
+		tglColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,0);
 		
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_vertices[index];
 		
-		tglNormal3f(normal.x(), normal.y(), normal.z());
-		tglVertex3f(vertex.x(), vertex.y(), vertex.z());
+		tglNormal3fv(normal.getData());
+		tglVertex3fv(vertex.getData());
 	}
 	tglEnd();
 	tglEnable(TGL_TEXTURE_2D);	
