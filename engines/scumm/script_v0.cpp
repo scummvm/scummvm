@@ -406,6 +406,42 @@ void ScummEngine_v0::decodeParseString() {
 	actorTalk(buffer);
 }
 
+void ScummEngine_v0::clearSentenceLine() {
+	Common::Rect sentenceline;
+	sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+	sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
+	sentenceline.left = 0;
+	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+	restoreBackground(sentenceline);
+}
+
+void ScummEngine_v0::flushSentenceLine() {
+	byte string[80];
+	const char *ptr = _sentenceBuf.c_str();
+	int i = 0, len = 0;
+
+	// Maximum length of printable characters
+	int maxChars = 40;
+	while (*ptr) {
+		if (*ptr != '@')
+			len++;
+		if (len > maxChars) {
+			break;
+		}
+
+		string[i++] = *ptr++;
+
+	}
+	string[i] = 0;
+
+	_string[2].charset = 1;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
+	_string[2].xpos = 0;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	_string[2].color = 16;
+	drawString(2, (byte *)string);
+}
+
 void ScummEngine_v0::drawSentenceObject(int object) {
 	const byte *temp;
 	temp = getObjOrActorName(object);
@@ -415,20 +451,30 @@ void ScummEngine_v0::drawSentenceObject(int object) {
 	}
 }
 
-void ScummEngine_v0::drawSentence() {
-	Common::Rect sentenceline;
 
+void ScummEngine_v0::drawSentenceLine() {
 	if (!(_userState & 32))
 		return;
+
+	clearSentenceLine();
+
+	if (_activeVerb == kVerbNewKid) {
+		_sentenceBuf = "";
+		for (int i = 0; i < 3; ++i) {
+			Actor *a = derefActor(VAR(97 + i), "drawSentence");
+			_sentenceBuf += Common::String::format("%-13s", a->getActorName());
+		}
+		flushSentenceLine();
+		return;
+	}
 
 	// Current Verb
 	if (_activeVerb == kVerbNone)
 		_activeVerb = kVerbWalkTo;
-	if (getResourceAddress(rtVerb, _activeVerb)) {
-		_sentenceBuf = (char *)getResourceAddress(rtVerb, _activeVerb);
-	} else {
-		return;
-	}
+
+	char *verbName = (char *)getResourceAddress(rtVerb, _activeVerb);
+	assert(verbName);
+	_sentenceBuf = verbName;
 
 	if (_activeObjectNr) {
 		// Draw the 1st active object
@@ -454,37 +500,7 @@ void ScummEngine_v0::drawSentence() {
 		}
 	}
 
-	_string[2].charset = 1;
-	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
-	_string[2].xpos = 0;
-	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
-	_string[2].color = 16;
-
-	byte string[80];
-	const char *ptr = _sentenceBuf.c_str();
-	int i = 0, len = 0;
-
-	// Maximum length of printable characters
-	int maxChars = 40;
-	while (*ptr) {
-		if (*ptr != '@')
-			len++;
-		if (len > maxChars) {
-			break;
-		}
-
-		string[i++] = *ptr++;
-
-	}
-	string[i] = 0;
-
-	sentenceline.top = _virtscr[kVerbVirtScreen].topline;
-	sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
-	sentenceline.left = 0;
-	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
-	restoreBackground(sentenceline);
-
-	drawString(2, (byte *)string);
+	flushSentenceLine();
 }
 
 void ScummEngine_v0::o_stopCurrentScript() {

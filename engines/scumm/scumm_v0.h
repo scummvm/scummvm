@@ -101,10 +101,11 @@ protected:
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
 	void resetVerbs();
-	void setNewKidVerbs();
 
+	void clearSentenceLine();
+	void flushSentenceLine();
 	void drawSentenceObject(int object);
-	void drawSentence();
+	void drawSentenceLine();
 
 	void switchActor(int slot);
 
