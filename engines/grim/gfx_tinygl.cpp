@@ -472,7 +472,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	int *indices = (int*)face->_indexes;
 	tglDisable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-	tglDisable(TGL_TEXTURE_2D);
+	tglEnable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
 		
@@ -813,49 +813,65 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 }
 
 void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
-	if (g_grim->getGameType() == GType_MONKEY4)
-		return;
 	material->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
-	for (int y = 0; y < material->_height; y++) {
-		for (int x = 0; x < material->_width; x++) {
-			uint8 col = *(uint8 *)(data);
-			if (col == 0) {
-				memset(texdatapos, 0, 4); // transparent
-				if (!material->_hasAlpha) {
+	
+	if (cmap != NULL) { // EMI doesn't have colour-maps
+		for (int y = 0; y < material->_height; y++) {
+			for (int x = 0; x < material->_width; x++) {
+				uint8 col = *(uint8 *)(data);
+				if (col == 0) {
+					memset(texdatapos, 0, 4); // transparent
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
+				} else {
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-			} else {
-				memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
-				texdatapos[3] = '\xff'; // fully opaque
+				texdatapos += 4;
+				data++;
 			}
-			texdatapos += 4;
-			data++;
 		}
+	} else {
+		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
 	}
+	
+	TGLuint format = 0;
+	TGLuint internalFormat = 0;
+	if (material->_colorFormat == BM_RGBA) {
+		format = TGL_RGBA;
+		internalFormat = TGL_RGBA;
+	} else {	// The only other colorFormat we load right now is BGR
+		format = TGL_BGR;
+		internalFormat = TGL_RGB;
+	}
+	
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, format, TGL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
 void GfxTinyGL::selectMaterial(const Texture *material) {
-	if (g_grim->getGameType() == GType_MONKEY4)
-		return;
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-	tglPushMatrix();
-	tglMatrixMode(TGL_TEXTURE);
-	tglLoadIdentity();
-	tglScalef(1.0f / material->_width, 1.0f / material->_height, 1);
-	tglMatrixMode(TGL_MODELVIEW);
-	tglPopMatrix();
+
+	// Grim has inverted tex-coords, EMI doesn't
+	if (g_grim->getGameType() != GType_MONKEY4) {
+		tglPushMatrix();
+		tglMatrixMode(TGL_TEXTURE);
+		tglLoadIdentity();
+		tglScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+		tglMatrixMode(TGL_MODELVIEW);
+		tglPopMatrix();
+	}
 }
 
 void GfxTinyGL::destroyMaterial(Texture *material) {
