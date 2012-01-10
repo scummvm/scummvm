@@ -1225,6 +1225,8 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 void ScummEngine_v0::runSentenceScript() {
 	int obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
 
+	drawSentenceLine();
+
 	if (getVerbEntrypoint(obj, _cmdVerb) != 0) {
 		// do not read in the dark
 		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
