@@ -92,8 +92,39 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	GLImage *im;
 	unsigned char *pixels1;
 	int do_free;
-
-	if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0
+	bool do_free_after_rgb2rgba = false;
+	
+	// Simply unpack RGB into RGBA with 0 for Alpha.
+	// FIXME: This will need additional checks when we get around to adding 24/32-bit backend.
+	if (target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0) {
+		if (format == TGL_RGB) {
+			unsigned char *temp = (unsigned char *)gl_malloc(width * height * 4);
+			unsigned char *pixPtr = (unsigned char*)pixels;
+			for (int i = 0; i < width * height * 4; i += 4) {
+				temp[i] = pixPtr[0];
+				temp[i + 1] = pixPtr[1];
+				temp[i + 2] = pixPtr[2];
+				temp[i + 3] = 255;
+				pixPtr += 3;
+			}
+			format = TGL_RGBA;
+			pixels = temp;
+			do_free_after_rgb2rgba = true;
+		} else if (format == TGL_BGR) {
+			unsigned char *temp = (unsigned char *)gl_malloc(width * height * 4);
+			unsigned char *pixPtr = (unsigned char*)pixels;
+			for (int i = 0; i < width * height * 4; i += 4) {
+				temp[i] = pixPtr[2];
+				temp[i + 1] = pixPtr[1];
+				temp[i + 2] = pixPtr[0];
+				temp[i + 3] = 255;
+				pixPtr += 3;
+			}
+			format = TGL_RGBA;
+			pixels = temp;
+			do_free_after_rgb2rgba = true;
+		}
+	} else if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0
 				&& format == TGL_RGBA && type == TGL_UNSIGNED_BYTE)) {
 		error("glTexImage2D: combination of parameters not handled");
 	}
@@ -122,6 +153,8 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		gl_convertRGB_to_5R6G5B8A((unsigned short *)im->pixmap, pixels1, width, height);
 	if (do_free)
 		gl_free(pixels1);
+	if (do_free_after_rgb2rgba)
+		gl_free(pixels);
 }
 
 // TODO: not all tests are done
