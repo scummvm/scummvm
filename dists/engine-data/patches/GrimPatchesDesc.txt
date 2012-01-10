@@ -7,6 +7,10 @@ List of fixed bug in GF scripts:
 	-Fix the behaviour of dofile statement
 	In _system.lua there is a re-definition of dofile, used to load scripts from some others positions ("Scripts\" and "d:\\grimFandango\\Scripts\\"). This cause a lot of warnings when an non-existant file is required. Moreover this function is bugged: it returns everytime nil, even if the file has correctly loaded. So it's has been modified to load scripts only from the main path and it returns nil when the file has succesfully loaded, otherwise the numer one (which is a boolean true). The last modification is requied, since the others scripts expect this behavior.
 
+	-Fix bug #312 "Manny disappears while holding and examining the sign the Ruba."
+	In sg and na sets, if Manny examine the sign of Ruba, it zoom the visual near the sign, by changing the setup and putting manny and the sign in it. The code that translate the coordinates of Manny is bugged, since it doesn't distinguish the case when the sign is planted or not; in particular, it's right when it's planted. This patch add a check of state of sign, and set Manny in a fixed position (in the centre of the scene) when he is holding the sign.
+	It also corrects the behaviour of Manny's head, since he doesn't look at the sign, when he is examining it. This is caused by the lacks of "enable_head_control(FALSE/TRUE)" before and after "START/END_CUT_SCENE()" and by a call at "manny:head_look_at_point" with the wrong arguments (a table instead of the coordinates instead of single coordinates).
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this prevents the correct load of this script.
