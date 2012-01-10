@@ -114,7 +114,7 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, Common::String &name) 
 		return false;
 	}
 
-	_data = new byte[maxSize];
+	_data = (byte*)malloc(maxSize);
 	file->read(_data, fileSize);
 
 	//Patch it!!

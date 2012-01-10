@@ -246,7 +246,7 @@ void LuaBase::registerOpcodes() {
 }
 
 void LuaBase::boot() {
-	bundle_dofile("_system.lua");
+	dofile("_system.lua");
 
 	lua_pushnil();		// resumeSave
 	lua_pushnil();		// bootParam - not used in scripts
@@ -286,7 +286,7 @@ void LuaBase::setMovieTime(float movieTime) {
 	lua_settable();
 }
 
-int LuaBase::bundle_dofile(const char *filename) {
+int LuaBase::dofile(const char *filename) {
 	Common::SeekableReadStream *stream;
 	stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream) {
@@ -299,28 +299,7 @@ int LuaBase::bundle_dofile(const char *filename) {
 	stream->read(buffer, size);
 	int result = lua_dobuffer(const_cast<char *>(buffer), size, const_cast<char *>(filename));
 	delete stream;
-	delete buffer;
-	return result;
-}
-
-int LuaBase::single_dofile(const char *filename) {
-	Common::File *f = new Common::File();
-
-	if (!f->open(filename)) {
-		delete f;
-		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
-
-		return 2;
-	}
-
-	int32 size = f->size();
-	char *data = new char[size];
-	f->read(data, size);
-
-	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
-	delete f;
-	delete[] data;
-
+	delete[] buffer;
 	return result;
 }
 

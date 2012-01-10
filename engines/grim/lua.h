@@ -107,8 +107,7 @@ public:
 	virtual ~LuaBase();
 	inline static LuaBase *instance() { return s_instance; }
 
-	int bundle_dofile(const char *filename);
-	int single_dofile(const char *filename);
+	int dofile(const char *filename);
 
 	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 	virtual Common::String parseMsgText(const char *msg, char *msgId);

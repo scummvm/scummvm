@@ -74,7 +74,7 @@ int luaA_passresults();
 
 void Lua_V1::new_dofile() {
 	const char *fname_str = luaL_check_string(1);
-	if (bundle_dofile(fname_str) == 0)
+	if (dofile(fname_str) == 0)
 		if (luaA_passresults() == 0)
 			lua_pushuserdata(0);
 }
@@ -1418,11 +1418,8 @@ void Lua_V1::registerOpcodes() {
 
 void Lua_V1::postRestoreHandle() {
 	// Apply the patch, only if it wasn't applied already.
-	if (lua_isnil(lua_getglobal("  service_release.lua"))) {
-		if (bundle_dofile("patch05.bin") == 2)
-			single_dofile("patch05.bin");
-	}
-
+	if (lua_isnil(lua_getglobal("  service_release.lua")))
+		dofile("patch05.bin");
 
 	lua_beginblock();
 	// Set the developerMode, since the save contains the value of

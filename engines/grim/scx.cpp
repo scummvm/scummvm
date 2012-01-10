@@ -114,8 +114,8 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 		// re-interleave in readBuffer().
 		// Of course, in doing something that does better streaming, it would
 		// screw up the XA loop points. So, I'm not really sure what is best atm.
-		byte *leftOut = new byte[channelSize[0]];
-		byte *rightOut = new byte[channelSize[1]];
+		byte *leftOut = (byte*)malloc(channelSize[0]);
+		byte *rightOut = (byte*)malloc(channelSize[1]);
 		Common::MemoryWriteStream *leftStream = new Common::MemoryWriteStream(leftOut, channelSize[0]);
 		Common::MemoryWriteStream *rightStream = new Common::MemoryWriteStream(rightOut, channelSize[1]);
 		byte *buf = new byte[_blockSize];
