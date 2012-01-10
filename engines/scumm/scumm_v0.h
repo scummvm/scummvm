@@ -97,6 +97,7 @@ protected:
 
 	virtual void runSentenceScript();
 	virtual void checkAndRunSentenceScript();
+	bool checkSentenceComplete();
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
