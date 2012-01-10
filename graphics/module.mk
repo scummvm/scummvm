@@ -15,6 +15,8 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	yuv_to_rgb.o \
+	yuva_to_rgba.o \
+	jpeg.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

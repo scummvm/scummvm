@@ -161,7 +161,7 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 			}
 
 			if (nextPattern.empty())
-				addDirectory(name, *i, priority);
+				addDirectory(i->getPath(), *i, priority);
 			else
 				addSubDirectoriesMatching(*i, nextPattern, ignoreCase, priority);
 		}

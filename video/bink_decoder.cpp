@@ -113,7 +113,22 @@ BinkDecoder::BinkDecoder() {
 	}
 
 	_audioStream = 0;
-	_audioStarted = false;
+}
+
+void BinkDecoder::startAudio() {
+	if (_audioTrack < _audioTracks.size()) {
+		const AudioTrack &audio = _audioTracks[_audioTrack];
+
+		_audioStream = Audio::makeQueuingAudioStream(audio.outSampleRate, audio.outChannels == 2);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
+	} // else no audio
+}
+
+void BinkDecoder::stopAudio() {
+	if (_audioStream) {
+		g_system->getMixer()->stopHandle(_audioHandle);
+		_audioStream = 0;
+	}
 }
 
 BinkDecoder::~BinkDecoder() {
@@ -123,13 +138,8 @@ BinkDecoder::~BinkDecoder() {
 void BinkDecoder::close() {
 	reset();
 
-	if (_audioStream) {
-		// Stop audio
-		g_system->getMixer()->stopHandle(_audioHandle);
-		_audioStream = 0;
-	}
-
-	_audioStarted = false;
+	// Stop audio
+	stopAudio();
 
 	for (int i = 0; i < 4; i++) {
 		delete[] _curPlanes[i]; _curPlanes[i] = 0;
@@ -173,7 +183,7 @@ void BinkDecoder::close() {
 
 uint32 BinkDecoder::getElapsedTime() const {
 	if (_audioStream && g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		return g_system->getMixer()->getSoundElapsedTime(_audioHandle);
+		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) + _audioStartOffset;
 
 	return g_system->getMillis() - _startTime;
 }
@@ -240,11 +250,6 @@ const Graphics::Surface *BinkDecoder::decodeNextFrame() {
 	_curFrame++;
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
-
-	if (!_audioStarted && _audioStream) {
-		_audioStarted = true;
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
-	}
 
 	return &_surface;
 }
@@ -510,6 +515,11 @@ void BinkDecoder::mergeHuffmanSymbols(VideoFrame &video, byte *dst, const byte *
 }
 
 bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
+	Graphics::PixelFormat format = g_system->getOverlayFormat(); // residual FIXME: getScreenFormat();
+	return loadStream(stream, format);
+}
+
+bool BinkDecoder::loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format) {
 	close();
 
 	_id = stream->readUint32BE();
@@ -589,8 +599,6 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_hasAlpha   = _videoFlags & kVideoFlagAlpha;
 	_swapPlanes = (_id == kBIKhID) || (_id == kBIKiID); // BIKh and BIKi swap the chroma planes
 
-	// Residual: replaced to getOverlayFormat()
-	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	_surface.create(width, height, format);
 
 	// Give the planes a bit extra space
@@ -619,11 +627,8 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	initBundles();
 	initHuffman();
 
-	if (_audioTrack < _audioTracks.size()) {
-		const AudioTrack &audio = _audioTracks[_audioTrack];
-
-		_audioStream = Audio::makeQueuingAudioStream(audio.outSampleRate, audio.outChannels == 2);
-	}
+	startAudio();
+	_audioStartOffset = 0;
 
 	return true;
 }

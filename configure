@@ -78,6 +78,7 @@ add_engine() {
 }
 
 add_engine grim "Grim" yes
+add_engine myst3 "Myst 3" yes
 
 
 #

@@ -5,7 +5,8 @@ MODULE_OBJS := \
 	video_decoder.o
 ifdef USE_BINK
 MODULE_OBJS += \
-	bink_decoder.o
+	bink_decoder.o \
+	bink_decoder_seek.o
 endif
 
 # Include common rules

@@ -92,9 +92,11 @@ int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
 	event.mouse.x = x;
 	event.mouse.y = y;
+	event.relMouse.x = relx;
+	event.relMouse.y = rely;
 
 	if (_graphicsManager) {
 		_graphicsManager->notifyMousePos(Common::Point(x, y));
@@ -517,7 +519,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	processMouseEvent(event, ev.motion.x, ev.motion.y);
+	processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
 
 	return true;
 }

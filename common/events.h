@@ -99,6 +99,13 @@ struct Event {
 	 */
 	Point mouse;
 
+	/**
+	 * Mouse movement since the last mouse movement event.
+	 *
+	 * This field is Residual specific
+	 */
+	Common::Point relMouse;
+
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
