@@ -23,8 +23,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "common/endian.h"
-#include "common/zlib.h"
-#include "common/memstream.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
@@ -118,10 +116,7 @@ BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *
 		case(MKTAG('B','M',' ',' ')):				//Grim bitmap
 			loadGrimBm(fname, data);
 			break;
-		case(MKTAG('\x1f','\x8b','\x08','\0')):		// MI4 bitmap
-			loadTile(fname, data);
-			break;
-		case(529205248): // FIXME, this is the value MKTAG should create
+		case(MKTAG('T','I','L','0')):				// MI4 bitmap
 			loadTile(fname, data);
 			break;
 		default:
@@ -223,7 +218,7 @@ BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fnam
 }
 
 BitmapData::BitmapData() :
-	_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0), 
+	_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
 	_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL), _refCount(1) {
 }
 
@@ -249,14 +244,13 @@ BitmapData::~BitmapData() {
 	}
 }
 
-bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStream *data) {
+bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStream *o) {
 #ifdef ENABLE_MONKEY4
 	_x = 0;
 	_y = 0;
 	_format = 1;
-	data->seek(0, SEEK_SET);
+	o->seek(0, SEEK_SET);
 	//warning("Loading TILE: %s",fname.c_str());
-	Common::SeekableReadStream *o = Common::wrapCompressedReadStream(data);
 
 	uint32 id, bmoffset;
 	id = o->readUint32LE();
