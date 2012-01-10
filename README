@@ -15,7 +15,7 @@ Contents:
 1. What is ResidualVM?
 --------------------
 ResidualVM is a game engine reimplementation that allows you 
-to play 3D adventure games such as Grim Fandango.
+to play 3D adventure games such as Grim Fandango and Myst3.
 
 ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
@@ -28,7 +28,7 @@ alpha.
 
 2.1 - Which games does ResidualVM support?
 ----------------------------------------
-Currently ResidualVM supports the GrimE-engine, but only Grim Fandango.
+Currently ResidualVM supports the GrimE-engine, but only Grim Fandango, and has partial support for Myst 3.
 
 2.1.1 . GrimE-games support 
 -----------------------------------
@@ -36,6 +36,10 @@ Escape From Monkey Island        - Not supported*
 Escape From Monkey Island (demo) - Not supported*
 Grim Fandango                    - Completable with glitches
 Grim Fandango (demo)             - Completable with glitches
+
+2.1.2 . Other games support
+-----------------------------------
+Myst 3				- Partially playable
 
 Specifics can be found at
 http://www.residualvm.org/compatibility/
@@ -55,9 +59,9 @@ For more information, see the page on ResidualVM at the wiki page:
 http://apps.sourceforge.net/mediawiki/residual
 
 
--------------------
+---------------------
 3. Running ResidualVM
--------------------
+---------------------
 As ResidualVM is not yet stable, easy to use, or complete.
 Some technical ability might be required.
 
