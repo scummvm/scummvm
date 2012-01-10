@@ -56,14 +56,15 @@ void chardes(Common::String nom, float passe, int long_) {
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		f.read(&mem[0x6000 * 16 + i], 1);
+		f.read(&mem[0x6000 * 16 + i], 128);
 		testfi();
 		l = l - 128;
 		i = i + 128;
 	}
 	f.close();
 
-	for (i = p; i <= long_ + p; i ++) mem[0x7000 * 16 + i - p] = mem[0x6000 * 16 + i];
+	for (i = p; i <= long_ + p; i ++) 
+		mem[0x7000 * 16 + i - p] = mem[0x6000 * 16 + i];
 	/*$i+*/
 }
 
