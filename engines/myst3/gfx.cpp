@@ -91,7 +91,7 @@ void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::
 
 	const float tLeft = textureRect.left / (float) glTexture->width;
 	const float tWidth = textureRect.width() / (float) glTexture->width;
-	float tTop = textureRect.top / (float) glTexture->height;
+	const float tTop = textureRect.top / (float) glTexture->height;
 	const float tHeight = textureRect.height() / (float) glTexture->height;
 
 	const float sLeft = screenRect.left;

@@ -23,7 +23,7 @@
 #ifndef GFX_H_
 #define GFX_H_
 
-#include "common\system.h"
+#include "common/system.h"
 
 namespace Myst3 {
 
