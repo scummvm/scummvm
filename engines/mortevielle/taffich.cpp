@@ -90,7 +90,7 @@ void charani(Common::String nom, float passe, int long_) {
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
-		f.read(&mem[0x6000 * 16 + i], 1);
+		f.read(&mem[0x6000 * 16 + i], 128);
 		testfi();
 		l = l - 128;
 		i = i + 128;
