@@ -113,6 +113,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig += (name == "tinsel" ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
 		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
+		toolConfig += (name == "myst3" ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
 		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
