@@ -26,7 +26,6 @@
 #include "common/rational.h"
 #include "common/system.h"
 #include "common/timer.h"
-#include "common/zlib.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -458,13 +457,13 @@ bool SmushDecoder::setupAnim() {
 bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	_file = stream;
+
 	// Load the video
 	if (_demo) {
-		_file = stream;
 		if (!setupAnimDemo())
 			return false;
 	} else {
-		_file = wrapCompressedReadStream(stream);
 		if (!setupAnim())
 			return false;
 

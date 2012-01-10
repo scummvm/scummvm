@@ -38,6 +38,7 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/patchr.h"
 #include "common/algorithm.h"
+#include "common/zlib.h"
 #include "gui/message.h"
 
 namespace Grim {
@@ -229,12 +230,13 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fna
 			byte *buf = new byte[size];
 			s->read(buf, size);
 			putIntoCache(fname, buf, size);
-			return new Common::MemoryReadStream(buf, size);
-		} else
-			return s;
+			s = new Common::MemoryReadStream(buf, size);
+		}
+	} else {
+		s = loadFile(fname);
 	}
-
-	return loadFile(fname);
+	// This will only have an effect if the stream is actually compressed.
+	return Common::wrapCompressedReadStream(s);
 }
 
 void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) {
