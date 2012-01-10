@@ -731,6 +731,14 @@ void ScummEngine_v0::verbExec() {
 	a->startWalkActor(VAR(6), VAR(7), -1);
 }
 
+bool ScummEngine_v0::checkSentenceComplete() {
+	if (_activeVerb && _activeVerb != kVerbWalkTo && _activeVerb != kVerbWhatIs) {
+		if (_activeObjectNr && (!activeVerbPrep() || _activeObject2Nr))
+			return true;
+	}
+	return false;
+}
+
 void ScummEngine_v0::checkExecVerbs() {
 	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
@@ -738,21 +746,28 @@ void ScummEngine_v0::checkExecVerbs() {
 	int sentenceLineChanged = false;
 	bool execute = false;
 
-	/*
-	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
-		return;
-	*/
+	//if (_userPut <= 0)
+	//	return;
 
-	// Check if mouse click
 	if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		int over = findVerbAtPos(_mouse.x, _mouse.y);
-		if (over && _activeVerb != over) {
-			_activeVerb = over;
-			_activeObjectNr = 0;
-			_activeObjectType = 0;
-			_activeObject2Nr = 0;
-			_activeObject2Type = 0;
-			sentenceLineChanged = true;
+		// click region: verbs
+		if (over) {
+			if (_activeVerb != over) { // new verb
+				// keep first object if no preposition is used yet
+				if (activeVerbPrep()) {
+					_activeObjectNr = 0;
+					_activeObjectType = 0;
+				}
+				_activeObject2Nr = 0;
+				_activeObject2Type = 0;
+				_activeVerb = over;
+				sentenceLineChanged = true;
+			} else {
+				// execute sentence if complete
+				if (checkSentenceComplete())
+					execute = true;
+			}
 		}
 	}
 
@@ -770,6 +785,7 @@ void ScummEngine_v0::checkExecVerbs() {
 		if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 			// TODO: check keypresses
 		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
+			// click region: sentence line
 			if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 				if (_activeVerb == kVerbNewKid) {
 					if (_currentMode == kModeNormal) {
@@ -787,13 +803,18 @@ void ScummEngine_v0::checkExecVerbs() {
 					}
 					_activeVerb = kVerbWalkTo;
 					return;
-				} else if (_activeVerb && _activeVerb != kVerbWalkTo && _activeVerb != kVerbWhatIs) {
-					if (_activeObjectNr && (!activeVerbPrep() || _activeObject2Nr))
+				} else {
+					// execute sentence if complete
+					if (checkSentenceComplete())
 						execute = true;
 				}
-			} else {
+			// click region: inventory or main screen
+			} else if ((zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) ||
+			           (zone->number == kMainVirtScreen))
+			{
 				int obj = 0;
 
+				// click region: inventory
 				if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
 					// click into inventory
 					int invOff = _inventoryOffset;
@@ -802,6 +823,7 @@ void ScummEngine_v0::checkExecVerbs() {
 						// inventory position changed (arrows pressed, do nothing)
 						return;
 					}
+				// click region: main screen
 				} else if (zone->number == kMainVirtScreen) {
 					// click into main screen
 					if (_activeVerb == kVerbGive && _activeObjectNr) {
