@@ -713,6 +713,8 @@ PROTO_GL4(Vertex)
 
 PROTO_GL3(Color)
 PROTO_GL4(Color)
+void tglColor4ub(unsigned char r, unsigned char g, unsigned char b,
+				 unsigned char a);
 
 PROTO_GL3(Normal)
 

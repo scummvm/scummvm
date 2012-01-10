@@ -84,6 +84,10 @@ void glColor3fv(float *v)  {
   tglColor4f(v[0], v[1], v[2], 1);
 }
 
+void tglColor4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+	tglColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+}
+
 // TexCoord
 
 void tglTexCoord4f(float s, float t, float r, float q) {
