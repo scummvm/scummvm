@@ -27,7 +27,6 @@
 #endif
 
 #include "engines/myst3/gfx.h"
-#include "engines/myst3/scene.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -139,7 +138,7 @@ void Renderer::clear() {
 void Renderer::setupCameraOrtho2D() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, Scene::_originalWidth, Scene::_originalHeight, 0.0);
+	gluOrtho2D(0.0, originalWidth, originalHeight, 0.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -148,7 +147,7 @@ void Renderer::setupCameraOrtho2D() {
 void Renderer::setupCameraPerspective(float pitch, float heading) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(65.0, (GLfloat)Scene::_originalWidth /(GLfloat)Scene::_originalHeight, 0.1, 100.0);
+	gluPerspective(65.0, (GLfloat)originalWidth /(GLfloat)originalHeight, 0.1, 100.0);
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);

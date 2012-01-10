@@ -66,6 +66,9 @@ public:
 
 	void drawCube(Texture **textures);
 
+	static const int originalWidth = 640;
+	static const int originalHeight = 480;
+
 protected:
 	OSystem *_system;
 };

@@ -150,7 +150,7 @@ void Inventory::reflow() {
 	if (itemCount >= 2)
 		totalWidth += 9 * (itemCount - 1);
 
-	uint16 left = (Scene::_originalWidth - totalWidth) / 2;
+	uint16 left = (Renderer::originalWidth - totalWidth) / 2;
 
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		const ItemData &item = getData(it->var);

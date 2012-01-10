@@ -62,9 +62,9 @@ void NodeFrame::draw() {
 
 	// Size and position of the frame
 	if (_vm->_viewType == kMenu) {
-		screenRect = Common::Rect(Scene::_originalWidth, Scene::_originalHeight);
+		screenRect = Common::Rect(Renderer::originalWidth, Renderer::originalHeight);
 	} else {
-		screenRect = Common::Rect(Scene::_originalWidth, Scene::_frameHeight);
+		screenRect = Common::Rect(Renderer::originalWidth, Scene::_frameHeight);
 		screenRect.translate(0, Scene::_topBorderHeight);
 	}
 
