@@ -95,7 +95,7 @@ Common::Error Myst3Engine::run() {
 	_scriptEngine = new Script(this);
 	_db = new Database("M3.exe");
 	_vars = new Variables(this);
-	_scene = new Scene();
+	_scene = new Scene(this);
 	_archive = new Archive();
 	_archiveRSRC = new Archive();
 	_archiveOVER = new Archive();
@@ -121,7 +121,7 @@ Common::Error Myst3Engine::run() {
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
 
-	_scene->init(w, h);
+	_gfx->init();
 
 	// Var init script
 	runScriptsFromNode(1000, 101);
@@ -252,12 +252,13 @@ void Myst3Engine::processInput(bool lookOnly) {
 }
 
 void Myst3Engine::drawFrame() {
-	_scene->clear();
+	_gfx->clear();
 
 	if (_viewType == kCube) {
-		_scene->setupCameraPerspective();
+		Common::Point rot = _scene->getMousePos();
+		_gfx->setupCameraPerspective(rot.y, rot.x);
 	} else {
-		_scene->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D();
 	}
 
 	_node->update();
@@ -273,7 +274,7 @@ void Myst3Engine::drawFrame() {
 	}
 
 	if (_viewType == kCube) {
-		_scene->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D();
 	}
 
 	if (_viewType != kMenu) {

@@ -21,10 +21,12 @@
  */
 
 #include "engines/myst3/gfx.h"
+#include "engines/myst3/scene.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
 
+#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #ifdef SDL_BACKEND
@@ -82,6 +84,66 @@ Texture *Renderer::createTexture(Graphics::Surface *surface) {
 void Renderer::freeTexture(Texture *texture) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 	delete glTexture;
+}
+
+void Renderer::init() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Renderer::clear() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void Renderer::setupCameraOrtho2D() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, Scene::_originalWidth, Scene::_originalHeight, 0.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
+void Renderer::setupCameraPerspective(float pitch, float heading) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(65.0, (GLfloat)Scene::_originalWidth /(GLfloat)Scene::_originalHeight, 0.1, 100.0);
+
+	// Rotate the model to simulate the rotation of the camera
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glRotatef(pitch, -1.0f, 0.0f, 0.0f);
+	glRotatef(heading - 180.0f, 0.0f, 1.0f, 0.0f);
+}
+
+void Renderer::drawRect2D(const Common::Rect &rect, uint32 color) {
+	uint8 a, r, g, b;
+	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+
+	if (a != 255) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glVertex3f( rect.left, rect.bottom, 0.0f);
+		glVertex3f( rect.right, rect.bottom, 0.0f);
+		glVertex3f( rect.left, rect.top, 0.0f);
+		glVertex3f( rect.right, rect.top, 0.0f);
+	glEnd();
+
+	glDisable(GL_BLEND);
 }
 
 void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,

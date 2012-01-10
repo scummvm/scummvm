@@ -23,34 +23,24 @@
 #ifndef MYST3_SCENE_H
 #define MYST3_SCENE_H
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/rect.h"
 
 namespace Myst3 {
 
+class Myst3Engine;
 class SunSpot;
 
 class Scene {
 	private:
+		Myst3Engine *_vm;
+
 		float _cameraPitch;
 		float _cameraHeading;
 		Common::Point _mouseOld;
 
-		void drawBlackRect(const Common::Rect &r);
-
 	public:
-		Scene();
+		Scene(Myst3Engine *vm);
 
-		void init(int width, int height);
-		void clear();
-		void setupCameraPerspective();
-		void setupCameraOrtho2D();
 		void updateCamera(Common::Point &mouse);
 		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
 

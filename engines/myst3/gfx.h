@@ -49,9 +49,15 @@ public:
 	Renderer(OSystem *_system);
 	virtual ~Renderer();
 
+	void init();
+	void clear();
+	void setupCameraOrtho2D();
+	void setupCameraPerspective(float pitch, float heading);
+
 	Texture *createTexture(Graphics::Surface *surface);
 	void freeTexture(Texture *texture);
 
+	void drawRect2D(const Common::Rect &rect, uint32 color);
 	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
 
 protected:
