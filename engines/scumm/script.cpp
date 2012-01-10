@@ -1171,8 +1171,10 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 
 	SentenceTab &st = _sentence[_sentenceNum - 1];
 
-	if (st.preposition && st.objectB == st.objectA)
+	if (st.preposition && st.objectB == st.objectA) {
+		_sentenceNum--;
 		return;
+	}
 
 	// FIXME: should this be executed?
 	//_currentScript = 0xFF;
