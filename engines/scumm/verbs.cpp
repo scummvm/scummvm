@@ -131,37 +131,6 @@ void ScummEngine_v0::resetVerbs() {
 	}
 }
 
-void ScummEngine_v0::setNewKidVerbs() {
-	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
-	VerbSlot *vs;
-	int i;
-
-	for (i = 1; i < 16; i++)
-		killVerb(i);
-
-	for (i = 1; i < 4; i++) {
-		vs = &_verbs[i];
-		vs->verbid = i;
-		vs->color = 5;
-		vs->hicolor = 7;
-		vs->dimcolor = 11;
-		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0]._default.charset;
-		vs->curmode = 1;
-		vs->saveid = 0;
-		vs->key = 0;
-		vs->center = 0;
-		vs->imgindex = 0;
-		vs->prep = 0;
-		vs->curRect.left = (i * 8) * 8;
-		vs->curRect.top = virt->topline + 8;
-
-		Actor *a = derefActor(VAR(96 + i), "setNewKidVerbs");
-		loadPtrToResource(rtVerb, i, (const byte*)a->getActorName());
-	}
-	setUserState(191);
-}
-
 void ScummEngine_v0::switchActor(int slot) {
 	resetSentence(false);
 
@@ -802,7 +771,24 @@ void ScummEngine_v0::checkExecVerbs() {
 			// TODO: check keypresses
 		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
 			if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
-				// TODO: handle click into sentence line
+				if (_activeVerb == kVerbNewKid) {
+					if (_currentMode == kModeNormal) {
+						int kid;
+						int lineX = _mouse.x >> V12_X_SHIFT;
+						if (lineX < 11)
+							kid = 0;
+						else if (lineX < 25)
+							kid = 1;
+						else
+							kid = 2;
+						// TODO: get clicked kid
+						_activeVerb = kVerbWalkTo;
+						drawSentenceLine();
+						switchActor(kid);
+					}
+					_activeVerb = kVerbWalkTo;
+					return;
+				}
 			} else {
 				int obj = 0;
 
@@ -867,22 +853,12 @@ void ScummEngine_v0::checkExecVerbs() {
 	}
 
 	if (sentenceLineChanged) {
-		drawSentence();
+		drawSentenceLine();
 		sentenceLineChanged = false;
 	}
 
 	if (!execute || !_activeVerb)
 		return;
-
-	if (_activeVerb == kVerbNewKid) {
-		if (_currentMode == kModeNormal) {
-			// TODO: get clicked kid
-			_activeVerb = kVerbWalkTo;
-			drawSentence();
-			//switchActor(_verbs[over].verbid - 1);
-		}
-		_activeVerb = kVerbWalkTo;
-	}
 
 	if (_activeVerb == kVerbWalkTo)
 		verbExec();
