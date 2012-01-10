@@ -710,6 +710,8 @@ void ScummEngine_v0::verbExec() {
 			_activeVerb = kVerbWalkTo;
 			_activeObjectNr = 0;
 			_activeObjectType = 0;
+			_activeObject2Nr = 0;
+			_activeObject2Type = 0;
 		}
 		_walkToObjectIdx = 0;
 		return;
