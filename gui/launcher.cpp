@@ -854,11 +854,10 @@ void LauncherDialog::addGame() {
 				// Display edit dialog for the new entry
 				const EnginePlugin *plugin = 0;
 				GameDescriptor gameInfo = EngineMan.findGame(result.gameid(), &plugin);
-				// The plugin may be null, e.g. in platforms that use engine
-				// plugins. One could have game entries in the config file, for
-				// which the engine plugin is no longer installed.
-				ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(domain) : ExtraGuiOptions();
-				EditGameDialog editDialog(domain, result.description(), extraOptions);
+				// At this point, the plugin should always be set, as the game
+				// that will be added has been detected successfully.
+				assert(plugin);
+				EditGameDialog editDialog(domain, result.description(), (*plugin)->getExtraGuiOptions(domain));
 				if (editDialog.runModal() > 0) {
 					// User pressed OK, so make changes permanent
 
