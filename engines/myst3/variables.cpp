@@ -92,6 +92,9 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
+	VAR(1340, MenuSaveBack, false)
+	VAR(1341, MenuSaveAction, false)
+
 #undef VAR
 
 	memset(&_vars, 0, sizeof(_vars));

@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	gfx.o \
 	hotspot.o \
 	inventory.o \
+	menu.o \
 	movie.o \
 	myst3.o \
 	node.o \

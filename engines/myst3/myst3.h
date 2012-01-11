@@ -62,6 +62,7 @@ class Inventory;
 class Database;
 class Script;
 class Renderer;
+class Menu;
 struct NodeData;
 
 typedef Common::SharedPtr<NodeData> NodePtr;
@@ -74,6 +75,7 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 	ViewType _viewType;
+	OSystem *_system;
 	Variables *_vars;
 	Cursor *_cursor;
 	Inventory *_inventory;
@@ -91,6 +93,7 @@ public:
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
+	int16 openDialog(uint16 id);
 
 	void runNodeInitScripts();
 	void runNodeBackgroundScripts();
@@ -104,15 +107,17 @@ public:
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
 
 	void setMenuAction(uint16 action) { _menuAction = action; }
+	void setShouldQuit() { _shouldQuit = true; }
+
 	void processInput(bool lookOnly);
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
 private:
-	OSystem *_system;
 	Console *_console;
 	
 	Node *_node;
 	Scene *_scene;
+	Menu *_menu;
 
 	Archive *_archive;
 	Archive *_archiveRSRC;
@@ -131,8 +136,6 @@ private:
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();
-	void updateMainMenu();
-	void menuGoTo(uint16 node);
 
 	friend class Console;
 };

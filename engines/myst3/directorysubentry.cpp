@@ -49,7 +49,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	if (_metadataSize == 2) {
 		_spotItemData.u = inStream.readUint32LE();
 		_spotItemData.v = inStream.readUint32LE();
-	} else if (_metadataSize == 10) {
+	} else if (_metadataSize == 10 && _type != kMetadata) {
 		_videoData.v1.setValue(0, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(1, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(2, inStream.readSint32LE() * 0.000001f);

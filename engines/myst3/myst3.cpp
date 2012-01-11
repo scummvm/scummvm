@@ -41,6 +41,7 @@
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
+#include "engines/myst3/menu.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -52,7 +53,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
-		_cursor(0), _inventory(0), _gfx(0),
+		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false),
 		_menuAction(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
@@ -71,6 +72,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _menu;
 	delete _inventory;
 	delete _cursor;
 	delete _scene;
@@ -97,6 +99,7 @@ Common::Error Myst3Engine::run() {
 	_db = new Database("M3.exe");
 	_vars = new Variables(this);
 	_scene = new Scene(this);
+	_menu = new Menu(this);
 	_archive = new Archive();
 	_archiveRSRC = new Archive();
 	_archiveOVER = new Archive();
@@ -135,7 +138,12 @@ Common::Error Myst3Engine::run() {
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
 		processInput(false);
-		updateMainMenu();
+
+		if (_menuAction) {
+			_menu->updateMainMenu(_menuAction);
+			_menuAction = 0;
+		}
+
 		drawFrame();
 	}
 
@@ -242,9 +250,9 @@ void Myst3Engine::processInput(bool lookOnly) {
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				// Open menu
+				// Open main menu
 				if (_vars->getLocationRoom() != 901) {
-					menuGoTo(100);
+					_menu->goToNode(100);
 				}
 				break;
 			case Common::KEYCODE_d:
@@ -635,33 +643,21 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	return s;
 }
 
-void Myst3Engine::updateMainMenu() {
-	switch (_menuAction) {
-	case 0: // Nothing to do
-		break;
-	case 5: // Quit
-		_shouldQuit = true;
-		break;
-	default:
-		warning("Menu action %d is not implemented", _menuAction);
-		break;
+int16 Myst3Engine::openDialog(uint16 id) {
+	Dialog dialog(this, id);
+
+	_drawables.push_back(&dialog);
+
+	int16 result = -1;
+
+	while (result == -1) {
+		result = dialog.update();
+		drawFrame();
 	}
 
-	// Action done, reset the flag
-	_menuAction = 0;
-}
+	_drawables.pop_back();
 
-void Myst3Engine::menuGoTo(uint16 node) {
-	if (_vars->getMenuSavedAge() == 0 && _vars->getLocationRoom() != 901) {
-		// Entering menu, save current location
-		_vars->setMenuSavedAge(_vars->getLocationAge());
-		_vars->setMenuSavedRoom(_vars->getLocationRoom());
-		_vars->setMenuSavedNode(_vars->getLocationNode());
-	}
-
-	_vars->setLocationNextAge(9);
-	_vars->setLocationNextRoom(901);
-	goToNode(node, 2);
+	return result;
 }
 
 } // end of namespace Myst3
