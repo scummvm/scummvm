@@ -124,8 +124,8 @@ void Cursor::updatePosition(Common::Point &mouse) {
 	if (!_lockedAtCenter) {
 		_position += mouse;
 
-		_position.x = CLIP<int16>(_position.x, 0, Renderer::originalWidth);
-		_position.y = CLIP<int16>(_position.y, 0, Renderer::originalHeight);
+		_position.x = CLIP<int16>(_position.x, 0, Renderer::kOriginalWidth);
+		_position.y = CLIP<int16>(_position.y, 0, Renderer::kOriginalHeight);
 	}
 }
 

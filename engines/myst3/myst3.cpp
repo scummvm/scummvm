@@ -177,14 +177,14 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		if (_viewType == kMenu)  {
 			scaledMouse = Common::Point(
-					mouse.x * Renderer::originalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Renderer::originalHeight / _system->getHeight(),
-							0, Renderer::originalHeight));
+					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight(),
+							0, Renderer::kOriginalHeight));
 		} else {
 			scaledMouse = Common::Point(
-					mouse.x * Renderer::originalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Renderer::originalHeight / _system->getHeight()
-							- Scene::_topBorderHeight, 0, Scene::_frameHeight));
+					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight()
+							- Scene::kTopBorderHeight, 0, Scene::kFrameHeight));
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {

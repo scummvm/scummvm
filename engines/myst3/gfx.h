@@ -66,8 +66,8 @@ public:
 
 	void drawCube(Texture **textures);
 
-	static const int originalWidth = 640;
-	static const int originalHeight = 480;
+	static const int kOriginalWidth = 640;
+	static const int kOriginalHeight = 480;
 
 protected:
 	OSystem *_system;

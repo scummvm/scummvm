@@ -150,13 +150,13 @@ void Inventory::reflow() {
 	if (itemCount >= 2)
 		totalWidth += 9 * (itemCount - 1);
 
-	uint16 left = (Renderer::originalWidth - totalWidth) / 2;
+	uint16 left = (Renderer::kOriginalWidth - totalWidth) / 2;
 
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		const ItemData &item = getData(it->var);
 
-		uint16 top = Scene::_topBorderHeight + Scene::_frameHeight
-				+ (Scene::_bottomBorderHeight - item.textureHeight) / 2;
+		uint16 top = Scene::kTopBorderHeight + Scene::kFrameHeight
+				+ (Scene::kBottomBorderHeight - item.textureHeight) / 2;
 
 		it->rect = Common::Rect(item.textureWidth,
 				item.textureHeight);

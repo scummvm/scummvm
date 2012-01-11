@@ -53,10 +53,10 @@ void Scene::lookAt(float pitch, float heading) {
 }
 
 void Scene::drawBlackBorders() {
-	Common::Rect top = Common::Rect(Renderer::originalWidth, _topBorderHeight);
+	Common::Rect top = Common::Rect(Renderer::kOriginalWidth, kTopBorderHeight);
 
-	Common::Rect bottom = Common::Rect(Renderer::originalWidth, _bottomBorderHeight);
-	bottom.translate(0, _topBorderHeight + _frameHeight);
+	Common::Rect bottom = Common::Rect(Renderer::kOriginalWidth, kBottomBorderHeight);
+	bottom.translate(0, kTopBorderHeight + kFrameHeight);
 
 	uint32 black = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(255, 0, 0, 0);
 	_vm->_gfx->drawRect2D(top, black);
@@ -64,8 +64,8 @@ void Scene::drawBlackBorders() {
 }
 
 void Scene::drawSunspotFlare(const SunSpot &s) {
-	Common::Rect frame = Common::Rect(Renderer::originalWidth, _frameHeight);
-	frame.translate(0, _topBorderHeight);
+	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, kFrameHeight);
+	frame.translate(0, kTopBorderHeight);
 
 	uint8 a = s.intensity * s.radius;
 	uint8 r, g, b;

@@ -128,8 +128,8 @@ void Dialog::draw() {
 
 Common::Rect Dialog::getPosition() {
 	Common::Rect screenRect = Common::Rect(_texture->width, _texture->height);
-	screenRect.translate((Renderer::originalWidth - _texture->width) / 2,
-			(Renderer::originalHeight - _texture->height) / 2);
+	screenRect.translate((Renderer::kOriginalWidth - _texture->width) / 2,
+			(Renderer::kOriginalHeight - _texture->height) / 2);
 	return screenRect;
 }
 

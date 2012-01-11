@@ -49,9 +49,9 @@ class Scene {
 		void drawBlackBorders();
 		void drawSunspotFlare(const SunSpot &s);
 
-		static const int _topBorderHeight = 30;
-		static const int _bottomBorderHeight = 90;
-		static const int _frameHeight = 360;
+		static const int kTopBorderHeight = 30;
+		static const int kBottomBorderHeight = 90;
+		static const int kFrameHeight = 360;
 };
 
 } // end of namespace Myst3
