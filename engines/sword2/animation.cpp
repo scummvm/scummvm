@@ -392,6 +392,8 @@ void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
 	uint16 y = (g_system->getHeight() - scaledFrame.h) / 2;
 
 	_vm->_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+
+	scaledFrame.free();
 }
 
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
