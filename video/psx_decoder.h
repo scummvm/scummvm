@@ -48,6 +48,9 @@ namespace Video {
 
 /**
  * Decoder for PSX stream videos.
+ * This currently implements the most basic PSX stream format that is
+ * used by most games on the system. Special variants are not supported
+ * at this time.
  *
  * Video decoder used in engines:
  *  - sword1 (psx)
