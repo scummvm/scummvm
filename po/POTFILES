@@ -23,6 +23,7 @@ common/util.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
+engines/sci/detection.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
 engines/scumm/scumm.cpp

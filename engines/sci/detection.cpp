@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -715,31 +716,31 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 	ExtraGuiOptions options;
 	
 	ExtraGuiOption sfxType = {
-		"Prefer digital sound effects",
-		"Prefer digital sound effects instead of synthesized ones",
+		_("Prefer digital sound effects"),
+		_("Prefer digital sound effects instead of synthesized ones"),
 		"prefer_digitalsfx",
 		true
 	};
 
 	ExtraGuiOption originalSaveLoad = {
-		"Use original save/load screens",
-		"Use the original save/load screens, instead of the ScummVM ones",
+		_("Use original save/load screens"),
+		_("Use the original save/load screens, instead of the ScummVM ones"),
 		"sci_originalsaveload",
 		false
 	};
 
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
 	ExtraGuiOption cdAudio = {
-		"Use CD audio",
-		"Use CD audio instead of in-game audio, if available",
+		_("Use CD audio"),
+		_("Use CD audio instead of in-game audio, if available"),
 		"use_cdaudio",
 		true
 	};
 
 	// KQ6 Windows - windows cursors
 	ExtraGuiOption windows_cursors = {
-		"Use Windows cursors",
-		"Use the Windows cursors (smaller and monochrome) instead of the DOS ones",
+		_("Use Windows cursors"),
+		_("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
 		"windows_cursors",
 		false
 	};
