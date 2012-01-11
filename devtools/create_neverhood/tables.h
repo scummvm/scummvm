@@ -112,6 +112,10 @@ static const uint32 rectListOffsets[] = {
 	// Scene2247
 	1, 0x004B5588,
 	1, 0x004B55C8,
+	// Scene2801
+	1, 0x004B6CE0,
+	1, 0x004B6CD0,
+	1, 0x004B6CF0,
 	0, 0
 };
 
@@ -377,6 +381,12 @@ static const uint32 messageListOffsets[] = {
 	4, 0x004B54C0,
 	5, 0x004B54E0,
 	5, 0x004B5508,
+	// Scene2801
+	1, 0x004B6BB8,
+	1, 0x004B6BC0,
+	1, 0x004B6C10,
+	1, 0x004B6BB0,
+	2, 0x004B6C40,
 	0, 0
 };
 
