@@ -194,6 +194,8 @@ Common::Error SciEngine::run() {
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
 	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
+	ConfMan.registerDefault("prefer_digitalsfx", "true");
+	ConfMan.registerDefault("use_cdaudio", "true");		// Jones CD audio
 
 	_resMan = new ResourceManager();
 	assert(_resMan);
