@@ -41,6 +41,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 	case 9:
 		journalAtrus(arg0, arg1);
 		break;
+	case 21:
+		mainMenu(arg0);
+		break;
 	default:
 		warning("Puzzle %d is not implemented", id);
 	}
@@ -156,6 +159,10 @@ void Puzzles::journalAtrus(uint16 node, uint16 var) {
 		numPages++;
 
 	_vm->_vars->set(var, numPages - 1);
+}
+
+void Puzzles::mainMenu(uint16 action) {
+	_vm->setMenuAction(action);
 }
 
 } /* namespace Myst3 */

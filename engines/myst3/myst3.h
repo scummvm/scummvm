@@ -103,6 +103,7 @@ public:
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
 
+	void setMenuAction(uint16 action) { _menuAction = action; }
 	void processInput(bool lookOnly);
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
@@ -126,9 +127,12 @@ private:
 
 	uint _frameCount;
 	bool _shouldQuit;
+	uint16 _menuAction;
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();
+	void updateMainMenu();
+	void menuGoTo(uint16 node);
 
 	friend class Console;
 };

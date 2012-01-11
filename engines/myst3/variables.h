@@ -52,6 +52,9 @@ public:
 	DECLARE_VAR(64, BookSavedAge)
 	DECLARE_VAR(65, BookSavedRoom)
 	DECLARE_VAR(66, BookSavedNode)
+	DECLARE_VAR(67, MenuSavedAge)
+	DECLARE_VAR(68, MenuSavedRoom)
+	DECLARE_VAR(69, MenuSavedNode)
 
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)

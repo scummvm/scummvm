@@ -35,6 +35,9 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(64, BookSavedAge, false)
 	VAR(65, BookSavedRoom, false)
 	VAR(66, BookSavedNode, false)
+	VAR(67, MenuSavedAge, false)
+	VAR(68, MenuSavedRoom, false)
+	VAR(69, MenuSavedNode, false)
 
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)

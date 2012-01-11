@@ -53,7 +53,8 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_vars(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
 		_cursor(0), _inventory(0), _gfx(0),
-		_frameCount(0), _rnd(0), _shouldQuit(false) {
+		_frameCount(0), _rnd(0), _shouldQuit(false),
+		_menuAction(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -126,6 +127,7 @@ Common::Error Myst3Engine::run() {
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
+	_vars->setLocationNextAge(5);
 	_vars->setLocationNextRoom(501); // LEIS
 	_vars->setLocationNextNode(3);
 	goToNode(0, 1);
@@ -133,6 +135,7 @@ Common::Error Myst3Engine::run() {
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
 		processInput(false);
+		updateMainMenu();
 		drawFrame();
 	}
 
@@ -238,6 +241,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 			
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				// Open menu
+				if (_vars->getLocationRoom() != 901) {
+					menuGoTo(100);
+				}
+				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
 					_console->attach();
@@ -624,6 +633,35 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	}
 
 	return s;
+}
+
+void Myst3Engine::updateMainMenu() {
+	switch (_menuAction) {
+	case 0: // Nothing to do
+		break;
+	case 5: // Quit
+		_shouldQuit = true;
+		break;
+	default:
+		warning("Menu action %d is not implemented", _menuAction);
+		break;
+	}
+
+	// Action done, reset the flag
+	_menuAction = 0;
+}
+
+void Myst3Engine::menuGoTo(uint16 node) {
+	if (_vars->getMenuSavedAge() == 0 && _vars->getLocationRoom() != 901) {
+		// Entering menu, save current location
+		_vars->setMenuSavedAge(_vars->getLocationAge());
+		_vars->setMenuSavedRoom(_vars->getLocationRoom());
+		_vars->setMenuSavedNode(_vars->getLocationNode());
+	}
+
+	_vars->setLocationNextAge(9);
+	_vars->setLocationNextRoom(901);
+	goToNode(node, 2);
 }
 
 } // end of namespace Myst3

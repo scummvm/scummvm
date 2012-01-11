@@ -46,6 +46,7 @@ private:
 	uint16 _journalSaavedroNextChapter(uint16 chapter, bool forward);
 
 	void journalAtrus(uint16 node, uint16 var);
+	void mainMenu(uint16 action);
 };
 
 } /* namespace Myst3 */
