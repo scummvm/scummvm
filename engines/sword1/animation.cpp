@@ -410,8 +410,8 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 
 		if (Common::File::exists(filename)) {
 #ifdef USE_RGB_COLOR
-			// All BS1 PSX videos seem to be 15fps
-			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(15);
+			// All BS1 PSX videos run the videos at 2x speed
+			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
 			return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, psxDecoder, kVideoDecoderPSX);
 #else
 			GUI::MessageDialog dialog(Common::String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));

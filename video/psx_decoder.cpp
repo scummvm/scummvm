@@ -38,31 +38,6 @@
 
 namespace Video {
 
-PSXStreamDecoder::PSXStreamDecoder(Common::Rational frameRate) {
-	assert(frameRate != 0);
-	initCommon();
-	_frameRate = frameRate;
-	_frameCount = 0;
-	_speed = kCDUnk;
-}
-
-PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) {
-	assert(speed != kCDUnk);
-	assert(frameCount != 0);
-	initCommon();
-	_frameCount = frameCount;
-	_speed = speed;
-	// frame rate will be calculated in loadStream()
-}
-
-PSXStreamDecoder::~PSXStreamDecoder() {
-	close();
-	delete _surface;
-	delete _acHuffman;
-	delete _dcHuffmanLuma;
-	delete _dcHuffmanChroma;
-}
-
 // Here are the codes/lengths/symbols that are used for decoding
 // DC coefficients (version 3 frames only)
 
@@ -174,7 +149,7 @@ static const uint32 s_huffmanACSymbols[AC_CODE_COUNT] = {
 	END_OF_BLOCK
 };
 
-void PSXStreamDecoder::initCommon() {
+PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) : _nextFrameStartTime(0, speed), _frameCount(frameCount) {
 	_stream = 0;
 	_audStream = 0;
 	_surface = new Graphics::Surface();
@@ -182,6 +157,14 @@ void PSXStreamDecoder::initCommon() {
 	_acHuffman = new Common::Huffman(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
 	_dcHuffmanChroma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
 	_dcHuffmanLuma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
+}
+
+PSXStreamDecoder::~PSXStreamDecoder() {
+	close();
+	delete _surface;
+	delete _acHuffman;
+	delete _dcHuffmanLuma;
+	delete _dcHuffmanChroma;
 }
 
 #define RAW_CD_SECTOR_SIZE 2352
@@ -227,14 +210,6 @@ bool PSXStreamDecoder::loadStream(Common::SeekableReadStream *stream) {
 	delete sector;
 	_stream->seek(0);
 
-	// Calculate frame rate based on CD speed
-	if (_speed != kCDUnk) {
-		// TODO: This algorithm is too basic and not accurate enough
-		// TODO: Count the number of sectors per frame to get a better estimate
-		_frameRate = Common::Rational(_speed * _frameCount, _stream->size() / RAW_CD_SECTOR_SIZE);
-		_frameRate.debugPrint(0, "Approximate PSX Stream Frame Rate:");
-	}
-
 	return true;
 }
 
@@ -267,7 +242,20 @@ uint32 PSXStreamDecoder::getElapsedTime() const {
 	//if (_audStream)
 	//	return _mixer->getSoundElapsedTime(_audHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return VideoDecoder::getElapsedTime();
+}
+
+uint32 PSXStreamDecoder::getTimeToNextFrame() const {
+	if (!isVideoLoaded() || endOfVideo())
+		return 0;
+
+	uint32 nextTimeMillis = _nextFrameStartTime.msecs();
+	uint32 elapsedTime = getElapsedTime();
+
+	if (elapsedTime > nextTimeMillis)
+		return 0;
+
+	return nextTimeMillis - elapsedTime;
 }
 
 #define VIDEO_DATA_CHUNK_SIZE   2016
@@ -276,9 +264,11 @@ uint32 PSXStreamDecoder::getElapsedTime() const {
 const Graphics::Surface *PSXStreamDecoder::decodeNextFrame() {
 	Common::SeekableReadStream *sector = 0;
 	byte *partialFrame = 0;
+	int sectorsRead = 0;
 
 	while (!endOfVideo()) {
 		sector = readSector();
+		sectorsRead++;
 
 		if (!sector)
 			error("Corrupt PSX stream sector");
@@ -321,6 +311,15 @@ const Graphics::Surface *PSXStreamDecoder::decodeNextFrame() {
 					_curFrame++;
 					if (_curFrame == 0)
 						_startTime = g_system->getMillis();
+
+					// Increase the time by the amount of sectors we read
+					// One may notice that this is still not the most precise
+					// method since a frame takes up the time its sectors took
+					// up instead of the amount of time it takes the next frame
+					// to be read from the sectors. The actual frame rate should
+					// be constant instead of variable, so the slight difference
+					// in a frame's showing time is negligible (1/150 of a second).
+					_nextFrameStartTime = _nextFrameStartTime.addFrames(sectorsRead);
 
 					return _surface;
 				}
