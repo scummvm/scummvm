@@ -373,7 +373,11 @@ void Myst3Engine::runNodeInitScripts() {
 			_vars->getLocationRoom(),
 			_vars->getLocationAge());
 
-	NodePtr nodeDataInit = _db->getNodeData(32765);
+	NodePtr nodeDataInit = _db->getNodeData(
+			32765,
+			_vars->getLocationRoom(),
+			_vars->getLocationAge());
+
 	if (nodeDataInit)
 		runScriptsFromNode(32765);
 
@@ -437,6 +441,12 @@ void Myst3Engine::loadNodeMenu(uint16 nodeID) {
 }
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
+	if (roomID == 0)
+		roomID = _vars->getLocationRoom();
+
+	if (ageID == 0)
+		ageID = _vars->getLocationAge();
+
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {

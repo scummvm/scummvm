@@ -92,8 +92,10 @@ public:
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 
+	DECLARE_VAR(1339, MenuLoadBack)
 	DECLARE_VAR(1340, MenuSaveBack)
 	DECLARE_VAR(1341, MenuSaveAction)
+	DECLARE_VAR(1342, MenuOptionsBack)
 
 private:
 	Myst3Engine *_vm;

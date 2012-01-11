@@ -38,6 +38,58 @@ Menu::~Menu() {
 
 void Menu::updateMainMenu(uint16 action) {
 	switch (action) {
+	case 1: {
+			// New game
+			int16 choice = 1;
+
+			// If a game is playing, ask if wants to save
+			if (_vm->_vars->getMenuSavedAge() != 0) {
+				choice = _vm->openDialog(1080);
+			}
+
+			if (choice == 0) {
+				// Go to save screen
+				_vm->_vars->setMenuSaveBack(1);
+				_vm->_vars->setMenuSaveAction(6);
+				goToNode(300);
+			} else if (choice == 1) {
+				// New game
+				goToNode(98);
+			}
+		}
+		break;
+	case 2: {
+			// Load game
+			int16 choice = 1;
+
+			// If a game is playing, ask if wants to save
+			if (_vm->_vars->getMenuSavedAge() != 0) {
+				choice = _vm->openDialog(1060);
+			}
+
+			if (choice == 0) {
+				// Go to save screen
+				_vm->_vars->setMenuSaveBack(1);
+				_vm->_vars->setMenuSaveAction(3);
+				goToNode(300);
+			} else if (choice == 1) {
+				// Load game screen
+				_vm->_vars->setMenuLoadBack(1);
+				goToNode(200);
+			}
+		}
+		break;
+	case 3:
+		// Go to save screen
+		_vm->_vars->setMenuSaveBack(1);
+		_vm->_vars->setMenuSaveAction(1);
+		goToNode(300);
+		break;
+	case 4:
+		// Settings
+		_vm->_vars->setMenuOptionsBack(1);
+		_vm->runScriptsFromNode(599, 0, 0);
+		break;
 	case 5: {
 			// Asked to quit
 			int16 choice = 1;
@@ -139,6 +191,7 @@ int16 Dialog::update() {
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		// Check for "Hard" quit"
 		if (event.type == Common::EVENT_QUIT) {
+			_vm->setShouldQuit();
 			return -2;
 		} else if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
