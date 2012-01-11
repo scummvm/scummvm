@@ -499,7 +499,6 @@ int ScummEngine::findObject(int x, int y) {
 	byte a;
 	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
 
-	// FIXME(TOBIAS): <= _numLocalObjects?
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
