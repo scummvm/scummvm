@@ -2493,11 +2493,8 @@ void ScummEngine_v5::walkActorToActor(int actor, int toActor, int dist) {
 	a->startWalkActor(x, y, -1);
 
 	// WORKAROUND: See bug #2971126 for details on why this is here.
-	if (_game.version == 0) {
-		// FIXME(TOBIAS): is this still needed?
-		// (updateScriptPtr/_currentScript might now be called automatically) 
+	if (_game.version == 0)
 		o5_breakHere();
-	}
 }
 
 void ScummEngine_v5::o5_walkActorToActor() {
