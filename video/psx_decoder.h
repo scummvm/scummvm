@@ -53,18 +53,16 @@ namespace Video {
  *  - sword1 (psx)
  *  - sword2 (psx)
  */
-class PSXStreamDecoder : public FixedRateVideoDecoder {
+class PSXStreamDecoder : public VideoDecoder {
 public:
 	// CD speed in sectors/second
 	// Calling code should use these enum values instead of the constants
 	enum CDSpeed {
-		kCDUnk = 0,
 		kCD1x = 75,
 		kCD2x = 150
 	};
 
-	PSXStreamDecoder(Common::Rational frameRate);
-	PSXStreamDecoder(CDSpeed speed, uint32 frameCount);
+	PSXStreamDecoder(CDSpeed speed, uint32 frameCount = 0);
 	virtual ~PSXStreamDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -75,22 +73,18 @@ public:
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
 	uint32 getElapsedTime() const;
+	uint32 getTimeToNextFrame() const;
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 	bool endOfVideo() const { return _stream->pos() >= _stream->size(); }
-
-protected:
-	// Hardcoded frame rate
-	Common::Rational getFrameRate() const { return _frameRate; }
 
 private:
 	void initCommon();
 	Common::SeekableReadStream *_stream;
 	Graphics::Surface *_surface;
 
-	CDSpeed _speed;
 	uint32 _frameCount;
-	Common::Rational _frameRate;
+	Audio::Timestamp _nextFrameStartTime;
 
 	Audio::SoundHandle _audHandle;
 	Audio::QueuingAudioStream *_audStream;
