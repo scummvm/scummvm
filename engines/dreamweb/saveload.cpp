@@ -774,7 +774,7 @@ void DreamWebEngine::checkInput() {
 }
 
 void DreamWebEngine::selectSaveLoadPage() {
-	commandOnlyCond(31, 244);
+	commandOnlyCond(31, 254);
 
 	if (_mouseButton != 1 || _mouseButton == _oldButton)
 		return;
