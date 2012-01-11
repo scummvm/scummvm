@@ -1,0 +1,27 @@
+#Fix issue #312: Manny disappears while holding & examing the sign the Ruba in Petrified forest
+
+begin fd7b996055e9e5144bd70ef2bd1834fd  #Both v1.0 and v1.01
+
+insert 24ad 06		#Make space for enable_head_control(FALSE)
+insert 24ef 09		#Make space for "if manny.is_holding ~= signpost then"
+insert 2516 0c		#Make space for "else ..."
+insert 25d1 06		#Make space for enable_head_control(TRUE)
+
+replace 24a5 32		#Increase the size of function code block
+
+replace 24ad 1e 29 1e 18 79 01						#enable_head_control(FALSE)
+replace 24ef 25 29 2a 1e 2b 2c 5c 6f 20				#if manny.is_holding ~= sg.signpost then
+replace 2516 6d 0a 08 0e 45 08 10 67 46 08 0d 47	#else ... end
+replace 25d1 1e 29 1e 26 79 01						#enable_head_control(TRUE)
+
+replace 254d ff ff		#head_look_at_point({a,b,c}) -> head_look_at_point(a,b,c)
+replace 2555 ff ff
+replace 2558 04
+
+#Const values
+replace 25d9 2c		#Increase the counter of constants by three
+insert 27c0 2b		#Make space for three new strings
+replace 27c0 53 00 14 9a 91 9e 9d 93 9a a0 97 9a 9e 9b a0 9c 90 91 8b 8d 90 93 ff	#Set string enable_head_control (number 0x29)
+replace 27d7 53 00 0b 96 8c a0 97 90 93 9b 96 91 98 ff								#Set string is_holding (number 0x2a)
+replace 27e5 53 00 03 8c 98 ff														#Set string sg (number 0x2b)
+end
