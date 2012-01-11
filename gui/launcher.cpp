@@ -854,7 +854,11 @@ void LauncherDialog::addGame() {
 				// Display edit dialog for the new entry
 				const EnginePlugin *plugin = 0;
 				GameDescriptor gameInfo = EngineMan.findGame(result.gameid(), &plugin);
-				EditGameDialog editDialog(domain, result.description(), (*plugin)->getExtraGuiOptions(domain));
+				// The plugin may be null, e.g. in platforms that use engine
+				// plugins. One could have game entries in the config file, for
+				// which the engine plugin is no longer installed.
+				ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(domain) : ExtraGuiOptions();
+				EditGameDialog editDialog(domain, result.description(), extraOptions);
 				if (editDialog.runModal() > 0) {
 					// User pressed OK, so make changes permanent
 
@@ -946,7 +950,11 @@ void LauncherDialog::editGame(int item) {
 	const EnginePlugin *plugin = 0;
 	GameDescriptor gameInfo = EngineMan.findGame(gameId, &plugin);
 	Common::String target = _domains[item];
-	EditGameDialog editDialog(target, gameInfo.description(), (*plugin)->getExtraGuiOptions(target));
+	// The plugin may be null, e.g. in platforms that use engine
+	// plugins. One could have game entries in the config file, for
+	// which the engine plugin is no longer installed.
+	ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : ExtraGuiOptions();
+	EditGameDialog editDialog(target, gameInfo.description(), extraOptions);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
