@@ -195,6 +195,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_timedX = 0;
 	_needToDumpTimed = 0;
 	_loadingOrSave = 0;
+	_saveLoadPage = 0;
 	_currentSlot = 0;
 	_cursorPos = 0;
 	_colourPos = 0;

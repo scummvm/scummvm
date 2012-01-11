@@ -227,8 +227,8 @@ protected:
 	Common::Point _lineData[200];		// Output of Bresenham
 
 	// from saveload.cpp
-	char _saveNames[17*7];
-	char _saveNamesOld[17*7];
+	char _saveNames[17*21];
+	char _saveNamesOld[17*21];
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
@@ -421,6 +421,7 @@ public:
 	uint8 _timedX;
 	uint8 _needToDumpTimed;
 	uint8 _loadingOrSave;
+	uint8 _saveLoadPage;
 	uint8 _currentSlot;
 	uint8 _cursorPos;
 	uint8 _colourPos;
@@ -692,6 +693,7 @@ public:
 	void loadSaveBox();
 	void showNames();
 	void checkInput();
+	void selectSaveLoadPage();
 	void selectSlot();
 	void showSlots();
 	void showOpBox();
