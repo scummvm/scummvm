@@ -646,7 +646,9 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 
 // Count number of save files, and load their descriptions into _saveNames
 uint DreamWebEngine::scanForNames() {
-	// Initialize the first 21 slots (like the original code expects)
+	// There are 21 save slots, each of which are 17 bytes. The first byte
+	// doesn't seem to be used. The name starts at the second byte. All the
+	// slots are initialized to be empty.
 	for (unsigned int slot = 0; slot < 21; ++slot) {
 		_saveNames[17 * slot + 0] = 2;
 		_saveNames[17 * slot + 1] = 0;
