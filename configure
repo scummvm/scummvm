@@ -1682,7 +1682,7 @@ esac
 # Determine a data type with the given length
 #
 find_type_with_size() {
-	for datatype in int short char long unknown; do
+	for datatype in int short char long "long long" unknown; do
 		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {
@@ -1709,27 +1709,29 @@ EOF
 # Check whether the system is 32-bit
 #
 pointer_is_32bit() {
-        cat > tmp_pointer_is_32bit.cpp << EOF
+	cat > tmp_pointer_is_32bit.cpp << EOF
 int main() {
-        static int test_array[1 - 2 * !(sizeof(void *) == 4)];
+	static int test_array[1 - 2 * !(sizeof(void *) == 4)];
+	test_array[0] = 0;
+	return 0;
 }
 EOF
-        $CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
-        status=$?
-        cc_check_clean tmp_pointer_is_32bit.cpp
-        return $status
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
+	status=$?
+	cc_check_clean tmp_pointer_is_32bit.cpp
+	return $status
 }
 
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-        type_ptr=int32
-        echo "no"
-        add_line_to_config_h "/* #define SCUMM_64BITS */"
+	type_ptr=int32
+	echo "no"
+	add_line_to_config_h "/* #define SCUMM_64BITS */"
 else
-        type_ptr=int64
-        echo "yes"
-        add_line_to_config_h "#define SCUMM_64BITS"
+	type_ptr=int64
+	echo "yes"
+	add_line_to_config_h "#define SCUMM_64BITS"
 fi
 
 #
@@ -1758,8 +1760,8 @@ type_8_byte=`find_type_with_size 8`
 TMPR="$?"
 echo "$type_8_byte"
 if test $TMPR -eq 0; then
-        _def_64bit_type_signed="typedef signed $type_8_byte int64;"
-        _def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
+	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
+	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
 fi
 # force cleanup after check for 8 bytes type
 cc_check_clean tmp_find_type_with_size.cpp
