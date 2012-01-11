@@ -117,7 +117,7 @@ public:
 	 *
 	 * The default implementation returns an empty list.
 	 */
-	virtual ExtraGuiOptions getExtraGuiOptions(Common::String &target) const {
+	virtual ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
 	}
 
