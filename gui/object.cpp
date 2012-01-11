@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/tokenizer.h"
 
 #include "gui/object.h"
 #include "gui/widget.h"
@@ -40,6 +41,25 @@ GuiObject::~GuiObject() {
 
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
+
+		if (_name.hasPrefix("GameOptions_Engine")) {
+			// Find the y position of this widget from its name
+			Common::StringTokenizer tokenizer(_name, ".");
+			tokenizer.nextToken();	// skip the tab name
+			tokenizer.nextToken();	// skip the widget name
+			uint id = atoi(tokenizer.nextToken().c_str());
+
+			// The values below are set so that up to 10 options can fit in a
+			// 320x200 screen.
+			_x = 6;
+			_y = (kLineHeight + 6) * id + kLineHeight - 6;
+			// FIXME: This fixed width isn't pretty, but at this point, we
+			// don't have information about the widget's parent.
+			_w = 240;
+			_h = kLineHeight;
+			return;
+		}
+
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
 			error("Could not load widget position for '%s'", _name.c_str());
 		}

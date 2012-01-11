@@ -403,6 +403,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	ExtraGuiOptions getExtraGuiOptions(Common::String &target) const;
 };
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -709,6 +710,50 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 }
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(Common::String &target) const {
+	ExtraGuiOptions options;
+	
+	ExtraGuiOption sfxType = {
+		"Prefer digital sound effects",
+		"Prefer digital sound effects instead of synthesized ones",
+		"prefer_digitalsfx",
+		true
+	};
+
+	ExtraGuiOption originalSaveLoad = {
+		"Use original save/load screens",
+		"Use the original save/load screens, instead of the ScummVM ones",
+		"sci_originalsaveload",
+		false
+	};
+
+	// Jones in the Fast Lane - CD audio tracks or resource.snd
+	ExtraGuiOption cdAudio = {
+		"Use CD audio",
+		"Use CD audio instead of in-game audio, if available",
+		"use_cdaudio",
+		true
+	};
+
+	// KQ6 Windows - windows cursors
+	ExtraGuiOption windows_cursors = {
+		"Use Windows cursors",
+		"Use the Windows cursors (smaller and monochrome) instead of the DOS ones",
+		"windows_cursors",
+		false
+	};
+	
+	options.push_back(sfxType);
+	options.push_back(originalSaveLoad);
+
+	if (target.hasPrefix("jones"))
+		options.push_back(cdAudio);
+	if (target.hasPrefix("kq6"))
+		options.push_back(windows_cursors);
+
+	return options;
+}
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
