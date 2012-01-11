@@ -49,7 +49,7 @@ void GuiObject::reflowLayout() {
 			tokenizer.nextToken();	// skip the widget name
 			uint id = atoi(tokenizer.nextToken().c_str());
 
-			// The values below are set so that up to 10 options can fit in a
+			// The values below are set so that up to 8 options can fit in a
 			// 320x200 screen.
 			_x = 6;
 			_y = (kLineHeight + 6) * id + kLineHeight - 6;
