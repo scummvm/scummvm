@@ -766,8 +766,17 @@ void Lua_V2::GetActiveCD() {
 }
 
 void Lua_V2::PurgeText() {
-	// FIXME
-	warning("Lua_V2::PurgeText: implement opcode");
+	TextObject::getPool().deleteObjects();
+}
+
+void Lua_V2::GetTextObjectDimensions() {
+	lua_Object textObj = lua_getparam(1);
+
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
+		TextObject *textObject = gettextobject(textObj);
+		lua_pushnumber(textObject->getBitmapWidth()/640.f);
+		lua_pushnumber(textObject->getBitmapHeight()/480.f);
+	}
 }
 
 void Lua_V2::ImFlushStack() {
@@ -820,6 +829,11 @@ void Lua_V2::SetAmbientLight() {
 
 void Lua_V2::Display() {
 	// dummy
+}
+
+void Lua_V2::RenderModeUser() {
+	lua_Object param1 = lua_getparam(1);
+	g_movie->pause(!lua_isnil(param1));
 }
 
 // Stub function for builtin functions not yet implemented

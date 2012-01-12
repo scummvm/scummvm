@@ -167,11 +167,16 @@ void TextObject::setupText() {
 		return;
 	}
 
+	// In EMI most stuff seems to be relitive to the center,
+	// but sometimes it is not so I catch that with _x being over 320.
+	// This is probably not the corrent way to do it though.
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_x == 0)
-			_x = 320;
-		if (_y == 0)
-			_y = 240;
+		if (_x > 320) {
+			_y = -_y;
+		} else {
+			_x += 320;
+			_y = 240 - _y;
+		}
 	}
 
 	// format the output message to incorporate line wrapping
