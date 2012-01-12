@@ -36,7 +36,8 @@ Database::Database() :
 	static const char *const names[] = {
 		"M3.exe",
 		"Myst III Exile for Mac OS X",
-		"Myst III Exile for Mac OS 8-9"
+		"Myst III Exile for Mac OS 8-9",
+		"SLUS_204.34"
 	};
 
 	// Game versions database
@@ -52,6 +53,7 @@ Database::Database() :
 			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x486110, 0x486040 },
 			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0, 0 }, // TODO
 			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0, 0 }, // TODO
+			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0, 0, 0 }, // TODO
 	};
 
 	// First, see what executable files we have
