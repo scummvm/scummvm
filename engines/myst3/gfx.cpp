@@ -285,7 +285,7 @@ void Renderer::draw2DText(const Common::String &text, const Common::Point &posit
 		glVertex3f(x, y + h, 1.0f);
 		glEnd();
 
-		x += textureRect.width();
+		x += textureRect.width() - 2;
 	}
 
 	glDisable(GL_TEXTURE_2D);

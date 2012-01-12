@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/cursor.h"
+#include "engines/myst3/database.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/variables.h"
@@ -266,6 +267,45 @@ void Menu::loadMenuSelect(uint16 item) {
 
 	// TODO: Refresh miniature
 	// TODO: Selecting twice loads item
+}
+
+void Menu::draw() {
+	uint16 node = _vm->_vars->getLocationNode();
+	uint16 room = _vm->_vars->getLocationRoom();
+	uint16 age = _vm->_vars->getLocationAge();
+
+	if (room != 901 || node != 200)
+		return;
+
+	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+	NodePtr nodeData = _vm->_db->getNodeData(node, room, age);
+
+	for (uint i = 0; i < 7; i++) {
+		uint itemToDisplay = page * 7 + i;
+
+		if (itemToDisplay >= _saveLoadFiles.size())
+			break;
+
+		PolarRect rect = nodeData->hotspots[i + 1].rects[0];
+
+		Common::String display = _saveLoadFiles[itemToDisplay];
+		display.toUppercase();
+		if (display.hasSuffix(".M3S")) {
+			display.deleteLastChar();
+			display.deleteLastChar();
+			display.deleteLastChar();
+			display.deleteLastChar();
+		}
+
+		while (display.size() > 17)
+			display.deleteLastChar();
+
+		_vm->_gfx->draw2DText(display, Common::Point(rect.centerPitch, rect.centerHeading));
+	}
+}
+
+void Menu::loadMenuChangePage() {
+	saveLoadUpdateVars();
 }
 
 } /* namespace Myst3 */

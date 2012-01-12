@@ -81,6 +81,8 @@ public:
 	Inventory *_inventory;
 	Renderer *_gfx;
 	Menu *_menu;
+	Database *_db;
+	
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
@@ -125,7 +127,6 @@ private:
 	Archive *_archiveLANG;
 
 	Script *_scriptEngine;
-	Database *_db;
 
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;

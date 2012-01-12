@@ -40,11 +40,14 @@ public:
 	Menu(Myst3Engine *vm);
 	virtual ~Menu();
 
+	void draw();
+
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
 
 	void loadMenuOpen();
 	void loadMenuSelect(uint16 item);
+	void loadMenuChangePage();
 private:
 	Myst3Engine *_vm;
 

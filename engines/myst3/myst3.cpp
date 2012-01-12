@@ -307,6 +307,8 @@ void Myst3Engine::drawFrame() {
 
 		_scene->drawBlackBorders();
 		_inventory->draw();
+	} else {
+		_menu->draw();
 	}
 
 	_cursor->draw();
