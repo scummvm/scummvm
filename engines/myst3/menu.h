@@ -56,6 +56,7 @@ private:
 
 	Common::StringArray _saveLoadFiles;
 	SpotItemFace *_saveLoadSpotItem;
+	Common::String _saveLoadAgeName;
 
 	void saveLoadUpdateVars();
 };

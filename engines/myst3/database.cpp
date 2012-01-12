@@ -388,14 +388,14 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 			s.readUint32LE();
 			age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
 			s.readUint32LE();
-			age.ageUnk1 = s.readUint32LE();
+			age.labelId = s.readUint32LE();
 			s.readUint32LE();
 		} else {
 			age.id = s.readUint32LE();
 			age.disk = s.readUint32LE();
 			age.roomCount = s.readUint32LE();
 			age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
-			age.ageUnk1 = s.readUint32LE();
+			age.labelId = s.readUint32LE();
 		}
 
 		ages.push_back(age);
@@ -456,4 +456,13 @@ uint32 Database::getRoomId(const char *name) {
 
 	return 0;
 }
+
+uint32 Database::getAgeLabelId(uint32 ageID) {
+	for (uint i = 0; i < _ages.size(); i++)
+		if (_ages[i].id == ageID)
+			return _ages[i].labelId;
+
+	return 0;
+}
+
 } /* namespace Myst3 */

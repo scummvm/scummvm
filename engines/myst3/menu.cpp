@@ -298,6 +298,9 @@ void Menu::loadMenuSelect(uint16 item) {
 	}
 
 	// Look for the age name
+	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
+	_saveLoadAgeName = desc->getTextData(_vm->_db->getAgeLabelId(age));
+	_saveLoadAgeName.toUppercase();
 
 	// Start miniature data
 	save->seek(8580);
@@ -354,6 +357,11 @@ void Menu::draw() {
 			display.deleteLastChar();
 
 		_vm->_gfx->draw2DText(display, Common::Point(rect.centerPitch, rect.centerHeading));
+	}
+
+	if (!_saveLoadAgeName.empty()) {
+		PolarRect rect = nodeData->hotspots[8].rects[0];
+		_vm->_gfx->draw2DText(_saveLoadAgeName, Common::Point(rect.centerPitch, rect.centerHeading));
 	}
 }
 

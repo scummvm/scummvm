@@ -61,7 +61,7 @@ struct AgeData
 	uint32 disk;
 	uint32 roomCount;
 	uint32 roomsOffset;
-	uint32 ageUnk1;
+	uint32 labelId;
 
 	Common::Array<RoomData> rooms;
 };
@@ -103,6 +103,11 @@ public:
 	 * Returns the list of the nodes of a room
 	 */
 	Common::Array<uint16> listRoomNodes(uint32 roomID = 0, uint32 ageID = 0);
+
+	/**
+	 * Returns an age's label id, to be used with AGES 1000 metadata
+	 */
+	uint32 getAgeLabelId(uint32 ageID);
 private:
 	struct GameVersion {
 		char *description;
