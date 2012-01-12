@@ -51,6 +51,10 @@ protected:
 	Math::Vector3d _pBottomLeft;
 	Math::Vector3d _pBottomRight;
 	Math::Vector3d _pTopRight;
+
+	int32 _posU;
+	int32 _posV;
+
 	Video::SeekableBinkDecoder _bink;
 	Texture *_texture;
 
@@ -96,9 +100,7 @@ private:
 
 	uint16 _startFrameVar;
 	uint16 _endFrameVar;
-	int32 _posU;
 	uint16 _posUVar;
-	int32 _posV;
 	uint16 _posVVar;
 
 	uint16 _nextFrameReadVar;

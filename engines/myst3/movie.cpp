@@ -28,6 +28,8 @@ namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_vm(vm),
+	_posU(0),
+	_posV(0),
 	_startFrame(0),
 	_endFrame(0),
 	_texture(0) {
@@ -78,10 +80,24 @@ void Movie::loadPosition(const VideoData &videoData) {
 	_pBottomLeft = planeOrigin + vBottom + vLeft;
 	_pBottomRight = planeOrigin + vBottom + vRight;
 	_pTopRight = planeOrigin + vTop + vRight;
+
+	_posU = videoData.u;
+	_posV = videoData.v;
 }
 
 void Movie::draw() {
-	_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
+	if (_vm->_viewType == kCube) {
+		_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
+	} else {
+		Common::Rect screenRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
+		screenRect.translate(_posU, _posV);
+
+		if (_vm->_viewType == kFrame)
+			screenRect.translate(0, Scene::kTopBorderHeight);
+
+		Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
+		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
+	}
 }
 
 void Movie::drawNextFrameToTexture() {
@@ -104,9 +120,7 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
 	_conditionBit(0),
 	_startFrameVar(0),
 	_endFrameVar(0),
-	_posU(0),
 	_posUVar(0),
-	_posV(0),
 	_posVVar(0),
 	_nextFrameReadVar(0),
 	_nextFrameWriteVar(0),
