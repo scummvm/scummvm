@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -64,6 +65,7 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -178,6 +180,21 @@ Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	assert(engine);
 	*engine = new Queen::QueenEngine(syst);
 	return Common::kNoError;
+}
+
+ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+
+	ExtraGuiOption altIntro = {
+		_("Show alternative intro"),
+		_("Show the intro of the floppy version in the CD version"),
+		"alt_intro",
+		false
+	};
+
+	options.push_back(altIntro);
+
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)
