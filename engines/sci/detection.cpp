@@ -745,7 +745,7 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 	};
 
 	// KQ6 Windows - windows cursors
-	ExtraGuiOption windows_cursors = {
+	ExtraGuiOption windowsCursors = {
 		_s("Use Windows cursors"),
 		_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
 		"windows_cursors",
@@ -759,7 +759,7 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 	if (target.hasPrefix("jones"))
 		options.push_back(cdAudio);
 	if (target.hasPrefix("kq6"))
-		options.push_back(windows_cursors);
+		options.push_back(windowsCursors);
 
 	return options;
 }
