@@ -716,31 +716,31 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 	ExtraGuiOptions options;
 	
 	ExtraGuiOption sfxType = {
-		_("Prefer digital sound effects"),
-		_("Prefer digital sound effects instead of synthesized ones"),
+		_s("Prefer digital sound effects"),
+		_s("Prefer digital sound effects instead of synthesized ones"),
 		"prefer_digitalsfx",
 		true
 	};
 
 	ExtraGuiOption originalSaveLoad = {
-		_("Use original save/load screens"),
-		_("Use the original save/load screens, instead of the ScummVM ones"),
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
 		"sci_originalsaveload",
 		false
 	};
 
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
 	ExtraGuiOption cdAudio = {
-		_("Use CD audio"),
-		_("Use CD audio instead of in-game audio, if available"),
+		_s("Use CD audio"),
+		_s("Use CD audio instead of in-game audio, if available"),
 		"use_cdaudio",
 		true
 	};
 
 	// KQ6 Windows - windows cursors
 	ExtraGuiOption windows_cursors = {
-		_("Use Windows cursors"),
-		_("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
+		_s("Use Windows cursors"),
+		_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
 		"windows_cursors",
 		false
 	};
