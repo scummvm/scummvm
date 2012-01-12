@@ -53,7 +53,7 @@ Database::Database() :
 			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0, 0 }, // TODO
 			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0, 0 }, // TODO
-			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0, 0, 0 }, // TODO
+			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00, 0x14EB10, 0x14EA10 },
 	};
 
 	// First, see what executable files we have
@@ -99,7 +99,7 @@ Database::Database() :
 			error("Could not find any executable to load");
 	}
 
-	if (_gameVersion->platform != Common::kPlatformWindows)
+	if (_gameVersion->platform != Common::kPlatformWindows && _gameVersion->platform != Common::kPlatformPS2)
 		error("Unhandled platform %s", getPlatformDescription(_gameVersion->platform));
 
 	// Load the ages and rooms description
@@ -376,11 +376,26 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 
 	for (uint i = 0; i < 10; i++) {
 		AgeData age;
-		age.id = s.readUint32LE();
-		age.disk = s.readUint32LE();
-		age.roomCount = s.readUint32LE();
-		age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
-		age.ageUnk1 = s.readUint32LE();
+
+		if (_gameVersion->platform == Common::kPlatformPS2) {
+			// Really 64-bit values
+			age.id = s.readUint32LE();
+			s.readUint32LE();
+			age.disk = s.readUint32LE();
+			s.readUint32LE();
+			age.roomCount = s.readUint32LE();
+			s.readUint32LE();
+			age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
+			s.readUint32LE();
+			age.ageUnk1 = s.readUint32LE();
+			s.readUint32LE();
+		} else {
+			age.id = s.readUint32LE();
+			age.disk = s.readUint32LE();
+			age.roomCount = s.readUint32LE();
+			age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
+			age.ageUnk1 = s.readUint32LE();
+		}
 
 		ages.push_back(age);
 	}
