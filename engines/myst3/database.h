@@ -31,6 +31,10 @@
 #include "common/hashmap.h"
 #include "common/stream.h"
 
+namespace Common {
+class SeekableSubReadStreamEndian;
+}
+
 namespace Myst3 {
 
 struct NodeData
@@ -133,15 +137,18 @@ private:
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
 	void preloadCommonRooms();
 
-	Common::Array<AgeData> loadAges(Common::ReadStream &s);
-	RoomData loadRoomDescription(Common::ReadStream &s);
+	Common::Array<AgeData> loadAges(Common::ReadStreamEndian &s);
+	RoomData loadRoomDescription(Common::ReadStreamEndian &s);
 
-	Common::Array<CondScript> loadCondScripts(Common::ReadStream & s);
-	Common::Array<Opcode> loadOpcodes(Common::ReadStream & s);
-	Common::Array<HotSpot> loadHotspots(Common::ReadStream & s);
-	Common::Array<PolarRect> loadRects(Common::ReadStream & s);
-	CondScript loadCondScript(Common::ReadStream & s);
-	HotSpot loadHotspot(Common::ReadStream & s);
+	Common::Array<CondScript> loadCondScripts(Common::ReadStreamEndian & s);
+	Common::Array<Opcode> loadOpcodes(Common::ReadStreamEndian & s);
+	Common::Array<HotSpot> loadHotspots(Common::ReadStreamEndian & s);
+	Common::Array<PolarRect> loadRects(Common::ReadStreamEndian & s);
+	CondScript loadCondScript(Common::ReadStreamEndian & s);
+	HotSpot loadHotspot(Common::ReadStreamEndian & s);
+
+	Common::SeekableSubReadStreamEndian *openDatabaseFile() const;
+	Common::SeekableReadStream *decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const;
 };
 
 } /* namespace Myst3 */

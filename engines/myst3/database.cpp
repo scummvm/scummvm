@@ -25,6 +25,8 @@
 #include "common/file.h"
 #include "common/debug.h"
 #include "common/md5.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 
 namespace Myst3 {
 
@@ -52,8 +54,8 @@ Database::Database() :
 			{ "1.27 German", Common::kPlatformWindows, "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 Italian", Common::kPlatformWindows, "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0, 0 }, // TODO
-			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0, 0 }, // TODO
+			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0x11934, 0x11864 },
+			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0x11378, 0x112A8 },
 			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00, 0x14EB10, 0x14EA10 },
 	};
 
@@ -100,38 +102,33 @@ Database::Database() :
 			error("Could not find any executable to load");
 	}
 
-	// TODO: Mac version has data compressed in PEF segments
-	if (_gameVersion->platform != Common::kPlatformWindows && _gameVersion->platform != Common::kPlatformPS2)
-		error("Unhandled platform %s", getPlatformDescription(_gameVersion->platform));
-
 	// Load the ages and rooms description
-	Common::File file;
-	file.open(_exePath);
-	file.seek(_gameVersion->ageTableOffset);
-	_ages = loadAges(file);
+	Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
+	file->seek(_gameVersion->ageTableOffset);
+	_ages = loadAges(*file);
 
 	for (uint i = 0; i < _ages.size(); i++) {
-		file.seek(_ages[i].roomsOffset);
+		file->seek(_ages[i].roomsOffset);
 
 		// Read the room offset table
 		Common::Array<uint32> roomsOffsets;
 		for (uint j = 0; j < _ages[i].roomCount; j++) {
-			uint32 offset = file.readUint32LE() - _gameVersion->baseOffset;
+			uint32 offset = file->readUint32() - _gameVersion->baseOffset;
 			roomsOffsets.push_back(offset);
 		}
 
 		// Load the rooms
 		for (uint j = 0; j < roomsOffsets.size(); j++) {
-			file.seek(roomsOffsets[j]);
+			file->seek(roomsOffsets[j]);
 
-			_ages[i].rooms.push_back(loadRoomDescription(file));
+			_ages[i].rooms.push_back(loadRoomDescription(*file));
 		}
 	}
 
-	file.seek(_gameVersion->nodeInitScriptOffset);
-	_nodeInitScript = loadOpcodes(file);
+	file->seek(_gameVersion->nodeInitScriptOffset);
+	_nodeInitScript = loadOpcodes(*file);
 
-	file.close();
+	delete file;
 
 	preloadCommonRooms();
 }
@@ -202,13 +199,11 @@ RoomData *Database::findRoomData(const uint32 & roomID)
 Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	Common::Array<NodePtr> nodes;
 
-	Common::File file;
-	file.open(_exePath);
-	file.seek(room->scriptsOffset);
-
+	Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
+	file->seek(room->scriptsOffset);
 
 	while (1) {
-		int16 id = file.readUint16LE();
+		int16 id = file->readUint16();
 
 		// End of list
 		if (id == 0)
@@ -221,8 +216,8 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 			// Normal node
 			NodePtr node = NodePtr(new NodeData());
 			node->id = id;
-			node->scripts = loadCondScripts(file);
-			node->hotspots = loadHotspots(file);
+			node->scripts = loadCondScripts(*file);
+			node->hotspots = loadHotspots(*file);
 
 			nodes.push_back(node);
 		} else {
@@ -230,11 +225,11 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 			Common::Array<int16> nodeIds;
 
 			for (int i = 0; i < -id; i++) {
-				nodeIds.push_back(file.readUint16LE());
+				nodeIds.push_back(file->readUint16());
 			}
 
-			Common::Array<CondScript> scripts = loadCondScripts(file);
-			Common::Array<HotSpot> hotspots = loadHotspots(file);
+			Common::Array<CondScript> scripts = loadCondScripts(*file);
+			Common::Array<HotSpot> hotspots = loadHotspots(*file);
 
 			for (int i = 0; i < -id; i++) {
 				NodePtr node = NodePtr(new NodeData());
@@ -247,7 +242,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 		}
 	}
 
-	file.close();
+	delete file;
 
 	return nodes;
 }
@@ -268,7 +263,7 @@ void Database::setCurrentRoom(const uint32 roomID) {
 	_currentRoomID = roomID;
 }
 
-Common::Array<CondScript> Database::loadCondScripts(Common::ReadStream &s) {
+Common::Array<CondScript> Database::loadCondScripts(Common::ReadStreamEndian &s) {
 	Common::Array<CondScript> scripts;
 
 	while (1) {
@@ -283,7 +278,7 @@ Common::Array<CondScript> Database::loadCondScripts(Common::ReadStream &s) {
 	return scripts;
 }
 
-Common::Array<HotSpot> Database::loadHotspots(Common::ReadStream &s) {
+Common::Array<HotSpot> Database::loadHotspots(Common::ReadStreamEndian &s) {
 	Common::Array<HotSpot> scripts;
 
 	while (1) {
@@ -298,19 +293,21 @@ Common::Array<HotSpot> Database::loadHotspots(Common::ReadStream &s) {
 	return scripts;
 }
 
-Common::Array<Opcode> Database::loadOpcodes(Common::ReadStream &s)
+Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s)
 {
 	Common::Array<Opcode> script;
 
 	while(1){
 		Opcode opcode;
-		opcode.op = s.readByte();
-		uint8 count = s.readByte();
+		uint16 code = s.readUint16();
+
+		opcode.op = code & 0xff;
+		uint8 count = code >> 8;
 		if(count == 0 && opcode.op == 0)
 			break;
 
 		for(int i = 0;i < count;i++){
-			uint16 value = s.readUint16LE();
+			uint16 value = s.readUint16();
 			opcode.args.push_back(value);
 		}
 		script.push_back(opcode);
@@ -319,10 +316,10 @@ Common::Array<Opcode> Database::loadOpcodes(Common::ReadStream &s)
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::ReadStream &s)
+CondScript Database::loadCondScript(Common::ReadStreamEndian &s)
 {
 	CondScript script;
-	script.condition = s.readUint16LE();
+	script.condition = s.readUint16();
 	if(!script.condition)
 		return script;
 
@@ -331,17 +328,17 @@ CondScript Database::loadCondScript(Common::ReadStream &s)
 	return script;
 }
 
-HotSpot Database::loadHotspot(Common::ReadStream &s) {
+HotSpot Database::loadHotspot(Common::ReadStreamEndian &s) {
 	HotSpot hotspot;
 
-	hotspot.condition = s.readUint16LE();
+	hotspot.condition = s.readUint16();
 
 	if (hotspot.condition == 0)
 		return hotspot;
 
 	if (hotspot.condition != -1) {
 		hotspot.rects = loadRects(s);
-		hotspot.cursor = s.readUint16LE();
+		hotspot.cursor = s.readUint16();
 	}
 
 	hotspot.script = loadOpcodes(s);
@@ -349,16 +346,16 @@ HotSpot Database::loadHotspot(Common::ReadStream &s) {
 	return hotspot;
 }
 
-Common::Array<PolarRect> Database::loadRects(Common::ReadStream &s) {
+Common::Array<PolarRect> Database::loadRects(Common::ReadStreamEndian &s) {
 	Common::Array<PolarRect> rects;
 
 	bool lastRect = false;
 	do {
 		PolarRect rect;
-		rect.centerPitch = s.readUint16LE();
-		rect.centerHeading = s.readUint16LE();
-		rect.width = s.readUint16LE();
-		rect.height = s.readUint16LE();
+		rect.centerPitch = s.readUint16();
+		rect.centerHeading = s.readUint16();
+		rect.width = s.readUint16();
+		rect.height = s.readUint16();
 
 		if (rect.width < 0) {
 			rect.width = -rect.width;
@@ -372,7 +369,7 @@ Common::Array<PolarRect> Database::loadRects(Common::ReadStream &s) {
 	return rects;
 }
 
-Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
+Common::Array<AgeData> Database::loadAges(Common::ReadStreamEndian &s)
 {
 	Common::Array<AgeData> ages;
 
@@ -392,11 +389,11 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 			age.labelId = s.readUint32LE();
 			s.readUint32LE();
 		} else {
-			age.id = s.readUint32LE();
-			age.disk = s.readUint32LE();
-			age.roomCount = s.readUint32LE();
-			age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
-			age.labelId = s.readUint32LE();
+			age.id = s.readUint32();
+			age.disk = s.readUint32();
+			age.roomCount = s.readUint32();
+			age.roomsOffset = s.readUint32() - _gameVersion->baseOffset;
+			age.labelId = s.readUint32();
 		}
 
 		ages.push_back(age);
@@ -405,7 +402,7 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 	return ages;
 }
 
-RoomData Database::loadRoomDescription(Common::ReadStream &s) {
+RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 	RoomData room;
 
 	if (_gameVersion->platform == Common::kPlatformPS2) {
@@ -417,13 +414,13 @@ RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 		room.roomUnk4 = s.readUint32LE();
 		room.roomUnk5 = s.readUint32LE();
 	} else {
-		room.id = s.readUint32LE();
+		room.id = s.readUint32();
 		s.read(&room.name, 8);
-		room.scriptsOffset = s.readUint32LE();
-		room.ambSoundsOffset = s.readUint32LE();
-		room.unkOffset = s.readUint32LE();
-		room.roomUnk4 = s.readUint32LE();
-		room.roomUnk5 = s.readUint32LE();
+		room.scriptsOffset = s.readUint32();
+		room.ambSoundsOffset = s.readUint32();
+		room.unkOffset = s.readUint32();
+		room.roomUnk4 = s.readUint32();
+		room.roomUnk5 = s.readUint32();
 	}
 
 	if (room.scriptsOffset != 0)
@@ -464,6 +461,180 @@ uint32 Database::getAgeLabelId(uint32 ageID) {
 			return _ages[i].labelId;
 
 	return 0;
+}
+
+Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
+	assert(_gameVersion);
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_exePath);
+	bool bigEndian = false;
+
+	if (_gameVersion->platform == Common::kPlatformMacintosh) {
+		// The data we need is always in segment 1
+		Common::SeekableReadStream *segment = decompressPEFDataSegment(stream, 1);
+		delete stream;
+		stream = segment;
+		bigEndian = true;
+	}
+
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), bigEndian, DisposeAfterUse::YES);
+}
+
+static uint32 getPEFArgument(Common::SeekableReadStream *stream, uint &pos) {
+	uint32 r = 0;
+	byte numEntries = 0;
+
+	for (;;) {
+		numEntries++;
+
+		byte in = stream->readByte();
+		pos++;
+
+		if (numEntries == 5) {
+			r <<= 4;
+		} else {
+			r <<= 7;
+		}
+
+		r += (in & 0x7f);
+
+		if (!(in & 0x80))
+			return r;
+
+		if (numEntries == 5)
+			error("bad argument in PEF");
+	}
+}
+
+// decompressPEFDataSegment is entirely based on https://github.com/fuzzie/unity/blob/master/data.cpp
+Common::SeekableReadStream *Database::decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const {
+	// Read the header
+	if (stream->readUint32BE() != MKTAG('J','o','y','!'))
+		error("Bad PEF header tag 1");
+	if (stream->readUint32BE() != MKTAG('p','e','f','f'))
+		error("Bad PEF header tag 2");
+	if (stream->readUint32BE() != MKTAG('p','w','p','c'))
+		error("PEF header is not PowerPC");
+	if (stream->readUint32BE() != 1)
+		error("PEF header is not version 1");
+
+	stream->skip(16); // dateTimeStamp, oldDefVersion, oldImpVersion, currentVersion
+	uint16 sectionCount = stream->readUint16BE();
+	stream->skip(6); // instSectionCount, reservedA
+
+	if (segmentID >= sectionCount)
+		error("Not enough segments in PEF");
+
+	stream->skip(28 * segmentID);
+
+	stream->skip(8); // nameOffset, defaultAddress
+	uint32 totalSize = stream->readUint32BE();
+	uint32 unpackedSize = stream->readUint32BE();
+	uint32 packedSize = stream->readUint32BE();
+	assert(unpackedSize <= totalSize);
+	assert(packedSize <= unpackedSize);
+	uint32 containerOffset = stream->readUint32BE();
+	byte sectionKind = stream->readByte();
+
+	switch (sectionKind) {
+	case 2:
+		break; // pattern-initialized data
+	default:
+		error("Unsupported PEF sectionKind %d", sectionKind);
+	}
+
+	debug(1, "Unpacking PEF segment of size %d (total %d, packed %d) at 0x%x", unpackedSize, totalSize, packedSize, containerOffset);
+
+	bool r = stream->seek(containerOffset, SEEK_SET);
+	assert(r);
+
+	// note that we don't bother with the zero-initialised section..
+	byte *data = (byte *)malloc(unpackedSize);
+
+	// unpack the data
+	byte *targ = data;
+	unsigned int pos = 0;
+	while (pos < packedSize) {
+		byte next = stream->readByte();
+		byte opcode = next >> 5;
+		uint32 count = next & 0x1f;
+		pos++;
+
+		if (count == 0)
+			count = getPEFArgument(stream, pos);
+
+		switch (opcode) {
+		case 0: // Zero
+			memset(targ, 0, count);
+			targ += count;
+			break;
+
+		case 1: // blockCopy
+			stream->read(targ, count);
+			targ += count;
+			pos += count;
+			break;
+
+		case 2:	{ // repeatedBlock
+				uint32 repeatCount = getPEFArgument(stream, pos);
+
+				byte *src = targ;
+				stream->read(src, count);
+				targ += count;
+				pos += count;
+
+				for (uint i = 0; i < repeatCount; i++) {
+					memcpy(targ, src, count);
+					targ += count;
+				}
+			} break;
+
+		case 3: { // interleaveRepeatBlockWithBlockCopy
+				uint32 customSize = getPEFArgument(stream, pos);
+				uint32 repeatCount = getPEFArgument(stream, pos);
+
+				byte *commonData = targ;
+				stream->read(commonData, count);
+				targ += count;
+				pos += count;
+
+				for (uint i = 0; i < repeatCount; i++) {
+					stream->read(targ, customSize);
+					targ += customSize;
+					pos += customSize;
+
+					memcpy(targ, commonData, count);
+					targ += count;
+				}
+			} break;
+
+		case 4: { // interleaveRepeatBlockWithZero
+				uint32 customSize = getPEFArgument(stream, pos);
+				uint32 repeatCount = getPEFArgument(stream, pos);
+
+				for (uint i = 0; i < repeatCount; i++) {
+					memset(targ, 0, count);
+					targ += count;
+
+					stream->read(targ, customSize);
+					targ += customSize;
+					pos += customSize;
+				}
+				memset(targ, 0, count);
+				targ += count;
+			} break;
+
+		default:
+			error("Unknown opcode %d in PEF pattern-initialized section", opcode);
+		}
+	}
+
+	if (pos != packedSize)
+		error("Failed to parse PEF pattern-initialized section (parsed %d of %d)", pos, packedSize);
+	if (targ != data + unpackedSize)
+		error("Failed to unpack PEF pattern-initialized section");
+
+	return new Common::MemoryReadStream(data, unpackedSize, DisposeAfterUse::YES);
 }
 
 } /* namespace Myst3 */
