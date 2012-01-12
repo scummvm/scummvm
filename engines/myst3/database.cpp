@@ -43,6 +43,7 @@ Database::Database() :
 	// Game versions database
 	// FIXME: At least clone2727's and PS2 versions are multi-language
 	static GameVersion versions[] = {
+			{ "1.2 English", Common::kPlatformWindows, "87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108, 0x86040 },
 			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108, 0x86040 },
 			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108, 0x86040 },
 			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110, 0x86040 },
