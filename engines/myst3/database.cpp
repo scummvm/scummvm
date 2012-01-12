@@ -99,6 +99,7 @@ Database::Database() :
 			error("Could not find any executable to load");
 	}
 
+	// TODO: Mac version has data compressed in PEF segments
 	if (_gameVersion->platform != Common::kPlatformWindows && _gameVersion->platform != Common::kPlatformPS2)
 		error("Unhandled platform %s", getPlatformDescription(_gameVersion->platform));
 
