@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -52,6 +52,9 @@ public:
 	DECLARE_VAR(64, BookSavedAge)
 	DECLARE_VAR(65, BookSavedRoom)
 	DECLARE_VAR(66, BookSavedNode)
+	DECLARE_VAR(67, MenuSavedAge)
+	DECLARE_VAR(68, MenuSavedRoom)
+	DECLARE_VAR(69, MenuSavedNode)
 
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
@@ -88,6 +91,16 @@ public:
 	DECLARE_VAR(284, JournalSaavedroPageInChapter)
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
+
+	DECLARE_VAR(1339, MenuLoadBack)
+	DECLARE_VAR(1340, MenuSaveBack)
+	DECLARE_VAR(1341, MenuSaveAction)
+	DECLARE_VAR(1342, MenuOptionsBack)
+
+	DECLARE_VAR(1350, MenuSaveLoadPageLeft)
+	DECLARE_VAR(1351, MenuSaveLoadPageRight)
+	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
+	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
 
 private:
 	Myst3Engine *_vm;

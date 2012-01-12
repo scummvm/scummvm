@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -27,6 +27,8 @@
 #include "common/debug.h"
 #include "common/rect.h"
 
+#include "graphics/conversion.h"
+
 namespace Myst3 {
 
 void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
@@ -45,25 +47,19 @@ void Face::setTextureFromJPEG(Graphics::JPEG *jpeg) {
 		*ptr++ = g;
 		*ptr++ = b;
 	}
+
+	_texture = _vm->_gfx->createTexture(_bitmap);
 }
 
-Face::Face() :
-	_textureDirty(true) {
-	glGenTextures(1, &_textureId);
-
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, Node::_cubeTextureSize, Node::_cubeTextureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+Face::Face(Myst3Engine *vm) :
+	_vm(vm),
+	_textureDirty(true),
+	_texture(0) {
 }
 
 void Face::uploadTexture() {
 	if (_textureDirty) {
-		glBindTexture(GL_TEXTURE_2D, _textureId);
-
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _bitmap->w, _bitmap->h, GL_RGB, GL_UNSIGNED_BYTE, _bitmap->pixels);
+		_texture->update(_bitmap);
 		_textureDirty = false;
 	}
 }
@@ -73,7 +69,9 @@ Face::~Face() {
 	delete _bitmap;
 	_bitmap = 0;
 
-	glDeleteTextures(1, &_textureId);
+	if (_texture) {
+		_vm->_gfx->freeTexture(_texture);
+	}
 }
 
 Node::Node(Myst3Engine *vm, uint16 id) :

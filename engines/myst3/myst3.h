@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -62,6 +62,7 @@ class Inventory;
 class Database;
 class Script;
 class Renderer;
+class Menu;
 struct NodeData;
 
 typedef Common::SharedPtr<NodeData> NodePtr;
@@ -74,10 +75,14 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 	ViewType _viewType;
+	OSystem *_system;
 	Variables *_vars;
 	Cursor *_cursor;
 	Inventory *_inventory;
 	Renderer *_gfx;
+	Menu *_menu;
+	Database *_db;
+	
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
@@ -91,6 +96,7 @@ public:
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
+	int16 openDialog(uint16 id);
 
 	void runNodeInitScripts();
 	void runNodeBackgroundScripts();
@@ -103,11 +109,13 @@ public:
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
 
+	void setMenuAction(uint16 action) { _menuAction = action; }
+	void setShouldQuit() { _shouldQuit = true; }
+
 	void processInput(bool lookOnly);
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
 private:
-	OSystem *_system;
 	Console *_console;
 	
 	Node *_node;
@@ -119,13 +127,13 @@ private:
 	Archive *_archiveLANG;
 
 	Script *_scriptEngine;
-	Database *_db;
 
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;
 
 	uint _frameCount;
 	bool _shouldQuit;
+	uint16 _menuAction;
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();

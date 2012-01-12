@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -23,30 +23,23 @@
 #ifndef MYST3_ROOM_H
 #define MYST3_ROOM_H
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/array.h"
 #include "common/rect.h"
 
 #include "graphics/surface.h"
 #include "graphics/jpeg.h"
-#include "graphics/conversion.h"
 
 namespace Myst3 {
 
+class Texture;
 class Myst3Engine;
 
 class Face {
 	public:
 		Graphics::Surface *_bitmap;
-		GLuint _textureId;
+		Texture *_texture;
 
-		Face();
+		Face(Myst3Engine *vm);
 		~Face();
 
 		void setTextureFromJPEG(Graphics::JPEG *jpeg);
@@ -56,6 +49,7 @@ class Face {
 
 	private:
 		bool _textureDirty;
+		Myst3Engine *_vm;
 };
 
 class SpotItemFace {
@@ -137,8 +131,6 @@ class Node {
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void dumpFaceMask(uint16 index, int face);
-
-		static const int _cubeTextureSize = 1024;
 };
 
 } // end of namespace Myst3

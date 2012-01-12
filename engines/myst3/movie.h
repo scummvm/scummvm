@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -33,6 +33,7 @@ namespace Myst3 {
 
 struct VideoData;
 class Myst3Engine;
+class Texture;
 
 class Movie : public Drawable {
 public:
@@ -44,22 +45,23 @@ public:
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
 protected:
-	static const int _movieTextureSize = 1024;
-
 	Myst3Engine *_vm;
 
 	Math::Vector3d _pTopLeft;
 	Math::Vector3d _pBottomLeft;
 	Math::Vector3d _pBottomRight;
 	Math::Vector3d _pTopRight;
+
+	int32 _posU;
+	int32 _posV;
+
 	Video::SeekableBinkDecoder _bink;
-	GLuint _texture;
+	Texture *_texture;
 
 	int32 _startFrame;
 	int32 _endFrame;
 
 	void loadPosition(const VideoData &videoData);
-	void initTexture();
 	void drawNextFrameToTexture();
 };
 
@@ -98,9 +100,7 @@ private:
 
 	uint16 _startFrameVar;
 	uint16 _endFrameVar;
-	int32 _posU;
 	uint16 _posUVar;
-	int32 _posV;
 	uint16 _posVVar;
 
 	uint16 _nextFrameReadVar;

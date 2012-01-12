@@ -1,26 +1,27 @@
 /* ResidualVM - A 3D game interpreter
  *
  * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
 #include "engines/myst3/puzzles.h"
+#include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/variables.h"
 
@@ -40,6 +41,12 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 		break;
 	case 9:
 		journalAtrus(arg0, arg1);
+		break;
+	case 20:
+		saveLoadMenu(arg0, arg1);
+		break;
+	case 21:
+		mainMenu(arg0);
 		break;
 	default:
 		warning("Puzzle %d is not implemented", id);
@@ -156,6 +163,26 @@ void Puzzles::journalAtrus(uint16 node, uint16 var) {
 		numPages++;
 
 	_vm->_vars->set(var, numPages - 1);
+}
+
+void Puzzles::mainMenu(uint16 action) {
+	_vm->setMenuAction(action);
+}
+
+void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
+	switch (action) {
+	case 0:
+		_vm->_menu->loadMenuOpen();
+		break;
+	case 1:
+		_vm->_menu->loadMenuSelect(item);
+		break;
+	case 6:
+		_vm->_menu->loadMenuChangePage();
+		break;
+	default:
+		warning("Save load menu action %d for item %d is not implemented", action, item);
+	}
 }
 
 } /* namespace Myst3 */

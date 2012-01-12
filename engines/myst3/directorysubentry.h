@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -59,7 +59,8 @@ class DirectorySubEntry {
 			kMetadata = 13,
 			kMenuSpotItem = 69,
 			kMenuFrame = 70,
-			kImagerMovie = 72
+			kImagerMovie = 72,
+			kDialogMovie = 74
 		};
 
 		DirectorySubEntry() {}

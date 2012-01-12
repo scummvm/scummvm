@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -46,7 +46,7 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 		Graphics::JPEG jpeg;
 		jpeg.read(jpegStream);
 
-		_faces[0] = new Face();
+		_faces[0] = new Face(_vm);
 		_faces[0]->setTextureFromJPEG(&jpeg);
 		_faces[0]->markTextureDirty();
 
@@ -58,40 +58,24 @@ NodeFrame::~NodeFrame() {
 }
 
 void NodeFrame::draw() {
-	// Size and position of the frame
-	float w;
-	float h;
-	float top;
+	Common::Rect screenRect;
 
+	// Size and position of the frame
 	if (_vm->_viewType == kMenu) {
-		w = Scene::_originalWidth;
-		h = Scene::_originalHeight;
-		top = 0;
+		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
 	} else {
-		w = Scene::_originalWidth;
-		h = Scene::_frameHeight;
-		top = Scene::_topBorderHeight;
+		screenRect = Common::Rect(Renderer::kOriginalWidth, Scene::kFrameHeight);
+		screenRect.translate(0, Scene::kTopBorderHeight);
 	}
+
+	// Used fragment of texture
+	Common::Rect textureRect = Common::Rect(screenRect.width(), screenRect.height());
 
 	// Update the OpenGL texture if needed
 	_faces[0]->uploadTexture();
 
-	// Used fragment of texture
-	const float u = w / (float)_cubeTextureSize;
-	const float v = h / (float)_cubeTextureSize;
-
-	glEnable(GL_TEXTURE_2D);
-	glDepthMask(GL_FALSE);
-
-	glBindTexture(GL_TEXTURE_2D, _faces[0]->_textureId);
-	glBegin(GL_TRIANGLE_STRIP);			// Z+
-		glTexCoord2f(0, v); glVertex3f( 0, top + h, 1.0f);
-		glTexCoord2f(u, v); glVertex3f( w, top + h, 1.0f);
-		glTexCoord2f(0, 0); glVertex3f( 0, top + 0, 1.0f);
-		glTexCoord2f(u, 0); glVertex3f( w, top + 0, 1.0f);
-	glEnd();
-
-	glDepthMask(GL_TRUE);
+	// Draw
+	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _faces[0]->_texture);
 }
 
 } /* namespace Myst3 */

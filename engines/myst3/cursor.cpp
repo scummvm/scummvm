@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -124,8 +124,8 @@ void Cursor::updatePosition(Common::Point &mouse) {
 	if (!_lockedAtCenter) {
 		_position += mouse;
 
-		_position.x = CLIP<int16>(_position.x, 0, Scene::_originalWidth);
-		_position.y = CLIP<int16>(_position.y, 0, Scene::_originalHeight);
+		_position.x = CLIP<int16>(_position.x, 0, Renderer::kOriginalWidth);
+		_position.y = CLIP<int16>(_position.y, 0, Renderer::kOriginalHeight);
 	}
 }
 

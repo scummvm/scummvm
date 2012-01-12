@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -150,13 +150,13 @@ void Inventory::reflow() {
 	if (itemCount >= 2)
 		totalWidth += 9 * (itemCount - 1);
 
-	uint16 left = (Scene::_originalWidth - totalWidth) / 2;
+	uint16 left = (Renderer::kOriginalWidth - totalWidth) / 2;
 
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		const ItemData &item = getData(it->var);
 
-		uint16 top = Scene::_topBorderHeight + Scene::_frameHeight
-				+ (Scene::_bottomBorderHeight - item.textureHeight) / 2;
+		uint16 top = Scene::kTopBorderHeight + Scene::kFrameHeight
+				+ (Scene::kBottomBorderHeight - item.textureHeight) / 2;
 
 		it->rect = Common::Rect(item.textureWidth,
 				item.textureHeight);

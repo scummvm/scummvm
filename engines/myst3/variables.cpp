@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #include "engines/myst3/variables.h"
 
 namespace Myst3 {
@@ -34,6 +35,9 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(64, BookSavedAge, false)
 	VAR(65, BookSavedRoom, false)
 	VAR(66, BookSavedNode, false)
+	VAR(67, MenuSavedAge, false)
+	VAR(68, MenuSavedRoom, false)
+	VAR(69, MenuSavedNode, false)
 
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
@@ -87,6 +91,16 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(284, JournalSaavedroPageInChapter, false)
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
+
+	VAR(1339, MenuLoadBack, false)
+	VAR(1340, MenuSaveBack, false)
+	VAR(1341, MenuSaveAction, false)
+	VAR(1342, MenuOptionsBack, false)
+
+	VAR(1350, MenuSaveLoadPageLeft, false)
+	VAR(1351, MenuSaveLoadPageRight, false)
+	VAR(1352, MenuSaveLoadSelectedItem, false)
+	VAR(1353, MenuSaveLoadCurrentPage, false)
 
 #undef VAR
 

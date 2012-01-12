@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -23,7 +23,9 @@
 #ifndef GFX_H_
 #define GFX_H_
 
+#include "common/rect.h"
 #include "common/system.h"
+#include "math/vector3d.h"
 
 namespace Myst3 {
 
@@ -39,6 +41,7 @@ public:
 	uint height;
 	Graphics::PixelFormat format;
 
+	virtual void update(const Graphics::Surface *surface) = 0;
 protected:
 	Texture() {}
 	virtual ~Texture() {}
@@ -49,13 +52,32 @@ public:
 	Renderer(OSystem *_system);
 	virtual ~Renderer();
 
-	Texture *createTexture(Graphics::Surface *surface);
+	void init();
+	void initFont(const Graphics::Surface *surface);
+
+	void clear();
+	void setupCameraOrtho2D();
+	void setupCameraPerspective(float pitch, float heading);
+
+	Texture *createTexture(const Graphics::Surface *surface);
 	void freeTexture(Texture *texture);
 
+	void drawRect2D(const Common::Rect &rect, uint32 color);
 	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
+	void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+			const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture);
+
+	void drawCube(Texture **textures);
+	void draw2DText(const Common::String &text, const Common::Point &position);
+
+	static const int kOriginalWidth = 640;
+	static const int kOriginalHeight = 480;
 
 protected:
 	OSystem *_system;
+	Texture *_font;
+
+	Common::Rect getFontCharacterRect(uint8 character);
 };
 
 } // end of namespace Myst3

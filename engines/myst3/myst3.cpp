@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -41,6 +41,7 @@
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
+#include "engines/myst3/menu.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -52,8 +53,9 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
-		_cursor(0), _inventory(0), _gfx(0),
-		_frameCount(0), _rnd(0), _shouldQuit(false) {
+		_cursor(0), _inventory(0), _gfx(0), _menu(0),
+		_frameCount(0), _rnd(0), _shouldQuit(false),
+		_menuAction(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -85,6 +87,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _menu;
 	delete _inventory;
 	delete _cursor;
 	delete _scene;
@@ -110,7 +113,8 @@ Common::Error Myst3Engine::run() {
 	_scriptEngine = new Script(this);
 	_db = new Database();
 	_vars = new Variables(this);
-	_scene = new Scene();
+	_scene = new Scene(this);
+	_menu = new Menu(this);
 	_archive = new Archive();
 	_archiveRSRC = new Archive();
 	_archiveOVER = new Archive();
@@ -136,11 +140,18 @@ Common::Error Myst3Engine::run() {
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
 
-	_scene->init(w, h);
+	_gfx->init();
+
+	// Init the font
+	Graphics::Surface *font = loadTexture(1206);
+	_gfx->initFont(font);
+	font->free();
+	delete font;
 
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
+	_vars->setLocationNextAge(5);
 	_vars->setLocationNextRoom(501); // LEIS
 	_vars->setLocationNextNode(3);
 	goToNode(0, 1);
@@ -148,6 +159,12 @@ Common::Error Myst3Engine::run() {
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
 		processInput(false);
+
+		if (_menuAction) {
+			_menu->updateMainMenu(_menuAction);
+			_menuAction = 0;
+		}
+
 		drawFrame();
 	}
 
@@ -181,14 +198,14 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		if (_viewType == kMenu)  {
 			scaledMouse = Common::Point(
-					mouse.x * Scene::_originalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight(),
-							0, Scene::_originalHeight));
+					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight(),
+							0, Renderer::kOriginalHeight));
 		} else {
 			scaledMouse = Common::Point(
-					mouse.x * Scene::_originalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Scene::_originalHeight / _system->getHeight()
-							- Scene::_topBorderHeight, 0, Scene::_frameHeight));
+					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
+					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight()
+							- Scene::kTopBorderHeight, 0, Scene::kFrameHeight));
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
@@ -253,6 +270,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 			
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				// Open main menu
+				if (_vars->getLocationRoom() != 901) {
+					_menu->goToNode(100);
+				}
+				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
 					_console->attach();
@@ -267,12 +290,13 @@ void Myst3Engine::processInput(bool lookOnly) {
 }
 
 void Myst3Engine::drawFrame() {
-	_scene->clear();
+	_gfx->clear();
 
 	if (_viewType == kCube) {
-		_scene->setupCameraPerspective();
+		Common::Point rot = _scene->getMousePos();
+		_gfx->setupCameraPerspective(rot.y, rot.x);
 	} else {
-		_scene->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D();
 	}
 
 	_node->update();
@@ -288,7 +312,7 @@ void Myst3Engine::drawFrame() {
 	}
 
 	if (_viewType == kCube) {
-		_scene->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D();
 	}
 
 	if (_viewType != kMenu) {
@@ -298,6 +322,8 @@ void Myst3Engine::drawFrame() {
 
 		_scene->drawBlackBorders();
 		_inventory->draw();
+	} else {
+		_menu->draw();
 	}
 
 	_cursor->draw();
@@ -370,7 +396,11 @@ void Myst3Engine::runNodeInitScripts() {
 			_vars->getLocationRoom(),
 			_vars->getLocationAge());
 
-	NodePtr nodeDataInit = _db->getNodeData(32765);
+	NodePtr nodeDataInit = _db->getNodeData(
+			32765,
+			_vars->getLocationRoom(),
+			_vars->getLocationAge());
+
 	if (nodeDataInit)
 		runScriptsFromNode(32765);
 
@@ -434,6 +464,12 @@ void Myst3Engine::loadNodeMenu(uint16 nodeID) {
 }
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
+	if (roomID == 0)
+		roomID = _vars->getLocationRoom();
+
+	if (ageID == 0)
+		ageID = _vars->getLocationAge();
+
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {
@@ -638,6 +674,23 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	}
 
 	return s;
+}
+
+int16 Myst3Engine::openDialog(uint16 id) {
+	Dialog dialog(this, id);
+
+	_drawables.push_back(&dialog);
+
+	int16 result = -1;
+
+	while (result == -1) {
+		result = dialog.update();
+		drawFrame();
+	}
+
+	_drawables.pop_back();
+
+	return result;
 }
 
 } // end of namespace Myst3

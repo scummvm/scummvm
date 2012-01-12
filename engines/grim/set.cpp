@@ -501,7 +501,13 @@ void Set::turnOffLights() {
 void Set::setSetup(int num) {
 	// Looks like num is zero-based so >= should work to find values
 	// that are out of the range of valid setups
-	if (num >= _numSetups || num < 0) {
+
+	// Quite weird, but this is what the original does when the setup id is above
+	// the upper bound.
+	if (num >= _numSetups)
+		num %= _numSetups;
+
+	if (num < 0) {
 		error("Failed to change scene setup, value out of range");
 		return;
 	}

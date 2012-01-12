@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -23,34 +23,24 @@
 #ifndef MYST3_SCENE_H
 #define MYST3_SCENE_H
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "common/rect.h"
 
 namespace Myst3 {
 
+class Myst3Engine;
 class SunSpot;
 
 class Scene {
 	private:
+		Myst3Engine *_vm;
+
 		float _cameraPitch;
 		float _cameraHeading;
 		Common::Point _mouseOld;
 
-		void drawBlackRect(const Common::Rect &r);
-
 	public:
-		Scene();
+		Scene(Myst3Engine *vm);
 
-		void init(int width, int height);
-		void clear();
-		void setupCameraPerspective();
-		void setupCameraOrtho2D();
 		void updateCamera(Common::Point &mouse);
 		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
 
@@ -59,11 +49,9 @@ class Scene {
 		void drawBlackBorders();
 		void drawSunspotFlare(const SunSpot &s);
 
-		static const int _originalWidth = 640;
-		static const int _originalHeight = 480;
-		static const int _topBorderHeight = 30;
-		static const int _bottomBorderHeight = 90;
-		static const int _frameHeight = 360;
+		static const int kTopBorderHeight = 30;
+		static const int kBottomBorderHeight = 90;
+		static const int kFrameHeight = 360;
 };
 
 } // end of namespace Myst3

@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -105,12 +105,12 @@ public:
 	Common::Array<uint16> listRoomNodes(uint32 roomID = 0, uint32 ageID = 0);
 private:
 	struct GameVersion {
-		const char *description;
+		char *description;
 		Common::Platform platform;
-		const char *md5;
-		const uint32 baseOffset;
-		const uint32 ageTableOffset;
-		const uint32 nodeInitScriptOffset;
+		char *md5;
+		uint32 baseOffset;
+		uint32 ageTableOffset;
+		uint32 nodeInitScriptOffset;
 	};
 
 	Common::String _exePath;

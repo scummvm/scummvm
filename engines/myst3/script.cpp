@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -1126,7 +1126,7 @@ void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
 	bool result = false;
 
 	do {
-		result |= _vm->_vars->get(var);
+		result |= _vm->_vars->get(var) != 0;
 		var++;
 	} while (var <= end);
 

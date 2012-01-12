@@ -1,6 +1,6 @@
-/* Residual - A 3D game interpreter
+/* ResidualVM - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -22,50 +22,15 @@
 
 #include "engines/myst3/scene.h"
 #include "engines/myst3/node.h"
+#include "engines/myst3/myst3.h"
+
+#include "graphics/colormasks.h"
 
 namespace Myst3 {
 
-Scene::Scene():
-		_cameraPitch(0.0f), _cameraHeading(0.0f)
+Scene::Scene(Myst3Engine *vm) :
+	_vm(vm), _cameraPitch(0.0f), _cameraHeading(0.0f)
 {
-}
-
-void Scene::init(int width, int height) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-}
-
-void Scene::clear() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-	glColor3f(1.0f, 1.0f, 1.0f);
-}
-
-void Scene::setupCameraOrtho2D() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0.0, _originalWidth, _originalHeight, 0.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
-void Scene::setupCameraPerspective() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(65.0, (GLfloat)_originalWidth /(GLfloat)_originalHeight, 0.1, 100.0);
-
-	// Rotate the model to simulate the rotation of the camera
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glRotatef(_cameraPitch, -1.0f, 0.0f, 0.0f);
-	glRotatef(_cameraHeading - 180.0f, 0.0f, 1.0f, 0.0f);
 }
 
 void Scene::updateCamera(Common::Point &mouse) {
@@ -87,51 +52,27 @@ void Scene::lookAt(float pitch, float heading) {
 	_cameraHeading = heading;
 }
 
-void Scene::drawBlackRect(const Common::Rect &r) {
-	glDisable(GL_TEXTURE_2D);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-	glBegin(GL_TRIANGLE_STRIP);
-		glVertex3f( r.left, r.bottom, 0.0f);
-		glVertex3f( r.right, r.bottom, 0.0f);
-		glVertex3f( r.left, r.top, 0.0f);
-		glVertex3f( r.right, r.top, 0.0f);
-	glEnd();
-}
-
 void Scene::drawBlackBorders() {
-	Common::Rect top = Common::Rect(_originalWidth, _topBorderHeight);
+	Common::Rect top = Common::Rect(Renderer::kOriginalWidth, kTopBorderHeight);
 
-	Common::Rect bottom = Common::Rect(_originalWidth, _bottomBorderHeight);
-	bottom.translate(0, _topBorderHeight + _frameHeight);
+	Common::Rect bottom = Common::Rect(Renderer::kOriginalWidth, kBottomBorderHeight);
+	bottom.translate(0, kTopBorderHeight + kFrameHeight);
 
-	drawBlackRect(top);
-	drawBlackRect(bottom);
+	uint32 black = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(255, 0, 0, 0);
+	_vm->_gfx->drawRect2D(top, black);
+	_vm->_gfx->drawRect2D(bottom, black);
 }
 
 void Scene::drawSunspotFlare(const SunSpot &s) {
-	Common::Rect frame = Common::Rect(_originalWidth, _frameHeight);
-	frame.translate(0, _topBorderHeight);
+	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, kFrameHeight);
+	frame.translate(0, kTopBorderHeight);
 
-	float r = ((s.color >> 16) & 0xFF) / 255.0;
-	float g = ((s.color >>  8) & 0xFF) / 255.0;
-	float b = ((s.color >>  0) & 0xFF) / 255.0;
-	float a = s.intensity * s.radius / 255.0;
+	uint8 a = s.intensity * s.radius;
+	uint8 r, g, b;
+	Graphics::colorToRGB< Graphics::ColorMasks<888> >(s.color, r, g, b);
+	uint32 color = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
 
-	glDisable(GL_TEXTURE_2D);
-	glColor4f(r, g, b, a);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glBegin(GL_TRIANGLE_STRIP);
-		glVertex3f( frame.left, frame.bottom, 0.0f);
-		glVertex3f( frame.right, frame.bottom, 0.0f);
-		glVertex3f( frame.left, frame.top, 0.0f);
-		glVertex3f( frame.right, frame.top, 0.0f);
-	glEnd();
-
-	glDisable(GL_BLEND);
+	_vm->_gfx->drawRect2D(frame, color);
 }
 
 } // end of namespace Myst3
