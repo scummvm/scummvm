@@ -197,8 +197,8 @@ ExtraGuiOptions DreamWebMetaEngine::getExtraGuiOptions(const Common::String &tar
 	ExtraGuiOptions options;
 
 	ExtraGuiOption originalSaveLoad = {
-		_("Use original save/load screens"),
-		_("Use the original save/load screens, instead of the ScummVM ones"),
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
 		"dreamweb_originalsaveload",
 		false
 	};
