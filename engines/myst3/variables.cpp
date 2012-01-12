@@ -116,12 +116,12 @@ void Variables::checkRange(uint16 var) {
 		error("Variable out of range %d", var);
 }
 
-uint32 Variables::get(uint16 var) {
+int32 Variables::get(uint16 var) {
 	checkRange(var);
 	return _vars[var];
 }
 
-void Variables::set(uint16 var, uint32 value) {
+void Variables::set(uint16 var, int32 value) {
 	checkRange(var);
 
 	if (_descriptions.contains(var)) {
@@ -152,21 +152,21 @@ bool Variables::evaluate(int16 condition) {
 	}
 }
 
-uint32 Variables::valueOrVarValue(int16 value) {
+int32 Variables::valueOrVarValue(int16 value) {
 	if (value < 0)
 		return get(-value);
 
 	return value;
 }
 
-uint32 Variables::engineGet(uint16 var) {
+int32 Variables::engineGet(uint16 var) {
 	if (!_descriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 
 	return _vars[var];
 }
 
-void Variables::engineSet(uint16 var, uint32 value) {
+void Variables::engineSet(uint16 var, int32 value) {
 	if (!_descriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 

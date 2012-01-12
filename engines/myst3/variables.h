@@ -30,18 +30,18 @@
 namespace Myst3 {
 
 #define DECLARE_VAR(num, name) \
-	void set##name(uint32 value) { engineSet(num, value); } \
-	uint32 get##name() { return engineGet(num); }
+	void set##name(int32 value) { engineSet(num, value); } \
+	int32 get##name() { return engineGet(num); }
 
 class Variables {
 public:
 	Variables(Myst3Engine *vm);
 	virtual ~Variables();
 
-	uint32 get(uint16 var);
-	void set(uint16 var, uint32 value);
+	int32 get(uint16 var);
+	void set(uint16 var, int32 value);
 	bool evaluate(int16 condition);
-	uint32 valueOrVarValue(int16 value);
+	int32 valueOrVarValue(int16 value);
 
 	const Common::String describeVar(uint16 var);
 	const Common::String describeCondition(int16 condition);
@@ -105,7 +105,7 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	uint32 _vars[2048];
+	int32 _vars[2048];
 
 	struct Description {
 		Description() {}
@@ -120,8 +120,8 @@ private:
 
 	void checkRange(uint16 var);
 
-	uint32 engineGet(uint16 var);
-	void engineSet(uint16 var, uint32 value);
+	int32 engineGet(uint16 var);
+	void engineSet(uint16 var, int32 value);
 };
 
 } /* namespace Myst3 */
