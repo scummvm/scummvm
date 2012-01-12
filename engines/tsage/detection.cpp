@@ -74,7 +74,6 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
-		_md5Bytes = 5000;
 		_singleid = "tsage";
 		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
