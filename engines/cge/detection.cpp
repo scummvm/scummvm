@@ -104,7 +104,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
 	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames) {
-		_singleid = "Soltys";
+		_singleid = "soltys";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
