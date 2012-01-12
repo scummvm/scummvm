@@ -366,7 +366,6 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
 	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");

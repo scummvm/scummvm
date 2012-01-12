@@ -26,6 +26,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Sci {
@@ -42,6 +43,8 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_sci2StringFunctionType = kSci2StringFunctionUninitialized;
 #endif
 	_usesCdTrack = Common::File::exists("cdaudio.map");
+	if (ConfMan.hasKey("use_cdaudio") && !ConfMan.getBool("use_cdaudio"))
+		_usesCdTrack = false;
 }
 
 reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {

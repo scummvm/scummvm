@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -403,6 +404,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -709,6 +711,58 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 }
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	
+	ExtraGuiOption sfxType = {
+		_s("Prefer digital sound effects"),
+		_s("Prefer digital sound effects instead of synthesized ones"),
+		"prefer_digitalsfx",
+		true
+	};
+
+	ExtraGuiOption originalSaveLoad = {
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
+		"sci_originalsaveload",
+		false
+	};
+
+	ExtraGuiOption yamahaFb01Midi = {
+		_s("Use IMF/Yahama FB-01 for MIDI output"),
+		_s("Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI output"),
+		"native_fb01",
+		false
+	};
+
+	// Jones in the Fast Lane - CD audio tracks or resource.snd
+	ExtraGuiOption cdAudio = {
+		_s("Use CD audio"),
+		_s("Use CD audio instead of in-game audio, if available"),
+		"use_cdaudio",
+		true
+	};
+
+	// KQ6 Windows - windows cursors
+	ExtraGuiOption windowsCursors = {
+		_s("Use Windows cursors"),
+		_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
+		"windows_cursors",
+		false
+	};
+	
+	options.push_back(sfxType);
+	options.push_back(originalSaveLoad);
+	options.push_back(yamahaFb01Midi);
+
+	if (target.hasPrefix("jones"))
+		options.push_back(cdAudio);
+	if (target.hasPrefix("kq6"))
+		options.push_back(windowsCursors);
+
+	return options;
+}
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

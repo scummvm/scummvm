@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/tokenizer.h"
 
 #include "gui/object.h"
 #include "gui/widget.h"
