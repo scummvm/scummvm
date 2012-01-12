@@ -77,7 +77,7 @@ protected:
 	OSystem *_system;
 	Texture *_font;
 
-	Common::Rect Renderer::getFontCharacterRect(uint8 character);
+	Common::Rect getFontCharacterRect(uint8 character);
 };
 
 } // end of namespace Myst3
