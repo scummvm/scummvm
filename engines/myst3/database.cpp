@@ -406,13 +406,23 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 	RoomData room;
 
-	room.id = s.readUint32LE();
-	s.read(&room.name, 8);
-	room.scriptsOffset = s.readUint32LE();
-	room.ambSoundsOffset = s.readUint32LE();
-	room.unkOffset = s.readUint32LE();
-	room.roomUnk4 = s.readUint32LE();
-	room.roomUnk5 = s.readUint32LE();
+	if (_gameVersion->platform == Common::kPlatformPS2) {
+		room.id = s.readUint32LE(); s.readUint32LE();
+		s.read(&room.name, 8);
+		room.scriptsOffset = s.readUint32LE(); s.readUint32LE();
+		room.ambSoundsOffset = s.readUint32LE(); s.readUint32LE();
+		room.unkOffset = s.readUint32LE(); // not 64-bit -- otherwise roomUnk5 is incorrect
+		room.roomUnk4 = s.readUint32LE();
+		room.roomUnk5 = s.readUint32LE();
+	} else {
+		room.id = s.readUint32LE();
+		s.read(&room.name, 8);
+		room.scriptsOffset = s.readUint32LE();
+		room.ambSoundsOffset = s.readUint32LE();
+		room.unkOffset = s.readUint32LE();
+		room.roomUnk4 = s.readUint32LE();
+		room.roomUnk5 = s.readUint32LE();
+	}
 
 	if (room.scriptsOffset != 0)
 		room.scriptsOffset -= _gameVersion->baseOffset;
