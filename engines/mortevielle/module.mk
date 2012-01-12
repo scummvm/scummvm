@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	detection.o \
 	disk.o \
 	droite.o \
+	graphics.o \
 	keyboard.o \
 	level15.o \
 	menu.o \
