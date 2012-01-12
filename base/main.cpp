@@ -195,7 +195,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
-	// the command line arugments here
+	// the command line arguments here
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
@@ -205,6 +205,12 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
+
+	// Set default values to the custom engine options
+	ExtraGuiOptions extraOptions = (*plugin)->getExtraGuiOptions(ConfMan.getActiveDomainName().c_str());
+	for (uint i = 0; i < extraOptions.size(); i++) {
+		ConfMan.registerDefault(extraOptions[i].configOption, extraOptions[i].defaultState);
+	}
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
