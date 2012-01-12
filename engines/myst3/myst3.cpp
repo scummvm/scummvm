@@ -65,6 +65,10 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data/TEXT");
 	SearchMan.addSubDirectoriesMatching(gameDataDir, "EXILE Disc ?/Data", true);
+
+	// Mac DVD version directories
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD/data");
 }
 
 Myst3Engine::~Myst3Engine() {
