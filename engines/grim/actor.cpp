@@ -865,7 +865,7 @@ bool Actor::isTalking() {
 	TextObject *textObject = NULL;
 	if (_sayLineText)
 		textObject = TextObject::getPool().getObject(_sayLineText);
-	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
+	if ((m == GrimEngine::TextOnly && !textObject) ||
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
 	}
