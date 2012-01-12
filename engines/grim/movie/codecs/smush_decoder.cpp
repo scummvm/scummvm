@@ -513,8 +513,10 @@ void SmushDecoder::seekToTime(Audio::Timestamp time) { // FIXME: This will be of
 	uint32 tag;
 	int32 size;
 
-	if (_stream)
+	if (_stream) {
 		_stream->finish();
+		_stream = NULL;
+	}
 
 	if (wantedFrame > _nbframes)
 		return;
