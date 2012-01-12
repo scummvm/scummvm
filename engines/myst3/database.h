@@ -72,7 +72,7 @@ public:
 	/**
 	 * Initialize the database from an executable file
 	 */
-	Database(const Common::String & executable);
+	Database();
 
 	/**
 	 * Loads a room's nodes into the database
@@ -106,12 +106,13 @@ public:
 private:
 	struct GameVersion {
 		char *description;
+		Common::Platform platform;
 		char *md5;
+		uint32 baseOffset;
 		uint32 ageTableOffset;
 		uint32 nodeInitScriptOffset;
 	};
 
-	static const uint32 _baseOffset = 0x400000;
 	Common::String _exePath;
 	GameVersion *_gameVersion;
 

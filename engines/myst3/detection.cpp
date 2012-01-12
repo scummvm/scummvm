@@ -38,6 +38,7 @@ static const PlainGameDescriptor myst3Games[] = {
 
 static const char *directoryGlobs[] = {
 	"M3Data",
+	"MYST3BIN",
 	0
 };
 
@@ -56,6 +57,19 @@ static const Myst3GameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Myst 3 PS2 (NTSC U/C)
+		{
+			"myst3",
+			0,
+			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
+			Common::UNK_LANG,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
@@ -65,7 +79,7 @@ public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
 		_singleid = "myst3";
 		_guioptions = GUIO_NOMIDI;
-		_maxScanDepth = 2;
+		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 

@@ -67,6 +67,21 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data/TEXT");
 	SearchMan.addSubDirectoriesMatching(gameDataDir, "EXILE Disc ?/Data", true);
+
+	// Mac DVD version directories
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD/data");
+
+	// PS2 version directories
+	SearchMan.addSubDirectoryMatching(gameDataDir, "GAMEDATA");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "GAMEDATA/WORLD");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "GAMEDATA/WORLD/SOUND");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/DISCS");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/DISCS/DATA");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/NTSC");
 }
 
 Myst3Engine::~Myst3Engine() {
@@ -96,7 +111,7 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
-	_db = new Database("M3.exe");
+	_db = new Database();
 	_vars = new Variables(this);
 	_scene = new Scene(this);
 	_menu = new Menu(this);
