@@ -28,45 +28,82 @@
 
 namespace Myst3 {
 
-Database::Database(const Common::String &executable) :
-		_exePath(executable),
+Database::Database() :
 		_currentRoomID(0),
 		_gameVersion(0),
 		_currentRoomData(0) {
 
-	// Game versions database
-	static GameVersion versions[] = {
-			{ "1.22 English", "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x486108, 0x486040 },
-			{ "1.22 French", "554612b239ff2d9a3364fa38e3f32b45", 0x486108, 0x486040 },
-			{ "1.27 French", "00e062994ddf98e0d5cf4aa78e738f47", 0x486110, 0x486040 },
-			{ "1.27 English", "a9e992323fa5048f0947d9ebd44088ac", 0x486110, 0x486040 },
-			{ "1.27 Dutch", "e9111bbae979d9c9c536aaf3601bd46f", 0x486110, 0x486040 },
-			{ "1.27 German", "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x486110, 0x486040 },
-			{ "1.27 Italian", "6e7bda56f3f8542ba936d7556256d5eb", 0x486110, 0x486040 },
-			{ "1.27 Spanish", "67cb6a606f123b327fac0d16f82b0adb", 0x486110, 0x486040 }
+	static const char *const names[] = {
+		"M3.exe",
+		"Myst III Exile for Mac OS X",
+		"Myst III Exile for Mac OS 8-9"
 	};
 
-	Common::File file;
-	file.open(_exePath);
+	// Game versions database
+	// FIXME: At least clone2727's and PS2 versions are multi-language
+	static GameVersion versions[] = {
+			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x486108, 0x486040 },
+			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x486108, 0x486040 },
+			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 English", Common::kPlatformWindows, "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 Dutch", Common::kPlatformWindows, "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 German", Common::kPlatformWindows, "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 Italian", Common::kPlatformWindows, "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x486110, 0x486040 },
+			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0, 0 }, // TODO
+			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0, 0 }, // TODO
+	};
 
-	// Check whether the game version is known
-	Common::String md5 = Common::computeStreamMD5AsString(file, 0);
+	// First, see what executable files we have
+	Common::Array<Common::String> fileMD5;
 
-	for (uint i = 0; i < sizeof(versions) / sizeof(GameVersion); i++) {
-		if (md5.equals(versions[i].md5)) {
-			_gameVersion = &versions[i];
-			break;
+	for (uint i = 0; i < ARRAYSIZE(names); i++) {
+		Common::File file;
+
+		if (file.open(names[i]))
+			fileMD5.push_back(Common::computeStreamMD5AsString(file, 0));
+		else
+			fileMD5.push_back(Common::String());
+
+		file.close();
+	}
+
+	// Compare our versions to the MD5's
+	for (uint i = 0; i < ARRAYSIZE(versions); i++) {
+		for (uint j = 0; j < fileMD5.size(); j++) {
+			if (fileMD5[j].equals(versions[i].md5)) {
+				_exePath = names[j];
+				_gameVersion = &versions[i];
+				break;
+			}
 		}
 	}
 
 	if (_gameVersion != 0) {
-		debug("Initializing database from %s (%s)", _exePath.c_str(), _gameVersion->description);
+		debug("Initializing database from %s (Platform: %s) (%s)", _exePath.c_str(), getPlatformDescription(_gameVersion->platform), _gameVersion->description);
 	} else {
-		error("Unknown game version: %s (md5: %s)", _exePath.c_str(), md5.c_str());
+		// Print out any unknown EXE's
+		bool foundOneEXE = false;
+		for (uint i = 0; i < fileMD5.size(); i++) {
+			if (!fileMD5[i].empty()) {
+				warning("Unknown EXE: %s (md5: %s)", names[i], fileMD5[i].c_str());
+				foundOneEXE = true;
+			}
+		}
+
+		if (foundOneEXE)
+			error("Unknown game version");
+		else
+			error("Could not find any executable to load");
 	}
 
+	if (_gameVersion->platform != Common::kPlatformWindows)
+		error("Unhandled platform %s", getPlatformDescription(_gameVersion->platform));
+
 	// Load the ages and rooms description
-	file.seek(_gameVersion->ageTableOffset - _baseOffset);
+	Common::File file;
+	file.open(_exePath);
+	file.seek(_gameVersion->ageTableOffset - _gameVersion->baseOffset);
 	_ages = loadAges(file);
 
 	for (uint i = 0; i < _ages.size(); i++) {
@@ -75,7 +112,7 @@ Database::Database(const Common::String &executable) :
 		// Read the room offset table
 		Common::Array<uint32> roomsOffsets;
 		for (uint j = 0; j < _ages[i].roomCount; j++) {
-			uint32 offset = file.readUint32LE() - _baseOffset;
+			uint32 offset = file.readUint32LE() - _gameVersion->baseOffset;
 			roomsOffsets.push_back(offset);
 		}
 
@@ -87,7 +124,7 @@ Database::Database(const Common::String &executable) :
 		}
 	}
 
-	file.seek(_gameVersion->nodeInitScriptOffset - _baseOffset);
+	file.seek(_gameVersion->nodeInitScriptOffset - _gameVersion->baseOffset);
 	_nodeInitScript = loadOpcodes(file);
 
 	file.close();
@@ -340,7 +377,7 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 		age.id = s.readUint32LE();
 		age.disk = s.readUint32LE();
 		age.roomCount = s.readUint32LE();
-		age.roomsOffset = s.readUint32LE() - _baseOffset;
+		age.roomsOffset = s.readUint32LE() - _gameVersion->baseOffset;
 		age.ageUnk1 = s.readUint32LE();
 
 		ages.push_back(age);
@@ -361,13 +398,13 @@ RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 	room.roomUnk5 = s.readUint32LE();
 
 	if (room.scriptsOffset != 0)
-		room.scriptsOffset -= _baseOffset;
+		room.scriptsOffset -= _gameVersion->baseOffset;
 
 	if (room.ambSoundsOffset != 0)
-		room.ambSoundsOffset -= _baseOffset;
+		room.ambSoundsOffset -= _gameVersion->baseOffset;
 
 	if (room.unkOffset != 0)
-		room.unkOffset -= _baseOffset;
+		room.unkOffset -= _gameVersion->baseOffset;
 
 	return room;
 }

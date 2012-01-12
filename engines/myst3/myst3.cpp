@@ -97,7 +97,7 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
-	_db = new Database("M3.exe");
+	_db = new Database();
 	_vars = new Variables(this);
 	_scene = new Scene();
 	_archive = new Archive();
