@@ -32,7 +32,7 @@ namespace Myst3 {
 
 DirectorySubEntry::DirectorySubEntry(Archive *archive) :
 	_archive(archive) {
-	for (uint i = 0; i < 20; i++) {
+	for (uint i = 0; i < 22; i++) {
 		_miscData[i] = 0;
 	}
 }
@@ -44,12 +44,10 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_face = inStream.readByte();
 	_type = static_cast<ResourceType>(inStream.readByte());
 
-	if (_metadataSize == 0) return;
-
-	if (_metadataSize == 2) {
+	if (_type == kSpotItem || _type == kMenuSpotItem) {
 		_spotItemData.u = inStream.readUint32LE();
 		_spotItemData.v = inStream.readUint32LE();
-	} else if (_metadataSize == 10 && _type != kMetadata) {
+	} else if (_type == kMovie) {
 		_videoData.v1.setValue(0, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(1, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(2, inStream.readSint32LE() * 0.000001f);
@@ -62,14 +60,21 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 		_videoData.v = inStream.readSint32LE();
 		_videoData.width = inStream.readSint32LE();
 		_videoData.height = inStream.readSint32LE();
-	} else {
+	} else if (_type == kNumMetadata || _type == kTextMetadata) {
 		if (_metadataSize > 20) {
 			warning("Too much metadata, skipping");
+			inStream.skip(_metadataSize * sizeof(uint32));
 			return;
 		}
 
+		_miscData[0] = _offset;
+		_miscData[1] = _size;
+
 		for (uint i = 0; i < _metadataSize; i++)
-			_miscData[i] = inStream.readUint32LE();
+			_miscData[i + 2] = inStream.readUint32LE();
+	} else if (_metadataSize != 0) {
+		warning("Metadata not read for type %d, size %d", _type, _metadataSize);
+		inStream.skip(_metadataSize * sizeof(uint32));
 	}
 }
 
@@ -119,14 +124,9 @@ Common::MemoryReadStream *DirectorySubEntry::getData() const {
 }
 
 uint32 DirectorySubEntry::getMiscData(uint index) const {
-	assert(index < 23);
+	assert(index < 22);
 
-	if (index == 0)
-		return _offset;
-	else if (index == 1)
-		return _size;
-	else
-		return _miscData[index - 2];
+	return _miscData[index];
 }
 
 } // end of namespace Myst3

@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/node.h"
+#include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/variables.h"
 
@@ -170,6 +171,24 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	_spotItems.push_back(spotItem);
 }
 
+void Node::loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+	SpotItem *spotItem = new SpotItem(_vm);
+
+	spotItem->setCondition(condition);
+	spotItem->setFade(false);
+	spotItem->setFadeVar(abs(condition));
+
+	SpotItemFace *spotItemFace = new SpotItemFace(_faces[0], rect.left, rect.top);
+	spotItemFace->initBlack(rect.width(), rect.height());
+
+	if (id == 1)
+		_vm->_menu->setSaveLoadSpotItem(spotItemFace);
+
+	spotItem->addFace(spotItemFace);
+
+	_spotItems.push_back(spotItem);
+}
+
 void Node::update() {
 	// First undraw ...
 	for (uint i = 0; i < _spotItems.size(); i++) {
@@ -245,6 +264,13 @@ SpotItemFace::~SpotItemFace() {
 	}
 }
 
+void SpotItemFace::initBlack(uint16 width, uint16 height) {
+	_bitmap = new Graphics::Surface();
+	_bitmap->create(width, height, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+
+	initNotDrawn(width, height);
+}
+
 void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
 	// Convert active SpotItem image to raw data
 	_bitmap = new Graphics::Surface();
@@ -266,14 +292,24 @@ void SpotItemFace::loadData(Graphics::JPEG *jpeg) {
 		}
 	}
 
+	initNotDrawn(_bitmap->w, _bitmap->h);
+}
+
+void SpotItemFace::updateData(const uint8 *data) {
+	assert(_bitmap && data);
+	memcpy(_bitmap->pixels, data, _bitmap->pitch * _bitmap->h);
+
+	_drawn = false;
+}
+
+void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	// Copy not drawn SpotItem image from face
 	_notDrawnBitmap = new Graphics::Surface();
-	_notDrawnBitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_notDrawnBitmap->create(width, height, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
-	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
+	for (uint i = 0; i < height; i++) {
 		memcpy(_notDrawnBitmap->getBasePtr(0, i),
-				_face->_bitmap->getBasePtr(_posX, _posY + i),
-				_notDrawnBitmap->w * 3);
+				_face->_bitmap->getBasePtr(_posX, _posY + i), width * 3);
 	}
 }
 

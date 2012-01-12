@@ -591,6 +591,10 @@ void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
 	_node->loadSpotItem(id, condition, fade);
 }
 
+void Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+	_node->loadMenuSpotItem(id, condition, rect);
+}
+
 void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
 

@@ -53,6 +53,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1( 13, spotItemAdd,					kValue														);
 	OP_2( 14, spotItemAddCond,				kValue,		kCondition										);
 	OP_2( 15, spotItemAddCondFade,			kValue,		kCondition										);
+	OP_5( 16, spotItemAddMenu,					kValue,		kCondition,		kValue,		kValue, 	kValue	); // Six args
 	OP_1( 17, movieInitLooping, 			kEvalValue													);
 	OP_2( 18, movieInitCondLooping,			kEvalValue,	kCondition										);
 	OP_2( 19, movieInitCond,				kEvalValue,	kCondition										);
@@ -65,7 +66,7 @@ Script::Script(Myst3Engine *vm):
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
 	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
-	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar								);
+	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar					);
 	OP_4( 38, sunspotAddIntensityColor,		kValue,		kValue,		kValue,		kValue					);
 	OP_5( 39, sunspotAddVarIntensityColor,	kValue,		kValue,		kValue,		kValue, 	kVar		);
 	OP_4( 40, sunspotAddIntensityRadius,	kValue,		kValue,		kValue,		kValue					);
@@ -369,6 +370,15 @@ void Script::spotItemAddCondFade(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add fading spotitem %d for var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->addSpotItem(cmd.args[0], cmd.args[1], true);
+}
+
+void Script::spotItemAddMenu(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add menu spotitem %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	Common::Rect rect = Common::Rect(cmd.args[4], cmd.args[5]);
+	rect.translate(cmd.args[2], cmd.args[3]);
+
+	_vm->addMenuSpotItem(cmd.args[0], cmd.args[1], rect);
 }
 
 void Script::movieInitLooping(Context &c, const Opcode &cmd) {

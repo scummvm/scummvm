@@ -29,10 +29,13 @@
 #include "common/events.h"
 #include "common/savefile.h"
 
+#include "graphics/colormasks.h"
+
 namespace Myst3 {
 
 Menu::Menu(Myst3Engine *vm) :
-	_vm(vm) {
+	_vm(vm),
+	_saveLoadSpotItem(0) {
 }
 
 Menu::~Menu() {
@@ -136,9 +139,9 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 	_texture(0),
 	_frameToDisplay(0),
 	_previousframe(0) {
-	const DirectorySubEntry *buttonsDesc = _vm->getFileDescription("DLGB", 1000, 0, DirectorySubEntry::kMetadata);
+	const DirectorySubEntry *buttonsDesc = _vm->getFileDescription("DLGB", 1000, 0, DirectorySubEntry::kNumMetadata);
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
-	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kMetadata);
+	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kNumMetadata);
 
 	// Retrieve button count
 	_buttonCount = countDesc->getMiscData(0);
@@ -249,6 +252,7 @@ void Menu::saveLoadUpdateVars() {
 
 	_vm->_vars->setMenuSaveLoadPageLeft(canGoLeft);
 	_vm->_vars->setMenuSaveLoadPageRight(canGoRight);
+	_vm->_vars->setMenuSaveLoadSelectedItem(-1);
 
 	// Enable items
 	uint16 itemsOnPage = _saveLoadFiles.size() % 7;
@@ -264,8 +268,57 @@ void Menu::saveLoadUpdateVars() {
 
 void Menu::loadMenuSelect(uint16 item) {
 	_vm->_vars->setMenuSaveLoadSelectedItem(item);
+	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
 
-	// TODO: Refresh miniature
+	uint16 index = page * 7 + item;
+
+	assert(index < _saveLoadFiles.size());
+	Common::String filename = _saveLoadFiles[index];
+
+	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(filename);
+
+	// For now, only saves from the original are accepted
+	uint32 version = save->readUint32LE();
+	if (version != 148)
+		error("Incorrect save file version %d, expected 148", version);
+
+	static const uint kMiniatureSize = 240 * 135;
+	uint8 *miniature = new uint8[kMiniatureSize * 3];
+
+	// Look for saved age to load
+	save->seek(372);
+	uint32 age = 0;
+	uint32 room = save->readUint32LE();
+	if (room == 902) {
+		save->seek(356);
+		age = save->readUint32LE();
+	} else {
+		save->seek(368);
+		age = save->readUint32LE();
+	}
+
+	// Look for the age name
+
+	// Start miniature data
+	save->seek(8580);
+
+	// The spot item expect RGB data instead of RGBA
+	uint8 *ptr = miniature;
+	for (uint i = 0; i < kMiniatureSize; i++) {
+		uint32 rgba = save->readUint32LE();
+		uint8 a, r, g, b;
+		Graphics::colorToARGB< Graphics::ColorMasks<8888> >(rgba, a, r, g, b);
+		*ptr++ = r;
+		*ptr++ = g;
+		*ptr++ = b;
+	}
+
+	if (_saveLoadSpotItem)
+		_saveLoadSpotItem->updateData(miniature);
+
+	delete[] miniature;
+	delete save;
+
 	// TODO: Selecting twice loads item
 }
 

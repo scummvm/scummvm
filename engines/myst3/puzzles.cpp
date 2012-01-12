@@ -125,7 +125,7 @@ void Puzzles::journalSaavedro(int16 move) {
 }
 
 uint16 Puzzles::_journalSaavedroGetNode(uint16 chapter) {
-	const DirectorySubEntry *desc = _vm->getFileDescription(0, 1200, 0, DirectorySubEntry::kMetadata);
+	const DirectorySubEntry *desc = _vm->getFileDescription(0, 1200, 0, DirectorySubEntry::kNumMetadata);
 
 	if (!desc)
 		error("Node 1200 does not exist");

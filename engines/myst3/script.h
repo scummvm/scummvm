@@ -106,6 +106,7 @@ private:
 	DECLARE_OPCODE(spotItemAdd);
 	DECLARE_OPCODE(spotItemAddCond);
 	DECLARE_OPCODE(spotItemAddCondFade);
+	DECLARE_OPCODE(spotItemAddMenu);
 	DECLARE_OPCODE(movieInitLooping);
 	DECLARE_OPCODE(movieInitCondLooping);
 	DECLARE_OPCODE(movieInitCond);

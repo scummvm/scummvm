@@ -34,6 +34,7 @@
 namespace Myst3 {
 
 class Myst3Engine;
+class SpotItemFace;
 
 class Menu {
 public:
@@ -48,10 +49,13 @@ public:
 	void loadMenuOpen();
 	void loadMenuSelect(uint16 item);
 	void loadMenuChangePage();
+	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
+
 private:
 	Myst3Engine *_vm;
 
 	Common::StringArray _saveLoadFiles;
+	SpotItemFace *_saveLoadSpotItem;
 
 	void saveLoadUpdateVars();
 };

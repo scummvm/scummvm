@@ -57,7 +57,9 @@ class SpotItemFace {
 		SpotItemFace(Face *face, uint16 posX, uint16 posY);
 		~SpotItemFace();
 
+		void initBlack(uint16 width, uint16 height);
 		void loadData(Graphics::JPEG *jpeg);
+		void updateData(const uint8 *data);
 
 		void draw();
 		void undraw();
@@ -77,6 +79,8 @@ class SpotItemFace {
 
 		Graphics::Surface *_bitmap;
 		Graphics::Surface *_notDrawnBitmap;
+
+		void initNotDrawn(uint16 width, uint16 height);
 };
 
 class SpotItem {
@@ -130,6 +134,8 @@ class Node {
 		SunSpot computeSunspotsIntensity(const Common::Point &lookAt);
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
+		void loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+
 		void dumpFaceMask(uint16 index, int face);
 };
 

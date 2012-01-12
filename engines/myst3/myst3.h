@@ -106,6 +106,7 @@ public:
 	void playSimpleMovie(uint16 id);
 
 	void addSpotItem(uint16 id, uint16 condition, bool fade);
+	void addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
 

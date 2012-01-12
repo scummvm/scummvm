@@ -42,7 +42,7 @@ struct VideoData {
 	int32 height;
 };
 
-typedef uint32 MiscData[20];
+typedef uint32 MiscData[22];
 
 class Archive;
 
@@ -56,7 +56,8 @@ class DirectorySubEntry {
 			kCursor = 7,
 			kMovie = 8,
 			kStillMovie = 10,
-			kMetadata = 13,
+			kTextMetadata = 12,
+			kNumMetadata = 13,
 			kMenuSpotItem = 69,
 			kMenuFrame = 70,
 			kImagerMovie = 72,
