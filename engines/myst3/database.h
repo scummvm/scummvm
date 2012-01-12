@@ -142,6 +142,8 @@ private:
 	Common::Array<PolarRect> loadRects(Common::ReadStream & s);
 	CondScript loadCondScript(Common::ReadStream & s);
 	HotSpot loadHotspot(Common::ReadStream & s);
+
+	Common::SeekableReadStream *openDatabaseFile() const;
 };
 
 } /* namespace Myst3 */

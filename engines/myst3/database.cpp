@@ -105,33 +105,32 @@ Database::Database() :
 		error("Unhandled platform %s", getPlatformDescription(_gameVersion->platform));
 
 	// Load the ages and rooms description
-	Common::File file;
-	file.open(_exePath);
-	file.seek(_gameVersion->ageTableOffset);
-	_ages = loadAges(file);
+	Common::SeekableReadStream *file = openDatabaseFile();
+	file->seek(_gameVersion->ageTableOffset);
+	_ages = loadAges(*file);
 
 	for (uint i = 0; i < _ages.size(); i++) {
-		file.seek(_ages[i].roomsOffset);
+		file->seek(_ages[i].roomsOffset);
 
 		// Read the room offset table
 		Common::Array<uint32> roomsOffsets;
 		for (uint j = 0; j < _ages[i].roomCount; j++) {
-			uint32 offset = file.readUint32LE() - _gameVersion->baseOffset;
+			uint32 offset = file->readUint32LE() - _gameVersion->baseOffset;
 			roomsOffsets.push_back(offset);
 		}
 
 		// Load the rooms
 		for (uint j = 0; j < roomsOffsets.size(); j++) {
-			file.seek(roomsOffsets[j]);
+			file->seek(roomsOffsets[j]);
 
-			_ages[i].rooms.push_back(loadRoomDescription(file));
+			_ages[i].rooms.push_back(loadRoomDescription(*file));
 		}
 	}
 
-	file.seek(_gameVersion->nodeInitScriptOffset);
-	_nodeInitScript = loadOpcodes(file);
+	file->seek(_gameVersion->nodeInitScriptOffset);
+	_nodeInitScript = loadOpcodes(*file);
 
-	file.close();
+	delete file;
 
 	preloadCommonRooms();
 }
@@ -202,13 +201,11 @@ RoomData *Database::findRoomData(const uint32 & roomID)
 Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	Common::Array<NodePtr> nodes;
 
-	Common::File file;
-	file.open(_exePath);
-	file.seek(room->scriptsOffset);
-
+	Common::SeekableReadStream *file = openDatabaseFile();
+	file->seek(room->scriptsOffset);
 
 	while (1) {
-		int16 id = file.readUint16LE();
+		int16 id = file->readUint16LE();
 
 		// End of list
 		if (id == 0)
@@ -221,8 +218,8 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 			// Normal node
 			NodePtr node = NodePtr(new NodeData());
 			node->id = id;
-			node->scripts = loadCondScripts(file);
-			node->hotspots = loadHotspots(file);
+			node->scripts = loadCondScripts(*file);
+			node->hotspots = loadHotspots(*file);
 
 			nodes.push_back(node);
 		} else {
@@ -230,11 +227,11 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 			Common::Array<int16> nodeIds;
 
 			for (int i = 0; i < -id; i++) {
-				nodeIds.push_back(file.readUint16LE());
+				nodeIds.push_back(file->readUint16LE());
 			}
 
-			Common::Array<CondScript> scripts = loadCondScripts(file);
-			Common::Array<HotSpot> hotspots = loadHotspots(file);
+			Common::Array<CondScript> scripts = loadCondScripts(*file);
+			Common::Array<HotSpot> hotspots = loadHotspots(*file);
 
 			for (int i = 0; i < -id; i++) {
 				NodePtr node = NodePtr(new NodeData());
@@ -247,7 +244,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 		}
 	}
 
-	file.close();
+	delete file;
 
 	return nodes;
 }
@@ -464,6 +461,15 @@ uint32 Database::getAgeLabelId(uint32 ageID) {
 			return _ages[i].labelId;
 
 	return 0;
+}
+
+Common::SeekableReadStream *Database::openDatabaseFile() const {
+	assert(_gameVersion);
+
+	if (_gameVersion->platform == Common::kPlatformMacintosh)
+		error("Unhandled Macintosh PEF compression");
+
+	return SearchMan.createReadStreamForMember(_exePath);
 }
 
 } /* namespace Myst3 */
