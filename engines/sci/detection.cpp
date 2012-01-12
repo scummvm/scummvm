@@ -729,6 +729,13 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 		false
 	};
 
+	ExtraGuiOption yamahaFb01Midi = {
+		_s("Use IMF/Yahama FB-01 for MIDI output"),
+		_s("Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI output"),
+		"native_fb01",
+		false
+	};
+
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
 	ExtraGuiOption cdAudio = {
 		_s("Use CD audio"),
@@ -747,6 +754,7 @@ ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target) 
 	
 	options.push_back(sfxType);
 	options.push_back(originalSaveLoad);
+	options.push_back(yamahaFb01Midi);
 
 	if (target.hasPrefix("jones"))
 		options.push_back(cdAudio);

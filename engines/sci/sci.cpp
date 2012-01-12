@@ -190,9 +190,6 @@ SciEngine::~SciEngine() {
 extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("native_fb01", "false");
-
 	_resMan = new ResourceManager();
 	assert(_resMan);
 	_resMan->addAppropriateSources();
