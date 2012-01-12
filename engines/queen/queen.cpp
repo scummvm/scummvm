@@ -186,8 +186,8 @@ ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target
 	ExtraGuiOptions options;
 
 	ExtraGuiOption altIntro = {
-		_("Show alternative intro"),
-		_("Show the intro of the floppy version in the CD version"),
+		_s("Show alternative intro"),
+		_s("Show the intro of the floppy version in the CD version"),
 		"alt_intro",
 		false
 	};
