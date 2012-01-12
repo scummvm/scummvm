@@ -24,6 +24,7 @@
 
 #include "common/algorithm.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 
@@ -60,6 +61,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -189,6 +191,21 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 	}
 
 	return SaveStateDescriptor();
+}
+
+ExtraGuiOptions DreamWebMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+
+	ExtraGuiOption originalSaveLoad = {
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens, instead of the ScummVM ones"),
+		"dreamweb_originalsaveload",
+		false
+	};
+
+	options.push_back(originalSaveLoad);
+
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DREAMWEB)
