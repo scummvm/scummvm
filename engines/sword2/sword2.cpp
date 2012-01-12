@@ -246,8 +246,8 @@ ExtraGuiOptions Sword2MetaEngine::getExtraGuiOptions(const Common::String &targe
 	ExtraGuiOptions options;
 
 	ExtraGuiOption objectLabels = {
-		_("Show object labels"),
-		_("Show labels for objects on mouse hover"),
+		_s("Show object labels"),
+		_s("Show labels for objects on mouse hover"),
 		"object_labels",
 		false
 	};
