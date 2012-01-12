@@ -26,6 +26,7 @@
 #include "engines/myst3/variables.h"
 
 #include "common/events.h"
+#include "common/savefile.h"
 
 namespace Myst3 {
 
@@ -225,6 +226,46 @@ int16 Dialog::update() {
 	}
 
 	return -1;
+}
+
+void Menu::loadMenuOpen() {
+	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
+	_vm->_vars->setMenuSaveLoadCurrentPage(0);
+	saveLoadUpdateVars();
+}
+
+void Menu::saveLoadUpdateVars() {
+	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+
+	// Go back one page if the last element of the last page was removed
+	if (page && (7 * page > (int)_saveLoadFiles.size() - 1))
+		page--;
+	_vm->_vars->setMenuSaveLoadCurrentPage(page);
+
+	// Set up pagination
+	bool canGoLeft = (_saveLoadFiles.size() > 7) && page;
+	bool canGoRight = (_saveLoadFiles.size() > 7) && (7 * (page + 1) < (int)_saveLoadFiles.size());
+
+	_vm->_vars->setMenuSaveLoadPageLeft(canGoLeft);
+	_vm->_vars->setMenuSaveLoadPageRight(canGoRight);
+
+	// Enable items
+	uint16 itemsOnPage = _saveLoadFiles.size() % 7;
+
+	if (itemsOnPage == 0 && _saveLoadFiles.size() != 0)
+		itemsOnPage = 7;
+	if (canGoRight)
+		itemsOnPage = 7;
+
+	for (uint i = 0; i < 7; i++)
+		_vm->_vars->set(1354 + i, i < itemsOnPage);
+}
+
+void Menu::loadMenuSelect(uint16 item) {
+	_vm->_vars->setMenuSaveLoadSelectedItem(item);
+
+	// TODO: Refresh miniature
+	// TODO: Selecting twice loads item
 }
 
 } /* namespace Myst3 */

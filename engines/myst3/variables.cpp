@@ -97,6 +97,11 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(1341, MenuSaveAction, false)
 	VAR(1342, MenuOptionsBack, false)
 
+	VAR(1350, MenuSaveLoadPageLeft, false)
+	VAR(1351, MenuSaveLoadPageRight, false)
+	VAR(1352, MenuSaveLoadSelectedItem, false)
+	VAR(1353, MenuSaveLoadCurrentPage, false)
+
 #undef VAR
 
 	memset(&_vars, 0, sizeof(_vars));

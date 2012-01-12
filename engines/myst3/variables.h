@@ -97,6 +97,11 @@ public:
 	DECLARE_VAR(1341, MenuSaveAction)
 	DECLARE_VAR(1342, MenuOptionsBack)
 
+	DECLARE_VAR(1350, MenuSaveLoadPageLeft)
+	DECLARE_VAR(1351, MenuSaveLoadPageRight)
+	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
+	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
+
 private:
 	Myst3Engine *_vm;
 

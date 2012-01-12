@@ -80,6 +80,7 @@ public:
 	Cursor *_cursor;
 	Inventory *_inventory;
 	Renderer *_gfx;
+	Menu *_menu;
 	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
@@ -117,7 +118,6 @@ private:
 	
 	Node *_node;
 	Scene *_scene;
-	Menu *_menu;
 
 	Archive *_archive;
 	Archive *_archiveRSRC;

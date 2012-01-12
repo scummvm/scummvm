@@ -27,6 +27,7 @@
 
 #include "common/rect.h"
 #include "common/memstream.h"
+#include "common/str-array.h"
 
 #include "video/bink_decoder_seek.h"
 
@@ -42,8 +43,14 @@ public:
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
 
+	void loadMenuOpen();
+	void loadMenuSelect(uint16 item);
 private:
 	Myst3Engine *_vm;
+
+	Common::StringArray _saveLoadFiles;
+
+	void saveLoadUpdateVars();
 };
 
 class Dialog : public Drawable {

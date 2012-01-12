@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/puzzles.h"
+#include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/variables.h"
 
@@ -40,6 +41,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 		break;
 	case 9:
 		journalAtrus(arg0, arg1);
+		break;
+	case 20:
+		saveLoadMenu(arg0, arg1);
 		break;
 	case 21:
 		mainMenu(arg0);
@@ -163,6 +167,19 @@ void Puzzles::journalAtrus(uint16 node, uint16 var) {
 
 void Puzzles::mainMenu(uint16 action) {
 	_vm->setMenuAction(action);
+}
+
+void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
+	switch (action) {
+	case 0:
+		_vm->_menu->loadMenuOpen();
+		break;
+	case 1:
+		_vm->_menu->loadMenuSelect(item);
+		break;
+	default:
+		warning("Save load menu action %d for item %d is not implemented", action, item);
+	}
 }
 
 } /* namespace Myst3 */
