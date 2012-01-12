@@ -98,10 +98,11 @@ void writepal(int n) {
 
 
 void pictout(int seg, int dep, int x, int y) {
+#ifdef DEBUG
 	GfxSurface surface;
 	surface.decode(&mem[0x7000 * 16]);
+#endif
 
-warning("TODO: complete picture decoding");
 	decomp(seg, dep);
 	if (gd == her) {
 		mem[0x7000 * 16 + 2] = 0;

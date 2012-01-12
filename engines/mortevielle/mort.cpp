@@ -71,7 +71,7 @@ int mortevielle_main(int argc, const char *argv[]) {
 	/*init_debug;*/
 	/*  ecri_seg;*/
 	//pio_initialize(argc, argv);
-	gd = cga;
+	gd = ega;
 	newgd = gd;
 	zuul = false;
 	tesok = false;
