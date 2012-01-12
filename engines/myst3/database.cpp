@@ -43,14 +43,14 @@ Database::Database() :
 	// Game versions database
 	// FIXME: At least clone2727's and PS2 versions are multi-language
 	static GameVersion versions[] = {
-			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x486108, 0x486040 },
-			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x486108, 0x486040 },
-			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x486110, 0x486040 },
-			{ "1.27 English", Common::kPlatformWindows, "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x486110, 0x486040 },
-			{ "1.27 Dutch", Common::kPlatformWindows, "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x486110, 0x486040 },
-			{ "1.27 German", Common::kPlatformWindows, "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x486110, 0x486040 },
-			{ "1.27 Italian", Common::kPlatformWindows, "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x486110, 0x486040 },
-			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x486110, 0x486040 },
+			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108, 0x86040 },
+			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108, 0x86040 },
+			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110, 0x86040 },
+			{ "1.27 English", Common::kPlatformWindows, "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110, 0x86040 },
+			{ "1.27 Dutch", Common::kPlatformWindows, "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110, 0x86040 },
+			{ "1.27 German", Common::kPlatformWindows, "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110, 0x86040 },
+			{ "1.27 Italian", Common::kPlatformWindows, "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110, 0x86040 },
+			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0, 0 }, // TODO
 			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0, 0 }, // TODO
 			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0, 0, 0 }, // TODO
@@ -105,7 +105,7 @@ Database::Database() :
 	// Load the ages and rooms description
 	Common::File file;
 	file.open(_exePath);
-	file.seek(_gameVersion->ageTableOffset - _gameVersion->baseOffset);
+	file.seek(_gameVersion->ageTableOffset);
 	_ages = loadAges(file);
 
 	for (uint i = 0; i < _ages.size(); i++) {
@@ -126,7 +126,7 @@ Database::Database() :
 		}
 	}
 
-	file.seek(_gameVersion->nodeInitScriptOffset - _gameVersion->baseOffset);
+	file.seek(_gameVersion->nodeInitScriptOffset);
 	_nodeInitScript = loadOpcodes(file);
 
 	file.close();
