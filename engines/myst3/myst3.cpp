@@ -127,6 +127,12 @@ Common::Error Myst3Engine::run() {
 
 	_gfx->init();
 
+	// Init the font
+	Graphics::Surface *font = loadTexture(1206);
+	_gfx->initFont(font);
+	font->free();
+	delete font;
+
 	// Var init script
 	runScriptsFromNode(1000, 101);
 

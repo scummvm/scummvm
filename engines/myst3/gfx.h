@@ -23,6 +23,7 @@
 #ifndef GFX_H_
 #define GFX_H_
 
+#include "common/rect.h"
 #include "common/system.h"
 #include "math/vector3d.h"
 
@@ -52,6 +53,8 @@ public:
 	virtual ~Renderer();
 
 	void init();
+	void initFont(const Graphics::Surface *surface);
+
 	void clear();
 	void setupCameraOrtho2D();
 	void setupCameraPerspective(float pitch, float heading);
@@ -65,12 +68,16 @@ public:
 			const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture);
 
 	void drawCube(Texture **textures);
+	void draw2DText(const Common::String &text, const Common::Point &position);
 
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 
 protected:
 	OSystem *_system;
+	Texture *_font;
+
+	Common::Rect Renderer::getFontCharacterRect(uint8 character);
 };
 
 } // end of namespace Myst3

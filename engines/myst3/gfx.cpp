@@ -103,10 +103,13 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 }
 
 Renderer::Renderer(OSystem *system) :
-	_system(system) {
+	_system(system),
+	_font(0) {
 }
 
 Renderer::~Renderer() {
+	if (_font)
+		freeTexture(_font);
 }
 
 Texture *Renderer::createTexture(const Graphics::Surface *surface) {
@@ -128,6 +131,10 @@ void Renderer::init() {
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+}
+
+void Renderer::initFont(const Graphics::Surface *surface) {
+	_font = createTexture(surface);
 }
 
 void Renderer::clear() {
@@ -219,6 +226,69 @@ void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::
 		glVertex3f(sLeft + sWidth, sTop + 0, 1.0f);
 	glEnd();
 
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+}
+
+Common::Rect Renderer::getFontCharacterRect(uint8 character) {
+	uint index = 0;
+
+	if (character == ' ')
+		index = 0;
+	else if (character >= '0' && character <= '9')
+		index = 1 + character - '0';
+	else if (character >= 'A' && character <= 'Z')
+		index = 1 + 10 + character - 'A';
+	else if (character == '|')
+		index = 1 + 10 + 26;
+
+	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
+}
+
+void Renderer::draw2DText(const Common::String &text, const Common::Point &position) {
+	OpenGLTexture *glFont = static_cast<OpenGLTexture *>(_font);
+
+	// The font only has uppercase letters
+	Common::String textToDraw = text;
+	textToDraw.toUppercase();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_TEXTURE_2D);
+	glDepthMask(GL_FALSE);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBindTexture(GL_TEXTURE_2D, glFont->id);
+
+	int x = position.x;
+	int y = position.y;
+
+	for (uint i = 0; i < textToDraw.size(); i++) {
+		Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
+		int w = textureRect.width();
+		int h = textureRect.height();
+
+		float cw = textureRect.width() / (float) glFont->internalWidth;
+		float ch = textureRect.height() / (float) glFont->internalHeight;
+		float cx = textureRect.left / (float) glFont->internalWidth;
+		float cy = textureRect.top / (float) glFont->internalHeight;
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(cx, cy + ch);
+		glVertex3f(x, y, 1.0f);
+		glTexCoord2f(cx + cw, cy + ch);
+		glVertex3f(x + w, y, 1.0f);
+		glTexCoord2f(cx + cw, cy);
+		glVertex3f(x + w, y + h, 1.0f);
+		glTexCoord2f(cx, cy);
+		glVertex3f(x, y + h, 1.0f);
+		glEnd();
+
+		x += textureRect.width();
+	}
+
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 }
