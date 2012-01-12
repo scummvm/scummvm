@@ -32,6 +32,7 @@
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/metaengine.h"
 
@@ -76,6 +77,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -266,6 +268,21 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 	if (ioFailed)
 		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
+}
+
+ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+
+	ExtraGuiOption altIntro = {
+		_("Show alternative intro"),
+		_("Show the intro of the floppy version in the CD version"),
+		"alt_intro",
+		false
+	};
+
+	options.push_back(altIntro);
+
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
