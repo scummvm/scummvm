@@ -129,4 +129,35 @@ uint32 DirectorySubEntry::getMiscData(uint index) const {
 	return _miscData[index];
 }
 
+Common::String DirectorySubEntry::getTextData(uint index) const {
+	uint8 key = 35;
+	uint8 cnt = 0;
+	uint8 decrypted[89];
+	memset(decrypted, 0, sizeof(decrypted));
+
+	uint8 *out = &decrypted[0];
+	while (_miscData[cnt / 4] && cnt < 89) {
+		// XORed text stored in little endian 32 bit words
+		*out++ = (_miscData[cnt / 4] >> (8 * (3 - (cnt % 4)))) ^ key++;
+		cnt++;
+	}
+
+	// decrypted contains a null separated string array
+	// extract the wanted one
+	cnt = 0;
+	int i = 0;
+	Common::String text;
+	while (cnt <= index && i < 89) {
+		if (cnt == index)
+			text += decrypted[i];
+
+		if (!decrypted[i])
+			cnt++;
+
+		i++;
+	}
+
+	return text;
+}
+
 } // end of namespace Myst3

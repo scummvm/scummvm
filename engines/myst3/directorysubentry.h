@@ -76,6 +76,7 @@ class DirectorySubEntry {
 		const SpotItemData &getSpotItemData() const { return _spotItemData; }
 		const VideoData &getVideoData() const { return _videoData; }
 		uint32 getMiscData(uint index) const;
+		Common::String getTextData(uint index) const;
 
 	private:
 		uint32 _offset;
