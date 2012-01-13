@@ -68,7 +68,7 @@ private:
 	void saveLoadUpdateVars();
 
 	void saveGameReadThumbnail(Common::InSaveFile *save);
-	Common::String Menu::getAgeLabel(GameState *gameState);
+	Common::String getAgeLabel(GameState *gameState);
 };
 
 class Dialog : public Drawable {
