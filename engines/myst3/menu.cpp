@@ -35,7 +35,9 @@ namespace Myst3 {
 
 Menu::Menu(Myst3Engine *vm) :
 	_vm(vm),
-	_saveLoadSpotItem(0) {
+	_saveLoadSpotItem(0),
+	_saveDrawCaret(false),
+	_saveCaretCounter(0) {
 }
 
 Menu::~Menu() {
@@ -325,6 +327,7 @@ void Menu::saveMenuOpen() {
 	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
 
 	_saveLoadAgeName = getAgeLabel(_vm->_state);
+	_saveCaretCounter = kCaretSpeed;
 
 	_vm->_state->setMenuSaveLoadCurrentPage(0);
 	saveLoadUpdateVars();
@@ -369,24 +372,34 @@ void Menu::draw() {
 
 		PolarRect rect = nodeData->hotspots[i + 1].rects[0];
 
-		Common::String display = _saveLoadFiles[itemToDisplay];
-		display.toUppercase();
-		if (display.hasSuffix(".M3S")) {
-			display.deleteLastChar();
-			display.deleteLastChar();
-			display.deleteLastChar();
-			display.deleteLastChar();
-		}
-
-		while (display.size() > 17)
-			display.deleteLastChar();
-
+		Common::String display = prepareSaveNameForDisplay(_saveLoadFiles[itemToDisplay]);
 		_vm->_gfx->draw2DText(display, Common::Point(rect.centerPitch, rect.centerHeading));
 	}
 
 	if (!_saveLoadAgeName.empty()) {
 		PolarRect rect = nodeData->hotspots[8].rects[0];
 		_vm->_gfx->draw2DText(_saveLoadAgeName, Common::Point(rect.centerPitch, rect.centerHeading));
+	}
+
+	// Save screen specific
+	if (node == 300) {
+		uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
+		Common::String display = prepareSaveNameForDisplay(_saveName);
+
+		if (item == 7) {
+			_saveCaretCounter--;
+			if (_saveCaretCounter < 0) {
+				_saveCaretCounter = kCaretSpeed;
+				_saveDrawCaret = !_saveDrawCaret;
+			}
+
+			if (_saveDrawCaret) {
+				display += '|';
+			}
+		}
+
+		PolarRect rect = nodeData->hotspots[9].rects[0];
+		_vm->_gfx->draw2DText(display, Common::Point(rect.centerPitch, rect.centerHeading));
 	}
 }
 
@@ -433,6 +446,22 @@ void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
 		_saveLoadSpotItem->updateData(thumbnail);
 
 	delete[] thumbnail;
+}
+
+Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
+	Common::String display = name;
+	display.toUppercase();
+	if (display.hasSuffix(".M3S")) {
+		display.deleteLastChar();
+		display.deleteLastChar();
+		display.deleteLastChar();
+		display.deleteLastChar();
+	}
+
+	while (display.size() > 17)
+		display.deleteLastChar();
+
+	return display;
 }
 
 } /* namespace Myst3 */

@@ -64,11 +64,16 @@ private:
 	SpotItemFace *_saveLoadSpotItem;
 	Common::String _saveLoadAgeName;
 	Common::String _saveName;
+	bool _saveDrawCaret;
+	int32 _saveCaretCounter;
+
+	static const uint kCaretSpeed = 25;
 
 	void saveLoadUpdateVars();
 
 	void saveGameReadThumbnail(Common::InSaveFile *save);
 	Common::String getAgeLabel(GameState *gameState);
+	Common::String prepareSaveNameForDisplay(const Common::String &name);
 };
 
 class Dialog : public Drawable {
