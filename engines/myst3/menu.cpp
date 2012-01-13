@@ -367,6 +367,38 @@ void Menu::saveMenuChangePage() {
 	_vm->_state->setMenuSaveLoadSelectedItem(7);
 }
 
+void Menu::saveMenuSave() {
+	if (_saveName.empty())
+		return;
+
+	Common::String fileName = _saveName;
+	if (!fileName.hasSuffix(".M3S") && !fileName.hasSuffix(".m3s"))
+		fileName += ".M3S";
+
+	// Check if file exists
+	bool fileExists = false;
+	for (uint i = 0; i < _saveLoadFiles.size(); i++) {
+		if (_saveLoadFiles[i].equalsIgnoreCase(fileName)) {
+			fileExists = true;
+			break;
+		}
+	}
+
+	// Ask the user if he wants to overwrite the existing save
+	if (fileExists && _vm->openDialog(1040))
+		return;
+
+	// Save the state and the thumbnail
+	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
+	_vm->_state->save(save);
+	saveGameWriteThumbnail(save);
+	delete save;
+
+	// Do next action
+	_vm->_state->setMenuNextAction(_vm->_state->getMenuSaveAction());
+	_vm->runScriptsFromNode(88);
+}
+
 void Menu::draw() {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();
@@ -439,13 +471,12 @@ Common::String Menu::getAgeLabel(GameState *gameState) {
 }
 
 void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
-	// Start thumbnail data
+	// Start of thumbnail data
 	save->seek(8580);
 
-	static const uint kMiniatureSize = 240 * 135;
 	uint8 *thumbnail = new uint8[kMiniatureSize * 3];
 
-	// The spot item expect RGB data instead of RGBA
+	// The spot item expects RGB data instead of RGBA
 	uint8 *ptr = thumbnail;
 	for (uint i = 0; i < kMiniatureSize; i++) {
 		uint32 rgba = save->readUint32LE();
@@ -460,6 +491,21 @@ void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
 		_saveLoadSpotItem->updateData(thumbnail);
 
 	delete[] thumbnail;
+}
+
+void Menu::saveGameWriteThumbnail(Common::OutSaveFile *save) {
+	// The file expects ARGB data instead of RGB
+	uint8 *src = (uint8 *)_saveThumb->pixels;
+	for (uint i = 0; i < kMiniatureSize; i++) {
+		uint8 r, g, b;
+		r = *src++;
+		g = *src++;
+		b = *src++;
+		save->writeByte(b);
+		save->writeByte(g);
+		save->writeByte(r);
+		save->writeByte(0xFF);   // Alpha
+	}
 }
 
 Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
@@ -482,11 +528,14 @@ void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
 	assert(big->format.bytesPerPixel == 3
 			&& small->format.bytesPerPixel == 3);
 
+	uint bigHeight = big->h - Scene::kTopBorderHeight - Scene::kBottomBorderHeight;
+	uint bigYOffset = Scene::kBottomBorderHeight;
+
 	uint8 *dst = (uint8 *)small->pixels;
 	for (uint i = 0; i < small->h; i++) {
 		for (uint j = 0; j < small->w; j++) {
 			uint32 srcX = big->w * j / small->w;
-			uint32 srcY = big->h - big->h * i / small->h;
+			uint32 srcY = bigYOffset + bigHeight - bigHeight * i / small->h;
 			uint8 *src = (uint8 *)big->getBasePtr(srcX, srcY - 1);
 
 			// Copy RGB bytes

@@ -311,6 +311,10 @@ void Myst3Engine::drawFrame() {
 		_movies[i]->draw();
 	}
 
+	if (_state->getViewType() == kMenu) {
+		_menu->draw();
+	}
+
 	for (uint i = 0; i < _drawables.size(); i++) {
 		_drawables[i]->draw();
 	}
@@ -328,8 +332,6 @@ void Myst3Engine::drawFrame() {
 
 		_scene->drawBlackBorders();
 		_inventory->draw();
-	} else {
-		_menu->draw();
 	}
 
 	_cursor->draw();

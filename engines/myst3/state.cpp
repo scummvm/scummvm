@@ -95,6 +95,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(481, BookStateReleeshahn, false)
 
 	VAR(1337, MenuEscapePressed, false)
+	VAR(1338, MenuNextAction, false)
 	VAR(1339, MenuLoadBack, false)
 	VAR(1340, MenuSaveBack, false)
 	VAR(1341, MenuSaveAction, false)
@@ -165,8 +166,14 @@ bool GameState::load(const Common::String &file) {
 	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(file);
 	Common::Serializer s = Common::Serializer(save, 0);
 	syncWithSaveGame(s);
-
 	delete save;
+
+	return true;
+}
+
+bool GameState::save(Common::OutSaveFile *save) {
+	Common::Serializer s = Common::Serializer(0, save);
+	syncWithSaveGame(s);
 
 	return true;
 }

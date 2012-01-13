@@ -55,6 +55,7 @@ public:
 	void saveMenuOpen();
 	void saveMenuSelect(uint16 item);
 	void saveMenuChangePage();
+	void saveMenuSave();
 	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
 
 private:
@@ -69,11 +70,13 @@ private:
 	Graphics::Surface *_saveThumb;
 
 	static const uint kCaretSpeed = 25;
+	static const uint kMiniatureSize = 240 * 135;
 
 	void saveLoadUpdateVars();
 
 	void createThumbnail(Graphics::Surface *big, Graphics::Surface *small);
 	void saveGameReadThumbnail(Common::InSaveFile *save);
+	void saveGameWriteThumbnail(Common::OutSaveFile *save);
 
 	Common::String getAgeLabel(GameState *gameState);
 	Common::String prepareSaveNameForDisplay(const Common::String &name);

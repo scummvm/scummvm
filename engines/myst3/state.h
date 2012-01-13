@@ -24,6 +24,7 @@
 #define VARIABLES_H_
 
 #include "common/hashmap.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 
 #include "engines/myst3/myst3.h"
@@ -46,6 +47,7 @@ public:
 	GameState(Myst3Engine *vm);
 	virtual ~GameState();
 	bool load(const Common::String &file);
+	bool save(Common::OutSaveFile *save);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
@@ -102,6 +104,7 @@ public:
 	DECLARE_VAR(481, BookStateReleeshahn)
 
 	DECLARE_VAR(1337, MenuEscapePressed)
+	DECLARE_VAR(1338, MenuNextAction)
 	DECLARE_VAR(1339, MenuLoadBack)
 	DECLARE_VAR(1340, MenuSaveBack)
 	DECLARE_VAR(1341, MenuSaveAction)

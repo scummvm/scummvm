@@ -186,6 +186,9 @@ void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
 	case 4:
 		_vm->_menu->saveMenuSelect(item);
 		break;
+	case 5:
+		_vm->_menu->saveMenuSave();
+		break;
 	case 6:
 		_vm->_menu->loadMenuChangePage();
 		break;
