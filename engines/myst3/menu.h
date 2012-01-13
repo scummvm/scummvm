@@ -36,6 +36,7 @@ namespace Myst3 {
 
 class Myst3Engine;
 class SpotItemFace;
+class GameState;
 
 class Menu {
 public:
@@ -51,6 +52,9 @@ public:
 	void loadMenuSelect(uint16 item);
 	void loadMenuLoad();
 	void loadMenuChangePage();
+	void saveMenuOpen();
+	void saveMenuSelect(uint16 item);
+	void saveMenuChangePage();
 	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
 
 private:
@@ -59,10 +63,12 @@ private:
 	Common::StringArray _saveLoadFiles;
 	SpotItemFace *_saveLoadSpotItem;
 	Common::String _saveLoadAgeName;
+	Common::String _saveName;
 
 	void saveLoadUpdateVars();
 
 	void saveGameReadThumbnail(Common::InSaveFile *save);
+	Common::String Menu::getAgeLabel(GameState *gameState);
 };
 
 class Dialog : public Drawable {

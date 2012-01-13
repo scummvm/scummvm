@@ -180,8 +180,17 @@ void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
 	case 2:
 		_vm->_menu->loadMenuLoad();
 		break;
+	case 3:
+		_vm->_menu->saveMenuOpen();
+		break;
+	case 4:
+		_vm->_menu->saveMenuSelect(item);
+		break;
 	case 6:
 		_vm->_menu->loadMenuChangePage();
+		break;
+	case 7:
+		_vm->_menu->saveMenuChangePage();
 		break;
 	default:
 		warning("Save load menu action %d for item %d is not implemented", action, item);

@@ -289,25 +289,13 @@ void Menu::loadMenuSelect(uint16 item) {
 	// Extract the age to load from the savegame
 	GameState *gameState = new GameState(_vm);
 	gameState->load(filename);
-
-	uint32 age = 0;
-	uint32 room = gameState->getLocationRoom();
-	if (room == 901)
-		age = gameState->getMenuSavedAge();
-	else
-		age = gameState->getLocationAge();
-
+	_saveLoadAgeName = getAgeLabel(gameState);
 	delete gameState;
 
 	// Extract the thumbnail from the save
 	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(filename);
 	saveGameReadThumbnail(save);
 	delete save;
-
-	// Look for the age name
-	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
-	_saveLoadAgeName = desc->getTextData(_vm->_db->getAgeLabelId(age));
-	_saveLoadAgeName.toUppercase();
 }
 
 void Menu::loadMenuLoad() {
@@ -330,12 +318,44 @@ void Menu::loadMenuLoad() {
 	_vm->goToNode(0, 1);
 }
 
+void Menu::saveMenuOpen() {
+	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
+
+	// The saves are sorted alphabetically
+	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+
+	_saveLoadAgeName = getAgeLabel(_vm->_state);
+
+	_vm->_state->setMenuSaveLoadCurrentPage(0);
+	saveLoadUpdateVars();
+
+	//TODO: Thumb
+}
+
+void Menu::saveMenuSelect(uint16 item) {
+	_vm->_state->setMenuSaveLoadSelectedItem(item);
+
+	if (item != 7) {
+		int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
+
+		uint16 index = page * 7 + item;
+
+		assert(index < _saveLoadFiles.size());
+		_saveName = _saveLoadFiles[index];
+	}
+}
+
+void Menu::saveMenuChangePage() {
+	saveLoadUpdateVars();
+	_vm->_state->setMenuSaveLoadSelectedItem(7);
+}
+
 void Menu::draw() {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 age = _vm->_state->getLocationAge();
 
-	if (room != 901 || node != 200)
+	if (room != 901 || !(node == 200 || node == 300))
 		return;
 
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
@@ -372,6 +392,23 @@ void Menu::draw() {
 
 void Menu::loadMenuChangePage() {
 	saveLoadUpdateVars();
+}
+
+Common::String Menu::getAgeLabel(GameState *gameState) {
+	uint32 age = 0;
+	uint32 room = gameState->getLocationRoom();
+	if (room == 901)
+		age = gameState->getMenuSavedAge();
+	else
+		age = gameState->getLocationAge();
+
+	// Look for the age name
+	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
+
+	Common::String label = desc->getTextData(_vm->_db->getAgeLabelId(age));
+	label.toUppercase();
+
+	return label;
 }
 
 void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
