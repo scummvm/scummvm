@@ -265,6 +265,7 @@ public:
 	int _state;
 
 	SceneActorExt() { _state = 0; }
+
 	virtual Common::String getClassName() { return "SceneActorExt"; }
 	virtual void synchronize(Serializer &s) {
 		SceneActor::synchronize(s);

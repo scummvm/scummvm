@@ -59,15 +59,15 @@ public:
 class Scene1100 : public SceneExt {
 	class Actor16 : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Actor17 : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Actor18 : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 public:
@@ -123,7 +123,7 @@ class Scene1200 : public SceneExt {
 		class Actor3 : public SceneActorExt {
 		public:
 			void init(int state);
-			bool startAction(CursorType action, Event &event);
+			virtual bool startAction(CursorType action, Event &event);
 		};
 
 		SceneActor _actor2;
@@ -160,6 +160,8 @@ class Scene1200 : public SceneExt {
 		void synchronize(Serializer &s);
 
 		int sub51AF8(Common::Point pt);
+		bool sub51AFD(Common::Point pt);
+		void sub9EDE8(Rect rect);
 		virtual Common::String getClassName() { return "UnkObject1200"; }
 	};
 		
@@ -211,8 +213,8 @@ public:
 
 class Scene1530 : public SceneExt {
 public:
-	SpeakerQuinn1530 _quinnSpeaker;
-	SpeakerSeeker1530 _seekerSpeaker;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;
@@ -222,6 +224,151 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
+};
+
+class Scene1550 : public SceneExt {
+	class UnkObj15501 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+
+		UnkObj15501();
+		void synchronize(Serializer &s);
+
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class UnkObj15502 : public SceneActor {
+	public:
+		int _fieldA4;
+
+		UnkObj15502();
+		void synchronize(Serializer &s);
+
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class UnkObj15503 : public SceneActor {
+	public:
+		int _fieldA4;
+
+		UnkObj15503();
+		void synchronize(Serializer &s);
+
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class UnkArea1550 : public SceneArea {
+	public:
+		byte _field20;
+		SceneActor _areaActor;
+		UnkObj15503 _unkObj155031;
+		UnkObj15503 _unkObj155032;
+
+		virtual void remove();
+		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	};
+
+	class Hotspot1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Hotspot3 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor6 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor7 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor8 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor9 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor10 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor11 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor12 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor13 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor14 : public SceneActor {
+		// Nothing specific found in the original
+		// TODO: check if it's an useless class
+	};
+
+public:
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	Hotspot1 _item1;
+	Hotspot1 _item2;
+	Hotspot3 _item3;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	Actor6 _actor6;
+	Actor7 _actor7;
+	Actor8 _actor8;
+	Actor9 _actor9;
+	Actor10 _actor10;
+	Actor11 _actor11;
+	Actor12 _actor12;
+	Actor13 _actor13;
+	UnkObj15501 _arrUnkObj15501[8];
+	Actor14 _actor14;
+	Actor14 _actor15;
+	Actor14 _actor16;
+	Actor14 _actor17;
+	Actor14 _actor18;
+	Actor14 _actor19;
+	UnkObj15502 _arrUnkObj15502[8];
+	UnkArea1550 _unkArea1;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+
+	int _field412;
+	byte _field414;
+	int _field415;
+	int _field417;
+	int _field419;
+
+	Scene1550();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void saveCharacter(int characterIndex);
 };
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
