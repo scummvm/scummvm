@@ -1448,12 +1448,12 @@ static void fadeOut() {
 	int16 stepNr, colorNr;
 	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 256 : 255;
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
 
 	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
 
 	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
-		for (colorNr = 1; colorNr < tillColorNr; colorNr++) {
+		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
 			if (g_sci->_gfxPalette->colorIsFromMacClut(colorNr)) {
 				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3];
 				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1];
@@ -1464,7 +1464,7 @@ static void fadeOut() {
 				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
 			}
 		}
-		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, 254);
+		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
 		g_sci->getEngineState()->wait(2);
 	}
 }
@@ -1474,10 +1474,10 @@ static void fadeIn() {
 	int16 stepNr;
 	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 256 : 255;
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		g_sci->_gfxPalette->kernelSetIntensity(1, tillColorNr, stepNr, true);
+		g_sci->_gfxPalette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
 		g_sci->getEngineState()->wait(2);
 	}
 }
