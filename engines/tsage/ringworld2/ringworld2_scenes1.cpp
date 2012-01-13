@@ -2886,8 +2886,8 @@ void Scene1550::signal() {
 
 void Scene1550::process(Event &event) {
 	if ((!R2_GLOBALS._player._canWalk) && (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN) && (event.eventType == EVENT_BUTTON_DOWN) && (this->_screenNumber == 1234)) {
-		int curReg = 0;
-		if (curReg = R2_GLOBALS._sceneRegions.indexOf(event.mousePos) == 0)
+		int curReg = R2_GLOBALS._sceneRegions.indexOf(event.mousePos);
+		if (curReg == 0)
 			_field412 = 1;
 		else if (((R2_GLOBALS._player._position.y < 90) && (event.mousePos.y > 90)) || ((R2_GLOBALS._player._position.y > 90) && (event.mousePos.y < 90)))
 			_field412 = 1;
