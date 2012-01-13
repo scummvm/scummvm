@@ -235,6 +235,10 @@ int16 Dialog::update() {
 
 void Menu::loadMenuOpen() {
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
+
+	// The saves are sorted alphabetically
+	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+
 	_vm->_state->setMenuSaveLoadCurrentPage(0);
 	saveLoadUpdateVars();
 }
