@@ -115,10 +115,8 @@ private:
 	Node *_node;
 	Scene *_scene;
 
-	Archive *_archive;
-	Archive *_archiveRSRC;
-	Archive *_archiveOVER;
-	Archive *_archiveLANG;
+	Common::Array<Archive *> _archivesCommon;
+	Archive *_archiveNode;
 
 	Script *_scriptEngine;
 
@@ -130,6 +128,8 @@ private:
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();
+
+	void addArchive(const Common::String &file, bool mandatory);
 
 	friend class Console;
 };

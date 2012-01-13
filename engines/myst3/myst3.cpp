@@ -51,8 +51,7 @@ namespace Myst3 {
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
-		_state(0), _node(0), _scene(0), _archive(0),
-		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
+		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_rnd(0), _shouldQuit(false),
 		_menuAction(0) {
@@ -87,14 +86,14 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	for (uint i = 0; i < _archivesCommon.size(); i++)
+		delete _archivesCommon[i];
+
 	delete _menu;
 	delete _inventory;
 	delete _cursor;
 	delete _scene;
-	delete _archive;
-	delete _archiveRSRC;
-	delete _archiveOVER;
-	delete _archiveLANG;
+	delete _archiveNode;
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
@@ -115,27 +114,15 @@ Common::Error Myst3Engine::run() {
 	_state = new GameState(this);
 	_scene = new Scene(this);
 	_menu = new Menu(this);
-	_archive = new Archive();
-	_archiveRSRC = new Archive();
-	_archiveOVER = new Archive();
-	_archiveLANG = new Archive();
+	_archiveNode = new Archive();
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
 
-	if (!_archiveLANG->open("ENGLISH.m3t", 0)) {
-		error("Unable to open archive ENGLISH.m3t");
-	}
-
-	if (!_archiveRSRC->open("RSRC.m3r", 0)) {
-		error("Unable to open archive RSRC.m3r");
-	}
-
-	if (!_archiveOVER->open("OVER101.m3o", 0)) {
-		// OVER101 is not required
-		delete _archiveOVER;
-		_archiveOVER = 0;
-	}
+	addArchive("OVER101.m3o", false);
+	addArchive("ENGLISH.m3t", true);
+	addArchive("LANGUAGE.m3u", false);
+	addArchive("RSRC.m3r", true);
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
@@ -175,9 +162,22 @@ Common::Error Myst3Engine::run() {
 
 	delete _node;
 
-	_archive->close();
+	_archiveNode->close();
 
 	return Common::kNoError;
+}
+
+void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
+	Archive *archive = new Archive();
+	bool opened = archive->open(file.c_str(), 0);
+
+	if (opened) {
+		_archivesCommon.push_back(archive);
+	} else {
+		delete archive;
+		if (mandatory)
+			error("Unable to open archive %s", file.c_str());
+	}
 }
 
 Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
@@ -389,8 +389,8 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 		_db->setCurrentRoom(roomID);
 		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName);
 
-		_archive->close();
-		if (!_archive->open(nodeFile.c_str(), newRoomName)) {
+		_archiveNode->close();
+		if (!_archiveNode->open(nodeFile.c_str(), newRoomName)) {
 			error("Unable to open archive %s", nodeFile.c_str());
 		}
 	}
@@ -633,17 +633,16 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint1
 
 	const DirectorySubEntry *desc = 0;
 
-	if (_archiveOVER)
-		desc = _archiveOVER->getDescription(room, index, face, type);
+	// Search common archives
+	uint i = 0;
+	while (!desc && i < _archivesCommon.size()) {
+		desc = _archivesCommon[i]->getDescription(room, index, face, type);
+		i++;
+	}
 
-	if (!desc && _archiveLANG)
-		desc = _archiveLANG->getDescription(room, index, face, type);
-
-	if (!desc && _archiveRSRC)
-		desc = _archiveRSRC->getDescription(room, index, face, type);
-
-	if (!desc && _archive)
-		desc = _archive->getDescription(room, index, face, type);
+	// Search currently loaded node archive
+	if (!desc && _archiveNode)
+		desc = _archiveNode->getDescription(room, index, face, type);
 
 	return desc;
 }
