@@ -56,6 +56,7 @@ public:
 	void saveMenuSelect(uint16 item);
 	void saveMenuChangePage();
 	void saveMenuSave();
+	void saveLoadErase();
 	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
 
 private:

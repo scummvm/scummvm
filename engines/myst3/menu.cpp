@@ -399,6 +399,40 @@ void Menu::saveMenuSave() {
 	_vm->runScriptsFromNode(88);
 }
 
+void Menu::saveLoadErase() {
+	uint16 node = _vm->_state->getLocationNode();
+	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
+	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
+
+	uint16 index = page * 7 + item;
+	assert(index < _saveLoadFiles.size());
+
+	// Confirm dialog
+	if (_vm->openDialog(1020))
+		return;
+
+	// Delete the file
+	if (!_vm->getSaveFileManager()->removeSavefile(_saveLoadFiles[index]))
+		_vm->openDialog(1050); // Error dialog
+
+	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
+
+	// The saves are sorted alphabetically
+	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+
+	saveLoadUpdateVars();
+
+	// Load menu specific
+	if (node == 200 && _saveLoadSpotItem) {
+		_saveLoadSpotItem->clear();
+		_saveLoadAgeName.clear();
+	}
+
+	// Save menu specific
+	if (node == 300)
+		_vm->_state->setMenuSaveLoadSelectedItem(7);
+}
+
 void Menu::draw() {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();

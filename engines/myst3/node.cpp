@@ -302,6 +302,12 @@ void SpotItemFace::updateData(const uint8 *data) {
 	_drawn = false;
 }
 
+void SpotItemFace::clear() {
+	memset(_bitmap->pixels, 0, _bitmap->pitch * _bitmap->h);
+
+	_drawn = false;
+}
+
 void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	// Copy not drawn SpotItem image from face
 	_notDrawnBitmap = new Graphics::Surface();

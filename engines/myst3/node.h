@@ -60,6 +60,7 @@ class SpotItemFace {
 		void initBlack(uint16 width, uint16 height);
 		void loadData(Graphics::JPEG *jpeg);
 		void updateData(const uint8 *data);
+		void clear();
 
 		void draw();
 		void undraw();
