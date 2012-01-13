@@ -40,7 +40,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kImagerMovie);
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
 
 	if (!binkDesc)
 		error("Movie %d does not exist", id);

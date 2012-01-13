@@ -47,7 +47,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	if (_type == kSpotItem || _type == kMenuSpotItem) {
 		_spotItemData.u = inStream.readUint32LE();
 		_spotItemData.v = inStream.readUint32LE();
-	} else if (_type == kMovie) {
+	} else if (_type == kMovie || _type == kMultitrackMovie) {
 		_videoData.v1.setValue(0, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(1, inStream.readSint32LE() * 0.000001f);
 		_videoData.v1.setValue(2, inStream.readSint32LE() * 0.000001f);
