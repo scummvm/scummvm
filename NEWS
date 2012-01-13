@@ -1,16 +1,23 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.4.1 (????-??-??)
+1.4.1 (2012-01-27)
  AGOS:
    - Fixed loading videos directly from InstallShield cabinets in the Windows
      version of the The Feeble Files.
+
+ BASS:
+   - Added support for Enhanced Music by James Woodcock 
+     (http://www.jameswoodcock.co.uk/?p=7695).
+
+ Broken Sword 2:
+   - Slight graphics improvement for PSX version.
 
  KYRA:
    - Fixed bug in the original Lands of Lore GUI which made ScummVM error out
      in the case the user did not have a contiguous save slot usage.
    - Add support for original DOS Lands of Lore save files (also applies to save
-     files made with the GOG release)
+     files made with the GOG release).
 
  SCI:
    - Fixed race condition in SCI1.1 palette changes. This fixes an error in
