@@ -47,13 +47,6 @@ enum {
 	kDebugScript   = (1 << 3)
 };
 
-// View type
-enum ViewType {
-	kCube = 1,
-	kFrame = 2,
-	kMenu = 3
-};
-
 class Console;
 class GameState;
 class HotSpot;
@@ -74,7 +67,6 @@ protected:
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
-	ViewType _viewType;
 	OSystem *_system;
 	GameState *_state;
 	Cursor *_cursor;
@@ -117,7 +109,6 @@ public:
 
 	void processInput(bool lookOnly);
 	void drawFrame();
-	uint getFrameCount() { return _frameCount; }
 private:
 	Console *_console;
 	
@@ -134,7 +125,6 @@ private:
 	Common::Array<ScriptedMovie *> _movies;
 	Common::Array<Drawable *> _drawables;
 
-	uint _frameCount;
 	bool _shouldQuit;
 	uint16 _menuAction;
 

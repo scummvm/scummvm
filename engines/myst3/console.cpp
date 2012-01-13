@@ -113,11 +113,13 @@ bool Console::Cmd_LookAt(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::Point lookAt = _vm->_scene->getMousePos();
-	DebugPrintf("pitch: %d heading: %d\n",  lookAt.y, lookAt.x);
+	float pitch = _vm->_state->getLookAtPitch();
+	float heading = _vm->_state->getLookAtHeading();
+
+	DebugPrintf("pitch: %d heading: %d\n", (int)pitch, (int)heading);
 
 	if (argc >= 3){
-		_vm->_scene->lookAt(atof(argv[1]), atof(argv[2]));
+		_vm->_state->lookAt(atof(argv[1]), atof(argv[2]));
 		return false;
 	}
 

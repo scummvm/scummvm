@@ -24,6 +24,7 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/nodeframe.h"
 #include "engines/myst3/scene.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
@@ -61,7 +62,7 @@ void NodeFrame::draw() {
 	Common::Rect screenRect;
 
 	// Size and position of the frame
-	if (_vm->_viewType == kMenu) {
+	if (_vm->_state->getViewType() == kMenu) {
 		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
 	} else {
 		screenRect = Common::Rect(Renderer::kOriginalWidth, Scene::kFrameHeight);

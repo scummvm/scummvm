@@ -23,33 +23,34 @@
 #include "engines/myst3/scene.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/state.h"
 
 #include "graphics/colormasks.h"
 
 namespace Myst3 {
 
 Scene::Scene(Myst3Engine *vm) :
-	_vm(vm), _cameraPitch(0.0f), _cameraHeading(0.0f)
+	_vm(vm)
 {
 }
 
 void Scene::updateCamera(Common::Point &mouse) {
-	_cameraPitch -= mouse.y / 3.0f;
-	_cameraHeading += mouse.x / 3.0f;
+	float pitch = _vm->_state->getLookAtPitch();
+	float heading = _vm->_state->getLookAtHeading();
+
+	pitch -= mouse.y / 3.0f;
+	heading += mouse.x / 3.0f;
 
 	// Keep heading in 0..360 range
-	if (_cameraHeading > 360.0f)
-		_cameraHeading -= 360.0f;
-	else if (_cameraHeading < 0.0f)
-		_cameraHeading += 360.0f;
+	if (heading > 360.0f)
+		heading -= 360.0f;
+	else if (heading < 0.0f)
+		heading += 360.0f;
 
 	// Keep pitch within allowed values
-	_cameraPitch = CLIP(_cameraPitch, -60.0f, 80.0f);
-}
+	pitch = CLIP(pitch, -60.0f, 80.0f);
 
-void Scene::lookAt(float pitch, float heading) {
-	_cameraPitch = pitch;
-	_cameraHeading = heading;
+	_vm->_state->lookAt(pitch, heading);
 }
 
 void Scene::drawBlackBorders() {

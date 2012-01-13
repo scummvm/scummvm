@@ -1378,12 +1378,12 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 	if (firstStep > 100)
 		firstStep /= 100;
 
-	uint nextScript = _vm->getFrameCount() + firstStep;
+	uint nextScript = _vm->_state->getFrameCount() + firstStep;
 
 	while (_vm->_state->evaluate(cmd.args[0])) {
 
-		if (_vm->getFrameCount() >= nextScript) {
-			nextScript = _vm->getFrameCount() + step;
+		if (_vm->_state->getFrameCount() >= nextScript) {
+			nextScript = _vm->_state->getFrameCount() + step;
 
 			_vm->runScriptsFromNode(cmd.args[1]);
 		}
@@ -1399,7 +1399,7 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {
 	if (numFrames < 0) {
 		numFrames = -numFrames;
-		uint startFrame = _vm->getFrameCount();
+		uint startFrame = _vm->_state->getFrameCount();
 		uint currentFrame = startFrame;
 		uint endFrame = startFrame + numFrames;
 		uint numValues = abs(endValue - startValue);
@@ -1426,7 +1426,7 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 
 				_vm->processInput(true);
 				_vm->drawFrame();
-				currentFrame = _vm->getFrameCount();
+				currentFrame = _vm->_state->getFrameCount();
 
 				if (currentFrame > endFrame)
 					break;
@@ -1450,10 +1450,10 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 			if (script)
 				_vm->runScriptsFromNode(script);
 
-			for (uint i = _vm->getFrameCount(); i < endFrame; i = _vm->getFrameCount())
+			for (uint i = _vm->_state->getFrameCount(); i < endFrame; i = _vm->_state->getFrameCount())
 				_vm->drawFrame();
 
-			endFrame = _vm->getFrameCount() + numFrames;
+			endFrame = _vm->_state->getFrameCount() + numFrames;
 
 			currentValue += positiveDirection ? 1 : -1;
 		}

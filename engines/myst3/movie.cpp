@@ -86,13 +86,13 @@ void Movie::loadPosition(const VideoData &videoData) {
 }
 
 void Movie::draw() {
-	if (_vm->_viewType == kCube) {
+	if (_vm->_state->getViewType() == kCube) {
 		_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
 	} else {
 		Common::Rect screenRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
 		screenRect.translate(_posU, _posV);
 
-		if (_vm->_viewType == kFrame)
+		if (_vm->_state->getViewType() == kFrame)
 			screenRect.translate(0, Scene::kTopBorderHeight);
 
 		Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
@@ -252,7 +252,7 @@ bool SimpleMovie::update() {
 		_bink.seekToFrame(_startFrame - 1);
 	}
 
-	uint startEngineFrame = _vm->getFrameCount();
+	uint startEngineFrame = _vm->_state->getFrameCount();
 
 	if (!_synchronized) {
 		// Play the movie according to the bink file framerate
@@ -261,7 +261,7 @@ bool SimpleMovie::update() {
 		}
 	} else {
 		// Draw a movie frame each two engine frames
-		int targetFrame = (_vm->getFrameCount() - startEngineFrame) >> 2;
+		int targetFrame = (_vm->_state->getFrameCount() - startEngineFrame) >> 2;
 		if (_bink.getCurFrame() < targetFrame) {
 			drawNextFrameToTexture();
 		}

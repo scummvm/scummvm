@@ -151,7 +151,7 @@ void GameState::syncWithSaveGame(Common::Serializer &s) {
 	for (uint i = 0; i < 2048; i++)
 		s.syncAsSint32LE(_data.vars[i]);
 
-	s.syncAsUint32LE(_data.inventoryPosition);
+	s.syncAsUint32LE(_data.inventoryCount);
 
 	for (uint i = 0; i < 7; i++)
 		s.syncAsUint32LE(_data.inventoryList[i]);

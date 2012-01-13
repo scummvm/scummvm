@@ -131,7 +131,7 @@ class Node {
 		virtual void draw() = 0;
 
 		void addSunSpot(const SunSpot &sunspot);
-		SunSpot computeSunspotsIntensity(const Common::Point &lookAt);
+		SunSpot computeSunspotsIntensity(float pitch, float heading);
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);

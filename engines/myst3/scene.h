@@ -34,17 +34,12 @@ class Scene {
 	private:
 		Myst3Engine *_vm;
 
-		float _cameraPitch;
-		float _cameraHeading;
 		Common::Point _mouseOld;
 
 	public:
 		Scene(Myst3Engine *vm);
 
 		void updateCamera(Common::Point &mouse);
-		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
-
-		void lookAt(float pitch, float heading);
 
 		void drawBlackBorders();
 		void drawSunspotFlare(const SunSpot &s);

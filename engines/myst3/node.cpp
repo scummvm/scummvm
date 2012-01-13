@@ -365,20 +365,20 @@ void Node::addSunSpot(const SunSpot &sunspot) {
 	_sunspots.push_back(sunSpot);
 }
 
-static Math::Vector3d directionToVector(const Common::Point &lookAt) {
+static Math::Vector3d directionToVector(float pitch, float heading) {
 	Math::Vector3d v;
 
-	float heading = Math::degreeToRadian(lookAt.x);
-	float pitch = Math::degreeToRadian(lookAt.y);
+	float radHeading = Math::degreeToRadian(heading);
+	float radPitch = Math::degreeToRadian(pitch);
 
-	v.setValue(0, cos(pitch) * cos(heading));
-	v.setValue(1, sin(pitch));
-	v.setValue(2, cos(pitch) * sin(heading));
+	v.setValue(0, cos(radPitch) * cos(radHeading));
+	v.setValue(1, sin(radPitch));
+	v.setValue(2, cos(radPitch) * sin(heading));
 
 	return v;
 }
 
-SunSpot Node::computeSunspotsIntensity(const Common::Point &lookAt) {
+SunSpot Node::computeSunspotsIntensity(float pitch, float heading) {
 	SunSpot result;
 	result.intensity = -1;
 	result.color = 0;
@@ -392,8 +392,8 @@ SunSpot Node::computeSunspotsIntensity(const Common::Point &lookAt) {
 		// Skip disabled items
 		if (value == 0) continue;
 
-		Math::Vector3d vLookAt = directionToVector(lookAt);
-		Math::Vector3d vSun = -directionToVector(Common::Point(s->heading, s->pitch));
+		Math::Vector3d vLookAt = directionToVector(pitch, heading);
+		Math::Vector3d vSun = -directionToVector(s->pitch, s->heading);
 		float dotProduct = Math::Vector3d::dotProduct(vLookAt, vSun);
 
 		float distance = (0.05 * s->radius - (dotProduct + 1.0) * 90) / (0.05 * s->radius);

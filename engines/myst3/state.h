@@ -30,6 +30,13 @@
 
 namespace Myst3 {
 
+// View type
+enum ViewType {
+	kCube = 1,
+	kFrame = 2,
+	kMenu = 3
+};
+
 #define DECLARE_VAR(num, name) \
 	void set##name(int32 value) { engineSet(num, value); } \
 	int32 get##name() { return engineGet(num); }
@@ -104,6 +111,16 @@ public:
 	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
 	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
 
+	uint getFrameCount() { return _data.currentFrame; }
+	void incFrameCount() { _data.currentFrame++; }
+
+	ViewType getViewType() { return static_cast<ViewType>(_data.currentNodeType); }
+	void setViewType(ViewType t) { _data.currentNodeType = t; }
+
+	float getLookAtPitch() { return _data.lookatPitch; }
+	float getLookAtHeading() { return _data.lookatHeading; }
+	void lookAt(float pitch, float heading) { _data.lookatPitch = pitch; _data.lookatHeading = heading; }
+
 private:
 	Myst3Engine *_vm;
 
@@ -136,7 +153,7 @@ private:
 		float maxHeading;
 		uint32  dword_4C2C90;
 		int32 vars[2048];
-		uint32 inventoryPosition;
+		uint32 inventoryCount;
 		uint32 inventoryList[7];
 		int8 zipDestinations[256];
 	};

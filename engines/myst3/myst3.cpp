@@ -54,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_state(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
-		_frameCount(0), _rnd(0), _shouldQuit(false),
+		_rnd(0), _shouldQuit(false),
 		_menuAction(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -183,8 +183,10 @@ Common::Error Myst3Engine::run() {
 Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 	Common::Array<HotSpot *> hovered;
 
-	if (_viewType == kCube) {
-		Common::Point mouse = _scene->getMousePos();
+	if (_state->getViewType() == kCube) {
+		float pitch = _state->getLookAtPitch();
+		float heading = _state->getLookAtHeading();
+		Common::Point mouse = Common::Point(heading, pitch);
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
@@ -196,7 +198,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 		Common::Point mouse = _cursor->getPosition();
 		Common::Point scaledMouse;
 
-		if (_viewType == kMenu)  {
+		if (_state->getViewType() == kMenu)  {
 			scaledMouse = Common::Point(
 					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
 					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight(),
@@ -243,7 +245,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 		if (event.type == Common::EVENT_QUIT) {
 			_shouldQuit = true;
 		} else if (event.type == Common::EVENT_MOUSEMOVE) {
-			if (_viewType == kCube) {
+			if (_state->getViewType() == kCube) {
 				_scene->updateCamera(event.relMouse);
 			}
 
@@ -292,9 +294,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 void Myst3Engine::drawFrame() {
 	_gfx->clear();
 
-	if (_viewType == kCube) {
-		Common::Point rot = _scene->getMousePos();
-		_gfx->setupCameraPerspective(rot.y, rot.x);
+	if (_state->getViewType() == kCube) {
+		float pitch = _state->getLookAtPitch();
+		float heading = _state->getLookAtHeading();
+		_gfx->setupCameraPerspective(pitch, heading);
 	} else {
 		_gfx->setupCameraOrtho2D();
 	}
@@ -311,12 +314,14 @@ void Myst3Engine::drawFrame() {
 		_drawables[i]->draw();
 	}
 
-	if (_viewType == kCube) {
+	if (_state->getViewType() == kCube) {
 		_gfx->setupCameraOrtho2D();
 	}
 
-	if (_viewType != kMenu) {
-		SunSpot flare = _node->computeSunspotsIntensity(_scene->getMousePos());
+	if (_state->getViewType() != kMenu) {
+		float pitch = _state->getLookAtPitch();
+		float heading = _state->getLookAtHeading();
+		SunSpot flare = _node->computeSunspotsIntensity(pitch, heading);
 		if (flare.intensity >= 0)
 			_scene->drawSunspotFlare(flare);
 
@@ -330,7 +335,7 @@ void Myst3Engine::drawFrame() {
 
 	_system->updateScreen();
 	_system->delayMillis(10);
-	_frameCount++;
+	_state->incFrameCount();
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
@@ -437,7 +442,7 @@ void Myst3Engine::runNodeBackgroundScripts() {
 }
 
 void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
-	_viewType = kCube;
+	_state->setViewType(kCube);
 
 	_cursor->lockPosition(true);
 	updateCursor();
@@ -446,7 +451,7 @@ void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
 }
 
 void Myst3Engine::loadNodeFrame(uint16 nodeID) {
-	_viewType = kFrame;
+	_state->setViewType(kFrame);
 
 	_cursor->lockPosition(false);
 	updateCursor();
@@ -455,7 +460,7 @@ void Myst3Engine::loadNodeFrame(uint16 nodeID) {
 }
 
 void Myst3Engine::loadNodeMenu(uint16 nodeID) {
-	_viewType = kMenu;
+	_state->setViewType(kMenu);
 
 	_cursor->lockPosition(false);
 	updateCursor();
