@@ -25,6 +25,7 @@
 
 #include "engines/myst3/gfx.h"
 
+#include "common/events.h"
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/savefile.h"
@@ -44,6 +45,7 @@ public:
 	virtual ~Menu();
 
 	void draw();
+	void handleInput(const Common::KeyState &e);
 
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);

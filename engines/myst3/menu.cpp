@@ -483,6 +483,38 @@ void Menu::draw() {
 	}
 }
 
+void Menu::handleInput(const Common::KeyState &e) {
+	uint16 node = _vm->_state->getLocationNode();
+	uint16 room = _vm->_state->getLocationRoom();
+	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
+
+	if (room != 901 || node != 300 || item != 7)
+		return;
+
+	Common::String display = prepareSaveNameForDisplay(_saveName);
+
+	if (e.keycode == Common::KEYCODE_BACKSPACE
+			|| e.keycode == Common::KEYCODE_DELETE) {
+		display.deleteLastChar();
+		_saveName = display;
+		return;
+	} else if (e.keycode == Common::KEYCODE_RETURN
+			|| e.keycode == Common::KEYCODE_KP_ENTER) {
+		saveMenuSave();
+		return;
+	}
+
+	if ((e.ascii >= 'a' && e.ascii <= 'z'
+			|| e.ascii >= 'A' && e.ascii <= 'Z'
+			|| e.ascii >= '0' && e.ascii <= '9'
+			|| e.ascii == ' ')
+			&& (display.size() < 17)) {
+		display += e.ascii;
+		display.toUppercase();
+		_saveName = display;
+	}
+}
+
 void Menu::loadMenuChangePage() {
 	saveLoadUpdateVars();
 }
