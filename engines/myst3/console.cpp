@@ -38,6 +38,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("go",					WRAP_METHOD(Console, Cmd_Go));
 	DCmd_Register("extract",			WRAP_METHOD(Console, Cmd_Extract));
 	DCmd_Register("fillInventory",		WRAP_METHOD(Console, Cmd_FillInventory));
+	DCmd_Register("dumpArchive",		WRAP_METHOD(Console, Cmd_DumpArchive));
 }
 
 Console::~Console() {
@@ -271,6 +272,37 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 bool Console::Cmd_FillInventory(int argc, const char **argv) {
 	_vm->_inventory->addAll();
 	return false;
+}
+
+bool Console::Cmd_DumpArchive(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Extract all the files from a game archive.\n");
+		DebugPrintf("The destination folder, named 'dump', must exist.\n");
+		DebugPrintf("Usage :\n");
+		DebugPrintf("dumpArchive [file name]\n");
+		return true;
+	}
+
+	// Is the archive multi-room
+	Common::String temp = Common::String(argv[1]);
+	temp.toUppercase();
+
+	bool multiRoom = !temp.hasSuffix(".M3A");
+	if (!multiRoom) {
+		temp = Common::String(argv[1], 4);
+		temp.toUppercase();
+	}
+
+	Archive archive;
+	if (!archive.open(argv[1], multiRoom ? 0 : temp.c_str())) {
+		DebugPrintf("Can't open archive with name '%s'\n", argv[1]);
+		return true;
+	}
+
+	archive.dumpToFiles();
+	archive.close();
+
+	return true;
 }
 
 } /* namespace Myst3 */

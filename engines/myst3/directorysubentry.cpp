@@ -82,22 +82,30 @@ void DirectorySubEntry::dump() {
 	debug("offset : %x size: %d padding : %d face : %d type : %d", _offset, _size, _metadataSize, _face, _type);
 }
 
-void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 index) {
+void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const char* room, uint16 index) {
 	char fileName[255];
 	
 	switch (_type) {
+		case kNumMetadata:
+		case kTextMetadata:
+			return; // These types are pure metadata and can't be extracted
 		case kCubeFace:
 		case kSpotItem:
-			sprintf(fileName, "dump/%d-%d.jpg", index, _face);
+		case kMenuSpotItem:
+		case kFrame:
+			sprintf(fileName, "dump/%s-%d-%d.jpg", room, index, _face);
 			break;
 		case kFaceMask:
-			sprintf(fileName, "dump/%d-%d.mask", index, _face);
+			sprintf(fileName, "dump/%s-%d-%d.mask", room, index, _face);
 			break;
 		case kMovie:
-			sprintf(fileName, "dump/%d.bik", index);
+		case kStillMovie:
+		case kDialogMovie:
+		case kMultitrackMovie:
+			sprintf(fileName, "dump/%s-%d.bik", room, index);
 			break;
 		default:
-			sprintf(fileName, "dump/%d-%d.%d", index, _face, _type);
+			sprintf(fileName, "dump/%s-%d-%d.%d", room, index, _face, _type);
 			break;
 	}
 	
@@ -105,7 +113,8 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 
 	debug("Extracted %s", fileName);
 	
 	Common::DumpFile outFile;
-	outFile.open(fileName);
+	if (!outFile.open(fileName))
+		error("Unable to open file '%s' for writing", fileName);
 	
 	inStream.seek(_offset);
 	

@@ -63,7 +63,7 @@ void DirectoryEntry::dump() {
 
 void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {
 	for (uint i = 0; i < _subentries.size(); i++) {
-		_subentries[i].dumpToFile(inStream, _index);
+		_subentries[i].dumpToFile(inStream, _roomName, _index);
 	}
 }
 
