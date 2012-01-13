@@ -34,6 +34,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - The option to toggle sound effect types between digitized and synthesized
      has been disabled until a more user-friendly GUI option is possible.
      Digital sound effects are always preferred for now.
+   - Fixed a case where starting a new song didn't fully reset its channels,
+     thus some notes sounded wrong.
 
 1.4.0 (2011-11-11)
  New Games:
