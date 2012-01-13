@@ -48,9 +48,6 @@ public:
 	void setJustify(int justify) { _justify = justify; }
 	int getJustify() { return _justify; }
 
-	void setDisabled(bool disabled) { _disabled = disabled; }
-	bool getDisabled() { return _disabled; }
-
 	void setWidth(int width) { _width = width; }
 	int getWidth() { return _width; }
 
@@ -67,7 +64,6 @@ protected:
 	int _x, _y;
 	int _width, _height;
 	int _justify;
-	bool _disabled;
 	Font *_font;
 	int _duration;
 };

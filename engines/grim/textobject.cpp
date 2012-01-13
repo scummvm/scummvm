@@ -34,7 +34,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-	_disabled(false), _font(NULL), _duration(0) {
+	_font(NULL), _duration(0) {
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
@@ -78,7 +78,8 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_numberLines);
 	state->writeLESint32(_duration);
 
-	state->writeLESint32(_disabled);
+	//SAVECHANGE: Remove the next line with the next save version
+	state->writeLESint32(0);
 	state->writeLESint32(_blastDraw);
 	state->writeLESint32(_isSpeech);
 	state->writeLESint32(_elapsedTime);
@@ -99,7 +100,8 @@ bool TextObject::restoreState(SaveGame *state) {
 	_numberLines  = state->readLESint32();
 	_duration     = state->readLESint32();
 
-	_disabled     = state->readLESint32();
+	//SAVECHANGE: Remove the next line with the next save version
+	state->readLESint32();
 	_blastDraw    = state->readLESint32();
 	_isSpeech     = state->readLESint32();
 	_elapsedTime  = state->readLESint32();
@@ -121,7 +123,6 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 	_font = defaults->getFont();
 	_fgColor = defaults->getFGColor();
 	_justify = defaults->getJustify();
-	_disabled = defaults->getDisabled();
 }
 
 int TextObject::getBitmapWidth() {
@@ -325,7 +326,7 @@ int TextObject::getLineY(int line) {
 }
 
 void TextObject::draw() {
-	if (_disabled || !_lines)
+	if (!_lines)
 		return;
 
 	if (!_created) {
@@ -341,13 +342,13 @@ void TextObject::draw() {
 }
 
 void TextObject::update() {
-	if (!_duration || !_created || _disabled) {
+	if (!_duration || !_created) {
 		return;
 	}
 
 	_elapsedTime += g_grim->getFrameTime();
 	if (_elapsedTime > _duration) {
-		_disabled = true;
+		delete this;
 	}
 }
 
