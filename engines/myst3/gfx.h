@@ -70,6 +70,8 @@ public:
 	void drawCube(Texture **textures);
 	void draw2DText(const Common::String &text, const Common::Point &position);
 
+	Graphics::Surface *getScreenshot();
+
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 

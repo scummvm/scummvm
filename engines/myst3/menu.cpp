@@ -38,9 +38,15 @@ Menu::Menu(Myst3Engine *vm) :
 	_saveLoadSpotItem(0),
 	_saveDrawCaret(false),
 	_saveCaretCounter(0) {
+	_saveThumb = new Graphics::Surface();
+	_saveThumb->create(240, 135, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 }
 
 Menu::~Menu() {
+	if (_saveThumb) {
+		_saveThumb->free();
+		delete _saveThumb;
+	}
 }
 
 void Menu::updateMainMenu(uint16 action) {
@@ -125,10 +131,16 @@ void Menu::updateMainMenu(uint16 action) {
 
 void Menu::goToNode(uint16 node) {
 	if (_vm->_state->getMenuSavedAge() == 0 && _vm->_state->getLocationRoom() != 901) {
-		// Entering menu, save current location
+		// Entering menu, save current location ...
 		_vm->_state->setMenuSavedAge(_vm->_state->getLocationAge());
 		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
 		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
+
+		// ... and capture the screen
+		Graphics::Surface *big = _vm->_gfx->getScreenshot();
+		createThumbnail(big, _saveThumb);
+		big->free();
+		delete big;
 	}
 
 	_vm->_state->setMenuEscapePressed(0);
@@ -332,7 +344,9 @@ void Menu::saveMenuOpen() {
 	_vm->_state->setMenuSaveLoadCurrentPage(0);
 	saveLoadUpdateVars();
 
-	//TODO: Thumb
+	// Update the thumbnail to display
+	if (_saveLoadSpotItem && _saveThumb)
+		_saveLoadSpotItem->updateData((uint8 *)_saveThumb->pixels);
 }
 
 void Menu::saveMenuSelect(uint16 item) {
@@ -462,6 +476,25 @@ Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
 		display.deleteLastChar();
 
 	return display;
+}
+
+void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
+	assert(big->format.bytesPerPixel == 3
+			&& small->format.bytesPerPixel == 3);
+
+	uint8 *dst = (uint8 *)small->pixels;
+	for (uint i = 0; i < small->h; i++) {
+		for (uint j = 0; j < small->w; j++) {
+			uint32 srcX = big->w * j / small->w;
+			uint32 srcY = big->h - big->h * i / small->h;
+			uint8 *src = (uint8 *)big->getBasePtr(srcX, srcY - 1);
+
+			// Copy RGB bytes
+			*dst++ = *src++;
+			*dst++ = *src++;
+			*dst++ = *src++;
+		}
+	}
 }
 
 } /* namespace Myst3 */

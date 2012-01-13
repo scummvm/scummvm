@@ -386,5 +386,13 @@ void Renderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vec
 	glDisable(GL_BLEND);
 }
 
+Graphics::Surface *Renderer::getScreenshot() {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+
+	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+
+	return s;
+}
 
 } // end of namespace Myst3

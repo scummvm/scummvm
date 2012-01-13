@@ -66,12 +66,15 @@ private:
 	Common::String _saveName;
 	bool _saveDrawCaret;
 	int32 _saveCaretCounter;
+	Graphics::Surface *_saveThumb;
 
 	static const uint kCaretSpeed = 25;
 
 	void saveLoadUpdateVars();
 
+	void createThumbnail(Graphics::Surface *big, Graphics::Surface *small);
 	void saveGameReadThumbnail(Common::InSaveFile *save);
+
 	Common::String getAgeLabel(GameState *gameState);
 	Common::String prepareSaveNameForDisplay(const Common::String &name);
 };
