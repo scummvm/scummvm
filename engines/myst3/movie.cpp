@@ -43,6 +43,9 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
 
 	if (!binkDesc)
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kDialogMovie);
+
+	if (!binkDesc)
 		error("Movie %d does not exist", id);
 
 	loadPosition(binkDesc->getVideoData());

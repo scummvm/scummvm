@@ -152,6 +152,9 @@ Script::Script(Myst3Engine *vm):
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
+	OP_1(164, changeNode,					kValue														);
+	OP_2(165, changeNodeRoom,				kValue,		kValue											);
+	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
 	OP_2(174, runScriptWhileCond,			kCondition,	kValue											);
 	OP_3(175, runScriptWhileCondEachXFrames,kCondition,	kValue,		kValue								);
 	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
@@ -1355,6 +1358,24 @@ void Script::moviePlaySynchronized(Context &c, const Opcode &cmd) {
 
 	_vm->_state->setMovieSynchronized(1);
 	_vm->playSimpleMovie(_vm->_state->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::changeNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
+
+	_vm->loadNode(cmd.args[0]);
+}
+
+void Script::changeNodeRoom(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d room %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->loadNode(cmd.args[1], cmd.args[0]);
+}
+
+void Script::changeNodeRoomAge(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d room %d age %d", cmd.op, cmd.args[2], cmd.args[1], cmd.args[0]);
+
+	_vm->loadNode(cmd.args[2], cmd.args[1], cmd.args[0]);
 }
 
 void Script::runScriptWhileCond(Context &c, const Opcode &cmd) {

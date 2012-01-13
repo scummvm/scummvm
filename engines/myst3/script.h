@@ -205,6 +205,9 @@ private:
 	DECLARE_OPCODE(zipToRoomNode);
 	DECLARE_OPCODE(moviePlay);
 	DECLARE_OPCODE(moviePlaySynchronized);
+	DECLARE_OPCODE(changeNode);
+	DECLARE_OPCODE(changeNodeRoom);
+	DECLARE_OPCODE(changeNodeRoomAge);
 	DECLARE_OPCODE(runScriptWhileCond);
 	DECLARE_OPCODE(runScriptWhileCondEachXFrames);
 	DECLARE_OPCODE(runScriptForVar);

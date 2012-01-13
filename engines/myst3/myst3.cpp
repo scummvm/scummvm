@@ -345,16 +345,6 @@ void Myst3Engine::drawFrame() {
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
-	if (_node) {
-		for (uint i = 0; i < _movies.size(); i++) {
-			delete _movies[i];
-		}
-		_movies.clear();
-
-		delete _node;
-		_node = 0;
-	}
-
 	uint16 node = _state->getLocationNextNode();
 	if (node == 0)
 		node = nodeID;
@@ -370,6 +360,16 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
+	if (_node) {
+		for (uint i = 0; i < _movies.size(); i++) {
+			delete _movies[i];
+		}
+		_movies.clear();
+
+		delete _node;
+		_node = 0;
+	}
+
 	_scriptEngine->run(&_db->getNodeInitScript());
 
 	if (nodeID)
