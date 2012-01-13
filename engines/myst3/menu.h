@@ -49,7 +49,7 @@ public:
 
 	void loadMenuOpen();
 	void loadMenuSelect(uint16 item);
-	void loadMenuLoad(uint16 item);
+	void loadMenuLoad();
 	void loadMenuChangePage();
 	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
 

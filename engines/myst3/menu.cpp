@@ -129,6 +129,7 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
 	}
 
+	_vm->_state->setMenuEscapePressed(0);
 	_vm->_state->setLocationNextAge(9);
 	_vm->_state->setLocationNextRoom(901);
 	_vm->goToNode(node, 2);
@@ -267,6 +268,12 @@ void Menu::saveLoadUpdateVars() {
 }
 
 void Menu::loadMenuSelect(uint16 item) {
+	// Selecting twice the same item loads it
+	if (item == _vm->_state->getMenuSaveLoadSelectedItem()) {
+		loadMenuLoad();
+		return;
+	}
+
 	_vm->_state->setMenuSaveLoadSelectedItem(item);
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
@@ -297,11 +304,10 @@ void Menu::loadMenuSelect(uint16 item) {
 	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
 	_saveLoadAgeName = desc->getTextData(_vm->_db->getAgeLabelId(age));
 	_saveLoadAgeName.toUppercase();
-
-	// TODO: Selecting twice loads item
 }
 
-void Menu::loadMenuLoad(uint16 item) {
+void Menu::loadMenuLoad() {
+	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
 	uint16 index = page * 7 + item;

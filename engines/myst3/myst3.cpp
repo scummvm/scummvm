@@ -274,9 +274,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				// Open main menu
-				if (_state->getLocationRoom() != 901) {
+				if (_state->getLocationRoom() != 901)
 					_menu->goToNode(100);
-				}
+				else
+					_state->setMenuEscapePressed(1);
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {

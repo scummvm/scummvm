@@ -101,6 +101,7 @@ public:
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 
+	DECLARE_VAR(1337, MenuEscapePressed)
 	DECLARE_VAR(1339, MenuLoadBack)
 	DECLARE_VAR(1340, MenuSaveBack)
 	DECLARE_VAR(1341, MenuSaveAction)
