@@ -373,7 +373,7 @@ static Math::Vector3d directionToVector(float pitch, float heading) {
 
 	v.setValue(0, cos(radPitch) * cos(radHeading));
 	v.setValue(1, sin(radPitch));
-	v.setValue(2, cos(radPitch) * sin(heading));
+	v.setValue(2, cos(radPitch) * sin(radHeading));
 
 	return v;
 }
@@ -409,6 +409,8 @@ SunSpot Node::computeSunspotsIntensity(float pitch, float heading) {
 			}
 		}
 	}
+
+
 
 	return result;
 }
