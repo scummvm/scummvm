@@ -389,10 +389,8 @@ void Lua_V2::PutActorInOverworld() {
 }
 
 void Lua_V2::GetActorWorldPos() {
-	warning("Lua_V2::GetActorWorldPos: Currently returns 0, 0, 0");
-	lua_pushnumber(0);
-	lua_pushnumber(0);
-	lua_pushnumber(0);
+	warning("Lua_V2::GetActorWorldPos: Currently runs Lua_V1::GetActorPos");
+	Lua_V1::GetActorPos();
 }
 
 void Lua_V2::MakeScreenTextures() {
@@ -429,12 +427,13 @@ void Lua_V2::PutActorInSet() {
 	// FIXME verify adding actor to set
 	if (!set) {
 		actor->putInSet("");
-	} else if (!actor->isInSet(set)) {
-		actor->putInSet(set);
+		lua_pushnil();
+	} else {
+		if (!actor->isInSet(set)) {
+			actor->putInSet(set);
+		}
 		lua_pushnumber(1.0);
-		return;
 	}
-	lua_pushnil();
 }
 
 void Lua_V2::LoadBundle() {
