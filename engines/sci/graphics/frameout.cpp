@@ -498,7 +498,8 @@ void GfxFrameout::kernelFrameout() {
 		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
 		// Since I first wrote the patch, the race has stopped occurring for me though.
 		// I'll leave this for investigation later, when someone can reproduce.
-		if (it->pictureId == 0xffff)
+		//if (it->pictureId == 0xffff)	// FIXME: This is what SSCI does, and fixes the intro of LSL7, but breaks the dialogs in GK1 (adds black boxes)
+		if (it->planeBack)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		GuiResourceId planeMainPictureId = it->pictureId;
