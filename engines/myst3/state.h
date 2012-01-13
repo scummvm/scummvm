@@ -121,6 +121,9 @@ public:
 	float getLookAtHeading() { return _data.lookatHeading; }
 	void lookAt(float pitch, float heading) { _data.lookatPitch = pitch; _data.lookatHeading = heading; }
 
+	Common::Array<uint16> getInventory();
+	void updateInventory(const Common::Array<uint16> &items);
+
 private:
 	Myst3Engine *_vm;
 

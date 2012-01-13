@@ -22,6 +22,7 @@
 
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/inventory.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
@@ -307,6 +308,7 @@ void Menu::loadMenuLoad(uint16 item) {
 	assert(index < _saveLoadFiles.size());
 
 	_vm->_state->load(_saveLoadFiles[index]);
+	_vm->_inventory->loadFromState();
 
 	_vm->_state->setLocationNextAge(_vm->_state->getMenuSavedAge());
 	_vm->_state->setLocationNextRoom(_vm->_state->getMenuSavedRoom());

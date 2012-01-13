@@ -170,6 +170,23 @@ bool GameState::load(const Common::String &file) {
 	return true;
 }
 
+Common::Array<uint16> GameState::getInventory() {
+	Common::Array<uint16> items;
+
+	for (uint i = 0; i < _data.inventoryCount; i++)
+		items.push_back(_data.inventoryList[i]);
+
+	return items;
+}
+
+void GameState::updateInventory(const Common::Array<uint16> &items) {
+	for (uint i = 0; i < 7; i++)
+		_data.inventoryList[i] = 0;
+
+	for (uint i = 0; i < items.size(); i++)
+		_data.inventoryList[i] = items[i];
+}
+
 void GameState::checkRange(uint16 var) {
 	if (var < 1 || var > 2047)
 		error("Variable out of range %d", var);

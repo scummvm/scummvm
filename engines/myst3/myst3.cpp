@@ -704,6 +704,7 @@ int16 Myst3Engine::openDialog(uint16 id) {
 
 Common::Error Myst3Engine::loadGameState(int slot) {
 	if (_state->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
+		_inventory->loadFromState();
 		goToNode(0, 1);
 		return Common::kNoError;
 	}

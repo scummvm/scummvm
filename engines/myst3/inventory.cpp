@@ -80,6 +80,7 @@ void Inventory::draw() {
 void Inventory::reset() {
 	_inventory.clear();
 	reflow();
+	updateState();
 }
 
 void Inventory::addItem(uint16 var, bool atEnd) {
@@ -97,6 +98,7 @@ void Inventory::addItem(uint16 var, bool atEnd) {
 		}
 
 		reflow();
+		updateState();
 	}
 }
 
@@ -111,6 +113,7 @@ void Inventory::removeItem(uint16 var) {
 	}
 
 	reflow();
+	updateState();
 }
 
 void Inventory::addAll() {
@@ -236,6 +239,22 @@ void Inventory::addSaavedroChapter(uint16 var) {
 	_vm->_state->setJournalSaavedroChapter(var - 285);
 	_vm->_state->setJournalSaavedroPageInChapter(0);
 	openBook(9, 902, 200);
+}
+
+void Inventory::loadFromState() {
+	Common::Array<uint16> items = _vm->_state->getInventory();
+
+	_inventory.clear();
+	for (uint i = 0; i < items.size(); i++)
+		addItem(items[i], true);
+}
+
+void Inventory::updateState() {
+	Common::Array<uint16> items;
+	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++)
+		items.push_back(it->var);
+
+	_vm->_state->updateInventory(items);
 }
 
 } /* namespace Myst3 */

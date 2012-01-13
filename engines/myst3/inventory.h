@@ -36,6 +36,9 @@ public:
 	Inventory(Myst3Engine *vm);
 	virtual ~Inventory();
 
+	void loadFromState();
+	void updateState();
+
 	void addItem(uint16 var, bool atEnd);
 	void addSaavedroChapter(uint16 var);
 	void addAll();
