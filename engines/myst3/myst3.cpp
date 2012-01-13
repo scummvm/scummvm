@@ -135,14 +135,9 @@ Common::Error Myst3Engine::run() {
 	font->free();
 	delete font;
 
-	// Var init script
-	runScriptsFromNode(1000, 101);
+	// Game init script, loads the menu
+	loadNode(1, 101, 1);
 
-	_state->setLocationNextAge(5);
-	_state->setLocationNextRoom(501); // LEIS
-	_state->setLocationNextNode(3);
-	goToNode(0, 1);
-	
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
 		processInput(false);
@@ -377,6 +372,8 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	if (roomID)
 		_state->setLocationRoom(_state->valueOrVarValue(roomID));
+	else
+		roomID = _state->getLocationRoom();
 
 	if (ageID)
 		_state->setLocationAge(_state->valueOrVarValue(ageID));
@@ -426,7 +423,7 @@ void Myst3Engine::runNodeInitScripts() {
 }
 
 void Myst3Engine::runNodeBackgroundScripts() {
-	NodePtr nodeDataRoom = _db->getNodeData(32675);
+	NodePtr nodeDataRoom = _db->getNodeData(32675, _state->getLocationRoom());
 
 	if (nodeDataRoom) {
 		for (uint j = 0; j < nodeDataRoom->hotspots.size(); j++) {

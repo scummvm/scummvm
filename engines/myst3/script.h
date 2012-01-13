@@ -222,6 +222,7 @@ private:
 	DECLARE_OPCODE(drawFramesForVarEachTwoFrames);
 	DECLARE_OPCODE(drawFramesForVarStartEndVarEachTwoFrames);
 	DECLARE_OPCODE(runScript);
+	DECLARE_OPCODE(runCommonScript);
 	DECLARE_OPCODE(runPuzzle1);
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);

@@ -169,6 +169,7 @@ Script::Script(Myst3Engine *vm):
 	OP_3(185, drawFramesForVarEachTwoFrames,			kVar,		kValue,		kValue					);
 	OP_3(186, drawFramesForVarStartEndVarEachTwoFrames, kVar, 		kVar,		kVar					);
 	OP_1(187, runScript,					kValue														);
+	OP_1(189, runCommonScript,				kValue														);
 	OP_1(194, runPuzzle1,					kValue														);
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
@@ -1567,6 +1568,12 @@ void Script::runScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
 	_vm->runScriptsFromNode(cmd.args[0], _vm->_state->getLocationRoom());
+}
+
+void Script::runCommonScript(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run common script %d", cmd.op, cmd.args[0]);
+
+	_vm->runScriptsFromNode(cmd.args[0], 101, 1);
 }
 
 void Script::runPuzzle1(Context &c, const Opcode &cmd) {
