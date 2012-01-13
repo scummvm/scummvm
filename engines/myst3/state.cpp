@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 #include "common/savefile.h"
 
@@ -175,12 +175,12 @@ void GameState::checkRange(uint16 var) {
 		error("Variable out of range %d", var);
 }
 
-int32 GameState::get(uint16 var) {
+int32 GameState::getVar(uint16 var) {
 	checkRange(var);
 	return _data.vars[var];
 }
 
-void GameState::set(uint16 var, int32 value) {
+void GameState::setVar(uint16 var, int32 value) {
 	checkRange(var);
 
 	if (_descriptions.contains(var)) {
@@ -195,7 +195,7 @@ void GameState::set(uint16 var, int32 value) {
 bool GameState::evaluate(int16 condition) {
 	uint16 unsignedCond = abs(condition);
 	uint16 var = unsignedCond & 2047;
-	int32 varValue = get(var);
+	int32 varValue = getVar(var);
 	int32 targetValue = (unsignedCond >> 11) - 1;
 
 	if (targetValue >= 0) {
@@ -213,7 +213,7 @@ bool GameState::evaluate(int16 condition) {
 
 int32 GameState::valueOrVarValue(int16 value) {
 	if (value < 0)
-		return get(-value);
+		return getVar(-value);
 
 	return value;
 }

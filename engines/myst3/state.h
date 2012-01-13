@@ -40,8 +40,8 @@ public:
 	virtual ~GameState();
 	bool load(const Common::String &file);
 
-	int32 get(uint16 var);
-	void set(uint16 var, int32 value);
+	int32 getVar(uint16 var);
+	void setVar(uint16 var, int32 value);
 	bool evaluate(int16 condition);
 	int32 valueOrVarValue(int16 value);
 

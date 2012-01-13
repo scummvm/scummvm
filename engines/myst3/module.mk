@@ -20,7 +20,7 @@ MODULE_OBJS := \
 	puzzles.o \
 	scene.o \
 	script.o \
-	variables.o
+	state.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)

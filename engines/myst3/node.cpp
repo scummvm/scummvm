@@ -23,7 +23,7 @@
 #include "engines/myst3/node.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 #include "common/debug.h"
 #include "common/rect.h"
@@ -213,7 +213,7 @@ SpotItem::~SpotItem() {
 
 void SpotItem::updateUndraw() {
 	for (uint i = 0; i < _faces.size(); i++) {
-		if (!_vm->_vars->evaluate(_condition) && _faces[i]->isDrawn()) {
+		if (!_vm->_state->evaluate(_condition) && _faces[i]->isDrawn()) {
 			_faces[i]->undraw();
 		}
 	}
@@ -222,7 +222,7 @@ void SpotItem::updateUndraw() {
 void SpotItem::updateDraw() {
 	for (uint i = 0; i < _faces.size(); i++) {
 		if (_enableFade) {
-			uint16 newFadeValue = _vm->_vars->get(_fadeVar);
+			uint16 newFadeValue = _vm->_state->getVar(_fadeVar);
 
 			if (_faces[i]->getFadeValue() != newFadeValue) {
 				_faces[i]->setFadeValue(newFadeValue);
@@ -230,7 +230,7 @@ void SpotItem::updateDraw() {
 			}
 		}
 
-		if (_vm->_vars->evaluate(_condition) && !_faces[i]->isDrawn()) {
+		if (_vm->_state->evaluate(_condition) && !_faces[i]->isDrawn()) {
 			if (_enableFade)
 				_faces[i]->fadeDraw();
 			else
@@ -387,7 +387,7 @@ SunSpot Node::computeSunspotsIntensity(const Common::Point &lookAt) {
 	for (uint i = 0; i < _sunspots.size(); i++) {
 		SunSpot *s = _sunspots[i];
 
-		uint32 value = _vm->_vars->get(s->var);
+		uint32 value = _vm->_state->getVar(s->var);
 
 		// Skip disabled items
 		if (value == 0) continue;

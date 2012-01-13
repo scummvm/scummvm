@@ -24,7 +24,7 @@
 #include "engines/myst3/database.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
@@ -51,8 +51,8 @@ void Console::describeScript(const Common::Array<Opcode> &script) {
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
-	uint16 nodeId = _vm->_vars->getLocationNode();
-	uint32 roomId = _vm->_vars->getLocationRoom();
+	uint16 nodeId = _vm->_state->getLocationNode();
+	uint32 roomId = _vm->_state->getLocationRoom();
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
@@ -81,8 +81,8 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
 		DebugPrintf("\nhotspot %d > %s (%s)\n", i,
-				_vm->_vars->describeCondition(nodeData->hotspots[i].condition).c_str(),
-				_vm->_vars->evaluate(nodeData->hotspots[i].condition) ? "true" : "false");
+				_vm->_state->describeCondition(nodeData->hotspots[i].condition).c_str(),
+				_vm->_state->evaluate(nodeData->hotspots[i].condition) ? "true" : "false");
 
 		for(uint j = 0; j < nodeData->hotspots[i].rects.size(); j++) {
 			PolarRect &rect = nodeData->hotspots[i].rects[j];
@@ -96,8 +96,8 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	for (uint i = 0; i < nodeData->scripts.size(); i++) {
 		DebugPrintf("\nscript %d > %s (%s)\n", i,
-				_vm->_vars->describeCondition(nodeData->scripts[i].condition).c_str(),
-				_vm->_vars->evaluate(nodeData->scripts[i].condition) ? "true" : "false");
+				_vm->_state->describeCondition(nodeData->scripts[i].condition).c_str(),
+				_vm->_state->evaluate(nodeData->scripts[i].condition) ? "true" : "false");
 
 		describeScript(nodeData->scripts[i].script);
 	}
@@ -141,14 +141,14 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	}
 
 	uint16 var = atoi(argv[1]);
-	uint32 value = _vm->_vars->get(var);
+	uint32 value = _vm->_state->getVar(var);
 
 	if (argc == 3) {
 		value = atoi(argv[2]);
-		_vm->_vars->set(var, value);
+		_vm->_state->setVar(var, value);
 	}
 
-	DebugPrintf("%s: %d\n", _vm->_vars->describeVar(var).c_str(), value);
+	DebugPrintf("%s: %d\n", _vm->_state->describeVar(var).c_str(), value);
 
 	return true;
 }
@@ -177,7 +177,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Run(int argc, const char **argv) {
-	uint16 nodeId = _vm->_vars->getLocationNode();
+	uint16 nodeId = _vm->_state->getLocationNode();
 	uint32 roomId = 0;
 
 	if (argc >= 2) {
@@ -214,8 +214,8 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_vars->setLocationNextRoom(roomID);
-	_vm->_vars->setLocationNextNode(nodeId);
+	_vm->_state->setLocationNextRoom(roomID);
+	_vm->_state->setLocationNextNode(nodeId);
 
 	_vm->goToNode(0, 1);
 

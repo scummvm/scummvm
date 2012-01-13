@@ -22,7 +22,7 @@
 
 #include "engines/myst3/movie.h"
 #include "engines/myst3/myst3.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
@@ -141,11 +141,11 @@ void ScriptedMovie::draw() {
 
 void ScriptedMovie::update() {
 	if (_startFrameVar) {
-		_startFrame = _vm->_vars->get(_startFrameVar);
+		_startFrame = _vm->_state->getVar(_startFrameVar);
 	}
 
 	if (_endFrameVar) {
-		_endFrame = _vm->_vars->get(_endFrameVar);
+		_endFrame = _vm->_state->getVar(_endFrameVar);
 	}
 
 	if (!_endFrame) {
@@ -153,18 +153,18 @@ void ScriptedMovie::update() {
 	}
 
 	if (_posUVar) {
-		_posU = _vm->_vars->get(_posUVar);
+		_posU = _vm->_state->getVar(_posUVar);
 	}
 
 	if (_posVVar) {
-		_posV = _vm->_vars->get(_posVVar);
+		_posV = _vm->_state->getVar(_posVVar);
 	}
 
 	bool newEnabled;
 	if (_conditionBit) {
-		newEnabled = (_vm->_vars->get(_condition) & (1 << (_conditionBit - 1))) != 0;
+		newEnabled = (_vm->_state->getVar(_condition) & (1 << (_conditionBit - 1))) != 0;
 	} else {
-		newEnabled = _vm->_vars->evaluate(_condition);
+		newEnabled = _vm->_state->evaluate(_condition);
 	}
 
 	if (newEnabled != _enabled) {
@@ -189,13 +189,13 @@ void ScriptedMovie::update() {
 
 	if (_enabled) {
 		if (_nextFrameReadVar) {
-			int32 nextFrame = _vm->_vars->get(_nextFrameReadVar);
+			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0) {
 				if (_bink.getCurFrame() != nextFrame) {
 					_bink.seekToFrame(nextFrame - 1);
 					drawNextFrameToTexture();
 				}
-				_vm->_vars->set(_nextFrameReadVar, 0);
+				_vm->_state->setVar(_nextFrameReadVar, 0);
 				_isLastFrame = false;
 			}
 		}
@@ -219,17 +219,17 @@ void ScriptedMovie::update() {
 			}
 
 			if (_nextFrameWriteVar) {
-				_vm->_vars->set(_nextFrameWriteVar, _bink.getCurFrame() + 1);
+				_vm->_state->setVar(_nextFrameWriteVar, _bink.getCurFrame() + 1);
 			}
 
 			if (_disableWhenComplete && complete) {
 				_bink.pauseVideo(true);
 
 				if (_playingVar) {
-					_vm->_vars->set(_playingVar, 0);
+					_vm->_state->setVar(_playingVar, 0);
 				} else {
 					_enabled = 0;
-					_vm->_vars->set(_condition & 0x7FF, 0);
+					_vm->_state->setVar(_condition & 0x7FF, 0);
 				}
 			}
 

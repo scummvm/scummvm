@@ -22,7 +22,7 @@
 
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/cursor.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
@@ -68,7 +68,7 @@ void Inventory::draw() {
 		textureRect.translate(item.textureX, 0);
 
 		bool itemHighlighted = it->rect.contains(mouse)
-				|| (_vm->_vars->get(it->var) == 2);
+				|| (_vm->_state->getVar(it->var) == 2);
 
 		if (itemHighlighted)
 			textureRect.translate(0, _texture->height / 2);
@@ -85,7 +85,7 @@ void Inventory::reset() {
 void Inventory::addItem(uint16 var, bool atEnd) {
 	// Only add objects once to the inventory
 	if (!hasItem(var)) {
-		_vm->_vars->set(var, 1);
+		_vm->_state->setVar(var, 1);
 
 		InventoryItem i;
 		i.var = var;
@@ -101,7 +101,7 @@ void Inventory::addItem(uint16 var, bool atEnd) {
 }
 
 void Inventory::removeItem(uint16 var) {
-	_vm->_vars->set(var, 0);
+	_vm->_state->setVar(var, 0);
 
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		if (it->var == var) {
@@ -184,22 +184,22 @@ void Inventory::useItem(uint16 var) {
 	switch (var) {
 	case 277: // Atrus
 		closeAllBooks();
-		_vm->_vars->setJournalAtrusState(2);
+		_vm->_state->setJournalAtrusState(2);
 		openBook(9, 902, 100);
 		break;
 	case 279: // Saavedro
 		closeAllBooks();
-		_vm->_vars->setJournalSaavedroState(2);
+		_vm->_state->setJournalSaavedroState(2);
 		openBook(9, 902, 200);
 		break;
 	case 480: // Tomahna
 		closeAllBooks();
-		_vm->_vars->setBookStateTomahna(2);
+		_vm->_state->setBookStateTomahna(2);
 		openBook(8, 801, 220);
 		break;
 	case 481: // Releeshahn
 		closeAllBooks();
-		_vm->_vars->setBookStateReleeshahn(2);
+		_vm->_state->setBookStateReleeshahn(2);
 		openBook(9, 902, 300);
 		break;
 	default:
@@ -208,33 +208,33 @@ void Inventory::useItem(uint16 var) {
 }
 
 void Inventory::closeAllBooks() {
-	if (_vm->_vars->getJournalAtrusState())
-		_vm->_vars->setJournalAtrusState(1);
-	if (_vm->_vars->getJournalSaavedroState())
-		_vm->_vars->setJournalSaavedroState(1);
-	if (_vm->_vars->getBookStateTomahna())
-		_vm->_vars->setBookStateTomahna(1);
-	if (_vm->_vars->getBookStateReleeshahn())
-		_vm->_vars->setBookStateReleeshahn(1);
+	if (_vm->_state->getJournalAtrusState())
+		_vm->_state->setJournalAtrusState(1);
+	if (_vm->_state->getJournalSaavedroState())
+		_vm->_state->setJournalSaavedroState(1);
+	if (_vm->_state->getBookStateTomahna())
+		_vm->_state->setBookStateTomahna(1);
+	if (_vm->_state->getBookStateReleeshahn())
+		_vm->_state->setBookStateReleeshahn(1);
 }
 
 void Inventory::openBook(uint16 age, uint16 room, uint16 node) {
-	if (!_vm->_vars->getBookSavedNode()) {
-		_vm->_vars->setBookSavedAge(_vm->_vars->getLocationAge());
-		_vm->_vars->setBookSavedRoom(_vm->_vars->getLocationRoom());
-		_vm->_vars->setBookSavedNode(_vm->_vars->getLocationNode());
+	if (!_vm->_state->getBookSavedNode()) {
+		_vm->_state->setBookSavedAge(_vm->_state->getLocationAge());
+		_vm->_state->setBookSavedRoom(_vm->_state->getLocationRoom());
+		_vm->_state->setBookSavedNode(_vm->_state->getLocationNode());
 	}
 
-	_vm->_vars->setLocationNextAge(age);
-	_vm->_vars->setLocationNextRoom(room);
+	_vm->_state->setLocationNextAge(age);
+	_vm->_state->setLocationNextRoom(room);
 	_vm->goToNode(node, 1);
 }
 
 void Inventory::addSaavedroChapter(uint16 var) {
-	_vm->_vars->set(var, 1);
-	_vm->_vars->setJournalSaavedroState(2);
-	_vm->_vars->setJournalSaavedroChapter(var - 285);
-	_vm->_vars->setJournalSaavedroPageInChapter(0);
+	_vm->_state->setVar(var, 1);
+	_vm->_state->setJournalSaavedroState(2);
+	_vm->_state->setJournalSaavedroChapter(var - 285);
+	_vm->_state->setJournalSaavedroPageInChapter(0);
 	openBook(9, 902, 200);
 }
 

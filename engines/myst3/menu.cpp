@@ -24,7 +24,7 @@
 #include "engines/myst3/database.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 #include "common/events.h"
 
@@ -47,14 +47,14 @@ void Menu::updateMainMenu(uint16 action) {
 			int16 choice = 1;
 
 			// If a game is playing, ask if wants to save
-			if (_vm->_vars->getMenuSavedAge() != 0) {
+			if (_vm->_state->getMenuSavedAge() != 0) {
 				choice = _vm->openDialog(1080);
 			}
 
 			if (choice == 0) {
 				// Go to save screen
-				_vm->_vars->setMenuSaveBack(1);
-				_vm->_vars->setMenuSaveAction(6);
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(6);
 				goToNode(300);
 			} else if (choice == 1) {
 				// New game
@@ -67,31 +67,31 @@ void Menu::updateMainMenu(uint16 action) {
 			int16 choice = 1;
 
 			// If a game is playing, ask if wants to save
-			if (_vm->_vars->getMenuSavedAge() != 0) {
+			if (_vm->_state->getMenuSavedAge() != 0) {
 				choice = _vm->openDialog(1060);
 			}
 
 			if (choice == 0) {
 				// Go to save screen
-				_vm->_vars->setMenuSaveBack(1);
-				_vm->_vars->setMenuSaveAction(3);
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(3);
 				goToNode(300);
 			} else if (choice == 1) {
 				// Load game screen
-				_vm->_vars->setMenuLoadBack(1);
+				_vm->_state->setMenuLoadBack(1);
 				goToNode(200);
 			}
 		}
 		break;
 	case 3:
 		// Go to save screen
-		_vm->_vars->setMenuSaveBack(1);
-		_vm->_vars->setMenuSaveAction(1);
+		_vm->_state->setMenuSaveBack(1);
+		_vm->_state->setMenuSaveAction(1);
 		goToNode(300);
 		break;
 	case 4:
 		// Settings
-		_vm->_vars->setMenuOptionsBack(1);
+		_vm->_state->setMenuOptionsBack(1);
 		_vm->runScriptsFromNode(599, 0, 0);
 		break;
 	case 5: {
@@ -99,14 +99,14 @@ void Menu::updateMainMenu(uint16 action) {
 			int16 choice = 1;
 
 			// If a game is playing, ask if wants to save
-			if (_vm->_vars->getMenuSavedAge() != 0) {
+			if (_vm->_state->getMenuSavedAge() != 0) {
 				choice = _vm->openDialog(1070);
 			}
 
 			if (choice == 0) {
 				// Go to save screen
-				_vm->_vars->setMenuSaveBack(1);
-				_vm->_vars->setMenuSaveAction(5);
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(5);
 				goToNode(300);
 			} else if (choice == 1) {
 				// Quit
@@ -121,15 +121,15 @@ void Menu::updateMainMenu(uint16 action) {
 }
 
 void Menu::goToNode(uint16 node) {
-	if (_vm->_vars->getMenuSavedAge() == 0 && _vm->_vars->getLocationRoom() != 901) {
+	if (_vm->_state->getMenuSavedAge() == 0 && _vm->_state->getLocationRoom() != 901) {
 		// Entering menu, save current location
-		_vm->_vars->setMenuSavedAge(_vm->_vars->getLocationAge());
-		_vm->_vars->setMenuSavedRoom(_vm->_vars->getLocationRoom());
-		_vm->_vars->setMenuSavedNode(_vm->_vars->getLocationNode());
+		_vm->_state->setMenuSavedAge(_vm->_state->getLocationAge());
+		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
+		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
 	}
 
-	_vm->_vars->setLocationNextAge(9);
-	_vm->_vars->setLocationNextRoom(901);
+	_vm->_state->setLocationNextAge(9);
+	_vm->_state->setLocationNextRoom(901);
 	_vm->goToNode(node, 2);
 }
 
@@ -233,25 +233,25 @@ int16 Dialog::update() {
 
 void Menu::loadMenuOpen() {
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
-	_vm->_vars->setMenuSaveLoadCurrentPage(0);
+	_vm->_state->setMenuSaveLoadCurrentPage(0);
 	saveLoadUpdateVars();
 }
 
 void Menu::saveLoadUpdateVars() {
-	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
 	// Go back one page if the last element of the last page was removed
 	if (page && (7 * page > (int)_saveLoadFiles.size() - 1))
 		page--;
-	_vm->_vars->setMenuSaveLoadCurrentPage(page);
+	_vm->_state->setMenuSaveLoadCurrentPage(page);
 
 	// Set up pagination
 	bool canGoLeft = (_saveLoadFiles.size() > 7) && page;
 	bool canGoRight = (_saveLoadFiles.size() > 7) && (7 * (page + 1) < (int)_saveLoadFiles.size());
 
-	_vm->_vars->setMenuSaveLoadPageLeft(canGoLeft);
-	_vm->_vars->setMenuSaveLoadPageRight(canGoRight);
-	_vm->_vars->setMenuSaveLoadSelectedItem(-1);
+	_vm->_state->setMenuSaveLoadPageLeft(canGoLeft);
+	_vm->_state->setMenuSaveLoadPageRight(canGoRight);
+	_vm->_state->setMenuSaveLoadSelectedItem(-1);
 
 	// Enable items
 	uint16 itemsOnPage = _saveLoadFiles.size() % 7;
@@ -262,12 +262,12 @@ void Menu::saveLoadUpdateVars() {
 		itemsOnPage = 7;
 
 	for (uint i = 0; i < 7; i++)
-		_vm->_vars->set(1354 + i, i < itemsOnPage);
+		_vm->_state->setVar(1354 + i, i < itemsOnPage);
 }
 
 void Menu::loadMenuSelect(uint16 item) {
-	_vm->_vars->setMenuSaveLoadSelectedItem(item);
-	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+	_vm->_state->setMenuSaveLoadSelectedItem(item);
+	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
 	uint16 index = page * 7 + item;
 
@@ -301,32 +301,32 @@ void Menu::loadMenuSelect(uint16 item) {
 }
 
 void Menu::loadMenuLoad(uint16 item) {
-	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
 	uint16 index = page * 7 + item;
 	assert(index < _saveLoadFiles.size());
 
-	_vm->_vars->load(_saveLoadFiles[index]);
+	_vm->_state->load(_saveLoadFiles[index]);
 
-	_vm->_vars->setLocationNextAge(_vm->_vars->getMenuSavedAge());
-	_vm->_vars->setLocationNextRoom(_vm->_vars->getMenuSavedRoom());
-	_vm->_vars->setLocationNextNode(_vm->_vars->getMenuSavedNode());
-	_vm->_vars->setMenuSavedAge(0);
-	_vm->_vars->setMenuSavedRoom(0);
-	_vm->_vars->setMenuSavedNode(0);
+	_vm->_state->setLocationNextAge(_vm->_state->getMenuSavedAge());
+	_vm->_state->setLocationNextRoom(_vm->_state->getMenuSavedRoom());
+	_vm->_state->setLocationNextNode(_vm->_state->getMenuSavedNode());
+	_vm->_state->setMenuSavedAge(0);
+	_vm->_state->setMenuSavedRoom(0);
+	_vm->_state->setMenuSavedNode(0);
 
 	_vm->goToNode(0, 1);
 }
 
 void Menu::draw() {
-	uint16 node = _vm->_vars->getLocationNode();
-	uint16 room = _vm->_vars->getLocationRoom();
-	uint16 age = _vm->_vars->getLocationAge();
+	uint16 node = _vm->_state->getLocationNode();
+	uint16 room = _vm->_state->getLocationRoom();
+	uint16 age = _vm->_state->getLocationAge();
 
 	if (room != 901 || node != 200)
 		return;
 
-	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 	NodePtr nodeData = _vm->_db->getNodeData(node, room, age);
 
 	for (uint i = 0; i < 7; i++) {

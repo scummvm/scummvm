@@ -37,7 +37,7 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/nodecube.h"
 #include "engines/myst3/nodeframe.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
@@ -51,7 +51,7 @@ namespace Myst3 {
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
-		_vars(0), _node(0), _scene(0), _archive(0),
+		_state(0), _node(0), _scene(0), _archive(0),
 		_archiveRSRC(0), _archiveOVER(0), _archiveLANG(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_frameCount(0), _rnd(0), _shouldQuit(false),
@@ -98,7 +98,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
-	delete _vars;
+	delete _state;
 	delete _rnd;
 	delete _gfx;
 }
@@ -112,7 +112,7 @@ Common::Error Myst3Engine::run() {
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
 	_db = new Database();
-	_vars = new GameState(this);
+	_state = new GameState(this);
 	_scene = new Scene(this);
 	_menu = new Menu(this);
 	_archive = new Archive();
@@ -151,9 +151,9 @@ Common::Error Myst3Engine::run() {
 	// Var init script
 	runScriptsFromNode(1000, 101);
 
-	_vars->setLocationNextAge(5);
-	_vars->setLocationNextRoom(501); // LEIS
-	_vars->setLocationNextNode(3);
+	_state->setLocationNextAge(5);
+	_state->setLocationNextRoom(501); // LEIS
+	_state->setLocationNextNode(3);
 	goToNode(0, 1);
 	
 	while (!_shouldQuit) {
@@ -188,7 +188,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
-					&& _vars->evaluate(nodeData->hotspots[j].condition)) {
+					&& _state->evaluate(nodeData->hotspots[j].condition)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -210,7 +210,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)
-					&& _vars->evaluate(nodeData->hotspots[j].condition)) {
+					&& _state->evaluate(nodeData->hotspots[j].condition)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -220,7 +220,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 }
 
 void Myst3Engine::updateCursor() {
-	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 
 	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 	uint16 hoveredInventory = _inventory->hoveredItem();
@@ -261,7 +261,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				continue;
 			}
 
-			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
+			NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
 
 			if (hovered.size() > 0) {
@@ -272,7 +272,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				// Open main menu
-				if (_vars->getLocationRoom() != 901) {
+				if (_state->getLocationRoom() != 901) {
 					_menu->goToNode(100);
 				}
 				break;
@@ -344,31 +344,31 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 		_node = 0;
 	}
 
-	uint16 node = _vars->getLocationNextNode();
+	uint16 node = _state->getLocationNextNode();
 	if (node == 0)
 		node = nodeID;
 
-	uint16 room = _vars->getLocationNextRoom();
-	uint16 age = _vars->getLocationNextAge();
+	uint16 room = _state->getLocationNextRoom();
+	uint16 age = _state->getLocationNextAge();
 
 	loadNode(node, room, age);
 
-	_vars->setLocationNextNode(0);
-	_vars->setLocationNextRoom(0);
-	_vars->setLocationNextAge(0);
+	_state->setLocationNextNode(0);
+	_state->setLocationNextRoom(0);
+	_state->setLocationNextAge(0);
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	_scriptEngine->run(&_db->getNodeInitScript());
 
 	if (nodeID)
-		_vars->setLocationNode(_vars->valueOrVarValue(nodeID));
+		_state->setLocationNode(_state->valueOrVarValue(nodeID));
 
 	if (roomID)
-		_vars->setLocationRoom(_vars->valueOrVarValue(roomID));
+		_state->setLocationRoom(_state->valueOrVarValue(roomID));
 
 	if (ageID)
-		_vars->setLocationAge(_vars->valueOrVarValue(ageID));
+		_state->setLocationAge(_state->valueOrVarValue(ageID));
 
 	char oldRoomName[8];
 	char newRoomName[8];
@@ -392,23 +392,23 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 void Myst3Engine::runNodeInitScripts() {
 	NodePtr nodeData = _db->getNodeData(
-			_vars->getLocationNode(),
-			_vars->getLocationRoom(),
-			_vars->getLocationAge());
+			_state->getLocationNode(),
+			_state->getLocationRoom(),
+			_state->getLocationAge());
 
 	NodePtr nodeDataInit = _db->getNodeData(
 			32765,
-			_vars->getLocationRoom(),
-			_vars->getLocationAge());
+			_state->getLocationRoom(),
+			_state->getLocationAge());
 
 	if (nodeDataInit)
 		runScriptsFromNode(32765);
 
 	if (!nodeData)
-		error("Node %d unknown in the database", _vars->getLocationNode());
+		error("Node %d unknown in the database", _state->getLocationNode());
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {
-		if (_vars->evaluate(nodeData->scripts[j].condition)) {
+		if (_state->evaluate(nodeData->scripts[j].condition)) {
 			_scriptEngine->run(&nodeData->scripts[j].script);
 		}
 	}
@@ -426,7 +426,7 @@ void Myst3Engine::runNodeBackgroundScripts() {
 		}
 	}
 
-	NodePtr nodeData = _db->getNodeData(_vars->getLocationNode(), _vars->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 
 	for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 		if (nodeData->hotspots[j].condition == -1) {
@@ -465,15 +465,15 @@ void Myst3Engine::loadNodeMenu(uint16 nodeID) {
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (roomID == 0)
-		roomID = _vars->getLocationRoom();
+		roomID = _state->getLocationRoom();
 
 	if (ageID == 0)
-		ageID = _vars->getLocationAge();
+		ageID = _state->getLocationAge();
 
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
 
 	for (uint j = 0; j < nodeData->scripts.size(); j++) {
-		if (_vars->evaluate(nodeData->scripts[j].condition)) {
+		if (_state->evaluate(nodeData->scripts[j].condition)) {
 			if (!_scriptEngine->run(&nodeData->scripts[j].script))
 				break;
 		}
@@ -486,74 +486,74 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 	movie->setDisableWhenComplete(resetCond);
 	movie->setLoop(loop);
 
-	if (_vars->getMovieScriptDriven()) {
-		movie->setScriptDriven(_vars->getMovieScriptDriven());
-		_vars->setMovieScriptDriven(0);
+	if (_state->getMovieScriptDriven()) {
+		movie->setScriptDriven(_state->getMovieScriptDriven());
+		_state->setMovieScriptDriven(0);
 	}
 
-	if (_vars->getMovieStartFrameVar()) {
-		movie->setStartFrameVar(_vars->getMovieStartFrameVar());
-		_vars->setMovieStartFrameVar(0);
+	if (_state->getMovieStartFrameVar()) {
+		movie->setStartFrameVar(_state->getMovieStartFrameVar());
+		_state->setMovieStartFrameVar(0);
 	}
 
-	if (_vars->getMovieEndFrameVar()) {
-		movie->setEndFrameVar(_vars->getMovieEndFrameVar());
-		_vars->setMovieEndFrameVar(0);
+	if (_state->getMovieEndFrameVar()) {
+		movie->setEndFrameVar(_state->getMovieEndFrameVar());
+		_state->setMovieEndFrameVar(0);
 	}
 
-	if (_vars->getMovieStartFrame()) {
-		movie->setStartFrame(_vars->getMovieStartFrame());
-		_vars->setMovieStartFrame(0);
+	if (_state->getMovieStartFrame()) {
+		movie->setStartFrame(_state->getMovieStartFrame());
+		_state->setMovieStartFrame(0);
 	}
 
-	if (_vars->getMovieEndFrame()) {
-		movie->setEndFrame(_vars->getMovieEndFrame());
-		_vars->setMovieEndFrame(0);
+	if (_state->getMovieEndFrame()) {
+		movie->setEndFrame(_state->getMovieEndFrame());
+		_state->setMovieEndFrame(0);
 	}
 
-	if (_vars->getMovieNextFrameGetVar()) {
-		movie->setNextFrameReadVar(_vars->getMovieNextFrameGetVar());
-		_vars->setMovieNextFrameGetVar(0);
+	if (_state->getMovieNextFrameGetVar()) {
+		movie->setNextFrameReadVar(_state->getMovieNextFrameGetVar());
+		_state->setMovieNextFrameGetVar(0);
 	}
 
-	if (_vars->getMovieNextFrameSetVar()) {
-		movie->setNextFrameWriteVar(_vars->getMovieNextFrameSetVar());
-		_vars->setMovieNextFrameSetVar(0);
+	if (_state->getMovieNextFrameSetVar()) {
+		movie->setNextFrameWriteVar(_state->getMovieNextFrameSetVar());
+		_state->setMovieNextFrameSetVar(0);
 	}
 
-	if (_vars->getMoviePlayingVar()) {
-		movie->setPlayingVar(_vars->getMoviePlayingVar());
-		_vars->setMoviePlayingVar(0);
+	if (_state->getMoviePlayingVar()) {
+		movie->setPlayingVar(_state->getMoviePlayingVar());
+		_state->setMoviePlayingVar(0);
 	}
 
-	if (_vars->getMovieOverridePosU()) {
-		movie->setPosU(_vars->getMovieOverridePosU());
-		_vars->setMovieOverridePosU(0);
+	if (_state->getMovieOverridePosU()) {
+		movie->setPosU(_state->getMovieOverridePosU());
+		_state->setMovieOverridePosU(0);
 	}
 
-	if (_vars->getMovieOverridePosV()) {
-		movie->setPosV(_vars->getMovieOverridePosV());
-		_vars->setMovieOverridePosV(0);
+	if (_state->getMovieOverridePosV()) {
+		movie->setPosV(_state->getMovieOverridePosV());
+		_state->setMovieOverridePosV(0);
 	}
 
-	if (_vars->getMovieUVar()) {
-		movie->setPosUVar(_vars->getMovieUVar());
-		_vars->setMovieUVar(0);
+	if (_state->getMovieUVar()) {
+		movie->setPosUVar(_state->getMovieUVar());
+		_state->setMovieUVar(0);
 	}
 
-	if (_vars->getMovieVVar()) {
-		movie->setPosVVar(_vars->getMovieVVar());
-		_vars->setMovieVVar(0);
+	if (_state->getMovieVVar()) {
+		movie->setPosVVar(_state->getMovieVVar());
+		_state->setMovieVVar(0);
 	}
 
-	if (_vars->getMovieOverrideCondition()) {
-		movie->setCondition(_vars->getMovieOverrideCondition());
-		_vars->setMovieOverrideCondition(0);
+	if (_state->getMovieOverrideCondition()) {
+		movie->setCondition(_state->getMovieOverrideCondition());
+		_state->setMovieOverrideCondition(0);
 	}
 
-	if (_vars->getMovieConditionBit()) {
-		movie->setConditionBit(_vars->getMovieConditionBit());
-		_vars->setMovieConditionBit(0);
+	if (_state->getMovieConditionBit()) {
+		movie->setConditionBit(_state->getMovieConditionBit());
+		_state->setMovieConditionBit(0);
 	}
 
 	_movies.push_back(movie);
@@ -562,19 +562,19 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 void Myst3Engine::playSimpleMovie(uint16 id) {
 	SimpleMovie movie = SimpleMovie(this, id);
 
-	if (_vars->getMovieSynchronized()) {
-		movie.setSynchronized(_vars->getMovieSynchronized());
-		_vars->setMovieSynchronized(0);
+	if (_state->getMovieSynchronized()) {
+		movie.setSynchronized(_state->getMovieSynchronized());
+		_state->setMovieSynchronized(0);
 	}
 
-	if (_vars->getMovieStartFrame()) {
-		movie.setStartFrame(_vars->getMovieStartFrame());
-		_vars->setMovieStartFrame(0);
+	if (_state->getMovieStartFrame()) {
+		movie.setStartFrame(_state->getMovieStartFrame());
+		_state->setMovieStartFrame(0);
 	}
 
-	if (_vars->getMovieEndFrame()) {
-		movie.setEndFrame(_vars->getMovieEndFrame());
-		_vars->setMovieEndFrame(0);
+	if (_state->getMovieEndFrame()) {
+		movie.setEndFrame(_state->getMovieEndFrame());
+		_state->setMovieEndFrame(0);
 	}
 
 	_drawables.push_back(&movie);
@@ -619,7 +619,7 @@ void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
 	char currentRoom[8];
 	if (!room) {
-		_db->getRoomName(currentRoom, _vars->getLocationRoom());
+		_db->getRoomName(currentRoom, _state->getLocationRoom());
 		room = currentRoom;
 	}
 
@@ -698,7 +698,7 @@ int16 Myst3Engine::openDialog(uint16 id) {
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {
-	if (_vars->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
+	if (_state->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
 		goToNode(0, 1);
 		return Common::kNoError;
 	}

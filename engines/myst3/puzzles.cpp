@@ -23,7 +23,7 @@
 #include "engines/myst3/puzzles.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
-#include "engines/myst3/variables.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
@@ -54,8 +54,8 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 }
 
 void Puzzles::journalSaavedro(int16 move) {
-	uint16 chapter = _vm->_vars->getJournalSaavedroChapter();
-	int16 page = _vm->_vars->getJournalSaavedroPageInChapter();
+	uint16 chapter = _vm->_state->getJournalSaavedroChapter();
+	int16 page = _vm->_state->getJournalSaavedroPageInChapter();
 
 	if (!_journalSaavedroHasChapter(chapter))
 		chapter = _journalSaavedroNextChapter(chapter, true);
@@ -70,8 +70,8 @@ void Puzzles::journalSaavedro(int16 move) {
 			page = 0;
 		}
 
-		_vm->_vars->setJournalSaavedroChapter(chapter);
-		_vm->_vars->setJournalSaavedroPageInChapter(page);
+		_vm->_state->setJournalSaavedroChapter(chapter);
+		_vm->_state->setJournalSaavedroPageInChapter(page);
 	} else if (move < 0) {
 		// Go to the previous available page
 		page--;
@@ -81,8 +81,8 @@ void Puzzles::journalSaavedro(int16 move) {
 			page = _journalSaavedroPageCount(chapter) - 1;
 		}
 
-		_vm->_vars->setJournalSaavedroChapter(chapter);
-		_vm->_vars->setJournalSaavedroPageInChapter(page);
+		_vm->_state->setJournalSaavedroChapter(chapter);
+		_vm->_state->setJournalSaavedroPageInChapter(page);
 	} else {
 		// Display current page
 		int16 chapterStartNode = _journalSaavedroGetNode(chapter);
@@ -115,9 +115,9 @@ void Puzzles::journalSaavedro(int16 move) {
 				nodeLeft = 2;
 		}
 
-		_vm->_vars->setJournalSaavedroClosed(closed);
-		_vm->_vars->setJournalSaavedroOpen(opened);
-		_vm->_vars->setJournalSaavedroLastPage(lastPage);
+		_vm->_state->setJournalSaavedroClosed(closed);
+		_vm->_state->setJournalSaavedroOpen(opened);
+		_vm->_state->setJournalSaavedroLastPage(lastPage);
 
 		// TODO: Draw nodeLeft on the left part of the screen
 		_vm->loadNodeFrame(nodeRight);
@@ -142,7 +142,7 @@ uint16 Puzzles::_journalSaavedroPageCount(uint16 chapter) {
 }
 
 bool Puzzles::_journalSaavedroHasChapter(uint16 chapter) {
-	return _vm->_vars->get(285 + chapter) != 0;
+	return _vm->_state->getVar(285 + chapter) != 0;
 }
 
 uint16 Puzzles::_journalSaavedroNextChapter(uint16 chapter, bool forward) {
@@ -162,7 +162,7 @@ void Puzzles::journalAtrus(uint16 node, uint16 var) {
 	while (_vm->getFileDescription(0, node++, 0, DirectorySubEntry::kFrame))
 		numPages++;
 
-	_vm->_vars->set(var, numPages - 1);
+	_vm->_state->setVar(var, numPages - 1);
 }
 
 void Puzzles::mainMenu(uint16 action) {

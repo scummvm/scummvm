@@ -76,7 +76,7 @@ protected:
 public:
 	ViewType _viewType;
 	OSystem *_system;
-	GameState *_vars;
+	GameState *_state;
 	Cursor *_cursor;
 	Inventory *_inventory;
 	Renderer *_gfx;
