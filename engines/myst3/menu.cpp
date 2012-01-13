@@ -27,7 +27,6 @@
 #include "engines/myst3/variables.h"
 
 #include "common/events.h"
-#include "common/savefile.h"
 
 #include "graphics/colormasks.h"
 
@@ -275,54 +274,48 @@ void Menu::loadMenuSelect(uint16 item) {
 	assert(index < _saveLoadFiles.size());
 	Common::String filename = _saveLoadFiles[index];
 
-	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(filename);
+	// Extract the age to load from the savegame
+	GameState *gameState = new GameState(_vm);
+	gameState->load(filename);
 
-	// For now, only saves from the original are accepted
-	uint32 version = save->readUint32LE();
-	if (version != 148)
-		error("Incorrect save file version %d, expected 148", version);
-
-	static const uint kMiniatureSize = 240 * 135;
-	uint8 *miniature = new uint8[kMiniatureSize * 3];
-
-	// Look for saved age to load
-	save->seek(372);
 	uint32 age = 0;
-	uint32 room = save->readUint32LE();
-	if (room == 902) {
-		save->seek(356);
-		age = save->readUint32LE();
-	} else {
-		save->seek(368);
-		age = save->readUint32LE();
-	}
+	uint32 room = gameState->getLocationRoom();
+	if (room == 901)
+		age = gameState->getMenuSavedAge();
+	else
+		age = gameState->getLocationAge();
+
+	delete gameState;
+
+	// Extract the thumbnail from the save
+	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(filename);
+	saveGameReadThumbnail(save);
+	delete save;
 
 	// Look for the age name
 	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
 	_saveLoadAgeName = desc->getTextData(_vm->_db->getAgeLabelId(age));
 	_saveLoadAgeName.toUppercase();
 
-	// Start miniature data
-	save->seek(8580);
-
-	// The spot item expect RGB data instead of RGBA
-	uint8 *ptr = miniature;
-	for (uint i = 0; i < kMiniatureSize; i++) {
-		uint32 rgba = save->readUint32LE();
-		uint8 a, r, g, b;
-		Graphics::colorToARGB< Graphics::ColorMasks<8888> >(rgba, a, r, g, b);
-		*ptr++ = r;
-		*ptr++ = g;
-		*ptr++ = b;
-	}
-
-	if (_saveLoadSpotItem)
-		_saveLoadSpotItem->updateData(miniature);
-
-	delete[] miniature;
-	delete save;
-
 	// TODO: Selecting twice loads item
+}
+
+void Menu::loadMenuLoad(uint16 item) {
+	int16 page = _vm->_vars->getMenuSaveLoadCurrentPage();
+
+	uint16 index = page * 7 + item;
+	assert(index < _saveLoadFiles.size());
+
+	_vm->_vars->load(_saveLoadFiles[index]);
+
+	_vm->_vars->setLocationNextAge(_vm->_vars->getMenuSavedAge());
+	_vm->_vars->setLocationNextRoom(_vm->_vars->getMenuSavedRoom());
+	_vm->_vars->setLocationNextNode(_vm->_vars->getMenuSavedNode());
+	_vm->_vars->setMenuSavedAge(0);
+	_vm->_vars->setMenuSavedRoom(0);
+	_vm->_vars->setMenuSavedNode(0);
+
+	_vm->goToNode(0, 1);
 }
 
 void Menu::draw() {
@@ -367,6 +360,30 @@ void Menu::draw() {
 
 void Menu::loadMenuChangePage() {
 	saveLoadUpdateVars();
+}
+
+void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
+	// Start thumbnail data
+	save->seek(8580);
+
+	static const uint kMiniatureSize = 240 * 135;
+	uint8 *thumbnail = new uint8[kMiniatureSize * 3];
+
+	// The spot item expect RGB data instead of RGBA
+	uint8 *ptr = thumbnail;
+	for (uint i = 0; i < kMiniatureSize; i++) {
+		uint32 rgba = save->readUint32LE();
+		uint8 a, r, g, b;
+		Graphics::colorToARGB< Graphics::ColorMasks<8888> >(rgba, a, r, g, b);
+		*ptr++ = r;
+		*ptr++ = g;
+		*ptr++ = b;
+	}
+
+	if (_saveLoadSpotItem)
+		_saveLoadSpotItem->updateData(thumbnail);
+
+	delete[] thumbnail;
 }
 
 } /* namespace Myst3 */

@@ -24,6 +24,7 @@
 #define VARIABLES_H_
 
 #include "common/hashmap.h"
+#include "common/serializer.h"
 
 #include "engines/myst3/myst3.h"
 
@@ -33,10 +34,11 @@ namespace Myst3 {
 	void set##name(int32 value) { engineSet(num, value); } \
 	int32 get##name() { return engineGet(num); }
 
-class Variables {
+class GameState {
 public:
-	Variables(Myst3Engine *vm);
-	virtual ~Variables();
+	GameState(Myst3Engine *vm);
+	virtual ~GameState();
+	bool load(const Common::String &file);
 
 	int32 get(uint16 var);
 	void set(uint16 var, int32 value);
@@ -105,7 +107,41 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	int32 _vars[2048];
+	static const uint32 kSaveVersion = 148;
+
+	struct StateData {
+		uint32 version;
+		uint32 gameRunning;
+		uint32 currentFrame;
+		uint32 dword_4C2C3C;
+		uint32 dword_4C2C40;
+		uint32 dword_4C2C44;
+		uint32 dword_4C2C48;
+		uint32 dword_4C2C4C;
+		uint32 dword_4C2C50;
+		uint32 dword_4C2C54;
+		uint32 dword_4C2C58;
+		uint32 dword_4C2C5C;
+		uint32 dword_4C2C60;
+		uint32 currentNodeType;
+		float lookatPitch;
+		float lookatHeading;
+		float lookatFOV;
+		float pitchOffset;
+		float headingOffset;
+		uint32 limitCubeCamera;
+		float minPitch;
+		float maxPitch;
+		float minHeading;
+		float maxHeading;
+		uint32  dword_4C2C90;
+		int32 vars[2048];
+		uint32 inventoryPosition;
+		uint32 inventoryList[7];
+		int8 zipDestinations[256];
+	};
+
+	StateData _data;
 
 	struct Description {
 		Description() {}
@@ -117,6 +153,8 @@ private:
 	};
 
 	Common::HashMap<uint16, Description> _descriptions;
+
+	void syncWithSaveGame(Common::Serializer &s);
 
 	void checkRange(uint16 var);
 

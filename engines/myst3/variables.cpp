@@ -22,9 +22,11 @@
 
 #include "engines/myst3/variables.h"
 
+#include "common/savefile.h"
+
 namespace Myst3 {
 
-Variables::Variables(Myst3Engine *vm):
+GameState::GameState(Myst3Engine *vm):
 	_vm(vm) {
 
 #define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
@@ -104,24 +106,81 @@ Variables::Variables(Myst3Engine *vm):
 
 #undef VAR
 
-	memset(&_vars, 0, sizeof(_vars));
-	_vars[1] = 1;
+	memset(&_data, 0, sizeof(_data));
+
+	_data.version = kSaveVersion;
+	_data.vars[1] = 1;
 }
 
-Variables::~Variables() {
+GameState::~GameState() {
 }
 
-void Variables::checkRange(uint16 var) {
+void GameState::syncWithSaveGame(Common::Serializer &s) {
+	if (!s.syncVersion(kSaveVersion))
+		error("This savegame (v%d) is too recent (max %d) please get a newer version of Residual", s.getVersion(), kSaveVersion);
+
+	s.syncAsUint32LE(_data.gameRunning);
+	s.syncAsUint32LE(_data.currentFrame);
+	s.syncAsUint32LE(_data.dword_4C2C3C);
+	s.syncAsUint32LE(_data.dword_4C2C40);
+	s.syncAsUint32LE(_data.dword_4C2C44);
+	s.syncAsUint32LE(_data.dword_4C2C48);
+	s.syncAsUint32LE(_data.dword_4C2C4C);
+	s.syncAsUint32LE(_data.dword_4C2C50);
+	s.syncAsUint32LE(_data.dword_4C2C54);
+	s.syncAsUint32LE(_data.dword_4C2C58);
+	s.syncAsUint32LE(_data.dword_4C2C5C);
+	s.syncAsUint32LE(_data.dword_4C2C60);
+	s.syncAsUint32LE(_data.currentNodeType);
+
+	// FIXME Syncing IEE754 data is not cross platform
+	// Increase the savegame version and save those as integers
+	s.syncBytes((byte*) &_data.lookatPitch, sizeof(float));
+	s.syncBytes((byte*) &_data.lookatHeading, sizeof(float));
+	s.syncBytes((byte*) &_data.lookatFOV, sizeof(float));
+	s.syncBytes((byte*) &_data.pitchOffset, sizeof(float));
+	s.syncBytes((byte*) &_data.headingOffset, sizeof(float));
+
+	s.syncAsUint32LE(_data.limitCubeCamera);
+	s.syncBytes((byte*) &_data.minPitch, sizeof(float));
+	s.syncBytes((byte*) &_data.maxPitch, sizeof(float));
+	s.syncBytes((byte*) &_data.minHeading, sizeof(float));
+	s.syncBytes((byte*) &_data.maxHeading, sizeof(float));
+	s.syncAsUint32LE(_data.dword_4C2C90);
+
+	for (uint i = 0; i < 2048; i++)
+		s.syncAsSint32LE(_data.vars[i]);
+
+	s.syncAsUint32LE(_data.inventoryPosition);
+
+	for (uint i = 0; i < 7; i++)
+		s.syncAsUint32LE(_data.inventoryList[i]);
+
+	for (uint i = 0; i < 256; i++)
+		s.syncAsByte(_data.zipDestinations[i]);
+}
+
+bool GameState::load(const Common::String &file) {
+	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(file);
+	Common::Serializer s = Common::Serializer(save, 0);
+	syncWithSaveGame(s);
+
+	delete save;
+
+	return true;
+}
+
+void GameState::checkRange(uint16 var) {
 	if (var < 1 || var > 2047)
 		error("Variable out of range %d", var);
 }
 
-int32 Variables::get(uint16 var) {
+int32 GameState::get(uint16 var) {
 	checkRange(var);
-	return _vars[var];
+	return _data.vars[var];
 }
 
-void Variables::set(uint16 var, int32 value) {
+void GameState::set(uint16 var, int32 value) {
 	checkRange(var);
 
 	if (_descriptions.contains(var)) {
@@ -130,10 +189,10 @@ void Variables::set(uint16 var, int32 value) {
 			warning("A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
 	}
 
-	_vars[var] = value;
+	_data.vars[var] = value;
 }
 
-bool Variables::evaluate(int16 condition) {
+bool GameState::evaluate(int16 condition) {
 	uint16 unsignedCond = abs(condition);
 	uint16 var = unsignedCond & 2047;
 	int32 varValue = get(var);
@@ -152,28 +211,28 @@ bool Variables::evaluate(int16 condition) {
 	}
 }
 
-int32 Variables::valueOrVarValue(int16 value) {
+int32 GameState::valueOrVarValue(int16 value) {
 	if (value < 0)
 		return get(-value);
 
 	return value;
 }
 
-int32 Variables::engineGet(uint16 var) {
+int32 GameState::engineGet(uint16 var) {
 	if (!_descriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 
-	return _vars[var];
+	return _data.vars[var];
 }
 
-void Variables::engineSet(uint16 var, int32 value) {
+void GameState::engineSet(uint16 var, int32 value) {
 	if (!_descriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 
-	_vars[var] = value;
+	_data.vars[var] = value;
 }
 
-const Common::String Variables::describeVar(uint16 var) {
+const Common::String GameState::describeVar(uint16 var) {
 	if (_descriptions.contains(var)) {
 		const Description &d = _descriptions.getVal(var);
 
@@ -183,7 +242,7 @@ const Common::String Variables::describeVar(uint16 var) {
 	}
 }
 
-const Common::String Variables::describeCondition(int16 condition) {
+const Common::String GameState::describeCondition(int16 condition) {
 	uint16 unsignedCond = abs(condition);
 	uint16 var = unsignedCond & 2047;
 	int16 value = (unsignedCond >> 11) - 1;

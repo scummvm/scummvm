@@ -55,7 +55,7 @@ enum ViewType {
 };
 
 class Console;
-class Variables;
+class GameState;
 class HotSpot;
 class Cursor;
 class Inventory;
@@ -76,7 +76,7 @@ protected:
 public:
 	ViewType _viewType;
 	OSystem *_system;
-	Variables *_vars;
+	GameState *_vars;
 	Cursor *_cursor;
 	Inventory *_inventory;
 	Renderer *_gfx;
@@ -87,6 +87,8 @@ public:
 
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();
+
+	Common::Error loadGameState(int slot);
 
 	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
 	Graphics::Surface *loadTexture(uint16 id);

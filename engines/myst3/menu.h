@@ -25,8 +25,9 @@
 
 #include "engines/myst3/gfx.h"
 
-#include "common/rect.h"
 #include "common/memstream.h"
+#include "common/rect.h"
+#include "common/savefile.h"
 #include "common/str-array.h"
 
 #include "video/bink_decoder_seek.h"
@@ -48,6 +49,7 @@ public:
 
 	void loadMenuOpen();
 	void loadMenuSelect(uint16 item);
+	void loadMenuLoad(uint16 item);
 	void loadMenuChangePage();
 	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
 
@@ -59,6 +61,8 @@ private:
 	Common::String _saveLoadAgeName;
 
 	void saveLoadUpdateVars();
+
+	void saveGameReadThumbnail(Common::InSaveFile *save);
 };
 
 class Dialog : public Drawable {

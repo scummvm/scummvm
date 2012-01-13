@@ -112,7 +112,7 @@ Common::Error Myst3Engine::run() {
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
 	_db = new Database();
-	_vars = new Variables(this);
+	_vars = new GameState(this);
 	_scene = new Scene(this);
 	_menu = new Menu(this);
 	_archive = new Archive();
@@ -695,6 +695,15 @@ int16 Myst3Engine::openDialog(uint16 id) {
 	_drawables.pop_back();
 
 	return result;
+}
+
+Common::Error Myst3Engine::loadGameState(int slot) {
+	if (_vars->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
+		goToNode(0, 1);
+		return Common::kNoError;
+	}
+
+	return Common::kUnknownError;
 }
 
 } // end of namespace Myst3
