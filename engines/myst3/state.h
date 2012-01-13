@@ -46,6 +46,8 @@ class GameState {
 public:
 	GameState(Myst3Engine *vm);
 	virtual ~GameState();
+
+	void newGame();
 	bool load(const Common::String &file);
 	bool save(Common::OutSaveFile *save);
 

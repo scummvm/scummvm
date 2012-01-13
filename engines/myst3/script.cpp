@@ -170,6 +170,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
 	OP_4(197, runPuzzle4,					kValue,		kValue,		kValue,		kValue					);
+	OP_0(249, newGame																					);
 
 #undef OP_0
 #undef OP_1
@@ -1570,5 +1571,12 @@ void Script::runPuzzle4(Context &c, const Opcode &cmd) {
 
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 }
+
+void Script::newGame(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: New game", cmd.op);
+
+	_vm->_state->newGame();
+}
+
 
 } /* namespace Myst3 */

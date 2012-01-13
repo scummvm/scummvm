@@ -108,10 +108,7 @@ GameState::GameState(Myst3Engine *vm):
 
 #undef VAR
 
-	memset(&_data, 0, sizeof(_data));
-
-	_data.version = kSaveVersion;
-	_data.vars[1] = 1;
+	newGame();
 }
 
 GameState::~GameState() {
@@ -160,6 +157,14 @@ void GameState::syncWithSaveGame(Common::Serializer &s) {
 
 	for (uint i = 0; i < 256; i++)
 		s.syncAsByte(_data.zipDestinations[i]);
+}
+
+void GameState::newGame() {
+	memset(&_data, 0, sizeof(_data));
+
+	_data.version = kSaveVersion;
+	_data.vars[0] = 0;
+	_data.vars[1] = 1;
 }
 
 bool GameState::load(const Common::String &file) {

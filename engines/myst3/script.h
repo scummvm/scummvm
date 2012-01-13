@@ -223,6 +223,7 @@ private:
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);
 	DECLARE_OPCODE(runPuzzle4);
+	DECLARE_OPCODE(newGame);
 
 };
 
