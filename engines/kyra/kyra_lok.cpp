@@ -510,7 +510,14 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			updateTextFade();
 			updateMousePointer();
 		} else {
-			_screen->updateScreen();
+			// We call OSystem::updateScreen here and not Screen::updateScreen
+			// to avoid new graphics changes to be copied to the screen.
+			// This assures the workaround of bug #1498221
+			// "KYRA1: Glitches when meeting Zanthia" is working correctly.
+			// Since we only call updateScreen here to let systems with frame
+			// update count limitations not miss any graphics updates it
+			// should not cause any problems.
+			_system->updateScreen();
 		}
 
 		_isSaveAllowed = isMainLoop;
