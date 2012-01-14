@@ -55,6 +55,9 @@ MODULE_OBJS := \
 	movie/mpeg.o \
 	movie/smush.o \
 	movie/movie.o \
+	emisound/vimatrack.o \
+	emisound/track.o \
+	emisound/emisound.o \
 	actor.o \
 	animation.o \
 	bitmap.o \
@@ -95,6 +98,7 @@ MODULE_OBJS := \
 	scx.o \
 	sector.o \
 	skeleton.o \
+	sound.o \
 	textobject.o \
 	textsplit.o \
 	object.o
