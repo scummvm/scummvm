@@ -165,10 +165,10 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/it
 	cp $(srcdir)/doc/it/GuidaRapida ./ScummVM-snapshot/doc/it/GuidaRapida
 	mkdir ScummVM-snapshot/doc/no-nb
-	cp $(srcdir)doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
+	cp $(srcdir)/doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
 	mkdir ScummVM-snapshot/doc/se
-	cp $(srcdir)doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
-	cp $(srcdir)doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
+	cp $(srcdir)/doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
+	cp $(srcdir)/doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
