@@ -943,7 +943,7 @@ void ScummEngine::runExitScript() {
 	// effect is also used in room 33, so let's do the same fade out that it
 	// does in that room's exit script.
 	if (_game.id == GID_DIG && _currentRoom == 44) {
-		int scriptCmds[] = { 14, 215, 0x600, 0, 30 };
+		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
 		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
 	}
 #endif
