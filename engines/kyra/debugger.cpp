@@ -205,6 +205,7 @@ void Debugger_LoK::initialize() {
 	DCmd_Register("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
 	DCmd_Register("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
 	DCmd_Register("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	Debugger::initialize();
 }
 
 bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
@@ -295,6 +296,7 @@ void Debugger_v2::initialize() {
 	DCmd_Register("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
 	DCmd_Register("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
 	DCmd_Register("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	Debugger::initialize();
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -445,6 +447,7 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 
 void Debugger_HoF::initialize() {
 	DCmd_Register("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	Debugger_v2::initialize();
 }
 
 bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
