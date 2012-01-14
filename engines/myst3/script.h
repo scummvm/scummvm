@@ -140,7 +140,13 @@ private:
 	DECLARE_OPCODE(varSetValue);
 	DECLARE_OPCODE(varToggle);
 	DECLARE_OPCODE(varSetOneIfZero);
+	DECLARE_OPCODE(varOpposite);
+	DECLARE_OPCODE(varAbsolute);
+	DECLARE_OPCODE(varDereference);
+	DECLARE_OPCODE(varReferenceSetZero);
+	DECLARE_OPCODE(varReferenceSetValue);
 	DECLARE_OPCODE(varRandRange);
+	DECLARE_OPCODE(polarToRectSimple);
 	DECLARE_OPCODE(polarToRect);
 	DECLARE_OPCODE(varRemoveBits);
 	DECLARE_OPCODE(varToggleBits);

@@ -87,7 +87,13 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 53, varSetValue,					kVar,		kValue											);
 	OP_1( 54, varToggle,					kVar														);
 	OP_1( 55, varSetOneIfZero,				kVar														);
+	OP_1( 56, varOpposite,					kVar														);
+	OP_1( 57, varAbsolute,					kVar														);
+	OP_1( 58, varDereference,				kVar														);
+	OP_1( 59, varReferenceSetZero,			kVar														);
+	OP_2( 60, varReferenceSetValue,			kVar,		kValue											);
 	OP_3( 61, varRandRange,					kVar,		kValue,		kValue								);
+	OP_5( 62, polarToRectSimple,			kVar,		kVar,		kValue,		kValue, 	kValue		); // Seven args
 	OP_5( 63, polarToRect,					kVar,		kVar,		kValue,		kValue, 	kValue		); // Ten args
 	OP_2( 67, varRemoveBits,				kVar,		kValue											);
 	OP_2( 68, varToggleBits,				kVar,		kValue											);
@@ -498,7 +504,7 @@ void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
 	_vm->_state->setMoviePreloadToMemory(true);
 	_vm->_state->setMovieScriptDriven(true);
 	_vm->_state->setMovieUVar(cmd.args[1]);
-	_vm->_state->setMovieUVar(cmd.args[2]);
+	_vm->_state->setMovieVVar(cmd.args[2]);
 
 	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadMovie(movieid, 1, false, true);
@@ -682,6 +688,47 @@ void Script::varSetOneIfZero(Context &c, const Opcode &cmd) {
 		_vm->_state->setVar(cmd.args[0], 1);
 }
 
+void Script::varOpposite(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Take the opposite of var %d", cmd.op, cmd.args[0]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+	_vm->_state->setVar(cmd.args[0], -value);
+}
+
+void Script::varAbsolute(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Take the absolute value of var %d", cmd.op, cmd.args[0]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+	_vm->_state->setVar(cmd.args[0], abs(value));
+}
+
+void Script::varDereference(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Dereference var %d", cmd.op, cmd.args[0]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+	_vm->_state->setVar(cmd.args[0], _vm->_state->getVar(value));
+}
+
+void Script::varReferenceSetZero(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set to zero the var referenced by var %d", cmd.op, cmd.args[0]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+	if (!value)
+		return;
+
+	_vm->_state->setVar(value, 0);
+}
+
+void Script::varReferenceSetValue(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set to %d the var referenced by var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+	if (!value)
+		return;
+
+	_vm->_state->setVar(value, cmd.args[1]);
+}
+
 void Script::varRandRange(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Randomize var %d value between %d and %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
@@ -695,11 +742,35 @@ void Script::varRandRange(Context &c, const Opcode &cmd) {
 	_vm->_state->setVar(cmd.args[0], value);
 }
 
+void Script::polarToRectSimple(Context &c, const Opcode &cmd)	{
+	debugC(kDebugScript, "Opcode %d: Polar to rect transformation for angle in var %d", cmd.op, cmd.args[5]);
+
+	int32 angleDeg = _vm->_state->getVar(cmd.args[5]);
+	float angleRad = 2 * M_PI / cmd.args[6] * angleDeg;
+	float angleSin = sin(angleRad);
+	float angleCos = cos(angleRad);
+
+	int32 offsetX = cmd.args[2];
+	int32 offsetY = cmd.args[3];
+
+	float radius;
+	if (cmd.args[4] >= 0)
+		radius = cmd.args[4] - 0.1;
+	else
+		radius = cmd.args[4] * -0.1;
+
+	int32 posX = offsetX + radius * angleSin;
+	int32 posY = offsetY - radius * angleCos;
+
+	_vm->_state->setVar(cmd.args[0], posX);
+	_vm->_state->setVar(cmd.args[1], posY);
+}
+
 void Script::polarToRect(Context &c, const Opcode &cmd)	{
 	debugC(kDebugScript, "Opcode %d: Complex polar to rect transformation for angle in var %d", cmd.op, cmd.args[8]);
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[8]);
-	float angleRad = 2 * M_PI / (cmd.args[9] * angleDeg);
+	float angleRad = 2 * M_PI / cmd.args[9] * angleDeg;
 	float angleSin = sin(angleRad);
 	float angleCos = cos(angleRad);
 
