@@ -212,7 +212,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			// Draw rect alternating top to bottom, bottom to top
 			INCR_TAIX;
 			for (int xCtr = 0; xCtr < _xSize; ++xCtr) {
-				if (xCtr % 2) {
+				if ((xCtr % 2) == 0) {
 					for (int yCtr = 0; yCtr < _ySize; ++yCtr, pDest += DEFAULT_WIDTH) {
 						*pDest = csuiv(pSrc, pLookup);
 					}
@@ -277,7 +277,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			break;
 
 		case 11:
-			warning("TODO: Switch 11");
+			decom11(pSrc, pDest, pLookup);
 			break;
 
 		case 12:
@@ -430,11 +430,16 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 		
 		bool continueFlag = false;
 		do {
-			for (int xIndex = 0; xIndex < _xSize; ++xIndex, ++pDest) {
+			for (int xIndex = 0; xIndex < _xSize; ++xIndex) {
 				if ((xIndex % 2) == 0) {
+					if (xIndex != 0)
+						++pDest;
+
 					// Write out vertical slice top to bottom
 					for (int yIndex = 0; yIndex < _thickness; ++yIndex, pDest += DEFAULT_WIDTH)
 						*pDest = csuiv(pSrc, pLookup);
+
+					++pDest;
 				} else {
 					// Write out vertical slice bottom to top
 					for (int yIndex = 0; yIndex < _thickness; ++yIndex, pDest -= DEFAULT_WIDTH)
@@ -556,6 +561,110 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 			}
 		}
 	}
+}
+
+void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
+	int var26 = 0, var28 = 0;
+	_var1E = DEFAULT_WIDTH;
+	_var22 = -1;
+	--_xSize;
+	--_ySize;
+
+	int areaNum = 0;
+	while (areaNum != -1) {
+		switch (areaNum) {
+		case 0:
+			*pDest = csuiv(pSrc, pLookup);
+			areaNum = 1;
+			break;
+
+		case 1:
+			increments(pDest);
+
+			if (!var28) {
+				NIH();
+				NIV();
+
+				if (var26 == _ySize) {
+					increments(pDest);
+					++var28;
+				} else {
+					++var26;
+				}
+
+				*++pDest = csuiv(pSrc, pLookup);
+				areaNum = 2;
+			} else if (var26 != _ySize) {
+				++var26;
+				--var28;
+				areaNum = 0;
+			} else {
+				NIH();
+				NIV();
+				increments(pDest);
+				++var28;
+
+				*++pDest = csuiv(pSrc, pLookup);
+
+				if (var28 == _xSize) {
+					areaNum = -1;
+				} else {
+					areaNum = 2;
+				}
+			}
+			break;
+
+		case 2:
+			increments(pDest);
+
+			if (!var26) {
+				NIH();
+				NIV();
+
+				if (var28 == _xSize) {
+					increments(pDest);
+					++var26;
+				} else {
+					++var28;
+				}
+
+				pDest += DEFAULT_WIDTH;
+				areaNum = 0;
+			} else if (var28 != _xSize) {
+				++var28;
+				--var26;
+
+				*pDest = csuiv(pSrc, pLookup);
+				areaNum = 2;
+			} else {
+				pDest += DEFAULT_WIDTH;
+				++var26;
+				NIH();
+				NIV();
+				increments(pDest);
+
+				*pDest = csuiv(pSrc, pLookup);
+
+				if (var26 == _ySize)
+					areaNum = -1;
+				else
+					areaNum = 1;
+			}
+			break;
+		}
+	}
+}
+
+void GfxSurface::increments(byte *&pDest) {
+	pDest += _var22 + _var1E;
+}
+
+void GfxSurface::NIH() {
+	_var22 = -_var22;
+}
+
+void GfxSurface::NIV() {
+	_var1E = -_var1E;
 }
 
 void GfxSurface::diag() {
