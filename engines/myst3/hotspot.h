@@ -30,7 +30,7 @@ namespace Myst3 {
 
 struct Opcode {
 	uint8 op;
-	Common::Array<uint16> args;
+	Common::Array<int16> args;
 };
 
 struct CondScript {

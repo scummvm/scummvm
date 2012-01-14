@@ -307,7 +307,7 @@ Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s)
 			break;
 
 		for(int i = 0;i < count;i++){
-			uint16 value = s.readUint16();
+			int16 value = s.readSint16();
 			opcode.args.push_back(value);
 		}
 		script.push_back(opcode);

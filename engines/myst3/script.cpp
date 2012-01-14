@@ -969,7 +969,7 @@ void Script::varZeroRange(Context &c, const Opcode &cmd) {
 	if (cmd.args[0] > cmd.args[1])
 		error("Opcode %d, Incorrect range, %d -> %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	for (uint i = cmd.args[0]; i <= cmd.args[1]; i++)
+	for (int16 i = cmd.args[0]; i <= cmd.args[1]; i++)
 		_vm->_state->setVar(i, 0);
 }
 
@@ -980,7 +980,7 @@ void Script::varCopyRange(Context &c, const Opcode &cmd) {
 	if (cmd.args[2] <= 0)
 		return;
 
-	for (uint i = 0; i < cmd.args[2]; i++)
+	for (int16 i = 0; i < cmd.args[2]; i++)
 		_vm->_state->setVar(cmd.args[1] + i, _vm->_state->getVar(cmd.args[0] + i));
 }
 
@@ -991,7 +991,7 @@ void Script::varSetRange(Context &c, const Opcode &cmd) {
 	if (cmd.args[0] > cmd.args[1])
 		error("Opcode %d, Incorrect range, %d -> %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	for (uint i = cmd.args[0]; i <= cmd.args[1]; i++)
+	for (int16 i = cmd.args[0]; i <= cmd.args[1]; i++)
 		_vm->_state->setVar(i, cmd.args[2]);
 }
 
@@ -1668,7 +1668,7 @@ void Script::runScriptForVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], (int16) cmd.args[4]);
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarStartVar(Context &c, const Opcode &cmd) {
@@ -1682,7 +1682,7 @@ void Script::runScriptForVarStartVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to %d, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], (int16) cmd.args[4]);
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarEndVar(Context &c, const Opcode &cmd) {
@@ -1696,7 +1696,7 @@ void Script::runScriptForVarEndVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], (int16) cmd.args[4]);
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarStartEndVar(Context &c, const Opcode &cmd) {
@@ -1710,14 +1710,14 @@ void Script::runScriptForVarStartEndVarEachXFrames(Context &c, const Opcode &cmd
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), cmd.args[3], (int16) cmd.args[4]);
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), cmd.args[3], cmd.args[4]);
 }
 
 void Script::drawFramesForVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, -((int16) cmd.args[3]));
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, -cmd.args[3]);
 }
 
 void Script::drawFramesForVarEachTwoFrames(Context &c, const Opcode &cmd) {
