@@ -47,10 +47,13 @@ private:
 	void horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
 	void vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
 	void decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
+	void diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
 	void increments(byte *&pDest);
 	void NIH();
 	void NIV();
-	void diag();
+	bool TFP(int v);
+	void TF1(byte *&pDest, int &v);
+	void TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v);
 public:
 	void decode(const byte *pSrc);
 };
