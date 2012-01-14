@@ -195,10 +195,6 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.left = (planeRect.left * screenRect.width()) / _scriptsRunningWidth;
 			planeRect.bottom = (planeRect.bottom * screenRect.height()) / _scriptsRunningHeight;
 			planeRect.right = (planeRect.right * screenRect.width()) / _scriptsRunningWidth;
-			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
-			// FIXME: The code above incorrectly added 1 pixel to the plane's
-			// bottom and right, so probably the plane clipping code is no
-			// longer necessary
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
