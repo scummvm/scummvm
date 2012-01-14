@@ -212,7 +212,8 @@ void BArchive::openArchive(const Common::String &path) {
 
 		_files[i]._offset = fileOffset;				// Offset of file from start
 
-		assert(_f.readByte() == 0 &&
+		byte compressionType = _f.readByte();
+		assert(compressionType == 0 &&
 			"Compression type flag is non-zero (file is compressed)");
 
 		_files[i]._crc = _f.readByte(); 	// CRC checksum of the file
@@ -221,7 +222,8 @@ void BArchive::openArchive(const Common::String &path) {
 	}
 
 	// Last footer item should be equal to footerOffset
-	assert(reader.readUint32LE() == footerOffset && "Footer offset mismatch");
+	uint32 footerOffset2 = reader.readUint32LE();
+	assert(footerOffset2 == footerOffset && "Footer offset mismatch");
 
 	// Indicate that the archive has been successfully opened
 	_opened = true;
