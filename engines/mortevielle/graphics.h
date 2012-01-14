@@ -36,7 +36,7 @@ private:
 	int _var14, _var18, _lookupValue;
 	bool _nibbleFlag;
 	int _thickness, _var1E, _var20, _var22;
-	int _var24, _var26;
+	int _var24;
 	int _width, _height;
 	int _xOffset, _yOffset;
 
@@ -46,6 +46,10 @@ private:
 	int desanalyse(const byte *&pSrc);
 	void horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
 	void vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
+	void decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
+	void increments(byte *&pDest);
+	void NIH();
+	void NIV();
 	void diag();
 public:
 	void decode(const byte *pSrc);
