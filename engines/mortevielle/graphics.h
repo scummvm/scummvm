@@ -31,20 +31,22 @@ namespace Mortevielle {
 class GfxSurface: public Graphics::Surface {
 private:
 	int _var1;
-	int _entryCount;
-	int _var4, _var6;
 	int _xp, _yp;
-	int _varC, _xSize, _ySize, _var12;
-	int _var14, _var15, _var18, _var1A;
-	int _var1C, _var1E, _var20, _var22;
-	int _var24, _var26, _var28;
+	int _xSize, _ySize, _var12;
+	int _var14, _var18, _lookupValue;
+	bool _nibbleFlag;
+	int _thickness, _var1E, _var20, _var22;
+	int _var24, _var26;
 	int _width, _height;
 	int _xOffset, _yOffset;
 
 	void majTtxTty();
 	byte suiv(const byte *&pSrc);
+	byte csuiv(const byte *&pSrc, const byte *&pLookup);
 	int desanalyse(const byte *&pSrc);
-	void horizontal(const byte *&pSrc, byte *&pDest);
+	void horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
+	void vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup);
+	void diag();
 public:
 	void decode(const byte *pSrc);
 };

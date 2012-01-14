@@ -33,7 +33,8 @@
 namespace Mortevielle {
 
 enum {
-	kMortevielleCore = 1 << 0
+	kMortevielleCore = 1 << 0,
+	kMortevielleGraphics = 1 << 1
 };
 
 #define SCREEN_WIDTH 640
