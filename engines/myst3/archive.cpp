@@ -31,16 +31,25 @@ void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::Write
 	static const uint32 multKey = 0x0019660D;
 
 	inStream.seek(0);
-	uint32 encryptedSize = inStream.readUint32LE();
-	uint32 decryptedSize = encryptedSize ^ addKey;
+	uint32 size = inStream.readUint32LE();
+
+	bool encrypted = size > 1000000;
 	
 	inStream.seek(0);
-	uint32 currentKey = 0;
 
-	for (uint i = 0; i < decryptedSize; i++) {
-		currentKey += addKey;
-		outStream.writeUint32LE(inStream.readUint32LE() ^ currentKey);
-		currentKey *= multKey;
+	if (encrypted) {
+		uint32 decryptedSize = size ^ addKey;
+
+		uint32 currentKey = 0;
+		for (uint i = 0; i < decryptedSize; i++) {
+			currentKey += addKey;
+			outStream.writeUint32LE(inStream.readUint32LE() ^ currentKey);
+			currentKey *= multKey;
+		}
+	} else {
+		for (uint i = 0; i < size; i++) {
+			outStream.writeUint32LE(inStream.readUint32LE());
+		}
 	}
 }
 

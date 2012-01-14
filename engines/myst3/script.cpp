@@ -175,7 +175,7 @@ Script::Script(Myst3Engine *vm):
 	OP_4(184, drawFramesForVar,				kVar,		kValue,		kValue,		kValue					);
 	OP_3(185, drawFramesForVarEachTwoFrames,			kVar,		kValue,		kValue					);
 	OP_3(186, drawFramesForVarStartEndVarEachTwoFrames, kVar, 		kVar,		kVar					);
-	OP_1(187, runScript,					kValue														);
+	OP_1(187, runScript,					kEvalValue													);
 	OP_1(189, runCommonScript,				kValue														);
 	OP_1(194, runPuzzle1,					kValue														);
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
@@ -1315,13 +1315,11 @@ void Script::ifHeadingInRange(Context &c, const Opcode &cmd) {
 	if (cmd.args[1] > cmd.args[0]) {
 		// If heading in range
 		if (heading > cmd.args[0] && heading < cmd.args[1]) {
-			debug("in range true %d %d", cmd.args[0], cmd.args[1]);
 			return;
 		}
 	} else {
 		// If heading *not* in range
 		if (heading > cmd.args[0] || heading < cmd.args[1]) {
-			debug("not in range true %d %d", cmd.args[1], cmd.args[0]);
 			return;
 		}
 	}
@@ -1672,7 +1670,9 @@ void Script::drawFramesForVarStartEndVarEachTwoFrames(Context &c, const Opcode &
 void Script::runScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
-	_vm->runScriptsFromNode(cmd.args[0], _vm->_state->getLocationRoom());
+	uint16 node = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->runScriptsFromNode(node, _vm->_state->getLocationRoom());
 }
 
 void Script::runCommonScript(Context &c, const Opcode &cmd) {
