@@ -1030,6 +1030,7 @@ gestartet werden -- siehe nächster Abschnitt.
   --list-themes            Zeigt Liste aller verwendbaren Oberflächenthemen.
   -e, --music-driver=MODUS
                            Wählt Musiktreiber (siehe auch Abschnitt 7.0).
+  --list-audio-devices     Listet alle verfügbaren Audiogeräte auf.
   -q, --language=SPRACHE   Wählt Spielsprache (siehe auch Abschnitt 5.2).
   -m, --music-volume=ZAHL  Wählt Musiklautstärke, 0-255 (Standard: 192).
   -s, --sfx-volume=ZAHL    Wählt Effektlautstärke, 0-255 (Standard: 192).
@@ -2009,7 +2010,7 @@ Ausgabefrequenz ein Vielfaches der Originalfrequenz ist.
 ---- --------------------
 Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\Benutzername\AppData\Roaming\ScummVM\scummvm.ini
 
     Windows 2000/XP:
@@ -2189,6 +2190,13 @@ The Legend of Kyrandia verfügt zusätzlich über folgendes nicht standardmäßi
 Schlüsselwort:
 
     walkspeed          Zahl     Bewegungsgeschwindigkeit (0-4)
+
+The 7th Guest verfügt zusätzlich über folgendes nicht standardmäßiges
+Schlüsselwort:
+
+    t7g_speed          Text     Videowiedergabe-Geschwindigkeit
+                                (normal, tweaked [optimiert],
+                                im_an_ios [ich bin ein iOS])
 
 
 9.0) Kompilierung:

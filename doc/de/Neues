@@ -2,6 +2,34 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+1.4.1 (27.01.2012)
+ AGOS:
+   - Das Laden von Videos direkt aus InstallShield-Archiven in der
+     Windows-Version von Floyd - Es gibt noch Helden korrigiert.
+
+ BASS:
+   - Unterstützung für verbesserte Musik von James Woodcock hinzugefügt
+     (http://www.jameswoodcock.co.uk/?p=7695).
+
+ KYRA:
+   - Fehler in der originalen Benutzeroberfläche von Lands of Lore beseitigt,
+     der dazu führte, dass ScummVM abstürzte, wenn der Anwender keine
+     durchgehend fortlaufenden Speicherplätze verwendete.
+   - Unterstützung für originale DOS-Speicherstände von Lands of Lore
+     hinzugefügt (trifft auch auf Speicherstände zu, die mit der GOG-Version
+     gemacht wurden).
+
+ SCI:
+   - Abfolgebedingung bei SCI1.1-Palettenänderungen korrigiert. Dies behebt
+     einen Fehler in QFG1VGA, wenn man in Erana's Peace schläft.
+   - Die Option, um zwischen digitalisierten und synthetisierten
+     Soundeffekten auszuwählen, wurde bis auf Weiteres deaktiviert, bis eine
+     anwenderfreundlichere Benutzeroberflächen-Option möglich ist.
+     Digitale Soundeffekte werden vorerst immer bevorzugt.
+
+ Sword2:
+   - Leichte Grafikverbesserung für PSX-Version.
+
 1.4.0 (11.11.2011)
  Neue Spiele:
    - Unterstützung für Lands of Lore: The Throne of Chaos hinzugefügt.
