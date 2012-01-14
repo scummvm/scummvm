@@ -20,18 +20,38 @@
  *
  */
 
+#ifndef GRIM_VIMATRACK_H
+#define GRIM_VIMATRACK_H
+
 #include "common/str.h"
-#include "common/stream.h"
-#include "engines/grim/sound/track.h"
+#include "engines/grim/emisound/track.h"
 
 namespace Grim {
+	
+class SoundDesc;
+class McmpMgr;
 
-Common::String SoundTrack::getSoundName() {
-	return _soundName;
+/**
+ * @class Vima-implementation for the EMI-sound system
+ * Vima is used for voices in the PC version of EMI, a
+ * similar implementation for SCX will be required for PS2-support.
+ */
+class VimaTrack : public SoundTrack {
+	Audio::QueuingAudioStream *_stream;
+	Common::SeekableReadStream *_file;
+	void parseSoundHeader(SoundDesc *sound, int &headerSize);
+	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
+public:
+	VimaTrack(Common::String soundName);
+	virtual ~VimaTrack();
+	
+	bool isPlaying();
+	bool openSound(Common::String voiceName, Common::SeekableReadStream *file);
+	void playTrack();
+	SoundDesc *_desc;
+	McmpMgr *_mcmp;
+};
+
 }
 
-void SoundTrack::setSoundName(Common::String name) {
-	_soundName = name;
-}
-
-} // end of namespace Grim 
+#endif

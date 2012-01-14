@@ -29,9 +29,9 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/emisound.h"
-#include "engines/grim/sound/track.h"
-#include "engines/grim/sound/vimatrack.h"
+#include "engines/grim/emisound/emisound.h"
+#include "engines/grim/emisound/track.h"
+#include "engines/grim/emisound/vimatrack.h"
 
 #define NUM_CHANNELS 32
 

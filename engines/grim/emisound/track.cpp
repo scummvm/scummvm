@@ -20,32 +20,18 @@
  *
  */
 
-#ifndef GRIM_SOUNDTRACK_H
-#define GRIM_SOUNDTRACK_H
-
-namespace Common {
-	class String;
-}
-
-namespace Audio {
-	class SoundHandle;
-}
+#include "common/str.h"
+#include "common/stream.h"
+#include "engines/grim/emisound/track.h"
 
 namespace Grim {
 
-class SoundTrack {
-protected:
-	Common::String _soundName;
-public:
-	virtual ~SoundTrack() { };
-	virtual bool openSound(Common::String voiceName, Common::SeekableReadStream *file) = 0;
-	virtual bool isPlaying() = 0;
-	Common::String getSoundName();
-	void setSoundName(Common::String);
-	
-	Audio::SoundHandle *_handle;
-};
-
+Common::String SoundTrack::getSoundName() {
+	return _soundName;
 }
 
-#endif
+void SoundTrack::setSoundName(Common::String name) {
+	_soundName = name;
+}
+
+} // end of namespace Grim 

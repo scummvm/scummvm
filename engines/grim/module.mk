@@ -55,8 +55,9 @@ MODULE_OBJS := \
 	movie/mpeg.o \
 	movie/smush.o \
 	movie/movie.o \
-	sound/vimatrack.o \
-	sound/track.o \
+	emisound/vimatrack.o \
+	emisound/track.o \
+	emisound/emisound.o \
 	actor.o \
 	animation.o \
 	bitmap.o \
@@ -65,7 +66,6 @@ MODULE_OBJS := \
 	colormap.o \
 	debug.o \
 	detection.o \
-	emisound.o \
 	font.o \
 	gfx_base.o \
 	gfx_opengl.o \

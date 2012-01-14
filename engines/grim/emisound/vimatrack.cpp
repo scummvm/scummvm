@@ -26,7 +26,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
-#include "engines/grim/sound/vimatrack.h"
+#include "engines/grim/emisound/vimatrack.h"
 
 namespace Grim {
 

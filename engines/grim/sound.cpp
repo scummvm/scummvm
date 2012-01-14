@@ -22,7 +22,7 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/imuse/imuse.h"
-#include "engines/grim/emisound.h"
+#include "engines/grim/emisound/emisound.h"
 #include "engines/grim/sound.h"
 
 namespace Grim {

@@ -20,31 +20,33 @@
  *
  */
 
-#ifndef GRIM_VIMATRACK_H
-#define GRIM_VIMATRACK_H
+#ifndef GRIM_SOUNDTRACK_H
+#define GRIM_SOUNDTRACK_H
 
-#include "common/str.h"
-#include "engines/grim/sound/track.h"
+namespace Common {
+	class String;
+}
+
+namespace Audio {
+	class SoundHandle;
+}
 
 namespace Grim {
-	
-class SoundDesc;
-class McmpMgr;
-	
-class VimaTrack : public SoundTrack {
-	Audio::QueuingAudioStream *_stream;
-	Common::SeekableReadStream *_file;
-	void parseSoundHeader(SoundDesc *sound, int &headerSize);
-	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
+
+/**
+ * @class Super-class for the different codecs used in EMI
+ */
+class SoundTrack {
+protected:
+	Common::String _soundName;
 public:
-	VimaTrack(Common::String soundName);
-	virtual ~VimaTrack();
+	virtual ~SoundTrack() { };
+	virtual bool openSound(Common::String voiceName, Common::SeekableReadStream *file) = 0;
+	virtual bool isPlaying() = 0;
+	Common::String getSoundName();
+	void setSoundName(Common::String);
 	
-	bool isPlaying();
-	bool openSound(Common::String voiceName, Common::SeekableReadStream *file);
-	void playTrack();
-	SoundDesc *_desc;
-	McmpMgr *_mcmp;
+	Audio::SoundHandle *_handle;
 };
 
 }
