@@ -53,7 +53,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1( 13, spotItemAdd,					kValue														);
 	OP_2( 14, spotItemAddCond,				kValue,		kCondition										);
 	OP_2( 15, spotItemAddCondFade,			kValue,		kCondition										);
-	OP_5( 16, spotItemAddMenu,					kValue,		kCondition,		kValue,		kValue, 	kValue	); // Six args
+	OP_5( 16, spotItemAddMenu,				kValue,		kCondition,		kValue,		kValue, 	kValue	); // Six args
 	OP_1( 17, movieInitLooping, 			kEvalValue													);
 	OP_2( 18, movieInitCondLooping,			kEvalValue,	kCondition										);
 	OP_2( 19, movieInitCond,				kEvalValue,	kCondition										);
@@ -64,6 +64,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 24, movieInitFrameVarPreload,		kEvalValue,	kVar											);
 	OP_4( 25, movieInitOverrridePosition,	kEvalValue,	kCondition,	kValue,		kValue					);
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
+	OP_1( 29, movieSetLooping,				kValue														);
+	OP_1( 30, movieSetNotLooping,			kValue														);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
 	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
 	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar					);
@@ -142,6 +144,9 @@ Script::Script(Myst3Engine *vm):
 	OP_2(120, ifVarHasAllBitsSet,			kVar,		kValue											);
 	OP_2(121, ifVarHasNoBitsSet,			kVar,		kValue											);
 	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
+	OP_2(123, ifHeadingInRange,				kValue,		kValue											);
+	OP_2(124, ifPitchInRange,				kValue,		kValue											);
+	OP_4(125, ifHeadingPitchInRect,			kValue,		kValue,		kValue,		kValue					);
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
 	OP_2(136, goToNodeTransition,			kValue,		kValue											);
@@ -155,6 +160,8 @@ Script::Script(Myst3Engine *vm):
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
+	OP_1(169, drawXFrames,					kValue														);
+	OP_1(171, drawWhileCond,				kCondition													);
 	OP_2(174, runScriptWhileCond,			kCondition,	kValue											);
 	OP_3(175, runScriptWhileCondEachXFrames,kCondition,	kValue,		kValue								);
 	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
@@ -174,6 +181,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
 	OP_4(197, runPuzzle4,					kValue,		kValue,		kValue,		kValue					);
+	OP_0(239, drawOneFrame																				);
 	OP_0(249, newGame																					);
 
 #undef OP_0
@@ -494,6 +502,20 @@ void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
 
 	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadMovie(movieid, 1, false, true);
+}
+
+void Script::movieSetLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set movie % to loop",
+			cmd.op, cmd.args[0]);
+
+	_vm->setMovieLooping(cmd.args[0], true);
+}
+
+void Script::movieSetNotLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set movie % not to loop",
+			cmd.op, cmd.args[0]);
+
+	_vm->setMovieLooping(cmd.args[0], false);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {
@@ -1284,6 +1306,68 @@ void Script::ifVarHasSomeBitsSet(Context &c, const Opcode &cmd) {
 	goToElse(c);
 }
 
+void Script::ifHeadingInRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: If heading in range %d -> %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	float heading = _vm->_state->getLookAtHeading();
+
+	if (cmd.args[1] > cmd.args[0]) {
+		// If heading in range
+		if (heading > cmd.args[0] && heading < cmd.args[1]) {
+			debug("in range true %d %d", cmd.args[0], cmd.args[1]);
+			return;
+		}
+	} else {
+		// If heading *not* in range
+		if (heading > cmd.args[0] || heading < cmd.args[1]) {
+			debug("not in range true %d %d", cmd.args[1], cmd.args[0]);
+			return;
+		}
+	}
+
+	goToElse(c);
+}
+
+void Script::ifPitchInRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: If pitch in range %d -> %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	float pitch = _vm->_state->getLookAtPitch();
+
+	// If pitch in range
+	if (pitch > cmd.args[0] && pitch < cmd.args[1])
+		return;
+
+	goToElse(c);
+}
+
+void Script::ifHeadingPitchInRect(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: If heading in range %d -> %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	float heading = _vm->_state->getLookAtHeading();
+	float pitch = _vm->_state->getLookAtPitch();
+
+	// If pitch in range
+	if (pitch <= cmd.args[0] || pitch >= cmd.args[1]) {
+		goToElse(c);
+		return;
+	}
+
+	if (cmd.args[1] > cmd.args[0]) {
+		// If heading in range
+		if (heading > cmd.args[0] && heading < cmd.args[1])
+			return;
+	} else {
+		// If heading *not* in range
+		if (heading > cmd.args[0] || heading < cmd.args[1])
+			return;
+	}
+
+	goToElse(c);
+}
+
 void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: If mouse in rect l%d t%d w%d h%d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
@@ -1377,6 +1461,27 @@ void Script::changeNodeRoomAge(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d room %d age %d", cmd.op, cmd.args[2], cmd.args[1], cmd.args[0]);
 
 	_vm->loadNode(cmd.args[2], cmd.args[1], cmd.args[0]);
+}
+
+void Script::drawXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Draw %d frames", cmd.op, cmd.args[0]);
+
+	uint32 endFrame = _vm->_state->getFrameCount() + cmd.args[0];
+
+	while (_vm->_state->getFrameCount() < endFrame) {
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
+}
+
+void Script::drawWhileCond(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: While condition %d, draw", cmd.op, cmd.args[0]);
+
+	// TODO: Skippable with Escape
+	while (_vm->_state->evaluate(cmd.args[0])) {
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
 }
 
 void Script::runScriptWhileCond(Context &c, const Opcode &cmd) {
@@ -1598,6 +1703,13 @@ void Script::runPuzzle4(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
 
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+}
+
+void Script::drawOneFrame(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Draw one frame", cmd.op);
+
+	_vm->processInput(true);
+	_vm->drawFrame();
 }
 
 void Script::newGame(Context &c, const Opcode &cmd) {

@@ -28,6 +28,7 @@ namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_vm(vm),
+	_id(id),
 	_posU(0),
 	_posV(0),
 	_startFrame(0),

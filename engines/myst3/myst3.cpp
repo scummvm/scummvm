@@ -595,6 +595,17 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 	_drawables.pop_back();
 }
 
+void Myst3Engine::setMovieLooping(uint16 id, bool loop) {
+	for (uint i = 0; i < _movies.size(); i++) {
+		if (_movies[i]->getId() == id) {
+			// Enable or disable looping
+			_movies[i]->setLoop(loop);
+			_movies[i]->setDisableWhenComplete(!loop);
+			break;
+		}
+	}
+}
+
 void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
 	_node->loadSpotItem(id, condition, fade);
 }

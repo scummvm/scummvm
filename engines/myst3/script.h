@@ -117,6 +117,8 @@ private:
 	DECLARE_OPCODE(movieInitFrameVarPreload);
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
+	DECLARE_OPCODE(movieSetLooping);
+	DECLARE_OPCODE(movieSetNotLooping);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(sunspotAddIntensity);
 	DECLARE_OPCODE(sunspotAddVarIntensity);
@@ -195,6 +197,9 @@ private:
 	DECLARE_OPCODE(ifVarHasAllBitsSet);
 	DECLARE_OPCODE(ifVarHasNoBitsSet);
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
+	DECLARE_OPCODE(ifHeadingInRange);
+	DECLARE_OPCODE(ifPitchInRange);
+	DECLARE_OPCODE(ifHeadingPitchInRect);
 	DECLARE_OPCODE(ifMouseIsInRect);
 	DECLARE_OPCODE(chooseNextNode);
 	DECLARE_OPCODE(goToNodeTransition);
@@ -208,6 +213,8 @@ private:
 	DECLARE_OPCODE(changeNode);
 	DECLARE_OPCODE(changeNodeRoom);
 	DECLARE_OPCODE(changeNodeRoomAge);
+	DECLARE_OPCODE(drawXFrames);
+	DECLARE_OPCODE(drawWhileCond);
 	DECLARE_OPCODE(runScriptWhileCond);
 	DECLARE_OPCODE(runScriptWhileCondEachXFrames);
 	DECLARE_OPCODE(runScriptForVar);
@@ -227,6 +234,7 @@ private:
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);
 	DECLARE_OPCODE(runPuzzle4);
+	DECLARE_OPCODE(drawOneFrame);
 	DECLARE_OPCODE(newGame);
 
 };

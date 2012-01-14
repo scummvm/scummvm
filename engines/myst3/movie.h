@@ -42,10 +42,13 @@ public:
 
 	virtual void draw();
 
+	uint16 getId() { return _id; }
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
 protected:
 	Myst3Engine *_vm;
+
+	uint16 _id;
 
 	Math::Vector3d _pTopLeft;
 	Math::Vector3d _pBottomLeft;

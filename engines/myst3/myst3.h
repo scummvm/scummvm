@@ -98,6 +98,7 @@ public:
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playSimpleMovie(uint16 id);
+	void setMovieLooping(uint16 id, bool loop);
 
 	void addSpotItem(uint16 id, uint16 condition, bool fade);
 	void addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
