@@ -49,6 +49,7 @@ public:
 	 */
 	bool loadTile(const Common::String &fname, Common::SeekableReadStream *data);
 	bool loadGrimBm(const Common::String &fname, Common::SeekableReadStream *data);
+	bool loadTGA(const Common::String &fname, Common::SeekableReadStream *data);
 
 	static BitmapData *getBitmapData(const Common::String &fname, Common::SeekableReadStream *data);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;

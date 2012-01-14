@@ -239,12 +239,12 @@ Common::Error GrimEngine::run() {
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
 		splash_bm = g_resourceloader->loadBitmap("splash.til");
+	else if (getGamePlatform() == Common::kPlatformPS2 && getGameType() == GType_MONKEY4)
+		splash_bm = g_resourceloader->loadBitmap("load.tga");
 
 	g_driver->clearScreen();
 
-	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
-		splash_bm->draw();
-	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
+	if (splash_bm != NULL)
 		splash_bm->draw();
 
 	g_driver->flipBuffer();

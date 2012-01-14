@@ -120,8 +120,8 @@ BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *
 			loadTile(fname, data);
 			break;
 		default:
-			assert(false);
-			Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
+			assert(loadTGA(fname, data));	// Try to load as TGA.
+			//Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
 			break;
 	}
 	delete data;
@@ -242,6 +242,61 @@ BitmapData::~BitmapData() {
 			_bitmaps = NULL;
 		}
 	}
+}
+	
+bool BitmapData::loadTGA(const Common::String &fname, Common::SeekableReadStream *data) {
+	data->seek(0, SEEK_SET);
+	if (data->readByte() != 0)	// Verify that description-field is empty
+		return false;
+	data->seek(1, SEEK_CUR);
+	
+	int format = data->readByte();
+	if (format != 2)
+		return false;
+	
+	data->seek(9, SEEK_CUR);
+	_width = data->readUint16LE();
+	_height = data->readUint16LE();;
+	_format = 1;
+	_x = 0;
+	_y = 0;
+	
+	int bpp = data->readByte();
+	if (bpp == 32) {
+		_colorFormat = BM_RGBA;
+		_bpp = 4;
+	} else {
+		return false;
+	}
+	
+	char desc = data->readByte();
+	char flipped = !(desc & 32);
+
+	if (!(bpp == 24 || bpp == 32)) // Assure we have 24/32 bpp
+		return false;
+	_data = new char*[1];
+	_data[0] = new char[_width * _height * (bpp / 8)];
+	char *writePtr = _data[0] + (_width * (_height - 1) * bpp / 8);
+
+	if (flipped) {
+		for (int i = 0; i < _height; i++) {
+			data->read(writePtr, _width * (bpp / 8));
+			writePtr -= (_width * bpp / 8);
+		}
+	} else {
+		data->read(_data[0], _width * _height * (bpp / 8));		
+	}
+	
+	char x;
+	for (int i = 0; i < _width * _height * (bpp / 8); i+=4) {
+		x = _data[0][i];
+		_data[0][i] = _data[0][i + 2];
+		_data[0][i + 2] = x;
+	}
+	
+	_numImages = 1;
+	g_driver->createBitmap(this);
+	return true;
 }
 
 bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStream *o) {
