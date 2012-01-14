@@ -67,6 +67,10 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data/TEXT");
 	SearchMan.addSubDirectoriesMatching(gameDataDir, "EXILE Disc ?/Data", true);
 
+	// Win DVD version directories
+	SearchMan.addSubDirectoryMatching(gameDataDir, "English");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Data");
+
 	// Mac DVD version directories
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Exile DVD/data");
@@ -121,6 +125,7 @@ Common::Error Myst3Engine::run() {
 
 	addArchive("OVER101.m3o", false);
 	addArchive("ENGLISH.m3t", true);
+	addArchive("ENGLISH.m3u", false);
 	addArchive("LANGUAGE.m3u", false);
 	addArchive("RSRC.m3r", true);
 
