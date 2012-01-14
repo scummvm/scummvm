@@ -85,7 +85,9 @@ void MaterialData::initGrim(const Common::String &filename, Common::SeekableRead
 }
 
 void loadTGA(Common::SeekableReadStream *data, Texture *t) {
-	assert(data->readByte() == 0);	// Verify that description-field is empty
+	int descField = data->readByte();
+	assert(descField == 0);	// Verify that description-field is empty
+	
 	data->seek(1, SEEK_CUR);
 	
 	int format = data->readByte();
