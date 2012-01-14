@@ -90,13 +90,19 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 		_texID = data->readUint32LE();
 	_faceLength = data->readUint32LE();
 	_faceLength = _faceLength / 3;
-	short x = 0, y = 0, z = 0;
+	int x = 0, y = 0, z = 0;
 	_indexes = new Vector3int[_faceLength];
 	int j = 0;
+	int readsize;
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		readsize = 4;
+	} else {
+		readsize = 2;
+	}
 	for (uint32 i = 0; i < _faceLength; i ++) {
-		data->read((char *)&x, 2);
-		data->read((char *)&y, 2);
-		data->read((char *)&z, 2);
+		data->read((char *)&x, readsize);
+		data->read((char *)&y, readsize);
+		data->read((char *)&z, readsize);
 		_indexes[j++].setVal(x,y,z);
 	}
 }

@@ -84,6 +84,7 @@ public:
 	int getGameFlags() { return _gameFlags; }
 	GrimGameType getGameType() { return _gameType; }
 	Common::Language getGameLanguage() { return _gameLanguage; }
+	Common::Platform getGamePlatform() { return _gamePlatform; }
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
