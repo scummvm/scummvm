@@ -25,7 +25,7 @@
 namespace Mortevielle {
 
 #define INCR_TAIX { if (_xSize & 1) ++_xSize; }
-#define DEFAULT_WIDTH 320
+#define DEFAULT_WIDTH (SCREEN_WIDTH / 2)
 #define BUFFER_SIZE 8192
 
 void GfxSurface::decode(const byte *pSrc) {
@@ -98,18 +98,20 @@ void GfxSurface::decode(const byte *pSrc) {
 					_var12 = desanalyse(pSrc);
 					_var14 = desanalyse(pSrc);
 
-					bool savedVar15 = _nibbleFlag;
+					const byte *pSrcSaved = pSrc;
+					bool savedNibbleFlag = _nibbleFlag;
 					int savedVar18 = _var18;
 					
 					do {
-						const byte *pTemp = pSrc;
-						_nibbleFlag = savedVar15;
+						pSrc = pSrcSaved;
+						_nibbleFlag = savedNibbleFlag;
 						_var18 = savedVar18;
 
 						assert(_var14 < 256);
-						for (int idx = 0; idx < _var14; ++idx, ++tableOffset)
+						for (int idx = 0; idx < _var14; ++idx, ++tableOffset) {
 							assert(tableOffset < BUFFER_SIZE);
-							lookupTable[tableOffset] = suiv(pTemp);
+							lookupTable[tableOffset] = suiv(pSrc);
+						}
 					} while (--_var12 > 0);
 				} while (_var18 < (lookupBytes - 1));
 
@@ -190,7 +192,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			break;
 
 		case 1:
-			// Draw rect alternating left to right, right to left
+			// Draw rect using horizontal lines alternating left to right, then right to left
 			INCR_TAIX;
 			for (int yCtr = 0; yCtr < _ySize; ++yCtr) {
 				if ((yCtr % 2) == 0) {
@@ -246,11 +248,11 @@ void GfxSurface::decode(const byte *pSrc) {
 			break;
 
 		case 7:
-			// Draw box
+			// Draw rect using horizontal lines left to right
 			INCR_TAIX;
 			for (int yCtr = 0; yCtr < _ySize; ++yCtr, pDest += DEFAULT_WIDTH) {
 				byte *pDestLine = pDest;
-				for (int xCtr = 0; xCtr < _xSize; ++xCtr, ++pDestLine)
+				for (int xCtr = 0; xCtr < _xSize; ++xCtr)
 					*pDestLine++ = csuiv(pSrc, pLookup);
 			}
 			break;
@@ -348,16 +350,15 @@ void GfxSurface::decode(const byte *pSrc) {
 		pSrc = pSrcStart;
 	} while (--entryCount > 0);
 
-	// At this point, the outputBuffer has the data for the image. The pitch is
-	// 320 pixels, the _xOffset and _yOffset represent the top left of the image data,
-	// and the _xSize and _ySize fields indicate the image size
-	create(_xOffset + _xSize, _yOffset + _ySize, Graphics::PixelFormat::createFormatCLUT8());
+	// At this point, the outputBuffer has the data for the image. Initialise the surface
+	// with the calculated size for the full image, and copy the lines to the surface
+	create(_xOffset + _width, _yOffset + _height, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int yCtr = 0; yCtr < _ySize; ++yCtr) {
+	for (int yCtr = 0; yCtr < _height; ++yCtr) {
 		const byte *copySrc = &outputBuffer[yCtr * DEFAULT_WIDTH];
 		byte *copyDest = (byte *)getBasePtr(_xOffset, yCtr + _yOffset);
 
-		Common::copy(copySrc, copySrc + _xSize, copyDest);
+		Common::copy(copySrc, copySrc + _width, copyDest);
 	}
 }
 

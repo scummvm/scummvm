@@ -25,6 +25,7 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
+#include "common/system.h"
 #include "common/file.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
@@ -101,6 +102,11 @@ void pictout(int seg, int dep, int x, int y) {
 #ifdef DEBUG
 	GfxSurface surface;
 	surface.decode(&mem[0x7000 * 16]);
+
+	g_system->copyRectToScreen((const byte *)surface.pixels, surface.pitch, 0, 0,
+		surface.w, surface.h);
+	g_system->updateScreen();
+
 #endif
 
 	decomp(seg, dep);
