@@ -131,8 +131,8 @@ void EMISound::setMusicState(int stateId) {
 	}
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile("Music/" + _musicTable[stateId]._filename);
 	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
-	_music->openSound(_musicTable[stateId]._name, str);
-	_music->play();
+	if (_music->openSound(_musicTable[stateId]._name, str))
+		_music->play();
 }
 
 void EMISound::initMusicTable(Common::String filename) {

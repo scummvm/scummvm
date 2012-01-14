@@ -57,11 +57,15 @@ MP3Track::~MP3Track() {
 }
 	
 bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *file) {
+#ifndef USE_MAD
+	return false;
+#else
 	_soundName = soundName;
 	parseRIFFHeader(file);
 	_stream = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(file, DisposeAfterUse::YES), 0);
 	_handle = new Audio::SoundHandle();
 	return true;
+#endif
 }
 
 } // end of namespace Grim 
