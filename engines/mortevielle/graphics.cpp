@@ -286,7 +286,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var1E = 320;
 			_var20 = _ySize;
 			_var24 = _xSize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 13:
@@ -296,7 +296,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _xSize;
 			_var22 = 320;
 			_var24 = _ySize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 14:
@@ -304,7 +304,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _xSize;
 			_var22 = 320;
 			_var24 = _ySize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 15:
@@ -314,7 +314,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _ySize;
 			_var22 = 1;
 			_var24 = _xSize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 16:
@@ -323,7 +323,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _xSize;
 			_var22 = 320;
 			_var24 = _ySize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 17:
@@ -333,7 +333,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _ySize;
 			_var22 = 1;
 			_var24 = _xSize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 18:
@@ -343,7 +343,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			_var20 = _ySize;
 			_var22 = 1;
 			_var24 = _xSize;
-			diag();
+			diag(pSrc, pDest, pLookup);
 			break;
 		}
 
@@ -655,6 +655,87 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 	}
 }
 
+void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
+	int var26 = 0, var28 = 0;
+	--_var24;
+
+	while (!TFP(var26)) {
+		for (;;) {
+			NIH();
+			for (int idx = 0; idx <= _thickness; ++idx) {
+				*pDest = csuiv(pSrc, pLookup);
+				NIH();
+				increments(pDest);
+			}
+
+			NIV();
+			pDest += _var1E;
+
+			for (int idx = 0; idx <= _thickness; ++idx) {
+				*pDest = csuiv(pSrc, pLookup);
+				NIH();
+				increments(pDest);
+			}
+			
+			NIH();
+			NIV();
+			increments(pDest);
+
+			++var28;
+			if (_var24 < (var28 + 1)) {
+				TF1(pDest, var26);
+				break;
+			}
+
+			pDest += _var22;
+			if (_var24 < (var28 + 1)) {
+				TF2(pSrc, pDest, pLookup, var26);
+				break;
+			}
+		}
+
+		if (TFP(var26))
+			return;
+
+		for (;;) {
+			for (int idx = 0; idx <= _thickness; ++idx) {
+				*pDest = csuiv(pSrc, pLookup);
+				NIH();
+				increments(pDest);
+			}
+
+			NIV();
+
+			for (int idx = 0; idx <= _thickness; ++idx) {
+				*pDest = csuiv(pSrc, pLookup);
+				NIH();
+				increments(pDest);
+			}
+			
+			NIH();
+			NIV();
+			increments(pDest);
+
+			if (--var28 == 0) {
+				TF1(pDest, var26);
+				NIH();
+				break;
+			} else {
+				pDest += _var22;
+				
+				if (--var28 == 0) {
+					TF2(pSrc, pDest, pLookup, var26);
+					NIH();
+					break;
+				}
+			} 
+
+			NIH();
+		}
+	}
+}
+
+
 void GfxSurface::increments(byte *&pDest) {
 	pDest += _var22 + _var1E;
 }
@@ -667,10 +748,30 @@ void GfxSurface::NIV() {
 	_var1E = -_var1E;
 }
 
-void GfxSurface::diag() {
-	// The diag method in the original source doesn't seem to have any exit point,
-	// which if the case, means the routine may not be used by the game
-	error("Non-exitable method diag() called");
+bool GfxSurface::TFP(int v) {
+	int diff = _var20 - v;
+	if (!diff)
+		// Time to finish loop in outer method
+		return true;
+
+	if (diff < (_thickness + 1))
+		_thickness = diff - 1;
+
+	return false;
+}
+
+void GfxSurface::TF1(byte *&pDest, int &v) {
+	v += _thickness + 1;
+	pDest += (_thickness + 1) * _var1E;
+}
+
+void GfxSurface::TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v) {
+	v += _thickness + 1;
+
+	for (int idx = 0; idx <= _thickness; ++idx) {
+		*pDest = csuiv(pSrc, pLookup);
+		pDest += _var1E;
+	}
 }
 
 } // End of namespace Mortevielle
