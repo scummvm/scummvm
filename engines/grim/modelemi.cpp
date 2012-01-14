@@ -83,9 +83,7 @@ Math::Vector4d *readVector4d(Common::ReadStream &ms) {
 void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	_flags = data->readUint32LE();
 	_hasTexture = data->readUint32LE();
-	if(_hasTexture > 1) {
-		warning("We have this many textures: %d", _hasTexture);
-	}
+
 	if(_hasTexture)
 		_texID = data->readUint32LE();
 	_faceLength = data->readUint32LE();
