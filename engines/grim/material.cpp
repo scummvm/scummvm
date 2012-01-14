@@ -108,8 +108,8 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 		t->_bpp = 3;
 	}
 	
-	char desc = data->readByte();
-	char flipped = !(desc & 32);
+	uint8 desc = data->readByte();
+	uint8 flipped = !(desc & 32);
 	
 	assert(bpp == 24 || bpp == 32); // Assure we have 24/32 bpp
 	t->_data = new char[t->_width * t->_height * (bpp / 8)];

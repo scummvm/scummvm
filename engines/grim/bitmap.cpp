@@ -120,8 +120,8 @@ BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *
 			loadTile(fname, data);
 			break;
 		default:
-			assert(loadTGA(fname, data));	// Try to load as TGA.
-			//Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
+			if (!loadTGA(fname, data))	// Try to load as TGA.
+				Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
 			break;
 	}
 	delete data;
@@ -269,8 +269,8 @@ bool BitmapData::loadTGA(const Common::String &fname, Common::SeekableReadStream
 		return false;
 	}
 	
-	char desc = data->readByte();
-	char flipped = !(desc & 32);
+	uint8 desc = data->readByte();
+	uint8 flipped = !(desc & 32);
 
 	if (!(bpp == 24 || bpp == 32)) // Assure we have 24/32 bpp
 		return false;
@@ -287,7 +287,7 @@ bool BitmapData::loadTGA(const Common::String &fname, Common::SeekableReadStream
 		data->read(_data[0], _width * _height * (bpp / 8));		
 	}
 	
-	char x;
+	uint8 x;
 	for (int i = 0; i < _width * _height * (bpp / 8); i+=4) {
 		x = _data[0][i];
 		_data[0][i] = _data[0][i + 2];
