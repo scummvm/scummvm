@@ -416,11 +416,14 @@ void Ringworld2Globals::reset() {
 	_v56AAB = 0;
 	_v57C2C = 0;
 	_v58CE2 = 0;
+	_v565EC[0] = 0;
+	_v565EC[1] = 27;
+	_v565EC[2] = 27;
+	_v565EC[3] = 4;
+	_v565EC[4] = 4;
 	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
-
-	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
 	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
 	_stripManager_lookupList[0] = 1;
 	_stripManager_lookupList[1] = 1;
@@ -460,8 +463,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v58CE2);
 	s.syncAsSint16LE(_speechSubtitles);
 
+	for (i = 0; i < 5; i++)
+		s.syncAsByte(_v565EC[i]);
+
 	for (i = 0; i < MAX_CHARACTERS; ++i)
-		s.syncAsSint16LE(_v565F1[i]);
+		s.syncAsByte(_v565F1[i]);
 	
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A8);

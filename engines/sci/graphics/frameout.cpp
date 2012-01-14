@@ -101,7 +101,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 }
 
 void GfxFrameout::kernelUpdatePlane(reg_t object) {
-	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			// Read some information
 			it->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
@@ -178,8 +178,10 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
+	deletePlaneItems(object);
 	deletePlanePictures(object);
-	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			_planes.erase(it);
 			Common::Rect planeRect;
@@ -193,10 +195,6 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.left = (planeRect.left * screenRect.width()) / _scriptsRunningWidth;
 			planeRect.bottom = (planeRect.bottom * screenRect.height()) / _scriptsRunningHeight;
 			planeRect.right = (planeRect.right * screenRect.width()) / _scriptsRunningWidth;
-			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
-			// FIXME: The code above incorrectly added 1 pixel to the plane's
-			// bottom and right, so probably the plane clipping code is no
-			// longer necessary
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -274,6 +272,18 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 	}
 
 	_screenItems.remove(itemEntry);
+}
+
+void GfxFrameout::deletePlaneItems(reg_t planeObject) {
+	FrameoutList::iterator listIterator = _screenItems.begin();
+
+	while (listIterator != _screenItems.end()) {
+		reg_t itemPlane = readSelector(_segMan, (*listIterator)->object, SELECTOR(plane));
+		if (planeObject == itemPlane)
+			listIterator = _screenItems.erase(listIterator);
+		else
+			++listIterator;
+	}
 }
 
 FrameoutEntry *GfxFrameout::findScreenItem(reg_t object) {

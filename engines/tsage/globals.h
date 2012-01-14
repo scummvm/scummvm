@@ -274,7 +274,8 @@ public:
 	int _v57C2C;
 	int _v58CE2;
 	int _speechSubtitles;
-	int _v565F1[4];
+	byte _v565EC[5];
+	byte _v565F1[4];
 	byte _stripManager_lookupList[12];
 
 	virtual void reset();

@@ -190,6 +190,9 @@ extern char const *const F7;
 extern char const *const F8;
 extern char const *const F10;
 
+// Scene 1550 map
+extern const byte _v5A4D6[];
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
