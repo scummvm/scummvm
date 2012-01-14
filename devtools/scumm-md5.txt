@@ -513,7 +513,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
-	c20848f53c2d48bfacdc840993843765	-1	nl	Windows	HE 80	Demo	-	DarthBo
+	c20848f53c2d48bfacdc840993843765	-1	nl	All	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
@@ -530,7 +530,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 
 	cb1559e8405d17a5a278a6b5ad9338d1	22718	en	All	-	Demo	-	khalek, sev
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
-	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
+	754feb59d3bf86b8a00840df74fd7b26	-1	nl	All	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
 	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
@@ -787,7 +787,7 @@ PuttTime	Putt-Putt Travels Through Time
 	4e5867848ee61bc30d157e2c94eee9b4	18394	us	All	HE 90	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	-1	de	All	HE 90	Demo	-	Joachim Eberhard
-	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	Windows	HE 90	Demo	-	adutchguy
+	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	All	HE 90	Demo	-	adutchguy
 	0a6d7b81b850ed4a77811c60c9b5c555	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
 	0ab19be9e2a3f6938226638b2a3744fe	-1	us	All	HE 100	Demo	-	khalek
 
