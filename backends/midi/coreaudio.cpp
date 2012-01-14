@@ -45,7 +45,7 @@
 // simply do so by manually enable the USE_DEPRECATED_COREAUDIO_API switch (e.g.
 // by adding setting it suitably in CPPFLAGS).
 #if !defined(USE_DEPRECATED_COREAUDIO_API)
-	#if TARGET_CPU_PPC || TARGET_CPU_PPC64
+	#if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
 		#define USE_DEPRECATED_COREAUDIO_API 1
 	#else
 		#define USE_DEPRECATED_COREAUDIO_API 0
