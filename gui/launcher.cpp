@@ -397,9 +397,16 @@ void EditGameDialog::open() {
 
 	// Set the state of engine-specific checkboxes
 	for (uint i = 0; i < _engineOptions.size(); i++) {
-		// We can't set the default options in registerDefaults(), so we do it here
-		ConfMan.registerDefault(_engineOptions[i].configOption, _engineOptions[i].defaultState);
-		_engineCheckboxes[i]->setState(ConfMan.getBool(_engineOptions[i].configOption, _domain));
+		// The default values for engine-specific checkboxes are not set when
+		// ScummVM starts, as this would require us to load and poll all of the
+		// engine plugins on startup. Thus, we set the state of each custom
+		// option checkbox to what is specified by the engine plugin, and
+		// update it only if a value has been set in the configuration of the
+		// currently selected game.
+		bool isChecked = _engineOptions[i].defaultState;
+		if (ConfMan.hasKey(_engineOptions[i].configOption, _domain))
+			isChecked = ConfMan.getBool(_engineOptions[i].configOption, _domain);
+		_engineCheckboxes[i]->setState(isChecked);
 	}
 
 	const Common::PlatformDescription *p = Common::g_platforms;
