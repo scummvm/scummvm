@@ -37,7 +37,7 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/movie/movie.h"
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/sound.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
@@ -82,6 +82,9 @@ Actor::Actor(const Common::String &actorName) :
 		_shadowArray[i].shadowMask = NULL;
 		_shadowArray[i].shadowMaskSize = 0;
 	}
+			
+	if (g_sound == NULL)
+		g_sound = new SoundPlayer();
 }
 
 Actor::Actor() :
@@ -774,17 +777,21 @@ void Actor::sayLine(const char *msgId, bool background) {
 	// a SayLine request rather than as part of the movie!
 
 	Common::String soundName = id;
-	soundName += ".wav";
+	
+	if (g_grim->getGameType() == GType_GRIM)
+		soundName += ".wav";
+	else
+		soundName += ".wVC";
 
 	if (_talkSoundName == soundName)
 		return;
 
-	if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg.empty())
+	if (g_sound->getSoundStatus(_talkSoundName.c_str()) || msg.empty())
 		shutUp();
 
 	_talkSoundName = soundName;
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
+		if (g_sound->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
 			g_grim->getCurrSet()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 	}
@@ -866,7 +873,7 @@ bool Actor::isTalking() {
 	if (_sayLineText)
 		textObject = TextObject::getPool().getObject(_sayLineText);
 	if ((m == GrimEngine::TextOnly && !textObject) ||
-			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
+			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
 	}
 
@@ -879,7 +886,7 @@ void Actor::shutUp() {
 	// Some warning messages will occur when the user terminates the
 	// actor dialog but the game will continue alright.
 	if (_talkSoundName != "") {
-		g_imuse->stopSound(_talkSoundName.c_str());
+		g_sound->stopSound(_talkSoundName.c_str());
 		_talkSoundName = "";
 	}
 	if (_lipSync) {
@@ -1100,8 +1107,8 @@ void Actor::update(uint frameTime) {
 
 		// While getPosIn60HzTicks will return "-1" to indicate that the
 		// sound is no longer playing, it is more appropriate to check first
-		if (g_grim->getSpeechMode() != GrimEngine::TextOnly && g_imuse->getSoundStatus(_talkSoundName.c_str()))
-			posSound = g_imuse->getPosIn60HzTicks(_talkSoundName.c_str());
+		if (g_grim->getSpeechMode() != GrimEngine::TextOnly && g_sound->getSoundStatus(_talkSoundName.c_str()))
+			posSound = g_sound->getPosIn60HzTicks(_talkSoundName.c_str());
 		else
 			posSound = -1;
 		if (posSound != -1) {

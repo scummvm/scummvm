@@ -34,7 +34,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/gfx_base.h"
 
-#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/sound.h"
 
 namespace Grim {
 
@@ -654,7 +654,7 @@ void Set::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol
 	newVolume += minVol;
 	if (newVolume > _maxVolume)
 		newVolume = _maxVolume;
-	g_imuse->setVolume(soundName, newVolume);
+	g_sound->setVolume(soundName, newVolume);
 
 	Math::Vector3d cameraVector =_currSetup->_interest - _currSetup->_pos;
 	Math::Vector3d up(0,0,1);
@@ -670,7 +670,7 @@ void Set::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol
 	float angle = atan2(Math::Vector3d::dotProduct(vector, right),
 						Math::Vector3d::dotProduct(vector, cameraVector));
 	float pan = sin(angle);
-	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
+	g_sound->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
 }
 
 Sector *Set::getSectorBase(int id) {
