@@ -1150,23 +1150,15 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 	}
 }
 
-const byte *ScummEngine::getActorName(int id) {
-	if (_game.version == 0) {
-		if (id > 0 && id < _numActors)
-			return derefActor(id, "getActorName")->getActorName();
-		else
-			return NULL;
-	} else {
-		return getObjOrActorName(id);
-	}
-}
-
 const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if (obj < _numActors && _game.version >= 1)
-		return derefActor(obj, "getObjOrActorName")->getActorName();
+	if ((_game.version == 0 && OBJECT_V0_TYPE(obj) == kObjectV0TypeActor) ||
+	    (_game.version != 0 && obj < _numActors)) {
+		int actorNr = (_game.version != 0 ? obj : OBJECT_V0_NR(obj));
+		return derefActor(actorNr, "getObjOrActorName")->getActorName();
+	}
 
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {

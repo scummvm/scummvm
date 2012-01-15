@@ -1179,16 +1179,12 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	// FIXME: should this be executed?
 	//_currentScript = 0xFF;
 
-	int obj1Nr = OBJECT_V0_NR(st.objectA);
-	int obj1Type = OBJECT_V0_TYPE(st.objectA);
-	int obj2Nr = OBJECT_V0_NR(st.objectB);
-	int obj2Type = OBJECT_V0_TYPE(st.objectB);
-	assert(obj1Nr);
+	assert(st.objectA);
 
 	// If two objects are involved, at least one must be in the actors inventory
-	if (obj2Nr &&
-		(obj1Type != kObjectV0TypeFG || _objectOwnerTable[obj1Nr] != VAR(VAR_EGO)) &&
-	    (obj2Type != kObjectV0TypeFG || _objectOwnerTable[obj2Nr] != VAR(VAR_EGO)))
+	if (st.objectB &&
+		(OBJECT_V0_TYPE(st.objectA) != kObjectV0TypeFG || _objectOwnerTable[st.objectA] != VAR(VAR_EGO)) &&
+	    (OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO)))
 	{
 		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
 			doSentence(kVerbPickUp, st.objectA, 0);
@@ -1200,10 +1196,8 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	}
 
 	_cmdVerb = st.verb;
-	_cmdObjectNr = obj1Nr;
-	_cmdObjectType = obj1Type;
-	_cmdObject2Nr = obj2Nr;
-	_cmdObject2Type = obj2Type;
+	_cmdObject = st.objectA;
+	_cmdObject2 = st.objectB;
 	_sentenceNum--;
 
 	// TODO: check sentenceNum
@@ -1225,22 +1219,21 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 }
 
 void ScummEngine_v0::runSentenceScript() {
-	int obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
-
 	drawSentenceLine();
 
-	if (getVerbEntrypoint(obj, _cmdVerb) != 0) {
+	if (getVerbEntrypoint(_cmdObject, _cmdVerb) != 0) {
 		// do not read in the dark
 		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
-			VAR(VAR_ACTIVE_OBJECT2) = _cmdObject2Nr;
-			runObjectScript(obj, _cmdVerb, false, false, NULL);
+			VAR(VAR_ACTIVE_OBJECT2) = OBJECT_V0_NR(_cmdObject2);
+			runObjectScript(_cmdObject, _cmdVerb, false, false, NULL);
 			return;
 		}
 	} else {
 		if (_cmdVerb == kVerbGive) {
 			// no "give to"-script: give to other kid or ignore
-			if (_cmdObject2Nr < 8)
-				setOwnerOf(obj, _cmdObject2Nr);
+			int actor = OBJECT_V0_NR(_cmdObject2);
+			if (actor < 8)
+				setOwnerOf(_cmdObject, actor);
 			return;
 		}
 	}

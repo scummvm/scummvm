@@ -686,14 +686,14 @@ int ScummEngine_v0::getVerbPrepId() {
 	if (_verbs[_activeVerb].prep != 0xFF) {
 		return _verbs[_activeVerb].prep;
 	} else {
-		byte *ptr = getOBCDFromObject(OBJECT_V0(_activeObjectNr, _activeObjectType), true);
+		byte *ptr = getOBCDFromObject(_activeObject, true);
 		assert(ptr);
 		return (*(ptr + 11) >> 5);
 	}
 }
 
 int ScummEngine_v0::activeVerbPrep() {
-	if (!_activeVerb || !_activeObjectNr)
+	if (!_activeVerb || !_activeObject)
 		return 0;
 	return getVerbPrepId();
 }
@@ -702,16 +702,12 @@ void ScummEngine_v0::verbExec() {
 	if (_activeVerb == kVerbWhatIs)
 		return;
 		
-	if (_activeVerb != kVerbWalkTo || _activeObjectNr != 0) {		
-		doSentence(_activeVerb, 
-			OBJECT_V0(_activeObjectNr, _activeObjectType), 
-			OBJECT_V0(_activeObject2Nr, _activeObject2Type));
+	if (!(_activeVerb == kVerbWalkTo && _activeObject == 0)) {		
+		doSentence(_activeVerb, _activeObject, _activeObject2);
 		if (_activeVerb != kVerbWalkTo) {
 			_activeVerb = kVerbWalkTo;
-			_activeObjectNr = 0;
-			_activeObjectType = 0;
-			_activeObject2Nr = 0;
-			_activeObject2Type = 0;
+			_activeObject = 0;
+			_activeObject2 = 0;
 		}
 		_walkToObjectIdx = 0;
 		return;
@@ -735,7 +731,7 @@ void ScummEngine_v0::verbExec() {
 
 bool ScummEngine_v0::checkSentenceComplete() {
 	if (_activeVerb && _activeVerb != kVerbWalkTo && _activeVerb != kVerbWhatIs) {
-		if (_activeObjectNr && (!activeVerbPrep() || _activeObject2Nr))
+		if (_activeObject && (!activeVerbPrep() || _activeObject2))
 			return true;
 	}
 	return false;
@@ -757,12 +753,9 @@ void ScummEngine_v0::checkExecVerbs() {
 		if (over) {
 			if (_activeVerb != over) { // new verb
 				// keep first object if no preposition is used yet
-				if (activeVerbPrep()) {
-					_activeObjectNr = 0;
-					_activeObjectType = 0;
-				}
-				_activeObject2Nr = 0;
-				_activeObject2Type = 0;
+				if (activeVerbPrep())
+					_activeObject = 0;
+				_activeObject2 = 0;
 				_activeVerb = over;
 				sentenceLineChanged = true;
 			} else {
@@ -828,41 +821,34 @@ void ScummEngine_v0::checkExecVerbs() {
 				// click region: main screen
 				} else if (zone->number == kMainVirtScreen) {
 					// click into main screen
-					if (_activeVerb == kVerbGive && _activeObjectNr) {
-						obj = OBJECT_V0(getActorFromPos(_virtualMouse.x, _virtualMouse.y), kObjectV0TypeActor);
+					if (_activeVerb == kVerbGive && _activeObject) {
+						int actor = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
+						if (actor != 0)
+							obj = OBJECT_V0(actor, kObjectV0TypeActor);
 					} else {
 						obj = findObject(_virtualMouse.x, _virtualMouse.y);
 					}
 				}
 
-				int id = OBJECT_V0_NR(obj);
-				int type = OBJECT_V0_TYPE(obj);
-				debug("found 0x%03x", obj);
-
-				if (!id) {
+				if (!obj) {
 					if (_activeVerb == kVerbWalkTo) {
-						_activeObjectNr = 0;
-						_activeObjectType = 0;
-						_activeObject2Nr = 0;
-						_activeObject2Type = 0;
+						_activeObject = 0;
+						_activeObject2 = 0;
 					}
 				} else {
 					if (activeVerbPrep() == kVerbPrepNone) {
-						if (id == _activeObjectNr && type == _activeObjectType) {
+						if (obj == _activeObject)
 							execute = true;
-						} else {
-							_activeObjectNr = id;
-							_activeObjectType = type;
-						}
+						else
+							_activeObject = obj;
 						// immediately execute action in keypad/selection mode
 						if (_currentMode == kModeKeypad)
 							execute = true;
 					} else {
-						if (id == _activeObject2Nr && type == _activeObject2Type)
+						if (obj == _activeObject2)
 							execute = true;
-						if (!(id == _activeObjectNr && type == _activeObjectType)) {
-							_activeObject2Nr = id;
-							_activeObject2Type = type;
+						if (obj != _activeObject) {
+							_activeObject2 = obj;
 							if (_currentMode == kModeKeypad)
 								execute = true;
 						}
@@ -888,9 +874,9 @@ void ScummEngine_v0::checkExecVerbs() {
 
 	if (_activeVerb == kVerbWalkTo)
 		verbExec();
-	else if (_activeObjectNr) {
+	else if (_activeObject) {
 		// execute if we have a 1st object and either have or do not need a 2nd
-		if (activeVerbPrep() == kVerbPrepNone || _activeObject2Nr)
+		if (activeVerbPrep() == kVerbPrepNone || _activeObject2)
 			verbExec();
 	}
 }

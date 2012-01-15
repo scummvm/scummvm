@@ -365,7 +365,7 @@ uint ScummEngine_v0::fetchScriptWord() {
 
 int ScummEngine_v0::getActiveObject() {
 	if (_opcode & PARAM_2)
-		return _cmdObjectNr;
+		return OBJECT_V0_NR(_cmdObject);
 
 	return fetchScriptByte();
 }
@@ -461,7 +461,8 @@ void ScummEngine_v0::drawSentenceLine() {
 	if (_activeVerb == kVerbNewKid) {
 		_sentenceBuf = "";
 		for (int i = 0; i < 3; ++i) {
-			_sentenceBuf += Common::String::format("%-13s", getActorName(VAR(97 + i)));
+			Actor *a = derefActor(VAR(97 + i), "drawSentenceLine");
+			_sentenceBuf += Common::String::format("%-13s", a->getActorName());
 		}
 		flushSentenceLine();
 		return;
@@ -475,9 +476,9 @@ void ScummEngine_v0::drawSentenceLine() {
 	assert(verbName);
 	_sentenceBuf = verbName;
 
-	if (_activeObjectNr) {
+	if (_activeObject) {
 		// Draw the 1st active object
-		drawSentenceObject(OBJECT_V0(_activeObjectNr, _activeObjectType));
+		drawSentenceObject(_activeObject);
 
 		// Append verb preposition
 		int sentencePrep = activeVerbPrep();
@@ -485,16 +486,8 @@ void ScummEngine_v0::drawSentenceLine() {
 			drawPreposition(sentencePrep);
 
 			// Draw the 2nd active object
-			if (_activeObject2Nr) {
-				// 2nd Object is an actor
-				if (_activeObject2Type == kObjectV0TypeActor) {
-					_sentenceBuf += " ";
-					_sentenceBuf += (const char *)getActorName(_activeObject2Nr);
-				// 2nd Object is an inventory or room object
-				} else {
-					drawSentenceObject(OBJECT_V0(_activeObject2Nr, _activeObject2Type));
-				}
-			}
+			if (_activeObject2)
+				drawSentenceObject(_activeObject2);
 		}
 	}
 
@@ -708,8 +701,9 @@ void ScummEngine_v0::o_putActorAtObject() {
 }
 
 void ScummEngine_v0::o_pickupObject() {
-	int objNr = fetchScriptByte();
-	int obj = OBJECT_V0((objNr ? objNr : _cmdObjectNr), 0);
+	int obj = fetchScriptByte();
+	if (!obj)
+		obj = _cmdObject;
 
 	/* Don't take an object twice */
 	if (whereIsObject(obj) == WIO_INVENTORY)
@@ -761,7 +755,7 @@ void ScummEngine_v0::o_setActorBitVar() {
 void ScummEngine_v0::o_getObjectOwner() {
 	getResultPos();
 	int obj = getVarOrDirectWord(PARAM_1);
-	setResult(getOwner(obj ? obj : _cmdObjectNr));
+	setResult(getOwner(obj ? obj : _cmdObject));
 }
 
 void ScummEngine_v0::o_getActorBitVar() {
@@ -815,20 +809,20 @@ void ScummEngine_v0::o_doSentence() {
 
 	b = fetchScriptByte();
 	if (b == 0xFF) {
-		obj = OBJECT_V0(_cmdObject2Nr, _cmdObject2Type);
+		obj = _cmdObject2;
 	} else if (b == 0xFE) {
-		obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
+		obj = _cmdObject;
 	} else {
-		obj = OBJECT_V0(b, (_opcode & 0x80) ? 1 : 0);
+		obj = OBJECT_V0(b, (_opcode & 0x80) ? kObjectV0TypeBG : kObjectV0TypeFG);
 	}
 
 	b = fetchScriptByte();
 	if (b == 0xFF) {
-		obj2 = OBJECT_V0(_cmdObject2Nr, _cmdObject2Type);
+		obj2 = _cmdObject2;
 	} else if (b == 0xFE) {
-		obj2 = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
+		obj2 = _cmdObject;
 	} else {
-		obj2 = OBJECT_V0(b, (_opcode & 0x40) ? 1 : 0);
+		obj2 = OBJECT_V0(b, (_opcode & 0x40) ? kObjectV0TypeBG : kObjectV0TypeFG);
 	}
 
 	doSentence(verb, obj, obj2);
@@ -836,8 +830,8 @@ void ScummEngine_v0::o_doSentence() {
 
 bool ScummEngine_v0::ifEqualActiveObject2Common(bool ignoreType) {
 	byte obj = fetchScriptByte();
-	if (!ignoreType || (_cmdObject2Type == kObjectV0TypeFG))
-		return (obj == _cmdObject2Nr);
+	if (!ignoreType || (OBJECT_V0_TYPE(_cmdObject2) == kObjectV0TypeFG))
+		return (obj == OBJECT_V0_NR(_cmdObject2));
 	return false;
 }
 
@@ -933,26 +927,16 @@ void ScummEngine_v0::o_setOwnerOf() {
 	obj = getVarOrDirectWord(PARAM_1);
 	owner = getVarOrDirectByte(PARAM_2);
 
-	if (obj == 0)
-		obj = _cmdObjectNr;
-
-	// FIXME: the original interpreter seems to set the owner of 
-	// an item to remove (new owner 0) to 13 (purple tentacle).
-	// Ignore this behavior for now.
-	/*
-	if (owner == 0)
-		owner = 13;
-	*/
+	if (!obj)
+		obj = _cmdObject;
 
 	setOwnerOf(obj, owner);
 }
 
 void ScummEngine_v0::resetSentence(bool walking) {
 	_activeVerb = kVerbWalkTo;
-	_activeObjectNr = 0;
-	_activeObjectType = kObjectV0TypeBG;
-	_activeObject2Nr = 0;
-	_activeObject2Type = kObjectV0TypeBG;
+	_activeObject = 0;
+	_activeObject2 = 0;
 	_walkToObjectIdx = 0;
 }
 

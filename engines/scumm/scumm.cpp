@@ -715,16 +715,12 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	_currentMode = 0;
 
 	_activeVerb = kVerbNone;
-	_activeObjectNr = 0;
-	_activeObjectType = 0;
-	_activeObject2Nr = 0;
-	_activeObject2Type = 0;
+	_activeObject = 0;
+	_activeObject2 = 0;
 
 	_cmdVerb = kVerbNone;
-	_cmdObjectNr = 0;
-	_cmdObjectType = 0;
-	_cmdObject2Nr = 0;
-	_cmdObject2Type = 0;
+	_cmdObject = 0;
+	_cmdObject2 = 0;
 
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;

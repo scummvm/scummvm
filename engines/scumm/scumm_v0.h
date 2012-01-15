@@ -42,17 +42,13 @@ protected:
 protected:
 	byte _currentMode;
 
-	int _activeVerb;
-	int _activeObjectNr;			// 1st Object Number
-	int _activeObjectType;			// 1st Object Type (0: inventory (or room), 1: room)
-	int _activeObject2Nr;			// 2nd Object Number
-	int _activeObject2Type;			// 2nd Object Type (0: inventory (or room), 1: room, 2: actor)
+	int _activeVerb;		// selected verb
+	int _activeObject;		// 1st selected object (see OBJECT_V0(nr, type), cannot be an actor)
+	int _activeObject2;		// 2nd selected object or actor (see OBJECT_V0(nr, type))
 
-	int _cmdVerb;
-	int _cmdObjectNr;
-	int _cmdObjectType;
-	int _cmdObject2Nr;
-	int _cmdObject2Type;
+	int _cmdVerb;			// script verb
+	int _cmdObject;			// 1st script object (see OBJECT_V0(nr, type))
+	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0(nr, type))
 
 	int _walkToObject;
 	int _walkToObjectIdx;
