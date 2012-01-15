@@ -804,6 +804,7 @@ public:
 protected:
 
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
+	const byte *getActorName(int id);
 	const byte *getObjOrActorName(int obj);		 // these three..
 	void setObjectName(int obj);
 

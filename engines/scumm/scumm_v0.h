@@ -39,19 +39,6 @@ protected:
 		kModeNormal = 3,     // normal playing mode
 	};
 
-	enum ObjectType {
-		kObjectTypeFG = 0,    // foreground object
-		                      //   - with owner/state, might (but has not to) be pickupable
-		                      //     -> with entry in _objectOwner/StateTable
-		                      //     -> all objects in _inventory have this type
-		                      //   - image can be exchanged (background overlay)
-		kObjectTypeBG = 1,    // background object
-		                      //   - without owner/state, not pickupable  (room only)
-		                      //     -> without entry in _objectOwner/StateTable
-		                      //   - image cannot be exchanged (part of background image)
-		kObjectTypeActor = 2  // object is an actor
-	};
-
 protected:
 	byte _currentMode;
 

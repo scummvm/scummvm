@@ -461,8 +461,7 @@ void ScummEngine_v0::drawSentenceLine() {
 	if (_activeVerb == kVerbNewKid) {
 		_sentenceBuf = "";
 		for (int i = 0; i < 3; ++i) {
-			Actor *a = derefActor(VAR(97 + i), "drawSentence");
-			_sentenceBuf += Common::String::format("%-13s", a->getActorName());
+			_sentenceBuf += Common::String::format("%-13s", getActorName(VAR(97 + i)));
 		}
 		flushSentenceLine();
 		return;
@@ -488,10 +487,9 @@ void ScummEngine_v0::drawSentenceLine() {
 			// Draw the 2nd active object
 			if (_activeObject2Nr) {
 				// 2nd Object is an actor
-				if (_activeObject2Type == kObjectTypeActor) {
-					Actor *a = derefActor(_activeObject2Nr, "");
+				if (_activeObject2Type == kObjectV0TypeActor) {
 					_sentenceBuf += " ";
-					_sentenceBuf += (const char *)a->getActorName();
+					_sentenceBuf += (const char *)getActorName(_activeObject2Nr);
 				// 2nd Object is an inventory or room object
 				} else {
 					drawSentenceObject(OBJECT_V0(_activeObject2Nr, _activeObject2Type));
@@ -838,7 +836,7 @@ void ScummEngine_v0::o_doSentence() {
 
 bool ScummEngine_v0::ifEqualActiveObject2Common(bool ignoreType) {
 	byte obj = fetchScriptByte();
-	if (!ignoreType || (_cmdObject2Type == kObjectTypeFG))
+	if (!ignoreType || (_cmdObject2Type == kObjectV0TypeFG))
 		return (obj == _cmdObject2Nr);
 	return false;
 }
@@ -952,9 +950,9 @@ void ScummEngine_v0::o_setOwnerOf() {
 void ScummEngine_v0::resetSentence(bool walking) {
 	_activeVerb = kVerbWalkTo;
 	_activeObjectNr = 0;
-	_activeObjectType = kObjectTypeBG;
+	_activeObjectType = kObjectV0TypeBG;
 	_activeObject2Nr = 0;
-	_activeObject2Type = kObjectTypeBG;
+	_activeObject2Type = kObjectV0TypeBG;
 	_walkToObjectIdx = 0;
 }
 

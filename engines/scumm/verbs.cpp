@@ -829,7 +829,7 @@ void ScummEngine_v0::checkExecVerbs() {
 				} else if (zone->number == kMainVirtScreen) {
 					// click into main screen
 					if (_activeVerb == kVerbGive && _activeObjectNr) {
-						obj = OBJECT_V0(getActorFromPos(_virtualMouse.x, _virtualMouse.y), kObjectTypeActor);
+						obj = OBJECT_V0(getActorFromPos(_virtualMouse.x, _virtualMouse.y), kObjectV0TypeActor);
 					} else {
 						obj = findObject(_virtualMouse.x, _virtualMouse.y);
 					}

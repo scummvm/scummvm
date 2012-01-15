@@ -1137,7 +1137,7 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	_walkToObject = object;
 	_walkToObjectIdx = getObjectIndex(object);
 
-	if (OBJECT_V0_TYPE(object) == kObjectTypeActor) {
+	if (OBJECT_V0_TYPE(object) == kObjectV0TypeActor) {
 		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_NR(object), 4);
 		x = a->getRealPos().x;
 		y = a->getRealPos().y;
@@ -1187,8 +1187,8 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 
 	// If two objects are involved, at least one must be in the actors inventory
 	if (obj2Nr &&
-		(obj1Type != kObjectTypeFG || _objectOwnerTable[obj1Nr] != VAR(VAR_EGO)) &&
-	    (obj2Type != kObjectTypeFG || _objectOwnerTable[obj2Nr] != VAR(VAR_EGO)))
+		(obj1Type != kObjectV0TypeFG || _objectOwnerTable[obj1Nr] != VAR(VAR_EGO)) &&
+	    (obj2Type != kObjectV0TypeFG || _objectOwnerTable[obj2Nr] != VAR(VAR_EGO)))
 	{
 		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
 			doSentence(kVerbPickUp, st.objectA, 0);

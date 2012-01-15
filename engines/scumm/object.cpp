@@ -1150,6 +1150,17 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 	}
 }
 
+const byte *ScummEngine::getActorName(int id) {
+	if (_game.version == 0) {
+		if (id > 0 && id < _numActors)
+			return derefActor(id, "getActorName")->getActorName();
+		else
+			return NULL;
+	} else {
+		return getObjOrActorName(id);
+	}
+}
+
 const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
