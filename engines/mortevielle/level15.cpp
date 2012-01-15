@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
@@ -99,15 +100,8 @@ void writepal(int n) {
 
 
 void pictout(int seg, int dep, int x, int y) {
-#ifdef DEBUG
 	GfxSurface surface;
-	surface.decode(&mem[0x7000 * 16]);
-
-	g_system->copyRectToScreen((const byte *)surface.pixels, surface.pitch, 0, 0,
-		surface.w, surface.h);
-	g_system->updateScreen();
-
-#endif
+	surface.decode(&mem[seg * 16 + dep]);
 
 	decomp(seg, dep);
 	if (gd == her) {
@@ -116,7 +110,7 @@ void pictout(int seg, int dep, int x, int y) {
 	}
 	if ((caff != 51) && (READ_LE_UINT16(&mem[0x7000 * 16 + 0x4138]) > 0x100))
 		WRITE_LE_UINT16(&mem[0x7000 * 16 + 0x4138], 0x100);
-	afff(gd, seg, dep, x, y);
+	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
 
 void putxy(int x, int y) {

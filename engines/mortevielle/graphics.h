@@ -23,10 +23,16 @@
 #ifndef MORTEVIELLE_GRAPHICS_H
 #define MORTEVIELLE_GRAPHICS_H
 
+#include "common/file.h"
+#include "common/list.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
-#include "mortevielle/mortevielle.h"
 
 namespace Mortevielle {
+
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 6
+#define FONT_NUM_CHARS 121
 
 class GfxSurface: public Graphics::Surface {
 private:
@@ -55,7 +61,24 @@ private:
 	void TF1(byte *&pDest, int &v);
 	void TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v);
 public:
+	~GfxSurface();
+
 	void decode(const byte *pSrc);
+};
+
+class ScreenSurface: public Graphics::Surface {
+private:
+	Common::List<Common::Rect> _dirtyRects;
+	byte _fontData[FONT_NUM_CHARS * FONT_HEIGHT];
+public:
+	void readFontData(Common::File &f, int dataSize);
+	Graphics::Surface lockArea(const Common::Rect &bounds);
+	void updateScreen();
+	void drawPicture(GfxSurface &surface, int x, int y);
+	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
+
+	// TODO: Refactor code to remove this method, for increased performance
+	void setPixel(const Common::Point &pt, int palIndex);
 };
 
 } // End of namespace Mortevielle

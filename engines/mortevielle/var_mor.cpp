@@ -312,9 +312,9 @@ void hirs() {
  */
 void affput(const Common::Point &pt, int palIndex, int ch) {
 	if (ch == 0)
-		g_vm->setPixel(pt, palIndex);
+		g_vm->_screenSurface.setPixel(pt, palIndex);
 	else
-		g_vm->writeCharacter(pt, ch, palIndex);
+		g_vm->_screenSurface.writeCharacter(pt, ch, palIndex);
 }
 
 void affcar(int gd, int x, int y, int coul, int chr) {
