@@ -3056,8 +3056,188 @@ void Scene1550::saveCharacter(int characterIndex) {
 	SceneExt::saveCharacter(characterIndex);
 }
 
-void Scene1550::SceneActor1550::subA4D14(int arg1, int arg2) {
-	warning("Scene1550::subA4D14(%d, %d);", arg1, arg2);
+void Scene1550::SceneActor1550::subA4D14(int frameNumber, int strip) {
+	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
+
+	postInit();
+	if (scene->_field414 == 2)
+		setup(1551, strip, frameNumber);
+	else
+		setup(1554, strip, frameNumber);
+
+	switch (strip) {
+	case 0:
+		switch (frameNumber - 1) {
+		case 0:
+			setup(1551, 1, 1);
+			setPosition(Common::Point(30, 67));
+			break;
+		case 1:
+			setup(1560, 1, 5);
+			setPosition(Common::Point(141, 54));
+			break;
+		case 2:
+			setup(1560, 2, 5);
+			setPosition(Common::Point(178, 54));
+			break;
+		case 3:
+			setup(1560, 2, 1);
+			setPosition(Common::Point(289, 67));
+			break;
+		case 4:
+			setup(1560, 2, 2);
+			setPosition(Common::Point(298, 132));
+			break;
+		case 5:
+			setup(1560, 1, 2);
+			setPosition(Common::Point(21, 132));
+			break;
+		case 6:
+			setup(1560, 2, 4);
+			setPosition(Common::Point(285, 123));
+			break;
+		case 7:
+			setup(1560, 1, 3);
+			setPosition(Common::Point(30, 111));
+			break;
+		case 8:
+			setup(1560, 2, 3);
+			setPosition(Common::Point(289, 111));
+			break;
+		case 9:
+			setup(1560, 1, 4);
+			setPosition(Common::Point(34, 123));
+			break;
+		default:
+			break;
+		}
+		fixPriority(1);
+		break;
+	case 1:
+		if (frameNumber == 3) {
+			setup(1553, 3, 1);
+			setPosition(Common::Point(48, 44));
+			fixPriority(2);
+		} else {
+			fixPriority(1);
+			setPosition(Common::Point(32, 17));
+		}
+
+		switch (frameNumber) {
+		case 2:
+			setDetails(1550, 3, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		case 3:
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		default:
+			setDetails(1550, 72, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		}
+		break;
+	case 2:
+		fixPriority(1);
+		switch (frameNumber) {
+		case 4:
+			setup(1553, 4, 1);
+			setPosition(Common::Point(48, 168));
+			break;
+		case 5:
+			setup(1553, 3, 2);
+			setPosition(Common::Point(20, 168));
+			fixPriority(250);
+			break;
+		default:
+			setPosition(Common::Point(28, 116));
+			break;
+		}
+
+		switch (frameNumber) {
+		case 2:
+			setDetails(1550, 3, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		case 4:
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		case 5:
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		default:
+			setDetails(1550, 72, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		}
+		break;
+	case 3:
+		switch (frameNumber) {
+		case 2:
+			fixPriority(2);
+			if (scene->_field414 == 2)
+				setup(1553, 2, 1);
+			else 
+				setup(1556, 2, 1);
+			setPosition(Common::Point(160, 44));
+			break;
+		case 3:
+			fixPriority(2);
+			setup(1553, 5, 1);
+			setPosition(Common::Point(178, 44));
+			break;
+		default:
+			fixPriority(1);
+			setPosition(Common::Point(160, 17));
+			break;
+		}
+
+		if (frameNumber == 1)
+			setDetails(1550, 3, -1, -1, 2, (SceneItem *) NULL);
+		else
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+		break;
+	case 4:
+		if (frameNumber == 2) {
+			fixPriority(250);
+			if (scene->_field414 == 2)
+				setup(1553, 1, 1);
+			else
+				setup(1556, 1, 1);
+		} else {
+			fixPriority(2);
+		}
+		
+		if (frameNumber != 1)
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+
+		setPosition(Common::Point(160, 168));
+		break;
+	case 5:
+		fixPriority(1);
+		setPosition(Common::Point(287, 17));
+
+		switch (frameNumber) {
+		case 2:
+			setDetails(1550, 3, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		case 3:
+			setDetails(1550, 6, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		default:
+			setDetails(1550, 72, -1, -1, 2, (SceneItem *) NULL);
+			break;
+		}
+		break;
+	case 6:
+		fixPriority(1);
+		setPosition(Common::Point(291, 116));
+
+		if (frameNumber == 2)
+			setDetails(1550, 3, -1, -1, 2, (SceneItem *) NULL);
+		else
+			setDetails(1550, 72, -1, -1, 2, (SceneItem *) NULL);
+		break;
+	default:
+		break;
+	}
+
 }
 
 void Scene1550::subA2B2F() {

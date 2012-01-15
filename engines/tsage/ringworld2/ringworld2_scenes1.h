@@ -229,7 +229,7 @@ public:
 class Scene1550 : public SceneExt {
 	class SceneActor1550 : public SceneActor {
 	public:
-		void subA4D14(int arg1, int arg2);
+		void subA4D14(int frameNumber, int strip);
 	};
 
 	class UnkObj15501 : public SceneActor {
