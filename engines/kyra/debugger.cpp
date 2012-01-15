@@ -29,6 +29,9 @@
 #include "kyra/eobcommon.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
+
+#include "gui/message.h"
 
 namespace Kyra {
 
@@ -477,6 +480,34 @@ Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 #ifdef ENABLE_EOB
 Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
+
+void Debugger_EoB::initialize() {
+	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+}
+
+bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+	if (argc == 3) {
+		int slot = atoi(argv[1]);
+		if (slot < -1 || slot > 989) {
+			DebugPrintf("slot must be between (including) -1 and 989 \n");
+			return true;
+		}
+
+		::GUI::MessageDialog dialog("Your current game (if any) will be lost if you continue. Make sure to save your game first.\n\n", "Continue", "Cancel");
+		if (!dialog.runModal()) {
+			DebugPrintf("Cancelled.\n");
+			return true;
+		}
+
+		DebugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
+		_vm->loadItemDefs();
+	} else {
+		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and pushs them to the top of the save game list.)\n\n");
+	}
+
+	return true;
+}
+
 #endif // ENABLE_EOB
 
 } // End of namespace Kyra

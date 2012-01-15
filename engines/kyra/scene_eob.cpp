@@ -38,31 +38,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	_currentSub = sub;
 	uint32 end = _system->getMillis() + 500;
 
-	Common::String file;
-	Common::SeekableReadStream *s = 0;
-	static const char *suffix[] = { "INF", "DRO", "ELO", 0 };
-
-	for (const char *const *sf = suffix; *sf && !s; sf++) {
-		file = Common::String::format("LEVEL%d.%s", level, *sf);
-		s = _res->createReadStream(file);
-	}
-
-	if (!s)
-		error("Failed to load level file LEVEL%d.INF/DRO/ELO", level);
-
-	if (s->readUint16LE() + 2 == s->size()) {
-		if (s->readUint16LE() == 4) {
-			delete s;
-			s = 0;
-			_screen->loadBitmap(file.c_str(), 5, 5, 0);
-		}
-	}
-
-	if (s) {
-		s->seek(0);
-		_screen->loadFileDataToPage(s, 5, 15000);
-		delete s;
-	}
+	readLevelFileData(level);
 
 	Common::String gfxFile;
 	// Work around for issue with corrupt (incomplete) monster property data
@@ -119,6 +95,34 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	_sceneDrawPage1 = 2;
 	_sceneDrawPage2 = 1;
 	_screen->setCurPage(0);
+}
+
+void EoBCoreEngine::readLevelFileData(int level) {
+	Common::String file;
+	Common::SeekableReadStream *s = 0;
+	static const char *suffix[] = { "INF", "DRO", "ELO", 0 };
+
+	for (const char *const *sf = suffix; *sf && !s; sf++) {
+		file = Common::String::format("LEVEL%d.%s", level, *sf);
+		s = _res->createReadStream(file);
+	}
+
+	if (!s)
+		error("Failed to load level file LEVEL%d.INF/DRO/ELO", level);
+
+	if (s->readUint16LE() + 2 == s->size()) {
+		if (s->readUint16LE() == 4) {
+			delete s;
+			s = 0;
+			_screen->loadBitmap(file.c_str(), 5, 5, 0);
+		}
+	}
+
+	if (s) {
+		s->seek(0);
+		_screen->loadFileDataToPage(s, 5, 15000);
+		delete s;
+	}
 }
 
 Common::String EoBCoreEngine::initLevelData(int sub) {
@@ -300,9 +304,29 @@ const uint8 *EoBCoreEngine::getBlockFileData(int) {
 	return _screen->getCPagePtr(14);
 }
 
+Common::String EoBCoreEngine::getBlockFileName(int levelIndex, int sub) {
+	readLevelFileData(levelIndex);
+	const uint8 *data = _screen->getCPagePtr(5) + 2;
+	const uint8 *pos = data;
+
+	for (int i = 0; i < sub; i++)
+		pos = data + READ_LE_UINT16(pos);
+
+	pos += 2;
+
+	if (*pos++ == 0xEC || _flags.gameID == GI_EOB1) {
+		if (_flags.gameID == GI_EOB1)
+			pos -= 3;
+
+		return Common::String((const char *)pos);
+	}
+
+	return Common::String();
+}
+
 const uint8 *EoBCoreEngine::getBlockFileData(const char *mazFile) {
 	_curBlockFile = mazFile;
-	return getBlockFileData(0);
+	return getBlockFileData();
 }
 
 void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
