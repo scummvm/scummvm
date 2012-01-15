@@ -211,7 +211,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)
+			if (nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse)
 					&& _state->evaluate(nodeData->hotspots[j].condition)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}

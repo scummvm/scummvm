@@ -88,7 +88,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		for(uint j = 0; j < nodeData->hotspots[i].rects.size(); j++) {
 			PolarRect &rect = nodeData->hotspots[i].rects[j];
 
-			DebugPrintf("    rect > pitch: %d heading: %d height: %d width: %d\n",
+			DebugPrintf("    rect > pitch: %d heading: %d width: %d height: %d\n",
 					rect.centerPitch, rect.centerHeading, rect.width, rect.height);
 		}
 

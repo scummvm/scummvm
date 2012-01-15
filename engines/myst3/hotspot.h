@@ -28,6 +28,8 @@
 
 namespace Myst3 {
 
+class GameState;
+
 struct Opcode {
 	uint8 op;
 	Common::Array<int16> args;
@@ -53,7 +55,7 @@ public:
 	Common::Array<Opcode> script;
 
 	bool isPointInRectsCube(const Common::Point &p);
-	bool isPointInRectsFrame(const Common::Point & p);
+	bool isPointInRectsFrame(GameState *state, const Common::Point &p);
 };
 
 

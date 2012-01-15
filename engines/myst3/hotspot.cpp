@@ -21,35 +21,42 @@
  */
 
 #include "engines/myst3/hotspot.h"
+#include "engines/myst3/state.h"
 
 namespace Myst3 {
 
-bool HotSpot::isPointInRectsCube(const Common::Point &p)
-{
-	for(uint j = 0;j < rects.size();j++){
+bool HotSpot::isPointInRectsCube(const Common::Point &p) {
+	for (uint j = 0; j < rects.size(); j++) {
 		Common::Rect rect = Common::Rect(
 				rects[j].centerHeading - rects[j].width / 2,
 				rects[j].centerPitch - rects[j].height / 2,
 				rects[j].centerHeading + rects[j].width / 2,
 				rects[j].centerPitch + rects[j].height / 2);
-		if(rect.contains(p)){
+		if (rect.contains(p))
 			return true;
-		}
 	}
 
 	return false;
 }
 
-bool HotSpot::isPointInRectsFrame(const Common::Point &p)
-{
-	for(uint j = 0;j < rects.size();j++){
-		Common::Rect rect = Common::Rect(rects[j].width,
-				rects[j].height);
-		rect.translate(rects[j].centerPitch,
-				rects[j].centerHeading);
-		if(rect.contains(p)){
-			return true;
+bool HotSpot::isPointInRectsFrame(GameState *state, const Common::Point &p) {
+	for (uint j = 0; j < rects.size(); j++) {
+
+		int16 x = rects[j].centerPitch;
+		int16 y = rects[j].centerHeading;
+		int16 w = rects[j].width;
+		int16 h = rects[j].height;
+
+		if (y < 0) {
+			x = state->getVar(x);
+			y = state->getVar(-y);
+			h = -h;
 		}
+
+		Common::Rect rect = Common::Rect(w, h);
+		rect.translate(x, y);
+		if (rect.contains(p))
+			return true;
 	}
 
 	return false;
