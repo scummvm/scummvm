@@ -748,18 +748,21 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		const char *rawString = 0;
 		uint32 size = 0;
 		reg_t stringHandle;
+		SciString *sciString;
+		Common::String commonString;
+
 		// We allocate the new string first because if the StringTable needs to
 		// grow, our rawString pointer will be invalidated
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 
 		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
-			SciString *string = s->_segMan->lookupString(argv[1]);
-			rawString = string->getRawData();
-			size = string->getSize();
+			sciString = s->_segMan->lookupString(argv[1]);
+			rawString = sciString->getRawData();
+			size = sciString->getSize();
 		} else {
-			Common::String string = s->_segMan->getString(argv[1]);
-			rawString = string.c_str();
-			size = string.size() + 1;
+			commonString = s->_segMan->getString(argv[1]);
+			rawString = commonString.c_str();
+			size = commonString.size() + 1;
 		}
 
 		dupString->setSize(size);
