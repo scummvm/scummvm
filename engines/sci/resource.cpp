@@ -2200,13 +2200,16 @@ void ResourceManager::detectSciVersion() {
 	// Handle SCI32 versions here
 	if (_volVersion >= kResVersionSci2) {
 		Common::List<ResourceId> *heaps = listResources(kResourceTypeHeap);
+		bool hasHeapResources = !heaps->empty();
+		delete heaps;
+
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
 		// SCI1 Late resource maps have the resource types or'd with
 		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
 		if (_mapVersion == kResVersionSci1Late) {
 			s_sciVersion = SCI_VERSION_2;
 			return;
-		} else if (!heaps->empty()) {
+		} else if (hasHeapResources) {
 			s_sciVersion = SCI_VERSION_2_1;
 			return;
 		} else {
