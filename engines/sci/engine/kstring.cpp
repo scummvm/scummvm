@@ -752,14 +752,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 
 		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
-			SciString *sciString = s->_segMan->lookupString(argv[1]);
-			const char *rawString = sciString->getRawData();
-			uint32 size = sciString->getSize();
-
-			dupString->setSize(sciString->getSize());
-
-			for (uint32 i = 0; i < size; i++)
-				dupString->setValue(i, rawString[i]);
+			*dupString = *s->_segMan->lookupString(argv[1]);
 		} else {
 			dupString->fromString(s->_segMan->getString(argv[1]));
 		}
