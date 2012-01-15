@@ -102,7 +102,7 @@ protected:
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
-	bool ifEqualActiveObject2Common(bool ignoreType);
+	bool ifEqualActiveObject2Common(bool checkType);
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();

@@ -828,9 +828,9 @@ void ScummEngine_v0::o_doSentence() {
 	doSentence(verb, obj, obj2);
 }
 
-bool ScummEngine_v0::ifEqualActiveObject2Common(bool ignoreType) {
+bool ScummEngine_v0::ifEqualActiveObject2Common(bool checkType) {
 	byte obj = fetchScriptByte();
-	if (!ignoreType || (OBJECT_V0_TYPE(_cmdObject2) == kObjectV0TypeFG))
+	if (!checkType || (OBJECT_V0_TYPE(_cmdObject2) == kObjectV0TypeFG))
 		return (obj == OBJECT_V0_NR(_cmdObject2));
 	return false;
 }
