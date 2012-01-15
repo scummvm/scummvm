@@ -61,12 +61,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 }
 
 GfxFrameout::~GfxFrameout() {
+	clear();
 }
 
 void GfxFrameout::clear() {
-	_screenItems.clear();
+	deletePlaneItems(NULL_REG);
 	_planes.clear();
-	_planePictures.clear();
+	deletePlanePictures(NULL_REG);
 }
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
@@ -214,12 +215,15 @@ void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 
 }
 
 void GfxFrameout::deletePlanePictures(reg_t object) {
-	for (PlanePictureList::iterator it = _planePictures.begin(); it != _planePictures.end(); it++) {
-		if (it->object == object) {
+	PlanePictureList::iterator it = _planePictures.begin();
+
+	while (it != _planePictures.end()) {
+		if (it->object == object || object.isNull()) {
+			delete it->pictureCels;
 			delete it->picture;
-			_planePictures.erase(it);
-			deletePlanePictures(object);
-			return;
+			it = _planePictures.erase(it);
+		} else {
+			++it;
 		}
 	}
 }
@@ -272,17 +276,28 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 	}
 
 	_screenItems.remove(itemEntry);
+	delete itemEntry;
 }
 
 void GfxFrameout::deletePlaneItems(reg_t planeObject) {
 	FrameoutList::iterator listIterator = _screenItems.begin();
 
 	while (listIterator != _screenItems.end()) {
-		reg_t itemPlane = readSelector(_segMan, (*listIterator)->object, SELECTOR(plane));
-		if (planeObject == itemPlane)
+		bool objectMatches = false;
+		if (!planeObject.isNull()) {
+			reg_t itemPlane = readSelector(_segMan, (*listIterator)->object, SELECTOR(plane));
+			objectMatches = (planeObject == itemPlane);
+		} else {
+			objectMatches = true;
+		}
+		
+		if (objectMatches) {
+			FrameoutEntry *itemEntry = *listIterator;
 			listIterator = _screenItems.erase(listIterator);
-		else
+			delete itemEntry;
+		} else {
 			++listIterator;
+		}
 	}
 }
 
