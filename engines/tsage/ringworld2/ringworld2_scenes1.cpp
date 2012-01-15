@@ -2237,7 +2237,7 @@ void Scene1550::UnkArea1550::remove() {
 	SceneArea::remove();
 	R2_GLOBALS._insetUp--;
 	//
-	if ((scene->_sceneMode >= 20) and (scene->_sceneMode <= 29))
+	if ((scene->_sceneMode >= 20) && (scene->_sceneMode <= 29))
 		return;
 	
 	R2_GLOBALS._player.disableControl();
