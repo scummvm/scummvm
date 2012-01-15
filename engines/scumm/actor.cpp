@@ -1474,6 +1474,18 @@ void ScummEngine::processActors() {
 				}
 			}
 		}
+	} else if (_game.version == 0) {
+		for (int j = 0; j < numactors; ++j) {
+			for (int i = 0; i < numactors; ++i) {
+				// Note: the plant is handled different in v0, the y value is not used.
+				// In v1/2 this is done by the actor's elevation instead.
+				int sc_actor1 = (_sortedActors[j]->_number == 19 ? 0 : _sortedActors[j]->getPos().y);
+				int sc_actor2 = (_sortedActors[i]->_number == 19 ? 0 : _sortedActors[i]->getPos().y);
+				if (sc_actor1 < sc_actor2) {
+					SWAP(_sortedActors[i], _sortedActors[j]);
+				}
+			}
+		}
 	} else {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
