@@ -859,10 +859,16 @@ void Actor::setDirection(int direction) {
 
 	// V0 MM
 	if (_vm->_game.version == 0) {
-		if (_moving)
-			_vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
-		else
-			_vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
+
+       	if (_moving)
+		    _vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
+	    else
+		    _vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
+
+        // 0x2C17
+
+        ((ActorC64*) this)->_byte_FD0A = 0xFF;
+
 		_needRedraw = true;
 		return;
 	}
@@ -895,6 +901,9 @@ void Actor::faceToObject(int obj) {
 void Actor::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
+
+    if( _vm->_game.version == 0 )
+        ((ActorC64*) this)->_byte_FD0A = -1;
 
 	if (_vm->_game.version <= 6) {
 		_moving = MF_TURN;
@@ -1794,7 +1803,6 @@ void Actor::animateActor(int anim) {
 		dir = anim % 1000;
 
 	} else {
-
 		cmd = anim / 4;
 		dir = oldDirToNewDir(anim % 4);
 
@@ -2626,6 +2634,45 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 }
 #endif
 
+void ActorC64::animateActor(int anim) {
+    Actor::animateActor(anim);
+    return;
+    int dir = oldDirToNewDir(anim % 4);
+
+    if( this->isInCurrentRoom() ) {
+
+       this->_costCommandNew = anim;
+       this->_byte_FD0A = this->_byte_FDE8;
+
+       // 0x273A
+       /*switch( anim ) {
+            case 4:
+                dir = 1;
+                break;
+            case 5:
+                dir = 0;
+                break;
+            case 6:
+                dir = 0x80;
+                break;
+            case 7:
+                dir = 0x81;
+                break;
+
+            default:
+                return;
+        }*/
+
+        this->setDirection( dir );
+
+    } else {
+
+        if( anim > 4 ) { 
+            if( anim <= 7 )
+                this->setDirection( dir );
+        }
+    }
+}
 
 void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 	Actor::saveLoadWithSerializer(ser);

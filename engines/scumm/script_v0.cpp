@@ -663,6 +663,8 @@ void ScummEngine_v0::o_animateActor() {
 
 	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
 
+    a->_byte_FDE8 = unk;
+
 	// 0x6993
 	if (anim == 0xFE) {
 		a->_speaking = 0x80;	// Enabled, but not switching

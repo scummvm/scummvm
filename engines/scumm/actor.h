@@ -348,9 +348,15 @@ enum ActorC64MiscFlags {
 
 class ActorC64 : public Actor_v2 {
 public:
+    byte _costCommandNew;
 	byte _costCommand, _costFrame;
 	byte _miscflags;
 	byte _speaking, _speakingPrev;
+
+    byte _byte_FDE8;
+    int8 _byte_FD0A;
+    byte _byte_FCE2[8];
+    
 
 public:
 	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
@@ -358,6 +364,13 @@ public:
 		 _costFrame = 0;
 		 _speaking = 0;
 		 _speakingPrev = 0;
+         _byte_FD0A = 0;
+         _byte_FDE8 = 0;
+
+         // Reset the limb counter?
+         for( int i = 0; i < sizeof( _byte_FCE2 ); ++i )
+             _byte_FCE2[i] = 0;
+
 	}
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
@@ -365,6 +378,8 @@ public:
 			_miscflags = 0;
 		}
 	}
+
+    virtual void animateActor(int anim);
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);

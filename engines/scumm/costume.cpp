@@ -1298,12 +1298,14 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 	cmd <<= 3;
 
 	for (int limb = 0, pos = 0; limb < 8; ++limb, pos = 0) {
-		// get a limb frames ptr from the costume command
+		// get the frame number for the beginning of the costume command
 		limbFrames = ((_animCmds + cmd)[limb]);
 
-		// Dont change limb if entry is invalid
+		// Dont change if frame is invalid
 		if (limbFrames == 0xFF)
-			continue;
+            continue;
+
+        a->_byte_FCE2[limb] = a->_byte_FD0A;
 
 		// Has limb frames ptr changed since last update?
 		if (a->_cost.start[limb] == limbFrames)
@@ -1337,7 +1339,7 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 		}
 
 		// Set ending position of limb frames
-		a->_cost.end[limb] = pos - 1;
+		a->_cost.end[limb] = pos;
 		a->_cost.curpos[limb] = 0;
 	}
 }
@@ -1345,18 +1347,27 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 // based on 0x2BCA, doesn't match disassembly because 'oldDir' variable
 // is not the same value as stored in the original interpreter
 int C64CostumeLoader::dirToDirStop(int oldDir) {
+    int res = 0;
+
 	switch (oldDir) {
 		case 0:
-			return 4;	// Left
+			res = 4;	// Left
+            break;
+
 		case 1:
-			return 5;	// Right
+			res = 5;	// Right
+            break;
+
 		case 2:
-			return 6;	// Face Camera
-		case 3:
-			return 7;	// Face Away
+			res = 6;	// Face Camera
+            break;
+
+        default:
+			res = 7;	// Face Away
+            break;
 	}
-	// shouldnt' be reached
-	return 4;
+	
+    return res;
 }
 
 void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
@@ -1378,20 +1389,27 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	// Enable/Disable speaking flag
 	if (frame == a->_talkStartFrame) {
+
 		if (v0ActorTalkArray[a->_number] & 0x40)
 			return;
 
 		A->_speaking = 1;
 		return;
 	}
+
 	if (frame == a->_talkStopFrame) {
+
 		A->_speaking = 0;
 		return;
 	}
 
 	// Different command for stand frame
 	if (frame == a->_standFrame)
+    {
 		command = dirToDirStop(dir);
+
+        A->_byte_FDE8 = 0xFF;
+    }
 
 	// Update the limb frames
 	frameUpdate(A, command);
@@ -1435,11 +1453,33 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 	}
 
 	// increase each frame pos
+    // 0x2543
 	for (int limb = 0; limb < 8; ++limb) {
-		if (a->_cost.curpos[limb] < a->_cost.end[limb])
-			a->_cost.curpos[limb]++;
-		else
-			a->_cost.curpos[limb] = 0;
+
+		if (++a->_cost.curpos[limb] >= a->_cost.end[limb]) {
+
+            // 0x2541
+            if( A->_byte_FCE2[limb] == 0 ) {
+
+                // 0x2556
+                --a->_cost.curpos[limb];
+
+                A->_costCommandNew = 0xFF;
+                //A->_costCommand = 0xFF;
+                
+                // 0x2568
+                //A->_limbCommandNew[limb] = 0xFF;
+                //A->_limbCommand[limb] = 0xFF;
+
+            } else {
+                if( A->_byte_FCE2[limb] != 0xFF )
+                    --A->_byte_FCE2[limb];
+
+                a->_cost.curpos[limb] = 0;
+            }
+        }
+
+        
 	}
 
 	return 1;
