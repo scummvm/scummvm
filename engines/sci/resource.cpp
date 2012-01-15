@@ -753,12 +753,10 @@ void ResourceManager::addScriptChunkSources() {
 		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
 		// does exactly this.
 
-		Common::List<ResourceId> *resources = listResources(kResourceTypeScript);
+		Common::List<ResourceId> resources = listResources(kResourceTypeScript);
 
-		if (resources->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
+		if (resources.empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
 			addResourcesFromChunk(0);
-
-		delete resources;
 	}
 #endif
 }
@@ -1045,13 +1043,13 @@ void ResourceManager::freeOldResources() {
 	}
 }
 
-Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int mapNumber) {
-	Common::List<ResourceId> *resources = new Common::List<ResourceId>;
+Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int mapNumber) {
+	Common::List<ResourceId> resources;
 
 	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
 		if ((itr->_value->getType() == type) && ((mapNumber == -1) || (itr->_value->getNumber() == mapNumber)))
-			resources->push_back(itr->_value->_id);
+			resources.push_back(itr->_value->_id);
 		++itr;
 	}
 
@@ -2199,9 +2197,8 @@ void ResourceManager::detectSciVersion() {
 
 	// Handle SCI32 versions here
 	if (_volVersion >= kResVersionSci2) {
-		Common::List<ResourceId> *heaps = listResources(kResourceTypeHeap);
-		bool hasHeapResources = !heaps->empty();
-		delete heaps;
+		Common::List<ResourceId> heaps = listResources(kResourceTypeHeap);
+		bool hasHeapResources = !heaps.empty();
 
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
 		// SCI1 Late resource maps have the resource types or'd with
