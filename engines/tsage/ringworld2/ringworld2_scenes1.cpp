@@ -1018,7 +1018,7 @@ bool Scene1200::Area1::Actor3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1200::Area1::postInit() {
+void Scene1200::Area1::postInit(SceneObjectList *OwnerList) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_field41A = 1;

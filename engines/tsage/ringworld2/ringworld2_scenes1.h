@@ -136,7 +136,7 @@ class Scene1200 : public SceneExt {
 		Area1();
 		void synchronize(Serializer &s);
 
-		virtual void postInit();
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
