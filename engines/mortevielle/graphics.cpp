@@ -20,9 +20,20 @@
  *
  */
 
+#include "common/endian.h"
+#include "common/system.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/mortevielle.h"
 
 namespace Mortevielle {
+
+/*-------------------------------------------------------------------------*
+ * Image decoding
+ * 
+ * The code in this section is responsible for decoding image resources.
+ * Images are broken down into rectangular sections, which can use one
+ * of 18 different encoding methods.
+ *-------------------------------------------------------------------------*/
 
 #define INCR_TAIX { if (_xSize & 1) ++_xSize; }
 #define DEFAULT_WIDTH (SCREEN_WIDTH / 2)
@@ -772,6 +783,139 @@ void GfxSurface::TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int 
 		*pDest = csuiv(pSrc, pLookup);
 		pDest += _var1E;
 	}
+}
+
+/*-------------------------------------------------------------------------*/
+
+GfxSurface::~GfxSurface() {
+	free();
+}
+
+/*-------------------------------------------------------------------------*
+ * Screen surface
+ *-------------------------------------------------------------------------*/
+
+/**
+ * Called to populate the font data from the passed file
+ */
+void ScreenSurface::readFontData(Common::File &f, int dataSize) {
+	assert(dataSize == (FONT_NUM_CHARS * FONT_HEIGHT));
+	f.read(_fontData, FONT_NUM_CHARS * FONT_HEIGHT);
+}
+
+/**
+ * Returns a graphics surface representing a subset of the screen. The affected area
+ * is also marked as dirty
+ */
+Graphics::Surface ScreenSurface::lockArea(const Common::Rect &bounds) {
+	_dirtyRects.push_back(bounds);
+
+	Graphics::Surface s;
+	s.pixels = getBasePtr(bounds.left, bounds.top);
+	s.pitch = pitch;
+	s.w = bounds.width();
+	s.h = bounds.height();
+
+	return s;
+}
+
+/**
+ * Updates the affected areas of the surface to the underlying physical screen
+ */
+void ScreenSurface::updateScreen() {
+	// Iterate through copying dirty areas to the screen
+	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
+		Common::Rect r = *i;
+		g_system->copyRectToScreen((const byte *)getBasePtr(r.left, r.top), pitch, 
+			r.left, r.top, r.width(), r.height());
+	}
+	_dirtyRects.clear();
+
+	// Update the screen
+	g_system->updateScreen();
+}
+
+/**
+ * Draws a decoded picture on the screen
+ * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
+ *		simulate the original 640x200 surface, all Y values have to be doubled.
+ *		Also, image resources are stored at 320x200, so when drawn onto the screen every
+ *		other column is interpolated.
+ */
+void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
+	// Lock the affected area of the surface to write to
+	Graphics::Surface destSurface = lockArea(Common::Rect(x, y, 
+		x + surface.w * 2, y + surface.h * 2));
+
+	// Loop through writing 
+	for (int yp = 0; yp < surface.h; ++yp) {
+		if (((y + yp) < 0) || ((y + yp) >= 200))
+			continue;
+
+		const byte *pSrc = (const byte *)surface.getBasePtr(0, yp);
+		byte *pDest = (byte *)destSurface.getBasePtr(0, yp * 2);
+
+		for (int xp = 0; xp < surface.w; ++xp, ++pSrc) {
+			// Draw pixel from source image
+			*pDest = *pSrc;
+			*(pDest + SCREEN_WIDTH) = *pSrc;
+			++pDest;
+
+			// TODO: I'm not sure what algorithm the original uses to calculate
+			// which pixel to use on the alternate columns, so for now I'm doing
+			// a simple output of null values. This should be revisited once we've
+			// got the palette loading so we can compare palettes. In fact, the 
+			// original had the alternate columns very noticablely striped. With
+			// the larger 256 colour palette, it may be worthwhile to offer a 
+			// better blended graphics mode as an option.
+			*pDest = 0;
+			*(pDest + SCREEN_WIDTH) = 0;
+			++pDest;
+		}
+	}
+
+	// TODO: Remove this once we have a proper game loop
+	updateScreen();
+}
+
+/**
+ * Draws a character at the specified co-ordinates
+ * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
+ *		simulate the original 640x200 surface, all Y values have to be doubled
+ */
+void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex) {
+	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, 
+		pt.x + FONT_WIDTH, (pt.y + FONT_HEIGHT) * 2));
+
+	// Get the start of the character to use
+	assert((ch >= ' ') && (ch <= (unsigned char)(32 + FONT_NUM_CHARS)));
+	const byte *charData = &_fontData[((int)ch - 32) * FONT_HEIGHT];
+
+	// Loop through decoding each character's data
+	for (int yp = 0; yp < FONT_HEIGHT; ++yp) {
+		byte *lineP = (byte *)destSurface.getBasePtr(0, yp * 2);
+		byte byteVal = *charData++;
+
+		for (int xp = 0; xp < FONT_WIDTH; ++xp, ++lineP, byteVal <<= 1) {
+			if (byteVal & 0x80) {
+				*lineP = palIndex;
+				*(lineP + SCREEN_WIDTH) = palIndex;
+			}
+		}
+	}
+}
+
+/**
+ * Sets a single pixel at the specified co-ordinates
+ * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
+ *		simulate the original 640x200 surface, all Y values have to be doubled
+ */
+void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
+	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, pt.x + 1, (pt.y + 1) * 2));
+
+	byte *destP = (byte *)destSurface.pixels;
+	*destP = palIndex;
+	*(destP + SCREEN_WIDTH) = palIndex;
 }
 
 } // End of namespace Mortevielle

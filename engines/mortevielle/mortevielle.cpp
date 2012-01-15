@@ -97,8 +97,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 		if (!strncmp(dataType, "FONT", 4)) {
 			// Font resource
-			assert(dataSize == (FONT_NUM_CHARS * FONT_HEIGHT));
-			f.read(_fontData, FONT_NUM_CHARS * FONT_HEIGHT);
+			_screenSurface.readFontData(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -108,60 +107,6 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	f.close();
 	return Common::kNoError;
 }
-
-/*-------------------------------------------------------------------------*/
-
-/**
- * Update the physical screen
- */
-void MortevielleEngine::updateScreen() {
-	g_system->copyRectToScreen((const byte *)_screenSurface.getBasePtr(0, 0), 
-		SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	g_system->updateScreen();
-}
-/**
- * Draws a character at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
- *		simulate the original 640x200 surface, all Y values have to be doubled
- */
-void MortevielleEngine::writeCharacter(const Common::Point &pt, unsigned char ch, 
-		int palIndex, Graphics::Surface *surface) {
-	if (surface == NULL)
-		surface = &_screenSurface;
-
-	// Get the start of the character to use
-	assert((ch >= ' ') && (ch <= (unsigned char)(32 + FONT_NUM_CHARS)));
-	const byte *charData = &_fontData[((int)ch - 32) * FONT_HEIGHT];
-
-	// Loop through decoding each character's data
-	for (int yp = 0; yp < FONT_HEIGHT; ++yp) {
-		byte *lineP = (byte *)surface->getBasePtr(pt.x, (pt.y + yp) * 2);
-		byte byteVal = *charData++;
-
-		for (int xp = 0; xp < 8; ++xp, ++lineP, byteVal <<= 1) {
-			if (byteVal & 0x80) {
-				*lineP = palIndex;
-				*(lineP + SCREEN_WIDTH) = palIndex;
-			}
-		}
-	}
-}
-
-/**
- * Sets a single pixel at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
- *		simulate the original 640x200 surface, all Y values have to be doubled
- */
-void MortevielleEngine::setPixel(const Common::Point &pt, int palIndex, 
-		Graphics::Surface *surface) {
-	if (surface == NULL)
-		surface = &_screenSurface;
-
-	byte *destP = (byte *)surface->getBasePtr(pt.x, pt.y * 2);
-	*destP = palIndex;
-	*(destP + SCREEN_WIDTH) = palIndex;
-}
-
 
 /*-------------------------------------------------------------------------*/
 

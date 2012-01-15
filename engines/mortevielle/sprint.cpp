@@ -88,7 +88,7 @@ void writeg(Common::String l, int c)
 	show_mouse();
 
 	// TODO: Move screen updates to main loop once constructed
-	g_vm->updateScreen();
+	g_vm->_screenSurface.updateScreen();
 }
 
 } // End of namespace Mortevielle
