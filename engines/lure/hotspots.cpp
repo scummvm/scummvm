@@ -2334,9 +2334,11 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	if (_data)
 		_data->npcSchedule.loadFromStream(stream);
-	else
+	else {
 		// Dummy read of terminator for empty actions list
-		assert(stream->readByte() == 0xff);
+		byte dummy = stream->readByte();
+		assert(dummy == 0xff);
+	}
 
 	_pathFinder.loadFromStream(stream);
 

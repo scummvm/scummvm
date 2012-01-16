@@ -753,7 +753,6 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 
 		reg_t arrayHandle = argv[1];
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
-		//SciArray<reg_t> *array1 = !argv[1].isNull() ? s->_segMan->lookupArray(argv[1]) : s->_segMan->allocateArray(&arrayHandle);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
 		uint32 index1 = argv[2].toUint16();
 		uint32 index2 = argv[4].toUint16();
@@ -790,21 +789,8 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 #endif
 			return NULL_REG;
 		}
-		SegmentType sourceType = s->_segMan->getSegmentObj(argv[1].segment)->getType();
-		if (sourceType == SEG_TYPE_SCRIPT) {
-			// A technique used in later SCI2.1 and SCI3 games: the contents of a script
-			// are loaded in an array (well, actually a string).
-			Script *scr = s->_segMan->getScript(argv[1].segment);
-			reg_t stringHandle;
-
-			SciString *dupString = s->_segMan->allocateString(&stringHandle);
-			dupString->setSize(scr->getBufSize());
-			dupString->fromString(Common::String((const char *)scr->getBuf()));
-
-			return stringHandle;
-		} else if (sourceType != SEG_TYPE_ARRAY && sourceType != SEG_TYPE_SCRIPT) {
-			error("kArray(Dup): Request to duplicate a segment which isn't an array or a script");
-		}
+		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY)
+			error("kArray(Dup): Request to duplicate a segment which isn't an array");
 
 		reg_t arrayHandle;
 		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);

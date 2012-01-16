@@ -28,6 +28,10 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/substream.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 namespace Kyra {
 
@@ -134,7 +138,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_updateFlags = in.readUint16BE();
 		_compassDirection = in.readUint16BE();
 		_currentControlMode = in.readUint16BE();
-		_updateCharNum = in.readUint16BE();
+		_updateCharNum = in.readSint16BE();
 		_openBookSpellLevel = in.readSByte();
 		_openBookSpellSelectedItem  = in.readSByte();
 		_openBookSpellListOffset = in.readSByte();
@@ -395,7 +399,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeUint16BE(_updateFlags);
 	out->writeUint16BE(_compassDirection);
 	out->writeUint16BE(_currentControlMode);
-	out->writeUint16BE(_updateCharNum);
+	out->writeSint16BE(_updateCharNum);
 	out->writeSByte(_openBookSpellLevel);
 	out->writeSByte(_openBookSpellSelectedItem);
 	out->writeSByte(_openBookSpellListOffset);
@@ -522,6 +526,380 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	_gui->notifyUpdateSaveSlotsList();
 
 	return Common::kNoError;
+}
+
+bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile) {
+	Common::Array<Common::String> origFiles;
+
+	if (sourceFile) {
+		// If a source file is specified via the console command we just check whether it exists.
+		if (Common::File::exists(sourceFile))
+			origFiles.push_back(sourceFile);
+		else
+			return false;
+	} else {
+		// Check for original save files in the game path (usually at least the "Quick Start Party" file will be present).
+		int numMax = (_flags.gameID == GI_EOB1) ? 1 : 6;
+		const char *pattern = (_flags.gameID == GI_EOB1) ? "EOBDATA.SAV" : "EOBDATA%d.SAV";
+		for (int i = 0; i < numMax; ++i) {
+			Common::String temp = Common::String::format(pattern, i);
+			Common::SeekableReadStream *fs = _res->createReadStream(temp);
+			if (fs) {
+				Common::String dsc;
+				if (_flags.gameID == GI_EOB2) {
+					char descStr[20];
+					fs->read(descStr, 20);
+					dsc = Common::String::format("(\"%s\")", descStr).c_str();
+				}
+
+				delete fs;
+				::GUI::MessageDialog dialog(Common::String::format(_("The following original save game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this save game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				if (dialog.runModal())
+					origFiles.push_back(temp);
+			}
+		}
+	}
+
+	int numFilesFound = origFiles.size();
+	if (!numFilesFound)
+		return false;
+
+	int moveUpSlots = 0;
+	_gui->updateSaveSlotsList(_targetName, true);
+
+	// Check whether ScummVM save files exist and how many slots they need to be moved up to make space for the original save files
+	if (destSlot == -1) {
+		for (int i = 0; i < numFilesFound; ++i) {
+			if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), i) != _gui->_saveSlots.end())
+				moveUpSlots++;
+		}
+	}
+
+	// "move up" existing save files
+	if (moveUpSlots) {
+		Common::sort(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), Common::Greater<int>());
+		for (Common::Array<int>::iterator i = _gui->_saveSlots.begin(); i != _gui->_saveSlots.end(); ++i) {
+			int newIndex = *i + moveUpSlots;
+
+			if (*i >= 990) {
+				// Skip quick save slots
+				continue;
+			} else if (*i >= (990 - moveUpSlots)) {
+				// Try to squeeze occupied slots together by finding and occupying empty slots before the current one if necessary
+				int missingSlots = moveUpSlots - (989 - *i);
+				int missingLeft = missingSlots;
+				int missingLast = missingLeft;
+				Common::Array<int>::iterator squeezeStart = i + 1;
+
+				for (; squeezeStart != _gui->_saveSlots.end() && missingLeft; ++squeezeStart) {
+					int diff = *(squeezeStart - 1) - *squeezeStart - 1;
+					missingLast = MIN(missingLeft, diff);
+					missingLeft -= missingLast;
+				}
+
+				// This will probably never happen, since we do have 990 save slots
+				if (missingLeft)
+					warning("%d original save files could not be converted due to missing save game slots", missingLeft);
+
+				int indexS = *(squeezeStart - 2) - missingLast;
+				for (Common::Array<int>::iterator ii = squeezeStart - 2; ii != i - 1; --ii)
+					_saveFileMan->renameSavefile(getSavegameFilename(*ii), getSavegameFilename(indexS++));
+
+				int newPos = *i -= (missingSlots - missingLeft);
+
+				_gui->updateSaveSlotsList(_targetName, true);
+				Common::sort(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), Common::Greater<int>());
+				i = Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), newPos);
+				if (i == _gui->_saveSlots.end())
+					error("EoBCoreEngine::importOriginalSaveFile(): Unknown error");
+				newIndex = *i + moveUpSlots;
+			}
+
+			_saveFileMan->renameSavefile(getSavegameFilename(*i), getSavegameFilename(newIndex));
+		}
+	}
+
+	int curSlot = MAX(destSlot, 0);
+
+	if (destSlot != -1) {
+		if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), destSlot) != _gui->_saveSlots.end()) {
+			::GUI::MessageDialog dialog(Common::String::format(_("A save game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
+			if (!dialog.runModal())
+				return false;
+		}
+	}
+
+	for (Common::Array<Common::String>::iterator i = origFiles.begin(); i != origFiles.end(); ++i) {
+		Common::String desc = readOriginalSaveFile(*i);
+		if (desc.empty()) {
+			warning("Unable to import original save file '%s'", i->c_str());
+		} else {
+			// We can't make thumbnails here, since we do not want to load all the level data, monsters, etc. for each save we convert.
+			// Instead, we use an empty surface to avoid that createThumbnailFromScreen() makes a completely pointless thumbnail from
+			// whatever screen that is currently shown when this function is called.
+			Graphics::Surface dummy;
+			saveGameStateIntern(curSlot++, desc.c_str(), &dummy);
+			warning("Imported original save file '%s' ('%s')", i->c_str(), desc.c_str());
+		}
+	}
+
+	_currentLevel = 0;
+	_currentSub = 0;
+	_currentBlock = 0;
+	_currentDirection = 0;
+	_itemInHand = 0;
+	_hasTempDataFlags = 0;
+	_partyEffectFlags = 0;
+	memset(_characters, 0, sizeof(EoBCharacter) * 6);
+	_inf->reset();
+
+	if (destSlot == -1 && curSlot) {
+		::GUI::MessageDialog dialog(_("One or more original save game files have been successfully imported into\nScummVM. If you want to manually import original save game files later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"));
+		dialog.runModal();
+	}
+
+	return true;
+}
+
+Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
+	Common::String desc;
+
+	Common::SeekableReadStream *fs = _res->createReadStream(file);
+	if (!fs)
+		return desc;
+
+	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), _flags.platform == Common::kPlatformAmiga, DisposeAfterUse::YES);
+
+	if (_flags.gameID == GI_EOB1) {
+		// Nothing to read here for EOB 1. Original EOB 1 has
+		// only one save slot without save file description.
+		desc = "<IMPORTED GAME>";
+	} else {
+		char tempStr[20];
+		in.read(tempStr, 20);
+		desc = tempStr;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_characters[i];
+		c->id = in.readByte();
+		c->flags = in.readByte();
+		in.read(c->name, 11);
+		c->strengthCur = in.readSByte();
+		c->strengthMax = in.readSByte();
+		c->strengthExtCur = in.readSByte();
+		c->strengthExtMax = in.readSByte();
+		c->intelligenceCur = in.readSByte();
+		c->intelligenceMax = in.readSByte();
+		c->wisdomCur = in.readSByte();
+		c->wisdomMax = in.readSByte();
+		c->dexterityCur = in.readSByte();
+		c->dexterityMax = in.readSByte();
+		c->constitutionCur = in.readSByte();
+		c->constitutionMax = in.readSByte();
+		c->charismaCur = in.readSByte();
+		c->charismaMax = in.readSByte();
+		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
+		c->hitPointsMax = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
+		c->armorClass = in.readSByte();
+		c->disabledSlots = in.readByte();
+		c->raceSex = in.readByte();
+		c->cClass = in.readByte();
+		c->alignment = in.readByte();
+		c->portrait = in.readSByte();
+		c->food = in.readByte();
+		in.read(c->level, 3);
+		for (int ii = 0; ii < 3; ii++)
+			c->experience[ii] = in.readUint32();
+		in.skip(4);
+		delete[] c->faceShape;
+		c->faceShape = 0;
+		in.read(c->mageSpells, (_flags.gameID == GI_EOB1) ? 30 :80);
+		in.read(c->clericSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
+		c->mageSpellsAvailableFlags = in.readUint32();
+		for (int ii = 0; ii < 27; ii++)
+			c->inventory[ii] = in.readSint16();
+		uint32 ct = _system->getMillis();
+		for (int ii = 0; ii < 10; ii++) {
+			c->timers[ii] = in.readUint32() * _tickLength;
+			if (c->timers[ii])
+				c->timers[ii] += ct;
+		}
+		in.read(c->events, 10);
+		in.read(c->effectsRemainder, 4);
+		c->effectFlags = in.readUint32();
+		if (c->effectFlags && _flags.gameID == GI_EOB1) {
+			warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled character effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
+			c->effectFlags = 0;
+		}
+		c->damageTaken = in.readByte();
+		in.read(c->slotStatus, 5);
+		in.skip(6);
+	}
+
+	setupCharacterTimers();
+
+	_currentLevel = in.readUint16();
+	_currentSub = (_flags.gameID == GI_EOB1) ? 0 : in.readSint16();
+	_currentBlock = in.readUint16();
+	_currentDirection = in.readUint16();
+	_itemInHand = in.readSint16();
+	_hasTempDataFlags = (_flags.gameID == GI_EOB1) ? in.readUint16() : in.readUint32();
+	_partyEffectFlags = (_flags.gameID == GI_EOB1) ? in.readUint16() : in.readUint32();
+	if (_partyEffectFlags && _flags.gameID == GI_EOB1) {
+		warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled party effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
+		_partyEffectFlags = 0;
+	}
+	if (_flags.gameID == GI_EOB2)
+		in.skip(1);
+
+	_inf->loadState(in, true);
+
+	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
+	for (int i = 0; i < numItems; i++) {
+		EoBItem *t = &_items[i];
+		t->nameUnid = in.readByte();
+		t->nameId = in.readByte();
+		t->flags = in.readByte();
+		t->icon = in.readSByte();
+		t->type = in.readSByte();
+		t->pos = in.readSByte();
+		t->block = in.readSint16();
+		t->next = in.readSint16();
+		t->prev = in.readSint16();
+		t->level = in.readByte();
+		t->value = in.readSByte();
+	}
+
+	int numParts = (_flags.gameID == GI_EOB1) ? 13 : 18;
+	int partSize = (_flags.gameID == GI_EOB1) ? 2040 : 2130;
+	uint32 nextPart = in.pos();
+	uint8 *cmpData = new uint8[1200];
+
+	for (int i = 0; i < numParts; i++) {
+		in.seek(nextPart);
+		nextPart += partSize;
+
+		if (!(_hasTempDataFlags & (1 << i)))
+			continue;
+
+		if (_lvlTempData[i]) {
+			delete[] _lvlTempData[i]->wallsXorData;
+			delete[] _lvlTempData[i]->flags;
+			releaseMonsterTempData(_lvlTempData[i]);
+			releaseFlyingObjectTempData(_lvlTempData[i]);
+			releaseWallOfForceTempData(_lvlTempData[i]);
+			delete _lvlTempData[i];
+		}
+
+		_lvlTempData[i] = new LevelTempData;
+		LevelTempData *l = _lvlTempData[i];
+		l->wallsXorData = new uint8[4096];
+		l->flags = new uint16[1024];
+		memset(l->flags, 0, 1024 * sizeof(uint16));
+		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30];
+		l->monsters = lm;
+		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects];
+		memset(lf, 0, _numFlyingObjects * sizeof(EoBFlyingObject));
+		l->flyingObjects = lf;
+		WallOfForce *lw = new WallOfForce[5];
+		memset(lw, 0, 5 * sizeof(WallOfForce));
+		l->wallsOfForce = lw;
+
+		in.read(cmpData, 1200);
+		_screen->decodeFrame4(cmpData, l->wallsXorData, 4096);
+		_curBlockFile = getBlockFileName(i + 1, 0);
+		const uint8 *p = getBlockFileData();
+		uint16 len = READ_LE_UINT16(p + 4);
+		p += 6;
+
+		uint8 *d = l->wallsXorData;
+		for (int ii = 0; ii < 1024; ii++) {
+			for (int iii = 0; iii < 4; iii++)
+				*d++ ^= p[ii * len + iii];
+		}
+
+		for (int ii = 0; ii < 30; ii++) {
+			EoBMonsterInPlay *m = &lm[ii];
+			m->type = in.readByte();
+			m->unit = in.readByte();
+			m->block = in.readUint16();
+			m->pos = in.readByte();
+			m->dir = in.readSByte();
+			m->animStep = in.readByte();
+			m->shpIndex = in.readByte();
+			m->mode = in.readSByte();
+			m->f_9 = in.readSByte();
+			m->curAttackFrame = in.readSByte();
+			m->spellStatusLeft = in.readSByte();
+			m->hitPointsMax = in.readSint16();
+			m->hitPointsCur = in.readSint16();
+			m->dest = in.readUint16();
+			m->randItem = in.readUint16();
+			m->fixedItem = in.readUint16();
+			m->flags = in.readByte();
+			m->idleAnimState = in.readByte();
+
+			if (_flags.gameID == GI_EOB1)
+				m->stepsTillRemoteAttack = in.readByte();
+			else
+				m->curRemoteWeapon = in.readByte();
+
+			m->numRemoteAttacks = in.readByte();
+			m->palette = in.readSByte();
+
+			if (_flags.gameID == GI_EOB1) {
+				in.skip(1);
+			} else {
+				m->directionChanged = in.readByte();
+				m->stepsTillRemoteAttack = in.readByte();
+				m->sub = in.readByte();
+			}
+
+			_levelBlockProperties[m->block].flags++;
+		}
+
+		if (_flags.gameID == GI_EOB1)
+			continue;
+
+		for (int ii = 0; ii < 5; ii++) {
+			WallOfForce *w = &lw[ii];
+			w->block = in.readUint16();
+			w->duration = in.readUint32();
+		}
+	}
+
+	delete[] cmpData;
+
+	restoreBlockTempData(_currentLevel);
+
+	in.skip(3);
+
+	delete[] _itemTypes;
+	_itemTypes = new EoBItemType[65];
+	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
+
+	if (_flags.gameID == GI_EOB1)
+		return desc;
+
+	for (int i = 51; i < 65; i++) {
+		EoBItemType *t = &_itemTypes[i];
+		t->invFlags = in.readUint16();
+		t->handFlags = in.readUint16();
+		t->armorClass = in.readSByte();
+		t->allowedClasses = in.readSByte();
+		t->requiredHands = in.readSByte();
+		t->dmgNumDiceS = in.readSByte();
+		t->dmgNumPipsS = in.readSByte();
+		t->dmgIncS = in.readSByte();
+		t->dmgNumDiceL = in.readSByte();
+		t->dmgNumPipsL = in.readSByte();
+		t->dmgIncL = in.readSByte();
+		t->unk1 = in.readByte();
+		t->extraProperties = in.readUint16();
+	}
+
+	return desc;
 }
 
 void *EoBCoreEngine::generateMonsterTempData(LevelTempData *tmp) {

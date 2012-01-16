@@ -136,7 +136,7 @@ class Scene1200 : public SceneExt {
 		Area1();
 		void synchronize(Serializer &s);
 
-		virtual void postInit();
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
 		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
@@ -227,6 +227,11 @@ public:
 };
 
 class Scene1550 : public SceneExt {
+	class SceneActor1550 : public SceneActor {
+	public:
+		void subA4D14(int frameNumber, int strip);
+	};
+
 	class UnkObj15501 : public SceneActor {
 	public:
 		int _fieldA4;
@@ -319,7 +324,7 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor14 : public SceneActor {
+	class Actor14 : public SceneActor1550 {
 		// Nothing specific found in the original
 		// TODO: check if it's an useless class
 	};
@@ -363,6 +368,7 @@ public:
 
 	Scene1550();
 	void synchronize(Serializer &s);
+	void subA2B2F();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

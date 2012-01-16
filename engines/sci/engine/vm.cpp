@@ -235,6 +235,9 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
 			// Script 64036 in Torin's Passage is empty and contains an invalid
 			// (empty) export
+		} else if (g_sci->getGameId() == GID_RAMA && script == 64908) {
+			// Script 64908 in the demo of RAMA contains an invalid (empty)
+			// export
 		} else
 #endif
 			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
