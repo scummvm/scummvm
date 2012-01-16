@@ -117,6 +117,8 @@ private:
 	DECLARE_OPCODE(movieInitFrameVarPreload);
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
+	DECLARE_OPCODE(movieRemove);
+	DECLARE_OPCODE(movieRemoveAll);
 	DECLARE_OPCODE(movieSetLooping);
 	DECLARE_OPCODE(movieSetNotLooping);
 	DECLARE_OPCODE(sunspotAdd);

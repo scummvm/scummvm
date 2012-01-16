@@ -66,6 +66,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 24, movieInitFrameVarPreload,		kEvalValue,	kVar											);
 	OP_4( 25, movieInitOverrridePosition,	kEvalValue,	kCondition,	kValue,		kValue					);
 	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
+	OP_1( 27, movieRemove,					kEvalValue													);
+	OP_0( 28, movieRemoveAll																			);
 	OP_1( 29, movieSetLooping,				kValue														);
 	OP_1( 30, movieSetNotLooping,			kValue														);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
@@ -511,6 +513,21 @@ void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
 
 	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadMovie(movieid, 1, false, true);
+}
+
+void Script::movieRemove(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Remove movie %d ",
+			cmd.op, cmd.args[0]);
+
+	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->removeMovie(movieid);
+}
+
+void Script::movieRemoveAll(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Remove all movies",
+			cmd.op);
+
+	_vm->removeMovie(0);
 }
 
 void Script::movieSetLooping(Context &c, const Opcode &cmd) {

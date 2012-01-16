@@ -360,10 +360,8 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (_node) {
-		for (uint i = 0; i < _movies.size(); i++) {
-			delete _movies[i];
-		}
-		_movies.clear();
+		// Delete all movies
+		removeMovie(0);
 
 		delete _node;
 		_node = 0;
@@ -597,6 +595,23 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 	}
 
 	_drawables.pop_back();
+}
+
+void Myst3Engine::removeMovie(uint16 id) {
+	if (id == 0) {
+		for (uint i = 0; i < _movies.size(); i++)
+			delete _movies[i];
+
+		_movies.clear();
+		return;
+	} else {
+		for (uint i = 0; i < _movies.size(); i++)
+			if (_movies[i]->getId() == id) {
+				delete _movies[i];
+				_movies.remove_at(i);
+				break;
+			}
+	}
 }
 
 void Myst3Engine::setMovieLooping(uint16 id, bool loop) {
