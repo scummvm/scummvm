@@ -2175,6 +2175,61 @@ bool Scene1550::UnkObj15502::startAction(CursorType action, Event &event) {
 	}
 }
 
+void Scene1550::UnkObj15502::subA5CDF(int strip) {
+	_fieldA4 = strip;
+	postInit();
+	setup(1517, _fieldA4, 1);
+	switch (_fieldA4 - 1) {
+	case 0:
+		if (R2_INVENTORY.getObjectScene(R2_22) == 0)
+			setFrame(5);
+		setPosition(Common::Point(287, 85));
+		break;
+	case 1:
+		if (R2_INVENTORY.getObjectScene(R2_25) == 0)
+			setFrame(5);
+		setPosition(Common::Point(248, 100));
+		break;
+	case 2:
+		if (R2_INVENTORY.getObjectScene(R2_28) == 0)
+			setFrame(5);
+		setPosition(Common::Point(217, 85));
+		break;
+	case 3:
+		if (R2_INVENTORY.getObjectScene(R2_23))
+			setFrame(5);
+		setPosition(Common::Point(161, 121));
+		break;
+	case 4:
+		if (R2_INVENTORY.getObjectScene(R2_27))
+			setFrame(5);
+		setPosition(Common::Point(117, 121));
+		break;
+	case 5:
+		if (R2_INVENTORY.getObjectScene(R2_17))
+			setFrame(5);
+		setPosition(Common::Point(111, 85));
+		break;
+	case 6:
+		if (R2_INVENTORY.getObjectScene(R2_45))
+			setFrame(5);
+		setPosition(Common::Point(95, 84));
+		break;
+	case 7: {
+		setup(1516, 1, 1);
+		setPosition(Common::Point(201, 45));
+		Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
+		if ((scene->_sceneMode == 1577) || (scene->_sceneMode == 1578))
+			hide();
+		fixPriority(92);
+		setDetails(1550, 70, -1, -1, 2, (SceneItem *) NULL);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 Scene1550::UnkObj15503::UnkObj15503() {
 	_fieldA4 = 0;
 }
@@ -2503,7 +2558,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 			_field412 = 1;
 			
 			_actor1.postInit();
-			warning("_arrUnkObj15502[7].subA5CDF()");
+			_arrUnkObj15502[7].subA5CDF(8);
 			_arrUnkObj15502[7].hide();
 			if (R2_GLOBALS._player._characterIndex == 1)
 				_sceneMode = 1577;

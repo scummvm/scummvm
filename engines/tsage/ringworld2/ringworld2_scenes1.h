@@ -251,6 +251,7 @@ class Scene1550 : public SceneExt {
 		void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
+		void subA5CDF(int strip);
 	};
 
 	class UnkObj15503 : public SceneActor {
