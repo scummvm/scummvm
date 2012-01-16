@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/debug-channels.h"
 #include "engines/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -48,6 +49,10 @@ bool MortevielleEngine::hasFeature(EngineFeature f) const {
 Common::ErrorCode MortevielleEngine::initialise() {
 	// Initialise graphics mode
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
+
+	// Set debug channels
+	DebugMan.addDebugChannel(kMortevielleCore, "core", "Core debugging");
+	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	// Set up an intermediate screen surface
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
