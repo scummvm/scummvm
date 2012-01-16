@@ -380,6 +380,59 @@ public:
 	virtual void dispatch();
 	virtual void saveCharacter(int characterIndex);
 };
+
+class Scene1575 : public SceneExt {
+	class Hotspot1 : public NamedHotspot {
+	public:
+		int _field34;
+		int _field36;
+		
+		Hotspot1();
+		void synchronize(Serializer &s);
+		void subA910D(int indx);
+
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	int _field412;
+	int _field414;
+	int _field416;
+	int _field418;
+	int _field41A;
+	Hotspot1 _item1;
+	Hotspot1 _item2;
+	Hotspot1 _item3;
+	Hotspot1 _item4;
+	Hotspot1 _item5;
+	Hotspot1 _item6;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	SceneActor _actor8;
+	SceneActor _actor9;
+	SceneActor _actor10;
+	SceneActor _actor11;
+	SceneActor _actor12;
+	SceneActor _actor13;
+	SceneActor _actor14;
+	SceneActor _actor15;
+	SceneActor _arrActor[17];
+	SequenceManager _sequenceManager1;
+
+	Scene1575();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

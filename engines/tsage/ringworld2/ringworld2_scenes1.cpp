@@ -4168,5 +4168,385 @@ void Scene1550::subA2B2F() {
 	R2_GLOBALS._uiElements.updateInventory();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 1575 - 
+ *
+ *--------------------------------------------------------------------------*/
+Scene1575::Scene1575() {
+	_field412 = 0;
+	_field414 = 0;
+	_field416 = 0;
+	_field418 = 0;
+	_field41A = 0;
+}
+
+void Scene1575::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field414);
+	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_field418);
+	s.syncAsSint16LE(_field41A);
+}
+
+Scene1575::Hotspot1::Hotspot1() {
+	_field34 = 0;
+	_field36 = 0;
+}
+
+void Scene1575::Hotspot1::synchronize(Serializer &s) {
+	NamedHotspot::synchronize(s);
+
+	s.syncAsSint16LE(_field34);
+	s.syncAsSint16LE(_field36);
+}
+
+void Scene1575::Hotspot1::process(Event &event) {
+	if ((event.eventType != EVENT_BUTTON_DOWN) || (R2_GLOBALS._events.getCursor() != R2_STEPPING_DISKS) || (!_bounds.contains(event.mousePos))) {
+		if (_field36 == 0)
+			return;
+		if ((_field34 == 1)  || (event.eventType == EVENT_BUTTON_UP) || (!_bounds.contains(event.mousePos))) {
+			_field36 = 0;
+			return;
+		}
+	}
+	_field36 = 1;
+	Scene1575 *scene = (Scene1575 *)R2_GLOBALS._sceneManager._scene;
+
+	event.handled = true;
+	if (R2_GLOBALS.getFlag(18) && (_field34 > 1) && (_field34 < 6)) {
+		warning("sub1A03B(\"Better not move the laser while it\'s firing!\", 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);");
+		return;
+	}
+	int di = scene->_actor1._position.x;
+	
+	switch (_field34 - 1) {
+	case 0:
+		if (R2_GLOBALS.getFlag(18)) {
+			scene->_actor14.hide();
+			scene->_actor15.hide();
+			R2_GLOBALS.clearFlag(18);
+		} else if ((scene->_actor12._position.x == 85) && (scene->_actor12._position.y == 123)) {
+			scene->_actor14.show();
+			scene->_actor15.show();
+			R2_GLOBALS.setFlag(18);
+		} else {
+			warning("sub1A03B(\"That\'s probably not a good thing, ya know!\", 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);");
+		}
+		break;
+	case 1:
+		if (scene->_field41A < 780) {
+			if (di > 54)
+				di -= 65;
+			di += 2;
+			scene->_field41A += 2;
+			
+			for (int i = 0; i < 17; i++)
+				scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x + 2, scene->_arrActor[i]._position.y));
+			
+			scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x + 2, scene->_actor13._position.y));
+			scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x + 2, scene->_actor12._position.y));
+			scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
+			scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
+			scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
+		}
+		break;
+	case 2:
+		if (scene->_field41A > 0) {
+			if (di < -8)
+				di += 65;
+			
+			di -= 2;
+			scene->_field41A -= 2;
+			for (int i = 0; i < 178; i++)
+				scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x - 2, scene->_arrActor[i]._position.y));
+			
+			scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x - 2, scene->_actor13._position.y));
+			scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x - 2, scene->_actor12._position.y));
+			scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
+			scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
+			scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
+		}
+		break;
+	case 3: {
+			int tmpPosY = scene->_actor1._position.y;
+			if (tmpPosY < 176) {
+				++tmpPosY;
+				for (int i = 0; i < 17; ++i)
+					scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y + 1));
+
+				scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y + 1));
+				scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y + 1));
+				scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
+				scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
+				scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
+			}
+		}
+		break;
+	case 4: {
+			int tmpPosY = scene->_actor1._position.y;
+			if (tmpPosY > 145) {
+				tmpPosY--;
+				for (int i = 0; i < 17; ++i)
+					scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y - 1));
+
+				scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y - 1));
+				scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y - 1));
+				scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
+				scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
+				scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
+			}
+		}
+		break;
+	case 5:
+		R2_GLOBALS._sceneManager.changeScene(1550);
+		break;
+	default:
+		break;
+	}
+
+	int j = 0;
+	for (int i = 0; i < 17; i++) {
+		if (scene->_arrActor[i]._bounds.contains(85, 116))
+			j = i;
+	}
+
+	if (scene->_actor13._bounds.contains(85, 116))
+		j = 18;
+
+	if (scene->_actor12._bounds.contains(85, 116))
+		j = 19;
+
+	if (j)
+		scene->_actor11.show();
+	else
+		scene->_actor11.hide();
+}
+
+bool Scene1575::Hotspot1::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+	return SceneHotspot::startAction(action, event);
+}
+
+void Scene1575::Hotspot1::subA910D(int indx) {
+	warning("STUB: Scene1575:Hotspot1::subA910D(%d)", indx);
+}
+
+void Scene1575::postInit(SceneObjectList *OwnerList) {
+	loadScene(1575);
+	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._v5589E = Rect(0, 0, 320, 200);
+	SceneExt::postInit();
+	_field414 = 390;
+
+	_actor1.postInit();
+	_actor1.setup(1575, 1, 1);
+	_actor1.setPosition(Common::Point(54, 161));
+	_actor1.fixPriority(5);
+
+	_actor2.postInit();
+	_actor2.setup(1575, 1, 1);
+	_actor2.setPosition(Common::Point(119, 161));
+	_actor2.fixPriority(5);
+
+	_actor3.postInit();
+	_actor3.setup(1575, 1, 1);
+	_actor3.setPosition(Common::Point(184, 161));
+	_actor3.fixPriority(5);
+
+	for (int i = 0; i < 17; i++) {
+		_arrActor[i].postInit();
+		_arrActor[i].setup(1575, 2, k5A7F6[(3 * i) + 2]);
+		warning("TODO: immense pile of floating operations");
+		_arrActor[i].fixPriority(6);
+	}
+
+	_actor4.postInit();
+	_actor4.setup(1575, 3, 1);
+	_actor4.setPosition(Common::Point(48, 81));
+
+	_actor5.postInit();
+	_actor5.setup(1575, 3,1);
+	_actor5.setPosition(Common::Point(121, 81));
+
+	_actor6.postInit();
+	_actor6.setup(1575, 3, 2);
+	_actor6.setPosition(Common::Point(203, 80));
+
+	_actor7.postInit();
+	_actor7.setup(1575, 3, 2);
+	_actor7.setPosition(Common::Point(217, 80));
+
+	_actor8.postInit();
+	_actor8.setup(1575, 3, 2);
+	_actor8.setPosition(Common::Point(231, 80));
+
+	_actor9.postInit();
+	_actor9.setup(1575, 3, 2);
+	_actor9.setPosition(Common::Point(273, 91));
+
+	_actor10.postInit();
+	_actor10.setup(1575, 3, 2);
+	_actor10.setPosition(Common::Point(287, 91));
+
+	_item1.subA910D(1);
+	_item1.subA910D(2);
+	_item1.subA910D(3);
+	_item1.subA910D(4);
+	_item1.subA910D(5);
+	_item1.subA910D(6);
+
+	_actor11.postInit();
+	_actor11.setup(1575, 4, 2);
+	_actor11.setPosition(Common::Point(84, 116));
+	_actor11.hide();
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.enableControl();
+
+	do {
+		_field412 = R2_GLOBALS._randomSource.getRandomNumber(20) - 10;
+		_field414 = R2_GLOBALS._randomSource.getRandomNumber(20) - 10;
+	} while ((_field412) && (_field414));
+
+	if (_field412 < 0)
+		_actor4.hide();
+
+	if (_field414 < 0)
+		_actor5.hide();
+
+	_field416 = R2_GLOBALS._randomSource.getRandomNumber(4) + 1;
+	_field418 = R2_GLOBALS._randomSource.getRandomNumber(4) + 1;
+
+	_actor13.postInit();
+	_actor13.setup(1575, 2, 4);
+
+	warning("TODO: another immense pile of floating operations");
+
+	_actor12.postInit();
+	_actor12.fixPriority(12);
+
+	if (R2_GLOBALS.getFlag(17)) {
+		_actor13.setPosition(Common::Point(_actor13._position.x + 5, _actor13._position.y));
+		_actor12.setPosition(Common::Point(_actor12._position.x + 5, _actor12._position.y));
+	}
+
+	_actor14.postInit();
+	_actor14.setup(1575, 5, 1);
+	_actor14.setPosition(Common::Point(85, 176));
+	_actor14.fixPriority(7);
+	_actor14.hide();
+
+	_actor15.postInit();
+	_actor15.setup(1575, 5, 2);
+	_actor15.setPosition(Common::Point(85, 147));
+	_actor15.fixPriority(7);
+	_actor15.hide();
+}
+
+void Scene1575::remove() {
+	SceneExt::remove();
+	R2_GLOBALS._v5589E.top = 3;
+	R2_GLOBALS._v5589E.bottom = 168;
+	R2_GLOBALS._v58CE2 = 1;
+}
+
+void Scene1575::signal() {
+	R2_GLOBALS._player.enableControl();
+}
+
+void Scene1575::process(Event &event) {
+	Scene::process(event);
+
+	g_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
+	warning("TODO: check Scene1575::process");
+}
+
+void Scene1575::dispatch() {
+	if (_field412 <= 0) {
+		++_field412;
+		if (_field412 == 0) {
+			_actor4.show();
+			_field412 = R2_GLOBALS._randomSource.getRandomNumber(9) + 1;
+		}
+	} else {
+		_field412--;
+		if (_field412 ==0) {
+			_actor4.hide();
+			_field412 = R2_GLOBALS._randomSource.getRandomNumber(9) + 1;
+		}
+	}
+
+	if (_field414 <= 0) {
+		++_field414;
+		if (_field414 == 0) {
+			_actor5.show();
+			_field414 = R2_GLOBALS._randomSource.getRandomNumber(9) + 1;
+		}
+	} else {
+		_field414--;
+		if (_field414 == 0) {
+			_actor5.hide();
+			_field414 = R2_GLOBALS._randomSource.getRandomNumber(9) + 1;
+		}
+	}
+
+	if (_field416 == 0) {
+		switch(R2_GLOBALS._randomSource.getRandomNumber(3)) {
+		case 0:
+			_actor6.hide();
+			_actor7.hide();
+			_actor8.hide();
+			break;
+		case 1:
+			_actor6.show();
+			_actor7.hide();
+			_actor8.hide();
+			break;
+		case 2:
+			_actor6.show();
+			_actor7.show();
+			_actor8.hide();
+			break;
+		case 3:
+			_actor6.show();
+			_actor7.show();
+			_actor8.show();
+			break;
+		default:
+			break;
+		}
+		_field416 = R2_GLOBALS._randomSource.getRandomNumber(4) + 1;
+	} else {
+		--_field416;
+	}
+
+	if (_field418 == 0) {
+		switch(R2_GLOBALS._randomSource.getRandomNumber(2)) {
+		case 0:
+			_actor9.hide();
+			_actor10.hide();
+			break;
+		case 1:
+			_actor9.show();
+			_actor10.hide();
+			break;
+		case 2:
+			_actor9.show();
+			_actor10.show();
+			break;
+		default:
+			break;
+		}
+		_field418 = R2_GLOBALS._randomSource.getRandomNumber(4) + 1;
+	} else {
+		_field418--;
+	}
+	Scene::dispatch();
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

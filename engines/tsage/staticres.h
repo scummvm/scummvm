@@ -199,6 +199,7 @@ extern const byte k5A750[];
 extern const byte k5A76D[];
 extern const byte k5A78A[];
 extern const byte k5A79B[];
+extern const byte k5A7F6[];
 
 } // End of namespace Ringworld2
 
