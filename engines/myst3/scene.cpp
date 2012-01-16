@@ -76,4 +76,27 @@ void Scene::drawSunspotFlare(const SunSpot &s) {
 	_vm->_gfx->drawRect2D(frame, color);
 }
 
+
+static Math::Vector3d directionToVector(float pitch, float heading) {
+	Math::Vector3d v;
+
+	float radHeading = Math::degreeToRadian(heading);
+	float radPitch = Math::degreeToRadian(pitch);
+
+	v.setValue(0, cos(radPitch) * cos(radHeading));
+	v.setValue(1, sin(radPitch));
+	v.setValue(2, cos(radPitch) * sin(radHeading));
+
+	return v;
+}
+
+float Scene::distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch) {
+	Math::Vector3d vLookAt = directionToVector(pitch, heading);
+	Math::Vector3d vSun = directionToVector(spotPitch, spotHeading);
+	float dotProduct = Math::Vector3d::dotProduct(vLookAt, -vSun);
+
+	float distance = (0.05 * spotRadius - (dotProduct + 1.0) * 90) / (0.05 * spotRadius);
+	return CLIP<float>(distance, 0.0, 1.0);
+}
+
 } // end of namespace Myst3

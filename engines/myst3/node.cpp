@@ -371,19 +371,6 @@ void Node::addSunSpot(const SunSpot &sunspot) {
 	_sunspots.push_back(sunSpot);
 }
 
-static Math::Vector3d directionToVector(float pitch, float heading) {
-	Math::Vector3d v;
-
-	float radHeading = Math::degreeToRadian(heading);
-	float radPitch = Math::degreeToRadian(pitch);
-
-	v.setValue(0, cos(radPitch) * cos(radHeading));
-	v.setValue(1, sin(radPitch));
-	v.setValue(2, cos(radPitch) * sin(radHeading));
-
-	return v;
-}
-
 SunSpot Node::computeSunspotsIntensity(float pitch, float heading) {
 	SunSpot result;
 	result.intensity = -1;
@@ -398,12 +385,7 @@ SunSpot Node::computeSunspotsIntensity(float pitch, float heading) {
 		// Skip disabled items
 		if (value == 0) continue;
 
-		Math::Vector3d vLookAt = directionToVector(pitch, heading);
-		Math::Vector3d vSun = -directionToVector(s->pitch, s->heading);
-		float dotProduct = Math::Vector3d::dotProduct(vLookAt, vSun);
-
-		float distance = (0.05 * s->radius - (dotProduct + 1.0) * 90) / (0.05 * s->radius);
-		distance = CLIP<float>(distance, 0.0, 1.0);
+		float distance = _vm->_scene->distanceToZone(s->heading, s->pitch, s->radius, heading, pitch);
 
 		if (distance > result.radius) {
 			result.radius = distance;

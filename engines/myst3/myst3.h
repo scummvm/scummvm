@@ -68,6 +68,7 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 	GameState *_state;
+	Scene *_scene;
 	Cursor *_cursor;
 	Inventory *_inventory;
 	Renderer *_gfx;
@@ -115,7 +116,6 @@ private:
 	Console *_console;
 	
 	Node *_node;
-	Scene *_scene;
 
 	Common::Array<Archive *> _archivesCommon;
 	Archive *_archiveNode;

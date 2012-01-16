@@ -191,7 +191,8 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
-					&& _state->evaluate(nodeData->hotspots[j].condition)) {
+					&& _state->evaluate(nodeData->hotspots[j].condition)
+					&& nodeData->hotspots[j].cursor < 12) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -213,7 +214,8 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse)
-					&& _state->evaluate(nodeData->hotspots[j].condition)) {
+					&& _state->evaluate(nodeData->hotspots[j].condition)
+					&& nodeData->hotspots[j].cursor < 12) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}

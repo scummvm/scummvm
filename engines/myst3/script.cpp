@@ -99,6 +99,8 @@ Script::Script(Myst3Engine *vm):
 	OP_3( 61, varRandRange,					kVar,		kValue,		kValue								);
 	OP_5( 62, polarToRectSimple,			kVar,		kVar,		kValue,		kValue, 	kValue		); // Seven args
 	OP_5( 63, polarToRect,					kVar,		kVar,		kValue,		kValue, 	kValue		); // Ten args
+	OP_4( 64, varSetDistanceToZone,			kVar,		kValue,		kValue,		kValue					);
+	OP_4( 65, varSetMinDistanceToZone,		kVar,		kValue,		kValue,		kValue					);
 	OP_2( 67, varRemoveBits,				kVar,		kValue											);
 	OP_2( 68, varToggleBits,				kVar,		kValue											);
 	OP_2( 69, varCopy,						kVar,		kVar											);
@@ -813,6 +815,25 @@ void Script::polarToRect(Context &c, const Opcode &cmd)	{
 
 	_vm->_state->setVar(cmd.args[0], posX);
 	_vm->_state->setVar(cmd.args[1], posY);
+}
+
+void Script::varSetDistanceToZone(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set var %d to distance to point %d %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	float heading = _vm->_state->getLookAtHeading();
+	float pitch = _vm->_state->getLookAtPitch();
+	int16 distance = 100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch);
+	_vm->_state->setVar(cmd.args[0], distance);
+}
+
+void Script::varSetMinDistanceToZone(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set var %d to distance to point %d %d if lower", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	float heading = _vm->_state->getLookAtHeading();
+	float pitch = _vm->_state->getLookAtPitch();
+	int16 distance = 100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch);
+	if (distance < _vm->_state->getVar(cmd.args[0]))
+		_vm->_state->setVar(cmd.args[0], distance);
 }
 
 void Script::varRemoveBits(Context &c, const Opcode &cmd) {

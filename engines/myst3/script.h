@@ -150,6 +150,8 @@ private:
 	DECLARE_OPCODE(varRandRange);
 	DECLARE_OPCODE(polarToRectSimple);
 	DECLARE_OPCODE(polarToRect);
+	DECLARE_OPCODE(varSetDistanceToZone);
+	DECLARE_OPCODE(varSetMinDistanceToZone);
 	DECLARE_OPCODE(varRemoveBits);
 	DECLARE_OPCODE(varToggleBits);
 	DECLARE_OPCODE(varCopy);
