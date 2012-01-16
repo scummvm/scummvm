@@ -848,15 +848,17 @@ void ScreenSurface::updateScreen() {
 
 /**
  * Draws a decoded picture on the screen
- * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ * @remarks		- Because the ScummVM surface is using a double height 640x400 surface to 
  *		simulate the original 640x400 surface, all Y values have to be doubled.
- *		Also, image resources are stored at 320x200, so when drawn onto the screen every
+ *		- Image resources are stored at 320x200, so when drawn onto the screen every
  *		other column is interpolated.
+ *		- Because the original game supported 320 width resolutions, the X coordinate
+ *		also needs to be doubled for EGA mode
  */
 void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 	// Lock the affected area of the surface to write to
-	Graphics::Surface destSurface = lockArea(Common::Rect(x, y, 
-		x + surface.w * 2, y + surface.h * 2));
+	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y, 
+		(x + surface.w) * 2, y + surface.h * 2));
 
 	// Loop through writing 
 	for (int yp = 0; yp < surface.h; ++yp) {
