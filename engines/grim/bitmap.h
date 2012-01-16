@@ -23,6 +23,8 @@
 #ifndef GRIM_BITMAP_H
 #define GRIM_BITMAP_H
 
+#include "graphics/pixelformat.h"
+
 #include "engines/grim/pool.h"
 
 namespace Grim {
@@ -65,6 +67,8 @@ public:
 	 */
 	void convertToColorFormat(int num, int format);
 
+	void convertToColorFormat(int num, const Graphics::PixelFormat &format);
+
 	Common::String _fname;
 	int _numImages;
 	int _width, _height, _x, _y;
@@ -75,6 +79,8 @@ public:
 	void *_texIds;
 	bool _hasTransparency;
 	char _filename[32];
+
+	Graphics::PixelFormat _pixelFormat;
 
 	int _refCount;
 
@@ -131,7 +137,7 @@ private:
 	void freeData();
 
 	BitmapData *_data;
-	/** 
+	/**
 	 * Specifies a one-based index to the current image in BitmapData.
 	 * _currImage==0 means a null image is chosen.
 	 */

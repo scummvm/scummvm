@@ -42,7 +42,7 @@ public:
 	virtual bool getFeatureState(OSystem::Feature f) = 0;
 
 	virtual void launcherInitSize(uint w, uint h) = 0;
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
 	virtual int getScreenChangeID() const = 0;
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;

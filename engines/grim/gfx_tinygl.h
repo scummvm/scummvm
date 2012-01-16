@@ -115,6 +115,7 @@ public:
 protected:
 
 private:
+	Graphics::PixelFormat _pixelFormat;
 	TinyGL::ZBuffer *_zb;
 	byte *_screen;
 	byte *_smushBitmap;

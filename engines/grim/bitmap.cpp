@@ -24,6 +24,9 @@
 
 #include "common/endian.h"
 
+#include "graphics/colormasks.h"
+#include "graphics/pixelbuffer.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
@@ -140,12 +143,14 @@ bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStr
 	data->readUint32LE(); 				//_transparentColor
 	_format = data->readUint32LE();
 	_bpp = data->readUint32LE();
-	//	_blueBits = data->readUint32LE();
-	//	_greenBits = data->readUint32LE();
-	//	_redBits = data->readUint32LE();
-	//	_blueShift = data->readUint32LE();
-	//	_greenShift = data->readUint32LE();
-	//	_redShift = data->readUint32LE();
+	uint32 redBits = data->readUint32LE();
+	uint32 greenBits = data->readUint32LE();
+	uint32 blueBits = data->readUint32LE();
+	uint32 redShift = data->readUint32LE();
+	uint32 greenShift = data->readUint32LE();
+	uint32 blueShift = data->readUint32LE();
+
+	_pixelFormat = Graphics::PixelFormat(_bpp / 8, redBits, greenBits, blueBits, 0, redShift, greenShift, blueShift, 0);
 
 	data->seek(128, SEEK_SET);
 	_width = data->readUint32LE();
@@ -209,6 +214,7 @@ BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fnam
 	_bpp = bpp;
 	_hasTransparency = false;
 	_colorFormat = BM_RGB565;
+	_pixelFormat = Graphics::createPixelFormat<565>();
 	_data = new char *[_numImages];
 	_data[0] = new char[_bpp / 8 * _width * _height];
 	memcpy(_data[0], data, _bpp / 8 * _width * _height);
@@ -344,8 +350,10 @@ bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStrea
 
 	if (_bpp == 16) {
 		_colorFormat = BM_RGB1555;
+		_pixelFormat = Graphics::createPixelFormat<1555>();
 		//convertToColorFormat(0, BM_RGBA);
 	} else {
+// 		_pixelFormat = Graphics::createPixelFormat<??>();
 		_colorFormat = BM_RGBA;
 	}
 
@@ -534,6 +542,25 @@ void BitmapData::convertToColorFormat(int num, int format) {
 	} else {
 		error("Conversion between format: %d and format %d not implemented",_colorFormat, format);
 	}
+}
+
+void BitmapData::convertToColorFormat(int num, const Graphics::PixelFormat &format) {
+	if (_pixelFormat == format) {
+		return;
+	}
+
+	Graphics::PixelBuffer src(_pixelFormat, (byte *)_data[num]);
+	Graphics::PixelBuffer dst(format, _width * _height, DisposeAfterUse::NO);
+
+	for (int i = 0; i < _width * _height; ++i) {
+		if (src.getValueAt(i) == 0xf81f) { //transparency
+			dst.setPixelAt(i, 0xf81f);
+		} else {
+			dst.setPixelAt(i, src);
+		}
+	}
+	delete _data[num];
+	_data[num] = (char *)dst.getRawBuffer();
 }
 
 #define GET_BIT do { bit = bitstr_value & 1; \

@@ -29,6 +29,7 @@
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h"
 
 ModularBackend::ModularBackend()
 	:
@@ -68,7 +69,7 @@ void ModularBackend::launcherInitSize(uint w, uint h) {
 	_graphicsManager->launcherInitSize(w, h);
 }
 
-byte *ModularBackend::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+Graphics::PixelBuffer ModularBackend::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
 	return _graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 

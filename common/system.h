@@ -34,6 +34,7 @@ class Mixer;
 
 namespace Graphics {
 struct Surface;
+class PixelBuffer;
 }
 
 namespace Common {
@@ -321,7 +322,7 @@ public:
 	 * @param height		the new screen height
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
 
 	/**
 	 * Returns the currently set virtual screen height.

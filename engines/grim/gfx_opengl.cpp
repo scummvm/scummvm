@@ -30,6 +30,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
@@ -95,7 +96,6 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
-	_screenBPP = 24;
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 	_useDepthShader = false;
 
@@ -108,8 +108,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	// Load emergency built-in font
 	loadEmergFont();
 
-	_storedDisplay = new byte[_screenWidth * _screenHeight * 4];
-	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
+	_screenSize = _screenWidth * _screenHeight * 4;
+	_storedDisplay = new byte[_screenSize];
+	memset(_storedDisplay, 0, _screenSize);
 	_smushNumTex = 0;
 
 	_currentShadowArray = NULL;
@@ -436,18 +437,18 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 
 	glBegin(GL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
-		
+
 		int index = indices[j];
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
 		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
-		
+
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_vertices[index];
-		
+
 		// Transform vertices (or maybe we should have done this already?)
-		
+
 		glNormal3fv(normal.getData());
 		glVertex3fv(vertex.getData());
 	}
@@ -458,7 +459,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_LIGHTING);
 	glColor3f(1.0f,1.0f,1.0f);
 }
-	
+
 void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
@@ -989,7 +990,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
-	
+
 	if (cmap != NULL) { // EMI doesn't have colour-maps
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
@@ -1010,7 +1011,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	} else {
 		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
 	}
-	
+
 	GLuint format = 0;
 	GLuint internalFormat = 0;
 	if (material->_colorFormat == BM_RGBA) {
@@ -1020,7 +1021,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 		format = GL_BGR;
 		internalFormat = GL_RGB;
 	}
-	
+
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1034,7 +1035,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 void GfxOpenGL::selectMaterial(const Texture *material) {
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	
+
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {
 		glMatrixMode(GL_TEXTURE);

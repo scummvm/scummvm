@@ -224,7 +224,7 @@ public:
 	void renderZBitmaps(bool render);
 
 protected:
-	int _screenWidth, _screenHeight, _screenBPP;
+	int _screenWidth, _screenHeight, _screenSize;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;
 	unsigned char _shadowColorR;

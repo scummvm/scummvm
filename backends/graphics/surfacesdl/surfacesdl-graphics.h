@@ -59,7 +59,7 @@ public:
 	virtual bool getFeatureState(OSystem::Feature f);
 
 	virtual void launcherInitSize(uint w, uint h);
-	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual int16 getHeight();
 	virtual int16 getWidth();
@@ -80,7 +80,7 @@ public:
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) {}
-	
+
 #ifdef USE_OSD
 	virtual void displayMessageOnOSD(const char *msg);
 #endif
@@ -97,6 +97,7 @@ protected:
 
 
 	SDL_Surface *_screen;
+	Graphics::PixelFormat _screenFormat;
 
 #ifdef USE_OPENGL
 	bool _opengl;

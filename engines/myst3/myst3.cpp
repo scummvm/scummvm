@@ -46,6 +46,7 @@
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
+#include "graphics/pixelbuffer.h"
 
 namespace Myst3 {
 
@@ -286,10 +287,9 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_scriptEngine->run(&hovered.front()->script);
 				continue;
 			}
-			
+
 			// Bad click
 			_sound->play(697, 5);
-
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			// Save file name input
 			_menu->handleInput(event.kbd);
@@ -344,7 +344,7 @@ void Myst3Engine::drawFrame() {
 
 	if (_state->getViewType() == kCube) {
 		_gfx->setupCameraOrtho2D();
-		
+
 		// Draw overlay 2D movies
 		for (uint i = 0; i < _movies.size(); i++) {
 			_movies[i]->drawForce2d();
@@ -535,7 +535,7 @@ void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID
 
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
 	ScriptedMovie *movie;
-	
+
 	if (!_state->getMovieUseBackground()) {
 		movie = new ScriptedMovie(this, id);
 	} else {
@@ -543,7 +543,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		_projectorBackground = 0;
 		_state->setMovieUseBackground(0);
 	}
-	
+
 	movie->setCondition(condition);
 	movie->setDisableWhenComplete(resetCond);
 	movie->setLoop(loop);

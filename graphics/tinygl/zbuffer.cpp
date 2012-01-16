@@ -3,11 +3,17 @@
 
 #include "common/scummsys.h"
 
+
+#include "common/endian.h"
+
 #include "graphics/tinygl/zbuffer.h"
+#include "graphics/tinygl/zgl.h"
 
 namespace TinyGL {
 
-ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
+uint8 PSZB;
+
+ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelFormat &mode, void *frame_buffer) {
 	ZBuffer *zb;
 	int size;
 
@@ -17,15 +23,10 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 
 	zb->xsize = xsize;
 	zb->ysize = ysize;
-	zb->mode = mode;
-	zb->linesize = (xsize * PSZB + 3) & ~3;
-
-	switch (mode) {
-	case ZB_MODE_5R6G5B:
-		break;
-	default:
-		goto error;
-	}
+	zb->cmode = mode;
+	PSZB = zb->pixelbytes = mode.bytesPerPixel;
+	zb->pixelbits = mode.bytesPerPixel * 8;
+	zb->linesize = (xsize * zb->pixelbytes + 3) & ~3;
 
 	size = zb->xsize * zb->ysize * sizeof(unsigned short);
 
@@ -41,7 +42,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 		goto error;
 	}
 	if (!frame_buffer) {
-		zb->pbuf = (PIXEL *)gl_malloc(zb->ysize * zb->linesize);
+		zb->pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
 		if (!zb->pbuf) {
 			gl_free(zb->zbuf);
 			gl_free(zb->zbuf2);
@@ -50,8 +51,10 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 		zb->frame_buffer_allocated = 1;
 	} else {
 		zb->frame_buffer_allocated = 0;
-		zb->pbuf = (PIXEL *)frame_buffer;
+		zb->pbuf = (byte *)frame_buffer;
 	}
+
+	zb->buffer = Graphics::PixelBuffer(mode, zb->pbuf);
 
 	zb->current_texture = NULL;
 	zb->shadow_mask_buf = NULL;
@@ -79,7 +82,7 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
 
 	zb->xsize = xsize;
 	zb->ysize = ysize;
-	zb->linesize = (xsize * PSZB + 3) & ~3;
+	zb->linesize = (xsize * zb->pixelbytes + 3) & ~3;
 
 	size = zb->xsize * zb->ysize * sizeof(unsigned short);
 
@@ -95,37 +98,31 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
 		gl_free(zb->pbuf);
 
 	if (!frame_buffer) {
-		zb->pbuf = (PIXEL *)gl_malloc(zb->ysize * zb->linesize);
+		zb->pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
 		zb->frame_buffer_allocated = 1;
 	} else {
-		zb->pbuf = (PIXEL *)frame_buffer;
+		zb->pbuf = (byte *)frame_buffer;
 		zb->frame_buffer_allocated = 0;
 	}
 }
 
 static void ZB_copyBuffer(ZBuffer *zb, void *buf, int linesize) {
 	unsigned char *p1;
-	PIXEL *q;
+	char *q;
 	int y, n;
 
-	q = zb->pbuf;
+	q = (char *)zb->pbuf;
 	p1 = (unsigned char *)buf;
-	n = zb->xsize * PSZB;
+	n = zb->xsize * zb->pixelbytes;
 	for (y = 0; y < zb->ysize; y++) {
 		memcpy(p1, q, n);
 		p1 += linesize;
-		q = (PIXEL *)((char *) q + zb->linesize);
+		q = q + zb->linesize;
 	}
 }
 
 void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize) {
-	switch (zb->mode) {
-	case ZB_MODE_5R6G5B:
-		ZB_copyBuffer(zb, buf, linesize);
-		break;
-	default:
-		assert(0);
-	}
+	ZB_copyBuffer(zb, buf, linesize);
 }
 
 // adr must be aligned on an 'int'
@@ -173,9 +170,9 @@ void memset_l(void *adr, int val, int count) {
 }
 
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b) {
-	int color;
+	uint32 color;
 	int y;
-	PIXEL *pp;
+	char *pp;
 
 	if (clear_z) {
 		memset_s(zb->zbuf, z, zb->xsize * zb->ysize);
@@ -184,11 +181,11 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, in
 		memset_l(zb->zbuf2, z, zb->xsize * zb->ysize);
 	}
 	if (clear_color) {
-		pp = zb->pbuf;
+		pp = (char *)zb->pbuf;
 		for (y = 0; y < zb->ysize; y++) {
-			color = RGB_TO_PIXEL(r, g, b);
+			color = zb->cmode.RGBToColor(r, g, b);
 			memset_s(pp, color, zb->xsize);
-			pp = (PIXEL *)((char *)pp + zb->linesize);
+			pp = pp + zb->linesize;
 		}
 	}
 }

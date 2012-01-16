@@ -289,7 +289,6 @@ Common::Error GrimEngine::run() {
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
 
-
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");

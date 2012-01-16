@@ -63,7 +63,7 @@ public:
 
 	virtual GraphicsManager *getGraphicsManager();
 	virtual void launcherInitSize(uint w, uint h);
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 	virtual int getScreenChangeID() const;
 
 	virtual int16 getHeight();

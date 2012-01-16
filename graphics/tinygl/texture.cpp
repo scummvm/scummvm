@@ -35,7 +35,7 @@ static void free_texture(GLContext *c, int h) {
 	for (i = 0; i < MAX_TEXTURE_LEVELS; i++) {
 		im = &t->images[i];
 		if (im->pixmap)
-			gl_free(im->pixmap);
+			im->pixmap.free();
 	}
 
 	gl_free(t);
@@ -90,38 +90,56 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	int type = p[8].i;
 	void *pixels = p[9].p;
 	GLImage *im;
-	unsigned char *pixels1;
-	int do_free;
+	byte *pixels1;
 	bool do_free_after_rgb2rgba = false;
-	
-	// Simply unpack RGB into RGBA with 0 for Alpha.
+
+	Graphics::PixelFormat sourceFormat;
+	switch (format) {
+		case TGL_RGBA:
+			sourceFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			break;
+		case TGL_RGB:
+			sourceFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+			break;
+		case TGL_BGRA:
+			sourceFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+			break;
+		case TGL_BGR:
+			sourceFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+			break;
+		default:
+			error("glTexImage2D: Pixel format not handled.");
+	}
+
+	Graphics::PixelFormat pf;
+	switch (format) {
+		case TGL_RGBA:
+		case TGL_RGB:
+			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			break;
+		case TGL_BGRA:
+		case TGL_BGR:
+			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+			break;
+		default:
+			break;
+	}
+	int bytes = pf.bytesPerPixel;
+
+	// Simply unpack RGB into RGBA with 255 for Alpha.
 	// FIXME: This will need additional checks when we get around to adding 24/32-bit backend.
 	if (target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0) {
-		if (format == TGL_RGB) {
-			unsigned char *temp = (unsigned char *)gl_malloc(width * height * 4);
-			unsigned char *pixPtr = (unsigned char*)pixels;
-			for (int i = 0; i < width * height * 4; i += 4) {
-				temp[i] = pixPtr[0];
-				temp[i + 1] = pixPtr[1];
-				temp[i + 2] = pixPtr[2];
-				temp[i + 3] = 255;
-				pixPtr += 3;
+		if (format == TGL_RGB || format == TGL_BGR) {
+			Graphics::PixelBuffer temp(pf, width * height, DisposeAfterUse::NO);
+			Graphics::PixelBuffer pixPtr(sourceFormat, (byte *)pixels);
+
+			for (int i = 0; i < width * height; ++i) {
+				uint8 r, g, b;
+				pixPtr.getRGBAt(i, r, g, b);
+				temp.setPixelAt(i, 255, r, g, b);
 			}
 			format = TGL_RGBA;
-			pixels = temp;
-			do_free_after_rgb2rgba = true;
-		} else if (format == TGL_BGR) {
-			unsigned char *temp = (unsigned char *)gl_malloc(width * height * 4);
-			unsigned char *pixPtr = (unsigned char*)pixels;
-			for (int i = 0; i < width * height * 4; i += 4) {
-				temp[i] = pixPtr[2];
-				temp[i + 1] = pixPtr[1];
-				temp[i + 2] = pixPtr[0];
-				temp[i + 3] = 255;
-				pixPtr += 3;
-			}
-			format = TGL_RGBA;
-			pixels = temp;
+			pixels = temp.getRawBuffer();
 			do_free_after_rgb2rgba = true;
 		}
 	} else if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0
@@ -129,30 +147,25 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("glTexImage2D: combination of parameters not handled");
 	}
 
-	do_free = 0;
+	pixels1 = new byte[256 * 256 * bytes];
 	if (width != 256 || height != 256) {
-		pixels1 = (unsigned char *)gl_malloc(256 * 256 * 4);
 		// no interpolation is done here to respect the original image aliasing !
 		//gl_resizeImageNoInterpolate(pixels1, 256, 256, (unsigned char *)pixels, width, height);
 		// used interpolation anyway, it look much better :) --- aquadran
-		gl_resizeImage(pixels1, 256, 256, (unsigned char *)pixels, width, height);
-		do_free = 1;
+		gl_resizeImage(pixels1, 256, 256, (byte *)pixels, width, height);
 		width = 256;
 		height = 256;
 	} else {
-		pixels1 = (unsigned char *)pixels;
+		memcpy(pixels1, pixels, 256 * 256 * bytes);
 	}
 
 	im = &c->current_texture->images[level];
 	im->xsize = width;
 	im->ysize = height;
 	if (im->pixmap)
-		gl_free(im->pixmap);
-	im->pixmap = gl_malloc(width * height * 3);
-	if (im->pixmap)
-		gl_convertRGB_to_5R6G5B8A((unsigned short *)im->pixmap, pixels1, width, height);
-	if (do_free)
-		gl_free(pixels1);
+		im->pixmap.free();
+	im->pixmap = Graphics::PixelBuffer(pf, pixels1);
+
 	if (do_free_after_rgb2rgba)
 		gl_free(pixels);
 }
