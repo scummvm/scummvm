@@ -41,7 +41,7 @@ private:
 	int _xSize, _ySize, _var12;
 	int _var14, _var18, _lookupValue;
 	bool _nibbleFlag;
-	int _thickness, _var1E, _var20, _var22;
+	int _thickness, _yInc, _var20, _xInc;
 	int _var24;
 	int _width, _height;
 	int _xOffset, _yOffset;

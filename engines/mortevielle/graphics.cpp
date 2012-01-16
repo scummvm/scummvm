@@ -72,6 +72,8 @@ void GfxSurface::decode(const byte *pSrc) {
 
 	// Temporary output buffer
 	byte outputBuffer[65536];
+	Common::fill(&outputBuffer[0], &outputBuffer[65536], 0);
+
 	byte *pDest = &outputBuffer[0];
 	const byte *pSrcStart = pSrc;
 	const byte *pLookup = NULL;
@@ -80,7 +82,7 @@ void GfxSurface::decode(const byte *pSrc) {
 	byte srcBuffer[BUFFER_SIZE];
 
 	// Main processing loop
-	do {
+	for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
 		int lookupBytes = READ_BE_UINT16(pSrc);
 		int srcSize = READ_BE_UINT16(pSrc + 2);
 		_xp = READ_BE_UINT16(pSrc + 4) - _xOffset;
@@ -228,7 +230,8 @@ void GfxSurface::decode(const byte *pSrc) {
 						*pDest = csuiv(pSrc, pLookup);
 					}
 				} else {
-					for (int yCtr = 0; yCtr < _ySize; ++yCtr, pDest -= DEFAULT_WIDTH) {
+					for (int yCtr = 0; yCtr < _ySize; ++yCtr) {
+						pDest -= DEFAULT_WIDTH;
 						*pDest = csuiv(pSrc, pLookup);
 					}
 				}
@@ -293,8 +296,8 @@ void GfxSurface::decode(const byte *pSrc) {
 
 		case 12:
 			INCR_TAIX;
-			_thickness = _var22 = 1;
-			_var1E = 320;
+			_thickness = _xInc = 1;
+			_yInc = DEFAULT_WIDTH;
 			_var20 = _ySize;
 			_var24 = _xSize;
 			diag(pSrc, pDest, pLookup);
@@ -303,17 +306,17 @@ void GfxSurface::decode(const byte *pSrc) {
 		case 13:
 			INCR_TAIX;
 			_thickness = _xSize;
-			_var1E = 1;
+			_yInc = 1;
 			_var20 = _xSize;
-			_var22 = 320;
+			_xInc = DEFAULT_WIDTH;
 			_var24 = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 14:
-			_thickness = _var1E = 1;
+			_thickness = _yInc = 1;
 			_var20 = _xSize;
-			_var22 = 320;
+			_xInc = DEFAULT_WIDTH;
 			_var24 = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
@@ -321,18 +324,18 @@ void GfxSurface::decode(const byte *pSrc) {
 		case 15:
 			INCR_TAIX;
 			_thickness = 2;
-			_var1E = 320;
+			_yInc = DEFAULT_WIDTH;
 			_var20 = _ySize;
-			_var22 = 1;
+			_xInc = 1;
 			_var24 = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 16:
 			_thickness = 3;
-			_var1E = 1;
+			_yInc = 1;
 			_var20 = _xSize;
-			_var22 = 320;
+			_xInc = DEFAULT_WIDTH;
 			_var24 = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
@@ -340,9 +343,9 @@ void GfxSurface::decode(const byte *pSrc) {
 		case 17:
 			INCR_TAIX;
 			_thickness = 3;
-			_var1E = 320;
+			_yInc = DEFAULT_WIDTH;
 			_var20 = _ySize;
-			_var22 = 1;
+			_xInc = 1;
 			_var24 = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
@@ -350,16 +353,18 @@ void GfxSurface::decode(const byte *pSrc) {
 		case 18:
 			INCR_TAIX;
 			_thickness = 5;
-			_var1E = 320;
+			_yInc = DEFAULT_WIDTH;
 			_var20 = _ySize;
-			_var22 = 1;
+			_xInc = 1;
 			_var24 = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 		}
 
 		pSrc = pSrcStart;
-	} while (--entryCount > 0);
+		debugC(1, kMortevielleGraphics, "Decoding image block %d position %d,%d size %d,%d method %d",
+			entryIndex + 1, _xp, _yp, _width, _height, decomIndex);
+	}
 
 	// At this point, the outputBuffer has the data for the image. Initialise the surface
 	// with the calculated size for the full image, and copy the lines to the surface
@@ -519,65 +524,66 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 
 	for (;;) {
 		// Reduce thickness as necessary
-		while ((var28 + _thickness) >= _xSize) {
+		while ((var28 + _thickness) > _xSize) {
 			if (--_thickness == 0)
 				return;
 		}
 
 		// Loop
-		for (int idx = 0; idx < _thickness; ++idx) {
-			if ((idx % 2) == 0) {
-				if (idx > 0)
-					pDest -= DEFAULT_WIDTH;
+		for (int yCtr = 0; yCtr < _ySize; ++yCtr) {
+			if ((yCtr % 2) == 0) {
+				if (yCtr > 0)
+					pDest += DEFAULT_WIDTH;
 
-				// Write out horizontal slice left to right
 				var28 += _thickness;
-				for (int xIndex = 0; xIndex < _thickness; ++xIndex) 
-					*pDest++ = suiv(pSrc);
+				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
+					*pDest++ = csuiv(pSrc, pLookup);
 			} else {
-				// Write out horizontal slice right to left
 				pDest += DEFAULT_WIDTH;
 				var28 -= _thickness;
-				for (int xIndex = 0; xIndex < _thickness; ++xIndex)
-					*pDest-- = csuiv(pSrc, pLookup);
+				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
+					*--pDest = csuiv(pSrc, pLookup);
 			}
 		}
-		if ((_thickness % 2) == 0) {
+		if ((_ySize % 2) == 0) {
 			pDest += _thickness;
 			var28 += _thickness;
 		}
-
-		// Reduce thickness as necessary
-		while ((var28 + _thickness) < _xSize) {
+		
+		while (_xSize < (var28 + _thickness)) {
 			if (--_thickness == 0)
 				return;
 		}
 
-		for (int yIndex = 0; yIndex < _ySize; ++yIndex) {
-			if ((yIndex % 2) == 0) {
-				if (yIndex > 0)
+		// Loop
+		for (int yCtr = 0; yCtr < _ySize; ++yCtr) {
+			if ((yCtr % 2) == 0) {
+				if (yCtr > 0)
 					pDest -= DEFAULT_WIDTH;
 
-				// Draw horizontal slice
 				var28 += _thickness;
 
-				for (int xIndex = 0; xIndex < _thickness; ++xIndex)
-					*pDest++ = suiv(pSrc);
+				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
+					*pDest++ = csuiv(pSrc, pLookup);
 			} else {
 				pDest -= DEFAULT_WIDTH;
 				var28 -= _thickness;
 
-				for (int xIndex = 0; xIndex < _thickness; ++xIndex)
-					*pDest-- = csuiv(pSrc, pLookup);
+				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
+					*--pDest = csuiv(pSrc, pLookup);
 			}
+		}				
+		if ((_ySize % 2) == 0) {
+			pDest += _thickness;
+			var28 += _thickness;
 		}
 	}
 }
 
 void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 	int var26 = 0, var28 = 0;
-	_var1E = DEFAULT_WIDTH;
-	_var22 = -1;
+	_yInc = DEFAULT_WIDTH;
+	_xInc = -1;
 	--_xSize;
 	--_ySize;
 
@@ -680,7 +686,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 			}
 
 			NIV();
-			pDest += _var1E;
+			pDest += _yInc;
 
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = csuiv(pSrc, pLookup);
@@ -698,7 +704,8 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 				break;
 			}
 
-			pDest += _var22;
+			pDest += _xInc;
+			++var28;
 			if (_var24 < (var28 + 1)) {
 				TF2(pSrc, pDest, pLookup, var26);
 				break;
@@ -706,7 +713,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 		}
 
 		if (TFP(var26))
-			return;
+			break;
 
 		for (;;) {
 			for (int idx = 0; idx <= _thickness; ++idx) {
@@ -716,6 +723,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 			}
 
 			NIV();
+			pDest += _yInc;
 
 			for (int idx = 0; idx <= _thickness; ++idx) {
 				*pDest = csuiv(pSrc, pLookup);
@@ -732,7 +740,7 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 				NIH();
 				break;
 			} else {
-				pDest += _var22;
+				pDest += _xInc;
 				
 				if (--var28 == 0) {
 					TF2(pSrc, pDest, pLookup, var26);
@@ -748,15 +756,15 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 
 
 void GfxSurface::increments(byte *&pDest) {
-	pDest += _var22 + _var1E;
+	pDest += _xInc + _yInc;
 }
 
 void GfxSurface::NIH() {
-	_var22 = -_var22;
+	_xInc = -_xInc;
 }
 
 void GfxSurface::NIV() {
-	_var1E = -_var1E;
+	_yInc = -_yInc;
 }
 
 bool GfxSurface::TFP(int v) {
@@ -773,7 +781,7 @@ bool GfxSurface::TFP(int v) {
 
 void GfxSurface::TF1(byte *&pDest, int &v) {
 	v += _thickness + 1;
-	pDest += (_thickness + 1) * _var1E;
+	pDest += (_thickness + 1) * _yInc;
 }
 
 void GfxSurface::TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v) {
@@ -781,7 +789,7 @@ void GfxSurface::TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int 
 
 	for (int idx = 0; idx <= _thickness; ++idx) {
 		*pDest = csuiv(pSrc, pLookup);
-		pDest += _var1E;
+		pDest += _yInc;
 	}
 }
 
