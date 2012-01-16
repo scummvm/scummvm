@@ -1161,6 +1161,199 @@ void Scene1200::Object1::sub9EDE8(Rect rect) {
 //	_rect1.clip(g_globals->gfxManager()._bounds);
 }
 
+int Scene1200::Object1::sub9EE22(int &arg1, int &arg2) {
+	arg1 /= _field2A;
+	arg2 /= _field2C;
+	
+	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
+		return (((_field26 * arg2) + arg1) * 2) + _field16;
+	}
+
+	return -1;
+}
+
+void Scene1200::sub9DAD6(int indx) {
+	_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+	
+	switch (indx) {
+	case 0:
+		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
+				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
+				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1200;
+			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(200, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 15;
+				else
+					_sceneMode = 10;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 76;
+				else
+					_sceneMode = 75;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 101;
+				else
+					_sceneMode = 100;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 111;
+				else
+					_sceneMode = 110;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 1;
+			signal();
+		}
+		break;
+	case 1:
+		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
+				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1201;
+			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(120, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 56;
+				else
+					_sceneMode = 55;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 25;
+				else
+					_sceneMode = 20;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 91;
+				else
+					_sceneMode = 90;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 121;
+				else
+					_sceneMode = 120;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 2;
+			signal();
+		}
+		break;
+	case 2:
+		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3)) 
+				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1203;
+			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(160, 110)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 51;
+				else
+					_sceneMode = 50;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 81;
+				else
+					_sceneMode = 80;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 35;
+				else
+					_sceneMode = 30;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 116;
+				else
+					_sceneMode = 115;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 3;
+			signal();
+		}
+		break;
+	case 3:
+		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3)) 
+				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1202;
+			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(160, 30)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 61;
+				else
+					_sceneMode = 60;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 71;
+				else
+					_sceneMode = 70;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 96;
+				else
+					_sceneMode = 95;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 45;
+				else
+					_sceneMode = 40;
+				break;
+			default:
+				_sceneMode = 1;
+				R2_GLOBALS._player.setup(3156, 4, 6);
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 4;
+			signal();
+		}
+		break;
+	default:
+		break;
+	}
+}
 void Scene1200::postInit(SceneObjectList *OwnerList) {
 	Rect tmpRect;
 
@@ -1459,22 +1652,22 @@ void Scene1200::process(Event &event) {
 		return;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		warning("_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);");
+		_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
 		int unk = _object1.sub51AF8(event.mousePos);
 		switch (R2_GLOBALS._events.getCursor()) {
 		case CURSOR_ARROW:
 			event.handled = true;
 			if ((event.mousePos.x > 179) && (event.mousePos.x < 210) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				warning("sub9DAD6(1);");
+				sub9DAD6(1);
 
 			if ((event.mousePos.x > 109) && (event.mousePos.x < 140) && (event.mousePos.y > 50) && (event.mousePos.y < 89))
-				warning("sub9DAD6(2);");
+				sub9DAD6(2);
 				
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 89) && (event.mousePos.y < 120))
-				warning("sub9DAD6(3);");
+				sub9DAD6(3);
 				
 			if ((event.mousePos.x > 140) && (event.mousePos.x < 179) && (event.mousePos.y > 19) && (event.mousePos.y < 50))
-				warning("sub9DAD6(4);");
+				sub9DAD6(4);
 			break;
 		case CURSOR_USE:
 			if (unk > 36) {
@@ -1579,19 +1772,19 @@ void Scene1200::process(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_1:
 			warning("FIXME: keycode = 0x4800");
-			warning("sub9DAD6(4);");
+			sub9DAD6(4);
 			break;
 		case Common::KEYCODE_2:
 			warning("FIXME: keycode = 0x4B00");
-			warning("sub9DAD6(2);");
+			sub9DAD6(2);
 			break;
 		case Common::KEYCODE_3:
 			warning("FIXME: keycode = 0x4D00");
-			warning("sub9DAD6(1);");
+			sub9DAD6(1);
 			break;
 		case Common::KEYCODE_4:
 			warning("FIXME: keycode = 0x5000");
-			warning("sub9DAD6(3);");
+			sub9DAD6(3);
 			break;
 		default:
 			event.handled = false;
@@ -2316,6 +2509,7 @@ bool Scene1550::Hotspot3::startAction(CursorType action, Event &event) {
 	// Arrays related to this scene are all hacky in the origina: they are based on the impossibility to use Miranda
 	assert ((R2_GLOBALS._player._characterIndex == 1) || (R2_GLOBALS._player._characterIndex == 2));
 	// The original contains a debug message when CURSOR_TALK is used.
+	// This part is totally useless, we could remove it (and the entire function as well)
 	if (action == CURSOR_TALK)
 		warning("Location: %d/%d - %d", R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex], R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex + 2], k5A4D6[(R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex + 2] * 30)] + R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex]);
 
@@ -2594,7 +2788,9 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 		_actor7.changeZoom(77);
 		_actor7.setDetails(1550, -1, -1, -1, 2, (SceneItem *) NULL);
 
-		warning("R2_GLOBALS._walkRegions.enableRegion(R2_GLOBALS._v14A72[_field419]);");
+		assert(_field419 >= 1550);
+		R2_GLOBALS._walkRegions.enableRegion(k5A750[_field419 - 1550]);
+
 		setAction(&_sequenceManager1, this, 1590, &_actor7, NULL);
 	} else if ((_sceneMode != 1577) && (_sceneMode != 1578))
 		R2_GLOBALS._player.enableControl();
@@ -3694,6 +3890,7 @@ void Scene1550::subA2B2F() {
 
 	int di = 0;
 	int tmpIdx = 0;
+	// Original game was checking "i < 129" but it was clearly a bug as it's out of bounds
 	for (int i = 0; i < 129 * 4; i += 4) {
 		if ((R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex] == k562CC[i]) && (R2_GLOBALS._v565EC[R2_GLOBALS._player._characterIndex + 2] == k562CC[i + 1]) && (k562CC[i + 2] != 0)) {
 			tmpIdx = k562CC[i + 3];
@@ -3922,14 +4119,14 @@ void Scene1550::subA2B2F() {
 				_actor6.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
 			case 11:
-				warning("_arrUnkObj15502[7].sub_A5CDF(8);");
-				warning("_arrUnkObj15502[0].sub_A5CDF(1);");
-				warning("_arrUnkObj15502[1].sub_A5CDF(2);");
-				warning("_arrUnkObj15502[2].sub_A5CDF(3);");
-				warning("_arrUnkObj15502[3].sub_A5CDF(4);");
-				warning("_arrUnkObj15502[4].sub_A5CDF(5);");
-				warning("_arrUnkObj15502[5].sub_A5CDF(6);");
-				warning("_arrUnkObj15502[6].sub_A5CDF(7);");
+				_arrUnkObj15502[7].subA5CDF(8);
+				_arrUnkObj15502[0].subA5CDF(1);
+				_arrUnkObj15502[1].subA5CDF(2);
+				_arrUnkObj15502[2].subA5CDF(3);
+				_arrUnkObj15502[3].subA5CDF(4);
+				_arrUnkObj15502[4].subA5CDF(5);
+				_arrUnkObj15502[5].subA5CDF(6);
+				_arrUnkObj15502[6].subA5CDF(7);
 			default:
 				break;
 			}

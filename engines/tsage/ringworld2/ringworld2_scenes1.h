@@ -162,6 +162,7 @@ class Scene1200 : public SceneExt {
 		int sub51AF8(Common::Point pt);
 		bool sub51AFD(Common::Point pt);
 		void sub9EDE8(Rect rect);
+		int sub9EE22(int &arg1, int &arg2);
 		virtual Common::String getClassName() { return "UnkObject1200"; }
 	};
 		
@@ -181,6 +182,8 @@ public:
 
 	Scene1200();
 	void synchronize(Serializer &s);
+
+	void sub9DAD6(int indx);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
