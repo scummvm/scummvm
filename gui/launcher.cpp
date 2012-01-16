@@ -209,7 +209,16 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	}
 
 	//
-	// 2) The graphics tab
+	// 2) The engine tab (shown only if there are custom engine options)
+	//
+	if (engineOptions.size() > 0) {
+		tab->addTab(_("Engine"));
+
+		addEngineControls(tab, "GameOptions_Engine.", engineOptions);
+	}
+
+	//
+	// 3) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
@@ -221,7 +230,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
-	// 3) The audio tab
+	// 4) The audio tab
 	//
 	tab->addTab(_("Audio"));
 
@@ -234,7 +243,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
-	// 4) The volume tab
+	// 5) The volume tab
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Volume"));
@@ -249,7 +258,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
-	// 5) The MIDI tab
+	// 6) The MIDI tab
 	//
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MIDI"));
@@ -263,7 +272,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	}
 
 	//
-	// 6) The MT-32 tab
+	// 7) The MT-32 tab
 	//
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MT-32"));
@@ -277,7 +286,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	}
 
 	//
-	// 7) The Paths tab
+	// 8) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Paths"));
@@ -311,15 +320,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
-
-	//
-	// 8) The engine tab
-	//
-	if (engineOptions.size() > 0) {
-		tab->addTab(_("Engine"));
-
-		addEngineControls(tab, "GameOptions_Engine.", engineOptions);
-	}
 
 	// Activate the first tab
 	tab->setActiveTab(0);
