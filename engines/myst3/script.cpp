@@ -170,6 +170,11 @@ Script::Script(Myst3Engine *vm):
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
+	OP_4(157, cameraLimitMovement,			kValue,		kValue,		kValue,		kValue					);
+	OP_0(158, cameraFreeMovement																		);
+	OP_2(159, cameraLookAt,					kValue,		kValue											);
+	OP_1(160, cameraLookAtVar,				kVar														);
+	OP_1(161, cameraGetLookAt,				kVar														);
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
@@ -1616,6 +1621,44 @@ void Script::moviePlaySynchronized(Context &c, const Opcode &cmd) {
 
 	_vm->_state->setMovieSynchronized(1);
 	_vm->playSimpleMovie(_vm->_state->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::cameraLimitMovement(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Limit camera movement in a rect", cmd.op);
+
+	_vm->_state->limitCubeCamera(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+}
+
+void Script::cameraFreeMovement(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Free camera movement from rect", cmd.op);
+
+	_vm->_state->freeCubeCamera();
+}
+
+void Script::cameraLookAt(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Camera look at %d %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	float pitch = cmd.args[0];
+	float heading = cmd.args[1];
+	_vm->_state->lookAt(pitch, heading);
+}
+
+void Script::cameraLookAtVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Camera look at value of var %d", cmd.op, cmd.args[0]);
+
+	float pitch = _vm->_state->getVar(cmd.args[0]) / 1000.0;
+	float heading = _vm->_state->getVar(cmd.args[0] + 1) / 1000.0;
+	_vm->_state->lookAt(pitch, heading);
+}
+
+void Script::cameraGetLookAt(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Save camera look at to var %d", cmd.op, cmd.args[0]);
+
+	float pitch = _vm->_state->getLookAtPitch() * 1000.0;
+	float heading = _vm->_state->getLookAtHeading() * 1000.0;
+
+	_vm->_state->setVar(cmd.args[0], pitch);
+	_vm->_state->setVar(cmd.args[0] + 1, heading);
 }
 
 void Script::changeNode(Context &c, const Opcode &cmd) {

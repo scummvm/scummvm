@@ -221,6 +221,11 @@ private:
 	DECLARE_OPCODE(zipToRoomNode);
 	DECLARE_OPCODE(moviePlay);
 	DECLARE_OPCODE(moviePlaySynchronized);
+	DECLARE_OPCODE(cameraLimitMovement);
+	DECLARE_OPCODE(cameraFreeMovement);
+	DECLARE_OPCODE(cameraLookAt);
+	DECLARE_OPCODE(cameraLookAtVar);
+	DECLARE_OPCODE(cameraGetLookAt);
 	DECLARE_OPCODE(changeNode);
 	DECLARE_OPCODE(changeNodeRoom);
 	DECLARE_OPCODE(changeNodeRoomAge);

@@ -77,6 +77,11 @@ public:
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
 
+	DECLARE_VAR(136, CameraPitch)
+	DECLARE_VAR(137, CameraHeading)
+	DECLARE_VAR(140, CameraMinPitch)
+	DECLARE_VAR(141, CameraMaxPitch)
+
 	DECLARE_VAR(142, MovieStartFrame)
 	DECLARE_VAR(143, MovieEndFrame)
 	DECLARE_VAR(149, MovieConditionBit)
@@ -131,6 +136,14 @@ public:
 	float getLookAtPitch() { return _data.lookatPitch; }
 	float getLookAtHeading() { return _data.lookatHeading; }
 	void lookAt(float pitch, float heading) { _data.lookatPitch = pitch; _data.lookatHeading = heading; }
+
+	void limitCubeCamera(float minPitch, float maxPitch, float minHeading, float maxHeading);
+	void freeCubeCamera() { _data.limitCubeCamera = false; }
+	bool isCameraLimited() { return _data.limitCubeCamera != 0; }
+	float getMinPitch() { return _data.minPitch; }
+	float getMaxPitch() { return _data.maxPitch; }
+	float getMinHeading() { return _data.minHeading; }
+	float getMaxHeading() { return _data.maxHeading; }
 
 	Common::Array<uint16> getInventory();
 	void updateInventory(const Common::Array<uint16> &items);

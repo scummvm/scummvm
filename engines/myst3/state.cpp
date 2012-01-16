@@ -49,6 +49,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)
 
+	VAR(136, CameraPitch, false)
+	VAR(137, CameraHeading, false)
+	VAR(140, CameraMinPitch, false)
+	VAR(141, CameraMaxPitch, false)
+
 	VAR(142, MovieOverrideStartFrame, true)
 	VAR(143, MovieOverrideEndFrame, true)
 	VAR(144, MovieVolume1, true)
@@ -285,6 +290,14 @@ const Common::String GameState::describeCondition(int16 condition) {
 			describeVar(var).c_str(),
 			(condition >= 0 && value >= 0) || (condition < 0 && value < 0) ? "==" : "!=",
 			value >= 0 ? value : 0);
+}
+
+void GameState::limitCubeCamera(float minPitch, float maxPitch, float minHeading, float maxHeading) {
+	_data.limitCubeCamera = true;
+	_data.minPitch = minPitch;
+	_data.maxPitch = maxPitch;
+	_data.minHeading = minHeading;
+	_data.maxHeading = maxHeading;
 }
 
 } /* namespace Myst3 */

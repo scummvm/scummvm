@@ -47,10 +47,39 @@ void Scene::updateCamera(Common::Point &mouse) {
 	else if (heading < 0.0f)
 		heading += 360.0f;
 
+	// Keep heading within allowed values
+	if (_vm->_state->isCameraLimited()) {
+		float minHeading = _vm->_state->getMinHeading();
+		float maxHeading = _vm->_state->getMaxHeading();
+
+		if (minHeading < maxHeading) {
+			heading = CLIP(heading, minHeading, maxHeading);
+		} else {
+			if (heading < minHeading && heading > maxHeading) {
+				uint distToMin = abs(heading - minHeading);
+				uint distToMax = abs(heading - maxHeading);
+				if (distToMin > distToMax)
+					heading = maxHeading;
+				else
+					heading = minHeading;
+			}
+		}
+	}
+
 	// Keep pitch within allowed values
-	pitch = CLIP(pitch, -60.0f, 80.0f);
+	float minPitch = _vm->_state->getCameraMinPitch();
+	float maxPitch = _vm->_state->getCameraMaxPitch();
+
+	if (_vm->_state->isCameraLimited()) {
+		minPitch = _vm->_state->getMinPitch();
+		maxPitch = _vm->_state->getMaxPitch();
+	}
+
+	pitch = CLIP(pitch, minPitch, maxPitch);
 
 	_vm->_state->lookAt(pitch, heading);
+	_vm->_state->setCameraPitch(pitch);
+	_vm->_state->setCameraHeading(heading);
 }
 
 void Scene::drawBlackBorders() {
