@@ -41,6 +41,7 @@ public:
 	virtual ~Movie();
 
 	virtual void draw();
+	void drawForce2d();
 
 	uint16 getId() { return _id; }
 	void setStartFrame(int32 v) { _startFrame = v; }
@@ -55,6 +56,7 @@ protected:
 	Math::Vector3d _pBottomRight;
 	Math::Vector3d _pTopRight;
 
+	bool _force2d;
 	int32 _posU;
 	int32 _posV;
 
@@ -66,6 +68,9 @@ protected:
 
 	void loadPosition(const VideoData &videoData);
 	void drawNextFrameToTexture();
+
+	void draw2d();
+	void draw3d();
 };
 
 class ScriptedMovie : public Movie {
@@ -90,6 +95,7 @@ public:
 	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
 	void setLoop(bool loop) { _loop = loop; }
 	void setScriptDriven(bool b) { _scriptDriven = b; }
+	void setForce2d(bool b) { _force2d = b; }
 
 private:
 	bool _enabled;

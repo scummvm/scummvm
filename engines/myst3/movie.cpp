@@ -33,7 +33,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_posV(0),
 	_startFrame(0),
 	_endFrame(0),
-	_texture(0) {
+	_texture(0),
+	_force2d(false) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
@@ -89,19 +90,35 @@ void Movie::loadPosition(const VideoData &videoData) {
 	_posV = videoData.v;
 }
 
+void Movie::draw2d() {
+	Common::Rect screenRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
+	screenRect.translate(_posU, _posV);
+
+	if (_vm->_state->getViewType() != kMenu)
+		screenRect.translate(0, Scene::kTopBorderHeight);
+
+	Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
+	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
+}
+
+void Movie::draw3d() {
+	_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
+}
+
 void Movie::draw() {
-	if (_vm->_state->getViewType() == kCube) {
-		_vm->_gfx->drawTexturedRect3D(_pTopLeft, _pBottomLeft, _pTopRight, _pBottomRight, _texture);
+	if (_force2d)
+		return;
+
+	if (_vm->_state->getViewType() != kCube) {
+		draw2d();
 	} else {
-		Common::Rect screenRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
-		screenRect.translate(_posU, _posV);
-
-		if (_vm->_state->getViewType() == kFrame)
-			screenRect.translate(0, Scene::kTopBorderHeight);
-
-		Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
-		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
+		draw3d();
 	}
+}
+
+void Movie::drawForce2d() {
+	if (_force2d)
+		draw2d();
 }
 
 void Movie::drawNextFrameToTexture() {

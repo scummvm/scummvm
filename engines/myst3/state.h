@@ -86,6 +86,7 @@ public:
 	DECLARE_VAR(153, MovieNextFrameGetVar)
 	DECLARE_VAR(154, MovieStartFrameVar)
 	DECLARE_VAR(155, MovieEndFrameVar)
+	DECLARE_VAR(156, MovieForce2d)
 	DECLARE_VAR(160, MovieSynchronized)
 	DECLARE_VAR(163, MovieOverrideCondition)
 	DECLARE_VAR(164, MovieUVar)

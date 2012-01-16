@@ -325,6 +325,11 @@ void Myst3Engine::drawFrame() {
 
 	if (_state->getViewType() == kCube) {
 		_gfx->setupCameraOrtho2D();
+		
+		// Draw overlay 2D movies
+		for (uint i = 0; i < _movies.size(); i++) {
+			_movies[i]->drawForce2d();
+		}
 	}
 
 	if (_state->getViewType() != kMenu) {
@@ -538,14 +543,10 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		_state->setMoviePlayingVar(0);
 	}
 
-	if (_state->getMovieOverridePosU()) {
+	if (_state->getMovieOverridePosition()) {
 		movie->setPosU(_state->getMovieOverridePosU());
-		_state->setMovieOverridePosU(0);
-	}
-
-	if (_state->getMovieOverridePosV()) {
 		movie->setPosV(_state->getMovieOverridePosV());
-		_state->setMovieOverridePosV(0);
+		_state->setMovieOverridePosition(0);
 	}
 
 	if (_state->getMovieUVar()) {
@@ -566,6 +567,11 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 	if (_state->getMovieConditionBit()) {
 		movie->setConditionBit(_state->getMovieConditionBit());
 		_state->setMovieConditionBit(0);
+	}
+
+	if (_state->getMovieForce2d()) {
+		movie->setForce2d(_state->getMovieForce2d());
+		_state->setMovieForce2d(0);
 	}
 
 	_movies.push_back(movie);
