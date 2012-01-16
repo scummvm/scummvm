@@ -24,6 +24,8 @@
 #include "common/system.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/mortevielle.h"
+#include "mortevielle/mouse.h"
+#include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
 
@@ -819,6 +821,7 @@ Graphics::Surface ScreenSurface::lockArea(const Common::Rect &bounds) {
 	_dirtyRects.push_back(bounds);
 
 	Graphics::Surface s;
+	s.format = format;
 	s.pixels = getBasePtr(bounds.left, bounds.top);
 	s.pitch = pitch;
 	s.w = bounds.width();
@@ -845,8 +848,8 @@ void ScreenSurface::updateScreen() {
 
 /**
  * Draws a decoded picture on the screen
- * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
- *		simulate the original 640x200 surface, all Y values have to be doubled.
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ *		simulate the original 640x400 surface, all Y values have to be doubled.
  *		Also, image resources are stored at 320x200, so when drawn onto the screen every
  *		other column is interpolated.
  */
@@ -888,8 +891,8 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 
 /**
  * Draws a character at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
- *		simulate the original 640x200 surface, all Y values have to be doubled
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, 
@@ -914,9 +917,33 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
 }
 
 /**
+ * Draws a box at the specified position and size
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ *		simulate the original 640x400 surface, all Y values have to be doubled
+ */
+void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
+	if (res == 1) {
+		x = (uint)x >> 1;
+		dx = (uint)dx >> 1;
+	}
+
+	Graphics::Surface destSurface = lockArea(Common::Rect(x, y * 2, x + dx, (y + dy) * 2));
+
+	destSurface.hLine(0, 0, dx, col);
+	destSurface.hLine(0, 1, dx, col);
+	destSurface.hLine(0, destSurface.h - 1, dx, col);
+	destSurface.hLine(0, destSurface.h - 2, dx, col);
+	destSurface.vLine(0, 2, destSurface.h - 3, col);
+	destSurface.vLine(1, 2, destSurface.h - 3, col);
+	destSurface.vLine(dx - 1, 2, destSurface.h - 3, col);
+	destSurface.vLine(dx - 2, 2, destSurface.h - 3, col);
+}
+
+
+/**
  * Sets a single pixel at the specified co-ordinates
- * @remarks		Because the ScummVM surface is using a double height 640x200 surface to 
- *		simulate the original 640x200 surface, all Y values have to be doubled
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2, pt.x + 1, (pt.y + 1) * 2));

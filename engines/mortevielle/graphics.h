@@ -76,7 +76,7 @@ public:
 	void updateScreen();
 	void drawPicture(GfxSurface &surface, int x, int y);
 	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
-
+	void drawBox(int x, int y, int dx, int dy, int col);
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);
 };
