@@ -1138,7 +1138,7 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	_walkToObjectIdx = getObjectIndex(object);
 
 	if (OBJECT_V0_TYPE(object) == kObjectV0TypeActor) {
-		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_NR(object), 4);
+		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_ID(object), 4);
 		x = a->getRealPos().x;
 		y = a->getRealPos().y;
 	} else {
@@ -1224,14 +1224,14 @@ void ScummEngine_v0::runSentenceScript() {
 	if (getVerbEntrypoint(_cmdObject, _cmdVerb) != 0) {
 		// do not read in the dark
 		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
-			VAR(VAR_ACTIVE_OBJECT2) = OBJECT_V0_NR(_cmdObject2);
+			VAR(VAR_ACTIVE_OBJECT2) = OBJECT_V0_ID(_cmdObject2);
 			runObjectScript(_cmdObject, _cmdVerb, false, false, NULL);
 			return;
 		}
 	} else {
 		if (_cmdVerb == kVerbGive) {
 			// no "give to"-script: give to other kid or ignore
-			int actor = OBJECT_V0_NR(_cmdObject2);
+			int actor = OBJECT_V0_ID(_cmdObject2);
 			if (actor < 8)
 				setOwnerOf(_cmdObject, actor);
 			return;

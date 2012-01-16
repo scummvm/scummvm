@@ -203,6 +203,9 @@ void ScummEngine::clearOwnerOf(int obj) {
 }
 
 bool ScummEngine::getClass(int obj, int cls) const {
+	if (_game.version == 0)
+		return false;
+
 	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
 	assertRange(1, cls, 32, "class");
@@ -230,6 +233,9 @@ bool ScummEngine::getClass(int obj, int cls) const {
 }
 
 void ScummEngine::putClass(int obj, int cls, bool set) {
+	if (_game.version == 0)
+		return;
+
 	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
 	assertRange(1, cls, 32, "class");
@@ -307,16 +313,12 @@ int ScummEngine::getObjectRoom(int obj) const {
 
 int ScummEngine::getObjectIndex(int object) const {
 	int i;
-	int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
 
-	if (nr < 1)
+	if (object < 1)
 		return -1;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-			continue;
-
-		if (_objs[i].obj_nr == nr)
+		if (_objs[i].obj_nr == object)
 			return i;
 	}
 	return -1;
@@ -342,10 +344,7 @@ int ScummEngine::whereIsObject(int object) const {
 	}
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
-		if (_objs[i].obj_nr == nr) {
-			if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-				continue;
+		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index)
 				return WIO_FLOBJECT;
 			return WIO_ROOM;
@@ -503,11 +502,9 @@ int ScummEngine::findObject(int x, int y) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
-		if (_game.version == 0) {
-			if (_objs[i].obj_type == 0 && _objs[i].state & kObjectStateUntouchable)
-				continue;
-		} else {
-			if (_game.version <= 2 && _objs[i].state & kObjectStateUntouchable)
+		if ((_game.version == 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == kObjectV0TypeFG) ||
+			(_game.version > 0 && _game.version <= 2)) {
+			if (_objs[i].state & kObjectStateUntouchable)
 				continue;
 		}
 
@@ -523,12 +520,8 @@ int ScummEngine::findObject(int x, int y) {
 				}
 #endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
-					if (_game.version == 0)
-						return OBJECT_V0(_objs[i].obj_nr, _objs[i].obj_type);
-					else
-						return _objs[i].obj_nr;
-				}
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+					return _objs[i].obj_nr;
 				break;
 			}
 		} while ((_objs[b].state & mask) == a);
@@ -834,9 +827,6 @@ void ScummEngine_v3old::resetRoomObjects() {
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
-			if (_game.version == 0)
-				sprintf(buf + 11, "%d-", od->obj_type);
-
 			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
 		}
 	}
@@ -902,8 +892,7 @@ void ScummEngine_v0::resetRoomObject(ObjectData *od, const byte *room, const byt
 	const byte *ptr = room + od->OBCDoffset;
 	ptr -= 2;
 
-	od->obj_nr = *(ptr + 6);
-	od->obj_type = *(ptr + 7);
+	od->obj_nr = OBJECT_V0(*(ptr + 6), *(ptr + 7));
 
 	od->x_pos = *(ptr + 8) * 8;
 	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
@@ -1064,7 +1053,7 @@ void ScummEngine::updateObjectStates() {
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {
 		// V0 MM, objects with type == 1 are room objects (room specific objects, non-pickup)
-		if (_game.version == 0 && od->obj_type == 1)
+		if (_game.version == 0 && OBJECT_V0_TYPE(od->obj_nr) == kObjectV0TypeBG)
 			continue;
 
 		if (od->obj_nr > 0)
@@ -1156,7 +1145,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 
 	if ((_game.version == 0 && OBJECT_V0_TYPE(obj) == kObjectV0TypeActor) ||
 	    (_game.version != 0 && obj < _numActors)) {
-		int actorNr = (_game.version != 0 ? obj : OBJECT_V0_NR(obj));
+		int actorNr = (_game.version != 0 ? obj : OBJECT_V0_ID(obj));
 		return derefActor(actorNr, "getObjOrActorName")->getActorName();
 	}
 
@@ -1225,10 +1214,7 @@ uint32 ScummEngine::getOBCDOffs(int object) const {
 		return 0;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
-		if (_objs[i].obj_nr == nr) {
-			if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-				continue;
+		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index != 0)
 				return 8;
 			return _objs[i].OBCDoffset;
@@ -1252,10 +1238,7 @@ byte *ScummEngine::getOBCDFromObject(int obj, bool v0CheckInventory) {
 		}
 	} else {
 		for (i = (_numLocalObjects-1); i > 0; --i) {
-			int nr = (_game.version != 0) ? obj : OBJECT_V0_NR(obj);
-			if (_objs[i].obj_nr == nr) {
-				if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(obj))
-					continue;
+			if (_objs[i].obj_nr == obj) {
 				if (_objs[i].fl_object_index) {
 					assert(_objs[i].OBCDoffset == 8);
 					ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index);

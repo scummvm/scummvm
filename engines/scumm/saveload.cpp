@@ -822,7 +822,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(ObjectData, parent, sleByte, VER(8)),
 		MKLINE(ObjectData, state, sleByte, VER(8)),
 		MKLINE(ObjectData, fl_object_index, sleByte, VER(8)),
-		MKLINE(ObjectData, extra, sleByte, VER(46)),
+		MKLINE(ObjectData, flags, sleByte, VER(46)),
 		MKEND()
 	};
 
@@ -1205,12 +1205,17 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load local objects
 	//
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
-	if (s->isLoading() && s->getVersion() < VER(13)) {
-		// Since roughly v13 of the save games, the objs storage has changed a bit
-		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
-			_objs[i].obj_nr = 0;
+	if (s->isLoading()) {
+		if (s->getVersion() < VER(13)) {
+			// Since roughly v13 of the save games, the objs storage has changed a bit
+			for (i = _numObjectsInRoom; i < _numLocalObjects; i++)
+				_objs[i].obj_nr = 0;
+		} else if (_game.version == 0) { //  TODO: handle this correctly
+			for (i = 0; i < _numLocalObjects; i++) {
+				if (_objs[i].obj_nr != 0 && _objs[i].flags != 0)
+					_objs[i].obj_nr = OBJECT_V0(_objs[i].obj_nr, _objs[i].flags);
+			}
 		}
-
 	}
 
 

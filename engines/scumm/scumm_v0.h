@@ -43,12 +43,12 @@ protected:
 	byte _currentMode;
 
 	int _activeVerb;		// selected verb
-	int _activeObject;		// 1st selected object (see OBJECT_V0(nr, type), cannot be an actor)
-	int _activeObject2;		// 2nd selected object or actor (see OBJECT_V0(nr, type))
+	int _activeObject;		// 1st selected object (see OBJECT_V0())
+	int _activeObject2;		// 2nd selected object or actor (see OBJECT_V0())
 
 	int _cmdVerb;			// script verb
-	int _cmdObject;			// 1st script object (see OBJECT_V0(nr, type))
-	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0(nr, type))
+	int _cmdObject;			// 1st script object (see OBJECT_V0())
+	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0())
 
 	int _walkToObject;
 	int _walkToObjectIdx;

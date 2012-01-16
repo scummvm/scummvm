@@ -365,7 +365,7 @@ uint ScummEngine_v0::fetchScriptWord() {
 
 int ScummEngine_v0::getActiveObject() {
 	if (_opcode & PARAM_2)
-		return OBJECT_V0_NR(_cmdObject);
+		return OBJECT_V0_ID(_cmdObject);
 
 	return fetchScriptByte();
 }
@@ -831,7 +831,7 @@ void ScummEngine_v0::o_doSentence() {
 bool ScummEngine_v0::ifEqualActiveObject2Common(bool checkType) {
 	byte obj = fetchScriptByte();
 	if (!checkType || (OBJECT_V0_TYPE(_cmdObject2) == kObjectV0TypeFG))
-		return (obj == OBJECT_V0_NR(_cmdObject2));
+		return (obj == OBJECT_V0_ID(_cmdObject2));
 	return false;
 }
 

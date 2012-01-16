@@ -25,10 +25,10 @@
 namespace Scumm {
 
 static inline int OBJECT_V0(int id, byte type) {
-	assert(id < 255);
+	assert(id < 256);
 	return (type << 8 | id);
 }
-#define OBJECT_V0_NR(obj)	(obj & 0xFF)
+#define OBJECT_V0_ID(obj)	(obj & 0xFF)
 #define OBJECT_V0_TYPE(obj)	((obj >> 8) & 0xFF)
 
 enum ObjectV0Type {
@@ -82,12 +82,7 @@ struct ObjectData {
 	byte parentstate;
 	byte state;
 	byte fl_object_index;
-	// extra engine specific data
-	union {
-		byte extra;
-		byte obj_type; // v0
-		byte flags; // v8
-	};
+	byte flags;
 };
 
 #include "common/pack-start.h"	// START STRUCT PACKING

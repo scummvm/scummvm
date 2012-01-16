@@ -428,10 +428,9 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 		o = &(_vm->_objs[i]);
 		if (o->obj_nr == 0)
 			continue;
-		int obj = (_vm->_game.version != 0 ? o->obj_nr : OBJECT_V0(o->obj_nr, o->obj_type));
 		int classData = (_vm->_game.version != 0 ? _vm->_classData[o->obj_nr] : 0);
 		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
-				obj, o->x_pos, o->y_pos, o->width, o->height, o->state,
+				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state,
 				o->fl_object_index, classData);
 	}
 	DebugPrintf("\n");
@@ -449,8 +448,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	}
 
 	obj = atoi(argv[1]);
-	int obj_nr = (_vm->_game.version != 0 ? obj : OBJECT_V0_NR(obj));
-	if (obj_nr >= _vm->_numGlobalObjects) {
+	if (_vm->_game.version != 0 && obj >= _vm->_numGlobalObjects) {
 		DebugPrintf("Object %d is out of range (range: 1 - %d)\n", obj, _vm->_numGlobalObjects);
 		return true;
 	}
