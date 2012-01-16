@@ -116,7 +116,9 @@ int DarkMoonEngine::mainMenu() {
 			_screen->_curPage = op;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
+			_allowImport = true;
 			menuChoice = mainMenuLoop();
+			_allowImport = false;
 		} break;
 
 		case 1:
