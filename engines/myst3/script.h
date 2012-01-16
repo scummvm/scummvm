@@ -207,6 +207,7 @@ private:
 	DECLARE_OPCODE(ifPitchInRange);
 	DECLARE_OPCODE(ifHeadingPitchInRect);
 	DECLARE_OPCODE(ifMouseIsInRect);
+	DECLARE_OPCODE(runScriptWhileDragging);
 	DECLARE_OPCODE(chooseNextNode);
 	DECLARE_OPCODE(goToNodeTransition);
 	DECLARE_OPCODE(goToNodeTrans2);

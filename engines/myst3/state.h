@@ -59,6 +59,10 @@ public:
 	const Common::String describeVar(uint16 var);
 	const Common::String describeCondition(int16 condition);
 
+	DECLARE_VAR(57, DragEnded)
+	DECLARE_VAR(59, DragPositionFound)
+	DECLARE_VAR(60, DragLeverPositionChanged)
+
 	DECLARE_VAR(61, LocationAge)
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)

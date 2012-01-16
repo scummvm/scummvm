@@ -146,6 +146,7 @@ Common::Error Myst3Engine::run() {
 	while (!_shouldQuit) {
 		runNodeBackgroundScripts();
 		processInput(false);
+		updateCursor();
 
 		if (_menuAction) {
 			_menu->updateMainMenu(_menuAction);
@@ -240,7 +241,7 @@ void Myst3Engine::updateCursor() {
 void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
-	while (_system->getEventManager()->pollEvent(event)) {
+	while (getEventManager()->pollEvent(event)) {
 		// Check for "Hard" quit"
 		if (event.type == Common::EVENT_QUIT) {
 			_shouldQuit = true;
@@ -250,8 +251,6 @@ void Myst3Engine::processInput(bool lookOnly) {
 			}
 
 			_cursor->updatePosition(event.relMouse);
-
-			updateCursor();
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Skip the event when in look only mode

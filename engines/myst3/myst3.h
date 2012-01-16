@@ -67,7 +67,6 @@ protected:
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
-	OSystem *_system;
 	GameState *_state;
 	Cursor *_cursor;
 	Inventory *_inventory;
@@ -111,6 +110,7 @@ public:
 	void processInput(bool lookOnly);
 	void drawFrame();
 private:
+	OSystem *_system;
 	Console *_console;
 	
 	Node *_node;

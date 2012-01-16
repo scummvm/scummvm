@@ -28,6 +28,8 @@
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/puzzles.h"
 
+#include "common/events.h"
+
 namespace Myst3 {
 
 Script::Script(Myst3Engine *vm):
@@ -154,6 +156,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(124, ifPitchInRange,				kValue,		kValue											);
 	OP_4(125, ifHeadingPitchInRect,			kValue,		kValue,		kValue,		kValue					);
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
+	OP_5(134, runScriptWhileDragging,		kVar, 		kVar,		kValue,		kValue, 	kVar		); // Eight args
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
 	OP_2(136, goToNodeTransition,			kValue,		kValue											);
 	OP_1(137, goToNodeTrans2,				kValue														);
@@ -1448,6 +1451,69 @@ void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 		return;
 
 	goToElse(c);
+}
+
+void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: While dragging lever, run script %d", cmd.op, cmd.args[7]);
+
+	uint16 script = _vm->_state->valueOrVarValue(cmd.args[7]);
+	uint16 maxDistance = cmd.args[6];
+	uint16 maxLeverPosition = cmd.args[5];
+	int16 lastLeverPosition = _vm->_state->getVar(cmd.args[4]);
+	int16 leverHeight = cmd.args[3];
+	int16 leverWidth = cmd.args[2];
+	int16 topOffset = _vm->_state->getViewType() != kMenu ? 30 : 0;
+
+	_vm->_cursor->changeCursor(2);
+
+	bool mousePressed = true;
+	do {
+		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		_vm->_state->setDragEnded(!mousePressed);
+
+		_vm->processInput(true);
+		_vm->drawFrame();
+
+		// Distance between the mouse and the lever
+		Common::Point mouse = _vm->_cursor->getPosition();
+		int16 distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
+		int16 distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
+		float distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+
+		uint16 bestPosition = lastLeverPosition;
+		if (distance > maxDistance) {
+			_vm->_state->setDragLeverPositionChanged(false);
+		} else {
+			// Find the lever position where the distance between the lever
+			// and the mouse is minimal, by trying every possible position.
+			float minDistance = 1000;
+			for (uint i = 0; i < maxLeverPosition; i++) {
+				_vm->_state->setDragPositionFound(false);
+
+				_vm->_state->setVar(cmd.args[4], i);
+				_vm->runScriptsFromNode(script);
+
+				mouse = _vm->_cursor->getPosition();
+				distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
+				distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
+				distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+
+				if (distance < minDistance) {
+					minDistance = distance;
+					bestPosition = i;
+				}
+			}
+			_vm->_state->setDragLeverPositionChanged(bestPosition != lastLeverPosition);
+		}
+
+		// Set the lever position to the best position
+		_vm->_state->setDragPositionFound(true);
+		_vm->_state->setVar(cmd.args[4], bestPosition);
+
+		_vm->runScriptsFromNode(script);
+		_vm->processInput(true);
+		_vm->drawFrame();
+	} while (mousePressed);
 }
 
 void Script::chooseNextNode(Context &c, const Opcode &cmd) {

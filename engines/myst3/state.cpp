@@ -31,6 +31,10 @@ GameState::GameState(Myst3Engine *vm):
 
 #define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
 
+	VAR(57, DragEnded, true)
+	VAR(59, DragPositionFound, true)
+	VAR(60, DragLeverPositionChanged, true)
+
 	VAR(61, LocationAge, false)
 	VAR(62, LocationRoom, false)
 	VAR(63, LocationNode, false)

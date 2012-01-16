@@ -208,7 +208,7 @@ Common::Rect Dialog::getPosition() {
 int16 Dialog::update() {
 	// Process events
 	Common::Event event;
-	while (_vm->_system->getEventManager()->pollEvent(event)) {
+	while (_vm->getEventManager()->pollEvent(event)) {
 		// Check for "Hard" quit"
 		if (event.type == Common::EVENT_QUIT) {
 			_vm->setShouldQuit();
