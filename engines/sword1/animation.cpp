@@ -88,8 +88,8 @@ static const char *const sequenceListPSX[20] = {
 	"candle1",
 	"geodrop1",
 	"vulture1",
-	"",
-	"" // no credits?
+	"", // not present
+	""  // credits are not a video
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ bool MoviePlayer::load(uint32 id) {
 		filename = Common::String::format("%s.smk", sequenceList[id]);
 		break;
 	case kVideoDecoderPSX:
-		filename = Common::String::format("%s.str", sequenceListPSX[id]);
+		filename = Common::String::format("%s.str", (_vm->_systemVars.isDemo) ? sequenceList[id] : sequenceListPSX[id]);
 
 		// Need to switch to true color
 		initGraphics(g_system->getWidth(), g_system->getHeight(), true, 0);
@@ -406,7 +406,8 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 
 	// For the PSX version, we'll try the PlayStation stream files
 	if (vm->isPsx()) {
-		filename = Common::String(sequenceListPSX[id]) + ".str";
+		// The demo uses the normal file names
+		filename = ((vm->_systemVars.isDemo) ? Common::String(sequenceList[id]) : Common::String(sequenceListPSX[id])) + ".str";
 
 		if (Common::File::exists(filename)) {
 #ifdef USE_RGB_COLOR
@@ -450,9 +451,11 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		return NULL;
 	}
 
-	Common::String buf = Common::String::format(_("Cutscene '%s' not found"), sequenceList[id]);
-	GUI::MessageDialog dialog(buf, _("OK"));
-	dialog.runModal();
+	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {
+		Common::String buf = Common::String::format(_("Cutscene '%s' not found"), sequenceList[id]);
+		GUI::MessageDialog dialog(buf, _("OK"));
+		dialog.runModal();
+	}
 
 	return NULL;
 }
