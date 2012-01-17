@@ -200,7 +200,7 @@ endif
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
-	cp $(srcdir)/dists/residualvm.iss $(WIN32PATH)
+	cp $(srcdir)/dists/win32/residualvm.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
@@ -255,7 +255,7 @@ endif
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/README ResidualVMWin32/README.txt
-	cp $(srcdir)/dists/residualvm.iss ResidualVMWin32
+	cp $(srcdir)/dists/win32/residualvm.iss ResidualVMWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	toms ResidualVMWin32/*.txt
