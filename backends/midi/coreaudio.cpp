@@ -26,6 +26,7 @@
 
 #ifdef MACOSX
 
+#include <AvailabilityMacros.h>
 
 // With the release of Mac OS X 10.5 in October 2007, Apple deprecated the
 // AUGraphNewNode & AUGraphGetNodeInfo APIs in favor of the new AUGraphAddNode &
@@ -53,7 +54,6 @@
 #endif
 
 #if USE_DEPRECATED_COREAUDIO_API
-	#include <AvailabilityMacros.h>
 	// Try to silence warnings about use of deprecated APIs
 	#undef DEPRECATED_ATTRIBUTE
 	#define DEPRECATED_ATTRIBUTE
