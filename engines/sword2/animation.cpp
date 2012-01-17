@@ -57,8 +57,8 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, A
 	_decoderType = decoderType;
 	_decoder = decoder;
 
-	_white = (_decoderType == kVideoDecoderPSX) ? _system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff) : 255;
-	_black = (_decoderType == kVideoDecoderPSX) ? _system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : 0;
+	_white = 255;
+	_black = 0;
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -189,11 +189,7 @@ void MoviePlayer::openTextObject(uint32 index) {
 	}
 }
 
-void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
-	// TODO
-	if (_decoderType == kVideoDecoderPSX)
-		return;
-
+void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint16 pitch) {
 	if (index < _numMovieTexts) {
 		MovieText *text = &_movieTexts[index];
 
@@ -208,23 +204,23 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 
 				int frameWidth = _decoder->getWidth();
 				int frameHeight = _decoder->getHeight();
+
+				if (_decoderType == kVideoDecoderPSX)
+					frameHeight *= 2;
+
 				int frameX = (_system->getWidth() - frameWidth) / 2;
 				int frameY = (_system->getHeight() - frameHeight) / 2;
-				byte black = getBlackColor();
-
-				byte *dst = screen + _textY * pitch;
+				uint32 black = getBlackColor();
 
 				for (int y = 0; y < text->_textSprite.h; y++) {
 					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
-						memset(dst + _textX, black, text->_textSprite.w);
+						screen->hLine(_textX, _textY + y, _textX + text->_textSprite.w, black);
 					} else {
 						if (frameX > _textX)
-							memset(dst + _textX, black, frameX - _textX);
+							screen->hLine(_textX, _textY + y, frameX, black);
 						if (frameX + frameWidth < _textX + text->_textSprite.w)
-							memset(dst + frameX + frameWidth, black, _textX + text->_textSprite.w - (frameX + frameWidth));
+							screen->hLine(frameX + frameWidth, _textY + y, text->_textSprite.w, black);
 					}
-
-					dst += pitch;
 				}
 			}
 
@@ -234,15 +230,24 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 	}
 }
 
-void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
-	// TODO
-	if (_decoderType == kVideoDecoderPSX)
-		return;
+#define PUT_PIXEL(c) \
+	switch (screen->format.bytesPerPixel) { \
+	case 1: \
+		*dst = (c); \
+		break; \
+	case 2: \
+		WRITE_UINT16(dst, (c)); \
+		break; \
+	case 4: \
+		WRITE_UINT32(dst, (c)); \
+		break; \
+	}
 
+void MoviePlayer::drawTextObject(uint32 index, Graphics::Surface *screen, uint16 pitch) {
 	MovieText *text = &_movieTexts[index];
 
-	byte white = getWhiteColor();
-	byte black = getBlackColor();
+	uint32 white = getWhiteColor();
+	uint32 black = getBlackColor();
 
 	if (text->_textMem && _textSurface) {
 		byte *src = text->_textSprite.data;
@@ -258,17 +263,20 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 			src = psxSpriteBuffer;
 		}
 
-		byte *dst = screen + _textY * pitch + _textX;
-
 		for (int y = 0; y < height; y++) {
+			byte *dst = (byte *)screen->getBasePtr(_textX, _textY + y);
+
 			for (int x = 0; x < width; x++) {
-				if (src[x] == 1)
-					dst[x] = black;
-				else if (src[x] == 255)
-					dst[x] = white;
+				if (src[x] == 1) {
+					PUT_PIXEL(black);
+				} else if (src[x] == 255) {
+					PUT_PIXEL(white);
+				}
+
+				dst += screen->format.bytesPerPixel;
 			}
+
 			src += width;
-			dst += pitch;
 		}
 
 		// Free buffer used to resize psx sprite
@@ -277,7 +285,9 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 	}
 }
 
-void MoviePlayer::performPostProcessing(byte *screen, uint16 pitch) {
+#undef PUT_PIXEL
+
+void MoviePlayer::performPostProcessing(Graphics::Surface *screen, uint16 pitch) {
 	MovieText *text;
 	int frame = _decoder->getCurFrame();
 
@@ -355,7 +365,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			Graphics::Surface *screen = _vm->_system->lockScreen();
-			performPostProcessing((byte *)screen->pixels, screen->pitch);
+			performPostProcessing(screen, screen->pitch);
 			_vm->_system->unlockScreen();
 			_vm->_system->updateScreen();
 		}
@@ -372,11 +382,11 @@ bool MoviePlayer::playVideo() {
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return _black;
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::getWhiteColor() {
-	return _white;
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
 }
 
 void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
