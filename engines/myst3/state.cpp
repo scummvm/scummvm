@@ -32,6 +32,7 @@ GameState::GameState(Myst3Engine *vm):
 #define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
 
 	VAR(57, DragEnded, true)
+	VAR(58, DragLeverSpeed, false)
 	VAR(59, DragPositionFound, true)
 	VAR(60, DragLeverPositionChanged, true)
 
@@ -114,6 +115,10 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1351, MenuSaveLoadPageRight, false)
 	VAR(1352, MenuSaveLoadSelectedItem, false)
 	VAR(1353, MenuSaveLoadCurrentPage, false)
+
+	VAR(1399, DragLeverLimited, true)
+	VAR(1400, DragLeverLimitMin, true)
+	VAR(1401, DragLeverLimitMax, true)
 
 #undef VAR
 

@@ -160,6 +160,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(124, ifPitchInRange,				kValue,		kValue											);
 	OP_4(125, ifHeadingPitchInRect,			kValue,		kValue,		kValue,		kValue					);
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
+	OP_5(127, leverDrag,					kValue,		kValue,		kValue,		kValue, 	kVar		); // Six args
 	OP_5(134, runScriptWhileDragging,		kVar, 		kVar,		kValue,		kValue, 	kVar		); // Eight args
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
 	OP_2(136, goToNodeTransition,			kValue,		kValue											);
@@ -1197,7 +1198,7 @@ void Script::varRatioToPercents(Context &c, const Opcode &cmd) {
 	int32 value = _vm->_state->getVar(cmd.args[0]);
 
 	value = 100 * (cmd.args[2] - abs(value - cmd.args[1])) / cmd.args[2];
-	value = MAX(0, value);
+	value = MAX<int32>(0, value);
 
 	_vm->_state->setVar(cmd.args[0], value);
 }
@@ -1496,6 +1497,80 @@ void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 	goToElse(c);
 }
 
+void Script::leverDrag(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Drag lever for var %d wit script %d", cmd.op, cmd.args[4], cmd.args[6]);
+
+	int16 minPosX = cmd.args[0];
+	int16 minPosY = cmd.args[1];
+	int16 maxPosX = cmd.args[2];
+	int16 maxPosY = cmd.args[3];
+	int16 var = cmd.args[4];
+	int16 numPositions = cmd.args[5];
+	int16 script = cmd.args[6];
+	int16 topOffset = _vm->_state->getViewType() != kMenu ? 30 : 0;
+
+	if (_vm->_state->getViewType() == kCube) {
+		warning("Opcode 127 is not implemented for the cube view.");
+		return;
+	}
+
+	if (script > 0) {
+		warning("Opcode 127 is not implemented for positive script cases.");
+		return;
+	}
+
+	_vm->_cursor->changeCursor(2);
+
+	bool mousePressed = true;
+	 while (true) {
+		Common::Point mouse = _vm->_cursor->getPosition();
+		int16 amplitude;
+		int16 pixelPosition;
+
+		if (minPosX == maxPosX) {
+			// Vertical slider
+			amplitude = maxPosY - minPosY;
+			pixelPosition = mouse.y - minPosY - topOffset;
+		} else {
+			// Horizontal slider
+			amplitude = maxPosX - minPosX;
+			pixelPosition = mouse.x - minPosX;
+		}
+
+		float ratioPosition = pixelPosition / (float) amplitude;
+
+		int16 position = ratioPosition * (numPositions + 1);
+		position = CLIP<int16>(position, 1, numPositions);
+
+		if (_vm->_state->getDragLeverLimited()) {
+			int16 minPosition = _vm->_state->getDragLeverLimitMin();
+			int16 maxPosition = _vm->_state->getDragLeverLimitMax();
+			position = CLIP(position, minPosition, maxPosition);
+		}
+
+		// Set new lever position
+		_vm->_state->setVar(var, position);
+
+		// Draw a frame
+		_vm->processInput(true);
+		_vm->drawFrame();
+
+		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		_vm->_state->setDragEnded(!mousePressed);
+
+		if (script) {
+			_vm->_state->setVar(var, position);
+			_vm->runScriptsFromNode(abs(script));
+		}
+
+		if (!mousePressed)
+			break;
+	}
+
+	_vm->_state->setDragLeverLimited(0);
+	_vm->_state->setDragLeverSpeed(0);
+}
+
 void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: While dragging lever, run script %d", cmd.op, cmd.args[7]);
 
@@ -1786,7 +1861,7 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 
 		while (1) {
 			if ((positiveDirection && (currentValue >= endValue))
-					|| (!positiveDirection && (currentValue <= startValue)))
+					|| (!positiveDirection && (currentValue <= endValue)))
 				break;
 
 			_vm->_state->setVar(var, currentValue);

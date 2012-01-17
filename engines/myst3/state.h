@@ -60,6 +60,7 @@ public:
 	const Common::String describeCondition(int16 condition);
 
 	DECLARE_VAR(57, DragEnded)
+	DECLARE_VAR(58, DragLeverSpeed)
 	DECLARE_VAR(59, DragPositionFound)
 	DECLARE_VAR(60, DragLeverPositionChanged)
 
@@ -126,6 +127,10 @@ public:
 	DECLARE_VAR(1351, MenuSaveLoadPageRight)
 	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
 	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
+
+	DECLARE_VAR(1399, DragLeverLimited)
+	DECLARE_VAR(1400, DragLeverLimitMin)
+	DECLARE_VAR(1401, DragLeverLimitMax)
 
 	uint getFrameCount() { return _data.currentFrame; }
 	void incFrameCount() { _data.currentFrame++; }
