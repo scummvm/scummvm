@@ -433,6 +433,65 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 };
+
+class Scene1580 : public SceneExt {
+	class Hotspot1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Hotspot2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor2 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor4 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor5 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor6 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor7 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	int _field412;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	Hotspot1 _item1;
+	Hotspot2 _item2;
+	NamedHotspot _item3;
+	SceneActor _actor1;
+	SceneActor _arrActor[8];
+	Actor2 _actor2;
+	Actor3 _actor3;
+	Actor4 _actor4;
+	Actor5 _actor5;
+	Actor6 _actor6;
+	Actor7 _actor7;
+	SequenceManager _sequenceManager;
+
+	Scene1580();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

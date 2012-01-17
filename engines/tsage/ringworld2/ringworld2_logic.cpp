@@ -121,6 +121,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1575:
 		return new Scene1575();
 	case 1580:
+		// Inside wreck
+		return new Scene1580();
 	case 1625:
 	case 1700:
 	case 1750:
