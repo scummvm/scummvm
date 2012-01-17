@@ -101,7 +101,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 34 */
 	OPCODE(0x34, o5_getDist);
 	OPCODE(0x35, o_stopCurrentScript);
-	OPCODE(0x36, o2_walkActorToObject);
+	OPCODE(0x36, o_walkActorToObject);
 	OPCODE(0x37, o2_clearState04);
 	/* 38 */
 	OPCODE(0x38, o2_isLessEqual);
@@ -181,7 +181,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 74 */
 	OPCODE(0x74, o5_getDist);
 	OPCODE(0x75, o_printEgo_c64);
-	OPCODE(0x76, o2_walkActorToObject);
+	OPCODE(0x76, o_walkActorToObject);
 	OPCODE(0x77, o2_clearState04);
 	/* 78 */
 	OPCODE(0x78, o2_isGreater);
@@ -261,7 +261,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* B4 */
 	OPCODE(0xb4, o5_getDist);
 	OPCODE(0xb5, o_stopCurrentScript);
-	OPCODE(0xb6, o2_walkActorToObject);
+	OPCODE(0xb6, o_walkActorToObject);
 	OPCODE(0xb7, o2_setState04);
 	/* B8 */
 	OPCODE(0xb8, o2_isLessEqual);
@@ -341,7 +341,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* F4 */
 	OPCODE(0xf4, o5_getDist);
 	OPCODE(0xf5, o_stopCurrentScript);
-	OPCODE(0xf6, o2_walkActorToObject);
+	OPCODE(0xf6, o_walkActorToObject);
 	OPCODE(0xf7, o2_setState04);
 	/* F8 */
 	OPCODE(0xf8, o2_isGreater);
@@ -496,6 +496,21 @@ void ScummEngine_v0::drawSentenceLine() {
 
 void ScummEngine_v0::o_stopCurrentScript() {
 	stopScriptCommon(0);
+}
+
+void ScummEngine_v0::o_walkActorToObject() {
+	int actor = getVarOrDirectByte(PARAM_1);
+	int objId = fetchScriptByte();
+	int obj;
+
+	if (_opcode & 0x40)
+		obj = OBJECT_V0(objId, kObjectV0TypeBG);
+	else
+		obj = OBJECT_V0(objId, kObjectV0TypeFG);
+
+	if (whereIsObject(obj) != WIO_NOT_FOUND) {
+		walkActorToObject(actor, obj);
+	}
 }
 
 void ScummEngine_v0::o_loadSound() {

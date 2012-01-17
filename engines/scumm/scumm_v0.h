@@ -106,6 +106,7 @@ protected:
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();
+	void o_walkActorToObject();
 	void o_loadSound();
 	void o_getActorMoving();
 	void o_animateActor();
