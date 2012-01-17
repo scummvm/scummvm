@@ -1509,35 +1509,39 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 	int16 script = cmd.args[6];
 	int16 topOffset = _vm->_state->getViewType() != kMenu ? 30 : 0;
 
-	if (_vm->_state->getViewType() == kCube) {
-		warning("Opcode 127 is not implemented for the cube view.");
-		return;
-	}
-
-	if (script > 0) {
-		warning("Opcode 127 is not implemented for positive script cases.");
-		return;
-	}
-
 	_vm->_cursor->changeCursor(2);
 
 	bool mousePressed = true;
-	 while (true) {
-		Common::Point mouse = _vm->_cursor->getPosition();
-		int16 amplitude;
-		int16 pixelPosition;
+	while (true) {
+		float ratioPosition = 0.0;
+		// Compute the distance to the minimum lever point
+		// and divide it by the lever movement amplitude
+		if (_vm->_state->getViewType() == kCube) {
+			float pitch = _vm->_state->getLookAtPitch();
+			float heading = _vm->_state->getLookAtHeading();
 
-		if (minPosX == maxPosX) {
-			// Vertical slider
-			amplitude = maxPosY - minPosY;
-			pixelPosition = mouse.y - minPosY - topOffset;
+			float amplitude = sqrt(Math::square(maxPosX - minPosX) + Math::square(maxPosY - minPosY));
+			float distanceToMin = sqrt(Math::square(pitch - minPosX) + Math::square(heading - minPosY));
+			float distanceToMax = sqrt(Math::square(pitch - maxPosX) + Math::square(heading - maxPosY));
+
+			ratioPosition = distanceToMax < amplitude ? distanceToMin / amplitude : 0.0;
 		} else {
-			// Horizontal slider
-			amplitude = maxPosX - minPosX;
-			pixelPosition = mouse.x - minPosX;
-		}
+			Common::Point mouse = _vm->_cursor->getPosition();
+			int16 amplitude;
+			int16 pixelPosition;
 
-		float ratioPosition = pixelPosition / (float) amplitude;
+			if (minPosX == maxPosX) {
+				// Vertical slider
+				amplitude = maxPosY - minPosY;
+				pixelPosition = mouse.y - minPosY - topOffset;
+			} else {
+				// Horizontal slider
+				amplitude = maxPosX - minPosX;
+				pixelPosition = mouse.x - minPosX;
+			}
+
+			ratioPosition = pixelPosition / (float) amplitude;
+		}
 
 		int16 position = ratioPosition * (numPositions + 1);
 		position = CLIP<int16>(position, 1, numPositions);
@@ -1557,6 +1561,11 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 
 		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
 		_vm->_state->setDragEnded(!mousePressed);
+
+		if (_vm->_state->getDragLeverSpeed()) {
+			warning("Interaction with var 58 is missing in opcode 127.");
+			return;
+		}
 
 		if (script) {
 			_vm->_state->setVar(var, position);
