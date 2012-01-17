@@ -348,14 +348,13 @@ enum ActorC64MiscFlags {
 
 class ActorC64 : public Actor_v2 {
 public:
-    byte _costCommandNew;
 	byte _costCommand, _costFrame;
 	byte _miscflags;
 	byte _speaking, _speakingPrev;
 
-    byte _byte_FDE8;
+    int8 _byte_FDE8;
     int8 _byte_FD0A;
-    byte _byte_FCE2[8];
+    int8 _byte_FCE2[8];
     
 
 public:

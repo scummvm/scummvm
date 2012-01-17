@@ -1464,7 +1464,7 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
                 // 0x2556
                 --a->_cost.curpos[limb];
 
-                A->_costCommandNew = 0xFF;
+                //A->_costCommandNew = 0xFF;
                 //A->_costCommand = 0xFF;
                 
                 // 0x2568

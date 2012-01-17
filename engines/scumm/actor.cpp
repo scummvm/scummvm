@@ -866,8 +866,7 @@ void Actor::setDirection(int direction) {
 		    _vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
 
         // 0x2C17
-
-        ((ActorC64*) this)->_byte_FD0A = 0xFF;
+        ((ActorC64*) this)->_byte_FD0A = -1;
 
 		_needRedraw = true;
 		return;
@@ -2653,7 +2652,7 @@ void ActorC64::animateActor(int anim) {
 
     if( this->isInCurrentRoom() ) {
 
-       this->_costCommandNew = anim;
+      // this->_costCommandNew = anim;
        this->_byte_FD0A = this->_byte_FDE8;
 
        // 0x273A
