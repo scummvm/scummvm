@@ -4606,7 +4606,7 @@ bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
 		scene->_actor1.fixPriority(20);
 		scene->_field412 = 1;
 		scene->_sceneMode = 10;
-		scene->setAction(&scene->_sequenceManager, scene, 1, R2_GLOBALS._player, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 1, &R2_GLOBALS._player, NULL);
 
 		return true;
 	}
