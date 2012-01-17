@@ -88,7 +88,7 @@ static const char *const sequenceListPSX[20] = {
 	"candle1",
 	"geodrop1",
 	"vulture1",
-	"", // not present
+	"", // demo video not present
 	""  // credits are not a video
 };
 
@@ -102,8 +102,8 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::
 	_decoderType = decoderType;
 	_decoder = decoder;
 
-	_white = (decoderType == kVideoDecoderPSX) ? _system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff) : 255;
-	_black = (decoderType == kVideoDecoderPSX) ? _system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : 0;
+	_white = 255;
+	_black = 0;
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -224,8 +224,9 @@ void MoviePlayer::play() {
 }
 
 void MoviePlayer::performPostProcessing(byte *screen) {
-	// TODO
-	if (_decoderType == kVideoDecoderPSX)
+	// TODO: We don't support the PSX stream videos yet
+	// nor using the PSX fonts to display subtitles.
+	if (_vm->isPsx())
 		return;
 
 	if (!_movieTexts.empty()) {
@@ -361,11 +362,11 @@ bool MoviePlayer::playVideo() {
 }
 
 uint32 MoviePlayer::getBlackColor() {
-	return _black;
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0x00, 0x00, 0x00) : _black;
 }
 
 uint32 MoviePlayer::getWhiteColor() {
-	return _white;
+	return (_decoderType == kVideoDecoderPSX) ? g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF) : _white;
 }
 
 void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
