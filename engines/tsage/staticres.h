@@ -190,6 +190,8 @@ extern char const *const F7;
 extern char const *const F8;
 extern char const *const F10;
 
+extern char const *const DONE_MSG;
+
 // Scene 1550 arrays of constants
 extern const byte k562CC[];
 extern const byte k5A4D6[];
