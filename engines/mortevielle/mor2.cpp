@@ -31,6 +31,7 @@
 #include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/parole2.h"
@@ -275,6 +276,7 @@ void mfouen()
 void atf3f8(int &key) {
 	do {
 		key = testou();
+		CHECK_QUIT;
 	} while (!((key == 61) || (key == 66)));
 }
 
@@ -394,6 +396,7 @@ void sparl(float adr, float rep) {
 	do {
 		parole(repint, haut[caff - 69], 0);
 		atf3f8(key);
+		CHECK_QUIT;
 	} while (!(key == 66));
 	hirs();
 	show_mouse();

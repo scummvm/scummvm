@@ -23,8 +23,10 @@
 #ifndef MORTEVIELLE_H
 #define MORTEVIELLE_H
 
+#include "common/events.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/stack.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "common/error.h"
@@ -42,14 +44,19 @@ enum {
 #define SCREEN_HEIGHT 400
 #define MORT_DAT_REQUIRED_VERSION 1
 #define MORT_DAT "mort.dat"
+#define GAME_FRAME_DELAY (1000 / 50)
 
 class MortevielleEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
+	Common::Stack<int> _keypresses;
+	uint32 _lastGameFrame;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
 	void loadFont(Common::File &f);
+	bool handleEvents();
+	void addKeypress(Common::Event &evt);
 public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
@@ -59,9 +66,14 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual Common::Error run();
 	uint32 getGameFlags() const;
+
+	bool keyPressed();
+	int getChar();
 };
 
 extern MortevielleEngine *g_vm;
+
+#define CHECK_QUIT if (g_vm->shouldQuit()) { return; }
 
 } // End of namespace Mortevielle
 

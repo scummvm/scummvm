@@ -28,6 +28,7 @@
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mort.h"
+#include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -37,6 +38,7 @@ MortevielleEngine *g_vm;
 MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc):
 		Engine(system), _gameDescription(gameDesc) {
 	g_vm = this;
+	_lastGameFrame = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -113,6 +115,78 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	return Common::kNoError;
 }
 
+bool MortevielleEngine::keyPressed() {
+	// Check for any pending key presses
+	handleEvents();
+
+	// Check if it's time to draw the next frame
+	if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
+		_lastGameFrame = g_system->getMillis();
+	
+		g_vm->_screenSurface.updateScreen();
+	}
+
+	// Delay briefly to keep CPU usage down
+	g_system->delayMillis(5);
+
+	// Return if there are any pending key presses
+	return !_keypresses.empty(); 
+}
+
+int MortevielleEngine::getChar() {
+	// If there isn't any pending keypress, wait until there is
+	while (!shouldQuit() && _keypresses.empty()) {
+		keypressed();
+	}
+
+	// Return the top keypress
+	return shouldQuit() ? 0 : _keypresses.pop();
+}
+
+bool MortevielleEngine::handleEvents() {
+	Common::Event event;
+	if (!g_system->getEventManager()->pollEvent(event))
+		return false;
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
+	case Common::EVENT_MOUSEMOVE:
+		x_s = event.mouse.x;
+		y_s = event.mouse.y;
+		break;
+
+	case Common::EVENT_KEYDOWN:
+		addKeypress(event);
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
+/**
+ * Add the specified key to the event queue
+ */
+void MortevielleEngine::addKeypress(Common::Event &evt) {
+	// Check for control keypresses
+	if (evt.kbd.hasFlags(Common::KBD_CTRL) && (evt.kbd.keycode >= Common::KEYCODE_a) &&
+			(evt.kbd.keycode <= Common::KEYCODE_z)) {
+		_keypresses.push(evt.kbd.keycode - Common::KEYCODE_a + 1);
+		return;
+	}
+
+	// Handle function keys
+	if ((evt.kbd.keycode >= Common::KEYCODE_F1) && (evt.kbd.keycode <= Common::KEYCODE_F12)) {
+		_keypresses.push(59 + evt.kbd.keycode - Common::KEYCODE_F1);
+	}
+}
+
 /*-------------------------------------------------------------------------*/
 
 Common::Error MortevielleEngine::run() {
@@ -125,8 +199,7 @@ Common::Error MortevielleEngine::run() {
 	_paletteManager.setDefaultPalette();
 
 	// Dispatch to the game's main routine
-	const char *argv[] = { "" };
-	mortevielle_main(1, argv);
+	mortevielle_main();
 
 	return Common::kNoError;
 }

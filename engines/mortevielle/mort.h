@@ -32,7 +32,7 @@ namespace Mortevielle {
 
 extern void divers(int np, bool b);
 /* NIVEAU 0 */
-extern int mortevielle_main(int argc, const char *argv[]);
+extern void mortevielle_main();
 
 } // End of namespace Mortevielle
 
