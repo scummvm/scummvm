@@ -246,9 +246,10 @@ void ani50() {
 		output(delig);
 	} while (!(cy == 20));
 	ix = 0;
-	do {
+/*	do {
 		ix = ix + 1;
 	} while (!(keypressed() | (ix == 5e5)));
+*/
 	crep = 998;
 	textcolor(1);
 	gotoxy(1, 21);

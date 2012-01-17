@@ -26,6 +26,7 @@
  */
 
 #include "mortevielle/mort.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/var_mor.h"          /* les variables */                       //Translation: Variables
 #include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"          /* la gestion du clavier */              //Translation: Keyboard manager
@@ -57,6 +58,8 @@ void divers(int np, bool b) {
 	do {
 		parole(np, 0, 0);
 		atf3f8(key);
+		CHECK_QUIT;
+
 		if (newgd != gd) {
 			gd = newgd;
 			hirs();
@@ -67,7 +70,7 @@ void divers(int np, bool b) {
 
 /* NIVEAU 0 */
 
-int mortevielle_main(int argc, const char *argv[]) {
+void mortevielle_main() {
 	/*init_debug;*/
 	/*  ecri_seg;*/
 	//pio_initialize(argc, argv);
@@ -116,9 +119,12 @@ int mortevielle_main(int argc, const char *argv[]) {
 	aff50(false);
 	mlec = 0;
 	divers(142, false);
+	CHECK_QUIT;
 
 	ani50();
 	divers(143, true);
+	CHECK_QUIT;
+
 	suite();
 	music();
 	adzon();
@@ -137,10 +143,6 @@ int mortevielle_main(int argc, const char *argv[]) {
 	do {
 		tjouer();
 	} while (!arret);
-	hide_mouse();
-	clrscr;
-	/*out_debug;*/
-	return EXIT_SUCCESS;
 }
 
 } // End of namespace Mortevielle

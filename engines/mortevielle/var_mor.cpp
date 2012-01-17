@@ -372,10 +372,10 @@ int get_random_number(int minval, int maxval) {
 }
 
 bool keypressed() {
-	return false;	// Hardcoded currently for no keypress pending
+	return g_vm->keyPressed();
 }
 char get_ch() {
-	return '\0';	// hardcoded currently for no keypress
+	return g_vm->getChar();
 }
 
 void palette(int v1) {

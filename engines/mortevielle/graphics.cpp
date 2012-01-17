@@ -66,7 +66,7 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
  */
 void PaletteManager::setDefaultPalette() {
 /*
-	int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 7, 20, 56, 57, 58, 59, 60, 61, 62, 63 };
+	int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
 	setPalette(defaultPalette, 0, 16);
 */
 	// TODO: Replace with proper palette
@@ -933,9 +933,6 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 			++pDest;
 		}
 	}
-
-	// TODO: Remove this once we have a proper game loop
-	updateScreen();
 }
 
 /**
@@ -986,9 +983,6 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
 	destSurface.vLine(1, 2, destSurface.h - 3, col);
 	destSurface.vLine(dx - 1, 2, destSurface.h - 3, col);
 	destSurface.vLine(dx - 2, 2, destSurface.h - 3, col);
-
-	// TODO: Remove this once we have a proper game loop
-	updateScreen();
 }
 
 

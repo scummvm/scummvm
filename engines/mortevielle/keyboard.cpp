@@ -49,6 +49,7 @@ int testou() {
 	case '\23' :
 		sonoff = ! sonoff;
 		break;
+	/* Prevent changing graphics mode
 	case '\1':
 	case '\3':
 	case '\5'  : {
@@ -69,6 +70,7 @@ int testou() {
 		return testou_result;
 	}
 	break;
+	*/
 	case '\26' :
 		if ((c_zzz == 1) && (c_zzz == 2)) {
 			zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
