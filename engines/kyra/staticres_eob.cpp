@@ -1016,27 +1016,6 @@ void EoBEngine::initStaticResource() {
 	_mainMenuStrings = _staticres->loadStrings(kEoB1MainMenuStrings, temp);
 	_finBonusStrings = _staticres->loadStrings(kEoB1BonusStrings, temp);
 
-	_introFilesOpening = _staticres->loadStrings(kEoB1IntroFilesOpening, temp);
-	_introFilesTower = _staticres->loadStrings(kEoB1IntroFilesTower, temp);
-	_introFilesOrb = _staticres->loadStrings(kEoB1IntroFilesOrb, temp);
-	_introFilesWdEntry = _staticres->loadStrings(kEoB1IntroFilesWdEntry, temp);
-	_introFilesKing = _staticres->loadStrings(kEoB1IntroFilesKing, temp);
-	_introFilesHands = _staticres->loadStrings(kEoB1IntroFilesHands, temp);
-	_introFilesWdExit = _staticres->loadStrings(kEoB1IntroFilesWdExit, temp);
-	_introFilesTunnel = _staticres->loadStrings(kEoB1IntroFilesTunnel, temp);
-	_introOpeningFrmDelay = _staticres->loadRawData(kEoB1IntroOpeningFrmDelay, temp);
-	_introWdEncodeX = _staticres->loadRawData(kEoB1IntroWdEncodeX, temp);
-	_introWdEncodeY = _staticres->loadRawData(kEoB1IntroWdEncodeY, temp);
-	_introWdEncodeWH = _staticres->loadRawData(kEoB1IntroWdEncodeWH, temp);
-	_introWdDsX = _staticres->loadRawDataBe16(kEoB1IntroWdDsX, temp);
-	_introWdDsY = _staticres->loadRawData(kEoB1IntroWdDsY, temp);
-	_introTvlX1 = _staticres->loadRawData(kEoB1IntroTvlX1, temp);
-	_introTvlY1 = _staticres->loadRawData(kEoB1IntroTvlY1, temp);
-	_introTvlX2 = _staticres->loadRawData(kEoB1IntroTvlX2, temp);
-	_introTvlY2 = _staticres->loadRawData(kEoB1IntroTvlY2, temp);
-	_introTvlW = _staticres->loadRawData(kEoB1IntroTvlW, temp);
-	_introTvlH = _staticres->loadRawData(kEoB1IntroTvlH, temp);
-
 	_doorShapeEncodeDefs = _staticres->loadRawData(kEoB1DoorShapeDefs, temp);
 	_doorSwitchShapeEncodeDefs = _staticres->loadRawData(kEoB1DoorSwitchShapeDefs, temp);
 	_doorSwitchCoords = _staticres->loadRawData(kEoB1DoorSwitchCoords, temp);

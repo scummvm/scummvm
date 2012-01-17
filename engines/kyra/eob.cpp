@@ -33,18 +33,14 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_numSpells = 53;
 	_menuChoiceInit = 4;
 
-	_turnUndeadString = _introFilesOpening = _introFilesTower = _introFilesOrb = 0;
-	_introFilesWdEntry = _introFilesKing = _introFilesHands = _introFilesWdExit = 0;
-	_introFilesTunnel = _finBonusStrings = _npcStrings[1] = _npcStrings[2] = 0;
+	_turnUndeadString = 0;
+	_finBonusStrings = _npcStrings[1] = _npcStrings[2] = 0;
 	_npcStrings[3] = _npcStrings[4] = _npcStrings[5] = _npcStrings[6] = 0;
 	_npcStrings[7] = _npcStrings[8] = _npcStrings[9] = _npcStrings[10] = 0;
-	_introOpeningFrmDelay = _introWdEncodeX = _introWdEncodeY = _introWdEncodeWH = 0;
-	_npcShpData = _npcSubShpIndex1 = _npcSubShpIndex2 = _npcSubShpY = _introWdDsY = 0;
-	_introTvlX1 = _introTvlY1 = _introTvlX2 = _introTvlY2 = _introTvlW = _introTvlH = 0;
+	_npcShpData = _npcSubShpIndex1 = _npcSubShpIndex2 = _npcSubShpY = 0;
 	_dscDoorScaleMult4 = _dscDoorScaleMult5 = _dscDoorScaleMult6 = _dscDoorY3 = 0;
 	_dscDoorY4 = _dscDoorY5 = _dscDoorY6 = _dscDoorY7 = _doorShapeEncodeDefs = 0;
 	_doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
-	_introWdDsX = 0;
 	_dscDoorCoordsExt = 0;
 }
 
