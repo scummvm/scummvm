@@ -22,12 +22,59 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
+
+/*-------------------------------------------------------------------------*
+ * Palette Manager 
+ * 
+ *-------------------------------------------------------------------------*/
+
+/**
+ * Set palette entries from the 64 colour available EGA palette
+ */
+void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
+	assert((idx + size) <= 16);
+
+	// Build up the EGA palette
+	byte egaPalette[64 * 3];
+
+	byte *p = &egaPalette[0];
+	for (int i = 0; i < 64; i++) {
+		*p++ = (i >> 2 & 1) * 42 + (i >> 5 & 1) * 21;
+		*p++ = (i >> 1 & 1) * 42 + (i >> 4 & 1) * 21;
+		*p++ = (i      & 1) * 42 + (i >> 3 & 1) * 21;
+    }
+
+	// Loop through setting palette colours based on the passed indexes
+	for (; size > 0; --size, ++idx) {
+		int palIndex = palette[idx];
+		assert(palIndex < 64);
+
+		const byte *pRgb = (const byte *)&egaPalette[palIndex];
+		g_system->getPaletteManager()->setPalette(pRgb, idx, 1);
+	}
+}
+
+/**
+ * Set the default EGA palette
+ */
+void PaletteManager::setDefaultPalette() {
+/*
+	int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 7, 20, 56, 57, 58, 59, 60, 61, 62, 63 };
+	setPalette(defaultPalette, 0, 16);
+*/
+	// TODO: Replace with proper palette
+	for (int idx = 0; idx < 16; ++idx) {
+		uint32 c = 0x111111 * idx;
+		g_system->getPaletteManager()->setPalette((const byte *)&c, idx, 1);
+	}
+}
 
 /*-------------------------------------------------------------------------*
  * Image decoding
@@ -939,6 +986,9 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
 	destSurface.vLine(1, 2, destSurface.h - 3, col);
 	destSurface.vLine(dx - 1, 2, destSurface.h - 3, col);
 	destSurface.vLine(dx - 2, 2, destSurface.h - 3, col);
+
+	// TODO: Remove this once we have a proper game loop
+	updateScreen();
 }
 
 
