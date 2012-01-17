@@ -121,11 +121,8 @@ Common::Error MortevielleEngine::run() {
 	if (err != Common::kNoError)
 		return err;
 
-	// TODO: Remove once palette loading is correctly done
-	for (int idx = 0; idx < 16; ++idx) {
-		uint32 c = 0x111111 * idx;
-		g_system->getPaletteManager()->setPalette((const byte *)&c, idx, 1);
-	}
+	// Set default palette
+	_paletteManager.setDefaultPalette();
 
 	// Dispatch to the game's main routine
 	const char *argv[] = { "" };

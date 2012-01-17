@@ -30,6 +30,12 @@
 
 namespace Mortevielle {
 
+class PaletteManager {
+public:
+	void setPalette(const int *palette, uint idx, uint size);
+	void setDefaultPalette();
+};
+
 #define FONT_WIDTH 8
 #define FONT_HEIGHT 6
 #define FONT_NUM_CHARS 121

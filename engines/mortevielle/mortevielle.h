@@ -52,6 +52,7 @@ private:
 	void loadFont(Common::File &f);
 public:
 	ScreenSurface _screenSurface;
+	PaletteManager _paletteManager;
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
