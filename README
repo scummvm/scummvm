@@ -88,7 +88,7 @@ the game, unpatched versions don't have subtitles in cutscenes,
 and can't complete the game. 
 
 The patch can be downloaded from:
-ftp://ftp.lucasarts.com/patches/pc/Gfupd101.exe and obviously requires
+http://demos.residualvm.org/patches/Gfupd101.exe and obviously requires
 Windows or something similar to unpack and apply it. (There does exist
 tools to unpack it on any platform in the residualvm-tools git-repos).
 
