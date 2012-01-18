@@ -103,7 +103,6 @@ void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
 	surface.decode(&mem[seg * 16 + dep]);
 
-	decomp(seg, dep);
 	if (gd == her) {
 		mem[0x7000 * 16 + 2] = 0;
 		mem[0x7000 * 16 + 32] = 15;
