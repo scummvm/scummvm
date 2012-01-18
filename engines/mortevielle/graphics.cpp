@@ -83,11 +83,11 @@ void PaletteManager::setDefaultPalette() {
 
 void GfxSurface::decode(const byte *pSrc) {
 	_width = _height = 0;
-	_var1 = *pSrc++;
+	bool offsetFlag = *pSrc++ == 0;
 	int entryCount = *pSrc++;
 	pSrc += 2;
 
-	if (!_var1)
+	if (offsetFlag)
 		pSrc += 30;
 
 	// First run through the data to calculate starting offsets
@@ -139,7 +139,7 @@ void GfxSurface::decode(const byte *pSrc) {
 		pSrc += 6;
 		pDest = &outputBuffer[0];
 
-		_var18 = 0;
+		_lookupIndex = 0;
 		_nibbleFlag = false;
 
 		int decomIndex = 0;
@@ -150,24 +150,24 @@ void GfxSurface::decode(const byte *pSrc) {
 			if (decomCode & 1) {
 				// Handle decompression of the pattern lookup table
 				do {
-					_var12 = desanalyse(pSrc);
-					_var14 = desanalyse(pSrc);
+					int outerCount = desanalyse(pSrc);
+					int innerCount = desanalyse(pSrc);
 
 					const byte *pSrcSaved = pSrc;
 					bool savedNibbleFlag = _nibbleFlag;
-					int savedVar18 = _var18;
+					int savedLookupIndex = _lookupIndex;
 					
 					do {
 						pSrc = pSrcSaved;
 						_nibbleFlag = savedNibbleFlag;
-						_var18 = savedVar18;
+						_lookupIndex = savedLookupIndex;
 
-						for (int idx = 0; idx < _var14; ++idx, ++tableOffset) {
+						for (int idx = 0; idx < innerCount; ++idx, ++tableOffset) {
 							assert(tableOffset < BUFFER_SIZE);
 							lookupTable[tableOffset] = suiv(pSrc);
 						}
-					} while (--_var12 > 0);
-				} while (_var18 < (lookupBytes - 1));
+					} while (--outerCount > 0);
+				} while (_lookupIndex < (lookupBytes - 1));
 
 			} else {
 				assert(lookupBytes < BUFFER_SIZE);
@@ -183,30 +183,30 @@ void GfxSurface::decode(const byte *pSrc) {
 				++pSrc;
 
 			tableOffset = 0;
-			_var18 = 0;
+			_lookupIndex = 0;
 
 			if (decomCode & 2) {
 				// Handle decompression of the temporary source buffer
 				do {
-					_var12 = desanalyse(pSrc);
-					_var14 = desanalyse(pSrc);
-					_var18 += _var14;
+					int outerCount = desanalyse(pSrc);
+					int innerCount = desanalyse(pSrc);
+					_lookupIndex += innerCount;
 
 					if (_nibbleFlag) {
 						++pSrc;
-						++_var18;
+						++_lookupIndex;
 						_nibbleFlag = false;
 					}
 
 					const byte *pStart = pSrc;
 					do {
 						pSrc = pStart;
-						for (int idx = 0; idx < _var14; ++idx) {
+						for (int idx = 0; idx < innerCount; ++idx) {
 							assert(tableOffset < BUFFER_SIZE);
 							srcBuffer[tableOffset++] = *pSrc++;
 						}
-					} while (--_var12 > 0);
-				} while (_var18 < (srcSize - 1));
+					} while (--outerCount > 0);
+				} while (_lookupIndex < (srcSize - 1));
 			} else {
 				assert(srcSize < BUFFER_SIZE);
 				for (int idx = 0; idx < srcSize; ++idx)
@@ -222,7 +222,7 @@ void GfxSurface::decode(const byte *pSrc) {
 			pSrc = &srcBuffer[0];
 			pLookup = &lookupTable[0] - 1;
 
-			_lookupValue = _var18 = 0;
+			_lookupValue = _lookupIndex = 0;
 			_nibbleFlag = false;
 			decomIndex = decomCode >> 8;
 		}
@@ -339,8 +339,8 @@ void GfxSurface::decode(const byte *pSrc) {
 			INCR_TAIX;
 			_thickness = _xInc = 1;
 			_yInc = DEFAULT_WIDTH;
-			_var20 = _ySize;
-			_var24 = _xSize;
+			_yEnd = _ySize;
+			_xEnd = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
@@ -348,17 +348,17 @@ void GfxSurface::decode(const byte *pSrc) {
 			INCR_TAIX;
 			_thickness = _xSize;
 			_yInc = 1;
-			_var20 = _xSize;
+			_yEnd = _xSize;
 			_xInc = DEFAULT_WIDTH;
-			_var24 = _ySize;
+			_xEnd = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 14:
 			_thickness = _yInc = 1;
-			_var20 = _xSize;
+			_yEnd = _xSize;
 			_xInc = DEFAULT_WIDTH;
-			_var24 = _ySize;
+			_xEnd = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
@@ -366,18 +366,18 @@ void GfxSurface::decode(const byte *pSrc) {
 			INCR_TAIX;
 			_thickness = 2;
 			_yInc = DEFAULT_WIDTH;
-			_var20 = _ySize;
+			_yEnd = _ySize;
 			_xInc = 1;
-			_var24 = _xSize;
+			_xEnd = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
 		case 16:
 			_thickness = 3;
 			_yInc = 1;
-			_var20 = _xSize;
+			_yEnd = _xSize;
 			_xInc = DEFAULT_WIDTH;
-			_var24 = _ySize;
+			_xEnd = _ySize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
@@ -385,9 +385,9 @@ void GfxSurface::decode(const byte *pSrc) {
 			INCR_TAIX;
 			_thickness = 3;
 			_yInc = DEFAULT_WIDTH;
-			_var20 = _ySize;
+			_yEnd = _ySize;
 			_xInc = 1;
-			_var24 = _xSize;
+			_xEnd = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 
@@ -395,9 +395,9 @@ void GfxSurface::decode(const byte *pSrc) {
 			INCR_TAIX;
 			_thickness = 5;
 			_yInc = DEFAULT_WIDTH;
-			_var20 = _ySize;
+			_yEnd = _ySize;
 			_xInc = 1;
-			_var24 = _xSize;
+			_xEnd = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
 		}
@@ -431,7 +431,7 @@ byte GfxSurface::suiv(const byte *&pSrc) {
 	int v = *pSrc;
 	if (_nibbleFlag) {
 		++pSrc;
-		++_var18;
+		++_lookupIndex;
 		_nibbleFlag = false;
 		return v & 0xf;
 	} else {
@@ -564,12 +564,11 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 }
 
 void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
-//	byte *pDestEnd = pDest + (_ySize - 1) * DEFAULT_WIDTH + _xSize;
-	int var28 = 0;
+	int drawIndex = 0;
 
 	for (;;) {
 		// Reduce thickness as necessary
-		while ((var28 + _thickness) > _xSize) {
+		while ((drawIndex + _thickness) > _xSize) {
 			if (--_thickness == 0)
 				return;
 		}
@@ -580,22 +579,22 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 				if (yCtr > 0)
 					pDest += DEFAULT_WIDTH;
 
-				var28 += _thickness;
+				drawIndex += _thickness;
 				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
 					*pDest++ = csuiv(pSrc, pLookup);
 			} else {
 				pDest += DEFAULT_WIDTH;
-				var28 -= _thickness;
+				drawIndex -= _thickness;
 				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
 					*--pDest = csuiv(pSrc, pLookup);
 			}
 		}
 		if ((_ySize % 2) == 0) {
 			pDest += _thickness;
-			var28 += _thickness;
+			drawIndex += _thickness;
 		}
 		
-		while (_xSize < (var28 + _thickness)) {
+		while (_xSize < (drawIndex + _thickness)) {
 			if (--_thickness == 0)
 				return;
 		}
@@ -606,13 +605,13 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 				if (yCtr > 0)
 					pDest -= DEFAULT_WIDTH;
 
-				var28 += _thickness;
+				drawIndex += _thickness;
 
 				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
 					*pDest++ = csuiv(pSrc, pLookup);
 			} else {
 				pDest -= DEFAULT_WIDTH;
-				var28 -= _thickness;
+				drawIndex -= _thickness;
 
 				for (int xCtr = 0; xCtr < _thickness; ++xCtr)
 					*--pDest = csuiv(pSrc, pLookup);
@@ -620,13 +619,13 @@ void GfxSurface::vertical(const byte *&pSrc, byte *&pDest, const byte *&pLookup)
 		}				
 		if ((_ySize % 2) == 0) {
 			pDest += _thickness;
-			var28 += _thickness;
+			drawIndex += _thickness;
 		}
 	}
 }
 
 void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
-	int var26 = 0, var28 = 0;
+	int yPos = 0, drawIndex = 0;
 	_yInc = DEFAULT_WIDTH;
 	_xInc = -1;
 	--_xSize;
@@ -643,32 +642,32 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 		case 1:
 			increments(pDest);
 
-			if (!var28) {
+			if (!drawIndex) {
 				NIH();
 				NIV();
 
-				if (var26 == _ySize) {
+				if (yPos == _ySize) {
 					increments(pDest);
-					++var28;
+					++drawIndex;
 				} else {
-					++var26;
+					++yPos;
 				}
 
 				*++pDest = csuiv(pSrc, pLookup);
 				areaNum = 2;
-			} else if (var26 != _ySize) {
-				++var26;
-				--var28;
+			} else if (yPos != _ySize) {
+				++yPos;
+				--drawIndex;
 				areaNum = 0;
 			} else {
 				NIH();
 				NIV();
 				increments(pDest);
-				++var28;
+				++drawIndex;
 
 				*++pDest = csuiv(pSrc, pLookup);
 
-				if (var28 == _xSize) {
+				if (drawIndex == _xSize) {
 					areaNum = -1;
 				} else {
 					areaNum = 2;
@@ -679,35 +678,35 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 		case 2:
 			increments(pDest);
 
-			if (!var26) {
+			if (!yPos) {
 				NIH();
 				NIV();
 
-				if (var28 == _xSize) {
+				if (drawIndex == _xSize) {
 					increments(pDest);
-					++var26;
+					++yPos;
 				} else {
-					++var28;
+					++drawIndex;
 				}
 
 				pDest += DEFAULT_WIDTH;
 				areaNum = 0;
-			} else if (var28 != _xSize) {
-				++var28;
-				--var26;
+			} else if (drawIndex != _xSize) {
+				++drawIndex;
+				--yPos;
 
 				*pDest = csuiv(pSrc, pLookup);
 				areaNum = 2;
 			} else {
 				pDest += DEFAULT_WIDTH;
-				++var26;
+				++yPos;
 				NIH();
 				NIV();
 				increments(pDest);
 
 				*pDest = csuiv(pSrc, pLookup);
 
-				if (var26 == _ySize)
+				if (yPos == _ySize)
 					areaNum = -1;
 				else
 					areaNum = 1;
@@ -718,10 +717,10 @@ void GfxSurface::decom11(const byte *&pSrc, byte *&pDest, const byte *&pLookup) 
 }
 
 void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
-	int var26 = 0, var28 = 0;
-	--_var24;
+	int diagIndex = 0, drawIndex = 0;
+	--_xEnd;
 
-	while (!TFP(var26)) {
+	while (!TFP(diagIndex)) {
 		for (;;) {
 			NIH();
 			for (int idx = 0; idx <= _thickness; ++idx) {
@@ -743,21 +742,21 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 			NIV();
 			increments(pDest);
 
-			++var28;
-			if (_var24 < (var28 + 1)) {
-				TF1(pDest, var26);
+			++drawIndex;
+			if (_xEnd < (drawIndex + 1)) {
+				TF1(pDest, diagIndex);
 				break;
 			}
 
 			pDest += _xInc;
-			++var28;
-			if (_var24 < (var28 + 1)) {
-				TF2(pSrc, pDest, pLookup, var26);
+			++drawIndex;
+			if (_xEnd < (drawIndex + 1)) {
+				TF2(pSrc, pDest, pLookup, diagIndex);
 				break;
 			}
 		}
 
-		if (TFP(var26))
+		if (TFP(diagIndex))
 			break;
 
 		for (;;) {
@@ -780,15 +779,15 @@ void GfxSurface::diag(const byte *&pSrc, byte *&pDest, const byte *&pLookup) {
 			NIV();
 			increments(pDest);
 
-			if (--var28 == 0) {
-				TF1(pDest, var26);
+			if (--drawIndex == 0) {
+				TF1(pDest, diagIndex);
 				NIH();
 				break;
 			} else {
 				pDest += _xInc;
 				
-				if (--var28 == 0) {
-					TF2(pSrc, pDest, pLookup, var26);
+				if (--drawIndex == 0) {
+					TF2(pSrc, pDest, pLookup, diagIndex);
 					NIH();
 					break;
 				}
@@ -813,7 +812,7 @@ void GfxSurface::NIV() {
 }
 
 bool GfxSurface::TFP(int v) {
-	int diff = _var20 - v;
+	int diff = _yEnd - v;
 	if (!diff)
 		// Time to finish loop in outer method
 		return true;
