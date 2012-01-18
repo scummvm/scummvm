@@ -50,7 +50,6 @@ private:
 	int _thickness, _yInc, _var20, _xInc;
 	int _var24;
 	int _width, _height;
-	int _xOffset, _yOffset;
 
 	void majTtxTty();
 	byte suiv(const byte *&pSrc);
@@ -66,6 +65,9 @@ private:
 	bool TFP(int v);
 	void TF1(byte *&pDest, int &v);
 	void TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v);
+public:
+	// Specifies offset when drawing the image
+	Common::Point _offset;
 public:
 	~GfxSurface();
 
