@@ -65,7 +65,7 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -182,19 +182,18 @@ Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	return Common::kNoError;
 }
 
-ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-
-	ExtraGuiOption altIntro = {
-		_s("Show alternative intro"),
-		_s("Show the intro of the floppy version in the CD version"),
-		"alt_intro",
-		false
+ExtraGuiOption *QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static ExtraGuiOption optionsList[] = {
+		{
+			_s("Show alternative intro"),
+			_s("Show the intro of the floppy version in the CD version"),
+			"alt_intro",
+			false
+		},
+		{ "", "", "", false }
 	};
 
-	options.push_back(altIntro);
-
-	return options;
+	return optionsList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)

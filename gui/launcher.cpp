@@ -118,7 +118,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 public:
-	EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions);
+	EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions);
 
 	void open();
 	void close();
@@ -145,11 +145,17 @@ protected:
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 
-	const ExtraGuiOptions _engineOptions;
+	Common::Array<ExtraGuiOption> _engineOptions;
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions)
-	: OptionsDialog(domain, "GameOptions"), _engineOptions(engineOptions) {
+EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions)
+	: OptionsDialog(domain, "GameOptions") {
+
+	uint i = 0;
+	while (strcmp(engineOptions[i].configOption, "")) {
+		_engineOptions.push_back(engineOptions[i]);
+		++i;
+	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -211,7 +217,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	//
 	// 2) The engine tab (shown only if there are custom engine options)
 	//
-	if (engineOptions.size() > 0) {
+	if (_engineOptions.size() > 0) {
 		tab->addTab(_("Engine"));
 
 		addEngineControls(tab, "GameOptions_Engine.", engineOptions);
@@ -959,7 +965,8 @@ void LauncherDialog::editGame(int item) {
 	// The plugin may be null, e.g. in platforms that use engine
 	// plugins. One could have game entries in the config file, for
 	// which the engine plugin is no longer installed.
-	ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : ExtraGuiOptions();
+	static ExtraGuiOption emptyList[] = { { "", "", "", false } };
+	ExtraGuiOption *extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : emptyList;
 	EditGameDialog editDialog(target, gameInfo.description(), extraOptions);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent

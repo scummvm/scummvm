@@ -77,7 +77,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -270,19 +270,18 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
 }
 
-ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-
-	ExtraGuiOption altIntro = {
-		_s("Show alternative intro"),
-		_s("Show the intro of the floppy version in the CD version"),
-		"alt_intro",
-		false
+ExtraGuiOption *SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static ExtraGuiOption optionsList[] = {
+		{
+			_s("Show alternative intro"),
+			_s("Show the intro of the floppy version in the CD version"),
+			"alt_intro",
+			false
+		},
+		{ "", "", "", false }
 	};
 
-	options.push_back(altIntro);
-
-	return options;
+	return optionsList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
