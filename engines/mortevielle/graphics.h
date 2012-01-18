@@ -42,13 +42,12 @@ public:
 
 class GfxSurface: public Graphics::Surface {
 private:
-	int _var1;
 	int _xp, _yp;
 	int _xSize, _ySize, _var12;
-	int _var14, _var18, _lookupValue;
+	int _var14, _lookupIndex, _lookupValue;
 	bool _nibbleFlag;
-	int _thickness, _yInc, _var20, _xInc;
-	int _var24;
+	int _thickness;
+	int _yInc, _yEnd, _xInc, _xEnd;
 	int _width, _height;
 
 	void majTtxTty();
