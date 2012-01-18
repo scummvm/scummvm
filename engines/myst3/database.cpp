@@ -48,6 +48,8 @@ Database::Database() :
 			{ "1.2 English", Common::kPlatformWindows, "87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108, 0x86040 },
 			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108, 0x86040 },
 			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108, 0x86040 },
+			{ "1.22 German", Common::kPlatformWindows, "976416b2ab1c058802bf3dccc4e2f11a", 0x400000, 0x86108, 0x86040 },
+			{ "1.24 Japanese", Common::kPlatformWindows, "0f7440439709e94d20e3ce4656a965ee", 0x400000, 0x86108, 0x86040 },
 			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 English", Common::kPlatformWindows, "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110, 0x86040 },
 			{ "1.27 Dutch", Common::kPlatformWindows, "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110, 0x86040 },

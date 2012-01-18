@@ -162,6 +162,7 @@ Script::Script(Myst3Engine *vm):
 	OP_4(125, ifHeadingPitchInRect,			kValue,		kValue,		kValue,		kValue					);
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
 	OP_5(127, leverDrag,					kValue,		kValue,		kValue,		kValue, 	kVar		); // Six args
+	OP_5(130, leverDragXY,					kVar, 		kVar,		kValue,		kValue,		kValue		);
 	OP_5(134, runScriptWhileDragging,		kVar, 		kVar,		kValue,		kValue, 	kVar		); // Eight args
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
 	OP_2(136, goToNodeTransition,			kValue,		kValue											);
@@ -1595,6 +1596,45 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 
 	_vm->_state->setDragLeverLimited(0);
 	_vm->_state->setDragLeverSpeed(0);
+}
+
+void Script::leverDragXY(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Drag 2D lever and update X (var %d) and Y (var %d) coordinates, while running script %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[4]);
+
+	uint16 varX = cmd.args[0];
+	uint16 varY = cmd.args[1];
+	uint16 scale = cmd.args[2];
+	uint16 maxLeverPosition = cmd.args[3];
+	uint16 script = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	Common::Point mouseInit = _vm->_cursor->getPosition();
+
+	_vm->_cursor->changeCursor(2);
+
+	bool mousePressed = true;
+	do {
+		Common::Point mouse = _vm->_cursor->getPosition();
+		int16 distanceX = (mouse.x - mouseInit.x) / scale;
+		int16 distanceY = (mouse.y - mouseInit.y) / scale;
+
+		distanceX = CLIP<int16>(distanceX, -maxLeverPosition, maxLeverPosition);
+		distanceY = CLIP<int16>(distanceY, -maxLeverPosition, maxLeverPosition);
+
+		// Set lever position variables
+		_vm->_state->setVar(varX, distanceX);
+		_vm->_state->setVar(varY, distanceY);
+
+		// Draw a frame
+		_vm->processInput(true);
+		_vm->drawFrame();
+
+		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		_vm->_state->setDragEnded(!mousePressed);
+
+		// Run script
+		if (script)
+			_vm->runScriptsFromNode(script);
+	} while (mousePressed);
 }
 
 void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
