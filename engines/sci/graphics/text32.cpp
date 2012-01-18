@@ -173,11 +173,16 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t textObject) {
+void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
 	if (hunkId.isNull())
+		return;
+
+	// Negative coordinates indicate that text shouldn't be displayed
+	if (x < 0 || y < 0)
 		return;
 
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
@@ -204,7 +209,7 @@ void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel != skipColor)
+			if (pixel != skipColor && pixel != backColor)
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}

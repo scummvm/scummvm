@@ -67,7 +67,7 @@ int BdfFont::getCharWidth(byte chr) const {
 
 template<typename PixelType>
 void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, int minX, int maxX, const PixelType color) {
-	byte data;
+	byte data = 0;
 	while (h--) {
 		PixelType *dst = (PixelType *)ptr;
 

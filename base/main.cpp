@@ -264,7 +264,7 @@ static void setupKeymapper(OSystem &system) {
 	using namespace Common;
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
-	Keymap *globalMap = new Keymap("global");
+	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;
 	HardwareKeySet *keySet;
 
@@ -294,7 +294,7 @@ static void setupKeymapper(OSystem &system) {
 
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global", true);
+	mapper->pushKeymap(kGlobalKeymapName, true);
 #endif
 
 }

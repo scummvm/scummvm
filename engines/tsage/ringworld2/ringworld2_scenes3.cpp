@@ -3929,37 +3929,6 @@ void Scene3800::sub110BBD() {
 	}
 }
 
-void Scene3800::sub1B007(int arg1, int arg2, int arg3) {
-	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
-	byte newR, newG, newB;
-	int tmp, varC, varD = 0;
-
-	for (int i = 0; i < 256; i++) {
-		newR = (arg1 * tmpPal[(3 * i)]) / 100;
-		newG = (arg2 * tmpPal[(3 * i) + 1]) / 100;
-		newB = (arg3 * tmpPal[(3 * i) + 2]) / 100;
-
-		varC = 769;
-		for (int j = 255; j >= 0; j--) {
-			tmp = abs(tmpPal[(3 * j)] - newR);
-			if (tmp >= varC)
-				continue;
-
-			tmp += abs(tmpPal[(3 * j) + 1] - newG);
-			if (tmp >= varC)
-				continue;
-
-			tmp += abs(tmpPal[(3 * j) + 2] - newB);
-			if (tmp >= varC)
-				continue;
-			
-			varC = tmp;
-			varD = j;
-		}
-		this->_field312[i] = varD;
-	}
-}
-
 void Scene3800::postInit(SceneObjectList *OwnerList) {
 	_field412 = 0;
 
@@ -3968,7 +3937,7 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(231);
 
-	warning("sub1B007(65, 65, 65)");
+	scalePalette(65, 65, 65);
 
 	setZoomPercents(87, 40, 144, 100);
 
@@ -4218,7 +4187,8 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_exit5._insideArea = false;
 	_exit5._moving = false;
 
-	warning("sub1B007(65, 65, 65)");
+	scalePalette(65, 65, 65);
+
 	_exit1.setDest(Common::Point(160, 126));
 	_exit1._enabled = true;
 	_exit1._insideArea = false;

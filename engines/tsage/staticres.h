@@ -190,6 +190,19 @@ extern char const *const F7;
 extern char const *const F8;
 extern char const *const F10;
 
+extern char const *const DONE_MSG;
+
+// Scene 1550 arrays of constants
+extern const byte k562CC[];
+extern const byte k5A4D6[];
+extern const byte k5A72E[];
+extern const byte k5A73F[];
+extern const byte k5A750[];
+extern const byte k5A76D[];
+extern const byte k5A78A[];
+extern const byte k5A79B[];
+extern const byte k5A7F6[];
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

@@ -148,6 +148,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_clericSpellOffset = 0;
 	_restPartyElapsedTime = 0;
 	_allowSkip = false;
+	_allowImport = false;
 
 	_wallsOfForce = 0;
 
@@ -371,7 +372,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_sound);
 	_sound->init();
 
-	// Setup volume settings
+	// Setup volume settings (and read in all ConfigManager settings)
 	syncSoundSettings();
 
 	_res = new Resource(this);
@@ -492,6 +493,8 @@ Common::Error EoBCoreEngine::init() {
 }
 
 Common::Error EoBCoreEngine::go() {
+	_debugger->initialize();
+
 	_txt->removePageBreakFlag();
 	_screen->loadPalette("palette.col", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
@@ -499,6 +502,13 @@ Common::Error EoBCoreEngine::go() {
 
 	loadItemsAndDecorationsShapes();
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+
+	// Import original save game files (especially the "Quick Start Party")
+	if (ConfMan.getBool("importOrigSaves")) {
+		importOriginalSaveFile(-1);
+		ConfMan.setBool("importOrigSaves", false);
+		ConfMan.flushToDisk();
+	}
 
 	loadItemDefs();
 	int action = 0;
@@ -550,6 +560,7 @@ Common::Error EoBCoreEngine::go() {
 void EoBCoreEngine::registerDefaultSettings() {
 	KyraEngine_v1::registerDefaultSettings();
 	ConfMan.registerDefault("hpbargraphs", true);
+	ConfMan.registerDefault("importOrigSaves", true);
 }
 
 void EoBCoreEngine::readSettings() {
@@ -912,7 +923,7 @@ Common::String EoBCoreEngine::getCharStrength(int str, int strExt) {
 	return _strenghtStr;
 }
 
-int EoBCoreEngine::testCharacter(int index, int flags) {
+int EoBCoreEngine::testCharacter(int16 index, int flags) {
 	if (index == -1)
 		return 0;
 

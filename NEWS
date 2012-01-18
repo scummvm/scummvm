@@ -16,11 +16,19 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
+   - Added a difficulty selection dialog for Loom FM-TOWNS.
 
-1.4.1 (????-??-??)
+1.4.1 (2012-01-27)
  AGOS:
    - Fixed loading videos directly from InstallShield cabinets in the Windows
      version of the The Feeble Files.
+
+ BASS:
+   - Added support for Enhanced Music by James Woodcock
+     (http://www.jameswoodcock.co.uk/?p=7695).
+
+ Broken Sword 2:
+   - Slight graphics improvement for PSX version.
 
  KYRA:
    - Fixed bug in the original Lands of Lore GUI which made ScummVM error out
@@ -34,6 +42,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - The option to toggle sound effect types between digitized and synthesized
      has been disabled until a more user-friendly GUI option is possible.
      Digital sound effects are always preferred for now.
+   - Fixed a case where starting a new song didn't fully reset its channels,
+     thus some notes sounded wrong.
 
 1.4.0 (2011-11-11)
  New Games:

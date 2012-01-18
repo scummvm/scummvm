@@ -2039,6 +2039,10 @@ The Legend of Kyrandia adds the following non-standard keyword:
 
     walkspeed          int      The walk speed (0-4)
 
+The 7th Guest adds the following non-standard keyword:
+
+    t7g_speed          string   Video playback speed (normal, tweaked, im_an_ios)
+
 
 9.0) Compiling:
 ---- ----------

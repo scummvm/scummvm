@@ -82,6 +82,16 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCaretaker2450"; }
 };
 
+// Classes related to Chief
+
+class SpeakerChief1100 : public VisualSpeaker {
+public:
+	SpeakerChief1100();
+
+	virtual Common::String getClassName() { return "SpeakerChief1100"; }
+	virtual void proc15();
+};
+
 // Classes related to Guard
 
 class SpeakerGuard : public VisualSpeaker {
@@ -133,6 +143,12 @@ public:
 class SpeakerMiranda300 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda300"; }
+	virtual void proc15();
+};
+
+class SpeakerMiranda1625 : public SpeakerMiranda {
+public:
+	virtual Common::String getClassName() { return "SpeakerMiranda1625"; }
 	virtual void proc15();
 };
 
@@ -250,6 +266,12 @@ public:
 class SpeakerQuinn300 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn300"; }
+	virtual void proc15();
+};
+
+class SpeakerQuinn1100 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn1100"; }
 	virtual void proc15();
 };
 
@@ -385,6 +407,12 @@ public:
 	virtual void proc15();
 };
 
+class SpeakerSeeker1100 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker1100"; }
+	virtual void proc15();
+};
+
 class SpeakerSeeker2435 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker2435"; }
@@ -455,12 +483,23 @@ public:
 
 // Classes related to Soldier
 
-class SpeakerSoldier300 : public VisualSpeaker {
+class SpeakerSoldier : public VisualSpeaker {
 public:
-	SpeakerSoldier300();
+	SpeakerSoldier(int colour);
+	virtual Common::String getClassName() { return "SpeakerSoldier"; }
+};
 
+class SpeakerSoldier300 : public SpeakerSoldier {
+public:
+	SpeakerSoldier300() : SpeakerSoldier(60) {};
 	virtual Common::String getClassName() { return "SpeakerSoldier300"; }
 	virtual void proc15();
+};
+
+class SpeakerSoldier1625 : public SpeakerSoldier {
+public:
+	SpeakerSoldier1625() : SpeakerSoldier(5) {};
+	virtual Common::String getClassName() { return "SpeakerSoldier1625"; }
 };
 
 // Classes related to Teal
@@ -480,6 +519,12 @@ public:
 class SpeakerTeal300 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal300"; }
+	virtual void proc15();
+};
+
+class SpeakerTeal1625 : public SpeakerTeal {
+public:
+	virtual Common::String getClassName() { return "SpeakerTeal1625"; }
 	virtual void proc15();
 };
 

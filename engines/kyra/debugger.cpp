@@ -29,6 +29,9 @@
 #include "kyra/eobcommon.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
+
+#include "gui/message.h"
 
 namespace Kyra {
 
@@ -205,6 +208,7 @@ void Debugger_LoK::initialize() {
 	DCmd_Register("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
 	DCmd_Register("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
 	DCmd_Register("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	Debugger::initialize();
 }
 
 bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
@@ -295,6 +299,7 @@ void Debugger_v2::initialize() {
 	DCmd_Register("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
 	DCmd_Register("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
 	DCmd_Register("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	Debugger::initialize();
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -445,6 +450,7 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 
 void Debugger_HoF::initialize() {
 	DCmd_Register("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	Debugger_v2::initialize();
 }
 
 bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
@@ -474,6 +480,33 @@ Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 #ifdef ENABLE_EOB
 Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
+
+void Debugger_EoB::initialize() {
+	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+}
+
+bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+	if (!_vm->_allowImport) {
+		DebugPrintf("This command may only be used from the main menu.\n");
+		return true;
+	}
+
+	if (argc == 3) {
+		int slot = atoi(argv[1]);
+		if (slot < -1 || slot > 989) {
+			DebugPrintf("slot must be between (including) -1 and 989 \n");
+			return true;
+		}
+
+		DebugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
+		_vm->loadItemDefs();
+	} else {
+		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
+	}
+
+	return true;
+}
+
 #endif // ENABLE_EOB
 
 } // End of namespace Kyra

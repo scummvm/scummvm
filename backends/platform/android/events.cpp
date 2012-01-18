@@ -231,7 +231,7 @@ void OSystem_Android::setupKeymapper() {
 
 	mapper->registerHardwareKeySet(keySet);
 
-	Keymap *globalMap = new Keymap("global");
+	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;
 
 	act = new Action(globalMap, "VIRT", "Display keyboard",
@@ -240,7 +240,7 @@ void OSystem_Android::setupKeymapper() {
 
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global");
+	mapper->pushKeymap(kGlobalKeymapName);
 #endif
 }
 

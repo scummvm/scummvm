@@ -26,6 +26,7 @@
 #include "tsage/graphics.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
+#include "tsage/ringworld2/ringworld2_scenes1.h"
 #include "tsage/ringworld2/ringworld2_scenes2.h"
 #include "tsage/ringworld2/ringworld2_scenes3.h"
 
@@ -247,6 +248,64 @@ SpeakerCaretaker2450::SpeakerCaretaker2450() {
 }
 
 //----------------------------------------------------------------------------
+// Classes related to CHIEF
+//----------------------------------------------------------------------------
+
+SpeakerChief1100::SpeakerChief1100() {
+	_speakerName = "CHIEF";
+	_color1 = 8;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerChief1100::proc15() {
+	int v = _fieldF6;
+	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
+
+	if (!_object2) {
+		_object2 = &scene->_actor18;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4080, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(4080, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 100:
+		_numFrames = 0;
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setStrip(_object1._strip - 1);
+		_object1.setFrame(_object1.getFrameCount());
+		_object1.animate(ANIM_MODE_6, this);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
+//----------------------------------------------------------------------------
 // Classes related to GUARD
 //----------------------------------------------------------------------------
 
@@ -423,6 +482,29 @@ void SpeakerMiranda300::proc15() {
 		} else {
 			_object1.setup(305, v * 2 - 1, 1);
 		}
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+void SpeakerMiranda1625::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
+		_object2 = &scene->_actor3;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(Common::Point(196, 65));
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1627, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
@@ -1043,6 +1125,54 @@ void SpeakerQuinn300::proc15() {
 		}
 
 		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+void SpeakerQuinn1100::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (v == 0)
+			return;
+
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor16;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1108, 7, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1109, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1109, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	default:
+		signal();
+		break;
 	}
 }
 
@@ -1758,6 +1888,65 @@ void SpeakerSeeker300::proc15() {
 	}
 }
 
+void SpeakerSeeker1100::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (v == 0)
+			return;
+
+		if (R2_GLOBALS._player._characterIndex == 2) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor16;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1108, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1108, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		_object1.setPosition(Common::Point(197, 134));
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1108, 5, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1109, 7, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 5:
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1109, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 void SpeakerSeeker2435::proc15() {
 	int v = _fieldF6;
 
@@ -2181,9 +2370,9 @@ void SpeakerSocko3200::proc15() {
 // Classes related to SOLDIER
 //----------------------------------------------------------------------------
 
-SpeakerSoldier300::SpeakerSoldier300(): VisualSpeaker() {
+SpeakerSoldier::SpeakerSoldier(int colour) {
 	_speakerName = "SOLDIER";
-	_color1 = 60;
+	_color1 = colour;
 	_color2 = 0;
 	_fieldF6 = 0;
 	_textWidth = 300;
@@ -2257,6 +2446,30 @@ void SpeakerTeal300::proc15() {
 	} else {
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(303, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+void SpeakerTeal1625::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
+		_object2 = &scene->_actor2;
+		_object2->hide();
+
+		_object1.postInit();
+		_object1.setPosition(Common::Point(68, 68));
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1627, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }

@@ -242,6 +242,7 @@ class EoBInfProcessor;
 class EoBCoreEngine : public KyraRpgEngine {
 friend class TextDisplayer_rpg;
 friend class GUI_EoB;
+friend class Debugger_EoB;
 friend class EoBInfProcessor;
 friend class DarkmoonSequenceHelper;
 friend class CharacterGenerator;
@@ -365,7 +366,7 @@ protected:
 	int getCharacterClassType(int cclass, int levelIndex);
 	int getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode);
 	Common::String getCharStrength(int str, int strExt);
-	int testCharacter(int index, int flags);
+	int testCharacter(int16 index, int flags);
 	int getNextValidCharIndex(int curCharIndex, int searchStep);
 
 	void recalcArmorClass(int index);
@@ -573,11 +574,13 @@ protected:
 
 	// Level
 	void loadLevel(int level, int sub);
+	void readLevelFileData(int level);
 	Common::String initLevelData(int sub);
 	void addLevelItems();
 	void loadVcnData(const char *file, const char * /*nextFile*/);
 	void loadBlockProperties(const char *mazFile);
-	const uint8 *getBlockFileData(int levelIndex);
+	const uint8 *getBlockFileData(int levelIndex = 0);
+	Common::String getBlockFileName(int levelIndex, int sub);
 	const uint8 *getBlockFileData(const char *mazFile);
 	void loadDecorations(const char *cpsFile, const char *decFile);
 	void assignWallsAndDecorations(int wallIndex, int vmpIndex, int decDataIndex, int specialType, int flags);
@@ -831,6 +834,10 @@ protected:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
+	// Default parameters will import all present original save files and push them to the top of the save dialog.
+	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
+	Common::String readOriginalSaveFile(Common::String &file);
+
 	void *generateMonsterTempData(LevelTempData *tmp);
 	void restoreMonsterTempData(LevelTempData *tmp);
 	void releaseMonsterTempData(LevelTempData *tmp);
@@ -850,6 +857,7 @@ protected:
 	int8 _rrId[10];
 
 	bool _allowSkip;
+	bool _allowImport;
 
 	Screen_EoB *_screen;
 	GUI_EoB *_gui;

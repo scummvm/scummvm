@@ -132,15 +132,7 @@ void GuiManager::pushKeymap() {
 }
 
 void GuiManager::popKeymap() {
-	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
-	if (!keymapper->getActiveStack().empty()) {
-		Common::Keymapper::MapRecord topKeymap = keymapper->getActiveStack().top();
-		// TODO: Don't use the keymap name as a way to discriminate GUI maps
-		if(topKeymap.keymap->getName().equals(Common::kGuiKeymapName))
-			keymapper->popKeymap();
-		else
-			warning("An attempt to pop non-gui keymap %s was blocked", topKeymap.keymap->getName().c_str());
-	}
+	_system->getEventManager()->getKeymapper()->popKeymap(Common::kGuiKeymapName);
 }
 #endif
 
@@ -285,15 +277,6 @@ void GuiManager::runLoop() {
 	uint32 lastRedraw = 0;
 	const uint32 waitTime = 1000 / 45;
 
-#ifdef ENABLE_KEYMAPPER
-	// Due to circular reference with event manager and GUI
-	// we cannot init keymap on the GUI creation. Thus, let's
-	// try to do it on every launch, checking whether the
-	// map is already existing
-	initKeymap();
-	pushKeymap();
-#endif
-
 	bool tooltipCheck = false;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
@@ -405,10 +388,6 @@ void GuiManager::runLoop() {
 		_system->delayMillis(10);
 	}
 
-#ifdef ENABLE_KEYMAPPER
-	popKeymap();
-#endif
-
 	if (didSaveState) {
 		_theme->disable();
 		restoreState();
@@ -419,6 +398,10 @@ void GuiManager::runLoop() {
 #pragma mark -
 
 void GuiManager::saveState() {
+#ifdef ENABLE_KEYMAPPER
+	initKeymap();
+	pushKeymap();
+#endif
 	// Backup old cursor
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
@@ -428,6 +411,9 @@ void GuiManager::saveState() {
 }
 
 void GuiManager::restoreState() {
+#ifdef ENABLE_KEYMAPPER
+	popKeymap();
+#endif
 	if (_useStdCursor) {
 		CursorMan.popCursor();
 		CursorMan.popCursorPalette();

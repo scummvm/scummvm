@@ -744,7 +744,7 @@ public:
 	const Room *loadRoomTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
-	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
+	const ItemAnimDefinition *loadItemAnimDefinition(int id, int &entries);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	const uint16 *loadRawDataBe16(int id, int &entries);
 	const uint32 *loadRawDataBe32(int id, int &entries);
@@ -787,7 +787,7 @@ private:
 	bool loadRoomTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size);
-	bool loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadItemAnimDefinition(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size);
@@ -813,7 +813,7 @@ private:
 	void freeRoomTable(void *&ptr, int &size);
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
-	void freeHofShapeAnimDataV2(void *&ptr, int &size);
+	void freeItemAnimDefinition(void *&ptr, int &size);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	void freeRawDataBe16(void *&ptr, int &size);
 	void freeRawDataBe32(void *&ptr, int &size);
@@ -840,7 +840,7 @@ private:
 
 		k2SeqData = 5,
 		k2ShpAnimDataV1 = 6,
-		k2ShpAnimDataV2 = 7,
+		k2ItemAnimDefinition = 7,
 
 		kLoLCharData = 8,
 		kLoLSpellData = 9,

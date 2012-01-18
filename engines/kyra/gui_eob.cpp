@@ -29,6 +29,7 @@
 #include "kyra/timer.h"
 #include "kyra/util.h"
 
+#include "backends/keymapper/keymapper.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/scaler.h"
@@ -2419,6 +2420,11 @@ void GUI_EoB::updateBoxFrameHighLight(int box) {
 }
 
 int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->pushKeymap(Common::kGlobalKeymapName);
+#endif
+
 	uint8 cursorState = 1;
 	char sufx[] = " ";
 
@@ -2532,6 +2538,10 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		_screen->updateScreen();
 
 	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
+
+#ifdef ENABLE_KEYMAPPER
+	keymapper->popKeymap(Common::kGlobalKeymapName);
+#endif
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }

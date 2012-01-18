@@ -720,14 +720,19 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
-	// Workaround for bug #1498221 "KYRA1: Glitches when meeting Zanthia"
-	// the original didn't do a forced screen update after displaying a wsa frame
-	// while we have to do it, which make brandon disappear for a short moment,
-	// what shouldn't happen. So we're not updating the screen for this special
-	// case too.
-	if (startFrame == 18 && endFrame == 18 && _currentRoom == 45) {
+	// WORKAROUND for bug #1498221 "KYRA1: Glitches when meeting Zanthia".
+	// The original did not do a forced screen update after displaying a WSA
+	// frame while we have to do it, which makes Brandon disappear for a short
+	// moment. That is not supposed to happen. So we're not updating the
+	// screen for this special case.
+	// This is only an issue for the CD version, but since the floppy version
+	// does not use the specified paramaeters like these, it is safe to enable
+	// it for all versions.
+	if (startFrame == 18 && endFrame == 18 && waitTime == 10 && wsaIndex == 0 && _currentRoom == 45) {
 		_movieObjects[wsaIndex]->displayFrame(18, 0, xpos, ypos, 0, 0, 0);
-		delay(waitTime * _tickLength);
+		// We call delayMillis manually here to avoid the screen getting
+		// updated.
+		_system->delayMillis(waitTime * _tickLength);
 		return 0;
 	}
 

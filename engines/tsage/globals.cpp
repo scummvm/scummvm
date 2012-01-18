@@ -375,32 +375,55 @@ void Ringworld2Globals::reset() {
 	T2_GLOBALS._uiElements._active = false;
 
 	// Reset fields
+	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;
 	_v5657C = 0;
 	_v565F5 = 0;
 	_v565AE = 0;
-	for (int i = 0; i < 14; i++)
-		_v56605[i] = 0;
+
+	_v56605[0] = 0;
+	_v56605[1] = 3;
+	_v56605[2] = 5;
+	_v56605[3] = 1;
+	_v56605[4] = 2;
+	_v56605[5] = 5;
+	_v56605[6] = 9;
+	_v56605[7] = 14;
+	_v56605[8] = 15;
+	_v56605[9] = 18;
+	_v56605[10] = 20;
+	_v56605[11] = 25;
+	_v56605[12] = 27;
+	_v56605[13] = 31;
+
 	_v566A6 = 3800;
-	_v566A8 = 0;
+	_v566A8 = 5;
 	_v566A9 = 0;
 	_v566AA = 0;
 	for (int i = 0; i < 1000; i++)
 		_v566AB[i] = 0;
-	_v56A93 = 0;
-	_v56A99 = 0;
+	_v56A93 = -1;
+	_v56A99 = 5;
 	_v56A9E = 0;
 	_v56AA0 = 0;
 	_v56AA1 = 0;
+	_v56AA2 = 60;
+	_v56AA4 = 660;
+	_v56AA6 = 1;
+	_v56AA7 = 1;
+	_v56AA8 = 1;
 	_v56AAB = 0;
 	_v57C2C = 0;
 	_v58CE2 = 0;
-	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
+	_v565EC[0] = 0;
+	_v565EC[1] = 27;
+	_v565EC[2] = 27;
+	_v565EC[3] = 4;
+	_v565EC[4] = 4;
+	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 1);
 	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
-
-	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
 	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
 	_stripManager_lookupList[0] = 1;
 	_stripManager_lookupList[1] = 1;
@@ -424,6 +447,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
 	int i;
 
+	_v5589E.synchronize(s);
 	_v558B6.synchronize(s);
 
 	s.syncAsSint16LE(_v558C2);
@@ -432,13 +456,18 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v566A6);
 	s.syncAsSint16LE(_v56A93);
 	s.syncAsSint16LE(_v56A9E);
+	s.syncAsSint16LE(_v56AA2);
+	s.syncAsSint16LE(_v56AA4);
 	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_v57C2C);
 	s.syncAsSint16LE(_v58CE2);
 	s.syncAsSint16LE(_speechSubtitles);
 
+	for (i = 0; i < 5; i++)
+		s.syncAsByte(_v565EC[i]);
+
 	for (i = 0; i < MAX_CHARACTERS; ++i)
-		s.syncAsSint16LE(_v565F1[i]);
+		s.syncAsByte(_v565F1[i]);
 	
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A8);
@@ -446,6 +475,9 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_v566AA);
 	s.syncAsByte(_v56AA0);
 	s.syncAsByte(_v56AA1);
+	s.syncAsByte(_v56AA6);
+	s.syncAsByte(_v56AA7);
+	s.syncAsByte(_v56AA8);
 
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_v56605[i]);

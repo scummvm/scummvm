@@ -214,16 +214,22 @@ bool EoBInfProcessor::preventRest() const {
 	return _preventRest ? true : false;
 }
 
-void EoBInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
-	_preventRest = in.readByte();
-	for (int i = 0; i < 18; i++)
-		_flagTable[i] = in.readUint32BE();
+void EoBInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in, bool origFile) {
+	_preventRest = (_vm->game() == GI_EOB1 && origFile) ? 0 : in.readByte();
+	int numFlags = (_vm->game() == GI_EOB1 && origFile) ? 13 : 18;
+	for (int i = 0; i < numFlags; i++)
+		_flagTable[i] = in.readUint32();
 }
 
 void EoBInfProcessor::saveState(Common::OutSaveFile *out) {
 	out->writeByte(_preventRest);
 	for (int i = 0; i < 18; i++)
 		out->writeUint32BE(_flagTable[i]);
+}
+
+void EoBInfProcessor::reset() {
+	_preventRest = 0;
+	memset(_flagTable, 0, 18 * sizeof(uint32));
 }
 
 const char *EoBInfProcessor::getString(uint16 index) {

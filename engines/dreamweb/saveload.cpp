@@ -143,6 +143,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualLoad },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
 				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -234,6 +235,7 @@ void DreamWebEngine::saveGame() {
 				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamWebEngine::getBackToOps },
 				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamWebEngine::actualSave },
 				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamWebEngine::selectSlot },
+				{ kOpsx+158,kOpsx+158+(18*3),kOpsy-17,kOpsy-1,&DreamWebEngine::selectSaveLoadPage },
 				{ 0,320,0,200,&DreamWebEngine::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
@@ -286,11 +288,11 @@ void DreamWebEngine::saveGame() {
 }
 
 void DreamWebEngine::namesToOld() {
-	memcpy(_saveNamesOld, _saveNames, 17*7);
+	memcpy(_saveNamesOld, _saveNames, 17*21);
 }
 
 void DreamWebEngine::oldToNames() {
-	memcpy(_saveNames, _saveNamesOld, 17*7);
+	memcpy(_saveNames, _saveNamesOld, 17*21);
 }
 
 void DreamWebEngine::saveLoad() {
@@ -440,7 +442,7 @@ void DreamWebEngine::actualSave() {
 	if (!(_mouseButton & 1))
 		return;
 
-	unsigned int slot = _currentSlot;
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
@@ -464,13 +466,13 @@ void DreamWebEngine::actualLoad() {
 	if (_mouseButton == _oldButton || _mouseButton != 1)
 		return;
 
-	unsigned int slot = _currentSlot;
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
 
 	const char *desc = &_saveNames[17*slot];
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	loadPosition(_currentSlot);
+	loadPosition(slot);
 	_getBack = 1;
 }
 
@@ -582,10 +584,10 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	if (len[0] != 17)
 		::error("Error loading save: description buffer isn't 17 bytes");
 
-	if (slot < 7) {
+	if (slot < 21) {
 		inSaveFile->read(&_saveNames[17*slot], len[0]);
 	} else {
-		// The savenames buffer only has room for 7 descriptions
+		// The savenames buffer only has room for 21 descriptions
 		uint8 namebuf[17];
 		inSaveFile->read(namebuf, 17);
 	}
@@ -644,8 +646,10 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 
 // Count number of save files, and load their descriptions into _saveNames
 uint DreamWebEngine::scanForNames() {
-	// Initialize the first 7 slots (like the original code expects)
-	for (unsigned int slot = 0; slot < 7; ++slot) {
+	// There are 21 save slots, each of which are 17 bytes. The first byte
+	// doesn't seem to be used. The name starts at the second byte. All the
+	// slots are initialized to be empty.
+	for (unsigned int slot = 0; slot < 21; ++slot) {
 		_saveNames[17 * slot + 0] = 2;
 		_saveNames[17 * slot + 1] = 0;
 		for (int i = 2; i < 17; ++i)
@@ -670,7 +674,7 @@ uint DreamWebEngine::scanForNames() {
 		int slotNum = atoi(file.c_str() + file.size() - 2);
 		SaveStateDescriptor sd(slotNum, name);
 		saveList.push_back(sd);
-		if (slotNum < 7)
+		if (slotNum < 21)
 			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused
 	}
 
@@ -709,9 +713,10 @@ void DreamWebEngine::loadSaveBox() {
 
 // show savegame names (original interface), and set kCursorpos
 void DreamWebEngine::showNames() {
+	unsigned int offset = 7 * _saveLoadPage;
 	for (int slot = 0; slot < 7; ++slot) {
 		// The first character of the savegame name is unused
-		Common::String name(&_saveNames[17*slot + 1]);
+		Common::String name(&_saveNames[17 * (slot + offset) + 1]);
 
 		if (slot != _currentSlot) {
 			printDirect((const uint8 *)name.c_str(), kOpsx + 21, kOpsy + 10*slot + 10, 200, false);
@@ -737,8 +742,10 @@ void DreamWebEngine::checkInput() {
 
 	readKey();
 
+	unsigned int slot = _currentSlot + 7 * _saveLoadPage;
+
 	// The first character of the savegame name is unused
-	char *name = &_saveNames[17*_currentSlot + 1];
+	char *name = &_saveNames[17*slot + 1];
 
 	if (_currentKey == 0) {
 		return;
@@ -766,6 +773,21 @@ void DreamWebEngine::checkInput() {
 	showSlots();
 	showSaveOps();
 	workToScreenM();
+}
+
+void DreamWebEngine::selectSaveLoadPage() {
+	commandOnlyCond(31, 254);
+
+	if (_mouseButton != 1 || _mouseButton == _oldButton)
+		return;
+	uint saveLoadPage = (_mouseX - (kOpsx + 158)) / 18;
+	if (saveLoadPage != _saveLoadPage) {
+		_saveLoadPage = saveLoadPage;
+		// This will also make the first slot the selected one, based
+		// on the mouse Y position. I can't decide if this is a feature
+		// or not.
+		selectSlot();
+	}
 }
 
 void DreamWebEngine::selectSlot() {
@@ -798,6 +820,8 @@ void DreamWebEngine::selectSlot() {
 }
 
 void DreamWebEngine::showSlots() {
+	showFrame(_icons1, kOpsx + 158, kOpsy - 11, 12, 0);
+	showFrame(_icons1, kOpsx + 158 + 18 * _saveLoadPage, kOpsy - 11, 13 + _saveLoadPage, 0);
 	showFrame(_tempGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
 
 	uint16 y = kOpsy + 11;

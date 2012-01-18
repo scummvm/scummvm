@@ -695,7 +695,6 @@ public:
 	Scene3800();
 	void initScene3800();
 	void sub110BBD();
-	void sub1B007(int arg1, int arg2, int arg3);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

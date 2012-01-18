@@ -242,12 +242,18 @@ namespace Ringworld2 {
 #define SPEECH_TEXT 1
 #define SPEECH_VOICE 2
 
+#define k5A78C 15
+#define k5A78D 16
+#define k5A790 18
+#define k5A791 17
+
 class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 	PlayStream _playStream;
 	StripProxy _stripProxy;
 	int _insetUp;
+	Rect _v5589E;
 	Rect _v558B6;
 	int _v558C2;
 	int _v565F5;
@@ -264,11 +270,17 @@ public:
 	int _v56A9E;
 	byte _v56AA0;
 	byte _v56AA1;
+	int _v56AA2;
+	int _v56AA4;
+	byte _v56AA6;
+	byte _v56AA7;
+	byte _v56AA8;
 	int _v56AAB;
 	int _v57C2C;
 	int _v58CE2;
 	int _speechSubtitles;
-	int _v565F1[4];
+	byte _v565EC[5];
+	byte _v565F1[4];
 	byte _stripManager_lookupList[12];
 
 	virtual void reset();

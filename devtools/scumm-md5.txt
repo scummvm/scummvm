@@ -513,7 +513,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
-	c20848f53c2d48bfacdc840993843765	-1	nl	Windows	HE 80	Demo	-	DarthBo
+	c20848f53c2d48bfacdc840993843765	-1	nl	All	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
@@ -526,10 +526,11 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	78c07ca088526d8d4446a4c2cb501203	-1	fr	All	HE 99	-	-	alamaz, gist974
 	83cedbe26aa8b58988e984e3d34cac8e	-1	de	All	HE 99	-	-	Joachim Eberhard
 	75bff95816b84672b877d22a911ab811	-1	ru	Windows	HE 99	Updated	-	sev
+	0ddf1174d0d097956ba10dd452ea65e6	-1	he	Windows	HE 99	-	-	Matan Bareket
 
 	cb1559e8405d17a5a278a6b5ad9338d1	22718	en	All	-	Demo	-	khalek, sev
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
-	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
+	754feb59d3bf86b8a00840df74fd7b26	-1	nl	All	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
 	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
@@ -645,6 +646,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
+	1af4eb581a33d808707d66d50e084dca	-1	he	Windows	HE 99	-	-	Matan Bareket
 
 	36a6750e03fb505fc19fc2bf3e4dbe91	58749	en	All	-	Demo	-	sev
 	30ba1e825d4ad2b448143ae8df18482a	-1	nl	All	HE 98.5	Demo	-	Kirben
@@ -729,6 +731,7 @@ puttcircus	Putt-Putt Joins the Circus
 	db74136c20557eca6ed3411bff39f7a1	-1	gb	Windows	-	-	-	Reckless
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
+	c8253da0f4626d2236b5291b99e33408	-1	he	Windows	HE 99	-	-	Matan Bareket
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
@@ -784,7 +787,7 @@ PuttTime	Putt-Putt Travels Through Time
 	4e5867848ee61bc30d157e2c94eee9b4	18394	us	All	HE 90	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	-1	de	All	HE 90	Demo	-	Joachim Eberhard
-	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	Windows	HE 90	Demo	-	adutchguy
+	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	All	HE 90	Demo	-	adutchguy
 	0a6d7b81b850ed4a77811c60c9b5c555	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
 	0ab19be9e2a3f6938226638b2a3744fe	-1	us	All	HE 100	Demo	-	khalek
 

@@ -36,6 +36,8 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 Scene *Ringworld2Game::createScene(int sceneNumber) {
+	warning("Switching to scene %d", sceneNumber);
+
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	case 50: 
@@ -100,15 +102,30 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1020:
 		return new Scene1020();
 	case 1100:
+		return new Scene1100();
 	case 1200:
+		return new Scene1200();
 	case 1330:
+		error("Missing scene %d from group 1", sceneNumber);
 	case 1500:
+		// Cutscene: Ship landing
+		return new Scene1500();
 	case 1525:
+		// Cutscene - Ship
+		return new Scene1525();
 	case 1530:
+		// Cutscene - Elevator
+		return new Scene1530();
 	case 1550:
+		return new Scene1550();
 	case 1575:
+		return new Scene1575();
 	case 1580:
+		// Inside wreck
+		return new Scene1580();
 	case 1625:
+		// Miranda being questioned
+		return new Scene1625();
 	case 1700:
 	case 1750:
 	case 1800:
@@ -269,7 +286,7 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
-	for (int i = 0; i < 44; i++)
+	for (int i = 0; i < 256; i++)
 		_field312[i] = 0;
 	_field372 = _field37A = 0;
 	_savedPlayerEnabled = false;
@@ -341,6 +358,7 @@ void SceneExt::loadScene(int sceneNum) {
 bool SceneExt::display(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_CROSSHAIRS:
+	case CURSOR_WALK:
 		return false;
 	case CURSOR_LOOK:
 		SceneItem::display2(1, R2_GLOBALS._randomSource.getRandomNumber(4));
@@ -475,6 +493,37 @@ void SceneExt::saveCharacter(int characterIndex) {
 	R2_GLOBALS._player._characterPos[characterIndex] = R2_GLOBALS._player._position;
 	R2_GLOBALS._player._characterStrip[characterIndex] = R2_GLOBALS._player._strip;
 	R2_GLOBALS._player._characterFrame[characterIndex] = R2_GLOBALS._player._frame;
+}
+
+void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
+	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
+	byte newR, newG, newB;
+	int tmp, varC, varD = 0;
+
+	for (int i = 0; i < 256; i++) {
+		newR = (RFactor * tmpPal[(3 * i)]) / 100;
+		newG = (GFactor * tmpPal[(3 * i) + 1]) / 100;
+		newB = (BFactor * tmpPal[(3 * i) + 2]) / 100;
+
+		varC = 769;
+		for (int j = 255; j >= 0; j--) {
+			tmp = abs(tmpPal[(3 * j)] - newR);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 1] - newG);
+			if (tmp >= varC)
+				continue;
+
+			tmp += abs(tmpPal[(3 * j) + 2] - newB);
+			if (tmp >= varC)
+				continue;
+			
+			varC = tmp;
+			varD = j;
+		}
+		this->_field312[i] = varD;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

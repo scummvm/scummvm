@@ -510,6 +510,9 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			updateTextFade();
 			updateMousePointer();
 		} else {
+			// We need to do Screen::updateScreen here, since client code
+			// relies on this method to copy screen changes to the actual
+			// screen since at least 0af418e7ea3a41f93fcc551a45ee5bae822d812a.
 			_screen->updateScreen();
 		}
 
