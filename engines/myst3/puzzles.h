@@ -48,6 +48,7 @@ private:
 	void journalAtrus(uint16 node, uint16 var);
 	void mainMenu(uint16 action);
 	void saveLoadMenu(uint16 action, uint16 item);
+	void projector();
 };
 
 } /* namespace Myst3 */

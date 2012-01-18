@@ -31,6 +31,11 @@ GameState::GameState(Myst3Engine *vm):
 
 #define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
 
+	VAR(47, ProjectorAngleX, true)
+	VAR(48, ProjectorAngleY, true)
+	VAR(49, ProjectorAngleZoom, true)
+	VAR(50, ProjectorAngleBlur, true)
+
 	VAR(57, DragEnded, true)
 	VAR(58, DragLeverSpeed, false)
 	VAR(59, DragPositionFound, true)
@@ -45,6 +50,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(67, MenuSavedAge, false)
 	VAR(68, MenuSavedRoom, false)
 	VAR(69, MenuSavedNode, false)
+
+	VAR(71, FrameCountdown, true)
 
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
@@ -93,6 +100,15 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(189, LocationNextNode, false)
 	VAR(190, LocationNextRoom, false)
 	VAR(191, LocationNextAge, false)
+
+	VAR(243, ProjectorX, false)
+	VAR(244, ProjectorY, false)
+	VAR(245, ProjectorZoom, false)
+	VAR(246, ProjectorBlur, false)
+	VAR(247, ProjectorAngleXOffset, false)
+	VAR(248, ProjectorAngleYOffset, false)
+	VAR(249, ProjectorAngleZoomOffset, false)
+	VAR(250, ProjectorAngleBlurOffset, false)
 
 	VAR(277, JournalAtrusState, false)
 	VAR(279, JournalSaavedroState, false)
@@ -177,6 +193,7 @@ void GameState::newGame() {
 	memset(&_data, 0, sizeof(_data));
 
 	_data.version = kSaveVersion;
+	_data.gameRunning = true;
 	_data.vars[0] = 0;
 	_data.vars[1] = 1;
 }
@@ -303,6 +320,14 @@ void GameState::limitCubeCamera(float minPitch, float maxPitch, float minHeading
 	_data.maxPitch = maxPitch;
 	_data.minHeading = minHeading;
 	_data.maxHeading = maxHeading;
+}
+
+void GameState::updateFrameCounters() {
+	_data.currentFrame++;
+
+	int32 frameCountdown = getFrameCountdown();
+	if (frameCountdown > 0)
+		setFrameCountdown(--frameCountdown);
 }
 
 } /* namespace Myst3 */

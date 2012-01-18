@@ -347,7 +347,7 @@ void Myst3Engine::drawFrame() {
 
 	_system->updateScreen();
 	_system->delayMillis(10);
-	_state->incFrameCount();
+	_state->updateFrameCounters();
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint transition) {

@@ -42,6 +42,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 	case 9:
 		journalAtrus(arg0, arg1);
 		break;
+	case 16:
+		projector();
+		break;
 	case 20:
 		saveLoadMenu(arg0, arg1);
 		break;
@@ -201,6 +204,43 @@ void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
 	default:
 		warning("Save load menu action %d for item %d is not implemented", action, item);
 	}
+}
+
+void Puzzles::projector() {
+	int16 x = CLIP<int16>(_vm->_state->getProjectorX(), 840, 9400);
+	int16 y = CLIP<int16>(_vm->_state->getProjectorY(), 840, 9400);
+	int16 zoom = CLIP<int16>(_vm->_state->getProjectorZoom(), 1280, 5120);
+	int16 blur = CLIP<int16>(_vm->_state->getProjectorBlur(), 400, 2470);
+
+	int16 halfZoom = zoom / 2;
+	if (x - halfZoom < 0)
+		x = halfZoom;
+	if (x + halfZoom > 12400)
+		x = 12400 - halfZoom;
+	if (y - halfZoom < 0)
+		y = halfZoom;
+	if (y + halfZoom > 12400)
+		y = 12400 - halfZoom;
+
+	int16 angleXOffset = _vm->_state->getProjectorAngleXOffset();
+	int16 angleYOffset = _vm->_state->getProjectorAngleYOffset();
+	int16 angleZoomOffset = _vm->_state->getProjectorAngleZoomOffset();
+	int16 angleBlurOffset = _vm->_state->getProjectorAngleBlurOffset();
+
+	int16 angleX = (angleXOffset + 200 * (5 * x - 4200) / 8560) % 1000;
+    int16 angleY = (angleYOffset + 200 * (5 * y - 4200) / 8560) % 1000;
+    int16 angleZoom = (angleZoomOffset + 200 * (5 * zoom - 6400) / 3840) % 1000;
+    int16 angleBlur = (angleBlurOffset + 200 * (5 * blur - 2000) / 2070) % 1000;
+
+    _vm->_state->setProjectorAngleX(angleX);
+	_vm->_state->setProjectorAngleY(angleY);
+	_vm->_state->setProjectorAngleZoom(angleZoom);
+	_vm->_state->setProjectorAngleBlur(angleBlur);
+
+    _vm->_state->setProjectorX(x);
+	_vm->_state->setProjectorY(y);
+	_vm->_state->setProjectorZoom(zoom);
+	_vm->_state->setProjectorBlur(blur);
 }
 
 } /* namespace Myst3 */

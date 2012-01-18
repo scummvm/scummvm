@@ -59,6 +59,11 @@ public:
 	const Common::String describeVar(uint16 var);
 	const Common::String describeCondition(int16 condition);
 
+	DECLARE_VAR(47, ProjectorAngleX)
+	DECLARE_VAR(48, ProjectorAngleY)
+	DECLARE_VAR(49, ProjectorAngleZoom)
+	DECLARE_VAR(50, ProjectorAngleBlur)
+
 	DECLARE_VAR(57, DragEnded)
 	DECLARE_VAR(58, DragLeverSpeed)
 	DECLARE_VAR(59, DragPositionFound)
@@ -73,6 +78,8 @@ public:
 	DECLARE_VAR(67, MenuSavedAge)
 	DECLARE_VAR(68, MenuSavedRoom)
 	DECLARE_VAR(69, MenuSavedNode)
+
+	DECLARE_VAR(71, FrameCountdown)
 
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
@@ -106,6 +113,15 @@ public:
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)
 
+	DECLARE_VAR(243, ProjectorX)
+	DECLARE_VAR(244, ProjectorY)
+	DECLARE_VAR(245, ProjectorZoom)
+	DECLARE_VAR(246, ProjectorBlur)
+	DECLARE_VAR(247, ProjectorAngleXOffset)
+	DECLARE_VAR(248, ProjectorAngleYOffset)
+	DECLARE_VAR(249, ProjectorAngleZoomOffset)
+	DECLARE_VAR(250, ProjectorAngleBlurOffset)
+
 	DECLARE_VAR(277, JournalAtrusState)
 	DECLARE_VAR(279, JournalSaavedroState)
 	DECLARE_VAR(280, JournalSaavedroClosed)
@@ -132,8 +148,8 @@ public:
 	DECLARE_VAR(1400, DragLeverLimitMin)
 	DECLARE_VAR(1401, DragLeverLimitMax)
 
+	void updateFrameCounters();
 	uint getFrameCount() { return _data.currentFrame; }
-	void incFrameCount() { _data.currentFrame++; }
 
 	ViewType getViewType() { return static_cast<ViewType>(_data.currentNodeType); }
 	void setViewType(ViewType t) { _data.currentNodeType = t; }
