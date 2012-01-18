@@ -257,6 +257,8 @@ public:
 	Rect _v558B6;
 	int _v558C2;
 	int _v565F5;
+	int _v565F6;
+	int _v565FA;
 	int _v5657C;
 	byte _v565AE;
 	byte _v56605[14];

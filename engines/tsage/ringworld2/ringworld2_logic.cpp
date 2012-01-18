@@ -127,6 +127,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Miranda being questioned
 		return new Scene1625();
 	case 1700:
+		return new Scene1700();
 	case 1750:
 	case 1800:
 	case 1850:
