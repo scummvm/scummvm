@@ -701,7 +701,12 @@ void ScummEngine_v0::o_putActorAtObject() {
 
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o_putActorAtObject");
 
-	obj = fetchScriptByte();
+	int objId = fetchScriptByte();
+	if (_opcode & 0x40)
+		obj = OBJECT_V0(objId, kObjectV0TypeBG);
+	else
+		obj = OBJECT_V0(objId, kObjectV0TypeFG);
+
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
 		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
@@ -735,6 +740,8 @@ void ScummEngine_v0::o_pickupObject() {
 
 void ScummEngine_v0::o_setObjectName() {
 	int obj = fetchScriptByte();
+	if (!obj)
+		obj = _cmdObject;
 	setObjectName(obj);
 }
 
