@@ -394,7 +394,8 @@ void s_sauv(int Gd, int y, int dy) {
 
 // (* external 'c:\mc\boite.com'; *)
 void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
-	warning("TODO: box method not yet implemented");
+	warning("TODO: box deprecated in favour of GfxSurface::fillBox");
+	g_vm->_screenSurface.fillBox(c, Common::Rect(xo, yo, xi, yi), patt);
 }
 
 // (* external 'c:\mc\decomp.com'; *)

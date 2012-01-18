@@ -982,6 +982,22 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
 	destSurface.vLine(dx - 2, 2, destSurface.h - 3, col);
 }
 
+/**
+ * Fills an area with the specified colour
+ * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
+ *		simulate the original 640x400 surface, all Y values have to be doubled
+ */
+void ScreenSurface::fillBox(int colour, const Common::Rect &bounds, int patt) {
+	Graphics::Surface destSurface = lockArea(Common::Rect(bounds.left, bounds.top * 2,
+		bounds.right, bounds.bottom * 2));
+	
+	// Fill the area
+	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), 0);
+
+	// TODO: Figure out what effect patterns of other than '0xff' have
+	if (patt != 0xff)
+		warning("TODO: Figure out operation of ScreenSurface::box when pattern is %xh", patt);
+}
 
 /**
  * Sets a single pixel at the specified co-ordinates
