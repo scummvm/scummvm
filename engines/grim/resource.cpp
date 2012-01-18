@@ -99,12 +99,21 @@ ResourceLoader::ResourceLoader() {
 				files.erase(datausr_it);
 			}
 		}
+	} else if (g_grim->getGameType() == GType_MONKEY4) {
+		if (g_grim->getGameFlags() == ADGF_DEMO) {
+			SearchMan.listMatchingMembers(files, "i9n.lab");
+			SearchMan.listMatchingMembers(files, "lip.lab");
+			SearchMan.listMatchingMembers(files, "MagDemo.lab");
+			SearchMan.listMatchingMembers(files, "tile.lab");
+			SearchMan.listMatchingMembers(files, "voice.lab");
+		} else {
+			SearchMan.listMatchingMembers(files, "art???.m4b");
+			SearchMan.listMatchingMembers(files, "lip.m4b");
+			SearchMan.listMatchingMembers(files, "local.m4b");
+			SearchMan.listMatchingMembers(files, "sfx.m4b");
+			SearchMan.listMatchingMembers(files, "voice???.m4b");
+		}
 	}
-
-	if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() == ADGF_DEMO)
-		SearchMan.listMatchingMembers(files, "*.lab");
-	else if (g_grim->getGameType() == GType_MONKEY4)
-		SearchMan.listMatchingMembers(files, "*.m4b");
 
 	if (files.empty())
 		error("Cannot find game data - check configuration file");
