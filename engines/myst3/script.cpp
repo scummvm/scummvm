@@ -130,6 +130,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2( 93, varMultVarValue,				kVar,		kVar											);
 	OP_2( 94, varDivValue,					kVar,		kValue											);
 	OP_2( 95, varDivVarValue,				kVar,		kVar											);
+	OP_5( 96, varCrossMultiplication,		kVar,		kValue,		kValue,		kValue,		kValue		);
 	OP_2( 97, varMinValue,					kVar,		kValue											);
 	OP_3( 98, varClipValue,					kVar,		kValue,		kValue								);
 	OP_3( 99, varClipChangeBound,			kVar,		kValue,		kValue								);
@@ -1134,6 +1135,22 @@ void Script::varDivVarValue(Context &c, const Opcode &cmd) {
 	int32 value = _vm->_state->getVar(cmd.args[0]);
 	value /= _vm->_state->getVar(cmd.args[1]);
 	_vm->_state->setVar(cmd.args[0], value);
+}
+
+void Script::varCrossMultiplication(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Cross multiply var %d from range %d %d to range %d %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+
+	if (value == 0)
+		return;
+
+	int32 temp = abs(value) - cmd.args[1];
+	temp *= (cmd.args[4] - cmd.args[3]) / (cmd.args[2] - cmd.args[1]);
+	temp += cmd.args[3];
+
+	_vm->_state->setVar(cmd.args[0], value > 0 ? temp : -temp);
 }
 
 void Script::varMinValue(Context &c, const Opcode &cmd) {

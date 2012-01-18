@@ -181,6 +181,7 @@ private:
 	DECLARE_OPCODE(varMultVarValue);
 	DECLARE_OPCODE(varDivValue);
 	DECLARE_OPCODE(varDivVarValue);
+	DECLARE_OPCODE(varCrossMultiplication);
 	DECLARE_OPCODE(varMinValue);
 	DECLARE_OPCODE(varClipValue);
 	DECLARE_OPCODE(varClipChangeBound);
