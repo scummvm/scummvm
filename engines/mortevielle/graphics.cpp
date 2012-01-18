@@ -892,8 +892,8 @@ void ScreenSurface::updateScreen() {
  * Draws a decoded picture on the screen
  * @remarks		- Because the ScummVM surface is using a double height 640x400 surface to 
  *		simulate the original 640x400 surface, all Y values have to be doubled.
- *		- Image resources are stored at 320x200, so when drawn onto the screen every
- *		other column is interpolated.
+ *		- Image resources are stored at 320x200, so when drawn onto the screen a single pixel
+ *		from the source image is drawn using the two pixels at the given index in the palette map
  *		- Because the original game supported 320 width resolutions, the X coordinate
  *		also needs to be doubled for EGA mode
  */
@@ -906,6 +906,9 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y * 2, 
 		(x + surface.w) * 2, (y + surface.h) * 2));
 
+	// Get a lookup for the palette mapping
+	const byte *paletteMap = &mem[0x7000 * 16 + 2];
+
 	// Loop through writing 
 	for (int yp = 0; yp < surface.h; ++yp) {
 		if (((y + yp) < 0) || ((y + yp) >= 200))
@@ -915,20 +918,14 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 		byte *pDest = (byte *)destSurface.getBasePtr(0, yp * 2);
 
 		for (int xp = 0; xp < surface.w; ++xp, ++pSrc) {
-			// Draw pixel from source image
-			*pDest = *pSrc;
-			*(pDest + SCREEN_WIDTH) = *pSrc;
+			// Draw the pixel using the specified index in the palette map
+			*pDest = paletteMap[*pSrc * 2];
+			*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2];
 			++pDest;
 
-			// TODO: I'm not sure what algorithm the original uses to calculate
-			// which pixel to use on the alternate columns, so for now I'm doing
-			// a simple output of null values. This should be revisited once we've
-			// got the palette loading so we can compare palettes. In fact, the 
-			// original had the alternate columns very noticablely striped. With
-			// the larger 256 colour palette, it may be worthwhile to offer a 
-			// better blended graphics mode as an option.
-			*pDest = 0;
-			*(pDest + SCREEN_WIDTH) = 0;
+			// Use the secondary mapping value to draw the secondary column pixel
+			*pDest = paletteMap[*pSrc * 2 + 1];
+			*(pDest + SCREEN_WIDTH) = paletteMap[*pSrc * 2 + 1];
 			++pDest;
 		}
 	}

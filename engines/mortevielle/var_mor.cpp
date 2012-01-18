@@ -399,7 +399,7 @@ void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
 
 // (* external 'c:\mc\decomp.com'; *)
 void decomp(int seg, int dep) {
-	warning("TODO: decomp");
+	warning("TODO: decomp deprecated in faovur of GfxSurface::decode");
 }
 
 // (* external 'c:\mc\affich.com'; *)
