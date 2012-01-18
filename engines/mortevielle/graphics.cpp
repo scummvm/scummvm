@@ -46,9 +46,9 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 
 	byte *p = &egaPalette[0];
 	for (int i = 0; i < 64; i++) {
-		*p++ = (i >> 2 & 1) * 42 + (i >> 5 & 1) * 21;
-		*p++ = (i >> 1 & 1) * 42 + (i >> 4 & 1) * 21;
-		*p++ = (i      & 1) * 42 + (i >> 3 & 1) * 21;
+		*p++ = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
+		*p++ = (i >> 1 & 1) * 0xaa + (i >> 4 & 1) * 0x55;
+		*p++ = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
     }
 
 	// Loop through setting palette colours based on the passed indexes
@@ -56,7 +56,7 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 		int palIndex = palette[idx];
 		assert(palIndex < 64);
 
-		const byte *pRgb = (const byte *)&egaPalette[palIndex];
+		const byte *pRgb = (const byte *)&egaPalette[palIndex * 3];
 		g_system->getPaletteManager()->setPalette(pRgb, idx, 1);
 	}
 }
@@ -65,15 +65,8 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
  * Set the default EGA palette
  */
 void PaletteManager::setDefaultPalette() {
-/*
 	int defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
 	setPalette(defaultPalette, 0, 16);
-*/
-	// TODO: Replace with proper palette
-	for (int idx = 0; idx < 16; ++idx) {
-		uint32 c = 0x111111 * idx;
-		g_system->getPaletteManager()->setPalette((const byte *)&c, idx, 1);
-	}
 }
 
 /*-------------------------------------------------------------------------*
@@ -86,7 +79,7 @@ void PaletteManager::setDefaultPalette() {
 
 #define INCR_TAIX { if (_xSize & 1) ++_xSize; }
 #define DEFAULT_WIDTH (SCREEN_WIDTH / 2)
-#define BUFFER_SIZE 8192
+#define BUFFER_SIZE 65536
 
 void GfxSurface::decode(const byte *pSrc) {
 	_width = _height = 0;
@@ -99,17 +92,17 @@ void GfxSurface::decode(const byte *pSrc) {
 
 	// First run through the data to calculate starting offsets
 	const byte *p = pSrc;
-	_xOffset = _yOffset = 0xffff;
+	_offset.x = _offset.y = 999;
 
 	assert(entryCount > 0);
 	for (int idx = 0; idx < entryCount; ++idx) {
 		_xp = READ_BE_UINT16(p + 4);
-		if (_xp < _xOffset)
-			_xOffset = _xp;
+		if (_xp < _offset.x)
+			_offset.x = _xp;
 
 		_yp = READ_BE_UINT16(p + 6);
-		if (_yp < _yOffset)
-			_yOffset = _yp;
+		if (_yp < _offset.y)
+			_offset.y = _yp;
 
 		// Move to next entry
 		int size = READ_BE_UINT16(p) + READ_BE_UINT16(p + 2);
@@ -134,8 +127,8 @@ void GfxSurface::decode(const byte *pSrc) {
 	for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
 		int lookupBytes = READ_BE_UINT16(pSrc);
 		int srcSize = READ_BE_UINT16(pSrc + 2);
-		_xp = READ_BE_UINT16(pSrc + 4) - _xOffset;
-		_yp = READ_BE_UINT16(pSrc + 6) - _yOffset;
+		_xp = READ_BE_UINT16(pSrc + 4) - _offset.x;
+		_yp = READ_BE_UINT16(pSrc + 6) - _offset.y;
 		pSrc += 8;
 
 		int decomCode = READ_BE_UINT16(pSrc);
@@ -169,7 +162,6 @@ void GfxSurface::decode(const byte *pSrc) {
 						_nibbleFlag = savedNibbleFlag;
 						_var18 = savedVar18;
 
-						assert(_var14 < 256);
 						for (int idx = 0; idx < _var14; ++idx, ++tableOffset) {
 							assert(tableOffset < BUFFER_SIZE);
 							lookupTable[tableOffset] = suiv(pSrc);
@@ -416,12 +408,12 @@ void GfxSurface::decode(const byte *pSrc) {
 	}
 
 	// At this point, the outputBuffer has the data for the image. Initialise the surface
-	// with the calculated size for the full image, and copy the lines to the surface
-	create(_xOffset + _width, _yOffset + _height, Graphics::PixelFormat::createFormatCLUT8());
+	// with the calculated size, and copy the lines to the surface
+	create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int yCtr = 0; yCtr < _height; ++yCtr) {
 		const byte *copySrc = &outputBuffer[yCtr * DEFAULT_WIDTH];
-		byte *copyDest = (byte *)getBasePtr(_xOffset, yCtr + _yOffset);
+		byte *copyDest = (byte *)getBasePtr(0, yCtr);
 
 		Common::copy(copySrc, copySrc + _width, copyDest);
 	}
@@ -903,9 +895,13 @@ void ScreenSurface::updateScreen() {
  *		also needs to be doubled for EGA mode
  */
 void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
+	// Adjust the draw position by the draw offset
+	x += surface._offset.x;
+	y += surface._offset.y;
+
 	// Lock the affected area of the surface to write to
-	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y, 
-		(x + surface.w) * 2, y + surface.h * 2));
+	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y * 2, 
+		(x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Loop through writing 
 	for (int yp = 0; yp < surface.h; ++yp) {
@@ -933,6 +929,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 			++pDest;
 		}
 	}
+	g_vm->_screenSurface.updateScreen();
 }
 
 /**
