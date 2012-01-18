@@ -499,8 +499,10 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 					++pDest;
 				} else {
 					// Write out vertical slice bottom to top
-					for (int yIndex = 0; yIndex < _thickness; ++yIndex, pDest -= DEFAULT_WIDTH)
+					for (int yIndex = 0; yIndex < _thickness; ++yIndex) {
+						pDest -= DEFAULT_WIDTH;
 						*pDest = csuiv(pSrc, pLookup);
+					}
 				}
 			}
 
@@ -529,8 +531,10 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 						*pDest = csuiv(pSrc, pLookup);
 				} else {
 					// Write out vertical slice top to bottom
-					for (int yIndex = 0; yIndex < _thickness; ++yIndex, pDest -= DEFAULT_WIDTH)
+					for (int yIndex = 0; yIndex < _thickness; ++yIndex) {
+						pDest -= DEFAULT_WIDTH;
 						*pDest = csuiv(pSrc, pLookup);
+					}
 				}
 			}
 
