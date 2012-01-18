@@ -1360,8 +1360,8 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2)
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
+	int x2 = primitive->getP2().x+1;
+	int y2 = primitive->getP2().y+1;
 
 	const Color &color = *primitive->getColor();
 
