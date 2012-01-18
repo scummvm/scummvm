@@ -472,7 +472,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	int *indices = (int*)face->_indexes;
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-	if (face->_hasTexture) 
+	if (face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
@@ -636,6 +636,10 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
+				// fix the value if it is incorrectly set to the bitmap transparency color
+				if (val == 0xf81f) {
+					val = 0;
+				}
 				bufPtr[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 		}
