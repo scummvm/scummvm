@@ -267,85 +267,88 @@ bool MoviePlayer::playVideo() {
 			if (_decoder->hasDirtyPalette()) {
 				_decoder->setSystemPalette();
 
-				uint32 minWeight = 0xFFFFFFFF;
-				uint32 weight;
-				float c1Weight = 1e+30;
-				float c2Weight = 1e+30;
-				float c3Weight = 1e+30;
-				float c4Weight = 1e+30;
-				byte r, g, b;
-				float h, s, v, hd, hsvWeight;
+				if (!_movieTexts.empty()) {
+					// Look for the best color indexes to use to display the subtitles
+					uint32 minWeight = 0xFFFFFFFF;
+					uint32 weight;
+					float c1Weight = 1e+30;
+					float c2Weight = 1e+30;
+					float c3Weight = 1e+30;
+					float c4Weight = 1e+30;
+					byte r, g, b;
+					float h, s, v, hd, hsvWeight;
 
-				const byte *palette = _decoder->getPalette();
-				
-				// Color comparaison for the subtitles colors is done in HSL
-				// C1 color is used for George and is almost white (R = 248, G = 252, B = 248)
-				const float h1 = 0.333333f, s1 = 0.02f, v1 = 0.99f;
+					const byte *palette = _decoder->getPalette();
 
-				// C2 color is used for George as a narrator and is grey (R = 184, G = 188, B = 184)
-				const float h2 = 0.333333f, s2 = 0.02f, v2 = 0.74f;
+					// Color comparaison for the subtitles colors is done in HSL
+					// C1 color is used for George and is almost white (R = 248, G = 252, B = 248)
+					const float h1 = 0.333333f, s1 = 0.02f, v1 = 0.99f;
 
-				// C3 color is used for Nicole and is rose (R = 200, G = 120, B = 184)
-				const float h3 = 0.866667f, s3 = 0.4f, v3 = 0.78f;
+					// C2 color is used for George as a narrator and is grey (R = 184, G = 188, B = 184)
+					const float h2 = 0.333333f, s2 = 0.02f, v2 = 0.74f;
 
-				// C4 color is used for Maguire and is blue (R = 80, G = 152, B = 184)
-				const float h4 = 0.55f, s4 = 0.57f, v4 = 0.72f;
+					// C3 color is used for Nicole and is rose (R = 200, G = 120, B = 184)
+					const float h3 = 0.866667f, s3 = 0.4f, v3 = 0.78f;
 
-				for (int i = 0; i < 256; i++) {
-					r = *palette++;
-					g = *palette++;
-					b = *palette++;
+					// C4 color is used for Maguire and is blue (R = 80, G = 152, B = 184)
+					const float h4 = 0.55f, s4 = 0.57f, v4 = 0.72f;
 
-					weight = 3 * r * r + 6 * g * g + 2 * b * b;
+					for (int i = 0; i < 256; i++) {
+						r = *palette++;
+						g = *palette++;
+						b = *palette++;
 
-					if (weight <= minWeight) {
-						minWeight = weight;
-						_black = i;
-					}
+						weight = 3 * r * r + 6 * g * g + 2 * b * b;
 
-					convertColor(r, g, b, h, s, v);
+						if (weight <= minWeight) {
+							minWeight = weight;
+							_black = i;
+						}
 
-					// C1 color
-					// It is almost achromatic (very low saturation) so the hue as litle impact on the color.
-					// Therefore use a low weight on hue and high weight on saturation.
-					hd = h - h1;
-					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
-					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s1) * (s - s1) + 3.0f * (v - v1) * (v - v1);
-					if (hsvWeight <= c1Weight) {
-						c1Weight = hsvWeight;
-						_c1Color = i;
-					}
+						convertColor(r, g, b, h, s, v);
 
-					// C2 color
-					// Also an almost achromatic color so use the same weights as for C1 color.
-					hd = h - h2;
-					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
-					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s2) * (s - s2) + 3.0f * (v - v2) * (v - v2);
-					if (hsvWeight <= c2Weight) {
-						c2Weight = hsvWeight;
-						_c2Color = i;
-					}
+						// C1 color
+						// It is almost achromatic (very low saturation) so the hue as litle impact on the color.
+						// Therefore use a low weight on hue and high weight on saturation.
+						hd = h - h1;
+						hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+						hsvWeight = 1.0f * hd * hd + 4.0f * (s - s1) * (s - s1) + 3.0f * (v - v1) * (v - v1);
+						if (hsvWeight <= c1Weight) {
+							c1Weight = hsvWeight;
+							_c1Color = i;
+						}
 
-					// C3 color
-					// A light rose. Use a high weight on the hue to get a rose.
-					// The color is a bit gray and the saturation has not much impact so use a low weight.
-					hd = h - h3;
-					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
-					hsvWeight = 4.0f * hd * hd + 1.0f * (s - s3) * (s - s3) + 2.0f * (v - v3) * (v - v3);
-					if (hsvWeight <= c3Weight) {
-						c3Weight = hsvWeight;
-						_c3Color = i;
-					}
+						// C2 color
+						// Also an almost achromatic color so use the same weights as for C1 color.
+						hd = h - h2;
+						hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+						hsvWeight = 1.0f * hd * hd + 4.0f * (s - s2) * (s - s2) + 3.0f * (v - v2) * (v - v2);
+						if (hsvWeight <= c2Weight) {
+							c2Weight = hsvWeight;
+							_c2Color = i;
+						}
 
-					// C4 color
-					// Blue. Use a hight weight on the hue to get a blue.
-					// The color is darker and more saturated than C3 and the saturation has more impact.
-					hd = h - h4;
-					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
-					hsvWeight = 5.0f * hd * hd + 3.0f * (s - s4) * (s - s4) + 2.0f * (v - v4) * (v - v4);
-					if (hsvWeight <= c4Weight) {
-						c4Weight = hsvWeight;
-						_c4Color = i;
+						// C3 color
+						// A light rose. Use a high weight on the hue to get a rose.
+						// The color is a bit gray and the saturation has not much impact so use a low weight.
+						hd = h - h3;
+						hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+						hsvWeight = 4.0f * hd * hd + 1.0f * (s - s3) * (s - s3) + 2.0f * (v - v3) * (v - v3);
+						if (hsvWeight <= c3Weight) {
+							c3Weight = hsvWeight;
+							_c3Color = i;
+						}
+
+						// C4 color
+						// Blue. Use a hight weight on the hue to get a blue.
+						// The color is darker and more saturated than C3 and the saturation has more impact.
+						hd = h - h4;
+						hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+						hsvWeight = 5.0f * hd * hd + 3.0f * (s - s4) * (s - s4) + 2.0f * (v - v4) * (v - v4);
+						if (hsvWeight <= c4Weight) {
+							c4Weight = hsvWeight;
+							_c4Color = i;
+						}
 					}
 				}
 			}
