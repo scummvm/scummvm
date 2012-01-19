@@ -54,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_rnd(0), _shouldQuit(false),
-		_menuAction(0) {
+		_menuAction(0), _projectorBackground(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -498,7 +498,16 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID)
 }
 
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
-	ScriptedMovie *movie = new ScriptedMovie(this, id);
+	ScriptedMovie *movie;
+	
+	if (!_state->getMovieUseBackground()) {
+		movie = new ScriptedMovie(this, id);
+	} else {
+		movie = new ProjectorMovie(this, id, _projectorBackground);
+		_projectorBackground = 0;
+		_state->setMovieUseBackground(0);
+	}
+	
 	movie->setCondition(condition);
 	movie->setDisableWhenComplete(resetCond);
 	movie->setLoop(loop);

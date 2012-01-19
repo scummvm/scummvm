@@ -95,7 +95,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(172, MovieUnk172, true)
 	VAR(173, MoviePlayingVar, true)
 
-	VAR(178, MovieUnk178, true)
+	VAR(178, MovieUseBackground, false)
 
 	VAR(189, LocationNextNode, false)
 	VAR(190, LocationNextRoom, false)

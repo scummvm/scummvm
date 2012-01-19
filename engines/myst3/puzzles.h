@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 
+#include "graphics/surface.h"
+
 namespace Myst3 {
 
 class Myst3Engine;
@@ -48,7 +50,8 @@ private:
 	void journalAtrus(uint16 node, uint16 var);
 	void mainMenu(uint16 action);
 	void saveLoadMenu(uint16 action, uint16 item);
-	void projector();
+	void projectorLoadBitmap(uint16 bitmap);
+	void projectorUpdateCoordinates();
 };
 
 } /* namespace Myst3 */

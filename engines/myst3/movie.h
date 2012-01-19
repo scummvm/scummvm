@@ -79,7 +79,7 @@ public:
 	virtual ~ScriptedMovie();
 
 	void draw();
-	void update();
+	virtual void update();
 
 	void setEndFrameVar(uint16 v) { _endFrameVar = v; }
 	void setNextFrameReadVar(uint16 v) { _nextFrameReadVar = v; }
@@ -97,7 +97,7 @@ public:
 	void setScriptDriven(bool b) { _scriptDriven = b; }
 	void setForce2d(bool b) { _force2d = b; }
 
-private:
+protected:
 	bool _enabled;
 	bool _loop;
 	bool _disableWhenComplete;
@@ -128,6 +128,19 @@ public:
 	void setSynchronized(bool b) { _synchronized = b; }
 private:
 	bool _synchronized;
+};
+
+// Used by the projectors on J'nanin, see puzzle #14
+class ProjectorMovie : public ScriptedMovie {
+public:
+	ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *background);
+	virtual ~ProjectorMovie();
+
+	void update();
+
+private:
+	Graphics::Surface *_background;
+	Graphics::Surface *_frame;
 };
 
 } /* namespace Myst3 */

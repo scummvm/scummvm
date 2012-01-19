@@ -42,8 +42,11 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 	case 9:
 		journalAtrus(arg0, arg1);
 		break;
+	case 14:
+		projectorLoadBitmap(arg0);
+		break;
 	case 16:
-		projector();
+		projectorUpdateCoordinates();
 		break;
 	case 20:
 		saveLoadMenu(arg0, arg1);
@@ -206,7 +209,36 @@ void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
 	}
 }
 
-void Puzzles::projector() {
+static void copySurfaceRect(Graphics::Surface *dest, const Common::Point &destPoint, const Graphics::Surface *src) {
+	for (uint16 i = 0; i < src->h; i++)
+		memcpy(dest->getBasePtr(destPoint.x, i + destPoint.y), src->getBasePtr(0, i), src->pitch);
+}
+
+void Puzzles::projectorLoadBitmap(uint16 bitmap) {
+	assert(_vm->_projectorBackground == 0 && "Previous background not yet used.");
+
+	// This surface is freed by the destructor of the movie that uses it
+	_vm->_projectorBackground = new Graphics::Surface();
+	_vm->_projectorBackground->create(1024, 1024, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription(0, bitmap, 0, DirectorySubEntry::kStillMovie);
+
+	if (!movieDesc)
+		error("Movie %d does not exist", bitmap);
+
+	// Rebuild the complete background image from the frames of the bink movie
+	Common::MemoryReadStream *movieStream = movieDesc->getData();
+	Video::SeekableBinkDecoder bink;
+	bink.loadStream(movieStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	for (uint i = 0; i < 1024; i += 256)
+		for (uint j = 0; j < 1024; j += 256) {
+			const Graphics::Surface *frame = bink.decodeNextFrame();
+			copySurfaceRect(_vm->_projectorBackground, Common::Point(j, i), frame);
+		}
+}
+
+void Puzzles::projectorUpdateCoordinates() {
 	int16 x = CLIP<int16>(_vm->_state->getProjectorX(), 840, 9400);
 	int16 y = CLIP<int16>(_vm->_state->getProjectorY(), 840, 9400);
 	int16 zoom = CLIP<int16>(_vm->_state->getProjectorZoom(), 1280, 5120);

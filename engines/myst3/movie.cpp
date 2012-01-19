@@ -24,6 +24,8 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 
+#include "graphics/colormasks.h"
+
 namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, uint16 id) :
@@ -292,6 +294,59 @@ bool SimpleMovie::update() {
 }
 
 SimpleMovie::~SimpleMovie() {
+}
+
+ProjectorMovie::ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *background) :
+	ScriptedMovie(vm, id),
+	_background(background),
+	_frame(0) {
+	_enabled = true;
+}
+
+ProjectorMovie::~ProjectorMovie() {
+	if (_frame) {
+		_frame->free();
+		delete _frame;
+	}
+
+	if (_background) {
+		_background->free();
+		delete _background;
+	}
+}
+
+void ProjectorMovie::update() {
+	if (!_frame) {
+		// First call, get the alpha channel from the bink file
+		const Graphics::Surface *frame = _bink.decodeNextFrame();
+		_frame = new Graphics::Surface();
+		_frame->copyFrom(*frame);
+	}
+
+	uint16 _backgroundX = _vm->_state->getProjectorX() / 10 - _frame->w / 2;
+	uint16 _backgroundY = _vm->_state->getProjectorY() / 10 - _frame->h / 2;
+
+	for (uint i = 0; i < _frame->h; i++) {
+		uint32 *src = (uint32 *)_background->getBasePtr(_backgroundX, _backgroundY + i);
+		uint32 *dst = (uint32 *)_frame->getBasePtr(0, i);
+		for (uint j = 0; j < _frame->w; j++) {
+			uint8 a, r, g, b;
+
+			// Keep the alpha channel from the previous frame
+			Graphics::colorToARGB< Graphics::ColorMasks<8888> >(*dst, a, r, g, b);
+
+			// Get the colors from the background
+			Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*src++, r, g, b);
+
+			// Draw the new frame
+			*dst++ = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
+		}
+	}
+
+	if (_texture)
+		_texture->update(_frame);
+	else
+		_texture = _vm->_gfx->createTexture(_frame);
 }
 
 } /* namespace Myst3 */

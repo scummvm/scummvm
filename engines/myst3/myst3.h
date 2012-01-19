@@ -77,6 +77,9 @@ public:
 	
 	Common::RandomSource *_rnd;
 
+	// Used by the projectors on J'nanin, see puzzle #14
+	Graphics::Surface *_projectorBackground;
+
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();
 
