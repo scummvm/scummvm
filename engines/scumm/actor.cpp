@@ -865,9 +865,6 @@ void Actor::setDirection(int direction) {
 	    else
 		    _vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
 
-        // 0x2C17
-        ((ActorC64*) this)->_byte_FD0A = -1;
-
 		_needRedraw = true;
 		return;
 	}
@@ -901,6 +898,7 @@ void Actor::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
 
+    // 0x2C17
     if( _vm->_game.version == 0 )
         ((ActorC64*) this)->_byte_FD0A = -1;
 
@@ -2655,7 +2653,6 @@ void ActorC64::animateActor(int anim) {
     if( this->isInCurrentRoom() ) {
 
       // this->_costCommandNew = anim;
-       this->_byte_FD0A = this->_byte_FDE8;
 
        // 0x273A
        /*switch( anim ) {
@@ -2675,8 +2672,10 @@ void ActorC64::animateActor(int anim) {
             default:
                 return;
         }*/
-
+        
         this->setDirection( dir );
+
+        this->_byte_FD0A = this->_byte_FDE8;
 
     } else {
 
@@ -2696,6 +2695,9 @@ void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
 		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
 		MKLINE(ActorC64, _speakingPrev, sleByte, VER(84)),
+        MKLINE(ActorC64, _byte_FD0A, sleByte, VER(89)),
+        MKLINE(ActorC64, _byte_FDE8, sleByte, VER(89)),
+        MKARRAY(ActorC64, _byte_FCE2, sleInt8, 8, VER(89)),
 		MKEND()
 	};
 
