@@ -240,71 +240,12 @@ byte adcfiec[(4088 * 16) + (311 * 0x80)];
 /*---------------------------------------------------------------------------*/
 
 void hirs() {
-	/* Deprecated set graphics 
+	// Note: The original used this to set the graphics mode and clear the screen, both at
+	// the start of the game, and whenever the screen need to be cleared. As such, this
+	// method is deprecated in favour of clearing the screen
+	warning("TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
 
-	const byte tandy[14] = {113, 80, 90, 14, 63, 6, 50, 56, 2, 3, 6, 7, 0, 0};
-	const byte herc[13] = {50, 40, 41, 9, 103, 3, 100, 100, 2, 3, 0, 0, 0};
-	int i;
-
-	switch (gd) {
-	case cga : {
-		graphcolormode;
-		graphbackground(0);
-		palette(1);
-		res = 1;
-	}
-	break;
-	case ams : {
-		hires;
-		//inline_((float)(0xb8) / 6 / 0 / //  =>  mov ax,6
-		//        0xcd / 0x10);			//  =>  int 16
-		port[0x3d9] = 15;
-		port[0x3df] = 0;
-		port[0x3dd] = 15;
-
-		res = 2;
-	}
-	break;
-	case ega : {
-		//inline_((float)(0xb8) / 14 / 0 /     //  MOV AX, 14   ; mode video 14 = 640*200 16 couleurs
-		//        0xcd / 0x10);				//   INT 16
-
-		res = 2;
-	}
-	break;
-	case her : {
-		port[0x3bf] = 3;
-		port[0x3b8] = 2;
-		for (i = 0; i <= 12; i ++) {
-			port[0x3b4] = i;
-			port[0x3b5] = herc[i];
-		}
-
-		//inline_((float)(0xfc) / 0xb9 / 0 / 0x80 / 0xb8 / 0 / 0xb0 / 0x8e / 0xc0 / 0x31 / 0xff / 0x31 / 0xc0 / 0xf3 / 0xab);
-
-		port[0x3b8] = 10;
-		res = 2;
-	}
-	break;
-	case tan : {
-		port[0x3d8] = 0;
-		port[0x3da] = 3;
-		port[0x3de] = 0x14;
-		for (i = 0; i <= 13; i ++) {
-			port[0x3d4] = i;
-			port[0x3d5] = tandy[i];
-		}
-		port[0x3da] = 2;
-		port[0x3de] = 0;
-		port[0x3d8] = port[0x3d8] | (11 & 0xef);
-		port[0x3dd] = port[0x3dd] | 1;
-		port[0x3df] = port[0x3df] | 0xc0;
-		box(0, gd, 0, 0, 640, 200, 255);
-		res = 1;
-	}
-	break;
-	}
-	*/
+	g_vm->_screenSurface.clearScreen();
 }
 
 /**
