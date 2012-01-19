@@ -48,7 +48,10 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	save->_inSaveFile = inSaveFile;
 
 	uint32 tag = inSaveFile->readUint32BE();
-	assert(tag == SAVEGAME_HEADERTAG);
+	if (tag != SAVEGAME_HEADERTAG) {
+		delete save;
+		return NULL;
+	}
 	save->_version = inSaveFile->readUint32BE();
 
 	return save;

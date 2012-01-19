@@ -946,7 +946,11 @@ void Lua_V1::GetSaveGameData() {
 		lua_settable();
 		lua_pushobject(result);
 
-		warning("Savegame %s is incompatible with this Residual build. Save version: %d; current version: %d", filename, savedState->saveVersion(), SaveGame::SAVEGAME_VERSION);
+		if (!savedState) {
+			warning("Savegame %s is invalid", filename);
+		} else {
+			warning("Savegame %s is incompatible with this Residual build. Save version: %d; current version: %d", filename, savedState->saveVersion(), SaveGame::SAVEGAME_VERSION);
+		}
 		delete savedState;
 		return;
 	}
