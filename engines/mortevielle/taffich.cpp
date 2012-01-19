@@ -51,7 +51,7 @@ void chardes(Common::String nom, float passe, int long_) {
 		passe = passe - 128;
 	}
 	if (p != 0)
-		f.seek(p);
+		f.seek(p * 0x80);
 	p = abs((int)passe);
 	l = long_ + p;
 	i = 0;
@@ -84,7 +84,7 @@ void charani(Common::String nom, float passe, int long_) {
 		p = p + 1;
 	}
 	if (p != 0)
-		f.seek(p);
+		f.seek(p * 0x80);
 
 	p = abs((int)passe);
 	l = long_ + p;
