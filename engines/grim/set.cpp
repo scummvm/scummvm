@@ -213,31 +213,7 @@ void Set::saveState(SaveGame *savedState) const {
 	//Setups
 	savedState->writeLEUint32(_numSetups);
 	for (int i = 0; i < _numSetups; ++i) {
-		Setup &set = _setups[i];
-
-		//name
-		savedState->writeString(set._name);
-
-		//bkgndBm
-		if (set._bkgndBm) {
-			savedState->writeLEUint32(set._bkgndBm->getId());
-		} else {
-			savedState->writeLEUint32(0);
-		}
-
-		//bkgndZBm
-		if (set._bkgndZBm) {
-			savedState->writeLEUint32(set._bkgndZBm->getId());
-		} else {
-			savedState->writeLEUint32(0);
-		}
-
-		savedState->writeVector3d(set._pos);
-		savedState->writeVector3d(set._interest);
-		savedState->writeFloat(set._roll);
-		savedState->writeFloat(set._fov);
-		savedState->writeFloat(set._nclip);
-		savedState->writeFloat(set._fclip);
+		_setups[i].saveState(savedState);
 	}
 
 	//Sectors
@@ -249,23 +225,7 @@ void Set::saveState(SaveGame *savedState) const {
 	//Lights
 	savedState->writeLEUint32(_numLights);
 	for (int i = 0; i < _numLights; ++i) {
-		Light &l = _lights[i];
-
-		//name
-		savedState->writeString(l._name);
-		savedState->writeLEBool(l._enabled);
-
-		//type
-		savedState->writeString(l._type);
-
-		savedState->writeVector3d(l._pos);
-		savedState->writeVector3d(l._dir);
-
-		savedState->writeColor(l._color);
-
-		savedState->writeFloat(l._intensity);
-		savedState->writeFloat(l._umbraangle);
-		savedState->writeFloat(l._penumbraangle);
+		_lights[i].saveState(savedState);
     }
 }
 
@@ -297,19 +257,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	_setups = new Setup[_numSetups];
 	_currSetup = _setups + currSetupId;
 	for (int i = 0; i < _numSetups; ++i) {
-		Setup &set = _setups[i];
-
-		set._name = savedState->readString();
-
-		set._bkgndBm = Bitmap::getPool().getObject(savedState->readLEUint32());
-		set._bkgndZBm = Bitmap::getPool().getObject(savedState->readLEUint32());
-
-		set._pos      = savedState->readVector3d();
-		set._interest = savedState->readVector3d();
-		set._roll     = savedState->readFloat();
-		set._fov      = savedState->readFloat();
-		set._nclip    = savedState->readFloat();
-		set._fclip    = savedState->readFloat();
+		_setups[i].restoreState(savedState);
 	}
 
     //Sectors
@@ -327,20 +275,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	_numLights = savedState->readLEUint32();
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; ++i) {
-		Light &l = _lights[i];
-
-		l._name = savedState->readString();
-		l._enabled = savedState->readLEBool();
-		l._type = savedState->readString();
-
-		l._pos           = savedState->readVector3d();
-		l._dir           = savedState->readVector3d();
-
-		l._color         = savedState->readColor();
-
-		l._intensity     = savedState->readFloat();
-		l._umbraangle    = savedState->readFloat();
-		l._penumbraangle = savedState->readFloat();
+		_lights[i].restoreState(savedState);;
 	}
 
 	_lightsConfigured = false;
@@ -419,6 +354,48 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 
 }
 
+void Set::Setup::saveState(SaveGame *savedState) const {
+	//name
+	savedState->writeString(_name);
+
+	//bkgndBm
+	if (_bkgndBm) {
+		savedState->writeLEUint32(_bkgndBm->getId());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+
+	//bkgndZBm
+	if (_bkgndZBm) {
+		savedState->writeLEUint32(_bkgndZBm->getId());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+
+	savedState->writeVector3d(_pos);
+	savedState->writeVector3d(_interest);
+	savedState->writeFloat(_roll);
+	savedState->writeFloat(_fov);
+	savedState->writeFloat(_nclip);
+	savedState->writeFloat(_fclip);
+}
+
+bool Set::Setup::restoreState(SaveGame *savedState) {
+	_name = savedState->readString();
+
+	_bkgndBm = Bitmap::getPool().getObject(savedState->readLEUint32());
+	_bkgndZBm = Bitmap::getPool().getObject(savedState->readLEUint32());
+
+	_pos      = savedState->readVector3d();
+	_interest = savedState->readVector3d();
+	_roll     = savedState->readFloat();
+	_fov      = savedState->readFloat();
+	_nclip    = savedState->readFloat();
+	_fclip    = savedState->readFloat();
+
+	return true;
+}
+
 void Light::load(TextSplitter &ts) {
 	char buf[256];
 
@@ -452,6 +429,41 @@ void Light::load(TextSplitter &ts) {
 void Light::loadBinary(Common::SeekableReadStream *data) {
 	// skip lights for now
 	data->seek(100, SEEK_CUR);
+}
+
+void Light::saveState(SaveGame *savedState) const {
+	//name
+	savedState->writeString(_name);
+	savedState->writeLEBool(_enabled);
+
+	//type
+	savedState->writeString(_type);
+
+	savedState->writeVector3d(_pos);
+	savedState->writeVector3d(_dir);
+
+	savedState->writeColor(_color);
+
+	savedState->writeFloat(_intensity);
+	savedState->writeFloat(_umbraangle);
+	savedState->writeFloat(_penumbraangle);
+}
+
+bool Light::restoreState(SaveGame *savedState) {
+	_name = savedState->readString();
+	_enabled = savedState->readLEBool();
+	_type = savedState->readString();
+
+	_pos           = savedState->readVector3d();
+	_dir           = savedState->readVector3d();
+
+	_color         = savedState->readColor();
+
+	_intensity     = savedState->readFloat();
+	_umbraangle    = savedState->readFloat();
+	_penumbraangle = savedState->readFloat();
+
+	return true;
 }
 
 void Set::Setup::setupCamera() const {
