@@ -141,6 +141,10 @@ public:
 private:
 	Graphics::Surface *_background;
 	Graphics::Surface *_frame;
+
+	static const uint kBlurIterations = 30;
+	uint8 _blurTableX[kBlurIterations];
+	uint8 _blurTableY[kBlurIterations];
 };
 
 } /* namespace Myst3 */
