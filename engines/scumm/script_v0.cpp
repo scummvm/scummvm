@@ -663,24 +663,29 @@ void ScummEngine_v0::o_lights() {
 void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
-	int unk = fetchScriptByte();
+	int8 unk = (int8) fetchScriptByte();
 
 	debug(0,"o_animateActor: unk %d", unk);
 
 	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
 
     a->_byte_FDE8 = unk;
-
-	// 0x6993
-	if (anim == 0xFE) {
+	
+    switch( anim ) {
+    case 0xFE:
+        // 0x6993
 		a->_speaking = 0x80;	// Enabled, but not switching
 		return;
-	}
-	// 0x69A3
-	if (anim == 0xFD) {
+
+    case 0xFD:
+	    // 0x69A3
 		a->_speaking = 0x00;
 		return;
-	}
+	
+    case 0xFF:
+        a->stopActorMoving();
+        return;
+    }
 
 	a->animateActor(anim);
 }

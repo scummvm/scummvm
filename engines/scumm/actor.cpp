@@ -847,7 +847,7 @@ void Actor::setDirection(int direction) {
 		direction = 90;
 
 	// Do nothing if actor is already facing in the given direction
-	if (_facing == direction)
+	if (_vm->_game.version != 0 && _facing == direction)
 		return;
 
 	// Normalize the angle
@@ -1294,6 +1294,10 @@ void Actor::showActor() {
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
 	if (_vm->_game.version == 0) {
+
+        // 0x39DF
+        ((ActorC64*) this)->_byte_FDE8 = 1;
+
 		_cost.reset();
 		startAnimActor(_standFrame);
 	} else if (_vm->_game.version <= 2) {
@@ -2646,8 +2650,6 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 #endif
 
 void ActorC64::animateActor(int anim) {
-    Actor::animateActor(anim);
-    return;
     int dir = oldDirToNewDir(anim % 4);
 
     if( this->isInCurrentRoom() ) {

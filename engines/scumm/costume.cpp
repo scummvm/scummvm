@@ -1378,6 +1378,8 @@ void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
 		cmd += 0x0C;
 	else
 		cmd += 0x10;
+
+    a->_byte_FDE8 = -1;
 }
 
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
@@ -1408,7 +1410,8 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
     {
 		command = dirToDirStop(dir);
 
-        A->_byte_FDE8 = 0xFF;
+        //0x2BEB
+        A->_byte_FDE8 = -1;
     }
 
 	// Update the limb frames
@@ -1472,7 +1475,7 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
                 //A->_limbCommand[limb] = 0xFF;
 
             } else {
-                if( A->_byte_FCE2[limb] != 0xFF )
+                if( A->_byte_FCE2[limb] != -1 )
                     --A->_byte_FCE2[limb];
 
                 a->_cost.curpos[limb] = 0;
