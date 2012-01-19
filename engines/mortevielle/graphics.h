@@ -85,6 +85,7 @@ public:
 	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
 	void drawBox(int x, int y, int dx, int dy, int col);
 	void fillBox(int colour, const Common::Rect &bounds, int patt);
+	void clearScreen();
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

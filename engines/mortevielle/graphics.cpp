@@ -998,6 +998,14 @@ void ScreenSurface::fillBox(int colour, const Common::Rect &bounds, int patt) {
 }
 
 /**
+ * Clears the screen
+ */
+void ScreenSurface::clearScreen() {
+	Graphics::Surface destSurface = lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	destSurface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+}
+
+/**
  * Sets a single pixel at the specified co-ordinates
  * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
  *		simulate the original 640x400 surface, all Y values have to be doubled
