@@ -43,6 +43,21 @@ namespace Mortevielle {
                                                                              */
 
 /*---------------------------------------------------------------------------*/
+/*-------------------           MEMORY  MAP          ------------------------*/
+/*---------------------------------------------------------------------------*/
+/* The following is a list of physical addresses in memory currently used
+ * by the game.
+ *
+ * Address
+ * -------
+ * 6000:0 - Decompressed current image
+ * 7000:0+ - Compressed images
+ * 7000:2 - 16 words representing palette map
+ * 7000:4138 - width, height, x/y offset of decoded image
+ */
+
+
+/*---------------------------------------------------------------------------*/
 /*-------------------------     DEFINES    ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
@@ -411,7 +426,7 @@ extern byte mem[65536 * 16];
 #define mortevielle_exit(ret) error("Exit the game")
 
 // Text screen functions not relevant for ScummVM
-#define clrscr {}
+#define clrscr { warning("ClrScr"); }
 #define clreol {}
 #define graphcolormode {}
 extern void gotoxy(int x, int y);
