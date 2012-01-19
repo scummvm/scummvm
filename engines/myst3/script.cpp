@@ -1614,8 +1614,8 @@ void Script::leverDragXY(Context &c, const Opcode &cmd) {
 	bool mousePressed = true;
 	do {
 		Common::Point mouse = _vm->_cursor->getPosition();
-		int16 distanceX = (mouse.x - mouseInit.x) / scale;
-		int16 distanceY = (mouse.y - mouseInit.y) / scale;
+		int16 distanceX = (mouseInit.x - mouse.x) / scale;
+		int16 distanceY = (mouseInit.y - mouse.y) / scale;
 
 		distanceX = CLIP<int16>(distanceX, -maxLeverPosition, maxLeverPosition);
 		distanceY = CLIP<int16>(distanceY, -maxLeverPosition, maxLeverPosition);

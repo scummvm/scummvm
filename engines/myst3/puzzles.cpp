@@ -247,12 +247,12 @@ void Puzzles::projectorUpdateCoordinates() {
 	int16 halfZoom = zoom / 2;
 	if (x - halfZoom < 0)
 		x = halfZoom;
-	if (x + halfZoom > 12400)
-		x = 12400 - halfZoom;
+	if (x + halfZoom > 10240)
+		x = 10240 - halfZoom;
 	if (y - halfZoom < 0)
 		y = halfZoom;
-	if (y + halfZoom > 12400)
-		y = 12400 - halfZoom;
+	if (y + halfZoom > 10240)
+		y = 10240 - halfZoom;
 
 	int16 angleXOffset = _vm->_state->getProjectorAngleXOffset();
 	int16 angleYOffset = _vm->_state->getProjectorAngleYOffset();

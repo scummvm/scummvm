@@ -323,20 +323,22 @@ void ProjectorMovie::update() {
 		_frame->copyFrom(*frame);
 	}
 
-	uint16 _backgroundX = _vm->_state->getProjectorX() / 10 - _frame->w / 2;
-	uint16 _backgroundY = _vm->_state->getProjectorY() / 10 - _frame->h / 2;
+	uint16 zoom = _vm->_state->getProjectorZoom();
+	uint16 backgroundX = (_vm->_state->getProjectorX() - zoom / 2) / 10;
+	uint16 backgroundY = (_vm->_state->getProjectorY() - zoom / 2) / 10;
+	float delta = zoom / 10.0 / _frame->w;
 
 	for (uint i = 0; i < _frame->h; i++) {
-		uint32 *src = (uint32 *)_background->getBasePtr(_backgroundX, _backgroundY + i);
 		uint32 *dst = (uint32 *)_frame->getBasePtr(0, i);
 		for (uint j = 0; j < _frame->w; j++) {
 			uint8 a, r, g, b;
+			uint32 *src = (uint32 *)_background->getBasePtr(backgroundX + j * delta, backgroundY + i * delta);
 
 			// Keep the alpha channel from the previous frame
 			Graphics::colorToARGB< Graphics::ColorMasks<8888> >(*dst, a, r, g, b);
 
 			// Get the colors from the background
-			Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*src++, r, g, b);
+			Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*src, r, g, b);
 
 			// Draw the new frame
 			*dst++ = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
