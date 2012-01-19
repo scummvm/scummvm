@@ -264,7 +264,6 @@ void GfxSurface::decode(const byte *pSrc) {
 
 		case 2:
 			// Draw rect alternating top to bottom, bottom to top
-			INCR_TAIX;
 			for (int xCtr = 0; xCtr < _xSize; ++xCtr) {
 				if ((xCtr % 2) == 0) {
 					for (int yCtr = 0; yCtr < _ySize; ++yCtr, pDest += DEFAULT_WIDTH) {
@@ -929,7 +928,6 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 			++pDest;
 		}
 	}
-	g_vm->_screenSurface.updateScreen();
 }
 
 /**
