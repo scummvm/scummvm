@@ -79,7 +79,7 @@ void PaletteManager::setDefaultPalette() {
 
 #define INCR_TAIX { if (_xSize & 1) ++_xSize; }
 #define DEFAULT_WIDTH (SCREEN_WIDTH / 2)
-#define BUFFER_SIZE 65536
+#define BUFFER_SIZE 8192
 
 void GfxSurface::decode(const byte *pSrc) {
 	_width = _height = 0;
