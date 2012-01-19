@@ -23,12 +23,7 @@
 #ifndef GRIM_LAB_H
 #define GRIM_LAB_H
 
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/str.h"
 #include "common/archive.h"
-#include "common/file.h"
-#include "common/types.h"
 
 namespace Grim {
 
@@ -48,27 +43,23 @@ public:
 
 class Lab : public Common::Archive {
 public:
-	Lab() : _f(NULL), _memLab(NULL) { }
+	Lab() : _f(NULL) { }
 	~Lab() { close(); }
 
 	bool open(const Common::String &filename);
-	bool open(const byte *memLab, const uint32 size);
 	void close();
 
 	// Common::Archive implementation
-	virtual bool hasFile(const Common::String &name); //TODO: Remove at next scummvm sync
 	virtual bool hasFile(const Common::String &name) const;
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:
-	bool loadLab();
 	void parseGrimFileTable();
 	void parseMonkey4FileTable();
 
-	Common::SeekableReadStream *_f;
-	const byte *_memLab;
+	Common::File *_f;
 	Common::String _labFileName;
 	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
 	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;

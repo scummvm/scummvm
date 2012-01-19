@@ -20,10 +20,8 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/substream.h"
-#include "common/memstream.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lab.h"
@@ -44,30 +42,17 @@ Common::SeekableReadStream *LabEntry::createReadStream() const {
 	return _parent->createReadStreamForMember(_name);
 }
 
-bool Lab::open(const byte *memLab, const uint32 size) {
-	_f = new Common::MemoryReadStream(memLab, size);
-	_labFileName = "";
-	_memLab = memLab;
-
-	return loadLab();
-}
-
 bool Lab::open(const Common::String &filename) {
 	_labFileName = filename;
 
 	close();
 
-	Common::File *file = new Common::File();
-	if (!file->open(filename)) {
-		delete file;
+	_f = new Common::File();
+	if (!_f->open(filename)) {
+		close();
 		return false;
 	}
 
-	_f = (Common::SeekableReadStream *)file;
-	return loadLab();
-}
-
-bool Lab::loadLab() {
 	if (_f->readUint32BE() != MKTAG('L','A','B','N')) {
 		close();
 		return false;
@@ -79,6 +64,9 @@ bool Lab::loadLab() {
 		parseGrimFileTable();
 	else
 		parseMonkey4FileTable();
+
+	delete _f;
+	_f = NULL;
 
 	return true;
 }
@@ -146,12 +134,6 @@ void Lab::parseMonkey4FileTable() {
 	delete[] stringTable;
 }
 
-bool Lab::hasFile(const Common::String &filename) {
-	Common::String fname(filename);
-	fname.toLowercase();
-	return _entries.contains(fname);
-}
-
 bool Lab::hasFile(const Common::String &filename) const {
 	Common::String fname(filename);
 	fname.toLowercase();
@@ -186,12 +168,6 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 	fname.toLowercase();
 	LabEntryPtr i = _entries[fname];
 
-	/*If the whole Lab has been loaded into ram, we return a MemoryReadStream
-	that map requested data directly, without copying them. Otherwise open a new
-	stream from disk.*/
-	if(_memLab)
-		return new Common::MemoryReadStream((_memLab + i->_offset), i->_len, DisposeAfterUse::NO);
-
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
 	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES );
@@ -200,9 +176,6 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 void Lab::close() {
 	delete _f;
 	_f = NULL;
-
-	if(_memLab)
-		delete _memLab;
 
 	_entries.clear();
 }

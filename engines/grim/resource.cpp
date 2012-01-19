@@ -37,6 +37,7 @@
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/patchr.h"
+#include "engines/grim/update/update.h"
 #include "common/algorithm.h"
 #include "common/zlib.h"
 #include "gui/message.h"
@@ -65,7 +66,7 @@ ResourceLoader::ResourceLoader() {
 	_cacheMemorySize = 0;
 
 	Lab *l;
-	Common::ArchiveMemberList files;
+	Common::ArchiveMemberList files, updFiles;
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
@@ -74,6 +75,15 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "sound001.lab");
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
+			//Load the update from the executable
+			Common::File *updStream = new Common::File();
+			if (updStream && updStream->open("gfupd101.exe")) {
+				Common::Archive *update = loadUpdateArchive(updStream);
+				if (update)
+					SearchMan.add("update", update, 1);
+			} else
+				delete updStream;
+
 			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
 				error("residualvm-grim-patch.lab not found");
 
@@ -107,6 +117,22 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "tile.lab");
 			SearchMan.listMatchingMembers(files, "voice.lab");
 		} else {
+			if (g_grim->getGamePlatform() == Common::kPlatformWindows) {
+				//Load the update from the executable
+				SearchMan.listMatchingMembers(updFiles, "MonkeyUpdate.exe");
+				SearchMan.listMatchingMembers(updFiles, "MonkeyUpdate_???.exe");
+				for (Common::ArchiveMemberList::const_iterator x = updFiles.begin(); x != updFiles.end(); ++x) {
+					Common::SeekableReadStream *updStream;
+					updStream = (*x)->createReadStream();
+
+					Common::Archive *update = loadUpdateArchive(updStream);
+					if (update)
+						SearchMan.add("update", update, 1);
+				}
+			}
+
+			SearchMan.listMatchingMembers(files, "local.m4b");
+			SearchMan.listMatchingMembers(files, "i9n.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
 			SearchMan.listMatchingMembers(files, "lip.m4b");
 			SearchMan.listMatchingMembers(files, "local.m4b");
@@ -118,10 +144,15 @@ ResourceLoader::ResourceLoader() {
 	if (files.empty())
 		error("Cannot find game data - check configuration file");
 
+	//load labs
 	int priority = files.size();
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String filename = (*x)->getName();
 		filename.toLowercase();
+
+		//Avoid duplicates
+		if (_files.hasArchive(filename))
+			continue;
 
 		l = new Lab();
 		if (l->open(filename))
