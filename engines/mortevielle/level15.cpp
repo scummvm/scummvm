@@ -190,6 +190,9 @@ void adzon() {
 	f.close();
 }
 
+/**
+ * Returns the offset within the compressed image data resource of the desired image
+ */
 int animof(int ouf, int num) {
 	int nani, aux;
 
@@ -197,11 +200,8 @@ int animof(int ouf, int num) {
 	nani = mem[adani * 16 + 1];
 	aux = num;
 	if (ouf != 1)  aux = aux + nani;
-	animof_result = (nani << 2) + 2 + swap(READ_LE_UINT16(&mem[adani * 16 + (aux << 1)]));
-	/*aux:= nani shl 2 + 2;
-	if ouf=1 then aux:= aux+ swap(WRITE_LE_UINT16(&mem[adani: num shl 1])
-	         else aux:= aux+ swap(WRITE_LE_UINT16(&mem[adani: (nani+num) shl 1]);
-	animof:=aux;*/
+	animof_result = (nani << 2) + 2 + READ_BE_UINT16(&mem[adani * 16 + (aux << 1)]);
+
 	return animof_result;
 }
 
