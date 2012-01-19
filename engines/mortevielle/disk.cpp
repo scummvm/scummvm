@@ -87,19 +87,28 @@ void takesav(int n) {
 	dem1();
 	// -- Load the file  'sauve#n.mor'
 	Common::String saveName = Common::String::format("sav%d.mor", n);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(saveName);
 
-	Common::Serializer sz(f, NULL);
+	// Try loading first from the save area
+	Common::SeekableReadStream *stream = g_system->getSavefileManager()->openForLoading(saveName);
+
+	// If not present, try loading from the program folder
+	Common::File f;
+	if (stream == NULL) {
+		if (!f.open(saveName))
+			error("Unable to open save file '%s'", saveName);
+
+		stream = f.readStream(f.size());
+		f.close();
+	}
+
+	Common::Serializer sz(stream, NULL);
 	sync_save(sz);
 
-	if (f->err()) {
-		i = do_alert(err_mess, 1);
-		mortevielle_exit(0);
-	}
 	s = s1;
 	for (i = 0; i <= 389; i ++) tabdon[i + acha] = bufcha[i];
 
-	delete f;	
+	// Close the stream
+	delete stream;	
 }
 
 void ld_game(int n) {
