@@ -581,6 +581,92 @@ public:
 	virtual void remove();
 	virtual void signal();
 };
+
+class Scene1800 : public SceneExt {
+	class Hotspot5 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor6 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor7 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor8 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	int _field412;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	Hotspot5 _item5;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	Actor6 _actor6;
+	Actor7 _actor7;
+	Actor8 _actor8;
+	Actor8 _actor9;
+	Exit1 _exit1;
+	SequenceManager _sequenceManager;
+
+	Scene1800();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void saveCharacter(int characterIndex);
+};
+
+class Scene1875 : public SceneExt {
+	class Actor1875 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+		
+		Actor1875();
+		void subB84AB();
+		void subB8271(int indx);
+		
+		void synchronize(Serializer &s);
+		virtual void process(Event &event);
+	};
+public:
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	Actor1875 _actor4;
+	Actor1875 _actor5;
+	Actor1875 _actor6;
+	Actor1875 _actor7;
+	Actor1875 _actor8;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
