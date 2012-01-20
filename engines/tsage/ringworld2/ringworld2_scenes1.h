@@ -634,6 +634,39 @@ public:
 	virtual void saveCharacter(int characterIndex);
 };
 
+class Scene1875 : public SceneExt {
+	class Actor1875 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+		
+		Actor1875();
+		void subB84AB();
+		void subB8271(int indx);
+		
+		void synchronize(Serializer &s);
+		virtual void process(Event &event);
+	};
+public:
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	Actor1875 _actor4;
+	Actor1875 _actor5;
+	Actor1875 _actor6;
+	Actor1875 _actor7;
+	Actor1875 _actor8;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
