@@ -218,7 +218,7 @@ void tmlieu(int mli) {
 		cx = v_lieu[i][mli];
 		deline(cx + c_tmlieu, st, tail);
 		nomp = delig;
-		while (nomp.size() < 30)  nomp = nomp + ' ';
+		while (nomp.size() < 20)  nomp = nomp + ' ';
 		menut(depl[i], nomp);
 		i = i + 1;
 	}
