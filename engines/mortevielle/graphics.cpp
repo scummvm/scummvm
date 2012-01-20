@@ -402,7 +402,7 @@ void GfxSurface::decode(const byte *pSrc) {
 		}
 
 		pSrc = pSrcStart;
-		debugC(1, kMortevielleGraphics, "Decoding image block %d position %d,%d size %d,%d method %d",
+		debugC(2, kMortevielleGraphics, "Decoding image block %d position %d,%d size %d,%d method %d",
 			entryIndex + 1, _xp, _yp, _width, _height, decomIndex);
 	}
 

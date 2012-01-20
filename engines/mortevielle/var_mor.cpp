@@ -243,7 +243,7 @@ void hirs() {
 	// Note: The original used this to set the graphics mode and clear the screen, both at
 	// the start of the game, and whenever the screen need to be cleared. As such, this
 	// method is deprecated in favour of clearing the screen
-	warning("TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
+	debugC(1, kMortevielleCore, "TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
 
 	g_vm->_screenSurface.clearScreen();
 }
@@ -335,13 +335,13 @@ void s_sauv(int Gd, int y, int dy) {
 
 // (* external 'c:\mc\boite.com'; *)
 void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
-	warning("TODO: box deprecated in favour of GfxSurface::fillBox");
+	debugC(1, kMortevielleCore, "TODO: box deprecated in favour of GfxSurface::fillBox");
 	g_vm->_screenSurface.fillBox(c, Common::Rect(xo, yo, xi, yi), patt);
 }
 
 // (* external 'c:\mc\decomp.com'; *)
 void decomp(int seg, int dep) {
-	warning("TODO: decomp deprecated in faovur of GfxSurface::decode");
+	debugC(1, kMortevielleCore, "TODO: decomp deprecated in faovur of GfxSurface::decode");
 }
 
 // (* external 'c:\mc\affich.com'; *)
