@@ -667,6 +667,38 @@ public:
 	virtual void process(Event &event);
 };
 
+class Scene1900 : public SceneExt {
+	class Actor2 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	SpeakerSeeker1900 _seekerSpeaker;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	SceneActor _actor1;
+	BackgroundSceneObject _object1;
+	BackgroundSceneObject _object2;
+	Actor2 _actor2;
+	Actor2 _actor3;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 

@@ -137,6 +137,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1875:
 		return new Scene1875();
 	case 1900:
+		return new Scene1900();
 	case 1925:
 	case 1945:
 	case 1950:
