@@ -857,6 +857,7 @@ protected:
 	int8 _rrId[10];
 
 	bool _allowSkip;
+	bool _allowImport;
 
 	Screen_EoB *_screen;
 	GUI_EoB *_gui;

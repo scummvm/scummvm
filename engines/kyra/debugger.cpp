@@ -486,6 +486,11 @@ void Debugger_EoB::initialize() {
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+	if (!_vm->_allowImport) {
+		DebugPrintf("This command may only be used from the main menu.\n");
+		return true;
+	}
+
 	if (argc == 3) {
 		int slot = atoi(argv[1]);
 		if (slot < -1 || slot > 989) {
@@ -493,16 +498,10 @@ bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 			return true;
 		}
 
-		::GUI::MessageDialog dialog("Your current game (if any) will be lost if you continue. Make sure to save your game first.\n\n", "Continue", "Cancel");
-		if (!dialog.runModal()) {
-			DebugPrintf("Cancelled.\n");
-			return true;
-		}
-
 		DebugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
 		_vm->loadItemDefs();
 	} else {
-		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and pushs them to the top of the save game list.)\n\n");
+		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
 	}
 
 	return true;

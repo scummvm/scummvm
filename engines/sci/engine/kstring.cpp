@@ -747,8 +747,6 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 8: { // Dup
 		reg_t stringHandle;
 
-		// We allocate the new string first because if the StringTable needs to
-		// grow, our rawString pointer will be invalidated
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 
 		if (argv[1].segment == s->_segMan->getStringSegmentId()) {

@@ -530,6 +530,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile) {
 	Common::Array<Common::String> origFiles;
+	Common::Array<int> newSlots;
 
 	if (sourceFile) {
 		// If a source file is specified via the console command we just check whether it exists.
@@ -564,62 +565,25 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	if (!numFilesFound)
 		return false;
 
-	int moveUpSlots = 0;
 	_gui->updateSaveSlotsList(_targetName, true);
 
-	// Check whether ScummVM save files exist and how many slots they need to be moved up to make space for the original save files
+	// Find free save slots for the original save files
 	if (destSlot == -1) {
-		for (int i = 0; i < numFilesFound; ++i) {
-			if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), i) != _gui->_saveSlots.end())
-				moveUpSlots++;
-		}
-	}
-
-	// "move up" existing save files
-	if (moveUpSlots) {
-		Common::sort(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), Common::Greater<int>());
-		for (Common::Array<int>::iterator i = _gui->_saveSlots.begin(); i != _gui->_saveSlots.end(); ++i) {
-			int newIndex = *i + moveUpSlots;
-
-			if (*i >= 990) {
-				// Skip quick save slots
-				continue;
-			} else if (*i >= (990 - moveUpSlots)) {
-				// Try to squeeze occupied slots together by finding and occupying empty slots before the current one if necessary
-				int missingSlots = moveUpSlots - (989 - *i);
-				int missingLeft = missingSlots;
-				int missingLast = missingLeft;
-				Common::Array<int>::iterator squeezeStart = i + 1;
-
-				for (; squeezeStart != _gui->_saveSlots.end() && missingLeft; ++squeezeStart) {
-					int diff = *(squeezeStart - 1) - *squeezeStart - 1;
-					missingLast = MIN(missingLeft, diff);
-					missingLeft -= missingLast;
-				}
-
-				// This will probably never happen, since we do have 990 save slots
-				if (missingLeft)
-					warning("%d original save files could not be converted due to missing save game slots", missingLeft);
-
-				int indexS = *(squeezeStart - 2) - missingLast;
-				for (Common::Array<int>::iterator ii = squeezeStart - 2; ii != i - 1; --ii)
-					_saveFileMan->renameSavefile(getSavegameFilename(*ii), getSavegameFilename(indexS++));
-
-				int newPos = *i -= (missingSlots - missingLeft);
-
-				_gui->updateSaveSlotsList(_targetName, true);
-				Common::sort(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), Common::Greater<int>());
-				i = Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), newPos);
-				if (i == _gui->_saveSlots.end())
-					error("EoBCoreEngine::importOriginalSaveFile(): Unknown error");
-				newIndex = *i + moveUpSlots;
+		int assignedSlots = 0;
+		for (int testSlot = 0; testSlot < 990 && assignedSlots < numFilesFound; testSlot++) {
+			if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), testSlot) == _gui->_saveSlots.end()) {
+				newSlots.push_back(testSlot);
+				assignedSlots++;
 			}
-
-			_saveFileMan->renameSavefile(getSavegameFilename(*i), getSavegameFilename(newIndex));
 		}
-	}
 
-	int curSlot = MAX(destSlot, 0);
+		// This will probably never happen, since we do have 990 save slots
+		if (assignedSlots != numFilesFound)
+			warning("%d original save files could not be converted due to missing save game slots", numFilesFound - assignedSlots);
+
+	} else {
+		newSlots.push_back(destSlot);
+	}
 
 	if (destSlot != -1) {
 		if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), destSlot) != _gui->_saveSlots.end()) {
@@ -629,17 +593,19 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 		}
 	}
 
-	for (Common::Array<Common::String>::iterator i = origFiles.begin(); i != origFiles.end(); ++i) {
-		Common::String desc = readOriginalSaveFile(*i);
+	int importedCount = 0;
+	for (int i = 0; i < numFilesFound; i++) {
+		Common::String desc = readOriginalSaveFile(origFiles[i]);
 		if (desc.empty()) {
-			warning("Unable to import original save file '%s'", i->c_str());
+			warning("Unable to import original save file '%s'", origFiles[i].c_str());
 		} else {
 			// We can't make thumbnails here, since we do not want to load all the level data, monsters, etc. for each save we convert.
 			// Instead, we use an empty surface to avoid that createThumbnailFromScreen() makes a completely pointless thumbnail from
 			// whatever screen that is currently shown when this function is called.
 			Graphics::Surface dummy;
-			saveGameStateIntern(curSlot++, desc.c_str(), &dummy);
-			warning("Imported original save file '%s' ('%s')", i->c_str(), desc.c_str());
+			saveGameStateIntern(newSlots[i], desc.c_str(), &dummy);
+			warning("Imported original save file '%s' ('%s')", origFiles[i].c_str(), desc.c_str());
+			importedCount++;
 		}
 	}
 
@@ -653,8 +619,8 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	memset(_characters, 0, sizeof(EoBCharacter) * 6);
 	_inf->reset();
 
-	if (destSlot == -1 && curSlot) {
-		::GUI::MessageDialog dialog(_("One or more original save game files have been successfully imported into\nScummVM. If you want to manually import original save game files later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"));
+	if (destSlot == -1 && importedCount) {
+		::GUI::MessageDialog dialog(Common::String::format(_("%d original save game files have been successfully imported into\nScummVM. If you want to manually import original save game files later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
 		dialog.runModal();
 	}
 
@@ -899,7 +865,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		t->extraProperties = in.readUint16();
 	}
 
-	return desc;
+	return in.err() ? Common::String() : desc;
 }
 
 void *EoBCoreEngine::generateMonsterTempData(LevelTempData *tmp) {

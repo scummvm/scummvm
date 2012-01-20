@@ -148,6 +148,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_clericSpellOffset = 0;
 	_restPartyElapsedTime = 0;
 	_allowSkip = false;
+	_allowImport = false;
 
 	_wallsOfForce = 0;
 

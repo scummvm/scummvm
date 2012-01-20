@@ -237,6 +237,8 @@ char const *const F7 = "F7";
 char const *const F8 = "F8";
 char const *const F10 = "F10";
 
+char const *const DONE_MSG = "Done";
+
 const byte k562CC[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,
@@ -419,6 +421,26 @@ const byte k5A79B[] = {
 	25, 11, 10,
 	12, 8,  11,
 	9,  11, 12
+};
+
+const byte k5A7F6[] = {
+	4,  11, 6,
+	5,  14, 5,
+	5,  11, 6,
+	5,  7,  5,
+	6,  9,  6,
+	7,  16, 7,
+	7,  12, 7,
+	8,  6,  5,
+	9,  9,  7,
+	10, 13, 9,
+	10, 6,  8,
+	11, 10, 9,
+	12, 15, 10,
+	13, 12, 11,
+	14, 8,  9,
+	15, 16, 1,
+	15, 10, 11
 };
 
 } // End of namespace Ringworld2

@@ -486,6 +486,29 @@ void SpeakerMiranda300::proc15() {
 	}
 }
 
+void SpeakerMiranda1625::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
+		_object2 = &scene->_actor3;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(Common::Point(196, 65));
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1627, 3, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
 void SpeakerMiranda3255::proc15() {
 	int v = _fieldF6;
 
@@ -2347,9 +2370,9 @@ void SpeakerSocko3200::proc15() {
 // Classes related to SOLDIER
 //----------------------------------------------------------------------------
 
-SpeakerSoldier300::SpeakerSoldier300(): VisualSpeaker() {
+SpeakerSoldier::SpeakerSoldier(int colour) {
 	_speakerName = "SOLDIER";
-	_color1 = 60;
+	_color1 = colour;
 	_color2 = 0;
 	_fieldF6 = 0;
 	_textWidth = 300;
@@ -2423,6 +2446,30 @@ void SpeakerTeal300::proc15() {
 	} else {
 		((SceneItem *)_action)->_sceneRegionId = 0;
 		_object1.setup(303, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	}
+}
+
+void SpeakerTeal1625::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
+		_object2 = &scene->_actor2;
+		_object2->hide();
+
+		_object1.postInit();
+		_object1.setPosition(Common::Point(68, 68));
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else {
+		((SceneItem *)_action)->_sceneRegionId = 0;
+		_object1.setup(1627, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
