@@ -199,16 +199,16 @@ void GameState::newGame() {
 }
 
 bool GameState::load(const Common::String &file) {
-	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(file);
-	Common::Serializer s = Common::Serializer(save, 0);
+	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(file);
+	Common::Serializer s = Common::Serializer(saveFile, 0);
 	syncWithSaveGame(s);
-	delete save;
+	delete saveFile;
 
 	return true;
 }
 
-bool GameState::save(Common::OutSaveFile *save) {
-	Common::Serializer s = Common::Serializer(0, save);
+bool GameState::save(Common::OutSaveFile *saveFile) {
+	Common::Serializer s = Common::Serializer(0, saveFile);
 	syncWithSaveGame(s);
 
 	return true;
