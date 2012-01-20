@@ -33,7 +33,7 @@ namespace Mortevielle {
 
 //Translation: box()
 void boite(int x, int y, int dx, int dy, int coul) {
-	warning("TODO: boite is deprecated in favour of ScreenSurface::drawBox");
+	debugC(1, kMortevielleCore, "TODO: boite is deprecated in favour of ScreenSurface::drawBox");
 
 	g_vm->_screenSurface.drawBox(x, y, dx, dy, coul);
 }
