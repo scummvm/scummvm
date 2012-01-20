@@ -295,7 +295,10 @@ void mov_mouse(bool &funct, char &key) {
 	funct = false;
 	key = '\377';
 	p_key = keypressed();
+
 	while (p_key) {
+		CHECK_QUIT;
+
 		in1 = get_ch();	// input >> kbd >> in1;
 		read_pos_mouse(cx, cy, cd);
 		switch (toupper(in1)) {

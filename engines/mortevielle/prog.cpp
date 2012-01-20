@@ -30,6 +30,7 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/prog.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
@@ -265,6 +266,7 @@ void tecran() {
 			mdn();
 			tinke();
 			mov_mouse(funct, inkey);
+			CHECK_QUIT;
 			temps = temps + 1;
 		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));
 
@@ -348,6 +350,7 @@ void tjouer() {
 	antegame();
 	do {
 		tecran();
+		CHECK_QUIT;
 	} while (!((arret) || (solu) || (perdu)));
 	if (solu)  tmaj1();
 	else if (perdu)  tencore();
