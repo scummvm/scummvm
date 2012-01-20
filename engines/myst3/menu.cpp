@@ -504,9 +504,9 @@ void Menu::handleInput(const Common::KeyState &e) {
 		return;
 	}
 
-	if ((e.ascii >= 'a' && e.ascii <= 'z'
-			|| e.ascii >= 'A' && e.ascii <= 'Z'
-			|| e.ascii >= '0' && e.ascii <= '9'
+	if (((e.ascii >= 'a' && e.ascii <= 'z')
+			|| (e.ascii >= 'A' && e.ascii <= 'Z')
+			|| (e.ascii >= '0' && e.ascii <= '9')
 			|| e.ascii == ' ')
 			&& (display.size() < 17)) {
 		display += e.ascii;

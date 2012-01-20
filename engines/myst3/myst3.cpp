@@ -658,12 +658,12 @@ void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 	s.pitch = pitch;
 	s.heading = heading;
 	s.intensity = intensity * 2.55;
-	s.color = color & 0xF | 16
-			* (color & 0xF | 16
-			* ((color >> 4) & 0xF | 16
-			* ((color >> 4) & 0xF | 16
-			* ((color >> 8) & 0xF | 16
-			* ((color >> 8) & 0xF)))));
+	s.color = (color & 0xF) | 16
+			* ((color & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 8) & 0xF) | 16
+			* (((color >> 8) & 0xF))))));
 	s.var = var;
 	s.variableIntensity = varControlledIntensity;
 	s.radius = radius;
