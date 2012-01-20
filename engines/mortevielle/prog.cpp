@@ -58,9 +58,7 @@ namespace Mortevielle {
 }
 
 /* overlay */ void antegame() {
-	registres regs;
-	char buffer[512];
-	int i, j, k;
+	int k;
 	bool test[3];
 	char g[8];
 
@@ -107,33 +105,14 @@ namespace Mortevielle {
 	affrep();
 	stpou = ind_mess;
 	while ((test[k] == false) && (k < 2)) {
-		regs.ax = 0;
-		k = succ(int, k);
-		intr(19, regs);
-		{
-			regs.ax = 0x201;
-			regs.cx = 0x1;
-			regs.dx = 0x100 + k - 1;
-			//regs.es = seg(buffer);
-			//regs.bx = ofs(buffer);
-			intr(19, regs);
-			test[k] = ! imen;
-			i = 0;
-			while ((test[k]) && (i < 19)) {
-				regs.ax = 0x201;
-				syn = false;
-				regs.cx = 0x2700 + i;
-				regs.dx = 0x100 + k - 1;
-				//regs.es = seg(buffer);
-				//regs.bx = ofs(buffer);
-				intr(19, regs);
-				if (lo(regs.flags) % 2 == 1)  test[k] = false;
-				i = i + 1;
-			}
-			okdes = false;
-			solu = true;
-			for (j = 0; j <= 7; j ++) if (buffer[j + 504] != g[j])  test[k] = false;
-		}
+		++k;
+
+		// Original read in the boot sector here of each drive and did some calculations -
+		// presumably for copy protection. This has been replaced with hardcoded success
+		test[k] = true;
+
+		okdes = false;
+		solu = true;
 		perdu = false;
 		fouil = false;
 	}
