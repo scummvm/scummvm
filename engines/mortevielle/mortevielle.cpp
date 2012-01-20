@@ -155,6 +155,11 @@ int MortevielleEngine::getChar() {
 	return shouldQuit() ? 0 : _keypresses.pop();
 }
 
+/**
+ * Handle pending events
+ * @remarks		Since the ScummVM screen surface is double height to handle 640x200 using 640x400,
+ * the mouse Y position is divided by 2 to keep the game thinking the Y goes from 0 - 199
+ */
 bool MortevielleEngine::handleEvents() {
 	Common::Event event;
 	if (!g_system->getEventManager()->pollEvent(event))
@@ -166,9 +171,9 @@ bool MortevielleEngine::handleEvents() {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
-		_mousePos = event.mouse;
+		_mousePos = Common::Point(event.mouse.x, event.mouse.y / 2);
 		x_s = event.mouse.x;
-		y_s = event.mouse.y;
+		y_s = event.mouse.y / 2;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN)
 			_mouseButtons |= 1;
@@ -212,29 +217,40 @@ void MortevielleEngine::addKeypress(Common::Event &evt) {
 		case Common::KEYCODE_KP4:
 		case Common::KEYCODE_LEFT:
 			ch = '4';
+			break;
 		case Common::KEYCODE_KP2:
 		case Common::KEYCODE_DOWN:
 			ch = '2';
+			break;
 		case Common::KEYCODE_KP6:
 		case Common::KEYCODE_RIGHT:
 			ch = '6';
+			break;
 		case Common::KEYCODE_KP8:
 		case Common::KEYCODE_UP:
 			ch = '8';
+			break;
 		case Common::KEYCODE_KP7:
 			ch = '7';
+			break;
 		case Common::KEYCODE_KP1:
 			ch = '1';
+			break;
 		case Common::KEYCODE_KP9:
 			ch = '9';
+			break;
 		case Common::KEYCODE_KP3:
 			ch = '3';
+			break;
 		case Common::KEYCODE_KP5:
 			ch = '5';
+			break;
 		case Common::KEYCODE_RETURN:
 			ch = '\13';
+			break;
 		case Common::KEYCODE_ESCAPE:
 			ch = '\33';
+			break;
 		default:
 			break;
 		}
@@ -271,8 +287,21 @@ void MortevielleEngine::initMouse() {
 	CursorMan.showMouse(true);
 }
 
+/**
+ * Sets the mouse position
+ * @remarks		Since the ScummVM screen surface is double height to handle 640x200 using 640x400,
+ * the mouse Y position is doubled to convert from 0-199 to 0-399
+ */
 void MortevielleEngine::setMousePos(const Common::Point &pt) {
-	_mousePos = pt;
+	// Adjust the passed position from simulated 640x200 to 640x400 co-ordinates
+	Common::Point newPoint(pt.x, (pt.y == 199) ? 399 : pt.y * 2);
+
+	if (newPoint != _mousePos)
+		// Warp the mouse to the new position
+		g_system->warpMouse(newPoint.x, newPoint.y);
+
+	// Save the new position
+	_mousePos = newPoint;
 }
 
 /*-------------------------------------------------------------------------*/
