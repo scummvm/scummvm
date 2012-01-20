@@ -109,6 +109,9 @@ public:
 		void load(TextSplitter &ts);
 		void loadBinary(Common::SeekableReadStream *data);
 		void setupCamera() const;
+		void saveState(SaveGame *savedState) const;
+		bool restoreState(SaveGame *savedState);
+
 		Common::String _name;
 		Bitmap::Ptr _bkgndBm, _bkgndZBm;
 		Math::Vector3d _pos, _interest;
@@ -146,6 +149,9 @@ class Light {		// Set lighting data
 public:
 	void load(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
+	void saveState(SaveGame *savedState) const;
+	bool restoreState(SaveGame *savedState);
+
 	Common::String _name;
 	Common::String _type;
 	Math::Vector3d _pos, _dir;
