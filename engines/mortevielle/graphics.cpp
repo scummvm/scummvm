@@ -990,7 +990,7 @@ void ScreenSurface::fillBox(int colour, const Common::Rect &bounds, int patt) {
 		bounds.right, bounds.bottom * 2));
 	
 	// Fill the area
-	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), 0);
+	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), colour);
 
 	// TODO: Figure out what effect patterns of other than '0xff' have
 	if (patt != 0xff)
