@@ -265,8 +265,6 @@ void show_mouse() {
 }
 
 void pos_mouse(int x, int y) {
-	registres reg;
-
 	if (x > 314 * res)  x = 314 * res;
 	else if (x < 0)  x = 0;
 	if (y > 199)  y = 199;
@@ -286,7 +284,7 @@ void read_pos_mouse(int &x, int &y, int &c) {
 void mov_mouse(bool &funct, char &key) {
 	bool p_key;
 	char in1, in2;
-	int x, y, cx, cy, cd;
+	int cx, cy, cd;
 
 	// If mouse button clicked, return it
 	if (g_vm->getMouseButtons() != 0) {
