@@ -541,14 +541,14 @@ void Script::movieRemoveAll(Context &c, const Opcode &cmd) {
 }
 
 void Script::movieSetLooping(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set movie % to loop",
+	debugC(kDebugScript, "Opcode %d: Set movie %d to loop",
 			cmd.op, cmd.args[0]);
 
 	_vm->setMovieLooping(cmd.args[0], true);
 }
 
 void Script::movieSetNotLooping(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set movie % not to loop",
+	debugC(kDebugScript, "Opcode %d: Set movie %d not to loop",
 			cmd.op, cmd.args[0]);
 
 	_vm->setMovieLooping(cmd.args[0], false);

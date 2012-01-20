@@ -119,9 +119,9 @@ public:
 	Common::String getSoundName(uint32 id);
 private:
 	struct GameVersion {
-		char *description;
+		const char *description;
 		Common::Platform platform;
-		char *md5;
+		const char *md5;
 		uint32 baseOffset;
 		uint32 ageTableOffset;
 		uint32 nodeInitScriptOffset;

@@ -106,7 +106,7 @@ Cursor::~Cursor() {
 }
 
 void Cursor::changeCursor(uint32 index) {
-	assert(index >= 0 && index <= 12);
+	assert(index <= 12);
 
 	_currentCursorID = index;
 }

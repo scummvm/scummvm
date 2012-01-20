@@ -658,12 +658,12 @@ void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 	s.pitch = pitch;
 	s.heading = heading;
 	s.intensity = intensity * 2.55;
-	s.color = color & 0xF | 16
-			* (color & 0xF | 16
-			* ((color >> 4) & 0xF | 16
-			* ((color >> 4) & 0xF | 16
-			* ((color >> 8) & 0xF | 16
-			* ((color >> 8) & 0xF)))));
+	s.color = (color & 0xF) | 16
+			* ((color & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 8) & 0xF) | 16
+			* (((color >> 8) & 0xF))))));
 	s.var = var;
 	s.variableIntensity = varControlledIntensity;
 	s.radius = radius;
@@ -704,7 +704,7 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 
 	uint32 magic = data->readUint32LE();
 	if (magic != 0x2E544558)
-		error("Wrong texture format", id);
+		error("Wrong texture format %d", id);
 
 	data->readUint32LE(); // unk 1
 	uint32 width = data->readUint32LE();
