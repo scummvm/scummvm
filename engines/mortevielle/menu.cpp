@@ -160,7 +160,7 @@ void menu_aff() {
 			do {     /* ligne par ligne */
 				msk = 0x80;
 				for (pt = 0; pt <= 7; pt ++) {
-					if ((lettres[num_letr][ind_tabl] & msk) != 0) {
+					if ((lettres[num_letr - 1][ind_tabl] & msk) != 0) {
 						putpix(gd, x + 1, y + 1, 0);
 						putpix(gd, x, y + 1, 0);
 						putpix(gd, x, y, color);
