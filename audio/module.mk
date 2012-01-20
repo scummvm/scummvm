@@ -10,10 +10,12 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	timestamp.o \
+	decoders/adpcm.o \
 	decoders/flac.o \
 	decoders/mp3.o \
 	decoders/raw.o \
 	decoders/vorbis.o \
+	decoders/wave.o \
 	decoders/xa.o \
 	softsynth/adlib.o \
 	softsynth/cms.o \
