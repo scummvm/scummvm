@@ -34,7 +34,7 @@ Puzzles::Puzzles(Myst3Engine *vm) :
 Puzzles::~Puzzles() {
 }
 
-void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
+void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	switch (id) {
 	case 8:
 		journalSaavedro(arg0);
@@ -44,6 +44,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg3) {
 		break;
 	case 14:
 		projectorLoadBitmap(arg0);
+		break;
+	case 15:
+		projectorAddSpotItem(arg0, arg1, arg2);
 		break;
 	case 16:
 		projectorUpdateCoordinates();
@@ -236,6 +239,23 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 			const Graphics::Surface *frame = bink.decodeNextFrame();
 			copySurfaceRect(_vm->_projectorBackground, Common::Point(j, i), frame);
 		}
+}
+
+void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
+	assert(_vm->_projectorBackground != 0 && "Projector background already used.");
+
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription(0, bitmap, 0, DirectorySubEntry::kStillMovie);
+
+	if (!movieDesc)
+		error("Movie %d does not exist", bitmap);
+
+	// Rebuild the complete background image from the frames of the bink movie
+	Common::MemoryReadStream *movieStream = movieDesc->getData();
+	Video::SeekableBinkDecoder bink;
+	bink.loadStream(movieStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	const Graphics::Surface *frame = bink.decodeNextFrame();
+	copySurfaceRect(_vm->_projectorBackground, Common::Point(x, y), frame);
 }
 
 void Puzzles::projectorUpdateCoordinates() {

@@ -36,7 +36,7 @@ public:
 	Puzzles(Myst3Engine *vm);
 	virtual ~Puzzles();
 
-	void run(uint16 id, uint16 arg0 = 0, uint16 arg1 = 0, uint16 arg3 = 0);
+	void run(uint16 id, uint16 arg0 = 0, uint16 arg1 = 0, uint16 arg2 = 0);
 
 private:
 	Myst3Engine *_vm;
@@ -51,6 +51,7 @@ private:
 	void mainMenu(uint16 action);
 	void saveLoadMenu(uint16 action, uint16 item);
 	void projectorLoadBitmap(uint16 bitmap);
+	void projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y);
 	void projectorUpdateCoordinates();
 };
 
