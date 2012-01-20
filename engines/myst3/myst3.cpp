@@ -42,6 +42,7 @@
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
 #include "engines/myst3/menu.h"
+#include "engines/myst3/sound.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -53,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
-		_rnd(0), _shouldQuit(false),
+		_rnd(0), _sound(0), _shouldQuit(false),
 		_menuAction(0), _projectorBackground(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -103,6 +104,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _console;
 	delete _state;
 	delete _rnd;
+	delete _sound;
 	delete _gfx;
 }
 
@@ -111,6 +113,7 @@ Common::Error Myst3Engine::run() {
 	const int h = 480;
 
 	_gfx = new Renderer(_system);
+	_sound = new Sound(this);
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
@@ -144,6 +147,7 @@ Common::Error Myst3Engine::run() {
 	loadNode(1, 101, 1);
 
 	while (!_shouldQuit) {
+		_sound->update();
 		runNodeBackgroundScripts();
 		processInput(false);
 		updateCursor();
@@ -269,8 +273,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 
 			if (hovered.size() > 0) {
 				_scriptEngine->run(&hovered.front()->script);
+				continue;
 			}
 			
+			// Bad click
+			_sound->play(697, 5);
+
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			// Save file name input
 			_menu->handleInput(event.kbd);

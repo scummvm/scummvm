@@ -56,6 +56,7 @@ class Database;
 class Script;
 class Renderer;
 class Menu;
+class Sound;
 struct NodeData;
 
 typedef Common::SharedPtr<NodeData> NodePtr;
@@ -74,6 +75,7 @@ public:
 	Renderer *_gfx;
 	Menu *_menu;
 	Database *_db;
+	Sound *_sound;
 	
 	Common::RandomSource *_rnd;
 

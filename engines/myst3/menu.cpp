@@ -25,6 +25,7 @@
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/sound.h"
 #include "engines/myst3/state.h"
 
 #include "common/events.h"
@@ -178,6 +179,8 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 	_texture = _vm->_gfx->createTexture(frame);
+
+	_vm->_sound->play(699, 10);
 }
 
 Dialog::~Dialog() {

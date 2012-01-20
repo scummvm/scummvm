@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	puzzles.o \
 	scene.o \
 	script.o \
+	sound.o \
 	state.o
 
 # This module can be built as a plugin
