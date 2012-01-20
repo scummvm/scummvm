@@ -319,18 +319,21 @@ char get_ch() {
 	return g_vm->getChar();
 }
 
+/**
+ * Restore a screen sectio
+ */
+void s_sauv(int Gd, int y, int dy) {
+	// Note: May no longer be necessary, since the backgorund restore code 
+	// is being handled slightly differently now in the menu_up() method
+}
+
 void palette(int v1) {
-	warning("TODO: s_sauv");
+	warning("TODO: palette");
 }
 
 // (* external 'c:\mc\charecr.com'; *)
 void s_char(int Gd, int y, int dy) {
 		warning("TODO: s_char");
-}
-
-// (* external 'c:\mc\sauvecr.com'; *)
-void s_sauv(int Gd, int y, int dy) {
-	warning("TODO: s_sauv");
 }
 
 // (* external 'c:\mc\boite.com'; *)

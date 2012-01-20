@@ -30,6 +30,7 @@
 #include "common/textconsole.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
@@ -255,6 +256,11 @@ void menu_down(int ii) {
 	int xco, nb_lig;
 
 	/* debug('menu_down'); */
+
+	// Make a copy of the current screen surface for later restore
+	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
+
+	// Draw the menu
 	xco = don[ii][1];
 	nb_lig = don[ii][4];
 	hide_mouse();
@@ -307,6 +313,18 @@ void menu_up(int xx) {
 	/* debug('menu_up'); */
 	if (test0) {
 		charecr(10, succ(byte, don[xx][2]) << 1);
+
+		/* Restore the background area */
+		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
+
+		// Get a pointer to the source and destination of the area to restore
+		const byte *pSrc = (const byte *)g_vm->_backgroundSurface.getBasePtr(0, 10);
+		Graphics::Surface destArea = g_vm->_screenSurface.lockArea(Common::Rect(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT));
+		byte *pDest = (byte *)destArea.getBasePtr(0, 0);
+
+		// Copy the data
+		Common::copy(pSrc, pSrc + (400 - 10) * SCREEN_WIDTH, pDest);
+
 		test0 = false;
 	}
 }

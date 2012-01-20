@@ -64,6 +64,7 @@ private:
 public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
+	GfxSurface _backgroundSurface;
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
