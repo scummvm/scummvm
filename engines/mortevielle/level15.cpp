@@ -158,35 +158,20 @@ end;
 
 void adzon() {
 	Common::File f;
-//	Common::File g;
-//	byte a;
-//	int i;
 
 	if (!f.open("don.mor"))
 		error("Missing file - don.mor");
-	f.read(tabdon, 7);
+	f.read(tabdon, 7 * 256);
 	f.close();
 
 	if (!f.open("bmor.mor"))
 		error("Missing file - bmor.mor");
-	f.read(&tabdon[fleche], 1);
-	/*i:=fleche;
-	repeat
-	  read(g,a);
-	  tabdon[i]:=a;
-	  i:=succ(i);
-	until i=fleche + 1916;*/
+	f.read(&tabdon[fleche], 1 * 1916);
 	f.close();
 
 	if (!f.open("dec.mor"))
-		error("Missing files - dec.moir");
-	f.read(&mem[0x73a2 * 16 + 0], 1);
-	/*i:=0;
-	repeat
-	  read(g,a);
-	  mem[$73A2:i]:=a;
-	  i:=succ(i);
-	until eof(g);*/
+		error("Missing file - dec.mor");
+	f.read(&mem[0x73a2 * 16 + 0], 1 * 1664);
 	f.close();
 }
 
