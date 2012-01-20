@@ -363,7 +363,7 @@ void ProjectorMovie::update() {
 					uint32 blurX = srcX + ((uint32) (blurLevel * _blurTableX[k] * delta) >> 12); // >> 12 = / 256 / 16
 					uint32 blurY = srcY + ((uint32) (blurLevel * _blurTableY[k] * delta) >> 12);
 
-					if (blurX >= 0 && blurX < 1024 && blurY >= 0 && blurY < 1024) {
+					if (blurX < 1024 && blurY < 1024) {
 						uint32 *blur = (uint32 *)_background->getBasePtr(blurX, blurY);
 
 						Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*blur, blurR, blurG, blurB);
