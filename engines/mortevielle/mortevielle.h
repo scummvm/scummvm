@@ -42,6 +42,7 @@ enum {
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 400
+#define SCREEN_ORIG_HEIGHT 200
 #define MORT_DAT_REQUIRED_VERSION 1
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
