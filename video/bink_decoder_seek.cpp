@@ -22,6 +22,7 @@
 
 #include "common/bitstream.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"
@@ -94,7 +95,7 @@ void SeekableBinkDecoder::seekToFrame(uint32 frame) {
 	// Track down the keyframe
 	_curFrame = findKeyFrame(frame) - 1;
 	while (_curFrame < (int32)frame - 1)
-		decodeNextFrame();
+		skipNextFrame();
 
 	// Map out the starting point
 	Common::Rational startTime = frame * 1000 / getFrameRate();
@@ -103,7 +104,8 @@ void SeekableBinkDecoder::seekToFrame(uint32 frame) {
 
 	// Adjust the audio starting point
 	if (_audioTrack < _audioTracks.size()) {
-		_audioStartOffset = startTime.toInt();
+		Common::Rational audioStartTime = (frame + 1) * 1000 / getFrameRate();
+		_audioStartOffset = audioStartTime.toInt();
 	}
 
 	// Restart the audio
@@ -114,6 +116,50 @@ void SeekableBinkDecoder::seekToTime(Audio::Timestamp time) {
 	// Try to find the last frame that should have been decoded
 	Common::Rational frame = time.msecs() * getFrameRate() / 1000;
 	seekToFrame(frame.toInt());
+}
+
+void SeekableBinkDecoder::skipNextFrame() {
+	if (endOfVideo())
+		return;
+
+	VideoFrame &frame = _frames[_curFrame + 1];
+
+	if (!_bink->seek(frame.offset))
+		error("Bad bink seek");
+
+	uint32 frameSize = frame.size;
+
+	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+		uint32 audioPacketLength = _bink->readUint32LE();
+
+		frameSize -= 4;
+
+		if (frameSize < audioPacketLength)
+			error("Audio packet too big for the frame");
+
+		if (audioPacketLength >= 4) {
+			// Skip audio data
+			_bink->seek(audioPacketLength, SEEK_CUR);
+
+			frameSize -= audioPacketLength;
+		}
+	}
+
+	uint32 videoPacketStart = _bink->pos();
+	uint32 videoPacketEnd   = _bink->pos() + frameSize;
+
+	frame.bits =
+		new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
+		    videoPacketStart, videoPacketEnd), true);
+
+	videoPacket(frame);
+
+	delete frame.bits;
+	frame.bits = 0;
+
+	_curFrame++;
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
 }
 
 } /* namespace Video */

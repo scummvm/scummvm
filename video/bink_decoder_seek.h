@@ -43,6 +43,9 @@ protected:
 	
 	/** Find the keyframe needed to decode a frame */
 	uint32 findKeyFrame(uint32 frame) const;
+
+	/** Skip the next frame */
+	void skipNextFrame();
 };
 
 } /* namespace Video */
