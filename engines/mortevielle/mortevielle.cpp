@@ -37,7 +37,7 @@ namespace Mortevielle {
 MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc):
-		Engine(system), _gameDescription(gameDesc) {
+		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	g_vm = this;
 	_lastGameFrame = 0;
 	_mouseButtons = 0;

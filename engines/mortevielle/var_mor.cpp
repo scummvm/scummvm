@@ -307,9 +307,11 @@ void graphbackground(int c) {
 void intr(int intNum, registres &regs) {
 }
 
+/**
+ * Get a random number between two values
+ */
 int get_random_number(int minval, int maxval) {
-	// TODO: Replace with a proper random source in the engine
-	return minval;
+	return g_vm->_randomSource.getRandomNumber(maxval - minval) + minval;
 }
 
 bool keypressed() {

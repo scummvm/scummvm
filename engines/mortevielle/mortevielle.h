@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/file.h"
+#include "common/random.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "engines/advancedDetector.h"
@@ -65,6 +66,7 @@ public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
+	Common::RandomSource _randomSource;
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
