@@ -50,7 +50,7 @@ static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 	bool v;
 
 	//val(s[2], nbc, i);
-	sscanf(s.c_str() + 1, "%d", nbc);
+	nbc = atoi(s.c_str() + 1);
 	i = 0;
 
 	c = "";
