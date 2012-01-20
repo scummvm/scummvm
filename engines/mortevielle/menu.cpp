@@ -51,7 +51,7 @@ namespace Mortevielle {
 		clrscr;
 		mortevielle_exit(0);
 	}
-	while (s.size() < 30)  s = s + ' ';
+	while (s.size() < 20)  s = s + ' ';
 	switch (h) {
 	case invent  :
 		if (l != 7) {
@@ -83,22 +83,22 @@ namespace Mortevielle {
 	switch (h) {
 	case invent : {
 		if (l > 6)  {
-			inv[l].setChar('<', 1);
-			inv[l].setChar('>', 22);
+			inv[l].setChar('<', 0);
+			inv[l].setChar('>', 21);
 		} else inv[l].setChar('*', 1);
 	}
 	break;
 	case depla :
-		dep[l].setChar('*', 1);
+		dep[l].setChar('*', 0);
 		break;
 	case action :
-		act[l].setChar('*', 1);
+		act[l].setChar('*', 0);
 		break;
 	case saction :
-		self_[l].setChar('*', 1);
+		self_[l].setChar('*', 0);
 		break;
 	case discut :
-		dis[l].setChar('*', 1);
+		dis[l].setChar('*', 0);
 		break;
 	}
 }
@@ -111,23 +111,23 @@ namespace Mortevielle {
 	l = lo(no);
 	switch (h) {
 	case invent : {
-		inv[l].setChar(' ', 1);
-		inv[l].setChar(' ', 22);
+		inv[l].setChar(' ', 0);
+		inv[l].setChar(' ', 21);
 	}
 	break;
 	case depla :
-		dep[l].setChar(' ', 1);
+		dep[l].setChar(' ', 0);
 		break;
 	case action :
-		act[l].setChar(' ', 1);
+		act[l].setChar(' ', 0);
 		break;
 	case saction : {
-		self_[l].setChar(' ', 1);
-		self_[l].setChar(' ', 1);
+		self_[l].setChar(' ', 0);
+		self_[l].setChar(' ', 0);
 	}
 	break;
 	case discut :
-		dis[l].setChar(' ', 1);
+		dis[l].setChar(' ', 0);
 		break;
 	}
 }
