@@ -51,6 +51,8 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::Stack<int> _keypresses;
 	uint32 _lastGameFrame;
+	int _mouseButtons;
+	Common::Point _mousePos;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -70,6 +72,9 @@ public:
 
 	bool keyPressed();
 	int getChar();
+	Common::Point getMousePos() const { return _mousePos; }
+	void setMousePos(const Common::Point &pt);
+	int getMouseButtons() const { return _mouseButtons; }
 };
 
 extern MortevielleEngine *g_vm;

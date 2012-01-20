@@ -28,6 +28,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -271,67 +272,28 @@ void pos_mouse(int x, int y) {
 	if (y > 199)  y = 199;
 	else if (y < 0)  y = 0;
 	if ((x == x_s) && (y == y_s))  return;
-	if (int_m) {
-		{
-			reg.ax = 4;
-			reg.cx = x;
-			reg.dx = y;
-		}
-		intr(0x33, reg);
-	}
-	hide_mouse();
-	x_s = x;
-	y_s = y;
-	switch (gd) {
-	case ams : {
-		p_o_s = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3) + (y_s & 1) * 0x2000;
-	}
-	break;
-	/*cga : begin
-	        P_O_S:=(Y_S shr 1)*80+X_S shr 2+(Y_S and 1)*$2000;
-	      end;*/
-	case ega : {
-		p_o_s = y_s * 80 + ((uint)x_s >> 3);
-	}
-	break;
-	}    /*  case Gd   */
-	show_mouse();
+
+	// Set the new position
+	g_vm->setMousePos(Common::Point(x, y));
 }
 
 void read_pos_mouse(int &x, int &y, int &c) {
-	registres reg;
-
-	if (int_m) {
-		reg.ax = 3;
-		intr(0x33, reg);
-		x = reg.cx;
-		y = reg.dx;
-		c = reg.bx;
-	} else {
-		c = 0;
-		x = x_s;
-		y = y_s;
-	}
+	x = g_vm->getMousePos().x;
+	y = g_vm->getMousePos().y;
+	c = g_vm->getMouseButtons();
 }
 
 void mov_mouse(bool &funct, char &key) {
 	bool p_key;
 	char in1, in2;
 	int x, y, cx, cy, cd;
-	registres reg;
 
-	if (int_m) {
-		reg.ax = 3;
-		intr(0x33, reg);
-		x = reg.cx;
-		y = reg.dx;
-		cd = reg.bx;
-		pos_mouse(x, y);
-		if (cd != 0) {
-			clic = true;
-			return;
-		}
+	// If mouse button clicked, return it
+	if (g_vm->getMouseButtons() != 0) {
+		clic = true;
+		return;
 	}
+
 	funct = false;
 	key = '\377';
 	p_key = keypressed();

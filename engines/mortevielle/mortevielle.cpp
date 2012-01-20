@@ -40,6 +40,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 		Engine(system), _gameDescription(gameDesc) {
 	g_vm = this;
 	_lastGameFrame = 0;
+	_mouseButtons = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -164,11 +165,19 @@ bool MortevielleEngine::handleEvents() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
+		_mousePos = event.mouse;
 		x_s = event.mouse.x;
 		y_s = event.mouse.y;
+
+		if (event.type == Common::EVENT_LBUTTONDOWN)
+			_mouseButtons |= 1;
+		else if (event.type == Common::EVENT_LBUTTONUP)
+			_mouseButtons &= ~1;
+		else if (event.type == Common::EVENT_RBUTTONDOWN)
+			_mouseButtons |= 2;
+		else if (event.type == Common::EVENT_RBUTTONUP)
+			_mouseButtons &= ~2;
 		break;
 
 	case Common::EVENT_KEYDOWN:
@@ -182,20 +191,57 @@ bool MortevielleEngine::handleEvents() {
 }
 
 /**
- * Add the specified key to the event queue
+ * Add the specified key to the pending keypress stack
  */
 void MortevielleEngine::addKeypress(Common::Event &evt) {
-	// Check for control keypresses
-	if (evt.kbd.hasFlags(Common::KBD_CTRL) && (evt.kbd.keycode >= Common::KEYCODE_a) &&
-			(evt.kbd.keycode <= Common::KEYCODE_z)) {
-		_keypresses.push(evt.kbd.keycode - Common::KEYCODE_a + 1);
-		return;
+	// Character to add
+	char ch = evt.kbd.ascii;
+
+	// Handle alphabetic keys
+	if ((evt.kbd.keycode >= Common::KEYCODE_a) && (evt.kbd.keycode <= Common::KEYCODE_z)) {
+		if (evt.kbd.hasFlags(Common::KBD_CTRL)) 
+			ch = evt.kbd.keycode - Common::KEYCODE_a + 1;
+		else
+			ch = evt.kbd.keycode - Common::KEYCODE_a + 'A';
+	} else if ((evt.kbd.keycode >= Common::KEYCODE_F1) && (evt.kbd.keycode <= Common::KEYCODE_F12)) {
+		// Handle function keys
+		ch = 59 + evt.kbd.keycode - Common::KEYCODE_F1;
+	} else {
+		// Series of special cases
+		switch (evt.kbd.keycode) {
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_LEFT:
+			ch = '4';
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_DOWN:
+			ch = '2';
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_RIGHT:
+			ch = '6';
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_UP:
+			ch = '8';
+		case Common::KEYCODE_KP7:
+			ch = '7';
+		case Common::KEYCODE_KP1:
+			ch = '1';
+		case Common::KEYCODE_KP9:
+			ch = '9';
+		case Common::KEYCODE_KP3:
+			ch = '3';
+		case Common::KEYCODE_KP5:
+			ch = '5';
+		case Common::KEYCODE_RETURN:
+			ch = '\13';
+		case Common::KEYCODE_ESCAPE:
+			ch = '\33';
+		default:
+			break;
+		}
 	}
 
-	// Handle function keys
-	if ((evt.kbd.keycode >= Common::KEYCODE_F1) && (evt.kbd.keycode <= Common::KEYCODE_F12)) {
-		_keypresses.push(59 + evt.kbd.keycode - Common::KEYCODE_F1);
-	}
+	if (ch != 0)
+		_keypresses.push(ch);
 }
 
 static byte CURSOR_ARROW_DATA[16 * 16] = {
@@ -223,6 +269,10 @@ static byte CURSOR_ARROW_DATA[16 * 16] = {
 void MortevielleEngine::initMouse() {
 	CursorMan.replaceCursor(CURSOR_ARROW_DATA, 16, 16, 0, 0, 0xff);
 	CursorMan.showMouse(true);
+}
+
+void MortevielleEngine::setMousePos(const Common::Point &pt) {
+	_mousePos = pt;
 }
 
 /*-------------------------------------------------------------------------*/
