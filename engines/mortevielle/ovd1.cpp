@@ -354,9 +354,7 @@ void ani50() {
 	if (!f.open("bruit5"))
 		error("Missing file - bruit5");
 
-	f.read(&mem[adbruit5 * 16 + 0], 149);
-	/*blockread(f,mem[$5CB0:0],100);
-	blockread(f,mem[$3D1F:0],49);*/
+	f.read(&mem[adbruit5 * 16 + 0], 149 * 128);
 	f.close();
 }
 
