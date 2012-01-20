@@ -112,6 +112,11 @@ public:
 	 * Returns an age's label id, to be used with AGES 1000 metadata
 	 */
 	uint32 getAgeLabelId(uint32 ageID);
+
+	/**
+	 * Retrieve the file name of a sound from its id
+	 */
+	Common::String getSoundName(uint32 id);
 private:
 	struct GameVersion {
 		char *description;
@@ -120,6 +125,7 @@ private:
 		uint32 baseOffset;
 		uint32 ageTableOffset;
 		uint32 nodeInitScriptOffset;
+		uint32 soundNamesOffset;
 	};
 
 	Common::String _exePath;
@@ -132,6 +138,8 @@ private:
 	Common::HashMap< uint16, Common::Array<NodePtr> > _roomNodesCache;
 
 	Common::Array<Opcode> _nodeInitScript;
+
+	Common::HashMap< uint32, Common::String> _soundNames;
 
 	RoomData *findRoomData(const uint32 &roomID);
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
@@ -146,6 +154,8 @@ private:
 	Common::Array<PolarRect> loadRects(Common::ReadStreamEndian & s);
 	CondScript loadCondScript(Common::ReadStreamEndian & s);
 	HotSpot loadHotspot(Common::ReadStreamEndian & s);
+
+	void loadSoundNames(Common::ReadStreamEndian *s);
 
 	Common::SeekableSubReadStreamEndian *openDatabaseFile() const;
 	Common::SeekableReadStream *decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const;

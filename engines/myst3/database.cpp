@@ -45,20 +45,20 @@ Database::Database() :
 	// Game versions database
 	// FIXME: At least clone2727's and PS2 versions are multi-language
 	static GameVersion versions[] = {
-			{ "1.2 English", Common::kPlatformWindows, "87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108, 0x86040 },
-			{ "1.22 English", Common::kPlatformWindows, "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108, 0x86040 },
-			{ "1.22 French", Common::kPlatformWindows, "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108, 0x86040 },
-			{ "1.22 German", Common::kPlatformWindows, "976416b2ab1c058802bf3dccc4e2f11a", 0x400000, 0x86108, 0x86040 },
-			{ "1.24 Japanese", Common::kPlatformWindows, "0f7440439709e94d20e3ce4656a965ee", 0x400000, 0x86108, 0x86040 },
-			{ "1.27 French", Common::kPlatformWindows, "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 English", Common::kPlatformWindows, "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 Dutch", Common::kPlatformWindows, "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 German", Common::kPlatformWindows, "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 Italian", Common::kPlatformWindows, "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 Spanish", Common::kPlatformWindows, "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110, 0x86040 },
-			{ "1.27 English", Common::kPlatformMacintosh, "675e469044ef406c92be36be5ebe92a3", 0, 0x11934, 0x11864 },
-			{ "1.27 English", Common::kPlatformMacintosh, "5951edd640c0455555280515974c4008", 0, 0x11378, 0x112A8 },
-			{ "English", Common::kPlatformPS2, "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00, 0x14EB10, 0x14EA10 },
+			{ "1.2 English", 	Common::kPlatformWindows,	"87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 English", 	Common::kPlatformWindows,	"8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 French", 	Common::kPlatformWindows,	"554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 German", 	Common::kPlatformWindows,	"976416b2ab1c058802bf3dccc4e2f11a", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.24 Japanese",	Common::kPlatformWindows,	"0f7440439709e94d20e3ce4656a965ee", 0x400000, 0x86108,  0x86040,  0x861E8 },
+			{ "1.27 French", 	Common::kPlatformWindows,	"00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 English", 	Common::kPlatformWindows,	"a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Dutch", 	Common::kPlatformWindows,	"e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 German", 	Common::kPlatformWindows,	"e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Italian", 	Common::kPlatformWindows,	"6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Spanish", 	Common::kPlatformWindows, 	"67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 English", 	Common::kPlatformMacintosh,	"675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0 },
+			{ "1.27 English", 	Common::kPlatformMacintosh,	"5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0 },
+			{ "English", 		Common::kPlatformPS2,		"c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0 },
 	};
 
 	// First, see what executable files we have
@@ -129,6 +129,9 @@ Database::Database() :
 
 	file->seek(_gameVersion->nodeInitScriptOffset);
 	_nodeInitScript = loadOpcodes(*file);
+
+	file->seek(_gameVersion->soundNamesOffset);
+	loadSoundNames(file);
 
 	delete file;
 
@@ -637,6 +640,28 @@ Common::SeekableReadStream *Database::decompressPEFDataSegment(Common::SeekableR
 		error("Failed to unpack PEF pattern-initialized section");
 
 	return new Common::MemoryReadStream(data, unpackedSize, DisposeAfterUse::YES);
+}
+
+void Database::loadSoundNames(Common::ReadStreamEndian *s) {
+	_soundNames.clear(false);
+
+	while (1) {
+		uint32 id = s->readUint32();
+		if (!id)
+			break;
+
+		char name[32];
+		s->read(name, sizeof(name));
+		_soundNames[id] = Common::String(name);
+	}
+}
+
+Common::String Database::getSoundName(uint32 id) {
+	const Common::String &result = _soundNames.getVal(id, "");
+	if (result.empty())
+		error("Unable to find a sound with id %d", id);
+
+	return result;
 }
 
 } /* namespace Myst3 */
