@@ -286,20 +286,22 @@ void mov_mouse(bool &funct, char &key) {
 	char in1, in2;
 	int cx, cy, cd;
 
+	// Set defaults and check pending events
+	funct = false;
+	key = '\377';
+	p_key = keypressed();
+
 	// If mouse button clicked, return it
 	if (g_vm->getMouseButtons() != 0) {
 		clic = true;
 		return;
 	}
 
-	funct = false;
-	key = '\377';
-	p_key = keypressed();
-
+	// Handle any pending keypresses
 	while (p_key) {
 		CHECK_QUIT;
 
-		in1 = get_ch();	// input >> kbd >> in1;
+		in1 = get_ch();
 		read_pos_mouse(cx, cy, cd);
 		switch (toupper(in1)) {
 		case '4' :
@@ -349,7 +351,7 @@ void mov_mouse(bool &funct, char &key) {
 			p_key = keypressed();
 
 			if (p_key) {
-				in2 = get_ch();	// input >> kbd >> in2;
+				in2 = get_ch();
 
 				if ((in2 >= ';') && (in2 <= 'D')) {
 					funct = true;
