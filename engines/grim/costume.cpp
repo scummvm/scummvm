@@ -116,7 +116,6 @@ Costume::Costume(const Common::String &fname, Common::SeekableReadStream *data, 
 		TextSplitter ts(data);
 		loadGRIM(ts, prevCost);
 	}
-	delete data;
 }
 
 void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {

@@ -34,7 +34,6 @@ CMap::CMap(const Common::String &fileName, Common::SeekableReadStream *data) :
 
 	data->seek(64, SEEK_SET);
 	data->read(_colors, sizeof(_colors));
-	delete data;
 }
 
 CMap::~CMap() {

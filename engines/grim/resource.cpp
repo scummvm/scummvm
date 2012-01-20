@@ -270,6 +270,7 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fna
 			byte *buf = new byte[size];
 			s->read(buf, size);
 			putIntoCache(fname, buf, size);
+			delete s;
 			s = new Common::MemoryReadStream(buf, size);
 		}
 	} else {
@@ -301,6 +302,7 @@ Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	}
 
 	Bitmap *result = new Bitmap(filename, stream);
+	delete stream;
 
 	return result;
 }
@@ -313,6 +315,7 @@ CMap *ResourceLoader::loadColormap(const Common::String &filename) {
 
 	CMap *result = new CMap(filename, stream);
 	_colormaps.push_back(result);
+	delete stream;
 
 	return result;
 }
@@ -343,6 +346,7 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 	}
 
 	Costume *result = new Costume(filename, stream, prevCost);
+	delete stream;
 
 	return result;
 }
@@ -355,6 +359,7 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 		error("Could not find font file %s", filename.c_str());
 
 	Font *result = new Font(filename, stream);
+	delete stream;
 
 	return result;
 }
@@ -368,6 +373,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
 
 	KeyframeAnim *result = new KeyframeAnim(filename, stream);
 	_keyframeAnims.push_back(result);
+	delete stream;
 
 	return result;
 }
@@ -389,6 +395,7 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 		delete result;
 		result = NULL;
 	}
+	delete stream;
 
 	return result;
 }
@@ -403,6 +410,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 		error("Could not find material %s", filename.c_str());
 
 	Material *result = new Material(fname, stream, c);
+	delete stream;
 
 	return result;
 }
@@ -417,6 +425,7 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model 
 
 	Model *result = new Model(filename, stream, c, parent);
 	_models.push_back(result);
+	delete stream;
 
 	return result;
 }
@@ -433,6 +442,7 @@ EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel 
 
 	EMIModel *result = new EMIModel(filename, stream, parent);
 	_emiModels.push_back(result);
+	delete stream;
 
 	return result;
 }
@@ -448,6 +458,7 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	}
 
 	Skeleton *result = new Skeleton(filename, stream);
+	delete stream;
 
 	return result;
 }

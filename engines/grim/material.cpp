@@ -81,7 +81,6 @@ void MaterialData::initGrim(const Common::String &filename, Common::SeekableRead
 		data->seek(12, SEEK_CUR);
 		data->read(t->_data, t->_width * t->_height);
 	}
-	delete data;
 }
 
 void loadTGA(Common::SeekableReadStream *data, Texture *t) {

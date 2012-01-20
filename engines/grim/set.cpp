@@ -51,7 +51,6 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 	} else {
 		loadBinary(data);
 	}
-	delete data;
 }
 
 Set::Set() :

@@ -963,6 +963,7 @@ Set *GrimEngine::loadSet(const Common::String &name) {
 			warning("Could not find scene file %s", name.c_str());
 
 		s = new Set(name, stream);
+		delete stream;
 	}
 
 	return s;

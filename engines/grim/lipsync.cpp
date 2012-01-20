@@ -77,7 +77,6 @@ LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *dat
 		}
 	}
 
-	delete data;
 }
 
 LipSync::~LipSync() {
