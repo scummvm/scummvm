@@ -142,6 +142,7 @@ void mortevielle_main() {
 	show_mouse();
 	do {
 		tjouer();
+		CHECK_QUIT;
 	} while (!arret);
 }
 
