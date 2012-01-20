@@ -116,11 +116,16 @@ void ani50() {
 	i = 1;
 	do {
 		deline(i + c_action, st, tai);
-		act[i] = delig + "          ";
+		act[i] = delig;
+		while (act[i].size() < 10)
+			act[i] += ' ';
+
 		if (i < 9) {
 			if (i < 6) {
 				deline(i + c_saction, st, tai);
-				self_[i] = delig + "       ";
+				self_[i] = delig;
+				while (self_[i].size() < 10)
+					self_[i] += ' ';
 			}
 			deline(i + c_dis, st, tai);
 			dis[i] = delig + ' ';
