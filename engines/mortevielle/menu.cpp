@@ -295,12 +295,22 @@ void menu_down(int ii) {
 		case 6 :
 			writeg(fic[cx], 4);
 			break;
-		case 7 :
-			writeg(fic[1] + ' ' + chr(48 + cx), 4);
+		case 7 : {
+			Common::String s = fic[1];
+			s += ' ';
+			s += (char)(48 + cx);
+			writeg(s, 4);
 			break;
+		}
 		case 8 :
-			if (cx == 1)  writeg(recom, 4);
-			else writeg(fic[2] + ' ' + chr(47 + cx), 4);
+			if (cx == 1)
+				writeg(recom, 4);
+			else {
+				Common::String s = fic[2];
+				s += ' ';
+				s += (char)(47 + cx);
+				writeg(s, 4);
+			}
 			break;
 		}
 		putxy(xco, ywhere + 8);
