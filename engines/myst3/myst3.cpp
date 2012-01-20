@@ -704,7 +704,7 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 
 	uint32 magic = data->readUint32LE();
 	if (magic != 0x2E544558)
-		error("Wrong texture format", id);
+		error("Wrong texture format %d", id);
 
 	data->readUint32LE(); // unk 1
 	uint32 width = data->readUint32LE();
