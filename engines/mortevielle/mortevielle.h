@@ -57,6 +57,7 @@ private:
 	void loadFont(Common::File &f);
 	bool handleEvents();
 	void addKeypress(Common::Event &evt);
+	void initMouse();
 public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
