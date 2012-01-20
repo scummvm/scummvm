@@ -62,6 +62,9 @@ void dem1() {
 	*/
 }
 
+/**
+ * Handle saving or loading savegame data
+ */
 static void sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(s1.conf);
 	sz.syncBytes((byte *)&s1.pourc[0], 11);
@@ -78,6 +81,8 @@ static void sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(s1.icryp);
 	sz.syncAsSint16LE(s1.ipre);
 	sz.syncAsSint16LE(s1.heure);
+
+	sz.syncBytes(bufcha, 390);
 }
 
 void takesav(int n) {
