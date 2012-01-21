@@ -195,6 +195,8 @@ int do_alert(Common::String str_, int n) {
 	do {
 		dumi = '\377';
 		mov_mouse(dum, dumi);
+		CHECK_QUIT0;
+
 		cx = x_s;
 		cy = y_s;
 		test = (cy > 95) && (cy < 105);

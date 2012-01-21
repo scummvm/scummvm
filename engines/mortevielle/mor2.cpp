@@ -628,6 +628,8 @@ void tfleche() {
 
 		do {
 			mov_mouse(qust, touch);
+			CHECK_QUIT;
+
 			if (g_vm->getMouseClick())
 				rect = (x_s < 256 * res) && (y_s < 176) && (y_s > 12);
 			tinke();
