@@ -109,6 +109,8 @@ namespace Mortevielle {
 			g_vm->setMouseClick(false);
 			tesok = false;
 			mov_mouse(func, key);
+			CHECK_QUIT0;
+
 			k = 1;
 			while (coor[k].etat && ! dans_rect(coor[k]))  k = k + 1;
 			if (coor[k].etat) {

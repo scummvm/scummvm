@@ -1053,6 +1053,8 @@ L2:
 		tou = '\0';
 		do {
 			mov_mouse(f, tou);
+			CHECK_QUIT;
+
 			/*     if keypressed then read(kbd,tou);*/
 			read_pos_mouse(x, y, c);
 			x = x * (3 - res);
