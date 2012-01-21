@@ -231,7 +231,7 @@ void invers(int ix) {
 		}
 		break;
 	}
-	if ((s[1] != '*') && (s[1] != '<'))
+	if ((s[0] != '*') && (s[0] != '<'))
 		writeg(s, ix);
 	else
 		msg4 = no_choice;
@@ -287,19 +287,19 @@ void menu_down(int ii) {
 		cx = succ(int, cx);
 		switch (ii) {
 		case 1 :
-			if (inv[cx][1] != '*')  writeg(inv[cx], 4);
+			if (inv[cx][0] != '*')  writeg(inv[cx], 4);
 			break;
 		case 2 :
-			if (dep[cx][1] != '*')  writeg(dep[cx], 4);
+			if (dep[cx][0] != '*')  writeg(dep[cx], 4);
 			break;
 		case 3 :
-			if (act[cx][1] != '*')  writeg(act[cx], 4);
+			if (act[cx][0] != '*')  writeg(act[cx], 4);
 			break;
 		case 4 :
-			if (self_[cx][1] != '*')  writeg(self_[cx], 4);
+			if (self_[cx][0] != '*')  writeg(self_[cx], 4);
 			break;
 		case 5 :
-			if (dis[cx][1] != '*')  writeg(dis[cx], 4);
+			if (dis[cx][0] != '*')  writeg(dis[cx], 4);
 			break;
 		case 6 :
 			writeg(fic[cx], 4);
