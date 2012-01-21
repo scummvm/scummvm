@@ -57,9 +57,9 @@ Database::Database() :
 			{ "1.27 German", 	Common::kPlatformWindows,	"e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110,  0x86040,  0x861F0 },
 			{ "1.27 Italian", 	Common::kPlatformWindows,	"6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110,  0x86040,  0x861F0 },
 			{ "1.27 Spanish", 	Common::kPlatformWindows, 	"67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 English", 	Common::kPlatformMacintosh,	"675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0 },
-			{ "1.27 English", 	Common::kPlatformMacintosh,	"5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0 },
-			{ "English", 		Common::kPlatformPS2,		"c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0 },
+			{ "1.27 English", 	Common::kPlatformMacintosh,	"675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0x11A10 },
+			{ "1.27 English", 	Common::kPlatformMacintosh,	"5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0x11454 },
+			{ "English", 		Common::kPlatformPS2,		"c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 },
 	};
 
 	// First, see what executable files we have
@@ -648,6 +648,11 @@ void Database::loadSoundNames(Common::ReadStreamEndian *s) {
 
 	while (1) {
 		uint32 id = s->readUint32();
+
+		// 64-bit value in the PS2 binary
+		if (_gameVersion->platform == Common::kPlatformPS2)
+			s->readUint32();
+
 		if (!id)
 			break;
 
