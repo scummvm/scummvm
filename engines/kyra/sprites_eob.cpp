@@ -75,7 +75,7 @@ const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
 		d->dmgDc[1].base = (int8)*data++;
 		d->dmgDc[2].times = *data++;
 		d->dmgDc[2].pips = *data++;
-		d->dmgDc[3].base = (int8)*data++;
+		d->dmgDc[2].base = (int8)*data++;
 		d->immunityFlags = READ_LE_UINT16(data);
 		data += 2;
 		d->capsFlags = READ_LE_UINT16(data);
