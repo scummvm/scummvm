@@ -62,6 +62,20 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_stop(0xD2FA4D14, 0, 0);
 		_childObject = new Scene2801(_vm, this, which);
 		break;
+	case 1:
+		// TODO Music18hList_stop(0xD2FA4D14, 0, 0);
+#if 0		
+		_flag = true; // DEBUG!
+		if (_flag) {
+			_childObject = new Scene2802(_vm, this, which);
+		} else {
+			_childObject = new Class152(_vm, this, 0x000C6444, 0xC6440008);
+		}
+#endif		
+		break;
+	//		
+	case 1001:
+		break;
 	// TODO ...		
 	}
 	SetUpdateHandler(&Module2800::updateScene);
@@ -83,11 +97,24 @@ void Module2800::updateScene() {
 				leaveModule(0);
 			}
 			break;
+		case 1:
+			if (_moduleResult == 0) {
+				createScene(0, 2);
+			} else {
+				createScene(1001, -1);
+			}
+			break;
+		//		
+		case 1001:
+			break;
 		}
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			// TODO Module2800_sub4731E0(true);
+			break;
+		case 1:
+			// TODO Module2800_sub4731E0(false);
 			break;
 		}
 	}
