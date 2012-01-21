@@ -61,14 +61,14 @@ namespace Mortevielle {
 /*-------------------------     DEFINES    ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-#define pred(type, v) (v - 1)
-#define succ(type, v) (v + 1)
+#define pred(type, v) ((v) - 1)
+#define succ(type, v) ((v) + 1)
 #define ord(v) ((int) v)
 #define chr(v) ((char) v)
-#define lo(v) (v & 0xff)
-#define hi(v) ((v >> 8) & 0xff)
+#define lo(v) ((v) & 0xff)
+#define hi(v) (((v) >> 8) & 0xff)
 #define swap(v) (((lo(v)) << 8) | ((hi(v)) >> 8)) 
-#define odd(v) ((v % 2) == 1)
+#define odd(v) (((v) % 2) == 1)
 
 /*---------------------------------------------------------------------------*/
 /*-------------------------    CONSTANTS   ----------------------------------*/
