@@ -27,6 +27,7 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/boite.h"
@@ -55,24 +56,19 @@ void testfi() {
 	}
 }
 
-
+/**
+ * Read the current system time
+ */
 int readclock() {
-	registres r;
-	int s, m, h;
+	int m, h;
 
 	/* debug('readclock');*/
-	int readclock_result;
-	r.ax = 0x2c00;
-	intr(0x21, r);
-	{
-		h = (uint)r.cx >> 8;
-		m = r.cx % 256;
-		s = (uint)r.dx >> 8;
-	}
-	m = m * 60;
-	h = h * 3600;
-	readclock_result = h + m + s;
-	return readclock_result;
+	TimeDate dateTime;
+	g_system->getTimeAndDate(dateTime);
+
+	m = dateTime.tm_min * 60;
+	h = dateTime.tm_hour * 3600;
+	return h + m + dateTime.tm_sec;
 }
 
 void modif(int &nu) {
