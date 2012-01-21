@@ -1219,7 +1219,7 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 }
 
 void ScummEngine_v0::runSentenceScript() {
-	drawSentenceLine();
+	_redrawSentenceLine = true;
 
 	if (getVerbEntrypoint(_cmdObject, _cmdVerb) != 0) {
 		// do not read in the dark

@@ -453,6 +453,8 @@ void ScummEngine_v0::drawSentenceObject(int object) {
 
 
 void ScummEngine_v0::drawSentenceLine() {
+	_redrawSentenceLine = false;
+
 	if (!(_userState & 32))
 		return;
 
@@ -601,7 +603,7 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 
 	_fullRedraw = true;
 
-	resetSentence(false);
+	resetSentence();
 
 	if (x >= 0 && y >= 0) {
 		a->startWalkActor(x, y, -1);
@@ -625,6 +627,7 @@ void ScummEngine_v0::o_cursorCommand() {
 	_currentMode = fetchScriptByte();
 	switch (_currentMode) {
 	case kModeCutscene:
+		_redrawSentenceLine = false;
 		state = 15;
 		break;
 	case kModeKeypad:
@@ -909,7 +912,7 @@ void ScummEngine_v0::o_cutscene() {
 	setUserState(15);
 
 	_sentenceNum = 0;
-	resetSentence(false);
+	resetSentence();
 
 	vm.cutScenePtr[0] = 0;
 }
@@ -930,6 +933,8 @@ void ScummEngine_v0::o_endCutscene() {
 	} else if (vm.cutSceneData[2] != _currentRoom) {
 		startScene(vm.cutSceneData[2], 0, 0);
 	}
+
+	_redrawSentenceLine = true;
 }
 
 void ScummEngine_v0::o_beginOverride() {
@@ -961,11 +966,12 @@ void ScummEngine_v0::o_setOwnerOf() {
 	setOwnerOf(obj, owner);
 }
 
-void ScummEngine_v0::resetSentence(bool walking) {
+void ScummEngine_v0::resetSentence() {
 	_activeVerb = kVerbWalkTo;
 	_activeObject = 0;
 	_activeObject2 = 0;
 	_walkToObjectIdx = 0;
+	_redrawSentenceLine = true;
 }
 
 } // End of namespace Scumm

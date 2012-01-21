@@ -132,7 +132,7 @@ void ScummEngine_v0::resetVerbs() {
 }
 
 void ScummEngine_v0::switchActor(int slot) {
-	resetSentence(false);
+	resetSentence();
 
 	if (_currentRoom == 45)
 		return;
@@ -741,7 +741,6 @@ void ScummEngine_v0::checkExecVerbs() {
 	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 
-	int sentenceLineChanged = false;
 	bool execute = false;
 
 	//if (_userPut <= 0)
@@ -757,7 +756,7 @@ void ScummEngine_v0::checkExecVerbs() {
 					_activeObject = 0;
 				_activeObject2 = 0;
 				_activeVerb = over;
-				sentenceLineChanged = true;
+				_redrawSentenceLine = true;
 			} else {
 				// execute sentence if complete
 				if (checkSentenceComplete())
@@ -793,7 +792,7 @@ void ScummEngine_v0::checkExecVerbs() {
 						else
 							kid = 2;
 						_activeVerb = kVerbWalkTo;
-						drawSentenceLine();
+						_redrawSentenceLine = true;
 						switchActor(kid);
 					}
 					_activeVerb = kVerbWalkTo;
@@ -855,7 +854,7 @@ void ScummEngine_v0::checkExecVerbs() {
 					}
 				}
 
-				sentenceLineChanged = true;
+				_redrawSentenceLine = true;
 				if (_activeVerb == kVerbWalkTo && zone->number == kMainVirtScreen) {
 					_walkToObjectIdx = 0;
 					execute = true;
@@ -864,10 +863,8 @@ void ScummEngine_v0::checkExecVerbs() {
 		}
 	}
 
-	if (sentenceLineChanged) {
+	if (_redrawSentenceLine)
 		drawSentenceLine();
-		sentenceLineChanged = false;
-	}
 
 	if (!execute || !_activeVerb)
 		return;

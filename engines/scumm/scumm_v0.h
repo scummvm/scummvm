@@ -52,6 +52,7 @@ protected:
 
 	int _walkToObject;
 	int _walkToObjectIdx;
+	bool _redrawSentenceLine;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -98,7 +99,7 @@ protected:
 
 	virtual int getActiveObject();
 
-	virtual void resetSentence(bool walking);
+	virtual void resetSentence();
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
