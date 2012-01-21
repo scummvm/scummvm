@@ -82,7 +82,7 @@ static void sync_save(Common::Serializer &sz) {
 	sz.syncAsByte(s1.ipre);
 	sz.syncAsByte(s1.heure);
 
-	sz.syncBytes(bufcha, 390);
+	sz.syncBytes(bufcha, 391);
 }
 
 void takesav(int n) {

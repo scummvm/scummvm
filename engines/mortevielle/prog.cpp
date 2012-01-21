@@ -255,8 +255,10 @@ void tecran() {
 			change_gd((uint)pred(int, ord(inkey)) >> 1);
 			return;
 		}
-		if (choisi && (msg[3] == sauve))  sv_game(msg[4] & 7);
-		if (choisi && (msg[3] == charge))  ld_game(pred(int, msg[4] & 7));
+		if (choisi && (msg[3] == sauve))
+			sv_game(msg[4] & 7);
+		if (choisi && (msg[3] == charge))
+			ld_game((msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
 			temps = do_alert(stpou, 1);
 			return;
