@@ -23,6 +23,7 @@
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/ringworld2/ringworld2_dialogs.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/ringworld2/ringworld2_speakers.h"
 
@@ -1287,6 +1288,177 @@ void Scene150::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 160 - Credits
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene160::Action1::signal() {
+	Scene160 *scene = (Scene160 *)R2_GLOBALS._sceneManager._scene;
+	bool breakFlag;
+	SynchronizedList<SceneText *>::iterator i;
+	SceneText *topItem;
+
+	switch (_actionIndex) {
+	case 0:
+		scene->_yChange = 1;
+		scene->_lineNum = 0;
+		++_actionIndex;
+		// Deliberate fall-through
+
+	case 1:
+		setDelay(5);
+		breakFlag = true;
+		do {
+			if (!scene->_lineNum || ((scene->_lineNum != -1) &&
+					(((*scene->_creditsList.reverse_begin())->_position.y < 164) || !breakFlag))) {
+				breakFlag = true;
+				Common::String msg = g_resourceManager->getMessage(160, scene->_lineNum++);
+
+				if (*msg.c_str() == '^') {
+					scene->_lineNum = -1;
+				} else {
+					if (msg.size() == 0)
+						msg = " ";
+
+					SceneText *sceneText = new SceneText();
+					sceneText->_fontNumber = 50;
+
+					switch (*msg.c_str()) {
+					case '$': {
+						// Centered text
+						msg.deleteChar(0);
+						int width = R2_GLOBALS.gfxManager()._font.getStringWidth(msg.c_str());
+
+						sceneText->_textMode = ALIGN_CENTER;
+						sceneText->setPosition(Common::Point(160 - (width / 2), 175));
+						sceneText->_width = 320;
+						break;
+					}
+
+					case '%': {
+						// Text for position name
+						msg.deleteChar(0);
+						int width = R2_GLOBALS.gfxManager()._font.getStringWidth(msg.c_str());
+
+						sceneText->_textMode = ALIGN_RIGHT;
+						sceneText->setPosition(Common::Point(151 - width, 175));
+						sceneText->_width = 320;
+						breakFlag = false;
+						break;
+					}
+
+					case '@':
+						// Text for who was in the position
+						msg.deleteChar(0);
+						sceneText->_textMode = ALIGN_LEFT;
+						sceneText->_position = Common::Point(167, 175);
+						sceneText->_width = 153;
+						break;
+
+					default:
+						sceneText->_width = 151;
+						sceneText->setPosition(Common::Point(151, 175));
+						sceneText->_textMode = ALIGN_RIGHT;
+						break;
+					}
+
+					sceneText->_color1 = 191;
+					sceneText->_color2 = 191;
+					sceneText->_color3 = 191;
+					sceneText->setup(msg);
+					sceneText->_flags |= OBJFLAG_CLONED;
+					sceneText->fixPriority(5);
+
+					scene->_creditsList.push_back(sceneText);
+				}
+			}
+
+		} while (!breakFlag);
+
+		// Move all the active credits
+		for (i = scene->_creditsList.begin(); i != scene->_creditsList.end(); ++i) {
+			SceneObject *item = *i;
+			item->setPosition(Common::Point(item->_position.x, item->_position.y - scene->_yChange));
+		}
+
+		topItem = *scene->_creditsList.begin();
+		if (topItem->_position.y < 25) {
+			// Credit has reached the top, so remove it
+			topItem->remove();
+			scene->_creditsList.remove(topItem);
+
+			if (scene->_creditsList.size() == 0) {
+				// No more items left
+				setDelay(10);
+				++_actionIndex;
+			}
+		}
+		break;
+
+	case 2:
+		HelpDialog::show();
+		setDelay(4);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene160::Scene160(): SceneExt() {
+	_frameNumber = _yChange = 0;
+	_lineNum = 0;
+}
+
+void Scene160::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(4001);
+
+	R2_GLOBALS._player._uiEnabled = false;
+	R2_GLOBALS._player.enableControl();
+	R2_GLOBALS._player._canWalk = false;
+	
+	R2_GLOBALS._uiElements.hide();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
+
+	_lineNum = 0;
+	_frameNumber = R2_GLOBALS._events.getFrameNumber();
+
+	_sound1.play(337);
+	setAction(&_action1);
+}
+
+void Scene160::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_frameNumber);
+	s.syncAsSint16LE(_yChange);
+	s.syncAsSint16LE(_lineNum);
+}
+
+void Scene160::remove() {
+	// Clear the credit list
+	SynchronizedList<SceneText *>::iterator i;
+	for (i = _creditsList.begin(); i != _creditsList.end(); ++i) {
+		SceneText *item = *i;
+
+		item->remove();
+	}
+	_creditsList.clear();
+
+	_sound1.fadeOut(NULL);
+	SceneExt::remove();
+}
+
+void Scene160::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = true;
+		HelpDialog::show();
+	}
+
+	if (!event.handled)
+		SceneExt::process(event);
 }
 
 /*--------------------------------------------------------------------------

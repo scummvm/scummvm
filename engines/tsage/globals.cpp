@@ -407,6 +407,7 @@ void Ringworld2Globals::reset() {
 		_v566AB[i] = 0;
 	_v56A93 = -1;
 	_v56A99 = 5;
+	_v56A9C = 0;
 	_v56A9E = 0;
 	_v56AA0 = 0;
 	_v56AA1 = 0;
@@ -459,6 +460,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v565FA);
 	s.syncAsSint16LE(_v566A6);
 	s.syncAsSint16LE(_v56A93);
+	s.syncAsSint16LE(_v56A9C);
 	s.syncAsSint16LE(_v56A9E);
 	s.syncAsSint16LE(_v56AA2);
 	s.syncAsSint16LE(_v56AA4);

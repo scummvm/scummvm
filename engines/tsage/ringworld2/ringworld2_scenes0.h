@@ -166,6 +166,26 @@ public:
 	virtual void signal();
 };
 
+class Scene160: public SceneExt {
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+public:
+	ASound _sound1;
+	Action1 _action1;
+	int _frameNumber, _yChange;
+	SceneObject _object1, _object2, _object3;
+	int _lineNum;
+	SynchronizedList<SceneText *> _creditsList;
+public:
+	Scene160();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
+};
+
 class Scene175: public Scene150 {
 };
 

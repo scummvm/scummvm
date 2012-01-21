@@ -1947,6 +1947,36 @@ void SpeakerSeeker1100::proc15() {
 	}
 }
 
+void SpeakerSeeker1900::proc15() {
+	int v = _fieldF6;
+
+	if (!_object2) {
+		if (R2_GLOBALS._player._characterIndex == 2) {
+			_object2 = &R2_GLOBALS._player;
+		} else {
+			Scene1900 *scene = (Scene1900 *)R2_GLOBALS._sceneManager._scene;
+			_object2 = &scene->_actor1;
+		}
+
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+		_object1._numFrames = 7;
+
+		if (_object2->_mover) 
+			_object2->addMover(NULL);
+	}
+
+	if (v == 0) {
+		_object1.animate(ANIM_MODE_2, NULL);
+	} else if (v == 1) {
+		_object1.setup(4032, 1, 1);
+		_object1.animate(ANIM_MODE_5, this);
+	} else {
+		signal();
+	}
+}
+
 void SpeakerSeeker2435::proc15() {
 	int v = _fieldF6;
 

@@ -1932,7 +1932,7 @@ case $_host_os in
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
 		# Checking them here
-		
+
 		# MacPorts
 		# There is no way to get the prefix, so implementing a hack here
 		macport_version=`port version 2>/dev/null`
