@@ -129,6 +129,7 @@ void GfxSurface::decode(const byte *pSrc) {
 		int srcSize = READ_BE_UINT16(pSrc + 2);
 		_xp = READ_BE_UINT16(pSrc + 4) - _offset.x;
 		_yp = READ_BE_UINT16(pSrc + 6) - _offset.y;
+		assert((_xp >= 0) && (_yp >= 0) && (_xp < SCREEN_WIDTH) && (_yp < SCREEN_ORIG_HEIGHT));
 		pSrc += 8;
 
 		int decomCode = READ_BE_UINT16(pSrc);
@@ -242,7 +243,7 @@ void GfxSurface::decode(const byte *pSrc) {
 				}
 			}
 
-			pSrc = pSrcStart + lookupBytes + ((lookupBytes & 1) ? 1 : 0);
+			pSrcStart += lookupBytes + ((lookupBytes & 1) ? 1 : 0);
 			break;
 
 		case 1:
@@ -399,6 +400,9 @@ void GfxSurface::decode(const byte *pSrc) {
 			_xEnd = _xSize;
 			diag(pSrc, pDest, pLookup);
 			break;
+
+		default:
+			error("Unknown decompression block type %d", decomIndex);
 		}
 
 		pSrc = pSrcStart;
