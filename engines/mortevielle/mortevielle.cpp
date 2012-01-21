@@ -40,7 +40,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	g_vm = this;
 	_lastGameFrame = 0;
-	_mouseButtons = 0;
+	_mouseClick = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -168,21 +168,15 @@ bool MortevielleEngine::handleEvents() {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = Common::Point(event.mouse.x, event.mouse.y / 2);
 		x_s = event.mouse.x;
 		y_s = event.mouse.y / 2;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN)
-			_mouseButtons |= 1;
+			_mouseClick = true;
 		else if (event.type == Common::EVENT_LBUTTONUP)
-			_mouseButtons &= ~1;
-		else if (event.type == Common::EVENT_RBUTTONDOWN)
-			_mouseButtons |= 2;
-		else if (event.type == Common::EVENT_RBUTTONUP)
-			_mouseButtons &= ~2;
+			_mouseClick = false;
 		break;
 
 	case Common::EVENT_KEYDOWN:

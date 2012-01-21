@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "mortevielle/alert.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/sprint.h"
 
@@ -150,7 +151,7 @@ int do_alert(Common::String str_, int n) {
 	while (keypressed())
 		dumi = get_ch();	// input >> kbd >> dumi;
 
-	clic = false;
+	g_vm->setMouseClick(false);
 	decod(str_, nbcase, nblig, nbcol, chaine, cas);
 	sauvecr(50, succ(int, nligne) << 4);
 
@@ -242,8 +243,8 @@ int do_alert(Common::String str_, int n) {
 		}
 		test3 = (cy > 95) && (cy < 105) && (((cx > limit[1][1]) && (cx < limit[1][2]))
 		                                    || ((cx > limit[2][1]) && (cx < limit[2][2])));
-	} while (!clic);
-	clic = false;
+	} while (!g_vm->getMouseClick());
+	g_vm->setMouseClick(false);
 	hide_mouse();
 	if (! test3)  {
 		quoi = n;

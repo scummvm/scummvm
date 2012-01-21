@@ -202,7 +202,7 @@ void tkey1(bool d) {
 		read_pos_mouse(x, y, c);
 	} while (!(quest || (c != 0) || (d && anyone)));
 	if (quest)  key = testou();
-	clic = false;
+	g_vm->setMouseClick(false);
 	show_mouse();
 }
 
@@ -628,7 +628,8 @@ void tfleche() {
 
 		do {
 			mov_mouse(qust, touch);
-			if (clic)  rect = (x_s < 256 * res) && (y_s < 176) && (y_s > 12);
+			if (g_vm->getMouseClick())
+				rect = (x_s < 256 * res) && (y_s < 176) && (y_s > 12);
 			tinke();
 		} while (!(qust || rect || anyone));
 

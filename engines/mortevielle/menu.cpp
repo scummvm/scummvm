@@ -187,7 +187,7 @@ void draw_menu() {
 	msg4 = no_choice;
 	msg3 = no_choice;
 	choisi = false;
-	clic = false;
+	g_vm->setMouseClick(false);
 	test0 = false;
 }
 
@@ -342,7 +342,7 @@ void menu_up(int xx) {
 void erase_menu() {
 	/* debug('erase_menu'); */
 	active_menu = false;
-	clic = false;
+	g_vm->setMouseClick(false);
 	menu_up(msg3);
 }
 
@@ -355,7 +355,7 @@ void mdn() {
 	if (! active_menu)  return;
 	x = x_s;
 	y = y_s;
-	if (! clic) {
+	if (!g_vm->getMouseClick()) {
 		if ((x == xprec) &&
 		        (y == yprec))  return;
 		else {
@@ -385,21 +385,26 @@ void mdn() {
 		} else { /* Not in the MenuTitle line */
 			if ((y > 11) && (test0))  util(x, y);
 		}
-	} else        /* il y a eu 'clic' */
+	} else        /* There was a click */
 		if ((msg3 == fichier) && (msg4 != no_choice)) {
-			clic = false;
+			// Another menu to be displayed
+			g_vm->setMouseClick(false);
 			menu_up(msg3);
 			if (lo(msg4) == 1)  msg3 = 7;
 			else msg3 = 8;
 			menu_down(msg3);
-		} else { /*  il y a eu clic sur un autre menu  */
+
+			g_vm->setMouseClick(false);
+		} else { 
+			//  A menu was clicked on
 			choisi = (test0) && (msg4 != no_choice);
 			menu_up(msg3);
 			msg[4] = msg4;
 			msg[3] = msg3;
 			msg3 = no_choice;
 			msg4 = no_choice;
-			clic = false;
+
+			g_vm->setMouseClick(false);
 		}
 }
 

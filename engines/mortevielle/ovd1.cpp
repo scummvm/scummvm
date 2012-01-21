@@ -31,6 +31,7 @@
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
@@ -142,7 +143,7 @@ void ani50() {
 	msg4 = no_choice;
 	msg[3] = no_choice;
 	msg[4] = no_choice;
-	clic = false;
+	g_vm->setMouseClick(false);
 }
 
 

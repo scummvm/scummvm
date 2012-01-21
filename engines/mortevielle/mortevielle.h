@@ -53,7 +53,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::Stack<int> _keypresses;
 	uint32 _lastGameFrame;
-	int _mouseButtons;
+	bool _mouseClick;
 	Common::Point _mousePos;
 
 	Common::ErrorCode initialise();
@@ -78,7 +78,8 @@ public:
 	int getChar();
 	Common::Point getMousePos() const { return _mousePos; }
 	void setMousePos(const Common::Point &pt);
-	int getMouseButtons() const { return _mouseButtons; }
+	bool getMouseClick() const { return _mouseClick; }
+	void setMouseClick(bool v) { _mouseClick = v; }
 };
 
 extern MortevielleEngine *g_vm;
