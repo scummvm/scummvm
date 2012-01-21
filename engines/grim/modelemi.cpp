@@ -207,7 +207,6 @@ void EMIModel::draw() {
 
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
 	loadMesh(data);
-	delete data;
 }
 	
 } // end of namespace Grim

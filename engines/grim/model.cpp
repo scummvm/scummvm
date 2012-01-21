@@ -57,7 +57,6 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 		TextSplitter ts(data);
 		loadText(&ts, cmap);
 	}
-	delete data;
 
 	Math::Vector3d max;
 

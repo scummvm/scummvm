@@ -44,7 +44,6 @@ KeyframeAnim::KeyframeAnim(const Common::String &fname, Common::SeekableReadStre
 		TextSplitter ts(data);
 		loadText(ts);
 	}
-	delete data;
 }
 
 void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
