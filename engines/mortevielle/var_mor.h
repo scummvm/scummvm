@@ -367,18 +367,18 @@ extern Common::String al_mess,
        ind_mess,
        al_mess2;
 
-extern int invt[8];
-extern int nbrep[8];
-extern int nbrepm[8];
-extern int disc[8];
+extern int invt[9];
+extern int nbrep[9];
+extern int nbrepm[9];
+extern int disc[9];
 extern int msg[5];
-extern int depl[7];
+extern int depl[8];
 extern Common::String inv[9];
 extern Common::String dep[8];
 extern Common::String act[22];
-extern Common::String self_[6];
+extern Common::String self_[7];
 extern Common::String dis[9];
-extern char touv[7];
+extern char touv[8];
 extern sav_chaine s, s1;
 extern byte bufcha[391];
 

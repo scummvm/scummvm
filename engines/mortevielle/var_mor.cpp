@@ -199,18 +199,18 @@ Common::String al_mess,
        ind_mess,
        al_mess2;
 
-int invt[8];
-int nbrep[8];
-int nbrepm[8];
-int disc[8];
+int invt[9];
+int nbrep[9];
+int nbrepm[9];
+int disc[9];
 int msg[5];
-int depl[7];
+int depl[8];
 Common::String inv[9];
 Common::String dep[8];
 Common::String act[22];
-Common::String self_[6];
+Common::String self_[7];
 Common::String dis[9];
-char touv[7];
+char touv[8];
 sav_chaine s, s1;
 byte bufcha[391];
 
