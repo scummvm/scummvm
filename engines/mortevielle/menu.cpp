@@ -86,7 +86,7 @@ namespace Mortevielle {
 		if (l > 6)  {
 			inv[l].setChar('<', 0);
 			inv[l].setChar('>', 21);
-		} else inv[l].setChar('*', 1);
+		} else inv[l].setChar('*', 0);
 	}
 	break;
 	case depla :
