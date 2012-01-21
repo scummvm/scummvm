@@ -79,8 +79,8 @@ static void sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(s1.derobj);
 	sz.syncAsSint16LE(s1.iloic);
 	sz.syncAsSint16LE(s1.icryp);
-	sz.syncAsSint16LE(s1.ipre);
-	sz.syncAsSint16LE(s1.heure);
+	sz.syncAsByte(s1.ipre);
+	sz.syncAsByte(s1.heure);
 
 	sz.syncBytes(bufcha, 390);
 }
