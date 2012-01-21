@@ -41,7 +41,7 @@ Sound::~Sound() {
 		delete _channels[i];
 }
 
-void Sound::play(uint32 id, uint32 volume) {
+void Sound::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	SoundChannel *channel = getChannelForSound(id, 3);
 	channel->play(id, volume);
 }
@@ -77,6 +77,7 @@ SoundChannel::~SoundChannel() {
 void SoundChannel::play(uint32 id, uint32 volume) {
 	// Load the name of the sound from its id
 	_name = _vm->_db->getSoundName(id);
+	_volume = volume;
 
 	// Open the file to a stream
 	_stream = makeAudioStream(_name);
@@ -84,8 +85,10 @@ void SoundChannel::play(uint32 id, uint32 volume) {
 	if (!_stream)
 		return;
 
+	uint16 mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
+
 	// Play the sound
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream, -1, mixerVolume);
 
 	// Update state
 	_id = id;

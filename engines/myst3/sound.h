@@ -56,7 +56,7 @@ public:
 	Sound(Myst3Engine *vm);
 	virtual ~Sound();
 
-	void play(uint32 id, uint32 volume);
+	void play(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
 	void update();
 
 private:

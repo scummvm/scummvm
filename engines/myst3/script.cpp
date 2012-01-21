@@ -27,6 +27,7 @@
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/puzzles.h"
+#include "engines/myst3/sound.h"
 
 #include "common/events.h"
 
@@ -202,6 +203,10 @@ Script::Script(Myst3Engine *vm):
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
 	OP_4(197, runPuzzle4,					kValue,		kValue,		kValue,		kValue					);
+	OP_1(205, soundPlay,					kEvalValue													);
+	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
+	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
+	OP_4(208, soundPlayVolumeDirectionAtt,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
 	OP_0(239, drawOneFrame																				);
 	OP_0(249, newGame																					);
 
@@ -2062,6 +2067,38 @@ void Script::runPuzzle4(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
 
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+}
+
+void Script::soundPlay(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound %d", cmd.op, cmd.args[0]);
+
+	_vm->_sound->play(cmd.args[0], 100);
+}
+
+void Script::soundPlayVolume(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound %d at volume %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->_sound->play(cmd.args[0], volume);
+}
+
+void Script::soundPlayVolumeDirection(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound %d at volume %d in direction %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
+	_vm->_sound->play(cmd.args[0], volume, heading, 85);
+}
+
+void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound %d at volume %d in direction %d with attenuation %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
+	int32 att = _vm->_state->valueOrVarValue(cmd.args[3]);
+	_vm->_sound->play(cmd.args[0], volume, heading, att);
 }
 
 void Script::drawOneFrame(Context &c, const Opcode &cmd) {

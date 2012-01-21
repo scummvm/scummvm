@@ -253,6 +253,10 @@ private:
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);
 	DECLARE_OPCODE(runPuzzle4);
+	DECLARE_OPCODE(soundPlay);
+	DECLARE_OPCODE(soundPlayVolume);
+	DECLARE_OPCODE(soundPlayVolumeDirection);
+	DECLARE_OPCODE(soundPlayVolumeDirectionAtt);
 	DECLARE_OPCODE(drawOneFrame);
 	DECLARE_OPCODE(newGame);
 
