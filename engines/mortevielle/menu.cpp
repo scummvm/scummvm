@@ -217,15 +217,24 @@ void invers(int ix) {
 		s = fic[lo(msg4)];
 		break;
 	case 7 :
-		s = fic[1] + ' ' + chr(48 + lo(msg4));
+		s = fic[1];
+		s += ' ';
+		s += (char)(48 + lo(msg4));
 		break;
 	case 8 :
-		if (lo(msg4) == 1)  s = recom;
-		else s = fic[2] + ' ' + chr(47 + lo(msg4));
+		if (lo(msg4) == 1) {
+			s = recom;
+		} else {
+			s = fic[2];
+			s += ' ';
+			s += (char)(47 + lo(msg4));
+		}
 		break;
 	}
-	if ((s[1] != '*') && (s[1] != '<'))  writeg(s, ix);
-	else msg4 = no_choice;
+	if ((s[1] != '*') && (s[1] != '<'))
+		writeg(s, ix);
+	else
+		msg4 = no_choice;
 }
 
 void util(int x, int y) {
