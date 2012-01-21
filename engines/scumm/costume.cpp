@@ -1305,6 +1305,7 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 		if (limbFrames == 0xFF)
             continue;
 
+        // 0x2679
         a->_byte_FCE2[limb] = a->_byte_FD0A;
 
 		// Has limb frames ptr changed since last update?
@@ -1407,12 +1408,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	// Different command for stand frame
 	if (frame == a->_standFrame)
-    {
 		command = dirToDirStop(dir);
-
-        //0x2BEB
-        A->_byte_FDE8 = -1;
-    }
 
 	// Update the limb frames
 	frameUpdate(A, command);

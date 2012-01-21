@@ -319,6 +319,9 @@ int Actor::actorWalkStep() {
 	int distX, distY;
 	int nextFacing;
 
+    if( _vm->_game.version == 0 )
+        ((ActorC64*) this)->_byte_FD0A = -1;
+
 	_needRedraw = true;
 
 	nextFacing = updateActorDirection(true);
@@ -857,18 +860,6 @@ void Actor::setDirection(int direction) {
 	if (_costume == 0)
 		return;
 
-	// V0 MM
-	if (_vm->_game.version == 0) {
-
-       	if (_moving)
-		    _vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
-	    else
-		    _vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
-
-		_needRedraw = true;
-		return;
-	}
-
 	// Update the costume for the new direction (and mark the actor for redraw)
 	aMask = 0x8000;
 	for (i = 0; i < 16; i++, aMask >>= 1) {
@@ -877,6 +868,27 @@ void Actor::setDirection(int direction) {
 			continue;
 		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_game.version <= 2) ? 0xFFFF : aMask);
 	}
+
+	_needRedraw = true;
+}
+
+void ActorC64::setDirection(int direction) {
+
+    // Normalize the angle
+	_facing = normalizeAngle(direction);
+
+     // 0x2C17
+   // _byte_FDE8 = -1;
+
+	// If there is no costume set for this actor, we are finished
+	if (_costume == 0)
+		return;
+
+    if (_moving)
+		_vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
+	else {
+		_vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
+    }
 
 	_needRedraw = true;
 }
@@ -897,10 +909,6 @@ void Actor::faceToObject(int obj) {
 void Actor::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
-
-    // 0x2C17
-    if( _vm->_game.version == 0 )
-        ((ActorC64*) this)->_byte_FD0A = -1;
 
 	if (_vm->_game.version <= 6) {
 		_moving = MF_TURN;
@@ -2672,10 +2680,11 @@ void ActorC64::animateActor(int anim) {
             default:
                 return;
         }*/
-        
-        this->setDirection( dir );
 
+                
         this->_byte_FD0A = this->_byte_FDE8;
+
+        this->setDirection( dir );
 
     } else {
 

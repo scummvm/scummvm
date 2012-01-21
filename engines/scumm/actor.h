@@ -202,7 +202,7 @@ public:
 	void adjustActorPos();
 	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 
-	void setDirection(int direction);
+	virtual void setDirection(int direction);
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	virtual void walkActor();
@@ -379,6 +379,7 @@ public:
 	}
 
     virtual void animateActor(int anim);
+    virtual void setDirection(int direction);
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);
