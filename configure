@@ -1619,7 +1619,7 @@ fi;
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | wii)
+android | gamecube | psp | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
