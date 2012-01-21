@@ -134,21 +134,12 @@ void ScummEngine_v0::resetVerbs() {
 void ScummEngine_v0::switchActor(int slot) {
 	resetSentence();
 
-	if (_currentRoom == 45)
-		return;
-
-	// radiation suit? don't let the player switch
-	if (VAR(VAR_EGO) == 8)
-		return;
-
-	// verbs disabled? or just new kid button?
-	if (_currentMode == kModeCutscene || _currentMode == kModeKeypad || _currentMode == kModeNoNewKid)
+	// actor switching only allowed during normal gamplay (not cutscene, ...)
+	if (_currentMode != kModeNormal)
 		return;
 
 	VAR(VAR_EGO) = VAR(97 + slot);
-	resetVerbs();
 	actorFollowCamera(VAR(VAR_EGO));
-	setUserState(247);
 }
 
 void ScummEngine_v2::initV2MouseOver() {
@@ -743,9 +734,6 @@ void ScummEngine_v0::checkExecVerbs() {
 
 	bool execute = false;
 
-	//if (_userPut <= 0)
-	//	return;
-
 	if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		int over = findVerbAtPos(_mouse.x, _mouse.y);
 		// click region: verbs
@@ -777,7 +765,7 @@ void ScummEngine_v0::checkExecVerbs() {
 		}
 
 		if (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY) {
-			// TODO: check keypresses
+			// keys already checked by input handler
 		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
 			// click region: sentence line
 			if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
@@ -793,9 +781,11 @@ void ScummEngine_v0::checkExecVerbs() {
 							kid = 2;
 						_activeVerb = kVerbWalkTo;
 						_redrawSentenceLine = true;
+						drawSentenceLine();
 						switchActor(kid);
 					}
 					_activeVerb = kVerbWalkTo;
+					_redrawSentenceLine = true;
 					return;
 				} else {
 					// execute sentence if complete

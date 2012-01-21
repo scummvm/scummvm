@@ -92,6 +92,8 @@ protected:
 	void drawSentenceObject(int object);
 	void drawSentenceLine();
 
+	void setMode(byte mode);
+
 	void switchActor(int slot);
 
 	virtual int getVarOrDirectWord(byte mask);
@@ -122,7 +124,7 @@ protected:
 	void o_lockScript();
 	void o_loadScript();
 	void o_lockRoom();
-	void o_cursorCommand();
+	void o_setMode();
 	void o_lights();
 	void o_unlockCostume();
 	void o_unlockScript();

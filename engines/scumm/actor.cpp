@@ -1512,12 +1512,17 @@ void ScummEngine::processActors() {
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
 
-		// V0 MM: 0x057B
 		if (_game.version == 0) {
+			// 0x057B
 			ActorC64 *A = (ActorC64*) a;
-			if ((A->_speaking & 1))
+			if (A->_speaking & 1)
 				A->_speaking ^= 0xFE;
+
+			// 0x22B5
+			if (A->_miscflags & kActorMiscFlagHide)
+				continue;
 		}
+
 		// Draw and animate the actors, except those w/o a costume.
 		// Note: We could 'optimize' this a little bit by only putting
 		// actors with a costume into the _sortedActors array in the

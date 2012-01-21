@@ -154,7 +154,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x5e, o2_walkActorTo);
 	OPCODE(0x5f, o2_ifState04);
 	/* 60 */
-	OPCODE(0x60, o_cursorCommand);
+	OPCODE(0x60, o_setMode);
 	OPCODE(0x61, o2_putActor);
 	OPCODE(0x62, o2_stopScript);
 	OPCODE(0x63, o_stopCurrentScript);
@@ -314,7 +314,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0xde, o2_walkActorTo);
 	OPCODE(0xdf, o2_ifNotState04);
 	/* E0 */
-	OPCODE(0xe0, o_cursorCommand);
+	OPCODE(0xe0, o_setMode);
 	OPCODE(0xe1, o2_putActor);
 	OPCODE(0xe2, o2_stopScript);
 	OPCODE(0xe3, o_stopCurrentScript);
@@ -463,8 +463,16 @@ void ScummEngine_v0::drawSentenceLine() {
 	if (_activeVerb == kVerbNewKid) {
 		_sentenceBuf = "";
 		for (int i = 0; i < 3; ++i) {
-			Actor *a = derefActor(VAR(97 + i), "drawSentenceLine");
-			_sentenceBuf += Common::String::format("%-13s", a->getActorName());
+			char *actorName;
+			int actorId = VAR(97 + i);
+			if (actorId == 0) {
+				// after usage of the radiation suit, kid vars are set to 0
+				actorName = " ";
+			} else {
+				Actor *a = derefActor(actorId, "drawSentenceLine");
+				actorName = (char *)a->getActorName();
+			}
+			_sentenceBuf += Common::String::format("%-13s", actorName);
 		}
 		flushSentenceLine();
 		return;
@@ -620,28 +628,30 @@ void ScummEngine_v0::o_unlockRoom() {
 	_res->unlock(rtRoom, resid);
 }
 
-void ScummEngine_v0::o_cursorCommand() {
-	// TODO
+void ScummEngine_v0::setMode(byte mode) {
 	int state = 0;
 
-	_currentMode = fetchScriptByte();
+	_currentMode = mode;
+
 	switch (_currentMode) {
 	case kModeCutscene:
 		_redrawSentenceLine = false;
-		state = 15;
+		state = 7;
 		break;
 	case kModeKeypad:
-		state = 31;
-		break;
-	case kModeNoNewKid:
+		state = 23;
 		break;
 	case kModeNormal:
+	case kModeNoNewKid:
 		state = 247;
 		break;
 	}
 
 	setUserState(state);
-	debug(0, "o_cursorCommand(%d)", _currentMode);
+}
+
+void ScummEngine_v0::o_setMode() {
+	setMode(fetchScriptByte());
 }
 
 void ScummEngine_v0::o_lights() {
@@ -777,8 +787,6 @@ void ScummEngine_v0::o_setActorBitVar() {
 	// This flag causes the actor to stop moving (used by script #158, Green Tentacle 'Oomph!')
 	if (a->_miscflags & kActorMiscFlagFreeze)
 		a->stopActorMoving();
-	if (a->_miscflags & kActorMiscFlagHide)
-		a->setActorCostume(0);
 
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }
@@ -904,12 +912,10 @@ void ScummEngine_v0::o_getClosestObjActor() {
 }
 
 void ScummEngine_v0::o_cutscene() {
-	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
+	vm.cutSceneData[0] = _currentMode;
 	vm.cutSceneData[2] = _currentRoom;
-	vm.cutSceneData[3] = camera._mode;
 
-	// Hide inventory, freeze scripts, hide cursor
-	setUserState(15);
+	setMode(kModeCutscene);
 
 	_sentenceNum = 0;
 	resetSentence();
@@ -924,17 +930,14 @@ void ScummEngine_v0::o_endCutscene() {
 	vm.cutSceneScript[0] = 0;
 	vm.cutScenePtr[0] = 0;
 
-	// Reset user state to values before cutscene
-	setUserState(vm.cutSceneData[0] | 7);
+	setMode(vm.cutSceneData[0]);
 
-	camera._mode = (byte) vm.cutSceneData[3];
-	if (camera._mode == kFollowActorCameraMode) {
-		actorFollowCamera(VAR(VAR_EGO));
-	} else if (vm.cutSceneData[2] != _currentRoom) {
+	if (_currentMode == kModeKeypad) {
 		startScene(vm.cutSceneData[2], 0, 0);
+	} else {
+		actorFollowCamera(VAR(VAR_EGO));
+		_redrawSentenceLine = true;
 	}
-
-	_redrawSentenceLine = true;
 }
 
 void ScummEngine_v0::o_beginOverride() {

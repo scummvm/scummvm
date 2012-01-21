@@ -336,14 +336,14 @@ protected:
 };
 
 enum ActorC64MiscFlags {
-	kActorMiscFlagStrong   = 0x01, // Kid is strong (Hunk-O-Matic used)
-	kActorMiscFlag_02      = 0x02, // ???
-	kActorMiscFlag_04      = 0x04, // ???
-	kActorMiscFlagEdsEnemy = 0x08, // Kid is not Weird Ed's friend
-	kActorMiscFlag_10      = 0x10, // ???
-	kActorMiscFlag_20      = 0x20, // ???
-	kActorMiscFlagFreeze   = 0x40, // Stop moving
-	kActorMiscFlagHide     = 0x80, // Hide actor (e.g. dead or wearing radiation suit)
+	kActorMiscFlagStrong    = 0x01, // Kid is strong (Hunk-O-Matic used)
+	kActorMiscFlagGTFriend  = 0x02, // Kid is green tentacle's friend (recording contract)
+	kActorMiscFlagWatchedTV = 0x04, // Kid knows publisher's address (watched TV)
+	kActorMiscFlagEdsEnemy  = 0x08, // Kid is not Weird Ed's friend
+	kActorMiscFlag_10       = 0x10, // ???
+	kActorMiscFlag_20       = 0x20, // ???
+	kActorMiscFlagFreeze    = 0x40, // Stop moving
+	kActorMiscFlagHide      = 0x80, // Kid is invisible (dead or in radiation suit)
 };
 
 class ActorC64 : public Actor_v2 {
