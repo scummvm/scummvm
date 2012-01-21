@@ -376,7 +376,7 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 	if (_firstPoll) {
 		// Set the initial dimensions
 		calculateDimensions();
-		
+
 		// Having a mouse pointer on screen when not in Touchpad mode is poor
 		// interface design, because the user won't know whether to tap buttons
 		// or drag the pointer to them.  On the first poll, set the appropriate
