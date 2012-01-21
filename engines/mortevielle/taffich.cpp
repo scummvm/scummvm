@@ -35,7 +35,7 @@
 
 namespace Mortevielle {
 
-void chardes(Common::String nom, float passe, int long_) {
+void chardes(Common::String nom, int32 passe, int long_) {
 	int i, p, l;
 //	byte b;
 	Common::File f;
@@ -52,7 +52,7 @@ void chardes(Common::String nom, float passe, int long_) {
 	}
 	if (p != 0)
 		f.seek(p * 0x80);
-	p = abs((int)passe);
+	p = abs(passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
@@ -68,7 +68,7 @@ void chardes(Common::String nom, float passe, int long_) {
 	/*$i+*/
 }
 
-void charani(Common::String nom, float passe, int long_) {
+void charani(Common::String nom, int32 passe, int long_) {
 	int i, p, l;
 //	byte b;
 	Common::File f;
@@ -86,7 +86,7 @@ void charani(Common::String nom, float passe, int long_) {
 	if (p != 0)
 		f.seek(p * 0x80);
 
-	p = abs((int)passe);
+	p = abs(passe);
 	l = long_ + p;
 	i = 0;
 	while (l > 0) {
@@ -106,7 +106,7 @@ void taffich() {
 
 	int i, m, a, b, cx, handle,
 	        npal;
-	float lgt;
+	int32 lgt;
 	Common::String nom;
 	int palh, k, j;
 	int alllum[16];
