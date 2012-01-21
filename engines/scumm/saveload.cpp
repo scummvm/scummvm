@@ -1212,7 +1212,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 				_objs[i].obj_nr = 0;
 		} else if (_game.version == 0) { //  TODO: handle this correctly
 			for (i = 0; i < _numLocalObjects; i++) {
-				if (_objs[i].obj_nr != 0 && _objs[i].flags != 0)
+				if (_objs[i].obj_nr != 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == 0 && _objs[i].flags != 0)
 					_objs[i].obj_nr = OBJECT_V0(_objs[i].obj_nr, _objs[i].flags);
 			}
 		}
