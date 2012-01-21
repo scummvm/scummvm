@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "mortevielle/boite.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
@@ -105,7 +106,7 @@ namespace Mortevielle {
 		j = 0;
 		memk = 0;
 		do {
-			clic = false;
+			g_vm->setMouseClick(false);
 			tesok = false;
 			mov_mouse(func, key);
 			k = 1;
@@ -130,7 +131,7 @@ namespace Mortevielle {
 				afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				memk = 0;
 			}
-		} while (!((memk != 0) && clic));
+		} while (!((memk != 0) && g_vm->getMouseClick()));
 		if (memk == ok[i])  compte = compte + 1;
 		else {
 			if (i == 5)  i = i + 1;

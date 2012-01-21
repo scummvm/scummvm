@@ -57,7 +57,7 @@ void init_mouse() {
 	y_s = 0;
 	p_o_s = 0;
 	/*int_m:= False;*/
-	clic = false;
+	g_vm->setMouseClick(false);
 	m_show = m_arrow;
 	if ((READ_LE_UINT16(&mem[0xcc]) == 0) && (READ_LE_UINT16(&mem[0xce]) == 0))  int_m = false;
 	if (int_m) {
@@ -278,7 +278,7 @@ void pos_mouse(int x, int y) {
 void read_pos_mouse(int &x, int &y, int &c) {
 	x = g_vm->getMousePos().x;
 	y = g_vm->getMousePos().y;
-	c = g_vm->getMouseButtons();
+	c = g_vm->getMouseClick() ? 1 : 0;
 }
 
 void mov_mouse(bool &funct, char &key) {
@@ -292,10 +292,8 @@ void mov_mouse(bool &funct, char &key) {
 	p_key = keypressed();
 
 	// If mouse button clicked, return it
-	if (g_vm->getMouseButtons() != 0) {
-		clic = true;
+	if (g_vm->getMouseClick())
 		return;
-	}
 
 	// Handle any pending keypresses
 	while (p_key) {
@@ -343,7 +341,7 @@ void mov_mouse(bool &funct, char &key) {
 		break;
 		case ' ':
 		case '\15' : {
-			clic = true;
+			g_vm->setMouseClick(true);
 			return;
 		}
 		break;

@@ -32,6 +32,7 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
@@ -1094,8 +1095,8 @@ L2:
 					} else choi = 0;
 				}
 			}
-		} while (!((tou == '\15') || (((c != 0) || clic) && (choi != 0))));
-		clic = false;
+		} while (!((tou == '\15') || (((c != 0) || g_vm->getMouseClick()) && (choi != 0))));
+		g_vm->setMouseClick(false);
 		if (choi != 46) {
 			ix = choi - 1;
 			if (col) {
