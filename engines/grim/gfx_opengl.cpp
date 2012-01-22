@@ -603,6 +603,10 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
+				// fix the value if it is incorrectly set to the bitmap transparency color
+				if (val == 0xf81f) {
+					val = 0;
+				}
 				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 
