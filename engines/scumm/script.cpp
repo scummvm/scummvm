@@ -1209,8 +1209,7 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 		return;
 	}
 
-	// FIXME: should this be executed?
-	//_currentScript = 0xFF;
+	_currentScript = 0xFF;
 
 	assert(st.objectA);
 
@@ -1233,7 +1232,19 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	_cmdObject2 = st.objectB;
 	_sentenceNum--;
 
-	// TODO: check sentenceNum
+	// abort sentence execution if the number of nested scripts is too high.
+	// This might happen for instance if the sentence command depends on an
+	// object that the actor has to pick-up in a nested doSentence() call.
+	// If the actor is not able to pick-up the object (e.g. because it is not
+	// reachable or pickupable) a nested pick-up command is triggered again
+	// and again, so the actual sentence command will never be executed.
+	// In this case the sentence command has to be aborted.
+	_sentenceNestedCount++;
+	if (_sentenceNestedCount > 6) {
+		_sentenceNestedCount = 0;
+		_sentenceNum = 0;
+		return;
+	}
 
 	if (whereIsObject(st.objectA) != WIO_INVENTORY) {
 		if (_currentMode != kModeKeypad) {

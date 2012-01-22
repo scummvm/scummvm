@@ -55,6 +55,7 @@ protected:
 	int _cmdVerb;			// script verb
 	int _cmdObject;			// 1st script object (see OBJECT_V0())
 	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0())
+	int _sentenceNestedCount;
 
 	int _walkToObject;
 	int _walkToObjectState;

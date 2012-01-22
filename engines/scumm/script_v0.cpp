@@ -979,6 +979,9 @@ void ScummEngine_v0::resetSentence() {
 
 	_walkToObjectState = kWalkToObjectStateDone;
 	_redrawSentenceLine = true;
+
+	_sentenceNum = 0;
+	_sentenceNestedCount = 0;
 }
 
 } // End of namespace Scumm

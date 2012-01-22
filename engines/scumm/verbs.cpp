@@ -689,6 +689,9 @@ int ScummEngine_v0::activeVerbPrep() {
 }
 
 void ScummEngine_v0::verbExec() {
+	_sentenceNum = 0;
+	_sentenceNestedCount = 0;
+
 	if (_activeVerb == kVerbWhatIs)
 		return;
 		
