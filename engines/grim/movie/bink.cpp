@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/stream.h"
+#include "common/substream.h"
 #include "graphics/surface.h"
 #include "video/bink_decoder.h"
 
@@ -38,11 +41,43 @@ BinkPlayer::BinkPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 }
 
 bool BinkPlayer::loadFile(Common::String filename) {
-	// The demo uses a weird .lab suffix instead of the normal .bik
 	_fname = filename;
-	_fname += (_demo) ? ".lab" : ".bik";
 
-	return MoviePlayer::loadFile(_fname);
+	if (_demo) {
+		// The demo uses a .lab suffix
+		_fname += ".lab";
+		return MoviePlayer::loadFile(_fname);
+	}
+
+	_fname += ".m4b";
+
+	// Windows/Mac versions have some fake SMUSH info at the beginning
+	// of the video. Weed it out here.
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_fname);
+	if (!stream)
+		return false;
+
+	char header[6];
+	stream->read(header, 5);
+	header[5] = 0;
+
+	if (strcmp(header, "SMUSH")) {
+		delete stream;
+		return false;
+	}
+
+	// Try at 0x200 for the Bink header first
+	// If not there, assume at 0x400
+	stream->seek(0x200);
+	uint32 tag = stream->readUint32BE();
+
+	Common::SeekableReadStream *bink = 0;
+	if (tag & 0xFFFFFF00 == MKTAG('B', 'I', 'K', 0))
+		bink = new Common::SeekableSubReadStream(stream, 0x200, stream->size(), DisposeAfterUse::YES);
+	else
+		bink = new Common::SeekableSubReadStream(stream, 0x400, stream->size(), DisposeAfterUse::YES);
+
+	return _videoDecoder->loadStream(bink);
 }
 
 } // end of namespace Grim

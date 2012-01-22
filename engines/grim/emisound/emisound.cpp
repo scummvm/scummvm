@@ -25,13 +25,14 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
-//#include "engines/grim/imuse/imuse.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/textsplit.h"
 #include "engines/grim/emisound/emisound.h"
 #include "engines/grim/emisound/track.h"
 #include "engines/grim/emisound/vimatrack.h"
+#include "engines/grim/emisound/mp3track.h"
 
 #define NUM_CHANNELS 32
 
@@ -44,6 +45,8 @@ EMISound::EMISound() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i] = NULL;
 	}
+	_music = NULL;
+	initMusicTable();
 }
 
 int32 EMISound::getFreeChannel() {
@@ -75,7 +78,11 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
 
-	return _channels[channel]->openSound(soundName, str);
+	if (_channels[channel]->openSound(soundName, str)) {
+		_channels[channel]->play();
+		return true;
+	}
+	return false;
 }
 
 bool EMISound::getSoundStatus(const char *soundName) {
@@ -84,30 +91,141 @@ bool EMISound::getSoundStatus(const char *soundName) {
 	if (channel == -1)	// We have no such sound.
 		return false;
 	
-	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->_handle) && _channels[channel]->isPlaying();	
+	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();	
 }
 
 void EMISound::stopSound(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	g_system->getMixer()->stopHandle(*_channels[channel]->_handle);
+	g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
 	freeChannel(channel);
 }
 
 int32 EMISound::getPosIn60HzTicks(const char *soundName) {	
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->_handle);
+	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle());
 }
 	
 void EMISound::setVolume(const char *soundName, int volume) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	g_system->getMixer()->setChannelVolume(*_channels[channel]->_handle, volume);
+	g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
 }
 
 void EMISound::setPan(const char *soundName, int pan) {
 	warning("EMI doesn't support sound-panning yet, %s", soundName);
 }
+	
+void EMISound::setMusicState(int stateId) {
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		warning("EMI doesn't have music-support yet %d", stateId);
+		return;
+	}
+	if (_music) {
+		delete _music;
+		_music = NULL;
+	}
+	if (stateId == 0) {
+		return;
+	}
+	// Workaround for the gap:
+	if (stateId > 65)
+		stateId -= 55;
+	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + _musicTable[stateId]._filename);
+	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
+	if (_music->openSound(_musicTable[stateId]._filename, str))
+		_music->play();
+}
 
+uint32 EMISound::getMsPos(int stateId) {
+	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
+}
+	
+MusicEntry *initMusicTableDemo(Common::String filename) {
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
+	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
+	MusicEntry *musicTable = new MusicEntry[15];
+	
+	TextSplitter *ts = new TextSplitter(data);
+	char *line;
+	ts->setLineNumber(3); // Skip top-comment
+	int id, x, y, sync;
+	int i = 0;
+	char musicfilename[64];
+	char name[64];
+	line = ts->getCurrentLine();
+	while (ts->checkString("/*")) {
+		ts->nextLine();
+		ts->scanString(".cuebutton id %d x %d y %d sync %d \"%[^\"]64s", 5, &id, &x, &y, &sync, name);
+		ts->scanString(".playfile \"%[^\"]64s", 1, musicfilename);
+		musicTable[id]._id = id;
+		musicTable[id]._x = x;
+		musicTable[id]._y = y;
+		musicTable[id]._sync = sync;
+		musicTable[id]._name = name;
+		musicTable[id]._filename = musicfilename;
+		ts->nextLine();
+	}
+	
+	return musicTable;
+}
+
+MusicEntry *initMusicTableRetail(Common::String filename) {
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
+	
+	// Remember to check, in case we forgot to copy over those files from the CDs.
+	if (!data)
+		error("Couldn't open %s", filename.c_str());
+	// FIXME, for now we use a fixed-size table, but, since there's a hole 65-122, we could perhaps offset that.
+	MusicEntry *musicTable = new MusicEntry[126];
+	
+	TextSplitter *ts = new TextSplitter(data);
+	char *line;
+	ts->setLineNumber(3); // Skip top-comment
+	int id, x, y, sync, trim;
+	int i = 0;
+	char musicfilename[64];
+	char name[64];
+	char type[16];
+	line = ts->getCurrentLine();
+	// Every block is followed by 3 lines of commenting/uncommenting, except the last.
+	while (!ts->isEof()) {
+		while (!ts->checkString("*/")) {
+			ts->scanString(".cuebutton id %d x %d y %d sync %d type %16s", 5, &id, &x, &y, &sync, type);
+			ts->scanString(".playfile trim %d \"%[^\"]64s", 2, &trim, musicfilename);
+			if (musicfilename[1] == '\\')
+				musicfilename[1] = '/';
+			// Decrease the big gap between the last elements.
+			if (id > 65)
+				id -= 50;
+			musicTable[id]._id = id;
+			musicTable[id]._x = x;
+			musicTable[id]._y = y;
+			musicTable[id]._sync = sync;
+			musicTable[id]._type = type;
+			musicTable[id]._name = "";
+			musicTable[id]._trim = trim;
+			musicTable[id]._filename = musicfilename;
+		}
+		ts->nextLine();
+		ts->nextLine();
+	}
+	return musicTable;
+}
+
+
+	
+void EMISound::initMusicTable() {
+	if (g_grim->getGameFlags() == ADGF_DEMO) {
+		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
+		_musicPrefix = "Music/";
+	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		// TODO, fill this in, data is in the binary.
+		//initMusicTablePS2()
+	} else {
+		_musicTable = initMusicTableRetail("Textures/FullMonkeyMap.imt");
+		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
+	}
+}
 } // end of namespace Grim

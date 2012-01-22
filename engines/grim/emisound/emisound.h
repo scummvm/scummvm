@@ -29,24 +29,43 @@ namespace Grim {
 
 class SoundTrack;
 	
+struct MusicEntry {
+	int _x;
+	int _y;
+	int _sync;
+	int _trim;
+	int _id;
+	Common::String _type;
+	Common::String _name;
+	Common::String _filename;
+};
+
 // Currently this class only implements the exact functions called in iMuse
 // from Actor, to allow for splitting that into EMI-sound and iMuse without
 // changing iMuse.
 class EMISound {
 	SoundTrack **_channels;
+	SoundTrack *_music;
+	MusicEntry *_musicTable;
+	Common::String _musicPrefix;
+
 	void removeItem(SoundTrack* item);
 	int32 getFreeChannel();
 	int32 getChannelByName(Common::String name);
 	void freeChannel(int32 channel);
+	void initMusicTable();
 public:
 	EMISound();
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);
 	int32 getPosIn60HzTicks(const char *soundName);
-	
+
 	void setVolume(const char *soundName, int volume);
 	void setPan(const char *soundName, int pan);
+
+	void setMusicState(int stateId);
+	uint32 getMsPos(int stateId);
 };
 	
 }

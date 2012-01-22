@@ -62,6 +62,7 @@ MODULE_OBJS := \
 	update/mscab.o \
 	update/lang_filter.o \
 	update/update.o \
+	emisound/mp3track.o \
 	actor.o \
 	animation.o \
 	bitmap.o \

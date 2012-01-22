@@ -20,36 +20,34 @@
  *
  */
 
-#include "common/mutex.h"
+#ifndef GRIM_MP3TRACK_H
+#define GRIM_MP3TRACK_H
+
 #include "common/str.h"
 #include "common/stream.h"
-#include "audio/mixer.h"
 #include "engines/grim/emisound/track.h"
+
+namespace Audio {
+	class AudioStream;
+	class SoundHandle;
+}
 
 namespace Grim {
 
-SoundTrack::SoundTrack() {
-	_stream = NULL;
-}
-	
-Common::String SoundTrack::getSoundName() {
-	return _soundName;
-}
+class MP3Track : public SoundTrack {
+	uint32 _headerSize;
+	uint32 _regionLength;
+	uint32 _freq;
+	char _bits;
+	char _channels;
+	bool _endFlag;
+	void parseRIFFHeader(Common::SeekableReadStream *data);
+public:
+	MP3Track(Audio::Mixer::SoundType soundType);
+	~MP3Track();
+	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
+	bool isPlaying() { return !_endFlag; }
+};
 
-void SoundTrack::setSoundName(Common::String name) {
-	_soundName = name;
 }
-	
-bool SoundTrack::play() {
-	if (_stream) {
-		g_system->getMixer()->playStream(_soundType, _handle, _stream);
-		return true;
-	}
-	return false;
-}
-
-void SoundTrack::stop() {
-	if (_handle)
-		g_system->getMixer()->stopHandle(*_handle);
-}
-} // end of namespace Grim 
+#endif
