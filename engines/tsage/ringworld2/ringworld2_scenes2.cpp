@@ -1035,7 +1035,7 @@ bool Scene2350::Actor2::startAction(CursorType action, Event &event) {
 bool Scene2350::Actor3::startAction(CursorType action, Event &event) {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_20) && (R2_GLOBALS.getFlag(74))) {
+	if ((action == R2_REBREATHER_TANK) && (R2_GLOBALS.getFlag(74))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_actor1.postInit();
 		scene->_sceneMode = 2355;
@@ -2488,7 +2488,7 @@ void Scene2500::signal() {
 bool Scene2525::Item5::startAction(CursorType action, Event &event) {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_20) && (!R2_GLOBALS.getFlag(74))) {
+	if ((action == R2_REBREATHER_TANK) && (!R2_GLOBALS.getFlag(74))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2526;
 		scene->setAction(&scene->_sequenceManager, scene, 2526, &R2_GLOBALS._player, NULL);
@@ -4177,7 +4177,7 @@ bool Scene2800::Actor1::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 2803;
 		scene->_stripManager.start(scene->_field412, scene);
 		return true;
-	} else if (action == R2_7) {
+	} else if (action == R2_SONIC_STUNNER) {
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS.setFlag(47);

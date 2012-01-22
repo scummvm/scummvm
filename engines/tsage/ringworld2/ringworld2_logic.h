@@ -273,6 +273,20 @@ public:
 	}
 };
 
+class SceneAreaObject: public SceneArea {
+	class Object1: public SceneActor {
+	public:
+	};
+public:
+	Object1 _object1;
+	int _insetCount;
+
+	virtual void remove();
+	virtual void process(Event &event);
+	void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

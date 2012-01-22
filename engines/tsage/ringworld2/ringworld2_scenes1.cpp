@@ -277,7 +277,7 @@ bool Scene1100::Actor17::startAction(CursorType action, Event &event) {
 			return SceneActor::startAction(action, event);
 		}
 		break;
-	case R2_7:
+	case R2_SONIC_STUNNER:
 	// No break on purpose
 	case R2_44:
 		if (_visage == 1105) {

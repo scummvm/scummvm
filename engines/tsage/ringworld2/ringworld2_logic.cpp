@@ -78,6 +78,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Science Lab
 		return new Scene400();
 	case 500:
+		// Lander Bay 2 Storage
+		return new Scene500();
 	case 525:
 	case 600:
 	case 700:
@@ -382,7 +384,7 @@ bool SceneExt::display(CursorType action, Event &event) {
 		else
 			SceneItem::display2(5, 0);
 		break;
-	case R2_7:
+	case R2_SONIC_STUNNER:
 		if ((R2_GLOBALS._v565F1[1] == 2) || ((R2_GLOBALS._v565F1[1] == 1) &&
 				(R2_GLOBALS._v565F1[2] == 2) && (R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
@@ -744,12 +746,12 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_STEPPING_DISKS, 100);
 	setObjectScene(R2_ATTRACTOR_UNIT, 400);
 	setObjectScene(R2_SENSOR_PROBE, 400);
-	setObjectScene(R2_7, 500);
+	setObjectScene(R2_SONIC_STUNNER, 500);
 	setObjectScene(R2_8, 700);
 	setObjectScene(R2_9, 800);
 	setObjectScene(R2_10, 100);
 	setObjectScene(R2_11, 400);
-	setObjectScene(R2_12, 500);
+	setObjectScene(R2_AEROSOL, 500);
 	setObjectScene(R2_13, 1550);
 	setObjectScene(R2_OPTICAL_FIBRE, 850);
 	setObjectScene(R2_CLAMP, 850);
@@ -757,7 +759,7 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_17, 1550);
 	setObjectScene(R2_18, 1550);
 	setObjectScene(R2_19, 1550);
-	setObjectScene(R2_20, 500);
+	setObjectScene(R2_REBREATHER_TANK, 500);
 	setObjectScene(R2_21, 500);
 	setObjectScene(R2_22, 1550);
 	setObjectScene(R2_23, 1580);
@@ -1102,6 +1104,54 @@ void SceneExit::process(Event &event) {
 				changeScene();
 		}
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneAreaObject::remove() {
+	_object1.remove();
+	SceneArea::remove();
+	--R2_GLOBALS._insetUp;
+}
+
+void SceneAreaObject::process(Event &event) {
+	if (_insetCount == R2_GLOBALS._insetUp) {
+		CursorType cursor = R2_GLOBALS._events.getCursor();
+
+		if (_bounds.contains(event.mousePos)) {
+			// Cursor moving in bounded area
+			if (cursor == _cursorNum) {
+				R2_GLOBALS._events.setCursor(_savedCursorNum);
+			}
+		} else if (event.mousePos.y < 168) {
+			if (_cursorNum != cursor)
+				// Cursor moved outside bounded area
+				R2_GLOBALS._events.setCursor(_savedCursorNum);
+
+			if (event.eventType == EVENT_BUTTON_DOWN) {
+				R2_GLOBALS._events.setCursor(_savedCursorNum);
+				event.handled = true;
+			}
+		}
+	}
+}
+
+void SceneAreaObject::setDetails(int visage, int strip, int frameNumber, const Common::Point &pt) {
+	_object1.postInit();
+	_object1.setup(visage, strip, frameNumber);
+	_object1.setPosition(pt);
+	_object1.fixPriority(250);
+
+	_cursorNum = CURSOR_INVALID;
+	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
+	scene->_sceneAreas.push_front(this);
+	
+	_insetCount = ++R2_GLOBALS._insetUp;
+}
+
+void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 
+		2, (SceneItem *)NULL);
 }
 
 } // End of namespace Ringworld2
