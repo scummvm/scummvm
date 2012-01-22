@@ -50,6 +50,7 @@ namespace Mortevielle {
  *
  * Address
  * -------
+ * 5000:0 - Music data
  * 6000:0 - Decompressed current image
  * 7000:0+ - Compressed images
  * 7000:2 - 16 words representing palette map
@@ -455,8 +456,6 @@ extern void decomp(int seg, int dep);
 extern void afff(int Gd, int seg, int dep, int x, int y); 
 // (* external 'c:\mc\reusint.com'; *)
 extern void musyc(tablint &tb, int nbseg, int att);  
-// (* external 'c:\mc\demus.com'; *)
-extern void demus(int Src, int Dst, int Tay);
 // (* external 'c:\mc\phint.com'; *)
 extern void litph(tablint &t, int typ, int tempo); 
 

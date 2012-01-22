@@ -36,6 +36,7 @@
 #include "mortevielle/outtext.h"
 #include "mortevielle/ovd1.h"
 #include "mortevielle/parole.h"
+#include "mortevielle/sound.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
@@ -338,7 +339,7 @@ void ani50() {
 	fic.read(&mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	demus(0x3800, 0x5000, 623);
+	demus(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
 	addfix = (float)((tempo_mus - addv[1])) / 256;
 	cctable(tbi);
 
