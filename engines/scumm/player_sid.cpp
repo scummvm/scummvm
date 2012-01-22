@@ -683,7 +683,7 @@ void Player_SID::stopSound_intern(int soundResID) { // $5093
 	releaseResource(soundResID);
 }
 
-void Player_SID::stopAllSounds_intern() { // $4CAA
+void Player_SID::stopMusic_intern() { // $4CAA
 	statusBits1B = 0;
 	isMusicPlaying = false;
 
@@ -1352,7 +1352,7 @@ void Player_SID::stopSound(int nr) {
 
 void Player_SID::stopAllSounds() {
 	Common::StackLock lock(_mutex);
-	stopAllSounds_intern();
+	resetPlayerState();
 }
 
 int Player_SID::getSoundStatus(int nr) const {
