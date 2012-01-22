@@ -66,6 +66,7 @@
 #include "engines/grim/objectstate.h"
 #include "engines/grim/set.h"
 #include "engines/grim/sound.h"
+#include "engines/grim/stuffit.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -203,6 +204,17 @@ GrimEngine::~GrimEngine() {
 }
 
 Common::Error GrimEngine::run() {
+	// Try to see if we have the EMI Mac installer present
+	// Currently, this requires the data fork to be standalone
+	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("Monkey Island 4 Installer")) {
+		StuffItArchive *archive = new StuffItArchive();
+
+		if (archive->open("Monkey Island 4 Installer"))
+			SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
+		else
+			delete archive;
+	}
+
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
 	bool demo = getGameFlags() & ADGF_DEMO;
@@ -234,6 +246,11 @@ Common::Error GrimEngine::run() {
 
 	// refresh the theme engine so that we can show the gui overlay without it crashing.
 	GUI::GuiManager::instance().theme()->refresh();
+
+	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
+		// TODO: Play EMI Mac Aspyr logo
+		warning("TODO: Play Aspyr logo");
+	}
 
 	Bitmap *splash_bm = NULL;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
