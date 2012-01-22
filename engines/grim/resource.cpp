@@ -138,6 +138,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "local.m4b");
 			SearchMan.listMatchingMembers(files, "sfx.m4b");
 			SearchMan.listMatchingMembers(files, "voice???.m4b");
+			SearchMan.listMatchingMembers(files, "music?.m4b");
 		}
 	}
 

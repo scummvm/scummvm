@@ -31,8 +31,9 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/emisound/emisound.h"
 #include "engines/grim/emisound/track.h"
-#include "engines/grim/emisound/vimatrack.h"
 #include "engines/grim/emisound/mp3track.h"
+#include "engines/grim/emisound/scxtrack.h"
+#include "engines/grim/emisound/vimatrack.h"
 
 #define NUM_CHANNELS 32
 
@@ -118,10 +119,6 @@ void EMISound::setPan(const char *soundName, int pan) {
 }
 	
 void EMISound::setMusicState(int stateId) {
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		warning("EMI doesn't have music-support yet %d", stateId);
-		return;
-	}
 	if (_music) {
 		delete _music;
 		_music = NULL;
@@ -129,9 +126,19 @@ void EMISound::setMusicState(int stateId) {
 	if (stateId == 0) {
 		return;
 	}
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + _musicTable[stateId]._filename);
-	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
-	if (_music->openSound(_musicTable[stateId]._filename, str))
+	Common::String filename;
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		warning("PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
+		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
+		filename = "1195.SCX";
+		_music = new SCXTrack(Audio::Mixer::kMusicSoundType);
+	} else {
+		filename = _musicTable[stateId]._filename;
+		_music = new MP3Track(Audio::Mixer::kMusicSoundType);	
+	}
+	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
+
+	if (_music->openSound(filename, str))
 		_music->play();
 }
 
@@ -216,6 +223,7 @@ void EMISound::initMusicTable() {
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		// TODO, fill this in, data is in the binary.
 		//initMusicTablePS2()
+		_musicPrefix = "";
 	} else {
 		_musicTable = initMusicTableRetail("Textures/FullMonkeyMap.imt");
 		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.

@@ -55,6 +55,8 @@ MODULE_OBJS := \
 	movie/mpeg.o \
 	movie/smush.o \
 	movie/movie.o \
+	emisound/mp3track.o \
+	emisound/scxtrack.o \
 	emisound/vimatrack.o \
 	emisound/track.o \
 	emisound/emisound.o \
@@ -62,7 +64,6 @@ MODULE_OBJS := \
 	update/mscab.o \
 	update/lang_filter.o \
 	update/update.o \
-	emisound/mp3track.o \
 	actor.o \
 	animation.o \
 	bitmap.o \
