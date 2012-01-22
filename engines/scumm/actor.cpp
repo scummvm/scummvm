@@ -2711,7 +2711,7 @@ void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(ActorC64, _speakingPrev, sleByte, VER(84)),
         MKLINE(ActorC64, _byte_FD0A, sleByte, VER(89)),
         MKLINE(ActorC64, _byte_FDE8, sleByte, VER(89)),
-        MKARRAY(ActorC64, _byte_FCE2, sleInt8, 8, VER(89)),
+        MKARRAY(ActorC64, _byte_FCE2[0], sleInt8, 8, VER(89)),
 		MKEND()
 	};
 
