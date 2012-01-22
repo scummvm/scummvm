@@ -173,14 +173,7 @@ GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	Set::getPool().deleteObjects();
-	Actor::getPool().deleteObjects();
-	PrimitiveObject::getPool().deleteObjects();
-	TextObject::getPool().deleteObjects();
-	Bitmap::getPool().deleteObjects();
-	Font::getPool().deleteObjects();
-	ObjectState::getPool().deleteObjects();
-	PoolColor::getPool().deleteObjects();
+	clearPools();
 
 	delete LuaBase::instance();
 	if (g_registry) {
@@ -199,6 +192,19 @@ GrimEngine::~GrimEngine() {
 	delete g_driver;
 	g_driver = NULL;
 	delete _iris;
+}
+
+void GrimEngine::clearPools() {
+	Set::getPool().deleteObjects();
+	Actor::getPool().deleteObjects();
+	PrimitiveObject::getPool().deleteObjects();
+	TextObject::getPool().deleteObjects();
+	Bitmap::getPool().deleteObjects();
+	Font::getPool().deleteObjects();
+	ObjectState::getPool().deleteObjects();
+	PoolColor::getPool().deleteObjects();
+
+	_currSet = NULL;
 }
 
 Common::Error GrimEngine::run() {
@@ -424,7 +430,7 @@ void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) 
 }
 
 void GrimEngine::luaUpdate() {
-	if (_savegameLoadRequest || _savegameSaveRequest)
+	if (_savegameLoadRequest || _savegameSaveRequest || _changeHardwareState)
 		return;
 
 	// Update timing information
@@ -598,6 +604,7 @@ void GrimEngine::mainLoop() {
 	_refreshShadowMask = false;
 	_shortFrame = false;
 	bool resetShortFrame = false;
+	_changeHardwareState = false;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
@@ -613,6 +620,33 @@ void GrimEngine::mainLoop() {
 		}
 		if (_savegameSaveRequest) {
 			savegameSave();
+		}
+
+		if (_changeHardwareState) {
+			_changeHardwareState = false;
+
+			EngineMode mode = getMode();
+
+			savegameSave();
+			clearPools();
+
+			delete g_driver;
+			if (tolower(g_registry->get("soft_renderer", "false")[0]) == 't') {
+				g_driver = CreateGfxTinyGL();
+			} else {
+				g_driver = CreateGfxOpenGL();
+			}
+
+			g_driver->setupScreen(640, 480, false);
+			savegameRestore();
+
+			if (mode == DrawMode) {
+				setMode(GrimEngine::NormalMode);
+				updateDisplayScene();
+				g_driver->storeDisplay();
+				g_driver->dimScreen();
+			}
+			setMode(mode);
 		}
 
 		g_imuse->flushTracks();
@@ -671,6 +705,10 @@ void GrimEngine::mainLoop() {
 			g_system->delayMillis(delayTime);
 		}
 	}
+}
+
+void GrimEngine::changeHardwareState() {
+	_changeHardwareState = true;
 }
 
 void GrimEngine::saveGame(const Common::String &file) {
