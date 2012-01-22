@@ -748,6 +748,10 @@ void Lua_V2::StartMovie() {
 	g_grim->setMode(GrimEngine::SmushMode);
 }
 
+void Lua_V2::EscapeMovie() {
+	g_movie->stop();
+}
+
 void Lua_V2::IsMoviePlaying() {
 	pushbool(g_movie->isPlaying());
 }
@@ -821,6 +825,15 @@ void Lua_V2::ToggleOverworld() {
 
 void Lua_V2::ScreenshotForSavegame() {
 	warning("Lua_V2::ScreenshotForSavegame: implement opcode");
+}
+	
+void Lua_V2::ImStateHasEnded() {
+	warning("Lua_V2::ImStateHasEnded: Just returns true");
+	pushbool(true);
+}
+
+void Lua_V2::PlayLoadedSound() {
+	warning("Lua_V2::PlayLoadedSound: implement opcode");
 }
 
 void Lua_V2::EngineDisplay() {
@@ -897,17 +910,14 @@ STUB_FUNC2(Lua_V2::CompleteChore)
 STUB_FUNC2(Lua_V2::UnlockChore)
 STUB_FUNC2(Lua_V2::LockChoreSet)
 STUB_FUNC2(Lua_V2::UnlockChoreSet)
-STUB_FUNC2(Lua_V2::EscapeMovie)
 STUB_FUNC2(Lua_V2::StopAllSounds)
 STUB_FUNC2(Lua_V2::FreeSound)
-STUB_FUNC2(Lua_V2::PlayLoadedSound)
 STUB_FUNC2(Lua_V2::GetSoundVolume)
 STUB_FUNC2(Lua_V2::SetSoundVolume)
 STUB_FUNC2(Lua_V2::PlaySoundFrom)
 STUB_FUNC2(Lua_V2::PlayLoadedSoundFrom)
 STUB_FUNC2(Lua_V2::UpdateSoundPosition)
 STUB_FUNC2(Lua_V2::ImStateHasLooped)
-STUB_FUNC2(Lua_V2::ImStateHasEnded)
 STUB_FUNC2(Lua_V2::ImPushState)
 STUB_FUNC2(Lua_V2::ImPopState)
 STUB_FUNC2(Lua_V2::GetSectorName)
