@@ -1149,9 +1149,9 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	VAR(6) = x;
 	VAR(7) = y;
 
-	if (!(a->_miscflags & kActorMiscFlagFreeze)) {
-		// FIXME: walking already started -> should be stopped if condition not true
-		//actorStartWalk();
+	// actor must not move if frozen
+	if (a->_miscflags & kActorMiscFlagFreeze)
+		a->stopActorMoving();
 	}
 }
 
