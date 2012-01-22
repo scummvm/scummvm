@@ -13,11 +13,11 @@ gp2xwiz-bundle: $(EXECUTABLE)
 
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gph/devices/gp2xwiz/scummvm.gpe $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvmb.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/README-GPH $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.ini $(bundle_name)/
+	$(CP) $(srcdir)/dists/gph/gp2xwiz/scummvm.gpe $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/scummvmb.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/README-GPH $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/scummvm.ini $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
@@ -47,11 +47,11 @@ gp2xwiz-bundle-debug: $(EXECUTABLE)
 
 	echo "Please put your save games in this dir" >> "$(bundle_name)/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gph/devices/gp2xwiz/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvmb.png $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/README-GPH $(bundle_name)/scummvm/
-	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.ini $(bundle_name)/
+	$(CP) $(srcdir)/dists/gph/gp2xwiz/scummvm-gdb.gpe $(bundle_name)/scummvm/scummvm.gpe
+	$(CP) $(srcdir)/dists/gph/scummvm.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/scummvmb.png $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/README-GPH $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/dists/gph/scummvm.ini $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
