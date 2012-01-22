@@ -80,6 +80,14 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	DebugPrintf("node: %s %d    ", roomName, nodeId);
 
+	for (uint i = 0; i < nodeData->scripts.size(); i++) {
+		DebugPrintf("\ninit %d > %s (%s)\n", i,
+				_vm->_state->describeCondition(nodeData->scripts[i].condition).c_str(),
+				_vm->_state->evaluate(nodeData->scripts[i].condition) ? "true" : "false");
+
+		describeScript(nodeData->scripts[i].script);
+	}
+
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
 		DebugPrintf("\nhotspot %d > %s (%s)\n", i,
 				_vm->_state->describeCondition(nodeData->hotspots[i].condition).c_str(),
@@ -95,20 +103,20 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		describeScript(nodeData->hotspots[i].script);
 	}
 
-	for (uint i = 0; i < nodeData->scripts.size(); i++) {
-		DebugPrintf("\nscript %d > %s (%s)\n", i,
-				_vm->_state->describeCondition(nodeData->scripts[i].condition).c_str(),
-				_vm->_state->evaluate(nodeData->scripts[i].condition) ? "true" : "false");
-
-		describeScript(nodeData->scripts[i].script);
-	}
-
 	for (uint i = 0; i < nodeData->soundScripts.size(); i++) {
-		DebugPrintf("\nambient sound %d > %s (%s)\n", i,
+		DebugPrintf("\nsound %d > %s (%s)\n", i,
 				_vm->_state->describeCondition(nodeData->soundScripts[i].condition).c_str(),
 				_vm->_state->evaluate(nodeData->soundScripts[i].condition) ? "true" : "false");
 
 		describeScript(nodeData->soundScripts[i].script);
+	}
+
+	for (uint i = 0; i < nodeData->backgroundSoundScripts.size(); i++) {
+		DebugPrintf("\nbackground sound %d > %s (%s)\n", i,
+				_vm->_state->describeCondition(nodeData->backgroundSoundScripts[i].condition).c_str(),
+				_vm->_state->evaluate(nodeData->backgroundSoundScripts[i].condition) ? "true" : "false");
+
+		describeScript(nodeData->backgroundSoundScripts[i].script);
 	}
 
 	return true;

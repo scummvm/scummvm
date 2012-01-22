@@ -215,7 +215,12 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	// Load the ambient sound scripts, if any
 	if (room->ambSoundsOffset) {
 		file->seek(room->ambSoundsOffset);
-		loadRoomSoundScripts(file, nodes);
+		loadRoomSoundScripts(file, nodes, false);
+	}
+
+	if (room->unkOffset) {
+		file->seek(room->unkOffset);
+		loadRoomSoundScripts(file, nodes, true);
 	}
 
 	delete file;
@@ -265,7 +270,7 @@ void Database::loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Co
 	}
 }
 
-void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes) {
+void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes, bool background) {
 	while (1) {
 		int16 id = file->readUint16();
 
@@ -292,7 +297,10 @@ void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, C
 				nodes.push_back(node);
 			}
 
-			node->soundScripts = loadCondScripts(*file);
+			if (background)
+				node->backgroundSoundScripts.push_back(loadCondScripts(*file));
+			else
+				node->soundScripts.push_back(loadCondScripts(*file));
 		} else {
 			// Several nodes sharing the same scripts
 			// Find the node ids the script applies to
@@ -333,7 +341,10 @@ void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, C
 				if (!node)
 					continue;
 
-				node->soundScripts.push_back(scripts);
+				if (background)
+					node->backgroundSoundScripts.push_back(scripts);
+				else
+					node->soundScripts.push_back(scripts);
 			}
 		}
 	}
