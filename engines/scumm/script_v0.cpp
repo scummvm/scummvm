@@ -756,9 +756,16 @@ void ScummEngine_v0::o_pickupObject() {
 }
 
 void ScummEngine_v0::o_setObjectName() {
-	int obj = fetchScriptByte();
-	if (!obj)
+	int obj;
+	int objId = fetchScriptByte();
+	if (!objId) {
 		obj = _cmdObject;
+	} else {
+		if (_opcode & 0x80)
+			obj = OBJECT_V0(objId, kObjectV0TypeBG);
+		else
+			obj = OBJECT_V0(objId, kObjectV0TypeFG);
+	}
 	setObjectName(obj);
 }
 
