@@ -39,6 +39,12 @@ protected:
 		kModeNormal = 3,     // normal playing mode
 	};
 
+	enum WalkToObjectState {
+		kWalkToObjectStateDone = 0,
+		kWalkToObjectStateWalk = 1,
+		kWalkToObjectStateTurn = 2,
+	};
+
 protected:
 	byte _currentMode;
 
@@ -51,7 +57,7 @@ protected:
 	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0())
 
 	int _walkToObject;
-	int _walkToObjectIdx;
+	int _walkToObjectState;
 	bool _redrawSentenceLine;
 
 public:
@@ -81,6 +87,7 @@ protected:
 
 	virtual void runSentenceScript();
 	virtual void checkAndRunSentenceScript();
+	bool checkPendingWalkAction();
 	bool checkSentenceComplete();
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);

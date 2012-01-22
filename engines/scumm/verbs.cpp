@@ -699,7 +699,7 @@ void ScummEngine_v0::verbExec() {
 			_activeObject = 0;
 			_activeObject2 = 0;
 		}
-		_walkToObjectIdx = 0;
+		_walkToObjectState = kWalkToObjectStateDone;
 		return;
 	}
 
@@ -845,7 +845,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 				_redrawSentenceLine = true;
 				if (_activeVerb == kVerbWalkTo && zone->number == kMainVirtScreen) {
-					_walkToObjectIdx = 0;
+					_walkToObjectState = kWalkToObjectStateDone;
 					execute = true;
 				}
 			}

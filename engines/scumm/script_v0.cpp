@@ -976,7 +976,8 @@ void ScummEngine_v0::resetSentence() {
 	_activeVerb = kVerbWalkTo;
 	_activeObject = 0;
 	_activeObject2 = 0;
-	_walkToObjectIdx = 0;
+
+	_walkToObjectState = kWalkToObjectStateDone;
 	_redrawSentenceLine = true;
 }
 

@@ -1135,7 +1135,7 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "walkToObject");
 
 	_walkToObject = object;
-	_walkToObjectIdx = getObjectIndex(object);
+	_walkToObjectState = kWalkToObjectStateWalk;
 
 	if (OBJECT_V0_TYPE(object) == kObjectV0TypeActor) {
 		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_ID(object), 4);
@@ -1152,19 +1152,52 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	// actor must not move if frozen
 	if (a->_miscflags & kActorMiscFlagFreeze)
 		a->stopActorMoving();
+}
+
+bool ScummEngine_v0::checkPendingWalkAction() {
+	// before a sentence script is executed, it might be necessary to walk to
+	// and pickup objects before. Check if such an action is pending and handle
+	// it if available.
+	if (_walkToObjectState == kWalkToObjectStateDone)
+		return false;
+
+	int actor = VAR(VAR_EGO);
+	ActorC64 *a = (ActorC64 *)derefActor(actor, "checkAndRunSentenceScript");
+
+	// wait until walking or turning action is finished
+	if (a->_moving)
+		return true;
+
+	// after walking and turning finally execute the script
+	if (_walkToObjectState == kWalkToObjectStateTurn) {
+		runSentenceScript();
+	// change actor facing
+	} else if (getObjActToObjActDist(actorToObj(actor), _walkToObject) <= 4) {
+		if (objIsActor(_walkToObject)) { // walk to actor finished
+			// make actors turn to each other
+			a->faceToObject(_walkToObject);
+			int otherActor = objToActor(_walkToObject);
+			// ignore the plant
+			if (otherActor != 19) {
+				Actor *b = derefActor(otherActor, "checkAndRunSentenceScript(2)");
+				b->faceToObject(actorToObj(actor));
+			}
+		} else { // walk to object finished
+			int x, y, dir;
+			getObjectXYPos(_walkToObject, x, y, dir);
+			a->turnToDirection(dir);
+		}
+		_walkToObjectState = kWalkToObjectStateTurn;
+		return true;
 	}
+
+	_walkToObjectState = kWalkToObjectStateDone;
+	return false;
 }
 
 void ScummEngine_v0::checkAndRunSentenceScript() {
-	if (_walkToObjectIdx) {
-		ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkAndRunSentenceScript");
-		if (a->_moving)
-			return;
-		// TODO: change actor facing
-		_walkToObjectIdx = 0;
-		runSentenceScript();
+	if (checkPendingWalkAction())
 		return;
-	}
 
 	if (!_sentenceNum || _sentence[_sentenceNum - 1].freezeCount)
 		return;
@@ -1214,7 +1247,7 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 
 	runSentenceScript();
 	if (_currentMode == kModeKeypad) {
-		_walkToObjectIdx = 0;
+		_walkToObjectState = kWalkToObjectStateDone;
 	}
 }
 
