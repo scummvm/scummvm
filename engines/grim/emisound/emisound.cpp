@@ -143,6 +143,8 @@ void EMISound::setMusicState(int stateId) {
 }
 
 uint32 EMISound::getMsPos(int stateId) {
+	if (!_music)
+		return -1;
 	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
 }
 	
