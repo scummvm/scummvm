@@ -95,4 +95,10 @@ void SoundPlayer::setMusicState(int stateId) {
 	}
 }
 	
+// EMI-only
+uint32 SoundPlayer::getMsPos(int stateId) {
+	assert(_emiSound); // This shouldn't ever be called from Grim.
+	return _emiSound->getMsPos(stateId);
+}
+	
 } // end of namespace Grim

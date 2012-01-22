@@ -46,10 +46,7 @@ EMISound::EMISound() {
 		_channels[i] = NULL;
 	}
 	_music = NULL;
-	
-	if (g_grim->getGameFlags() == ADGF_DEMO) {
-		initMusicTable("Music/FullMonkeyMap.imt");
-	}
+	initMusicTable();
 }
 
 int32 EMISound::getFreeChannel() {
@@ -121,7 +118,7 @@ void EMISound::setPan(const char *soundName, int pan) {
 }
 	
 void EMISound::setMusicState(int stateId) {
-	if (g_grim->getGameFlags() != ADGF_DEMO) {
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		warning("EMI doesn't have music-support yet %d", stateId);
 		return;
 	}
@@ -129,16 +126,26 @@ void EMISound::setMusicState(int stateId) {
 		delete _music;
 		_music = NULL;
 	}
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile("Music/" + _musicTable[stateId]._filename);
+	if (stateId == 0) {
+		return;
+	}
+	// Workaround for the gap:
+	if (stateId > 65)
+		stateId -= 55;
+	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + _musicTable[stateId]._filename);
 	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
-	if (_music->openSound(_musicTable[stateId]._name, str))
+	if (_music->openSound(_musicTable[stateId]._filename, str))
 		_music->play();
 }
 
-void EMISound::initMusicTable(Common::String filename) {
+uint32 EMISound::getMsPos(int stateId) {
+	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
+}
+	
+MusicEntry *initMusicTableDemo(Common::String filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
-	_musicTable = new MusicEntry[15];
+	MusicEntry *musicTable = new MusicEntry[15];
 	
 	TextSplitter *ts = new TextSplitter(data);
 	char *line;
@@ -152,14 +159,73 @@ void EMISound::initMusicTable(Common::String filename) {
 		ts->nextLine();
 		ts->scanString(".cuebutton id %d x %d y %d sync %d \"%[^\"]64s", 5, &id, &x, &y, &sync, name);
 		ts->scanString(".playfile \"%[^\"]64s", 1, musicfilename);
-		_musicTable[id]._id = id;
-		_musicTable[id]._x = x;
-		_musicTable[id]._y = y;
-		_musicTable[id]._sync = sync;
-		_musicTable[id]._name = name;
-		_musicTable[id]._filename = musicfilename;
+		musicTable[id]._id = id;
+		musicTable[id]._x = x;
+		musicTable[id]._y = y;
+		musicTable[id]._sync = sync;
+		musicTable[id]._name = name;
+		musicTable[id]._filename = musicfilename;
 		ts->nextLine();
 	}
-}
 	
+	return musicTable;
+}
+
+MusicEntry *initMusicTableRetail(Common::String filename) {
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
+	
+	// Remember to check, in case we forgot to copy over those files from the CDs.
+	if (!data)
+		error("Couldn't open %s", filename.c_str());
+	// FIXME, for now we use a fixed-size table, but, since there's a hole 65-122, we could perhaps offset that.
+	MusicEntry *musicTable = new MusicEntry[126];
+	
+	TextSplitter *ts = new TextSplitter(data);
+	char *line;
+	ts->setLineNumber(3); // Skip top-comment
+	int id, x, y, sync, trim;
+	int i = 0;
+	char musicfilename[64];
+	char name[64];
+	char type[16];
+	line = ts->getCurrentLine();
+	// Every block is followed by 3 lines of commenting/uncommenting, except the last.
+	while (!ts->isEof()) {
+		while (!ts->checkString("*/")) {
+			ts->scanString(".cuebutton id %d x %d y %d sync %d type %16s", 5, &id, &x, &y, &sync, type);
+			ts->scanString(".playfile trim %d \"%[^\"]64s", 2, &trim, musicfilename);
+			if (musicfilename[1] == '\\')
+				musicfilename[1] = '/';
+			// Decrease the big gap between the last elements.
+			if (id > 65)
+				id -= 50;
+			musicTable[id]._id = id;
+			musicTable[id]._x = x;
+			musicTable[id]._y = y;
+			musicTable[id]._sync = sync;
+			musicTable[id]._type = type;
+			musicTable[id]._name = "";
+			musicTable[id]._trim = trim;
+			musicTable[id]._filename = musicfilename;
+		}
+		ts->nextLine();
+		ts->nextLine();
+	}
+	return musicTable;
+}
+
+
+	
+void EMISound::initMusicTable() {
+	if (g_grim->getGameFlags() == ADGF_DEMO) {
+		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
+		_musicPrefix = "Music/";
+	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		// TODO, fill this in, data is in the binary.
+		//initMusicTablePS2()
+	} else {
+		_musicTable = initMusicTableRetail("Textures/FullMonkeyMap.imt");
+		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
+	}
+}
 } // end of namespace Grim

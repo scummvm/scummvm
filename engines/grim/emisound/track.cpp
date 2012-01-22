@@ -41,8 +41,11 @@ void SoundTrack::setSoundName(Common::String name) {
 }
 	
 bool SoundTrack::play() {
-	if (_stream)
+	if (_stream) {
 		g_system->getMixer()->playStream(_soundType, _handle, _stream);
+		return true;
+	}
+	return false;
 }
 
 void SoundTrack::stop() {

@@ -60,6 +60,10 @@ bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *f
 #ifndef USE_MAD
 	return false;
 #else
+	if (!file) {
+		warning("Stream for %s not open", soundName.c_str());
+		//return false;
+	}
 	_soundName = soundName;
 	parseRIFFHeader(file);
 	_stream = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(file, DisposeAfterUse::YES), 0);

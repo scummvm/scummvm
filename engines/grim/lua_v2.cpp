@@ -35,6 +35,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/sound.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/costume/chore.h"
 
@@ -139,8 +140,11 @@ void Lua_V2::ImGetMillisecondPosition() {
 		// FIXME int ms = func(sound);
 		// lua_pushnumber(ms);
 		// push -1 for now
-		warning("Lua_V2::ImGetMillisecondPosition: sound: %d", sound);
-		lua_pushnumber(-1);
+		// Currently a bit of guesswork, and probably wrong, as the stateId
+		// is ignored by emisound (which only has one music-track now).
+		uint32 msPos = g_sound->getMsPos(sound);
+		warning("Lua_V2::ImGetMillisecondPosition: sound: %d ms: %d", sound, msPos);
+		lua_pushnumber(msPos);
 	}
 }
 
