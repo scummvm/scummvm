@@ -444,6 +444,13 @@ public:
 	virtual bool showMouse(bool visible) = 0;
 
 	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 *
+	 * ResidualVM specific method
+	 */
+	virtual bool lockMouse(bool lock) = 0;
+
+	/**
 	 * Move ("warp") the mouse cursor to the specified position in virtual
 	 * screen coordinates.
 	 * @param x		the new x position of the mouse

@@ -125,6 +125,11 @@ bool ModularBackend::showMouse(bool visible) {
 	return _graphicsManager->showMouse(visible);
 }
 
+// ResidualVM specific method
+bool ModularBackend::lockMouse(bool visible) {
+	return _graphicsManager->lockMouse(visible);
+}
+
 void ModularBackend::warpMouse(int x, int y) {
 	_graphicsManager->warpMouse(x, y);
 }
