@@ -1,5 +1,5 @@
 [info]
-name="ScummVM"
+name="ScummVM @VERSION@"
 path="/scummvm/scummvm.gpe"
 icon="/scummvm/scummvm.png"
 title="/scummvm/scummvmb.png"
