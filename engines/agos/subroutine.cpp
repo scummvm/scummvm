@@ -369,7 +369,7 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 				if (getGameType() == GType_SIMON2) {
-					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
+					_sound->loadSfxTable(getFileName(GAME_GMEFILE), _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
 				} else if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) {
 					filename.setChar('S', 0);
 					filename.setChar('F', 1);
