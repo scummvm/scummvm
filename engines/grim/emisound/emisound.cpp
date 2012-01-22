@@ -129,9 +129,6 @@ void EMISound::setMusicState(int stateId) {
 	if (stateId == 0) {
 		return;
 	}
-	// Workaround for the gap:
-	if (stateId > 65)
-		stateId -= 55;
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + _musicTable[stateId]._filename);
 	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
 	if (_music->openSound(_musicTable[stateId]._filename, str))
@@ -177,7 +174,6 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	// Remember to check, in case we forgot to copy over those files from the CDs.
 	if (!data)
 		error("Couldn't open %s", filename.c_str());
-	// FIXME, for now we use a fixed-size table, but, since there's a hole 65-122, we could perhaps offset that.
 	MusicEntry *musicTable = new MusicEntry[126];
 	
 	TextSplitter *ts = new TextSplitter(data);
@@ -196,9 +192,6 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 			ts->scanString(".playfile trim %d \"%[^\"]64s", 2, &trim, musicfilename);
 			if (musicfilename[1] == '\\')
 				musicfilename[1] = '/';
-			// Decrease the big gap between the last elements.
-			if (id > 65)
-				id -= 50;
 			musicTable[id]._id = id;
 			musicTable[id]._x = x;
 			musicTable[id]._y = y;
