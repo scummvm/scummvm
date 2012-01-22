@@ -65,6 +65,7 @@
 #include "engines/grim/primitives.h"
 #include "engines/grim/objectstate.h"
 #include "engines/grim/set.h"
+#include "engines/grim/sound.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -656,7 +657,7 @@ void GrimEngine::mainLoop() {
 		}
 
 		if (g_imuseState != -1) {
-			g_imuse->setMusicState(g_imuseState);
+			g_sound->setMusicState(g_imuseState);
 			g_imuseState = -1;
 		}
 

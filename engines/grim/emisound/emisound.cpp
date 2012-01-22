@@ -25,13 +25,14 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
-//#include "engines/grim/imuse/imuse.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/textsplit.h"
 #include "engines/grim/emisound/emisound.h"
 #include "engines/grim/emisound/track.h"
 #include "engines/grim/emisound/vimatrack.h"
+#include "engines/grim/emisound/mp3track.h"
 
 #define NUM_CHANNELS 32
 
@@ -43,6 +44,11 @@ EMISound::EMISound() {
 	_channels = new SoundTrack*[NUM_CHANNELS];
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i] = NULL;
+	}
+	_music = NULL;
+	
+	if (g_grim->getGameFlags() == ADGF_DEMO) {
+		initMusicTable("Music/FullMonkeyMap.imt");
 	}
 }
 
@@ -75,7 +81,11 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
 
-	return _channels[channel]->openSound(soundName, str);
+	if (_channels[channel]->openSound(soundName, str)) {
+		_channels[channel]->play();
+		return true;
+	}
+	return false;
 }
 
 bool EMISound::getSoundStatus(const char *soundName) {
@@ -84,30 +94,72 @@ bool EMISound::getSoundStatus(const char *soundName) {
 	if (channel == -1)	// We have no such sound.
 		return false;
 	
-	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->_handle) && _channels[channel]->isPlaying();	
+	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();	
 }
 
 void EMISound::stopSound(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	g_system->getMixer()->stopHandle(*_channels[channel]->_handle);
+	g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
 	freeChannel(channel);
 }
 
 int32 EMISound::getPosIn60HzTicks(const char *soundName) {	
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->_handle);
+	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle());
 }
 	
 void EMISound::setVolume(const char *soundName, int volume) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	g_system->getMixer()->setChannelVolume(*_channels[channel]->_handle, volume);
+	g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
 }
 
 void EMISound::setPan(const char *soundName, int pan) {
 	warning("EMI doesn't support sound-panning yet, %s", soundName);
 }
+	
+void EMISound::setMusicState(int stateId) {
+	if (g_grim->getGameFlags() != ADGF_DEMO) {
+		warning("EMI doesn't have music-support yet %d", stateId);
+		return;
+	}
+	if (_music) {
+		delete _music;
+		_music = NULL;
+	}
+	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile("Music/" + _musicTable[stateId]._filename);
+	_music = new MP3Track(Audio::Mixer::kMusicSoundType);
+	_music->openSound(_musicTable[stateId]._name, str);
+	_music->play();
+}
 
+void EMISound::initMusicTable(Common::String filename) {
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
+	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
+	_musicTable = new MusicEntry[15];
+	
+	TextSplitter *ts = new TextSplitter(data);
+	char *line;
+	ts->setLineNumber(3); // Skip top-comment
+	int id, x, y, sync;
+	int i = 0;
+	char musicfilename[64];
+	char name[64];
+	line = ts->getCurrentLine();
+	while (ts->checkString("/*")) {
+		ts->nextLine();
+		ts->scanString(".cuebutton id %d x %d y %d sync %d \"%[^\"]64s", 5, &id, &x, &y, &sync, name);
+		ts->scanString(".playfile \"%[^\"]64s", 1, musicfilename);
+		_musicTable[id]._id = id;
+		_musicTable[id]._x = x;
+		_musicTable[id]._y = y;
+		_musicTable[id]._sync = sync;
+		_musicTable[id]._name = name;
+		_musicTable[id]._filename = musicfilename;
+		ts->nextLine();
+	}
+}
+	
 } // end of namespace Grim

@@ -460,6 +460,7 @@ void Lua_V2::ImSetState() {
 		return;
 
 	int state = (int)lua_getnumber(stateObj);
+	g_imuseState = state;
 	warning("Lua_V2::ImSetState: stub, state: %d", state);
 }
 

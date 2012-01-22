@@ -21,32 +21,47 @@
  */
 
 #include "common/mutex.h"
-#include "common/str.h"
-#include "common/stream.h"
+#include "common/textconsole.h"
 #include "audio/mixer.h"
-#include "engines/grim/emisound/track.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/mp3.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/emisound/mp3track.h"
 
 namespace Grim {
 
-SoundTrack::SoundTrack() {
-	_stream = NULL;
-}
-	
-Common::String SoundTrack::getSoundName() {
-	return _soundName;
+void MP3Track::parseRIFFHeader(Common::SeekableReadStream *data) {
+	uint32 tag = data->readUint32BE();
+	if (tag == MKTAG('R','I','F','F')) {
+		_endFlag = false;
+		data->seek(18, SEEK_CUR);
+		_channels = data->readByte();
+		data->readByte();
+		_freq = data->readUint32LE();
+		data->seek(6, SEEK_CUR);
+		_bits = data->readByte();
+		data->seek(5, SEEK_CUR);
+		_regionLength = data->readUint32LE();
+		_headerSize = 44;
+	} else {
+		error("Unknown file header");
+	}
 }
 
-void SoundTrack::setSoundName(Common::String name) {
-	_soundName = name;
-}
-	
-bool SoundTrack::play() {
-	if (_stream)
-		g_system->getMixer()->playStream(_soundType, _handle, _stream);
+MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
+	_soundType = soundType;
 }
 
-void SoundTrack::stop() {
-	if (_handle)
-		g_system->getMixer()->stopHandle(*_handle);
+MP3Track::~MP3Track() {
+	stop();
 }
+	
+bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *file) {
+	_soundName = soundName;
+	parseRIFFHeader(file);
+	_stream = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(file, DisposeAfterUse::YES), 0);
+	_handle = new Audio::SoundHandle();
+	return true;
+}
+
 } // end of namespace Grim 

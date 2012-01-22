@@ -75,7 +75,6 @@ bool VimaTrack::openSound(Common::String voiceName, Common::SeekableReadStream *
 		parseSoundHeader(_desc, headerSize);
 
 		_stream = Audio::makeQueuingAudioStream(_desc->freq, (false));
-		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _handle, _stream);
 
 		playTrack();
 		return true;
@@ -174,7 +173,7 @@ void VimaTrack::playTrack() {
 			result = mixer_size;
 		
 		if (g_system->getMixer()->isReady()) {
-			_stream->queueBuffer(data, result, DisposeAfterUse::YES, mixerFlags);
+			((Audio::QueuingAudioStream*)_stream)->queueBuffer(data, result, DisposeAfterUse::YES, mixerFlags);
 			regionOffset += result;
 		} else
 			delete[] data;
@@ -199,14 +198,15 @@ void VimaTrack::playTrack() {
 }
 
 VimaTrack::VimaTrack(Common::String soundName) {
+	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
 	_file = NULL;
 	setSoundName(soundName);
 }
 
 VimaTrack::~VimaTrack() {
-	if (_handle)
-		g_system->getMixer()->stopHandle(*_handle);
+	stop();
+	
 	delete _mcmp;
 	
 	if (_desc) {

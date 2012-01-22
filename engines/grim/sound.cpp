@@ -87,4 +87,12 @@ void SoundPlayer::setPan(const char *soundName, int pan) {
 	}
 }
 	
+void SoundPlayer::setMusicState(int stateId) {
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_imuse->setMusicState(stateId);
+	} else {
+		_emiSound->setMusicState(stateId);
+	}
+}
+	
 } // end of namespace Grim

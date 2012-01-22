@@ -39,6 +39,8 @@ public:
 	
 	void setVolume(const char *soundName, int volume);
 	void setPan(const char *soundName, int pan);
+	
+	void setMusicState(int stateId);
 };
 
 extern SoundPlayer *g_sound;

@@ -37,7 +37,6 @@ class McmpMgr;
  * similar implementation for SCX will be required for PS2-support.
  */
 class VimaTrack : public SoundTrack {
-	Audio::QueuingAudioStream *_stream;
 	Common::SeekableReadStream *_file;
 	void parseSoundHeader(SoundDesc *sound, int &headerSize);
 	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);

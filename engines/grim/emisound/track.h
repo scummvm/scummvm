@@ -23,11 +23,14 @@
 #ifndef GRIM_SOUNDTRACK_H
 #define GRIM_SOUNDTRACK_H
 
+#include "audio/mixer.h"
+
 namespace Common {
 	class String;
 }
 
 namespace Audio {
+	class AudioStream;
 	class SoundHandle;
 }
 
@@ -39,14 +42,19 @@ namespace Grim {
 class SoundTrack {
 protected:
 	Common::String _soundName;
+	Audio::AudioStream *_stream;
+	Audio::SoundHandle *_handle;
+	Audio::Mixer::SoundType _soundType;
 public:
+	SoundTrack();
 	virtual ~SoundTrack() { };
 	virtual bool openSound(Common::String voiceName, Common::SeekableReadStream *file) = 0;
 	virtual bool isPlaying() = 0;
+	virtual bool play();
+	virtual void stop();
+	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
 	void setSoundName(Common::String);
-	
-	Audio::SoundHandle *_handle;
 };
 
 }
