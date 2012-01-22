@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	parole2.o \
 	prog.o \
 	ques.o \
+	sound.o \
 	sprint.o \
 	taffich.o \
 	var_mor.o
