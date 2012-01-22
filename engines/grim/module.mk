@@ -105,6 +105,7 @@ MODULE_OBJS := \
 	sector.o \
 	skeleton.o \
 	sound.o \
+	stuffit.o \
 	textobject.o \
 	textsplit.o \
 	object.o
