@@ -42,6 +42,7 @@ struct NodeData
 	int16 id;
 	Common::Array<CondScript> scripts;
 	Common::Array<HotSpot> hotspots;
+	Common::Array<CondScript> soundScripts;
 };
 
 // Nodes are using ref counting pointers since they can be
@@ -143,6 +144,8 @@ private:
 
 	RoomData *findRoomData(const uint32 &roomID);
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
+	void loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes);
+	void loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes);
 	void preloadCommonRooms();
 
 	Common::Array<AgeData> loadAges(Common::ReadStreamEndian &s);

@@ -204,10 +204,26 @@ RoomData *Database::findRoomData(const uint32 & roomID)
 
 Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	Common::Array<NodePtr> nodes;
-
 	Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
-	file->seek(room->scriptsOffset);
 
+	// Load the node scripts
+	if (room->scriptsOffset) {
+		file->seek(room->scriptsOffset);
+		loadRoomNodeScripts(file, nodes);
+	}
+
+	// Load the ambient sound scripts, if any
+	if (room->ambSoundsOffset) {
+		file->seek(room->ambSoundsOffset);
+		loadRoomSoundScripts(file, nodes);
+	}
+
+	delete file;
+
+	return nodes;
+}
+
+void Database::loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes) {
 	while (1) {
 		int16 id = file->readUint16();
 
@@ -247,10 +263,80 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 			}
 		}
 	}
+}
 
-	delete file;
+void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes) {
+	while (1) {
+		int16 id = file->readUint16();
 
-	return nodes;
+		// End of list
+		if (id == 0)
+			break;
+
+		if (id < -10)
+			error("Unimplemented node list command");
+
+		if (id > 0) {
+			// Normal node, find the node if existing
+			NodePtr node;
+			for (uint i = 0; i < nodes.size(); i++)
+				if (nodes[i]->id == id) {
+					node = nodes[i];
+					break;
+				}
+
+			// Node not found, create a new one
+			if (!node) {
+				node = NodePtr(new NodeData());
+				node->id = id;
+				nodes.push_back(node);
+			}
+
+			node->soundScripts = loadCondScripts(*file);
+		} else {
+			// Several nodes sharing the same scripts
+			// Find the node ids the script applies to
+			Common::Array<int16> nodeIds;
+
+			if (id == -10)
+				do {
+					id = file->readUint16();
+					if (id < 0) {
+						uint16 end = file->readUint16();
+						for (int i = -id; i < end; i++)
+							nodeIds.push_back(i);
+
+					} else if (id > 0) {
+						nodeIds.push_back(id);
+					}
+				} while (id);
+			else
+				for (int i = 0; i < -id; i++) {
+					nodeIds.push_back(file->readUint16());
+				}
+
+			// Load the script
+			Common::Array<CondScript> scripts = loadCondScripts(*file);
+
+			// Add the script to each matching node
+			for (uint i = 0; i < nodeIds.size(); i++) {
+				NodePtr node;
+
+				// Find the current node if existing
+				for (uint j = 0; j < nodes.size(); j++)
+					if (nodes[j]->id == nodeIds[i]) {
+						node = nodes[j];
+						break;
+					}
+
+				// Node not found, skip it
+				if (!node)
+					continue;
+
+				node->soundScripts.push_back(scripts);
+			}
+		}
+	}
 }
 
 void Database::setCurrentRoom(const uint32 roomID) {

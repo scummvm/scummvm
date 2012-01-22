@@ -103,6 +103,14 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		describeScript(nodeData->scripts[i].script);
 	}
 
+	for (uint i = 0; i < nodeData->soundScripts.size(); i++) {
+		DebugPrintf("\nambient sound %d > %s (%s)\n", i,
+				_vm->_state->describeCondition(nodeData->soundScripts[i].condition).c_str(),
+				_vm->_state->evaluate(nodeData->soundScripts[i].condition) ? "true" : "false");
+
+		describeScript(nodeData->soundScripts[i].script);
+	}
+
 	return true;
 }
 
