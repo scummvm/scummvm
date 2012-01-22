@@ -382,8 +382,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		int actor = (_vm->_game.version != 0 ? actnum : OBJECT_V0(actnum, kObjectV0TypeActor));
-		DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actor));
+		DebugPrintf("Name of actor %d: %s\n", actnum, 
+			_vm->getObjOrActorName(_vm->actorToObj(actnum)));
 	} else if (!strcmp(argv[2], "condmask")) {
 		if (argc > 3) {
 			a->_heCondMask = value;

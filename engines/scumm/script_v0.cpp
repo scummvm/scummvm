@@ -81,7 +81,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 24 */
 	OPCODE(0x24, o_ifNotEqualActiveObject2);
 	OPCODE(0x25, o5_loadRoom);
-	OPCODE(0x26, o_getClosestObjActor);
+	OPCODE(0x26, o_getClosestActor);
 	OPCODE(0x27, o2_getActorY);
 	/* 28 */
 	OPCODE(0x28, o5_equalZero);
@@ -161,7 +161,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 64 */
 	OPCODE(0x64, o_ifEqualActiveObject2);
 	OPCODE(0x65, o_stopCurrentScript);
-	OPCODE(0x66, o_getClosestObjActor);
+	OPCODE(0x66, o_getClosestActor);
 	OPCODE(0x67, o5_getActorFacing);
 	/* 68 */
 	OPCODE(0x68, o5_isScriptRunning);
@@ -884,31 +884,30 @@ void ScummEngine_v0::o_ifNotEqualActiveObject2() {
 	jumpRelative(!equal);
 }
 
-void ScummEngine_v0::o_getClosestObjActor() {
-	int obj;
-	int act;
+void ScummEngine_v0::o_getClosestActor() {
+	int act, check_act;
 	int dist;
 
 	// This code can't detect any actors farther away than 255 units
 	// (pixels in newer games, characters in older ones.) But this is
 	// perfectly OK, as it is exactly how the original behaved.
 
-	int closest_obj = 0xFF, closest_dist = 0xFF;
+	int closest_act = 0xFF, closest_dist = 0xFF;
 
 	getResultPos();
 
 	act = getVarOrDirectByte(PARAM_1);
-	obj = (_opcode & PARAM_2) ? 25 : 7;
+	check_act = (_opcode & PARAM_2) ? 25 : 7;
 
 	do {
-		dist = getObjActToObjActDist(act, obj);
+		dist = getObjActToObjActDist(actorToObj(act), actorToObj(check_act));
 		if (dist < closest_dist) {
 			closest_dist = dist;
-			closest_obj = obj;
+			closest_act = check_act;
 		}
-	} while (--obj);
+	} while (--check_act);
 
-	setResult(closest_obj);
+	setResult(closest_act);
 }
 
 void ScummEngine_v0::o_cutscene() {

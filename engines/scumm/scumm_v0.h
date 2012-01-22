@@ -138,7 +138,7 @@ protected:
 	void o_doSentence();
 	void o_ifEqualActiveObject2();
 	void o_ifNotEqualActiveObject2();
-	void o_getClosestObjActor();
+	void o_getClosestActor();
 	void o_printEgo_c64();
 	void o_print_c64();
 	void o_unlockRoom();

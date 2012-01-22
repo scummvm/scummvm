@@ -357,8 +357,8 @@ int ScummEngine::whereIsObject(int object) const {
 int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	Actor *act;
 
-	if (object < _numActors) {
-		act = derefActorSafe(object, "getObjectOrActorXY");
+	if (objIsActor(object)) {
+		act = derefActorSafe(objToActor(object), "getObjectOrActorXY");
 		if (act && act->isInCurrentRoom()) {
 			x = act->getRealPos().x;
 			y = act->getRealPos().y;
@@ -371,7 +371,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
-		if (_objectOwnerTable[object] < _numActors) {
+		if (objIsActor(_objectOwnerTable[object])) {
 			act = derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)");
 			if (act && act->isInCurrentRoom()) {
 				x = act->getRealPos().x;
@@ -463,11 +463,11 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
-	if (a < _numActors)
-		acta = derefActorSafe(a, "getObjActToObjActDist");
+	if (objIsActor(a))
+		acta = derefActorSafe(objToActor(a), "getObjActToObjActDist");
 
-	if (b < _numActors)
-		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
+	if (objIsActor(b))
+		actb = derefActorSafe(objToActor(b), "getObjActToObjActDist(2)");
 
 	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() && !acta->isInCurrentRoom())
 		return 0;
@@ -1143,11 +1143,8 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if ((_game.version == 0 && OBJECT_V0_TYPE(obj) == kObjectV0TypeActor) ||
-	    (_game.version != 0 && obj < _numActors)) {
-		int actorNr = (_game.version != 0 ? obj : OBJECT_V0_ID(obj));
-		return derefActor(actorNr, "getObjOrActorName")->getActorName();
-	}
+	if (objIsActor(obj))
+		return derefActor(objToActor(obj), "getObjOrActorName")->getActorName();
 
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
@@ -1183,7 +1180,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 void ScummEngine::setObjectName(int obj) {
 	int i;
 
-	if (obj < _numActors && _game.version != 0)
+	if (objIsActor(obj))
 		error("Can't set actor %d name with new-name-of", obj);
 
 	for (i = 0; i < _numNewNames; i++) {
@@ -1491,11 +1488,34 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	}
 }
 
+bool ScummEngine::objIsActor(int obj) {
+	// object IDs < _numActors are used in v0 for objects too (e.g. hamster)
+	if (_game.version == 0)
+		return OBJECT_V0_TYPE(obj) == kObjectV0TypeActor;
+	else
+		return obj < _numActors;
+}
+
+int ScummEngine::objToActor(int obj) {
+	if (_game.version == 0)
+		return OBJECT_V0_ID(obj);
+	else
+		return obj;
+}
+
+int ScummEngine::actorToObj(int actor) {
+	if (_game.version == 0)
+		return OBJECT_V0(actor, kObjectV0TypeActor);
+	else
+		return actor;
+}
+
 int ScummEngine::getObjX(int obj) {
-	if (obj < _numActors) {
-		if (obj < 1)
-			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjX")->getRealPos().x;
+	if (obj < 1)
+		return 0;									/* fix for indy4's map */
+
+	if (objIsActor(obj)) {
+		return derefActor(objToActor(obj), "getObjX")->getRealPos().x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1506,10 +1526,11 @@ int ScummEngine::getObjX(int obj) {
 }
 
 int ScummEngine::getObjY(int obj) {
-	if (obj < _numActors) {
-		if (obj < 1)
-			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjY")->getRealPos().y;
+	if (obj < 1)
+		return 0;									/* fix for indy4's map */
+
+	if (objIsActor(obj)) {
+		return derefActor(objToActor(obj), "getObjY")->getRealPos().y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1525,8 +1546,8 @@ int ScummEngine::getObjOldDir(int obj) {
 
 int ScummEngine::getObjNewDir(int obj) {
 	int dir;
-	if (obj < _numActors) {
-		dir = derefActor(obj, "getObjNewDir")->getFacing();
+	if (objIsActor(obj)) {
+		dir = derefActor(objToActor(obj), "getObjNewDir")->getFacing();
 	} else {
 		int x, y;
 		getObjectXYPos(obj, x, y, dir);

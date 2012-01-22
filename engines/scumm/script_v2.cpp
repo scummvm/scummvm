@@ -1315,7 +1315,7 @@ void ScummEngine_v2::o2_getActorX() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjX(a));
+	setResult(getObjX(actorToObj(a)));
 }
 
 void ScummEngine_v2::o2_getActorY() {
@@ -1323,7 +1323,7 @@ void ScummEngine_v2::o2_getActorY() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjY(a));
+	setResult(getObjY(actorToObj(a)));
 }
 
 void ScummEngine_v2::o2_isGreater() {

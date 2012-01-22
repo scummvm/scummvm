@@ -787,6 +787,9 @@ protected:
 	void setOwnerOf(int obj, int owner);
 	void clearOwnerOf(int obj);
 	int getObjectRoom(int obj) const;
+	bool objIsActor(int obj);
+	int objToActor(int obj);
+	int actorToObj(int actor);
 	int getObjX(int obj);
 	int getObjY(int obj);
 	void getObjectXYPos(int object, int &x, int &y)	{ int dir; getObjectXYPos(object, x, y, dir); }

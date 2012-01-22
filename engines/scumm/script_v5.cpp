@@ -1095,10 +1095,16 @@ void ScummEngine_v5::o5_getClosestObjActor() {
 void ScummEngine_v5::o5_getDist() {
 	int o1, o2;
 	int r;
+
 	getResultPos();
+	
 	o1 = getVarOrDirectWord(PARAM_1);
 	o2 = getVarOrDirectWord(PARAM_2);
-	r = getObjActToObjActDist(o1, o2);
+
+	if (_game.version == 0) // in v0 both parameters are always actor IDs, never objects
+		r = getObjActToObjActDist(actorToObj(o1), actorToObj(o2));
+	else
+		r = getObjActToObjActDist(o1, o2);
 
 	// FIXME: MI2 race workaround, see bug #597022. We never quite figured out
 	// what the real cause of this, or if it maybe occurs in the original, too...
