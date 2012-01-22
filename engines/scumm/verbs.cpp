@@ -62,7 +62,6 @@ static const VerbSettings v0VerbTable_English[] = {
 	{kVerbWhatIs,  15, 2, "What is"}
 };
 
-// FIXME: Replace * with the correct character
 static const VerbSettings v0VerbTable_German[] = {
 	{kVerbOpen,     7, 0, "$ffne"},
 	{kVerbClose,   13, 1, "Schlie*e"},

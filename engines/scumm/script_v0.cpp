@@ -584,8 +584,6 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 
 	//0x634F
 	if (a->_miscflags & kActorMiscFlagFreeze) {
-		// TODO: Check if this is the correct function
-		// to be calling here
 		stopObjectCode();
 		return;
 	}
@@ -767,7 +765,6 @@ void ScummEngine_v0::o_setObjectName() {
 void ScummEngine_v0::o_nop() {
 }
 
-// TODO: Maybe translate actor flags in future.
 void ScummEngine_v0::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
