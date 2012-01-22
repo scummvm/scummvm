@@ -271,10 +271,10 @@ bool MoviePlayer::playVideo() {
 					// Look for the best color indexes to use to display the subtitles
 					uint32 minWeight = 0xFFFFFFFF;
 					uint32 weight;
-					float c1Weight = 1e+30;
-					float c2Weight = 1e+30;
-					float c3Weight = 1e+30;
-					float c4Weight = 1e+30;
+					float c1Weight = 1e+30f;
+					float c2Weight = 1e+30f;
+					float c3Weight = 1e+30f;
+					float c4Weight = 1e+30f;
 					byte r, g, b;
 					float h, s, v, hd, hsvWeight;
 
