@@ -699,6 +699,55 @@ public:
 	virtual void remove();
 	virtual void signal();
 };
+
+class Scene1925 : public SceneExt {
+	class Hotspot2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Hotspot3 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit3 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit4 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	NamedHotspot _item1;
+	Hotspot2 _item2;
+	Hotspot3 _item3;
+	SceneActor _actor1;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	Exit3 _exit3;
+	Exit4 _exit4;
+	SequenceManager _sequenceManager;
+
+	int _field9B8;
+	int _levelResNum[5];
+
+	Scene1925();
+	void synchronize(Serializer &s);
+
+	void changeLevel(bool upFlag);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
