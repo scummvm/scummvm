@@ -3029,10 +3029,10 @@ bool Scene3600::Actor13::startAction(CursorType action, Event &event) {
 		scene->_stripManager.start(3327, scene);
 
 		return true;
-	case R2_7:
+	case R2_SONIC_STUNNER:
 	// No break on purpose
 	case R2_44:
-		if (action == R2_7)
+		if (action == R2_SONIC_STUNNER)
 			R2_GLOBALS._sound3.play(43);
 		else
 			R2_GLOBALS._sound3.play(99);
