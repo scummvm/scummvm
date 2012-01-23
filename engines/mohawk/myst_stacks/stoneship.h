@@ -130,6 +130,7 @@ private:
 	uint16 _telescopeLighthouseOff; // 130
 	uint16 _telescopeLighthouseOn; // 128
 	bool _telescopeLighthouseState; // 124
+	bool _telescopeInitialized;
 	bool _telescopeRunning;
 	uint32 _telescopeNexTime;
 	void telescope_run();

@@ -98,7 +98,7 @@ void MystResource::setEnabled(bool enabled) {
 
 const Common::String MystResource::describe() {
 	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
-			type, _rect.left, _rect.top, _rect.width(), _rect.height());
+			_type, _rect.left, _rect.top, _rect.width(), _rect.height());
 
 	if (_dest != 0)
 		desc += Common::String::format(" dest: %4d", _dest);
@@ -115,6 +115,50 @@ void MystResource::drawBoundingRect() {
 		else
 			_vm->_gfx->drawRect(_rect, kRectDisabled);
 	}
+}
+
+int MystResource::indexSubItem(uint16 value, uint16 max, uint16 type, const char * name) {
+	int index = -1;
+
+	if (max) {
+		if (value < max)
+			index = value;
+		else
+			warning("Type %u Resource sub-item index %d exceeds _numSub%s %d", type, value, name, max);
+	}
+
+	return index;
+}
+
+
+int MystResource::currentSubItem(uint16 var, uint16 max, uint16 type, const char * name) {
+	int index = -1;
+	uint16 varValue = 0;
+
+	switch (max) {
+
+	case 0:
+		break;
+
+	default:
+		if (var == 0xFFFF) {
+			warning("Type %u Resource with _numSub%s of %d, but no control variable", type, name, max);
+			break;
+			}
+
+		varValue = _vm->_scriptParser->getVar(var);
+		// FALL THROUGH
+
+	case 1:
+		if (varValue < max)
+			index = varValue;
+		else
+			warning("Type %u Resource Var %d: %d exceeds _numSub%s %d", type, var, varValue, name, max);
+
+		break;
+	}
+
+	return index;
 }
 
 MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
@@ -254,86 +298,36 @@ MystResourceType7::~MystResourceType7() {
 	_subResources.clear();
 }
 
-// TODO: All these functions to switch subresource are very similar.
-//       Find way to share code (function pointer pass?)
-void MystResourceType7::drawDataToScreen() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->drawDataToScreen();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
+int MystResourceType7::currentSubResource() {
+	return currentSubItem(_var7, _numSubResources, 7, "Resources");
+}
 
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->drawDataToScreen();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->drawDataToScreen();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+void MystResourceType7::drawDataToScreen() {
+	int subResourceId = currentSubResource();
+
+	if (subResourceId >= 0)
+		_subResources[subResourceId]->drawDataToScreen();
 }
 
 void MystResourceType7::handleCardChange() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
+	int subResourceId = currentSubResource();
 
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleCardChange();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+	if (subResourceId >= 0)
+		_subResources[subResourceId]->handleCardChange();
 }
 
 void MystResourceType7::handleMouseUp() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
+	int subResourceId = currentSubResource();
 
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseUp();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+	if (subResourceId >= 0)
+		_subResources[subResourceId]->handleMouseUp();
 }
 
 void MystResourceType7::handleMouseDown() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
+	int subResourceId = currentSubResource();
 
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseDown();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+	if (subResourceId >= 0)
+		_subResources[subResourceId]->handleMouseDown();
 }
 
 MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType7(vm, rlstStream, parent) {
@@ -375,77 +369,49 @@ MystResourceType8::~MystResourceType8() {
 	delete[] _subImages;
 }
 
+int MystResourceType8::indexSubImage(uint16 *imageToDraw, uint16 index) {
+
+	int i;
+
+	if (index == 0xFFFF)
+		i = currentSubItem(_var8, _numSubImages, 8, "Images");
+	else
+		i = indexSubItem(index, _numSubImages, 8, "Images");
+
+	if (i >= 0 && imageToDraw) {
+		*imageToDraw = _subImages[i].wdib;
+
+		// This special case means redraw background
+		if (*imageToDraw == 0xFFFF)
+			*imageToDraw = _vm->getCardBackgroundId();
+	}
+
+	return i;
+}
+
 void MystResourceType8::drawDataToScreen() {
 	// Need to call overidden Type 7 function to ensure
 	// switch section is processed correctly.
 	MystResourceType7::drawDataToScreen();
 
-	bool drawSubImage = false;
-	int16 subImageId = 0;
+	uint16 imageToDraw;
+	int subImageId = indexSubImage(&imageToDraw);
 
-	if (_var8 == 0xFFFF) {
-		if (_numSubImages == 1) {
-			subImageId = 0;
-			drawSubImage = true;
-		} else if (_numSubImages != 0)
-			warning("Type 8 Resource with _numSubImages of %d, but no control variable", _numSubImages);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var8);
-
-		if (_numSubImages == 1 && varValue != 0) {
-			subImageId = 0;
-			drawSubImage = true;
-		} else if (_numSubImages != 0) {
-			if (varValue < _numSubImages) {
-				subImageId = varValue;
-				drawSubImage = true;
-			} else
-				warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _var8, varValue, _numSubImages);
-		}
-	}
-
-	if (drawSubImage) {
-		uint16 imageToDraw = _subImages[subImageId].wdib;
-
-		// This special case means redraw background
-		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
-
+	if (subImageId >= 0)
 		_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
-	}
 }
 
 void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
-	bool drawSubImage = false;
-	int16 subImageId = 0;
+	uint16 imageToDraw;
+	int subImageId = indexSubImage(&imageToDraw, state);
 
-
-	if (_numSubImages == 1 && state != 0) {
-		subImageId = 0;
-		drawSubImage = true;
-	} else if (_numSubImages != 0) {
-		if (state < _numSubImages) {
-			subImageId = state;
-			drawSubImage = true;
-		} else
-			warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _var8, state, _numSubImages);
-	}
-
-
-	if (drawSubImage) {
-		uint16 imageToDraw = _subImages[subImageId].wdib;
-
-		// This special case means redraw background
-		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
-
+	if (subImageId >= 0) {
 		// Draw to screen
 		if (update) {
 			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
 			_vm->_system->updateScreen();
-		} else {
+		} else
 			_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
-		}
 	}
 }
 

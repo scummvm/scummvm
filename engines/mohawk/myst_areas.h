@@ -62,7 +62,7 @@ public:
 	void drawBoundingRect();
 
 	MystResource *_parent;
-	ResourceType type;
+	ResourceType _type;
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
@@ -88,6 +88,9 @@ protected:
 	uint16 _flags;
 	Common::Rect _rect;
 	uint16 _dest;
+
+	int indexSubItem(uint16 value, uint16 max, uint16 type, const char * name);
+	int currentSubItem(uint16 var, uint16 max, uint16 type, const char * name);
 };
 
 class MystResourceType5 : public MystResource {
@@ -138,6 +141,8 @@ protected:
 	uint16 _var7;
 	uint16 _numSubResources;
 	Common::Array<MystResource*> _subResources;
+
+	int currentSubResource();
 };
 
 class MystResourceType8 : public MystResourceType7 {
@@ -158,6 +163,8 @@ public:
 protected:
 	uint16 _var8;
 	uint16 _numSubImages;
+
+	int indexSubImage(uint16 *imageToDraw, uint16 index = 0xFFFF);
 };
 
 // No MystResourceType9!
@@ -212,7 +219,7 @@ public:
 	void handleMouseDrag();
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
-    void restoreBackground();
+	void restoreBackground();
 
 protected:
 	Common::Rect boundingBox();

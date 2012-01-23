@@ -81,6 +81,7 @@ private:
 	MohawkEngine_Myst *_vm;
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
+	GUI::CheckboxWidget *_extensionsCheckbox;
 	GUI::ButtonWidget *_dropPageButton;
 	GUI::ButtonWidget *_showMapButton;
 	GUI::ButtonWidget *_returnToMenuButton;

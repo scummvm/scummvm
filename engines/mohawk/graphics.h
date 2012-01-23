@@ -123,6 +123,7 @@ public:
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
+	void copyClippedImageToScreen(uint16 image, Common::Point dest, Common::Rect clipArea, Common::Rect src = Common::Rect(0, 0, 0, 0));
 	void copyImageToBackBuffer(uint16 image, Common::Rect dest);
 	void copyBackBufferToScreen(Common::Rect r);
 	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);

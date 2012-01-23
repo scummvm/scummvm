@@ -67,6 +67,7 @@ public:
 		uint16 zipMode;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
+		uint16 extensions;
 		uint16 ending;
 	} _globals;
 

@@ -44,6 +44,51 @@ public:
 	virtual void runPersistentScripts();
 
 private:
+	//	Observatory timestamp controls.
+
+	class ObservatoryControl {
+	public:
+		ObservatoryControl();
+
+		void initialize(Myst *parser);
+		void setControls(MystResource *decrease, MystResource *slider, MystResource *increase);
+		void setValueParameters(uint16 *pValue, uint16 min, uint16 max, uint16 *sliderPosition);
+		void addDisplay(uint16 displayVar);
+
+		void preset();
+
+		void startIncrease();
+		void startDecrease();
+		void increment();
+		void stopChange();
+
+		void sliderStart();
+		void sliderMove();
+		void sliderStop();
+	private:
+		Myst *_parser;
+
+		// Resources.
+		MystResourceType11 *_buttonDecrease;
+		MystResourceType10 *_slider;
+		MystResourceType11 *_buttonIncrease;
+
+		// Value parameters.
+		uint16 *_setting;		// Value storage.
+		int16 _minSetting;		// Minimum allowed value.
+		int16 _maxSetting;		// Maximum allowed value.
+		uint16 *_sliderPosition;	// Slider position storage.
+
+		// Value display control.
+		Common::Array<uint16> _display;	// Control variable #.
+
+		// Permanent script control.
+		int16 _currentIncrement;	// Current value increment.
+
+		bool update(int16 newSetting);
+		void startChange(int16 dir);
+	};
+
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 	void toggleVar(uint16 var);
@@ -66,10 +111,7 @@ private:
 	void imagerValidation_run();
 	void imager_run();
 	void observatory_run();
-	void observatoryMonthChange_run();
-	void observatoryDayChange_run();
-	void observatoryYearChange_run();
-	void observatoryTimeChange_run();
+	void observatoryControlChange_run();
 	void greenBook_run();
 	void clockGears_run();
 	void gullsFly1_run();
@@ -97,8 +139,14 @@ private:
 	DECLARE_OPCODE(o_cabinSafeHandleMove);
 	DECLARE_OPCODE(o_cabinSafeHandleEndMove);
 	DECLARE_OPCODE(o_treePressureReleaseStart);
-	DECLARE_OPCODE(o_observatoryMonthChangeStart);
-	DECLARE_OPCODE(o_observatoryDayChangeStart);
+	DECLARE_OPCODE(o_observatoryControl1IncreaseStart);
+	DECLARE_OPCODE(o_observatoryControl1DecreaseStart);
+	DECLARE_OPCODE(o_observatoryControl2IncreaseStart);
+	DECLARE_OPCODE(o_observatoryControl2DecreaseStart);
+	DECLARE_OPCODE(o_observatoryControl3IncreaseStart);
+	DECLARE_OPCODE(o_observatoryControl3DecreaseStart);
+	DECLARE_OPCODE(o_observatoryControl4IncreaseStart);
+	DECLARE_OPCODE(o_observatoryControl4DecreaseStart);
 	DECLARE_OPCODE(o_observatoryGoButton);
 	DECLARE_OPCODE(o_observatoryMonthSliderMove);
 	DECLARE_OPCODE(o_observatoryDaySliderMove);
@@ -152,9 +200,7 @@ private:
 
 	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
-	DECLARE_OPCODE(o_observatoryTimeChangeStart);
 	DECLARE_OPCODE(o_observatoryChangeSettingStop);
-	DECLARE_OPCODE(o_observatoryYearChangeStart);
 	DECLARE_OPCODE(o_dockVaultForceClose);
 	DECLARE_OPCODE(o_imagerEraseStop);
 
@@ -271,6 +317,7 @@ private:
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232
 
+	bool _observatoryIsDDMMMYYYY2400;
 	bool _observatoryRunning;
 	bool _observatoryMonthChanging;
 	bool _observatoryDayChanging;
@@ -278,14 +325,15 @@ private:
 	bool _observatoryTimeChanging;
 	MystResourceType8 *_observatoryVisualizer; // 184
 	MystResourceType8 *_observatoryGoButton; // 188
-	MystResourceType10 *_observatoryDaySlider; // 192
-	MystResourceType10 *_observatoryMonthSlider; // 196
-	MystResourceType10 *_observatoryYearSlider; // 200
-	MystResourceType10 *_observatoryTimeSlider; // 204
+	ObservatoryControl _observatoryControl[4];
+	ObservatoryControl *_observatoryDayControl;
+	ObservatoryControl *_observatoryMonthControl;
+	ObservatoryControl *_observatoryYearControl;
+	ObservatoryControl *_observatoryTimeControl;
 	uint32 _observatoryLastTime; // 208
 	bool _observatoryNotInitialized; // 212
 	int16 _observatoryIncrement; // 346
-	MystResourceType10 *_observatoryCurrentSlider; // 348
+	ObservatoryControl *_observatoryCurrentControl;
 
 	bool _greenBookRunning;
 
@@ -320,17 +368,9 @@ private:
 	void treeSetAlcoveAccessible();
 	uint32 treeNextMoveDelay(uint16 pressure);
 
-	bool observatoryIsDDMMYYYY2400();
 	void observatorySetTargetToSetting();
 	void observatoryUpdateVisualizer(uint16 x, uint16 y);
-	void observatoryIncrementMonth(int16 increment);
-	void observatoryIncrementDay(int16 increment);
-	void observatoryIncrementYear(int16 increment);
-	void observatoryIncrementTime(int16 increment);
-	void observatoryUpdateMonth();
-	void observatoryUpdateDay();
-	void observatoryUpdateYear();
-	void observatoryUpdateTime();
+	static int observatoryResourceCompare(const void *p1, const void *p2);
 };
 
 } // End of namespace MystStacks

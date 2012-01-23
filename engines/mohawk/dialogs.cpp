@@ -82,7 +82,8 @@ enum {
 	kWaterCmd = 'WATR',
 	kDropCmd = 'DROP',
 	kMapCmd = 'SMAP',
-	kMenuCmd = 'MENU'
+	kMenuCmd = 'MENU',
+	kExtCmd = 'EXTN'
 };
 
 #ifdef ENABLE_MYST
@@ -91,18 +92,20 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog
 	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
+	// I18N: Option for enabling extensions
+	_extensionsCheckbox = new GUI::CheckboxWidget(this, 15, 50, 300, 15, _("~E~xtensions Enabled"), 0, kExtCmd);
 	// I18N: Drop book page
-	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), 0, kDropCmd);
+	_dropPageButton = new GUI::ButtonWidget(this, 15, 80, 100, 25, _("~D~rop Page"), 0, kDropCmd);
 
 	// Myst ME only has maps
 	if (_vm->getFeatures() & GF_ME)
-		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~S~how Map"), 0, kMapCmd);
+		_showMapButton = new GUI::ButtonWidget(this, 15, 115, 100, 25, _("~S~how Map"), 0, kMapCmd);
 	else
 		_showMapButton = 0;
 
 	// Myst demo only has a menu
 	if (_vm->getFeatures() & GF_DEMO)
-		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~M~ain Menu"), 0, kMenuCmd);
+		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 115, 100, 25, _("~M~ain Menu"), 0, kMenuCmd);
 	else
 		_returnToMenuButton = 0;
 
@@ -133,6 +136,7 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
+	_extensionsCheckbox->setState(_vm->_gameState->_globals.extensions);
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -142,6 +146,9 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		break;
 	case kTransCmd:
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
+		break;
+	case kExtCmd:
+		_vm->_gameState->_globals.extensions = _extensionsCheckbox->getState();
 		break;
 	case kDropCmd:
 		_vm->_needsPageDrop = true;
