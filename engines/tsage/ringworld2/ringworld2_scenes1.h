@@ -275,7 +275,9 @@ class Scene1550 : public SceneExt {
 		UnkObj15503 _unkObj155032;
 
 		virtual void remove();
+		virtual void process(Event &event);
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
 	class Hotspot1 : public NamedHotspot {
@@ -796,6 +798,7 @@ public:
 	virtual void remove();
 	virtual void signal();
 };
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
