@@ -38,6 +38,7 @@
 #include <SDL_syswm.h> // For setting the icon
 
 #include "backends/platform/sdl/win32/win32.h"
+#include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
 
@@ -73,6 +74,10 @@ void OSystem_Win32::initBackend() {
 	} else {
 		FreeConsole();
 	}
+
+	// Create the savefile manager
+	if (_savefileManager == 0)
+		_savefileManager = new WindowsSaveFileManager();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
