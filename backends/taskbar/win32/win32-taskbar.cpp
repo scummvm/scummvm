@@ -29,12 +29,8 @@
 #if defined(WIN32) && defined(USE_TASKBAR)
 
 // Needed for taskbar functions
-#if defined(__GNUC__)
-#ifdef __MINGW32__
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
 	#include "backends/taskbar/win32/mingw-compat.h"
-#else
-	#error Only compilation with MingW is supported
-#endif
 #else
 	// We need certain functions that are excluded by default
 	#undef NONLS
@@ -44,9 +40,12 @@
 		#undef ARRAYSIZE
 	#endif
 
-	// Default MSVC headers for ITaskbarList3 and IShellLink
-	#include <SDKDDKVer.h>
+	#if defined(_MSC_VER)
+		// Default MSVC headers for ITaskbarList3 and IShellLink
+		#include <SDKDDKVer.h>
+	#endif
 #endif
+
 #include <shlobj.h>
 
 // For HWND
