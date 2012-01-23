@@ -710,7 +710,7 @@ class Scene1925 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class ExitUp : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -731,7 +731,7 @@ public:
 	Hotspot2 _item2;
 	Hotspot3 _item3;
 	SceneActor _actor1;
-	Exit1 _exit1;
+	ExitUp _exitUp;
 	Exit2 _exit2;
 	Exit3 _exit3;
 	Exit4 _exit4;
@@ -764,7 +764,7 @@ class Scene1945 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class ExitUp : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -780,7 +780,7 @@ public:
 	SceneActor _actor1;
 	SceneActor _actor2;
 	Actor3 _actor3;
-	Exit1 _exit1;
+	ExitUp _exitUp;
 	Exit2 _exit2;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
