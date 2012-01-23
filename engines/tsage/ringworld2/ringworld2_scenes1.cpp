@@ -2497,8 +2497,73 @@ void Scene1550::UnkArea1550::remove() {
 		scene->setAction(&scene->_sequenceManager1, scene, 1562, &R2_GLOBALS._player, NULL);
 	}
 }
+
+void Scene1550::UnkArea1550::process(Event &event) {
+// This is a copy of Scene1200::Area1::process
+	if (_field20 != R2_GLOBALS._insetUp)
+		return;
+
+	CursorType cursor = R2_GLOBALS._events.getCursor();
+
+	if (_areaActor._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
+		if (cursor == _cursorNum)
+			warning("TODO: _cursorState = ???");
+			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+	} else if (event.mousePos.y < 168) {
+		if (cursor != _cursorNum) {
+			_savedCursorNum = cursor;
+			warning("TODO: _cursorState = ???");
+			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
+		}
+		if (event.eventType == EVENT_BUTTON_DOWN) {
+			event.handled = true;
+			warning("TODO: _cursorState = ???");
+			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+			remove();
+		}
+	}
+}
+
 void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
-	warning("Scene1550::UnkArea1550::proc12() should be based on Scene1550::UnkArea1200::proc12()");
+	// UnkArea1200::proc12();
+	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
+
+	_areaActor.postInit();
+	_areaActor.setup(visage, stripFrameNum, frameNum);
+	_areaActor.setPosition(Common::Point(posX, posY));
+	_areaActor.fixPriority(250);
+	_cursorNum = CURSOR_INVALID;
+	scene->_sceneAreas.push_front(this);
+	++R2_GLOBALS._insetUp;
+	_field20 = R2_GLOBALS._insetUp;
+	//
+
+	proc13(1550, 67, -1, -1);
+	_unkObj155031.postInit();
+	_unkObj155031._fieldA4 = 1;
+	if (scene->_actor4._frame == 1)
+		_unkObj155031.setup(1559, 3, 1);
+	else
+		_unkObj155031.setup(1559, 3, 2);
+	_unkObj155031.setPosition(Common::Point(142, 79));
+	_unkObj155031.fixPriority(251);
+	_unkObj155031.setDetails(1550, 68, -1, -1, 2, (SceneItem *) NULL);
+
+	_unkObj155032.postInit();
+	_unkObj155032._numFrames = 5;
+	_unkObj155032._fieldA4 = 2;
+	if (scene->_actor13._frame == 1)
+		_unkObj155032.setup(1559, 2, 1);
+	else
+		_unkObj155032.setup(1559, 2, 2);
+	_unkObj155032.setPosition(Common::Point(156, 103));
+	_unkObj155032.fixPriority(251);
+	_unkObj155032.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
+}
+
+void Scene1550::UnkArea1550::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+	// Copy of Scene1200::Area1::proc13
+	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
 bool Scene1550::Hotspot1::startAction(CursorType action, Event &event) {
