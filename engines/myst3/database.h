@@ -120,9 +120,16 @@ public:
 	 */
 	Common::String getSoundName(uint32 id);
 private:
+	enum GameVersionFlags {
+		kFlagNone = 0,
+		kFlagVersion10 = (1 << 0), // v1.0
+		kFlagSafeDisc = (1 << 1)   // SafeDisc-encrypted
+	};
+
 	struct GameVersion {
 		const char *description;
 		Common::Platform platform;
+		int flags;
 		const char *md5;
 		uint32 baseOffset;
 		uint32 ageTableOffset;
