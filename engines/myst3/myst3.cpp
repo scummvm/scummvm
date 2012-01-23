@@ -108,6 +108,11 @@ Myst3Engine::~Myst3Engine() {
 	delete _gfx;
 }
 
+bool Myst3Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
+}
+
 Common::Error Myst3Engine::run() {
 	const int w = 640;
 	const int h = 480;
@@ -146,7 +151,7 @@ Common::Error Myst3Engine::run() {
 	// Game init script, loads the menu
 	loadNode(1, 101, 1);
 
-	while (!_shouldQuit) {
+	while (!shouldQuit() && !_shouldQuit) {
 		_sound->update();
 		runNodeBackgroundScripts();
 		processInput(false);
@@ -766,7 +771,7 @@ int16 Myst3Engine::openDialog(uint16 id) {
 
 	int16 result = -1;
 
-	while (result == -1) {
+	while (result == -1 && !shouldQuit()) {
 		result = dialog.update();
 		drawFrame();
 	}

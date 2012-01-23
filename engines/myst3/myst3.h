@@ -85,6 +85,7 @@ public:
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();
 
+	bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot);
 
 	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
