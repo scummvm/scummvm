@@ -207,6 +207,9 @@ Script::Script(Myst3Engine *vm):
 	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_4(208, soundPlayVolumeDirectionAtt,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
+	OP_1(231, runSoundScriptNode,			kEvalValue													);
+	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
+	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_0(239, drawOneFrame																				);
 	OP_0(249, newGame																					);
 
@@ -2099,6 +2102,33 @@ void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
 	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
 	int32 att = _vm->_state->valueOrVarValue(cmd.args[3]);
 	_vm->_sound->play(cmd.args[0], volume, heading, att);
+}
+
+void Script::runSoundScriptNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run sound script for node %d",
+			cmd.op, cmd.args[0]);
+
+	int32 node = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->runBackgroundSoundScriptsFromNode(node);
+}
+
+void Script::runSoundScriptNodeRoom(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run sound script for node %d, room %d",
+			cmd.op, cmd.args[1], cmd.args[0]);
+
+	int32 node = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 room = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->runBackgroundSoundScriptsFromNode(node, room);
+}
+
+void Script::runSoundScriptNodeRoomAge(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run sound script for node %d, room %d, age %d",
+			cmd.op, cmd.args[2], cmd.args[1], cmd.args[0]);
+
+	int32 node = _vm->_state->valueOrVarValue(cmd.args[2]);
+	int32 room = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 age = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->runBackgroundSoundScriptsFromNode(node, room, age);
 }
 
 void Script::drawOneFrame(Context &c, const Opcode &cmd) {

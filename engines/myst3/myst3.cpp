@@ -505,6 +505,23 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID)
 	}
 }
 
+void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
+	if (roomID == 0)
+		roomID = _state->getLocationRoom();
+
+	if (ageID == 0)
+		ageID = _state->getLocationAge();
+
+	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
+
+	for (uint j = 0; j < nodeData->backgroundSoundScripts.size(); j++) {
+		if (_state->evaluate(nodeData->backgroundSoundScripts[j].condition)) {
+			if (!_scriptEngine->run(&nodeData->backgroundSoundScripts[j].script))
+				break;
+		}
+	}
+}
+
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
 	ScriptedMovie *movie;
 	

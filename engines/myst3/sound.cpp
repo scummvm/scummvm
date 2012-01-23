@@ -63,6 +63,8 @@ SoundChannel *Sound::getChannelForSound(uint32 id, uint priority) {
 void Sound::update() {
 	for (uint i = 0; i < kNumChannels; i++)
 		_channels[i]->update();
+
+	_vm->runBackgroundSoundScriptsFromNode(_vm->_state->getLocationNode());
 }
 
 SoundChannel::SoundChannel(Myst3Engine *vm) :

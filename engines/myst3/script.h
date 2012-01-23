@@ -257,6 +257,9 @@ private:
 	DECLARE_OPCODE(soundPlayVolume);
 	DECLARE_OPCODE(soundPlayVolumeDirection);
 	DECLARE_OPCODE(soundPlayVolumeDirectionAtt);
+	DECLARE_OPCODE(runSoundScriptNode);
+	DECLARE_OPCODE(runSoundScriptNodeRoom);
+	DECLARE_OPCODE(runSoundScriptNodeRoomAge);
 	DECLARE_OPCODE(drawOneFrame);
 	DECLARE_OPCODE(newGame);
 
