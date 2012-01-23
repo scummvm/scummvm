@@ -30,6 +30,16 @@ List of fixed bugs in GF scripts:
 	with the wrong arguments (a table instead of the coordinates instead
 	of single coordinates).
 
+	-Fix bug #397 "Keyboard jams in inventory in beaver dam."
+	The function bd.fake_beaver animates a beaver when another one has jumped
+	into the dam. This animation is performed into a cutscene block (between
+	START/END_CUT_SCENE()), so if the user opens the inventory a bit before
+	this function is called, the interface will froze, since in
+	cutscenes the keyboard is locked. This patch check if the inventory is open
+	(with inInventorySet()) before bd.fake_beaver and MakeSectorActive
+	are called (in bd.throw_bone_in_tar) and wait until it's closed,
+	then performs the animation.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
