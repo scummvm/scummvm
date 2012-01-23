@@ -312,7 +312,7 @@ void MoviePlayerDXA::startSound() {
 
 			_fileStream->seek(size, SEEK_CUR);
 
-			in.open((const char *)"audio.wav");
+			in.open("audio.wav");
 			if (!in.isOpen()) {
 				error("Can't read offset file 'audio.wav'");
 			}
