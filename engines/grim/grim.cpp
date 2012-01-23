@@ -244,9 +244,6 @@ Common::Error GrimEngine::run() {
 
 	g_driver->setupScreen(640, 480, fullscreen);
 
-	// refresh the theme engine so that we can show the gui overlay without it crashing.
-	GUI::GuiManager::instance().theme()->refresh();
-
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// TODO: Play EMI Mac Aspyr logo
 		warning("TODO: Play Aspyr logo");
