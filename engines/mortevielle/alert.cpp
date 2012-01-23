@@ -143,6 +143,8 @@ int do_alert(Common::String str_, int n) {
 	bool newaff, test, test1, test2, test3, dum;
 	Common::String cas;
 
+	// Make a copy of the current screen surface for later restore
+	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
 	/*debug('** do_alert **');*/
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
@@ -258,6 +260,10 @@ int do_alert(Common::String str_, int n) {
 	}
 	charecr(50, succ(int, nligne) << 4);
 	show_mouse();
+
+	/* Restore the background area */
+	g_vm->_screenSurface.copyFrom(g_vm->_backgroundSurface, 0, 0);
+
 	do_alert_result = quoi;
 	return do_alert_result;
 }
