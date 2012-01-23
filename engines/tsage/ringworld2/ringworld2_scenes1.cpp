@@ -6701,7 +6701,7 @@ bool Scene1925::Hotspot3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1925::Exit1::changeScene() {
+void Scene1925::ExitUp::changeScene() {
 	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -6723,7 +6723,7 @@ void Scene1925::Exit1::changeScene() {
 		scene->_sceneMode = 1932;
 	}
 
-	if (scene->_sceneMode == 0)
+	if (scene->_sceneMode != 0)
 		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, NULL);
 	else {
 		scene->_sceneMode = 1932;
@@ -6779,7 +6779,7 @@ void Scene1925::Exit4::changeScene() {
 }
 
 void Scene1925::changeLevel(bool upFlag) {
-	if (R2_GLOBALS._scene1925CurrLevel <= 0)
+	if (R2_GLOBALS._scene1925CurrLevel < 0)
 		R2_GLOBALS._scene1925CurrLevel = 3;
 
 	if (upFlag) {
@@ -6853,7 +6853,7 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 		_exit3.setDetails(Rect(83, 38, 128, 101), EXITCURSOR_W, 1925);
 	// No break on purpose
 	default:
-		_exit1.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1925);
+		_exitUp.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1925);
 		_exit2.setDetails(Rect(128, 160, 190, 167), EXITCURSOR_S, 1925);
 		_item3.setDetails(Rect(141, 11, 167, 159),	1925, 6, -1, -1, 1, NULL);
 		break;
@@ -7055,7 +7055,7 @@ bool Scene1945::Actor3::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene1945::Exit1::changeScene() {
+void Scene1945::ExitUp::changeScene() {
 	Scene1945 *scene = (Scene1945 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -7108,7 +7108,7 @@ void Scene1945::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[2] = 1945;
 	R2_GLOBALS._player._characterIndex = R2_SEEKER;
 
-	_exit1.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1945);
+	_exitUp.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1945);
 	_exit2.setDetails(Rect(238, 144, 274, 167), EXITCURSOR_E, 1945);
 
 	_item4.setDetails(Rect(141, 3, 167, 126), 1945, 9, -1, -1, 1, NULL);
