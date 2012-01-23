@@ -70,6 +70,9 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "samnmax", "Sam & Max Hit the Road" },
 	{ "tentacle", "Day of the Tentacle" },
 	{ "zak", "Zak McKracken and the Alien Mindbenders" },
+	{ "indyloom", "Indiana Jones and the Last Crusade & Loom" },
+	{ "indyzak", "Indiana Jones and the Last Crusade & Zak McKracken" },
+	{ "zakloom", "Zak McKracken & Loom" },
 
 #ifdef ENABLE_SCUMM_7_8
 	{ "ft", "Full Throttle" },
@@ -210,6 +213,9 @@ static const GameSettings gameVariantsTable[] = {
 	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"zak", "FM-TOWNS",    0, GID_ZAK, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
+	{"zakloom", "FM-TOWNS",    0, GID_ZAKLOOM, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
+	{"indyloom", "FM-TOWNS",    0, GID_INDYLOOM, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
+	{"indyzak", "FM-TOWNS",    0, GID_INDYZAK, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
 
 	{"indy3", "EGA",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"indy3", "No AdLib", "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR,             0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
@@ -436,6 +442,10 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "zak", "zak1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "V1" },         // ... and zak2.d64
 
 	{ "indy3", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+
+	{ "indyloom", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "indyzak", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
+	{ "zakloom", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 
 	{ "loom", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "loom", "%03d.LFL", kGenRoomNum, UNK_LANG, UNK, "VGA" },	// Loom CD
