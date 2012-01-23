@@ -935,6 +935,23 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 }
 
 /**
+ * Copys a given surface to the given position
+ */
+void ScreenSurface::copyFrom(Graphics::Surface &src, int x, int y) {
+	Graphics::Surface destSurface = lockArea(Common::Rect(x, y, x + src.w, y + src.h));
+
+	// Loop through writing 
+	for (int yp = 0; yp < src.h; ++yp) {
+		if (((y + yp) < 0) || ((y + yp) >= SCREEN_HEIGHT))
+			continue;
+
+		const byte *pSrc = (const byte *)src.getBasePtr(0, yp);
+		byte *pDest = (byte *)getBasePtr(0, yp);
+		Common::copy(pSrc, pSrc + src.w, pDest);
+	}
+}
+
+/**
  * Draws a character at the specified co-ordinates
  * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
  *		simulate the original 640x400 surface, all Y values have to be doubled
