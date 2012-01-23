@@ -140,6 +140,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("music_volume", 127);
 	ConfMan.registerDefault("sfx_volume", 127);
 	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("speech_mode", "3");
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
