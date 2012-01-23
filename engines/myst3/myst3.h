@@ -86,6 +86,7 @@ public:
 	virtual ~Myst3Engine();
 
 	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 
 	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);

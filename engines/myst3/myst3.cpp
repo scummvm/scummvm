@@ -110,7 +110,8 @@ Myst3Engine::~Myst3Engine() {
 
 bool Myst3Engine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 Common::Error Myst3Engine::run() {
@@ -148,8 +149,13 @@ Common::Error Myst3Engine::run() {
 	font->free();
 	delete font;
 
-	// Game init script, loads the menu
-	loadNode(1, 101, 1);
+	if (ConfMan.hasKey("save_slot")) {
+		// Load game from specified slot, if any
+		loadGameState(ConfMan.getInt("save_slot"));
+	} else {
+		// Game init script, loads the menu
+		loadNode(1, 101, 1);
+	}
 
 	while (!shouldQuit() && !_shouldQuit) {
 		_sound->update();
@@ -781,9 +787,21 @@ int16 Myst3Engine::openDialog(uint16 id) {
 	return result;
 }
 
+bool Myst3Engine::canLoadGameStateCurrently() {
+	return true;
+}
+
 Common::Error Myst3Engine::loadGameState(int slot) {
 	if (_state->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
 		_inventory->loadFromState();
+
+		_state->setLocationNextAge(_state->getMenuSavedAge());
+		_state->setLocationNextRoom(_state->getMenuSavedRoom());
+		_state->setLocationNextNode(_state->getMenuSavedNode());
+		_state->setMenuSavedAge(0);
+		_state->setMenuSavedRoom(0);
+		_state->setMenuSavedNode(0);
+
 		goToNode(0, 1);
 		return Common::kNoError;
 	}

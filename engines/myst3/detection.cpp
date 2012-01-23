@@ -24,6 +24,8 @@
 
 #include "engines/myst3/myst3.h"
 
+#include "common/savefile.h"
+
 namespace Myst3 {
 
 struct Myst3GameDescription {
@@ -89,6 +91,26 @@ public:
 
 	virtual const char *getOriginalCopyright() const {
 		return "Myst III Game (C) Presto Studios";
+	}
+
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return
+			(f == kSupportsListSaves) ||
+			(f == kSupportsLoadingDuringStartup);
+	}
+
+	virtual SaveStateList listSaves(const char *target) const {
+		SaveStateList saveList;
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.m3s");
+
+		for (uint32 i = 0; i < filenames.size(); i++)
+			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
+
+		return saveList;
+	}
+
+	virtual int getMaximumSaveSlot() const {
+		return 999;
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
