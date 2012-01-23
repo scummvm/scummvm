@@ -1340,8 +1340,20 @@ config file by setting the savepath parameter. See the example config
 file later in this README.
 
 The platforms that currently have a different default directory are:
-    Mac OS X:     $HOME/Documents/ScummVM Savegames/
-    Other unices: $HOME/.scummvm/
+    Mac OS X:
+    $HOME/Documents/ScummVM Savegames/
+
+    Other unices:
+    $HOME/.scummvm/
+
+    Windows Vista/7:
+    \Users\username\AppData\Roaming\ScummVM\Saved games\
+
+    Windows 2000/XP:
+    \Documents and Settings\username\Application Data\ScummVM\Saved games\
+
+    Windows NT4:
+    <windir>\Profiles\username\Application Data\ScummVM\Saved games\
 
 
 6.1) Autosaves:
