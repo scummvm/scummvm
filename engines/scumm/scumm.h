@@ -216,6 +216,8 @@ enum ScummGameId {
 	GID_FT,
 	GID_INDY3,
 	GID_INDY4,
+	GID_INDYLOOM,
+	GID_INDYZAK,
 	GID_LOOM,
 	GID_MANIAC,
 	GID_MONKEY_EGA,
@@ -226,6 +228,7 @@ enum ScummGameId {
 	GID_SAMNMAX,
 	GID_TENTACLE,
 	GID_ZAK,
+	GID_ZAKLOOM,
 
 	GID_HEGAME,      // Generic name for all HE games with default behavior
 	GID_PUTTDEMO,
