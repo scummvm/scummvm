@@ -37,6 +37,8 @@ Database::Database() :
 
 	static const char *const names[] = {
 		"M3.exe",
+		"Myst III Exile",
+		"Myst3 Exile JP",
 		"Myst III Exile for Mac OS X",
 		"Myst III Exile for Mac OS 8-9",
 		"SLUS_204.34"
@@ -45,21 +47,25 @@ Database::Database() :
 	// Game versions database
 	// FIXME: At least clone2727's and PS2 versions are multi-language
 	static GameVersion versions[] = {
-			{ "1.2 English", 	Common::kPlatformWindows,	"87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108,  0x86040,  0x861D0 },
-			{ "1.22 English", 	Common::kPlatformWindows,	"8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108,  0x86040,  0x861D0 },
-			{ "1.22 French", 	Common::kPlatformWindows,	"554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108,  0x86040,  0x861D0 },
-			{ "1.22 German", 	Common::kPlatformWindows,	"976416b2ab1c058802bf3dccc4e2f11a", 0x400000, 0x86108,  0x86040,  0x861D0 },
-			{ "1.22 Polish", 	Common::kPlatformWindows,	"00ac408dd79b0789b1fec0cc9195289a", 0x400000, 0x86108,  0x86040,  0x861D0 },
-			{ "1.24 Japanese",	Common::kPlatformWindows,	"0f7440439709e94d20e3ce4656a965ee", 0x400000, 0x86108,  0x86040,  0x861E8 },
-			{ "1.27 French", 	Common::kPlatformWindows,	"00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 English", 	Common::kPlatformWindows,	"a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 Dutch", 	Common::kPlatformWindows,	"e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 German", 	Common::kPlatformWindows,	"e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 Italian", 	Common::kPlatformWindows,	"6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 Spanish", 	Common::kPlatformWindows, 	"67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110,  0x86040,  0x861F0 },
-			{ "1.27 English", 	Common::kPlatformMacintosh,	"675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0x11A10 },
-			{ "1.27 English", 	Common::kPlatformMacintosh,	"5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0x11454 },
-			{ "English", 		Common::kPlatformPS2,		"c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 },
+			{ "1.0 English",    Common::kPlatformWindows,   kFlagVersion10|kFlagSafeDisc, "a63d00c09a370b057c54442e1153fefc", 0,        0,        0,        0       },
+			{ "1.2 English",    Common::kPlatformWindows,   kFlagNone,                    "87b4a792ec8f3406bfef42c0f0c30249", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.2 Japanese",   Common::kPlatformWindows,   kFlagSafeDisc,                "b9e79d5fcff4d56ae6bb498081248725", 0,        0,        0,        0       },
+			{ "1.22 English",   Common::kPlatformWindows,   kFlagNone,                    "8f21c22a4ca4f383ab29cbba4df0b2b5", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 French",    Common::kPlatformWindows,   kFlagNone,                    "554612b239ff2d9a3364fa38e3f32b45", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 German",    Common::kPlatformWindows,   kFlagNone,                    "976416b2ab1c058802bf3dccc4e2f11a", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.22 Polish",    Common::kPlatformWindows,   kFlagNone,                    "00ac408dd79b0789b1fec0cc9195289a", 0x400000, 0x86108,  0x86040,  0x861D0 },
+			{ "1.24 Japanese",  Common::kPlatformWindows,   kFlagNone,                    "0f7440439709e94d20e3ce4656a965ee", 0x400000, 0x86108,  0x86040,  0x861E8 },
+			{ "1.27 French",    Common::kPlatformWindows,   kFlagNone,                    "00e062994ddf98e0d5cf4aa78e738f47", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 English",   Common::kPlatformWindows,   kFlagNone,                    "a9e992323fa5048f0947d9ebd44088ac", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Dutch",     Common::kPlatformWindows,   kFlagNone,                    "e9111bbae979d9c9c536aaf3601bd46f", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 German",    Common::kPlatformWindows,   kFlagNone,                    "e3ce37f0bb93dfc4df73de88a8c15e1d", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Italian",   Common::kPlatformWindows,   kFlagNone,                    "6e7bda56f3f8542ba936d7556256d5eb", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.27 Spanish",   Common::kPlatformWindows,   kFlagNone,                    "67cb6a606f123b327fac0d16f82b0adb", 0x400000, 0x86110,  0x86040,  0x861F0 },
+			{ "1.0 English",    Common::kPlatformMacintosh, kFlagVersion10,               "fc55cb3b91f2a6679100ec9c3424ef7a", 0,        0x10FD4,  0x10F10,  0x1109C },
+			{ "1.2 Japanese",   Common::kPlatformMacintosh, kFlagNone,                    "506758f57d9a903549fa6bd34a189fae", 0,        0x11230,  0x1116C,  0x112F8 },
+			{ "1.27 English",   Common::kPlatformMacintosh, kFlagNone,                    "675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0x11A10 },
+			{ "1.27 English",   Common::kPlatformMacintosh, kFlagNone,                    "5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0x11454 },
+			{ "English",        Common::kPlatformPS2,       kFlagNone,                    "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 }
 	};
 
 	// First, see what executable files we have
@@ -89,6 +95,15 @@ Database::Database() :
 
 	if (_gameVersion != 0) {
 		debug("Initializing database from %s (Platform: %s) (%s)", _exePath.c_str(), getPlatformDescription(_gameVersion->platform), _gameVersion->description);
+
+		if (_gameVersion->flags & kFlagSafeDisc) {
+			// TODO: SafeDisc encrypted binary
+			error("Unhandled SafeDisc encrypted executable");
+		} else if (_gameVersion->flags & kFlagVersion10) {
+			// TODO: In a completely horrible fashion, the 1.0 executables use a different
+			// opcode set
+			error("Unhandled v1.0 executable");
+		}
 	} else {
 		// Print out any unknown EXE's
 		bool foundOneEXE = false;
