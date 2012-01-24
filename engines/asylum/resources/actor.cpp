@@ -606,12 +606,7 @@ void Actor::update() {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
 				if (canMoveCheckActors(&current, _direction)) {
-					// FIXME This matches the original, but results in a negative x value,
-					// which causes the actor to warp to the left side of the screen.
-					// Perhaps _point2.x is not being properly set somewhere ...
-					// This can be quickly tested in Scene 1 by trying to pick up
-					// the towel.
-					_point1.x = (int16)dist - _point2.x;
+					_point1.x = current.x - _point2.x; 
 					_point1.y = current.y - _point2.y;
 
 					if (_data.current < (int32)(_data.count - 1)) {
@@ -1311,7 +1306,7 @@ bool Actor::process(const Common::Point &point) {
 			point1 = Common::Point((int16)(sum.x + abs(delta.y) * a1),                     (int16)(sum.y + abs(delta.y) * a2));
 			point2 = Common::Point((int16)(sum.x + abs(abs(delta.y) - abs(delta.x)) * a1), sum.y);
 			count1 = (uint32)abs(abs(delta.y) * a2);
-			count2 = (uint32)abs(point1.y - point.x);
+			count2 = (uint32)abs(point1.x - point.x);
 
 			switch (a3) {
 			default:
@@ -1363,7 +1358,7 @@ bool Actor::process(const Common::Point &point) {
 		}
 
 		if (canMove(&sum,    direction2, count2, true)
-		 && canMove(&point1, direction1, count1, true)) {
+		 && canMove(&point2, direction1, count1, true)) {
 			_data.points[0] = point2;
 			_data.points[1] = point;
 			_data.current = 0;
@@ -1743,7 +1738,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
-	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
+	Common::Point sum(_point1.x + _point2.x, _point1.y + _point2.y);
 	int32 panning = getSound()->calculatePanningAtPoint(sum);
 
 	switch (_status) {
@@ -1910,6 +1905,9 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 		Actor *actor = getScene()->getActor(i);
 
 		if (!actor->isOnScreen())
+			continue;
+
+		if (actor->_field_944)
 			continue;
 
 		int32 x2 = actor->getPoint1()->x + actor->getPoint2()->x -    (actor->getField948() + 15);
@@ -3965,7 +3963,7 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int16 delta,
 		break;
 
 	case kDirectionNE:
-		point->y += delta;
+		point->x += delta;
 		point->y -= delta;
 		break;
 	}

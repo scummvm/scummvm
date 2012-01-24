@@ -394,7 +394,7 @@ private:
 	int32  _field_938;
 	ResourceId _soundResourceId; // field_93C
 	int32  _numberValue01;
-	int32  _field_944;
+	int32  _field_944; // has collision ?!
 	int32  _field_948;
 	int32  _field_94C;
 	int32  _numberFlag01;
