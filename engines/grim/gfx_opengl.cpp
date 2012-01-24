@@ -92,7 +92,7 @@ GfxOpenGL::~GfxOpenGL() {
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	g_system->setupScreen(screenW, screenH, fullscreen, true);
+	_pixelFormat = g_system->setupScreen(screenW, screenH, fullscreen, true).getFormat();
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
@@ -1211,40 +1211,32 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 }
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
-	uint16 *buffer = new uint16[w * h];
-	uint32 *src = (uint32 *)_storedDisplay;
+	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
 
 	int step = 0;
 	for (int y = 0; y <= 479; y++) {
 		for (int x = 0; x <= 639; x++) {
-			uint32 pixel = *(src + y * 640 + x);
-			uint8 r = (pixel & 0xFF0000);
-			uint8 g = (pixel & 0x00FF00);
-			uint8 b = (pixel & 0x0000FF);
+			uint8 r, g, b;
+			src.getRGBAt(y * 640 + x, r, g, b);
 			uint32 color = (r + g + b) / 3;
-			src[step++] = ((color << 24) | (color << 16) | (color << 8) | color);
+			src.setPixelAt(step++, color, color, color);
 		}
 	}
 
-	float step_x = _screenWidth * 1.0f / w;
-	float step_y = _screenHeight * 1.0f / h;
+	float step_x = (float)_screenWidth / w;
+	float step_y = (float)_screenHeight / h;
 	step = 0;
-	for (float y = 0; y < 479; y += step_y) {
+	for (float y = 479; y >= 0; y -= step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			uint32 pixel = *(src + (int)y * _screenWidth + (int)x);
-			uint8 r = (pixel & 0xFF0000) >> 16;
-			uint8 g = (pixel & 0x00FF00) >> 8;
-			uint8 b = (pixel & 0x0000FF);
-			int pos = step / w;
-			int wpos = step - pos * w;
-			// source is upside down, flip appropriately while storing
-			buffer[h * w - (pos * w + w - wpos)] = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-			step++;
+			uint8 r, g, b;
+			src.getRGBAt((int)y * _screenWidth + (int)x, r, g, b);
+			buffer.setPixelAt(step++, r, g, b);
 		}
 	}
 
-	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, 16, "screenshot");
-	delete[] buffer;
+	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
 	return screenshot;
 }
 

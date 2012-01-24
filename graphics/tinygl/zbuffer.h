@@ -46,8 +46,7 @@ typedef struct {
 	int shadow_color_r;
 	int shadow_color_g;
 	int shadow_color_b;
-	byte *pbuf;
-	Graphics::PixelBuffer buffer;
+	Graphics::PixelBuffer pbuf;
 	int frame_buffer_allocated;
 
 	unsigned char *dctable;
@@ -65,7 +64,7 @@ typedef struct {
 
 // zbuffer.c
 
-ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelFormat &mode, void *frame_buffer);
+ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
 void ZB_close(ZBuffer *zb);
 void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize);
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);

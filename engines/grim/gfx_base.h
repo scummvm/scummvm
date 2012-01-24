@@ -25,6 +25,8 @@
 
 #include "math/vector3d.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Graphics {
 	struct Surface;
 }
@@ -233,6 +235,7 @@ protected:
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
+	Graphics::PixelFormat _pixelFormat;
 };
 
 // Factory-like functions:

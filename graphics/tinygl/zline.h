@@ -22,7 +22,7 @@
 		p2 = tmp;
 	}
 	sx = zb->xsize;
-	pp = (PIXEL *)((char *) zb->pbuf + zb->linesize * p1->y + p1->x * PSZB);
+	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p1->y + p1->x * PSZB);
 #ifdef INTERP_Z
 	pz = zb->zbuf + (p1->y * sx + p1->x);
 	pz_2 = zb->zbuf2 + (p1->y * sx + p1->x);
@@ -116,4 +116,4 @@
 #undef PUTPIXEL
 #undef ZZ
 #undef RGB
-#undef RGBPIXEL 
+#undef RGBPIXEL

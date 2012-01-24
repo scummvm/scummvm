@@ -92,13 +92,13 @@
 	dbdy = (int)(fdx1 * d2 - fdx2 * d1);
 
 #endif
-  
+
 #ifdef INTERP_ST
 	d1 = (float)(p1->s - p0->s);
 	d2 = (float)(p2->s - p0->s);
 	dsdx = (int)(fdy2 * d1 - fdy1 * d2);
 	dsdy = (int)(fdx1 * d2 - fdx2 * d1);
-  
+
 	d1 = (float)(p1->t - p0->t);
 	d2 = (float)(p2->t - p0->t);
 	dtdx = (int)(fdy2 * d1 - fdy1 * d2);
@@ -132,7 +132,7 @@
 
 	// screen coordinates
 
-	pp1 = (PIXEL *)((char *)zb->pbuf + zb->linesize * p0->y);
+	pp1 = (PIXEL *)((char *)zb->pbuf.getRawBuffer() + zb->linesize * p0->y);
 	pz1 = zb->zbuf + p0->y * zb->xsize;
 	pz2 = zb->zbuf2 + p0->y * zb->xsize;
 
@@ -166,7 +166,7 @@
 			} else {
 				update_left = 1;
 				update_right = 0;
-				l1 = p1; 
+				l1 = p1;
 				l2 = p2;
 			}
 			nb_lines = p2->y - p1->y + 1;
@@ -177,7 +177,7 @@
 		if (update_left) {
 			dy1 = l2->y - l1->y;
 			dx1 = l2->x - l1->x;
-			if (dy1 > 0) 
+			if (dy1 > 0)
 				tmp = (dx1 << 16) / dy1;
 			else
 				tmp = 0;
@@ -189,7 +189,7 @@
 
 #ifdef INTERP_Z
 			z1 = l1->z;
-			dzdl_min = (dzdy + dzdx * dxdy_min); 
+			dzdl_min = (dzdy + dzdx * dxdy_min);
 			dzdl_max = dzdl_min + dzdx;
 #endif
 #ifdef INTERP_RGB
@@ -230,7 +230,7 @@
 		if (update_right) {
 			dx2 = (pr2->x - pr1->x);
 			dy2 = (pr2->y - pr1->y);
-			if (dy2>0) 
+			if (dy2>0)
 				dx2dy2 = ( dx2 << 16) / dy2;
 			else
 				dx2dy2 = 0;
@@ -306,7 +306,7 @@
 #else
 			DRAW_LINE();
 #endif
-      
+
 			// left edge
 			error += derror;
 			if (error > 0) {
@@ -346,8 +346,8 @@
 				sz1 += dszdl_min;
 				tz1 += dtzdl_min;
 #endif
-			} 
-      
+			}
+
 			// right edge
 			x2 += dx2dy2;
 
@@ -365,5 +365,5 @@
 #undef INTERP_STZ
 
 #undef DRAW_INIT
-#undef DRAW_LINE  
+#undef DRAW_LINE
 #undef PUT_PIXEL

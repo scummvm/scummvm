@@ -25,45 +25,193 @@
 
 #include "common/types.h"
 
+#include "graphics/colormasks.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
 
 class PixelBuffer {
 public:
+	/**
+	 * Create a PixelBuffer.
+	 * Convenience syntax for PixelBuffer(createPixelFormat<format>(), buffersize, dispose).
+	 */
+	template<int format>
+	inline static PixelBuffer createBuffer(int buffersize, DisposeAfterUse::Flag dispose) {
+		return PixelBuffer(createPixelFormat<format>(), buffersize, dispose);
+	}
+
+	/**
+	 * Create a PixelBuffer.
+	 * Convenience syntax for PixelBuffer(createPixelFormat<format>(), buffer).
+	 */
+	template<int format>
+	inline static PixelBuffer createBuffer(byte *buffer) {
+		return PixelBuffer(createPixelFormat<format>(), buffer);
+	}
+
+	/**
+	 * Construct an empty PixelBuffer.
+	 */
 	PixelBuffer();
+	/**
+	 * Construct a PixelBuffer, allocating the internal buffer.
+	 *
+	 * @param format The format of the pixels in this buffer.
+	 * @param buffersize The number of pixels the buffer will store.
+	 * @param dispose If YES the internal buffer will be deleted when this object is destroyed,
+	 */
 	PixelBuffer(const Graphics::PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose);
+	/**
+	 * Construct a PixelBuffer, using an already allocated buffer.
+	 *
+	 * @param format The format of the pixels in this buffer.
+	 * @param buffer The raw buffer containing the pixels.
+	 */
 	PixelBuffer(const Graphics::PixelFormat &format, byte *buffer);
+	/**
+	 * Copy constructor.
+	 * The internal buffer will NOT be duplicated, it will be shared between the instances.
+	 */
 	PixelBuffer(const PixelBuffer &buf);
+	/**
+	 * Destroy the object.
+	 */
 	~PixelBuffer();
 
+	/**
+	 * Initialize the buffer.
+	 *
+	 * @param format The format of the pixels.
+	 * @param buffersize The number of pixels the buffer will store.
+	 * @param dispose If YES the internal buffer will be deleted when this object is destroyed,
+	 */
 	void create(const Graphics::PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose);
+	/**
+	 * Initialize the buffer, using the already set pixel format.
+	 * @note If the pixel format was not set before the results are undefined.
+	 *
+	 * @param buffersize The number of pixels the buffer will store.
+	 * @param dispose If YES the internal buffer will be deleted when this object is destroyed,
+	 */
+	void create(int buffersize, DisposeAfterUse::Flag dispose);
+
+	/**
+	 * Initialize the buffer.
+	 *
+	 * @param format The format of the pixels in this buffer.
+	 * @param buffer The raw buffer containing the pixels.
+	 */
+	void set(const Graphics::PixelFormat &format, byte *buffer);
+
+	/**
+	 * Delete the internal pixel buffer.
+	 */
 	void free();
 
+	/**
+	 * Reset the value of the pixels.
+	 *
+	 * @param length The length of the buffer, in pixels.
+	 */
+	void clear(int length);
+
+	/**
+	 * Set the value of the pixel at index 'pixel' to 'value',
+	 */
 	void setPixelAt(int pixel, uint32 value);
+	/**
+	 * Set the value of a pixel. The pixel will be converted from a pixel in another PixelBuffer,
+	 * at the same index.
+	 *
+	 * @param pixel The index of the pixel to set.
+	 * @param buf The buffer storing the source pixel.
+	 */
 	inline void setPixelAt(int pixel, const PixelBuffer &buf) { setPixelAt(pixel, buf, pixel); }
+	/**
+	 * Set the value of a pixel. The pixel will be converted from a pixel in another PixelBuffer.
+	 *
+	 * @param thisPix The index of the pixel to set.
+	 * @param buf The buffer storing the source pixel.
+	 * @param otherPix The index of the source pixel in 'buf'.
+	 */
 	inline void setPixelAt(int thisPix, const PixelBuffer &buf, int otherPix) {
 		uint8 a, r, g, b;
 		buf.getARGBAt(otherPix, a, r, g, b);
 		setPixelAt(thisPix, a, r, g, b);
 	}
+	/**
+	 * Set a pixel, from RGB values.
+	 */
 	inline void setPixelAt(int pixel, uint8 r, uint8 g, uint8 b) { setPixelAt(pixel, _format.RGBToColor(r, g, b)); }
+	/**
+	 * Set a pixel, from ARGB values.
+	 */
 	inline void setPixelAt(int pixel, uint8 a, uint8 r, uint8 g, uint8 b) { setPixelAt(pixel, _format.ARGBToColor(a, r, g, b)); }
 
-	void copyBuffer(int from, int length, const PixelBuffer &buf);
+	/**
+	 * Copy some pixels from a buffer. The pixels will be converted, storing the same ARGB value.
+	 *
+	 * @param from The starting index.
+	 * @param length The number of pixels to copy.
+	 * @param buf The source buffer.
+	 */
+	inline void copyBuffer(int from, int length, const PixelBuffer &buf) { copyBuffer(from, from, length, buf); }
+	/**
+	 * Copy some pixels from a buffer. The pixels will be converted, storing the same ARGB value.
+	 *
+	 * @param thisFrom The starting index.
+	 * @param otherFrom The starting index in the source buffer.
+	 * @param length The number of pixels to copy.
+	 * @param buf The source buffer.
+	 */
 	void copyBuffer(int thisFrom, int otherFrom, int length, const PixelBuffer &buf);
 
+	/**
+	 * Shift the internal buffer of some pixels, losing some pixels at the start of the buffer.
+	 * The pixels lost will NOT be deleted.
+	 */
 	inline void shiftBy(int amount) { _buffer += amount * _format.bytesPerPixel; }
 
+	/**
+	 * Return the encoded value of the pixel at the given index.
+	 */
 	uint32 getValueAt(int i) const;
+	/**
+	 * Return the RGB value of the pixel at the given index.
+	 */
 	inline void getRGBAt(int i, uint8 &r, uint8 &g, uint8 &b) const { _format.colorToRGB(getValueAt(i), r, g, b); }
+	/**
+	 * Return the ARGB value of the pixel at the given index.
+	 */
 	inline void getARGBAt(int i, uint8 &a, uint8 &r, uint8 &g, uint8 &b) const { _format.colorToARGB(getValueAt(i), a, r, g, b); }
 
-	byte *getRawBuffer() const;
-	PixelFormat getFormat() const;
+	/**
+	 * Return the internal buffer.
+	 */
+	inline byte *getRawBuffer() const { return _buffer; }
+	/**
+	 * Return the pixel format used.
+	 */
+	inline PixelFormat getFormat() const { return _format; }
 
+	/**
+	 * Copy a PixelBuffer object.
+	 * The internal buffer will NOT be duplicated, it will be shared between the instances.
+	 */
 	PixelBuffer &operator=(const PixelBuffer &buf);
+	/**
+	 * Set the internal buffer to an already allocated array.
+	 *
+	 * @param buffer The pointer to the array.
+	 */
 	PixelBuffer &operator=(byte *buffer);
+
+	/**
+	 * Check if the interal buffer is allocated.
+	 *
+	 * @returns true if allocated.
+	 */
 	inline operator bool() const { return (_buffer); }
 
 private:

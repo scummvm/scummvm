@@ -30,7 +30,8 @@ PixelBuffer::PixelBuffer()
 
 }
 
-PixelBuffer::PixelBuffer(const PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose) {
+PixelBuffer::PixelBuffer(const PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose)
+	: _buffer(NULL) {
 	create(format, buffersize, dispose);
 }
 
@@ -51,9 +52,28 @@ PixelBuffer::~PixelBuffer() {
 }
 
 void PixelBuffer::create(const Graphics::PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose) {
+	if (_dispose == DisposeAfterUse::YES)
+		free();
+
 	_format = format;
 	_dispose = dispose;
 	_buffer = new byte[buffersize * format.bytesPerPixel];
+}
+
+void PixelBuffer::create(int buffersize, DisposeAfterUse::Flag dispose) {
+	if (_dispose == DisposeAfterUse::YES)
+		free();
+
+	_dispose = dispose;
+	_buffer = new byte[buffersize * _format.bytesPerPixel];
+}
+
+void PixelBuffer::set(const Graphics::PixelFormat &format, byte *buffer) {
+	if (_dispose == DisposeAfterUse::YES)
+		free();
+
+	_format = format;
+	_buffer = buffer;
 }
 
 void PixelBuffer::free() {
@@ -61,20 +81,27 @@ void PixelBuffer::free() {
 	_buffer = NULL;
 }
 
+void PixelBuffer::clear(int length) {
+	memset(_buffer, 0, length);
+}
+
 void PixelBuffer::setPixelAt(int pixel, uint32 value) {
+#if defined(SCUMM_BIG_ENDIAN)
+	byte *buffer = _buffer + pixel * _format.bytesPerPixel;
+	for (int i = 0; i < _format.bytesPerPixel; ++i) {
+		buffer[i] = value >> ((_format.bytesPerPixel - i - 1) * 8) & 0xFF;
+	}
+#elif defined(SCUMM_LITTLE_ENDIAN)
 	byte *buffer = _buffer + pixel * _format.bytesPerPixel;
 	for (int i = 0; i < _format.bytesPerPixel; ++i) {
 		buffer[i] = value >> (i * 8) & 0xFF;
 	}
-}
-
-void PixelBuffer::copyBuffer(int from, int length, const PixelBuffer &buf) {
-	copyBuffer(from, from, length, buf);
+#endif
 }
 
 void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const PixelBuffer &buf) {
 	if (buf._format == _format) {
-		memcpy(_buffer + thisFrom * _format.bytesPerPixel , buf._buffer + otherFrom * _format.bytesPerPixel, length * _format.bytesPerPixel);
+		memcpy(_buffer + thisFrom * _format.bytesPerPixel, buf._buffer + otherFrom * _format.bytesPerPixel, length * _format.bytesPerPixel);
 	} else {
 		uint8 r, g, b;
 		for (int i = 0; i < length; ++i) {
@@ -85,21 +112,21 @@ void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const Pixe
 }
 
 uint32 PixelBuffer::getValueAt(int i) const {
-	//TODO: Check this
+#if defined(SCUMM_BIG_ENDIAN)
+	byte *buffer = _buffer + i * _format.bytesPerPixel;
+	uint32 p = buffer[0] << ((_format.bytesPerPixel - 1) * 8);
+	for (int l = 1; l < _format.bytesPerPixel; ++l) {
+		p = p | (buffer[l] << (8 * (_format.bytesPerPixel - l - 1)));
+	}
+	return p;
+#elif defined(SCUMM_LITTLE_ENDIAN)
 	byte *buffer = _buffer + i * _format.bytesPerPixel;
 	uint32 p = buffer[0];
 	for (int l = 1; l < _format.bytesPerPixel; ++l) {
 		p = p | (buffer[l] << (8 * l));
 	}
 	return p;
-}
-
-byte *PixelBuffer::getRawBuffer() const {
-	return _buffer;
-}
-
-PixelFormat PixelBuffer::getFormat() const {
-	return _format;
+#endif
 }
 
 PixelBuffer &PixelBuffer::operator=(const PixelBuffer &buf) {

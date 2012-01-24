@@ -152,7 +152,6 @@ GfxTinyGL::GfxTinyGL() {
 }
 
 GfxTinyGL::~GfxTinyGL() {
-	delete[] _storedDisplay;
 	if (_zb) {
 		TinyGL::glClose();
 		ZB_close(_zb);
@@ -172,12 +171,12 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
 
 	_pixelFormat = buf.getFormat();
-	_zb = TinyGL::ZB_open(screenW, screenH, _pixelFormat, buffer);
+	_zb = TinyGL::ZB_open(screenW, screenH, buf);
 	TinyGL::glInit(_zb);
 
 	_screenSize = 640 * 480 * _pixelFormat.bytesPerPixel;
-	_storedDisplay = new byte[_screenSize];
-	memset(_storedDisplay, 0, _screenSize);
+	_storedDisplay.create(_pixelFormat, 640 * 480, DisposeAfterUse::YES);
+	_storedDisplay.clear(640 * 480);
 
 	_currentShadowArray = NULL;
 
@@ -214,9 +213,9 @@ void GfxTinyGL::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
 }
 
 void GfxTinyGL::clearScreen() {
-	memset(_zb->pbuf, 0, _screenSize);
-	memset(_zb->zbuf, 0, _screenSize);
-	memset(_zb->zbuf2, 0, _screenSize);
+	_zb->pbuf.clear(_screenSize);
+	memset(_zb->zbuf, 0, 640 * 480 * 2);
+	memset(_zb->zbuf2, 0, 640 * 480 * 4);
 }
 
 void GfxTinyGL::flipBuffer() {
@@ -630,13 +629,10 @@ void GfxTinyGL::turnOffLight(int lightId) {
 }
 
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
-	// We want an RGB565-bitmap in TinyGL.
-// 	if (bitmap->_colorFormat != BM_RGB565) {
 	if (bitmap->_format == 1) {
-		bitmap->convertToColorFormat(0, _pixelFormat);
-// 		bitmap->convertToColorFormat(0, BM_RGB565);
+		bitmap->convertToColorFormat(_pixelFormat);
 	} else { // The zbuffer is still 16 bpp, 565
-// 		bitmap->convertToColorFormat(0, Graphics::createPixelFormat<565>());
+		bitmap->convertToColorFormat(Graphics::createPixelFormat<565>());
 	}
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
@@ -653,7 +649,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	}
 }
 
-void TinyGLBlit(TinyGL::ZBuffer *zb, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
+void TinyGLBlit(const Graphics::PixelFormat &format, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
 	int srcX, srcY;
 	int l, r;
 
@@ -679,13 +675,13 @@ void TinyGLBlit(TinyGL::ZBuffer *zb, byte *dst, byte *src, int x, int y, int wid
 	if (y + height > 480)
 		height -= (y + height) - 480;
 
-	dst += (x + (y * 640)) * zb->pixelbytes;
-	src += (srcX + (srcY * width)) * zb->pixelbytes;
+	dst += (x + (y * 640)) * format.bytesPerPixel;
+	src += (srcX + (srcY * width)) * format.bytesPerPixel;
 
-	int copyWidth = width * zb->pixelbytes;
+	int copyWidth = width * format.bytesPerPixel;
 
-	Graphics::PixelBuffer srcBuf(zb->cmode, src);
-	Graphics::PixelBuffer dstBuf(zb->cmode, dst);
+	Graphics::PixelBuffer srcBuf(format, src);
+	Graphics::PixelBuffer dstBuf(format, dst);
 
 	if (!trans) {
 		for (l = 0; l < height; l++) {
@@ -714,10 +710,10 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 
 	assert(bitmap->getActiveImage() > 0);
 	if (bitmap->getFormat() == 1)
-		TinyGLBlit(_zb, (byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
+		TinyGLBlit(bitmap->getPixelFormat(), (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit(_zb, (byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
+		TinyGLBlit(bitmap->getPixelFormat(), (byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
@@ -772,11 +768,8 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 			startOffset += charWidth;
 		}
 
-		byte *bu = new byte[width * height * _zb->pixelbytes];
-		Graphics::PixelBuffer buf(_zb->cmode, bu);
+		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);
 
-		uint16 *texData = new uint16[width * height];
-		uint16 *texDataPtr = texData;
 		uint8 *bitmapData = _textBitmap;
 		uint8 r = fgColor->getRed();
 		uint8 g = fgColor->getGreen();
@@ -814,7 +807,7 @@ void GfxTinyGL::drawTextObject(TextObject *text) {
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			TinyGLBlit(_zb, (byte *)_zb->pbuf, userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
+			TinyGLBlit(_pixelFormat, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
 		}
 	}
 
@@ -901,19 +894,17 @@ void GfxTinyGL::destroyMaterial(Texture *material) {
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface* frame) {
 	_smushWidth = frame->w;
 	_smushHeight = frame->h;
-	_smushBitmap = (byte *)frame->pixels;
 
 	Graphics::PixelBuffer srcBuf(frame->format, (byte *)frame->pixels);
-	Graphics::PixelBuffer dstBuf(_pixelFormat, frame->w * frame->h, DisposeAfterUse::NO);
-	dstBuf.copyBuffer(0, frame->w * frame->h, srcBuf);
-	_smushBitmap = dstBuf.getRawBuffer();
+	_smushBitmap.create(_pixelFormat, frame->w * frame->h, DisposeAfterUse::YES);
+	_smushBitmap.copyBuffer(0, frame->w * frame->h, srcBuf);
 }
 
 void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {
 	if (_smushWidth == 640 && _smushHeight == 480) {
-		memcpy(_zb->pbuf, _smushBitmap, _screenSize);
+		_zb->pbuf.copyBuffer(0, 640 * 480, _smushBitmap);
 	} else {
-		TinyGLBlit(_zb, (byte *)_zb->pbuf, _smushBitmap, offsetX, offsetY, _smushWidth, _smushHeight, false);
+		TinyGLBlit(_pixelFormat, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
 	}
 }
 
@@ -925,7 +916,6 @@ void GfxTinyGL::loadEmergFont() {
 
 void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	uint32 color = _pixelFormat.RGBToColor(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue());
-	Graphics::PixelBuffer buf(_pixelFormat, _zb->pbuf);
 
 	for (int l = 0; l < (int)strlen(text); l++) {
 		int c = text[l];
@@ -939,7 +929,7 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 						int pixel = line & 0x80;
 						line <<= 1;
 						if (pixel) {
-							buf.setPixelAt(((py + y) * 640) + (px + x), color);
+							_zb->pbuf.setPixelAt(((py + y) * 640) + (px + x), color);
 						}
 					}
 				}
@@ -950,19 +940,15 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 }
 
 Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
-	uint16 *buffer = new uint16[w * h];
-	uint16 *src = (uint16 *)_storedDisplay;
-	assert(buffer);
+	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
 
 	int step = 0;
 	for (int y = 0; y <= 479; y++) {
 		for (int x = 0; x <= 639; x++) {
-			uint16 pixel = *(src + y * 640 + x);
-			uint8 r = (pixel & 0xF800) >> 8;
-			uint8 g = (pixel & 0x07E0) >> 3;
-			uint8 b = (pixel & 0x001F) << 3;
+			uint8 r, g, b;
+			_zb->pbuf.getRGBAt(y * 640 + x, r, g, b);
 			uint32 color = (r + g + b) / 3;
-			src[step++] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			_zb->pbuf.setPixelAt(step++, color, color,color);
 		}
 	}
 
@@ -971,98 +957,92 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 	step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			uint16 pixel = *(src + (int)y * 640 + (int)x);
-			buffer[step++] = pixel;
+			uint8 r, g, b;
+			_zb->pbuf.getRGBAt((int)y * 640 + (int)x, r, g, b);
+			buffer.setPixelAt(step++, r, g, b);
 		}
 	}
 
-	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, 16, "screenshot");
-	delete[] buffer;
+	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
 	return screenshot;
 }
 
 void GfxTinyGL::storeDisplay() {
-	memcpy(_storedDisplay, _zb->pbuf, _screenSize);
+	_storedDisplay.copyBuffer(0, 640 * 408, _zb->pbuf);
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
-	memcpy(_zb->pbuf, _storedDisplay, _screenSize);
+	_zb->pbuf.copyBuffer(0, 640 * 480, _storedDisplay);
 }
 
 void GfxTinyGL::dimScreen() {
-	Graphics::PixelBuffer buf(_pixelFormat, (byte *)_storedDisplay);
 	for (int l = 0; l < 640 * 480; l++) {
 		uint8 r, g, b;
-		buf.getRGBAt(l, r, g, b);
-		buf.setPixelAt(l, r / 10, g / 10, b / 10);
+		_storedDisplay.getRGBAt(l, r, g, b);
+		uint32 color = (r + g + b) / 10;
+		_storedDisplay.setPixelAt(l, color, color, color);
 	}
 }
 
 void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
-	uint32 *data = (uint32 *)_zb->pbuf;
 	for (int ly = y; ly < y + h; ly++) {
 		for (int lx = x; lx < x + w; lx++) {
-			uint16 pixel = data[ly * 640 + lx];
-			uint8 r = (pixel & 0xF800) >> 8;
-			uint8 g = (pixel & 0x07E0) >> 3;
-			uint8 b = (pixel & 0x001F) << 3;
-			uint16 color = (uint16)(((r + g + b) / 3) * level);
-			data[ly * 640 + lx] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			uint8 r, g, b;
+			_zb->pbuf.getRGBAt(ly * 640 + lx, r, g, b);
+			uint32 color = ((r + g + b) / 3) * level;
+			_zb->pbuf.setPixelAt(ly * 640 + lx, color, color, color);
 		}
 	}
 }
 
 void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
-	uint16 *data = (uint16 *)_zb->pbuf;
 	for (int ly = 0; ly < _screenHeight; ly++) {
 		for (int lx = 0; lx < _screenWidth; lx++) {
 			// Don't do anything with the data in the region we draw Around
 			if(lx > x1 && lx < x2 && ly > y1 && ly < y2)
 				continue;
 			// But set everything around it to black.
-			data[ly * 640 + lx] = (uint16)0.0f;
+			_zb->pbuf.setPixelAt(ly * 640 + lx, 0);
 		}
 	}
 }
 
 void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
-	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
 	const Color &color = *primitive->getColor();
-	uint16 c = ((color.getRed() & 0xF8) << 8) | ((color.getGreen() & 0xFC) << 3) | (color.getBlue() >> 3);
+	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
 
 	if (primitive->isFilled()) {
 		for (; y1 <= y2; y1++)
 			if (y1 >= 0 && y1 < 480)
 				for (int x = x1; x <= x2; x++)
 					if (x >= 0 && x < 640)
-						WRITE_UINT16(dst + 640 * y1 + x, c);
+						_zb->pbuf.setPixelAt(640 * y1 + x, c);
 	} else {
 		if (y1 >= 0 && y1 < 480)
 			for (int x = x1; x <= x2; x++)
 				if (x >= 0 && x < 640)
-					WRITE_UINT16(dst + 640 * y1 + x, c);
+					_zb->pbuf.setPixelAt(640 * y1 + x, c);
 		if (y2 >= 0 && y2 < 480)
 			for (int x = x1; x <= x2; x++)
 				if (x >= 0 && x < 640)
-					WRITE_UINT16(dst + 640 * y2 + x, c);
+					_zb->pbuf.setPixelAt(640 * y2 + x, c);
 		if (x1 >= 0 && x1 < 640)
 			for (int y = y1; y <= y2; y++)
 				if (y >= 0 && y < 480)
-					WRITE_UINT16(dst + 640 * y + x1, c);
+					_zb->pbuf.setPixelAt(640 * y + x1, c);
 		if (x2 >= 0 && x2 < 640)
 			for (int y = y1; y <= y2; y++)
 				if (y >= 0 && y < 480)
-					WRITE_UINT16(dst + 640 * y + x2, c);
+					_zb->pbuf.setPixelAt(640 * y + x2, c);
 	}
 }
 
 void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
-	Graphics::PixelBuffer buf(_pixelFormat, _zb->pbuf);
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
@@ -1073,7 +1053,7 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	if (x2 == x1) {
 		for (int y = y1; y <= y2; y++) {
 			if (x1 >= 0 && x1 < 640 && y >= 0 && y < 480)
-				buf.setPixelAt(640 * y + x1, color.getRed(), color.getGreen(), color.getBlue());
+				_zb->pbuf.setPixelAt(640 * y + x1, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	} else {
 		float m = (y2 - y1) / (x2 - x1);
@@ -1081,13 +1061,12 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 		for (int x = x1; x <= x2; x++) {
 			int y = (int)(m * x) + b;
 			if (x >= 0 && x < 640 && y >= 0 && y < 480)
-				buf.setPixelAt(640 * y + x, color.getRed(), color.getGreen(), color.getBlue());
+				_zb->pbuf.setPixelAt(640 * y + x, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	}
 }
 
 void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
-	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
@@ -1100,21 +1079,21 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	int b;
 
 	const Color &color = *primitive->getColor();
-	uint16 c = ((color.getRed() & 0xF8) << 8) | ((color.getGreen() & 0xFC) << 3) | (color.getBlue() >> 3);
+	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
 
 	m = (y2 - y1) / (x2 - x1);
 	b = (int)(-m * x1 + y1);
 	for (int x = x1; x <= x2; x++) {
 		int y = (int)(m * x) + b;
 		if (x >= 0 && x < 640 && y >= 0 && y < 480)
-			WRITE_UINT16(dst + 640 * y + x, c);
+			_zb->pbuf.setPixelAt(640 * y + x, c);
 	}
 	m = (y4 - y3) / (x4 - x3);
 	b = (int)(-m * x3 + y3);
 	for (int x = x3; x <= x4; x++) {
 		int y = (int)(m * x) + b;
 		if (x >= 0 && x < 640 && y >= 0 && y < 480)
-			WRITE_UINT16(dst + 640 * y + x, c);
+			_zb->pbuf.setPixelAt(640 * y + x, c);
 	}
 }
 

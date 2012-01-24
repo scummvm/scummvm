@@ -27,6 +27,10 @@
 
 #include "engines/grim/pool.h"
 
+namespace Graphics {
+class PixelBuffer;
+}
+
 namespace Grim {
 
 /**
@@ -39,7 +43,7 @@ namespace Grim {
 class BitmapData {
 public:
 	BitmapData(const Common::String &fname, Common::SeekableReadStream *data);
-	BitmapData(const char *data, int w, int h, int bpp, const char *fname);
+	BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname);
 	BitmapData();
 	~BitmapData();
 
@@ -67,7 +71,7 @@ public:
 	 */
 	void convertToColorFormat(int num, int format);
 
-	void convertToColorFormat(int num, const Graphics::PixelFormat &format);
+	void convertToColorFormat(const Graphics::PixelFormat &format);
 
 	Common::String _fname;
 	int _numImages;
@@ -98,7 +102,7 @@ public:
 	 * @param len		the length of the data
 	 */
 	Bitmap(const Common::String &filename, Common::SeekableReadStream *data);
-	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
+	Bitmap(const Graphics::PixelBuffer &buf, int width, int height, const char *filename);
 	Bitmap();
 
 	const Common::String &getFilename() const { return _data->_fname; }
@@ -127,6 +131,7 @@ public:
 	char *getData() const { return getData(_currImage); }
 	void *getTexIds() const { return _data->_texIds; }
 	int getNumTex() const { return _data->_numTex; }
+	const Graphics::PixelFormat &getPixelFormat() const { return _data->_pixelFormat; }
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);

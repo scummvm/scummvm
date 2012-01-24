@@ -131,7 +131,6 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
 	unsigned short *pz1;
 	unsigned int *pz2;
-	PIXEL *pp1;
 	int part, update_left, update_right;
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
@@ -230,7 +229,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 	// screen coordinates
 
-	pp1 = (PIXEL *)((char *)zb->pbuf + zb->linesize * p0->y);
+	byte *pp1 = zb->pbuf.getRawBuffer() + zb->linesize * p0->y;
 	pz1 = zb->zbuf + p0->y * zb->xsize;
 	pz2 = zb->zbuf2 + p0->y * zb->xsize;
 
@@ -343,8 +342,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 				fz = (float)z1;
 				zinv = (float)(1.0 / fz);
 
-				Graphics::PixelBuffer &buf = zb->buffer;
-				buf = (byte *)pp1 + x1 * PSZB;
+				Graphics::PixelBuffer buf = zb->pbuf;
+				buf = pp1 + x1 * PSZB;
 
 				pz = pz1 + x1;
 				pz_2 = pz2 + x1;
@@ -479,7 +478,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 = (PIXEL *)((char *)pp1 + zb->linesize);
+			pp1 += zb->linesize;
 			pz1 += zb->xsize;
 			pz2 += zb->xsize;
 		}

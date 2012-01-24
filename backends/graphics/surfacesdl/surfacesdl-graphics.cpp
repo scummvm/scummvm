@@ -134,7 +134,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 	} else
 #endif
 	{
-		bpp = 24;
+		bpp = 16;
 		sdlflags = SDL_HWSURFACE;
 	}
 
