@@ -56,7 +56,7 @@ Also beware that since ResidualVM is currently in an alpha-state, there is
 no guarantee that your saves will continue to work with newer builds.
 
 For more information, see the page on ResidualVM at the wiki page:
-http://apps.sourceforge.net/mediawiki/residual
+http://apps.sourceforge.net/mediawiki/residualvm
 
 
 ---------------------
@@ -93,7 +93,7 @@ Windows or something similar to unpack and apply it. (There does exist
 tools to unpack it on any platform in the residualvm-tools git-repos).
 
 Additional information on how to apply the patch, can be found in our
-wiki at: http://sourceforge.net/apps/mediawiki/residual/index.php?title=Grim_Fandango_Patch
+wiki at: http://sourceforge.net/apps/mediawiki/residualvm/index.php?title=Grim_Fandango_Patch
 
 If you want to try to play with fullscreen, or you want to play with
 software-rendering, see the configuration-section below.
@@ -214,7 +214,7 @@ You can report bugs at our github-issue-tracker:
 http://www.github.com/residualvm/residualvm/issues
 
 Please read the Wiki regarding how to report bugs properly first though:
-http://sourceforge.net/apps/mediawiki/residual/index.php?title=Reporting_Bugs
+http://sourceforge.net/apps/mediawiki/residualvm/index.php?title=Reporting_Bugs
 
 Remember to always have the following information in your bug reports:
 * Bug details, including instructions on reproducing it
@@ -227,7 +227,7 @@ Remember to always have the following information in your bug reports:
 8. Contact
 ----------
 Homepage: http://www.residualvm.org/
-Wiki: http://sourceforge.net/apps/mediawiki/residual/index.php?title=Main_Page
+Wiki: http://sourceforge.net/apps/mediawiki/residualvm/index.php?title=Main_Page
 Forums: http://forums.residualvm.org/
 IRC: #residual on freenode
 
