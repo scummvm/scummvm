@@ -144,14 +144,15 @@ bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStr
 	data->readUint32LE(); 				//_transparentColor
 	_format = data->readUint32LE();
 	_bpp = data->readUint32LE();
-	uint32 redBits = data->readUint32LE();
-	uint32 greenBits = data->readUint32LE();
-	uint32 blueBits = data->readUint32LE();
-	uint32 redShift = data->readUint32LE();
-	uint32 greenShift = data->readUint32LE();
-	uint32 blueShift = data->readUint32LE();
+// 	uint32 redBits = data->readUint32LE();
+// 	uint32 greenBits = data->readUint32LE();
+// 	uint32 blueBits = data->readUint32LE();
+// 	uint32 redShift = data->readUint32LE();
+// 	uint32 greenShift = data->readUint32LE();
+// 	uint32 blueShift = data->readUint32LE();
 
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(_bpp / 8, redBits, greenBits, blueBits, 0, redShift, greenShift, blueShift, 0);
+	// Hardcode the format, since the values saved in the files are garbage for some, like "ha_0_elvos.zbm".
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	data->seek(128, SEEK_SET);
 	_width = data->readUint32LE();
