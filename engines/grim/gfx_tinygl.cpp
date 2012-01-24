@@ -636,9 +636,9 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	}
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
+			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
+				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic).getRawBuffer() + 2 * i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -709,11 +709,12 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 	}
 
 	assert(bitmap->getActiveImage() > 0);
+	const int num = bitmap->getActiveImage() - 1;
 	if (bitmap->getFormat() == 1)
-		TinyGLBlit(bitmap->getPixelFormat(), (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
+		TinyGLBlit(bitmap->getPixelFormat(num), (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit(bitmap->getPixelFormat(), (byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
+		TinyGLBlit(bitmap->getPixelFormat(num), (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
