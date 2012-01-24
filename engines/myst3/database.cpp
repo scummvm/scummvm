@@ -99,10 +99,6 @@ Database::Database() :
 		if (_gameVersion->flags & kFlagSafeDisc) {
 			// TODO: SafeDisc encrypted binary
 			error("Unhandled SafeDisc encrypted executable");
-		} else if (_gameVersion->flags & kFlagVersion10) {
-			// TODO: In a completely horrible fashion, the 1.0 executables use a different
-			// opcode set
-			error("Unhandled v1.0 executable");
 		}
 	} else {
 		// Print out any unknown EXE's
@@ -411,23 +407,28 @@ Common::Array<HotSpot> Database::loadHotspots(Common::ReadStreamEndian &s) {
 	return scripts;
 }
 
-Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s)
-{
+Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s) {
 	Common::Array<Opcode> script;
 
-	while(1){
+	while (1) {
 		Opcode opcode;
 		uint16 code = s.readUint16();
 
 		opcode.op = code & 0xff;
 		uint8 count = code >> 8;
-		if(count == 0 && opcode.op == 0)
+		if (count == 0 && opcode.op == 0)
 			break;
 
-		for(int i = 0;i < count;i++){
+		// The v1.0 executables use a slightly different opcode set
+		// Since it's a simple conversion, we'll handle that here
+		if ((_gameVersion->flags & kFlagVersion10) && opcode.op >= 122)
+			opcode.op++;
+
+		for (int i = 0; i < count; i++) {
 			int16 value = s.readSint16();
 			opcode.args.push_back(value);
 		}
+
 		script.push_back(opcode);
 	}
 
