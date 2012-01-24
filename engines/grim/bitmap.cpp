@@ -113,6 +113,7 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname, Common::Seeka
 BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *data) {
 	_fname = fname;
 	_refCount = 1;
+	_data = 0;
 
 	uint32 tag = data->readUint32BE();
 	switch(tag) {
@@ -343,14 +344,16 @@ bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStrea
 		pixelFormat = Graphics::createPixelFormat<1555>();
 		//convertToColorFormat(0, BM_RGBA);
 	} else {
-		// 		_pixelFormat = Graphics::createPixelFormat<??>();
+		pixelFormat = Graphics::PixelFormat(4, 8,8,8,8, 0, 8, 16, 24);
 		_colorFormat = BM_RGBA;
 	}
 
 	_width = 640;
 	_height = 480;
-	_data[0].set(pixelFormat, (byte *)bMap);
 	_numImages = 1;
+	_data = new Graphics::PixelBuffer[_numImages];
+	_data[0].create(pixelFormat, _width * _height, DisposeAfterUse::YES);
+	_data[0].set(pixelFormat, (byte *)bMap);
 
 	g_driver->createBitmap(this);
 #endif // ENABLE_MONKEY4
