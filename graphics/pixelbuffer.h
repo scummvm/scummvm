@@ -191,9 +191,14 @@ public:
 	 */
 	inline byte *getRawBuffer() const { return _buffer; }
 	/**
+	 * Return the internal buffer, pointing at the wanted pixel.
+	 */
+	inline byte *getRawBuffer(int pixel) const { return _buffer + _format.bytesPerPixel * pixel; }
+
+	/**
 	 * Return the pixel format used.
 	 */
-	inline PixelFormat getFormat() const { return _format; }
+	inline const PixelFormat &getFormat() const { return _format; }
 
 	/**
 	 * Copy a PixelBuffer object.
