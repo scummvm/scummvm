@@ -243,6 +243,15 @@ void current_script() {
 
 void break_here() {}
 
+void sleep_for() {
+	lua_Object msObj = lua_getparam(1);
+
+	if (lua_isnumber(msObj)) {
+		int ms = (int)lua_getnumber(msObj);
+		lua_state->sleepFor = ms;
+	}
+}
+
 void lua_runtasks() {
 	if (!lua_state || !lua_state->next) {
 		return;
@@ -251,7 +260,11 @@ void lua_runtasks() {
 	// Mark all the states to be updated
 	LState *state = lua_state->next;
 	do {
-		state->updated = false;
+		if (state->sleepFor > 0) {
+			state->sleepFor -= g_grim->getFrameTime();
+		} else {
+			state->updated = false;
+		}
 		state = state->next;
 	} while	(state);
 

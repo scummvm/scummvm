@@ -15,6 +15,7 @@ void find_script();
 void identify_script();
 void next_script();
 void break_here();
+void sleep_for();
 void pause_scripts();
 void unpause_scripts();
 

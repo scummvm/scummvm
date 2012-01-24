@@ -32,6 +32,7 @@ void pause_scripts();
 void unpause_scripts();
 void find_script();
 void break_here();
+void sleep_for();
 
 void runtasks(LState *const rootState);
 

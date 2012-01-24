@@ -92,6 +92,7 @@ void lua_stateinit(LState *state) {
 	state->task = NULL;
 	state->some_task = NULL;
 	state->taskFunc.ttype = LUA_T_NIL;
+	state->sleepFor = 0;
 
 	state->stack.stack = luaM_newvector(STACK_UNIT, TObject);
 	state->stack.top = state->stack.stack;
