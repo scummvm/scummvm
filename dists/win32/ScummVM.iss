@@ -64,9 +64,9 @@ Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment
 Name: {group}\Liesmich; Filename: {app}\Liesmich.txt; WorkingDir: {app}; Comment: Liesmich; Flags: createonlyiffileexists; Languages: de
 Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: se
 
-Name: {group}\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0
-Name: {group}\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0
-Name: {group}\Saved Games (new default); Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games (new default); IconIndex: 0
+Name: {group}\Saved Games\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0; MinVersion: 0, 1
+Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1
+Name: {group}\Saved Games\Saved Games (new default); Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games (new default); IconIndex: 0; MinVersion: 0, 1
 
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
