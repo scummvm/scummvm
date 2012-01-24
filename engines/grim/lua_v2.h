@@ -36,7 +36,6 @@ protected:
 	DECLARE_LUA_OPCODE(UndimAll);
 	DECLARE_LUA_OPCODE(SetActorLocalAlpha);
 	DECLARE_LUA_OPCODE(UndimRegion);
-	DECLARE_LUA_OPCODE(SleepFor);
 	DECLARE_LUA_OPCODE(DimScreen);
 	DECLARE_LUA_OPCODE(MakeCurrentSetup);
 	DECLARE_LUA_OPCODE(SetActorGlobalAlpha);
