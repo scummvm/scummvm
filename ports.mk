@@ -233,6 +233,8 @@ endif
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
+	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 	unix2dos $(WIN32PATH)/doc/*.txt

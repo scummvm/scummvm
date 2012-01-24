@@ -64,6 +64,7 @@ Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment
 Name: {group}\Liesmich; Filename: {app}\Liesmich.txt; WorkingDir: {app}; Comment: Liesmich; Flags: createonlyiffileexists; Languages: de
 Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: se
 
+Name: {group}\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0
 Name: {group}\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0
 Name: {group}\Saved Games (new default); Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games (new default); IconIndex: 0
 
@@ -109,3 +110,8 @@ Source: sky.cpt; DestDir: {app}; Flags: ignoreversion
 Source: teenagent.dat; DestDir: {app}; Flags: ignoreversion
 Source: toon.dat; DestDir: {app}; Flags: ignoreversion
 Source: translations.dat; DestDir: {app}; Flags: ignoreversion
+;Mirgration script for saved games in Windows NT4 onwards
+Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
+Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
+
+
