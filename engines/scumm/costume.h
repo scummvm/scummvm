@@ -77,9 +77,7 @@ public:
 	int _maxHeight;
 
 protected:
-	void actorSpeak(ActorC64 *a, int &cmd);
 	int dirToDirStop(int oldDir);
-	void frameUpdate(ActorC64 *A, int cmd);
 
 };
 

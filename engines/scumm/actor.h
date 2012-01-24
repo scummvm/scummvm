@@ -208,7 +208,7 @@ public:
 	virtual void walkActor();
 	void drawActorCostume(bool hitTestMode = false);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	void animateCostume();
+	virtual void animateCostume();
 	virtual void setActorCostume(int c);
 
 	void animateLimb(int limb, int f);
@@ -222,7 +222,7 @@ protected:
 	void startWalkAnim(int cmd, int angle);
 public:
 	void runActorTalkScript(int f);
-	void startAnimActor(int frame);
+	virtual void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);
 	void remapActorPaletteColor(int slot, int color);
@@ -348,38 +348,47 @@ enum ActorC64MiscFlags {
 
 class ActorC64 : public Actor_v2 {
 public:
-	byte _costCommand, _costFrame;
+	byte _costCommandNew, _costCommand, _costFrame;
 	byte _miscflags;
-	byte _speaking, _speakingPrev;
+	byte _speaking;
 
-    int8 _byte_FDE8;
-    int8 _byte_FD0A;
-    int8 _byte_FCE2[8];
-    
+    int8 _AnimFrameRepeat;
+    int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
+
+    byte _limb_current;
+	bool _limb_flipped[8];
 
 public:
 	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
-		 _costCommand = 0;
+		 _costCommand = 0xFF;
 		 _costFrame = 0;
 		 _speaking = 0;
-		 _speakingPrev = 0;
-         _byte_FD0A = 0;
-         _byte_FDE8 = 0;
+         _AnimFrameRepeat = 0;
+		 _costCommandNew = 0;
 
-         // Reset the limb counter?
-         for( int i = 0; i < sizeof( _byte_FCE2 ); ++i )
-             _byte_FCE2[i] = 0;
-
+		 for( int i = 0; i < 8; ++i ) {
+			_limbFrameRepeatNew[i] = 0;
+			_limbFrameRepeat[i] = 0;
+			_limb_flipped[i] = false;
+		 }
 	}
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
 		if (mode == -1) {
 			_miscflags = 0;
 		}
+
 	}
 
     virtual void animateActor(int anim);
+	virtual void animateCostume();
+
+	void		 limbFrameCheck();
+
+	void		 speakCheck();
     virtual void setDirection(int direction);
+	int			 setCmdFromDirection(int direction);
+	void		 startAnimActor(int f);
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);

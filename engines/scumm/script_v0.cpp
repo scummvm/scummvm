@@ -27,6 +27,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/verbs.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
@@ -601,8 +602,7 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 	x = r.x;
 	y = r.y;
 	a->putActor(x, y, _currentRoom);
-	a->setDirection(dir + 180);
-
+	
 	camera._dest.x = camera._cur.x = a->getPos().x;
 	setCameraAt(a->getPos().x, a->getPos().y);
 	setCameraFollows(a);
@@ -674,13 +674,13 @@ void ScummEngine_v0::o_lights() {
 void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
-	int8 unk = (int8) fetchScriptByte();
+	int8 animFrameRepeat = (int8) fetchScriptByte();
 
-	debug(0,"o_animateActor: unk %d", unk);
+	debug(0,"o_animateActor: animFrameRepeat %d", animFrameRepeat);
 
 	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
 
-    a->_byte_FDE8 = unk;
+    a->_AnimFrameRepeat = animFrameRepeat;
 	
     switch( anim ) {
 
