@@ -225,9 +225,8 @@ void Costume::loadEMI(Common::SeekableReadStream *data, Costume *prevCost) {
 
 		for (int k = 0; k < _chores[i]->_numTracks; k++) {
 			int componentNameLength = data->readUint32LE();
-			assert(componentNameLength < 64);
 
-			char name[64];
+			char *name = new char[componentNameLength];
 			data->read(name, componentNameLength);
 
 			data->readUint32LE();
@@ -267,6 +266,7 @@ void Costume::loadEMI(Common::SeekableReadStream *data, Costume *prevCost) {
 				track.keys[j].time = (int)time;
 				track.keys[j].value = (int)value;
 			}
+			delete[] name;
 		}
 		//_chores[i]._tracks->compID;
 	}

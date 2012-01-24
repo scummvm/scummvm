@@ -34,7 +34,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-	_font(NULL), _duration(0) {
+	_font(NULL), _duration(0), _positioned(false) {
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
@@ -149,6 +149,28 @@ void TextObject::destroy() {
 	}
 }
 
+void TextObject::reposition() {
+	// In EMI most stuff seems to be relative to the center,
+	// but sometimes it is not so I catch that with _x being over 320.
+	// This is probably not the corrent way to do it though.
+	if (!_positioned && g_grim->getGameType() == GType_MONKEY4) {
+		_positioned = true;
+		if (_x == 0) {
+			_x += 320;
+			if (_y < 0) {
+				_y = -_y;
+			} else {
+				_y = 240 - _y;
+			}
+		} else if (_x > 320) {
+			_y = -_y;
+		} else {
+			_x += 320;
+			_y = 240 - _y;
+		}
+	}
+}
+
 void TextObject::setupText() {
 	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
 	Common::String message;
@@ -168,17 +190,7 @@ void TextObject::setupText() {
 		return;
 	}
 
-	// In EMI most stuff seems to be relitive to the center,
-	// but sometimes it is not so I catch that with _x being over 320.
-	// This is probably not the corrent way to do it though.
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_x > 320) {
-			_y = -_y;
-		} else {
-			_x += 320;
-			_y = 240 - _y;
-		}
-	}
+	reposition();
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object

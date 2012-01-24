@@ -33,10 +33,10 @@ class PoolColor;
 
 class TextObjectCommon {
 public:
-	void setX(int x) { _x = x; }
+	void setX(int x) { _x = x; _positioned = false; }
 	int getX() { return _x; }
 
-	void setY(int y) { _y = y; }
+	void setY(int y) { _y = y; _positioned = false; }
 	int getY() { return _y; }
 
 	void setFont(Font *font) { _font = font; }
@@ -66,6 +66,7 @@ protected:
 	int _justify;
 	Font *_font;
 	int _duration;
+	bool _positioned;
 };
 
 class TextObjectDefaults : public TextObjectCommon {
@@ -101,6 +102,7 @@ public:
 	void update();
 
 	void destroy();
+	void reposition();
 
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
