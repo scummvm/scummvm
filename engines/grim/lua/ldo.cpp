@@ -281,7 +281,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 				base = lua_state->task->some_base;
 			}
 
-			if (function == break_here) {
+			if (function == break_here || function == sleep_for) {
 				if (!lua_state->state_counter1)  {
 					lua_state->some_task = tmpTask;
 					return 1;

@@ -90,6 +90,7 @@ struct LState {
 	TObject	taskFunc;
 	struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
 	int numCblocks; // number of nested Cblocks
+	int sleepFor;
 };
 
 extern LState *lua_state, *lua_rootState;

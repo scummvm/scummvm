@@ -73,16 +73,6 @@ void Lua_V2::UndimRegion() {
 	}
 }
 
-void Lua_V2::SleepFor() {
-	lua_Object msObj = lua_getparam(1);
-
-	if (lua_isnumber(msObj)) {
-		int ms = (int)lua_getnumber(msObj);
-		// FIXME func(ms);
-		warning("Lua_V2::SleepFor: ms: %d", ms);
-	}
-}
-
 void Lua_V2::DimScreen() {
 	lua_Object dimObj = lua_getparam(1);
 	float dim = 0.6999f;
@@ -1046,8 +1036,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SectEditSortAdd", LUA_OPCODE(Lua_V2, SectEditSortAdd) },
 	{ "SectEditForgetIt", LUA_OPCODE(Lua_V2, SectEditForgetIt) },
 	{ "FRUTEY_Begin", LUA_OPCODE(Lua_V2, FRUTEY_Begin) },
-	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) },
-	{ "sleep_for", LUA_OPCODE(Lua_V2, SleepFor) }
+	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) }
 };
 
 void Lua_V2::registerOpcodes() {
