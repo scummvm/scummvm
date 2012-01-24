@@ -39,7 +39,7 @@ Font::Font(const Common::String &filename, Common::SeekableReadStream *data) :
 }
 
 Font::Font() :
-		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>() {
+		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(0) {
 	_charIndex = NULL;
 }
 

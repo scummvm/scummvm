@@ -294,6 +294,7 @@ void Lua_V1::SetHardwareState() {
 		g_registry->set("soft_renderer", "false");
 	else
 		g_registry->set("soft_renderer", "true");
+	g_grim->changeHardwareState();
 }
 
 void Lua_V1::SetVideoDevices() {

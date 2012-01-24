@@ -85,7 +85,9 @@ bool MoviePlayer::prepareFrame() {
 		return false;
 
 	if (_videoFinished) {
-		g_grim->setMode(GrimEngine::NormalMode);
+		if (g_grim->getMode() == GrimEngine::SmushMode) {
+			g_grim->setMode(GrimEngine::NormalMode);
+		}
 		_videoPause = true;
 		return false;
 	}

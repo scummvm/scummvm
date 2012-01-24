@@ -81,6 +81,8 @@ public:
 	GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~GrimEngine();
 
+	void clearPools();
+
 	int getGameFlags() { return _gameFlags; }
 	GrimGameType getGameType() { return _gameType; }
 	Common::Language getGameLanguage() { return _gameLanguage; }
@@ -148,6 +150,8 @@ public:
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
 
+	void changeHardwareState();
+
 	Common::StringArray _listFiles;
 	Common::StringArray::const_iterator _listFilesIter;
 
@@ -197,6 +201,8 @@ private:
 
 	bool *_controlsEnabled;
 	bool *_controlsState;
+
+	bool _changeHardwareState;
 
 	Actor *_selectedActor;
 	Actor *_talkingActor;
