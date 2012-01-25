@@ -90,7 +90,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Myst III Game (C) Presto Studios";
+		return "Myst III Exile (C) Presto Studios";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const {

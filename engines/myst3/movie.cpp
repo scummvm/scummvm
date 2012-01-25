@@ -118,7 +118,7 @@ void Movie::draw() {
 	}
 }
 
-void Movie::drawForce2d() {
+void Movie::drawOverlay() {
 	if (_force2d)
 		draw2d();
 }

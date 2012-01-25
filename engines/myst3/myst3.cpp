@@ -47,6 +47,8 @@
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
 
+#include "math/vector2d.h"
+
 namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
@@ -347,7 +349,11 @@ void Myst3Engine::drawFrame() {
 		
 		// Draw overlay 2D movies
 		for (uint i = 0; i < _movies.size(); i++) {
-			_movies[i]->drawForce2d();
+			_movies[i]->drawOverlay();
+		}
+
+		for (uint i = 0; i < _drawables.size(); i++) {
+			_drawables[i]->drawOverlay();
 		}
 	}
 
@@ -622,7 +628,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 	_movies.push_back(movie);
 }
 
-void Myst3Engine::playSimpleMovie(uint16 id) {
+void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	SimpleMovie movie = SimpleMovie(this, id);
 
 	if (_state->getMovieSynchronized()) {
@@ -639,6 +645,8 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 		movie.setEndFrame(_state->getMovieEndFrame());
 		_state->setMovieEndFrame(0);
 	}
+
+	movie.setForce2d(fullframe && _state->getViewType() == kCube);
 
 	_drawables.push_back(&movie);
 
@@ -864,6 +872,61 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 
 	_state->lookAt(targetPitch, targetHeading);
 	drawFrame();
+}
+
+void Myst3Engine::getMovieLookAt(uint16 id, bool start, float &pitch, float &heading) {
+	const DirectorySubEntry *desc = getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
+
+	if (!desc)
+		desc = getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
+
+	if (!desc)
+		error("Movie %d does not exist", id);
+
+	Math::Vector3d v;
+	if (start)
+		v = desc->getVideoData().v1;
+	else
+		v = desc->getVideoData().v2;
+
+	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
+	horizontalProjection.normalize();
+
+	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
+	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
+
+	if (horizontalProjection.getX() < 0.0) {
+		heading = 360 - heading;
+	}
+}
+
+void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
+	uint16 room = _state->getLocationNextRoom();
+	uint16 age = _state->getLocationNextAge();
+
+	if (_state->getLocationNextNode() != 0) {
+		node = _state->getLocationNextNode();
+	}
+
+	if (_state->getViewType() == kCube && !_state->getCameraSkipAnimation()) {
+		float startPitch, startHeading;
+		getMovieLookAt(movie, true, startPitch, startHeading);
+		animateDirectionChange(startPitch, startHeading, 0);
+		_state->setCameraSkipAnimation(0);
+	}
+
+	playSimpleMovie(movie, true);
+	loadNode(node, room, age);
+
+	_state->setLocationNextNode(0);
+	_state->setLocationNextRoom(0);
+	_state->setLocationNextAge(0);
+
+	if (_state->getViewType() == kCube) {
+		float endPitch, endHeading;
+		getMovieLookAt(movie, false, endPitch, endHeading);
+		_state->lookAt(endPitch, endHeading);
+	}
 }
 
 } // end of namespace Myst3

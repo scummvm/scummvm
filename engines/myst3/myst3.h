@@ -105,7 +105,8 @@ public:
 	void runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
-	void playSimpleMovie(uint16 id);
+	void playMovieGoToNode(uint16 movie, uint16 node);
+	void playSimpleMovie(uint16 id, bool fullframe = false);
 	void removeMovie(uint16 id);
 	void setMovieLooping(uint16 id, bool loop);
 
@@ -118,6 +119,7 @@ public:
 	void setShouldQuit() { _shouldQuit = true; }
 
 	void animateDirectionChange(float pitch, float heading, uint16 speed);
+	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
 	void processInput(bool lookOnly);
 	void drawFrame();

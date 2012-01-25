@@ -41,11 +41,13 @@ public:
 	virtual ~Movie();
 
 	virtual void draw();
-	void drawForce2d();
+	void drawOverlay();
 
 	uint16 getId() { return _id; }
+	void setForce2d(bool b) { _force2d = b; }
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
+
 protected:
 	Myst3Engine *_vm;
 
@@ -95,7 +97,6 @@ public:
 	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
 	void setLoop(bool loop) { _loop = loop; }
 	void setScriptDriven(bool b) { _scriptDriven = b; }
-	void setForce2d(bool b) { _force2d = b; }
 
 protected:
 	bool _enabled;

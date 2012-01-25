@@ -110,6 +110,7 @@ public:
 	DECLARE_VAR(173, MoviePlayingVar)
 
 	DECLARE_VAR(178, MovieUseBackground)
+	DECLARE_VAR(179, CameraSkipAnimation)
 
 	DECLARE_VAR(185, CameraMoveSpeed)
 

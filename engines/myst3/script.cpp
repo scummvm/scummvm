@@ -174,6 +174,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
+	OP_2(151, moviePlayChangeNode,			kEvalValue,	kEvalValue										);
+	OP_2(152, moviePlayChangeNodeTrans,			kEvalValue,	kEvalValue										);
 	OP_2(153, lootAt,						kValue, 	kValue											);
 	OP_3(154, lootAtInXFrames,				kValue, 	kValue, 	kValue								);
 	OP_4(157, cameraLimitMovement,			kValue,		kValue,		kValue,		kValue					);
@@ -1889,6 +1891,24 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 
 	_vm->processInput(true);
 	_vm->drawFrame();
+}
+
+void Script::moviePlayChangeNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play movie %d, go to node %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->playMovieGoToNode(movieId, nodeId);
+}
+
+void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play movie %d, go to node %d with transition", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->playMovieGoToNode(movieId, nodeId);
+
+	// TODO: Transition
 }
 
 void Script::lootAt(Context &c, const Opcode &cmd) {
