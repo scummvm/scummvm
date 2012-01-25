@@ -323,11 +323,11 @@ int Actor::actorWalkStep() {
 	int nextFacing;
 
     if( _vm->_game.version == 0 )
-        ((ActorC64*) this)->_AnimFrameRepeat = -1;
+        ((ActorC64*) this)->_animFrameRepeat = -1;
 
 	_needRedraw = true;
 
-	nextFacing = updateActorDirection(true);;
+	nextFacing = updateActorDirection(true);
 
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
@@ -420,9 +420,6 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		}
 	}
 
-	if( _vm->_game.version == 0 )
-		((ActorC64*) this)->animateActor(dir);
-
 	_walkdata.dest.x = abr.x;
 	_walkdata.dest.y = abr.y;
 	_walkdata.destbox = abr.box;
@@ -448,6 +445,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 		args[2] = angle;
 		_vm->runScript(_walkScript, 1, 0, args);
 	} else {
+
 		switch (cmd) {
 		case 1:										/* start walk */
 			setDirection(angle);
@@ -564,7 +562,9 @@ void Actor_v2::walkActor() {
 		}
 
 		if( _vm->_game.version == 0 )
-			((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(new_dir) );
+			if( _moving == 0 )
+				((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(new_dir) );
+
 		return;
 	}
 
@@ -573,8 +573,10 @@ void Actor_v2::walkActor() {
 
 	if (_moving & MF_IN_LEG) {
 		actorWalkStep();
+
 		if( _vm->_game.version == 0 )
 			((ActorC64*) this)->animateActor( newDirToOldDir( _facing ) );
+
 	} else {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
@@ -884,13 +886,9 @@ void Actor::setDirection(int direction) {
 }
 
 void ActorC64::setDirection(int cmd) {
+	
+	setCmdFromDirection( newDirToOldDir( cmd ) );
 
-    // Normalize the angle
-	_facing = normalizeAngle( cmd );
-
-	// If there is no costume set for this actor, we are finished
-	if (_costume == 0)
-		return;
 }
 
 // based on 0x2BCA, doesn't match disassembly because 'oldDir' variable
@@ -916,8 +914,7 @@ int ActorC64::setCmdFromDirection(int direction) {
             break;
 	}
 	
-	
-	_AnimFrameRepeat = -1;
+	_animFrameRepeat = -1;
 	animateActor(res);
 	animateCostume();
 
@@ -951,6 +948,9 @@ void Actor::turnToDirection(int newdir) {
 			_targetFacing = newdir;
 		}
 	}
+
+	if (_vm->_game.version == 0)
+		((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(newdir) );
 }
 
 
@@ -999,6 +999,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 			}
 
 			adjustActorPos();
+
 		} else {
 #ifdef ENABLE_HE
 			if (_vm->_game.heversion >= 71)
@@ -1010,6 +1011,9 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		if (isInCurrentRoom())
 			showActor();
 	}
+
+	if( _vm->_game.version == 0 && _costume != 0x13 )
+		turnToDirection( oldDirToNewDir(2));
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1261,8 +1265,6 @@ void Actor::adjustActorPos() {
 		if (flags & 7) {
 			turnToDirection(_facing);
 		}
-		if (_vm->_game.version == 0)
-				((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(_facing) );
 	}
 }
 
@@ -1335,20 +1337,26 @@ void Actor::showActor() {
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
 	if (_vm->_game.version == 0) {
+
 		ActorC64 *a = ((ActorC64*) this);
 		
 		a->_costCommand = a->_costCommandNew = 0xFF;
 
 		for( int i = 0; i < 8; ++i ) {
+			a->_limbFrameRepeat[i] = 0;
 			a->_limbFrameRepeatNew[i] = 0;
-
 		}
 
-        // 0x39DF
-        a->_AnimFrameRepeat = 1;
-
 		_cost.reset();
-		a->setCmdFromDirection( newDirToOldDir(_facing) );
+
+        // 0x39DF
+        a->_animFrameRepeat = 1;
+		a->_speaking = 0;
+
+ 		if( a->_costume != 0x13 )
+			startAnimActor(_standFrame);
+		_visible = true;
+		return;
 
 	} else if (_vm->_game.version <= 2) {
 		_cost.reset();
@@ -1974,8 +1982,6 @@ void ActorC64::animateCostume() {
 			_cost.soundPos = (_cost.soundPos + 1) % 3;
 	}
 
-	_vm->_costumeLoader->loadCostume(_costume);
-
 	speakCheck();
 
 	for( _limb_current = 0; _limb_current < 8; ++_limb_current ) {
@@ -1998,7 +2004,7 @@ void ActorC64::speakCheck() {
 	else
 		cmd += 0x10;
 
-    _AnimFrameRepeat = -1;
+    _animFrameRepeat = -1;
 	animateActor( cmd );
 }
 
@@ -2788,18 +2794,22 @@ void ActorC64::animateActor(int anim) {
 	int dir = -1;
 	
 	switch( anim ) {
+		case 0x00:
 		case 0x04:
 			dir = 0;
 			break;
 
+		case 0x01:
 		case 0x05:
 			dir = 1;
 			break;
 
+		case 0x02:
 		case 0x06:
 			dir = 2;
 			break;
 
+		case 0x03:
 		case 0x07:
 			dir = 3;
 			break;
@@ -2816,12 +2826,12 @@ void ActorC64::animateActor(int anim) {
 		if( dir == -1 )
 			return;
 
-		setDirection( oldDirToNewDir(dir) );
+		_facing = normalizeAngle( oldDirToNewDir(dir) );
 
 	} else {
 
         if( anim > 4 && anim <= 7 )
-			setDirection( oldDirToNewDir(dir) );
+			_facing = normalizeAngle( oldDirToNewDir(dir) );
     }
 }
 
@@ -2830,11 +2840,12 @@ void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
-		MKLINE(ActorC64, _costFrame, sleByte, VER(84)),
+		MKLINE_OLD(ActorC64, _costFrame, sleByte, VER(84), VER(89)),
 		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
 		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
-        MKLINE(ActorC64, _AnimFrameRepeat, sleByte, VER(89)),
+        MKLINE(ActorC64, _animFrameRepeat, sleByte, VER(89)),
         MKARRAY(ActorC64, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
+		MKARRAY(ActorC64, _limbFrameRepeat[0], sleInt8, 8, VER(89)),
 		MKEND()
 	};
 

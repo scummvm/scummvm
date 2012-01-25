@@ -1288,6 +1288,9 @@ void C64CostumeLoader::loadCostume(int id) {
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	ActorC64 *A = (ActorC64 *)a;
 
+	if( !a->_costume )
+		return;
+
 	loadCostume(a->_costume);
 
 	if( A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew) )
@@ -1330,14 +1333,14 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		}
 
 		// 0x2679
-        A->_limbFrameRepeatNew[limb] = A->_AnimFrameRepeat;
+        A->_limbFrameRepeatNew[limb] = A->_animFrameRepeat;
 	}
 }
 
 byte C64CostumeLoader::increaseAnims(Actor *a) {
 	ActorC64 *A = (ActorC64 *)a;
 	
-	if( _frameOffsets == 0 )
+	if( _frameOffsets == 0 || (a->_cost.active[A->_limb_current] == 0xFFFF) )
 		return 0;
 
 	uint16 limbPrevious = a->_cost.curpos[A->_limb_current]++;

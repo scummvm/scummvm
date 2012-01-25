@@ -352,7 +352,7 @@ public:
 	byte _miscflags;
 	byte _speaking;
 
-    int8 _AnimFrameRepeat;
+    int8 _animFrameRepeat;
     int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
 
     byte _limb_current;
@@ -361,10 +361,9 @@ public:
 public:
 	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
 		 _costCommand = 0xFF;
-		 _costFrame = 0;
 		 _speaking = 0;
-         _AnimFrameRepeat = 0;
-		 _costCommandNew = 0;
+         _animFrameRepeat = 0;
+		 _costCommandNew = 0xFF;
 
 		 for( int i = 0; i < 8; ++i ) {
 			_limbFrameRepeatNew[i] = 0;

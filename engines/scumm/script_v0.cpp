@@ -674,13 +674,11 @@ void ScummEngine_v0::o_lights() {
 void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
-	int8 animFrameRepeat = (int8) fetchScriptByte();
-
-	debug(0,"o_animateActor: animFrameRepeat %d", animFrameRepeat);
+	int8 repeat = (int8) fetchScriptByte();
 
 	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
 
-    a->_AnimFrameRepeat = animFrameRepeat;
+    a->_animFrameRepeat = repeat;
 	
     switch( anim ) {
 
