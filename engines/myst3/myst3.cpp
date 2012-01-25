@@ -915,12 +915,30 @@ void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
 		_state->setCameraSkipAnimation(0);
 	}
 
-	playSimpleMovie(movie, true);
 	loadNode(node, room, age);
+
+	playSimpleMovie(movie, true);
 
 	_state->setLocationNextNode(0);
 	_state->setLocationNextRoom(0);
 	_state->setLocationNextAge(0);
+
+	if (_state->getViewType() == kCube) {
+		float endPitch, endHeading;
+		getMovieLookAt(movie, false, endPitch, endHeading);
+		_state->lookAt(endPitch, endHeading);
+	}
+}
+
+void Myst3Engine::playMovieFullFrame(uint16 movie) {
+	if (_state->getViewType() == kCube && !_state->getCameraSkipAnimation()) {
+		float startPitch, startHeading;
+		getMovieLookAt(movie, true, startPitch, startHeading);
+		animateDirectionChange(startPitch, startHeading, 0);
+		_state->setCameraSkipAnimation(0);
+	}
+
+	playSimpleMovie(movie, true);
 
 	if (_state->getViewType() == kCube) {
 		float endPitch, endHeading;

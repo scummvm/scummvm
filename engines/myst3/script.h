@@ -224,6 +224,8 @@ private:
 	DECLARE_OPCODE(zipToRoomNode);
 	DECLARE_OPCODE(moviePlay);
 	DECLARE_OPCODE(moviePlaySynchronized);
+	DECLARE_OPCODE(moviePlayFullFrame);
+	DECLARE_OPCODE(moviePlayFullFrameTrans);
 	DECLARE_OPCODE(moviePlayChangeNode);
 	DECLARE_OPCODE(moviePlayChangeNodeTrans);
 	DECLARE_OPCODE(lootAt);
