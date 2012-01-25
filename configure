@@ -3893,6 +3893,10 @@ typedef unsigned $type_4_byte uint32;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+EOF
+
+if test -n "$_def_64bit_type_unsigned"  ; then
+cat >> config.h << EOF
 
 /* 64-bit stuff */
 $_def_64bit_type_signed
@@ -3904,6 +3908,10 @@ $_def_64bit_type_unsigned
 #else
 $_def_64bit_type_unsigned
 #endif
+EOF
+fi
+
+cat >> config.h << EOF
 
 #endif /* CONFIG_H */
 EOF
