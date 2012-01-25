@@ -1060,7 +1060,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 }
 
 void GfxTinyGL::storeDisplay() {
-	_storedDisplay.copyBuffer(0, 640 * 408, _zb->pbuf);
+	_storedDisplay.copyBuffer(0, 640 * 480, _zb->pbuf);
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
