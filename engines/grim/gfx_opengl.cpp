@@ -96,6 +96,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
+	_scaleW = _screenWidth / (float)_gameWidth;
+	_scaleH = _screenHeight / (float)_gameHeight;
+
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 	_useDepthShader = false;
 
@@ -508,13 +511,13 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glBegin(GL_POLYGON);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(sprite->_width / 2, sprite->_height, 0.0f);
+	glVertex3f((sprite->_width / 2) *_scaleW, sprite->_height * _scaleH, 0.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(sprite->_width / 2, 0.0f, 0.0f);
+	glVertex3f((sprite->_width / 2) * _scaleW, 0.0f, 0.0f);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-sprite->_width / 2, 0.0f, 0.0f);
+	glVertex3f((-sprite->_width / 2) * _scaleW, 0.0f, 0.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-sprite->_width / 2, sprite->_height, 0.0f);
+	glVertex3f((-sprite->_width / 2) * _scaleW, sprite->_height * _scaleH, 0.0f);
 	glEnd();
 
 	glEnable(GL_LIGHTING);
@@ -757,7 +760,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	}
 
 	glEnable(GL_SCISSOR_TEST);
-	glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
+	glScissor((int)(bitmap->getX() * _scaleW), _screenHeight - (int)(((bitmap->getY() + bitmap->getHeight())) * _scaleH), (int)(bitmap->getWidth() * _scaleW), (int)(bitmap->getHeight() * _scaleH));
 	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getActiveImage() - 1);
 	for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
 		for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
@@ -765,18 +768,17 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 			glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 0.0f);
-			glVertex2i(x, y);
+			glVertex2f(x * _scaleW, y * _scaleH);
 			glTexCoord2f(1.0f, 0.0f);
-			glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+			glVertex2f((x + BITMAP_TEXTURE_SIZE) * _scaleW, y * _scaleH);
 			glTexCoord2f(1.0f, 1.0f);
-			glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+			glVertex2f((x + BITMAP_TEXTURE_SIZE) * _scaleW, (y + BITMAP_TEXTURE_SIZE)  * _scaleH);
 			glTexCoord2f(0.0f, 1.0f);
-			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+			glVertex2f(x * _scaleW, (y + BITMAP_TEXTURE_SIZE) * _scaleH);
 			glEnd();
 			cur_tex_idx++;
 		}
 	}
-
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -941,7 +943,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	FontUserData *userData = (FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
-	int size = userData->size;
+	float size = userData->size * _scaleW;
 	GLuint texture = userData->texture;
 	int y, x;
 	const Common::String *lines = text->getLines();
@@ -952,22 +954,24 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 		y = text->getLineY(j);
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
-			int w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
-			int z = x + font->getCharStartingCol(character);
-
+			float w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+			float z = x + font->getCharStartingCol(character);
+			z *= _scaleW;
+			w *= _scaleH;
+			
 			glBindTexture(GL_TEXTURE_2D, texture);
 			float width = 1 / 16.f;
 			float cx = ((character-1) % 16) / 16.0f;
 			float cy = ((character-1) / 16) / 16.0f;
 			glBegin(GL_QUADS);
 			glTexCoord2f(cx, cy);
-			glVertex2i(z, w);
+			glVertex2f(z, w);
 			glTexCoord2f(cx + width, cy);
-			glVertex2i(z + size, w);
+			glVertex2f(z + size, w);
 			glTexCoord2f(cx + width, cy + width);
-			glVertex2i(z + size, w + size);
+			glVertex2f(z + size, w + size);
 			glTexCoord2f(cx, cy + width);
-			glVertex2i(z, w + size);
+			glVertex2f(z, w + size);
 			glEnd();
 			x += font->getCharWidth(character);
 		}
@@ -1118,8 +1122,8 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface* frame) {
 	}
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	_smushWidth = width;
-	_smushHeight = height;
+	_smushWidth = (int)(width * _scaleW);
+	_smushHeight = (int)(height * _scaleH);
 }
 
 void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
@@ -1141,21 +1145,24 @@ void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
+	offsetX *= _scaleW;
+	offsetY *= _scaleH;
+
 	glScissor(offsetX, _screenHeight - (offsetY + _smushHeight), _smushWidth, _smushHeight);
 
 	int curTexIdx = 0;
-	for (int y = 0; y < _smushHeight; y += BITMAP_TEXTURE_SIZE) {
-		for (int x = 0; x < _smushWidth; x += BITMAP_TEXTURE_SIZE) {
+	for (int y = 0; y < _smushHeight; y += (int)(BITMAP_TEXTURE_SIZE * _scaleH)) {
+		for (int x = 0; x < _smushWidth; x += (int)(BITMAP_TEXTURE_SIZE * _scaleW)) {
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
-			glVertex2i(x + offsetX, y + offsetY);
+			glVertex2f(x + offsetX, y + offsetY);
 			glTexCoord2f(1.0f, 0.0f);
-			glVertex2i(x + offsetX + BITMAP_TEXTURE_SIZE, y + offsetY);
+			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _scaleW, y + offsetY);
 			glTexCoord2f(1.0f, 1.0f);
-			glVertex2i(x + offsetX + BITMAP_TEXTURE_SIZE, y + offsetY + BITMAP_TEXTURE_SIZE);
+			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _scaleW, y + offsetY + BITMAP_TEXTURE_SIZE * _scaleH);
 			glTexCoord2f(0.0f, 1.0f);
-			glVertex2i(x + offsetX, y + offsetY + BITMAP_TEXTURE_SIZE);
+			glVertex2f(x + offsetX, y + offsetY + BITMAP_TEXTURE_SIZE * _scaleH);
 			glEnd();
 			curTexIdx++;
 		}
@@ -1355,10 +1362,10 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2)
 }
 
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x+1;
-	int y2 = primitive->getP2().y+1;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = (primitive->getP2().x+1) * _scaleW;
+	float y2 = (primitive->getP2().y+1) * _scaleH;
 
 	const Color &color = *primitive->getColor();
 
@@ -1380,10 +1387,10 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 		glBegin(GL_LINE_LOOP);
 	}
 
-	glVertex2i(x1, y1);
-	glVertex2i(x2, y1);
-	glVertex2i(x2, y2);
-	glVertex2i(x1, y2);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y1);
+	glVertex2f(x2, y2);
+	glVertex2f(x1, y2);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -1394,10 +1401,10 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 }
 
 void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
 
 	const Color &color = *primitive->getColor();
 
@@ -1413,9 +1420,11 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 
 	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
+	glLineWidth(_scaleW);
+
 	glBegin(GL_LINES);
-	glVertex2i(x1, y1);
-	glVertex2i(x2, y2);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y2);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -1426,14 +1435,14 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 }
 
 void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
-	int x3 = primitive->getP3().x;
-	int y3 = primitive->getP3().y;
-	int x4 = primitive->getP4().x;
-	int y4 = primitive->getP4().y;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
+	float x3 = primitive->getP3().x * _scaleW;
+	float y3 = primitive->getP3().y * _scaleH;
+	float x4 = primitive->getP4().x * _scaleW;
+	float y4 = primitive->getP4().y * _scaleH;
 
 	const Color &color = *primitive->getColor();
 
@@ -1450,13 +1459,13 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 	glBegin(GL_LINES);
-	glVertex2i(x1, y1);
-	glVertex2i(x2, y2);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y2);
 	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex2i(x3, y3);
-	glVertex2i(x4, y4);
+	glVertex2f(x3, y3);
+	glVertex2f(x4, y4);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);

@@ -226,6 +226,9 @@ public:
 	void renderZBitmaps(bool render);
 
 protected:
+	static const int _gameHeight = 480;
+	static const int _gameWidth = 640;
+	float _scaleW, _scaleH;
 	int _screenWidth, _screenHeight, _screenSize;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;
