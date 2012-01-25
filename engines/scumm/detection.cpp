@@ -971,9 +971,6 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 	::detectGames(fslist, results, 0);
 
-	// TODO: We still don't handle the FM-TOWNS demos (like zakloom) very well.
-	// In particular, they are detected as ZakTowns, which is bad.
-
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
