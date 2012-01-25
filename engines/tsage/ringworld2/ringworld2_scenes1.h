@@ -799,6 +799,148 @@ public:
 	virtual void signal();
 };
 
+class Scene1950 : public SceneExt {
+	class Area1: public SceneArea {
+	public:
+		class Actor10 : public SceneActor {
+		public:
+			int _fieldA4;
+			int _fieldA6;
+			int _fieldA8;
+
+			Actor10::Actor10();
+			void synchronize(Serializer &s);
+
+			void init(int indx);
+			virtual void process(Event &event);
+			virtual bool startAction(CursorType action, Event &event);
+		};
+
+		SceneActor _areaActor;
+		Actor10 _arrActor1[16];
+
+		byte _field20;
+		int _fieldB65;
+
+		Area1();
+		void synchronize(Serializer &s);
+
+		virtual void remove();
+		virtual void process(Event &event);
+		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+	};
+
+	class Hotspot2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor2 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor4 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor5 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor8 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+		int _fieldA8;
+		int _fieldAA;
+		int _fieldAC;
+		byte _fieldAE;
+		byte _fieldAF;
+
+		Actor8::Actor8();
+		void synchronize(Serializer &s);
+
+		virtual void signal();
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Exit1 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit2 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit3 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit4 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit5 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit6 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit7 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class Exit8 : public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	NamedHotspot _item1;
+	Hotspot2 _item2;
+	SceneActor _actor1;
+	BackgroundSceneObject _object1;
+	Actor2 _actor2;
+	Actor3 _actor3;
+	SceneActor _actor4;
+	Actor5 _actor5;
+	SceneActor _actor6;
+	SceneActor _actor7;
+	Actor8 _actor8;
+	Area1 _area1;
+	Exit1 _exit1;
+	Exit2 _exit2;
+	Exit3 _exit3;
+	Exit4 _exit4;
+	Exit5 _exit5;
+	Exit6 _exit6;
+	Exit7 _exit7;
+	Exit8 _exit8;
+	SequenceManager _sequenceManager;
+
+	int _field412;
+	int _field414;
+	int _field416;
+	Common::Point _field418;
+	int _field41C;
+
+	Scene1950();
+	void synchronize(Serializer &s);
+
+	void subBDC1E();
+	void subBE59B();
+	void subBF4B4(int indx);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+};
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
