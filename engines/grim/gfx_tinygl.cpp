@@ -41,6 +41,79 @@
 
 namespace Grim {
 
+/**
+ * This class is used for blitting bitmaps with transparent pixels.
+ * Instead of checking every pixel for transparency, it creates a list of 'lines'.
+ * A line is, well, a line of non trasparent pixels, and itstores a pointer to the
+ * first pixel, and the position of it, which can be used to memcpy the entire line
+ * to the destination buffer.
+ */
+class BlitImage {
+public:
+	BlitImage() {
+		_lines = NULL;
+		_last = NULL;
+	}
+	void create(const Graphics::PixelBuffer &buf, uint32 transparency, int x, int y, int width, int height) {
+		Graphics::PixelBuffer srcBuf = buf;
+		// A line of pixels can not wrap more that one line of the image, since it would break
+		// blitting of bitmaps with a non-zero x position.
+		for (int l = 0; l < height; l++) {
+			int start = -1;
+
+			for (int r = 0; r < width; ++r) {
+				// We found a transparent pixel, so save a line from 'start' to the pixel before this.
+				if (srcBuf.getValueAt(r) == transparency && start >= 0) {
+					newLine(start, l, r - start, srcBuf.getRawBuffer(start));
+
+					start = -1;
+				} else if (srcBuf.getValueAt(r) != transparency && start == -1) {
+					start = r;
+				}
+			}
+			// end of the bitmap line. if start is an actual pixel save the line.
+			if (start >= 0) {
+				newLine(start, l, width - start, srcBuf.getRawBuffer(start));
+			}
+
+			srcBuf.shiftBy(width);
+		}
+	}
+
+	void newLine(int x, int y, int length, byte *pixels) {
+		if (length < 1) {
+			return;
+		}
+
+		Line *line = new Line;
+
+		line->x = x;
+		line->y = y;
+		line->length = length;
+		line->pixels = pixels;
+		line->next = NULL;
+
+		if (_last) {
+			_last->next = line;
+		}
+		if (!_lines) {
+			_lines = line;
+		}
+		_last = line;
+	}
+
+	struct Line {
+		int x;
+		int y;
+		int length;
+		byte *pixels;
+
+		Line *next;
+	};
+	Line *_lines;
+	Line *_last;
+};
+
 GfxBase *CreateGfxTinyGL() {
 	return new GfxTinyGL();
 }
@@ -646,12 +719,18 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				bufPtr[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 		}
+	} else {
+		BlitImage *imgs = new BlitImage[bitmap->_numImages];
+		bitmap->_texIds = (void *)imgs;
+
+		for (int i = 0; i < bitmap->_numImages; ++i) {
+			imgs[i].create(bitmap->getImageData(i), 0xf81f, bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height);
+		}
 	}
 }
 
-void TinyGLBlit(const Graphics::PixelFormat &format, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
+void TinyGLBlit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
 	int srcX, srcY;
-	int l, r;
 
 	if (x > 639 || y > 479)
 		return;
@@ -678,26 +757,33 @@ void TinyGLBlit(const Graphics::PixelFormat &format, byte *dst, byte *src, int x
 	dst += (x + (y * 640)) * format.bytesPerPixel;
 	src += (srcX + (srcY * width)) * format.bytesPerPixel;
 
-	int copyWidth = width * format.bytesPerPixel;
-
 	Graphics::PixelBuffer srcBuf(format, src);
 	Graphics::PixelBuffer dstBuf(format, dst);
 
 	if (!trans) {
-		for (l = 0; l < height; l++) {
+		for (int l = 0; l < height; l++) {
 			dstBuf.copyBuffer(0, width, srcBuf);
 			dstBuf.shiftBy(640);
 			srcBuf.shiftBy(width);
 		}
 	} else {
-		for (l = 0; l < height; l++) {
-			for (int r = 0; r < width; ++r) {
-				if (srcBuf.getValueAt(r) != 0xf81f) {
-					dstBuf.setPixelAt(r, srcBuf);
-				}
+		if (blit) {
+			BlitImage::Line *l = blit->_lines;
+			while (l) {
+				memcpy(dstBuf.getRawBuffer(l->y * 640 + l->x), l->pixels, l->length * format.bytesPerPixel);
+
+				l = l->next;
 			}
-			dstBuf.shiftBy(640);
-			srcBuf.shiftBy(width);
+		} else {
+			for (int l = 0; l < height; l++) {
+				for (int r = 0; r < width; ++r) {
+					if (srcBuf.getValueAt(r) != 0xf81f) {
+						dstBuf.setPixelAt(r, srcBuf);
+					}
+				}
+				dstBuf.shiftBy(640);
+				srcBuf.shiftBy(width);
+			}
 		}
 	}
 }
@@ -710,15 +796,20 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 
 	assert(bitmap->getActiveImage() > 0);
 	const int num = bitmap->getActiveImage() - 1;
+
+	BlitImage *b = (BlitImage *)bitmap->getTexIds();
+
 	if (bitmap->getFormat() == 1)
-		TinyGLBlit(bitmap->getPixelFormat(num), (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
+		TinyGLBlit(bitmap->getPixelFormat(num), &b[num], (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit(bitmap->getPixelFormat(num), (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
+		TinyGLBlit(bitmap->getPixelFormat(num), NULL, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
-void GfxTinyGL::destroyBitmap(BitmapData *) { }
+void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
+	delete[] bitmap->_texIds;
+}
 
 void GfxTinyGL::createFont(Font *font) {
 }
@@ -808,7 +899,7 @@ void GfxTinyGL::drawTextObject(TextObject *text) {
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			TinyGLBlit(_pixelFormat, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
+			TinyGLBlit(_pixelFormat, NULL, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
 		}
 	}
 
@@ -905,7 +996,7 @@ void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {
 	if (_smushWidth == 640 && _smushHeight == 480) {
 		_zb->pbuf.copyBuffer(0, 640 * 480, _smushBitmap);
 	} else {
-		TinyGLBlit(_pixelFormat, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
+		TinyGLBlit(_pixelFormat, NULL, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
 	}
 }
 
