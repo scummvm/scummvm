@@ -1,0 +1,14 @@
+#Fix issue #397: Keyboard jams in inventory in beaver dam.
+
+begin 83a182eca8030f357068d7dffc992332  #Both v1.0 and v1.01
+
+replace 1bca 6b		#Increase the size of function code block
+insert 1e0d 0c		#Make space for code
+replace 1e0d 6d 04 1e 39 79 00 1e 56 7a 00 71 0a	#Insert a check for the inventory
+
+#Const value
+replace 1e37 57		#Increase the counter of constants by one
+insert 22ed 12		#Make space for one new string
+replace 22ed 53 00 0f 96 91 b6 91 89 9a 91 8b 90 8d 86 ac 9a 8b ff		#Set string inInventorySet (number 0x5d)
+
+end

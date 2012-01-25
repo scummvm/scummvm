@@ -76,3 +76,7 @@ REPLACE 280 AA BB CC
 COPY 0 10 283
 DELETE 0 10
 END
+
+Debugging:
+If you start ResidualVM with the command-line option --debugflags=patchr, it will print some debug information.
+It will also dump a patched version of the modified files, so you can inspect your work.
