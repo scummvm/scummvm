@@ -61,6 +61,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
 //	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
+	{ "ResidualVM NULL", ".invalidandnull", NULL }	// ResidualVM-fix since we don't have QuickTime
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
