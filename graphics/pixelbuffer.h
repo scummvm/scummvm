@@ -136,6 +136,10 @@ public:
 	 * @param otherPix The index of the source pixel in 'buf'.
 	 */
 	inline void setPixelAt(int thisPix, const PixelBuffer &buf, int otherPix) {
+		if (_format == buf._format) {
+			memcpy(getRawBuffer(thisPix), buf.getRawBuffer(otherPix), _format.bytesPerPixel);
+			return;
+		}
 		uint8 a, r, g, b;
 		buf.getARGBAt(otherPix, a, r, g, b);
 		setPixelAt(thisPix, a, r, g, b);
