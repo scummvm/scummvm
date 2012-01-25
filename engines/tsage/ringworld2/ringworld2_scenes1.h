@@ -808,7 +808,7 @@ class Scene1950 : public SceneExt {
 			int _fieldA6;
 			int _fieldA8;
 
-			Actor10::Actor10();
+			Actor10();
 			void synchronize(Serializer &s);
 
 			void init(int indx);
@@ -862,7 +862,7 @@ class Scene1950 : public SceneExt {
 		byte _fieldAE;
 		byte _fieldAF;
 
-		Actor8::Actor8();
+		Actor8();
 		void synchronize(Serializer &s);
 
 		virtual void signal();
