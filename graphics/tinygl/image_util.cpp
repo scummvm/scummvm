@@ -3,29 +3,6 @@
 
 namespace TinyGL {
 
-// image conversion
-
-void gl_convertRGB_to_5R6G5B8A(unsigned short *pixmap, unsigned char *rgba, int xsize, int ysize) {
-	int i, n;
-	unsigned char *p, *p2;
-
-	p = rgba;
-	n = xsize * ysize;
-	p2 = (unsigned char *)pixmap;
-	for (i = 0; i < n; i++) {
-		unsigned short pixel = ((p[0] & 0xF8) << 8) | ((p[1] & 0xFC) << 3) | (p[2] >> 3);
-#ifdef SCUMM_BIG_ENDIAN
-		p2[3 * i + 0] = pixel >> 8;
-		p2[3 * i + 1] = pixel & 0xff;
-#else
-		p2[3 * i + 0] = pixel & 0xff;
-		p2[3 * i + 1] = pixel >> 8;
-#endif
-		p2[3 * i + 2] = p[3];
-		p += 4;
-	}
-}
-
 // linear interpolation with xf, yf normalized to 2^16
 
 #define INTERP_NORM_BITS  16
@@ -35,7 +12,7 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 	return v00 + (((v01 - v00) * xf + (v10 - v00) * yf) >> INTERP_NORM_BITS);
 }
 
-// TODO: more accurate resampling 
+// TODO: more accurate resampling
 
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
                     unsigned char *src, int xsize_src, int ysize_src) {
@@ -46,7 +23,7 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 
 	pix = dest;
 	pix_src = src;
-  
+
 	x1inc = (float)(xsize_src - 1) / (float)(xsize_dest - 1);
 	y1inc = (float)(ysize_src - 1) / (float)(ysize_dest - 1);
 

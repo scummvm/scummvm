@@ -25,6 +25,8 @@
 
 #include "math/vector3d.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Graphics {
 	struct Surface;
 }
@@ -224,7 +226,7 @@ public:
 	void renderZBitmaps(bool render);
 
 protected:
-	int _screenWidth, _screenHeight, _screenBPP;
+	int _screenWidth, _screenHeight, _screenSize;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;
 	unsigned char _shadowColorR;
@@ -233,6 +235,7 @@ protected:
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
+	Graphics::PixelFormat _pixelFormat;
 };
 
 // Factory-like functions:

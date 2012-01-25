@@ -25,6 +25,9 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/pixelbuffer.h"
+#include "graphics/colormasks.h"
+
 #include "math/matrix3.h"
 
 #include "engines/grim/debug.h"
@@ -892,7 +895,8 @@ void Lua_V1::GetSaveGameImage() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	screenshot = new Bitmap((char *)data, width, height, 16, "screenshot");
+	Graphics::PixelBuffer buf(Graphics::createPixelFormat<565>(), (byte *)data);
+	screenshot = new Bitmap(buf, width, height, "screenshot");
 	delete[] data;
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));

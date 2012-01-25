@@ -13,7 +13,7 @@ void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
 
 	pz = zb->zbuf + (p->y * zb->xsize + p->x);
 	pz_2 = zb->zbuf2 + (p->y * zb->xsize + p->x);
-	pp = (PIXEL *)((char *) zb->pbuf + zb->linesize * p->y + p->x * PSZB);
+	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p->y + p->x * PSZB);
 	zz = p->z >> ZB_POINT_Z_FRAC_BITS;
 	if ((ZCMP(zz, *pz)) && (ZCMP((unsigned int)p->z, *pz_2))) {
 		*pp = RGB_TO_PIXEL(p->r, p->g, p->b);

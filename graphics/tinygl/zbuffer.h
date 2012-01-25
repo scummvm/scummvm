@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_TINYGL_ZBUFFER_H_
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
+#include "graphics/pixelbuffer.h"
+
 namespace TinyGL {
 
 // Z buffer
@@ -24,16 +26,19 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-// 16 bit mode
-#define RGB_TO_PIXEL(r,g,b) (((r) & 0xF800) | (((g) >> 5) & 0x07E0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-#define PSZB 2 
-#define PSZSH 4 
+ #define RGB_TO_PIXEL(r,g,b) zb->cmode.RGBToColor(r, g, b)
+typedef byte PIXEL;
+
+#define PSZSH 4
+
+extern uint8 PSZB;
 
 typedef struct {
 	int xsize, ysize;
 	int linesize; // line size, in bytes
-	int mode;
+	Graphics::PixelFormat cmode;
+	int pixelbits;
+	int pixelbytes;
 
 	unsigned short *zbuf;
 	unsigned int *zbuf2;
@@ -41,25 +46,25 @@ typedef struct {
 	int shadow_color_r;
 	int shadow_color_g;
 	int shadow_color_b;
-	PIXEL *pbuf;
+	Graphics::PixelBuffer pbuf;
 	int frame_buffer_allocated;
 
 	unsigned char *dctable;
 	int *ctable;
-	PIXEL *current_texture;
+	Graphics::PixelBuffer current_texture;
 } ZBuffer;
 
 typedef struct {
 	int x,y,z;     // integer coordinates in the zbuffer
 	int s,t;       // coordinates for the mapping
 	int r,g,b;     // color indexes
-  
+
 	float sz,tz;   // temporary coordinates for mapping
 } ZBufferPoint;
 
 // zbuffer.c
 
-ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer);
+ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
 void ZB_close(ZBuffer *zb);
 void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize);
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);
@@ -74,12 +79,12 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 
 // ztriangle.c */
 
-void ZB_setTexture(ZBuffer *zb, PIXEL *texture);
-void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1, 
+void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
+void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
 						 ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1, 
+void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1,
 						 ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1, 
+void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1,
 						 ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,
 						   ZBufferPoint *p2, ZBufferPoint *p3);

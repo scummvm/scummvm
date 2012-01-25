@@ -116,11 +116,10 @@ protected:
 
 private:
 	TinyGL::ZBuffer *_zb;
-	byte *_screen;
-	byte *_smushBitmap;
+	Graphics::PixelBuffer _smushBitmap;
 	int _smushWidth;
 	int _smushHeight;
-	byte *_storedDisplay;
+	Graphics::PixelBuffer _storedDisplay;
 };
 
 } // end of namespace Grim

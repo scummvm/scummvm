@@ -23,11 +23,11 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	v->zp.z = (int)(v->pc.Z * winv * c->viewport.scale.Z + c->viewport.trans.Z);
 	// color
 	if (c->lighting_enabled) {
-		v->zp.r = (int)(v->color.v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) 
+		v->zp.r = (int)(v->color.v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN)
 					+ ZB_POINT_RED_MIN);
-		v->zp.g = (int)(v->color.v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) 
+		v->zp.g = (int)(v->color.v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN)
 					+ ZB_POINT_GREEN_MIN);
-		v->zp.b = (int)(v->color.v[2] * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN) 
+		v->zp.b = (int)(v->color.v[2] * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN)
 					+ ZB_POINT_BLUE_MIN);
 	} else {
 		// no need to convert to integer if no lighting : take current color
@@ -35,7 +35,7 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 		v->zp.g = c->longcurrent_color[1];
 		v->zp.b = c->longcurrent_color[2];
 	}
-  
+
 	// texture
 	if (c->texture_2d_enabled) {
 		v->zp.s = (int)(v->tex_coord.X * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
@@ -84,7 +84,7 @@ static inline void interpolate(GLVertex *q, GLVertex *p0, GLVertex *p1, float t)
 	q->color.v[2] = p0->color.v[2] + (p1->color.v[2] - p0->color.v[2]) * t;
 }
 
-// Line Clipping 
+// Line Clipping
 
 // Line Clipping algorithm from 'Computer Graphics', Principles and
 // Practice
@@ -114,7 +114,7 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 	float tmin, tmax;
 	GLVertex q1, q2;
 	int cc1, cc2;
-  
+
 	cc1 = p1->clip_code;
 	cc2 = p2->clip_code;
 
@@ -145,7 +145,7 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 				ClipLine1(-dx + dw, x1 - w1, &tmin, &tmax) &&
 				ClipLine1(dy + dw, -y1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dy + dw, y1 - w1, &tmin, &tmax) &&
-				ClipLine1(dz + dw, -z1 - w1, &tmin, &tmax) && 
+				ClipLine1(dz + dw, -z1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dz + dw, z1 - w1, &tmin, &tmax)) {
 			interpolate(&q1,p1,p2,tmin);
 			interpolate(&q2,p1,p2,tmax);
@@ -166,8 +166,8 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 
 // We clip the segment [a,b] against the 6 planes of the normal volume.
 // We compute the point 'c' of intersection and the value of the parameter 't'
-// of the intersection if x=a+t(b-a). 
-	 
+// of the intersection if x=a+t(b-a).
+
 #define clip_func(name, sign, dir, dir1, dir2) \
 static float name(V4 *c, V4 *a, V4 *b) { \
 	float t, dX, dY, dZ, dW, den;\
@@ -275,7 +275,7 @@ void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	}
 }
 
-static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, 
+static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 								  GLVertex *p1, GLVertex *p2, int clip_bit) {
 	int co, c_and, co1, cc[3], edge_flag_tmp, clip_mask;
 	GLVertex tmp1, tmp2, *q[3];
@@ -284,7 +284,7 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 	cc[0] = p0->clip_code;
 	cc[1] = p1->clip_code;
 	cc[2] = p2->clip_code;
-  
+
 	co = cc[0] | cc[1] | cc[2];
 	if (co == 0) {
 		gl_draw_triangle(c, p0, p1, p2);
@@ -313,7 +313,7 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 		clip_mask = 1 << clip_bit;
 		co1 = (cc[0] ^ cc[1] ^ cc[2]) & clip_mask;
 
-		if (co1)  { 
+		if (co1)  {
 			// one point outside
 			if (cc[0] & clip_mask) {
 				q[0] = p0; q[1] = p1; q[2] = p2;
@@ -386,7 +386,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 		count_triangles++;
 	}
 #endif
-    
+
 	if (c->shadow_mode & 1) {
 		assert(c->zb->shadow_mask_buf);
 		ZB_fillTriangleFlatShadowMask(c->zb, &p0->zp, &p1->zp, &p2->zp);
@@ -397,7 +397,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
-		ZB_setTexture(c->zb, (PIXEL *)c->current_texture->images[0].pixmap);
+		ZB_setTexture(c->zb, c->current_texture->images[0].pixmap);
 		ZB_fillTriangleMappingPerspective(c->zb, &p0->zp, &p1->zp, &p2->zp);
 	} else if (c->current_shade_model == TGL_SMOOTH) {
 		ZB_fillTriangleSmooth(c->zb, &p0->zp, &p1->zp, &p2->zp);

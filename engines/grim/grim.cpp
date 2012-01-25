@@ -43,6 +43,8 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 
+#include "graphics/pixelbuffer.h"
+
 #include "gui/error.h"
 #include "gui/gui-manager.h"
 
@@ -288,7 +290,6 @@ Common::Error GrimEngine::run() {
 
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
-
 
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
@@ -859,7 +860,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	if (screenshot) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
 		screenshot->setActiveImage(0);
-		uint16 *data = (uint16 *)screenshot->getData();
+		uint16 *data = (uint16 *)screenshot->getData().getRawBuffer();
 		for (int l = 0; l < size; l++) {
 			state->writeLEUint16(data[l]);
 		}

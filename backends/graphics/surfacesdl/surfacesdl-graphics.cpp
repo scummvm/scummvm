@@ -39,6 +39,7 @@
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
@@ -102,7 +103,7 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
 
@@ -141,7 +142,6 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 		sdlflags |= SDL_FULLSCREEN;
 
 	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
-
 #ifdef USE_OPENGL
 	// If 32-bit with antialiasing failed, try 32-bit without antialiasing
 	if (!_screen && _opengl && _antialiasing) {
@@ -225,8 +225,9 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 	if (!_overlayscreen)
 		error("allocating _overlayscreen failed");
 
-	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
+	/*_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
 
+// 	For some reason the values below aren't right, at least on my system
 	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
 	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
 	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
@@ -235,11 +236,17 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 	_overlayFormat.rShift = _overlayscreen->format->Rshift;
 	_overlayFormat.gShift = _overlayscreen->format->Gshift;
 	_overlayFormat.bShift = _overlayscreen->format->Bshift;
-	_overlayFormat.aShift = _overlayscreen->format->Ashift;
+	_overlayFormat.aShift = _overlayscreen->format->Ashift;*/
+
+	_overlayFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	_screenChangeCount++;
 
-	return (byte *)_screen->pixels;
+	SDL_PixelFormat *f = _screen->format;
+	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
+										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
+
+	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 
 #define BITMAP_TEXTURE_SIZE 256
@@ -348,13 +355,15 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 		if (_overlayVisible) {
 			SDL_LockSurface(_screen);
 			SDL_LockSurface(_overlayscreen);
-			byte *src = (byte *)_overlayscreen->pixels;
-			byte *buf = (byte *)_screen->pixels;
+			Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
+			Graphics::PixelBuffer dstBuf(_screenFormat, (byte *)_screen->pixels);
 			int h = _overlayHeight;
+
 			do {
-				memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
-				src += _overlayscreen->pitch;
-				buf += _screen->pitch;
+				dstBuf.copyBuffer(0, _overlayWidth, srcBuf);
+
+				srcBuf.shiftBy(_overlayWidth);
+				dstBuf.shiftBy(_overlayWidth);
 			} while (--h);
 			SDL_UnlockSurface(_screen);
 			SDL_UnlockSurface(_overlayscreen);
@@ -430,13 +439,15 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	{
 		SDL_LockSurface(_screen);
 		SDL_LockSurface(_overlayscreen);
-		byte *src = (byte *)_screen->pixels;
-		byte *buf = (byte *)_overlayscreen->pixels;
+		Graphics::PixelBuffer srcBuf(_screenFormat, (byte *)_screen->pixels);
+		Graphics::PixelBuffer dstBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
 		int h = _overlayHeight;
+
 		do {
-			memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
-			src += _screen->pitch;
-			buf += _overlayscreen->pitch;
+			dstBuf.copyBuffer(0, _overlayWidth, srcBuf);
+
+			srcBuf.shiftBy(_overlayWidth);
+			dstBuf.shiftBy(_overlayWidth);
 		} while (--h);
 		SDL_UnlockSurface(_screen);
 		SDL_UnlockSurface(_overlayscreen);
@@ -474,7 +485,7 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int p
 	}
 
 	if (y < 0) {
-		h += y; 
+		h += y;
 		buf -= y * pitch;
 		y = 0;
 	}

@@ -30,6 +30,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
@@ -91,11 +92,10 @@ GfxOpenGL::~GfxOpenGL() {
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	g_system->setupScreen(screenW, screenH, fullscreen, true);
+	_pixelFormat = g_system->setupScreen(screenW, screenH, fullscreen, true).getFormat();
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
-	_screenBPP = 24;
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 	_useDepthShader = false;
 
@@ -108,8 +108,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	// Load emergency built-in font
 	loadEmergFont();
 
-	_storedDisplay = new byte[_screenWidth * _screenHeight * 4];
-	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
+	_screenSize = _screenWidth * _screenHeight * 4;
+	_storedDisplay = new byte[_screenSize];
+	memset(_storedDisplay, 0, _screenSize);
 	_smushNumTex = 0;
 
 	_currentShadowArray = NULL;
@@ -436,18 +437,18 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 
 	glBegin(GL_TRIANGLES);
 	for (int j = 0; j < face->_faceLength * 3; j++) {
-		
+
 		int index = indices[j];
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
 		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
-		
+
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_vertices[index];
-		
+
 		// Transform vertices (or maybe we should have done this already?)
-		
+
 		glNormal3fv(normal.getData());
 		glVertex3fv(vertex.getData());
 	}
@@ -458,7 +459,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_LIGHTING);
 	glColor3f(1.0f,1.0f,1.0f);
 }
-	
+
 void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
@@ -600,9 +601,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
+				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic).getRawBuffer() + 2 * i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -653,7 +654,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					texData = new byte[4 * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
+				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -671,10 +672,10 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				}
 				texOut = texData;
 			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
-				bitmap->convertToColorFormat(pic, BM_RGBA);
-				texOut = (byte *)bitmap->getImageData(pic);
+				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
 			} else {
-				texOut = (byte *)bitmap->getImageData(pic);
+				texOut = (byte *)bitmap->getImageData(pic).getRawBuffer();
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -734,7 +735,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getActiveImage() - 1));
+			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
@@ -989,7 +990,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
-	
+
 	if (cmap != NULL) { // EMI doesn't have colour-maps
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
@@ -1010,7 +1011,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	} else {
 		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
 	}
-	
+
 	GLuint format = 0;
 	GLuint internalFormat = 0;
 	if (material->_colorFormat == BM_RGBA) {
@@ -1020,7 +1021,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 		format = GL_BGR;
 		internalFormat = GL_RGB;
 	}
-	
+
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1034,7 +1035,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 void GfxOpenGL::selectMaterial(const Texture *material) {
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	
+
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {
 		glMatrixMode(GL_TEXTURE);
@@ -1210,40 +1211,32 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 }
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
-	uint16 *buffer = new uint16[w * h];
-	uint32 *src = (uint32 *)_storedDisplay;
+	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
 
 	int step = 0;
 	for (int y = 0; y <= 479; y++) {
 		for (int x = 0; x <= 639; x++) {
-			uint32 pixel = *(src + y * 640 + x);
-			uint8 r = (pixel & 0xFF0000);
-			uint8 g = (pixel & 0x00FF00);
-			uint8 b = (pixel & 0x0000FF);
+			uint8 r, g, b;
+			src.getRGBAt(y * 640 + x, r, g, b);
 			uint32 color = (r + g + b) / 3;
-			src[step++] = ((color << 24) | (color << 16) | (color << 8) | color);
+			src.setPixelAt(step++, color, color, color);
 		}
 	}
 
-	float step_x = _screenWidth * 1.0f / w;
-	float step_y = _screenHeight * 1.0f / h;
+	float step_x = (float)_screenWidth / w;
+	float step_y = (float)_screenHeight / h;
 	step = 0;
-	for (float y = 0; y < 479; y += step_y) {
+	for (float y = 479; y >= 0; y -= step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			uint32 pixel = *(src + (int)y * _screenWidth + (int)x);
-			uint8 r = (pixel & 0xFF0000) >> 16;
-			uint8 g = (pixel & 0x00FF00) >> 8;
-			uint8 b = (pixel & 0x0000FF);
-			int pos = step / w;
-			int wpos = step - pos * w;
-			// source is upside down, flip appropriately while storing
-			buffer[h * w - (pos * w + w - wpos)] = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-			step++;
+			uint8 r, g, b;
+			src.getRGBAt((int)y * _screenWidth + (int)x, r, g, b);
+			buffer.setPixelAt(step++, r, g, b);
 		}
 	}
 
-	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, 16, "screenshot");
-	delete[] buffer;
+	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
 	return screenshot;
 }
 

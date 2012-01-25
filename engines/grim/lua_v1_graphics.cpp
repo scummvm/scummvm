@@ -482,7 +482,6 @@ void Lua_V1::ScreenShot() {
 	GrimEngine::EngineMode mode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::NormalMode);
 	g_grim->updateDisplayScene();
-	g_driver->storeDisplay();
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
 	if (screenshot) {
