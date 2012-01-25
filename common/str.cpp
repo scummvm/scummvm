@@ -793,7 +793,7 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 	}
 
 	// Move to the terminating zero of the source
-	// string, we need this to determin the length
+	// string, we need this to determine the length
 	// of the source string.
 	while (*src)
 		++src;
@@ -841,7 +841,7 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	*dst = 0;
 
 	// Move to the terminating zero of the source
-	// string, we need this to determin the length
+	// string, we need this to determine the length
 	// of the source string.
 	while (*src)
 		++src;
