@@ -55,6 +55,7 @@ MoviePlayer::MoviePlayer() {
 MoviePlayer::~MoviePlayer() {
 	deinit();
 	delete _videoDecoder;
+	delete _externalSurface;
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 

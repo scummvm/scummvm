@@ -189,6 +189,8 @@ GrimEngine::~GrimEngine() {
 	g_movie = NULL;
 	delete g_imuse;
 	g_imuse = NULL;
+	delete g_sound;
+	g_sound = NULL;
 	delete g_localizer;
 	g_localizer = NULL;
 	delete g_resourceloader;
@@ -235,6 +237,7 @@ Common::Error GrimEngine::run() {
 			g_movie = CreateBinkPlayer(demo);
 	}
 	g_imuse = new Imuse(20, demo);
+	g_sound = new SoundPlayer();
 
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
 

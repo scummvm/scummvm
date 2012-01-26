@@ -147,6 +147,7 @@ void Font::restoreState(SaveGame *state) {
 
 	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	load(fname, stream);
+	delete stream;
 }
 
 // Hardcoded default font for GUI, etc
