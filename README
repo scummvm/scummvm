@@ -2105,16 +2105,6 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
     * Please refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
-  Debian GNU/Linux:
-    * Install the packages 'build-essential', 'fakeroot', 'debhelper',
-      and 'libsdl1.2-dev' on your system.
-    * Install any of these packages (optional): 'libvorbis-dev' (for Ogg
-      Vorbis support), 'libasound2-dev' (for ALSA sequencer support),
-      'libmad0-dev' (for MAD MP3 support), 'zlib1g-dev' (for compressed
-      saves support).
-    * Run 'make deb'.
-    * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
-
   Mac OS X:
     * Make sure you have the developer tools installed.
     * The SDL developer package for OS X available on the SDL web site is
