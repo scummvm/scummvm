@@ -801,10 +801,6 @@ site, please see the section on reporting bugs.
 
   FM-TOWNS versions:
     - The Kanji versions require the FM-TOWNS Font ROM
-    - ScummVM will crash randomly when using the FM-TOWNS Font ROM for
-      the Kanji versions of the following games:
-      The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
-      and Indiana Jones and the Fate of Atlantis
 
   Loom:
     - Turning off the subtitles via the config file does not work reliably
