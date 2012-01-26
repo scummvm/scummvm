@@ -332,8 +332,10 @@ void VocStream::preProcess() {
 		block.length |= _stream->readByte() << 16;
 
 		// Premature end of stream => error!
-		if (_stream->eos() || _stream->err())
+		if (_stream->eos() || _stream->err()) {
+			warning("VocStream::preProcess: Reading failed");
 			return;
+		}
 
 		uint32 skip = 0;
 
@@ -343,17 +345,26 @@ void VocStream::preProcess() {
 		// Sound data (New format)
 		case 9:
 			if (block.code == 1) {
+				if (block.length < 2) {
+					warning("Invalid sound data block length %d in VOC file", block.length);
+					return;
+				}
+
 				// Read header data
 				int freqDiv = _stream->readByte();
 				// Prevent division through 0
-				if (freqDiv == 256)
+				if (freqDiv == 256) {
+					warning("Invalid frequency divisor 256 in VOC file");
 					return;
+				}
 				block.sampleBlock.rate = getSampleRateFromVOCRate(freqDiv);
 
 				int codec = _stream->readByte();
 				// We only support 8bit PCM
-				if (codec != 0)
+				if (codec != 0) {
+					warning("Unhandled codec %d in VOC file", codec);
 					return;
+				}
 
 				block.sampleBlock.samples = skip = block.length - 2;
 				block.sampleBlock.offset = _stream->pos();
@@ -371,11 +382,18 @@ void VocStream::preProcess() {
 					}
 				}
 			} else {
+				if (block.length < 12) {
+					warning("Invalid sound data (wew format) block length %d in VOC file", block.length);
+					return;
+				}
+
 				block.sampleBlock.rate = _stream->readUint32LE();
 				int bitsPerSample = _stream->readByte();
 				// We only support 8bit PCM
-				if (bitsPerSample != 8)
+				if (bitsPerSample != 8) {
+					warning("Unhandled bits per sample %d in VOC file", bitsPerSample);
 					return;
+				}
 				int channels = _stream->readByte();
 				// We only support mono
 				if (channels != 1) {
@@ -400,23 +418,29 @@ void VocStream::preProcess() {
 
 		// Silence
 		case 3: {
-			if (block.length != 3)
+			if (block.length != 3) {
+				warning("Invalid silence block length %d in VOC file", block.length);
 				return;
+			}
 
 			block.sampleBlock.offset = 0;
 
 			block.sampleBlock.samples = _stream->readUint16LE() + 1;
 			int freqDiv = _stream->readByte();
 			// Prevent division through 0
-			if (freqDiv == 256)
+			if (freqDiv == 256) {
+				warning("Invalid frequency divisor 256 in VOC file");
 				return;
+			}
 			block.sampleBlock.rate = getSampleRateFromVOCRate(freqDiv);
 			} break;
 
 		// Repeat start
 		case 6:
-			if (block.length != 2)
+			if (block.length != 2) {
+				warning("Invalid repeat start block length %d in VOC file", block.length);
 				return;
+			}
 
 			block.loopBlock.count = _stream->readUint16LE() + 1;
 			break;
@@ -432,8 +456,10 @@ void VocStream::preProcess() {
 
 			int freqDiv = _stream->readUint16LE();
 			// Prevent division through 0
-			if (freqDiv == 65536)
+			if (freqDiv == 65536) {
+				warning("Invalid frequency divisor 65536 in VOC file");
 				return;
+			}
 
 			int codec = _stream->readByte();
 			// We only support RAW 8bit PCM.
@@ -460,8 +486,10 @@ void VocStream::preProcess() {
 		}
 
 		// Premature end of stream => error!
-		if (_stream->eos() || _stream->err())
+		if (_stream->eos() || _stream->err()) {
+			warning("VocStream::preProcess: Reading failed");
 			return;
+		}
 
 		// Skip the rest of the block
 		if (skip)
