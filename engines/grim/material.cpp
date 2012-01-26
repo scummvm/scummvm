@@ -158,6 +158,7 @@ void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadS
 				continue;
 			}
 			loadTGA(texData, _textures + i);
+			delete texData;
 		}
 		_numImages = texFileNames.size();
 		delete ts;

@@ -211,6 +211,7 @@ VimaTrack::~VimaTrack() {
 	
 	if (_desc) {
 		delete[] _desc->region;
+		delete _desc->inStream;
 	}
 	
 	delete _handle;

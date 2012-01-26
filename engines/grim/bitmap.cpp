@@ -338,7 +338,7 @@ bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStrea
 	for (int i = 0; i < numSubImages; ++i) {
 		delete[] data[i];
 	}
-
+	delete[] data;
 	Graphics::PixelFormat pixelFormat;
 	if (_bpp == 16) {
 		_colorFormat = BM_RGB1555;
