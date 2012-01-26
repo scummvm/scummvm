@@ -37,12 +37,20 @@ namespace Gob {
 
 namespace Geisha {
 
-static const int kEvilFishTypeCount = 3;
-
-static const int kEvilFishTypes[kEvilFishTypeCount][5] = {
+const uint16 Diving::kEvilFishTypes[kEvilFishTypeCount][5] = {
 	{ 0, 14,  8,  9, 3}, // Shark
 	{15,  1, 12, 13, 3}, // Moray
 	{16,  2, 10, 11, 3}  // Ray
+};
+
+const uint16 Diving::kPlantLevel1[] = { 18, 19, 20, 21 };
+const uint16 Diving::kPlantLevel2[] = { 22, 23, 24, 25 };
+const uint16 Diving::kPlantLevel3[] = { 26, 27, 28, 29, 30 };
+
+const Diving::PlantLevel Diving::kPlantLevels[] = {
+	{ 150, ARRAYSIZE(kPlantLevel1), kPlantLevel1 },
+	{ 120, ARRAYSIZE(kPlantLevel2), kPlantLevel2 },
+	{ 108, ARRAYSIZE(kPlantLevel3), kPlantLevel3 },
 };
 
 
@@ -63,6 +71,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	init();
 	initScreen();
 	initCursor();
+	initPlants();
 
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
@@ -71,6 +80,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		checkShots();
 		updateEvilFish();
 		updateDecorFish();
+		updatePlants();
 		updateAnims();
 
 		_vm->_draw->animateCursor(1);
@@ -135,14 +145,24 @@ void Diving::init() {
 		_decorFish[i].decorFish = new ANIObject(*_objects);
 	}
 
+	for (uint i = 0; i < kPlantCount; i++) {
+		_plant[i].level   = i / kPlantPerLevelCount;
+		_plant[i].deltaX  = (kPlantLevelCount - _plant[i].level) * -2;
+
+		_plant[i].x = -1;
+		_plant[i].y = -1;
+
+		_plant[i].plant = new ANIObject(*_objects);
+	}
+
 	_decorFish[0].decorFish->setAnimation( 6); // Jellyfish
 	_decorFish[0].deltaX = 0;
 
 	_decorFish[1].decorFish->setAnimation(32); // Swarm of red/green fish
-	_decorFish[1].deltaX = -6;
+	_decorFish[1].deltaX = -5;
 
 	_decorFish[2].decorFish->setAnimation(33); // Swarm of orange fish
-	_decorFish[2].deltaX = -6;
+	_decorFish[2].deltaX = -5;
 
 	for (uint i = 0; i < kMaxShotCount; i++) {
 		_shot[i] = new ANIObject(*_objects);
@@ -168,6 +188,8 @@ void Diving::init() {
 		_anims.push_back(_decorFish[i].decorFish);
 	for (uint i = 0; i < kEvilFishCount; i++)
 		_anims.push_back(_evilFish[i].evilFish);
+	for (int i = kPlantCount - 1; i >= 0; i--)
+		_anims.push_back(_plant[i].plant);
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
 
@@ -206,6 +228,12 @@ void Diving::deinit() {
 		delete _decorFish[i].decorFish;
 
 		_decorFish[i].decorFish = 0;
+	}
+
+	for (uint i = 0; i < kPlantCount; i++) {
+		delete _plant[i].plant;
+
+		_plant[i].plant = 0;
 	}
 
 	delete _heart;
@@ -257,6 +285,37 @@ void Diving::initCursor() {
 
 	_vm->_draw->_cursorHotspotX = 8;
 	_vm->_draw->_cursorHotspotY = 8;
+}
+
+
+void Diving::initPlants() {
+	for (uint i = 0; i < kPlantLevelCount; i++) {
+		for (uint j = 0; j < kPlantPerLevelCount; j++) {
+			int16 prevPlantX = -100;
+			if (j > 0)
+				prevPlantX = _plant[i * kPlantPerLevelCount + j - 1].x;
+
+			enterPlant(_plant[i * kPlantPerLevelCount + j], prevPlantX);
+		}
+	}
+}
+
+void Diving::enterPlant(ManagedPlant &plant, int16 prevPlantX) {
+	const PlantLevel &level = kPlantLevels[plant.level];
+	const uint anim = level.plants[_vm->_util->getRandom(kPlantLevels[plant.level].plantCount)];
+
+	plant.plant->setAnimation(anim);
+	plant.plant->rewind();
+
+	int16 width, height;
+	plant.plant->getFrameSize(width, height);
+
+	plant.x = prevPlantX + 150 - 10 + _vm->_util->getRandom(21);
+	plant.y = kPlantLevels[plant.level].y - height;
+
+	plant.plant->setPosition(plant.x, plant.y);
+	plant.plant->setVisible(true);
+	plant.plant->setPause(false);
 }
 
 void Diving::updateEvilFish() {
@@ -329,6 +388,38 @@ void Diving::updateDecorFish() {
 				fish.decorFish->setVisible(true);
 				fish.decorFish->setPause(false);
 			}
+		}
+	}
+}
+
+void Diving::updatePlants() {
+	for (uint i = 0; i < kPlantCount; i++) {
+		ManagedPlant &plant = _plant[i];
+
+		if (plant.plant->isVisible()) {
+			// Move the plant
+			plant.plant->setPosition(plant.x += plant.deltaX, plant.y);
+
+			// Check if the plant has left the screen
+			int16 x, y, width, height;
+			plant.plant->getFramePosition(x, y);
+			plant.plant->getFrameSize(width, height);
+
+			if ((x + width) <= 0) {
+				plant.plant->setVisible(false);
+				plant.plant->setPause(true);
+
+				plant.x = 0;
+			}
+
+		} else {
+			// Find the right-most plant in this level and enter the plant to the right of it
+
+			int16 rightX = 320;
+			for (uint j = 0; j < kPlantPerLevelCount; j++)
+				rightX = MAX(rightX, _plant[plant.level * kPlantPerLevelCount + j].x);
+
+			enterPlant(plant, rightX);
 		}
 	}
 }
