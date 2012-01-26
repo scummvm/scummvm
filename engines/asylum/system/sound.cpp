@@ -56,6 +56,8 @@ Sound::~Sound() {
 //////////////////////////////////////////////////////////////////////////
 
 void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning) {
+	debugC(kDebugLevelSound, "[Sound] Playing Sound 0x%08X", resourceId);
+
 	// Cleanup sound queue
 	cleanupQueue();
 
@@ -82,6 +84,7 @@ void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 p
 }
 
 void Sound::playMusic(ResourceId resourceId, int32 volume) {
+	debugC(kDebugLevelSound, "[Sound] Playing Music 0x%08X", resourceId);
 	if (resourceId == kResourceNone) {
 		stopMusic();
 		return;
@@ -301,6 +304,7 @@ SoundQueueItem *Sound::getPlayingItem(ResourceId resourceId) {
 }
 
 SoundQueueItem *Sound::addToQueue(ResourceId resourceId) {
+	debugC(kDebugLevelSound, "[Sound] Queueing Sound 0x%08X", resourceId);
 	SoundQueueItem sound;
 	sound.resourceId = resourceId;
 	_soundQueue.push_back(sound);
