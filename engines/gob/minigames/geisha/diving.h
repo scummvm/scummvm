@@ -54,6 +54,26 @@ private:
 	static const uint kDecorFishCount =  3;
 	static const uint kMaxShotCount   = 10;
 
+	static const uint   kEvilFishTypeCount = 3;
+	static const uint16 kEvilFishTypes[kEvilFishTypeCount][5];
+
+	struct PlantLevel {
+		int16 y;
+		uint plantCount;
+		const uint16 *plants;
+	};
+
+	static const uint kPlantLevelCount    = 3;
+	static const uint kPlantPerLevelCount = 5;
+
+	static const uint16 kPlantLevel1[];
+	static const uint16 kPlantLevel2[];
+	static const uint16 kPlantLevel3[];
+
+	static const PlantLevel kPlantLevels[kPlantLevelCount];
+
+	static const uint kPlantCount = kPlantLevelCount * kPlantPerLevelCount;
+
 	struct ManagedEvilFish {
 		EvilFish *evilFish;
 
@@ -66,6 +86,14 @@ private:
 
 		uint32 enterAt;
 		int8 deltaX;
+	};
+
+	struct ManagedPlant {
+		ANIObject *plant;
+
+		uint level;
+		int8 deltaX;
+		int16 x, y;
 	};
 
 	GobEngine *_vm;
@@ -81,6 +109,7 @@ private:
 
 	ManagedEvilFish  _evilFish[kEvilFishCount];
 	ManagedDecorFish _decorFish[kDecorFishCount];
+	ManagedPlant     _plant[kPlantCount];
 
 	ANIObject *_shot[kMaxShotCount];
 
@@ -106,12 +135,16 @@ private:
 
 	void initScreen();
 	void initCursor();
+	void initPlants();
+
+	void enterPlant(ManagedPlant &plant, int16 prevPlantX);
 
 	void foundBlackPearl();
 	void foundWhitePearl();
 
 	void updateEvilFish();
 	void updateDecorFish();
+	void updatePlants();
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
