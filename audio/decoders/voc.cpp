@@ -321,6 +321,11 @@ void VocStream::preProcess() {
 		// In case we hit a "Terminator" block we also break here.
 		if (_stream->eos() || block.code == 0)
 			break;
+		// We also allow 128 as terminator, since Simon 1 Amiga CD32 uses it.
+		if (block.code == 128) {
+			debug(3, "VocStream::preProcess: Caught 128 as terminator");
+			break;
+		}
 
 		block.length = _stream->readByte();
 		block.length |= _stream->readByte() << 8;
