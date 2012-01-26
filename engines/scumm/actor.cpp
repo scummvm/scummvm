@@ -909,7 +909,8 @@ void ActorC64::setDirection(int direction) {
 	
 	_animFrameRepeat = -1;
 	animateActor(res);
-	animateCostume();
+	if(_moving)
+		animateCostume();
 }
 
 void Actor::faceToObject(int obj) {
@@ -1344,8 +1345,7 @@ void Actor::showActor() {
         a->_animFrameRepeat = 1;
 		a->_speaking = 0;
 
- 		if( a->_costume != 0x13 )
-			startAnimActor(_standFrame);
+		startAnimActor(_standFrame);
 		_visible = true;
 		return;
 
