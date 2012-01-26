@@ -54,6 +54,7 @@ MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
 
 MP3Track::~MP3Track() {
 	stop();
+	delete _handle;
 }
 	
 bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *file) {

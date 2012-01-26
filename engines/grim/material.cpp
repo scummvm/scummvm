@@ -131,7 +131,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	
 void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
-	char *readFileName = new char[64];
+	char readFileName[64];
 
 	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
 		TextSplitter *ts = new TextSplitter(data);
@@ -160,6 +160,7 @@ void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadS
 			loadTGA(texData, _textures + i);
 		}
 		_numImages = texFileNames.size();
+		delete ts;
 		return;
 	} else if(filename.hasSuffix(".tga")) {
 		_numImages = 1;

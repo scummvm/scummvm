@@ -213,6 +213,7 @@ VimaTrack::~VimaTrack() {
 		delete[] _desc->region;
 	}
 	
+	delete _handle;
 	delete _desc;
 }
 

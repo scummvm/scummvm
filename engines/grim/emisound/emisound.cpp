@@ -143,8 +143,8 @@ void EMISound::setMusicState(int stateId) {
 }
 
 uint32 EMISound::getMsPos(int stateId) {
-	if (!_music)
-		return -1;
+	if (!_music || !_music->getHandle())
+		return 0;
 	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
 }
 	
@@ -157,7 +157,6 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 	char *line;
 	ts->setLineNumber(3); // Skip top-comment
 	int id, x, y, sync;
-	int i = 0;
 	char musicfilename[64];
 	char name[64];
 	line = ts->getCurrentLine();
@@ -173,7 +172,7 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 		musicTable[id]._filename = musicfilename;
 		ts->nextLine();
 	}
-	
+	delete ts;
 	return musicTable;
 }
 
@@ -189,7 +188,6 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	char *line;
 	ts->setLineNumber(3); // Skip top-comment
 	int id, x, y, sync, trim;
-	int i = 0;
 	char musicfilename[64];
 	char name[64];
 	char type[16];
@@ -213,11 +211,10 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 		ts->nextLine();
 		ts->nextLine();
 	}
+	delete ts;
 	return musicTable;
 }
 
-
-	
 void EMISound::initMusicTable() {
 	if (g_grim->getGameFlags() == ADGF_DEMO) {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");

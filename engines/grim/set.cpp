@@ -59,7 +59,7 @@ Set::Set() :
 }
 
 Set::~Set() {
-	if (_cmaps) {
+	if (_cmaps || g_grim->getGameType() == GType_MONKEY4) {
 		delete[] _cmaps;
 		for (int i = 0; i < _numSetups; ++i) {
 			delete _setups[i]._bkgndBm;
@@ -351,6 +351,7 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	data->read(&_nclip, 4);
 	data->read(&_fclip, 4);
 
+	delete[] fileName;
 }
 
 void Set::Setup::saveState(SaveGame *savedState) const {

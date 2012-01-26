@@ -25,6 +25,7 @@
 #include "engines/grim/costume/emiskel_component.h"
 #include "engines/grim/modelemi.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/skeleton.h"
 
 namespace Grim {
 
@@ -32,7 +33,7 @@ EMISkelComponent::EMISkelComponent(Component *p, int parentID, const char *filen
 }
 
 EMISkelComponent::~EMISkelComponent() {
-
+	delete _obj;
 }
 
 void EMISkelComponent::init() {
