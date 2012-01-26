@@ -44,6 +44,8 @@ public:
 	void drawOverlay();
 
 	uint16 getId() { return _id; }
+	void setPosU(int32 v) { _posU = v; }
+	void setPosV(int32 v) { _posV = v; }
 	void setForce2d(bool b) { _force2d = b; }
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
@@ -87,9 +89,7 @@ public:
 	void setNextFrameReadVar(uint16 v) { _nextFrameReadVar = v; }
 	void setNextFrameWriteVar(uint16 v) { _nextFrameWriteVar = v; }
 	void setPlayingVar(uint16 v) { _playingVar = v; }
-	void setPosU(int32 v) { _posU = v; }
 	void setPosUVar(uint16 v) { _posUVar = v; }
-	void setPosV(int32 v) { _posV = v; }
 	void setPosVVar(uint16 v) { _posVVar = v; }
 	void setStartFrameVar(uint16 v) { _startFrameVar = v; }
 	void setCondition(int16 condition) { _condition = condition; }

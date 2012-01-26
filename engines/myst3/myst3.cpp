@@ -649,12 +649,32 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 		_state->setMovieEndFrame(0);
 	}
 
-	movie.setForce2d(fullframe && _state->getViewType() == kCube);
+	if (fullframe) {
+		movie.setForce2d(_state->getViewType() == kCube);
+		movie.setPosU(0);
+		movie.setPosV(0);
+	}
 
 	_drawables.push_back(&movie);
 
-	while (movie.update()) {
-		processInput(true);
+	bool skip = false;
+
+	while (!skip && !shouldQuit() && !_shouldQuit && movie.update()) {
+		// Process events
+		Common::Event event;
+		while (getEventManager()->pollEvent(event))
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				if (_state->getViewType() == kCube)
+					_scene->updateCamera(event.relMouse);
+
+				_cursor->updatePosition(event.relMouse);
+
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_SPACE
+						|| event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					skip = true;
+			}
+
 		drawFrame();
 	}
 
