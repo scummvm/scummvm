@@ -54,6 +54,14 @@ public:
 		_lines = NULL;
 		_last = NULL;
 	}
+	~BlitImage() {
+		Line *temp = _lines;
+		while (temp != NULL) {
+			_lines = temp->next;
+			delete temp;
+			temp = _lines;
+		}
+	}
 	void create(const Graphics::PixelBuffer &buf, uint32 transparency, int x, int y, int width, int height) {
 		Graphics::PixelBuffer srcBuf = buf;
 		// A line of pixels can not wrap more that one line of the image, since it would break
@@ -808,7 +816,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 }
 
 void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
-	delete[] bitmap->_texIds;
+	delete[] (BlitImage*)bitmap->_texIds;
 }
 
 void GfxTinyGL::createFont(Font *font) {
