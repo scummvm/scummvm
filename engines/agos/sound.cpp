@@ -369,11 +369,11 @@ static BaseSound *makeSound(Audio::Mixer *mixer, const Common::String &basename)
 #endif
 #ifdef USE_VORBIS
 	if (Common::File::exists(basename + ".ogg"))
-		return new FLACSound(mixer, basename + ".ogg");
+		return new VorbisSound(mixer, basename + ".ogg");
 #endif
 #ifdef USE_MAD
 	if (Common::File::exists(basename + ".mp3"))
-		return new FLACSound(mixer, basename + ".mp3");
+		return new MP3Sound(mixer, basename + ".mp3");
 #endif
 	if (Common::File::exists(basename + ".wav"))
 		return new WavSound(mixer, basename + ".wav");
