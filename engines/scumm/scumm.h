@@ -245,7 +245,10 @@ enum ScummGameId {
 	GID_BASEBALL2001,
 	GID_BASKETBALL,
 	GID_MOONBASE,
-	GID_HECUP		// CUP demos
+	GID_HECUP,		// CUP demos
+	GID_INDYLOOM,
+	GID_INDYZAK,
+	GID_ZAKLOOM
 };
 
 struct SentenceTab {
