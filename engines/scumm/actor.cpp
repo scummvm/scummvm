@@ -563,7 +563,7 @@ void Actor_v2::walkActor() {
 
 		if( _vm->_game.version == 0 )
 			if( _moving == 0 )
-				((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(new_dir) );
+				setDirection( new_dir );
 
 		return;
 	}
@@ -885,18 +885,11 @@ void Actor::setDirection(int direction) {
 	_needRedraw = true;
 }
 
-void ActorC64::setDirection(int cmd) {
-	
-	setCmdFromDirection( newDirToOldDir( cmd ) );
-
-}
-
-// based on 0x2BCA, doesn't match disassembly because 'oldDir' variable
-// is not the same value as stored in the original interpreter
-int ActorC64::setCmdFromDirection(int direction) {
+void ActorC64::setDirection(int direction) {
+	int dir = newDirToOldDir( direction );
     int res = 0;
 
-	switch (direction) {
+	switch (dir) {
 		case 0:
 			res = 4;	// Left
             break;
@@ -917,8 +910,6 @@ int ActorC64::setCmdFromDirection(int direction) {
 	_animFrameRepeat = -1;
 	animateActor(res);
 	animateCostume();
-
-    return res;
 }
 
 void Actor::faceToObject(int obj) {
@@ -950,7 +941,7 @@ void Actor::turnToDirection(int newdir) {
 	}
 
 	if (_vm->_game.version == 0)
-		((ActorC64*)this)->setCmdFromDirection( newDirToOldDir(newdir) );
+		setDirection( newdir );
 }
 
 
@@ -1885,7 +1876,7 @@ void ActorC64::startAnimActor(int f) {
 	}
 
 	if( f == _standFrame )
-		setCmdFromDirection( newDirToOldDir(_facing) );
+		setDirection( _facing );
 	else
 		animateActor( newDirToOldDir(_facing) );
 }

@@ -386,7 +386,6 @@ public:
 
 	void		 speakCheck();
     virtual void setDirection(int direction);
-	int			 setCmdFromDirection(int direction);
 	void		 startAnimActor(int f);
 
 	// Used by the save/load system:
