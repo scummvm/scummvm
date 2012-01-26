@@ -82,9 +82,6 @@ Actor::Actor(const Common::String &actorName) :
 		_shadowArray[i].shadowMask = NULL;
 		_shadowArray[i].shadowMaskSize = 0;
 	}
-			
-	if (g_sound == NULL)
-		g_sound = new SoundPlayer();
 }
 
 Actor::Actor() :

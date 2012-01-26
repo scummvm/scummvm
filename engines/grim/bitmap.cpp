@@ -404,6 +404,7 @@ void Bitmap::restoreState(SaveGame *state) {
 	Common::String fname = state->readString();
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	_data = BitmapData::getBitmapData(fname, data);
+	delete data;
 
 	_currImage = state->readLESint32();
 	_x = state->readLESint32();
