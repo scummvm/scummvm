@@ -673,7 +673,11 @@ Rename voices.wav on CD4 to voices4.wav
 3.14) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat'
-file, which can be found on the 'Downloads' page of the ScummVM website.
+file. The file should always be included in the official ScummVM packages.
+In case ScummVM complains that the file is missing you can find it on the
+'Downloads' page of the ScummVM website. The current Windows release of
+ScummVM should contain the file embedded into the executable, thus you only
+need to grab it in case ScummVM complains about the file being missing.
 
 
 3.15) Sierra AGI games Predictive Input Dialog notes:
