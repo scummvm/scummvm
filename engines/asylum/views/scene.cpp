@@ -1125,7 +1125,8 @@ void Scene::updateCoordinates() {
 	if ((yTop + 479) > sceneRect.bottom)
 		yTop = _ws->yTop = sceneRect.bottom - 479;
 
-	// TODO set a var if scene coordinates changed
+	// XXX dword_44E1EC is set to 2 at this point if the scene coordinates
+	// have changed, but that variable is never used anywhere else
 }
 
 void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
