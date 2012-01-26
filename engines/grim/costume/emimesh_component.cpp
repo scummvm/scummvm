@@ -29,12 +29,15 @@
 namespace Grim {
 
 EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, t), _filename(filename), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
+	_hierShared = false;
 }
 
 EMIMeshComponent::~EMIMeshComponent() {
 	if (_hierShared) {
 		_obj = NULL; // Keep ~ModelComp from deleting it
 		 //_animation = NULL;
+	} else {
+		delete _obj;
 	}
 
 	foreach (EMIMeshComponent *child, _children) {

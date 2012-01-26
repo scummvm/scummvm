@@ -56,6 +56,7 @@ class EMISound {
 	void initMusicTable();
 public:
 	EMISound();
+	~EMISound();
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);

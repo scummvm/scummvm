@@ -49,6 +49,15 @@ EMISound::EMISound() {
 	_music = NULL;
 	initMusicTable();
 }
+	
+EMISound::~EMISound() {
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		freeChannel(i);
+	}
+	delete _music;
+	delete[] _channels;
+	delete[] _musicTable;
+}
 
 int32 EMISound::getFreeChannel() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {

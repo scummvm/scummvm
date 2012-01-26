@@ -105,6 +105,10 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	}
 }
 
+EMIMeshFace::~EMIMeshFace() {
+	delete[] _indexes;
+}
+
 void EMIModel::setTex(int index) {
 	_mats[index]->select();
 }
@@ -206,7 +210,37 @@ void EMIModel::draw() {
 }
 
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
+	_numVertices = 0;
+	_vertices = NULL;
+	_normals = NULL;
+	_colorMap = NULL;
+	_texVerts = NULL;
+	_numFaces = 0;
+	_faces = NULL;
+	_numTextures = 0;
+	_texNames = NULL;
+	_mats = NULL;
+	_numBones = 0;
+	_sphereData = NULL;
+	_boxData = NULL;
+	_boxData2 = NULL;
+	_numTexSets = 0;
+	_setType = 0;
+
 	loadMesh(data);
 }
-	
+
+EMIModel::~EMIModel() {
+	delete[] _vertices;
+	delete[] _normals;
+	delete[] _colorMap;
+	delete[] _texVerts;
+	delete[] _faces;
+	delete[] _texNames;
+	delete[] _mats;
+	delete _sphereData;
+	delete _boxData;
+	delete _boxData2;
+}
+
 } // end of namespace Grim
