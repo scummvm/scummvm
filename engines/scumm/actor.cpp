@@ -2834,9 +2834,11 @@ void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE_OLD(ActorC64, _costFrame, sleByte, VER(84), VER(89)),
 		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
 		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
-        MKLINE(ActorC64, _animFrameRepeat, sleByte, VER(89)),
-        MKARRAY(ActorC64, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
-		MKARRAY(ActorC64, _limbFrameRepeat[0], sleInt8, 8, VER(89)),
+		MK_OBSOLETE(ActorC64, _speakingPrev, sleByte, VER(84), VER(89)),
+		MK_OBSOLETE(ActorC64, _byte_FD0A, sleByte, VER(89), VER(89)),
+		MKLINE(ActorC64, _animFrameRepeat, sleByte, VER(89)),
+		MKARRAY(ActorC64, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
+		MKARRAY(ActorC64, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
 		MKEND()
 	};
 
