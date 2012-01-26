@@ -68,6 +68,8 @@ Diving::~Diving() {
 }
 
 bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
+	_hasPearlLocation = hasPearlLocation;
+
 	init();
 	initScreen();
 	initCursor();
@@ -81,6 +83,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		updateEvilFish();
 		updateDecorFish();
 		updatePlants();
+		updatePearl();
 		updateAnims();
 
 		_vm->_draw->animateCursor(1);
@@ -155,6 +158,11 @@ void Diving::init() {
 		_plant[i].plant = new ANIObject(*_objects);
 	}
 
+	_pearl.pearl = new ANIObject(*_objects);
+	_pearl.black = false;
+
+	_pearl.pearl->setAnimation(4);
+
 	_decorFish[0].decorFish->setAnimation( 6); // Jellyfish
 	_decorFish[0].deltaX = 0;
 
@@ -184,6 +192,7 @@ void Diving::init() {
 	_anims.push_back(_water);
 	for (uint i = 0; i < kMaxShotCount; i++)
 		_anims.push_back(_shot[i]);
+	_anims.push_back(_pearl.pearl);
 	for (uint i = 0; i < kDecorFishCount; i++)
 		_anims.push_back(_decorFish[i].decorFish);
 	for (uint i = 0; i < kEvilFishCount; i++)
@@ -235,6 +244,9 @@ void Diving::deinit() {
 
 		_plant[i].plant = 0;
 	}
+
+	delete _pearl.pearl;
+	_pearl.pearl = 0;
 
 	delete _heart;
 	delete _lungs;
@@ -316,6 +328,27 @@ void Diving::enterPlant(ManagedPlant &plant, int16 prevPlantX) {
 	plant.plant->setPosition(plant.x, plant.y);
 	plant.plant->setVisible(true);
 	plant.plant->setPause(false);
+
+	if (plant.x > 320)
+		enterPearl(plant.x);
+}
+
+void Diving::enterPearl(int16 x) {
+	// Only one pearl is ever visible
+	if (_pearl.pearl->isVisible())
+		return;
+
+	// Only every 4th potential pearl position has a pearl
+	if (_vm->_util->getRandom(4) != 0)
+		return;
+
+	// Every 5th pearl is a black one, but only if the location is correct
+	_pearl.black = _hasPearlLocation && (_vm->_util->getRandom(5) == 0);
+
+	_pearl.pearl->setPosition(x + 80, 130);
+
+	_pearl.pearl->setVisible(true);
+	_pearl.pearl->setPause(false);
 }
 
 void Diving::updateEvilFish() {
@@ -421,6 +454,25 @@ void Diving::updatePlants() {
 
 			enterPlant(plant, rightX);
 		}
+	}
+}
+
+void Diving::updatePearl() {
+	if (!_pearl.pearl->isVisible())
+		return;
+
+	// Move the pearl
+	int16 x, y, width, height;
+	_pearl.pearl->getPosition(x, y);
+	_pearl.pearl->setPosition(x - 5, y);
+
+	// Check if the pearl has left the screen
+	_pearl.pearl->getFramePosition(x, y);
+	_pearl.pearl->getFrameSize(width, height);
+
+	if ((x + width) <= 0) {
+		_pearl.pearl->setVisible(false);
+		_pearl.pearl->setPause(true);
 	}
 }
 

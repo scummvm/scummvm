@@ -96,6 +96,12 @@ private:
 		int16 x, y;
 	};
 
+	struct ManagedPearl {
+		ANIObject *pearl;
+
+		bool black;
+	};
+
 	GobEngine *_vm;
 
 	DECFile *_background;
@@ -110,6 +116,7 @@ private:
 	ManagedEvilFish  _evilFish[kEvilFishCount];
 	ManagedDecorFish _decorFish[kDecorFishCount];
 	ManagedPlant     _plant[kPlantCount];
+	ManagedPearl     _pearl;
 
 	ANIObject *_shot[kMaxShotCount];
 
@@ -129,6 +136,8 @@ private:
 	SoundDesc _soundWhitePearl;
 	SoundDesc _soundBlackPearl;
 
+	bool _hasPearlLocation;
+
 
 	void init();
 	void deinit();
@@ -138,6 +147,7 @@ private:
 	void initPlants();
 
 	void enterPlant(ManagedPlant &plant, int16 prevPlantX);
+	void enterPearl(int16 x);
 
 	void foundBlackPearl();
 	void foundWhitePearl();
@@ -145,6 +155,7 @@ private:
 	void updateEvilFish();
 	void updateDecorFish();
 	void updatePlants();
+	void updatePearl();
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
