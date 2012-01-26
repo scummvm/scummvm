@@ -1414,20 +1414,28 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
        AGI
        AGOS
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
+       MOHAWK
        PARALLACTION
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
        TUCKER
 
 --save-slot/-x:
@@ -1439,20 +1447,28 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
    Engines which currently support --save-slot/-x are:
 
        AGI
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
-       PARALLACTION
+       MOHAWK
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
+       TUCKER
 
 
 7.0) Music and Sound:
