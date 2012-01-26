@@ -85,6 +85,9 @@ public:
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
 
+	DECLARE_VAR(131, CursorLocked)
+	DECLARE_VAR(132, CursorHidden)
+
 	DECLARE_VAR(136, CameraPitch)
 	DECLARE_VAR(137, CameraHeading)
 	DECLARE_VAR(140, CameraMinPitch)

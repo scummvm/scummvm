@@ -42,6 +42,8 @@ Sound::~Sound() {
 }
 
 void Sound::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
+	id = _vm->_state->valueOrVarValue(id);
+
 	SoundChannel *channel = getChannelForSound(id, 3);
 	channel->play(id, volume);
 }

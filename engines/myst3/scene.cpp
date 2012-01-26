@@ -38,8 +38,10 @@ void Scene::updateCamera(Common::Point &mouse) {
 	float pitch = _vm->_state->getLookAtPitch();
 	float heading = _vm->_state->getLookAtHeading();
 
-	pitch -= mouse.y / 3.0f;
-	heading += mouse.x / 3.0f;
+	if (!_vm->_state->getCursorLocked()) {
+		pitch -= mouse.y / 3.0f;
+		heading += mouse.x / 3.0f;
+	}
 
 	// Keep heading in 0..360 range
 	if (heading > 360.0f)

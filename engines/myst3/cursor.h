@@ -40,10 +40,13 @@ public:
 	Common::Point getPosition() { return _position; }
 	void updatePosition(Common::Point &mouse);
 	void draw();
+	void setVisible(bool show);
+	bool isVisible();
 private:
 	Myst3Engine *_vm;
 
 	uint32 _currentCursorID;
+	int32 _hideLevel;
 
 	/** Position of the cursor */
 	Common::Point _position;

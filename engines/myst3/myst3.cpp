@@ -299,10 +299,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				// Open main menu
-				if (_state->getLocationRoom() != 901)
-					_menu->goToNode(100);
-				else
-					_state->setMenuEscapePressed(1);
+				if (_cursor->isVisible()) {
+					if (_state->getLocationRoom() != 901)
+						_menu->goToNode(100);
+					else
+						_state->setMenuEscapePressed(1);
+				}
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
@@ -368,7 +370,8 @@ void Myst3Engine::drawFrame() {
 		_inventory->draw();
 	}
 
-	_cursor->draw();
+	if (_cursor->isVisible())
+		_cursor->draw();
 
 	_system->updateScreen();
 	_system->delayMillis(10);

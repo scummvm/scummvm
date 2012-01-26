@@ -267,6 +267,11 @@ private:
 	DECLARE_OPCODE(runSoundScriptNodeRoom);
 	DECLARE_OPCODE(runSoundScriptNodeRoomAge);
 	DECLARE_OPCODE(drawOneFrame);
+	DECLARE_OPCODE(cursorHide);
+	DECLARE_OPCODE(cursorShow);
+	DECLARE_OPCODE(cursorSet);
+	DECLARE_OPCODE(cursorLock);
+	DECLARE_OPCODE(cursorUnlock);
 	DECLARE_OPCODE(newGame);
 
 };

@@ -24,6 +24,7 @@
 #include "engines/myst3/directorysubentry.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/scene.h"
+#include "engines/myst3/state.h"
 
 #include "graphics/surface.h"
 #include "graphics/imagedec.h"
@@ -57,6 +58,7 @@ static CursorData availableCursors[13] = {
 Cursor::Cursor(Myst3Engine *vm) :
 	_vm(vm),
 	_position(320, 210),
+	_hideLevel(0),
 	_lockedAtCenter(false) {
 
 	// Load available cursors
@@ -129,8 +131,7 @@ void Cursor::updatePosition(Common::Point &mouse) {
 	}
 }
 
-void Cursor::draw()
-{
+void Cursor::draw() {
 	CursorData &cursor = availableCursors[_currentCursorID];
 
 	// Rect where to draw the cursor
@@ -147,6 +148,17 @@ void Cursor::draw()
 		transparency = 1.0f;
 
 	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, cursor.texture, transparency);
+}
+
+void Cursor::setVisible(bool show) {
+	if (show)
+		_hideLevel = MAX(0, --_hideLevel);
+	else
+		_hideLevel++;
+}
+
+bool Cursor::isVisible() {
+	return !_hideLevel && !_vm->_state->getCursorHidden() && !_vm->_state->getCursorLocked();
 }
 
 } /* namespace Myst3 */

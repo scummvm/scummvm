@@ -217,6 +217,11 @@ Script::Script(Myst3Engine *vm):
 	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
 	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_0(239, drawOneFrame																				);
+	OP_0(240, cursorHide																				);
+	OP_0(241, cursorShow																				);
+	OP_1(242, cursorSet,					kValue														);
+	OP_0(243, cursorLock																				);
+	OP_0(244, cursorUnlock																				);
 	OP_0(249, newGame																					);
 
 #undef OP_0
@@ -1899,14 +1904,18 @@ void Script::moviePlayFullFrame(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play movie %d", cmd.op, cmd.args[0]);
 
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->_cursor->setVisible(false);
 	_vm->playMovieFullFrame(movieId);
+	_vm->_cursor->setVisible(true);
 }
 
 void Script::moviePlayFullFrameTrans(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play movie %d with transition", cmd.op, cmd.args[0]);
 
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->_cursor->setVisible(false);
 	_vm->playMovieFullFrame(movieId);
+	_vm->_cursor->setVisible(true);
 
 	// TODO: Transition
 }
@@ -1916,7 +1925,9 @@ void Script::moviePlayChangeNode(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->_cursor->setVisible(false);
 	_vm->playMovieGoToNode(movieId, nodeId);
+	_vm->_cursor->setVisible(true);
 }
 
 void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
@@ -1924,7 +1935,9 @@ void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[1]);
+	_vm->_cursor->setVisible(false);
 	_vm->playMovieGoToNode(movieId, nodeId);
+	_vm->_cursor->setVisible(true);
 
 	// TODO: Transition
 }
@@ -2190,11 +2203,40 @@ void Script::drawOneFrame(Context &c, const Opcode &cmd) {
 	_vm->drawFrame();
 }
 
+void Script::cursorHide(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Hide cursor", cmd.op);
+
+	_vm->_cursor->setVisible(false);
+}
+
+void Script::cursorShow(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Show cursor", cmd.op);
+
+	_vm->_cursor->setVisible(true);
+}
+
+void Script::cursorSet(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set cursor %d", cmd.op, cmd.args[0]);
+
+	_vm->_cursor->changeCursor(cmd.args[0]);
+}
+
+void Script::cursorLock(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Lock cursor", cmd.op);
+
+	_vm->_state->setCursorLocked(true);
+}
+
+void Script::cursorUnlock(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Unlock cursor", cmd.op);
+
+	_vm->_state->setCursorLocked(false);
+}
+
 void Script::newGame(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: New game", cmd.op);
 
 	_vm->_state->newGame();
 }
-
 
 } /* namespace Myst3 */
