@@ -45,6 +45,8 @@ struct Plane {
 
 typedef Common::List<Plane> SectorListType;
 
+#define MAX_SHADOWS 5
+
 struct Shadow {
 	Common::String name;
 	Math::Vector3d pos;

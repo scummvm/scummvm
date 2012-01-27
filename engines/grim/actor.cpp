@@ -76,7 +76,7 @@ Actor::Actor(const Common::String &actorName) :
 	_collisionScale = 1.f;
 	_puckOrient = false;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
 		_shadowArray[i].dontNegate = false;
 		_shadowArray[i].shadowMask = NULL;
@@ -96,7 +96,7 @@ Actor::Actor() :
 	_collisionMode = CollisionOff;
 	_collisionScale = 1.f;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
 		_shadowArray[i].dontNegate = false;
 		_shadowArray[i].shadowMask = NULL;
@@ -197,7 +197,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	_mumbleChore.saveState(savedState);
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < MAX_SHADOWS; ++i) {
 		Shadow &shadow = _shadowArray[i];
 		savedState->writeString(shadow.name);
 
@@ -319,7 +319,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_mumbleChore.restoreState(savedState, this);
 
 	clearShadowPlanes();
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < MAX_SHADOWS; ++i) {
 		Shadow &shadow = _shadowArray[i];
 		shadow.name = savedState->readString();
 
@@ -1167,7 +1167,7 @@ void Actor::draw() {
 	}
 
 	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {
-		for (int l = 0; l < 5; l++) {
+		for (int l = 0; l < MAX_SHADOWS; l++) {
 			if (!_shadowArray[l].active)
 				continue;
 			g_driver->setShadow(&_shadowArray[l]);
@@ -1178,7 +1178,7 @@ void Actor::draw() {
 
 	if (!_costumeStack.empty()) {
 		Costume *costume = _costumeStack.back();
-		for (int l = 0; l < 5; l++) {
+		for (int l = 0; l < MAX_SHADOWS; l++) {
 			if (!shouldDrawShadow(l))
 				continue;
 			g_driver->setShadow(&_shadowArray[l]);
@@ -1303,7 +1303,7 @@ void Actor::setShadowPoint(const Math::Vector3d &p) {
 }
 
 void Actor::clearShadowPlanes() {
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < MAX_SHADOWS; i++) {
 		Shadow *shadow = &_shadowArray[i];
 		while (!shadow->planeList.empty()) {
 			delete shadow->planeList.back().sector;
