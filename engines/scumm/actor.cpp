@@ -999,6 +999,10 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		if (isInCurrentRoom())
 			showActor();
 	}
+
+	// V0 always sets the actor to face the camera upon entering a room
+	if( _vm->_game.version == 0 ) 
+		setDirection( oldDirToNewDir(2));
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1942,8 +1946,6 @@ void ActorC64::limbFrameCheck() {
 	_cost.start[_limb_current] = _cost.frame[_limb_current];
 
 	_limbFrameRepeat[_limb_current] = _limbFrameRepeatNew[_limb_current];
-
-	_vm->_costumeLoader->loadCostume(_costume);
 
 	// 0x25C3
 	_cost.active[_limb_current] = ((C64CostumeLoader*)_vm->_costumeLoader)->getFrame( this );
