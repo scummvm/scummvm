@@ -720,7 +720,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic).getRawBuffer() + 2 * i);
+				uint16 val = READ_LE_UINT16(bufPtr + i);
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
