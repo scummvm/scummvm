@@ -498,9 +498,9 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			if (i == j) {
-				modelview[i * 4 + j] = 1.0;
+				modelview[i * 4 + j] = 1.0f;
 			} else {
-				modelview[i * 4 + j] = 0.0;
+				modelview[i * 4 + j] = 0.0f;
 			}
 		}
 	}
