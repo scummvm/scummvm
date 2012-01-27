@@ -401,9 +401,6 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		if (_pos.x == abr.x && _pos.y == abr.y && (dir == -1 || _facing == dir))
 			return;
 
-		if( _vm->_game.version == 0 )
-			((ActorC64*) this)->animateActor( newDirToOldDir( _facing ) );
-
 	} else {
 		if (_ignoreBoxes) {
 			abr.box = kInvalidBox;
@@ -909,7 +906,7 @@ void ActorC64::setDirection(int direction) {
 	
 	_animFrameRepeat = -1;
 	animateActor(res);
-	if(_moving & MF_TURN)
+	if(_moving)
 		animateCostume();
 }
 
@@ -1001,11 +998,6 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	} else {
 		if (isInCurrentRoom())
 			showActor();
-	}
-
-	if( _vm->_game.version == 0 ) {
-		_moving = 0;
-		setDirection( oldDirToNewDir(2));
 	}
 }
 
