@@ -537,6 +537,15 @@ bool SurfaceSdlGraphicsManager::showMouse(bool visible) {
 	return true;
 }
 
+// ResidualVM specific method
+bool SurfaceSdlGraphicsManager::lockMouse(bool lock) {
+	if (lock)
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	else
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	return true;
+}
+
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	SDL_WarpMouse(x, y);
 }

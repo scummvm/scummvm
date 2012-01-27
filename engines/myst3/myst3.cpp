@@ -134,6 +134,7 @@ Common::Error Myst3Engine::run() {
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
+	_system->lockMouse(true);
 
 	addArchive("OVER101.m3o", false);
 	addArchive("ENGLISH.m3t", true);
@@ -182,6 +183,8 @@ Common::Error Myst3Engine::run() {
 	delete _node;
 
 	_archiveNode->close();
+
+	_system->lockMouse(false);
 
 	return Common::kNoError;
 }
@@ -308,8 +311,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
+					_system->lockMouse(false);
 					_console->attach();
 					_console->onFrame();
+					_system->lockMouse(true);
 				}
 				break;
 			default:

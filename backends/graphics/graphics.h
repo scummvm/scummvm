@@ -61,6 +61,9 @@ public:
 	virtual void warpMouse(int x, int y) = 0;
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 
+	// ResidualVM specific method
+	virtual bool lockMouse(bool lock) = 0;
+
 	virtual void displayMessageOnOSD(const char *msg) {}
 };
 
