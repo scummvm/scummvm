@@ -327,7 +327,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
-							   const Math::Angle &pitch, const Math::Angle &roll) {
+		const Math::Angle &pitch, const Math::Angle &roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -612,7 +612,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				if (val == 0xf81f) {
 					val = 0;
 				}
-				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
+				zbufPtr[i] = 0xffff - ((uint32)val) * 0x10000 / 100 / (0x10000 - val);
 			}
 
 			// Flip the zbuffer image to match what GL expects

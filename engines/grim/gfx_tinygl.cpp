@@ -560,8 +560,8 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	else
 		tglDisable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
-	for (uint j = 0; j < face->_faceLength * 3; j++) {
 
+	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (face->_hasTexture) {
 			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
@@ -574,6 +574,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		tglNormal3fv(normal.getData());
 		tglVertex3fv(vertex.getData());
 	}
+
 	tglEnd();
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
@@ -897,7 +898,6 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
 
-
 		delete[] _textBitmap;
 	}
 }
@@ -910,7 +910,6 @@ void GfxTinyGL::drawTextObject(TextObject *text) {
 			TinyGLBlit(_pixelFormat, NULL, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
 		}
 	}
-
 }
 
 void GfxTinyGL::destroyTextObject(TextObject *text) {
@@ -1099,7 +1098,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	for (int ly = 0; ly < _screenHeight; ly++) {
 		for (int lx = 0; lx < _screenWidth; lx++) {
 			// Don't do anything with the data in the region we draw Around
-			if(lx > x1 && lx < x2 && ly > y1 && ly < y2)
+			if (lx > x1 && lx < x2 && ly > y1 && ly < y2)
 				continue;
 			// But set everything around it to black.
 			_zb->pbuf.setPixelAt(ly * _gameWidth + lx, 0);
