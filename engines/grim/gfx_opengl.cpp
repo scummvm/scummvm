@@ -938,24 +938,22 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 		error("Could not get font userdata");
 	float size = userData->size * _scaleW;
 	GLuint texture = userData->texture;
-	int y, x;
 	const Common::String *lines = text->getLines();
 	int numLines = text->getNumLines();
 	for (int j = 0; j < numLines; ++j) {
 		const Common::String &line = lines[j];
-		x = text->getLineX(j);
-		y = text->getLineY(j);
+		int x = text->getLineX(j);
+		int y = text->getLineY(j);
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
 			float w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
 			float z = x + font->getCharStartingCol(character);
 			z *= _scaleW;
 			w *= _scaleH;
-			
 			glBindTexture(GL_TEXTURE_2D, texture);
 			float width = 1 / 16.f;
-			float cx = ((character-1) % 16) / 16.0f;
-			float cy = ((character-1) / 16) / 16.0f;
+			float cx = ((character - 1) % 16) / 16.0f;
+			float cy = ((character - 1) / 16) / 16.0f;
 			glBegin(GL_QUADS);
 			glTexCoord2f(cx, cy);
 			glVertex2f(z, w);
@@ -1050,9 +1048,9 @@ void GfxOpenGL::destroyMaterial(Texture *material) {
 }
 
 void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
-	//	if (num != 0) {
-	//		warning("Animation not handled yet in GL texture path");
-	//	}
+	//if (num != 0) {
+	//	warning("Animation not handled yet in GL texture path");
+	//}
 
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
@@ -1228,9 +1226,9 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 	float step_x = (float)_screenWidth / w;
 	float step_y = (float)_screenHeight / h;
 	step = 0;
+	uint8 r, g, b;
 	for (float y = 479; y >= 0; y -= step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			uint8 r, g, b;
 			src.getRGBAt((int)y * _screenWidth + (int)x, r, g, b);
 			buffer.setPixelAt(step++, r, g, b);
 		}
