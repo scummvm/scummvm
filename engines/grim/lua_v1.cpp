@@ -196,16 +196,16 @@ void Lua_V1::MakeColor() {
 	else
 		b = clamp_color((int)lua_getnumber(bObj));
 
-	PoolColor *c = new PoolColor (r, g ,b);
-	lua_pushusertag(c->getId(), MKTAG('C','O','L','R'));
+	Color c(r, g, b);
+	lua_pushusertag(c.toEncodedValue(), MKTAG('C','O','L','R'));
 }
 
 void Lua_V1::GetColorComponents() {
 	lua_Object colorObj = lua_getparam(1);
-	Color *c = getcolor(colorObj);
-	lua_pushnumber(c->getRed());
-	lua_pushnumber(c->getGreen());
-	lua_pushnumber(c->getBlue());
+	Color c(getcolor(colorObj));
+	lua_pushnumber(c.getRed());
+	lua_pushnumber(c.getGreen());
+	lua_pushnumber(c.getBlue());
 }
 
 void Lua_V1::ReadRegistryValue() {

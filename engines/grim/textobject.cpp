@@ -68,7 +68,7 @@ void TextObject::reset() {
 }
 
 void TextObject::saveState(SaveGame *state) const {
-	state->writeLEUint32(_fgColor->getId());
+	state->writeColor(_fgColor);
 
 	state->writeLESint32(_x);
 	state->writeLESint32(_y);
@@ -90,7 +90,7 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-	_fgColor = PoolColor::getPool().getObject(state->readLEUint32());
+	_fgColor = state->readLEUint32();
 
 	_x            = state->readLESint32();
 	_y            = state->readLESint32();

@@ -24,12 +24,12 @@
 #define GRIM_TEXTOBJECT_H
 
 #include "engines/grim/pool.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 
 class SaveGame;
 class Font;
-class PoolColor;
 
 class TextObjectCommon {
 public:
@@ -42,8 +42,8 @@ public:
 	void setFont(Font *font) { _font = font; }
 	Font *getFont() { return _font; }
 
-	void setFGColor(PoolColor *fgColor) { _fgColor = fgColor; }
-	PoolColor *getFGColor() { return _fgColor; }
+	void setFGColor(const Color &fgColor) { _fgColor = fgColor; }
+	Color getFGColor() { return _fgColor; }
 
 	void setJustify(int justify) { _justify = justify; }
 	int getJustify() { return _justify; }
@@ -60,7 +60,7 @@ public:
 protected:
 	TextObjectCommon();
 
-	PoolColor *_fgColor;
+	Color _fgColor;
 	int _x, _y;
 	int _width, _height;
 	int _justify;

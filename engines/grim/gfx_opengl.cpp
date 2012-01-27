@@ -929,10 +929,10 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
-	const Color *color = text->getFGColor();
+	const Color &color = text->getFGColor();
 	Font *font = text->getFont();
 
-	glColor3f(color->getRed() / 255.f, color->getGreen() / 255.f, color->getBlue() / 255.f);
+	glColor3f(color.getRed() / 255.f, color.getGreen() / 255.f, color.getBlue() / 255.f);
 	FontUserData *userData = (FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
@@ -1362,7 +1362,7 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	float x2 = (primitive->getP2().x+1) * _scaleW;
 	float y2 = (primitive->getP2().y+1) * _scaleH;
 
-	const Color &color = *primitive->getColor();
+	const Color color(primitive->getColor());
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1401,7 +1401,7 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	float x2 = primitive->getP2().x * _scaleW;
 	float y2 = primitive->getP2().y * _scaleH;
 
-	const Color &color = *primitive->getColor();
+	const Color &color = primitive->getColor();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1439,7 +1439,7 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	float x4 = primitive->getP4().x * _scaleW;
 	float y4 = primitive->getP4().y * _scaleH;
 
-	const Color &color = *primitive->getColor();
+	const Color &color = primitive->getColor();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

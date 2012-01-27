@@ -81,8 +81,7 @@ void Lua_V1::SetActorTalkColor() {
 	if (!lua_isuserdata(colorObj) && lua_tag(colorObj) != MKTAG('C','O','L','R'))
 		return;
 	Actor *actor = getactor(actorObj);
-	PoolColor *color = getcolor(colorObj);
-	actor->setTalkColor(color);
+	actor->setTalkColor(getcolor(colorObj));
 }
 
 void Lua_V1::GetActorTalkColor() {
@@ -92,7 +91,7 @@ void Lua_V1::GetActorTalkColor() {
 		return;
 	}
 	Actor *actor = getactor(actorObj);
-	lua_pushusertag(actor->getTalkColor()->getId(), MKTAG('C','O','L','R'));
+	lua_pushusertag(actor->getTalkColor().toEncodedValue(), MKTAG('C','O','L','R'));
 }
 
 void Lua_V1::SetActorRestChore() {

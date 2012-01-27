@@ -25,6 +25,7 @@
 
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
+#include "engines/grim/color.h"
 #include "math/vector3d.h"
 #include "math/angle.h"
 
@@ -35,7 +36,6 @@ class Sector;
 class Costume;
 class LipSync;
 class Font;
-class PoolColor;
 class Set;
 
 struct Plane {
@@ -110,13 +110,13 @@ public:
 	 * @param color The color.
 	 * @see getTalkColor
 	 */
-	void setTalkColor(PoolColor *color) { _talkColor = color; }
+	void setTalkColor(const Color &color) { _talkColor = color; }
 	/**
 	 * Returns the color of the subtitles of the actor.
 	 *
 	 * @see setTalkColor
 	 */
-	PoolColor *getTalkColor() const { return _talkColor; }
+	Color getTalkColor() const { return _talkColor; }
 
 	/**
 	 * Sets the position of the actor on the 3D scene.
@@ -475,7 +475,7 @@ private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
-	PoolColor *_talkColor;
+	Color _talkColor;
 	Math::Vector3d _pos;
 	Math::Angle _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;

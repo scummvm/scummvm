@@ -139,8 +139,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_fps[0] = 0;
 	_iris = new Iris();
 
-	PoolColor *c = new PoolColor(0, 0, 0);
-	new PoolColor(255, 255, 255); // Default color for actors. Id == 2
+	Color c(0, 0, 0);
 
 	_printLineDefaults.setX(0);
 	_printLineDefaults.setY(100);
@@ -208,7 +207,6 @@ void GrimEngine::clearPools() {
 	Bitmap::getPool().deleteObjects();
 	Font::getPool().deleteObjects();
 	ObjectState::getPool().deleteObjects();
-	PoolColor::getPool().deleteObjects();
 
 	_currSet = NULL;
 }
@@ -764,9 +762,6 @@ void GrimEngine::savegameRestore() {
 	delete _currSet;
 	_currSet = NULL;
 
-	PoolColor::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "Colors restored succesfully.");
-
 	Bitmap::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps restored succesfully.");
 
@@ -831,9 +826,11 @@ void GrimEngine::restoreGRIM() {
 	_talkingActor = Actor::getPool().getObject(_savedState->readLEUint32());
 
 	//TextObject stuff
-	//SAVECHANGE: Remove the next line with the next save version
+	//SAVECHANGE: Remove the next two lines with the next save version
 	_savedState->readLESint32();
-	_sayLineDefaults.setFGColor(PoolColor::getPool().getObject(_savedState->readLEUint32()));
+	_savedState->readByte();
+
+	_sayLineDefaults.setFGColor(_savedState->readColor());
 	_sayLineDefaults.setFont(Font::getPool().getObject(_savedState->readLEUint32()));
 	_sayLineDefaults.setHeight(_savedState->readLESint32());
 	_sayLineDefaults.setJustify(_savedState->readLESint32());
@@ -898,9 +895,6 @@ void GrimEngine::savegameSave() {
 	g_movie->pause(true);
 
 	savegameCallback();
-
-	PoolColor::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "Colors saved succesfully.");
 
 	Bitmap::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps saved succesfully.");
@@ -969,9 +963,11 @@ void GrimEngine::saveGRIM() {
 	}
 
 	//TextObject stuff
-	//SAVECHANGE: Remove the next line with the next save version
+	//SAVECHANGE: Remove the next two lines with the next save version
 	_savedState->writeLESint32(0);
-	_savedState->writeLEUint32(_sayLineDefaults.getFGColor()->getId());
+	_savedState->writeByte(0);
+
+	_savedState->writeColor(_sayLineDefaults.getFGColor());
 	_savedState->writeLEUint32(_sayLineDefaults.getFont()->getId());
 	_savedState->writeLESint32(_sayLineDefaults.getHeight());
 	_savedState->writeLESint32(_sayLineDefaults.getJustify());
