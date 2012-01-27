@@ -32,6 +32,7 @@ namespace Grim {
 class ModelNode;
 class Mesh;
 class MeshFace;
+class BlitImage;
 
 class GfxTinyGL : public GfxBase {
 public:
@@ -120,6 +121,8 @@ private:
 	int _smushWidth;
 	int _smushHeight;
 	Graphics::PixelBuffer _storedDisplay;
+
+	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);
 };
 
 } // end of namespace Grim

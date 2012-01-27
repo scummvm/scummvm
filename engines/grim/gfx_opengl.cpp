@@ -300,19 +300,19 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}
 
 	double t = bottom;
-	bottom = 480 - top;
-	top = 480 - t;
+	bottom = _gameHeight - top;
+	top = _gameHeight - t;
 
 	if (left < 0)
 		left = 0;
-	if (right > 639)
-		right = 639;
+	if (right >= _gameWidth)
+		right = _gameWidth - 1;
 	if (top < 0)
 		top = 0;
-	if (bottom > 479)
-		bottom = 479;
+	if (bottom >= _gameHeight)
+		bottom = _gameHeight - 1;
 
-	if (top > 479 || left > 639 || bottom < 0 || right < 0) {
+	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
 		*x1 = -1;
 		*y1 = -1;
 		*x2 = -1;
