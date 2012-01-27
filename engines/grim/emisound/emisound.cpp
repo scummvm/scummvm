@@ -198,7 +198,7 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	ts->setLineNumber(3); // Skip top-comment
 	int id, x, y, sync, trim;
 	char musicfilename[64];
-	char name[64];
+	//char name[64];
 	char type[16];
 	line = ts->getCurrentLine();
 	// Every block is followed by 3 lines of commenting/uncommenting, except the last.

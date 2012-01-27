@@ -1139,7 +1139,7 @@ void Actor::update(uint frameTime) {
 		}
 	}
 
-	frameTime *= _timeScale;
+	frameTime = (uint)(frameTime * _timeScale);
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);

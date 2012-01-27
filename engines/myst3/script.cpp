@@ -795,7 +795,7 @@ void Script::polarToRectSimple(Context &c, const Opcode &cmd)	{
 	debugC(kDebugScript, "Opcode %d: Polar to rect transformation for angle in var %d", cmd.op, cmd.args[5]);
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[5]);
-	float angleRad = 2 * M_PI / cmd.args[6] * angleDeg;
+	float angleRad = 2 * LOCAL_PI / cmd.args[6] * angleDeg;
 	float angleSin = sin(angleRad);
 	float angleCos = cos(angleRad);
 
@@ -808,8 +808,8 @@ void Script::polarToRectSimple(Context &c, const Opcode &cmd)	{
 	else
 		radius = cmd.args[4] * -0.1;
 
-	int32 posX = offsetX + radius * angleSin;
-	int32 posY = offsetY - radius * angleCos;
+	int32 posX = (int32)(offsetX + radius * angleSin);
+	int32 posY = (int32)(offsetY - radius * angleCos);
 
 	_vm->_state->setVar(cmd.args[0], posX);
 	_vm->_state->setVar(cmd.args[1], posY);
@@ -819,7 +819,7 @@ void Script::polarToRect(Context &c, const Opcode &cmd)	{
 	debugC(kDebugScript, "Opcode %d: Complex polar to rect transformation for angle in var %d", cmd.op, cmd.args[8]);
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[8]);
-	float angleRad = 2 * M_PI / cmd.args[9] * angleDeg;
+	float angleRad = 2 * LOCAL_PI / cmd.args[9] * angleDeg;
 	float angleSin = sin(angleRad);
 	float angleCos = cos(angleRad);
 
@@ -837,8 +837,8 @@ void Script::polarToRect(Context &c, const Opcode &cmd)	{
 	int32 offsetX = cmd.args[2];
 	int32 offsetY = cmd.args[3];
 
-	int32 posX = offsetX + (radiusX - 0.1f) * angleSin;
-	int32 posY = offsetY - (radiusY - 0.1f) * angleCos;
+	int32 posX = (int32)(offsetX + (radiusX - 0.1f) * angleSin);
+	int32 posY = (int32)(offsetY - (radiusY - 0.1f) * angleCos);
 
 	_vm->_state->setVar(cmd.args[0], posX);
 	_vm->_state->setVar(cmd.args[1], posY);
@@ -849,7 +849,7 @@ void Script::varSetDistanceToZone(Context &c, const Opcode &cmd) {
 
 	float heading = _vm->_state->getLookAtHeading();
 	float pitch = _vm->_state->getLookAtPitch();
-	int16 distance = 100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch);
+	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch));
 	_vm->_state->setVar(cmd.args[0], distance);
 }
 
@@ -858,7 +858,7 @@ void Script::varSetMinDistanceToZone(Context &c, const Opcode &cmd) {
 
 	float heading = _vm->_state->getLookAtHeading();
 	float pitch = _vm->_state->getLookAtPitch();
-	int16 distance = 100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch);
+	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch));
 	if (distance < _vm->_state->getVar(cmd.args[0]))
 		_vm->_state->setVar(cmd.args[0], distance);
 }
@@ -1580,7 +1580,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 			ratioPosition = pixelPosition / (float) amplitude;
 		}
 
-		int16 position = ratioPosition * (numPositions + 1);
+		int16 position = (int16)(ratioPosition * (numPositions + 1));
 		position = CLIP<int16>(position, 1, numPositions);
 
 		if (_vm->_state->getDragLeverLimited()) {
@@ -1817,8 +1817,8 @@ void Script::cameraGetLookAt(Context &c, const Opcode &cmd) {
 	float pitch = _vm->_state->getLookAtPitch() * 1000.0;
 	float heading = _vm->_state->getLookAtHeading() * 1000.0;
 
-	_vm->_state->setVar(cmd.args[0], pitch);
-	_vm->_state->setVar(cmd.args[0] + 1, heading);
+	_vm->_state->setVar(cmd.args[0],(int32) pitch);
+	_vm->_state->setVar(cmd.args[0] + 1, (int32)heading);
 }
 
 void Script::changeNode(Context &c, const Opcode &cmd) {

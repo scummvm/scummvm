@@ -515,7 +515,7 @@ void Lua_V2::GetActorChores() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
-	Actor *actor = getactor(actorObj);
+//	Actor *actor = getactor(actorObj);
 
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
@@ -570,7 +570,7 @@ void Lua_V2::PlayActorChore() {
 
 void Lua_V2::StopActorChores() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object paramObj = lua_getparam(2);
+	/*lua_Object paramObj = */lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -580,7 +580,7 @@ void Lua_V2::StopActorChores() {
 		return;
 
 	//FIXME: What does the second param actually do
-	bool p = lua_isnil(paramObj) != 0;
+//	bool p = lua_isnil(paramObj) != 0;
 	Costume *costume = actor->getCurrentCostume();
 	if (costume) {
 		costume->stopChores();

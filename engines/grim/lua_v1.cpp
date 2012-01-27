@@ -93,7 +93,7 @@ void Lua_V1::PrintDebug() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj));
-		debug(msg.c_str());
+		debug("%s", msg.c_str());
 	}
 }
 
@@ -106,7 +106,7 @@ void Lua_V1::PrintError() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj));
-		debug(msg.c_str());
+		debug("%s", msg.c_str());
 	}
 }
 
@@ -119,7 +119,7 @@ void Lua_V1::PrintWarning() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj));
-		debug(msg.c_str());
+		debug("%s", msg.c_str());
 	}
 }
 

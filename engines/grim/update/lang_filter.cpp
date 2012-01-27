@@ -94,7 +94,7 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 			name = Common::String(orgName.c_str() + 3);
 		else if (orgName.hasPrefix(kLanguages2[_lang]) || orgName.hasPrefix(kLanguages2[kCommon])) {
 			int i = 0;
-			while (orgName[i++] != '/');
+			while (orgName[i++] != '/') {;}
 			name = Common::String(orgName.c_str() + i);
 
 			//If the file is a subfolder, reject it

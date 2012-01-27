@@ -208,7 +208,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 	if (_state->getViewType() == kCube) {
 		float pitch = _state->getLookAtPitch();
 		float heading = _state->getLookAtHeading();
-		Common::Point mouse = Common::Point(heading, pitch);
+		Common::Point mouse = Common::Point((int16)heading, (int16)pitch);
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)

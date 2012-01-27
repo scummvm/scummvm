@@ -58,8 +58,8 @@ void Scene::updateCamera(Common::Point &mouse) {
 			heading = CLIP(heading, minHeading, maxHeading);
 		} else {
 			if (heading < minHeading && heading > maxHeading) {
-				uint distToMin = abs(heading - minHeading);
-				uint distToMax = abs(heading - maxHeading);
+				uint distToMin = ABS(heading - minHeading);
+				uint distToMax = ABS(heading - maxHeading);
 				if (distToMin > distToMax)
 					heading = maxHeading;
 				else
@@ -80,8 +80,8 @@ void Scene::updateCamera(Common::Point &mouse) {
 	pitch = CLIP(pitch, minPitch, maxPitch);
 
 	_vm->_state->lookAt(pitch, heading);
-	_vm->_state->setCameraPitch(pitch);
-	_vm->_state->setCameraHeading(heading);
+	_vm->_state->setCameraPitch((int32)pitch);
+	_vm->_state->setCameraHeading((int32)heading);
 }
 
 void Scene::drawBlackBorders() {
@@ -99,7 +99,7 @@ void Scene::drawSunspotFlare(const SunSpot &s) {
 	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, kFrameHeight);
 	frame.translate(0, kTopBorderHeight);
 
-	uint8 a = s.intensity * s.radius;
+	uint8 a = (uint8)(s.intensity * s.radius);
 	uint8 r, g, b;
 	Graphics::colorToRGB< Graphics::ColorMasks<888> >(s.color, r, g, b);
 	uint32 color = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);

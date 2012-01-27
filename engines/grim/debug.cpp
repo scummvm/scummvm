@@ -59,7 +59,7 @@ void Debug::debug(DebugChannel channel, const char *s, ...) {
 		Common::String buf = Common::String::vformat(s, args);
 		va_end(args);
 
-		::debug(buf.c_str());
+		::debug("%s", buf.c_str());
 	}
 }
 
@@ -70,7 +70,7 @@ void Debug::warning(DebugChannel channel, const char *s, ...) {
 		Common::String buf = Common::String::vformat(s, args);
 		va_end(args);
 
-		::warning(buf.c_str());
+		::warning("%s", buf.c_str());
 	}
 }
 
@@ -81,7 +81,7 @@ void Debug::error(DebugChannel channel, const char *s, ...) {
 		Common::String buf = Common::String::vformat(s, args);
 		va_end(args);
 
-		::error(buf.c_str());
+		::error("%s", buf.c_str());
 	}
 }
 
@@ -92,7 +92,7 @@ void Debug::error(const char *s, ...) {
 		Common::String buf = Common::String::vformat(s, args);
 		va_end(args);
 
-		::error(buf.c_str());
+		::error("%s", buf.c_str());
 	}
 }
 

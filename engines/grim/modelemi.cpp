@@ -122,7 +122,7 @@ void EMIMeshFace::render() {
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
-	int strLength = 0; // Usefull for PS2-strings
+	//int strLength = 0; // Usefull for PS2-strings
 	
 	Common::String nameString = readLAString(*data);
 	
@@ -179,7 +179,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_faces[j].loadFace(data);
 	}
 
-	int hasBones = data->readUint32LE();
+	/*int hasBones = */data->readUint32LE();
 
 	// TODO add in the bone-stuff, as well as the skeleton
 	prepare(); // <- Initialize materials etc.

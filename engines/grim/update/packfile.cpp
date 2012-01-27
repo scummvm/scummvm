@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-const uint32 PackFile::_knownOffsets[] = { 0x1c000, 0x21000, 0x23000, 0x24000, NULL };
+const uint32 PackFile::_knownOffsets[] = { 0x1c000, 0x21000, 0x23000, 0x24000, 0 };
 
 PackFile::PackFile(Common::SeekableReadStream *data):
 	_codeTable(NULL), _orgStream(data), _offset(0), _kCodeTableSize(0x100) {

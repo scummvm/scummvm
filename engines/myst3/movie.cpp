@@ -303,8 +303,8 @@ ProjectorMovie::ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *ba
 	_enabled = true;
 
 	for (uint i = 0; i < kBlurIterations; i++) {
-		_blurTableX[i] = sin(2 * M_PI * i / (float) kBlurIterations) * 256.0;
-		_blurTableY[i] = cos(2 * M_PI * i / (float) kBlurIterations) * 256.0;
+		_blurTableX[i] = (uint8)(sin(2 * LOCAL_PI * i / (float)kBlurIterations) * 256.0);
+		_blurTableY[i] = (uint8)(cos(2 * LOCAL_PI * i / (float)kBlurIterations) * 256.0);
 	}
 }
 
@@ -340,8 +340,8 @@ void ProjectorMovie::update() {
 		for (uint j = 0; j < _frame->w; j++) {
 			uint8 a, depth;
 			uint16 r = 0, g = 0, b = 0;
-			uint32 srcX = backgroundX + j * delta;
-			uint32 srcY = backgroundY + i * delta;
+			uint32 srcX = (uint32)(backgroundX + j * delta);
+			uint32 srcY = (uint32)(backgroundY + i * delta);
 			uint32 *src = (uint32 *)_background->getBasePtr(srcX, srcY);
 
 			// Keep the alpha channel from the previous frame
