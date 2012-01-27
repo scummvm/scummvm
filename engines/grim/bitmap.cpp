@@ -181,7 +181,7 @@ bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStr
 
 #ifdef SCUMM_BIG_ENDIAN
 		if (_format == 1) {
-			uint16 *d = _data[i].getRawBuffer();
+			uint16 *d = (uint16 *)_data[i].getRawBuffer();
 			for (int j = 0; j < _width * _height; ++j) {
 				d[j] = SWAP_BYTES_16(d[j]);
 			}
