@@ -121,10 +121,10 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 			shoot(mouseX, mouseY);
 
 		if (key == kKeyDown) {
-			if (_oko->isAtBottom())
+			_oko->sink();
+			if ((_oko->getState() == Oko::kStatePick) && (_oko->getFrame() == 0))
 				getPearl();
 
-			_oko->sink();
 		} else if (key == kKeyUp)
 			_oko->raise();
 

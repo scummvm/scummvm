@@ -33,7 +33,8 @@ enum kOkoAnimation {
 	kOkoAnimationSwim    = 1,
 	kOkoAnimationSink    = 8,
 	kOkoAnimationRaise   = 7,
-	kOkoAnimationBreathe = 2
+	kOkoAnimationBreathe = 2,
+	kOkoAnimationPick    = 3
 };
 
 static const int16 kOkoPositionX = 110;
@@ -78,6 +79,15 @@ void Oko::advance() {
 			}
 			break;
 
+		case kStatePick:
+			if (wasLastFrame) {
+				_level = 1;
+				setAnimation(kOkoAnimationSwim);
+				setPosition(kOkoPositionX, kLevelPositionX[_level]);
+				_state = kStateSwim;
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -87,8 +97,11 @@ void Oko::sink() {
 	if (_state != kStateSwim)
 		return;
 
-	if (_level >= (kLevelCount - 1))
+	if (_level >= (kLevelCount - 1)) {
+		setAnimation(kOkoAnimationPick);
+		_state = kStatePick;
 		return;
+	}
 
 	setAnimation(kOkoAnimationSink);
 	setPosition(kOkoPositionX, kLevelPositionX[_level]);
