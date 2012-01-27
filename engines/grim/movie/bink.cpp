@@ -72,7 +72,7 @@ bool BinkPlayer::loadFile(Common::String filename) {
 	uint32 tag = stream->readUint32BE();
 
 	Common::SeekableReadStream *bink = 0;
-	if (tag & 0xFFFFFF00 == MKTAG('B', 'I', 'K', 0))
+	if ((tag & 0xFFFFFF00) == MKTAG('B', 'I', 'K', 0))
 		bink = new Common::SeekableSubReadStream(stream, 0x200, stream->size(), DisposeAfterUse::YES);
 	else
 		bink = new Common::SeekableSubReadStream(stream, 0x400, stream->size(), DisposeAfterUse::YES);

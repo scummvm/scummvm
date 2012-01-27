@@ -29,8 +29,6 @@ namespace Common {
 
 namespace Grim {
 
-class Audio::RewindableAudioStream;
-
 /**
  * Takes an input stream containing SCX sound data and creates
  * an RewindableAudioStream from that.
