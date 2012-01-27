@@ -180,10 +180,12 @@ bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStr
 			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
 
 #ifdef SCUMM_BIG_ENDIAN
-		if (_format == 1)
+		if (_format == 1) {
+			uint16 *d = _data[i].getRawBuffer();
 			for (int j = 0; j < _width * _height; ++j) {
-				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
+				d[j] = SWAP_BYTES_16(d[j]);
 			}
+		}
 #endif
 	}
 
