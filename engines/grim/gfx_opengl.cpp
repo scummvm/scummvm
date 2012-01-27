@@ -82,6 +82,7 @@ GfxOpenGL::GfxOpenGL() {
 
 GfxOpenGL::~GfxOpenGL() {
 	delete[] _storedDisplay;
+
 	if (_emergFont && glIsList(_emergFont))
 		glDeleteLists(_emergFont, 128);
 
@@ -433,6 +434,7 @@ void GfxOpenGL::set3DMode() {
 
 void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
 	int *indices = (int*)face->_indexes;
+
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
@@ -440,7 +442,6 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 
 	glBegin(GL_TRIANGLES);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
-
 		int index = indices[j];
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
@@ -694,7 +695,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 
 			for (int y = 0; y < bitmap->_height; y += BITMAP_TEXTURE_SIZE) {
 				for (int x = 0; x < bitmap->_width; x += BITMAP_TEXTURE_SIZE) {
-					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
+					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width) ? (bitmap->_width - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type,
@@ -729,8 +730,9 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	if (bitmap->getFormat() == 1 && bitmap->getHasTransparency()) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	} else
+	} else {
 		glDisable(GL_BLEND);
+	}
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 
@@ -804,8 +806,7 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	}
 }
 
-struct FontUserData
-{
+struct FontUserData {
 	int size;
 	GLuint texture;
 };
@@ -824,20 +825,12 @@ void GfxOpenGL::createFont(Font *font) {
 	for (uint i = 0; i < dataSize; i++, texDataPtr += bpp, bitmapData++) {
 		byte pixel = *bitmapData;
 		if (pixel == 0x00) {
-			texDataPtr[0] = 0;
-			texDataPtr[1] = 0;
-			texDataPtr[2] = 0;
-			texDataPtr[3] = 0;
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = texDataPtr[3] = 0;
 		} else if (pixel == 0x80) {
-			texDataPtr[0] = 0;
-			texDataPtr[1] = 0;
-			texDataPtr[2] = 0;
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = 0;
 			texDataPtr[3] = 255;
 		} else if (pixel == 0xFF) {
-			texDataPtr[0] = 255;
-			texDataPtr[1] = 255;
-			texDataPtr[2] = 255;
-			texDataPtr[3] = 255;
+			texDataPtr[0] = texDataPtr[1] = texDataPtr[2] = texDataPtr[3] = 255;
 		}
 	}
 	int size = 0;
@@ -939,7 +932,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	const Color *color = text->getFGColor();
 	Font *font = text->getFont();
 
-	glColor3f(color->getRed()/255.f, color->getGreen()/255.f, color->getBlue()/255.f);
+	glColor3f(color->getRed() / 255.f, color->getGreen() / 255.f, color->getBlue() / 255.f);
 	FontUserData *userData = (FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
@@ -1321,8 +1314,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	delete[] data;
 }
 
-void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2)
-{
+void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, _screenWidth, _screenHeight, 0.0, 0.0, 1.0);
