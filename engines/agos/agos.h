@@ -198,6 +198,10 @@ public:
 #endif
 
 	virtual bool hasFile(const Common::String &name) const;
+	virtual int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &filename) const;
 
 private:
