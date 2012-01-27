@@ -198,7 +198,7 @@ public:
 #endif
 
 	virtual bool hasFile(const Common::String &name) const;
-	Common::SeekableReadStream *open(const Common::String &filename);
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &filename) const;
 
 private:
 	bool _fallBack;
