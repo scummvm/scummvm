@@ -118,6 +118,10 @@ Oko::State Oko::getState() const {
 	return _state;
 }
 
+bool Oko::isAtBottom() const {
+	return _level >= (kLevelCount - 1);
+}
+
 } // End of namespace Geisha
 
 } // End of namespace Gob

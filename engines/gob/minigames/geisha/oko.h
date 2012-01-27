@@ -56,6 +56,8 @@ public:
 
 	State getState() const;
 
+	bool isAtBottom() const;
+
 private:
 	Sound *_sound;
 	SoundDesc *_breathe;

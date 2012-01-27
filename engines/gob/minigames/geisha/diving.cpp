@@ -120,9 +120,12 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		if (mouseButtons == kMouseButtonsLeft)
 			shoot(mouseX, mouseY);
 
-		if      (key == kKeyDown)
+		if (key == kKeyDown) {
+			if (_oko->isAtBottom())
+				getPearl();
+
 			_oko->sink();
-		else if (key == kKeyUp)
+		} else if (key == kKeyUp)
 			_oko->raise();
 
 		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
@@ -510,6 +513,30 @@ void Diving::updatePearl() {
 	}
 }
 
+void Diving::getPearl() {
+	if (!_pearl.pearl->isVisible())
+		return;
+
+	// Make sure the pearl is within Oko's grasp
+
+	int16 x, y, width, height;
+	_pearl.pearl->getFramePosition(x, y);
+	_pearl.pearl->getFrameSize(width, height);
+
+	if ((x > 175) || ((x + width) < 168))
+		return;
+
+	// Remove the pearl
+	_pearl.pearl->setVisible(false);
+	_pearl.pearl->setPause(true);
+
+	// Add the pearl to our found pearls repository
+	if (_pearl.black)
+		foundBlackPearl();
+	else
+		foundWhitePearl();
+}
+
 void Diving::foundBlackPearl() {
 	_blackPearlCount++;
 
@@ -520,6 +547,8 @@ void Diving::foundBlackPearl() {
 		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 160, 179, 0);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 160, 186);
 	}
+
+	_vm->_sound->blasterPlay(&_soundBlackPearl, 1, 0);
 }
 
 void Diving::foundWhitePearl() {
@@ -531,6 +560,8 @@ void Diving::foundWhitePearl() {
 
 	_background->drawLayer(*_vm->_draw->_backSurface, 0, 2, x, 177, 0);
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, 177, x + 3, 180);
+
+	_vm->_sound->blasterPlay(&_soundWhitePearl, 1, 0);
 }
 
 void Diving::updateAnims() {
