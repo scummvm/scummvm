@@ -43,7 +43,7 @@
 
 #include "common/memstream.h"
 
-#define DEFAULT_CONFIG_FILE "residual.ini"
+#define DEFAULT_CONFIG_FILE "residualvm.ini"
 
 void OSystem_Win32::init() {
 	// Initialize File System Factory
@@ -170,7 +170,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 			}
 		}
 
-		strcat(configFile, "\\Residual");
+		strcat(configFile, "\\ResidualVM");
 		if (!CreateDirectory(configFile, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
 				error("Cannot create ResidualVM application data folder");

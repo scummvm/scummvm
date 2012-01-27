@@ -43,9 +43,9 @@
 
 
 #ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
+#define DEFAULT_SAVE_PATH "Documents/ResidualVM Savegames"
 #else
-#define DEFAULT_SAVE_PATH ".residual"
+#define DEFAULT_SAVE_PATH ".residualvm"
 #endif
 
 POSIXSaveFileManager::POSIXSaveFileManager() {

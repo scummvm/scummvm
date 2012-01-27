@@ -38,7 +38,7 @@ namespace Common {
 
 DECLARE_SINGLETON(ConfigManager);
 
-char const *const ConfigManager::kApplicationDomain = "residual";
+char const *const ConfigManager::kApplicationDomain = "residualvm";
 char const *const ConfigManager::kTransientDomain = "__TRANSIENT";
 
 #ifdef ENABLE_KEYMAPPER

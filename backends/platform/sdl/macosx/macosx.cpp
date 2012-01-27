@@ -43,7 +43,7 @@
 
 OSystem_MacOSX::OSystem_MacOSX()
 	:
-	OSystem_POSIX("Library/Preferences/Residual Preferences") {
+	OSystem_POSIX("Library/Preferences/ResidualVM Preferences") {
 }
 
 void OSystem_MacOSX::initBackend() {

@@ -28,7 +28,7 @@
 class OSystem_POSIX : public OSystem_SDL {
 public:
 	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_POSIX(Common::String baseConfigName = ".residualrc");
+	OSystem_POSIX(Common::String baseConfigName = ".residualvmrc");
 	virtual ~OSystem_POSIX() {}
 
 	virtual bool hasFeature(Feature f);

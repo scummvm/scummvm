@@ -125,7 +125,7 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 }
 
 Common::String OSystem::getDefaultConfigFileName() {
-	return "residual.ini";
+	return "residualvm.ini";
 }
 
 Common::String OSystem::getSystemLanguage() const {
