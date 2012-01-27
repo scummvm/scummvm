@@ -251,7 +251,7 @@ bool MoviePlayerDXA::load() {
 	}
 
 	Common::String videoName = Common::String::format("%s.dxa", baseName);
-	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))
@@ -415,7 +415,7 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 bool MoviePlayerSMK::load() {
 	Common::String videoName = Common::String::format("%s.smk", baseName);
 
-	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))
