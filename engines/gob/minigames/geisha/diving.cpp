@@ -134,6 +134,11 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 }
 
 void Diving::init() {
+	_vm->_sound->sampleLoad(&_soundShoot     , SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundBreathe   , SOUND_SND, "respir.snd");
+	_vm->_sound->sampleLoad(&_soundWhitePearl, SOUND_SND, "virtou.snd");
+	_vm->_sound->sampleLoad(&_soundBlackPearl, SOUND_SND, "trouve.snd");
+
 	_background = new DECFile(_vm, "tperle.dec"  , 320, 200);
 	_objects    = new ANIFile(_vm, "tperle.ani"  , 320);
 	_gui        = new ANIFile(_vm, "tperlcpt.ani", 320);
@@ -201,7 +206,7 @@ void Diving::init() {
 		_shot[i]->setMode(ANIObject::kModeOnce);
 	}
 
-	_oko = new Oko(*_okoAnim);
+	_oko = new Oko(*_okoAnim, *_vm->_sound, _soundBreathe);
 
 	Surface tmp(320, 103, 1);
 
@@ -226,11 +231,6 @@ void Diving::init() {
 	_anims.push_back(_oko);
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
-
-	_vm->_sound->sampleLoad(&_soundShoot     , SOUND_SND, "tirgim.snd");
-	_vm->_sound->sampleLoad(&_soundBreathe   , SOUND_SND, "respir.snd");
-	_vm->_sound->sampleLoad(&_soundWhitePearl, SOUND_SND, "virtou.snd");
-	_vm->_sound->sampleLoad(&_soundBlackPearl, SOUND_SND, "trouve.snd");
 }
 
 void Diving::deinit() {
