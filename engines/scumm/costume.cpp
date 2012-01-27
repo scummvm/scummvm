@@ -1280,8 +1280,6 @@ void C64CostumeLoader::loadCostume(int id) {
 	_frameOffsets = _baseptr + READ_LE_UINT16(ptr + 5);
 	_dataOffsets = ptr;
 	_animCmds = _baseptr + READ_LE_UINT16(ptr + 7);
-
-	_maxHeight = 0;
 }
 
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
@@ -1314,7 +1312,8 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 				continue;
 
 			// Store the limb frame number (clear the flipped status)
-			a->_cost.frame[limb]	= (limbFrameNumber & 0x7f);			// limb animation-frames ptr
+			a->_cost.frame[limb]	= (limbFrameNumber & 0x7f);
+
 			if( A->_limb_flipped[limb] != true )
 				a->_cost.start[limb] = 0xFFFF;
 

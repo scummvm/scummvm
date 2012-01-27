@@ -76,8 +76,6 @@ public:
 	
 	byte getFrame( ActorC64 *A );
 
-	int _maxHeight;
-
 protected:
 
 };
