@@ -40,6 +40,7 @@ class ANIObject;
 namespace Geisha {
 
 class EvilFish;
+class Oko;
 
 /** Geisha's "Diving" minigame. */
 class Diving {
@@ -107,7 +108,7 @@ private:
 	DECFile *_background;
 	ANIFile *_objects;
 	ANIFile *_gui;
-	ANIFile *_oko;
+	ANIFile *_okoAnim;
 
 	ANIObject *_water;
 	ANIObject *_lungs;
@@ -117,6 +118,8 @@ private:
 	ManagedDecorFish _decorFish[kDecorFishCount];
 	ManagedPlant     _plant[kPlantCount];
 	ManagedPearl     _pearl;
+
+	Oko *_oko;
 
 	ANIObject *_shot[kMaxShotCount];
 
