@@ -45,4 +45,4 @@ bool SCXTrack::openSound(Common::String soundName, Common::SeekableReadStream *f
 	return true;
 }
 
-} // end of namespace Grim 
+} // end of namespace Grim

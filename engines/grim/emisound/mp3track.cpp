@@ -73,4 +73,4 @@ bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *f
 #endif
 }
 
-} // end of namespace Grim 
+} // end of namespace Grim

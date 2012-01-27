@@ -52,4 +52,4 @@ void SoundTrack::stop() {
 	if (_handle)
 		g_system->getMixer()->stopHandle(*_handle);
 }
-} // end of namespace Grim 
+} // end of namespace Grim

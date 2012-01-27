@@ -218,4 +218,4 @@ VimaTrack::~VimaTrack() {
 	delete _desc;
 }
 
-} // end of namespace Grim 
+} // end of namespace Grim
