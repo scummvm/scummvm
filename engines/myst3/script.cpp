@@ -179,12 +179,15 @@ Script::Script(Myst3Engine *vm):
 	OP_2(151, moviePlayChangeNode,			kEvalValue,	kEvalValue										);
 	OP_2(152, moviePlayChangeNodeTrans,		kEvalValue,	kEvalValue										);
 	OP_2(153, lootAt,						kValue, 	kValue											);
-	OP_3(154, lootAtInXFrames,				kValue, 	kValue, 	kValue								);
+	OP_3(154, lootAtInXFrames,				kValue, 	kValue,		kValue								);
+	OP_1(155, lootAtMovieStart,				kEvalValue													);
+	OP_2(156, lootAtMovieStartInXFrames,	kEvalValue,	kValue											);
 	OP_4(157, cameraLimitMovement,			kValue,		kValue,		kValue,		kValue					);
 	OP_0(158, cameraFreeMovement																		);
 	OP_2(159, cameraLookAt,					kValue,		kValue											);
 	OP_1(160, cameraLookAtVar,				kVar														);
 	OP_1(161, cameraGetLookAt,				kVar														);
+	OP_1(162, lootAtMovieStartImmediate,	kEvalValue													);
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
@@ -849,7 +852,8 @@ void Script::varSetDistanceToZone(Context &c, const Opcode &cmd) {
 
 	float heading = _vm->_state->getLookAtHeading();
 	float pitch = _vm->_state->getLookAtPitch();
-	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch));
+	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[2], cmd.args[1], cmd.args[3], heading, pitch));
+
 	_vm->_state->setVar(cmd.args[0], distance);
 }
 
@@ -858,7 +862,7 @@ void Script::varSetMinDistanceToZone(Context &c, const Opcode &cmd) {
 
 	float heading = _vm->_state->getLookAtHeading();
 	float pitch = _vm->_state->getLookAtPitch();
-	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[1], cmd.args[2], cmd.args[3], heading, pitch));
+	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[2], cmd.args[1], cmd.args[3], heading, pitch));
 	if (distance < _vm->_state->getVar(cmd.args[0]))
 		_vm->_state->setVar(cmd.args[0], distance);
 }
@@ -1821,6 +1825,16 @@ void Script::cameraGetLookAt(Context &c, const Opcode &cmd) {
 	_vm->_state->setVar(cmd.args[0] + 1, (int32)heading);
 }
 
+void Script::lootAtMovieStartImmediate(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Look at movie %d start", cmd.op, cmd.args[0]);
+
+	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	float startPitch, startHeading;
+	_vm->getMovieLookAt(movieId, true, startPitch, startHeading);
+	_vm->_state->lookAt(startPitch, startHeading);
+}
+
 void Script::changeNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
@@ -1952,6 +1966,26 @@ void Script::lootAtInXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at %d, %d in %d frames", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], cmd.args[2]);
+}
+
+void Script::lootAtMovieStart(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Look at movie %d start", cmd.op, cmd.args[0]);
+
+	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	float startPitch, startHeading;
+	_vm->getMovieLookAt(movieId, true, startPitch, startHeading);
+	_vm->animateDirectionChange(startPitch, startHeading, 0);
+}
+
+void Script::lootAtMovieStartInXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Look at movie %d start in %d frames", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	float startPitch, startHeading;
+	_vm->getMovieLookAt(movieId, true, startPitch, startHeading);
+	_vm->animateDirectionChange(startPitch, startHeading, cmd.args[1]);
 }
 
 void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {

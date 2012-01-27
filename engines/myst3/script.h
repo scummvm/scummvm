@@ -230,11 +230,14 @@ private:
 	DECLARE_OPCODE(moviePlayChangeNodeTrans);
 	DECLARE_OPCODE(lootAt);
 	DECLARE_OPCODE(lootAtInXFrames);
+	DECLARE_OPCODE(lootAtMovieStart);
+	DECLARE_OPCODE(lootAtMovieStartInXFrames);
 	DECLARE_OPCODE(cameraLimitMovement);
 	DECLARE_OPCODE(cameraFreeMovement);
 	DECLARE_OPCODE(cameraLookAt);
 	DECLARE_OPCODE(cameraLookAtVar);
 	DECLARE_OPCODE(cameraGetLookAt);
+	DECLARE_OPCODE(lootAtMovieStartImmediate);
 	DECLARE_OPCODE(changeNode);
 	DECLARE_OPCODE(changeNodeRoom);
 	DECLARE_OPCODE(changeNodeRoomAge);
