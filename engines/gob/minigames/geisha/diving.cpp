@@ -31,6 +31,7 @@
 #include "gob/sound/sound.h"
 
 #include "gob/minigames/geisha/evilfish.h"
+#include "gob/minigames/geisha/oko.h"
 #include "gob/minigames/geisha/diving.h"
 
 namespace Gob {
@@ -55,10 +56,26 @@ const Diving::PlantLevel Diving::kPlantLevels[] = {
 
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
-	_objects(0), _gui(0), _oko(0), _lungs(0), _heart(0),
+	_objects(0), _gui(0), _okoAnim(0), _lungs(0), _heart(0),
 	_blackPearl(0), _whitePearlCount(0), _blackPearlCount(0) {
 
 	_blackPearl = new Surface(11, 8, 1);
+
+	for (uint i = 0; i < kEvilFishCount; i++)
+		_evilFish[i].evilFish = 0;
+
+	for (uint i = 0; i < kDecorFishCount; i++)
+		_decorFish[i].decorFish = 0;
+
+	for (uint i = 0; i < kPlantCount; i++)
+		_plant[i].plant = 0;
+
+	for (uint i = 0; i < kMaxShotCount; i++)
+		_shot[i] = 0;
+
+	_pearl.pearl = 0;
+
+	_oko = 0;
 }
 
 Diving::~Diving() {
@@ -103,6 +120,11 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		if (mouseButtons == kMouseButtonsLeft)
 			shoot(mouseX, mouseY);
 
+		if      (key == kKeyDown)
+			_oko->sink();
+		else if (key == kKeyUp)
+			_oko->raise();
+
 		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
 			break;
 	}
@@ -115,7 +137,7 @@ void Diving::init() {
 	_background = new DECFile(_vm, "tperle.dec"  , 320, 200);
 	_objects    = new ANIFile(_vm, "tperle.ani"  , 320);
 	_gui        = new ANIFile(_vm, "tperlcpt.ani", 320);
-	_oko        = new ANIFile(_vm, "tplonge.ani" , 320);
+	_okoAnim    = new ANIFile(_vm, "tplonge.ani" , 320);
 
 	_water = new ANIObject(*_objects);
 	_lungs = new ANIObject(*_gui);
@@ -179,6 +201,8 @@ void Diving::init() {
 		_shot[i]->setMode(ANIObject::kModeOnce);
 	}
 
+	_oko = new Oko(*_okoAnim);
+
 	Surface tmp(320, 103, 1);
 
 	_vm->_video->drawPackedSprite("tperlobj.cmp", tmp);
@@ -199,6 +223,7 @@ void Diving::init() {
 		_anims.push_back(_evilFish[i].evilFish);
 	for (int i = kPlantCount - 1; i >= 0; i--)
 		_anims.push_back(_plant[i].plant);
+	_anims.push_back(_oko);
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
 
@@ -248,11 +273,14 @@ void Diving::deinit() {
 	delete _pearl.pearl;
 	_pearl.pearl = 0;
 
+	delete _oko;
+	_oko = 0;
+
 	delete _heart;
 	delete _lungs;
 	delete _water;
 
-	delete _oko;
+	delete _okoAnim;
 	delete _gui;
 	delete _objects;
 	delete _background;
@@ -261,7 +289,7 @@ void Diving::deinit() {
 	_heart = 0;
 	_lungs = 0;
 
-	_oko        = 0;
+	_okoAnim    = 0;
 	_gui        = 0;
 	_objects    = 0;
 	_background = 0;
@@ -426,6 +454,9 @@ void Diving::updateDecorFish() {
 }
 
 void Diving::updatePlants() {
+	if (_oko->getState() == Oko::kStateBreathe)
+		return;
+
 	for (uint i = 0; i < kPlantCount; i++) {
 		ManagedPlant &plant = _plant[i];
 
@@ -459,6 +490,9 @@ void Diving::updatePlants() {
 
 void Diving::updatePearl() {
 	if (!_pearl.pearl->isVisible())
+		return;
+
+	if (_oko->getState() == Oko::kStateBreathe)
 		return;
 
 	// Move the pearl
