@@ -1557,8 +1557,18 @@ void ScummEngine::processActors() {
 			// 0x22B5
 			if (A->_miscflags & kActorMiscFlagHide)
 				continue;
-		}
 
+			// Sound
+			if (A->_moving  && _currentRoom != 1 && _currentRoom != 44) {
+				if (A->_cost.soundPos == 0)
+					A->_cost.soundCounter++;
+
+				// Is this the correct location?
+				// 0x073C
+				if (v0ActorTalkArray[A->_number] & 0x3F)
+					A->_cost.soundPos = (A->_cost.soundPos + 1) % 3;
+			}
+		}
 		// Draw and animate the actors, except those w/o a costume.
 		// Note: We could 'optimize' this a little bit by only putting
 		// actors with a costume into the _sortedActors array in the
@@ -1871,7 +1881,7 @@ void ActorC64::startAnimActor(int f) {
 	if( f == _standFrame )
 		setDirection( _facing );
 	else
-		animateActor( newDirToOldDir(_targetFacing) );
+		animateActor( newDirToOldDir(_facing) );
 }
 
 void Actor::animateActor(int anim) {
@@ -2766,17 +2776,6 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 
 void ActorC64::animateActor(int anim) {
 	int dir = -1;
-	
-	// Sound
-	if (_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
-		if (_cost.soundPos == 0)
-			_cost.soundCounter++;
-
-		// Is this the correct location?
-		// 0x073C
-		if (v0ActorTalkArray[_number] & 0x3F)
-			_cost.soundPos = (_cost.soundPos + 1) % 3;
-	}
 
 	switch( anim ) {
 		case 0x00:
