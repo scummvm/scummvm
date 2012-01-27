@@ -47,7 +47,7 @@ void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
 }
 #endif
 
-bool ArchiveMan::hasFile(const Common::String &name) {
+bool ArchiveMan::hasFile(const Common::String &name) const {
 	if (_fallBack && SearchMan.hasFile(name))
 		return true;
 

@@ -197,7 +197,7 @@ public:
 	void registerArchive(const Common::String &filename, int priority);
 #endif
 
-	bool hasFile(const Common::String &name);
+	virtual bool hasFile(const Common::String &name) const;
 	Common::SeekableReadStream *open(const Common::String &filename);
 
 private:
