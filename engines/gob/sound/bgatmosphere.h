@@ -24,6 +24,7 @@
 #define GOB_SOUND_BGATMOSPHERE_H
 
 #include "audio/mixer.h"
+#include "common/array.h"
 #include "common/mutex.h"
 #include "common/random.h"
 

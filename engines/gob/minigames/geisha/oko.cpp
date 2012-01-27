@@ -20,6 +20,8 @@
  *
  */
 
+#include "gob/sound/sound.h"
+
 #include "gob/minigames/geisha/oko.h"
 
 namespace Gob {
@@ -40,7 +42,9 @@ static const uint kLevelCount = 3;
 static const int16 kLevelPositionX[kLevelCount] = { 44, 84, 124 };
 
 
-Oko::Oko(const ANIFile &ani) : ANIObject(ani), _state(kStateEnter), _level(0) {
+Oko::Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe) :
+	ANIObject(ani), _sound(&sound), _breathe(&breathe), _state(kStateEnter), _level(0) {
+
 	setAnimation(kOkoAnimationEnter);
 	setVisible(true);
 }
@@ -62,9 +66,11 @@ void Oko::advance() {
 			}
 			break;
 
+		case kStateBreathe:
+			if ((getFrame() == 6) || (getFrame() == 23))
+			_sound->blasterPlay(_breathe, 1, 0);
 		case kStateSink:
 		case kStateRaise:
-		case kStateBreathe:
 			if (wasLastFrame) {
 				setAnimation(kOkoAnimationSwim);
 				setPosition(kOkoPositionX, kLevelPositionX[_level]);

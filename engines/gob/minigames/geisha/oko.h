@@ -27,6 +27,9 @@
 
 namespace Gob {
 
+class Sound;
+class SoundDesc;
+
 namespace Geisha {
 
 /** Oko, the person you control, in Geisha's "Diving" minigame. */
@@ -40,7 +43,7 @@ public:
 		kStateBreathe
 	};
 
-	Oko(const ANIFile &ani);
+	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
 	~Oko();
 
 	/** Advance the animation to the next frame. */
@@ -54,6 +57,9 @@ public:
 	State getState() const;
 
 private:
+	Sound *_sound;
+	SoundDesc *_breathe;
+
 	State _state;
 
 	uint8 _level;
