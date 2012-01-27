@@ -53,6 +53,10 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(71, FrameCountdown, true)
 
+	VAR(84, InputMousePressed, false)
+	VAR(88, InputEscapePressed, false)
+	VAR(90, InputSpacePressed, false)
+
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)
@@ -262,6 +266,21 @@ void GameState::setVar(uint16 var, int32 value) {
 bool GameState::evaluate(int16 condition) {
 	uint16 unsignedCond = abs(condition);
 	uint16 var = unsignedCond & 2047;
+
+	switch (var) {
+	case 84:
+		setInputMousePressed(_vm->inputValidatePressed());
+		break;
+	case 88:
+		setInputEscapePressed(_vm->inputEscapePressed());
+		break;
+	case 90:
+		setInputSpacePressed(_vm->inputSpacePressed());
+		break;
+	default:
+		break;
+	}
+
 	int32 varValue = getVar(var);
 	int32 targetValue = (unsignedCond >> 11) - 1;
 

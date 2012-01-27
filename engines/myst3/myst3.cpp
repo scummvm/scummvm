@@ -58,6 +58,8 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_rnd(0), _sound(0), _shouldQuit(false),
+		_inputSpacePressed(0), _inputEnterPressed(0),
+		_inputEscapePressed(0),
 		_menuAction(0), _projectorBackground(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -301,6 +303,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
+				_inputEscapePressed = true;
+
 				// Open main menu
 				if (_cursor->isVisible()) {
 					if (_state->getLocationRoom() != 901)
@@ -309,6 +313,13 @@ void Myst3Engine::processInput(bool lookOnly) {
 						_state->setMenuEscapePressed(1);
 				}
 				break;
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				_inputEnterPressed = true;
+				break;
+			case Common::KEYCODE_SPACE:
+				_inputSpacePressed = true;
+				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
 					_system->lockMouse(false);
@@ -316,6 +327,24 @@ void Myst3Engine::processInput(bool lookOnly) {
 					_console->onFrame();
 					_system->lockMouse(true);
 				}
+				break;
+			default:
+				break;
+			}
+		} else if (event.type == Common::EVENT_KEYUP) {
+			// Save file name input
+			_menu->handleInput(event.kbd);
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				_inputEscapePressed = false;
+				break;
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				_inputEnterPressed = false;
+				break;
+			case Common::KEYCODE_SPACE:
+				_inputSpacePressed = false;
 				break;
 			default:
 				break;
@@ -538,6 +567,8 @@ void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID
 		ageID = _state->getLocationAge();
 
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
+
+	if (!nodeData) return;
 
 	for (uint j = 0; j < nodeData->backgroundSoundScripts.size(); j++) {
 		if (_state->evaluate(nodeData->backgroundSoundScripts[j].condition)) {
@@ -973,6 +1004,20 @@ void Myst3Engine::playMovieFullFrame(uint16 movie) {
 		getMovieLookAt(movie, false, endPitch, endHeading);
 		_state->lookAt(endPitch, endHeading);
 	}
+}
+
+bool Myst3Engine::inputValidatePressed() {
+	return _inputEnterPressed ||
+			_inputSpacePressed ||
+			getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+}
+
+bool Myst3Engine::inputEscapePressed() {
+	return _inputEscapePressed;
+}
+
+bool Myst3Engine::inputSpacePressed() {
+	return _inputSpacePressed;
 }
 
 } // end of namespace Myst3

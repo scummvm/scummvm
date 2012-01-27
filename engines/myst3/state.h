@@ -81,6 +81,10 @@ public:
 
 	DECLARE_VAR(71, FrameCountdown)
 
+	DECLARE_VAR(84, InputMousePressed)
+	DECLARE_VAR(88, InputEscapePressed)
+	DECLARE_VAR(90, InputSpacePressed)
+
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)

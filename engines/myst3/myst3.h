@@ -124,6 +124,10 @@ public:
 
 	void processInput(bool lookOnly);
 	void drawFrame();
+
+	bool inputValidatePressed();
+	bool inputEscapePressed();
+	bool inputSpacePressed();
 private:
 	OSystem *_system;
 	Console *_console;
@@ -140,6 +144,10 @@ private:
 
 	bool _shouldQuit;
 	uint16 _menuAction;
+
+	bool _inputSpacePressed;
+	bool _inputEnterPressed;
+	bool _inputEscapePressed;
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();
