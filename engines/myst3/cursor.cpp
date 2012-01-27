@@ -152,7 +152,8 @@ void Cursor::draw() {
 
 void Cursor::setVisible(bool show) {
 	if (show)
-		_hideLevel = MAX(0, --_hideLevel);
+		if (--_hideLevel < 0)
+			_hideLevel = 0;
 	else
 		_hideLevel++;
 }
