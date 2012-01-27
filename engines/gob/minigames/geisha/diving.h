@@ -152,6 +152,8 @@ private:
 	void enterPlant(ManagedPlant &plant, int16 prevPlantX);
 	void enterPearl(int16 x);
 
+	void getPearl();
+
 	void foundBlackPearl();
 	void foundWhitePearl();
 
