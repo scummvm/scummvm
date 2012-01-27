@@ -1040,24 +1040,25 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
 
-	int step = 0;
-	for (int y = 0; y < _gameHeight; y++) {
-		for (int x = 0; x < _gameWidth; x++) {
-			uint8 r, g, b;
-			_zb->pbuf.getRGBAt(y * _gameWidth + x, r, g, b);
-			uint32 color = (r + g + b) / 3;
-			_zb->pbuf.setPixelAt(step++, color, color,color);
-		}
-	}
+	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
+	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
 
-	float step_x = 640.0f / w;
-	float step_y = 480.0f / h;
-	step = 0;
-	for (float y = 0; y <= _gameHeight; y += step_y) {
-		for (float x = 0; x <= _gameWidth; x += step_x) {
-			uint8 r, g, b;
-			_zb->pbuf.getRGBAt((int)y * _gameWidth + (int)x, r, g, b);
-			buffer.setPixelAt(step++, r, g, b);
+	for (int j = 0; j < j1; j++) {
+		for (int i = 0; i < i1; i++) {
+			int x0 = i * _screenWidth / w;
+			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
+			int y0 = j * _screenHeight / h;
+			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
+			uint32 color = 0;
+			for (int y = y0; y < y1; y++) {
+				for (int x = x0; x < x1; x++) {
+					uint8 lr, lg, lb;
+					_zb->pbuf.getRGBAt(y * _screenWidth + x, lr, lg, lb);
+					color += (lr + lg + lb) / 3;
+				}
+			}
+			color /= (x1 - x0) * (y1 - y0);
+			buffer.setPixelAt(j * w + i, color, color, color);
 		}
 	}
 

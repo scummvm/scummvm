@@ -1213,24 +1213,25 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
 	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
 
-	int step = 0;
-	for (int y = 0; y <= 479; y++) {
-		for (int x = 0; x <= 639; x++) {
-			uint8 r, g, b;
-			src.getRGBAt(y * 640 + x, r, g, b);
-			uint32 color = (r + g + b) / 3;
-			src.setPixelAt(step++, color, color, color);
-		}
-	}
+	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
+	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
 
-	float step_x = (float)_screenWidth / w;
-	float step_y = (float)_screenHeight / h;
-	step = 0;
-	uint8 r, g, b;
-	for (float y = 479; y >= 0; y -= step_y) {
-		for (float x = 0; x < 639; x += step_x) {
-			src.getRGBAt((int)y * _screenWidth + (int)x, r, g, b);
-			buffer.setPixelAt(step++, r, g, b);
+	for (int j = 0; j < j1; j++) {
+		for (int i = 0; i < i1; i++) {
+			int x0 = i * _screenWidth / w;
+			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
+			int y0 = j * _screenHeight / h;
+			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
+			uint32 color = 0;
+			for (int y = y0; y < y1; y++) {
+				for (int x = x0; x < x1; x++) {
+					uint8 lr, lg, lb;
+					src.getRGBAt(y * _screenWidth + x, lr, lg, lb);
+					color += (lr + lg + lb) / 3;
+				}
+			}
+			color /= (x1 - x0) * (y1 - y0);
+			buffer.setPixelAt((h - j - 1) * w + i, color, color, color);
 		}
 	}
 
@@ -1275,6 +1276,10 @@ void GfxOpenGL::dimScreen() {
 }
 
 void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
+	x = (int)(x * _scaleW);
+	yReal = (int)(yReal *_scaleH);
+	w = (int)(w * _scaleW);
+	h = (int)(h * _scaleH);
 	uint32 *data = new uint32[w * h];
 	int y = _screenHeight - yReal;
 
