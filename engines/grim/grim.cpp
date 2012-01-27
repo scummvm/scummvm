@@ -646,6 +646,7 @@ void GrimEngine::mainLoop() {
 
 			EngineMode mode = getMode();
 
+			_savegameFileName = "";
 			savegameSave();
 			clearPools();
 
