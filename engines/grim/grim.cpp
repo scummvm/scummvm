@@ -819,19 +819,15 @@ void GrimEngine::restoreGRIM() {
 	_previousMode = (EngineMode)_savedState->readLEUint32();
 
 	// Actor stuff
-	int32 id = _savedState->readLEUint32();
+	int32 id = _savedState->readLESint32();
 	if (id != 0) {
 		_selectedActor = Actor::getPool().getObject(id);
 	}
-	_talkingActor = Actor::getPool().getObject(_savedState->readLEUint32());
+	_talkingActor = Actor::getPool().getObject(_savedState->readLESint32());
 
 	//TextObject stuff
-	//SAVECHANGE: Remove the next two lines with the next save version
-	_savedState->readLESint32();
-	_savedState->readByte();
-
 	_sayLineDefaults.setFGColor(_savedState->readColor());
-	_sayLineDefaults.setFont(Font::getPool().getObject(_savedState->readLEUint32()));
+	_sayLineDefaults.setFont(Font::getPool().getObject(_savedState->readLESint32()));
 	_sayLineDefaults.setHeight(_savedState->readLESint32());
 	_sayLineDefaults.setJustify(_savedState->readLESint32());
 	_sayLineDefaults.setWidth(_savedState->readLESint32());
@@ -840,7 +836,7 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
 
 	// Set stuff
-	_currSet = Set::getPool().getObject(_savedState->readLEUint32());
+	_currSet = Set::getPool().getObject(_savedState->readLESint32());
 
 	_savedState->endSection();
 }
@@ -952,23 +948,19 @@ void GrimEngine::saveGRIM() {
 
 	//Actor stuff
 	if (_selectedActor) {
-		_savedState->writeLEUint32(_selectedActor->getId());
+		_savedState->writeLESint32(_selectedActor->getId());
 	} else {
-		_savedState->writeLEUint32(0);
+		_savedState->writeLESint32(0);
 	}
 	if (_talkingActor) {
-		_savedState->writeLEUint32(_talkingActor->getId());
+		_savedState->writeLESint32(_talkingActor->getId());
 	} else {
-		_savedState->writeLEUint32(0);
+		_savedState->writeLESint32(0);
 	}
 
 	//TextObject stuff
-	//SAVECHANGE: Remove the next two lines with the next save version
-	_savedState->writeLESint32(0);
-	_savedState->writeByte(0);
-
 	_savedState->writeColor(_sayLineDefaults.getFGColor());
-	_savedState->writeLEUint32(_sayLineDefaults.getFont()->getId());
+	_savedState->writeLESint32(_sayLineDefaults.getFont()->getId());
 	_savedState->writeLESint32(_sayLineDefaults.getHeight());
 	_savedState->writeLESint32(_sayLineDefaults.getJustify());
 	_savedState->writeLESint32(_sayLineDefaults.getWidth());
@@ -977,7 +969,7 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLESint32(_sayLineDefaults.getDuration());
 
 	//Set stuff
-	_savedState->writeLEUint32(_currSet->getId());
+	_savedState->writeLESint32(_currSet->getId());
 
 	_savedState->endSection();
 }

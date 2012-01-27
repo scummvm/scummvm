@@ -81,14 +81,14 @@ void Iris::update(int frameTime) {
 void Iris::saveState(SaveGame *state) const {
 	state->beginSection('IRIS');
 
-	state->writeLEBool(_playing);
+	state->writeBool(_playing);
 	state->writeLEUint32((uint32)_direction);
-	state->writeLEUint32(_x1);
-	state->writeLEUint32(_y1);
-	state->writeLEUint32(_x2);
-	state->writeLEUint32(_y2);
-	state->writeLEUint32(_lenght);
-	state->writeLEUint32(_currTime);
+	state->writeLESint32(_x1);
+	state->writeLESint32(_y1);
+	state->writeLESint32(_x2);
+	state->writeLESint32(_y2);
+	state->writeLESint32(_lenght);
+	state->writeLESint32(_currTime);
 
 	state->endSection();
 }
@@ -96,14 +96,14 @@ void Iris::saveState(SaveGame *state) const {
 void Iris::restoreState(SaveGame *state) {
 	state->beginSection('IRIS');
 
-	_playing = state->readLEBool();
+	_playing = state->readBool();
 	_direction = (Direction)state->readLEUint32();
-	_x1 = state->readLEUint32();
-	_y1 = state->readLEUint32();
-	_x2 = state->readLEUint32();
-	_y2 = state->readLEUint32();
-	_lenght = state->readLEUint32();
-	_currTime = state->readLEUint32();
+	_x1 = state->readLESint32();
+	_y1 = state->readLESint32();
+	_x2 = state->readLESint32();
+	_y2 = state->readLESint32();
+	_lenght = state->readLESint32();
+	_currTime = state->readLESint32();
 
 	state->endSection();
 }

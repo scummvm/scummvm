@@ -47,7 +47,7 @@ void Sector::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_numVertices);
 	savedState->writeLESint32(_id);
 	savedState->writeLESint32(_type);
-	savedState->writeLESint32(_visible);
+	savedState->writeBool(_visible);
 	savedState->writeFloat(_height);
 
 	savedState->writeString(_name);
@@ -59,7 +59,7 @@ void Sector::saveState(SaveGame *savedState) const {
 	savedState->writeVector3d(_normal);
 
 	savedState->writeFloat(_shrinkRadius);
-	savedState->writeLESint32(_invalid);
+	savedState->writeBool(_invalid);
 	if (_shrinkRadius != 0.f && !_invalid) {
 		for (int i = 0; i < _numVertices + 1; ++i) {
 			savedState->writeVector3d(_origVertices[i]);
@@ -71,7 +71,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 	_numVertices = savedState->readLESint32();
 	_id          = savedState->readLESint32();
 	_type        = (SectorType)savedState->readLESint32();
-	_visible     = savedState->readLESint32();
+	_visible     = savedState->readBool();
 	_height      = savedState->readFloat();
 
 	_name 		 = savedState->readString();
@@ -84,7 +84,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 	_normal = savedState->readVector3d();
 
 	_shrinkRadius = savedState->readFloat();
-	_invalid = savedState->readLESint32();
+	_invalid = savedState->readBool();
 	if (_shrinkRadius != 0.f && !_invalid) {
 		_origVertices = new Math::Vector3d[_numVertices + 1];
 		for (int i = 0; i < _numVertices + 1; ++i) {

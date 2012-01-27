@@ -53,8 +53,8 @@ void GfxBase::saveState(SaveGame *state) {
 	state->writeByte(r),
 	state->writeByte(g),
 	state->writeByte(b),
-	state->writeLEBool(_renderBitmaps);
-	state->writeLEBool(_renderZBitmaps);
+	state->writeBool(_renderBitmaps);
+	state->writeBool(_renderZBitmaps);
 
 	state->endSection();
 }
@@ -67,8 +67,8 @@ void GfxBase::restoreState(SaveGame *state) {
 	g = state->readByte();
 	b = state->readByte();
 	setShadowColor(r, g ,b);
-	_renderBitmaps = state->readLEBool();
-	_renderZBitmaps = state->readLEBool();
+	_renderBitmaps = state->readBool();
+	_renderZBitmaps = state->readBool();
 
 	state->endSection();
 }

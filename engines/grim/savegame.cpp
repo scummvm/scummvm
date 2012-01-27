@@ -201,14 +201,8 @@ byte SaveGame::readByte() {
 	return data;
 }
 
-bool SaveGame::readLEBool() {
-	if (_saving)
-		error("SaveGame::readBlock called when storing a savegame");
-	if (_currentSection == 0)
-		error("Tried to read a block without starting a section");
-	uint32 data = READ_LE_UINT32(&_sectionBuffer[_sectionPtr]);
-	_sectionPtr += 4;
-	return data != 0;
+bool SaveGame::readBool() {
+	return readByte() != 0;
 }
 
 void SaveGame::checkAlloc(int size) {
@@ -269,16 +263,8 @@ void SaveGame::writeLESint32(int32 data) {
 	_sectionSize += 4;
 }
 
-void SaveGame::writeLEBool(bool data) {
-	if (!_saving)
-		error("SaveGame::writeBlock called when restoring a savegame");
-	if (_currentSection == 0)
-		error("Tried to write a block without starting a section");
-
-	checkAlloc(4);
-
-	WRITE_LE_UINT32(&_sectionBuffer[_sectionSize], (uint32)data);
-	_sectionSize += 4;
+void SaveGame::writeBool(bool data) {
+	writeByte(data);
 }
 
 void SaveGame::writeByte(byte data) {

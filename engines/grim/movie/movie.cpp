@@ -171,8 +171,8 @@ void MoviePlayer::saveState(SaveGame *state) {
 
 	state->writeLESint32(_frame);
 	state->writeFloat(_movieTime);
-	state->writeLESint32(_videoFinished);
-	state->writeLESint32(_videoLooping);
+	state->writeBool(_videoFinished);
+	state->writeBool(_videoLooping);
 
 	state->writeLESint32(_x);
 	state->writeLESint32(_y);
@@ -187,8 +187,8 @@ void MoviePlayer::restoreState(SaveGame *state) {
 
 	int32 frame = state->readLESint32();
 	float movieTime = state->readFloat();
-	bool videoFinished = state->readLESint32();
-	bool videoLooping = state->readLESint32();
+	bool videoFinished = state->readBool();
+	bool videoLooping = state->readBool();
 
 	int x = state->readLESint32();
 	int y = state->readLESint32();

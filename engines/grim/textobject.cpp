@@ -78,19 +78,17 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_numberLines);
 	state->writeLESint32(_duration);
 
-	//SAVECHANGE: Remove the next line with the next save version
-	state->writeLESint32(0);
-	state->writeLESint32(_blastDraw);
-	state->writeLESint32(_isSpeech);
+	state->writeBool(_blastDraw);
+	state->writeBool(_isSpeech);
 	state->writeLESint32(_elapsedTime);
 
-	state->writeLEUint32(_font->getId());
+	state->writeLESint32(_font->getId());
 
 	state->writeString(_textID);
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-	_fgColor = state->readLEUint32();
+	_fgColor = state->readColor();
 
 	_x            = state->readLESint32();
 	_y            = state->readLESint32();
@@ -100,13 +98,11 @@ bool TextObject::restoreState(SaveGame *state) {
 	_numberLines  = state->readLESint32();
 	_duration     = state->readLESint32();
 
-	//SAVECHANGE: Remove the next line with the next save version
-	state->readLESint32();
-	_blastDraw    = state->readLESint32();
-	_isSpeech     = state->readLESint32();
+	_blastDraw    = state->readBool();
+	_isSpeech     = state->readBool();
 	_elapsedTime  = state->readLESint32();
 
-	_font = Font::getPool().getObject(state->readLEUint32());
+	_font = Font::getPool().getObject(state->readLESint32());
 
 	_textID = state->readString();
 

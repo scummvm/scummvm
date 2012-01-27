@@ -76,29 +76,29 @@ void ObjectState::draw() {
 }
 
 void ObjectState::saveState(SaveGame *savedState) const {
-	savedState->writeLESint32(_visibility);
-	savedState->writeLEUint32(_setupID);
-	savedState->writeLEUint32(_pos);
+	savedState->writeBool(_visibility);
+	savedState->writeLESint32(_setupID);
+	savedState->writeLESint32(_pos);
 
 	//_bitmap
 	if (_bitmap) {
 		savedState->writeLESint32(_bitmap->getId());
 	} else {
-		savedState->writeLEUint32(0);
+		savedState->writeLESint32(0);
 	}
 
 	//_zbitmap
 	if (_zbitmap) {
 		savedState->writeLESint32(_zbitmap->getId());
 	} else {
-		savedState->writeLEUint32(0);
+		savedState->writeLESint32(0);
 	}
 }
 
 bool ObjectState::restoreState(SaveGame *savedState) {
-	_visibility = savedState->readLEUint32();
-	_setupID    = savedState->readLEUint32();
-	_pos        = (Position) savedState->readLEUint32();
+	_visibility = savedState->readBool();
+	_setupID    = savedState->readLESint32();
+	_pos        = (Position) savedState->readLESint32();
 
 	_bitmap = Bitmap::getPool().getObject(savedState->readLESint32());
 	_zbitmap = Bitmap::getPool().getObject(savedState->readLESint32());

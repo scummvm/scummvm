@@ -48,12 +48,12 @@ public:
 	uint32 readLEUint32();
 	uint16 readLEUint16();
 	int32 readLESint32();
-	bool readLEBool();
+	bool readBool();
 	byte readByte();
 	void writeLEUint32(uint32 data);
 	void writeLEUint16(uint16 data);
 	void writeLESint32(int32 data);
-	void writeLEBool(bool data);
+	void writeBool(bool data);
 	void writeByte(byte data);
 	void writeString(const Common::String &string);
 

@@ -72,11 +72,11 @@ int MeshComponent::update(uint /*time*/) {
 }
 
 void MeshComponent::saveState(SaveGame *state) {
-	state->writeLESint32(_node->_meshVisible);
+	state->writeBool(_node->_meshVisible);
 }
 
 void MeshComponent::restoreState(SaveGame *state) {
-	_node->_meshVisible = state->readLESint32();
+	_node->_meshVisible = state->readBool();
 }
 
 } // end of namespace Grim

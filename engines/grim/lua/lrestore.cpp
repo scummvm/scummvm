@@ -532,7 +532,7 @@ void lua_Restore(SaveGame *savedState) {
 				task->base = savedState->readLESint32();
 				task->some_base = savedState->readLESint32();
 				task->some_results = savedState->readLESint32();
-				task->some_flag = savedState->readLESint32();
+				task->some_flag = savedState->readBool();
 				int32 pcOffset = savedState->readLESint32();
 				task->pc = task->tf->code + pcOffset;
 				task->aux = savedState->readLESint32();
@@ -550,8 +550,8 @@ void lua_Restore(SaveGame *savedState) {
 				state->some_task = state->some_task->next;
 		}
 
-		state->updated = savedState->readLESint32();
-		state->paused = savedState->readLESint32();
+		state->updated = savedState->readBool();
+		state->paused = savedState->readBool();
 		state->state_counter1 = savedState->readLESint32();
 		state->state_counter2 = savedState->readLESint32();
 
@@ -580,7 +580,7 @@ void lua_Restore(SaveGame *savedState) {
 			state->Cblocks[i].num = savedState->readLESint32();
 		}
 
-		state->id = savedState->readLESint32();
+		state->id = savedState->readLEUint32();
 		restoreObjectValue(&state->taskFunc, savedState);
 		if (state->taskFunc.ttype == LUA_T_PROTO || state->taskFunc.ttype == LUA_T_CPROTO)
 			recreateObj(&state->taskFunc);

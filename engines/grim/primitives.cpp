@@ -50,19 +50,19 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 	savedState->writeLEUint32(_filled);
 
 	if (_bitmap) {
-		savedState->writeLEUint32(_bitmap->getId());
+		savedState->writeLESint32(_bitmap->getId());
 	} else {
-		savedState->writeLEUint32(0);
+		savedState->writeLESint32(0);
 	}
 
-	savedState->writeLEUint32(_p1.x);
-	savedState->writeLEUint32(_p1.y);
-	savedState->writeLEUint32(_p2.x);
-	savedState->writeLEUint32(_p2.y);
-	savedState->writeLEUint32(_p3.x);
-	savedState->writeLEUint32(_p3.y);
-	savedState->writeLEUint32(_p4.x);
-	savedState->writeLEUint32(_p4.y);
+	savedState->writeLEUint16(_p1.x);
+	savedState->writeLEUint16(_p1.y);
+	savedState->writeLEUint16(_p2.x);
+	savedState->writeLEUint16(_p2.y);
+	savedState->writeLEUint16(_p3.x);
+	savedState->writeLEUint16(_p3.y);
+	savedState->writeLEUint16(_p4.x);
+	savedState->writeLEUint16(_p4.y);
 }
 
 bool PrimitiveObject::restoreState(SaveGame *savedState) {
@@ -72,16 +72,16 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 
 	_filled = savedState->readLEUint32();
 
-	_bitmap = Bitmap::getPool().getObject(savedState->readLEUint32());
+	_bitmap = Bitmap::getPool().getObject(savedState->readLESint32());
 
-	_p1.x = savedState->readLEUint32();
-	_p1.y = savedState->readLEUint32();
-	_p2.x = savedState->readLEUint32();
-	_p2.y = savedState->readLEUint32();
-	_p3.x = savedState->readLEUint32();
-	_p3.y = savedState->readLEUint32();
-	_p4.x = savedState->readLEUint32();
-	_p4.y = savedState->readLEUint32();
+	_p1.x = savedState->readLEUint16();
+	_p1.y = savedState->readLEUint16();
+	_p2.x = savedState->readLEUint16();
+	_p2.y = savedState->readLEUint16();
+	_p3.x = savedState->readLEUint16();
+	_p3.y = savedState->readLEUint16();
+	_p4.x = savedState->readLEUint16();
+	_p4.y = savedState->readLEUint16();
 
 	return true;
 }

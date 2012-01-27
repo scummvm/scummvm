@@ -105,12 +105,12 @@ void SpriteComponent::reset() {
 }
 
 void SpriteComponent::saveState(SaveGame *state) {
-	state->writeLEBool(_sprite->_visible);
+	state->writeBool(_sprite->_visible);
 	state->writeLESint32(_sprite->_material->getActiveTexture());
 }
 
 void SpriteComponent::restoreState(SaveGame *state) {
-	_sprite->_visible = state->readLEBool();
+	_sprite->_visible = state->readBool();
 	_sprite->_material->setActiveTexture(state->readLESint32());
 }
 

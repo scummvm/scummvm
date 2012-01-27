@@ -198,31 +198,31 @@ void Set::saveState(SaveGame *savedState) const {
 	for (int i = 0; i < _numCmaps; ++i) {
 		savedState->writeString(_cmaps[i]->getFilename());
 	}
-	savedState->writeLEUint32(_currSetup - _setups); // current setup id
-	savedState->writeLEUint32(_locked);
-	savedState->writeLEUint32(_enableLights);
-	savedState->writeLEUint32(_minVolume);
-	savedState->writeLEUint32(_maxVolume);
+	savedState->writeLEUint32((uint32)(_currSetup - _setups)); // current setup id
+	savedState->writeBool(_locked);
+	savedState->writeBool(_enableLights);
+	savedState->writeLESint32(_minVolume);
+	savedState->writeLESint32(_maxVolume);
 
 	savedState->writeLEUint32(_states.size());
 	for (StateList::const_iterator i = _states.begin(); i != _states.end(); ++i) {
-		savedState->writeLEUint32((*i)->getId());
+		savedState->writeLESint32((*i)->getId());
 	}
 
 	//Setups
-	savedState->writeLEUint32(_numSetups);
+	savedState->writeLESint32(_numSetups);
 	for (int i = 0; i < _numSetups; ++i) {
 		_setups[i].saveState(savedState);
 	}
 
 	//Sectors
-	savedState->writeLEUint32(_numSectors);
+	savedState->writeLESint32(_numSectors);
 	for (int i = 0; i < _numSectors; ++i) {
 		_sectors[i]->saveState(savedState);
 	}
 
 	//Lights
-	savedState->writeLEUint32(_numLights);
+	savedState->writeLESint32(_numLights);
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].saveState(savedState);
     }
@@ -238,21 +238,21 @@ bool Set::restoreState(SaveGame *savedState) {
 	}
 
 	int32 currSetupId = savedState->readLEUint32();
-	_locked           = savedState->readLEUint32();
-	_enableLights     = savedState->readLEUint32();
-	_minVolume        = savedState->readLEUint32();
-	_maxVolume        = savedState->readLEUint32();
+	_locked           = savedState->readBool();
+	_enableLights     = savedState->readBool();
+	_minVolume        = savedState->readLESint32();
+	_maxVolume        = savedState->readLESint32();
 
-	_numObjectStates = savedState->readLEUint32();
+	_numObjectStates = savedState->readLESint32();
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
-		int32 id = savedState->readLEUint32();
+		int32 id = savedState->readLESint32();
 		ObjectState *o = ObjectState::getPool().getObject(id);
 		_states.push_back(o);
 	}
 
 	//Setups
-	_numSetups = savedState->readLEUint32();
+	_numSetups = savedState->readLESint32();
 	_setups = new Setup[_numSetups];
 	_currSetup = _setups + currSetupId;
 	for (int i = 0; i < _numSetups; ++i) {
@@ -260,7 +260,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	}
 
     //Sectors
-	_numSectors = savedState->readLEUint32();
+	_numSectors = savedState->readLESint32();
 	if (_numSectors > 0) {
 		_sectors = new Sector*[_numSectors];
 		for (int i = 0; i < _numSectors; ++i) {
@@ -271,7 +271,7 @@ bool Set::restoreState(SaveGame *savedState) {
 		_sectors = NULL;
 	}
 
-	_numLights = savedState->readLEUint32();
+	_numLights = savedState->readLESint32();
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].restoreState(savedState);;
@@ -360,16 +360,16 @@ void Set::Setup::saveState(SaveGame *savedState) const {
 
 	//bkgndBm
 	if (_bkgndBm) {
-		savedState->writeLEUint32(_bkgndBm->getId());
+		savedState->writeLESint32(_bkgndBm->getId());
 	} else {
-		savedState->writeLEUint32(0);
+		savedState->writeLESint32(0);
 	}
 
 	//bkgndZBm
 	if (_bkgndZBm) {
-		savedState->writeLEUint32(_bkgndZBm->getId());
+		savedState->writeLESint32(_bkgndZBm->getId());
 	} else {
-		savedState->writeLEUint32(0);
+		savedState->writeLESint32(0);
 	}
 
 	savedState->writeVector3d(_pos);
@@ -383,8 +383,8 @@ void Set::Setup::saveState(SaveGame *savedState) const {
 bool Set::Setup::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 
-	_bkgndBm = Bitmap::getPool().getObject(savedState->readLEUint32());
-	_bkgndZBm = Bitmap::getPool().getObject(savedState->readLEUint32());
+	_bkgndBm = Bitmap::getPool().getObject(savedState->readLESint32());
+	_bkgndZBm = Bitmap::getPool().getObject(savedState->readLESint32());
 
 	_pos      = savedState->readVector3d();
 	_interest = savedState->readVector3d();
@@ -434,7 +434,7 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 void Light::saveState(SaveGame *savedState) const {
 	//name
 	savedState->writeString(_name);
-	savedState->writeLEBool(_enabled);
+	savedState->writeBool(_enabled);
 
 	//type
 	savedState->writeString(_type);
@@ -451,7 +451,7 @@ void Light::saveState(SaveGame *savedState) const {
 
 bool Light::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
-	_enabled = savedState->readLEBool();
+	_enabled = savedState->readBool();
 	_type = savedState->readString();
 
 	_pos           = savedState->readVector3d();

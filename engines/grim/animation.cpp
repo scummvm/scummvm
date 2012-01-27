@@ -175,23 +175,23 @@ int Animation::update(uint time) {
 }
 
 void Animation::saveState(SaveGame *state) const {
-	state->writeLESint32(_active);
+	state->writeBool(_active);
 	state->writeLESint32((int)_repeatMode);
 	state->writeLESint32(_time);
 	state->writeLESint32((int)_fadeMode);
 	state->writeFloat(_fade);
 	state->writeLESint32(_fadeLength);
-	state->writeLESint32(_paused);
+	state->writeBool(_paused);
 }
 
 void Animation::restoreState(SaveGame *state) {
-	bool active = state->readLESint32();
+	bool active = state->readBool();
 	_repeatMode = (RepeatMode)state->readLESint32();
 	_time = state->readLESint32();
 	_fadeMode = (FadeMode)state->readLESint32();
 	_fade = state->readFloat();
 	_fadeLength = state->readLESint32();
-	_paused = state->readLESint32();
+	_paused = state->readBool();
 
 	if (active)
 		activate();
