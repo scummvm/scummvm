@@ -439,7 +439,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_TEXTURE_2D);
 
 	glBegin(GL_TRIANGLES);
-	for (int j = 0; j < face->_faceLength * 3; j++) {
+	for (uint j = 0; j < face->_faceLength * 3; j++) {
 
 		int index = indices[j];
 		if (face->_hasTexture) {
@@ -1145,8 +1145,8 @@ void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
-	offsetX *= _scaleW;
-	offsetY *= _scaleH;
+	offsetX = (int)(offsetX * _scaleW);
+	offsetY = (int)(offsetY * _scaleH);
 
 	glScissor(offsetX, _screenHeight - (offsetY + _smushHeight), _smushWidth, _smushHeight);
 

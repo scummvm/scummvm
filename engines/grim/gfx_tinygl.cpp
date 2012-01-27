@@ -560,7 +560,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	else
 		tglDisable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
-	for (int j = 0; j < face->_faceLength * 3; j++) {
+	for (uint j = 0; j < face->_faceLength * 3; j++) {
 
 		int index = indices[j];
 		if (face->_hasTexture) {
@@ -1089,7 +1089,7 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 		for (int lx = x; lx < x + w; lx++) {
 			uint8 r, g, b;
 			_zb->pbuf.getRGBAt(ly * _gameWidth + lx, r, g, b);
-			uint32 color = ((r + g + b) / 3) * level;
+			uint32 color = (uint32)(((r + g + b) / 3) * level);
 			_zb->pbuf.setPixelAt(ly * _gameWidth + lx, color, color, color);
 		}
 	}
