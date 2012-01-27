@@ -40,7 +40,8 @@ public:
 		kStateSwim,
 		kStateSink,
 		kStateRaise,
-		kStateBreathe
+		kStateBreathe,
+		kStatePick
 	};
 
 	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
