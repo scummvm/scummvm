@@ -1000,7 +1000,7 @@ void ScummEngine::killScriptsAndResources() {
 		for (i = 0; i < _numNewNames; i++) {
 			const int obj = _newNames[i];
 			if (obj) {
-				const int owner = getOwner(obj);
+				const int owner = getOwner( (_game.version != 0 ? obj : OBJECT_V0_ID(obj) ) );
 				// We can delete custom name resources if either the object is
 				// no longer in use (i.e. not owned by anyone anymore); or if
 				// it is an object which is owned by a room.
