@@ -58,8 +58,8 @@ void Scene::updateCamera(Common::Point &mouse) {
 			heading = CLIP(heading, minHeading, maxHeading);
 		} else {
 			if (heading < minHeading && heading > maxHeading) {
-				uint distToMin = ABS(heading - minHeading);
-				uint distToMax = ABS(heading - maxHeading);
+				uint distToMin = (uint)ABS(heading - minHeading);
+				uint distToMax = (uint)ABS(heading - maxHeading);
 				if (distToMin > distToMax)
 					heading = maxHeading;
 				else
