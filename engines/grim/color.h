@@ -34,6 +34,7 @@ public:
 	Color();
 	Color(byte r, byte g, byte b);
 	Color(const Color& c);
+	Color(uint32 c);
 
 	byte &getRed() { return _vals[0]; }
 	byte getRed() const { return _vals[0]; }
@@ -42,18 +43,12 @@ public:
 	byte &getBlue() { return _vals[2]; }
 	byte getBlue() const { return _vals[2]; }
 
+	uint32 toEncodedValue();
+
 	Color& operator =(const Color &c);
 	Color& operator =(Color *c);
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
-
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
 
 } // end of namespace Grim
 

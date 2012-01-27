@@ -370,8 +370,8 @@ Font *LuaBase::getfont(lua_Object obj) {
 	return Font::getPool().getObject(lua_getuserdata(obj));
 }
 
-PoolColor *LuaBase::getcolor(lua_Object obj) {
-	return PoolColor::getPool().getObject(lua_getuserdata(obj));
+Color LuaBase::getcolor(lua_Object obj) {
+	return Color(lua_getuserdata(obj));
 }
 
 PrimitiveObject *LuaBase::getprimitive(lua_Object obj) {

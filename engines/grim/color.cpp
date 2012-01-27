@@ -41,6 +41,18 @@ Color::Color(const Color& c) {
 	_vals[2] = c._vals[2];
 }
 
+Color::Color(uint32 c) {
+	_vals[0] = (c >> 16) & 0xFF;
+	_vals[1] = (c >> 8) & 0xFF;
+	_vals[2] = c & 0xFF;
+}
+
+uint32 Color::toEncodedValue() {
+	return	(_vals[0] << 16) |
+			(_vals[1] << 8 ) |
+			 _vals[2];
+}
+
 Color& Color::operator =(const Color &c) {
 	_vals[0] = c._vals[0];
 	_vals[1] = c._vals[1];
@@ -53,30 +65,6 @@ Color& Color::operator =(Color *c) {
 	_vals[1] = c->_vals[1];
 	_vals[2] = c->_vals[2];
 	return *this;
-}
-
-
-
-PoolColor::PoolColor() :
-	PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>(), Color() {
-
-}
-
-PoolColor::PoolColor(byte r, byte g, byte b) :
-	PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>(), Color(r, g, b) {
-
-}
-
-void PoolColor::restoreState(SaveGame *state) {
-	getRed() = state->readByte();
-	getGreen() = state->readByte();
-	getBlue() = state->readByte();
-}
-
-void PoolColor::saveState(SaveGame *state) const {
-	state->writeByte(getRed());
-	state->writeByte(getGreen());
-	state->writeByte(getBlue());
 }
 
 } // end of namespace Grim

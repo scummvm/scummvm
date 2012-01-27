@@ -163,7 +163,7 @@ void Lua_V1::PurgePrimitiveQueue() {
 void Lua_V1::DrawPolygon() {
 	lua_Object pointObj;
 	Common::Point p1, p2, p3, p4;
-	PoolColor *color = NULL;
+	Color color;
 
 	lua_Object tableObj1 = lua_getparam(1);
 	if (!lua_istable(tableObj1)) {
@@ -229,7 +229,7 @@ void Lua_V1::DrawPolygon() {
 
 void Lua_V1::DrawLine() {
 	Common::Point p1, p2;
-	PoolColor *color = NULL;;
+	Color color;
 	lua_Object x1Obj = lua_getparam(1);
 	lua_Object y1Obj = lua_getparam(2);
 	lua_Object x2Obj = lua_getparam(3);
@@ -268,7 +268,7 @@ void Lua_V1::DrawLine() {
 
 void Lua_V1::ChangePrimitive() {
 	PrimitiveObject *psearch, *pmodify = NULL;
-	PoolColor *color = NULL;
+	Color color;
 
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isuserdata(param1) || lua_tag(param1) != MKTAG('P','R','I','M'))
@@ -375,7 +375,7 @@ void Lua_V1::ChangePrimitive() {
 
 void Lua_V1::DrawRectangle() {
 	Common::Point p1, p2;
-	PoolColor *color = NULL;
+	Color color;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);
@@ -414,7 +414,7 @@ void Lua_V1::DrawRectangle() {
 
 void Lua_V1::BlastRect() {
 	Common::Point p1, p2;
-	PoolColor *color = NULL;
+	Color color;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);

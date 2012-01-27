@@ -51,7 +51,7 @@ namespace Grim {
 
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
-		_talkColor(PoolColor::getPool().getObject(2)), _pos(0, 0, 0),
+		_talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -121,11 +121,9 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeString(_setName);
 
-	if (_talkColor) {
-		savedState->writeLEUint32(_talkColor->getId());
-	} else {
-		savedState->writeLEUint32(0);
-	}
+	//SAVECHANGE: Remove the next line
+	savedState->writeByte(0);
+	savedState->writeColor(_talkColor);
 
 	savedState->writeVector3d(_pos);
 
@@ -242,7 +240,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor = PoolColor::getPool().getObject(savedState->readLEUint32());
+	//SAVECHANGE: Remove the next line
+	savedState->readByte();
+	_talkColor = savedState->readColor();
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();

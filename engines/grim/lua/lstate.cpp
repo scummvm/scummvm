@@ -166,8 +166,8 @@ void callHook(lua_Function func, const char *filename, int32 line) {
 					Actor *a = Actor::getPool().getObject(lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<actor \"%s\">", a->getName().c_str());
 				} else if (lua_tag(lua_getparam(i)) == MKTAG('C','O','L','R')) {
-					Color *c = PoolColor::getPool().getObject(lua_getuserdata(lua_getparam(i)));
-					fprintf(output, "<color #%02x%02x%02x>", c->getRed(), c->getGreen(), c->getBlue());
+					Color c(lua_getuserdata(lua_getparam(i)));
+					fprintf(output, "<color #%02x%02x%02x>", c.getRed(), c.getGreen(), c.getBlue());
 				} else
 					fprintf(output, "<userdata %d>", lua_getuserdata(lua_getparam(i)));
 			} else if (lua_isfunction(lua_getparam(i))) {

@@ -27,11 +27,11 @@
 
 #include "engines/grim/pool.h"
 #include "engines/grim/bitmap.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 
 class SaveGame;
-class PoolColor;
 
 class PrimitiveObject : public PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')> {
 public:
@@ -45,17 +45,17 @@ public:
 		POLYGON
 	} PrimType;
 
-	void createRectangle(Common::Point p1, Common::Point p2, PoolColor *color, bool filled);
+	void createRectangle(Common::Point p1, Common::Point p2, const Color &color, bool filled);
 	void createBitmap(Bitmap *bitmap, Common::Point p, bool transparent);
-	void createLine(Common::Point p1, Common::Point p2, PoolColor *color);
-	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, PoolColor *color);
+	void createLine(Common::Point p1, Common::Point p2, const Color &color);
+	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, const Color &color);
 	Common::Point getP1() { return _p1; }
 	Common::Point getP2() { return _p2; }
 	Common::Point getP3() { return _p3; }
 	Common::Point getP4() { return _p4; }
 	void setPos(int x, int y);
-	void setColor(PoolColor *color) { _color = color; }
-	PoolColor *getColor() { return _color; }
+	void setColor(const Color &color) { _color = color; }
+	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
 	bool isBitmap() { return _type == BITMAP; }
@@ -65,7 +65,7 @@ public:
 
 private:
 	Common::Point _p1, _p2, _p3, _p4;
-	PoolColor *_color;
+	Color _color;
 	bool _filled;
 	int _type;
 	Bitmap::Ptr _bitmap;

@@ -834,7 +834,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	int numLines = text->getNumLines();
 	const Common::String *lines = text->getLines();
 	const Font *font = text->getFont();
-	const Color *fgColor = text->getFGColor();
+	const Color &fgColor = text->getFGColor();
 	TextObjectData *userData = new TextObjectData[numLines];
 	text->setUserData(userData);
 	for (int j = 0; j < numLines; j++) {
@@ -871,9 +871,9 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);
 
 		uint8 *bitmapData = _textBitmap;
-		uint8 r = fgColor->getRed();
-		uint8 g = fgColor->getGreen();
-		uint8 b = fgColor->getBlue();
+		uint8 r = fgColor.getRed();
+		uint8 g = fgColor.getGreen();
+		uint8 b = fgColor.getBlue();
 		uint32 color = _zb->cmode.RGBToColor(r, g, b);
 
 		if (color == 0xf81f)
@@ -1112,7 +1112,7 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	const Color &color = *primitive->getColor();
+	const Color &color = primitive->getColor();
 	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
 
 	if (primitive->isFilled()) {
@@ -1147,7 +1147,7 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	const Color &color = *primitive->getColor();
+	const Color &color = primitive->getColor();
 
 	if (x2 == x1) {
 		for (int y = y1; y <= y2; y++) {
@@ -1177,7 +1177,7 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	float m;
 	int b;
 
-	const Color &color = *primitive->getColor();
+	const Color &color = primitive->getColor();
 	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
 
 	m = (y2 - y1) / (x2 - x1);
