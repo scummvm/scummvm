@@ -396,9 +396,14 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (_vm->_game.version <= 2) {
+
 		abr = adjustXYToBeInBox(abr.x, abr.y);
 		if (_pos.x == abr.x && _pos.y == abr.y && (dir == -1 || _facing == dir))
 			return;
+
+		if( _vm->_game.version == 0 )
+			((ActorC64*) this)->animateActor( newDirToOldDir( _facing ) );
+
 	} else {
 		if (_ignoreBoxes) {
 			abr.box = kInvalidBox;
@@ -554,16 +559,11 @@ void Actor_v2::walkActor() {
 		
 		if (_facing != new_dir) {
 
-			if( _vm->_game.version != 0 )
-				setDirection(new_dir);
+			setDirection(new_dir);
 
 		} else {
 			_moving = 0;
 		}
-
-		if( _vm->_game.version == 0 )
-			if( _moving == 0 )
-				setDirection( new_dir );
 
 		return;
 	}
@@ -909,7 +909,7 @@ void ActorC64::setDirection(int direction) {
 	
 	_animFrameRepeat = -1;
 	animateActor(res);
-	if(_moving)
+	if(_moving & MF_TURN)
 		animateCostume();
 }
 
@@ -936,13 +936,12 @@ void Actor::turnToDirection(int newdir) {
 	} else {
 		_moving &= ~MF_TURN;
 		if (newdir != _facing) {
+			
 			_moving |= MF_TURN;
 			_targetFacing = newdir;
 		}
 	}
 
-	if (_vm->_game.version == 0)
-		setDirection( newdir );
 }
 
 
@@ -1004,8 +1003,10 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 			showActor();
 	}
 
-	if( _vm->_game.version == 0 && _costume != 0x13 )
-		turnToDirection( oldDirToNewDir(2));
+	if( _vm->_game.version == 0 ) {
+		_moving = 0;
+		setDirection( oldDirToNewDir(2));
+	}
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1874,7 +1875,7 @@ void ActorC64::startAnimActor(int f) {
 	if( f == _standFrame )
 		setDirection( _facing );
 	else
-		animateActor( newDirToOldDir(_facing) );
+		animateActor( newDirToOldDir(_targetFacing) );
 }
 
 void Actor::animateActor(int anim) {
@@ -1950,24 +1951,16 @@ void ActorC64::limbFrameCheck() {
 
 	_limbFrameRepeat[_limb_current] = _limbFrameRepeatNew[_limb_current];
 
-	_cost.active[_limb_current] = _cost.frame[_limb_current];
+	_vm->_costumeLoader->loadCostume(_costume);
+
+	// 0x25C3
+	_cost.active[_limb_current] = ((C64CostumeLoader*)_vm->_costumeLoader)->getFrame( this );
 	_cost.curpos[_limb_current] = 0;
 
 	_needRedraw = true;
 }
 
 void ActorC64::animateCostume() {
-	
-	// Sound
-	if (_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
-		if (_cost.soundPos == 0)
-			_cost.soundCounter++;
-
-		// Is this the correct location?
-		// 0x073C
-		if (v0ActorTalkArray[_number] & 0x3F)
-			_cost.soundPos = (_cost.soundPos + 1) % 3;
-	}
 
 	speakCheck();
 
@@ -2780,6 +2773,17 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 void ActorC64::animateActor(int anim) {
 	int dir = -1;
 	
+	// Sound
+	if (_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
+		if (_cost.soundPos == 0)
+			_cost.soundCounter++;
+
+		// Is this the correct location?
+		// 0x073C
+		if (v0ActorTalkArray[_number] & 0x3F)
+			_cost.soundPos = (_cost.soundPos + 1) % 3;
+	}
+
 	switch( anim ) {
 		case 0x00:
 		case 0x04:

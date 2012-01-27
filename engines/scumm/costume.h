@@ -73,11 +73,12 @@ public:
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
+	
+	byte getFrame( ActorC64 *A );
 
 	int _maxHeight;
 
 protected:
-	int dirToDirStop(int oldDir);
 
 };
 

@@ -1184,19 +1184,16 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (limb >= 8)
 		return 0;
 
-	if (a->_cost.curpos[limb] == 0xFFFF || A->_cost.active[limb] == 0xFFFF )
-		return 0;
-
 	if (limb == 0) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-
-	byte frameB = _loaded._frameOffsets[limb] + a->_cost.active[limb];
-	byte frameStart = _loaded._frameOffsets[ frameB ];
-	byte frame = _loaded._frameOffsets[frameStart + a->_cost.curpos[limb]];
-	if (frame == 0xFF)
+	
+	if(  a->_cost.curpos[limb] == 0xFFFF )
 		return 0;
+
+	_loaded.loadCostume( a->_costume );
+	byte frame = _loaded._frameOffsets[ a->_cost.curpos[limb] + a->_cost.active[limb] ];
 
 	byte ptrLow = _loaded._baseptr[frame];
 	byte ptrHigh = ptrLow + _loaded._dataOffsets[4];
@@ -1337,19 +1334,23 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	}
 }
 
+byte C64CostumeLoader::getFrame( ActorC64 *A ) {
+
+	loadCostume(A->_costume);
+
+	return _frameOffsets[ _frameOffsets[A->_limb_current] + A->_cost.start[ A->_limb_current ] ];
+}
+
 byte C64CostumeLoader::increaseAnims(Actor *a) {
 	ActorC64 *A = (ActorC64 *)a;
 	
-	if( _frameOffsets == 0 || (a->_cost.active[A->_limb_current] == 0xFFFF) )
-		return 0;
-
 	uint16 limbPrevious = a->_cost.curpos[A->_limb_current]++;
+
+	loadCostume(a->_costume);
 
 	// increase each frame pos
     // 0x2543
-	byte frameB = _frameOffsets[A->_limb_current] + a->_cost.active[A->_limb_current];
-	byte frameStart = _frameOffsets[ frameB ];
-	byte frame = _frameOffsets[frameStart + a->_cost.curpos[A->_limb_current]];
+	byte frame = _frameOffsets[ a->_cost.curpos[A->_limb_current] + a->_cost.active[A->_limb_current] ];
 
 	if ( frame == 0xFF ) {
         // 0x2545

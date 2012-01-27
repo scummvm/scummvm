@@ -698,6 +698,7 @@ void ScummEngine_v0::o_animateActor() {
     }
 
 	a->animateActor(anim);
+	a->animateCostume();
 }
 
 void ScummEngine_v0::o_getActorMoving() {
