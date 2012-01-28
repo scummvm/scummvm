@@ -172,7 +172,6 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
-	virtual void drawRoundedSquareFakeBevel(int x, int y, int r, int w, int h, int amount);
 
 	/**
 	 * Calculates the color gradient on a given point.
