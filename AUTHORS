@@ -477,6 +477,7 @@ Other contributions
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support
      Andre Souza           - SDL-based OpenGL renderer
+     Tom Frost             - WebOS port contributions
 
   FreeSCI Contributors
   --------------------

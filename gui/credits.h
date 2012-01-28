@@ -567,6 +567,8 @@ static const char *credits[] = {
 "C2""Final MI1 CD music support, initial Ogg Vorbis support",
 "C0""Andr\351 Souza",
 "C2""SDL-based OpenGL renderer",
+"C0""Tom Frost",
+"C2""WebOS port contributions",
 "",
 "C1""FreeSCI Contributors",
 "C0""Francois-R Boyer",
