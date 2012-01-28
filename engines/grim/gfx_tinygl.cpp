@@ -450,8 +450,8 @@ void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angl
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
-			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
-			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
+			_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
+			_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
 		}
 		assert(_currentShadowArray->shadowMask);
 		//tglSetShadowColor(255, 255, 255);
@@ -497,10 +497,10 @@ void GfxTinyGL::finishActorDraw() {
 void GfxTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
 	if (!_currentShadowArray->shadowMask) {
-		_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
-		_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
+		_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
+		_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
 	}
-	memset(_currentShadowArray->shadowMask, 0, _screenWidth * _screenHeight);
+	memset(_currentShadowArray->shadowMask, 0, _gameWidth * _gameHeight);
 
 	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 	_currentShadowArray->planeList.begin();
@@ -741,7 +741,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
 	int srcX, srcY;
 
-	if (x >= _screenWidth || y >= _screenHeight)
+	if (x >= _gameWidth || y >= _gameHeight)
 		return;
 
 	if (x < 0) {
@@ -757,13 +757,13 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 		srcY = 0;
 	}
 
-	if (x + width > _screenWidth)
-		width -= (x + width) - _screenWidth;
+	if (x + width > _gameWidth)
+		width -= (x + width) - _gameWidth;
 
-	if (y + height > _screenHeight)
-		height -= (y + height) - _screenHeight;
+	if (y + height > _gameHeight)
+		height -= (y + height) - _gameHeight;
 
-	dst += (x + (y * _screenWidth)) * format.bytesPerPixel;
+	dst += (x + (y * _gameWidth)) * format.bytesPerPixel;
 	src += (srcX + (srcY * width)) * format.bytesPerPixel;
 
 	Graphics::PixelBuffer srcBuf(format, src);
@@ -772,14 +772,14 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	if (!trans) {
 		for (int l = 0; l < height; l++) {
 			dstBuf.copyBuffer(0, width, srcBuf);
-			dstBuf.shiftBy(_screenWidth);
+			dstBuf.shiftBy(_gameWidth);
 			srcBuf.shiftBy(width);
 		}
 	} else {
 		if (image) {
 			BlitImage::Line *l = image->_lines;
 			while (l) {
-				memcpy(dstBuf.getRawBuffer(l->y * _screenWidth + l->x), l->pixels, l->length * format.bytesPerPixel);
+				memcpy(dstBuf.getRawBuffer(l->y * _gameWidth + l->x), l->pixels, l->length * format.bytesPerPixel);
 				l = l->next;
 			}
 		} else {
@@ -789,7 +789,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 						dstBuf.setPixelAt(r, srcBuf);
 					}
 				}
-				dstBuf.shiftBy(_screenWidth);
+				dstBuf.shiftBy(_gameWidth);
 				srcBuf.shiftBy(width);
 			}
 		}
@@ -1040,20 +1040,20 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
 
-	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
+	int i1 = (_gameWidth * w - 1) / _gameWidth + 1;
+	int j1 = (_gameHeight * h - 1) / _gameHeight + 1;
 
 	for (int j = 0; j < j1; j++) {
 		for (int i = 0; i < i1; i++) {
-			int x0 = i * _screenWidth / w;
-			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-			int y0 = j * _screenHeight / h;
-			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
+			int x0 = i * _gameWidth / w;
+			int x1 = ((i + 1) * _gameWidth - 1) / w + 1;
+			int y0 = j * _gameHeight / h;
+			int y1 = ((j + 1) * _gameHeight - 1) / h + 1;
 			uint32 color = 0;
 			for (int y = y0; y < y1; y++) {
 				for (int x = x0; x < x1; x++) {
 					uint8 lr, lg, lb;
-					_zb->pbuf.getRGBAt(y * _screenWidth + x, lr, lg, lb);
+					_zb->pbuf.getRGBAt(y * _gameWidth + x, lr, lg, lb);
 					color += (lr + lg + lb) / 3;
 				}
 			}
@@ -1095,8 +1095,8 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 }
 
 void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
-	for (int ly = 0; ly < _screenHeight; ly++) {
-		for (int lx = 0; lx < _screenWidth; lx++) {
+	for (int ly = 0; ly < _gameHeight; ly++) {
+		for (int lx = 0; lx < _gameWidth; lx++) {
 			// Don't do anything with the data in the region we draw Around
 			if (lx > x1 && lx < x2 && ly > y1 && ly < y2)
 				continue;
