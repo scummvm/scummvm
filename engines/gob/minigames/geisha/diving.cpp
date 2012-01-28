@@ -725,10 +725,6 @@ void Diving::checkOkoHurt() {
 	if (_oko->getState() != Oko::kStateSwim)
 		return;
 
-	// Oko dies if the health reaches 0
-	if (_healthMeter->getValue() == 0)
-		_oko->die();
-
 	// Give Oko a grace period after being hurt
 	if (_hurtGracePeriod > 0) {
 		_hurtGracePeriod--;
@@ -740,8 +736,13 @@ void Diving::checkOkoHurt() {
 		EvilFish &evilFish = *_evilFish[i].evilFish;
 
 		if (!evilFish.isDead() && evilFish.isIn(*_oko)) {
-			_oko->hurt();
 			_healthMeter->decrease();
+
+			// If the health reached 0, Oko dies. Otherwise, she gets hurt
+			if (_healthMeter->getValue() == 0)
+				_oko->die();
+			else
+				_oko->hurt();
 
 			_hurtGracePeriod = 10;
 			break;
