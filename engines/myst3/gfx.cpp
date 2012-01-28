@@ -143,6 +143,7 @@ void Renderer::clear() {
 }
 
 void Renderer::setupCameraOrtho2D() {
+	glViewport(0, 0, kOriginalWidth, kOriginalHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, kOriginalWidth, kOriginalHeight, 0.0);
@@ -152,9 +153,10 @@ void Renderer::setupCameraOrtho2D() {
 }
 
 void Renderer::setupCameraPerspective(float pitch, float heading) {
+	glViewport(0, kBottomBorderHeight, kOriginalWidth, kFrameHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(65.0, (GLfloat)kOriginalWidth /(GLfloat)kOriginalHeight, 0.1, 100.0);
+	gluPerspective(50.5, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);
@@ -297,7 +299,7 @@ void Renderer::drawCube(Texture **textures) {
 	OpenGLTexture *texture0 = static_cast<OpenGLTexture *>(textures[0]);
 
 	// Size of the cube
-	float t = 1.0f;
+	float t = 256.0f;
 
 	// Used fragment of the textures
 	float s = texture0->width / (float) texture0->internalWidth;

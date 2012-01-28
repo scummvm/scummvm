@@ -85,10 +85,10 @@ void Scene::updateCamera(Common::Point &mouse) {
 }
 
 void Scene::drawBlackBorders() {
-	Common::Rect top = Common::Rect(Renderer::kOriginalWidth, kTopBorderHeight);
+	Common::Rect top = Common::Rect(Renderer::kOriginalWidth, Renderer::kTopBorderHeight);
 
-	Common::Rect bottom = Common::Rect(Renderer::kOriginalWidth, kBottomBorderHeight);
-	bottom.translate(0, kTopBorderHeight + kFrameHeight);
+	Common::Rect bottom = Common::Rect(Renderer::kOriginalWidth, Renderer::kBottomBorderHeight);
+	bottom.translate(0, Renderer::kTopBorderHeight + Renderer::kFrameHeight);
 
 	uint32 black = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(255, 0, 0, 0);
 	_vm->_gfx->drawRect2D(top, black);
@@ -96,8 +96,8 @@ void Scene::drawBlackBorders() {
 }
 
 void Scene::drawSunspotFlare(const SunSpot &s) {
-	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, kFrameHeight);
-	frame.translate(0, kTopBorderHeight);
+	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
+	frame.translate(0, Renderer::kTopBorderHeight);
 
 	uint8 a = (uint8)(s.intensity * s.radius);
 	uint8 r, g, b;

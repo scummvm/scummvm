@@ -44,10 +44,6 @@ class Scene {
 		void drawBlackBorders();
 		void drawSunspotFlare(const SunSpot &s);
 		float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);
-
-		static const int kTopBorderHeight = 30;
-		static const int kBottomBorderHeight = 90;
-		static const int kFrameHeight = 360;
 };
 
 } // end of namespace Myst3

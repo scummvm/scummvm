@@ -65,8 +65,8 @@ void NodeFrame::draw() {
 	if (_vm->_state->getViewType() == kMenu) {
 		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
 	} else {
-		screenRect = Common::Rect(Renderer::kOriginalWidth, Scene::kFrameHeight);
-		screenRect.translate(0, Scene::kTopBorderHeight);
+		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
+		screenRect.translate(0, Renderer::kTopBorderHeight);
 	}
 
 	// Used fragment of texture

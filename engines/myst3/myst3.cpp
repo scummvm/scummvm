@@ -164,7 +164,6 @@ Common::Error Myst3Engine::run() {
 	}
 
 	while (!shouldQuit() && !_shouldQuit) {
-		_sound->update();
 		runNodeBackgroundScripts();
 		processInput(false);
 		updateCursor();
@@ -232,7 +231,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 			scaledMouse = Common::Point(
 					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
 					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight()
-							- Scene::kTopBorderHeight, 0, Scene::kFrameHeight));
+							- Renderer::kTopBorderHeight, 0, Renderer::kFrameHeight));
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
@@ -354,6 +353,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 }
 
 void Myst3Engine::drawFrame() {
+	_sound->update();
 	_gfx->clear();
 
 	if (_state->getViewType() == kCube) {

@@ -97,7 +97,7 @@ void Movie::draw2d() {
 	screenRect.translate(_posU, _posV);
 
 	if (_vm->_state->getViewType() != kMenu)
-		screenRect.translate(0, Scene::kTopBorderHeight);
+		screenRect.translate(0, Renderer::kTopBorderHeight);
 
 	Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
 	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);

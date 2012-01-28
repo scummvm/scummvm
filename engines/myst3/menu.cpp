@@ -597,8 +597,8 @@ void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
 	assert(big->format.bytesPerPixel == 3
 			&& small->format.bytesPerPixel == 3);
 
-	uint bigHeight = big->h - Scene::kTopBorderHeight - Scene::kBottomBorderHeight;
-	uint bigYOffset = Scene::kBottomBorderHeight;
+	uint bigHeight = big->h - Renderer::kTopBorderHeight - Renderer::kBottomBorderHeight;
+	uint bigYOffset = Renderer::kBottomBorderHeight;
 
 	uint8 *dst = (uint8 *)small->pixels;
 	for (uint i = 0; i < small->h; i++) {
