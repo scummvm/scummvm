@@ -22,7 +22,7 @@ namespace Grim {
 PointerId makeIdFromPointer(void *ptr) {
 	PointerId pointer;
 
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 	uint64 v = (uint64)ptr;
 	pointer.low = v & 0xffffffff;
 	pointer.hi = v >> 32;
@@ -37,7 +37,7 @@ PointerId makeIdFromPointer(void *ptr) {
 void *makePointerFromId(PointerId ptr) {
 	void *pointer;
 
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 	uint64 v = ptr.low | ((uint64)ptr.hi << 32);
 	pointer = (void *)v;
 #else

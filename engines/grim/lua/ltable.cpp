@@ -21,7 +21,7 @@ namespace Grim {
 #define REHASH_LIMIT	0.70    // avoid more than this % full
 #define TagDefault		LUA_T_ARRAY;
 
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 static int64 hashindex(TObject *ref) {
 	int64 h;
 

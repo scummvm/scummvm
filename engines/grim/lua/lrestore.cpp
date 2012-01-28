@@ -111,7 +111,7 @@ struct ArrayIDObj {
 };
 
 static int sortCallback(const void *id1, const void *id2) {
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 	uint64 p1 = ((ArrayIDObj *)id1)->idObj.low | ((uint64)(((ArrayIDObj *)id1)->idObj.hi)) << 32;
 	uint64 p2 = ((ArrayIDObj *)id2)->idObj.low | ((uint64)(((ArrayIDObj *)id2)->idObj.hi)) << 32;
 	if (p1 > p2) {
@@ -144,7 +144,7 @@ static bool arraysAllreadySort = false;
 
 static void recreateObj(TObject *obj) {
 	if (obj->ttype == LUA_T_CPROTO) {
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 		uint64 id = ((uint64)(obj->value.f)) >> 16;
 #else
 		uint32 id = ((uint32)(obj->value.f)) >> 16;
@@ -157,7 +157,7 @@ static void recreateObj(TObject *obj) {
 			list = list->next;
 		}
 
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 		int32 numberFunc = (uint64)(obj->value.f) & 0xffff;
 #else
 		int32 numberFunc = (uint32)(obj->value.f) & 0xffff;

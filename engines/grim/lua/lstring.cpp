@@ -33,7 +33,7 @@ void luaS_init() {
 static uint32 hash(const char *s, int32 tag) {
 	uint32 h;
 	if (tag != LUA_T_STRING) {
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 		h = (uint64)s;
 #else
 		h = (uint32)s;
@@ -121,7 +121,7 @@ static TaggedString *insert(const char *buff, int32 tag, stringtable *tb) {
 }
 
 TaggedString *luaS_createudata(void *udata, int32 tag) {
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 	return insert((char *)udata, tag, &string_root[(uint64)udata % NUM_HASHS]);
 #else
 	return insert((char *)udata, tag, &string_root[(uint32)udata % NUM_HASHS]);
@@ -129,7 +129,7 @@ TaggedString *luaS_createudata(void *udata, int32 tag) {
 }
 
 TaggedString *luaS_new(const char *str) {
-#ifdef TARGET_64BITS
+#ifdef SCUMM_64BITS
 	return insert(str, LUA_T_STRING, &string_root[(uint64)str[0] % NUM_HASHS]);
 #else
 	return insert(str, LUA_T_STRING, &string_root[(uint32)str[0] % NUM_HASHS]);
