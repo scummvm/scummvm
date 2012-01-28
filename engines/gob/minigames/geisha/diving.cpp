@@ -410,6 +410,9 @@ void Diving::updateAirMeter() {
 
 	if (_airCycle == 0)
 		_airMeter->decrease();
+
+	if (_airMeter->getValue() == 0)
+		_oko->die();
 }
 
 void Diving::updateEvilFish() {

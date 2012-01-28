@@ -29,12 +29,15 @@ namespace Gob {
 namespace Geisha {
 
 enum kOkoAnimation {
-	kOkoAnimationEnter   = 0,
-	kOkoAnimationSwim    = 1,
-	kOkoAnimationSink    = 8,
-	kOkoAnimationRaise   = 7,
-	kOkoAnimationBreathe = 2,
-	kOkoAnimationPick    = 3
+	kOkoAnimationEnter   =  0,
+	kOkoAnimationSwim    =  1,
+	kOkoAnimationSink    =  8,
+	kOkoAnimationRaise   =  7,
+	kOkoAnimationBreathe =  2,
+	kOkoAnimationPick    =  3,
+	kOkoAnimationDie0    = 17,
+	kOkoAnimationDie1    = 18,
+	kOkoAnimationDie2    = 19
 };
 
 static const int16 kOkoPositionX = 110;
@@ -55,6 +58,11 @@ Oko::~Oko() {
 
 void Oko::advance() {
 	bool wasLastFrame = lastFrame();
+
+	if ((_state == kStateDead) && wasLastFrame) {
+		setPause(true);
+		return;
+	}
 
 	ANIObject::advance();
 
@@ -125,6 +133,14 @@ void Oko::raise() {
 	_state = kStateSink;
 
 	_level--;
+}
+
+void Oko::die() {
+	if (_state != kStateSwim)
+		return;
+
+	setAnimation(kOkoAnimationDie0 + _level);
+	_state = kStateDead;
 }
 
 Oko::State Oko::getState() const {

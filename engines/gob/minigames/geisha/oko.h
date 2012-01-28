@@ -41,7 +41,8 @@ public:
 		kStateSink,
 		kStateRaise,
 		kStateBreathe,
-		kStatePick
+		kStatePick,
+		kStateDead
 	};
 
 	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
@@ -54,6 +55,9 @@ public:
 	void sink();
 	/** Oko should raise a level. */
 	void raise();
+
+	/** Oko should die. */
+	void die();
 
 	State getState() const;
 
