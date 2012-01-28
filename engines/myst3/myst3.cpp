@@ -331,9 +331,6 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			}
 		} else if (event.type == Common::EVENT_KEYUP) {
-			// Save file name input
-			_menu->handleInput(event.kbd);
-
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				_inputEscapePressed = false;
