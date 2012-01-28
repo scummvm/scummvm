@@ -111,6 +111,13 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(190, LocationNextRoom, false)
 	VAR(191, LocationNextAge, false)
 
+	VAR(195, BallPosition, false)
+	VAR(196, BallFrame, false)
+	VAR(197, BallLeverLeft, false)
+	VAR(198, BallLeverRight, false)
+
+	VAR(228, BallDoorOpen, false)
+
 	VAR(243, ProjectorX, false)
 	VAR(244, ProjectorY, false)
 	VAR(245, ProjectorZoom, false)

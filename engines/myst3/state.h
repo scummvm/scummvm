@@ -125,6 +125,13 @@ public:
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)
 
+	DECLARE_VAR(195, BallPosition)
+	DECLARE_VAR(196, BallFrame)
+	DECLARE_VAR(197, BallLeverLeft)
+	DECLARE_VAR(198, BallLeverRight)
+
+	DECLARE_VAR(228, BallDoorOpen)
+
 	DECLARE_VAR(243, ProjectorX)
 	DECLARE_VAR(244, ProjectorY)
 	DECLARE_VAR(245, ProjectorZoom)

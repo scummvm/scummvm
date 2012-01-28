@@ -24,6 +24,7 @@
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
+#include "engines/myst3/sound.h"
 
 namespace Myst3 {
 
@@ -36,6 +37,9 @@ Puzzles::~Puzzles() {
 
 void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	switch (id) {
+	case 1:
+		leversBall(arg0);
+		break;
 	case 8:
 		journalSaavedro(arg0);
 		break;
@@ -60,6 +64,131 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	default:
 		warning("Puzzle %d is not implemented", id);
 	}
+}
+
+void Puzzles::_drawForVarHelper(uint16 var, int32 startValue, int32 endValue) {
+		uint startFrame = _vm->_state->getFrameCount();
+		uint currentFrame = startFrame;
+		uint numValues = abs(endValue - startValue);
+		uint endFrame = startFrame + 2 * numValues;
+
+		if (startFrame < endFrame) {
+			int currentValue = -9999;
+			while (1) {
+				int nextValue = (currentFrame - startFrame) / 2;
+				if (currentValue != nextValue) {
+					currentValue = nextValue;
+
+					int16 varValue;
+					if (endValue > startValue)
+						varValue = startValue + currentValue;
+					else
+						varValue = startValue - currentValue;
+
+					_vm->_state->setVar(var, varValue);
+				}
+
+				_vm->processInput(true);
+				_vm->drawFrame();
+				currentFrame = _vm->_state->getFrameCount();
+
+				if (currentFrame > endFrame)
+					break;
+			}
+		}
+
+		_vm->_state->setVar(var, endValue);
+}
+
+void Puzzles::leversBall(int16 var) {
+	struct NewPosition {
+		bool newLeft;
+		bool newRight;
+		uint16 newBallPosition;
+		uint16 movieStart;
+		uint16 movieEnd;
+		uint16 movieBallStart;
+		uint16 movieBallEnd;
+	};
+
+	struct Move {
+		bool oldLeft;
+		bool oldRight;
+		uint16 oldBallPosition;
+		NewPosition p[2];
+	};
+
+	static const Move moves[] =	{
+		{   0,   1,   2, { { 1,   1,   2, 127, 147,   0,   0 }, { 0,   0,   0, 703, 735,   0,   0 } } },
+		{   0,   0,   4, { { 1,   0,   4,  43,  63,   0,   0 }, { 0,   1,   4,  64,  84,   0,   0 } } },
+		{   0,   0,   1, { { 1,   0,   1,  85, 105,   0,   0 }, { 0,   1,   1,  22,  42,   0,   0 } } },
+		{   1,   0,   4, { { 1,   1,   3, 514, 534, 169, 217 }, { 0,   0,   4, 577, 597,   0,   0 } } },
+		{   1,   0,   3, { { 1,   1,   3, 493, 513,   0,   0 }, { 0,   0,   4, 451, 471, 410, 450 } } },
+		{   1,   0,   1, { { 1,   1,   2, 472, 492, 312, 360 }, { 0,   0,   1, 598, 618,   0,   0 } } },
+		{   0,   1,   4, { { 1,   1,   3, 148, 168, 169, 217 }, { 0,   0,   4, 619, 639,   0,   0 } } },
+		{   0,   1,   2, { { 1,   1,   2, 127, 147,   0,   0 }, { 0,   0,   1,   1,  21, 271, 311 } } },
+		{   0,   1,   1, { { 1,   1,   2, 106, 126, 312, 360 }, { 0,   0,   1, 640, 660,   0,   0 } } },
+		{   1,   1,   3, { { 1,   0,   3, 661, 681,   0,   0 }, { 0,   1,   2, 535, 555, 218, 270 } } },
+		{   1,   1,   2, { { 1,   0,   3, 556, 575, 361, 409 }, { 0,   1,   2, 682, 702,   0,   0 } } },
+		{   0,   0,   0, { { 1,   0,   0, 757, 777,   0,   0 }, { 0,   1,   0, 736, 756,   0,   0 } } },
+		{   1,   0,   0, { { 1,   1,   0, 799, 819,   0,   0 }, { 0,   0,   0, 841, 861,   0,   0 } } },
+		{   0,   1,   0, { { 1,   1,   0, 778, 798,   0,   0 }, { 0,   0,   0, 820, 840,   0,   0 } } },
+		{   1,   1,   0, { { 1,   0,   0, 883, 903,   0,   0 }, { 0,   1,   0, 862, 882,   0,   0 } } },
+		{  -1,   0,   0, { { 0,   0,   0,   0,   0,   0,   0 }, { 0,   0,   0,   0,   0,   0,   0 } } }
+	};
+
+	uint16 oldPosition = _vm->_state->getBallPosition();
+	uint16 oldLeverLeft = _vm->_state->getBallLeverLeft();
+	uint16 oldLeverRight = _vm->_state->getBallLeverRight();
+
+	// Toggle lever position
+	_vm->_state->setVar(var, !_vm->_state->getVar(var));
+
+	uint16 newLeverLeft = _vm->_state->getBallLeverLeft();
+	uint16 newLeverRight = _vm->_state->getBallLeverRight();
+
+	const Move *move = 0;
+	for (uint i = _vm->_state->getBallDoorOpen() ? 0 : 1; i < ARRAYSIZE(moves); i++)
+		if (moves[i].oldBallPosition == oldPosition
+				&& moves[i].oldLeft == oldLeverLeft
+				&& moves[i].oldRight == oldLeverRight) {
+			move = &moves[i];
+			break;
+		}
+
+	if (!move)
+		error("Unable to find move with old levers l:%d r:%d p:%d", oldLeverLeft, oldLeverRight, oldPosition);
+
+	const NewPosition *position = 0;
+	for (uint i = 0; i < ARRAYSIZE(move->p); i++)
+		if (move->p[i].newLeft == newLeverLeft
+				&& move->p[i].newRight == newLeverRight) {
+			position = &move->p[i];
+			break;
+		}
+
+	if (!position)
+		error("Unable to find position with levers l:%d r:%d", newLeverLeft, newLeverRight);
+
+	_vm->_sound->play(789, 50);
+	_drawForVarHelper(35, position->movieStart, position->movieEnd);
+
+	if (position->newBallPosition != oldPosition) {
+		uint16 sound;
+		if (position->newBallPosition == 0) {
+			sound = 792;
+		} else if (position->newBallPosition == 1 || position->newBallPosition == 4) {
+			sound = 790;
+		} else {
+			sound = 791;
+		}
+
+		_vm->_sound->play(sound, 50);
+		_drawForVarHelper(35, position->movieBallStart, position->movieBallEnd);
+	}
+
+	_vm->_state->setBallPosition(position->newBallPosition);
+	_vm->_state->setBallFrame(_vm->_state->getVar(35));
 }
 
 void Puzzles::journalSaavedro(int16 move) {
@@ -280,19 +409,21 @@ void Puzzles::projectorUpdateCoordinates() {
 	int16 angleBlurOffset = _vm->_state->getProjectorAngleBlurOffset();
 
 	int16 angleX = (angleXOffset + 200 * (5 * x - 4200) / 8560) % 1000;
-    int16 angleY = (angleYOffset + 200 * (5 * y - 4200) / 8560) % 1000;
-    int16 angleZoom = (angleZoomOffset + 200 * (5 * zoom - 6400) / 3840) % 1000;
-    int16 angleBlur = (angleBlurOffset + 200 * (5 * blur - 2000) / 2070) % 1000;
+	int16 angleY = (angleYOffset + 200 * (5 * y - 4200) / 8560) % 1000;
+	int16 angleZoom = (angleZoomOffset + 200 * (5 * zoom - 6400) / 3840) % 1000;
+	int16 angleBlur = (angleBlurOffset + 200 * (5 * blur - 2000) / 2070) % 1000;
 
-    _vm->_state->setProjectorAngleX(angleX);
+	_vm->_state->setProjectorAngleX(angleX);
 	_vm->_state->setProjectorAngleY(angleY);
 	_vm->_state->setProjectorAngleZoom(angleZoom);
 	_vm->_state->setProjectorAngleBlur(angleBlur);
 
-    _vm->_state->setProjectorX(x);
+	_vm->_state->setProjectorX(x);
 	_vm->_state->setProjectorY(y);
 	_vm->_state->setProjectorZoom(zoom);
 	_vm->_state->setProjectorBlur(blur);
 }
+
+
 
 } /* namespace Myst3 */

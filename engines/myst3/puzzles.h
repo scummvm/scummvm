@@ -41,6 +41,8 @@ public:
 private:
 	Myst3Engine *_vm;
 
+	void leversBall(int16 var);
+
 	void journalSaavedro(int16 move);
 	uint16 _journalSaavedroGetNode(uint16 chapter);
 	uint16 _journalSaavedroPageCount(uint16 chapter);
@@ -53,6 +55,8 @@ private:
 	void projectorLoadBitmap(uint16 bitmap);
 	void projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y);
 	void projectorUpdateCoordinates();
+
+	void _drawForVarHelper(uint16 var, int32 startValue, int32 endValue);
 };
 
 } /* namespace Myst3 */
