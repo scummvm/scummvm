@@ -809,6 +809,9 @@ void ScummEngine_v0::checkExecVerbs() {
 						// inventory position changed (arrows pressed, do nothing)
 						return;
 					}
+					// the second object of a give-to command has to be an actor
+					if (_activeVerb == kVerbGive && _activeObject)
+						obj = 0;
 				// click region: main screen
 				} else if (zone->number == kMainVirtScreen) {
 					// click into main screen
