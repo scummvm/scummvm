@@ -23,6 +23,7 @@
 #include "common/list.h"
 
 #include "gob/global.h"
+#include "gob/palanim.h"
 #include "gob/draw.h"
 #include "gob/video.h"
 #include "gob/decfile.h"
@@ -116,13 +117,20 @@ Diving::~Diving() {
 bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	_hasPearlLocation = hasPearlLocation;
 
+	_vm->_palAnim->fade(0, 0, 0);
+
 	init();
 	initScreen();
 	initCursor();
 	initPlants();
 
+	updateAirMeter();
+	updateAnims();
+
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
+
+	_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 
 	while (!_vm->shouldQuit()) {
 		checkShots();
@@ -339,8 +347,6 @@ void Diving::initScreen() {
 
 	memcpy(_vm->_draw->_vgaPalette     , kPalette, 48);
 	memcpy(_vm->_draw->_vgaSmallPalette, kPalette, 48);
-
-	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 	_vm->_draw->_backSurface->clear();
 	_background->draw(*_vm->_draw->_backSurface);
