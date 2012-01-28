@@ -267,9 +267,6 @@ void Lua_V1::DrawLine() {
 }
 
 void Lua_V1::ChangePrimitive() {
-	PrimitiveObject *psearch, *pmodify = NULL;
-	Color color;
-
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isuserdata(param1) || lua_tag(param1) != MKTAG('P','R','I','M'))
 		return;
@@ -278,17 +275,10 @@ void Lua_V1::ChangePrimitive() {
 	if (!lua_istable(tableObj))
 		return;
 
-	psearch = getprimitive(param1);
-
-	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
-		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
-				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
-			pmodify = p;
-			break;
-		}
-	}
+	PrimitiveObject *pmodify = getprimitive(param1);
 	assert(pmodify);
 
+	Color color;
 	lua_pushobject(tableObj);
 	lua_pushstring("color");
 	lua_Object colorObj = lua_gettable();
