@@ -41,6 +41,7 @@ namespace Geisha {
 
 class EvilFish;
 class Oko;
+class Meter;
 
 /** Geisha's "Diving" minigame. */
 class Diving {
@@ -131,6 +132,9 @@ private:
 
 	uint8 _whitePearlCount;
 	uint8 _blackPearlCount;
+
+	Meter *_airMeter;
+	Meter *_healthMeter;
 
 	uint8 _currentShot;
 
