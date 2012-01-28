@@ -648,8 +648,7 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32((*i)->getId());
 	}
 
-	// FIXME: Decomment this!!
-// 	state.writeFloat(_lookAtRate);
+	state->writeFloat(_lookAtRate);
 	_head->saveState(state);
 }
 
@@ -683,8 +682,7 @@ bool Costume::restoreState(SaveGame *state) {
 		_playingChores.push_back(_chores[id]);
 	}
 
-	// FIXME: Decomment this!!
-// 	_lookAtRate = state->readFloat();
+	_lookAtRate = state->readFloat();
 	_head->restoreState(state);
 	_head->loadJoints(getModelNodes());
 
