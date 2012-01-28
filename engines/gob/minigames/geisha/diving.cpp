@@ -92,8 +92,7 @@ const Diving::PlantLevel Diving::kPlantLevels[] = {
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 	_objects(0), _gui(0), _okoAnim(0), _lungs(0), _heart(0),
-	_blackPearl(0), _airMeter(0), _healthMeter(0),
-	_whitePearlCount(0), _blackPearlCount(0) {
+	_blackPearl(0), _airMeter(0), _healthMeter(0) {
 
 	_blackPearl = new Surface(11, 8, 1);
 
@@ -307,6 +306,9 @@ void Diving::init() {
 
 	_airCycle = 0;
 	_hurtGracePeriod = 0;
+
+	_whitePearlCount = 0;
+	_blackPearlCount = 0;
 }
 
 void Diving::deinit() {
@@ -467,6 +469,7 @@ void Diving::enterPearl(int16 x) {
 
 	_pearl.pearl->setVisible(true);
 	_pearl.pearl->setPause(false);
+	_pearl.picked = false;
 }
 
 void Diving::updateAirMeter() {
@@ -610,6 +613,21 @@ void Diving::updatePearl() {
 	if (!_oko->isMoving())
 		return;
 
+	// Picking the pearl
+	if (_pearl.picked && (_oko->getState() == Oko::kStatePick) && (_oko->getFrame() == 8)) {
+		// Remove the pearl
+		_pearl.pearl->setVisible(false);
+		_pearl.pearl->setPause(true);
+
+		// Add the pearl to our found pearls repository
+		if (_pearl.black)
+			foundBlackPearl();
+		else
+			foundWhitePearl();
+
+		return;
+	}
+
 	// Move the pearl
 	int16 x, y, width, height;
 	_pearl.pearl->getPosition(x, y);
@@ -635,18 +653,10 @@ void Diving::getPearl() {
 	_pearl.pearl->getFramePosition(x, y);
 	_pearl.pearl->getFrameSize(width, height);
 
-	if ((x > 175) || ((x + width) < 168))
+	if ((x > 190) || ((x + width) < 140))
 		return;
 
-	// Remove the pearl
-	_pearl.pearl->setVisible(false);
-	_pearl.pearl->setPause(true);
-
-	// Add the pearl to our found pearls repository
-	if (_pearl.black)
-		foundBlackPearl();
-	else
-		foundWhitePearl();
+	_pearl.picked = true;
 }
 
 void Diving::foundBlackPearl() {

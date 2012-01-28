@@ -101,6 +101,7 @@ private:
 	struct ManagedPearl {
 		ANIObject *pearl;
 
+		bool picked;
 		bool black;
 	};
 
