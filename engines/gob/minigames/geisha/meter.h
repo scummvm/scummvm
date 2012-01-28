@@ -50,6 +50,9 @@ public:
 	/** Set the current value the meter is measuring. */
 	void setValue(int32 value);
 
+	/** Set the current value the meter is measuring to the max value. */
+	void setMaxValue();
+
 	/** Increase the current value the meter is measuring. */
 	void increase(int32 n = 1);
 	/** Decrease the current value the meter is measuring. */
