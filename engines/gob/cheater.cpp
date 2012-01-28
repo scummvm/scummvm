@@ -20,41 +20,15 @@
  *
  */
 
-#ifndef GOB_CONSOLE_H
-#define GOB_CONSOLE_H
-
-#include "gui/debugger.h"
+#include "gob/gob.h"
+#include "gob/cheater.h"
 
 namespace Gob {
 
-class GobEngine;
-class Cheater;
+Cheater::Cheater(GobEngine *vm) : _vm(vm) {
+}
 
-class GobConsole : public GUI::Debugger {
-public:
-	GobConsole(GobEngine *vm);
-	virtual ~GobConsole(void);
-
-	void registerCheater(Cheater *cheater);
-	void unregisterCheater();
-
-private:
-	GobEngine *_vm;
-
-	Cheater *_cheater;
-
-	bool cmd_varSize(int argc, const char **argv);
-	bool cmd_dumpVars(int argc, const char **argv);
-	bool cmd_var8(int argc, const char **argv);
-	bool cmd_var16(int argc, const char **argv);
-	bool cmd_var32(int argc, const char **argv);
-	bool cmd_varString(int argc, const char **argv);
-
-	bool cmd_cheat(int argc, const char **argv);
-
-	bool cmd_listArchives(int argc, const char **argv);
-};
+Cheater::~Cheater() {
+}
 
 } // End of namespace Gob
-
-#endif

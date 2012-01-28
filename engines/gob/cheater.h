@@ -20,41 +20,43 @@
  *
  */
 
-#ifndef GOB_CONSOLE_H
-#define GOB_CONSOLE_H
+#ifndef GOB_CHEATER_H
+#define GOB_CHEATER_H
 
-#include "gui/debugger.h"
+namespace GUI {
+	class Debugger;
+}
 
 namespace Gob {
 
+namespace Geisha {
+	class Diving;
+}
+
 class GobEngine;
-class Cheater;
 
-class GobConsole : public GUI::Debugger {
+class Cheater {
 public:
-	GobConsole(GobEngine *vm);
-	virtual ~GobConsole(void);
+	Cheater(GobEngine *vm);
+	virtual ~Cheater();
 
-	void registerCheater(Cheater *cheater);
-	void unregisterCheater();
+	virtual bool cheat(GUI::Debugger &console) = 0;
+
+protected:
+	GobEngine *_vm;
+};
+
+class Cheater_Geisha : public Cheater {
+public:
+	Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving);
+	~Cheater_Geisha();
+
+	bool cheat(GUI::Debugger &console);
 
 private:
-	GobEngine *_vm;
-
-	Cheater *_cheater;
-
-	bool cmd_varSize(int argc, const char **argv);
-	bool cmd_dumpVars(int argc, const char **argv);
-	bool cmd_var8(int argc, const char **argv);
-	bool cmd_var16(int argc, const char **argv);
-	bool cmd_var32(int argc, const char **argv);
-	bool cmd_varString(int argc, const char **argv);
-
-	bool cmd_cheat(int argc, const char **argv);
-
-	bool cmd_listArchives(int argc, const char **argv);
+	Geisha::Diving *_diving;
 };
 
 } // End of namespace Gob
 
-#endif
+#endif // GOB_CHEATER_H
