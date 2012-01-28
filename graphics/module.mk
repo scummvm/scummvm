@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	fonts/winfont.o \
 	iff.o \
 	maccursor.o \
-	png.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
@@ -26,7 +25,8 @@ MODULE_OBJS := \
 	yuv_to_rgb.o \
 	decoders/bmp.o \
 	decoders/jpeg.o \
-	decoders/pict.o
+	decoders/pict.o \
+	decoders/png.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
