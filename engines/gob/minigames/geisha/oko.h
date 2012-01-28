@@ -57,7 +57,7 @@ public:
 
 	State getState() const;
 
-	bool isAtBottom() const;
+	bool isBreathing() const;
 
 private:
 	Sound *_sound;

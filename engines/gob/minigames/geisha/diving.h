@@ -136,6 +136,8 @@ private:
 	Meter *_airMeter;
 	Meter *_healthMeter;
 
+	uint8 _airCycle;
+
 	uint8 _currentShot;
 
 	SoundDesc _soundShoot;
@@ -161,6 +163,7 @@ private:
 	void foundBlackPearl();
 	void foundWhitePearl();
 
+	void updateAirMeter();
 	void updateEvilFish();
 	void updateDecorFish();
 	void updatePlants();

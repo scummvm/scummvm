@@ -131,8 +131,8 @@ Oko::State Oko::getState() const {
 	return _state;
 }
 
-bool Oko::isAtBottom() const {
-	return _level >= (kLevelCount - 1);
+bool Oko::isBreathing() const {
+	return (_state == kStateBreathe) && ((getFrame() >= 9) && (getFrame() <= 30));
 }
 
 } // End of namespace Geisha

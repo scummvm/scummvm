@@ -39,6 +39,9 @@ namespace Gob {
 
 namespace Geisha {
 
+static const uint8 kAirDecreaseRate = 15;
+
+
 const uint16 Diving::kEvilFishTypes[kEvilFishTypeCount][5] = {
 	{ 0, 14,  8,  9, 3}, // Shark
 	{15,  1, 12, 13, 3}, // Moray
@@ -105,6 +108,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 	while (!_vm->shouldQuit()) {
 		checkShots();
+		updateAirMeter();
 		updateEvilFish();
 		updateDecorFish();
 		updatePlants();
@@ -245,6 +249,8 @@ void Diving::init() {
 
 	_airMeter->setValue(38);
 	_healthMeter->setValue(38);
+
+	_airCycle = 0;
 }
 
 void Diving::deinit() {
@@ -391,6 +397,19 @@ void Diving::enterPearl(int16 x) {
 
 	_pearl.pearl->setVisible(true);
 	_pearl.pearl->setPause(false);
+}
+
+void Diving::updateAirMeter() {
+	if (_oko->isBreathing()) {
+		_airCycle = 0;
+		_airMeter->increase();
+		return;
+	}
+
+	_airCycle = (_airCycle + 1) % kAirDecreaseRate;
+
+	if (_airCycle == 0)
+		_airMeter->decrease();
 }
 
 void Diving::updateEvilFish() {
