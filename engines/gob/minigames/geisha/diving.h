@@ -51,6 +51,9 @@ public:
 
 	bool play(uint16 playerCount, bool hasPearlLocation);
 
+	bool isPlaying() const;
+	void cheatWin();
+
 private:
 	static const uint kEvilFishCount  =  3;
 	static const uint kDecorFishCount =  3;
@@ -148,6 +151,7 @@ private:
 	SoundDesc _soundBlackPearl;
 
 	bool _hasPearlLocation;
+	bool _isPlaying;
 
 
 	void init();

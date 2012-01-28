@@ -92,7 +92,7 @@ const Diving::PlantLevel Diving::kPlantLevels[] = {
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 	_objects(0), _gui(0), _okoAnim(0), _lungs(0), _heart(0),
-	_blackPearl(0), _airMeter(0), _healthMeter(0) {
+	_blackPearl(0), _airMeter(0), _healthMeter(0), _isPlaying(false) {
 
 	_blackPearl = new Surface(11, 8, 1);
 
@@ -127,6 +127,7 @@ Diving::~Diving() {
 
 bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	_hasPearlLocation = hasPearlLocation;
+	_isPlaying = true;
 
 	// Fade to black
 	_vm->_palAnim->fade(0, 0, 0);
@@ -194,8 +195,18 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 	deinit();
 
+	_isPlaying = false;
+
 	// The game succeeded when we got 2 black pearls
 	return _blackPearlCount >= 2;
+}
+
+bool Diving::isPlaying() const {
+	return _isPlaying;
+}
+
+void Diving::cheatWin() {
+	_blackPearlCount = 2;
 }
 
 void Diving::init() {

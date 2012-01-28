@@ -20,41 +20,47 @@
  *
  */
 
-#ifndef GOB_CONSOLE_H
-#define GOB_CONSOLE_H
-
 #include "gui/debugger.h"
+
+#include "gob/gob.h"
+#include "gob/cheater.h"
+#include "gob/inter.h"
+
+#include "gob/minigames/geisha/diving.h"
 
 namespace Gob {
 
-class GobEngine;
-class Cheater;
+Cheater_Geisha::Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving) :
+	Cheater(vm), _diving(diving) {
 
-class GobConsole : public GUI::Debugger {
-public:
-	GobConsole(GobEngine *vm);
-	virtual ~GobConsole(void);
+}
 
-	void registerCheater(Cheater *cheater);
-	void unregisterCheater();
+Cheater_Geisha::~Cheater_Geisha() {
+}
 
-private:
-	GobEngine *_vm;
+bool Cheater_Geisha::cheat(GUI::Debugger &console) {
+	// A cheat to get around the Diving minigame
+	if (_diving->isPlaying()) {
+		_diving->cheatWin();
+		return false;
+	}
 
-	Cheater *_cheater;
+	// A cheat to get around the mastermind puzzle
+	if (_vm->isCurrentTot("hard.tot") && _vm->_inter->_variables) {
+		uint32 digit1 = READ_VARO_UINT32(0x768);
+		uint32 digit2 = READ_VARO_UINT32(0x76C);
+		uint32 digit3 = READ_VARO_UINT32(0x770);
+		uint32 digit4 = READ_VARO_UINT32(0x774);
+		uint32 digit5 = READ_VARO_UINT32(0x778);
 
-	bool cmd_varSize(int argc, const char **argv);
-	bool cmd_dumpVars(int argc, const char **argv);
-	bool cmd_var8(int argc, const char **argv);
-	bool cmd_var16(int argc, const char **argv);
-	bool cmd_var32(int argc, const char **argv);
-	bool cmd_varString(int argc, const char **argv);
+		if (digit1 && digit2 && digit3 && digit4 && digit5)
+			console.DebugPrintf("Mastermind solution: %d %d %d %d %d\n",
+			                    digit1, digit2, digit3, digit4, digit5);
 
-	bool cmd_cheat(int argc, const char **argv);
+		return true;
+	}
 
-	bool cmd_listArchives(int argc, const char **argv);
-};
+	return true;
+}
 
 } // End of namespace Gob
-
-#endif

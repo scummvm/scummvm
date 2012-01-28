@@ -24,20 +24,30 @@
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/dataio.h"
+#include "gob/cheater.h"
 
 namespace Gob {
 
-GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm) {
+GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(0) {
 	DCmd_Register("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
 	DCmd_Register("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
 	DCmd_Register("var8",         WRAP_METHOD(GobConsole, cmd_var8));
 	DCmd_Register("var16",        WRAP_METHOD(GobConsole, cmd_var16));
 	DCmd_Register("var32",        WRAP_METHOD(GobConsole, cmd_var32));
 	DCmd_Register("varString",    WRAP_METHOD(GobConsole, cmd_varString));
+	DCmd_Register("cheat",        WRAP_METHOD(GobConsole, cmd_cheat));
 	DCmd_Register("listArchives", WRAP_METHOD(GobConsole, cmd_listArchives));
 }
 
 GobConsole::~GobConsole() {
+}
+
+void GobConsole::registerCheater(Cheater *cheater) {
+	_cheater = cheater;
+}
+
+void GobConsole::unregisterCheater() {
+	_cheater = 0;
 }
 
 bool GobConsole::cmd_varSize(int argc, const char **argv) {
@@ -151,6 +161,13 @@ bool GobConsole::cmd_varString(int argc, const char **argv) {
 	}
 
 	DebugPrintf("varString_%d = \"%s\"\n", varNum, _vm->_inter->_variables->getAddressOffString(varNum));
+
+	return true;
+}
+
+bool GobConsole::cmd_cheat(int argc, const char **argv) {
+	if (_cheater)
+		return _cheater->cheat(*this);
 
 	return true;
 }

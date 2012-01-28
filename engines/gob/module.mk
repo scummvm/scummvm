@@ -3,6 +3,8 @@ MODULE := engines/gob
 MODULE_OBJS := \
 	anifile.o \
 	aniobject.o \
+	cheater.o \
+	cheater_geisha.o \
 	console.o \
 	dataio.o \
 	databases.o \
