@@ -1162,7 +1162,7 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 		return false;
 
 	int actor = VAR(VAR_EGO);
-	ActorC64 *a = (ActorC64 *)derefActor(actor, "checkAndRunSentenceScript");
+	ActorC64 *a = (ActorC64 *)derefActor(actor, "checkPendingWalkAction");
 
 	// wait until walking or turning action is finished
 	if (a->_moving)
@@ -1172,23 +1172,41 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 	if (_walkToObjectState == kWalkToObjectStateTurn) {
 		runSentenceScript();
 	// change actor facing
-	} else if (getObjActToObjActDist(actorToObj(actor), _walkToObject) <= 4) {
-		if (objIsActor(_walkToObject)) { // walk to actor finished
-			// make actors turn to each other
-			a->faceToObject(_walkToObject);
-			int otherActor = objToActor(_walkToObject);
-			// ignore the plant
-			if (otherActor != 19) {
-				Actor *b = derefActor(otherActor, "checkAndRunSentenceScript(2)");
-				b->faceToObject(actorToObj(actor));
-			}
-		} else { // walk to object finished
-			int x, y, dir;
-			getObjectXYPos(_walkToObject, x, y, dir);
-			a->turnToDirection(dir);
+	} else {
+		int x, y, distX, distY;
+		if (objIsActor(_walkToObject)) {
+			Actor *b = derefActor(objToActor(_walkToObject), "checkPendingWalkAction(2)");
+			x = b->getRealPos().x;
+			y = b->getRealPos().y;
+			if (x < a->getRealPos().x)
+				x += 4;
+			else
+				x -= 4;
+		} else {
+			getObjectXYPos(_walkToObject, x, y);
 		}
-		_walkToObjectState = kWalkToObjectStateTurn;
-		return true;
+		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
+		distX = ABS(a->getRealPos().x - abr.x);
+		distY = ABS(a->getRealPos().y - abr.y);
+
+		if (distX <= 4 && distY <= 8) {
+			if (objIsActor(_walkToObject)) { // walk to actor finished
+				// make actors turn to each other
+				a->faceToObject(_walkToObject);
+				int otherActor = objToActor(_walkToObject);
+				// ignore the plant
+				if (otherActor != 19) {
+					Actor *b = derefActor(otherActor, "checkPendingWalkAction(3)");
+					b->faceToObject(actorToObj(actor));
+				}
+			} else { // walk to object finished
+				int x, y, dir;
+				getObjectXYPos(_walkToObject, x, y, dir);
+				a->turnToDirection(dir);
+			}
+			_walkToObjectState = kWalkToObjectStateTurn;
+			return true;
+		}
 	}
 
 	_walkToObjectState = kWalkToObjectStateDone;
