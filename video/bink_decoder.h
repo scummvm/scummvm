@@ -66,7 +66,6 @@ public:
 
 	// VideoDecoder API
 	bool loadStream(Common::SeekableReadStream *stream);
-	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
 	void close();
 	bool isVideoLoaded() const { return _bink != 0; }
 	uint16 getWidth() const { return _surface.w; }
@@ -79,6 +78,8 @@ public:
 	// FixedRateVideoDecoder
 	Common::Rational getFrameRate() const { return _frameRate; }
 
+	// Bink specific
+	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
 protected:
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
@@ -263,7 +264,7 @@ protected:
 	/**
 	 * Decode a video packet.
 	 *
-	 * This method is virtual because it is overriden in Residual
+	 * This method is virtual because it is overriden in ResidualVM
 	 * to export the alpha channel of the video
 	 */
 	virtual void videoPacket(VideoFrame &video);

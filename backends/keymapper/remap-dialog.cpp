@@ -327,7 +327,7 @@ void RemapDialog::loadKeymap() {
 		}
 
 		// loop through remaining finding mappings for unmapped keys
-		if (top.inherit && topIndex >= 0) {
+		if (top.transparent && topIndex >= 0) {
 			for (int i = topIndex - 1; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
@@ -345,7 +345,7 @@ void RemapDialog::loadKeymap() {
 					}
 				}
 
-				if (mr.inherit == false || freeKeys.empty())
+				if (mr.transparent == false || freeKeys.empty())
 					break;
 			}
 		}

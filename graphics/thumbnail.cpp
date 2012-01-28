@@ -126,6 +126,7 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 bool saveThumbnail(Common::WriteStream &out) {
 	Graphics::Surface thumb;
 
+//ResidualVM: not supported
 //	if (!createThumbnailFromScreen(&thumb)) {
 //		warning("Couldn't create thumbnail from screen, aborting thumbnail save");
 		return false;

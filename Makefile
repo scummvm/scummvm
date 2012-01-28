@@ -32,7 +32,7 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable exceptions (ResidualVM use RTTI)
+	# Disable exceptions, ResidualVM use RTTI:
 	CXXFLAGS+= -fno-exceptions
 
 ifneq "$(HAVE_CLANG)" "1"

@@ -80,9 +80,11 @@ add_engine() {
 add_engine grim "Grim" yes
 add_engine myst3 "Myst 3" yes
 
-
 #
 # Default settings
+#
+#ResidualVM defaults: mpeg2=no, faad=no, opengles=no
+#mt32emu=no, translation=no
 #
 # Default lib behaviour yes/no/auto
 _vorbis=auto
@@ -95,7 +97,9 @@ _seq_midi=auto
 _timidity=auto
 _zlib=auto
 _sparkle=auto
+_png=no
 _mpeg2=no
+_faad=no
 _fluidsynth=auto
 _opengl=auto
 _opengles=no
@@ -646,7 +650,7 @@ get_saga_build_string() {
 #
 # Greet user
 #
-echo "Running Residual configure..."
+echo "Running ResidualVM configure..."
 echo "Configure run on" `date` > $TMPLOG
 
 #
@@ -756,6 +760,15 @@ Optional Libraries:
 
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
+  --with-png-prefix=DIR    Prefix where libpng is installed (optional)
+  --disable-png            disable PNG decoder [autodetect]
+
+  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
+  --disable-theoradec      disable Theora decoder [autodetect]
+
+  --with-faad-prefix=DIR   Prefix where libfaad is installed (optional)
+  --disable-faad           disable AAC decoder [autodetect]
+
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
@@ -814,6 +827,12 @@ for ac_option in $@; do
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
+	--disable-png)            _png=no         ;;
+	--enable-png)             _png=yes        ;;
+	--disable-theoradec)      _theoradec=no   ;;
+	--enable-theoradec)       _theoradec=yes  ;;
+	--disable-faad)           _faad=no        ;;
+	--enable-faad)            _faad=yes       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -879,6 +898,21 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-png-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		PNG_CFLAGS="-I$arg/include"
+		PNG_LIBS="-L$arg/lib"
+		;;
+	--with-theoradec-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		THEORADEC_CFLAGS="-I$arg/include"
+		THEORADEC_LIBS="-L$arg/lib"
+		;;
+	--with-faad-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FAAD_CFLAGS="-I$arg/include"
+		FAAD_LIBS="-L$arg/lib"
 		;;
 	--with-zlib-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1516,7 +1550,7 @@ fi;
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | wii)
+android | gamecube | psp | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -1579,7 +1613,7 @@ esac
 # Determine a data type with the given length
 #
 find_type_with_size() {
-	for datatype in int short char long unknown; do
+	for datatype in int short char long "long long" unknown; do
 		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {
@@ -1603,21 +1637,33 @@ EOF
 }
 
 #
-# Determine a size of pointer type
+# Check whether the system is 32-bit
 #
-find_pointer_size() {
-	cat > tmp_find_pointer_size.cpp << EOF
+pointer_is_32bit() {
+	cat > tmp_pointer_is_32bit.cpp << EOF
 int main() {
-	void *p;
-	int v = (int)p;
+	static int test_array[1 - 2 * !(sizeof(void *) == 4)];
+	test_array[0] = 0;
 	return 0;
 }
 EOF
-	$CXX $CXXFLAGS -c -o $TMPO.o tmp_find_pointer_size.cpp 2>/dev/null
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
 	status=$?
-	cc_check_clean tmp_find_pointer_size.cpp
+	cc_check_clean tmp_pointer_is_32bit.cpp
 	return $status
 }
+
+echo_n "Checking 64-bitness... "
+pointer_is_32bit
+if test $? -eq 0; then
+	type_ptr=int32
+	echo "no"
+	add_line_to_config_h "/* #define SCUMM_64BITS */"
+else
+	type_ptr=int64
+	echo "yes"
+	add_line_to_config_h "#define SCUMM_64BITS"
+fi
 
 #
 # Determine data type sizes
@@ -1650,18 +1696,6 @@ if test $TMPR -eq 0; then
 fi
 # force cleanup after check for 8 bytes type
 cc_check_clean tmp_find_type_with_size.cpp
-
-echo_n "Target 64 bits... "
-find_pointer_size
-if test $? -eq 0; then
-	type_ptr=int32
-	echo "no"
-	add_line_to_config_h "/* #define TARGET_64BITS */"
-else
-	type_ptr=int64
-	echo "yes"
-	add_line_to_config_h "#define TARGET_64BITS"
-fi
 
 #
 # Check whether memory alignment is required
@@ -1829,7 +1863,7 @@ case $_host_os in
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
 		# Checking them here
-		
+
 		# MacPorts
 		# There is no way to get the prefix, so implementing a hack here
 		macport_version=`port version 2>/dev/null`
@@ -1985,6 +2019,7 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	webos)
+		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/device/usr/include"
@@ -3063,6 +3098,76 @@ define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
 
 #
+# Check for PNG
+#
+echocheck "PNG >= 1.2.8"
+if test "$_png" = auto ; then
+	_png=no
+	cat > $TMPC << EOF
+#include <png.h>
+int main(void) {
+#if PNG_LIBPNG_VER >= 10208
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+fi
+if test "$_png" = yes ; then
+	LIBS="$LIBS $PNG_LIBS -lpng"
+	INCLUDES="$INCLUDES $PNG_CFLAGS"
+fi
+define_in_config_if_yes "$_png" 'USE_PNG'
+echo "$_png"
+
+#
+# Check for Theora Decoder
+#
+echocheck "libtheoradec >= 1.0"
+if test "$_vorbis" = no ; then
+	echo "skipping. no vorbis"
+	_theoradec=notsupported
+fi
+if test "$_theoradec" = auto ; then
+	_theoradec=no
+	cat > $TMPC << EOF
+#include <theora/theoradec.h>
+#include <vorbis/codec.h>
+int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
+EOF
+	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
+fi
+if test "$_theoradec" = yes ; then
+	LIBS="$LIBS $THEORADEC_LIBS -ltheoradec"
+	INCLUDES="$INCLUDES $THEORADEC_CFLAGS"
+fi
+define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
+if test ! "$_theoradec" = notsupported ; then
+	echo "$_theoradec"
+fi
+
+#
+# Check for the AAC decoder
+#
+echocheck "libfaad"
+if test "$_faad" = auto ; then
+	_faad=no
+	cat > $TMPC << EOF
+#include <neaacdec.h>
+int main(void) { NeAACDecGetCapabilities(); return 0; }
+EOF
+	cc_check $FAAD_CFLAGS $FAAD_LIBS -lfaad && _faad=yes
+fi
+if test "$_faad" = yes ; then
+	LIBS="$LIBS $FAAD_LIBS -lfaad"
+	INCLUDES="$INCLUDES $FAAD_CFLAGS"
+fi
+define_in_config_if_yes "$_faad" 'USE_FAAD'
+echo "$_faad"
+
+#
 # Check for SEQ MIDI
 #
 echocheck "SEQ MIDI"
@@ -3354,6 +3459,14 @@ EOF
 		INCLUDES="$INCLUDES $OPENGL_CFLAGS"
 	fi
 fi
+
+case $_host_os in
+	bada)
+		# components live in non-standard locations so just assume sane SDK
+		_opengl=yes
+		_opengles=yes
+		;;
+esac
 
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
@@ -3754,8 +3867,12 @@ typedef unsigned $type_4_byte uint32;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+EOF
 
-// Residual 64bit stuff
+if test -n "$_def_64bit_type_unsigned"  ; then
+cat >> config.h << EOF
+
+/* 64-bit stuff */
 $_def_64bit_type_signed
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
@@ -3765,7 +3882,10 @@ $_def_64bit_type_unsigned
 #else
 $_def_64bit_type_unsigned
 #endif
-typedef $type_ptr residualvmptr;
+EOF
+fi
+
+cat >> config.h << EOF
 
 #endif /* CONFIG_H */
 EOF
@@ -3789,6 +3909,7 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
+#ResidualVM specific:
 SDLCONFIG=$_sdlconfig
 
 BACKEND := $_backend

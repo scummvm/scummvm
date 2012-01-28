@@ -536,9 +536,7 @@ protected:
 	 */
 	void unloadTheme();
 
-	const Graphics::Font *loadFont(const Common::String &filename);
-	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
-	const Graphics::Font *loadCachedFontFromArchive(const Common::String &filename);
+	const Graphics::Font *loadFont(const Common::String &filename, const bool makeLocalizedFont);
 	Common::String genCacheFilename(const Common::String &filename) const;
 
 	/**
@@ -658,6 +656,7 @@ protected:
 	Common::String _themeId;
 	Common::String _themeFile;
 	Common::Archive *_themeArchive;
+	Common::SearchSet _themeFiles;
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;

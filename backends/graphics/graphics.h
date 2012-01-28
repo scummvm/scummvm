@@ -33,6 +33,7 @@
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.
  */
+	// ResidualVM specific method
 class GraphicsManager : Common::NonCopyable  {
 public:
 	virtual ~GraphicsManager() {}
@@ -41,7 +42,9 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) = 0;
 	virtual bool getFeatureState(OSystem::Feature f) = 0;
 
+	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h) = 0;
+	// ResidualVM specific method
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
 	virtual int getScreenChangeID() const = 0;
 	virtual int16 getHeight() = 0;

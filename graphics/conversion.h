@@ -18,18 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/graphics/conversion.h $
- * $Id: conversion.h 43626 2009-08-22 00:27:13Z dhewg $
- *
  */
 
 #ifndef GRAPHICS_CONVERSION_H
 #define GRAPHICS_CONVERSION_H
 
 #include "common/util.h"
-#include "graphics/pixelformat.h"
 
 namespace Graphics {
+
+struct PixelFormat;
 
 /** Converting a color from YUV to RGB colorspace. */
 inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
@@ -45,6 +43,32 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 	v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
 }
 
-} // end of namespace Graphics
+// TODO: generic YUV to RGB blit
+
+/**
+ * Blits a rectangle from one graphical format to another.
+ *
+ * @param dstbuf	the buffer which will recieve the converted graphics data
+ * @param srcbuf	the buffer containing the original graphics data
+ * @param dstpitch	width in bytes of one full line of the dest buffer
+ * @param srcpitch	width in bytes of one full line of the source buffer
+ * @param w			the width of the graphics data
+ * @param h			the height of the graphics data
+ * @param dstFmt	the desired pixel format
+ * @param srcFmt	the original pixel format
+ * @return			true if conversion completes successfully,
+ *					false if there is an error.
+ *
+ * @note This implementation currently arbitrarily requires that the
+ *		 destination's format have at least as high a bytedepth as
+ *		 the source's.
+ * @note This can convert a rectangle in place, if the source and
+ *		 destination format have the same bytedepth.
+ *
+ */
+bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
+						int w, int h, const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+
+} // End of namespace Graphics
 
 #endif // GRAPHICS_CONVERSION_H

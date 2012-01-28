@@ -25,6 +25,41 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 
+extern void InitScalers(uint32 BitFormat);
+extern void DestroyScalers();
+
+typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
+#define DECLARE_SCALER(x)	\
+	extern void x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
+					uint32 dstPitch, int width, int height)
+
+
+DECLARE_SCALER(Normal1x);
+
+#ifdef USE_SCALERS
+
+DECLARE_SCALER(Normal2x);
+DECLARE_SCALER(Normal3x);
+DECLARE_SCALER(Normal1o5x);
+
+DECLARE_SCALER(_2xSaI);
+DECLARE_SCALER(Super2xSaI);
+DECLARE_SCALER(SuperEagle);
+
+DECLARE_SCALER(AdvMame2x);
+DECLARE_SCALER(AdvMame3x);
+
+DECLARE_SCALER(TV2x);
+DECLARE_SCALER(DotMatrix);
+
+#ifdef USE_HQ_SCALERS
+DECLARE_SCALER(HQ2x);
+DECLARE_SCALER(HQ3x);
+#endif
+
+#endif // #ifdef USE_SCALERS
 
 // creates a 160x100 thumbnail for 320x200 games
 // and 160x120 thumbnail for 320x240 and 640x480 games
@@ -41,6 +76,7 @@ enum {
  * @param surf	a surface (will always have 16 bpp after this for now)
  * @return		false if a error occurred
  */
+//ResidualVM: not supported
 //extern bool createThumbnailFromScreen(Graphics::Surface *surf);
 
 /**
@@ -52,6 +88,7 @@ enum {
  * @param h         height
  * @param palette   palette in RGB format
  */
+//ResidualVM: not supported
 //extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
 #endif

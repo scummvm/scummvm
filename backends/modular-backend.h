@@ -62,7 +62,9 @@ public:
 	//@{
 
 	virtual GraphicsManager *getGraphicsManager();
+// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
+// ResidualVM specific method
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 	virtual int getScreenChangeID() const;
 

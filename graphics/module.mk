@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	imagedec.o \
+	jpeg.o \
 	primitives.o \
 	surface.o \
 	thumbnail.o \
@@ -16,7 +17,6 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
-	jpeg.o \
 	pixelbuffer.o \
 	tinygl/api.o \
 	tinygl/arrays.o \

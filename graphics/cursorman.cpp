@@ -136,23 +136,23 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 }
 
 bool CursorManager::supportsCursorPalettes() {
-	return false;
+	return false; //ResidualVM: not supported
 }
 
 void CursorManager::disableCursorPalette(bool disable) {
-	return;
+	return; //ResidualVM: not supported
 }
 
 void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {
-	return;
+	return; //ResidualVM: not supported
 }
 
 void CursorManager::popCursorPalette() {
-	return;
+	return; //ResidualVM: not supported
 }
 
 void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint num) {
-	return;
+	return; //ResidualVM: not supported
 }
 
 CursorManager::Cursor::Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, const Graphics::PixelFormat *format) {

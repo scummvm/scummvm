@@ -534,7 +534,7 @@ int main(int argc, char *argv[]) {
 		projectWarnings["agos"].push_back("4511");
 
 		projectWarnings["dreamweb"].push_back("4355");
-
+		
 		projectWarnings["lure"].push_back("4189");
 		projectWarnings["lure"].push_back("4355");
 
@@ -575,6 +575,8 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("-Wwrite-strings");
 		// The following are not warnings at all... We should consider adding them to
 		// a different list of parameters.
+		//ResidualVM: disabled:
+		globalWarnings.push_back("-fno-rtti");
 		globalWarnings.push_back("-fno-exceptions");
 		globalWarnings.push_back("-fcheck-new");
 
@@ -1212,6 +1214,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
 		createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
 		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
+		//ResidualVM specific
 		createModuleList(setup.srcDir + "/math", setup.defines, in, ex);
 #if HAS_VIDEO_FOLDER
 		createModuleList(setup.srcDir + "/video", setup.defines, in, ex);

@@ -515,7 +515,7 @@ void BinkDecoder::mergeHuffmanSymbols(VideoFrame &video, byte *dst, const byte *
 }
 
 bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
-	Graphics::PixelFormat format = g_system->getOverlayFormat(); // residual FIXME: getScreenFormat();
+	Graphics::PixelFormat format = g_system->getOverlayFormat(); // ResidualVM specific: getScreenFormat();
 	return loadStream(stream, format);
 }
 

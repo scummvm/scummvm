@@ -29,6 +29,7 @@
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"
+// ResidualVM specific:
 #include "graphics/pixelbuffer.h"
 
 ModularBackend::ModularBackend()
@@ -65,10 +66,12 @@ GraphicsManager *ModularBackend::getGraphicsManager() {
 	return (GraphicsManager *)_graphicsManager;
 }
 
+// ResidualVM specific method
 void ModularBackend::launcherInitSize(uint w, uint h) {
 	_graphicsManager->launcherInitSize(w, h);
 }
 
+// ResidualVM specific method
 Graphics::PixelBuffer ModularBackend::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
 	return _graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }

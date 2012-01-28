@@ -78,6 +78,7 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
 
+//ResidualVM specific
 #ifndef round
 #define round(x) ((x > 0.0) ? floor((x) + 0.5) : ceil((x) - 0.5))
 #endif

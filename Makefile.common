@@ -12,6 +12,7 @@ all: $(EXECUTABLE) plugins
 ######################################################################
 # Module settings
 ######################################################################
+#ResidualVM: do not include 'test' but add 'math':
 
 PLUGINS :=
 MODULES := devtools base $(MODULES)
@@ -241,7 +242,10 @@ endif
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
 # Engine data files
-DIST_FILES_ENGINEDATA=residualvm-grim-patch.lab
+DIST_FILES_ENGINEDATA=
+ifdef ENABLE_GRIM
+DIST_FILES_ENGINEDATA+=residualvm-grim-patch.lab
+endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 

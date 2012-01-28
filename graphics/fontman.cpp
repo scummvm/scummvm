@@ -72,6 +72,20 @@ const struct {
 	{ 0, FontManager::kConsoleFont }
 };
 
+bool FontManager::setLocalizedFont(const Common::String &name) {
+	Common::String lowercaseName = name;
+	lowercaseName.toLowercase();
+
+	// We only update the localized font in case the name is properly assigned
+	// to a font.
+	if (_fontMap.contains(lowercaseName) && _fontMap.getVal(lowercaseName) != 0) {
+		_localizedFontName = lowercaseName;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool FontManager::assignFontToName(const Common::String &name, const Font *font) {
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();
@@ -79,19 +93,19 @@ bool FontManager::assignFontToName(const Common::String &name, const Font *font)
 	return true;
 }
 
-bool FontManager::setFont(FontUsage usage, const Font *font) {
+bool FontManager::setFont(FontUsage usage, const BdfFont *font) {
 	switch (usage) {
 	case kConsoleFont:
 		delete g_consolefont;
-		g_consolefont = (const BdfFont *)font;
+		g_consolefont = font;
 		break;
 	case kGUIFont:
 		delete g_sysfont;
-		g_sysfont = (const BdfFont *)font;
+		g_sysfont = font;
 		break;
 	case kBigGUIFont:
 		delete g_sysfont_big;
-		g_sysfont_big = (const BdfFont *)font;
+		g_sysfont_big = font;
 		break;
 	default:
 		return false;
@@ -103,6 +117,11 @@ void FontManager::removeFontName(const Common::String &name) {
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();
 	_fontMap.erase(lowercaseName);
+
+	// In case the current localized font is removed, we fall back to the
+	// default font again.
+	if (_localizedFontName == lowercaseName)
+		_localizedFontName.clear();
 }
 
 const Font *FontManager::getFontByName(const Common::String &name) const {
@@ -126,49 +145,14 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	case kBigGUIFont:
 		return g_sysfont_big;
 	case kLocalizedFont:
-	{
-		// First try to find a kBigGUIFont
-		Common::String fontName = getLocalizedFontNameByUsage(kBigGUIFont);
-		if (!fontName.empty()) {
-			const Font *font = getFontByName(fontName);
-			if (font)
-				return font;
-		}
-		// Try kGUIFont
-		fontName = getLocalizedFontNameByUsage(kGUIFont);
-		if (!fontName.empty()) {
-			const Font *font = getFontByName(fontName);
-			if (font)
-				return font;
-		}
-#ifdef USE_TRANSLATION
-		// Accept any other font that has the charset in its name
-		for (Common::HashMap<Common::String, const Font *>::const_iterator it = _fontMap.begin() ; it != _fontMap.end() ; ++it) {
-			if (it->_key.contains(TransMan.getCurrentCharset()))
-				return it->_value;
-		}
-#endif
-		// Fallback: return a non localized kGUIFont.
-		// Maybe we should return a null pointer instead?
-		return g_sysfont;
-	}
+		// By default use the big font as localized font
+		if (_localizedFontName.empty())
+			return g_sysfont_big;
+		else
+			return _fontMap[_localizedFontName];
 	}
 
 	return 0;
-}
-
-Common::String FontManager::getLocalizedFontNameByUsage(FontUsage usage) const {
-	// We look for a name that matches the usage and that ends in .bdf.
-	// It should also not contain "-ascii" or "-iso-" in its name.
-	// We take the first name that matches.
-	for (int i = 0; builtinFontNames[i].name; i++) {
-		if (builtinFontNames[i].id == usage) {
-			Common::String fontName(builtinFontNames[i].name);
-			if (!fontName.contains("-ascii") && !fontName.contains("-iso-") && fontName.contains(".bdf"))
-				return genLocalizedFontFilename(fontName);
-		}
-	}
-	return Common::String();
 }
 
 Common::String FontManager::genLocalizedFontFilename(const Common::String &filename) const {

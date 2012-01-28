@@ -16,8 +16,7 @@ install:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) "$(DESTDIR)$(datadir)/"
-	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/residualvm/"
 	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/residualvm/"
@@ -82,6 +81,7 @@ endif
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
 # Static libaries, used for the residualvm-static and iphone targets
+#ResidualVM path for SDL
 OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
 endif
 
@@ -122,7 +122,7 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
 endif
 
 ifdef USE_ZLIB
-OSX_ZLIB ?= -lz
+OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
@@ -163,6 +163,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
+	mkdir ScummVM-snapshot/doc
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
 	#cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
@@ -186,6 +187,7 @@ residualvmwinres.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_F
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	mkdir -p $(WIN32PATH)/graphics
+	mkdir -p $(WIN32PATH)/doc
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -202,6 +204,7 @@ endif
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/win32/residualvm.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/doc/*.txt
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
