@@ -61,6 +61,18 @@ static const byte kPalette[48] = {
 	0x3F, 0x3F, 0x3F
 };
 
+enum Animation {
+	kAnimationLungs         =  0,
+	kAnimationHeart         =  1,
+	kAnimationPearl         =  4,
+	kAnimationJellyfish     =  6,
+	kAnimationWater         =  7,
+	kAnimationShot          = 17,
+	kAnimationSwarmRedGreen = 32,
+	kAnimationSwarmOrange   = 33
+};
+
+
 const uint16 Diving::kEvilFishTypes[kEvilFishTypeCount][5] = {
 	{ 0, 14,  8,  9, 3}, // Shark
 	{15,  1, 12, 13, 3}, // Moray
@@ -117,8 +129,10 @@ Diving::~Diving() {
 bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	_hasPearlLocation = hasPearlLocation;
 
+	// Fade to black
 	_vm->_palAnim->fade(0, 0, 0);
 
+	// Initialize our playing field
 	init();
 	initScreen();
 	initCursor();
@@ -130,16 +144,18 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
+	// Fade in
 	_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 
 	while (!_vm->shouldQuit()) {
-		checkShots();
-		checkOkoHurt();
+		checkShots();   // Check if a shot hit something
+		checkOkoHurt(); // Check if Oko was hurt
 
 		// Is Oko dead?
 		if (_oko->isPaused())
 			break;
 
+		// Update all objects and animations
 		updateAirMeter();
 		updateEvilFish();
 		updateDecorFish();
@@ -149,37 +165,48 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 		_vm->_draw->animateCursor(1);
 
+		// Draw and wait for the end of the frame
 		_vm->_draw->blitInvalidated();
-
 		_vm->_util->waitEndFrame();
+
+		// Handle input
 		_vm->_util->processInput();
 
 		int16 mouseX, mouseY;
 		MouseButtons mouseButtons;
 
 		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+
+		// Aborting the game
 		if (key == kKeyEscape)
 			break;
 
+		// Shoot the gun
 		if (mouseButtons == kMouseButtonsLeft)
 			shoot(mouseX, mouseY);
 
+		// Oko
 		handleOko(key);
 
+		// Game end check
 		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
 			break;
 	}
 
 	deinit();
+
+	// The game succeeded when we got 2 black pearls
 	return _blackPearlCount >= 2;
 }
 
 void Diving::init() {
+	// Load sounds
 	_vm->_sound->sampleLoad(&_soundShoot     , SOUND_SND, "tirgim.snd");
 	_vm->_sound->sampleLoad(&_soundBreathe   , SOUND_SND, "respir.snd");
 	_vm->_sound->sampleLoad(&_soundWhitePearl, SOUND_SND, "virtou.snd");
 	_vm->_sound->sampleLoad(&_soundBlackPearl, SOUND_SND, "trouve.snd");
 
+	// Load and initialize sprites and animations
 	_background = new DECFile(_vm, "tperle.dec"  , 320, 200);
 	_objects    = new ANIFile(_vm, "tperle.ani"  , 320);
 	_gui        = new ANIFile(_vm, "tperlcpt.ani", 320);
@@ -189,16 +216,16 @@ void Diving::init() {
 	_lungs = new ANIObject(*_gui);
 	_heart = new ANIObject(*_gui);
 
-	_water->setAnimation(7);
+	_water->setAnimation(kAnimationWater);
 	_water->setPosition();
 	_water->setVisible(true);
 
-	_lungs->setAnimation(0);
+	_lungs->setAnimation(kAnimationLungs);
 	_lungs->setPosition();
 	_lungs->setVisible(true);
 	_lungs->setPause(true);
 
-	_heart->setAnimation(1);
+	_heart->setAnimation(kAnimationHeart);
 	_heart->setPosition();
 	_heart->setVisible(true);
 	_heart->setPause(true);
@@ -229,21 +256,21 @@ void Diving::init() {
 	_pearl.pearl = new ANIObject(*_objects);
 	_pearl.black = false;
 
-	_pearl.pearl->setAnimation(4);
+	_pearl.pearl->setAnimation(kAnimationPearl);
 
-	_decorFish[0].decorFish->setAnimation( 6); // Jellyfish
+	_decorFish[0].decorFish->setAnimation(kAnimationJellyfish);
 	_decorFish[0].deltaX = 0;
 
-	_decorFish[1].decorFish->setAnimation(32); // Swarm of red/green fish
+	_decorFish[1].decorFish->setAnimation(kAnimationSwarmRedGreen);
 	_decorFish[1].deltaX = -5;
 
-	_decorFish[2].decorFish->setAnimation(33); // Swarm of orange fish
+	_decorFish[2].decorFish->setAnimation(kAnimationSwarmOrange);
 	_decorFish[2].deltaX = -5;
 
 	for (uint i = 0; i < kMaxShotCount; i++) {
 		_shot[i] = new ANIObject(*_objects);
 
-		_shot[i]->setAnimation(17);
+		_shot[i]->setAnimation(kAnimationShot);
 		_shot[i]->setMode(ANIObject::kModeOnce);
 	}
 
@@ -259,6 +286,7 @@ void Diving::init() {
 
 	_currentShot = 0;
 
+	// Add the animations to our animation list
 	_anims.push_back(_water);
 	for (uint i = 0; i < kMaxShotCount; i++)
 		_anims.push_back(_shot[i]);
@@ -273,8 +301,9 @@ void Diving::init() {
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
 
-	_airMeter->setValue(38);
-	_healthMeter->setValue(38);
+	// Air and health meter
+	_airMeter->setMaxValue();
+	_healthMeter->setMaxValue();
 
 	_airCycle = 0;
 	_hurtGracePeriod = 0;
@@ -343,18 +372,23 @@ void Diving::deinit() {
 }
 
 void Diving::initScreen() {
+	// Set framerate
 	_vm->_util->setFrameRate(15);
 
-	memcpy(_vm->_draw->_vgaPalette     , kPalette, 48);
-	memcpy(_vm->_draw->_vgaSmallPalette, kPalette, 48);
+	// Set palette
+	memcpy(_vm->_draw->_vgaPalette     , kPalette, sizeof(kPalette));
+	memcpy(_vm->_draw->_vgaSmallPalette, kPalette, sizeof(kPalette));
 
+	// Draw background decal
 	_vm->_draw->_backSurface->clear();
 	_background->draw(*_vm->_draw->_backSurface);
 
+	// Draw heart and lung boxes
 	int16 left, top, right, bottom;
 	_lungs->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
 	_heart->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
 
+	// Mark everything as dirty
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
 }
 
@@ -377,6 +411,7 @@ void Diving::initCursor() {
 
 
 void Diving::initPlants() {
+	// Create initial plantlife
 	for (uint i = 0; i < kPlantLevelCount; i++) {
 		for (uint j = 0; j < kPlantPerLevelCount; j++) {
 			int16 prevPlantX = -100;
@@ -389,6 +424,8 @@ void Diving::initPlants() {
 }
 
 void Diving::enterPlant(ManagedPlant &plant, int16 prevPlantX) {
+	// Create a new plant outside the borders of the screen to scroll in
+
 	const PlantLevel &level = kPlantLevels[plant.level];
 	const uint anim = level.plants[_vm->_util->getRandom(kPlantLevels[plant.level].plantCount)];
 
@@ -398,6 +435,7 @@ void Diving::enterPlant(ManagedPlant &plant, int16 prevPlantX) {
 	int16 width, height;
 	plant.plant->getFrameSize(width, height);
 
+	// The new plant is created 140 - 160 pixels to the right of the right-most plant
 	plant.x = prevPlantX + 150 - 10 + _vm->_util->getRandom(21);
 	plant.y = kPlantLevels[plant.level].y - height;
 
@@ -405,11 +443,14 @@ void Diving::enterPlant(ManagedPlant &plant, int16 prevPlantX) {
 	plant.plant->setVisible(true);
 	plant.plant->setPause(false);
 
+	// If the plant is outside of the screen, create a pearl too if necessary
 	if (plant.x > 320)
 		enterPearl(plant.x);
 }
 
 void Diving::enterPearl(int16 x) {
+	// Create a pearl outside the borders of the screen to scroll in
+
 	// Only one pearl is ever visible
 	if (_pearl.pearl->isVisible())
 		return;
@@ -421,6 +462,7 @@ void Diving::enterPearl(int16 x) {
 	// Every 5th pearl is a black one, but only if the location is correct
 	_pearl.black = _hasPearlLocation && (_vm->_util->getRandom(5) == 0);
 
+	// Set the pearl about in the middle of two bottom-level plants
 	_pearl.pearl->setPosition(x + 80, 130);
 
 	_pearl.pearl->setVisible(true);
@@ -429,18 +471,22 @@ void Diving::enterPearl(int16 x) {
 
 void Diving::updateAirMeter() {
 	if (_oko->isBreathing()) {
+		// If Oko is breathing, increase the air meter and play the lungs animation
 		_airCycle = 0;
 		_airMeter->increase();
 		_lungs->setPause(false);
 		return;
 	} else
+		// Otherwise, don't play the lungs animation
 		_lungs->setPause(true);
 
+	// Update the air cycle and decrease the air meter when the cycle ended
 	_airCycle = (_airCycle + 1) % kAirDecreaseRate;
 
 	if (_airCycle == 0)
 		_airMeter->decrease();
 
+	// Without any air, Oko dies
 	if (_airMeter->getValue() == 0)
 		_oko->die();
 }
@@ -469,6 +515,7 @@ void Diving::updateEvilFish() {
 				fish.enterAt = _vm->_util->getTimeKey() + 2000 + _vm->_util->getRandom(8000);
 
 			if (_vm->_util->getTimeKey() >= fish.enterAt) {
+				// The new fish has a random type
 				int fishType = _vm->_util->getRandom(kEvilFishTypeCount);
 				fish.evilFish->mutate(kEvilFishTypes[fishType][0], kEvilFishTypes[fishType][1],
 				                      kEvilFishTypes[fishType][2], kEvilFishTypes[fishType][3],
@@ -520,7 +567,8 @@ void Diving::updateDecorFish() {
 }
 
 void Diving::updatePlants() {
-	if (_oko->getState() == Oko::kStateBreathe)
+	// When Oko isn't moving, the plants don't continue to scroll by
+	if (!_oko->isMoving())
 		return;
 
 	for (uint i = 0; i < kPlantCount; i++) {
@@ -558,7 +606,8 @@ void Diving::updatePearl() {
 	if (!_pearl.pearl->isVisible())
 		return;
 
-	if (_oko->getState() == Oko::kStateBreathe)
+	// When Oko isn't moving, the pearl doesn't continue to scroll by
+	if (!_oko->isMoving())
 		return;
 
 	// Move the pearl
@@ -603,6 +652,7 @@ void Diving::getPearl() {
 void Diving::foundBlackPearl() {
 	_blackPearlCount++;
 
+	// Put the black pearl drawing into the black pearl box
 	if        (_blackPearlCount == 1) {
 		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 147, 179, 0);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 157, 186);
@@ -617,6 +667,7 @@ void Diving::foundBlackPearl() {
 void Diving::foundWhitePearl() {
 	_whitePearlCount++;
 
+	// Put the white pearl drawing into the white pearl box
 	int16 x = 54 + (_whitePearlCount - 1) * 8;
 	if (_whitePearlCount > 10)
 		x += 48;
@@ -688,6 +739,7 @@ void Diving::shoot(int16 mouseX, int16 mouseY) {
 void Diving::checkShots() {
 	Common::List<int>::iterator activeShot = _activeShots.begin();
 
+	// Check if we hit something with our shots
 	while (activeShot != _activeShots.end()) {
 		ANIObject &shot = *_shot[*activeShot];
 
@@ -696,6 +748,7 @@ void Diving::checkShots() {
 
 			shot.getPosition(x, y);
 
+			// When we hit an evil fish, it dies
 			for (uint i = 0; i < kEvilFishCount; i++) {
 				EvilFish &evilFish = *_evilFish[i].evilFish;
 
@@ -714,12 +767,14 @@ void Diving::checkShots() {
 
 void Diving::handleOko(int16 key) {
 	if (key == kKeyDown) {
+		// Oko sinks down a level or picks up a pearl if already at the bottom
 		_oko->sink();
 
 		if ((_oko->getState() == Oko::kStatePick) && (_oko->getFrame() == 0))
 			getPearl();
 
 	} else if (key == kKeyUp)
+		// Oko raises up a level or surfaces to breathe if already at the top
 		_oko->raise();
 }
 

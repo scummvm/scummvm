@@ -161,6 +161,10 @@ bool Oko::isBreathing() const {
 	return (_state == kStateBreathe) && ((getFrame() >= 9) && (getFrame() <= 30));
 }
 
+bool Oko::isMoving() const {
+	return (_state != kStateBreathe) && (_state != kStateHurt) && (_state != kStateDead);
+}
+
 } // End of namespace Geisha
 
 } // End of namespace Gob

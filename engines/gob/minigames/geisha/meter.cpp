@@ -55,6 +55,10 @@ void Meter::setValue(int32 value) {
 	_needUpdate = true;
 }
 
+void Meter::setMaxValue() {
+	setValue(_maxValue);
+}
+
 void Meter::increase(int32 n) {
 	int32 value = CLIP<int32>(_value + n, 0, _maxValue);
 	if (_value == value)

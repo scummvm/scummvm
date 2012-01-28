@@ -66,6 +66,7 @@ public:
 	State getState() const;
 
 	bool isBreathing() const;
+	bool isMoving() const;
 
 private:
 	Sound *_sound;
