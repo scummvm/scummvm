@@ -91,7 +91,7 @@ const Diving::PlantLevel Diving::kPlantLevels[] = {
 
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
-	_objects(0), _gui(0), _okoAnim(0), _lungs(0), _heart(0),
+	_objects(0), _gui(0), _okoAnim(0), _water(0), _lungs(0), _heart(0),
 	_blackPearl(0), _airMeter(0), _healthMeter(0), _isPlaying(false) {
 
 	_blackPearl = new Surface(11, 8, 1);
