@@ -166,6 +166,8 @@ public:
 	ViewType getViewType() { return static_cast<ViewType>(_data.currentNodeType); }
 	void setViewType(ViewType t) { _data.currentNodeType = t; }
 
+	float getLookAtFOV() { return _data.lookatFOV; }
+	void setLookAtFOV(float fov) { _data.lookatFOV = fov; }
 	float getLookAtPitch() { return _data.lookatPitch; }
 	float getLookAtHeading() { return _data.lookatHeading; }
 	void lookAt(float pitch, float heading) { _data.lookatPitch = pitch; _data.lookatHeading = heading; }

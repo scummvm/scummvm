@@ -238,6 +238,7 @@ private:
 	DECLARE_OPCODE(cameraLookAtVar);
 	DECLARE_OPCODE(cameraGetLookAt);
 	DECLARE_OPCODE(lootAtMovieStartImmediate);
+	DECLARE_OPCODE(cameraSetFOV);
 	DECLARE_OPCODE(changeNode);
 	DECLARE_OPCODE(changeNodeRoom);
 	DECLARE_OPCODE(changeNodeRoomAge);

@@ -359,7 +359,8 @@ void Myst3Engine::drawFrame() {
 	if (_state->getViewType() == kCube) {
 		float pitch = _state->getLookAtPitch();
 		float heading = _state->getLookAtHeading();
-		_gfx->setupCameraPerspective(pitch, heading);
+		float fov = _state->getLookAtFOV();
+		_gfx->setupCameraPerspective(pitch, heading, fov);
 	} else {
 		_gfx->setupCameraOrtho2D();
 	}

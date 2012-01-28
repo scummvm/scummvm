@@ -43,12 +43,6 @@ void Scene::updateCamera(Common::Point &mouse) {
 		heading += mouse.x / 3.0f;
 	}
 
-	// Keep heading in 0..360 range
-	if (heading > 360.0f)
-		heading -= 360.0f;
-	else if (heading < 0.0f)
-		heading += 360.0f;
-
 	// Keep heading within allowed values
 	if (_vm->_state->isCameraLimited()) {
 		float minHeading = _vm->_state->getMinHeading();
@@ -67,6 +61,12 @@ void Scene::updateCamera(Common::Point &mouse) {
 			}
 		}
 	}
+
+	// Keep heading in 0..360 range
+	if (heading > 360.0f)
+		heading -= 360.0f;
+	else if (heading < 0.0f)
+		heading += 360.0f;
 
 	// Keep pitch within allowed values
 	float minPitch = _vm->_state->getCameraMinPitch();

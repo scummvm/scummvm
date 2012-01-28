@@ -188,6 +188,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(160, cameraLookAtVar,				kVar														);
 	OP_1(161, cameraGetLookAt,				kVar														);
 	OP_1(162, lootAtMovieStartImmediate,	kEvalValue													);
+	OP_1(163, cameraSetFOV,					kEvalValue													);
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
@@ -1833,6 +1834,14 @@ void Script::lootAtMovieStartImmediate(Context &c, const Opcode &cmd) {
 	float startPitch, startHeading;
 	_vm->getMovieLookAt(movieId, true, startPitch, startHeading);
 	_vm->_state->lookAt(startPitch, startHeading);
+}
+
+void Script::cameraSetFOV(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set camera fov %d", cmd.op, cmd.args[0]);
+
+	int32 fov = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->_state->setLookAtFOV(fov);
 }
 
 void Script::changeNode(Context &c, const Opcode &cmd) {

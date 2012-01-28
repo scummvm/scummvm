@@ -58,7 +58,7 @@ public:
 
 	void clear();
 	void setupCameraOrtho2D();
-	void setupCameraPerspective(float pitch, float heading);
+	void setupCameraPerspective(float pitch, float heading, float fov);
 
 	Texture *createTexture(const Graphics::Surface *surface);
 	void freeTexture(Texture *texture);

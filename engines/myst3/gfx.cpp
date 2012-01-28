@@ -152,11 +152,18 @@ void Renderer::setupCameraOrtho2D() {
 	glLoadIdentity();
 }
 
-void Renderer::setupCameraPerspective(float pitch, float heading) {
+void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
+	// TODO: Find a correct and exact formula for the FOV
+	GLfloat glFOV = 0.63 * fov; // Approximative and experimental formula
+	if (fov > 79.0 && fov < 81.0)
+		glFOV = 50.5; // Somewhat good value for fov == 80
+	else if (fov > 59.0 && fov < 61.0)
+		glFOV = 36.0; // Somewhat good value for fov == 60
+
 	glViewport(0, kBottomBorderHeight, kOriginalWidth, kFrameHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(50.5, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
+	gluPerspective(glFOV, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);
