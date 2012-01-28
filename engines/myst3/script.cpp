@@ -91,7 +91,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1( 52, varSetOneHundred,				kVar														);
 	OP_2( 53, varSetValue,					kVar,		kValue											);
 	OP_1( 54, varToggle,					kVar														);
-	OP_1( 55, varSetOneIfZero,				kVar														);
+	OP_1( 55, varSetOneIfNotZero,				kVar														);
 	OP_1( 56, varOpposite,					kVar														);
 	OP_1( 57, varAbsolute,					kVar														);
 	OP_1( 58, varDereference,				kVar														);
@@ -733,11 +733,11 @@ void Script::varToggle(Context &c, const Opcode &cmd) {
 	_vm->_state->setVar(cmd.args[0], _vm->_state->getVar(cmd.args[0]) == 0);
 }
 
-void Script::varSetOneIfZero(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set var %d to one if zero", cmd.op, cmd.args[0]);
+void Script::varSetOneIfNotZero(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set var %d to one if not zero", cmd.op, cmd.args[0]);
 
 	int32 value = _vm->_state->getVar(cmd.args[0]);
-	if (!value)
+	if (value)
 		_vm->_state->setVar(cmd.args[0], 1);
 }
 

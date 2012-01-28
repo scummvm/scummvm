@@ -141,7 +141,7 @@ private:
 	DECLARE_OPCODE(varSetOneHundred);
 	DECLARE_OPCODE(varSetValue);
 	DECLARE_OPCODE(varToggle);
-	DECLARE_OPCODE(varSetOneIfZero);
+	DECLARE_OPCODE(varSetOneIfNotZero);
 	DECLARE_OPCODE(varOpposite);
 	DECLARE_OPCODE(varAbsolute);
 	DECLARE_OPCODE(varDereference);
