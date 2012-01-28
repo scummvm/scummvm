@@ -111,6 +111,36 @@ void ANIObject::getFrameSize(int16 &width, int16 &height) const {
 	height = animation.frameAreas[_frame].bottom - animation.frameAreas[_frame].top  + 1;
 }
 
+bool ANIObject::isIn(int16 x, int16 y) const {
+	if (!isVisible())
+		return false;
+
+	int16 frameX, frameY, frameWidth, frameHeight;
+	getFramePosition(frameX, frameY);
+	getFrameSize(frameWidth, frameHeight);
+
+	if ((x < frameX) || (y < frameY))
+		return false;
+	if ((x > (frameX + frameWidth)) || (y > (frameY + frameHeight)))
+		return false;
+
+	return true;
+}
+
+bool ANIObject::isIn(const ANIObject &obj) const {
+	if (!isVisible() || !obj.isVisible())
+		return false;
+
+	int16 frameX, frameY, frameWidth, frameHeight;
+	getFramePosition(frameX, frameY);
+	getFrameSize(frameWidth, frameHeight);
+
+	return obj.isIn(frameX                 , frameY                  ) ||
+	       obj.isIn(frameX + frameWidth - 1, frameY                  ) ||
+	       obj.isIn(frameX                 , frameY + frameHeight - 1) ||
+	       obj.isIn(frameX + frameWidth - 1, frameY + frameHeight - 1);
+}
+
 void ANIObject::draw(Surface &dest, int16 &left, int16 &top,
                                     int16 &right, int16 &bottom) {
 

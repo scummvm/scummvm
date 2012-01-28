@@ -42,6 +42,7 @@ public:
 		kStateRaise,
 		kStateBreathe,
 		kStatePick,
+		kStateHurt,
 		kStateDead
 	};
 
@@ -55,6 +56,9 @@ public:
 	void sink();
 	/** Oko should raise a level. */
 	void raise();
+
+	/** Oko should get hurt. */
+	void hurt();
 
 	/** Oko should die. */
 	void die();
