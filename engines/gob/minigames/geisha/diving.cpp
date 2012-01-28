@@ -431,8 +431,10 @@ void Diving::updateAirMeter() {
 	if (_oko->isBreathing()) {
 		_airCycle = 0;
 		_airMeter->increase();
+		_lungs->setPause(false);
 		return;
-	}
+	} else
+		_lungs->setPause(true);
 
 	_airCycle = (_airCycle + 1) % kAirDecreaseRate;
 
