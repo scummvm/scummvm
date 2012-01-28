@@ -137,6 +137,7 @@ private:
 	Meter *_healthMeter;
 
 	uint8 _airCycle;
+	uint8 _hurtGracePeriod;
 
 	uint8 _currentShot;
 
@@ -174,6 +175,10 @@ private:
 
 	void shoot(int16 mouseX, int16 mouseY);
 	void checkShots();
+
+	void handleOko(int16 key);
+
+	void checkOkoHurt();
 };
 
 } // End of namespace Geisha

@@ -66,8 +66,8 @@ Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 
 	_blackPearl = new Surface(11, 8, 1);
 
-	_airMeter    = new Meter(4  , 195, 38, 2, 5, 7, 38, Meter::kFillToLeft);
-	_healthMeter = new Meter(276, 195, 38, 2, 6, 7, 38, Meter::kFillToLeft);
+	_airMeter    = new Meter(3  , 195, 40, 2, 5, 7, 40, Meter::kFillToLeft);
+	_healthMeter = new Meter(275, 195, 40, 2, 6, 7,  4, Meter::kFillToLeft);
 
 	for (uint i = 0; i < kEvilFishCount; i++)
 		_evilFish[i].evilFish = 0;
@@ -108,6 +108,8 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 	while (!_vm->shouldQuit()) {
 		checkShots();
+		checkOkoHurt();
+
 		updateAirMeter();
 		updateEvilFish();
 		updateDecorFish();
@@ -132,13 +134,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		if (mouseButtons == kMouseButtonsLeft)
 			shoot(mouseX, mouseY);
 
-		if (key == kKeyDown) {
-			_oko->sink();
-			if ((_oko->getState() == Oko::kStatePick) && (_oko->getFrame() == 0))
-				getPearl();
-
-		} else if (key == kKeyUp)
-			_oko->raise();
+		handleOko(key);
 
 		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
 			break;
@@ -251,6 +247,7 @@ void Diving::init() {
 	_healthMeter->setValue(38);
 
 	_airCycle = 0;
+	_hurtGracePeriod = 0;
 }
 
 void Diving::deinit() {
@@ -679,6 +676,45 @@ void Diving::checkShots() {
 			activeShot = _activeShots.erase(activeShot);
 		} else
 			++activeShot;
+	}
+}
+
+void Diving::handleOko(int16 key) {
+	if (key == kKeyDown) {
+		_oko->sink();
+
+		if ((_oko->getState() == Oko::kStatePick) && (_oko->getFrame() == 0))
+			getPearl();
+
+	} else if (key == kKeyUp)
+		_oko->raise();
+}
+
+void Diving::checkOkoHurt() {
+	if (_oko->getState() != Oko::kStateSwim)
+		return;
+
+	// Oko dies if the health reaches 0
+	if (_healthMeter->getValue() == 0)
+		_oko->die();
+
+	// Give Oko a grace period after being hurt
+	if (_hurtGracePeriod > 0) {
+		_hurtGracePeriod--;
+		return;
+	}
+
+	// Check for a fish/Oko-collision
+	for (uint i = 0; i < kEvilFishCount; i++) {
+		EvilFish &evilFish = *_evilFish[i].evilFish;
+
+		if (!evilFish.isDead() && evilFish.isIn(*_oko)) {
+			_oko->hurt();
+			_healthMeter->decrease();
+
+			_hurtGracePeriod = 10;
+			break;
+		}
 	}
 }
 

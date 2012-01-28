@@ -35,6 +35,7 @@ enum kOkoAnimation {
 	kOkoAnimationRaise   =  7,
 	kOkoAnimationBreathe =  2,
 	kOkoAnimationPick    =  3,
+	kOkoAnimationHurt    =  4,
 	kOkoAnimationDie0    = 17,
 	kOkoAnimationDie1    = 18,
 	kOkoAnimationDie2    = 19
@@ -80,6 +81,7 @@ void Oko::advance() {
 			_sound->blasterPlay(_breathe, 1, 0);
 		case kStateSink:
 		case kStateRaise:
+		case kStateHurt:
 			if (wasLastFrame) {
 				setAnimation(kOkoAnimationSwim);
 				setPosition(kOkoPositionX, kLevelPositionX[_level]);
@@ -133,6 +135,14 @@ void Oko::raise() {
 	_state = kStateSink;
 
 	_level--;
+}
+
+void Oko::hurt() {
+	if (_state != kStateSwim)
+		return;
+
+	setAnimation(kOkoAnimationHurt);
+	_state = kStateHurt;
 }
 
 void Oko::die() {
