@@ -128,6 +128,10 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		checkShots();
 		checkOkoHurt();
 
+		// Is Oko dead?
+		if (_oko->isPaused())
+			break;
+
 		updateAirMeter();
 		updateEvilFish();
 		updateDecorFish();
