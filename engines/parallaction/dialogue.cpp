@@ -381,7 +381,7 @@ protected:
 	}
 
 	void accumPassword(uint16 ascii) {
-		if (!isdigit(ascii)) {
+		if (!isDigit(ascii)) {
 			return;
 		}
 

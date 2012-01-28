@@ -19,6 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_isalnum
+#define FORBIDDEN_SYMBOL_EXCEPTION_isalpha
+#define FORBIDDEN_SYMBOL_EXCEPTION_isdigit
+#define FORBIDDEN_SYMBOL_EXCEPTION_isnumber
+#define FORBIDDEN_SYMBOL_EXCEPTION_islower
+#define FORBIDDEN_SYMBOL_EXCEPTION_isspace
+#define FORBIDDEN_SYMBOL_EXCEPTION_isupper
+
+
 #include "common/util.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
@@ -407,3 +416,37 @@ void updateGameGUIOptions(const String &options, const String &langOption) {
 }
 
 } // End of namespace Common
+
+
+//
+// TODO: Instead of a blind cast, we might want to verify
+// if c equals EOS; and/or is in the range -255..+255;
+// and return false if it isn't.
+//
+bool isAlnum(int c) {
+	return isalnum((byte)c);
+}
+
+bool isAlpha(int c) {
+	return isalpha((byte)c);
+}
+
+bool isDigit(int c) {
+	return isdigit((byte)c);
+}
+
+bool isNumber(int c) {
+	return isnumber((byte)c);
+}
+
+bool isLower(int c) {
+	return islower((byte)c);
+}
+
+bool isSpace(int c) {
+	return isspace((byte)c);
+}
+
+bool isUpper(int c) {
+	return isupper((byte)c);
+}

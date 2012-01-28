@@ -34,6 +34,17 @@
           ((((size_t)value) & ((alignment) - 1)) == 0)
 
 
+//namespace{
+bool isAlnum(int c);
+bool isAlpha(int c);
+bool isDigit(int c);
+bool isNumber(int c);
+bool isLower(int c);
+bool isSpace(int c);
+bool isUpper(int c);
+//}
+
+
 #ifdef MIN
 #undef MIN
 #endif
