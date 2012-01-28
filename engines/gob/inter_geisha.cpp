@@ -280,7 +280,7 @@ void Inter_Geisha::oGeisha_gameDiving(OpGobParams &params) {
 
 	bool result = _diving->play(playerCount, hasPearlLocation);
 
-	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
+	WRITE_VAR_UINT32(resultVar, result ? 0 : 1);
 }
 
 void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
