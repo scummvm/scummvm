@@ -32,6 +32,7 @@
 
 #include "gob/minigames/geisha/evilfish.h"
 #include "gob/minigames/geisha/oko.h"
+#include "gob/minigames/geisha/meter.h"
 #include "gob/minigames/geisha/diving.h"
 
 namespace Gob {
@@ -57,9 +58,13 @@ const Diving::PlantLevel Diving::kPlantLevels[] = {
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 	_objects(0), _gui(0), _okoAnim(0), _lungs(0), _heart(0),
-	_blackPearl(0), _whitePearlCount(0), _blackPearlCount(0) {
+	_blackPearl(0), _airMeter(0), _healthMeter(0),
+	_whitePearlCount(0), _blackPearlCount(0) {
 
 	_blackPearl = new Surface(11, 8, 1);
+
+	_airMeter    = new Meter(4  , 195, 38, 2, 5, 7, 38, Meter::kFillToLeft);
+	_healthMeter = new Meter(276, 195, 38, 2, 6, 7, 38, Meter::kFillToLeft);
 
 	for (uint i = 0; i < kEvilFishCount; i++)
 		_evilFish[i].evilFish = 0;
@@ -79,6 +84,9 @@ Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 }
 
 Diving::~Diving() {
+	delete _airMeter;
+	delete _healthMeter;
+
 	delete _blackPearl;
 
 	deinit();
@@ -234,6 +242,9 @@ void Diving::init() {
 	_anims.push_back(_oko);
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
+
+	_airMeter->setValue(38);
+	_healthMeter->setValue(38);
 }
 
 void Diving::deinit() {
@@ -584,6 +595,13 @@ void Diving::updateAnims() {
 
 		(*a)->advance();
 	}
+
+	// Draw the meters
+	_airMeter->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+	_healthMeter->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 }
 
 int16 Diving::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
