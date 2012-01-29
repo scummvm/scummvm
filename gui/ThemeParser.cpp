@@ -176,8 +176,15 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 		return true;
 	}
 
+	// Default to a point size of 12.
+	int pointsize = 12;
+	if (node->values.contains("point_size")) {
+		if (sscanf(node->values["point_size"].c_str(), "%d", &pointsize) != 1 || pointsize <= 0)
+			return parserError(Common::String::format("Font \"%s\" has invalid point size \"%s\"", node->values["id"].c_str(), node->values["point_size"].c_str()));
+	}
+
 	TextData textDataId = parseTextDataId(node->values["id"]);
-	if (!_theme->addFont(textDataId, node->values["file"]))
+	if (!_theme->addFont(textDataId, node->values["file"], node->values["scalable_file"], pointsize))
 		return parserError("Error loading Font in theme engine.");
 
 	return true;
