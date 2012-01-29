@@ -636,14 +636,13 @@ void ScummEngine_v0::setMode(byte mode) {
 		_redrawSentenceLine = false;
 		// Note: do not change freeze state here
 		state = USERSTATE_SET_IFACE | 
-			USERSTATE_SET_CURSOR |
-			USERSTATE_SET_FREEZE;
+			USERSTATE_SET_CURSOR;
 		break;
 	case kModeKeypad:
 		_redrawSentenceLine = false;
 		state = USERSTATE_SET_IFACE | 
 			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
-			USERSTATE_SET_FREEZE;
+			USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON;
 		break;
 	case kModeNormal:
 	case kModeNoNewKid:
@@ -927,12 +926,14 @@ void ScummEngine_v0::o_cutscene() {
 	vm.cutSceneData[0] = _currentMode;
 	vm.cutSceneData[2] = _currentRoom;
 
+	freezeScripts(0);
 	setMode(kModeCutscene);
 
 	_sentenceNum = 0;
 	resetSentence();
 
 	vm.cutScenePtr[0] = 0;
+	vm.cutSceneScript[0] = 0;
 }
 
 void ScummEngine_v0::o_endCutscene() {
@@ -946,8 +947,13 @@ void ScummEngine_v0::o_endCutscene() {
 
 	if (_currentMode == kModeKeypad) {
 		startScene(vm.cutSceneData[2], 0, 0);
+		// in contrast to the normal keypad behavior we unfreeze scripts here
+		unfreezeScripts();
 	} else {
+		unfreezeScripts();
 		actorFollowCamera(VAR(VAR_EGO));
+		// set mode again to have the freeze mode right
+		setMode(vm.cutSceneData[0]);
 		_redrawSentenceLine = true;
 	}
 }
