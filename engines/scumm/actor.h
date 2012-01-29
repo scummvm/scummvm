@@ -343,7 +343,7 @@ enum ActorC64MiscFlags {
 	kActorMiscFlag_10      = 0x10, // ???
 	kActorMiscFlag_20      = 0x20, // ???
 	kActorMiscFlagFreeze   = 0x40, // Stop moving
-	kActorMiscFlagHide     = 0x80, // Hide actor (e.g. dead or wearing radiation suit)
+	kActorMiscFlagHide     = 0x80  // Hide actor (e.g. dead or wearing radiation suit)
 };
 
 class ActorC64 : public Actor_v2 {

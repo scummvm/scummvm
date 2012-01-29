@@ -36,7 +36,7 @@ protected:
 		kModeCutscene = 0,   // cutscene active
 		kModeKeypad = 1,     // kid selection / dial pad / save-load dialog
 		kModeNoNewKid = 2,   // verb "new kid" disabled (e.g. when entering lab)
-		kModeNormal = 3,     // normal playing mode
+		kModeNormal = 3      // normal playing mode
 	};
 
 	enum ObjectType {
