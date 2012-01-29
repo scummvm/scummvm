@@ -32,10 +32,10 @@
 
 #include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/head.h"
+#include "engines/grim/emi/costume/emimesh_component.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/costume/main_model_component.h"
 #include "engines/grim/costume/colormap_component.h"
-#include "engines/grim/costume/emimesh_component.h"
-#include "engines/grim/costume/emiskel_component.h"
 #include "engines/grim/costume/keyframe_component.h"
 #include "engines/grim/costume/mesh_component.h"
 #include "engines/grim/costume/lua_var_component.h"

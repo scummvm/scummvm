@@ -5,8 +5,6 @@ MODULE_OBJS := \
 	costume/chore.o \
 	costume/colormap_component.o \
 	costume/component.o \
-	costume/emimesh_component.o \
-	costume/emiskel_component.o \
 	costume/head.o \
 	costume/keyframe_component.o \
 	costume/lua_var_component.o \
@@ -16,6 +14,8 @@ MODULE_OBJS := \
 	costume/model_component.o \
 	costume/sound_component.o \
 	costume/sprite_component.o \
+	emi/costume/emimesh_component.o \
+	emi/costume/emiskel_component.o \
 	emi/sound/mp3track.o \
 	emi/sound/scxtrack.o \
 	emi/sound/vimatrack.o \

@@ -22,7 +22,7 @@
 
 #include "common/foreach.h"
 
-#include "engines/grim/costume/emiskel_component.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
