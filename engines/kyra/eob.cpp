@@ -326,7 +326,7 @@ void EoBEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int typ
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].hitPointsCur <= 0) {
-			initMonster(i, unit, block, pos, dir, type, shpIndex, mode, h2, randItem, fixedItem);;
+			initMonster(i, unit, block, pos, dir, type, shpIndex, mode, h2, randItem, fixedItem);
 			break;
 		}
 	}
