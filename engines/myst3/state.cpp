@@ -51,6 +51,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(68, MenuSavedRoom, false)
 	VAR(69, MenuSavedNode, false)
 
+	VAR(70, SecondsCountdown, true)
 	VAR(71, FrameCountdown, true)
 
 	VAR(84, InputMousePressed, false)
@@ -168,8 +169,8 @@ void GameState::syncWithSaveGame(Common::Serializer &s) {
 
 	s.syncAsUint32LE(_data.gameRunning);
 	s.syncAsUint32LE(_data.currentFrame);
-	s.syncAsUint32LE(_data.dword_4C2C3C);
-	s.syncAsUint32LE(_data.dword_4C2C40);
+	s.syncAsUint32LE(_data.nextSecondsUpdate);
+	s.syncAsUint32LE(_data.secondsPlayed);
 	s.syncAsUint32LE(_data.dword_4C2C44);
 	s.syncAsUint32LE(_data.dword_4C2C48);
 	s.syncAsUint32LE(_data.dword_4C2C4C);
@@ -222,12 +223,17 @@ bool GameState::load(const Common::String &file) {
 	syncWithSaveGame(s);
 	delete saveFile;
 
+	_data.gameRunning = true;
+
 	return true;
 }
 
 bool GameState::save(Common::OutSaveFile *saveFile) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
+
+	_data.gameRunning = false;
 	syncWithSaveGame(s);
+	_data.gameRunning = true;
 
 	return true;
 }
@@ -361,9 +367,24 @@ void GameState::limitCubeCamera(float minPitch, float maxPitch, float minHeading
 void GameState::updateFrameCounters() {
 	_data.currentFrame++;
 
+	if (!_data.gameRunning)
+		return;
+
 	int32 frameCountdown = getFrameCountdown();
 	if (frameCountdown > 0)
 		setFrameCountdown(--frameCountdown);
+
+
+	uint32 currentTime = g_system->getMillis();
+	if (currentTime > _data.nextSecondsUpdate || abs(_data.nextSecondsUpdate - currentTime) > 2000) {
+		_data.secondsPlayed++;
+		_data.nextSecondsUpdate = currentTime + 1000;
+
+		int32 secondsCountdown = getSecondsCountdown();
+		if (secondsCountdown > 0)
+			setSecondsCountdown(--secondsCountdown);
+
+	}
 }
 
 } /* namespace Myst3 */

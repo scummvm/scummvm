@@ -79,6 +79,7 @@ public:
 	DECLARE_VAR(68, MenuSavedRoom)
 	DECLARE_VAR(69, MenuSavedNode)
 
+	DECLARE_VAR(70, SecondsCountdown)
 	DECLARE_VAR(71, FrameCountdown)
 
 	DECLARE_VAR(84, InputMousePressed)
@@ -200,8 +201,8 @@ private:
 		uint32 version;
 		uint32 gameRunning;
 		uint32 currentFrame;
-		uint32 dword_4C2C3C;
-		uint32 dword_4C2C40;
+		uint32 nextSecondsUpdate;
+		uint32 secondsPlayed;
 		uint32 dword_4C2C44;
 		uint32 dword_4C2C48;
 		uint32 dword_4C2C4C;
