@@ -162,6 +162,12 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 		data->read(_vertices[i].getData(), 12);
 	}
 
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
+	                                       _vertices[_numVertices - 1] - _vertices[0]);
+	float length = _normal.getMagnitude();
+	if (length > 0)
+		_normal /= length;
+
 	char name[128];
 	int nameLength = data->readUint32LE();
 
