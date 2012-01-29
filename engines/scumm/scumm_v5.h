@@ -87,8 +87,6 @@ protected:
 
 	void drawFlashlight();
 
-	void walkActorToActor(int actor, int toActor, int dist);
-
 	/**
 	 * Fetch the next script word, then if cond is *false*, perform a relative jump.
 	 * So this corresponds to a "jne" jump instruction.

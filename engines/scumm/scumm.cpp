@@ -151,6 +151,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_fileHandle = 0;
 
 	// Init all vars
+	_v0ObjectIndex = false;
+	_v0ObjectInInventory = false;
+	_v0ObjectFlag = 0;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -698,6 +701,10 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 
 	_inventoryOffset = 0;
 
+	_activeInventory = 0;
+	_activeObject = 0;
+	_activeVerb = 0;
+
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
 	VAR_SENTENCE_OBJECT2 = 0xFF;
@@ -712,21 +719,19 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
+	_verbExecuting = false;
+	_verbPickup = false;
 	_currentMode = 0;
 
-	_activeVerb = kVerbNone;
-	_activeObjectNr = 0;
-	_activeObjectType = 0;
-	_activeObject2Nr = 0;
-	_activeObject2Type = 0;
+	_activeObject2 = 0;
+	_activeObjectIndex = 0;
+	_activeObject2Index = 0;
+	_activeInvExecute = false;
+	_activeObject2Inv = false;
+	_activeObjectObtained = false;
+	_activeObject2Obtained = false;
 
-	_cmdVerb = kVerbNone;
-	_cmdObjectNr = 0;
-	_cmdObjectType = 0;
-	_cmdObject2Nr = 0;
-	_cmdObject2Type = 0;
-
-	VAR_ACTIVE_OBJECT2 = 0xFF;
+	VAR_ACTIVE_ACTOR = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
 	VAR_ACTIVE_VERB = 0xFF;
 }

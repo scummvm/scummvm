@@ -28,7 +28,6 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
-#include "scumm/scumm_v0.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
@@ -132,6 +131,8 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 
 	initializeLocals(slot, vars);
 
+	// V0 Ensure we don't try and access objects via index inside the script
+	_v0ObjectIndex = false;
 	runScriptNested(slot);
 }
 
@@ -195,10 +196,9 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
 	} else if (_game.version <= 2) {
 		do {
-			const int kFallbackEntry = (_game.version == 0 ? 0x0F : 0xFF);
 			if (!*verbptr)
 				return 0;
-			if (*verbptr == entry || *verbptr == kFallbackEntry)
+			if (*verbptr == entry || *verbptr == 0xFF)
 				break;
 			verbptr += 2;
 		} while (1);
@@ -1128,128 +1128,6 @@ void ScummEngine::checkAndRunSentenceScript() {
 	_currentScript = 0xFF;
 	if (sentenceScript)
 		runScript(sentenceScript, 0, 0, localParamList);
-}
-
-void ScummEngine_v0::walkToActorOrObject(int object) {
-	int x, y, dir;
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "walkToObject");
-
-	_walkToObject = object;
-	_walkToObjectIdx = getObjectIndex(object);
-
-	if (OBJECT_V0_TYPE(object) == kObjectTypeActor) {
-		walkActorToActor(VAR(VAR_EGO), OBJECT_V0_NR(object), 4);
-		x = a->getRealPos().x;
-		y = a->getRealPos().y;
-	} else {
-		walkActorToObject(VAR(VAR_EGO), object);
-		getObjectXYPos(object, x, y, dir);
-	}
-
-	VAR(6) = x;
-	VAR(7) = y;
-
-	if (!(a->_miscflags & kActorMiscFlagFreeze)) {
-		// FIXME: walking already started -> should be stopped if condition not true
-		//actorStartWalk();
-	}
-}
-
-void ScummEngine_v0::checkAndRunSentenceScript() {
-	if (_walkToObjectIdx) {
-		ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkAndRunSentenceScript");
-		if (a->_moving)
-			return;
-		// TODO: change actor facing
-		_walkToObjectIdx = 0;
-		runSentenceScript();
-		return;
-	}
-
-	if (!_sentenceNum || _sentence[_sentenceNum - 1].freezeCount)
-		return;
-
-	SentenceTab &st = _sentence[_sentenceNum - 1];
-
-	if (st.preposition && st.objectB == st.objectA) {
-		_sentenceNum--;
-		return;
-	}
-
-	// FIXME: should this be executed?
-	//_currentScript = 0xFF;
-
-	int obj1Nr = OBJECT_V0_NR(st.objectA);
-	int obj1Type = OBJECT_V0_TYPE(st.objectA);
-	int obj2Nr = OBJECT_V0_NR(st.objectB);
-	int obj2Type = OBJECT_V0_TYPE(st.objectB);
-	assert(obj1Nr);
-
-	// If two objects are involved, at least one must be in the actors inventory
-	if (obj2Nr &&
-		(obj1Type != kObjectTypeFG || _objectOwnerTable[obj1Nr] != VAR(VAR_EGO)) &&
-	    (obj2Type != kObjectTypeFG || _objectOwnerTable[obj2Nr] != VAR(VAR_EGO)))
-	{
-		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
-			doSentence(kVerbPickUp, st.objectA, 0);
-		else if (getVerbEntrypoint(st.objectB, kVerbPickUp))
-			doSentence(kVerbPickUp, st.objectB, 0);
-		else
-			_sentenceNum--;
-		return;
-	}
-
-	_cmdVerb = st.verb;
-	_cmdObjectNr = obj1Nr;
-	_cmdObjectType = obj1Type;
-	_cmdObject2Nr = obj2Nr;
-	_cmdObject2Type = obj2Type;
-	_sentenceNum--;
-
-	// TODO: check sentenceNum
-
-	if (whereIsObject(st.objectA) != WIO_INVENTORY) {
-		if (_currentMode != kModeKeypad) {
-			walkToActorOrObject(st.objectA);
-			return;
-		}
-	} else if (st.objectB && whereIsObject(st.objectB) != WIO_INVENTORY) {
-		walkToActorOrObject(st.objectB);
-		return;
-	}
-
-	runSentenceScript();
-	if (_currentMode == kModeKeypad) {
-		_walkToObjectIdx = 0;
-	}
-}
-
-void ScummEngine_v0::runSentenceScript() {
-	int obj = OBJECT_V0(_cmdObjectNr, _cmdObjectType);
-
-	drawSentenceLine();
-
-	if (getVerbEntrypoint(obj, _cmdVerb) != 0) {
-		// do not read in the dark
-		if (!(_cmdVerb == kVerbRead && _currentLights == 0)) {
-			VAR(VAR_ACTIVE_OBJECT2) = _cmdObject2Nr;
-			runObjectScript(obj, _cmdVerb, false, false, NULL);
-			return;
-		}
-	} else {
-		if (_cmdVerb == kVerbGive) {
-			// no "give to"-script: give to other kid or ignore
-			if (_cmdObject2Nr < 8)
-				setOwnerOf(obj, _cmdObject2Nr);
-			return;
-		}
-	}
-
-	if (_cmdVerb != kVerbWalkTo) {
-		// perform verb's fallback action
-		VAR(VAR_ACTIVE_VERB) = _cmdVerb;
-		runScript(3, 0, 0, 0);
-	}
 }
 
 void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {

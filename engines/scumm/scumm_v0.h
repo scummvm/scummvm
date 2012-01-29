@@ -32,43 +32,20 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
-	enum CurrentMode {
-		kModeCutscene = 0,   // cutscene active
-		kModeKeypad = 1,     // kid selection / dial pad / save-load dialog
-		kModeNoNewKid = 2,   // verb "new kid" disabled (e.g. when entering lab)
-		kModeNormal = 3,     // normal playing mode
-	};
-
-	enum ObjectType {
-		kObjectTypeFG = 0,    // foreground object
-		                      //   - with owner/state, might (but has not to) be pickupable
-		                      //     -> with entry in _objectOwner/StateTable
-		                      //     -> all objects in _inventory have this type
-		                      //   - image can be exchanged (background overlay)
-		kObjectTypeBG = 1,    // background object
-		                      //   - without owner/state, not pickupable  (room only)
-		                      //     -> without entry in _objectOwner/StateTable
-		                      //   - image cannot be exchanged (part of background image)
-		kObjectTypeActor = 2  // object is an actor
-	};
-
-protected:
 	byte _currentMode;
+	bool _verbExecuting;			// is a verb executing
+	bool _verbPickup;				// are we picking up an object during a verb execute
 
-	int _activeVerb;
-	int _activeObjectNr;			// 1st Object Number
-	int _activeObjectType;			// 1st Object Type (0: inventory (or room), 1: room)
-	int _activeObject2Nr;			// 2nd Object Number
-	int _activeObject2Type;			// 2nd Object Type (0: inventory (or room), 1: room, 2: actor)
+	int _activeActor;				// Actor Number
+	int _activeObject2;				// 2nd Object Number
 
-	int _cmdVerb;
-	int _cmdObjectNr;
-	int _cmdObjectType;
-	int _cmdObject2Nr;
-	int _cmdObject2Type;
+	bool _activeInvExecute;			// is activeInventory first to be executed
+	bool _activeObject2Inv;			// is activeobject2 in the inventory
+	bool _activeObjectObtained;		// collected _activeobject?
+	bool _activeObject2Obtained;	// collected _activeObject2?
 
-	int _walkToObject;
-	int _walkToObjectIdx;
+	int _activeObjectIndex;
+	int _activeObject2Index;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -87,26 +64,26 @@ protected:
 
 	virtual void processInput();
 
+	virtual void runObject(int obj, int entry);
 	virtual void saveOrLoad(Serializer *s);
 
 	// V0 MM Verb commands
-	int getVerbPrepId();
-	int activeVerbPrep();
-	void walkToActorOrObject(int object);
-	void verbExec();
+	int  verbPrep(int object);
+	bool verbMove(int object, int objectIndex, bool invObject);
+	bool verbMoveToActor(int actor);
+	bool verbObtain(int object, int objIndex);
+	bool verbExecutes(int object, bool inventory = false);
+	bool verbExec();
 
-	virtual void runSentenceScript();
-	virtual void checkAndRunSentenceScript();
-	bool checkSentenceComplete();
+	int findObjectIndex(int x, int y);
+
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
-	int verbPrepIdType(int verbid);
 	void resetVerbs();
+	void setNewKidVerbs();
 
-	void clearSentenceLine();
-	void flushSentenceLine();
-	void drawSentenceObject(int object);
-	void drawSentenceLine();
+	void drawSentenceWord(int object, bool usePrep, bool objInInventory);
+	void drawSentence();
 
 	void switchActor(int slot);
 
@@ -118,8 +95,6 @@ protected:
 	virtual void resetSentence(bool walking);
 
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
-
-	bool ifEqualActiveObject2Common(bool ignoreType);
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();
@@ -143,14 +118,13 @@ protected:
 	void o_unlockScript();
 	void o_decrement();
 	void o_nop();
-	void o_getObjectOwner();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
 	void o_getBitVar();
 	void o_setBitVar();
 	void o_doSentence();
-	void o_ifEqualActiveObject2();
-	void o_ifNotEqualActiveObject2();
+	void o_unknown2();
+	void o_ifActiveObject();
 	void o_getClosestObjActor();
 	void o_printEgo_c64();
 	void o_print_c64();
@@ -161,7 +135,7 @@ protected:
 	void o_beginOverride();
 	void o_setOwnerOf();
 
-	byte VAR_ACTIVE_OBJECT2;
+	byte VAR_ACTIVE_ACTOR;
 	byte VAR_IS_SOUND_RUNNING;
 	byte VAR_ACTIVE_VERB;
 };

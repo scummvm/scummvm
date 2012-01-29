@@ -178,7 +178,10 @@ void ScummEngine::clearOwnerOf(int obj) {
 		// Alternatively, scan the inventory to see if the object is in there...
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj) {
-				assert(WIO_INVENTORY == whereIsObject(obj));
+				if (_game.version == 0)
+					assert(WIO_INVENTORY == whereIsObjectInventory(obj));
+				else
+					assert(WIO_INVENTORY == whereIsObject(obj));
 
 				// Found the object! Nuke it from the inventory.
 				_res->nukeResource(rtInventory, i);
@@ -307,50 +310,52 @@ int ScummEngine::getObjectRoom(int obj) const {
 
 int ScummEngine::getObjectIndex(int object) const {
 	int i;
-	int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
 
-	if (nr < 1)
+	if (object < 1)
 		return -1;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-			continue;
+		if (_game.version == 0 )
+			if( _objs[i].flags != _v0ObjectFlag )
+				continue;
 
-		if (_objs[i].obj_nr == nr)
+		if (_objs[i].obj_nr == object)
 			return i;
 	}
 	return -1;
 }
 
+int ScummEngine::whereIsObjectInventory(int object) {
+	int res = 0;
+	_v0ObjectInInventory = true;
+	res = whereIsObject(object);
+	_v0ObjectInInventory = false;
+
+	return res;
+}
+
 int ScummEngine::whereIsObject(int object) const {
 	int i;
 
-	// Note: in MMC64 bg objects are greater _numGlobalObjects
-	if (_game.version != 0 && object >= _numGlobalObjects)
+	if (object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
 	if (object < 1)
 		return WIO_NOT_FOUND;
 
-	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
-		 _objectOwnerTable[object] != OF_OWNER_ROOM) 
-	{
+	if ((_objectOwnerTable[object] != OF_OWNER_ROOM && _game.version != 0) || _v0ObjectInInventory) {
 		for (i = 0; i < _numInventory; i++)
 			if (_inventory[i] == object)
 				return WIO_INVENTORY;
 		return WIO_NOT_FOUND;
 	}
 
-	for (i = (_numLocalObjects-1); i > 0; i--) {
-		int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
-		if (_objs[i].obj_nr == nr) {
-			if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-				continue;
+	for (i = (_numLocalObjects-1); i > 0; i--)
+		if ((_objs[i].obj_nr == object && !_v0ObjectIndex) || (_v0ObjectIndex && i == object)) {
 			if (_objs[i].fl_object_index)
 				return WIO_FLOBJECT;
 			return WIO_ROOM;
 		}
-	}
 
 	return WIO_NOT_FOUND;
 }
@@ -391,7 +396,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
  * Returns X, Y and direction in angles
  */
 void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
-	int idx = getObjectIndex(object);
+	int idx = (_v0ObjectIndex) ? object : getObjectIndex(object);
 	assert(idx >= 0);
 	ObjectData &od = _objs[idx];
 	int state;
@@ -434,15 +439,8 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else if (_game.version <= 2) {
-		if (od.actordir) {
-			x = od.walk_x;
-			y = od.walk_y;
-		} else {
-			x = od.x_pos + od.width/2;
-			y = od.y_pos + od.height/2;
-		}
-		x = x >> V12_X_SHIFT;
-		y = y >> V12_Y_SHIFT;
+		x = od.walk_x >> V12_X_SHIFT;
+		y = od.walk_y >> V12_Y_SHIFT;
 	} else {
 		x = od.walk_x;
 		y = od.walk_y;
@@ -494,6 +492,14 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	return getDist(x, y, x2, y2);
 }
 
+int ScummEngine_v0::findObjectIndex(int x, int y) {
+	int objIdx;
+	_v0ObjectIndex = true;
+	objIdx = findObject(x, y);
+	_v0ObjectIndex = false;
+	return objIdx;
+}
+
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
@@ -504,7 +510,7 @@ int ScummEngine::findObject(int x, int y) {
 			continue;
 
 		if (_game.version == 0) {
-			if (_objs[i].obj_type == 0 && _objs[i].state & kObjectStateUntouchable)
+			if (_objs[i].flags == 0 && _objs[i].state & kObjectStateUntouchable)
 				continue;
 		} else {
 			if (_game.version <= 2 && _objs[i].state & kObjectStateUntouchable)
@@ -524,8 +530,11 @@ int ScummEngine::findObject(int x, int y) {
 #endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
 				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
+					// MMC64: Set the object search flag
 					if (_game.version == 0)
-						return OBJECT_V0(_objs[i].obj_nr, _objs[i].obj_type);
+						_v0ObjectFlag = _objs[i].flags;
+					if (_game.version == 0 && _v0ObjectIndex)
+						return i;
 					else
 						return _objs[i].obj_nr;
 				}
@@ -835,7 +844,7 @@ void ScummEngine_v3old::resetRoomObjects() {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
 			if (_game.version == 0)
-				sprintf(buf + 11, "%d-", od->obj_type);
+				sprintf(buf + 11, "%d-", od->flags);
 
 			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
 		}
@@ -903,7 +912,7 @@ void ScummEngine_v0::resetRoomObject(ObjectData *od, const byte *room, const byt
 	ptr -= 2;
 
 	od->obj_nr = *(ptr + 6);
-	od->obj_type = *(ptr + 7);
+	od->flags = *(ptr + 7);
 
 	od->x_pos = *(ptr + 8) * 8;
 	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
@@ -1063,8 +1072,8 @@ void ScummEngine::updateObjectStates() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {
-		// V0 MM, objects with type == 1 are room objects (room specific objects, non-pickup)
-		if (_game.version == 0 && od->obj_type == 1)
+		// V0 MM, Room objects with Flag == 1 are objects with 'no-state' (room specific objects, non-pickup)
+		if (_game.version == 0 && od->flags == 1)
 			continue;
 
 		if (od->obj_nr > 0)
@@ -1164,7 +1173,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 		}
 	}
 
-	objptr = getOBCDFromObject(obj, true);
+	objptr = getOBCDFromObject(obj);
 	if (objptr == NULL)
 		return NULL;
 
@@ -1217,15 +1226,15 @@ void ScummEngine::setObjectName(int obj) {
 uint32 ScummEngine::getOBCDOffs(int object) const {
 	int i;
 
-	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
-		_objectOwnerTable[object] != OF_OWNER_ROOM)
+	if ((_objectOwnerTable[object] != OF_OWNER_ROOM && (_game.version != 0))  || _v0ObjectInInventory)
 		return 0;
 
+	// V0 MM Return by Index
+	if (_v0ObjectIndex)
+		return _objs[object].OBCDoffset;
+
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		int nr = (_game.version != 0) ? object : OBJECT_V0_NR(object);
-		if (_objs[i].obj_nr == nr) {
-			if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(object))
-				continue;
+		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index != 0)
 				return 8;
 			return _objs[i].OBCDoffset;
@@ -1234,25 +1243,21 @@ uint32 ScummEngine::getOBCDOffs(int object) const {
 	return 0;
 }
 
-byte *ScummEngine::getOBCDFromObject(int obj, bool v0CheckInventory) {
+byte *ScummEngine::getOBCDFromObject(int obj) {
+	bool useInventory = _v0ObjectInInventory;
 	int i;
 	byte *ptr;
 
-	if ((_game.version != 0 || OBJECT_V0_TYPE(obj) == 0) &&
-		_objectOwnerTable[obj] != OF_OWNER_ROOM) 
-	{
-		if (_game.version == 0 && !v0CheckInventory)
-			return 0;
+	_v0ObjectInInventory = false;
+
+	if ((_objectOwnerTable[obj] != OF_OWNER_ROOM && (_game.version != 0)) || useInventory) {
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj)
 				return getResourceAddress(rtInventory, i);
 		}
 	} else {
 		for (i = (_numLocalObjects-1); i > 0; --i) {
-			int nr = (_game.version != 0) ? obj : OBJECT_V0_NR(obj);
-			if (_objs[i].obj_nr == nr) {
-				if (_game.version == 0 && _objs[i].obj_type != OBJECT_V0_TYPE(obj))
-					continue;
+			if ((_objs[i].obj_nr == obj && !_v0ObjectIndex) || (_v0ObjectIndex && i == obj)) {
 				if (_objs[i].fl_object_index) {
 					assert(_objs[i].OBCDoffset == 8);
 					ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index);
