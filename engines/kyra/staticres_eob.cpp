@@ -369,13 +369,13 @@ void EoBCoreEngine::initStaticResource() {
 	_mnWord = _staticres->loadStrings(kEoBBaseManWord, _mnNumWord);
 	_mnPrompt = _staticres->loadStrings(kEoBBaseManPrompt, temp);
 
-	_monsterStepTable0 = (int8 *)_staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterStepTable02 : kEoBBaseMonsterStepTable01, temp);
-	_monsterStepTable1 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable1, temp);
-	_monsterStepTable2 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable2, temp);
-	_monsterStepTable3 = (int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable3, temp);
+	_monsterStepTable0 = (const int8 *)_staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterStepTable02 : kEoBBaseMonsterStepTable01, temp);
+	_monsterStepTable1 = (const int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable1, temp);
+	_monsterStepTable2 = (const int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable2, temp);
+	_monsterStepTable3 = (const int8 *)_staticres->loadRawData(kEoBBaseMonsterStepTable3, temp);
 	_monsterCloseAttPosTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttPosTable1, temp);
 	_monsterCloseAttPosTable2 = _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEoBBaseMonsterCloseAttPosTable22 : kEoBBaseMonsterCloseAttPosTable21, temp);
-	_monsterCloseAttUnkTable = (int8 *)_staticres->loadRawData(kEoBBaseMonsterCloseAttUnkTable, temp);
+	_monsterCloseAttUnkTable = (const int8 *)_staticres->loadRawData(kEoBBaseMonsterCloseAttUnkTable, temp);
 	_monsterCloseAttChkTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable1, temp);
 	_monsterCloseAttChkTable2 = _staticres->loadRawData(kEoBBaseMonsterCloseAttChkTable2, temp);
 	_monsterCloseAttDstTable1 = _staticres->loadRawData(kEoBBaseMonsterCloseAttDstTable1, temp);

@@ -1545,7 +1545,6 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 	default:
 		warning("Unknown AvoidPath subfunction %d", argc);
 		return NULL_REG;
-		break;
 	}
 }
 

@@ -130,10 +130,10 @@ SeekableReadStream *FSNode::createReadStream() const {
 
 	if (!_realNode->exists()) {
 		warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
-		return false;
+		return 0;
 	} else if (_realNode->isDirectory()) {
 		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
-		return false;
+		return 0;
 	}
 
 	return _realNode->createReadStream();

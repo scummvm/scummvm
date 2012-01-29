@@ -2,12 +2,12 @@
 # Copyright (C) 2010-2012 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <Lothar@Windowsbase.de>, 2011.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-12-26 15:26+0100\n"
+"POT-Creation-Date: 2012-01-28 21:48+0100\n"
 "PO-Revision-Date: 2011-10-15 18:15+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
@@ -47,7 +47,7 @@ msgstr "Pfad hoch"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:319 gui/massadd.cpp:94 gui/options.cpp:1221
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/engine.cpp:436 engines/scumm/dialogs.cpp:190
+#: engines/engine.cpp:438 engines/scumm/dialogs.cpp:190
 #: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
 #: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
@@ -59,22 +59,22 @@ msgstr "Abbrechen"
 msgid "Choose"
 msgstr "Auswählen"
 
-#: gui/gui-manager.cpp:116 engines/scumm/help.cpp:125
+#: gui/gui-manager.cpp:115 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 #: backends/keymapper/remap-dialog.cpp:52
 msgid "Close"
 msgstr "Schließen"
 
-#: gui/gui-manager.cpp:119
+#: gui/gui-manager.cpp:118
 msgid "Mouse click"
 msgstr "Mausklick"
 
-#: gui/gui-manager.cpp:122 base/main.cpp:283
+#: gui/gui-manager.cpp:121 base/main.cpp:289
 msgid "Display keyboard"
 msgstr "Tastatur anzeigen"
 
-#: gui/gui-manager.cpp:125 base/main.cpp:286
+#: gui/gui-manager.cpp:124 base/main.cpp:292
 msgid "Remap keys"
 msgstr "Tasten neu zuweisen"
 
@@ -88,11 +88,11 @@ msgstr "Zuweisen"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
 #: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
-#: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:192
+#: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
 #: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:345
-#: engines/sword1/animation.cpp:355 engines/sword1/animation.cpp:361
+#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:449
+#: engines/sword1/animation.cpp:459 engines/sword1/animation.cpp:465
 #: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:379 engines/sword2/animation.cpp:389
 #: engines/sword2/animation.cpp:398 engines/parallaction/saveload.cpp:281
@@ -347,7 +347,7 @@ msgstr "Diese Spielkennung ist schon vergeben. Bitte eine andere wählen."
 msgid "~Q~uit"
 msgstr "~B~eenden"
 
-#: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:80
+#: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:96
 msgid "Quit ScummVM"
 msgstr "ScummVM beenden"
 
@@ -355,7 +355,7 @@ msgstr "ScummVM beenden"
 msgid "A~b~out..."
 msgstr "Übe~r~"
 
-#: gui/launcher.cpp:579 backends/platform/sdl/macosx/appmenu_osx.mm:61
+#: gui/launcher.cpp:579 backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "About ScummVM"
 msgstr "Über ScummVM"
 
@@ -973,28 +973,28 @@ msgstr "Unbenannt"
 msgid "Select a Theme"
 msgstr "Thema auswählen"
 
-#: gui/ThemeEngine.cpp:329
+#: gui/ThemeEngine.cpp:333
 msgid "Disabled GFX"
 msgstr "GFX ausgeschaltet"
 
-#: gui/ThemeEngine.cpp:329
+#: gui/ThemeEngine.cpp:333
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX ausgeschaltet"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:334
 msgid "Standard Renderer (16bpp)"
 msgstr "Standard-Renderer (16bpp)"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:334
 msgid "Standard (16bpp)"
 msgstr "Standard (16bpp)"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:336
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:336
 msgid "Antialiased (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
@@ -1007,30 +1007,30 @@ msgstr "Wert löschen"
 msgid "Engine does not support debug level '%s'"
 msgstr "Engine unterstützt den Debug-Level \"%s\" nicht."
 
-#: base/main.cpp:271
+#: base/main.cpp:277
 msgid "Menu"
 msgstr "Menü"
 
-#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Überspringen"
 
-#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:283 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:280
+#: base/main.cpp:286
 msgid "Skip line"
 msgstr "Zeile überspringen"
 
-#: base/main.cpp:439
+#: base/main.cpp:445
 msgid "Error running game:"
 msgstr "Fehler beim Ausführen des Spiels:"
 
-#: base/main.cpp:463
+#: base/main.cpp:469
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Konnte keine Spiel-Engine finden, die dieses Spiel starten kann."
 
@@ -1206,23 +1206,23 @@ msgstr "~A~bbrechen"
 msgid "~K~eys"
 msgstr "~T~asten"
 
-#: engines/engine.cpp:233
+#: engines/engine.cpp:235
 msgid "Could not initialize color format."
 msgstr "Konnte Farbenformat nicht initialisieren."
 
-#: engines/engine.cpp:241
+#: engines/engine.cpp:243
 msgid "Could not switch to video mode: '"
 msgstr "Konnte nicht zu Grafikmodus wechseln: '"
 
-#: engines/engine.cpp:250
+#: engines/engine.cpp:252
 msgid "Could not apply aspect ratio setting."
 msgstr "Konnte Einstellung für Seitenverhältniskorrektur nicht anwenden."
 
-#: engines/engine.cpp:255
+#: engines/engine.cpp:257
 msgid "Could not apply fullscreen setting."
 msgstr "Konnte Einstellung für Vollbildmodus nicht anwenden."
 
-#: engines/engine.cpp:355
+#: engines/engine.cpp:357
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1238,7 +1238,7 @@ msgstr ""
 "Lesen Sie die Liesmich-Datei für\n"
 "weitere Informationen."
 
-#: engines/engine.cpp:366
+#: engines/engine.cpp:368
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1253,7 +1253,7 @@ msgstr ""
 "Spiel hören zu können. Lesen Sie die\n"
 "Liesmich-Datei für weitere Informationen."
 
-#: engines/engine.cpp:433
+#: engines/engine.cpp:435
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1264,7 +1264,7 @@ msgstr ""
 "und jegliche Spielstände, die Sie erstellen, könnten in zukünftigen "
 "Versionen von ScummVM nicht mehr funktionieren."
 
-#: engines/engine.cpp:436
+#: engines/engine.cpp:438
 msgid "Start anyway"
 msgstr "Trotzdem starten"
 
@@ -2025,56 +2025,56 @@ msgstr "Konnte Datei nicht löschen."
 msgid "Failed to save game"
 msgstr "Konnte Spielstand nicht speichern."
 
-#: engines/kyra/lol.cpp:572
+#: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr ""
 
-#: engines/kyra/lol.cpp:573
+#: engines/kyra/lol.cpp:479
 msgid "Attack 2"
 msgstr ""
 
-#: engines/kyra/lol.cpp:574
+#: engines/kyra/lol.cpp:480
 msgid "Attack 3"
 msgstr ""
 
-#: engines/kyra/lol.cpp:575
+#: engines/kyra/lol.cpp:481
 msgid "Move Forward"
 msgstr ""
 
-#: engines/kyra/lol.cpp:576
+#: engines/kyra/lol.cpp:482
 msgid "Move Back"
 msgstr ""
 
-#: engines/kyra/lol.cpp:577
+#: engines/kyra/lol.cpp:483
 msgid "Slide Left"
 msgstr ""
 
-#: engines/kyra/lol.cpp:578
+#: engines/kyra/lol.cpp:484
 #, fuzzy
 msgid "Slide Right"
 msgstr "Rechts"
 
-#: engines/kyra/lol.cpp:579
+#: engines/kyra/lol.cpp:485
 #, fuzzy
 msgid "Turn Left"
 msgstr "Schalt aus"
 
-#: engines/kyra/lol.cpp:580
+#: engines/kyra/lol.cpp:486
 #, fuzzy
 msgid "Turn Right"
 msgstr "Zeiger nach rechts"
 
-#: engines/kyra/lol.cpp:581
+#: engines/kyra/lol.cpp:487
 #, fuzzy
 msgid "Rest"
 msgstr "Laden"
 
-#: engines/kyra/lol.cpp:582
+#: engines/kyra/lol.cpp:488
 #, fuzzy
 msgid "Options"
 msgstr "~O~ptionen"
 
-#: engines/kyra/lol.cpp:583
+#: engines/kyra/lol.cpp:489
 #, fuzzy
 msgid "Choose Spell"
 msgstr "Auswählen"
@@ -2112,17 +2112,17 @@ msgstr ""
 "Bitte laden Sie diese Datei (erneut) von\n"
 "www.scummvm.org herunter."
 
-#: engines/sword1/animation.cpp:345 engines/sword2/animation.cpp:379
+#: engines/sword1/animation.cpp:449 engines/sword2/animation.cpp:379
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr ""
 "DXA-Zwischensequenzen gefunden, aber ScummVM wurde ohne Zlib-Unterstützung "
 "erstellt."
 
-#: engines/sword1/animation.cpp:355 engines/sword2/animation.cpp:389
+#: engines/sword1/animation.cpp:459 engines/sword2/animation.cpp:389
 msgid "MPEG2 cutscenes are no longer supported"
 msgstr "MPEG2-Zwischensequenzen werden nicht mehr unterstützt."
 
-#: engines/sword1/animation.cpp:360 engines/sword2/animation.cpp:397
+#: engines/sword1/animation.cpp:464 engines/sword2/animation.cpp:397
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Zwischensequenz \"%s\" gefunden"
@@ -2409,24 +2409,24 @@ msgstr "Touchpad-Modus aktiviert."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad-Modus ausgeschaltet."
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:67
+#: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
 msgstr "ScummVM verbergen"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:70
+#: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
 msgstr "Andere verbergen"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:74
+#: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
 msgstr "Alles zeigen"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:92
-#: backends/platform/sdl/macosx/appmenu_osx.mm:99
+#: backends/platform/sdl/macosx/appmenu_osx.mm:110
+#: backends/platform/sdl/macosx/appmenu_osx.mm:121
 msgid "Window"
 msgstr "Fenster"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:95
+#: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
 msgstr "Minimieren"
 

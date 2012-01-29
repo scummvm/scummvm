@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
+#include "graphics/fonts/ttf.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -557,7 +558,7 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId,
 	return true;
 }
 
-bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
+bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Common::String &scalableFile, const int pointsize) {
 	if (textId == -1)
 		return false;
 
@@ -570,15 +571,21 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 		_texts[textId]->_fontPtr = _font;
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
+		const Common::String charset(
+#ifdef USE_TRANSLATION
+		                             TransMan.getCurrentCharset()
+#endif
+		                            );
+
 		// Try localized fonts
-		_texts[textId]->_fontPtr = loadFont(localized, textId == kTextDataDefault);
+		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
 			// Try standard fonts
-			_texts[textId]->_fontPtr = loadFont(file, textId == kTextDataDefault);
+			_texts[textId]->_fontPtr = loadFont(file, scalableFile, Common::String(), pointsize, textId == kTextDataDefault);
 
 			if (!_texts[textId]->_fontPtr)
-				error("Couldn't load font '%s'", file.c_str());
+				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
 
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
@@ -899,7 +906,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
@@ -925,7 +932,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -1366,6 +1373,10 @@ int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
 
+int ThemeEngine::getKerningOffset(byte left, byte right, FontStyle font) const {
+	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getKerningOffset(left, right) : 0;
+}
+
 TextData ThemeEngine::getTextData(DrawData ddId) const {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 }
@@ -1386,15 +1397,42 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
  * External data loading
  *********************************************************/
 
-const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const bool makeLocalizedFont) {
+const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name) {
+#ifdef USE_FREETYPE2
+	name = Common::String::format("%s-%s@%d", filename.c_str(), charset.c_str(), pointsize);
+
 	// Try already loaded fonts.
-	const Graphics::Font *font = FontMan.getFontByName(filename);
+	const Graphics::Font *font = FontMan.getFontByName(name);
 	if (font)
 		return font;
 
-	Common::String cacheFilename = genCacheFilename(filename);
+	Common::ArchiveMemberList members;
+	_themeFiles.listMatchingMembers(members, filename);
+
+	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+		Common::SeekableReadStream *stream = (*i)->createReadStream();
+		if (stream) {
+			font = Graphics::loadTTFFont(*stream, pointsize, false, TransMan.getCharsetMapping());
+			delete stream;
+
+			if (font)
+				return font;
+		}
+	}
+#endif
+	return 0;
+}
+
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Common::String &name) {
+	name = filename;
+
+	// Try already loaded fonts.
+	const Graphics::Font *font = FontMan.getFontByName(name);
+	if (font)
+		return font;
 
 	Common::ArchiveMemberList members;
+	const Common::String cacheFilename(genCacheFilename(filename));
 	_themeFiles.listMatchingMembers(members, cacheFilename);
 	_themeFiles.listMatchingMembers(members, filename);
 
@@ -1411,20 +1449,34 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 				}
 			}
 			delete stream;
-		}
 
-		if (font)
-			break;
+			if (font)
+				return font;
+		}
 	}
+
+	return 0;
+}
+
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::String &charset, const int pointsize, const bool makeLocalizedFont) {
+	Common::String fontName;
+
+	const Graphics::Font *font = 0;
+
+	// Prefer scalable fonts over non-scalable fonts
+	font = loadScalableFont(scalableFilename, charset, pointsize, fontName);
+	if (!font)
+		font = loadFont(filename, fontName);
 
 	// If the font is successfully loaded store it in the font manager.
 	if (font) {
-		FontMan.assignFontToName(filename, font);
+		FontMan.assignFontToName(fontName, font);
 		// If this font should be the new default localized font, we set it up
 		// for that.
 		if (makeLocalizedFont)
-			FontMan.setLocalizedFont(filename);
+			FontMan.setLocalizedFont(fontName);
 	}
+
 	return font;
 }
 
