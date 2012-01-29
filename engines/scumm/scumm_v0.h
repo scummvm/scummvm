@@ -153,7 +153,6 @@ protected:
 	void o_unlockSound();
 	void o_cutscene();
 	void o_endCutscene();
-	void o_beginOverride();
 	void o_setOwnerOf();
 
 	byte VAR_ACTIVE_OBJECT2;

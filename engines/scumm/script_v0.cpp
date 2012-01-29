@@ -145,7 +145,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x56, o_getActorMoving);
 	OPCODE(0x57, o2_clearState08);
 	/* 58 */
-	OPCODE(0x58, o_beginOverride);
+	OPCODE(0x58, o2_beginOverride);
 	OPCODE(0x59, o_stopCurrentScript);
 	OPCODE(0x5a, o2_add);
 	OPCODE(0x5b, o_getActorBitVar);
@@ -950,23 +950,6 @@ void ScummEngine_v0::o_endCutscene() {
 		actorFollowCamera(VAR(VAR_EGO));
 		_redrawSentenceLine = true;
 	}
-}
-
-void ScummEngine_v0::o_beginOverride() {
-	const int idx = vm.cutSceneStackPointer;
-	assert(0 <= idx && idx < 5);
-
-	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
-	vm.cutSceneScript[idx] = _currentScript;
-
-	// Skip the jump instruction following the override instruction
-	// (the jump is responsible for "skipping" cutscenes, and the reason
-	// why we record the current script position in vm.cutScenePtr).
-	fetchScriptByte();
-	ScummEngine::fetchScriptWord();
-
-	// This is based on disassembly
-	VAR(VAR_OVERRIDE) = 0;
 }
 
 void ScummEngine_v0::o_setOwnerOf() {

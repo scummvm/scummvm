@@ -1527,7 +1527,7 @@ void ScummEngine_v2::o2_beginOverride() {
 
 	// Skip the jump instruction following the override instruction
 	fetchScriptByte();
-	fetchScriptWord();
+	ScummEngine::fetchScriptWord();
 }
 
 void ScummEngine_v2::o2_chainScript() {
