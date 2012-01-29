@@ -2620,6 +2620,8 @@ bool Actor::isPlayer() {
 }
 
 bool Actor_v2::isPlayer() {
+	// isPlayer() is not supported by v0 
+	assert(_vm->_game.version != 0);
 	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 }
 
