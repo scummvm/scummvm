@@ -365,21 +365,23 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 }
 
 Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
-	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane");
+	if (_normal.getMagnitude() == 0)
+		error("Sector normal is (0,0,0)");
 
-	// Formula: return p - (n . (p - v_0))/(n . k) k
+	// Formula: return p - n * (n . (p - v_0))
 	Math::Vector3d result = point;
-	result.z() -= Math::Vector3d::dotProduct(_normal, point - _vertices[0]) / _normal.z();
+	Math::Vector3d norm_normal = _normal.getNormalized();
+	result -= norm_normal * Math::Vector3d::dotProduct(norm_normal, point - _vertices[0]);
 	return result;
 }
 
 Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const {
-	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane");
+	if (_normal.getMagnitude() == 0)
+		error("Sector normal is (0,0,0)");
 
 	Math::Vector3d result = v;
-	result.z() -= Math::Vector3d::dotProduct(_normal, v) / _normal.z();
+	Math::Vector3d norm_normal = _normal.getNormalized();
+	result -= norm_normal * Math::Vector3d::dotProduct(norm_normal, v);
 	return result;
 }
 
