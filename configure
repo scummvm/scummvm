@@ -77,7 +77,8 @@ add_engine() {
 	done
 }
 
-add_engine grim "Grim" yes
+add_engine grim "Grim" yes "monkey4"
+add_engine monkey4 "Escape from Monkey Island" yes
 add_engine myst3 "Myst 3" yes
 
 #
@@ -119,7 +120,6 @@ _enable_prof=no
 _global_constructors=no
 _bink=yes
 _smush=yes
-_monkey4=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -3216,9 +3216,14 @@ echo "$_zlib"
 #
 # Check whether to activate SMUSH & Monkey4, based on zlib
 #
-if test "$_zlib" = no; then 
+if test ! "$_smush" = no && test ! "$_zlib" = yes; then
+	echo "...disabling SMUSH. zlib is required"
 	_smush=no
-	_monkey4=no	
+fi
+
+if test `get_engine_build monkey4` = yes && test ! "$_zlib" = yes ; then
+	echo "...disabling Escape from Monkey Island. zlib is required"
+	engine_disable monkey4
 fi
 
 #
@@ -3623,13 +3628,6 @@ fi
 echo_n "Building SMUSH video support... "
 define_in_config_if_yes $_smush 'USE_SMUSH'
 echo "$_smush"
-
-#
-# Check whether to build Monkey4-support
-#
-echo_n "Building Escape from Monkey Island support... "
-define_in_config_if_yes $_monkey4 'ENABLE_MONKEY4'
-echo "$_monkey4"
 
 #
 # Figure out installation directories
