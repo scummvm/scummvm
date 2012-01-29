@@ -571,11 +571,11 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 		_texts[textId]->_fontPtr = _font;
 	} else {
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
-		const Common::String charset(
+		const Common::String charset
 #ifdef USE_TRANSLATION
-		                             TransMan.getCurrentCharset()
+		                            (TransMan.getCurrentCharset())
 #endif
-		                            );
+		                            ;
 
 		// Try localized fonts
 		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
@@ -1412,7 +1412,13 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			font = Graphics::loadTTFFont(*stream, pointsize, false, TransMan.getCharsetMapping());
+			font = Graphics::loadTTFFont(*stream, pointsize, false,
+#ifdef USE_TRANSLATION
+			                             TransMan.getCharsetMapping()
+#else
+			                             0
+#endif
+			                             );
 			delete stream;
 
 			if (font)
