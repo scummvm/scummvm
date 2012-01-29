@@ -373,6 +373,10 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
 	assert(_vm->_projectorBackground != 0 && "Projector background already used.");
 
+	// Nothing to do if the spotitem is not enabled
+	if (!_vm->_state->getVar(26))
+		return;
+
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription(0, bitmap, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
