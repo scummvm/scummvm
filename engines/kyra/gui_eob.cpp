@@ -3781,7 +3781,7 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 	if (!b)
 		return;
 
-	EoBMenuButtonDef *d = (EoBMenuButtonDef *)b->extButtonDef;
+	const EoBMenuButtonDef *d = (const EoBMenuButtonDef *)b->extButtonDef;
 
 	if (d->flags & 1)
 		drawMenuButtonBox(b->x, b->y, b->width, b->height, clicked, noFill);
