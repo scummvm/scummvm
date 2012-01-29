@@ -599,6 +599,7 @@ void GrimEngine::mainLoop() {
 				fullscreen = !fullscreen;
 			}
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
+			g_registry->set("fullscreen", (fullscreen ? "true" : "false"));
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();
