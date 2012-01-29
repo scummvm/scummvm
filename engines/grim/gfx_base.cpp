@@ -81,4 +81,11 @@ void GfxBase::renderZBitmaps(bool render) {
 	_renderZBitmaps = render;
 }
 
+#ifndef USE_OPENGL
+// Allow CreateGfxOpenGL to be called even if OpenGL isn't included
+GfxBase *CreateGfxOpenGL() {
+	return CreateGfxTinyGL();
+}
+#endif // USE_OPENGL
+
 }
