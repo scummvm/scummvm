@@ -1,14 +1,14 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2012 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <Lothar@Windowsbase.de>, 2011.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <Lothar@Windowsbase.de>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-01-28 21:48+0100\n"
-"PO-Revision-Date: 2011-10-15 18:15+0100\n"
+"PO-Revision-Date: 2012-01-29 21:11+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
 "<Lothar@Windowsbase.de> (Contributor)\n"
@@ -1384,24 +1384,23 @@ msgstr "Sprache & Text"
 
 #: engines/scumm/dialogs.cpp:653
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Wähle einen Schwierigkeitsgrad."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Für Hilfe schaue ins Loom-Handbuch."
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Standard (16bpp)"
+msgstr "Standard"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr ""
+msgstr "Anfänger"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
-msgstr ""
+msgstr "Experte"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -2027,57 +2026,51 @@ msgstr "Konnte Spielstand nicht speichern."
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr ""
+msgstr "Attacke 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr ""
+msgstr "Attacke 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr ""
+msgstr "Attacke 3"
 
 #: engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr ""
+msgstr "Nach vorn bewegen"
 
 #: engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr ""
+msgstr "Nach hinten bewegen"
 
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr ""
+msgstr "Nach links rutschen"
 
 #: engines/kyra/lol.cpp:484
-#, fuzzy
 msgid "Slide Right"
-msgstr "Rechts"
+msgstr "Nach rechts rutschen"
 
 #: engines/kyra/lol.cpp:485
-#, fuzzy
 msgid "Turn Left"
-msgstr "Schalt aus"
+msgstr "Nach links drehen"
 
 #: engines/kyra/lol.cpp:486
-#, fuzzy
 msgid "Turn Right"
-msgstr "Zeiger nach rechts"
+msgstr "Nach rechts drehen"
 
 #: engines/kyra/lol.cpp:487
-#, fuzzy
 msgid "Rest"
-msgstr "Laden"
+msgstr "Ausruhen"
 
 #: engines/kyra/lol.cpp:488
-#, fuzzy
 msgid "Options"
-msgstr "~O~ptionen"
+msgstr "Optionen"
 
 #: engines/kyra/lol.cpp:489
-#, fuzzy
 msgid "Choose Spell"
-msgstr "Auswählen"
+msgstr "Zauberspruch auswählen"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
