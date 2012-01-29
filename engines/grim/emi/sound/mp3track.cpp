@@ -26,7 +26,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/mp3.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/emisound/mp3track.h"
+#include "engines/grim/emi/sound/mp3track.h"
 
 namespace Grim {
 

@@ -21,28 +21,35 @@
  */
 
 #include "common/mutex.h"
-#include "common/textconsole.h"
+#include "common/str.h"
+#include "common/stream.h"
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
-#include "engines/grim/resource.h"
-#include "engines/grim/scx.h"
-#include "engines/grim/emisound/scxtrack.h"
+#include "engines/grim/emi/sound/track.h"
 
 namespace Grim {
 
-SCXTrack::SCXTrack(Audio::Mixer::SoundType soundType) {
-	_soundType = soundType;
-}
-
-SCXTrack::~SCXTrack() {
-	stop();
+SoundTrack::SoundTrack() {
+	_stream = NULL;
 }
 	
-bool SCXTrack::openSound(Common::String soundName, Common::SeekableReadStream *file) {
-	_soundName = soundName;
-	_stream = Audio::makeLoopingAudioStream(makeSCXStream(file, DisposeAfterUse::YES), 0);
-	_handle = new Audio::SoundHandle();
-	return true;
+Common::String SoundTrack::getSoundName() {
+	return _soundName;
 }
 
+void SoundTrack::setSoundName(Common::String name) {
+	_soundName = name;
+}
+	
+bool SoundTrack::play() {
+	if (_stream) {
+		g_system->getMixer()->playStream(_soundType, _handle, _stream);
+		return true;
+	}
+	return false;
+}
+
+void SoundTrack::stop() {
+	if (_handle)
+		g_system->getMixer()->stopHandle(*_handle);
+}
 } // end of namespace Grim

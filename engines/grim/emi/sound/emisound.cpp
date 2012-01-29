@@ -29,11 +29,11 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/textsplit.h"
-#include "engines/grim/emisound/emisound.h"
-#include "engines/grim/emisound/track.h"
-#include "engines/grim/emisound/mp3track.h"
-#include "engines/grim/emisound/scxtrack.h"
-#include "engines/grim/emisound/vimatrack.h"
+#include "engines/grim/emi/sound/emisound.h"
+#include "engines/grim/emi/sound/track.h"
+#include "engines/grim/emi/sound/mp3track.h"
+#include "engines/grim/emi/sound/scxtrack.h"
+#include "engines/grim/emi/sound/vimatrack.h"
 
 #define NUM_CHANNELS 32
 

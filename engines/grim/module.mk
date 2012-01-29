@@ -16,6 +16,12 @@ MODULE_OBJS := \
 	costume/model_component.o \
 	costume/sound_component.o \
 	costume/sprite_component.o \
+	emi/sound/mp3track.o \
+	emi/sound/scxtrack.o \
+	emi/sound/vimatrack.o \
+	emi/sound/track.o \
+	emi/sound/emisound.o \
+	emi/sound/codecs/scx.o \
 	emi/modelemi.o \
 	emi/skeleton.o \
 	imuse/imuse.o \
@@ -57,11 +63,6 @@ MODULE_OBJS := \
 	movie/mpeg.o \
 	movie/smush.o \
 	movie/movie.o \
-	emisound/mp3track.o \
-	emisound/scxtrack.o \
-	emisound/vimatrack.o \
-	emisound/track.o \
-	emisound/emisound.o \
 	update/packfile.o \
 	update/mscab.o \
 	update/lang_filter.o \
@@ -102,7 +103,6 @@ MODULE_OBJS := \
 	resource.o \
 	savegame.o \
 	set.o \
-	scx.o \
 	sector.o \
 	sound.o \
 	stuffit.o \

@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef GRIM_MP3TRACK_H
-#define GRIM_MP3TRACK_H
+#ifndef GRIM_SCXTRACK_H
+#define GRIM_SCXTRACK_H
 
 #include "common/str.h"
 #include "common/stream.h"
-#include "engines/grim/emisound/track.h"
+#include "engines/grim/emi/sound/track.h"
 
 namespace Audio {
 	class AudioStream;
@@ -34,19 +34,12 @@ namespace Audio {
 
 namespace Grim {
 
-class MP3Track : public SoundTrack {
-	uint32 _headerSize;
-	uint32 _regionLength;
-	uint32 _freq;
-	char _bits;
-	char _channels;
-	bool _endFlag;
-	void parseRIFFHeader(Common::SeekableReadStream *data);
+class SCXTrack : public SoundTrack {
 public:
-	MP3Track(Audio::Mixer::SoundType soundType);
-	~MP3Track();
+	SCXTrack(Audio::Mixer::SoundType soundType);
+	~SCXTrack();
 	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
-	bool isPlaying() { return !_endFlag; }
+	bool isPlaying() { return true; }
 };
 
 }
