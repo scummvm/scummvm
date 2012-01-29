@@ -412,7 +412,7 @@ void ScummEngine_v2::decodeParseString() {
 }
 
 int ScummEngine_v2::readVar(uint var) {
-	if (var >= 14 && var <= 16)
+	if (_game.version >= 1 && var >= 14 && var <= 16)
 		var = _scummVars[var];
 
 	assertRange(0, var, _numVariables - 1, "variable (reading)");
