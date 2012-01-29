@@ -118,7 +118,7 @@ void MenuSystem::handleEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
-	switch (event.type) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			handleKeyDown(event.kbd);
 			break;
