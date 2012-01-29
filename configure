@@ -3477,6 +3477,10 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
+if test `get_engine_build myst3` = yes && test ! "$_opengl" = yes ; then
+	echo "...disabling Myst 3 engine. OpenGL is required"
+	engine_disable myst3
+fi
 
 #
 # Check for nasm
