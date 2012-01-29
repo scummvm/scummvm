@@ -55,6 +55,7 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(84, InputMousePressed, false)
 	VAR(88, InputEscapePressed, false)
+	VAR(89, InputTildePressed, false)
 	VAR(90, InputSpacePressed, false)
 
 	VAR(115, SunspotIntensity, false)
@@ -280,6 +281,9 @@ bool GameState::evaluate(int16 condition) {
 		break;
 	case 88:
 		setInputEscapePressed(_vm->inputEscapePressed());
+		break;
+	case 89:
+		setInputTildePressed(_vm->inputTilePressed());
 		break;
 	case 90:
 		setInputSpacePressed(_vm->inputSpacePressed());

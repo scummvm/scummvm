@@ -83,6 +83,7 @@ public:
 
 	DECLARE_VAR(84, InputMousePressed)
 	DECLARE_VAR(88, InputEscapePressed)
+	DECLARE_VAR(89, InputTildePressed)
 	DECLARE_VAR(90, InputSpacePressed)
 
 	DECLARE_VAR(115, SunspotIntensity)

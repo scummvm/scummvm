@@ -128,6 +128,7 @@ public:
 	bool inputValidatePressed();
 	bool inputEscapePressed();
 	bool inputSpacePressed();
+	bool inputTilePressed();
 private:
 	OSystem *_system;
 	Console *_console;
@@ -148,6 +149,7 @@ private:
 	bool _inputSpacePressed;
 	bool _inputEnterPressed;
 	bool _inputEscapePressed;
+	bool _inputTildePressed;
 
 	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
 	void updateCursor();

@@ -58,8 +58,8 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_rnd(0), _sound(0), _shouldQuit(false),
-		_inputSpacePressed(0), _inputEnterPressed(0),
-		_inputEscapePressed(0),
+		_inputSpacePressed(false), _inputEnterPressed(false),
+		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -319,6 +319,9 @@ void Myst3Engine::processInput(bool lookOnly) {
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
 				break;
+			case Common::KEYCODE_TILDE:
+				_inputTildePressed = true;
+				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
 					_system->lockMouse(false);
@@ -341,6 +344,9 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = false;
+				break;
+			case Common::KEYCODE_TILDE:
+				_inputTildePressed = false;
 				break;
 			default:
 				break;
@@ -1016,6 +1022,10 @@ bool Myst3Engine::inputEscapePressed() {
 
 bool Myst3Engine::inputSpacePressed() {
 	return _inputSpacePressed;
+}
+
+bool Myst3Engine::inputTilePressed() {
+	return _inputTildePressed;
 }
 
 } // end of namespace Myst3
