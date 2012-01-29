@@ -456,7 +456,7 @@ void ScummEngine_v0::drawSentenceObject(int object) {
 void ScummEngine_v0::drawSentenceLine() {
 	_redrawSentenceLine = false;
 
-	if (!(_userState & 32))
+	if (!(_userState & USERSTATE_IFACE_SENTENCE))
 		return;
 
 	clearSentenceLine();
@@ -627,22 +627,32 @@ void ScummEngine_v0::o_unlockRoom() {
 }
 
 void ScummEngine_v0::setMode(byte mode) {
-	int state = 0;
+	int state;
 
 	_currentMode = mode;
 
 	switch (_currentMode) {
 	case kModeCutscene:
 		_redrawSentenceLine = false;
-		state = 7;
+		// Note: do not change freeze state here
+		state = USERSTATE_SET_IFACE | 
+			USERSTATE_SET_CURSOR |
+			USERSTATE_SET_FREEZE;
 		break;
 	case kModeKeypad:
-		state = 23;
+		_redrawSentenceLine = false;
+		state = USERSTATE_SET_IFACE | 
+			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
+			USERSTATE_SET_FREEZE;
 		break;
 	case kModeNormal:
 	case kModeNoNewKid:
-		state = 247;
+		state = USERSTATE_SET_IFACE | USERSTATE_IFACE_ALL | 
+			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
+			USERSTATE_SET_FREEZE;
 		break;
+	default:
+		error("Invalid mode: %d", mode);
 	}
 
 	setUserState(state);

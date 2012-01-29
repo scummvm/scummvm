@@ -993,7 +993,8 @@ void ScummEngine_v2::o2_drawSentence() {
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
-	if (!((_userState & 32) || (_game.platform == Common::kPlatformNES && _userState & 0xe0)))
+	if (!((_userState & USERSTATE_IFACE_SENTENCE) || 
+		  (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
 		return;
 
 	if (getResourceAddress(rtVerb, slot))
@@ -1303,7 +1304,7 @@ void ScummEngine_v2::o2_findObject() {
 	int x = getVarOrDirectByte(PARAM_1) * V12_X_MULTIPLIER;
 	int y = getVarOrDirectByte(PARAM_2) * V12_Y_MULTIPLIER;
 	obj = findObject(x, y);
-	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & 0x40)) {
+	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & USERSTATE_IFACE_INVENTORY)) {
 		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4)
 			obj = findInventory(VAR(VAR_EGO), _mouseOverBoxV2 + _inventoryOffset + 1);
 	}
@@ -1485,7 +1486,9 @@ void ScummEngine_v2::o2_cutscene() {
 	VAR(VAR_CURSORSTATE) = 200;
 
 	// Hide inventory, freeze scripts, hide cursor
-	setUserState(15);
+	setUserState(USERSTATE_SET_IFACE | 
+		USERSTATE_SET_CURSOR | 
+		USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON);
 
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
@@ -1504,7 +1507,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
 
 	// Reset user state to values before cutscene
-	setUserState(vm.cutSceneData[0] | 7);
+	setUserState(vm.cutSceneData[0] | USERSTATE_SET_IFACE | USERSTATE_SET_CURSOR | USERSTATE_SET_FREEZE);
 
 	if ((_game.id == GID_MANIAC) && !(_game.platform == Common::kPlatformNES)) {
 		camera._mode = (byte) vm.cutSceneData[3];
@@ -1570,24 +1573,24 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 }
 
 void ScummEngine_v2::setUserState(byte state) {
-	if (state & 4) {						// Userface
+	if (state & USERSTATE_SET_IFACE) {			// Userface
 		if (_game.platform == Common::kPlatformNES)
-			_userState = (_userState & ~0xE0) | (state & 0xE0);
+			_userState = (_userState & ~USERSTATE_IFACE_ALL) | (state & USERSTATE_IFACE_ALL);
 		else
-			_userState = state & (32 | 64 | 128);
+			_userState = state & USERSTATE_IFACE_ALL;
 	}
 
-	if (state & 1) {						// Freeze
-		if (state & 8)
+	if (state & USERSTATE_SET_FREEZE) {		// Freeze
+		if (state & USERSTATE_FREEZE_ON)
 			freezeScripts(0);
 		else
 			unfreezeScripts();
 	}
 
-	if (state & 2) {						// Cursor Show/Hide
+	if (state & USERSTATE_SET_CURSOR) {			// Cursor Show/Hide
 		if (_game.platform == Common::kPlatformNES)
-			_userState = (_userState & ~0x10) | (state & 0x10);
-		if (state & 16) {
+			_userState = (_userState & ~USERSTATE_CURSOR_ON) | (state & USERSTATE_CURSOR_ON);
+		if (state & USERSTATE_CURSOR_ON) {
 			_userPut = 1;
 			_cursor.state = 1;
 		} else {

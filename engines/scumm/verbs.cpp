@@ -272,7 +272,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	int i, x, y, new_box = -1;
 
 	// Don't do anything unless the inventory is active
-	if (!(_userState & 64)) {
+	if (!(_userState & USERSTATE_IFACE_INVENTORY)) {
 		_mouseOverBoxV2 = -1;
 		return;
 	}
@@ -368,7 +368,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 	_mouseOverBoxV2 = -1;
 
-	if (!(_userState & 64))	// Don't draw inventory unless active
+	if (!(_userState & USERSTATE_IFACE_INVENTORY))	// Don't draw inventory unless active
 		return;
 
 	// Clear on all invocations
@@ -432,7 +432,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 }
 
 void ScummEngine::redrawVerbs() {
-	if (_game.version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
+	if (_game.version <= 2 && !(_userState & USERSTATE_IFACE_VERBS)) // Don't draw verbs unless active
 		return;
 
 	int i, verb = 0;
@@ -875,7 +875,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 void ScummEngine::verbMouseOver(int verb) {
 	// Don't do anything unless verbs are active
-	if (_game.version <= 2 && !(_userState & 128))
+	if (_game.version <= 2 && !(_userState & USERSTATE_IFACE_VERBS))
 		return;
 
 	if (_game.id == GID_FT)
