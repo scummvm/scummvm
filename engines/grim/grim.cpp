@@ -600,6 +600,9 @@ void GrimEngine::mainLoop() {
 			}
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
 
+			uint screenWidth = g_driver->getScreenWidth();
+			uint screenHeight = g_driver->getScreenHeight();
+			
 			EngineMode mode = getMode();
 
 			_savegameFileName = "";
@@ -613,7 +616,7 @@ void GrimEngine::mainLoop() {
 				g_driver = CreateGfxOpenGL();
 			}
 
-			g_driver->setupScreen(640, 480, fullscreen);
+			g_driver->setupScreen(screenWidth, screenHeight, fullscreen);
 			savegameRestore();
 
 			if (mode == DrawMode) {
