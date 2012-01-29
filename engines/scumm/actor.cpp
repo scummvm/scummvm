@@ -289,7 +289,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint) ABS((int)(deltaXFactor >> 16)) > _speedx) {
+	if ((uint) ABS(deltaXFactor) > (_speedx << 16))	{
 		deltaXFactor = _speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
