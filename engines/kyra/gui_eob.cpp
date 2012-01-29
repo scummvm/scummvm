@@ -3656,7 +3656,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 			}
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			if (found >= 0)
+			if (hlCur >= 0)
 				result = hlCur;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == 0x8010) {
