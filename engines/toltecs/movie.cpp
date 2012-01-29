@@ -268,7 +268,7 @@ bool MoviePlayer::handleInput() {
 	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
-	switch (event.type) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return false;
@@ -279,7 +279,6 @@ bool MoviePlayer::handleInput() {
 		case Common::EVENT_QUIT:
 			_vm->quitGame();
 			return false;
-			break;
 		default:
 			break;
 		}
