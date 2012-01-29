@@ -41,9 +41,9 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
-#include "engines/grim/modelemi.h"
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
+#include "engines/grim/emi/modelemi.h"
 
 #ifdef USE_OPENGL
 

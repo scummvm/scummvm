@@ -23,7 +23,7 @@
 #include "common/foreach.h"
 
 #include "engines/grim/costume/emimesh_component.h"
-#include "engines/grim/modelemi.h"
+#include "engines/grim/emi/modelemi.h"
 #include "engines/grim/resource.h"
 
 namespace Grim {

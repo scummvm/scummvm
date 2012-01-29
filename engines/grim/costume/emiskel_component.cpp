@@ -23,9 +23,9 @@
 #include "common/foreach.h"
 
 #include "engines/grim/costume/emiskel_component.h"
-#include "engines/grim/modelemi.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/skeleton.h"
+#include "engines/grim/emi/modelemi.h"
+#include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
 

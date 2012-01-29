@@ -16,6 +16,8 @@ MODULE_OBJS := \
 	costume/model_component.o \
 	costume/sound_component.o \
 	costume/sprite_component.o \
+	emi/modelemi.o \
+	emi/skeleton.o \
 	imuse/imuse.o \
 	imuse/imuse_mcmp_mgr.o \
 	imuse/imuse_music.o \
@@ -93,7 +95,6 @@ MODULE_OBJS := \
 	lua_v2.o \
 	material.o \
 	model.o \
-	modelemi.o \
 	objectstate.o \
 	primitives.o \
 	patchr.o \
@@ -103,7 +104,6 @@ MODULE_OBJS := \
 	set.o \
 	scx.o \
 	sector.o \
-	skeleton.o \
 	sound.o \
 	stuffit.o \
 	textobject.o \
