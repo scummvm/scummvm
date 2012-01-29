@@ -76,10 +76,6 @@
 
 namespace Grim {
 
-// CHAR_KEY tests to see whether a keycode is for
-// a "character" handler or a "button" handler
-#define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
-
 GrimEngine *g_grim = NULL;
 GfxBase *g_driver = NULL;
 int g_imuseState = -1;
@@ -332,50 +328,6 @@ void GrimEngine::handleUserPaint() {
 	}
 }
 
-void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	if (!CHAR_KEY(ascii))
-		return;
-
-	char keychar[2];
-	keychar[0] = ascii;
-	keychar[1] = 0;
-
-	LuaObjects objects;
-	objects.add(keychar);
-
-	if (!LuaBase::instance()->callback("characterHandler", objects)) {
-		error("handleChars: invalid handler");
-	}
-}
-
-void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	// If we're not supposed to handle the key then don't
-	if (!_controlsEnabled[key])
-		return;
-
-	LuaObjects objects;
-	objects.add(key);
-	if (operation == Common::EVENT_KEYDOWN) {
-		objects.add(1);
-		objects.add(1);
-	} else {
-		objects.addNil();
-		objects.add(0);
-	}
-	objects.add(0);
-	if (!LuaBase::instance()->callback("buttonHandler", objects)) {
-		error("handleControls: invalid keys handler");
-	}
-// 	if (!LuaBase::instance()->callback("axisHandler", objects)) {
-// 		error("handleControls: invalid joystick handler");
-// 	}
-
-	if (operation == Common::EVENT_KEYDOWN)
-		_controlsState[key] = true;
-	else if (operation == Common::EVENT_KEYUP)
-		_controlsState[key] = false;
-}
-
 void GrimEngine::cameraChangeHandle(int prev, int next) {
 	LuaObjects objects;
 	objects.add(prev);
@@ -622,6 +574,7 @@ void GrimEngine::mainLoop() {
 	_shortFrame = false;
 	bool resetShortFrame = false;
 	_changeHardwareState = false;
+	_changeFullscreenState = false;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
@@ -639,9 +592,18 @@ void GrimEngine::mainLoop() {
 			savegameSave();
 		}
 
-		if (_changeHardwareState) {
+		if (_changeHardwareState || _changeFullscreenState) {
 			_changeHardwareState = false;
+			bool fullscreen = g_driver->isFullscreen();	
+			if (_changeFullscreenState) {
+				fullscreen = !fullscreen;
+			}
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
+			g_registry->set("fullscreen", (fullscreen ? "true" : "false"));
 
+			uint screenWidth = g_driver->getScreenWidth();
+			uint screenHeight = g_driver->getScreenHeight();
+			
 			EngineMode mode = getMode();
 
 			_savegameFileName = "";
@@ -655,7 +617,7 @@ void GrimEngine::mainLoop() {
 				g_driver = CreateGfxOpenGL();
 			}
 
-			g_driver->setupScreen(640, 480, false);
+			g_driver->setupScreen(screenWidth, screenHeight, fullscreen);
 			savegameRestore();
 
 			if (mode == DrawMode) {
@@ -665,6 +627,7 @@ void GrimEngine::mainLoop() {
 				g_driver->dimScreen();
 			}
 			setMode(mode);
+			_changeFullscreenState = false;
 		}
 
 		g_imuse->flushTracks();

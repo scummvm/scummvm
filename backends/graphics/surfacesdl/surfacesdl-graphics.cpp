@@ -92,10 +92,22 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 }
 
 void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+		case OSystem::kFeatureFullscreenMode:
+			_fullscreen = enable;
+			break;
+		default:
+			break;
+	}
 }
 
 bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
-	return false;
+	switch (f) {
+		case OSystem::kFeatureFullscreenMode:
+			return _fullscreen;
+		default:
+			return false;
+	}
 }
 
 void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {

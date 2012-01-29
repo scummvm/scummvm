@@ -76,11 +76,19 @@ public:
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
 	/**
-	 *	Query whether the current context is hardware-accelerated
+	 * Query whether the current context is hardware-accelerated
 	 *
 	 * @return true if hw-accelerated, false otherwise
 	 */
 	virtual bool isHardwareAccelerated() = 0;
+	/**
+	 * Query whether the current context is fullscreen.
+	 *
+	 * @return true if fullscreen, false otherwise
+	 */
+	virtual bool isFullscreen() { return _isFullscreen; }
+	virtual uint getScreenWidth() { return _screenWidth; }
+	virtual uint getScreenHeight() { return _screenHeight; }
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Math::Vector3d pos, Math::Vector3d interest) = 0;
