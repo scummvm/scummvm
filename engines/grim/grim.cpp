@@ -348,8 +348,13 @@ void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16
 	}
 }
 
-void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	// If we're not supposed to handle the key then don't
+void GrimEngine::handleControls(int operation, int key, int keyModifier, uint16 ascii) {
+	// Might also want to support keypad-enter?
+	if (keyModifier == Common::KBD_ALT && key == Common::KEYCODE_RETURN && operation == Common::EVENT_KEYDOWN) {
+		_changeFullscreenState = true;
+	}
+
+	// If we're not supposed to handle the key then don't	
 	if (!_controlsEnabled[key])
 		return;
 
@@ -622,6 +627,7 @@ void GrimEngine::mainLoop() {
 	_shortFrame = false;
 	bool resetShortFrame = false;
 	_changeHardwareState = false;
+	_changeFullscreenState = false;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
@@ -639,8 +645,13 @@ void GrimEngine::mainLoop() {
 			savegameSave();
 		}
 
-		if (_changeHardwareState) {
+		if (_changeHardwareState || _changeFullscreenState) {
 			_changeHardwareState = false;
+			bool fullscreen = g_driver->isFullscreen();	
+			if (_changeFullscreenState) {
+				fullscreen = !fullscreen;
+			}
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
 
 			EngineMode mode = getMode();
 
@@ -655,7 +666,7 @@ void GrimEngine::mainLoop() {
 				g_driver = CreateGfxOpenGL();
 			}
 
-			g_driver->setupScreen(640, 480, false);
+			g_driver->setupScreen(640, 480, fullscreen);
 			savegameRestore();
 
 			if (mode == DrawMode) {
@@ -665,6 +676,7 @@ void GrimEngine::mainLoop() {
 				g_driver->dimScreen();
 			}
 			setMode(mode);
+			_changeFullscreenState = false;
 		}
 
 		g_imuse->flushTracks();

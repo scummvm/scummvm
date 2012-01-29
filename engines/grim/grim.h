@@ -203,6 +203,7 @@ private:
 	bool *_controlsState;
 
 	bool _changeHardwareState;
+	bool _changeFullscreenState;
 
 	Actor *_selectedActor;
 	Actor *_talkingActor;

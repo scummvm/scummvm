@@ -81,6 +81,7 @@ public:
 	 * @return true if hw-accelerated, false otherwise
 	 */
 	virtual bool isHardwareAccelerated() = 0;
+	bool isFullscreen() { return _isFullscreen; }
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Math::Vector3d pos, Math::Vector3d interest) = 0;
