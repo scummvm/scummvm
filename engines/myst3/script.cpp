@@ -172,6 +172,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
 	OP_1(140, zipToNode,					kValue														);
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
+	OP_0(145, reloadNode																				);
+	OP_0(146, redrawFrame																				);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
 	OP_1(149, moviePlayFullFrame,			kEvalValue													);
@@ -1773,6 +1775,19 @@ void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
 	_vm->_state->setLocationNextNode(cmd.args[1]);
 
 	_vm->goToNode(0, 3);
+}
+
+void Script::reloadNode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Reload current node", cmd.op);
+
+	_vm->loadNode(0);
+	_vm->drawFrame();
+}
+
+void Script::redrawFrame(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Reload current node", cmd.op);
+
+	_vm->drawFrame();
 }
 
 void Script::moviePlay(Context &c, const Opcode &cmd) {

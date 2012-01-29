@@ -32,7 +32,14 @@ bool HotSpot::isPointInRectsCube(const Common::Point &p) {
 				rects[j].centerPitch - rects[j].height / 2,
 				rects[j].centerHeading + rects[j].width / 2,
 				rects[j].centerPitch + rects[j].height / 2);
-		if (rect.contains(p))
+
+		Common::Point lookAt = p;
+
+		// Make sure heading is in the correct range
+		if (rect.left > 360 || rect.right > 360)
+			lookAt.x += 360;
+
+		if (rect.contains(lookAt))
 			return true;
 	}
 
