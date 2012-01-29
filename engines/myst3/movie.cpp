@@ -213,7 +213,7 @@ void ScriptedMovie::update() {
 	if (_enabled) {
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
-			if (nextFrame > 0) {
+			if (nextFrame > 0 && nextFrame <= _bink.getFrameCount()) {
 				if (_bink.getCurFrame() != nextFrame - 1) {
 					_bink.seekToFrame(nextFrame - 1);
 					drawNextFrameToTexture();
