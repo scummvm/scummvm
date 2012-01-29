@@ -245,16 +245,16 @@ void StaticTextWidget::setValue(int value) {
 }
 
 void StaticTextWidget::setLabel(const Common::String &label) {
-    if (_label != label) {
-        _label = label;
+	if (_label != label) {
+		_label = label;
 
-        // when changing the label, add the CLEARBG flag
-        // so the widget is completely redrawn, otherwise
-        // the new text is drawn on top of the old one.
-        setFlags(WIDGET_CLEARBG);
-        draw();
-        clearFlags(WIDGET_CLEARBG);
-    }
+		// when changing the label, add the CLEARBG flag
+		// so the widget is completely redrawn, otherwise
+		// the new text is drawn on top of the old one.
+		setFlags(WIDGET_CLEARBG);
+		draw();
+		clearFlags(WIDGET_CLEARBG);
+	}
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
