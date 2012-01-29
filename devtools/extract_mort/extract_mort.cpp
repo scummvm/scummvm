@@ -296,6 +296,9 @@ static void export_strings(const char *textFilename) {
 				printf("Extracted string exceeded allowed buffer size.\n");
 				exit(1);
 			}
+
+			if (indis >= (txxInp.size() / 2))
+				endFlag = true;
 		} while (!endFlag);
 
 		// Write out the string
@@ -347,7 +350,7 @@ static void import_strings(const char *textFilename) {
 	// Write out the compressed data
 	if (point != 16)
 		++indis;
-	txxInp.write(strData, indis);
+	txxInp.write(strData, indis * 2);
 
 	// Close the files
 	txxInp.close();
