@@ -162,6 +162,13 @@ void ScriptedMovie::draw() {
 	Movie::draw();
 }
 
+void ScriptedMovie::drawOverlay() {
+	if (!_enabled)
+		return;
+
+	Movie::drawOverlay();
+}
+
 void ScriptedMovie::update() {
 	if (_startFrameVar) {
 		_startFrame = _vm->_state->getVar(_startFrameVar);

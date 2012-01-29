@@ -41,7 +41,7 @@ public:
 	virtual ~Movie();
 
 	virtual void draw();
-	void drawOverlay();
+	virtual void drawOverlay();
 
 	uint16 getId() { return _id; }
 	void setPosU(int32 v) { _posU = v; }
@@ -83,6 +83,7 @@ public:
 	virtual ~ScriptedMovie();
 
 	void draw();
+	void drawOverlay();
 	virtual void update();
 
 	void setEndFrameVar(uint16 v) { _endFrameVar = v; }
