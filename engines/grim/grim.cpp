@@ -54,7 +54,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/lua_v1.h"
-#include "engines/grim/lua_v2.h"
+#include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"

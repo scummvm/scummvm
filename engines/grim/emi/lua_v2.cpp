@@ -28,7 +28,7 @@
 
 #include "common/endian.h"
 
-#include "engines/grim/lua_v2.h"
+#include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lauxlib.h"
 

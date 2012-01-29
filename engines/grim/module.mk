@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	emi/sound/codecs/scx.o \
 	emi/modelemi.o \
 	emi/skeleton.o \
+	emi/lua_v2.o \
 	imuse/imuse.o \
 	imuse/imuse_mcmp_mgr.o \
 	imuse/imuse_music.o \
@@ -93,7 +94,6 @@ MODULE_OBJS := \
 	lua_v1_graphics.o \
 	lua_v1_sound.o \
 	lua_v1_text.o \
-	lua_v2.o \
 	material.o \
 	model.o \
 	objectstate.o \
