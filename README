@@ -110,6 +110,7 @@ Escape     : Skips cutscenes, exits certain screens
 q          : Exit Dialog Menu
 Ctrl + c   : Force Quit (from command-line)
 Alt + x    : Quit (ingame)
+Alt + enter: Switch between windowed-mode and fullscreen
 F1         : Menu
 
 
