@@ -1171,9 +1171,15 @@ void ScummEngine_v2::o2_startScript() {
 	// imprisonment of the player), then any attempt to start script 87
 	// (which makes Ted go answer the door bell) is simply ignored. This
 	// way, the door bell still chimes, but Ted ignores it.
-	if (_game.id == GID_MANIAC && script == 87) {
-		if (isScriptRunning(88) || isScriptRunning(89)) {
-			return;
+	if (_game.id == GID_MANIAC) {
+		if (_game.version >= 1 && script == 87) {
+			if (isScriptRunning(88) || isScriptRunning(89))
+				return;
+		}
+		// Script numbers are different in V0
+		if (_game.version == 0 && script == 82) {
+			if (isScriptRunning(83) || isScriptRunning(84))
+				return;
 		}
 	}
 
@@ -1189,7 +1195,10 @@ void ScummEngine_v2::o2_stopScript() {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
-		if ((script == 116) && isScriptRunning(89))
+		if (_game.version >= 1 && script == 116 && isScriptRunning(89))
+			return;
+		// Script numbers are different in V0
+		if (_game.version == 0 && script == 111 && isScriptRunning(84))
 			return;
 	}
 
