@@ -26,10 +26,6 @@
 #include "math/vector.h"
 #include "math/vector3d.h"
 
-namespace Common {
-class ReadStream;
-}
-
 namespace Math {
 
 template<>
@@ -49,12 +45,6 @@ public:
 	Angle getAngle() const;
 
 	Vector3d toVector3d() const;
-	
-	/**
-	 * Reads 2 floats from the passed stream, and uses them
-	 * as x and y in chronological order.
-	 */
-	void readFromStream(Common::ReadStream *stream);
 };
 
 typedef Matrix<2, 1> Vector2d;

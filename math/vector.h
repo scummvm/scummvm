@@ -23,6 +23,8 @@
 #ifndef MATH_VECTOR_H
 #define MATH_VECTOR_H
 
+#include "common/stream.h"
+
 #include "math/matrix.h"
 #include "math/utils.h"
 
@@ -48,6 +50,12 @@ public:
 	inline static float dotProduct(const Vector(d) &v1, const Vector(d) &v2) {
 		return v1.dotProduct(v2);
 	}
+
+	/**
+	 * Reads <i>dim</i> floats from the passed stream, and uses them
+	 * as value 0...dim in chronological order.
+	 */
+	void readFromStream(Common::ReadStream *stream);
 
 protected:
 	MatrixType() : MatrixBase<dim, 1>() { }
@@ -101,6 +109,17 @@ float MatrixType<dim, 1>::dotProduct(const Vector(dim) &v) const {
 		result += value(i) * v.value(i);
 	}
 	return result;
+}
+
+template<int dim>
+void MatrixType<dim, 1>::readFromStream(Common::ReadStream *stream) {
+	const int size = dim * sizeof(float);
+	char buf[size];
+	stream->read(buf, size);
+
+	for (int i = 0; i < dim; ++i) {
+		setValue(i, get_float(buf + i * sizeof(float)));
+	}
 }
 
 }

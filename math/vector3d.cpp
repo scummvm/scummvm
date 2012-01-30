@@ -21,7 +21,6 @@
  */
 
 #include "common/streamdebug.h"
-#include "common/stream.h"
 #include "math/vector3d.h"
 
 namespace Math {
@@ -54,14 +53,6 @@ void Vector3d::set(float lx, float ly, float lz) {
 // (ignores z-component)
 Angle Vector3d::unitCircleAngle() const {
 	return Angle::arcTangent2(y(), x());
-}
-	
-void Vector3d::readFromStream(Common::ReadStream *stream) {
-	char buf[12];
-	stream->read(buf, 12);
-	x() = get_float(buf);
-	y() = get_float(buf + 4);
-	z() = get_float(buf + 8);
 }
 
 } // end of namespace Math

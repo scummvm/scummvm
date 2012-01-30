@@ -29,10 +29,6 @@
 #include "math/vector.h"
 #include "math/angle.h"
 
-namespace Common {
-class ReadStream;
-}
-
 namespace Math {
 
 typedef Matrix<4, 1> Vector4d;
@@ -60,11 +56,6 @@ public:
 		return Vector4d(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
 	}
 
-	/**
-	 * Reads 4 floats from the passed stream, and uses them
-	 * as x,y,z,w in chronological order.
-	 */
-	void readFromStream(Common::ReadStream *stream);
 };
 
 } // end of namespace Math

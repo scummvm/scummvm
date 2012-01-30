@@ -21,7 +21,6 @@
  */
 
 #include "common/streamdebug.h"
-#include "common/stream.h"
 #include "math/vector4d.h"
 
 namespace Math {
@@ -50,14 +49,5 @@ Vector4d::Matrix(const float *data) :
 void Vector4d::set(float lx, float ly, float lz, float lw) {
 	x() = lx; y() = ly; z() = lz; w() = lw;
 }
-	
-void Vector4d::readFromStream(Common::ReadStream *stream) {
-	char buf[16];
-	stream->read(buf, 16);
-	x() = get_float(buf);
-	y() = get_float(buf + 4);
-	z() = get_float(buf + 8);
-	w() = get_float(buf + 12);
-}
-	
+
 } // end of namespace Math
