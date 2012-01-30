@@ -81,6 +81,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Lander Bay 2 Storage
 		return new Scene500();
 	case 525:
+		// Cutscene - Walking in hall
+		return new Scene525();
 	case 600:
 	case 700:
 		error("Missing scene %d from group 0", sceneNumber);

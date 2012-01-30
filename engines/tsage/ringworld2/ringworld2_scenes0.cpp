@@ -4440,6 +4440,32 @@ void Scene500::signal() {
 	}
 }
 
+
+/*--------------------------------------------------------------------------
+ * Scene 525 - Cutscene - Walking in hall
+ *
+ *--------------------------------------------------------------------------*/
+void Scene525::postInit(SceneObjectList *OwnerList) {
+	loadScene(525);
+	R2_GLOBALS._v58CE2 = 0;
+	SceneExt::postInit();
+	
+	R2_GLOBALS._sound1.play(105);
+	
+	_actor1.postInit();
+	_actor1._effect = 1;
+	
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+	
+	setAction(&_sequenceManager, this, 525, &R2_GLOBALS._player, &_actor1, NULL);
+}
+
+void Scene525::signal() {
+	R2_GLOBALS._sceneManager.changeScene(1525);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 800 - Sick Bay
  *
