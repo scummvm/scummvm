@@ -50,35 +50,6 @@ Common::String readLAString(Common::ReadStream *ms) {
 	
 	return retVal;
 }
-	
-Math::Vector2d *readVector2d(Common::ReadStream &ms, int count = 1) {
-	Math::Vector2d *vec2d = new Math::Vector2d[count];
-	char buf[8];
-	for (int i = 0; i < count; i++) {
-		ms.read(buf, 8);
-		vec2d[i].setX(get_float(buf));
-		vec2d[i].setY(get_float(buf + 4));
-	}
-	return vec2d;
-}
-
-Math::Vector3d *readVector3d(Common::ReadStream &ms, int count = 1) {
-	Math::Vector3d *vec3d = new Math::Vector3d[count];
-	char buf[12];
-	for (int i = 0; i < count; i++) {
-		ms.read(buf, 12);
-		vec3d[i] = Math::Vector3d::get_vector3d(buf);
-	}
-	return vec3d;
-}
-
-Math::Vector4d *readVector4d(Common::ReadStream &ms) {
-	Math::Vector4d *vec4d = new Math::Vector4d();
-	char buf[16];
-	ms.read(buf, 16);
-	*vec4d = Math::Vector4d::get_vector4d(buf);
-	return vec4d;
-}
 
 void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	_flags = data->readUint32LE();
@@ -125,11 +96,11 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	//int strLength = 0; // Usefull for PS2-strings
 	
 	Common::String nameString = readLAString(data);
-	
-	_sphereData = readVector4d(*data);
 
-	_boxData = readVector3d(*data);
-	_boxData2 = readVector3d(*data);
+	_sphereData->readFromStream(data);
+
+	_boxData->readFromStream(data);
+	_boxData2->readFromStream(data);
 
 	_numTexSets = data->readUint32LE();
 	_setType = data->readUint32LE();
@@ -150,8 +121,14 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_numVertices = data->readUint32LE();
 
 	// Vertices
-	_vertices = readVector3d(*data, _numVertices);
-	_normals = readVector3d(*data, _numVertices);
+	_vertices = new Math::Vector3d[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_vertices[i].readFromStream(data);
+	}
+	_normals = new Math::Vector3d[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_normals[i].readFromStream(data);
+	}
 	_colorMap = new EMIColormap[_numVertices];
 	for (int i = 0; i < _numVertices; ++i) {
 		_colorMap[i].r = data->readByte();
@@ -159,7 +136,10 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_colorMap[i].b = data->readByte();
 		_colorMap[i].a = data->readByte();
 	}
-	_texVerts = readVector2d(*data, _numVertices);
+	_texVerts = new Math::Vector2d[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_texVerts[i].readFromStream(data);
+	}
 
 	// Faces
 
@@ -221,9 +201,9 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_texNames = NULL;
 	_mats = NULL;
 	_numBones = 0;
-	_sphereData = NULL;
-	_boxData = NULL;
-	_boxData2 = NULL;
+	_sphereData = new Math::Vector4d();
+	_boxData = new Math::Vector3d();
+	_boxData2 = new Math::Vector3d();
 	_numTexSets = 0;
 	_setType = 0;
 
