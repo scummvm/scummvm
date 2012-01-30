@@ -516,8 +516,8 @@ private:
 
 	int getNewFrame();
 	void animEnded();
-	int changeFrame();
 public:
+	int changeFrame();
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
 	Common::Point _field2E;
