@@ -198,7 +198,7 @@ void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 	}
 }
 
-Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
+Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData, uint16 var) {
 	Common::Array<HotSpot *> hovered;
 
 	if (_state->getViewType() == kCube) {
@@ -208,8 +208,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
-					&& _state->evaluate(nodeData->hotspots[j].condition)
-					&& nodeData->hotspots[j].cursor < 12) {
+					&& nodeData->hotspots[j].isEnabled(_state, var)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -231,8 +230,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse)
-					&& _state->evaluate(nodeData->hotspots[j].condition)
-					&& nodeData->hotspots[j].cursor < 12) {
+					&& nodeData->hotspots[j].isEnabled(_state, var)) {
 				hovered.push_back(&nodeData->hotspots[j]);
 			}
 		}
@@ -381,15 +379,6 @@ void Myst3Engine::drawFrame() {
 
 	if (_state->getViewType() == kCube) {
 		_gfx->setupCameraOrtho2D();
-
-		// Draw overlay 2D movies
-		for (uint i = 0; i < _movies.size(); i++) {
-			_movies[i]->drawOverlay();
-		}
-
-		for (uint i = 0; i < _drawables.size(); i++) {
-			_drawables[i]->drawOverlay();
-		}
 	}
 
 	if (_state->getViewType() != kMenu) {
@@ -401,6 +390,15 @@ void Myst3Engine::drawFrame() {
 
 		_scene->drawBlackBorders();
 		_inventory->draw();
+	}
+
+	// Draw overlay 2D movies
+	for (uint i = 0; i < _movies.size(); i++) {
+		_movies[i]->drawOverlay();
+	}
+
+	for (uint i = 0; i < _drawables.size(); i++) {
+		_drawables[i]->drawOverlay();
 	}
 
 	if (_cursor->isVisible())
@@ -840,6 +838,30 @@ int16 Myst3Engine::openDialog(uint16 id) {
 	_drawables.pop_back();
 
 	return result;
+}
+
+void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
+	DragItem drag(this, id);
+
+	_drawables.push_back(&drag);
+
+	_cursor->changeCursor(2);
+	_state->setVar(var, -1);
+
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+
+	while (inputValidatePressed() && !shouldQuit()) {
+		processInput(true);
+		drawFrame();
+	}
+
+	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData, var);
+	if (!hovered.empty())
+		_scriptEngine->run(&hovered.front()->script);
+
+	_state->setVar(var, 1);
+
+	_drawables.pop_back();
 }
 
 bool Myst3Engine::canLoadGameStateCurrently() {

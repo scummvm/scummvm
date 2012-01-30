@@ -98,6 +98,8 @@ public:
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
+
+	void dragSymbol(uint16 var, uint16 id);
 	int16 openDialog(uint16 id);
 
 	void runNodeInitScripts();
@@ -155,7 +157,7 @@ private:
 	bool _inputEscapePressed;
 	bool _inputTildePressed;
 
-	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData);
+	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData, uint16 var = 0);
 	void updateCursor();
 
 	void addArchive(const Common::String &file, bool mandatory);

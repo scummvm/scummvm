@@ -24,7 +24,12 @@
 #define INVENTORY_H_
 
 #include "common/list.h"
+#include "common/memstream.h"
 #include "common/rect.h"
+
+#include "engines/myst3/gfx.h"
+
+#include "video/bink_decoder_seek.h"
 
 namespace Myst3 {
 
@@ -79,6 +84,23 @@ private:
 
 	void openBook(uint16 age, uint16 room, uint16 node);
 	void closeAllBooks();
+};
+
+class DragItem : public Drawable {
+public:
+	DragItem(Myst3Engine *vm, uint id);
+	~DragItem();
+	void drawOverlay();
+
+private:
+	Myst3Engine *_vm;
+
+	Common::MemoryReadStream *_movieStream;
+	Video::SeekableBinkDecoder _bink;
+
+	Texture *_texture;
+
+	Common::Rect getPosition();
 };
 
 } /* namespace Myst3 */

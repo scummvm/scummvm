@@ -68,4 +68,14 @@ bool HotSpot::isPointInRectsFrame(GameState *state, const Common::Point &p) {
 	return false;
 }
 
+bool HotSpot::isEnabled(GameState *state, uint16 var) {
+	if (!state->evaluate(condition))
+		return false;
+
+	if (var == 0)
+		return cursor < 12;
+	else
+		return cursor == var;
+}
+
 } /* namespace Myst3 */

@@ -31,9 +31,9 @@ namespace Myst3 {
 
 class Drawable {
 public:
-	virtual void draw() = 0;
-	virtual void drawOverlay() {};
-	virtual ~Drawable() {};
+	virtual void draw() {}
+	virtual void drawOverlay() {}
+	virtual ~Drawable() {}
 };
 
 class Texture {

@@ -61,14 +61,19 @@ void Inventory::draw() {
 	Common::Point mouse = _vm->_cursor->getPosition();
 
 	for (ItemList::const_iterator it = _inventory.begin(); it != _inventory.end(); it++) {
+		int32 state = _vm->_state->getVar(it->var);
+
+		// Don't draw if the item is being dragged
+		if (state == -1)
+			continue;
+
 		const ItemData &item = getData(it->var);
 
 		Common::Rect textureRect = Common::Rect(item.textureWidth,
 				item.textureHeight);
 		textureRect.translate(item.textureX, 0);
 
-		bool itemHighlighted = it->rect.contains(mouse)
-				|| (_vm->_state->getVar(it->var) == 2);
+		bool itemHighlighted = it->rect.contains(mouse) || state == 2;
 
 		if (itemHighlighted)
 			textureRect.translate(0, _texture->height / 2);
@@ -205,6 +210,15 @@ void Inventory::useItem(uint16 var) {
 		_vm->_state->setBookStateReleeshahn(2);
 		openBook(9, 902, 300);
 		break;
+	case 345:
+		_vm->dragSymbol(345, 1002);
+		break;
+	case 398:
+		_vm->dragSymbol(398, 1001);
+		break;
+	case 447:
+		_vm->dragSymbol(447, 1000);
+		break;
 	default:
 		debug("Used inventory item %d which is not implemented", var);
 	}
@@ -255,6 +269,40 @@ void Inventory::updateState() {
 		items.push_back(it->var);
 
 	_vm->_state->updateInventory(items);
+}
+
+DragItem::DragItem(Myst3Engine *vm, uint id):
+	_vm(vm),
+	_texture(0) {
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DRAG", id, 0, DirectorySubEntry::kStillMovie);
+
+	if (!movieDesc)
+		error("Movie %d does not exist", id);
+
+	// Load the movie
+	_movieStream = movieDesc->getData();
+	_bink.loadStream(_movieStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	const Graphics::Surface *frame = _bink.decodeNextFrame();
+	_texture = _vm->_gfx->createTexture(frame);
+}
+
+DragItem::~DragItem() {
+	_vm->_gfx->freeTexture(_texture);
+}
+
+void DragItem::drawOverlay() {
+	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
+	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture, 0.99);
+}
+
+Common::Rect DragItem::getPosition() {
+	Common::Point mouse = _vm->_cursor->getPosition();
+	uint posX = CLIP<uint>(mouse.x, _texture->width / 2, Renderer::kOriginalWidth - _texture->width / 2);
+	uint posY = CLIP<uint>(mouse.y, _texture->height / 2, Renderer::kOriginalHeight - _texture->height / 2);
+
+	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width, _texture->height);
+	return screenRect;
 }
 
 } /* namespace Myst3 */
