@@ -531,6 +531,68 @@ public:
 
 };
 
+class Scene600 : public SceneExt {
+	class Item1 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item4 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor4 : public SceneActor {
+	public:
+		virtual void signal();
+		virtual bool startAction(CursorType action, Event &event);
+		virtual void draw();
+	};
+	class Actor5 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor6 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor7 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor8 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	int _field412;
+	Item1 _item1;
+	Item1 _item2;
+	Item1 _item3;
+	Item4 _item4;
+	Item1 _item5;
+	BackgroundSceneObject _object1;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	Actor4 _actor4;
+	Actor5 _actor5;
+	Actor6 _actor6;
+	Actor7 _actor7;
+	Actor8 _actor8;
+	ASoundExt _aSound1;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	byte _fieldAD2[256];
+
+	Scene600();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void Scene600::remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
+};
+
 class Scene800: public SceneExt {
 	/* Items */
 	class Button: public NamedHotspot {
