@@ -29,6 +29,10 @@
 #include "math/vector.h"
 #include "math/angle.h"
 
+namespace Common {
+class ReadStream;
+}
+
 namespace Math {
 
 typedef Matrix<3, 1> Vector3d;
@@ -67,7 +71,12 @@ public:
 	inline static Vector3d get_vector3d(const char *data) {
 		return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
 	}
-
+	
+	/**
+	 * Reads 3 floats from the passed stream, and uses them
+	 * as x,y,z in chronological order.
+	 */
+	void readFromStream(Common::ReadStream *stream);
 };
 
 } // end of namespace Math

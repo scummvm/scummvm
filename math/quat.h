@@ -41,13 +41,15 @@ public:
 	Quaternion() : Vector4d(0, 0, 0, 0) {}
 	Quaternion(float lx, float ly, float lz, float lw) : Vector4d(lx, ly, lz, lw) {}
 	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
-
+	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
+	
 	Matrix4 toMatrix();
 	void slerpQuat(Quaternion dst, const Quaternion from, const Quaternion to, const float t);
 	
 	inline static Quaternion get_quaternion(const char *data) {
 		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
 	}
+	Quaternion& operator=(Vector4d &vec);
 };
 
 } // end of namespace Math

@@ -87,5 +87,5 @@ Matrix4 Quaternion::toMatrix() {
 	dst.setData(newMat);
 	return dst;
 }
-	
+
 }

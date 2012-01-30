@@ -21,7 +21,7 @@
  */
 
 #include "math/vector2d.h"
-
+#include "common/stream.h"
 #include "common/streamdebug.h"
 
 namespace Math {
@@ -65,6 +65,13 @@ Angle Vector2d::getAngle() const {
 Vector3d Vector2d::toVector3d() const {
 	Vector3d v(value(0), value(1), 0);
 	return v;
+}
+	
+void Vector2d::readFromStream(Common::ReadStream *stream) {
+	char buf[8];
+	stream->read(buf, 8);
+	setX(get_float(buf));
+	setY(get_float(buf + 4));
 }
 
 }
