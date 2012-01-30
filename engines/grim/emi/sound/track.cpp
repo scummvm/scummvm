@@ -30,6 +30,7 @@ namespace Grim {
 
 SoundTrack::SoundTrack() {
 	_stream = NULL;
+	_handle = NULL;
 }
 	
 Common::String SoundTrack::getSoundName() {
