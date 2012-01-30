@@ -70,9 +70,15 @@ Name: {group}\Saved Games\Saved Games (new default); Filename: {userappdata}\Scu
 
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
+;Creates a symbolic link for standard save games area, under Windows Vista/7
+Filename: {cmd}; Parameters: "/c ""mklink /d ""%userprofile%\Saved Games\ScummVM"" ""%appdata%\ScummVM\Saved games"" "" "; MinVersion: 0, 6.1
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
+
+[Dirs]
+Name: "{userappdata}\ScummVM"; MinVersion: 0, 1
+Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1
 
 [Files]
 Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
