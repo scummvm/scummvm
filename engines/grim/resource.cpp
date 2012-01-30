@@ -471,7 +471,7 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	
 	stream = openNewStreamFile(fname.c_str(), true);
 	if(!stream) {
-		warning("Could not find skeleton %s", filename.c_str());
+		warning("Could not find animation %s", filename.c_str());
 		return NULL;
 	}
 	
