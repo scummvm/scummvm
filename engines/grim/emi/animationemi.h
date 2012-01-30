@@ -20,34 +20,49 @@
  *
  */
 
-#ifndef GRIM_SKELETON_H
-#define GRIM_SKELETON_H
+#ifndef GRIM_ANIMATIONEMI_H
+#define GRIM_ANIMATIONEMI_H
 
+#include "common/str.h"
+#include "math/mathfwd.h"
 #include "engines/grim/object.h"
 
-namespace Common {
-class SeekableReadStream;
+namespace Math {
+class Quaternion;
 }
 
 namespace Grim {
-	
-class AnimationEmi;
-class Joint;
 
-class Skeleton : public Object {
-	int _numJoints;
-	Joint *_joints;
-	AnimationEmi *_anim;
-	void loadSkeleton(Common::SeekableReadStream *data);
-	void initBone(int index);
-	void initBones();
-public:
-	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
-	void resetAnim();
-	void setAnim(AnimationEmi *anim);	
-	int findJointIndex(Common::String name, int max);
+struct AnimRotation {
+	Math::Quaternion _quat;
+	float _time;
 };
-	
+
+struct AnimTranslation {
+	Math::Vector3d _vec;
+	float _time;
+};
+
+struct Bone {
+	Common::String _boneName;
+	int _operation;
+	int _b;
+	int _c;
+	int _count;
+	AnimRotation **_rotations;
+	AnimTranslation **_translations;
+};
+
+class AnimationEmi : public Object {
+	void loadAnimation(Common::SeekableReadStream *data);
+public:
+	Common::String _name;
+	float _duration;
+	int _numBones;
+	Bone **_bones;
+	AnimationEmi() : _name(""), _duration(0.0f), _numBones(0) {}
+};
+
 } // end of namespace Grim
 
 #endif

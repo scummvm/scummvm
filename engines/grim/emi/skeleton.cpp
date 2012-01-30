@@ -20,16 +20,91 @@
  *
  */
 
+#include "common/stream.h"
+#include "math/vector3d.h"
+#include "math/vector4d.h"
+#include "math/quat.h"
+#include "engines/grim/emi/animationemi.h"
 #include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
+
+struct Joint {
+	Common::String _name;
+	Common::String _parent;
+	Math::Vector3d _trans;
+	Math::Quaternion _quat;
+	// calculated;
+	int _animIndex;
+	int _parentIndex;
+	Math::Matrix4 _absMatrix;
+	Math::Matrix4 _relMatrix;
+	Math::Matrix4 _finalMatrix;
+};
 
 Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
 	loadSkeleton(data);
 }
 
 void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
+	_numJoints = data->readUint32LE();
+	_joints = new Joint[_numJoints];
 	
+	char inString[32];
+	
+	for(int i = 0;i < _numJoints; i++) {
+		data->read(inString, 32);
+		_joints[i]._name = inString;
+		data->read(inString, 32);
+		_joints[i]._parent = inString;
+		
+		_joints[i]._trans.readFromStream(data); 
+		_joints[i]._quat.readFromStream(data);
+		
+		_joints[i]._parentIndex = findJointIndex(_joints[i]._parent, i);
+	}
+	initBones();
+	resetAnim();
+}
+	
+void Skeleton::initBone(int index) {
+	// TODO: Fill in math
+}
+
+void Skeleton::initBones() {
+	for (int i = 0; i < _numJoints; i++) {
+		initBone(i);
+	}	
+}
+
+void Skeleton::resetAnim() {
+	for (int i = 0; i < _numJoints; i++) {
+		_joints[i]._finalMatrix = _joints[i]._absMatrix;
+	}
+}
+
+void Skeleton::setAnim(AnimationEmi *anim) {
+	_anim = anim;
+	for (int i = 0; i < _numJoints; i++) {
+		_joints[i]._animIndex = -1;
+	}
+	
+	for(int i = 0; i < _anim->_numBones; i++) {
+		int index = findJointIndex(_anim->_bones[i]->_boneName, _numJoints);
+		_joints[index]._animIndex = i;
+	}
+	resetAnim();
+}
+
+int Skeleton::findJointIndex(Common::String name, int max) {
+	if (_numJoints > 0) {
+		for(int i = 0; i < max; i++) {
+			if(_joints[i]._name == name) {
+				return i;
+			}
+		}
+	} 
+	return -1;
 }
 
 } // end of namespace Grim

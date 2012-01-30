@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	emi/sound/track.o \
 	emi/sound/emisound.o \
 	emi/sound/codecs/scx.o \
+	emi/animationemi.o \
 	emi/modelemi.o \
 	emi/skeleton.o \
 	emi/lua_v2.o \
