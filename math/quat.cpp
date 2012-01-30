@@ -22,6 +22,13 @@
 
 // Quaternion-math borrowed from plib http://plib.sourceforge.net/index.html
 // Which is covered by LGPL2
+// And has this additional copyright note:
+/*
+ Quaternion routines are Copyright (C) 1999
+ Kevin B. Thompson <kevinbthompson@yahoo.com>
+ Modified by Sylvan W. Clebsch <sylvan@stanford.edu>
+ Largely rewritten by "Negative0" <negative0@earthlink.net>
+ */
 
 #include "common/streamdebug.h"
 
@@ -66,7 +73,7 @@ Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) {
 	return dst;
 }
 
-Matrix4 Quaternion::toMatrix() {
+void Quaternion::toMatrix(Matrix4 &dst) {
 	float two_xx = x() * (x() + x());
 	float two_xy = x() * (y() + y());
 	float two_xz = x() * (z() + z());
@@ -86,8 +93,12 @@ Matrix4 Quaternion::toMatrix() {
 		two_xz-two_wy,			two_yz+two_wx,			1.0f-(two_xx+two_yy),	0.0f,
 		0.0f,					0.0f,					0.0f,					1.0f
 	};
-	Matrix4 dst;
 	dst.setData(newMat);
+}
+
+Matrix4 Quaternion::toMatrix() {
+	Matrix4 dst;
+	toMatrix(dst);
 	return dst;
 }
 

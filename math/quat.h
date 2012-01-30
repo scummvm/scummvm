@@ -22,6 +22,13 @@
 
 // Quaternion-math borrowed from plib http://plib.sourceforge.net/index.html
 // Which is covered by LGPL2
+// And has this additional copyright note:
+/*
+ Quaternion routines are Copyright (C) 1999
+ Kevin B. Thompson <kevinbthompson@yahoo.com>
+ Modified by Sylvan W. Clebsch <sylvan@stanford.edu>
+ Largely rewritten by "Negative0" <negative0@earthlink.net>
+ */
 
 #ifndef MATH_QUAT_H
 #define MATH_QUAT_H
@@ -44,6 +51,7 @@ public:
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
 	
 	Matrix4 toMatrix();
+	void toMatrix(Matrix4 &dst);
 	/**
 	 * Slerps between this quaternion and to by factor t
 	 * @param to	the quaternion to slerp between
