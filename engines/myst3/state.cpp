@@ -136,6 +136,13 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(282, JournalSaavedroLastPage, false)
 	VAR(283, JournalSaavedroChapter, false)
 	VAR(284, JournalSaavedroPageInChapter, false)
+
+	VAR(329, TeslaAllAligned, false)
+	VAR(330, TeslaTopAligned, false)
+	VAR(331, TeslaMiddleAligned, false)
+	VAR(332, TeslaBottomAligned, false)
+	VAR(333, TeslaMovieStart, false)
+
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 

@@ -150,6 +150,13 @@ public:
 	DECLARE_VAR(282, JournalSaavedroLastPage)
 	DECLARE_VAR(283, JournalSaavedroChapter)
 	DECLARE_VAR(284, JournalSaavedroPageInChapter)
+
+	DECLARE_VAR(329, TeslaAllAligned)
+	DECLARE_VAR(330, TeslaTopAligned)
+	DECLARE_VAR(331, TeslaMiddleAligned)
+	DECLARE_VAR(332, TeslaBottomAligned)
+	DECLARE_VAR(333, TeslaMovieStart)
+
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 

@@ -40,6 +40,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 1:
 		leversBall(arg0);
 		break;
+	case 2:
+		tesla(arg0, arg1, arg2);
+		break;
 	case 8:
 		journalSaavedro(arg0);
 		break;
@@ -189,6 +192,81 @@ void Puzzles::leversBall(int16 var) {
 
 	_vm->_state->setBallPosition(position->newBallPosition);
 	_vm->_state->setBallFrame(_vm->_state->getVar(35));
+}
+
+void Puzzles::tesla(int16 movie, int16 var, int16 move) {
+	uint16 node = _vm->_state->getLocationNode();
+
+	int16 movieStart = 0;
+	switch (node) {
+	case 114:
+		movieStart = 0;
+		break;
+	case 116:
+		movieStart = 320;
+		break;
+	case 118:
+		movieStart = 240;
+		break;
+	case 120:
+		movieStart = 160;
+		break;
+	case 122:
+		movieStart = 80;
+		break;
+	}
+
+	_vm->_state->setTeslaMovieStart(movieStart);
+
+	uint16 position = movieStart + _vm->_state->getVar(var);
+
+	if (position > 400)
+		position -= 400;
+
+	_vm->_state->setVar(32, node % 100);
+	_vm->_state->setVar(33, node % 100 + 10000);
+
+	if (movie) {
+		_vm->_sound->play(1243, 100);
+		_vm->_state->setMovieSynchronized(true);
+		_vm->playSimpleMovie(movie);
+	}
+
+	if (move) {
+		uint16 sound = _vm->_rnd->getRandomNumberRng(1244, 1245);
+		_vm->_sound->play(sound, 100);
+	}
+
+	if (move > 0) {
+		_drawForVarHelper(var - 303, position + 1, position + 19);
+		position += 20;
+	} else if (move < 0) {
+		if (position == 1)
+			position = 401;
+
+		_drawForVarHelper(var - 303, position - 1, position - 19);
+		position -= 20;
+	}
+
+	if (position < 1)
+		position = 381;
+	else if (position > 400)
+		position = 1;
+
+	_vm->_state->setVar(var - 303, position);
+
+	int16 absPosition = position - movieStart;
+
+	if (absPosition < 1)
+		absPosition += 400;
+
+	_vm->_state->setVar(var, absPosition);
+
+	bool puzzleSolved = _vm->_state->getTeslaTopAligned() == 1
+			&& _vm->_state->getTeslaMiddleAligned() == 1
+			&& _vm->_state->getTeslaBottomAligned() == 1;
+
+	_vm->_state->setTeslaAllAligned(puzzleSolved);
 }
 
 void Puzzles::journalSaavedro(int16 move) {
