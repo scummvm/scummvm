@@ -160,7 +160,7 @@ void Skeleton::animate(float time) {
 					// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
 					quat = _curBone->_rotations[keyfIdx]->_quat.slerpQuat(_curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
 				}
-				//TODO: Apply rotation to relFinal
+				quat.toMatrix(relFinal);
 			} else if (_curBone->_operation == TRANSLATE_OP) {
 				if (keyfIdx == 0) {
 					vec = _curBone->_translations[keyfIdx]->_vec;
@@ -179,7 +179,7 @@ void Skeleton::animate(float time) {
 					vec.z() = _curBone->_translations[keyfIdx-1]->_vec.z() +
 					(_curBone->_translations[keyfIdx]->_vec.z() - _curBone->_translations[keyfIdx-1]->_vec.z()) * interpVal;
 				}
-				// TODO: Apply translation to relFinal
+				relFinal.setPosition(vec);
 			} else {
 				error("Skeleton::Animate, invalid operation %d", _curBone->_operation);
 			}
