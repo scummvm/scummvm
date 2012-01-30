@@ -39,14 +39,14 @@ public:
 	Vector(dim) getNormalized() const;
 	float getMagnitude() const;
 	float getDistanceTo(const Vector(dim) &point) const;
-	float getDotProduct(const Vector(dim) &v) const;
+	float dotProduct(const Vector(dim) &v) const;
 
 	inline void setValue(int i, float val) { value(i) = val; }
 	inline float getValue(int i) const { return value(i); }
 
 	template<int d>
 	inline static float dotProduct(const Vector(d) &v1, const Vector(d) &v2) {
-		return v1.getDotProduct(v2);
+		return v1.dotProduct(v2);
 	}
 
 protected:
@@ -95,7 +95,7 @@ float MatrixType<dim, 1>::getDistanceTo(const Vector(dim) &point) const {
 }
 
 template<int dim>
-float MatrixType<dim, 1>::getDotProduct(const Vector(dim) &v) const {
+float MatrixType<dim, 1>::dotProduct(const Vector(dim) &v) const {
 	float result = 0;
 	for (int i = 0; i < dim; ++i) {
 		result += value(i) * v.value(i);
