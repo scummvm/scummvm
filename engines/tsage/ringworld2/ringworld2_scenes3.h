@@ -571,6 +571,126 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+class Scene3500 : public SceneExt {
+	class Action1: public Action {
+	public:
+		int _field1E;
+		int _field20;
+		int _field22;
+		int _field24;
+
+		Action1();
+		virtual void synchronize(Serializer &s);
+		void sub108670(int arg1);
+		void sub108732(int arg1);
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action2: public Action {
+	public:
+		int _field1E;
+
+		Action2();
+		virtual void synchronize(Serializer &s);
+		void sub10831F(int arg1);
+
+		virtual void signal();
+	};
+
+	class Item4 : public NamedHotspot {
+	public:
+		int _field34;
+		
+		Item4();
+		virtual void synchronize(Serializer &s);
+		
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor7 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+		int _fieldA8;
+		int _fieldAA;
+		int _fieldAC;
+		int _fieldAE;
+		
+		Actor7();
+		virtual void synchronize(Serializer &s);
+
+		void sub109466(int arg1, int arg2, int arg3, int arg4, int arg5);
+		void sub1094ED();
+		void sub109663(int arg1);
+		void sub109693(Common::Point Pt);
+
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor8 : public SceneActor {
+	public:
+		// TODO: double check if nothing specific is present, then remove this class
+	};
+
+	class UnkObject3500 : public UnkObject1200 {
+	public:
+		int sub1097C9(int arg1);
+		int sub1097EF(int arg1);
+		int sub109C09(Common::Point pt);
+		int sub109C5E(int &x, int &y);
+	};
+public:
+	Action1 _action1;
+	Action2 _action2;
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	Item4 _item4;
+	Item4 _item5;
+	Item4 _item6;
+	Item4 _item7;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	SceneActor _actor5;
+	SceneActor _actor6;
+	Actor7 _actor7;
+	Actor8 _actor8;
+	Actor8 _actor9;
+	ASoundExt _aSound1;
+	UnkObject3500 _unkObj1;
+	SequenceManager _sequenceManager;
+
+	int _fieldAF8;
+	int _fieldB9E;
+	PaletteRotation *_rotation;
+	int _field126E;
+	int _field1270;
+	int _field1272;
+	int _field1274;
+	int _field1276;
+	int _field1278;
+	int _field127A;
+	int _field127C;
+	int _field127E;
+	int _field1280;
+	int _field1282;
+	int _field1284;
+	int _field1286;
+
+	Scene3500();
+	void sub107F71(int arg1);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
+};
+
 class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:

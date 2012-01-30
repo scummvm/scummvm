@@ -259,7 +259,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 3400:
 		return new Scene3400();
 	case 3500:
-		error("Missing scene %d from group 3", sceneNumber);
+		return new Scene3500();
 	case 3600:
 		return new Scene3600();
 	case 3700:
@@ -1154,6 +1154,289 @@ void SceneAreaObject::setDetails(int visage, int strip, int frameNumber, const C
 void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 
 		2, (SceneItem *)NULL);
+}
+
+/*****************************************************************************/
+
+UnkObject1200::UnkObject1200() {
+	_field16 = _field3A = NULL;
+	_field12 = _field14 = 0;
+	_field26 = _field28 = _field2A = _field2C = _field2E = _field30 = 0;
+	_field32 = _field34 = _field36 = _field38 = _field3E = _field40 = 0;
+}
+
+void UnkObject1200::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
+
+	_rect1.synchronize(s);
+	_rect2.synchronize(s);
+
+	// FIXME: syncrhonize _field16 and _field3A
+
+	s.syncAsSint16LE(_field12);
+	s.syncAsSint16LE(_field14);
+	s.syncAsSint16LE(_field26);
+	s.syncAsSint16LE(_field28);
+	s.syncAsSint16LE(_field2A);
+	s.syncAsSint16LE(_field2C);
+	s.syncAsSint16LE(_field2E);
+	s.syncAsSint16LE(_field30);
+	s.syncAsSint16LE(_field32);
+	s.syncAsSint16LE(_field34);
+	s.syncAsSint16LE(_field36);
+	s.syncAsSint16LE(_field38);
+	s.syncAsSint16LE(_field3E);
+	s.syncAsSint16LE(_field40);
+}
+
+void UnkObject1200::sub51AE9(int arg1) {
+	warning("STUB: UnkObject1200::sub51AE9()");
+}
+
+int UnkObject1200::sub51AF8(Common::Point pt) {
+	if (!_rect1.contains(pt))
+		return -1;
+	
+	int tmp1 = (pt.x - _rect1.left + _field2E) / _field2A;
+	int tmp2 = (pt.y - _rect1.top + _field30) / _field2C;
+
+	if ((tmp1 >= 0) && (tmp2 >= 0) && (_field26 > tmp1) && (_field28 > tmp2))
+		return _field16[(((_field26 * tmp2) + tmp1)* 2)];
+
+	return -1;
+}
+
+bool UnkObject1200::sub51AFD(Common::Point pt) {
+	int retval = false;
+
+	_field2E = pt.x;
+	_field30 = pt.y;
+
+	if (_field2E < _rect2.top) {
+		_field2E = _rect2.top;
+		retval = true;
+	}
+
+	if (_field30 < _rect2.left) {
+		_field30 = _rect2.left;
+		retval = true;
+	}
+
+	if (_field2E + _rect1.width() > _rect2.right) {
+		_field2E = _rect2.right - _rect1.width();
+		retval = true;
+	}
+
+	if (_field30 + _rect1.height() > _rect2.bottom) {
+		_field30 = _rect2.bottom - _rect1.height();
+		retval = true;
+	}
+
+	return retval;
+}
+
+void UnkObject1200::sub51B02() {
+	warning("STUB: UnkObject1200::sub51B02()");
+}
+
+void UnkObject1200::sub9EDE8(Rect rect) {
+	_rect1 = rect;
+	warning("FIXME: UnkObject1200::sub9EDE8()");
+//	_rect1.clip(g_globals->gfxManager()._bounds);
+}
+
+int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
+	arg1 /= _field2A;
+	arg2 /= _field2C;
+	
+	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
+		return _field16[(((_field26 * arg2) + arg1) * 2)];
+	}
+
+	return -1;
+}
+
+void Scene1200::sub9DAD6(int indx) {
+	_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
+	
+	switch (indx) {
+	case 0:
+		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
+				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
+				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1200;
+			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(200, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 15;
+				else
+					_sceneMode = 10;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 76;
+				else
+					_sceneMode = 75;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 101;
+				else
+					_sceneMode = 100;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 111;
+				else
+					_sceneMode = 110;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 1;
+			signal();
+		}
+		break;
+	case 1:
+		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
+				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1201;
+			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(120, 69)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 56;
+				else
+					_sceneMode = 55;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 25;
+				else
+					_sceneMode = 20;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 91;
+				else
+					_sceneMode = 90;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 121;
+				else
+					_sceneMode = 120;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 2;
+			signal();
+		}
+		break;
+	case 2:
+		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3)) 
+				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1203;
+			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(160, 110)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 51;
+				else
+					_sceneMode = 50;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 81;
+				else
+					_sceneMode = 80;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 35;
+				else
+					_sceneMode = 30;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 116;
+				else
+					_sceneMode = 115;
+				break;
+			default:
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 3;
+			signal();
+		}
+		break;
+	case 3:
+		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36)) 
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3)) 
+				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
+				)	{
+			R2_GLOBALS._player.disableControl();
+			_sceneMode = 1202;
+			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);
+		} else if (_object1.sub51AF8(Common::Point(160, 30)) == 36) {
+			switch (_field412 - 1) {
+			case 0:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 61;
+				else
+					_sceneMode = 60;
+				break;
+			case 1:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 71;
+				else
+					_sceneMode = 70;
+				break;
+			case 2:
+				if (R2_GLOBALS._player._visage == 3156)
+					_sceneMode = 96;
+				else
+					_sceneMode = 95;
+				break;
+			case 3:
+				if (R2_GLOBALS._player._visage == 3155)
+					_sceneMode = 45;
+				else
+					_sceneMode = 40;
+				break;
+			default:
+				_sceneMode = 1;
+				R2_GLOBALS._player.setup(3156, 4, 6);
+				break;
+			}
+			R2_GLOBALS._player.disableControl();
+			_field412 = 4;
+			signal();
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Ringworld2

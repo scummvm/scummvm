@@ -142,35 +142,12 @@ class Scene1200 : public SceneExt {
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
-
-	class Object1 : public SavedObject {
-	public:
-		Rect _rect1;
-		Rect _rect2;
-
-		int _field16;
-		int _field26;
-		int _field28;
-		int _field2A;
-		int _field2C;
-		int _field2E;
-		int _field30;
-
-		Object1();
-		void synchronize(Serializer &s);
-
-		int sub51AF8(Common::Point pt);
-		bool sub51AFD(Common::Point pt);
-		void sub9EDE8(Rect rect);
-		int sub9EE22(int &arg1, int &arg2);
-		virtual Common::String getClassName() { return "UnkObject1200"; }
-	};
 		
 public:
 	NamedHotspot _item1;
 	SceneActor _actor1;
 	Area1 _area1;
-	Object1 _object1;
+	UnkObject1200 _object1;
 	SequenceManager _sequenceManager;
 
 	int _field412;
