@@ -1285,6 +1285,9 @@ void C64CostumeLoader::loadCostume(int id) {
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	ActorC64 *A = (ActorC64 *)a;
 
+	if(!a->_costume)
+		return;
+
 	loadCostume(a->_costume);
 
 	// Invalid costume command?
