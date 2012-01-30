@@ -28,9 +28,16 @@
 #include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
+	
+#define ROTATE_OP 4
+#define TRANSLATE_OP 3
 
 Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
 	loadSkeleton(data);
+}
+
+Skeleton::~Skeleton() {
+	delete[] _joints;
 }
 
 void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
@@ -94,8 +101,99 @@ int Skeleton::findJointIndex(Common::String name, int max) {
 	return -1;
 }
 
-Skeleton::~Skeleton() {
-	delete[] _joints;
+void Skeleton::animate(float time) {
+	if (_anim == NULL)
+		return;
+
+	if (time > _anim->_duration) {
+		time = 0.0;
+		resetAnim();
+	}
+
+	int curJoint = 0;
+	int animIdx = 0;
+	int prevKeyfIdx = 0;
+	int keyfIdx = 0;
+	int curKeyFrame = 0;
+	float timeDelta = 0.0f;
+	float interpVal = 0.0f;
+	
+	Math::Matrix4 relFinal;
+	Math::Vector3d vec;
+	
+	for (curJoint = 0; curJoint < _numJoints; curJoint++) {
+		animIdx = _joints[curJoint]._animIndex;
+		
+		if (animIdx >= 0) {
+			prevKeyfIdx = -1;
+			keyfIdx = 0;
+
+			Bone *_curBone = _anim->_bones[animIdx];
+			// Find the right keyframe
+			for (curKeyFrame = 0; curKeyFrame < _curBone->_count; curKeyFrame++) {
+				if (_curBone->_operation == ROTATE_OP) {
+					if (_curBone->_rotations[curKeyFrame]->_time >= time) {
+						keyfIdx = curKeyFrame;
+						break;
+					}
+				} else if (_curBone->_operation == TRANSLATE_OP) {
+					if (_curBone->_translations[curKeyFrame]->_time >= time) {
+						keyfIdx = curKeyFrame;
+						break;
+					}
+					
+				}
+			}
+
+			relFinal = _joints[curJoint]._relMatrix;
+			Math::Quaternion quat;
+
+			if (_curBone->_operation == ROTATE_OP) {
+				if (keyfIdx == 0) {
+					quat = _curBone->_rotations[keyfIdx]->_quat;
+				} else if (keyfIdx == _curBone->_count - 1) {
+					quat = _curBone->_rotations[keyfIdx-1]->_quat;
+				} else {
+					timeDelta = _curBone->_rotations[keyfIdx-1]->_time - _curBone->_rotations[keyfIdx]->_time;
+					interpVal = (time - _curBone->_rotations[keyfIdx]->_time) / timeDelta;
+					
+					// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
+					quat = _curBone->_rotations[keyfIdx]->_quat.slerpQuat(_curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
+				}
+				//TODO: Apply rotation to relFinal
+			} else if (_curBone->_operation == TRANSLATE_OP) {
+				if (keyfIdx == 0) {
+					vec = _curBone->_translations[keyfIdx]->_vec;
+				} else if (keyfIdx == _curBone->_count - 1) {
+					vec = _curBone->_translations[keyfIdx-1]->_vec;
+				} else {
+					timeDelta = _curBone->_translations[keyfIdx-1]->_time - _curBone->_translations[keyfIdx]->_time;
+					interpVal = (time - _curBone->_translations[keyfIdx]->_time) / timeDelta;
+					
+					vec.x() = _curBone->_translations[keyfIdx-1]->_vec.x() +
+					(_curBone->_translations[keyfIdx]->_vec.x() - _curBone->_translations[keyfIdx-1]->_vec.x()) * interpVal;
+					
+					vec.y() = _curBone->_translations[keyfIdx-1]->_vec.y() +
+					(_curBone->_translations[keyfIdx]->_vec.y() - _curBone->_translations[keyfIdx-1]->_vec.y()) * interpVal;
+					
+					vec.z() = _curBone->_translations[keyfIdx-1]->_vec.z() +
+					(_curBone->_translations[keyfIdx]->_vec.z() - _curBone->_translations[keyfIdx-1]->_vec.z()) * interpVal;
+				}
+				// TODO: Apply translation to relFinal
+			} else {
+				error("Skeleton::Animate, invalid operation %d", _curBone->_operation);
+			}
+		} else {
+			relFinal = _joints[curJoint]._relMatrix;
+		}
+		
+		if (_joints[curJoint]._parentIndex == -1) {
+			_joints[curJoint]._finalMatrix = relFinal;
+		} else {
+			_joints[curJoint]._finalMatrix = _joints[_joints[curJoint]._parentIndex]._finalMatrix;
+			_joints[curJoint]._finalMatrix = _joints[curJoint]._finalMatrix * relFinal;
+		}
+	} // end for
 }
 
 } // end of namespace Grim

@@ -61,7 +61,8 @@ public:
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
 	void resetAnim();
-	void setAnim(AnimationEmi *anim);	
+	void setAnim(AnimationEmi *anim);
+	void animate(float time);
 	int findJointIndex(Common::String name, int max);
 };
 	
