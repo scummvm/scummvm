@@ -62,7 +62,18 @@ void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
 }
 	
 void Skeleton::initBone(int index) {
-	// TODO: Fill in math
+	// The matrix should have identity at this point.
+	_joints[index]._quat.toMatrix(_joints[index]._relMatrix);
+	// Might need to be translate instead.
+	_joints[index]._relMatrix.setPosition(_joints[index]._trans);
+	if(_joints[index]._parentIndex == -1) {
+		_joints[index]._absMatrix = _joints[index]._relMatrix;
+	} else {
+		_joints[index]._absMatrix = _joints[_joints[index]._parentIndex]._absMatrix;
+		
+		// Might be the other way around.
+		_joints[index]._absMatrix =  _joints[index]._absMatrix * _joints[index]._relMatrix;
+	}
 }
 
 void Skeleton::initBones() {
