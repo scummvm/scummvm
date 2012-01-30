@@ -521,6 +521,16 @@ public:
 	virtual void signal();
 };
 
+class Scene525: public SceneExt {
+public:
+	SceneActor _actor1;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+
+};
+
 class Scene800: public SceneExt {
 	/* Items */
 	class Button: public NamedHotspot {
