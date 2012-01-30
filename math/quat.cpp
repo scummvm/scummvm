@@ -29,13 +29,14 @@
 
 namespace Math {
 
-void Quaternion::slerpQuat(Quaternion dst, const Quaternion from, const Quaternion to, const float t) {
+Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) {
+	Quaternion dst;
 	float co, scale0, scale1;
 	bool flip = false ;
 
 	/* SWC - Interpolate between to quaternions */
 
-	co = from.dotProduct(to);
+	co = this->dotProduct(to);
 
 	if (co < 0.0f) {
 		co = -co;
@@ -57,10 +58,12 @@ void Quaternion::slerpQuat(Quaternion dst, const Quaternion from, const Quaterni
 		scale1 = -scale1 ;
 	}
 
-	dst.x() = scale0 * from.x() + scale1 * to.x() ;
-	dst.x() = scale0 * from.w() + scale1 * to.y() ;
-	dst.x() = scale0 * from.w() + scale1 * to.z() ;
-	dst.x() = scale0 * from.w() + scale1 * to.w() ;
+	dst.x() = scale0 * this->x() + scale1 * to.x() ;
+	dst.x() = scale0 * this->w() + scale1 * to.y() ;
+	dst.x() = scale0 * this->w() + scale1 * to.z() ;
+	dst.x() = scale0 * this->w() + scale1 * to.w() ;
+	
+	return dst;
 }
 
 Matrix4 Quaternion::toMatrix() {

@@ -44,7 +44,13 @@ public:
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
 	
 	Matrix4 toMatrix();
-	void slerpQuat(Quaternion dst, const Quaternion from, const Quaternion to, const float t);
+	/**
+	 * Slerps between this quaternion and to by factor t
+	 * @param to	the quaternion to slerp between
+	 * @param t		factor to slerp by.
+	 * @return		the resulting quaternion.
+	 */
+	Quaternion slerpQuat(const Quaternion& to, const float t);
 	
 	inline static Quaternion get_quaternion(const char *data) {
 		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
