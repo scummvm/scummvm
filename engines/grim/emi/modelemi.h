@@ -45,6 +45,9 @@ struct EMIColormap {
 struct Vector3int;
 
 class EMIModel;
+class BoneInfo;
+class Bone;
+class Skeleton;
 	
 class EMIMeshFace {
 public:
@@ -80,8 +83,18 @@ public:
 	Common::String *_texNames;
 	Material **_mats;
 	
-	int _numBones;
+	Skeleton *_skeleton;
 	
+	int _numBones;
+	Bone *_bones;
+	
+	// Bone-stuff:
+	int _numBoneInfos;
+	BoneInfo *_boneInfos;
+	Common::String *_boneNames;
+	int *_vertexBoneInfo;
+	int *_vertexBone;
+
 	// Stuff we dont know how to use:
 	Math::Vector4d *_sphereData;
 	Math::Vector3d *_boxData;
@@ -93,7 +106,8 @@ public:
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);
 	~EMIModel();
-	void setTex(int index); 
+	void setTex(int index);
+	void setSkeleton(Skeleton *skel);
 	void loadMesh(Common::SeekableReadStream *data);
 	void prepareForRender();
 	void prepare();

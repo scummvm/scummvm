@@ -29,19 +29,6 @@
 
 namespace Grim {
 
-struct Joint {
-	Common::String _name;
-	Common::String _parent;
-	Math::Vector3d _trans;
-	Math::Quaternion _quat;
-	// calculated;
-	int _animIndex;
-	int _parentIndex;
-	Math::Matrix4 _absMatrix;
-	Math::Matrix4 _relMatrix;
-	Math::Matrix4 _finalMatrix;
-};
-
 Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
 	loadSkeleton(data);
 }

@@ -23,6 +23,8 @@
 #ifndef GRIM_SKELETON_H
 #define GRIM_SKELETON_H
 
+#include "math/mathfwd.h"
+#include "math/quat.h"
 #include "engines/grim/object.h"
 
 namespace Common {
@@ -32,16 +34,30 @@ class SeekableReadStream;
 namespace Grim {
 	
 class AnimationEmi;
-class Joint;
+
+struct Joint {
+	Common::String _name;
+	Common::String _parent;
+	Math::Vector3d _trans;
+	Math::Quaternion _quat;
+	// calculated;
+	int _animIndex;
+	int _parentIndex;
+	Math::Matrix4 _absMatrix;
+	Math::Matrix4 _relMatrix;
+	Math::Matrix4 _finalMatrix;
+};
 
 class Skeleton : public Object {
-	int _numJoints;
-	Joint *_joints;
+
 	AnimationEmi *_anim;
 	void loadSkeleton(Common::SeekableReadStream *data);
 	void initBone(int index);
 	void initBones();
 public:
+	int _numJoints;
+	Joint *_joints;
+
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
 	void resetAnim();

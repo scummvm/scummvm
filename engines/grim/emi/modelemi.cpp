@@ -27,7 +27,8 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/modelemi.h"
-
+#include "engines/grim/emi/animationemi.h"
+#include "engines/grim/emi/skeleton.h"
 
 namespace Grim {
 
@@ -38,6 +39,12 @@ struct Vector3int {
 	void setVal(int x, int y, int z) {
 		_x = x; _y = y; _z = z;
 	}
+};
+
+struct BoneInfo {
+	int _incFac;
+	int _joint;
+	float _weight;
 };
 
 Common::String readLAString(Common::ReadStream *ms) {
@@ -159,10 +166,60 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_faces[j].loadFace(data);
 	}
 
-	/*int hasBones = */data->readUint32LE();
+	int hasBones = data->readUint32LE();
 
-	// TODO add in the bone-stuff, as well as the skeleton
+	if (hasBones == 1) {
+		_numBones = data->readUint32LE();
+		_bones = new Bone[_numBones];
+		_boneNames = new Common::String[_numBones];
+		for(int i = 0;i < _numBones; i++) {
+			_bones[i]._boneName = readLAString(data);
+			_boneNames[i] = _bones[i]._boneName;
+		}
+
+		_numBoneInfos =  data->readUint32LE();
+		_boneInfos = new BoneInfo[_numBoneInfos];
+
+		for(int i = 0;i < _numBoneInfos; i++) {
+			_boneInfos[i]._incFac = data->readUint32LE();
+			_boneInfos[i]._joint = data->readUint32LE();
+			_boneInfos[i]._weight = data->readUint32LE();
+		}
+	} else {
+		_numBones = 0;
+		_numBoneInfos = 0;
+	}
 	prepare(); // <- Initialize materials etc.
+}
+
+void EMIModel::setSkeleton(Skeleton *skel) {
+	_skeleton = skel;
+	
+	int boneVert = 0;
+	delete[] _vertexBoneInfo; _vertexBoneInfo = NULL;
+	delete[] _vertexBone; _vertexBone = NULL;
+	_vertexBoneInfo = new int[_numBoneInfos];
+	_vertexBone = new int[_numBoneInfos]; // Oversized, but yeah.
+	
+	for (int i = 0; i < _numBoneInfos; i++) {
+		_vertexBoneInfo[i] = _skeleton->findJointIndex(_boneNames[_boneInfos[i]._joint], _skeleton->_numJoints);
+		
+		if (_boneInfos[i]._incFac == 1) {
+			_vertexBone[boneVert] = i;
+			boneVert++;
+		}
+	}
+	
+	Math::Vector3d vertex;
+	Math::Matrix4 mat;
+	for (int i = 0; i < _numVertices; i++) {
+		vertex = _vertices[i];
+		if (_vertexBoneInfo[_vertexBone[i]] != -1) {
+			mat = _skeleton->_joints[_vertexBoneInfo[_vertexBone[i]]]._absMatrix;
+			// TODO, add in math (inverse translate & rotate the vertex by the matrix)
+		}
+		_vertices[i] = vertex;
+	}
 }
 
 void EMIModel::prepareForRender() {
@@ -201,6 +258,11 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_texNames = NULL;
 	_mats = NULL;
 	_numBones = 0;
+	_bones = NULL;
+	_boneInfos = NULL;
+	_numBoneInfos = 0;
+	_vertexBoneInfo = NULL;
+	_vertexBone = NULL;
 	_sphereData = new Math::Vector4d();
 	_boxData = new Math::Vector3d();
 	_boxData2 = new Math::Vector3d();
@@ -218,6 +280,10 @@ EMIModel::~EMIModel() {
 	delete[] _faces;
 	delete[] _texNames;
 	delete[] _mats;
+	delete[] _bones;
+	delete[] _boneInfos;
+	delete[] _vertexBone;
+	delete[] _vertexBoneInfo;
 	delete _sphereData;
 	delete _boxData;
 	delete _boxData2;
