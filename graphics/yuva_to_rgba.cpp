@@ -85,6 +85,7 @@
 
 #include "common/scummsys.h"
 #include "common/singleton.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 
@@ -257,7 +258,9 @@ void convertYUVA420ToRGBA(Graphics::Surface *dst, const byte *ySrc, const byte *
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc && aSrc);
 	assert((yWidth & 1) == 0);
-	assert((yHeight & 1) == 0);
+
+	if (yHeight & 1) // Odd height, the last line won't be converted
+		warning("Decoding YUV420 data with an odd height %d", yHeight);
 
 	const YUVAToRGBALookup *lookup = YUVAToRGBAMan.getLookup(dst->format);
 
