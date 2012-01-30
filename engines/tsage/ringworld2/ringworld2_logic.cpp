@@ -84,6 +84,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Walking in hall
 		return new Scene525();
 	case 600:
+		return new Scene600();
 	case 700:
 		error("Missing scene %d from group 0", sceneNumber);
 	case 800:
