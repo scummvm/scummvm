@@ -164,6 +164,7 @@ Script::Script(Myst3Engine *vm):
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
 	OP_5(127, leverDrag,					kValue,		kValue,		kValue,		kValue, 	kVar		); // Six args
 	OP_5(130, leverDragXY,					kVar, 		kVar,		kValue,		kValue,		kValue		);
+	OP_2(132, leverDragPositions,			kVar, 		kValue											); // Variable args
 	OP_5(134, runScriptWhileDragging,		kVar, 		kVar,		kValue,		kValue, 	kVar		); // Eight args
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
 	OP_2(136, goToNodeTransition,			kValue,		kValue											);
@@ -1542,7 +1543,7 @@ void Script::ifMouseIsInRect(Context &c, const Opcode &cmd) {
 }
 
 void Script::leverDrag(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Drag lever for var %d wit script %d", cmd.op, cmd.args[4], cmd.args[6]);
+	debugC(kDebugScript, "Opcode %d: Drag lever for var %d with script %d", cmd.op, cmd.args[4], cmd.args[6]);
 
 	int16 minPosX = cmd.args[0];
 	int16 minPosY = cmd.args[1];
@@ -1621,6 +1622,68 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 	}
 
 	_vm->_state->setDragLeverLimited(0);
+	_vm->_state->setDragLeverSpeed(0);
+}
+
+void Script::leverDragPositions(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Drag lever for var %d with script %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	int16 var = cmd.args[0];
+	int16 script = cmd.args[1];
+	uint16 numPositions = (cmd.args.size() - 3) / 3;
+
+	if (cmd.args[2 + numPositions * 3] != -1)
+		error("leverDragPositions no end marker found");
+
+	_vm->_cursor->changeCursor(2);
+
+	bool mousePressed = true;
+	while (true) {
+		float pitch = _vm->_state->getLookAtPitch();
+		float heading = _vm->_state->getLookAtHeading();
+
+		float minDistance = 180.0;
+		uint position = 0;
+
+		// Find the lever position where the distance between the lever
+		// and the mouse is minimal, by trying every possible position.
+		for (uint i = 0; i < numPositions; i++) {
+			float posPitch = cmd.args[2 + i * 3 + 0] * 0.1;
+			float posHeading = cmd.args[2 + i * 3 + 1] * 0.1;
+
+			// Distance between the mouse and the lever
+			float distance = sqrt(Math::square(pitch - posPitch) + Math::square(heading - posHeading));
+
+			if (distance < minDistance) {
+				minDistance = distance;
+				position = cmd.args[2 + i * 3 + 2];
+			}
+		}
+
+		// Set new lever position
+		_vm->_state->setVar(var, position);
+
+		// Draw a frame
+		_vm->processInput(true);
+		_vm->drawFrame();
+
+		mousePressed = _vm->inputValidatePressed();
+		_vm->_state->setDragEnded(!mousePressed);
+
+		if (_vm->_state->getDragLeverSpeed()) {
+			warning("Interaction with var 58 is missing in opcode 132.");
+			return;
+		}
+
+		if (script) {
+			_vm->_state->setVar(var, position);
+			_vm->runScriptsFromNode(abs(script));
+		}
+
+		if (!mousePressed)
+			break;
+	}
+
 	_vm->_state->setDragLeverSpeed(0);
 }
 
