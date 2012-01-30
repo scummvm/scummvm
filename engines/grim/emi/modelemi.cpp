@@ -129,8 +129,10 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	// Vertices
 	_vertices = new Math::Vector3d[_numVertices];
+	_drawVertices = new Math::Vector3d[_numVertices];
 	for (int i = 0; i < _numVertices; i++) {
 		_vertices[i].readFromStream(data);
+		_drawVertices[i] = _vertices[i];
 	}
 	_normals = new Math::Vector3d[_numVertices];
 	for (int i = 0; i < _numVertices; i++) {
@@ -223,7 +225,13 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 }
 
 void EMIModel::prepareForRender() {
-	// TODO, this was intended to update the vertices from the skeleton.
+	if (!_skeleton)
+		return;
+	for (int i = 0; i < _numVertices; i++) {
+		_drawVertices[i] = _vertices[i];
+		int animIndex = _vertexBoneInfo[_vertexBone[i]];
+		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawVertices + i, true);
+	}
 }
 
 void EMIModel::prepare() {
@@ -249,6 +257,7 @@ void EMIModel::draw() {
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
 	_numVertices = 0;
 	_vertices = NULL;
+	_drawVertices = NULL;
 	_normals = NULL;
 	_colorMap = NULL;
 	_texVerts = NULL;
@@ -263,6 +272,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_numBoneInfos = 0;
 	_vertexBoneInfo = NULL;
 	_vertexBone = NULL;
+	_skeleton = NULL;
 	_sphereData = new Math::Vector4d();
 	_boxData = new Math::Vector3d();
 	_boxData2 = new Math::Vector3d();
@@ -274,6 +284,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 
 EMIModel::~EMIModel() {
 	delete[] _vertices;
+	delete[] _drawVertices;
 	delete[] _normals;
 	delete[] _colorMap;
 	delete[] _texVerts;

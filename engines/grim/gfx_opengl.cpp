@@ -449,9 +449,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		glColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,model->_colorMap[index].a);
 
 		Math::Vector3d normal = model->_normals[index];
-		Math::Vector3d vertex = model->_vertices[index];
-
-		// Transform vertices (or maybe we should have done this already?)
+		Math::Vector3d vertex = model->_drawVertices[index];
 
 		glNormal3fv(normal.getData());
 		glVertex3fv(vertex.getData());

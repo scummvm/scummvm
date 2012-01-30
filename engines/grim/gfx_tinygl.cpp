@@ -569,7 +569,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		tglColor4ub(model->_colorMap[index].r,model->_colorMap[index].g,model->_colorMap[index].b,0);
 
 		Math::Vector3d normal = model->_normals[index];
-		Math::Vector3d vertex = model->_vertices[index];
+		Math::Vector3d vertex = model->_drawVertices[index];
 
 		tglNormal3fv(normal.getData());
 		tglVertex3fv(vertex.getData());

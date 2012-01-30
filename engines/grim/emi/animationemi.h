@@ -48,7 +48,7 @@ struct Bone {
 	int _count;
 	AnimRotation **_rotations;
 	AnimTranslation **_translations;
-	Bone() : _rotations(NULL), _translations(NULL), _boneName("") {}
+	Bone() : _rotations(NULL), _translations(NULL), _boneName(""), _operation(0) {}
 	~Bone();
 };
 

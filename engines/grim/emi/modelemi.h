@@ -73,6 +73,7 @@ class EMIModel : public Object {
 public:
 	int _numVertices;
 	Math::Vector3d *_vertices;
+	Math::Vector3d *_drawVertices;
 	Math::Vector3d *_normals;
 	EMIColormap *_colorMap;
 	Math::Vector2d *_texVerts;
