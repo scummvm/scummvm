@@ -376,7 +376,7 @@ void GameState::updateFrameCounters() {
 
 
 	uint32 currentTime = g_system->getMillis();
-	if (currentTime > _data.nextSecondsUpdate || abs(_data.nextSecondsUpdate - currentTime) > 2000) {
+	if (currentTime > _data.nextSecondsUpdate || ABS<int32>(_data.nextSecondsUpdate - currentTime) > 2000) {
 		_data.secondsPlayed++;
 		_data.nextSecondsUpdate = currentTime + 1000;
 

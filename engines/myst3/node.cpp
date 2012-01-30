@@ -366,41 +366,4 @@ void SpotItemFace::fadeDraw() {
 	_face->markTextureDirty();
 }
 
-void Node::addSunSpot(const SunSpot &sunspot) {
-	SunSpot *sunSpot = new SunSpot(sunspot);
-	_sunspots.push_back(sunSpot);
-}
-
-SunSpot Node::computeSunspotsIntensity(float pitch, float heading) {
-	SunSpot result;
-	result.intensity = -1;
-	result.color = 0;
-	result.radius = 0;
-
-	for (uint i = 0; i < _sunspots.size(); i++) {
-		SunSpot *s = _sunspots[i];
-
-		uint32 value = _vm->_state->getVar(s->var);
-
-		// Skip disabled items
-		if (value == 0) continue;
-
-		float distance = _vm->_scene->distanceToZone(s->heading, s->pitch, s->radius, heading, pitch);
-
-		if (distance > result.radius) {
-			result.radius = distance;
-			result.color = s->color;
-			result.intensity = s->intensity;
-
-			if (s->variableIntensity) {
-				result.radius = value * distance / 100;
-			}
-		}
-	}
-
-
-
-	return result;
-}
-
 } // end of namespace Myst3

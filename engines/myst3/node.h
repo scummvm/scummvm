@@ -122,7 +122,6 @@ class Node {
 		Myst3Engine *_vm;
 		Face *_faces[6];
 		Common::Array<SpotItem *> _spotItems;
-		Common::Array<SunSpot *> _sunspots;
 
 	public:
 		Node(Myst3Engine *vm, uint16 id);
@@ -130,9 +129,6 @@ class Node {
 
 		void update();
 		virtual void draw() = 0;
-
-		void addSunSpot(const SunSpot &sunspot);
-		SunSpot computeSunspotsIntensity(float pitch, float heading);
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);

@@ -94,6 +94,7 @@ public:
 
 	void goToNode(uint16 nodeID, uint transition);
 	void loadNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
+	void unloadNode();
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
@@ -113,8 +114,10 @@ public:
 
 	void addSpotItem(uint16 id, uint16 condition, bool fade);
 	void addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
+	SunSpot computeSunspotsIntensity(float pitch, float heading);
 
 	void setMenuAction(uint16 action) { _menuAction = action; }
 	void setShouldQuit() { _shouldQuit = true; }
@@ -141,6 +144,7 @@ private:
 	Script *_scriptEngine;
 
 	Common::Array<ScriptedMovie *> _movies;
+	Common::Array<SunSpot *> _sunspots;
 	Common::Array<Drawable *> _drawables;
 
 	bool _shouldQuit;

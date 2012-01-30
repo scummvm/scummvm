@@ -176,12 +176,7 @@ Common::Error Myst3Engine::run() {
 		drawFrame();
 	}
 
-	for (uint i = 0; i < _movies.size(); i++) {
-		delete _movies[i];
-	}
-	_movies.clear();
-
-	delete _node;
+	unloadNode();
 
 	_archiveNode->close();
 
@@ -400,7 +395,7 @@ void Myst3Engine::drawFrame() {
 	if (_state->getViewType() != kMenu) {
 		float pitch = _state->getLookAtPitch();
 		float heading = _state->getLookAtHeading();
-		SunSpot flare = _node->computeSunspotsIntensity(pitch, heading);
+		SunSpot flare = computeSunspotsIntensity(pitch, heading);
 		if (flare.intensity >= 0)
 			_scene->drawSunspotFlare(flare);
 
@@ -432,13 +427,7 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
-	if (_node) {
-		// Delete all movies
-		removeMovie(0);
-
-		delete _node;
-		_node = 0;
-	}
+	unloadNode();
 
 	_scriptEngine->run(&_db->getNodeInitScript());
 
@@ -471,6 +460,22 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	}
 
 	runNodeInitScripts();
+}
+
+void Myst3Engine::unloadNode() {
+	if (!_node)
+		return;
+
+	// Delete all movies
+	removeMovie(0);
+
+	// Remove all sunspots
+	for (uint i = 0; i < _sunspots.size(); i++)
+		delete _sunspots[i];
+	_sunspots.clear();
+
+	delete _node;
+	_node = 0;
 }
 
 void Myst3Engine::runNodeInitScripts() {
@@ -757,27 +762,6 @@ void Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rec
 	_node->loadMenuSpotItem(id, condition, rect);
 }
 
-void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
-		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
-
-	SunSpot s;
-
-	s.pitch = pitch;
-	s.heading = heading;
-	s.intensity = intensity * 2.55;
-	s.color = (color & 0xF) | 16
-			* ((color & 0xF) | 16
-			* (((color >> 4) & 0xF) | 16
-			* (((color >> 4) & 0xF) | 16
-			* (((color >> 8) & 0xF) | 16
-			* (((color >> 8) & 0xF))))));
-	s.var = var;
-	s.variableIntensity = varControlledIntensity;
-	s.radius = radius;
-
-	_node->addSunSpot(s);
-}
-
 const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
 	char currentRoom[8];
 	if (!room) {
@@ -1026,6 +1010,57 @@ bool Myst3Engine::inputSpacePressed() {
 
 bool Myst3Engine::inputTilePressed() {
 	return _inputTildePressed;
+}
+
+void Myst3Engine::addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
+		uint16 color, uint16 var, bool varControlledIntensity, uint16 radius) {
+
+	SunSpot *s = new SunSpot();
+
+	s->pitch = pitch;
+	s->heading = heading;
+	s->intensity = intensity * 2.55;
+	s->color = (color & 0xF) | 16
+			* ((color & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 4) & 0xF) | 16
+			* (((color >> 8) & 0xF) | 16
+			* (((color >> 8) & 0xF))))));
+	s->var = var;
+	s->variableIntensity = varControlledIntensity;
+	s->radius = radius;
+
+	_sunspots.push_back(s);
+}
+
+SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
+	SunSpot result;
+	result.intensity = -1;
+	result.color = 0;
+	result.radius = 0;
+
+	for (uint i = 0; i < _sunspots.size(); i++) {
+		SunSpot *s = _sunspots[i];
+
+		uint32 value = _state->getVar(s->var);
+
+		// Skip disabled items
+		if (value == 0) continue;
+
+		float distance = _scene->distanceToZone(s->heading, s->pitch, s->radius, heading, pitch);
+
+		if (distance > result.radius) {
+			result.radius = distance;
+			result.color = s->color;
+			result.intensity = s->intensity;
+
+			if (s->variableIntensity) {
+				result.radius = value * distance / 100;
+			}
+		}
+	}
+
+	return result;
 }
 
 } // end of namespace Myst3
