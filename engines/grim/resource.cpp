@@ -34,6 +34,7 @@
 #include "engines/grim/model.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/debug.h"
+#include "engines/grim/emi/animationemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/patchr.h"
@@ -461,6 +462,22 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	Skeleton *result = new Skeleton(filename, stream);
 	delete stream;
 
+	return result;
+}
+
+AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
+	Common::String fname = fixFilename(filename);
+	Common::SeekableReadStream *stream;
+	
+	stream = openNewStreamFile(fname.c_str(), true);
+	if(!stream) {
+		warning("Could not find skeleton %s", filename.c_str());
+		return NULL;
+	}
+	
+	AnimationEmi *result = new AnimationEmi(filename, stream);
+	delete stream;
+	
 	return result;
 }
 

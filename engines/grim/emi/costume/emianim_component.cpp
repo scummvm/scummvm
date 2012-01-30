@@ -8,47 +8,49 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- 
+
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- 
+
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 
-#ifndef GRIM_SKELETON_H
-#define GRIM_SKELETON_H
+#include "common/foreach.h"
 
-#include "engines/grim/object.h"
-
-namespace Common {
-class SeekableReadStream;
-}
+#include "engines/grim/emi/costume/emianim_component.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/emi/modelemi.h"
+#include "engines/grim/emi/animationemi.h"
 
 namespace Grim {
-	
-class AnimationEmi;
-class Joint;
 
-class Skeleton : public Object {
-	int _numJoints;
-	Joint *_joints;
-	AnimationEmi *_anim;
-	void loadSkeleton(Common::SeekableReadStream *data);
-	void initBone(int index);
-	void initBones();
-public:
-	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
-	~Skeleton();
-	void resetAnim();
-	void setAnim(AnimationEmi *anim);	
-	int findJointIndex(Common::String name, int max);
-};
+EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, t), _filename(filename), _obj(NULL), _parentModel(NULL) {
+}
+
+EMIAnimComponent::~EMIAnimComponent() {
+	delete _obj;
+}
+
+void EMIAnimComponent::init() {
+	_visible = true;
+	_obj = g_resourceloader->loadAnimationEmi(_filename);
+}
+
+int EMIAnimComponent::update(uint time) {
+	return 0;
+}
+
+void EMIAnimComponent::reset() {
+	_visible = true;
+}
 	
+void EMIAnimComponent::draw() {
+	
+}
+
 } // end of namespace Grim
-
-#endif

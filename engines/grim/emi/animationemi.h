@@ -25,11 +25,8 @@
 
 #include "common/str.h"
 #include "math/mathfwd.h"
+#include "math/quat.h"
 #include "engines/grim/object.h"
-
-namespace Math {
-class Quaternion;
-}
 
 namespace Grim {
 
@@ -51,6 +48,8 @@ struct Bone {
 	int _count;
 	AnimRotation **_rotations;
 	AnimTranslation **_translations;
+	Bone() : _rotations(NULL), _translations(NULL), _boneName("") {}
+	~Bone();
 };
 
 class AnimationEmi : public Object {
@@ -60,7 +59,8 @@ public:
 	float _duration;
 	int _numBones;
 	Bone **_bones;
-	AnimationEmi() : _name(""), _duration(0.0f), _numBones(0) {}
+	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL) { loadAnimation(data); }
+	~AnimationEmi();
 };
 
 } // end of namespace Grim

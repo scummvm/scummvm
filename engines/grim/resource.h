@@ -31,6 +31,7 @@
 
 namespace Grim {
 
+class AnimationEmi;
 class Bitmap;
 class CMap;
 class Costume;
@@ -68,6 +69,7 @@ public:
 	EMIModel *loadModelEMI(const Common::String &fname, EMIModel *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Skeleton *loadSkeleton(const Common::String &fname);
+	AnimationEmi *loadAnimationEmi(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false);
 	void uncache(const char *fname);
 	bool getFileExists(const Common::String &filename);  //TODO: make it const again at next scummvm sync

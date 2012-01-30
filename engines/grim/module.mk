@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	costume/model_component.o \
 	costume/sound_component.o \
 	costume/sprite_component.o \
+	emi/costume/emianim_component.o \
 	emi/costume/emimesh_component.o \
 	emi/costume/emiskel_component.o \
 	emi/sound/mp3track.o \

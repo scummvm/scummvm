@@ -8,47 +8,46 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- 
+
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- 
+
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 
-#ifndef GRIM_SKELETON_H
-#define GRIM_SKELETON_H
+#ifndef GRIM_EMI_ANIM_COMPONENT_H
+#define GRIM_EMI_ANIM_COMPONENT_H
 
-#include "engines/grim/object.h"
+#include "engines/grim/costume/component.h"
 
-namespace Common {
-class SeekableReadStream;
-}
+// This is mostly stubbed for testing the animation loading at the moment.
 
 namespace Grim {
-	
-class AnimationEmi;
-class Joint;
 
-class Skeleton : public Object {
-	int _numJoints;
-	Joint *_joints;
-	AnimationEmi *_anim;
-	void loadSkeleton(Common::SeekableReadStream *data);
-	void initBone(int index);
-	void initBones();
-public:
-	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
-	~Skeleton();
-	void resetAnim();
-	void setAnim(AnimationEmi *anim);	
-	int findJointIndex(Common::String name, int max);
-};
+class AnimationEmi;
 	
+class EMIAnimComponent : public Component {
+public:
+	EMIAnimComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
+	~EMIAnimComponent();
+	void init();
+	int update(uint time);
+	void reset();
+	void draw();
+
+private:
+	bool _hierShared;
+	Component *_parentModel;
+	Common::String _filename;
+	AnimationEmi *_obj;
+	friend class Costume;
+};
+
 } // end of namespace Grim
 
 #endif

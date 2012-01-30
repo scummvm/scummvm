@@ -107,4 +107,8 @@ int Skeleton::findJointIndex(Common::String name, int max) {
 	return -1;
 }
 
+Skeleton::~Skeleton() {
+	delete[] _joints;
+}
+
 } // end of namespace Grim

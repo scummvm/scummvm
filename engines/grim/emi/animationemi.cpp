@@ -28,21 +28,25 @@
 namespace Grim {
 
 // Use modelemi's solution for the LA-strings.
-Common::String readLAString(Common::ReadStream &ms);
-	
 void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
-	_name = readLAString(*data);
+	int len = data->readUint32LE();
+	char *inString = new char[len];
+	data->read(inString, len);
+	_name = inString;
+	delete[] inString;
 
 	char temp[4];
 	data->read(temp, 4);
 	_duration = get_float(temp);
 	_numBones = data->readUint32LE();;
 
-	Bone *bone;
 	_bones = new Bone*[_numBones];
 	for (int i = 0; i < _numBones; i++) {
 		_bones[i] = new Bone();
-		_bones[i]->_boneName = readLAString(*data);
+		len = data->readUint32LE();
+		inString = new char[len];
+		data->read(inString, len);
+		_bones[i]->_boneName = inString;
 		_bones[i]->_operation = data->readUint32LE();;
 		_bones[i]->_b = data->readUint32LE();;
 		_bones[i]->_c = data->readUint32LE();;
@@ -50,7 +54,7 @@ void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
 
 		if (_bones[i]->_operation == 3) { // Translation
 			_bones[i]->_translations = new AnimTranslation*[_bones[i]->_count];
-			for(int j = 0; j < bone->_count; j++) {
+			for(int j = 0; j < _bones[i]->_count; j++) {
 				_bones[i]->_translations[j] = new AnimTranslation();
 				_bones[i]->_translations[j]->_vec.readFromStream(data);
 				data->read(temp, 4);
@@ -58,7 +62,7 @@ void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
 			}
 		} else if (_bones[i]->_operation == 4) { // Rotation
 			_bones[i]->_rotations = new AnimRotation*[_bones[i]->_count];
-			for(int j = 0; j < bone->_count; j++) {
+			for(int j = 0; j < _bones[i]->_count; j++) {
 				_bones[i]->_rotations[j] = new AnimRotation();
 				_bones[i]->_rotations[j]->_quat.readFromStream(data);
 				data->read(temp, 4);
@@ -69,5 +73,25 @@ void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
 		}		
 	}
 }
-	
+
+AnimationEmi::~AnimationEmi() {
+	for (int i = 0; i < _numBones; i++) {
+		delete _bones[i];
+	}
+	delete[] _bones;
+}
+
+Bone::~Bone() {
+	if (_operation == 3) {
+		for(int i = 0; i < _count; i++) {
+			delete _translations[i];
+		}
+		delete[] _translations;
+	} else if (_operation == 4) {
+		for(int i = 0; i < _count; i++) {
+			delete _rotations[i];
+		}
+		delete[] _rotations;
+	}
+}
 } // end of namespace Grim

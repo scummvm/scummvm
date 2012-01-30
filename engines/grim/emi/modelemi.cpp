@@ -40,10 +40,10 @@ struct Vector3int {
 	}
 };
 
-Common::String readLAString(Common::ReadStream &ms) {
-	int strLength = ms.readUint32LE();
+Common::String readLAString(Common::ReadStream *ms) {
+	int strLength = ms->readUint32LE();
 	char* readString = new char[strLength];
-	ms.read(readString, strLength);
+	ms->read(readString, strLength);
 	
 	Common::String retVal(readString);
 	delete[] readString;
@@ -124,7 +124,7 @@ void EMIMeshFace::render() {
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	//int strLength = 0; // Usefull for PS2-strings
 	
-	Common::String nameString = readLAString(*data);
+	Common::String nameString = readLAString(data);
 	
 	_sphereData = readVector4d(*data);
 
@@ -138,7 +138,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_texNames = new Common::String[_numTextures];
 
 	for(uint32 i = 0;i < _numTextures; i++) {
-		_texNames[i] = readLAString(*data);
+		_texNames[i] = readLAString(data);
 		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
 		// this is intentional)
 		data->skip(4);
