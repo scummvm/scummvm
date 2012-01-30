@@ -561,6 +561,70 @@ public:
 	virtual void signal();
 };
 
+class Scene1750 : public SceneExt {
+	class Actor4 : public SceneActor {
+	public:
+		int _fieldA4;
+		int _fieldA6;
+		int _fieldA8;
+		int _fieldAA;
+		int _fieldAC;
+		int _fieldAE;
+		
+		Actor4();
+		virtual void synchronize(Serializer &s);
+		void subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5);
+		void subB1B27();
+
+		virtual void remove();
+		virtual void process(Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	
+	class Actor5 : public SceneActor {
+	public:
+		int _fieldA4;
+		
+		Actor5();
+		virtual void synchronize(Serializer &s);
+
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+public:
+	NamedHotspot _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	Actor4 _actor4;
+	Actor5 _actor5;
+	Actor5 _actor6;
+	Actor5 _actor7;
+	SequenceManager _sequenceManager;
+	PaletteRotation *_rotation;
+
+	int _field412;
+	int _field413;
+	int _field415;
+	int _field417;
+	int _field419;
+	int _field41B;
+	int _field41D;
+
+	Scene1750();
+	virtual void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene1800 : public SceneExt {
 	class Hotspot5 : public NamedHotspot {
 	public:

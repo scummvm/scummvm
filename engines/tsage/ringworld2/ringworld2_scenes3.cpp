@@ -3092,10 +3092,10 @@ Scene3500::Scene3500() {
 
 void Scene3500::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
+	SYNC_POINTER(_rotation);
 
 	s.syncAsSint16LE(_fieldAF8);
 	s.syncAsSint16LE(_fieldB9E);
-	_rotation->synchronize(s);
 	s.syncAsSint16LE(_field126E);
 	s.syncAsSint16LE(_field1270);
 	s.syncAsSint16LE(_field1272);

@@ -5449,6 +5449,308 @@ void Scene1700::signal() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 1750 - 
+ *
+ *--------------------------------------------------------------------------*/
+Scene1750::Actor4::Actor4() {
+	_fieldA4 = 0;
+	_fieldA6 = 0;
+	_fieldA8 = 0;
+	_fieldAA = 0;
+	_fieldAC = 0;
+	_fieldAE = 0;
+}
+
+void Scene1750::Actor4::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_fieldA4);
+	s.syncAsSint16LE(_fieldA6);
+	s.syncAsSint16LE(_fieldA8);
+	s.syncAsSint16LE(_fieldAA);
+	s.syncAsSint16LE(_fieldAC);
+	s.syncAsSint16LE(_fieldAE);
+}
+
+Scene1750::Actor5::Actor5() {
+	_fieldA4 = 0;
+}
+
+void Scene1750::Actor5::synchronize(Serializer &s) {
+	SceneActor::synchronize(s);
+
+	s.syncAsSint16LE(_fieldA4);
+}
+
+Scene1750::Scene1750() {
+	_field412 = 0;
+	_field413 = 0;
+	_field415 = 0;
+	_field417 = 0;
+	_field419 = 0;
+	_field41B = 0;
+	_field41D = 0;
+}
+
+void Scene1750::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	SYNC_POINTER(_rotation);
+
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field413);
+	s.syncAsSint16LE(_field415);
+	s.syncAsSint16LE(_field417);
+	s.syncAsSint16LE(_field419);
+	s.syncAsSint16LE(_field41B);
+	s.syncAsSint16LE(_field41D);
+}
+
+void Scene1750::Actor4::subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5) {
+	_fieldA4 = arg1;
+	_fieldAE = 0;
+	_fieldA6 = arg2;
+	_fieldA8 = arg3;
+	_fieldAA = arg4;
+	_fieldAC = arg5;
+	
+	postInit();
+	setup(1750, 1, 1);
+	fixPriority(255);
+	setPosition(Common::Point(_fieldA6, _fieldA8 + ((_fieldAA * (arg1 - 1)) / (_fieldAC - 1))));
+}
+
+void Scene1750::Actor4::subB1B27() {
+	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
+
+	int tmpVar = (_fieldAA / (_fieldAC - 1)) / 2;
+	int tmpVar2 = ((_position.y - _fieldA8 + tmpVar) * _fieldAC) / (_fieldAA + 2 * tmpVar);
+
+	setPosition(Common::Point(_fieldA6, _fieldA8 + ((_fieldAA * tmpVar2) / (_fieldAC - 1))));
+	scene->_field415 = scene->_field412 * tmpVar2;
+}
+
+void Scene1750::Actor4::remove() {
+	// Function kept to match IDA. Could be removed.
+	SceneActor::remove();
+}
+
+void Scene1750::Actor4::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos))) {
+		_fieldAE = 1;
+		event.eventType = EVENT_NONE;
+	}
+
+	if ((event.eventType == EVENT_BUTTON_UP) && (_fieldAE != 0)) {
+		_fieldAE = 0;
+		event.handled = true;
+		addMover(NULL);
+		subB1B27();
+	}
+	
+	if (_fieldAE != 0) {
+		event.handled = true;
+		if (event.mousePos.y >= _fieldA8) {
+			if (_fieldA8 + _fieldAA >= event.mousePos.y)
+				setPosition(Common::Point(_fieldA6, event.mousePos.y));
+			else
+				setPosition(Common::Point(_fieldA6, _fieldA8 + _fieldAA));
+		} else {
+			setPosition(Common::Point(_fieldA6, _fieldA8));
+		}
+	}
+}
+
+bool Scene1750::Actor4::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return SceneActor::startAction(action, event);
+
+	return false;
+}
+
+bool Scene1750::Actor5::startAction(CursorType action, Event &event) {
+	if (action != CURSOR_USE)
+		return SceneActor::startAction(action, event);
+	
+	Scene1750 *scene = (Scene1750 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_fieldA4) {
+	case 1:
+		show();
+		scene->_actor6.hide();
+		if (scene->_field415 < 0)
+			scene->_field415 ^= 0xFFFE;
+		scene->_field412 = 1;
+		break;
+	case 2:
+		show();
+		scene->_actor5.hide();
+		if (scene->_field415 > 0)
+			scene->_field415 ^= 0xFFFE;
+		scene->_field412 = -1;
+		break;
+	case 3:
+		if (scene->_rotation->_idxChange == 0) {
+			show();
+			R2_GLOBALS._sceneManager.changeScene(1700);
+		} else {
+			scene->_field415 = 0;
+			scene->_actor4._moveRate = 20;
+			scene->_actor5._moveDiff.y = 1;
+			Common::Point pt(286, 143);
+			NpcMover *mover = new NpcMover();
+			scene->_actor4.addMover(mover, &pt, NULL);
+		}
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void Scene1750::postInit(SceneObjectList *OwnerList) {
+	loadScene(1750);
+	R2_GLOBALS._sound1.play(115);
+	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
+	SceneExt::postInit();
+	
+	R2_GLOBALS._player._characterScene[1] = 1750;
+	R2_GLOBALS._player._characterScene[2] = 1750;
+	R2_GLOBALS._player._oldCharacterScene[1] = 1750;
+	R2_GLOBALS._player._oldCharacterScene[2] = 1750;
+
+	_rotation = R2_GLOBALS._scenePalette.addRotation(224, 254, 1);
+	_rotation->setDelay(0);
+	_rotation->_idxChange = 0;
+	_rotation->_countdown = 2;
+	
+	switch ((R2_GLOBALS._v565F6 + 2) % 4) {
+	case 0:
+		_rotation->_currIndex = 247;
+		break;
+	case 1:
+		_rotation->_currIndex = 235;
+		break;
+	case 2:
+		_rotation->_currIndex = 239;
+		break;
+	case 3:
+		_rotation->_currIndex = 243;
+		break;
+	default:
+		break;
+	}
+	
+	byte tmpPal[768];
+
+	for (int i = 224; i < 255; i++) {
+		int tmpIndex = _rotation->_currIndex - 224;
+		if (tmpIndex > 254)
+			tmpIndex -= 31;
+		tmpPal[3 * i] = R2_GLOBALS._scenePalette._palette[3 * tmpIndex];
+		tmpPal[(3 * i) + 1] = R2_GLOBALS._scenePalette._palette[(3 * tmpIndex) + 1];
+		tmpPal[(3 * i) + 2] = R2_GLOBALS._scenePalette._palette[(3 * tmpIndex) + 2];
+	}
+
+	for (int i = 224; i < 255; i++) {
+		R2_GLOBALS._scenePalette._palette[3 * i] = tmpPal[3 * i];
+		R2_GLOBALS._scenePalette._palette[(3 * i) + 1] = tmpPal[(3 * i) + 1];
+		R2_GLOBALS._scenePalette._palette[(3 * i) + 2] = tmpPal[(3 * i) + 2];
+	}
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.hide();
+	R2_GLOBALS._player.enableControl();
+
+	_actor3.postInit();
+	_actor3.setup(1750, 3, 1);
+	_actor3.setPosition(Common::Point(49, 185));
+	_actor3.fixPriority(7);
+	_actor3.setDetails(1750, 30, -1, -1, 1, (SceneItem *) NULL);
+	
+	_actor1.postInit();
+	_actor1.setup(1750, 2, 1);
+	_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._v565F6 % 800) * 4) - 1440));
+	_actor1.fixPriority(8);
+	
+	_actor2.postInit();
+	_actor2.setup(1750, 1, 4);
+	
+	int tmpVar = abs(_actor1._position.y - 158) / 100;
+	
+	if (tmpVar >= 8)
+		_actor2.hide();
+	else if (_actor1._position.y <= 158)
+		_actor2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
+	else
+		_actor2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
+	
+	_actor4.subB1A76(1, 286, 143, 41, 15);
+	_actor4.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
+	
+	_actor5.postInit();
+	_actor5._fieldA4 = 1;
+	_actor5.setup(1750, 1, 2);
+	_actor5.setPosition(Common::Point(192, 140));
+	_actor5.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
+	
+	_actor6.postInit();
+	_actor6._fieldA4 = 2;
+	_actor6.setup(1750, 1, 3);
+	_actor6.setPosition(Common::Point(192, 163));
+	_actor6.setDetails(1750, 18, 1, -1, 1, (SceneItem *) NULL);
+	_actor6.hide();
+	
+	_actor7.postInit();
+	_actor7._fieldA4 = 3;
+	_actor7.setup(1750, 1, 5);
+	_actor7.setPosition(Common::Point(230, 183));
+	_actor7.setDetails(1750, 27, 1, -1, 1, (SceneItem *) NULL);
+
+	_field412 = 1;
+	_field417 = 0;
+	_field413 = 0;
+	_field415 = 0;
+	_field419 = ((_rotation->_currIndex - 218) / 4) % 4;
+	
+	_item2.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
+	_item3.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
+	_item4.setDetails(Rect(3, 3, 157, 99), 1750, 9, -1, -1, 1, NULL);
+	_item5.setDetails(Rect(162, 3, 316, 99), 1750, 12, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 320, 200), 1750, 6, 1, -1, 1, NULL);
+}
+
+void Scene1750::remove() {
+	_rotation->remove();
+	
+	if (R2_GLOBALS._v565F6 == 2400)
+		R2_GLOBALS._v565F6 = 2399;
+	
+	if (R2_GLOBALS._v565F6 == -2400)
+		R2_GLOBALS._v565F6 = -2399;
+	
+	R2_GLOBALS._v565FA = R2_GLOBALS._v565F6;
+	
+	SceneExt::remove();
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	R2_GLOBALS._v5589E.top = 3;
+	R2_GLOBALS._v5589E.bottom = 168;
+	R2_GLOBALS._v58CE2 = 1;
+}
+
+void Scene1750::signal() {
+	R2_GLOBALS._player.enableControl();
+}
+
+void Scene1750::process(Event &event) {
+	Scene::process(event);
+	if (!event.handled)
+		_actor4.process(event);
+}
+
+void Scene1750::dispatch() {}
+
+/*--------------------------------------------------------------------------
  * Scene 1800 - 
  *
  *--------------------------------------------------------------------------*/
