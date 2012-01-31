@@ -204,7 +204,7 @@ endif
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/win32/residualvm.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
-	unix2dos $(WIN32PATH)/doc/*.txt
+#	unix2dos $(WIN32PATH)/doc/*.txt
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
