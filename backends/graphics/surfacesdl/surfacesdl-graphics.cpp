@@ -75,6 +75,8 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher() != NULL)
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+
+	closeOverlay();
 }
 
 void SurfaceSdlGraphicsManager::initEventObserver() {

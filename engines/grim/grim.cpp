@@ -38,6 +38,7 @@
 #endif
 
 #include "common/archive.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -193,6 +194,8 @@ GrimEngine::~GrimEngine() {
 	delete g_driver;
 	g_driver = NULL;
 	delete _iris;
+
+	DebugMan.clearAllDebugChannels();
 }
 
 void GrimEngine::clearPools() {
@@ -583,6 +586,9 @@ void GrimEngine::mainLoop() {
 			resetShortFrame = !resetShortFrame;
 		}
 
+		if (shouldQuit())
+			return;
+
 		if (_savegameLoadRequest) {
 			savegameRestore();
 		}
@@ -647,9 +653,6 @@ void GrimEngine::mainLoop() {
 			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
 				handleControls(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 			}
-			// Check for "Hard" quit"
-			if (type == Common::EVENT_QUIT)
-				return;
 			if (type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
 
@@ -1052,6 +1055,10 @@ void GrimEngine::clearEventQueue() {
 	for (int i = 0; i < KEYCODE_EXTRA_LAST; ++i) {
 		_controlsState[i] = false;
 	}
+}
+
+bool GrimEngine::hasFeature(EngineFeature f) const {
+	return f == kSupportsRTL;
 }
 
 } // end of namespace Grim
