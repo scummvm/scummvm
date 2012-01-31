@@ -164,7 +164,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 		sceneObj->setObjectWrapper(NULL);
 		sceneObj->animate(ANIM_MODE_NONE, 0);
 
-		sceneObj->_flags &= !OBJFLAG_PANES;
+		sceneObj->_flags &= ~OBJFLAG_PANES;
 	}
 
 	// Blank out the screen
