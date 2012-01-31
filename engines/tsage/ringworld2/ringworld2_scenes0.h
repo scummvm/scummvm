@@ -586,7 +586,7 @@ public:
 
 	Scene600();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void Scene600::remove();
+	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
