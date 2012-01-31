@@ -66,5 +66,32 @@ void Matrix<4, 4>::translate(const Vector3d &vec) {
 	operator()(2, 3) += v.z();
 }
 
+// The following functions are adapted from Portalib3d, which no longer is 
+// available on the net, but was used in the iconoclast-project:
+// http://code.google.com/p/iconoclast/
+// Original copyright notice (license.txt was not supplied in iconoclast,
+// but should match our LGPL-license):
+// Author:	Brett Porter
+// Email: brettporter@yahoo.com
+// Website: http://rsn.gamedev.net/pl3d
+// Copyright (C)2000, 2001, Brett Porter. All Rights Reserved.
+// This source code is released under the LGPL. See license.txt for details.
+
+void Matrix<4, 4>::inverseTranslate(Vector3d *v) {
+	v->x() = v->x() - getValue(0, 3);
+	v->y() = v->y() - getValue(1, 3);
+	v->z() = v->z() - getValue(2, 3);
+}
+
+void Matrix<4, 4>::inverseRotate(Vector3d *v) {
+	Vector3d temp;
+	
+	temp.x() = v->x() * getValue(0, 0) + v->y() * getValue(1, 0) + v->z() * getValue(2, 0);
+	temp.y() = v->x() * getValue(0, 1) + v->y() * getValue(1, 1) + v->z() * getValue(2, 1);
+	temp.z() = v->x() * getValue(0, 2) + v->y() * getValue(1, 2) + v->z() * getValue(2, 2);
+	
+	*v = temp;
+}
+	
 } // end of namespace Math
 

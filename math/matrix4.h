@@ -37,7 +37,9 @@ public:
 	Matrix(const MatrixBase<4, 4> &m);
 
 	void transform(Vector3d *v, bool translate) const;
-
+	void inverseTranslate(Vector3d *v);
+	void inverseRotate(Vector3d *v);
+	
 	Vector3d getPosition() const;
 	void setPosition(const Vector3d &v);
 
