@@ -4518,7 +4518,7 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 	scene->_actor2.postInit();
 	
 	scene->_sceneMode = 612;
-	setAction(&scene->_sequenceManager1, this, 612, &scene->_actor3, &scene->_actor2, R2_GLOBALS._player, NULL);
+	setAction(&scene->_sequenceManager1, this, 612, &scene->_actor3, &scene->_actor2, &R2_GLOBALS._player, NULL);
 	return true;
 }
 
