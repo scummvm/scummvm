@@ -1616,6 +1616,363 @@ void Scene200::signal() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 205 - Star-field Credits
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene205::Action1::signal() {
+	Scene205 *scene = (Scene205 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+
+	case 1:
+		scene->_yp = 100 - (scene->_fontHeight * 3 / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 2; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+		setDelay(240);
+		break;
+
+	case 2:
+	case 4:
+	case 6:
+	case 8:
+	case 10:
+	case 12:
+	case 14:
+	case 16:
+	case 18:
+	case 20:
+		textLoop();
+		setDelay(120);
+		break;
+
+	case 3:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 2) / 2);
+		scene->handleText();
+
+		++scene->_textIndex;
+		scene->_yp += scene->_fontHeight;
+		scene->handleText();
+		setDelay(240);
+		break;
+
+	case 5:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 7) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 6; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(480);
+		break;
+
+	case 7:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 6) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 5; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(300);
+		break;
+
+	case 9:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 8) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 7; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(480);
+		break;
+
+	case 11:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 3) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 2; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(240);
+		break;
+
+	case 13:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 3) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 2; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(240);
+		break;
+
+	case 15:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 5) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 4; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(240);
+		break;
+
+	case 17:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 5) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 4; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(360);
+		break;
+
+	case 19:
+		scene->_textIndex = 1;
+		scene->_yp = 100 - ((scene->_fontHeight * 3) / 2);
+		scene->handleText();
+
+		for (int idx = 1; idx <= 2; ++idx) {
+			++scene->_textIndex;
+			scene->_yp += scene->_fontHeight;
+			scene->handleText();
+		}
+
+		setDelay(480);
+		break;
+
+	case 21:
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
+
+	default:
+		break;
+	}
+}
+
+void Scene205::Action1::textLoop() {
+	Scene205 *scene = (Scene205 *)R2_GLOBALS._sceneManager._scene;
+
+	for (int idx = 1; idx <= 14; ++idx) {
+		if (R2_GLOBALS._sceneObjects->contains(&scene->_textList[idx])) {
+			scene->_textList[idx].remove();
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene205::Object::Object(): SceneObject() {
+	_x100 = _y100 = 0;
+}
+
+void Scene205::Object::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+
+	s.syncAsSint32LE(_x100);
+	s.syncAsSint32LE(_y100);
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene205::Scene205(): SceneExt() {
+	_yp = 0;
+	_textIndex = 1;
+	_lineNum = -1;
+
+	GfxFont font;
+	font.setFontNumber(4);
+	_fontHeight = font.getHeight();
+}
+
+void Scene205::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(4000);
+	R2_GLOBALS._player._uiEnabled = false;
+
+	R2_GLOBALS._sound1.play(337);
+	R2_GLOBALS._scenePalette.loadPalette(0);
+	R2_GLOBALS._player.disableControl();
+
+	setup();
+	setAction(&_action1);
+}
+
+void Scene205::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	for (int idx = 0; idx < 3; ++idx)
+		SYNC_POINTER(_objList1[idx]);
+	for (int idx = 0; idx < 3; ++idx)
+		SYNC_POINTER(_objList2[idx]);
+	for (int idx = 0; idx < 4; ++idx)
+		SYNC_POINTER(_objList3[idx]);
+
+	s.syncAsSint16LE(_textIndex);
+	s.syncAsSint16LE(_lineNum);
+}
+
+void Scene205::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene205::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = true;
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
+	} else {
+		Scene::process(event);
+	}
+}
+
+void Scene205::dispatch() {
+	processList(_objList3, 4, Common::Rect(0, 0, 319, 200), 1, 1, 160, 100);
+	processList(_objList2, 3, Common::Rect(0, 0, 319, 200), 2, 2, 160, 100);
+	processList(_objList1, 3, Common::Rect(0, 0, 319, 200), 4, 3, 160, 100);
+
+	Scene::dispatch();
+}
+
+void Scene205::setup() {
+	const Common::Point pointList1[3] = { Common::Point(2, 50), Common::Point(100, 28), Common::Point(53, 15) };
+	const Common::Point pointList2[3] = { Common::Point(289, 192), Common::Point(125, 60), Common::Point(130, 40) };
+	const Common::Point pointList3[4] = { 
+		Common::Point(140, 149), Common::Point(91, 166), Common::Point(299, 46), Common::Point(314, 10)
+	};
+
+	// Set up the first object list
+	for (int idx = 0; idx < 3; ++idx) {
+		Object *obj = new Object();
+		_objList1[idx] = obj;
+
+		obj->postInit();
+		obj->_flags |= OBJFLAG_CLONED;
+		obj->setVisage(205);
+		obj->_strip = 1;
+		obj->_frame = 1;
+		obj->setPosition(pointList1[idx]);
+		obj->_x100 = obj->_position.x * 100;
+		obj->_y100 = obj->_position.y * 100;
+		obj->fixPriority(12);
+	}
+
+	// Setup the second object list
+	for (int idx = 0; idx < 3; ++idx) {
+		Object *obj = new Object();
+		_objList2[idx] = obj;
+
+		obj->postInit();
+		obj->_flags |= OBJFLAG_CLONED;
+		obj->setVisage(205);
+		obj->_strip = 1;
+		obj->_frame = 2;
+		obj->setPosition(pointList2[idx]);
+		obj->_x100 = obj->_position.x * 100;
+		obj->_y100 = obj->_position.y * 100;
+		obj->fixPriority(11);
+	}
+
+	// Setup the third object list
+	for (int idx = 0; idx < 4; ++idx) {
+		Object *obj = new Object();
+		_objList3[idx] = obj;
+
+		obj->postInit();
+		obj->_flags |= OBJFLAG_CLONED;
+		obj->setVisage(205);
+		obj->_strip = 1;
+		obj->_frame = 3;
+		obj->setPosition(pointList3[idx]);
+		obj->_x100 = obj->_position.x * 100;
+		obj->_y100 = obj->_position.y * 100;
+		obj->fixPriority(10);
+	}
+}
+
+/**
+ * Handles moving a group of stars in the scene background
+ */
+void Scene205::processList(Object **ObjList, int count, const Common::Rect &bounds, 
+						   int xMultiply, int yMultiply, int xCenter, int yCenter) {
+	for (int idx = 0; idx < count; ++idx) {
+		Object *obj = ObjList[idx];
+		Common::Point pt(obj->_position.x - xCenter, obj->_position.y - yCenter);
+
+		if ((obj->_position.x <= 319) && (obj->_position.x >= 0) && 
+				(obj->_position.y <= 199) && (obj->_position.y >= 0)) {
+			if (!pt.x && !pt.y) {
+				pt.x = pt.y = 1;
+			}
+
+			pt.x *= xMultiply;
+			pt.y *= yMultiply;
+			obj->_x100 += pt.x;
+			obj->_y100 += pt.y;
+		} else {
+			obj->_x100 = (bounds.left + R2_GLOBALS._randomSource.getRandomNumber(bounds.right)) * 100;
+			obj->_y100 = (bounds.top + R2_GLOBALS._randomSource.getRandomNumber(bounds.bottom)) * 100;
+		}
+
+		obj->setPosition(Common::Point(obj->_x100 / 100, obj->_y100 / 100));
+   }
+}
+
+void Scene205::handleText() {
+	_message = g_resourceManager->getMessage(205, ++_lineNum);
+	_messageP = _message.c_str();
+
+	_textList[_textIndex]._fontNumber = 4;
+	_textList[_textIndex]._color1 = 0;
+	_textList[_textIndex]._color2 = 10;
+	_textList[_textIndex]._color3 = 7;
+	_textList[_textIndex]._width = 400;
+	_textList[_textIndex].setup(_message);
+	_textList[_textIndex].fixPriority(199);
+
+	GfxFont font;
+	font.setFontNumber(4);
+	int width = font.getStringWidth(_message.c_str());
+	
+	_textList[_textIndex].setPosition(Common::Point(160 - (width / 2), _yp));
+}
+
+/*--------------------------------------------------------------------------
  * Scene 250 - Lift
  *
  *--------------------------------------------------------------------------*/

@@ -226,6 +226,53 @@ public:
 	virtual void signal();
 };
 
+class Scene205: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	private:
+		void textLoop();
+	public:
+		virtual void signal();
+	};
+
+	/* Objects */
+	class Object: public SceneObject {
+	public:
+		int _x100, _y100;
+	public:
+		Object();
+
+		virtual void synchronize(Serializer &s);
+	};
+private:
+	void setup();
+	void processList(Object **ObjList, int count, const Common::Rect &bounds, 
+					int xMultiply, int yMultiply, int xCenter, int yCenter);
+	void handleText();
+public:
+	ActionObject _actionObject;
+	int _fontHeight;
+	SceneText _textList[15];
+	Object *_objList1[3];
+	Object *_objList2[3];
+	Object *_objList3[4];
+	ASound _sound1;
+	Action1 _action1;
+	int _yp;
+	int _textIndex, _lineNum;
+	Common::String _message;
+	const char *_messageP;
+public:
+	Scene205();
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
 	public:
