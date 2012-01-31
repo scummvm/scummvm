@@ -64,7 +64,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #2 - By Lift
 		return new Scene200();
 	case 205:
-		error("Missing scene %d from group 0", sceneNumber);
+		// Star-field Credits
+		return new Scene205();
 	case 250:
 		// Lift
 		return new Scene250();
@@ -1440,6 +1441,25 @@ void Scene1200::sub9DAD6(int indx) {
 	default:
 		break;
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+ActionObject::ActionObject(): EventHandler() {
+	_endAction = NULL;
+}
+
+void ActionObject::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+
+	SYNC_POINTER(_endAction);
+}
+
+void ActionObject::remove() {
+	if (_endAction)
+		_endAction->signal();
+
+	_endAction = NULL;
 }
 
 } // End of namespace Ringworld2

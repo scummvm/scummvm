@@ -321,6 +321,20 @@ public:
 	int sub9EE22(int &arg1, int &arg2);
 	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
+
+class ActionObject: public EventHandler {
+public:
+	EventHandler *_endAction;
+	Rect _rect1, _screenBounds;
+	int _field3A, _field3C;
+	int _field58, _field5A;
+public:
+	ActionObject();
+
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
