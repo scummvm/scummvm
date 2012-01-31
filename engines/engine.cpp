@@ -148,6 +148,10 @@ Engine::~Engine() {
 
 	delete _mainMenuDialog;
 	g_engine = NULL;
+
+	// Remove our cursors again to prevent memory leaks
+	CursorMan.popCursor();
+	CursorMan.popCursorPalette();
 }
 
 
