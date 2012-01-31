@@ -532,8 +532,6 @@ void GrimEngine::updateDisplayScene() {
 
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
-		// FIXME: This should really be called only when necessary.
-		handleUserPaint();
 		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
@@ -594,7 +592,7 @@ void GrimEngine::mainLoop() {
 
 		if (_changeHardwareState || _changeFullscreenState) {
 			_changeHardwareState = false;
-			bool fullscreen = g_driver->isFullscreen();	
+			bool fullscreen = g_driver->isFullscreen();
 			if (_changeFullscreenState) {
 				fullscreen = !fullscreen;
 			}
@@ -603,7 +601,7 @@ void GrimEngine::mainLoop() {
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();
-			
+
 			EngineMode mode = getMode();
 
 			_savegameFileName = "";
