@@ -261,7 +261,6 @@ public:
 	int _yp;
 	int _textIndex, _lineNum;
 	Common::String _message;
-	const char *_messageP;
 public:
 	Scene205();
 
