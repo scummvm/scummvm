@@ -1845,6 +1845,7 @@ void Scene205::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_textIndex);
 	s.syncAsSint16LE(_lineNum);
+	s.syncAsSint16BE(_yp);
 }
 
 void Scene205::remove() {
@@ -1955,7 +1956,6 @@ void Scene205::processList(Object **ObjList, int count, const Common::Rect &boun
 
 void Scene205::handleText() {
 	_message = g_resourceManager->getMessage(205, ++_lineNum);
-	_messageP = _message.c_str();
 
 	_textList[_textIndex]._fontNumber = 4;
 	_textList[_textIndex]._color1 = 0;
