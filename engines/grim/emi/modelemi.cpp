@@ -218,7 +218,8 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 		vertex = _vertices[i];
 		if (_vertexBoneInfo[_vertexBone[i]] != -1) {
 			mat = _skeleton->_joints[_vertexBoneInfo[_vertexBone[i]]]._absMatrix;
-			// TODO, add in math (inverse translate & rotate the vertex by the matrix)
+			mat.inverseTranslate(&vertex);
+			mat.inverseRotate(&vertex);
 		}
 		_vertices[i] = vertex;
 	}
