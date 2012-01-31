@@ -584,6 +584,7 @@ void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
+	updateScreen();
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
