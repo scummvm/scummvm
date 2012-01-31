@@ -35,10 +35,14 @@ public:
 	virtual ~Cursor();
 
 	void changeCursor(uint32 index);
+	bool isPositionLocked() { return _lockedAtCenter; }
 	void lockPosition(bool lock);
 
 	Common::Point getPosition() { return _position; }
 	void updatePosition(Common::Point &mouse);
+
+	void getDirection(float &pitch, float &heading);
+
 	void draw();
 	void setVisible(bool show);
 	bool isVisible();

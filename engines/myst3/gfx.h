@@ -73,6 +73,8 @@ public:
 
 	Graphics::Surface *getScreenshot();
 
+	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
+
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 	static const int kTopBorderHeight = 30;
@@ -82,6 +84,10 @@ public:
 protected:
 	OSystem *_system;
 	Texture *_font;
+
+	int _cubeViewport[4];
+	double _cubeProjectionMatrix[16];
+	double _cubeModelViewMatrix[16];
 
 	Common::Rect getFontCharacterRect(uint8 character);
 };

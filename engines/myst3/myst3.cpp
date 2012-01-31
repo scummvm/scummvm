@@ -202,8 +202,9 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData, uint
 	Common::Array<HotSpot *> hovered;
 
 	if (_state->getViewType() == kCube) {
-		float pitch = _state->getLookAtPitch();
-		float heading = _state->getLookAtHeading();
+		float pitch, heading;
+		_cursor->getDirection(pitch, heading);
+
 		Common::Point mouse = Common::Point((int16)heading, (int16)pitch);
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
@@ -263,7 +264,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 		if (event.type == Common::EVENT_QUIT) {
 			_shouldQuit = true;
 		} else if (event.type == Common::EVENT_MOUSEMOVE) {
-			if (_state->getViewType() == kCube) {
+			if (_state->getViewType() == kCube
+					&& _cursor->isPositionLocked()) {
 				_scene->updateCamera(event.relMouse);
 			}
 
@@ -289,6 +291,15 @@ void Myst3Engine::processInput(bool lookOnly) {
 
 			// Bad click
 			_sound->play(697, 5);
+		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
+			// Skip the event when in look only mode
+			if (lookOnly) continue;
+			// Nothing to do if not in cube view
+			if (_state->getViewType() != kCube) continue;
+
+			bool cursorLocked = _cursor->isPositionLocked();
+			_cursor->lockPosition(!cursorLocked);
+
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			// Save file name input
 			_menu->handleInput(event.kbd);
@@ -855,13 +866,12 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 		drawFrame();
 	}
 
+	_state->setVar(var, 1);
+	_drawables.pop_back();
+
 	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData, var);
 	if (!hovered.empty())
 		_scriptEngine->run(&hovered.front()->script);
-
-	_state->setVar(var, 1);
-
-	_drawables.pop_back();
 }
 
 bool Myst3Engine::canLoadGameStateCurrently() {

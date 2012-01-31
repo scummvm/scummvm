@@ -161,4 +161,13 @@ bool Cursor::isVisible() {
 	return !_hideLevel && !_vm->_state->getCursorHidden() && !_vm->_state->getCursorLocked();
 }
 
+void Cursor::getDirection(float &pitch, float &heading) {
+	if (_lockedAtCenter) {
+		pitch = _vm->_state->getLookAtPitch();
+		heading = _vm->_state->getLookAtHeading();
+	} else {
+		_vm->_gfx->screenPosToDirection(_position, pitch, heading);
+	}
+}
+
 } /* namespace Myst3 */

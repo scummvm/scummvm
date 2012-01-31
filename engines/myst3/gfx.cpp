@@ -34,6 +34,8 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
+#include "math/vector2d.h"
+
 #ifdef SDL_BACKEND
 #include <SDL_opengl.h>
 #else
@@ -170,6 +172,10 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	glLoadIdentity();
 	glRotatef(pitch, -1.0f, 0.0f, 0.0f);
 	glRotatef(heading - 180.0f, 0.0f, 1.0f, 0.0f);
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, _cubeModelViewMatrix);
+	glGetDoublev(GL_PROJECTION_MATRIX, _cubeProjectionMatrix);
+	glGetIntegerv(GL_VIEWPORT, _cubeViewport);
 }
 
 void Renderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -402,6 +408,26 @@ Graphics::Surface *Renderer::getScreenshot() {
 	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
 
 	return s;
+}
+
+void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
+	double x, y, z;
+
+	// Screen coords to 3D coords
+	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, &x, &y, &z);
+
+	// 3D coords to polar coords
+	Math::Vector3d v = Math::Vector3d(x, y, z);
+	v.normalize();
+
+	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
+	horizontalProjection.normalize();
+
+	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
+	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
+
+	if (horizontalProjection.getX() > 0.0)
+		heading = 360 - heading;
 }
 
 } // end of namespace Myst3
