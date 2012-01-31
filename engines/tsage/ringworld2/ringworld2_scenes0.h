@@ -764,6 +764,42 @@ public:
 	virtual void signal();
 };
 
+class Scene900 : public SceneExt {
+	class Actor4 : public SceneActor {
+	public:
+    int _fieldA4;
+
+		Actor4();
+		void sub96135(int arg1);
+		virtual void synchronize(Serializer &s);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	int _field412;
+	int _field414;
+	int _field416;
+	NamedHotspot _item1;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	Actor4 _actor4;
+	Actor4 _actor5;
+	Actor4 _actor6;
+	Actor4 _actor7;
+	Actor4 _actor8;
+	Actor4 _actor9;
+	Actor4 _actor10;
+	ASoundExt _aSound1;
+	SequenceManager _sequenceManager1;
+
+	Scene900();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
