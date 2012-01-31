@@ -616,6 +616,7 @@ begin_credits("Credits");
 
 			begin_section("SAGA");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Daniel Balsom", "DanielFox", "Original engine reimplementation author (retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Andrew Kurushin", "ajax16384", "");
 				add_person("Eugene Sandulenko", "sev", "");
@@ -1059,6 +1060,7 @@ begin_credits("Credits");
 
 	begin_section("Special thanks to");
 		begin_persons();
+			add_person("Daniel Balsom", "DanielFox", "For the original Reinherit (SAGA) code");
 			add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
 			add_person("", "Canadacow", "For the original MT-32 emulator");
 			add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");

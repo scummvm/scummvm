@@ -144,6 +144,8 @@ ScummVM Team
 
     SAGA:
        Torbjorn Andersson
+       Daniel Balsom         - Original engine reimplementation author
+                               (retired)
        Filippos Karapetis
        Andrew Kurushin
        Eugene Sandulenko
@@ -536,6 +538,7 @@ Other contributions
 
 Special thanks to
 *****************
+   Daniel Balsom    - For the original Reinherit (SAGA) code
    Sander Buskens   - For his work on the initial reversing of Monkey2
    Canadacow        - For the original MT-32 emulator
    Kevin Carnes     - For Scumm16, the basis of ScummVM's older gfx codecs
