@@ -53,10 +53,13 @@ MoviePlayer::MoviePlayer() {
 }
 
 MoviePlayer::~MoviePlayer() {
+	// Remove the callback immediately, so we're sure timerCallback() doesn't get called
+	// after the deinit() or the deletes.
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
+
 	deinit();
 	delete _videoDecoder;
 	delete _externalSurface;
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 void MoviePlayer::pause(bool p) {
