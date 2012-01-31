@@ -255,7 +255,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			m->attackerId = in.readSint16BE();
 			m->item = in.readSint16BE();
 			m->curBlock = in.readUint16BE();
-			m->u2 = in.readUint16BE();
+			m->starting = in.readUint16BE();
 			m->u1 = in.readByte();
 			m->direction = in.readByte();
 			m->distance = in.readByte();
@@ -494,7 +494,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeSint16BE(m->attackerId);
 			out->writeSint16BE(m->item);
 			out->writeUint16BE(m->curBlock);
-			out->writeUint16BE(m->u2);
+			out->writeUint16BE(m->starting);
 			out->writeByte(m->u1);
 			out->writeByte(m->direction);
 			out->writeByte(m->distance);

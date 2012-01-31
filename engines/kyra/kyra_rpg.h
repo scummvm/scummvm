@@ -70,7 +70,7 @@ struct EoBFlyingObject {
 	int16 attackerId;
 	Item item;
 	uint16 curBlock;
-	uint16 u2;
+	uint16 starting;
 	uint8 u1;
 	uint8 direction;
 	uint8 distance;

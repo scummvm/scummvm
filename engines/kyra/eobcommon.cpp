@@ -201,6 +201,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_coneOfColdDest1 = _coneOfColdDest2 = _coneOfColdDest3 = _coneOfColdDest4 = 0;
 	_coneOfColdGfxTblSize = 0;
 	_menuButtonDefs = 0;
+	_updateCharNum = 0;
 	_menuStringsMain = _menuStringsSaveLoad = _menuStringsOnOff = _menuStringsSpells = 0;
 	_menuStringsRest = _menuStringsDrop = _menuStringsExit = _menuStringsStarve = 0;
 	_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = 0;

@@ -531,7 +531,7 @@ bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	setItemPosition((Item *)&_levelBlockProperties[startBlock].drawObjects, startBlock, item, startPos | 4);
 
 	t->enable = 1;
-	t->u2 = 1;
+	t->starting = 1;
 	t->flags = 0;
 	t->direction = dir;
 	t->distance = 12;
@@ -559,7 +559,7 @@ void EoBCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock
 		return;
 
 	t->enable = 2;
-	t->u2 = 1;
+	t->starting = 1;
 	t->flags = _magicFlightObjectProperties[(type << 2) + 2];
 	t->direction = dir;
 	t->distance = _magicFlightObjectProperties[(type << 2) + 1];
@@ -568,7 +568,6 @@ void EoBCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock
 	t->item = type;
 	t->objectType = _magicFlightObjectProperties[(type << 2) + 3];
 	t->attackerId = charIndex;
-	t->u2 = 1;
 	t->callBackIndex = _magicFlightObjectProperties[type << 2];
 	_sceneUpdateRequired = true;
 }
@@ -576,7 +575,7 @@ void EoBCoreEngine::launchMagicObject(int charIndex, int type, uint16 startBlock
 bool EoBCoreEngine::updateObjectFlight(EoBFlyingObject *fo, int block, int pos) {
 	uint8 wallFlags = _wllWallFlags[_levelBlockProperties[block].walls[fo->direction ^ 2]];
 	if (fo->enable == 1) {
-		if ((wallFlags & 1) || (fo->u2) || ((wallFlags & 2) && (_dscItemShapeMap[_items[fo->item].icon] >= 15))) {
+		if ((wallFlags & 1) || (fo->starting) || ((wallFlags & 2) && (_dscItemShapeMap[_items[fo->item].icon] >= 15))) {
 			getQueuedItem((Item *)&_levelBlockProperties[fo->curBlock].drawObjects, 0, fo->item);
 			setItemPosition((Item *)&_levelBlockProperties[block].drawObjects, block, fo->item, pos | 4);
 			fo->curBlock = block;
@@ -602,7 +601,7 @@ bool EoBCoreEngine::updateObjectFlight(EoBFlyingObject *fo, int block, int pos) 
 }
 
 bool EoBCoreEngine::updateFlyingObjectHitTest(EoBFlyingObject *fo, int block, int pos) {
-	if (fo->u2 && (fo->curBlock != _currentBlock || fo->attackerId >= 0) && (!blockHasMonsters(block) || fo->attackerId < 0))
+	if (fo->starting && (fo->curBlock != _currentBlock || fo->attackerId >= 0) && (!blockHasMonsters(fo->curBlock) || fo->attackerId < 0))
 		return false;
 
 	if (fo->enable == 2) {
