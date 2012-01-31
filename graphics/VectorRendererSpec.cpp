@@ -524,9 +524,7 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		(_blueMask & ((idst & _blueMask) +
 		((int)(((int)(isrc & _blueMask) -
 		(int)(idst & _blueMask)) * alpha) >> 8))) |
-		(_alphaMask & ((idst & _alphaMask) +
-                ((alpha >> _format.aLoss) << _format.aShift) -
-                (((int)(idst & _alphaMask) * alpha) >> 8))));
+		(idst & _alphaMask));
 }
 
 /********************************************************************
