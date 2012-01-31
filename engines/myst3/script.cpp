@@ -1562,8 +1562,8 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 		// Compute the distance to the minimum lever point
 		// and divide it by the lever movement amplitude
 		if (_vm->_state->getViewType() == kCube) {
-			float pitch = _vm->_state->getLookAtPitch();
-			float heading = _vm->_state->getLookAtHeading();
+			float pitch, heading;
+			_vm->_cursor->getDirection(pitch, heading);
 
 			float amplitude = sqrt(Math::square(maxPosX - minPosX) + Math::square(maxPosY - minPosY));
 			float distanceToMin = sqrt(Math::square(pitch - minPosX) + Math::square(heading - minPosY));
@@ -1639,8 +1639,8 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 
 	bool mousePressed = true;
 	while (true) {
-		float pitch = _vm->_state->getLookAtPitch();
-		float heading = _vm->_state->getLookAtHeading();
+		float pitch, heading;
+		_vm->_cursor->getDirection(pitch, heading);
 
 		float minDistance = 180.0;
 		uint position = 0;

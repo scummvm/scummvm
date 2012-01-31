@@ -141,11 +141,15 @@ void Cursor::draw() {
 	// Rect where to draw the cursor
 	Common::Rect textureRect = Common::Rect(cursor.texture->width, cursor.texture->height);
 
-	float transparency;
-	if (_lockedAtCenter)
-		transparency = cursor.transparency;
-	else
-		transparency = 1.0f;
+	float transparency = 1.0;
+
+	int32 varTransparency = _vm->_state->getCursorTransparency();
+	if (_lockedAtCenter || varTransparency == 0) {
+		if (varTransparency >= 0)
+			transparency = varTransparency / 100.0;
+		else
+			transparency = cursor.transparency;
+	}
 
 	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, cursor.texture, transparency);
 }

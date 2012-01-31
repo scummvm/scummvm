@@ -31,6 +31,8 @@ GameState::GameState(Myst3Engine *vm):
 
 #define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
 
+	VAR(14, CursorTransparency, false)
+
 	VAR(47, ProjectorAngleX, true)
 	VAR(48, ProjectorAngleY, true)
 	VAR(49, ProjectorAngleZoom, true)

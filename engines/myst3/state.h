@@ -59,6 +59,8 @@ public:
 	const Common::String describeVar(uint16 var);
 	const Common::String describeCondition(int16 condition);
 
+	DECLARE_VAR(14, CursorTransparency)
+
 	DECLARE_VAR(47, ProjectorAngleX)
 	DECLARE_VAR(48, ProjectorAngleY)
 	DECLARE_VAR(49, ProjectorAngleZoom)

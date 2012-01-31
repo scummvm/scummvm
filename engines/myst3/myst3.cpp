@@ -296,6 +296,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 			if (lookOnly) continue;
 			// Nothing to do if not in cube view
 			if (_state->getViewType() != kCube) continue;
+			// Don't unlock if the cursor is transparent
+			if (!_state->getCursorTransparency()) continue;
 
 			bool cursorLocked = _cursor->isPositionLocked();
 			_cursor->lockPosition(!cursorLocked);
@@ -427,6 +429,14 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 
 	uint16 room = _state->getLocationNextRoom();
 	uint16 age = _state->getLocationNextAge();
+
+	if (_state->getViewType() == kCube) {
+		// The lookat direction in the next node should be
+		// the direction of the mouse cursor
+		float pitch, heading;
+		_cursor->getDirection(pitch, heading);
+		_state->lookAt(pitch, heading);
+	}
 
 	loadNode(node, room, age);
 
