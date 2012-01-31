@@ -98,7 +98,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #5 - By Lift
 		return new Scene850();
 	case 900:
-		error("Missing scene %d from group 0", sceneNumber);
+		return new Scene900();
 	/* Scene group #1 */
 	//
 	case 1000:
