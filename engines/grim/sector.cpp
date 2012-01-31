@@ -370,8 +370,7 @@ Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
 
 	// Formula: return p - n * (n . (p - v_0))
 	Math::Vector3d result = point;
-	Math::Vector3d norm_normal = _normal.getNormalized();
-	result -= norm_normal * Math::Vector3d::dotProduct(norm_normal, point - _vertices[0]);
+	result -= _normal * Math::Vector3d::dotProduct(_normal, point - _vertices[0]);
 	return result;
 }
 
@@ -380,8 +379,7 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 		error("Sector normal is (0,0,0)");
 
 	Math::Vector3d result = v;
-	Math::Vector3d norm_normal = _normal.getNormalized();
-	result -= norm_normal * Math::Vector3d::dotProduct(norm_normal, v);
+	result -= _normal * Math::Vector3d::dotProduct(_normal, v);
 	return result;
 }
 
