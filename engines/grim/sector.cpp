@@ -335,16 +335,18 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			bool b1_out = edge.x() * delta_b1.y() < edge.y() * delta_b1.x();
 			bool b2_out = edge.x() * delta_b2.y() < edge.y() * delta_b2.x();
 
+			bool useXZ = (g_grim->getGameType() == GType_MONKEY4);
+
 			if (b1_out && b2_out) {
 				// Both points are outside.
 				it = bridges.erase(it);
 				continue;
 			} else if (b1_out) {
-				if (bridge.intersectLine2d(line, &pos)) {
+				if (bridge.intersectLine2d(line, &pos), useXZ) {
 					bridge = Math::Line3d(pos, bridge.end());
 				}
 			} else if (b2_out) {
-				if (bridge.intersectLine2d(line, &pos)) {
+				if (bridge.intersectLine2d(line, &pos, useXZ)) {
 					bridge = Math::Line3d(bridge.begin(), pos);
 				}
 			}

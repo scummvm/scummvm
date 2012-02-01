@@ -49,13 +49,22 @@ Math::Vector3d Line3d::middle() const {
 	return (_begin + _end) / 2.f;
 }
 
-bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos) {
+bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ) {
 
-	float denom = ((other._end.y() - other._begin.y()) * (_end.x() - _begin.x())) -
-	((other._end.x() - other._begin.x()) * (_end.y() - _begin.y()));
+	float denom, nume_a;
+	if (useXZ) {
+		denom = ((other._end.z() - other._begin.z()) * (_end.x() - _begin.x())) -
+		((other._end.x() - other._begin.x()) * (_end.z() - _begin.z()));
 
-	float nume_a = ((other._end.x() - other._begin.x()) * (_begin.y() - other._begin.y())) -
-	((other._end.y() - other._begin.y()) * (_begin.x() - other._begin.x()));
+		nume_a = ((other._end.x() - other._begin.x()) * (_begin.z() - other._begin.z())) -
+		((other._end.z() - other._begin.z()) * (_begin.x() - other._begin.x()));
+	} else {
+		denom = ((other._end.y() - other._begin.y()) * (_end.x() - _begin.x())) -
+		((other._end.x() - other._begin.x()) * (_end.y() - _begin.y()));
+
+		nume_a = ((other._end.x() - other._begin.x()) * (_begin.y() - other._begin.y())) -
+		((other._end.y() - other._begin.y()) * (_begin.x() - other._begin.x()));
+	}
 
 	if (denom == 0.0f) {
 		return false;
