@@ -66,9 +66,9 @@ Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) {
 	}
 
 	dst.x() = scale0 * this->x() + scale1 * to.x() ;
-	dst.x() = scale0 * this->w() + scale1 * to.y() ;
-	dst.x() = scale0 * this->w() + scale1 * to.z() ;
-	dst.x() = scale0 * this->w() + scale1 * to.w() ;
+	dst.y() = scale0 * this->y() + scale1 * to.y() ;
+	dst.z() = scale0 * this->z() + scale1 * to.z() ;
+	dst.w() = scale0 * this->w() + scale1 * to.w() ;
 	
 	return dst;
 }
