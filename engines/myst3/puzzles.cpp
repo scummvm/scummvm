@@ -480,13 +480,76 @@ void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
 }
 
 void Puzzles::symbolCodesClick(uint16 var) {
+	// Toggle clicked symbol element
 	if (var > 0) {
 		int32 value = _vm->_state->getVar(var);
 		value ^= 1 << _vm->_state->getHotspotActiveRect();
 		_vm->_state->setVar(var, value);
 	}
 
-	// TODO: Complete, verify solution
+	// Check puzzle with one symbol solution
+	static const SymbolCodeSolution smallSolution = { 330080, 53575, 241719, 116411 };
+	if (_vm->_state->getSymbolCode1AllSolved()) {
+		bool code2Solved = _symbolCodesCheckSolution(490, smallSolution);
+		_vm->_state->setSymbolCode2Solved(code2Solved);
+	}
+
+	// Check puzzle with 3 symbols solution
+	static const SymbolCodeSolution solutions[] = {
+			{ 208172, 131196, 252945, 788771 },
+			{ 431060, 418863, 558738, 653337 },
+			{ 472588, 199440, 155951, 597954 }
+	};
+
+
+	_vm->_state->setSymbolCode1CurrentSolved(false);
+
+	for (uint i = 1; i <= ARRAYSIZE(solutions); i++) {
+		int32 solutionsFound = _symbolCodesFound();
+
+		// Symbol already found, don't allow it another time
+		if (solutionsFound & (1 << i))
+			continue;
+
+		if (_symbolCodesCheckSolution(498, solutions[i - 1])) {
+			_vm->_state->setSymbolCode1TopSolved(i);
+			_vm->_state->setSymbolCode1CurrentSolved(true);
+		}
+
+		if (_symbolCodesCheckSolution(502, solutions[i - 1])) {
+			_vm->_state->setSymbolCode1LeftSolved(i);
+			_vm->_state->setSymbolCode1CurrentSolved(true);
+		}
+
+		if (_symbolCodesCheckSolution(507, solutions[i - 1])) {
+			_vm->_state->setSymbolCode1LeftSolved(i);
+			_vm->_state->setSymbolCode1CurrentSolved(true);
+		}
+	}
+
+	bool allSolved = _symbolCodesFound() == 14;
+	_vm->_state->setSymbolCode1AllSolved(allSolved);
+}
+
+bool Puzzles::_symbolCodesCheckSolution(uint16 var, const SymbolCodeSolution &solution) {
+	bool solved = true;
+
+	for (uint i = 0; i < ARRAYSIZE(solution); i++) {
+		int32 value = _vm->_state->getVar(var + i);
+		if (value != solution[i]) {
+			solved = false;
+			break;
+		}
+	}
+
+	return solved;
+}
+
+int32 Puzzles::_symbolCodesFound() {
+	int32 top = _vm->_state->getSymbolCode1TopSolved();
+	int32 left = _vm->_state->getSymbolCode1LeftSolved();
+	int32 right = _vm->_state->getSymbolCode1RightSolved();
+	return (1 << top) | (1 << left) | (1 << right);
 }
 
 void Puzzles::mainMenu(uint16 action) {

@@ -41,6 +41,8 @@ public:
 private:
 	Myst3Engine *_vm;
 
+	typedef int32 SymbolCodeSolution[4];
+
 	void leversBall(int16 var);
 
 	void tesla(int16 movie, int16 var, int16 move);
@@ -59,6 +61,8 @@ private:
 	void projectorUpdateCoordinates();
 	void symbolCodesInit(uint16 var, uint16 posX, uint16 posY);
 	void symbolCodesClick(uint16 var);
+	bool _symbolCodesCheckSolution(uint16 var, const SymbolCodeSolution &solution);
+	int32 _symbolCodesFound();
 
 	void _drawForVarHelper(uint16 var, int32 startValue, int32 endValue);
 };

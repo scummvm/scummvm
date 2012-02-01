@@ -164,6 +164,13 @@ public:
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 
+	DECLARE_VAR(489, SymbolCode2Solved)
+	DECLARE_VAR(495, SymbolCode1AllSolved)
+	DECLARE_VAR(496, SymbolCode1CurrentSolved)
+	DECLARE_VAR(497, SymbolCode1TopSolved)
+	DECLARE_VAR(502, SymbolCode1LeftSolved)
+	DECLARE_VAR(507, SymbolCode1RightSolved)
+
 	DECLARE_VAR(1327, DialogResult)
 
 	DECLARE_VAR(1337, MenuEscapePressed)

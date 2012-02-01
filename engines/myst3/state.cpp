@@ -150,6 +150,13 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
+	VAR(489, SymbolCode2Solved, false)
+	VAR(495, SymbolCode1AllSolved, false)
+	VAR(496, SymbolCode1CurrentSolved, false)
+	VAR(497, SymbolCode1TopSolved, false)
+	VAR(502, SymbolCode1LeftSolved, false)
+	VAR(507, SymbolCode1RightSolved, false)
+
 	VAR(1327, DialogResult, false)
 
 	VAR(1337, MenuEscapePressed, false)
