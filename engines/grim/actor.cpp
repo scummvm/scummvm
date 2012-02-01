@@ -578,6 +578,13 @@ void Actor::walkForward() {
 	Math::Vector3d forwardVec(-_yaw.getSine() * _pitch.getCosine(),
 		_yaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
+	// EMI: Y is up-down, sectors use an X-Z plane for movement
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float temp = forwardVec.z();
+		forwardVec.z() = forwardVec.y();
+		forwardVec.y() = temp;
+	}
+
 	if (! _constrain) {
 		_pos += forwardVec * dist;
 		_walkedCur = true;

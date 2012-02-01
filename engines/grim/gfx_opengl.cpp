@@ -188,6 +188,18 @@ void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 void GfxOpenGL::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
 	Math::Vector3d up_vec(0, 0, 1);
 
+	// EMI only: transform XYZ to YXZ
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		static const float EMI_MATRIX[] = {
+			0,1,0,0,
+			1,0,0,0,
+			0,0,1,0,
+			0,0,0,1
+		};
+
+		glMultMatrixf(EMI_MATRIX);
+	}
+
 	if (pos.x() == interest.x() && pos.y() == interest.y())
 		up_vec = Math::Vector3d(0, 1, 0);
 
@@ -347,9 +359,16 @@ void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angl
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glScalef(scale, scale, scale);
-	glRotatef(yaw.getDegrees(), 0, 0, 1);
-	glRotatef(pitch.getDegrees(), 1, 0, 0);
-	glRotatef(roll.getDegrees(), 0, 1, 0);
+	// EMI uses Y axis as down-up, so we need to rotate differently.
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glRotatef(yaw.getDegrees(), 0, -1, 0);
+		glRotatef(pitch.getDegrees(), 1, 0, 0);
+		glRotatef(roll.getDegrees(), 0, 0, 1);
+	} else {
+		glRotatef(yaw.getDegrees(), 0, 0, 1);
+		glRotatef(pitch.getDegrees(), 1, 0, 0);
+		glRotatef(roll.getDegrees(), 0, 1, 0);
+	}
 }
 
 void GfxOpenGL::finishActorDraw() {

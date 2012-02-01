@@ -162,6 +162,12 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 		data->read(_vertices[i].getData(), 12);
 	}
 
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
+	                                       _vertices[_numVertices - 1] - _vertices[0]);
+	float length = _normal.getMagnitude();
+	if (length > 0)
+		_normal /= length;
+
 	char name[128];
 	int nameLength = data->readUint32LE();
 
@@ -359,21 +365,21 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 }
 
 Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
-	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane");
+	if (_normal.getMagnitude() == 0)
+		error("Sector normal is (0,0,0)");
 
-	// Formula: return p - (n . (p - v_0))/(n . k) k
+	// Formula: return p - n * (n . (p - v_0))
 	Math::Vector3d result = point;
-	result.z() -= Math::Vector3d::dotProduct(_normal, point - _vertices[0]) / _normal.z();
+	result -= _normal * Math::Vector3d::dotProduct(_normal, point - _vertices[0]);
 	return result;
 }
 
 Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const {
-	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane");
+	if (_normal.getMagnitude() == 0)
+		error("Sector normal is (0,0,0)");
 
 	Math::Vector3d result = v;
-	result.z() -= Math::Vector3d::dotProduct(_normal, v) / _normal.z();
+	result -= _normal * Math::Vector3d::dotProduct(_normal, v);
 	return result;
 }
 
