@@ -470,6 +470,8 @@ private:
 	 */
 	Math::Vector3d getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const;
 
+	Math::Vector3d getSimplePuckVector() const;
+
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
