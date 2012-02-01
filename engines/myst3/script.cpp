@@ -1517,13 +1517,13 @@ void Script::ifHeadingPitchInRect(Context &c, const Opcode &cmd) {
 		return;
 	}
 
-	if (cmd.args[1] > cmd.args[0]) {
+	if (cmd.args[1] > cmd.args[2]) {
 		// If heading in range
-		if (heading > cmd.args[0] && heading < cmd.args[1])
+		if (heading > cmd.args[2] && heading < cmd.args[3])
 			return;
 	} else {
 		// If heading *not* in range
-		if (heading > cmd.args[0] || heading < cmd.args[1])
+		if (heading > cmd.args[2] || heading < cmd.args[3])
 			return;
 	}
 

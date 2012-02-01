@@ -479,7 +479,7 @@ void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
 	}
 }
 
-void Puzzles::symbolCodesClick(uint16 var) {
+void Puzzles::symbolCodesClick(int16 var) {
 	// Toggle clicked symbol element
 	if (var > 0) {
 		int32 value = _vm->_state->getVar(var);
