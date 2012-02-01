@@ -224,16 +224,16 @@ int16 Dialog::update() {
 			localMouse.x -= position.left;
 			localMouse.y -= position.top;
 
+			// No hovered button
+			_frameToDisplay = 0;
+
 			// Display the frame corresponding to the hovered button
 			for (uint i = 0; i < _buttonCount; i++) {
 				if (_buttons[i].contains(localMouse)) {
 					_frameToDisplay = i + 1;
-					return -1;
+					break;
 				}
 			}
-
-			// No hovered button
-			_frameToDisplay = 0;
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			return _frameToDisplay - 1;
 		} else if (event.type == Common::EVENT_KEYDOWN) {
