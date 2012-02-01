@@ -71,6 +71,7 @@ protected:
 	void resetHierCMap();
 
 	friend class Costume;
+	friend class EMICostume;
 };
 
 } // end of namespace Grim

@@ -20,53 +20,42 @@
  *
  */
 
-#ifndef GRIM_SKELETON_H
-#define GRIM_SKELETON_H
+#ifndef GRIM_COSTUMEEMI_H
+#define GRIM_COSTUMEEMI_H
 
-#include "math/mathfwd.h"
-#include "math/quat.h"
+#include "common/stream.h"
+
 #include "engines/grim/object.h"
-
-namespace Common {
-class SeekableReadStream;
-}
+#include "engines/grim/costume.h"
 
 namespace Grim {
-	
-class AnimationEmi;
 
-struct Joint {
-	Common::String _name;
-	Common::String _parent;
-	Math::Vector3d _trans;
-	Math::Quaternion _quat;
-	// calculated;
-	int _animIndex;
-	int _parentIndex;
-	Math::Matrix4 _absMatrix;
-	Math::Matrix4 _relMatrix;
-	Math::Matrix4 _finalMatrix;
-};
+typedef uint32 tag32;
 
-class Skeleton : public Object {
+class EMISkelComponent;
+class EMIMeshComponent;
 
-	AnimationEmi *_anim;
-	void loadSkeleton(Common::SeekableReadStream *data);
-	void initBone(int index);
-	void initBones();
+class EMICostume : public Costume {
 public:
-	int _numJoints;
-	Joint *_joints;
+	EMICostume(const Common::String &filename, Costume *prevCost);
 
-	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
-	~Skeleton();
-	void resetAnim();
-	void setAnim(AnimationEmi *anim);
-	void animate(float time);
-	int findJointIndex(Common::String name, int max);
-	float _time;
-};
+	void load(Common::SeekableReadStream *data);
+
+	int update(uint frameTime);
+	void draw();
 	
+	void saveState(SaveGame *state) const;
+	bool restoreState(SaveGame *state);
+
+public:
+	EMISkelComponent *_emiSkel;
+	EMIMeshComponent *_emiMesh;
+private:
+	Component *loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
+	
+	friend class Chore;
+};
+
 } // end of namespace Grim
 
 #endif

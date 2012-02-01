@@ -38,7 +38,7 @@ public:
 	void reset();
 	void draw();
 
-private:
+public:
 	bool _hierShared;
 	Common::List<EMIMeshComponent*> _children;
 	EMIMeshComponent *_parentModel;

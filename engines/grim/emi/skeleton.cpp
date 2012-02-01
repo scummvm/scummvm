@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- 
+
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- 
+
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -32,7 +32,7 @@ namespace Grim {
 #define ROTATE_OP 4
 #define TRANSLATE_OP 3
 
-Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
+Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) : _anim(NULL), _time(0) {
 	loadSkeleton(data);
 }
 
@@ -52,7 +52,7 @@ void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
 		data->read(inString, 32);
 		_joints[i]._parent = inString;
 		
-		_joints[i]._trans.readFromStream(data); 
+		_joints[i]._trans.readFromStream(data);
 		_joints[i]._quat.readFromStream(data);
 		
 		_joints[i]._parentIndex = findJointIndex(_joints[i]._parent, i);
@@ -83,13 +83,20 @@ void Skeleton::initBones() {
 }
 
 void Skeleton::resetAnim() {
+	_time = 0;
 	for (int i = 0; i < _numJoints; i++) {
 		_joints[i]._finalMatrix = _joints[i]._absMatrix;
 	}
 }
 
 void Skeleton::setAnim(AnimationEmi *anim) {
+	if (_anim == anim) {
+		return;
+	}
 	_anim = anim;
+	if (!_anim) {
+		return;
+	}
 	for (int i = 0; i < _numJoints; i++) {
 		_joints[i]._animIndex = -1;
 	}
@@ -108,16 +115,15 @@ int Skeleton::findJointIndex(Common::String name, int max) {
 				return i;
 			}
 		}
-	} 
+	}
 	return -1;
 }
 
-void Skeleton::animate(float time) {
+void Skeleton::animate(float delta) {
 	if (_anim == NULL)
 		return;
-
-	if (time > _anim->_duration) {
-		time = 0.0;
+	_time += delta;
+	if (_time > _anim->_duration) {
 		resetAnim();
 	}
 
@@ -143,12 +149,12 @@ void Skeleton::animate(float time) {
 			// Find the right keyframe
 			for (curKeyFrame = 0; curKeyFrame < _curBone->_count; curKeyFrame++) {
 				if (_curBone->_operation == ROTATE_OP) {
-					if (_curBone->_rotations[curKeyFrame]->_time >= time) {
+					if (_curBone->_rotations[curKeyFrame]->_time >= _time) {
 						keyfIdx = curKeyFrame;
 						break;
 					}
 				} else if (_curBone->_operation == TRANSLATE_OP) {
-					if (_curBone->_translations[curKeyFrame]->_time >= time) {
+					if (_curBone->_translations[curKeyFrame]->_time >= _time) {
 						keyfIdx = curKeyFrame;
 						break;
 					}
@@ -166,7 +172,7 @@ void Skeleton::animate(float time) {
 					quat = _curBone->_rotations[keyfIdx-1]->_quat;
 				} else {
 					timeDelta = _curBone->_rotations[keyfIdx-1]->_time - _curBone->_rotations[keyfIdx]->_time;
-					interpVal = (time - _curBone->_rotations[keyfIdx]->_time) / timeDelta;
+					interpVal = (_time - _curBone->_rotations[keyfIdx]->_time) / timeDelta;
 					
 					// Might be the other way around (keyfIdx - 1 slerped against keyfIdx)
 					quat = _curBone->_rotations[keyfIdx]->_quat.slerpQuat(_curBone->_rotations[keyfIdx - 1]->_quat, interpVal);
@@ -179,7 +185,7 @@ void Skeleton::animate(float time) {
 					vec = _curBone->_translations[keyfIdx-1]->_vec;
 				} else {
 					timeDelta = _curBone->_translations[keyfIdx-1]->_time - _curBone->_translations[keyfIdx]->_time;
-					interpVal = (time - _curBone->_translations[keyfIdx]->_time) / timeDelta;
+					interpVal = (_time - _curBone->_translations[keyfIdx]->_time) / timeDelta;
 					
 					vec.x() = _curBone->_translations[keyfIdx-1]->_vec.x() +
 					(_curBone->_translations[keyfIdx]->_vec.x() - _curBone->_translations[keyfIdx-1]->_vec.x()) * interpVal;

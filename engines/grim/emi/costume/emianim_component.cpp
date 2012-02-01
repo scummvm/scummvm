@@ -23,8 +23,12 @@
 #include "common/foreach.h"
 
 #include "engines/grim/emi/costume/emianim_component.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/costume.h"
+#include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
+#include "engines/grim/emi/skeleton.h"
 #include "engines/grim/emi/animationemi.h"
 
 namespace Grim {
@@ -50,7 +54,10 @@ void EMIAnimComponent::reset() {
 }
 	
 void EMIAnimComponent::draw() {
-	
+	EMISkelComponent *skel = ((EMICostume*) _cost)->_emiSkel;
+	if (skel && skel->_obj) {
+		skel->_obj->setAnim(_obj);
+	}
 }
 
 } // end of namespace Grim

@@ -25,6 +25,7 @@
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/costume.h"
 
 namespace Grim {
 

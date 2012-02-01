@@ -32,6 +32,7 @@ namespace Grim {
 
 class Costume;
 class Animation;
+class Component;
 
 struct TrackKey {
 	int time, value;
@@ -41,6 +42,7 @@ struct ChoreTrack {
 	int compID;
 	int numKeys;
 	TrackKey *keys;
+	Component *component;
 };
 
 class Chore {
@@ -61,6 +63,9 @@ public:
 	bool isPlaying() { return _playing; }
 
 	virtual int getId() { return _choreId; }
+	
+	void setOwner(Costume *owner) { _owner = owner; }
+	void createTracks(int num);
 
 private:
 	void setKeys(int startTime, int stopTime);
@@ -78,6 +83,7 @@ private:
 	int _currTime;
 
 	friend class Costume;
+	friend class EMICostume;
 };
 
 class PoolChore : public PoolObject<PoolChore, MKTAG('C', 'H', 'O', 'R')>, public Chore {

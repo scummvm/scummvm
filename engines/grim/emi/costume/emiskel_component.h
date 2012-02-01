@@ -40,7 +40,7 @@ public:
 	void reset();
 	void draw();
 
-private:
+public:
 	bool _hierShared;
 	Component *_parentModel;
 	Common::String _filename;

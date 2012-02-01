@@ -174,4 +174,9 @@ void Chore::fadeOut(uint msecs) {
 	fade(Animation::FadeOut, msecs);
 }
 
+void Chore::createTracks(int num) {
+	_numTracks = num;
+	_tracks = new ChoreTrack[_numTracks];
+}
+
 } // end of namespace Grim

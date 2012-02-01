@@ -26,6 +26,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
+#include "engines/grim/costume.h"
 
 namespace Grim {
 
@@ -42,6 +43,9 @@ void EMISkelComponent::init() {
 }
 
 int EMISkelComponent::update(uint time) {
+	if (_obj) {
+		_obj->animate(time/1000.f);
+	}
 	return 0;
 }
 

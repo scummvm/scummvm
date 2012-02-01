@@ -44,12 +44,10 @@ class Head;
 
 class Costume : public Object {
 public:
-	Costume(const Common::String &filename, Common::SeekableReadStream *data, Costume *prevCost);
-
-	void loadGRIM(TextSplitter &ts, Costume *prevCost);
-	void loadEMI(Common::SeekableReadStream *data, Costume *prevCost);
+	Costume(const Common::String &filename, Costume *prevCost);
 
 	virtual ~Costume();
+	virtual void load(Common::SeekableReadStream *data);
 
 	const Common::String &getFilename() const { return _fname; }
 	void playChore(const char *name);
@@ -77,10 +75,10 @@ public:
 
 	CMap *getCMap() { return _cmap; }
 
-	int update(uint frameTime);
+	virtual int update(uint frameTime);
 	void animate();
 	void setupTextures();
-	void draw();
+	virtual void draw();
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
 					  const Math::Angle &yaw, const Math::Angle &roll);
@@ -88,12 +86,15 @@ public:
 
 	Costume *getPreviousCostume() const;
 
-	void saveState(SaveGame *state) const;
-	bool restoreState(SaveGame *state);
+	virtual void saveState(SaveGame *state) const;
+	virtual bool restoreState(SaveGame *state);
 
-private:
-	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	Component *loadComponentEMI(Component *parent, int parentID, const char *name, Component *prevComponent);
+	Component *getComponent(int num) { return _components[num]; }
+protected:
+	virtual Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
+
+	void load(TextSplitter &ts, Costume *prevCost);
+
 	ModelComponent *getMainModelComponent() const;
 
 	Common::String _fname;

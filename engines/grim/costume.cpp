@@ -29,7 +29,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/model.h"
-
+#include "engines/grim/emi/modelemi.h"
 #include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/head.h"
 #include "engines/grim/emi/costume/emianim_component.h"
@@ -105,21 +105,16 @@ namespace Grim {
 // marked OBJSTATE_OVERLAY.  So the BitmapComponent just needs to pass
 // along setKey requests to the actual bitmap object.
 
-Costume::Costume(const Common::String &fname, Common::SeekableReadStream *data, Costume *prevCost) :
+Costume::Costume(const Common::String &fname, Costume *prevCost) :
 		Object(), _head(new Head()), _chores(NULL) {
 
 	_fname = fname;
 	_lookAtRate = 200;
 	_prevCostume = prevCost;
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		loadEMI(data, prevCost);
-	} else {
-		TextSplitter ts(data);
-		loadGRIM(ts, prevCost);
-	}
 }
 
-void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
+void Costume::load(Common::SeekableReadStream *data) {
+	TextSplitter ts(data);
 	ts.expectString("costume v0.1");
 	ts.expectString("section tags");
 	int numTags;
@@ -152,7 +147,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 		// A Parent ID of "-1" indicates that the component should
 		// use the properties of the previous costume as a base
 		if (parentID == -1) {
-			if (prevCost) {
+			if (_prevCostume) {
 				MainModelComponent *mmc;
 
 				// However, only the first item can actually share the
@@ -160,7 +155,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 				// that component so it knows what to do
 				if (i == 0)
 					parentID = -2;
-				prevComponent = prevCost->_components[0];
+				prevComponent = _prevCostume->_components[0];
 				mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 				// Make sure that the component is valid
 				if (!mmc)
@@ -202,85 +197,6 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 		int which;
 		ts.scanString("chore %d", 1, &which);
 		_chores[which]->load(i, this, ts);
-	}
-}
-
-void Costume::loadEMI(Common::SeekableReadStream *data, Costume *prevCost) {
-	Common::List<Component *>components;
-
-	_numChores = data->readUint32LE();
-	_chores = new Chore *[_numChores];
-	for (int i = 0; i < _numChores; i++) {
-		_chores[i] = new PoolChore();
-		uint32 nameLength;
-		Component *prevComponent = NULL;
-		nameLength = data->readUint32LE();
-		data->read(_chores[i]->_name, nameLength);
-		float length;
-		data->read(&length, 4);
-		_chores[i]->_length = (int)length;
-
-		_chores[i]->_owner = this;
-		_chores[i]->_numTracks = data->readUint32LE();
-		_chores[i]->_tracks = new ChoreTrack[_chores[i]->_numTracks];
-
-		for (int k = 0; k < _chores[i]->_numTracks; k++) {
-			int componentNameLength = data->readUint32LE();
-
-			char *name = new char[componentNameLength];
-			data->read(name, componentNameLength);
-
-			data->readUint32LE();
-			int parentID = data->readUint32LE();
-			if (parentID == -1 && prevCost) {
-				MainModelComponent *mmc;
-
-				// However, only the first item can actually share the
-				// node hierarchy with the previous costume, so flag
-				// that component so it knows what to do
-				if (i == 0)
-					parentID = -2;
-				prevComponent = prevCost->_components[0];
-				mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-				// Make sure that the component is valid
-				if (!mmc)
-					prevComponent = NULL;
-			}
-			// Actually load the appropriate component
-			Component *component = loadComponentEMI(parentID < 0 ? NULL : _components[parentID], parentID, name, prevComponent);
-
-
-			//Component *component = loadComponentEMI(name, parent);
-
-			components.push_back(component);
-
-			ChoreTrack &track = _chores[i]->_tracks[k];
-			track.numKeys = data->readUint32LE();
-			track.keys = new TrackKey[track.numKeys];
-
-			// this is probably wrong
-			track.compID = 0;
-			for (int j = 0; j < track.numKeys; j++) {
-				float time, value;
-				data->read(&time, 4);
-				data->read(&value, 4);
-				track.keys[j].time = (int)time;
-				track.keys[j].value = (int)value;
-			}
-			delete[] name;
-		}
-		//_chores[i]._tracks->compID;
-	}
-
-	_numComponents = components.size();
-	_components = new Component *[_numComponents];
-	int i = 0;
-	for (Common::List<Component *>::iterator it = components.begin(); it != components.end(); ++it, ++i) {
-		_components[i] = *it;
-		if (!_components[i])
-			continue;
-		_components[i]->setCostume(this);
-		_components[i]->init();
 	}
 }
 
@@ -329,54 +245,6 @@ Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, c
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
 	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
-	return NULL;
-}
-
-Component *Costume::loadComponentEMI(Component *parent, int parentID, const char *name, Component *prevComponent) {
-	// some have an exclimation mark, this could mean something.
-	// for now, return 0 otherwise it will just crash in some other part.
-	//return 0;
-
-	assert(name[0] == '!');
-	++name;
-
-	char type[5];
-	tag32 tag = 0;
-	memcpy(&tag, name, 4);
-	memcpy(&type, name, 4);
-	type[4] = 0;
-
-	name += 4;
-
-	if (FROM_BE_32(tag) == MKTAG('m','e','s','h')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement MESH-handling: %s" , name);
-		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('s','k','e','l')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
-		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('t','e','x','i')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
-		//return new MaterialComponent(parent, parentID, name, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('a','n','i','m')) {
-		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
-		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','c')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
-	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','v')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
-		//return new LuaVarComponent(parent, parentID, name, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('s','p','r','t')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
-		//return new SpriteComponent(parent, parentID, name, tag);
-	} else if (FROM_BE_32(tag) == MKTAG('s','h','a','d')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
-	} else {
-		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
-	}
-	/*
-	char t[4];
-	memcpy(t, &tag, sizeof(tag32));
-	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);*/
 	return NULL;
 }
 

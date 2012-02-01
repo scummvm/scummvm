@@ -195,8 +195,13 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 }
 
 void EMIModel::setSkeleton(Skeleton *skel) {
+	if (_skeleton == skel) {
+		return;
+	}
 	_skeleton = skel;
-	
+	if (!skel || !_numBoneInfos) {
+		return;
+	}
 	int boneVert = 0;
 	delete[] _vertexBoneInfo; _vertexBoneInfo = NULL;
 	delete[] _vertexBone; _vertexBone = NULL;
@@ -226,7 +231,7 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 }
 
 void EMIModel::prepareForRender() {
-	if (!_skeleton)
+	if (!_skeleton || !_vertexBoneInfo)
 		return;
 	for (int i = 0; i < _numVertices; i++) {
 		_drawVertices[i] = _vertices[i];
