@@ -47,6 +47,8 @@ private:
 
 	void tesla(int16 movie, int16 var, int16 move);
 
+	void ringControl();
+
 	void weightDrag(uint16 var, uint16 movie);
 
 	void journalSaavedro(int16 move);

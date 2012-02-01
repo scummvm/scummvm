@@ -43,6 +43,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 2:
 		tesla(arg0, arg1, arg2);
 		break;
+	case 3:
+		ringControl();
+		break;
 	case 7:
 		weightDrag(arg0, arg1);
 		break;
@@ -276,6 +279,37 @@ void Puzzles::tesla(int16 movie, int16 var, int16 move) {
 			&& _vm->_state->getTeslaBottomAligned() == 1;
 
 	_vm->_state->setTeslaAllAligned(puzzleSolved);
+}
+
+void Puzzles::ringControl() {
+	static const uint16 frames[] = { 0, 24, 1, 5, 10, 15, 0, 0, 0, 38 };
+
+	uint16 startPos = _vm->_state->getVar(29);
+	uint16 destPos = _vm->_state->getVar(27);
+
+	int16 startFrame = frames[startPos] - 27;
+	int16 destFrame = frames[destPos];
+
+	// Choose the shortest direction
+	for (int16 i = destFrame - startFrame; abs(i) > 14; i -= 27)
+		startFrame += 27;
+
+	// Play the movie, taking care of the limit case
+	if (destFrame >= startFrame) {
+		if (startFrame < 1) {
+			_drawForVarHelper(28, startFrame + 27, 27);
+			_drawForVarHelper(28, 1, destFrame);
+			return;
+		}
+	} else {
+		if (startFrame > 27) {
+			_drawForVarHelper(28, startFrame - 27, 1);
+			_drawForVarHelper(28, 27, destFrame);
+			return;
+		}
+	}
+	if (startFrame)
+		_drawForVarHelper(28, startFrame, destFrame);
 }
 
 void Puzzles::weightDrag(uint16 var, uint16 movie) {
