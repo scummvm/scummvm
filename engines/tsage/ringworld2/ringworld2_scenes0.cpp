@@ -5614,7 +5614,11 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 
 void Scene700::remove() {
 	R2_GLOBALS._sound1.play(10);
-	_rotation->remove();
+// CHECKME: Present in the original... But it crashes badly.
+// The instruction was removed as it's not used in other scene coded the same way
+// and reversed by dreammaster. A double check is required in order to verify it doesn't hide 
+// a memory leak
+//	_rotation->remove();
 	SceneExt::remove();
 }
 
