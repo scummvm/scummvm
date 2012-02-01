@@ -157,7 +157,7 @@ private:
 	bool _inputEscapePressed;
 	bool _inputTildePressed;
 
-	Common::Array<HotSpot *> listHoveredHotspots(NodePtr nodeData, uint16 var = 0);
+	HotSpot *getHoveredHotspot(NodePtr nodeData, uint16 var = 0);
 	void updateCursor();
 
 	void addArchive(const Common::String &file, bool mandatory);

@@ -198,9 +198,7 @@ void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 	}
 }
 
-Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData, uint16 var) {
-	Common::Array<HotSpot *> hovered;
-
+HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 	if (_state->getViewType() == kCube) {
 		float pitch, heading;
 		_cursor->getDirection(pitch, heading);
@@ -210,7 +208,7 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData, uint
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
 					&& nodeData->hotspots[j].isEnabled(_state, var)) {
-				hovered.push_back(&nodeData->hotspots[j]);
+				return &nodeData->hotspots[j];
 			}
 		}
 	} else {
@@ -230,25 +228,26 @@ Common::Array<HotSpot *> Myst3Engine::listHoveredHotspots(NodePtr nodeData, uint
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			if (nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse)
+			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse);
+			if (hitRect >= 0
 					&& nodeData->hotspots[j].isEnabled(_state, var)) {
-				hovered.push_back(&nodeData->hotspots[j]);
+				_state->setHotspotActiveRect(hitRect);
+				return &nodeData->hotspots[j];
 			}
 		}
 	}
 
-	return hovered;
+	return 0;
 }
 
 void Myst3Engine::updateCursor() {
 	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 
-	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
+	HotSpot *hovered = getHoveredHotspot(nodeData);
 	uint16 hoveredInventory = _inventory->hoveredItem();
 
-	if (hovered.size() > 0) {
-		HotSpot *h = hovered.front();
-		_cursor->changeCursor(h->cursor);
+	if (hovered) {
+		_cursor->changeCursor(hovered->cursor);
 	} else if (hoveredInventory > 0) {
 		_cursor->changeCursor(1);
 	} else {
@@ -282,10 +281,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 			}
 
 			NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
-			Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData);
+			HotSpot *hovered = getHoveredHotspot(nodeData);
 
-			if (hovered.size() > 0) {
-				_scriptEngine->run(&hovered.front()->script);
+			if (hovered) {
+				_scriptEngine->run(&hovered->script);
 				continue;
 			}
 
@@ -879,9 +878,9 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	_state->setVar(var, 1);
 	_drawables.pop_back();
 
-	Common::Array<HotSpot *> hovered = listHoveredHotspots(nodeData, var);
-	if (!hovered.empty())
-		_scriptEngine->run(&hovered.front()->script);
+	HotSpot *hovered = getHoveredHotspot(nodeData, var);
+	if (hovered)
+		_scriptEngine->run(&hovered->script);
 }
 
 bool Myst3Engine::canLoadGameStateCurrently() {

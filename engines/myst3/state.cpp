@@ -61,6 +61,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(89, InputTildePressed, false)
 	VAR(90, InputSpacePressed, false)
 
+	VAR(92, HotspotActiveRect, false)
+
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)

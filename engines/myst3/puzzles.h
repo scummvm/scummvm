@@ -57,6 +57,8 @@ private:
 	void projectorLoadBitmap(uint16 bitmap);
 	void projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y);
 	void projectorUpdateCoordinates();
+	void symbolCodesInit(uint16 var, uint16 posX, uint16 posY);
+	void symbolCodesClick(uint16 var);
 
 	void _drawForVarHelper(uint16 var, int32 startValue, int32 endValue);
 };

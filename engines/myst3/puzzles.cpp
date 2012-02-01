@@ -49,6 +49,12 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 9:
 		journalAtrus(arg0, arg1);
 		break;
+	case 10:
+		symbolCodesInit(arg0, arg1, arg2);
+		break;
+	case 11:
+		symbolCodesClick(arg0);
+		break;
 	case 14:
 		projectorLoadBitmap(arg0);
 		break;
@@ -379,6 +385,108 @@ void Puzzles::journalAtrus(uint16 node, uint16 var) {
 		numPages++;
 
 	_vm->_state->setVar(var, numPages - 1);
+}
+
+void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
+	struct Point {
+		uint16 x;
+		uint16 y;
+	};
+
+	struct CodeData {
+		uint16 node;
+		uint16 movie;
+		bool flag;
+		Point coords[20];
+	};
+
+	static const CodeData codes[] = {
+			{
+					144, 10144, 0,
+					{
+							{ 296, 120 }, { 312, 128 }, { 296, 144 }, { 296, 128 }, { 312, 120 },
+							{ 328, 120 }, { 312, 144 }, { 312, 128 }, { 296, 136 }, { 312, 144 },
+							{ 296, 160 }, { 296, 144 }, { 312, 136 }, { 328, 144 }, { 312, 160 },
+							{ 312, 144 }, { 296, 112 }, { 328, 120 }, { 296, 160 }, { 288, 120 }
+					}
+			}, {
+					244, 10244, 1,
+					{
+							{ 288, 16 }, { 336, 32 }, { 294, 72 }, { 280, 24 }, { 336, 16 },
+							{ 376, 24 }, { 336, 72 }, { 328, 32 }, { 288, 64 }, { 336, 80 },
+							{ 288, 120 }, { 280, 72 }, { 336, 64 }, { 384, 72 }, { 336, 120 },
+							{ 328, 80 }, { 288, 0 }, { 384, 24 }, { 288, 120 }, { 264, 24 }
+					}
+			}, {
+					148, 10148, 0,
+					{
+							{ 280, 24 }, { 304, 32 }, { 288, 48 }, { 280, 24 }, { 304, 24 },
+							{ 320, 32 }, { 304, 48 }, { 296, 32 }, { 288, 40 }, { 304, 48 },
+							{ 280, 64 }, { 280, 48 }, { 304, 48 }, { 320, 48 }, { 304, 64 },
+							{ 296, 48 }, { 280, 16 }, { 320, 24 }, { 280, 64 }, { 272, 24 }
+					}
+			}, {
+					248, 10248, 1,
+					{
+							{ 280, 48 }, { 320, 56 }, { 287, 88 }, { 272, 56 }, { 320, 48 },
+							{ 360, 56 }, { 328, 96 }, { 312, 56 }, { 288, 88 }, { 320, 96 },
+							{ 280, 128 }, { 271, 96 }, { 328, 88 }, { 360, 96 }, { 320, 128 },
+							{ 312, 96 }, { 280, 32 }, { 360, 48 }, { 280, 128 }, { 264, 48 }
+					}
+			}, {
+					348, 10348, 1,
+					{
+							{ 336, 24 }, { 376, 32 }, { 336, 80 }, { 328, 32 }, { 376, 24 },
+							{ 424, 32 }, { 384, 80 }, { 368, 40 }, { 336, 72 }, { 376, 80 },
+							{ 336, 120 }, { 328, 80 }, { 384, 72 }, { 424, 80 }, { 376, 120 },
+							{ 368, 80 }, { 328, 8 }, { 424, 32 }, { 328, 128 }, { 312, 32 }
+					}
+			}, {
+					448, 10448, 1,
+					{
+							{ 224, 32 }, { 264, 40 }, { 224, 80 }, { 208, 40 }, { 264, 32 },
+							{ 304, 40 }, { 270, 88 }, { 256, 40 }, { 224, 72 }, { 264, 88 },
+							{ 224, 128 }, { 208, 88 }, { 272, 72 }, { 312, 88 }, { 264, 128 },
+							{ 256, 88 }, { 216, 16 }, { 312, 40 }, { 216, 128 }, { 200, 40 }
+					}
+			}
+	};
+
+	uint16 node = _vm->_state->getLocationNode();
+
+	const CodeData *code = 0;
+	for (uint i = 0; i < ARRAYSIZE(codes); i++)
+		if (codes[i].node == node) {
+			code = &codes[i];
+			break;
+		}
+
+	if (!node)
+		error("Unable to find puzzle data for node %d", node);
+
+	int32 value = _vm->_state->getVar(var);
+
+	for (uint i = 0; i < 20; i++) {
+		if (code->flag || value & (1 << i)) {
+			_vm->_state->setMoviePreloadToMemory(true);
+			_vm->_state->setMovieScriptDriven(true);
+			_vm->_state->setMovieOverridePosition(true);
+			_vm->_state->setMovieOverridePosU(posX + code->coords[i].x);
+			_vm->_state->setMovieOverridePosV(posY + code->coords[i].y);
+			_vm->_state->setMovieConditionBit(i + 1);
+			_vm->loadMovie(code->movie + i * 1000, var, false, true);
+		}
+	}
+}
+
+void Puzzles::symbolCodesClick(uint16 var) {
+	if (var > 0) {
+		int32 value = _vm->_state->getVar(var);
+		value ^= 1 << _vm->_state->getHotspotActiveRect();
+		_vm->_state->setVar(var, value);
+	}
+
+	// TODO: Complete, verify solution
 }
 
 void Puzzles::mainMenu(uint16 action) {

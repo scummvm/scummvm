@@ -89,6 +89,8 @@ public:
 	DECLARE_VAR(89, InputTildePressed)
 	DECLARE_VAR(90, InputSpacePressed)
 
+	DECLARE_VAR(92, HotspotActiveRect)
+
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
