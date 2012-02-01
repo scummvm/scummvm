@@ -344,7 +344,6 @@ public:
  **/
 class PluginManagerUncached : public PluginManager {
 protected:
-	friend class PluginManager;
 	PluginList _allEnginePlugins;
 	PluginList::iterator _currentPlugin;
 
