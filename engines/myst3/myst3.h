@@ -99,6 +99,7 @@ public:
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
 
+	void dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 hoverFrame, uint16 itemVar);
 	void dragSymbol(uint16 var, uint16 id);
 	int16 openDialog(uint16 id);
 

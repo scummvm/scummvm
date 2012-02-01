@@ -164,6 +164,7 @@ Script::Script(Myst3Engine *vm):
 	OP_4(126, ifMouseIsInRect,				kValue,		kValue,		kValue,		kValue					);
 	OP_5(127, leverDrag,					kValue,		kValue,		kValue,		kValue, 	kVar		); // Six args
 	OP_5(130, leverDragXY,					kVar, 		kVar,		kValue,		kValue,		kValue		);
+	OP_5(131, itemDrag,						kVar, 		kValue,		kValue,		kValue,		kVar		);
 	OP_2(132, leverDragPositions,			kVar, 		kValue											); // Variable args
 	OP_5(134, runScriptWhileDragging,		kVar, 		kVar,		kValue,		kValue, 	kVar		); // Eight args
 	OP_3(135, chooseNextNode,				kCondition, kValue,		kValue								);
@@ -211,7 +212,9 @@ Script::Script(Myst3Engine *vm):
 	OP_3(185, drawFramesForVarEachTwoFrames,			kVar,		kValue,		kValue					);
 	OP_3(186, drawFramesForVarStartEndVarEachTwoFrames, kVar, 		kVar,		kVar					);
 	OP_1(187, runScript,					kEvalValue													);
+	OP_2(188, runScriptWithVar,				kEvalValue, kValue											);
 	OP_1(189, runCommonScript,				kValue														);
+	OP_2(190, runCommonScriptWithVar,		kEvalValue, kValue											);
 	OP_1(194, runPuzzle1,					kValue														);
 	OP_2(195, runPuzzle2,					kValue,		kValue											);
 	OP_3(196, runPuzzle3,					kValue,		kValue,		kValue								);
@@ -1517,7 +1520,7 @@ void Script::ifHeadingPitchInRect(Context &c, const Opcode &cmd) {
 		return;
 	}
 
-	if (cmd.args[1] > cmd.args[2]) {
+	if (cmd.args[3] > cmd.args[2]) {
 		// If heading in range
 		if (heading > cmd.args[2] && heading < cmd.args[3])
 			return;
@@ -1725,6 +1728,11 @@ void Script::leverDragXY(Context &c, const Opcode &cmd) {
 		if (script)
 			_vm->runScriptsFromNode(script);
 	} while (mousePressed);
+}
+
+void Script::itemDrag(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Drag item %d", cmd.op, cmd.args[4]);
+	_vm->dragItem(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
@@ -2229,8 +2237,25 @@ void Script::runScript(Context &c, const Opcode &cmd) {
 	_vm->runScriptsFromNode(node, _vm->_state->getLocationRoom());
 }
 
+void Script::runScriptWithVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run scripts from node %d with var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_state->setVar(26, cmd.args[1]);
+	uint16 node = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->runScriptsFromNode(node, _vm->_state->getLocationRoom());
+}
+
 void Script::runCommonScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run common script %d", cmd.op, cmd.args[0]);
+
+	_vm->runScriptsFromNode(cmd.args[0], 101, 1);
+}
+
+void Script::runCommonScriptWithVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run common script %d with var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_state->setVar(26, cmd.args[1]);
 
 	_vm->runScriptsFromNode(cmd.args[0], 101, 1);
 }

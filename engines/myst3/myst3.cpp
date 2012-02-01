@@ -885,6 +885,37 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 		_scriptEngine->run(&hovered->script);
 }
 
+void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 hoverFrame, uint16 itemVar) {
+	DragItem drag(this, movie);
+
+	_drawables.push_back(&drag);
+
+	_cursor->changeCursor(2);
+	_state->setVar(statusVar, 0);
+	_state->setVar(itemVar, 1);
+
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+
+	while (inputValidatePressed() && !shouldQuit()) {
+		processInput(true);
+
+		HotSpot *hovered = getHoveredHotspot(nodeData, itemVar);
+		drag.setFrame(hovered ? hoverFrame : frame);
+
+		drawFrame();
+	}
+
+	_drawables.pop_back();
+
+	HotSpot *hovered = getHoveredHotspot(nodeData, itemVar);
+	if (hovered) {
+		_scriptEngine->run(&hovered->script);
+	} else {
+		_state->setVar(statusVar, 1);
+		_state->setVar(itemVar, 0);
+	}
+}
+
 bool Myst3Engine::canLoadGameStateCurrently() {
 	return true;
 }

@@ -273,7 +273,8 @@ void Inventory::updateState() {
 
 DragItem::DragItem(Myst3Engine *vm, uint id):
 	_vm(vm),
-	_texture(0) {
+	_texture(0),
+	_frame(1) {
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DRAG", id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
@@ -294,6 +295,15 @@ DragItem::~DragItem() {
 void DragItem::drawOverlay() {
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
 	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture, 0.99);
+}
+
+void DragItem::setFrame(uint16 frame) {
+	if (frame != _frame) {
+		_frame = frame;
+		_bink.seekToFrame(frame - 1);
+		const Graphics::Surface *s = _bink.decodeNextFrame();
+		_texture->update(s);
+	}
 }
 
 Common::Rect DragItem::getPosition() {

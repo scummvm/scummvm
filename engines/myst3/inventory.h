@@ -91,6 +91,7 @@ public:
 	DragItem(Myst3Engine *vm, uint id);
 	~DragItem();
 	void drawOverlay();
+	void setFrame(uint16 frame);
 
 private:
 	Myst3Engine *_vm;
@@ -98,6 +99,7 @@ private:
 	Common::MemoryReadStream *_movieStream;
 	Video::SeekableBinkDecoder _bink;
 
+	uint16 _frame;
 	Texture *_texture;
 
 	Common::Rect getPosition();

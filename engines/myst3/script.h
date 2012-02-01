@@ -215,6 +215,7 @@ private:
 	DECLARE_OPCODE(leverDrag);
 	DECLARE_OPCODE(leverDragPositions);
 	DECLARE_OPCODE(leverDragXY);
+	DECLARE_OPCODE(itemDrag);
 	DECLARE_OPCODE(runScriptWhileDragging);
 	DECLARE_OPCODE(chooseNextNode);
 	DECLARE_OPCODE(goToNodeTransition);
@@ -261,7 +262,9 @@ private:
 	DECLARE_OPCODE(drawFramesForVarEachTwoFrames);
 	DECLARE_OPCODE(drawFramesForVarStartEndVarEachTwoFrames);
 	DECLARE_OPCODE(runScript);
+	DECLARE_OPCODE(runScriptWithVar);
 	DECLARE_OPCODE(runCommonScript);
+	DECLARE_OPCODE(runCommonScriptWithVar);
 	DECLARE_OPCODE(runPuzzle1);
 	DECLARE_OPCODE(runPuzzle2);
 	DECLARE_OPCODE(runPuzzle3);
