@@ -37,6 +37,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(48, ProjectorAngleY, true)
 	VAR(49, ProjectorAngleZoom, true)
 	VAR(50, ProjectorAngleBlur, true)
+	VAR(51, DraggedWeight, true)
 
 	VAR(57, DragEnded, true)
 	VAR(58, DragLeverSpeed, false)

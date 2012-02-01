@@ -47,6 +47,8 @@ private:
 
 	void tesla(int16 movie, int16 var, int16 move);
 
+	void weightDrag(uint16 var, uint16 movie);
+
 	void journalSaavedro(int16 move);
 	uint16 _journalSaavedroGetNode(uint16 chapter);
 	uint16 _journalSaavedroPageCount(uint16 chapter);

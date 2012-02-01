@@ -65,6 +65,7 @@ public:
 	DECLARE_VAR(48, ProjectorAngleY)
 	DECLARE_VAR(49, ProjectorAngleZoom)
 	DECLARE_VAR(50, ProjectorAngleBlur)
+	DECLARE_VAR(51, DraggedWeight)
 
 	DECLARE_VAR(57, DragEnded)
 	DECLARE_VAR(58, DragLeverSpeed)

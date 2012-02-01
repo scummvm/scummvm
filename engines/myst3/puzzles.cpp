@@ -43,6 +43,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 2:
 		tesla(arg0, arg1, arg2);
 		break;
+	case 7:
+		weightDrag(arg0, arg1);
+		break;
 	case 8:
 		journalSaavedro(arg0);
 		break;
@@ -273,6 +276,73 @@ void Puzzles::tesla(int16 movie, int16 var, int16 move) {
 			&& _vm->_state->getTeslaBottomAligned() == 1;
 
 	_vm->_state->setTeslaAllAligned(puzzleSolved);
+}
+
+void Puzzles::weightDrag(uint16 var, uint16 movie) {
+	if (var >= 429 && var <= 432) {
+		movie = _vm->_state->getVar(var);
+		_vm->_state->setVar(var, 0);
+		var = movie;
+	}
+
+	uint16 sound = 0;
+	if (var) {
+		switch (var) {
+		case 423:
+			movie = 1022;
+			sound = 921;
+			break;
+		case 425:
+			movie = 1023;
+			sound = 921;
+			break;
+		case 424:
+			movie = 1024;
+			sound = 922;
+			break;
+		case 427:
+			movie = 1025;
+			sound = 922;
+			break;
+		case 426:
+			movie = 1020;
+			sound = 920;
+			break;
+		case 428:
+			movie = 1021;
+			sound = 920;
+			break;
+		default:
+			break;
+		}
+
+		_vm->_state->setDraggedWeight(var);
+		_vm->dragItem(var, movie, 1, 2, 26);
+		_vm->_sound->play(sound, 25);
+	}
+
+	for (uint i = 0; i < 4; i++) {
+		int32 value = _vm->_state->getVar(429 + i);
+		uint16 frame = 0;
+		switch (value) {
+			case 423:
+			case 425:
+				frame = 2;
+				break;
+			case 424:
+			case 427:
+				frame = 3;
+				break;
+			case 426:
+			case 428:
+				frame = 1;
+				break;
+			default:
+				break;
+		}
+		_vm->_state->setVar(28 + i, frame);
+		_vm->_state->setVar(32 + i, frame != 0);
+	}
 }
 
 void Puzzles::journalSaavedro(int16 move) {
