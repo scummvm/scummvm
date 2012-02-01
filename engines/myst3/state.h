@@ -164,6 +164,8 @@ public:
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 
+	DECLARE_VAR(1327, DialogResult)
+
 	DECLARE_VAR(1337, MenuEscapePressed)
 	DECLARE_VAR(1338, MenuNextAction)
 	DECLARE_VAR(1339, MenuLoadBack)

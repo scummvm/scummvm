@@ -150,6 +150,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
+	VAR(1327, DialogResult, false)
+
 	VAR(1337, MenuEscapePressed, false)
 	VAR(1338, MenuNextAction, false)
 	VAR(1339, MenuLoadBack, false)

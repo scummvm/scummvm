@@ -279,6 +279,7 @@ private:
 	DECLARE_OPCODE(cursorSet);
 	DECLARE_OPCODE(cursorLock);
 	DECLARE_OPCODE(cursorUnlock);
+	DECLARE_OPCODE(dialogOpen);
 	DECLARE_OPCODE(newGame);
 
 };

@@ -373,8 +373,10 @@ void Myst3Engine::drawFrame() {
 		_gfx->setupCameraOrtho2D();
 	}
 
-	_node->update();
-	_node->draw();
+	if (_node) {
+		_node->update();
+		_node->draw();
+	}
 
 	for (uint i = 0; i < _movies.size(); i++) {
 		_movies[i]->update();

@@ -229,6 +229,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(242, cursorSet,					kValue														);
 	OP_0(243, cursorLock																				);
 	OP_0(244, cursorUnlock																				);
+	OP_1(248, dialogOpen,					kEvalValue													);
 	OP_0(249, newGame																					);
 
 #undef OP_0
@@ -2352,6 +2353,14 @@ void Script::cursorUnlock(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Unlock cursor", cmd.op);
 
 	_vm->_state->setCursorLocked(false);
+}
+
+void Script::dialogOpen(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Open dialog %d", cmd.op, cmd.args[0]);
+
+	uint16 dialog = _vm->_state->valueOrVarValue(cmd.args[0]);
+	int16 result = _vm->openDialog(dialog);
+	_vm->_state->setDialogResult(result + 1);
 }
 
 void Script::newGame(Context &c, const Opcode &cmd) {
