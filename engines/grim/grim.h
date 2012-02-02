@@ -152,6 +152,9 @@ public:
 
 	void changeHardwareState();
 
+	// Engine APIs
+	bool hasFeature(EngineFeature f) const;
+
 	Common::StringArray _listFiles;
 	Common::StringArray::const_iterator _listFilesIter;
 
