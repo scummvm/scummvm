@@ -132,7 +132,7 @@ void EMISound::setMusicState(int stateId) {
 		delete _music;
 		_music = NULL;
 	}
-	if (stateId == 0) {
+	if (stateId == 0 || _musicTable[stateId]._id != stateId) {
 		return;
 	}
 	Common::String filename;
@@ -163,22 +163,23 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 	MusicEntry *musicTable = new MusicEntry[15];
 	
 	TextSplitter *ts = new TextSplitter(data);
-	char *line;
-	ts->setLineNumber(3); // Skip top-comment
 	int id, x, y, sync;
 	char musicfilename[64];
 	char name[64];
-	line = ts->getCurrentLine();
-	while (ts->checkString("/*")) {
-		ts->nextLine();
-		ts->scanString(".cuebutton id %d x %d y %d sync %d \"%[^\"]64s", 5, &id, &x, &y, &sync, name);
-		ts->scanString(".playfile \"%[^\"]64s", 1, musicfilename);
-		musicTable[id]._id = id;
-		musicTable[id]._x = x;
-		musicTable[id]._y = y;
-		musicTable[id]._sync = sync;
-		musicTable[id]._name = name;
-		musicTable[id]._filename = musicfilename;
+	while (!ts->isEof()) {
+		while (!ts->checkString("*/")) {
+			while (!ts->checkString(".cuebutton"))
+				ts->nextLine();
+
+			ts->scanString(".cuebutton id %d x %d y %d sync %d \"%[^\"]64s", 5, &id, &x, &y, &sync, name);
+			ts->scanString(".playfile \"%[^\"]64s", 1, musicfilename);
+			musicTable[id]._id = id;
+			musicTable[id]._x = x;
+			musicTable[id]._y = y;
+			musicTable[id]._sync = sync;
+			musicTable[id]._name = name;
+			musicTable[id]._filename = musicfilename;
+		}
 		ts->nextLine();
 	}
 	delete ts;
@@ -194,16 +195,15 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	MusicEntry *musicTable = new MusicEntry[126];
 	
 	TextSplitter *ts = new TextSplitter(data);
-	char *line;
-	ts->setLineNumber(3); // Skip top-comment
 	int id, x, y, sync, trim;
 	char musicfilename[64];
-	//char name[64];
 	char type[16];
-	line = ts->getCurrentLine();
 	// Every block is followed by 3 lines of commenting/uncommenting, except the last.
 	while (!ts->isEof()) {
 		while (!ts->checkString("*/")) {
+			while (!ts->checkString(".cuebutton"))
+				ts->nextLine();
+
 			ts->scanString(".cuebutton id %d x %d y %d sync %d type %16s", 5, &id, &x, &y, &sync, type);
 			ts->scanString(".playfile trim %d \"%[^\"]64s", 2, &trim, musicfilename);
 			if (musicfilename[1] == '\\')
@@ -217,7 +217,6 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 			musicTable[id]._trim = trim;
 			musicTable[id]._filename = musicfilename;
 		}
-		ts->nextLine();
 		ts->nextLine();
 	}
 	delete ts;
