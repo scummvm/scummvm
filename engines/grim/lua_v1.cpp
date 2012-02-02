@@ -51,18 +51,7 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
-// Windows.h badness: Remove #defines to the following Win32 API MultiByte/Unicode functions.
-#ifdef GetDiskFreeSpace
-#undef GetDiskFreeSpace
-#endif
-
-#ifdef PlaySound
-#undef PlaySound
-#endif
-
 namespace Grim {
-
-#define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
 byte clamp_color(int c) {
 	if (c < 0)
@@ -146,7 +135,6 @@ void Lua_V1::FunctionName() {
 		break;
 	default:
 		{
-//             cout<<(void*)filename<<endl;
 			if (line == 0)
 				sprintf(buf, "main of %.100s", filename);
 			else if (line < 0)
@@ -425,7 +413,7 @@ void Lua_V1::GetPointSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushstring(result->getName());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
@@ -447,7 +435,7 @@ void Lua_V1::GetActorSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushstring(result->getName());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
@@ -467,19 +455,16 @@ void Lua_V1::IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	int numSectors = g_grim->getCurrSet()->getSectorCount();
-	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
-		if (strstr(sector->getName(), name)) {
-			if (sector->isPointInSector(actor->getPos())) {
-				lua_pushnumber(sector->getSectorId());
-				lua_pushstring(sector->getName());
-				lua_pushnumber(sector->getType());
-				return;
-			}
-		}
+
+	Sector *sector = g_grim->getCurrSet()->getSector(name);
+
+	if (sector && sector->isPointInSector(actor->getPos())) {
+		lua_pushnumber(sector->getSectorId());
+		lua_pushstring(sector->getName());
+		lua_pushnumber(sector->getType());
+	} else {
+		lua_pushnil();
 	}
-	lua_pushnil();
 }
 
 void Lua_V1::IsPointInSector() {
@@ -499,19 +484,15 @@ void Lua_V1::IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Math::Vector3d pos(x, y, z);
 
-	int numSectors = g_grim->getCurrSet()->getSectorCount();
-	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
-		if (strstr(sector->getName(), name)) {
-			if (sector->isPointInSector(pos)) {
-				lua_pushnumber(sector->getSectorId());
-				lua_pushstring(sector->getName());
-				lua_pushnumber(sector->getType());
-				return;
-			}
-		}
+	Sector *sector = g_grim->getCurrSet()->getSector(name);
+
+	if (sector && sector->isPointInSector(pos)) {
+		lua_pushnumber(sector->getSectorId());
+		lua_pushstring(sector->getName());
+		lua_pushnumber(sector->getType());
+	} else {
+		lua_pushnil();
 	}
-	lua_pushnil();
 }
 
 void Lua_V1::GetSectorOppositeEdge() {
@@ -529,31 +510,26 @@ void Lua_V1::GetSectorOppositeEdge() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	int numSectors = g_grim->getCurrSet()->getSectorCount();
-	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
-		if (strmatch(sector->getName(), name)) {
-			if (sector->getNumVertices() != 4)
-				warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
-			Math::Vector3d* vertices = sector->getVertices();
-			Sector::ExitInfo e;
+	Sector *sector = g_grim->getCurrSet()->getSector(name);
+	if (sector) {
+		if (sector->getNumVertices() != 4)
+			warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
+		Math::Vector3d* vertices = sector->getVertices();
+		Sector::ExitInfo e;
 
-			sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
-			float frac = (e.exitPoint - vertices[e.edgeVertex + 1]).getMagnitude() / e.edgeDir.getMagnitude();
-			e.edgeVertex -= 2;
-			if (e.edgeVertex < 0)
-				e.edgeVertex += sector->getNumVertices();
-			Math::Vector3d edge = vertices[e.edgeVertex + 1] - vertices[e.edgeVertex];
-			Math::Vector3d p = vertices[e.edgeVertex] + edge * frac;
-			lua_pushnumber(p.x());
-			lua_pushnumber(p.y());
-			lua_pushnumber(p.z());
-
-			return;
-		}
+		sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
+		float frac = (e.exitPoint - vertices[e.edgeVertex + 1]).getMagnitude() / e.edgeDir.getMagnitude();
+		e.edgeVertex -= 2;
+		if (e.edgeVertex < 0)
+			e.edgeVertex += sector->getNumVertices();
+		Math::Vector3d edge = vertices[e.edgeVertex + 1] - vertices[e.edgeVertex];
+		Math::Vector3d p = vertices[e.edgeVertex] + edge * frac;
+		lua_pushnumber(p.x());
+		lua_pushnumber(p.y());
+		lua_pushnumber(p.z());
+	} else {
+		lua_pushnil();
 	}
-
-	lua_pushnil();
 }
 
 void Lua_V1::MakeSectorActive() {
@@ -569,17 +545,15 @@ void Lua_V1::MakeSectorActive() {
 	}
 
 	bool visible = !lua_isnil(lua_getparam(2));
-	int numSectors = g_grim->getCurrSet()->getSectorCount();
+
 	if (lua_isstring(sectorObj)) {
 		const char *name = lua_getstring(sectorObj);
-		for (int i = 0; i < numSectors; i++) {
-			Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
-			if (strmatch(sector->getName(), name)) {
-				sector->setVisible(visible);
-				return;
-			}
+		Sector *sector = g_grim->getCurrSet()->getSector(name);
+		if (sector) {
+			sector->setVisible(visible);
 		}
 	} else if (lua_isnumber(sectorObj)) {
+		int numSectors = g_grim->getCurrSet()->getSectorCount();
 		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->getCurrSet()->getSectorBase(i);

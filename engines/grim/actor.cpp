@@ -1236,20 +1236,15 @@ void Actor::setShadowPlane(const char *n) {
 void Actor::addShadowPlane(const char *n, Set *scene, int shadowId) {
 	assert(shadowId != -1);
 
-	int numSectors = scene->getSectorCount();
-
-	for (int i = 0; i < numSectors; i++) {
+	Sector *sector = scene->getSector(n);
+	if (sector) {
 		// Create a copy so we are sure it will not be deleted by the Set destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
-		Sector *sector = scene->getSectorBase(i);
-		if (!strcmp(sector->getName(), n)) {
-			Plane p = { scene->getName(), new Sector(*sector) };
-			_shadowArray[shadowId].planeList.push_back(p);
-			g_grim->flagRefreshShadowMask(true);
-			return;
-		}
+		Plane p = { scene->getName(), new Sector(*sector) };
+		_shadowArray[shadowId].planeList.push_back(p);
+		g_grim->flagRefreshShadowMask(true);
 	}
 }
 

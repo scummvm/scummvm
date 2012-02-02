@@ -692,6 +692,16 @@ Sector *Set::getSectorBase(int id) {
 		return NULL;
 }
 
+Sector *Set::getSector(const Common::String &name) {
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors[i];
+		if (name == sector->getName()) {
+			return sector;
+		}
+	}
+	return NULL;
+}
+
 void Set::setSoundParameters(int minVolume, int maxVolume) {
 	_minVolume = minVolume;
 	_maxVolume = maxVolume;
