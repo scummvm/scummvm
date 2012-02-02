@@ -44,7 +44,13 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 		tesla(arg0, arg1, arg2);
 		break;
 	case 3:
-		ringControl();
+		resonanceRingControl();
+		break;
+	case 4:
+		resonanceRingsLaunchBall();
+		break;
+	case 5:
+		resonanceRingsLights();
 		break;
 	case 7:
 		weightDrag(arg0, arg1);
@@ -281,8 +287,8 @@ void Puzzles::tesla(int16 movie, int16 var, int16 move) {
 	_vm->_state->setTeslaAllAligned(puzzleSolved);
 }
 
-void Puzzles::ringControl() {
-	static const uint16 frames[] = { 0, 24, 1, 5, 10, 15, 0, 0, 0, 38 };
+void Puzzles::resonanceRingControl() {
+	static const uint16 frames[] = { 0, 24, 1, 5, 10, 15, 0, 0, 0 };
 
 	uint16 startPos = _vm->_state->getVar(29);
 	uint16 destPos = _vm->_state->getVar(27);
@@ -310,6 +316,146 @@ void Puzzles::ringControl() {
 	}
 	if (startFrame)
 		_drawForVarHelper(28, startFrame, destFrame);
+}
+
+void Puzzles::resonanceRingsLaunchBall() {
+	struct TrackFrames {
+		uint16 ringFrame;
+		uint16 var;
+		uint16 num;
+		uint16 shatterStartFrame;
+		uint16 shatterEndFrame;
+	};
+
+	static const TrackFrames tracks[] = {
+		{ 38, 436, 1, 182, 190 },
+		{ 74, 434, 2, 194, 214 },
+		{ 104, 437, 3, 215, 224 },
+		{ 138, 435, 4, 225, 234 },
+		{ 166, 438, 5, 235, 244 },
+		{ 0, 0, 0, 0, 0 }
+	};
+
+	struct LightFrames {
+		uint16 startFrame;
+		uint16 endFrame;
+		uint16 num;
+	};
+
+	static const LightFrames lights[] = {
+		{ 26, 44, 1 },
+		{ 66, 85, 2 },
+		{ 89, 118, 3 },
+		{ 126, 150, 4 },
+		{ 154, 180, 5 }
+	};
+
+	bool ballShattered = false;
+	bool lastIsOnLightButton = false;
+	int32 lightStatus = 0;
+	uint part = 0;
+	uint16 buttonVar = 0;
+	int32 ballMoviePlaying;
+	int32 boardMoviePlaying;
+
+	do {
+		_vm->processInput(true);
+		_vm->drawFrame();
+
+		ballMoviePlaying = _vm->_state->getVar(27);
+		boardMoviePlaying = _vm->_state->getVar(34);
+
+		if (ballMoviePlaying && tracks[part].ringFrame) {
+			int32 currentFrame = _vm->_state->getVar(30);
+
+			if (!ballShattered && currentFrame >= tracks[part].ringFrame) {
+				int32 value = _vm->_state->getVar(tracks[part].var);
+
+				if (value == tracks[part].num) {
+					// Correct ring order, go to next track part
+					part++;
+				} else {
+					// Incorrect ring order, shatter ball
+					ballShattered = true;
+					_vm->_sound->play(1010, 50);
+
+					_vm->_state->setVar(28, tracks[part].shatterStartFrame);
+					_vm->_state->setVar(29, tracks[part].shatterEndFrame);
+					_vm->_state->setVar(31, tracks[part].shatterStartFrame);
+				}
+			}
+		}
+
+		bool isOnLightButton = false;
+
+		const LightFrames *frames = 0;
+		int32 currentLightFrame = _vm->_state->getVar(33);
+
+		// Look is the mini ball is on a light button
+		for (uint j = 0; j < ARRAYSIZE(lights); j++)
+			if (currentLightFrame >= lights[j].startFrame && currentLightFrame <= lights[j].endFrame) {
+				frames = &lights[j];
+				break;
+			}
+
+		// If ball on light button, turn it off
+		if (frames) {
+			for (uint j = 0; j < 5; j++) {
+				int32 ringValue = _vm->_state->getVar(434 + j);
+				if (ringValue == frames->num)
+					_vm->_state->setVar(38 + j, true);
+			}
+
+			isOnLightButton = true;
+			buttonVar = 438 + frames->num;
+		}
+
+		// Restore previous light value
+		if (lastIsOnLightButton != isOnLightButton) {
+			lastIsOnLightButton = isOnLightButton;
+			if (isOnLightButton) {
+				lightStatus = _vm->_state->getVar(buttonVar);
+				_vm->_state->setVar(buttonVar, 0);
+			} else {
+				_vm->_state->setVar(buttonVar, lightStatus);
+
+				for (uint j = 0; j < 5; j++)
+					_vm->_state->setVar(38 + j, false);
+			}
+
+			// TODO: Run sound script (same as opcode 200, args 100, 2)
+		}
+	} while (ballMoviePlaying || boardMoviePlaying);
+
+	_vm->_state->setResonanceRingsSolved(!ballShattered);
+}
+
+void Puzzles::resonanceRingsLights() {
+	// Turn off all lights
+	for (uint i = 0; i < 5; i++)
+		_vm->_state->setVar(439 + i, false);
+
+	// For each button / ring value
+	for (uint i = 0; i < 5; i++) {
+		// For each light
+		for (uint j = 0; j < 5; j++) {
+			// Ring selector value
+			uint32 ringValue = _vm->_state->getVar(434 + j);
+			if (ringValue == i + 1) {
+				// Button state
+				uint32 buttonState = _vm->_state->getVar(43 + i);
+				if (buttonState) {
+					uint32 oldValue = _vm->_state->getVar(444 + i);
+					_vm->_state->setVar(439 + i, oldValue);
+					_vm->_state->setVar(38 + j, true);
+				} else {
+					_vm->_state->setVar(38 + j, false);
+				}
+			}
+		}
+	}
+
+	// TODO: Run sound script (same as opcode 200, args 100, 2)
 }
 
 void Puzzles::weightDrag(uint16 var, uint16 movie) {

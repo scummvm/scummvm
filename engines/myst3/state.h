@@ -162,6 +162,8 @@ public:
 	DECLARE_VAR(332, TeslaBottomAligned)
 	DECLARE_VAR(333, TeslaMovieStart)
 
+	DECLARE_VAR(444, ResonanceRingsSolved)
+
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 

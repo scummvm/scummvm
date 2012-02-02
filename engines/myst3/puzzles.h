@@ -47,7 +47,9 @@ private:
 
 	void tesla(int16 movie, int16 var, int16 move);
 
-	void ringControl();
+	void resonanceRingControl();
+	void resonanceRingsLaunchBall();
+	void resonanceRingsLights();
 
 	void weightDrag(uint16 var, uint16 movie);
 

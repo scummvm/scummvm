@@ -148,6 +148,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(332, TeslaBottomAligned, false)
 	VAR(333, TeslaMovieStart, false)
 
+	VAR(444, ResonanceRingsSolved, false)
+
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
