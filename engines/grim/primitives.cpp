@@ -34,12 +34,9 @@ PrimitiveObject::PrimitiveObject() :
 	PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')>() {
 	_filled = false;
 	_type = 0;
-	_bitmap = NULL;
 }
 
 PrimitiveObject::~PrimitiveObject() {
-	if (_bitmap && _type == 2)
-		delete _bitmap;
 }
 
 void PrimitiveObject::saveState(SaveGame *savedState) const {
@@ -49,11 +46,8 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 
 	savedState->writeLEUint32(_filled);
 
-	if (_bitmap) {
-		savedState->writeLESint32(_bitmap->getId());
-	} else {
-		savedState->writeLESint32(0);
-	}
+	//SAVECHANGE
+	savedState->writeLESint32(0);
 
 	savedState->writeLEUint16(_p1.x);
 	savedState->writeLEUint16(_p1.y);
@@ -72,7 +66,8 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 
 	_filled = savedState->readLEUint32();
 
-	_bitmap = Bitmap::getPool().getObject(savedState->readLESint32());
+	//SAVECHANGE
+	savedState->readLESint32();
 
 	_p1.x = savedState->readLEUint16();
 	_p1.y = savedState->readLEUint16();
@@ -92,14 +87,6 @@ void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, const 
 	_p2 = p2;
 	_color = color;
 	_filled = filled;
-}
-
-void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*transparent*/) {
-	_type = BITMAP;
-	_bitmap = bitmap;
-	_bitmap->setX(p.x);
-	_bitmap->setY(p.y);
-	// transparent: what to do ?
 }
 
 void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, const Color &color) {
@@ -123,8 +110,6 @@ void PrimitiveObject::draw() {
 
 	if (_type == RECTANGLE)
 		g_driver->drawRectangle(this);
-	else if (_type == BITMAP)
-		g_driver->drawBitmap(_bitmap);
 	else if (_type == LINE)
 		g_driver->drawLine(this);
 	else if (_type == POLYGON)

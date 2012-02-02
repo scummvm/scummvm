@@ -815,7 +815,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	}
 }
 
-void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
+void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y) {
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
 		return;
@@ -828,10 +828,10 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 
 	if (bitmap->getFormat() == 1)
 		blit(bitmap->getPixelFormat(num), &b[num], (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
-			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
+			x, y, bitmap->getWidth(), bitmap->getHeight(), true);
 	else
 		blit(bitmap->getPixelFormat(num), NULL, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
-			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
+			x, y, bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
 void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {

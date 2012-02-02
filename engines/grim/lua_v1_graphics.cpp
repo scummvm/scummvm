@@ -60,7 +60,7 @@ void Lua_V1::GetImage() {
 		return;
 	}
 	const char *bitmapName = lua_getstring(nameObj);
-	Bitmap *b = g_resourceloader->loadBitmap(bitmapName);
+	Bitmap *b = Bitmap::create(bitmapName);
 	lua_pushusertag(b->getId(), MKTAG('V','B','U','F'));
 }
 
@@ -85,9 +85,7 @@ void Lua_V1::BlastImage() {
 	int x = (int)lua_getnumber(xObj);
 	int y = (int)lua_getnumber(yObj);
 //	bool transparent = getbool(4); // TODO transparent/masked copy into display
-	bitmap->setX(x);
-	bitmap->setY(y);
-	g_driver->drawBitmap(bitmap);
+	bitmap->draw(x, y);
 }
 
 void Lua_V1::CleanBuffer() {

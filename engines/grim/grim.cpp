@@ -256,11 +256,11 @@ Common::Error GrimEngine::run() {
 
 	Bitmap *splash_bm = NULL;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
-		splash_bm = g_resourceloader->loadBitmap("splash.bm");
+		splash_bm = Bitmap::create("splash.bm");
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
-		splash_bm = g_resourceloader->loadBitmap("splash.til");
+		splash_bm = Bitmap::create("splash.til");
 	else if (getGamePlatform() == Common::kPlatformPS2 && getGameType() == GType_MONKEY4)
-		splash_bm = g_resourceloader->loadBitmap("load.tga");
+		splash_bm = Bitmap::create("load.tga");
 
 	g_driver->clearScreen();
 
@@ -362,7 +362,7 @@ void GrimEngine::handleDebugLoadResource() {
 	if (strstr(buf, ".key"))
 		resource = (void *)g_resourceloader->loadKeyframe(buf);
 	else if (strstr(buf, ".zbm") || strstr(buf, ".bm"))
-		resource = (void *)g_resourceloader->loadBitmap(buf);
+		resource = (void *)Bitmap::create(buf);
 	else if (strstr(buf, ".cmp"))
 		resource = (void *)g_resourceloader->loadColormap(buf);
 	else if (strstr(buf, ".cos"))

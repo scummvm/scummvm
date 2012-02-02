@@ -32,7 +32,6 @@
 namespace Grim {
 
 class AnimationEmi;
-class Bitmap;
 class CMap;
 class Costume;
 class Font;
@@ -47,7 +46,6 @@ class Skeleton;
 class Lab;
 
 typedef ObjectPtr<Material> MaterialPtr;
-typedef ObjectPtr<Bitmap> BitmapPtr;
 typedef ObjectPtr<Model> ModelPtr;
 typedef ObjectPtr<CMap> CMapPtr;
 typedef ObjectPtr<KeyframeAnim> KeyframeAnimPtr;
@@ -59,7 +57,6 @@ public:
 	ResourceLoader();
 	~ResourceLoader();
 
-	Bitmap *loadBitmap(const Common::String &fname);
 	CMap *loadColormap(const Common::String &fname);
 	Costume *loadCostume(const Common::String &fname, Costume *prevCost);
 	Font *loadFont(const Common::String &fname);

@@ -42,10 +42,14 @@ namespace Grim {
  */
 class BitmapData {
 public:
-	BitmapData(const Common::String &fname, Common::SeekableReadStream *data);
+	BitmapData(const Common::String &fname);
 	BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname);
 	BitmapData();
 	~BitmapData();
+
+	void freeData();
+
+	void load();
 
 	/**
 	 * Loads an EMI TILE-bitmap.
@@ -53,11 +57,11 @@ public:
 	 * @param data		the data for the TILE.
 	 * @param len		the length of the data.
 	 */
-	bool loadTile(const Common::String &fname, Common::SeekableReadStream *data);
-	bool loadGrimBm(const Common::String &fname, Common::SeekableReadStream *data);
-	bool loadTGA(const Common::String &fname, Common::SeekableReadStream *data);
+	bool loadTile(Common::SeekableReadStream *data);
+	bool loadGrimBm(Common::SeekableReadStream *data);
+	bool loadTGA(Common::SeekableReadStream *data);
 
-	static BitmapData *getBitmapData(const Common::String &fname, Common::SeekableReadStream *data);
+	static BitmapData *getBitmapData(const Common::String &fname);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	const Graphics::PixelBuffer &getImageData(int num) const;
@@ -85,7 +89,8 @@ public:
 	int _colorFormat;
 	void *_texIds;
 	bool _hasTransparency;
-	char _filename[32];
+	bool _loaded;
+	bool _keepData;
 
 	int _refCount;
 
@@ -102,13 +107,16 @@ public:
 	 * @param data		the actual data to construct from
 	 * @param len		the length of the data
 	 */
-	Bitmap(const Common::String &filename, Common::SeekableReadStream *data);
+	Bitmap(const Common::String &filename);
 	Bitmap(const Graphics::PixelBuffer &buf, int width, int height, const char *filename);
 	Bitmap();
 
+	static Bitmap *create(const Common::String &filename);
+
 	const Common::String &getFilename() const { return _data->_fname; }
 
-	void draw() const;
+	void draw();
+	void draw(int x, int y);
 
 	/**
 	 * Set which image in an animated bitmap to use
@@ -123,10 +131,6 @@ public:
 	int getFormat() const { return _data->_format; }
 	int getWidth() const { return _data->_width; }
 	int getHeight() const { return _data->_height; }
-	int getX() const { return _x; }
-	int getY() const { return _y; }
-	void setX(int xPos) { _x = xPos; }
-	void setY(int yPos) { _y = yPos; }
 
 	const Graphics::PixelBuffer &getData(int num) const { return _data->getImageData(num); }
 	const Graphics::PixelBuffer &getData() const { return getData(_currImage); }
@@ -148,7 +152,6 @@ private:
 	 * _currImage==0 means a null image is chosen.
 	 */
 	int _currImage;
-	int _x, _y;
 };
 
 } // end of namespace Grim

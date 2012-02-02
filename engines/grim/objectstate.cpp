@@ -32,9 +32,9 @@ namespace Grim {
 ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
 		PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')>(), _setupID(setup), _pos(position), _visibility(false) {
 
-	_bitmap = g_resourceloader->loadBitmap(bitmap);
+	_bitmap = Bitmap::create(bitmap);
 	if (zbitmap) {
-		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
+		_zbitmap = Bitmap::create(zbitmap);
 	} else
 		_zbitmap = NULL;
 }
