@@ -41,7 +41,8 @@ Database::Database() :
 		"Myst3 Exile JP",
 		"Myst III Exile for Mac OS X",
 		"Myst III Exile for Mac OS 8-9",
-		"SLUS_204.34"
+		"SLUS_204.34",
+		"SLES_507.26"
 	};
 
 	// Game versions database
@@ -65,7 +66,8 @@ Database::Database() :
 			{ "1.2 Japanese",   Common::kPlatformMacintosh, kFlagNone,                    "506758f57d9a903549fa6bd34a189fae", 0,        0x11230,  0x1116C,  0x112F8 },
 			{ "1.27 English",   Common::kPlatformMacintosh, kFlagNone,                    "675e469044ef406c92be36be5ebe92a3", 0,        0x11934,  0x11864,  0x11A10 },
 			{ "1.27 English",   Common::kPlatformMacintosh, kFlagNone,                    "5951edd640c0455555280515974c4008", 0,        0x11378,  0x112A8,  0x11454 },
-			{ "English",        Common::kPlatformPS2,       kFlagNone,                    "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 }
+			{ "English",        Common::kPlatformPS2,       kFlagNone,                    "c6d6dadac5ae3b882ed276bde7e92031", 0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 },
+			{ "English",        Common::kPlatformPS2,       kFlagNone,                    "dc03e8cb6a638df2184a6004fd74760e", 0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0 }
 	};
 
 	// First, see what executable files we have
