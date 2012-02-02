@@ -87,14 +87,12 @@ public:
 	};
 
 private:
-	Common::SeekableReadStream *loadFile(Common::String &filename);  //TODO: make it const again at next scummvm sync
+	Common::SeekableReadStream *loadFile(const Common::String &filename);  //TODO: make it const again at next scummvm sync
 	Common::SeekableReadStream *getFileFromCache(const Common::String &filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename);
 	void putIntoCache(const Common::String &fname, byte *res, uint32 len);
-	void loadPatches();
 
 	Common::SearchSet _files;
-	Common::List<Common::String> _patches;
 
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;
