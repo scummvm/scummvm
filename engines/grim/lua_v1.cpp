@@ -51,18 +51,7 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
-// Windows.h badness: Remove #defines to the following Win32 API MultiByte/Unicode functions.
-#ifdef GetDiskFreeSpace
-#undef GetDiskFreeSpace
-#endif
-
-#ifdef PlaySound
-#undef PlaySound
-#endif
-
 namespace Grim {
-
-#define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
 byte clamp_color(int c) {
 	if (c < 0)
@@ -146,7 +135,6 @@ void Lua_V1::FunctionName() {
 		break;
 	default:
 		{
-//             cout<<(void*)filename<<endl;
 			if (line == 0)
 				sprintf(buf, "main of %.100s", filename);
 			else if (line < 0)
@@ -425,7 +413,7 @@ void Lua_V1::GetPointSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushstring(result->getName());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
@@ -447,7 +435,7 @@ void Lua_V1::GetActorSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushstring(result->getName());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
