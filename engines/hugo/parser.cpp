@@ -271,7 +271,7 @@ void Parser::keyHandler(Common::Event event) {
 	status_t &gameStatus = _vm->getGameStatus();
 	uint16 nChar = event.kbd.keycode;
 
-	if ((event.kbd.hasFlags(Common::KBD_ALT)) || (event.kbd.hasFlags(Common::KBD_SCRL)))
+	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))
 		return;
 
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
