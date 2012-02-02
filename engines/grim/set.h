@@ -88,6 +88,7 @@ public:
 	int getSectorCount() { return _numSectors; }
 
 	Sector *getSectorBase(int id);
+	Sector *getSector(const Common::String &name);
 
 	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
 	void findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPt);
