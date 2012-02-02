@@ -383,7 +383,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 	// We use the light target and render mode to improve the looks of the
 	// glyphs. It is most noticable in FreeSansBold.ttf, where otherwise the
 	// 't' glyph looks like it is cut off on the right side.
-	if (FT_Load_Glyph(_face, slot, (_monochrome ? FT_LOAD_MONOCHROME : FT_LOAD_TARGET_LIGHT)))
+	if (FT_Load_Glyph(_face, slot, (_monochrome ? FT_LOAD_TARGET_MONO : FT_LOAD_TARGET_LIGHT)))
 		return false;
 
 	if (FT_Render_Glyph(_face->glyph, (_monochrome ? FT_RENDER_MODE_MONO : FT_RENDER_MODE_LIGHT)))
