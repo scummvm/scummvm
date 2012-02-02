@@ -40,13 +40,11 @@ public:
 
 	typedef enum {
 		RECTANGLE = 1,
-		BITMAP,
 		LINE,
 		POLYGON
 	} PrimType;
 
 	void createRectangle(Common::Point p1, Common::Point p2, const Color &color, bool filled);
-	void createBitmap(Bitmap *bitmap, Common::Point p, bool transparent);
 	void createLine(Common::Point p1, Common::Point p2, const Color &color);
 	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, const Color &color);
 	Common::Point getP1() { return _p1; }
@@ -58,8 +56,6 @@ public:
 	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
-	bool isBitmap() { return _type == BITMAP; }
-	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
 	void saveState(SaveGame *state) const;
     bool restoreState(SaveGame *state);
 
@@ -68,7 +64,6 @@ private:
 	Color _color;
 	bool _filled;
 	int _type;
-	Bitmap::Ptr _bitmap;
 
 	friend class GrimEngine;
 };
