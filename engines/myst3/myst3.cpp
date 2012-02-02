@@ -91,6 +91,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/NTSC");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/PAL");
 }
 
 Myst3Engine::~Myst3Engine() {

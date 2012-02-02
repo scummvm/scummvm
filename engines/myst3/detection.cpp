@@ -72,6 +72,20 @@ static const Myst3GameDescription gameDescriptions[] = {
 		},
 		0
 	},
+	
+	{
+		// Myst 3 PS2 (PAL)
+		{
+			"myst3",
+			0,
+			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
+			Common::UNK_LANG,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
