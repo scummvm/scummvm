@@ -293,22 +293,6 @@ void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32
 	_cacheDirty = true;
 }
 
-Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
-	Common::String fname = filename;
-	fname.toLowercase();
-
-	Common::SeekableReadStream *stream = openNewStreamFile(fname.c_str(), true);
-	if (!stream) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-		warning("Could not find bitmap %s", filename.c_str());
-		return NULL;
-	}
-
-	Bitmap *result = new Bitmap(filename, stream);
-	delete stream;
-
-	return result;
-}
-
 CMap *ResourceLoader::loadColormap(const Common::String &filename) {
 	Common::SeekableReadStream *stream = openNewStreamFile(filename.c_str());
 	if (!stream) {

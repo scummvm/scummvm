@@ -94,7 +94,7 @@ char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 
 #endif
 
-BitmapData *BitmapData::getBitmapData(const Common::String &fname, Common::SeekableReadStream *data) {
+BitmapData *BitmapData::getBitmapData(const Common::String &fname) {
 	Common::String str(fname);
 	if (_bitmaps && _bitmaps->contains(str)) {
 		BitmapData *b = (*_bitmaps)[str];
@@ -102,7 +102,7 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname, Common::Seeka
 		return b;
 	}
 
-	BitmapData *b = new BitmapData(fname, data);
+	BitmapData *b = new BitmapData(fname);
 	if (!_bitmaps) {
 		_bitmaps = new Common::HashMap<Common::String, BitmapData *>();
 	}
@@ -110,28 +110,38 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname, Common::Seeka
 	return b;
 }
 
-BitmapData::BitmapData(const Common::String &fname, Common::SeekableReadStream *data) {
+BitmapData::BitmapData(const Common::String &fname) {
 	_fname = fname;
 	_refCount = 1;
 	_data = 0;
+	_loaded = false;
+	_keepData = true;
+}
+
+void BitmapData::load() {
+	if (_loaded) {
+		return;
+	}
+	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(_fname.c_str());
 
 	uint32 tag = data->readUint32BE();
 	switch(tag) {
 		case(MKTAG('B','M',' ',' ')):				//Grim bitmap
-			loadGrimBm(fname, data);
+			loadGrimBm(data);
 			break;
 		case(MKTAG('T','I','L','0')):				// MI4 bitmap
-			loadTile(fname, data);
+			loadTile(data);
 			break;
 		default:
-			if (!loadTGA(fname, data))	// Try to load as TGA.
+			if (!loadTGA(data))	// Try to load as TGA.
 				Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
 			break;
 	}
+	delete data;
+	_loaded = true;
 }
 
-
-bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStream *data) {
+bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	uint32 tag2 = data->readUint32BE();
 	if(tag2 != (MKTAG('F','\0','\0','\0')))
 		return false;
@@ -175,7 +185,7 @@ bool BitmapData::loadGrimBm(const Common::String &fname, Common::SeekableReadStr
 			bool success = decompress_codec3(compressed, (char *)_data[i].getRawBuffer(), _bpp / 8 * _width * _height);
 			delete[] compressed;
 			if (!success)
-				warning(".. when loading image %s.\n", fname.c_str());
+				warning(".. when loading image %s.\n", _fname.c_str());
 		} else
 			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
 
@@ -216,6 +226,8 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_data = new Graphics::PixelBuffer[_numImages];
 	_data[0].create(buf.getFormat(), w * h, DisposeAfterUse::YES);
 	_data[0].copyBuffer(0, w * h, buf);
+	_loaded = true;
+	_keepData = true;
 
 	g_driver->createBitmap(this);
 }
@@ -226,10 +238,9 @@ BitmapData::BitmapData() :
 }
 
 BitmapData::~BitmapData() {
-	if (_data) {
-		delete[] _data;
-		_data = NULL;
-
+	_keepData = false;
+	freeData();
+	if (_loaded) {
 		g_driver->destroyBitmap(this);
 	}
 	if (_bitmaps) {
@@ -243,7 +254,14 @@ BitmapData::~BitmapData() {
 	}
 }
 
-bool BitmapData::loadTGA(const Common::String &fname, Common::SeekableReadStream *data) {
+void BitmapData::freeData() {
+	if (!_keepData) {
+		delete[] _data;
+		_data = NULL;
+	}
+}
+
+bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 	data->seek(0, SEEK_SET);
 	if (data->readByte() != 0)	// Verify that description-field is empty
 		return false;
@@ -301,7 +319,7 @@ bool BitmapData::loadTGA(const Common::String &fname, Common::SeekableReadStream
 	return true;
 }
 
-bool BitmapData::loadTile(const Common::String &fname, Common::SeekableReadStream *o) {
+bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 #ifdef ENABLE_MONKEY4
 	_x = 0;
 	_y = 0;
@@ -371,19 +389,15 @@ const Graphics::PixelBuffer &BitmapData::getImageData(int num) const {
 
 // Bitmap
 
-Bitmap::Bitmap(const Common::String &fname, Common::SeekableReadStream *data) :
+Bitmap::Bitmap(const Common::String &fname) :
 		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
-	_data = BitmapData::getBitmapData(fname, data);
-	_x = _data->_x;
-	_y = _data->_y;
+	_data = BitmapData::getBitmapData(fname);
 	_currImage = 1;
 }
 
 Bitmap::Bitmap(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) :
 		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
 	_data = new BitmapData(buf, w, h, fname);
-	_x = _data->_x;
-	_y = _data->_y;
 	_currImage = 1;
 }
 
@@ -392,32 +406,52 @@ Bitmap::Bitmap() :
 	_data = new BitmapData();
 }
 
+Bitmap *Bitmap::create(const Common::String &filename) {
+	if (!g_resourceloader->getFileExists(filename)) {
+		warning("Could not find bitmap %s", filename.c_str());
+		return NULL;
+	}
+	Bitmap *b = new Bitmap(filename);
+	return b;
+}
+
 void Bitmap::saveState(SaveGame *state) const {
 	state->writeString(getFilename());
 
 	state->writeLESint32(getActiveImage());
-	state->writeLESint32(getX());
-	state->writeLESint32(getY());
+
+	//SAVECHANGE
+	state->writeLESint32(0);
+	state->writeLESint32(0);
 }
 
 void Bitmap::restoreState(SaveGame *state) {
 	freeData();
 
 	Common::String fname = state->readString();
-	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(fname.c_str(), true);
-	_data = BitmapData::getBitmapData(fname, data);
-	delete data;
+	_data = BitmapData::getBitmapData(fname);
 
 	_currImage = state->readLESint32();
-	_x = state->readLESint32();
-	_y = state->readLESint32();
+
+	//SAVECHANGE
+	state->readLESint32();
+	state->readLESint32();
 }
 
-void Bitmap::draw() const {
+void Bitmap::draw() {
+	_data->load();
 	if (_currImage == 0)
 		return;
 
-	g_driver->drawBitmap(this);
+	g_driver->drawBitmap(this, _data->_x, _data->_y);
+}
+
+void Bitmap::draw(int x, int y) {
+	_data->load();
+	if (_currImage == 0)
+		return;
+
+	g_driver->drawBitmap(this, x, y);
 }
 
 void Bitmap::setActiveImage(int n) {

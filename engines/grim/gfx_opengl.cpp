@@ -725,10 +725,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 		delete[] texData;
+		bitmap->freeData();
 	}
 }
 
-void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
+void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
 		return;
@@ -757,7 +758,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
+			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)bitmap->getData(bitmap->getActiveImage() - 1).getRawBuffer());
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
@@ -779,10 +780,10 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	}
 
 	glEnable(GL_SCISSOR_TEST);
-	glScissor((int)(bitmap->getX() * _scaleW), _screenHeight - (int)(((bitmap->getY() + bitmap->getHeight())) * _scaleH), (int)(bitmap->getWidth() * _scaleW), (int)(bitmap->getHeight() * _scaleH));
+	glScissor((int)(dx * _scaleW), _screenHeight - (int)(((dy + bitmap->getHeight())) * _scaleH), (int)(bitmap->getWidth() * _scaleW), (int)(bitmap->getHeight() * _scaleH));
 	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getActiveImage() - 1);
-	for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
-		for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
+	for (int y = dy; y < (dy + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
+		for (int x = dx; x < (dx + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
 			textures = (GLuint *)bitmap->getTexIds();
 			glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 			glBegin(GL_QUADS);
