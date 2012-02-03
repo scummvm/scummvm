@@ -175,7 +175,7 @@ public:
 	 *
 	 * An observer is supposed to eat the event, with returning true, when
 	 * it wants to prevent other observers from receiving the event.
-	 * An usage example here is the keymapper:
+	 * A usage example here is the keymapper:
 	 * If it processes an Event, it should 'eat' it and create a new
 	 * event, which the EventDispatcher will then catch.
 	 *
