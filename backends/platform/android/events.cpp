@@ -216,6 +216,8 @@ static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
 
+static const int kQueuedInputEventDelay = 50;
+
 void OSystem_Android::setupKeymapper() {
 #ifdef ENABLE_KEYMAPPER
 	using namespace Common;
@@ -601,13 +603,18 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			lockMutex(_event_queue_lock);
 
+			if (_queuedEventTime)
+				_event_queue.push(_queuedEvent);
+
 			if (!_touchpad_mode)
 				_event_queue.push(e);
 
 			e.type = down;
 			_event_queue.push(e);
+
 			e.type = up;
-			_event_queue.push(e);
+			_queuedEvent = e;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 			unlockMutex(_event_queue_lock);
 		}
@@ -702,9 +709,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				lockMutex(_event_queue_lock);
 
+				if (_queuedEventTime)
+					_event_queue.push(_queuedEvent);
+
 				_event_queue.push(e);
+
 				e.type = up;
-				_event_queue.push(e);
+				_queuedEvent = e;
+				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 				unlockMutex(_event_queue_lock);
 				return;
@@ -799,6 +811,13 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	}
 
 	lockMutex(_event_queue_lock);
+
+	if (_queuedEventTime && (getMillis() > _queuedEventTime)) {
+		event = _queuedEvent;
+		_queuedEventTime = 0;
+		unlockMutex(_event_queue_lock);
+		return true;
+	}
 
 	if (_event_queue.empty()) {
 		unlockMutex(_event_queue_lock);
