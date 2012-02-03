@@ -75,6 +75,13 @@ public:
 		events.push_back(evt);
 	}
 
+	void addEvent(const EventType evtType) {
+		Event evt;
+
+		evt.type = evtType;
+		events.push_back(evt);
+	}
+
 	void addKeyEvent(const KeyState &ks) {
 		Event evt;
 
@@ -84,24 +91,15 @@ public:
 	}
 
 	void addLeftClickEvent() {
-		Event evt;
-
-		evt.type = EVENT_LBUTTONDOWN;
-		addEvent(evt);
+		addEvent(EVENT_LBUTTONDOWN);
 	}
 
 	void addMiddleClickEvent() {
-		Event evt;
-
-		evt.type = EVENT_MBUTTONDOWN;
-		addEvent(evt);
+		addEvent(EVENT_MBUTTONDOWN);
 	}
 
 	void addRightClickEvent() {
-		Event evt;
-
-		evt.type = EVENT_RBUTTONDOWN;
-		addEvent(evt);
+		addEvent(EVENT_RBUTTONDOWN);
 	}
 
 	Keymap *getParent() {
