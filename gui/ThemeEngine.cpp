@@ -847,7 +847,7 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 	ThemeItemBitmap *q = new ThemeItemBitmap(this, area, bitmap, alpha);
 
 	if (_buffering) {
-		_bufferQueue.push_back(q);
+		_screenQueue.push_back(q);
 	} else {
 		q->drawSelf(true, false);
 		delete q;
