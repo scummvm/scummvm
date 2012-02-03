@@ -28,9 +28,10 @@
 namespace Maemo {
 
 enum ModelType {
-	kModelTypeN800 = 1,
-	kModelTypeN810 = 2,
-	kModelTypeN900 = 4,
+	kModelType770 = 1,
+	kModelTypeN800 = 2,
+	kModelTypeN810 = 4,
+	kModelTypeN900 = 8,
 	kModelTypeInvalid = 0
 };
 
@@ -42,6 +43,7 @@ struct Model {
 };
 
 static const Model models[] = {
+	{"SU-18", kModelType770, "770", false},
 	{"RX-34", kModelTypeN800, "N800", false},
 	{"RX-44", kModelTypeN810, "N810", true},
 	{"RX-48", kModelTypeN810, "N810W", true},
