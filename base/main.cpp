@@ -275,7 +275,7 @@ static void setupKeymapper(OSystem &system) {
 
 	// Now create the global keymap
 	act = new Action(globalMap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+	act->addEvent(EVENT_MAINMENU);
 
 	act = new Action(globalMap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
