@@ -73,11 +73,10 @@ public:
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
-	
-	byte getFrame(ActorC64 *A);
+	byte getFrame(Actor *a, int limb);
 
 protected:
-
+	byte increaseAnim(Actor *a, int limb);
 };
 
 class ClassicCostumeRenderer : public BaseCostumeRenderer {

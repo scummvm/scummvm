@@ -355,7 +355,6 @@ public:
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
 
-	byte _limb_current;
 	bool _limb_flipped[8];
 
 public:
@@ -382,7 +381,7 @@ public:
 	virtual void animateActor(int anim);
 	virtual void animateCostume();
 
-	void limbFrameCheck();
+	void limbFrameCheck(int limb);
 
 	void speakCheck();
 	virtual void setDirection(int direction);

@@ -1337,54 +1337,64 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	}
 }
 
-byte C64CostumeLoader::getFrame(ActorC64 *A) {
-
-	loadCostume(A->_costume);
+byte C64CostumeLoader::getFrame(Actor *a, int limb) {
+	loadCostume(a->_costume);
 
 	// Get the frame number for the current limb / Command
-	return _frameOffsets[_frameOffsets[A->_limb_current] + A->_cost.start[A->_limb_current]];
+	return _frameOffsets[_frameOffsets[limb] + a->_cost.start[limb]];
 }
 
 byte C64CostumeLoader::increaseAnims(Actor *a) {
 	ActorC64 *A = (ActorC64 *)a;
-	
-	uint16 limbPrevious = a->_cost.curpos[A->_limb_current]++;
+	int i;
+	byte r = 0;
+
+	for(i = 0; i != 8; i++) {
+		A->limbFrameCheck(i);
+		r += increaseAnim(a, i);
+	}
+	return r;
+}
+
+byte C64CostumeLoader::increaseAnim(Actor *a, int limb) {
+	ActorC64 *A = (ActorC64 *)a;
+	const uint16 limbPrevious = a->_cost.curpos[limb]++;
 
 	loadCostume(a->_costume);
 
 	// 0x2543
-	byte frame = _frameOffsets[a->_cost.curpos[A->_limb_current] + a->_cost.active[A->_limb_current]];
+	byte frame = _frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
 
 	// Is this frame invalid?
 	if (frame == 0xFF) {
 
 		// Repeat timer has reached 0?
-		if(A->_limbFrameRepeat[A->_limb_current] == 0) {
+		if(A->_limbFrameRepeat[limb] == 0) {
 
 			// Use the previous frame
-			--A->_cost.curpos[A->_limb_current];
+			--A->_cost.curpos[limb];
 
 			// Reset the comstume command
 			A->_costCommandNew = 0xFF;
 			A->_costCommand = 0xFF;
 			
 			// Set the frame/start to invalid
-			A->_cost.frame[A->_limb_current] = 0xFFFF;
-			A->_cost.start[A->_limb_current] = 0xFFFF;
+			A->_cost.frame[limb] = 0xFFFF;
+			A->_cost.start[limb] = 0xFFFF;
 
 		} else {
 
 			// Repeat timer enabled?
-			if(A->_limbFrameRepeat[A->_limb_current] != -1)
-				--A->_limbFrameRepeat[A->_limb_current];
+			if(A->_limbFrameRepeat[limb] != -1)
+				--A->_limbFrameRepeat[limb];
 
 			// No, restart at frame 0
-			a->_cost.curpos[A->_limb_current] = 0;
+			a->_cost.curpos[limb] = 0;
 		}
 	}
 
 	// Limb frame has changed?
-	if(limbPrevious == a->_cost.curpos[A->_limb_current])
+	if(limbPrevious == a->_cost.curpos[limb])
 		return 0;
 
 	return 1;

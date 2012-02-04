@@ -1937,39 +1937,33 @@ void Actor::animateCostume() {
 	}
 }
 
-void ActorC64::limbFrameCheck() {
-	if (_cost.frame[_limb_current] == 0xFFFF )
+void ActorC64::limbFrameCheck(int limb) {
+	if (_cost.frame[limb] == 0xFFFF)
 		return;
 
-	if (_cost.start[_limb_current] == _cost.frame[_limb_current] )
+	if (_cost.start[limb] == _cost.frame[limb])
 		return;
 
 	// 0x25A4
-	_cost.start[_limb_current] = _cost.frame[_limb_current];
+	_cost.start[limb] = _cost.frame[limb];
 
-	_limbFrameRepeat[_limb_current] = _limbFrameRepeatNew[_limb_current];
+	_limbFrameRepeat[limb] = _limbFrameRepeatNew[limb];
 
 	// 0x25C3
-	_cost.active[_limb_current] = ((C64CostumeLoader*)_vm->_costumeLoader)->getFrame( this );
-	_cost.curpos[_limb_current] = 0;
+	_cost.active[limb] = ((C64CostumeLoader*)_vm->_costumeLoader)->getFrame(this, limb);
+	_cost.curpos[limb] = 0;
 
 	_needRedraw = true;
 }
 
 void ActorC64::animateCostume() {
-
 	speakCheck();
 
-	for(_limb_current = 0; _limb_current < 8; ++_limb_current) {
-		limbFrameCheck();
-		
-		if (_vm->_costumeLoader->increaseAnims(this))
-			_needRedraw = true;
-	}
+	if (_vm->_costumeLoader->increaseAnims(this))
+		_needRedraw = true;
 }
 
 void ActorC64::speakCheck() {
-
 	if (v0ActorTalkArray[_number] & 0x80)
 		return;
 	
