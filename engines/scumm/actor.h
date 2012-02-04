@@ -352,41 +352,41 @@ public:
 	byte _miscflags;
 	byte _speaking;
 
-    int8 _animFrameRepeat;
-    int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
+	int8 _animFrameRepeat;
+	int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
 
-    byte _limb_current;
+	byte _limb_current;
 	bool _limb_flipped[8];
 
 public:
 	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
-		 _costCommand = 0xFF;
-		 _speaking = 0;
-         _animFrameRepeat = 0;
-		 _costCommandNew = 0xFF;
+		_costCommand = 0xFF;
+		_speaking = 0;
+		_animFrameRepeat = 0;
+		_costCommandNew = 0xFF;
 
-		 for( int i = 0; i < 8; ++i ) {
+		for(int i = 0; i < 8; ++i) {
 			_limbFrameRepeatNew[i] = 0;
 			_limbFrameRepeat[i] = 0;
 			_limb_flipped[i] = false;
 		 }
 	}
+
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
 		if (mode == -1) {
 			_miscflags = 0;
 		}
-
 	}
 
-    virtual void animateActor(int anim);
+	virtual void animateActor(int anim);
 	virtual void animateCostume();
 
-	void		 limbFrameCheck();
+	void limbFrameCheck();
 
-	void		 speakCheck();
-    virtual void setDirection(int direction);
-	void		 startAnimActor(int f);
+	void speakCheck();
+	virtual void setDirection(int direction);
+	void startAnimActor(int f);
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);

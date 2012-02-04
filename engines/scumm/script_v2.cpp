@@ -994,7 +994,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
 	if (!((_userState & USERSTATE_IFACE_SENTENCE) || 
-		  (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
+	      (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
 		return;
 
 	if (getResourceAddress(rtVerb, slot))

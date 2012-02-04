@@ -476,7 +476,6 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 }
 
 void ScummEngine_v0::handleMouseOver(bool updateInventory) {
-	//drawSentence();
 	ScummEngine_v2::handleMouseOver(updateInventory);
 }
 
@@ -695,7 +694,7 @@ void ScummEngine_v0::verbExec() {
 	if (_activeVerb == kVerbWhatIs)
 		return;
 		
-	if (!(_activeVerb == kVerbWalkTo && _activeObject == 0)) {		
+	if (!(_activeVerb == kVerbWalkTo && _activeObject == 0)) {
 		doSentence(_activeVerb, _activeObject, _activeObject2);
 		if (_activeVerb != kVerbWalkTo) {
 			_activeVerb = kVerbWalkTo;

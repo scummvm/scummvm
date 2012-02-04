@@ -687,24 +687,24 @@ void ScummEngine_v0::o_animateActor() {
 
 	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
 
-    a->_animFrameRepeat = repeat;
+	a->_animFrameRepeat = repeat;
 	
-    switch( anim ) {
+	switch (anim) {
 
-        case 0xFE:
-            // 0x6993
-	        a->_speaking = 0x80;	// Enabled, but not switching
-	        return;
+		case 0xFE:
+			// 0x6993
+			a->_speaking = 0x80;	// Enabled, but not switching
+			return;
 
-        case 0xFD:
-	        // 0x69A3
-	        a->_speaking = 0x00;
-	        return;
+		case 0xFD:
+			// 0x69A3
+			a->_speaking = 0x00;
+			return;
 	
-        case 0xFF:
-            a->stopActorMoving();
-            return;
-    }
+		case 0xFF:
+			a->stopActorMoving();
+			return;
+	}
 
 	a->animateActor(anim);
 	a->animateCostume();

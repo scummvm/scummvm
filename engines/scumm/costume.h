@@ -74,7 +74,7 @@ public:
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
 	
-	byte getFrame( ActorC64 *A );
+	byte getFrame(ActorC64 *A);
 
 protected:
 

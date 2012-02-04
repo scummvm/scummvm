@@ -1000,7 +1000,7 @@ void ScummEngine::killScriptsAndResources() {
 		for (i = 0; i < _numNewNames; i++) {
 			const int obj = _newNames[i];
 			if (obj) {
-				const int owner = getOwner( (_game.version != 0 ? obj : OBJECT_V0_ID(obj) ) );
+				const int owner = getOwner((_game.version != 0 ? obj : OBJECT_V0_ID(obj)));
 				// We can delete custom name resources if either the object is
 				// no longer in use (i.e. not owned by anyone anymore); or if
 				// it is an object which is owned by a room.
@@ -1234,7 +1234,7 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	// If two objects are involved, at least one must be in the actors inventory
 	if (st.objectB &&
 		(OBJECT_V0_TYPE(st.objectA) != kObjectV0TypeFG || _objectOwnerTable[st.objectA] != VAR(VAR_EGO)) &&
-	    (OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO)))
+		(OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO)))
 	{
 		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
 			doSentence(kVerbPickUp, st.objectA, 0);

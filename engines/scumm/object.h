@@ -33,14 +33,14 @@ static inline int OBJECT_V0(int id, byte type) {
 
 enum ObjectV0Type {
 	kObjectV0TypeFG = 0,    // foreground object
-		                    //   - with owner/state, might (but has not to) be pickupable
-		                    //     -> with entry in _objectOwner/StateTable
-		                    //     -> all objects in _inventory have this type
-		                    //   - image can be exchanged (background overlay)
+	                        //   - with owner/state, might (but has not to) be pickupable
+	                        //     -> with entry in _objectOwner/StateTable
+	                        //     -> all objects in _inventory have this type
+	                        //   - image can be exchanged (background overlay)
 	kObjectV0TypeBG = 1,    // background object
-		                    //   - without owner/state, not pickupable  (room only)
-		                    //     -> without entry in _objectOwner/StateTable
-		                    //   - image cannot be exchanged (part of background image)
+	                        //   - without owner/state, not pickupable  (room only)
+	                        //     -> without entry in _objectOwner/StateTable
+	                        //   - image cannot be exchanged (part of background image)
 	kObjectV0TypeActor = 2  // object is an actor
 };
 

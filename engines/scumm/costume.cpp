@@ -1190,11 +1190,11 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	}
 	
 	// Invalid current position?
-	if(  a->_cost.curpos[limb] == 0xFFFF )
+	if(a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
 
-	_loaded.loadCostume( a->_costume );
-	byte frame = _loaded._frameOffsets[ a->_cost.curpos[limb] + a->_cost.active[limb] ];
+	_loaded.loadCostume(a->_costume);
+	byte frame = _loaded._frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
 
 	// Get the frame ptr
 	byte ptrLow = _loaded._baseptr[frame];
@@ -1224,7 +1224,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (!width || !height)
 		return 0;
 
-	int xpos = _actorX + (A->_limb_flipped[ limb ] ? -1 : +1) * (offsetX * 8 - a->_width / 2);
+	int xpos = _actorX + (A->_limb_flipped[limb] ? -1 : +1) * (offsetX * 8 - a->_width / 2);
 	// +1 as we appear to be 1 pixel away from the original interpreter
 	int ypos = _actorY - offsetY + 1;
 
@@ -1234,13 +1234,13 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			byte color = data[y * width + x];
 			byte pcolor;
 
-			int destX = xpos + (A->_limb_flipped[ limb ] ? -(x + 1) : x) * 8;
+			int destX = xpos + (A->_limb_flipped[limb] ? -(x + 1) : x) * 8;
 			int destY = ypos + y;
 
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
 				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
-				if (A->_limb_flipped[ limb ]) {
+				if (A->_limb_flipped[limb]) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
 					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
@@ -1251,7 +1251,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	_draw_top = MIN(_draw_top, ypos);
 	_draw_bottom = MAX(_draw_bottom, ypos + height);
-	if (A->_limb_flipped[ limb ])
+	if (A->_limb_flipped[limb])
 		_vm->markRectAsDirty(kMainVirtScreen, xpos - (width * 8), xpos, ypos, ypos + height, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos + (width * 8), ypos, ypos + height, _actorID);
@@ -1291,7 +1291,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	loadCostume(a->_costume);
 
 	// Invalid costume command?
-	if( A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew) )
+	if(A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew))
 		return;
 
 	A->_costCommand = A->_costCommandNew;
@@ -1308,41 +1308,41 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		limbFrameNumber = ((_animCmds + cmd)[limb]);
 
 		// Is this limb flipped?
-		if( limbFrameNumber & 0x80 ) {
+		if(limbFrameNumber & 0x80) {
 
 			// Invalid frame?
-			if( limbFrameNumber == 0xFF )
+			if(limbFrameNumber == 0xFF)
 				continue;
 
 			// Store the limb frame number (clear the flipped status)
-			a->_cost.frame[limb]	= (limbFrameNumber & 0x7f);
+			a->_cost.frame[limb] = (limbFrameNumber & 0x7f);
 
-			if( A->_limb_flipped[limb] != true )
+			if(A->_limb_flipped[limb] != true)
 				a->_cost.start[limb] = 0xFFFF;
 
 			A->_limb_flipped[limb] = true;
 
 		} else {
 			//Store the limb frame number
-			a->_cost.frame[limb]	= limbFrameNumber;
+			a->_cost.frame[limb] = limbFrameNumber;
 
-			if( A->_limb_flipped[limb] != false )
+			if(A->_limb_flipped[limb] != false)
 				a->_cost.start[limb] = 0xFFFF;
 
 			A->_limb_flipped[limb] = false;
 		}
 
 		// Set the repeat value
-        A->_limbFrameRepeatNew[limb] = A->_animFrameRepeat;
+		A->_limbFrameRepeatNew[limb] = A->_animFrameRepeat;
 	}
 }
 
-byte C64CostumeLoader::getFrame( ActorC64 *A ) {
+byte C64CostumeLoader::getFrame(ActorC64 *A) {
 
 	loadCostume(A->_costume);
 
 	// Get the frame number for the current limb / Command
-	return _frameOffsets[ _frameOffsets[A->_limb_current] + A->_cost.start[ A->_limb_current ] ];
+	return _frameOffsets[_frameOffsets[A->_limb_current] + A->_cost.start[A->_limb_current]];
 }
 
 byte C64CostumeLoader::increaseAnims(Actor *a) {
@@ -1352,39 +1352,39 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 
 	loadCostume(a->_costume);
 
-    // 0x2543
-	byte frame = _frameOffsets[ a->_cost.curpos[A->_limb_current] + a->_cost.active[A->_limb_current] ];
+	// 0x2543
+	byte frame = _frameOffsets[a->_cost.curpos[A->_limb_current] + a->_cost.active[A->_limb_current]];
 
 	// Is this frame invalid?
-	if ( frame == 0xFF ) {
+	if (frame == 0xFF) {
 
-        // Repeat timer has reached 0?
-        if( A->_limbFrameRepeat[A->_limb_current] == 0 ) {
+		// Repeat timer has reached 0?
+		if(A->_limbFrameRepeat[A->_limb_current] == 0) {
 
-            // Use the previous frame
-            --A->_cost.curpos[A->_limb_current];
+			// Use the previous frame
+			--A->_cost.curpos[A->_limb_current];
 
 			// Reset the comstume command
-            A->_costCommandNew = 0xFF;
-            A->_costCommand = 0xFF;
-                
-            // Set the frame/start to invalid
+			A->_costCommandNew = 0xFF;
+			A->_costCommand = 0xFF;
+			
+			// Set the frame/start to invalid
 			A->_cost.frame[A->_limb_current] = 0xFFFF;
 			A->_cost.start[A->_limb_current] = 0xFFFF;
 
-        } else {
+		} else {
 
 			// Repeat timer enabled?
-            if( A->_limbFrameRepeat[A->_limb_current] != -1 )
-                --A->_limbFrameRepeat[A->_limb_current];
+			if(A->_limbFrameRepeat[A->_limb_current] != -1)
+				--A->_limbFrameRepeat[A->_limb_current];
 
 			// No, restart at frame 0
-            a->_cost.curpos[A->_limb_current] = 0;
-        }
-    }
+			a->_cost.curpos[A->_limb_current] = 0;
+		}
+	}
 
 	// Limb frame has changed?
-	if( limbPrevious == a->_cost.curpos[A->_limb_current] )
+	if(limbPrevious == a->_cost.curpos[A->_limb_current])
 		return 0;
 
 	return 1;
