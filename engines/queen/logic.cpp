@@ -1193,13 +1193,10 @@ void Logic::handlePinnacleRoom() {
 	uint16 prevObj = 0;
 	CmdText *cmdText = CmdText::makeCmdTextInstance(5, _vm);
 	cmdText->setVerb(VERB_WALK_TO);
-	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
+	while (!_vm->shouldQuit() && (_vm->input()->mouseButton() == 0 || _entryObj == 0)) {
 
 		_vm->update();
 		mouse = _vm->input()->getMousePos();
-
-		// update screen scrolling
-		_vm->display()->horizontalScroll(mouse.x);
 
 		// update bobs position / frame
 		joe->x = piton->x = 3 * mouse.x / 4 + 200;
@@ -1218,6 +1215,9 @@ void Logic::handlePinnacleRoom() {
 			}
 			prevObj = curObj;
 		}
+
+		// update screen scrolling
+		_vm->display()->horizontalScroll(mouse.x);
 	}
 	delete cmdText;
 	_vm->input()->clearMouseButton();
