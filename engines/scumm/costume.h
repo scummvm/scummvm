@@ -67,9 +67,9 @@ protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-class C64CostumeLoader : public ClassicCostumeLoader {
+class V0CostumeLoader : public ClassicCostumeLoader {
 public:
-	C64CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
+	V0CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
@@ -131,12 +131,12 @@ public:
 };
 #endif
 
-class C64CostumeRenderer : public BaseCostumeRenderer {
+class V0CostumeRenderer : public BaseCostumeRenderer {
 protected:
-	C64CostumeLoader _loaded;
+	V0CostumeLoader _loaded;
 
 public:
-	C64CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	V0CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(uint16 *palette) {}
 	void setFacing(const Actor *a) {}

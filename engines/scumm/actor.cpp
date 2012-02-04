@@ -175,7 +175,7 @@ void Actor_v2::initActor(int mode) {
 	_talkStopFrame = 4;
 }
 
-void ActorC64::initActor(int mode) {
+void Actor_v0::initActor(int mode) {
 	Actor_v2::initActor(mode);
 
 	_costCommandNew = 0xFF;
@@ -251,7 +251,7 @@ void Actor::stopActorMoving() {
 
 	_moving = 0;
 	if(_vm->_game.version == 0)
-		((ActorC64 *)this)->setDirection(_facing);
+		((Actor_v0 *)this)->setDirection(_facing);
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
@@ -340,7 +340,7 @@ int Actor::actorWalkStep() {
 	int nextFacing;
 
 	if(_vm->_game.version == 0)
-		((ActorC64 *)this)->_animFrameRepeat = -1;
+		((Actor_v0 *)this)->_animFrameRepeat = -1;
 
 	_needRedraw = true;
 
@@ -584,7 +584,7 @@ void Actor_v2::walkActor() {
 		actorWalkStep();
 
 		if(_vm->_game.version == 0)
-			((ActorC64 *)this)->animateActor(newDirToOldDir(_facing));
+			((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
 	} else {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
@@ -805,7 +805,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 180;
 		}
 
-		// MM C64 stores flags as a part of the mask
+		// MM v0 stores flags as a part of the mask
 		if (_vm->_game.version == 0) {
 			mask = _vm->getMaskFromBox(_walkbox);
 			// face the wall if climbing/descending a ladder
@@ -893,7 +893,7 @@ void Actor::setDirection(int direction) {
 	_needRedraw = true;
 }
 
-void ActorC64::setDirection(int direction) {
+void Actor_v0::setDirection(int direction) {
 	int dir = newDirToOldDir( direction );
 	int res = 0;
 
@@ -1329,7 +1329,7 @@ void Actor::showActor() {
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
 	if (_vm->_game.version == 0) {
-		ActorC64 *a = ((ActorC64 *)this);
+		Actor_v0 *a = ((Actor_v0 *)this);
 		
 		a->_costCommand = a->_costCommandNew = 0xFF;
 
@@ -1556,7 +1556,7 @@ void ScummEngine::processActors() {
 
 		if (_game.version == 0) {
 			// 0x057B
-			ActorC64 *A = (ActorC64*) a;
+			Actor_v0 *A = (Actor_v0*) a;
 			if (A->_speaking & 1)
 				A->_speaking ^= 0xFE;
 
@@ -1869,7 +1869,7 @@ void Actor::startAnimActor(int f) {
 	}
 }
 
-void ActorC64::startAnimActor(int f) {
+void Actor_v0::startAnimActor(int f) {
 	if (f == _talkStartFrame) {
 		if (v0ActorTalkArray[_number] & 0x40)
 			return;
@@ -1952,7 +1952,7 @@ void Actor::animateCostume() {
 	}
 }
 
-void ActorC64::limbFrameCheck(int limb) {
+void Actor_v0::limbFrameCheck(int limb) {
 	if (_cost.frame[limb] == 0xFFFF)
 		return;
 
@@ -1965,20 +1965,20 @@ void ActorC64::limbFrameCheck(int limb) {
 	_limbFrameRepeat[limb] = _limbFrameRepeatNew[limb];
 
 	// 0x25C3
-	_cost.active[limb] = ((C64CostumeLoader*)_vm->_costumeLoader)->getFrame(this, limb);
+	_cost.active[limb] = ((V0CostumeLoader*)_vm->_costumeLoader)->getFrame(this, limb);
 	_cost.curpos[limb] = 0;
 
 	_needRedraw = true;
 }
 
-void ActorC64::animateCostume() {
+void Actor_v0::animateCostume() {
 	speakCheck();
 
 	if (_vm->_costumeLoader->increaseAnims(this))
 		_needRedraw = true;
 }
 
-void ActorC64::speakCheck() {
+void Actor_v0::speakCheck() {
 	if (v0ActorTalkArray[_number] & 0x80)
 		return;
 	
@@ -2146,7 +2146,7 @@ void ScummEngine::setTalkingActor(int i) {
 		VAR(VAR_TALK_ACTOR) = i;
 }
 
-static const int c64MMActorTalkColor[25] = {
+static const int v0MMActorTalkColor[25] = {
 	1, 7, 2, 14, 8, 15, 3, 7, 7, 15, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 1, 7
 };
 static const int v1MMActorTalkColor[25] = {
@@ -2158,7 +2158,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_game.version == 0) {
-			_actors[i]->_talkColor = c64MMActorTalkColor[i];
+			_actors[i]->_talkColor = v0MMActorTalkColor[i];
 		} else {
 			_actors[i]->_talkColor = v1MMActorTalkColor[i];
 		}
@@ -2777,7 +2777,7 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 }
 #endif
 
-void ActorC64::animateActor(int anim) {
+void Actor_v0::animateActor(int anim) {
 	int dir = -1;
 
 	switch (anim) {
@@ -2822,19 +2822,19 @@ void ActorC64::animateActor(int anim) {
 	}
 }
 
-void ActorC64::saveLoadWithSerializer(Serializer *ser) {
+void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 	Actor::saveLoadWithSerializer(ser);
 
 	static const SaveLoadEntry actorEntries[] = {
-		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
-		MK_OBSOLETE(ActorC64, _costFrame, sleByte, VER(84), VER(89)),
-		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
-		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
-		MK_OBSOLETE(ActorC64, _speakingPrev, sleByte, VER(84), VER(89)),
-		MK_OBSOLETE(ActorC64, _limbTemp, sleByte, VER(89), VER(89)),
-		MKLINE(ActorC64, _animFrameRepeat, sleByte, VER(89)),
-		MKARRAY(ActorC64, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
-		MKARRAY(ActorC64, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
+		MKLINE(Actor_v0, _costCommand, sleByte, VER(84)),
+		MK_OBSOLETE(Actor_v0, _costFrame, sleByte, VER(84), VER(89)),
+		MKLINE(Actor_v0, _miscflags, sleByte, VER(84)),
+		MKLINE(Actor_v0, _speaking, sleByte, VER(84)),
+		MK_OBSOLETE(Actor_v0, _speakingPrev, sleByte, VER(84), VER(89)),
+		MK_OBSOLETE(Actor_v0, _limbTemp, sleByte, VER(89), VER(89)),
+		MKLINE(Actor_v0, _animFrameRepeat, sleByte, VER(89)),
+		MKARRAY(Actor_v0, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
+		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
 		MKEND()
 	};
 

@@ -1025,7 +1025,7 @@ Common::Error ScummEngine::init() {
 
 	// The	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
-	// This is the case of the NES, C64 and Mac versions of certain games.
+	// This is the case of the NES, v0 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
 	// are treated like any other SCUMM game.
 	if (_filenamePattern.genMethod == kGenUnchanged) {
@@ -1379,8 +1379,8 @@ void ScummEngine::setupCostumeRenderer() {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
 	} else if (_game.version == 0) {
-		_costumeRenderer = new C64CostumeRenderer(this);
-		_costumeLoader = new C64CostumeLoader(this);
+		_costumeRenderer = new V0CostumeRenderer(this);
+		_costumeLoader = new V0CostumeLoader(this);
 	} else if (_game.platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
@@ -1459,7 +1459,7 @@ void ScummEngine::resetScumm() {
 	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; ++i) {
 		if (_game.version == 0)
-			_actors[i] = new ActorC64(this, i);
+			_actors[i] = new Actor_v0(this, i);
 		else if (_game.version <= 2)
 			_actors[i] = new Actor_v2(this, i);
 		else if (_game.version == 3)

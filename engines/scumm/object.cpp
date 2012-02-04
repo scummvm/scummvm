@@ -327,7 +327,7 @@ int ScummEngine::getObjectIndex(int object) const {
 int ScummEngine::whereIsObject(int object) const {
 	int i;
 
-	// Note: in MMC64 bg objects are greater _numGlobalObjects
+	// Note: in MM v0 bg objects are greater _numGlobalObjects
 	if (_game.version != 0 && object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
@@ -808,7 +808,7 @@ void ScummEngine_v3old::resetRoomObjects() {
 	else
 		ptr = room + 29;
 
-	// Default pointer of objects without image, in C64 verison of Maniac Mansion
+	// Default pointer of objects without image, in v0 version of Maniac Mansion
 	int defaultPtr = READ_LE_UINT16(ptr + 2 * _numObjectsInRoom);
 
 	for (i = 0; i < _numObjectsInRoom; i++) {

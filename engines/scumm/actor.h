@@ -335,7 +335,7 @@ protected:
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 };
 
-enum ActorC64MiscFlags {
+enum ActorV0MiscFlags {
 	kActorMiscFlagStrong    = 0x01, // Kid is strong (Hunk-O-Matic used)
 	kActorMiscFlagGTFriend  = 0x02, // Kid is green tentacle's friend (recording contract)
 	kActorMiscFlagWatchedTV = 0x04, // Kid knows publisher's address (watched TV)
@@ -346,7 +346,7 @@ enum ActorC64MiscFlags {
 	kActorMiscFlagHide      = 0x80  // Kid is invisible (dead or in radiation suit)
 };
 
-class ActorC64 : public Actor_v2 {
+class Actor_v0 : public Actor_v2 {
 public:
 	byte _costCommandNew;
 	byte _costCommand;
@@ -360,7 +360,7 @@ public:
 	bool _limb_flipped[8];
 
 public:
-	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
+	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
 	virtual void initActor(int mode);
 	virtual void animateActor(int anim);

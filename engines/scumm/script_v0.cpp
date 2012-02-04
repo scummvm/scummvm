@@ -51,7 +51,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x0b, o_setActorBitVar);
 	/* 0C */
 	OPCODE(0x0c, o_loadSound);
-	OPCODE(0x0d, o_printEgo_c64);
+	OPCODE(0x0d, o_printEgo);
 	OPCODE(0x0e, o_putActorAtObject);
 	OPCODE(0x0f, o2_clearState02);
 	/* 10 */
@@ -60,7 +60,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x12, o2_panCameraTo);
 	OPCODE(0x13, o_lockCostume);
 	/* 14 */
-	OPCODE(0x14, o_print_c64);
+	OPCODE(0x14, o_print);
 	OPCODE(0x15, o5_walkActorToActor);
 	OPCODE(0x16, o5_getRandomNr);
 	OPCODE(0x17, o2_clearState08);
@@ -92,7 +92,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 2C */
 	OPCODE(0x2c, o_stopCurrentScript);
 	OPCODE(0x2d, o2_putActorInRoom);
-	OPCODE(0x2e, o_print_c64);
+	OPCODE(0x2e, o_print);
 	OPCODE(0x2f, o2_ifState08);
 	/* 30 */
 	OPCODE(0x30, o_loadCostume);
@@ -181,7 +181,7 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0x73, o_getObjectOwner);
 	/* 74 */
 	OPCODE(0x74, o5_getDist);
-	OPCODE(0x75, o_printEgo_c64);
+	OPCODE(0x75, o_printEgo);
 	OPCODE(0x76, o_walkActorToObject);
 	OPCODE(0x77, o2_clearState04);
 	/* 78 */
@@ -252,7 +252,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* AC */
 	OPCODE(0xac, o_stopCurrentScript);
 	OPCODE(0xad, o2_putActorInRoom);
-	OPCODE(0xae, o_print_c64);
+	OPCODE(0xae, o_print);
 	OPCODE(0xaf, o2_ifNotState08);
 	/* B0 */
 	OPCODE(0xb0, o_loadCostume);
@@ -575,13 +575,13 @@ void ScummEngine_v0::o_loadRoom() {
 }
 
 void ScummEngine_v0::o_loadRoomWithEgo() {
-	ActorC64 *a;
+	Actor_v0 *a;
 	int obj, room, x, y, dir;
 
 	obj = fetchScriptByte();
 	room = fetchScriptByte();
 
-	a = (ActorC64 *)derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
+	a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
 
 	//0x634F
 	if (a->_miscflags & kActorMiscFlagFreeze) {
@@ -685,7 +685,7 @@ void ScummEngine_v0::o_animateActor() {
 	int anim = getVarOrDirectByte(PARAM_2);
 	int8 repeat = (int8) fetchScriptByte();
 
-	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
+	Actor_v0 *a = (Actor_v0*) derefActor(act, "o_animateActor");
 
 	a->_animFrameRepeat = repeat;
 	
@@ -789,7 +789,7 @@ void ScummEngine_v0::o_setActorBitVar() {
 	if (act >= _numActors)
 		return;
 
-	ActorC64 *a = (ActorC64 *)derefActor(act, "o_setActorBitVar");
+	Actor_v0 *a = (Actor_v0 *)derefActor(act, "o_setActorBitVar");
 
 	if (mod)
 		a->_miscflags |= mask;
@@ -814,7 +814,7 @@ void ScummEngine_v0::o_getActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 
-	ActorC64 *a = (ActorC64 *)derefActor(act, "o_getActorBitVar");
+	Actor_v0 *a = (Actor_v0 *)derefActor(act, "o_getActorBitVar");
 	setResult((a->_miscflags & mask) ? 1 : 0);
 
 	debug(0, "o_getActorBitVar(%d, %d, %d)", act, mask, (a->_miscflags & mask));
@@ -843,12 +843,12 @@ void ScummEngine_v0::o_getBitVar() {
 	debug(0, "o_getBitVar (%d, %d %d)", flag, mask, _bitVars[flag] & (1 << mask));
 }
 
-void ScummEngine_v0::o_print_c64() {
+void ScummEngine_v0::o_print() {
 	_actorToPrintStrFor = fetchScriptByte();
 	decodeParseString();
 }
 
-void ScummEngine_v0::o_printEgo_c64() {
+void ScummEngine_v0::o_printEgo() {
 	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
 }

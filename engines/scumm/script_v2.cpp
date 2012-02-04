@@ -401,7 +401,7 @@ void ScummEngine_v2::decodeParseString() {
 	_string[textSlot].overhead = false;
 
 	if (_game.id == GID_MANIAC && _actorToPrintStrFor == 0xFF) {
-		if (_game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			_string[textSlot].color = 14;
 		} else if (_game.features & GF_DEMO) {
 			_string[textSlot].color = (_game.version == 2) ? 15 : 1;

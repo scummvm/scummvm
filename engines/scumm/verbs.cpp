@@ -705,7 +705,7 @@ void ScummEngine_v0::verbExec() {
 		return;
 	}
 
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "verbExec");
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "verbExec");
 	int x = _virtualMouse.x / V12_X_MULTIPLIER;
 	int y = _virtualMouse.y / V12_Y_MULTIPLIER;
 	//actorSetPosInBox();
@@ -730,7 +730,7 @@ bool ScummEngine_v0::checkSentenceComplete() {
 }
 
 void ScummEngine_v0::checkExecVerbs() {
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 
 	bool execute = false;

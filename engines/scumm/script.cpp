@@ -1132,7 +1132,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 
 void ScummEngine_v0::walkToActorOrObject(int object) {
 	int x, y, dir;
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "walkToObject");
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "walkToObject");
 
 	_walkToObject = object;
 	_walkToObjectState = kWalkToObjectStateWalk;
@@ -1162,7 +1162,7 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 		return false;
 
 	int actor = VAR(VAR_EGO);
-	ActorC64 *a = (ActorC64 *)derefActor(actor, "checkPendingWalkAction");
+	Actor_v0 *a = (Actor_v0 *)derefActor(actor, "checkPendingWalkAction");
 
 	// wait until walking or turning action is finished
 	if (a->_moving)

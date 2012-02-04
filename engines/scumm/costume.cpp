@@ -1163,7 +1163,7 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 	return (a->_cost.curpos[slot] != oldframe);
 }
 
-static const byte actorColorsMMC64[25] = {
+static const byte actorV0Colors[25] = {
 	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
 
@@ -1178,8 +1178,8 @@ static const byte actorColorsMMC64[25] = {
 			dst[p + 1] = palette[pcolor]; \
 	}
 
-byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	const ActorC64* A = (const ActorC64 *)a;
+byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
+	const Actor_v0* A = (const Actor_v0 *)a;
 
 	if (limb >= 8)
 		return 0;
@@ -1207,7 +1207,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	byte palette[4] = { 0, 0, 0, 0 };
 	if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 		palette[1] = 10;
-		palette[2] = actorColorsMMC64[_actorID];
+		palette[2] = actorV0Colors[_actorID];
 	} else {
 		palette[2] = 11;
 		palette[3] = 11;
@@ -1261,11 +1261,11 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 #undef LINE
 #undef MASK_AT
 
-void C64CostumeRenderer::setCostume(int costume, int shadow) {
+void V0CostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 
-void C64CostumeLoader::loadCostume(int id) {
+void V0CostumeLoader::loadCostume(int id) {
 	const byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
 	_id = id;
@@ -1275,15 +1275,15 @@ void C64CostumeLoader::loadCostume(int id) {
 	_numColors = 0;
 	_numAnim = 0;
 	_mirror = 0;
-	_palette = &actorColorsMMC64[id];
+	_palette = &actorV0Colors[id];
 
 	_frameOffsets = _baseptr + READ_LE_UINT16(ptr + 5);
 	_dataOffsets = ptr;
 	_animCmds = _baseptr + READ_LE_UINT16(ptr + 7);
 }
 
-void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
-	ActorC64 *A = (ActorC64 *)a;
+void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	Actor_v0 *A = (Actor_v0 *)a;
 
 	if(!a->_costume)
 		return;
@@ -1337,15 +1337,15 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	}
 }
 
-byte C64CostumeLoader::getFrame(Actor *a, int limb) {
+byte V0CostumeLoader::getFrame(Actor *a, int limb) {
 	loadCostume(a->_costume);
 
 	// Get the frame number for the current limb / Command
 	return _frameOffsets[_frameOffsets[limb] + a->_cost.start[limb]];
 }
 
-byte C64CostumeLoader::increaseAnims(Actor *a) {
-	ActorC64 *A = (ActorC64 *)a;
+byte V0CostumeLoader::increaseAnims(Actor *a) {
+	Actor_v0 *A = (Actor_v0 *)a;
 	int i;
 	byte r = 0;
 
@@ -1356,8 +1356,8 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 	return r;
 }
 
-byte C64CostumeLoader::increaseAnim(Actor *a, int limb) {
-	ActorC64 *A = (ActorC64 *)a;
+byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
+	Actor_v0 *A = (Actor_v0 *)a;
 	const uint16 limbPrevious = a->_cost.curpos[limb]++;
 
 	loadCostume(a->_costume);

@@ -118,7 +118,7 @@ protected:
 
 	virtual int getCurrentLights() const;
 
-	/* Version C64 script opcodes */
+	/* Version 0 script opcodes */
 	void o_stopCurrentScript();
 	void o_walkActorToObject();
 	void o_loadSound();
@@ -150,8 +150,8 @@ protected:
 	void o_ifEqualActiveObject2();
 	void o_ifNotEqualActiveObject2();
 	void o_getClosestActor();
-	void o_printEgo_c64();
-	void o_print_c64();
+	void o_printEgo();
+	void o_print();
 	void o_unlockRoom();
 	void o_unlockSound();
 	void o_cutscene();
