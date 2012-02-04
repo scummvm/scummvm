@@ -26,6 +26,7 @@
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/resource.h"
+#include "scumm/scumm_v0.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/usage_bits.h"
@@ -1487,15 +1488,17 @@ void ScummEngine_v5::drawFlashlight() {
 	_flashlight.isDrawn = true;
 }
 
-// V0 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
-// an internal variable. Emulate this to prevent overwriting script vars...
-// And V6 games do not use the "lights" at all. There, the whole screen is
-// always visible, and actors are always colored, so we fake the correct
-// light value for it.
+int ScummEngine_v0::getCurrentLights() const {
+	// V0 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
+	// an internal variable. Emulate this to prevent overwriting script vars...
+	// And V6 games do not use the "lights" at all. There, the whole screen is
+	// always visible, and actors are always colored, so we fake the correct
+	// light value for it.
+	return _currentLights;
+}
+
 int ScummEngine::getCurrentLights() const {
-	if (_game.id == GID_MANIAC && _game.version == 0)
-		return _currentLights;
-	else if (_game.version >= 6)
+	if (_game.version >= 6)
 		return LIGHTMODE_room_lights_on | LIGHTMODE_actor_use_colors;
 	else
 		return VAR(VAR_CURRENT_LIGHTS);

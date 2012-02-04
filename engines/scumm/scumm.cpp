@@ -263,7 +263,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
-	_currentLights = 0;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;
@@ -713,6 +712,7 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
 	_currentMode = 0;
+	_currentLights = 0;
 
 	_activeVerb = kVerbNone;
 	_activeObject = 0;

@@ -47,6 +47,7 @@ protected:
 
 protected:
 	byte _currentMode;
+	byte _currentLights;
 
 	int _activeVerb;		// selected verb
 	int _activeObject;		// 1st selected object (see OBJECT_V0())
@@ -114,6 +115,8 @@ protected:
 	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
 	bool ifEqualActiveObject2Common(bool checkType);
+
+	virtual int getCurrentLights() const;
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();
