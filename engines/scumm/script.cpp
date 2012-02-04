@@ -1200,8 +1200,8 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 					b->faceToObject(actorToObj(actor));
 				}
 			} else { // walk to object finished
-				int x, y, dir;
-				getObjectXYPos(_walkToObject, x, y, dir);
+				int tmpX, tmpY, dir;
+				getObjectXYPos(_walkToObject, tmpX, tmpY, dir);
 				a->turnToDirection(dir);
 			}
 			_walkToObjectState = kWalkToObjectStateTurn;

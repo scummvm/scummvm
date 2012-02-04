@@ -343,7 +343,7 @@ enum ActorC64MiscFlags {
 	kActorMiscFlag_10       = 0x10, // ???
 	kActorMiscFlag_20       = 0x20, // ???
 	kActorMiscFlagFreeze    = 0x40, // Stop moving
-	kActorMiscFlagHide      = 0x80, // Kid is invisible (dead or in radiation suit)
+	kActorMiscFlagHide      = 0x80  // Kid is invisible (dead or in radiation suit)
 };
 
 class ActorC64 : public Actor_v2 {

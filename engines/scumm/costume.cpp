@@ -1179,7 +1179,7 @@ static const byte actorColorsMMC64[25] = {
 	}
 
 byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	ActorC64* A = (ActorC64*) a;
+	const ActorC64* A = (const ActorC64 *)a;
 
 	if (limb >= 8)
 		return 0;

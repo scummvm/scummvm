@@ -82,7 +82,7 @@ enum VerbPrepsV0 {
 	kVerbPrepWith   = 2,
 	kVerbPrepOn     = 3,
 	kVerbPrepTo     = 4,
-	kVerbPrepObject = 0xFF, // prep depends on object (USE)
+	kVerbPrepObject = 0xFF // prep depends on object (USE)
 };
 
 } // End of namespace Scumm

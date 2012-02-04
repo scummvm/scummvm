@@ -464,7 +464,7 @@ void ScummEngine_v0::drawSentenceLine() {
 	if (_activeVerb == kVerbNewKid) {
 		_sentenceBuf = "";
 		for (int i = 0; i < 3; ++i) {
-			char *actorName;
+			const char *actorName;
 			int actorId = VAR(97 + i);
 			if (actorId == 0) {
 				// after usage of the radiation suit, kid vars are set to 0
