@@ -81,6 +81,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
 	DebugMan.addDebugChannel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
 	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
+	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
 
 	_console = new ToucheConsole(this);
 }
@@ -1260,6 +1261,13 @@ const char *ToucheEngine::getString(int num) const {
 
 int ToucheEngine::getStringWidth(int num) const {
 	const char *str = getString(num);
+	if (DebugMan.isDebugChannelEnabled(kDebugCharset)) {
+		debug("stringwidth: %s", str);
+		debugN("raw:");
+		const char *p = str;
+		while (*p) debugN(" %02X", (unsigned char)*p++);
+		debugN("\n");
+	}
 	return Graphics::getStringWidth16(str);
 }
 
