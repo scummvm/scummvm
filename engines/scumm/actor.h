@@ -348,36 +348,21 @@ enum ActorC64MiscFlags {
 
 class ActorC64 : public Actor_v2 {
 public:
-	byte _costCommandNew, _costCommand, _costFrame;
+	byte _costCommandNew;
+	byte _costCommand;
 	byte _miscflags;
 	byte _speaking;
 
 	int8 _animFrameRepeat;
-	int8 _limbFrameRepeatNew[8], _limbFrameRepeat[8];
+	int8 _limbFrameRepeatNew[8];
+	int8 _limbFrameRepeat[8];
 
 	bool _limb_flipped[8];
 
 public:
-	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
-		_costCommand = 0xFF;
-		_speaking = 0;
-		_animFrameRepeat = 0;
-		_costCommandNew = 0xFF;
+	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
-		for(int i = 0; i < 8; ++i) {
-			_limbFrameRepeatNew[i] = 0;
-			_limbFrameRepeat[i] = 0;
-			_limb_flipped[i] = false;
-		 }
-	}
-
-	virtual void initActor(int mode) {
-		Actor_v2::initActor(mode);
-		if (mode == -1) {
-			_miscflags = 0;
-		}
-	}
-
+	virtual void initActor(int mode);
 	virtual void animateActor(int anim);
 	virtual void animateCostume();
 

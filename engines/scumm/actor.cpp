@@ -175,6 +175,21 @@ void Actor_v2::initActor(int mode) {
 	_talkStopFrame = 4;
 }
 
+void ActorC64::initActor(int mode) {
+	Actor_v2::initActor(mode);
+
+	_costCommandNew = 0xFF;
+	_costCommand = 0xFF;
+	_miscflags = 0;
+	_speaking = 0;
+
+	_animFrameRepeat = 0;
+	for(int i = 0; i < 8; ++i) {
+		_limbFrameRepeatNew[i] = 0;
+		_limbFrameRepeat[i] = 0;
+		_limb_flipped[i] = false;
+	}
+}
 
 void Actor::setBox(int box) {
 	_walkbox = box;
@@ -2812,11 +2827,11 @@ void ActorC64::saveLoadWithSerializer(Serializer *ser) {
 
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(ActorC64, _costCommand, sleByte, VER(84)),
-		MKLINE_OLD(ActorC64, _costFrame, sleByte, VER(84), VER(89)),
+		MK_OBSOLETE(ActorC64, _costFrame, sleByte, VER(84), VER(89)),
 		MKLINE(ActorC64, _miscflags, sleByte, VER(84)),
 		MKLINE(ActorC64, _speaking, sleByte, VER(84)),
 		MK_OBSOLETE(ActorC64, _speakingPrev, sleByte, VER(84), VER(89)),
-		MK_OBSOLETE(ActorC64, _byte_FD0A, sleByte, VER(89), VER(89)),
+		MK_OBSOLETE(ActorC64, _limbTemp, sleByte, VER(89), VER(89)),
 		MKLINE(ActorC64, _animFrameRepeat, sleByte, VER(89)),
 		MKARRAY(ActorC64, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
 		MKARRAY(ActorC64, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
