@@ -28,8 +28,7 @@
 namespace Grim {
 
 KeyframeComponent::KeyframeComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, t), _priority1(1), _priority2(5) {
-	_fname = filename;
+		Component(p, parentID, t), _priority1(1), _priority2(5), _fname(filename) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_fname = Common::String(filename, comma);

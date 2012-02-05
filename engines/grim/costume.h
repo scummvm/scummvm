@@ -80,7 +80,7 @@ public:
 	void setupTextures();
 	virtual void draw();
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
-	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
+	void setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
 					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
 

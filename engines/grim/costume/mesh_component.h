@@ -42,7 +42,7 @@ public:
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 
-	void setMatrix(Math::Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(const Math::Matrix4 &matrix) { _matrix = matrix; };
 
 	ModelNode *getNode() { return _node; }
 	Model *getModel() { return _model; }

@@ -91,7 +91,7 @@ public:
 	virtual uint getScreenHeight() { return _screenHeight; }
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
-	virtual void positionCamera(Math::Vector3d pos, Math::Vector3d interest) = 0;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) = 0;
 
 	virtual void clearScreen() = 0;
 
@@ -101,7 +101,7 @@ public:
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+	virtual void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
 								const Math::Angle &pitch, const Math::Angle &roll) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;

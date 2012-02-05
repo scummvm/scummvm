@@ -150,7 +150,7 @@ public:
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 	void addChild(ModelNode *child);
 	void removeChild(ModelNode *child);
-	void setMatrix(Math::Matrix4 matrix);
+	void setMatrix(const Math::Matrix4 &matrix);
 	void update();
 	void addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
@@ -165,7 +165,7 @@ public:
 	 * discretely.
 	 */
 	int _flags;
-	/** 
+	/**
 	 * Each KeyFrameAnim has a type identifier. This type field is a bitmask which is ANDed againts
 	 * the type in the KeyFrameAnim to control which KeyFrameAnims animate on which nodes of the character.
 	 * This enables selectively controlling the animations to act only on certain bones.
