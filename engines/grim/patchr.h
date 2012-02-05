@@ -36,7 +36,7 @@ public:
 	Patchr(): _data(NULL), _err(false), _kMd5size(5000), _kMaxFileSize(0x100000) {}
 	~Patchr() { if (_data) delete[] _data; }
 	void loadPatch(Common::SeekableReadStream *patchStream);
-	bool patchFile(Common::SeekableReadStream *&file, Common::String &name);
+	bool patchFile(Common::SeekableReadStream *&file, const Common::String &name);
 private:
 	uint32 _kMaxFileSize;
 	uint32 _kMd5size;

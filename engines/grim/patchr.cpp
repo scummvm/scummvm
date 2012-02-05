@@ -80,7 +80,7 @@ uint32 Patchr::calcIncSize(Common::Array<Op>::const_iterator start) {
 	return incSize;
 }
 
-bool Patchr::patchFile(Common::SeekableReadStream *&file, Common::String &name) {
+bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &name) {
 	Common::Array<Op>::const_iterator line;
 	Common::String md5;
 	uint32 maxSize, fileSize;

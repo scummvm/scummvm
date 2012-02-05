@@ -165,20 +165,6 @@ ResourceLoader::ResourceLoader() {
 	}
 
 	files.clear();
-
-	loadPatches();
-}
-
-void ResourceLoader::loadPatches() {
-	Common::ArchiveMemberList patches;
-	_patches.clear();
-	_files.listMatchingMembers(patches, "*.patchr");
-	SearchMan.listMatchingMembers(patches, "*.patchr");
-	for (Common::ArchiveMemberList::const_iterator x = patches.begin(); x != patches.end(); ++x) {
-		Common::String filename = (*x)->getName();
-		filename = Common::String(filename.c_str(), filename.size() - 7); //remove the .patchr extension
-		_patches.push_back(filename);
-	}
 }
 
 template<typename T>
@@ -234,7 +220,7 @@ bool ResourceLoader::getFileExists(const Common::String &filename) {
 	return _files.hasFile(filename);
 }
 
-Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
+Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) {
 	Common::SeekableReadStream *rs = NULL;
 	if (_files.hasFile(filename))
 		rs = _files.createReadStreamForMember(filename);
@@ -243,11 +229,11 @@ Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
 	else
 		return NULL;
 
-	//Patch a file, if needed
-	if ((Common::find(_patches.begin(), _patches.end(), filename)) != _patches.end()) {
+	Common::String patchfile = filename + ".patchr";
+	if (getFileExists(patchfile)) {
 		Debug::debug(Debug::Patchr, "Patch requested for %s", filename.c_str());
 		Patchr p;
-		p.loadPatch(openNewStreamFile(filename + ".patchr"));
+		p.loadPatch(openNewStreamFile(patchfile));
 		bool success = p.patchFile(rs, filename);
 		if (success)
 			Debug::debug(Debug::Patchr, "%s successfully patched", filename.c_str());
@@ -255,6 +241,7 @@ Common::SeekableReadStream *ResourceLoader::loadFile(Common::String &filename) {
 			warning("Patching of %s failed", filename.c_str());
 		rs->seek(0, SEEK_SET);
 	}
+
 	return rs;
 }
 
