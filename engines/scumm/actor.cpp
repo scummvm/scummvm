@@ -350,6 +350,10 @@ int Actor::actorWalkStep() {
 			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
+
+		// V0: Don't move during the turn
+		if(_vm->_game.version == 0)
+			return 0;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
@@ -384,6 +388,10 @@ int Actor::actorWalkStep() {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
+
+	if(_vm->_game.version == 0)
+		((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
+
 	return 1;
 }
 
@@ -583,8 +591,6 @@ void Actor_v2::walkActor() {
 	if (_moving & MF_IN_LEG) {
 		actorWalkStep();
 
-		if(_vm->_game.version == 0)
-			((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
 	} else {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
@@ -1886,8 +1892,8 @@ void Actor_v0::startAnimActor(int f) {
 
 	if(f == _standFrame)
 		setDirection(_facing);
-	else
-		animateActor(newDirToOldDir(_facing));
+	//else
+	//	animateActor(newDirToOldDir(_facing));
 }
 
 void Actor::animateActor(int anim) {
