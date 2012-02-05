@@ -102,6 +102,7 @@ public:
 	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 	virtual void saveCharacter(int characterIndex);
+	virtual void restore() {}
 
 	bool display(CursorType action, Event &event);
 	void fadeOut();
@@ -327,12 +328,26 @@ public:
 	EventHandler *_endAction;
 	Rect _rect1, _screenBounds;
 	int _field3A, _field3C;
+	int _field56;
 	int _field58, _field5A;
+	ScenePalette _palette;
+	byte _palData[256 * 3];
 public:
 	ActionObject();
 
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
+
+	bool load(int rlbNum, Action *endAction = NULL);
+	bool proc1() { return false; }
+	void proc2() {}
+};
+
+class ActionObjectExt: public ActionObject {
+public:
+	int _v1;
+
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Ringworld2

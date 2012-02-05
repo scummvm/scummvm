@@ -59,7 +59,8 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Empty Bedroom #2
 		return new Scene175();
 	case 180:
-		error("Missing scene %d from group 0", sceneNumber);
+		// Title Screen
+		return new Scene180();
 	case 200:
 		// Deck #2 - By Lift
 		return new Scene200();
@@ -1461,6 +1462,20 @@ void ActionObject::remove() {
 
 	_endAction = NULL;
 }
+
+bool ActionObject::load(int rlbNum, Action *endAction) {
+	warning("TODO ActionOjbect::load");
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void ActionObjectExt::synchronize(Serializer &s) {
+	ActionObject::synchronize(s);
+	s.syncAsSint16LE(_v1);
+}
+
+
 
 } // End of namespace Ringworld2
 

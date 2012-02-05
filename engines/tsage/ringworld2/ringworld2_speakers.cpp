@@ -193,6 +193,17 @@ void VisualSpeaker::setDelay(int delay) {
 }
 
 //----------------------------------------------------------------------------
+
+SpeakerGameText::SpeakerGameText(): VisualSpeaker() {
+	_speakerName = "GAMETEXT";
+	_color1 = 8;
+	_color2 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+}
+
+//----------------------------------------------------------------------------
 // Classes related to CAPTAIN
 //----------------------------------------------------------------------------
 
@@ -2907,6 +2918,51 @@ void SpeakerWebbster3400::proc15() {
 		break;
 	}
 }
+
+//----------------------------------------------------------------------------
+
+SpeakerDutyOfficer::SpeakerDutyOfficer(): VisualSpeaker() {
+	_speakerName = "DUTYOFFICER";
+	_color1 = 5;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+void SpeakerDutyOfficer::proc15() {
+	Scene180 *scene = (Scene180 *)R2_GLOBALS._sceneManager._scene;
+
+	int v = _fieldF6;
+
+	if (!_object2) {
+		_object2 = &scene->_object2;
+		_object2->hide();
+		_object1.postInit();
+		_object1.setPosition(_object2->_position);
+
+		if (_object2->_mover)
+			_object2->addMover(NULL);
+	}
+
+	switch (v) {
+	case 0:
+		_object1.animate(ANIM_MODE_2, NULL);
+		break;
+	case 1:
+		_action = NULL;
+		_object1.setup(76, 2, 1);
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	default:
+		signal();
+		break;
+	}
+}
+
 
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
