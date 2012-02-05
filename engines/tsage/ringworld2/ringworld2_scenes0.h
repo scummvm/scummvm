@@ -189,6 +189,43 @@ public:
 class Scene175: public Scene150 {
 };
 
+class Scene180: public SceneExt {
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+private:
+	void setFrameInc(int v);
+public:
+	SpeakerWebbster _webbsterSpeaker;
+	SpeakerDutyOfficer _dutyOfficerSpeaker;
+	SpeakerTeal _tealSpeaker;
+	SpeakerGameText _gameTextSpeaker;
+	SceneActor _object1, _object2, _object3, _object4, _object5;
+	ScenePalette _palette;
+	SceneText _textList[20];
+	ActionObjectExt _actionObject;
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	ASoundExt _sound1;
+	
+	int _frameNumber;
+	int _field412, _field480;
+	int _field482, _frameInc;
+	int _fontNumber, _fontHeight;
+	int _scene180Mode;
+public:
+	Scene180();
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void restore();
+};
+
 class Scene200: public SceneExt {
 	/* Objects */
 	class NorthDoor: public SceneActor {

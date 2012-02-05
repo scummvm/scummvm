@@ -1301,6 +1301,13 @@ bool ScenePalette::loadPalette(int paletteNum) {
 	return true;
 }
 
+/**
+ * Loads a palette from the passed raw data block
+ */
+void ScenePalette::loadPalette(const byte *pSrc, int start, int count) {
+	Common::copy(pSrc, pSrc + count * 3, &_palette[start * 3]);
+}
+
 void ScenePalette::refresh() {
 	// Set indexes for standard colors to closest color in the palette
 	_colors.background = indexOf(255, 255, 255);	// White background

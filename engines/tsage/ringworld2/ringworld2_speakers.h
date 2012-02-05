@@ -63,6 +63,13 @@ public:
 	void setDelay(int delay);
 };
 
+class SpeakerGameText : public VisualSpeaker {
+public:
+	SpeakerGameText();
+
+	virtual Common::String getClassName() { return "SpeakerGameText"; }
+};
+
 // Classes related to Captain
 
 class SpeakerCaptain3210 : public VisualSpeaker {
@@ -613,6 +620,14 @@ public:
 	SpeakerWebbster3400() : SpeakerWebbster(27) {};
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3400"; }
+	virtual void proc15();
+};
+
+class SpeakerDutyOfficer: public VisualSpeaker {
+public:
+	SpeakerDutyOfficer();
+
+	virtual Common::String getClassName() { return "SpeakerDutyOfficer"; }
 	virtual void proc15();
 };
 

@@ -253,6 +253,7 @@ public:
 	PlayStream _playStream;
 	StripProxy _stripProxy;
 	int _insetUp;
+	int _frameEdgeColour;	// _v421e
 	Rect _v5589E;
 	Rect _v558B6;
 	int _v558C2;
@@ -289,6 +290,7 @@ public:
 	byte _v56AA7;
 	byte _v56AA8;
 	int _v56AAB;
+	int _scene180Mode;	// _v575f7
 	int _v57C2C;
 	int _v58CE2;
 	int _speechSubtitles;

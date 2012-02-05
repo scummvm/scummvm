@@ -1462,6 +1462,521 @@ void Scene160::process(Event &event) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 180 - Title Screen
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene180::Action1::signal() {
+	Scene180 *scene = (Scene180 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+	case 1:
+	case 2:
+		scene->_object5.setStrip((_actionIndex == 1) ? 1 : 2);
+		scene->_object5.setFrame(1);
+		scene->_object5.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		scene->_object5.setStrip(3);
+		scene->_object5.setFrame(1);
+		scene->_object5.animate(ANIM_MODE_5, this);
+		_actionIndex = 0;
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene180::Scene180(): SceneExt(), _webbsterSpeaker(27) {
+	_field412 = 0;
+	_frameInc = 0;
+	_frameNumber = R2_GLOBALS._events.getFrameNumber();
+	_field480 = 1;
+	_field482 = -1;
+	_fontNumber = R2_GLOBALS.gfxManager()._font._fontNumber;
+
+	GfxFont font;
+	font.setFontNumber(7);
+	_fontHeight = font.getHeight();
+
+	_sceneMode = (R2_GLOBALS._sceneManager._previousScene == 205) ? 10 : 0;
+	_gameTextSpeaker._displayMode = 9;
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_webbsterSpeaker);
+	_stripManager.addSpeaker(&_tealSpeaker);
+	_stripManager.addSpeaker(&_dutyOfficerSpeaker);
+
+	signal();
+}
+
+void Scene180::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(9999);
+
+	R2_GLOBALS._player._uiEnabled = false;
+	R2_GLOBALS._player.disableControl();
+
+}
+
+void Scene180::remove() {
+	_stripManager._field2E8 = -1;
+//	_stripManager._field2EA = -1;
+	SceneExt::remove();
+
+	R2_GLOBALS._events.setCursor(CURSOR_WALK);
+	// word_575F7 = 0;
+	R2_GLOBALS._playStream.stop();
+	R2_GLOBALS._sound2.fadeOut2(NULL);
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+}
+
+void Scene180::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_frameNumber);
+	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_field480);
+	s.syncAsSint16LE(_field482);
+	s.syncAsSint16LE(_frameInc);
+	s.syncAsSint16LE(_fontNumber);
+	s.syncAsSint16LE(_fontHeight);
+}
+
+void Scene180::signal() {
+	R2_GLOBALS._playStream.stop();
+
+	switch (_sceneMode) {
+	case 0:
+		setFrameInc(6);
+		break;
+
+	case 1:
+		_field412 = 1;
+		R2_GLOBALS._sceneManager._hasPalette = true;
+		_actionObject._field3C = 2;
+		_actionObject._v1 = 1;
+		_actionObject._field56 = 1;
+		R2_GLOBALS._scene180Mode = 1;
+
+		_actionObject.load(1, NULL);
+		R2_GLOBALS._scenePalette.loadPalette(_actionObject._palData, 0, 256);
+
+		R2_GLOBALS._sound1.play(1);
+		break;
+
+	case 2:
+		R2_GLOBALS._scene180Mode = 1;
+		R2_GLOBALS._paneRefreshFlag[0] = 3;
+
+		if (R2_GLOBALS._sound1.isPlaying()) {
+			setFrameInc(1);
+		} else {
+			setFrameInc(180);
+		}
+		break;
+
+	case 3:
+		R2_GLOBALS._scene180Mode = 1;
+
+		if (R2_GLOBALS._sound1.isPlaying())
+			_sceneMode = 3;
+
+		setFrameInc(1);
+		break;
+
+	case 4:
+	case 8:
+	case 30:
+	case 43:
+	case 47:
+		_field412 = 0;
+		_palette.loadPalette(0);
+		_palette.loadPalette(9998);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
+		break;
+
+	case 5:
+		_actionObject._field3C = 2;
+		_actionObject._v1 = 1;
+		_actionObject._field56 = 1;
+		R2_GLOBALS._scene180Mode = 2;
+		_actionObject.load(2);
+
+		_field412 = 1;
+		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 6, NULL);
+		R2_GLOBALS._sound1.play(2);
+		break;
+
+	case 6:
+		R2_GLOBALS._scene180Mode = 2;
+		R2_GLOBALS._paneRefreshFlag[0] = 3;
+
+		if (R2_GLOBALS._sound1.isPlaying()) {
+			setFrameInc(1);
+		} else {
+			setFrameInc(180);
+		}
+		break;
+
+	case 7:
+		R2_GLOBALS._scene180Mode = 2;
+		if (R2_GLOBALS._sound1.isPaused())
+			_sceneMode = 7;
+		setFrameInc(1);
+		break;
+
+	case 9:
+		R2_GLOBALS._sound1.play(3);
+		setFrameInc(2);
+		break;
+
+	case 10:
+		loadScene(4002);
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		setFrameInc(6);
+		break;
+
+	case 11:
+		_field412 = 1;
+		_object4.postInit();
+		_object5.postInit();
+		setAction(&_sequenceManager, this, 4000, &_object4, &_object5, NULL);
+		break;
+
+	case 12:
+	case 14:
+	case 16:
+	case 18:
+	case 20:
+	case 22:
+	case 24:
+	case 26:
+	case 46:
+		setFrameInc((R2_GLOBALS._speechSubtitles & 1) ? 1 : 18);
+		break;
+
+	case 13:
+		setAction(&_sequenceManager, this, 4001, &_object4, &_object5, NULL);
+		break;
+
+	case 15:
+		setAction(&_sequenceManager, this, 4002, &_object4, &_object5, NULL);
+		break;
+	
+	case 17:
+		setAction(&_sequenceManager, this, 4003, &_object4, &_object5, NULL);
+		break;
+
+	case 19:
+		setAction(&_sequenceManager, this, 4004, &_object4, &_object5, NULL);
+		break;
+
+	case 21:
+		setAction(&_sequenceManager, this, 4005, &_object4, &_object5, NULL);
+		break;
+
+	case 23:
+		setAction(&_sequenceManager, this, 4006, &_object4, &_object5, NULL);
+		break;
+
+	case 25:
+		setAction(&_sequenceManager, this, 4007, &_object4, &_object5, NULL);
+		break;
+
+	case 27:
+		_field412 = 0;
+		_object4.remove();
+		_object5.remove();
+		setFrameInc(2);
+		break;
+
+	case 28:
+		_field412 = 0;
+		_palette.loadPalette(0);
+		_palette.loadPalette(9998);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 100, this);
+		break;
+
+	case 29:
+		_field412 = 1;
+		_actionObject._field3C = 0;
+		_actionObject._v1 = 1;
+		_actionObject._field56 = 42;
+		R2_GLOBALS._scene180Mode = 3;
+		_actionObject.load(3);
+		break;
+
+	case 31:
+		R2_GLOBALS._sound2.play(7);
+
+		_object4.postInit();
+		_object4.setVisage(76);
+		_object4.setStrip(1);
+		_object4.setFrame(1);
+		_object4.setPosition(Common::Point(288, 143));
+		_object4.fixPriority(210);
+
+		loadScene(75);
+
+		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._scenePalette.loadPalette(75);
+
+		if (R2_GLOBALS._sceneManager._hasPalette)
+			R2_GLOBALS._scenePalette.refresh();
+		setFrameInc(6);
+		break;
+
+	case 32:
+		_field412 = 1;
+		
+		_object2.postInit();
+		_object2.setPosition(Common::Point(161, 97));
+		_object2.hide();
+
+		_object3.postInit();
+		_object3.setPosition(Common::Point(60, 96));
+		_object3.hide();
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 11, this);
+		break;
+
+	case 33:
+		_object2.hide();
+
+		_object3.setup(76, 4, 1);
+		_object3.setFrame(_object3.getFrameCount());
+
+		_object5.postInit();
+		_object5.setup(75, 1, 1);
+		_object5.setPosition(Common::Point(221, 125));
+		_object5.fixPriority(210);
+		_object5.setAction(&_action1);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 12, this);
+		break;
+
+	case 34:
+		_object2.hide();
+		_object3.hide();
+
+		_object1.postInit();
+		_object1.setup(76, 2, 1);
+		_object1.setPosition(Common::Point(287, 135));
+		_object1.fixPriority(200);
+
+		_sound1.play(19);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
+		break;
+
+	case 35:
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 13, this);
+		break;
+
+	case 36:
+		_object2.remove();
+		_sound1.play(19);
+
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 6, this);
+		break;
+
+	case 37:
+		_field412 = 0;
+		_object1.remove();
+		_palette.loadPalette(9998);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
+		break;
+
+	case 38:
+		_object4.remove();
+		_object5.setAction(NULL);
+		_object5.remove();
+		
+		R2_GLOBALS._sound2.fadeOut2(NULL);
+		R2_GLOBALS._sound1.fadeOut2(NULL);
+		break;
+
+	case 39:
+		R2_GLOBALS._sound1.changeSound(8);
+		setFrameInc(1);
+		break;
+
+	case 40:
+		_actionObject._field3C = 2;
+		_actionObject._field56 = 1;
+		R2_GLOBALS._scene180Mode = 4;
+		if (_actionObject.load(4)) {
+			_actionObject.dispatch();
+			R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 8, this);
+		} else {
+			_sceneMode = 43;
+			setFrameInc(1);
+		}
+		break;
+
+	case 41:
+		_field412 = 1;
+		_actionObject._v1 = 1;
+		break;
+
+	case 42:
+		R2_GLOBALS._scene180Mode = 4;
+		R2_GLOBALS._paneRefreshFlag[0] = 3;
+		setFrameInc(1);
+		break;
+
+	case 44:
+		loadScene(9997);
+		R2_GLOBALS._scenePalette.loadPalette(9997);
+		if (R2_GLOBALS._sceneManager._hasPalette)
+			R2_GLOBALS._scenePalette.refresh();
+
+		setFrameInc(6);
+		break;
+
+	case 45:
+		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 28, this);
+		break;
+
+	case 48:
+		_field412 = 1;
+		_actionObject._field3C = 2;
+		_actionObject._v1 = 1;
+		_actionObject._field56 = 1;
+		R2_GLOBALS._scene180Mode = 15;
+		_actionObject.load(15, NULL);
+
+		R2_GLOBALS._sound1.play(9);
+		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 6, NULL);
+		break;
+
+	case 49:
+		R2_GLOBALS._scene180Mode = 15;
+		R2_GLOBALS._paneRefreshFlag[0] = 3;
+		setFrameInc(1);
+		break;
+
+	case 50:
+		R2_GLOBALS._scene180Mode = 0;
+		_field412 = 0;
+		R2_GLOBALS._sceneManager.changeScene(100);
+		break;
+	}
+}
+
+void Scene180::setFrameInc(int v) {
+	_frameInc = v;
+	_frameNumber = R2_GLOBALS._events.getFrameNumber();
+}
+
+void Scene180::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = 1;
+		if (!_field412) {
+			if (R2_GLOBALS._scenePalette._listeners.size() == 0) {
+				HelpDialog::show();
+			}
+		}
+	}
+
+	if (!event.handled)
+		SceneExt::process(event);
+}
+
+void Scene180::dispatch() {
+	if (_frameInc) {
+		uint32 frameNumber = R2_GLOBALS._events.getFrameNumber();
+
+		if (frameNumber >= frameNumber) {
+			_frameInc = frameNumber - _frameNumber;
+			_frameNumber = frameNumber;
+
+			if (_frameInc <= 0) {
+				_frameInc = 0;
+				signal();
+			}
+		}
+	}
+
+	if (_actionObject._v1) {
+		if (_actionObject.proc1()) {
+			_actionObject._v1 = 0;
+			_actionObject.proc2();
+			_actionObject.remove();
+
+			signal();
+		} else {
+			_actionObject.dispatch();
+		}
+	}
+
+	Scene::dispatch();
+}
+
+void Scene180::restore() {
+	R2_GLOBALS._gfxColors.background = 0;
+	R2_GLOBALS._gfxColors.foreground = 0xff;
+	R2_GLOBALS._fontColors.background = 0;
+	R2_GLOBALS._fontColors.foreground = 0xff;
+
+	switch (R2_GLOBALS._scene180Mode) {
+	case 0:
+		R2_GLOBALS._events.setCursor(SHADECURSOR_HAND);
+
+		R2_GLOBALS._gfxColors.foreground = 4;
+		R2_GLOBALS._gfxColors.background = 3;
+		R2_GLOBALS._fontColors.background = 3;
+		R2_GLOBALS._frameEdgeColour = 3;
+		break;
+
+	case 1:
+		R2_GLOBALS._events.setCursor(R2_CURSOR_20);
+
+		R2_GLOBALS._gfxColors.foreground = 25;
+		R2_GLOBALS._gfxColors.background = 43;
+		R2_GLOBALS._fontColors.background = 48;
+		R2_GLOBALS._frameEdgeColour = 48;
+		break;
+
+	case 2:
+		R2_GLOBALS._events.setCursor(R2_CURSOR_21);
+
+		R2_GLOBALS._gfxColors.foreground = 106;
+		R2_GLOBALS._gfxColors.background = 136;
+		R2_GLOBALS._fontColors.background = 48;
+		R2_GLOBALS._fontColors.foreground = 253;
+		R2_GLOBALS._frameEdgeColour = 48;
+		break;
+
+	case 3:
+		R2_GLOBALS._events.setCursor(R2_CURSOR_22);
+
+		R2_GLOBALS._gfxColors.foreground = 84;
+		R2_GLOBALS._gfxColors.background = 118;
+		R2_GLOBALS._fontColors.background = 47;
+		R2_GLOBALS._frameEdgeColour = 48;
+		break;
+
+	case 14:
+		R2_GLOBALS._events.setCursor(R2_CURSOR_23);
+
+		R2_GLOBALS._fontColors.background = 38;
+		R2_GLOBALS._fontColors.foreground = 38;
+		R2_GLOBALS._gfxColors.foreground = 192;
+		R2_GLOBALS._gfxColors.background = 30;
+		R2_GLOBALS._frameEdgeColour = 48;
+		break;
+
+	default:
+		R2_GLOBALS._gfxColors.background = 0;
+		R2_GLOBALS._gfxColors.foreground = 59;
+		R2_GLOBALS._fontColors.background = 4;
+		R2_GLOBALS._fontColors.foreground = 15;
+
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 200 - Ship Corridor
  *
  *--------------------------------------------------------------------------*/
