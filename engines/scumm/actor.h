@@ -333,6 +333,7 @@ public:
 protected:
 	virtual bool isPlayer();
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 enum ActorV0MiscFlags {
@@ -376,7 +377,9 @@ public:
 	virtual void saveLoadWithSerializer(Serializer *ser);
 
 protected:
-
+	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End, 
+		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
+	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 
