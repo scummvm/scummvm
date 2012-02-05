@@ -339,7 +339,7 @@ void ani50() {
 	fic.read(&mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	demus(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
+	g_vm->_soundManager.demus(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
 	addfix = (float)((tempo_mus - addv[1])) / 256;
 	cctable(tbi);
 
@@ -347,7 +347,7 @@ void ani50() {
 	k = 0;
 	do {
 		fin = keypressed();
-		musyc(tbi, 9958 , tempo_mus);
+		g_vm->_soundManager.musyc(tbi, 9958 , tempo_mus);
 		k = k + 1;
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);

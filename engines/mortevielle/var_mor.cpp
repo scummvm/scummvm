@@ -359,9 +359,4 @@ void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");
 }
 
-// (* external 'c:\mc\phint.com'; *)
-void litph(tablint &t, int typ, int tempo) {
-	warning("TODO: litph");
-}
-
 } // End of namespace Mortevielle

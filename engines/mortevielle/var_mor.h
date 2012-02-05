@@ -454,10 +454,6 @@ extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
 extern void decomp(int seg, int dep); 
 // (* external 'c:\mc\affich.com'; *)
 extern void afff(int Gd, int seg, int dep, int x, int y); 
-// (* external 'c:\mc\reusint.com'; *)
-extern void musyc(tablint &tb, int nbseg, int att);  
-// (* external 'c:\mc\phint.com'; *)
-extern void litph(tablint &t, int typ, int tempo); 
 
 } // End of namespace Mortevielle
 

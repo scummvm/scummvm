@@ -28,9 +28,83 @@
 #ifndef MORTEVIELLE_SOUND_H
 #define MORTEVIELLE_SOUND_H
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/queue.h"
+#include "mortevielle/var_mor.h"
+
 namespace Mortevielle {
 
-extern void demus(const byte *PSrc, byte *PDest, int NbreSeg);
+/**
+ * Structure used to store pending notes to play
+ */
+struct SpeakerNote {
+	int freq;
+	uint32 length;
+
+	SpeakerNote(int noteFreq, uint32 noteLength) {
+		freq = noteFreq;
+		length = noteLength;
+	}
+};
+	
+/**
+ * This is a modified PC Speaker class that allows the queueing of an entire song
+ * sequence one note at a time.
+ */
+class PCSpeaker : public Audio::AudioStream {
+private:
+	Common::Queue<SpeakerNote> _pendingNotes;
+	Common::Mutex _mutex;
+
+	int _rate;
+	uint32 _oscLength;
+	uint32 _oscSamples;
+	uint32 _remainingSamples;
+	uint32 _mixedSamples;
+	byte _volume;
+
+	void dequeueNote();
+protected:
+	static int8 generateSquare(uint32 x, uint32 oscLength);
+public:
+	PCSpeaker(int rate = 44100);
+	~PCSpeaker();
+
+	/** Play a note for length microseconds.
+	 */
+	void play(int freq, uint32 length);
+	/** Stop the currently playing sequence */
+	void stop();
+	/** Adjust the volume. */
+	void setVolume(byte volume);
+
+	bool isPlaying() const;
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const	{ return false; }
+	bool endOfData() const	{ return false; }
+	bool endOfStream() const { return false; }
+	int getRate() const	{ return _rate; }
+};
+
+class SoundManager {
+private:
+	Audio::Mixer *_mixer;
+	PCSpeaker *_speakerStream;
+	Audio::SoundHandle _speakerHandle;
+public:
+	SoundManager(Audio::Mixer *mixer);
+	~SoundManager();
+
+	void playNote(int frequency, int32 length);
+
+	void demus(const byte *PSrc, byte *PDest, int NbreSeg);
+	void litph(tablint &t, int typ, int tempo);
+	void musyc(tablint &tb, int nbseg, int att);  
+};
 
 } // End of namespace Mortevielle
 

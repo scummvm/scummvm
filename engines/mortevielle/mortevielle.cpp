@@ -37,7 +37,8 @@ namespace Mortevielle {
 MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc):
-		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
+		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle"),
+		_soundManager(_mixer) {
 	g_vm = this;
 	_lastGameFrame = 0;
 	_mouseClick = false;
@@ -296,6 +297,22 @@ void MortevielleEngine::setMousePos(const Common::Point &pt) {
 
 	// Save the new position
 	_mousePos = newPoint;
+}
+
+/**
+ * Delay by a given amount
+ */
+void MortevielleEngine::delay(int amount) {
+	uint32 endTime = g_system->getMillis() + amount;
+
+	while (g_system->getMillis() < endTime) {
+		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
+			_lastGameFrame = g_system->getMillis();
+			g_vm->_screenSurface.updateScreen();
+		}
+
+		g_system->delayMillis(10);
+	}
 }
 
 /*-------------------------------------------------------------------------*/
