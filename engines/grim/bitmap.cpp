@@ -456,8 +456,9 @@ void Bitmap::draw(int x, int y) {
 
 void Bitmap::setActiveImage(int n) {
 	assert(n >= 0);
+	_data->load();
 	if ((n - 1) >= _data->_numImages) {
-		warning("Bitmap::setNumber: no anim image: %d. (%s)", n, _data->_fname.c_str());
+		warning("Bitmap::setActiveImage: no anim image: %d. (%s)", n, _data->_fname.c_str());
 	} else {
 		_currImage = n;
 	}
