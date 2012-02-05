@@ -124,6 +124,9 @@ void GuiManager::initKeymap() {
 	act = new Action(guiMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
+	act = new Action(guiMap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+
 	mapper->addGlobalKeymap(guiMap);
 }
 

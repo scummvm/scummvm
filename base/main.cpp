@@ -292,6 +292,9 @@ static void setupKeymapper(OSystem &system) {
 	act = new Action(globalMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
+	act = new Action(globalMap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+
 	mapper->addGlobalKeymap(globalMap);
 
 	mapper->pushKeymap(kGlobalKeymapName, true);
