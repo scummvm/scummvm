@@ -1892,8 +1892,6 @@ void Actor_v0::startAnimActor(int f) {
 
 	if(f == _standFrame)
 		setDirection(_facing);
-	//else
-	//	animateActor(newDirToOldDir(_facing));
 }
 
 void Actor::animateActor(int anim) {
