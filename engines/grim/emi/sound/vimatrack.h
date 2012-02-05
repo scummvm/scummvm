@@ -28,7 +28,7 @@
 
 namespace Grim {
 	
-class SoundDesc;
+struct SoundDesc;
 class McmpMgr;
 
 /**

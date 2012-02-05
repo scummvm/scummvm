@@ -45,8 +45,8 @@ struct EMIColormap {
 struct Vector3int;
 
 class EMIModel;
-class BoneInfo;
-class Bone;
+struct BoneInfo;
+struct Bone;
 class Skeleton;
 	
 class EMIMeshFace {
