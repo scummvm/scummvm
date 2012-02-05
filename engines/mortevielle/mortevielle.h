@@ -33,6 +33,7 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/sound.h"
 
 namespace Mortevielle {
 
@@ -67,6 +68,7 @@ public:
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
+	SoundManager _soundManager;
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -80,6 +82,7 @@ public:
 	void setMousePos(const Common::Point &pt);
 	bool getMouseClick() const { return _mouseClick; }
 	void setMouseClick(bool v) { _mouseClick = v; }
+	void delay(int amount);
 };
 
 extern MortevielleEngine *g_vm;

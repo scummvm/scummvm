@@ -29,6 +29,8 @@
 #include "mortevielle/level15.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/parole.h"
+#include "mortevielle/mortevielle.h"
+#include "mortevielle/sound.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -116,7 +118,7 @@ void parole(int rep, int ht, int typ) {
 	break;
 	}
 	trait_ph();
-	litph(tbi, typ, tempo);
+	g_vm->_soundManager.litph(tbi, typ, tempo);
 	if (typlec != 0)
 		for (i = 0; i <= 500; i ++) {
 			t_cph[i] = savph[i];
