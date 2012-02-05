@@ -149,7 +149,7 @@ void RemapDialog::reflowLayout() {
 	int labelWidth =  colWidth - (keyButtonWidth + spacing + clearButtonWidth + spacing);
 
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	debug("rowCount = %d" , _rowCount);
+	debug(7, "rowCount = %d" , _rowCount);
 	if (colWidth <= 0  || _rowCount <= 0)
 		error("Remap dialog too small to display any keymaps");
 
