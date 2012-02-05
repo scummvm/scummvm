@@ -55,8 +55,8 @@ public:
 	int _refCount;
 
 private:
-	void initGrim(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
-	void initEMI(const Common::String &filename, Common::SeekableReadStream *data);
+	void initGrim(Common::SeekableReadStream *data, CMap *cmap);
+	void initEMI(Common::SeekableReadStream *data);
 };
 
 class Material : public Object {

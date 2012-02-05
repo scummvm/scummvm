@@ -26,15 +26,11 @@
 
 namespace Grim {
 
-Component::Component(Component *p, int parentID, tag32 t)  {
-	_visible = true;
-	_previousCmap = NULL;
-	_cmap = NULL;
-	_cost = NULL;
-	_parent = NULL;
-	_parentID = parentID;
+Component::Component(Component *p, int parentID, tag32 t) :
+	_visible(true), _tag(t), _parentID(parentID),
+	_previousCmap(NULL), _cmap(NULL), _cost(NULL) {
+
 	setParent(p);
-	_tag = t;
 }
 
 Component::~Component() {

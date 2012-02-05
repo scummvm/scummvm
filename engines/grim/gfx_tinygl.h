@@ -44,7 +44,7 @@ public:
 	const char *getVideoDeviceName();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Math::Vector3d pos, Math::Vector3d interest);
+	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest);
 
 	void clearScreen();
 	void flipBuffer();
@@ -53,7 +53,7 @@ public:
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
 						const Math::Angle &pitch, const Math::Angle &roll);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);

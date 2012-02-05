@@ -38,13 +38,13 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 	_fname(filename), _cmap(cmap), _refCount(1) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		initEMI(filename, data);
+		initEMI(data);
 	} else {
-		initGrim(filename, data, cmap);
+		initGrim(data, cmap);
 	}
 }
 
-void MaterialData::initGrim(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
+void MaterialData::initGrim(Common::SeekableReadStream *data, CMap *cmap) {
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
 		error("invalid magic loading texture");
@@ -129,11 +129,11 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	}
 }
 	
-void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadStream *data) {
+void MaterialData::initEMI(Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
 	char readFileName[64];
 
-	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
+	if (_fname.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
 		TextSplitter *ts = new TextSplitter(data);
 		ts->setLineNumber(2); // Skip copyright-line
 		ts->expectString("version\t1.0");
@@ -163,7 +163,7 @@ void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadS
 		_numImages = texFileNames.size();
 		delete ts;
 		return;
-	} else if(filename.hasSuffix(".tga")) {
+	} else if(_fname.hasSuffix(".tga")) {
 		_numImages = 1;
 		_textures = new Texture();
 		loadTGA(data, _textures);
@@ -171,7 +171,7 @@ void MaterialData::initEMI(const Common::String &filename, Common::SeekableReadS
 		return;
 		
 	} else {
-		warning("Unknown material-format: %s", filename.c_str());
+		warning("Unknown material-format: %s", _fname.c_str());
 	}
 }
 

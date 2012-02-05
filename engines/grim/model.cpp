@@ -703,7 +703,7 @@ void ModelNode::removeChild(ModelNode *child) {
 	}
 }
 
-void ModelNode::setMatrix(Math::Matrix4 matrix) {
+void ModelNode::setMatrix(const Math::Matrix4 &matrix) {
 	_matrix = matrix;
 	if (_sibling)
 		_sibling->setMatrix(matrix);

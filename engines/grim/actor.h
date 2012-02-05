@@ -435,7 +435,7 @@ public:
 	void setLookAtVectorZero() {
 		_lookAtVector.set(0.f, 0.f, 0.f);
 	}
-	void setLookAtVector(Math::Vector3d vector) {
+	void setLookAtVector(const Math::Vector3d &vector) {
 		_lookAtVector = vector;
 	}
 	Math::Vector3d getLookAtVector() {

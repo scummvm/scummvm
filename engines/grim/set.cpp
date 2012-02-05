@@ -651,11 +651,11 @@ void Set::setLightPosition(int light, const Math::Vector3d &pos) {
 	_lightsConfigured = false;
 }
 
-void Set::setSoundPosition(const char *soundName, Math::Vector3d pos) {
+void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos) {
 	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
 }
 
-void Set::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol) {
+void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol) {
 	// TODO: The volume and pan needs to be updated when the setup changes.
 	Math::Vector3d cameraPos = _currSetup->_pos;
 	Math::Vector3d vector = pos - cameraPos;

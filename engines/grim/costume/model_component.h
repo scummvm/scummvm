@@ -40,7 +40,7 @@ public:
 	void animate();
 	void reset();
 	void resetColormap();
-	void setMatrix(Math::Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(const Math::Matrix4 &matrix) { _matrix = matrix; };
 	void restoreState(SaveGame *state);
 	void translateObject(bool reset);
 	static void translateObject(ModelNode *node, bool reset);

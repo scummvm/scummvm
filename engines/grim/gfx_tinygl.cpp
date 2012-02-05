@@ -284,7 +284,7 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void GfxTinyGL::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
+void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) {
 	Math::Vector3d up_vec(0, 0, 1);
 
 	// EMI only: transform XYZ to YXZ
@@ -319,7 +319,7 @@ bool GfxTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
-static void tglShadowProjection(Math::Vector3d light, Math::Vector3d plane, Math::Vector3d normal, bool dontNegate) {
+static void tglShadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -454,7 +454,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
 							   const Math::Angle &pitch, const Math::Angle &roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
