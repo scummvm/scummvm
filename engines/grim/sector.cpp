@@ -375,7 +375,7 @@ Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
 
 	// Formula: return p - n * (n . (p - v_0))
 	Math::Vector3d result = point;
-	result -= _normal * Math::Vector3d::dotProduct(_normal, point - _vertices[0]);
+	result -= _normal * _normal.dotProduct(point - _vertices[0]);
 	return result;
 }
 
@@ -384,15 +384,14 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 		error("Sector normal is (0,0,0)");
 
 	Math::Vector3d result = v;
-	result -= _normal * Math::Vector3d::dotProduct(_normal, v);
+	result -= _normal * _normal.dotProduct(v);
 	return result;
 }
 
 // Find the closest point on the walkplane to the given point
 Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	// First try to project to the plane
-	Math::Vector3d p2 = point;
-	p2 -= (Math::Vector3d::dotProduct(_normal, p2 - _vertices[0])) * _normal;
+	Math::Vector3d p2 = getProjectionToPlane(point);
 	if (isPointInSector(p2))
 		return p2;
 
@@ -451,7 +450,7 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	result->angleWithEdge = Math::Vector3d::angle(dir, result->edgeDir);
 	result->edgeVertex = i - 1;
 
-	Math::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
+	Math::Vector3d edgeNormal = Math::Vector3d::crossProduct(result->edgeDir, _normal);
 	float d = Math::Vector3d::dotProduct(dir, edgeNormal);
 	// This is 0 for the albinizod monster in the at set
 	if (!d)
