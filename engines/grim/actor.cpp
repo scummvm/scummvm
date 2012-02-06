@@ -654,7 +654,11 @@ Math::Vector3d Actor::getSimplePuckVector() const {
 Math::Vector3d Actor::getPuckVector() const {
 	Math::Vector3d forwardVec = getSimplePuckVector();
 
-	Sector *sector = g_grim->getCurrSet()->findPointSector(_pos, Sector::WalkType);
+	Set * currSet = g_grim->getCurrSet();
+	if (!currSet)
+		return forwardVec;
+
+	Sector *sector = currSet->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
 		return forwardVec;
 	else
