@@ -199,9 +199,9 @@ void UIInventoryScroll::process(Event &event) {
 		// Draw the button as selected
 		toggle(true);
 
-		event.handled = true;
-		break;
-	case EVENT_BUTTON_UP:
+		// Wait for the mouse to be released
+		BF_GLOBALS._events.waitForPress(EVENT_BUTTON_UP);
+
 		// Restore unselected version
 		toggle(false);
 
