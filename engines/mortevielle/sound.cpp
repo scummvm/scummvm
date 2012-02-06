@@ -129,6 +129,9 @@ int8 PCSpeaker::generateSquare(uint32 x, uint32 oscLength) {
 
 const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
 
+// The PC timer chip works at a frequency of 1.19318Mhz
+#define TIMER_FREQUENCY 1193180
+
 SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
 	_speakerStream = new PCSpeaker(mixer->getOutputRate());
@@ -177,13 +180,13 @@ void SoundManager::musyc(tablint &tb, int nbseg, int att) {
 	const byte *pSrc = &mem[0x5000 * 16];
 	
 	// Convert the countdown amount to a tempo rate, and then to note length in microseconds
-	int tempo = 1193180 / att;
+	int tempo = TIMER_FREQUENCY / att;
 	int length = 1000000 / tempo;
 
 	for (int noteIndex = 0; noteIndex < (nbseg * 16); ++noteIndex) {
 		int lookupValue = *pSrc++;
 		int noteCountdown = tb[lookupValue];
-		int noteFrequency = 1193180 / noteCountdown;
+		int noteFrequency = TIMER_FREQUENCY / noteCountdown;
 
 		playNote(noteFrequency, length);
 	}
