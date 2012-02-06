@@ -184,7 +184,7 @@ void Actor_v0::initActor(int mode) {
 	_speaking = 0;
 
 	_animFrameRepeat = 0;
-	for(int i = 0; i < 8; ++i) {
+	for (int i = 0; i < 8; ++i) {
 		_limbFrameRepeatNew[i] = 0;
 		_limbFrameRepeat[i] = 0;
 		_limb_flipped[i] = false;
@@ -250,7 +250,7 @@ void Actor::stopActorMoving() {
 		_vm->stopScript(_walkScript);
 
 	_moving = 0;
-	if(_vm->_game.version == 0)
+	if (_vm->_game.version == 0)
 		((Actor_v0 *)this)->setDirection(_facing);
 }
 
@@ -339,7 +339,7 @@ int Actor::actorWalkStep() {
 	int distX, distY;
 	int nextFacing;
 
-	if(_vm->_game.version == 0)
+	if (_vm->_game.version == 0)
 		((Actor_v0 *)this)->_animFrameRepeat = -1;
 
 	_needRedraw = true;
@@ -352,7 +352,7 @@ int Actor::actorWalkStep() {
 		_moving |= MF_IN_LEG;
 
 		// V0: Don't move during the turn
-		if(_vm->_game.version == 0)
+		if (_vm->_game.version == 0)
 			return 0;
 	}
 
@@ -389,7 +389,7 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	if(_vm->_game.version == 0)
+	if (_vm->_game.version == 0)
 		((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
 
 	return 1;
@@ -1000,7 +1000,7 @@ void Actor_v0::setDirection(int direction) {
 	
 	_animFrameRepeat = -1;
 	animateActor(res);
-	if(_moving)
+	if (_moving)
 		animateCostume();
 }
 
@@ -1090,7 +1090,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	}
 
 	// V0 always sets the actor to face the camera upon entering a room
-	if(_vm->_game.version == 0)
+	if (_vm->_game.version == 0)
 		setDirection(oldDirToNewDir(2));
 }
 
@@ -1194,7 +1194,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 	int yDist = ABS(y - destY) / 4;
 	int dist;
 
-	if(g_scumm->_game.version == 0)
+	if (g_scumm->_game.version == 0)
 		xDist *= 2;
 
 	if (xDist < yDist)
@@ -1416,7 +1416,7 @@ void Actor::showActor() {
 		
 		a->_costCommand = a->_costCommandNew = 0xFF;
 
-		for(int i = 0; i < 8; ++i) {
+		for (int i = 0; i < 8; ++i) {
 			a->_limbFrameRepeat[i] = 0;
 			a->_limbFrameRepeatNew[i] = 0;
 		}
@@ -1967,7 +1967,7 @@ void Actor_v0::startAnimActor(int f) {
 		return;
 	}
 
-	if(f == _standFrame)
+	if (f == _standFrame)
 		setDirection(_facing);
 }
 
@@ -2886,19 +2886,19 @@ void Actor_v0::animateActor(int anim) {
 			break;
 	}
 
-	if(isInCurrentRoom()) {
+	if (isInCurrentRoom()) {
 
 		_costCommandNew = anim;
 		_vm->_costumeLoader->costumeDecodeData(this, 0, 0);
 		
-		if(dir == -1)
+		if (dir == -1)
 			return;
 
 		_facing = normalizeAngle(oldDirToNewDir(dir));
 
 	} else {
 
-		if(anim > 4 && anim <= 7)
+		if (anim > 4 && anim <= 7)
 			_facing = normalizeAngle(oldDirToNewDir(dir));
 	}
 }

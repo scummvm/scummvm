@@ -1190,7 +1190,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	}
 	
 	// Invalid current position?
-	if(a->_cost.curpos[limb] == 0xFFFF)
+	if (a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
 
 	_loaded.loadCostume(a->_costume);
@@ -1285,13 +1285,13 @@ void V0CostumeLoader::loadCostume(int id) {
 void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	Actor_v0 *A = (Actor_v0 *)a;
 
-	if(!a->_costume)
+	if (!a->_costume)
 		return;
 
 	loadCostume(a->_costume);
 
 	// Invalid costume command?
-	if(A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew))
+	if (A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew))
 		return;
 
 	A->_costCommand = A->_costCommandNew;
@@ -1308,16 +1308,16 @@ void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		limbFrameNumber = ((_animCmds + cmd)[limb]);
 
 		// Is this limb flipped?
-		if(limbFrameNumber & 0x80) {
+		if (limbFrameNumber & 0x80) {
 
 			// Invalid frame?
-			if(limbFrameNumber == 0xFF)
+			if (limbFrameNumber == 0xFF)
 				continue;
 
 			// Store the limb frame number (clear the flipped status)
 			a->_cost.frame[limb] = (limbFrameNumber & 0x7f);
 
-			if(A->_limb_flipped[limb] != true)
+			if (A->_limb_flipped[limb] != true)
 				a->_cost.start[limb] = 0xFFFF;
 
 			A->_limb_flipped[limb] = true;
@@ -1326,7 +1326,7 @@ void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 			//Store the limb frame number
 			a->_cost.frame[limb] = limbFrameNumber;
 
-			if(A->_limb_flipped[limb] != false)
+			if (A->_limb_flipped[limb] != false)
 				a->_cost.start[limb] = 0xFFFF;
 
 			A->_limb_flipped[limb] = false;
@@ -1349,7 +1349,7 @@ byte V0CostumeLoader::increaseAnims(Actor *a) {
 	int i;
 	byte r = 0;
 
-	for(i = 0; i != 8; i++) {
+	for (i = 0; i != 8; i++) {
 		A->limbFrameCheck(i);
 		r += increaseAnim(a, i);
 	}
@@ -1369,7 +1369,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 	if (frame == 0xFF) {
 
 		// Repeat timer has reached 0?
-		if(A->_limbFrameRepeat[limb] == 0) {
+		if (A->_limbFrameRepeat[limb] == 0) {
 
 			// Use the previous frame
 			--A->_cost.curpos[limb];
@@ -1385,7 +1385,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 		} else {
 
 			// Repeat timer enabled?
-			if(A->_limbFrameRepeat[limb] != -1)
+			if (A->_limbFrameRepeat[limb] != -1)
 				--A->_limbFrameRepeat[limb];
 
 			// No, restart at frame 0
@@ -1394,7 +1394,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 	}
 
 	// Limb frame has changed?
-	if(limbPrevious == a->_cost.curpos[limb])
+	if (limbPrevious == a->_cost.curpos[limb])
 		return 0;
 
 	return 1;
