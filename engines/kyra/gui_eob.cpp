@@ -285,7 +285,7 @@ void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 	else if (!slot && _flags.gameID == GI_EOB2 && checkScriptFlags(0x80000000))
 		_screen->drawShape(_screen->_curPage, _itemIconShapes[103], x + 8, y, 0);
 	else
-		_screen->drawShape(_screen->_curPage, _itemIconShapes[85], x + 8, y, 0);
+		_screen->drawShape(_screen->_curPage, _itemIconShapes[85 + slot], x + 8, y, 0);
 
 	if ((_characters[charIndex].disabledSlots & (1 << slot)) || !validateWeaponSlotItem(charIndex, slot) || (_characters[charIndex].hitPointsCur <= 0) || (_characters[charIndex].flags & 0x0c))
 		_screen->drawShape(_screen->_curPage, _weaponSlotGrid, x, y, 0);
