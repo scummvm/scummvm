@@ -307,10 +307,6 @@ void RemapDialog::loadKeymap() {
 		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
 
 		int topIndex = activeKeymaps.size() - 1;
-		// skip the top gui keymap since it is for the keymapper itself
-		// TODO: Don't use the keymap name as a way to discriminate GUI maps
-		if (topIndex > 0 && activeKeymaps[topIndex].keymap->getName().equals(kGuiKeymapName))
-			--topIndex;
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = activeKeymaps[topIndex];
