@@ -52,6 +52,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 5:
 		resonanceRingsLights();
 		break;
+	case 6:
+		pinball(arg0);
+		break;
 	case 7:
 		weightDrag(arg0, arg1);
 		break;
@@ -87,11 +90,18 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	}
 }
 
-void Puzzles::_drawForVarHelper(uint16 var, int32 startValue, int32 endValue) {
+void Puzzles::_drawForVarHelper(int16 var, int32 startValue, int32 endValue) {
 		uint startFrame = _vm->_state->getFrameCount();
 		uint currentFrame = startFrame;
 		uint numValues = abs(endValue - startValue);
 		uint endFrame = startFrame + 2 * numValues;
+
+		int16 var2 = var;
+
+		if (var < 0)
+			var = -var;
+		if (var2 < 0)
+			var2 = -var2 + 1;
 
 		if (startFrame < endFrame) {
 			int currentValue = -9999;
@@ -107,6 +117,7 @@ void Puzzles::_drawForVarHelper(uint16 var, int32 startValue, int32 endValue) {
 						varValue = startValue - currentValue;
 
 					_vm->_state->setVar(var, varValue);
+					_vm->_state->setVar(var2, varValue);
 				}
 
 				_vm->processInput(true);
@@ -119,6 +130,16 @@ void Puzzles::_drawForVarHelper(uint16 var, int32 startValue, int32 endValue) {
 		}
 
 		_vm->_state->setVar(var, endValue);
+		_vm->_state->setVar(var2, endValue);
+}
+
+void Puzzles::_drawXFrames(uint16 frames) {
+	uint32 endFrame = _vm->_state->getFrameCount() + frames;
+
+	while (_vm->_state->getFrameCount() < endFrame) {
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
 }
 
 void Puzzles::leversBall(int16 var) {
@@ -456,6 +477,499 @@ void Puzzles::resonanceRingsLights() {
 	}
 
 	// TODO: Run sound script (same as opcode 200, args 100, 2)
+}
+
+void Puzzles::pinball(int16 var) {
+	static const byte remainingPegsFrames[] = { 2, 15, 25, 32 };
+
+	static const PegCombination leftPegs[] = {
+		{ 10101, { 0, 1, 0, 0, 0 }, {   0,   0,   0 }, 300 },
+		{ 10102, { 1, 1, 0, 0, 0 }, {  49,   0,   0 }, 310 },
+		{ 10103, { 0, 1, 0, 1, 0 }, { 200,   0,   0 }, 310 },
+		{ 10104, { 0, 1, 1, 0, 0 }, { 150,   0,   0 }, 305 },
+		{ 10105, { 0, 1, 0, 0, 1 }, { 250,   0,   0 }, 305 },
+		{ 10106, { 1, 1, 0, 1, 0 }, {  49, 205,   0 }, 310 },
+		{ 10107, { 1, 1, 1, 0, 0 }, {  49, 155,   0 }, 309 },
+		{ 10108, { 1, 1, 0, 0, 1 }, {  49, 253,   0 }, 310 },
+		{ 10109, { 0, 1, 1, 1, 0 }, { 150, 205,   0 }, 310 },
+		{ 10110, { 0, 1, 0, 1, 1 }, { 199, 254,   0 }, 309 },
+		{ 10111, { 0, 1, 1, 0, 1 }, { 150, 254,   0 }, 309 },
+		{ 10112, { 1, 1, 1, 1, 0 }, {  49, 155, 210 }, 315 },
+		{ 10113, { 1, 1, 0, 1, 1 }, {  49, 205, 260 }, 315 },
+		{ 10114, { 1, 1, 1, 0, 1 }, {  49, 155, 260 }, 315 },
+		{ 10115, { 0, 1, 1, 1, 1 }, { 150, 205, 260 }, 315 }
+	};
+
+	static const PegCombination rightPegs[] = {
+		{ 10201, { 0, 0, 0, 0, 0 }, {   0,   0,   0 }, 300 },
+		{ 10202, { 1, 0, 0, 0, 0 }, { 250,   0,   0 }, 305 },
+		{ 10203, { 0, 1, 0, 0, 0 }, { 200,   0,   0 }, 305 },
+		{ 10204, { 0, 0, 1, 0, 0 }, { 150,   0,   0 }, 305 },
+		{ 10205, { 0, 0, 0, 1, 0 }, { 100,   0,   0 }, 305 },
+		{ 10206, { 0, 0, 0, 0, 1 }, {  50,   0,   0 }, 305 },
+		{ 10207, { 1, 1, 0, 0, 0 }, { 200, 255,   0 }, 305 },
+		{ 10208, { 1, 0, 1, 0, 0 }, { 150, 255,   0 }, 310 },
+		{ 10209, { 1, 0, 0, 1, 0 }, { 100, 255,   0 }, 310 },
+		{ 10210, { 1, 0, 0, 0, 1 }, {  50, 255,   0 }, 310 },
+		{ 10211, { 0, 1, 1, 0, 0 }, { 150, 205,   0 }, 310 },
+		{ 10212, { 0, 1, 0, 1, 0 }, { 100, 205,   0 }, 310 },
+		{ 10213, { 0, 1, 0, 0, 1 }, {  50, 205,   0 }, 310 },
+		{ 10214, { 0, 0, 1, 1, 0 }, { 100, 155,   0 }, 310 },
+		{ 10215, { 0, 0, 1, 0, 1 }, {  50, 155,   0 }, 210 },
+		{ 10216, { 0, 0, 0, 1, 1 }, {  50, 105,   0 }, 310 },
+		{ 10217, { 1, 1, 1, 0, 0 }, { 150, 205, 260 }, 315 },
+		{ 10218, { 1, 1, 0, 1, 0 }, { 100, 205, 260 }, 315 },
+		{ 10219, { 1, 1, 0, 0, 1 }, {  50, 205, 260 }, 312 },
+		{ 10220, { 1, 0, 1, 1, 0 }, { 100, 155, 260 }, 314 },
+		{ 10221, { 1, 0, 1, 0, 1 }, {  50, 155, 259 }, 315 },
+		{ 10222, { 1, 0, 0, 1, 1 }, {  50, 105, 260 }, 315 },
+		{ 10223, { 0, 1, 1, 1, 0 }, { 100, 155, 210 }, 315 },
+		{ 10224, { 0, 1, 1, 0, 1 }, {  50, 155, 210 }, 315 },
+		{ 10225, { 0, 1, 0, 1, 1 }, {  50, 105, 210 }, 315 },
+		{ 10226, { 0, 0, 1, 1, 1 }, {  50, 105, 155 }, 315 }
+	};
+
+	struct BallJump {
+		int16 positionLeft;
+		int16 positionRight;
+		int16 filter;
+		int16 startFrame;
+		int16 endFrame;
+		int16 sound;
+		int16 targetLeftFrame;
+		int16 tragetRightFrame;
+		int16 type;
+	};
+
+	static const BallJump jumps[] = {
+		{   0, 450,  1,   16,   28, 1021, 250, 550, 0 },
+		{   0, 450, -1,   29,   41, 1021, 500, 550, 3 },
+		{   0, 200,  0,   42,   57, 1023, 300, 500, 0 },
+		{   0, 200, -1,   58,   74, 1023, 550, 500, 3 },
+		{   0, 250,  1,   75,   90, 1023, 350, 550, 0 },
+		{   0, 250, -1,   91,  106, 1023, 500, 550, 3 },
+		{   0, 300,  0,  107,  119, 1021, 400, 500, 0 },
+		{   0, 300, -1,  120,  132, 1021, 550, 500, 3 },
+		{   0, 400,  0,  133,  165, 1022, 500, 500, 2 },
+		{   0, 400,  1, 1039, 1071, 1022, 550, 500, 2 },
+		{   0, 350,  0,  166,  198, 1022, 500, 550, 2 },
+		{   0, 350,  1, 1072, 1109, 1022, 550, 550, 2 },
+		{ 250,   0,  1,  801,  815, 1021, 550, 450, 0 },
+		{ 250,   0, -1,  816,  827, 1021, 550, 500, 4 },
+		{ 300,   0,  0,  828,  845, 1023, 500, 200, 0 },
+		{ 300,   0, -1,  846,  858, 1023, 500, 550, 3 },
+		{ 350,   0,  1,  859,  876, 1023, 550, 250, 0 },
+		{ 350,   0, -1,    0,    0,    0, 550, 500, 1 },
+		{ 400,   0,  0,  893,  907, 1021, 500, 300, 0 },
+		{ 400,   0,  1, 1267, 1278, 1023, 500, 550, 3 },
+		{ 200,   0,  1,  908,  940, 1022, 500, 550, 2 },
+		{ 200,   0,  0,  974, 1006, 1022, 500, 500, 2 },
+		{ 450,   0,  1,  941,  973, 1022, 550, 550, 2 },
+		{ 450,   0,  0, 1007, 1038, 1022, 550, 500, 2 }
+	};
+
+	struct BallExpireFrames {
+		uint16 leftPosition;
+		uint16 rightPosition;
+		uint16 startFrame;
+		uint16 endFrame;
+	};
+
+	static const BallExpireFrames ballExpireFrames[] = {
+		{ 200, 200, 1105, 1131 },
+		{ 250, 250, 1132, 1158 },
+		{ 300, 300, 1159, 1185 },
+		{ 350, 350, 1186, 1212 },
+		{ 400, 400, 1213, 1239 },
+		{ 450, 450, 1240, 1266 }
+	};
+
+	// Toggle peg state
+	if (var > 0) {
+		int32 value = _vm->_state->getVar(var);
+		if (value) {
+			_vm->_state->setVar(var, 0);
+		} else {
+			_vm->_state->setVar(var, 1);
+			// TODO: Play sound 1024, volume 100 if not already playing
+		}
+	}
+
+	// Remaining pegs movie
+	uint32 pegs = _vm->_state->getPinballRemainingPegs();
+	uint32 frame = remainingPegsFrames[pegs];
+	_vm->_state->setVar(33, frame);
+
+	// Choose pegs movie according to peg combination
+	const PegCombination *leftComb = _pinballFindCombination(461, leftPegs, ARRAYSIZE(leftPegs));
+	if (!leftComb)
+		error("Unable to find correct left pegs combination");
+	_vm->_state->setVar(31, leftComb->movie - 10100);
+
+	const PegCombination *rightComb = _pinballFindCombination(466, rightPegs, ARRAYSIZE(rightPegs));
+	if (!rightComb)
+		error("Unable to find correct right pegs combination");
+	_vm->_state->setVar(32, rightComb->movie - 10200);
+
+	if (var >= 0)
+		return;
+
+	_vm->_state->setVar(93, 0);
+
+	// Remove the default panel movies
+	_vm->removeMovie(10116);
+	_vm->removeMovie(10227);
+
+	// Set up left panel movie with the correct combination
+	_vm->_state->setMoviePreloadToMemory(true);
+	_vm->_state->setMovieScriptDriven(true);
+	_vm->_state->setMovieNextFrameGetVar(31);
+	_vm->loadMovie(leftComb->movie, 1, false, true);
+	_vm->_state->setVar(31, 2);
+
+	// Set up right panel movie with the correct combination
+	_vm->_state->setMoviePreloadToMemory(true);
+	_vm->_state->setMovieScriptDriven(true);
+	_vm->_state->setMovieNextFrameGetVar(32);
+	_vm->loadMovie(rightComb->movie, 1, false, true);
+	_vm->_state->setVar(32, 2);
+
+
+	// Launch sound
+	_vm->_sound->play(1021, 50);
+	_drawForVarHelper(-34, 2, 15);
+	_drawXFrames(30);
+
+	int32 leftSideFrame = 250;
+	int32 rightSideFrame = 500;
+	_vm->_state->setVar(34, 250);
+	_vm->_state->setVar(35, 500);
+	int32 leftPanelFrame = 2;
+	int32 rightPanelFrame = 2;
+	int32 ballOnLeftSide = 1;
+	int32 ballOnRightSide = 0;
+	int32 ballShouldExpire = 0;
+	int32 ballCrashed = 0;
+	int32 leftToRightJumpCountDown = 0;
+	int32 rightToLeftJumpCountdown = 0;
+	int32 ballJumpedFromLeftSide = 1;
+	int32 ballJumpedFromRightSide = 0;
+	int32 jumpType = -1;
+
+	while (1) {
+		_vm->drawFrame();
+		_vm->processInput(true);
+
+		// while (limit > renderCurrFrame);
+		// limit = _vm->_state->getFrameCount() + 1;
+
+		bool shouldRotate;
+		if (leftToRightJumpCountDown >= 3 || rightToLeftJumpCountdown >= 3) {
+			shouldRotate = false;
+			// sound fade stop 1025, 7
+		} else {
+			shouldRotate = true;
+			_vm->_sound->play(1025, 50, ballOnLeftSide != 0 ? 150 : 210, 95);
+		}
+
+		if (ballOnLeftSide && shouldRotate) {
+			++leftSideFrame;
+
+			if (ballJumpedFromLeftSide) {
+				if (leftSideFrame >= 500)
+					leftSideFrame = 200;
+			} else {
+				if (leftSideFrame >= 800)
+					leftSideFrame = 500;
+			}
+
+			_vm->_state->setVar(34, leftSideFrame);
+		}
+
+		if (ballOnRightSide && shouldRotate) {
+			rightSideFrame++;
+
+			if (ballJumpedFromRightSide) {
+				if (rightSideFrame >= 500)
+					rightSideFrame = 200;
+			} else {
+				if (rightSideFrame >= 800)
+					rightSideFrame = 500;
+			}
+
+			_vm->_state->setVar(35, rightSideFrame);
+		}
+
+		if (ballOnLeftSide) {
+			leftPanelFrame++;
+			_vm->_state->setVar(31, leftPanelFrame);
+
+			for (uint i = 0; i < 3; i++)
+				if (leftComb->pegFrames[i] == leftPanelFrame) {
+					_vm->_sound->play(1027, 50);
+					leftToRightJumpCountDown = 5;
+				}
+
+			if (leftPanelFrame == leftComb->expireFrame) {
+				ballShouldExpire = 1;
+				ballOnLeftSide = 0;
+			}
+		}
+
+		if (ballOnRightSide) {
+			rightPanelFrame++;
+			_vm->_state->setVar(32, rightPanelFrame);
+
+			for (uint i = 0; i < 3; i++)
+				if (rightComb->pegFrames[i] == rightPanelFrame) {
+					_vm->_sound->play(1027, 50);
+					rightToLeftJumpCountdown = 5;
+				}
+
+			if (rightPanelFrame == rightComb->expireFrame) {
+				ballShouldExpire = 1;
+				ballOnRightSide = 0;
+			}
+		}
+
+		bool ballShouldJump = false;
+		if (leftToRightJumpCountDown) {
+			--leftToRightJumpCountDown;
+			if (!leftToRightJumpCountDown) {
+				ballOnLeftSide = 0;
+				ballShouldJump = true;
+			}
+		}
+
+		if (rightToLeftJumpCountdown) {
+			--rightToLeftJumpCountdown;
+			if (!rightToLeftJumpCountdown) {
+				ballOnRightSide = 0;
+				ballShouldJump = true;
+			}
+		}
+
+		if (ballShouldJump) {
+			// sound fade stop 1025, 7
+			_drawXFrames(30);
+
+			int32 jumpPositionLeft = 50 * ((leftSideFrame + 25) / 50);
+			int32 jumpPositionRight = 50 * ((rightSideFrame + 25) / 50);
+
+			const BallJump *jump = 0;
+
+			for (uint i = 0; i < ARRAYSIZE(jumps); i++) {
+				int32 filter = jumps[i].filter;
+				if (filter != -1) {
+					if (filter) {
+						if (!(jumpPositionLeft % 100))
+							continue;
+					} else {
+						if (jumpPositionLeft % 100)
+							continue;
+					}
+				}
+
+				if (abs(jumps[i].positionRight - jumpPositionRight) < 10) {
+					ballOnRightSide = 0;
+					ballOnLeftSide = 1;
+					ballJumpedFromRightSide = 0;
+					ballJumpedFromLeftSide = 1;
+					jump = &jumps[i];
+					break;
+				}
+			}
+
+			for (uint i = 0; i < ARRAYSIZE(jumps); i++) {
+				int32 filter = jumps[i].filter;
+				if (filter != -1) {
+					if (filter) {
+						if (!(jumpPositionRight % 100))
+							continue;
+					} else {
+						if (jumpPositionRight % 100)
+							continue;
+					}
+				}
+
+				if (abs(jumps[i].positionLeft - jumpPositionLeft) < 10) {
+					ballOnLeftSide = 0;
+					ballOnRightSide = 1;
+					ballJumpedFromRightSide = 1;
+					ballJumpedFromLeftSide = 0;
+					jump = &jumps[i];
+					break;
+				}
+			}
+
+			if (!jump)
+				error("Bad orb jump combo %d %d", jumpPositionLeft, jumpPositionRight);
+
+			jumpType = jump->type;
+
+			int32 sound = jump->sound;
+			if (sound)
+				_vm->_sound->play(sound, 50);
+
+			int32 jumpStartFrame = jump->startFrame;
+			if (jumpStartFrame)
+				_drawForVarHelper(-34, jumpStartFrame, jump->endFrame);
+
+			if (jumpType == 3) {
+				_drawXFrames(6);
+				_vm->_sound->play(1028, 50);
+			} else if (jumpType == 1 || jumpType == 4) {
+				_vm->_state->setVar(26, jumpType);
+				_vm->_state->setVar(93, 1);
+				// sound fade stop 1025, 7
+				return;
+			}
+
+			leftSideFrame = jump->targetLeftFrame;
+			rightSideFrame = jump->tragetRightFrame;
+			_vm->_state->setVar(34, leftSideFrame);
+			_vm->_state->setVar(35, rightSideFrame);
+
+			if (jumpType >= 2)
+				ballCrashed = 1;
+
+			_drawXFrames(30);
+		}
+
+		if (ballShouldExpire) {
+			leftSideFrame = 50 * ((leftSideFrame + 25) / 50);
+			rightSideFrame = 50 * ((rightSideFrame + 25) / 50);
+
+			if (leftSideFrame == 500)
+				leftSideFrame = 200;
+
+			if (rightSideFrame == 500)
+				rightSideFrame = 200;
+
+			// sound fade stop 1025, 7
+			// Sound same as opcode 213 : 1005, 65, 0, 0, 5, 60, 20
+			_drawXFrames(55);
+			_vm->_sound->play(1010, 50);
+
+			for (uint i = 0; i < ARRAYSIZE(ballExpireFrames); i++) {
+				if (ballJumpedFromLeftSide && ballExpireFrames[i].leftPosition == leftSideFrame) {
+					_drawForVarHelper(34, ballExpireFrames[i].startFrame, ballExpireFrames[i].endFrame);
+					break;
+				}
+
+				if (ballJumpedFromRightSide && ballExpireFrames[i].rightPosition == rightSideFrame) {
+					_drawForVarHelper(35, ballExpireFrames[i].startFrame, ballExpireFrames[i].endFrame);
+					break;
+				}
+			}
+
+			_drawXFrames(15);
+			break;
+		}
+
+		if (ballCrashed)
+			break;
+	}
+
+	if (ballCrashed) {
+		if (leftSideFrame < 500)
+			leftSideFrame += 300;
+		if (rightSideFrame < 500)
+			rightSideFrame += 300;
+
+		int32 crashedLeftFrame = ((((leftSideFrame + 25) / 50) >> 4) & 1) != 0 ? 550 : 500;
+		int32 crashedRightFrame = ((((rightSideFrame + 25) / 50) >> 4) & 1) != 0 ? 550 : 500;
+
+		while (1) {
+			bool moviePlaying = false;
+			if ((leftComb->movie != 10101 || leftPanelFrame > 2)
+					&& leftPanelFrame != leftComb->expireFrame) {
+
+				if (leftToRightJumpCountDown) {
+					--leftToRightJumpCountDown;
+				}
+				if (!leftToRightJumpCountDown) {
+					_vm->_state->setVar(34, crashedLeftFrame);
+					crashedLeftFrame++;
+				}
+
+				_vm->_state->setVar(31, leftPanelFrame);
+
+				++leftPanelFrame;
+				leftSideFrame = leftPanelFrame;
+
+				for (uint i = 0; i < 3; i++)
+					if (leftComb->pegFrames[i] == leftSideFrame) {
+						_vm->_sound->play(1027, 50);
+						leftToRightJumpCountDown = 5;
+					}
+
+				moviePlaying = true;
+			}
+
+			if (!moviePlaying) {
+				if ((rightComb->movie != 10201 || rightPanelFrame > 2)
+					&& rightPanelFrame != rightComb->expireFrame) {
+
+					if (rightToLeftJumpCountdown) {
+						--rightToLeftJumpCountdown;
+					}
+					if (!rightToLeftJumpCountdown) {
+						_vm->_state->setVar(35, crashedRightFrame);
+						crashedRightFrame++;
+					}
+
+					_vm->_state->setVar(32, rightPanelFrame);
+
+					++rightPanelFrame;
+					rightSideFrame = rightPanelFrame;
+
+					for (uint i = 0; i < 3; i++)
+						if (rightComb->pegFrames[i] == rightSideFrame) {
+							_vm->_sound->play(1027, 50);
+							rightToLeftJumpCountdown = 5;
+						}
+
+					moviePlaying = true;
+				}
+			}
+
+			_vm->drawFrame();
+			_vm->processInput(true);
+			// while (limit > renderCurrFrame);
+			// limit = _vm->_state->getFrameCount() + 1;
+
+			if (!moviePlaying) {
+				_vm->_state->setVar(26, jumpType);
+				_vm->_state->setVar(93, 1);
+				// sound fade stop 1025, 7
+				return;
+			}
+
+			// play sound same as opcode 212 : 1025, 50
+		}
+	}
+}
+
+const Puzzles::PegCombination *Puzzles::_pinballFindCombination(uint16 var, const PegCombination pegs[], uint16 size) {
+	const PegCombination *combination = 0;
+
+	for (uint i = 0; i < size; i++) {
+		bool good = true;
+		for (uint j = 0; j < 5; j++) {
+			bool setPeg = _vm->_state->getVar(var + j);
+			bool targetPeg = pegs[i].pegs[j];
+			if (setPeg != targetPeg)
+				good = false;
+		}
+
+		if (good) {
+			combination = &pegs[i];
+			break;
+		}
+	}
+
+	return combination;
 }
 
 void Puzzles::weightDrag(uint16 var, uint16 movie) {

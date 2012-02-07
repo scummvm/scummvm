@@ -164,6 +164,8 @@ public:
 
 	DECLARE_VAR(444, ResonanceRingsSolved)
 
+	DECLARE_VAR(460, PinballRemainingPegs)
+
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 

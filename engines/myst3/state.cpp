@@ -150,6 +150,8 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(444, ResonanceRingsSolved, false)
 
+	VAR(460, PinballRemainingPegs, false)
+
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
