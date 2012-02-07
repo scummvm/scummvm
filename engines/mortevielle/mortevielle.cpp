@@ -28,8 +28,16 @@
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/mort.h"
+#include "mortevielle/asm.h"
+#include "mortevielle/disk.h"
+#include "mortevielle/keyboard.h"
+#include "mortevielle/level15.h"
+#include "mortevielle/mor.h"
+#include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/ovd1.h"
+#include "mortevielle/parole2.h"
+#include "mortevielle/prog.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -76,6 +84,36 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	// Setup the mouse cursor
 	initMouse();
+
+	/*init_debug;*/
+	/*  ecri_seg;*/
+	//pio_initialize(argc, argv);
+	gd = ega;
+	newgd = gd;
+	zuul = false;
+	tesok = false;
+	chartex();
+	charpal();
+	charge_cfiph();
+	charge_cfiec();
+	zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	c_zzz = 1;
+	init_nbrepm();
+	init_mouse();
+
+	init_lieu();
+	arret = false;
+	sonoff = false;
+	f2_all = false;
+	textcolor(9);
+	teskbd();
+	dialpre();
+	newgd = gd;
+	teskbd();
+	if (newgd != gd)
+		gd = newgd;
+	hirs();
+	ades = 0x7000;
 
 	return Common::kNoError;
 }
@@ -323,10 +361,68 @@ Common::Error MortevielleEngine::run() {
 	if (err != Common::kNoError)
 		return err;
 
-	// Dispatch to the game's main routine
-	mortevielle_main();
+	// Show the game introduction
+	showIntroduction();
+
+	adzon();
+	takesav(0);
+
+	mainGame();
 
 	return Common::kNoError;
+}
+
+/**
+ * Show the game introduction
+ */
+void MortevielleEngine::showIntroduction() {
+	aff50(false);
+	mlec = 0;
+	divers(142, false);
+	CHECK_QUIT;
+
+	ani50();
+	divers(143, true);
+	CHECK_QUIT;
+
+	suite();
+	music();
+}
+
+void MortevielleEngine::divers(int np, bool b) {
+	teskbd();
+	do {
+		parole(np, 0, 0);
+		atf3f8(key);
+		CHECK_QUIT;
+
+		if (newgd != gd) {
+			gd = newgd;
+			hirs();
+			aff50(b);
+		}
+	} while (!(key == 66));
+}
+
+/**
+ * Main game loop
+ */
+void MortevielleEngine::mainGame() {
+	if (rech_cfiec)  charge_cfiec();
+	for (crep = 1; crep <= c_zzz; crep ++) 
+		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+	charge_bruit5();
+	init_menu();
+
+	theure();
+	dprog();
+	hirs();
+	dessine_rouleau();
+	show_mouse();
+	do {
+		tjouer();
+		CHECK_QUIT;
+	} while (!arret);
 }
 
 } // End of namespace Mortevielle
