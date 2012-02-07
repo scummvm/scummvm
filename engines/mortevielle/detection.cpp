@@ -35,39 +35,9 @@ static const PlainGameDescriptor MortevielleGame[] = {
 	{0, 0}
 };
 
-static const ADGameDescription MortevielleGameDescriptions[] = {
-	{
-		"mortevielle",
-		"",
-		{
-			{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
-			{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-			AD_LISTEND
-		},
-		Common::FR_FRA,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-	{
-		"mortevielle",
-		"",
-		{
-			{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-			{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-			AD_LISTEND
-		},
-		Common::DE_DEU,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-	AD_TABLE_END_MARKER
-};
-
 class MortevielleMetaEngine : public AdvancedMetaEngine {
 public:
-	MortevielleMetaEngine() : AdvancedMetaEngine(MortevielleGameDescriptions, sizeof(ADGameDescription), 
+	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(ADGameDescription), 
 		MortevielleGame) {
 		_md5Bytes = 512;
 		_singleid = "mortevielle";
