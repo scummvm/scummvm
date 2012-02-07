@@ -73,6 +73,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 12:
 		railRoadSwitchs();
 		break;
+	case 13:
+		rollercoaster();
+		break;
 	case 14:
 		projectorLoadBitmap(arg0);
 		break;
@@ -1349,6 +1352,95 @@ void Puzzles::railRoadSwitchs() {
 
 	_vm->_state->setVar(28 + index, endFrame);
 	_vm->_state->setVar(449 + index, endFrame);
+}
+
+void Puzzles::rollercoaster() {
+	static const uint8 map1[][8] = {
+		{ 3, 9, 9, 0, 7, 9, 9, 4 },
+		{ 2, 6, 0, 9, 9, 9, 1, 9 },
+		{ 6, 9, 4, 9, 2, 9, 0, 9 },
+		{ 4, 9, 6, 9, 0, 9, 2, 9 },
+		{ 9, 4, 7, 9, 1, 9, 9, 2 },
+		{ 2, 9, 0, 9, 7, 9, 9, 4 },
+		{ 6, 9, 9, 7, 9, 9, 0, 3 },
+		{ 4, 9, 7, 6, 0, 9, 3, 2 },
+		{ 9, 5, 9, 9, 6, 1, 4, 9 }
+	};
+
+	static const uint8 map2[][8] = {
+		{   0,  0,  26, 57,  40,  0,   0,  0 },
+		{ 100,  0,  36, 67,  50, 41,  12,  0 },
+		{   0,  0,   0,  0,  60, 51,  22,  0 },
+		{  14, 25,  56, 87,  70,  0, 103,  0 },
+		{  24, 35,  66, 97,  80, 71,  42, 13 },
+		{  34,  0, 101,  0,  90, 81,  52, 23 },
+		{  44, 55,  86,  0,   0,  0,   0,  0 },
+		{  54, 65,  96,  0, 102,  0,  72, 43 },
+		{  64,  0,   0,  0,   0,  0,  82, 53 }
+	};
+
+	int32 entryPoint = _vm->_state->getVar(26);
+	int32 movie = 0;
+	int32 exitPoint = 0;
+
+	if (_vm->_state->getVar(38 + entryPoint - 100)) {
+		_vm->_state->setVar(42, 0);
+		_vm->_state->setVar(26, 0);
+		return;
+	}
+
+	_vm->_state->setVar(38 + entryPoint - 100, 1);
+
+	switch (entryPoint) {
+	case 100:
+		_vm->_state->setVar(42, 0);
+		_vm->_state->setVar(26, 1);
+		return;
+	case 101:
+		movie = 12007;
+		exitPoint = 93;
+		break;
+	case 102:
+		movie = 14007;
+		exitPoint = 75;
+		break;
+	case 103:
+		movie = 16007;
+		exitPoint = 17;
+		break;
+	default:
+		_vm->_state->setVar(42, 0);
+		_vm->_state->setVar(26, 0);
+		return;
+	}
+
+	int32 recursion = 20;
+	while (1) {
+		int32 switchIndex = exitPoint / 10 - 1;
+		int32 switchFrame = _vm->_state->getVar(449 + switchIndex);
+		int32 switchPosition = 2 * (switchFrame - 1) / 3;
+
+		int32 direction = map1[switchIndex][(exitPoint % 10 - switchPosition) & 7];
+
+		if (direction != 9)
+			exitPoint = map2[switchIndex][(switchPosition + direction) & 7];
+		else
+			exitPoint = 0;
+
+		if (!recursion)
+			break;
+
+		recursion--;
+
+		if (exitPoint <= 0 || exitPoint >= 100) {
+			_vm->_state->setVar(42, exitPoint);
+			_vm->_state->setVar(26, movie);
+			return;
+		}
+	}
+
+	_vm->_state->setVar(42, 0);
+	_vm->_state->setVar(26, movie);
 }
 
 void Puzzles::mainMenu(uint16 action) {
