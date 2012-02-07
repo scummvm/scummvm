@@ -70,6 +70,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 11:
 		symbolCodesClick(arg0);
 		break;
+	case 12:
+		railRoadSwitchs();
+		break;
 	case 14:
 		projectorLoadBitmap(arg0);
 		break;
@@ -1314,6 +1317,38 @@ int32 Puzzles::_symbolCodesFound() {
 	int32 left = _vm->_state->getSymbolCode1LeftSolved();
 	int32 right = _vm->_state->getSymbolCode1RightSolved();
 	return (1 << top) | (1 << left) | (1 << right);
+}
+
+void Puzzles::railRoadSwitchs() {
+	uint16 index = _vm->_state->getHotspotActiveRect();
+	uint16 startFrame = _vm->_state->getVar(449 + index);
+	uint16 endFrame;
+
+	switch (startFrame) {
+	case 1:
+		endFrame = 4;
+		break;
+	case 4:
+		endFrame = 7;
+		break;
+	case 7:
+		endFrame = 10;
+		break;
+	case 10:
+		endFrame = 12;
+		break;
+	default:
+		error("Bad railroad switchs start value %d", startFrame);
+		return;
+	}
+
+	_drawForVarHelper(28 + index, startFrame, endFrame);
+
+	if (endFrame == 12)
+		endFrame = 1;
+
+	_vm->_state->setVar(28 + index, endFrame);
+	_vm->_state->setVar(449 + index, endFrame);
 }
 
 void Puzzles::mainMenu(uint16 action) {

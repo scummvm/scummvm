@@ -81,6 +81,8 @@ private:
 	bool _symbolCodesCheckSolution(uint16 var, const SymbolCodeSolution &solution);
 	int32 _symbolCodesFound();
 
+	void railRoadSwitchs();
+
 	void _drawForVarHelper(int16 var, int32 startValue, int32 endValue);
 	void _drawXFrames(uint16 frames);
 };
