@@ -198,6 +198,8 @@ Script::Script(Myst3Engine *vm):
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
 	OP_1(169, drawXFrames,					kValue														);
 	OP_1(171, drawWhileCond,				kCondition													);
+	OP_1(172, whileStart,					kCondition													);
+	OP_0(173, whileEnd																					);
 	OP_2(174, runScriptWhileCond,			kCondition,	kValue											);
 	OP_3(175, runScriptWhileCondEachXFrames,kCondition,	kValue,		kValue								);
 	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
@@ -1968,6 +1970,29 @@ void Script::drawWhileCond(Context &c, const Opcode &cmd) {
 		_vm->processInput(true);
 		_vm->drawFrame();
 	}
+}
+
+void Script::whileStart(Context &c, const Opcode &cmd) {
+	c.whileStart = c.op - 1;
+
+	// Check the while condition
+	if (!_vm->_state->evaluate(cmd.args[0])) {
+		// Condition is false, go to the next opcode after the end of the while loop
+		do {
+			c.op++;
+		} while (c.op != c.script->end()
+				&& c.op->op != 173);
+	}
+
+	_vm->processInput(true);
+	_vm->drawFrame();
+}
+
+void Script::whileEnd(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: End of while condition", cmd.op);
+
+	// Go to while start
+	c.op = c.whileStart;
 }
 
 void Script::runScriptWhileCond(Context &c, const Opcode &cmd) {

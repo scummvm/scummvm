@@ -47,6 +47,7 @@ private:
 		bool result;
 		const Common::Array<Opcode> *script;
 		Common::Array<Opcode>::const_iterator op;
+		Common::Array<Opcode>::const_iterator whileStart;
 	};
 
 	typedef void (Script::*CommandProc)(Context &c, const Opcode &cmd);
@@ -248,6 +249,8 @@ private:
 	DECLARE_OPCODE(changeNodeRoomAge);
 	DECLARE_OPCODE(drawXFrames);
 	DECLARE_OPCODE(drawWhileCond);
+	DECLARE_OPCODE(whileStart);
+	DECLARE_OPCODE(whileEnd);
 	DECLARE_OPCODE(runScriptWhileCond);
 	DECLARE_OPCODE(runScriptWhileCondEachXFrames);
 	DECLARE_OPCODE(runScriptForVar);
