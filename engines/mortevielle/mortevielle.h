@@ -63,6 +63,9 @@ private:
 	bool handleEvents();
 	void addKeypress(Common::Event &evt);
 	void initMouse();
+	void showIntroduction();
+	void mainGame();
+	void divers(int np, bool b);
 public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;

@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	menu.o \
 	mor.o \
 	mor2.o \
-	mort.o \
 	mortevielle.o \
 	mouse.o \
 	outtext.o \
