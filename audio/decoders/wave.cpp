@@ -175,6 +175,13 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, Dispose
 	else if (type == 2) // MS ADPCM
 		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 
+	// Raw PCM, make sure the last packet is complete
+	uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
+	if (size % sampleSize != 0) {
+		warning("makeWAVStream: Trying to play a WAVE file with an incomplete PCM packet");
+		size &= ~(sampleSize - 1);
+	}
+
 	// Raw PCM. Just read everything at once.
 	// TODO: More elegant would be to wrap the stream.
 	byte *data = (byte *)malloc(size);
