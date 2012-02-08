@@ -717,15 +717,15 @@ void BinkDecoder::initBundles() {
 	for (int i = 0; i < 2; i++) {
 		int width = MAX<uint32>(cw[i], 8);
 
-		_bundles[kSourceBlockTypes   ].countLengths[i] = Common::intLog2((width  >> 3)    + 511) + 1;
-		_bundles[kSourceSubBlockTypes].countLengths[i] = Common::intLog2((width  >> 4)    + 511) + 1;
-		_bundles[kSourceColors       ].countLengths[i] = Common::intLog2((cbw[i]     )*64 + 511) + 1;
-		_bundles[kSourceIntraDC      ].countLengths[i] = Common::intLog2((width  >> 3)    + 511) + 1;
-		_bundles[kSourceInterDC      ].countLengths[i] = Common::intLog2((width  >> 3)    + 511) + 1;
-		_bundles[kSourceXOff         ].countLengths[i] = Common::intLog2((width  >> 3)    + 511) + 1;
-		_bundles[kSourceYOff         ].countLengths[i] = Common::intLog2((width  >> 3)    + 511) + 1;
-		_bundles[kSourcePattern      ].countLengths[i] = Common::intLog2((cbw[i] << 3)    + 511) + 1;
-		_bundles[kSourceRun          ].countLengths[i] = Common::intLog2((cbw[i]     )*48 + 511) + 1;
+		_bundles[kSourceBlockTypes   ].countLengths[i] = Common::intLog2((width       >> 3) + 511) + 1;
+		_bundles[kSourceSubBlockTypes].countLengths[i] = Common::intLog2(((width + 7) >> 4) + 511) + 1;
+		_bundles[kSourceColors       ].countLengths[i] = Common::intLog2((cbw[i])     * 64  + 511) + 1;
+		_bundles[kSourceIntraDC      ].countLengths[i] = Common::intLog2((width       >> 3) + 511) + 1;
+		_bundles[kSourceInterDC      ].countLengths[i] = Common::intLog2((width       >> 3) + 511) + 1;
+		_bundles[kSourceXOff         ].countLengths[i] = Common::intLog2((width       >> 3) + 511) + 1;
+		_bundles[kSourceYOff         ].countLengths[i] = Common::intLog2((width       >> 3) + 511) + 1;
+		_bundles[kSourcePattern      ].countLengths[i] = Common::intLog2((cbw[i]      << 3) + 511) + 1;
+		_bundles[kSourceRun          ].countLengths[i] = Common::intLog2((cbw[i])     * 48  + 511) + 1;
 	}
 }
 
