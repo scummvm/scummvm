@@ -1124,7 +1124,6 @@ public:
 	void multiPut(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiDump(uint16 x, uint16 y, uint8 width, uint8 height);
 	void workToScreen();
-	void printUnderMon();
 	void frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y);
 	void frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);

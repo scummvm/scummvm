@@ -175,7 +175,7 @@ void DreamWebEngine::monitorLogo() {
 		_oldLogoNum = _logoNum;
 		//fadeDownMon(); // FIXME: Commented out in ASM
 		printLogo();
-		printUnderMon();
+		printUnderMonitor();
 		workToScreen();
 		printLogo();
 		//fadeUpMon(); // FIXME: Commented out in ASM
@@ -286,7 +286,7 @@ void DreamWebEngine::delCurs() {
 
 void DreamWebEngine::scrollMonitor() {
 	printLogo();
-	printUnderMon();
+	printUnderMonitor();
 	workToScreen();
 	playChannel1(25);
 }

@@ -71,10 +71,6 @@ void DreamWebEngine::workToScreen() {
 	blit(workspace(), 320, 0, 0, 320, 200);
 }
 
-void DreamWebEngine::printUnderMon() {
-	printUnderMonitor();
-}
-
 void DreamWebEngine::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	dst += pitch * y + x;
 
