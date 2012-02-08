@@ -54,6 +54,7 @@ private:
 
 	Common::SeekableReadStream *_stream;
 	uint16 _w, _h;
+	uint16 _restartInterval;
 
 	// Image components
 	uint8 _numComp;
@@ -101,6 +102,7 @@ private:
 	bool readDHT();
 	bool readSOS();
 	bool readDQT();
+	bool readDRI();
 
 	// Helper functions
 	bool readMCU(uint16 xMCU, uint16 yMCU);

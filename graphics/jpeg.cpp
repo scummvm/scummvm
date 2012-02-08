@@ -113,6 +113,7 @@ void JPEG::reset() {
 	// Reset member variables
 	_stream = NULL;
 	_w = _h = 0;
+	_restartInterval = 0;
 
 	// Free the components
 	for (int c = 0; c < _numComp; c++)
@@ -208,12 +209,18 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 		case 0xE0: // JFIF/JFXX segment
 			ok = readJFIF();
 			break;
+		case 0xDD: // Define Restart Interval
+			ok = readDRI();
+			break;
 		case 0xFE: // Comment
 			_stream->seek(_stream->readUint16BE() - 2, SEEK_CUR);
 			break;
 		default: { // Unknown marker
 			uint16 size = _stream->readUint16BE();
-			warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
+
+			if ((marker & 0xE0) != 0xE0)
+				warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
+
 			_stream->seek(size - 2, SEEK_CUR);
 		}
 		}
@@ -234,8 +241,10 @@ bool JPEG::readJFIF() {
 	}
 	byte majorVersion = _stream->readByte();
 	byte minorVersion = _stream->readByte();
-	if (majorVersion != 1 || minorVersion != 1)
-		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
+
+	if (majorVersion != 1 || (minorVersion != 1 && minorVersion != 2))
+		warning("JPEG::readJFIF() Non-v1.1/1.2 JPEGs may not be handled correctly");
+
 	/* byte densityUnits = */ _stream->readByte();
 	/* uint16 xDensity = */ _stream->readUint16BE();
 	/* uint16 yDensity = */ _stream->readUint16BE();
@@ -445,9 +454,27 @@ bool JPEG::readSOS() {
 	}
 
 	bool ok = true;
-	for (int y = 0; ok && (y < yMCU); y++)
-		for (int x = 0; ok && (x < xMCU); x++)
+	uint16 interval = _restartInterval;
+
+	for (int y = 0; ok && (y < yMCU); y++) {
+		for (int x = 0; ok && (x < xMCU); x++) {
 			ok = readMCU(x, y);
+
+			// If we have a restart interval, we'll need to reset a couple
+			// variables
+			if (_restartInterval != 0) {
+				interval--;
+
+				if (interval == 0) {
+					interval = _restartInterval;
+					_bitsNumber = 0;
+
+					for (byte i = 0; i < _numScanComp; i++)
+						_scanComp[i]->DCpredictor = 0;					
+				}
+			}
+		}
+	}
 
 	// Trim Component surfaces back to image height and width
 	// Note: Code using jpeg must use surface.pitch correctly...
@@ -486,6 +513,21 @@ bool JPEG::readDQT() {
 			_quant[tableId][i] = highPrecision ? _stream->readUint16BE() : _stream->readByte();
 	}
 
+	return true;
+}
+
+// Marker 0xDD (Define Restart Interval)
+bool JPEG::readDRI() {
+	debug(5, "JPEG: readDRI");
+	uint16 size = _stream->readUint16BE() - 2;
+
+	if (size != 2) {
+		warning("JPEG: Invalid DRI size %d", size);
+		return false;
+	}
+
+	_restartInterval = _stream->readUint16BE();
+	debug(5, "Restart interval: %d", _restartInterval);
 	return true;
 }
 
@@ -647,7 +689,8 @@ void JPEG::readAC(int16 *out) {
 
 int16 JPEG::readSignedBits(uint8 numBits) {
 	uint16 ret = 0;
-	if (numBits > 16) error("requested %d bits", numBits); //XXX
+	if (numBits > 16)
+		error("requested %d bits", numBits); //XXX
 
 	// MSB=0 for negatives, 1 for positives
 	for (int i = 0; i < numBits; i++)
@@ -708,6 +751,9 @@ uint8 JPEG::readBit() {
 					// DNL marker: Define Number of Lines
 					// TODO: terminate scan
 					warning("DNL marker detected: terminate scan");
+				} else if (byte2 >= 0xD0 && byte2 <= 0xD7) {
+					debug(7, "RST%d marker detected", byte2 & 7);
+					_bitsData = _stream->readByte();
 				} else {
 					warning("Error: marker 0x%02X read in entropy data", byte2);
 				}
