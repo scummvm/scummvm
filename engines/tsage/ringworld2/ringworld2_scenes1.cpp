@@ -2759,7 +2759,7 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_item2._object1.addMover(mover, scene->_arrunkObj1337[scene->_field423E]._fieldB94, this);
+			scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[scene->_field423E]._fieldB94, this);
 
 			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
 			scene->_field3E28[scene->_field3E24] = 0;
