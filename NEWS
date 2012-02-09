@@ -5,6 +5,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  New Games:
    - Added support for Soltys.
 
+ General:
+   - Updated MT-32 emulation code to latest munt project snapshot. The emulation
+     improved dramatically.
+
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
