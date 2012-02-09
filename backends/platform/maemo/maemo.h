@@ -39,6 +39,7 @@ public:
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
 	virtual void setupIcon();
+	virtual Common::HardwareKeySet *getHardwareKeySet();
 
 	Model getModel() { return _model; }
 
