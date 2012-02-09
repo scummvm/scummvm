@@ -171,7 +171,8 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	char name[128];
 	int nameLength = data->readUint32LE();
 
-	_name = data->read(name, nameLength);
+	data->read(name, nameLength);
+	_name = name;
 
 	_id = data->readUint32LE();
 
