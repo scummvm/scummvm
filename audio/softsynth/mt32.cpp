@@ -293,6 +293,11 @@ int MidiDriver_MT32::open() {
 	drawMessage(-1, _s("Initializing MT-32 Emulator"));
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
+
+	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
+	_synth->setOutputGain(1.0f * gain);
+	_synth->setReverbOutputGain(0.68f * gain);
+
 	_initializing = false;
 
 	if (screenFormat.bytesPerPixel > 1)
