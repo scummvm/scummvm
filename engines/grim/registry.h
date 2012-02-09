@@ -61,6 +61,10 @@ private:
 	Common::String _engineSpeed;
 
 	bool _dirty;
+
+	uint convertVolumeToMixer(const Common::String &volume);
+	Common::String convertVolumeFromMixer(uint volume);
+
 };
 
 extern Registry *g_registry;

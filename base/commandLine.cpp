@@ -81,9 +81,9 @@ static const char HELP_STRING[] =
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
-	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
-	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
-	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
+	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
+	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
+	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
 	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Speech Only, 3-Speech and Text\n"
 	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
 	"                           100) (only supported by some MIDI drivers)\n"
@@ -137,9 +137,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("show_fps", "false");
 
 	// Sound & Music
-	ConfMan.registerDefault("music_volume", 127);
-	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
 	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("speech_mode", "3");
 	ConfMan.registerDefault("multi_midi", false);
