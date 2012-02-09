@@ -164,6 +164,22 @@ bool MaemoSdlEventSource::toggleClickMode() {
 	return _clickEnabled;
 }
 
+MaemoSdlEventObserver::MaemoSdlEventObserver(MaemoSdlEventSource *eventSource) {
+	assert(_eventSource);
+	_eventSource = eventSource;
+}
+
+bool MaemoSdlEventObserver::notifyEvent(const Common::Event &event) {
+	if (event.type != Common::EVENT_CUSTOM_BACKEND)
+		return false;
+	if (event.customType == kEventClickMode) {
+		assert(_eventSource);
+		_eventSource->toggleClickMode();
+		return true;
+	}
+	return false;
+}
+
 } // namespace Maemo
 
 #endif // if defined(MAEMO)

@@ -47,6 +47,15 @@ protected:
 	bool _clickEnabled;
 };
 
+class MaemoSdlEventObserver : public Common::EventObserver {
+public:
+	MaemoSdlEventObserver(MaemoSdlEventSource *eventSource);
+
+	virtual bool notifyEvent(const Common::Event &event);
+private:
+	MaemoSdlEventSource *_eventSource;
+};
+
 } // namespace Maemo
 
 #endif // include guard

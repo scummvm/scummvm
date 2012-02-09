@@ -51,6 +51,11 @@ static const Model models[] = {
 	{0, kModelTypeInvalid, 0, true}
 };
 
+enum CustomEventType {
+	kEventClickMode = 1,
+	kEventInvalid = 0
+};
+
 } // namespace Maemo
 
 #endif // ifndef PLATFORM_SDL_MAEMO_COMMON_H
