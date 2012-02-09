@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 
 #include "backends/platform/maemo/maemo.h"
+#include "backends/platform/maemo/maemo-keys.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "common/textconsole.h"
@@ -118,6 +119,16 @@ void OSystem_SDL_Maemo::setupIcon() {
 	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
+Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
+#ifdef ENABLE_KEYMAPPER
+	return OSystem_POSIX::buildHardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
+#else
+	return OSystem_POSIX::getHardwareKeySet();
+#endif
+}
+
 } //namespace Maemo
+
+
 
 #endif
