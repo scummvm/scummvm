@@ -124,9 +124,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					debug(9, "remapping to F7 up (virtual keyboard)");
 					return true;
 				} else {
-					_clickEnabled = !_clickEnabled;
-					((SurfaceSdlGraphicsManager*) _graphicsManager)->displayMessageOnOSD(
-					  _clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
+					toggleClickMode();
 					debug(9, "remapping to click toggle");
 					return true;
 				}
@@ -156,6 +154,14 @@ bool MaemoSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 
 	// Invoke parent implementation of this method
 	return SdlEventSource::handleMouseButtonUp(ev, event);
+}
+
+bool MaemoSdlEventSource::toggleClickMode() {
+	_clickEnabled = !_clickEnabled;
+	((SurfaceSdlGraphicsManager*) _graphicsManager)->displayMessageOnOSD(
+	  _clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
+
+	return _clickEnabled;
 }
 
 } // namespace Maemo

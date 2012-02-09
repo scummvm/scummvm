@@ -37,6 +37,8 @@ namespace Maemo {
 class MaemoSdlEventSource : public SdlEventSource {
 public:
 	MaemoSdlEventSource();
+
+	bool toggleClickMode();
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
