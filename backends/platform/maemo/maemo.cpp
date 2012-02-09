@@ -46,6 +46,10 @@ OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	OSystem_POSIX() {
 }
 
+OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
+	delete _eventObserver;
+}
+
 void OSystem_SDL_Maemo::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
@@ -54,12 +58,16 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
 
+	if (_eventObserver == 0)
+		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
+
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
 	_model = Model(detectModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
+	initObserver();
 }
 
 void OSystem_SDL_Maemo::quit() {
@@ -157,8 +165,11 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 #endif
 }
 
+void OSystem_SDL_Maemo::initObserver() {
+	assert(_eventManager);
+	_eventManager->getEventDispatcher()->registerObserver(_eventObserver, 10, false);
+}
+
 } //namespace Maemo
-
-
 
 #endif
