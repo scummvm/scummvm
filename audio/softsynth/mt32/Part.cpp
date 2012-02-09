@@ -220,13 +220,13 @@ unsigned int Part::getAbsTimbreNum() const {
 	return (patchTemp->patch.timbreGroup * 64) + patchTemp->patch.timbreNum;
 }
 
-void RhythmPart::setProgram(unsigned int patchNum) {
 #if MT32EMU_MONITOR_MIDI > 0
+void RhythmPart::setProgram(unsigned int patchNum) {
 	synth->printDebug("%s: Attempt to set program (%d) on rhythm is invalid", name, patchNum);
-#else
-	patchNum = 0; // Just to avoid unused variable warning
-#endif
 }
+#else
+void RhythmPart::setProgram(unsigned int) { }
+#endif
 
 void Part::setProgram(unsigned int patchNum) {
 	setPatch(&synth->mt32ram.patches[patchNum]);
