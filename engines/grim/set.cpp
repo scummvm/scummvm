@@ -695,7 +695,8 @@ Sector *Set::getSectorBase(int id) {
 Sector *Set::getSector(const Common::String &name) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (name == sector->getName()) {
+		// Do not do a exact comparation here. https://github.com/residualvm/residualvm/issues/530
+		if (strstr(sector->getName(), name.c_str())) {
 			return sector;
 		}
 	}
