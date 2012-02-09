@@ -28,16 +28,7 @@
 
 using namespace Common;
 
-struct Key {
-	const char *hwId;
-	KeyCode keycode;
-	uint16 ascii;
-	const char *desc;
-	KeyType preferredAction;
-	bool shiftable;
-};
-
-static const Key keys[] = {
+static const KeyTableEntry sdlKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", kActionKeyType, false},
 	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", kActionKeyType, false},
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", kActionKeyType, false},
@@ -173,14 +164,7 @@ static const Key keys[] = {
 	{0, KEYCODE_INVALID, 0, 0, kGenericKeyType, false}
 };
 
-struct Mod {
-	byte flag;
-	const char *id;
-	const char *desc;
-	bool shiftable;
-};
-
-static const Mod modifiers[] = {
+static const ModifierTableEntry sdlModifiers[] = {
 	{ 0, "", "", false },
 	{ KBD_CTRL, "C+", "Ctrl+", false },
 	{ KBD_ALT, "A+", "Alt+", false },
@@ -195,35 +179,7 @@ static const Mod modifiers[] = {
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
-	HardwareKeySet *keySet = new HardwareKeySet();
-	const Key *key;
-	const Mod *mod;
-	char fullKeyId[50];
-	char fullKeyDesc[100];
-	uint16 ascii;
-
-	for (mod = modifiers; mod->id; mod++) {
-		for (key = keys; key->hwId; key++) {
-			ascii = key->ascii;
-
-			if (mod->shiftable && key->shiftable) {
-				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
-				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
-				ascii = toupper(key->ascii);
-			} else if (mod->shiftable) {
-				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
-			} else {
-				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
-			}
-
-			keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
-		}
-	}
-
-	return keySet;
-
+	return new HardwareKeySet(sdlKeys, sdlModifiers);
 #else
 	return 0;
 #endif
