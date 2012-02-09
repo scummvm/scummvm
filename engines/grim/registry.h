@@ -61,6 +61,14 @@ private:
 	Common::String _engineSpeed;
 
 	bool _dirty;
+
+	uint convertVolumeToMixer(const Common::String &volume);
+	Common::String convertVolumeFromMixer(uint volume);
+	uint convertTalkSpeedToGUI(const Common::String &talkspeed);
+	Common::String convertTalkSpeedFromGUI(uint talkspeed);
+	bool convertSubtitlesToGUI(const Common::String &speechmode);
+	bool convertSpeechMuteToGUI(const Common::String &speechmode);
+	Common::String convertSpeechModeFromGUI(bool subtitles, bool speechMute);
 };
 
 extern Registry *g_registry;

@@ -232,6 +232,21 @@ void OptionsDialog::open() {
 		_speechVolumeSlider->setValue(vol);
 		_speechVolumeLabel->setValue(vol);
 	}
+
+	// Subtitle options
+	if (_subToggleGroup) {
+		int speed;
+		int sliderMaxValue = _subSpeedSlider->getMaxValue();
+
+		int subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
+		_subToggleGroup->setValue(subMode);
+
+		// Engines that reuse the subtitle speed widget set their own max value.
+		// Scale the config value accordingly (see addSubtitleControls)
+		speed = (ConfMan.getInt("talkspeed", _domain) * sliderMaxValue + 255 / 2) / 255;
+		_subSpeedSlider->setValue(speed);
+		_subSpeedLabel->setValue(speed);
+	}
 }
 
 void OptionsDialog::close() {
@@ -317,6 +332,43 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("enable_gs", _domain);
 			}
 		}
+
+		// Subtitle options
+		if (_subToggleGroup) {
+			if (_enableSubtitleSettings) {
+				bool subtitles, speech_mute;
+				int talkspeed;
+				int sliderMaxValue = _subSpeedSlider->getMaxValue();
+
+				switch (_subToggleGroup->getValue()) {
+				case kSubtitlesSpeech:
+					subtitles = speech_mute = false;
+					break;
+				case kSubtitlesBoth:
+					subtitles = true;
+					speech_mute = false;
+					break;
+				case kSubtitlesSubs:
+				default:
+					subtitles = speech_mute = true;
+					break;
+				}
+
+				ConfMan.setBool("subtitles", subtitles, _domain);
+				ConfMan.setBool("speech_mute", speech_mute, _domain);
+
+				// Engines that reuse the subtitle speed widget set their own max value.
+				// Scale the config value accordingly (see addSubtitleControls)
+				talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
+				ConfMan.setInt("talkspeed", talkspeed, _domain);
+
+			} else {
+				ConfMan.removeKey("subtitles", _domain);
+				ConfMan.removeKey("talkspeed", _domain);
+				ConfMan.removeKey("speech_mute", _domain);
+			}
+		}
+
 		// Save config file
 		ConfMan.flushToDisk();
 	}
@@ -342,6 +394,11 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
 		_speechVolumeLabel->draw();
 		break;
+	case kSubtitleToggle:
+		// We update the slider settings here, when there are sliders, to
+		// disable the speech volume in case we are in subtitle only mode.
+		if (_musicVolumeSlider)
+			setVolumeSettingsState(true);
 		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
@@ -451,6 +508,9 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeLabel->setEnabled(ena);
 
 	ena = enabled;
+	// Disable speech volume slider, when we are in subtitle only mode.
+	if (_subToggleGroup)
+		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
 	if (_guioptions.contains(GUIO_NOSPEECH))
 		ena = false;
 

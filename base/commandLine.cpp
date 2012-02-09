@@ -81,12 +81,12 @@ static const char HELP_STRING[] =
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
-	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
-	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
-	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
-	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Speech Only, 3-Speech and Text\n"
+	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
+	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
+	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
 	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
 	"                           100) (only supported by some MIDI drivers)\n"
+	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
 	"                           (separated by commas)\n"
@@ -100,6 +100,7 @@ static const char HELP_STRING[] =
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
+	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
 	"\n"
@@ -137,11 +138,15 @@ void registerDefaults() {
 	ConfMan.registerDefault("show_fps", "false");
 
 	// Sound & Music
-	ConfMan.registerDefault("music_volume", 127);
-	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("speech_mute", false);
-	ConfMan.registerDefault("speech_mode", "3");
+	ConfMan.registerDefault("mute", false);
+
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
@@ -159,8 +164,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("path", "");
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
+	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
+
+	ConfMan.registerDefault("talkspeed", 60);
 
 	ConfMan.registerDefault("dimuse_tempo", 10);
 
@@ -330,6 +338,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_INT('m', "music-volume")
 			END_OPTION
 
+			DO_OPTION_BOOL('n', "subtitles")
+			END_OPTION
+
 			DO_OPTION('p', "path")
 				Common::FSNode path(option);
 				if (!path.exists()) {
@@ -421,6 +432,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				}
 			END_OPTION
 
+			DO_LONG_OPTION_INT("talkspeed")
+			END_OPTION
+
 			DO_LONG_OPTION("gui-theme")
 			END_OPTION
 
@@ -437,9 +451,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("target-md5")
-			END_OPTION
-
-			DO_LONG_OPTION("text-speed")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("dimuse-tempo")

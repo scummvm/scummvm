@@ -104,7 +104,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_softRenderer = true;
 #endif
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 192);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
