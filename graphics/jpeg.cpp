@@ -43,20 +43,6 @@ static const uint8 _zigZagOrder[64] = {
 	53, 60, 61, 54, 47, 55, 62, 63
 };
 
-// IDCT table built with :
-// _idct8x8[x][y] = cos(((2 * x + 1) * y) * (M_PI / 16.0)) * 0.5;
-// _idct8x8[x][y] /= sqrt(2.0) if y == 0
-static const double _idct8x8[8][8] = {
-	{ 0.353553390593274,  0.490392640201615,  0.461939766255643,  0.415734806151273,  0.353553390593274,  0.277785116509801,  0.191341716182545,  0.097545161008064 },
-	{ 0.353553390593274,  0.415734806151273,  0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801 },
-	{ 0.353553390593274,  0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274,  0.097545161008064,  0.461939766255643,  0.415734806151273 },
-	{ 0.353553390593274,  0.097545161008064, -0.461939766255643, -0.277785116509801,  0.353553390593274,  0.415734806151273, -0.191341716182545, -0.490392640201615 },
-	{ 0.353553390593274, -0.097545161008064, -0.461939766255643,  0.277785116509801,  0.353553390593274, -0.415734806151273, -0.191341716182545,  0.490392640201615 },
-	{ 0.353553390593274, -0.277785116509801, -0.191341716182545,  0.490392640201615, -0.353553390593273, -0.097545161008064,  0.461939766255643, -0.415734806151273 },
-	{ 0.353553390593274, -0.415734806151273,  0.191341716182545,  0.097545161008064, -0.353553390593274,  0.490392640201615, -0.461939766255643,  0.277785116509801 },
-	{ 0.353553390593274, -0.490392640201615,  0.461939766255643, -0.415734806151273,  0.353553390593273, -0.277785116509801,  0.191341716182545, -0.097545161008064 }
-};
-
 JPEG::JPEG() :
 	_stream(NULL), _w(0), _h(0), _numComp(0), _components(NULL), _numScanComp(0),
 	_scanComp(NULL), _currentComp(NULL) {
@@ -546,40 +532,63 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 	return ok;
 }
 
-void JPEG::idct8x8(float result[64], const int16 dct[64]) {
-	float tmp[64];
+// triple-butterfly-add (and possible rounding)
+#define xadd3(xa, xb, xc, xd, h) \
+	p = xa + xb; \
+	n = xa - xb; \
+	xa = p + xc + h; \
+	xb = n + xd + h; \
+	xc = p - xc + h; \
+	xd = n - xd + h;
+
+// butterfly-mul
+#define xmul(xa, xb, k1, k2, sh) \
+	n = k1 * (xa + xb); \
+	p = xa; \
+	xa = (n + (k2 - k1) * xb) >> sh; \
+	xb = (n - (k2 + k1) * p) >> sh;
+
+// IDCT based on public domain code from http://halicery.com/jpeg/idct.html
+void JPEG::idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half) {
+	int p, n;
+
+	src[0] <<= 9;
+	src[1] <<= 7;
+	src[3] *= 181;
+	src[4] <<= 9;
+	src[5] *= 181;
+	src[7] <<= 7;
+
+	// Even part
+	xmul(src[6], src[2], 277, 669, 0)
+	xadd3(src[0], src[4], src[6], src[2], half)
+
+	// Odd part
+	xadd3(src[1], src[7], src[3], src[5], 0)
+	xmul(src[5], src[3], 251, 50, 6)
+	xmul(src[1], src[7], 213, 142, 6)
+
+	dest[0 * 8] = (src[0] + src[1]) >> ps;
+	dest[1 * 8] = (src[4] + src[5]) >> ps;
+	dest[2 * 8] = (src[2] + src[3]) >> ps;
+	dest[3 * 8] = (src[6] + src[7]) >> ps;
+	dest[4 * 8] = (src[6] - src[7]) >> ps;
+	dest[5 * 8] = (src[2] - src[3]) >> ps;
+	dest[6 * 8] = (src[4] - src[5]) >> ps;
+	dest[7 * 8] = (src[0] - src[1]) >> ps;
+}
+
+void JPEG::idct2D8x8(int32 block[64]) {
+	int32 tmp[64];
 
 	// Apply 1D IDCT to rows
-	for (int y = 0; y < 8; y++) {
-		for (int x = 0; x < 8; x++) {
-			tmp[y + x * 8] = dct[0] * _idct8x8[x][0]
-			                 + dct[1] * _idct8x8[x][1]
-			                 + dct[2] * _idct8x8[x][2]
-			                 + dct[3] * _idct8x8[x][3]
-			                 + dct[4] * _idct8x8[x][4]
-			                 + dct[5] * _idct8x8[x][5]
-			                 + dct[6] * _idct8x8[x][6]
-			                 + dct[7] * _idct8x8[x][7];
-		}
-
-		dct += 8;
-	}
+	for (int i = 0; i < 8; i++)
+		idct1D8x8(&block[i * 8], &tmp[i], 9, 1 << 8);
 
 	// Apply 1D IDCT to columns
-	for (int x = 0; x < 8; x++) {
-		const float *u = tmp + x * 8;
-		for (int y = 0; y < 8; y++) {
-			result[y * 8 + x] = u[0] * _idct8x8[y][0]
-			                    + u[1] * _idct8x8[y][1]
-			                    + u[2] * _idct8x8[y][2]
-			                    + u[3] * _idct8x8[y][3]
-			                    + u[4] * _idct8x8[y][4]
-			                    + u[5] * _idct8x8[y][5]
-			                    + u[6] * _idct8x8[y][6]
-			                    + u[7] * _idct8x8[y][7];
-		}
-	}
-}
+	for (int i = 0; i < 8; i++)
+		idct1D8x8(&tmp[i * 8], &block[i], 12, 1 << 11);
+ }
 
 bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	// Prepare an empty data array
@@ -595,30 +604,29 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	readAC(readData);
 
 	// Calculate the DCT coefficients from the input sequence
-	int16 DCT[64];
+	int32 block[64];
 	for (uint8 i = 0; i < 64; i++) {
 		// Dequantize
-		int16 val = readData[i];
+		int32 val = readData[i];
 		int16 quant = _quant[_currentComp->quantTableSelector][i];
 		val *= quant;
 
 		// Store the normalized coefficients, undoing the Zig-Zag
-		DCT[_zigZagOrder[i]] = val;
+		block[_zigZagOrder[i]] = val;
 	}
 
 	// Apply the IDCT
-	float result[64];
-	idct8x8(result, DCT);
+	idct2D8x8(block);
 
 	// Level shift to make the values unsigned
 	for (int i = 0; i < 64; i++) {
-		result[i] = result[i] + 128;
+		block[i] = block[i] + 128;
 
-		if (result[i] < 0)
-			result[i] = 0;
+		if (block[i] < 0)
+			block[i] = 0;
 
-		if (result[i] > 255)
-			result[i] = 255;
+		if (block[i] > 255)
+			block[i] = 255;
 	}
 
 	// Paint the component surface
@@ -636,7 +644,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 
 			for (uint8 i = 0; i < 8; i++) {
 				for (uint16 sH = 0; sH < scalingH; sH++) {
-					*ptr = (byte)(result[j * 8 + i]);
+					*ptr = (byte)(block[j * 8 + i]);
 					ptr++;
 				}
 			}
