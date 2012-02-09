@@ -52,6 +52,7 @@ class TimerManager;
 class SeekableReadStream;
 class WriteStream;
 class HardwareKeySet;
+class Keymap;
 }
 
 class AudioCDManager;
@@ -941,6 +942,19 @@ public:
 	 */
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
+	/**
+	 * Provide a global keymap
+	 *
+	 * @return Keymap with actions appropriate for the platform
+	 *
+	 * The caller will use and delete the return object.
+	 * If the keymap name equals Common::kGlobalKeymapName then it
+	 * will override the default global one, otherwise it will be
+	 * considered an additional global keymap
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::Keymap *getGlobalKeymap() { return 0; }
 	//@}
 
 
