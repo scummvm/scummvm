@@ -152,7 +152,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  New Ports:
    - Added WebOS port.
 
- General
+ General:
    - Added support for loadable modules on platforms without a dynamic
      loader (GSoC Task).
    - Added Danish translation.
