@@ -123,7 +123,6 @@ public:
 	SunSpot computeSunspotsIntensity(float pitch, float heading);
 
 	void setMenuAction(uint16 action) { _menuAction = action; }
-	void setShouldQuit() { _shouldQuit = true; }
 
 	void animateDirectionChange(float pitch, float heading, uint16 speed);
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
@@ -150,7 +149,6 @@ private:
 	Common::Array<SunSpot *> _sunspots;
 	Common::Array<Drawable *> _drawables;
 
-	bool _shouldQuit;
 	uint16 _menuAction;
 
 	bool _inputSpacePressed;

@@ -120,7 +120,7 @@ void Menu::updateMainMenu(uint16 action) {
 				goToNode(300);
 			} else if (choice == 1) {
 				// Quit
-				_vm->setShouldQuit();
+				_vm->quitGame();
 			}
 		}
 		break;
@@ -212,11 +212,7 @@ int16 Dialog::update() {
 	// Process events
 	Common::Event event;
 	while (_vm->getEventManager()->pollEvent(event)) {
-		// Check for "Hard" quit"
-		if (event.type == Common::EVENT_QUIT) {
-			_vm->setShouldQuit();
-			return -2;
-		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
 			_vm->_cursor->updatePosition(event.relMouse);
 			Common::Rect position = getPosition();

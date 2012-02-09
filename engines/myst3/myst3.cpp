@@ -57,7 +57,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		_db(0), _console(0), _scriptEngine(0),
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
-		_rnd(0), _sound(0), _shouldQuit(false),
+		_rnd(0), _sound(0),
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0) {
@@ -164,7 +164,7 @@ Common::Error Myst3Engine::run() {
 		loadNode(1, 101, 1);
 	}
 
-	while (!shouldQuit() && !_shouldQuit) {
+	while (!shouldQuit()) {
 		runNodeBackgroundScripts();
 		processInput(false);
 		updateCursor();
@@ -260,10 +260,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
 	while (getEventManager()->pollEvent(event)) {
-		// Check for "Hard" quit"
-		if (event.type == Common::EVENT_QUIT) {
-			_shouldQuit = true;
-		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_state->getViewType() == kCube
 					&& _cursor->isPositionLocked()) {
 				_scene->updateCamera(event.relMouse);
@@ -725,7 +722,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 
 	bool skip = false;
 
-	while (!skip && !shouldQuit() && !_shouldQuit && movie.update()) {
+	while (!skip && !shouldQuit() && movie.update()) {
 		// Process events
 		Common::Event event;
 		while (getEventManager()->pollEvent(event))
