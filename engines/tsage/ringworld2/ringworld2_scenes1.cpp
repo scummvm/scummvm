@@ -1608,6 +1608,2645 @@ void Scene1200::saveCharacter(int characterIndex) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 1337 - Card game
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene1337::unkObj1337sub1::unkObj1337sub1() {
+	_field34 = 0;
+	_field36 = Common::Point(0, 0);
+}
+
+void Scene1337::unkObj1337sub1::synchronize(Serializer &s) {
+	warning("STUBBED: unkObj1337sub1::synchronize()");
+}
+
+Scene1337::unkObj1337_1::unkObj1337_1() {
+	_fieldB94 = Common::Point(0, 0);
+	_fieldB98 = Common::Point(0, 0);
+	_fieldB9C = Common::Point(0, 0);
+	_fieldBA0 = Common::Point(0, 0);
+	_fieldBA4 = 0;
+}
+
+void Scene1337::unkObj1337_1::synchronize(Serializer &s) {
+	warning("STUBBED: unkObj1337_1::synchronize()");
+}
+
+Scene1337::Scene1337() {
+	_fieldA30 = 0;
+	_field3E24 = 0;
+	_field3E26 = 0;
+
+	for (int i = 0; i < 100; i++)
+		_field3E28[i] = 0;
+
+	_field423C = 0;
+	_field423E = 0;
+	_field4240 = 0;
+	_field4242 = 0;
+	_field4244 = 0;
+	_field4246 = 0;
+	_field4248 = 0;
+	_field424A = 0;
+	_field424C = 0;
+	_field424E = 0;
+}
+
+void Scene1337::synchronize(Serializer &s) {
+	warning("STUBBED: Scene1337::synchronize()");
+}
+
+void Scene1337::Action1337::subD18B5(int arg1, int arg2, int arg3) {
+	warning("STUBBED: Action1337::sub53CD5()");
+}
+
+void Scene1337::Action1337::skipFrames(int32 skipCount) {
+	uint32 firstFrameNumber = g_globals->_events.getFrameNumber();
+	uint32 tmpFrameNumber = firstFrameNumber;
+	
+	while (tmpFrameNumber < firstFrameNumber + skipCount)
+		tmpFrameNumber = g_globals->_events.getFrameNumber();
+
+	warning("_eventManager.waitEvent(-1)");
+}
+
+void Scene1337::Action1::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 1: {
+		scene->actionDisplay(1331, 6, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		R2_GLOBALS._sceneObjects->draw();
+		scene->actionDisplay(1331, 7, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		scene->actionDisplay(1331, 8, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrunkObj1337[1]._arr2[0]._field34 = 2;
+		scene->_arrunkObj1337[1]._arr2[0]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr2[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr2[0]._object1.setPosition(scene->_arrunkObj1337[1]._arr2[0]._field36, 0);
+		scene->_arrunkObj1337[1]._arr2[0]._object1.setStrip(2);
+		scene->_arrunkObj1337[1]._arr2[0]._object1.setFrame(scene->_arrunkObj1337[1]._arr2[0]._field34);
+		scene->_arrunkObj1337[1]._arr2[0]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[1]._arr2[0]);
+
+		scene->_arrunkObj1337[1]._arr2[1]._field34 = 3;
+		scene->_arrunkObj1337[1]._arr2[1]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr2[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr2[1]._object1.setPosition(scene->_arrunkObj1337[1]._arr2[1]._field36, 0);
+		scene->_arrunkObj1337[1]._arr2[1]._object1.setStrip(2);
+		scene->_arrunkObj1337[1]._arr2[1]._object1.setFrame(scene->_arrunkObj1337[1]._arr2[1]._field34);
+		scene->_arrunkObj1337[1]._arr2[1]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[1]._arr2[1]);
+
+		scene->_arrunkObj1337[2]._arr2[0]._field34 = 4;
+		scene->_arrunkObj1337[2]._arr2[0]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[0]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[0]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[0]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[0]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[0]._field34);
+		scene->_arrunkObj1337[2]._arr2[0]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[0]);
+
+		scene->_arrunkObj1337[3]._arr2[0]._field34 = 5;
+		scene->_arrunkObj1337[3]._arr2[0]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr2[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr2[0]._object1.setPosition(scene->_arrunkObj1337[3]._arr2[0]._field36, 0);
+		scene->_arrunkObj1337[3]._arr2[0]._object1.setStrip(2);
+		scene->_arrunkObj1337[3]._arr2[0]._object1.setFrame(scene->_arrunkObj1337[3]._arr2[0]._field34);
+		scene->_arrunkObj1337[3]._arr2[0]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[3]._arr2[0]);
+
+		scene->_arrunkObj1337[3]._arr2[1]._field34 = 6;
+		scene->_arrunkObj1337[3]._arr2[1]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr2[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr2[1]._object1.setPosition(scene->_arrunkObj1337[3]._arr2[1]._field36, 0);
+		scene->_arrunkObj1337[3]._arr2[1]._object1.setStrip(2);
+		scene->_arrunkObj1337[3]._arr2[1]._object1.setFrame(scene->_arrunkObj1337[3]._arr2[1]._field34);
+		scene->_arrunkObj1337[3]._arr2[1]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[3]._arr2[1]);
+
+		scene->_arrunkObj1337[3]._arr2[2]._field34 = 7;
+		scene->_arrunkObj1337[3]._arr2[2]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr2[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr2[2]._object1.setPosition(scene->_arrunkObj1337[3]._arr2[2]._field36, 0);
+		scene->_arrunkObj1337[3]._arr2[2]._object1.setStrip(2);
+		scene->_arrunkObj1337[3]._arr2[2]._object1.setFrame(scene->_arrunkObj1337[3]._arr2[2]._field34);
+		scene->_arrunkObj1337[3]._arr2[2]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[3]._arr2[2]);
+
+		scene->_arrunkObj1337[0]._arr2[0]._field34 = 8;
+		scene->_arrunkObj1337[0]._arr2[0]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr2[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr2[0]._object1.setPosition(scene->_arrunkObj1337[0]._arr2[0]._field36, 0);
+		scene->_arrunkObj1337[0]._arr2[0]._object1.setStrip(2);
+		scene->_arrunkObj1337[0]._arr2[0]._object1.setFrame(scene->_arrunkObj1337[0]._arr2[0]._field34);
+		scene->_arrunkObj1337[0]._arr2[0]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[0]._arr2[0]);
+
+		scene->_arrunkObj1337[0]._arr2[1]._field34 = 9;
+		scene->_arrunkObj1337[0]._arr2[1]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr2[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr2[1]._object1.setPosition(scene->_arrunkObj1337[0]._arr2[1]._field36, 0);
+		scene->_arrunkObj1337[0]._arr2[1]._object1.setStrip(2);
+		scene->_arrunkObj1337[0]._arr2[1]._object1.setFrame(scene->_arrunkObj1337[0]._arr2[1]._field34);
+		scene->_arrunkObj1337[0]._arr2[1]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[0]._arr2[1]);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(60);
+		scene->actionDisplay(1331, 9, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrunkObj1337[2]._arr2[1]._field34 = 2;
+		scene->_arrunkObj1337[2]._arr2[1]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[1]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[1]._field34);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[1]);
+
+		scene->_arrunkObj1337[2]._arr2[2]._field34 = 3;
+		scene->_arrunkObj1337[2]._arr2[2]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[2]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[2]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[2]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[2]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[2]._field34);
+		scene->_arrunkObj1337[2]._arr2[2]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[2]);
+
+		scene->_arrunkObj1337[2]._arr2[3]._field34 = 5;
+		scene->_arrunkObj1337[2]._arr2[3]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[3]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[3]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[3]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[3]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[3]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[3]._field34);
+		scene->_arrunkObj1337[2]._arr2[3]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[3]);
+
+		scene->_arrunkObj1337[2]._arr2[4]._field34 = 6;
+		scene->_arrunkObj1337[2]._arr2[4]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[4]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[4]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[4]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[4]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[4]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[4]._field34);
+		scene->_arrunkObj1337[2]._arr2[4]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[4]);
+
+		scene->_arrunkObj1337[2]._arr2[5]._field34 = 7;
+		scene->_arrunkObj1337[2]._arr2[5]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[5]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[5]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[5]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[5]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[5]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[5]._field34);
+		scene->_arrunkObj1337[2]._arr2[5]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[5]);
+
+		scene->_arrunkObj1337[2]._arr2[6]._field34 = 8;
+		scene->_arrunkObj1337[2]._arr2[6]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[6]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[6]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[6]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[6]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[6]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[6]._field34);
+		scene->_arrunkObj1337[2]._arr2[6]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[6]);
+
+		scene->_arrunkObj1337[2]._arr2[7]._field34 = 9;
+		scene->_arrunkObj1337[2]._arr2[7]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[7]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[7]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[7]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[7]._object1.setStrip(2);
+		scene->_arrunkObj1337[2]._arr2[7]._object1.setFrame(scene->_arrunkObj1337[2]._arr2[7]._field34);
+		scene->_arrunkObj1337[2]._arr2[7]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[7]);
+
+		scene->_aSound1.play(62);
+
+		R2_GLOBALS._sceneObjects->draw();
+		
+		skipFrames(120);
+		scene->_arrunkObj1337[2]._arr2[0]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[1]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[2]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[3]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[4]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[5]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[6]._object1.remove();
+		scene->_arrunkObj1337[2]._arr2[7]._object1.remove();
+
+		scene->_arrunkObj1337[1]._arr2[0]._object1.remove();
+		scene->_arrunkObj1337[1]._arr2[1]._object1.remove();
+
+		scene->_arrunkObj1337[3]._arr2[0]._object1.remove();
+		scene->_arrunkObj1337[3]._arr2[1]._object1.remove();
+		scene->_arrunkObj1337[3]._arr2[2]._object1.remove();
+
+		scene->_arrunkObj1337[0]._arr2[0]._object1.remove();
+		scene->_arrunkObj1337[0]._arr2[1]._object1.remove();
+
+		scene->_background2.setup2(1332, 5, 1, 165, 95, 110, 1);
+
+		scene->_arrunkObj1337[1]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[1]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[1]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[2]._arr1[0]._field34 = 30;
+		scene->_arrunkObj1337[2]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setFrame(2);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr1[0]);
+
+		scene->_arrunkObj1337[2]._arr1[1]._field34 = 16;
+		scene->_arrunkObj1337[2]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setFrame(2);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr1[1]);
+
+		scene->_arrunkObj1337[2]._arr1[2]._field34 = 1;
+		scene->_arrunkObj1337[2]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setFrame(2);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.fixPriority(170);
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr1[2]);
+
+		scene->_arrunkObj1337[3]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[3]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[3]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[0]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setFrame(2);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[0]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setFrame(2);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.fixPriority(170);
+
+		scene->_arrunkObj1337[0]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setFrame(2);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.fixPriority(170);
+
+		R2_GLOBALS._sceneObjects->draw();
+		
+		scene->actionDisplay(1331, 10, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		scene->_item2._object1.setPosition(Common::Point(162, 95), 0);
+		scene->_item2._object1.show();
+		scene->_aSound2.play(61);
+
+		Common::Point pt(91, 174);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+		}
+		break;
+	case 2: {
+		scene->_arrunkObj1337[2]._arr1[3]._field34 = 2;
+		scene->_arrunkObj1337[2]._arr1[3]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[3]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[3]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[3]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[3]._object1.setStrip(1);
+		scene->_arrunkObj1337[2]._arr1[3]._object1.setFrame(2);
+		scene->_arrunkObj1337[2]._arr1[3]._object1.fixPriority(170);
+
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr1[3]);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(60);
+		scene->actionDisplay(1331, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		scene->actionDisplay(1331, 12, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrunkObj1337[2]._arr2[1]._field34 = 1;
+		scene->_arrunkObj1337[2]._arr2[1]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.setPosition(scene->_arrunkObj1337[2]._arr2[1]._field36, 0);
+		scene->_arrunkObj1337[2]._arr2[1]._object1.hide();
+
+		scene->_item2._object1.setStrip(scene->_arrunkObj1337[2]._arr1[2]._object1._strip);
+		scene->_item2._object1.setFrame(scene->_arrunkObj1337[2]._arr1[2]._object1._frame);
+		scene->_item2._object1.animate(ANIM_MODE_NONE, NULL);
+		
+		scene->_arrunkObj1337[2]._arr1[2]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr1[2]._object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr1[2]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[2]._arr2[1]._field36, this);
+		}
+		break;
+	case 3: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[1]);
+		scene->_aSound1.play(59);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(60);
+		scene->actionDisplay(1331, 13, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrunkObj1337[2]._arr2[1]._field34 = scene->_arrunkObj1337[2]._arr1[3]._field34;
+
+		scene->_item2._object1.setStrip(scene->_arrunkObj1337[2]._arr1[3]._object1._strip);
+		scene->_item2._object1.setFrame(scene->_arrunkObj1337[2]._arr1[3]._object1._frame);
+
+		scene->_arrunkObj1337[2]._arr1[3]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr1[3]._object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr1[3]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[2]._arr2[1]._field36, this);
+		}
+		break;
+	case 4: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr2[1]);
+		scene->_aSound1.play(59);
+
+		scene->_item7._field34 = 1;
+		scene->_item7._object1.hide();
+
+		scene->_item2._object1.setStrip(5);
+		scene->_item2._object1.setFrame(1);
+		scene->_item2._object1.animate(ANIM_MODE_2, NULL);
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr2[1]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_item7._field36, this);
+		}
+		break;
+	case 5: {
+		scene->_item2._object1.hide();
+
+		scene->_item7._object1.postInit();
+		scene->_item7._object1.setVisage(1332);
+		scene->_item7._object1.setPosition(scene->_item7._field36, 0);
+		scene->setAnimationInfo(&scene->_item7);
+		scene->_aSound2.play(61);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(60);
+		scene->actionDisplay(1331, 14, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrunkObj1337[2]._arr3[0]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr3[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr3[0]._object1.setPosition(scene->_arrunkObj1337[2]._arr3[0]._field36, 0);
+		scene->_arrunkObj1337[2]._arr3[0]._object1.hide();
+
+		scene->_arrunkObj1337[3]._arr1[2]._field34 = 0;
+		scene->_arrunkObj1337[3]._arr1[2].remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[3]._arr1[2]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[2]._arr3[0]._field36, this);
+		}
+		break;
+	case 6: {
+		scene->_item2._object1.hide();
+		scene->_arrunkObj1337[2]._arr3[0]._field34 = 21;
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr3[0]);
+		scene->_aSound1.play(57);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(60);
+		scene->actionDisplay(1331, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		int tmpVal = 15;
+		int i = -1;
+
+		for (i = 0; i <= 7; i++) {
+			tmpVal += 29;
+
+			scene->_arrObject1[i].postInit();
+			scene->_arrObject1[i].setVisage(1332);
+			scene->_arrObject1[i].setPosition(Common::Point(tmpVal, 90), 0);
+			scene->_arrObject1[i].setStrip(3);
+			scene->_arrObject1[i].fixPriority(190);
+
+			scene->_arrObject2[i].postInit();
+			scene->_arrObject2[i].setVisage(1332);
+			scene->_arrObject2[i].setPosition(Common::Point(tmpVal, 90), 0);
+			scene->_arrObject2[i].setStrip(7);
+			scene->_arrObject2[i].setFrame(1);
+			scene->_arrObject2[i].fixPriority(180);
+		}
+
+		scene->_arrObject1[0].setFrame(1);
+		scene->_arrObject1[1].setFrame(3);
+		scene->_arrObject1[2].setFrame(6);
+		scene->_arrObject1[3].setFrame(8);
+		scene->_arrObject1[4].setFrame(9);
+		scene->_arrObject1[5].setFrame(10);
+		scene->_arrObject1[6].setFrame(11);
+		scene->_arrObject1[7].setFrame(12);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(240);
+		
+		scene->_arrObject1[0].remove();
+		scene->_arrObject1[1].remove();
+		scene->_arrObject1[2].remove();
+		scene->_arrObject1[3].remove();
+		scene->_arrObject1[4].remove();
+		scene->_arrObject1[5].remove();
+		scene->_arrObject1[6].remove();
+		scene->_arrObject1[7].remove();
+
+		scene->_arrObject2[0].remove();
+		scene->_arrObject2[1].remove();
+		scene->_arrObject2[2].remove();
+		scene->_arrObject2[3].remove();
+		scene->_arrObject2[4].remove();
+		scene->_arrObject2[5].remove();
+		scene->_arrObject2[6].remove();
+		scene->_arrObject2[7].remove();
+
+		scene->_item7._field34 = scene->_arrunkObj1337[2]._arr3[0]._field34;
+
+		scene->_arrunkObj1337[2]._arr3[0]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr3[0]._object1.remove();
+		
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr3[0]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_item7._field36, this);
+		}
+		break;
+	case 7: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_item7);
+		scene->_aSound2.play(61);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		scene->_arrunkObj1337[2]._arr3[0]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr3[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr3[0]._object1.setPosition(scene->_arrunkObj1337[2]._arr3[0]._field36, 0);
+		scene->_arrunkObj1337[2]._arr3[0]._object1.hide();
+
+		scene->_arrunkObj1337[3]._arr1[1]._field34 = 0;
+		scene->_arrunkObj1337[3]._arr1[1].remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[3]._arr1[1]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[2]._arr3[0]._field36, this);
+		}
+		break;
+	case 8: {
+		scene->_item2._object1.hide();
+		scene->_arrunkObj1337[2]._arr3[0]._field34 = 14;
+		scene->setAnimationInfo(&scene->_arrunkObj1337[2]._arr3[0]);
+		scene->_aSound1.play(57);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		scene->actionDisplay(1331, 16, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		int tmpVal = 72;
+		int i = -1;
+
+		for (i = 0; i <= 3; i++) {
+			tmpVal += 29;
+			scene->_arrObject1[i].postInit();
+			scene->_arrObject1[i].setVisage(1332);
+			scene->_arrObject1[i].setPosition(Common::Point(tmpVal, 71), 0);
+			scene->_arrObject1[i].setStrip(3);
+			scene->_arrObject1[i].fixPriority(190);
+
+			scene->_arrObject2[i].postInit();
+			scene->_arrObject2[i].setVisage(1332);
+			scene->_arrObject2[i].setPosition(Common::Point(tmpVal, 71), 0);
+			scene->_arrObject2[i].setStrip(7);
+			scene->_arrObject2[i].setFrame(1);
+			scene->_arrObject2[i].fixPriority(180);
+		}
+
+		scene->_arrObject1[0].setFrame(2);
+		scene->_arrObject1[1].setFrame(5);
+		scene->_arrObject1[2].setFrame(7);
+		scene->_arrObject1[3].setFrame(15);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(240);
+		scene->actionDisplay(1331, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		tmpVal = 72;
+		for (i = 4; i <= 7; i++) {
+			tmpVal += 29;
+
+			scene->_arrObject1[i].postInit();
+			scene->_arrObject1[i].setVisage(1332);
+			scene->_arrObject1[i].setPosition(Common::Point(tmpVal, 100), 0);
+			scene->_arrObject1[i].setStrip(4);
+			scene->_arrObject1[i].fixPriority(190);
+
+			scene->_arrObject2[i].postInit();
+			scene->_arrObject2[i].setVisage(1332);
+			scene->_arrObject2[i].setPosition(Common::Point(tmpVal, 100), 0);
+			scene->_arrObject2[i].setStrip(7);
+			scene->_arrObject2[i].setFrame(1);
+			scene->_arrObject2[i].fixPriority(180);
+		}
+
+		scene->_arrObject1[4].setFrame(1);
+		scene->_arrObject1[5].setFrame(5);
+		scene->_arrObject1[6].setFrame(7);
+		scene->_arrObject1[7].setFrame(3);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(240);
+		
+		scene->_arrObject1[0].remove();
+		scene->_arrObject1[1].remove();
+		scene->_arrObject1[2].remove();
+		scene->_arrObject1[3].remove();
+		scene->_arrObject1[4].remove();
+		scene->_arrObject1[5].remove();
+		scene->_arrObject1[6].remove();
+		scene->_arrObject1[7].remove();
+
+		scene->_arrObject2[0].remove();
+		scene->_arrObject2[1].remove();
+		scene->_arrObject2[2].remove();
+		scene->_arrObject2[3].remove();
+		scene->_arrObject2[4].remove();
+		scene->_arrObject2[5].remove();
+		scene->_arrObject2[6].remove();
+		scene->_arrObject2[7].remove();
+
+		scene->_item7._field34 = scene->_arrunkObj1337[2]._arr1[0]._field34;
+
+		scene->_item2._object1.setStrip(scene->_arrunkObj1337[2]._arr1[0]._object1._strip);
+		scene->_item2._object1.setFrame(scene->_arrunkObj1337[2]._arr1[0]._object1._frame);
+		scene->_item2._object1.animate(ANIM_MODE_NONE, NULL);
+
+		scene->_arrunkObj1337[2]._arr1[0]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr1[0]._object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr1[0]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[2]._arr3[0]._field36, this);
+		}
+		break;
+	case 9: {
+		scene->_aSound1.play(58);
+		scene->_arrunkObj1337[2]._arr3[0]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr3[0].remove();
+		scene->_item2._object1.setStrip(5);
+		scene->_item2._object1.setFrame(1);
+		scene->_item2._object1.animate(ANIM_MODE_2, NULL);
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr3[0]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_item7._field36, this);
+		}
+		break;
+	case 10: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_item7);
+		scene->_aSound2.play(61);
+
+		R2_GLOBALS._sceneObjects->draw();
+		scene->actionDisplay(1331, 18, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		scene->_arrObject1[0].postInit();
+		scene->_arrObject1[0].setVisage(1332);
+		scene->_arrObject1[0].setPosition(Common::Point(131, 71), 0);
+		scene->_arrObject1[0].fixPriority(190);
+		scene->_arrObject1[0].setStrip(3);
+		scene->_arrObject1[0].setFrame(4);
+
+		scene->_arrObject2[0].postInit();
+		scene->_arrObject2[0].setVisage(1332);
+		scene->_arrObject2[0].setPosition(Common::Point(131, 71), 0);
+		scene->_arrObject2[0].setStrip(7);
+		scene->_arrObject2[0].setFrame(1);
+		scene->_arrObject2[0].fixPriority(180);
+			 
+		scene->_arrObject1[1].postInit();
+		scene->_arrObject1[1].setVisage(1332);
+		scene->_arrObject1[1].setPosition(Common::Point(160, 71), 0);
+		scene->_arrObject1[1].fixPriority(190);
+		scene->_arrObject1[1].setStrip(3);
+		scene->_arrObject1[1].setFrame(16);
+
+		scene->_arrObject2[1].postInit();
+		scene->_arrObject2[1].setVisage(1332);
+		scene->_arrObject2[1].setPosition(Common::Point(160, 71), 0);
+		scene->_arrObject2[1].setStrip(7);
+		scene->_arrObject2[1].setFrame(1);
+		scene->_arrObject2[1].fixPriority(180);
+			 
+		scene->_arrObject1[2].postInit();
+		scene->_arrObject1[2].setVisage(1332);
+		scene->_arrObject1[2].setPosition(Common::Point(131, 100), 0);
+		scene->_arrObject1[2].fixPriority(190);
+		scene->_arrObject1[2].setStrip(4);
+		scene->_arrObject1[2].setFrame(4);
+			 
+		scene->_arrObject2[2].postInit();
+		scene->_arrObject2[2].setVisage(1332);
+		scene->_arrObject2[2].setPosition(Common::Point(131, 100), 0);
+		scene->_arrObject2[2].setStrip(7);
+		scene->_arrObject2[2].setFrame(1);
+		scene->_arrObject2[2].fixPriority(180);
+			 
+		scene->_arrObject1[3].postInit();
+		scene->_arrObject1[3].setVisage(1332);
+		scene->_arrObject1[3].setPosition(Common::Point(160, 100), 0);
+		scene->_arrObject1[3].fixPriority(190);
+		scene->_arrObject1[3].setStrip(4);
+		scene->_arrObject1[3].setFrame(2);
+			 
+		scene->_arrObject2[3].postInit();
+		scene->_arrObject2[3].setVisage(1332);
+		scene->_arrObject2[3].setPosition(Common::Point(160, 100), 0);
+		scene->_arrObject2[3].setStrip(7);
+		scene->_arrObject2[3].setFrame(1);
+		scene->_arrObject2[3].fixPriority(180);
+			 
+		R2_GLOBALS._sceneObjects->draw();
+
+		skipFrames(240);
+
+		scene->_arrObject1[0].remove();
+		scene->_arrObject1[1].remove();
+		scene->_arrObject1[2].remove();
+		scene->_arrObject1[3].remove();
+
+		scene->_arrObject2[0].remove();
+		scene->_arrObject2[1].remove();
+		scene->_arrObject2[2].remove();
+		scene->_arrObject2[3].remove();
+
+		scene->_object1.setFrame(1);
+		scene->_object1.show();
+		scene->_object1.animate(ANIM_MODE_2, NULL);
+
+		R2_GLOBALS._sceneObjects->draw();
+
+		scene->actionDisplay(1331, 19, 159, 10, 1, 220, 0, 7, 0, 154, 154);
+		
+		scene->_object1.hide();
+
+		scene->actionDisplay(1331, 20, 159, 10, 1, 220, 0, 7, 0, 154, 154);
+		scene->actionDisplay(1331, 21, 159, 10, 1, 220, 0, 7, 0, 154, 154);
+
+		scene->_item7._field34 = scene->_arrunkObj1337[2]._arr1[1]._field34;
+		
+		scene->_item2._object1.setStrip(scene->_arrunkObj1337[2]._arr1[1]._object1._strip);
+		scene->_item2._object1.setFrame(scene->_arrunkObj1337[2]._arr1[1]._object1._frame);
+		scene->_item2._object1.animate(ANIM_MODE_NONE, NULL);
+
+		scene->_arrunkObj1337[2]._arr1[1]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr1[1]._object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_arrunkObj1337[2]._arr1[1]._field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_item7._field36, this);
+		}
+		break;
+	case 11: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_item7);
+		scene->_aSound2.play(61);
+		scene->_item2._object1.setStrip(5);
+		scene->_item2._object1.setFrame(1);
+		scene->_item2._object1.animate(ANIM_MODE_2, NULL);
+
+		R2_GLOBALS._sceneObjects->draw();
+		
+		scene->actionDisplay(1331, 22, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+
+		int i = -1;
+		for (i = 0; i <= 3; i ++) {
+			scene->_arrunkObj1337[3]._arr1[i]._field34 = 0;
+			scene->_arrunkObj1337[3]._arr1[i]._object1.remove();
+
+			scene->_arrunkObj1337[2]._arr1[i]._field34 = 0;
+			scene->_arrunkObj1337[2]._arr1[i]._object1.remove();
+
+			scene->_arrunkObj1337[0]._arr1[i]._field34 = 0;
+			scene->_arrunkObj1337[0]._arr1[i]._object1.remove();
+
+			scene->_arrunkObj1337[1]._arr1[i]._field34 = 0;
+			scene->_arrunkObj1337[1]._arr1[i]._object1.remove();
+		}
+
+		for (i = 0; i <= 7; i++) {
+			scene->_arrunkObj1337[3]._arr2[i]._field34 = 0;
+			scene->_arrunkObj1337[3]._arr2[i]._object1.remove();
+
+			scene->_arrunkObj1337[2]._arr2[i]._field34 = 0;
+			scene->_arrunkObj1337[2]._arr2[i]._object1.remove();
+
+			scene->_arrunkObj1337[0]._arr2[i]._field34 = 0;
+			scene->_arrunkObj1337[0]._arr2[i]._object1.remove();
+
+			scene->_arrunkObj1337[1]._arr2[i]._field34 = 0;
+			scene->_arrunkObj1337[1]._arr2[i]._object1.remove();
+		}
+
+		scene->_arrunkObj1337[2]._arr3[0]._field34 = 0;
+		scene->_arrunkObj1337[2]._arr3[0]._object1.remove();
+
+		scene->_item7._field34 = 0;
+		scene->_item7._object1.remove();
+
+		scene->_background2.remove();
+		}
+	// No break on purpose
+	case 0:
+		R2_GLOBALS._sceneObjects->draw();
+		signal();
+		break;
+	case 12:
+		scene->subCBB1E();
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action2::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_item3._object1.postInit();
+		scene->_item3._object1.setVisage(1332);
+		scene->_item3._object1.setStrip(8);
+		scene->_item3._object1.setFrame(1);
+		scene->_item3._object1.fixPriority(300);
+		scene->_item3._object1.setPosition(Common::Point(156, 108));
+
+		scene->_item7._object1.remove();
+		scene->_item7._field34 = 0;
+		
+		scene->_aSound1.play(60);
+		scene->_item3._object1.animate(ANIM_MODE_5, this);
+		break;
+	case 1:
+		scene->_item3._object1.setFrame(1);
+		
+		scene->_aSound1.play(60);
+		scene->_item3._object1.animate(ANIM_MODE_5, this);
+		break;
+	case 2: {
+		Common::Point pt(156, 108);
+		NpcMover *mover = new NpcMover();
+		scene->_item3._object1.addMover(mover, &pt, this);
+		}
+		break;
+	case 3:
+		scene->_item3._object1.remove();
+		scene->_background2.setup2(1332, 5, 1, 162, 95, 110, 1);
+		scene->_field423C = 1;
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action3::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	scene->_item2._object1.setPosition(Common::Point(162, 95), 0);
+	
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_item2._object1._moveDiff = Common::Point(30, 30);
+		scene->_item2._object1.setVisage(1332);
+		scene->_item2._object1.setStrip(5);
+		scene->_item2._object1.setFrame(1);
+		scene->_item2._object1.fixPriority(400);
+		scene->_item2._object1.animate(ANIM_MODE_2, NULL);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(283, 146);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_item2._object1.show();
+		scene->_arrunkObj1337[1]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 1: {
+		scene->_arrunkObj1337[1]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[0]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[0]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(10, 174);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[2]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 2: {
+		scene->_arrunkObj1337[2]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[0]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[0]._object1.fixPriority(170);
+		if (scene->_arrunkObj1337[2]._arr1[0]._field34 > 9) {
+			if (scene->_arrunkObj1337[2]._arr1[0]._field34 > 25) {
+				scene->_arrunkObj1337[2]._arr1[0]._object1.setStrip(4);
+				scene->_arrunkObj1337[2]._arr1[0]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[0]._field34 - 25);
+			} else {
+				scene->_arrunkObj1337[2]._arr1[0]._object1.setStrip(3);
+				scene->_arrunkObj1337[2]._arr1[0]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[0]._field34 - 9);
+			}
+		} else {
+			scene->_arrunkObj1337[2]._arr1[0]._object1.setStrip(2);
+			scene->_arrunkObj1337[2]._arr1[0]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[0]._field34);
+		}
+		scene->_aSound2.play(61);
+
+		Common::Point pt(14, 14);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[3]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 3: {
+		scene->_arrunkObj1337[3]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[0]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[0]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(280, 5);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[0]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 4: {
+		scene->_arrunkObj1337[0]._arr1[0]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[0]._object1._moveDiff = Common::Point(30,30);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[0]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setStrip(5);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.setFrame(1);
+		scene->_arrunkObj1337[0]._arr1[0]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(283, 124);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[1]._arr1[1]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 5: {
+		scene->_arrunkObj1337[1]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[1]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[1]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(37, 174);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[2]._arr1[1]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 6: {
+		scene->_arrunkObj1337[2]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[1]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[1]._object1.fixPriority(170);
+
+		if (scene->_arrunkObj1337[2]._arr1[1]._field34 > 9) {
+			if (scene->_arrunkObj1337[2]._arr1[1]._field34 > 25) {
+				scene->_arrunkObj1337[2]._arr1[1]._object1.setStrip(4);
+				scene->_arrunkObj1337[2]._arr1[1]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[1]._field34 - 25);
+			} else {
+				scene->_arrunkObj1337[2]._arr1[1]._object1.setStrip(3);
+				scene->_arrunkObj1337[2]._arr1[1]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[1]._field34 - 9);
+			}
+		} else {
+			scene->_arrunkObj1337[2]._arr1[1]._object1.setStrip(2);
+			scene->_arrunkObj1337[2]._arr1[1]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[1]._field34);
+		}
+
+		scene->_aSound2.play(61);
+
+		Common::Point pt(14, 36);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[3]._arr1[1]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 7: {
+		scene->_arrunkObj1337[3]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[1]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[1]._field36);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[1]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+
+		Common::Point pt(253, 5);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[0]._arr1[1]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 8: {
+		scene->_arrunkObj1337[0]._arr1[1]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[1]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[1]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setStrip(5);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.setFrame(1);
+		scene->_arrunkObj1337[0]._arr1[1]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+		
+		Common::Point pt(283, 102);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[1]._arr1[2]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 9: {
+		scene->_arrunkObj1337[1]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[1]._arr1[2]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[1]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.setFrame(4);
+		scene->_arrunkObj1337[1]._arr1[2]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+		
+		Common::Point pt(64, 174);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[2]._arr1[2]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 10: {
+		scene->_arrunkObj1337[2]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[2]._arr1[2]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[2]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[2]._arr1[2]._object1.fixPriority(170);
+
+		if (scene->_arrunkObj1337[2]._arr1[2]._field34 > 9) {
+			if (scene->_arrunkObj1337[2]._arr1[2]._field34 > 25) {
+				scene->_arrunkObj1337[2]._arr1[2]._object1.setStrip(4);
+				scene->_arrunkObj1337[2]._arr1[2]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[2]._field34 - 25);
+			} else {
+				scene->_arrunkObj1337[2]._arr1[2]._object1.setStrip(3);
+				scene->_arrunkObj1337[2]._arr1[2]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[2]._field34 - 9);
+			}
+		} else {
+			scene->_arrunkObj1337[2]._arr1[2]._object1.setStrip(2);
+			scene->_arrunkObj1337[2]._arr1[2]._object1.setFrame(scene->_arrunkObj1337[2]._arr1[2]._field34);
+		}
+
+		scene->_aSound2.play(61);
+
+		Common::Point pt(14, 58);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[3]._arr1[2]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 11: {
+		scene->_arrunkObj1337[3]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[3]._arr1[2]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[3]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setStrip(1);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.setFrame(3);
+		scene->_arrunkObj1337[3]._arr1[2]._object1.fixPriority(170);
+		scene->_aSound2.play(61);
+		
+		Common::Point pt(226, 5);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+
+		scene->_arrunkObj1337[0]._arr1[2]._field34 = scene->_field3E28[scene->_field3E24];
+		}
+		break;
+	case 12:
+		scene->_arrunkObj1337[0]._arr1[2]._object1.postInit();
+		scene->_arrunkObj1337[0]._arr1[2]._object1._moveDiff = Common::Point(30, 30);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setVisage(1332);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[0]._arr1[2]._field36, 0);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setStrip(5);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.setFrame(1);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.fixPriority(170);
+		scene->_arrunkObj1337[0]._arr1[2]._object1.hide();
+	default:
+		break;
+	}
+	
+	if (_actionIndex > 12) {
+		scene->_field423E = 0;
+		R2_GLOBALS._sceneObjects->draw();
+		scene->actionDisplay(1330, 0, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		scene->subC20F9();
+	} else if (_actionIndex >= 1) {
+		scene->_field3E28[scene->_field3E24] = 0;
+		scene->_field3E24--;
+	}
+}
+
+void Scene1337::Action4::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34))) {
+			if (scene->_field3E24 < 0)
+				scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34);
+			scene->_item2._object1.setPosition(Common::Point(162, 95), 0);
+			scene->_item2._object1.show();
+			scene->_aSound2.play(61);
+
+			NpcMover *mover = new NpcMover();
+			scene->_item2._object1.addMover(mover, scene->_arrunkObj1337[scene->_field423E]._fieldB94, this);
+
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field34 = scene->_field3E28[scene->_field3E24];
+			scene->_field3E28[scene->_field3E24] = 0;
+			scene->_field3E24--;
+			
+			if (scene->_field3E24 < 0)
+				scene->_background2.remove(); 
+		} else {
+			// Self call, forcing next actionIndex
+			signal();
+		}
+		break;
+	case 1:
+		if ( ( scene->_item2._object1._position.x == scene->_arrunkObj1337[scene->_field423E]._fieldB94.x)
+			&& ( scene->_item2._object1._position.y == scene->_arrunkObj1337[scene->_field423E]._fieldB94.y) ) {
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.postInit();
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1._moveDiff = Common::Point(30, 30);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.setVisage(1332);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.setPosition(scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field36, 0);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.setStrip(1);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.setFrame(scene->_arrunkObj1337[scene->_field423E]._fieldBA4);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[0]._object1.fixPriority(170);
+		}
+
+		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
+			scene->setAnimationInfo(&scene->_arrunkObj1337[scene->_field423E]._arr1[0]);
+			
+		scene->_item2._object1.hide();
+		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
+			if (scene->_field3E24 < 0)
+				scene->subCBB7B();
+			scene->_item2._object1.setPosition(Common::Point(162, 95));
+			scene->_item2._object1.show();
+
+			scene->_aSound2.play(61);
+
+			NpcMover *mover = new NpcMover();
+			scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[scene->_field423E]._fieldB98, this);
+			
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._field34 = scene->_field3E28[scene->_field3E24];
+			scene->_field3E28[scene->_field3E24] = 0;
+			scene->_field3E24--;
+			if (scene->_field3E24 < 0)
+				scene->_background2.remove();
+		} else
+			signal();
+		break;
+	case 2:
+		if ( ( scene->_item2._object1._position.x == scene->_arrunkObj1337[scene->_field423E]._fieldB98.x)
+			&& ( scene->_item2._object1._position.y == scene->_arrunkObj1337[scene->_field423E]._fieldB98.y) ) {
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.postInit();
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1._moveDiff = Common::Point(30, 30);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.setVisage(1332);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.setPosition(scene->_arrunkObj1337[scene->_field423E]._arr1[1]._field36, 0);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.setStrip(1);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.setFrame(scene->_arrunkObj1337[scene->_field423E]._fieldBA4);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[1]._object1.fixPriority(170);
+		}
+
+		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
+			scene->setAnimationInfo(&scene->_arrunkObj1337[scene->_field423E]._arr1[1]);
+			
+		scene->_item2._object1.hide();
+		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[2]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
+			if (scene->_field3E24 < 0)
+				scene->subCBB7B();
+			scene->_item2._object1.setPosition(Common::Point(162, 95));
+			scene->_item2._object1.show();
+
+			scene->_aSound2.play(61);
+
+			NpcMover *mover = new NpcMover();
+			scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[scene->_field423E]._fieldB9C, this);
+			
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._field34 = scene->_field3E28[scene->_field3E24];
+			scene->_field3E28[scene->_field3E24] = 0;
+			scene->_field3E24--;
+			if (scene->_field3E24 < 0)
+				scene->_background2.remove();
+		} else
+			signal();
+		break;
+	case 3:
+		if ( ( scene->_item2._object1._position.x == scene->_arrunkObj1337[scene->_field423E]._fieldB9C.x)
+			&& ( scene->_item2._object1._position.y == scene->_arrunkObj1337[scene->_field423E]._fieldB9C.y) ) {
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.postInit();
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1._moveDiff = Common::Point(30, 30);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.setVisage(1332);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.setPosition(scene->_arrunkObj1337[scene->_field423E]._arr1[2]._field36, 0);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.setStrip(1);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.setFrame(scene->_arrunkObj1337[scene->_field423E]._fieldBA4);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[2]._object1.fixPriority(170);
+		}
+
+		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
+			scene->setAnimationInfo(&scene->_arrunkObj1337[scene->_field423E]._arr1[2]);
+			
+		scene->_item2._object1.hide();
+		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[3]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
+			if (scene->_field3E24 < 0)
+				scene->subCBB7B();
+			scene->_item2._object1.setPosition(Common::Point(162, 95));
+			scene->_item2._object1.show();
+
+			scene->_aSound2.play(61);
+
+			NpcMover *mover = new NpcMover();
+			scene->_item2._object1.addMover(mover, &scene->_arrunkObj1337[scene->_field423E]._fieldBA0, this);
+			
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._field34 = scene->_field3E28[scene->_field3E24];
+			scene->_field3E28[scene->_field3E24] = 0;
+			scene->_field3E24--;
+			if (scene->_field3E24 < 0)
+				scene->_background2.remove();
+		} else
+			signal();
+		break;
+	case 4:
+		if ( ( scene->_item2._object1._position.x == scene->_arrunkObj1337[scene->_field423E]._fieldBA0.x)
+			&& ( scene->_item2._object1._position.y == scene->_arrunkObj1337[scene->_field423E]._fieldBA0.y) ) {
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.postInit();
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1._moveDiff = Common::Point(30, 30);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.setVisage(1332);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.setPosition(scene->_arrunkObj1337[scene->_field423E]._arr1[3]._field36, 0);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.setStrip(1);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.setFrame(scene->_arrunkObj1337[scene->_field423E]._fieldBA4);
+			scene->_arrunkObj1337[scene->_field423E]._arr1[3]._object1.fixPriority(170);
+		}
+
+		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
+			scene->setAnimationInfo(&scene->_arrunkObj1337[scene->_field423E]._arr1[3]);
+			
+		scene->_item2._object1.hide();
+		switch (scene->_field423E) {
+		case 0:
+			scene->subCF979();
+			break;
+		case 1:
+			scene->subCF31D();
+			break;
+		case 2:
+			scene->subD0281();
+			break;
+		case 3:
+			scene->subC2C2F();
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action5::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3E28[scene->_field3E26] = scene->_field3EF0->_field34;
+		scene->_field3E26--;
+		if (!g_globals->_sceneObjects->contains(&scene->_item7._object1)) {
+			scene->_item7._object1.postInit();
+			scene->_item7._object1.hide();
+			scene->_item7._object1.setVisage(1332);
+			scene->_item7._object1.setPosition(scene->_item7._field36, 0);
+			scene->_item7._object1.fixPriority(170);
+		}
+		
+		scene->_item7._field34 = scene->_field3EF0->_field34;
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+		Common::Point pt(128, 95);
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &pt, this);
+		}
+		break;
+	case 1:
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(&scene->_item7);
+		scene->_aSound2.play(61);
+		scene->subC20F9();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action6::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3EF4->_field34 = 1;
+		scene->_field3EF4->_object1.postInit();
+		scene->_field3EF4->_object1.hide();
+		scene->_field3EF4->_object1.setVisage(1332);
+		scene->_field3EF4->_object1.setPosition(scene->_field3EF4->_field36);
+		scene->_field3EF4->_object1.fixPriority(170);
+
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1:
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(59);
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+		scene->subC20F9();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action7::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3EF4->_field34 = scene->_field3EF0->_field34;
+
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1:
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(59);
+		scene->_item5._field34 = 1;
+		scene->_item5._field36.x = scene->_field3EF4->_field36.x;
+		scene->_item5._field36.y = scene->_field3EF4->_field36.y;
+		scene->_item5._object1.postInit();
+		scene->_item5._object1.hide();
+		scene->_item5._object1._flags = 0x200;
+
+		scene->subC4A39(&scene->_item5);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action8::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_field34;
+		scene->_field3E26--;
+
+		scene->_field3EF4->_field34 = scene->_field3EF0->_field34;
+		scene->_field3EF0->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1:
+		scene->_item2._object1.hide();
+
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(58);
+		scene->subC4A39(scene->_field3EF4);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action9::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3EF4->_field34 = scene->_field3EF0->_field34;
+		scene->_field3EF4->_object1.postInit();
+		scene->_field3EF4->_object1.hide();
+		scene->_field3EF4->_object1.setVisage(1332);
+		scene->_field3EF4->_object1.setPosition(scene->_field3EF4->_field36, 0);
+		scene->_field3EF4->_object1.fixPriority(170);
+
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1:
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(57);
+
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+		
+		scene->subC20F9();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action10::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3EF8->_object1.postInit();
+		scene->_field3EF8->_object1.hide();
+		scene->_field3EF8->_object1.setVisage(1332);
+		scene->_field3EF8->_object1.setPosition(scene->_field3EF8->_field36, 0);
+		scene->_field3EF8->_object1.fixPriority(170);
+		scene->_field3EF8->_field34 = scene->_field3EF0->_field34;
+
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		if (scene->_field3EF0 == &scene->_item6) {
+			subD18B5(5, 1, 4);
+			scene->subC4CEC();
+		}
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF8->_field36, this);
+		}
+		break;
+	case 1: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF8);
+		scene->_aSound1.play(57);
+
+		bool found = false;
+		int indexFound = -1;
+
+		switch (scene->_field4240) {
+		case 0:
+			for (indexFound = 0; indexFound < 3; indexFound++) {
+				if (scene->_arrunkObj1337[0]._arr1[indexFound]._field34 == 29) {
+					found = true;
+					break;
+				} 
+			}
+			break;
+		case 1:
+			for (indexFound = 0; indexFound < 3; indexFound++) {
+				if (scene->_arrunkObj1337[1]._arr1[indexFound]._field34 == 29) {
+					found = true;
+					break;
+				} 
+			}
+			break;
+		case 2:
+			for (indexFound = 0; indexFound < 3; indexFound++) {
+				if (scene->_arrunkObj1337[2]._arr1[indexFound]._field34 == 29) {
+					found = true;
+					break;
+				} 
+			}
+			break;
+		case 3:
+			for (indexFound = 0; indexFound < 3; indexFound++) {
+				if (scene->_arrunkObj1337[3]._arr1[indexFound]._field34 == 29) {
+					found = true;
+					break;
+				} 
+			}
+			break;
+		default:
+			break;
+		}
+
+		bool found2 = false;
+
+		if (found) {
+			switch (scene->_field4240) {
+			case 0:
+				scene->subC51A0(&scene->_arrunkObj1337[0]._arr1[indexFound], scene->_field3EF8);
+				found2 = true;
+				break;
+			case 1:
+				scene->subC51A0(&scene->_arrunkObj1337[1]._arr1[indexFound], scene->_field3EF8);
+				found2 = true;
+				break;
+			case 2:
+				scene->subC4CD2();
+				if (MessageDialog::show(USE_INTERCEPTOR, NO_MSG, YES_MSG) == 0)
+					scene->subC4CEC();
+				else {			
+					scene->subC51A0(&scene->_arrunkObj1337[2]._arr1[indexFound], scene->_field3EF8);
+					found2 = true;
+				}
+				break;
+			case 3:
+				scene->subC51A0(&scene->_arrunkObj1337[3]._arr1[indexFound], scene->_field3EF8);
+				found2 = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (!found2)
+			break;
+
+		if (scene->_field4240 == 2) {
+			int j = 0;
+			for (int i = 0; i <= 7; i++) {
+				if (scene->_arrunkObj1337[2]._arr2[i]._field34 != 0)
+					++j;
+			}
+			
+			if (j <= 1) {
+				for (int i = 0; i <= 7; i++) {
+					if (scene->_arrunkObj1337[2]._arr2[i]._field34 != 0) {
+						scene->_field3EF4 = &scene->_arrunkObj1337[2]._arr2[i];
+						break;
+					}
+				}
+			} else {
+				scene->subC4CD2();
+				
+				found2 = false;
+				while (!found2) {
+					scene->actionDisplay(1330, 130, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					
+					// Wait for a mouse or keypress
+					Event event;
+					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+						g_globals->_scenePalette.signalListeners();
+						R2_GLOBALS._sceneObjects->draw();
+						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
+					}
+	
+					scene->_item6._field36 = event.mousePos;
+	
+					for (int i = 0; i <= 7; i++) {
+						if ((scene->subC2BF8(&scene->_arrunkObj1337[2]._arr2[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[2]._arr2[i]._field34 != 0)) {
+							scene->_field3EF4 = &scene->_arrunkObj1337[2]._arr2[0];
+							found2 = true;
+							break;
+						}
+					}
+				}
+				scene->subC4CEC();
+			}
+		}
+		
+		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_field34;
+		scene->_field3E26--;
+		scene->_field3EF4->_field34 = 0;
+		scene->_field3EF4->_object1.remove();
+		
+		scene->_item2._object1.setPosition(scene->_field3EF4->_field36, 0);
+		scene->_item2._object1.show();
+		
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF8->_field36, this);
+		}
+		break;
+	case 2:
+		scene->_item2._object1.hide();
+		scene->subC4A39(scene->_field3EF8);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action11::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	bool noAction = true;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3EF4->_object1.postInit();
+		scene->_field3EF4->_object1.hide();
+		scene->_field3EF4->_object1.setVisage(1332);
+		scene->_field3EF4->_object1.setPosition(scene->_field3EF4->_field36, 0);
+		scene->_field3EF4->_object1.fixPriority(170);
+		scene->_field3EF4->_field34 = 25;
+		
+		if (scene->_field4240 == 2) {
+			scene->_item2._object1.setPosition(scene->_field3EF4->_field36, 0);
+			subD18B5(5, 1, 4);
+		} else {
+			scene->_field3EF0->_field34 = 0;
+			scene->_field3EF0->_object1.remove();
+			scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		}
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1: {
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(57);
+
+		bool found = false;
+		int i = -1;
+
+		switch (scene->_field4242) {
+		case 0:
+			for (i = 0; i <= 3; i++) {
+				if (scene->_arrunkObj1337[0]._arr1[i]._field34 == 27) {
+					found = true;
+					break;
+				}
+			}
+
+			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
+				scene->_field3EF0 = &scene->_arrunkObj1337[0]._arr1[i];
+				scene->_field3EF4 = &scene->_arrunkObj1337[0]._arr4[0];
+				if (scene->_field4240 != 0) {
+					int tmpVal = scene->subC3E92(scene->_field4240);
+					scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4240]._arr1[tmpVal];
+				}
+				scene->_item1.setAction(&scene->_action12);
+				noAction = false;
+			}
+			break;
+		case 1:
+			for (i = 0; i <= 3; i++) {
+				if (scene->_arrunkObj1337[1]._arr1[i]._field34 == 27) {
+					found = true;
+					break;
+				}
+			}
+
+			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
+				scene->_field3EF0 = &scene->_arrunkObj1337[1]._arr1[i];
+				scene->_field3EF4 = &scene->_arrunkObj1337[1]._arr4[0];
+				if (scene->_field4240 != 1) {
+					int tmpVal = scene->subC3E92(scene->_field4240);
+					scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4240]._arr1[tmpVal];
+				}
+				scene->_item1.setAction(&scene->_action12);
+				noAction = false;
+			}
+			break;
+		case 2:
+			for (i = 0; i <= 3; i++) {
+				if (scene->_arrunkObj1337[2]._arr1[i]._field34 == 27) {
+					found = true;
+					break;
+				}
+			}
+			
+			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
+				scene->subC4CD2();
+				if (MessageDialog::show(USE_DOUBLE_AGENT, NO_MSG, YES_MSG) == 0)
+					scene->subC4CEC();
+				else {
+					scene->subC4CEC();
+					scene->_field3EF0 = &scene->_arrunkObj1337[2]._arr1[i];
+					scene->_field3EF4 = &scene->_arrunkObj1337[2]._arr4[0];
+					if (scene->_field4240 != 2) {
+						int tmpVal = scene->subC3E92(scene->_field4240);
+						scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4240]._arr1[tmpVal];
+					}
+					scene->_item1.setAction(&scene->_action12);
+					noAction = false;
+				}
+			}
+			break;
+		case 3:
+			for (i = 0; i <= 3; i++) {
+				if (scene->_arrunkObj1337[3]._arr1[i]._field34 == 27) {
+					found = true;
+					break;
+				}
+			}
+
+			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
+				scene->_field3EF0 = &scene->_arrunkObj1337[3]._arr1[i];
+				scene->_field3EF4 = &scene->_arrunkObj1337[3]._arr4[0];
+				if (scene->_field4240 != 3) {
+					int tmpVal = scene->subC3E92(scene->_field4240);
+					scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4240]._arr1[tmpVal];
+				}
+				scene->_item1.setAction(&scene->_action12);
+				noAction = false;
+			}
+			break;
+		default:
+			break;
+		}
+		
+		if (!noAction)
+			return;
+
+		if (scene->_field4240 == 2) {
+			int count = 0;
+			if (scene->_field4242 != 2) {
+				for (i = 0; i <= 3; i++) {
+					if (scene->_arrunkObj1337[scene->_field4242]._arr1[i]._field34 == 0)
+						++count;
+				}
+			}
+
+			if (count > 1) {
+				scene->subC4CD2();
+
+				found = false;
+				while (!found) {
+					switch (scene->_field4242) {
+					case 0:
+						scene->actionDisplay(1330, 131, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 1:
+						scene->actionDisplay(1330, 132, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 3:
+						scene->actionDisplay(1330, 133, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					default:
+						break;
+					}
+
+					Event event;
+					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+						g_globals->_scenePalette.signalListeners();
+						R2_GLOBALS._sceneObjects->draw();
+						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
+					}
+					
+					scene->_item6._field36 = event.mousePos;
+					
+					found = false;
+
+					if (scene->_field4242 != 2) {
+						for (i = 0; i <= 3; i++) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[scene->_field4242]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[scene->_field4242]._arr1[i]._field34 != 0)) {
+								scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4242]._arr1[i];
+								found = true;
+								break;
+							}
+						}
+					}
+				} // while
+				scene->_field4246 = 1;
+				scene->subC4CEC();
+			} else {
+				if (scene->_field4242 != 2) {
+					int tmpVal = scene->subC3E92(scene->_field4242);
+					scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4242]._arr1[tmpVal];
+				}
+			}
+		}
+
+		scene->_field3EF0->_object1.postInit();
+		scene->_field3EF0->_object1.hide();
+		scene->_field3EF0->_object1.setVisage(1332);
+		scene->_field3EF0->_object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_field3EF0->_object1.fixPriority(170);
+		scene->_field3EF0->_object1.setStrip2(1);
+		scene->_field3EF0->_field34 = scene->_field3EF8->_field34;
+
+		scene->_field3EF8->_field34 = 0;
+		scene->_field3EF8->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF8->_field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF0->_field36, this);
+		}
+		break;
+	case 2:
+		scene->_item2._object1.hide();
+		switch (scene->_field4240) {
+		case 0:
+			scene->_field3EF0->_object1.setFrame(2);
+			scene->_field3EF0->_object1.show();
+			scene->_field423E--;
+			scene->_field4244 = 0;
+			break;
+		case 1:
+			scene->_field3EF0->_object1.setFrame(4);
+			scene->_field3EF0->_object1.show();
+			scene->_field423E--;
+			scene->_field4244 = 0;
+			break;
+		case 3:
+			scene->_field3EF0->_object1.setFrame(3);
+			scene->_field3EF0->_object1.show();
+			scene->_field423E--;
+			scene->_field4244 = 0;
+			break;
+		default:
+			scene->setAnimationInfo(scene->_field3EF0);
+			break;
+		}
+			
+		scene->subC4A39(scene->_field3EF4);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action12::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		signal();
+		break;
+	case 1: {
+		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_field34;
+		scene->_field3EF4->_field34 = scene->_field3EF0->_field34;
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 2:
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(58);
+		if (scene->_field4242 == 2) {
+			int count = 0;
+			int i = -1;
+			switch (scene->_field4240) {
+			case 0:
+				for (i = 0; i <= 3; i++) {
+					if (scene->_arrunkObj1337[0]._arr1[i]._field34 != 0)
+						++count;
+				}
+				break;
+			case 1:
+				for (i = 0; i <= 3; i++) {
+					if (scene->_arrunkObj1337[3]._arr1[i]._field34 != 0)
+						++count;
+				}
+				break;
+			case 3:
+				for (i = 0; i <= 3; i++) {
+					if (scene->_arrunkObj1337[3]._arr1[i]._field34 != 0)
+						++count;
+				}
+				break;
+			default:
+				break;
+			}
+
+			if (count > 1) {
+				scene->subC4CD2();
+
+				bool found = false;
+				
+				while (!found) {
+					switch (scene->_field4240) {
+					case 0:
+						scene->actionDisplay(1330, 131, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 1:
+						scene->actionDisplay(1330, 132, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 3:
+						scene->actionDisplay(1330, 133, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					default:
+						break;
+					}
+
+					Event event;
+					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+						g_globals->_scenePalette.signalListeners();
+						R2_GLOBALS._sceneObjects->draw();
+						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
+					}
+					
+					scene->_item6._field36 = event.mousePos;
+
+					if (scene->_field4240 == 0) {
+						for (i = 0; i <= 3; i++) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[0]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[0]._arr1[i]._field34 != 0)) {
+								found = true;
+								scene->_field3EF8 = &scene->_arrunkObj1337[0]._arr1[i];
+								break;
+							}
+						}
+					}
+					
+					if (scene->_field4240 == 3) {
+						for (i = 0; i <= 3; i++) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[3]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[3]._arr1[i]._field34 != 0)) {
+								found = true;
+								scene->_field3EF8 = &scene->_arrunkObj1337[3]._arr1[i];
+								break;
+							}
+						}
+					}
+
+					if (scene->_field4240 == 1) {
+						for (i = 0; i <= 3; i++) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[1]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[1]._arr1[i]._field34 != 0)) {
+								found = true;
+								scene->_field3EF8 = &scene->_arrunkObj1337[1]._arr1[i];
+								break;
+							}
+						}
+					}
+				}
+				scene->subC4CEC();
+			} else {
+				if (scene->_field4240 != 1) {
+					switch (scene->_field4240) {
+					case 0:
+						scene->_field3EF8 = &scene->_arrunkObj1337[0]._arr1[scene->subC3E92(0)];
+						break;
+					case 3:
+						scene->_field3EF8 = &scene->_arrunkObj1337[3]._arr1[scene->subC3E92(3)];
+						break;
+					default:
+						break;
+					}
+				} else {
+					scene->_field3EF8 = &scene->_arrunkObj1337[1]._arr1[scene->subC3E92(1)];
+				}
+			}
+
+			scene->_field3EF0->_object1.postInit();
+			scene->_field3EF0->_object1.hide();
+			scene->_field3EF0->_object1.setVisage(1332);
+			scene->_field3EF0->_object1.setPosition(scene->_field3EF0->_field36);
+			scene->_field3EF0->_object1.fixPriority(170);
+			scene->_field3EF0->_object1.setStrip2(1);
+			scene->_field3EF0->_field34 = scene->_field3EF8->_field34;
+
+			scene->_field3EF8->_field34 = 0;
+			scene->_field3EF8->_object1.remove();
+
+			scene->_item2._object1.setPosition(scene->_field3EF8->_field36);
+			scene->_item2._object1.show();
+			scene->_aSound1.play(57);
+
+			NpcMover *mover = new NpcMover();
+			scene->_item2._object1.addMover(mover, &scene->_field3EF0->_field36, this);
+		}
+		break;
+	case 3:
+		scene->_item2._object1.hide();
+		switch (scene->_field4242) {
+		case 0:
+			scene->_field3EF0->_object1.setFrame2(2);
+			scene->_field3EF0->_object1.show();
+			break;
+		case 1:
+			scene->_field3EF0->_object1.setFrame2(4);
+			scene->_field3EF0->_object1.show();
+			break;
+		case 3:
+			scene->_field3EF0->_object1.setFrame2(3);
+			scene->_field3EF0->_object1.show();
+			break;
+		default:
+			scene->setAnimationInfo(scene->_field3EF0);
+			break;
+		}
+		scene->subC4A39(scene->_field3EF4);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::Action13::signal() {
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_field34;
+		scene->_field3E26--;
+
+		scene->_field3EF4->_field34 = scene->_field3EF0->_field34;
+
+		scene->_field3EF0->_field34 = 0;
+		scene->_field3EF0->_object1.remove();
+
+		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
+		scene->_item2._object1.show();
+
+		NpcMover *mover = new NpcMover();
+		scene->_item2._object1.addMover(mover, &scene->_field3EF4->_field36, this);
+		}
+		break;
+	case 1:
+		scene->_item2._object1.hide();
+		scene->setAnimationInfo(scene->_field3EF4);
+		scene->_aSound1.play(58);
+		signal();
+		break;
+	case 2:
+		scene->subC4A39(scene->_field3EF4);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene1337::postInit(SceneObjectList *OwnerList) {
+// In the original, may be found in subPostInit.
+// Without it, enableControl asserts
+	loadScene(1330);
+	SceneExt::postInit();
+//
+
+	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._player.enableControl();
+	R2_GLOBALS._player._canWalk = false;
+
+	_unkFctPtr412 = NULL;
+
+	_field3EF0 = NULL;
+	_field3EF4 = NULL;
+	_field3EF8 = NULL;
+
+	_arrunkObj1337[2]._arr1[0]._field36 = Common::Point(10, 174);
+	_arrunkObj1337[2]._arr1[1]._field36 = Common::Point(37, 174);
+	_arrunkObj1337[2]._arr1[2]._field36 = Common::Point(64, 174);
+	_arrunkObj1337[2]._arr1[3]._field36 = Common::Point(91, 174);
+
+	_arrunkObj1337[2]._arr2[0]._field36 = Common::Point(119, 174);
+	_arrunkObj1337[2]._arr2[1]._field36 = Common::Point(119, 148);
+	_arrunkObj1337[2]._arr2[2]._field36 = Common::Point(119, 122);
+	_arrunkObj1337[2]._arr2[3]._field36 = Common::Point(145, 122);
+	_arrunkObj1337[2]._arr2[4]._field36 = Common::Point(171, 122);
+	_arrunkObj1337[2]._arr2[5]._field36 = Common::Point(171, 148);
+	_arrunkObj1337[2]._arr2[6]._field36 = Common::Point(171, 174);
+	_arrunkObj1337[2]._arr2[7]._field36 = Common::Point(145, 174);
+
+	_arrunkObj1337[2]._arr3[0]._field36 = Common::Point(199, 174);
+
+	_arrunkObj1337[2]._arr4[0]._field36 = Common::Point(145, 148);
+
+	_arrunkObj1337[2]._fieldB94 = Common::Point(10, 174);
+	_arrunkObj1337[2]._fieldB98 = Common::Point(37, 174);
+	_arrunkObj1337[2]._fieldB9C = Common::Point(64, 174);
+	_arrunkObj1337[2]._fieldBA0 = Common::Point(91, 174);
+	_arrunkObj1337[2]._fieldBA4 = 2;
+
+	_arrunkObj1337[3]._arr1[0]._field36 = Common::Point(14, 14);
+	_arrunkObj1337[3]._arr1[1]._field36 = Common::Point(14, 36);
+	_arrunkObj1337[3]._arr1[2]._field36 = Common::Point(14, 58);
+	_arrunkObj1337[3]._arr1[3]._field36 = Common::Point(14, 80);
+
+	_arrunkObj1337[3]._arr2[0]._field36 = Common::Point(37, 66);
+	_arrunkObj1337[3]._arr2[1]._field36 = Common::Point(63, 66);
+	_arrunkObj1337[3]._arr2[2]._field36 = Common::Point(89, 66);
+	_arrunkObj1337[3]._arr2[3]._field36 = Common::Point(89, 92);
+	_arrunkObj1337[3]._arr2[4]._field36 = Common::Point(89, 118);
+	_arrunkObj1337[3]._arr2[5]._field36 = Common::Point(63, 118);
+	_arrunkObj1337[3]._arr2[6]._field36 = Common::Point(37, 118);
+	_arrunkObj1337[3]._arr2[7]._field36 = Common::Point(37, 92);
+
+	_arrunkObj1337[3]._arr3[0]._field36 = Common::Point(37, 145);
+
+	_arrunkObj1337[3]._arr4[0]._field36 = Common::Point(63, 92);
+
+	_arrunkObj1337[3]._fieldB94 = Common::Point(14, 14);
+	_arrunkObj1337[3]._fieldB98 = Common::Point(14, 36);
+	_arrunkObj1337[3]._fieldB9C = Common::Point(14, 58);
+	_arrunkObj1337[3]._fieldBA0 = Common::Point(14, 80);
+	_arrunkObj1337[3]._fieldBA4 = 3;
+
+	_arrunkObj1337[0]._arr1[0]._field36 = Common::Point(280, 5);
+	_arrunkObj1337[0]._arr1[1]._field36 = Common::Point(253, 5);
+	_arrunkObj1337[0]._arr1[2]._field36 = Common::Point(226, 5);
+	_arrunkObj1337[0]._arr1[3]._field36 = Common::Point(199, 5);
+
+	_arrunkObj1337[0]._arr2[0]._field36 = Common::Point(171, 16);
+	_arrunkObj1337[0]._arr2[1]._field36 = Common::Point(171, 42);
+	_arrunkObj1337[0]._arr2[2]._field36 = Common::Point(171, 68);
+	_arrunkObj1337[0]._arr2[3]._field36 = Common::Point(145, 68);
+	_arrunkObj1337[0]._arr2[4]._field36 = Common::Point(119, 68);
+	_arrunkObj1337[0]._arr2[5]._field36 = Common::Point(119, 42);
+	_arrunkObj1337[0]._arr2[6]._field36 = Common::Point(119, 16);
+	_arrunkObj1337[0]._arr2[7]._field36 = Common::Point(145, 16);
+
+	_arrunkObj1337[0]._arr3[0]._field36 = Common::Point(91, 16);
+
+	_arrunkObj1337[0]._arr4[0]._field36 = Common::Point(145, 42);
+
+	_arrunkObj1337[0]._fieldB94 = Common::Point(280, 5);
+	_arrunkObj1337[0]._fieldB98 = Common::Point(253, 5);
+	_arrunkObj1337[0]._fieldB9C = Common::Point(226, 5);
+	_arrunkObj1337[0]._fieldBA0 = Common::Point(199, 5);
+	_arrunkObj1337[0]._fieldBA4 = 2;
+
+	_arrunkObj1337[1]._arr1[0]._field36 = Common::Point(283, 146);
+	_arrunkObj1337[1]._arr1[1]._field36 = Common::Point(283, 124);
+	_arrunkObj1337[1]._arr1[2]._field36 = Common::Point(283, 102);
+	_arrunkObj1337[1]._arr1[3]._field36 = Common::Point(283, 80);
+
+	_arrunkObj1337[1]._arr2[0]._field36 = Common::Point(253, 122);
+	_arrunkObj1337[1]._arr2[1]._field36 = Common::Point(227, 122);
+	_arrunkObj1337[1]._arr2[2]._field36 = Common::Point(201, 122);
+	_arrunkObj1337[1]._arr2[3]._field36 = Common::Point(201, 96);
+	_arrunkObj1337[1]._arr2[4]._field36 = Common::Point(201, 70);
+	_arrunkObj1337[1]._arr2[5]._field36 = Common::Point(227, 70);
+	_arrunkObj1337[1]._arr2[6]._field36 = Common::Point(253, 70);
+	_arrunkObj1337[1]._arr2[7]._field36 = Common::Point(253, 96);
+
+	_arrunkObj1337[1]._arr3[0]._field36 = Common::Point(253, 43);
+
+	_arrunkObj1337[1]._arr4[0]._field36 = Common::Point(227, 96);
+
+	_arrunkObj1337[1]._fieldB94 = Common::Point(283, 146);
+	_arrunkObj1337[1]._fieldB98 = Common::Point(283, 124);
+	_arrunkObj1337[1]._fieldB9C = Common::Point(283, 102);
+	_arrunkObj1337[1]._fieldBA0 = Common::Point(283, 80);
+	_arrunkObj1337[1]._fieldBA4 = 4;
+
+	subPostInit();
+}
+
+void Scene1337::remove() {
+	if (R2_GLOBALS._v57709 > 1) {
+		subD1917();
+		subD1940(false);
+	}
+
+	R2_GLOBALS._v58CE2 = 1;
+	SceneExt::remove();
+}
+
+void Scene1337::process(Event &event) {
+	if (event.eventType == EVENT_BUTTON_DOWN) {
+		if (event.btnState != BTNSHIFT_RIGHT) {
+			subD183F(R2_GLOBALS._v5780E, 1);
+			event.handled = true;
+		} else if (_unkFctPtr412 != NULL) {
+			FunctionPtrType tmpFctPtr = _unkFctPtr412;
+			_unkFctPtr412 = NULL;
+			(this->*tmpFctPtr)();
+			event.handled = true;
+		}
+	} else if (event.eventType == EVENT_KEYPRESS) {
+		if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+			if (_unkFctPtr412 != NULL) {
+				FunctionPtrType tmpFctPtr = _unkFctPtr412;
+				_unkFctPtr412 = NULL;
+				(this->*tmpFctPtr)();
+				event.handled = true;
+			}
+		} else
+			warning("Fixme: Find proper keycode value");
+	}
+
+	if (!event.handled)
+		Scene::process(event);
+}
+
+void Scene1337::dispatch() {
+	if (_field424C == 0) {
+		++_field424E;
+		if (_field424E == 4) {
+			_field424C = 1;
+			subCBB1E();
+		}
+	}
+	Scene::dispatch();
+}
+
+void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int arg5, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt) {
+	// TODO: Check if it's normal that arg5 is unused and replaced by an hardcoded 0 value
+	// May hide an original bug
+	
+	SceneItem::display(resNum, lineNum, SET_X, x, SET_Y, y, SET_KEEP_ONSCREEN, 0, SET_WIDTH, width, SET_POS_MODE, -1, SET_TEXT_MODE, textMode, SET_FONT, fontNum, SET_FG_COLOR, colFG, SET_EXT_BGCOLOR, colBGExt, SET_EXT_FGCOLOR, colFGExt, LIST_END);
+}
+
+void Scene1337::setAnimationInfo(unkObj1337sub1 *subObj) {
+	if (!subObj)
+		return;
+	
+	if (subObj->_field34 > 9) {
+		if (subObj->_field34 > 25) {
+			subObj->_object1.setStrip2(4);
+			subObj->_object1.setFrame(subObj->_field34 - 25);
+		} else {
+			subObj->_object1.setStrip2(3);
+			subObj->_object1.setFrame(subObj->_field34 - 9);
+		}
+	} else {
+		subObj->_object1.setStrip2(2);
+		subObj->_object1.setFrame(subObj->_field34);
+	}
+	
+	subObj->_object1.show();
+	R2_GLOBALS._sceneObjects->draw();
+}
+
+void Scene1337::subC20E5() {
+	warning("STUBBED lvl2 subC20E5()");
+}
+
+void Scene1337::subC20F9() {
+	switch (_field424A) {
+	case -1:
+		++_field423E;
+		if (_field423E == 3)
+			_field423E = 0;
+
+		if (_field4244 == 1) {
+			_object1.show();
+			switch (_field423E) {
+			case 0:
+				_object1.setStrip(3);
+				break;
+			case 1:
+				_object1.setStrip(4);
+				break;
+			case 2:
+				subD1975(174, 107);
+				_object1.setStrip(1);
+				break;
+			case 3:
+				subC4CEC();
+				_object1.setStrip(2);
+				break;
+			default:
+				break;
+			}
+			
+			if (_fieldA30 == 0)
+				_unkFctPtr412 = &Scene1337::subC20E5;
+			else
+				subC20E5();
+		} else {
+			subC20E5();
+		}
+		break;
+	case 0:
+		_aSound2.play(62);
+		actionDisplay(1330, 135, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		actionDisplay(1330, 121, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		actionDisplay(1330, 122, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		R2_GLOBALS._sceneObjects->draw();
+		actionDisplay(1330, 123, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+		break;
+	case 1:
+		_aSound2.play(62);
+		actionDisplay(1330, 151, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		actionDisplay(1330, 118, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		actionDisplay(1330, 119, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		R2_GLOBALS._sceneObjects->draw();
+		actionDisplay(1330, 120, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+		break;
+	case 2:
+		_aSound2.play(62);
+		actionDisplay(1330, 134, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+		actionDisplay(1330, 124, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		actionDisplay(1330, 126, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		R2_GLOBALS._sceneObjects->draw();
+		actionDisplay(1330, 125, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		break;
+	case 3:
+		_aSound2.play(62);
+		actionDisplay(1330, 150, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		actionDisplay(1330, 115, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		actionDisplay(1330, 116, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		R2_GLOBALS._sceneObjects->draw();
+		actionDisplay(1330, 117, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+		break;
+	default:
+		break;
+	}
+
+	if (_field424A != -1)
+		R2_GLOBALS._sceneManager.changeScene(125);
+
+}
+
+int Scene1337::subC264B(int arg1) {
+	warning("STUBBED Scene1337::subC264B()");
+	return -1;
+}
+
+int Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt) {
+	warning("STUBBED Scene1337::subC2BF8()");
+	return -1;
+}
+
+void Scene1337::subC2C2F() {
+	warning("STUBBED Scene1337::subC2C2F()");
+}
+
+int Scene1337::subC3E92(int arg1) {
+	warning("STUBBED Scene1337::subC3E92()");
+	return -1;
+}
+
+void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
+	warning("STUBBED Scene1337::subC4A39()");
+}
+
+void Scene1337::subC4CD2() {
+	warning("STUBBED Scene1337::subC4CD2()");
+}
+
+void Scene1337::subC4CEC() {
+	warning("STUBBED Scene1337::subC4CEC()");
+}
+
+void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC51A0()");
+}
+
+void Scene1337::subPostInit() {
+	R2_GLOBALS._v57709 = 0;
+	R2_GLOBALS._v5780C = 0;
+	subD183F(1, 0);
+	subD1940(true);
+	subD18F5();
+
+//	loadScene(1330);
+//	SceneExt::postInit();
+
+	R2_GLOBALS._scenePalette.addRotation(224, 235, 1);
+
+	_field3E28[0] = 1;
+	_field3E28[1] = 1;
+	_field3E28[2] = 1;
+	_field3E28[3] = 1;
+	_field3E28[4] = 1;
+	_field3E28[5] = 1;
+	_field3E28[6] = 1;
+	_field3E28[7] = 1;
+	_field3E28[8] = 26;
+	_field3E28[9] = 2;
+	_field3E28[10] = 2;
+	_field3E28[11] = 2;
+	_field3E28[12] = 2;
+	_field3E28[13] = 2;
+	_field3E28[14] = 26;
+	_field3E28[15] = 3;
+	_field3E28[16] = 3;
+	_field3E28[17] = 3;
+	_field3E28[18] = 3;
+	_field3E28[19] = 3;
+	_field3E28[20] = 28;
+	_field3E28[21] = 4;
+	_field3E28[22] = 4;
+	_field3E28[23] = 4;
+	_field3E28[24] = 4;
+	_field3E28[25] = 4;
+	_field3E28[26] = 28;
+	_field3E28[27] = 5;
+	_field3E28[28] = 5;
+	_field3E28[29] = 5;
+	_field3E28[30] = 5;
+	_field3E28[31] = 5;
+	_field3E28[32] = 30;
+	_field3E28[33] = 6;
+	_field3E28[34] = 6;
+	_field3E28[35] = 6;
+	_field3E28[36] = 6;
+	_field3E28[37] = 6;
+	_field3E28[38] = 30;
+	_field3E28[39] = 7;
+	_field3E28[40] = 7;
+	_field3E28[41] = 7;
+	_field3E28[42] = 7;
+	_field3E28[43] = 7;
+	_field3E28[44] = 32;
+	_field3E28[45] = 8;
+	_field3E28[46] = 8;
+	_field3E28[47] = 8;
+	_field3E28[48] = 8;
+	_field3E28[49] = 8;
+	_field3E28[50] = 32;
+	_field3E28[51] = 9;
+	_field3E28[52] = 9;
+	_field3E28[53] = 9;
+	_field3E28[54] = 9;
+	_field3E28[55] = 9;
+	_field3E28[56] = 10;
+	_field3E28[57] = 11;
+	_field3E28[58] = 12;
+	_field3E28[59] = 13;
+	_field3E28[60] = 13;
+	_field3E28[61] = 14;
+	_field3E28[62] = 15;
+	_field3E28[63] = 16;
+	_field3E28[64] = 17;
+	_field3E28[65] = 18;
+	_field3E28[66] = 19;
+	_field3E28[67] = 20;
+	_field3E28[68] = 21;
+	_field3E28[69] = 26;
+	_field3E28[70] = 28;
+	_field3E28[71] = 24;
+	_field3E28[72] = 25;
+	_field3E28[73] = 25;
+	_field3E28[74] = 25;
+	_field3E28[75] = 25;
+	_field3E28[76] = 26;
+	_field3E28[77] = 26;
+	_field3E28[78] = 26;
+	_field3E28[79] = 27;
+	_field3E28[80] = 27;
+	_field3E28[81] = 28;
+	_field3E28[82] = 28;
+	_field3E28[83] = 28;
+	_field3E28[84] = 29;
+	_field3E28[85] = 29;
+	_field3E28[86] = 29;
+	_field3E28[87] = 30;
+	_field3E28[88] = 30;
+	_field3E28[89] = 30;
+	_field3E28[90] = 30;
+	_field3E28[91] = 32;
+	_field3E28[92] = 1;
+	_field3E28[93] = 32;
+	_field3E28[94] = 32;
+	_field3E28[95] = 32;
+	_field3E28[96] = 1;
+	_field3E28[97] = 1;
+	_field3E28[98] = 1;
+	_field3E28[99] = 0;
+
+	_field3E24 = 98;
+	_field3E26 = 98;
+
+	_item7._field34 = 0;
+	_item7._field36 = Common::Point(128, 95);
+
+	_item8._field34 = 0;
+	_item8._field36 = Common::Point(162, 95);
+
+	_item6._field34 = 0;
+
+	_item2._object1.postInit();
+	_item2._object1.setVisage(1332);
+	_item2._object1.setStrip(5);
+	_item2._object1.setFrame(1);
+	_item2._object1._moveDiff = Common::Point(10, 10);
+	_item2._object1.fixPriority(400);
+	_item2._object1.setPosition(Common::Point(128, 95), 0);
+	_item2._object1.animate(ANIM_MODE_2, NULL);
+	_item2._object1.hide();
+
+	_object1.postInit();
+	_object1.setVisage(1334);
+	_object1.setStrip(1);
+	_object1.setFrame(1);
+	_object1._numFrames = 12;
+	_object1.fixPriority(500);
+	_object1.setPosition(Common::Point(174, 107), 0);
+	_object1.animate(ANIM_MODE_2, NULL);
+	_object1.hide();
+
+	_field4244 = 1;
+	_field4246 = 0;
+	_field4248 = 0;
+	_field424A = -1;
+
+	_background1.setup2(9531, 1, 1, 249, 168, 155, 0);
+
+	_fieldA30 = 0;
+	_field424C = 0;
+	_field424E = 0;
+}
+
+void Scene1337::subCBB1E() {
+	warning("STUBBED Scene1337::subCBB1E()");
+}
+
+void Scene1337::subCBB7B() {
+	warning("STUBBED Scene1337::subCBB7B()");
+}
+
+void Scene1337::subCF31D() {
+	warning("STUBBED Scene1337::subCF31D()");
+}
+
+void Scene1337::subCF979() {
+	warning("STUBBED Scene1337::subCF979()");
+}
+
+void Scene1337::subD0281() {
+	warning("STUBBED Scene1337::subD0281()");
+}
+
+void Scene1337::subD183F(int arg1, int arg2) {
+	if ((R2_GLOBALS._v57709 != 0) || (R2_GLOBALS._v5780C != 0))
+		return;
+
+	R2_GLOBALS._v5780E = arg1 + arg2;
+
+	if (arg2 != 0) {
+		if (R2_GLOBALS._v5780E < 1)
+			R2_GLOBALS._v5780E = 2;
+
+		if (R2_GLOBALS._v5780E > 2)
+			R2_GLOBALS._v5780E = 1;
+	}
+
+	if (R2_GLOBALS._v5780E == 1) {
+		R2_GLOBALS._v57810 = 200;
+		subD195F(1, 4);
+	} else if (R2_GLOBALS._v5780E == 2) {
+		R2_GLOBALS._v57810 = 300;
+		subD195F(1, 5);
+	} else {
+		R2_GLOBALS._v57810 = 0;
+		subD195F(0, 0);
+	}
+}
+
+void Scene1337::subD18B5(int resNum, int rlbNum, int arg3) {
+	warning("STUBBED lvl3 Scene1337::subD18B5()");
+}
+
+void Scene1337::subD18F5() {
+	warning("STUBBED Scene1337::subD18F5()");
+}
+
+void Scene1337::subD1917() {
+	warning("STUBBED Scene1337::subD1917()");
+}
+
+void Scene1337::subD1940(bool flag) {
+	warning("STUBBED Scene1337::subD1940()");
+}
+
+void Scene1337::subD195F(int arg1, int arg2) {
+	subD18B5(5, arg1, arg2);
+}
+
+void Scene1337::subD1975(int arg1, int arg2) {
+	warning("STUBBED lvl2 Scene1337::subD1975()");
+}
+
+/*--------------------------------------------------------------------------
  * Scene 1500 - Cutscene: Ship landing
  *
  *--------------------------------------------------------------------------*/

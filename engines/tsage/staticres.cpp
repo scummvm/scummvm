@@ -238,6 +238,10 @@ char const *const F8 = "F8";
 char const *const F10 = "F10";
 
 char const *const DONE_MSG = "Done";
+char const *const YES_MSG = " Yes ";
+char const *const NO_MSG = " No ";
+char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
+char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 
 const byte k562CC[] = {
 	20, 7,  41, 6,

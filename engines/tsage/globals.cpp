@@ -450,6 +450,10 @@ void Ringworld2Globals::reset() {
 	_v56AA8 = 1;
 	_v56AAB = 0;
 	_scene180Mode = -1;
+	_v57709 = 0;
+	_v5780C = 0;
+	_v5780E = 0;
+	_v57810 = 0;
 	_v57C2C = 0;
 	_v58CE2 = 0;
 	_v565EC[0] = 0;
@@ -507,6 +511,10 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v56AA4);
 	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_scene180Mode);
+	s.syncAsSint16LE(_v57709);
+	s.syncAsSint16LE(_v5780C);
+	s.syncAsSint16LE(_v5780E);
+	s.syncAsSint16LE(_v57810);
 	s.syncAsSint16LE(_v57C2C);
 	s.syncAsSint16LE(_v58CE2);
 	s.syncAsSint16LE(_speechSubtitles);

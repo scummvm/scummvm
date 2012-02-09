@@ -169,6 +169,180 @@ public:
 	virtual void saveCharacter(int characterIndex);
 };
 
+class Scene1337 : public SceneExt {
+	class unkObj1337sub1: public SceneItem {
+	public:
+		SceneObject _object1;
+
+		int _field34;
+		Common::Point _field36;
+
+		unkObj1337sub1();
+		void synchronize(Serializer &s);
+	};
+
+	class unkObj1337_1: public SceneItem {
+	public:
+		unkObj1337sub1 _arr1[4];
+		unkObj1337sub1 _arr2[7];
+		unkObj1337sub1 _arr3[1];
+		unkObj1337sub1 _arr4[1];
+
+		Common::Point _fieldB94;
+		Common::Point _fieldB98;
+		Common::Point _fieldB9C;
+		Common::Point _fieldBA0;
+		int _fieldBA4;
+
+		unkObj1337_1();
+		void synchronize(Serializer &s);
+	};
+
+	class Action1337: public Action {
+	public:
+		void subD18B5(int arg1, int arg2, int arg3);
+		void skipFrames(int32 skipCount);
+	};
+
+	class Action1: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action2: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action3: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action4: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action5: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action6: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action7: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action8: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action9: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action10: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action11: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action12: public Action1337 {
+	public:
+		void signal();
+	};
+	class Action13: public Action1337 {
+	public:
+		void signal();
+	};
+public:
+	typedef void (Scene1337::*FunctionPtrType)();
+	FunctionPtrType _unkFctPtr412;
+
+	ASound _aSound1;
+	ASound _aSound2;
+	BackgroundSceneObject _background1;
+	int _fieldA30;
+	unkObj1337_1 _arrunkObj1337[4];
+	SceneItem _item1;
+	SceneObject _object1;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+	Action9 _action9;
+	Action10 _action10;
+	Action11 _action11;
+	Action12 _action12;
+	Action13 _action13;
+	unkObj1337sub1 _item2;
+	unkObj1337sub1 _item3;
+	unkObj1337sub1 _item4;
+	BackgroundSceneObject _background2;
+	int _field3E24;
+	int _field3E26;
+	int _field3E28[100];
+	unkObj1337sub1 *_field3EF0;
+	unkObj1337sub1 *_field3EF4;
+	unkObj1337sub1 *_field3EF8;
+	unkObj1337sub1 _item5;
+	unkObj1337sub1 _item6;
+	unkObj1337sub1 _item7;
+	unkObj1337sub1 _item8;
+	int _field423C;
+	int _field423E;
+	int _field4240;
+	int _field4242;
+	int _field4244;
+	int _field4246;
+	int _field4248;
+	int _field424A;
+	int _field424C;
+	int _field424E;
+
+	SceneObject _arrObject1[8];
+	SceneObject _arrObject2[8];
+
+	Scene1337();
+	virtual void synchronize(Serializer &s);
+
+	void actionDisplay(int resNum, int lineNum, int x, int y, int arg5, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
+	void setAnimationInfo(unkObj1337sub1 *subObj);
+	void subC20E5();
+	void subC20F9();
+	int subC264B(int arg1);
+	int subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt);
+	void subC2C2F();
+	int subC3E92(int arg1);
+	void subC4A39(unkObj1337sub1 *subObj);
+	void subC4CD2();
+	void subC4CEC();
+	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
+	void subPostInit();
+	void subCBB1E();
+	void subCBB7B();
+	void subCF31D();
+	void subCF979();
+	void subD0281();
+	void subD183F(int arg1, int arg2);
+	void subD18B5(int resNum, int rlbNum, int arg3);
+	void subD18F5();
+	void subD1917();
+	void subD1940(bool flag);
+	void subD195F(int arg1, int arg2);
+	void subD1975(int arg1, int arg2);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene1500 : public SceneExt {
 public:
 	SceneActor _actor1;

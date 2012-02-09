@@ -291,6 +291,10 @@ public:
 	byte _v56AA8;
 	int _v56AAB;
 	int _scene180Mode;	// _v575f7
+	int _v57709;
+	int _v5780C;
+	int _v5780E;
+	int _v57810;
 	int _v57C2C;
 	int _v58CE2;
 	int _speechSubtitles;
