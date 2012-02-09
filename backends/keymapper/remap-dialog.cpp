@@ -61,7 +61,7 @@ void RemapDialog::open() {
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Active)"));
+		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
 		divider = true;
 	}
 
@@ -84,12 +84,28 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->size();
 	}
 
+	if (activeKeymaps.size() > 1) {
+		keymapCount += activeKeymaps.size() - 1;
+	}
+
 	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
 
 	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
 
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
+
+	if (activeKeymaps.size() > 1) {
+		if (divider)
+			_kmPopUp->appendEntry("");
+		int topIndex = activeKeymaps.size() - 1;
+		for (int i = topIndex - 1; i >= 0; --i) {
+			Keymapper::MapRecord mr = activeKeymaps[i];
+			_kmPopUp->appendEntry(mr.keymap->getName() + _(" (Active)"), idx);
+			_keymapTable[idx++] = mr.keymap;
+		}
+		divider = true;
+	}
 
 	if (_globalKeymaps) {
 		if (divider)
@@ -108,6 +124,7 @@ void RemapDialog::open() {
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
+		divider = true;
 	}
 
 	_changes = false;
