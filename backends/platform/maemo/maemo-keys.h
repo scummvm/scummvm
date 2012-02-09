@@ -122,15 +122,11 @@ static const KeyTableEntry maemoKeys[] = {
 	{"LEFT", KEYCODE_LEFT, 0, "Left", kDirLeftKeyType, false},
 
 	// Function keys
-	{"F1", KEYCODE_F1, ASCII_F1, "F1", kActionKeyType, false},
-	{"F2", KEYCODE_F2, ASCII_F2, "F2", kActionKeyType, false},
-	{"F3", KEYCODE_F3, ASCII_F3, "F3", kActionKeyType, false},
-	{"F4", KEYCODE_F4, ASCII_F4, "Menu", kActionKeyType, false},
-	{"F5", KEYCODE_F5, ASCII_F5, "Home", kActionKeyType, false},
-	{"F6", KEYCODE_F6, ASCII_F6, "FullScreen", kActionKeyType, false},
-	{"F7", KEYCODE_F7, ASCII_F7, "Zoom+", kActionKeyType, false},
-	{"F8", KEYCODE_F8, ASCII_F8, "Zoom-", kActionKeyType, false},
-	{"F9", KEYCODE_F9, ASCII_F9, "F9", kActionKeyType, false},
+	{"MENU", KEYCODE_F11, 0, "Menu", kActionKeyType, false},
+	{"HOME", KEYCODE_F12, 0, "Home", kActionKeyType, false},
+	{"FULLSCREEN", KEYCODE_F13, 0, "FullScreen", kActionKeyType, false},
+	{"ZOOMPLUS", KEYCODE_F14, 0, "Zoom+", kActionKeyType, false},
+	{"ZOOMMINUS", KEYCODE_F15, 0, "Zoom-", kActionKeyType, false},
 
 	{0, KEYCODE_INVALID, 0, 0, kGenericKeyType, false}
 };

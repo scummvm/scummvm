@@ -33,6 +33,21 @@ MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(tru
 
 }
 
+struct KeymapEntry {
+	SDLKey sym;
+	Common::KeyCode keycode;
+	uint16 ascii;
+};
+
+static const KeymapEntry keymapEntries[] = {
+	{SDLK_F4, Common::KEYCODE_F11, 0},
+	{SDLK_F5, Common::KEYCODE_F12, 0},
+	{SDLK_F6, Common::KEYCODE_F13, 0},
+	{SDLK_F7, Common::KEYCODE_F14, 0},
+	{SDLK_F8, Common::KEYCODE_F15, 0},
+	{SDLK_LAST, Common::KEYCODE_INVALID, 0}
+};
+
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
 	Model model = Model(((OSystem_SDL_Maemo *)g_system)->getModel());
@@ -45,6 +60,20 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	// SDLK_F7 -> zoom +
 	// SDLK_F8 -> zoom -
 
+#ifdef ENABLE_KEYMAPPER
+	if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
+		const KeymapEntry *entry;
+		for (entry = keymapEntries; entry->sym != SDLK_LAST; ++entry) {
+			if (ev.key.keysym.sym == entry->sym) {
+				SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+				event.type = ev.type == SDL_KEYDOWN ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
+				event.kbd.keycode = entry->keycode;
+				event.kbd.ascii = entry->ascii;
+				return true;
+			}
+		}
+	}
+#else
 	switch (ev.type) {
 		case SDL_KEYDOWN:{
 			if (ev.key.keysym.sym == SDLK_F4
@@ -132,6 +161,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			break;
 		}
 	}
+#endif
 	// Invoke parent implementation of this method
 	return SdlEventSource::remapKey(ev, event);
 }
