@@ -39,7 +39,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
+	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -61,6 +61,8 @@ void RemapDialog::open() {
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
+		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
+			_topKeymapIsGui = true;
 		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
 		divider = true;
 	}
@@ -324,6 +326,11 @@ void RemapDialog::loadKeymap() {
 		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
 
 		int topIndex = activeKeymaps.size() - 1;
+
+		// This is a WORKAROUND for changing the popup list selected item and changing it back
+		// to the top entry. Upon changing it back, the top keymap is always "gui".
+		if (!_topKeymapIsGui && activeKeymaps[topIndex].keymap->getName() == kGuiKeymapName)
+			--topIndex;
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = activeKeymaps[topIndex];
