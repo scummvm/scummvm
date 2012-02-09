@@ -40,6 +40,7 @@ public:
 	virtual void setWindowCaption(const char *caption);
 	virtual void setupIcon();
 	virtual Common::HardwareKeySet *getHardwareKeySet();
+	virtual Common::Keymap *getGlobalKeymap();
 
 	Model getModel() { return _model; }
 
