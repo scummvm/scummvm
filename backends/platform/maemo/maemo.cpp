@@ -136,8 +136,11 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 
 	Action *act;
 
-//	act = new Action(globalMap, "CLKM", _("Click Mode"), kKeyRemapActionType);
-//	act->addCustomEvent(CLICK_MODE);
+	act = new Action(globalMap, "CLKM", _("Click Mode"), kKeyRemapActionType);
+	Event evt = Event();
+	evt.type = EVENT_CUSTOM_BACKEND;
+	evt.customtype = Maemo::kEventClickMode;
+	act->addEvent(evt);
 
 	act = new Action(globalMap, "LCLK", _("Left Click"), kKeyRemapActionType);
 	act->addLeftClickEvent();
