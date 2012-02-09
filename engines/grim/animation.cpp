@@ -108,10 +108,9 @@ Animation::FadeMode Animation::getFadeMode() const {
 }
 
 int Animation::update(uint time) {
-	int newTime;
-	if (_time < 0)		// For first time through
-		newTime = 0;
-	else if (!_paused)
+	// For first time through newTime will be 0
+	int newTime = 0;
+	if (_time >= 0 && !_paused)
 		newTime = _time + time;
 
 	int marker = 0;

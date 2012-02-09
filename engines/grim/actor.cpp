@@ -321,7 +321,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		size = savedState->readLEUint32();
 		Set *scene = NULL;
-		for (int j = 0; j < size; ++j) {
+		for (uint32 j = 0; j < size; ++j) {
 			Common::String setName = savedState->readString();
 			Common::String secName = savedState->readString();
 			if (!scene || scene->getName() != setName) {
