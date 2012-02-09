@@ -31,7 +31,9 @@
 #include "backends/platform/maemo/maemo-keys.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 
 #include <SDL/SDL_syswm.h>
@@ -124,6 +126,31 @@ Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
 	return OSystem_POSIX::buildHardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
 #else
 	return OSystem_POSIX::getHardwareKeySet();
+#endif
+}
+
+Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+	Keymap *globalMap = new Keymap("maemo");
+
+	Action *act;
+
+//	act = new Action(globalMap, "CLKM", _("Click Mode"), kKeyRemapActionType);
+//	act->addCustomEvent(CLICK_MODE);
+
+	act = new Action(globalMap, "LCLK", _("Left Click"), kKeyRemapActionType);
+	act->addLeftClickEvent();
+
+	act = new Action(globalMap, "MCLK", _("Middle Click"), kKeyRemapActionType);
+	act->addMiddleClickEvent();
+
+	act = new Action(globalMap, "RCLK", _("Right Click"), kKeyRemapActionType);
+	act->addRightClickEvent();
+
+	return globalMap;
+#else
+	return OSystem_POSIX::getGlobalKeymap();
 #endif
 }
 
