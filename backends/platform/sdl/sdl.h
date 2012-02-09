@@ -30,6 +30,11 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
+namespace Common {
+struct KeyTableEntry;
+struct ModifierTableEntry;
+}
+
 /**
  * Base OSystem class for all SDL ports.
  */
@@ -100,6 +105,10 @@ protected:
 	 * Setup the window icon.
 	 */
 	virtual void setupIcon();
+
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::HardwareKeySet *buildHardwareKeySet(const Common::KeyTableEntry keys[], const Common::ModifierTableEntry modifiers[]);
+#endif
 
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }

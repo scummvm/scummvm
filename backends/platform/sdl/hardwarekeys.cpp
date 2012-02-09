@@ -22,22 +22,14 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/hardwarekeys-common.h"
 #include "common/keyboard.h"
 
 #ifdef ENABLE_KEYMAPPER
 
 using namespace Common;
 
-struct Key {
-	const char *hwId;
-	KeyCode keycode;
-	uint16 ascii;
-	const char *desc;
-	KeyType preferredAction;
-	bool shiftable;
-};
-
-static const Key keys[] = {
+static const KeyTableEntry sdlKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", kActionKeyType, false},
 	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", kActionKeyType, false},
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", kActionKeyType, false},
@@ -173,14 +165,7 @@ static const Key keys[] = {
 	{0, KEYCODE_INVALID, 0, 0, kGenericKeyType, false}
 };
 
-struct Mod {
-	byte flag;
-	const char *id;
-	const char *desc;
-	bool shiftable;
-};
-
-static const Mod modifiers[] = {
+static const ModifierTableEntry sdlModifiers[] = {
 	{ 0, "", "", false },
 	{ KBD_CTRL, "C+", "Ctrl+", false },
 	{ KBD_ALT, "A+", "Alt+", false },
@@ -195,9 +180,17 @@ static const Mod modifiers[] = {
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
+	return buildHardwareKeySet(sdlKeys, sdlModifiers);
+#else
+	return 0;
+#endif
+}
+
+#ifdef ENABLE_KEYMAPPER
+Common::HardwareKeySet *OSystem_SDL::buildHardwareKeySet(const Common::KeyTableEntry keys[], const Common::ModifierTableEntry modifiers[]) {
 	HardwareKeySet *keySet = new HardwareKeySet();
-	const Key *key;
-	const Mod *mod;
+	const KeyTableEntry *key;
+	const ModifierTableEntry *mod;
 	char fullKeyId[50];
 	char fullKeyDesc[100];
 	uint16 ascii;
@@ -221,10 +214,6 @@ Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 			keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
 		}
 	}
-
 	return keySet;
-
-#else
-	return 0;
-#endif
 }
+#endif
