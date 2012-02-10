@@ -105,6 +105,7 @@ _fluidsynth=auto
 _opengl=auto
 _opengles=no
 _readline=auto
+_freetype2=auto
 _taskbar=yes
 _updates=no
 _libunity=auto
