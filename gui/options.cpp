@@ -167,13 +167,13 @@ void OptionsDialog::open() {
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
-
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+#endif // SMALL_SCREEN_DEVICE
 	}
 
 	// Audio options
