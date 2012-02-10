@@ -81,6 +81,10 @@ protected:
 
 	virtual void saveOrLoad(Serializer *s);
 
+	virtual bool objIsActor(int obj);
+	virtual int objToActor(int obj);
+	virtual int actorToObj(int actor);
+
 	// V0 MM Verb commands
 	int getVerbPrepId();
 	int activeVerbPrep();

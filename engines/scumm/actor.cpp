@@ -657,15 +657,11 @@ void Actor_v2::walkActor() {
 
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
-		
 		if (_facing != new_dir) {
-
 			setDirection(new_dir);
-
 		} else {
 			_moving = 0;
 		}
-
 		return;
 	}
 
@@ -674,7 +670,6 @@ void Actor_v2::walkActor() {
 
 	if (_moving & MF_IN_LEG) {
 		actorWalkStep();
-
 	} else {
 		if (_moving & MF_LAST_LEG) {
 			_moving = 0;
@@ -1423,7 +1418,6 @@ void Actor::showActor() {
 
 		_cost.reset();
 
-		// 0x39DF
 		a->_animFrameRepeat = 1;
 		a->_speaking = 0;
 

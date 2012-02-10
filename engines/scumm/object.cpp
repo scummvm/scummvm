@@ -437,8 +437,8 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			x = od.walk_x;
 			y = od.walk_y;
 		} else {
-			x = od.x_pos + od.width/2;
-			y = od.y_pos + od.height/2;
+			x = od.x_pos + od.width / 2;
+			y = od.y_pos + od.height / 2;
 		}
 		x = x >> V12_X_SHIFT;
 		y = y >> V12_Y_SHIFT;
@@ -1488,26 +1488,29 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	}
 }
 
-bool ScummEngine::objIsActor(int obj) {
+bool ScummEngine_v0::objIsActor(int obj) {
 	// object IDs < _numActors are used in v0 for objects too (e.g. hamster)
-	if (_game.version == 0)
-		return OBJECT_V0_TYPE(obj) == kObjectV0TypeActor;
-	else
-		return obj < _numActors;
+	return OBJECT_V0_TYPE(obj) == kObjectV0TypeActor;
+}
+
+int ScummEngine_v0::objToActor(int obj) {
+	return OBJECT_V0_ID(obj);
+}
+
+int ScummEngine_v0::actorToObj(int actor) {
+	return OBJECT_V0(actor, kObjectV0TypeActor);
+}
+
+bool ScummEngine::objIsActor(int obj) {
+	return obj < _numActors;
 }
 
 int ScummEngine::objToActor(int obj) {
-	if (_game.version == 0)
-		return OBJECT_V0_ID(obj);
-	else
-		return obj;
+	return obj;
 }
 
 int ScummEngine::actorToObj(int actor) {
-	if (_game.version == 0)
-		return OBJECT_V0(actor, kObjectV0TypeActor);
-	else
-		return actor;
+	return actor;
 }
 
 int ScummEngine::getObjX(int obj) {
