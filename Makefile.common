@@ -15,7 +15,7 @@ all: $(EXECUTABLE) plugins
 #ResidualVM: do not include 'test' but add 'math':
 
 PLUGINS :=
-MODULES := devtools base $(MODULES)
+MODULES := test devtools base $(MODULES)
 
 -include $(srcdir)/engines/engines.mk
 

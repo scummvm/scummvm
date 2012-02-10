@@ -53,7 +53,7 @@ SdlEventSource::SdlEventSource()
     : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0) {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
-/* ResidualVM doesn't support this
+
 	int joystick_num = ConfMan.getInt("joystick_num");
 	if (joystick_num > -1) {
 		// Initialize SDL joystick subsystem
@@ -66,13 +66,12 @@ SdlEventSource::SdlEventSource()
 			debug("Using joystick: %s", SDL_JoystickName(0));
 			_joystick = SDL_JoystickOpen(joystick_num);
 		}
-	}*/
+	}
 }
 
 SdlEventSource::~SdlEventSource() {
-/*	ResidualVM doesn't support this
 	if (_joystick)
-		SDL_JoystickClose(_joystick);*/
+		SDL_JoystickClose(_joystick);
 }
 
 int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {

@@ -39,7 +39,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
+	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -61,7 +61,9 @@ void RemapDialog::open() {
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Active)"));
+		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
+			_topKeymapIsGui = true;
+		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
 		divider = true;
 	}
 
@@ -84,12 +86,28 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->size();
 	}
 
+	if (activeKeymaps.size() > 1) {
+		keymapCount += activeKeymaps.size() - 1;
+	}
+
 	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
 
 	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
 
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
+
+	if (activeKeymaps.size() > 1) {
+		if (divider)
+			_kmPopUp->appendEntry("");
+		int topIndex = activeKeymaps.size() - 1;
+		for (int i = topIndex - 1; i >= 0; --i) {
+			Keymapper::MapRecord mr = activeKeymaps[i];
+			_kmPopUp->appendEntry(mr.keymap->getName() + _(" (Active)"), idx);
+			_keymapTable[idx++] = mr.keymap;
+		}
+		divider = true;
+	}
 
 	if (_globalKeymaps) {
 		if (divider)
@@ -108,6 +126,7 @@ void RemapDialog::open() {
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
+		divider = true;
 	}
 
 	_changes = false;
@@ -149,7 +168,7 @@ void RemapDialog::reflowLayout() {
 	int labelWidth =  colWidth - (keyButtonWidth + spacing + clearButtonWidth + spacing);
 
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	debug("rowCount = %d" , _rowCount);
+	debug(7, "rowCount = %d" , _rowCount);
 	if (colWidth <= 0  || _rowCount <= 0)
 		error("Remap dialog too small to display any keymaps");
 
@@ -307,9 +326,10 @@ void RemapDialog::loadKeymap() {
 		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
 
 		int topIndex = activeKeymaps.size() - 1;
-		// skip the top gui keymap since it is for the keymapper itself
-		// TODO: Don't use the keymap name as a way to discriminate GUI maps
-		if (topIndex > 0 && activeKeymaps[topIndex].keymap->getName().equals(kGuiKeymapName))
+
+		// This is a WORKAROUND for changing the popup list selected item and changing it back
+		// to the top entry. Upon changing it back, the top keymap is always "gui".
+		if (!_topKeymapIsGui && activeKeymaps[topIndex].keymap->getName() == kGuiKeymapName)
 			--topIndex;
 
 		// add most active keymap's keys

@@ -124,6 +124,9 @@ void GuiManager::initKeymap() {
 	act = new Action(guiMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
+	act = new Action(guiMap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+
 	mapper->addGlobalKeymap(guiMap);
 }
 
@@ -279,7 +282,7 @@ void GuiManager::runLoop() {
 
 	bool tooltipCheck = false;
 
-	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
+	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit()) {
 		redraw();
 
 		// Don't "tickle" the dialog until the theme has had a chance
@@ -358,8 +361,6 @@ void GuiManager::runLoop() {
 			case Common::EVENT_WHEELDOWN:
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
-			case Common::EVENT_QUIT:
-				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
 				break;
@@ -387,6 +388,17 @@ void GuiManager::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
+
+	// WORKAROUND: When quitting we might not properly close the dialogs on
+	// the dialog stack, thus we do this here to avoid any problems.
+	// This is most noticable in bug #3481395 "LAUNCHER: Can't quit from unsupported game dialog".
+	// It seems that Dialog::runModal never removes the dialog from the dialog
+	// stack, thus if the dialog does not call Dialog::close to close itself
+	// it will never be removed. Since we can have multiple run loops being
+	// called we cannot rely on catching EVENT_QUIT in the event loop above,
+	// since it would only catch it for the top run loop.
+	if (eventMan->shouldQuit() && activeDialog == getTopDialog())
+		getTopDialog()->close();
 
 	if (didSaveState) {
 		_theme->disable();

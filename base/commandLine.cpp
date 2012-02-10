@@ -79,6 +79,7 @@ static const char HELP_STRING[] =
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
+	"  --list-audio-devices     List all available audio devices\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
@@ -87,10 +88,19 @@ static const char HELP_STRING[] =
 	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
 	"                           100) (only supported by some MIDI drivers)\n"
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
+	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
 	"                           (separated by commas)\n"
+	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
+	"                           exists in the current directory\n"
 	"\n"
+	"  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first\n"
+	"                           drive)\n"
+	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
+	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
+	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
+	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
@@ -165,6 +175,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("subtitles", false);
+	ConfMan.registerDefault("boot_param", 0);
+	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
@@ -317,6 +329,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('c', "config")
 			END_OPTION
 
+			DO_OPTION_INT('b', "boot-param")
+			END_OPTION
+
 			DO_OPTION_OPT('d', "debuglevel", "0")
 			END_OPTION
 
@@ -324,6 +339,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
+			END_OPTION
+
+			DO_LONG_COMMAND("list-audio-devices")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
@@ -362,6 +380,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_INT("midi-gain")
+			END_OPTION
+
+			DO_OPTION_BOOL('u', "dump-scripts")
+			END_OPTION
+
+			DO_OPTION_OPT('x', "save-slot", "0")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("cdrom")

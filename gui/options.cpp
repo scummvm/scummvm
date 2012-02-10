@@ -165,6 +165,17 @@ void OptionsDialog::open() {
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 
+	// Graphic options
+	if (_fullscreenCheckbox) {
+
+#ifdef SMALL_SCREEN_DEVICE
+		_fullscreenCheckbox->setState(true);
+		_fullscreenCheckbox->setEnabled(false);
+#else // !SMALL_SCREEN_DEVICE
+		// Fullscreen setting
+		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+	}
+
 	// Audio options
 	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver"))
 		_midiPopUp->setSelected(0);
@@ -231,6 +242,14 @@ void OptionsDialog::open() {
 		vol = ConfMan.getInt("speech_volume", _domain);
 		_speechVolumeSlider->setValue(vol);
 		_speechVolumeLabel->setValue(vol);
+
+		bool val = false;
+		if (ConfMan.hasKey("mute", _domain)) {
+			val = ConfMan.getBool("mute", _domain);
+		} else {
+			ConfMan.setBool("mute", false);
+		}
+		_muteCheckbox->setState(val);
 	}
 
 	// Subtitle options
@@ -251,16 +270,53 @@ void OptionsDialog::open() {
 
 void OptionsDialog::close() {
 	if (getResult()) {
+
+		// Graphic options
+		bool graphicsModeChanged = false;
+		if (_fullscreenCheckbox) {
+			if (_enableGraphicSettings) {
+				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
+					graphicsModeChanged = true;
+				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
+			} else {
+				ConfMan.removeKey("fullscreen", _domain);
+				ConfMan.removeKey("aspect_ratio", _domain);
+				ConfMan.removeKey("disable_dithering", _domain);
+				ConfMan.removeKey("gfx_mode", _domain);
+				ConfMan.removeKey("render_mode", _domain);
+			}
+		}
+
+		// Setup graphics again if needed
+		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
+			if (ConfMan.hasKey("fullscreen"))
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
+			// Since this might change the screen resolution we need to give
+			// the GUI a chance to update it's internal state. Otherwise we might
+			// get a crash when the GUI tries to grab the overlay.
+			//
+			// This fixes bug #3303501 "Switching from HQ2x->HQ3x crashes ScummVM"
+			//
+			// It is important that this is called *before* any of the current
+			// dialog's widgets are destroyed (for example before
+			// Dialog::close) is called, to prevent crashes caused by invalid
+			// widgets being referenced or similar errors.
+			g_gui.checkScreenChange();
+			}
+		}
+
 		// Volume options
 		if (_musicVolumeSlider) {
 			if (_enableVolumeSettings) {
 				ConfMan.setInt("music_volume", _musicVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("speech_volume", _speechVolumeSlider->getValue(), _domain);
+				ConfMan.setBool("mute", _muteCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
 				ConfMan.removeKey("speech_volume", _domain);
+				ConfMan.removeKey("mute", _domain);
 			}
 		}
 
@@ -394,6 +450,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
 		_speechVolumeLabel->draw();
 		break;
+	case kMuteAllChanged:
+		// 'true' because if control is disabled then event do not pass
+		setVolumeSettingsState(true);
+		break;
 	case kSubtitleToggle:
 		// We update the slider settings here, when there are sliders, to
 		// disable the speech volume in case we are in subtitle only mode.
@@ -429,6 +489,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
 #ifndef SMALL_SCREEN_DEVICE
+	_fullscreenCheckbox->setEnabled(enabled);
 #endif
 }
 
@@ -491,7 +552,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 
 	_enableVolumeSettings = enabled;
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions.contains(GUIO_NOMUSIC))
 		ena = false;
 
@@ -499,7 +560,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeSlider->setEnabled(ena);
 	_musicVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions.contains(GUIO_NOSFX))
 		ena = false;
 
@@ -507,7 +568,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeSlider->setEnabled(ena);
 	_sfxVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	// Disable speech volume slider, when we are in subtitle only mode.
 	if (_subToggleGroup)
 		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
@@ -517,6 +578,8 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_speechVolumeDesc->setEnabled(ena);
 	_speechVolumeSlider->setEnabled(ena);
 	_speechVolumeLabel->setEnabled(ena);
+
+	_muteCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setSubtitleSettingsState(bool enabled) {
@@ -540,6 +603,8 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
+	// Fullscreen checkbox
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
 	_enableGraphicSettings = true;
 }
@@ -741,6 +806,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), 0, kMuteAllChanged);
 
 	if (g_system->getOverlayWidth() > 320)
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));

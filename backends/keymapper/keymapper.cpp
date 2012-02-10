@@ -268,6 +268,9 @@ void Keymapper::executeAction(const Action *action, bool keyDown) {
 		case EVENT_MBUTTONUP:
 			if (keyDown) evt.type = EVENT_MBUTTONDOWN;
 			break;
+		case EVENT_MAINMENU:
+			if (!keyDown) evt.type = EVENT_MAINMENU;
+			break;
 		default:
 			// don't deliver other events on key up
 			if (!keyDown) continue;

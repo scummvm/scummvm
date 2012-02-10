@@ -58,6 +58,11 @@ project.xcworkspace
 /dists/msvc*/*.dll
 
 /plugins
+
+/test/runner
+/test/runner.cpp
+/test/*.dSYM
+
 /devtools/create_project/create_project
 
 #ignore thumbnails created by windows

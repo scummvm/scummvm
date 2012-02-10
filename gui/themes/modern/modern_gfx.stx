@@ -105,27 +105,38 @@
 	<fonts>
 		<font	id = 'text_default'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSansBold.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_default'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'text_button'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSansBold.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_button'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'
+				scalable_file = 'FreeSansBold.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_normal'
 				file = 'clR6x12.bdf'
+				scalable_file = 'FreeSans.ttf'
+				point_size = '11'
 		/>
 		<font	id = 'tooltip_normal'
 				file = 'fixed5x8.bdf'
+				scalable_file = 'FreeMonoBold.ttf'
+				point_size = '8'
 		/>
 
 		<text_color	id = 'color_normal'

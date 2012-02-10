@@ -1,22 +1,18 @@
-/* Copyright (c) 2003-2005 Various contributors
+/* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
+ * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 2.1 of the License, or
+ *  (at your option) any later version.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef MT32EMU_PARTIAL_H
@@ -25,122 +21,97 @@
 namespace MT32Emu {
 
 class Synth;
-struct NoteLookup;
+class Part;
+class TVA;
+struct ControlROMPCMStruct;
 
-enum EnvelopeType {
-	EnvelopeType_amp = 0,
-	EnvelopeType_filt = 1,
-	EnvelopeType_pitch = 2
+struct StereoVolume {
+	float leftVol;
+	float rightVol;
 };
 
-struct EnvelopeStatus {
-	Bit32s envpos;
-	Bit32s envstat;
-	Bit32s envbase;
-	Bit32s envdist;
-	Bit32s envsize;
-
-	bool sustaining;
-	bool decaying;
-	Bit32s prevlevel;
-
-	Bit32s counter;
-	Bit32s count;
-};
-
-// Class definition of MT-32 partials.  32 in all.
+// A partial represents one of up to four waveform generators currently playing within a poly.
 class Partial {
 private:
 	Synth *synth;
+	const int debugPartialNum; // Only used for debugging
+	// Number of the sample currently being rendered by generateSamples(), or 0 if no run is in progress
+	// This is only kept available for debugging purposes.
+	unsigned long sampleNum; 
 
 	int ownerPart; // -1 if unassigned
 	int mixType;
 	int structurePosition; // 0 or 1 of a structure pair
-	bool useNoisePair;
+	StereoVolume stereoVolume;
 
-	Bit16s myBuffer[MAX_SAMPLE_OUTPUT];
+	// Distance in (possibly fractional) samples from the start of the current pulse
+	float wavePos;
 
-	// Keyfollowed note value
-#if MT32EMU_ACCURATENOTES == 1
-	NoteLookup noteLookupStorage;
-	float noteVal;
-#else
-	int noteVal;
-	int fineShift;
-#endif
-	const NoteLookup *noteLookup; // LUTs for this noteVal
-	const KeyLookup *keyLookup; // LUTs for the clamped (12..108) key
+	float lastFreq;
 
-	// Keyfollowed filter values
-	int realVal;
-	int filtVal;
+	float myBuffer[MAX_SAMPLES_PER_RUN];
 
 	// Only used for PCM partials
 	int pcmNum;
+	// FIXME: Give this a better name (e.g. pcmWaveInfo)
 	PCMWaveEntry *pcmWave;
 
-	int pulsewidth;
+	// Final pulse width value, with velfollow applied, matching what is sent to the LA32.
+	// Range: 0-255
+	int pulseWidthVal;
 
-	Bit32u lfoPos;
-	soundaddr partialOff;
+	float pcmPosition;
 
-	Bit32u ampEnvVal;
-	Bit32u pitchEnvVal;
+	Poly *poly;
 
-	float history[32];
+	LA32Ramp ampRamp;
+	LA32Ramp cutoffModifierRamp;
 
-	bool pitchSustain;
+	float *mixBuffersRingMix(float *buf1, float *buf2, unsigned long len);
+	float *mixBuffersRing(float *buf1, float *buf2, unsigned long len);
 
-	int loopPos;
-
-	dpoly *poly;
-
-	int bendShift;
-
-	Bit16s *mixBuffers(Bit16s *buf1, Bit16s *buf2, int len);
-	Bit16s *mixBuffersRingMix(Bit16s *buf1, Bit16s *buf2, int len);
-	Bit16s *mixBuffersRing(Bit16s *buf1, Bit16s *buf2, int len);
-	void mixBuffersStereo(Bit16s *buf1, Bit16s *buf2, Bit16s *outBuf, int len);
-
-	Bit32s getFiltEnvelope();
-	Bit32u getAmpEnvelope();
-	Bit32s getPitchEnvelope();
-
-	void initKeyFollow(int freqNum);
+	float getPCMSample(unsigned int position);
 
 public:
 	const PatchCache *patchCache;
-	EnvelopeStatus envs[3];
-	bool play;
+	TVA *tva;
+	TVP *tvp;
+	TVF *tvf;
 
 	PatchCache cachebackup;
 
 	Partial *pair;
 	bool alreadyOutputed;
-	Bit32u age;
 
-	Partial(Synth *synth);
+	Partial(Synth *synth, int debugPartialNum);
 	~Partial();
+
+	int debugGetPartialNum() const;
+	unsigned long debugGetSampleNum() const;
 
 	int getOwnerPart() const;
 	int getKey() const;
-	const dpoly *getDpoly() const;
-	bool isActive();
+	const Poly *getPoly() const;
+	bool isActive() const;
 	void activate(int part);
 	void deactivate(void);
-	void startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *pairPartial);
-	void startDecay(EnvelopeType envnum, Bit32s startval);
+	void startPartial(const Part *part, Poly *usePoly, const PatchCache *useCache, const MemParams::RhythmTemp *rhythmTemp, Partial *pairPartial);
+	void startAbort();
 	void startDecayAll();
-	void setBend(float factor);
 	bool shouldReverb();
+	bool hasRingModulatingSlave() const;
+	bool isRingModulatingSlave() const;
+	bool isPCM() const;
+	const ControlROMPCMStruct *getControlROMPCMStruct() const;
+	Synth *getSynth() const;
 
 	// Returns true only if data written to buffer
 	// This function (unlike the one below it) returns processed stereo samples
 	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(Bit16s * partialBuf, long length);
+	bool produceOutput(float *leftBuf, float *rightBuf, unsigned long length);
 
-	// This function produces mono sample output using the partial's private internal buffer
-	Bit16s *generateSamples(long length);
+	// This function writes mono sample output to the provided buffer, and returns the number of samples written
+	unsigned long generateSamples(float *partialBuf, unsigned long length);
 };
 
 }

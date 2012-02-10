@@ -233,6 +233,8 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 static void setupGraphics(OSystem &system) {
 	system.launcherInitSize(640, 400);
+		if (ConfMan.hasKey("fullscreen"))
+			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 
 	// When starting up launcher for the first time, the user might have specified
 	// a --gui-theme option, to allow that option to be working, we need to initialize
@@ -253,7 +255,7 @@ static void setupKeymapper(OSystem &system) {
 	using namespace Common;
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
-	Keymap *globalMap = new Keymap("global");
+	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;
 	HardwareKeySet *keySet;
 
@@ -264,7 +266,7 @@ static void setupKeymapper(OSystem &system) {
 
 	// Now create the global keymap
 	act = new Action(globalMap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+	act->addEvent(EVENT_MAINMENU);
 
 	act = new Action(globalMap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
@@ -281,9 +283,12 @@ static void setupKeymapper(OSystem &system) {
 	act = new Action(globalMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
+	act = new Action(globalMap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global", true);
+	mapper->pushKeymap(kGlobalKeymapName, true);
 #endif
 
 }

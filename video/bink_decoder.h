@@ -260,13 +260,7 @@ protected:
 
 	/** Decode an audio packet. */
 	void audioPacket(AudioTrack &audio);
-
-	/**
-	 * Decode a video packet.
-	 *
-	 * This method is virtual because it is overriden in ResidualVM
-	 * to export the alpha channel of the video
-	 */
+	/** Decode a video packet. */
 	virtual void videoPacket(VideoFrame &video);
 
 	/** Decode a plane. */

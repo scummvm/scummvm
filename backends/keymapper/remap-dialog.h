@@ -91,6 +91,8 @@ protected:
 
 	bool _changes;
 
+	bool _topKeymapIsGui;
+
 };
 
 } // End of namespace Common

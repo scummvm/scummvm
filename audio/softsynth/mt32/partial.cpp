@@ -1,84 +1,72 @@
-/* Copyright (c) 2003-2005 Various contributors
+/* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
+ * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 2.1 of the License, or
+ *  (at your option) any later version.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
+//#include <cmath>
+//#include <cstdlib>
+//#include <cstring>
 
 #include "mt32emu.h"
-
-#if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
-// Older versions of Mac OS X didn't supply a powf function, so using it
-// will cause a binary incompatibility when trying to run a binary built
-// on a newer OS X release on an older one. And Solaris 8 doesn't provide
-// powf, floorf, fabsf etc. at all.
-// Cross-compiled MinGW32 toolchains suffer from a cross-compile bug in
-// libstdc++. math/stubs.o should be empty, but it comes with a symbol for
-// powf, resulting in a linker error because of multiple definitions.
-// Hence we re-define them here. The only potential drawback is that it
-// might be a little bit slower this way.
-#define powf(x,y)	((float)pow(x,y))
-#define floorf(x)	((float)floor(x))
-#define fabsf(x)	((float)fabs(x))
-#endif
-
-#define FIXEDPOINT_UDIV(x, y, point) (((x) << (point)) / ((y)))
-#define FIXEDPOINT_SDIV(x, y, point) (((x) * (1 << point)) / ((y)))
-#define FIXEDPOINT_UMULT(x, y, point) (((x) * (y)) >> point)
-#define FIXEDPOINT_SMULT(x, y, point) (((x) * (y)) / (1 << point))
+#include "mmath.h"
 
 using namespace MT32Emu;
 
-Partial::Partial(Synth *useSynth) {
-	this->synth = useSynth;
+#ifdef INACCURATE_SMOOTH_PAN
+// Mok wanted an option for smoother panning, and we love Mok.
+static const float PAN_NUMERATOR_NORMAL[] = {0.0f, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.5f, 6.0f, 6.5f, 7.0f};
+#else
+// CONFIRMED by Mok: These NUMERATOR values (as bytes, not floats, obviously) are sent exactly like this to the LA32.
+static const float PAN_NUMERATOR_NORMAL[] = {0.0f, 0.0f, 1.0f, 1.0f, 2.0f, 2.0f, 3.0f, 3.0f, 4.0f, 4.0f, 5.0f, 5.0f, 6.0f, 6.0f, 7.0f};
+#endif
+static const float PAN_NUMERATOR_MASTER[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f};
+static const float PAN_NUMERATOR_SLAVE[]  = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f};
+
+Partial::Partial(Synth *useSynth, int useDebugPartialNum) :
+	synth(useSynth), debugPartialNum(useDebugPartialNum), sampleNum(0), tva(new TVA(this, &ampRamp)), tvp(new TVP(this)), tvf(new TVF(this, &cutoffModifierRamp)) {
 	ownerPart = -1;
 	poly = NULL;
 	pair = NULL;
-#if MT32EMU_ACCURATENOTES == 1
-	for (int i = 0; i < 3; i++) {
-		noteLookupStorage.waveforms[i] = new Bit16s[65536];
-	}
-	noteLookup = &noteLookupStorage;
-#endif
 }
 
 Partial::~Partial() {
-#if MT32EMU_ACCURATENOTES == 1
-	for (int i = 0; i < 3; i++) {
-		delete[] noteLookupStorage.waveforms[i];
-	}
-	delete[] noteLookupStorage.wavTable;
-#endif
+	delete tva;
+	delete tvp;
+	delete tvf;
+}
+
+// Only used for debugging purposes
+int Partial::debugGetPartialNum() const {
+	return debugPartialNum;
+}
+
+// Only used for debugging purposes
+unsigned long Partial::debugGetSampleNum() const {
+	return sampleNum;
 }
 
 int Partial::getOwnerPart() const {
 	return ownerPart;
 }
 
-bool Partial::isActive() {
+bool Partial::isActive() const {
 	return ownerPart > -1;
 }
 
-const dpoly *Partial::getDpoly() const {
-	return this->poly;
+const Poly *Partial::getPoly() const {
+	return poly;
 }
 
 void Partial::activate(int part) {
@@ -87,90 +75,63 @@ void Partial::activate(int part) {
 }
 
 void Partial::deactivate() {
+	if (!isActive()) {
+		return;
+	}
 	ownerPart = -1;
 	if (poly != NULL) {
-		for (int i = 0; i < 4; i++) {
-			if (poly->partials[i] == this) {
-				poly->partials[i] = NULL;
-				break;
-			}
-		}
+		poly->partialDeactivated(this);
 		if (pair != NULL) {
 			pair->pair = NULL;
 		}
 	}
+#if MT32EMU_MONITOR_PARTIALS > 2
+	synth->printDebug("[+%lu] [Partial %d] Deactivated", sampleNum, debugPartialNum);
+	synth->printPartialUsage(sampleNum);
+#endif
 }
 
-void Partial::initKeyFollow(int key) {
-	// Setup partial keyfollow
-	// Note follow relative to middle C
-
-	// Calculate keyfollow for pitch
-#if 1
-	float rel = key == -1 ? 0.0f : (key - MIDDLEC);
-	float newPitch = rel * patchCache->pitchKeyfollow + patchCache->pitch + patchCache->pitchShift;
-	//FIXME:KG: Does it truncate the keyfollowed pitch to a semitone (towards MIDDLEC)?
-	//int newKey = (int)(rel * patchCache->pitchKeyfollow);
-	//float newPitch = newKey + patchCache->pitch + patchCache->pitchShift;
-#else
-	float rel = key == -1 ? 0.0f : (key + patchCache->pitchShift - MIDDLEC);
-	float newPitch = rel * patchCache->pitchKeyfollow + patchCache->pitch;
-#endif
-#if MT32EMU_ACCURATENOTES == 1
-	noteVal = newPitch;
-	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f", key, (double)patchCache->pitch, (double)patchCache->pitchKeyfollow, (double)patchCache->pitchShift, (double)newPitch);
-#else
-	float newPitchInt;
-	float newPitchFract = modff(newPitch, &newPitchInt);
-	if (newPitchFract > 0.5f) {
-		newPitchInt += 1.0f;
-		newPitchFract -= 1.0f;
-	}
-	noteVal = (int)newPitchInt;
-	fineShift = (int)(powf(2.0f, newPitchFract / 12.0f) * 4096.0f);
-	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f, noteVal=%d, fineShift=%d", key, (double)patchCache->pitch, (double)patchCache->pitchKeyfollow, (double)patchCache->pitchShift, (double)newPitch, noteVal, fineShift);
-#endif
-	// FIXME:KG: Raise/lower by octaves until in the supported range.
-	while (noteVal > HIGHEST_NOTE) // FIXME:KG: see tables.cpp: >108?
-		noteVal -= 12;
-	while (noteVal < LOWEST_NOTE) // FIXME:KG: see tables.cpp: <12?
-		noteVal += 12;
-	// Calculate keyfollow for filter
-	int keyfollow = ((key - MIDDLEC) * patchCache->filtkeyfollow) / 4096;
-	if (keyfollow > 108)
-		keyfollow = 108;
-	else if (keyfollow < -108)
-		keyfollow = -108;
-	filtVal = synth->tables.tvfKeyfollowMult[keyfollow + 108];
-	realVal = synth->tables.tvfKeyfollowMult[(noteVal - MIDDLEC) + 108];
-}
-
+// DEPRECATED: This should probably go away eventually, it's currently only used as a kludge to protect our old assumptions that
+// rhythm part notes were always played as key MIDDLEC.
 int Partial::getKey() const {
 	if (poly == NULL) {
 		return -1;
+	} else if (ownerPart == 8) {
+		// FIXME: Hack, should go away after new pitch stuff is committed (and possibly some TVF changes)
+		return MIDDLEC;
 	} else {
-		return poly->key;
+		return poly->getKey();
 	}
 }
 
-void Partial::startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *pairPartial) {
-	if (usePoly == NULL || useCache == NULL) {
-		synth->printDebug("*** Error: Starting partial for owner %d, usePoly=%s, useCache=%s", ownerPart, usePoly == NULL ? "*** NULL ***" : "OK", useCache == NULL ? "*** NULL ***" : "OK");
+void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *usePatchCache, const MemParams::RhythmTemp *rhythmTemp, Partial *pairPartial) {
+	if (usePoly == NULL || usePatchCache == NULL) {
+		synth->printDebug("[Partial %d] *** Error: Starting partial for owner %d, usePoly=%s, usePatchCache=%s", debugPartialNum, ownerPart, usePoly == NULL ? "*** NULL ***" : "OK", usePatchCache == NULL ? "*** NULL ***" : "OK");
 		return;
 	}
-	patchCache = useCache;
+	patchCache = usePatchCache;
 	poly = usePoly;
 	mixType = patchCache->structureMix;
 	structurePosition = patchCache->structurePosition;
 
-	play = true;
-	initKeyFollow(poly->freqnum); // Initializes noteVal, filtVal and realVal
-#if MT32EMU_ACCURATENOTES == 0
-	noteLookup = &synth->tables.noteLookups[noteVal - LOWEST_NOTE];
-#else
-	Tables::initNote(synth, &noteLookupStorage, noteVal, (float)synth->myProp.sampleRate, synth->masterTune, synth->pcmWaves, NULL);
-#endif
-	keyLookup = &synth->tables.keyLookups[poly->freqnum - 12];
+	Bit8u panSetting = rhythmTemp != NULL ? rhythmTemp->panpot : part->getPatchTemp()->panpot;
+	float panVal;
+	if (mixType == 3) {
+		if (structurePosition == 0) {
+			panVal = PAN_NUMERATOR_MASTER[panSetting];
+		} else {
+			panVal = PAN_NUMERATOR_SLAVE[panSetting];
+		}
+		// Do a normal mix independent of any pair partial.
+		mixType = 0;
+		pairPartial = NULL;
+	} else {
+		panVal = PAN_NUMERATOR_NORMAL[panSetting];
+	}
+
+	// FIXME: Sample analysis suggests that the use of panVal is linear, but there are some some quirks that still need to be resolved.
+	stereoVolume.leftVol = panVal / 7.0f;
+	stereoVolume.rightVol = 1.0f - stereoVolume.leftVol;
 
 	if (patchCache->PCMPartial) {
 		pcmNum = patchCache->pcm;
@@ -183,340 +144,301 @@ void Partial::startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *
 		pcmWave = &synth->pcmWaves[pcmNum];
 	} else {
 		pcmWave = NULL;
+		wavePos = 0.0f;
+		lastFreq = 0.0;
 	}
 
-	lfoPos = 0;
-	pulsewidth = patchCache->pulsewidth + synth->tables.pwVelfollowAdd[patchCache->pwsens][poly->vel];
-	if (pulsewidth > 100) {
-		pulsewidth = 100;
-	} else if (pulsewidth < 0) {
-		pulsewidth = 0;
+	// CONFIRMED: pulseWidthVal calculation is based on information from Mok
+	pulseWidthVal = (poly->getVelocity() - 64) * (patchCache->srcPartial.wg.pulseWidthVeloSensitivity - 7) + synth->tables.pulseWidth100To255[patchCache->srcPartial.wg.pulseWidth];
+	if (pulseWidthVal < 0) {
+		pulseWidthVal = 0;
+	} else if (pulseWidthVal > 255) {
+		pulseWidthVal = 255;
 	}
 
-	for (int e = 0; e < 3; e++) {
-		envs[e].envpos = 0;
-		envs[e].envstat = -1;
-		envs[e].envbase = 0;
-		envs[e].envdist = 0;
-		envs[e].envsize = 0;
-		envs[e].sustaining = false;
-		envs[e].decaying = false;
-		envs[e].prevlevel = 0;
-		envs[e].counter = 0;
-		envs[e].count = 0;
-	}
-	ampEnvVal = 0;
-	pitchEnvVal = 0;
-	pitchSustain = false;
-	loopPos = 0;
-	partialOff.pcmoffset = partialOff.pcmplace = 0;
+	pcmPosition = 0.0f;
 	pair = pairPartial;
-	useNoisePair = pairPartial == NULL && (mixType == 1 || mixType == 2);
-	age = 0;
 	alreadyOutputed = false;
-	memset(history,0,sizeof(history));
+	tva->reset(part, patchCache->partialParam, rhythmTemp);
+	tvp->reset(part, patchCache->partialParam);
+	tvf->reset(patchCache->partialParam, tvp->getBasePitch());
 }
 
-Bit16s *Partial::generateSamples(long length) {
+float Partial::getPCMSample(unsigned int position) {
+	if (position >= pcmWave->len) {
+		if (!pcmWave->loop) {
+			return 0;
+		}
+		position = position % pcmWave->len;
+	}
+	return synth->pcmROMData[pcmWave->addr + position];
+}
+
+unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed) {
-		return NULL;
+		return 0;
 	}
 	if (poly == NULL) {
-		synth->printDebug("*** ERROR: poly is NULL at Partial::generateSamples()!");
-		return NULL;
+		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::generateSamples()!", debugPartialNum);
+		return 0;
 	}
 
 	alreadyOutputed = true;
 
 	// Generate samples
 
-	Bit16s *partialBuf = &myBuffer[0];
-	Bit32u volume = *poly->volumeptr;
-	while (length--) {
-		Bit32s envval;
-		Bit32s sample = 0;
-		if (!envs[EnvelopeType_amp].sustaining) {
-			if (envs[EnvelopeType_amp].count <= 0) {
-				Bit32u ampval = getAmpEnvelope();
-				if (!play) {
-					deactivate();
-					break;
-				}
-				if (ampval > 100) {
-					ampval = 100;
-				}
-
-				ampval = synth->tables.volumeMult[ampval];
-				ampval = FIXEDPOINT_UMULT(ampval, synth->tables.tvaVelfollowMult[poly->vel][(int)patchCache->ampEnv.velosens], 8);
-				//if (envs[EnvelopeType_amp].sustaining)
-				ampEnvVal = ampval;
-			}
-			--envs[EnvelopeType_amp].count;
+	for (sampleNum = 0; sampleNum < length; sampleNum++) {
+		float sample = 0;
+		Bit32u ampRampVal = ampRamp.nextValue();
+		if (ampRamp.checkInterrupt()) {
+			tva->handleInterrupt();
 		}
-
-		unsigned int lfoShift = 0x1000;
-		if (pitchSustain) {
-			// Calculate LFO position
-			// LFO does not kick in completely until pitch envelope sustains
-			if (patchCache->lfodepth > 0) {
-				lfoPos++;
-				if (lfoPos >= patchCache->lfoperiod)
-					lfoPos = 0;
-				int lfoatm = FIXEDPOINT_UDIV(lfoPos, patchCache->lfoperiod, 16);
-				int lfoatr = synth->tables.sintable[lfoatm];
-				lfoShift = synth->tables.lfoShift[patchCache->lfodepth][lfoatr];
-			}
-		} else {
-			// Calculate Pitch envelope
-			envval = getPitchEnvelope();
-			int pd = patchCache->pitchEnv.depth;
-			pitchEnvVal = synth->tables.pitchEnvVal[pd][envval];
+		if (!tva->isPlaying()) {
+			deactivate();
+			break;
 		}
+		// SEMI-CONFIRMED: From sample analysis:
+		// (1) Tested with a single partial playing PCM wave 77 with pitchCoarse 36 and no keyfollow, velocity follow, etc.
+		// This gives results within +/- 2 at the output (before any DAC bitshifting)
+		// when sustaining at levels 156 - 255 with no modifiers.
+		// (2) Tested with a special square wave partial (internal capture ID tva5) at TVA envelope levels 155-255.
+		// This gives deltas between -1 and 0 compared to the real output. Note that this special partial only produces
+		// positive amps, so negative still needs to be explored, as well as lower levels.
+		//
+		// Also still partially unconfirmed is the behaviour when ramping between levels, as well as the timing.
+		float amp = EXP2F((32772 - ampRampVal / 2048) / -2048.0f);
 
-		int delta;
+		Bit16u pitch = tvp->nextPitch();
+		float freq = synth->tables.pitchToFreq[pitch];
 
-		// Wrap positions or end if necessary
 		if (patchCache->PCMPartial) {
-			// PCM partial
-
-			delta = noteLookup->wavTable[pcmNum];
+			// Render PCM waveform
 			int len = pcmWave->len;
-			if (partialOff.pcmplace >= len) {
-				if (pcmWave->loop) {
-					//partialOff.pcmplace = partialOff.pcmoffset = 0;
-					partialOff.pcmplace %= len;
-				} else {
-					play = false;
-					deactivate();
-					break;
-				}
+			int intPCMPosition = (int)pcmPosition;
+			if (intPCMPosition >= len && !pcmWave->loop) {
+				// We're now past the end of a non-looping PCM waveform so it's time to die.
+				deactivate();
+				break;
 			}
+			Bit32u pcmAddr = pcmWave->addr;
+			float positionDelta = freq * 2048.0f / synth->myProp.sampleRate;
+
+			// Linear interpolation
+			float firstSample = synth->pcmROMData[pcmAddr + intPCMPosition];
+			float nextSample = getPCMSample(intPCMPosition + 1);
+			sample = firstSample + (nextSample - firstSample) * (pcmPosition - intPCMPosition);
+
+			float newPCMPosition = pcmPosition + positionDelta;
+			if (pcmWave->loop) {
+				newPCMPosition = fmod(newPCMPosition, (float)pcmWave->len);
+			}
+			pcmPosition = newPCMPosition;
 		} else {
-			// Synthesis partial
-			delta = 0x10000;
-			partialOff.pcmplace %= (Bit16u)noteLookup->div2;
-		}
+			// Render synthesised waveform
+			wavePos *= lastFreq / freq;
+			lastFreq = freq;
 
-		// Build delta for position of next sample
-		// Fix delta code
-		Bit32u tdelta = delta;
-#if MT32EMU_ACCURATENOTES == 0
-		tdelta = FIXEDPOINT_UMULT(tdelta, fineShift, 12);
+			Bit32u cutoffModifierRampVal = cutoffModifierRamp.nextValue();
+			if (cutoffModifierRamp.checkInterrupt()) {
+				tvf->handleInterrupt();
+			}
+			float cutoffModifier = cutoffModifierRampVal / 262144.0f;
+
+			// res corresponds to a value set in an LA32 register
+			Bit8u res = patchCache->srcPartial.tvf.resonance + 1;
+
+			// EXP2F(1.0f - (32 - res) / 4.0f);
+			float resAmp = synth->tables.resAmpMax[res];
+
+			// The cutoffModifier may not be supposed to be directly added to the cutoff -
+			// it may for example need to be multiplied in some way.
+			// The 240 cutoffVal limit was determined via sample analysis (internal Munt capture IDs: glop3, glop4).
+			// More research is needed to be sure that this is correct, however.
+			float cutoffVal = tvf->getBaseCutoff() + cutoffModifier;
+			if (cutoffVal > 240.0f) {
+				cutoffVal = 240.0f;
+			}
+
+			// Wave length in samples
+			float waveLen = synth->myProp.sampleRate / freq;
+
+			// Init cosineLen
+			float cosineLen = 0.5f * waveLen;
+			if (cutoffVal > 128.0f) {
+#if MT32EMU_ACCURATE_WG == 1
+				cosineLen *= EXP2F((cutoffVal - 128.0f) / -16.0f); // found from sample analysis
+#else
+				cosineLen *= synth->tables.cutoffToCosineLen[Bit32u((cutoffVal - 128.0f) * 8.0f)];
 #endif
-		tdelta = FIXEDPOINT_UMULT(tdelta, pitchEnvVal, 12);
-		tdelta = FIXEDPOINT_UMULT(tdelta, lfoShift, 12);
-		tdelta = FIXEDPOINT_UMULT(tdelta, bendShift, 12);
-		delta = (int)tdelta;
+			}
 
-		// Get waveform - either PCM or synthesized sawtooth or square
-		if (ampEnvVal > 0) {
-			if (patchCache->PCMPartial) {
-				// Render PCM sample
-				int ra, rb, dist;
-				Bit32u taddr;
-				Bit32u pcmAddr = pcmWave->addr;
-				if (delta < 0x10000) {
-					// Linear sound interpolation
-					taddr = pcmAddr + partialOff.pcmplace;
-					ra = synth->pcmROMData[taddr];
-					taddr++;
-					if (taddr == pcmAddr + pcmWave->len) {
-						// Past end of PCM
-						if (pcmWave->loop) {
-							rb = synth->pcmROMData[pcmAddr];
-						} else {
-							rb = 0;
-						}
-					} else {
-						rb = synth->pcmROMData[taddr];
-					}
-					dist = rb - ra;
-					sample = (ra + ((dist * (Bit32s)(partialOff.pcmoffset >> 8)) >> 8));
-				} else {
-					// Sound decimation
-					// The right way to do it is to use a lowpass filter on the waveform before selecting
-					// a point.  This is too slow.  The following approximates this as fast as possible
-					int idelta = delta >> 16;
-					taddr = pcmAddr + partialOff.pcmplace;
-					ra = synth->pcmROMData[taddr++];
-					for (int ix = 0; ix < idelta - 1; ix++) {
-						if (taddr == pcmAddr + pcmWave->len) {
-							// Past end of PCM
-							if (pcmWave->loop) {
-								taddr = pcmAddr;
-							} else {
-								// Behave as if all subsequent samples were 0
-								break;
-							}
-						}
-						ra += synth->pcmROMData[taddr++];
-					}
-					sample = ra / idelta;
-				}
+			// Start playing in center of first cosine segment
+			// relWavePos is shifted by a half of cosineLen
+			float relWavePos = wavePos + 0.5f * cosineLen;
+			if (relWavePos > waveLen) {
+				relWavePos -= waveLen;
+			}
+
+			float pulseLen = 0.5f;
+			if (pulseWidthVal > 128) {
+				pulseLen += synth->tables.pulseLenFactor[pulseWidthVal - 128];
+			}
+			pulseLen *= waveLen;
+
+			float lLen = pulseLen - cosineLen;
+
+			// Ignore pulsewidths too high for given freq
+			if (lLen < 0.0f) {
+				lLen = 0.0f;
+			}
+
+			// Ignore pulsewidths too high for given freq and cutoff
+			float hLen = waveLen - lLen - 2 * cosineLen;
+			if (hLen < 0.0f) {
+				hLen = 0.0f;
+			}
+
+			// Correct resAmp for cutoff in range 50..66
+			if ((cutoffVal >= 128.0f) && (cutoffVal < 144.0f)) {
+#if MT32EMU_ACCURATE_WG == 1
+				resAmp *= sinf(FLOAT_PI * (cutoffVal - 128.0f) / 32.0f);
+#else
+				resAmp *= synth->tables.sinf10[Bit32u(64 * (cutoffVal - 128.0f))];
+#endif
+			}
+
+			// Produce filtered square wave with 2 cosine waves on slopes
+
+			// 1st cosine segment
+			if (relWavePos < cosineLen) {
+#if MT32EMU_ACCURATE_WG == 1
+				sample = -cosf(FLOAT_PI * relWavePos / cosineLen);
+#else
+				sample = -synth->tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) + 1024];
+#endif
+			} else
+
+			// high linear segment
+			if (relWavePos < (cosineLen + hLen)) {
+				sample = 1.f;
+			} else
+
+			// 2nd cosine segment
+			if (relWavePos < (2 * cosineLen + hLen)) {
+#if MT32EMU_ACCURATE_WG == 1
+				sample = cosf(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
+#else
+				sample = synth->tables.sinf10[Bit32u(2048.0f * (relWavePos - (cosineLen + hLen)) / cosineLen) + 1024];
+#endif
 			} else {
-				// Render synthesised sample
-				int toff = partialOff.pcmplace;
-				int minorplace = partialOff.pcmoffset >> 14;
-				Bit32s filterInput;
-				Bit32s filtval = getFiltEnvelope();
 
-				//synth->printDebug("Filtval: %d", filtval);
+			// low linear segment
+				sample = -1.f;
+			}
 
-				if ((patchCache->waveform & 1) == 0) {
-					// Square waveform.  Made by combining two pregenerated bandlimited
-					// sawtooth waveforms
-					Bit32u ofsA = ((toff << 2) + minorplace) % noteLookup->waveformSize[0];
-					int width = FIXEDPOINT_UMULT(noteLookup->div2, synth->tables.pwFactor[pulsewidth], 7);
-					Bit32u ofsB = (ofsA + width) % noteLookup->waveformSize[0];
-					Bit16s pa = noteLookup->waveforms[0][ofsA];
-					Bit16s pb = noteLookup->waveforms[0][ofsB];
-					filterInput = pa - pb;
-					// Non-bandlimited squarewave
-					/*
-					ofs = FIXEDPOINT_UMULT(noteLookup->div2, synth->tables.pwFactor[patchCache->pulsewidth], 8);
-					if (toff < ofs)
-						sample = 1 * WGAMP;
-					else
-						sample = -1 * WGAMP;
-					*/
-				} else {
-					// Sawtooth.  Made by combining the full cosine and half cosine according
-					// to how it looks on the MT-32.  What it really does it takes the
-					// square wave and multiplies it by a full cosine
-					int waveoff = (toff << 2) + minorplace;
-					if (toff < noteLookup->sawTable[pulsewidth])
-						filterInput = noteLookup->waveforms[1][waveoff % noteLookup->waveformSize[1]];
-					else
-						filterInput = noteLookup->waveforms[2][waveoff % noteLookup->waveformSize[2]];
-					// This is the correct way
-					// Seems slow to me (though bandlimited) -- doesn't seem to
-					// sound any better though
-					/*
-					//int pw = (patchCache->pulsewidth * pulsemod[filtval]) >> 8;
+			if (cutoffVal < 128.0f) {
 
-					Bit32u ofs = toff % (noteLookup->div2 >> 1);
+				// Attenuate samples below cutoff 50
+				// Found by sample analysis
+#if MT32EMU_ACCURATE_WG == 1
+				sample *= EXP2F(-0.125f * (128.0f - cutoffVal));
+#else
+				sample *= synth->tables.cutoffToFilterAmp[Bit32u(cutoffVal * 8.0f)];
+#endif
+			} else {
 
-					Bit32u ofs3 = toff + FIXEDPOINT_UMULT(noteLookup->div2, synth->tables.pwFactor[patchCache->pulsewidth], 9);
-					ofs3 = ofs3 % (noteLookup->div2 >> 1);
+				// Add resonance sine. Effective for cutoff > 50 only
+				float resSample = 1.0f;
 
-					pa = noteLookup->waveforms[0][ofs];
-					pb = noteLookup->waveforms[0][ofs3];
-					sample = ((pa - pb) * noteLookup->waveforms[2][toff]) / 2;
-					*/
+				// Now relWavePos counts from the middle of first cosine
+				relWavePos = wavePos;
+
+				// negative segments
+				if (!(relWavePos < (cosineLen + hLen))) {
+					resSample = -resSample;
+					relWavePos -= cosineLen + hLen;
 				}
 
-				//Very exact filter
-				if (filtval > ((FILTERGRAN * 15) / 16))
-					filtval = ((FILTERGRAN * 15) / 16);
-				sample = (Bit32s)(floorf((synth->iirFilter)((float)filterInput, &history[0], synth->tables.filtCoeff[filtval][(int)patchCache->filtEnv.resonance])) / synth->tables.resonanceFactor[patchCache->filtEnv.resonance]);
-				if (sample < -32768) {
-					synth->printDebug("Overdriven amplitude for %d: %d:=%d < -32768", patchCache->waveform, filterInput, sample);
-					sample = -32768;
+				// Resonance sine WG
+#if MT32EMU_ACCURATE_WG == 1
+				resSample *= sinf(FLOAT_PI * relWavePos / cosineLen);
+#else
+				resSample *= synth->tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) & 4095];
+#endif
+
+				// Resonance sine amp
+				float resAmpFade = EXP2F(-synth->tables.resAmpFadeFactor[res >> 2] * (relWavePos / cosineLen));	// seems to be exact
+
+				// Now relWavePos set negative to the left from center of any cosine
+				relWavePos = wavePos;
+
+				// negative segment
+				if (!(wavePos < (waveLen - 0.5f * cosineLen))) {
+					relWavePos -= waveLen;
+				} else
+
+				// positive segment
+				if (!(wavePos < (hLen + 0.5f * cosineLen))) {
+					relWavePos -= cosineLen + hLen;
 				}
-				else if (sample > 32767) {
-					synth->printDebug("Overdriven amplitude for %d: %d:=%d > 32767", patchCache->waveform, filterInput, sample);
-					sample = 32767;
+
+				// Fading to zero while within cosine segments to avoid jumps in the wave
+				// Sample analysis suggests that this window is very close to cosine
+				if (relWavePos < 0.5f * cosineLen) {
+#if MT32EMU_ACCURATE_WG == 1
+					resAmpFade *= 0.5f * (1.0f - cosf(FLOAT_PI * relWavePos / (0.5f * cosineLen)));
+#else
+					resAmpFade *= 0.5f * (1.0f + synth->tables.sinf10[Bit32s(2048.0f * relWavePos / (0.5f * cosineLen)) + 3072]);
+#endif
 				}
+
+				sample += resSample * resAmp * resAmpFade;
+			}
+
+			// sawtooth waves
+			if ((patchCache->waveform & 1) != 0) {
+#if MT32EMU_ACCURATE_WG == 1
+				sample *= cosf(FLOAT_2PI * wavePos / waveLen);
+#else
+				sample *= synth->tables.sinf10[(Bit32u(4096.0f * wavePos / waveLen) & 4095) + 1024];
+#endif
+			}
+
+			wavePos++;
+
+			// wavePos isn't supposed to be > waveLen
+			if (wavePos > waveLen) {
+				wavePos -= waveLen;
 			}
 		}
 
-		// Add calculated delta to our waveform offset
-		Bit32u absOff = ((partialOff.pcmplace << 16) | partialOff.pcmoffset);
-		absOff += delta;
-		partialOff.pcmplace = (Bit16u)((absOff & 0xFFFF0000) >> 16);
-		partialOff.pcmoffset = (Bit16u)(absOff & 0xFFFF);
-
-		// Put volume envelope over generated sample
-		sample = FIXEDPOINT_SMULT(sample, ampEnvVal, 9);
-		sample = FIXEDPOINT_SMULT(sample, volume, 7);
-		envs[EnvelopeType_amp].envpos++;
-		envs[EnvelopeType_pitch].envpos++;
-		envs[EnvelopeType_filt].envpos++;
-
-		*partialBuf++ = (Bit16s)sample;
+		// Multiply sample with current TVA value
+		sample *= amp;
+		*partialBuf++ = sample;
 	}
-	// We may have deactivated and broken out of the loop before the end of the buffer,
-	// if so then fill the remainder with 0s.
-	if (++length > 0)
-		memset(partialBuf, 0, length * 2);
-	return &myBuffer[0];
+	unsigned long renderedSamples = sampleNum;
+	sampleNum = 0;
+	return renderedSamples;
 }
 
-void Partial::setBend(float factor) {
-	if (!patchCache->useBender || factor == 0.0f) {
-		bendShift = 4096;
-		return;
-	}
-	// NOTE:KG: We can't do this smoothly with lookup tables, unless we use several MB.
-	// FIXME:KG: Bend should be influenced by pitch key-follow too, according to docs.
-	float bendSemitones = factor * patchCache->benderRange; // -24 .. 24
-	float mult = powf(2.0f, bendSemitones / 12.0f);
-	synth->printDebug("setBend(): factor=%f, benderRange=%f, semitones=%f, mult=%f\n", (double)factor, (double)patchCache->benderRange, (double)bendSemitones, (double)mult);
-	bendShift = (int)(mult * 4096.0f);
-}
-
-Bit16s *Partial::mixBuffers(Bit16s * buf1, Bit16s *buf2, int len) {
-	if (buf1 == NULL)
-		return buf2;
-	if (buf2 == NULL)
-		return buf1;
-
-	Bit16s *outBuf = buf1;
-#if MT32EMU_USE_MMX >= 1
-	// KG: This seems to be fine
-	int donelen = i386_mixBuffers(buf1, buf2, len);
-	len -= donelen;
-	buf1 += donelen;
-	buf2 += donelen;
-#endif
-	while (len--) {
-		*buf1 = *buf1 + *buf2;
-		buf1++, buf2++;
-	}
-	return outBuf;
-}
-
-Bit16s *Partial::mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len) {
-	if (buf1 == NULL)
+float *Partial::mixBuffersRingMix(float *buf1, float *buf2, unsigned long len) {
+	if (buf1 == NULL) {
 		return NULL;
+	}
 	if (buf2 == NULL) {
-		Bit16s *outBuf = buf1;
-		while (len--) {
-			if (*buf1 < -8192)
-				*buf1 = -8192;
-			else if (*buf1 > 8192)
-				*buf1 = 8192;
-			buf1++;
-		}
-		return outBuf;
+		return buf1;
 	}
 
-	Bit16s *outBuf = buf1;
-#if MT32EMU_USE_MMX >= 1
-	// KG: This seems to be fine
-	int donelen = i386_mixBuffersRingMix(buf1, buf2, len);
-	len -= donelen;
-	buf1 += donelen;
-	buf2 += donelen;
-#endif
 	while (len--) {
-		float a, b;
-		a = ((float)*buf1) / 8192.0f;
-		b = ((float)*buf2) / 8192.0f;
-		a = (a * b) + a;
-		if (a > 1.0f)
-			a = 1.0f;
-		if (a < -1.0f)
-			a = -1.0f;
-		*buf1 = (Bit16s)(a * 8192.0f);
+		// FIXME: At this point we have no idea whether this is remotely correct...
+		*buf1 = *buf1 * *buf2 + *buf1;
 		buf1++;
 		buf2++;
-		//buf1[i] = (Bit16s)(((Bit32s)buf1[i] * (Bit32s)buf2[i]) >> 10) + buf1[i];
 	}
-	return outBuf;
+	return buf1;
 }
 
-Bit16s *Partial::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
+float *Partial::mixBuffersRing(float *buf1, float *buf2, unsigned long len) {
 	if (buf1 == NULL) {
 		return NULL;
 	}
@@ -524,445 +446,112 @@ Bit16s *Partial::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
 		return NULL;
 	}
 
-	Bit16s *outBuf = buf1;
-#if MT32EMU_USE_MMX >= 1
-	// FIXME:KG: Not really checked as working
-	int donelen = i386_mixBuffersRing(buf1, buf2, len);
-	len -= donelen;
-	buf1 += donelen;
-	buf2 += donelen;
-#endif
 	while (len--) {
-		float a, b;
-		a = ((float)*buf1) / 8192.0f;
-		b = ((float)*buf2) / 8192.0f;
-		a *= b;
-		if (a > 1.0f)
-			a = 1.0f;
-		if (a < -1.0f)
-			a = -1.0f;
-		*buf1 = (Bit16s)(a * 8192.0f);
+		// FIXME: At this point we have no idea whether this is remotely correct...
+		*buf1 = *buf1 * *buf2;
 		buf1++;
 		buf2++;
 	}
-	return outBuf;
+	return buf1;
 }
 
-void Partial::mixBuffersStereo(Bit16s *buf1, Bit16s *buf2, Bit16s *outBuf, int len) {
-	if (buf2 == NULL) {
-		while (len--) {
-			*outBuf++ = *buf1++;
-			*outBuf++ = 0;
-		}
-	} else if (buf1 == NULL) {
-		while (len--) {
-			*outBuf++ = 0;
-			*outBuf++ = *buf2++;
-		}
-	} else {
-		while (len--) {
-			*outBuf++ = *buf1++;
-			*outBuf++ = *buf2++;
-		}
+bool Partial::hasRingModulatingSlave() const {
+	return pair != NULL && structurePosition == 0 && (mixType == 1 || mixType == 2);
+}
+
+bool Partial::isRingModulatingSlave() const {
+	return pair != NULL && structurePosition == 1 && (mixType == 1 || mixType == 2);
+}
+
+bool Partial::isPCM() const {
+	return pcmWave != NULL;
+}
+
+const ControlROMPCMStruct *Partial::getControlROMPCMStruct() const {
+	if (pcmWave != NULL) {
+		return pcmWave->controlROMPCMStruct;
 	}
+	return NULL;
 }
 
-bool Partial::produceOutput(Bit16s *partialBuf, long length) {
-	if (!isActive() || alreadyOutputed)
+Synth *Partial::getSynth() const {
+	return synth;
+}
+
+bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long length) {
+	if (!isActive() || alreadyOutputed || isRingModulatingSlave()) {
 		return false;
+	}
 	if (poly == NULL) {
-		synth->printDebug("*** ERROR: poly is NULL at Partial::produceOutput()!");
+		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::produceOutput()!", debugPartialNum);
 		return false;
 	}
 
-	Bit16s *pairBuf = NULL;
-	// Check for dependant partial
-	if (pair != NULL) {
-		if (!pair->alreadyOutputed) {
-			// Note: pair may have become NULL after this
-			pairBuf = pair->generateSamples(length);
+	float *partialBuf = &myBuffer[0];
+	unsigned long numGenerated = generateSamples(partialBuf, length);
+	if (mixType == 1 || mixType == 2) {
+		float *pairBuf;
+		unsigned long pairNumGenerated;
+		if (pair == NULL) {
+			pairBuf = NULL;
+			pairNumGenerated = 0;
+		} else {
+			pairBuf = &pair->myBuffer[0];
+			pairNumGenerated = pair->generateSamples(pairBuf, numGenerated);
+			// pair will have been set to NULL if it deactivated within generateSamples()
+			if (pair != NULL) {
+				if (!isActive()) {
+					pair->deactivate();
+					pair = NULL;
+				} else if (!pair->isActive()) {
+					pair = NULL;
+				}
+			}
 		}
-	} else if (useNoisePair) {
-		// Generate noise for pairless ring mix
-		pairBuf = synth->tables.noiseBuf;
+		if (pairNumGenerated > 0) {
+			if (mixType == 1) {
+				mixBuffersRingMix(partialBuf, pairBuf, pairNumGenerated);
+			} else {
+				mixBuffersRing(partialBuf, pairBuf, pairNumGenerated);
+			}
+		}
+		if (numGenerated > pairNumGenerated) {
+			if (mixType == 1) {
+				mixBuffersRingMix(partialBuf + pairNumGenerated, NULL, numGenerated - pairNumGenerated);
+			} else {
+				mixBuffersRing(partialBuf + pairNumGenerated, NULL, numGenerated - pairNumGenerated);
+			}
+		}
 	}
 
-	Bit16s *myBuf = generateSamples(length);
-
-	if (myBuf == NULL && pairBuf == NULL)
-		return false;
-
-	Bit16s *p1buf, *p2buf;
-
-	if (structurePosition == 0 || pairBuf == NULL) {
-		p1buf = myBuf;
-		p2buf = pairBuf;
-	} else {
-		p2buf = myBuf;
-		p1buf = pairBuf;
+	for (unsigned int i = 0; i < numGenerated; i++) {
+		*leftBuf++ = partialBuf[i] * stereoVolume.leftVol;
 	}
-
-	//synth->printDebug("mixType: %d", mixType);
-
-	Bit16s *mixedBuf;
-	switch (mixType) {
-	case 0:
-		// Standard sound mix
-		mixedBuf = mixBuffers(p1buf, p2buf, length);
-		break;
-
-	case 1:
-		// Ring modulation with sound mix
-		mixedBuf = mixBuffersRingMix(p1buf, p2buf, length);
-		break;
-
-	case 2:
-		// Ring modulation alone
-		mixedBuf = mixBuffersRing(p1buf, p2buf, length);
-		break;
-
-	case 3:
-		// Stereo mixing.  One partial to one speaker channel, one to another.
-		// FIXME:KG: Surely we should be multiplying by the left/right volumes here?
-		mixBuffersStereo(p1buf, p2buf, partialBuf, length);
-		return true;
-
-	default:
-		mixedBuf = mixBuffers(p1buf, p2buf, length);
-		break;
+	for (unsigned int i = 0; i < numGenerated; i++) {
+		*rightBuf++ = partialBuf[i] * stereoVolume.rightVol;
 	}
-
-	if (mixedBuf == NULL)
-		return false;
-
-	Bit16s leftvol, rightvol;
-	leftvol = patchCache->pansetptr->leftvol;
-	rightvol = patchCache->pansetptr->rightvol;
-
-#if MT32EMU_USE_MMX >= 2
-	// FIXME:KG: This appears to introduce crackle
-	int donelen = i386_partialProductOutput(length, leftvol, rightvol, partialBuf, mixedBuf);
-	length -= donelen;
-	mixedBuf += donelen;
-	partialBuf += donelen * 2;
-#endif
-	while (length--) {
-		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)leftvol) >> 15);
-		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)rightvol) >> 15);
-		mixedBuf++;
+	while (numGenerated < length) {
+		*leftBuf++ = 0.0f;
+		*rightBuf++ = 0.0f;
+		numGenerated++;
 	}
 	return true;
 }
 
-Bit32s Partial::getFiltEnvelope() {
-	int reshigh;
-
-	int cutoff, depth;
-
-	EnvelopeStatus *tStat  = &envs[EnvelopeType_filt];
-
-	if (tStat->decaying) {
-		reshigh = tStat->envbase;
-		reshigh = (reshigh + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-		if (tStat->envpos >= tStat->envsize)
-			reshigh = 0;
-	} else {
-		if (tStat->envstat==4) {
-			reshigh = patchCache->filtsustain;
-			if (!poly->sustain) {
-				startDecay(EnvelopeType_filt, reshigh);
-			}
-		} else {
-			if ((tStat->envstat==-1) || (tStat->envpos >= tStat->envsize)) {
-				if (tStat->envstat==-1)
-					tStat->envbase = 0;
-				else
-					tStat->envbase = patchCache->filtEnv.envlevel[tStat->envstat];
-				tStat->envstat++;
-				tStat->envpos = 0;
-				if (tStat->envstat == 3) {
-					tStat->envsize = synth->tables.envTime[(int)patchCache->filtEnv.envtime[tStat->envstat]];
-				} else {
-					Bit32u envTime = (int)patchCache->filtEnv.envtime[tStat->envstat];
-					if (tStat->envstat > 1) {
-						int envDiff = abs(patchCache->filtEnv.envlevel[tStat->envstat] - patchCache->filtEnv.envlevel[tStat->envstat - 1]);
-						if (envTime > synth->tables.envDeltaMaxTime[envDiff]) {
-							envTime = synth->tables.envDeltaMaxTime[envDiff];
-						}
-					}
-
-					tStat->envsize = (synth->tables.envTime[envTime] * keyLookup->envTimeMult[(int)patchCache->filtEnv.envtkf]) >> 8;
-				}
-
-				tStat->envsize++;
-				tStat->envdist = patchCache->filtEnv.envlevel[tStat->envstat] - tStat->envbase;
-			}
-
-			reshigh = tStat->envbase;
-			reshigh = (reshigh + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-
-		}
-		tStat->prevlevel = reshigh;
-	}
-
-	cutoff = patchCache->filtEnv.cutoff;
-
-	//if (patchCache->waveform==1) reshigh = (reshigh * 3) >> 2;
-
-	depth = patchCache->filtEnv.envdepth;
-
-	//int sensedep = (depth * 127-patchCache->filtEnv.envsense) >> 7;
-	depth = FIXEDPOINT_UMULT(depth, synth->tables.tvfVelfollowMult[poly->vel][(int)patchCache->filtEnv.envsense], 8);
-
-	int bias = patchCache->tvfbias;
-	int dist;
-
-	if (bias != 0) {
-		//FIXME:KG: Is this really based on pitch (as now), or key pressed?
-		//synth->printDebug("Cutoff before %d", cutoff);
-		if (patchCache->tvfdir == 0) {
-			if (noteVal < bias) {
-				dist = bias - noteVal;
-				cutoff = FIXEDPOINT_UMULT(cutoff, synth->tables.tvfBiasMult[patchCache->tvfblevel][dist], 8);
-			}
-		} else {
-			// > Bias
-			if (noteVal > bias) {
-				dist = noteVal - bias;
-				cutoff = FIXEDPOINT_UMULT(cutoff, synth->tables.tvfBiasMult[patchCache->tvfblevel][dist], 8);
-			}
-
-		}
-		//synth->printDebug("Cutoff after %d", cutoff);
-	}
-
-	depth = (depth * keyLookup->envDepthMult[patchCache->filtEnv.envdkf]) >> 8;
-	reshigh = (reshigh * depth) >> 7;
-
-	Bit32s tmp;
-
-	cutoff *= filtVal;
-	cutoff /= realVal; //FIXME:KG: With filter keyfollow 0, this makes no sense. What's correct?
-
-	reshigh *= filtVal;
-	reshigh /= realVal; //FIXME:KG: As above for cutoff
-
-	if (patchCache->waveform == 1) {
-		reshigh = (reshigh * 65) / 100;
-	}
-
-	if (cutoff > 100)
-		cutoff = 100;
-	else if (cutoff < 0)
-		cutoff = 0;
-	if (reshigh > 100)
-		reshigh = 100;
-	else if (reshigh < 0)
-		reshigh = 0;
-	tmp = noteLookup->nfiltTable[cutoff][reshigh];
-	//tmp *= keyfollow;
-	//tmp /= realfollow;
-
-	//synth->printDebug("Cutoff %d, tmp %d, freq %d", cutoff, tmp, tmp * 256);
-	return tmp;
-}
-
 bool Partial::shouldReverb() {
-	if (!isActive())
+	if (!isActive()) {
 		return false;
+	}
 	return patchCache->reverb;
 }
 
-Bit32u Partial::getAmpEnvelope() {
-	Bit32s tc;
-
-	EnvelopeStatus *tStat = &envs[EnvelopeType_amp];
-
-	if (!play)
-		return 0;
-
-	if (tStat->decaying) {
-		tc = tStat->envbase;
-		tc += (tStat->envdist * tStat->envpos) / tStat->envsize;
-		if (tc < 0)
-			tc = 0;
-		if ((tStat->envpos >= tStat->envsize) || (tc == 0)) {
-			play = false;
-			// Don't have to worry about prevlevel storage or anything, this partial's about to die
-			return 0;
-		}
-	} else {
-		if ((tStat->envstat == -1) || (tStat->envpos >= tStat->envsize)) {
-			if (tStat->envstat == -1)
-				tStat->envbase = 0;
-			else
-				tStat->envbase = patchCache->ampEnv.envlevel[tStat->envstat];
-			tStat->envstat++;
-			tStat->envpos = 0;
-			if (tStat->envstat == 4) {
-				//synth->printDebug("Envstat %d, size %d", tStat->envstat, tStat->envsize);
-				tc = patchCache->ampEnv.envlevel[3];
-				if (!poly->sustain)
-					startDecay(EnvelopeType_amp, tc);
-				else
-					tStat->sustaining = true;
-				goto PastCalc;
-			}
-			Bit8u targetLevel = patchCache->ampEnv.envlevel[tStat->envstat];
-			tStat->envdist = targetLevel - tStat->envbase;
-			Bit32u envTime = patchCache->ampEnv.envtime[tStat->envstat];
-			if (targetLevel == 0) {
-				tStat->envsize = synth->tables.envDecayTime[envTime];
-			} else {
-				int envLevelDelta = abs(tStat->envdist);
-				if (envTime > synth->tables.envDeltaMaxTime[envLevelDelta]) {
-					envTime = synth->tables.envDeltaMaxTime[envLevelDelta];
-				}
-				tStat->envsize = synth->tables.envTime[envTime];
-			}
-
-			// Time keyfollow is used by all sections of the envelope (confirmed on CM-32L)
-			tStat->envsize = FIXEDPOINT_UMULT(tStat->envsize, keyLookup->envTimeMult[(int)patchCache->ampEnv.envtkf], 8);
-
-			switch (tStat->envstat) {
-			case 0:
-				//Spot for velocity time follow
-				//Only used for first attack
-				tStat->envsize = FIXEDPOINT_UMULT(tStat->envsize, synth->tables.envTimeVelfollowMult[(int)patchCache->ampEnv.envvkf][poly->vel], 8);
-				//synth->printDebug("Envstat %d, size %d", tStat->envstat, tStat->envsize);
-				break;
-			case 1:
-			case 2:
-			case 3:
-				//synth->printDebug("Envstat %d, size %d", tStat->envstat, tStat->envsize);
-				break;
-			default:
-				synth->printDebug("Invalid TVA envelope number %d hit!", tStat->envstat);
-				break;
-			}
-
-			tStat->envsize++;
-
-			if (tStat->envdist != 0) {
-				tStat->counter = abs(tStat->envsize / tStat->envdist);
-				//synth->printDebug("Pos %d, envsize %d envdist %d", tStat->envstat, tStat->envsize, tStat->envdist);
-			} else {
-				tStat->counter = 0;
-				//synth->printDebug("Pos %d, envsize %d envdist %d", tStat->envstat, tStat->envsize, tStat->envdist);
-			}
-		}
-		tc = tStat->envbase;
-		tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-		tStat->count = tStat->counter;
-PastCalc:
-		tc = (tc * (Bit32s)patchCache->ampEnv.level) / 100;
-	}
-
-	// Prevlevel storage is bottle neck
-	tStat->prevlevel = tc;
-
-	//Bias level crap stuff now
-
-	for (int i = 0; i < 2; i++) {
-		if (patchCache->ampblevel[i]!=0) {
-			int bias = patchCache->ampbias[i];
-			if (patchCache->ampdir[i]==0) {
-				// < Bias
-				if (noteVal < bias) {
-					int dist = bias - noteVal;
-					tc = FIXEDPOINT_UMULT(tc, synth->tables.tvaBiasMult[patchCache->ampblevel[i]][dist], 8);
-				}
-			} else {
-				// > Bias
-				if (noteVal > bias) {
-					int dist = noteVal - bias;
-					tc = FIXEDPOINT_UMULT(tc, synth->tables.tvaBiasMult[patchCache->ampblevel[i]][dist], 8);
-				}
-			}
-		}
-	}
-	if (tc < 0) {
-		synth->printDebug("*** ERROR: tc < 0 (%d) at getAmpEnvelope()", tc);
-		tc = 0;
-	}
-	return (Bit32u)tc;
-}
-
-Bit32s Partial::getPitchEnvelope() {
-	EnvelopeStatus *tStat = &envs[EnvelopeType_pitch];
-
-	Bit32s tc;
-	pitchSustain = false;
-	if (tStat->decaying) {
-		if (tStat->envpos >= tStat->envsize)
-			tc = patchCache->pitchEnv.level[4];
-		else {
-			tc = tStat->envbase;
-			tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-		}
-	} else {
-		if (tStat->envstat==3) {
-			tc = patchCache->pitchsustain;
-			if (poly->sustain)
-				pitchSustain = true;
-			else
-				startDecay(EnvelopeType_pitch, tc);
-		} else {
-			if ((tStat->envstat==-1) || (tStat->envpos >= tStat->envsize)) {
-				tStat->envstat++;
-
-				tStat->envbase = patchCache->pitchEnv.level[tStat->envstat];
-
-				Bit32u envTime = patchCache->pitchEnv.time[tStat->envstat];
-				int envDiff = abs(patchCache->pitchEnv.level[tStat->envstat] - patchCache->pitchEnv.level[tStat->envstat + 1]);
-				if (envTime > synth->tables.envDeltaMaxTime[envDiff]) {
-					envTime = synth->tables.envDeltaMaxTime[envDiff];
-				}
-
-				tStat->envsize = (synth->tables.envTime[envTime] * keyLookup->envTimeMult[(int)patchCache->pitchEnv.timekeyfollow]) >> 8;
-
-				tStat->envpos = 0;
-				tStat->envsize++;
-				tStat->envdist = patchCache->pitchEnv.level[tStat->envstat + 1] - tStat->envbase;
-			}
-			tc = tStat->envbase;
-			tc = (tc + ((tStat->envdist * tStat->envpos) / tStat->envsize));
-		}
-		tStat->prevlevel = tc;
-	}
-	return tc;
+void Partial::startAbort() {
+	// This is called when the partial manager needs to terminate partials for re-use by a new Poly.
+	tva->startAbort();
 }
 
 void Partial::startDecayAll() {
-	startDecay(EnvelopeType_amp, envs[EnvelopeType_amp].prevlevel);
-	startDecay(EnvelopeType_filt, envs[EnvelopeType_filt].prevlevel);
-	startDecay(EnvelopeType_pitch, envs[EnvelopeType_pitch].prevlevel);
-	pitchSustain = false;
-}
-
-void Partial::startDecay(EnvelopeType envnum, Bit32s startval) {
-	EnvelopeStatus *tStat  = &envs[envnum];
-
-	tStat->sustaining = false;
-	tStat->decaying = true;
-	tStat->envpos = 0;
-	tStat->envbase = startval;
-
-	switch (envnum) {
-	case EnvelopeType_amp:
-		tStat->envsize = FIXEDPOINT_UMULT(synth->tables.envDecayTime[(int)patchCache->ampEnv.envtime[4]], keyLookup->envTimeMult[(int)patchCache->ampEnv.envtkf], 8);
-		tStat->envdist = -startval;
-		break;
-	case EnvelopeType_filt:
-		tStat->envsize = FIXEDPOINT_UMULT(synth->tables.envDecayTime[(int)patchCache->filtEnv.envtime[4]], keyLookup->envTimeMult[(int)patchCache->filtEnv.envtkf], 8);
-		tStat->envdist = -startval;
-		break;
-	case EnvelopeType_pitch:
-		tStat->envsize = FIXEDPOINT_UMULT(synth->tables.envDecayTime[(int)patchCache->pitchEnv.time[3]], keyLookup->envTimeMult[(int)patchCache->pitchEnv.timekeyfollow], 8);
-		tStat->envdist = patchCache->pitchEnv.level[4] - startval;
-		break;
-	default:
-		break;
-	}
-	tStat->envsize++;
+	tva->startDecay();
+	tvp->startDecay();
+	tvf->startDecay();
 }
