@@ -39,6 +39,23 @@ struct Surface;
 
 namespace Myst3 {
 
+enum GameVersionFlags {
+	kFlagNone      = 0,
+	kFlagVersion10 = (1 << 0), // v1.0
+	kFlagSafeDisc  = (1 << 1), // SafeDisc-encrypted
+	kFlagDVD       = (1 << 2)  // DVD version
+};
+
+struct ExecutableVersion {
+	const char *description;
+	int flags;
+	const char *executable;
+	uint32 baseOffset;
+	uint32 ageTableOffset;
+	uint32 nodeInitScriptOffset;
+	uint32 soundNamesOffset;
+};
+
 // Engine Debug Flags
 enum {
 	kDebugVariable = (1 << 0),
@@ -58,6 +75,7 @@ class Renderer;
 class Menu;
 class Sound;
 struct NodeData;
+struct Myst3GameDescription;
 
 typedef Common::SharedPtr<NodeData> NodePtr;
 
@@ -82,10 +100,14 @@ public:
 	// Used by the projectors on J'nanin, see puzzle #14
 	Graphics::Surface *_projectorBackground;
 
-	Myst3Engine(OSystem *syst, int gameFlags);
+	Myst3Engine(OSystem *syst, const Myst3GameDescription *version);
 	virtual ~Myst3Engine();
 
 	bool hasFeature(EngineFeature f) const;
+	Common::Platform getPlatform() const;
+	Common::Language getDefaultLanguage() const;
+	const ExecutableVersion *getExecutableVersion() const;
+
 	bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 
@@ -141,6 +163,7 @@ public:
 private:
 	OSystem *_system;
 	Console *_console;
+	const Myst3GameDescription *_gameDescription;
 	
 	Node *_node;
 

@@ -52,8 +52,8 @@
 
 namespace Myst3 {
 
-Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
-		Engine(syst), _system(syst),
+Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
+		Engine(syst), _system(syst), _gameDescription(version),
 		_db(0), _console(0), _scriptEngine(0),
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
@@ -131,7 +131,7 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
-	_db = new Database();
+	_db = new Database(this);
 	_state = new GameState(this);
 	_scene = new Scene(this);
 	_menu = new Menu(this);
