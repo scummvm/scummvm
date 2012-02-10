@@ -1179,7 +1179,7 @@ static const byte actorV0Colors[25] = {
 	}
 
 byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	const Actor_v0* A = (const Actor_v0 *)a;
+	const Actor_v0* a0 = (const Actor_v0 *)a;
 
 	if (limb >= 8)
 		return 0;
@@ -1224,7 +1224,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (!width || !height)
 		return 0;
 
-	int xpos = _actorX + (A->_limb_flipped[limb] ? -1 : +1) * (offsetX * 8 - a->_width / 2);
+	int xpos = _actorX + (a0->_limb_flipped[limb] ? -1 : +1) * (offsetX * 8 - a->_width / 2);
 	// +1 as we appear to be 1 pixel away from the original interpreter
 	int ypos = _actorY - offsetY + 1;
 
@@ -1234,13 +1234,13 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			byte color = data[y * width + x];
 			byte pcolor;
 
-			int destX = xpos + (A->_limb_flipped[limb] ? -(x + 1) : x) * 8;
+			int destX = xpos + (a0->_limb_flipped[limb] ? -(x + 1) : x) * 8;
 			int destY = ypos + y;
 
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
 				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
-				if (A->_limb_flipped[limb]) {
+				if (a0->_limb_flipped[limb]) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
 					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
@@ -1251,7 +1251,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	_draw_top = MIN(_draw_top, ypos);
 	_draw_bottom = MAX(_draw_bottom, ypos + height);
-	if (A->_limb_flipped[limb])
+	if (a0->_limb_flipped[limb])
 		_vm->markRectAsDirty(kMainVirtScreen, xpos - (width * 8), xpos, ypos, ypos + height, _actorID);
 	else
 		_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos + (width * 8), ypos, ypos + height, _actorID);
@@ -1283,7 +1283,7 @@ void V0CostumeLoader::loadCostume(int id) {
 }
 
 void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
-	Actor_v0 *A = (Actor_v0 *)a;
+	Actor_v0 *a0 = (Actor_v0 *)a;
 
 	if (!a->_costume)
 		return;
@@ -1291,12 +1291,12 @@ void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	loadCostume(a->_costume);
 
 	// Invalid costume command?
-	if (A->_costCommandNew == 0xFF || (A->_costCommand == A->_costCommandNew))
+	if (a0->_costCommandNew == 0xFF || (a0->_costCommand == a0->_costCommandNew))
 		return;
 
-	A->_costCommand = A->_costCommandNew;
+	a0->_costCommand = a0->_costCommandNew;
 
-	int cmd = A->_costCommand;
+	int cmd = a0->_costCommand;
 	byte limbFrameNumber = 0;
 
 	// Each costume-command has 8 limbs  (0x2622)
@@ -1317,23 +1317,23 @@ void V0CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 			// Store the limb frame number (clear the flipped status)
 			a->_cost.frame[limb] = (limbFrameNumber & 0x7f);
 
-			if (A->_limb_flipped[limb] != true)
+			if (a0->_limb_flipped[limb] != true)
 				a->_cost.start[limb] = 0xFFFF;
 
-			A->_limb_flipped[limb] = true;
+			a0->_limb_flipped[limb] = true;
 
 		} else {
 			//Store the limb frame number
 			a->_cost.frame[limb] = limbFrameNumber;
 
-			if (A->_limb_flipped[limb] != false)
+			if (a0->_limb_flipped[limb] != false)
 				a->_cost.start[limb] = 0xFFFF;
 
-			A->_limb_flipped[limb] = false;
+			a0->_limb_flipped[limb] = false;
 		}
 
 		// Set the repeat value
-		A->_limbFrameRepeatNew[limb] = A->_animFrameRepeat;
+		a0->_limbFrameRepeatNew[limb] = a0->_animFrameRepeat;
 	}
 }
 
@@ -1345,19 +1345,19 @@ byte V0CostumeLoader::getFrame(Actor *a, int limb) {
 }
 
 byte V0CostumeLoader::increaseAnims(Actor *a) {
-	Actor_v0 *A = (Actor_v0 *)a;
+	Actor_v0 *a0 = (Actor_v0 *)a;
 	int i;
 	byte r = 0;
 
 	for (i = 0; i != 8; i++) {
-		A->limbFrameCheck(i);
+		a0->limbFrameCheck(i);
 		r += increaseAnim(a, i);
 	}
 	return r;
 }
 
 byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
-	Actor_v0 *A = (Actor_v0 *)a;
+	Actor_v0 *a0 = (Actor_v0 *)a;
 	const uint16 limbPrevious = a->_cost.curpos[limb]++;
 
 	loadCostume(a->_costume);
@@ -1369,24 +1369,24 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 	if (frame == 0xFF) {
 
 		// Repeat timer has reached 0?
-		if (A->_limbFrameRepeat[limb] == 0) {
+		if (a0->_limbFrameRepeat[limb] == 0) {
 
 			// Use the previous frame
-			--A->_cost.curpos[limb];
+			--a0->_cost.curpos[limb];
 
 			// Reset the comstume command
-			A->_costCommandNew = 0xFF;
-			A->_costCommand = 0xFF;
+			a0->_costCommandNew = 0xFF;
+			a0->_costCommand = 0xFF;
 			
 			// Set the frame/start to invalid
-			A->_cost.frame[limb] = 0xFFFF;
-			A->_cost.start[limb] = 0xFFFF;
+			a0->_cost.frame[limb] = 0xFFFF;
+			a0->_cost.start[limb] = 0xFFFF;
 
 		} else {
 
 			// Repeat timer enabled?
-			if (A->_limbFrameRepeat[limb] != -1)
-				--A->_limbFrameRepeat[limb];
+			if (a0->_limbFrameRepeat[limb] != -1)
+				--a0->_limbFrameRepeat[limb];
 
 			// No, restart at frame 0
 			a->_cost.curpos[limb] = 0;

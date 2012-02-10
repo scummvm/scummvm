@@ -1633,23 +1633,23 @@ void ScummEngine::processActors() {
 
 		if (_game.version == 0) {
 			// 0x057B
-			Actor_v0 *A = (Actor_v0*) a;
-			if (A->_speaking & 1)
-				A->_speaking ^= 0xFE;
+			Actor_v0 *a0 = (Actor_v0*) a;
+			if (a0->_speaking & 1)
+				a0->_speaking ^= 0xFE;
 
 			// 0x22B5
-			if (A->_miscflags & kActorMiscFlagHide)
+			if (a0->_miscflags & kActorMiscFlagHide)
 				continue;
 
 			// Sound
-			if (A->_moving  && _currentRoom != 1 && _currentRoom != 44) {
-				if (A->_cost.soundPos == 0)
-					A->_cost.soundCounter++;
+			if (a0->_moving  && _currentRoom != 1 && _currentRoom != 44) {
+				if (a0->_cost.soundPos == 0)
+					a0->_cost.soundCounter++;
 
 				// Is this the correct location?
 				// 0x073C
-				if (v0ActorTalkArray[A->_number] & 0x3F)
-					A->_cost.soundPos = (A->_cost.soundPos + 1) % 3;
+				if (v0ActorTalkArray[a0->_number] & 0x3F)
+					a0->_cost.soundPos = (a0->_cost.soundPos + 1) % 3;
 			}
 		}
 		// Draw and animate the actors, except those w/o a costume.
