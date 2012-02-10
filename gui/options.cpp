@@ -302,7 +302,6 @@ void OptionsDialog::close() {
 			// Dialog::close) is called, to prevent crashes caused by invalid
 			// widgets being referenced or similar errors.
 			g_gui.checkScreenChange();
-			}
 		}
 
 		// Volume options
