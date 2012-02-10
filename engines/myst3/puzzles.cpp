@@ -1297,13 +1297,13 @@ void Puzzles::symbolCodesClick(int16 var) {
 			_vm->_state->setSymbolCode1CurrentSolved(true);
 		}
 
-		if (_symbolCodesCheckSolution(502, solutions[i - 1])) {
+		if (_symbolCodesCheckSolution(503, solutions[i - 1])) {
 			_vm->_state->setSymbolCode1LeftSolved(i);
 			_vm->_state->setSymbolCode1CurrentSolved(true);
 		}
 
-		if (_symbolCodesCheckSolution(507, solutions[i - 1])) {
-			_vm->_state->setSymbolCode1LeftSolved(i);
+		if (_symbolCodesCheckSolution(508, solutions[i - 1])) {
+			_vm->_state->setSymbolCode1RightSolved(i);
 			_vm->_state->setSymbolCode1CurrentSolved(true);
 		}
 	}
