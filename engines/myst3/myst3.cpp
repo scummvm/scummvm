@@ -52,6 +52,15 @@
 
 namespace Myst3 {
 
+enum MystLanguage {
+	kEnglish,
+	kDutch,
+	kFrench,
+	kGerman,
+	kItalian,
+	kSpanish
+};
+
 Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		Engine(syst), _system(syst), _gameDescription(version),
 		_db(0), _console(0), _scriptEngine(0),
@@ -99,8 +108,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
-	for (uint i = 0; i < _archivesCommon.size(); i++)
-		delete _archivesCommon[i];
+	closeArchives();
 
 	delete _menu;
 	delete _inventory;
@@ -141,11 +149,7 @@ Common::Error Myst3Engine::run() {
 	_system->showMouse(false);
 	_system->lockMouse(true);
 
-	addArchive("OVER101.m3o", false);
-	addArchive("ENGLISH.m3t", true);
-	addArchive("ENGLISH.m3u", false);
-	addArchive("LANGUAGE.m3u", false);
-	addArchive("RSRC.m3r", true);
+	openArchives();
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
@@ -199,6 +203,91 @@ void Myst3Engine::addArchive(const Common::String &file, bool mandatory) {
 		if (mandatory)
 			error("Unable to open archive %s", file.c_str());
 	}
+}
+
+void Myst3Engine::openArchives() {
+	// The language of the menus is always the same as the executable
+	// The English CD version can only display English text
+	// The non English CD versions can display their localized language and English
+	// The DVD version can display 6 different languages
+
+	Common::String menuLanguage;
+	Common::String textLanguage;
+
+	switch (getDefaultLanguage()) {
+	case Common::NL_NLD:
+		menuLanguage = "DUTCH";
+		break;
+	case Common::FR_FRA:
+		menuLanguage = "FRENCH";
+		break;
+	case Common::DE_DEU:
+		menuLanguage = "GERMAN";
+		break;
+	case Common::IT_ITA:
+		menuLanguage = "ITALIAN";
+		break;
+	case Common::ES_ESP:
+		menuLanguage = "SPANISH";
+		break;
+	case Common::JA_JPN:
+		menuLanguage = "JAPANESE";
+		break;
+	case Common::PL_POL:
+		menuLanguage = "POLISH";
+		break;
+	case Common::EN_ANY:
+	default:
+		menuLanguage = "ENGLISH";
+		break;
+	}
+
+	if (getExecutableVersion()->flags & kFlagDVD) {
+		switch (ConfMan.getInt("text_language")) {
+		case kDutch:
+			textLanguage = "DUTCH";
+			break;
+		case kFrench:
+			textLanguage = "FRENCH";
+			break;
+		case kGerman:
+			textLanguage = "GERMAN";
+			break;
+		case kItalian:
+			textLanguage = "ITALIAN";
+			break;
+		case kSpanish:
+			textLanguage = "SPANISH";
+			break;
+		case kEnglish:
+		default:
+			textLanguage = "ENGLISH";
+			break;
+		}
+	} else {
+		if (getDefaultLanguage() == Common::EN_ANY
+				|| ConfMan.getInt("text_language")) {
+			textLanguage = menuLanguage;
+		} else {
+			textLanguage = "ENGLISHjp";
+		}
+	}
+
+	addArchive("OVERMainMenuLogo.m3o", false);
+	addArchive("OVER101.m3o", false);
+	addArchive(textLanguage + ".m3t", true);
+
+	if (getExecutableVersion()->flags & kFlagDVD
+			|| getDefaultLanguage() != Common::EN_ANY)
+		addArchive(menuLanguage + ".m3u", true);
+
+	addArchive("RSRC.m3r", true);
+}
+
+void Myst3Engine::closeArchives() {
+	for (uint i = 0; i < _archivesCommon.size(); i++)
+		delete _archivesCommon[i];
+	_archivesCommon.clear();
 }
 
 HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
@@ -1138,11 +1227,42 @@ SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
 }
 
 void Myst3Engine::settingsInitDefaults() {
+	Common::Language executableLanguage = getDefaultLanguage();
+	int defaultLanguage;
+
+	switch (executableLanguage) {
+	case Common::NL_NLD:
+		defaultLanguage = kDutch;
+		break;
+	case Common::FR_FRA:
+		defaultLanguage = kFrench;
+		break;
+	case Common::DE_DEU:
+		defaultLanguage = kGerman;
+		break;
+	case Common::IT_ITA:
+		defaultLanguage = kItalian;
+		break;
+	case Common::ES_ESP:
+		defaultLanguage = kSpanish;
+		break;
+	case Common::EN_ANY:
+	default:
+		defaultLanguage = kEnglish;
+		break;
+	}
+
+	int defaultTextLanguage;
+	if (getExecutableVersion()->flags & kFlagDVD)
+		defaultTextLanguage = defaultLanguage;
+	else
+		defaultTextLanguage = executableLanguage != Common::EN_ANY;
+
 	ConfMan.registerDefault("overall_volume", Audio::Mixer::kMaxMixerVolume);
 	ConfMan.registerDefault("music_volume", Audio::Mixer::kMaxMixerVolume / 2);
 	ConfMan.registerDefault("music_frequency", 75);
-	ConfMan.registerDefault("audio_language", 2);
-	ConfMan.registerDefault("text_language", 1);
+	ConfMan.registerDefault("audio_language", defaultLanguage);
+	ConfMan.registerDefault("text_language", defaultTextLanguage);
 	ConfMan.registerDefault("water_effects", true);
 	ConfMan.registerDefault("transition_speed", 50);
 	ConfMan.registerDefault("mouse_speed", 50);
@@ -1164,6 +1284,8 @@ void Myst3Engine::settingsLoadToVars() {
 }
 
 void Myst3Engine::settingsApplyFromVars() {
+	int32 oldTextLanguage = ConfMan.getInt("text_language");
+
 	ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
 	ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
 	ConfMan.setInt("music_frequency", _state->getMusicFrequency());
@@ -1174,6 +1296,12 @@ void Myst3Engine::settingsApplyFromVars() {
 	ConfMan.setInt("mouse_speed", _state->getMouseSpeed());
 	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
 	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
+
+	// The language changed, reload the correct archives
+	if (_state->getLanguageText() != oldTextLanguage) {
+		closeArchives();
+		openArchives();
+	}
 }
 
 } // end of namespace Myst3

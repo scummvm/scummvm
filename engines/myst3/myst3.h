@@ -187,6 +187,8 @@ private:
 	void updateCursor();
 
 	void addArchive(const Common::String &file, bool mandatory);
+	void openArchives();
+	void closeArchives();
 
 	friend class Console;
 };
