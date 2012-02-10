@@ -251,7 +251,7 @@ void Actor::stopActorMoving() {
 
 	_moving = 0;
 	if (_vm->_game.version == 0)
-		((Actor_v0 *)this)->setDirection(_facing);
+		setDirection(_facing);
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
