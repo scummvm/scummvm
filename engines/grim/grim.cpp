@@ -269,6 +269,8 @@ Common::Error GrimEngine::run() {
 
 	if (splash_bm != NULL)
 		splash_bm->draw();
+	
+	g_driver->flipBuffer();
 
 	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
