@@ -62,7 +62,11 @@
 
 // 0: Use LUTs to speedup WG
 // 1: Use precise float math
+#ifdef USE_MT32EMU_ACCURATE_WG
 #define MT32EMU_ACCURATE_WG 1
+#else
+#define MT32EMU_ACCURATE_WG 0
+#endif
 
 #define MT32EMU_USE_EXTINT 0
 
