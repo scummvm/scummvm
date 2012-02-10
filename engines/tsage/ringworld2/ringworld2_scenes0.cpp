@@ -1885,7 +1885,7 @@ void Scene180::dispatch() {
 	if (_frameInc) {
 		uint32 frameNumber = R2_GLOBALS._events.getFrameNumber();
 
-		if (frameNumber >= frameNumber) {
+		if (frameNumber >= (uint32)_frameNumber) {
 			_frameInc = frameNumber - _frameNumber;
 			_frameNumber = frameNumber;
 
