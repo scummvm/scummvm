@@ -2902,14 +2902,13 @@ void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor_v0, _costCommand, sleByte, VER(84)),
-		MK_OBSOLETE(Actor_v0, _costFrame, sleByte, VER(84), VER(89)),
+		MK_OBSOLETE(Actor_v0, _costFrame, sleByte, VER(84), VER(88)),
 		MKLINE(Actor_v0, _miscflags, sleByte, VER(84)),
 		MKLINE(Actor_v0, _speaking, sleByte, VER(84)),
-		MK_OBSOLETE(Actor_v0, _speakingPrev, sleByte, VER(84), VER(89)),
-		MK_OBSOLETE(Actor_v0, _limbTemp, sleByte, VER(89), VER(89)),
+		MK_OBSOLETE(Actor_v0, _speakingPrev, sleByte, VER(84), VER(88)),
 		MKLINE(Actor_v0, _animFrameRepeat, sleByte, VER(89)),
 		MKARRAY(Actor_v0, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
-		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
+		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(89)),
 		MKEND()
 	};
 
