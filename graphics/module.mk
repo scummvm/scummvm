@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/ttf.o \
-
 	imagedec.o \
 	jpeg.o \
 	primitives.o \
