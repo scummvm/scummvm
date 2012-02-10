@@ -134,6 +134,10 @@ public:
 	bool inputEscapePressed();
 	bool inputSpacePressed();
 	bool inputTilePressed();
+
+	void settingsInitDefaults();
+	void settingsLoadToVars();
+	void settingsApplyFromVars();
 private:
 	OSystem *_system;
 	Console *_console;

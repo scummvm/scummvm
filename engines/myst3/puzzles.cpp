@@ -26,6 +26,8 @@
 #include "engines/myst3/state.h"
 #include "engines/myst3/sound.h"
 
+#include "common/config-manager.h"
+
 namespace Myst3 {
 
 Puzzles::Puzzles(Myst3Engine *vm) :
@@ -84,6 +86,15 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 		break;
 	case 16:
 		projectorUpdateCoordinates();
+		break;
+	case 17:
+		_vm->settingsLoadToVars();
+		break;
+	case 18:
+		_vm->settingsApplyFromVars();
+		break;
+	case 19:
+		settingsSave();
 		break;
 	case 20:
 		saveLoadMenu(arg0, arg1);
@@ -1568,6 +1579,8 @@ void Puzzles::projectorUpdateCoordinates() {
 	_vm->_state->setProjectorBlur(blur);
 }
 
-
+void Puzzles::settingsSave() {
+	ConfMan.flushToDisk();
+}
 
 } /* namespace Myst3 */

@@ -92,6 +92,8 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/NTSC");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/PAL");
+
+	settingsInitDefaults();
 }
 
 Myst3Engine::~Myst3Engine() {
@@ -1133,6 +1135,45 @@ SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
 	}
 
 	return result;
+}
+
+void Myst3Engine::settingsInitDefaults() {
+	ConfMan.registerDefault("overall_volume", Audio::Mixer::kMaxMixerVolume);
+	ConfMan.registerDefault("music_volume", Audio::Mixer::kMaxMixerVolume / 2);
+	ConfMan.registerDefault("music_frequency", 75);
+	ConfMan.registerDefault("audio_language", 2);
+	ConfMan.registerDefault("text_language", 1);
+	ConfMan.registerDefault("water_effects", true);
+	ConfMan.registerDefault("transition_speed", 50);
+	ConfMan.registerDefault("mouse_speed", 50);
+	ConfMan.registerDefault("zip_mode", false);
+	ConfMan.registerDefault("subtitles", false);
+}
+
+void Myst3Engine::settingsLoadToVars() {
+	_state->setOverallVolume(CLIP<uint>(ConfMan.getInt("overall_volume") * 100 / 256, 0, 100));
+	_state->setMusicVolume(CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100));
+	_state->setMusicFrequency(ConfMan.getInt("music_frequency"));
+	_state->setLanguageAudio(ConfMan.getInt("audio_language"));
+	_state->setLanguageText(ConfMan.getInt("text_language"));
+	_state->setWaterEffects(ConfMan.getBool("water_effects"));
+	_state->setTransitionSpeed(ConfMan.getInt("transition_speed"));
+	_state->setMouseSpeed(ConfMan.getInt("mouse_speed"));
+	_state->setZipModeEnabled(ConfMan.getBool("zip_mode"));
+	_state->setSubtitlesEnabled(ConfMan.getBool("subtitles"));
+}
+
+void Myst3Engine::settingsApplyFromVars() {
+	ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
+	ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
+	ConfMan.setInt("music_frequency", _state->getMusicFrequency());
+	ConfMan.setInt("audio_language", _state->getLanguageAudio());
+	ConfMan.setInt("text_language", _state->getLanguageText());
+	ConfMan.setBool("water_effects", _state->getWaterEffects());
+	ConfMan.setInt("transition_speed", _state->getTransitionSpeed());
+	ConfMan.setInt("mouse_speed", _state->getMouseSpeed());
+	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
+	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
 }
 
 } // end of namespace Myst3

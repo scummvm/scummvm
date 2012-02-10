@@ -162,6 +162,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(502, SymbolCode1LeftSolved, false)
 	VAR(507, SymbolCode1RightSolved, false)
 
+	VAR(1322, ZipModeEnabled, false)
+	VAR(1323, SubtitlesEnabled, false)
+	VAR(1324, WaterEffects, false)
+	VAR(1325, TransitionSpeed, false)
+	VAR(1326, MouseSpeed, false)
 	VAR(1327, DialogResult, false)
 
 	VAR(1337, MenuEscapePressed, false)
@@ -175,6 +180,12 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1351, MenuSaveLoadPageRight, false)
 	VAR(1352, MenuSaveLoadSelectedItem, false)
 	VAR(1353, MenuSaveLoadCurrentPage, false)
+
+	VAR(1374, OverallVolume, false)
+	VAR(1377, MusicVolume, false)
+	VAR(1380, MusicFrequency, false)
+	VAR(1393, LanguageAudio, false)
+	VAR(1394, LanguageText, false)
 
 	VAR(1399, DragLeverLimited, true)
 	VAR(1400, DragLeverLimitMin, true)

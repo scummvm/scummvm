@@ -176,6 +176,11 @@ public:
 	DECLARE_VAR(502, SymbolCode1LeftSolved)
 	DECLARE_VAR(507, SymbolCode1RightSolved)
 
+	DECLARE_VAR(1322, ZipModeEnabled)
+	DECLARE_VAR(1323, SubtitlesEnabled)
+	DECLARE_VAR(1324, WaterEffects)
+	DECLARE_VAR(1325, TransitionSpeed)
+	DECLARE_VAR(1326, MouseSpeed)
 	DECLARE_VAR(1327, DialogResult)
 
 	DECLARE_VAR(1337, MenuEscapePressed)
@@ -189,6 +194,12 @@ public:
 	DECLARE_VAR(1351, MenuSaveLoadPageRight)
 	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
 	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
+
+	DECLARE_VAR(1374, OverallVolume);
+	DECLARE_VAR(1377, MusicVolume);
+	DECLARE_VAR(1380, MusicFrequency);
+	DECLARE_VAR(1393, LanguageAudio);
+	DECLARE_VAR(1394, LanguageText);
 
 	DECLARE_VAR(1399, DragLeverLimited)
 	DECLARE_VAR(1400, DragLeverLimitMin)

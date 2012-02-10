@@ -85,6 +85,8 @@ private:
 
 	void rollercoaster();
 
+	void settingsSave();
+
 	void _drawForVarHelper(int16 var, int32 startValue, int32 endValue);
 	void _drawXFrames(uint16 frames);
 };

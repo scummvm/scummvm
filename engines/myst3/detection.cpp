@@ -94,7 +94,7 @@ class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
 		_singleid = "myst3";
-		_guioptions = GUIO_NOMIDI;
+		_guioptions = GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
