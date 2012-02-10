@@ -59,7 +59,7 @@ public:
 		_currSetup->setupCamera();
 	}
 
-	void setupLights();
+	void setupLights(const Math::Vector3d &pos);
 
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos);
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol);
@@ -70,9 +70,7 @@ public:
 
 	void setLightEnableState(bool state) {
 		_enableLights = state;
-		_lightsConfigured = false;
 	}
-	void setLightsDirty();
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
 	void setLightPosition(const char *light, const Math::Vector3d &pos);
@@ -136,8 +134,8 @@ private:
 	bool _enableLights;
 	Sector **_sectors;
 	Light *_lights;
+	Common::List<Light *> _lightsList;
 	Setup *_setups;
-	bool _lightsConfigured;
 
 	Setup *_currSetup;
 	typedef Common::List<ObjectState::Ptr> StateList;

@@ -39,8 +39,7 @@
 namespace Grim {
 
 Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
-		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
-		_lightsConfigured(false) {
+		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false) {
 
 	char header[7];
 	data->read(header, 7);
@@ -107,7 +106,6 @@ void Set::loadText(TextSplitter &ts) {
 		_setups[i].load(ts);
 	_currSetup = _setups;
 
-	_lightsConfigured = false;
 	_numSectors = -1;
 	_numLights = -1;
 	_lights = NULL;
@@ -123,8 +121,10 @@ void Set::loadText(TextSplitter &ts) {
 	ts.expectString("section: lights");
 	ts.scanString(" numlights %d", 1, &_numLights);
 	_lights = new Light[_numLights];
-	for (int i = 0; i < _numLights; i++)
+	for (int i = 0; i < _numLights; i++) {
 		_lights[i].load(ts);
+		_lightsList.push_back(&_lights[i]);
+	}
 
 	// Calculate the number of sectors
 	ts.expectString("section: sectors");
@@ -177,8 +177,10 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 
 	_numLights = data->readUint32LE();
 	_lights = new Light[_numLights];
-	for (int i = 0; i < _numLights; i++)
+	for (int i = 0; i < _numLights; i++) {
 		_lights[i].loadBinary(data);
+		_lightsList.push_back(&_lights[i]);
+	}
 
 	// bypass light stuff for now
 	_numLights = 0;
@@ -225,7 +227,7 @@ void Set::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_numLights);
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].saveState(savedState);
-    }
+	}
 }
 
 bool Set::restoreState(SaveGame *savedState) {
@@ -273,11 +275,10 @@ bool Set::restoreState(SaveGame *savedState) {
 
 	_numLights = savedState->readLESint32();
 	_lights = new Light[_numLights];
-	for (int i = 0; i < _numLights; ++i) {
-		_lights[i].restoreState(savedState);;
+	for (int i = 0; i < _numLights; i++) {
+		_lights[i].restoreState(savedState);
+		_lightsList.push_back(&_lights[i]);
 	}
-
-	_lightsConfigured = false;
 
 	return true;
 }
@@ -479,18 +480,31 @@ void Set::Setup::setupCamera() const {
 	g_driver->positionCamera(_pos, _interest);
 }
 
-void Set::setupLights() {
-	if (_lightsConfigured)
-		return;
-	_lightsConfigured = true;
+class Sorter {
+public:
+	Sorter(const Math::Vector3d &pos) {
+		_pos = pos;
+	}
+
+	bool operator()(Light *l1, Light *l2) const {
+		return (l1->_pos - _pos).getSquareMagnitude() < (l2->_pos - _pos).getSquareMagnitude();
+	}
+
+	Math::Vector3d _pos;
+};
+
+void Set::setupLights(const Math::Vector3d &pos) {
 	if (!_enableLights) {
 		g_driver->disableLights();
 		return;
 	}
 
+	// Sort the ligths from the nearest to the farthest to the pos.
+	Sorter sorter(pos);
+	Common::sort(_lightsList.begin(), _lightsList.end(), sorter);
+
 	int count = 0;
-	for (int i = 0; i < _numLights; i++) {
-		Light *l = &_lights[i];
+	foreach (Light *l, _lightsList) {
 		if (l->_enabled) {
 			g_driver->setupLight(l, count);
 			++count;
@@ -525,7 +539,6 @@ void Set::setSetup(int num) {
 	}
 	_currSetup = _setups + num;
 	g_grim->flagRefreshShadowMask(true);
-	_lightsConfigured = false;
 }
 
 void Set::drawBackground() const {
@@ -596,16 +609,11 @@ void Set::unshrinkBoxes() {
 	}
 }
 
-void Set::setLightsDirty() {
-	_lightsConfigured = false;
-}
-
 void Set::setLightIntensity(const char *light, float intensity) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._intensity = intensity;
-			_lightsConfigured = false;
 			return;
 		}
 	}
@@ -614,7 +622,6 @@ void Set::setLightIntensity(const char *light, float intensity) {
 void Set::setLightIntensity(int light, float intensity) {
 	Light &l = _lights[light];
 	l._intensity = intensity;
-	_lightsConfigured = false;
 }
 
 void Set::setLightEnabled(const char *light, bool enabled) {
@@ -622,7 +629,6 @@ void Set::setLightEnabled(const char *light, bool enabled) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._enabled = enabled;
-			_lightsConfigured = false;
 			return;
 		}
 	}
@@ -631,7 +637,6 @@ void Set::setLightEnabled(const char *light, bool enabled) {
 void Set::setLightEnabled(int light, bool enabled) {
 	Light &l = _lights[light];
 	l._enabled = enabled;
-	_lightsConfigured = false;
 }
 
 void Set::setLightPosition(const char *light, const Math::Vector3d &pos) {
@@ -639,7 +644,6 @@ void Set::setLightPosition(const char *light, const Math::Vector3d &pos) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._pos = pos;
-			_lightsConfigured = false;
 			return;
 		}
 	}
@@ -648,7 +652,6 @@ void Set::setLightPosition(const char *light, const Math::Vector3d &pos) {
 void Set::setLightPosition(int light, const Math::Vector3d &pos) {
 	Light &l = _lights[light];
 	l._pos = pos;
-	_lightsConfigured = false;
 }
 
 void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos) {
@@ -695,7 +698,6 @@ Sector *Set::getSectorBase(int id) {
 Sector *Set::getSector(const Common::String &name) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		// Do not do a exact comparation here. https://github.com/residualvm/residualvm/issues/530
 		if (strstr(sector->getName(), name.c_str())) {
 			return sector;
 		}

@@ -773,7 +773,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	// a SayLine request rather than as part of the movie!
 
 	Common::String soundName = id;
-	
+
 	if (g_grim->getGameType() == GType_GRIM)
 		soundName += ".wav";
 	else
@@ -1176,6 +1176,8 @@ void Actor::draw() {
 	}
 
 	if (!_costumeStack.empty()) {
+		g_grim->getCurrSet()->setupLights(_pos);
+
 		Costume *costume = _costumeStack.back();
 		for (int l = 0; l < MAX_SHADOWS; l++) {
 			if (!shouldDrawShadow(l))

@@ -40,6 +40,7 @@ public:
 	void normalize();
 	Vector(dim) getNormalized() const;
 	float getMagnitude() const;
+	float getSquareMagnitude() const;
 	float getDistanceTo(const Vector(dim) &point) const;
 	float dotProduct(const Vector(dim) &v) const;
 
@@ -86,11 +87,16 @@ Vector(dim) MatrixType<dim, 1>::getNormalized() const {
 
 template<int dim>
 float MatrixType<dim, 1>::getMagnitude() const {
+	return sqrt(getSquareMagnitude());
+}
+
+template<int dim>
+float MatrixType<dim, 1>::getSquareMagnitude() const {
 	float mag = 0;
 	for (int i = 0; i < dim; ++i) {
 		mag += square(getValue(i));
 	}
-	return sqrt(mag);
+	return mag;
 }
 
 template<int dim>

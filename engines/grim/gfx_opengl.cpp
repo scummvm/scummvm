@@ -571,6 +571,12 @@ void GfxOpenGL::disableLights() {
 }
 
 void GfxOpenGL::setupLight(Light *light, int lightId) {
+	int max;
+	glGetIntegerv(GL_MAX_LIGHTS, &max);
+	if (lightId >= max) {
+		return;
+	}
+
 	glEnable(GL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
