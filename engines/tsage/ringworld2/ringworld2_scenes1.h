@@ -184,7 +184,7 @@ class Scene1337 : public SceneExt {
 	class unkObj1337_1: public SceneItem {
 	public:
 		unkObj1337sub1 _arr1[4];
-		unkObj1337sub1 _arr2[7];
+		unkObj1337sub1 _arr2[8];
 		unkObj1337sub1 _arr3[1];
 		unkObj1337sub1 _arr4[1];
 
