@@ -101,7 +101,7 @@ struct Event {
 	 */
 	Point mouse;
 
-	CustomEventType customtype;
+	CustomEventType customType;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };

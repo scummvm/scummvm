@@ -172,7 +172,7 @@ MaemoSdlEventObserver::MaemoSdlEventObserver(MaemoSdlEventSource *eventSource) {
 bool MaemoSdlEventObserver::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND)
 		return false;
-	if (event.customtype == kEventClickMode) {
+	if (event.customType == kEventClickMode) {
 		assert(_eventSource);
 		_eventSource->toggleClickMode();
 		return true;
