@@ -298,7 +298,8 @@ bool Sector::isPointInSector(const Math::Vector3d &point) const {
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
-		if (edge.x() * delta.y() < edge.y() * delta.x())
+		Math::Vector3d cross = Math::Vector3d::crossProduct(edge, delta);
+		if (cross.dotProduct(_normal) < 0)
 			return false;
 	}
 	return true;
