@@ -340,7 +340,7 @@ void Myst3Engine::updateCursor() {
 
 	if (hovered) {
 		_cursor->changeCursor(hovered->cursor);
-	} else if (hoveredInventory > 0) {
+	} else if (hoveredInventory > 0 && _state->getViewType() != kMenu) {
 		_cursor->changeCursor(1);
 	} else {
 		_cursor->changeCursor(8);
@@ -364,7 +364,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			if (lookOnly) continue;
 
 			uint16 hoveredInventory = _inventory->hoveredItem();
-			if (hoveredInventory > 0) {
+			if (hoveredInventory > 0 && _state->getViewType() != kMenu) {
 				_inventory->useItem(hoveredInventory);
 				continue;
 			}
@@ -871,7 +871,7 @@ void Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rec
 	_node->loadMenuSpotItem(id, condition, rect);
 }
 
-const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type) {
+const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type) {
 	char currentRoom[8];
 	if (!room) {
 		_db->getRoomName(currentRoom, _state->getLocationRoom());

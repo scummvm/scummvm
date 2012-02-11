@@ -78,11 +78,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	}
 }
 
-void DirectorySubEntry::dump() {
-	debug("offset : %x size: %d padding : %d face : %d type : %d", _offset, _size, _metadataSize, _face, _type);
-}
-
-void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const char* room, uint16 index) {
+void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const char* room, uint32 index) {
 	char fileName[255];
 	
 	switch (_type) {

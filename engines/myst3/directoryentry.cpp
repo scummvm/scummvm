@@ -36,28 +36,17 @@ void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream, const 
 	else
 		Common::strlcpy(_roomName, room, sizeof(_roomName));
 
+	// The index is stored as a 24-bits number
 	_index = inStream.readUint16LE();
-	_unk = inStream.readByte();
+	_index |= inStream.readByte() << 16;
+
 	byte subItemCount = inStream.readByte();
 	
-	// End of directory marker ?
-	if (_unk > 2) {
-		subItemCount = 0;
-	}
-
 	_subentries.clear();
 	for (uint i = 0; i < subItemCount ; i++) {
 		DirectorySubEntry subEntry(_archive);
 		subEntry.readFromStream(inStream);
 		_subentries.push_back(subEntry);
-	}
-}
-
-void DirectoryEntry::dump() {
-	debug("index : %d unk: %d subitems : %d", _index, _unk, _subentries.size());
-
-	for (uint i = 0; i < _subentries.size(); i++) {
-		_subentries[i].dump();
 	}
 }
 

@@ -111,7 +111,7 @@ public:
 	bool canLoadGameStateCurrently();
 	Common::Error loadGameState(int slot);
 
-	const DirectorySubEntry *getFileDescription(const char* room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+	const DirectorySubEntry *getFileDescription(const char* room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type);
 	Graphics::Surface *loadTexture(uint16 id);
 
 	void goToNode(uint16 nodeID, uint transition);

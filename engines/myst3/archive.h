@@ -41,9 +41,8 @@ class Archive {
 		void _readDirectory();
 	public:
 
-		const DirectorySubEntry *getDescription(const char *room, uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+		const DirectorySubEntry *getDescription(const char *room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type);
 		Common::MemoryReadStream *dumpToMemory(uint32 offset, uint32 size);
-		void dumpDirectory();
 		void dumpToFiles();
 		
 		bool open(const char *fileName, const char *room);

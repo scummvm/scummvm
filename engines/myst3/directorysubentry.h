@@ -56,6 +56,7 @@ class DirectorySubEntry {
 			kCursor = 7,
 			kMovie = 8,
 			kStillMovie = 10,
+			kText = 11,
 			kTextMetadata = 12,
 			kNumMetadata = 13,
 			kMenuSpotItem = 69,
@@ -68,8 +69,7 @@ class DirectorySubEntry {
 		DirectorySubEntry(Archive *archive);
 
 		void readFromStream(Common::SeekableReadStream &inStream);
-		void dump();
-		void dumpToFile(Common::SeekableReadStream &inStream, const char* room, uint16 index);
+		void dumpToFile(Common::SeekableReadStream &inStream, const char* room, uint32 index);
 		Common::MemoryReadStream *getData() const;
 		uint16 getFace() const { return _face; }
 		ResourceType getType() const { return _type; }
