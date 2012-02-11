@@ -30,7 +30,7 @@ namespace Common {
 
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
-	template <typename T> \
+	template<typename T> \
 	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
 		if (_version < minVersion || _version > maxVersion) \
 			return;	\

@@ -2181,7 +2181,7 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor) {
 		wrapped_decodeFrameDelta<false>(dst, src);
 }
 
-template <bool noXor>
+template<bool noXor>
 void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 	while (1) {
 		uint8 code = *src++;

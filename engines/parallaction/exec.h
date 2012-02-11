@@ -71,7 +71,7 @@ typedef Common::Array<const ProgramOpcode*>	ProgramOpcodeSet;
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op(ProgramContext &)
 
 
-template <class OpcodeSet>
+template<class OpcodeSet>
 class Exec {
 protected:
 	OpcodeSet _opcodes;

@@ -49,7 +49,7 @@ static void saveOrLoadInt(Common::ReadStream &stream, int &i) {
 	i = stream.readSint32LE();
 }
 
-template <class S>
+template<class S>
 void TuckerEngine::saveOrLoadGameStateData(S &s) {
 	for (int i = 0; i < kFlagsTableSize; ++i) {
 		saveOrLoadInt(s, _flagsTable[i]);

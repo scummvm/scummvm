@@ -211,7 +211,7 @@ static const Common::KeyCode jkeymap[] = {
 };
 
 // floating point. use sparingly
-template <class T>
+template<class T>
 static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }

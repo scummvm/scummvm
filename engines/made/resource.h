@@ -219,7 +219,7 @@ protected:
 
 	void loadIndex(ResourceSlots *slots);
 
-	template <class T>
+	template<class T>
 	T *createResource(uint32 resType, int index) {
 		ResourceSlot *slot = getResourceSlot(resType, index);
 		if (!slot)

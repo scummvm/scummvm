@@ -178,7 +178,7 @@ protected:
 	bool keepAnimation_ns(AnimationPtr a);
 	bool keepAnimation_br(AnimationPtr a);
 
-	template <class T>
+	template<class T>
 	void freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter);
 
 public:

@@ -687,7 +687,7 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstTyp
 }
 
 #ifdef USE_RGB_COLOR
-template <int type>
+template<int type>
 void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *xmapPtr) {
 	uint16 col = READ_LE_UINT16(dataPtr);
 	if (type == kWizXMap) {
@@ -701,7 +701,7 @@ void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, cons
 	}
 }
 
-template <int type>
+template<int type>
 void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code;
@@ -804,7 +804,7 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 }
 #endif
 
-template <int type>
+template<int type>
 void Wiz::write8BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	if (bitDepth == 2) {
 		if (type == kWizXMap) {
@@ -833,7 +833,7 @@ void Wiz::write8BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const
 	}
 }
 
-template <int type>
+template<int type>
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code, *dstPtr, *dstPtrNext;
@@ -942,7 +942,7 @@ template void Wiz::decompressWizImage<kWizXMap>(uint8 *dst, int dstPitch, int ds
 template void Wiz::decompressWizImage<kWizRMap>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 template void Wiz::decompressWizImage<kWizCopy>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 
-template <int type>
+template<int type>
 void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitDepth) {
 	if (type == kWizRMap) {
 		assert(palPtr != 0);

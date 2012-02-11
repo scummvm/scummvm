@@ -507,7 +507,7 @@ void APU::Reset () {
 	Frame.Cycles = 1;
 }
 
-template <class T>
+template<class T>
 int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 	int samppos = 0;
 	while (sampcycles) {
