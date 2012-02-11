@@ -1210,7 +1210,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			// Since roughly v13 of the save games, the objs storage has changed a bit
 			for (i = _numObjectsInRoom; i < _numLocalObjects; i++)
 				_objs[i].obj_nr = 0;
-		} else if (_game.version == 0 && s->getVersion() < VER(89)) {
+		} else if (_game.version == 0 && s->getVersion() < VER(91)) {
 			for (i = 0; i < _numLocalObjects; i++) {
 				// Merge object id and type (previously stored in flags)
 				if (_objs[i].obj_nr != 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == 0 && _objs[i].flags != 0)
@@ -1504,14 +1504,14 @@ void ScummEngine_v0::saveOrLoad(Serializer *s) {
 	const SaveLoadEntry v0Entrys[] = {
 		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
 		MKLINE(ScummEngine_v0, _currentLights, sleByte, VER(78)),
-		MKLINE(ScummEngine_v0, _activeVerb, sleByte, VER(89)),
-		MKLINE(ScummEngine_v0, _activeObject, sleUint16, VER(89)),
-		MKLINE(ScummEngine_v0, _activeObject2, sleUint16, VER(89)),
-		MKLINE(ScummEngine_v0, _cmdVerb, sleByte, VER(89)),
-		MKLINE(ScummEngine_v0, _cmdObject, sleUint16, VER(89)),
-		MKLINE(ScummEngine_v0, _cmdObject2, sleUint16, VER(89)),
-		MKLINE(ScummEngine_v0, _walkToObject, sleUint16, VER(89)),
-		MKLINE(ScummEngine_v0, _walkToObjectState, sleByte, VER(89)),
+		MKLINE(ScummEngine_v0, _activeVerb, sleByte, VER(92)),
+		MKLINE(ScummEngine_v0, _activeObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _activeObject2, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdVerb, sleByte, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdObject2, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _walkToObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _walkToObjectState, sleByte, VER(92)),
 		MKEND()
 	};
  	s->saveLoadEntries(this, v0Entrys);
