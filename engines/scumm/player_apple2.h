@@ -247,7 +247,6 @@ public:
 		_sampleRate = rate;
 		_sampleConverter.setSampleRate(rate); 
 	}
-	void startMusic(int songResIndex);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
