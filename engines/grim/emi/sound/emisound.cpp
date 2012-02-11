@@ -132,7 +132,7 @@ void EMISound::setMusicState(int stateId) {
 		delete _music;
 		_music = NULL;
 	}
-	if (stateId == 0 || _musicTable[stateId]._id != stateId) {
+	if (stateId == 0 || (_musicTable != NULL && _musicTable[stateId]._id != stateId)) {
 		return;
 	}
 	Common::String filename;
