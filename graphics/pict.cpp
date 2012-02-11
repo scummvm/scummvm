@@ -466,7 +466,6 @@ void PictDecoder::skipBitsRect(Common::SeekableReadStream *stream, bool hasPalet
 	stream->readUint16BE();
 
 	uint16 packType;
-	uint16 pixelSize; // FIXME: unused
 
 	// Top two bits signify PixMap vs BitMap
 	if (rowBytes & 0xC000) {
@@ -474,7 +473,7 @@ void PictDecoder::skipBitsRect(Common::SeekableReadStream *stream, bool hasPalet
 		stream->readUint16BE();
 		packType = stream->readUint16BE();
 		stream->skip(14);
-		pixelSize = stream->readUint16BE();
+		stream->readUint16BE(); // pixelSize
 		stream->skip(16);
 
 		if (hasPalette) {
@@ -487,7 +486,6 @@ void PictDecoder::skipBitsRect(Common::SeekableReadStream *stream, bool hasPalet
 	} else {
 		// BitMap
 		packType = 0;
-		pixelSize = 1;
 	}
 
 	stream->skip(18);
