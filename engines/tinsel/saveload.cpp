@@ -22,6 +22,7 @@
  */
 
 #include "tinsel/actors.h"
+#include "tinsel/config.h"
 #include "tinsel/dialogs.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
@@ -94,12 +95,14 @@ struct SaveGameHeader {
 	uint32 ver;
 	char desc[SG_DESC_LEN];
 	TimeDate dateTime;
+	bool scnFlag;
+	byte language;
 };
 
 enum {
 	DW1_SAVEGAME_ID = 0x44575399,	// = 'DWSc' = "DiscWorld 1 ScummVM"
 	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWorld 2 ScummVM"
-	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7
+	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 1 + 1
 };
 
 #define SAVEGAME_ID (TinselV2 ? (uint32)DW2_SAVEGAME_ID : (uint32)DW1_SAVEGAME_ID)
@@ -166,6 +169,21 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 	// Perform sanity check
 	if (tmp < 0 || !correctID || hdr.ver > CURRENT_VER || hdr.size > 1024)
 		return false;
+
+	if (tmp > 0) {
+		// If there's header space left, handling syncing the Scn flag and game language
+		s.syncAsByte(hdr.scnFlag);
+		s.syncAsByte(hdr.language);
+		tmp -= 2;
+
+		if (_vm && s.isLoading()) {
+			// If the engine is loaded, ensure the Scn/Gra usage is correct, and it's the correct language
+			if ((hdr.scnFlag != ((_vm->getFeatures() & GF_SCNFILES) != 0)) ||
+					(hdr.language != _vm->_config->_language))
+				return false;
+		}
+	}
+
 	// Skip over any extra bytes
 	s.skip(tmp);
 	return true;
@@ -547,6 +565,9 @@ static void DoSave() {
 	memcpy(hdr.desc, SaveSceneDesc, SG_DESC_LEN);
 	hdr.desc[SG_DESC_LEN - 1] = 0;
 	g_system->getTimeAndDate(hdr.dateTime);
+	hdr.scnFlag = _vm->getFeatures() & GF_SCNFILES;
+	hdr.language = _vm->_config->_language;
+
 	if (!syncSaveGameHeader(s, hdr) || f->err()) {
 		SaveFailure(f);
 		return;
