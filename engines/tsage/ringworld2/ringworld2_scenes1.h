@@ -328,7 +328,7 @@ public:
 	void subPostInit();
 	void subCB59B();
 	void suggestInstructions();
-	void subCBB7B();
+	void shuffleCards();
 	void subCCF26();
 	void subCF31D();
 	void subCF979();

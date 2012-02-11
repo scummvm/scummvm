@@ -2790,7 +2790,7 @@ void Scene1337::Action4::signal() {
 		scene->_item2._object1.hide();
 		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[0]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
 			if (scene->_field3E24 < 0)
-				scene->subCBB7B();
+				scene->shuffleCards();
 			scene->_item2._object1.setPosition(Common::Point(162, 95));
 			scene->_item2._object1.show();
 
@@ -2825,7 +2825,7 @@ void Scene1337::Action4::signal() {
 		scene->_item2._object1.hide();
 		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[2]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
 			if (scene->_field3E24 < 0)
-				scene->subCBB7B();
+				scene->shuffleCards();
 			scene->_item2._object1.setPosition(Common::Point(162, 95));
 			scene->_item2._object1.show();
 
@@ -2860,7 +2860,7 @@ void Scene1337::Action4::signal() {
 		scene->_item2._object1.hide();
 		if ((scene->_arrunkObj1337[scene->_field423E]._arr1[3]._field34 == 0) && (scene->subC264B(scene->_arrunkObj1337[scene->_field423E]._arr3[0]._field34 == 0))) {
 			if (scene->_field3E24 < 0)
-				scene->subCBB7B();
+				scene->shuffleCards();
 			scene->_item2._object1.setPosition(Common::Point(162, 95));
 			scene->_item2._object1.show();
 
@@ -4238,12 +4238,59 @@ void Scene1337::subCB59B() {
 	_item1.setAction(&_action1);
 }
 
-void Scene1337::subCBB7B() {
-	warning("STUBBED Scene1337::subCBB7B()");
+void Scene1337::shuffleCards() {
+	R2_GLOBALS._sceneObjects->draw();
+
+	for (int i = 0; i <= 98; i++) {
+		if (_field3E28[i] == 0) {
+			for (int j = i + 1; j <= 98; j ++) {
+				if (_field3E28[j] != 0) {
+					_field3E28[i] = _field3E28[j];
+					_field3E28[j] = 0;
+					break;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i <= 99; i ++) {
+		if (_field3E28[i] == 0) {
+			_field3E24 = i - 1;
+			_field3E26 = 98;
+			break;
+		}
+	}
+
+	// tmpVal is never modified in the original. It looks weird but it works: at the end, the cards are suffled!
+	int tmpVal = 0;
+	int randIndx;
+	int swap;
+	for (int i = 0; i < 2000; i ++) {
+		randIndx = R2_GLOBALS._randomSource.getRandomNumber(_field3E24);
+		swap = _field3E28[tmpVal];
+		_field3E28[tmpVal] = _field3E28[randIndx];
+		_field3E28[randIndx] = swap;
+	}
+
+	_field423C = 0;
+	_item2._object1.setAction(&_action2);
+
+	while(_field423C == 0) {
+		g_globals->_scenePalette.signalListeners();
+		R2_GLOBALS._sceneObjects->draw();
+		warning("TODO: recurse on draw() and on signalListeners()?");
+		g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
+
+		// Hack to avoid eternal loop
+		// To be removed when the recurse is working properly
+		_field423C = 1;
+	}
 }
 
 void Scene1337::subCCF26() {
-	warning("STUBBED Scene1337::subCCF26()");
+	_item2._object1._moveDiff = Common::Point(30, 30);
+	shuffleCards();
+	_item1.setAction(&_action3);
 }
 
 void Scene1337::subCF31D() {
