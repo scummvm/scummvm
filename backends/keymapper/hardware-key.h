@@ -128,6 +128,21 @@ private:
 	List<const HardwareKey*> _keys;
 };
 
+struct KeyTableEntry {
+	const char *hwId;
+	KeyCode keycode;
+	uint16 ascii;
+	const char *desc;
+	KeyType preferredAction;
+	bool shiftable;
+};
+
+struct ModifierTableEntry {
+	byte flag;
+	const char *id;
+	const char *desc;
+	bool shiftable;
+};
 
 } // End of namespace Common
 

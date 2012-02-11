@@ -106,10 +106,6 @@ protected:
 	 */
 	virtual void setupIcon();
 
-#ifdef ENABLE_KEYMAPPER
-	virtual Common::HardwareKeySet *buildHardwareKeySet(const Common::KeyTableEntry keys[], const Common::ModifierTableEntry modifiers[]);
-#endif
-
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }
 	Backends::Log::Log *_logger;

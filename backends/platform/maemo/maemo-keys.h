@@ -29,7 +29,6 @@
 #include "common/keyboard.h"
 
 #include "backends/keymapper/hardware-key.h"
-#include "backends/keymapper/hardwarekeys-common.h"
 
 namespace Common {
 

@@ -131,7 +131,7 @@ void OSystem_SDL_Maemo::setupIcon() {
 
 Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
-	return OSystem_POSIX::buildHardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
+	return Common::Keymapper::buildHardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
 #else
 	return OSystem_POSIX::getHardwareKeySet();
 #endif

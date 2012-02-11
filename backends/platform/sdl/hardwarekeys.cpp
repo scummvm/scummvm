@@ -22,7 +22,6 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/hardwarekeys-common.h"
 #include "common/keyboard.h"
 
 #ifdef ENABLE_KEYMAPPER
@@ -180,40 +179,8 @@ static const ModifierTableEntry sdlModifiers[] = {
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
-	return buildHardwareKeySet(sdlKeys, sdlModifiers);
+	return Keymapper::buildHardwareKeySet(sdlKeys, sdlModifiers);
 #else
 	return 0;
 #endif
 }
-
-#ifdef ENABLE_KEYMAPPER
-Common::HardwareKeySet *OSystem_SDL::buildHardwareKeySet(const Common::KeyTableEntry keys[], const Common::ModifierTableEntry modifiers[]) {
-	HardwareKeySet *keySet = new HardwareKeySet();
-	const KeyTableEntry *key;
-	const ModifierTableEntry *mod;
-	char fullKeyId[50];
-	char fullKeyDesc[100];
-	uint16 ascii;
-
-	for (mod = modifiers; mod->id; mod++) {
-		for (key = keys; key->hwId; key++) {
-			ascii = key->ascii;
-
-			if (mod->shiftable && key->shiftable) {
-				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
-				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
-				ascii = toupper(key->ascii);
-			} else if (mod->shiftable) {
-				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
-			} else {
-				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
-			}
-
-			keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
-		}
-	}
-	return keySet;
-}
-#endif
