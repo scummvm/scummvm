@@ -106,6 +106,7 @@ public:
 
 	DECLARE_VAR(142, MovieStartFrame)
 	DECLARE_VAR(143, MovieEndFrame)
+	DECLARE_VAR(146, MovieOverrideSubtitles)
 	DECLARE_VAR(149, MovieConditionBit)
 	DECLARE_VAR(150, MoviePreloadToMemory)
 	DECLARE_VAR(151, MovieScriptDriven)
@@ -195,11 +196,14 @@ public:
 	DECLARE_VAR(1352, MenuSaveLoadSelectedItem)
 	DECLARE_VAR(1353, MenuSaveLoadCurrentPage)
 
-	DECLARE_VAR(1374, OverallVolume);
-	DECLARE_VAR(1377, MusicVolume);
-	DECLARE_VAR(1380, MusicFrequency);
-	DECLARE_VAR(1393, LanguageAudio);
-	DECLARE_VAR(1394, LanguageText);
+	DECLARE_VAR(1374, OverallVolume)
+	DECLARE_VAR(1377, MusicVolume)
+	DECLARE_VAR(1380, MusicFrequency)
+	DECLARE_VAR(1393, LanguageAudio)
+	DECLARE_VAR(1394, LanguageText)
+
+	DECLARE_VAR(1396, HotspotHovered)
+	DECLARE_VAR(1397, SpotSubtitle)
 
 	DECLARE_VAR(1399, DragLeverLimited)
 	DECLARE_VAR(1400, DragLeverLimitMin)

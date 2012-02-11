@@ -23,6 +23,8 @@
 #ifndef MYST3_ROOM_H
 #define MYST3_ROOM_H
 
+#include "engines/myst3/gfx.h"
+
 #include "common/array.h"
 #include "common/rect.h"
 
@@ -33,6 +35,7 @@ namespace Myst3 {
 
 class Texture;
 class Myst3Engine;
+class Subtitles;
 
 class Face {
 	public:
@@ -117,11 +120,12 @@ class SunSpot {
 		float radius;
 };
 
-class Node {
+class Node : Drawable {
 	protected:
 		Myst3Engine *_vm;
 		Face *_faces[6];
 		Common::Array<SpotItem *> _spotItems;
+		Subtitles *_subtitles;
 
 	public:
 		Node(Myst3Engine *vm, uint16 id);
@@ -129,9 +133,13 @@ class Node {
 
 		void update();
 		virtual void draw() = 0;
+		void drawOverlay();
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
 		void loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+
+		void loadSubtitles(uint32 id);
+		bool hasSubtitlesToDraw();
 
 		void dumpFaceMask(uint16 index, int face);
 };

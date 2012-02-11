@@ -21,7 +21,8 @@ MODULE_OBJS := \
 	scene.o \
 	script.o \
 	sound.o \
-	state.o
+	state.o \
+	subtitles.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)

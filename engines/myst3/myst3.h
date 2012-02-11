@@ -139,6 +139,7 @@ public:
 
 	void addSpotItem(uint16 id, uint16 condition, bool fade);
 	void addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+	void loadNodeSubtitles(uint32 id);
 
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,
 			uint16 color, uint16 var, bool varControlledIntensity, uint16 radius);
@@ -189,6 +190,8 @@ private:
 	void addArchive(const Common::String &file, bool mandatory);
 	void openArchives();
 	void closeArchives();
+
+	bool isInventoryVisible();
 
 	friend class Console;
 };

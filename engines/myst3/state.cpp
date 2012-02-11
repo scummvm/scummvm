@@ -80,7 +80,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(143, MovieOverrideEndFrame, true)
 	VAR(144, MovieVolume1, true)
 	VAR(145, MovieVolume2, true)
-	VAR(146, MovieUnk146, true)
+	VAR(146, MovieOverrideSubtitles, false)
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
 	VAR(149, MovieConditionBit, true)
@@ -186,6 +186,9 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1380, MusicFrequency, false)
 	VAR(1393, LanguageAudio, false)
 	VAR(1394, LanguageText, false)
+
+	VAR(1396, HotspotHovered, false)
+	VAR(1397, SpotSubtitle, false)
 
 	VAR(1399, DragLeverLimited, true)
 	VAR(1400, DragLeverLimitMin, true)

@@ -25,7 +25,7 @@
 
 namespace Myst3 {
 
-bool HotSpot::isPointInRectsCube(const Common::Point &p) {
+int32 HotSpot::isPointInRectsCube(const Common::Point &p) {
 	for (uint j = 0; j < rects.size(); j++) {
 		Common::Rect rect = Common::Rect(
 				rects[j].centerHeading - rects[j].width / 2,
@@ -39,10 +39,10 @@ bool HotSpot::isPointInRectsCube(const Common::Point &p) {
 			lookAt.x += 360;
 
 		if (rect.contains(lookAt))
-			return true;
+			return j;
 	}
 
-	return false;
+	return -1;
 }
 
 int32 HotSpot::isPointInRectsFrame(GameState *state, const Common::Point &p) {
@@ -73,7 +73,7 @@ bool HotSpot::isEnabled(GameState *state, uint16 var) {
 		return false;
 
 	if (var == 0)
-		return cursor < 12;
+		return cursor <= 13;
 	else
 		return cursor == var;
 }

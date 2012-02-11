@@ -24,6 +24,7 @@
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
+#include "engines/myst3/subtitles.h"
 
 #include "common/debug.h"
 #include "common/rect.h"
@@ -76,7 +77,8 @@ Face::~Face() {
 }
 
 Node::Node(Myst3Engine *vm, uint16 id) :
-	_vm(vm) {
+	_vm(vm),
+	_subtitles(0) {
 	for (uint i = 0; i < 6; i++)
 		_faces[i] = 0;
 }
@@ -134,6 +136,8 @@ Node::~Node() {
 	for (int i = 0; i < 6; i++) {
 		delete _faces[i];
 	}
+
+	delete _subtitles;
 }
 
 void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
@@ -187,6 +191,25 @@ void Node::loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rec
 	spotItem->addFace(spotItemFace);
 
 	_spotItems.push_back(spotItem);
+}
+
+void Node::loadSubtitles(uint32 id) {
+	_subtitles = new Subtitles(_vm, id);
+}
+
+bool Node::hasSubtitlesToDraw() {
+	if (!_subtitles)
+		return false;
+
+	return _vm->_state->getSpotSubtitle() > 0;
+}
+
+void Node::drawOverlay() {
+	if (hasSubtitlesToDraw()) {
+		uint subId = _vm->_state->getSpotSubtitle();
+		_subtitles->setFrame(15 * subId + 1);
+		_subtitles->drawOverlay();
+	}
 }
 
 void Node::update() {

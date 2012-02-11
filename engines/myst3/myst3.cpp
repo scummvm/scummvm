@@ -291,6 +291,9 @@ void Myst3Engine::closeArchives() {
 }
 
 HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
+	_state->setHotspotHovered(false);
+	_state->setHotspotActiveRect(0);
+
 	if (_state->getViewType() == kCube) {
 		float pitch, heading;
 		_cursor->getDirection(pitch, heading);
@@ -298,8 +301,13 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 		Common::Point mouse = Common::Point((int16)heading, (int16)pitch);
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			if (nodeData->hotspots[j].isPointInRectsCube(mouse)
+			int32 hitRect = nodeData->hotspots[j].isPointInRectsCube(mouse);
+			if (hitRect >= 0
 					&& nodeData->hotspots[j].isEnabled(_state, var)) {
+				if (nodeData->hotspots[j].rects.size() > 1) {
+					_state->setHotspotHovered(true);
+					_state->setHotspotActiveRect(hitRect);
+				}
 				return &nodeData->hotspots[j];
 			}
 		}
@@ -323,7 +331,10 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse);
 			if (hitRect >= 0
 					&& nodeData->hotspots[j].isEnabled(_state, var)) {
-				_state->setHotspotActiveRect(hitRect);
+				if (nodeData->hotspots[j].rects.size() > 1) {
+					_state->setHotspotHovered(true);
+					_state->setHotspotActiveRect(hitRect);
+				}
 				return &nodeData->hotspots[j];
 			}
 		}
@@ -340,7 +351,7 @@ void Myst3Engine::updateCursor() {
 
 	if (hovered) {
 		_cursor->changeCursor(hovered->cursor);
-	} else if (hoveredInventory > 0 && _state->getViewType() != kMenu) {
+	} else if (isInventoryVisible() && hoveredInventory > 0) {
 		_cursor->changeCursor(1);
 	} else {
 		_cursor->changeCursor(8);
@@ -364,7 +375,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			if (lookOnly) continue;
 
 			uint16 hoveredInventory = _inventory->hoveredItem();
-			if (hoveredInventory > 0 && _state->getViewType() != kMenu) {
+			if (isInventoryVisible() && hoveredInventory > 0) {
 				_inventory->useItem(hoveredInventory);
 				continue;
 			}
@@ -492,8 +503,10 @@ void Myst3Engine::drawFrame() {
 			_scene->drawSunspotFlare(flare);
 
 		_scene->drawBlackBorders();
-		_inventory->draw();
 	}
+
+	if (isInventoryVisible())
+		_inventory->draw();
 
 	// Draw overlay 2D movies
 	for (uint i = 0; i < _movies.size(); i++) {
@@ -504,12 +517,27 @@ void Myst3Engine::drawFrame() {
 		_drawables[i]->drawOverlay();
 	}
 
+	// Draw spot subtitles
+	if (_node) {
+		_node->drawOverlay();
+	}
+
 	if (_cursor->isVisible())
 		_cursor->draw();
 
 	_system->updateScreen();
 	_system->delayMillis(10);
 	_state->updateFrameCounters();
+}
+
+bool Myst3Engine::isInventoryVisible() {
+	if (_state->getViewType() == kMenu)
+		return false;
+
+	if (_node && _node->hasSubtitlesToDraw())
+		return false;
+
+	return true;
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
@@ -864,11 +892,21 @@ void Myst3Engine::setMovieLooping(uint16 id, bool loop) {
 }
 
 void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
+	assert(_node);
+
 	_node->loadSpotItem(id, condition, fade);
 }
 
 void Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+	assert(_node);
+
 	_node->loadMenuSpotItem(id, condition, rect);
+}
+
+void Myst3Engine::loadNodeSubtitles(uint32 id) {
+	assert(_node);
+
+	_node->loadSubtitles(id);
 }
 
 const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type) {

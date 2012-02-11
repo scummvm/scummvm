@@ -20,45 +20,41 @@
  *
  */
 
-#ifndef HOTSPOT_H_
-#define HOTSPOT_H_
+#ifndef SUBTITLES_H_
+#define SUBTITLES_H_
 
-#include "common/rect.h"
+#include "engines/myst3/gfx.h"
+
 #include "common/array.h"
 
 namespace Myst3 {
 
-class GameState;
+class Myst3Engine;
 
-struct Opcode {
-	uint8 op;
-	Common::Array<int16> args;
-};
-
-struct CondScript {
-	uint16 condition;
-	Common::Array<Opcode> script;
-};
-
-struct PolarRect {
-	int16 centerPitch;
-	int16 centerHeading;
-	int16 height;
-	int16 width;
-};
-
-class HotSpot {
+class Subtitles : public Drawable {
 public:
-	int16 condition;
-	Common::Array<PolarRect> rects;
-	int16 cursor;
-	Common::Array<Opcode> script;
+	Subtitles(Myst3Engine *vm, uint32 id);
+	virtual ~Subtitles();
 
-	int32 isPointInRectsCube(const Common::Point &p);
-	int32 isPointInRectsFrame(GameState *state, const Common::Point &p);
-	bool isEnabled(GameState *state, uint16 var = 0);
+	void setFrame(int32 frame);
+	void drawOverlay();
+
+private:
+	struct Phrase {
+		uint32 offset;
+		int32 frame;
+		Common::String string;
+	};
+
+	Myst3Engine *_vm;
+	uint32 _id;
+
+	Common::Array<Phrase> _phrases;
+
+	int32 _frame;
+	Graphics::Surface *_surface;
+	Texture *_texture;
 };
-
 
 } /* namespace Myst3 */
-#endif /* HOTSPOT_H_ */
+#endif /* SUBTITLES_H_ */
