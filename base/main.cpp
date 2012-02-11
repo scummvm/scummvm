@@ -271,7 +271,10 @@ static void setupKeymapper(OSystem &system) {
 	// Query backend for hardware keys and register them
 	mapper->registerHardwareKeySet(keySet);
 
+	// Get the platform-specific global keymap (if it exists)
 	Keymap *platformGlobalKeymap = system.getGlobalKeymap();
+
+	// Define the default global keymap if the platform-specific one didn't override it
 	if (!platformGlobalKeymap || (platformGlobalKeymap && platformGlobalKeymap->getName() != kGlobalKeymapName)) {
 		Keymap *defaultGlobalKeymap = new Keymap(kGlobalKeymapName);
 
@@ -302,6 +305,7 @@ static void setupKeymapper(OSystem &system) {
 		mapper->addGlobalKeymap(defaultGlobalKeymap);
 		mapper->pushKeymap(kGlobalKeymapName, true);
 	}
+	// Define the platform-specific global keymap if it exists
 	if (platformGlobalKeymap) {
 		String platformGlobalKeymapName = platformGlobalKeymap->getName();
 		assert(!platformGlobalKeymapName.empty());
