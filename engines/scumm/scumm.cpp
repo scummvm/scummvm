@@ -151,9 +151,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_fileHandle = 0;
 
 	// Init all vars
-	_v0ObjectIndex = false;
-	_v0ObjectInInventory = false;
-	_v0ObjectFlag = 0;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -266,7 +263,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
-	_currentLights = 0;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;
@@ -701,10 +697,6 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 
 	_inventoryOffset = 0;
 
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 0;
-
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
 	VAR_SENTENCE_OBJECT2 = 0xFF;
@@ -719,19 +711,18 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
-	_verbExecuting = false;
-	_verbPickup = false;
 	_currentMode = 0;
+	_currentLights = 0;
 
+	_activeVerb = kVerbNone;
+	_activeObject = 0;
 	_activeObject2 = 0;
-	_activeObjectIndex = 0;
-	_activeObject2Index = 0;
-	_activeInvExecute = false;
-	_activeObject2Inv = false;
-	_activeObjectObtained = false;
-	_activeObject2Obtained = false;
 
-	VAR_ACTIVE_ACTOR = 0xFF;
+	_cmdVerb = kVerbNone;
+	_cmdObject = 0;
+	_cmdObject2 = 0;
+
+	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
 	VAR_ACTIVE_VERB = 0xFF;
 }
@@ -1034,7 +1025,7 @@ Common::Error ScummEngine::init() {
 
 	// The	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
-	// This is the case of the NES, C64 and Mac versions of certain games.
+	// This is the case of the NES, v0 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
 	// are treated like any other SCUMM game.
 	if (_filenamePattern.genMethod == kGenUnchanged) {
@@ -1388,8 +1379,8 @@ void ScummEngine::setupCostumeRenderer() {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
 	} else if (_game.version == 0) {
-		_costumeRenderer = new C64CostumeRenderer(this);
-		_costumeLoader = new C64CostumeLoader(this);
+		_costumeRenderer = new V0CostumeRenderer(this);
+		_costumeLoader = new V0CostumeLoader(this);
 	} else if (_game.platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
@@ -1468,7 +1459,7 @@ void ScummEngine::resetScumm() {
 	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; ++i) {
 		if (_game.version == 0)
-			_actors[i] = new ActorC64(this, i);
+			_actors[i] = new Actor_v0(this, i);
 		else if (_game.version <= 2)
 			_actors[i] = new Actor_v2(this, i);
 		else if (_game.version == 3)
@@ -1972,6 +1963,14 @@ Common::Error ScummEngine::go() {
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
+
+		// WORKAROUND: walking speed in the original v0/v1 interpreter 
+		// is sometimes slower (e.g. during scrolling) than in ScummVM.
+		// This is important for the door-closing action in the dungeon,
+		// otherwise (delta < 6) a single kid is able to escape. 
+		if ((_game.version == 0 && isScriptRunning(132)) || 
+			(_game.version == 1 && isScriptRunning(137)))
+			delta = 6;
 
 		// Wait...
 		waitForTimer(delta * 1000 / 60 - diff);

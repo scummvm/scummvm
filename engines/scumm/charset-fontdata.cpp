@@ -420,7 +420,7 @@ static const byte germanCharsetDataV2[] = {
 	126, 10,
 };
 
-// German C64 MM.
+// German v0 MM.
 static const byte germanCharsetDataV0[] = {
 	36, 11,
 	42, 12,

@@ -401,7 +401,7 @@ void ScummEngine_v2::decodeParseString() {
 	_string[textSlot].overhead = false;
 
 	if (_game.id == GID_MANIAC && _actorToPrintStrFor == 0xFF) {
-		if (_game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			_string[textSlot].color = 14;
 		} else if (_game.features & GF_DEMO) {
 			_string[textSlot].color = (_game.version == 2) ? 15 : 1;
@@ -412,7 +412,7 @@ void ScummEngine_v2::decodeParseString() {
 }
 
 int ScummEngine_v2::readVar(uint var) {
-	if (var >= 14 && var <= 16)
+	if (_game.version >= 1 && var >= 14 && var <= 16)
 		var = _scummVars[var];
 
 	assertRange(0, var, _numVariables - 1, "variable (reading)");
@@ -953,39 +953,7 @@ void ScummEngine_v2::o2_doSentence() {
 	}
 }
 
-void ScummEngine_v2::o2_drawSentence() {
-	Common::Rect sentenceline;
-	const byte *temp;
-	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
-
-	if (!((_userState & 32) || (_game.platform == Common::kPlatformNES && _userState & 0xe0)))
-		return;
-
-	if (getResourceAddress(rtVerb, slot))
-		_sentenceBuf = (char *)getResourceAddress(rtVerb, slot);
-	else
-		return;
-
-	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
-		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
-		if (temp) {
-			_sentenceBuf += " ";
-			_sentenceBuf += (const char *)temp;
-		}
-
-		// For V1 games, the engine must compute the preposition.
-		// In all other Scumm versions, this is done by the sentence script.
-		if ((_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
-			if (_verbs[slot].prep == 0xFF) {
-				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
-				assert(ptr);
-				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr + 12) >> 5);
-			} else
-				VAR(VAR_SENTENCE_PREPOSITION) = _verbs[slot].prep;
-		}
-	}
-
-	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
+void ScummEngine_v2::drawPreposition(int index) {
 		// The prepositions, like the fonts, were hard code in the engine. Thus
 		// we have to do that, too, and provde localized versions for all the
 		// languages MM/Zak are available in.
@@ -1017,7 +985,44 @@ void ScummEngine_v2::o2_drawSentence() {
 		if (_game.platform == Common::kPlatformNES) {
 			_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
 		} else
-			_sentenceBuf += prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)];
+			_sentenceBuf += prepositions[lang][index];
+}
+
+void ScummEngine_v2::o2_drawSentence() {
+	Common::Rect sentenceline;
+	const byte *temp;
+	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
+
+	if (!((_userState & USERSTATE_IFACE_SENTENCE) || 
+	      (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
+		return;
+
+	if (getResourceAddress(rtVerb, slot))
+		_sentenceBuf = (char *)getResourceAddress(rtVerb, slot);
+	else
+		return;
+
+	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
+		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
+		if (temp) {
+			_sentenceBuf += " ";
+			_sentenceBuf += (const char *)temp;
+		}
+
+		// For V1 games, the engine must compute the preposition.
+		// In all other Scumm versions, this is done by the sentence script.
+		if ((_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
+			if (_verbs[slot].prep == 0xFF) {
+				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
+				assert(ptr);
+				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr + 12) >> 5);
+			} else
+				VAR(VAR_SENTENCE_PREPOSITION) = _verbs[slot].prep;
+		}
+	}
+
+	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
+		drawPreposition(VAR(VAR_SENTENCE_PREPOSITION));
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
@@ -1186,11 +1191,7 @@ void ScummEngine_v2::o2_startScript() {
 	runScript(script, 0, 0, 0);
 }
 
-void ScummEngine_v2::o2_stopScript() {
-	int script;
-
-	script = getVarOrDirectByte(PARAM_1);
-
+void ScummEngine_v2::stopScriptCommon(int script) {
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
@@ -1211,26 +1212,31 @@ void ScummEngine_v2::o2_stopScript() {
 		stopScript(script);
 }
 
+void ScummEngine_v2::o2_stopScript() {
+	stopScriptCommon(getVarOrDirectByte(PARAM_1));
+}
+
 void ScummEngine_v2::o2_panCameraTo() {
 	panCameraTo(getVarOrDirectByte(PARAM_1) * V12_X_MULTIPLIER, 0);
 }
 
+void ScummEngine_v2::walkActorToObject(int actor, int obj) {
+	int x, y, dir;
+	getObjectXYPos(obj, x, y, dir);
+
+	Actor *a = derefActor(actor, "walkActorToObject");
+	AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+	x = r.x;
+	y = r.y;
+
+	a->startWalkActor(x, y, dir);
+}
+
 void ScummEngine_v2::o2_walkActorToObject() {
-	int obj;
-	Actor *a;
-
-	_v0ObjectFlag = 0;
-
-	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorToObject");
-	obj = getVarOrDirectWord(PARAM_2);
+	int actor = getVarOrDirectByte(PARAM_1);
+	int obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		int x, y, dir;
-		getObjectXYPos(obj, x, y, dir);
-		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
-		x = r.x;
-		y = r.y;
-
-		a->startWalkActor(x, y, dir);
+		walkActorToObject(actor, obj);
 	}
 }
 
@@ -1298,7 +1304,7 @@ void ScummEngine_v2::o2_findObject() {
 	int x = getVarOrDirectByte(PARAM_1) * V12_X_MULTIPLIER;
 	int y = getVarOrDirectByte(PARAM_2) * V12_Y_MULTIPLIER;
 	obj = findObject(x, y);
-	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & 0x40)) {
+	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & USERSTATE_IFACE_INVENTORY)) {
 		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4)
 			obj = findInventory(VAR(VAR_EGO), _mouseOverBoxV2 + _inventoryOffset + 1);
 	}
@@ -1310,7 +1316,7 @@ void ScummEngine_v2::o2_getActorX() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjX(a));
+	setResult(getObjX(actorToObj(a)));
 }
 
 void ScummEngine_v2::o2_getActorY() {
@@ -1318,7 +1324,7 @@ void ScummEngine_v2::o2_getActorY() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjY(a));
+	setResult(getObjY(actorToObj(a)));
 }
 
 void ScummEngine_v2::o2_isGreater() {
@@ -1480,7 +1486,9 @@ void ScummEngine_v2::o2_cutscene() {
 	VAR(VAR_CURSORSTATE) = 200;
 
 	// Hide inventory, freeze scripts, hide cursor
-	setUserState(15);
+	setUserState(USERSTATE_SET_IFACE | 
+		USERSTATE_SET_CURSOR | 
+		USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON);
 
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
@@ -1499,7 +1507,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
 
 	// Reset user state to values before cutscene
-	setUserState(vm.cutSceneData[0] | 7);
+	setUserState(vm.cutSceneData[0] | USERSTATE_SET_IFACE | USERSTATE_SET_CURSOR | USERSTATE_SET_FREEZE);
 
 	if ((_game.id == GID_MANIAC) && !(_game.platform == Common::kPlatformNES)) {
 		camera._mode = (byte) vm.cutSceneData[3];
@@ -1519,7 +1527,7 @@ void ScummEngine_v2::o2_beginOverride() {
 
 	// Skip the jump instruction following the override instruction
 	fetchScriptByte();
-	fetchScriptWord();
+	ScummEngine::fetchScriptWord();
 }
 
 void ScummEngine_v2::o2_chainScript() {
@@ -1565,24 +1573,24 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 }
 
 void ScummEngine_v2::setUserState(byte state) {
-	if (state & 4) {						// Userface
+	if (state & USERSTATE_SET_IFACE) {			// Userface
 		if (_game.platform == Common::kPlatformNES)
-			_userState = (_userState & ~0xE0) | (state & 0xE0);
+			_userState = (_userState & ~USERSTATE_IFACE_ALL) | (state & USERSTATE_IFACE_ALL);
 		else
-			_userState = state & (32 | 64 | 128);
+			_userState = state & USERSTATE_IFACE_ALL;
 	}
 
-	if (state & 1) {						// Freeze
-		if (state & 8)
+	if (state & USERSTATE_SET_FREEZE) {		// Freeze
+		if (state & USERSTATE_FREEZE_ON)
 			freezeScripts(0);
 		else
 			unfreezeScripts();
 	}
 
-	if (state & 2) {						// Cursor Show/Hide
+	if (state & USERSTATE_SET_CURSOR) {			// Cursor Show/Hide
 		if (_game.platform == Common::kPlatformNES)
-			_userState = (_userState & ~0x10) | (state & 0x10);
-		if (state & 16) {
+			_userState = (_userState & ~USERSTATE_CURSOR_ON) | (state & USERSTATE_CURSOR_ON);
+		if (state & USERSTATE_CURSOR_ON) {
 			_userPut = 1;
 			_cursor.state = 1;
 		} else {

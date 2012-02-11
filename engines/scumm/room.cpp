@@ -747,7 +747,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 			}
 
 			ptr = roomptr + *(roomptr + 0x15);
-			size = numOfBoxes * SIZEOF_BOX_C64 + 1;
+			size = numOfBoxes * SIZEOF_BOX_V0 + 1;
 
 			_res->createResource(rtMatrix, 2, size + 1);
 			getResourceAddress(rtMatrix, 2)[0] = numOfBoxes;

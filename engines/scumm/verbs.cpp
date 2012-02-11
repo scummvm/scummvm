@@ -41,46 +41,57 @@ struct VerbSettings {
 	int id;
 	int x_pos;
 	int y_pos;
-	int prep;
 	const char *name;
 };
 
 static const VerbSettings v0VerbTable_English[] = {
-	{ 1,  8, 0,   0, "Open"},
-	{ 2,  8, 1,   0, "Close"},
-	{ 3,  0, 2,   4, "Give"},
-	{ 4, 32, 0,   0, "Turn on"},
-	{ 5, 32, 1,   0, "Turn off"},
-	{ 6, 32, 2,   2, "Fix"},
-	{ 7, 24, 0,   0, "New Kid"},
-	{ 8, 24, 1,   2, "Unlock"},
-	{ 9,  0, 0,   0, "Push"},
-	{10,  0, 1,   0, "Pull"},
-	{11, 24, 2, 255, "Use"},
-	{12,  8, 2,   0, "Read"},
-	{13, 15, 0,   0, "Walk to"},
-	{14, 15, 1,   0, "Pick up"},
-	{15, 15, 2,   0, "What is"}
+	{kVerbOpen,     8, 0, "Open"},
+	{kVerbClose,    8, 1, "Close"},
+	{kVerbGive,     0, 2, "Give"},
+	{kVerbTurnOn,  32, 0, "Turn on"},
+	{kVerbTurnOff, 32, 1, "Turn off"},
+	{kVerbFix,     32, 2, "Fix"},
+	{kVerbNewKid,  24, 0, "New Kid"},
+	{kVerbUnlock,  24, 1, "Unlock"},
+	{kVerbPush,     0, 0, "Push"},
+	{kVerbPull,     0, 1, "Pull"},
+	{kVerbUse,     24, 2, "Use"},
+	{kVerbRead,     8, 2, "Read"},
+	{kVerbWalkTo,  15, 0, "Walk to"},
+	{kVerbPickUp,  15, 1, "Pick up"},
+	{kVerbWhatIs,  15, 2, "What is"}
 };
 
-// FIXME: Replace * with the correct character
 static const VerbSettings v0VerbTable_German[] = {
-	{ 1,  7, 0,   0, "$ffne"},
-	{ 2, 13, 1,   0, "Schlie*e"},
-	{ 3,  0, 2,   4, "Gebe"},
-	{ 4, 37, 1,   0, "Ein"},
-	{ 5, 37, 0,   0, "Aus"},
-	{ 6, 23, 1,   2, "Repariere"},
-	{ 7, 34, 2,   0, "Person"},
-	{ 8, 23, 0,   2, "Schlie*e auf"},
-	{ 9,  0, 0,   0, "Dr<cke"},
-	{10,  0, 1,   0, "Ziehe"},
-	{11, 23, 2, 255, "Benutz"},
-	{12,  7, 2,   0, "Lese"},
-	{13, 13, 0,   0, "Gehe zu"},
-	{14,  7, 1,   0, "Nimm"},
-	{15, 13, 2,   0, "Was ist"}
+	{kVerbOpen,     7, 0, "$ffne"},
+	{kVerbClose,   13, 1, "Schlie*e"},
+	{kVerbGive,     0, 2, "Gebe"},
+	{kVerbTurnOn,  37, 1, "Ein"},
+	{kVerbTurnOff, 37, 0, "Aus"},
+	{kVerbFix,     23, 1, "Repariere"},
+	{kVerbNewKid,  34, 2, "Person"},
+	{kVerbUnlock,  23, 0, "Schlie*e auf"},
+	{kVerbPush,     0, 0, "Dr<cke"},
+	{kVerbPull,     0, 1, "Ziehe"},
+	{kVerbUse,     23, 2, "Benutz"},
+	{kVerbRead,     7, 2, "Lese"},
+	{kVerbWalkTo,  13, 0, "Gehe zu"},
+	{kVerbPickUp,   7, 1, "Nimm"},
+	{kVerbWhatIs,  13, 2, "Was ist"}
 };
+
+int ScummEngine_v0::verbPrepIdType(int verbid) {
+	switch (verbid) {
+	case kVerbUse: // depends on object1
+		return kVerbPrepObject;
+	case kVerbGive: 
+		return kVerbPrepTo;
+	case kVerbUnlock: case kVerbFix:
+		return kVerbPrepWith;
+	default:
+		return kVerbPrepNone;
+	}
+}
 
 void ScummEngine_v0::resetVerbs() {
 	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
@@ -112,62 +123,22 @@ void ScummEngine_v0::resetVerbs() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
-		vs->prep = vtable[i - 1].prep;
+		vs->prep = verbPrepIdType(vtable[i - 1].id);
 		vs->curRect.left = vtable[i - 1].x_pos * 8;
 		vs->curRect.top = vtable[i - 1].y_pos * 8 + virt->topline + 8;
 		loadPtrToResource(rtVerb, i, (const byte*)vtable[i - 1].name);
 	}
 }
 
-void ScummEngine_v0::setNewKidVerbs() {
-	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
-	VerbSlot *vs;
-	int i;
-
-	for (i = 1; i < 16; i++)
-		killVerb(i);
-
-	for (i = 1; i < 4; i++) {
-		vs = &_verbs[i];
-		vs->verbid = i;
-		vs->color = 5;
-		vs->hicolor = 7;
-		vs->dimcolor = 11;
-		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0]._default.charset;
-		vs->curmode = 1;
-		vs->saveid = 0;
-		vs->key = 0;
-		vs->center = 0;
-		vs->imgindex = 0;
-		vs->prep = 0;
-		vs->curRect.left = (i * 8) * 8;
-		vs->curRect.top = virt->topline + 8;
-
-		Actor *a = derefActor(VAR(96 + i), "setNewKidVerbs");
-		loadPtrToResource(rtVerb, i, (const byte*)a->getActorName());
-	}
-	setUserState(191);
-}
-
 void ScummEngine_v0::switchActor(int slot) {
-	resetSentence(false);
+	resetSentence();
 
-	if (_currentRoom == 45)
-		return;
-
-	// radiation suit? don't let the player switch
-	if (VAR(VAR_EGO) == 8)
-		return;
-
-	// verbs disabled? or just new kid button?
-	if (_currentMode == 0 || _currentMode == 1 || _currentMode == 2)
+	// actor switching only allowed during normal gamplay (not cutscene, ...)
+	if (_currentMode != kModeNormal)
 		return;
 
 	VAR(VAR_EGO) = VAR(97 + slot);
-	resetVerbs();
 	actorFollowCamera(VAR(VAR_EGO));
-	setUserState(247);
 }
 
 void ScummEngine_v2::initV2MouseOver() {
@@ -301,7 +272,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	int i, x, y, new_box = -1;
 
 	// Don't do anything unless the inventory is active
-	if (!(_userState & 64)) {
+	if (!(_userState & USERSTATE_IFACE_INVENTORY)) {
 		_mouseOverBoxV2 = -1;
 		return;
 	}
@@ -354,14 +325,14 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	}
 }
 
-void ScummEngine_v2::checkV2Inventory(int x, int y) {
+int ScummEngine_v2::checkV2Inventory(int x, int y) {
 	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
 	y -= _virtscr[kVerbVirtScreen].topline;
 
 	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK))
-		return;
+		return 0;
 
 	if (_mouseOverBoxesV2[kInventoryUpArrow].rect.contains(x, y)) {
 		if (_inventoryOffset >= 2) {
@@ -382,18 +353,9 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	}
 
 	if (object >= 4)
-		return;
+		return 0;
 
-	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
-
-	if (object > 0) {
-		if (_game.version == 0) {
-			_activeInventory = object;
-
-		} else {
-			runInputScript(kInventoryClickArea, object, 0);
-		}
-	}
+	return findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 }
 
 void ScummEngine_v2::redrawV2Inventory() {
@@ -406,7 +368,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 	_mouseOverBoxV2 = -1;
 
-	if (!(_userState & 64))	// Don't draw inventory unless active
+	if (!(_userState & USERSTATE_IFACE_INVENTORY))	// Don't draw inventory unless active
 		return;
 
 	// Clear on all invocations
@@ -431,9 +393,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 		_string[1].right = _mouseOverBoxesV2[i].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[i].color;
 
-		_v0ObjectInInventory = true;
 		const byte *tmp = getObjOrActorName(obj);
-		_v0ObjectInInventory = false;
 		assert(tmp);
 
 		// Prevent inventory entries from overflowing by truncating the text
@@ -472,7 +432,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 }
 
 void ScummEngine::redrawVerbs() {
-	if (_game.version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
+	if (_game.version <= 2 && !(_userState & USERSTATE_IFACE_VERBS)) // Don't draw verbs unless active
 		return;
 
 	int i, verb = 0;
@@ -516,7 +476,6 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 }
 
 void ScummEngine_v0::handleMouseOver(bool updateInventory) {
-	drawSentence();
 	ScummEngine_v2::handleMouseOver(updateInventory);
 }
 
@@ -674,15 +633,8 @@ void ScummEngine_v2::checkExecVerbs() {
 
 		if (object != -1) {
 			object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
-
-			if (object > 0) {
-				if (_game.version == 0) {
-					_activeInventory = object;
-
-				} else {
-					runInputScript(kInventoryClickArea, object, 0);
-				}
-			}
+			if (object > 0)
+				runInputScript(kInventoryClickArea, object, 0);
 			return;
 		}
 
@@ -703,7 +655,9 @@ void ScummEngine_v2::checkExecVerbs() {
 			runInputScript(kSentenceClickArea, 0, 0);
 		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
-			checkV2Inventory(_mouse.x, _mouse.y);
+			int object = checkV2Inventory(_mouse.x, _mouse.y);
+			if (object > 0)
+				runInputScript(kInventoryClickArea, object, 0);
 		} else {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
@@ -717,550 +671,210 @@ void ScummEngine_v2::checkExecVerbs() {
 	}
 }
 
-void ScummEngine_v0::runObject(int obj, int entry) {
-	bool prev = _v0ObjectInInventory;
-
-	if (getVerbEntrypoint(obj, entry) == 0) {
-		// If nothing was found, attempt to find the 'WHAT-IS' verb script
-		// (which is not really the what-is script, as this verb never actually executes
-		//  it merely seems to be some type of fallback)
-		if (getVerbEntrypoint(obj, 0x0F) != 0) {
-			entry = 0x0F;
-		}
-	}
-
-	_v0ObjectInInventory = prev;
-
-	if (getVerbEntrypoint(obj, entry) != 0) {
-		_v0ObjectInInventory = prev;
-		runObjectScript(obj, entry, false, false, NULL);
-	} else if (entry != 13 && entry != 15) {
-		if (_activeVerb != 3) {
-			VAR(VAR_ACTIVE_VERB) = entry;
-			runScript(3, 0, 0, 0);
-
-		// For some reasons, certain objects don't have a "give" script
-		} else if (VAR(VAR_ACTIVE_ACTOR) > 0 && VAR(VAR_ACTIVE_ACTOR) < 8) {
-			if (_activeInventory)
-				setOwnerOf(_activeInventory, VAR(VAR_ACTIVE_ACTOR));
-		}
-	}
-}
-
-bool ScummEngine_v0::verbMoveToActor(int actor) {
-	Actor *a = derefActor(VAR(VAR_EGO), "verbMoveToActor");
-	Actor *a2 = derefActor(actor, "verbMoveToActor");
-	int dist = getDist(a->getRealPos().x, a->getRealPos().y, a2->getRealPos().x, a2->getRealPos().y);
-
-	if (!a->_moving && dist > 4) {
-		a->startWalkActor(a2->getRealPos().x, a2->getRealPos().y, -1);
+int ScummEngine_v0::getVerbPrepId() {
+	if (_verbs[_activeVerb].prep != 0xFF) {
+		return _verbs[_activeVerb].prep;
 	} else {
-		if (dist <= 4) {
-			a->stopActorMoving();
-			return false;
-		}
+		byte *ptr = getOBCDFromObject(_activeObject, true);
+		assert(ptr);
+		return (*(ptr + 11) >> 5);
 	}
-
-	return true;
 }
 
-bool ScummEngine_v0::verbMove(int object, int objectIndex, bool invObject) {
-	int x, y, dir;
-	Actor *a = derefActor(VAR(VAR_EGO), "verbMove");
-
-	if (_currentMode != 3 && _currentMode != 2)
-		return false;
-
-	_v0ObjectIndex = true;
-	getObjectXYPos(objectIndex, x, y, dir);
-	_v0ObjectIndex = false;
-
-	// Detect distance from target object
-	int dist =  getDist(a->getRealPos().x, a->getRealPos().y, x, y);
-
-	if (a->_moving)
-		return true;
-
-	if (dist > 5) {
-		a->startWalkActor(x, y, dir);
-		VAR(6) = x;
-		VAR(7) = y;
-		return true;
-	} else {
-		// Finished walk, are we picking up the item?
-		if (_verbPickup) {
-			int oldActive = _activeObject, oldIndex = _activeObjectIndex;
-			_activeObject = object;
-			_activeObjectIndex = objectIndex;
-
-			_v0ObjectIndex = true;
-			// Execute pickup
-			runObject(objectIndex, 14);
-			_v0ObjectIndex = false;
-
-			_activeObject = oldActive;
-			_activeObjectIndex = oldIndex;
-
-			// Finished picking up
-			_verbPickup = false;
-		}
-	}
-
-	return false;
+int ScummEngine_v0::activeVerbPrep() {
+	if (!_activeVerb || !_activeObject)
+		return 0;
+	return getVerbPrepId();
 }
 
-bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
-	bool didPickup = false;
+void ScummEngine_v0::verbExec() {
+	_sentenceNum = 0;
+	_sentenceNestedCount = 0;
 
-	int prep, where = whereIsObjectInventory(obj);
-
-	if (objIndex == 0)
-		return false;
-
-	// Object in inventory ?
-	if (where != WIO_INVENTORY) {
-		_v0ObjectIndex = true;
-		prep = verbPrep(objIndex);
-
-		if (prep == 1 || prep == 4) {
-			if (_activeVerb != 13 && _activeVerb != 14) {
-				_verbPickup = true;
-				didPickup = true;
-			}
-		} else {
-			_verbPickup = false;
-		}
-
-		// Ignore verbs?
-		Actor *a = derefActor(VAR(VAR_EGO), "verbObtain");
-		if (((ActorC64 *)a)->_miscflags & 0x40) {
-			resetSentence(false);
-			return false;
-		}
-
-		//attempt move to object
-		if (verbMove(obj, objIndex, false))
-			return true;
-
-		if (didPickup && (prep == 1 || prep == 4))
-			if (_activeVerb != 13 && _activeVerb != 14) {
-				_v0ObjectInInventory = true;
-
-				if (whereIsObject(obj) == WIO_INVENTORY)
-					_activeInventory = obj;
-				else
-					resetSentence(false);
-
-				_v0ObjectInInventory = false;
-			}
-	}
-
-	return false;
-}
-
-int ScummEngine_v0::verbPrep(int object) {
-	if (!_v0ObjectInInventory)
-		_v0ObjectIndex = true;
-	else
-		_v0ObjectIndex = false;
-
-	byte *ptr = getOBCDFromObject(object);
-	_v0ObjectIndex = false;
-	assert(ptr);
-	return (*(ptr + 11) >> 5);
-}
-
-bool ScummEngine_v0::verbExecutes(int object, bool inventory) {
-	_v0ObjectInInventory = inventory;
-	int prep = verbPrep(object);
-
-	if (prep == 2 || prep == 0) {
-		return true;
-	}
-
-	return false;
-}
-
-bool ScummEngine_v0::verbExec() {
-	int prep = 0;
-	int entry = (_currentMode != 0 && _currentMode != 1) ? _activeVerb : 15;
-
-	if ((!_activeInvExecute && _activeObject && getObjectIndex(_activeObject) == -1)) {
-		resetSentence(false);
-		return false;
-	}
-
-	// Lets try walk to the object
-	if (_activeObject && _activeObjectIndex && !_activeObjectObtained && _currentMode != 0) {
-		prep = verbPrep(_activeObjectIndex);
-
-		if (verbObtain(_activeObject, _activeObjectIndex))
-			return true;
-
-		_activeObjectObtained = true;
-	}
-
-	// Attempt to obtain/reach object2
-	if (_activeObject2 && _activeObject2Index && !_activeObject2Obtained && _currentMode != 0) {
-		prep = verbPrep(_activeObject2Index);
-
-		_v0ObjectInInventory = false;
-		if (verbObtain(_activeObject2, _activeObject2Index))
-			return true;
-
-		if (prep != 1 && prep != 4) {
-			_activeInventory = _activeObject;
-			_activeObject = _activeObject2;
-			_activeObjectIndex = _activeObject2Index;
+	if (_activeVerb == kVerbWhatIs)
+		return;
+		
+	if (!(_activeVerb == kVerbWalkTo && _activeObject == 0)) {
+		doSentence(_activeVerb, _activeObject, _activeObject2);
+		if (_activeVerb != kVerbWalkTo) {
+			_activeVerb = kVerbWalkTo;
+			_activeObject = 0;
 			_activeObject2 = 0;
-			_activeObject2Index = 0;
 		}
-
-		_activeObject2Obtained = true;
+		_walkToObjectState = kWalkToObjectStateDone;
+		return;
 	}
 
-	// Give-To
-	if (_activeVerb == 3 && _activeInventory && _activeActor) {
-		// FIXME: Actors need to turn and face each other
-		if (verbMoveToActor(_activeActor)) {
-			// Ignore verbs?
-			Actor *a = derefActor(VAR(VAR_EGO), "verbExec");
-			if (((ActorC64 *)a)->_miscflags & 0x40) {
-				resetSentence(false);
-				return false;
-			}
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "verbExec");
+	int x = _virtualMouse.x / V12_X_MULTIPLIER;
+	int y = _virtualMouse.y / V12_Y_MULTIPLIER;
+	//actorSetPosInBox();
 
+	// 0xB31
+	VAR(6) = x;
+	VAR(7) = y;
+
+	if (a->_miscflags & kActorMiscFlagFreeze)
+		return;
+
+	a->stopActorMoving();
+	a->startWalkActor(VAR(6), VAR(7), -1);
+}
+
+bool ScummEngine_v0::checkSentenceComplete() {
+	if (_activeVerb && _activeVerb != kVerbWalkTo && _activeVerb != kVerbWhatIs) {
+		if (_activeObject && (!activeVerbPrep() || _activeObject2))
 			return true;
-		}
-		_v0ObjectInInventory = true;
-		VAR(VAR_ACTIVE_ACTOR) = _activeActor;
-		runObject(_activeInventory , 3);
-		_v0ObjectInInventory = false;
-
-		resetSentence(false);
-		return false;
 	}
-
-	// Where we performing an action on an actor?
-	if (_activeActor) {
-		_v0ObjectIndex = true;
-		runObject(_activeActor, entry);
-		_v0ObjectIndex = false;
-		_verbExecuting = false;
-
-		resetSentence(false);
-		return false;
-	}
-
-	// If we've finished walking (now near target), execute the action
-	if (_activeObject && _activeObjectIndex && verbPrep(_activeObjectIndex) == 2) {
-		_v0ObjectIndex = true;
-		runObject(_activeObjectIndex, entry);
-		_v0ObjectIndex = false;
-		_verbExecuting = false;
-
-		if ((_currentMode == 3 || _currentMode == 2) && _activeVerb == 13)
-			return false;
-
-		resetSentence(false);
-		return false;
-	}
-
-	// We acted on an inventory item
-	if (_activeInventory && verbExecutes(_activeInventory, true) && _activeVerb != 3) {
-		_v0ObjectInInventory = true;
-		_activeObject = _activeInventory;
-		runObject(_activeInventory, _activeVerb);
-
-		_verbExecuting = false;
-
-		if (_currentMode == 3 && _activeVerb == 13) {
-			resetSentence(true);
-			return false;
-		}
-
-		resetSentence(false);
-		return false;
-	}
-
-	// Item not in inventory is executed
-	if (_activeObject) {
-		_v0ObjectIndex = true;
-		runObject(_activeObjectIndex, entry);
-		_v0ObjectIndex = false;
-	} else if (_activeInventory) {
-		// Not sure this is the correct way to do this,
-		// however its working for most situations - segra
-		if (verbExecutes(_activeInventory, true) == false) {
-			if (_activeObject2 && _activeObject2Inv && verbExecutes(_activeObject2, true)) {
-				_v0ObjectInInventory = true;
-
-				_activeObject = _activeInventory;
-				_activeInventory = _activeObject2;
-
-				runObject(_activeObject, _activeVerb);
-			} else {
-				_v0ObjectInInventory = true;
-
-				if (_activeObject2) {
-					_activeObject = _activeObject2;
-
-					runObject(_activeObject, _activeVerb);
-				} else
-					runObject(_activeInventory, _activeVerb);
-			}
-		} else {
-			_v0ObjectInInventory = true;
-			runObject(_activeInventory, _activeVerb);
-		}
-	}
-
-	_verbExecuting = false;
-
-	if (_activeVerb == 13) {
-		resetSentence(true);
-		return false;
-	}
-
-	resetSentence(false);
-
 	return false;
 }
 
 void ScummEngine_v0::checkExecVerbs() {
-	ActorC64 *a = (ActorC64 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
+	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 
-	// Is a verb currently executing
-	if (_verbExecuting) {
-		// Check if mouse click
-		if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-			int over = findVerbAtPos(_mouse.x, _mouse.y);
-			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
-			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
+	bool execute = false;
 
-			if (over && over != _activeVerb) {
+	if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
+		int over = findVerbAtPos(_mouse.x, _mouse.y);
+		// click region: verbs
+		if (over) {
+			if (_activeVerb != over) { // new verb
+				// keep first object if no preposition is used yet
+				if (activeVerbPrep())
+					_activeObject = 0;
+				_activeObject2 = 0;
 				_activeVerb = over;
-				_verbExecuting = false;
-				return;
-			}
-
-			if (!obj && !act && !over) {
-				resetSentence(false);
+				_redrawSentenceLine = true;
 			} else {
-				a->stopActorMoving();
+				// execute sentence if complete
+				if (checkSentenceComplete())
+					execute = true;
 			}
-		} else {
-
-			if (_verbExecuting && !verbExec())
-				return;
 		}
 	}
 
-	// What-Is selected, any object we hover over is selected, on mouse press we set to WalkTo
-	if (_activeVerb == 15) {
-		int obj = findObject(_virtualMouse.x, _virtualMouse.y);
-		int objIdx = findObjectIndex(_virtualMouse.x, _virtualMouse.y);
-		_activeObject = obj;
-		_activeObjectIndex = objIdx;
-
-		if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK))
-			_activeVerb = 13;	// Walk-To
-
-		return;
+	if (a->_miscflags & kActorMiscFlagHide) {
+		if (_activeVerb != kVerbNewKid) {
+			_activeVerb = kVerbNone;
+		}
 	}
 
-	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
-		return;
+	if (_currentMode != kModeCutscene) {
+		if (_currentMode == kModeKeypad) {
+			_activeVerb = kVerbPush;
+		}
 
-	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
-		/* Check keypresses */
-		// TODO
-	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
-			// TODO
-		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
-			int prevInventory = _activeInventory;
-			int invOff = _inventoryOffset;
-
-			// Click into V2 inventory
-			checkV2Inventory(_mouse.x, _mouse.y);
-
-			// Did the Inventory position changed (arrows pressed, do nothing)
-			if (invOff != _inventoryOffset)
-				return;
-
-			// No inventory selected?
-			if (!_activeInventory)
-				return;
-
-			// Did we just change the selected inventory item?
-			if (prevInventory && prevInventory != _activeInventory && _activeInventory != _activeObject2) {
-				_v0ObjectInInventory = true;
-				int prep = verbPrep(_activeInventory);
-				_v0ObjectInInventory = true;
-				int prep2 = verbPrep(prevInventory);
-
-				// Should the new inventory object remain as the secondary selected object
-				// Or should the new inventory object become primary?
-				if (prep != prep2 || prep != 1) {
-					if (prep == 1 || prep == 3) {
-						int tmp = _activeInventory;
-						_activeInventory = prevInventory;
-						prevInventory = tmp;
+		if (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY) {
+			// keys already checked by input handler
+		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
+			// click region: sentence line
+			if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+				if (_activeVerb == kVerbNewKid) {
+					if (_currentMode == kModeNormal) {
+						int kid;
+						int lineX = _mouse.x >> V12_X_SHIFT;
+						if (lineX < 11)
+							kid = 0;
+						else if (lineX < 25)
+							kid = 1;
+						else
+							kid = 2;
+						_activeVerb = kVerbWalkTo;
+						_redrawSentenceLine = true;
+						drawSentenceLine();
+						switchActor(kid);
 					}
-				}
-
-				// Setup object2
-				_activeObject = 0;
-				_activeInvExecute = true;
-				_activeObject2Inv = true;
-				_activeObject2 = _activeInventory;
-				_activeInventory = prevInventory;
-				return;
-			}
-
-			// is the new selected inventory the same as the last selected?, reset to previous if it is
-			if (_activeInventory == _activeObject2)
-				_activeInventory = prevInventory;
-
-			// Inventory Selected changed
-			if (prevInventory != _activeInventory)
-				if (!_activeObject2 || prevInventory != _activeObject2)
+					_activeVerb = kVerbWalkTo;
+					_redrawSentenceLine = true;
 					return;
-
-			if (_activeVerb == 11 && !(((_activeObject || _activeInventory)) || !_activeObject2))
-				return;
-		} else {
-			int over = findVerbAtPos(_mouse.x, _mouse.y);
-			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
-			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
-			int objIdx = findObjectIndex(_virtualMouse.x, _virtualMouse.y);
-
-			// If we already have an object selected, and we just clicked an actor
-			// Clear any object we may of also clicked on
-			if ((_activeObject || _activeInventory) && act) {
-				obj = 0;
-				objIdx = 0;
-			}
-
-			if (a->_miscflags & 0x80) {
-				if (_activeVerb != 7 && over != 7) {
-					_activeVerb = 0;
-					over = 0;
+				} else {
+					// execute sentence if complete
+					if (checkSentenceComplete())
+						execute = true;
 				}
-			}
+			// click region: inventory or main screen
+			} else if ((zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) ||
+			           (zone->number == kMainVirtScreen))
+			{
+				int obj = 0;
 
-			// Handle New Kid verb options
-			if (_activeVerb == 7 || over == 7) {
-				// Disable New-Kid (in the secret lab)
-				if (_currentMode == 2 || _currentMode == 0)
-					return;
-
-				if (_activeVerb == 7 && over) {
-					_activeVerb = 13;
-					switchActor(_verbs[over].verbid - 1);
-					return;
-				}
-
-				setNewKidVerbs();
-				_activeVerb = 7;
-
-				return;
-			}
-
-			// Clicked on nothing, walk here?
-			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
-				// Clear all selected
-				resetSentence(false);
-
-				// 0xB31
-				VAR(6) = _virtualMouse.x / V12_X_MULTIPLIER;
-				VAR(7) = _virtualMouse.y / V12_Y_MULTIPLIER;
-
-				if (zone->number == kMainVirtScreen) {
-					// Ignore verbs?
-					if (a->_miscflags & 0x40) {
-						resetSentence(false);
+				// click region: inventory
+				if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+					// click into inventory
+					int invOff = _inventoryOffset;
+					obj = checkV2Inventory(_mouse.x, _mouse.y);
+					if (invOff != _inventoryOffset) {
+						// inventory position changed (arrows pressed, do nothing)
 						return;
 					}
-					a->stopActorMoving();
-					a->startWalkActor(VAR(6), VAR(7), -1);
-					_verbExecuting = true;
-				}
-				return;
-			}
-
-			// No new verb, use previous
-			if (over == 0)
-				over = _activeVerb;
-
-			// No verb selected, use walk-to
-			if (!_activeVerb)
-				_activeVerb = over = 13;		// Walk-To
-
-			// New verb selected
-			if (_activeVerb != over) {
-				_activeVerb = over;
-				if (_activeVerb == 13) {
-					resetSentence(false);
-				}
-				return;
-			}
-
-			// Only allowing targetting actors if its the GIVE/USE verb
-			if (_activeVerb == 3 || _activeVerb == 11) {
-				// Different actor selected?
-				if (act) {
-					if (_activeActor != act) {
-						_activeActor = act;
-						return;
+					// the second object of a give-to command has to be an actor
+					if (_activeVerb == kVerbGive && _activeObject)
+						obj = 0;
+				// click region: main screen
+				} else if (zone->number == kMainVirtScreen) {
+					// click into main screen
+					if (_activeVerb == kVerbGive && _activeObject) {
+						int actor = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
+						if (actor != 0)
+							obj = OBJECT_V0(actor, kObjectV0TypeActor);
+					} else {
+						obj = findObject(_virtualMouse.x, _virtualMouse.y);
 					}
 				}
-			}
 
-			if (obj && obj != _activeObject) {
-				if (!_activeObject)
-					if (_activeInventory)
-						_activeInvExecute = true;
-
-				// USE
-				if (_activeVerb == 11 || _activeVerb == 8) {
-					if (obj != _activeObject || obj != _activeObject2) {
-						if (!_activeObject || _activeInventory) {
-							_activeObject = obj;
-							_activeObjectIndex = objIdx;
-							return;
-						} else {
-							if (_activeObject2 != obj) {
-								_activeObject2 = obj;
-								_activeObject2Index = objIdx;
-								return;
-							}
-						}
+				if (!obj) {
+					if (_activeVerb == kVerbWalkTo) {
+						_activeObject = 0;
+						_activeObject2 = 0;
 					}
 				} else {
-					a->stopActorMoving();
+					if (activeVerbPrep() == kVerbPrepNone) {
+						if (obj == _activeObject)
+							execute = true;
+						else
+							_activeObject = obj;
+						// immediately execute action in keypad/selection mode
+						if (_currentMode == kModeKeypad)
+							execute = true;
+					} else {
+						if (obj == _activeObject2)
+							execute = true;
+						if (obj != _activeObject) {
+							_activeObject2 = obj;
+							if (_currentMode == kModeKeypad)
+								execute = true;
+						}
+					}
+				}
 
-					_activeObject = obj;
-					_activeObjectIndex = objIdx;
-
-					if (_activeVerb != 13)
-						return;
-
-					//return;
+				_redrawSentenceLine = true;
+				if (_activeVerb == kVerbWalkTo && zone->number == kMainVirtScreen) {
+					_walkToObjectState = kWalkToObjectStateDone;
+					execute = true;
 				}
 			}
 		}
+	}
 
-		_verbExecuting = true;
+	if (_redrawSentenceLine)
+		drawSentenceLine();
 
-	}	// mouse k/b action
+	if (!execute || !_activeVerb)
+		return;
+
+	if (_activeVerb == kVerbWalkTo)
+		verbExec();
+	else if (_activeObject) {
+		// execute if we have a 1st object and either have or do not need a 2nd
+		if (activeVerbPrep() == kVerbPrepNone || _activeObject2)
+			verbExec();
+	}
 }
 
 void ScummEngine::verbMouseOver(int verb) {
 	// Don't do anything unless verbs are active
-	if (_game.version <= 2 && !(_userState & 128))
+	if (_game.version <= 2 && !(_userState & USERSTATE_IFACE_VERBS))
 		return;
 
 	if (_game.id == GID_FT)
