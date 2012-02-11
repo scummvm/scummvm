@@ -242,6 +242,7 @@ char const *const YES_MSG = " Yes ";
 char const *const NO_MSG = " No ";
 char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
+char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
 
 const byte k562CC[] = {
 	20, 7,  41, 6,

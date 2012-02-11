@@ -195,6 +195,7 @@ extern char const *const YES_MSG;
 extern char const *const NO_MSG;
 extern char const *const USE_INTERCEPTOR;
 extern char const *const USE_DOUBLE_AGENT;
+extern char const *const NEED_INSTRUCTIONS;
 
 // Scene 1550 arrays of constants
 extern const byte k562CC[];

@@ -2430,7 +2430,7 @@ void Scene1337::Action1::signal() {
 		signal();
 		break;
 	case 12:
-		scene->subCBB1E();
+		scene->suggestInstructions();
 		remove();
 		break;
 	default:
@@ -3870,7 +3870,7 @@ void Scene1337::dispatch() {
 		++_field424E;
 		if (_field424E == 4) {
 			_field424C = 1;
-			subCBB1E();
+			suggestInstructions();
 		}
 	}
 	Scene::dispatch();
@@ -3905,7 +3905,7 @@ void Scene1337::setAnimationInfo(unkObj1337sub1 *subObj) {
 }
 
 void Scene1337::subC20E5() {
-	warning("STUBBED lvl2 subC20E5()");
+	subC2586();
 }
 
 void Scene1337::subC20F9() {
@@ -3985,9 +3985,50 @@ void Scene1337::subC20F9() {
 
 }
 
+void Scene1337::subC2586() {
+	if (_field4244 != 0)
+		_object1.hide();
+
+	switch (_field423E) {
+	case 2:
+		subC4CD2();
+		if (_field4246 == 1) 
+			actionDisplay(1330, 114, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		_field4246 = 0;
+	// No break on purpose
+	case 0:
+	// No break on purpose
+	case 1:
+	// No break on purpose
+	case 3:
+		_item1.setAction(&_action4);
+	default:
+		break;
+	}
+
+	_field4244 = 1;
+
+}
+
 int Scene1337::subC264B(int arg1) {
 	warning("STUBBED Scene1337::subC264B()");
 	return -1;
+}
+
+int Scene1337::subC27F9(int arg1) {
+	switch (arg1) {
+	case 10:
+	case 12:
+	case 15:
+	case 17:
+	case 18:
+	case 19:
+	case 20:
+	case 21:
+		return arg1;
+	default:
+		return -1;
+	}
 }
 
 int Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt) {
@@ -4009,7 +4050,10 @@ void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
 }
 
 void Scene1337::subC4CD2() {
-	warning("STUBBED Scene1337::subC4CD2()");
+	if (R2_GLOBALS._v57709 > 0) {
+		subD1917();
+		subD1940(false);
+	}
 }
 
 void Scene1337::subC4CEC() {
@@ -4176,12 +4220,30 @@ void Scene1337::subPostInit() {
 	_field424E = 0;
 }
 
-void Scene1337::subCBB1E() {
-	warning("STUBBED Scene1337::subCBB1E()");
+void Scene1337::suggestInstructions() {
+	if (R2_GLOBALS._v57709 > 0)
+		subD1917();
+	if (MessageDialog::show(NEED_INSTRUCTIONS, NO_MSG, YES_MSG) == 0) {
+		if (R2_GLOBALS._v57709 == 0)
+			subD18F5();
+		subCCF26();
+	} else {
+		if (R2_GLOBALS._v57709 == 0)
+			subD18F5();
+		subCB59B();
+	}
+}
+
+void Scene1337::subCB59B() {
+	_item1.setAction(&_action1);
 }
 
 void Scene1337::subCBB7B() {
 	warning("STUBBED Scene1337::subCBB7B()");
+}
+
+void Scene1337::subCCF26() {
+	warning("STUBBED Scene1337::subCCF26()");
 }
 
 void Scene1337::subCF31D() {
@@ -4192,8 +4254,19 @@ void Scene1337::subCF979() {
 	warning("STUBBED Scene1337::subCF979()");
 }
 
+void Scene1337::subD026D() {
+	subD02CA();
+}
+
 void Scene1337::subD0281() {
-	warning("STUBBED Scene1337::subD0281()");
+	if (subC27F9(this->_arrunkObj1337[2]._arr3[0]._field34) == -1)
+		_unkFctPtr412 = &Scene1337::subD026D;
+	else
+		subC4A39(&_arrunkObj1337[2]._arr3[0]);
+}
+
+void Scene1337::subD02CA() {
+	warning("STUBBED lvl4 Scene1337::subD02CA()");
 }
 
 void Scene1337::subD183F(int arg1, int arg2) {
@@ -4226,16 +4299,34 @@ void Scene1337::subD18B5(int resNum, int rlbNum, int arg3) {
 	warning("STUBBED lvl3 Scene1337::subD18B5()");
 }
 
-void Scene1337::subD18F5() {
-	warning("STUBBED Scene1337::subD18F5()");
+int Scene1337::subD18F5() {
+	if (R2_GLOBALS._v57709 == 0)
+		// The cursor looks... very dummy
+		// To be checked
+		warning("TODO: CursorManager.setData(R2_GLOBALS.off_57705)");
+		
+	++R2_GLOBALS._v57709;
+
+	return R2_GLOBALS._v57709;
 }
 
-void Scene1337::subD1917() {
-	warning("STUBBED Scene1337::subD1917()");
+int Scene1337::subD1917() {
+	if (R2_GLOBALS._v57709 != 0) {
+		R2_GLOBALS._v57709--;
+		if (R2_GLOBALS._v57709 != 0)
+			warning("FIXME: subD195F(_width, _data);");
+	}
+
+	return R2_GLOBALS._v57709;
 }
 
-void Scene1337::subD1940(bool flag) {
-	warning("STUBBED Scene1337::subD1940()");
+int Scene1337::subD1940(bool flag) {
+	if (flag)
+		++R2_GLOBALS._v5780C;
+	else if (R2_GLOBALS._v5780C != 0)
+		--R2_GLOBALS._v5780C;
+
+	return R2_GLOBALS._v5780C;
 }
 
 void Scene1337::subD195F(int arg1, int arg2) {

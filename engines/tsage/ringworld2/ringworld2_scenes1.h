@@ -315,7 +315,9 @@ public:
 	void setAnimationInfo(unkObj1337sub1 *subObj);
 	void subC20E5();
 	void subC20F9();
+	void subC2586();
 	int subC264B(int arg1);
+	int subC27F9(int arg1);
 	int subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt);
 	void subC2C2F();
 	int subC3E92(int arg1);
@@ -324,16 +326,20 @@ public:
 	void subC4CEC();
 	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subPostInit();
-	void subCBB1E();
+	void subCB59B();
+	void suggestInstructions();
 	void subCBB7B();
+	void subCCF26();
 	void subCF31D();
 	void subCF979();
+	void subD026D();
 	void subD0281();
+	void subD02CA();
 	void subD183F(int arg1, int arg2);
 	void subD18B5(int resNum, int rlbNum, int arg3);
-	void subD18F5();
-	void subD1917();
-	void subD1940(bool flag);
+	int subD18F5();
+	int subD1917();
+	int subD1940(bool flag);
 	void subD195F(int arg1, int arg2);
 	void subD1975(int arg1, int arg2);
 
