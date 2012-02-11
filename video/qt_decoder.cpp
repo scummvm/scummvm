@@ -113,7 +113,6 @@ void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 
 QuickTimeDecoder::VideoTrackHandler *QuickTimeDecoder::findNextVideoTrack() const {
 	VideoTrackHandler *bestTrack = 0;
-	int32 num;
 	uint32 bestTime = 0xffffffff;
 
 	for (uint32 i = 0; i < _handlers.size(); i++) {
@@ -124,7 +123,6 @@ QuickTimeDecoder::VideoTrackHandler *QuickTimeDecoder::findNextVideoTrack() cons
 			if (time < bestTime) {
 				bestTime = time;
 				bestTrack = track;
-				num  = i;
 			}
 		}
 	}
