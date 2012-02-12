@@ -196,8 +196,8 @@ void writeEnglishStaticStrings() {
 
 		" Load",
 		" Restart     ",
-		"F3: More",
-		"F8: Restart",
+		"F3: Repeat",
+		"F8: Proceed",
 		"Hide self",
 		"take",
 		" probe    ",
