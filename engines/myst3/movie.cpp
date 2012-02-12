@@ -23,6 +23,9 @@
 #include "engines/myst3/movie.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
+#include "engines/myst3/subtitles.h"
+
+#include "common/config-manager.h"
 
 #include "graphics/colormasks.h"
 
@@ -36,7 +39,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_startFrame(0),
 	_endFrame(0),
 	_texture(0),
-	_force2d(false) {
+	_force2d(false),
+	_subtitles(0) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
@@ -56,6 +60,9 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
 	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	if (ConfMan.getBool("subtitles"))
+		_subtitles = Subtitles::create(_vm, id);
 }
 
 void Movie::loadPosition(const VideoData &videoData) {
@@ -121,6 +128,11 @@ void Movie::draw() {
 void Movie::drawOverlay() {
 	if (_force2d)
 		draw2d();
+
+	if (_subtitles) {
+		_subtitles->setFrame(_bink.getCurFrame());
+		_subtitles->drawOverlay();
+	}
 }
 
 void Movie::drawNextFrameToTexture() {
@@ -135,6 +147,8 @@ void Movie::drawNextFrameToTexture() {
 Movie::~Movie() {
 	if (_texture)
 		_vm->_gfx->freeTexture(_texture);
+
+	delete _subtitles;
 }
 
 ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :

@@ -34,6 +34,7 @@ namespace Myst3 {
 struct VideoData;
 class Myst3Engine;
 class Texture;
+class Subtitles;
 
 class Movie : public Drawable {
 public:
@@ -54,6 +55,7 @@ protected:
 	Myst3Engine *_vm;
 
 	uint16 _id;
+	Subtitles *_subtitles;
 
 	Math::Vector3d _pTopLeft;
 	Math::Vector3d _pBottomLeft;
