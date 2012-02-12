@@ -297,9 +297,13 @@ void palette(int v1) {
 	warning("TODO: palette");
 }
 
-// (* external 'c:\mc\charecr.com'; *)
+/**
+ * Restore a screen area
+ * @remarks	Currently implemented differently in ScummVM, so this method is redundant.
+ * Original assembly was present in 'charecr.asm'
+ */
 void s_char(int Gd, int y, int dy) {
-		warning("TODO: s_char");
+	debugC(1, kMortevielleCore, "s_char called");
 }
 
 // (* external 'c:\mc\boite.com'; *)
