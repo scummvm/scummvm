@@ -1097,4 +1097,37 @@ int ScreenSurface::getStringWidth(const Common::String &s) {
 	return s.size() * charWidth;
 }
 
+void ScreenSurface::droite(int x, int y, int xx, int yy, int coul) {
+	int step, i;
+	float a, b;
+	float xr, yr, xro, yro;
+
+	xr = x;
+	yr = y;
+	xro = xx;
+	yro = yy;
+	
+	if (abs(y - yy) > abs(x - xx)) {
+		a = (float)((x - xx)) / (y - yy);
+		b = (yr * xro - yro * xr) / (y - yy);
+		i = y;
+		if (y > yy)  step = -1;
+		else step = 1;
+		do {
+			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
+			i = i + step;
+		} while (!(i == yy));
+	} else {
+		a = (float)((y - yy)) / (x - xx);
+		b = ((yro * xr) - (yr * xro)) / (x - xx);
+		i = x;
+		if (x > xx)  step = -1;
+		else step = 1;
+		do {
+			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
+			i = i + step;
+		} while (!(i == xx));
+	}
+}
+
 } // End of namespace Mortevielle

@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	alert.o \
 	asm.o \
 	detection.o \
-	droite.o \
 	graphics.o \
 	keyboard.o \
 	level15.o \

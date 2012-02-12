@@ -30,7 +30,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
-#include "mortevielle/droite.h"
+#include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -616,12 +616,14 @@ void pendule() {
 	if ((gd == cga) || (gd == her))
 		co = 0;
 	else co = 1;
-	if (min == 0)  droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
-	else droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
+	if (min == 0)
+		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
+	else 
+		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
 	h = heu;
 	if (h > 12)  h = h - 12;
 	if (h == 0)  h = 12;
-	droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
+	g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
 	show_mouse();
 	g_vm->_screenSurface.putxy(568, 154);
 	if (heu > 11)
