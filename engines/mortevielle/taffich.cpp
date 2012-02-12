@@ -219,19 +219,4 @@ void taffich() {
 	}
 }
 
-/*    begin
-      for i:=0 to 15 do
-         begin
-           PalH:=WRITE_LE_UINT16(&mem[$7000:succ(i) shl 1];
-           Alllum[i]:=PalH and 15 + PalH shr 4 and 15 + PalH shr 8 and 15;
-         end;
-      for i:=0 to 15 do
-         begin
-           k:=0;
-           for j:=0 to 15 do if Alllum[j]>Alllum[k] then k:=j;
-           mem[$7000:2+k shl 1]:= Rang[i];
-           Alllum[k]:=-1;
-         end;
-    end;*/
-
 } // End of namespace Mortevielle

@@ -41,7 +41,7 @@ void droite(int x, int y, int xx, int yy, int coul) {
 	yr = y;
 	xro = xx;
 	yro = yy;
-	/*writeln(le_file,'(',x:4,',',y:4,') ==> (',xx:4,',',yy:4,')');*/
+	
 	if (abs(y - yy) > abs(x - xx)) {
 		a = (float)((x - xx)) / (y - yy);
 		b = (yr * xro - yro * xr) / (y - yy);
@@ -52,7 +52,6 @@ void droite(int x, int y, int xx, int yy, int coul) {
 			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i = i + step;
 		} while (!(i == yy));
-		/*writeln(le_file,'X == ',a:3:3,' * Y + ',b:3:3);*/
 	} else {
 		a = (float)((y - yy)) / (x - xx);
 		b = ((yro * xr) - (yr * xro)) / (x - xx);
@@ -63,7 +62,6 @@ void droite(int x, int y, int xx, int yy, int coul) {
 			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
 		} while (!(i == xx));
-		/*writeln(le_file,'Y == ',a:3:3,' * X + ',b:3:3);*/
 	}
 }
 

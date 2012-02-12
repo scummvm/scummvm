@@ -347,7 +347,7 @@ extern int x,
 
 extern int t_cph[6401];
 extern byte tabdon[4001];
-/*   t_dxx  : array[0..121] of int;*/
+
 extern Common::String stpou;                               /* donne le % d'indices */
 extern byte is;
 extern char mode;

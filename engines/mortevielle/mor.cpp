@@ -144,50 +144,10 @@ void ecrf1() {
 }
 
 void clsf1() {
-//	int i, j;
-
 	/* debug('clsf1'); */
 	hide_mouse();
 	g_vm->_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
-	/* if Gd=ams then port[$3DD]:=15;
-	 case Gd of
-	         ams,
-	         cga : begin
-	                 for j:=0 to 63 do
-	                    begin
-	                      for i:=6 to 86 do
-	                         begin
-	                           mem[$B800:i*80+j]:=0;
-	                           mem[$Ba00:i*80+j]:=0;
-	                         end;
-	                      mem[$b800:6960+j]:=0;
-	                      mem[$ba00:400+j]:=0;
-	                    end;
-	               end;
-	         ega : begin
-	                 port[$3C4]:= 2;
-	                 port[$3C5]:= 15;
-	                 port[$3CE]:= 8;
-	                 port[$3CF]:= 255;
-	                 for j:=0 to 63 do
-	                    for i:=11 to 174 do
-	                       mem[$A000:i*80+j]:=0;
-	               end;
-	         tan : begin
-	                 for j:=0 to 128 do
-	                    begin
-	                      for i:=3 to 43 do
-	                         begin
-	                           mem[$B800:i*160+j]:=0;
-	                           mem[$Ba00:i*160+j]:=0;
-	                           mem[$bc00:i*160+j]:=0;
-	                           if i<>43 then mem[$be00:i*160+j]:=0;
-	                         end;
-	                      mem[$be00:320+j]:=0;
-	                    end;
-	               end;
-	 end;
-	 droite(256*res,11,256*res,175,0);*/
+
 	show_mouse();
 }
 
@@ -208,9 +168,7 @@ void clsf2() {
 }
 
 void ecrf2() {
-	/* debug('ecrf2'); */
 	text_color(5);
-	/*g_vm->_screenSurface.drawBox(0,175,630,15,15);*/
 }
 
 void ecr2(Common::String str_) {
@@ -266,9 +224,6 @@ void ecrf6() {
 
 void ecrf7() {
 	text_color(4);
-	/* draw_mode(2);
-	 text_height(4*res);
-	 text_style(normal);*/
 }
 
 void clsf10() {

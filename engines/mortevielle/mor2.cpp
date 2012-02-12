@@ -402,11 +402,7 @@ void sparl(float adr, float rep) {
 	deline(repint + c_paroles, st, tay);
 	afftex(st, 230, 4, 65, 24, 5);
 	f3f8();
-	/*g_vm->_screenSurface.drawBox(43,30,90,19,15);
-	gotoxy(7,5);
-	write('F3: Encore');
-	gotoxy(7,6);
-	write('F8: Stop');*/
+	
 	key = 0;
 	do {
 		parole(repint, haut[caff - 69], 0);
@@ -428,19 +424,11 @@ void finfouil() {
 void mfoudi() {
 	int cx;
 
-	for (cx = 1; cx <= 7; cx ++) menu_disable(depl[cx]);
-	for (cx = 1; cx <= 11; cx ++) menu_disable(men[cx]);
-	/* menu_disable(menup, scacher);
-	 menu_disable(menup, attacher);
-	 menu_disable(menup, defoncer);
-	 menu_disable(menup, dormir);
-	 menu_disable(menup, entrer);
-	 menu_disable(menup, fermer);
-	 menu_disable(menup, frapper);
-	 menu_disable(menup, manger);
-	 menu_disable(menup, mettre);
-	 menu_disable(menup, ouvrir);
-	 menu_disable(menup, sortir);  */
+	for (cx = 1; cx <= 7; cx ++) 
+		menu_disable(depl[cx]);
+	for (cx = 1; cx <= 11; cx ++)
+		menu_disable(men[cx]);
+
 	menut(sonder, g_vm->getString(S_SUITE));
 	menut(soulever, g_vm->getString(S_STOP));
 }
