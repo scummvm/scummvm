@@ -48,7 +48,7 @@ const int ioresult = 0;
 void testfi() {
 	if (ioresult != 0) {
 		caff = do_alert(err_mess, 1);
-		mortevielle_exit(0);
+		g_vm->quitGame();
 	}
 }
 
@@ -263,7 +263,7 @@ void stop() {
 	hirs();
 	gd = ams;
 	hirs();
-	mortevielle_exit(0);
+	g_vm->quitGame();
 }
 
 void paint_rect(int x, int y, int dx, int dy) {
