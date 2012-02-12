@@ -65,7 +65,7 @@ void Subtitles::loadFontSettings(int32 id) {
 	_line1Top = fontNums->getMiscData(4);
 	_line2Top = fontNums->getMiscData(5);
 	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
-	_fontCharset = fontNums->getMiscData(7);
+	_fontCharsetCode = fontNums->getMiscData(7);
 
 
 	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
@@ -74,6 +74,15 @@ void Subtitles::loadFontSettings(int32 id) {
 		error("Unable to load font face");
 
 	_fontFace = fontText->getTextData(0);
+
+	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kCursor);
+
+	if (!fontCharset)
+		error("Unable to load font charset");
+
+	Common::MemoryReadStream *data = fontCharset->getData();
+	data->read(_charset, sizeof(_charset));
+	delete data;
 }
 
 void Subtitles::loadSubtitles(int32 id) {
@@ -110,9 +119,13 @@ void Subtitles::loadSubtitles(int32 id) {
 		crypted->seek(_phrases[i].offset);
 
 		uint8 key = 35;
-		char c = 0;
+		uint8 c = 0;
 		do {
 			c = crypted->readByte() ^ key++;
+
+			if (c >= 32)
+				c = _charset[c - 32];
+
 			_phrases[i].string += c;
 		} while (c);
 	}

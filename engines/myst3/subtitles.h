@@ -68,7 +68,8 @@ private:
 	uint _line1Top;
 	uint _line2Top;
 	uint _surfaceTop;
-	int32 _fontCharset;
+	int32 _fontCharsetCode;
+	uint8 _charset[255 - 32];
 };
 
 } /* namespace Myst3 */
