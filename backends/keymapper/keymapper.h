@@ -177,14 +177,6 @@ public:
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
-	/**
-	 * Build and return a new HardwareKeySet out of key and modifier tables.
-	 * @param keys       table of available keys
-	 * @param modifiers  table of available modifiers
-	 * @return           new HardwareKeySet (caller should use and delete)
-	 */
-	static HardwareKeySet *buildHardwareKeySet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
-
 private:
 
 	void initKeymap(Domain &domain, Keymap *keymap);

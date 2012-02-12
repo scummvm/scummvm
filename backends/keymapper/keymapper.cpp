@@ -287,36 +287,6 @@ const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
-HardwareKeySet *Keymapper::buildHardwareKeySet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
-	HardwareKeySet *keySet = new HardwareKeySet();
-	const KeyTableEntry *key;
-	const ModifierTableEntry *mod;
-	char fullKeyId[50];
-	char fullKeyDesc[100];
-	uint16 ascii;
-
-	for (mod = modifiers; mod->id; mod++) {
-		for (key = keys; key->hwId; key++) {
-			ascii = key->ascii;
-
-			if (mod->shiftable && key->shiftable) {
-				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
-				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
-				ascii = toupper(key->ascii);
-			} else if (mod->shiftable) {
-				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
-			} else {
-				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
-			}
-
-			keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
-		}
-	}
-	return keySet;
-}
-
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

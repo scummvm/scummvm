@@ -179,7 +179,7 @@ static const ModifierTableEntry sdlModifiers[] = {
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
-	return Keymapper::buildHardwareKeySet(sdlKeys, sdlModifiers);
+	return new HardwareKeySet(sdlKeys, sdlModifiers);
 #else
 	return 0;
 #endif
