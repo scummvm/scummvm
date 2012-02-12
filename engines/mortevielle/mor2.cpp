@@ -213,6 +213,7 @@ void tkey1(bool d) {
 		if (d)  tinke();
 		quest = keypressed();
 		read_pos_mouse(x, y, c);
+		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && anyone)));
 	if (quest)  key = testou();
 	g_vm->setMouseClick(false);
