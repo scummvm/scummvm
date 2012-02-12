@@ -1090,9 +1090,15 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 		pt.x += i;
 	}
 	show_mouse();
+}
 
-	// TODO: Move screen updates to main loop once constructed
-	g_vm->_screenSurface.updateScreen();
+/**
+ * Gets the width in pixels of the specified string
+ */
+int ScreenSurface::getStringWidth(const Common::String &s) {
+	int charWidth = (res == 2) ? 6 : 10;
+
+	return s.size() * charWidth;
 }
 
 } // End of namespace Mortevielle
