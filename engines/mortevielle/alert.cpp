@@ -33,7 +33,7 @@
 
 namespace Mortevielle {
 
-/* overlay */ int do_alert(Common::String str_, int n);
+int do_alert(Common::String str_, int n);
 
 
 const int nligne = 7;

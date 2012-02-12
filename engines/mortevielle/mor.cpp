@@ -491,7 +491,7 @@ void affper(int per) {
 	ipers = per;
 }
 
-/* overlay */ void choix(int min, int max, int &per) {
+void choix(int min, int max, int &per) {
 	bool i;
 	int haz, cx, cy, cz;
 
@@ -515,7 +515,7 @@ void affper(int per) {
 	i = false;
 }
 
-/* overlay */ void cpl1(int &p) {
+void cpl1(int &p) {
 	int j, h, m;
 
 	/* debug('o0 cpl1'); */
@@ -530,7 +530,7 @@ void affper(int per) {
 	mdn();
 }
 
-/* overlay */ void cpl2(int &p) {
+void cpl2(int &p) {
 	int j, h, m;
 
 	/* debug('o0 cpl2'); */
@@ -542,7 +542,7 @@ void affper(int per) {
 	if ((h >= 0) && (h < 8))  p = 50;
 }
 
-/* overlay */ void cpl3(int &p) {
+void cpl3(int &p) {
 	int j, h, m;
 
 	/* debug('o0 cpl3'); */
@@ -551,7 +551,7 @@ void affper(int per) {
 	if (((h > 9) && (h < 20)) || ((h >= 0) && (h < 9)))  p = 0;
 }
 
-/* overlay */ void cpl5(int &p) {
+void cpl5(int &p) {
 	int j, h, m;
 
 	/* debug('o0 cpl5'); */
@@ -562,7 +562,7 @@ void affper(int per) {
 	if ((h >= 0) && (h < 7))  p = 50;
 }
 
-/* overlay */ void cpl6(int &p) {
+void cpl6(int &p) {
 	int j, h, m;
 
 	/* debug('o0 cpl6'); */
@@ -650,7 +650,7 @@ void debloc(int l) {
 	mpers = ipers;
 }
 
-/* overlay */ void cpl10(int &p, int &h) {
+void cpl10(int &p, int &h) {
 	int j, m;
 
 	/* debug('o1 cpl10'); */
@@ -663,7 +663,7 @@ void debloc(int l) {
 	if ((h >= 0) && (h < 8))  p = 5;
 }
 
-/* overlay */ void cpl11(int &p, int &h) {
+void cpl11(int &p, int &h) {
 	int j, m;
 
 	/* debug('o1 cpl11'); */
@@ -675,7 +675,7 @@ void debloc(int l) {
 	if ((h >= 0) && (h < 9))  p = 0;
 }
 
-/* overlay */ void cpl12(int &p) {
+void cpl12(int &p) {
 	int j, h, m;
 
 	/* debug('o1 cpl12'); */
@@ -686,12 +686,12 @@ void debloc(int l) {
 	if ((h > 4) && (h < 9))  p = 15;
 }
 
-/* overlay */ void cpl13(int &p) {
+void cpl13(int &p) {
 	/* debug('o1 cpl13'); */
 	p = 0;
 }
 
-/* overlay */ void cpl15(int &p) {
+void cpl15(int &p) {
 	int j, h, m;
 
 	/* debug('o1 cpl15'); */
@@ -705,7 +705,7 @@ void debloc(int l) {
 	if ((h >= 0) && (h < 8))  p = -15;
 }
 
-/* overlay */ void cpl20(int &p, int &h) {
+void cpl20(int &p, int &h) {
 	int j, m;
 
 	/* debug('o1 cpl20'); */
@@ -717,7 +717,7 @@ void debloc(int l) {
 	if ((h > 4) && (h < 10))  p = -5;
 }
 
-/* overlay */ void quelq1(int l) {
+void quelq1(int l) {
 	int per;
 
 	/* debug('o1 quelq1'); */
@@ -731,27 +731,27 @@ void debloc(int l) {
 	ipers = 10;
 }
 
-/* overlay */ void quelq2() {
+void quelq2() {
 	/* debug('o1 quelq2'); */
 	if (li == 2)  bh2 = true;
 	else bh9 = true;
 	ipers = 10;
 }
 
-/* overlay */ void quelq5() {
+void quelq5() {
 	/* debug('o1 quelq5'); */
 	bh5 = true;
 	ipers = 10;
 }
 
-/* overlay */ void quelq6(int l) {
+void quelq6(int l) {
 	/* debug('o1 quelq6'); */
 	if (l == 6)  bh6 = true;
 	if (l == 8)  bh8 = true;
 	ipers = 10;
 }
 
-/* overlay */ void quelq10(int h, int &per) {
+void quelq10(int h, int &per) {
 	int min = 0, max = 0;
 
 	/* debug('o1 quelq10'); */
@@ -778,7 +778,7 @@ void debloc(int l) {
 	affper(per);
 }
 
-/* overlay */ void quelq11(int h, int &per) {
+void quelq11(int h, int &per) {
 	int min = 0, max = 0;
 
 	/* debug('o1 quelq11'); */
@@ -801,13 +801,13 @@ void debloc(int l) {
 	affper(per);
 }
 
-/* overlay */ void quelq12(int &per) {
+void quelq12(int &per) {
 	/* debug('o1 quelq12'); */
 	chlm(per);
 	affper(per);
 }
 
-/* overlay */ void quelq15(int &per) {
+void quelq15(int &per) {
 	int cx;
 	bool test;
 
@@ -831,7 +831,7 @@ void debloc(int l) {
 	}
 }
 
-/* overlay */ void quelq20(int h, int &per) {
+void quelq20(int h, int &per) {
 	int min = 0, max = 0;
 
 	/* debug('o1 quelq20'); */
@@ -855,7 +855,7 @@ void debloc(int l) {
 }
 
 
-/* overlay */void frap() {
+void frap() {
 	int j, h, m, haz;
 
 	/* debug('o1 frap'); */
@@ -868,7 +868,7 @@ void debloc(int l) {
 	}
 }
 
-/* overlay */ void nouvp(int l, int &p) {
+void nouvp(int l, int &p) {
 	/* debug('o1 nouvp'); */
 	p = 0;
 	if (l == 1) {
@@ -889,7 +889,7 @@ void debloc(int l) {
 
 
 
-/* overlay */ void tip(int ip, int &cx) {
+void tip(int ip, int &cx) {
 	/* debug('o1 tip'); */
 	if (ip == 128)  cx = 1;
 	else if (ip == 64)   cx = 2;
@@ -902,7 +902,7 @@ void debloc(int l) {
 }
 
 
-/* overlay */ void ecfren(int &p, int &haz, int cf, int l) {
+void ecfren(int &p, int &haz, int cf, int l) {
 	/* debug('o1 ecfren'); */
 	if (l == 0)  person();
 	p = -500;
@@ -921,7 +921,7 @@ void debloc(int l) {
 	}
 }
 
-/* overlay */ void becfren(int l) {
+void becfren(int l) {
 	int haz;
 
 	/* debug('o1 becfren'); */
@@ -958,7 +958,7 @@ void phaz(int &haz, int &p, int cf) {
 	haz = hazard(1, 100);
 }
 
-/* overlay */ void inzon() {
+void inzon() {
 	int cx;
 
 	/* debug('o2 inzon'); */
@@ -989,7 +989,7 @@ void phaz(int &haz, int &p, int cf) {
 	init_nbrepm();
 }
 
-/* overlay */ void dprog() {
+void dprog() {
 	/* debug('o2 dprog'); */
 	li = 21;
 	/* jh:= t_settime(0);*/
@@ -999,7 +999,7 @@ void phaz(int &haz, int &p, int cf) {
 	mh = readclock();
 }
 
-/* overlay */ void pl1(int cf) {
+void pl1(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl1'); */
@@ -1012,7 +1012,7 @@ void phaz(int &haz, int &p, int cf) {
 	}
 }
 
-/* overlay */ void pl2(int cf) {
+void pl2(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl2'); */
@@ -1024,7 +1024,7 @@ void phaz(int &haz, int &p, int cf) {
 	}
 }
 
-/* overlay */ void pl5(int cf) {
+void pl5(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl5'); */
@@ -1036,7 +1036,7 @@ void phaz(int &haz, int &p, int cf) {
 	}
 }
 
-/* overlay */ void pl6(int cf) {
+void pl6(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl6'); */
@@ -1048,7 +1048,7 @@ void phaz(int &haz, int &p, int cf) {
 	}
 }
 
-/* overlayi */ void pl9(int cf) {
+void pl9(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl9'); */
@@ -1060,7 +1060,7 @@ void phaz(int &haz, int &p, int cf) {
 	}
 }
 
-/* overlayi */ void pl10(int cf) {
+void pl10(int cf) {
 	int p, h, haz;
 
 	/* debug('o2 pl10'); */
@@ -1070,7 +1070,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq10(h, p);
 }
 
-/* overlay */ void pl11(int cf) {
+void pl11(int cf) {
 	int p, h, haz;
 
 	/* debug('o2 pl11'); */
@@ -1080,7 +1080,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq11(h, p);
 }
 
-/* overlay */ void pl12(int cf) {
+void pl12(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl12'); */
@@ -1090,7 +1090,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq12(p);
 }
 
-/* overlay */ void pl13(int cf) {
+void pl13(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl13'); */
@@ -1100,7 +1100,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq12(p);
 }
 
-/* overlay */ void pl15(int cf) {
+void pl15(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl15'); */
@@ -1110,7 +1110,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq15(p);
 }
 
-/* overlay */ void pl20(int cf) {
+void pl20(int cf) {
 	int p, h, haz;
 
 	/* debug('o2 pl20'); */
@@ -1120,7 +1120,7 @@ void phaz(int &haz, int &p, int cf) {
 	else quelq20(h, p);
 }
 
-/* overlay */ void t11(int l11, int &a) {
+void t11(int l11, int &a) {
 	int p, haz, h = 0;
 
 	/* debug('o2 t11'); */
@@ -1161,7 +1161,7 @@ void phaz(int &haz, int &p, int cf) {
 		}
 }
 
-/* overlay */ void cavegre()
+void cavegre()
 
 {
 	int haz;

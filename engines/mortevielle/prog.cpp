@@ -38,7 +38,7 @@
 
 namespace Mortevielle {
 
-/* overlay */ void change_gd(int ngd) {
+void change_gd(int ngd) {
 	hide_mouse();
 	gd = ngd;
 	hirs();
