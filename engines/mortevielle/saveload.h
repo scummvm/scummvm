@@ -25,15 +25,42 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#ifndef MORTEVIELLE_DISK_H
-#define MORTEVIELLE_DISK_H
+#ifndef MORTEVIELLE_SAVELOAD_H
+#define MORTEVIELLE_SAVELOAD_H
+
+#include "common/savefile.h"
+#include "common/serializer.h"
+#include "graphics/palette.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
+
+#define SAVEGAME_VERSION 1
 
 namespace Mortevielle {
 
-extern void dem1();
-extern void takesav(int n);
-extern void ld_game(int n);
-extern void sv_game(int n);
+struct SavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+	int totalFrames;
+};
+
+class SavegameManager {
+private:
+	void sync_save(Common::Serializer &sz);
+public:
+	void takesav(int n);
+	Common::Error loadGame(int n);
+	Common::Error saveGame(int n, const Common::String &saveName);
+
+	static void writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName);
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	static Common::String generateSaveName(int slotNumber);
+	static SaveStateList listSaves(const char *target);
+	static SaveStateDescriptor querySaveMetaInfos(int slot);
+};
 
 } // End of namespace Mortevielle
 #endif

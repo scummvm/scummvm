@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "engines/util.h"
 #include "engines/engine.h"
@@ -28,16 +29,20 @@
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
+#include "mortevielle/actions.h"
+#include "mortevielle/alert.h"
 #include "mortevielle/asm.h"
-#include "mortevielle/disk.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/ovd1.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/prog.h"
+#include "mortevielle/saveload.h"
+#include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -50,15 +55,58 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	g_vm = this;
 	_lastGameFrame = 0;
 	_mouseClick = false;
+	_inMainGameLoop = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
 }
 
+/**
+ * Specifies whether the engine supports given features
+ */
 bool MortevielleEngine::hasFeature(EngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
+/**
+ * Return true if a game can currently be loaded
+ */
+bool MortevielleEngine::canLoadGameStateCurrently() {
+	// Saving is only allowed in the main game event loop
+	return _inMainGameLoop;
+}
+
+/**
+ * Return true if a game can currently be saved
+ */
+bool MortevielleEngine::canSaveGameStateCurrently() {
+	// Loading is only allowed in the main game event loop
+	return _inMainGameLoop;
+}
+
+/**
+ * Load in a savegame at the specified slot number
+ */
+Common::Error MortevielleEngine::loadGameState(int slot) {
+	return _savegameManager.loadGame(slot);	
+}
+
+/**
+ * Save the current game
+ */
+Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &desc) {
+	if (slot == 0)
+		return Common::kWritingFailed;
+	
+	return _savegameManager.saveGame(slot, desc);
+}
+
+/**
+ * Initialise the game state
+ */
 Common::ErrorCode MortevielleEngine::initialise() {
 	// Initialise graphics mode
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
@@ -361,12 +409,23 @@ Common::Error MortevielleEngine::run() {
 	if (err != Common::kNoError)
 		return err;
 
-	// Show the game introduction
-	showIntroduction();
+	// Check for a savegame
+	int loadSlot = 0;
+	if (ConfMan.hasKey("save_slot")) {
+		int gameToLoad = ConfMan.getInt("save_slot");
+		if (gameToLoad >= 1 && gameToLoad <= 999)
+			loadSlot = gameToLoad;
+	}
 
+	if (loadSlot == 0)
+		// Show the game introduction
+		showIntroduction();
+
+	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	takesav(0);
+	_savegameManager.takesav(loadSlot);
 
+	// Run the main game loop
 	mainGame();
 
 	return Common::kNoError;
@@ -423,6 +482,118 @@ void MortevielleEngine::mainGame() {
 		tjouer();
 		CHECK_QUIT;
 	} while (!arret);
+}
+
+/**
+ * This method handles repeatedly calling a sub-method to wait for a user action and then handling it
+ */
+void MortevielleEngine::tjouer() {
+	antegame();
+	do {
+		tecran();
+		CHECK_QUIT;
+	} while (!((arret) || (solu) || (perdu)));
+	if (solu)
+		tmaj1();
+	else if (perdu)
+		tencore();
+}
+
+/**
+ * Waits for the user to select an action, and then handles it
+ */
+void MortevielleEngine::tecran() {
+	const char idem[] = "Idem";
+	const int lim = 20000;
+	int temps = 0;
+	char inkey = '\0';
+	bool oo, funct = 0;
+
+	clsf3();
+	oo = false;
+	ctrm = 0;
+	if (! iesc) {
+		draw_menu();
+		imen = true;
+		temps = 0;
+		key = 0;
+		funct = false;
+		inkey = '.';
+
+		_inMainGameLoop = true;
+		do {
+			mdn();
+			tinke();
+			mov_mouse(funct, inkey);
+			CHECK_QUIT;
+			temps = temps + 1;
+		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));
+		_inMainGameLoop = false;
+
+		erase_menu();
+		imen = false;
+		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
+			change_gd((uint)pred(int, ord(inkey)) >> 1);
+			return;
+		}
+		if (choisi && (msg[3] == sauve)) {
+			Common::String saveName = Common::String::format("Savegame #%d", msg[4] & 7);
+			g_vm->_savegameManager.saveGame(msg[4] & 7, saveName);
+		}
+		if (choisi && (msg[3] == charge))
+			g_vm->_savegameManager.loadGame((msg[4] & 7) - 1);
+		if (inkey == '\103') {       /* F9 */
+			temps = do_alert(stpou, 1);
+			return;
+		} else if (inkey == '\77') {
+			if ((mnumo != no_choice) && ((msg[3] == action) || (msg[3] == saction))) {
+				msg[4] = mnumo;
+				ecr3(idem);
+			} else return;
+		} else if (inkey == '\104') {
+			if ((x != 0) && (y != 0))  num = 9999;
+			return;
+		}
+	}
+	if (inkey == '\73') {
+		arret = true;
+		tmaj3();
+	} else {
+		if ((funct) && (inkey != '\77'))  return;
+		if (temps > lim) {
+			repon(2, 141);
+			if (num == 9999)  num = 0;
+		} else {
+			mnumo = msg[3];
+			if ((msg[3] == action) || (msg[3] == saction))  mnumo = msg[4];
+			if (! anyone) {
+				if ((fouil) || (obpart)) {
+					if (y_s < 12)  return;
+					if ((msg[4] == sonder) || (msg[4] == soulever)) {
+						oo = true;
+						if ((msg[4] == soulever) || (obpart)) {
+							finfouil();
+							caff = s.mlieu;
+							crep = 998;
+						} else tsuiv();
+						mennor();
+					}
+				}
+			}
+			do {
+				if (! oo)  tsitu();
+				if ((ctrm == 0) && (! perdu) && (! solu)) {
+					taffich();
+					if (okdes) {
+						okdes = false;
+						dessin(0);
+					}
+					if ((! syn) || (col))  repon(2, crep);
+				}
+			} while (!(! syn));
+			if (ctrm != 0)  tctrm();
+		}
+	}
 }
 
 } // End of namespace Mortevielle

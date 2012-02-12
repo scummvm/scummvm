@@ -33,6 +33,7 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
 
 namespace Mortevielle {
@@ -56,6 +57,7 @@ private:
 	uint32 _lastGameFrame;
 	bool _mouseClick;
 	Common::Point _mousePos;
+	bool _inMainGameLoop;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -65,6 +67,8 @@ private:
 	void initMouse();
 	void showIntroduction();
 	void mainGame();
+	void tjouer();
+	void tecran();
 	void divers(int np, bool b);
 public:
 	ScreenSurface _screenSurface;
@@ -72,10 +76,15 @@ public:
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
+	SavegameManager _savegameManager;
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
 	uint32 getGameFlags() const;
 
