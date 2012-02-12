@@ -506,7 +506,7 @@ void MortevielleEngine::mainGame() {
 	for (crep = 1; crep <= c_zzz; crep ++) 
 		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	charge_bruit5();
-	init_menu();
+	_menu.initMenu();
 
 	theure();
 	dprog();

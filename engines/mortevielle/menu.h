@@ -38,6 +38,16 @@ private:
 	void invers(int ix);
 	void menuDown(int ii);
 public:
+	bool _menuActive;
+	Common::String _inv[9];
+	Common::String _dep[8];
+	Common::String _act[22];
+	Common::String _self[7];
+	Common::String _dis[9];
+	int _disc[9];
+	int _invt[9];
+	int _depl[8];
+public:
 	void menut(int no, Common::String nom);
 	void disableMenuItem(int no);
 	void enableMenuItem(int no);
@@ -46,6 +56,12 @@ public:
 	void menuUp(int xx);
 	void eraseMenu();
 	void mdn();
+	void initMenu();
+};
+
+enum {
+	invent = 1, depla = 2, action = 3, saction = 4,
+	discut = 5, fichier = 6, sauve = 7, charge = 8
 };
 
 } // End of namespace Mortevielle

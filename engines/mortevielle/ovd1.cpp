@@ -71,60 +71,6 @@ void aff50(bool c) {
 	f3f8();
 }
 
-void init_menu() {
-	int i, tai;
-	char st[1410];
-	Common::File f;
-
-	if (!f.open("menufr.mor"))
-		error("Missing file - menufr.mor");
-
-	f.read(lettres, 7 * 24);
-	f.close();
-
-	// Ask to swap floppy
-	dem2();
-
-
-	for (i = 1; i <= 8; i ++)
-		inv[i] = "*                     ";
-	inv[7] = "< -*-*-*-*-*-*-*-*-*- ";
-	for (i = 1; i <= 7; i ++)
-		dep[i] = "*                       ";
-	i = 1;
-	do {
-		deline(i + c_action, st, tai);
-		act[i] = delig;
-		while (act[i].size() < 10)
-			act[i] += ' ';
-
-		if (i < 9) {
-			if (i < 6) {
-				deline(i + c_saction, st, tai);
-				self_[i] = delig;
-				while (self_[i].size() < 10)
-					self_[i] += ' ';
-			}
-			deline(i + c_dis, st, tai);
-			dis[i] = delig + ' ';
-		}
-		i = succ(int, i);
-	} while (!(i == 22));
-	for (i = 1; i <= 8; i ++) {
-		disc[i] = 0x500 + i;
-		if (i < 8)  depl[i] = 0x200 + i;
-		invt[i] = 0x100 + i;
-		if (i > 6)
-			g_vm->_menu.disableMenuItem(invt[i]);
-	}
-	msg3 = no_choice;
-	msg4 = no_choice;
-	msg[3] = no_choice;
-	msg[4] = no_choice;
-	g_vm->setMouseClick(false);
-}
-
-
 void charpal() {
 	Common::File f;		// tabdb records
 	Common::File ft;	// tfxx

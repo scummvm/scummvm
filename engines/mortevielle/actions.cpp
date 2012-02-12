@@ -47,13 +47,13 @@ void taller() {
 	//int mx, cx, cy;
 	int cx;
 
-	if ((s.mlieu == 26) && (msg[4] == depl[6])) {
+	if ((s.mlieu == 26) && (msg[4] == g_vm->_menu._depl[6])) {
 		s.mlieu = 15;
 		caff = s.mlieu;
 		afdes(0);
 		repon(2, s.mlieu);
 	}
-	if ((s.mlieu == 15) && (msg[4] == depl[6])) {
+	if ((s.mlieu == 15) && (msg[4] == g_vm->_menu._depl[6])) {
 		if (!syn)
 			ecr3(g_vm->getString(S_GO_TO));
 		tfleche();
@@ -78,7 +78,7 @@ void taller() {
 	cx = 0;
 	do {
 		cx = cx + 1;
-	} while (!(depl[cx] == msg[4]));
+	} while (!(g_vm->_menu._depl[cx] == msg[4]));
 	if (s.mlieu == 19) {
 		if (cx == 1)  t1deva();
 		if (cx == 2)  t1neig();
@@ -236,7 +236,7 @@ void tsprendre() {
 	cx = 0;
 	do {
 		cx = cx + 1;
-	} while (!(invt[cx] == msg[4]));
+	} while (!(g_vm->_menu._invt[cx] == msg[4]));
 	cz = 0;
 	cy = 0;
 	do {
@@ -870,7 +870,7 @@ void tentrer() {
 					s.conf = s.conf + 1;
 					s.mlieu = 15;
 					msg[3] = discut;
-					msg[4] = disc[x];
+					msg[4] = g_vm->_menu._disc[x];
 					syn = true;
 					if (ment == 9) {
 						col = true;
@@ -1027,7 +1027,7 @@ void tparler()
 		cx = 0;
 		do {
 			cx = cx + 1;
-		} while (!(disc[cx] == msg[4]));
+		} while (!(g_vm->_menu._disc[cx] == msg[4]));
 		caff = 69 + cx;
 		afdes(0);
 		repon(2, caff);
