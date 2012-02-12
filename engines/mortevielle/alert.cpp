@@ -30,7 +30,6 @@
 #include "mortevielle/level15.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
-#include "mortevielle/sprint.h"
 
 namespace Mortevielle {
 
@@ -100,9 +99,9 @@ static void fait_boite(int lidep, int nli, int tx) {
 	y = pred(int, lidep) << 3;
 	xx = x + tx;
 	yy = y + (nli << 3);
-	g_vm->_screenSurface.fillBox(15, Common::Rect(x, y, xx, yy));
-	g_vm->_screenSurface.fillBox(0, Common::Rect(x, y + 2, xx, y + 4));
-	g_vm->_screenSurface.fillBox(0, Common::Rect(x, yy - 4, xx, yy - 2));
+	g_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
 
 

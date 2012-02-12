@@ -32,7 +32,6 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
-#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -146,7 +145,7 @@ void menu_aff() {
 	     clrscr;
 	     halt;
 	   end;*/
-	g_vm->_screenSurface.fillBox(7, Common::Rect(0, 0, 639, 10));
+	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * res;
 	if (gd == cga)  color = 1;
 	else color = 9;
@@ -278,9 +277,9 @@ void menu_down(int ii) {
 	if (res == 1)  cx = 10;
 	else cx = 6;
 	xcc = xco + (don[ii][3] * cx) + 6;
-	g_vm->_screenSurface.fillBox(15, Common::Rect(xco, 12, xcc, 10 + (don[ii][2] << 1)));
-	g_vm->_screenSurface.fillBox(0, Common::Rect(xcc, 12, xcc + 4, 10 + (don[ii][2] << 1)));
-	g_vm->_screenSurface.fillBox(0, Common::Rect(xco, 8 + (don[ii][2] << 1), xcc + 4, 12 + (don[ii][2] << 1)));
+	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (don[ii][2] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (don[ii][2] << 1)));
+	g_vm->_screenSurface.fillRect(0, Common::Rect(xco, 8 + (don[ii][2] << 1), xcc + 4, 12 + (don[ii][2] << 1)));
 	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {

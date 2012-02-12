@@ -29,7 +29,6 @@
 #include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 #include "common/str.h"
 
