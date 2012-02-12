@@ -149,7 +149,7 @@ void clsf1() {
 
 	/* debug('clsf1'); */
 	hide_mouse();
-	box(0, gd, 0, 11, 514, 175, 255);
+	g_vm->_screenSurface.fillBox(0, Common::Rect(0, 11, 514, 175));
 	/* if Gd=ams then port[$3DD]:=15;
 	 case Gd of
 	         ams,
@@ -198,11 +198,11 @@ void clsf2() {
 	/* debug('clsf2'); */
 	hide_mouse();
 	if (f2_all) {
-		box(0, gd, 1, 176, 633, 199, 255);
+		g_vm->_screenSurface.fillBox(0, Common::Rect(1, 176, 633, 199));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
 		f2_all = false;
 	} else {
-		box(0, gd, 1, 176, 633, 190, 255);
+		g_vm->_screenSurface.fillBox(0, Common::Rect(1, 176, 633, 190));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
 	}
 	show_mouse();
@@ -247,7 +247,7 @@ void clsf3() {
 
 	/* debug('clsf3'); */
 	hide_mouse();
-	box(0, gd, 1, 192, 633, 199, 255);
+	g_vm->_screenSurface.fillBox(0, Common::Rect(1, 192, 633, 199));
 	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
 	show_mouse();
 }
@@ -285,7 +285,7 @@ void clsf10() {
 		co = 600;
 		cod = 544;
 	}
-	box(15, gd, cod, 93, co, 98, 255);
+	g_vm->_screenSurface.fillBox(15, Common::Rect(cod, 93, co, 98));
 	if (s.conf < 33)
 		st = g_vm->getString(S_COOL);
 	else if (s.conf < 66)
@@ -300,7 +300,7 @@ void clsf10() {
 	g_vm->_screenSurface.writeg(st, 4);
 	if (res == 1)  co = 620;
 	else co = 584;
-	box(15, gd, 560, 24, co, 86, 255);
+	g_vm->_screenSurface.fillBox(15, Common::Rect(560, 24, co, 86));
 	/* rempli(69,12,32,5,255);*/
 	show_mouse();
 }
@@ -319,7 +319,7 @@ void paint_rect(int x, int y, int dx, int dy) {
 	/* debug('paint_rect'); */
 	if (gd == cga)  co = 3;
 	else co = 11;
-	box(co, gd, x, y, x + dx, y + dy, 255);
+	g_vm->_screenSurface.fillBox(co, Common::Rect(x, y, x + dx, y + dy));
 }
 
 int hazard(int min, int max) {

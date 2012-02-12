@@ -35,11 +35,13 @@
 namespace Mortevielle {
 
 void fill_box(int x, int y, int dx) {
-	box(15, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
+	g_vm->_screenSurface.fillBox(15, Common::Rect(pred(int, x) << 3, pred(int, y) << 3, 
+		pred(int, x + dx) << 3, y << 3));
 }
 
 void clear_box(int x, int y, int dx) {
-	box(0, gd, pred(int, x) << 3, pred(int, y) << 3, pred(int, x + dx) << 3, y << 3, 255);
+	g_vm->_screenSurface.fillBox(0, Common::Rect(pred(int, x) << 3, pred(int, y) << 3, 
+		pred(int, x + dx) << 3, y << 3));
 }
 
 } // End of namespace Mortevielle

@@ -306,17 +306,6 @@ void s_char(int Gd, int y, int dy) {
 	debugC(1, kMortevielleCore, "s_char called");
 }
 
-// (* external 'c:\mc\boite.com'; *)
-void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt) {
-	debugC(1, kMortevielleCore, "TODO: box deprecated in favour of GfxSurface::fillBox");
-	g_vm->_screenSurface.fillBox(c, Common::Rect(xo, yo, xi, yi), patt);
-}
-
-// (* external 'c:\mc\decomp.com'; *)
-void decomp(int seg, int dep) {
-	debugC(1, kMortevielleCore, "TODO: decomp deprecated in faovur of GfxSurface::decode");
-}
-
 // (* external 'c:\mc\reusint.com'; *)
 void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");

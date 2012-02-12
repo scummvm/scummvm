@@ -100,9 +100,9 @@ static void fait_boite(int lidep, int nli, int tx) {
 	y = pred(int, lidep) << 3;
 	xx = x + tx;
 	yy = y + (nli << 3);
-	box(15, gd, x, y, xx, yy, 255);
-	box(0, gd, x, y + 2, xx, y + 4, 255);
-	box(0, gd, x, yy - 4, xx, yy - 2, 255);
+	g_vm->_screenSurface.fillBox(15, Common::Rect(x, y, xx, yy));
+	g_vm->_screenSurface.fillBox(0, Common::Rect(x, y + 2, xx, y + 4));
+	g_vm->_screenSurface.fillBox(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
 
 
