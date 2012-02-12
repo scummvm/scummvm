@@ -186,7 +186,6 @@ private:
 	uint8 _channel0, _channel1;
 
 protected:
-	const char *_timedString;
 	GameVars _vars; // saved variables
 
 	// from backdrop.cpp
@@ -416,10 +415,9 @@ public:
 	uint16 _monAdX;
 	uint16 _monAdY;
 	uint16 _timeCount;
-	uint16 _countToTimed;
-	uint8 _timedY;
-	uint8 _timedX;
 	uint8 _needToDumpTimed;
+	TimedTemp _previousTimedTemp;
+	TimedTemp _timedTemp;
 	uint8 _loadingOrSave;
 	uint8 _saveLoadPage;
 	uint8 _currentSlot;

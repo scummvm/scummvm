@@ -418,6 +418,18 @@ struct GameVars {
 	uint8 _shakeCounter;
 };
 
+struct TimedTemp {
+	TimedTemp() : _timeCount(0), _string(0) { }
+
+	uint8 _x;
+	uint8 _y;
+
+	uint16 _timeCount;
+	uint16 _countToTimed;
+
+	const char *_string;
+};
+
 } // End of namespace DreamWeb
 
 #endif

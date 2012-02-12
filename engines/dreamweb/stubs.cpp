@@ -864,16 +864,16 @@ void DreamWebEngine::dumpTextLine() {
 
 void DreamWebEngine::getUnderTimed() {
 	if (_foreignRelease)
-		multiGet(_underTimedText, _timedX, _timedY - 3, 240, kUnderTimedTextSizeY_f);
+		multiGet(_underTimedText, _timedTemp._x, _timedTemp._y - 3, 240, kUnderTimedTextSizeY_f);
 	else
-		multiGet(_underTimedText, _timedX, _timedY, 240, kUnderTimedTextSizeY);
+		multiGet(_underTimedText, _timedTemp._x, _timedTemp._y, 240, kUnderTimedTextSizeY);
 }
 
 void DreamWebEngine::putUnderTimed() {
 	if (_foreignRelease)
-		multiPut(_underTimedText, _timedX, _timedY - 3, 240, kUnderTimedTextSizeY_f);
+		multiPut(_underTimedText, _timedTemp._x, _timedTemp._y - 3, 240, kUnderTimedTextSizeY_f);
 	else
-		multiPut(_underTimedText, _timedX, _timedY, 240, kUnderTimedTextSizeY);
+		multiPut(_underTimedText, _timedTemp._x, _timedTemp._y, 240, kUnderTimedTextSizeY);
 }
 
 void DreamWebEngine::triggerMessage(uint16 index) {
@@ -903,6 +903,23 @@ void DreamWebEngine::processTrigger() {
 }
 
 void DreamWebEngine::useTimedText() {
+	if (_previousTimedTemp._string) {
+		// TODO: It might be nice to make subtitles wait for the speech
+		// to finish (_channel1Playing) when we're in speech+subtitles mode,
+		// instead of waiting the pre-specified amount of time.
+
+
+		// Ugly... (Maybe make this an argument to putUnderTimed()?)
+		TimedTemp t = _timedTemp;
+		_timedTemp = _previousTimedTemp;
+
+		// Force-reset the previous string to make room for the next one
+		putUnderTimed();
+
+		_timedTemp = t;
+		return;
+	}
+
 	if (_timeCount == 0)
 		return;
 	--_timeCount;
@@ -912,49 +929,65 @@ void DreamWebEngine::useTimedText() {
 		return;
 	}
 
-	if (_timeCount == _countToTimed)
+	if (_timeCount == _timedTemp._countToTimed)
 		getUnderTimed();
-	else if (_timeCount > _countToTimed)
+	else if (_timeCount > _timedTemp._countToTimed)
 		return;
 
-	const uint8 *string = (const uint8 *)_timedString;
-	printDirect(string, _timedX, _timedY, 237, true);
+	const uint8 *string = (const uint8 *)_timedTemp._string;
+	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
 	_needToDumpTimed = 1;
 }
 
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+
 	if (hasSpeech() && voiceIndex != 0) {
 		if (loadSpeech('T', voiceIndex, 'T', textIndex)) {
 			playChannel1(50+12);
 		}
 
-		// FIXME: This fallthrough does not properly support subtitles+speech
-		// mode. The parameters to setuptimedtemp() are sometimes different
-		// for speech and for subtitles. See e.g., madmantext()
 		if (_speechLoaded && !_subtitles)
 			return;
+
+		if (_timeCount != 0) {
+			// store previous TimedTemp for deletion
+			_previousTimedTemp = _timedTemp;
+			_timeCount = 0;
+		}
 	}
 
 	if (_timeCount != 0)
 		return;
-	_timedY = y;
-	_timedX = x;
-	_countToTimed = countToTimed;
-	_timeCount = timeCount + countToTimed;
-	_timedString = _textFile1.getString(textIndex);
-	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, _timedString);
+
+	_timedTemp._y = y;
+	_timedTemp._x = x;
+	_timedTemp._countToTimed = countToTimed;
+	_timeCount = _timedTemp._timeCount = timeCount + countToTimed;
+	_timedTemp._string = _textFile1.getString(textIndex);
+	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, _timedTemp._string);
 }
 
 void DreamWebEngine::dumpTimedText() {
-	const uint16 kUndertimedysize = 30;
-	if (_needToDumpTimed != 1)
+	const TimedTemp *tt;
+	if (_previousTimedTemp._string) {
+		assert(!_needToDumpTimed);
+
+		tt = &_previousTimedTemp;
+		_previousTimedTemp._string = 0;
+		_previousTimedTemp._timeCount = 0;
+	} else if (_needToDumpTimed != 1) {
 		return;
-	uint8 y = _timedY;
+	} else {
+		tt = &_timedTemp;
+		_needToDumpTimed = 0;
+	}
+
+	const uint16 kUndertimedysize = 30;
+	uint8 y = tt->_y;
 	if (_foreignRelease)
 		y -= 3;
 
-	multiDump(_timedX, y, 240, kUndertimedysize);
-	_needToDumpTimed = 0;
+	multiDump(tt->_x, y, 240, kUndertimedysize);
 }
 
 void DreamWebEngine::getTime() {
@@ -2822,12 +2855,12 @@ void DreamWebEngine::setupTimedUse(uint16 textIndex, uint16 countToTimed, uint16
 	if (_timeCount != 0)
 		return; // can't setup
 
-	_timedY = y;
-	_timedX = x;
-	_countToTimed = countToTimed;
-	_timeCount = timeCount + countToTimed;
-	_timedString = _puzzleText.getString(textIndex);
-	debug(1, "setupTimedUse: %d => '%s'", textIndex, _timedString);
+	_timedTemp._y = y;
+	_timedTemp._x = x;
+	_timedTemp._countToTimed = countToTimed;
+	_timeCount = _timedTemp._timeCount = timeCount + countToTimed;
+	_timedTemp._string = _puzzleText.getString(textIndex);
+	debug(1, "setupTimedUse: %d => '%s'", textIndex, _timedTemp._string);
 }
 
 void DreamWebEngine::entryTexts() {
