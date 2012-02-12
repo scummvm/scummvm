@@ -23,6 +23,7 @@
 namespace Mortevielle {
 
 static const ADGameDescription MortevielleGameDescriptions[] = {
+	// French
 	{
 		"mortevielle",
 		"",
@@ -36,6 +37,8 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+
+	// German
 	{
 		"mortevielle",
 		"",
@@ -49,6 +52,23 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+
+	// English. Note that this is technically the French version, but English strings in mort.dat
+	// will automatically replace all the French strings
+	{
+		"mortevielle",
+		"",
+		{
+			{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
+			{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	AD_TABLE_END_MARKER
 };
 

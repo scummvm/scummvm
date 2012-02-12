@@ -214,18 +214,18 @@ void invers(int ix) {
 		s = dis[lo(msg4)];
 		break;
 	case 6 :
-		s = fic[lo(msg4)];
+		s = g_vm->getString(S_SAVE_LOAD + lo(msg4));
 		break;
 	case 7 :
-		s = fic[1];
+		s = g_vm->getString(S_SAVE_LOAD + 1);
 		s += ' ';
 		s += (char)(48 + lo(msg4));
 		break;
 	case 8 :
 		if (lo(msg4) == 1) {
-			s = recom;
+			s = g_vm->getString(S_RESTART);
 		} else {
-			s = fic[2];
+			s = g_vm->getString(S_SAVE_LOAD + 2);
 			s += ' ';
 			s += (char)(47 + lo(msg4));
 		}
@@ -302,10 +302,10 @@ void menu_down(int ii) {
 			if (dis[cx][0] != '*')  writeg(dis[cx], 4);
 			break;
 		case 6 :
-			writeg(fic[cx], 4);
+			writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
 			break;
 		case 7 : {
-			Common::String s = fic[1];
+			Common::String s = g_vm->getString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + cx);
 			writeg(s, 4);
@@ -313,9 +313,9 @@ void menu_down(int ii) {
 		}
 		case 8 :
 			if (cx == 1)
-				writeg(recom, 4);
+				writeg(g_vm->getString(S_RESTART), 4);
 			else {
-				Common::String s = fic[2];
+				Common::String s = g_vm->getString(S_SAVE_LOAD + 2);
 				s += ' ';
 				s += (char)(47 + cx);
 				writeg(s, 4);

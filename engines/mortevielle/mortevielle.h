@@ -38,9 +38,30 @@
 
 namespace Mortevielle {
 
+// Debug channels
 enum {
 	kMortevielleCore = 1 << 0,
 	kMortevielleGraphics = 1 << 1
+};
+
+// Game languages
+enum {
+	LANG_FRENCH = 0,
+	LANG_ENGLISH = 1
+};
+
+// Static string list
+enum {
+	S_YES_NO = 0, S_GO_TO = 1, S_SOMEONE_ENTERS = 2, S_COOL = 3, S_LOURDE = 4, 
+	S_MALSAINE = 5, S_IDEM = 6,	S_YOU = 7, S_ARE = 8, S_ALONE = 9,
+	S_HEAR_NOISE = 10, S_SHOULD_HAVE_NOTICED = 11, S_NUMBER_OF_HINTS = 12,
+	S_WANT_TO_WAKE_UP = 13, S_OK = 14, S_SAVE_LOAD = 15, S_RESTART = 18, S_F3 = 19, 
+	S_F8 = 20, S_HIDE_SELF = 21, S_TAKE = 22, S_PROBE = 23, S_RAISE = 24, S_SUITE = 25, 
+	S_STOP = 26, S_USE_DEP_MENU = 27, S_LIFT = 28, S_READ = 29, 
+	S_LOOK = 30, S_SEARCH = 31, S_OPEN = 32, S_PUT = 33, S_TURN = 34, S_TIE = 35, S_CLOSE = 36,
+	S_HIT = 37, S_POSE = 38, S_SMASH = 39,
+
+	S_SMELL = 40, S_SCRATCH = 41, S_PROBE2 = 42, S_BEFORE_USE_DEP_MENU = 43, S_DAY = 44
 };
 
 #define SCREEN_WIDTH 640
@@ -58,9 +79,11 @@ private:
 	bool _mouseClick;
 	Common::Point _mousePos;
 	bool _inMainGameLoop;	// Flag when the main game loop is active
+	Common::StringArray _staticStrings;
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
+	void readStaticStrings(Common::File &f, int dataSize);
 	void loadFont(Common::File &f);
 	bool handleEvents();
 	void addKeypress(Common::Event &evt);
@@ -91,6 +114,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
 	uint32 getGameFlags() const;
+	Common::Language getLanguage() const;
 
 	bool keyPressed();
 	int getChar();
@@ -99,6 +123,7 @@ public:
 	bool getMouseClick() const { return _mouseClick; }
 	void setMouseClick(bool v) { _mouseClick = v; }
 	void delay(int amount);
+	Common::String getString(int idx) const { return _staticStrings[idx]; }
 
 	void endGame();
 	void loseGame();

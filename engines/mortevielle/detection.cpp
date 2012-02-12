@@ -29,6 +29,9 @@
 
 namespace Mortevielle {
 uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->flags; }
+
+Common::Language MortevielleEngine::getLanguage() const { return _gameDescription->language; }
+
 }
 
 static const PlainGameDescriptor MortevielleGame[] = {
