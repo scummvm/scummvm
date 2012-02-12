@@ -677,9 +677,7 @@ void tcoord(int sx)
 		atdon = atdon + 4;
 		cy = succ(int, cy);
 	}
-	/*     for cy:=0 to caff-1 do
-	          a:=a+ tabdon[amzon+3+4*cy];
-	     b:= peek(amzon+3+4*caff); */
+
 	b = tabdon[atdon];
 	if (b == 0)  goto L1;
 	a = a + fleche;

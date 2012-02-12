@@ -174,7 +174,7 @@ int x,
 
 int t_cph[6401];
 byte tabdon[4001];
-/*   t_dxx  : array[0..121] of int;*/
+
 Common::String stpou;               /* donne le % d'indices */ //Translation: "Provides the % of hints"
 byte is;
 char mode;

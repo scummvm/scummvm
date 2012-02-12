@@ -656,8 +656,7 @@ void pendule() {
 
 	/* debug('pendule'); */
 	hide_mouse();
-	/*paint_rect(572,114,18,20);
-	paint_rect(577,114,6,20);*/
+	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
 	if ((gd == cga) || (gd == her))
@@ -1238,23 +1237,7 @@ void writetp(Common::String s, int t) {
  * a waiting message between scenes.
  */
 void messint(int nu) {
-	/*	Method is deprecated
-	clsf1();
-	clsf2();
-	clsf3();
-
-	GfxSurface surface;
-	surface.decode(&mem[0x73a2 * 16 + 1008]);
-
-	WRITE_LE_UINT16(&mem[0x7413 * 16 + 12], 80);
-	WRITE_LE_UINT16(&mem[0x7413 * 16 + 14], 40);
-	writepal(90);
-
-	g_vm->_screenSurface.drawPicture(surface, 0, 0);
-	g_vm->_screenSurface.drawPicture(surface, 0, 70);
-
-	repon(7, nu);
-	*/
+	// Method is deprecated
 }
 
 void aniof(int ouf, int num) {
@@ -1278,7 +1261,6 @@ void aniof(int ouf, int num) {
 void musique(int so) {
 	bool i;
 	int haz;
-	/* dep: array[1..5] of float;*/
 
 	/* debug('musique'); */
 	if (so == 0) { /*musik(0)*/
@@ -1315,13 +1297,6 @@ void musique(int so) {
 			i = true;
 		}
 		if (! i) {
-			/* dep[1]:= 1416;
-			 dep[2]:= 1512;
-			 dep[3]:= 1692;
-			 dep[4]:= 1884;
-			 dep[5]:= 2046;
-			 haz:= hazard(1,5);
-			 musik(dep[haz]);*/
 			haz = hazard(1, 17);
 			parole(haz, 1, 2);
 		}
