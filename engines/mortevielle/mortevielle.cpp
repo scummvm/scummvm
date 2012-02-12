@@ -479,7 +479,9 @@ void MortevielleEngine::showIntroduction() {
 	divers(143, true);
 	CHECK_QUIT;
 
+	// TODO: Once music is implemented, only use the below delay if music is turned off
 	suite();
+	delay(3000);
 	music();
 }
 

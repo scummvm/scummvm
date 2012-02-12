@@ -233,75 +233,13 @@ void ani50() {
 	al_mess2 = delig;
 }
 
-/* overlay */ void dialpre()
-
-{
-	int cy, tay;
-	char st[1410];
-	float ix;
-//	char ch;
-
-
+/**
+ * The original engine used this method to display a starting text screen letting the palyer
+ * select the graphics mode to use
+ */
+void dialpre() {
 	/* debug('o3 dialpre'); */
-	cy = 0;
-	clrscr;
-	textcolor(9);
-	do {
-		cy = cy + 1;
-		deline(cy + c_dialpre, st, tay);
-		gotoxy(40 - tay / 2, wherey + 1);
-		output(delig);
-	} while (!(cy == 20));
-	ix = 0;
-/*	do {
-		ix = ix + 1;
-	} while (!(keypressed() | (ix == 5e5)));
-*/
 	crep = 998;
-	textcolor(1);
-	gotoxy(1, 21);
-	clreol;
-	gotoxy(1, 23);
-	output("CARTE GRAPHIQUE      CGA    EGA    HERCULE/AT&T400    TANDY    AMSTRAD1512");
-	gotoxy(12, 24);
-	output("Ctrl       C      E            H             T           A");
-
-/*
-	do {
-		ch = get_ch();	// input >> kbd >> ch;
-	} while ((ch != '\1') && (ch != '\3') && (ch != '\5') && (ch != '\24') && (ch != '\10'));
-	switch (ch) {
-	case '\1':
-	case '\3':
-	case '\5' :
-		gd = (uint)ord(ch) >> 1;
-		break;
-	case '\10' :
-		gd = her;
-		break;
-	case '\24' :
-		gd = tan;
-		break;
-	}*/
-
-	gotoxy(1, 24);
-	clreol;
-	gotoxy(1, 23);
-	clreol;
-	gotoxy(26, 23);
-	// "Play using keyboard / ... mouse"
-	output("Jeu au Clavier / … la Souris");
-	textcolor(4);
-	gotoxy(33, 23);
-	output("C");
-	gotoxy(48, 23);
-	output("S");
-	/*
-	do {
-		ch = get_ch();	// input >> kbd >> ch;
-	} while ((ch != 'C') && (ch != 'S'));
-	int_m = (toupper(ch) == 'S');
-	*/
 	int_m = true;
 }
 
@@ -390,10 +328,7 @@ void ani50() {
 	f.close();
 }
 
-
-/* overlay */ void suite() {
-	Common::String cpr;
-
+void suite() {
 	hirs();
 	repon(7, 2035);
 	caff = 51;
@@ -402,15 +337,10 @@ void ani50() {
 	if (newgd != gd)  gd = newgd;
 	hirs();
 	dessine(ades, 0, 0);
-	gotoxy(20 * pred(int, res) + 8, 24);
-	textcolor(7);
-	cpr = "COPYRIGHT 1989 : LANKHOR";
-	if ((gd == ega) || (gd == ams) || (gd == cga))
-		output(cpr);
-	else {
-		putxy(104 + 72 * res, 190);
-		writeg(cpr, 0);
-	}
+
+	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
+	putxy(104 + 72 * res, 185);
+	writeg(cpr, 0);
 }
 
 } // End of namespace Mortevielle
