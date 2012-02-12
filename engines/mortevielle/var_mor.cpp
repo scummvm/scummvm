@@ -313,11 +313,6 @@ void decomp(int seg, int dep) {
 	debugC(1, kMortevielleCore, "TODO: decomp deprecated in faovur of GfxSurface::decode");
 }
 
-// (* external 'c:\mc\affich.com'; *)
-void afff(int Gd, int seg, int dep, int x, int y) {
-	warning("TODO: afff");
-}
-
 // (* external 'c:\mc\reusint.com'; *)
 void musyc(tablint &tb, int nbseg, int att) {
 	warning("TODO: musyc");
