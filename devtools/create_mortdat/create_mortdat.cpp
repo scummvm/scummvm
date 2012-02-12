@@ -91,6 +91,9 @@ public:
 		uint32 vTemp = TO_LE_32(v);
 		write(&vTemp, sizeof(uint32));
 	}
+	void writeString(const char *s) {
+		write(s, strlen(s) + 1);
+	}
 	uint32 pos() {
 		return ftell(f);
 	}
@@ -112,7 +115,10 @@ void openOutputFile(const char *outFilename) {
 	outputFile.writeByte(VERSION_MINOR);
 }
 
-void process() {
+/**
+ * Write out the data for the font 
+ */
+void writeFontBlock() {
 	byte checkBuffer[7];
 	byte fontBuffer[121 * 6];
 
@@ -138,6 +144,162 @@ void process() {
 	outputFile.write(fontBuffer, 121 * 6);
 }
 
+void writeStaticStrings(const char **strings, int languageId) {
+	// Write out a section header 
+	char sStaticStrings[4] = { 'S', 'S', 'T', 'R' };
+	outputFile.write(sStaticStrings, 4);
+
+	// Figure out the block size
+	int blockSize = 1;
+	const char **s = &strings[0];
+	while (*s) {
+		blockSize += strlen(*s) + 1;
+		++s;
+	}
+
+	outputFile.writeWord(blockSize);
+
+	// Write out a byte indicating the language for this block
+	outputFile.writeByte(languageId);
+
+	// Write out each of the strings
+	s = &strings[0];
+	while (*s) {
+		outputFile.writeString(*s);
+		++s;
+	}
+}
+
+/**
+ * Write out the French strings previously hard-coded into the application
+ */
+void writeEnglishStaticStrings() {
+	const char *string_list[] =  {
+		"[2][ ][YES][NO]",
+		"Go to",
+		"Someone enters, looks surised, but says nothing",
+		"Cool",
+		" Lourde ",
+		"Malsaine",
+		"Idem",
+		"You",
+		"are",
+		"Alone",
+
+		"Gosh! You hear some noise...",
+		" | You should have noticed,   |       ",
+		"% of hints...",
+		"Do you want to wake up?",
+		"OK",
+		"", 
+		" Save",
+
+		" Load",
+		" Restart     ",
+		"F3: More",
+		"F8: Restart",
+		"Hide self",
+		"take",
+		" probe    ",
+		" raise    ",
+		" -SUITE- ",
+		" -STOP-  ",
+		"[1] [So, use the DEP menu] [Ok]",
+		"lift",
+		"read",
+
+		"look",
+		"search",
+		"open",
+		"put",
+		"turn",
+		"tie",
+		"close",
+		"hit",
+		"pose",
+		"smash",
+
+		"smell",
+		"scratch",
+		"probe",
+		"[1] [ | Before, use the DEP menu...] [Ok]",
+		"& day",
+		NULL
+	};
+
+	writeStaticStrings(string_list, 1);
+}
+
+/**
+ * Write out the French strings previously hard-coded into the application
+ */
+void writeFrenchStaticStrings() {
+	const char *string_list[] = {
+		"[2][ ][OUI][NON]",
+		"aller",
+		"quelqu'un entre, parait ‚tonn‚ mais ne dit rien",
+		"Cool",
+		" Lourde ",
+		"Malsaine",
+		"Idem",
+		"Vous",
+		"ˆtes",
+		"SEUL",
+
+		"Mince! Vous entendez du bruit...",
+		" | Vous devriez avoir remarqu‚|       ",
+		"% des indices...",
+		"D‚sirez-vous vous r‚veiller?",
+		"OK",
+		"", 
+		" Sauvegarde",
+
+		" Chargement",
+		" Recommence  ",
+		"F3: Encore",
+		"F8: Suite",
+		"se cacher",
+
+		"prendre",
+		" sonder   ",
+		"soulever",
+		" -SUITE- ",
+		" -STOP-  ",
+		"[1][Alors, utilisez le menu DEP...][ok]",
+		"soulever",
+		"lire",
+
+		"regarder",
+		"fouiller",
+		"ouvrir",
+		"mettre",
+		"tourner",
+		"attacher",
+		"fermer",
+		"frapper",
+		"poser",
+		"d‚foncer",
+
+		"sentir",
+		"gratter",
+		"sonder",
+		"[1][ | Avant, utilisez le menu DEP...][ok]",
+		"& jour",
+		NULL
+	};
+
+	writeStaticStrings(string_list, 0);
+}
+
+void process() {
+	writeFontBlock();
+	writeEnglishStaticStrings();
+	writeFrenchStaticStrings();
+}
+
+/**
+ * Main method
+ */
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
 		printf("Format: input_filename output_filename\n", argv[0]);
