@@ -48,7 +48,7 @@ void menut(int no, Common::String nom) {
 	l = lo(no);
 	s = nom;
 	if (! tesok) {
-		mortevielle_exit(0);
+		g_vm->quitGame();
 	}
 	while (s.size() < 20)  s = s + ' ';
 	switch (h) {
