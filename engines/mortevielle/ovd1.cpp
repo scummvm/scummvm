@@ -114,7 +114,8 @@ void init_menu() {
 		disc[i] = 0x500 + i;
 		if (i < 8)  depl[i] = 0x200 + i;
 		invt[i] = 0x100 + i;
-		if (i > 6)  menu_disable(invt[i]);
+		if (i > 6)
+			g_vm->_menu.disableMenuItem(invt[i]);
 	}
 	msg3 = no_choice;
 	msg4 = no_choice;

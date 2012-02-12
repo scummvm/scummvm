@@ -324,8 +324,8 @@ void modobj(int m) {
 		deline(m - 501 + c_st41, str_, tay);
 		strp = delig;
 	}
-	menut(invt[8], strp);
-	menu_disable(invt[8]);
+	g_vm->_menu.menut(invt[8], strp);
+	g_vm->_menu.disableMenuItem(invt[8]);
 }
 
 void modobj2(int m, bool t1, bool t2) {
@@ -341,8 +341,8 @@ void modobj2(int m, bool t1, bool t2) {
 		deline(m - 501 + c_st41, str_, tay);
 		strp = delig;
 	}
-	menut(invt[8], strp);
-	menu_disable(invt[8]);
+	g_vm->_menu.menut(invt[8], strp);
+	g_vm->_menu.disableMenuItem(invt[8]);
 }
 
 
@@ -445,47 +445,48 @@ void affper(int per) {
 	int cx;
 
 	/* debug('affper'); */
-	for (cx = 1; cx <= 8; cx ++) menu_disable(disc[cx]);
+	for (cx = 1; cx <= 8; cx ++)
+		g_vm->_menu.disableMenuItem(disc[cx]);
 	clsf10();
 	if ((per & 128) == 128) {
 		g_vm->_screenSurface.putxy(560, 24);
 		g_vm->_screenSurface.writeg("LEO", 4);
-		menu_enable(disc[1]);
+		g_vm->_menu.enableMenuItem(disc[1]);
 	}
 	if ((per & 64) == 64) {
 		g_vm->_screenSurface.putxy(560, 32);
 		g_vm->_screenSurface.writeg("PAT", 4);
-		menu_enable(disc[2]);
+		g_vm->_menu.enableMenuItem(disc[2]);
 	}
 	if ((per & 32) == 32) {
 		g_vm->_screenSurface.putxy(560, 40);
 		g_vm->_screenSurface.writeg("GUY", 4);
-		menu_enable(disc[3]);
+		g_vm->_menu.enableMenuItem(disc[3]);
 	}
 	if ((per & 16) == 16) {
 		g_vm->_screenSurface.putxy(560, 48);
 		g_vm->_screenSurface.writeg("EVA", 4);
-		menu_enable(disc[4]);
+		g_vm->_menu.enableMenuItem(disc[4]);
 	}
 	if ((per & 8) == 8) {
 		g_vm->_screenSurface.putxy(560, 56);
 		g_vm->_screenSurface.writeg("BOB", 4);
-		menu_enable(disc[5]);
+		g_vm->_menu.enableMenuItem(disc[5]);
 	}
 	if ((per & 4) == 4) {
 		g_vm->_screenSurface.putxy(560, 64);
 		g_vm->_screenSurface.writeg("LUC", 4);
-		menu_enable(disc[6]);
+		g_vm->_menu.enableMenuItem(disc[6]);
 	}
 	if ((per & 2) == 2) {
 		g_vm->_screenSurface.putxy(560, 72);
 		g_vm->_screenSurface.writeg("IDA", 4);
-		menu_enable(disc[7]);
+		g_vm->_menu.enableMenuItem(disc[7]);
 	}
 	if ((per & 1) == 1) {
 		g_vm->_screenSurface.putxy(560, 80);
 		g_vm->_screenSurface.writeg("MAX", 4);
-		menu_enable(disc[8]);
+		g_vm->_menu.enableMenuItem(disc[8]);
 	}
 	ipers = per;
 }
@@ -526,7 +527,7 @@ void cpl1(int &p) {
 	if ((h > 17) && (h < 22))  p = 35;
 	if ((h > 21) && (h < 24))  p = 50;
 	if ((h >= 0) && (h < 8))  p = 70;
-	mdn();
+	g_vm->_menu.mdn();
 }
 
 void cpl2(int &p) {
@@ -578,7 +579,7 @@ void cpl6(int &p) {
 void person() {
 	/* debug('person'); */
 	for (int cf = 1; cf <= 8; cf ++)
-		menu_disable(disc[cf]);
+		g_vm->_menu.disableMenuItem(disc[cf]);
 
 	clsf10();
 	g_vm->_screenSurface.putxy(560, 30);

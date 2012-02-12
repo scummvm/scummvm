@@ -38,19 +38,22 @@ namespace Mortevielle {
 
 /* NIVEAU 14*/
 
-void menut(int no, Common::String nom) {
+/**
+ * Setup a menu's contents
+ */
+void Menu::menut(int no, Common::String nom) {
 	byte h, l;
 	Common::String s;
 
-
-	/* debug('menut'); */
 	h = hi(no);
 	l = lo(no);
 	s = nom;
 	if (! tesok) {
 		g_vm->quitGame();
 	}
-	while (s.size() < 20)  s = s + ' ';
+	while (s.size() < 20)
+		s = s + ' ';
+
 	switch (h) {
 	case invent  :
 		if (l != 7) {
@@ -73,10 +76,13 @@ void menut(int no, Common::String nom) {
 	}
 }
 
-void menu_disable(int no) {
+/**
+ * Disable a menu item
+ * @param no	Hi byte represents menu number, lo byte reprsents item index
+ */
+void Menu::disableMenuItem(int no) {
 	byte h, l;
 
-	/* debug('menu_disable'); */
 	h = hi(no);
 	l = lo(no);
 	switch (h) {
@@ -84,7 +90,8 @@ void menu_disable(int no) {
 		if (l > 6)  {
 			inv[l].setChar('<', 0);
 			inv[l].setChar('>', 21);
-		} else inv[l].setChar('*', 0);
+		} else
+			inv[l].setChar('*', 0);
 	}
 	break;
 	case depla :
@@ -102,10 +109,13 @@ void menu_disable(int no) {
 	}
 }
 
-void menu_enable(int no) {
+/**
+ * Enable a menu item
+ * @param no	Hi byte represents menu number, lo byte reprsents item index
+ */
+void Menu::enableMenuItem(int no) {
 	byte h, l;
 
-	/* debug('menu_disable'); */
 	h = hi(no);
 	l = lo(no);
 	switch (h) {
@@ -131,19 +141,13 @@ void menu_enable(int no) {
 	}
 }
 
-void menu_aff() {
+void Menu::menu_aff() {
 	int ind_tabl, k, col;
-//	char c;
-	int pt, x, y, color, msk,
-	        num_letr;
 
-	/* debug('menu_aff'); */
+	int pt, x, y, color, msk, num_letr;
+
 	hide_mouse();
-	/*if not tesok then
-	   begin
-	     clrscr;
-	     halt;
-	   end;*/
+	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * res;
 	if (gd == cga)  color = 1;
@@ -177,9 +181,10 @@ void menu_aff() {
 	show_mouse();
 }
 
-
-void draw_menu() {
-	/* debug('draw_menu'); */
+/**
+ * Show the menu
+ */
+void Menu::drawMenu() {
 	menu_aff();
 	active_menu = true;
 	msg4 = no_choice;
@@ -189,10 +194,9 @@ void draw_menu() {
 	test0 = false;
 }
 
-void invers(int ix) {
+void Menu::invers(int ix) {
 	Common::String s;
 
-	/* debug('invers'); */
 	if (msg4 == no_choice)  return;
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
@@ -235,7 +239,7 @@ void invers(int ix) {
 		msg4 = no_choice;
 }
 
-void util(int x, int y) {
+void Menu::util(int x, int y) {
 	int ymx, dxcar, xmn, xmx, ix;
 
 	/* debug('util'); */
@@ -258,11 +262,14 @@ void util(int x, int y) {
 	}
 }
 
-void menu_down(int ii) {
+/**
+ * Draw a menu
+ */
+void Menu::menuDown(int ii) {
 	int cx, xcc;
 	int xco, nb_lig;
 
-	/* debug('menu_down'); */
+	/* debug('menuDown'); */
 
 	// Make a copy of the current screen surface for later restore
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
@@ -331,8 +338,11 @@ void menu_down(int ii) {
 	show_mouse();
 }
 
-void menu_up(int xx) {
-	/* debug('menu_up'); */
+/**
+ * Menu is being removed, so restore the previous background area.
+ */
+void Menu::menuUp(int xx) {
+	/* debug('menuUp'); */
 	if (test0) {
 		charecr(10, succ(byte, don[xx][2]) << 1);
 
@@ -351,14 +361,20 @@ void menu_up(int xx) {
 	}
 }
 
-void erase_menu() {
-	/* debug('erase_menu'); */
+/**
+ * Erase the menu
+ */
+void Menu::eraseMenu() {
+	/* debug('eraseMenu'); */
 	active_menu = false;
 	g_vm->setMouseClick(false);
-	menu_up(msg3);
+	menuUp(msg3);
 }
 
-void mdn() {
+/**
+ * Handle updates to the menu
+ */
+void Menu::mdn() {
 	//int x, y, c, a, ix;
 	int x, y, ix;
 	bool tes;
@@ -389,28 +405,28 @@ void mdn() {
 			else ix = fichier;
 			if ((ix != msg3) || (! test0))
 				if (!((ix == fichier) && ((msg3 == sauve) || (msg3 == charge)))) {
-					menu_up(msg3);
-					menu_down(ix);
+					menuUp(msg3);
+					menuDown(ix);
 					msg3 = ix;
 					msg4 = no_choice;
 				}
 		} else { /* Not in the MenuTitle line */
 			if ((y > 11) && (test0))  util(x, y);
 		}
-	} else        /* There was a click */
+	} else {       /* There was a click */
 		if ((msg3 == fichier) && (msg4 != no_choice)) {
 			// Another menu to be displayed
 			g_vm->setMouseClick(false);
-			menu_up(msg3);
+			menuUp(msg3);
 			if (lo(msg4) == 1)  msg3 = 7;
 			else msg3 = 8;
-			menu_down(msg3);
+			menuDown(msg3);
 
 			g_vm->setMouseClick(false);
 		} else { 
 			//  A menu was clicked on
 			choisi = (test0) && (msg4 != no_choice);
-			menu_up(msg3);
+			menuUp(msg3);
 			msg[4] = msg4;
 			msg[3] = msg3;
 			msg3 = no_choice;
@@ -418,6 +434,7 @@ void mdn() {
 
 			g_vm->setMouseClick(false);
 		}
+	}
 }
 
 } // End of namespace Mortevielle

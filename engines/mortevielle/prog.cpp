@@ -54,7 +54,7 @@ void change_gd(int ngd) {
 	maff = 68;
 	afdes(0);
 	repon(2, crep);
-	menu_aff();
+	g_vm->_menu.menu_aff();
 }
 
 /**
