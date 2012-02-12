@@ -72,18 +72,7 @@ const byte don[9][5] = {
 	{0,  62, 25, 13,  5}
 };
 
-const char *fic[3] = {
-	"", 
-	" Sauvegarde",  // Translation: "Save"
-	 " Chargement"  // Translation: "Load"
-};
-
 const byte addv[2] = {8, 8};
-
-const char recom[] = " Recommence  "; // Translation: "Restart"
-
-const char f3[] = "F3: Encore";       // Translation: "F3: More"
-const char f8[] = "F8: Suite";        // Translation: "F8: Next"
 
 const byte rang[16] = {15, 14, 11, 7, 13, 12, 10, 6, 9, 5, 3, 1, 2, 4, 8, 0};
 

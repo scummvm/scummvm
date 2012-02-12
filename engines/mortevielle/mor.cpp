@@ -35,6 +35,7 @@
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/parole2.h"
@@ -42,9 +43,6 @@
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
-
-/* Niveau 14 suite */
-const char m1[] = "quelqu'un entre, parait ‚tonn‚ mais ne dit rien";       //Translation: Someone enters, looks surised, but says nothing
 
 // For ScummVM, we need to do check for file errors where we do the file access
 const int ioresult = 0;
@@ -287,10 +285,14 @@ void clsf10() {
 		cod = 544;
 	}
 	box(15, gd, cod, 93, co, 98, 255);
-	if (s.conf < 33)  st = "Cool";
-	else if (s.conf < 66)  st = " Lourde ";
-	else if (s.conf > 65)  st = "Malsaine";
-	if (res == 1)  co = 10;
+	if (s.conf < 33)
+		st = g_vm->getString(S_COOL);
+	else if (s.conf < 66)
+		st = g_vm->getString(S_LOURDE);
+	else if (s.conf > 65)
+		st = g_vm->getString(S_MALSAINE);
+	if (res == 1)
+		co = 10;
 	else co = 6;
 	co = 574 - ((uint)co * st.size() >> 1);
 	putxy(co, 92);
@@ -453,9 +455,9 @@ void f3f8() {
 	if (res == 1)  co = 107;
 	else co = 64;
 	putxy(3, 44);
-	writeg(f3, 5);
+	writeg(g_vm->getString(S_F3), 5);
 	ywhere = 51;
-	writeg(f8, 5);
+	writeg(g_vm->getString(S_F8), 5);
 	boite(0, 42, co, 16, 7);
 }
 
@@ -610,22 +612,21 @@ void affper(int per) {
 	if ((h >= 0) && (h < 8))  p = 60;
 }
 
+/**
+ * Shows the you are alone message in the status area on the right hand side of the screen
+ */
 void person() {
-	const char m1[] = "Vous"; //Translation: You
-	const char m2[] = "ˆtes"; //Translation: are
-	const char m3[] = "SEUL"; //Translation: ALONE
-	int cf;
-	Common::String str_;
-
 	/* debug('person'); */
-	for (cf = 1; cf <= 8; cf ++) menu_disable(disc[cf]);
+	for (int cf = 1; cf <= 8; cf ++)
+		menu_disable(disc[cf]);
+
 	clsf10();
 	putxy(560, 30);
-	writeg(m1, 4);
+	writeg(g_vm->getString(S_YOU), 4);
 	putxy(560, 50);
-	writeg(m2, 4);
+	writeg(g_vm->getString(S_ARE), 4);
 	putxy(560, 70);
-	writeg(m3, 4);
+	writeg(g_vm->getString(S_ALONE), 4);
 	ipers = 0;
 }
 
@@ -668,7 +669,7 @@ void pendule() {
 	else writeg("AM ", 1);
 	putxy(550, 160);
 	if ((jou >= 0) && (jou <= 8)) {
-		Common::String tmp("& jour");                 //Translation: Day
+		Common::String tmp = g_vm->getString(S_DAY);
 		tmp.insertChar((char)(jou + 49), 0);
 		writeg(tmp, 1);
 	}
@@ -1208,7 +1209,7 @@ void phaz(int &haz, int &p, int cf) {
 	if (s.conf > 69)  s.conf = s.conf + (s.conf / 10);
 	clsf3();
 	ecrf2();
-	ecr3(m1);
+	ecr3(g_vm->getString(S_SOMEONE_ENTERS));
 	haz = (hazard(0, 4)) - 2;
 	parole(2, haz, 1);
 	for (haz = 0; haz <= 3000; haz ++);

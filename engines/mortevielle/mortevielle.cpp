@@ -204,14 +204,49 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 		if (!strncmp(dataType, "FONT", 4)) {
 			// Font resource
 			_screenSurface.readFontData(f, dataSize);
+		} else if (!strncmp(dataType, "SSTR", 4)) {
+			readStaticStrings(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
 		}
 	}
 
+	// Close the file
 	f.close();
+
+	assert(_staticStrings.size() > 0);
 	return Common::kNoError;
+}
+
+/**
+ * Read in a static strings block, and if the language matches, load up the static strings
+ */
+void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize) {
+	// Figure out what language Id is needed
+	byte desiredLanguageId = (getLanguage() == Common::EN_ANY) ? LANG_ENGLISH : LANG_FRENCH;
+
+	// Read in the language
+	byte languageId = f.readByte();
+	--dataSize;
+
+	// If the language isn't correct, then skip the entire block
+	if (languageId != desiredLanguageId) {
+		f.skip(dataSize);
+		return;
+	}
+
+	// Load in each of the strings
+	while (dataSize > 0) {
+		Common::String s;
+		char ch;
+		while ((ch = (char)f.readByte()) != '\0')
+			s += ch;
+		
+		_staticStrings.push_back(s);
+		dataSize -= s.size() + 1;
+	}
+	assert(dataSize == 0);
 }
 
 bool MortevielleEngine::keyPressed() {
@@ -510,7 +545,6 @@ void MortevielleEngine::playGame() {
  * @remarks	Originally called tecran
  */
 void MortevielleEngine::handleAction() {
-	const char idem[] = "Idem";
 	const int lim = 20000;
 	int temps = 0;
 	char inkey = '\0';
@@ -555,7 +589,7 @@ void MortevielleEngine::handleAction() {
 		} else if (inkey == '\77') {
 			if ((mnumo != no_choice) && ((msg[3] == action) || (msg[3] == saction))) {
 				msg[4] = mnumo;
-				ecr3(idem);
+				ecr3(g_vm->getString(S_IDEM));
 			} else return;
 		} else if (inkey == '\104') {
 			if ((x != 0) && (y != 0))  num = 9999;

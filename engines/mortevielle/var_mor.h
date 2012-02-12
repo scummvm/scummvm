@@ -176,14 +176,7 @@ extern const byte tnocon[364];
 
 extern const byte don[9][5];
 
-extern const char *fic[3];
-
 extern const byte addv[2];
-
-extern const char recom[];
-
-extern const char f3[];
-extern const char f8[];
 
 extern const byte rang[16];
 

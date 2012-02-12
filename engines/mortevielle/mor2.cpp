@@ -47,13 +47,12 @@ const int men[12] = { 0,
 };
 
 void tinke() {
-	const char m1[] = "Mince! Vous entendez du bruit...";       //Translation: Gosh! You hear some noise...
-	const char d1[] = " | Vous devriez avoir remarqu‚|       "; //Translation: You should have noticed
-	const char d2[] = "% des indices...";                       //Translation: %s of hints
+	Common::String d1 = g_vm->getString(S_SHOULD_HAVE_NOTICED);
+	Common::String d2 = g_vm->getString(S_NUMBER_OF_HINTS);
 	const char d3 = '[';
 	const char d4 = ']';
 	const char d5 = '1';
-	const char d6[] = "OK";
+	Common::String d6 = g_vm->getString(S_OK);
 	int cx, haz, nh, cf, j, h, m;
 	Common::String stpo;
 	bool am;
@@ -78,7 +77,18 @@ void tinke() {
 		if (cf == 10)  stpo = "10";
 		else stpo = chr(cf + 48);
 
-		stpou = Common::String(d3) + d5 + d4 + d3 + d1 + stpo + '0' + d2 + d4 + d3 + d6 + d4;
+		stpou = Common::String(d3);
+		stpou += d5;
+		stpou += d4;
+		stpou += d3;
+		stpou += d1;
+		stpou += stpo;
+		stpou += '0';
+		stpou += d2;
+		stpou += d4;
+		stpou += d3;
+		stpou += d6;
+		stpou += d4;
 	}
 	if (m > min) {
 		min = 30;
@@ -149,7 +159,7 @@ void tinke() {
 						if (haz < 5) {
 							clsf3();
 							ecrf2();
-							ecr3(m1);
+							ecr3(g_vm->getString(S_HEAR_NOISE));
 							haz = (hazard(0, 4)) - 2;
 							parole(1, haz, 1);
 							clsf3();
@@ -269,8 +279,8 @@ void mfouen()
 	 menu_enable(menup, mettre);
 	 menu_enable(menup, ouvrir);
 	 menu_enable(menup, sortir);  */
-	menut(sonder, " sonder   ");
-	menut(soulever, " soulever ");
+	menut(sonder, g_vm->getString(S_PROBE));
+	menut(soulever, g_vm->getString(S_RAISE));
 }
 
 void atf3f8(int &key) {
@@ -427,8 +437,8 @@ void mfoudi() {
 	 menu_disable(menup, mettre);
 	 menu_disable(menup, ouvrir);
 	 menu_disable(menup, sortir);  */
-	menut(sonder, " -SUITE- ");
-	menut(soulever, " -STOP-  ");
+	menut(sonder, g_vm->getString(S_SUITE));
+	menut(soulever, g_vm->getString(S_STOP));
 }
 
 void mennor() {
@@ -774,7 +784,7 @@ void st13(int ob) {
 void aldepl() {
 	int dummy;
 
-	dummy = do_alert("[1][Alors, utilisez le menu DEP...][ok]", 1);       //Translation: [1] [So, use the DEP menu] [Ok]
+	dummy = do_alert(g_vm->getString(S_USE_DEP_MENU), 1);
 }
 
 } // End of namespace Mortevielle

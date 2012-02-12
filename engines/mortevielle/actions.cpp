@@ -42,9 +42,6 @@
 
 namespace Mortevielle {
 
-/* NIVEAU 4 */
-const char stouinon[] = "[2][ ][OUI][NON]";   //Translation: [2] [ ] [YES] [NO]
-
 /* overlay */
 void taller() {
 	//int mx, cx, cy;
@@ -57,7 +54,8 @@ void taller() {
 		repon(2, s.mlieu);
 	}
 	if ((s.mlieu == 15) && (msg[4] == depl[6])) {
-		if (! syn)  ecr3("aller");                //Translation: Go to
+		if (!syn)
+			ecr3(g_vm->getString(S_GO_TO));
 		tfleche();
 		if (iesc)  okdes = false;
 		if ((anyone) || (iesc))  return;
@@ -170,7 +168,8 @@ L2:
 		}
 		return;
 	}
-	if (! syn)  ecr3("prendre");                 //Translation: Take
+	if (!syn)
+		ecr3(g_vm->getString(S_TAKE));
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	if (caff == 3) {
@@ -257,7 +256,8 @@ L2:
 {
 	int cx;
 
-	if (! syn)  ecr3("soulever");                //Translation: Lift
+	if (!syn)
+		ecr3(g_vm->getString(S_LIFT));
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(3);
@@ -283,11 +283,13 @@ L2:
 
 	if (caff > 99)  st4(caff);
 	else {
-		if (! syn)  ecr3("lire");                //Translation: Read
+		if (!syn)
+			ecr3(g_vm->getString(S_READ));
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(4);
-			if (num != 0)  crep = 107;
+			if (num != 0)
+				crep = 107;
 		}
 	}
 }
@@ -304,7 +306,8 @@ L2:
 		crep = 103;
 		return;
 	}
-	if (! syn)  ecr3("regarder");            //Translation: Look
+	if (!syn)
+		ecr3(g_vm->getString(S_LOOK));
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(5);
@@ -365,7 +368,8 @@ L2:
 		st7(caff);
 		return;
 	}
-	if (! syn)  ecr3("fouiller");            //Translation: Search
+	if (!syn)
+		ecr3(g_vm->getString(S_SEARCH));
 	tfleche();
 	if (anyone || iesc)  return;
 	if (s.mlieu == 23) {
@@ -432,7 +436,8 @@ L2:
 /* overlay */ void touvrir() {
 	int cx, haz;
 
-	if (! syn)  ecr3("ouvrir");                  //Translation: Open
+	if (!syn)
+		ecr3(g_vm->getString(S_OPEN));
 	if (caff == 26) {
 		if (ment != 0) {
 			msg[4] = entrer;
@@ -493,7 +498,8 @@ L2:
 		crep = 186;
 		return;
 	}
-	if (! syn)  ecr3("mettre");               //Translation: Put
+	if (!syn)
+		ecr3(g_vm->getString(S_PUT));
 	tfleche();
 	if (iesc)  crep = 998;
 	if ((anyone) || (iesc))  return;
@@ -523,7 +529,7 @@ L2:
 					repon(2, 165);
 					maivid();
 					parole(6, -9, 1);
-					quel = do_alert(stouinon, 1);
+					quel = do_alert(g_vm->getString(S_YES_NO), 1);
 					if (quel == 1)  {
 						deline(582, st, tay);
 						i = do_alert(delig, 1);
@@ -592,7 +598,8 @@ L2:
 		crep = 149;
 		return;
 	}
-	if (! syn)  ecr3("tourner");             //Translation: Turn
+	if (!syn)
+		ecr3(g_vm->getString(S_TURN));
 	tfleche();
 	if ((anyone) || (iesc))  return;
 	tcoord(9);
@@ -601,7 +608,7 @@ L2:
 		if ((s.mlieu == 13) && (s.ibag == 159) && (s.iboul == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
-			quel = do_alert(stouinon, 1);
+			quel = do_alert(g_vm->getString(S_YES_NO), 1);
 			if (quel == 1)
 				g_vm->_endGame = true;
 			else crep = 168;
@@ -610,7 +617,7 @@ L2:
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
-			quel = do_alert(stouinon, 1);
+			quel = do_alert(g_vm->getString(S_YES_NO), 1);
 			if (quel == 1) {
 				s.mlieu = 16;
 				affrep();
@@ -620,7 +627,8 @@ L2:
 }
 
 /* overlay */ void tcacher() {
-	if (! syn)  ecr3("se cacher");             //Translation: Hide self
+	if (!syn)
+		ecr3(g_vm->getString(S_HIDE_SELF));
 	tfleche();
 	if (!(anyone) && !(iesc)) {
 		tcoord(10);
@@ -635,7 +643,8 @@ L2:
 /* overlay */ void tattacher() {
 	if (s.derobj == 0)  crep = 186;
 	else {
-		if (! syn)  ecr3("attacher");           //Translation: Tie
+		if (!syn)
+			ecr3(g_vm->getString(S_TIE));
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(8);
@@ -655,7 +664,8 @@ L2:
 /* overlay */ void tfermer() {
 	int cx, chai;
 
-	if (! syn)  ecr3("fermer");              //Translation: Close
+	if (!syn)
+		ecr3(g_vm->getString(S_CLOSE));
 	if (caff < 26) {
 		tfleche();
 		if (iesc)  crep = 998;
@@ -684,9 +694,10 @@ L2:
 /* overlay */ void tfrapper() {
 	int l, p, haz;
 
-	if (! syn)  ecr3("frapper");          //Translation: Hit
+	if (!syn)
+		ecr3(g_vm->getString(S_HIT));
 	if (s.mlieu == 15) {
-		l = do_alert("[1][ | Avant, utilisez le menu DEP...][ok]", 1);  //Translation: [1] [ | Before, use the DEP menu...] [Ok]
+		l = do_alert(g_vm->getString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
 	if (s.mlieu < 25) {
@@ -716,7 +727,8 @@ L2:
 /* overlay */ void tposer() {
 	int cx, chai;
 
-	if (! syn)  ecr3("poser");
+	if (!syn)
+		ecr3(g_vm->getString(S_POSE));
 	if (s.derobj == 0)  crep = 186;
 	else {
 		if (caff > 99) {
@@ -884,7 +896,6 @@ L2:
 }
 
 /* overlay */ void tdormir() {
-	const char m1[] = "D‚sirez-vous vous r‚veiller?";       //Translation: Do you want to wake up?
 	int z, j, h, m, quel;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
@@ -902,7 +913,7 @@ L2:
 	clsf3();
 	clsf2();
 	ecrf2();
-	ecr2(m1);
+	ecr2(g_vm->getString(S_WANT_TO_WAKE_UP));
 	calch(j, h, m);
 	do {
 		if (h < 8) {
@@ -916,7 +927,7 @@ L2:
 		h = h + 1;
 		if (h > 23)  h = 0;
 		tinke();
-		quel = do_alert(stouinon, 1);
+		quel = do_alert(g_vm->getString(S_YES_NO), 1);
 		anyone = false;
 	} while (!(quel == 1));
 	crep = 998;
@@ -924,7 +935,8 @@ L2:
 }
 
 /* overlay */ void tdefoncer() {
-	if (! syn)  ecr3("d‚foncer");                     //Translation: Smash
+	if (!syn)
+		ecr3(g_vm->getString(S_SMASH));
 	if (caff < 25)  tfleche();
 	if ((! anyone) && (! iesc))
 		if (s.mlieu != 26)  crep = 997;
@@ -977,14 +989,15 @@ L2:
 			return;
 		}
 		repon(2, 102);
-		quel = do_alert(stouinon, 1);
+		quel = do_alert(g_vm->getString(S_YES_NO), 1);
 	} while (!(quel == 2));
 	crep = 998;
 	if (! anyone)  tinke();
 }
 
 /* overlay */ void tsonder() {
-	if (! syn)  ecr3("sonder");            //Translation: Probe
+	if (!syn)
+		ecr3(g_vm->getString(S_PROBE2));
 	if (caff < 27) {
 		tfleche();
 		if (!(anyone) && (! iesc))  crep = 145;
@@ -1170,7 +1183,8 @@ L2:
 /* overlay */ void tsentir() {
 	crep = 119;
 	if (caff < 26) {
-		if (! syn)  ecr3("sentir");        //Translation: Smell
+		if (!syn)
+			ecr3(g_vm->getString(S_SMELL));
 		tfleche();
 		if (!(anyone) && !(iesc))
 			if (caff == 16)  crep = 153;
@@ -1181,7 +1195,8 @@ L2:
 /* overlay */ void tgratter() {
 	crep = 155;
 	if (caff < 27) {
-		if (! syn)  ecr3("gratter");       //Translation: Scratch
+		if (!syn)
+			ecr3(g_vm->getString(S_SCRATCH));
 		tfleche();
 	}
 	num = 0;
@@ -1242,7 +1257,7 @@ void MortevielleEngine::loseGame() {
 	heu = 10;
 	jou = 0;
 	repon(2, 180);
-	quel = do_alert(stouinon, 1);
+	quel = do_alert(g_vm->getString(S_YES_NO), 1);
 	_quitGame = (quel != 1);
 }
 
