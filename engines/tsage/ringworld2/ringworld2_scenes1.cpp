@@ -4124,7 +4124,151 @@ int Scene1337::subC27F9(int arg1) {
 }
 
 void Scene1337::subC2835(int arg1) {
-	warning("STUBBED Scene1337::subC2835()");
+	int i;
+	bool found = false;
+	switch (arg1) {
+	case 0:
+		for (i = 0; i <= 3; i++) {
+			if (subC27F9(_arrunkObj1337[arg1]._arr1[i]._field34) != -1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (subC27B5(_arrunkObj1337[arg1]._arr1[i]._field34) != -1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if ((_arrunkObj1337[arg1]._arr1[i]._field34 > 1) && (_arrunkObj1337[arg1]._arr1[i]._field34 <= 9)) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if ((_arrunkObj1337[arg1]._arr1[i]._field34 >= 26) && (_arrunkObj1337[arg1]._arr1[i]._field34 <= 33)) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 25) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+		
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 13) {
+				found = true;
+				break;
+			}
+		}
+		break;
+	case 1:
+		for (i = 0; i <= 3; i++) {
+			if ((_arrunkObj1337[arg1]._arr1[i]._field34 >= 26) && (_arrunkObj1337[arg1]._arr1[i]._field34 <= 33)) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if ((_arrunkObj1337[arg1]._arr1[i]._field34 > 1) && (_arrunkObj1337[arg1]._arr1[i]._field34 <= 9)) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (subC27F9(_arrunkObj1337[arg1]._arr1[i]._field34) != -1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (subC27B5(_arrunkObj1337[arg1]._arr1[i]._field34) != -1) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 25) {
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+
+		for (i = 0; i <= 3; i++) {
+			if (_arrunkObj1337[arg1]._arr1[i]._field34 == 13) {
+				found = true;
+				break;
+			}
+		}
+
+		break;
+	default:
+		return;
+	}
+
+	subC4A39(&_arrunkObj1337[arg1]._arr1[i]);
 }
 
 int Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt) {
@@ -4184,7 +4328,9 @@ void Scene1337::subC358E(unkObj1337sub1 *subObj1) {
 }
 
 void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
-	warning("STUBBED Scene1337::subC4A39()");
+	_field3EF0 = subObj;
+
+	_item1.setAction(&_action5);
 }
 
 void Scene1337::subC4CD2() {
