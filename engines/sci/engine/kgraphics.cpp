@@ -59,11 +59,13 @@
 namespace Sci {
 
 static int16 adjustGraphColor(int16 color) {
-	// WORKAROUND: SCI1 EGA and Amiga games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (getSciVersion() >= SCI_VERSION_1_EARLY && g_sci->getResMan()->getViewType() == kViewEga)
+	// WORKAROUND: EGA and Amiga games can set invalid colors (above 0 - 15).
+	// It seems only the lower nibble was used in these games.
+	// bug #3048908, #3486899.
+	// Confirmed in EGA games KQ4(late), QFG1(ega), LB1 that
+	// at least FillBox (only one of the functions using adjustGraphColor)
+	// behaves like this.
+	if (g_sci->getResMan()->getViewType() == kViewEga)
 		return color & 0x0F;	// 0 - 15
 	else
 		return color;
