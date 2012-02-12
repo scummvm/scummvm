@@ -862,7 +862,7 @@ L2:
 					x = (hazard(0, 10)) - 5;
 					parole(7, x, 1);
 					aniof(1, 1);
-					/*       tkey(5,32000);*/
+					
 					tip(z, x);
 					s.conf = s.conf + 1;
 					s.mlieu = 15;
@@ -882,7 +882,7 @@ L2:
 				x = (hazard(0, 10)) - 5;
 				parole(7, x, 1);
 				aniof(1, 1);
-				/*      tkey(1,32000);*/
+				
 				s.mlieu = ment;
 				affrep();
 				debloc(s.mlieu);
@@ -1069,7 +1069,6 @@ L2:
 			mov_mouse(f, tou);
 			CHECK_QUIT;
 
-			/*     if keypressed then read(kbd,tou);*/
 			read_pos_mouse(x, y, c);
 			x = x * (3 - res);
 			if (x > 319)  cx = 41;
