@@ -54,6 +54,7 @@ public:
 
 	GLuint id;
 	GLuint internalFormat;
+	GLuint sourceFormat;
 	uint32 internalWidth;
 	uint32 internalHeight;
 };
@@ -79,16 +80,21 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	internalHeight = upperPowerOfTwo(height);
 	internalWidth = upperPowerOfTwo(width);
 
-	if (format.bytesPerPixel == 4)
+	if (format.bytesPerPixel == 4) {
 		internalFormat = GL_RGBA;
-	else if (format.bytesPerPixel == 3)
+		sourceFormat = GL_UNSIGNED_BYTE;
+	} else if (format.bytesPerPixel == 3) {
 		internalFormat = GL_RGB;
-	else
+		sourceFormat = GL_UNSIGNED_BYTE;
+	} else if (format.bytesPerPixel == 2) {
+		internalFormat = GL_RGB;
+		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
+	} else
 		error("Unknown pixel format");
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -101,7 +107,7 @@ OpenGLTexture::~OpenGLTexture() {
 
 void OpenGLTexture::update(const Graphics::Surface *surface) {
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->pixels);
 }
 
 Renderer::Renderer(OSystem *system) :

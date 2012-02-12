@@ -135,8 +135,9 @@ void Subtitles::loadSubtitles(int32 id) {
 
 void Subtitles::createTexture() {
 	// Create a surface to draw the subtitles on
+	// Use RGB 565 to allow use of BDF fonts
 	_surface = new Graphics::Surface();
-	_surface->create(Renderer::kOriginalWidth, _surfaceHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_surface->create(Renderer::kOriginalWidth, _surfaceHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	_texture = _vm->_gfx->createTexture(_surface);
 }
