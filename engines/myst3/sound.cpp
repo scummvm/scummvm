@@ -72,13 +72,18 @@ void Sound::update() {
 SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_vm(vm),
 	_playing(false),
-	_id(0) {
+	_id(0),
+	_stream(0) {
 }
 
 SoundChannel::~SoundChannel() {
 }
 
 void SoundChannel::play(uint32 id, uint32 volume) {
+	// TODO: Should stop and start again
+	if (_playing)
+		return;
+
 	// Load the name of the sound from its id
 	_name = _vm->_db->getSoundName(id);
 	_volume = volume;
@@ -137,8 +142,10 @@ void SoundChannel::update() {
 
 	_playing = g_system->getMixer()->isSoundHandleActive(_handle);
 
-	if (!_playing)
+	if (!_playing) {
 		_vm->_state->setVar(_id, 0);
+		_stream = 0;
+	}
 }
 
 } /* namespace Myst3 */
