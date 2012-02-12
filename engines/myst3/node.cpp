@@ -194,7 +194,7 @@ void Node::loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rec
 }
 
 void Node::loadSubtitles(uint32 id) {
-	_subtitles = new Subtitles(_vm, id);
+	_subtitles = Subtitles::create(_vm, id);
 }
 
 bool Node::hasSubtitlesToDraw() {

@@ -37,16 +37,18 @@ class Myst3Engine;
 
 class Subtitles : public Drawable {
 public:
-	Subtitles(Myst3Engine *vm, uint32 id);
+	static Subtitles *create(Myst3Engine *vm, uint32 id);
 	virtual ~Subtitles();
 
 	void setFrame(int32 frame);
 	void drawOverlay();
 
 private:
+	Subtitles(Myst3Engine *vm);
+
 	void loadFontSettings(int32 id);
 	void loadFont();
-	void loadSubtitles(int32 id);
+	bool loadSubtitles(int32 id);
 	void createTexture();
 
 	struct Phrase {
@@ -56,7 +58,6 @@ private:
 	};
 
 	Myst3Engine *_vm;
-	uint32 _id;
 	const Graphics::Font *_font;
 
 	Common::Array<Phrase> _phrases;

@@ -30,18 +30,28 @@
 
 namespace Myst3 {
 
-Subtitles::Subtitles(Myst3Engine *vm, uint32 id) :
+Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
+	Subtitles *s = new Subtitles(vm);
+
+	s->loadFontSettings(1100);
+
+	if (!s->loadSubtitles(id)) {
+		delete s;
+		return 0;
+	}
+
+	s->loadFont();
+	s->createTexture();
+
+	return s;
+}
+
+Subtitles::Subtitles(Myst3Engine *vm) :
 	_vm(vm),
-	_id(id),
 	_surface(0),
 	_texture(0),
 	_frame(-1),
 	_font(0) {
-
-	loadFontSettings(1100);
-	loadFont();
-	loadSubtitles(id);
-	createTexture();
 }
 
 Subtitles::~Subtitles() {
@@ -101,7 +111,7 @@ void Subtitles::loadFont() {
 #endif
 }
 
-void Subtitles::loadSubtitles(int32 id) {
+bool Subtitles::loadSubtitles(int32 id) {
 	// Subtitles may be overridden using a variable
 	const DirectorySubEntry *desc;
 	if (_vm->_state->getMovieOverrideSubtitles()) {
@@ -114,7 +124,7 @@ void Subtitles::loadSubtitles(int32 id) {
 	}
 
 	if (!desc)
-		error("Subtitles %d don't exist", 100000 + id);
+		return false;
 
 	Common::MemoryReadStream *crypted = desc->getData();
 
@@ -147,6 +157,8 @@ void Subtitles::loadSubtitles(int32 id) {
 	}
 
 	delete crypted;
+
+	return true;
 }
 
 void Subtitles::createTexture() {
