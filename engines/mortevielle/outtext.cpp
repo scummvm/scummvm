@@ -26,7 +26,9 @@
  */
 
 #include "mortevielle/outtext.h"
+#include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 #include "common/str.h"
@@ -174,7 +176,7 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 
 
 	/*    debug('  .. Afftex');*/
-	putxy(x, y);
+	g_vm->_screenSurface.putxy(x, y);
 	if (res == 1)  tab = 10;
 	else tab = 6;
 	dx = dx * 6;
@@ -189,12 +191,12 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	while (! the_end) {
 		switch (ch[p]) {
 		case '@' : {
-			writeg(s, typ);
+			g_vm->_screenSurface.writeg(s, typ);
 			s = "";
 			p = p + 1;
 			xc = x;
 			yc = yc + 6;
-			putxy(xc, yc);
+			g_vm->_screenSurface.putxy(xc, yc);
 		}
 		break;
 		case ' ' : {
@@ -202,7 +204,7 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 			xc = xc + tab;
 			p = p + 1;
 			if (l_motsuiv(p, ch, tab) + xc > xf) {
-				writeg(s, typ);
+				g_vm->_screenSurface.writeg(s, typ);
 				s = "";
 				xc = x;
 				yc = yc + 6;
@@ -214,21 +216,21 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 					do {
 						j = x;
 						do {
-							putxy(j, i);
-							writeg(" ", 0);
+							g_vm->_screenSurface.putxy(j, i);
+							g_vm->_screenSurface.writeg(" ", 0);
 							j = j + 6;
 						} while (!(j > xf));
 						i = i + 6;
 					} while (!(i > yf));
 					yc = y;
 				}
-				putxy(xc, yc);
+				g_vm->_screenSurface.putxy(xc, yc);
 			}
 		}
 		break;
 		case '$' : {
 			the_end = true;
-			writeg(s, typ);
+			g_vm->_screenSurface.writeg(s, typ);
 		}
 		break;
 		default: {

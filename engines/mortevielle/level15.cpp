@@ -112,10 +112,6 @@ void pictout(int seg, int dep, int x, int y) {
 	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
 
-void putxy(int x, int y) {
-	xwhere = x;
-	ywhere = y;
-}
 /*
 function calad(x,y:int):int;
    begin

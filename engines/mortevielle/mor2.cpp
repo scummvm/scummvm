@@ -182,10 +182,14 @@ void fenat(char ans) {
 	int coul;
 
 	hide_mouse();
-	if (gd == cga)  coul = 2;
-	else if (gd == her)  coul = 1;
-	else coul = 12;
-	affcar(gd, 306, 193, coul, ord(ans));
+	if (gd == cga)
+		coul = 2;
+	else if (gd == her)
+		coul = 1;
+	else
+		coul = 12;
+
+	g_vm->_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
 	boite(300, 191, 16, 8, 15);
 	show_mouse();
 }

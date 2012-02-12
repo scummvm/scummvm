@@ -221,23 +221,24 @@ void ecr2(Common::String str_) {
 	/* debug('ecr2 : '+str_);*/
 	if (res == 1)  tab = 10;
 	else tab = 6;
-	putxy(8, 177);
+	g_vm->_screenSurface.putxy(8, 177);
 	tlig = 59 + pred(int, res) * 36;
-	if ((int)str_.size() < tlig)  writeg(str_, 5);
+	if ((int)str_.size() < tlig)
+		g_vm->_screenSurface.writeg(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
-		putxy(8, 176);
-		writeg(copy(str_, 1, pred(int, tlig)), 5);
-		putxy(8, 182);
-		writeg(copy(str_, tlig, tlig << 1), 5);
+		g_vm->_screenSurface.putxy(8, 176);
+		g_vm->_screenSurface.writeg(copy(str_, 1, pred(int, tlig)), 5);
+		g_vm->_screenSurface.putxy(8, 182);
+		g_vm->_screenSurface.writeg(copy(str_, tlig, tlig << 1), 5);
 	} else {
 		f2_all = true;
 		clsf2();
-		putxy(8, 176);
-		writeg(copy(str_, 1, pred(int, tlig)), 5);
-		putxy(8, 182);
-		writeg(copy(str_, tlig, pred(int, (tlig << 1))), 5);
-		putxy(8, 190);
-		writeg(copy(str_, tlig << 1, tlig * 3), 5);
+		g_vm->_screenSurface.putxy(8, 176);
+		g_vm->_screenSurface.writeg(copy(str_, 1, pred(int, tlig)), 5);
+		g_vm->_screenSurface.putxy(8, 182);
+		g_vm->_screenSurface.writeg(copy(str_, tlig, pred(int, (tlig << 1))), 5);
+		g_vm->_screenSurface.putxy(8, 190);
+		g_vm->_screenSurface.writeg(copy(str_, tlig << 1, tlig * 3), 5);
 	}
 }
 
@@ -254,8 +255,8 @@ void clsf3() {
 void ecr3(Common::String text) {
 	/* debug('ecr3 : '+text);*/
 	clsf3();
-	putxy(8, 192);
-	writeg(text, 5);
+	g_vm->_screenSurface.putxy(8, 192);
+	g_vm->_screenSurface.writeg(text, 5);
 }
 
 void ecrf6() {
@@ -295,8 +296,8 @@ void clsf10() {
 		co = 10;
 	else co = 6;
 	co = 574 - ((uint)co * st.size() >> 1);
-	putxy(co, 92);
-	writeg(st, 4);
+	g_vm->_screenSurface.putxy(co, 92);
+	g_vm->_screenSurface.writeg(st, 4);
 	if (res == 1)  co = 620;
 	else co = 584;
 	box(15, gd, 560, 24, co, 86, 255);
@@ -454,10 +455,10 @@ void f3f8() {
 
 	if (res == 1)  co = 107;
 	else co = 64;
-	putxy(3, 44);
-	writeg(g_vm->getString(S_F3), 5);
-	ywhere = 51;
-	writeg(g_vm->getString(S_F8), 5);
+	g_vm->_screenSurface.putxy(3, 44);
+	g_vm->_screenSurface.writeg(g_vm->getString(S_F3), 5);
+	g_vm->_screenSurface._textPos.y = 51;
+	g_vm->_screenSurface.writeg(g_vm->getString(S_F8), 5);
 	boite(0, 42, co, 16, 7);
 }
 
@@ -488,43 +489,43 @@ void affper(int per) {
 	for (cx = 1; cx <= 8; cx ++) menu_disable(disc[cx]);
 	clsf10();
 	if ((per & 128) == 128) {
-		putxy(560, 24);
-		writeg("LEO", 4);
+		g_vm->_screenSurface.putxy(560, 24);
+		g_vm->_screenSurface.writeg("LEO", 4);
 		menu_enable(disc[1]);
 	}
 	if ((per & 64) == 64) {
-		putxy(560, 32);
-		writeg("PAT", 4);
+		g_vm->_screenSurface.putxy(560, 32);
+		g_vm->_screenSurface.writeg("PAT", 4);
 		menu_enable(disc[2]);
 	}
 	if ((per & 32) == 32) {
-		putxy(560, 40);
-		writeg("GUY", 4);
+		g_vm->_screenSurface.putxy(560, 40);
+		g_vm->_screenSurface.writeg("GUY", 4);
 		menu_enable(disc[3]);
 	}
 	if ((per & 16) == 16) {
-		putxy(560, 48);
-		writeg("EVA", 4);
+		g_vm->_screenSurface.putxy(560, 48);
+		g_vm->_screenSurface.writeg("EVA", 4);
 		menu_enable(disc[4]);
 	}
 	if ((per & 8) == 8) {
-		putxy(560, 56);
-		writeg("BOB", 4);
+		g_vm->_screenSurface.putxy(560, 56);
+		g_vm->_screenSurface.writeg("BOB", 4);
 		menu_enable(disc[5]);
 	}
 	if ((per & 4) == 4) {
-		putxy(560, 64);
-		writeg("LUC", 4);
+		g_vm->_screenSurface.putxy(560, 64);
+		g_vm->_screenSurface.writeg("LUC", 4);
 		menu_enable(disc[6]);
 	}
 	if ((per & 2) == 2) {
-		putxy(560, 72);
-		writeg("IDA", 4);
+		g_vm->_screenSurface.putxy(560, 72);
+		g_vm->_screenSurface.writeg("IDA", 4);
 		menu_enable(disc[7]);
 	}
 	if ((per & 1) == 1) {
-		putxy(560, 80);
-		writeg("MAX", 4);
+		g_vm->_screenSurface.putxy(560, 80);
+		g_vm->_screenSurface.writeg("MAX", 4);
 		menu_enable(disc[8]);
 	}
 	ipers = per;
@@ -621,12 +622,12 @@ void person() {
 		menu_disable(disc[cf]);
 
 	clsf10();
-	putxy(560, 30);
-	writeg(g_vm->getString(S_YOU), 4);
-	putxy(560, 50);
-	writeg(g_vm->getString(S_ARE), 4);
-	putxy(560, 70);
-	writeg(g_vm->getString(S_ALONE), 4);
+	g_vm->_screenSurface.putxy(560, 30);
+	g_vm->_screenSurface.writeg(g_vm->getString(S_YOU), 4);
+	g_vm->_screenSurface.putxy(560, 50);
+	g_vm->_screenSurface.writeg(g_vm->getString(S_ARE), 4);
+	g_vm->_screenSurface.putxy(560, 70);
+	g_vm->_screenSurface.writeg(g_vm->getString(S_ALONE), 4);
 	ipers = 0;
 }
 
@@ -664,14 +665,16 @@ void pendule() {
 	if (h == 0)  h = 12;
 	droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
 	show_mouse();
-	putxy(568, 154);
-	if (heu > 11)  writeg("PM ", 1);
-	else writeg("AM ", 1);
-	putxy(550, 160);
+	g_vm->_screenSurface.putxy(568, 154);
+	if (heu > 11)
+		g_vm->_screenSurface.writeg("PM ", 1);
+	else
+		g_vm->_screenSurface.writeg("AM ", 1);
+	g_vm->_screenSurface.putxy(550, 160);
 	if ((jou >= 0) && (jou <= 8)) {
 		Common::String tmp = g_vm->getString(S_DAY);
 		tmp.insertChar((char)(jou + 49), 0);
-		writeg(tmp, 1);
+		g_vm->_screenSurface.writeg(tmp, 1);
 	}
 }
 
@@ -1218,8 +1221,10 @@ void phaz(int &haz, int &p, int cf) {
 }
 
 void writetp(Common::String s, int t) {
-	if (res == 2)  writeg(s, t);
-	else writeg(copy(s, 1, 25), t);
+	if (res == 2)
+		g_vm->_screenSurface.writeg(s, t);
+	else
+		g_vm->_screenSurface.writeg(copy(s, 1, 25), t);
 }
 
 void messint(int nu) {

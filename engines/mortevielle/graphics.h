@@ -78,6 +78,8 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 	byte _fontData[FONT_NUM_CHARS * FONT_HEIGHT];
 public:
+	Common::Point _textPos;		// Original called xwhere/ywhere
+public:
 	void readFontData(Common::File &f, int dataSize);
 	Graphics::Surface lockArea(const Common::Rect &bounds);
 	void updateScreen();
@@ -87,6 +89,8 @@ public:
 	void drawBox(int x, int y, int dx, int dy, int col);
 	void fillBox(int colour, const Common::Rect &bounds, int patt);
 	void clearScreen();
+	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
+	void writeg(const Common::String &l, int c);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

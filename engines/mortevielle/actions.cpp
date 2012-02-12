@@ -1053,7 +1053,7 @@ L2:
 		lig = 0;
 		do {
 			icm = succ(int, icm);
-			putxy(co, lig);
+			g_vm->_screenSurface.putxy(co, lig);
 			if (s.teauto[icm] == '*')
 				if (te[icm])  writetp(lib[icm], 1);
 				else writetp(lib[icm], 0);
@@ -1062,7 +1062,7 @@ L2:
 				co = 320;
 			} else lig = lig + 8;
 		} while (!(icm == 42));
-		putxy(320, 176);
+		g_vm->_screenSurface.putxy(320, 176);
 		writetp(lib[46], 0);
 		tou = '\0';
 		do {
@@ -1080,7 +1080,7 @@ L2:
 					lig = ((choi - 1) % 23) << 3;
 					if (choi > 23)  co = 320;
 					else co = 0;
-					putxy(co, lig);
+					g_vm->_screenSurface.putxy(co, lig);
 					if (te[choi])  writetp(lib[choi], 0);
 					else writetp(lib[choi], 1);
 					te[choi] = ! te[choi];
@@ -1094,7 +1094,7 @@ L2:
 						lig = ((choi - 1) % 23) << 3;
 						if (choi > 23)  co = 320;
 						else co = 0;
-						putxy(co, lig);
+						g_vm->_screenSurface.putxy(co, lig);
 						if (te[choi])  writetp(lib[choi], 0);
 						else writetp(lib[choi], 1);
 						te[choi] = ! te[choi];
@@ -1103,7 +1103,7 @@ L2:
 						lig = ((ix - 1) % 23) << 3;
 						if (ix > 23)  co = 320;
 						else co = 0;
-						putxy(co, lig);
+						g_vm->_screenSurface.putxy(co, lig);
 						if (te[ix])  writetp(lib[ix], 0);
 						else writetp(lib[ix], 1);
 						te[ix] = ! te[ix];

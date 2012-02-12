@@ -1040,4 +1040,59 @@ void ScreenSurface::setPixel(const Common::Point &pt, int palIndex) {
 	*(destP + SCREEN_WIDTH) = palIndex;
 }
 
+/**
+ * Write out a string
+ */
+void ScreenSurface::writeg(const Common::String &l, int c) {
+	int i, x;
+	Common::Point pt;
+	int cecr = 0;
+
+	/*  debug('writeg : '+l);*/
+
+	if (l == "")
+		return;
+	hide_mouse();
+	pt = _textPos;
+
+	if (res == 2)
+		i = 6;
+	else
+		i = 10;
+	x = pt.x + i * l.size();
+
+	switch (c) {
+	case 1:
+	case 3  : {
+		cecr = 0;
+		box(15, gd, pt.x, pt.y, x, pt.y + 7, 255);
+	}
+	break;
+	case 4 : {
+		cecr = 0;
+	}
+	break;
+	case 5 : {
+		cecr = 15;
+	}
+	break;
+	case 0:
+	case 2 : {
+		cecr = 15;
+		box(0, gd, pt.x, pt.y, x, pt.y + 7, 255);
+	}
+	break;
+	}
+	pt.x += 1;
+	pt.y += 1;
+	for (x = 1; x <= (int)l.size(); ++x) {
+		g_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
+		pt.x += i;
+	}
+	show_mouse();
+
+	// TODO: Move screen updates to main loop once constructed
+	g_vm->_screenSurface.updateScreen();
+}
+
 } // End of namespace Mortevielle
