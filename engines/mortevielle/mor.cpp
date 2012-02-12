@@ -1233,18 +1233,29 @@ void writetp(Common::String s, int t) {
 		g_vm->_screenSurface.writeg(copy(s, 1, 25), t);
 }
 
+/**
+ * Shows the waiting message when changing scenes.
+ * @remarks	Because modern computesr are so much quicker. There's no point in showing
+ * a waiting message between scenes.
+ */
 void messint(int nu) {
-	/* debug('messint'); */
+	/*	Method is deprecated
 	clsf1();
 	clsf2();
 	clsf3();
-	decomp(0x73a2, 1008);
+
+	GfxSurface surface;
+	surface.decode(&mem[0x73a2 * 16 + 1008]);
+
 	WRITE_LE_UINT16(&mem[0x7413 * 16 + 12], 80);
 	WRITE_LE_UINT16(&mem[0x7413 * 16 + 14], 40);
 	writepal(90);
-	afff(gd, 0x73a2, 1008, 0, 0);
-	afff(gd, 0x73a2, 1008, 0, 70);
+
+	g_vm->_screenSurface.drawPicture(surface, 0, 0);
+	g_vm->_screenSurface.drawPicture(surface, 0, 70);
+
 	repon(7, nu);
+	*/
 }
 
 void aniof(int ouf, int num) {
@@ -1257,11 +1268,12 @@ void aniof(int ouf, int num) {
 		else if (num == 4)  num = 3;
 	ad = adani;
 	offset = animof(ouf, num);
-	decomp(ad, offset);
-	hide_mouse();
-	afff(gd, ad, offset, 0, 12);
+
+	GfxSurface surface;
+	surface.decode(&mem[ad * 16 + offset]);
+	g_vm->_screenSurface.drawPicture(surface, 0, 12);
+
 	ecrf1();
-	show_mouse();
 }
 
 void musique(int so) {

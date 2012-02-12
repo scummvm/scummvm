@@ -437,8 +437,6 @@ extern void s_sauv(int Gd, int y, int dy);
 extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
 // (* external 'c:\mc\decomp.com'; *)
 extern void decomp(int seg, int dep); 
-// (* external 'c:\mc\affich.com'; *)
-extern void afff(int Gd, int seg, int dep, int x, int y); 
 
 } // End of namespace Mortevielle
 
