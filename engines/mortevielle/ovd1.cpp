@@ -37,7 +37,6 @@
 #include "mortevielle/ovd1.h"
 #include "mortevielle/parole.h"
 #include "mortevielle/sound.h"
-#include "mortevielle/sprint.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
 

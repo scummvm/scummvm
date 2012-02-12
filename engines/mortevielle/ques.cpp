@@ -31,7 +31,6 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/ques.h"
-#include "mortevielle/sprint.h"
 
 namespace Mortevielle {
 
@@ -63,7 +62,7 @@ namespace Mortevielle {
 		deline(ta[i], st, tay);
 		if (res == 1)  y = 29;
 		else y = 23;
-		g_vm->_screenSurface.fillBox(15, Common::Rect(0, 14, 630, y));
+		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, y));
 		afftex(st, 20, 15, 100, 2, 0);
 		if (i != 10) {
 			prem = ta[i] + 1;

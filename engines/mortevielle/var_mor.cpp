@@ -29,7 +29,6 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "mortevielle/mortevielle.h"
-#include "mortevielle/sprint.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {

@@ -22,7 +22,6 @@ MODULE_OBJS := \
 	ques.o \
 	saveload.o \
 	sound.o \
-	sprint.o \
 	taffich.o \
 	var_mor.o
 
