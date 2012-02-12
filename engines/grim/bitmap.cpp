@@ -464,6 +464,11 @@ void Bitmap::setActiveImage(int n) {
 	}
 }
 
+int Bitmap::getNumImages() const {
+	_data->load();
+	return _data->_numImages;
+}
+
 void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {
