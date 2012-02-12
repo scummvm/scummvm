@@ -91,6 +91,7 @@ public:
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void writeg(const Common::String &l, int c);
+	int getStringWidth(const Common::String &s);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);
