@@ -79,6 +79,15 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"toon", "",
 		{
+			{"local.pak", 0, "48ec60709bebbdeff791d55ee18ec910", 3417846},
+			{"arcaddbl.svl", 0, "1d1b96e317e03ffd3874a8ebe59556f3", 6246232},
+			{"study.svl", 0, "d4aff126ee27be3c3d25e2996369d7cb", 2324368},
+		},
+		Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
+	},		
+	{
+		"toon", "",
+		{
 			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
 			{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
 			{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
