@@ -4010,25 +4010,84 @@ void Scene1337::subC2586() {
 
 }
 
-int Scene1337::subC264B(int arg1) {
-	warning("STUBBED Scene1337::subC264B()");
+bool Scene1337::subC264B(int arg1) {
+	switch (arg1) {
+	case 10:
+	// No break on purpose
+	case 12:
+	// No break on purpose
+	case 15:
+	// No break on purpose
+	case 17:
+	// No break on purpose
+	case 18:
+	// No break on purpose
+	case 19:
+	// No break on purpose
+	case 20:
+	// No break on purpose
+	case 21:
+		return true;
+	default:
+		return false;
+	}
+}
+
+int Scene1337::subC2687(int arg1) {
+	warning("STUBBED Scene1337::subC2687()");
+	return -1;
+}
+
+int Scene1337::subC26CB(int arg1, int arg2) {
+	warning("STUBBED Scene1337::subC26CB()");
+	return -1;
+}
+
+int Scene1337::subC2719(int arg1) {
+	warning("STUBBED Scene1337::subC2719()");
+	return -1;
+}
+
+int Scene1337::subC274D(int arg1) {
+	warning("STUBBED Scene1337::subC274D()");
+	return -1;
+}
+
+int Scene1337::subC2781(int arg1) {
+	warning("STUBBED Scene1337::subC2781()");
+	return -1;
+}
+
+int Scene1337::subC27B5(int arg1) {
+	warning("STUBBED Scene1337::subC27B5()");
 	return -1;
 }
 
 int Scene1337::subC27F9(int arg1) {
 	switch (arg1) {
 	case 10:
+	// No break on purpose
 	case 12:
+	// No break on purpose
 	case 15:
+	// No break on purpose
 	case 17:
+	// No break on purpose
 	case 18:
+	// No break on purpose
 	case 19:
+	// No break on purpose
 	case 20:
+	// No break on purpose
 	case 21:
 		return arg1;
 	default:
 		return -1;
 	}
+}
+
+void Scene1337::subC2835(int arg1) {
+	warning("STUBBED Scene1337::subC2835()");
 }
 
 int Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt) {
@@ -4040,9 +4099,48 @@ void Scene1337::subC2C2F() {
 	warning("STUBBED Scene1337::subC2C2F()");
 }
 
+void Scene1337::subC318B(int arg1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC318B()");
+}
+
+int Scene1337::subC32B1(int arg1) {
+	warning("STUBBED Scene1337::subC32B1()");
+	return -1;
+}
+
+int Scene1337::subC331B(int arg1) {
+	warning("STUBBED Scene1337::subC331B()");
+	return -1;
+}
+
+int Scene1337::subC3386(int arg1, int arg2) {
+	warning("STUBBED Scene1337::subCF979()");
+	return -1;
+}
+
+void Scene1337::subC33C0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC33C0()");
+}
+
 int Scene1337::subC3E92(int arg1) {
 	warning("STUBBED Scene1337::subC3E92()");
 	return -1;
+}
+
+void Scene1337::subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC340B()");
+}
+
+void Scene1337::subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC3456()");
+}
+
+void Scene1337::subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
+	warning("STUBBED Scene1337::subC34A1()");
+}
+
+void Scene1337::subC358E(unkObj1337sub1 *subObj1) {
+	warning("STUBBED Scene1337::subC358E()");
 }
 
 void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
@@ -4295,6 +4393,219 @@ void Scene1337::subCCF26() {
 
 void Scene1337::subCF31D() {
 	warning("STUBBED Scene1337::subCF31D()");
+	int tmpVal = 1;
+	bool found;
+	int count;
+
+	if (this->_arrunkObj1337[1]._arr3[0]._field34 != 0) {
+		switch (_arrunkObj1337[1]._arr3[0]._field34) {
+		case 10:
+		// No break on purpose
+		case 12:
+		// No break on purpose
+		case 15:
+		// No break on purpose
+		case 17:
+		// No break on purpose
+		case 18:
+		// No break on purpose
+		case 19:
+		// No break on purpose
+		case 20:
+		// No break on purpose
+		case 21:
+			tmpVal = 0;
+			subC4A39(&_arrunkObj1337[1]._arr3[0]);
+			break;
+		default:
+			found = false;
+			int i;
+			for (i = 0; i <= 3; i++) {
+				if (subC3386(_arrunkObj1337[1]._arr3[0]._field34, _arrunkObj1337[1]._arr1[i]._field34) != 0) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found) {
+				tmpVal = 0;
+				subC34A1(&_arrunkObj1337[1]._arr1[i], &_arrunkObj1337[1]._arr3[0]);
+			}
+		}
+	}
+
+	if (tmpVal != 1)
+		return;
+
+	found = false;
+	for (int i = 0; i <= 3; i++) {
+		int tmpIndx = subC26CB(1, i);
+		if (tmpIndx == -1)
+			break;
+		
+		tmpVal = 0;
+		for (int j = 0; j <= 7; j++) {
+			if (_arrunkObj1337[1]._arr2[j]._field34 == _arrunkObj1337[1]._arr1[tmpIndx]._field34) {
+				tmpVal = 1;
+				break;
+			}
+		}
+		
+		if (tmpVal == 0)
+			break;
+
+		for (int j = 0; j <= 7; j++) {
+			if (_arrunkObj1337[1]._arr2[j]._field34 == 1) {
+				if (subC2687(_arrunkObj1337[1]._arr3[0]._field34) == 0) {
+					count = 0;
+					for (int k = 0; k <= 7; k++) {
+						if ((_arrunkObj1337[1]._arr2[k]._field34 > 1) && (_arrunkObj1337[1]._arr2[k]._field34 <= 9))
+							++count;
+					}
+					
+					if (count == 7)
+						_field424A = 1;
+
+					subC33C0(&_arrunkObj1337[1]._arr1[tmpIndx], &_arrunkObj1337[1]._arr2[j]);
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (found)
+		return;
+
+	tmpVal = subC2719(1);
+	if (tmpVal != -1) {
+		for (int i = 0; i <= 7; i++) {
+			if ((_arrunkObj1337[1]._arr2[i]._field34 == 0) && (subC2687(_arrunkObj1337[1]._arr3[0]._field34) == 0)) {
+				subC340B(&_arrunkObj1337[1]._arr1[tmpVal], &_arrunkObj1337[1]._arr2[i]);
+				found = true;
+			}
+		}
+	}
+	
+	if (found)
+		return;
+
+	tmpVal = subC274D(1);
+
+	if ((tmpVal != -1) && (subC331B(1) != -1))
+		subC358E(&_arrunkObj1337[1]._arr1[tmpVal]);
+
+	if (found)
+		return;
+
+	tmpVal = subC2781(1);
+	if (tmpVal != -1) {
+		count = -1;
+		int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+		for (int i = 0; i <= 3; i++) {
+			if (rndVal != 1) {
+				if (  (_arrunkObj1337[rndVal]._arr1[0]._field34 != 0) 
+				   || (_arrunkObj1337[rndVal]._arr1[1]._field34 != 0) 
+				   || (_arrunkObj1337[rndVal]._arr1[2]._field34 != 0) 
+				   || (_arrunkObj1337[rndVal]._arr1[3]._field34 == 0)) {
+					count = rndVal;
+					break;
+				}
+
+				rndVal--;
+				if (rndVal < 0)
+					rndVal = 3;
+			}
+		}
+
+		if (count != -1) {
+			subC318B(1, &_arrunkObj1337[1]._arr1[tmpVal]);
+			found = true;
+		}
+	}
+	
+	if (found)
+		return;
+
+	count = -1;
+	int i;
+	for (i = 0; i <= 3; i++) {
+		tmpVal = subC27B5(_arrunkObj1337[1]._arr1[i]._field34);
+		if (tmpVal != -1) {
+			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+			for (int j = 0; j <= 3; j++) {
+				if (tmpVal != 1) {
+					for (int k = 0; k <= 7; k++) {
+						// 'k' is not used in that loop. 
+						// It looks suspicious.
+						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(_arrunkObj1337[1]._arr1[i]._field34) == 1)) {
+							count = tmpVal;
+							break;
+						}
+					}
+				}
+
+				if (count != -1) {
+					found = true;
+					break;
+				} else {
+					rndVal--;
+					if (rndVal < 0)
+						rndVal = 3;
+				}
+			}
+
+			if (found)
+				break;
+		}
+	}
+
+	if (found) {
+		if (count == -1)
+			return;
+
+		subC3456(&_arrunkObj1337[1]._arr1[i], &_arrunkObj1337[count]._arr3[0]);
+	} else {
+		int j;
+		for (j = 0; j <= 3; j++) {
+			if (subC27F9(_arrunkObj1337[1]._arr1[j]._field34) != -1) {
+				count = -1;
+				int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+				for (int l = 0; l <= 3; l++) {
+					if (rndVal != 1) {
+						for (int m = 0; m <= 7; m++) {
+							// 'm' is not used in that loop. It looks suspicious.
+							if ((_arrunkObj1337[rndVal]._arr3[0]._field34 == 0) && (_arrunkObj1337[1]._arr1[j]._field34 == 1)) {
+								count = rndVal;
+								break;
+							}
+						}
+					}
+					if (count != -1) {
+						found = true;
+						break;
+					} else {
+						rndVal--;
+						if (rndVal < 0)
+							rndVal = 3;
+					}
+				}
+				if (found)
+					break;
+			}
+		}
+
+		if (found) {
+			if (count == -1)
+				return;	
+
+			subC3456(&_arrunkObj1337[1]._arr1[j], &_arrunkObj1337[count]._arr3[0]);
+		} else {
+			subC2835(1);
+		}
+	}
+
 }
 
 void Scene1337::subCF979() {
