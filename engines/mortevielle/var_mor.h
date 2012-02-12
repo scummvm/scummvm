@@ -411,16 +411,6 @@ extern byte mem[65536 * 16];
 #define hires {}
 #define mortevielle_exit(ret) error("Exit the game")
 
-// Text screen functions not relevant for ScummVM
-#define clrscr { warning("ClrScr"); }
-#define clreol {}
-#define graphcolormode {}
-extern void gotoxy(int x, int y);
-extern void textcolor(int c);
-extern void output(const Common::String &s);
-extern void graphbackground(int c);
-extern int wherey;
-
 // Stubs for input functions
 extern bool keypressed();
 extern char get_ch();

@@ -150,7 +150,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	init_lieu();
 	sonoff = false;
 	f2_all = false;
-	textcolor(9);
+
 	teskbd();
 	dialpre();
 	newgd = gd;
