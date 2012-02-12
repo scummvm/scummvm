@@ -602,7 +602,8 @@ L2:
 			repon(2, 167);
 			parole(7, 9, 1);
 			quel = do_alert(stouinon, 1);
-			if (quel == 1)  solu = true;
+			if (quel == 1)
+				g_vm->_endGame = true;
 			else crep = 168;
 		}
 		if ((s.mlieu == 17) && (s.ivier == 143)) {
@@ -1186,9 +1187,12 @@ L2:
 	num = 0;
 }
 
-/* NIVEAU 2 */
-/* overlay */ void tmaj1() {           /* Le jeu est termin‚ !!! */   //Translation: The game is over!!!
-	arret = true;
+/**
+ * The game is over
+ * @remarks	Originally called 'tmaj1'
+ */
+void MortevielleEngine::endGame() {
+	_quitGame = true;
 	tlu(13, 152);
 	maivid();
 	clsf1();
@@ -1218,7 +1222,11 @@ L2:
 	inzon();
 }
 
-/* overlay */ void tencore() {         /* Perdu !!! */         //Translation: You lost!
+/**
+ * You lost!
+ * @remarks	Originally called 'tencore'
+ */
+void MortevielleEngine::loseGame() {
 	int quel;
 
 	clsf2();
@@ -1235,7 +1243,7 @@ L2:
 	jou = 0;
 	repon(2, 180);
 	quel = do_alert(stouinon, 1);
-	arret = (quel != 1);
+	_quitGame = (quel != 1);
 }
 
 } // End of namespace Mortevielle

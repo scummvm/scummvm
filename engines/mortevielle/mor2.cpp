@@ -290,8 +290,9 @@ void tperd() {
 	iouv = 0;
 	mchai = 0;
 	mfouen();
-	if (! blo)  t11(21, cx);
-	perdu = true;
+	if (!blo)
+		t11(21, cx);
+	g_vm->_loseGame = true;
 	clsf1();
 	boite(60, 35, 400, 50, 15);
 	repon(9, crep);

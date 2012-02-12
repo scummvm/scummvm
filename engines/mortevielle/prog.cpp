@@ -57,7 +57,11 @@ namespace Mortevielle {
 	menu_aff();
 }
 
-/* overlay */ void antegame() {
+/**
+ * Called when a savegame has been loaded.
+ * @remarks	Originally called 'antegame'
+ */
+void MortevielleEngine::gameLoaded() {
 	int k;
 	bool test[3];
 	char g[8];
@@ -66,7 +70,7 @@ namespace Mortevielle {
 	hide_mouse();
 	imen = false;
 	g[1] = 'M';
-	perdu = true;
+	_loseGame = true;
 	anyone = false;
 	okdes = true;
 	test[0] = false;
@@ -112,8 +116,8 @@ namespace Mortevielle {
 		test[k] = true;
 
 		okdes = false;
-		solu = true;
-		perdu = false;
+		_endGame = true;
+		_loseGame = false;
 		fouil = false;
 	}
 	person();
@@ -122,7 +126,7 @@ namespace Mortevielle {
 	afdes(0);
 	repon(2, crep);
 	clsf3();
-	solu = false;
+	_endGame = false;
 	tmlieu(s.mlieu);
 	modinv();
 	if (s.derobj != 0)  modobj2(s.derobj + 400, test[1], test[2]);
@@ -201,7 +205,7 @@ L1:
 	if ((((h == 12) || (h == 13) || (h == 19)) && (s.mlieu != 10)) ||
 	        ((h > 0) && (h < 6) && (s.mlieu != 0)))  s.conf = s.conf + 1;
 	if (((s.mlieu < 16) || (s.mlieu > 19)) && (s.mlieu != 23)
-	        && (s.mlieu != 0) && (s.derobj != 152) && (! perdu)) {
+	        && (s.mlieu != 0) && (s.derobj != 152) && (!g_vm->_loseGame)) {
 		if ((s.conf > 99) && (h > 8) && (h < 16)) {
 			crep = 1501;
 			tperd();
@@ -210,7 +214,7 @@ L1:
 			crep = 1508;
 			tperd();
 		}
-		if ((j > 1) && (h > 8) && (! perdu)) {
+		if ((j > 1) && (h > 8) && (!g_vm->_loseGame)) {
 			crep = 1502;
 			tperd();
 		}

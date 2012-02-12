@@ -61,8 +61,8 @@ extern void tparler();
 extern void tsentir();
 extern void tgratter();
 /* NIVEAU 2 */
-extern void tmaj1();
-extern void tencore();
+extern void endGame();
+extern void loseGame();
 
 } // End of namespace Mortevielle
 #endif
