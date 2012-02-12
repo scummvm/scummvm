@@ -34,7 +34,6 @@ extern void dem2();
 extern void ani50();
 //extern void apzuul();
 extern void aff50(bool c);
-extern void init_menu();
 extern void charpal();
 extern void chartex();
 extern void dialpre();

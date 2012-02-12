@@ -129,14 +129,6 @@ const int amzon = 1650;
 const int fleche = 1758;
 
 const int no_choice = 0;
-const int invent = 1;
-const int depla = 2;
-const int action = 3;
-const int saction = 4;
-const int discut = 5;
-const int fichier = 6;
-const int sauve = 7;
-const int charge = 8;
 
 const int attacher = 0x301;
 const int attendre = 0x302;
@@ -284,8 +276,7 @@ extern bool blo,
         anyone,
         brt,
         rect,
-        rech_cfiec,
-        active_menu;
+        rech_cfiec;
 
 
 extern int x,
@@ -356,17 +347,9 @@ extern Common::String al_mess,
        ind_mess,
        al_mess2;
 
-extern int invt[9];
 extern int nbrep[9];
 extern int nbrepm[9];
-extern int disc[9];
 extern int msg[5];
-extern int depl[8];
-extern Common::String inv[9];
-extern Common::String dep[8];
-extern Common::String act[22];
-extern Common::String self_[7];
-extern Common::String dis[9];
 extern char touv[8];
 extern sav_chaine s, s1;
 extern byte bufcha[391];

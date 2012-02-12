@@ -103,7 +103,7 @@ void tinke() {
 		if (cf > 65)  t = t - ((t / 3) * 2);
 		nh = readclock();
 		if ((nh - mh) > t) {
-			am = active_menu;
+			am = g_vm->_menu._menuActive;
 			g_vm->_menu.eraseMenu();
 			jh = jh + ((nh - mh) / t);
 			mh = nh;
@@ -234,12 +234,12 @@ void tmlieu(int mli) {
 		deline(cx + c_tmlieu, st, tail);
 		nomp = delig;
 		while (nomp.size() < 20)  nomp = nomp + ' ';
-		g_vm->_menu.menut(depl[i], nomp);
+		g_vm->_menu.menut(g_vm->_menu._depl[i], nomp);
 		i = i + 1;
 	}
 	nomp = "*                   ";
 	for (cx = 7; cx >= i; cx --)
-		g_vm->_menu.menut(depl[cx], nomp);
+		g_vm->_menu.menut(g_vm->_menu._depl[cx], nomp);
 }
 
 
@@ -375,13 +375,13 @@ void modinv() {
 			r = (ord(s.sjer[cx]) + 400);
 			deline(r - 501 + c_st41, nom, tay);
 			nomp = delig;
-			g_vm->_menu.menut(invt[cy], nomp);
-			g_vm->_menu.enableMenuItem(invt[cx]);
+			g_vm->_menu.menut(g_vm->_menu._invt[cy], nomp);
+			g_vm->_menu.enableMenuItem(g_vm->_menu._invt[cx]);
 		}
 	if (cy < 6)
 		for (cx = cy + 1; cx <= 6; cx ++) {
-			g_vm->_menu.menut(invt[cx], "                       ");
-			g_vm->_menu.disableMenuItem(invt[cx]);
+			g_vm->_menu.menut(g_vm->_menu._invt[cx], "                       ");
+			g_vm->_menu.disableMenuItem(g_vm->_menu._invt[cx]);
 		}
 }
 
@@ -418,7 +418,7 @@ void mfoudi() {
 	int cx;
 
 	for (cx = 1; cx <= 7; cx ++) 
-		g_vm->_menu.disableMenuItem(depl[cx]);
+		g_vm->_menu.disableMenuItem(g_vm->_menu._depl[cx]);
 	for (cx = 1; cx <= 11; cx ++)
 		g_vm->_menu.disableMenuItem(men[cx]);
 
@@ -541,9 +541,7 @@ void tctrm() {
 }
 
 
-void quelquun()
-
-{
+void quelquun() {
 	int haz, cx;
 
 	if (imen)
@@ -566,7 +564,7 @@ L1:
 		caff = 69 + cx;
 		crep = caff;
 		msg[3] = discut;
-		msg[4] = disc[cx];
+		msg[4] = g_vm->_menu._disc[cx];
 		syn = true;
 		col = true;
 	} else {

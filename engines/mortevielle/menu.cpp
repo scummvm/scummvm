@@ -2,14 +2,14 @@
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
+ * file _distributed with this source _distribution.
  *
- * This program is free software; you can redistribute it and/or
+ * This program is free software; you can re_distribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
 
- * This program is distributed in the hope that it will be useful,
+ * This program is _distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
@@ -32,6 +32,8 @@
 #include "mortevielle/menu.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
+#include "mortevielle/ovd1.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -57,27 +59,27 @@ void Menu::menut(int no, Common::String nom) {
 	switch (h) {
 	case invent  :
 		if (l != 7) {
-			inv[l] = s;
-			inv[l].insertChar(' ', 0);
+			_inv[l] = s;
+			_inv[l].insertChar(' ', 0);
 		}
 		break;
-	case depla   :
-		dep[l] = s;
+	case depla:
+		_dep[l] = s;
 		break;
-	case action  :
-		act[l] = s;
+	case action:
+		_act[l] = s;
 		break;
-	case saction :
-		self_[l] = s;
+	case saction:
+		_self[l] = s;
 		break;
-	case discut  :
-		dis[l] = s;
+	case discut:
+		_dis[l] = s;
 		break;
 	}
 }
 
 /**
- * Disable a menu item
+ * _disable a menu item
  * @param no	Hi byte represents menu number, lo byte reprsents item index
  */
 void Menu::disableMenuItem(int no) {
@@ -88,23 +90,23 @@ void Menu::disableMenuItem(int no) {
 	switch (h) {
 	case invent : {
 		if (l > 6)  {
-			inv[l].setChar('<', 0);
-			inv[l].setChar('>', 21);
+			_inv[l].setChar('<', 0);
+			_inv[l].setChar('>', 21);
 		} else
-			inv[l].setChar('*', 0);
+			_inv[l].setChar('*', 0);
 	}
 	break;
-	case depla :
-		dep[l].setChar('*', 0);
+	case depla:
+		_dep[l].setChar('*', 0);
 		break;
-	case action :
-		act[l].setChar('*', 0);
+	case action:
+		_act[l].setChar('*', 0);
 		break;
-	case saction :
-		self_[l].setChar('*', 0);
+	case saction:
+		_self[l].setChar('*', 0);
 		break;
-	case discut :
-		dis[l].setChar('*', 0);
+	case discut:
+		_dis[l].setChar('*', 0);
 		break;
 	}
 }
@@ -120,23 +122,23 @@ void Menu::enableMenuItem(int no) {
 	l = lo(no);
 	switch (h) {
 	case invent : {
-		inv[l].setChar(' ', 0);
-		inv[l].setChar(' ', 21);
+		_inv[l].setChar(' ', 0);
+		_inv[l].setChar(' ', 21);
 	}
 	break;
-	case depla :
-		dep[l].setChar(' ', 0);
+	case depla:
+		_dep[l].setChar(' ', 0);
 		break;
-	case action :
-		act[l].setChar(' ', 0);
+	case action:
+		_act[l].setChar(' ', 0);
 		break;
-	case saction : {
-		self_[l].setChar(' ', 0);
-		self_[l].setChar(' ', 0);
+	case saction: {
+		_self[l].setChar(' ', 0);
+		_self[l].setChar(' ', 0);
 	}
 	break;
-	case discut :
-		dis[l].setChar(' ', 0);
+	case discut:
+		_dis[l].setChar(' ', 0);
 		break;
 	}
 }
@@ -186,7 +188,7 @@ void Menu::menu_aff() {
  */
 void Menu::drawMenu() {
 	menu_aff();
-	active_menu = true;
+	_menuActive = true;
 	msg4 = no_choice;
 	msg3 = no_choice;
 	choisi = false;
@@ -201,19 +203,19 @@ void Menu::invers(int ix) {
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
 	case 1 :
-		s = inv[lo(msg4)];
+		s = _inv[lo(msg4)];
 		break;
 	case 2 :
-		s = dep[lo(msg4)];
+		s = _dep[lo(msg4)];
 		break;
 	case 3 :
-		s = act[lo(msg4)];
+		s = _act[lo(msg4)];
 		break;
 	case 4 :
-		s = self_[lo(msg4)];
+		s = _self[lo(msg4)];
 		break;
 	case 5 :
-		s = dis[lo(msg4)];
+		s = _dis[lo(msg4)];
 		break;
 	case 6 :
 		s = g_vm->getString(S_SAVE_LOAD + lo(msg4));
@@ -292,24 +294,24 @@ void Menu::menuDown(int ii) {
 		cx = succ(int, cx);
 		switch (ii) {
 		case 1 :
-			if (inv[cx][0] != '*')
-				g_vm->_screenSurface.writeg(inv[cx], 4);
+			if (_inv[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_inv[cx], 4);
 			break;
 		case 2 :
-			if (dep[cx][0] != '*')
-				g_vm->_screenSurface.writeg(dep[cx], 4);
+			if (_dep[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_dep[cx], 4);
 			break;
 		case 3 :
-			if (act[cx][0] != '*')
-				g_vm->_screenSurface.writeg(act[cx], 4);
+			if (_act[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_act[cx], 4);
 			break;
 		case 4 :
-			if (self_[cx][0] != '*')
-				g_vm->_screenSurface.writeg(self_[cx], 4);
+			if (_self[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_self[cx], 4);
 			break;
 		case 5 :
-			if (dis[cx][0] != '*')
-				g_vm->_screenSurface.writeg(dis[cx], 4);
+			if (_dis[cx][0] != '*')
+				g_vm->_screenSurface.writeg(_dis[cx], 4);
 			break;
 		case 6 :
 			g_vm->_screenSurface.writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
@@ -366,7 +368,7 @@ void Menu::menuUp(int xx) {
  */
 void Menu::eraseMenu() {
 	/* debug('eraseMenu'); */
-	active_menu = false;
+	_menuActive = false;
 	g_vm->setMouseClick(false);
 	menuUp(msg3);
 }
@@ -380,7 +382,8 @@ void Menu::mdn() {
 	bool tes;
 
 	/* debug('mdn'); */
-	if (! active_menu)  return;
+	if (!_menuActive)
+		return;
 	x = x_s;
 	y = y_s;
 	if (!g_vm->getMouseClick()) {
@@ -415,7 +418,7 @@ void Menu::mdn() {
 		}
 	} else {       /* There was a click */
 		if ((msg3 == fichier) && (msg4 != no_choice)) {
-			// Another menu to be displayed
+			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
 			menuUp(msg3);
 			if (lo(msg4) == 1)  msg3 = 7;
@@ -435,6 +438,59 @@ void Menu::mdn() {
 			g_vm->setMouseClick(false);
 		}
 	}
+}
+
+void Menu::initMenu() {
+	int i, tai;
+	char st[1410];
+	Common::File f;
+
+	if (!f.open("menufr.mor"))
+		error("Missing file - menufr.mor");
+
+	f.read(lettres, 7 * 24);
+	f.close();
+
+	// Ask to swap floppy
+	dem2();
+
+	for (i = 1; i <= 8; i ++)
+		_inv[i] = "*                     ";
+	_inv[7] = "< -*-*-*-*-*-*-*-*-*- ";
+	for (i = 1; i <= 7; i ++)
+		_dep[i] = "*                       ";
+	i = 1;
+	do {
+		deline(i + c_action, st, tai);
+		_act[i] = delig;
+		while (_act[i].size() < 10)
+			_act[i] += ' ';
+
+		if (i < 9) {
+			if (i < 6) {
+				deline(i + c_saction, st, tai);
+				_self[i] = delig;
+				while (_self[i].size() < 10)
+					_self[i] += ' ';
+			}
+			deline(i + c_dis, st, tai);
+			_dis[i] = delig + ' ';
+		}
+		i = succ(int, i);
+	} while (!(i == 22));
+	for (i = 1; i <= 8; i ++) {
+		_disc[i] = 0x500 + i;
+		if (i < 8)
+			_depl[i] = 0x200 + i;
+		_invt[i] = 0x100 + i;
+		if (i > 6)
+			g_vm->_menu.disableMenuItem(_invt[i]);
+	}
+	msg3 = no_choice;
+	msg4 = no_choice;
+	msg[3] = no_choice;
+	msg[4] = no_choice;
+	g_vm->setMouseClick(false);
 }
 
 } // End of namespace Mortevielle
