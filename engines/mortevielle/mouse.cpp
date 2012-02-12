@@ -49,14 +49,13 @@ int s_s[12][6];
 
 
 void init_mouse() {
-//	int i, j;
 	registres reg;
 
 	mouse_shwn = 0;
 	x_s = 0;
 	y_s = 0;
 	p_o_s = 0;
-	/*int_m:= False;*/
+	
 	g_vm->setMouseClick(false);
 	m_show = m_arrow;
 	if ((READ_LE_UINT16(&mem[0xcc]) == 0) && (READ_LE_UINT16(&mem[0xce]) == 0))  int_m = false;
@@ -74,21 +73,6 @@ void init_mouse() {
 		}
 	}
 }
-
-/*procedure change_mouse( t : int );
-begin
-  m_show:= t;
-end;*/
-
-/*procedure dessine_souris(xf,yf:int);
-  var x, xx, y :int;
-begin
-  case m_show of
-             m_arrow : begin
-                         affput(2,Gd,xf,yf,0,0);
-                       end;
-  end;
-end;  */
 
 void hide_mouse() {
 	int i, j, k, ps;;

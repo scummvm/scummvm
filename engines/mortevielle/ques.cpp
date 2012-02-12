@@ -113,13 +113,11 @@ namespace Mortevielle {
 			while (coor[k].etat && ! dans_rect(coor[k]))  k = k + 1;
 			if (coor[k].etat) {
 				if ((memk != 0) && (memk != k)) {
-					/*DeLine(T_rec[ta[i]+memk].indis,T_rec[ta[i]+memk].point,st,tay);*/
 					for (j = 1; j <= tmax; j ++) st[j] = chaines[memk][j];
 					st[1 + tmax] = '$';
 					afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				}
 				if (memk != k) {
-					/*DeLine(T_rec[pred(prem)+k].indis,T_rec[pred(prem)+k].point,st,tay);*/
 					for (j = 1; j <= tmax; j ++) st[j] = chaines[k][j];
 					st[1 + tmax] = '$';
 					afftex(st, 100, 27 + k * 8, 100, 1, 1);

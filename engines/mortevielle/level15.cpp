@@ -112,12 +112,6 @@ void pictout(int seg, int dep, int x, int y) {
 	g_vm->_screenSurface.drawPicture(surface, x, y);
 }
 
-/*
-function calad(x,y:int):int;
-   begin
-     calad:=pred(x)+320*pred(y)
-   end;
-  */
 void sauvecr(int y, int dy) {
 	hide_mouse();
 	s_sauv(gd, y, dy);
@@ -129,28 +123,6 @@ void charecr(int y, int dy) {
 	s_char(gd, y, dy);
 	show_mouse();
 }
-/*
-function peek(ad:int):int;
-begin
-  peek:=tabdon[ad];
-end;
-
-function peekw(ad:int):int;
-begin
-  peekw:=tabdon[ad] shl 8+tabdon[succ(ad)];
-end;
-
-function peekl(ad:int):real;
-begin
-  peekl:=tabdon[ad+3]+tabdon[ad+2] shl 8;
-end;
-
-
-procedure poke (ad,n:int);
-begin
-  tabdon[ad]:=lo(n);
-end;
-  */
 
 void adzon() {
 	Common::File f;
@@ -185,16 +157,5 @@ int animof(int ouf, int num) {
 
 	return animof_result;
 }
-
-/*procedure affgd(offs,dep,x,y:int);
-begin
-  case Gd of
-     Ams : affams(offs,dep,x,y);
-     Cga : affcga(offs,dep,x,y);
-     Ega : affega(offs,dep,x,y);
-     Her : affher(offs,dep,x,y);
-     Tan : afftan(offs,dep,x,y);
-  end;
-end;*/
 
 } // End of namespace Mortevielle

@@ -128,8 +128,7 @@ void veracf(byte b) {
 		error("Missing file - sonmus.mor");
 	
 	f.read(&mem[0x7414 * 16 + 0], 273);
-	/*blockread(f,mem[adson * 16+0],300);
-	blockread(f,mem[adson * 16+2400+0],245);*/
+
 	g_vm->_soundManager.demus(&mem[0x7414 * 16], &mem[adson * 16], 273);
 	f.close();
 }

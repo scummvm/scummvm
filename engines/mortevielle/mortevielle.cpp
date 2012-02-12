@@ -134,9 +134,6 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	/*init_debug;*/
-	/*  ecri_seg;*/
-	//pio_initialize(argc, argv);
 	gd = ega;
 	newgd = gd;
 	zuul = false;

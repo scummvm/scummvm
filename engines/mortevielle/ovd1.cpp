@@ -45,25 +45,11 @@ namespace Mortevielle {
 // For ScummVM, we need to do check for file errors where we do the file access
 const int ioresult = 0;
 
+/**
+ * Check for disk 2 being in the drive
+ */
 void dem2() {
-	/* Deprecated check for disk 2
-
-	untyped_file f;
-	int k;
-
-	// -- demande de disk 2 --
-	while (ioresult != 0);
-	assign(f, "mort.001");
-	//$i-
-	reset(f);
-	while (ioresult != 0) {
-		show_mouse();
-		k = do_alert(al_mess2, 1);
-		hide_mouse();
-		reset(f);
-	}
-	close(f);
-	*/
+	// Deprecated under ScummVM
 }
 
 void ani50() {
@@ -74,15 +60,6 @@ void ani50() {
 	f2_all = (res == 1);
 	repon(2, c_paroles + 143);
 }
-
-/*overlay procedure apzuul;
-  begin
-    if (c_zzz=1) or (c_zzz=2) then
-     begin
-       zzuul(adcfiec+161,0,1644);
-       c_zzz:=succ(c_zzz);
-     end;
-  end;*/
 
 /* overlay */ void aff50(bool c) {
 	caff = 50;
