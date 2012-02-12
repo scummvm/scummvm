@@ -4666,10 +4666,10 @@ void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom 
 	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT);
 	bottom = MIN<int32>(MAX<int32>(bottom, 0), TOON_BACKBUFFER_HEIGHT);
 
-	Common::Rect rect(left, top, right, bottom);
-
 	if (bottom - top <= 0 || right - left <= 0)
 		return;
+
+	Common::Rect rect(left, top, right, bottom);
 
 	for (uint32 i = 0; i < _dirtyRects.size(); i++) {
 		if (_dirtyRects[i].contains(rect))
