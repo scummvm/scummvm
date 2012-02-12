@@ -27,6 +27,10 @@
 
 #include "common/array.h"
 
+namespace Graphics {
+	class Font;
+}
+
 namespace Myst3 {
 
 class Myst3Engine;
@@ -41,6 +45,7 @@ public:
 
 private:
 	void loadFontSettings(int32 id);
+	void loadFont();
 	void loadSubtitles(int32 id);
 	void createTexture();
 
@@ -52,6 +57,7 @@ private:
 
 	Myst3Engine *_vm;
 	uint32 _id;
+	const Graphics::Font *_font;
 
 	Common::Array<Phrase> _phrases;
 

@@ -26,6 +26,7 @@
 
 #include "graphics/fontman.h"
 #include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 
 namespace Myst3 {
 
@@ -34,9 +35,11 @@ Subtitles::Subtitles(Myst3Engine *vm, uint32 id) :
 	_id(id),
 	_surface(0),
 	_texture(0),
-	_frame(-1) {
+	_frame(-1),
+	_font(0) {
 
 	loadFontSettings(1100);
+	loadFont();
 	loadSubtitles(id);
 	createTexture();
 }
@@ -49,6 +52,8 @@ Subtitles::~Subtitles() {
 	if (_texture) {
 		_vm->_gfx->freeTexture(_texture);
 	}
+
+	delete _font;
 }
 
 void Subtitles::loadFontSettings(int32 id) {
@@ -83,6 +88,17 @@ void Subtitles::loadFontSettings(int32 id) {
 	Common::MemoryReadStream *data = fontCharset->getData();
 	data->read(_charset, sizeof(_charset));
 	delete data;
+}
+
+void Subtitles::loadFont() {
+	// Use the TTF font provided by the game if TTF support is available
+#ifdef USE_FREETYPE2
+	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember("arir67w.ttf");
+	if (s) {
+		_font = Graphics::loadTTFFont(*s, _fontSize);
+		delete s;
+	}
+#endif
 }
 
 void Subtitles::loadSubtitles(int32 id) {
@@ -159,8 +175,11 @@ void Subtitles::setFrame(int32 frame) {
 	_frame = phrase->frame;
 
 
-	// TODO: Use the TTF font provided by the game
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+	const Graphics::Font *font;
+	if (_font)
+		font = _font;
+	else
+		font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	if (!font)
 		error("No available font");
