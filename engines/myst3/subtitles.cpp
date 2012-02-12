@@ -36,6 +36,47 @@ Subtitles::Subtitles(Myst3Engine *vm, uint32 id) :
 	_texture(0),
 	_frame(-1) {
 
+	loadFontSettings(1100);
+	loadSubtitles(id);
+	createTexture();
+}
+
+Subtitles::~Subtitles() {
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+	if (_texture) {
+		_vm->_gfx->freeTexture(_texture);
+	}
+}
+
+void Subtitles::loadFontSettings(int32 id) {
+	// Load font settings
+	const DirectorySubEntry *fontNums = _vm->getFileDescription("NUMB", id, 0, DirectorySubEntry::kNumMetadata);
+
+	if (!fontNums)
+		error("Unable to load font settings values");
+
+	_fontSize = fontNums->getMiscData(0);
+	_fontBold = fontNums->getMiscData(1);
+	_surfaceHeight = fontNums->getMiscData(2);
+	_singleLineTop = fontNums->getMiscData(3);
+	_line1Top = fontNums->getMiscData(4);
+	_line2Top = fontNums->getMiscData(5);
+	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
+	_fontCharset = fontNums->getMiscData(7);
+
+
+	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
+
+	if (!fontText)
+		error("Unable to load font face");
+
+	_fontFace = fontText->getTextData(0);
+}
+
+void Subtitles::loadSubtitles(int32 id) {
 	// Subtitles may be overridden using a variable
 	const DirectorySubEntry *desc;
 	if (_vm->_state->getMovieOverrideSubtitles()) {
@@ -77,22 +118,14 @@ Subtitles::Subtitles(Myst3Engine *vm, uint32 id) :
 	}
 
 	delete crypted;
-
-	// Create a surface to draw the subtitles on
-	_surface = new Graphics::Surface();
-	_surface->create(Renderer::kOriginalWidth, Renderer::kBottomBorderHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	_texture = _vm->_gfx->createTexture(_surface);
 }
 
-Subtitles::~Subtitles() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
-	if (_texture) {
-		_vm->_gfx->freeTexture(_texture);
-	}
+void Subtitles::createTexture() {
+	// Create a surface to draw the subtitles on
+	_surface = new Graphics::Surface();
+	_surface->create(Renderer::kOriginalWidth, _surfaceHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	_texture = _vm->_gfx->createTexture(_surface);
 }
 
 void Subtitles::setFrame(int32 frame) {
@@ -113,7 +146,6 @@ void Subtitles::setFrame(int32 frame) {
 
 
 	// TODO: Use the TTF font provided by the game
-	// TODO: Use the positioning information provided by the game
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	if (!font)
@@ -121,7 +153,7 @@ void Subtitles::setFrame(int32 frame) {
 
 	// Draw the new text
 	memset(_surface->pixels, 0, _surface->pitch * _surface->h);
-	font->drawString(_surface, phrase->string, 0, _surface->h / 2, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+	font->drawString(_surface, phrase->string, 0, _singleLineTop, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 
 	// Update the texture
 	_texture->update(_surface);
@@ -130,7 +162,7 @@ void Subtitles::setFrame(int32 frame) {
 void Subtitles::drawOverlay() {
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
 	Common::Rect bottomBorder = textureRect;
-	bottomBorder.translate(0, Renderer::kTopBorderHeight + Renderer::kFrameHeight);
+	bottomBorder.translate(0, _surfaceTop);
 
 	_vm->_gfx->drawTexturedRect2D(bottomBorder, textureRect, _texture);
 }

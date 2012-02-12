@@ -40,6 +40,10 @@ public:
 	void drawOverlay();
 
 private:
+	void loadFontSettings(int32 id);
+	void loadSubtitles(int32 id);
+	void createTexture();
+
 	struct Phrase {
 		uint32 offset;
 		int32 frame;
@@ -54,6 +58,17 @@ private:
 	int32 _frame;
 	Graphics::Surface *_surface;
 	Texture *_texture;
+
+	// Font settings
+	Common::String _fontFace;
+	uint _fontSize;
+	bool _fontBold;
+	uint _surfaceHeight;
+	uint _singleLineTop;
+	uint _line1Top;
+	uint _line2Top;
+	uint _surfaceTop;
+	int32 _fontCharset;
 };
 
 } /* namespace Myst3 */
