@@ -30,7 +30,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "mortevielle/alert.h"
-#include "mortevielle/boite.h"
 #include "mortevielle/droite.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
@@ -141,7 +140,8 @@ void initouv() {
 }
 
 void ecrf1() {
-	boite(0, 11, 512, 163, 15);           /* grand dessin */         //Translation: Large drawing
+	// Large drawing
+	g_vm->_screenSurface.drawBox(0, 11, 512, 163, 15);
 }
 
 void clsf1() {
@@ -199,11 +199,11 @@ void clsf2() {
 	hide_mouse();
 	if (f2_all) {
 		box(0, gd, 1, 176, 633, 199, 255);
-		boite(0, 175, 634, 24, 15);
+		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
 		f2_all = false;
 	} else {
 		box(0, gd, 1, 176, 633, 190, 255);
-		boite(0, 175, 634, 15, 15);
+		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
 	}
 	show_mouse();
 }
@@ -211,7 +211,7 @@ void clsf2() {
 void ecrf2() {
 	/* debug('ecrf2'); */
 	text_color(5);
-	/*boite(0,175,630,15,15);*/
+	/*g_vm->_screenSurface.drawBox(0,175,630,15,15);*/
 }
 
 void ecr2(Common::String str_) {
@@ -248,7 +248,7 @@ void clsf3() {
 	/* debug('clsf3'); */
 	hide_mouse();
 	box(0, gd, 1, 192, 633, 199, 255);
-	boite(0, 191, 634, 8, 15);
+	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
 	show_mouse();
 }
 
@@ -262,7 +262,7 @@ void ecr3(Common::String text) {
 void ecrf6() {
 	/* debug('ecrf6'); */
 	text_color(5);
-	boite(62, 33, 363, 80, 15);
+	g_vm->_screenSurface.drawBox(62, 33, 363, 80, 15);
 }
 
 void ecrf7() {
@@ -459,7 +459,7 @@ void f3f8() {
 	g_vm->_screenSurface.writeg(g_vm->getString(S_F3), 5);
 	g_vm->_screenSurface._textPos.y = 51;
 	g_vm->_screenSurface.writeg(g_vm->getString(S_F8), 5);
-	boite(0, 42, co, 16, 7);
+	g_vm->_screenSurface.drawBox(0, 42, co, 16, 7);
 }
 
 void t5(int cx) {
@@ -1321,10 +1321,10 @@ void dessin(int ad) {
 		clsf1();
 		if (caff > 99) {
 			dessine(ades, 60, 33);
-			boite(118, 32, 291, 121, 15);         /* cadre moyen */          //Translation: Medium box
+			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         /* cadre moyen */          //Translation: Medium box
 		} else if (caff > 69) {
 			dessine(ades, 112, 48);           /* tˆtes */                    //Translation: Heads
-			boite(222, 47, 155, 91, 15);
+			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
 		} else {
 			dessine(ades, 0, 12);
 			ecrf1();

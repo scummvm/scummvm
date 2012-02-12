@@ -26,7 +26,6 @@
  */
 
 #include "common/str.h"
-#include "mortevielle/boite.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
@@ -101,7 +100,7 @@ namespace Mortevielle {
 		coor[j + 1].etat = false;
 		if (res == 1)  rep = 10;
 		else rep = 6;
-		boite(80, 33, 40 + tmax * rep, (der - prem) * 8 + 16, 15);
+		g_vm->_screenSurface.drawBox(80, 33, 40 + tmax * rep, (der - prem) * 8 + 16, 15);
 		rep = 0;
 		j = 0;
 		memk = 0;

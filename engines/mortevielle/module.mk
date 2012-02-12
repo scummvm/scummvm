@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	actions.o \
 	alert.o \
 	asm.o \
-	boite.o \
 	detection.o \
 	droite.o \
 	graphics.o \

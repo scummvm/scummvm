@@ -27,7 +27,6 @@
 
 #include "mortevielle/mor2.h"
 #include "mortevielle/alert.h"
-#include "mortevielle/boite.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -190,7 +189,7 @@ void fenat(char ans) {
 		coul = 12;
 
 	g_vm->_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
-	boite(300, 191, 16, 8, 15);
+	g_vm->_screenSurface.drawBox(300, 191, 16, 8, 15);
 	show_mouse();
 }
 
@@ -308,7 +307,7 @@ void tperd() {
 		t11(21, cx);
 	g_vm->_loseGame = true;
 	clsf1();
-	boite(60, 35, 400, 50, 15);
+	g_vm->_screenSurface.drawBox(60, 35, 400, 50, 15);
 	repon(9, crep);
 	clsf2();
 	clsf3();
@@ -402,7 +401,7 @@ void sparl(float adr, float rep) {
 	deline(repint + c_paroles, st, tay);
 	afftex(st, 230, 4, 65, 24, 5);
 	f3f8();
-	/*boite(43,30,90,19,15);
+	/*g_vm->_screenSurface.drawBox(43,30,90,19,15);
 	gotoxy(7,5);
 	write('F3: Encore');
 	gotoxy(7,6);
@@ -451,7 +450,7 @@ void mennor() {
 
 void premtet() {
 	dessine(ades, 10, 80);
-	boite(18, 79, 155, 91, 15);
+	g_vm->_screenSurface.drawBox(18, 79, 155, 91, 15);
 }
 
 /* NIVEAU 5 */
@@ -499,7 +498,7 @@ void t1sama() {    /* On entre dans le manoir */                 //Translation: 
 		affper(ipers);
 		caff = 77;
 		afdes(0);
-		boite(223, 47, 155, 91, 15);
+		g_vm->_screenSurface.drawBox(223, 47, 155, 91, 15);
 		repon(2, 33);
 		tkey1(false);
 		mennor();
