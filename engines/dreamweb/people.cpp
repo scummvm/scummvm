@@ -145,13 +145,19 @@ void DreamWebEngine::updatePeople() {
 void DreamWebEngine::madmanText() {
 	byte origCount;
 
+	uint16 length = 90;
 	if (hasSpeech()) {
-		if (_speechCount >= 63)
+		if (_speechCount > 15)
 			return;
 		if (_channel1Playing != 255)
 			return;
 		origCount = _speechCount;
 		++_speechCount;
+
+		if (origCount != 15)
+			length = 32000; // Set subtitle time very high to make it
+			                // always wait for the next line, except for the
+			                // last one, when there is no next line.
 	} else {
 		if (_vars._combatCount >= 61)
 			return;
@@ -159,7 +165,7 @@ void DreamWebEngine::madmanText() {
 			return;
 		origCount = _vars._combatCount / 4;
 	}
-	setupTimedTemp(47 + origCount, 82, 72, 80, 90, 1);
+	setupTimedTemp(47 + origCount, 82, 72, 80, length, 1);
 }
 
 void DreamWebEngine::madman(ReelRoutine &routine) {
