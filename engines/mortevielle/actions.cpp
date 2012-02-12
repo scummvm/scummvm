@@ -42,7 +42,7 @@
 
 namespace Mortevielle {
 
-/* overlay */
+
 void taller() {
 	//int mx, cx, cy;
 	int cx;
@@ -134,7 +134,7 @@ L2:
 	tmlieu(s.mlieu);
 }
 
-/* overlay */ void tprendre() {
+void tprendre() {
 	//int cx, cy, cz;
 	int cx;
 
@@ -230,7 +230,7 @@ L2:
 	}
 }
 
-/* overlay */ void tsprendre() {
+void tsprendre() {
 	int cx, cy, cz;
 
 	cx = 0;
@@ -251,7 +251,7 @@ L2:
 	clsf2();
 }
 
-/* overlay */ void tsoulever()
+void tsoulever()
 
 {
 	int cx;
@@ -278,7 +278,7 @@ L2:
 	if (crep == 255)  crep = 997;
 }
 
-/* overlay */ void tlire() {
+void tlire() {
 //	int iaff;
 
 	if (caff > 99)  st4(caff);
@@ -294,12 +294,12 @@ L2:
 	}
 }
 
-/* overlay */ void tslire() {
+void tslire() {
 	if (s.derobj == 0)  crep = 186;
 	else st4(s.derobj);
 }
 
-/* overlay */ void tregarder() {
+void tregarder() {
 	int cx;
 
 	if (caff > 99) {
@@ -355,12 +355,12 @@ L2:
 	if ((s.mlieu == 10) && (num == 3))  treg(31);
 }
 
-/* overlay */ void tsregarder() {
+void tsregarder() {
 	if (s.derobj != 0)  treg(s.derobj);
 	else crep = 186;
 }
 
-/* overlay */ void tfouiller() {
+void tfouiller() {
 	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 	int cx;
 
@@ -428,12 +428,12 @@ L2:
 	}
 }
 
-/* overlay */ void tsfouiller() {
+void tsfouiller() {
 	if (s.derobj != 0)  st7(s.derobj);
 	else crep = 186;
 }
 
-/* overlay */ void touvrir() {
+void touvrir() {
 	int cx, haz;
 
 	if (!syn)
@@ -487,7 +487,7 @@ L2:
 	}
 }
 
-/* overlay */ void tmettre() {
+void tmettre() {
 	int quel;
 	bool entre;
 	char st[1410];
@@ -591,7 +591,7 @@ L2:
 	}
 }
 
-/* overlay */ void ttourner() {
+void ttourner() {
 	int quel;
 
 	if (caff > 99) {
@@ -626,7 +626,7 @@ L2:
 	}
 }
 
-/* overlay */ void tcacher() {
+void tcacher() {
 	if (!syn)
 		ecr3(g_vm->getString(S_HIDE_SELF));
 	tfleche();
@@ -640,7 +640,7 @@ L2:
 	}
 }
 
-/* overlay */ void tattacher() {
+void tattacher() {
 	if (s.derobj == 0)  crep = 186;
 	else {
 		if (!syn)
@@ -661,7 +661,7 @@ L2:
 	}
 }
 
-/* overlay */ void tfermer() {
+void tfermer() {
 	int cx, chai;
 
 	if (!syn)
@@ -691,7 +691,7 @@ L2:
 	if (caff == 26)  crep = 999;
 }
 
-/* overlay */ void tfrapper() {
+void tfrapper() {
 	int l, p, haz;
 
 	if (!syn)
@@ -724,7 +724,7 @@ L2:
 	}
 }
 
-/* overlay */ void tposer() {
+void tposer() {
 	int cx, chai;
 
 	if (!syn)
@@ -790,7 +790,7 @@ L2:
 	}
 }
 
-/* overlay */ void tecouter() {
+void tecouter() {
 	int l, p, haz, j, h, m;
 
 	if (s.mlieu != 26)  crep = 101;
@@ -815,7 +815,7 @@ L2:
 	}
 }
 
-/* overlay */ void tmanger() {
+void tmanger() {
 	int j, h, m;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26))
@@ -842,7 +842,7 @@ L2:
 	}
 }
 
-/* overlay */ void tentrer() {
+void tentrer() {
 	int x, z = 0;
 
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
@@ -895,7 +895,7 @@ L2:
 	}
 }
 
-/* overlay */ void tdormir() {
+void tdormir() {
 	int z, j, h, m, quel;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
@@ -934,7 +934,7 @@ L2:
 	num = 0;
 }
 
-/* overlay */ void tdefoncer() {
+void tdefoncer() {
 	if (!syn)
 		ecr3(g_vm->getString(S_SMASH));
 	if (caff < 25)  tfleche();
@@ -946,7 +946,7 @@ L2:
 		}
 }
 
-/* overlay */ void tsortir() {
+void tsortir() {
 	int lx = 0;
 
 	tsort();
@@ -971,7 +971,7 @@ L2:
 	}
 }
 
-/* overlay */ void tattendre() {
+void tattendre() {
 	int quel;
 
 	mpers = 0;
@@ -995,7 +995,7 @@ L2:
 	if (! anyone)  tinke();
 }
 
-/* overlay */ void tsonder() {
+void tsonder() {
 	if (!syn)
 		ecr3(g_vm->getString(S_PROBE2));
 	if (caff < 27) {
@@ -1005,7 +1005,7 @@ L2:
 	}
 }
 
-/* overlay */ void tparler()
+void tparler()
 
 {
 	bool te[47];
@@ -1179,7 +1179,7 @@ L2:
 	clsf3();
 }
 
-/* overlay */ void tsentir() {
+void tsentir() {
 	crep = 119;
 	if (caff < 26) {
 		if (!syn)
@@ -1191,7 +1191,7 @@ L2:
 	num = 0;
 }
 
-/* overlay */ void tgratter() {
+void tgratter() {
 	crep = 155;
 	if (caff < 27) {
 		if (!syn)

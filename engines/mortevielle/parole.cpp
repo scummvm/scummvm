@@ -97,7 +97,7 @@ void veracf(byte b) {
 	;
 }
 
-/* overlay */ void cctable(tablint &t) {
+void cctable(tablint &t) {
 	int k;
 	float tb[257];
 
@@ -109,7 +109,7 @@ void veracf(byte b) {
 	}
 }
 
-/* overlay */ void regenbruit() {
+void regenbruit() {
 	int i, j;
 
 	i = offsetb3 + 8590;
@@ -121,7 +121,7 @@ void veracf(byte b) {
 	} while (!(i >= offsetb3 + 8790));
 }
 
-/* overlay */   void charge_son() {
+  void charge_son() {
 	Common::File f;
 
 	if (!f.open("sonmus.mor"))
@@ -133,7 +133,7 @@ void veracf(byte b) {
 	f.close();
 }
 
-/* overlay */   void charge_phbruit() {
+  void charge_phbruit() {
 	Common::File f;
 
 	if (!f.open("phbrui.mor"))
@@ -145,7 +145,7 @@ void veracf(byte b) {
 	f.close();
 }
 
-/* overlay */   void charge_bruit() {
+  void charge_bruit() {
 	Common::File f;
 	int i;
 
@@ -159,7 +159,7 @@ void veracf(byte b) {
 	f.close();
 }
 
-/* overlay */   void trait_car() {
+  void trait_car() {
 	byte d3;
 	int d2, i;
 

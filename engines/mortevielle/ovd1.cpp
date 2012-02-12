@@ -61,7 +61,7 @@ void ani50() {
 	repon(2, c_paroles + 143);
 }
 
-/* overlay */ void aff50(bool c) {
+void aff50(bool c) {
 	caff = 50;
 	maff = 0;
 	taffich();
@@ -71,7 +71,7 @@ void ani50() {
 	f3f8();
 }
 
-/* overlay */ void init_menu() {
+void init_menu() {
 	int i, tai;
 	char st[1410];
 	Common::File f;
@@ -124,7 +124,7 @@ void ani50() {
 }
 
 
-/* overlay */ void charpal() {
+void charpal() {
 	Common::File f;		// tabdb records
 	Common::File ft;	// tfxx
 	int i, j, k;
@@ -172,7 +172,7 @@ void ani50() {
 	fb.close();
 }
 
-/* overlay */ void chartex() {
+void chartex() {
 	int i;
 	Common::File f;
 	char s[1410];
@@ -219,7 +219,7 @@ void dialpre() {
 	int_m = true;
 }
 
-/* overlay */ void init_lieu() {
+void init_lieu() {
 	Common::File f_lieu;	// tab_mlieu
 
 	/* debug('o3 init_lieu'); */
@@ -234,7 +234,7 @@ void dialpre() {
 }
 
 
-/* overlay */ void music() {
+void music() {
 	Common::File fic;
 	int k;
 	bool fin;
@@ -269,7 +269,7 @@ void dialpre() {
 }
 
 
-/* overlay */ void charge_bruit5() {
+void charge_bruit5() {
 	Common::File f;
 
 	if (!f.open("bruit5"))
@@ -279,7 +279,7 @@ void dialpre() {
 	f.close();
 }
 
-/* overlay */ void charge_cfiec() {
+void charge_cfiec() {
 	Common::File f;
 
 	if (!f.open("cfiec.mor"))
@@ -292,7 +292,7 @@ void dialpre() {
 }
 
 
-/* overlay */ void charge_cfiph() {
+void charge_cfiph() {
 	Common::File f;
 
 	if (!f.open("cfiph.mor"))

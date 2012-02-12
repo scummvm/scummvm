@@ -38,7 +38,7 @@ namespace Mortevielle {
 
 /* NIVEAU 14*/
 
-/* overlay */ void menut(int no, Common::String nom) {
+void menut(int no, Common::String nom) {
 	byte h, l;
 	Common::String s;
 
@@ -74,7 +74,7 @@ namespace Mortevielle {
 	}
 }
 
-/* overlay */ void menu_disable(int no) {
+void menu_disable(int no) {
 	byte h, l;
 
 	/* debug('menu_disable'); */
@@ -103,7 +103,7 @@ namespace Mortevielle {
 	}
 }
 
-/* overlay */ void menu_enable(int no) {
+void menu_enable(int no) {
 	byte h, l;
 
 	/* debug('menu_disable'); */
