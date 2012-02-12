@@ -33,6 +33,7 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/menu.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
 
@@ -100,6 +101,7 @@ public:
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
 	SavegameManager _savegameManager;
+	Menu _menu;
 
 	bool _quitGame;			// Quit game flag. Originally called 'arret'
 	bool _endGame;			// End game flag. Originally called 'solu'

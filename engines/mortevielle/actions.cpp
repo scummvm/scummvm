@@ -543,9 +543,12 @@ void tmettre() {
 						show_mouse();
 						tinke();
 						pendule();
-						if (ipers != 0)  affper(ipers);
-						else person();
-						menu_aff();
+						if (ipers != 0)
+							affper(ipers);
+						else 
+							person();
+
+						g_vm->_menu.menu_aff();
 						if (entre) {
 							s.mlieu = 17;
 							tmlieu(17);

@@ -278,7 +278,7 @@ char get_ch() {
  */
 void s_sauv(int Gd, int y, int dy) {
 	// Note: May no longer be necessary, since the backgorund restore code 
-	// is being handled slightly differently now in the menu_up() method
+	// is being handled slightly differently now in the menuUp() method
 }
 
 void palette(int v1) {

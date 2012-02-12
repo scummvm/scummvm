@@ -553,7 +553,7 @@ void MortevielleEngine::handleAction() {
 	oo = false;
 	ctrm = 0;
 	if (! iesc) {
-		draw_menu();
+		g_vm->_menu.drawMenu();
 		imen = true;
 		temps = 0;
 		key = 0;
@@ -562,7 +562,7 @@ void MortevielleEngine::handleAction() {
 
 		_inMainGameLoop = true;
 		do {
-			mdn();
+			g_vm->_menu.mdn();
 			tinke();
 			mov_mouse(funct, inkey);
 			CHECK_QUIT;
@@ -570,7 +570,7 @@ void MortevielleEngine::handleAction() {
 		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));
 		_inMainGameLoop = false;
 
-		erase_menu();
+		g_vm->_menu.eraseMenu();
 		imen = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
 			change_gd((uint)pred(int, ord(inkey)) >> 1);
