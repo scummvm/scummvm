@@ -255,17 +255,6 @@ Common::String copy(const Common::String &s, int idx, size_t size) {
 
 int port[0xfff];
 byte mem[65536 * 16];
-int wherey;
-
-void gotoxy(int x, int y) {
-}
-void textcolor(int c) {
-}
-void output(const Common::String &s) {
-	debug(s.c_str());
-}
-void graphbackground(int c) {
-}
 
 void intr(int intNum, registres &regs) {
 }

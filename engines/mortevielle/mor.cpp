@@ -260,7 +260,6 @@ void clsf10() {
 }
 
 void stop() {
-	clrscr;
 	hirs();
 	gd = ams;
 	hirs();

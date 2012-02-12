@@ -48,7 +48,6 @@ void menut(int no, Common::String nom) {
 	l = lo(no);
 	s = nom;
 	if (! tesok) {
-		clrscr;
 		mortevielle_exit(0);
 	}
 	while (s.size() < 20)  s = s + ' ';
