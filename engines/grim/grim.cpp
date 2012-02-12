@@ -269,7 +269,7 @@ Common::Error GrimEngine::run() {
 
 	if (splash_bm != NULL)
 		splash_bm->draw();
-	
+
 	g_driver->flipBuffer();
 
 	LuaBase *lua = NULL;
@@ -764,6 +764,12 @@ void GrimEngine::savegameRestore() {
 	Debug::debug(Debug::Engine, "Lua restored succesfully.");
 
 	delete _savedState;
+
+	//Re-read the values, since we may have been in some state that changed them when loading the savegame,
+	//e.g. running a cutscene, which sets the sfx volume to 0.
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	LuaBase::instance()->postRestoreHandle();
 	g_imuse->pause(false);
