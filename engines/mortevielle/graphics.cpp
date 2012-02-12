@@ -1006,16 +1006,12 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
  * @remarks		Because the ScummVM surface is using a double height 640x400 surface to 
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
-void ScreenSurface::fillBox(int colour, const Common::Rect &bounds, int patt) {
+void ScreenSurface::fillBox(int colour, const Common::Rect &bounds) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(bounds.left, bounds.top * 2,
 		bounds.right, bounds.bottom * 2));
 	
 	// Fill the area
 	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), colour);
-
-	// TODO: Figure out what effect patterns of other than '0xff' have
-	if (patt != 0xff)
-		warning("TODO: Figure out operation of ScreenSurface::box when pattern is %xh", patt);
 }
 
 /**
@@ -1065,7 +1061,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 	case 1:
 	case 3  : {
 		cecr = 0;
-		box(15, gd, pt.x, pt.y, x, pt.y + 7, 255);
+		g_vm->_screenSurface.fillBox(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 	}
 	break;
 	case 4 : {
@@ -1079,7 +1075,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 	case 0:
 	case 2 : {
 		cecr = 15;
-		box(0, gd, pt.x, pt.y, x, pt.y + 7, 255);
+		g_vm->_screenSurface.fillBox(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 	}
 	break;
 	}

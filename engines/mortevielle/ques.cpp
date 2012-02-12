@@ -63,7 +63,7 @@ namespace Mortevielle {
 		deline(ta[i], st, tay);
 		if (res == 1)  y = 29;
 		else y = 23;
-		box(15, gd, 0, 14, 630, y, 255);
+		g_vm->_screenSurface.fillBox(15, Common::Rect(0, 14, 630, y));
 		afftex(st, 20, 15, 100, 2, 0);
 		if (i != 10) {
 			prem = ta[i] + 1;

@@ -433,10 +433,6 @@ extern int get_random_number(int minval, int maxval);
 extern void s_char(int Gd, int y, int dy);
 // (* external 'c:\mc\sauvecr.com'; *)
 extern void s_sauv(int Gd, int y, int dy);
-// (* external 'c:\mc\boite.com'; *)
-extern void box(int c, int Gd, int xo, int yo, int xi, int yi, int patt);
-// (* external 'c:\mc\decomp.com'; *)
-extern void decomp(int seg, int dep); 
 
 } // End of namespace Mortevielle
 

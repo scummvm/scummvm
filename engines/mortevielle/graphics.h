@@ -87,7 +87,7 @@ public:
 	void copyFrom(Graphics::Surface &src, int x, int y);
 	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
 	void drawBox(int x, int y, int dx, int dy, int col);
-	void fillBox(int colour, const Common::Rect &bounds, int patt);
+	void fillBox(int colour, const Common::Rect &bounds);
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void writeg(const Common::String &l, int c);
