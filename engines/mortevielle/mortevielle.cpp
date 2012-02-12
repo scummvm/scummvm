@@ -56,6 +56,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_lastGameFrame = 0;
 	_mouseClick = false;
 	_inMainGameLoop = false;
+	_quitGame = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -150,7 +151,6 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	init_mouse();
 
 	init_lieu();
-	arret = false;
 	sonoff = false;
 	f2_all = false;
 	textcolor(9);
@@ -464,7 +464,8 @@ void MortevielleEngine::divers(int np, bool b) {
 }
 
 /**
- * Main game loop
+ * Main game loop. Handles potentially playing the game multiple times, such as if the player
+ * loses, and chooses to start playing the game again.
  */
 void MortevielleEngine::mainGame() {
 	if (rech_cfiec)  charge_cfiec();
@@ -478,31 +479,37 @@ void MortevielleEngine::mainGame() {
 	hirs();
 	dessine_rouleau();
 	show_mouse();
+
+	// Loop to play the game
 	do {
-		tjouer();
+		playGame();
 		CHECK_QUIT;
-	} while (!arret);
+	} while (!_quitGame);
 }
 
 /**
- * This method handles repeatedly calling a sub-method to wait for a user action and then handling it
+ * This method handles playing a loaded game
+ * @remarks	Originally called tojouer
  */
-void MortevielleEngine::tjouer() {
-	antegame();
+void MortevielleEngine::playGame() {
+	gameLoaded();
+
+	// Loop handling actions until the game has to be quit, or show the lose or end sequence
 	do {
-		tecran();
+		handleAction();
 		CHECK_QUIT;
-	} while (!((arret) || (solu) || (perdu)));
-	if (solu)
-		tmaj1();
-	else if (perdu)
-		tencore();
+	} while (!((_quitGame) || (_endGame) || (_loseGame)));
+	if (_endGame)
+		endGame();
+	else if (_loseGame)
+		loseGame();
 }
 
 /**
  * Waits for the user to select an action, and then handles it
+ * @remarks	Originally called tecran
  */
-void MortevielleEngine::tecran() {
+void MortevielleEngine::handleAction() {
 	const char idem[] = "Idem";
 	const int lim = 20000;
 	int temps = 0;
@@ -556,7 +563,7 @@ void MortevielleEngine::tecran() {
 		}
 	}
 	if (inkey == '\73') {
-		arret = true;
+		_quitGame = true;
 		tmaj3();
 	} else {
 		if ((funct) && (inkey != '\77'))  return;
@@ -582,7 +589,7 @@ void MortevielleEngine::tecran() {
 			}
 			do {
 				if (! oo)  tsitu();
-				if ((ctrm == 0) && (! perdu) && (! solu)) {
+				if ((ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();
 					if (okdes) {
 						okdes = false;

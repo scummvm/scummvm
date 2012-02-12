@@ -57,7 +57,7 @@ private:
 	uint32 _lastGameFrame;
 	bool _mouseClick;
 	Common::Point _mousePos;
-	bool _inMainGameLoop;
+	bool _inMainGameLoop;	// Flag when the main game loop is active
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();
@@ -67,8 +67,8 @@ private:
 	void initMouse();
 	void showIntroduction();
 	void mainGame();
-	void tjouer();
-	void tecran();
+	void playGame();
+	void handleAction();
 	void divers(int np, bool b);
 public:
 	ScreenSurface _screenSurface;
@@ -77,6 +77,10 @@ public:
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
 	SavegameManager _savegameManager;
+
+	bool _quitGame;			// Quit game flag. Originally called 'arret'
+	bool _endGame;			// End game flag. Originally called 'solu'
+	bool _loseGame;			// Lose game flag. Originally called 'perdu'
 public:
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -95,6 +99,10 @@ public:
 	bool getMouseClick() const { return _mouseClick; }
 	void setMouseClick(bool v) { _mouseClick = v; }
 	void delay(int amount);
+
+	void endGame();
+	void loseGame();
+	void gameLoaded();
 };
 
 extern MortevielleEngine *g_vm;
