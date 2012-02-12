@@ -317,7 +317,7 @@ public:
 	void subC20F9();
 	void subC2586();
 	bool subC264B(int arg1);
-	int  subC2687(int arg1);
+	bool subC2687(int arg1);
 	int  subC26CB(int arg1, int arg2);
 	int  subC2719(int arg1);
 	int  subC274D(int arg1);

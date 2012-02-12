@@ -113,6 +113,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		return new Scene1100();
 	case 1200:
 		return new Scene1200();
+	case 1337:
 	case 1330:
 		// Card Game
 		return new Scene1337();

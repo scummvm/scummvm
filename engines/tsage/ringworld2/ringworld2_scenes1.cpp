@@ -4033,34 +4033,71 @@ bool Scene1337::subC264B(int arg1) {
 	}
 }
 
-int Scene1337::subC2687(int arg1) {
-	warning("STUBBED Scene1337::subC2687()");
-	return -1;
+bool Scene1337::subC2687(int arg1) {
+	switch (arg1) {
+	case 11:
+	// No break on purpose
+	case 14:
+	// No break on purpose
+	case 16:
+	// No break on purpose
+	case 24:
+		return true;
+	default:
+		return false;
+	}
 }
 
 int Scene1337::subC26CB(int arg1, int arg2) {
-	warning("STUBBED Scene1337::subC26CB()");
+	if ((_arrunkObj1337[arg1]._arr1[arg2]._field34 > 1) && (_arrunkObj1337[arg1]._arr1[arg2]._field34 <= 9)) {
+		return arg2;
+	}
+
 	return -1;
 }
 
 int Scene1337::subC2719(int arg1) {
-	warning("STUBBED Scene1337::subC2719()");
+	for (int i = 0; i <= 3; i++) {
+		if (_arrunkObj1337[arg1]._arr1[i]._field34 == 1)
+			return i;
+	}
+
 	return -1;
 }
 
 int Scene1337::subC274D(int arg1) {
-	warning("STUBBED Scene1337::subC274D()");
+	for (int i = 0; i <= 3; i++) {
+		if (_arrunkObj1337[arg1]._arr1[i]._field34 == 13)
+			return i;
+	}
+
 	return -1;
 }
 
 int Scene1337::subC2781(int arg1) {
-	warning("STUBBED Scene1337::subC2781()");
+	for (int i = 0; i <= 3; i++) {
+		if (_arrunkObj1337[arg1]._arr1[i]._field34 == 25)
+			return i;
+	}
+
 	return -1;
 }
 
 int Scene1337::subC27B5(int arg1) {
-	warning("STUBBED Scene1337::subC27B5()");
-	return -1;
+	switch (arg1) {
+	case 11:
+	// No break on purpose
+	case 14:
+	// No break on purpose
+	case 16:
+	// No break on purpose
+	case 24:
+		return arg1;
+		break;
+	default:
+		return -1;
+		break;
+	}
 }
 
 int Scene1337::subC27F9(int arg1) {
@@ -4128,7 +4165,10 @@ int Scene1337::subC3E92(int arg1) {
 }
 
 void Scene1337::subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC340B()");
+	_field3EF0 = subObj1;
+	_field3EF4 = subObj2;
+
+	_item1.setAction(&_action6);
 }
 
 void Scene1337::subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
@@ -4392,7 +4432,6 @@ void Scene1337::subCCF26() {
 }
 
 void Scene1337::subCF31D() {
-	warning("STUBBED Scene1337::subCF31D()");
 	int tmpVal = 1;
 	bool found;
 	int count;
@@ -4456,7 +4495,7 @@ void Scene1337::subCF31D() {
 
 		for (int j = 0; j <= 7; j++) {
 			if (_arrunkObj1337[1]._arr2[j]._field34 == 1) {
-				if (subC2687(_arrunkObj1337[1]._arr3[0]._field34) == 0) {
+				if (!subC2687(_arrunkObj1337[1]._arr3[0]._field34)) {
 					count = 0;
 					for (int k = 0; k <= 7; k++) {
 						if ((_arrunkObj1337[1]._arr2[k]._field34 > 1) && (_arrunkObj1337[1]._arr2[k]._field34 <= 9))
@@ -4480,7 +4519,7 @@ void Scene1337::subCF31D() {
 	tmpVal = subC2719(1);
 	if (tmpVal != -1) {
 		for (int i = 0; i <= 7; i++) {
-			if ((_arrunkObj1337[1]._arr2[i]._field34 == 0) && (subC2687(_arrunkObj1337[1]._arr3[0]._field34) == 0)) {
+			if ((_arrunkObj1337[1]._arr2[i]._field34 == 0) && (!subC2687(_arrunkObj1337[1]._arr3[0]._field34))) {
 				subC340B(&_arrunkObj1337[1]._arr1[tmpVal], &_arrunkObj1337[1]._arr2[i]);
 				found = true;
 			}
