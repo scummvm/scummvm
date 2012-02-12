@@ -339,8 +339,8 @@ void suite() {
 	dessine(ades, 0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
-	putxy(104 + 72 * res, 185);
-	writeg(cpr, 0);
+	g_vm->_screenSurface.putxy(104 + 72 * res, 185);
+	g_vm->_screenSurface.writeg(cpr, 0);
 }
 
 } // End of namespace Mortevielle

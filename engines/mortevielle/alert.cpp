@@ -87,7 +87,7 @@ static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 
 
 static void posit(int ji, int &coldep, int &esp) {
-	putxy(coldep + (40 + esp) *pred(int, ji), 98);
+	g_vm->_screenSurface.putxy(coldep + (40 + esp) *pred(int, ji), 98);
 }
 
 
@@ -122,13 +122,13 @@ static void fait_choix(Common::String c, int &coldep, int &nbcase, Common::Strin
 		} while (!(c[i + 1] == ']'));
 		i = i + 2;
 		while (str[l].size() < 3)  str[l] = str[l] + ' ';
-		putxy(x, 98);
+		g_vm->_screenSurface.putxy(x, 98);
 
 		Common::String tmp(" ");
 		tmp += str[l];
 		tmp += " ";
 
-		writeg(tmp, 0);
+		g_vm->_screenSurface.writeg(tmp, 0);
 		x = x + esp + 40;
 	}
 }
@@ -163,7 +163,7 @@ int do_alert(Common::String str_, int n) {
 	} else {
 		fait_boite(8, 7, nbcol);
 		i = 0;
-		ywhere = 70;
+		g_vm->_screenSurface._textPos.y = 70;
 		do {
 			cx = 320;
 			st = "";
@@ -173,9 +173,9 @@ int do_alert(Common::String str_, int n) {
 				if (res == 2)  cx = cx - 3;
 				else cx = cx - 5;
 			}
-			putxy(cx, ywhere);
-			ywhere = ywhere + 6;
-			writeg(st, 4);
+			g_vm->_screenSurface.putxy(cx, g_vm->_screenSurface._textPos.y);
+			g_vm->_screenSurface._textPos.y += 6;
+			g_vm->_screenSurface.writeg(st, 4);
 			i = i + 1;
 		} while (!(chaine[i] == ']'));
 	}
@@ -219,14 +219,14 @@ int do_alert(Common::String str_, int n) {
 						Common::String tmp(" ");
 						tmp += s[quoi];
 						tmp += " ";
-						writeg(tmp, 0);
+						g_vm->_screenSurface.writeg(tmp, 0);
 					}
 					posit(ix, coldep, esp);
 
 					Common::String tmp2 = " ";
 					tmp2 += s[ix];
 					tmp2 += " ";
-					writeg(tmp2, 1);
+					g_vm->_screenSurface.writeg(tmp2, 1);
 
 					quoi = ix;
 					show_mouse();
@@ -240,7 +240,7 @@ int do_alert(Common::String str_, int n) {
 			Common::String tmp3(" ");
 			tmp3 += s[quoi];
 			tmp3 += " ";
-			writeg(tmp3, 0);
+			g_vm->_screenSurface.writeg(tmp3, 0);
 
 			quoi = 0;
 			show_mouse();
@@ -256,7 +256,7 @@ int do_alert(Common::String str_, int n) {
 		Common::String tmp4(" ");
 		tmp4 += s[n];
 		tmp4 += " ";
-		writeg(tmp4, 1);
+		g_vm->_screenSurface.writeg(tmp4, 1);
 	}
 	charecr(50, succ(int, nligne) << 4);
 	show_mouse();

@@ -162,9 +162,9 @@ void menu_aff() {
 				msk = 0x80;
 				for (pt = 0; pt <= 7; pt ++) {
 					if ((lettres[num_letr - 1][ind_tabl] & msk) != 0) {
-						putpix(gd, x + 1, y + 1, 0);
-						putpix(gd, x, y + 1, 0);
-						putpix(gd, x, y, color);
+						g_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
+						g_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
+						g_vm->_screenSurface.setPixel(Common::Point(x, y), color);
 					}
 					msk = (uint)msk >> 1;
 					x = x + 1;
@@ -196,7 +196,7 @@ void invers(int ix) {
 
 	/* debug('invers'); */
 	if (msg4 == no_choice)  return;
-	putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
+	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
 	case 1 :
 		s = inv[lo(msg4)];
@@ -232,7 +232,7 @@ void invers(int ix) {
 		break;
 	}
 	if ((s[0] != '*') && (s[0] != '<'))
-		writeg(s, ix);
+		g_vm->_screenSurface.writeg(s, ix);
 	else
 		msg4 = no_choice;
 }
@@ -281,48 +281,53 @@ void menu_down(int ii) {
 	box(15, gd, xco, 12, xcc, 10 + (don[ii][2] << 1), 255);
 	box(0, gd, xcc, 12, xcc + 4, 10 + (don[ii][2] << 1), 255);
 	box(0, gd, xco, 8 + (don[ii][2] << 1), xcc + 4, 12 + (don[ii][2] << 1), 255);
-	putxy(xco, 16);
+	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
 		cx = succ(int, cx);
 		switch (ii) {
 		case 1 :
-			if (inv[cx][0] != '*')  writeg(inv[cx], 4);
+			if (inv[cx][0] != '*')
+				g_vm->_screenSurface.writeg(inv[cx], 4);
 			break;
 		case 2 :
-			if (dep[cx][0] != '*')  writeg(dep[cx], 4);
+			if (dep[cx][0] != '*')
+				g_vm->_screenSurface.writeg(dep[cx], 4);
 			break;
 		case 3 :
-			if (act[cx][0] != '*')  writeg(act[cx], 4);
+			if (act[cx][0] != '*')
+				g_vm->_screenSurface.writeg(act[cx], 4);
 			break;
 		case 4 :
-			if (self_[cx][0] != '*')  writeg(self_[cx], 4);
+			if (self_[cx][0] != '*')
+				g_vm->_screenSurface.writeg(self_[cx], 4);
 			break;
 		case 5 :
-			if (dis[cx][0] != '*')  writeg(dis[cx], 4);
+			if (dis[cx][0] != '*')
+				g_vm->_screenSurface.writeg(dis[cx], 4);
 			break;
 		case 6 :
-			writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
+			g_vm->_screenSurface.writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
 			break;
 		case 7 : {
 			Common::String s = g_vm->getString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + cx);
-			writeg(s, 4);
+			g_vm->_screenSurface.writeg(s, 4);
 			break;
 		}
 		case 8 :
 			if (cx == 1)
-				writeg(g_vm->getString(S_RESTART), 4);
+				g_vm->_screenSurface.writeg(g_vm->getString(S_RESTART), 4);
 			else {
 				Common::String s = g_vm->getString(S_SAVE_LOAD + 2);
 				s += ' ';
 				s += (char)(47 + cx);
-				writeg(s, 4);
+				g_vm->_screenSurface.writeg(s, 4);
 			}
 			break;
 		}
-		putxy(xco, ywhere + 8);
+		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
 	} while (!(cx == nb_lig));
 	test0 = true;
 	show_mouse();

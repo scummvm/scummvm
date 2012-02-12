@@ -26,6 +26,8 @@
  */
 
 #include "mortevielle/droite.h"
+#include "mortevielle/graphics.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/var_mor.h"
 
 namespace Mortevielle {
@@ -47,7 +49,7 @@ void droite(int x, int y, int xx, int yy, int coul) {
 		if (y > yy)  step = -1;
 		else step = 1;
 		do {
-			putpix(gd, abs((int)(a * i + b)), i, coul);
+			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i = i + step;
 		} while (!(i == yy));
 		/*writeln(le_file,'X == ',a:3:3,' * Y + ',b:3:3);*/
@@ -58,7 +60,7 @@ void droite(int x, int y, int xx, int yy, int coul) {
 		if (x > xx)  step = -1;
 		else step = 1;
 		do {
-			putpix(gd, i, abs((int)(a * i + b)), coul);
+			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
 		} while (!(i == xx));
 		/*writeln(le_file,'Y == ',a:3:3,' * X + ',b:3:3);*/

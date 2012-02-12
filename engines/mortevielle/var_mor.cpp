@@ -164,8 +164,6 @@ int x,
         prebru,
         typlec,
         num_ph,
-        xwhere,
-        ywhere,
         numpal,
         lderobj,
         nb_word,
@@ -233,27 +231,6 @@ void hirs() {
 	debugC(1, kMortevielleCore, "TODO: hirs is deprecated in favour of ScreenSurface::clearScreen");
 
 	g_vm->_screenSurface.clearScreen();
-}
-
-/**
- * Draws either a single pixel or a character to the screen
- */
-void affput(const Common::Point &pt, int palIndex, int ch) {
-	if (ch == 0)
-		g_vm->_screenSurface.setPixel(pt, palIndex);
-	else
-		g_vm->_screenSurface.writeCharacter(pt, ch, palIndex);
-}
-
-void affcar(int gd, int x, int y, int coul, int chr) {
-	if (res == 1)  
-		affput(Common::Point(((uint)x >> 1), y), coul, chr);
-	else 
-		affput(Common::Point(x, y), coul, chr);
-}
-
-void putpix(int gd, int x, int y, int coul) {
-	affput(Common::Point(x, y), coul, 0);
 }
 
 /**

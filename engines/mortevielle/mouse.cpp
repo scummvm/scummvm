@@ -261,7 +261,6 @@ void show_mouse() {
 	}
 	break;
 	}    /*  case Gd   */
-	affput(Common::Point(x_s, y_s), 0, 0);
 }
 
 void pos_mouse(int x, int y) {

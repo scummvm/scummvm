@@ -38,7 +38,6 @@ extern bool dans_rect(rectangle r);
 extern void outbloc(int n, pattern p, t_nhom pal);
 extern void writepal(int n);
 extern void pictout(int seg, int dep, int x, int y);
-extern void putxy(int x, int y);
 // extern int calad(int x, int y);
 extern void sauvecr(int y, int dy);
 extern void charecr(int y, int dy);

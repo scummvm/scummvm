@@ -336,8 +336,6 @@ extern int x,
         prebru,
         typlec,
         num_ph,
-        xwhere,
-        ywhere,
         numpal,
         lderobj,
         nb_word,
@@ -399,11 +397,8 @@ extern byte adcfiec[822 * 128];
 /*---------------------------------------------------------------------------*/
 
 void hirs();
-void affcar(int gd, int x, int y, int coul, int chr);
-void putpix(int gd, int x, int y, int coul);
 Common::String copy(const Common::String &s, int idx, size_t size);
 void Val(const Common::String &s, int &V, int Code);
-void affput(const Common::Point &pt, int palIndex, int ch);
 
 /*---------------------------------------------------------------------------*/
 /*------------------------------     STUBS     ------------------------------*/
