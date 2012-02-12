@@ -129,6 +129,7 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 		return Audio::makeMP3Stream(s, DisposeAfterUse::YES);
 #else
 		warning("Unable to play sound '%s', MP3 support is not compiled in.", filename.c_str());
+		delete s;
 		return 0;
 #endif
 	} else {
