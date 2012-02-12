@@ -271,44 +271,37 @@ static void setupKeymapper(OSystem &system) {
 	// Query backend for hardware keys and register them
 	mapper->registerHardwareKeySet(keySet);
 
+	// Now create the global keymap
+	Keymap *primaryGlobalKeymap = new Keymap(kGlobalKeymapName);
+	Action *act;
+	act = new Action(primaryGlobalKeymap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
+	act->addEvent(EVENT_MAINMENU);
+
+	act = new Action(primaryGlobalKeymap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(primaryGlobalKeymap, "PAUS", _("Pause"), kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+
+	act = new Action(primaryGlobalKeymap, "SKLI", _("Skip line"), kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+
+	act = new Action(primaryGlobalKeymap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	act = new Action(primaryGlobalKeymap, "REMP", _("Remap keys"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
+
+	act = new Action(primaryGlobalKeymap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+
+	mapper->addGlobalKeymap(primaryGlobalKeymap);
+	mapper->pushKeymap(kGlobalKeymapName, true);
+
 	// Get the platform-specific global keymap (if it exists)
 	Keymap *platformGlobalKeymap = system.getGlobalKeymap();
-
-	// Define the default global keymap if the platform-specific one didn't override it
-	if (!platformGlobalKeymap || (platformGlobalKeymap && platformGlobalKeymap->getName() != kGlobalKeymapName)) {
-		Keymap *defaultGlobalKeymap = new Keymap(kGlobalKeymapName);
-
-		Action *act;
-
-		// Now create the global keymap
-		act = new Action(defaultGlobalKeymap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
-		act->addEvent(EVENT_MAINMENU);
-
-		act = new Action(defaultGlobalKeymap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
-		act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
-
-		act = new Action(defaultGlobalKeymap, "PAUS", _("Pause"), kGenericActionType, kStartKeyType);
-		act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
-
-		act = new Action(defaultGlobalKeymap, "SKLI", _("Skip line"), kGenericActionType, kActionKeyType);
-		act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
-
-		act = new Action(defaultGlobalKeymap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
-		act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
-
-		act = new Action(defaultGlobalKeymap, "REMP", _("Remap keys"), kKeyRemapActionType);
-		act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
-
-		act = new Action(defaultGlobalKeymap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
-		act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
-
-		mapper->addGlobalKeymap(defaultGlobalKeymap);
-		mapper->pushKeymap(kGlobalKeymapName, true);
-	}
-	// Define the platform-specific global keymap if it exists
 	if (platformGlobalKeymap) {
 		String platformGlobalKeymapName = platformGlobalKeymap->getName();
-		assert(!platformGlobalKeymapName.empty());
 		mapper->addGlobalKeymap(platformGlobalKeymap);
 		mapper->pushKeymap(platformGlobalKeymapName, true);
 	}

@@ -145,6 +145,8 @@ Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 
 bool Keymapper::pushKeymap(const String& name, bool transparent) {
 	bool global;
+
+	assert(!name.empty());
 	Keymap *newMap = getKeymap(name, &global);
 
 	if (!newMap) {
