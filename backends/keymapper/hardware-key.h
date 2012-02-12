@@ -32,7 +32,6 @@
 
 namespace Common {
 
-
 #define HWKEY_ID_SIZE (30)
 
 /**
@@ -62,6 +61,27 @@ struct HardwareKey {
 	}
 };
 
+/**
+ * Entry in a static table of available non-modifier keys
+ */
+struct KeyTableEntry {
+	const char *hwId;
+	KeyCode keycode;
+	uint16 ascii;
+	const char *desc;
+	KeyType preferredAction;
+	bool shiftable;
+};
+
+/**
+ * Entry in a static table of available key modifiers
+ */
+struct ModifierTableEntry {
+	byte flag;
+	const char *id;
+	const char *desc;
+	bool shiftable;
+};
 
 /**
  * Simple class to encapsulate a device's set of HardwareKeys.
@@ -70,6 +90,17 @@ struct HardwareKey {
  */
 class HardwareKeySet {
 public:
+
+	/**
+	 * Add hardware keys to the set out of key and modifier tables.
+	 * @param keys       table of available keys
+	 * @param modifiers  table of available modifiers
+	 */
+	HardwareKeySet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+		addHardwareKeys(keys, modifiers);
+	}
+
+	HardwareKeySet() { }
 
 	virtual ~HardwareKeySet() {
 		List<const HardwareKey*>::const_iterator it;
@@ -111,6 +142,38 @@ public:
 		return _keys.size();
 	}
 
+	/**
+	 * Add hardware keys to the set out of key and modifier tables.
+	 * @param keys       table of available keys
+	 * @param modifiers  table of available modifiers
+	 */
+	void addHardwareKeys(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+		const KeyTableEntry *key;
+		const ModifierTableEntry *mod;
+		char fullKeyId[50];
+		char fullKeyDesc[100];
+		uint16 ascii;
+
+		for (mod = modifiers; mod->id; mod++) {
+			for (key = keys; key->hwId; key++) {
+				ascii = key->ascii;
+
+				if (mod->shiftable && key->shiftable) {
+					snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
+					snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
+					ascii = toupper(key->ascii);
+				} else if (mod->shiftable) {
+					snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
+					snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
+				} else {
+					snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
+					snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
+				}
+
+				addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
+			}
+		}
+	}
 
 private:
 
@@ -127,7 +190,6 @@ private:
 
 	List<const HardwareKey*> _keys;
 };
-
 
 } // End of namespace Common
 

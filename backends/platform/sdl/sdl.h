@@ -30,6 +30,11 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
+namespace Common {
+struct KeyTableEntry;
+struct ModifierTableEntry;
+}
+
 /**
  * Base OSystem class for all SDL ports.
  */

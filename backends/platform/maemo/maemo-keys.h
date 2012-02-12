@@ -20,20 +20,31 @@
  *
  */
 
-#include "backends/platform/sdl/sdl.h"
-#include "backends/keymapper/keymapper.h"
+#if defined(MAEMO)
+#if defined(ENABLE_KEYMAPPER)
+
+#ifndef PLATFORM_SDL_MAEMO_KEYS_H
+#define PLATFORM_SDL_MAEMO_KEYS_H
+
 #include "common/keyboard.h"
 
-#ifdef ENABLE_KEYMAPPER
+#include "backends/keymapper/hardware-key.h"
 
-using namespace Common;
+namespace Common {
 
-static const KeyTableEntry sdlKeys[] = {
+static const ModifierTableEntry maemoModifiers[] = {
+	{ 0, "", "", false },
+	{ KBD_CTRL, "C+", "Ctrl+", false },
+	{ KBD_SHIFT, "", "", true },
+	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+", true },
+	{ 0, 0, 0, false }
+};
+
+static const KeyTableEntry maemoKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", kActionKeyType, false},
 	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", kActionKeyType, false},
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", kActionKeyType, false},
-	{"RETURN", KEYCODE_RETURN, ASCII_RETURN, "Return", kActionKeyType, false},
-	{"PAUSE", KEYCODE_PAUSE, 0, "Pause", kActionKeyType, false},
+	{"RETURN", KEYCODE_RETURN, ASCII_RETURN, "MCenter", kActionKeyType, false},
 	{"ESCAPE", KEYCODE_ESCAPE, ASCII_ESCAPE, "Esc", kStartKeyType, false},
 	{"SPACE", KEYCODE_SPACE, ASCII_SPACE, "Space", kActionKeyType, false},
 	{"EXCLAIM", KEYCODE_EXCLAIM, '!', "!", kActionKeyType, false},
@@ -102,85 +113,32 @@ static const KeyTableEntry sdlKeys[] = {
 	{"z", KEYCODE_z, 'z', "z", kActionKeyType, true},
 	{"DELETE", KEYCODE_DELETE, 0, "Del", kActionKeyType, false},
 
-	// Numeric keypad
-	{"KP0", KEYCODE_KP0, 0, "KP0", kActionKeyType, false},
-	{"KP1", KEYCODE_KP1, 0, "KP1", kActionKeyType, false},
-	{"KP2", KEYCODE_KP2, 0, "KP2", kActionKeyType, false},
-	{"KP3", KEYCODE_KP3, 0, "KP3", kActionKeyType, false},
-	{"KP4", KEYCODE_KP4, 0, "KP4", kActionKeyType, false},
-	{"KP5", KEYCODE_KP5, 0, "KP5", kActionKeyType, false},
-	{"KP6", KEYCODE_KP6, 0, "KP6", kActionKeyType, false},
-	{"KP7", KEYCODE_KP7, 0, "KP7", kActionKeyType, false},
-	{"KP8", KEYCODE_KP8, 0, "KP8", kActionKeyType, false},
-	{"KP9", KEYCODE_KP9, 0, "KP9", kActionKeyType, false},
-	{"KP_PERIOD", KEYCODE_KP_PERIOD, 0, "KP.", kActionKeyType, false},
-	{"KP_DIVIDE", KEYCODE_KP_DIVIDE, 0, "KP/", kActionKeyType, false},
-	{"KP_MULTIPLY", KEYCODE_KP_MULTIPLY, 0, "KP*", kActionKeyType, false},
-	{"KP_MINUS", KEYCODE_KP_MINUS, 0, "KP-", kActionKeyType, false},
-	{"KP_PLUS", KEYCODE_KP_PLUS, 0, "KP+", kActionKeyType, false},
-	{"KP_ENTER", KEYCODE_KP_ENTER, 0, "KP Enter", kActionKeyType, false},
-	{"KP_EQUALS", KEYCODE_KP_EQUALS, 0, "KP=", kActionKeyType, false},
+	{"KP_ENTER", KEYCODE_KP_ENTER, 0, "Enter", kActionKeyType, false},
 
 	// Arrows + Home/End pad
 	{"UP", KEYCODE_UP, 0, "Up", kDirUpKeyType, false},
 	{"DOWN", KEYCODE_DOWN, 0, "Down", kDirDownKeyType, false},
 	{"RIGHT", KEYCODE_RIGHT, 0, "Right", kDirRightKeyType, false},
 	{"LEFT", KEYCODE_LEFT, 0, "Left", kDirLeftKeyType, false},
-	{"INSERT", KEYCODE_INSERT, 0, "Insert", kActionKeyType, false},
-	{"HOME", KEYCODE_HOME, 0, "Home", kActionKeyType, false},
-	{"END", KEYCODE_END, 0, "End", kActionKeyType, false},
-	{"PAGEUP", KEYCODE_PAGEUP, 0, "PgUp", kActionKeyType, false},
-	{"PAGEDOWN", KEYCODE_PAGEDOWN, 0, "PgDn", kActionKeyType, false},
 
 	// Function keys
 	{"F1", KEYCODE_F1, ASCII_F1, "F1", kActionKeyType, false},
 	{"F2", KEYCODE_F2, ASCII_F2, "F2", kActionKeyType, false},
 	{"F3", KEYCODE_F3, ASCII_F3, "F3", kActionKeyType, false},
-	{"F4", KEYCODE_F4, ASCII_F4, "F4", kActionKeyType, false},
-	{"F5", KEYCODE_F5, ASCII_F5, "F5", kActionKeyType, false},
-	{"F6", KEYCODE_F6, ASCII_F6, "F6", kActionKeyType, false},
-	{"F7", KEYCODE_F7, ASCII_F7, "F7", kActionKeyType, false},
-	{"F8", KEYCODE_F8, ASCII_F8, "F8", kActionKeyType, false},
+	{"F4", KEYCODE_F4, ASCII_F4, "Menu", kActionKeyType, false},
+	{"F5", KEYCODE_F5, ASCII_F5, "Home", kActionKeyType, false},
+	{"F6", KEYCODE_F6, ASCII_F6, "FullScreen", kActionKeyType, false},
+	{"F7", KEYCODE_F7, ASCII_F7, "Zoom+", kActionKeyType, false},
+	{"F8", KEYCODE_F8, ASCII_F8, "Zoom-", kActionKeyType, false},
 	{"F9", KEYCODE_F9, ASCII_F9, "F9", kActionKeyType, false},
-	{"F10", KEYCODE_F10, ASCII_F10, "F10", kActionKeyType, false},
-	{"F11", KEYCODE_F11, ASCII_F11, "F11", kActionKeyType, false},
-	{"F12", KEYCODE_F12, ASCII_F12, "F12", kActionKeyType, false},
-	{"F13", KEYCODE_F13, 0, "F13", kActionKeyType, false},
-	{"F14", KEYCODE_F14, 0, "F14", kActionKeyType, false},
-	{"F15", KEYCODE_F15, 0, "F15", kActionKeyType, false},
 
-	// Miscellaneous function keys
-	{"HELP", KEYCODE_HELP, 0, "Help", kActionKeyType, false},
-	{"PRINT", KEYCODE_PRINT, 0, "Print", kActionKeyType, false},
-	{"SYSREQ", KEYCODE_SYSREQ, 0, "SysRq", kActionKeyType, false},
-	{"BREAK", KEYCODE_BREAK, 0, "Break", kActionKeyType, false},
-	{"MENU", KEYCODE_MENU, 0, "Menu", kActionKeyType, false},
-		// Power Macintosh power key
-	{"POWER", KEYCODE_POWER, 0, "Power", kActionKeyType, false},
-		// Some european keyboards
-	{"EURO", KEYCODE_EURO, 0, "Euro", kActionKeyType, false},
-		// Atari keyboard has Undo
-	{"UNDO", KEYCODE_UNDO, 0, "Undo", kActionKeyType, false},
 	{0, KEYCODE_INVALID, 0, 0, kGenericKeyType, false}
 };
 
-static const ModifierTableEntry sdlModifiers[] = {
-	{ 0, "", "", false },
-	{ KBD_CTRL, "C+", "Ctrl+", false },
-	{ KBD_ALT, "A+", "Alt+", false },
-	{ KBD_SHIFT, "", "", true },
-	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", false },
-	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+", true },
-	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
-	{ 0, 0, 0, false }
-};
-#endif
 
+} // namespace Common
 
-Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
-#ifdef ENABLE_KEYMAPPER
-	return new HardwareKeySet(sdlKeys, sdlModifiers);
-#else
-	return 0;
-#endif
-}
+#endif // ifndef PLATFORM_SDL_MAEMO_KEYS_H
+
+#endif // if defined(ENABLE_KEYMAPPER)
+#endif // if defined(MAEMO)

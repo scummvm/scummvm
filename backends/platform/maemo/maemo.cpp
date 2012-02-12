@@ -28,9 +28,12 @@
 #include "common/config-manager.h"
 
 #include "backends/platform/maemo/maemo.h"
+#include "backends/platform/maemo/maemo-keys.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 
 #include <SDL/SDL_syswm.h>
@@ -43,6 +46,10 @@ OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	OSystem_POSIX() {
 }
 
+OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
+	delete _eventObserver;
+}
+
 void OSystem_SDL_Maemo::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
@@ -51,12 +58,16 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
 
+	if (_eventObserver == 0)
+		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
+
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
 	_model = Model(detectModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
+	initObserver();
 }
 
 void OSystem_SDL_Maemo::quit() {
@@ -116,6 +127,47 @@ void OSystem_SDL_Maemo::setupIcon() {
 	// no Maemo version needs setupIcon
 	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
 	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+}
+
+Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
+#ifdef ENABLE_KEYMAPPER
+	return new Common::HardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
+#else
+	return OSystem_POSIX::getHardwareKeySet();
+#endif
+}
+
+Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+	Keymap *globalMap = new Keymap("maemo");
+
+	Action *act;
+
+	act = new Action(globalMap, "CLKM", _("Click Mode"), kKeyRemapActionType);
+	Event evt = Event();
+	evt.type = EVENT_CUSTOM_BACKEND;
+	evt.customType = Maemo::kEventClickMode;
+	act->addEvent(evt);
+
+	act = new Action(globalMap, "LCLK", _("Left Click"), kKeyRemapActionType);
+	act->addLeftClickEvent();
+
+	act = new Action(globalMap, "MCLK", _("Middle Click"), kKeyRemapActionType);
+	act->addMiddleClickEvent();
+
+	act = new Action(globalMap, "RCLK", _("Right Click"), kKeyRemapActionType);
+	act->addRightClickEvent();
+
+	return globalMap;
+#else
+	return OSystem_POSIX::getGlobalKeymap();
+#endif
+}
+
+void OSystem_SDL_Maemo::initObserver() {
+	assert(_eventManager);
+	_eventManager->getEventDispatcher()->registerObserver(_eventObserver, 10, false);
 }
 
 } //namespace Maemo

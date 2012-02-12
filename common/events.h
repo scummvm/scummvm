@@ -72,9 +72,11 @@ enum EventType {
 	 * use events to ask for the save game dialog or to pause the engine.
 	 * An associated enumerated type can accomplish this.
 	 **/
-	EVENT_PREDICTIVE_DIALOG = 12
+	EVENT_PREDICTIVE_DIALOG = 12,
+	EVENT_CUSTOM_BACKEND = 13
 };
 
+typedef uint32 CustomEventType;
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
@@ -98,6 +100,8 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Point mouse;
+
+	CustomEventType customType;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };

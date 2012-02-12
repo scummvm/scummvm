@@ -29,25 +29,30 @@
 #include "backends/platform/maemo/maemo-common.h"
 
 namespace Maemo {
+class MaemoSdlEventObserver;
 
 class OSystem_SDL_Maemo : public OSystem_POSIX {
 public:
 	OSystem_SDL_Maemo();
+	~OSystem_SDL_Maemo();
 
 	virtual void initBackend();
 	virtual void quit();
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
 	virtual void setupIcon();
+	virtual Common::HardwareKeySet *getHardwareKeySet();
+	virtual Common::Keymap *getGlobalKeymap();
 
 	Model getModel() { return _model; }
 
 private:
 	virtual void setXWindowName(const char *caption);
+	void initObserver();
 
 	const Model detectModel();
 	Model _model;
-
+	MaemoSdlEventObserver *_eventObserver;
 };
 
 } // namespace Maemo
