@@ -25,6 +25,7 @@
 
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/detection_tables.h"
+#include "mortevielle/saveload.h"
 
 namespace Mortevielle {
 uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->flags; }
@@ -52,6 +53,9 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -62,8 +66,29 @@ bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 }
 
 bool MortevielleMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false; 
+	switch (f) {
+	case kSupportsListSaves:
+	case kSupportsDeleteSave:
+	case kSupportsLoadingDuringStartup:
+	case kSavesSupportMetaInfo:
+	case kSavesSupportThumbnail:
+	case kSavesSupportCreationDate:
+		return true;
+	default:
+		return false;
+	}
 }
+
+int MortevielleMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+SaveStateList MortevielleMetaEngine::listSaves(const char *target) const {
+	return Mortevielle::SavegameManager::listSaves(target);
+}
+
+SaveStateDescriptor MortevielleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	return Mortevielle::SavegameManager::querySaveMetaInfos(slot);
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(MORTEVIELLE)
 	REGISTER_PLUGIN_DYNAMIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);

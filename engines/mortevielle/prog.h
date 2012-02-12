@@ -37,11 +37,9 @@ extern void antegame();
 /* procedure PROGRAMME */
 extern void tmaj3();
 extern void tsitu();
-extern void tecran();
 
 /* NIVEAU 1 */
 extern void theure();
-extern void tjouer();
 
 } // End of namespace Mortevielle
 #endif

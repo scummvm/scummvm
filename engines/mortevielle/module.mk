@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	asm.o \
 	boite.o \
 	detection.o \
-	disk.o \
 	droite.o \
 	graphics.o \
 	keyboard.o \
@@ -22,6 +21,7 @@ MODULE_OBJS := \
 	parole2.o \
 	prog.o \
 	ques.o \
+	saveload.o \
 	sound.o \
 	sprint.o \
 	taffich.o \

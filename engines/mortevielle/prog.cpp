@@ -219,100 +219,6 @@ L2:
 	mennor();
 }
 
-void sv_game(int n);
-
-void ld_game(int n);
-
-void tecran() {
-	const char idem[] = "Idem";
-	const int lim = 20000;
-	int temps = 0;
-	char inkey = '\0';
-	bool oo, funct = 0;
-
-	clsf3();
-	oo = false;
-	ctrm = 0;
-	if (! iesc) {
-		draw_menu();
-		imen = true;
-		temps = 0;
-		key = 0;
-		funct = false;
-		inkey = '.';
-
-		do {
-			mdn();
-			tinke();
-			mov_mouse(funct, inkey);
-			CHECK_QUIT;
-			temps = temps + 1;
-		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));
-
-		erase_menu();
-		imen = false;
-		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
-			change_gd((uint)pred(int, ord(inkey)) >> 1);
-			return;
-		}
-		if (choisi && (msg[3] == sauve))
-			sv_game(msg[4] & 7);
-		if (choisi && (msg[3] == charge))
-			ld_game((msg[4] & 7) - 1);
-		if (inkey == '\103') {       /* F9 */
-			temps = do_alert(stpou, 1);
-			return;
-		} else if (inkey == '\77') {
-			if ((mnumo != no_choice) && ((msg[3] == action) || (msg[3] == saction))) {
-				msg[4] = mnumo;
-				ecr3(idem);
-			} else return;
-		} else if (inkey == '\104') {
-			if ((x != 0) && (y != 0))  num = 9999;
-			return;
-		}
-	}
-	if (inkey == '\73') {
-		arret = true;
-		tmaj3();
-	} else {
-		if ((funct) && (inkey != '\77'))  return;
-		if (temps > lim) {
-			repon(2, 141);
-			if (num == 9999)  num = 0;
-		} else {
-			mnumo = msg[3];
-			if ((msg[3] == action) || (msg[3] == saction))  mnumo = msg[4];
-			if (! anyone) {
-				if ((fouil) || (obpart)) {
-					if (y_s < 12)  return;
-					if ((msg[4] == sonder) || (msg[4] == soulever)) {
-						oo = true;
-						if ((msg[4] == soulever) || (obpart)) {
-							finfouil();
-							caff = s.mlieu;
-							crep = 998;
-						} else tsuiv();
-						mennor();
-					}
-				}
-			}
-			do {
-				if (! oo)  tsitu();
-				if ((ctrm == 0) && (! perdu) && (! solu)) {
-					taffich();
-					if (okdes) {
-						okdes = false;
-						dessin(0);
-					}
-					if ((! syn) || (col))  repon(2, crep);
-				}
-			} while (!(! syn));
-			if (ctrm != 0)  tctrm();
-		}
-	}
-}
-
 /* NIVEAU 1 */
 
 void theure() {
@@ -324,17 +230,6 @@ void theure() {
 	heu = vh;
 	if (vm == 1)  min = 30;
 	else min = 0;
-}
-
-
-void tjouer() {
-	antegame();
-	do {
-		tecran();
-		CHECK_QUIT;
-	} while (!((arret) || (solu) || (perdu)));
-	if (solu)  tmaj1();
-	else if (perdu)  tencore();
 }
 
 } // End of namespace Mortevielle
