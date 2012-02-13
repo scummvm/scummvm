@@ -36,6 +36,7 @@ extern uint8 PSZB;
 struct Buffer {
 	byte *pbuf;
 	unsigned int *zbuf;
+	bool used;
 };
 
 typedef struct {
@@ -78,6 +79,7 @@ void ZB_selectOffscreenBuffer(ZBuffer *zb);
  * depth value of the screen pixel, so if it is 'above'.
  */
 void ZB_blitOffscreenBuffer(ZBuffer *zb);
+void ZB_clearOffscreenBuffer(ZBuffer *zb);
 
 ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
 void ZB_close(ZBuffer *zb);

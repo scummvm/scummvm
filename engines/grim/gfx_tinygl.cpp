@@ -325,9 +325,7 @@ void GfxTinyGL::selectCleanBuffer() {
 }
 
 void GfxTinyGL::clearCleanBuffer() {
-	selectCleanBuffer();
-	clearScreen();
-	selectScreenBuffer();
+	TinyGL::ZB_clearOffscreenBuffer(_zb);
 }
 
 bool GfxTinyGL::isHardwareAccelerated() {

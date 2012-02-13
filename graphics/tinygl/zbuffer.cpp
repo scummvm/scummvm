@@ -55,6 +55,7 @@ ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer
 
 	zb->buffers[1].pbuf = NULL;
 	zb->buffers[1].zbuf = NULL;
+	zb->buffers[1].used = false;
 
 	return zb;
 error:
@@ -189,27 +190,40 @@ void ZB_selectScreenBuffer(ZBuffer *zb) {
 }
 
 void ZB_selectOffscreenBuffer(ZBuffer *zb) {
-	if (!zb->buffers[1].pbuf) {
-		zb->buffers[1].pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
+	Buffer &buf = zb->buffers[1];
+
+	if (!buf.pbuf) {
+		buf.pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
 		int size = zb->xsize * zb->ysize * sizeof(unsigned int);
-		zb->buffers[1].zbuf = (unsigned int *)gl_malloc(size);
+		buf.zbuf = (unsigned int *)gl_malloc(size);
 	}
 
-	zb->pbuf = zb->buffers[1].pbuf;
-	zb->zbuf = zb->buffers[1].zbuf;
+	zb->pbuf = buf.pbuf;
+	zb->zbuf = buf.zbuf;
+	buf.used = true;
 }
 
 void ZB_blitOffscreenBuffer(ZBuffer *zb) {
 	// TODO: could be faster, probably.
-	if (zb->buffers[1].pbuf) {
+	Buffer &buf = zb->buffers[1];
+	if (buf.used) {
 		for (int i = 0; i < zb->xsize * zb->ysize; ++i) {
-			unsigned int d1 = zb->buffers[1].zbuf[i];
+			unsigned int d1 = buf.zbuf[i];
 			unsigned int d2 = zb->buffers[0].zbuf[i];
 			if (d1 > d2) {
 				const int offset = i * PSZB;
-				memcpy(zb->buffers[0].pbuf + offset, zb->buffers[1].pbuf + offset, PSZB);
+				memcpy(zb->buffers[0].pbuf + offset, buf.pbuf + offset, PSZB);
 			}
 		}
+	}
+}
+
+void ZB_clearOffscreenBuffer(ZBuffer *zb) {
+	Buffer &buf = zb->buffers[1];
+	if (buf.pbuf) {
+		memset(buf.pbuf, 0, zb->ysize * zb->linesize);
+		memset(buf.zbuf, 0, zb->ysize * zb->xsize * sizeof(unsigned int));
+		buf.used = false;
 	}
 }
 
