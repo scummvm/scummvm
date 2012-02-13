@@ -1094,36 +1094,23 @@ void Control::doAutoSave() {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	Common::OutSaveFile *outf;
 
-	outf = _saveFileMan->openForSaving(fName);
-	if (outf == NULL) {
-		displayMessage(0, "Unable to create autosave file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-		return;
-	}
+	uint16 res = saveGameToFile(false, fName);
 
-	_savedCharSet = _skyText->giveCurrentCharSet();
-	_savedMouse = _skyMouse->giveCurrentMouseType();
+	if (res != GAME_SAVED)
+		displayMessage(0, "Unable to perform autosave to '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 
-	uint8 *saveData = (uint8 *)malloc(0x20000);
-	uint32 fSize = prepareSaveData(saveData);
-
-	outf->write(saveData, fSize);
-	outf->finalize();
-
-	if (outf->err())
-		displayMessage(0, "Unable to write autosave file '%s'. Disk full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-
-	delete outf;
-	free(saveData);
 }
 
-uint16 Control::saveGameToFile(bool fromControlPanel) {
+uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	if (!filename) {
+		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		filename = fName;
+	}
 
 	Common::OutSaveFile *outf;
-	outf = _saveFileMan->openForSaving(fName);
+	outf = _saveFileMan->openForSaving(filename);
 	if (outf == NULL)
 		return NO_DISK_SPACE;
 

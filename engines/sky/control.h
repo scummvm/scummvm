@@ -190,7 +190,7 @@ public:
 	bool loadSaveAllowed();
 
 	uint16 _selectedGame;
-	uint16 saveGameToFile(bool fromControlPanel);
+	uint16 saveGameToFile(bool fromControlPanel, const char *filename = 0);
 
 	void loadDescriptions(Common::StringArray &list);
 	void saveDescriptions(const Common::StringArray &list);
