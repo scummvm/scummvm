@@ -94,7 +94,7 @@ public:
 
 	int _refCount;
 
-private:
+// private:
 	Graphics::PixelBuffer *_data;
 };
 

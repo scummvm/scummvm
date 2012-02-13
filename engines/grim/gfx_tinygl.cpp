@@ -307,8 +307,7 @@ void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 
 void GfxTinyGL::clearScreen() {
 	_zb->pbuf.clear(_screenSize);
-	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * 2);
-	memset(_zb->zbuf2, 0, _gameWidth * _gameHeight * 4);
+	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
 }
 
 void GfxTinyGL::flipBuffer() {
@@ -328,6 +327,7 @@ void GfxTinyGL::selectCleanBuffer() {
 void GfxTinyGL::clearCleanBuffer() {
 	selectCleanBuffer();
 	clearScreen();
+	selectScreenBuffer();
 }
 
 bool GfxTinyGL::isHardwareAccelerated() {
@@ -747,10 +747,9 @@ void GfxTinyGL::turnOffLight(int lightId) {
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format == 1) {
 		bitmap->convertToColorFormat(_pixelFormat);
-	} else { // The zbuffer is still 16 bpp, 565
-		bitmap->convertToColorFormat(Graphics::createPixelFormat<565>());
 	}
 	if (bitmap->_format != 1) {
+		uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
@@ -759,8 +758,10 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				if (val == 0xf81f) {
 					val = 0;
 				}
-				bufPtr[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
+				buf[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val) << 14;
 			}
+			delete[] bufPtr;
+			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte*)buf);
 		}
 	} else {
 		BlitImage *imgs = new BlitImage[bitmap->_numImages];
