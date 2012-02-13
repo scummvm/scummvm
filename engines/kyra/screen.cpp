@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "engines/util.h"
 
@@ -48,6 +49,9 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_drawShapeVar5 = 0;
 
 	memset(_fonts, 0, sizeof(_fonts));
+
+	_renderMode = Common::kRenderDefault;
+	_cgaDrawCharDitheringTable = 0;
 
 	_currentFont = FID_8_FNT;
 	_paletteChanged = true;
@@ -84,6 +88,10 @@ bool Screen::init() {
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
+
+	if (ConfMan.hasKey("render_mode"))
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+
 	memset(_fonts, 0, sizeof(_fonts));
 
 	if (_vm->gameFlags().useHiResOverlay) {
@@ -110,15 +118,33 @@ bool Screen::init() {
 	}
 
 	_curPage = 0;
-	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
-	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
-		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum >> 1) * SCREEN_PAGE_SIZE;
-	memset(pagePtr, 0, SCREEN_PAGE_SIZE * 8);
+
+	int numPages = SCREEN_PAGE_NUM / 2;
+	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
+	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)
+		numPages += 4;
+
+	uint8 *pagePtr = new uint8[numPages * SCREEN_PAGE_SIZE];
+	memset(pagePtr, 0, numPages * SCREEN_PAGE_SIZE);
+
+	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA) {
+		// Unlike VGA mode the odd and even page numbers do not always point to the same buffers.
+		// Instead, the odd pages are used for CGA/EGA specific graphics conversions.
+		int pageNum = 0;
+		for (; pageNum < 8; pageNum++)
+			_pagePtrs[pageNum] = pagePtr + pageNum * SCREEN_PAGE_SIZE;
+		for (; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
+			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum / 2) * SCREEN_PAGE_SIZE;
+	} else {
+		for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
+			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum / 2) * SCREEN_PAGE_SIZE;
+	}
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
 	const int paletteCount = _isAmiga ? 13 : 4;
-	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : 256);
+	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
+	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : (_renderMode == Common::kRenderCGA ? 4 : 256));
 
 	_interfacePaletteEnabled = false;
 
@@ -129,6 +155,13 @@ bool Screen::init() {
 	for (int i = 0; i < paletteCount; ++i) {
 		_palettes[i] = new Palette(numColors);
 		assert(_palettes[i]);
+	}
+
+	// Setup CGA colors (if CGA mode is selected)
+	if (_renderMode == Common::kRenderCGA) {
+		Palette pal(4);
+		pal.setCGAPalette(1, Palette::kIntensityHigh);
+		Screen::setScreenPalette(pal);
 	}
 
 	_internFadePalette = new Palette(numColors);
@@ -618,7 +651,13 @@ void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
+	if (_renderMode == Common::kRenderEGA)
+		setScreenPalette(pal);
+
 	updateScreen();
+
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA)
+		return;
 
 	int diff = 0, delayInc = 0;
 	getFadeParams(pal, delay, delayInc, diff);
@@ -1126,7 +1165,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			fnt = new AMIGAFont();
 #ifdef ENABLE_EOB
 		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
-			fnt = new OldDOSFont();
+			fnt = new OldDOSFont(_renderMode, _cgaDrawCharDitheringTable);
 #endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
@@ -3013,6 +3052,9 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 }
 
 bool Screen::loadPalette(const char *filename, Palette &pal) {
+	if (_renderMode == Common::kRenderCGA)
+		return true;
+
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 
 	if (!stream)
@@ -3029,6 +3071,17 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
 		numCols = stream->size() / Palette::kPC98BytesPerColor;
 		pal.loadPC98Palette(*stream, 0, MIN(maxCols, numCols));
+	} else if (_renderMode == Common::kRenderEGA) {
+		// EOB II checks the number of palette bytes to distinguish between real EGA palettes
+		// and normal palettes (which are used to generate a color map).
+		if (stream->size() == 16) {
+			numCols = 16;
+			pal.loadEGAPalette(*stream, 0, 16);
+		} else {
+			numCols = stream->size() / Palette::kVGABytesPerColor;
+			pal.loadVGAPalette(*stream, 0, numCols);
+		}
+
 	} else {
 		numCols = stream->size() / Palette::kVGABytesPerColor;
 		pal.loadVGAPalette(*stream, 0, MIN(maxCols, numCols));
@@ -3076,7 +3129,14 @@ void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
 		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
-	else
+	else if (_renderMode == Common::kRenderEGA) {
+		// EOB II checks the number of palette bytes to distinguish between real EGA palettes
+		// and normal palettes (which are used to generate a color map).
+		if (stream.size() == 16)
+			pal.loadEGAPalette(stream, 0, stream.size());
+		else
+			pal.loadVGAPalette(stream, 0, stream.size() / Palette::kVGABytesPerColor);
+	} else
 		pal.loadVGAPalette(stream, 0, stream.size() / Palette::kVGABytesPerColor);
 }
 
@@ -3553,6 +3613,24 @@ void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int col
 		*pos++ = stream.readByte() & 0x3f;
 }
 
+void Palette::loadEGAPalette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= 16);
+
+	uint8 *dst = _palData + startIndex * 3;
+	for (int i = 0; i < colors; i++) {
+		uint8 index = stream.readByte();
+		assert(index < _egaNumColors);
+		memcpy(dst, &_egaColors[index * 3], 3);
+		dst += 3;
+	}
+}
+
+void Palette::setCGAPalette(int palIndex, CGAIntensity intensity) {
+	assert(_numColors == _cgaNumColors);
+	assert(!(palIndex & ~1));
+	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _numColors * 3);
+}
+
 void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {
 	assert(startIndex + colors <= _numColors);
 
@@ -3628,5 +3706,23 @@ uint8 *Palette::fetchRealPalette() const {
 
 	return buffer;
 }
+
+const uint8 Palette::_egaColors[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
+	0xAA, 0x00, 0x00, 0xAA,	0x00, 0xAA, 0xAA, 0x55, 0x00, 0xAA, 0xAA, 0xAA,
+	0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF,	0x55, 0x55, 0xFF, 0xFF,
+	0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF
+};
+
+const int Palette::_egaNumColors = ARRAYSIZE(_egaColors) / 3;
+
+const uint8 Palette::_cgaColors[4][12] = {
+	{ 0x00, 0x00, 0x00, 0x00, 0x2A, 0x00, 0x2A, 0x00, 0x00, 0x2A, 0x15, 0x00 },
+	{ 0x00, 0x00, 0x00, 0x15, 0x3F, 0x15, 0x3F, 0x15, 0x15, 0x3F, 0x3F, 0x15 },
+	{ 0x00, 0x00, 0x00, 0x00, 0x2A, 0x2A, 0x2A, 0x00, 0x2A, 0x2A, 0x2A, 0x2A },
+	{ 0x00, 0x00, 0x00, 0x15, 0x3F, 0x3F, 0x3F, 0x15, 0x3F, 0x3F, 0x3F, 0x3F }
+};
+
+const int Palette::_cgaNumColors = ARRAYSIZE(_cgaColors[0]) / 3;
 
 } // End of namespace Kyra

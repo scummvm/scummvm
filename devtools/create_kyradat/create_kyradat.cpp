@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 80
+	kKyraDatVersion = 81
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -445,6 +445,21 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1BeholderSfx, kTypeRawData, false },
 	{ kEoB1TurnUndeadString, kTypeStringList, true },
 
+	{ kEoB1CgaMappingDefault, kTypeRawData, false },
+	{ kEoB1CgaMappingAlt, kTypeRawData, false },
+	{ kEoB1CgaMappingInv, kTypeRawData, false },
+	{ kEoB1CgaMappingItemsL, kTypeRawData, false },
+	{ kEoB1CgaMappingItemsS, kTypeRawData, false },
+	{ kEoB1CgaMappingThrown, kTypeRawData, false },
+	{ kEoB1CgaMappingIcons, kTypeRawData, false },
+	{ kEoB1CgaMappingDeco, kTypeRawData, false },
+	{ kEoB1CgaLevelMappingIndex, kTypeRawData, false },
+	{ kEoB1CgaMappingLevel0, kTypeRawData, false },
+	{ kEoB1CgaMappingLevel1, kTypeRawData, false },
+	{ kEoB1CgaMappingLevel2, kTypeRawData, false },
+	{ kEoB1CgaMappingLevel3, kTypeRawData, false },
+	{ kEoB1CgaMappingLevel4, kTypeRawData, false },
+
 	{ kEoB1NpcShpData, kTypeRawData, false },
 	{ kEoB1NpcSubShpIndex1, kTypeRawData, false },
 	{ kEoB1NpcSubShpIndex2, kTypeRawData, false },
@@ -474,50 +489,50 @@ const ExtractFilename extractFilenames[] = {
 
 	{ kEoB2IntroStrings, k2TypeSfxList, true },
 	{ kEoB2IntroCPSFiles, kTypeStringList, true },
-	{ kEoB2IntroSeqData00, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData01, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData02, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData03, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData04, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData05, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData06, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData07, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData08, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData09, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData10, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData11, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData12, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData13, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData14, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData15, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData16, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData17, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData18, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData19, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData20, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData21, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData22, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData23, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData24, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData25, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData26, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData27, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData28, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData29, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData30, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData31, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData32, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData33, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData34, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData35, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData36, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData37, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData38, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData39, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData40, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData41, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData42, kEoB2TypeSeqData, false },
-	{ kEoB2IntroSeqData43, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData00, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData01, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData02, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData03, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData04, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData05, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData06, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData07, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData08, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData09, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData10, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData11, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData12, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData13, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData14, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData15, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData16, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData17, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData18, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData19, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData20, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData21, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData22, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData23, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData24, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData25, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData26, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData27, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData28, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData29, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData30, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData31, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData32, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData33, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData34, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData35, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData36, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData37, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData38, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData39, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData40, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData41, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData42, kEoB2TypeSeqData, false },
+	{ kEob2IntroAnimData43, kEoB2TypeSeqData, false },
 	{ kEoB2IntroShapes00, kEoB2TypeShapeData, false },
 	{ kEoB2IntroShapes01, kEoB2TypeShapeData, false },
 	{ kEoB2IntroShapes04, kEoB2TypeShapeData, false },
@@ -526,27 +541,27 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2FinaleStrings, k2TypeSfxList, true },
 	{ kEoB2CreditsData, kTypeRawData, true },
 	{ kEoB2FinaleCPSFiles, kTypeStringList, true },
-	{ kEoB2FinaleSeqData00, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData01, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData02, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData03, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData04, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData05, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData06, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData07, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData08, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData09, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData10, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData11, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData12, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData13, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData14, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData15, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData16, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData17, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData18, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData19, kEoB2TypeSeqData, false },
-	{ kEoB2FinaleSeqData20, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData00, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData01, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData02, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData03, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData04, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData05, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData06, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData07, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData08, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData09, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData10, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData11, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData12, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData13, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData14, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData15, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData16, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData17, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData18, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData19, kEoB2TypeSeqData, false },
+	{ kEob2FinaleAnimData20, kEoB2TypeSeqData, false },
 	{ kEoB2FinaleShapes00, kEoB2TypeShapeData, false },
 	{ kEoB2FinaleShapes03, kEoB2TypeShapeData, false },
 	{ kEoB2FinaleShapes07, kEoB2TypeShapeData, false },
@@ -1756,6 +1771,34 @@ const char *getIdString(const int id) {
 		return "kEoB1BeholderSfx";
 	case kEoB1TurnUndeadString:
 		return "kEoB1TurnUndeadString";
+	case kEoB1CgaMappingDefault:
+		return "kEoB1CgaMappingDefault";
+	case kEoB1CgaMappingAlt:
+		return "kEoB1CgaMappingAlt";
+	case kEoB1CgaMappingInv:
+		return "kEoB1CgaMappingInv";
+	case kEoB1CgaMappingItemsL:
+		return "kEoB1CgaMappingItemsL";
+	case kEoB1CgaMappingItemsS:
+		return "kEoB1CgaMappingItemsS";
+	case kEoB1CgaMappingThrown:
+		return "kEoB1CgaMappingThrown";
+	case kEoB1CgaMappingIcons:
+		return "kEoB1CgaMappingIcons";
+	case kEoB1CgaMappingDeco:
+		return "kEoB1CgaMappingDeco";	
+	case kEoB1CgaLevelMappingIndex:
+		return "kEoB1CgaLevelMappingIndex";
+	case kEoB1CgaMappingLevel0:
+		return "kEoB1CgaMappingLevel0";
+	case kEoB1CgaMappingLevel1:
+		return "kEoB1CgaMappingLevel1";
+	case kEoB1CgaMappingLevel2:
+		return "kEoB1CgaMappingLevel2";
+	case kEoB1CgaMappingLevel3:
+		return "kEoB1CgaMappingLevel3";
+	case kEoB1CgaMappingLevel4:
+		return "kEoB1CgaMappingLevel4";
 	case kEoB1NpcShpData:
 		return "kEoB1NpcShpData";
 	case kEoB1NpcSubShpIndex1:
@@ -1806,94 +1849,94 @@ const char *getIdString(const int id) {
 		return "kEoB2IntroStrings";
 	case kEoB2IntroCPSFiles:
 		return "kEoB2IntroCPSFiles";
-	case kEoB2IntroSeqData00:
-		return "kEoB2IntroSeqData00";
-	case kEoB2IntroSeqData01:
-		return "kEoB2IntroSeqData01";
-	case kEoB2IntroSeqData02:
-		return "kEoB2IntroSeqData02";
-	case kEoB2IntroSeqData03:
-		return "kEoB2IntroSeqData03";
-	case kEoB2IntroSeqData04:
-		return "kEoB2IntroSeqData04";
-	case kEoB2IntroSeqData05:
-		return "kEoB2IntroSeqData05";
-	case kEoB2IntroSeqData06:
-		return "kEoB2IntroSeqData06";
-	case kEoB2IntroSeqData07:
-		return "kEoB2IntroSeqData07";
-	case kEoB2IntroSeqData08:
-		return "kEoB2IntroSeqData08";
-	case kEoB2IntroSeqData09:
-		return "kEoB2IntroSeqData09";
-	case kEoB2IntroSeqData10:
-		return "kEoB2IntroSeqData10";
-	case kEoB2IntroSeqData11:
-		return "kEoB2IntroSeqData11";
-	case kEoB2IntroSeqData12:
-		return "kEoB2IntroSeqData12";
-	case kEoB2IntroSeqData13:
-		return "kEoB2IntroSeqData13";
-	case kEoB2IntroSeqData14:
-		return "kEoB2IntroSeqData14";
-	case kEoB2IntroSeqData15:
-		return "kEoB2IntroSeqData15";
-	case kEoB2IntroSeqData16:
-		return "kEoB2IntroSeqData16";
-	case kEoB2IntroSeqData17:
-		return "kEoB2IntroSeqData17";
-	case kEoB2IntroSeqData18:
-		return "kEoB2IntroSeqData18";
-	case kEoB2IntroSeqData19:
-		return "kEoB2IntroSeqData19";
-	case kEoB2IntroSeqData20:
-		return "kEoB2IntroSeqData20";
-	case kEoB2IntroSeqData21:
-		return "kEoB2IntroSeqData21";
-	case kEoB2IntroSeqData22:
-		return "kEoB2IntroSeqData22";
-	case kEoB2IntroSeqData23:
-		return "kEoB2IntroSeqData23";
-	case kEoB2IntroSeqData24:
-		return "kEoB2IntroSeqData24";
-	case kEoB2IntroSeqData25:
-		return "kEoB2IntroSeqData25";
-	case kEoB2IntroSeqData26:
-		return "kEoB2IntroSeqData26";
-	case kEoB2IntroSeqData27:
-		return "kEoB2IntroSeqData27";
-	case kEoB2IntroSeqData28:
-		return "kEoB2IntroSeqData28";
-	case kEoB2IntroSeqData29:
-		return "kEoB2IntroSeqData29";
-	case kEoB2IntroSeqData30:
-		return "kEoB2IntroSeqData30";
-	case kEoB2IntroSeqData31:
-		return "kEoB2IntroSeqData31";
-	case kEoB2IntroSeqData32:
-		return "kEoB2IntroSeqData32";
-	case kEoB2IntroSeqData33:
-		return "kEoB2IntroSeqData33";
-	case kEoB2IntroSeqData34:
-		return "kEoB2IntroSeqData34";
-	case kEoB2IntroSeqData35:
-		return "kEoB2IntroSeqData35";
-	case kEoB2IntroSeqData36:
-		return "kEoB2IntroSeqData36";
-	case kEoB2IntroSeqData37:
-		return "kEoB2IntroSeqData37";
-	case kEoB2IntroSeqData38:
-		return "kEoB2IntroSeqData38";
-	case kEoB2IntroSeqData39:
-		return "kEoB2IntroSeqData39";
-	case kEoB2IntroSeqData40:
-		return "kEoB2IntroSeqData40";
-	case kEoB2IntroSeqData41:
-		return "kEoB2IntroSeqData41";
-	case kEoB2IntroSeqData42:
-		return "kEoB2IntroSeqData42";
-	case kEoB2IntroSeqData43:
-		return "kEoB2IntroSeqData43";
+	case kEob2IntroAnimData00:
+		return "kEob2IntroAnimData00";
+	case kEob2IntroAnimData01:
+		return "kEob2IntroAnimData01";
+	case kEob2IntroAnimData02:
+		return "kEob2IntroAnimData02";
+	case kEob2IntroAnimData03:
+		return "kEob2IntroAnimData03";
+	case kEob2IntroAnimData04:
+		return "kEob2IntroAnimData04";
+	case kEob2IntroAnimData05:
+		return "kEob2IntroAnimData05";
+	case kEob2IntroAnimData06:
+		return "kEob2IntroAnimData06";
+	case kEob2IntroAnimData07:
+		return "kEob2IntroAnimData07";
+	case kEob2IntroAnimData08:
+		return "kEob2IntroAnimData08";
+	case kEob2IntroAnimData09:
+		return "kEob2IntroAnimData09";
+	case kEob2IntroAnimData10:
+		return "kEob2IntroAnimData10";
+	case kEob2IntroAnimData11:
+		return "kEob2IntroAnimData11";
+	case kEob2IntroAnimData12:
+		return "kEob2IntroAnimData12";
+	case kEob2IntroAnimData13:
+		return "kEob2IntroAnimData13";
+	case kEob2IntroAnimData14:
+		return "kEob2IntroAnimData14";
+	case kEob2IntroAnimData15:
+		return "kEob2IntroAnimData15";
+	case kEob2IntroAnimData16:
+		return "kEob2IntroAnimData16";
+	case kEob2IntroAnimData17:
+		return "kEob2IntroAnimData17";
+	case kEob2IntroAnimData18:
+		return "kEob2IntroAnimData18";
+	case kEob2IntroAnimData19:
+		return "kEob2IntroAnimData19";
+	case kEob2IntroAnimData20:
+		return "kEob2IntroAnimData20";
+	case kEob2IntroAnimData21:
+		return "kEob2IntroAnimData21";
+	case kEob2IntroAnimData22:
+		return "kEob2IntroAnimData22";
+	case kEob2IntroAnimData23:
+		return "kEob2IntroAnimData23";
+	case kEob2IntroAnimData24:
+		return "kEob2IntroAnimData24";
+	case kEob2IntroAnimData25:
+		return "kEob2IntroAnimData25";
+	case kEob2IntroAnimData26:
+		return "kEob2IntroAnimData26";
+	case kEob2IntroAnimData27:
+		return "kEob2IntroAnimData27";
+	case kEob2IntroAnimData28:
+		return "kEob2IntroAnimData28";
+	case kEob2IntroAnimData29:
+		return "kEob2IntroAnimData29";
+	case kEob2IntroAnimData30:
+		return "kEob2IntroAnimData30";
+	case kEob2IntroAnimData31:
+		return "kEob2IntroAnimData31";
+	case kEob2IntroAnimData32:
+		return "kEob2IntroAnimData32";
+	case kEob2IntroAnimData33:
+		return "kEob2IntroAnimData33";
+	case kEob2IntroAnimData34:
+		return "kEob2IntroAnimData34";
+	case kEob2IntroAnimData35:
+		return "kEob2IntroAnimData35";
+	case kEob2IntroAnimData36:
+		return "kEob2IntroAnimData36";
+	case kEob2IntroAnimData37:
+		return "kEob2IntroAnimData37";
+	case kEob2IntroAnimData38:
+		return "kEob2IntroAnimData38";
+	case kEob2IntroAnimData39:
+		return "kEob2IntroAnimData39";
+	case kEob2IntroAnimData40:
+		return "kEob2IntroAnimData40";
+	case kEob2IntroAnimData41:
+		return "kEob2IntroAnimData41";
+	case kEob2IntroAnimData42:
+		return "kEob2IntroAnimData42";
+	case kEob2IntroAnimData43:
+		return "kEob2IntroAnimData43";
 	case kEoB2IntroShapes00:
 		return "kEoB2IntroShapes00";
 	case kEoB2IntroShapes01:
@@ -1908,48 +1951,48 @@ const char *getIdString(const int id) {
 		return "kEoB2CreditsData";
 	case kEoB2FinaleCPSFiles:
 		return "kEoB2FinaleCPSFiles";
-	case kEoB2FinaleSeqData00:
-		return "kEoB2FinaleSeqData00";
-	case kEoB2FinaleSeqData01:
-		return "kEoB2FinaleSeqData01";
-	case kEoB2FinaleSeqData02:
-		return "kEoB2FinaleSeqData02";
-	case kEoB2FinaleSeqData03:
-		return "kEoB2FinaleSeqData03";
-	case kEoB2FinaleSeqData04:
-		return "kEoB2FinaleSeqData04";
-	case kEoB2FinaleSeqData05:
-		return "kEoB2FinaleSeqData05";
-	case kEoB2FinaleSeqData06:
-		return "kEoB2FinaleSeqData06";
-	case kEoB2FinaleSeqData07:
-		return "kEoB2FinaleSeqData07";
-	case kEoB2FinaleSeqData08:
-		return "kEoB2FinaleSeqData08";
-	case kEoB2FinaleSeqData09:
-		return "kEoB2FinaleSeqData09";
-	case kEoB2FinaleSeqData10:
-		return "kEoB2FinaleSeqData10";
-	case kEoB2FinaleSeqData11:
-		return "kEoB2FinaleSeqData11";
-	case kEoB2FinaleSeqData12:
-		return "kEoB2FinaleSeqData12";
-	case kEoB2FinaleSeqData13:
-		return "kEoB2FinaleSeqData13";
-	case kEoB2FinaleSeqData14:
-		return "kEoB2FinaleSeqData14";
-	case kEoB2FinaleSeqData15:
-		return "kEoB2FinaleSeqData15";
-	case kEoB2FinaleSeqData16:
-		return "kEoB2FinaleSeqData16";
-	case kEoB2FinaleSeqData17:
-		return "kEoB2FinaleSeqData17";
-	case kEoB2FinaleSeqData18:
-		return "kEoB2FinaleSeqData18";
-	case kEoB2FinaleSeqData19:
-		return "kEoB2FinaleSeqData19";
-	case kEoB2FinaleSeqData20:
-		return "kEoB2FinaleSeqData20";
+	case kEob2FinaleAnimData00:
+		return "kEob2FinaleAnimData00";
+	case kEob2FinaleAnimData01:
+		return "kEob2FinaleAnimData01";
+	case kEob2FinaleAnimData02:
+		return "kEob2FinaleAnimData02";
+	case kEob2FinaleAnimData03:
+		return "kEob2FinaleAnimData03";
+	case kEob2FinaleAnimData04:
+		return "kEob2FinaleAnimData04";
+	case kEob2FinaleAnimData05:
+		return "kEob2FinaleAnimData05";
+	case kEob2FinaleAnimData06:
+		return "kEob2FinaleAnimData06";
+	case kEob2FinaleAnimData07:
+		return "kEob2FinaleAnimData07";
+	case kEob2FinaleAnimData08:
+		return "kEob2FinaleAnimData08";
+	case kEob2FinaleAnimData09:
+		return "kEob2FinaleAnimData09";
+	case kEob2FinaleAnimData10:
+		return "kEob2FinaleAnimData10";
+	case kEob2FinaleAnimData11:
+		return "kEob2FinaleAnimData11";
+	case kEob2FinaleAnimData12:
+		return "kEob2FinaleAnimData12";
+	case kEob2FinaleAnimData13:
+		return "kEob2FinaleAnimData13";
+	case kEob2FinaleAnimData14:
+		return "kEob2FinaleAnimData14";
+	case kEob2FinaleAnimData15:
+		return "kEob2FinaleAnimData15";
+	case kEob2FinaleAnimData16:
+		return "kEob2FinaleAnimData16";
+	case kEob2FinaleAnimData17:
+		return "kEob2FinaleAnimData17";
+	case kEob2FinaleAnimData18:
+		return "kEob2FinaleAnimData18";
+	case kEob2FinaleAnimData19:
+		return "kEob2FinaleAnimData19";
+	case kEob2FinaleAnimData20:
+		return "kEob2FinaleAnimData20";
 	case kEoB2FinaleShapes00:
 		return "kEoB2FinaleShapes00";
 	case kEoB2FinaleShapes03:

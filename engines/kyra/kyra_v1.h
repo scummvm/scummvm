@@ -306,6 +306,8 @@ protected:
 	bool _configSounds;
 	uint8 _configVoice;
 
+	Common::RenderMode _configRenderMode;
+
 	// game speed
 	virtual bool skipFlag() const;
 	virtual void resetSkipFlag(bool removeEvent = true);

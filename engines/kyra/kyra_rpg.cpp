@@ -45,7 +45,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_vcnBlocks = 0;
 	_vcfBlocks = 0;
 	_vcnShift = 0;
-	_vcnExpTable = 0;
+	_vcnColTable = 0;
 	_vmpPtr = 0;
 	_blockBrightness = _wllVcnOffset = 0;
 	_blockDrawingBuffer = 0;
@@ -123,7 +123,7 @@ KyraRpgEngine::~KyraRpgEngine() {
 	delete[] _wllWallFlags;
 
 	delete[] _vmpPtr;
-	delete[] _vcnExpTable;
+	delete[] _vcnColTable;
 	delete[] _vcnBlocks;
 	delete[] _vcfBlocks;
 	delete[] _vcnShift;
@@ -173,9 +173,9 @@ Common::Error KyraRpgEngine::init() {
 	_lvlShapeLeftRight = new int16[36];
 	memset(_lvlShapeLeftRight, 0, 36 * sizeof(int16));
 
-	_vcnExpTable = new uint8[128];
+	_vcnColTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
-		_vcnExpTable[i] = i & 0x0f;
+		_vcnColTable[i] = i & 0x0f;
 
 	_doorShapes = new uint8*[6];
 	memset(_doorShapes, 0, 6 * sizeof(uint8 *));

@@ -45,10 +45,14 @@ public:
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
 	void printShadedText(const char *string, int x, int y, int col1, int col2);
-	void loadEoBBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
+	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
-	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding = false);
+	void convertPage(int srcPage, int dstPage, const uint8 *cgaMapping);
+
+	void setScreenPalette(const Palette &pal);
+
+	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding = false, const uint8 *cgaMapping = 0);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
@@ -77,6 +81,8 @@ private:
 	void scaleShapeProcessLine(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
+	void generateCGADitheringTables(const uint8 *mappingData);
+
 	int _dsDiv, _dsRem, _dsScaleTmp;
 	int16 _gfxX, _gfxY;
 	uint8 _gfxCol;
@@ -90,6 +96,14 @@ private:
 
 	uint8 *_dsTempPage;
 
+	uint16 *_cgaDitheringTables[2];
+	const uint8 *_cgaMappingDefault;
+	
+	uint8 *_egaColorMap;
+	uint8 *_egaPixelValueTable;
+	bool _useHiResEGADithering;
+
+	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 };

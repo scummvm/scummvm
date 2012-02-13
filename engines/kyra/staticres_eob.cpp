@@ -28,12 +28,12 @@
 namespace Kyra {
 
 #ifdef ENABLE_EOB
-const EoBSequenceStep *StaticResource::loadEoB2SeqData(int id, int &entries) {
-	return (const EoBSequenceStep *)getData(id, kEoB2SequenceData, entries);
+const DarkMoonAnimCommand *StaticResource::loadEoB2SeqData(int id, int &entries) {
+	return (const DarkMoonAnimCommand *)getData(id, kEoB2SequenceData, entries);
 }
 
-const EoBShapeDef *StaticResource::loadEoB2ShapeData(int id, int &entries) {
-	return (const EoBShapeDef *)getData(id, kEoB2ShapeData, entries);
+const DarkMoonShapeDef *StaticResource::loadEoB2ShapeData(int id, int &entries) {
+	return (const DarkMoonShapeDef *)getData(id, kEoB2ShapeData, entries);
 }
 
 const EoBCharacter *StaticResource::loadEoBNpcData(int id, int &entries) {
@@ -43,7 +43,7 @@ const EoBCharacter *StaticResource::loadEoBNpcData(int id, int &entries) {
 bool StaticResource::loadEoB2SeqData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 11;
 
-	EoBSequenceStep *s = new EoBSequenceStep[size];
+	DarkMoonAnimCommand *s = new DarkMoonAnimCommand[size];
 
 	for (int i = 0; i < size; i++) {
 		s[i].command = stream.readByte();
@@ -65,7 +65,7 @@ bool StaticResource::loadEoB2SeqData(Common::SeekableReadStream &stream, void *&
 bool StaticResource::loadEoB2ShapeData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.size() / 6;
 
-	EoBShapeDef *s = new EoBShapeDef[size];
+	DarkMoonShapeDef *s = new DarkMoonShapeDef[size];
 
 	for (int i = 0; i < size; i++) {
 		s[i].index = stream.readSint16BE();
@@ -127,14 +127,14 @@ bool StaticResource::loadEoBNpcData(Common::SeekableReadStream &stream, void *&p
 }
 
 void StaticResource::freeEoB2SeqData(void *&ptr, int &size) {
-	EoBSequenceStep *d = (EoBSequenceStep *)ptr;
+	DarkMoonAnimCommand *d = (DarkMoonAnimCommand *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
 }
 
 void StaticResource::freeEoB2ShapeData(void *&ptr, int &size) {
-	EoBShapeDef *d = (EoBShapeDef *)ptr;
+	DarkMoonShapeDef *d = (DarkMoonShapeDef *)ptr;
 	delete[] d;
 	ptr = 0;
 	size = 0;
@@ -1035,6 +1035,18 @@ void EoBEngine::initStaticResource() {
 	_beholderSpellList = _staticres->loadRawData(kEoB1BeholderSpellList, temp);
 	_beholderSfx = _staticres->loadRawData(kEoB1BeholderSfx, temp);
 
+	_cgaMappingDefault = _staticres->loadRawData(kEoB1CgaMappingDefault, temp);
+	_cgaMappingAlt = _staticres->loadRawData(kEoB1CgaMappingAlt, temp);
+	_cgaMappingInv = _staticres->loadRawData(kEoB1CgaMappingInv, temp);
+	_cgaMappingItemsL = _staticres->loadRawData(kEoB1CgaMappingItemsL, temp);
+	_cgaMappingItemsS = _staticres->loadRawData(kEoB1CgaMappingItemsS, temp);
+	_cgaMappingThrown = _staticres->loadRawData(kEoB1CgaMappingThrown, temp);
+	_cgaMappingIcons = _staticres->loadRawData(kEoB1CgaMappingIcons, temp);
+	_cgaMappingDeco = _staticres->loadRawData(kEoB1CgaMappingDeco, temp);
+	_cgaLevelMappingIndex = _staticres->loadRawData(kEoB1CgaLevelMappingIndex, temp);
+	for (int i = 0; i < 5; i++)
+		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
+
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
 	_npcShpData = _staticres->loadRawData(kEoB1NpcShpData, temp);
@@ -1174,18 +1186,22 @@ const KyraRpgGUISettings EoBEngine::_guiSettings = {
 	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180	}
 };
 
+const uint8 EoBEngine::_egaDefaultPalette[] = {
+	0, 5, 3, 2, 10, 14, 12, 6, 4, 11, 9, 1, 0, 8, 7, 15
+};
+
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
 	_introStrings = _staticres->loadStrings(kEoB2IntroStrings, temp);
 	_cpsFilesIntro = _staticres->loadStrings(kEoB2IntroCPSFiles, temp);
 
-	_seqIntro = new const EoBSequenceStep*[44];
+	_animIntro = new const DarkMoonAnimCommand*[44];
 	for (int i = 0; i < 44; i++)
-		_seqIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroSeqData00 + i, temp);
+		_animIntro[i] = _staticres->loadEoB2SeqData(kEob2IntroAnimData00 + i, temp);
 
-	_shapesIntro = new const EoBShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(EoBShapeDef *) * 13);
+	_shapesIntro = new const DarkMoonShapeDef*[13];
+	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef*) * 13);
 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
@@ -1195,12 +1211,12 @@ void DarkMoonEngine::initStaticResource() {
 	_creditsData = _staticres->loadRawData(kEoB2CreditsData, temp);
 	_cpsFilesFinale = _staticres->loadStrings(kEoB2FinaleCPSFiles, temp);
 
-	_seqFinale = new const EoBSequenceStep*[21];
+	_animFinale = new const DarkMoonAnimCommand*[21];
 	for (int i = 0; i < 21; i++)
-		_seqFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleSeqData00 + i, temp);
+		_animFinale[i] = _staticres->loadEoB2SeqData(kEob2FinaleAnimData00 + i, temp);
 
-	_shapesFinale = new const EoBShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(EoBShapeDef *) * 13);
+	_shapesFinale = new const DarkMoonShapeDef*[13];
+	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef*) * 13);
 	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
@@ -1275,15 +1291,23 @@ void DarkMoonEngine::initSpells() {
 	}
 }
 
-const char *DarkMoonEngine::_palFilesIntro[] = {
-	"PALETTE1.PAL", // EGA: palette0.pal
+const char *DarkMoonEngine::_palFilesIntroVGA[] = {
+	"PALETTE1.PAL",
 	"PALETTE3.PAL",
 	"PALETTE2.PAL",
 	"PALETTE4.PAL",
 	0
 };
 
-const char *DarkMoonEngine::_palFilesFinale[] = {
+const char *DarkMoonEngine::_palFilesIntroEGA[] = {
+	"PALETTE0.PAL",
+	"PALETTE3.PAL",
+	"PALETTE2.PAL",
+	"PALETTE4.PAL",
+	0
+};
+
+const char *DarkMoonEngine::_palFilesFinaleVGA[] = {
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",
@@ -1296,9 +1320,26 @@ const char *DarkMoonEngine::_palFilesFinale[] = {
 	0
 };
 
+const char *DarkMoonEngine::_palFilesFinaleEGA[] = {
+	"FINALE_0.PAL",
+	"FINALE_0.PAL",
+	"FINALE_1.PAL",
+	"FINALE_2.PAL",
+	"FINALE_3.PAL",
+	"FINALE_4.PAL",
+	"FINALE_5.PAL",
+	"FINALE_0.PAL",
+	"FINALE_0.PAL",
+	0
+};
+
 const KyraRpgGUISettings DarkMoonEngine::_guiSettings = {
 	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
+};
+
+const uint8 DarkMoonEngine::_egaDefaultPalette[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
 #endif // ENABLE_EOB

@@ -86,8 +86,8 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 		pos += 2;
 	}
 
-	loadVcnData(gfxFile.c_str(), 0);
-	_screen->loadEoBBitmap("INVENT", 0, 5, 3, 2);
+	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
+	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
 	delayUntil(end);
 	snd_stopSound();
 
@@ -142,7 +142,8 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		loadBlockProperties((const char *)pos);
 		pos += slen;
 
-		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char *)pos));
+		const char *vmpPattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.EMP" : "%s.VMP";
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format(vmpPattern, (const char *)pos));
 		uint16 size = s->readUint16LE();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
@@ -150,12 +151,14 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_vmpPtr[i] = s->readUint16LE();
 		delete s;
 
-		Common::String tmpStr = Common::String::format("%s.PAL", (const char *)pos);
+		const char *paletteFilePattern = (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) ? "%s.EGA" : "%s.PAL";
+
+		Common::String tmpStr = Common::String::format(paletteFilePattern, (const char *)pos);
 		_curGfxFile = (const char *)pos;
 		pos += slen;
 
 		if (*pos++ != 0xff && _flags.gameID == GI_EOB2) {
-			tmpStr = Common::String::format("%s.PAL", (const char *)pos);
+			tmpStr = Common::String::format(paletteFilePattern, (const char *)pos);
 			pos += 13;
 		}
 
@@ -165,21 +168,24 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->setShapeFadeMode(1, false);
 		}
 
-		_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
+		if (_flags.gameID == GI_EOB2 || _configRenderMode != Common::kRenderEGA)
+			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
 
-		Palette backupPal(256);
-		backupPal.copy(_screen->getPalette(0), 224, 32, 224);
-		_screen->getPalette(0).fill(224, 32, 0x3f);
-		uint8 *src = _screen->getPalette(0).getData();
+		if (_configRenderMode != Common::kRenderCGA) {
+			Palette backupPal(256);
+			backupPal.copy(_screen->getPalette(0), 224, 32, 224);
+			_screen->getPalette(0).fill(224, 32, 0x3f);
+			uint8 *src = _screen->getPalette(0).getData();
 
-		_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);     // green
-		_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);   // black
-		_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);    // blue
-		_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);   // light blue
+			_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);     // green
+			_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);   // black
+			_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);    // blue
+			_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);   // light blue
 
-		_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-		_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
-		_screen->setFadeTableIndex(4);
+			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
+			_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
+			_screen->setFadeTableIndex(4);
+		}
 	}
 
 	if (_flags.gameID == GI_EOB2) {
@@ -267,15 +273,17 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const char * /*nextFile*/) {
+void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
-	_screen->loadBitmap(Common::String::format("%s.VCN", _lastBlockDataFile).c_str(), 3, 3, 0);
-	const uint8 *v = _screen->getCPagePtr(2);
+	const char *filePattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN";
+	_screen->loadBitmap(Common::String::format(filePattern, _lastBlockDataFile).c_str(), 3, 3, 0);
+	const uint8 *v = _screen->getCPagePtr(3);
 	uint32 tlen = READ_LE_UINT16(v) << 5;
 	v += 2;
-	memcpy(_vcnExpTable, v, 32);
+	if (!(_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)))
+		memcpy(_vcnColTable, v, 32);
 	v += 32;
 	delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[tlen];
@@ -301,7 +309,7 @@ const uint8 *EoBCoreEngine::getBlockFileData(int) {
 	Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
 	_screen->loadFileDataToPage(s, 15, s->size());
 	delete s;
-	return _screen->getCPagePtr(14);
+	return _screen->getCPagePtr(15);
 }
 
 Common::String EoBCoreEngine::getBlockFileName(int levelIndex, int sub) {
@@ -400,7 +408,7 @@ void EoBCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 			if (r->w == 0 || r->h == 0)
 				error("Error trying to make decoration %d (x: %d, y: %d, w: %d, h: %d)", decIndex, r->x, r->y, r->w, r->h);
 
-			_levelDecorationShapes[t] = _screen->encodeShape(r->x, r->y, r->w, r->h);
+			_levelDecorationShapes[t] = _screen->encodeShape(r->x, r->y, r->w, r->h, false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 		}
 
 		decIndex = _levelDecorationProperties[_mappedDecorationsCount++].next;

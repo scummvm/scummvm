@@ -225,7 +225,7 @@ protected:
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
 	uint8 *_vcnShift;
-	uint8 *_vcnExpTable;
+	uint8 *_vcnColTable;
 	uint16 *_blockDrawingBuffer;
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;

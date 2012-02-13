@@ -42,6 +42,8 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_emc = 0;
 	_debugger = 0;
 
+	_configRenderMode = Common::kRenderDefault;
+
 	if (_flags.platform == Common::kPlatformAmiga)
 		_gameSpeed = 50;
 	else
@@ -162,6 +164,9 @@ Common::Error KyraEngine_v1::init() {
 
 	if (_sound)
 		_sound->updateVolumeSettings();
+
+	if (ConfMan.hasKey("render_mode"))
+		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
 	_res = new Resource(this);
 	assert(_res);

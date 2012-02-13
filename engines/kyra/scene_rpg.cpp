@@ -389,8 +389,8 @@ void KyraRpgEngine::drawVcnBlocks() {
 					src += 3;
 					for (int blockX = 0; blockX < 4; blockX++) {
 						uint8 t = *src--;
-						*d++ = _vcnExpTable[((t & 0x0f) + wllVcnOffset) | shift];
-						*d++ = _vcnExpTable[((t >> 4) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((t & 0x0f) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((t >> 4) + wllVcnOffset) | shift];
 					}
 					src += 5;
 					d += 168;
@@ -399,8 +399,8 @@ void KyraRpgEngine::drawVcnBlocks() {
 				for (int blockY = 0; blockY < 8; blockY++) {
 					for (int blockX = 0; blockX < 4; blockX++) {
 						uint8 t = *src++;
-						*d++ = _vcnExpTable[((t >> 4) + wllVcnOffset) | shift];
-						*d++ = _vcnExpTable[((t & 0x0f) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((t >> 4) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((t & 0x0f) + wllVcnOffset) | shift];
 					}
 					d += 168;
 				}
@@ -424,8 +424,8 @@ void KyraRpgEngine::drawVcnBlocks() {
 						src += 3;
 						for (int blockX = 0; blockX < 4; blockX++) {
 							uint8 t = *src--;
-							uint8 h = _vcnExpTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnExpTable[((t >> 4) + wllVcnRmdOffset) | shift];
+							uint8 h = _vcnColTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
+							uint8 l = _vcnColTable[((t >> 4) + wllVcnRmdOffset) | shift];
 							if (h)
 								*d = h;
 							d++;
@@ -440,8 +440,8 @@ void KyraRpgEngine::drawVcnBlocks() {
 					for (int blockY = 0; blockY < 8; blockY++) {
 						for (int blockX = 0; blockX < 4; blockX++) {
 							uint8 t = *src++;
-							uint8 h = _vcnExpTable[((t >> 4) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnExpTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
+							uint8 h = _vcnColTable[((t >> 4) + wllVcnRmdOffset) | shift];
+							uint8 l = _vcnColTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
 							if (h)
 								*d = h;
 							d++;

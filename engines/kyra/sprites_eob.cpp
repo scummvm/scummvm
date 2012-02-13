@@ -37,7 +37,7 @@ void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bo
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
 	for (int i = 0; i < 6; i++, enc += 4)
-		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
 
 	generateMonsterPalettes(filename, monsterIndex);
 

@@ -145,8 +145,8 @@ private:
  */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont();
-	~OldDOSFont() { unload(); }
+	OldDOSFont(Common::RenderMode mode, const uint16 *cgaDitheringTable);
+	~OldDOSFont();
 
 	bool load(Common::SeekableReadStream &file);
 	int getHeight() const { return _height; }
@@ -165,6 +165,9 @@ private:
 	const uint8 *_colorMap;
 
 	int _numGlyphs;
+
+	Common::RenderMode _renderMode;
+	const uint16 *_cgaDitheringTable;
 };
 #endif // ENABLE_EOB
 
@@ -252,6 +255,21 @@ public:
 	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
+	 * Load a EGA palette from the given stream.
+	 */
+	void loadEGAPalette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	 * Set default CGA palette. We only need the cyan/magenta/grey mode.
+	 */
+	enum CGAIntensity {
+		kIntensityLow = 0,
+		kIntensityHigh = 1
+	};
+
+	void setCGAPalette(int palIndex, CGAIntensity intensity);
+
+	/**
 	 * Load a AMIGA palette from the given stream.
 	 */
 	void loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors);
@@ -325,9 +343,15 @@ public:
 	 */
 	uint8 *getData() { return _palData; }
 	const uint8 *getData() const { return _palData; }
+
 private:
 	uint8 *_palData;
 	const int _numColors;
+
+	static const uint8 _egaColors[];
+	static const int _egaNumColors;
+	static const uint8 _cgaColors[4][12];
+	static const int _cgaNumColors;
 };
 
 class Screen {
@@ -480,9 +504,9 @@ public:
 	// misc
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
-	bool loadPalette(const char *filename, Palette &pal);
+	virtual bool loadPalette(const char *filename, Palette &pal);
 	bool loadPaletteTable(const char *filename, int firstPalette);
-	void loadPalette(const byte *data, Palette &pal, int bytes);
+	virtual void loadPalette(const byte *data, Palette &pal, int bytes);
 
 	void setAnimBlockPtr(int size);
 
@@ -550,6 +574,8 @@ protected:
 	bool _useSJIS;
 	bool _use16ColorMode;
 	bool _isAmiga;
+	Common::RenderMode _renderMode;
+	uint16 *_cgaDrawCharDitheringTable;
 
 	uint8 _sjisInvisibleColor;
 

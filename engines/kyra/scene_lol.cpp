@@ -358,7 +358,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_vcnShift, v, tlen);
 		v += tlen;
 
-		memcpy(_vcnExpTable, v, 128);
+		memcpy(_vcnColTable, v, 128);
 		v += 128;
 
 		if (_lastOverridePalFilePtr) {
@@ -451,7 +451,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		for (int i = 0; i < 8; i++) {
 			uint8 *pl = _screen->getLevelOverlay(7 - i);
 			for (int ii = 0; ii < 16; ii++)
-				_vcnExpTable[(i << 4) + ii] = pl[(ii << 4) | ii];
+				_vcnColTable[(i << 4) + ii] = pl[(ii << 4) | ii];
 		}
 	}
 

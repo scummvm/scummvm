@@ -47,7 +47,7 @@ Button *EoBCoreEngine::gui_getButton(Button *buttonList, int index) {
 }
 
 void EoBCoreEngine::gui_drawPlayField(bool refresh) {
-	_screen->loadEoBBitmap("PLAYFLD", 0, 5, 3, 2);
+	_screen->loadEoBBitmap("PLAYFLD", _cgaMappingDeco, 5, 3, 2);
 	int cp = _screen->setCurPage(2);
 	gui_drawCompass(true);
 
@@ -60,11 +60,11 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 	if (!_loading)
 		_screen->updateScreen();
 
-	_screen->loadEoBBitmap("INVENT", 0, 5, 3, 2);
+	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
-	loadVcnData(0, 0);
+	loadVcnData(0, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 	_screen->_curPage = 0;
 	gui_drawPlayField(true);
 	gui_drawAllCharPortraitsWithStats();
@@ -1891,7 +1891,7 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	for (int i = 0; i < _menuNumItems; i++) {
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = y + i * (lineSpacing + _screen->getFontHeight());
-		_screen->printShadedText(strings[item], x, ty, dm->unkA, 0);
+		_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : dm->unkA, 0);
 		if (item == v)
 			_screen->printText(strings[item], x, ty, dm->unkC, 0);
 	}
@@ -1944,7 +1944,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	}
 
 	if (newItem != currentItem) {
-		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH , dm->unkA, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : dm->unkA, 0);
 		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , dm->unkC, 0);
 		_screen->updateScreen();
 	}

@@ -248,10 +248,10 @@ void CharacterGenerator::init() {
 
 	_faceShapes = new uint8*[44];
 	for (int i = 0; i < 44; i++)
-		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true);
+		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 
-	_screen->loadEoBBitmap("CHARGEN", 0, 3, 3, 0);
+	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 3, 3, 0);
 	_screen->loadShapeSetBitmap("CHARGENB", 3, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
@@ -261,14 +261,14 @@ void CharacterGenerator::init() {
 
 	_chargenMagicShapes = new uint8*[10];
 	for (int i = 0; i < 10; i++)
-		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true);
+		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
 
 	for (int i = 0; i < 17; i++) {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
-		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true) : 0;
+		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
 	}
 
-	_screen->copyPage(3, 2);
+	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();

@@ -110,7 +110,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait < 0)
 			continue;
-		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true);
+		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true, _cgaMappingDefault);
 	}
 
 	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
@@ -118,7 +118,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait >= 0)
 			continue;
-		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
+		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
 	}
 	_screen->_curPage = 0;
 

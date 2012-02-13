@@ -29,22 +29,21 @@
 namespace Kyra {
 
 DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
-	_seqIntro = _seqFinale = 0;
+	_animIntro = _animFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
 	_menuChoiceInit = 4;
 
 	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npcStrings[0] = _npcStrings[1] = _hornStrings = 0;
-	_seqIntro = _seqFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_creditsData = _npcShpData = _dscDoorType5Offs = _hornSounds = 0;
 	_dreamSteps = 0;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {
-	delete[] _seqIntro;
-	delete[] _seqFinale;
+	delete[] _animIntro;
+	delete[] _animFinale;
 	delete[] _shapesIntro;
 	delete[] _shapesFinale;
 }
@@ -57,6 +56,14 @@ Common::Error DarkMoonEngine::init() {
 	initStaticResource();
 
 	_monsterProps = new EoBMonsterProperty[10];
+
+	if (_configRenderMode == Common::kRenderEGA) {
+		Palette pal(16);
+		_screen->loadPalette(_egaDefaultPalette, pal, 16);
+		_screen->setScreenPalette(pal);
+	} else {
+		_screen->loadPalette("palette.col", _screen->getPalette(0));
+	}
 
 	return Common::kNoError;
 }

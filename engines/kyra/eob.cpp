@@ -55,13 +55,21 @@ Common::Error EoBEngine::init() {
 
 	initStaticResource();
 
-	_itemsOverlay = _res->fileData("ITEMRMP.VGA", 0);
+	_itemsOverlay = _res->fileData((_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA) ? "ITEMRMP.EGA" : "ITEMRMP.VGA", 0);
 
 	_screen->modifyScreenDim(7, 0x01, 0xB3, 0x22, 0x12);
 	_screen->modifyScreenDim(9, 0x01, 0x7D, 0x26, 0x3F);
 	_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
 
 	_scriptTimersCount = 1;
+
+	if (_configRenderMode == Common::kRenderEGA) {
+		Palette pal(16);
+		_screen->loadPalette(_egaDefaultPalette, pal, 16);
+		_screen->setScreenPalette(pal);
+	} else {
+		_screen->loadPalette("palette.col", _screen->getPalette(0));
+	}
 
 	return Common::kNoError;
 }
@@ -73,6 +81,7 @@ void EoBEngine::startupNew() {
 	_currentBlock = 490;
 	_currentDirection = 0;
 	setHandItem(0);
+
 	EoBCoreEngine::startupNew();
 }
 
@@ -134,7 +143,7 @@ void EoBEngine::drawNpcScene(int npcIndex) {
 void EoBEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 	const uint8 *shpDef = &_npcShpData[npcIndex << 2];
 	_screen->_curPage = 2;
-	const uint8 *shp = _screen->encodeShape(shpDef[0], shpDef[1], shpDef[2], shpDef[3]);
+	const uint8 *shp = _screen->encodeShape(shpDef[0], shpDef[1], shpDef[2], shpDef[3], false, _cgaMappingDefault);
 	_screen->_curPage = 0;
 	_screen->drawShape(0, shp, drawX - (shp[2] << 2), drawY - shp[1], 5);
 	delete[] shp;
@@ -352,9 +361,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType1 != 0xff) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 * 6 + i * 2];
 			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[doorType1 * 6 + i * 2 + 1];
 		}
@@ -363,9 +372,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType2 != 0xff) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 * 6 + i * 2];
 			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[doorType2 * 6 + i * 2 + 1];
 		}

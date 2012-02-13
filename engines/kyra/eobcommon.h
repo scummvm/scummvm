@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-struct EoBShapeDef {
+struct DarkMoonShapeDef {
 	int16 index;
 	uint8 x, y, w, h;
 };
@@ -577,7 +577,7 @@ protected:
 	void readLevelFileData(int level);
 	Common::String initLevelData(int sub);
 	void addLevelItems();
-	void loadVcnData(const char *file, const char * /*nextFile*/);
+	void loadVcnData(const char *file, const uint8 *cgaMapping);
 	void loadBlockProperties(const char *mazFile);
 	const uint8 *getBlockFileData(int levelIndex = 0);
 	Common::String getBlockFileName(int levelIndex, int sub);
@@ -833,6 +833,17 @@ protected:
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+
+	const uint8 *_cgaMappingDefault;
+	const uint8 *_cgaMappingAlt;
+	const uint8 *_cgaMappingInv;
+	const uint8 *_cgaMappingItemsL;
+	const uint8 *_cgaMappingItemsS;
+	const uint8 *_cgaMappingThrown;
+	const uint8 *_cgaMappingIcons;
+	const uint8 *_cgaMappingDeco;
+	const uint8 *_cgaMappingLevel[5];
+	const uint8 *_cgaLevelMappingIndex;
 
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
