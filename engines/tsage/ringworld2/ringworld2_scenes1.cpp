@@ -1657,7 +1657,7 @@ void Scene1337::synchronize(Serializer &s) {
 	warning("STUBBED: Scene1337::synchronize()");
 }
 
-void Scene1337::Action1337::subD18B5(int arg1, int arg2, int arg3) {
+void Scene1337::Action1337::subD18B5(int resNum, int stripNum, int frameNum) {
 	warning("STUBBED: Action1337::sub53CD5()");
 }
 
@@ -3239,7 +3239,7 @@ void Scene1337::Action10::signal() {
 					scene->_item6._field36 = event.mousePos;
 	
 					for (int i = 0; i <= 7; i++) {
-						if ((scene->subC2BF8(&scene->_arrunkObj1337[2]._arr2[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[2]._arr2[i]._field34 != 0)) {
+						if ((scene->subC2BF8(&scene->_arrunkObj1337[2]._arr2[i], scene->_item6._field36) != 0) && (scene->_arrunkObj1337[2]._arr2[i]._field34 != 0)) {
 							scene->_field3EF4 = &scene->_arrunkObj1337[2]._arr2[0];
 							found2 = true;
 							break;
@@ -3438,7 +3438,7 @@ void Scene1337::Action11::signal() {
 
 					if (scene->_field4242 != 2) {
 						for (i = 0; i <= 3; i++) {
-							if ((scene->subC2BF8(&scene->_arrunkObj1337[scene->_field4242]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[scene->_field4242]._arr1[i]._field34 != 0)) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[scene->_field4242]._arr1[i], scene->_item6._field36) != 0) && (scene->_arrunkObj1337[scene->_field4242]._arr1[i]._field34 != 0)) {
 								scene->_field3EF8 = &scene->_arrunkObj1337[scene->_field4242]._arr1[i];
 								found = true;
 								break;
@@ -3587,7 +3587,7 @@ void Scene1337::Action12::signal() {
 
 					if (scene->_field4240 == 0) {
 						for (i = 0; i <= 3; i++) {
-							if ((scene->subC2BF8(&scene->_arrunkObj1337[0]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[0]._arr1[i]._field34 != 0)) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[0]._arr1[i], scene->_item6._field36) != 0) && (scene->_arrunkObj1337[0]._arr1[i]._field34 != 0)) {
 								found = true;
 								scene->_field3EF8 = &scene->_arrunkObj1337[0]._arr1[i];
 								break;
@@ -3597,7 +3597,7 @@ void Scene1337::Action12::signal() {
 					
 					if (scene->_field4240 == 3) {
 						for (i = 0; i <= 3; i++) {
-							if ((scene->subC2BF8(&scene->_arrunkObj1337[3]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[3]._arr1[i]._field34 != 0)) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[3]._arr1[i], scene->_item6._field36) != 0) && (scene->_arrunkObj1337[3]._arr1[i]._field34 != 0)) {
 								found = true;
 								scene->_field3EF8 = &scene->_arrunkObj1337[3]._arr1[i];
 								break;
@@ -3607,7 +3607,7 @@ void Scene1337::Action12::signal() {
 
 					if (scene->_field4240 == 1) {
 						for (i = 0; i <= 3; i++) {
-							if ((scene->subC2BF8(&scene->_arrunkObj1337[1]._arr1[i], &scene->_item6._field36) != 0) && (scene->_arrunkObj1337[1]._arr1[i]._field34 != 0)) {
+							if ((scene->subC2BF8(&scene->_arrunkObj1337[1]._arr1[i], scene->_item6._field36) != 0) && (scene->_arrunkObj1337[1]._arr1[i]._field34 != 0)) {
 								found = true;
 								scene->_field3EF8 = &scene->_arrunkObj1337[1]._arr1[i];
 								break;
@@ -4271,20 +4271,40 @@ void Scene1337::subC2835(int arg1) {
 	subC4A39(&_arrunkObj1337[arg1]._arr1[i]);
 }
 
-int Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt) {
-	warning("STUBBED Scene1337::subC2BF8()");
-	return -1;
+bool Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point pt) {
+	if ((subObj1->_field36.x > pt.x) || (subObj1->_field36.x + 24 < pt.x))
+		return false;
+
+	if ((subObj1->_field36.y > pt.y) || (subObj1->_field36.y + 24 < pt.y))
+		return false;
+
+	return true;
 }
 
 void Scene1337::subC2C2F() {
 	warning("STUBBED Scene1337::subC2C2F()");
 }
 
-void Scene1337::subC318B(int arg1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC318B()");
+void Scene1337::subC318B(int arg1, unkObj1337sub1 *subObj1, int arg3) {
+	_field4240 = arg1;
+	_field4242 = arg3;
+
+	int randIndx;
+	
+	for (;;) {
+		randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+		if (_arrunkObj1337[arg3]._arr1[randIndx]._field34 != 0)
+			break;
+	}
+
+	_field3EF0 = subObj1;
+	_field3EF4 = &_arrunkObj1337[arg3]._arr4[0];
+	_field3EF8 = &_arrunkObj1337[arg3]._arr1[randIndx];
+
+	_item1.setAction(&_action11);
 }
 
-int Scene1337::subC32B1(int arg1) {
+int Scene1337::subC32B1(int arg1, int arg2) {
 	warning("STUBBED Scene1337::subC32B1()");
 	return -1;
 }
@@ -4323,8 +4343,17 @@ void Scene1337::subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 	warning("STUBBED Scene1337::subC34A1()");
 }
 
-void Scene1337::subC358E(unkObj1337sub1 *subObj1) {
-	warning("STUBBED Scene1337::subC358E()");
+Scene1337::unkObj1337sub1 *Scene1337::subC34EC(int arg1) {
+	warning("STUBBED Scene1337::subC34EC()");
+	return NULL;
+}
+
+void Scene1337::subC358E(unkObj1337sub1 *subObj1, int arg2) {
+	_field3EF0 = subObj1;
+	_field3EF4 = subC34EC(arg2);
+	_field3EF8 = &_arrunkObj1337[arg2]._arr4[0];
+	_field4240 = arg2;
+	_item1.setAction(&_action10);
 }
 
 void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
@@ -4577,6 +4606,10 @@ void Scene1337::subCCF26() {
 	_item1.setAction(&_action3);
 }
 
+void Scene1337::subCDB90(int arg1, Common::Point *pt) {
+	warning("STUBBED: subCDB90()");
+}
+
 void Scene1337::subCF31D() {
 	int tmpVal = 1;
 	bool found;
@@ -4676,9 +4709,10 @@ void Scene1337::subCF31D() {
 		return;
 
 	tmpVal = subC274D(1);
+	int tmpVal2 = subC331B(1);
 
-	if ((tmpVal != -1) && (subC331B(1) != -1))
-		subC358E(&_arrunkObj1337[1]._arr1[tmpVal]);
+	if ((tmpVal != -1) && ( tmpVal2 != -1))
+		subC358E(&_arrunkObj1337[1]._arr1[tmpVal], tmpVal2);
 
 	if (found)
 		return;
@@ -4704,7 +4738,7 @@ void Scene1337::subCF31D() {
 		}
 
 		if (count != -1) {
-			subC318B(1, &_arrunkObj1337[1]._arr1[tmpVal]);
+			subC318B(1, &_arrunkObj1337[1]._arr1[tmpVal], count);
 			found = true;
 		}
 	}
@@ -4724,7 +4758,7 @@ void Scene1337::subCF31D() {
 					for (int k = 0; k <= 7; k++) {
 						// 'k' is not used in that loop. 
 						// It looks suspicious.
-						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(_arrunkObj1337[1]._arr1[i]._field34) == 1)) {
+						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(tmpVal, _arrunkObj1337[1]._arr1[i]._field34) == 1)) {
 							count = tmpVal;
 							break;
 						}
@@ -4809,7 +4843,418 @@ void Scene1337::subD0281() {
 }
 
 void Scene1337::subD02CA() {
-	warning("STUBBED lvl4 Scene1337::subD02CA()");
+	_item6._field36 = g_globals->_events._mousePos;
+
+	if (R2_GLOBALS._v57810 == 200) {
+		int di;
+		for (di = 0; di < 4; di++) {
+			if ((subC2BF8(&_arrunkObj1337[2]._arr1[di], _item6._field36) != 0) && (_arrunkObj1337[2]._arr1[di]._field34 != 0)) {
+				_item6._field34 = _arrunkObj1337[2]._arr1[di]._field34;
+				_item6._field36 = _arrunkObj1337[2]._arr1[di]._field36;
+				// _item6._actorName = _arrunkObj1337[2]._arr1[di]._actorName;
+				_item6._fieldE = _arrunkObj1337[2]._arr1[di]._fieldE;
+				_item6._field10 = _arrunkObj1337[2]._arr1[di]._field10;
+				warning("_item6._field12 = _arrunkObj1337[2]._arr1[di]._field12;");
+				warning("_item6._field14 = _arrunkObj1337[2]._arr1[di]._field14;");
+				warning("_item6._field16 = _arrunkObj1337[2]._arr1[di]._field16;");
+				_item6._sceneRegionId = _arrunkObj1337[2]._arr1[di]._sceneRegionId;
+				_item6._position = _arrunkObj1337[2]._arr1[di]._position;
+				_item6._yDiff = _arrunkObj1337[2]._arr1[di]._yDiff;
+				_item6._bounds = _arrunkObj1337[2]._arr1[di]._bounds;
+				_item6._resNum = _arrunkObj1337[2]._arr1[di]._resNum;
+				_item6._lookLineNum = _arrunkObj1337[2]._arr1[di]._lookLineNum;
+				_item6._talkLineNum = _arrunkObj1337[2]._arr1[di]._talkLineNum;
+				_item6._useLineNum = _arrunkObj1337[2]._arr1[di]._useLineNum;
+				_item6._action = _arrunkObj1337[2]._arr1[di]._action;
+				warning("_item6._field0 = _arrunkObj1337[2]._arr1[di]._field0;");
+				_item6._object1._updateStartFrame = _arrunkObj1337[2]._arr1[di]._object1._updateStartFrame;
+				_item6._object1._walkStartFrame = _arrunkObj1337[2]._arr1[di]._object1._walkStartFrame;
+				// _field2E is named _field3C in R2R
+				_item6._object1._field2E = _arrunkObj1337[2]._arr1[di]._object1._field2E;
+				_item6._object1._percent = _arrunkObj1337[2]._arr1[di]._object1._percent;
+				_item6._object1._priority = _arrunkObj1337[2]._arr1[di]._object1._priority;
+				_item6._object1._angle = _arrunkObj1337[2]._arr1[di]._object1._angle;
+				_item6._object1._flags = _arrunkObj1337[2]._arr1[di]._object1._flags;
+				_item6._object1._xe = _arrunkObj1337[2]._arr1[di]._object1._xe;
+				_item6._object1._xs = _arrunkObj1337[2]._arr1[di]._object1._xs;
+				_item6._object1._paneRects[0] = _arrunkObj1337[2]._arr1[di]._object1._paneRects[0];
+				_item6._object1._paneRects[1] = _arrunkObj1337[2]._arr1[di]._object1._paneRects[1];
+				_item6._object1._visage = _arrunkObj1337[2]._arr1[di]._object1._visage;
+				_item6._object1._objectWrapper = _arrunkObj1337[2]._arr1[di]._object1._objectWrapper;
+				_item6._object1._strip = _arrunkObj1337[2]._arr1[di]._object1._strip;
+				_item6._object1._animateMode = _arrunkObj1337[2]._arr1[di]._object1._animateMode;
+				_item6._object1._frame = _arrunkObj1337[2]._arr1[di]._object1._frame;
+				_item6._object1._endFrame = _arrunkObj1337[2]._arr1[di]._object1._endFrame;
+				// _field68 is named _field76 in R2R
+				_item6._object1._field68 = _arrunkObj1337[2]._arr1[di]._object1._field68;
+				_item6._object1._frameChange = _arrunkObj1337[2]._arr1[di]._object1._frameChange;
+				_item6._object1._numFrames = _arrunkObj1337[2]._arr1[di]._object1._numFrames;
+				_item6._object1._regionIndex = _arrunkObj1337[2]._arr1[di]._object1._regionIndex;
+				_item6._object1._mover = _arrunkObj1337[2]._arr1[di]._object1._mover;
+				_item6._object1._moveDiff = _arrunkObj1337[2]._arr1[di]._object1._moveDiff;
+				_item6._object1._moveRate = _arrunkObj1337[2]._arr1[di]._object1._moveRate;
+				_item6._object1._field8A = _arrunkObj1337[2]._arr1[di]._object1._field8A;
+				_item6._object1._endAction = _arrunkObj1337[2]._arr1[di]._object1._endAction;
+				_item6._object1._regionBitList = _arrunkObj1337[2]._arr1[di]._object1._regionBitList;
+				// _item6._object1._actorName = _arrunkObj1337[2]._arr1[di]._object1._actorName;
+				_item6._object1._fieldE = _arrunkObj1337[2]._arr1[di]._object1._fieldE;
+				_item6._object1._field10 = _arrunkObj1337[2]._arr1[di]._object1._field10;
+				warning("_item6._object1._field12 = _arrunkObj1337[2]._arr1[di]._object1._field12;");
+				warning("_item6._object1._field14 = _arrunkObj1337[2]._arr1[di]._object1._field14;");
+				warning("_item6._object1._field16 = _arrunkObj1337[2]._arr1[di]._object1._field16;");
+				_item6._object1 = _arrunkObj1337[2]._arr1[di]._object1;
+			}
+		}
+		
+		if (di == 4) {
+			subCDB90(1, &_item6._field36);
+			subD0281();
+			return;
+		}
+	} else if (R2_GLOBALS._v57810 == 300) {
+		subCDB90(3, &_item6._field36);
+		subD0281();
+		return;
+	} else {
+		subD1A48(R2_GLOBALS._v57810);
+		subD0281();
+		return;
+	}
+	
+	// That continues the block when R2_GLOBALS._v57810 == 200 and di != 4
+	subD18B5(1332, _item6._object1._strip, _item6._object1._frame);
+	R2_GLOBALS._sceneObjects->draw();
+	Event event;
+	bool found = false;
+	bool found_di;
+	for (;;) {
+		if ( ((g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN)) && (event.btnState == BTNSHIFT_RIGHT))
+			|| (g_globals->_events.getEvent(event, EVENT_KEYPRESS)) ){
+			_item6._field36 = g_globals->_events._mousePos;
+			found_di = false;
+			
+			for (int i = 0; i <= 3; i ++) {
+				if (subC2BF8(&_arrunkObj1337[2]._arr1[i], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+					if (_arrunkObj1337[2]._arr1[i]._field34 == 0) {
+						_arrunkObj1337[2]._arr1[i]._field34 = _item6._field34;
+						_arrunkObj1337[2]._arr1[i]._object1.postInit();
+						_arrunkObj1337[2]._arr1[i]._object1.hide();
+						_arrunkObj1337[2]._arr1[i]._object1.setVisage(1332);
+						_arrunkObj1337[2]._arr1[i]._object1.setPosition(_arrunkObj1337[2]._arr1[i]._field36, 0);
+						_arrunkObj1337[2]._arr1[i]._object1.fixPriority(170);
+						setAnimationInfo(&_arrunkObj1337[2]._arr1[i]);
+						subD18B5(5, 1, 4);
+						found = true;
+						_field423E--;
+						_field4244 = 0;
+						subC20F9();
+					} else {
+						actionDisplay(1330, 127, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						found_di = true;
+					}
+					break;
+				}
+			}
+			
+			if ((!found) && (!found_di)) {
+				if (subC2BF8(&_item7, Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+					subC4A39(&_item6);
+				} else if (!found) {
+					bool foundVar4;
+					int i;
+					if (_item6._field34 == 1) {
+						foundVar4 = false;
+						for (i = 0; i <= 7; i++) {
+							if (subC2BF8(&_arrunkObj1337[2]._arr2[i], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+								foundVar4 = true;
+								break;
+							}
+						}
+
+						if ((foundVar4) && (_arrunkObj1337[2]._arr2[i]._field34 == 0)) {
+							if (subC27B5(_arrunkObj1337[2]._arr3[0]._field34) != -1) {
+								actionDisplay(1330, 55, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							} else {
+								subC340B(&_item6, &_arrunkObj1337[2]._arr2[i]);
+								return;
+							}
+						} else {
+							actionDisplay(1330, 56, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						}
+					} else if (_item6._field34 <= 9) {
+						foundVar4 = false;
+						for (i = 0; i <= 7; i++) {
+							if (subC2BF8(&_arrunkObj1337[2]._arr2[i], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+								foundVar4 = true;
+								break;
+							}
+						}
+						if ((foundVar4) && (_arrunkObj1337[2]._arr2[i]._field34 == 1)) {
+							foundVar4 = false;
+							int j;
+							for (j = 0; j <= 7; j++) {
+								if (_item6._field34 == _arrunkObj1337[2]._arr2[j]._field34) {
+									foundVar4 = true;
+									break;
+								}
+							}
+							if (foundVar4) {
+								actionDisplay(1330, 34, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							} else if (subC27B5(_arrunkObj1337[2]._arr3[0]._field34) != -1) {
+								actionDisplay(1330, 35, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							} else {
+								if (j == 7)
+									_field424A = 2;
+								
+								subC33C0(&_item6, &_arrunkObj1337[2]._arr2[i]);
+								return;
+							}
+						} else {
+							actionDisplay(1330, 37, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						}
+					} else {
+						if ((_item6._field34 == 26) || (_item6._field34 == 30) ||(_item6._field34 == 32) || (_item6._field34 == 28)) {
+							if (subC2BF8(&_arrunkObj1337[2]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+								actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							} else if (subC3386(_arrunkObj1337[2]._arr3[0]._field34, _item6._field34) == 0) {
+								if (_arrunkObj1337[2]._arr3[0]._field34 != 0) {
+									switch (_arrunkObj1337[2]._arr3[0]._field34) {
+									case 11:
+										actionDisplay(1330, 68, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 14:
+										actionDisplay(1330, 80, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 16:
+										actionDisplay(1330, 84, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 24:
+										actionDisplay(1330, 96, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									default:
+										break;
+									}
+								} else {
+									actionDisplay(1330, 41, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								}
+							} else {
+								subC34A1(&_item6, &_arrunkObj1337[2]._arr3[0]);
+								return;
+							}
+						} else {
+							if ((subC27F9(_item6._field34) == -1) && (subC27B5(_item6._field34) == -1)) {
+								if (_item6._field34 == 13) {
+									if (subC2BF8(&_arrunkObj1337[0]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										for (int k = 0; k <= 7; k++) {
+											if (_arrunkObj1337[0]._arr2[k]._field34 != 0) {
+												found = true;
+												subC358E(&_item6, 0);
+											}
+										}
+
+										if (!found)
+											actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else if (subC2BF8(&_arrunkObj1337[3]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										for (int k = 0; k <= 7; k++) {
+											if (_arrunkObj1337[3]._arr2[k]._field34 != 0) {
+												found = true;
+												subC358E(&_item6, 3);
+											}
+										}
+										if (!found)
+											actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else if (subC2BF8(&_arrunkObj1337[1]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										for (int k = 0; k <= 7; k++) {
+											if (_arrunkObj1337[1]._arr2[k]._field34 == 0) {
+												found = true;
+												subC358E(&_item6, 1);
+											}
+										}
+										if (!found)
+											actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else {
+										actionDisplay(1330, 128, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									}
+								} else if (_item6._field34 == 25) {
+									int k;
+									if (subC2BF8(&_arrunkObj1337[0]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										if ( (_arrunkObj1337[0]._arr1[0]._field34 != 0)
+											|| (_arrunkObj1337[0]._arr1[1]._field34 != 0)
+											|| (_arrunkObj1337[0]._arr1[2]._field34 != 0)
+											|| (_arrunkObj1337[0]._arr1[3]._field34 != 0) ) {
+												for (k = 0; k <= 3; k++){
+													if (_arrunkObj1337[2]._arr1[k]._field34 == 0)
+														break;
+												}
+												subC318B(2, &_arrunkObj1337[2]._arr1[k], 0);
+												return;
+										} else {
+											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										}
+									} else if (subC2BF8(&_arrunkObj1337[1]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										if ( (_arrunkObj1337[1]._arr1[0]._field34 != 0)
+											|| (_arrunkObj1337[1]._arr1[1]._field34 != 0)
+											|| (_arrunkObj1337[1]._arr1[2]._field34 != 0)
+											|| (_arrunkObj1337[1]._arr1[3]._field34 != 0) ) {
+												for (k = 0; k <= 3; k++){
+													if (_arrunkObj1337[2]._arr1[k]._field34 == 0)
+														break;
+												}
+												subC318B(2, &_arrunkObj1337[2]._arr1[k], 1);
+												return;
+										} else {
+											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										}
+									}
+									
+									if (subC2BF8(&_arrunkObj1337[3]._arr4[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+										if ( (_arrunkObj1337[3]._arr1[0]._field34 != 0)
+											|| (_arrunkObj1337[3]._arr1[1]._field34 != 0)
+											|| (_arrunkObj1337[3]._arr1[2]._field34 != 0)
+											|| (_arrunkObj1337[3]._arr1[3]._field34 != 0) ) {
+												for (k = 0; k <= 3; k++){
+													if (_arrunkObj1337[2]._arr1[k]._field34 == 0)
+														break;
+												}
+												subC318B(2, &_arrunkObj1337[2]._arr1[k], 3);
+												return;
+										} else {
+											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										}
+									} else {
+										actionDisplay(1330, 129, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									}
+								} else if (_item6._field34 == 29) {
+									actionDisplay(1330, 136, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (_item6._field34 == 27) {
+									actionDisplay(1330, 137, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								}
+							} else {
+								if (subC2BF8(&_arrunkObj1337[0]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+									if (_arrunkObj1337[0]._arr3[0]._field34 != 0) {
+										actionDisplay(1330, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else if (subC32B1(0, _item6._field34) != 1) {
+										switch (_item6._field34) {
+										case 10:
+											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 12:
+											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 15:
+											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 17:
+											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 18:
+											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 19:
+											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 20:
+											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 21:
+											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										default:
+											break;
+										}
+									} else {
+										subC3456(&_item6, &_arrunkObj1337[0]._arr3[0]);
+										found = true;
+									}
+								} else if (subC2BF8(&_arrunkObj1337[3]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+									if (_arrunkObj1337[3]._arr3[0]._field34 != 0) {
+										actionDisplay(1330, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else if (subC32B1(3, _item6._field34) != 1) {
+										switch (_item6._field34) {
+										case 10:
+											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 12:
+											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 15:
+											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 17:
+											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 18:
+											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 19:
+											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 20:
+											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 21:
+											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										default:
+											break;
+										}
+									} else {
+										subC3456(&_item6, &_arrunkObj1337[3]._arr3[0]);
+										found = true;
+									}
+								} else if (subC2BF8(&_arrunkObj1337[1]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
+									if (_arrunkObj1337[1]._arr3[0]._field34 != 0) {
+										actionDisplay(1330, 19, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									} else if (subC32B1(1, _item6._field34) != 1) {
+										switch (_item6._field34) {
+										case 10:
+											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 12:
+											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 15:
+											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 17:
+											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 18:
+											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 19:
+											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 20:
+											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										case 21:
+											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+											break;
+										default:
+											break;
+										}
+									} else {
+										subC3456(&_item6, &_arrunkObj1337[1]._arr3[0]);
+										found = true;
+									}
+								} else {
+									actionDisplay(1330, 38, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if (found)
+				return;
+		} else {
+			g_globals->_scenePalette.signalListeners();
+			R2_GLOBALS._sceneObjects->draw();
+			g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
+		}
+	}
 }
 
 void Scene1337::subD183F(int arg1, int arg2) {
@@ -4878,6 +5323,27 @@ void Scene1337::subD195F(int arg1, int arg2) {
 
 void Scene1337::subD1975(int arg1, int arg2) {
 	warning("STUBBED lvl2 Scene1337::subD1975()");
+}
+
+void Scene1337::subD1A48(int arg1) {
+	int tmpVal = -1;
+
+	switch (arg1) {
+	case 200:
+		tmpVal = 141;
+		break;
+	case 300:
+		tmpVal = 142;
+		break;
+	default:
+		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
+		break;
+	}
+
+	if (tmpVal == -1)
+		return;
+
+	actionDisplay(1330, tmpVal, -1, -1, 1, 220, 1, 5, 0, 105, 0);
 }
 
 /*--------------------------------------------------------------------------

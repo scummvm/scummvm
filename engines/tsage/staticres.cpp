@@ -243,7 +243,7 @@ char const *const NO_MSG = " No ";
 char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
-
+char const *const WRONG_ANSWER_MSG = "Wrong respond value sent.";
 const byte k562CC[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,

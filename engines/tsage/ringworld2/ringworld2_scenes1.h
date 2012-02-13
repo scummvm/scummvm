@@ -170,7 +170,7 @@ public:
 };
 
 class Scene1337 : public SceneExt {
-	class unkObj1337sub1: public SceneItem {
+	class unkObj1337sub1: public SceneHotspot {
 	public:
 		SceneObject _object1;
 
@@ -181,7 +181,7 @@ class Scene1337 : public SceneExt {
 		void synchronize(Serializer &s);
 	};
 
-	class unkObj1337_1: public SceneItem {
+	class unkObj1337_1: public SceneHotspot {
 	public:
 		unkObj1337sub1 _arr1[4];
 		unkObj1337sub1 _arr2[8];
@@ -200,7 +200,7 @@ class Scene1337 : public SceneExt {
 
 	class Action1337: public Action {
 	public:
-		void subD18B5(int arg1, int arg2, int arg3);
+		void subD18B5(int resNum, int stripNum, int frameNum);
 		void skipFrames(int32 skipCount);
 	};
 
@@ -325,17 +325,18 @@ public:
 	int  subC27B5(int arg1);
 	int  subC27F9(int arg1);
 	void subC2835(int arg1);
-	int  subC2BF8(unkObj1337sub1 *subObj1, Common::Point *pt);
+	bool subC2BF8(unkObj1337sub1 *subObj1, Common::Point pt);
 	void subC2C2F();
-	void subC318B(int arg1, unkObj1337sub1 *subObj2);
-	int  subC32B1(int arg1);
+	void subC318B(int arg1, unkObj1337sub1 *subObj2, int arg3);
+	int  subC32B1(int arg1, int arg2);
 	int  subC331B(int arg1);
 	int  subC3386(int arg1, int arg2);
 	void subC33C0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	void subC358E(unkObj1337sub1 *subObj1);
+	unkObj1337sub1 *subC34EC(int arg1);
+	void subC358E(unkObj1337sub1 *subObj1, int arg2);
 	int  subC3E92(int arg1);
 	void subC4A39(unkObj1337sub1 *subObj);
 	void subC4CD2();
@@ -346,6 +347,7 @@ public:
 	void suggestInstructions();
 	void shuffleCards();
 	void subCCF26();
+	void subCDB90(int arg1, Common::Point *pt);
 	void subCF31D();
 	void subCF979();
 	void subD026D();
@@ -358,6 +360,7 @@ public:
 	int  subD1940(bool flag);
 	void subD195F(int arg1, int arg2);
 	void subD1975(int arg1, int arg2);
+	void subD1A48(int arg1);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
