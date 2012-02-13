@@ -88,12 +88,9 @@ the game, unpatched versions don't have subtitles in cutscenes,
 and can't complete the game. 
 
 The patch can be downloaded from:
-http://demos.residualvm.org/patches/Gfupd101.exe and obviously requires
-Windows or something similar to unpack and apply it. (There does exist
-tools to unpack it on any platform in the residualvm-tools git-repos).
-
-Additional information on how to apply the patch, can be found in our
-wiki at: http://sourceforge.net/apps/mediawiki/residualvm/index.php?title=Grim_Fandango_Patch
+http://demos.residualvm.org/patches/Gfupd101.exe
+Simply download it and put gfupd101.exe in the same folder as the .LAB-files,
+and you are good to go.
 
 If you want to try to play with fullscreen, or you want to play with
 software-rendering, see the configuration-section below.
