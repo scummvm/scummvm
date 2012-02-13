@@ -26,7 +26,7 @@
  */
 
 #include "mortevielle/mor2.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -280,13 +280,6 @@ void mfouen()
 	g_vm->_menu.menut(soulever, g_vm->getString(S_RAISE));
 }
 
-void atf3f8(int &key) {
-	do {
-		key = testou();
-		CHECK_QUIT;
-	} while (!((key == 61) || (key == 66)));
-}
-
 /* NIVEAU 6 */
 
 void tperd() {
@@ -394,12 +387,12 @@ void sparl(float adr, float rep) {
 	hide_mouse();
 	deline(repint + c_paroles, st, tay);
 	afftex(st, 230, 4, 65, 24, 5);
-	f3f8();
+	f3f8::draw();
 	
 	key = 0;
 	do {
 		parole(repint, haut[caff - 69], 0);
-		atf3f8(key);
+		f3f8::atf3f8(key);
 		CHECK_QUIT;
 	} while (!(key == 66));
 	hirs();
@@ -631,7 +624,7 @@ void tfleche() {
 			tinke();
 		} while (!(qust || rect || anyone));
 
-		if (qust && (touch == '\103'))  dummy = do_alert(stpou, 1);
+		if (qust && (touch == '\103'))  dummy = Alert::show(stpou, 1);
 	} while (!((touch == '\73') || ((touch == '\104') && (x != 0) && (y != 0)) ||
 	           (anyone) || (rect)));
 	if (touch == '\73')  iesc = true;
@@ -767,7 +760,7 @@ void st13(int ob) {
 void aldepl() {
 	int dummy;
 
-	dummy = do_alert(g_vm->getString(S_USE_DEP_MENU), 1);
+	dummy = Alert::show(g_vm->getString(S_USE_DEP_MENU), 1);
 }
 
 } // End of namespace Mortevielle

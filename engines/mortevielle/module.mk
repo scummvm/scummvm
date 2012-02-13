@@ -2,9 +2,9 @@ MODULE := engines/mortevielle
 
 MODULE_OBJS := \
 	actions.o \
-	alert.o \
 	asm.o \
 	detection.o \
+	dialogs.o \
 	graphics.o \
 	keyboard.o \
 	level15.o \
@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	parole.o \
 	parole2.o \
 	prog.o \
-	ques.o \
 	saveload.o \
 	sound.o \
 	taffich.o \

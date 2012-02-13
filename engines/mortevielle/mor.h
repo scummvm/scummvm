@@ -62,7 +62,6 @@ extern void okpas();
 extern void modobj(int m);
 extern void modobj2(int m, bool t1, bool t2);
 extern void repon(int f, int m);
-extern void f3f8();
 extern void t5(int cx);
 extern void affper(int per);
 extern void choix(int min, int max, int &per);

@@ -25,14 +25,36 @@
  * Copyright (c) 1988-1989 Lankhor
  */
 
-#ifndef MORTEVIELLE_QUES_H
-#define MORTEVIELLE_QUES_H
+#ifndef MORTEVIELLE_ALERT_H
+#define MORTEVIELLE_ALERT_H
 
 #include "common/str.h"
 
 namespace Mortevielle {
 
-extern bool ques();
+class Alert {
+private:
+	static void decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs);
+	static void setPosition(int ji, int coldep, int esp);
+	static void fait_boite(int lidep, int nli, int tx);
+	static void fait_choix(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
+public:
+	static int show(const Common::String &s, int n);
+};
 
+class Ques {
+public:
+	static bool show();
+};
+
+class f3f8 {
+public:
+	static void draw();
+	static void divers(int np, bool b);
+	static void atf3f8(int &key);
+	static void aff50(bool c);
+	static void ani50();
+};
+	
 } // End of namespace Mortevielle
 #endif

@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 #include "mortevielle/actions.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
@@ -35,7 +35,6 @@
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/ques.h"
 #include "mortevielle/parole2.h"
 #include "mortevielle/taffich.h"
 #include "mortevielle/var_mor.h"
@@ -529,12 +528,12 @@ void tmettre() {
 					repon(2, 165);
 					maivid();
 					parole(6, -9, 1);
-					quel = do_alert(g_vm->getString(S_YES_NO), 1);
+					quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 					if (quel == 1)  {
 						deline(582, st, tay);
-						i = do_alert(delig, 1);
+						i = Alert::show(delig, 1);
 						tesok = false;
-						entre = ques();
+						entre = Ques::show();
 						hide_mouse();
 						hirs();
 						dessine_rouleau();
@@ -559,7 +558,7 @@ void tmettre() {
 							aniof(1, 2);
 							aniof(1, 1);
 							deline(577, st, tay);
-							i = do_alert(delig, 1);
+							i = Alert::show(delig, 1);
 							aniof(2, 1);
 							crep = 166;
 						}
@@ -611,7 +610,7 @@ void ttourner() {
 		if ((s.mlieu == 13) && (s.ibag == 159) && (s.iboul == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
-			quel = do_alert(g_vm->getString(S_YES_NO), 1);
+			quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 			if (quel == 1)
 				g_vm->_endGame = true;
 			else crep = 168;
@@ -620,7 +619,7 @@ void ttourner() {
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
-			quel = do_alert(g_vm->getString(S_YES_NO), 1);
+			quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 			if (quel == 1) {
 				s.mlieu = 16;
 				affrep();
@@ -700,7 +699,7 @@ void tfrapper() {
 	if (!syn)
 		ecr3(g_vm->getString(S_HIT));
 	if (s.mlieu == 15) {
-		l = do_alert(g_vm->getString(S_BEFORE_USE_DEP_MENU), 1);
+		l = Alert::show(g_vm->getString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
 	if (s.mlieu < 25) {
@@ -930,7 +929,7 @@ void tdormir() {
 		h = h + 1;
 		if (h > 23)  h = 0;
 		tinke();
-		quel = do_alert(g_vm->getString(S_YES_NO), 1);
+		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 		anyone = false;
 	} while (!(quel == 1));
 	crep = 998;
@@ -992,7 +991,7 @@ void tattendre() {
 			return;
 		}
 		repon(2, 102);
-		quel = do_alert(g_vm->getString(S_YES_NO), 1);
+		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 	} while (!(quel == 2));
 	crep = 998;
 	if (! anyone)  tinke();
@@ -1259,7 +1258,7 @@ void MortevielleEngine::loseGame() {
 	heu = 10;
 	jou = 0;
 	repon(2, 180);
-	quel = do_alert(g_vm->getString(S_YES_NO), 1);
+	quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 	_quitGame = (quel != 1);
 }
 

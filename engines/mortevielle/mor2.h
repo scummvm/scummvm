@@ -41,7 +41,6 @@ extern void tlu(int af, int ob);
 extern void delin(int n);
 extern void affrep();
 extern void mfouen();
-extern void atf3f8(int &key);
 /* NIVEAU 6 */
 extern void tperd();
 extern void tsort();

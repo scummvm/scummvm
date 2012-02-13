@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
@@ -47,7 +47,7 @@ const int ioresult = 0;
 
 void testfi() {
 	if (ioresult != 0) {
-		caff = do_alert(err_mess, 1);
+		caff = Alert::show(err_mess, 1);
 		g_vm->quitGame();
 	}
 }
@@ -401,24 +401,6 @@ void repon(int f, int m) {
 			else afftex(st, caspe, 86, dx, 3, 5);
 		}
 	}
-}
-
-void f3f8() {
-	Common::String f3 = g_vm->getString(S_F3);
-	Common::String f8 = g_vm->getString(S_F8);
-
-	// Write the F3 and F8 text strings
-	g_vm->_screenSurface.putxy(3, 44);
-	g_vm->_screenSurface.writeg(f3, 5);
-	g_vm->_screenSurface._textPos.y = 51;
-	g_vm->_screenSurface.writeg(f8, 5);
-
-	// Get the width of the written text strings
-	int f3Width = g_vm->_screenSurface.getStringWidth(f3);
-	int f8Width = g_vm->_screenSurface.getStringWidth(f8);
-
-	// Write out the bounding box
-	g_vm->_screenSurface.drawBox(0, 42, MAX(f3Width, f8Width) + 6, 16, 7);
 }
 
 void t5(int cx) {

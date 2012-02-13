@@ -26,7 +26,7 @@
  */
 
 #include "common/file.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/level15.h"
 #include "mortevielle/menu.h"
@@ -50,25 +50,6 @@ const int ioresult = 0;
  */
 void dem2() {
 	// Deprecated under ScummVM
-}
-
-void ani50() {
-	crep = animof(1, 1);
-	pictout(adani, crep, 63, 12);
-	crep = animof(2, 1);
-	pictout(adani, crep, 63, 12);
-	f2_all = (res == 1);
-	repon(2, c_paroles + 143);
-}
-
-void aff50(bool c) {
-	caff = 50;
-	maff = 0;
-	taffich();
-	dessine(ades, 63, 12);
-	if (c)  ani50();
-	else repon(2, c_paroles + 142);
-	f3f8();
 }
 
 void charpal() {
