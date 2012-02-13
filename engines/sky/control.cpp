@@ -878,6 +878,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			clickRes = handleClick(lookList[0]);
 			if (clickRes == GAME_SAVED)
 				saveDescriptions(saveGameTexts);
+			else if (clickRes == NO_DISK_SPACE)
+				displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 			quitPanel = true;
 			_mouseClicked = false;
 			_keyPressed.reset();
