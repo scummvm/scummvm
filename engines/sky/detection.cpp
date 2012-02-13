@@ -286,7 +286,7 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// Set the save slot and save the game
 	_skyControl->_selectedGame = slot - 1;
-	if (_skyControl->saveGameToFile() != GAME_SAVED)
+	if (_skyControl->saveGameToFile(false) != GAME_SAVED)
 		return Common::kWritePermissionDenied;
 
 	// Load current save game descriptions

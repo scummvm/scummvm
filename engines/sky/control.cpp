@@ -535,7 +535,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 		return saveRestorePanel(true); // texts can be edited
 	case SAVE_A_GAME:
 		animClick(pButton);
-		return saveGameToFile();
+		return saveGameToFile(true);
 	case RESTORE_A_GAME:
 		animClick(pButton);
 		return restoreGameFromFile(false);
@@ -1101,6 +1101,10 @@ void Control::doAutoSave() {
 		displayMessage(0, "Unable to create autosave file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
+
+	_savedCharSet = _skyText->giveCurrentCharSet();
+	_savedMouse = _skyMouse->giveCurrentMouseType();
+
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
@@ -1114,7 +1118,7 @@ void Control::doAutoSave() {
 	free(saveData);
 }
 
-uint16 Control::saveGameToFile() {
+uint16 Control::saveGameToFile(bool fromControlPanel) {
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
@@ -1122,6 +1126,13 @@ uint16 Control::saveGameToFile() {
 	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL)
 		return NO_DISK_SPACE;
+
+	if (!fromControlPanel) {
+		// These variables are usually set when entering the control panel,
+		// but not when using the GMM.
+		_savedCharSet = _skyText->giveCurrentCharSet();
+		_savedMouse = _skyMouse->giveCurrentMouseType();
+	}
 
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
