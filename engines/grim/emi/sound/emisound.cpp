@@ -230,6 +230,7 @@ void EMISound::initMusicTable() {
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		// TODO, fill this in, data is in the binary.
 		//initMusicTablePS2()
+		_musicTable = NULL;
 		_musicPrefix = "";
 	} else {
 		_musicTable = initMusicTableRetail("Textures/FullMonkeyMap.imt");
