@@ -9,10 +9,9 @@
 	register unsigned int rinc, ginc, binc;
 #endif
 #ifdef INTERP_Z
-	register unsigned short *pz;
-	register unsigned int *pz_2;
+	register unsigned int *pz;
 	int zinc;
-	register unsigned int z, zz;
+	register unsigned int z;
 #endif
 
 	if (p1->y > p2->y || (p1->y == p2->y && p1->x > p2->x)) {
@@ -25,7 +24,6 @@
 	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p1->y + p1->x * PSZB);
 #ifdef INTERP_Z
 	pz = zb->zbuf + (p1->y * sx + p1->x);
-	pz_2 = zb->zbuf2 + (p1->y * sx + p1->x);
 	z = p1->z;
 #endif
 
@@ -49,10 +47,9 @@
 #define ZZ(x) x
 #define PUTPIXEL() 									\
 	{												\
-		zz = z >> ZB_POINT_Z_FRAC_BITS;				\
-		if ((ZCMP(zz, *pz)) && (ZCMP(z, *pz_2))) {	\
+		if (ZCMP(z, *pz)) {							\
 			RGBPIXEL;								\
-			*pz_2 = z; 								\
+			*pz = z; 								\
 		}											\
 	}
 #else // INTERP_Z
@@ -78,12 +75,10 @@
 		if (a > 0) {					\
 			pp = (PIXEL *)((char *)pp + pp_inc_1); \
 			ZZ(pz+=(inc_1));			\
-			ZZ(pz_2+=(inc_1));			\
 			a -= dx;					\
 		} else {						\
 			pp = (PIXEL *)((char *)pp + pp_inc_2); \
 			ZZ(pz += (inc_2)); \
-			ZZ(pz_2 += (inc_2)); \
 			a += dy; \
 		} \
 	} while (--n >= 0);

@@ -4,8 +4,7 @@
 {
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
-	unsigned short *pz1;
-	unsigned int *pz2;
+	unsigned int *pz1;
 	PIXEL *pp1;
 	int part, update_left, update_right;
 
@@ -134,7 +133,6 @@
 
 	pp1 = (PIXEL *)((char *)zb->pbuf.getRawBuffer() + zb->linesize * p0->y);
 	pz1 = zb->zbuf + p0->y * zb->xsize;
-	pz2 = zb->zbuf2 + p0->y * zb->xsize;
 
 	DRAW_INIT();
 
@@ -247,9 +245,8 @@
 				register PIXEL *pp;
 				register int n;
 #ifdef INTERP_Z
-				register unsigned short *pz;
-				register unsigned int *pz_2;
-				register unsigned int z, zz;
+				register unsigned int *pz;
+				register unsigned int z;
 #endif
 #ifdef INTERP_RGB
 				register unsigned int or1, og1, ob1;
@@ -265,7 +262,6 @@
 				pp = (PIXEL *)((char *)pp1 + x1 * PSZB);
 #ifdef INTERP_Z
 				pz = pz1 + x1;
-				pz_2 = pz2 + x1;
 				z = z1;
 #endif
 #ifdef INTERP_RGB
@@ -288,7 +284,6 @@
 					PUT_PIXEL(3);
 #ifdef INTERP_Z
 					pz += 4;
-					pz_2 += 4;
 #endif
 					pp = (PIXEL *)((char *)pp + 4 * PSZB);
 					n -= 4;
@@ -297,7 +292,6 @@
 					PUT_PIXEL(0);
 #ifdef INTERP_Z
 					pz += 1;
-					pz_2 += 1;
 #endif
 					pp = (PIXEL *)((char *)pp + PSZB);
 					n -= 1;
@@ -354,7 +348,6 @@
 			// screen coordinates
 			pp1 = (PIXEL *)((char *)pp1 + zb->linesize);
 			pz1 += zb->xsize;
-			pz2 += zb->xsize;
 		}
 	}
 }

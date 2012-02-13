@@ -35,8 +35,7 @@ extern uint8 PSZB;
 
 struct Buffer {
 	byte *pbuf;
-	unsigned short *zbuf;
-	unsigned int *zbuf2;
+	unsigned int *zbuf;
 };
 
 typedef struct {
@@ -48,8 +47,7 @@ typedef struct {
 
 	Buffer buffers[2];
 
-	unsigned short *zbuf;
-	unsigned int *zbuf2;
+	unsigned int *zbuf;
 	unsigned char *shadow_mask_buf;
 	int shadow_color_r;
 	int shadow_color_g;

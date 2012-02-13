@@ -6,18 +6,14 @@ namespace TinyGL {
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
 void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
-	unsigned short *pz;
-	unsigned int *pz_2;
+	unsigned int *pz;
 	PIXEL *pp;
-	unsigned int zz;
 
 	pz = zb->zbuf + (p->y * zb->xsize + p->x);
-	pz_2 = zb->zbuf2 + (p->y * zb->xsize + p->x);
 	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p->y + p->x * PSZB);
-	zz = p->z >> ZB_POINT_Z_FRAC_BITS;
-	if ((ZCMP(zz, *pz)) && (ZCMP((unsigned int)p->z, *pz_2))) {
+	if (ZCMP((unsigned int)p->z, *pz)) {
 		*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
-		*pz_2 = p->z;
+		*pz = p->z;
     }
 }
 

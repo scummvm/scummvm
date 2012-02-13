@@ -165,8 +165,7 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned char *pm1;
-	unsigned short *pz1;
-	unsigned int *pz2;
+	unsigned int *pz1;
 	byte *pp1;
 	int part, update_left, update_right;
 
@@ -224,7 +223,6 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 	pp1 = zb->pbuf.getRawBuffer() + zb->linesize * p0->y;
 	pm1 = zb->shadow_mask_buf + p0->y * zb->xsize;
 	pz1 = zb->zbuf + p0->y * zb->xsize;
-	pz2 = zb->zbuf2 + p0->y * zb->xsize;
 
 	color = RGB_TO_PIXEL(zb->shadow_color_r, zb->shadow_color_g, zb->shadow_color_b);
 
@@ -302,9 +300,8 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 			{
 				register unsigned char *pm;
 				register int n;
-				register unsigned short *pz;
-				register unsigned int *pz_2;
-				register unsigned int z, zz;
+				register unsigned int *pz;
+				register unsigned int z;
 
 				n = (x2 >> 16) - x1;
 
@@ -313,31 +310,26 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 
 				pm = pm1 + x1;
 				pz = pz1 + x1;
-				pz_2 = pz2 + x1;
 				z = z1;
 				while (n >= 3) {
 					for (int a = 0; a < 4; a++) {
-						zz = z >> ZB_POINT_Z_FRAC_BITS;
-						if ((ZCMP(zz, pz[a])) && (ZCMP(z, pz_2[a])) && pm[0]) {
+						if (ZCMP(z, pz[a]) && pm[0]) {
 							buf.setPixelAt(a, color);
-							pz_2[a] = z;
+							pz[a] = z;
 						}
 						z += dzdx;
 					}
 					pz += 4;
-					pz_2 += 4;
 					pm += 4;
 					buf.shiftBy(4);
 					n -= 4;
 				}
 				while (n >= 0) {
-					zz = z >> ZB_POINT_Z_FRAC_BITS;
-					if ((ZCMP(zz, pz[0])) && (ZCMP(z, pz_2[0])) && pm[0]) {
+					if (ZCMP(z, pz[0]) && pm[0]) {
 						buf.setPixelAt(0, color);
-						pz_2[0] = z;
+						pz[0] = z;
 					}
 					pz += 1;
-					pz_2 += 1;
 					pm += 1;
 					buf.shiftBy(1);
 					n -= 1;
@@ -361,7 +353,6 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 			// screen coordinates
 			pp1 += zb->linesize;
 			pz1 += zb->xsize;
-			pz2 += zb->xsize;
 			pm1 += zb->xsize;
 		}
 	}
