@@ -72,8 +72,14 @@ enum EventType {
 	 * use events to ask for the save game dialog or to pause the engine.
 	 * An associated enumerated type can accomplish this.
 	 **/
-	EVENT_PREDICTIVE_DIALOG = 12,
+	EVENT_PREDICTIVE_DIALOG = 12
+
+#ifdef ENABLE_KEYMAPPER
+	,
+	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	// this, please talk to tsoliman and/or LordHoto.
 	EVENT_CUSTOM_BACKEND = 13
+#endif
 };
 
 typedef uint32 CustomEventType;
@@ -101,7 +107,11 @@ struct Event {
 	 */
 	Point mouse;
 
+#ifdef ENABLE_KEYMAPPER
+	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	// this, please talk to tsoliman and/or LordHoto.
 	CustomEventType customType;
+#endif
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
