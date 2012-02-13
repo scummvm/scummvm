@@ -58,6 +58,14 @@ ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer
 	zb->current_texture = NULL;
 	zb->shadow_mask_buf = NULL;
 
+	zb->buffers[0].pbuf = zb->pbuf.getRawBuffer();
+	zb->buffers[0].zbuf = zb->zbuf;
+	zb->buffers[0].zbuf2 = zb->zbuf2;
+
+	zb->buffers[1].pbuf = NULL;
+	zb->buffers[1].zbuf = NULL;
+	zb->buffers[1].zbuf2 = NULL;
+
 	return zb;
 error:
 	gl_free(zb);
@@ -70,7 +78,12 @@ void ZB_close(ZBuffer *zb) {
 
     gl_free(zb->zbuf);
     gl_free(zb->zbuf2);
-    gl_free(zb);
+
+	gl_free(zb->buffers[1].pbuf);
+	gl_free(zb->buffers[1].zbuf);
+	gl_free(zb->buffers[1].zbuf2);
+
+	gl_free(zb);
 }
 
 void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
@@ -186,6 +199,40 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, in
 			color = zb->cmode.RGBToColor(r, g, b);
 			memset_s(pp, color, zb->xsize);
 			pp = pp + zb->linesize;
+		}
+	}
+}
+
+void ZB_selectScreenBuffer(ZBuffer *zb) {
+	zb->pbuf = zb->buffers[0].pbuf;
+	zb->zbuf = zb->buffers[0].zbuf;
+	zb->zbuf2 = zb->buffers[0].zbuf2;
+}
+
+void ZB_selectOffscreenBuffer(ZBuffer *zb) {
+	if (!zb->buffers[1].pbuf) {
+		zb->buffers[1].pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
+		int size = zb->xsize * zb->ysize * sizeof(unsigned short);
+		zb->buffers[1].zbuf = (unsigned short *)gl_malloc(size);
+		size = zb->xsize * zb->ysize * sizeof(unsigned int);
+		zb->buffers[1].zbuf2 = (unsigned int *)gl_malloc(size);
+	}
+
+	zb->pbuf = zb->buffers[1].pbuf;
+	zb->zbuf = zb->buffers[1].zbuf;
+	zb->zbuf2 = zb->buffers[1].zbuf2;
+}
+
+void ZB_blitOffscreenBuffer(ZBuffer *zb) {
+	// TODO: could be faster, probably.
+	if (zb->buffers[1].pbuf) {
+		for (int i = 0; i < zb->xsize * zb->ysize; ++i) {
+			unsigned int d1 = zb->buffers[1].zbuf2[i];
+			unsigned int d2 = zb->buffers[0].zbuf2[i];
+			if (d1 > d2) {
+				const int offset = i * PSZB;
+				memcpy(zb->buffers[0].pbuf + offset, zb->buffers[1].pbuf + offset, PSZB);
+			}
 		}
 	}
 }

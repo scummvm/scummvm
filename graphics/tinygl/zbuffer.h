@@ -33,12 +33,20 @@ typedef byte PIXEL;
 
 extern uint8 PSZB;
 
+struct Buffer {
+	byte *pbuf;
+	unsigned short *zbuf;
+	unsigned int *zbuf2;
+};
+
 typedef struct {
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
 	int pixelbits;
 	int pixelbytes;
+
+	Buffer buffers[2];
 
 	unsigned short *zbuf;
 	unsigned int *zbuf2;
@@ -63,6 +71,15 @@ typedef struct {
 } ZBufferPoint;
 
 // zbuffer.c
+
+void ZB_selectScreenBuffer(ZBuffer *zb);
+void ZB_selectOffscreenBuffer(ZBuffer *zb);
+/**
+ * Blit the buffer to the screen buffer, checking the depth of the pixels.
+ * Eack pixel is copied if and only if its depth value is bigger than the
+ * depth value of the screen pixel, so if it is 'above'.
+ */
+void ZB_blitOffscreenBuffer(ZBuffer *zb);
 
 ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
 void ZB_close(ZBuffer *zb);
