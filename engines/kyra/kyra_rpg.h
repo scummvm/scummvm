@@ -224,6 +224,7 @@ protected:
 	uint16 *_vmpPtr;
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
+	uint8 *_vcnTransitionMask;
 	uint8 *_vcnShift;
 	uint8 *_vcnColTable;
 	uint16 *_blockDrawingBuffer;

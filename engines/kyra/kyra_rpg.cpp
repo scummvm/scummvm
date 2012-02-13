@@ -44,6 +44,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_vmpPtr = 0;
 	_vcnBlocks = 0;
 	_vcfBlocks = 0;
+	_vcnTransitionMask = 0;
 	_vcnShift = 0;
 	_vcnColTable = 0;
 	_vmpPtr = 0;
@@ -126,6 +127,7 @@ KyraRpgEngine::~KyraRpgEngine() {
 	delete[] _vcnColTable;
 	delete[] _vcnBlocks;
 	delete[] _vcfBlocks;
+	delete[] _vcnTransitionMask;
 	delete[] _vcnShift;
 	delete[] _blockDrawingBuffer;
 	delete[] _sceneWindowBuffer;

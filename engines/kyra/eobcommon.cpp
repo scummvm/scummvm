@@ -65,7 +65,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_itemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
-	_tempIconShape = 0;
 
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
@@ -93,7 +92,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_doorSwitches = 0;
 	_monsterProps = 0;
 	_monsterDecorations = 0;
-	_monsterOvl1 = _monsterOvl2 = 0;
+	_monsterFlashOverlay = _monsterStoneOverlay = 0;
 	_monsters = 0;
 	_dstMonsterIndex = 0;
 	_preventMonsterFlash = false;
@@ -214,7 +213,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
-	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));	
+	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
 	memset(_doorType, 0, sizeof(_doorType));
@@ -271,8 +270,8 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete[] _itemNames;
 	delete[] _flyingObjects;
 
-	delete[] _monsterOvl1;
-	delete[] _monsterOvl2;
+	delete[] _monsterFlashOverlay;
+	delete[] _monsterStoneOverlay;
 	delete[] _monsters;
 
 	if (_monsterDecorations) {
@@ -483,11 +482,11 @@ Common::Error EoBCoreEngine::init() {
 	_doorSwitches = new SpriteDecoration[6];
 	memset(_doorSwitches, 0, 6 * sizeof(SpriteDecoration));
 
-	_monsterOvl1 = new uint8[16];
-	_monsterOvl2 = new uint8[16];
-	memset(_monsterOvl1, 15, 16 * sizeof(uint8));
-	memset(_monsterOvl2, 13, 16 * sizeof(uint8));
-	_monsterOvl1[0] = _monsterOvl2[0] = 0;
+	_monsterFlashOverlay = new uint8[16];
+	_monsterStoneOverlay = new uint8[16];
+	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xff : 0x0f, 16 * sizeof(uint8));
+	memset(_monsterStoneOverlay, 0x0d, 16 * sizeof(uint8));
+	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
@@ -700,7 +699,6 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
 	for (int i = 0; i < _numItemIconShapes; i++)
 		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
-	_tempIconShape = new uint8[300];
 
 	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
 
@@ -774,7 +772,6 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		}
 		delete[] _itemIconShapes;
 	}
-	delete[] _tempIconShape;
 
 	if (_sparkShapes) {
 		for (int i = 0; i < 3; i++) {
@@ -838,18 +835,13 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	_itemInHand = itemIndex;
 	int icon = _items[_itemInHand].icon;
 	const uint8 *shp = _itemIconShapes[icon];
+	const uint8 *ovl = 0;
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
-		memcpy(_tempIconShape, shp, shp[1] * shp[2] * 4 + 20);
-		if (_flags.gameID == GI_EOB1)
-			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icon << 4]);
-		else
-			_screen->applyShapeOverlay(_tempIconShape, 3);
-		shp = _tempIconShape;
-	}
+	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2))
+		ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, 3);
 
 	int mouseOffs = itemIndex ? 8 : 0;
-	_screen->setMouseCursor(mouseOffs, mouseOffs, shp);
+	_screen->setMouseCursor(mouseOffs, mouseOffs, shp, ovl);
 }
 
 int EoBCoreEngine::getDexterityArmorClassModifier(int dexterity) {

@@ -349,15 +349,14 @@ void KyraRpgEngine::drawVcnBlocks() {
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
 			bool horizontalFlip = false;
-			int remainder = 0;
-
 			uint16 vcnOffset = *bdb++;
+			uint16 vcnExtraOffsetWll = 0;
 			int wllVcnOffset = 0;
 			int wllVcnRmdOffset = 0;
 
 			if (vcnOffset & 0x8000) {
 				// this renders a wall block over the transparent pixels of a floor/ceiling block
-				remainder = vcnOffset - 0x8000;
+				vcnExtraOffsetWll = vcnOffset - 0x8000;
 				vcnOffset = 0;
 				wllVcnRmdOffset = _wllVcnOffset;
 			}
@@ -388,9 +387,9 @@ void KyraRpgEngine::drawVcnBlocks() {
 				for (int blockY = 0; blockY < 8; blockY++) {
 					src += 3;
 					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src--;
-						*d++ = _vcnColTable[((t & 0x0f) + wllVcnOffset) | shift];
-						*d++ = _vcnColTable[((t >> 4) + wllVcnOffset) | shift];
+						uint8 bl = *src--;
+						*d++ = _vcnColTable[((bl & 0x0f) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
 					}
 					src += 5;
 					d += 168;
@@ -398,54 +397,71 @@ void KyraRpgEngine::drawVcnBlocks() {
 			} else {
 				for (int blockY = 0; blockY < 8; blockY++) {
 					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src++;
-						*d++ = _vcnColTable[((t >> 4) + wllVcnOffset) | shift];
-						*d++ = _vcnColTable[((t & 0x0f) + wllVcnOffset) | shift];
+						uint8 bl = *src++;
+						*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((bl & 0x0f) + wllVcnOffset) | shift];
 					}
 					d += 168;
 				}
 			}
 			d -= 1400;
 
-			if (remainder) {
+			if (vcnExtraOffsetWll) {
 				d -= 8;
 				horizontalFlip = false;
 
-				if (remainder & 0x4000) {
-					remainder &= 0x3fff;
+				if (vcnExtraOffsetWll & 0x4000) {
+					vcnExtraOffsetWll &= 0x3fff;
 					horizontalFlip = true;
 				}
 
-				shift = _vcnShift ? _vcnShift[remainder] : _blockBrightness;
-				src = &_vcnBlocks[remainder << 5];
+				shift = _vcnShift ? _vcnShift[vcnExtraOffsetWll] : _blockBrightness;
+				src = &_vcnBlocks[vcnExtraOffsetWll << 5];
+				uint8 *maskTable = _vcnTransitionMask ? &_vcnTransitionMask[vcnExtraOffsetWll << 5] : 0;
 
 				if (horizontalFlip) {
 					for (int blockY = 0; blockY < 8; blockY++) {
 						src += 3;
+						maskTable += 3;
 						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src--;
-							uint8 h = _vcnColTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnColTable[((t >> 4) + wllVcnRmdOffset) | shift];
-							if (h)
+							uint8 bl = *src--;
+							uint8 mask = _vcnTransitionMask ? *maskTable-- : 0;
+							uint8 h = _vcnColTable[((bl & 0x0f) + wllVcnRmdOffset) | shift];
+							uint8 l = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask & 0x0f)) | h;
+							else if (h)
 								*d = h;
 							d++;
-							if (l)
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask >> 4)) | l;
+							else if (l)
 								*d = l;
 							d++;
 						}
 						src += 5;
+						maskTable += 5;
 						d += 168;
 					}
 				} else {
 					for (int blockY = 0; blockY < 8; blockY++) {
 						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src++;
-							uint8 h = _vcnColTable[((t >> 4) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnColTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
-							if (h)
+							uint8 bl = *src++;
+							uint8 mask = _vcnTransitionMask ? *maskTable++ : 0;
+							uint8 h = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+							uint8 l = _vcnColTable[((bl & 0x0f) + wllVcnRmdOffset) | shift];
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask >> 4)) | h;
+							else if (h)
 								*d = h;
 							d++;
-							if (l)
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask & 0x0f)) | l;
+							else if (l)
 								*d = l;
 							d++;
 						}

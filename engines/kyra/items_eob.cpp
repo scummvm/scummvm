@@ -462,19 +462,18 @@ void EoBCoreEngine::identifyQueuedItems(Item itemQueue) {
 void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	int icn = _items[itemId].icon;
 	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[itemId].flags & 0x80)) ? true : false;
-
-	memcpy(_tempIconShape, _itemIconShapes[icn], _itemIconShapes[icn][1] * _itemIconShapes[icn][2] * 4 + 20);
+	const uint8 *ovl = 0;
 
 	if (applyBluePal) {
-		if (_flags.gameID == GI_EOB1) {
-			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icn << 4]);
+		if (_flags.gameID == GI_EOB1) {			
+			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {
 			_screen->setFadeTableIndex(3);
 			_screen->setShapeFadeMode(1, true);
 		}
 	}
 
-	_screen->drawShape(pageNum, _tempIconShape, x, y, 0);
+	_screen->drawShape(pageNum, _itemIconShapes[icn], x, y, 0, ovl ? 2 : 0, ovl);
 
 	if (applyBluePal) {
 		_screen->setFadeTableIndex(4);

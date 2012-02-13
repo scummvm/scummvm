@@ -302,8 +302,8 @@ protected:
 	const uint8 *_blackBoxWideGrid;
 	const uint8 *_lightningColumnShape;
 
-	uint8 *_tempIconShape;
 	uint8 *_itemsOverlay;
+	static const uint8 _itemsOverlayCGA[];
 
 	static const uint8 _teleporterShapeDefs[];
 	static const uint8 _wallOfForceShapeDefs[];
@@ -528,8 +528,8 @@ protected:
 	void updateMonstersSpellStatus(EoBMonsterInPlay *m);
 	void setBlockMonsterDirection(int block, int dir);
 
-	uint8 *_monsterOvl1;
-	uint8 *_monsterOvl2;
+	uint8 *_monsterFlashOverlay;
+	uint8 *_monsterStoneOverlay;
 
 	SpriteDecoration *_monsterDecorations;
 	EoBMonsterProperty *_monsterProps;

@@ -342,9 +342,9 @@ void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipp
 	uint8 *ovl = 0;
 
 	if (flags & 2)
-		ovl = _monsterOvl1;
+		ovl = _monsterFlashOverlay;
 	else if (_flags.gameID == GI_EOB2 && flags & 0x20)
-		ovl = _monsterOvl2;
+		ovl = _monsterStoneOverlay;
 	else if (palIndex != -1)
 		ovl = _monsterPalettes[palIndex];
 

@@ -159,8 +159,10 @@ bool Screen::init() {
 
 	// Setup CGA colors (if CGA mode is selected)
 	if (_renderMode == Common::kRenderCGA) {
-		Palette pal(4);
+		Palette pal(5);
 		pal.setCGAPalette(1, Palette::kIntensityHigh);
+		// create additional black color 4 for use with the mouse cursor manager
+		pal.fill(4, 1, 0);
 		Screen::setScreenPalette(pal);
 	}
 
@@ -1035,6 +1037,8 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 	if (_use16ColorMode) {
 		color &= 0x0F;
 		color |= (color << 4);
+	} else if (_renderMode == Common::kRenderCGA) {
+		color &= 3;
 	}
 
 	if (xored) {
@@ -1112,6 +1116,8 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	if (_use16ColorMode) {
 		color &= 0x0F;
 		color |= (color << 4);
+	} else if (_renderMode == Common::kRenderCGA) {
+		color &= 3;
 	}
 
 	if (vertical) {
@@ -2086,17 +2092,16 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 
 	while (dst < dstEnd) {
 		code = decodeEGAGetCode(src, nib);
-		last = code & 0xff;
 		uint8 cmd = code >> 8;
 
 		if (cmd--) {
-			code = (cmd << 8) | last;
+			code = (cmd << 8) | (code & 0xff);
 			uint8 *tmpDst = dst;
-			last = *dst;
 
 			if (code < numPatterns) {
 				const uint8 *tmpSrc = patterns[code].pos;
 				countPrev = patterns[code].len;
+				last = *tmpSrc;
 				for (int i = 0; i < countPrev; i++)
 					*dst++ = *tmpSrc++;
 
@@ -2118,7 +2123,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 			count = countPrev;
 
 		} else {
-			*dst++ = last;
+			*dst++ = last = (code & 0xff);
 
 			if (numPatterns < 3840) {
 				patterns[numPatterns].pos = dstPrev;
@@ -3626,7 +3631,7 @@ void Palette::loadEGAPalette(Common::ReadStream &stream, int startIndex, int col
 }
 
 void Palette::setCGAPalette(int palIndex, CGAIntensity intensity) {
-	assert(_numColors == _cgaNumColors);
+	assert(_numColors >= _cgaNumColors);
 	assert(!(palIndex & ~1));
 	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _numColors * 3);
 }

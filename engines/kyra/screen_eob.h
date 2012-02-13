@@ -41,6 +41,7 @@ public:
 	void clearCurDim();
 
 	void setMouseCursor(int x, int y, const byte *shape);
+	void setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl);
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
@@ -52,12 +53,11 @@ public:
 
 	void setScreenPalette(const Palette &pal);
 
-	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding = false, const uint8 *cgaMapping = 0);
+	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit = false, const uint8 *cgaMapping = 0);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
-	void replaceShapePalette(uint8 *shp, const uint8 *pal);
-	void applyShapeOverlay(uint8 *shp, int ovlIndex);
+	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
 
 	void setShapeFrame(int x1, int y1, int x2, int y2);
 	void setShapeFadeMode (uint8 i, bool b);
@@ -75,15 +75,18 @@ public:
 	void setFadeTableIndex(int index);
 	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
 	uint8 *getFadeTable(int index);
+	const uint16 *getCGADitheringTable(int index);
 
 private:
 	void drawShapeSetPixel(uint8 *dst, uint8 c);
-	void scaleShapeProcessLine(uint8 *&dst, const uint8 *&src);
+	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
+	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
 	void generateCGADitheringTables(const uint8 *mappingData);
 
-	int _dsDiv, _dsRem, _dsScaleTmp;
+	int _dsDiv, _dsRem, _dsScaleTrans;
+	uint8 *_cgaScaleTable;
 	int16 _gfxX, _gfxY;
 	uint8 _gfxCol;
 	const uint8 *_gfxMaxY;
@@ -93,12 +96,13 @@ private:
 	uint16 _shapeFadeInternal;
 	uint8 *_fadeData;
 	int _fadeDataIndex;
+	uint8 _shapeOverlay[16];
 
 	uint8 *_dsTempPage;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
-	
+
 	uint8 *_egaColorMap;
 	uint8 *_egaPixelValueTable;
 	bool _useHiResEGADithering;

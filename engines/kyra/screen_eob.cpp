@@ -48,7 +48,8 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_dsTempPage = 0;
 	_dsDiv = 0;
 	_dsRem = 0;
-	_dsScaleTmp = 0;
+	_dsScaleTrans = 0;
+	_cgaScaleTable = 0;
 	_gfxMaxY = 0;
 	_egaColorMap = 0;
 	_egaPixelValueTable = 0;
@@ -60,6 +61,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 Screen_EoB::~Screen_EoB() {
 	delete[] _fadeData;
 	delete[] _dsTempPage;
+	delete[] _cgaScaleTable;
 	delete[] _egaColorMap;
 	delete[] _egaPixelValueTable;
 	delete[] _cgaDitheringTables[0];
@@ -71,7 +73,7 @@ bool Screen_EoB::init() {
 	if (Screen::init()) {
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
-		
+
 		if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA)
 			_fadeData = _vm->resource()->fileData("FADING.DAT", 0);
 
@@ -86,7 +88,8 @@ bool Screen_EoB::init() {
 			}
 		}
 
-		_dsTempPage = new uint8[6000];
+		_dsTempPage = new uint8[12000];
+
 		if (_renderMode == Common::kRenderEGA) {
 			_egaColorMap = new uint8[256];
 			_egaPixelValueTable = new uint8[256];
@@ -97,18 +100,24 @@ bool Screen_EoB::init() {
 
 			if (_vm->game() == GI_EOB2)
 				_useHiResEGADithering = true;
+
 		} else if (_renderMode == Common::kRenderCGA) {
 			_cgaMappingDefault = _vm->staticres()->loadRawData(kEoB1CgaMappingDefault, temp);
 			_cgaDitheringTables[0] = new uint16[256];
 			memset(_cgaDitheringTables[0], 0, 256 * sizeof(uint16));
 			_cgaDitheringTables[1] = new uint16[256];
 			memset(_cgaDitheringTables[1], 0, 256 * sizeof(uint16));
+
 			_cgaDrawCharDitheringTable = new uint16[256];
 			memset(_cgaDrawCharDitheringTable, 0, 256 * sizeof(uint16));
-			
 			static const uint bits[] = { 0, 3, 12, 15 };
 			for (int i = 0; i < 256; i++)
-				WRITE_BE_UINT16(&_cgaDrawCharDitheringTable[i], (bits[i & 3] << 8) | (bits[(i >> 2) & 3] << 12) | (bits[(i >> 4) & 3] << 0) | (bits[(i >> 6) & 3] << 4));
+				_cgaDrawCharDitheringTable[i] = (bits[i & 3] << 8) | (bits[(i >> 2) & 3] << 12) | (bits[(i >> 4) & 3] << 0) | (bits[(i >> 6) & 3] << 4);
+
+			_cgaScaleTable = new uint8[256];
+			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
+			for (int i = 0; i < 256; i++)
+				_cgaScaleTable[i] = ((i & 0xf0) >> 2) | (i & 0x03);
 		}
 
 		return true;
@@ -126,15 +135,43 @@ void Screen_EoB::clearCurDim() {
 }
 
 void Screen_EoB::setMouseCursor(int x, int y, const byte *shape) {
+	setMouseCursor(x, y, shape, 0);
+}
+
+void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl) {
 	if (!shape)
 		return;
 	int mouseW = shape[2] << 3;
 	int mouseH = shape[3];
 	uint8 *cursor = new uint8[mouseW * mouseH];
 	fillRect(0, 0, mouseW, mouseH, _cursorColorKey, 8);
-	drawShape(8, shape, 0, 0, 0);
+	drawShape(8, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
 	copyRegionToBuffer(8, 0, 0, mouseW, mouseH, cursor);
+
+	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
+	// the cursor manager cannot know whether a pixel value of 0 is supposed to be black or transparent. Thus, we
+	// go over the transparency mask again and turn the black pixels to color 4.
+	if (_renderMode == Common::kRenderCGA) {
+		const uint8 *maskTbl = shape + 4 + ((mouseW * mouseH) >> 2);
+		uint8 *dst = cursor;
+		uint8 trans = 0;
+		uint8 shift = 6;
+
+		uint16 mH = mouseH;
+		while (mH--) {
+			uint16 mW = mouseW;
+			while (mW--) {
+				if (shift == 6)
+					trans = *maskTbl++;
+				if (!*dst && !((trans >> shift) & 3))
+					*dst = 4;
+				dst++;
+				shift = (shift - 2) & 7;
+			}
+		}
+	}
+
 	CursorMan.replaceCursor(cursor, mouseW, mouseH, x, y, _cursorColorKey);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
@@ -215,13 +252,14 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 		return;
 
 	if (_renderMode == Common::kRenderCGA) {
-		generateCGADitheringTables(cgaMapping);
+		if (cgaMapping)
+			generateCGADitheringTables(cgaMapping);
 		uint16 *d = (uint16*)dst;
-		uint8 tblSwitch = 0;	
+		uint8 tblSwitch = 0;
 		for (int height = SCREEN_H; height; height--) {
 			const uint16 *table = _cgaDitheringTables[(tblSwitch++) & 1];
 			for (int width = SCREEN_W / 2; width; width--) {
-				*d++ = table[((src[0] & 0x0f) << 4) | (src[1] & 0x0f)];
+				*d++ = table[((src[1] & 0x0f) << 4) | (src[0] & 0x0f)];
 				src += 2;
 			}
 		}
@@ -301,14 +339,53 @@ void Screen_EoB::setScreenPalette(const Palette &pal) {
 	}
 }
 
-uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding, const uint8 *cgaMapping) {
+uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit, const uint8 *cgaMapping) {
 	uint8 *shp = 0;
 	uint16 shapesize = 0;
 
-	uint8 *srcPage = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
-	uint8 *src = srcPage;
+	uint8 *srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
+	uint8 *src = srcLineStart;
 
-	if (no4bitEncoding) {
+	if (_renderMode == Common::kRenderCGA) {
+		if (cgaMapping)
+			generateCGADitheringTables(cgaMapping);
+		shapesize = h * (w << 2) + 4;
+		shp = new uint8[shapesize];
+		memset(shp, 0, shapesize);
+		uint8 *dst = shp;
+
+		*dst++ = 4;
+		*dst++ = (h & 0xff);
+		*dst++ = (w & 0xff);
+		*dst++ = (h & 0xff);
+
+		uint8 *dst2 = dst + (h * (w << 1));
+
+		uint8 tblSwitch = 0;
+		uint16 h1 = h;
+		while (h1--) {
+			uint16 w1 = w << 1;
+			const uint16 *table = _cgaDitheringTables[(tblSwitch++) & 1];
+
+			while (w1--) {
+				uint16 p0 = table[((src[1] & 0x0f) << 4) | (src[0] & 0x0f)];
+				uint16 p1 = table[((src[3] & 0x0f) << 4) | (src[2] & 0x0f)];
+
+				*dst++ = ((p0 & 0x0003) << 6) | ((p0 & 0x0300) >> 4) | ((p1 & 0x0003) << 2) | ((p1 & 0x0300) >> 8);
+
+				uint8 msk = 0;
+				for (int i = 0; i < 4; i++) {
+					if (!src[3 - i])
+						msk |= (3 << (i << 1));
+				}
+				*dst2++ = msk;
+				src += 4;
+			}
+			srcLineStart += SCREEN_W;
+			src = srcLineStart;
+		}
+
+	} else if (encode8bit) {
 		uint16 h1 = h;
 		while (h1--) {
 			uint8 *lineEnd = src + (w << 3);
@@ -326,8 +403,8 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 				shapesize++;
 			} while (src != lineEnd);
 
-			srcPage += 320;
-			src = srcPage;
+			srcLineStart += SCREEN_W;
+			src = srcLineStart;
 		}
 
 		shapesize += 4;
@@ -336,13 +413,13 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 		memset(shp, 0, shapesize);
 		uint8 *dst = shp;
 
-		*dst++ = 0;
+		*dst++ = 8;
 		*dst++ = (h & 0xff);
 		*dst++ = (w & 0xff);
 		*dst++ = (h & 0xff);
 
-		srcPage = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
-		src = srcPage;
+		srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
+		src = srcLineStart;
 
 		h1 = h;
 		while (h1--) {
@@ -367,8 +444,8 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 				*dst++ = val;
 			} while (src != lineEnd);
 
-			srcPage += 320;
-			src = srcPage;
+			srcLineStart += SCREEN_W;
+			src = srcLineStart;
 		}
 
 	} else {
@@ -381,17 +458,14 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 		memset(shp, 0, shapesize);
 		uint8 *dst = shp;
 
-		*dst++ = 1;
+		*dst++ = 2;
 		*dst++ = (h & 0xff);
 		*dst++ = (w & 0xff);
 		*dst++ = (h & 0xff);
 		memset(dst, 0xff, 0x10);
 
 		uint8 *pal = dst;
-		dst += 0x10;
-
-		srcPage = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
-		src = srcPage;
+		dst += 16;
 		nib = col = 0;
 
 		uint16 h1 = h;
@@ -411,14 +485,13 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 					}
 				}
 
-				if (++nib & 1) {
+				if (++nib & 1)
 					*dst = c << 4;
-				} else {
+				else
 					*dst++ |= c;
-				}
 			}
-			srcPage += 320;
-			src = srcPage;
+			srcLineStart += SCREEN_W;
+			src = srcLineStart;
 		}
 		delete [] colorMap;
 	}
@@ -449,10 +522,11 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
-	uint8 flag = *src++;
+	uint8 pixelsPerByte = *src++ ;
 
 	uint16 dH = *src++;
 	uint16 width = (*src++) << 3;
+	uint16 transOffset = (pixelsPerByte == 4) ? (dH * width) >> 2 : 0;
 	src++;
 
 	int rX = x;
@@ -465,148 +539,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 	int pixelStep = (flags & 1) ? -1 : 1;
 
-	if (flag) {
-		const uint8 *pal = ovl ? ovl : src;
-		src += 16;
-
-		if (d < 0) {
-			d = -d;
-			if (d >= dH)
-				return;
-			src += (d * (width >> 1));
-			d = dY + dH - _dsY1;
-			if (d >= 0) {
-				dH = d;
-				dY = _dsY1;
-				d = _dsY2 - dY;
-			}
-		} else {
-			d = _dsY2 - dY;
-		}
-
-		if (d < 1)
-			return;
-
-		if (d < dH)
-			dH = d;
-
-		int16 cnt1 = 0;
-		int16 cnt2 = 0;
-		int16 dXbit1 = dX & 1;
-
-		if (dX < 0) {
-			width += dX;
-			d = -dX;
-			if (flags & 1)
-				src -= (d >> 1);
-			else
-				src += (d >> 1);
-
-			if (d >= w2)
-				return;
-
-			dX = 0;
-			cnt1++;
-		}
-
-		d = (dW << 3) - dX;
-
-		if (d < 1)
-			return;
-
-		if (d < width) {
-			width = d;
-			cnt2++;
-		}
-
-		dst += (dY * 320 + dX);
-
-		if (pageNum == 0 || pageNum == 1)
-			addDirtyRect(rX, rY, rW, rH);
-
-		int w3 = w2;
-		dY = 320 - width;
-		width >>= 1;
-		w2 >>= 1;
-		if (flags & 1)
-			src += (w2 - 1);
-
-		int16 w1shr = width;
-
-		if (cnt1 && (dXbit1 & 1)) {
-			w1shr++;
-			w2++;
-			if (!cnt2)
-				dY += 2;
-		}
-
-		if (cnt2 && (dXbit1 & 1))
-			w1shr++;
-
-		int lineSrcStep = (w2 - w1shr);
-		if (flags & 1)
-			lineSrcStep = w3 - lineSrcStep;
-
-		while (dH--) {
-			int16 hpos = width;
-			uint8 col = 0;
-			uint8 b = 0;
-			uint8 nextloop = 0;
-
-			if (cnt1 && dXbit1) {
-				if (!hpos)
-					return;
-				b = *src;
-				src += pixelStep;
-				nextloop = 2;
-			} else {
-				nextloop = hpos ? 1 : 3;
-			}
-
-			while (nextloop) {
-				switch (nextloop) {
-				case 1:
-					b = *src;
-					src += pixelStep;
-					col = pal[(flags & 1) ? (b & 0x0f) : (b >> 4)];
-					if (col)
-						drawShapeSetPixel(dst, col);
-					dst++;
-
-				case 2:
-					col = pal[(flags & 1) ? (b >> 4) : (b & 0x0f)];
-
-					if (!col) {
-						nextloop = 4;
-						break;
-					}
-
-					drawShapeSetPixel(dst++, col);
-					nextloop = --hpos ? 1 : 3;
-					break;
-
-				case 3:
-					if (cnt2 && dXbit1) {
-						col = pal[(flags & 1) ? (*src & 0x0f) : (*src >> 4)];
-						src += pixelStep;
-						if (col)
-							drawShapeSetPixel(dst, col);
-						dst++;
-					}
-
-					src += lineSrcStep;
-					dst += dY;
-					nextloop = 0;
-					break;
-
-				case 4:
-					dst++;
-					nextloop = --hpos ? 1 : 3;
-					break;
-				}
-			}
-		}
-	} else {
+	if (pixelsPerByte == 8)  {
 		uint16 marginLeft = 0;
 		uint16 marginRight = 0;
 
@@ -740,6 +673,127 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			if (flags & 1)
 				src = src2 + 1;
 		}
+	} else {
+		const uint8 *pal = 0;
+		uint8 cgaPal[4];
+		memset(cgaPal, 0, 4);
+
+		if (pixelsPerByte == 2) {
+			pal = ovl ? ovl : src;
+			src += 16;
+		} else {
+			static const uint8 cgaDefOvl[] = { 0x00, 0x55, 0xaa, 0xff };
+			pal = ovl ? ovl : cgaDefOvl;
+			for (int i = 0; i < 4; i++)
+				cgaPal[i] = pal[i] & 3;
+			pal = cgaPal;
+		}
+
+		if (d < 0) {
+			d = -d;
+			if (d >= dH)
+				return;
+			src += (d * (width / pixelsPerByte));
+			d = dY + dH - _dsY1;
+			if (d >= 0) {
+				dH = d;
+				dY = _dsY1;
+				d = _dsY2 - dY;
+			}
+		} else {
+			d = _dsY2 - dY;
+		}
+
+		if (d < 1)
+			return;
+
+		if (d < dH)
+			dH = d;
+
+		bool trimL = false;
+		uint8 dXbitAlign = dX & (pixelsPerByte - 1);
+
+		if (dX < 0) {
+			width += dX;
+			d = -dX;
+			if (flags & 1)
+				src -= (d / pixelsPerByte);
+			else
+				src += (d / pixelsPerByte);
+
+			if (d >= w2)
+				return;
+
+			dX = 0;
+			trimL = true;
+		}
+
+		d = (dW << 3) - dX;
+
+		if (d < 1)
+			return;
+
+		if (d < width)
+			width = d;
+
+		dst += (dY * 320 + dX);
+
+		if (pageNum == 0 || pageNum == 1)
+			addDirtyRect(rX, rY, rW, rH);
+
+		int pitch = 320 - width;
+		int16 lineSrcStep = (w2 - width) / pixelsPerByte;
+		uint8 lineSrcStepRemainder = (w2 - width) % pixelsPerByte;
+
+		w2 /= pixelsPerByte;
+		if (flags & 1)
+			src += (w2 - 1);
+
+		uint8 pixelPacking = 8 / pixelsPerByte;
+		uint8 pixelPackingMask = 0;
+
+		for (int i = 0; i < pixelPacking; i++)
+			pixelPackingMask |= (1 << i);
+
+		if (trimL && (dXbitAlign > lineSrcStepRemainder))
+			lineSrcStep--;
+
+		uint8 bitShDef = 8 - pixelPacking;
+		if (flags & 1) {
+			lineSrcStep = (w2 << 1) - lineSrcStep;
+			bitShDef = 0;
+		}
+
+		uint8 bitShLineStart = bitShDef;
+		if (trimL)
+			bitShLineStart -= (dXbitAlign * pixelStep * pixelPacking);
+
+		while (dH--) {
+			int16 wd = width;
+			uint8 in = 0;
+			uint8 trans = 0;
+			uint8 shift = bitShLineStart;
+			uint8 shSwtch = bitShLineStart;
+
+			while (wd--) {
+				if (shift == shSwtch) {
+					in = *src;
+					trans = src[transOffset];
+					src += pixelStep;
+					shSwtch = bitShDef;
+				}
+				if (pixelsPerByte == 2) {
+					if (pal[(in >> shift) & pixelPackingMask])
+						drawShapeSetPixel(dst, pal[(in >> shift) & pixelPackingMask]);
+				} else {
+					*dst = (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
+				}
+				dst++;
+				shift = (shift - (pixelStep * pixelPacking) & 7);
+			}
+			src += lineSrcStep;
+			dst += pitch;
+		}
 	}
 }
 
@@ -753,69 +807,75 @@ const uint8 *Screen_EoB::scaleShape(const uint8 *shapeData, int steps) {
 }
 
 const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
-	uint8 *d = _dsTempPage;
-	*d++ = *shp++;
+	uint8 *dst = (shp != _dsTempPage) ? _dsTempPage : _dsTempPage + 6000;
+	uint8 *d = dst;
+	uint8 pixelsPerByte = *d++ = *shp++;
+	assert (pixelsPerByte > 1);
 
-	uint16 h = (*shp++) + 1;
+	uint16 h = shp[0] + 1;
 	d[0] = d[2] = (h << 1) / 3;
-	d++;
 
-	uint16 w = *shp++;
-	uint16 w2 = w << 2;
+	uint16 w = shp[1];
+	uint16 w2 = (w << 3) / pixelsPerByte;
 	uint16 t = ((w << 1) % 3) ? 1 : 0;
-	*d++ = ((w << 1) / 3) + t;
+	d[1] = ((w << 1) / 3) + t;
+	
+	uint32 transOffsetSrc = (pixelsPerByte == 4) ? (shp[0] * shp[1]) << 1 : 0;
+	uint32 transOffsetDst = (pixelsPerByte == 4) ? (d[0] * d[1]) << 1 : 0;
+	shp += 3;
+	d += 3;	
 
-	shp++;
-	d++;
-
-	int i = 0;
-	while (i < 16) {
-		if (!shp[i]) {
-			i = -i;
-			break;
+	if (pixelsPerByte == 2) {
+		int i = 0;
+		while (i < 16) {
+			if (!shp[i]) {
+				i = -i;
+				break;
+			}
+			i++;
 		}
-		i++;
+
+		if (i >= 0)
+			i = 0;
+		else
+			i = -i;
+
+		_dsScaleTrans = (i << 4) | (i & 0x0f);
+		for (int ii = 0; ii < 16; ii++)
+			*d++ = *shp++;
 	}
-
-	if (i >= 0)
-		i = 0;
-	else
-		i = -i;
-
-	_dsScaleTmp = (i << 4) | (i & 0x0f);
-	for (int ii = 0; ii < 16; ii++)
-		*d++ = *shp++;
 
 	_dsDiv = w2 / 3;
 	_dsRem = w2 % 3;
 
 	while (--h) {
-		scaleShapeProcessLine(d, shp);
+		if (pixelsPerByte == 2)
+			scaleShapeProcessLine4Bit(d, shp);
+		else
+			scaleShapeProcessLine2Bit(d, shp, transOffsetDst, transOffsetSrc);
 		if (!--h)
 			break;
-		scaleShapeProcessLine(d, shp);
+		if (pixelsPerByte == 2)
+			scaleShapeProcessLine4Bit(d, shp);
+		else
+			scaleShapeProcessLine2Bit(d, shp, transOffsetDst, transOffsetSrc);
 		if (!--h)
 			break;
 		shp += w2;
 	}
 
-	return (const uint8 *)_dsTempPage;
+	return (const uint8*)dst;
 }
 
-void Screen_EoB::replaceShapePalette(uint8 *shp, const uint8 *pal) {
-	if (*shp != 1)
-		return;
-	shp += 4;
-	memcpy(shp, pal, 16);
-}
+const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex) {
+	if (*shp != 2)
+		return 0;
 
-void Screen_EoB::applyShapeOverlay(uint8 *shp, int ovlIndex) {
-	if (*shp != 1)
-		return;
 	shp += 4;
-	uint8 *ovl = getFadeTable(ovlIndex);
+	uint8 *ovl = getFadeTable(paletteOverlayIndex);
 	for (int i = 0; i < 16; i++)
-		shp[i] = ovl[shp[i]];
+		_shapeOverlay[i] = ovl[shp[i]];
+	return _shapeOverlay;
 }
 
 void Screen_EoB::setShapeFrame(int x1, int y1, int x2, int y2) {
@@ -1187,6 +1247,10 @@ uint8 *Screen_EoB::getFadeTable(int index) {
 	return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0;
 }
 
+const uint16 *Screen_EoB::getCGADitheringTable(int index) {
+	return !(index & ~1) ? _cgaDitheringTables[index] : 0;
+}
+
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 c) {
 	if (_shapeFadeMode[0]) {
 		if (_shapeFadeMode[1]) {
@@ -1206,7 +1270,35 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 c) {
 	*dst = c;
 }
 
-void Screen_EoB::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
+void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc) {
+	for (int i = 0; i < _dsDiv; i++) {
+		shpDst[0] = (_cgaScaleTable[shpSrc[0]] << 2) | (shpSrc[1] >> 6);
+		shpDst[1] = ((shpSrc[1] & 0x0f) << 4) | ((shpSrc[2] >> 2) & 0x0f);
+		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | (shpSrc[transOffsetSrc + 1] >> 6);
+		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x0f) << 4) | ((shpSrc[transOffsetSrc + 2] >> 2) & 0x0f);
+		shpSrc += 3;
+		shpDst += 2;
+	}
+
+	if (_dsRem == 1) {
+		shpDst[0] = _cgaScaleTable[shpSrc[0]] << 2;
+		shpDst[1] = 0;
+		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | 3;
+		shpDst[transOffsetDst + 1] = 0xff;
+		shpSrc++;
+		shpDst += 2;
+
+	} else if (_dsRem == 2) {
+		shpDst[0] = (_cgaScaleTable[shpSrc[0]] << 2) | (shpSrc[1] >> 6);
+		shpDst[1] = (shpSrc[1] & 0x3f) << 2;
+		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | (shpSrc[transOffsetSrc + 1] >> 6);
+		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x3f) << 2) | 3;
+		shpSrc += 2;
+		shpDst += 2;
+	}
+}
+
+void Screen_EoB::scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src) {
 	for (int i = 0; i < _dsDiv; i++) {
 		*dst++ = *src++;
 		*dst++ = (READ_BE_UINT16(src) >> 4) & 0xff;
@@ -1215,13 +1307,13 @@ void Screen_EoB::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
 
 	if (_dsRem == 1) {
 		*dst++ = *src++;
-		*dst++ = _dsScaleTmp;
+		*dst++ = _dsScaleTrans;
 	} else if (_dsRem == 2) {
 		*dst++ = (src[0] & 0xf0) | (src[1] >> 4);
 		src += 2;
-		*dst++ = _dsScaleTmp;
-		*dst++ = _dsScaleTmp;
-		*dst++ = _dsScaleTmp;
+		*dst++ = _dsScaleTrans;
+		*dst++ = _dsScaleTrans;
+		*dst++ = _dsScaleTrans;
 	}
 }
 
@@ -1233,8 +1325,8 @@ bool Screen_EoB::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y
 
 void Screen_EoB::generateCGADitheringTables(const uint8 *mappingData) {
 	for (int i = 0; i < 256; i++) {
-		WRITE_BE_UINT16(&_cgaDitheringTables[0][i], (mappingData[i >> 4] << 8) | mappingData[(i & 0x0f) + 16]);
-		WRITE_BE_UINT16(&_cgaDitheringTables[1][i], (mappingData[(i >> 4) + 16] << 8) | mappingData[i & 0x0f]);
+		_cgaDitheringTables[0][i] = (mappingData[(i >> 4) + 16] << 8) | mappingData[i & 0x0f];
+		_cgaDitheringTables[1][i] = (mappingData[i >> 4] << 8) | mappingData[(i & 0x0f) + 16];
 	}
 }
 
@@ -1406,7 +1498,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			uint8 in = s | last;
 			uint16 cmp1 = 0;
 			uint16 cmp2 = 0;
-			
+
 			if (color1) {
 				in &= m;
 				cmp1 = _cgaDitheringTable[in];
@@ -1418,18 +1510,18 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			}
 
 			uint16 cDst = 0;
-			uint8 sh = 14;
+			uint8 sh = 6;
 			for (int i = 0; i < _width; i++) {
 				cDst |= ((dst[i] & 3) << sh);
-				sh -= 2;
+				sh = (sh - 2) & 0x0f;
 			}
 
 			uint16 out = (~(cmp1 | cmp2) & cDst) | (cmp1 & cgaMask1) | (cmp2 & cgaMask2);
 
-			sh = 14;
+			sh = 6;
 			for (int i = 0; i < _width; i++) {
 				*dst++ = (out >> sh) & 3;
-				sh -= 2;
+				sh = (sh - 2) & 0x0f;
 			}
 
 			last = s;

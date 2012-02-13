@@ -1099,6 +1099,7 @@ void EoBEngine::seq_xdeath() {
 	_screen->loadShapeSetBitmap("XDEATH3", 5, 3);
 	shapes2 = _screen->encodeShape(22, 0, 16, 95, true, _cgaMappingDefault);
 	_screen->loadEoBBitmap("XDEATH1", _cgaMappingDefault, 5, 3, -1);
+	_screen->convertPage(3, 2, _cgaMappingDefault);
 	_screen->setCurPage(0);
 
 	for (int i = 0; i < 10; i++) {

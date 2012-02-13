@@ -55,7 +55,8 @@ Common::Error EoBEngine::init() {
 
 	initStaticResource();
 
-	_itemsOverlay = _res->fileData((_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA) ? "ITEMRMP.EGA" : "ITEMRMP.VGA", 0);
+	if (_configRenderMode != Common::kRenderCGA)
+		_itemsOverlay = _res->fileData((_configRenderMode == Common::kRenderEGA) ? "ITEMRMP.EGA" : "ITEMRMP.VGA", 0);
 
 	_screen->modifyScreenDim(7, 0x01, 0xB3, 0x22, 0x12);
 	_screen->modifyScreenDim(9, 0x01, 0x7D, 0x26, 0x3F);
@@ -553,7 +554,7 @@ void EoBEngine::healParty() {
 }
 
 const KyraRpgGUISettings *EoBEngine::guiSettings() {
-	return &_guiSettings;
+	return (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA) ? &_guiSettingsEGA : &_guiSettingsVGA;
 }
 
 } // End of namespace Kyra

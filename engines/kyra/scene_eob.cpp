@@ -279,15 +279,51 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 
 	const char *filePattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN";
 	_screen->loadBitmap(Common::String::format(filePattern, _lastBlockDataFile).c_str(), 3, 3, 0);
-	const uint8 *v = _screen->getCPagePtr(3);
-	uint32 tlen = READ_LE_UINT16(v) << 5;
-	v += 2;
+	const uint8 *pos = _screen->getCPagePtr(3);
+	uint32 tlen = READ_LE_UINT16(pos) << 5;
+	pos += 2;
 	if (!(_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)))
-		memcpy(_vcnColTable, v, 32);
-	v += 32;
+		memcpy(_vcnColTable, pos, 32);
+	pos += 32;
 	delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[tlen];
-	memcpy(_vcnBlocks, v, tlen);
+
+	if (_configRenderMode == Common::kRenderCGA) {
+		uint8 *tmp = _screen->encodeShape(0, 0, 1, 8, false, cgaMapping);
+		delete[] tmp;
+
+		delete[] _vcnTransitionMask;
+		_vcnTransitionMask = new uint8[tlen];
+		uint8 tblSwitch = 0;
+		uint8 *dst = _vcnBlocks;
+		uint8 *dst2 = _vcnTransitionMask;
+
+		while (dst < _vcnBlocks + tlen) {
+			const uint16 *table = _screen->getCGADitheringTable((tblSwitch++) & 1);
+			for (int ii = 0; ii < 2; ii++) {
+				*dst++ = ((table[pos[0]] & 0x000f) << 4) | ((table[pos[0]] & 0x0f00) >> 8);
+				*dst++= ((table[pos[1]] & 0x000f) << 4) | ((table[pos[1]] & 0x0f00) >> 8);
+
+				uint8 msk = 0;
+				if (pos[0] & 0xf0)
+					msk |= 0x30;
+				if (pos[0] & 0x0f)
+					msk |= 0x03;
+				*dst2++ = msk ^ 0x33;
+
+				msk = 0;
+				if (pos[1] & 0xf0)
+					msk |= 0x30;
+				if (pos[1] & 0x0f)
+					msk |= 0x03;
+				*dst2++ = msk ^ 0x33;
+
+				pos += 2;
+			}
+		}
+	} else {
+		memcpy(_vcnBlocks, pos, tlen);
+	}
 }
 
 void EoBCoreEngine::loadBlockProperties(const char *mazFile) {
@@ -338,7 +374,7 @@ const uint8 *EoBCoreEngine::getBlockFileData(const char *mazFile) {
 }
 
 void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
-	_screen->loadShapeSetBitmap(cpsFile, 3, 3);
+	_screen->loadShapeSetBitmap(cpsFile, 5, 3);
 	Common::SeekableReadStream *s = _res->createReadStream(decFile);
 
 	_levelDecorationDataSize = s->readUint16LE();

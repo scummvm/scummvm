@@ -108,7 +108,8 @@ private:
 
 	const KyraRpgGUISettings *guiSettings();
 
-	static const KyraRpgGUISettings _guiSettings;
+	static const KyraRpgGUISettings _guiSettingsVGA;
+	static const KyraRpgGUISettings _guiSettingsEGA;
 	static const uint8 _egaDefaultPalette[];
 };
 

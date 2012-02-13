@@ -198,6 +198,10 @@ const uint8 EoBCoreEngine::_charClassModifier[] = {
 	0x00, 0x00, 0x02
 };
 
+const uint8 EoBCoreEngine::_itemsOverlayCGA[] = {
+	0x00, 0x55, 0x55, 0xFF
+};
+
 const uint8 EoBCoreEngine::_teleporterShapeDefs[] = {
 	0x0C, 0x58, 0x02, 0x0E,
 	0x0C, 0x67, 0x01, 0x07,
@@ -1181,9 +1185,14 @@ void EoBEngine::initSpells() {
 	}
 }
 
-const KyraRpgGUISettings EoBEngine::_guiSettings = {
+const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180	}
+};
+
+const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
+	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 13, 9, 2, 133, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14 }
 };
 
 const uint8 EoBEngine::_egaDefaultPalette[] = {
