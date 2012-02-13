@@ -27,7 +27,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"
 #include "mortevielle/mortevielle.h"

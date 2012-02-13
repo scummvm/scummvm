@@ -26,7 +26,7 @@
  */
 
 #include "mortevielle/actions.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mor.h"
 #include "mortevielle/mor2.h"

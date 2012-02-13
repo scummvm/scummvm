@@ -30,7 +30,7 @@
 #include "graphics/pixelformat.h"
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/actions.h"
-#include "mortevielle/alert.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/asm.h"
 #include "mortevielle/keyboard.h"
 #include "mortevielle/level15.h"
@@ -467,34 +467,19 @@ Common::Error MortevielleEngine::run() {
  * Show the game introduction
  */
 void MortevielleEngine::showIntroduction() {
-	aff50(false);
+	f3f8::aff50(false);
 	mlec = 0;
-	divers(142, false);
+	f3f8::divers(142, false);
 	CHECK_QUIT;
 
-	ani50();
-	divers(143, true);
+	f3f8::ani50();
+	f3f8::divers(143, true);
 	CHECK_QUIT;
 
 	// TODO: Once music is implemented, only use the below delay if music is turned off
 	suite();
 	delay(3000);
 	music();
-}
-
-void MortevielleEngine::divers(int np, bool b) {
-	teskbd();
-	do {
-		parole(np, 0, 0);
-		atf3f8(key);
-		CHECK_QUIT;
-
-		if (newgd != gd) {
-			gd = newgd;
-			hirs();
-			aff50(b);
-		}
-	} while (!(key == 66));
 }
 
 /**
@@ -583,7 +568,7 @@ void MortevielleEngine::handleAction() {
 		if (choisi && (msg[3] == charge))
 			g_vm->_savegameManager.loadGame((msg[4] & 7) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = do_alert(stpou, 1);
+			temps = Alert::show(stpou, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((mnumo != no_choice) && ((msg[3] == action) || (msg[3] == saction))) {

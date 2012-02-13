@@ -93,7 +93,6 @@ private:
 	void mainGame();
 	void playGame();
 	void handleAction();
-	void divers(int np, bool b);
 public:
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
