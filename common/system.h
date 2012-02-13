@@ -51,8 +51,10 @@ class UpdateManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
+#ifdef ENABLE_KEYMAPPER
 class HardwareKeySet;
 class Keymap;
+#endif
 }
 
 class AudioCDManager;
@@ -933,6 +935,7 @@ public:
 		return _eventManager;
 	}
 
+#ifdef ENABLE_KEYMAPPER
 	/**
 	 * Register hardware keys with keymapper
 	 *
@@ -952,6 +955,7 @@ public:
 	 * See keymapper documentation for further reference.
 	 */
 	virtual Common::Keymap *getGlobalKeymap() { return 0; }
+#endif
 	//@}
 
 

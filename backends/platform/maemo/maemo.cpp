@@ -129,16 +129,12 @@ void OSystem_SDL_Maemo::setupIcon() {
 	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
-Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
+Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
 	return new Common::HardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
-#else
-	return OSystem_POSIX::getHardwareKeySet();
-#endif
 }
 
 Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
-#ifdef ENABLE_KEYMAPPER
 	using namespace Common;
 	Keymap *globalMap = new Keymap("maemo");
 
@@ -160,10 +156,8 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 	act->addRightClickEvent();
 
 	return globalMap;
-#else
-	return OSystem_POSIX::getGlobalKeymap();
-#endif
 }
+#endif
 
 void OSystem_SDL_Maemo::initObserver() {
 	assert(_eventManager);

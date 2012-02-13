@@ -174,13 +174,8 @@ static const ModifierTableEntry sdlModifiers[] = {
 	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
 	{ 0, 0, 0, false }
 };
-#endif
-
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
-#ifdef ENABLE_KEYMAPPER
 	return new HardwareKeySet(sdlKeys, sdlModifiers);
-#else
-	return 0;
-#endif
 }
+#endif

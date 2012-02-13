@@ -106,9 +106,8 @@ static const Mod modifiers[] = {
 	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
 	{ 0, 0, 0, false }
 };
-#endif
-
 
 Common::HardwareKeySet *OSystem_LINUXMOTO::getHardwareKeySet() {
 	return OSystem_SDL::getHardwareKeySet();
 }
+#endif

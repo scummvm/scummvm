@@ -41,8 +41,10 @@ public:
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
 	virtual void setupIcon();
+#ifdef ENABLE_KEYMAPPER
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual Common::Keymap *getGlobalKeymap();
+#endif
 
 	Model getModel() { return _model; }
 
