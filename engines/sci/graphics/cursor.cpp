@@ -137,6 +137,11 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(170, 170, 170); // Grey
+	// Special case for the magnifier cursor in LB1 (bug #3487092).
+	// No other SCI0 game has a cursor resource of 1, so this is handled
+	// specifically for LB1.
+	if (resourceId == 1)
+		colorMapping[3] = _screen->getColorWhite();
 
 	// Seek to actual data
 	resourceData += 4;
