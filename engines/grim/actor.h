@@ -450,8 +450,6 @@ public:
 
 	bool handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const;
 
-	bool _toClean;
-
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;

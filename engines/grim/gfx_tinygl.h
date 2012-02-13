@@ -113,6 +113,10 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY);
 	void releaseMovieFrame();
 
+	void selectScreenBuffer();
+	void selectCleanBuffer();
+	void clearCleanBuffer();
+
 protected:
 
 private:

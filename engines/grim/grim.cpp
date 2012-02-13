@@ -275,11 +275,6 @@ Common::Error GrimEngine::run() {
 	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
 		lua = new Lua_V1();
-
-		// FIXME/HACK: see PutActorInSet
-		const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
-		lua_pushstring(func);
-		lua_call("dostring");
 	} else {
 		lua = new Lua_V2();
 	}
@@ -470,8 +465,6 @@ void GrimEngine::updateDisplayScene() {
 		if (!_currSet)
 			return;
 
-		cameraPostChangeHandle(_currSet->getSetup());
-
 		g_driver->clearScreen();
 
 		_prevSmushFrame = 0;
@@ -517,6 +510,12 @@ void GrimEngine::updateDisplayScene() {
 		_currSet->setupCamera();
 
 		g_driver->set3DMode();
+
+		if (_setupChanged) {
+			g_driver->clearCleanBuffer();
+			cameraPostChangeHandle(_currSet->getSetup());
+			_setupChanged = false;
+		}
 
 		// Draw actors
 		foreach (Actor *a, Actor::getPool()) {
@@ -574,6 +573,7 @@ void GrimEngine::mainLoop() {
 	bool resetShortFrame = false;
 	_changeHardwareState = false;
 	_changeFullscreenState = false;
+	_setupChanged = true;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
@@ -1006,6 +1006,7 @@ void GrimEngine::setSet(Set *scene) {
 		delete lastSet;
 	}
 	_shortFrame = true;
+	_setupChanged = true;
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
@@ -1015,6 +1016,8 @@ void GrimEngine::makeCurrentSetup(int num) {
 		getCurrSet()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
 		// here should be set sound position
+
+		_setupChanged = true;
 	}
 }
 

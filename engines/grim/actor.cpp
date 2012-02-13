@@ -67,7 +67,6 @@ Actor::Actor(const Common::String &actorName) :
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	_toClean = false;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
@@ -88,7 +87,6 @@ Actor::Actor() :
 	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
 
 	_shadowArray = new Shadow[5];
-	_toClean = false;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;

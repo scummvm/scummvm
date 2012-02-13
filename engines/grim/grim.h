@@ -193,6 +193,7 @@ private:
 	bool _doFlip;
 	bool _refreshShadowMask;
 	bool _shortFrame;
+	bool _setupChanged;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	int _prevSmushFrame;

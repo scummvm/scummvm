@@ -448,21 +448,6 @@ void Lua_V1::PutActorInSet() {
 	if (!lua_isstring(setObj) && !lua_isnil(setObj))
 		return;
 
-	if (actor->_toClean) {
-		actor->_toClean = false;
-
-		// FIXME HACK: This hack allows manny to exit from the sets where actors are freezed
-		// (and though ActorToClean is called), otherwise the set will never change and manny
-		// will be trapped inside. I'm aware this is really ugly, but i could not come up
-		// with a better solution, since the bug here seems to be inside the lua scripts, and
-		// not in the engine. If you want to have a look, the important bits are in:
-		// _system.LUA, TrackManny()
-		// _actors.LUA, put_in_set(), freeze() and stamp()
-		// Be aware that is not needed for the OpenGL renderer.
-		lua_call("reset_doorman");
-		return;
-	}
-
 	const char *set = lua_getstring(setObj);
 
 	// FIXME verify adding actor to set
@@ -610,10 +595,9 @@ void Lua_V1::ActorToClean() {
 
 	Actor *actor = getactor(actorObj);
 
-	// TODO: It seems this function should load/create an image to be used in place
-	// of the real actor until it is put in the set again.
-	// For now this Actor::_toClean is used to leave the actor in the set.
-	actor->_toClean = true;
+	g_driver->selectCleanBuffer();
+	actor->draw();
+	g_driver->selectScreenBuffer();
 }
 
 void Lua_V1::IsActorMoving() {

@@ -508,6 +508,7 @@ void Lua_V1::EngineDisplay() {
 
 void Lua_V1::ForceRefresh() {
 	g_grim->refreshDrawMode();
+	g_driver->clearCleanBuffer();
 }
 
 void Lua_V1::RenderModeUser() {
