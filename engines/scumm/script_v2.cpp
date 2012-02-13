@@ -873,7 +873,7 @@ void ScummEngine_v2::o2_doSentence() {
 		return;
 	}
 	if (a == 0xFB) {
-		resetSentence(false);
+		resetSentence();
 		return;
 	}
 
@@ -1411,7 +1411,7 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 
 	_fullRedraw = true;
 
-	resetSentence(false);
+	resetSentence();
 
 	if (x >= 0 && y >= 0) {
 		a->startWalkActor(x, y, -1);
@@ -1492,7 +1492,7 @@ void ScummEngine_v2::o2_cutscene() {
 
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
-	resetSentence(false);
+	resetSentence();
 
 	vm.cutScenePtr[0] = 0;
 }
@@ -1640,7 +1640,7 @@ void ScummEngine_v2::o2_switchCostumeSet() {
 		o2_dummy();
 }
 
-void ScummEngine_v2::resetSentence(bool walking) {
+void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
 	VAR(VAR_SENTENCE_OBJECT1) = 0;
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
