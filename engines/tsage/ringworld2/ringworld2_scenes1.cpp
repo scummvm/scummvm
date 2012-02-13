@@ -4304,28 +4304,114 @@ void Scene1337::subC318B(int arg1, unkObj1337sub1 *subObj1, int arg3) {
 	_item1.setAction(&_action11);
 }
 
-int Scene1337::subC32B1(int arg1, int arg2) {
-	warning("STUBBED Scene1337::subC32B1()");
-	return -1;
+int Scene1337::subC3257(int arg1) {
+	int retVal;
+
+	switch (arg1) {
+	case 10:
+		retVal = 2;
+		break;
+	case 12:
+		retVal = 3;
+		break;
+	case 15:
+		retVal = 5;
+		break;
+	case 17:
+		retVal = 9;
+		break;
+	case 18:
+		retVal = 6;
+		break;
+	case 19:
+		retVal = 4;
+		break;
+	case 20:
+		retVal = 8;
+		break;
+	case 21:
+		retVal = 7;
+		break;
+	default:
+		retVal = -1;
+	}
+
+	return retVal;
+}
+
+bool Scene1337::subC32B1(int arg1, int arg2) {
+	for (int i = 0; i <= 7; i++) {
+		if (_arrunkObj1337[arg1]._arr2[i]._field34 != 0) {
+			int tmpVal = subC3257(arg2);
+			if (tmpVal == _arrunkObj1337[arg1]._arr2[i]._field34)
+				return false;
+		}
+	}
+	return true;
 }
 
 int Scene1337::subC331B(int arg1) {
-	warning("STUBBED Scene1337::subC331B()");
+	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+	for (int i = 0; i <= 3; i++) {
+		if (randIndx != arg1) {
+			for (int j = 0; j <= 7; j++) {
+				if (_arrunkObj1337[randIndx]._arr2[j]._field34 != 0)
+					return randIndx;
+			}
+		}
+
+		if (arg1 == 1) {
+			randIndx--;
+			if (randIndx < 0)
+				randIndx = 3;
+		} else {
+			++randIndx;
+			if (randIndx > 3)
+				randIndx = 0;
+		}
+	}
+
 	return -1;
 }
 
-int Scene1337::subC3386(int arg1, int arg2) {
-	warning("STUBBED Scene1337::subCF979()");
-	return -1;
+bool Scene1337::subC3386(int arg1, int arg2) {
+	if ((arg1 == 11) && (arg2 == 26))
+		return true;
+
+	if ((arg1 == 14) && (arg2 == 30))
+		return true;
+
+	if ((arg1 == 16) && (arg2 == 32))
+		return true;
+
+	if ((arg1 == 24) && (arg2 == 28))
+		return true;
+
+	return false;
 }
 
 void Scene1337::subC33C0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC33C0()");
+	_field3EF4 = subObj2;
+	_field3EF0 = subObj1;
+	_item1.setAction(&_action7);
 }
 
 int Scene1337::subC3E92(int arg1) {
-	warning("STUBBED Scene1337::subC3E92()");
-	return -1;
+	if ( (_arrunkObj1337[arg1]._arr1[0]._field34 == 0) 
+	  && (_arrunkObj1337[arg1]._arr1[1]._field34 == 0)
+	  && (_arrunkObj1337[arg1]._arr1[2]._field34 == 0)
+	  && (_arrunkObj1337[arg1]._arr1[3]._field34 == 0))
+	  return -1;
+
+	int randIndx;
+	for (;;) {
+		randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+		if (_arrunkObj1337[arg1]._arr1[randIndx]._field34 == 0)
+			break;
+	}
+
+	return randIndx;
 }
 
 void Scene1337::subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
@@ -4336,11 +4422,17 @@ void Scene1337::subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 }
 
 void Scene1337::subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC3456()");
+	_field3EF0 = subObj1;
+	_field3EF4 = subObj2;
+
+	_item1.setAction(&_action9);
 }
 
 void Scene1337::subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC34A1()");
+	_field3EF0 = subObj1;
+	_field3EF4 = subObj2;
+
+	_item1.setAction(&_action8);
 }
 
 Scene1337::unkObj1337sub1 *Scene1337::subC34EC(int arg1) {
@@ -4370,11 +4462,18 @@ void Scene1337::subC4CD2() {
 }
 
 void Scene1337::subC4CEC() {
-	warning("STUBBED Scene1337::subC4CEC()");
+	if (R2_GLOBALS._v57709 != 0)
+		return;
+
+	subD18F5();
+	subD1940(1);
 }
 
 void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
-	warning("STUBBED Scene1337::subC51A0()");
+	_field3EF0 = subObj1;
+	_field3EF4 = subObj2;
+
+	_item1.setAction(&_action13);
 }
 
 void Scene1337::subPostInit() {
@@ -4639,7 +4738,7 @@ void Scene1337::subCF31D() {
 			found = false;
 			int i;
 			for (i = 0; i <= 3; i++) {
-				if (subC3386(_arrunkObj1337[1]._arr3[0]._field34, _arrunkObj1337[1]._arr1[i]._field34) != 0) {
+				if (subC3386(_arrunkObj1337[1]._arr3[0]._field34, _arrunkObj1337[1]._arr1[i]._field34)) {
 					found = true;
 					break;
 				}
@@ -4758,7 +4857,7 @@ void Scene1337::subCF31D() {
 					for (int k = 0; k <= 7; k++) {
 						// 'k' is not used in that loop. 
 						// It looks suspicious.
-						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(tmpVal, _arrunkObj1337[1]._arr1[i]._field34) == 1)) {
+						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(tmpVal, _arrunkObj1337[1]._arr1[i]._field34))) {
 							count = tmpVal;
 							break;
 						}
@@ -5016,7 +5115,7 @@ void Scene1337::subD02CA() {
 						if ((_item6._field34 == 26) || (_item6._field34 == 30) ||(_item6._field34 == 32) || (_item6._field34 == 28)) {
 							if (subC2BF8(&_arrunkObj1337[2]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
 								actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							} else if (subC3386(_arrunkObj1337[2]._arr3[0]._field34, _item6._field34) == 0) {
+							} else if (!subC3386(_arrunkObj1337[2]._arr3[0]._field34, _item6._field34)) {
 								if (_arrunkObj1337[2]._arr3[0]._field34 != 0) {
 									switch (_arrunkObj1337[2]._arr3[0]._field34) {
 									case 11:
@@ -5133,7 +5232,7 @@ void Scene1337::subD02CA() {
 								if (subC2BF8(&_arrunkObj1337[0]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
 									if (_arrunkObj1337[0]._arr3[0]._field34 != 0) {
 										actionDisplay(1330, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (subC32B1(0, _item6._field34) != 1) {
+									} else if (!subC32B1(0, _item6._field34)) {
 										switch (_item6._field34) {
 										case 10:
 											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -5169,7 +5268,7 @@ void Scene1337::subD02CA() {
 								} else if (subC2BF8(&_arrunkObj1337[3]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
 									if (_arrunkObj1337[3]._arr3[0]._field34 != 0) {
 										actionDisplay(1330, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (subC32B1(3, _item6._field34) != 1) {
+									} else if (!subC32B1(3, _item6._field34)) {
 										switch (_item6._field34) {
 										case 10:
 											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -5205,7 +5304,7 @@ void Scene1337::subD02CA() {
 								} else if (subC2BF8(&_arrunkObj1337[1]._arr3[0], Common::Point(_item6._field36.x + 12, _item6._field36.y + 12)) != 0) {
 									if (_arrunkObj1337[1]._arr3[0]._field34 != 0) {
 										actionDisplay(1330, 19, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (subC32B1(1, _item6._field34) != 1) {
+									} else if (!subC32B1(1, _item6._field34)) {
 										switch (_item6._field34) {
 										case 10:
 											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);

@@ -328,9 +328,10 @@ public:
 	bool subC2BF8(unkObj1337sub1 *subObj1, Common::Point pt);
 	void subC2C2F();
 	void subC318B(int arg1, unkObj1337sub1 *subObj2, int arg3);
-	int  subC32B1(int arg1, int arg2);
+	int  subC3257(int arg1);
+	bool subC32B1(int arg1, int arg2);
 	int  subC331B(int arg1);
-	int  subC3386(int arg1, int arg2);
+	bool subC3386(int arg1, int arg2);
 	void subC33C0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
