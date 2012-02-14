@@ -152,9 +152,11 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	: OptionsDialog(domain, "GameOptions") {
 
 	uint i = 0;
-	while (strcmp(engineOptions[i].configOption, "")) {
-		_engineOptions.push_back(engineOptions[i]);
-		++i;
+	if (engineOptions) {
+		while (strcmp(engineOptions[i].configOption, "")) {
+			_engineOptions.push_back(engineOptions[i]);
+			++i;
+		}
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
@@ -965,8 +967,7 @@ void LauncherDialog::editGame(int item) {
 	// The plugin may be null, e.g. in platforms that use engine
 	// plugins. One could have game entries in the config file, for
 	// which the engine plugin is no longer installed.
-	static ExtraGuiOption emptyList[] = { { "", "", "", false } };
-	ExtraGuiOption *extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : emptyList;
+	const ExtraGuiOption *extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : NULL;
 	EditGameDialog editDialog(target, gameInfo.description(), extraOptions);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
