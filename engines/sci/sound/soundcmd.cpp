@@ -32,15 +32,12 @@
 
 namespace Sci {
 
-//#define ENABLE_SFX_TYPE_SELECTION
-
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
-#ifdef ENABLE_SFX_TYPE_SELECTION
 	// Check if the user wants synthesized or digital sound effects in SCI1.1
 	// or later games
-	_useDigitalSFX = ConfMan.getBool("multi_midi");
+	_useDigitalSFX = ConfMan.getBool("prefer_digitalsfx");
 
 	// In SCI2 and later games, this check should always be true - there was
 	// always only one version of each sound effect or digital music track
@@ -48,10 +45,6 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	// resource number, but it's totally unrelated to the menu music).
 	if (getSciVersion() >= SCI_VERSION_2)
 		_useDigitalSFX = true;
-#else
-	// Always prefer digital sound effects
-	_useDigitalSFX = true;
-#endif
 
 	_music = new SciMusic(_soundVersion, _useDigitalSFX);
 	_music->init();

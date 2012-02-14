@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -64,6 +65,7 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -178,6 +180,32 @@ Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	assert(engine);
 	*engine = new Queen::QueenEngine(syst);
 	return Common::kNoError;
+}
+
+const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const {
+	static const ExtraGuiOption optionsList[] = {
+		{
+			_s("Show alternative intro"),
+			_s("Show the intro of the floppy version in the CD version"),
+			"alt_intro",
+			false
+		},
+		{ 0, 0, 0, 0 }
+	};
+
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		Common::String curOption = optionsList[i].configOption;
+		// Only add game specific options to the games that apply
+		if (curOption == "alt_intro" && guiOptions.contains(GUIO_NOSPEECH)) {
+			i++;
+			continue;
+		}
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)
