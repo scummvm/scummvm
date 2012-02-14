@@ -274,16 +274,16 @@ static void setupKeymapper(OSystem &system) {
 	// Now create the global keymap
 	Keymap *primaryGlobalKeymap = new Keymap(kGlobalKeymapName);
 	Action *act;
-	act = new Action(primaryGlobalKeymap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
+	act = new Action(primaryGlobalKeymap, "MENU", _("Menu"), kMenuActionType);
 	act->addEvent(EVENT_MAINMENU);
 
-	act = new Action(primaryGlobalKeymap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
+	act = new Action(primaryGlobalKeymap, "SKCT", _("Skip"));
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(primaryGlobalKeymap, "PAUS", _("Pause"), kGenericActionType, kStartKeyType);
+	act = new Action(primaryGlobalKeymap, "PAUS", _("Pause"));
 	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
 
-	act = new Action(primaryGlobalKeymap, "SKLI", _("Skip line"), kGenericActionType, kActionKeyType);
+	act = new Action(primaryGlobalKeymap, "SKLI", _("Skip line"));
 	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
 	act = new Action(primaryGlobalKeymap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
@@ -292,7 +292,7 @@ static void setupKeymapper(OSystem &system) {
 	act = new Action(primaryGlobalKeymap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
-	act = new Action(primaryGlobalKeymap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act = new Action(primaryGlobalKeymap, "FULS", _("Toggle FullScreen"));
 	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 
 	mapper->addGlobalKeymap(primaryGlobalKeymap);

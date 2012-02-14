@@ -345,12 +345,12 @@ void EoBCoreEngine::initKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
-		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description, Common::kGenericActionType, Common::kActionKeyType);
+		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->addKeyEvent(keyActionEntries[i].ks);
 	}
 
 	if (_flags.gameID == GI_EOB2) {
-		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"), Common::kGenericActionType, Common::kActionKeyType);
+		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"));
 		act->addKeyEvent(Common::KeyState(Common::KEYCODE_6));
 	}
 

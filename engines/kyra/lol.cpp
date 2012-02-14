@@ -491,7 +491,7 @@ void LoLEngine::initKeymap() {
 	};
 
 	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
-		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description, Common::kGenericActionType, Common::kActionKeyType);
+		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description);
 		act->addKeyEvent(entry->ks);
 	}
 

@@ -112,10 +112,10 @@ void GuiManager::initKeymap() {
 	Action *act;
 	Keymap *guiMap = new Keymap(kGuiKeymapName);
 
-	act = new Action(guiMap, "CLOS", _("Close"), kGenericActionType, kStartKeyType);
+	act = new Action(guiMap, "CLOS", _("Close"), kQuitActionType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(guiMap, "CLIK", _("Mouse click"));
+	act = new Action(guiMap, "CLIK", _("Mouse click"), kLeftClickActionType);
 	act->addLeftClickEvent();
 
 	act = new Action(guiMap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
@@ -124,7 +124,7 @@ void GuiManager::initKeymap() {
 	act = new Action(guiMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
-	act = new Action(guiMap, "FULS", _("Toggle FullScreen"), kKeyRemapActionType);
+	act = new Action(guiMap, "FULS", _("Toggle FullScreen"));
 	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 
 	mapper->addGlobalKeymap(guiMap);
