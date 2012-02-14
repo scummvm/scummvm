@@ -4668,7 +4668,101 @@ void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 }
 
 void Scene1337::subC6235(int arg1) {
-	warning("STUBBED: subC6235()");
+	switch (arg1 - 1) {
+	case 0:
+		actionDisplay(1330, 53, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 1:
+		actionDisplay(1330, 57, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 2:
+		actionDisplay(1330, 58, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 3:
+		actionDisplay(1330, 59, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 4:
+		actionDisplay(1330, 60, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 5:
+		actionDisplay(1330, 61, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 6:
+		actionDisplay(1330, 62, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 7:
+		actionDisplay(1330, 63, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 8:
+		actionDisplay(1330, 64, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 9:
+		actionDisplay(1330, 65, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 10:
+		actionDisplay(1330, 67, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 11:
+		actionDisplay(1330, 69, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 12:
+		actionDisplay(1330, 71, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		actionDisplay(1330, 72, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		actionDisplay(1330, 73, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 13:
+		actionDisplay(1330, 79, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 14:
+		actionDisplay(1330, 81, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 15:
+		actionDisplay(1330, 83, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 16:
+		actionDisplay(1330, 85, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 17:
+		actionDisplay(1330, 87, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 18:
+		actionDisplay(1330, 89, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 19:
+		actionDisplay(1330, 91, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 20:
+		actionDisplay(1330, 93, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 23:
+		actionDisplay(1330, 95, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 24:
+		actionDisplay(1330, 97, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 25:
+		actionDisplay(1330, 104, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 26:
+		actionDisplay(1330, 105, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		actionDisplay(1330, 106, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 27:
+		actionDisplay(1330, 110, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 28:
+		actionDisplay(1330, 108, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		actionDisplay(1330, 109, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 29:
+		actionDisplay(1330, 111, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	case 31:
+		actionDisplay(1330, 112, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		break;
+	default:
+		break;
+	}
 }
 
 void Scene1337::subPostInit() {
