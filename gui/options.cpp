@@ -991,14 +991,18 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 }
 
 void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOption *engineOptions) {
+	// Note: up to 7 engine options can currently fit on screen (the most that
+	// can fit in a 320x200 screen with the classic theme).
+	// TODO: Increase this number by including the checkboxes inside a scroll
+	// widget. The appropriate number of checkboxes will need to be added to
+	// the theme files.
+
 	uint i = 0;
 	while (strcmp(engineOptions[i].configOption, "")) {
 		Common::String id = Common::String::format("%d", i + 1);
 		_engineCheckboxes.push_back(new CheckboxWidget(boss, prefix + "customOption" + id + "Checkbox", _(engineOptions[i].label), _(engineOptions[i].tooltip)));
 		++i;
 	}
-
-	assert(_engineCheckboxes.size() <= 7);	// allow up to 7 engine options (the most that can fit in a 320x200 screen with the classic theme)
 }
 
 bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType) {
