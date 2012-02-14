@@ -1033,6 +1033,7 @@ void Scene125::consoleAction(int id) {
 
 		_sceneMode = 10;
 		_palette.loadPalette(161);
+		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
 	case 24:
 		_icon4.setIcon(25);
