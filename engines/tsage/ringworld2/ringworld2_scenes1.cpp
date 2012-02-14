@@ -1658,7 +1658,7 @@ void Scene1337::synchronize(Serializer &s) {
 }
 
 void Scene1337::Action1337::subD18B5(int resNum, int stripNum, int frameNum) {
-	warning("STUBBED: Action1337::sub53CD5()");
+	warning("STUBBED: Action1337::subD18B5()");
 }
 
 void Scene1337::Action1337::skipFrames(int32 skipCount) {
@@ -4285,7 +4285,184 @@ bool Scene1337::subC2BF8(unkObj1337sub1 *subObj1, Common::Point pt) {
 }
 
 void Scene1337::subC2C2F() {
-	warning("STUBBED Scene1337::subC2C2F()");
+	bool found = true;
+
+	if (_arrunkObj1337[3]._arr3[0]._field34 != 0) {
+		switch (_arrunkObj1337[3]._arr3[0]._field34) {
+		case 10:
+		// No break on purpose
+		case 12:
+		// No break on purpose
+		case 15:
+		// No break on purpose
+		case 17:
+		// No break on purpose
+		case 18:
+		// No break on purpose
+		case 19:
+		// No break on purpose
+		case 20:
+		// No break on purpose
+		case 21:
+			subC4A39(&_arrunkObj1337[3]._arr3[0]);
+			found = false;
+			break;
+		default:
+			found = false;
+			int i;
+			for (i = 0; i <= 3; i++) {
+				if (subC3386(_arrunkObj1337[3]._arr3[0]._field34, _arrunkObj1337[3]._arr1[i]._field34)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found) {
+				found = false;
+				subC34A1(&_arrunkObj1337[3]._arr1[i], &_arrunkObj1337[3]._arr3[0]);
+			}
+			break;
+		}
+	}
+
+	if (!found)
+		return;
+
+	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+	
+	if (_arrunkObj1337[3]._arr1[randIndx]._field34 == 1) {
+		found = false;
+
+		for (int i = 0; i <= 7; i++) {
+			if ((_arrunkObj1337[3]._arr2[i]._field34 == 0) && (!subC2687(_arrunkObj1337[3]._arr3[0]._field34))) {
+				subC340B(&_arrunkObj1337[3]._arr1[randIndx], &_arrunkObj1337[3]._arr2[i]);
+				found = true;
+				break;
+			}
+		}
+
+		if (found) {
+			return;
+		}
+	} else if (_arrunkObj1337[3]._arr1[randIndx]._field34 <= 9) {
+		found = false;
+
+		for (int i = 0; i <= 7; i++) {
+			if (_arrunkObj1337[3]._arr2[i]._field34 == _arrunkObj1337[3]._arr1[randIndx]._field34) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			for (int i = 0; i <= 7; i++) {
+				if ((_arrunkObj1337[3]._arr2[i]._field34 == 1) && (!subC2687(_arrunkObj1337[3]._arr3[i]._field34))) {
+					int tmpVal = 0;
+					
+					for (int i = 0; i <= 7; i++) {
+						if ((_arrunkObj1337[3]._arr2[i]._field34 > 1) && (_arrunkObj1337[3]._arr2[i]._field34 <= 9))
+							++tmpVal;
+					}
+					
+					if (tmpVal == 7)
+						_field424A = 3;
+					
+					subC33C0(&_arrunkObj1337[3]._arr1[randIndx], &_arrunkObj1337[3]._arr2[i]);
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				return;
+		}
+	} else if (_arrunkObj1337[3]._arr1[randIndx]._field34 == 13) {
+		int tmpVal = subC331B(3);
+
+		if (tmpVal != -1) {
+			subC358E(&_arrunkObj1337[3]._arr1[randIndx], tmpVal);
+			return;
+		}
+	} else if (_arrunkObj1337[3]._arr1[randIndx]._field34 == 25) {
+		int tmpVal = -1;
+		found = false;
+		int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+		
+		for (int i = 0; i <= 3; i++) {
+			if (  (tmpRandIndx != 3)
+			  && (  (_arrunkObj1337[tmpRandIndx]._arr1[0]._field34 != 0)
+			     || (_arrunkObj1337[tmpRandIndx]._arr1[1]._field34 != 0)
+			     || (_arrunkObj1337[tmpRandIndx]._arr1[2]._field34 != 0)
+			     || (_arrunkObj1337[tmpRandIndx]._arr1[3]._field34 != 0) )) {
+				tmpVal = tmpRandIndx;
+				break;
+			}
+			
+			++tmpRandIndx;
+			if (tmpRandIndx > 3)
+				tmpRandIndx = 0;
+		}
+
+		if (tmpVal != -1) {
+			subC318B(3, &_arrunkObj1337[3]._arr1[randIndx], tmpVal);
+			return;
+		}
+	} else {
+		switch (_arrunkObj1337[3]._arr1[randIndx]._field34) {
+		case 10:
+		// No break on purpose
+		case 11:
+		// No break on purpose
+		case 12:
+		// No break on purpose
+		case 14:
+		// No break on purpose
+		case 15:
+		// No break on purpose
+		case 16:
+		// No break on purpose
+		case 17:
+		// No break on purpose
+		case 18:
+		// No break on purpose
+		case 19:
+		// No break on purpose
+		case 20:
+		// No break on purpose
+		case 21:
+		// No break on purpose
+		case 24: {
+			int tmpVal = -1;
+			int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+			
+			for (int i = 0; i <= 3; i++) {
+				if (tmpRandIndx != 3) {
+					for (int j = 0; j <= 7; j++) {
+						if ((_arrunkObj1337[j]._arr3[0]._field34 == 0) && (subC32B1(j, _arrunkObj1337[3]._arr1[randIndx]._field34))) {
+							tmpVal = j;
+						}
+					}
+				}
+
+				++tmpRandIndx;
+				if (tmpRandIndx > 3)
+					tmpRandIndx = 0;
+				
+				if (tmpVal != -1)
+					break;
+			}
+			
+			if (tmpVal != -1) {
+				// Useless second identical check skipped
+				subC3456(&_arrunkObj1337[3]._arr1[randIndx], &_arrunkObj1337[tmpVal]._arr3[0]);
+				return;
+			}
+			}
+		default:
+			break;
+		}
+	}
+
+	subC4A39(&_arrunkObj1337[3]._arr1[randIndx]);
 }
 
 void Scene1337::subC318B(int arg1, unkObj1337sub1 *subObj1, int arg3) {
