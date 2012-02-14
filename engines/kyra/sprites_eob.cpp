@@ -335,6 +335,8 @@ const int16 *EoBCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, in
 
 void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, int x, int y, int sd, uint8 *ovl) {
 	const ScreenDim *d = _screen->getScreenDim(sd);
+	if (_flags.gameID == GI_EOB1)
+		x &= ~1;
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
