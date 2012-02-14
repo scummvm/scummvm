@@ -5424,7 +5424,255 @@ void Scene1337::subCF31D() {
 }
 
 void Scene1337::subCF979() {
-	warning("STUBBED Scene1337::subCF979()");
+	bool found = true;
+
+	if (_arrunkObj1337[0]._arr3[0]._field34 != 0) {
+		switch (_arrunkObj1337[0]._arr3[0]._field34) {
+		case 10:
+		//No break on purpose
+		case 12:
+		//No break on purpose
+		case 15:
+		//No break on purpose
+		case 17:
+		//No break on purpose
+		case 18:
+		//No break on purpose
+		case 19:
+		//No break on purpose
+		case 20:
+		//No break on purpose
+		case 21:
+			subC4A39(&_arrunkObj1337[0]._arr3[0]);
+			found = false;
+			break;
+		default:
+			int i;
+			found = false;
+
+			for (i = 0; i <= 3; i++) {
+				if (subC3386(_arrunkObj1337[0]._arr3[0]._field34, _arrunkObj1337[0]._arr1[i]._field34)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found) {
+				found = false;
+				subC34A1(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[0]._arr3[0]);
+			}
+			break;
+		}
+	}
+	
+	if (found)
+		return;
+	
+	int tmpVal;
+	found = false;
+	for (int i = 0; i <= 3; i++) {
+		tmpVal = subC26CB(0, i);
+
+		if (tmpVal != -1) {
+			bool flag = false;;
+			for (int j = 0; j <= 7; j++) {
+				if (_arrunkObj1337[0]._arr2[j]._field34 == _arrunkObj1337[0]._arr1[tmpVal]._field34) {
+					flag = true;
+					break;
+				}
+			}
+			
+			if (!flag) {
+				for (int j = 0; j <= 7; j++) {
+					if ((_arrunkObj1337[0]._arr2[j]._field34 == 1) && (!subC2687(_arrunkObj1337[0]._arr3[0]._field34))) {
+						int count = 0;
+						for (int k = 0; k <= 7; k++) {
+							if ((_arrunkObj1337[0]._arr2[k]._field34 > 1) && (_arrunkObj1337[0]._arr2[k]._field34 <= 9)) {
+								++count;
+							}
+						}
+
+						if (count == 7)
+							_field424A = 0;
+						
+						subC33C0(&_arrunkObj1337[0]._arr1[tmpVal], &_arrunkObj1337[0]._arr2[j]);
+						found = true;
+					}
+				}
+			}
+		}
+		
+		if (found)
+			break;
+	}
+
+	if (found)
+		return;
+	
+	found = false;
+	tmpVal = subC2719(0);
+
+	if (tmpVal != -1) {
+		for (int i = 0; i <= 7; i++) {
+			if ((_arrunkObj1337[0]._arr2[i]._field34 == 0) && (!subC2687(_arrunkObj1337[0]._arr3[0]._field34))) {
+				subC340B(&_arrunkObj1337[0]._arr1[tmpVal], &_arrunkObj1337[0]._arr2[i]);
+				found = true;
+				break;
+			}
+		}
+	}
+	
+	if (found)
+		return;
+	
+	tmpVal = subC274D(0);
+	if (tmpVal != -1) {
+		for (int i = 0; i <= 7; i++) {
+			if (_arrunkObj1337[2]._arr2[i]._field34 != 0) {
+				subC358E(&_arrunkObj1337[0]._arr1[tmpVal], 2);
+				found = true;
+				break;
+			}
+		}
+	}
+	
+	if (found) 
+		return;
+	
+	tmpVal = subC2781(0);
+	if (tmpVal != -1) {
+		if ( (_arrunkObj1337[2]._arr1[0]._field34 != 0)
+		  || (_arrunkObj1337[2]._arr1[1]._field34 != 0)
+		  || (_arrunkObj1337[2]._arr1[2]._field34 != 0)
+		  || (_arrunkObj1337[2]._arr1[3]._field34 != 0) ) {
+			subC318B(0, &_arrunkObj1337[0]._arr1[tmpVal], 2);
+			found = true;
+		}
+	}
+	
+	if (found) 
+		return;
+	
+	for (int i = 0; i <= 3; i++) {
+		if (subC27B5(_arrunkObj1337[0]._arr1[i]._field34) != -1) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect
+			for (int j = 0; j <= 7; j++) {
+				if ((_arrunkObj1337[2]._arr3[0]._field34 == 0) && (subC32B1(2, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[2]._arr3[0]);
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+				break;
+		}
+	}
+
+	if (found) 
+		return;
+
+	for (int i = 0; i <= 3; i++) {
+		if (subC27F9(_arrunkObj1337[0]._arr1[i]._field34) != -1) {
+			for (int j = 0; j <= 7; j++) {
+				if ((_arrunkObj1337[2]._arr3[0]._field34 == 0) && (subC32B1(2, _arrunkObj1337[0]._arr1[j]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[j], &_arrunkObj1337[2]._arr3[0]);
+					found = true;
+				}
+			}
+			
+			if (found)
+				break;
+		}
+	}
+		
+	if (found) 
+		return;
+
+	tmpVal = subC274D(0);
+	int tmpVal2 = subC331B(0);
+	
+	if ((tmpVal != -1) && (tmpVal2 != -1)) {
+		subC358E(&_arrunkObj1337[0]._arr1[tmpVal], tmpVal2);
+		found = true;
+	}
+	
+	if (found)
+		return;
+	
+	tmpVal = subC2781(0);
+	if (tmpVal != -1) {
+		if ( (_arrunkObj1337[1]._arr1[0]._field34 != 0)
+		  || (_arrunkObj1337[1]._arr1[1]._field34 != 0)
+		  || (_arrunkObj1337[1]._arr1[2]._field34 != 0)
+		  || (_arrunkObj1337[1]._arr1[3]._field34 != 0) ) {
+			subC318B(0, &_arrunkObj1337[0]._arr1[tmpVal], 1);
+			found = true;
+		}
+	}
+	
+	if (found)
+		return;
+
+	for (int i = 0; i <= 3; i++) {
+		tmpVal = subC27F9(_arrunkObj1337[0]._arr1[i]._field34);
+		if (tmpVal != -1) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect.
+			for (int j = 0; j <= 7; j++) {
+				if ((_arrunkObj1337[1]._arr3[0]._field34 == 0) && (subC32B1(1, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[1]._arr3[0]);
+					found = true;
+				}
+			}
+			
+			if (!found) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect.
+				for (int j = 0; j <= 7; j++) {
+					if ((_arrunkObj1337[3]._arr3[0]._field34 == 0) && (subC32B1(3, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[3]._arr3[0]);
+					found = true;
+					}
+				}
+			}
+			
+			if (found)
+				break;
+		}
+	}
+
+	if (found)
+		return;
+
+	for (int i = 0; i <= 3; i++) {
+		tmpVal = subC27B5(_arrunkObj1337[0]._arr1[i]._field34);
+		if (tmpVal != -1) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect.
+			for (int j = 0; j <= 7; j++) {
+				if ((_arrunkObj1337[1]._arr3[0]._field34 == 0) && (subC32B1(1, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[1]._arr3[0]);
+					found = true;
+				}
+			}
+
+			if (!found) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect.
+				for (int j = 0; j <= 7; j++) {
+					if ((_arrunkObj1337[3]._arr3[0]._field34 == 0) && (subC32B1(3, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[3]._arr3[0]);
+					found = true;
+					}
+				}
+			}
+			
+			if (found)
+				break;
+		}
+	}
+	
+	if (found)
+		return;
+
+	subC2835(0);
 }
 
 void Scene1337::subD026D() {
