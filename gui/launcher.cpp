@@ -118,7 +118,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 public:
-	EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions);
+	EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions);
 
 	void open();
 	void close();
@@ -145,18 +145,14 @@ protected:
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 
-	ExtraGuiOptionList _engineOptions;
+	ExtraGuiOptions _engineOptions;
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions)
+EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOptions &engineOptions)
 	: OptionsDialog(domain, "GameOptions") {
 
-	if (engineOptions) {
-		uint i = 0;
-		while (engineOptions[i].configOption) {
-			_engineOptions.push_back(engineOptions[i]);
-			++i;
-		}
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		_engineOptions.push_back(engineOptions[i]);
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
@@ -872,7 +868,13 @@ void LauncherDialog::addGame() {
 				// At this point, the plugin should always be set, as the game
 				// that will be added has been detected successfully.
 				assert(plugin);
-				EditGameDialog editDialog(domain, result.description(), (*plugin)->getExtraGuiOptions(domain));
+				const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
+				Common::String guiOptions;
+				if (ConfMan.hasKey("guioptions", domain)) {
+					guiOptions = ConfMan.get("guioptions", domain);
+					guiOptions = parseGameGUIOptions(guiOptions);
+				}
+				EditGameDialog editDialog(domain, result.description(), (*plugin)->getExtraGuiOptions(domain, guiOptions, platform));
 				if (editDialog.runModal() > 0) {
 					// User pressed OK, so make changes permanent
 
@@ -964,10 +966,16 @@ void LauncherDialog::editGame(int item) {
 	const EnginePlugin *plugin = 0;
 	GameDescriptor gameInfo = EngineMan.findGame(gameId, &plugin);
 	Common::String target = _domains[item];
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domains[item]));
+	Common::String guiOptions;
+	if (ConfMan.hasKey("guioptions", _domains[item])) {
+		guiOptions = ConfMan.get("guioptions", _domains[item]);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
 	// The plugin may be null, e.g. in platforms that use engine
 	// plugins. One could have game entries in the config file, for
 	// which the engine plugin is no longer installed.
-	const ExtraGuiOption *extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target) : NULL;
+	const ExtraGuiOptions extraOptions = plugin ? (*plugin)->getExtraGuiOptions(target, guiOptions, platform) : ExtraGuiOptions();
 	EditGameDialog editDialog(target, gameInfo.description(), extraOptions);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent

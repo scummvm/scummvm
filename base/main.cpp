@@ -207,11 +207,15 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	engine->initKeymap();
 
 	// Set default values to the custom engine options
-	const ExtraGuiOption *engineOptions = (*plugin)->getExtraGuiOptions(ConfMan.getActiveDomainName().c_str());
-	uint i = 0;
-	while (strcmp(engineOptions[i].configOption, "")) {
+	Common::String guiOptions;
+	if (ConfMan.hasKey("guioptions")) {
+		guiOptions = ConfMan.get("guioptions");
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(ConfMan.getActiveDomainName(), guiOptions, platform);
+	for (uint i = 0; i < engineOptions.size(); i++) {
 		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
-		i++;
 	}
 
 	// Inform backend that the engine is about to be run

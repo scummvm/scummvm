@@ -44,12 +44,13 @@ class String;
  * Currently, this can only be used for options with checkboxes.
  */
 struct ExtraGuiOption {
-	//int id;                     // unique ID for each engine option
 	const char *label;          // option label, e.g. "Fullscreen mode"
 	const char *tooltip;        // option tooltip (when the mouse hovers above it)
 	const char *configOption;   // confMan key, e.g. "fullscreen"
 	bool defaultState;          // the detault state of the checkbox (checked or not)
 };
+
+typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
 
 /**
  * A meta engine is essentially a factory for Engine instances with the
@@ -116,8 +117,8 @@ public:
 	 *
 	 * The default implementation returns an empty list.
 	 */
-	virtual const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const {
-		return NULL;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const {
+		return ExtraGuiOptions();
 	}
 
 	/**

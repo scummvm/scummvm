@@ -90,7 +90,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -242,7 +242,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	return Common::kNoGameDataFoundError;
 }
 
-const ExtraGuiOption *Sword2MetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions Sword2MetaEngine::getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const {
 	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Show object labels"),
@@ -253,7 +253,13 @@ const ExtraGuiOption *Sword2MetaEngine::getExtraGuiOptions(const Common::String 
 		{ 0, 0, 0, 0 }
 	};
 
-	return optionsList;
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)

@@ -77,7 +77,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -270,7 +270,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
 }
 
-const ExtraGuiOption *SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const {
 	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Show alternative intro"),
@@ -281,7 +281,19 @@ const ExtraGuiOption *SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 		{ 0, 0, 0, 0 }
 	};
 
-	return optionsList;
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		Common::String curOption = optionsList[i].configOption;
+		// Only add game specific options to the games that apply
+		if (curOption == "alt_intro" && guiOptions.contains(GUIO_NOSPEECH)) {
+			i++;
+			continue;
+		}
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)

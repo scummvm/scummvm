@@ -404,7 +404,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const;
 };
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -712,7 +712,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-const ExtraGuiOption *SciMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions SciMetaEngine::getExtraGuiOptions(const Common::String &target, const Common::String &guiOptions, const Common::Platform platform) const {
 	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Prefer digital sound effects"),
@@ -749,7 +749,23 @@ const ExtraGuiOption *SciMetaEngine::getExtraGuiOptions(const Common::String &ta
 		{ 0, 0, 0, 0 }
 	};
 	
-	return optionsList;
+	ExtraGuiOptions returnList;
+	uint i = 0;
+	while (optionsList[i].configOption) {
+		Common::String curOption = optionsList[i].configOption;
+		// Only add game specific options to the games that apply
+		if (curOption == "use_cdaudio" && (!target.hasPrefix("jones") || guiOptions.contains(GUIO_NOSPEECH))) {
+			i++;
+			continue;
+		}
+		if (curOption == "windows_cursors" && (!target.hasPrefix("kq6") || platform != Common::kPlatformWindows)) {
+			i++;
+			continue;
+		}
+		returnList.push_back(optionsList[i++]);
+	}
+
+	return returnList;
 }
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
