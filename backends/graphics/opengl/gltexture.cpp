@@ -60,8 +60,7 @@ void GLTexture::initGLExtensions() {
 		return;
 
 	// Get a string with all extensions
-	const char *ext_string =
-	    reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+	const char *ext_string = (const char *)glGetString(GL_EXTENSIONS);
 	CHECK_GL_ERROR();
 	Common::StringTokenizer tokenizer(ext_string, " ");
 	// Iterate all string tokens
@@ -146,12 +145,12 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
 	// Check if the buffer has its data contiguously
-	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
+	if ((int)w * _bytesPerPixel == pitch) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 		                _glFormat, _glType, buf); CHECK_GL_ERROR();
 	} else {
 		// Update the texture row by row
-		const byte *src = static_cast<const byte *>(buf);
+		const byte *src = (const byte *)buf;
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 			                w, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
