@@ -4616,7 +4616,18 @@ void Scene1337::subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 }
 
 Scene1337::unkObj1337sub1 *Scene1337::subC34EC(int arg1) {
-	warning("STUBBED Scene1337::subC34EC()");
+	for (int i = 0; i <= 7; i++) {
+		if (_arrunkObj1337[arg1]._arr2[i]._field34 == 1) {
+			return &_arrunkObj1337[arg1]._arr2[i];
+		}
+	}
+	
+	for (int i = 0; i <= 7; i++) {
+		if ((_arrunkObj1337[arg1]._arr2[i]._field34 != 0) && (_arrunkObj1337[arg1]._arr2[i]._field34 < 10)) {
+			return &_arrunkObj1337[arg1]._arr2[i];
+		}
+	}
+	
 	return NULL;
 }
 
