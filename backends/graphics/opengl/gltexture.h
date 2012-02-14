@@ -113,7 +113,7 @@ public:
 	 */
 	void setFilter(GLint filter) { _filter = filter; }
 
-protected:
+private:
 	const byte _bytesPerPixel;
 	const GLenum _internalFormat;
 	const GLenum _glFormat;
