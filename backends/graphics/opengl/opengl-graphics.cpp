@@ -1276,15 +1276,13 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	if (_overlayVisible)
 		return;
 
-	if (!_overlayVisible) {
-		x -= _displayX;
-		y -= _displayY;
+	x -= _displayX;
+	y -= _displayY;
 
-		if (_displayWidth != _videoMode.screenWidth)
-			x = x * _videoMode.screenWidth / _displayWidth;
-		if (_displayHeight != _videoMode.screenHeight)
-			y = y * _videoMode.screenHeight / _displayHeight;
-	}
+	if (_displayWidth != _videoMode.screenWidth)
+		x = x * _videoMode.screenWidth / _displayWidth;
+	if (_displayHeight != _videoMode.screenHeight)
+		y = y * _videoMode.screenHeight / _displayHeight;
 }
 
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
