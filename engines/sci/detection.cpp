@@ -404,7 +404,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
 };
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -712,8 +712,8 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-ExtraGuiOption *SciMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	static ExtraGuiOption optionsList[] = {
+const ExtraGuiOption *SciMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Prefer digital sound effects"),
 			_s("Prefer digital sound effects instead of synthesized ones"),

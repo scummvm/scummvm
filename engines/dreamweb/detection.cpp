@@ -61,7 +61,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -193,8 +193,8 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
-ExtraGuiOption *DreamWebMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	static ExtraGuiOption optionsList[] = {
+const ExtraGuiOption *DreamWebMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens, instead of the ScummVM ones"),

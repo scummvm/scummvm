@@ -116,8 +116,8 @@ public:
 	 *
 	 * The default implementation returns an empty list.
 	 */
-	virtual ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const {
-		static ExtraGuiOption optionsList[] = {
+	virtual const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const {
+		static const ExtraGuiOption optionsList[] = {
 			{ "", "", "", false }
 		};
 

@@ -90,7 +90,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
+	const ExtraGuiOption *getExtraGuiOptions(const Common::String &target) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -242,8 +242,8 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	return Common::kNoGameDataFoundError;
 }
 
-ExtraGuiOption *Sword2MetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	static ExtraGuiOption optionsList[] = {
+const ExtraGuiOption *Sword2MetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	static const ExtraGuiOption optionsList[] = {
 		{
 			_s("Show object labels"),
 			_s("Show labels for objects on mouse hover"),
