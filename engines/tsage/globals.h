@@ -299,7 +299,6 @@ public:
 	int _v5780E;
 	int _v57810;
 	int _v57C2C;
-	int _v58CE2;
 	int _speechSubtitles;
 	byte _v565EC[5];
 	byte _v565F1[4];

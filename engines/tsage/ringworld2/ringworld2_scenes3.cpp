@@ -60,7 +60,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 1000) {
 		if (R2_GLOBALS._player._oldCharacterScene[1] == 3100) {
 			loadScene(3101);
-			R2_GLOBALS._v58CE2 = 0;
+			R2_GLOBALS._uiElements._active = false;
 		} else {
 			loadScene(3100);
 			g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
@@ -71,7 +71,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 	// Original was doing it twice in a row. Skipped.
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3255)
-		R2_GLOBALS._v58CE2 = 0;
+		R2_GLOBALS._uiElements._active = false;
 
 	SceneExt::postInit();
 	_stripManager.addSpeaker(&_guardSpeaker);
@@ -927,7 +927,7 @@ void Scene3175::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3200::postInit(SceneObjectList *OwnerList) {
 	loadScene(3200);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_rockoSpeaker);
@@ -955,7 +955,7 @@ void Scene3200::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3210::postInit(SceneObjectList *OwnerList) {
 	loadScene(3210);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_privateSpeaker);
@@ -981,7 +981,7 @@ void Scene3210::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3220::postInit(SceneObjectList *OwnerList) {
 	loadScene(3220);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_rockoSpeaker);
@@ -1007,7 +1007,7 @@ void Scene3220::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3230::postInit(SceneObjectList *OwnerList) {
 	loadScene(3230);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_rockoSpeaker);
@@ -1034,7 +1034,7 @@ void Scene3230::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3240::postInit(SceneObjectList *OwnerList) {
 	loadScene(3240);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_tealSpeaker);
@@ -1061,7 +1061,7 @@ void Scene3240::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3245::postInit(SceneObjectList *OwnerList) {
 	loadScene(3245);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_ralfSpeaker);
@@ -1641,7 +1641,7 @@ void Scene3275::signal() {
  *--------------------------------------------------------------------------*/
 void Scene3350::postInit(SceneObjectList *OwnerList) {
 	loadScene(3350);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 	R2_GLOBALS._sound2.play(310);
 
@@ -3562,7 +3562,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	Rect tmpRect;
 
 	loadScene(1050);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	R2_GLOBALS._sound1.play(305);
 	R2_GLOBALS._player._characterIndex = R2_QUINN;
@@ -4876,7 +4876,7 @@ void Scene3600::dispatch() {
  *--------------------------------------------------------------------------*/
 void Scene3700::postInit(SceneObjectList *OwnerList) {
 	loadScene(3700);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.setColors(60, 255);

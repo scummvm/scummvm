@@ -51,7 +51,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit(OwnerList);
 	loadScene(110);
 
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._scenePalette.loadPalette(0);
 
 	R2_GLOBALS._sound2.play(10);
@@ -5320,7 +5320,7 @@ void Scene500::signal() {
  *--------------------------------------------------------------------------*/
 void Scene525::postInit(SceneObjectList *OwnerList) {
 	loadScene(525);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 	
 	R2_GLOBALS._sound1.play(105);

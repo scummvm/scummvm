@@ -2399,7 +2399,7 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 3100)
-		R2_GLOBALS._v58CE2 = 0;
+		R2_GLOBALS._uiElements._active = false;
 
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
@@ -2978,7 +2978,7 @@ void Scene2600::synchronize(Serializer &s) {
 
 void Scene2600::postInit(SceneObjectList *OwnerList) {
 	loadScene(2600);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.fadeSound(214);
 	R2_GLOBALS._sound2.play(215);

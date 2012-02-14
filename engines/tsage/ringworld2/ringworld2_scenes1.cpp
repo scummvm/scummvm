@@ -37,7 +37,7 @@ void Scene1010::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(1010);
 
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	setZoomPercents(100, 1, 160, 100);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setObjectWrapper(NULL);
@@ -100,7 +100,7 @@ void Scene1020::postInit(SceneObjectList *OwnerList) {
 		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
 
 	R2_GLOBALS._v558B6.set(160, 0, 160, 161);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010) {
@@ -330,7 +330,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		loadScene(1100);
 
 	if ((R2_GLOBALS._sceneManager._previousScene == 1000) && (!R2_GLOBALS.getFlag(44))) {
-		R2_GLOBALS._v58CE2 = 0;
+		R2_GLOBALS._uiElements._active = false;
 		R2_GLOBALS._v5589E.left = 0;
 		R2_GLOBALS._v5589E.right = 200;
 	}
@@ -339,7 +339,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sceneManager._previousScene = 1100;
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
-		R2_GLOBALS._v58CE2 = 0;
+		R2_GLOBALS._uiElements._active = false;
 		R2_GLOBALS._v5589E.left = 0;
 		R2_GLOBALS._v5589E.right = 200;
 	}
@@ -542,7 +542,7 @@ void Scene1100::remove() {
 	if (_sceneMode > 20)
 		R2_GLOBALS._sound1.fadeOut2(NULL);
 	g_globals->gfxManager()._bounds.moveTo(Common::Point(0, 0));
-	R2_GLOBALS._v58CE2 = 1;
+	R2_GLOBALS._uiElements._active = true;
 	SceneExt::remove();
 }
 
@@ -3719,7 +3719,7 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 //
 
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
 
@@ -3834,7 +3834,7 @@ void Scene1337::remove() {
 		subD1940(false);
 	}
 
-	R2_GLOBALS._v58CE2 = 1;
+	R2_GLOBALS._uiElements._active = true;
 	SceneExt::remove();
 }
 
@@ -5451,7 +5451,7 @@ void Scene1337::subD1A48(int arg1) {
  *--------------------------------------------------------------------------*/
 void Scene1500::postInit(SceneObjectList *OwnerList) {
 	loadScene(1500);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._v5589E.top = 0;
 	R2_GLOBALS._v5589E.bottom = 200;
 	setZoomPercents(170, 13, 240, 100);
@@ -5514,7 +5514,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 void Scene1500::remove() {
 	R2_GLOBALS._v5589E.top = 3;
 	R2_GLOBALS._v5589E.bottom = 168;
-	R2_GLOBALS._v58CE2 = 1;
+	R2_GLOBALS._uiElements._active = true;
 
 	SceneExt::remove();
 }
@@ -5609,7 +5609,7 @@ void Scene1500::dispatch() {
  *--------------------------------------------------------------------------*/
 void Scene1525::postInit(SceneObjectList *OwnerList) {
 	loadScene(1525);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	R2_GLOBALS._player.postInit();
@@ -5657,7 +5657,7 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 	else
 		loadScene(1530);
 
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	_stripManager.addSpeaker(&_quinnSpeaker);
@@ -7982,7 +7982,7 @@ void Scene1575::Hotspot1::subA910D(int indx) {
 
 void Scene1575::postInit(SceneObjectList *OwnerList) {
 	loadScene(1575);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._v5589E = Rect(0, 0, 320, 200);
 	SceneExt::postInit();
 	_field414 = 390;
@@ -8097,7 +8097,7 @@ void Scene1575::remove() {
 	SceneExt::remove();
 	R2_GLOBALS._v5589E.top = 3;
 	R2_GLOBALS._v5589E.bottom = 168;
-	R2_GLOBALS._v58CE2 = 1;
+	R2_GLOBALS._uiElements._active = true;
 }
 
 void Scene1575::signal() {
@@ -9448,7 +9448,7 @@ bool Scene1750::Actor5::startAction(CursorType action, Event &event) {
 void Scene1750::postInit(SceneObjectList *OwnerList) {
 	loadScene(1750);
 	R2_GLOBALS._sound1.play(115);
-	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	SceneExt::postInit();
 	
@@ -9573,7 +9573,7 @@ void Scene1750::remove() {
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	R2_GLOBALS._v5589E.top = 3;
 	R2_GLOBALS._v5589E.bottom = 168;
-	R2_GLOBALS._v58CE2 = 1;
+	R2_GLOBALS._uiElements._active = true;
 }
 
 void Scene1750::signal() {

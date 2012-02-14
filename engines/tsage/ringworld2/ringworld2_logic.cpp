@@ -331,7 +331,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 			|| ((prevScene == 205) && (sceneNumber == 100))
 			|| ((prevScene == 180) && (sceneNumber == 100))) {
 		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
-		R2_GLOBALS._v58CE2 = 1;
+		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
 	} else {
 		R2_GLOBALS._uiElements.updateInventory();
@@ -378,7 +378,7 @@ void SceneExt::loadScene(int sceneNum) {
 			(sceneNumber == 50) || ((prevScene == 205) && (sceneNumber == 100)) ||
 			((prevScene == 180) && (sceneNumber == 100))) {
 		// TODO: sub_17875
-		R2_GLOBALS._v58CE2 = 1;
+		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
 	} else {
 		// Update the user interface
@@ -564,7 +564,7 @@ void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 }
 
 void SceneHandlerExt::process(Event &event) {
-	if (T2_GLOBALS._uiElements._active) {
+	if (T2_GLOBALS._uiElements._active && R2_GLOBALS._player._uiEnabled) {
 		T2_GLOBALS._uiElements.process(event);
 		if (event.handled)
 			return;
