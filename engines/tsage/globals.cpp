@@ -375,6 +375,8 @@ void Ringworld2Globals::reset() {
 	T2_GLOBALS._uiElements._active = false;
 
 	// Reset fields
+	Common::fill(&_v1000[0], &_v1000[0x1000], 0);
+	_v1000Flag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;

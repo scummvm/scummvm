@@ -323,6 +323,19 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	_action = NULL;
 	_field12 = 0;
 	_sceneMode = 0;
+
+	int prevScene = R2_GLOBALS._sceneManager._previousScene;
+	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
+	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50)) 
+			|| (sceneNumber == 50)
+			|| ((prevScene == 205) && (sceneNumber == 100))
+			|| ((prevScene == 180) && (sceneNumber == 100))) {
+		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
+		R2_GLOBALS._v58CE2 = 1;
+		R2_GLOBALS._uiElements.show();
+	} else {
+		R2_GLOBALS._uiElements.updateInventory();
+	}
 }
 
 void SceneExt::remove() {
@@ -568,6 +581,96 @@ void SceneHandlerExt::process(Event &event) {
 
 	if (!event.handled)
 		SceneHandler::process(event);
+}
+
+void SceneHandlerExt::setupPaletteMaps() {
+	byte *palP = &R2_GLOBALS._scenePalette._palette[0];
+
+	if (!R2_GLOBALS._v1000Flag) {
+		R2_GLOBALS._v1000Flag = true;
+
+		for (int idx = 0; idx < 10; ++idx) {
+			for (int palIndex = 0; palIndex < 224; ++palIndex) {
+				int r, g, b;
+
+				// Get adjusted RGB values
+				switch (idx) {
+				case 7:
+					r = palP[palIndex * 3] * 85 / 100;
+					g = palP[palIndex * 3 + 1] * 7 / 10;
+					b = palP[palIndex * 3 + 2] * 7 / 10;
+					break;
+				case 8:
+					r = palP[palIndex * 3] * 7 / 10;
+					g = palP[palIndex * 3 + 1] * 85 / 100;
+					b = palP[palIndex * 3 + 2] * 7 / 10;
+					break;
+				case 9:
+					r = palP[palIndex * 3] * 8 / 10;
+					g = palP[palIndex * 3 + 1] * 5 / 10;
+					b = palP[palIndex * 3 + 2] * 9 / 10;
+					break;
+				default:
+					r = palP[palIndex * 3] * (10 - idx) / 10;
+					g = palP[palIndex * 3 + 1] * (10 - idx) / 12;
+					b = palP[palIndex * 3 + 2] * (10 - idx) / 10;
+					break;
+				}
+
+				// Scan for the palette index with the closest matching colour
+				int threshold = 769;
+				int foundIndex = -1;
+				for (int pIndex2 = 223; pIndex2 >= 0; --pIndex2) {
+					int diffSum = ABS(palP[pIndex2 * 3] - r);
+					if (diffSum >= threshold)
+						continue;
+
+					diffSum += ABS(palP[pIndex2 * 3 + 1] - g);
+					if (diffSum >= threshold)
+						continue;
+					
+					diffSum += ABS(palP[pIndex2 * 3 + 2] - b);
+					if (diffSum >= threshold)
+						continue;
+					
+					threshold = diffSum;
+					foundIndex = pIndex2;
+				}
+
+				R2_GLOBALS._palIndexList[idx][palIndex] = foundIndex;
+			}
+		}
+	}
+
+	for (int palIndex = 0; palIndex < 224; ++palIndex) {
+		int r = palP[palIndex * 3] >> 2;
+		int g = palP[palIndex * 3 + 1] >> 2;
+		int b = palP[palIndex * 3 + 2] >> 2;
+
+		int idx = (((r << 4) | g) << 4) | b;
+		R2_GLOBALS._v1000[idx] = palIndex;
+	}
+
+	int vdx = 0;
+	int idx = 0;
+	int palIndex = 224;
+
+	for (int vIndex = 0; vIndex < 4096; ++vIndex) {
+		int v = R2_GLOBALS._v1000[vIndex];
+		if (!v) {
+			R2_GLOBALS._v1000[vIndex] = idx;
+		} else {
+			idx = v;
+		}
+
+		if (!palIndex) {
+			vdx = palIndex;
+		} else {
+			int idxTemp = palIndex;
+			palIndex = (palIndex + vdx) / 2;
+			vdx = idxTemp;
+		}
+	}
 }
 
 /*--------------------------------------------------------------------------*/

@@ -114,6 +114,8 @@ class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
+
+	void setupPaletteMaps();
 };
 
 
