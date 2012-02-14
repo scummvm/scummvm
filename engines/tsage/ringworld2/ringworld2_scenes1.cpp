@@ -4667,8 +4667,8 @@ void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 	_item1.setAction(&_action13);
 }
 
-void Scene1337::subC6235(int arg1) {
-	switch (arg1 - 1) {
+void Scene1337::displayDialog(int dialogNumb) {
+	switch (dialogNumb - 1) {
 	case 0:
 		actionDisplay(1330, 53, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		break;
@@ -5017,25 +5017,25 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 			switch (curReg) {
 			case 5:
 				if (_arrunkObj1337[2]._arr2[i]._field34 != 0)
-					subC6235(_arrunkObj1337[2]._arr2[i]._field34);
+					displayDialog(_arrunkObj1337[2]._arr2[i]._field34);
 				else
 					actionDisplay(1330, 20, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
 			case 10:
 				if (_arrunkObj1337[3]._arr2[i]._field34 != 0)
-					subC6235(_arrunkObj1337[3]._arr2[i]._field34);
+					displayDialog(_arrunkObj1337[3]._arr2[i]._field34);
 				else
 					actionDisplay(1330, 22, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
 			case 15:
 				if (_arrunkObj1337[0]._arr2[i]._field34 != 0)
-					subC6235(_arrunkObj1337[0]._arr2[i]._field34);
+					displayDialog(_arrunkObj1337[0]._arr2[i]._field34);
 				else
 					actionDisplay(1330, 21, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
 			case 20:
 				if (_arrunkObj1337[1]._arr2[i]._field34 != 0)
-					subC6235(_arrunkObj1337[1]._arr2[i]._field34);
+					displayDialog(_arrunkObj1337[1]._arr2[i]._field34);
 				else
 					actionDisplay(1330, 23, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
@@ -5054,25 +5054,25 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 				switch (curReg) {
 				case 5:
 					if (_arrunkObj1337[2]._arr3[0]._field34 != 0)
-						subC6235(_arrunkObj1337[2]._arr3[0]._field34);
+						displayDialog(_arrunkObj1337[2]._arr3[0]._field34);
 					else
 						actionDisplay(1330, 10, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					break;
 				case 10:
 					if (_arrunkObj1337[3]._arr3[0]._field34 != 0)
-						subC6235(_arrunkObj1337[3]._arr3[0]._field34);
+						displayDialog(_arrunkObj1337[3]._arr3[0]._field34);
 					else
 						actionDisplay(1330, 16, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					break;
 				case 15:
 					if (_arrunkObj1337[0]._arr3[0]._field34 != 0)
-						subC6235(_arrunkObj1337[3]._arr3[0]._field34);
+						displayDialog(_arrunkObj1337[3]._arr3[0]._field34);
 					else
 						actionDisplay(1330, 13, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					break;
 				case 20:
 					if (_arrunkObj1337[1]._arr3[0]._field34 != 0)
-						subC6235(_arrunkObj1337[1]._arr3[0]._field34);
+						displayDialog(_arrunkObj1337[1]._arr3[0]._field34);
 					else
 						actionDisplay(1330, 18, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					break;
@@ -5082,7 +5082,7 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 			} else {
 				if (subC2BF8(&_item7, pt)) {
 					if (_item7._field34 != 0)
-						subC6235(_item7._field34);
+						displayDialog(_item7._field34);
 					else
 						actionDisplay(1330, 7, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				} else if (_background1._bounds.contains(pt)) {
@@ -5096,13 +5096,13 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 					actionDisplay(1330, 32, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				} else {
 					if (subC2BF8(&_arrunkObj1337[2]._arr1[0], pt))
-						subC6235(_arrunkObj1337[2]._arr1[0]._field34);
+						displayDialog(_arrunkObj1337[2]._arr1[0]._field34);
 					else if (subC2BF8(&_arrunkObj1337[2]._arr1[1], pt))
-						subC6235(_arrunkObj1337[2]._arr1[1]._field34);
+						displayDialog(_arrunkObj1337[2]._arr1[1]._field34);
 					else if (subC2BF8(&_arrunkObj1337[2]._arr1[2], pt))
-						subC6235(_arrunkObj1337[2]._arr1[2]._field34);
+						displayDialog(_arrunkObj1337[2]._arr1[2]._field34);
 					else if (subC2BF8(&_arrunkObj1337[2]._arr1[3], pt))
-						subC6235(_arrunkObj1337[2]._arr1[3]._field34);
+						displayDialog(_arrunkObj1337[2]._arr1[3]._field34);
 					else if ((curReg >= 6) || (curReg <= 9))
 						actionDisplay(1330, 29, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					else if ((curReg >= 11) || (curReg <= 14))

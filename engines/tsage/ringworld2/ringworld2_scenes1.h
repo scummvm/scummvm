@@ -343,7 +343,7 @@ public:
 	void subC4CD2();
 	void subC4CEC();
 	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	void subC6235(int arg1);
+	void displayDialog(int dialogNumb);
 	void subPostInit();
 	void subCB59B();
 	void suggestInstructions();
