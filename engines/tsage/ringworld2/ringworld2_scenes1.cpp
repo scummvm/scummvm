@@ -4667,6 +4667,10 @@ void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
 	_item1.setAction(&_action13);
 }
 
+void Scene1337::subC6235(int arg1) {
+	warning("STUBBED: subC6235()");
+}
+
 void Scene1337::subPostInit() {
 	R2_GLOBALS._v57709 = 0;
 	R2_GLOBALS._v5780C = 0;
@@ -4895,9 +4899,311 @@ void Scene1337::subCCF26() {
 	shuffleCards();
 	_item1.setAction(&_action3);
 }
+void Scene1337::subCD193() {
+	warning("STUBBED: subCD193()");
+}
 
-void Scene1337::subCDB90(int arg1, Common::Point *pt) {
-	warning("STUBBED: subCDB90()");
+void Scene1337::subCDB90(int arg1, Common::Point pt) {
+	bool found = false;
+	int curReg = R2_GLOBALS._sceneRegions.indexOf(g_globals->_events._mousePos);
+	
+	if (arg1 == 3) {
+		int i;
+		for (i = 0; i <= 7; i++) {
+			if ( (subC2BF8(&_arrunkObj1337[2]._arr2[i], pt))
+			  || (subC2BF8(&_arrunkObj1337[0]._arr2[i], pt))
+			  || (subC2BF8(&_arrunkObj1337[1]._arr2[i], pt))
+			  || (subC2BF8(&_arrunkObj1337[3]._arr2[i], pt)) ) {
+				found = true;
+				break;
+			}
+		}
+		
+		if (found) {
+			switch (curReg) {
+			case 5:
+				if (_arrunkObj1337[2]._arr2[i]._field34 != 0)
+					subC6235(_arrunkObj1337[2]._arr2[i]._field34);
+				else
+					actionDisplay(1330, 20, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			case 10:
+				if (_arrunkObj1337[3]._arr2[i]._field34 != 0)
+					subC6235(_arrunkObj1337[3]._arr2[i]._field34);
+				else
+					actionDisplay(1330, 22, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			case 15:
+				if (_arrunkObj1337[0]._arr2[i]._field34 != 0)
+					subC6235(_arrunkObj1337[0]._arr2[i]._field34);
+				else
+					actionDisplay(1330, 21, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			case 20:
+				if (_arrunkObj1337[1]._arr2[i]._field34 != 0)
+					subC6235(_arrunkObj1337[1]._arr2[i]._field34);
+				else
+					actionDisplay(1330, 23, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			default:
+				break;
+			}
+		} else {
+			if ( (subC2BF8(&_arrunkObj1337[2]._arr3[0], pt))
+			  || (subC2BF8(&_arrunkObj1337[0]._arr3[0], pt))
+			  || (subC2BF8(&_arrunkObj1337[1]._arr3[0], pt))
+			  || (subC2BF8(&_arrunkObj1337[3]._arr3[0], pt)) ) {
+				found = true;
+			}
+			
+			if (found) {
+				switch (curReg) {
+				case 5:
+					if (_arrunkObj1337[2]._arr3[0]._field34 != 0)
+						subC6235(_arrunkObj1337[2]._arr3[0]._field34);
+					else
+						actionDisplay(1330, 10, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					break;
+				case 10:
+					if (_arrunkObj1337[3]._arr3[0]._field34 != 0)
+						subC6235(_arrunkObj1337[3]._arr3[0]._field34);
+					else
+						actionDisplay(1330, 16, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					break;
+				case 15:
+					if (_arrunkObj1337[0]._arr3[0]._field34 != 0)
+						subC6235(_arrunkObj1337[3]._arr3[0]._field34);
+					else
+						actionDisplay(1330, 13, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					break;
+				case 20:
+					if (_arrunkObj1337[1]._arr3[0]._field34 != 0)
+						subC6235(_arrunkObj1337[1]._arr3[0]._field34);
+					else
+						actionDisplay(1330, 18, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					break;
+				default:
+					break;
+				}
+			} else {
+				if (subC2BF8(&_item7, pt)) {
+					if (_item7._field34 != 0)
+						subC6235(_item7._field34);
+					else
+						actionDisplay(1330, 7, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				} else if (_background1._bounds.contains(pt)) {
+					actionDisplay(1330, 43, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				} else if (subC2BF8(&_item8, pt)) {
+					actionDisplay(1330, 4, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				} else if ( (subC2BF8(&_arrunkObj1337[2]._arr4[0], pt))
+					       || (subC2BF8(&_arrunkObj1337[3]._arr4[0], pt))
+					       || (subC2BF8(&_arrunkObj1337[0]._arr4[0], pt))
+					       || (subC2BF8(&_arrunkObj1337[1]._arr4[0], pt)) ) {
+					actionDisplay(1330, 32, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				} else {
+					if (subC2BF8(&_arrunkObj1337[2]._arr1[0], pt))
+						subC6235(_arrunkObj1337[2]._arr1[0]._field34);
+					else if (subC2BF8(&_arrunkObj1337[2]._arr1[1], pt))
+						subC6235(_arrunkObj1337[2]._arr1[1]._field34);
+					else if (subC2BF8(&_arrunkObj1337[2]._arr1[2], pt))
+						subC6235(_arrunkObj1337[2]._arr1[2]._field34);
+					else if (subC2BF8(&_arrunkObj1337[2]._arr1[3], pt))
+						subC6235(_arrunkObj1337[2]._arr1[3]._field34);
+					else if ((curReg >= 6) || (curReg <= 9))
+						actionDisplay(1330, 29, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					else if ((curReg >= 11) || (curReg <= 14))
+						actionDisplay(1330, 31, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					else if ((curReg >= 16) || (curReg <= 19))
+						actionDisplay(1330, 30, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+					else {
+						switch (curReg) {
+						case 0:
+							actionDisplay(1330, 2, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+							break;
+						case 5:
+							actionDisplay(1330, 25, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							break;
+						case 10:
+							actionDisplay(1330, 27, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							break;
+						case 15:
+							actionDisplay(1330, 26, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							break;
+						case 20:
+							actionDisplay(1330, 28, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							break;
+						case 21:
+							actionDisplay(1330, 24, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	if (arg1 != 1)
+		return;
+		
+	for (int i = 0; i <= 7; i++) {
+		if (subC2BF8(&_arrunkObj1337[2]._arr2[i], pt)) {
+			switch (_arrunkObj1337[2]._arr2[i]._field34) {
+			case 0:
+				actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			case 1:
+				actionDisplay(1330, 54, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			default:
+				actionDisplay(1330, 34, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			}
+			found = true;
+			break;
+		} else if (subC2BF8(&_arrunkObj1337[0]._arr2[i], pt)) {
+			switch (_arrunkObj1337[0]._arr2[i]._field34) {
+			case 0:
+				actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			default:
+				actionDisplay(1330, 1, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				break;
+			}
+			found = true;
+			break;
+		} else if (subC2BF8(&_arrunkObj1337[1]._arr2[i], pt)) {
+			switch (_arrunkObj1337[1]._arr2[i]._field34) {
+			case 0:
+				actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+				break;
+			default:
+				actionDisplay(1330, 144, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+				break;
+			}
+			found = true;
+			break;
+		} else if (subC2BF8(&_arrunkObj1337[3]._arr2[i], pt)) {
+			switch (_arrunkObj1337[3]._arr2[i]._field34) {
+			case 0:
+				actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+				break;
+			default:
+				actionDisplay(1330, 145, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+				break;
+			}
+			found = true;
+			break;
+		}
+	}
+
+	if (subC2BF8(&_arrunkObj1337[2]._arr3[0], pt)) {
+		if (_arrunkObj1337[0]._arr3[0]._field34 != 0) {
+			actionDisplay(1330, 39, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		} else {
+			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		}
+		found = true;
+	}
+	
+	if (subC2BF8(&_arrunkObj1337[3]._arr3[0], pt)) {
+		if (_arrunkObj1337[3]._arr3[0]._field34 != 0) {
+			actionDisplay(1330, 145, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		} else {
+			actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		}
+		found = true;
+	}
+	
+	if (subC2BF8(&_arrunkObj1337[1]._arr3[0], pt)) {
+		if (_arrunkObj1337[1]._arr3[0]._field34 != 0) {
+			actionDisplay(1330, 144, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		} else {
+			actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		}
+		found = true;
+	}
+	
+	if (subC2BF8(&_arrunkObj1337[0]._arr3[0], pt)) {
+		if (_arrunkObj1337[0]._arr3[0]._field34 != 0) {
+			actionDisplay(1330, 1, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		} else {
+			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		}
+		found = true;
+	}
+
+	if (subC2BF8(&_arrunkObj1337[3]._arr4[0], pt)) {
+		actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+		found = true;
+	}
+
+	if (subC2BF8(&_arrunkObj1337[1]._arr4[0], pt)) {
+		actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+		found = true;
+	}
+
+	if (subC2BF8(&_arrunkObj1337[0]._arr4[0], pt)) {
+		actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+		found = true;
+	}
+
+	if (found)
+		return;
+	
+	if (_background1._bounds.contains(pt)) {
+		subCD193();
+		return;
+	}
+	
+	if (subC2BF8(&_item7, pt))
+		actionDisplay(1330, 9, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+	else if (subC2BF8(&_item8, pt))
+		actionDisplay(1330, 5, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+	else {
+		switch (curReg) {
+		case 0:
+			actionDisplay(1330, 3, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+			break;
+		case 6:
+		// no break on purpose
+		case 7:
+		// no break on purpose
+		case 8:
+		// no break on purpose
+		case 9:
+			actionDisplay(1330, 145, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+			break;
+		case 10:
+			actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
+			break;
+		case 11:
+		// no break on purpose
+		case 12:
+		// no break on purpose
+		case 13:
+		// no break on purpose
+		case 14:
+			actionDisplay(1330, 1, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+			break;
+		case 16:
+		// no break on purpose
+		case 17:
+		// no break on purpose
+		case 18:
+		// no break on purpose
+		case 19:
+			actionDisplay(1330, 144, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+			break;
+		case 20:
+			actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
+			break;
+		default:
+			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+			break;
+		}
+	}
 }
 
 void Scene1337::subCF31D() {
@@ -5197,12 +5503,12 @@ void Scene1337::subD02CA() {
 		}
 		
 		if (di == 4) {
-			subCDB90(1, &_item6._field36);
+			subCDB90(1, _item6._field36);
 			subD0281();
 			return;
 		}
 	} else if (R2_GLOBALS._v57810 == 300) {
-		subCDB90(3, &_item6._field36);
+		subCDB90(3, _item6._field36);
 		subD0281();
 		return;
 	} else {
