@@ -119,12 +119,12 @@ void EoBIntroPlayer::start() {
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream("TEXT.RAW");
 	if (s) {
 		s->seek(768);
-		_screen->loadFileDataToPage(s, 6, s->size() - 768);
+		_screen->loadFileDataToPage(s, 5, s->size() - 768);
 		delete s;
 	} else {
 		_screen->loadBitmap("TEXT.CMP", 3, 5, 0);
-		_screen->convertPage(5, 6, _vm->_cgaMappingAlt);
 	}
+	_screen->convertPage(5, 6, _vm->_cgaMappingAlt);
 
 	tower();
 	orb();

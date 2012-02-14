@@ -70,6 +70,10 @@ Screen_EoB::~Screen_EoB() {
 }
 
 bool Screen_EoB::init() {
+	return init(false);
+}
+
+bool Screen_EoB::init(bool useHiResEGADithering) {
 	if (Screen::init()) {
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
@@ -91,15 +95,13 @@ bool Screen_EoB::init() {
 		_dsTempPage = new uint8[12000];
 
 		if (_renderMode == Common::kRenderEGA) {
+			_useHiResEGADithering = useHiResEGADithering;
 			_egaColorMap = new uint8[256];
 			_egaPixelValueTable = new uint8[256];
 			for (int i = 0; i < 256; i++) {
 				_egaColorMap[i] = i & 0x0f;
 				_egaPixelValueTable[i] = i & 0x0f;
 			}
-
-			if (_vm->game() == GI_EOB2)
-				_useHiResEGADithering = true;
 
 		} else if (_renderMode == Common::kRenderCGA) {
 			_cgaMappingDefault = _vm->staticres()->loadRawData(kEoB1CgaMappingDefault, temp);
@@ -346,6 +348,9 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	uint8 *srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
 	uint8 *src = srcLineStart;
 
+	if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)
+		encode8bit = false;
+
 	if (_renderMode == Common::kRenderCGA) {
 		if (cgaMapping)
 			generateCGADitheringTables(cgaMapping);
@@ -450,8 +455,12 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 
 	} else {
 		uint8 nib = 0, col = 0;
-		uint8 *colorMap = new uint8[0x100];
-		memset(colorMap, 0xff, 0x100);
+		uint8 *colorMap = 0;
+
+		if (_renderMode != Common::kRenderEGA) {
+			colorMap = new uint8[0x100];
+			memset(colorMap, 0xff, 0x100);
+		}
 
 		shapesize = h * (w << 2) + 20;
 		shp = new uint8[shapesize];
@@ -462,7 +471,13 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		*dst++ = (h & 0xff);
 		*dst++ = (w & 0xff);
 		*dst++ = (h & 0xff);
-		memset(dst, 0xff, 0x10);
+
+		if (_renderMode == Common::kRenderEGA) {
+			for (int i = 0; i < 16; i++)
+				dst[i] = i;
+		} else {
+			memset(dst, 0xff, 0x10);
+		}
 
 		uint8 *pal = dst;
 		dst += 16;
@@ -473,15 +488,18 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 			uint16 w1 = w << 3;
 			while (w1--) {
 				uint8 s = *src++;
-				uint8 c = colorMap[s];
-				if (c == 0xff) {
-					if (col < 0x10) {
-						*pal++ = s;
-						c = colorMap[s] = col++;
-						if (!col)
+				uint8 c = s & 0x0f;
+				if (colorMap) {
+					c = colorMap[s];
+					if (c == 0xff) {
+						if (col < 0x10) {
+							*pal++ = s;
+							c = colorMap[s] = col++;
+							if (!col)
+								c = 0;
+						} else {
 							c = 0;
-					} else {
-						c = 0;
+						}
 					}
 				}
 
@@ -782,12 +800,9 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 					src += pixelStep;
 					shSwtch = bitShDef;
 				}
-				if (pixelsPerByte == 2) {
-					if (pal[(in >> shift) & pixelPackingMask])
-						drawShapeSetPixel(dst, pal[(in >> shift) & pixelPackingMask]);
-				} else {
-					*dst = (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
-				}
+				uint8 col = (pixelsPerByte == 2) ? pal[(in >> shift) & pixelPackingMask] : (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
+				if (col || pixelsPerByte == 4)
+					drawShapeSetPixel(dst, col);
 				dst++;
 				shift = (shift - (pixelStep * pixelPacking) & 7);
 			}
@@ -819,11 +834,11 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 	uint16 w2 = (w << 3) / pixelsPerByte;
 	uint16 t = ((w << 1) % 3) ? 1 : 0;
 	d[1] = ((w << 1) / 3) + t;
-	
+
 	uint32 transOffsetSrc = (pixelsPerByte == 4) ? (shp[0] * shp[1]) << 1 : 0;
 	uint32 transOffsetDst = (pixelsPerByte == 4) ? (d[0] * d[1]) << 1 : 0;
 	shp += 3;
-	d += 3;	
+	d += 3;
 
 	if (pixelsPerByte == 2) {
 		int i = 0;
@@ -1252,19 +1267,21 @@ const uint16 *Screen_EoB::getCGADitheringTable(int index) {
 }
 
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 c) {
-	if (_shapeFadeMode[0]) {
-		if (_shapeFadeMode[1]) {
-			c = *dst;
-		} else {
-			_shapeFadeInternal &= 7;
-			c = *(dst + _shapeFadeInternal++);
+	if ((_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
+		if (_shapeFadeMode[0]) {
+			if (_shapeFadeMode[1]) {
+				c = *dst;
+			} else {
+				_shapeFadeInternal &= 7;
+				c = *(dst + _shapeFadeInternal++);
+			}
 		}
-	}
 
-	if (_shapeFadeMode[1]) {
-		uint8 cnt = _shapeFadeMode[1];
-		while (cnt--)
-			c = _fadeData[_fadeDataIndex + c];
+		if (_shapeFadeMode[1]) {
+			uint8 cnt = _shapeFadeMode[1];
+			while (cnt--)
+				c = _fadeData[_fadeDataIndex + c];
+		}
 	}
 
 	*dst = c;
@@ -1485,6 +1502,11 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	uint16 cgaMask1 = cgaColorMask[color1 & 3];
 	uint16 cgaMask2 = cgaColorMask[color2 & 3];
 
+	if (_renderMode == Common::kRenderCGA) {
+		color1 &= 0x0f;
+		color2 &= 0x0f;
+	}
+
 	int cH = _height;
 	while (cH--) {
 		int cW = w;
@@ -1525,6 +1547,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			}
 
 			last = s;
+
 		} else {
 			for (bool runWidthLoop = true; runWidthLoop;) {
 				uint8 s = *src++;
@@ -1536,22 +1559,11 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 						break;
 					}
 
-					if (_renderMode == Common::kRenderCGA) {
-						uint8 in = s | last;
-						if (s & i) {
-							if (color1)
-								*dst = color1;
-						} else if (color2) {
-							*dst = color2;
-						}
-						last = s;
-					} else {
-						if (s & i) {
-							if (color1)
-								*dst = color1;
-						} else if (color2) {
-							*dst = color2;
-						}
+					if (s & i) {
+						if (color1)
+							*dst = color1;
+					} else if (color2) {
+						*dst = color2;
 					}
 					dst++;
 				}

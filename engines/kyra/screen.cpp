@@ -648,6 +648,9 @@ void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
+	if (_renderMode == Common::kRenderEGA)
+		return;
+
 	Palette pal(getPalette(0).getNumColors());
 	fadePalette(pal, delay, upFunc);
 }
@@ -1038,7 +1041,9 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
-		color &= 3;
+		color &= 0x03;
+	} else if (_renderMode == Common::kRenderEGA) {
+		color &= 0x0F;
 	}
 
 	if (xored) {
@@ -1117,7 +1122,9 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		color &= 0x0F;
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
-		color &= 3;
+		color &= 0x03;
+	} else if (_renderMode == Common::kRenderEGA) {
+		color &= 0x0F;
 	}
 
 	if (vertical) {

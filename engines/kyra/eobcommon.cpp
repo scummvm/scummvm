@@ -390,7 +390,7 @@ Common::Error EoBCoreEngine::init() {
 	if (!_staticres->init())
 		error("_staticres->init() failed");
 
-	if (!screen()->init())
+	if (!_screen->init(_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA))
 		error("screen()->init() failed");
 
 	if (ConfMan.hasKey("save_slot")) {

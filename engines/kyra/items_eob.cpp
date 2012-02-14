@@ -465,7 +465,7 @@ void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	const uint8 *ovl = 0;
 
 	if (applyBluePal) {
-		if (_flags.gameID == GI_EOB1) {			
+		if (_flags.gameID == GI_EOB1) {
 			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {
 			_screen->setFadeTableIndex(3);

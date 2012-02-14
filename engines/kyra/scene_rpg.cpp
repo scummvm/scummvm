@@ -111,7 +111,7 @@ void KyraRpgEngine::setDoorShapeDim(int index, int16 &y1, int16 &y2, int dim) {
 		a += _dscDoorFrameIndex1[_currentLevel - 1];
 		b += _dscDoorFrameIndex2[_currentLevel - 1];
 	}
-	
+
 	y1 = _dscDoorFrameY1[a];
 	y2 = _dscDoorFrameY2[b];
 

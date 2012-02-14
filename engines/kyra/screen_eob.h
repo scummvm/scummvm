@@ -36,6 +36,7 @@ public:
 	virtual ~Screen_EoB();
 
 	bool init();
+	bool init(bool useHiResEGADithering);
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
