@@ -222,7 +222,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc, const E
 	if (_engineOptions.size() > 0) {
 		tab->addTab(_("Engine"));
 
-		addEngineControls(tab, "GameOptions_Engine.", engineOptions);
+		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
 	}
 
 	//
