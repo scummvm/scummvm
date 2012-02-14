@@ -3719,7 +3719,10 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 //
 
+	// Hide the user interface
 	R2_GLOBALS._uiElements._active = false;
+	BF_GLOBALS._interfaceY = 200;
+
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
 
