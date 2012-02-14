@@ -190,7 +190,7 @@ const ExtraGuiOption *QueenMetaEngine::getExtraGuiOptions(const Common::String &
 			"alt_intro",
 			false
 		},
-		{ "", "", "", false }
+		{ 0, 0, 0, 0 }
 	};
 
 	return optionsList;

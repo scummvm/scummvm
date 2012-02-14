@@ -746,7 +746,7 @@ const ExtraGuiOption *SciMetaEngine::getExtraGuiOptions(const Common::String &ta
 			"windows_cursors",
 			false
 		},
-		{ "", "", "", false }
+		{ 0, 0, 0, 0 }
 	};
 	
 	return optionsList;

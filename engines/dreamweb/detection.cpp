@@ -201,7 +201,7 @@ const ExtraGuiOption *DreamWebMetaEngine::getExtraGuiOptions(const Common::Strin
 			"dreamweb_originalsaveload",
 			false
 		},
-		{ "", "", "", false }
+		{ 0, 0, 0, 0 }
 	};
 
 	return optionsList;

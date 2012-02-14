@@ -151,9 +151,9 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions)
 	: OptionsDialog(domain, "GameOptions") {
 
-	uint i = 0;
 	if (engineOptions) {
-		while (strcmp(engineOptions[i].configOption, "")) {
+		uint i = 0;
+		while (engineOptions[i].configOption) {
 			_engineOptions.push_back(engineOptions[i]);
 			++i;
 		}

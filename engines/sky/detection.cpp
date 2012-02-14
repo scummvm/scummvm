@@ -278,7 +278,7 @@ const ExtraGuiOption *SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 			"alt_intro",
 			false
 		},
-		{ "", "", "", false }
+		{ 0, 0, 0, 0 }
 	};
 
 	return optionsList;

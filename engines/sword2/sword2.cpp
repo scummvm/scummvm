@@ -250,7 +250,7 @@ const ExtraGuiOption *Sword2MetaEngine::getExtraGuiOptions(const Common::String 
 			"object_labels",
 			false
 		},
-		{ "", "", "", false }
+		{ 0, 0, 0, 0 }
 	};
 
 	return optionsList;
