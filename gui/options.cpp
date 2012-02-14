@@ -990,7 +990,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_enableVolumeSettings = true;
 }
 
-void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const Common::Array<ExtraGuiOption> &engineOptions) {
+void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptionList &engineOptions) {
 	// Note: up to 7 engine options can currently fit on screen (the most that
 	// can fit in a 320x200 screen with the classic theme).
 	// TODO: Increase this number by including the checkboxes inside a scroll
@@ -998,7 +998,7 @@ void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &pre
 	// the theme files.
 
 	uint i = 1;
-	Common::Array<ExtraGuiOption>::const_iterator iter;
+	ExtraGuiOptionList::const_iterator iter;
 	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
 		Common::String id = Common::String::format("%d", i);
 		_engineCheckboxes.push_back(new CheckboxWidget(boss, 

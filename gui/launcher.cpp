@@ -145,7 +145,7 @@ protected:
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 
-	Common::Array<ExtraGuiOption> _engineOptions;
+	ExtraGuiOptionList _engineOptions;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc, const ExtraGuiOption *engineOptions)
