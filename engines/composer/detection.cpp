@@ -253,6 +253,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	// The Princess and the Crab Mac - From Bug #3461984
+	{
+		{
+			"princess",
+			0,
+			{
+				{"the princess and the crab.ini", 0, "f6b551a7304643004bd5e4df7ac1e76e", -1},
+				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by sev
 		{
 			"sleepingcub",
