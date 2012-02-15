@@ -1293,6 +1293,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Just Grandma and Me 2.0 Macintosh
+	// From aluff in bug #3461368
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("BookOutline", "99fe5c8ace79f0542e6390bc3b58f25a"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// Just Grandma and Me 1.0
 	// From scoriae
 	{
@@ -1782,6 +1799,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Arthur Birthday (English) Version 2.0 Macintosh
+	// From aluff in bug #3461368
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BookOutline", "8e4fddb5b761c8cf2a3b448dd38422be"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"arthurbday",
@@ -2241,6 +2275,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"beardark",
 			"",
 			AD_ENTRY1("BookOutline", "95b2e43778ca9cfaee37bdde843e7681"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From aluff in bug #3461368
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("BookOutline", "b56746b3b2c062c8588bfb6b28e137c1"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
