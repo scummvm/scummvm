@@ -171,7 +171,7 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 		delete[] _conversationState[i];
 	delete[] _conversationState;
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
 		delete *i;
 	_timOpcodes.clear();
 }

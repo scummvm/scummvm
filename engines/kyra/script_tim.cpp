@@ -135,7 +135,7 @@ bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
 	return false;
 }
 
-TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes) {
+TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
 	if (!_vm->resource()->exists(filename))
 		return 0;
 

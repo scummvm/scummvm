@@ -447,7 +447,7 @@ private:
 	uint16 _envSfxQueuedBlocks[10];
 	int _nextSpeechId;
 	int _nextSpeaker;
-	typedef Common::List<Audio::SeekableAudioStream*> SpeechList;
+	typedef Common::List<Audio::SeekableAudioStream *> SpeechList;
 	SpeechList _speechList;
 
 	int _curTlkFile;
@@ -762,14 +762,14 @@ private:
 	// tim opcode
 	void setupOpcodeTable();
 
-	Common::Array<const TIMOpcode*> _timIntroOpcodes;
+	Common::Array<const TIMOpcode *> _timIntroOpcodes;
 	int tlol_setupPaletteFade(const TIM *tim, const uint16 *param);
 	int tlol_loadPalette(const TIM *tim, const uint16 *param);
 	int tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param);
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
 
-	Common::Array<const TIMOpcode*> _timOutroOpcodes;
+	Common::Array<const TIMOpcode *> _timOutroOpcodes;
 	int tlol_fadeInScene(const TIM *tim, const uint16 *param);
 	int tlol_unusedResourceFunc(const TIM *tim, const uint16 *param);
 	int tlol_fadeInPalette(const TIM *tim, const uint16 *param);
@@ -778,7 +778,7 @@ private:
 	int tlol_delayForChat(const TIM *tim, const uint16 *param);
 	int tlol_fadeOutSound(const TIM *tim, const uint16 *param);
 
-	Common::Array<const TIMOpcode*> _timIngameOpcodes;
+	Common::Array<const TIMOpcode *> _timIngameOpcodes;
 	int tlol_initSceneWindowDialogue(const TIM *tim, const uint16 *param);
 	int tlol_restoreAfterSceneWindowDialogue(const TIM *tim, const uint16 *param);
 	int tlol_giveItem(const TIM *tim, const uint16 *param);
@@ -1156,7 +1156,7 @@ private:
 
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell *, int, LoLEngine> SpellProc;
-	Common::Array<const SpellProc*> _spellProcs;
+	Common::Array<const SpellProc *> _spellProcs;
 	typedef void (LoLEngine::*SpellProcCallback)(WSAMovie_v2 *, int, int);
 
 	int castSpell(int charNum, int spellType, int spellLevel);

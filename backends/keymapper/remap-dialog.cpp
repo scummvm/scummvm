@@ -323,7 +323,7 @@ void RemapDialog::loadKeymap() {
 	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
 		// load active keymaps
 
-		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
+		List<const HardwareKey *> freeKeys(_keymapper->getHardwareKeys());
 
 		int topIndex = activeKeymaps.size() - 1;
 
@@ -334,7 +334,7 @@ void RemapDialog::loadKeymap() {
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = activeKeymaps[topIndex];
-		List<Action*>::iterator actIt;
+		List<Action *>::iterator actIt;
 		debug(3, "RemapDialog::loadKeymap top keymap: %s", top.keymap->getName().c_str());
 		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
 			Action *act = *actIt;
@@ -351,7 +351,7 @@ void RemapDialog::loadKeymap() {
 			for (int i = topIndex - 1; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
-				List<const HardwareKey*>::iterator keyIt = freeKeys.begin();
+				List<const HardwareKey *>::iterator keyIt = freeKeys.begin();
 
 				while (keyIt != freeKeys.end()) {
 					Action *act = mr.keymap->getMappedAction((*keyIt)->key);
@@ -373,7 +373,7 @@ void RemapDialog::loadKeymap() {
 	} else if (_kmPopUp->getSelected() != -1) {
 		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 
-		List<Action*>::iterator it;
+		List<Action *>::iterator it;
 
 		for (it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 			ActionInfo info = {*it, false, (*it)->description};

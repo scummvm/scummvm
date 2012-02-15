@@ -67,7 +67,7 @@ public:
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
-	List<Action*>& getActions() { return _actions; }
+	List<Action *>& getActions() { return _actions; }
 
 	/**
 	 * Find the Action that a key is mapped to
@@ -137,8 +137,8 @@ private:
 
 	String _name;
 	Keymap *_parent;
-	List<Action*> _actions;
-	HashMap<KeyState, Action*> _keymap;
+	List<Action *> _actions;
+	HashMap<KeyState, Action *> _keymap;
 	ConfigManager::Domain *_configDomain;
 
 };

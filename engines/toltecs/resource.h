@@ -71,7 +71,7 @@ public:
 	void purgeCache();
 
 protected:
-	typedef Common::HashMap<uint, Resource*> ResourceMap;
+	typedef Common::HashMap<uint, Resource *> ResourceMap;
 
 	ToltecsEngine *_vm;
 

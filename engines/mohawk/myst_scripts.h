@@ -143,7 +143,7 @@ protected:
 		const char *desc;
 	};
 
-	Common::Array<MystOpcode*> _opcodes;
+	Common::Array<MystOpcode *> _opcodes;
 
 	MystResource *_invokingResource;
 

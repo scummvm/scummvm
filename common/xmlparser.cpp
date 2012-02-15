@@ -39,7 +39,7 @@ XMLParser::~XMLParser() {
 	delete _XMLkeys;
 	delete _stream;
 
-	for (List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+	for (List<XMLKeyLayout *>::iterator i = _layoutList.begin();
 		i != _layoutList.end(); ++i)
 		delete *i;
 

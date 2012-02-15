@@ -53,7 +53,7 @@ private:
 		ExternalCmd proc;
 	};
 
-	Common::Array<RivenExternalCmd*> _externalCommands;
+	Common::Array<RivenExternalCmd *> _externalCommands;
 	void setupCommands();
 
 	// Supplementary Functions

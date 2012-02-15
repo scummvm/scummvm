@@ -33,8 +33,8 @@ namespace Agi {
 
 struct AgiMenu;
 struct AgiMenuOption;
-typedef Common::List<AgiMenu*> MenuList;
-typedef Common::List<AgiMenuOption*> MenuOptionList;
+typedef Common::List<AgiMenu *> MenuList;
+typedef Common::List<AgiMenuOption *> MenuOptionList;
 
 class GfxMgr;
 class PictureMgr;

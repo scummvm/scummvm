@@ -116,7 +116,7 @@ public:
 		static uint32 const cookie = 0x41424344;
 	};
 
-	Common::List<MemInfo*> _memList;
+	Common::List<MemInfo *> _memList;
 
 	typedef Common::List<Common::Rect> RectList;
 

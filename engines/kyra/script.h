@@ -41,7 +41,7 @@ struct EMCData {
 	uint16 *ordr;
 	uint16 dataSize;
 
-	const Common::Array<const Opcode*> *sysFuncs;
+	const Common::Array<const Opcode *> *sysFuncs;
 };
 
 struct EMCState {
@@ -109,7 +109,7 @@ class EMCInterpreter {
 public:
 	EMCInterpreter(KyraEngine_v1 *vm);
 
-	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode*> *opcodes);
+	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode *> *opcodes);
 	void unload(EMCData *data);
 
 	void init(EMCState *scriptState, const EMCData *data);

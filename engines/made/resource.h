@@ -111,7 +111,7 @@ public:
 	int16 getWidth() const { return _width; }
 	int16 getHeight() const { return _height; }
 protected:
-	Common::Array<Graphics::Surface*> _frames;
+	Common::Array<Graphics::Surface *> _frames;
 	uint16 _flags;
 	int16 _width, _height;
 };
@@ -210,7 +210,7 @@ protected:
 	bool _isV1;
 
 	typedef Common::Array<ResourceSlot> ResourceSlots;
-	typedef Common::HashMap<uint32, ResourceSlots*> ResMap;
+	typedef Common::HashMap<uint32, ResourceSlots *> ResMap;
 	void openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType);
 
 	ResMap _resSlots;

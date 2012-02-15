@@ -31,7 +31,7 @@
 namespace Common {
 
 Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
-	List<Action*>::iterator it;
+	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		const HardwareKey *hwKey = (*it)->getMappedKey();
@@ -43,7 +43,7 @@ Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDoma
 }
 
 Keymap::~Keymap() {
-	List<Action*>::iterator it;
+	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it)
 		delete *it;
@@ -57,7 +57,7 @@ void Keymap::addAction(Action *action) {
 }
 
 void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
-	HashMap<KeyState, Action*>::iterator it;
+	HashMap<KeyState, Action *>::iterator it;
 
 	it = _keymap.find(hwKey->key);
 
@@ -82,7 +82,7 @@ Action *Keymap::getAction(const char *id) {
 }
 
 Action *Keymap::findAction(const char *id) {
-	List<Action*>::iterator it;
+	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
@@ -92,7 +92,7 @@ Action *Keymap::findAction(const char *id) {
 }
 
 const Action *Keymap::findAction(const char *id) const {
-	List<Action*>::const_iterator it;
+	List<Action *>::const_iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
@@ -103,7 +103,7 @@ const Action *Keymap::findAction(const char *id) const {
 }
 
 Action *Keymap::getMappedAction(const KeyState& ks) const {
-	HashMap<KeyState, Action*>::iterator it;
+	HashMap<KeyState, Action *>::iterator it;
 
 	it = _keymap.find(ks);
 
@@ -158,7 +158,7 @@ void Keymap::saveMappings() {
 	if (!_configDomain)
 		return;
 
-	List<Action*>::const_iterator it;
+	List<Action *>::const_iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
@@ -179,7 +179,7 @@ void Keymap::saveMappings() {
 }
 
 bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
-	List<Action*>::iterator it;
+	List<Action *>::iterator it;
 	bool allMapped = true;
 	uint numberMapped = 0;
 
@@ -201,11 +201,11 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 #if 0 //disabling the broken automapper for now
 	// Create copies of action and key lists.
-	List<Action*> actions(_actions);
-	List<const HardwareKey*> keys(hwKeys->getHardwareKeys());
+	List<Action *> actions(_actions);
+	List<const HardwareKey *> keys(hwKeys->getHardwareKeys());
 
-	List<Action*>::iterator actIt;
-	List<const HardwareKey*>::iterator keyIt, selectedKey;
+	List<Action *>::iterator actIt;
+	List<const HardwareKey *>::iterator keyIt, selectedKey;
 
 	// Remove actions and keys from local lists that have already been mapped.
 	actIt = actions.begin();

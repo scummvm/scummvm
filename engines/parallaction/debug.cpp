@@ -69,14 +69,14 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 
 	switch (argc) {
 	case 3:
-		character = const_cast<char*>(argv[2]);
-		location = const_cast<char*>(argv[1]);
+		character = const_cast<char *>(argv[2]);
+		location = const_cast<char *>(argv[1]);
 		sprintf(tmp, "%s.%s", location, character);
 		_vm->scheduleLocationSwitch(tmp);
 		break;
 
 	case 2:
-		location = const_cast<char*>(argv[1]);
+		location = const_cast<char *>(argv[1]);
 		_vm->scheduleLocationSwitch(location);
 		break;
 

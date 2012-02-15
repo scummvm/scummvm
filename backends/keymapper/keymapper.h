@@ -86,7 +86,7 @@ public:
 	/**
 	 * Get a list of all registered HardwareKeys
 	 */
-	const List<const HardwareKey*> &getHardwareKeys() const {
+	const List<const HardwareKey *> &getHardwareKeys() const {
 		assert(_hardwareKeys);
 		return _hardwareKeys->getHardwareKeys();
 	}
@@ -196,7 +196,7 @@ private:
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
-	HashMap<KeyState, Action*> _keysDown;
+	HashMap<KeyState, Action *> _keysDown;
 
 };
 

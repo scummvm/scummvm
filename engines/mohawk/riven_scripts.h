@@ -125,7 +125,7 @@ private:
 	DECLARE_OPCODE(activateMLST);
 };
 
-typedef Common::Array<RivenScript*> RivenScriptList;
+typedef Common::Array<RivenScript *> RivenScriptList;
 
 class RivenScriptManager {
 public:

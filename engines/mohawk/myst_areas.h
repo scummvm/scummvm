@@ -137,7 +137,7 @@ public:
 protected:
 	uint16 _var7;
 	uint16 _numSubResources;
-	Common::Array<MystResource*> _subResources;
+	Common::Array<MystResource *> _subResources;
 };
 
 class MystResourceType8 : public MystResourceType7 {

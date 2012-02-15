@@ -224,7 +224,7 @@ protected:
 	// Sequences
 	EMCData _animationScriptData;
 	EMCState _animationScriptState;
-	Common::Array<const Opcode*> _opcodesAnimation;
+	Common::Array<const Opcode *> _opcodesAnimation;
 
 	void runAnimationScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload);
 
@@ -252,7 +252,7 @@ protected:
 	virtual void uninitAnimationShapes(int count, uint8 *filedata) = 0;
 
 	// Shapes
-	typedef Common::HashMap<int, uint8*> ShapeMap;
+	typedef Common::HashMap<int, uint8 *> ShapeMap;
 	ShapeMap _gameShapes;
 
 	uint8 *getShapePtr(int index) const;

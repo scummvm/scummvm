@@ -103,7 +103,7 @@ public:
 	HardwareKeySet() { }
 
 	virtual ~HardwareKeySet() {
-		List<const HardwareKey*>::const_iterator it;
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++)
 			delete *it;
@@ -115,7 +115,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(const char *id) const {
-		List<const HardwareKey*>::const_iterator it;
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if (strncmp((*it)->hwKeyId, id, HWKEY_ID_SIZE) == 0)
@@ -125,7 +125,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(const KeyState& keystate) const {
-		List<const HardwareKey*>::const_iterator it;
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->key == keystate)
@@ -134,7 +134,7 @@ public:
 		return 0;
 	}
 
-	const List<const HardwareKey*> &getHardwareKeys() const {
+	const List<const HardwareKey *> &getHardwareKeys() const {
 		return _keys;
 	}
 
@@ -178,7 +178,7 @@ public:
 private:
 
 	void checkForKey(const HardwareKey *key) {
-		List<const HardwareKey*>::iterator it;
+		List<const HardwareKey *>::iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if (strncmp((*it)->hwKeyId, key->hwKeyId, HWKEY_ID_SIZE) == 0)
@@ -188,7 +188,7 @@ private:
 		}
 	}
 
-	List<const HardwareKey*> _keys;
+	List<const HardwareKey *> _keys;
 };
 
 } // End of namespace Common

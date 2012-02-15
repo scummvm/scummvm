@@ -155,7 +155,7 @@ protected:
 		uint16 height;
 		CodecType codecType;
 
-		Array<SampleDesc*> sampleDescs;
+		Array<SampleDesc *> sampleDescs;
 
 		uint32 editCount;
 		EditListEntry *editList;
@@ -180,7 +180,7 @@ protected:
 	uint32 _duration;
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
-	Array<Track*> _tracks;
+	Array<Track *> _tracks;
 	uint32 _beginOffset;
 	MacResManager *_resFork;
 

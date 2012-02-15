@@ -1131,7 +1131,7 @@ void LocationParser_br::init() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
-	Common::Array<const Opcode*> *table = 0;
+	Common::Array<const Opcode *> *table = 0;
 
 	SetOpcodeTable(_commandParsers);
 	WARNING_PARSER(unexpected);
@@ -1234,7 +1234,7 @@ void ProgramParser_br::init() {
 
 	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
 
-	Common::Array<const Opcode*> *table = 0;
+	Common::Array<const Opcode *> *table = 0;
 
 	SetOpcodeTable(_instructionParsers);
 	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition

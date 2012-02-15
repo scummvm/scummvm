@@ -341,12 +341,12 @@ public:
 */
 struct BackgroundInfo {
 protected:
-	typedef Common::Array<MaskBuffer*> MaskPatches;
+	typedef Common::Array<MaskBuffer *> MaskPatches;
 	MaskPatches	_maskPatches;
 	MaskBuffer		_maskBackup;
 	void clearMaskData();
 
-	typedef Common::Array<PathBuffer*> PathPatches;
+	typedef Common::Array<PathBuffer *> PathPatches;
 	PathPatches	_pathPatches;
 	PathBuffer		_pathBackup;
 	void clearPathData();
@@ -415,7 +415,7 @@ public:
 };
 
 
-typedef Common::Array<GfxObj*> GfxObjArray;
+typedef Common::Array<GfxObj *> GfxObjArray;
 #define SCENE_DRAWLIST_SIZE 100
 
 class Gfx {

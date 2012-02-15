@@ -55,7 +55,7 @@ struct CommandContext {
 	// in Parallaction_XX
 };
 typedef Common::Functor1<CommandContext&, void> CommandOpcode;
-typedef Common::Array<const CommandOpcode*>	CommandOpcodeSet;
+typedef Common::Array<const CommandOpcode *>	CommandOpcodeSet;
 #define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op(CommandContext &)
 
 struct ProgramContext {
@@ -67,7 +67,7 @@ struct ProgramContext {
 	bool		_suspend;
 };
 typedef Common::Functor1<ProgramContext&, void> ProgramOpcode;
-typedef Common::Array<const ProgramOpcode*>	ProgramOpcodeSet;
+typedef Common::Array<const ProgramOpcode *>	ProgramOpcodeSet;
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op(ProgramContext &)
 
 

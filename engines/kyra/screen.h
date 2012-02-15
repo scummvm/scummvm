@@ -554,7 +554,7 @@ protected:
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
-	Common::Array<Palette*> _palettes;
+	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
 	Font *_fonts[FID_NUM];

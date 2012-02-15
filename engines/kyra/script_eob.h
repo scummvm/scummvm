@@ -99,7 +99,7 @@ private:
 		InfProc *proc;
 		Common::String desc;
 	};
-	Common::Array<const InfOpcode*> _opcodes;
+	Common::Array<const InfOpcode *> _opcodes;
 
 	int8 *_scriptData;
 	uint16 _scriptSize;

@@ -631,7 +631,7 @@ struct AgiGame {
 	AgiLogic *_curLogic;
 
 	// words
-	Common::Array<AgiWord*> words[26];
+	Common::Array<AgiWord *> words[26];
 
 	// view table
 	VtEntry viewTable[MAX_VIEWTABLE];

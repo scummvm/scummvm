@@ -77,7 +77,7 @@ protected:
 	};
 
 	ToltecsEngine *_vm;
-	Common::Array<const ScriptFunction*> _scriptFuncs;
+	Common::Array<const ScriptFunction *> _scriptFuncs;
 	Common::Array<const char *> _scriptFuncNames;
 
 	byte *_stack;

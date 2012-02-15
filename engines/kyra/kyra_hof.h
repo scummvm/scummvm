@@ -656,7 +656,7 @@ protected:
 	int t2_resetChat(const TIM *tim, const uint16 *param);
 	int t2_playSoundEffect(const TIM *tim, const uint16 *param);
 
-	Common::Array<const TIMOpcode*> _timOpcodes;
+	Common::Array<const TIMOpcode *> _timOpcodes;
 
 	// sound
 	int _oldTalkFile;

@@ -1480,7 +1480,7 @@ typedef Common::Functor2Mem<const TIM *, const uint16 *, int, KyraEngine_HoF> TI
 #define OpcodeTimUnImpl() _timOpcodes.push_back(new TIMOpcodeV2(this, 0))
 
 void KyraEngine_HoF::setupOpcodeTable() {
-	Common::Array<const Opcode*> *table = 0;
+	Common::Array<const Opcode *> *table = 0;
 
 	_opcodes.reserve(176);
 	SetOpcodeTable(_opcodes);

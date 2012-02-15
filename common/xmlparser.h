@@ -70,7 +70,7 @@ class SeekableReadStream;
 		ParserCallback callback;\
 		bool doCallback(XMLParser *parent, ParserNode *node) {return ((kLocalParserName*)parent->*callback)(node);} };\
 	virtual void buildLayout() { \
-		Common::Stack<XMLKeyLayout*> layout; \
+		Common::Stack<XMLKeyLayout *> layout; \
 		CustomXMLKeyLayout *lay = 0; \
 		XMLKeyLayout::XMLKeyProperty prop; \
 		_XMLkeys = new CustomXMLKeyLayout; \
@@ -334,7 +334,7 @@ protected:
 	 */
 	virtual void cleanup() {}
 
-	List<XMLKeyLayout*> _layoutList;
+	List<XMLKeyLayout *> _layoutList;
 
 private:
 	char _char;
@@ -346,7 +346,7 @@ private:
 	String _error; /** Current error message */
 	String _token; /** Current text token */
 
-	Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
+	Stack<ParserNode *> _activeKey; /** Node stack of the parsed keys */
 };
 
 } // End of namespace Common

@@ -463,7 +463,7 @@ private:
 
 	void npcChatSequence(const char *str, int object, int vocHigh, int vocLow);
 
-	Common::Array<const Opcode*> _opcodesDialog;
+	Common::Array<const Opcode *> _opcodesDialog;
 
 	int o3d_updateAnim(EMCState *script);
 	int o3d_delay(EMCState *script);

@@ -183,7 +183,7 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete[] _sceneStrings;
 	delete[] _talkObjectList;
 
-	for (Common::Array<const Opcode*>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
+	for (Common::Array<const Opcode *>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
 		delete *i;
 	_opcodesDialog.clear();
 

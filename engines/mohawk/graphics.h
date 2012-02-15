@@ -99,8 +99,8 @@ protected:
 
 private:
 	// An image cache that stores images until clearCache() is called
-	Common::HashMap<uint16, MohawkSurface*> _cache;
-	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
+	Common::HashMap<uint16, MohawkSurface *> _cache;
+	Common::HashMap<uint16, Common::Array<MohawkSurface *> > _subImageCache;
 };
 
 #ifdef ENABLE_MYST
@@ -222,7 +222,7 @@ private:
 		uint16 frameCount;
 		Common::Rect rect;
 		uint16 speed;
-		Common::Array<Common::SeekableReadStream*> frameScripts;
+		Common::Array<Common::SeekableReadStream *> frameScripts;
 
 		// Cur frame
 		uint16 curFrame;

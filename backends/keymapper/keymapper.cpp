@@ -217,7 +217,7 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		if (action)
 			_keysDown[key] = action;
 	} else {
-		HashMap<KeyState, Action*>::iterator it = _keysDown.find(key);
+		HashMap<KeyState, Action *>::iterator it = _keysDown.find(key);
 
 		if (it != _keysDown.end()) {
 			action = it->_value;
