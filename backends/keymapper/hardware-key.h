@@ -109,7 +109,7 @@ public:
 			delete *it;
 	}
 
-	void addHardwareKey(HardwareKey *key) {
+	void addHardwareKey(const HardwareKey *key) {
 		checkForKey(key);
 		_keys.push_back(key);
 	}
@@ -177,7 +177,7 @@ public:
 
 private:
 
-	void checkForKey(HardwareKey *key) {
+	void checkForKey(const HardwareKey *key) {
 		List<const HardwareKey*>::iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
