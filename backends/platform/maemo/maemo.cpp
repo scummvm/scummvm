@@ -32,6 +32,7 @@
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -48,6 +49,35 @@ OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 
 OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
 	delete _eventObserver;
+	delete _keymapperDefaultBindings;
+}
+
+static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymapperDefaultBindings, Model _model) {
+	_keymapperDefaultBindings->setDefaultBinding("gui", "REM", "HOME");
+	_keymapperDefaultBindings->setDefaultBinding("global", "REM", "HOME");
+
+	if (_model.hasMenuKey && _model.hasHwKeyboard) {
+		_keymapperDefaultBindings->setDefaultBinding("gui", "FUL", "FULLSCREEN");
+		_keymapperDefaultBindings->setDefaultBinding("global", "FUL", "FULLSCREEN");
+	}
+
+	if (_model.hasHwKeyboard) {
+		_keymapperDefaultBindings->setDefaultBinding("gui", "VIR", "C+ZOOMMINUS");
+		_keymapperDefaultBindings->setDefaultBinding("global", "VIR", "C+ZOOMMINUS");
+	} else {
+		_keymapperDefaultBindings->setDefaultBinding("gui", "VIR", "FULLSCREEN");
+		_keymapperDefaultBindings->setDefaultBinding("global", "VIR", "FULLSCREEN");
+	}
+
+	if (_model.hasMenuKey )
+		_keymapperDefaultBindings->setDefaultBinding("global", "MEN", "MENU");
+	else
+		_keymapperDefaultBindings->setDefaultBinding("global", "MEN", "S+C+M");
+
+	_keymapperDefaultBindings->setDefaultBinding("gui", "CLO", "ESCAPE");
+
+	_keymapperDefaultBindings->setDefaultBinding("maemo", "RCL", "ZOOMPLUS");
+	_keymapperDefaultBindings->setDefaultBinding("maemo", "CLK", "ZOOMMINUS");
 }
 
 void OSystem_SDL_Maemo::initBackend() {
@@ -61,9 +91,14 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
 
+	if (_keymapperDefaultBindings == 0)
+		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
 	_model = Model(detectModel());
+
+	registerDefaultKeyBindings(_keymapperDefaultBindings, _model);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();

@@ -44,6 +44,7 @@ public:
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual Common::Keymap *getGlobalKeymap();
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
 #endif
 
 	Model getModel() { return _model; }
@@ -55,6 +56,7 @@ private:
 	const Model detectModel();
 	Model _model;
 	MaemoSdlEventObserver *_eventObserver;
+	Common::KeymapperDefaultBindings *_keymapperDefaultBindings;
 };
 
 } // namespace Maemo
