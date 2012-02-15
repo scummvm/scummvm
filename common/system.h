@@ -939,6 +939,8 @@ public:
 #ifdef ENABLE_KEYMAPPER
 	/**
 	 * Register hardware keys with keymapper
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return HardwareKeySet with all keys and recommended mappings
 	 *
@@ -948,6 +950,8 @@ public:
 
 	/**
 	 * Return a platform-specific global keymap
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return Keymap with actions appropriate for the platform
 	 *
@@ -959,6 +963,8 @@ public:
 
 	/**
 	 * Return platform-specific default keybindings
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return KeymapperDefaultBindings populated with keybindings
 	 *
