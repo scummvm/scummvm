@@ -183,7 +183,7 @@ protected:
 
 	virtual const uint8 *getBlockFileData(int levelIndex) = 0;
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);
-	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
+	void setDoorShapeDim(int index, int16 &y1, int16 &y2, int dim);
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void generateBlockDrawingBuffer();
 	void generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
@@ -271,6 +271,10 @@ protected:
 	const uint8 *_dscDoorShpIndex;
 	int _dscDoorShpIndexSize;
 	const uint8 *_dscDoorY2;
+	const uint8 *_dscDoorFrameY1;
+	const uint8 *_dscDoorFrameY2;
+	const uint8 *_dscDoorFrameIndex1;
+	const uint8 *_dscDoorFrameIndex2;
 
 	// Script
 	virtual void runLevelScript(int block, int flags) = 0;

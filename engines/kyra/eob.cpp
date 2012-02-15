@@ -421,7 +421,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		d1 = x - (_doorShapes[shapeIndex + 3][2] << 2);
 		x -= (shp[2] << 2);
 		drawBlockObject(0, 2, _doorShapes[shapeIndex + 3], d1, y, 5);
-		scaleLevelShapesDim(index, y1, y2, 5);
+		setDoorShapeDim(index, y1, y2, 5);
 		y = _dscDoorY3[mDim] - ((wall < 30) ? (wall - _dscDoorScaleOffs[wall]) * _dscDoorScaleMult1[mDim] : _dscDoorScaleMult2[mDim]);
 		drawBlockObject(0, 2, shp, x, y, 5);
 		if (_wllShapeMap[wall] == -1)

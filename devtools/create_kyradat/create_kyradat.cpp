@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 81
+	kKyraDatVersion = 82
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -656,6 +656,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kRpgCommonDscBlockIndex, kTypeRawData, false },
 	{ kLoLDscDoor4, kLoLTypeRaw16, false },
 	{ kRpgCommonDscDoorY2, kTypeRawData, false },
+	{ kRpgCommonDscDoorFrameY1, kTypeRawData, false },
+	{ kRpgCommonDscDoorFrameY2, kTypeRawData, false },
+	{ kRpgCommonDscDoorFrameIndex1, kTypeRawData, false },
+	{ kRpgCommonDscDoorFrameIndex2, kTypeRawData, false },
 	{ kLoLDscDoorX, kLoLTypeRaw16, false },
 	{ kLoLDscDoorY, kLoLTypeRaw16, false },
 
@@ -1786,7 +1790,7 @@ const char *getIdString(const int id) {
 	case kEoB1CgaMappingIcons:
 		return "kEoB1CgaMappingIcons";
 	case kEoB1CgaMappingDeco:
-		return "kEoB1CgaMappingDeco";	
+		return "kEoB1CgaMappingDeco";
 	case kEoB1CgaLevelMappingIndex:
 		return "kEoB1CgaLevelMappingIndex";
 	case kEoB1CgaMappingLevel0:
@@ -2165,6 +2169,14 @@ const char *getIdString(const int id) {
 		return "kRpgCommonDscBlockIndex";
 	case kRpgCommonDscDoorY2:
 		return "kRpgCommonDscDoorY2";
+	case kRpgCommonDscDoorFrameY1:
+		return "kRpgCommonDscDoorFrameY1";
+	case kRpgCommonDscDoorFrameY2:
+		return "kRpgCommonDscDoorFrameY2";
+	case kRpgCommonDscDoorFrameIndex1:
+		return "kRpgCommonDscDoorFrameIndex1";
+	case kRpgCommonDscDoorFrameIndex2:
+		return "kRpgCommonDscDoorFrameIndex2";
 	case kLoLDscDoorScale:
 		return "kLoLDscDoorScale";
 	case kLoLDscDoor4:

@@ -51,7 +51,7 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 				if (t > x1) {
 					x1 = t;
 					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
+						setDoorShapeDim(index, y1, y2, -1);
 				}
 
 				t = _dscDim2[((m + i) << 1) + 1];
@@ -59,7 +59,7 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 				if (t < x2) {
 					x2 = t;
 					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
+						setDoorShapeDim(index, y1, y2, -1);
 				}
 			} else {
 				int t = _dscDim1[m + i];
@@ -100,17 +100,20 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 	drawLevelModifyScreenDim(dim, x1, 0, x2, 15);
 }
 
-void KyraRpgEngine::scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim) {
-	static const int8 dscY1[] = { 0x1E, 0x18, 0x10, 0x00 };
-	static const int8 dscY2[] = { 0x3B, 0x47, 0x56, 0x78 };
-
+void KyraRpgEngine::setDoorShapeDim(int index, int16 &y1, int16 &y2, int dim) {
 	uint8 a = _dscDimMap[index];
 
-	if (dim == -1 && a != 3)
+	if (_flags.gameID != GI_EOB1 && dim == -1 && a != 3)
 		a++;
 
-	y1 = dscY1[a];
-	y2 = dscY2[a];
+	uint8 b = a;
+	if (_flags.gameID == GI_EOB1) {
+		a += _dscDoorFrameIndex1[_currentLevel - 1];
+		b += _dscDoorFrameIndex2[_currentLevel - 1];
+	}
+	
+	y1 = _dscDoorFrameY1[a];
+	y2 = _dscDoorFrameY2[b];
 
 	if (dim == -1)
 		return;

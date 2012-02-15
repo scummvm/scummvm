@@ -462,7 +462,7 @@ void EoBCoreEngine::drawDoor(int index) {
 
 	int16 y1 = 0;
 	int16 y2 = 0;
-	scaleLevelShapesDim(index, y1, y2, 5);
+	setDoorShapeDim(index, y1, y2, 5);
 	drawDoorIntern(type, index, x, y, w, s, d, y1, y2);
 	drawLevelModifyScreenDim(5, _shpDmX1, 0, _shpDmX2, 15);
 }

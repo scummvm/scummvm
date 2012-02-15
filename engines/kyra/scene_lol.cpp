@@ -1436,7 +1436,7 @@ void LoLEngine::drawSceneShapes(int) {
 		if (v > 80)
 			v = 80;
 
-		scaleLevelShapesDim(t, dimY1, dimY2, _sceneShpDim);
+		setDoorShapeDim(t, dimY1, dimY2, _sceneShpDim);
 		drawDoor(_doorShapes[(s < 23 ? _dscDoorShpIndex[s] : 0)], 0, t, 10, 0, -v, 2);
 		setLevelShapesDim(t, dimY1, dimY2, _sceneShpDim);
 	}

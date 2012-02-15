@@ -94,6 +94,10 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_dscDimMap = 0;
 	_dscDoorShpIndex = 0;
 	_dscDoorY2 = 0;
+	_dscDoorFrameY1 = 0;
+	_dscDoorFrameY2 = 0;
+	_dscDoorFrameIndex1 = 0;
+	_dscDoorFrameIndex2 = 0;
 
 	_shpDmX1 = _shpDmX2 = 0;
 

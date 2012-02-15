@@ -190,6 +190,10 @@ enum kExtractID {
 	kRpgCommonDscBlockMap,
 	kRpgCommonDscDimMap,
 	kRpgCommonDscDoorY2,
+	kRpgCommonDscDoorFrameY1,
+	kRpgCommonDscDoorFrameY2,
+	kRpgCommonDscDoorFrameIndex1,
+	kRpgCommonDscDoorFrameIndex2,
 	kRpgCommonDscBlockIndex,
 
 	kEoBBaseChargenStrings1,
