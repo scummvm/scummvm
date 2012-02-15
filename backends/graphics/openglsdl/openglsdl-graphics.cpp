@@ -376,7 +376,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	}
 
 	// Check if the screen is BGR format
-	_formatBGR = _hwscreen->format->Rshift != 0;
+	setFormatIsBGR(_hwscreen->format->Rshift != 0);
 
 	if (isFullscreen) {
 		_lastFullscreenModeWidth = _videoMode.hardwareWidth;
@@ -671,8 +671,7 @@ void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 }
  
 void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
-	_cursorState.x = mouse.x;
-	_cursorState.y = mouse.y;
+	setMousePosition(mouse.x, mouse.y);
 }
 
 #endif

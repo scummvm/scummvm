@@ -594,10 +594,8 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 		scaledY += _displayY;
 	}
 
+	setMousePosition(scaledX, scaledY);
 	setInternalMousePosition(scaledX, scaledY);
-
-	_cursorState.x = scaledX;
-	_cursorState.y = scaledY;
 }
 
 void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
