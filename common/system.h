@@ -54,6 +54,7 @@ class WriteStream;
 #ifdef ENABLE_KEYMAPPER
 class HardwareKeySet;
 class Keymap;
+class KeymapperDefaultBindings;
 #endif
 }
 
@@ -955,6 +956,15 @@ public:
 	 * See keymapper documentation for further reference.
 	 */
 	virtual Common::Keymap *getGlobalKeymap() { return 0; }
+
+	/**
+	 * Return platform-specific default keybindings
+	 *
+	 * @return KeymapperDefaultBindings populated with keybindings
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return 0; }
 #endif
 	//@}
 
