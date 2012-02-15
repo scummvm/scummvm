@@ -28,10 +28,10 @@
 namespace Maemo {
 
 enum ModelType {
-	kModelType770 = 1,
-	kModelTypeN800 = 2,
-	kModelTypeN810 = 4,
-	kModelTypeN900 = 8,
+	kModelType770 = 1 << 0,
+	kModelTypeN800 = 1 << 1,
+	kModelTypeN810 = 1 << 2,
+	kModelTypeN900 = 1 << 3,
 	kModelTypeInvalid = 0
 };
 
