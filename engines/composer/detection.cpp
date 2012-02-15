@@ -270,6 +270,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	// Sleeping Cub Mac - From Bug #3461369
+	{
+		{
+			"sleepingcub",
+			0,
+			{
+				{"sleeping cub.ini", 0, "39642a4036cb51443f5e90052c3ad0b2", -1},
+				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
