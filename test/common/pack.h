@@ -15,7 +15,7 @@ struct TestStruct {
 
 #include <common/pack-end.h>	// END STRUCT PACKING
 
-#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->type::item))-42)
+#define OFFS(type,item) (((ptrdiff_t)(&((type *)42)->type::item))-42)
 
 class PackTestSuite : public CxxTest::TestSuite
 {

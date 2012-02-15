@@ -55,7 +55,7 @@ void *SpritesMgr::poolAlloc(int size) {
 
 	// Adjust size to sizeof(void *) boundary to prevent data misalignment
 	// errors.
-	const int alignPadding = sizeof(void*) - 1;
+	const int alignPadding = sizeof(void *) - 1;
 	size = (size + alignPadding) & ~alignPadding;
 
 	x = _poolTop;

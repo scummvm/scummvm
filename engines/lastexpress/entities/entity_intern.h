@@ -94,7 +94,7 @@ void class::setup_##name() { \
 
 // Expose parameters and check validity
 #define EXPOSE_PARAMS(type) \
-	type *params = (type*)_data->getCurrentParameters(); \
+	type *params = (type *)_data->getCurrentParameters(); \
 	if (!params) \
 		error("[EXPOSE_PARAMS] Trying to call an entity function with invalid parameters"); \
 
@@ -307,7 +307,7 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 #define RESET_ENTITY_STATE(entity, class, function) \
 	getEntities()->resetState(entity); \
-	((class*)getEntities()->get(entity))->function();
+	((class *)getEntities()->get(entity))->function();
 
 //////////////////////////////////////////////////////////////////////////
 // Parameters macros (for default IIII parameters)

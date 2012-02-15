@@ -260,7 +260,7 @@ void DreamWebEngine::saveGame() {
 		}
 
 		char descbuf[17] = { 2, 0 };
-		Common::strlcpy((char*)descbuf + 1, game_description.c_str(), 16);
+		Common::strlcpy((char *)descbuf + 1, game_description.c_str(), 16);
 		unsigned int desclen = game_description.size();
 		if (desclen > 15)
 			desclen = 15;

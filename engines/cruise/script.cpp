@@ -33,7 +33,7 @@ scriptInstanceStruct procHead;
 scriptInstanceStruct *currentScriptPtr;
 
 int8 getByteFromScript() {
-	int8 var = *(int8*)(currentData3DataPtr + currentScriptPtr->scriptOffset);
+	int8 var = *(int8 *)(currentData3DataPtr + currentScriptPtr->scriptOffset);
 	++currentScriptPtr->scriptOffset;
 
 	return (var);
@@ -202,7 +202,7 @@ int32 opcodeType1()	{
 			di = currentScriptPtr->overlayNumber;
 		}
 
-		if ((var == 0x85) && !strcmp((char*)currentCtpName, "S26.CTP") && !di && mode == 1) { // patch in bar
+		if ((var == 0x85) && !strcmp((char *)currentCtpName, "S26.CTP") && !di && mode == 1) { // patch in bar
 			var = 0x87;
 		}
 

@@ -209,7 +209,7 @@ public:
 	}
 
 	uint32 readSamples(void *buffer, int numSamples) {
-		return _buffer.read((byte*)buffer, numSamples * 2) / 2;
+		return _buffer.read((byte *)buffer, numSamples * 2) / 2;
 	}
 
 private:

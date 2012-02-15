@@ -50,7 +50,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 	char line[1024];
 	dofgets(line, 1024, inf);
 	assert(lineMatchSection(line, "MAINLISTS"));
-	uint16 *resBuf = (uint16*)malloc(MAX_OBJ_SIZE);
+	uint16 *resBuf = (uint16 *)malloc(MAX_OBJ_SIZE);
 	uint32 idNum = 0;
 	do {
 		dofgets(line, 1024, inf);
@@ -60,7 +60,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 			CptObj *dest = destArr + id;
 			assertEmpty(dest);
 			dest->type = MAINLIST;
-			dest->dbgName = (char*)malloc(strlen(cptName) + 1);
+			dest->dbgName = (char *)malloc(strlen(cptName) + 1);
 			strcpy(dest->dbgName, cptName);
 			memset(resBuf, 0, MAX_OBJ_SIZE);
 			uint32 resPos = 0;
@@ -82,7 +82,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 			} while (1);
 			assert(resPos < (MAX_OBJ_SIZE / 2));
 			dest->len = resPos;
-			dest->data = (uint16*)malloc(resPos * 2);
+			dest->data = (uint16 *)malloc(resPos * 2);
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
@@ -95,7 +95,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 	char line[1024];
 	dofgets(line, 1024, inf);
 	assert(lineMatchSection(line, "COMPACTS"));
-	uint16 *resBuf = (uint16*)malloc(MAX_OBJ_SIZE);
+	uint16 *resBuf = (uint16 *)malloc(MAX_OBJ_SIZE);
 	do {
 		dofgets(line, 1024, inf);
 		if (!isEndOfSection(line)) {
@@ -103,7 +103,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 			uint16 id = getInfo(line, "COMPACT", cptName);
 			CptObj *dest = destArr + id;
 			assertEmpty(dest);
-			dest->dbgName = (char*)malloc(strlen(cptName) + 1);
+			dest->dbgName = (char *)malloc(strlen(cptName) + 1);
 			dest->type = COMPACT;
 			strcpy(dest->dbgName, cptName);
 			memset(resBuf, 0, MAX_OBJ_SIZE);
@@ -134,7 +134,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 			} while (1);
 			assert(resPos < (MAX_OBJ_SIZE / 2));
 			dest->len = resPos;
-			dest->data = (uint16*)malloc(resPos * 2);
+			dest->data = (uint16 *)malloc(resPos * 2);
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
@@ -147,7 +147,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 	char line[1024];
 	dofgets(line, 1024, inf);
 	assert(lineMatchSection(line, "TURNTABS"));
-	uint16 *resBuf = (uint16*)malloc(MAX_OBJ_SIZE);
+	uint16 *resBuf = (uint16 *)malloc(MAX_OBJ_SIZE);
 	do {
 		dofgets(line, 1024, inf);
 		if (!isEndOfSection(line)) {
@@ -155,7 +155,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 			uint16 id = getInfo(line, "TURNTAB", cptName);
 			CptObj *dest = destArr + id;
 			assertEmpty(dest);
-			dest->dbgName = (char*)malloc(strlen(cptName) + 1);
+			dest->dbgName = (char *)malloc(strlen(cptName) + 1);
 			dest->type = TURNTAB;
 			strcpy(dest->dbgName, cptName);
 			memset(resBuf, 0, MAX_OBJ_SIZE);
@@ -176,7 +176,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 			} while (1);
 			assert(resPos < (MAX_OBJ_SIZE / 2));
 			dest->len = resPos;
-			dest->data = (uint16*)malloc(resPos * 2);
+			dest->data = (uint16 *)malloc(resPos * 2);
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
@@ -189,7 +189,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 	char line[1024];
 	dofgets(line, 1024, inf);
 	assert(lineMatchSection(line, typeName));
-	uint16 *resBuf = (uint16*)malloc(MAX_OBJ_SIZE);
+	uint16 *resBuf = (uint16 *)malloc(MAX_OBJ_SIZE);
 	do {
 		dofgets(line, 1024, inf);
 		if (!isEndOfSection(line)) {
@@ -197,7 +197,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 			uint16 id = getInfo(line, objName, cptName);
 			CptObj *dest = destArr + id;
 			assertEmpty(dest);
-			dest->dbgName = (char*)malloc(strlen(cptName) + 1);
+			dest->dbgName = (char *)malloc(strlen(cptName) + 1);
 			dest->type = cTypeId;
 			strcpy(dest->dbgName, cptName);
 			memset(resBuf, 0, MAX_OBJ_SIZE);
@@ -218,7 +218,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 			} while (1);
 			assert(resPos < (MAX_OBJ_SIZE / 2));
 			dest->len = resPos;
-			dest->data = (uint16*)malloc(resPos * 2);
+			dest->data = (uint16 *)malloc(resPos * 2);
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
@@ -242,7 +242,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 			uint16 fromId = getInfo(line, "SYMLINK", cptName);
 			CptObj *from = destArr + fromId;
 			assertEmpty(from);
-			dlinkNames[dlinkCount] = (char*)malloc(strlen(cptName) + 1);
+			dlinkNames[dlinkCount] = (char *)malloc(strlen(cptName) + 1);
 			strcpy(dlinkNames[dlinkCount], cptName);
 
 			dofgets(line, 1024, inf);
@@ -272,7 +272,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	CptObj *resCpts;
 	uint16 baseLists[NUM_DATA_LISTS];
 	memset(baseLists, 0, NUM_DATA_LISTS * 2);
-	resCpts = (CptObj*)malloc(MAX_CPTS * sizeof(CptObj));
+	resCpts = (CptObj *)malloc(MAX_CPTS * sizeof(CptObj));
 	memset(resCpts, 0, MAX_CPTS * sizeof(CptObj));
 	printf(" MainLists...\n");
 	processMainLists(inf, resCpts, baseLists);
@@ -323,7 +323,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	fwrite(&binSize, 1, 4, debOutf);
 	fwrite(&binSize, 1, 4, resOutf);
 
-	char *asciiBuf = (char*)malloc(ASCII_SIZE);
+	char *asciiBuf = (char *)malloc(ASCII_SIZE);
 	char *asciiPos = asciiBuf;
 
 	// now process all the compacts
@@ -491,7 +491,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		assert((ftell(res288) / 2) < 65536);
 		uint16 resSize = (uint16)(ftell(res288) / 2);
 		fseek(res288, 0, SEEK_SET);
-		uint16 *buf288 = (uint16*)malloc(resSize * 2);
+		uint16 *buf288 = (uint16 *)malloc(resSize * 2);
 		fread(buf288, 2, resSize, res288);
 		fclose(res288);
 		fwrite(&resSize, 1, 2, debOutf);
@@ -514,7 +514,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			fseek(resDiff, 0, SEEK_END);
 			assert(ftell(resDiff) == (resSize * 2));
 			fseek(resDiff, 0, SEEK_SET);
-			uint16 *bufDif = (uint16*)malloc(resSize *2);
+			uint16 *bufDif = (uint16 *)malloc(resSize *2);
 			fread(bufDif, 2, resSize, resDiff);
 			fclose(resDiff);
 			for (uint16 eCnt = 0; eCnt < resSize; eCnt++)

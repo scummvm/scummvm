@@ -318,7 +318,7 @@ void DXADecoder::decode13(int size) {
 	for (uint32 by = 0; by < _curHeight; by += BLOCKH) {
 		for (uint32 bx = 0; bx < _width; bx += BLOCKW) {
 			uint8 type = *codeBuf++;
-			uint8 *b2 = (uint8*)_frameBuffer1 + bx + by * _width;
+			uint8 *b2 = (uint8 *)_frameBuffer1 + bx + by * _width;
 
 			switch (type) {
 			case 0:
@@ -369,7 +369,7 @@ void DXADecoder::decode13(int size) {
 				if (mbyte & 0x08)
 					my = -my;
 
-				uint8 *b1 = (uint8*)_frameBuffer2 + (bx+mx) + (by+my) * _width;
+				uint8 *b1 = (uint8 *)_frameBuffer2 + (bx+mx) + (by+my) * _width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
 					b1 += _width;
@@ -385,7 +385,7 @@ void DXADecoder::decode13(int size) {
 
 				for (int subBlock = 0; subBlock < 4; subBlock++) {
 					int sx = bx + subX[subBlock], sy = by + subY[subBlock];
-					b2 = (uint8*)_frameBuffer1 + sx + sy * _width;
+					b2 = (uint8 *)_frameBuffer1 + sx + sy * _width;
 					switch (subMask & 0xC0) {
 					// 00: skip
 					case 0x00:
@@ -413,7 +413,7 @@ void DXADecoder::decode13(int size) {
 						if (mbyte & 0x08)
 							my = -my;
 
-						uint8 *b1 = (uint8*)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
+						uint8 *b1 = (uint8 *)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
 							memcpy(b2, b1, BLOCKW / 2);
 							b1 += _width;

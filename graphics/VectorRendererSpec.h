@@ -103,7 +103,7 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
-		blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
+		blendPixelPtr((PixelType *)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
 	/**

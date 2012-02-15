@@ -786,7 +786,7 @@ void ScriptInterpreter::sfGetRandomNumber() {
 }
 
 void ScriptInterpreter::sfDrawGuiTextMulti() {
-	_vm->_screen->drawGuiTextMulti((byte*)localPtr(arg16(3)));
+	_vm->_screen->drawGuiTextMulti((byte *)localPtr(arg16(3)));
 }
 
 void ScriptInterpreter::sfUpdateVerbLine() {
@@ -907,11 +907,11 @@ void ScriptInterpreter::sfDrawGuiImage() {
 }
 
 void ScriptInterpreter::sfAddAnimatedSpriteNoLoop() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), false, 2);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), false, 2);
 }
 
 void ScriptInterpreter::sfAddAnimatedSprite() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 2);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), true, 2);
 }
 
 void ScriptInterpreter::sfAddStaticSprite() {
@@ -919,11 +919,11 @@ void ScriptInterpreter::sfAddStaticSprite() {
 }
 
 void ScriptInterpreter::sfAddAnimatedSpriteScaled() {
-	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 1);
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte *)localPtr(0), (int16 *)localPtr(arg16(9)), true, 1);
 }
 
 void ScriptInterpreter::sfFindPath() {
-	_vm->_segmap->findPath((int16*)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
+	_vm->_segmap->findPath((int16 *)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
 }
 
 void ScriptInterpreter::sfWalk() {

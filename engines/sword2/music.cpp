@@ -115,7 +115,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		fh->idxLen = fh->file.readUint32LE();
 		fh->file.seek(entrySize * 4);
 
-		fh->idxTab = (uint32*)malloc(fh->idxLen * 3 * sizeof(uint32));
+		fh->idxTab = (uint32 *)malloc(fh->idxLen * 3 * sizeof(uint32));
 		for (uint32 cnt = 0; cnt < fh->idxLen; cnt++) {
 			fh->idxTab[cnt * 3 + 0] = fh->file.readUint32LE();
 			fh->idxTab[cnt * 3 + 1] = fh->file.readUint32LE();

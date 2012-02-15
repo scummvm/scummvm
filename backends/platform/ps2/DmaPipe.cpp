@@ -48,7 +48,7 @@ private:
 
 DmaPipe::DmaPipe(uint32 size) {
 	size &= ~0x1F;
-	_buf = (uint64*)memalign(64, size);
+	_buf = (uint64 *)memalign(64, size);
 	_curPipe = 0;
     _pipes[0] = new SinglePipe(_buf, size >> 4);
 	_pipes[1] = new SinglePipe(_buf + (size >> 4), size >> 4);
@@ -260,7 +260,7 @@ void SinglePipe::init(void) {
 	_buf[0] = 0x0000000070000000;
 	_buf[1] = 0;
 	_chainHead = _buf;
-	_chainSize = (uint16*)_chainHead;
+	_chainSize = (uint16 *)_chainHead;
 	_bufPos = _buf + 2;
 }
 
@@ -272,7 +272,7 @@ void SinglePipe::appendChain(uint64 dmaTag) {
 	_chainHead = _bufPos;
 	_chainHead[0] = dmaTag;
 	_chainHead[1] = 0;
-	_chainSize = (uint16*)_chainHead;
+	_chainSize = (uint16 *)_chainHead;
 	_bufPos += 2;
 }
 

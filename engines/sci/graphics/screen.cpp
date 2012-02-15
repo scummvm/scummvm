@@ -438,7 +438,7 @@ void GfxScreen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWid
 	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void*)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
 		screen += screenWidth;
 	}
 }
@@ -458,7 +458,7 @@ void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void*)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
 		screen += _displayWidth;
 	}
 }
@@ -503,7 +503,7 @@ void GfxScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *scr
 	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
+		memcpy((void *) screen, memoryPtr, width); memoryPtr += width;
 		screen += screenWidth;
 	}
 }
@@ -523,7 +523,7 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
+		memcpy((void *) screen, memoryPtr, width); memoryPtr += width;
 		screen += _displayWidth;
 	}
 }

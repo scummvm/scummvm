@@ -238,7 +238,7 @@ void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut &src) {
 void AudioThread::OnTimerExpired(Timer &timer) {
 	if (_ready < NUM_AUDIO_BUFFERS) {
 		uint len = _audioBuffer[_head].GetCapacity();
-		int samples = _mixer->mixCallback((byte*)_audioBuffer[_head].GetPointer(), len);
+		int samples = _mixer->mixCallback((byte *)_audioBuffer[_head].GetPointer(), len);
 		if (samples) {
 			_head = (_head + 1) % NUM_AUDIO_BUFFERS;
 			_ready++;

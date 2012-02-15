@@ -727,7 +727,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 				switch (mobj->getType()) {
 				case SEG_TYPE_HUNK:
 				{
-					HunkTable *ht = (HunkTable*)mobj;
+					HunkTable *ht = (HunkTable *)mobj;
 					int index = argv[parmNr].offset;
 					if (ht->isValidEntry(index)) {
 						// NOTE: This ", deleted" isn't as useful as it could

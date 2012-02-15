@@ -210,14 +210,14 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 	switch (GuRenderer::_displayManager->getOutputBitsPerPixel()) {
 	case 16:
 		sceGuDrawBuffer(GU_PSM_4444, (void *)0, PSP_BUFFER_WIDTH);
-		sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void*)(PSP_FRAME_SIZE * sizeof(uint16)), PSP_BUFFER_WIDTH);
-		sceGuDepthBuffer((void*)(PSP_FRAME_SIZE * sizeof(uint16) * 2), PSP_BUFFER_WIDTH);
+		sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void *)(PSP_FRAME_SIZE * sizeof(uint16)), PSP_BUFFER_WIDTH);
+		sceGuDepthBuffer((void *)(PSP_FRAME_SIZE * sizeof(uint16) * 2), PSP_BUFFER_WIDTH);
 		VramAllocator::instance().allocate(PSP_FRAME_SIZE * sizeof(uint16) * 2);
 		break;
 	case 32:
 		sceGuDrawBuffer(GU_PSM_8888, (void *)0, PSP_BUFFER_WIDTH);
-		sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void*)(PSP_FRAME_SIZE * sizeof(uint32)), PSP_BUFFER_WIDTH);
-		sceGuDepthBuffer((void*)(PSP_FRAME_SIZE * sizeof(uint32) * 2), PSP_BUFFER_WIDTH);
+		sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void *)(PSP_FRAME_SIZE * sizeof(uint32)), PSP_BUFFER_WIDTH);
+		sceGuDepthBuffer((void *)(PSP_FRAME_SIZE * sizeof(uint32) * 2), PSP_BUFFER_WIDTH);
 		VramAllocator::instance().allocate(PSP_FRAME_SIZE * sizeof(uint32) * 2);
 		break;
 	}

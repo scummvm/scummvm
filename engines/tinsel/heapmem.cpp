@@ -234,8 +234,8 @@ static MEM_NODE *MemoryAlloc(long size) {
 	MEM_NODE *pHeap = &heapSentinel;
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	const int alignPadding = sizeof(void*) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
+	const int alignPadding = sizeof(void *) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// compact the heap to make up room for 'size' bytes, if necessary
@@ -310,8 +310,8 @@ MEM_NODE *MemoryNoAlloc() {
 MEM_NODE *MemoryAllocFixed(long size) {
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	const int alignPadding = sizeof(void*) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
+	const int alignPadding = sizeof(void *) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// Search for a free entry in s_fixedMnodesList

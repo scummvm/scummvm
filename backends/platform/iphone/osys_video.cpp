@@ -466,7 +466,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	int texWidth = getSizeNextPOT(w);
 	int texHeight = getSizeNextPOT(h);
 	int bufferSize =  texWidth * texHeight * sizeof(int16);
-	int16* mouseBuf = (int16*)malloc(bufferSize);
+	int16* mouseBuf = (int16 *)malloc(bufferSize);
 	memset(mouseBuf, 0, bufferSize);
 
 	for (uint x = 0; x < w; ++x) {

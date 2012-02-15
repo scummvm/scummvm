@@ -118,7 +118,7 @@ void KyraRpgEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
 }
 
 void KyraRpgEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-	EoBFlyingObject *p = (EoBFlyingObject*)tmp->flyingObjects;
+	EoBFlyingObject *p = (EoBFlyingObject *)tmp->flyingObjects;
 	delete[] p;
 }
 

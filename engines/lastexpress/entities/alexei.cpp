@@ -355,7 +355,7 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, function16, TimeValue)
 		break;
 
 	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityAlexei, (char*)&params->seq);
+		getEntities()->drawSequenceLeft(kEntityAlexei, (char *)&params->seq);
 		getObjects()->update(kObjectCompartment2, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectHandleInsideBathroom, kEntityAlexei, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;

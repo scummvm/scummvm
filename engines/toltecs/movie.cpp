@@ -215,7 +215,7 @@ void MoviePlayer::fetchAudioChunks() {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 		if (chunkType == 4) {
-			byte *chunkBuffer = (byte*)malloc(chunkSize);
+			byte *chunkBuffer = (byte *)malloc(chunkSize);
 			_vm->_arc->read(chunkBuffer, chunkSize);
 			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			chunkBuffer = NULL;

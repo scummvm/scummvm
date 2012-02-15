@@ -382,8 +382,8 @@ void Logic::mainAnim() {
 		}
 	};
 
-	uint16 animId = *(uint16*)_skyCompact->getCompactElem(_compact, C_ANIM_UP + _compact->megaSet + dir * 4);
-	uint16 *animList = (uint16*)_skyCompact->fetchCpt(animId);
+	uint16 animId = *(uint16 *)_skyCompact->getCompactElem(_compact, C_ANIM_UP + _compact->megaSet + dir * 4);
+	uint16 *animList = (uint16 *)_skyCompact->fetchCpt(animId);
 
 	uint16 arAnimIndex = _compact->arAnimIndex;
 	if (!animList[arAnimIndex / 2]) {
@@ -400,7 +400,7 @@ void Logic::mainAnim() {
 }
 
 void Logic::arTurn() {
-	uint16 *turnData = (uint16*)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
+	uint16 *turnData = (uint16 *)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
 	_compact->frame = *turnData++;
 	_compact->turnProgPos++;
 
@@ -453,7 +453,7 @@ void Logic::anim() {
 }
 
 void Logic::turn() {
-	uint16 *turnData = (uint16*)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
+	uint16 *turnData = (uint16 *)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
 	if (*turnData) {
 		_compact->frame = *turnData;
 		_compact->turnProgPos++;
@@ -1425,12 +1425,12 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 
 bool Logic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
 	_skySound->fnStopFx();
-	_skyDisk->fnCacheChip((uint16*)_skyCompact->fetchCpt((uint16)a));
+	_skyDisk->fnCacheChip((uint16 *)_skyCompact->fetchCpt((uint16)a));
 	return true;
 }
 
 bool Logic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	_skyDisk->fnCacheFast((uint16*)_skyCompact->fetchCpt((uint16)a));
+	_skyDisk->fnCacheFast((uint16 *)_skyCompact->fetchCpt((uint16)a));
 	return true;
 }
 
@@ -1577,7 +1577,7 @@ bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 		warning("can't find _compact's getToTable. Place compact is NULL");
 		return false;
 	}
-	uint16 *getToTable = (uint16*)_skyCompact->fetchCpt(cpt->getToTableId);
+	uint16 *getToTable = (uint16 *)_skyCompact->fetchCpt(cpt->getToTableId);
 	if (!getToTable) {
 		warning("Place compact's getToTable is NULL");
 		return false;
@@ -1596,7 +1596,7 @@ bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 bool Logic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 1; // high level stood still
 
-	_compact->grafixProgId = *(uint16*)_skyCompact->getCompactElem(_compact, C_STAND_UP + _compact->megaSet + _compact->dir * 4);
+	_compact->grafixProgId = *(uint16 *)_skyCompact->getCompactElem(_compact, C_STAND_UP + _compact->megaSet + _compact->dir * 4);
 	_compact->grafixProgPos = 0;
 
 	uint16 *standList = _skyCompact->getGrafixPtr(_compact);
@@ -2158,8 +2158,8 @@ bool Logic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
 
 bool Logic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 	// Move a list of id's to another screen
-	uint16 *p = (uint16*)_skyCompact->fetchCpt(CPT_MOVE_LIST);
-	p = (uint16*)_skyCompact->fetchCpt(p[listNo]);
+	uint16 *p = (uint16 *)_skyCompact->fetchCpt(CPT_MOVE_LIST);
+	p = (uint16 *)_skyCompact->fetchCpt(p[listNo]);
 	for (int i = 0; i < 2; i++) {
 		if (!*p)
 			return true;
@@ -2528,7 +2528,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	animNum += target->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
 
-	uint16 *talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
+	uint16 *talkTable = (uint16 *)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
 	target->grafixProgId = talkTable[animNum];
 	target->grafixProgPos = 0;
 	uint16 *animPtr = _skyCompact->getGrafixPtr(target);

@@ -635,7 +635,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 
 		for (uint i = 0; i < packedSize; i++)
 #if defined(SCUMM_NEED_ALIGNMENT)
-			memcpy(dataDest++, (byte*)((byte*)data + *(idx + i) * sizeof(uint16)), sizeof(uint16));
+			memcpy(dataDest++, (byte *)((byte *)data + *(idx + i) * sizeof(uint16)), sizeof(uint16));
 #else
 			*dataDest++ = data[*(idx + i)];
 #endif

@@ -945,11 +945,11 @@ protected:
 	void printNoEffectWarning();
 
 	void spellCallback_start_empty() {}
-	bool spellCallback_end_empty(void*) { return true; }
+	bool spellCallback_end_empty(void *) { return true; }
 	void spellCallback_start_armor();
 	void spellCallback_start_burningHands();
 	void spellCallback_start_detectMagic();
-	bool spellCallback_end_detectMagic(void*);
+	bool spellCallback_end_detectMagic(void *);
 	void spellCallback_start_magicMissile();
 	bool spellCallback_end_magicMissile(void *obj);
 	void spellCallback_start_shockingGrasp();
@@ -981,7 +981,7 @@ protected:
 	void spellCallback_start_fleshToStone();
 	void spellCallback_start_stoneToFlesh();
 	void spellCallback_start_trueSeeing();
-	bool spellCallback_end_trueSeeing(void*);
+	bool spellCallback_end_trueSeeing(void *);
 	void spellCallback_start_slayLiving();
 	void spellCallback_start_powerWordStun();
 	void spellCallback_start_causeLightWounds();

@@ -960,13 +960,13 @@ void PS2Icon::setup(mcIcon *icon) {
 	memcpy(icon->head, "PS2D", 4);
 	icon->nlOffset = strlen(_info) + 1;
 	strcpy(title, _info);
-	strcpy_sjis((short*)&(icon->title), title);
+	strcpy_sjis((short *)&(icon->title), title);
 	icon->trans = 0x10;
 	memcpy(icon->bgCol, _bgcolor, sizeof(_bgcolor));
 	memcpy(icon->lightDir, _lightdir, sizeof(_lightdir));
 	memcpy(icon->lightCol, _lightcol, sizeof(_lightcol));
 	memcpy(icon->lightAmbient, _ambient, sizeof(_ambient));
-	strcpy((char*)icon->view, "scummvm.icn");
-	strcpy((char*)icon->copy, "scummvm.icn");
-	strcpy((char*)icon->del, "scummvm.icn");
+	strcpy((char *)icon->view, "scummvm.icn");
+	strcpy((char *)icon->copy, "scummvm.icn");
+	strcpy((char *)icon->del, "scummvm.icn");
 }

@@ -117,7 +117,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	cflag = (uint8)((fileFlags >> 23) & 0x1);
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	DataFileHeader *fileHeader = (DataFileHeader*)fileDest;
+	DataFileHeader *fileHeader = (DataFileHeader *)fileDest;
 
 	if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
 		debug(4, "File is RNC compressed.");
@@ -175,7 +175,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 }
 
 uint16 *Disk::loadScriptFile(uint16 fileNr) {
-	uint16 *buf = (uint16*)loadFile(fileNr);
+	uint16 *buf = (uint16 *)loadFile(fileNr);
 #ifdef SCUMM_BIG_ENDIAN
 	for (uint i = 0; i < _lastLoadedFileSize / 2; i++)
 		buf[i] = FROM_LE_16(buf[i]);

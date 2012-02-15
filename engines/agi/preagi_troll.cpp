@@ -455,7 +455,7 @@ int TrollEngine::drawRoom(char *menu) {
 	_gfx->doUpdate();
 
 	char tmp[10];
-	strncat(menu, (char*)_gameData + _locMessagesIdx[_currentRoom], 39);
+	strncat(menu, (char *)_gameData + _locMessagesIdx[_currentRoom], 39);
 
 	for (int i = 0; i < 3; i++) {
 		if (_roomDescs[_roomPicture - 1].options[i]) {
@@ -725,7 +725,7 @@ void TrollEngine::fillOffsets() {
 
 void TrollEngine::init() {
 	_picture->setPictureVersion(AGIPIC_V15);
-	//SetScreenPar(320, 200, (char*)ibm_fontdata);
+	//SetScreenPar(320, 200, (char *)ibm_fontdata);
 
 	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,
 						 0x6c00,  0x7400,  0x7600,  0x7c00,  0x7e00,  0x8e00,

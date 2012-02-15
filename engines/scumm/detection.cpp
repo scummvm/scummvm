@@ -598,7 +598,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			}
 
 			if (isDiskImg)
-				closeDiskImage((ScummDiskImage*)tmp);
+				closeDiskImage((ScummDiskImage *)tmp);
 			delete tmp;
 		}
 

@@ -704,7 +704,7 @@ protected:
 	void readOfsData(int, int, uint8*, long);
 	bool chooseY_N(int, bool);
 	int choose1to9(int);
-	void printStr(char*);
+	void printStr(char *);
 	void printLine(const char*);
 	void printExeStr(int);
 	void printExeMsg(int);

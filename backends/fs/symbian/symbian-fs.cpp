@@ -153,7 +153,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			sprintf(path,"%c:\\", driveNumber+'A');
 
 			SymbianFilesystemNode entry(false);
-			entry._displayName = (char*) driveString8.PtrZ(); // drive_name
+			entry._displayName = (char *) driveString8.PtrZ(); // drive_name
 			entry._isDirectory = true;
 			entry._isValid = true;
 			entry._isPseudoRoot = false;

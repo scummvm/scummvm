@@ -378,7 +378,7 @@ Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Chan
 
 	if (_vm->getFeatures() & GF_DEMO) {
 		uint32 dataSize = stream->size();
-		int8 *data = (int8*)malloc(dataSize);
+		int8 *data = (int8 *)malloc(dataSize);
 		if (stream->read(data, dataSize) != dataSize)
 			error("DosSoundMan_br::loadChannelData: Read failed");
 

@@ -59,7 +59,7 @@ void OSystem_Dreamcast::checkSound()
   if (n<100)
     return;
 
-  _mixer->mixCallback((byte*)temp_sound_buffer,
+  _mixer->mixCallback((byte *)temp_sound_buffer,
 		      2*SAMPLES_TO_BYTES(n));
 
   if (fillpos+n > curr_ring_buffer_samples) {

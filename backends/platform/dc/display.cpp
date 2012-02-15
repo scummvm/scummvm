@@ -334,8 +334,8 @@ void OSystem_Dreamcast::updateScreenTextures(void)
     unsigned short *dst = (unsigned short *)screen_tx[_screen_buffer];
     unsigned char *src = screen;
 
-    // while ((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
-    // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff0000;
+    // while ((*((volatile unsigned int *)(void *)0xa05f810c) & 0x3ff) != 200);
+    // *((volatile unsigned int *)(void *)0xa05f8040) = 0xff0000;
 
     if (_screenFormat == 0)
       for ( int y = 0; y<_screen_h; y++ )
@@ -379,7 +379,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
 
-  // *((volatile unsigned int *)(void*)0xa05f8040) = 0x00ff00;
+  // *((volatile unsigned int *)(void *)0xa05f8040) = 0x00ff00;
 
   mypoly.cmd =
     TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_OPAQUE|TA_CMD_POLYGON_SUBLIST|
@@ -395,7 +395,7 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
 
   ta_begin_frame();
-  // *((volatile unsigned int *)(void*)0xa05f8040) = 0x0000ff;
+  // *((volatile unsigned int *)(void *)0xa05f8040) = 0x0000ff;
   ta_commit_list(&mypoly);
 
   myvertex.cmd = TA_CMD_VERTEX;
@@ -493,12 +493,12 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
     _softkbd.draw(330.0*sin(0.013*_softkbd_motion) - 320.0, 200.0,
 		  120-_softkbd_motion);
 
-  // *((volatile unsigned int *)(void*)0xa05f8040) = 0xffff00;
+  // *((volatile unsigned int *)(void *)0xa05f8040) = 0xffff00;
   drawMouse(_ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_buf, _ms_visible);
-  // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff00ff;
+  // *((volatile unsigned int *)(void *)0xa05f8040) = 0xff00ff;
   ta_commit_frame();
 
-  // *((volatile unsigned int *)(void*)0xa05f8040) = 0x0;
+  // *((volatile unsigned int *)(void *)0xa05f8040) = 0x0;
 
   _last_screen_refresh = Timer();
 }

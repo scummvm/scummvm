@@ -38,7 +38,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 		}
 		_surf->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 		_mode  = Graphics::ILBMDecoder::ILBM_UNPACK_PLANES;
-		_intBuffer = (byte*)_surf->pixels;
+		_intBuffer = (byte *)_surf->pixels;
 		break;
 
 	case BODYMODE_MASKBUFFER:
@@ -82,7 +82,7 @@ bool ILBMLoader::callback(Common::IFFChunk &chunk) {
 	case ID_CRNG:
 		if (_crng) {
 			PaletteFxRange *ptr = &_crng[_numCRNG];
-			chunk._stream->read((byte*)ptr, chunk._size);
+			chunk._stream->read((byte *)ptr, chunk._size);
 			ptr->_timer = FROM_BE_16(ptr->_timer);
 			ptr->_step = FROM_BE_16(ptr->_step);
 			ptr->_flags = FROM_BE_16(ptr->_flags);

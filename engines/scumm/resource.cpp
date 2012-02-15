@@ -232,7 +232,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 #endif
 	} else {
 		sprintf(buf, "Cannot find file: '%s'", filename);
-		InfoDialog dialog(this, (char*)buf);
+		InfoDialog dialog(this, (char *)buf);
 		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
 	}
@@ -350,7 +350,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	switch (blocktype) {
 	case MKTAG('A','N','A','M'):		// Used by: The Dig, FT
 		num = _fileHandle->readUint16LE();
-		ptr = (char*)malloc(num * 9);
+		ptr = (char *)malloc(num * 9);
 		_fileHandle->read(ptr, num * 9);
 		_imuseDigital->setAudioNames(num, ptr);
 		break;

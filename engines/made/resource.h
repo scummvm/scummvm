@@ -224,7 +224,7 @@ protected:
 		ResourceSlot *slot = getResourceSlot(resType, index);
 		if (!slot)
 			return NULL;
-		T *res = (T*)getResourceFromCache(slot);
+		T *res = (T *)getResourceFromCache(slot);
 		if (!res) {
 			byte *buffer;
 			uint32 size;

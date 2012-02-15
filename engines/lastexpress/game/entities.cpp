@@ -615,9 +615,9 @@ void Entities::resetSequences(EntityIndex entityIndex) const {
 	getData(entityIndex)->field_4A9 = false;
 	getData(entityIndex)->field_4AA = false;
 
-	strcpy((char*)&getData(entityIndex)->sequenceNameCopy, "");
-	strcpy((char*)&getData(entityIndex)->sequenceName, "");
-	strcpy((char*)&getData(entityIndex)->sequenceName2, "");
+	strcpy((char *)&getData(entityIndex)->sequenceNameCopy, "");
+	strcpy((char *)&getData(entityIndex)->sequenceName, "");
+	strcpy((char *)&getData(entityIndex)->sequenceName2, "");
 
 	getScenes()->resetQueue();
 }

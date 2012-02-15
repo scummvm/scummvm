@@ -314,7 +314,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 				input += 0x11; output += 0x0F;
 			}
 
-			strcpy((char*) output, (const char*) input);
+			strcpy((char *) output, (const char*) input);
 			uint32 stringsize = strlen((const char*)output) + 1;
 			input += stringsize; output += stringsize;
 			// skip empty entries
@@ -370,7 +370,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	} else if (patch == 5) {
 		const byte *c = data + size;
 		do {
-			strcpy((char*) output, (const char*) input);
+			strcpy((char *) output, (const char*) input);
 			uint32 stringsize = strlen((const char*)output) + 1;
 			input += stringsize; output += stringsize;
 
@@ -403,7 +403,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 			output += 44;
 			data += 44;
 			for (int t = 1; t != 10; t++) {
-				sprintf((char*) output, "COST%d_SH.PAK", t);
+				sprintf((char *) output, "COST%d_SH.PAK", t);
 				output += 13;
 			}
 			data += 126;
@@ -576,7 +576,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 	byte *buffer = new byte[bufferSize];
 	assert(buffer);
 	memset(buffer, 0, bufferSize );
-	uint16 *header = (uint16*) buffer;
+	uint16 *header = (uint16 *) buffer;
 	byte *output = buffer + headerSize;
 	uint16 *hdout = header;
 
@@ -751,7 +751,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 	byte *finBuffer = new byte[finBufferSize];
 	assert(finBuffer);
 	uint16 diff = headerSize - finHeaderSize;
-	uint16 *finHeader = (uint16*) finBuffer;
+	uint16 *finHeader = (uint16 *) finBuffer;
 
 	for (int i = 1; i < finHeaderSize; i++)
 		WRITE_BE_UINT16(&finHeader[i], (READ_BE_UINT16(&header[i]) - diff));
@@ -760,7 +760,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 	memcpy (finBuffer + finHeaderSize, buffer + headerSize, finBufferSize - finHeaderSize);
 	delete[] buffer;
 
-	finHeader = (uint16*) (finBuffer + ((numSequences + 2) * sizeof(uint16)));
+	finHeader = (uint16 *) (finBuffer + ((numSequences + 2) * sizeof(uint16)));
 	for (int i = 0; i < numNestedSequences; i++) {
 		uint8 * offs = finBuffer + READ_BE_UINT16(finHeader++) + 26;
 		uint16 ctrl = READ_BE_UINT16(offs);

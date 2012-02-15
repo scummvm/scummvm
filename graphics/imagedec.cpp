@@ -117,7 +117,7 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream, const Pixel
 	assert(newSurf);
 	newSurf->create(info.width, info.height, format);
 	assert(newSurf->pixels);
-	OverlayColor *curPixel = (OverlayColor*)newSurf->pixels + (newSurf->h-1) * newSurf->w;
+	OverlayColor *curPixel = (OverlayColor *)newSurf->pixels + (newSurf->h-1) * newSurf->w;
 	int pitchAdd = info.width % 4;
 	for (int i = 0; i < newSurf->h; ++i) {
 		for (int i2 = 0; i2 < newSurf->w; ++i2) {

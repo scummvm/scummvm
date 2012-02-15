@@ -1136,7 +1136,7 @@ void ScummEngine::clearTextSurface() {
 		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
 #endif
 
-	fill((byte*)_textSurface.pixels,  _textSurface.pitch,
+	fill((byte *)_textSurface.pixels,  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
 #endif
@@ -2773,7 +2773,7 @@ void GdiNES::drawStripNESMask(byte *dst, int stripnr, int top, int height) const
 void readOffsetTable(const byte *ptr, uint16 **table, int *count) {
 	int pos = 0;
 	*count = READ_LE_UINT16(ptr) / 2 + 1;
-	*table = (uint16*)malloc(*count * sizeof(uint16));
+	*table = (uint16 *)malloc(*count * sizeof(uint16));
 	for (int i = 0; i < *count; i++) {
 		(*table)[i] = READ_LE_UINT16(ptr + pos) + pos + 2;
 		pos += 2;
@@ -2977,10 +2977,10 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 
 	if (_distaff) {
 		free(_PCE.staffTiles);
-		_PCE.staffTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+		_PCE.staffTiles = (byte *)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
 	} else {
 		free(_PCE.roomTiles);
-		_PCE.roomTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+		_PCE.roomTiles = (byte *)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
 	}
 
 	for (int i = 0; i < _PCE.numTiles; ++i) {
@@ -3023,7 +3023,7 @@ void GdiPCEngine::decodePCEngineMaskData(const byte *ptr) {
 	readOffsetTable(ptr, &maskOffsets, &_PCE.numMasks);
 
 	free(_PCE.masks);
-	_PCE.masks = (byte*)malloc(_PCE.numMasks * 8 * sizeof(byte));
+	_PCE.masks = (byte *)malloc(_PCE.numMasks * 8 * sizeof(byte));
 
 	for (int i = 0; i < _PCE.numMasks; ++i) {
 		mask = &_PCE.masks[i * 8];

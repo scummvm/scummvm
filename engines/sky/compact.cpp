@@ -34,7 +34,7 @@ namespace Sky {
 
 #define	SKY_CPT_SIZE	419427
 
-#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->item))-42)
+#define OFFS(type,item) (((ptrdiff_t)(&((type *)42)->item))-42)
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
@@ -147,28 +147,28 @@ SkyCompact::SkyCompact() {
 	_numDataLists = _cptFile->readUint16LE();
 	_cptNames	  = (char***)malloc(_numDataLists * sizeof(char**));
 	_dataListLen  = (uint16 *)malloc(_numDataLists * sizeof(uint16));
-	_cptSizes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16*));
-	_cptTypes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16*));
+	_cptSizes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
+	_cptTypes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
 	_compacts	  = (Compact***)malloc(_numDataLists * sizeof(Compact**));
 
 	for (int i = 0; i < _numDataLists; i++) {
 		_dataListLen[i] = _cptFile->readUint16LE();
-		_cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char*));
+		_cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char *));
 		_cptSizes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
 		_cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
-		_compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact*));
+		_compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact *));
 	}
 
 	uint32 rawSize = _cptFile->readUint32LE() * sizeof(uint16);
-	uint16 *rawPos = _rawBuf = (uint16*)malloc(rawSize);
+	uint16 *rawPos = _rawBuf = (uint16 *)malloc(rawSize);
 
 	uint32 srcSize = _cptFile->readUint32LE() * sizeof(uint16);
-	uint16 *srcBuf = (uint16*)malloc(srcSize);
+	uint16 *srcBuf = (uint16 *)malloc(srcSize);
 	uint16 *srcPos = srcBuf;
 	_cptFile->read(srcBuf, srcSize);
 
 	uint32 asciiSize = _cptFile->readUint32LE();
-	char *asciiPos = _asciiBuf = (char*)malloc(asciiSize);
+	char *asciiPos = _asciiBuf = (char *)malloc(asciiSize);
 	_cptFile->read(_asciiBuf, asciiSize);
 
 	// and fill them with the compact data
@@ -177,7 +177,7 @@ SkyCompact::SkyCompact() {
 			_cptSizes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
 			if (_cptSizes[lcnt][ecnt]) {
 				_cptTypes[lcnt][ecnt] = READ_LE_UINT16(srcPos++);
-				_compacts[lcnt][ecnt] = (Compact*)rawPos;
+				_compacts[lcnt][ecnt] = (Compact *)rawPos;
 				_cptNames[lcnt][ecnt] = asciiPos;
 				asciiPos += strlen(asciiPos) + 1;
 
@@ -193,7 +193,7 @@ SkyCompact::SkyCompact() {
 	free(srcBuf);
 
 	uint16 numDlincs = _cptFile->readUint16LE();
-	uint16 *dlincBuf = (uint16*)malloc(numDlincs * 2 * sizeof(uint16));
+	uint16 *dlincBuf = (uint16 *)malloc(numDlincs * 2 * sizeof(uint16));
 	uint16 *dlincPos = dlincBuf;
 	_cptFile->read(dlincBuf, numDlincs * 2 * sizeof(uint16));
 	// these compacts don't actually exist but only point to other ones...
@@ -213,13 +213,13 @@ SkyCompact::SkyCompact() {
 	// if this is v0.0288, parse this diff data
 	uint16 numDiffs = _cptFile->readUint16LE();
 	uint16 diffSize = _cptFile->readUint16LE();
-	uint16 *diffBuf = (uint16*)malloc(diffSize * sizeof(uint16));
+	uint16 *diffBuf = (uint16 *)malloc(diffSize * sizeof(uint16));
 	_cptFile->read(diffBuf, diffSize * sizeof(uint16));
 	if (SkyEngine::_systemVars.gameVersion == 288) {
 		uint16 *diffPos = diffBuf;
 		for (cnt = 0; cnt < numDiffs; cnt++) {
 			uint16 cptId = READ_LE_UINT16(diffPos++);
-			uint16 *rawCpt = (uint16*)fetchCpt(cptId);
+			uint16 *rawCpt = (uint16 *)fetchCpt(cptId);
 			rawCpt += READ_LE_UINT16(diffPos++);
 			uint16 len = READ_LE_UINT16(diffPos++);
 			for (uint16 elemCnt = 0; elemCnt < len; elemCnt++)
@@ -231,7 +231,7 @@ SkyCompact::SkyCompact() {
 
 	// these are the IDs that have to be saved into savegame files.
 	_numSaveIds = _cptFile->readUint16LE();
-	_saveIds = (uint16*)malloc(_numSaveIds * sizeof(uint16));
+	_saveIds = (uint16 *)malloc(_numSaveIds * sizeof(uint16));
 	_cptFile->read(_saveIds, _numSaveIds * sizeof(uint16));
 	for (cnt = 0; cnt < _numSaveIds; cnt++)
 		_saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
@@ -318,7 +318,7 @@ uint16 *SkyCompact::getSub(Compact *cpt, uint16 mode) {
 }
 
 uint16 *SkyCompact::getGrafixPtr(Compact *cpt) {
-	uint16 *gfxBase = (uint16*)fetchCpt(cpt->grafixProgId);
+	uint16 *gfxBase = (uint16 *)fetchCpt(cpt->grafixProgId);
 	if (gfxBase == NULL)
 		return NULL;
 
@@ -358,7 +358,7 @@ MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
 */
 uint16 *SkyCompact::getTurnTable(Compact *cpt, uint16 dir) {
 	MegaSet *m = getMegaSet(cpt);
-	TurnTable *turnTable = (TurnTable*)fetchCpt(m->turnTableId);
+	TurnTable *turnTable = (TurnTable *)fetchCpt(m->turnTableId);
 	switch (dir) {
 	case 0:
 		return turnTable->turnTableUp;
@@ -418,7 +418,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 uint8 *SkyCompact::createResetData(uint16 gameVersion) {
 	_cptFile->seek(_resetDataPos);
 	uint32 dataSize = _cptFile->readUint16LE() * sizeof(uint16);
-	uint16 *resetBuf = (uint16*)malloc(dataSize);
+	uint16 *resetBuf = (uint16 *)malloc(dataSize);
 	_cptFile->read(resetBuf, dataSize);
 	uint16 numDiffs = _cptFile->readUint16LE();
 	for (uint16 cnt = 0; cnt < numDiffs; cnt++) {
@@ -429,7 +429,7 @@ uint8 *SkyCompact::createResetData(uint16 gameVersion) {
 				uint16 pos = _cptFile->readUint16LE();
 				resetBuf[pos] = TO_LE_16(_cptFile->readUint16LE());
 			}
-			return (uint8*)resetBuf;
+			return (uint8 *)resetBuf;
 		} else
 			_cptFile->seek(diffFields * 2 * sizeof(uint16), SEEK_CUR);
 	}

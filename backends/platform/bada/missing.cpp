@@ -96,7 +96,7 @@ int sprintf(char *str, const char *format, ...) {
 char *strdup(const char *strSource) {
 	char *buffer;
 	int len = strlen(strSource) + 1;
-	buffer = (char*)malloc(len);
+	buffer = (char *)malloc(len);
 	if (buffer) {
 		memcpy(buffer, strSource, len);
 	}

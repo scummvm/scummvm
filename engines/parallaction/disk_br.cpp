@@ -283,7 +283,7 @@ Sprites* DosDisk_br::createSprites(Common::ReadStream *stream) {
 		spr->w = stream->readUint16LE();
 		spr->h = stream->readUint16LE();
 
-		spr->packedData = (byte*)malloc(spr->size);
+		spr->packedData = (byte *)malloc(spr->size);
 		stream->read(spr->packedData, spr->size);
 	}
 	delete stream;
@@ -450,7 +450,7 @@ void AmigaDisk_br::init() {
 
 void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColor) {
 	uint size = surf.w * surf.h;
-	byte *data = (byte*)surf.pixels;
+	byte *data = (byte *)surf.pixels;
 	for (uint i = 0; i < size; i++, data++) {
 		if (transparentColor == -1 || transparentColor != *data)
 			*data += 16;
@@ -609,7 +609,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 		stream->read(shadow, shadowSize);
 		for (int32 i = 0; i < surf->h; ++i) {
 			byte *src = shadow + shadowWidth * i;
-			byte *dst = (byte*)surf->pixels + surf->pitch * i;
+			byte *dst = (byte *)surf->pixels + surf->pitch * i;
 
 			for (int32 j = 0; j < surf->w; ++j, ++dst) {
 				byte bit = src[j/8] & (1 << (7 - (j & 7)));
@@ -637,7 +637,7 @@ Sprites* AmigaDisk_br::createSprites(Common::ReadStream *stream) {
 		spr->w = stream->readUint16BE();
 		spr->h = stream->readUint16BE() - 1;
 
-		spr->packedData = (byte*)malloc(spr->size);
+		spr->packedData = (byte *)malloc(spr->size);
 		stream->read(spr->packedData, spr->size);
 	}
 
@@ -725,7 +725,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 		max = 72;
 
 	byte *data = new byte[max * 2601];
-	byte *srcPtr = (byte*)loader._surf->getBasePtr(0,0);
+	byte *srcPtr = (byte *)loader._surf->getBasePtr(0,0);
 	int w = loader._surf->w;
 
 	// Convert to the expected display format

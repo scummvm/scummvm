@@ -92,7 +92,7 @@ void RemapDialog::open() {
 
 	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
 
-	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
+	_keymapTable = (Keymap **)malloc(sizeof(Keymap *) * keymapCount);
 
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;

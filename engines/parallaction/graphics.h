@@ -103,7 +103,7 @@ public:
 	}
 	byte*	getData(uint16 index) {
 		assert(index == 0);
-		return (byte*)_surf->getBasePtr(0,0);
+		return (byte *)_surf->getBasePtr(0,0);
 	}
 	void	getRect(uint16 index, Common::Rect &r) {
 		assert(index == 0);

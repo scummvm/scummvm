@@ -67,7 +67,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 	// Calculate needed index numbers, align width and height not next multiple of four
 	imageWidth = (imageWidth % 4) ? ((imageWidth / 4) + 1) * 4 : imageWidth;
 	imageHeight = (imageHeight % 4) ? ((imageHeight / 4) + 1) * 4 : imageHeight;
-	destinationBuffer = (uint8*)malloc((imageWidth * imageHeight) / 8);
+	destinationBuffer = (uint8 *)malloc((imageWidth * imageHeight) / 8);
 	dstIdx = destinationBuffer;
 	remainingBlocks = (imageWidth * imageHeight) / 16;
 

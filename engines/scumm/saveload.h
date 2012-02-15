@@ -74,13 +74,13 @@ namespace Scumm {
  * what POD means refer to <http://en.wikipedia.org/wiki/Plain_Old_Data_Structures> or
  * to <http://www.informit.com/guides/content.asp?g=cplusplus&seqNum=32&rl=1>)
  */
-#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->type::item))-42)
+#define OFFS(type,item) (((ptrdiff_t)(&((type *)42)->type::item))-42)
 
 /**
  * Similar to the OFFS macro, this macro computes the size (in bytes) of a
  * member of a given struct/class type.
  */
-#define SIZE(type,item) sizeof(((type*)42)->type::item)
+#define SIZE(type,item) sizeof(((type *)42)->type::item)
 
 // Any item that is still in use automatically gets a maxVersion equal to CURRENT_VER
 #define MKLINE(type,item,saveas,minVer) {OFFS(type,item),saveas,SIZE(type,item),minVer,CURRENT_VER}

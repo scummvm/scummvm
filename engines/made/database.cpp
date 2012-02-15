@@ -56,7 +56,7 @@ const char *Object::getString() {
 
 void Object::setString(const char *str) {
 	if (getClass() == 0x7FFF) {
-		char *objStr = (char*)getData();
+		char *objStr = (char *)getData();
 		if (str)
 			strncpy(objStr, str, getSize());
 		else
@@ -86,10 +86,10 @@ int16 Object::getVectorSize() {
 
 int16 Object::getVectorItem(int16 index) {
 	if (getClass() == 0x7FFF) {
-		byte *vector = (byte*)getData();
+		byte *vector = (byte *)getData();
 		return vector[index];
 	} else if (getClass() <= 0x7FFE) {
-		int16 *vector = (int16*)getData();
+		int16 *vector = (int16 *)getData();
 		return READ_LE_UINT16(&vector[index]);
 	} else {
 		// should never reach here
@@ -100,10 +100,10 @@ int16 Object::getVectorItem(int16 index) {
 
 void Object::setVectorItem(int16 index, int16 value) {
 	if (getClass() == 0x7FFF) {
-		byte *vector = (byte*)getData();
+		byte *vector = (byte *)getData();
 		vector[index] = value;
 	} else if (getClass() <= 0x7FFE) {
-		int16 *vector = (int16*)getData();
+		int16 *vector = (int16 *)getData();
 		WRITE_LE_UINT16(&vector[index], value);
 	}
 }
@@ -526,7 +526,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		error("GameDatabaseV2::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
 	}
 
-	int16 *prop = (int16*)obj->getData();
+	int16 *prop = (int16 *)obj->getData();
 	byte count1 = obj->getCount1();
 	byte count2 = obj->getCount2();
 
@@ -553,7 +553,7 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 
 		obj = getObject(parentObjectIndex);
 
-		prop = (int16*)obj->getData();
+		prop = (int16 *)obj->getData();
 		count1 = obj->getCount1();
 		count2 = obj->getCount2();
 
@@ -750,7 +750,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		error("GameDatabaseV2::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
 	}
 
-	int16 *prop = (int16*)obj->getData();
+	int16 *prop = (int16 *)obj->getData();
 	byte count1 = obj->getCount1();
 	byte count2 = obj->getCount2();
 
@@ -762,7 +762,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 			if (READ_LE_UINT16(prop) & 0x4000) {
 				propertyFlag = 1;
-				return (int16*)_gameState + READ_LE_UINT16(propPtr1);
+				return (int16 *)_gameState + READ_LE_UINT16(propPtr1);
 			} else {
 				propertyFlag = obj->getFlags() & 1;
 				return propPtr1;
@@ -782,7 +782,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 
 		obj = getObject(parentObjectIndex);
 
-		prop = (int16*)obj->getData();
+		prop = (int16 *)obj->getData();
 		count1 = obj->getCount1();
 		count2 = obj->getCount2();
 
@@ -794,7 +794,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (READ_LE_UINT16(prop) & 0x4000) {
 						propertyFlag = 1;
-						return (int16*)_gameState + READ_LE_UINT16(propPtr1);
+						return (int16 *)_gameState + READ_LE_UINT16(propPtr1);
 					} else {
 						propertyFlag = obj->getFlags() & 1;
 						return propPtr1;
@@ -806,7 +806,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 				if ((READ_LE_UINT16(prop) & 0x3FFF) == propertyId) {
 					if (READ_LE_UINT16(prop) & 0x4000) {
 						propertyFlag = 1;
-						return (int16*)_gameState + READ_LE_UINT16(propertyPtr);
+						return (int16 *)_gameState + READ_LE_UINT16(propertyPtr);
 					} else {
 						propertyFlag = obj->getFlags() & 1;
 						return propertyPtr;

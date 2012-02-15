@@ -75,7 +75,7 @@ struct A8SVXLoader {
 
 		case ID_BODY:
 			_dataSize = chunk._size;
-			_data = (int8*)malloc(_dataSize);
+			_data = (int8 *)malloc(_dataSize);
 			assert(_data);
 			loadData(chunk._stream);
 			return true;

@@ -668,7 +668,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 							 (v1.mask_ptr && (mask[0] & maskbit));
 
 					if (pcolor && !masked) {
-						WRITE_UINT16(dst, ((uint16*)_palette)[pcolor]);
+						WRITE_UINT16(dst, ((uint16 *)_palette)[pcolor]);
 					}
 
 					xPos += xStep;

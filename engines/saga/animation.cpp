@@ -501,7 +501,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	}
 
 	anim = getAnimation(animId);
-	displayBuffer = (byte*)_vm->_render->getBackGroundSurface()->pixels;
+	displayBuffer = (byte *)_vm->_render->getBackGroundSurface()->pixels;
 
 	if (playing) {
 		anim->state = ANIM_PLAYING;

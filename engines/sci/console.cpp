@@ -1433,7 +1433,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			_engine->getVocabulary()->dumpParseTree();
 			_engine->getVocabulary()->parserIsValid = true;
 
-			int ret = said((byte*)spec, true);
+			int ret = said((byte *)spec, true);
 			DebugPrintf("kSaid: %s\n", (ret == SAID_NO_MATCH ? "No match" : "Match"));
 		}
 
@@ -1605,7 +1605,7 @@ bool Console::cmdWindowList(int argc, const char **argv) {
 bool Console::cmdSavedBits(int argc, const char **argv) {
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		DebugPrintf("No hunk segment found.\n");
 		return true;
@@ -1617,7 +1617,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 		uint16 offset = entries[i].offset;
 		const Hunk& h = hunks->_table[offset];
 		if (strcmp(h.type, "SaveBits()") == 0) {
-			byte* memoryPtr = (byte*)h.mem;
+			byte* memoryPtr = (byte *)h.mem;
 
 			if (memoryPtr) {
 				DebugPrintf("%04x:%04x:", PRINT_REG(entries[i]));
@@ -1671,7 +1671,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		DebugPrintf("No hunk segment found.\n");
 		return true;

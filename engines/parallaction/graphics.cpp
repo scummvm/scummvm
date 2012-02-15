@@ -44,7 +44,7 @@ namespace Parallaction {
 
 void halfbritePixel(int x, int y, int color, void *data) {
 	Graphics::Surface *surf = (Graphics::Surface *)data;
-	byte *pixel = (byte*)surf->getBasePtr(x, y);
+	byte *pixel = (byte *)surf->getBasePtr(x, y);
 	*pixel &= ~0x20;
 }
 
@@ -319,7 +319,7 @@ void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int 
 			y += _scrollPosY;
 		}
 
-		byte *dst = (byte*)_backBuffer.getBasePtr(x, y);
+		byte *dst = (byte *)_backBuffer.getBasePtr(x, y);
 		for (int i = 0; i < h; i++) {
 			memcpy(dst, buf, w);
 			buf += pitch;
@@ -357,7 +357,7 @@ void Gfx::unlockScreen() {
 
 void Gfx::updateScreenIntern() {
 	if (_doubleBuffering) {
-		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPosX, _scrollPosY);
+		byte *data = (byte *)_backBuffer.getBasePtr(_scrollPosX, _scrollPosY);
 		_vm->_system->copyRectToScreen(data, _backBuffer.pitch, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	}
 
@@ -425,7 +425,7 @@ void Gfx::updateScreen() {
 		// background may not cover the whole screen, so adjust bulk update size
 		uint w = _backgroundInfo->width;
 		uint h = _backgroundInfo->height;
-		byte *backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(0, 0);
+		byte *backgroundData = (byte *)_backgroundInfo->bg.getBasePtr(0, 0);
 		uint16 backgroundPitch = _backgroundInfo->bg.pitch;
 		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->_x, _backgroundInfo->_y, w, h);
 	}
@@ -450,7 +450,7 @@ void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
 		return;
 	}
 
-	byte *buf = (byte*)surf.pixels;
+	byte *buf = (byte *)surf.pixels;
 	for (int i = 0; i < surf.w*surf.h; i++) {
 		*buf++ |= 0x20;
 	}
@@ -493,7 +493,7 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	r.moveTo(x, y);
 
 	uint16 z = (mask) ? _backgroundInfo->getMaskLayer(y) : LAYER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 100, 0);
+	blt(r, (byte *)surf.pixels, &_backgroundInfo->bg, z, 100, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {
@@ -502,7 +502,7 @@ void Gfx::fillBackground(const Common::Rect& r, byte color) {
 
 void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_backgroundInfo->bg.getBasePtr(r.left, r.top);
+	byte *d = (byte *)_backgroundInfo->bg.getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -536,12 +536,12 @@ GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 		setupLabelSurface(*cnv, w, h);
 
 		font->setColor((_gameType == GType_BRA) ? 0 : 7);
-		font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
-		font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
-		font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
-		font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
+		font->drawString((byte *)cnv->pixels + 1, cnv->w, text);
+		font->drawString((byte *)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
+		font->drawString((byte *)cnv->pixels + cnv->w, cnv->w, text);
+		font->drawString((byte *)cnv->pixels + 2 + cnv->w, cnv->w, text);
 		font->setColor((_gameType == GType_BRA) ? 11 : 1);
-		font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
+		font->drawString((byte *)cnv->pixels + 1 + cnv->w, cnv->w, text);
 	} else {
 		w = font->getStringWidth(text);
 		h = font->height();
@@ -703,8 +703,8 @@ void Gfx::unregisterLabel(GfxObj *label) {
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
 
-	byte *s = (byte*)src.getBasePtr(r.left, r.top);
-	byte *d = (byte*)dst.getBasePtr(0, 0);
+	byte *s = (byte *)src.getBasePtr(r.left, r.top);
+	byte *d = (byte *)dst.getBasePtr(0, 0);
 
 	for (uint16 i = 0; i < r.height(); i++) {
 		memcpy(d, s, r.width());
@@ -1017,7 +1017,7 @@ void MaskBuffer::create(uint16 width, uint16 height) {
 	internalWidth = w >> 2;
 	h = height;
 	size = (internalWidth * h);
-	data = (byte*)calloc(size, 1);
+	data = (byte *)calloc(size, 1);
 }
 
 void MaskBuffer::free() {
@@ -1096,7 +1096,7 @@ void PathBuffer::create(uint16 width, uint16 height) {
 	internalWidth = w >> 3;
 	h = height;
 	size = (internalWidth * h);
-	data = (byte*)calloc(size, 1);
+	data = (byte *)calloc(size, 1);
 }
 
 void PathBuffer::free() {

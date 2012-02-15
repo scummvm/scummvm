@@ -39,7 +39,7 @@ public:
 	Common::Array<const OpcodeV2 *> _opcodes;
 	ToonEngine *_vm;
 
-#define SYSFUNC(x)  int32 x(EMCState*)
+#define SYSFUNC(x)  int32 x(EMCState *)
 	SYSFUNC(sys_Cmd_Dummy);
 	SYSFUNC(sys_Cmd_Change_Actor_X_And_Y);
 	SYSFUNC(sys_Cmd_Init_Talking_Character);

@@ -108,7 +108,7 @@ public:
 	void highlightItem(ItemPosition pos, byte color);
 	void drawItem(ItemName name, byte *buffer, uint pitch);
 
-	byte*	getData() const { return (byte*)_surf.pixels; }
+	byte*	getData() const { return (byte *)_surf.pixels; }
 
 	void	getRect(Common::Rect &r) const;
 	int16	getNumLines() const;

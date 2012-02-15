@@ -1160,7 +1160,7 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 
 	for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
 		uint16 numElems;
-		uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+		uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
 		for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
 			STOSW(destPos, rawCpt[elemCnt]);
 	}
@@ -1209,9 +1209,9 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 		else if (graphType == OG_COMPACT)
 			destCpt->grafixProgId = target;
 		else if (graphType == OG_TALKTABLE)
-			destCpt->grafixProgId = ((uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST))[target];
+			destCpt->grafixProgId = ((uint16 *)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST))[target];
 		else if (graphType == OG_COMPACTELEM)
-			destCpt->grafixProgId = *(uint16*)_skyCompact->getCompactElem(destCpt, target);
+			destCpt->grafixProgId = *(uint16 *)_skyCompact->getCompactElem(destCpt, target);
 		else
 			error("Illegal GrafixProg type encountered for compact %s", name);
 	}
@@ -1330,7 +1330,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, mouseType);
 	LODSD(srcPos, palette);
 
-	_skyLogic->parseSaveData((uint32*)srcPos);
+	_skyLogic->parseSaveData((uint32 *)srcPos);
 	srcPos += NUM_SKY_SCRIPTVARS * sizeof(uint32);
 
 	for (cnt = 0; cnt < 60; cnt++)
@@ -1339,7 +1339,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	if (saveRev == SAVE_FILE_REVISION) {
 		for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
 			uint16 numElems;
-			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
 			for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
 				LODSW(srcPos, rawCpt[elemCnt]);
 		}
@@ -1348,19 +1348,19 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			uint16 numElems;
 			uint16 type;
 			char name[128];
-			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
+			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
 			if (type == COMPACT) {
-				importOldCompact((Compact*)rawCpt, &srcPos, numElems, type, name);
+				importOldCompact((Compact *)rawCpt, &srcPos, numElems, type, name);
 			} else if (type == ROUTEBUF) {
 				assert(numElems == 32);
 				for (uint32 elemCnt = 0; elemCnt < numElems; elemCnt++)
 					LODSW(srcPos, rawCpt[elemCnt]);
 			}
 		}
-		uint16 *rawCpt = (uint16*)_skyCompact->fetchCpt(0xBF);
+		uint16 *rawCpt = (uint16 *)_skyCompact->fetchCpt(0xBF);
 		for (cnt = 0; cnt < 3; cnt++)
 			LODSW(srcPos, rawCpt[cnt]);
-		rawCpt = (uint16*)_skyCompact->fetchCpt(0xC2);
+		rawCpt = (uint16 *)_skyCompact->fetchCpt(0xC2);
 		for (cnt = 0; cnt < 13; cnt++)
 			LODSW(srcPos, rawCpt[cnt]);
 	}
@@ -1467,7 +1467,7 @@ void Control::restartGame() {
 		return; // no restart for floppy demo
 
 	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars.gameVersion);
-	parseSaveData((uint8*)resetData);
+	parseSaveData((uint8 *)resetData);
 	free(resetData);
 	_skyScreen->forceRefresh();
 

@@ -130,9 +130,9 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_height = height;
 	_pitch = (width + 127) & ~127;
 
-	_screenBuf = (uint8*)memalign(64, _width * _height);
-	_overlayBuf = (uint16*)memalign(64, _width * _height * 2);
-	_clut = (uint32*)memalign(64, 256 * 4);
+	_screenBuf = (uint8 *)memalign(64, _width * _height);
+	_overlayBuf = (uint16 *)memalign(64, _width * _height * 2);
+	_clut = (uint32 *)memalign(64, 256 * 4);
 
 	memset(_screenBuf, 0, _width * _height);
 	memset(_clut, 0, 256 * sizeof(uint32));
@@ -291,11 +291,11 @@ void Gs2dScreen::quit(void) {
 }
 
 void Gs2dScreen::createAnimTextures(void) {
-	uint8 *buf = (uint8*)memalign(64, 16 * 64);
+	uint8 *buf = (uint8 *)memalign(64, 16 * 64);
 	memset(buf, 0, 16 * 64);
 	uint32 vramDest = _texPtrs[TEXT];
 	for (int i = 0; i < 16; i++) {
-		uint32 *destPos = (uint32*)buf;
+		uint32 *destPos = (uint32 *)buf;
 		for (int ch = 15; ch >= 0; ch--) {
 			const uint32 *src = (const uint32*)(_binaryData + ((_binaryPattern[i] >> ch) & 1) * 4 * 14);
 			for (int line = 0; line < 14; line++)
@@ -331,8 +331,8 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	// malloc new buffers
 	free(_screenBuf);
 	free(_overlayBuf);
-	_screenBuf = (uint8*)memalign(64, _width * _height);
-	_overlayBuf = (uint16*)memalign(64, _width * _height * 2);
+	_screenBuf = (uint8 *)memalign(64, _width * _height);
+	_overlayBuf = (uint16 *)memalign(64, _width * _height * 2);
 	memset(_screenBuf, 0, _width * height);
 	memset(_overlayBuf, 0, _width * height * 2);
 	memset(_clut, 0, 256 * sizeof(uint32));
@@ -556,7 +556,7 @@ void Gs2dScreen::copyPrintfOverlay(const uint8 *buf) {
 }
 
 void Gs2dScreen::clearPrintfOverlay(void) {
-	uint8 *tmpBuf = (uint8*)memalign(64, 320 * 200);
+	uint8 *tmpBuf = (uint8 *)memalign(64, 320 * 200);
 	memset(tmpBuf, 4, 320 * 200);
 	_dmaPipe->uploadTex(_texPtrs[PRINTF], 3 * 128, 0, 0, GS_PSMT8H, tmpBuf, 320, 200);
 	_dmaPipe->flush();
@@ -619,7 +619,7 @@ void Gs2dScreen::setMouseOverlay(const uint8 *buf, uint16 width, uint16 height, 
 		_mTraCol = transpCol;
 		_clutChanged = true;
 	}
-	uint8 *bufCopy = (uint8*)memalign(64, M_SIZE * M_SIZE); // make a copy to align to 64 bytes
+	uint8 *bufCopy = (uint8 *)memalign(64, M_SIZE * M_SIZE); // make a copy to align to 64 bytes
 	memset(bufCopy, _mTraCol, M_SIZE * M_SIZE);
 	for (int cnt = 0; cnt < height; cnt++)
 		memcpy(bufCopy + cnt * M_SIZE, buf + cnt * width, width);

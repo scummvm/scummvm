@@ -306,7 +306,7 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = true;
 	ret.maxSize = _table[pointer.offset].getSize();
-	ret.raw = (byte*)_table[pointer.offset].getRawData();
+	ret.raw = (byte *)_table[pointer.offset].getRawData();
 	return ret;
 }
 

@@ -29,7 +29,7 @@
 }
 
 - (id)initWithFrame:(CGRect)frame;
-- (UITextView*)inputView;
+- (UITextView *)inputView;
 - (void)setInputDelegate:(id)delegate;
 - (void)handleKeyPress:(unichar)c;
 

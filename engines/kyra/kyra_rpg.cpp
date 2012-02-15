@@ -148,7 +148,7 @@ Common::Error KyraRpgEngine::init() {
 	_levelDecorationProperties = new LevelDecorationProperty[100];
 	memset(_levelDecorationProperties, 0, 100 * sizeof(LevelDecorationProperty));
 	_levelDecorationShapes = new uint8*[400];
-	memset(_levelDecorationShapes, 0, 400 * sizeof(uint8*));
+	memset(_levelDecorationShapes, 0, 400 * sizeof(uint8 *));
 	_levelBlockProperties = new LevelBlockProperty[1025];
 	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
 
@@ -178,7 +178,7 @@ Common::Error KyraRpgEngine::init() {
 		_vcnExpTable[i] = i & 0x0f;
 
 	_doorShapes = new uint8*[6];
-	memset(_doorShapes, 0, 6 * sizeof(uint8*));
+	memset(_doorShapes, 0, 6 * sizeof(uint8 *));
 
 	initStaticResource();
 

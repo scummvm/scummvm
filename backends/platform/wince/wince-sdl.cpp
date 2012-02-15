@@ -87,15 +87,15 @@ extern "C" void *__wrap_malloc(size_t size) {
 		void *ptr = __real_malloc(size+4);
 //		printf("malloc(%d) = %p\n", size, ptr);
 		if (ptr != NULL) {
-			*((HANDLE*)ptr) = 0;
-			return 4+(char*)ptr;
+			*((HANDLE *)ptr) = 0;
+			return 4+(char *)ptr;
 		}
 		return NULL;
 	}
 	HANDLE H = CreateFileMapping((HANDLE)INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size+4, 0);
 	void *ptr = MapViewOfFile(H, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-	*((HANDLE*)ptr) = H;
-	return 4+(char*)ptr;
+	*((HANDLE *)ptr) = H;
+	return 4+(char *)ptr;
 }
 
 extern "C" void __wrap_free(void *ptr) {
@@ -104,9 +104,9 @@ extern "C" void __wrap_free(void *ptr) {
 	printf("free(%p)\n", ptr);
 */
 	if (ptr != NULL) {
-		HANDLE H = *(HANDLE*)((char *)ptr-4);
+		HANDLE H = *(HANDLE *)((char *)ptr-4);
 		if (H == 0) {
-			__real_free((char*)ptr-4);
+			__real_free((char *)ptr-4);
 			return;
 		}
 		UnmapViewOfFile((char *)ptr-4);

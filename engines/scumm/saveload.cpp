@@ -875,21 +875,21 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// vm.localvar grew from 25 to 40 script entries and then from
 		// 16 to 32 bit variables (but that wasn't reflect here)... and
 		// THEN from 16 to 25 variables.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(8), VER(8)),
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(9), VER(14)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(8), VER(8)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(9), VER(14)),
 
 		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
 		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
 		// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
 		// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(15), VER(17)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(15), VER(17)),
 		MK_OBSOLETE_ARRAY(ScummEngine, vm.localvar[39][0], sleUint16, 12, VER(15), VER(17)),
 
 		// This was the first proper multi dimensional version of the localvars, with 32 bit values
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(18), VER(19)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(18), VER(19)),
 
 		// Then we doubled the script slots again, from 40 to 80
-		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(20)),
+		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(20)),
 
 
 		MKARRAY(ScummEngine, _resourceMapper[0], sleByte, 128, VER(8)),
@@ -1538,7 +1538,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
 	const SaveLoadEntry cursorEntries[] = {
-		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte*)_cursorImages[1] - (byte*)_cursorImages[0], VER(44)),
+		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte *)_cursorImages[1] - (byte *)_cursorImages[0], VER(44)),
 		MKARRAY(ScummEngine_v5, _cursorHotspots[0], sleByte, 8, VER(44)),
 		MKEND()
 	};

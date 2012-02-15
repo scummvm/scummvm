@@ -823,7 +823,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	int size = argv[2].toUint16();
 	char *buf = new char[size];
 	bool success = false;
-	s->_segMan->memcpy((byte*)buf, argv[1], size);
+	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
