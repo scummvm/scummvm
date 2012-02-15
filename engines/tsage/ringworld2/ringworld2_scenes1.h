@@ -879,6 +879,58 @@ public:
 	virtual void saveCharacter(int characterIndex);
 };
 
+class Scene1850 : public SceneExt {
+	class Hotspot2 : public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Actor5 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor6 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor8 : public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	
+public:
+	int _field412;
+	int _field414;
+	int _field416;
+	int _field418;
+	Common::Point _field41A;
+	int _field41E;
+	ScenePalette _palette1;
+	SpeakerQuinn _quinnSpeaker;
+	SpeakerSeeker _seekerSpeaker;
+	NamedHotspot _item1;
+	Hotspot2 _item2;
+	SceneActor _actor1;
+	SceneActor _actor2;
+	SceneActor _actor3;
+	SceneActor _actor4;
+	Actor5 _actor5;
+	Actor6 _actor6;
+	Actor6 _actor7;
+	Actor8 _actor8;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+
+	Scene1850();
+	void synchronize(Serializer &s);
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene1875 : public SceneExt {
 	class Actor1875 : public SceneActor {
 	public:
