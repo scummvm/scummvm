@@ -246,10 +246,8 @@ void clsf10() {
 		st = g_vm->getString(S_LOURDE);
 	else if (s.conf > 65)
 		st = g_vm->getString(S_MALSAINE);
-	if (res == 1)
-		co = 10;
-	else co = 6;
-	co = 574 - ((uint)co * st.size() >> 1);
+	
+	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
 	g_vm->_screenSurface.putxy(co, 92);
 	g_vm->_screenSurface.writeg(st, 4);
 	if (res == 1)  co = 620;
@@ -563,13 +561,18 @@ void person() {
 	for (int cf = 1; cf <= 8; cf ++)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cf]);
 
+	Common::String sYou = g_vm->getString(S_YOU);
+	Common::String sAre = g_vm->getString(S_ARE);
+	Common::String sAlone = g_vm->getString(S_ALONE);
+
 	clsf10();
-	g_vm->_screenSurface.putxy(560, 30);
-	g_vm->_screenSurface.writeg(g_vm->getString(S_YOU), 4);
-	g_vm->_screenSurface.putxy(560, 50);
-	g_vm->_screenSurface.writeg(g_vm->getString(S_ARE), 4);
-	g_vm->_screenSurface.putxy(560, 70);
-	g_vm->_screenSurface.writeg(g_vm->getString(S_ALONE), 4);
+	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sYou) / 2), 30);
+	g_vm->_screenSurface.writeg(sYou, 4);
+	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAre) / 2), 50);
+	g_vm->_screenSurface.writeg(sAre, 4);
+	g_vm->_screenSurface.putxy(580 - (g_vm->_screenSurface.getStringWidth(sAlone) / 2), 70);
+	g_vm->_screenSurface.writeg(sAlone, 4);
+
 	ipers = 0;
 }
 
