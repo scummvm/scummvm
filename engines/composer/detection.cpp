@@ -136,6 +136,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	// Liam Finds a Story Mac - from bug #3463201
+	{
+		{
+			"liam",
+			0,
+			{
+				{"liam finds a story.ini", 0, "85a1ca6002ded8572920bbdb73d35b0a", -1},
+				{"page99.rsc", 0, "11b0a19c6b6d73c39e2bd289a457c1dc", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	// from Liam Finds a Story CD
 	{
 		{
@@ -316,6 +334,7 @@ using namespace Composer;
 // we match from data too, to stop detection from a non-top-level directory
 const static char *directoryGlobs[] = {
 	"data",
+	"liam",
 	"programs",
 	"princess",
 	"sleepcub",
