@@ -165,7 +165,7 @@ bool MaemoSdlEventSource::toggleClickMode() {
 }
 
 MaemoSdlEventObserver::MaemoSdlEventObserver(MaemoSdlEventSource *eventSource) {
-	assert(_eventSource);
+	assert(eventSource);
 	_eventSource = eventSource;
 }
 
