@@ -36,7 +36,7 @@ MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(tru
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
 	Model model = Model(((OSystem_SDL_Maemo *)g_system)->getModel());
-	debug(10, "Model: %s %u %s %s", model.hwId, model.modelType, model.hwAlias, model.hwKeyboard ? "true" : "false");
+	debug(10, "Model: %s %u %s %s", model.hwId, model.modelType, model.hwAlias, model.hasHwKeyboard ? "true" : "false");
 
 	// List of special N810 keys:
 	// SDLK_F4 -> menu
@@ -56,7 +56,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				debug(9, "remapping to main menu");
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
-				if (!model.hwKeyboard) {
+				if (!model.hasHwKeyboard) {
 					event.type = Common::EVENT_KEYDOWN;
 					event.kbd.keycode = Common::KEYCODE_F7;
 					event.kbd.ascii = Common::ASCII_F7;
@@ -95,7 +95,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_MAINMENU;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
-				if (!model.hwKeyboard) {
+				if (!model.hasHwKeyboard) {
 					event.type = Common::EVENT_KEYUP;
 					event.kbd.keycode = Common::KEYCODE_F7;
 					event.kbd.ascii = Common::ASCII_F7;
