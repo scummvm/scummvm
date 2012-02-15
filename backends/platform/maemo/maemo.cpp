@@ -96,7 +96,7 @@ void OSystem_SDL_Maemo::initBackend() {
 
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
-	_model = Model(detectModel());
+	_model = detectModel();
 
 	registerDefaultKeyBindings(_keymapperDefaultBindings, _model);
 
