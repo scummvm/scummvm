@@ -486,7 +486,7 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 }
 
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch ((int)event.type) {
+	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.hasFlags(Common::KBD_ALT)) {
 			// Alt-Return and Alt-Enter toggle full screen mode
