@@ -263,7 +263,7 @@ public:
 	ASound _aSound1;
 	ASound _aSound2;
 	BackgroundSceneObject _background1;
-	int _fieldA30;
+	bool _autoplay;
 	unkObj1337_1 _arrunkObj1337[4];
 	SceneItem _item1;
 	SceneObject _object1;

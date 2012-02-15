@@ -1634,7 +1634,7 @@ void Scene1337::unkObj1337_1::synchronize(Serializer &s) {
 }
 
 Scene1337::Scene1337() {
-	_fieldA30 = 0;
+	_autoplay = false;
 	_field3E24 = 0;
 	_field3E26 = 0;
 
@@ -3939,7 +3939,7 @@ void Scene1337::subC20F9() {
 				break;
 			}
 			
-			if (_fieldA30 == 0)
+			if (!_autoplay)
 				_unkFctPtr412 = &Scene1337::subC20E5;
 			else
 				subC20E5();
@@ -4916,7 +4916,7 @@ void Scene1337::subPostInit() {
 
 	_background1.setup2(9531, 1, 1, 249, 168, 155, 0);
 
-	_fieldA30 = 0;
+	_autoplay = false;
 	_field424C = 0;
 	_field424E = 0;
 }
