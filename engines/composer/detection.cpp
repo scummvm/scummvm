@@ -81,6 +81,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King - from bug #3485018
 	{
 		{
@@ -95,6 +109,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Imo and the King Mac - from bug #3466402
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: The Little Samurai - from bug #3485018
 	{
 		{
@@ -103,6 +131,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("book.ini", "7a851869d022a9041e0dd11e5bace09b", 3747),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai Mac - from bug #3466402
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1("The Little Samurai", "38121dd649c24e8676aa108cf35d44b5"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
