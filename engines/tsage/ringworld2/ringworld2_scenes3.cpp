@@ -385,7 +385,7 @@ bool Scene3150::Item5::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 3154;
 		scene->setAction(&scene->_sequenceManager, scene, 3154, &R2_GLOBALS._player, &scene->_actor3, NULL);
 		return true;
-	case R2_40:
+	case R2_SUPERCONDUCTOR_WIRE:
 		if ((R2_INVENTORY.getObjectScene(47) != 3150) && (R2_GLOBALS.getFlag(75))) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor3.postInit();
@@ -407,7 +407,7 @@ bool Scene3150::Item6::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
-	case R2_41:
+	case R2_PILLOW:
 		R2_GLOBALS._player.disableControl();
 		scene->_actor4.postInit();
 		scene->_actor4._effect = 6;
@@ -416,7 +416,7 @@ bool Scene3150::Item6::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 3158;
 		scene->setAction(&scene->_sequenceManager, scene, 3158, &R2_GLOBALS._player, &scene->_actor4, NULL);
 		return true;
-	case R2_42:
+	case R2_FOOD_TRAY:
 		if ((R2_INVENTORY.getObjectScene(47) != 3150) && (R2_INVENTORY.getObjectScene(40) == 3150) && (R2_GLOBALS.getFlag(75))) {
 			scene->_actor5.postInit();
 			scene->_actor5._effect = 6;
@@ -447,7 +447,7 @@ bool Scene3150::Actor4::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 3151;
 		scene->setAction(&scene->_sequenceManager, scene, 3151, &R2_GLOBALS._player, &scene->_actor4, NULL);
 		return true;
-	case R2_42:
+	case R2_FOOD_TRAY:
 		return false;
 	default:
 		return SceneActor::startAction(action, event);
@@ -498,7 +498,7 @@ bool Scene3150::Actor6::startAction(CursorType action, Event &event) {
 bool Scene3150::Actor7::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_43) && (!R2_GLOBALS.getFlag(80))) {
+	if ((action == R2_LASER_HACKSAW) && (!R2_GLOBALS.getFlag(80))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3160;
 		scene->setAction(&scene->_sequenceManager, scene, 3160, &R2_GLOBALS._player, &scene->_actor7, NULL);
@@ -4325,7 +4325,7 @@ bool Scene3600::Actor13::startAction(CursorType action, Event &event) {
 		return true;
 	case R2_SONIC_STUNNER:
 	// No break on purpose
-	case R2_44:
+	case R2_PHOTON_STUNNER:
 		if (action == R2_SONIC_STUNNER)
 			R2_GLOBALS._sound3.play(43);
 		else

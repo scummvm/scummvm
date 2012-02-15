@@ -419,13 +419,13 @@ bool SceneExt::display(CursorType action, Event &event) {
 
 		R2_GLOBALS._sound4.play(45);
 		break;
-	case R2_9:
-	case R2_39:
+	case R2_COM_SCANNER:
+	case R2_COM_SCANNER_2:
 		R2_GLOBALS._sound3.play(44);
 		SceneItem::display2(2, action);
 		R2_GLOBALS._sound3.stop();
 		break;
-	case R2_44:
+	case R2_PHOTON_STUNNER:
 		R2_GLOBALS._sound3.play(99);
 		SceneItem::display2(2, action);
 		break;
@@ -859,51 +859,51 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_ATTRACTOR_UNIT, 400);
 	setObjectScene(R2_SENSOR_PROBE, 400);
 	setObjectScene(R2_SONIC_STUNNER, 500);
-	setObjectScene(R2_8, 700);
-	setObjectScene(R2_9, 800);
-	setObjectScene(R2_10, 100);
-	setObjectScene(R2_11, 400);
+	setObjectScene(R2_CABLE_HARNESS, 700);
+	setObjectScene(R2_COM_SCANNER, 800);
+	setObjectScene(R2_SPENT_POWER_CAPSULE, 100);
+	setObjectScene(R2_CHARGED_POWER_CAPSULE, 400);
 	setObjectScene(R2_AEROSOL, 500);
-	setObjectScene(R2_13, 1550);
+	setObjectScene(R2_REMOTE_CONTROL, 1550);
 	setObjectScene(R2_OPTICAL_FIBRE, 850);
 	setObjectScene(R2_CLAMP, 850);
-	setObjectScene(R2_16, 0);
-	setObjectScene(R2_17, 1550);
-	setObjectScene(R2_18, 1550);
-	setObjectScene(R2_19, 1550);
+	setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 0);
+	setObjectScene(R2_FUEL_CELL, 1550);
+	setObjectScene(R2_GYROSCOPE, 1550);
+	setObjectScene(R2_AIRBAG, 1550);
 	setObjectScene(R2_REBREATHER_TANK, 500);
-	setObjectScene(R2_21, 500);
-	setObjectScene(R2_22, 1550);
-	setObjectScene(R2_23, 1580);
-	setObjectScene(R2_24, 9999);
-	setObjectScene(R2_25, 1550);
-	setObjectScene(R2_26, 1550);
-	setObjectScene(R2_27, 1580);
-	setObjectScene(R2_28, 1550);
-	setObjectScene(R2_29, 2525);
-	setObjectScene(R2_30, 2440);
-	setObjectScene(R2_31, 2455);
-	setObjectScene(R2_32, 2535);
-	setObjectScene(R2_33, 2530);
-	setObjectScene(R2_34, 1950);
-	setObjectScene(R2_35, 1950);
-	setObjectScene(R2_36, 9999);
-	setObjectScene(R2_37, 2430);
-	setObjectScene(R2_38, 9999);
-	setObjectScene(R2_39, 2);
-	setObjectScene(R2_40, 9999);
-	setObjectScene(R2_41, 3150);
-	setObjectScene(R2_42, 0);
-	setObjectScene(R2_43, 3260);
-	setObjectScene(R2_44, 2);
-	setObjectScene(R2_45, 1550);
-	setObjectScene(R2_46, 0);
-	setObjectScene(R2_47, 3150);
-	setObjectScene(R2_48, 2435);
-	setObjectScene(R2_49, 2440);
-	setObjectScene(R2_50, 2435);
-	setObjectScene(R2_51, 1580);
-	setObjectScene(R2_52, 3260);
+	setObjectScene(R2_RESERVE_REBREATHER_TANK, 500);
+	setObjectScene(R2_GUIDANCE_MODULE, 1550);
+	setObjectScene(R2_THRUSTER_VALVE, 1580);
+	setObjectScene(R2_BALLOON_BACKPACK, 9999);
+	setObjectScene(R2_RADAR_MECHANISM, 1550);
+	setObjectScene(R2_JOYSTICK, 1550);
+	setObjectScene(R2_IGNITOR, 1580);
+	setObjectScene(R2_DIAGNOSTICS_DISPLAY, 1550);
+	setObjectScene(R2_GLASS_DOME, 2525);
+	setObjectScene(R2_WICK_LAMP, 2440);
+	setObjectScene(R2_SCRITH_KEY, 2455);
+	setObjectScene(R2_TANNER_MASK, 2535);
+	setObjectScene(R2_PURE_GRAIN_ALCOHOL, 2530);
+	setObjectScene(R2_SAPPHIRE_BLUE, 1950);
+	setObjectScene(R2_ANCIENT_SCROLLS, 1950);
+	setObjectScene(R2_FLUTE, 9999);
+	setObjectScene(R2_GUNPOWDER, 2430);
+	setObjectScene(R2_NONAME, 9999);
+	setObjectScene(R2_COM_SCANNER_2, 2);
+	setObjectScene(R2_SUPERCONDUCTOR_WIRE, 9999);
+	setObjectScene(R2_PILLOW, 3150);
+	setObjectScene(R2_FOOD_TRAY, 0);
+	setObjectScene(R2_LASER_HACKSAW, 3260);
+	setObjectScene(R2_PHOTON_STUNNER, 2);
+	setObjectScene(R2_BATTERY, 1550);
+	setObjectScene(R2_SOAKED_FACEMASK, 0);
+	setObjectScene(R2_LIGHT_BULB, 3150);
+	setObjectScene(R2_ALCOHOL_LAMP, 2435);
+	setObjectScene(R2_ALCOHOL_LAMP_2, 2440);
+	setObjectScene(R2_ALCOHOL_LAMP_3, 2435);
+	setObjectScene(R2_BROKEN_DISPLAY, 1580);
+	setObjectScene(R2_TOOLBOX, 3260);
 }
 
 void Ringworld2InvObjectList::setObjectScene(int objectNum, int sceneNumber) {

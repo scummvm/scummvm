@@ -1269,13 +1269,13 @@ void Scene2400::signal() {
 bool Scene2425::Item1::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_37) && (!R2_GLOBALS.getFlag(84))) {
+	if ((action == R2_GUNPOWDER) && (!R2_GLOBALS.getFlag(84))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2426;
 		scene->setAction(&scene->_sequenceManager, scene, 2426, &R2_GLOBALS._player, &scene->_actor1, NULL);
 		R2_GLOBALS.setFlag(84);
 		return true;
-	} else if (action == R2_37) {
+	} else if (action == R2_GUNPOWDER) {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
 		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
@@ -1286,13 +1286,13 @@ bool Scene2425::Item1::startAction(CursorType action, Event &event) {
 bool Scene2425::Item2::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action == R2_37) && (R2_GLOBALS.getFlag(84))) {
+	if ((action == R2_GUNPOWDER) && (R2_GLOBALS.getFlag(84))) {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2427;
 		scene->setAction(&scene->_sequenceManager, scene, 2427, &R2_GLOBALS._player, &scene->_actor1, NULL);
 		R2_GLOBALS.clearFlag(84);
 		return true;
-	} else if (action == R2_37) {
+	} else if (action == R2_GUNPOWDER) {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
 		R2_GLOBALS._player.enableControl(R2_STEPPING_DISKS);
 		return NamedHotspot::startAction(R2_STEPPING_DISKS, event);
@@ -1303,7 +1303,7 @@ bool Scene2425::Item2::startAction(CursorType action, Event &event) {
 bool Scene2425::Item3::startAction(CursorType action, Event &event) {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
-	if (action != R2_37)
+	if (action != R2_GUNPOWDER)
 		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._player.disableControl();
@@ -1320,7 +1320,7 @@ bool Scene2425::Item3::startAction(CursorType action, Event &event) {
 }
 
 bool Scene2425::Item4::startAction(CursorType action, Event &event) {
-	if (action != R2_37)
+	if (action != R2_GUNPOWDER)
 		return NamedHotspot::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
@@ -1332,19 +1332,19 @@ bool Scene2425::Item4::startAction(CursorType action, Event &event) {
 bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
 	if (action == R2_STEPPING_DISKS) {
 		if (R2_GLOBALS._player._characterIndex == 2) {
-			R2_GLOBALS._events.setCursor(R2_37);
+			R2_GLOBALS._events.setCursor(R2_GUNPOWDER);
 			return true;
 		} else {
 			return SceneActor::startAction(action, event);
 		}
-	} else if (R2_GLOBALS._events.getCursor() == R2_37)
+	} else if (R2_GLOBALS._events.getCursor() == R2_GUNPOWDER)
 		return false;
 	else 
 		return SceneActor::startAction(action, event);
 }
 
 bool Scene2425::Actor2::startAction(CursorType action, Event &event) {
-	if (action != R2_37)
+	if (action != R2_GUNPOWDER)
 		return SceneActor::startAction(action, event);
 	else {
 		R2_GLOBALS._events.setCursor(R2_STEPPING_DISKS);
@@ -1601,12 +1601,12 @@ void Scene2430::signal() {
 		break;
 	case 2430:
 		_actor2.remove();
-		R2_INVENTORY.setObjectScene(R2_37, 2);
+		R2_INVENTORY.setObjectScene(R2_GUNPOWDER, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 2435:
 		_actor3.remove();
-		R2_INVENTORY.setObjectScene(R2_50, 2);
+		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_3, 2);
 		R2_GLOBALS._player.enableControl();
 		break;
 	default:
@@ -1627,18 +1627,18 @@ bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
-	case R2_34:
+	case R2_SAPPHIRE_BLUE:
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS.setFlag(82);
 		scene->_stripManager.start(603, scene);
 		return true;
-	case R2_35:
+	case R2_ANCIENT_SCROLLS:
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS.setFlag(82);
 		scene->_stripManager.start(602, scene);
-		R2_INVENTORY.setObjectScene(R2_35, 2000);
+		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2000);
 		return true;
 	case CURSOR_TALK:
 		R2_GLOBALS._player.disableControl();
@@ -1647,7 +1647,7 @@ bool Scene2435::Actor2::startAction(CursorType action, Event &event) {
 		if ((R2_GLOBALS._player._characterIndex == 1) || (R2_GLOBALS.getFlag(82))) {
 			scene->_stripManager.start(605, scene);
 			return true;
-		} else if (R2_INVENTORY.getObjectScene(R2_35) == 2) {
+		} else if (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2) {
 			scene->_stripManager.start(601, scene);
 			return true;
 		} else {
@@ -2204,7 +2204,7 @@ void Scene2450::signal() {
 bool Scene2455::Actor1::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
-	if (action == R2_29) {
+	if (action == R2_GLASS_DOME) {
 		if ((R2_INVENTORY.getObjectScene(49) == 2455) || (R2_INVENTORY.getObjectScene(50) == 2455)) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2458;
@@ -2224,7 +2224,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
-	case R2_49:
+	case R2_ALCOHOL_LAMP_2:
 		if (R2_INVENTORY.getObjectScene(50) != 2455) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor1.postInit();
@@ -2236,7 +2236,7 @@ bool Scene2455::Actor2::startAction(CursorType action, Event &event) {
 			return true;
 		}
 		break;
-	case R2_50:
+	case R2_ALCOHOL_LAMP_3:
 		if (R2_INVENTORY.getObjectScene(49) != 2455) {
 			R2_GLOBALS._player.disableControl();
 			scene->_actor1.postInit();
@@ -3513,7 +3513,7 @@ void Scene2700::signal() {
 }
 void Scene2700::process(Event &event) {
 	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN)) {
-		if (R2_GLOBALS._events.getCursor() == R2_36) {
+		if (R2_GLOBALS._events.getCursor() == R2_FLUTE) {
 			if (R2_GLOBALS._player._bounds.contains(event.mousePos)) {
 				_sceneMode = 10;
 				_field414 = 2710;

@@ -82,7 +82,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 		}
 		break;
 	case GType_Ringworld2:
-		if ((cursor == R2_9) || (cursor == R2_39)) {
+		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
 			// Show communicator
 			warning("TODO: Communicator");
 		} else {
