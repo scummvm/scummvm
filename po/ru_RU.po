@@ -348,7 +348,7 @@ msgstr "~В~ыход"
 
 #: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:96
 msgid "Quit ScummVM"
-msgstr "Выход из ScummVM"
+msgstr "Завершить ScummVM"
 
 #: gui/launcher.cpp:579
 msgid "A~b~out..."
@@ -2391,15 +2391,15 @@ msgstr "Режим тачпада выключен."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
-msgstr "Спрятать ScummVM"
+msgstr "Скрыть ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
-msgstr "Спрятать Другие"
+msgstr "Скрыть остальные"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
-msgstr "Показать всё"
+msgstr "Показать все"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:110
 #: backends/platform/sdl/macosx/appmenu_osx.mm:121
@@ -2408,7 +2408,7 @@ msgstr "Окно"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
-msgstr "Минимизировать"
+msgstr "Убрать в Dock"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"

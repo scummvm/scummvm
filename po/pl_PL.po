@@ -357,7 +357,7 @@ msgstr "I~n~formacje..."
 
 #: gui/launcher.cpp:579 backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "About ScummVM"
-msgstr "O ScummVM"
+msgstr "Ksi±¿ka ScummVM"
 
 #: gui/launcher.cpp:580
 msgid "~O~ptions..."
@@ -2379,11 +2379,11 @@ msgstr "Tryb touchpada wy³±czony."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
-msgstr "Schowaj ScummVM"
+msgstr "Ukryj ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
-msgstr "Schowaj pozosta³e"
+msgstr "Ukryj pozosta³e"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
@@ -2396,7 +2396,7 @@ msgstr "Okno"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
-msgstr "Minimalizuj"
+msgstr "Miniaturka"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
