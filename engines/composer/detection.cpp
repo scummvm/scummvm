@@ -53,9 +53,12 @@ Common::Language ComposerEngine::getLanguage() const {
 
 static const PlainGameDescriptor composerGames[] = {
 	{"composer", "Composer Game"},
+	{"babayaga", "Magic Tales: Baba Yaga and the Magic Geese"},
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
+	{"imoking", "Magic Tales: Imo and the King"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
+	{"littlesamurai", "Magic Tales: The Little Samurai"},
 	{"princess", "The Princess and the Crab"},
 	{"sleepingcub", "Sleeping Cub's Test of Courage"},
 	{0, 0}
@@ -64,6 +67,48 @@ static const PlainGameDescriptor composerGames[] = {
 namespace Composer {
 
 static const ComposerGameDescription gameDescriptions[] = {
+	// Magic Tales: Baba Yaga and the Magic Geese - from bug #3485018
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1s("book.ini", "412b7f4b0ef07f442009d28e3a819974", 3852),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King - from bug #3485018
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1s("book.ini", "62b52a1763cce7d7d6ccde9f9d32fd4b", 3299),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai - from bug #3485018
+	{
+		{
+			"littlesamurai",
+			"",
+			AD_ENTRY1s("book.ini", "7a851869d022a9041e0dd11e5bace09b", 3747),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// from Liam Finds a Story CD
 	{
 		{
