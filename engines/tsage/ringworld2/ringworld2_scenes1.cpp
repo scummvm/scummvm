@@ -4359,8 +4359,8 @@ void Scene1337::subC2C2F() {
 				if ((_arrunkObj1337[3]._arr2[i]._field34 == 1) && (!subC2687(_arrunkObj1337[3]._arr3[i]._field34))) {
 					int tmpVal = 0;
 					
-					for (int i = 0; i <= 7; i++) {
-						if ((_arrunkObj1337[3]._arr2[i]._field34 > 1) && (_arrunkObj1337[3]._arr2[i]._field34 <= 9))
+					for (int j = 0; j <= 7; j++) {
+						if ((_arrunkObj1337[3]._arr2[j]._field34 > 1) && (_arrunkObj1337[3]._arr2[j]._field34 <= 9))
 							++tmpVal;
 					}
 					
