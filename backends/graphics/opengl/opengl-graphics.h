@@ -316,10 +316,10 @@ protected:
 	 */
 	Common::Array<Common::String> _osdLines;
 
-  /**
-   * Returns the font used for on screen display
-   */
-  virtual const Graphics::Font *getFontOSD();
+	/**
+	 * Returns the font used for on screen display
+	 */
+	virtual const Graphics::Font *getFontOSD();
 
 	/**
 	 * Update the OSD texture / surface.
