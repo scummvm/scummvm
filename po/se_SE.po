@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-01-28 21:48+0100\n"
+"POT-Creation-Date: 2012-02-16 12:32+0200\n"
 "PO-Revision-Date: 2011-11-27 19:00+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -80,6 +80,11 @@ msgstr "Visa tangentbord"
 msgid "Remap keys"
 msgstr "Ställ in tangenter"
 
+#: gui/gui-manager.cpp:127 base/main.cpp:295
+#, fuzzy
+msgid "Toggle FullScreen"
+msgstr "Fullskärmsläge"
+
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
 msgstr "Välj en handling att ställa in"
@@ -91,7 +96,7 @@ msgstr "Ställ in"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
 #: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
 #: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
+#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:449
 #: engines/sword1/animation.cpp:459 engines/sword1/animation.cpp:465
@@ -601,7 +606,7 @@ msgstr "Speciella gitterlägen stödda av vissa spel"
 
 #: gui/options.cpp:761
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:476
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr "Fullskärmsläge"
 
@@ -1016,11 +1021,11 @@ msgstr "Paus"
 msgid "Skip line"
 msgstr "Skippa rad"
 
-#: base/main.cpp:445
+#: base/main.cpp:455
 msgid "Error running game:"
 msgstr "Fel under körning av spel:"
 
-#: base/main.cpp:469
+#: base/main.cpp:479
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 
@@ -1899,7 +1904,7 @@ msgstr "Flyg åt höger"
 msgid "Fly to lower right"
 msgstr "Flyg åt nedre höger"
 
-#: engines/scumm/scumm.cpp:1782
+#: engines/scumm/scumm.cpp:1773
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1908,7 +1913,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:2272 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1919,7 +1924,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1930,7 +1935,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2291 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2290 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1941,7 +1946,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2506
+#: engines/scumm/scumm.cpp:2505
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1991,11 +1996,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Filmscensfilen '%s' hittades ej!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:482
+#: engines/tinsel/saveload.cpp:500
 msgid "Failed to load game state from file."
 msgstr "Kunde inte läsa spardata från filen"
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:495
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:513
 msgid "Failed to save game state to file."
 msgstr "Kunde inte skriva spardata till filen."
 
@@ -2256,11 +2261,11 @@ msgstr "Apple II GS-emulator (INTE IMPLEMENTERAD)"
 msgid "C64 Audio Emulator"
 msgstr "C64 ljudemulator"
 
-#: audio/softsynth/mt32.cpp:329
+#: audio/softsynth/mt32.cpp:293
 msgid "Initializing MT-32 Emulator"
 msgstr "Initialiserar MT-32 emulator"
 
-#: audio/softsynth/mt32.cpp:543
+#: audio/softsynth/mt32.cpp:512
 msgid "MT-32 Emulator"
 msgstr "MT-32 emulator"
 
@@ -2276,15 +2281,20 @@ msgstr "IBM PCjr-emulator"
 msgid "Keymap:"
 msgstr "Tangenter:"
 
-#: backends/keymapper/remap-dialog.cpp:64
+#: backends/keymapper/remap-dialog.cpp:66
+#, fuzzy
+msgid " (Effective)"
+msgstr "(Aktiv)"
+
+#: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
 msgstr "(Aktiv)"
 
-#: backends/keymapper/remap-dialog.cpp:98
+#: backends/keymapper/remap-dialog.cpp:116
 msgid " (Global)"
 msgstr "(Global)"
 
-#: backends/keymapper/remap-dialog.cpp:108
+#: backends/keymapper/remap-dialog.cpp:126
 msgid " (Game)"
 msgstr "(Spel)"
 
@@ -2380,6 +2390,30 @@ msgstr "Touchpad-läge aktiverat."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad-läge inaktiverat."
 
+#: backends/platform/maemo/maemo.cpp:178
+msgid "Click Mode"
+msgstr ""
+
+#: backends/platform/maemo/maemo.cpp:184
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:60
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/bada/form.cpp:281
+msgid "Left Click"
+msgstr "Vänsterklick"
+
+#: backends/platform/maemo/maemo.cpp:187
+#, fuzzy
+msgid "Middle Click"
+msgstr "Mellersta vänstra föremålet"
+
+#: backends/platform/maemo/maemo.cpp:190
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/bada/form.cpp:273
+msgid "Right Click"
+msgstr "Högerklick"
+
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
 msgstr "Göm ScummVM"
@@ -2411,12 +2445,12 @@ msgid "Normal (no scaling)"
 msgstr "Normalt (ingen skalning)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:537
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
 msgid "Enabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande på"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
 msgid "Disabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande av"
 
@@ -2425,7 +2459,7 @@ msgid "Active graphics filter:"
 msgstr "Aktivt grafikfilter:"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:481
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
 msgid "Windowed mode"
 msgstr "Fönsterläge"
 
@@ -2449,11 +2483,11 @@ msgstr "Nuvarande visningsläge"
 msgid "Current scale"
 msgstr "Nuvarande skala"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:562
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
 msgid "Active filter mode: Linear"
 msgstr "Aktivt filterläge: Linjärt"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
 msgid "Active filter mode: Nearest"
 msgstr "Aktivt filterläge: Närmast"
 
@@ -2476,19 +2510,6 @@ msgstr "Vänster"
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
 msgstr "Höger"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/wince/CEActionsPocket.cpp:60
-#: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:281
-msgid "Left Click"
-msgstr "Vänsterklick"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:273
-msgid "Right Click"
-msgstr "Högerklick"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
@@ -2853,11 +2874,11 @@ msgstr "Visa tangentbord"
 msgid "Control Mouse"
 msgstr "Kontrollera musen"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Enabled"
 msgstr "Klickning aktiverad"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Disabled"
 msgstr "Klickning deaktiverad"
 

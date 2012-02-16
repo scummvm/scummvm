@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-01-28 21:48+0100\n"
+"POT-Creation-Date: 2012-02-16 12:32+0200\n"
 "PO-Revision-Date: 2011-08-20 13:30+0200\n"
 "Last-Translator: Eugene Sandulenko\n"
 "Language-Team: Ukrainian\n"
@@ -78,6 +78,11 @@ msgstr "Показати клавіатуру"
 msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
+#: gui/gui-manager.cpp:127 base/main.cpp:295
+#, fuzzy
+msgid "Toggle FullScreen"
+msgstr "Увімкнути повноекранний режим"
+
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
 msgstr "Виберіть дію для призначення"
@@ -89,7 +94,7 @@ msgstr "Призначити"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
 #: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
 #: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
+#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:449
 #: engines/sword1/animation.cpp:459 engines/sword1/animation.cpp:465
@@ -598,7 +603,7 @@ msgstr "Спеціальні режими растрування, які підтримують деякі ігри"
 
 #: gui/options.cpp:761
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:476
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -1015,11 +1020,11 @@ msgstr "Пауза"
 msgid "Skip line"
 msgstr "Пропустити рядок"
 
-#: base/main.cpp:445
+#: base/main.cpp:455
 msgid "Error running game:"
 msgstr "Помилка запуску гри:"
 
-#: base/main.cpp:469
+#: base/main.cpp:479
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 
@@ -1897,7 +1902,7 @@ msgstr "Летіти направо"
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
-#: engines/scumm/scumm.cpp:1782
+#: engines/scumm/scumm.cpp:1773
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1906,7 +1911,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2272 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1917,7 +1922,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1928,7 +1933,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2291 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2290 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1939,7 +1944,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2506
+#: engines/scumm/scumm.cpp:2505
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1989,11 +1994,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Файл заставки '%s' не знайдено!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:482
+#: engines/tinsel/saveload.cpp:500
 msgid "Failed to load game state from file."
 msgstr "Не вдалося завантажити стан гри з файлу."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:495
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:513
 msgid "Failed to save game state to file."
 msgstr "Не вдалося зберегти стан гри у файл."
 
@@ -2258,11 +2263,11 @@ msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 msgid "C64 Audio Emulator"
 msgstr "C64 Аудіо Емулятор"
 
-#: audio/softsynth/mt32.cpp:329
+#: audio/softsynth/mt32.cpp:293
 msgid "Initializing MT-32 Emulator"
 msgstr "Налаштовую емулятор MT-32"
 
-#: audio/softsynth/mt32.cpp:543
+#: audio/softsynth/mt32.cpp:512
 msgid "MT-32 Emulator"
 msgstr "Емулятор MT-32"
 
@@ -2278,15 +2283,20 @@ msgstr "Емулятор IBM PCjr"
 msgid "Keymap:"
 msgstr "Мапа клавіш:"
 
-#: backends/keymapper/remap-dialog.cpp:64
+#: backends/keymapper/remap-dialog.cpp:66
+#, fuzzy
+msgid " (Effective)"
+msgstr " (Активна)"
+
+#: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
 msgstr " (Активна)"
 
-#: backends/keymapper/remap-dialog.cpp:98
+#: backends/keymapper/remap-dialog.cpp:116
 msgid " (Global)"
 msgstr " (Глобальна)"
 
-#: backends/keymapper/remap-dialog.cpp:108
+#: backends/keymapper/remap-dialog.cpp:126
 msgid " (Game)"
 msgstr " (Ігри)"
 
@@ -2382,6 +2392,30 @@ msgstr "Режим тачпаду увімкнено."
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
 
+#: backends/platform/maemo/maemo.cpp:178
+msgid "Click Mode"
+msgstr ""
+
+#: backends/platform/maemo/maemo.cpp:184
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:60
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/bada/form.cpp:281
+msgid "Left Click"
+msgstr "Лівий клік"
+
+#: backends/platform/maemo/maemo.cpp:187
+#, fuzzy
+msgid "Middle Click"
+msgstr "Середня зліва річ"
+
+#: backends/platform/maemo/maemo.cpp:190
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/bada/form.cpp:273
+msgid "Right Click"
+msgstr "Правий клік"
+
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
 msgstr "Сховати ScummVM"
@@ -2413,12 +2447,12 @@ msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:537
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
@@ -2427,7 +2461,7 @@ msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:481
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
@@ -2451,11 +2485,11 @@ msgstr "Поточний відеорежим"
 msgid "Current scale"
 msgstr "Поточний масштаб"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:562
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
 msgid "Active filter mode: Linear"
 msgstr "Активний режим фільтрації: Лінійний"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
 msgid "Active filter mode: Nearest"
 msgstr "Активний режим фільтрації: Найближче"
 
@@ -2478,19 +2512,6 @@ msgstr "Наліво"
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
 msgstr "Направо"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/wince/CEActionsPocket.cpp:60
-#: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:281
-msgid "Left Click"
-msgstr "Лівий клік"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:273
-msgid "Right Click"
-msgstr "Правий клік"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
@@ -2854,11 +2875,11 @@ msgstr "Показати клавіатуру"
 msgid "Control Mouse"
 msgstr "Управління мишею"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Enabled"
 msgstr "Кліки увімкнено"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Disabled"
 msgstr "Кліки вимкнено"
 

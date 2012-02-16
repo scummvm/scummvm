@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-01-28 21:48+0100\n"
+"POT-Creation-Date: 2012-02-16 12:32+0200\n"
 "PO-Revision-Date: 2011-10-24 21:14+0100\n"
 "Last-Translator: Micha³ Zi±bkowski <mziab@o2.pl>\n"
 "Language-Team: Grajpopolsku.pl <grajpopolsku@gmail.com>\n"
@@ -80,6 +80,11 @@ msgstr "Wy¶wietl klawiaturê"
 msgid "Remap keys"
 msgstr "Dostosuj klawisze"
 
+#: gui/gui-manager.cpp:127 base/main.cpp:295
+#, fuzzy
+msgid "Toggle FullScreen"
+msgstr "W³±cz/wy³±cz pe³ny ekran"
+
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
 msgstr "Wybierz akcjê do przypisania"
@@ -91,7 +96,7 @@ msgstr "Przypisz"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:320 gui/launcher.cpp:959
 #: gui/launcher.cpp:963 gui/massadd.cpp:91 gui/options.cpp:1222
 #: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1784 engines/agos/animation.cpp:551
+#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:449
 #: engines/sword1/animation.cpp:459 engines/sword1/animation.cpp:465
@@ -597,7 +602,7 @@ msgstr "Specjalne tryby ditheringu wspierane przez niektóre gry"
 
 #: gui/options.cpp:761
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:476
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr "Pe³ny ekran"
 
@@ -1012,11 +1017,11 @@ msgstr "Wstrzymaj"
 msgid "Skip line"
 msgstr "Pomiñ liniê"
 
-#: base/main.cpp:445
+#: base/main.cpp:455
 msgid "Error running game:"
 msgstr "B³±d podczas uruchamiania gry:"
 
-#: base/main.cpp:469
+#: base/main.cpp:479
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nie uda³o siê znale¼æ silnika zdolnego do uruchomienia zaznaczonej gry"
 
@@ -1890,7 +1895,7 @@ msgstr "Leæ w prawo"
 msgid "Fly to lower right"
 msgstr "Leæ w dó³, w prawo"
 
-#: engines/scumm/scumm.cpp:1782
+#: engines/scumm/scumm.cpp:1773
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1899,7 +1904,7 @@ msgstr ""
 "Natywne wsparcie MIDI wymaga aktualizacji Rolanda od LucasArts,\n"
 "ale brakuje %s. Prze³±czam na tryb AdLib."
 
-#: engines/scumm/scumm.cpp:2272 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1910,7 +1915,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1921,7 +1926,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2291 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2290 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1932,7 +1937,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2506
+#: engines/scumm/scumm.cpp:2505
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1982,11 +1987,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Nie znaleziono pliku przerywnika '%s'!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:482
+#: engines/tinsel/saveload.cpp:500
 msgid "Failed to load game state from file."
 msgstr "Nie uda³o siê wczytaæ stanu gry z pliku."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:495
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:513
 msgid "Failed to save game state to file."
 msgstr "Nie uda³o siê zapisaæ stanu gry do pliku."
 
@@ -2253,11 +2258,11 @@ msgstr "Emulator Apple II GS (NIE ZAIMPLEMENTOWANY)"
 msgid "C64 Audio Emulator"
 msgstr "Emulator d¼wiêku C64"
 
-#: audio/softsynth/mt32.cpp:329
+#: audio/softsynth/mt32.cpp:293
 msgid "Initializing MT-32 Emulator"
 msgstr "Inicjalizacja emulatora MT-32"
 
-#: audio/softsynth/mt32.cpp:543
+#: audio/softsynth/mt32.cpp:512
 msgid "MT-32 Emulator"
 msgstr "Emulator MT-32"
 
@@ -2273,15 +2278,20 @@ msgstr "Emulator IBM PCjr"
 msgid "Keymap:"
 msgstr "Klawisze:"
 
-#: backends/keymapper/remap-dialog.cpp:64
+#: backends/keymapper/remap-dialog.cpp:66
+#, fuzzy
+msgid " (Effective)"
+msgstr " (Aktywny)"
+
+#: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
 msgstr " (Aktywny)"
 
-#: backends/keymapper/remap-dialog.cpp:98
+#: backends/keymapper/remap-dialog.cpp:116
 msgid " (Global)"
 msgstr " (Globalny)"
 
-#: backends/keymapper/remap-dialog.cpp:108
+#: backends/keymapper/remap-dialog.cpp:126
 msgid " (Game)"
 msgstr " (Gra)"
 
@@ -2377,6 +2387,30 @@ msgstr "Tryb touchpada w³±czony."
 msgid "Touchpad mode disabled."
 msgstr "Tryb touchpada wy³±czony."
 
+#: backends/platform/maemo/maemo.cpp:178
+msgid "Click Mode"
+msgstr ""
+
+#: backends/platform/maemo/maemo.cpp:184
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:60
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/bada/form.cpp:281
+msgid "Left Click"
+msgstr "Klikniêcie LPM"
+
+#: backends/platform/maemo/maemo.cpp:187
+#, fuzzy
+msgid "Middle Click"
+msgstr "Przedmiot na ¶rodku, z lewej"
+
+#: backends/platform/maemo/maemo.cpp:190
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/bada/form.cpp:273
+msgid "Right Click"
+msgstr "Klikniêcie PPM"
+
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
 msgstr "Ukryj ScummVM"
@@ -2408,12 +2442,12 @@ msgid "Normal (no scaling)"
 msgstr "Zwyk³y (bez skalowania)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:537
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
 msgid "Enabled aspect ratio correction"
 msgstr "W³±czono korekcjê formatu obrazu"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
 msgid "Disabled aspect ratio correction"
 msgstr "Wy³±czono korekcjê formatu obrazu"
 
@@ -2422,7 +2456,7 @@ msgid "Active graphics filter:"
 msgstr "Aktywny filtr graficzny:"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:481
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
 msgid "Windowed mode"
 msgstr "Okno"
 
@@ -2446,11 +2480,11 @@ msgstr "Obecny tryb wideo"
 msgid "Current scale"
 msgstr "Aktualne powiêkszenie"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:562
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
 msgid "Active filter mode: Linear"
 msgstr "Aktywny tryb filtru: dwuliniowy"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
 msgid "Active filter mode: Nearest"
 msgstr "Aktywny tryb filtru: najbli¿szy s±siad"
 
@@ -2473,19 +2507,6 @@ msgstr "W lewo"
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
 msgstr "W prawo"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/wince/CEActionsPocket.cpp:60
-#: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:281
-msgid "Left Click"
-msgstr "Klikniêcie LPM"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:273
-msgid "Right Click"
-msgstr "Klikniêcie PPM"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
@@ -2847,11 +2868,11 @@ msgstr "Poka¿ klawiaturê"
 msgid "Control Mouse"
 msgstr "Steruj myszk±"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Enabled"
 msgstr "Klikanie w³±czone"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:129
+#: backends/events/maemosdl/maemosdl-events.cpp:192
 msgid "Clicking Disabled"
 msgstr "Klikanie wy³±czone"
 
