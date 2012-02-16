@@ -101,6 +101,18 @@ void Lua_V2::ImSetState() {
 	warning("Lua_V2::ImSetState: stub, state: %d", state);
 }
 
+void Lua_V2::ImStateHasEnded() {
+	lua_Object stateObj = lua_getparam(1);
+	if (!lua_isnumber(stateObj))
+		return;
+
+	int state = (int)lua_getnumber(stateObj);
+
+	// FIXME: Make sure this logic is correct.
+	pushbool(g_imuseState != state);
+
+	warning("Lua_V2::ImStateHasEnded: state %d.", state);
+}
 
 void Lua_V2::EnableVoiceFX() {
 	lua_Object stateObj = lua_getparam(1);
@@ -168,32 +180,61 @@ void Lua_V2::LoadSound() {
 
 	const char *str = lua_getstring(strObj);
 	// FIXME: implement code
-	warning("Lua_V2::LoadSound: stub, wants to load %s", str);
-}
-
-void Lua_V2::ImSetMusicVol() {
-	warning("Lua_V2::ImSetMusicVol: implement opcode");
-}
-
-void Lua_V2::ImSetSfxVol() {
-	warning("Lua_V2::ImSetSfxVol: implement opcode");
-}
-
-void Lua_V2::ImSetVoiceVol() {
-	warning("Lua_V2::ImSetVoiceVol: implement opcode");
-}
-
-void Lua_V2::ImSetVoiceEffect() {
-	warning("Lua_V2::ImSetVoiceEffect: implement opcode");
-}
-
-void Lua_V2::ImStateHasEnded() {
-	warning("Lua_V2::ImStateHasEnded: Just returns true");
-	pushbool(true);
+	warning("Lua_V2::LoadSound: implement opcode, wants to load %s", str);
 }
 
 void Lua_V2::PlayLoadedSound() {
+	lua_Object idObj = lua_getparam(1);
+	lua_Object bool1Obj = lua_getparam(2);
+	lua_Object volumeObj = lua_getparam(3);
+	lua_Object bool2Obj = lua_getparam(4);
+
 	warning("Lua_V2::PlayLoadedSound: implement opcode");
+}
+
+void Lua_V2::ImSetMusicVol() {
+	// This only seems to be used in the demo.
+	lua_Object volumeObj = lua_getparam(1);
+
+	if (!lua_isnumber(volumeObj))
+		return;
+	int volume = (int)lua_getnumber(volumeObj);
+	warning("Lua_V2::ImSetMusicVol: implement opcode, wants volume %d", volume);
+}
+
+void Lua_V2::ImSetSfxVol() {
+	// This only seems to be used in the demo.
+	lua_Object volumeObj = lua_getparam(1);
+
+	if (!lua_isnumber(volumeObj))
+		return;
+	int volume = (int)lua_getnumber(volumeObj);
+	warning("Lua_V2::ImSetSfxVol: implement opcode, wants volume %d", volume);
+}
+
+void Lua_V2::ImSetVoiceVol() {
+	// This only seems to be used in the demo.
+	lua_Object volumeObj = lua_getparam(1);
+
+	if (!lua_isnumber(volumeObj))
+		return;
+	int volume = (int)lua_getnumber(volumeObj);
+	warning("Lua_V2::ImSetVoiceVol: implement opcode, wants volume %d", volume);
+}
+
+void Lua_V2::ImSetVoiceEffect() {
+	// This only seems to be used in the demo.
+	lua_Object strObj = lua_getparam(1);
+
+	if (!lua_isstring(strObj))
+		return;
+
+	const char *str = lua_getstring(strObj);
+	warning("Lua_V2::ImSetVoiceEffect: implement opcode, wants effect %s", str);
+}
+
+void Lua_V2::StopAllSounds() {
+	warning("Lua_V2::StopAllSounds: implement opcode");
 }
 
 } // end of namespace Grim
