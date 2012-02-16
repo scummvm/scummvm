@@ -2360,25 +2360,24 @@ msgstr "Touchpad-modus deaktivert."
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 #, fuzzy
 msgid "Hide ScummVM"
-msgstr "Avslutt ScummVM"
+msgstr "Skjul ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
-msgstr ""
+msgstr "Skjul andre"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
-msgstr ""
+msgstr "Vis alle"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:110
 #: backends/platform/sdl/macosx/appmenu_osx.mm:121
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr "Vindu"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
-msgstr ""
+msgstr "Minimer"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"

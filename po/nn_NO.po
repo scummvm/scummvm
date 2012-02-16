@@ -2346,9 +2346,8 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:110
 #: backends/platform/sdl/macosx/appmenu_osx.mm:121
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"

@@ -2382,11 +2382,11 @@ msgstr "Touchpad-läge inaktiverat."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
-msgstr "Dölj ScummVM"
+msgstr "Göm ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
-msgstr "Dölj övriga"
+msgstr "Göm övriga"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
