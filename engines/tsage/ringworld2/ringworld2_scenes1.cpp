@@ -3846,7 +3846,7 @@ void Scene1337::process(Event &event) {
 		if (event.btnState != BTNSHIFT_RIGHT) {
 			subD183F(R2_GLOBALS._v5780E, 1);
 			event.handled = true;
-		} else if (_unkFctPtr412 != NULL) {
+		} else if (_unkFctPtr412) {
 			FunctionPtrType tmpFctPtr = _unkFctPtr412;
 			_unkFctPtr412 = NULL;
 			(this->*tmpFctPtr)();
@@ -3854,7 +3854,7 @@ void Scene1337::process(Event &event) {
 		}
 	} else if (event.eventType == EVENT_KEYPRESS) {
 		if (event.kbd.keycode == Common::KEYCODE_SPACE) {
-			if (_unkFctPtr412 != NULL) {
+			if (_unkFctPtr412) {
 				FunctionPtrType tmpFctPtr = _unkFctPtr412;
 				_unkFctPtr412 = NULL;
 				(this->*tmpFctPtr)();
@@ -4436,8 +4436,11 @@ void Scene1337::subC2C2F() {
 			
 			for (int i = 0; i <= 3; i++) {
 				if (tmpRandIndx != 3) {
+				// The variables 'i' and 'j' are not used in the inner code of the loop.
+				// It's understandable for 'i', which helps making sure that tmpVal is used properly,
+				// but it's suspect for j
 					for (int j = 0; j <= 7; j++) {
-						if ((_arrunkObj1337[j]._arr3[0]._field34 == 0) && (subC32B1(j, _arrunkObj1337[3]._arr1[randIndx]._field34))) {
+						if ((_arrunkObj1337[tmpRandIndx]._arr3[0]._field34 == 0) && (subC32B1(tmpRandIndx, _arrunkObj1337[3]._arr1[randIndx]._field34))) {
 							tmpVal = j;
 						}
 					}
@@ -5668,9 +5671,10 @@ void Scene1337::subCF979() {
 
 	for (int i = 0; i <= 3; i++) {
 		if (subC27F9(_arrunkObj1337[0]._arr1[i]._field34) != -1) {
+			// The variable 'j' is not used in the inner code of the loop. It's suspect
 			for (int j = 0; j <= 7; j++) {
-				if ((_arrunkObj1337[2]._arr3[0]._field34 == 0) && (subC32B1(2, _arrunkObj1337[0]._arr1[j]._field34))) {
-					subC3456(&_arrunkObj1337[0]._arr1[j], &_arrunkObj1337[2]._arr3[0]);
+				if ((_arrunkObj1337[2]._arr3[0]._field34 == 0) && (subC32B1(2, _arrunkObj1337[0]._arr1[i]._field34))) {
+					subC3456(&_arrunkObj1337[0]._arr1[i], &_arrunkObj1337[2]._arr3[0]);
 					found = true;
 				}
 			}
