@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-02-16 12:32+0200\n"
-"PO-Revision-Date: 2011-08-20 13:22+0200\n"
+"PO-Revision-Date: 2012-02-16 13:09+0200+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -79,9 +79,8 @@ msgid "Remap keys"
 msgstr "Переназначить клавиши"
 
 #: gui/gui-manager.cpp:127 base/main.cpp:295
-#, fuzzy
 msgid "Toggle FullScreen"
-msgstr "Переключить на весь экран"
+msgstr "Переключение на весь экран"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
@@ -1375,24 +1374,23 @@ msgstr "Озвучка и текст"
 
 #: engines/scumm/dialogs.cpp:653
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Выберите уровень сложности."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "За помощью обратитесь к инстукции Loom(TM)"
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Стандартный растеризатор (16bpp)"
+msgstr "Стандартный"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr ""
+msgstr "Практикант"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
-msgstr ""
+msgstr "Эксперт"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -2017,57 +2015,51 @@ msgstr "Не удалось сохранить игру"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr ""
+msgstr "Атака 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr ""
+msgstr "Атака 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr ""
+msgstr "Атака 3"
 
 #: engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr ""
+msgstr "Идти вперёд"
 
 #: engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr ""
+msgstr "Идти назад"
 
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr ""
+msgstr "Скользить влево"
 
 #: engines/kyra/lol.cpp:484
-#, fuzzy
 msgid "Slide Right"
-msgstr "Вправо"
+msgstr "Скользить вправо"
 
 #: engines/kyra/lol.cpp:485
-#, fuzzy
 msgid "Turn Left"
-msgstr "Выключить"
+msgstr "Поворот налево"
 
 #: engines/kyra/lol.cpp:486
-#, fuzzy
 msgid "Turn Right"
-msgstr "Курсор вправо"
+msgstr "Поворот направо"
 
 #: engines/kyra/lol.cpp:487
-#, fuzzy
 msgid "Rest"
-msgstr "Восствновить"
+msgstr "Отдохнуть"
 
 #: engines/kyra/lol.cpp:488
-#, fuzzy
 msgid "Options"
-msgstr "~О~пции"
+msgstr "Опции"
 
 #: engines/kyra/lol.cpp:489
-#, fuzzy
 msgid "Choose Spell"
-msgstr "Выбрать"
+msgstr "Выбрать заклинание"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -2291,9 +2283,8 @@ msgid "Keymap:"
 msgstr "Таблица клавиш:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
-msgstr " (Активная)"
+msgstr " (Действующая)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
@@ -2401,7 +2392,7 @@ msgstr "Режим тачпада выключен."
 
 #: backends/platform/maemo/maemo.cpp:178
 msgid "Click Mode"
-msgstr ""
+msgstr "Режим щелчка"
 
 #: backends/platform/maemo/maemo.cpp:184
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2412,9 +2403,8 @@ msgid "Left Click"
 msgstr "Левый щелчок"
 
 #: backends/platform/maemo/maemo.cpp:187
-#, fuzzy
 msgid "Middle Click"
-msgstr "Средний левый предмет"
+msgstr "Средний щелчок"
 
 #: backends/platform/maemo/maemo.cpp:190
 #: backends/platform/symbian/src/SymbianActions.cpp:43
