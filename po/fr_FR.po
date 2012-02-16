@@ -2396,15 +2396,15 @@ msgstr "Mode touchpad désactivé"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
-msgstr "Cacher ScummVM"
+msgstr "Masquer ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
-msgstr "Masquer les Autres"
+msgstr "Masquer les autres"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
-msgstr "Tout Afficher"
+msgstr "Tout afficher"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:110
 #: backends/platform/sdl/macosx/appmenu_osx.mm:121
@@ -2413,7 +2413,7 @@ msgstr "Fenêtre"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:115
 msgid "Minimize"
-msgstr "Minimiser"
+msgstr "Placer dans le Dock"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"

@@ -2413,7 +2413,7 @@ msgstr "Ocultar Outros"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Show All"
-msgstr "Exibir Todos"
+msgstr "Mostrar Tudo"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:110
 #: backends/platform/sdl/macosx/appmenu_osx.mm:121

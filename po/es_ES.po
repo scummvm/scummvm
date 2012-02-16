@@ -347,7 +347,7 @@ msgstr "~S~alir"
 
 #: gui/launcher.cpp:578 backends/platform/sdl/macosx/appmenu_osx.mm:96
 msgid "Quit ScummVM"
-msgstr "Cerrar ScummVM"
+msgstr "Salir de ScummVM"
 
 #: gui/launcher.cpp:579
 msgid "A~b~out..."
@@ -2388,7 +2388,7 @@ msgstr "Modo Touchpad desactivado."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:78
 msgid "Hide ScummVM"
-msgstr "Oculta ScummVM"
+msgstr "Ocultar ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:83
 msgid "Hide Others"
