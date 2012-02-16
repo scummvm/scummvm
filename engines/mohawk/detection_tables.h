@@ -1016,7 +1016,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"tortoise",
 			"",
-			AD_ENTRY1("TORTB.LB", "9a7932c32bf1d6faf27fae8801ba967a"),
+			AD_ENTRY1("TORTB.LB", "23135777370cf1ff00aa7247e93642d3"),
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
