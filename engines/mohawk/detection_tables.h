@@ -1011,6 +1011,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Tortoise and the Hare Hebrew variant - From georgeqgreg on bug #3441928
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTB.LB", "9a7932c32bf1d6faf27fae8801ba967a"),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From afholman in bug#3309308
 	{
 		{
