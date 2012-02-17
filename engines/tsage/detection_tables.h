@@ -140,6 +140,8 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
+#if 0
+	// Blue Force Spanish doesn't yet work
 	// Blue Force Spanish CD
 	{
 		{
@@ -154,7 +156,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
-
+#endif
 	// Return to Ringworld
 	{
 		{
