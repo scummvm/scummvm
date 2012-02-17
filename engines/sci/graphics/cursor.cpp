@@ -131,6 +131,15 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	// bit 0 of resourceData[3] is set on <SCI1 games, which means center hotspot
 	if ((hotspot.x == 0) && (hotspot.y == 256))
 		hotspot.x = hotspot.y = SCI_CURSOR_SCI0_HEIGHTWIDTH / 2;
+	// LB1 defines bogus hotspot data for the busy cursor, which is fairly easy
+	// to detect, as the hotspot is defined outside the visible screen (!).
+	// Presumably, this was done to prevent the cursor from being usable, however
+	// the only thing that can be done when the wait cursor is shown is to skip
+	// scenes by left clicking. This bogus hotspot causes the cursor to not be
+	// drawn at all, thus we detect it and set the hotspot to (0, 0) instead.
+	// Fixes bug #3487088.
+	if (hotspot.x > _screen->getDisplayWidth())
+		hotspot.x = hotspot.y = 0;
 
 	// Now find out what colors we are supposed to use
 	colorMapping[0] = 0; // Black is hardcoded
