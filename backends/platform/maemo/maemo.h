@@ -56,7 +56,9 @@ private:
 	const Model detectModel();
 	Model _model;
 	MaemoSdlEventObserver *_eventObserver;
+#ifdef ENABLE_KEYMAPPER
 	Common::KeymapperDefaultBindings *_keymapperDefaultBindings;
+#endif
 };
 
 } // namespace Maemo
