@@ -167,9 +167,13 @@ void Lua_V2::IsChoreValid() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-
 	Chore *c = PoolChore::getPool().getObject(chore);
-	pushbool(c != NULL);
+
+	if (c) {
+		pushbool(c != NULL);
+	} else {
+		lua_pushnil();
+	}
 }
 
 void Lua_V2::IsChorePlaying() {
@@ -179,9 +183,29 @@ void Lua_V2::IsChorePlaying() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-
 	Chore *c = PoolChore::getPool().getObject(chore);
-	pushbool(c->isPlaying());
+
+	if (c) {
+		pushbool(c->isPlaying());
+	} else {
+		lua_pushnil();
+	}
+}
+
+void Lua_V2::IsChoreLooping() {
+	lua_Object choreObj = lua_getparam(1);
+
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
+		return;
+
+	int chore = lua_getuserdata(choreObj);
+	Chore *c = PoolChore::getPool().getObject(chore);
+
+	if (c) {
+		pushbool(c->isLooping());
+	} else {
+		lua_pushnil();
+	}
 }
 
 void Lua_V2::StopChore() {
@@ -195,6 +219,10 @@ void Lua_V2::StopChore() {
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missing rest part of code
 	warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
+	Chore *c = PoolChore::getPool().getObject(chore);
+	if (c) {
+		c->stop();
+	}
 }
 
 void Lua_V2::AdvanceChore() {
@@ -307,14 +335,25 @@ void Lua_V2::GetActorChores() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
-//	Actor *actor = getactor(actorObj);
+	Actor *actor = getactor(actorObj);
+	Costume *costume = actor->getCurrentCostume();
 
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
 
+	int num = costume->getNumChores();
+
 	lua_pushstring("count");
-	lua_pushnumber(0.0);
+	lua_pushnumber(num);
 	lua_settable();
+
+	for (int i = 0; i < num; ++i) {
+		lua_pushobject(result);
+		lua_pushnumber(i);
+		lua_pushusertag(costume->getChore(i)->getId(), MKTAG('C','H','O','R'));
+		lua_settable();
+	}
+
 
 	lua_pushobject(result);
 }

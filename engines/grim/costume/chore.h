@@ -61,6 +61,7 @@ public:
 	void cleanup();
 
 	bool isPlaying() { return _playing; }
+	bool isLooping() { return _looping; }
 
 	virtual int getId() { return _choreId; }
 	
