@@ -78,13 +78,15 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	},
 
 	// French CD release
+	// NOTE: The original files are named dreamwfr.*, thus they have to be renamed
+	// to dreamweb.* for the game to work, as the engine looks for dreamweb.* files
 	{
 		{
 			"dreamweb",
 			"CD",
 			{
-				{"dreamwfr.r00", 0, "e354582a8564faf5c515df92f207e8d1", 154657},
-				{"dreamwfr.r02", 0, "57f3f08d5aefd04184eac76927eced80", 200575},
+				{"dreamweb.r00", 0, "e354582a8564faf5c515df92f207e8d1", 154657},
+				{"dreamweb.r02", 0, "57f3f08d5aefd04184eac76927eced80", 200575},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -146,13 +148,15 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	},
 
 	// Spanish CD release
+	// NOTE: The original files are named dreamwsp.*, thus they have to be renamed
+	// to dreamweb.* for the game to work, as the engine looks for dreamweb.* files
 	{
 		{
 			"dreamweb",
 			"CD",
 			{
-				{"dreamwsp.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
-				{"dreamwsp.r02", 0, "577d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
+				{"dreamweb.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
+				{"dreamweb.r02", 0, "577d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
 				AD_LISTEND
 			},
 			Common::ES_ESP,
