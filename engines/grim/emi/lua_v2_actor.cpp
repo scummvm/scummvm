@@ -130,7 +130,6 @@ void Lua_V2::GetActorWalkRate() {
 	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
 }
 
-
 void Lua_V2::LockChore() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object filenameObj = lua_getparam(2);
@@ -143,6 +142,21 @@ void Lua_V2::LockChore() {
 	const char *name = lua_getstring(nameObj);
 	const char *filename = lua_getstring(filenameObj);
 	warning("Lua_V2::LockChore, name: %s, filename: %s", name, filename);
+	// FIXME: implement missing rest part of code
+}
+
+void Lua_V2::UnlockChore() {
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object filenameObj = lua_getparam(2);
+
+	if (!lua_isstring(nameObj) || !lua_isstring(filenameObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *name = lua_getstring(nameObj);
+	const char *filename = lua_getstring(filenameObj);
+	warning("Lua_V2::UnlockChore, name: %s, filename: %s", name, filename);
 	// FIXME: implement missing rest part of code
 }
 

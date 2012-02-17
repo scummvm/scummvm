@@ -183,6 +183,10 @@ void Lua_V2::LoadSound() {
 	warning("Lua_V2::LoadSound: implement opcode, wants to load %s", str);
 }
 
+void Lua_V2::FreeSound() {
+	warning("Lua_V2::FreeSound: implement opcode");
+}
+
 void Lua_V2::PlayLoadedSound() {
 	lua_Object idObj = lua_getparam(1);
 	lua_Object bool1Obj = lua_getparam(2);
