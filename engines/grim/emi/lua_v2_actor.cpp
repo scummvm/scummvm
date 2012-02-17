@@ -161,26 +161,26 @@ void Lua_V2::UnlockChore() {
 }
 
 void Lua_V2::IsChoreValid() {
-	lua_Object paramObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(1);
 
-	if (!lua_isnumber(paramObj))
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 
-	int num = (int)lua_getnumber(paramObj);
+	int chore = lua_getuserdata(choreObj);
 
-	Chore *c = PoolChore::getPool().getObject(num);
-	pushbool(c != 0);
+	Chore *c = PoolChore::getPool().getObject(chore);
+	pushbool(c != NULL);
 }
 
 void Lua_V2::IsChorePlaying() {
-	lua_Object paramObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(1);
 
-	if (!lua_isnumber(paramObj))
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 
-	int num = (int)lua_getnumber(paramObj);
+	int chore = lua_getuserdata(choreObj);
 
-	Chore *c = PoolChore::getPool().getObject(num);
+	Chore *c = PoolChore::getPool().getObject(chore);
 	pushbool(c->isPlaying());
 }
 
@@ -188,10 +188,10 @@ void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
 
-	if (!lua_isnumber(choreObj) || !lua_isnumber(timeObj))
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R') || !lua_isnumber(timeObj))
 		return;
 
-	int chore = (int)lua_getnumber(choreObj);
+	int chore = lua_getuserdata(choreObj);
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missing rest part of code
 	warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
@@ -201,10 +201,10 @@ void Lua_V2::AdvanceChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
 
-	if (!lua_isnumber(choreObj) || !lua_isnumber(timeObj))
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R') || !lua_isnumber(timeObj))
 		return;
 
-	int chore = (int)lua_getnumber(choreObj);
+	int chore = lua_getuserdata(choreObj);
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missong code
 	warning("Lua_V2::AdvanceChore: stub, chore: %d time: %f", chore, time);
@@ -353,7 +353,7 @@ void Lua_V2::PlayActorChore() {
 	Chore *chore = costume->getChore(choreName);
 	costume->playChore(choreName);
 	if (chore) {
-		lua_pushnumber(chore->getId());
+		lua_pushusertag(chore->getId(), MKTAG('C','H','O','R'));
 	} else {
 		lua_pushnil();
 	}
