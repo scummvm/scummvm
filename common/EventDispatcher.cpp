@@ -21,7 +21,6 @@
  */
 
 #include "common/events.h"
-#include "common/textconsole.h"
 
 namespace Common {
 
@@ -49,26 +48,15 @@ void EventDispatcher::dispatch() {
 	dispatchPoll();
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
-		const bool allowMapping = i->source->allowMapping();
-
 		while (i->source->pollEvent(event)) {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
 			assert(_mapper);
-			if (allowMapping) {
-				bool mapped = _mapper->notifyEvent(event);
-				// EventMappers must map all events
-				if (!mapped)
-					error("Event [%u] was not mapped by the EventMapper!", event.type);
-				// We allow the event mapper to create multiple events, when
-				// eating an event.
-				while (_mapper->pollEvent(event))
-					dispatchEvent(event);
+			List<Event> mappedEvents = _mapper->mapEvent(event, i->source);
 
-				// Try getting another event from the current EventSource.
-				continue;
-			} else {
-				dispatchEvent(Event(event));
+			for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
+				const Event mappedEvent = *j;
+				dispatchEvent(mappedEvent);
 			}
 		}
 	}

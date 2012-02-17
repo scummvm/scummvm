@@ -213,15 +213,25 @@ public:
  *
  * An example for this is the Keymapper.
  */
-class EventMapper : public EventSource, public EventObserver {
+class EventMapper {
 public:
-	/** For event mappers resulting events should never be mapped */
-	bool allowMapping() const { return false; }
+	virtual ~EventMapper() {}
+
+	/**
+	 * Map an incoming event to one or more action events
+	 */
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source) = 0;
 };
 
-class DefaultEventMapper : public EventMapper, private ArtificialEventSource {
-	bool notifyEvent(const Event &ev) { ArtificialEventSource::addEvent(Event(ev)); return true; }
-	bool pollEvent(Event &ev) { return ArtificialEventSource::pollEvent(ev); }
+class DefaultEventMapper : public EventMapper {
+public:
+	// EventMapper interface
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source) {
+		List<Event> events;
+		// just pass it through
+		events.push_back(ev);
+		return events;
+	}
 };
 
 /**
