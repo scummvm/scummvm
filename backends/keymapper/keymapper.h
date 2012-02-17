@@ -164,6 +164,12 @@ public:
 	bool mapKeyUp(const KeyState& key);
 
 	/**
+	 * Map non-key incoming events
+	 * @param ev incoming event
+	 */
+	bool mapEvent(const Common::Event &ev);
+
+	/**
 	 * Enable/disable the keymapper
 	 */
 	void setEnabled(bool enabled) { _enabled = enabled; }
