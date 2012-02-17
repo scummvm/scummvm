@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	emi/costume/emianim_component.o \
 	emi/costume/emimesh_component.o \
 	emi/costume/emiskel_component.o \
+	emi/costume/emisprite_component.o \
 	emi/sound/mp3track.o \
 	emi/sound/scxtrack.o \
 	emi/sound/vimatrack.o \

@@ -33,6 +33,7 @@
 #include "engines/grim/emi/costume/emianim_component.h"
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
+#include "engines/grim/emi/costume/emisprite_component.h"
 #include "engines/grim/costume/main_model_component.h"
 
 namespace Grim {
@@ -173,8 +174,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
 		//return new LuaVarComponent(parent, parentID, name, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','p','r','t')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
-		//return new SpriteComponent(parent, parentID, name, tag);
+		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
+		return new EMISpriteComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','h','a','d')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
 	} else {
