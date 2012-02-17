@@ -145,7 +145,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	// Special case for the magnifier cursor in LB1 (bug #3487092).
 	// No other SCI0 game has a cursor resource of 1, so this is handled
 	// specifically for LB1.
-	if (resourceId == 1)
+	if (g_sci->getGameId() == GID_LAURABOW && resourceId == 1)
 		colorMapping[3] = _screen->getColorWhite();
 
 	// Seek to actual data
@@ -173,6 +173,11 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		_screen->scale2x(rawBitmap, upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
 		delete[] rawBitmap;
 		rawBitmap = upscaledBitmap;
+	}
+
+	if (hotspot.x >= heightWidth || hotspot.y >= heightWidth) {
+		error("cursor %d's hotspot (%d, %d) is out of range of the cursor's dimensions (%dx%d)",
+				resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
 	}
 
 	CursorMan.replaceCursor(rawBitmap, heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
