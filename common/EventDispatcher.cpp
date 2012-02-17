@@ -54,7 +54,8 @@ void EventDispatcher::dispatch() {
 		while (i->source->pollEvent(event)) {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
-			if (_mapper && allowMapping) {
+			assert(_mapper);
+			if (allowMapping) {
 				bool mapped = _mapper->notifyEvent(event);
 				// EventMappers must map all events
 				if (!mapped)
@@ -67,7 +68,7 @@ void EventDispatcher::dispatch() {
 				// Try getting another event from the current EventSource.
 				continue;
 			} else {
-				dispatchEvent(event);
+				dispatchEvent(Event(event));
 			}
 		}
 	}
