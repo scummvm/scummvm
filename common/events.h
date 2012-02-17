@@ -219,6 +219,11 @@ public:
 	bool allowMapping() const { return false; }
 };
 
+class DefaultEventMapper : public EventMapper, private ArtificialEventSource {
+	bool notifyEvent(const Event &ev) { ArtificialEventSource::addEvent(Event(ev)); return true; }
+	bool pollEvent(Event &ev) { return ArtificialEventSource::pollEvent(ev); }
+};
+
 /**
  * Dispatches events from various sources to various observers.
  *

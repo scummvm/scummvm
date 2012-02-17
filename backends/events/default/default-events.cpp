@@ -60,6 +60,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
+#else
+	_dispatcher.registerMapper(new Common::DefaultEventMapper());
 #endif
 }
 
