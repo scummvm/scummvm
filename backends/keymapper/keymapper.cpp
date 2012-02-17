@@ -181,12 +181,24 @@ void Keymapper::popKeymap(const char *name) {
 }
 
 bool Keymapper::notifyEvent(const Common::Event &ev) {
+	bool mapped = false;
+
 	if (ev.type == Common::EVENT_KEYDOWN)
-		return mapKeyDown(ev.kbd);
+		mapped = mapKeyDown(ev.kbd);
 	else if (ev.type == Common::EVENT_KEYUP)
-		return mapKeyUp(ev.kbd);
+		mapped = mapKeyUp(ev.kbd);
+
+	if (mapped)
+		return true;
 	else
-		return false;
+		return mapEvent(ev);
+}
+
+bool Keymapper::mapEvent(const Common::Event &ev) {
+	// pass through - copy the event
+	Event evt = ev;
+	addEvent(evt);
+	return true;
 }
 
 bool Keymapper::mapKeyDown(const KeyState& key) {
