@@ -188,6 +188,8 @@ public:
 PoolSound::PoolSound(const Common::String &filename) {
 	track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
 	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	if (!stream)
+		return;
 	track->openSound(filename, stream);
 }
 
@@ -232,6 +234,10 @@ void Lua_V2::PlayLoadedSound() {
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 	sound->track->setLooping(looping);
 	sound->track->play();
+}
+
+void Lua_V2::PlayLoadedSoundFrom() {
+	warning("Lua_V2::PlayLoadedSoundFrom: implement opcode");
 }
 
 void Lua_V2::StopSound() {
@@ -310,6 +316,13 @@ void Lua_V2::ImSetVoiceEffect() {
 
 void Lua_V2::StopAllSounds() {
 	warning("Lua_V2::StopAllSounds: implement opcode");
+}
+
+void Lua_V2::ImPushState() {
+	warning("Lua_V2::ImPushState: implement opcode");
+}
+void Lua_V2::ImPopState() {
+	warning("Lua_V2::ImPopState: implement opcode");
 }
 
 } // end of namespace Grim

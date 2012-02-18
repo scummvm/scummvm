@@ -31,6 +31,7 @@
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lauxlib.h"
 
+#include "engines/grim/set.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lipsync.h"
 
@@ -235,6 +236,49 @@ void Lua_V2::RenderModeUser() {
 	g_movie->pause(!lua_isnil(param1));
 }
 
+void Lua_V2::GetCameraPosition() {
+	warning("Lua_V2::GetCameraPosition: implement opcode, just returns 0, 0, 0");
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+}
+
+void Lua_V2::GetCameraYaw() {
+	warning("Lua_V2::GetCameraYaw: implement opcode, just returns 0");
+	lua_pushnumber(0);
+}
+
+// I suspect that pushtext and poptext stack the current text objects.
+void Lua_V2::PushText() {
+	warning("Lua_V2::PushText: implement opcode");
+}
+
+void Lua_V2::PopText() {
+	warning("Lua_V2::PopText: implement opcode");
+}
+
+void Lua_V2::GetSectorName() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+
+	if (!lua_isnumber(xObj) || !lua_isnumber(xObj) || !lua_isnumber(xObj)) {
+		lua_pushnil();
+		return;
+	}
+	float x, y, z;
+	x = lua_getnumber(xObj);
+	y = lua_getnumber(xObj);
+	z = lua_getnumber(xObj);
+
+	Math::Vector3d pos(x, y, z);
+	Set *set = g_grim->getCurrSet();
+	Sector *sector = set->findPointSector(pos, Sector::NoneType);
+	if (sector) {
+		lua_pushstring(sector->getName());
+	}
+}
+
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -283,7 +327,6 @@ static void stubError(const char *funcName) {
 STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::ClearSpecialtyTexture)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
-STUB_FUNC2(Lua_V2::GetActorSortOrder)
 STUB_FUNC2(Lua_V2::PlayChore)
 STUB_FUNC2(Lua_V2::PauseChore)
 STUB_FUNC2(Lua_V2::CompleteChore)
@@ -292,13 +335,8 @@ STUB_FUNC2(Lua_V2::UnlockChoreSet)
 STUB_FUNC2(Lua_V2::GetSoundVolume)
 STUB_FUNC2(Lua_V2::SetSoundVolume)
 STUB_FUNC2(Lua_V2::PlaySoundFrom)
-STUB_FUNC2(Lua_V2::PlayLoadedSoundFrom)
 STUB_FUNC2(Lua_V2::UpdateSoundPosition)
 STUB_FUNC2(Lua_V2::ImStateHasLooped)
-STUB_FUNC2(Lua_V2::ImPushState)
-STUB_FUNC2(Lua_V2::ImPopState)
-STUB_FUNC2(Lua_V2::GetSectorName)
-STUB_FUNC2(Lua_V2::GetCameraYaw)
 STUB_FUNC2(Lua_V2::YawCamera)
 STUB_FUNC2(Lua_V2::GetCameraPitch)
 STUB_FUNC2(Lua_V2::PitchCamera)
@@ -308,8 +346,6 @@ STUB_FUNC2(Lua_V2::FreeLayer)
 STUB_FUNC2(Lua_V2::SetLayerSortOrder)
 STUB_FUNC2(Lua_V2::SetLayerFrame)
 STUB_FUNC2(Lua_V2::AdvanceLayerFrame)
-STUB_FUNC2(Lua_V2::PushText)
-STUB_FUNC2(Lua_V2::PopText)
 STUB_FUNC2(Lua_V2::NukeAllScriptLocks)
 STUB_FUNC2(Lua_V2::ToggleDebugDraw)
 STUB_FUNC2(Lua_V2::ToggleDrawCameras)

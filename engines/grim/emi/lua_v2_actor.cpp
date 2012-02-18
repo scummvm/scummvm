@@ -254,6 +254,11 @@ void Lua_V2::SetActorSortOrder() {
 	// FIXME: actor->func(mode);
 }
 
+void Lua_V2::GetActorSortOrder() {
+	warning("Lua_V2::GetActorSortOrder, implement opcode");
+	lua_pushnumber(0);
+}
+
 void Lua_V2::ActorActivateShadow() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object qualityObj = lua_getparam(2);
@@ -341,6 +346,14 @@ void Lua_V2::GetActorChores() {
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
 
+	if (!costume) {
+		lua_pushstring("count");
+		lua_pushnumber(0);
+		lua_settable();
+		lua_pushobject(result);
+		return;
+	}
+
 	int num = costume->getNumChores();
 
 	lua_pushstring("count");
@@ -353,7 +366,6 @@ void Lua_V2::GetActorChores() {
 		lua_pushusertag(costume->getChore(i)->getId(), MKTAG('C','H','O','R'));
 		lua_settable();
 	}
-
 
 	lua_pushobject(result);
 }
