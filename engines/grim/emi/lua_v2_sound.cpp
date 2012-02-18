@@ -26,11 +26,18 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "common/system.h"
+
+#include "engines/grim/emi/sound/aifftrack.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lua.h"
 
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/resource.h"
+#include "audio/decoders/aiff.h"
 
 namespace Grim {
 
@@ -172,6 +179,18 @@ void Lua_V2::ImFlushStack() {
 	warning("Lua_V2::ImFlushStack: implement opcode");
 }
 
+class PoolSound : public PoolObject<PoolSound, MKTAG('A', 'I', 'F', 'F')>{
+public:
+	PoolSound(const Common::String &filename);
+	AIFFTrack *track;
+};
+
+PoolSound::PoolSound(const Common::String &filename) {
+	track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	track->openSound(filename, stream);
+}
+
 void Lua_V2::LoadSound() {
 	lua_Object strObj = lua_getparam(1);
 
@@ -179,12 +198,23 @@ void Lua_V2::LoadSound() {
 		return;
 
 	const char *str = lua_getstring(strObj);
-	// FIXME: implement code
-	warning("Lua_V2::LoadSound: implement opcode, wants to load %s", str);
+
+	Common::String filename = str;
+	filename += ".aif";
+
+	PoolSound *sound = new PoolSound(filename);
+	lua_pushusertag(sound->getId(), MKTAG('A', 'I', 'F', 'F'));
 }
 
 void Lua_V2::FreeSound() {
-	warning("Lua_V2::FreeSound: implement opcode");
+	lua_Object idObj = lua_getparam(1);
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+		return;
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (sound) {
+		sound->track->stop();
+		delete sound;
+	}
 }
 
 void Lua_V2::PlayLoadedSound() {
@@ -193,7 +223,15 @@ void Lua_V2::PlayLoadedSound() {
 	lua_Object volumeObj = lua_getparam(3);
 	lua_Object bool2Obj = lua_getparam(4);
 
-	warning("Lua_V2::PlayLoadedSound: implement opcode");
+
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+		return;
+
+	bool looping = !lua_isnil(bool1Obj);
+
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	sound->track->setLooping(looping);
+	sound->track->play();
 }
 
 void Lua_V2::ImSetMusicVol() {
