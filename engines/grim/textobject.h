@@ -62,6 +62,7 @@ protected:
 
 	Color _fgColor;
 	int _x, _y;
+	int _posX, _posY;
 	int _width, _height;
 	int _justify;
 	Font *_font;
