@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	null.o \
 	timestamp.o \
 	decoders/adpcm.o \
+	decoders/aiff.o \
 	decoders/flac.o \
 	decoders/mp3.o \
 	decoders/raw.o \
