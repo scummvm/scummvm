@@ -322,7 +322,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			event.type = Common::EVENT_KEYDOWN;
 			_queuedInputEvent.type = Common::EVENT_KEYUP;
 
-			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+			event.kbd.flags = _queuedInputEvent.kbd.flags = Common::KBD_CTRL;
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
