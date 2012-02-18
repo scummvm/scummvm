@@ -31,6 +31,8 @@ enum AccessMode {
 	kFileWriteMode = 2
 };
 
+#define MORT_DAT "mort.dat"
+
 class File {
 private:
 	FILE *f;
