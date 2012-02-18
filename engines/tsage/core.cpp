@@ -4107,7 +4107,8 @@ void SceneHandler::process(Event &event) {
 
 	// Check for displaying right-click dialog
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
-			g_globals->_player._uiEnabled) {
+			g_globals->_player._uiEnabled &&
+			((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
 		g_globals->_game->rightClick();
 
 		event.handled = true;
