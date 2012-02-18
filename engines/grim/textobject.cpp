@@ -153,13 +153,24 @@ void TextObject::reposition() {
 	_posX = _x;
 	_posY = _y;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_isSpeech) {
-			_posY = 480 - _y;
+		if (Overworld::inOverworld) {
+			if (_posX >= 320) {
+				_posY = abs(_posY);
+			} else {
+				_posX = 320 + _posX;
+				_posY = 240 - _posY;
+			}
 		} else {
-			_posX = _x + 320;
-			_posY = - _y;
+			if (_isSpeech) {
+				_posY = 480 - _posY;
+			} else {
+				_posX = 320 + _posX;
+				_posY = abs(_posY);
+			}
 		}
 		Debug::debug(Debug::TextObjects, "Repositioning (%d, %d) -> (%d, %d)", _x, _y, _posX, _posY);
+		assert(0 <= _posX && _posX <= 640);
+		assert(0 <= _posY && _posY <= 480);
 	}
 }
 
