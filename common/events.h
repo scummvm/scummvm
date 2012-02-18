@@ -226,12 +226,7 @@ public:
 class DefaultEventMapper : public EventMapper {
 public:
 	// EventMapper interface
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source) {
-		List<Event> events;
-		// just pass it through
-		events.push_back(ev);
-		return events;
-	}
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 };
 
 /**

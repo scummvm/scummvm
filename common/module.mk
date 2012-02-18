@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	debug.o \
 	error.o \
 	EventDispatcher.o \
+	EventMapper.o \
 	EventRecorder.o \
 	file.o \
 	fs.o \
