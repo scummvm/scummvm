@@ -200,6 +200,10 @@ void Lua_V2::ToggleOverworld() {
 	warning("Lua_V2::ToggleOverworld: implement opcode");
 }
 
+void Lua_V2::ClearOverworld() {
+	warning("Lua_V2::ClearOverworld: implement opcode");
+}
+
 void Lua_V2::ScreenshotForSavegame() {
 	warning("Lua_V2::ScreenshotForSavegame: implement opcode");
 }
@@ -268,7 +272,6 @@ static void stubError(const char *funcName) {
 // Monkey specific LUA_OPCODEs
 STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::ClearSpecialtyTexture)
-STUB_FUNC2(Lua_V2::ClearOverworld)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::GetActorSortOrder)
 STUB_FUNC2(Lua_V2::PlayChore)
