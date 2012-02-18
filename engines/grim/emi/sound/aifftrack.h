@@ -41,6 +41,7 @@ public:
 	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
 	bool isPlaying() { return true; }
 	void setLooping(bool looping);
+	bool play();
 };
 
 }

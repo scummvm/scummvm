@@ -45,7 +45,7 @@ bool AIFFTrack::openSound(Common::String soundName, Common::SeekableReadStream *
 		//return false;
 	}
 	_soundName = soundName;
-	_stream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	_stream = Audio::makeAIFFStream(file, DisposeAfterUse::NO);
 	_handle = new Audio::SoundHandle();
 	return true;
 }
@@ -54,6 +54,17 @@ void AIFFTrack::setLooping(bool looping) {
 	if (looping) {
 		_stream = Audio::makeLoopingAudioStream(dynamic_cast<Audio::SeekableAudioStream *>(_stream), 0);
 	}
+}
+
+bool AIFFTrack::play() {
+	if (_stream) {
+		Audio::SeekableAudioStream *stream = dynamic_cast<Audio::SeekableAudioStream *>(_stream);
+		if (stream) {
+			stream->rewind();
+		}
+		return SoundTrack::play();
+	}
+	return false;
 }
 
 } // end of namespace Grim

@@ -255,10 +255,15 @@ void Lua_V2::PlaySound() {
 		return;
 
 	const char *str = lua_getstring(strObj);
+	Common::String filename = str;
+
+	if (g_grim->getGameFlags() != ADGF_DEMO) {
+		filename += ".aif";
+	}
 
 	AIFFTrack *track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(str);
-	track->openSound(str, stream);
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	track->openSound(filename, stream);
 	track->play();
 }
 
