@@ -234,6 +234,18 @@ void Lua_V2::PlayLoadedSound() {
 	sound->track->play();
 }
 
+void Lua_V2::StopSound() {
+	lua_Object idObj = lua_getparam(1);
+
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+		return;
+
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (sound) {
+		sound->track->stop();
+	}
+}
+
 void Lua_V2::ImSetMusicVol() {
 	// This only seems to be used in the demo.
 	lua_Object volumeObj = lua_getparam(1);

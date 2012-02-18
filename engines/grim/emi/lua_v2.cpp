@@ -362,6 +362,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "LoadSound", LUA_OPCODE(Lua_V2, LoadSound) },
 	{ "FreeSound", LUA_OPCODE(Lua_V2, FreeSound) },
 	{ "PlayLoadedSound", LUA_OPCODE(Lua_V2, PlayLoadedSound) },
+	{ "StopSound", LUA_OPCODE(Lua_V2, StopSound) },
 	{ "SetGroupVolume", LUA_OPCODE(Lua_V2, SetGroupVolume) },
 	{ "GetSoundVolume", LUA_OPCODE(Lua_V2, GetSoundVolume) },
 	{ "SetSoundVolume", LUA_OPCODE(Lua_V2, SetSoundVolume) },
