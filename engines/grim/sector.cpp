@@ -332,8 +332,10 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			edge = line.end() - line.begin();
 			delta_b1 = bridge.begin() - line.begin();
 			delta_b2 = bridge.end() - line.begin();
-			bool b1_out = edge.x() * delta_b1.y() < edge.y() * delta_b1.x();
-			bool b2_out = edge.x() * delta_b2.y() < edge.y() * delta_b2.x();
+			Math::Vector3d cross_b1 = Math::Vector3d::crossProduct(edge, delta_b1);
+			Math::Vector3d cross_b2 = Math::Vector3d::crossProduct(edge, delta_b2);
+			bool b1_out = cross_b1.dotProduct(_normal) < 0;
+			bool b2_out = cross_b2.dotProduct(_normal) < 0;
 
 			bool useXZ = (g_grim->getGameType() == GType_MONKEY4);
 
@@ -361,10 +363,18 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 
 	// All the bridges should be at the same height on both sectors.
 	while (it != bridges.end()) {
-		if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
-			fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
-			it = bridges.erase(it);
-			continue;
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			if (fabs(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.01f ||
+				fabs(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.01f) {
+				it = bridges.erase(it);
+				continue;
+			}
+		} else {
+			if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
+				fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
+				it = bridges.erase(it);
+				continue;
+			}
 		}
 		++it;
 	}
@@ -402,7 +412,8 @@ Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
 		float scalar = Math::Vector3d::dotProduct(delta, edge) / Math::Vector3d::dotProduct(edge, edge);
-		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
+		Math::Vector3d cross = Math::Vector3d::crossProduct(delta, edge);
+		if (scalar >= 0 && scalar <= 1 && cross.dotProduct(_normal) > 0)
 			// That last test is just whether the z-component
 			// of delta cross edge is positive; we don't
 			// want to return opposite edges.
@@ -435,7 +446,8 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	int i;
 	for (i = 0; i < _numVertices; i++) {
 		Math::Vector3d delta = _vertices[i] - start;
-		if (delta.x() * dir.y() > delta.y() * dir.x())
+		Math::Vector3d cross = Math::Vector3d::crossProduct(delta, dir);
+		if (cross.dotProduct(_normal) > 0)
 			break;
 	}
 
@@ -444,7 +456,8 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	while (i < _numVertices) {
 		i++;
 		Math::Vector3d delta = _vertices[i] - start;
-		if (delta.x() * dir.y() <= delta.y() * dir.x())
+		Math::Vector3d cross = Math::Vector3d::crossProduct(delta, dir);
+		if (cross.dotProduct(_normal) <= 0)
 			break;
 	}
 
