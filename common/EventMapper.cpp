@@ -26,8 +26,15 @@ namespace Common {
 
 List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	List<Event> events;
-	// just pass it through
-	events.push_back(ev);
+	Event mappedEvent;
+	if (ev.type == EVENT_KEYDOWN && ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
+		mappedEvent.type = EVENT_MAINMENU;
+	}
+	else {
+		// just pass it through
+		mappedEvent = ev;
+	}
+	events.push_back(mappedEvent);
 	return events;
 }
 
