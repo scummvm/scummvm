@@ -177,6 +177,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		return new EMISpriteComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','h','a','d')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
+	} else if (FROM_BE_32(tag) == MKTAG('a','w','g','t')) {
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement AWGT-handling: %s" , name);
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}
