@@ -111,6 +111,7 @@ protected:
 	DECLARE_LUA_OPCODE(FreeSound);
 	DECLARE_LUA_OPCODE(PlayLoadedSound);
 	DECLARE_LUA_OPCODE(StopSound);
+	DECLARE_LUA_OPCODE(PlaySound);
 	DECLARE_LUA_OPCODE(GetSoundVolume);
 	DECLARE_LUA_OPCODE(SetSoundVolume);
 	DECLARE_LUA_OPCODE(PlaySoundFrom);

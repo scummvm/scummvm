@@ -246,6 +246,22 @@ void Lua_V2::StopSound() {
 	}
 }
 
+void Lua_V2::PlaySound() {
+	lua_Object strObj = lua_getparam(1);
+	//FIXME: get the second param
+	lua_getparam(2);
+
+	if (!lua_isstring(strObj))
+		return;
+
+	const char *str = lua_getstring(strObj);
+
+	AIFFTrack *track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(str);
+	track->openSound(str, stream);
+	track->play();
+}
+
 void Lua_V2::ImSetMusicVol() {
 	// This only seems to be used in the demo.
 	lua_Object volumeObj = lua_getparam(1);
