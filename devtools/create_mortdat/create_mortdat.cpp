@@ -38,73 +38,10 @@
 #include <string.h>
 
 #include "common/endian.h"
-
-enum AccessMode {
-	kFileReadMode = 1,
-	kFileWriteMode = 2
-};
-
-class File {
-private:
-	FILE *f;
-public:
-	bool open(const char *filename, AccessMode mode = kFileReadMode) {
-		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
-		return (f != NULL);
-	}
-	void close() {
-		fclose(f);
-		f = NULL;
-	}
-	int seek(int32 offset, int whence = SEEK_SET) {
-		return fseek(f, offset, whence);
-	}
-	long read(void *buffer, int len) {
-		return fread(buffer, 1, len, f);
-	}
-	void write(const void *buffer, int len) {
-		fwrite(buffer, 1, len, f);
-	}
-	byte readByte() {
-		byte v;
-		read(&v, sizeof(byte));
-		return v;
-	}
-	uint16 readWord() {
-		uint16 v;
-		read(&v, sizeof(uint16));
-		return FROM_LE_16(v);
-	}
-	uint32 readLong() {
-		uint32 v;
-		read(&v, sizeof(uint32));
-		return FROM_LE_32(v);
-	}
-	void writeByte(byte v) {
-		write(&v, sizeof(byte));
-	}
-	void writeWord(uint16 v) {
-		uint16 vTemp = TO_LE_16(v);
-		write(&vTemp, sizeof(uint16));
-	}
-	void writeLong(uint32 v) {
-		uint32 vTemp = TO_LE_32(v);
-		write(&vTemp, sizeof(uint32));
-	}
-	void writeString(const char *s) {
-		write(s, strlen(s) + 1);
-	}
-	uint32 pos() {
-		return ftell(f);
-	}
-};
-
-File outputFile, mortCom;
+#include "create_mortdat.h"
+#include "enginetext.h"
 
 /*-------------------------------------------------------------------------*/
-
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 0
 
 void openOutputFile(const char *outFilename) {
 	outputFile.open(outFilename, kFileWriteMode);
@@ -171,143 +108,29 @@ void writeStaticStrings(const char **strings, int languageId) {
 }
 
 /**
- * Write out the French strings previously hard-coded into the application
+ * Write out the strings previously hard-coded into the engine
  */
-void writeEnglishStaticStrings() {
-	const char *string_list[] =  {
-		"[2][ ][YES][NO]",
-		"Go to",
-		"Someone enters, looks surised, but says nothing",
-		"Cool",
-		" Lourde ",
-		"Malsaine",
-		"Idem",
-		"You",
-		"are",
-		"Alone",
-
-		"Gosh! You hear some noise...",
-		" | You should have noticed,   |       ",
-		"% of hints...",
-		"Do you want to wake up?",
-		"OK",
-		"", 
-		" Save",
-
-		" Load",
-		" Restart     ",
-		"F3: Repeat",
-		"F8: Proceed",
-		"Hide self",
-		"take",
-		" probe    ",
-		" raise    ",
-		" -SUITE- ",
-		" -STOP-  ",
-		"[1] [So, use the DEP menu] [Ok]",
-		"lift",
-		"read",
-
-		"look",
-		"search",
-		"open",
-		"put",
-		"turn",
-		"tie",
-		"close",
-		"hit",
-		"pose",
-		"smash",
-
-		"smell",
-		"scratch",
-		"probe",
-		"[1] [ | Before, use the DEP menu...] [Ok]",
-		"& day",
-		NULL
-	};
-
-	writeStaticStrings(string_list, 1);
-}
-
-/**
- * Write out the French strings previously hard-coded into the application
- */
-void writeFrenchStaticStrings() {
-	const char *string_list[] = {
-		"[2][ ][OUI][NON]",
-		"aller",
-		"quelqu'un entre, parait ‚tonn‚ mais ne dit rien",
-		"Cool",
-		" Lourde ",
-		"Malsaine",
-		"Idem",
-		"Vous",
-		"ˆtes",
-		"SEUL",
-
-		"Mince! Vous entendez du bruit...",
-		" | Vous devriez avoir remarqu‚|       ",
-		"% des indices...",
-		"D‚sirez-vous vous r‚veiller?",
-		"OK",
-		"", 
-		" Sauvegarde",
-
-		" Chargement",
-		" Recommence  ",
-		"F3: Encore",
-		"F8: Suite",
-		"se cacher",
-
-		"prendre",
-		" sonder   ",
-		"soulever",
-		" -SUITE- ",
-		" -STOP-  ",
-		"[1][Alors, utilisez le menu DEP...][ok]",
-		"soulever",
-		"lire",
-
-		"regarder",
-		"fouiller",
-		"ouvrir",
-		"mettre",
-		"tourner",
-		"attacher",
-		"fermer",
-		"frapper",
-		"poser",
-		"d‚foncer",
-
-		"sentir",
-		"gratter",
-		"sonder",
-		"[1][ | Avant, utilisez le menu DEP...][ok]",
-		"& jour",
-		NULL
-	};
-
-	writeStaticStrings(string_list, 0);
+void writeEngineStrings() {
+	writeStaticStrings(engineDataEn, 1);
+	writeStaticStrings(engineDataFr, 0);
 }
 
 void process() {
 	writeFontBlock();
-	writeEnglishStaticStrings();
-	writeFrenchStaticStrings();
+	writeEngineStrings();
 }
 
 /**
  * Main method
  */
 int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Format: input_filename output_filename\n", argv[0]);
+	if (argc != 2) {
+		printf("Usage:\n%s input_filename\nWhere input_filename is the name of the Mortevielle DOS executable", argv[0]);
 		exit(0);
 	}
 
 	mortCom.open(argv[1], kFileReadMode);
-	openOutputFile(argv[2]);
+	openOutputFile("mort.dat");
 
 	process();
 
