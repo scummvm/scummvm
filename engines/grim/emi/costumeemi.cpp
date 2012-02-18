@@ -43,7 +43,7 @@ EMICostume::EMICostume(const Common::String &fname, Costume *prevCost) :
 }
 
 void EMICostume::load(Common::SeekableReadStream *data) {
-	Common::List<Component *>components;
+	Common::Array<Component *> components;
 
 	_numChores = data->readUint32LE();
 	_chores = new Chore *[_numChores];
@@ -83,7 +83,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 					prevComponent = NULL;
 			}
 			// Actually load the appropriate component
-			Component *component = loadComponent(parentID < 0 ? NULL : _components[parentID], parentID, name, prevComponent);
+			Component *component = loadComponent(parentID < 0 ? NULL : components[parentID], parentID, name, prevComponent);
 			if (component) {
 				component->setCostume(this);
 				component->init();
@@ -131,9 +131,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 
 	_numComponents = components.size();
 	_components = new Component *[_numComponents];
-	int i = 0;
-	for (Common::List<Component *>::iterator it = components.begin(); it != components.end(); ++it, ++i) {
-		_components[i] = *it;
+	for (int i = 0; i < _numComponents; ++i) {
+		_components[i] = components[i];
 		if (!_components[i])
 			continue;
 
