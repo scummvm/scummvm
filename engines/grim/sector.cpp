@@ -157,10 +157,13 @@ void Sector::load(TextSplitter &ts) {
 
 void Sector::loadBinary(Common::SeekableReadStream *data) {
 	_numVertices = data->readUint32LE();
-	_vertices = new Math::Vector3d[_numVertices];
+	_vertices = new Math::Vector3d[_numVertices + 1];
 	for(int i = 0; i < _numVertices; i++) {
 		data->read(_vertices[i].getData(), 12);
 	}
+
+	// Repeat the last vertex for convenience
+	_vertices[_numVertices] = _vertices[0];
 
 	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
 	                                       _vertices[_numVertices - 1] - _vertices[0]);
