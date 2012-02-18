@@ -197,7 +197,17 @@ void Lua_V2::GetTextObjectDimensions() {
 }
 
 void Lua_V2::ToggleOverworld() {
-	warning("Lua_V2::ToggleOverworld: implement opcode");
+	lua_Object boolObj = lua_getparam(1);
+	bool backToNormal = (lua_isnil(boolObj) == 0);
+	if (backToNormal) {
+		GrimEngine::EngineMode previous = g_grim->getPreviousMode();
+		g_grim->setPreviousMode(GrimEngine::OverworldMode);
+		g_grim->setMode(previous);
+	} else {
+		GrimEngine::EngineMode previous = g_grim->getMode();
+		g_grim->setPreviousMode(previous);
+		g_grim->setMode(GrimEngine::OverworldMode);
+	}
 }
 
 void Lua_V2::ClearOverworld() {

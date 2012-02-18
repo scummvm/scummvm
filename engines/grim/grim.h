@@ -70,7 +70,8 @@ public:
 		PauseMode = 1,
 		NormalMode = 2,
 		SmushMode = 3,
-		DrawMode = 4
+		DrawMode = 4,
+		OverworldMode = 5
 	};
 	enum SpeechMode {
 		TextOnly = 1,
