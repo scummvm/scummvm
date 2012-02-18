@@ -40,6 +40,7 @@
 #include "common/endian.h"
 #include "create_mortdat.h"
 #include "enginetext.h"
+#include "gametext.h"
 
 /*-------------------------------------------------------------------------*/
 
@@ -115,9 +116,18 @@ void writeEngineStrings() {
 	writeStaticStrings(engineDataFr, 0);
 }
 
+/**
+ * Write out the strings used in the game
+ */
+void writeGameStrings() {
+	writeStaticStrings(gameDataEn, 1);
+	writeStaticStrings(gameDataFr, 0);
+}
+
 void process() {
 	writeFontBlock();
 	writeEngineStrings();
+	writeGameStrings();
 }
 
 /**
