@@ -197,7 +197,21 @@ void Lua_V2::GetTextObjectDimensions() {
 }
 
 void Lua_V2::ToggleOverworld() {
-	warning("Lua_V2::ToggleOverworld: implement opcode");
+	lua_Object boolObj = lua_getparam(1);
+	bool backToNormal = (lua_isnil(boolObj) == 0);
+	if (backToNormal) {
+		GrimEngine::EngineMode previous = g_grim->getPreviousMode();
+		g_grim->setPreviousMode(GrimEngine::OverworldMode);
+		g_grim->setMode(previous);
+	} else {
+		GrimEngine::EngineMode previous = g_grim->getMode();
+		g_grim->setPreviousMode(previous);
+		g_grim->setMode(GrimEngine::OverworldMode);
+	}
+}
+
+void Lua_V2::ClearOverworld() {
+	warning("Lua_V2::ClearOverworld: implement opcode");
 }
 
 void Lua_V2::ScreenshotForSavegame() {
@@ -268,7 +282,6 @@ static void stubError(const char *funcName) {
 // Monkey specific LUA_OPCODEs
 STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::ClearSpecialtyTexture)
-STUB_FUNC2(Lua_V2::ClearOverworld)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::GetActorSortOrder)
 STUB_FUNC2(Lua_V2::PlayChore)

@@ -174,8 +174,8 @@ void Lua_V1::BlastText() {
 }
 
 void Lua_V1::SetOffscreenTextPos() {
+	// called with (0,0) on dialog entry, (nil, nil) on dialog exit
 	warning("Lua_V1::SetOffscreenTextPos: implement opcode");
-	// this sets where we shouldn't put dialog maybe?
 }
 
 void Lua_V1::TextFileGetLine() {

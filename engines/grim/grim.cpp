@@ -461,7 +461,7 @@ void GrimEngine::updateDisplayScene() {
 			p->draw();
 		}
 		drawPrimitives();
-	} else if (_mode == NormalMode) {
+	} else if (_mode == NormalMode || _mode == OverworldMode) {
 		if (!_currSet)
 			return;
 

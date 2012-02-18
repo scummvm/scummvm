@@ -146,24 +146,29 @@ void TextObject::destroy() {
 }
 
 void TextObject::reposition() {
-	// In EMI most stuff seems to be relative to the center,
-	// but sometimes it is not so I catch that with _x being over 320.
-	// This is probably not the corrent way to do it though.
-	if (!_positioned && g_grim->getGameType() == GType_MONKEY4) {
-		_positioned = true;
-		if (_x == 0) {
-			_x += 320;
-			if (_y < 0) {
-				_y = -_y;
-			} else {
-				_y = 240 - _y;
-			}
-		} else if (_x > 320) {
-			_y = -_y;
+	if (_positioned)
+		return;
+
+	_positioned = true;
+	_posX = _x;
+	_posY = _y;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (_isSpeech || abs(_posX) >= 320 || abs(_posY) >= 240) {
+			_posY = _posY > 0 ? 480 - _posY : abs(_posY);
+			if (_posX < 0)
+				_posX = _posX + 640;
+			if (_justify == CENTER && _posX == 0)
+				_posX = 320;
+		} else if (g_grim->getMode() == GrimEngine::OverworldMode) {
+			_posX = 320 + _posX;
+			_posY = 240 - _posY;
 		} else {
-			_x += 320;
-			_y = 240 - _y;
+			_posX = 320 + _posX;
+			_posY = abs(_posY);
 		}
+		Debug::debug(Debug::TextObjects, "Repositioning (%d, %d) -> (%d, %d)", _x, _y, _posX, _posY);
+		assert(0 <= _posX && _posX <= 640);
+		assert(0 <= _posY && _posY <= 480);
 	}
 }
 
@@ -196,10 +201,10 @@ void TextObject::setupText() {
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
 	if (_isSpeech){
-		if (_x < SCREEN_MARGIN) {
-			_x = SCREEN_MARGIN;
-		} else if (SCREEN_WIDTH - _x < SCREEN_MARGIN) {
-			_x = SCREEN_WIDTH - SCREEN_MARGIN;
+		if (_posX < SCREEN_MARGIN) {
+			_posX = SCREEN_MARGIN;
+		} else if (SCREEN_WIDTH - _posX < SCREEN_MARGIN) {
+			_posX = SCREEN_WIDTH - SCREEN_MARGIN;
 		}
 	}
 
@@ -208,11 +213,11 @@ void TextObject::setupText() {
 	// with GrimE.
 	int maxWidth = 0;
 	if (_justify == CENTER) {
-		maxWidth = 2 * MIN(_x, SCREEN_WIDTH - _x);
+		maxWidth = 2 * MIN(_posX, SCREEN_WIDTH - _posX);
 	} else if (_justify == LJUSTIFY) {
-		maxWidth = SCREEN_WIDTH - _x;
+		maxWidth = SCREEN_WIDTH - _posX;
 	} else if (_justify == RJUSTIFY) {
-		maxWidth = _x;
+		maxWidth = _posX;
 	}
 
 	// We break the message to lines not longer than maxWidth
@@ -269,9 +274,9 @@ void TextObject::setupText() {
 	// printed further down the screen.
 	const int SCREEN_TOP_MARGIN = 16;
 	if (_isSpeech) {
-		_y -= _numberLines * _font->getHeight();
-		if (_y < SCREEN_TOP_MARGIN) {
-			_y = SCREEN_TOP_MARGIN;
+		_posY -= _numberLines * _font->getHeight();
+		if (_posY < SCREEN_TOP_MARGIN) {
+			_posY = SCREEN_TOP_MARGIN;
 		}
 	}
 
@@ -299,11 +304,11 @@ void TextObject::setupText() {
 }
 
 int TextObject::getLineX(int line) {
-	int x = _x;
+	int x = _posX;
 	if (_justify == CENTER)
-		x = _x - (_font->getStringLength(_lines[line]) / 2);
+		x = _posX - (_font->getStringLength(_lines[line]) / 2);
 	else if (_justify == RJUSTIFY)
-		x = _x - getBitmapWidth();
+		x = _posX - getBitmapWidth();
 
 	if (x < 0)
 		x = 0;
@@ -311,20 +316,20 @@ int TextObject::getLineX(int line) {
 }
 
 int TextObject::getLineY(int line) {
-	int y = _y;
+	int y = _posY;
 	if (_blastDraw)
-		y = _y + 5;
+		y = _posY + 5;
 	else {
 		if (_font->getHeight() == 21) // talk_font,verb_font
-			y = _y - 6;
+			y = _posY - 6;
 		else if (_font->getHeight() == 26) // special_font
-			y = _y - 12;
+			y = _posY - 12;
 		else if (_font->getHeight() == 13) // computer_font
-			y = _y - 6;
+			y = _posY - 6;
 		else if (_font->getHeight() == 19) // pt_font
-			y = _y - 9;
+			y = _posY - 9;
 		else
-			y = _y;
+			y = _posY;
 	}
 	if (y < 0)
 		y = 0;
