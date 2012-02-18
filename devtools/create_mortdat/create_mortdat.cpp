@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	mortCom.open(argv[1], kFileReadMode);
-	openOutputFile("mort.dat");
+	openOutputFile(MORT_DAT);
 
 	process();
 
