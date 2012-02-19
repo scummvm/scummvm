@@ -36,8 +36,7 @@ namespace Mortevielle {
 const int m_arrow = 0;
 const int m_point_hand = 1;
 
-bool int_m,
-        clic;
+bool int_m, clic;
 
 int m_show,
         x_s,
@@ -91,7 +90,7 @@ void hideMouse() {
 		imp = odd(y_s);
 		j = p_o_s;
 		switch (gd) {
-		case cga: {
+		case cga:
 			k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
@@ -102,9 +101,8 @@ void hideMouse() {
 				j += 80;
 				k = succ(int, k);
 			} while (!(k >= 5));
-		}
-		break;
-		case ams: {
+			break;
+		case ams:
 			for (i = 0; i <= 3; i ++) {
 				port[0x3dd] = 1 << i;
 				k = 0;
@@ -117,13 +115,12 @@ void hideMouse() {
 						WRITE_LE_UINT16(&mem[0xb800 * 16 + j], s_s[i][k]);
 						j += 0x2000;
 					}
-					imp = ! imp;
+					imp = !imp;
 					k = succ(int, k);
 				} while (!(k >= 8));
 			}
-		}
-		break;
-		case ega: {
+			break;
+		case ega:
 			port[0x3c4] = 2;
 			port[0x3ce] = 8;
 			port[0x3cf] = 255;
@@ -142,18 +139,16 @@ void hideMouse() {
 				} while (!(k >= 8));
 				++i;
 			} while (!(i == 4));
-		}
-		break;
-		case her: {
+			break;
+		case her:
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 			for (i = 0; i <= 5; i ++) {
 				for (k = 0; k <= 3; k ++) 
 					WRITE_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}
-		}
-		break;
-		case tan: {
+			break;
+		case tan:
 			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 			k = 0;
 			do {
@@ -164,10 +159,10 @@ void hideMouse() {
 				j += 160;
 				k = succ(int, k);
 			} while (!(k == 3));
-		}
-		break;
-
-		}     /* case Gd */
+			break;
+		default:
+			break;
+		}     // case Gd
 	}
 }
 
@@ -180,12 +175,13 @@ void showMouse() {
 	bool imp;
 
 	mouse_shwn = mouse_shwn + 1;
-	if (mouse_shwn != 1)  return;
+	if (mouse_shwn != 1)
+		return;
 	j = p_o_s;
 	imp = odd(y_s);
 	i = x_s & 7;
 	switch (gd) {
-	case cga: {
+	case cga:
 		k = 0;
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 		do {
@@ -196,9 +192,8 @@ void showMouse() {
 			j += 80;
 			k = succ(int, k);
 		} while (!(k >= 5));
-	}
-	break;
-	case ams: {
+		break;
+	case ams:
 		for (i = 0; i <= 3; i ++) {
 			j = p_o_s;
 			imp = odd(y_s);
@@ -212,13 +207,12 @@ void showMouse() {
 					s_s[i][k] = READ_LE_UINT16(&mem[0xb800 * 16 + j]);
 					j += 0x2000;
 				}
-				imp = ! imp;
+				imp = !imp;
 				k = succ(int, k);
 			} while (!(k >= 8));
 		}
-	}
-	break;
-	case ega: {
+		break;
+	case ega:
 		port[0x3ce] = 4;
 		l = 0;
 		do {
@@ -232,18 +226,16 @@ void showMouse() {
 			} while (!(k >= 8));
 			++l;
 		} while (!(l == 4));
-	}
-	break;
-	case her: {
+		break;
+	case her:
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 		for (i = 0; i <= 5; i ++) {
 			for (k = 0; k <= 3; k ++)
 				s_s[i][k] = READ_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j]);
-			j = j + 80;
+			j += 80;
 		}
-	}
-	break;
-	case tan: {
+		break;
+	case tan:
 		j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 		k = 0;
 		do {
@@ -254,9 +246,10 @@ void showMouse() {
 			j += 160;
 			k = succ(int, k);
 		} while (!(k == 3));
-	}
-	break;
-	}    /*  case Gd   */
+		break;
+	default:
+		break;
+	}    //  case Gd
 }
 
 /**
@@ -370,26 +363,26 @@ void moveMouse(bool &funct, char &key) {
 						cy = succ(int, cy);
 						break;
 					case 'M':
-						cx = cx + 2;
+						cx += 2;
 						break;
 					case 'H':
 						cy = pred(int, cy);
 						break;
 					case 'G':
-						cx = cx - 1;
-						cy = cy - 1;
+						--cx;
+						--cy;
 						break;
 					case 'I':
-						cx = cx + 1;
-						cy = cy - 1;
+						++cx;
+						--cy;
 						break;
 					case 'O':
-						cx = cx - 1;
-						cy = cy + 1;
+						--cx;
+						++cy;
 						break;
 					case 'Q':
-						cx = cx + 1;
-						cy = cy + 1;
+						++cx;
+						++cy;
 						break;
 					default:
 						break;
@@ -422,7 +415,7 @@ void moveMouse(bool &funct, char &key) {
 			cy = 8;
 			break;
 		case '\23':
-			sonoff = ! sonoff;
+			sonoff = !sonoff;
 			return;
 			break;
 		case '\26':
@@ -446,6 +439,7 @@ void moveMouse(bool &funct, char &key) {
 		default:
 			break;
 		}
+
 		setMousePos(cx, cy);
 		p_key = keypressed();
 	}
