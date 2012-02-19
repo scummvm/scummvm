@@ -70,8 +70,8 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
 	delete _mixer;
-	delete _gameScreenRaw;
-	delete _gameScreenConverted;
+	free(_gameScreenRaw);
+	free(_gameScreenConverted);
 }
 
 int OSystem_IPHONE::timerHandler(int t) {
