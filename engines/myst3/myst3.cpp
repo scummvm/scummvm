@@ -597,6 +597,11 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	}
 
 	runNodeInitScripts();
+
+	// WORKAROUND: In Narayan, the scripts in node NACH 9 test on var 39
+	// without first reinitializing it leading to Saavedro not always giving
+	// Releeshan to the player when he is trapped between both shields.
+	if (nodeID == 9 && roomID == 801) _state->setVar(39, 0);
 }
 
 void Myst3Engine::unloadNode() {
