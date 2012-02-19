@@ -164,15 +164,15 @@ inline frac_t fp_sqroot(uint32 x) {
 
 // Color depending on y
 // Note: this is only for the outer pixels
-#define WU_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) do { \
-	this->blendPixelPtr(ptr1 + (y) - (px), color1, a); \
-	this->blendPixelPtr(ptr1 + (x) - (py), color2, a); \
-	this->blendPixelPtr(ptr2 - (x) - (py), color2, a); \
-	this->blendPixelPtr(ptr2 - (y) - (px), color1, a); \
-	this->blendPixelPtr(ptr3 - (y) + (px), color3, a); \
-	this->blendPixelPtr(ptr3 - (x) + (py), color4, a); \
-	this->blendPixelPtr(ptr4 + (x) + (py), color4, a); \
-	this->blendPixelPtr(ptr4 + (y) + (px), color3, a); \
+#define WU_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a,func) do { \
+	this->func(ptr1 + (y) - (px), color1, a); \
+	this->func(ptr1 + (x) - (py), color2, a); \
+	this->func(ptr2 - (x) - (py), color2, a); \
+	this->func(ptr2 - (y) - (px), color1, a); \
+	this->func(ptr3 - (y) + (px), color3, a); \
+	this->func(ptr3 - (x) + (py), color4, a); \
+	this->func(ptr4 + (x) + (py), color4, a); \
+	this->func(ptr4 + (y) + (px), color3, a); \
 } while (0)
 
 // Color depending on corner (tl,tr,bl: color1, br: color2)
@@ -517,6 +517,23 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		((int)(((int)(isrc & _blueMask) -
 		(int)(idst & _blueMask)) * alpha) >> 8))) |
 		(idst & _alphaMask));
+}
+
+template<typename PixelType>
+inline void VectorRendererSpec<PixelType>::
+blendPixelDestAlphaPtr(PixelType *ptr, PixelType color, uint8 alpha) {
+	int idst = *ptr;
+	// This function is only used for corner pixels in rounded rectangles, so
+	// the performance hit of this if shouldn't be too high.
+	// We're also ignoring the cases where dst has intermediate alpha.
+	if ((idst & _alphaMask) == 0) {
+		// set color and alpha channels
+		*ptr = (PixelType)(color & (_redMask | _greenMask | _blueMask)) |
+		                  ((alpha >> _format.aLoss) << _format.aShift);
+	} else {
+		// blend color with background
+		blendPixelPtr(ptr, color, alpha);
+	}
 }
 
 template<typename PixelType>
@@ -1827,7 +1844,15 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				if (T < oldT || y == 1)
 					gradientFill(ptr_bl - y + px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, h - r + x);
 
-				WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
+				// This shape is used for dialog backgrounds.
+				// If we're drawing on top of an empty overlay background,
+				// and the overlay supports alpha, we have to do AA by
+				// setting the dest alpha channel, instead of blending with
+				// dest color channels.
+				if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha))
+					WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelPtr);
+				else
+					WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelDestAlphaPtr);
 			}
 
 			ptr_fill += pitch * r;

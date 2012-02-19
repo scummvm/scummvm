@@ -121,6 +121,24 @@ protected:
 	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/**
+	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
+	 * and Alpha intensity.
+	 * If the destination pixel has 0 alpha, set the color and alpha channels,
+	 * overwriting the destination pixel entirely.
+	 * If the destination pixel has non-zero alpha, blend dest with src.
+	 *
+	 * This is implemented to prevent blendPixel() to calculate the surface pointer on each call.
+	 * Optimized drawing algorithms should call this function when possible.
+	 *
+	 * @see blendPixel
+	 * @param ptr Pointer to the pixel to blend on top of
+	 * @param color Color of the pixel
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
+	inline void blendPixelDestAlphaPtr(PixelType *ptr, PixelType color, uint8 alpha);
+
+
+	/**
 	 * PRIMITIVE DRAWING ALGORITHMS
 	 *
 	 * Generic algorithms for drawing all kinds of aliased primitive shapes.
