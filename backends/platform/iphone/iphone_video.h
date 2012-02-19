@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _IPHONE_VIDEO__H
-#define _IPHONE_VIDEO__H
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -80,6 +80,4 @@
 
 @end
 
-
-
-#endif /* _IPHONE_VIDEO__H */
+#endif

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
+
 enum InputEvent {
 	kInputMouseDown,
 	kInputMouseUp,
@@ -78,4 +81,6 @@ uint getSizeNextPOT(uint size);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
