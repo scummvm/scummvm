@@ -499,11 +499,27 @@ void Lua_V2::SetActorCollisionScale() {
 }
 
 void Lua_V2::GetActorPuckVector() {
-	// stub this for now as the regular one crashes.
-	warning("Lua_V2::GetActorPuckVector: just returns 0, 0, 0");
-	lua_pushnumber(0);
-	lua_pushnumber(0);
-	lua_pushnumber(0);
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object addObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
+		lua_pushnil();
+		return;
+	}
+
+	Actor *actor = getactor(actorObj);
+	if (!actor) {
+		lua_pushnil();
+		return;
+	}
+
+	Math::Vector3d result = actor->getPuckVector();
+	if (!lua_isnil(addObj))
+		result += actor->getPos();
+
+	lua_pushnumber(result.x());
+	lua_pushnumber(result.y());
+	lua_pushnumber(result.z());
 }
 
 void Lua_V2::SetActorHeadLimits() {

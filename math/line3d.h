@@ -40,7 +40,7 @@ public:
 	Math::Vector3d end() const;
 	Math::Vector3d middle() const;
 
-	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos);
+	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ = false);
 
 	void operator=(const Line3d &other);
 
