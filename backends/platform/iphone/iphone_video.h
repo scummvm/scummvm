@@ -31,7 +31,7 @@
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
-#import "iphone_keyboard.h"
+#include "iphone_keyboard.h"
 
 @interface iPhoneView : UIView {
 	void *_screenSurface;
