@@ -77,14 +77,14 @@ lib*.a
 /dists/codeblocks/scummvm*
 
 #Ignore XCode user data and build files
-xcuserdata
-project.xcworkspace
+#xcuserdata
+#project.xcworkspace
 /dists/iphone/build
-/dists/iphone/scummvm.xcodeproj
-/dists/iphone/create_project
+#/dists/iphone/scummvm.xcodeproj
+#/dists/iphone/create_project
 /dists/macosx/build
-/dists/macosx/scummvm.xcodeproj
-/dists/macosx/create_project
+#/dists/macosx/scummvm.xcodeproj
+#/dists/macosx/create_project
 
 /dists/msvc*/[Dd]ebug*/
 /dists/msvc*/[Rr]elease*/
