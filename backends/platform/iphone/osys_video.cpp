@@ -332,6 +332,7 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 bool OSystem_IPHONE::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
+	iPhone_showCursor(visible);
 	_mouseDirty = true;
 
 	return last;

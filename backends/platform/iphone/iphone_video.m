@@ -55,6 +55,7 @@ static int _mouseCursorHotspotX = 0;
 static int _mouseCursorHotspotY = 0;
 static int _mouseX = 0;
 static int _mouseY = 0;
+static int _mouseCursorEnabled = 0;
 
 // static long lastTick = 0;
 // static int frames = 0;
@@ -72,6 +73,10 @@ int printOglError(const char *file, int line) {
 		glErr = glGetError();
 	}
 	return retCode;
+}
+
+void iPhone_showCursor(int state) {
+	_mouseCursorEnabled = state;
 }
 
 void iPhone_setMouseCursor(short *buffer, int width, int height, int hotspotX, int hotspotY) {
@@ -271,7 +276,8 @@ bool getLocalMouseCoords(CGPoint *point) {
 	if (_overlayIsEnabled)
 		[self updateOverlaySurface];
 
-	[self updateMouseSurface];
+	if (_mouseCursorEnabled)
+		[self updateMouseSurface];
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
