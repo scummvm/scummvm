@@ -501,26 +501,13 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 	if (w <= 0 || h <= 0)
 		return;
 
-	if (_overlayFormat.aBits() == 1) {
-		// Copy buffer with the alpha bit on for all pixels for correct
-		// overlay drawing.
-		const uint16 *src = (const uint16 *)buf;
-		uint16 *dst = (uint16 *)_overlayData.pixels + y * _overlayData.w + x;
-		for (int i = 0; i < h; i++) {
-			for (int e = 0; e < w; e++)
-				dst[e] = src[e] | 0x1;
-			src += pitch;
-			dst += _overlayData.w;
-		}
-	} else {
-		// Copy buffer data to internal overlay surface
-		const byte *src = (const byte *)buf;
-		byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
-		for (int i = 0; i < h; i++) {
-			memcpy(dst + x * _overlayData.format.bytesPerPixel, src, w * _overlayData.format.bytesPerPixel);
-			src += pitch * sizeof(buf[0]);
-			dst += _overlayData.pitch;
-		}
+	// Copy buffer data to internal overlay surface
+	const byte *src = (const byte *)buf;
+	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+	for (int i = 0; i < h; i++) {
+		memcpy(dst + x * _overlayData.format.bytesPerPixel, src, w * _overlayData.format.bytesPerPixel);
+		src += pitch * sizeof(buf[0]);
+		dst += _overlayData.pitch;
 	}
 
 	// Extend dirty area if not full screen redraw is flagged
