@@ -78,7 +78,12 @@ enum EventType {
 	,
 	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	// this, please talk to tsoliman and/or LordHoto.
-	EVENT_CUSTOM_BACKEND = 18
+	EVENT_CUSTOM_BACKEND = 18,
+	EVENT_KEYMAPPER_REMAP = 19
+#endif
+#ifdef ENABLE_VKEYBD
+	,
+	EVENT_VIRTUAL_KEYBOARD = 20
 #endif
 };
 

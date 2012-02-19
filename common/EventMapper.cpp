@@ -27,13 +27,25 @@ namespace Common {
 List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	List<Event> events;
 	Event mappedEvent;
-	if (ev.type == EVENT_KEYDOWN && ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
-		mappedEvent.type = EVENT_MAINMENU;
+	if (ev.type == EVENT_KEYDOWN) {
+		if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
+			mappedEvent.type = EVENT_MAINMENU;
+		}
+#ifdef ENABLE_VKEYBD
+		else if (ev.kbd.keycode == KEYCODE_F7 && ev.kbd.hasFlags(0)) {
+			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
+		}
+#endif
+#ifdef ENABLE_KEYMAPPER
+		else if (ev.kbd.keycode == KEYCODE_F8 && ev.kbd.hasFlags(0)) {
+			mappedEvent.type = EVENT_KEYMAPPER_REMAP;
+		}
+#endif
 	}
-	else {
-		// just pass it through
+
+	// if it didn't get mapped, just pass it through
+	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;
-	}
 	events.push_back(mappedEvent);
 	return events;
 }
