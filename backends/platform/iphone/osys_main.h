@@ -63,12 +63,12 @@ protected:
 	Audio::MixerImpl *_mixer;
 
 	Graphics::Surface _framebuffer;
-	byte *_offscreen;
+	byte *_gameScreenRaw;
 	OverlayColor  *_overlayBuffer;
 	uint16 _overlayHeight;
 	uint16 _overlayWidth;
 
-	uint16 *_fullscreen;
+	uint16 *_gameScreenConverted;
 
 	// For use with the game texture
 	uint16  _gamePalette[256];

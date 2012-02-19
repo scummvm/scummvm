@@ -52,10 +52,10 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_screenWidth = width;
 	_screenHeight = height;
 
-	free(_offscreen);
+	free(_gameScreenRaw);
 
-	_offscreen = (byte *)malloc(width * height);
-	bzero(_offscreen, width * height);
+	_gameScreenRaw = (byte *)malloc(width * height);
+	bzero(_gameScreenRaw, width * height);
 
 	//free(_overlayBuffer);
 
@@ -63,10 +63,10 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	//_overlayBuffer = (OverlayColor *)malloc(fullSize);
 	clearOverlay();
 
-	free(_fullscreen);
+	free(_gameScreenConverted);
 
-	_fullscreen = (uint16 *)malloc(fullSize);
-	bzero(_fullscreen, fullSize);
+	_gameScreenConverted = (uint16 *)malloc(fullSize);
+	bzero(_gameScreenConverted, fullSize);
 
 	iPhone_initSurface(width, height);
 
@@ -147,7 +147,7 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	}
 
 
-	byte *dst = _offscreen + y * _screenWidth + x;
+	byte *dst = _gameScreenRaw + y * _screenWidth + x;
 	if (_screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w);
 	else {
@@ -196,8 +196,8 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
-	byte  *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
-	uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+	byte  *src = &_gameScreenRaw[dirtyRect.top * _screenWidth + dirtyRect.left];
+	uint16 *dst = &_gameScreenConverted[dirtyRect.top * _screenWidth + dirtyRect.left];
 	for (int y = h; y > 0; y--) {
 		for (int x = w; x > 0; x--)
 			*dst++ = _gamePalette[*src++];
@@ -222,13 +222,13 @@ void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect &dirtyRect) {
 }
 
 void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect &updatedRect) {
-	iPhone_updateScreenRect(_fullscreen, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom);
+	iPhone_updateScreenRect(_gameScreenConverted, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom);
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
 	//printf("lockScreen()\n");
 
-	_framebuffer.pixels = _offscreen;
+	_framebuffer.pixels = _gameScreenRaw;
 	_framebuffer.w = _screenWidth;
 	_framebuffer.h = _screenHeight;
 	_framebuffer.pitch = _screenWidth;
