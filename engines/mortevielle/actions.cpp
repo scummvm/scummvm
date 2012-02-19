@@ -56,69 +56,106 @@ void taller() {
 		if (!syn)
 			ecr3(g_vm->getString(S_GO_TO));
 		tfleche();
-		if (iesc)  okdes = false;
-		if ((anyone) || (iesc))  return;
+		if (iesc)
+			okdes = false;
+		if ((anyone) || (iesc))
+			return;
 		tcoord(1);
-		if (num == 0)  return;
+		if (num == 0)
+			return;
 		if (num == 1) {
 			s.mlieu = 0;
 			tmlieu(0);
 		} else if (num == 7) {
 			s.mlieu = 13;
 			tmlieu(13);
-		} else if (num != 6)  s.mlieu = 26;
-		if ((num > 1) && (num < 6))  ment = num - 1;
-		if (num > 7)  ment = num - 3;
-		if (num != 6)  affrep();
-		else aldepl();
+		} else if (num != 6)
+			s.mlieu = 26;
+		if ((num > 1) && (num < 6))
+			ment = num - 1;
+		if (num > 7)
+			ment = num - 3;
+		if (num != 6)
+			affrep();
+		else
+			aldepl();
 		return;
 	}
 	tsort();
 	cx = 0;
 	do {
-		cx = cx + 1;
+		++cx;
 	} while (!(g_vm->_menu._depl[cx] == msg[4]));
 	if (s.mlieu == 19) {
-		if (cx == 1)  t1deva();
-		if (cx == 2)  t1neig();
+		if (cx == 1)
+			t1deva();
+		if (cx == 2)
+			t1neig();
 		goto L2;
 	}
 	if (s.mlieu == 23) {
-		if (cx == 1)  t1deau();
-		if (cx == 2)  t1derr();
+		if (cx == 1)
+			t1deau();
+		if (cx == 2)
+			t1derr();
 		goto L2;
 	}
-	if ((s.mlieu == 11) && (cx == 1))  cx = 6;
+	if ((s.mlieu == 11) && (cx == 1))
+		cx = 6;
 	if (s.mlieu == 12) {
-		if (cx == 2)  cx = 6;
-		if (cx == 5)  cx = 16;
+		if (cx == 2)
+			cx = 6;
+		if (cx == 5)
+			cx = 16;
 	}
-	if ((s.mlieu == 14) && (cx == 3))  cx = 6;
-	if (((s.mlieu == 15) || (s.mlieu == 26)) && (cx == 4))  cx = 6;
-	if ((s.mlieu > 19) && (s.mlieu != 26))  cx = cx + 10;
-	if ((s.mlieu == 20) && (cx == 13))  cx = 16;
+	if ((s.mlieu == 14) && (cx == 3))
+		cx = 6;
+	if (((s.mlieu == 15) || (s.mlieu == 26)) && (cx == 4))
+		cx = 6;
+	if ((s.mlieu > 19) && (s.mlieu != 26))
+		cx += 10;
+	if ((s.mlieu == 20) && (cx == 13))
+		cx = 16;
 	if (s.mlieu == 21) {
-		if (cx == 12)  cx = 16;
-		else if (cx > 13)  cx = 15;
+		if (cx == 12)
+			cx = 16;
+		else if (cx > 13)
+			cx = 15;
 	}
-	if ((s.mlieu == 22) && (cx > 14))  cx = 15;
+	if ((s.mlieu == 22) && (cx > 14))
+		cx = 15;
 	if ((s.mlieu == 24) && (cx != 17))
-		if (cx > 13)  cx = 15;
-	if (cx == 1)  s.mlieu = 11;
-	else if (cx == 2)  s.mlieu = 12;
-	else if (cx == 3)  s.mlieu = 14;
-	else if (cx == 4)  s.mlieu = 15;
-	else if (cx == 5)  cx = 12;
-	if (cx == 6)  cx = 11;
-	if (cx == 11)  t1sama();
-	else if (cx == 12)  t1deva();
-	else if (cx == 13)  s.mlieu = 20;
-	else if (cx == 14)  s.mlieu = 24;
-	else if (cx == 15)  t1neig();
-	else if (cx == 16)  t1derr();
+		if (cx > 13)
+			cx = 15;
+	if (cx == 1)
+		s.mlieu = 11;
+	else if (cx == 2)
+		s.mlieu = 12;
+	else if (cx == 3)
+		s.mlieu = 14;
+	else if (cx == 4)
+		s.mlieu = 15;
+	else if (cx == 5)
+		cx = 12;
+	if (cx == 6)
+		cx = 11;
+	if (cx == 11)
+		t1sama();
+	else if (cx == 12)
+		t1deva();
+	else if (cx == 13)
+		s.mlieu = 20;
+	else if (cx == 14)
+		s.mlieu = 24;
+	else if (cx == 15)
+		t1neig();
+	else if (cx == 16)
+		t1derr();
 	else if (cx == 17) {
-		if ((s.ipuit != 120) && (s.ipuit != 140))  crep = 997;
-		else if (s.ipuit == 120)  crep = 181;
+		if ((s.ipuit != 120) && (s.ipuit != 140))
+			crep = 997;
+		else if (s.ipuit == 120)
+			crep = 181;
 		else if (s.conf > 80) {
 			crep = 1505;
 			tperd();
@@ -127,7 +164,8 @@ void taller() {
 			affrep();
 		}
 	}
-	if ((cx < 5) || (cx == 13) || (cx == 14))  affrep();
+	if ((cx < 5) || (cx == 13) || (cx == 14))
+		affrep();
 	debloc(s.mlieu);
 L2:
 	tmlieu(s.mlieu);
@@ -141,26 +179,34 @@ void tprendre() {
 		cx = caff;
 		avpoing(cx);
 		if (crep != 139) {
-			if (ipers > 0)  s.conf = s.conf + 3;
+			if (ipers > 0)
+				s.conf += 3;
 			if (obpart) {
-				if (s.mlieu == 2)  s.iloic = 0;
+				if (s.mlieu == 2)
+					s.iloic = 0;
 				if (s.mlieu == 13) {
-					if (s.iboul == caff)  s.iboul = 0;
-					if (s.ibag == caff)  s.ibag = 0;
+					if (s.iboul == caff)
+						s.iboul = 0;
+					if (s.ibag == caff)
+						s.ibag = 0;
 				}
-				if (s.mlieu == 14)  s.icave = 0;
-				if (s.mlieu == 16)  s.icryp = 0;
-				if (s.mlieu == 17)  s.ivier = 0;
-				if (s.mlieu == 24)  s.ipuit = 0;
+				if (s.mlieu == 14)
+					s.icave = 0;
+				if (s.mlieu == 16)
+					s.icryp = 0;
+				if (s.mlieu == 17)
+					s.ivier = 0;
+				if (s.mlieu == 24)
+					s.ipuit = 0;
 				mfouen();
 				obpart = false;
 				affrep();
 			} else {
 				tabdon[acha + (pred(int, mchai) * 10) + pred(int, cs)] = 0;
 				tsuiv();
-				dobj = dobj + 1;
+				++dobj;
 				if (dobj > 6) {
-					s.conf = s.conf + 2;
+					s.conf += 2;
 					dobj = 0;
 				}
 			}
@@ -170,7 +216,8 @@ void tprendre() {
 	if (!syn)
 		ecr3(g_vm->getString(S_TAKE));
 	tfleche();
-	if ((anyone) || (iesc))  return;
+	if ((anyone) || (iesc))
+		return;
 	if (caff == 3) {
 		tcoord(2);
 		if (num == 1) {
@@ -182,22 +229,28 @@ void tprendre() {
 	if ((num == 0) || ((num == 1) && (s.mlieu == 16))) {
 		tcoord(8);
 		if (num != 0) {
-			if (ipers > 0)  s.conf = s.conf + 3;
+			if (ipers > 0)
+				s.conf += 3;
 			crep = 997;
-			if ((s.mlieu == 2) && (s.iloic != 0))  avpoing(s.iloic);
+			if ((s.mlieu == 2) && (s.iloic != 0))
+				avpoing(s.iloic);
 			if ((s.mlieu == 13) && (num == 1) && (s.iboul != 0)) {
 				avpoing(s.iboul);
-				if ((crep != 997) && (crep != 139))  aniof(2, 7);
+				if ((crep != 997) && (crep != 139))
+					aniof(2, 7);
 			}
 			if ((s.mlieu == 13) && (num == 2) && (s.ibag != 0)) {
 				avpoing(s.ibag);
-				if ((crep != 997) && (crep != 139))  aniof(2, 6);
+				if ((crep != 997) && (crep != 139))
+					aniof(2, 6);
 			}
 			if ((s.mlieu == 14) && (s.icave != 0)) {
 				avpoing(s.icave);
-				if ((crep != 997) && (crep != 139))  aniof(2, 2);
+				if ((crep != 997) && (crep != 139))
+					aniof(2, 2);
 			}
-			if ((s.mlieu == 16) && (s.icryp != 0))  avpoing(s.icryp);
+			if ((s.mlieu == 16) && (s.icryp != 0))
+				avpoing(s.icryp);
 			if ((s.mlieu == 17) && (s.ivier != 0)) {
 				avpoing(s.ivier);
 				if ((crep != 997) && (crep != 139)) {
@@ -207,25 +260,26 @@ void tprendre() {
 			}
 			if ((s.mlieu == 24) && (s.ipuit != 0)) {
 				avpoing(s.ipuit);
-				if ((crep != 997) && (crep != 139))  aniof(2, 1);
+				if ((crep != 997) && (crep != 139))
+					aniof(2, 1);
 			}
-			if ((crep != 997) && (crep != 182) && (crep != 139))  crep = 999;
+			if ((crep != 997) && (crep != 182) && (crep != 139))
+				crep = 999;
 		}
 	} else {
-		if (((s.mlieu == 0) && (num == 3)) || ((s.mlieu == 1) && (num == 4))
-		        || ((s.mlieu == 2) && (num == 1)) || ((s.mlieu == 4) && (num == 3))
-		        || ((s.mlieu == 5) && (num == 6)) || ((s.mlieu == 6) && (num == 2))
-		        || ((s.mlieu == 7) && (num == 6)) || ((s.mlieu == 8) && (num == 4))
-		        || ((s.mlieu == 9) && (num == 4)) || ((s.mlieu == 10) && (num > 2))
-		        || ((s.mlieu == 11) && (num == 7)) || ((s.mlieu == 12) && (num == 6))
-		        || ((s.mlieu == 13) && (num > 4)) || ((s.mlieu > 13)
-		                && (s.mlieu != 23)))  crep = 997;
-		else {
-			if (s.mlieu == 23) {
-				crep = 1504;
-				tperd();
-			} else crep = 120;
-		}
+		if ( ((s.mlieu == 0)  && (num == 3)) || ((s.mlieu == 1)  && (num == 4))
+		  || ((s.mlieu == 2)  && (num == 1)) || ((s.mlieu == 4)  && (num == 3))
+		  || ((s.mlieu == 5)  && (num == 6)) || ((s.mlieu == 6)  && (num == 2))
+		  || ((s.mlieu == 7)  && (num == 6)) || ((s.mlieu == 8)  && (num == 4))
+		  || ((s.mlieu == 9)  && (num == 4)) || ((s.mlieu == 10) && (num > 2))
+		  || ((s.mlieu == 11) && (num == 7)) || ((s.mlieu == 12) && (num == 6))
+		  || ((s.mlieu == 13) && (num > 4))  || ((s.mlieu > 13)  && (s.mlieu != 23)) )
+		  crep = 997;
+		else if (s.mlieu == 23) {
+			crep = 1504;
+			tperd();
+		} else
+			crep = 120;
 	}
 }
 
@@ -234,13 +288,14 @@ void tsprendre() {
 
 	cx = 0;
 	do {
-		cx = cx + 1;
+		++cx;
 	} while (!(g_vm->_menu._invt[cx] == msg[4]));
 	cz = 0;
 	cy = 0;
 	do {
-		cy = cy + 1;
-		if (ord(s.sjer[cy]) != 0)  cz = cz + 1;
+		++cy;
+		if (ord(s.sjer[cy]) != 0)
+			++cz;
 	} while (!(cz == cx));
 	cz = ord(s.sjer[cy]);
 	s.sjer[cy] = chr(0);
@@ -250,37 +305,43 @@ void tsprendre() {
 	clsf2();
 }
 
-void tsoulever()
-
-{
+void tsoulever() {
 	int cx;
 
 	if (!syn)
 		ecr3(g_vm->getString(S_LIFT));
 	tfleche();
-	if ((anyone) || (iesc))  return;
+	if ((anyone) || (iesc))
+		return;
 	tcoord(3);
 	if (num == 0) {
 		tcoord(8);
 		if (num != 0) {
-			if (ipers > 0)  s.conf = s.conf + 1;
+			if (ipers > 0)
+				++s.conf;
 			crep = 997;
-			if ((s.mlieu == 2) && (s.iloic != 0))  treg(s.iloic);
+			if ((s.mlieu == 2) && (s.iloic != 0))
+				treg(s.iloic);
 		}
 		return;
 	}
-	if (ipers > 0)  s.conf = s.conf + 1;
+	if (ipers > 0)
+		++s.conf;
 	cx = s.mlieu;
-	if (s.mlieu == 16)  cx = 14;
-	if (s.mlieu == 19)  cx = 15;
+	if (s.mlieu == 16)
+		cx = 14;
+	else if (s.mlieu == 19)
+		cx = 15;
 	crep = tabdon[asoul + (cx << 3) + pred(int, num)];
-	if (crep == 255)  crep = 997;
+	if (crep == 255)
+		crep = 997;
 }
 
 void tlire() {
 //	int iaff;
 
-	if (caff > 99)  st4(caff);
+	if (caff > 99)
+		st4(caff);
 	else {
 		if (!syn)
 			ecr3(g_vm->getString(S_READ));
@@ -294,8 +355,10 @@ void tlire() {
 }
 
 void tslire() {
-	if (s.derobj == 0)  crep = 186;
-	else st4(s.derobj);
+	if (s.derobj == 0)
+		crep = 186;
+	else
+		st4(s.derobj);
 }
 
 void tregarder() {
@@ -308,7 +371,8 @@ void tregarder() {
 	if (!syn)
 		ecr3(g_vm->getString(S_LOOK));
 	tfleche();
-	if ((anyone) || (iesc))  return;
+	if ((anyone) || (iesc))
+		return;
 	tcoord(5);
 	if (num == 0) {
 		tcoord(8);
@@ -317,46 +381,65 @@ void tregarder() {
 			if (s.mlieu == 13) {
 				if (num == 1) {
 					crep = 164;
-					if (s.ibag != 0)  treg(s.ibag);
-					else if (s.iboul != 0)  treg(s.iboul);
+					if (s.ibag != 0)
+						treg(s.ibag);
+					else if (s.iboul != 0)
+						treg(s.iboul);
 				} else {
 					crep = 193;
-					if (s.ibag != 0)  treg(s.ibag);
+					if (s.ibag != 0)
+						treg(s.ibag);
 				}
 			}
 			if (s.mlieu == 14) {
 				crep = 164;
-				if (s.icave != 0)  treg(s.icave);
+				if (s.icave != 0)
+					treg(s.icave);
 			}
 			if (s.mlieu == 17) {
 				crep = 174;
-				if (s.ivier != 0)  treg(s.ivier);
+				if (s.ivier != 0)
+					treg(s.ivier);
 			}
 			if (s.mlieu == 24) {
 				crep = 131;
-				if (s.ipuit != 0)  treg(s.ipuit);
+				if (s.ipuit != 0)
+					treg(s.ipuit);
 			}
 		}
 		return;
 	}
 	cx = s.mlieu;
-	if (s.mlieu == 20)  cx = 17;
-	if ((s.mlieu > 21) && (s.mlieu < 25))  cx = cx - 4;
-	if (s.mlieu == 26)  cx = 21;
+	if (s.mlieu == 20)
+		cx = 17;
+	if ((s.mlieu > 21) && (s.mlieu < 25))
+		cx -= 4;
+	if (s.mlieu == 26)
+		cx = 21;
 	crep = tabdon[arega + (cx * 7) + pred(int, num)];
-	if ((s.mlieu == 13) && (num == 8))  crep = 126;
-	if (s.mlieu == 19)  crep = 103;
-	if (crep == 255)  crep = 131;
-	if ((s.mlieu == 1) && (num == 1))  treg(144);
-	if ((s.mlieu == 5) && (num == 3))  treg(147);
-	if ((s.mlieu == 8) && (num == 3))  treg(149);
-	if ((s.mlieu == 9) && (num == 2))  treg(30);
-	if ((s.mlieu == 10) && (num == 3))  treg(31);
+	if ((s.mlieu == 13) && (num == 8))
+		crep = 126;
+	if (s.mlieu == 19)
+		crep = 103;
+	if (crep == 255)
+		crep = 131;
+	if ((s.mlieu == 1) && (num == 1))
+		treg(144);
+	if ((s.mlieu == 5) && (num == 3))
+		treg(147);
+	if ((s.mlieu == 8) && (num == 3))
+		treg(149);
+	if ((s.mlieu == 9) && (num == 2))
+		treg(30);
+	if ((s.mlieu == 10) && (num == 3))
+		treg(31);
 }
 
 void tsregarder() {
-	if (s.derobj != 0)  treg(s.derobj);
-	else crep = 186;
+	if (s.derobj != 0)
+		treg(s.derobj);
+	else
+		crep = 186;
 }
 
 void tfouiller() {
@@ -370,7 +453,8 @@ void tfouiller() {
 	if (!syn)
 		ecr3(g_vm->getString(S_SEARCH));
 	tfleche();
-	if (anyone || iesc)  return;
+	if (anyone || iesc)
+		return;
 	if (s.mlieu == 23) {
 		crep = 1504;
 		tperd();
@@ -382,11 +466,13 @@ void tfouiller() {
 		if (num != 0) {
 			cx = 0;
 			do {
-				cx = cx + 1;
+				++cx;
 			} while (!((cx > 6) || (num == ord(touv[cx]))));
-			if (num != ord(touv[cx]))  crep = 187;
+			if (num != ord(touv[cx]))
+				crep = 187;
 			else {
-				if (ipers > 0)  s.conf = s.conf + 3;
+				if (ipers > 0)
+					s.conf += 3;
 				rechai(mchai);
 				if (mchai != 0) {
 					cs = 0;
@@ -394,42 +480,55 @@ void tfouiller() {
 					fouil = true;
 					mfoudi();
 					tsuiv();
-				} else crep = 997;
+				} else
+					crep = 997;
 			}
 		} else {
 			tcoord(8);
 			crep = 997;
 			if (num != 0) {
-				if (ipers > 0)  s.conf = s.conf + 3;
+				if (ipers > 0)
+					s.conf += 3;
 				if ((s.mlieu != 24) && (s.mlieu != 17) && (s.mlieu != 13)) {
 					if (s.mlieu == 2) {
 						crep = 123;
-						if (s.iloic != 0)  treg(s.iloic);
+						if (s.iloic != 0)
+							treg(s.iloic);
 					}
 					if (s.mlieu == 16) {
 						crep = 123;
-						if (s.icryp != 0)  treg(s.icryp);
+						if (s.icryp != 0)
+							treg(s.icryp);
 					}
 				}
 			}
 		}
 	} else {
-		if (ipers > 0)  s.conf = s.conf + 3;
+		if (ipers > 0)
+			s.conf += 3;
 		crep = 997;
-		if (s.mlieu < 14)  crep = r[s.mlieu];
-		if ((s.mlieu == 3) && (num == 2))  crep = 162;
+		if (s.mlieu < 14)
+			crep = r[s.mlieu];
+		if ((s.mlieu == 3) && (num == 2))
+			crep = 162;
 		if (s.mlieu == 12) {
-			if ((num == 3) || (num == 4))  crep = 162;
-			if (num == 5)  crep = 159;
+			if ((num == 3) || (num == 4))
+				crep = 162;
+			else if (num == 5)
+				crep = 159;
 		}
-		if (s.mlieu == 19)  crep = 104;
-		if (s.mlieu == 16)  crep = 155;
+		if (s.mlieu == 19)
+			crep = 104;
+		else if (s.mlieu == 16)
+			crep = 155;
 	}
 }
 
 void tsfouiller() {
-	if (s.derobj != 0)  st7(s.derobj);
-	else crep = 186;
+	if (s.derobj != 0)
+		st7(s.derobj);
+	else
+		crep = 186;
 }
 
 void touvrir() {
@@ -441,7 +540,8 @@ void touvrir() {
 		if (ment != 0) {
 			msg[4] = entrer;
 			syn = true;
-		} else crep = 997;
+		} else
+			crep = 997;
 		return;
 	}
 	if (caff == 15) {
@@ -449,40 +549,42 @@ void touvrir() {
 		return;
 	}
 	tfleche();
-	if ((anyone) || (iesc))  return;
+	if ((anyone) || (iesc))
+		return;
 	tcoord(7);
 	if (num != 0) {
-		if (ipers > 0)  s.conf = s.conf + 2;
-		iouv = iouv + 1;
+		if (ipers > 0)
+			s.conf += 2;
+		++iouv;
 		cx = 0;
 		do {
-			cx = cx + 1;
+			++cx;
 		} while (!((cx > 6) || (ord(touv[cx]) == 0) || (ord(touv[cx]) == num)));
 		if (ord(touv[cx]) != num) {
-			if (!
-			        (
-			            ((num == 3) && ((s.mlieu == 0) || (s.mlieu == 9) || (s.mlieu == 5) || (s.mlieu == 7)))
-			            ||
-			            ((num == 4) && ((s.mlieu == 1) || (s.mlieu == 2) || (s.mlieu == 6))) ||
-			            ((s.mlieu == 4) && (num == 5)) ||
-			            ((num == 6) && ((s.mlieu == 7) || (s.mlieu == 10) ||
-			                            (s.mlieu == 8) || (s.mlieu == 13))) ||
-			            ((s.mlieu == 8) && (num == 2)) ||
-			            ((s.mlieu == 12) && (num == 7)))) {
-				if (((s.mlieu > 10) && (s.mlieu < 14)) ||
-				        ((s.mlieu > 6) && (s.mlieu < 10)) ||
-				        (s.mlieu == 0) || (s.mlieu == 2) || (s.mlieu == 5)) {
+			if (!( ((num == 3) && ((s.mlieu == 0) || (s.mlieu == 9) || (s.mlieu == 5) || (s.mlieu == 7)))
+			    || ((num == 4) && ((s.mlieu == 1) || (s.mlieu == 2) || (s.mlieu == 6)))
+				|| ((s.mlieu == 4) && (num == 5))
+				|| ((num == 6) && ((s.mlieu == 7) || (s.mlieu == 10) || (s.mlieu == 8) || (s.mlieu == 13)))
+				|| ((s.mlieu == 8) && (num == 2))
+				|| ((s.mlieu == 12) && (num == 7))) ) {
+				if ( ((s.mlieu > 10) && (s.mlieu < 14))
+				  || ((s.mlieu > 6) && (s.mlieu < 10))
+				  || (s.mlieu == 0) || (s.mlieu == 2) || (s.mlieu == 5)) {
 					haz = hazard(1, 4);
-					if (haz == 3)  parole(7, 9, 1);
+					if (haz == 3)
+						parole(7, 9, 1);
 				}
 				touv[cx] = chr(num);
 				aniof(1, num);
 			}
 			cx = s.mlieu;
-			if (s.mlieu == 16)  cx = 14;
+			if (s.mlieu == 16)
+				cx = 14;
 			crep = tabdon[aouvr + (cx * 7) + pred(int, num)];
-			if (crep == 254)  crep = 999;
-		} else crep = 18;
+			if (crep == 254)
+				crep = 999;
+		} else
+			crep = 18;
 	}
 }
 
@@ -500,26 +602,33 @@ void tmettre() {
 	if (!syn)
 		ecr3(g_vm->getString(S_PUT));
 	tfleche();
-	if (iesc)  crep = 998;
-	if ((anyone) || (iesc))  return;
+	if (iesc)
+		crep = 998;
+	if ((anyone) || (iesc))
+		return;
 	tcoord(8);
 	if (num != 0) {
 		crep = 999;
 		if (caff == 13) {
 			if (num == 1) {
-				if (s.iboul != 0)  crep = 188;
+				if (s.iboul != 0)
+					crep = 188;
 				else {
 					s.iboul = s.derobj;
-					if (s.derobj == 141)  aniof(1, 7);
+					if (s.derobj == 141)
+						aniof(1, 7);
 				}
-			} else if (s.ibag != 0)  crep = 188;
+			} else if (s.ibag != 0)
+				crep = 188;
 			else {
 				s.ibag = s.derobj;
-				if (s.derobj == 159)  aniof(1, 6);
+				if (s.derobj == 159)
+					aniof(1, 6);
 			}
 		}
 		if (caff == 14)
-			if (s.icave != 0)  crep = 188;
+			if (s.icave != 0)
+				crep = 188;
 			else {
 				s.icave = s.derobj;
 				if (s.derobj == 151) {
@@ -572,10 +681,13 @@ void tmettre() {
 				}
 			}
 		if (caff == 16)
-			if (s.icryp == 0)  s.icryp = s.derobj;
-			else crep = 188;
+			if (s.icryp == 0)
+				s.icryp = s.derobj;
+			else
+				crep = 188;
 		if (caff == 17)
-			if (s.ivier != 0)  crep = 188;
+			if (s.ivier != 0)
+				crep = 188;
 			else if (s.derobj == 143) {
 				s.ivier = 143;
 				aniof(1, 1);
@@ -584,12 +696,15 @@ void tmettre() {
 				tperd();
 			}
 		if (caff == 24)
-			if (s.ipuit != 0)  crep = 188;
+			if (s.ipuit != 0)
+				crep = 188;
 			else if ((s.derobj == 140) || (s.derobj == 120)) {
 				s.ipuit = s.derobj;
 				aniof(1, 1);
-			} else crep = 185;
-		if (crep != 188)  maivid();
+			} else
+				crep = 185;
+		if (crep != 188)
+			maivid();
 	}
 }
 
@@ -603,7 +718,8 @@ void ttourner() {
 	if (!syn)
 		ecr3(g_vm->getString(S_TURN));
 	tfleche();
-	if ((anyone) || (iesc))  return;
+	if ((anyone) || (iesc))
+		return;
 	tcoord(9);
 	if (num != 0) {
 		crep = 997;
@@ -613,7 +729,8 @@ void ttourner() {
 			quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 			if (quel == 1)
 				g_vm->_endGame = true;
-			else crep = 168;
+			else
+				crep = 168;
 		}
 		if ((s.mlieu == 17) && (s.ivier == 143)) {
 			repon(2, 175);
@@ -623,7 +740,8 @@ void ttourner() {
 			if (quel == 1) {
 				s.mlieu = 16;
 				affrep();
-			} else crep = 176;
+			} else
+				crep = 176;
 		}
 	}
 }
@@ -634,7 +752,8 @@ void tcacher() {
 	tfleche();
 	if (!(anyone) && !(iesc)) {
 		tcoord(10);
-		if (num == 0)  cache = false;
+		if (num == 0)
+			cache = false;
 		else {
 			cache = true;
 			crep = 999;
@@ -643,7 +762,8 @@ void tcacher() {
 }
 
 void tattacher() {
-	if (s.derobj == 0)  crep = 186;
+	if (s.derobj == 0)
+		crep = 186;
 	else {
 		if (!syn)
 			ecr3(g_vm->getString(S_TIE));
@@ -656,7 +776,8 @@ void tattacher() {
 				if ((s.derobj == 120) || (s.derobj == 140)) {
 					s.ipuit = s.derobj;
 					aniof(1, 1);
-				} else crep = 185;
+				} else
+					crep = 185;
 				maivid();
 			}
 		}
@@ -670,27 +791,32 @@ void tfermer() {
 		ecr3(g_vm->getString(S_CLOSE));
 	if (caff < 26) {
 		tfleche();
-		if (iesc)  crep = 998;
-		if ((anyone) || (iesc))  return;
+		if (iesc)
+			crep = 998;
+		if ((anyone) || (iesc))
+			return;
 		tcoord(7);
 		if (num != 0) {
 			cx = 0;
 			do {
-				cx = cx + 1;
+				++cx;
 			} while (!((cx > 6) || (num == ord(touv[cx]))));
 			if (num == ord(touv[cx])) {
 				aniof(2, num);
 				crep = 998;
 				touv[cx] = chr(0);
 				iouv = iouv - 1;
-				if (iouv < 0)  iouv = 0;
+				if (iouv < 0)
+					iouv = 0;
 				chai = 9999;
 				rechai(chai);
-				if (mchai == chai)  mchai = 0;
+				if (mchai == chai)
+					mchai = 0;
 			} else crep = 187;
 		}
 	}
-	if (caff == 26)  crep = 999;
+	if (caff == 26)
+		crep = 999;
 }
 
 void tfrapper() {
@@ -705,8 +831,10 @@ void tfrapper() {
 	if (s.mlieu < 25) {
 		tfleche();
 		if (!(anyone) && !(iesc))
-			if ((s.mlieu < 19) && (s.mlieu != 15))  crep = 133;
-			else crep = 997;
+			if ((s.mlieu < 19) && (s.mlieu != 15))
+				crep = 133;
+			else
+				crep = 997;
 		return;
 	}
 	if (s.mlieu == 26) {
@@ -716,13 +844,16 @@ void tfrapper() {
 		l = ment;
 		if (l != 0)
 			if (p != -500) {
-				if (haz > p)  crep = 190;
+				if (haz > p)
+					crep = 190;
 				else {
 					becfren(l);
 					frap();
 				}
-			} else frap();
-		if (ment == 8)  crep = 190;
+			} else
+				frap();
+		if (ment == 8)
+			crep = 190;
 	}
 }
 
@@ -731,27 +862,32 @@ void tposer() {
 
 	if (!syn)
 		ecr3(g_vm->getString(S_POSE));
-	if (s.derobj == 0)  crep = 186;
+	if (s.derobj == 0)
+		crep = 186;
 	else {
 		if (caff > 99) {
 			crep = 999;
 			ajchai();
-			if (crep != 192)  maivid();
+			if (crep != 192)
+				maivid();
 			return;
 		}
 		tfleche();
-		if ((anyone) || (iesc))  return;
+		if ((anyone) || (iesc))
+			return;
 		tcoord(7);
 		crep = 124;
 		if (num != 0) {
 			rechai(chai);
-			if (chai == 0)  crep = 997;
+			if (chai == 0)
+				crep = 997;
 			else {
 				cx = 0;
 				do {
-					cx = cx + 1;
+					++cx;
 				} while (!((cx > 6) || (num == ord(touv[cx]))));
-				if (num != ord(touv[cx]))  crep = 187;
+				if (num != ord(touv[cx]))
+					crep = 187;
 				else {
 					mchai = chai;
 					crep = 999;
@@ -762,32 +898,46 @@ void tposer() {
 			if (num != 0) {
 				crep = 998;
 				if (caff == 2)
-					if (s.iloic != 0)  crep = 188;
-					else s.iloic = s.derobj;
+					if (s.iloic != 0)
+						crep = 188;
+					else
+						s.iloic = s.derobj;
 				if (caff == 13) {
 					if (num == 1) {
-						if (s.iboul != 0)  crep = 188;
-						else s.iboul = s.derobj;
-					} else if (s.ibag != 0)  crep = 188;
-					else s.ibag = s.derobj;
+						if (s.iboul != 0)
+							crep = 188;
+						else
+							s.iboul = s.derobj;
+					} else if (s.ibag != 0)
+						crep = 188;
+					else
+						s.ibag = s.derobj;
 				}
 				if (caff == 16)
-					if (s.icryp != 0)  crep = 188;
-					else s.icryp = s.derobj;
-				if (caff == 24)  crep = 185;
-				if ((caff == 14) || (caff == 17))  crep = 124;
+					if (s.icryp != 0)
+						crep = 188;
+					else
+						s.icryp = s.derobj;
+				if (caff == 24)
+					crep = 185;
+				if ((caff == 14) || (caff == 17))
+					crep = 124;
 			} else {
 				crep = 124;
 				if (caff == 24) {
 					tcoord(5);
-					if (num != 0)  crep = 185;
+					if (num != 0)
+						crep = 185;
 				}
 			}
 		}
-		if (caff == 23)  crep = 185;
+		if (caff == 23)
+			crep = 185;
 		if ((crep == 999) || (crep == 185) || (crep == 998)) {
-			if (crep == 999)  ajchai();
-			if (crep != 192)  maivid();
+			if (crep == 999)
+				ajchai();
+			if (crep != 192)
+				maivid();
 		}
 	}
 }
@@ -795,25 +945,34 @@ void tposer() {
 void tecouter() {
 	int l, p, haz, j, h, m;
 
-	if (s.mlieu != 26)  crep = 101;
+	if (s.mlieu != 26)
+		crep = 101;
 	else {
-		if (ipers != 0)  s.conf = s.conf + 1;
+		if (ipers != 0)
+			++s.conf;
 		ecfren(p, haz, s.conf, ment);
 		l = ment;
-		if (l != 0)
+		if (l != 0) {
 			if (p != -500) {
-				if (haz > p)  crep = 101;
+				if (haz > p)
+					crep = 101;
 				else {
 					becfren(l);
 					calch(j, h, m);
 					haz = hazard(1, 100);
 					if ((h >= 0) && (h < 8)) {
-						if (haz > 30)  crep = 101;
-						else crep = 178;
-					} else if (haz > 70)  crep = 101;
-					else crep = 178;
+						if (haz > 30)
+							crep = 101;
+						else
+							crep = 178;
+					} else if (haz > 70)
+						crep = 101;
+					else
+						crep = 178;
 				}
-			} else crep = 178;
+			} else
+				crep = 178;
+		}
 	}
 }
 
@@ -832,15 +991,20 @@ void tmanger() {
 		if ((h == 12) || (h == 13) || (h == 19)) {
 			s.conf = s.conf - (s.conf / 7);
 			if (h == 12)
-				if (m == 0)  h = 4;
-				else h = 3;
+				if (m == 0)
+					h = 4;
+				else
+					h = 3;
 			if ((h == 13) || (h == 19))
-				if (m == 0)  h = 2;
-				else h = 1;
-			jh = jh + h;
+				if (m == 0)
+					h = 2;
+				else
+					h = 1;
+			jh += h;
 			crep = 135;
 			tinke();
-		} else crep = 134;
+		} else
+			crep = 134;
 	}
 }
 
@@ -850,49 +1014,52 @@ void tentrer() {
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
 		t1sama();
 		tmlieu(s.mlieu);
-	} else if (s.mlieu == 15)  aldepl();
-	else if (ment == 0)  crep = 997;
-	else {
-		if ((ment == 9) && (s.derobj != 136)) {
+	} else if (s.mlieu == 15)
+		aldepl();
+	else if (ment == 0)
+		crep = 997;
+	else if ((ment == 9) && (s.derobj != 136)) {
 			crep = 189;
 			s.teauto[8] = '*';
-		} else {
-			if (! blo)  t11(ment, z);
-			if (z != 0) {
-				if ((ment == 3) || (ment == 7))  crep = 179;
-				else {
-					x = (hazard(0, 10)) - 5;
-					parole(7, x, 1);
-					aniof(1, 1);
-					
-					tip(z, x);
-					s.conf = s.conf + 1;
-					s.mlieu = 15;
-					msg[3] = discut;
-					msg[4] = g_vm->_menu._disc[x];
-					syn = true;
-					if (ment == 9) {
-						col = true;
-						caff = 70;
-						afdes(0);
-						repon(2, caff);
-					} else col = false;
-					debloc(ment);
-					ment = 0;
-				}
-			} else {
+	} else {
+		if (! blo)
+			t11(ment, z);
+		if (z != 0) {
+			if ((ment == 3) || (ment == 7))
+				crep = 179;
+			else {
 				x = (hazard(0, 10)) - 5;
 				parole(7, x, 1);
 				aniof(1, 1);
 				
-				s.mlieu = ment;
-				affrep();
-				debloc(s.mlieu);
-				tmlieu(s.mlieu);
+				tip(z, x);
+				++s.conf;
+				s.mlieu = 15;
+				msg[3] = discut;
+				msg[4] = g_vm->_menu._disc[x];
+				syn = true;
+				if (ment == 9) {
+					col = true;
+					caff = 70;
+					afdes(0);
+					repon(2, caff);
+				} else
+					col = false;
+				debloc(ment);
 				ment = 0;
-				mpers = 0;
-				ipers = 0;
 			}
+		} else {
+			x = (hazard(0, 10)) - 5;
+			parole(7, x, 1);
+			aniof(1, 1);
+			
+			s.mlieu = ment;
+			affrep();
+			debloc(s.mlieu);
+			tmlieu(s.mlieu);
+			ment = 0;
+			mpers = 0;
+			ipers = 0;
 		}
 	}
 }
@@ -921,13 +1088,15 @@ void tdormir() {
 		if (h < 8) {
 			s.conf = s.conf - (s.conf / 20);
 			z = (7 - h) * 2;
-			if (m == 30)  z = z - 1;
-			jh = jh + z;
+			if (m == 30)
+				--z;
+			jh += z;
 			h = 7;
 		}
-		jh = jh + 2;
-		h = h + 1;
-		if (h > 23)  h = 0;
+		jh += 2;
+		++h;
+		if (h > 23)
+			h = 0;
 		tinke();
 		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 		anyone = false;
@@ -939,12 +1108,14 @@ void tdormir() {
 void tdefoncer() {
 	if (!syn)
 		ecr3(g_vm->getString(S_SMASH));
-	if (caff < 25)  tfleche();
+	if (caff < 25)
+		tfleche();
 	if ((! anyone) && (! iesc))
-		if (s.mlieu != 26)  crep = 997;
+		if (s.mlieu != 26)
+			crep = 997;
 		else {
 			crep = 143;
-			s.conf = s.conf + 2;
+			s.conf += 2;
 		}
 }
 
@@ -953,21 +1124,28 @@ void tsortir() {
 
 	tsort();
 	crep = 0;
-	if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22)
-	        || (s.mlieu == 24))  crep = 997;
+	if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22) || (s.mlieu == 24))
+		crep = 997;
 	else {
-		if ((s.mlieu < 16) || (s.mlieu == 26))  lx = 10;
-		if ((s.mlieu == 10) || (s.mlieu == 20))  lx = 21;
-		if ((s.mlieu < 10) || (s.mlieu == 13))  lx = 15;
+		if ((s.mlieu < 16) || (s.mlieu == 26))
+			lx = 10;
+		if ((s.mlieu == 10) || (s.mlieu == 20))
+			lx = 21;
+		if ((s.mlieu < 10) || (s.mlieu == 13))
+			lx = 15;
 		if (s.mlieu == 16) {
 			lx = 17;
 			crep = 176;
 		}
-		if (s.mlieu == 17)  t23coul(lx);
-		if (s.mlieu == 23)  lx = 24;
-		if (crep != 997)  s.mlieu = lx;
+		if (s.mlieu == 17)
+			t23coul(lx);
+		if (s.mlieu == 23)
+			lx = 24;
+		if (crep != 997)
+			s.mlieu = lx;
 		caff = lx;
-		if (crep == 0)  crep = lx;
+		if (crep == 0)
+			crep = lx;
 		debloc(lx);
 		tmlieu(lx);
 	}
@@ -979,22 +1157,27 @@ void tattendre() {
 	mpers = 0;
 	clsf3();
 	do {
-		jh = jh + 1;
+		++jh;
 		tinke();
-		if (! blo)  t11(s.mlieu, quel);
+		if (!blo)
+			t11(s.mlieu, quel);
 		if ((ipers != 0) && (mpers == 0)) {
 			crep = 998;
-			if ((s.mlieu == 13) || (s.mlieu == 14))  cavegre();
-			if ((s.mlieu > 0) && (s.mlieu < 10))  anyone = true;
+			if ((s.mlieu == 13) || (s.mlieu == 14))
+				cavegre();
+			if ((s.mlieu > 0) && (s.mlieu < 10))
+				anyone = true;
 			mpers = ipers;
-			if (! anyone)  tinke();
+			if (!anyone)
+				tinke();
 			return;
 		}
 		repon(2, 102);
 		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
 	} while (!(quel == 2));
 	crep = 998;
-	if (! anyone)  tinke();
+	if (!anyone)
+		tinke();
 }
 
 void tsonder() {
@@ -1002,14 +1185,13 @@ void tsonder() {
 		ecr3(g_vm->getString(S_PROBE2));
 	if (caff < 27) {
 		tfleche();
-		if (!(anyone) && (! iesc))  crep = 145;
+		if (!(anyone) && (!iesc))
+			crep = 145;
 		num = 0;
 	}
 }
 
-void tparler()
-
-{
+void tparler() {
 	bool te[47];
 	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
@@ -1018,14 +1200,13 @@ void tparler()
 	char st[1410];
 	bool f;
 
-
-
 	finfouil();
-	if (col)  suj = 128;
+	if (col)
+		suj = 128;
 	else {
 		cx = 0;
 		do {
-			cx = cx + 1;
+			++cx;
 		} while (!(g_vm->_menu._disc[cx] == msg[4]));
 		caff = 69 + cx;
 		afdes(0);
@@ -1039,11 +1220,13 @@ void tparler()
 	premtet();
 	sparl(0, suj);
 	hirs();
-	for (ix = 1; ix <= 46; ix ++) te[ix] = false;
-	for (ix = 1; ix <= 45; ix ++) {
+	for (ix = 1; ix <= 46; ++ix)
+		te[ix] = false;
+	for (ix = 1; ix <= 45; ++ix) {
 		deline(ix + c_tparler, st, tay);
 		lib[ix] = delig;
-		for (i = tay; i <= 40; i ++) lib[ix] = lib[ix] + ' ';
+		for (i = tay; i <= 40; ++i)
+			lib[ix] = lib[ix] + ' ';
 	}
 	lib[46] = lib[45];
 	lib[45] = ' ';
@@ -1057,12 +1240,15 @@ void tparler()
 			icm = succ(int, icm);
 			g_vm->_screenSurface.putxy(co, lig);
 			if (s.teauto[icm] == '*')
-				if (te[icm])  writetp(lib[icm], 1);
-				else writetp(lib[icm], 0);
+				if (te[icm])
+					writetp(lib[icm], 1);
+				else
+					writetp(lib[icm], 0);
 			if (icm == 23)  {
 				lig = 0;
 				co = 320;
-			} else lig = lig + 8;
+			} else
+				lig = lig + 8;
 		} while (!(icm == 42));
 		g_vm->_screenSurface.putxy(320, 176);
 		writetp(lib[46], 0);
@@ -1073,43 +1259,59 @@ void tparler()
 
 			getMousePos(x, y, c);
 			x = x * (3 - res);
-			if (x > 319)  cx = 41;
-			else cx = 1;
+			if (x > 319)
+				cx = 41;
+			else
+				cx = 1;
 			cy = succ(int, ((uint)y >> 3));                  /* 0-199 => 1-25 */
 			if ((cy > 23) || ((cx == 41) && ((cy >= 20) && (cy <= 22)))) {
 				if (choi != 0) {
 					lig = ((choi - 1) % 23) << 3;
-					if (choi > 23)  co = 320;
-					else co = 0;
+					if (choi > 23)
+						co = 320;
+					else
+						co = 0;
 					g_vm->_screenSurface.putxy(co, lig);
-					if (te[choi])  writetp(lib[choi], 0);
-					else writetp(lib[choi], 1);
-					te[choi] = ! te[choi];
+					if (te[choi])
+						writetp(lib[choi], 0);
+					else
+						writetp(lib[choi], 1);
+					te[choi] = !te[choi];
 					choi = 0;
 				}
 			} else {
 				ix = cy;
-				if (cx == 41)  ix = ix + 23;
+				if (cx == 41)
+					ix = ix + 23;
 				if (ix != choi) {
 					if (choi != 0) {
 						lig = ((choi - 1) % 23) << 3;
-						if (choi > 23)  co = 320;
-						else co = 0;
+						if (choi > 23)
+							co = 320;
+						else
+							co = 0;
 						g_vm->_screenSurface.putxy(co, lig);
-						if (te[choi])  writetp(lib[choi], 0);
-						else writetp(lib[choi], 1);
+						if (te[choi])
+							writetp(lib[choi], 0);
+						else
+							writetp(lib[choi], 1);
 						te[choi] = ! te[choi];
 					}
 					if ((s.teauto[ix] == '*') || (ix == 46)) {
 						lig = ((ix - 1) % 23) << 3;
-						if (ix > 23)  co = 320;
-						else co = 0;
+						if (ix > 23)
+							co = 320;
+						else
+							co = 0;
 						g_vm->_screenSurface.putxy(co, lig);
-						if (te[ix])  writetp(lib[ix], 0);
-						else writetp(lib[ix], 1);
+						if (te[ix])
+							writetp(lib[ix], 0);
+						else
+							writetp(lib[ix], 1);
 						te[ix] = ! te[ix];
 						choi = ix;
-					} else choi = 0;
+					} else
+						choi = 0;
 				}
 			}
 		} while (!((tou == '\15') || (((c != 0) || g_vm->getMouseClick()) && (choi != 0))));
@@ -1119,10 +1321,13 @@ void tparler()
 			if (col) {
 				col = false;
 				s.mlieu = 15;
-				if (iouv > 0)  max = 8;
-				else max = 4;
+				if (iouv > 0)
+					max = 8;
+				else
+					max = 4;
 				haz = hazard(1, max);
-				if (haz == 2)  suj = 129;
+				if (haz == 2)
+					suj = 129;
 				else {
 					suj = 138;
 					s.conf = s.conf + (3 * (s.conf / 10));
@@ -1145,7 +1350,8 @@ void tparler()
 				s.teauto[7] = '*';
 			}
 			if ((suj == 106) || (suj == 108) || (suj == 94)) {
-				for (ix = 29; ix <= 31; ix ++) s.teauto[ix] = '*';
+				for (ix = 29; ix <= 31; ++ix)
+					s.teauto[ix] = '*';
 				s.pourc[7] = '*';
 			}
 			if (suj == 70) {
@@ -1188,8 +1394,10 @@ void tsentir() {
 			ecr3(g_vm->getString(S_SMELL));
 		tfleche();
 		if (!(anyone) && !(iesc))
-			if (caff == 16)  crep = 153;
-	} else if (caff == 123)  crep = 110;
+			if (caff == 16)
+				crep = 153;
+	} else if (caff == 123)
+		crep = 110;
 	num = 0;
 }
 
