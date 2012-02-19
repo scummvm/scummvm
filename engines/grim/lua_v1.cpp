@@ -455,10 +455,8 @@ void Lua_V1::IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-
-	Sector *sector = g_grim->getCurrSet()->getSector(name);
-
-	if (sector && sector->isPointInSector(actor->getPos())) {
+	Sector *sector = g_grim->getCurrSet()->getSector(name, actor->getPos());
+	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName());
 		lua_pushnumber(sector->getType());

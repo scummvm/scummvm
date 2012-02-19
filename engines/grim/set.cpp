@@ -705,6 +705,16 @@ Sector *Set::getSector(const Common::String &name) {
 	return NULL;
 }
 
+Sector *Set::getSector(const Common::String &name, const Math::Vector3d &pos) {
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors[i];
+		if (strstr(sector->getName(), name.c_str()) && sector->isPointInSector(pos)) {
+			return sector;
+		}
+	}
+	return NULL;
+}
+
 void Set::setSoundParameters(int minVolume, int maxVolume) {
 	_minVolume = minVolume;
 	_maxVolume = maxVolume;
