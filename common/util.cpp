@@ -286,7 +286,10 @@ const RenderModeDescription g_renderModes[] = {
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
 	{ "ega", "EGA", kRenderEGA },
+	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
+	{ "fmtowns", "FM-Towns", kRenderFMTowns },
+	{ "pc98", "PC-98", kRenderPC98 },
 	{0, 0, kRenderDefault}
 };
 
@@ -350,6 +353,15 @@ const struct GameOpt {
 
 	{ GUIO_NOASPECT,     "noAspect" },
 	{ GUIO_EGAUNDITHER,  "egaUndither" },
+
+	{ GUIO_RENDERHERCGREEN,	"hercGreen" },
+	{ GUIO_RENDERHERCAMBER,	"hercAmber" },
+	{ GUIO_RENDERCGA,		"cga" },
+	{ GUIO_RENDEREGA,		"ega" },
+	{ GUIO_RENDERVGA,		"vga" },
+	{ GUIO_RENDERAMIGA,		"amiga" },
+	{ GUIO_RENDERFMTOWNS,	"fmtowns" },
+	{ GUIO_RENDERPC98,		"pc98" },
 
 	{ GUIO_NONE, 0 }
 };

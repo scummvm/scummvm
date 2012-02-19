@@ -101,12 +101,22 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_NOASPECT		"\022"
 #define GUIO_EGAUNDITHER	"\023"
 
+#define GUIO_RENDERHERCGREEN	"\030"
+#define GUIO_RENDERHERCAMBER	"\031"
+#define GUIO_RENDERCGA		"\032"
+#define GUIO_RENDEREGA		"\033"
+#define GUIO_RENDERVGA		"\034"
+#define GUIO_RENDERAMIGA	"\035"
+#define GUIO_RENDERFMTOWNS	"\036"
+#define GUIO_RENDERPC98		"\037"
+
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)
 #define GUIO3(a,b,c) (a b c)
 #define GUIO4(a,b,c,d) (a b c d)
 #define GUIO5(a,b,c,d,e) (a b c d e)
+#define GUIO6(a,b,c,d,e,f) (a b c d e f)
 
 namespace Common {
 
@@ -299,11 +309,14 @@ extern const char *getPlatformDescription(Platform id);
  */
 enum RenderMode {
 	kRenderDefault = 0,
-	kRenderEGA = 1,
-	kRenderCGA = 2,
-	kRenderHercG = 3,
-	kRenderHercA = 4,
-	kRenderAmiga = 5
+	kRenderVGA = 1,
+	kRenderEGA = 2,
+	kRenderCGA = 3,
+	kRenderHercG = 4,
+	kRenderHercA = 5,
+	kRenderAmiga = 6,
+	kRenderFMTowns = 7,
+	kRenderPC98 = 8
 };
 
 struct RenderModeDescription {

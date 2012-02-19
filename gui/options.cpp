@@ -191,9 +191,9 @@ void OptionsDialog::open() {
 			int sel = 0;
 			for (int i = 0; p->code; ++p, ++i) {
 				if (renderMode == p->id)
-					sel = i + 2;
+					sel = p->id;
 			}
-			_renderModePopUp->setSelected(sel);
+			_renderModePopUp->setSelectedTag(sel);
 		}
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -748,13 +748,18 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// RenderMode popup
+	const Common::String allFlags = renderType2GUIO((uint32)-1);
+	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
 	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
-		_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
+		Common::String renderGuiOption = renderType2GUIO(rm->id);
+		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
+			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
 	}
 
 	// Fullscreen checkbox
@@ -1031,6 +1036,30 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (!found)
 		ConfMan.removeKey(setting, _domain);
+}
+
+Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
+	static const struct {
+		Common::RenderMode type;
+		const char *guio;
+	} renderGUIOMapping[] = {
+		{ Common::kRenderHercG,		GUIO_RENDERHERCGREEN },
+		{ Common::kRenderHercA,		GUIO_RENDERHERCAMBER },
+		{ Common::kRenderCGA,		GUIO_RENDERCGA },
+		{ Common::kRenderEGA,		GUIO_RENDEREGA },
+		{ Common::kRenderVGA,		GUIO_RENDERVGA },
+		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
+		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
+		{ Common::kRenderPC98,		GUIO_RENDERPC98 }
+	};
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(renderGUIOMapping); i++) {
+		if (renderType == renderGUIOMapping[i].type || renderType == (uint32)-1)
+			res += renderGUIOMapping[i].guio;
+	}
+
+	return res;
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
