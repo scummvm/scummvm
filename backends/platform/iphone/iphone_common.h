@@ -75,7 +75,7 @@ bool iPhone_isHighResDevice();
 int iPhone_getScreenHeight();
 int iPhone_getScreenWidth();
 void iPhone_enableOverlay(int state);
-void iPhone_setMouseCursor(short *buffer, int width, int height);
+void iPhone_setMouseCursor(short *buffer, int width, int height, int hotspotX, int hotspotY);
 
 uint getSizeNextPOT(uint size);
 

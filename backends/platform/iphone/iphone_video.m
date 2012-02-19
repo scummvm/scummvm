@@ -51,6 +51,8 @@ static UITouch *_secondTouch = NULL;
 static short *_mouseCursor = NULL;
 static int _mouseCursorHeight = 0;
 static int _mouseCursorWidth = 0;
+static int _mouseCursorHotspotX = 0;
+static int _mouseCursorHotspotY = 0;
 static int _mouseX = 0;
 static int _mouseY = 0;
 
@@ -72,11 +74,14 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-void iPhone_setMouseCursor(short *buffer, int width, int height) {
+void iPhone_setMouseCursor(short *buffer, int width, int height, int hotspotX, int hotspotY) {
 	_mouseCursor = buffer;
 
 	_mouseCursorWidth = width;
 	_mouseCursorHeight = height;
+
+	_mouseCursorHotspotX = hotspotX;
+	_mouseCursorHotspotY = hotspotY;
 
 	[sharedInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
@@ -354,20 +359,30 @@ bool getLocalMouseCoords(CGPoint *point) {
 	int mouseX = _mouseX;
 	int mouseY = _mouseY;
 
+	int hotspotX = _mouseCursorHotspotX;
+	int hotspotY = _mouseCursorHotspotY;
+
 	if (!_overlayIsEnabled) {
 		const GLint gameWidth = (_visibleHeight - 2 * _widthOffset);
 		const GLint gameHeight = (_visibleWidth - 2 * _heightOffset);
 
 		mouseX = (_width - mouseX) / (float)_width * gameHeight + _heightOffset;
 		mouseY = mouseY / (float)_height * gameWidth + _widthOffset;
+		hotspotX = hotspotX / (float)_width * gameHeight;
+		hotspotY = hotspotY / (float)_height * gameWidth;
 		width = width / (float)_width * gameHeight;
 		height = height / (float)_height * gameWidth;
 	} else {
 		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _backingWidth;
 		mouseY = mouseY / (float)_overlayHeight * _backingHeight;
+		hotspotX = hotspotX / (float)_overlayWidth * _backingWidth;
+		hotspotY = hotspotY / (float)_overlayHeight * _backingHeight;
 		width = width / (float)_overlayWidth * _backingWidth;
 		height = height / (float)_overlayHeight * _backingHeight;
 	}
+
+	mouseX -= hotspotX;
+	mouseY -= hotspotY;
 
 	GLfloat vertices[] = {
 		mouseX        , mouseY,

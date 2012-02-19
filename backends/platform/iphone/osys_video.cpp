@@ -170,7 +170,7 @@ void OSystem_IPHONE::updateScreen() {
 	_fullScreenIsDirty = false;
 	_fullScreenOverlayIsDirty = false;
 
-	iPhone_updateScreen(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY);
+	iPhone_updateScreen(_mouseX, _mouseY);
 }
 
 void OSystem_IPHONE::internUpdateScreen() {
@@ -380,7 +380,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 		}
 	}
 
-	iPhone_setMouseCursor(mouseBuf, w, h);
+	iPhone_setMouseCursor(mouseBuf, w, h, hotspotX, hotspotY);
 
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
 		free(_mouseBuf);
