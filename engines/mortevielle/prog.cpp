@@ -39,11 +39,11 @@
 namespace Mortevielle {
 
 void change_gd(int ngd) {
-	hide_mouse();
+	hideMouse();
 	gd = ngd;
 	hirs();
-	init_mouse();
-	show_mouse();
+	initMouse();
+	showMouse();
 	dessine_rouleau();
 	tinke();
 	pendule();
@@ -67,7 +67,7 @@ void MortevielleEngine::gameLoaded() {
 	char g[8];
 
 
-	hide_mouse();
+	hideMouse();
 	imen = false;
 	g[1] = 'M';
 	_loseGame = true;
@@ -131,7 +131,7 @@ void MortevielleEngine::gameLoaded() {
 	modinv();
 	if (s.derobj != 0)  modobj2(s.derobj + 400, test[1], test[2]);
 	else tesok = test[1] || test[2];
-	show_mouse();
+	showMouse();
 }
 
 

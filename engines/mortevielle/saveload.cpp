@@ -118,7 +118,7 @@ void SavegameManager::takesav(int n) {
  * Load a saved game
  */
 Common::Error SavegameManager::loadGame(int n) {
-	hide_mouse();
+	hideMouse();
 	maivid();
 	takesav(n);
 	
@@ -126,7 +126,7 @@ Common::Error SavegameManager::loadGame(int n) {
 	theure();
 	dprog();
 	g_vm->gameLoaded();
-	show_mouse();
+	showMouse();
 	return Common::kNoError;
 }
 
@@ -137,7 +137,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	Common::OutSaveFile *f;
 	int i;
 
-	hide_mouse();
+	hideMouse();
 	tmaj3();
 	
 	for (i = 0; i <= 389; i ++)
@@ -165,7 +165,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	delete f;
 
 	dem2();
-	show_mouse();
+	showMouse();
 	return Common::kNoError;
 }
 

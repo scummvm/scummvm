@@ -38,14 +38,14 @@ extern int m_show,
         p_o_s,
         mouse_shwn;
 
-void init_mouse();
+void initMouse();
 //extern void change_mouse(int t);
 //extern void dessine_souris(int xf, int yf);
-extern void hide_mouse();
-extern void show_mouse();
-extern void pos_mouse(int x, int y);
-extern void read_pos_mouse(int &x, int &y, int &c);
-extern void mov_mouse(bool &funct, char &key);
+extern void hideMouse();
+extern void showMouse();
+extern void setMousePos(int x, int y);
+extern void getMousePos(int &x, int &y, int &c);
+extern void moveMouse(bool &funct, char &key);
 
 } // End of namespace Mortevielle
 #endif

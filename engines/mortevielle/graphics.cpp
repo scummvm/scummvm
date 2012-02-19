@@ -1048,7 +1048,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 
 	if (l == "")
 		return;
-	hide_mouse();
+	hideMouse();
 	pt = _textPos;
 
 	if (res == 2)
@@ -1085,7 +1085,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 		g_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
 		pt.x += i;
 	}
-	show_mouse();
+	showMouse();
 }
 
 /**
