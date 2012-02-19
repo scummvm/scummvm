@@ -77,7 +77,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	HELPER MACROS for Bresenham's circle drawing algorithm
 	Note the proper spelling on this header.
 */
-#define BE_ALGORITHM() { \
+#define BE_ALGORITHM() do { \
 	if (f >= 0) { \
 		y--; \
 		ddF_y += 2; \
@@ -87,9 +87,9 @@ inline frac_t fp_sqroot(uint32 x) {
 	px += pitch; \
 	ddF_x += 2; \
 	f += ddF_x + 1; \
-}
+} while(0)
 
-#define BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+#define BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) do { \
 	*(ptr1 + (y) - (px)) = color; \
 	*(ptr1 + (x) - (py)) = color; \
 	*(ptr2 - (x) - (py)) = color; \
@@ -98,9 +98,9 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr3 - (x) + (py)) = color; \
 	*(ptr4 + (x) + (py)) = color; \
 	*(ptr4 + (y) + (px)) = color; \
-}
+} while (0)
 
-#define BE_DRAWCIRCLE_BCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+#define BE_DRAWCIRCLE_BCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) do { \
 	*(ptr1 + (y) - (px)) = color1; \
 	*(ptr1 + (x) - (py)) = color1; \
 	*(ptr2 - (x) - (py)) = color1; \
@@ -109,9 +109,9 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr3 - (x) + (py)) = color1; \
 	*(ptr4 + (x) + (py)) = color2; \
 	*(ptr4 + (y) + (px)) = color2; \
-}
+} while (0)
 
-#define BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+#define BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) do { \
 	*(ptr1 + (y) - (px)) = color1; \
 	*(ptr1 + (x) - (py)) = color2; \
 	*(ptr2 - (x) - (py)) = color2; \
@@ -120,13 +120,13 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr3 - (x) + (py)) = color4; \
 	*(ptr4 + (x) + (py)) = color4; \
 	*(ptr4 + (y) + (px)) = color3; \
-}
+} while (0)
 
-#define BE_RESET() { \
+#define BE_RESET() do { \
 	f = 1 - r; \
 	ddF_x = 0; ddF_y = -2 * r; \
 	x = 0; y = r; px = 0; py = pitch * r; \
-}
+} while (0)
 
 #define TRIANGLE_MAINX() \
 		if (error_term >= 0) { \
@@ -151,7 +151,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		ptr_left += pitch;
 
 /** HELPER MACROS for WU's circle drawing algorithm **/
-#define WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
+#define WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr1 + (y) - (px), color, a); \
 	this->blendPixelPtr(ptr1 + (x) - (py), color, a); \
 	this->blendPixelPtr(ptr2 - (x) - (py), color, a); \
@@ -160,11 +160,11 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr3 - (x) + (py), color, a); \
 	this->blendPixelPtr(ptr4 + (x) + (py), color, a); \
 	this->blendPixelPtr(ptr4 + (y) + (px), color, a); \
-}
+} while (0)
 
 // Color depending on y
 // Note: this is only for the outer pixels
-#define WU_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
+#define WU_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr1 + (y) - (px), color1, a); \
 	this->blendPixelPtr(ptr1 + (x) - (py), color2, a); \
 	this->blendPixelPtr(ptr2 - (x) - (py), color2, a); \
@@ -173,11 +173,11 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr3 - (x) + (py), color4, a); \
 	this->blendPixelPtr(ptr4 + (x) + (py), color4, a); \
 	this->blendPixelPtr(ptr4 + (y) + (px), color3, a); \
-}
+} while (0)
 
 // Color depending on corner (tl,tr,bl: color1, br: color2)
 // Note: this is only for the outer pixels
-#define WU_DRAWCIRCLE_BCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
+#define WU_DRAWCIRCLE_BCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr1 + (y) - (px), color1, a); \
 	this->blendPixelPtr(ptr1 + (x) - (py), color1, a); \
 	this->blendPixelPtr(ptr2 - (x) - (py), color1, a); \
@@ -186,11 +186,11 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr3 - (x) + (py), color1, a); \
 	this->blendPixelPtr(ptr4 + (x) + (py), color2, a); \
 	this->blendPixelPtr(ptr4 + (y) + (px), color2, a); \
-}
+} while (0)
 
 
 // optimized Wu's algorithm
-#define WU_ALGORITHM() { \
+#define WU_ALGORITHM() do { \
 	oldT = T; \
 	T = fp_sqroot(rsq - y*y) ^ 0xFFFF; \
 	py += pitch; \
@@ -199,7 +199,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	} \
 	a2 = (T >> 8); \
 	a1 = ~a2;   \
-}
+} while (0)
 
 
 namespace Graphics {
@@ -485,18 +485,10 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
-		int n = (pixels + 7) >> 3;
-		switch (pixels % 8) {
-		case 0: do {
-					*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 7:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 6:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 5:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 4:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 3:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 2:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-		case 1:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
-				} while (--n > 0);
+		// TODO: Check how this interacts with kFeatureOverlaySupportsAlpha
+		for (int i = 0; i < pixels; ++i) {
+			*ptr = ((*ptr & colorMask) >> 1) | _alphaMask;
+			++ptr;
 		}
 
 	} else if (shadingStyle == GUI::ThemeEngine::kShadingLuminance) {
@@ -511,8 +503,8 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-	register int idst = *ptr;
-	register int isrc = color;
+	int idst = *ptr;
+	int isrc = color;
 
 	*ptr = (PixelType)(
 		(_redMask & ((idst & _redMask) +
