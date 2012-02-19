@@ -30,25 +30,25 @@ static int _fullWidth;
 static int _fullHeight;
 static CGRect _screenRect;
 
-static char* _textureBuffer = 0;
+static char *_textureBuffer = 0;
 static int _textureWidth = 0;
 static int _textureHeight = 0;
 
-static char* _overlayTexBuffer = 0;
+static char *_overlayTexBuffer = 0;
 static int _overlayTexWidth = 0;
 static int _overlayTexHeight = 0;
 static int _overlayWidth = 0;
 static int _overlayHeight = 0;
 static float _overlayPortraitRatio = 1.0f;
 
-NSLock* _lock = nil;
+NSLock *_lock = nil;
 static int _needsScreenUpdate = 0;
 static int _overlayIsEnabled = 0;
 
-static UITouch* _firstTouch = NULL;
-static UITouch* _secondTouch = NULL;
+static UITouch *_firstTouch = NULL;
+static UITouch *_secondTouch = NULL;
 
-static short* _mouseCursor = NULL;
+static short *_mouseCursor = NULL;
 static int _mouseCursorHeight = 0;
 static int _mouseCursorWidth = 0;
 static int _mouseX = 0;
@@ -59,14 +59,12 @@ static int _mouseY = 0;
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
-int printOglError(const char *file, int line)
-{
+int printOglError(const char *file, int line) {
 	int     retCode = 0;
 
 	// returns 1 if an OpenGL error occurred, 0 otherwise.
 	GLenum glErr = glGetError();
-	while( glErr != GL_NO_ERROR)
-	{
+	while (glErr != GL_NO_ERROR) {
 		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line );
 		retCode = 1;
 		glErr = glGetError();
@@ -74,7 +72,7 @@ int printOglError(const char *file, int line)
 	return retCode;
 }
 
-void iPhone_setMouseCursor(short* buffer, int width, int height) {
+void iPhone_setMouseCursor(short *buffer, int width, int height) {
 	_mouseCursor = buffer;
 
 	_mouseCursorWidth = width;
@@ -119,13 +117,13 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 	}
 }
 
-void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	for (y = y1; y < y2; ++y)
 		memcpy(&_textureBuffer[(y * _textureWidth + x1 )* 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
-void iPhone_updateOverlayRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
 	for (y = y1; y < y2; ++y)
@@ -158,19 +156,19 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 }
 
 uint getSizeNextPOT(uint size) {
-    if ((size & (size - 1)) || !size) {
-        int log = 0;
+	if ((size & (size - 1)) || !size) {
+		int log = 0;
 
-        while (size >>= 1)
-            ++log;
+		while (size >>= 1)
+			++log;
 
-        size = (2 << log);
-    }
+		size = (2 << log);
+	}
 
-    return size;
+	return size;
 }
 
-const char* iPhone_getDocumentsDir() {
+const char *iPhone_getDocumentsDir() {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths objectAtIndex:0];
 	return [documentsDirectory UTF8String];
@@ -196,18 +194,15 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 @implementation iPhoneView
 
-+ (Class) layerClass
-{
++ (Class) layerClass {
 	return [CAEAGLLayer class];
 }
 
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
-	if([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")])
-	{
-		if([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")])
-		{
+	if ([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")]) {
+		if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
 			//self.contentScaleFactor = [[UIScreen mainScreen] scale];
 		}
 	}
@@ -395,7 +390,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	if (_context == nil) {
 		orientation = UIDeviceOrientationLandscapeRight;
-		CAEAGLLayer *eaglLayer = (CAEAGLLayer*) self.layer;
+		CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
 		eaglLayer.opaque = YES;
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -475,7 +470,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 
 	int textureSize = _textureWidth * _textureHeight * 2;
-	_textureBuffer = (char*)malloc(textureSize);
+	_textureBuffer = (char *)malloc(textureSize);
 	memset(_textureBuffer, 0, textureSize);
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
@@ -554,7 +549,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	return event;
 }
 
-- (void)addEvent:(NSDictionary*)event {
+- (void)addEvent:(NSDictionary *)event {
 
 	if (_events == nil)
 		_events = [[NSMutableArray alloc] init];

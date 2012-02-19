@@ -25,7 +25,7 @@
 
 #include "osys_main.h"
 
-const OSystem::GraphicsMode* OSystem_IPHONE::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_IPHONE::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
@@ -248,7 +248,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 	}
 }
 
-void OSystem_IPHONE::drawDirtyRect(const Common::Rect& dirtyRect) {
+void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
@@ -263,7 +263,7 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect& dirtyRect) {
 	}
 }
 
-void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
+void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect &dirtyRect) {
 	// int h = dirtyRect.bottom - dirtyRect.top;
 	//
 	// uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
@@ -277,7 +277,7 @@ void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
 	iPhone_updateOverlayRect(_overlayBuffer, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 }
 
-void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect) {
+void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect &updatedRect, const Common::Rect &mouseRect) {
 	//draw mouse on top
 	if (_mouseVisible && (updatedRect.intersects(mouseRect))) {
 		int srcX = 0;
@@ -320,8 +320,8 @@ void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect
 	}
 }
 
-void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect& updatedRect) {
-	iPhone_updateScreenRect(_fullscreen, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom );
+void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect &updatedRect) {
+	iPhone_updateScreenRect(_fullscreen, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom);
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
@@ -466,7 +466,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	int texWidth = getSizeNextPOT(w);
 	int texHeight = getSizeNextPOT(h);
 	int bufferSize =  texWidth * texHeight * sizeof(int16);
-	int16* mouseBuf = (int16 *)malloc(bufferSize);
+	int16 *mouseBuf = (int16 *)malloc(bufferSize);
 	memset(mouseBuf, 0, bufferSize);
 
 	for (uint x = 0; x < w; ++x) {

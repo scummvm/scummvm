@@ -25,7 +25,7 @@
 
 @interface SoftKeyboard : UIView {
 	id inputDelegate;
-	UITextView* inputView;
+	UITextView *inputView;
 }
 
 - (id)initWithFrame:(CGRect)frame;

@@ -29,17 +29,17 @@
 @end
 
 @interface TextInputHandler : UITextView {
-	SoftKeyboard* softKeyboard;
+	SoftKeyboard *softKeyboard;
 }
 
-- (id)initWithKeyboard:(SoftKeyboard*)keyboard;
+- (id)initWithKeyboard:(SoftKeyboard *)keyboard;
 
 @end
 
 
 @implementation TextInputHandler
 
-- (id)initWithKeyboard:(SoftKeyboard*)keyboard; {
+- (id)initWithKeyboard:(SoftKeyboard *)keyboard; {
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	softKeyboard = keyboard;
 
@@ -80,7 +80,7 @@
 	return self;
 }
 
-- (UITextView*)inputView {
+- (UITextView *)inputView {
 	return inputView;
 }
 

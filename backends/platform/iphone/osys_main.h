@@ -42,12 +42,12 @@
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
 
-typedef struct AQCallbackStruct {
-    AudioQueueRef queue;
-    uint32 frameCount;
-    AudioQueueBufferRef buffers[AUDIO_BUFFERS];
-    AudioStreamBasicDescription dataFormat;
-} AQCallbackStruct;
+struct AQCallbackStruct {
+	AudioQueueRef queue;
+	uint32 frameCount;
+	AudioQueueBufferRef buffers[AUDIO_BUFFERS];
+	AudioStreamBasicDescription dataFormat;
+};
 
 class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
 protected:
@@ -167,7 +167,7 @@ public:
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
 	virtual void setTimerCallback(TimerProc callback, int interval);
- 	virtual int getScreenChangeID() const { return _screenChangeCount; }
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
@@ -188,10 +188,10 @@ protected:
 	void dirtyFullOverlayScreen();
 	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
-	void drawDirtyRect(const Common::Rect& dirtyRect);
-	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);
-	void drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect);
-	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);
+	void drawDirtyRect(const Common::Rect &dirtyRect);
+	void drawDirtyOverlayRect(const Common::Rect &dirtyRect);
+	void drawMouseCursorOnRectUpdate(const Common::Rect &updatedRect, const Common::Rect &mouseRect);
+	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 

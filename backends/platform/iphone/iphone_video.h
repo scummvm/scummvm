@@ -33,17 +33,16 @@
 
 #import "iphone_keyboard.h"
 
-@interface iPhoneView : UIView
-{
-	void* _screenSurface;
-	NSMutableArray* _events;
-	SoftKeyboard* _keyboardView;
-	CALayer* _screenLayer;
+@interface iPhoneView : UIView {
+	void *_screenSurface;
+	NSMutableArray *_events;
+	SoftKeyboard *_keyboardView;
+	CALayer *_screenLayer;
 
 	int _widthOffset;
 	int _heightOffset;
 
-	EAGLContext* _context;
+	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
 	GLint _backingWidth;
@@ -69,7 +68,7 @@
 - (void)updateMouseSurface;
 - (void)clearColorBuffer;
 
--(void)updateMouseCursor;
+- (void)updateMouseCursor;
 
 - (id)getEvent;
 

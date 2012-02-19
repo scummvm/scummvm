@@ -60,8 +60,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0)
-{
+	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
 
@@ -272,7 +271,7 @@ void iphone_main(int argc, char *argv[]) {
 	}
 
 #ifdef IPHONE_OFFICIAL
-	chdir( iPhone_getDocumentsDir() );
+	chdir(iPhone_getDocumentsDir());
 #else
 	system("mkdir " SCUMMVM_ROOT_PATH);
 	system("mkdir " SCUMMVM_SAVE_PATH);
