@@ -78,7 +78,7 @@ enum EventType {
 	,
 	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	// this, please talk to tsoliman and/or LordHoto.
-	EVENT_CUSTOM_BACKEND = 13
+	EVENT_CUSTOM_BACKEND = 18
 #endif
 };
 
