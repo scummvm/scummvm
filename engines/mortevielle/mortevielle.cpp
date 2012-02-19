@@ -145,7 +145,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 	c_zzz = 1;
 	init_nbrepm();
-	init_mouse();
+	initMouse();
 
 	init_lieu();
 	sonoff = false;
@@ -497,7 +497,7 @@ void MortevielleEngine::mainGame() {
 	dprog();
 	hirs();
 	dessine_rouleau();
-	show_mouse();
+	showMouse();
 
 	// Loop to play the game
 	do {
@@ -549,7 +549,7 @@ void MortevielleEngine::handleAction() {
 		do {
 			g_vm->_menu.mdn();
 			tinke();
-			mov_mouse(funct, inkey);
+			moveMouse(funct, inkey);
 			CHECK_QUIT;
 			temps = temps + 1;
 		} while (!((choisi) || (temps > lim) || (funct) || (anyone)));

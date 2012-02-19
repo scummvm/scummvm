@@ -64,7 +64,7 @@ int Alert::show(const Common::String &msg, int n) {
 	/*debug('** do_alert **');*/
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 	int do_alert_result;
-	hide_mouse();
+	hideMouse();
 	while (keypressed())
 		dumi = get_ch();	// input >> kbd >> dumi;
 
@@ -106,12 +106,12 @@ int Alert::show(const Common::String &msg, int n) {
 		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * res;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
-	show_mouse();
+	showMouse();
 	quoi = 0;
 	dum = false;
 	do {
 		dumi = '\377';
-		mov_mouse(dum, dumi);
+		moveMouse(dum, dumi);
 		CHECK_QUIT0;
 
 		cx = x_s;
@@ -127,7 +127,7 @@ int Alert::show(const Common::String &msg, int n) {
 				if (test1)  ix = 1;
 				else ix = 2;
 				if (ix != quoi) {
-					hide_mouse();
+					hideMouse();
 					if (quoi != 0) {
 						setPosition(quoi, coldep, esp);
 
@@ -144,12 +144,12 @@ int Alert::show(const Common::String &msg, int n) {
 					g_vm->_screenSurface.writeg(tmp2, 1);
 
 					quoi = ix;
-					show_mouse();
+					showMouse();
 				}
 			}
 		}
 		if ((quoi != 0) && ! newaff) {
-			hide_mouse();
+			hideMouse();
 			setPosition(quoi, coldep, esp);
 
 			Common::String tmp3(" ");
@@ -158,13 +158,13 @@ int Alert::show(const Common::String &msg, int n) {
 			g_vm->_screenSurface.writeg(tmp3, 0);
 
 			quoi = 0;
-			show_mouse();
+			showMouse();
 		}
 		test3 = (cy > 95) && (cy < 105) && (((cx > limit[1][1]) && (cx < limit[1][2]))
 		                                    || ((cx > limit[2][1]) && (cx < limit[2][2])));
 	} while (!g_vm->getMouseClick());
 	g_vm->setMouseClick(false);
-	hide_mouse();
+	hideMouse();
 	if (! test3)  {
 		quoi = n;
 		setPosition(n, coldep, esp);
@@ -174,7 +174,7 @@ int Alert::show(const Common::String &msg, int n) {
 		g_vm->_screenSurface.writeg(tmp4, 1);
 	}
 	charecr(50, succ(int, nligne) << 4);
-	show_mouse();
+	showMouse();
 
 	/* Restore the background area */
 	g_vm->_screenSurface.copyFrom(g_vm->_backgroundSurface, 0, 0);
@@ -289,9 +289,9 @@ bool Ques::show() {
 	compte = 0;
 
 	do {
-		hide_mouse();
+		hideMouse();
 		hirs();
-		show_mouse();
+		showMouse();
 		i = i + 1;
 		deline(ta[i], st, tay);
 		if (res == 1)  y = 29;
@@ -340,7 +340,7 @@ bool Ques::show() {
 		do {
 			g_vm->setMouseClick(false);
 			tesok = false;
-			mov_mouse(func, key);
+			moveMouse(func, key);
 			CHECK_QUIT0;
 
 			k = 1;

@@ -40,7 +40,6 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 	if (!f.open(filename))
 		error("Missing file %s", filename.c_str());
 
-	testfi();
 	int skipBlock = 0;
 	while (skipSize > 127) {
 		++skipBlock;
@@ -66,11 +65,9 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 
 void charani(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
-
 	if (!f.open(filename))
 		error("Missing file - %s", filename.c_str());
 
-	testfi();
 	int skipBlock = 0;
 	while (skipSize > 127) {
 		skipSize = skipSize - 128;
@@ -153,23 +150,29 @@ void taffich() {
 	}
 
 	okdes = true;
-	hide_mouse();
+	hideMouse();
 	lgt = 0;
 	Common::String filename;
 
 	if ((a != 50) && (a != 51)) {
 		m = a + 2000;
-		if ((m > 2001) && (m < 2010))  m = 2001;
-		if (m == 2011)  m = 2010;
-		if (a == 32)  m = 2034;
-		if ((a == 17) && (_maff == 14))  m = 2018;
+		if ((m > 2001) && (m < 2010))
+			m = 2001;
+		if (m == 2011)
+			m = 2010;
+		if (a == 32)
+			m = 2034;
+		if ((a == 17) && (_maff == 14))
+			m = 2018;
 		if (a > 99)
-			if ((is == 1) || (is == 0))  m = 2031;
-			else m = 2032;
-		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144)
-		        || (a == 147) || (a == 149))  m = 2030;
-		if (((a < 27) && (((_maff > 69) && (! s.ipre)) || (_maff > 99)))
-		        || ((_maff > 29) && (_maff < 33)))  m = 2033;
+			if ((is == 1) || (is == 0))
+				m = 2031;
+			else
+				m = 2032;
+		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
+			m = 2030;
+		if (((a < 27) && (((_maff > 69) && (! s.ipre)) || (_maff > 99))) || ((_maff > 29) && (_maff < 33)))
+			m = 2033;
 		messint(m);
 		_maff = a;
 		if (a == 159)
@@ -224,10 +227,14 @@ void taffich() {
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
 		lgt = 0;
 		if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26)) {
-			if (b == 26)  b = 18;
-			else if (b == 24)  b = 17;
-			else if (b > 15)  b = b - 1;
-			for (cx = 0; cx <= (b - 1); cx ++) lgt = lgt + l[cx + 89];
+			if (b == 26)
+				b = 18;
+			else if (b == 24)
+				b = 17;
+			else if (b > 15)
+				b = b - 1;
+			for (cx = 0; cx <= (b - 1); cx ++)
+				lgt = lgt + l[cx + 89];
 			handle = l[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {
@@ -236,10 +243,12 @@ void taffich() {
 		}
 		charani(filename, lgt, handle);
 	}
-	show_mouse();
+	showMouse();
 	if ((a < 27) && ((_maff < 27) || (s.mlieu == 15)) && (msg[4] != entrer)) {
-		if ((a == 13) || (a == 14))  person();
-		else if (! blo)  t11(s.mlieu, cx);
+		if ((a == 13) || (a == 14))
+			person();
+		else if (! blo)
+			t11(s.mlieu, cx);
 		mpers =  0;
 	}
 }

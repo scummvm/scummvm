@@ -148,7 +148,7 @@ void Menu::menu_aff() {
 
 	int pt, x, y, color, msk, num_letr;
 
-	hide_mouse();
+	hideMouse();
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * res;
@@ -180,7 +180,7 @@ void Menu::menu_aff() {
 		} while (!(y == 9));
 		col = col + 48 * res;
 	} while (!(num_letr == 6));
-	show_mouse();
+	showMouse();
 }
 
 /**
@@ -279,7 +279,7 @@ void Menu::menuDown(int ii) {
 	// Draw the menu
 	xco = don[ii][1];
 	nb_lig = don[ii][4];
-	hide_mouse();
+	hideMouse();
 	sauvecr(10, succ(byte, don[ii][2]) << 1);
 	xco = xco << 3;
 	if (res == 1)  cx = 10;
@@ -337,7 +337,7 @@ void Menu::menuDown(int ii) {
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
 	} while (!(cx == nb_lig));
 	test0 = true;
-	show_mouse();
+	showMouse();
 }
 
 /**

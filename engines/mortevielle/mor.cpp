@@ -92,10 +92,10 @@ void modif(int &nu) {
 
 void dessine(int ad, int x, int y) {
 	/* debug('dessine'); */
-	hide_mouse();
+	hideMouse();
 	writepal(numpal);
 	pictout(ad, 0, x, y);
-	show_mouse();
+	showMouse();
 }
 
 void dessine_rouleau() {
@@ -104,9 +104,9 @@ void dessine_rouleau() {
 	if (gd == her) {
 		mem[0x7000 * 16 + 14] = 15;
 	}
-	hide_mouse();
+	hideMouse();
 	pictout(0x73a2, 0, 0, 0);
-	show_mouse();
+	showMouse();
 }
 
 
@@ -145,17 +145,17 @@ void ecrf1() {
 
 void clsf1() {
 	/* debug('clsf1'); */
-	hide_mouse();
+	hideMouse();
 	g_vm->_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
 
-	show_mouse();
+	showMouse();
 }
 
 void clsf2() {
 //	int i, j;
 
 	/* debug('clsf2'); */
-	hide_mouse();
+	hideMouse();
 	if (f2_all) {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 24, 15);
@@ -164,7 +164,7 @@ void clsf2() {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 190));
 		g_vm->_screenSurface.drawBox(0, 175, 634, 15, 15);
 	}
-	show_mouse();
+	showMouse();
 }
 
 void ecrf2() {
@@ -203,10 +203,10 @@ void clsf3() {
 //	int i, j;
 
 	/* debug('clsf3'); */
-	hide_mouse();
+	hideMouse();
 	g_vm->_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
 	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
-	show_mouse();
+	showMouse();
 }
 
 void ecr3(Common::String text) {
@@ -231,7 +231,7 @@ void clsf10() {
 	Common::String st;
 
 	/* debug('clsf10'); */
-	hide_mouse();
+	hideMouse();
 	if (res == 1) {
 		co = 634;
 		cod = 534;
@@ -254,7 +254,7 @@ void clsf10() {
 	else co = 584;
 	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, co, 86));
 	/* rempli(69,12,32,5,255);*/
-	show_mouse();
+	showMouse();
 }
 
 void stop() {
@@ -595,7 +595,7 @@ void pendule() {
 
 
 	/* debug('pendule'); */
-	hide_mouse();
+	hideMouse();
 	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
@@ -610,7 +610,7 @@ void pendule() {
 	if (h > 12)  h = h - 12;
 	if (h == 0)  h = 12;
 	g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
-	show_mouse();
+	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 	if (heu > 11)
 		g_vm->_screenSurface.writeg("PM ", 1);

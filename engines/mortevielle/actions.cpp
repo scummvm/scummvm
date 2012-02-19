@@ -534,12 +534,12 @@ void tmettre() {
 						i = Alert::show(delig, 1);
 						tesok = false;
 						entre = Ques::show();
-						hide_mouse();
+						hideMouse();
 						hirs();
 						dessine_rouleau();
 						clsf2();
 						clsf3();
-						show_mouse();
+						showMouse();
 						tinke();
 						pendule();
 						if (ipers != 0)
@@ -1034,7 +1034,7 @@ void tparler()
 	}
 	tkey1(false);
 	mennor();
-	hide_mouse();
+	hideMouse();
 	hirs();
 	premtet();
 	sparl(0, suj);
@@ -1047,7 +1047,7 @@ void tparler()
 	}
 	lib[46] = lib[45];
 	lib[45] = ' ';
-	show_mouse();
+	showMouse();
 	do {
 		choi = 0;
 		icm = 0;
@@ -1068,10 +1068,10 @@ void tparler()
 		writetp(lib[46], 0);
 		tou = '\0';
 		do {
-			mov_mouse(f, tou);
+			moveMouse(f, tou);
 			CHECK_QUIT;
 
-			read_pos_mouse(x, y, c);
+			getMousePos(x, y, c);
 			x = x * (3 - res);
 			if (x > 319)  cx = 41;
 			else cx = 1;
@@ -1135,11 +1135,11 @@ void tparler()
 				s.conf = s.conf + 3;
 				suj = 139;
 			}
-			hide_mouse();
+			hideMouse();
 			hirs();
 			premtet();
 			sparl(0, suj);
-			show_mouse();
+			showMouse();
 			if ((suj == 84) || (suj == 86)) {
 				s.pourc[5] = '*';
 				s.teauto[7] = '*';
@@ -1152,26 +1152,26 @@ void tparler()
 				s.pourc[8] = '*';
 				s.teauto[32] = '*';
 			}
-			hide_mouse();
+			hideMouse();
 			hirs();
-			show_mouse();
+			showMouse();
 		}
 	} while (!((choi == 46) || (suj == 138)));
 	if (col) {
 		s.conf = s.conf + (3 * (s.conf / 10));
-		hide_mouse();
+		hideMouse();
 		hirs();
 		premtet();
 		sparl(0, 138);
-		show_mouse();
+		showMouse();
 		col = false;
 		s.mlieu = 15;
 	}
 	ctrm = 0;
-	hide_mouse();
+	hideMouse();
 	hirs();
 	dessine_rouleau();
-	show_mouse();
+	showMouse();
 	affper(ipers);
 	tinke();
 	pendule();
@@ -1216,13 +1216,13 @@ void MortevielleEngine::endGame() {
 	clsf3();
 	repon(9, 1509);
 	tkey1(false);
-	hide_mouse();
+	hideMouse();
 	caff = 70;
 	taffich();
 	hirs();
 	premtet();
 	sparl(0, 141);
-	show_mouse();
+	showMouse();
 	clsf1();
 	repon(9, 1509);
 	repon(2, 142);

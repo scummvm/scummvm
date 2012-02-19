@@ -181,7 +181,7 @@ void tinke() {
 void fenat(char ans) {
 	int coul;
 
-	hide_mouse();
+	hideMouse();
 	if (gd == cga)
 		coul = 2;
 	else if (gd == her)
@@ -191,7 +191,7 @@ void fenat(char ans) {
 
 	g_vm->_screenSurface.writeCharacter(Common::Point(306, 193), ord(ans), coul);
 	g_vm->_screenSurface.drawBox(300, 191, 16, 8, 15);
-	show_mouse();
+	showMouse();
 }
 
 
@@ -207,18 +207,18 @@ void tkey1(bool d) {
 	int x, y, c;
 	int key;
 
-	hide_mouse();
+	hideMouse();
 	fenat('K');
 	while (keypressed())  key = testou();
 	do {
 		if (d)  tinke();
 		quest = keypressed();
-		read_pos_mouse(x, y, c);
+		getMousePos(x, y, c);
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && anyone)));
 	if (quest)  key = testou();
 	g_vm->setMouseClick(false);
-	show_mouse();
+	showMouse();
 }
 
 void tmlieu(int mli) {
@@ -384,7 +384,7 @@ void sparl(float adr, float rep) {
 	char st[1410];
 
 	repint = abs((int)rep);
-	hide_mouse();
+	hideMouse();
 	deline(repint + c_paroles, st, tay);
 	afftex(st, 230, 4, 65, 24, 5);
 	f3f8::draw();
@@ -396,7 +396,7 @@ void sparl(float adr, float rep) {
 		CHECK_QUIT;
 	} while (!(key == 66));
 	hirs();
-	show_mouse();
+	showMouse();
 }
 
 void finfouil() {
@@ -477,13 +477,13 @@ void t1sama() {    /* On entre dans le manoir */                 //Translation: 
 		repon(2, 33);
 		tkey1(false);
 		mennor();
-		hide_mouse();
+		hideMouse();
 		hirs();
 		premtet();
 		sparl(0, 140);
 		dessine_rouleau();
 		pendule();
-		show_mouse();
+		showMouse();
 		s.mlieu = 0;
 		affrep();
 		t5(10);
@@ -616,7 +616,7 @@ void tfleche() {
 		touch = '\0';
 
 		do {
-			mov_mouse(qust, touch);
+			moveMouse(qust, touch);
 			CHECK_QUIT;
 
 			if (g_vm->getMouseClick())

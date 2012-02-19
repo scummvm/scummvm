@@ -50,7 +50,7 @@ bool dans_rect(rectangle r) {
 	int x, y, c;
 
 	bool dans_rect_result;
-	read_pos_mouse(x, y, c);
+	getMousePos(x, y, c);
 	if ((x > r.x1) &&
 	        (x < r.x2) &&
 	        (y > r.y1) &&
@@ -113,15 +113,15 @@ void pictout(int seg, int dep, int x, int y) {
 }
 
 void sauvecr(int y, int dy) {
-	hide_mouse();
+	hideMouse();
 	s_sauv(gd, y, dy);
-	show_mouse();
+	showMouse();
 }
 
 void charecr(int y, int dy) {
-	hide_mouse();
+	hideMouse();
 	s_char(gd, y, dy);
-	show_mouse();
+	showMouse();
 }
 
 void adzon() {
