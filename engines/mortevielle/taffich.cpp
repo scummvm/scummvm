@@ -35,69 +35,63 @@
 
 namespace Mortevielle {
 
-void chardes(Common::String nom, int32 passe, int long_) {
-	int i, p, l;
-//	byte b;
+void chardes(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
-
-	/* debug('chardes'); */
-	if (!f.open(nom))
-		error("Missing file %s", nom.c_str());
+	if (!f.open(filename))
+		error("Missing file %s", filename.c_str());
 
 	testfi();
-	p = 0;
-	while (passe > 127) {
-		p = p + 1;
-		passe = passe - 128;
+	int skipBlock = 0;
+	while (skipSize > 127) {
+		++skipBlock;
+		skipSize -= 128;
 	}
-	if (p != 0)
-		f.seek(p * 0x80);
-	p = abs(passe);
-	l = long_ + p;
-	i = 0;
-	while (l > 0) {
-		f.read(&mem[0x6000 * 16 + i], 128);
+	if (skipBlock != 0)
+		f.seek(skipBlock * 0x80);
+
+	int remainingSkipSize = abs(skipSize);
+	int totalLength = length + remainingSkipSize;
+	int memIndx = 0x6000 * 16;
+	while (totalLength > 0) {
+		f.read(&mem[memIndx], 128);
 		testfi();
-		l = l - 128;
-		i = i + 128;
+		totalLength -= 128;
+		memIndx += 128;
 	}
 	f.close();
 
-	for (i = p; i <= long_ + p; i ++) 
-		mem[0x7000 * 16 + i - p] = mem[0x6000 * 16 + i];
-	/*$i+*/
+	for (int i = remainingSkipSize; i <= length + remainingSkipSize; i ++) 
+		mem[0x7000 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
 }
 
-void charani(Common::String nom, int32 passe, int long_) {
-	int i, p, l;
-//	byte b;
+void charani(Common::String filename, int32 skipSize, int length) {
 	Common::File f;
 
-	/* debug('charani'); */
-	if (!f.open(nom))
-		error("Missing file - %s", nom.c_str());
+	if (!f.open(filename))
+		error("Missing file - %s", filename.c_str());
 
 	testfi();
-	p = 0;
-	while (passe > 127) {
-		passe = passe - 128;
-		p = p + 1;
+	int skipBlock = 0;
+	while (skipSize > 127) {
+		skipSize = skipSize - 128;
+		++skipBlock;
 	}
-	if (p != 0)
-		f.seek(p * 0x80);
+	if (skipBlock != 0)
+		f.seek(skipBlock * 0x80);
 
-	p = abs(passe);
-	l = long_ + p;
-	i = 0;
-	while (l > 0) {
-		f.read(&mem[0x6000 * 16 + i], 128);
+	int remainingSkipSize = abs(skipSize);
+	int fullLength = length + remainingSkipSize;
+	int memIndx = 0x6000 * 16;
+	while (fullLength > 0) {
+		f.read(&mem[memIndx], 128);
 		testfi();
-		l = l - 128;
-		i = i + 128;
+		fullLength -= 128;
+		memIndx += 128;
 	}
 	f.close();
 
-	for (i = p; i <= long_ + p; i ++) mem[0x7314 * 16 + i - p] = mem[0x6000 * 16 + i];
+	for (int i = remainingSkipSize; i <= length + remainingSkipSize; i ++)
+		mem[0x7314 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
 }
 
 void taffich() {
@@ -107,7 +101,6 @@ void taffich() {
 	int i, m, a, b, cx, handle,
 	        npal;
 	int32 lgt;
-	Common::String nom;
 	int palh, k, j;
 	int alllum[16];
 
@@ -118,69 +111,101 @@ void taffich() {
 	else if ((a >= 136) && (a <= 140))
 		a = tran1[a - 136];
 	b = a;
-	if (maff == a)  return;
-	if (a == 16) {
+	if (_maff == a)
+		return;
+
+	switch (a) {
+	case 16:
 		s.pourc[9] = '*';
 		s.teauto[42] = '*';
-	}
-	if (a == 20) {
+		break;
+	case 20:
 		s.teauto[39] = '*';
 		if (s.teauto[36] == '*') {
 			s.pourc[3] = '*';
 			s.teauto[38] = '*';
 		}
-	}
-	if (a == 24)  s.teauto[37] = '*';
-	if (a == 30)  s.teauto[9] = '*';
-	if (a == 31) {
+		break;
+	case 24:
+		s.teauto[37] = '*';
+		break;
+	case 30:
+		s.teauto[9] = '*';
+		break;
+	case 31:
 		s.pourc[4] = '*';
 		s.teauto[35] = '*';
+		break;
+	case 118:
+		s.teauto[41] = '*';
+		break;
+	case 143:
+		s.pourc[1] = '*';
+		break;
+	case 150:
+		s.teauto[34] = '*';
+		break;
+	case 151:
+		s.pourc[2] = '*';
+		break;
+	default:
+		break;
 	}
-	if (a == 118)  s.teauto[41] = '*';
-	if (a == 143)  s.pourc[1] = '*';
-	if (a == 150)  s.teauto[34] = '*';
-	if (a == 151)  s.pourc[2] = '*';
+
 	okdes = true;
 	hide_mouse();
 	lgt = 0;
+	Common::String filename;
+
 	if ((a != 50) && (a != 51)) {
 		m = a + 2000;
 		if ((m > 2001) && (m < 2010))  m = 2001;
 		if (m == 2011)  m = 2010;
 		if (a == 32)  m = 2034;
-		if ((a == 17) && (maff == 14))  m = 2018;
+		if ((a == 17) && (_maff == 14))  m = 2018;
 		if (a > 99)
 			if ((is == 1) || (is == 0))  m = 2031;
 			else m = 2032;
 		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144)
 		        || (a == 147) || (a == 149))  m = 2030;
-		if (((a < 27) && (((maff > 69) && (! s.ipre)) || (maff > 99)))
-		        || ((maff > 29) && (maff < 33)))  m = 2033;
+		if (((a < 27) && (((_maff > 69) && (! s.ipre)) || (_maff > 99)))
+		        || ((_maff > 29) && (_maff < 33)))  m = 2033;
 		messint(m);
-		maff = a;
-		if (a == 159)  a = 86;
-		else if (a > 140)  a = a - 67;
-		else if (a > 137)  a = a - 66;
-		else if (a > 99)  a = a - 64;
-		else if (a > 69)  a = a - 42;
-		else if (a > 29)  a = a - 5;
-		else if (a == 26)  a = 24;
-		else if (a > 18)  a = a - 1;
+		_maff = a;
+		if (a == 159)
+			a = 86;
+		else if (a > 140)
+			a = a - 67;
+		else if (a > 137)
+			a = a - 66;
+		else if (a > 99)
+			a = a - 64;
+		else if (a > 69)
+			a = a - 42;
+		else if (a > 29)
+			a = a - 5;
+		else if (a == 26)
+			a = 24;
+		else if (a > 18)
+			a = a - 1;
 		npal = a;
-		for (cx = 0; cx <= (a - 1); cx ++) lgt = lgt + l[cx];
+
+		for (cx = 0; cx <= (a - 1); cx ++)
+			lgt = lgt + l[cx];
 		handle = l[a];
-		nom = "DXX.mor";
+
+		filename = "DXX.mor";
 	} else {
-		nom = "DZZ.mor";
+		filename = "DZZ.mor";
 		handle = l[87];
 		if (a == 51) {
 			lgt = handle;
 			handle = l[88];
 		}
-		maff = a;
+		_maff = a;
 		npal = a + 37;
 	}
-	chardes(nom, lgt, handle);
+	chardes(filename, lgt, handle);
 	if (gd == her) {
 		for (i = 0; i <= 15; i ++) {
 			palh = READ_LE_UINT16(&mem[0x7000 * 16 + (succ(int, i) << 1)]);
@@ -204,15 +229,15 @@ void taffich() {
 			else if (b > 15)  b = b - 1;
 			for (cx = 0; cx <= (b - 1); cx ++) lgt = lgt + l[cx + 89];
 			handle = l[b + 89];
-			nom = "AXX.mor";
+			filename = "AXX.mor";
 		} else if (b == 50) {
-			nom = "AZZ.mor";
+			filename = "AZZ.mor";
 			handle = 1260;
 		}
-		charani(nom, lgt, handle);
+		charani(filename, lgt, handle);
 	}
 	show_mouse();
-	if ((a < 27) && ((maff < 27) || (s.mlieu == 15)) && (msg[4] != entrer)) {
+	if ((a < 27) && ((_maff < 27) || (s.mlieu == 15)) && (msg[4] != entrer)) {
 		if ((a == 13) || (a == 14))  person();
 		else if (! blo)  t11(s.mlieu, cx);
 		mpers =  0;
