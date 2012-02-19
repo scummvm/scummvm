@@ -51,7 +51,7 @@ void change_gd(int ngd) {
 	else person();
 	clsf2();
 	clsf3();
-	maff = 68;
+	_maff = 68;
 	afdes(0);
 	repon(2, crep);
 	g_vm->_menu.menu_aff();
@@ -83,7 +83,7 @@ void MortevielleEngine::gameLoaded() {
 	g[2] = 'A';
 	cache = false;
 	brt = false;
-	maff = 68;
+	_maff = 68;
 	g[5] = 'E';
 	mnumo = 0;
 	prebru = 0;

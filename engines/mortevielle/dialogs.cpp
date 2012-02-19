@@ -422,7 +422,7 @@ void f3f8::atf3f8(int &key) {
 
 void f3f8::aff50(bool c) {
 	caff = 50;
-	maff = 0;
+	_maff = 0;
 	taffich();
 	dessine(ades, 63, 12);
 	if (c)

@@ -32,8 +32,8 @@
 
 namespace Mortevielle {
 
-extern void chardes(Common::String nom, int32 passe, int long_);
-extern void charani(Common::String nom, int32 passe, int long_);
+extern void chardes(Common::String filename, int32 passe, int long_);
+extern void charani(Common::String filename, int32 skipSize, int length);
 extern void taffich();
 
 } // End of namespace Mortevielle
