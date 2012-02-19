@@ -40,9 +40,9 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 
-	if (_queuedInputEvent.type != (Common::EventType)0 && curTime >= _queuedEventTime) {
+	if (_queuedInputEvent.type != Common::EVENT_INVALID && curTime >= _queuedEventTime) {
 		event = _queuedInputEvent;
-		_queuedInputEvent.type = (Common::EventType)0;
+		_queuedInputEvent.type = Common::EVENT_INVALID;
 		return true;
 	}
 
