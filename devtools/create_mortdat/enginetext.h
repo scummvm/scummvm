@@ -106,7 +106,7 @@ const char *engineDataFr[] = {
 	"se cacher",
 
 	"prendre",
-	" sonder   ",
+	"sonder",
 	"soulever",
 	" -SUITE- ",
 	" -STOP-  ",
