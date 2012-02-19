@@ -25,6 +25,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
    - Added a difficulty selection dialog for Loom FM-TOWNS.
 
+ iPhone port:
+   - Changed "F5 (menu)" gesture to open up the global main menu instead.
+
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.
      (The migration batch file can be used to copy savegames from the old
