@@ -63,6 +63,9 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
+
+	uint language = ConfMan.getInt("audio_language");
+	_bink.setAudioTrack(language);
 }
 
 void Movie::loadPosition(const VideoData &videoData) {

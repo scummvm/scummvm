@@ -162,4 +162,9 @@ void SeekableBinkDecoder::skipNextFrame() {
 		_startTime = g_system->getMillis();
 }
 
+void SeekableBinkDecoder::setAudioTrack(uint32 track) {
+	if (_audioTracks.size() > 1 && track < _audioTracks.size())
+		_audioTrack = track;
+}
+
 } /* namespace Video */

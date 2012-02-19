@@ -37,6 +37,8 @@ public:
 	void seekToTime(Audio::Timestamp time);
 	uint32 getDuration() const;
 
+	// Bink seek specific
+	void setAudioTrack(uint32 track);
 protected:
 	/** Decode a video packet. */
 	void videoPacket(VideoFrame &video);
