@@ -201,6 +201,8 @@ protected:
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
+	void darkenFill(PixelType *first, PixelType *last);
+
 	const PixelFormat _format;
 	const PixelType _redMask, _greenMask, _blueMask, _alphaMask;
 

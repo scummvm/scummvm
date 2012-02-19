@@ -527,6 +527,35 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		(idst & _alphaMask));
 }
 
+template<typename PixelType>
+inline void VectorRendererSpec<PixelType>::
+darkenFill(PixelType *ptr, PixelType *end) {
+	PixelType mask = (PixelType)((3 << _format.rShift) | (3 << _format.gShift) | (3 << _format.bShift));
+
+	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
+		// !kFeatureOverlaySupportsAlpha (but might have alpha bits)
+
+		while (ptr != end) {
+			*ptr = ((*ptr & ~mask) >> 2) | _alphaMask;
+			++ptr;
+		}
+	} else {
+		// kFeatureOverlaySupportsAlpha
+		// assuming at least 3 alpha bits
+
+		mask |= 3 << _format.aShift;
+		PixelType addA = (PixelType)(255 >> _format.aLoss) << _format.aShift;
+		addA -= (addA >> 2);
+
+		while (ptr != end) {
+			// Darken the colour, and increase the alpha
+			// (0% -> 75%, 100% -> 100%)
+			*ptr = (PixelType)(((*ptr & ~mask) >> 2) + addA);
+			++ptr;
+		}
+	}
+}
+
 /********************************************************************
  ********************************************************************
  * Primitive shapes drawing - Public API calls - VectorRendererSpec *
@@ -1020,8 +1049,9 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	PixelType *ptr_fill = (PixelType *)_activeSurface->getBasePtr(x, y);
 
 	if (fill) {
+		assert((_bgColor & ~_alphaMask) == 0); // only support black
 		while (height--) {
-			blendFill(ptr_fill, ptr_fill + w, _bgColor, 200);
+			darkenFill(ptr_fill, ptr_fill + w);
 			ptr_fill += pitch;
 		}
 	}
