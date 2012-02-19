@@ -91,7 +91,6 @@ protected:
 	long _lastMouseDown;
 	long _lastMouseTap;
 	long _queuedEventTime;
-	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
@@ -192,11 +191,9 @@ protected:
 	void internUpdateScreen();
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
-	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
 	void drawDirtyRect(const Common::Rect &dirtyRect);
 	void drawDirtyOverlayRect(const Common::Rect &dirtyRect);
-	void drawMouseCursorOnRectUpdate(const Common::Rect &updatedRect, const Common::Rect &mouseRect);
 	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);

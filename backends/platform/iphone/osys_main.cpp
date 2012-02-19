@@ -62,8 +62,6 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
 	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
-	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
-
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
 }

@@ -108,8 +108,8 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 	//_mouseX = _overlayHeight - mouseX;
 	//_mouseY = mouseY;
 
-	_mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _overlayHeight;
-	_mouseY = mouseY / (float)_overlayHeight * _overlayWidth;
+	_mouseX = mouseX;
+	_mouseY = mouseY;
 
 	if (!_needsScreenUpdate) {
 		_needsScreenUpdate = 1;
@@ -259,16 +259,14 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 	_needsScreenUpdate = 0;
 
-	if (_overlayIsEnabled) {
-		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-	}
+	glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
 
 	[self updateMainSurface];
 
-	if (_overlayIsEnabled) {
+	if (_overlayIsEnabled)
 		[self updateOverlaySurface];
-		[self updateMouseSurface];
-	}
+
+	[self updateMouseSurface];
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
@@ -350,14 +348,32 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (void)updateMouseSurface {
 
-	int width = _mouseCursorWidth / (float)_backingWidth * _backingHeight;
-	int height = _mouseCursorHeight / (float)_backingHeight * _backingWidth;
+	int width = _mouseCursorWidth;
+	int height = _mouseCursorHeight;
+
+	int mouseX = _mouseX;
+	int mouseY = _mouseY;
+
+	if (!_overlayIsEnabled) {
+		const GLint gameWidth = (_visibleHeight - 2 * _widthOffset);
+		const GLint gameHeight = (_visibleWidth - 2 * _heightOffset);
+
+		mouseX = (_width - mouseX) / (float)_width * gameHeight + _heightOffset;
+		mouseY = mouseY / (float)_height * gameWidth + _widthOffset;
+		width = width / (float)_width * gameHeight;
+		height = height / (float)_height * gameWidth;
+	} else {
+		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _backingWidth;
+		mouseY = mouseY / (float)_overlayHeight * _backingHeight;
+		width = width / (float)_overlayWidth * _backingWidth;
+		height = height / (float)_overlayHeight * _backingHeight;
+	}
 
 	GLfloat vertices[] = {
-		_mouseX, _mouseY,
-		_mouseX + height, _mouseY,
-		_mouseX, _mouseY + width,
-		_mouseX + height,  _mouseY + width
+		mouseX        , mouseY,
+		mouseX + width, mouseY,
+		mouseX        , mouseY + height,
+		mouseX + width, mouseY + height
 	};
 
 	//printf("Cursor: width %u height %u\n", _mouseCursorWidth, _mouseCursorHeight);
