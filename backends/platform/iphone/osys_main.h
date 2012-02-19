@@ -70,7 +70,10 @@ protected:
 
 	uint16 *_fullscreen;
 
+	// For use with the game texture
 	uint16  _gamePalette[256];
+	// For use with the mouse texture
+	uint16  _gamePaletteRGBA5551[256];
 	bool _overlayVisible;
 	uint16 _screenWidth;
 	uint16 _screenHeight;

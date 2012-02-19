@@ -99,6 +99,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 
 	for (uint i = start; i < start + num; ++i) {
 		_gamePalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(b[0], b[1], b[2]);
+		_gamePaletteRGBA5551[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(b[0], b[1], b[2]);
 		b += 3;
 	}
 
@@ -473,7 +474,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 		for (uint y = 0; y < h; ++y) {
 			byte color = buf[y * w + x];
 			if (color != keycolor)
-				mouseBuf[y * texWidth + x] = _gamePalette[color] | 0x1;
+				mouseBuf[y * texWidth + x] = _gamePaletteRGBA5551[color] | 0x1;
 			else
 				mouseBuf[y * texWidth + x] = 0x0;
 		}
