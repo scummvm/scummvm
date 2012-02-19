@@ -2417,6 +2417,7 @@ void Script::newGame(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: New game", cmd.op);
 
 	_vm->_state->newGame();
+	_vm->_inventory->reset();
 }
 
 } /* namespace Myst3 */
