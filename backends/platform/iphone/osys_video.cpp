@@ -98,7 +98,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
-		_palette[i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(b[0], b[1], b[2]);
+		_gamePalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(b[0], b[1], b[2]);
 		b += 3;
 	}
 
@@ -110,7 +110,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 	byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
-		Graphics::colorToRGB<Graphics::ColorMasks<565> >(_palette[i], b[0], b[1], b[2]);
+		Graphics::colorToRGB<Graphics::ColorMasks<565> >(_gamePalette[i], b[0], b[1], b[2]);
 		b += 3;
 	}
 }
@@ -256,7 +256,7 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
 	for (int y = h; y > 0; y--) {
 		for (int x = w; x > 0; x--)
-			*dst++ = _palette[*src++];
+			*dst++ = _gamePalette[*src++];
 
 		dst += _screenWidth - w;
 		src += _screenWidth - w;
@@ -310,7 +310,7 @@ void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect &updatedRect
 		for (int y = displayHeight; y > srcY; y--) {
 			for (int x = displayWidth; x > srcX; x--) {
 				if (*src != _mouseKeyColor)
-					*dst = _palette[*src];
+					*dst = _gamePalette[*src];
 				dst++;
 				src++;
 			}
@@ -473,7 +473,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 		for (uint y = 0; y < h; ++y) {
 			byte color = buf[y * w + x];
 			if (color != keycolor)
-				mouseBuf[y * texWidth + x] = _palette[color] | 0x1;
+				mouseBuf[y * texWidth + x] = _gamePalette[color] | 0x1;
 			else
 				mouseBuf[y * texWidth + x] = 0x0;
 		}

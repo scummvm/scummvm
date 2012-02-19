@@ -70,7 +70,7 @@ protected:
 
 	uint16 *_fullscreen;
 
-	uint16  _palette[256];
+	uint16  _gamePalette[256];
 	bool _overlayVisible;
 	uint16 _screenWidth;
 	uint16 _screenHeight;
