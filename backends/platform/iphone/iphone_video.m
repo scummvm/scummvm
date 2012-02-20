@@ -584,17 +584,17 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_visibleHeight = _renderBufferHeight;
 		_visibleWidth = _renderBufferWidth;
 
-		float ratioDifference = ((float)_height / (float)_width) / ((float)_fullWidth / (float)_fullHeight);
+		float ratioDifference = ((float)_height / (float)_width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
 		int rectWidth, rectHeight;
 		if (ratioDifference < 1.0f) {
-			rectWidth = _fullWidth * ratioDifference;
-			rectHeight = _fullHeight;
-			_widthOffset = (_fullWidth - rectWidth) / 2;
+			rectWidth = _renderBufferWidth * ratioDifference;
+			rectHeight = _renderBufferHeight;
+			_widthOffset = (_renderBufferWidth - rectWidth) / 2;
 			_heightOffset = 0;
 		} else {
-			rectWidth = _fullWidth;
-			rectHeight = _fullHeight / ratioDifference;
-			_heightOffset = (_fullHeight - rectHeight) / 2;
+			rectWidth = _renderBufferWidth;
+			rectHeight = _renderBufferHeight / ratioDifference;
+			_heightOffset = (_renderBufferHeight - rectHeight) / 2;
 			_widthOffset = 0;
 		}
 
@@ -603,9 +603,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_overlayPortraitRatio = 1.0f;
 	} else {
 		float ratio = (float)_height / (float)_width;
-		int height = _fullWidth * ratio;
-		//printf("Making rect (%u, %u)\n", _fullWidth, height);
-		_gameScreenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
+		int height = _renderBufferWidth * ratio;
+		//printf("Making rect (%u, %u)\n", _renderBufferWidth, height);
+		_gameScreenRect = CGRectMake(0, 0, _renderBufferWidth - 1, height - 1);
 
 		_visibleHeight = height;
 		_visibleWidth = _renderBufferWidth;
