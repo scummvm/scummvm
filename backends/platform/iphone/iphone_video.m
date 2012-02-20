@@ -42,7 +42,6 @@ static int _overlayWidth = 0;
 static int _overlayHeight = 0;
 static float _overlayPortraitRatio = 1.0f;
 
-NSLock *_lock = nil;
 static int _needsScreenUpdate = 0;
 static int _overlayIsEnabled = 0;
 
@@ -247,11 +246,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 	_fullWidth = frame.size.width;
 	_fullHeight = frame.size.height;
-	_screenLayer = nil;
 
 	sharedInstance = self;
 
-	_lock = [NSLock new];
 	_keyboardView = nil;
 	_context = nil;
 	_screenTexture = 0;

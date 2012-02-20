@@ -37,7 +37,6 @@
 	void *_screenSurface;
 	NSMutableArray *_events;
 	SoftKeyboard *_keyboardView;
-	CALayer *_screenLayer;
 
 	int _widthOffset;
 	int _heightOffset;
