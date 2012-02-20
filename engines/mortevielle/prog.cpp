@@ -46,7 +46,7 @@ void change_gd(int ngd) {
 	showMouse();
 	dessine_rouleau();
 	tinke();
-	pendule();
+	drawClock();
 	if (ipers != 0)  affper(ipers);
 	else person();
 	clsf2();
@@ -122,7 +122,7 @@ void MortevielleEngine::gameLoaded() {
 	}
 	person();
 	tinke();
-	pendule();
+	drawClock();
 	afdes(0);
 	repon(2, crep);
 	clsf3();
@@ -254,9 +254,11 @@ void theure() {
 	vj = vj / 48;
 	vm = vh % 2;
 	vh = vh / 2;
-	heu = vh;
-	if (vm == 1)  min = 30;
-	else min = 0;
+	_hour = vh;
+	if (vm == 1)
+		_minute = 30;
+	else
+		_minute = 0;
 }
 
 } // End of namespace Mortevielle

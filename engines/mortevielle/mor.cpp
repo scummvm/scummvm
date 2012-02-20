@@ -618,7 +618,7 @@ void chlm(int &per) {
 	if (per == 2)  per = 128;
 }
 
-void pendule() {
+void drawClock() {
 	const int cv[3][13] = {
 		{ 0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,  0,  0 },
 		{ 0,  5,  8, 10,  8,  5,  0, -5, -8, -10, -8, -5,  0 },
@@ -638,30 +638,30 @@ void pendule() {
 		co = 0;
 	else co = 1;
 
-	if (min == 0)
-		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
+	if (_minute == 0)
+		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
 	else 
-		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
+		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
 
-	h = heu;
+	h = _hour;
 	if (h > 12)
 		h -= 12;
 	if (h == 0)
 		h = 12;
 
-	g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
+	g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
 
-	if (heu > 11)
+	if (_hour > 11)
 		g_vm->_screenSurface.writeg("PM ", 1);
 	else
 		g_vm->_screenSurface.writeg("AM ", 1);
 
 	g_vm->_screenSurface.putxy(550, 160);
-	if ((jou >= 0) && (jou <= 8)) {
+	if ((_day >= 0) && (_day <= 8)) {
 		Common::String tmp = g_vm->getString(S_DAY);
-		tmp.insertChar((char)(jou + 49), 0);
+		tmp.insertChar((char)(_day + 49), 0);
 		g_vm->_screenSurface.writeg(tmp, 1);
 	}
 }

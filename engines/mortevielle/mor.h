@@ -72,7 +72,7 @@ extern void cpl5(int &p);
 extern void cpl6(int &p);
 extern void person();
 extern void chlm(int &per);
-extern void pendule();
+extern void drawClock();
 /*************
  * NIVEAU 11 *
  *************/

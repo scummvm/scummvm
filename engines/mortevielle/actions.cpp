@@ -621,7 +621,6 @@ void fctOpen() {
  * @remarks	Originally called 'tmettre'
  */
 void fctPlace() {
-	int quel;
 	bool entre;
 	char st[1410];
 	Common::String str_;
@@ -669,8 +668,8 @@ void fctPlace() {
 					repon(2, 165);
 					maivid();
 					parole(6, -9, 1);
-					quel = Alert::show(g_vm->getString(S_YES_NO), 1);
-					if (quel == 1)  {
+					int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+					if (answer== 1)  {
 						deline(582, st, tay);
 						i = Alert::show(delig, 1);
 						tesok = false;
@@ -682,7 +681,7 @@ void fctPlace() {
 						clsf3();
 						showMouse();
 						tinke();
-						pendule();
+						drawClock();
 						if (ipers != 0)
 							affper(ipers);
 						else 
@@ -745,8 +744,6 @@ void fctPlace() {
  * @remarks	Originally called 'ttourner'
  */
 void fctTurn() {
-	int quel;
-
 	if (caff > 99) {
 		crep = 149;
 		return;
@@ -762,8 +759,8 @@ void fctTurn() {
 		if ((s.mlieu == 13) && (s.ibag == 159) && (s.iboul == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
-			quel = Alert::show(g_vm->getString(S_YES_NO), 1);
-			if (quel == 1)
+			int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+			if (answer == 1)
 				g_vm->_endGame = true;
 			else
 				crep = 168;
@@ -772,8 +769,8 @@ void fctTurn() {
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
-			quel = Alert::show(g_vm->getString(S_YES_NO), 1);
-			if (quel == 1) {
+			int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+			if (answer == 1) {
 				s.mlieu = 16;
 				affrep();
 			} else
@@ -1137,7 +1134,7 @@ void fctEnter() {
  * @remarks	Originally called 'tdormir'
  */
 void fctSleep() {
-	int z, j, h, m, quel;
+	int z, j, h, m;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
 		crep = 148;
@@ -1156,6 +1153,8 @@ void fctSleep() {
 	ecrf2();
 	ecr2(g_vm->getString(S_WANT_TO_WAKE_UP));
 	calch(j, h, m);
+
+	int answer;
 	do {
 		if (h < 8) {
 			s.conf = s.conf - (s.conf / 20);
@@ -1170,9 +1169,9 @@ void fctSleep() {
 		if (h > 23)
 			h = 0;
 		tinke();
-		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
+		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
 		anyone = false;
-	} while (!(quel == 1));
+	} while (!(answer == 1));
 	crep = 998;
 	num = 0;
 }
@@ -1240,6 +1239,8 @@ void fctWait() {
 
 	mpers = 0;
 	clsf3();
+
+	int answer;
 	do {
 		++jh;
 		tinke();
@@ -1257,8 +1258,8 @@ void fctWait() {
 			return;
 		}
 		repon(2, 102);
-		quel = Alert::show(g_vm->getString(S_YES_NO), 1);
-	} while (!(quel == 2));
+		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+	} while (!(answer == 2));
 	crep = 998;
 	if (!anyone)
 		tinke();
@@ -1472,7 +1473,7 @@ void fctDiscuss() {
 	showMouse();
 	affper(ipers);
 	tinke();
-	pendule();
+	drawClock();
 	affrep();
 	/* chech;*/
 	tmlieu(s.mlieu);
@@ -1551,7 +1552,7 @@ void MortevielleEngine::endGame() {
  * @remarks	Originally called 'tencore'
  */
 void MortevielleEngine::loseGame() {
-	int quel;
+	int answer;
 
 	clsf2();
 	musique(0);
@@ -1562,12 +1563,12 @@ void MortevielleEngine::loseGame() {
 	vh = 10;
 	vm = 0;
 	vj = 0;
-	min = 0;
-	heu = 10;
-	jou = 0;
+	_minute = 0;
+	_hour = 10;
+	_day = 0;
 	repon(2, 180);
-	quel = Alert::show(g_vm->getString(S_YES_NO), 1);
-	_quitGame = (quel != 1);
+	answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+	_quitGame = (answer != 1);
 }
 
 } // End of namespace Mortevielle
