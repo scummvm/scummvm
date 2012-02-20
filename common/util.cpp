@@ -415,32 +415,37 @@ void updateGameGUIOptions(const String &options, const String &langOption) {
 	}
 }
 
-//
-// TODO: Instead of a blind cast, we might want to verify
-// if c equals EOS; and/or is in the range -255..+255;
-// and return false if it isn't.
-//
+#define ENSURE_ASCII_CHAR(c) \
+		if (c < 0 || c > 127) \
+			return false
+
 bool isAlnum(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return isalnum((byte)c);
 }
 
 bool isAlpha(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return isalpha((byte)c);
 }
 
 bool isDigit(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return isdigit((byte)c);
 }
 
 bool isLower(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return islower((byte)c);
 }
 
 bool isSpace(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return isspace((byte)c);
 }
 
 bool isUpper(int c) {
+	ENSURE_ASCII_CHAR(c);
 	return isupper((byte)c);
 }
 
