@@ -57,14 +57,12 @@ RemapDialog::~RemapDialog() {
 }
 
 void RemapDialog::open() {
-	bool divider = false;
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
 		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
 			_topKeymapIsGui = true;
 		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
-		divider = true;
 	}
 
 	Keymapper::Domain *_globalKeymaps = &_keymapper->getGlobalDomain();
@@ -98,35 +96,30 @@ void RemapDialog::open() {
 	uint32 idx = 0;
 
 	if (activeKeymaps.size() > 1) {
-		if (divider)
-			_kmPopUp->appendEntry("");
 		int topIndex = activeKeymaps.size() - 1;
+		bool active = activeKeymaps[topIndex].transparent;
 		for (int i = topIndex - 1; i >= 0; --i) {
 			Keymapper::MapRecord mr = activeKeymaps[i];
-			_kmPopUp->appendEntry(mr.keymap->getName() + _(" (Active)"), idx);
+			_kmPopUp->appendEntry(mr.keymap->getName() + (active ? _(" (Active)") : _(" (Blocked)")), idx);
 			_keymapTable[idx++] = mr.keymap;
+			active &= mr.transparent;
 		}
-		divider = true;
 	}
 
+	_kmPopUp->appendEntry("");
+
 	if (_globalKeymaps) {
-		if (divider)
-			_kmPopUp->appendEntry("");
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Global)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
-		divider = true;
 	}
 
 	if (_gameKeymaps) {
-		if (divider)
-			_kmPopUp->appendEntry("");
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
-		divider = true;
 	}
 
 	_changes = false;
