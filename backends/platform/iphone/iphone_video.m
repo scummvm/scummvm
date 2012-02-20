@@ -148,7 +148,7 @@ void iPhone_initSurface(int width, int height) {
 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
-bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
+bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
 	id event = [sharedInstance getEvent];
 	if (event == nil) {
 		return false;
@@ -162,8 +162,8 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 	}
 
 	*outEvent = [type intValue];
-	*outX = [[event objectForKey:@"x"] floatValue];
-	*outY = [[event objectForKey:@"y"] floatValue];
+	*outX = [[event objectForKey:@"x"] intValue];
+	*outY = [[event objectForKey:@"y"] intValue];
 	return true;
 }
 
@@ -186,18 +186,55 @@ const char *iPhone_getDocumentsDir() {
 	return [documentsDirectory UTF8String];
 }
 
-bool getLocalMouseCoords(CGPoint *point) {
+static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
 	if (_overlayIsEnabled) {
-		point->x = point->x / _overlayHeight;
-		point->y = point->y / _overlayWidth;
+		switch (orientation) {
+		case UIDeviceOrientationLandscapeLeft:
+			*x = (int)point.y;
+			*y = _overlayHeight - (int)point.x;
+			break;
+
+		case UIDeviceOrientationLandscapeRight:
+			*x = _overlayWidth - (int)point.y;
+			*y =  (int)point.x;
+			break;
+
+		case UIDeviceOrientationPortrait:
+			*x = (int)point.x;
+			*y = (int)point.y;
+			break;
+
+		default:
+			return false;
+		}
 	} else {
-		if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
-			point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
+		if (point.x < _screenRect.origin.x || point.x >= _screenRect.origin.x + _screenRect.size.width ||
+			point.y < _screenRect.origin.y || point.y >= _screenRect.origin.y + _screenRect.size.height) {
 				return false;
 		}
 
-		point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
-		point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
+		point.x = (point.x - _screenRect.origin.x) / _screenRect.size.width;
+		point.y = (point.y - _screenRect.origin.y) / _screenRect.size.height;
+
+		switch (orientation) {
+		case UIDeviceOrientationLandscapeLeft:
+			*x = point.y * _width;
+			*y = (1.0f - point.x) * _height;
+			break;
+
+		case UIDeviceOrientationLandscapeRight:
+			*x = (1.0f - point.y) * _width;
+			*y = point.x * _height;
+			break;
+
+		case UIDeviceOrientationPortrait:
+			*x = point.x * _width;
+			*y = point.y * _height;
+			break;
+
+		default:
+			return false;
+		}
 	}
 
 	return true;
@@ -442,12 +479,22 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	_gameScreenTextureWidth = getSizeNextPOT(_width);
 	_gameScreenTextureHeight = getSizeNextPOT(_height);
 
-	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	_orientation = [[UIDevice currentDevice] orientation];
+
+	switch (_orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+	case UIDeviceOrientationLandscapeRight:
+	case UIDeviceOrientationPortrait:
+		break;
+
+	default:
+		_orientation = UIDeviceOrientationLandscapeRight;
+	}
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	if (_context == nil) {
-		orientation = UIDeviceOrientationLandscapeRight;
+		_orientation = UIDeviceOrientationLandscapeRight;
 		CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
 		eaglLayer.opaque = YES;
@@ -496,9 +543,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if (orientation ==  UIDeviceOrientationLandscapeRight) {
+	if (_orientation ==  UIDeviceOrientationLandscapeRight) {
 		glRotatef(-90, 0, 0, 1); printOpenGLError();
-	} else if (orientation == UIDeviceOrientationLandscapeLeft) {
+	} else if (_orientation == UIDeviceOrientationLandscapeLeft) {
 		glRotatef(90, 0, 0, 1); printOpenGLError();
 	} else {
 		glRotatef(180, 0, 0, 1); printOpenGLError();
@@ -534,7 +581,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[[_keyboardView inputView] removeFromSuperview];
 	}
 
-	if (orientation == UIDeviceOrientationLandscapeLeft || orientation ==  UIDeviceOrientationLandscapeRight) {
+	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
 		_visibleHeight = _backingHeight;
 		_visibleWidth = _backingWidth;
 
@@ -607,12 +654,23 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	[_events addObject: event];
 }
 
-- (void)deviceOrientationChanged:(int)orientation {
+- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
+	switch (orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+	case UIDeviceOrientationLandscapeRight:
+	case UIDeviceOrientationPortrait:
+		_orientation = orientation;
+		break;
+
+	default:
+		return;
+	}
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputOrientationChanged], @"type",
-		 [NSNumber numberWithFloat:(float)orientation], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:orientation], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -620,20 +678,21 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
+	int x, y;
 
 	switch ([allTouches count]) {
 	case 1: {
 		UITouch *touch = [touches anyObject];
 		CGPoint point = [touch locationInView:self];
-		if (!getLocalMouseCoords(&point))
+		if (!getMouseCoords(_orientation, point, &x, &y))
 			return;
 
 		_firstTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseDown], @"type",
-		  [NSNumber numberWithFloat:point.x], @"x",
-		  [NSNumber numberWithFloat:point.y], @"y",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
 		  nil
 		  ]
 		 ];
@@ -643,15 +702,15 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	case 2: {
 		UITouch *touch = [touches anyObject];
 		CGPoint point = [touch locationInView:self];
-		if (!getLocalMouseCoords(&point))
+		if (!getMouseCoords(_orientation, point, &x, &y))
 			return;
 
 		_secondTouch = touch;
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
-		  [NSNumber numberWithFloat:point.x], @"x",
-		  [NSNumber numberWithFloat:point.y], @"y",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
 		  nil
 		  ]
 		 ];
@@ -662,31 +721,32 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	//NSSet *allTouches = [event allTouches];
+	int x, y;
 
 	for (UITouch *touch in touches) {
 		if (touch == _firstTouch) {
 			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
+			if (!getMouseCoords(_orientation, point, &x, &y))
 				return;
 
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
+			  [NSNumber numberWithInt:x], @"x",
+			  [NSNumber numberWithInt:y], @"y",
 			  nil
 			  ]
 			 ];
 		} else if (touch == _secondTouch) {
 			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
+			if (!getMouseCoords(_orientation, point, &x, &y))
 				return;
 
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
+			  [NSNumber numberWithInt:x], @"x",
+			  [NSNumber numberWithInt:y], @"y",
 			  nil
 			  ]
 			 ];
@@ -696,19 +756,20 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
+	int x, y;
 
 	switch ([allTouches count]) {
 	case 1: {
 		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
 		CGPoint point = [touch locationInView:self];
-		if (!getLocalMouseCoords(&point))
+		if (!getMouseCoords(_orientation, point, &x, &y))
 			return;
 
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseUp], @"type",
-		  [NSNumber numberWithFloat:point.x], @"x",
-		  [NSNumber numberWithFloat:point.y], @"y",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
 		  nil
 		  ]
 		 ];
@@ -718,14 +779,14 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	case 2: {
 		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 		CGPoint point = [touch locationInView:self];
-		if (!getLocalMouseCoords(&point))
+		if (!getMouseCoords(_orientation, point, &x, &y))
 			return;
 
 		[self addEvent:
 		 [[NSDictionary alloc] initWithObjectsAndKeys:
 		  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
-		  [NSNumber numberWithFloat:point.x], @"x",
-		  [NSNumber numberWithFloat:point.y], @"y",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
 		  nil
 		  ]
 		 ];
@@ -741,8 +802,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputKeyPressed], @"type",
-		 [NSNumber numberWithFloat:(float)c], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:c], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -758,8 +819,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputSwipe], @"type",
-		 [NSNumber numberWithFloat:(float)num], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:num], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -769,8 +830,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputApplicationSuspended], @"type",
-		 [NSNumber numberWithFloat:0], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:0], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -780,8 +841,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputApplicationResumed], @"type",
-		 [NSNumber numberWithFloat:0], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:0], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];

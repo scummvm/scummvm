@@ -139,13 +139,13 @@ bool OSystem_IPHONE::getFeatureState(Feature f) {
 void OSystem_IPHONE::suspendLoop() {
 	bool done = false;
 	int eventType;
-	float xUnit, yUnit;
+	int x, y;
 	uint32 startTime = getMillis();
 
 	stopSoundsystem();
 
 	while (!done) {
-		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
+		if (iPhone_fetchEvent(&eventType, &x, &y))
 			if ((InputEvent)eventType == kInputApplicationResumed)
 				done = true;
 		usleep(100000);

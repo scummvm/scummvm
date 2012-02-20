@@ -47,41 +47,9 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	}
 
 	int eventType;
-	float xUnit, yUnit;
+	int x, y;
 
-	if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit)) {
-		int x = 0;
-		int y = 0;
-		switch (_screenOrientation) {
-		case kScreenOrientationPortrait:
-			if (_overlayVisible) {
-				x = (int)(xUnit * _overlayWidth);
-				y = (int)(yUnit * _overlayHeight);
-			} else {
-				x = (int)(xUnit * _screenWidth);
-				y = (int)(yUnit * _screenHeight);
-			}
-			break;
-		case kScreenOrientationLandscape:
-			if (_overlayVisible) {
-				x = (int)(yUnit * _overlayWidth);
-				y = (int)((1.0 - xUnit) * _overlayHeight);
-			} else {
-				x = (int)(yUnit * _screenWidth);
-				y = (int)((1.0 - xUnit) * _screenHeight);
-			}
-			break;
-		case kScreenOrientationFlippedLandscape:
-			if (_overlayVisible) {
-				x = (int)((1.0 - yUnit) * _overlayWidth);
-				y = (int)(xUnit * _overlayHeight);
-			} else {
-				x = (int)((1.0 - yUnit) * _screenWidth);
-				y = (int)(xUnit * _screenHeight);
-			}
-			break;
-		}
-
+	if (iPhone_fetchEvent(&eventType, &x, &y)) {
 		switch ((InputEvent)eventType) {
 		case kInputMouseDown:
 			if (!handleEvent_mouseDown(event, x, y))
@@ -112,7 +80,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				return false;
 			break;
 		case kInputOrientationChanged:
-			handleEvent_orientationChanged((int)xUnit);
+			handleEvent_orientationChanged(x);
 			return false;
 			break;
 
@@ -122,11 +90,11 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			break;
 
 		case kInputKeyPressed:
-			handleEvent_keyPressed(event, (int)xUnit);
+			handleEvent_keyPressed(event, x);
 			break;
 
 		case kInputSwipe:
-			if (!handleEvent_swipe(event, (int)xUnit))
+			if (!handleEvent_swipe(event, x))
 				return false;
 			break;
 

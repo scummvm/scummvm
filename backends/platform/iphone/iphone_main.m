@@ -126,8 +126,8 @@ int main(int argc, char **argv) {
 }
 
 - (void)didRotate:(NSNotification *)notification {
-	int screenOrientation = [[UIDevice currentDevice] orientation];
-	[_view deviceOrientationChanged: screenOrientation];
+	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
+	[_view deviceOrientationChanged:screenOrientation];
 }
 
 - (UIWindow*) getWindow {

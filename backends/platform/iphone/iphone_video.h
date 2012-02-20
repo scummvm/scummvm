@@ -51,6 +51,8 @@
 	GLuint _screenTexture;
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
+
+	UIDeviceOrientation _orientation;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
@@ -73,7 +75,7 @@
 
 - (id)getEvent;
 
-- (void)deviceOrientationChanged:(int)orientation;
+- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
 
 - (void)applicationSuspend;
 
