@@ -24,6 +24,7 @@
 #include "iphone_common.h"
 
 static iPhoneView *sharedInstance = nil;
+static GraphicsModes _graphicsMode = kGraphicsModeLinear;
 static int _width = 0;
 static int _height = 0;
 static int _fullWidth;
@@ -73,6 +74,12 @@ int printOglError(const char *file, int line) {
 		glErr = glGetError();
 	}
 	return retCode;
+}
+
+void iPhone_setGraphicsMode(int mode) {
+	_graphicsMode = mode;
+
+	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 }
 
 void iPhone_showCursor(int state) {
@@ -201,6 +208,27 @@ bool getLocalMouseCoords(CGPoint *point) {
 	return true;
 }
 
+static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
+	if (!tex)
+		return;
+
+	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
+
+	GLint filter = GL_LINEAR;
+
+	switch (mode) {
+	case kGraphicsModeLinear:
+		filter = GL_LINEAR;
+		break;
+
+	case kGraphicsModeNone:
+		filter = GL_NEAREST;
+		break;
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
+}
 
 @implementation iPhoneView
 
@@ -263,6 +291,12 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// }
 }
 
+- (void)setGraphicsMode {
+	setFilterModeForTexture(_screenTexture, _graphicsMode);
+	setFilterModeForTexture(_overlayTexture, _graphicsMode);
+	setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
+}
+
 - (void)updateSurface {
 	if (!_needsScreenUpdate) {
 		return;
@@ -287,9 +321,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 -(void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
-		glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+		setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
@@ -487,18 +519,14 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 
 	glGenTextures(1, &_screenTexture); printOpenGLError();
-	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+	setFilterModeForTexture(_screenTexture, _graphicsMode);
 
 	if (_overlayTexture > 0) {
 		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
 	}
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
-	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+	setFilterModeForTexture(_overlayTexture, _graphicsMode);
 
 	if (_textureBuffer) {
 		free(_textureBuffer);

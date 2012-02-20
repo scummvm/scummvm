@@ -45,7 +45,9 @@
 
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
-	{0, 0, 0}
+	{ "linear", "Linear filtering", kGraphicsModeLinear },
+	{ "none", "No filtering", kGraphicsModeNone },
+	{ 0, 0, 0 }
 };
 
 AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
@@ -60,7 +62,8 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0), _mouseCursorPaletteEnabled(false) {
+	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0), _mouseCursorPaletteEnabled(false),
+	_currentGraphicsMode(kGraphicsModeLinear) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();

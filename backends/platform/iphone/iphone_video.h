@@ -62,6 +62,8 @@
 
 - (void)initSurface;
 
+- (void)setGraphicsMode;
+
 - (void)updateSurface;
 - (void)updateMainSurface;
 - (void)updateOverlaySurface;

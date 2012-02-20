@@ -31,19 +31,24 @@ const OSystem::GraphicsMode *OSystem_IPHONE::getSupportedGraphicsModes() const {
 
 
 int OSystem_IPHONE::getDefaultGraphicsMode() const {
-	return -1;
-}
-
-bool OSystem_IPHONE::setGraphicsMode(const char *mode) {
-	return true;
+	return kGraphicsModeLinear;
 }
 
 bool OSystem_IPHONE::setGraphicsMode(int mode) {
-	return true;
+	switch (mode) {
+	case kGraphicsModeNone:
+	case kGraphicsModeLinear:
+		_currentGraphicsMode = mode;
+		iPhone_setGraphicsMode(mode);
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 int OSystem_IPHONE::getGraphicsMode() const {
-	return -1;
+	return _currentGraphicsMode;
 }
 
 void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
