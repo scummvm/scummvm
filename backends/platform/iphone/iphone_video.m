@@ -41,7 +41,6 @@ static int _overlayTexHeight = 0;
 static int _overlayWidth = 0;
 static int _overlayHeight = 0;
 static CGRect _overlayRect;
-static float _overlayPortraitRatio = 1.0f;
 
 static int _needsScreenUpdate = 0;
 static int _overlayIsEnabled = 0;
@@ -588,6 +587,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[[_keyboardView inputView] removeFromSuperview];
 	}
 
+	float overlayPortraitRatio;
+
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
 		_visibleHeight = _renderBufferHeight;
 		_visibleWidth = _renderBufferWidth;
@@ -608,7 +609,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
 		_gameScreenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
-		_overlayPortraitRatio = 1.0f;
+		overlayPortraitRatio = 1.0f;
 	} else {
 		float ratio = (float)_height / (float)_width;
 		int height = _renderBufferWidth * ratio;
