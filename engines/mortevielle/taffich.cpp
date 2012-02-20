@@ -244,7 +244,7 @@ void taffich() {
 		charani(filename, lgt, handle);
 	}
 	showMouse();
-	if ((a < 27) && ((_maff < 27) || (s.mlieu == 15)) && (msg[4] != entrer)) {
+	if ((a < 27) && ((_maff < 27) || (s.mlieu == 15)) && (msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
 			person();
 		else if (! blo)

@@ -63,7 +63,7 @@ void Menu::menut(int no, Common::String nom) {
 			_inv[l].insertChar(' ', 0);
 		}
 		break;
-	case depla:
+	case MENU_MOVE:
 		_dep[l] = s;
 		break;
 	case action:
@@ -96,7 +96,7 @@ void Menu::disableMenuItem(int no) {
 			_inv[l].setChar('*', 0);
 	}
 	break;
-	case depla:
+	case MENU_MOVE:
 		_dep[l].setChar('*', 0);
 		break;
 	case action:
@@ -126,7 +126,7 @@ void Menu::enableMenuItem(int no) {
 		_inv[l].setChar(' ', 21);
 	}
 	break;
-	case depla:
+	case MENU_MOVE:
 		_dep[l].setChar(' ', 0);
 		break;
 	case action:
@@ -189,8 +189,8 @@ void Menu::menu_aff() {
 void Menu::drawMenu() {
 	menu_aff();
 	_menuActive = true;
-	msg4 = no_choice;
-	msg3 = no_choice;
+	msg4 = OPCODE_NONE;
+	msg3 = OPCODE_NONE;
 	choisi = false;
 	g_vm->setMouseClick(false);
 	test0 = false;
@@ -199,7 +199,7 @@ void Menu::drawMenu() {
 void Menu::invers(int ix) {
 	Common::String s;
 
-	if (msg4 == no_choice)  return;
+	if (msg4 == OPCODE_NONE)  return;
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
 	case 1 :
@@ -238,7 +238,7 @@ void Menu::invers(int ix) {
 	if ((s[0] != '*') && (s[0] != '<'))
 		g_vm->_screenSurface.writeg(s, ix);
 	else
-		msg4 = no_choice;
+		msg4 = OPCODE_NONE;
 }
 
 void Menu::util(int x, int y) {
@@ -258,9 +258,9 @@ void Menu::util(int x, int y) {
 			msg4 = ix;
 			invers(0);
 		}
-	} else if (msg4 != no_choice) {
+	} else if (msg4 != OPCODE_NONE) {
 		invers(1);
-		msg4 = no_choice;
+		msg4 = OPCODE_NONE;
 	}
 }
 
@@ -401,7 +401,7 @@ void Menu::mdn() {
 		                   || ((x > 268 * res) && (x < 268 * res + 24)));
 		if (tes) {
 			if (x < 76 * res)  ix = invent;
-			else if (x < 124 * res)  ix = depla;
+			else if (x < 124 * res)  ix = MENU_MOVE;
 			else if (x < 172 * res)  ix = action;
 			else if (x < 220 * res)  ix = saction;
 			else if (x < 268 * res)  ix = discut;
@@ -411,13 +411,13 @@ void Menu::mdn() {
 					menuUp(msg3);
 					menuDown(ix);
 					msg3 = ix;
-					msg4 = no_choice;
+					msg4 = OPCODE_NONE;
 				}
 		} else { /* Not in the MenuTitle line */
 			if ((y > 11) && (test0))  util(x, y);
 		}
 	} else {       /* There was a click */
-		if ((msg3 == fichier) && (msg4 != no_choice)) {
+		if ((msg3 == fichier) && (msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
 			menuUp(msg3);
@@ -428,12 +428,12 @@ void Menu::mdn() {
 			g_vm->setMouseClick(false);
 		} else { 
 			//  A menu was clicked on
-			choisi = (test0) && (msg4 != no_choice);
+			choisi = (test0) && (msg4 != OPCODE_NONE);
 			menuUp(msg3);
 			msg[4] = msg4;
 			msg[3] = msg3;
-			msg3 = no_choice;
-			msg4 = no_choice;
+			msg3 = OPCODE_NONE;
+			msg4 = OPCODE_NONE;
 
 			g_vm->setMouseClick(false);
 		}
@@ -486,10 +486,10 @@ void Menu::initMenu() {
 		if (i > 6)
 			g_vm->_menu.disableMenuItem(_invt[i]);
 	}
-	msg3 = no_choice;
-	msg4 = no_choice;
-	msg[3] = no_choice;
-	msg[4] = no_choice;
+	msg3 = OPCODE_NONE;
+	msg4 = OPCODE_NONE;
+	msg[3] = OPCODE_NONE;
+	msg[4] = OPCODE_NONE;
 	g_vm->setMouseClick(false);
 }
 
