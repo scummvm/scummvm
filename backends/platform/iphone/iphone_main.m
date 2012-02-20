@@ -84,18 +84,19 @@ int main(int argc, char **argv) {
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
-	_view = [[iPhoneView alloc] initWithFrame: rect];
+	_view = [[iPhoneView alloc] initWithFrame:rect];
 	_view.multipleTouchEnabled = YES;
 
-	[_window setContentView: _view];
+	[_window setContentView:_view];
 
   	[_window addSubview:_view];
 	[_window makeKeyAndVisible];
 
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(didRotate:)
-												 name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+	                                         selector:@selector(didRotate:)
+	                                             name:@"UIDeviceOrientationDidChangeNotification"
+	                                           object:nil];
 
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }

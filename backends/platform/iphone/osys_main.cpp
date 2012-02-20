@@ -250,7 +250,6 @@ Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 #endif
 }
 
-
 void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Get URL of the Resource directory of the .app bundle
 	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
