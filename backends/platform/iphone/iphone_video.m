@@ -40,6 +40,7 @@ static int _overlayTexWidth = 0;
 static int _overlayTexHeight = 0;
 static int _overlayWidth = 0;
 static int _overlayHeight = 0;
+static CGRect _overlayRect;
 static float _overlayPortraitRatio = 1.0f;
 
 static int _needsScreenUpdate = 0;
@@ -628,8 +629,10 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
-		_overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
+		overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
 	}
+
+	_overlayRect = CGRectMake(0, 0, _renderBufferWidth, _renderBufferHeight * overlayPortraitRatio);
 
 	_gameScreenVertCoords[0] = _heightOffset;
 	_gameScreenVertCoords[1] = _widthOffset;
