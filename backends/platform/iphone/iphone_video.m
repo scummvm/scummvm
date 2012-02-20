@@ -29,7 +29,7 @@ static int _width = 0;
 static int _height = 0;
 static int _fullWidth;
 static int _fullHeight;
-static CGRect _screenRect;
+static CGRect _gameScreenRect;
 
 static char *_gameScreenTextureBuffer = 0;
 static int _gameScreenTextureWidth = 0;
@@ -208,13 +208,13 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 			return false;
 		}
 	} else {
-		if (point.x < _screenRect.origin.x || point.x >= _screenRect.origin.x + _screenRect.size.width ||
-			point.y < _screenRect.origin.y || point.y >= _screenRect.origin.y + _screenRect.size.height) {
+		if (point.x < _gameScreenRect.origin.x || point.x >= _gameScreenRect.origin.x + _gameScreenRect.size.width ||
+			point.y < _gameScreenRect.origin.y || point.y >= _gameScreenRect.origin.y + _gameScreenRect.size.height) {
 				return false;
 		}
 
-		point.x = (point.x - _screenRect.origin.x) / _screenRect.size.width;
-		point.y = (point.y - _screenRect.origin.y) / _screenRect.size.height;
+		point.x = (point.x - _gameScreenRect.origin.x) / _gameScreenRect.size.width;
+		point.y = (point.y - _gameScreenRect.origin.y) / _gameScreenRect.size.height;
 
 		switch (orientation) {
 		case UIDeviceOrientationLandscapeLeft:
@@ -599,13 +599,13 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		}
 
 		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
-		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
+		_gameScreenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
 		_overlayPortraitRatio = 1.0f;
 	} else {
 		float ratio = (float)_height / (float)_width;
 		int height = _fullWidth * ratio;
 		//printf("Making rect (%u, %u)\n", _fullWidth, height);
-		_screenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
+		_gameScreenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
 
 		_visibleHeight = height;
 		_visibleWidth = _renderBufferWidth;
