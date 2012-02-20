@@ -61,7 +61,7 @@ public:
 
 enum {
 	invent = 1, MENU_MOVE = 2, action = 3, saction = 4,
-	discut = 5, fichier = 6, sauve = 7, charge = 8
+	MENU_DISCUSS = 5, fichier = 6, sauve = 7, charge = 8
 };
 
 } // End of namespace Mortevielle

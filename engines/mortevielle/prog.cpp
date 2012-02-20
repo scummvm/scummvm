@@ -163,7 +163,8 @@ void tsitu()
 		}
 	if (msg[3] == MENU_MOVE)
 		fctMove();
-	if (msg[3] == discut)      tparler();   //Translation: talk
+	if (msg[3] == MENU_DISCUSS)
+		fctDiscuss();
 	if (msg[3] == invent)      tsprendre(); //Translation: inventory/take
 	if (msg[4] == OPCODE_ATTACH)
 		fctAttach();
@@ -213,7 +214,8 @@ void tsitu()
 	}
 	if (msg[4] == sfouiller)   tsfouiller();//Translation: search 
 	if (msg[4] == slire)       tslire();    //Translation: read
-	if (msg[4] == sposer)      tposer();    //Translation: put
+	if (msg[4] == OPCODE_PUT)
+		fctPut();
 	if (msg[4] == sregarder)   tsregarder();//Translation: look
 	cache = false;
 L1:

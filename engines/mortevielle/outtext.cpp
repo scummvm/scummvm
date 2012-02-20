@@ -129,6 +129,11 @@ void deline(int num, char *l , int &tl) {
 	byte ps, k;
 	bool the_end;
 
+	if (num < 0) {
+		warning("deline: num < 0! Skipping");
+		return;
+	}
+
 	/* DETEX */
 	/*debug('  => DeLine');*/
 	delig = "";

@@ -56,42 +56,55 @@ void testfi() {
  * Read the current system time
  */
 int readclock() {
-	int m, h;
-
-	/* debug('readclock');*/
 	TimeDate dateTime;
 	g_system->getTimeAndDate(dateTime);
 
-	m = dateTime.tm_min * 60;
-	h = dateTime.tm_hour * 3600;
+	int m = dateTime.tm_min * 60;
+	int h = dateTime.tm_hour * 3600;
 	return h + m + dateTime.tm_sec;
 }
 
 void modif(int &nu) {
-	/* debug('modif'); */
-	if (nu == 26)  nu = 25;
-	if ((nu > 29) && (nu < 36))  nu = nu - 4;
-	if ((nu > 69) && (nu < 78))  nu = nu - 37;
-	if ((nu > 99) && (nu < 194))  nu = nu - 59;
-	if ((nu > 996) && (nu < 1000))  nu = nu - 862;
-	if ((nu > 1500) && (nu < 1507))  nu = nu - 1363;
-	if ((nu > 1507) && (nu < 1513))  nu = nu - 1364;
-	if ((nu > 1999) && (nu < 2002))  nu = nu - 1851;
-	if (nu == 2010)  nu = 151;
-	if ((nu > 2011) && (nu < 2025))  nu = nu - 1860;
-	if (nu == 2026)  nu = 165;
-	if ((nu > 2029) && (nu < 2037))  nu = nu - 1864;
-	if ((nu > 3000) && (nu < 3005))  nu = nu - 2828;
-	if (nu == 4100)  nu = 177;
-	if (nu == 4150)  nu = 178;
-	if ((nu > 4151) && (nu < 4156))  nu = nu - 3973;
-	if (nu == 4157)  nu = 183;
-	if ((nu == 4160) || (nu == 4161))  nu = nu - 3976;
+	if (nu == 26)
+		nu = 25;
+	else if ((nu > 29) && (nu < 36))
+		nu -= 4;
+	else if ((nu > 69) && (nu < 78))
+		nu -= 37;
+	else if ((nu > 99) && (nu < 194))
+		nu -= 59;
+	else if ((nu > 996) && (nu < 1000))
+		nu -= 862;
+	else if ((nu > 1500) && (nu < 1507))
+		nu -= 1363;
+	else if ((nu > 1507) && (nu < 1513))
+		nu -= 1364;
+	else if ((nu > 1999) && (nu < 2002))
+		nu -= 1851;
+	else if (nu == 2010)
+		nu = 151;
+	else if ((nu > 2011) && (nu < 2025))
+		nu -= 1860;
+	else if (nu == 2026)
+		nu = 165;
+	else if ((nu > 2029) && (nu < 2037))
+		nu -= 1864;
+	else if ((nu > 3000) && (nu < 3005))
+		nu -= 2828;
+	else if (nu == 4100)
+		nu = 177;
+	else if (nu == 4150)
+		nu = 178;
+	else if ((nu > 4151) && (nu < 4156))
+		nu -= 3973;
+	else if (nu == 4157)
+		nu = 183;
+	else if ((nu == 4160) || (nu == 4161))
+		nu -= 3976;
 }
 
 
 void dessine(int ad, int x, int y) {
-	/* debug('dessine'); */
 	hideMouse();
 	writepal(numpal);
 	pictout(ad, 0, x, y);
@@ -99,7 +112,6 @@ void dessine(int ad, int x, int y) {
 }
 
 void dessine_rouleau() {
-	/* debug('dessine_rouleau'); */
 	writepal(89);
 	if (gd == her) {
 		mem[0x7000 * 16 + 14] = 15;
@@ -124,18 +136,19 @@ void text1(int x, int y, int nb, int m) {
 
 
 	/* debug('text'); */
-	if (res == 1)  co = 10;
-	else co = 6;
+	if (res == 1)
+		co = 10;
+	else
+		co = 6;
 	deline(m, st, tay);
-	if ((y == 182) && (tay * co > nb * 6))  y = 176;
+	if ((y == 182) && (tay * co > nb * 6))
+		y = 176;
 	afftex(st, x, y, nb, 20, color_txt);
 }
 
 void initouv() {
-	int cx;
-
-	/* debug('initouv'); */
-	for (cx = 1; cx <= 7; cx ++) touv[cx] = chr(0);
+	for (int cx = 1; cx <= 7; cx++)
+		touv[cx] = chr(0);
 }
 
 void ecrf1() {
@@ -144,7 +157,6 @@ void ecrf1() {
 }
 
 void clsf1() {
-	/* debug('clsf1'); */
 	hideMouse();
 	g_vm->_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
 
@@ -152,9 +164,6 @@ void clsf1() {
 }
 
 void clsf2() {
-//	int i, j;
-
-	/* debug('clsf2'); */
 	hideMouse();
 	if (f2_all) {
 		g_vm->_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
@@ -173,13 +182,13 @@ void ecrf2() {
 
 void ecr2(Common::String str_) {
 	int tab;
-	int tlig;
 
-	/* debug('ecr2 : '+str_);*/
-	if (res == 1)  tab = 10;
-	else tab = 6;
+	if (res == 1)
+		tab = 10;
+	else
+		tab = 6;
 	g_vm->_screenSurface.putxy(8, 177);
-	tlig = 59 + pred(int, res) * 36;
+	int tlig = 59 + pred(int, res) * 36;
 	if ((int)str_.size() < tlig)
 		g_vm->_screenSurface.writeg(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
@@ -200,9 +209,6 @@ void ecr2(Common::String str_) {
 }
 
 void clsf3() {
-//	int i, j;
-
-	/* debug('clsf3'); */
 	hideMouse();
 	g_vm->_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
 	g_vm->_screenSurface.drawBox(0, 191, 634, 8, 15);
@@ -210,14 +216,12 @@ void clsf3() {
 }
 
 void ecr3(Common::String text) {
-	/* debug('ecr3 : '+text);*/
 	clsf3();
 	g_vm->_screenSurface.putxy(8, 192);
 	g_vm->_screenSurface.writeg(text, 5);
 }
 
 void ecrf6() {
-	/* debug('ecrf6'); */
 	text_color(5);
 	g_vm->_screenSurface.drawBox(62, 33, 363, 80, 15);
 }
@@ -230,7 +234,6 @@ void clsf10() {
 	int co, cod;
 	Common::String st;
 
-	/* debug('clsf10'); */
 	hideMouse();
 	if (res == 1) {
 		co = 634;
@@ -250,8 +253,12 @@ void clsf10() {
 	co = 580 - (g_vm->_screenSurface.getStringWidth(st) / 2);
 	g_vm->_screenSurface.putxy(co, 92);
 	g_vm->_screenSurface.writeg(st, 4);
-	if (res == 1)  co = 620;
-	else co = 584;
+
+	if (res == 1)
+		co = 620;
+	else
+		co = 584;
+
 	g_vm->_screenSurface.fillRect(15, Common::Rect(560, 24, co, 86));
 	/* rempli(69,12,32,5,255);*/
 	showMouse();
@@ -267,23 +274,20 @@ void stop() {
 void paint_rect(int x, int y, int dx, int dy) {
 	int co;
 
-	/* debug('paint_rect'); */
-	if (gd == cga)  co = 3;
-	else co = 11;
+	if (gd == cga)
+		co = 3;
+	else
+		co = 11;
 	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
 }
 
 int hazard(int min, int max) {
-	/* debug('hazard'); */
 	return get_random_number(min, max);
 }
 
 void calch(int &j, int &h, int &m) {
-	int th, nh;
-
-	/* debug('calch');*/
-	nh = readclock();
-	th = jh + ((nh - mh) / t);
+	int nh = readclock();
+	int th = jh + ((nh - mh) / t);
 	m = ((th % 2) + vm) * 30;
 	h = ((uint)th >> 1) + vh;
 	if (m == 60) {
@@ -295,10 +299,7 @@ void calch(int &j, int &h, int &m) {
 }
 
 void conv(int x, int &y) {
-	int cx;
-
-	/* debug('conv'); */
-	cx = 1;
+	int cx = 1;
 	y = 128;
 	while (cx < x) {
 		y = (uint)y >> 1;
@@ -313,11 +314,9 @@ void okpas() {
 
 void modobj(int m) {
 	char str_[1410];
-	Common::String strp;
 	int tay;
 
-	/* debug('modobj'); */
-	strp = ' ';
+	Common::String strp = Common::String(' ');
 	if (m != 500) {
 		deline(m - 501 + c_st41, str_, tay);
 		strp = delig;
@@ -328,13 +327,13 @@ void modobj(int m) {
 
 void modobj2(int m, bool t1, bool t2) {
 	char str_[1410];
-	Common::String strp;
 	int tay;
 
-	/* debug('modobj'); */
-	strp = ' ';
-	if (t1 || t2)  okpas();
-	else tesok = false;;
+	Common::String strp = Common::String(' ');
+	if (t1 || t2)
+		okpas();
+	else
+		tesok = false;;
 	if (m != 500) {
 		deline(m - 501 + c_st41, str_, tay);
 		strp = delig;
@@ -348,25 +347,28 @@ void repon(int f, int m) {
 	Common::String str_;
 	Common::String str1;
 	char st[1410];
-//	text1 fic;
 	int i, xco, dx, caspe, tay;
 
-	/* debug('repon fenetre nø'+chr(f+48));*/
 	if ((m > 499) && (m < 563)) {
 		deline(m - 501 + c_st41, st, tay);
-		if (tay > ((58 + pred(int, res) * 37) << 1))  f2_all = true;
-		else f2_all = false;
+		if (tay > ((58 + pred(int, res) * 37) << 1))
+			f2_all = true;
+		else
+			f2_all = false;
 		clsf2();
 		afftex(st, 8, 176, 85, 3, 5);
 	} else {
 		modif(m);
-		if (f == 8)  f = 2;
-		if (f == 1)  f = 6;
+		if (f == 8)
+			f = 2;
+		if (f == 1)
+			f = 6;
 		if (f == 2) {
 			clsf2();
 			ecrf2();
 			text1(8, 182, 103, m);
-			if ((m == 68) || (m == 69))  s.teauto[40] = '*';
+			if ((m == 68) || (m == 69))
+				s.teauto[40] = '*';
 			if ((m == 104) && (caff == 14)) {
 				s.teauto[36] = '*';
 				if (s.teauto[39] == '*') {
@@ -377,11 +379,15 @@ void repon(int f, int m) {
 		}
 		if ((f >= 6) && (f <= 9)) {
 			deline(m, st, tay);
-			if (f == 6)  i = 4;
-			else i = 5;
+			if (f == 6)
+				i = 4;
+			else
+				i = 5;
 			afftex(st, 80, 40, 60, 25, i);
-			if (m == 180)  s.pourc[6] = '*';
-			if (m == 179)  s.pourc[10] = '*';
+			if (m == 180)
+				s.pourc[6] = '*';
+			if (m == 179)
+				s.pourc[10] = '*';
 		}
 		if (f == 7) {         /* messint */
 			ecrf7();
@@ -395,30 +401,43 @@ void repon(int f, int m) {
 				caspe = 144;
 				dx = 50;
 			}
-			if (tay < 40)  afftex(st, xco, 86, dx, 3, 5);
-			else afftex(st, caspe, 86, dx, 3, 5);
+			if (tay < 40)
+				afftex(st, xco, 86, dx, 3, 5);
+			else
+				afftex(st, caspe, 86, dx, 3, 5);
 		}
 	}
 }
 
 void t5(int cx) {
-	/* debug('t5'); */
-	if (cx == 10)  blo = false;
+	if (cx == 10)
+		blo = false;
+
 	if (cx != 1) {
 		bh1 = false;
 		bf1 = false;
 	}
-	if (cx != 2)  bh2 = false;
+
+	if (cx != 2)
+		bh2 = false;
+
 	if (cx != 4) {
 		bh4 = false;
 		bf4 = false;
 	}
-	if (cx != 5)  bh5 = false;
-	if (cx != 6)  bh6 = false;
-	if (cx != 8)  bh8 = false;
-	if (cx != 3)  bt3 = false;
-	if (cx != 7)  bt7 = false;
-	if (cx != 9)  bh9 = false;
+
+	if (cx != 5)
+		bh5 = false;
+	if (cx != 6)
+		bh6 = false;
+	if (cx != 8)
+		bh8 = false;
+	if (cx != 3)
+		bt3 = false;
+	if (cx != 7)
+		bt7 = false;
+	if (cx != 9)
+		bh9 = false;
 }
 
 void affper(int per) {
@@ -473,91 +492,109 @@ void affper(int per) {
 
 void choix(int min, int max, int &per) {
 	bool i;
-	int haz, cx, cy, cz;
+	int cz;
 
-	/* debug('o0 choix'); */
-	haz = hazard(min, max);
+	int haz = hazard(min, max);
 	if (haz > 4) {
 		haz = 8 - haz;
 		i = true;
-	} else i = false;
-	cx = 0;
+	} else
+		i = false;
+
+	int cx = 0;
 	per = 0;
 	while (cx < haz) {
-		cy = hazard(1, 8);
+		int cy = hazard(1, 8);
 		conv(cy, cz);
 		if ((per & cz) != cz) {
-			cx = cx + 1;
-			per = (per | cz);
+			++cx;
+			per |= cz;
 		}
 	}
-	if (i)  per = 255 - per;
-	i = false;
+	if (i)
+		per = 255 - per;
 }
 
 void cpl1(int &p) {
 	int j, h, m;
 
-	/* debug('o0 cpl1'); */
 	calch(j, h, m);
-	if ((h > 7) || (h < 11))  p = 25;
-	if ((h > 10) && (h < 14))  p = 35;
-	if ((h > 13) && (h < 16))  p = 50;
-	if ((h > 15) && (h < 18))  p = 5;
-	if ((h > 17) && (h < 22))  p = 35;
-	if ((h > 21) && (h < 24))  p = 50;
-	if ((h >= 0) && (h < 8))  p = 70;
+	if ((h > 7) || (h < 11))
+		p = 25;
+	else if ((h > 10) && (h < 14))
+		p = 35;
+	else if ((h > 13) && (h < 16))
+		p = 50;
+	else if ((h > 15) && (h < 18))
+		p = 5;
+	else if ((h > 17) && (h < 22))
+		p = 35;
+	else if ((h > 21) && (h < 24))
+		p = 50;
+	else if ((h >= 0) && (h < 8))
+		p = 70;
+
 	g_vm->_menu.mdn();
 }
 
 void cpl2(int &p) {
 	int j, h, m;
 
-	/* debug('o0 cpl2'); */
 	calch(j, h, m);
-	if ((h > 7) && (h < 11))  p = -2;
-	if (h == 11)  p = 100;
-	if ((h > 11) && (h < 23))  p = 10;
-	if (h == 23)  p = 20;
-	if ((h >= 0) && (h < 8))  p = 50;
+	if ((h > 7) && (h < 11))
+		p = -2;
+	if (h == 11)
+		p = 100;
+	if ((h > 11) && (h < 23))
+		p = 10;
+	if (h == 23)
+		p = 20;
+	if ((h >= 0) && (h < 8))
+		p = 50;
 }
 
 void cpl3(int &p) {
 	int j, h, m;
 
-	/* debug('o0 cpl3'); */
 	calch(j, h, m);
-	if (((h > 8) && (h < 10)) || ((h > 19) && (h < 24)))  p = 34;
-	if (((h > 9) && (h < 20)) || ((h >= 0) && (h < 9)))  p = 0;
+	if (((h > 8) && (h < 10)) || ((h > 19) && (h < 24)))
+		p = 34;
+	if (((h > 9) && (h < 20)) || ((h >= 0) && (h < 9)))
+		p = 0;
 }
 
 void cpl5(int &p) {
 	int j, h, m;
 
-	/* debug('o0 cpl5'); */
 	calch(j, h, m);
-	if ((h > 6) && (h < 10))  p = 0;
-	if (h == 10)  p = 100;
-	if ((h > 10) && (h < 24))  p = 15;
-	if ((h >= 0) && (h < 7))  p = 50;
+	if ((h > 6) && (h < 10))
+		p = 0;
+	if (h == 10)
+		p = 100;
+	if ((h > 10) && (h < 24))
+		p = 15;
+	if ((h >= 0) && (h < 7))
+		p = 50;
 }
 
 void cpl6(int &p) {
 	int j, h, m;
 
-	/* debug('o0 cpl6'); */
 	calch(j, h, m);
-	if (((h > 7) && (h < 13)) || ((h > 17) && (h < 20)))  p = -2;
-	if (((h > 12) && (h < 17)) || ((h > 19) && (h < 24)))  p = 35;
-	if (h == 17)  p = 100;
-	if ((h >= 0) && (h < 8))  p = 60;
+	if (((h > 7) && (h < 13)) || ((h > 17) && (h < 20)))
+		p = -2;
+	if (((h > 12) && (h < 17)) || ((h > 19) && (h < 24)))
+		p = 35;
+	if (h == 17)
+		p = 100;
+	if ((h >= 0) && (h < 8))
+		p = 60;
 }
 
 /**
  * Shows the you are alone message in the status area on the right hand side of the screen
  */
 void person() {
-	/* debug('person'); */
 	for (int cf = 1; cf <= 8; cf ++)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cf]);
 
@@ -577,7 +614,6 @@ void person() {
 }
 
 void chlm(int &per) {
-	/* debug('chlm'); */
 	per = hazard(1, 2);
 	if (per == 2)  per = 128;
 }
@@ -594,7 +630,6 @@ void pendule() {
 	int h, co;
 
 
-	/* debug('pendule'); */
 	hideMouse();
 	
 	paint_rect(570, 118, 20, 10);
@@ -602,20 +637,27 @@ void pendule() {
 	if ((gd == cga) || (gd == her))
 		co = 0;
 	else co = 1;
+
 	if (min == 0)
 		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);
 	else 
 		g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y + rg), co);
+
 	h = heu;
-	if (h > 12)  h = h - 12;
-	if (h == 0)  h = 12;
+	if (h > 12)
+		h -= 12;
+	if (h == 0)
+		h = 12;
+
 	g_vm->_screenSurface.droite(((uint)x >> 1)*res, y, ((uint)(x + cv[1][h]) >> 1)*res, y + cv[2][h], co);
 	showMouse();
 	g_vm->_screenSurface.putxy(568, 154);
+
 	if (heu > 11)
 		g_vm->_screenSurface.writeg("PM ", 1);
 	else
 		g_vm->_screenSurface.writeg("AM ", 1);
+
 	g_vm->_screenSurface.putxy(550, 160);
 	if ((jou >= 0) && (jou <= 8)) {
 		Common::String tmp = g_vm->getString(S_DAY);
@@ -629,134 +671,158 @@ void pendule() {
  *************/
 
 void debloc(int l) {
-	/* debug('debloc'); */
 	num = 0;
 	x = 0;
 	y = 0;
-	if ((l != 26) && (l != 15))  t5(l);
+	if ((l != 26) && (l != 15))
+		t5(l);
 	mpers = ipers;
 }
 
 void cpl10(int &p, int &h) {
 	int j, m;
 
-	/* debug('o1 cpl10'); */
 	calch(j, h, m);
-	if (((h > 7) && (h < 11)) || ((h > 11) && (h < 14))
-	        || ((h > 18) && (h < 21)))  p = 100;
-	if ((h == 11) || ((h > 20) && (h < 24)))  p = 45;
-	if (((h > 13) && (h < 17)) || (h == 18))  p = 35;
-	if (h == 17)  p = 60;
-	if ((h >= 0) && (h < 8))  p = 5;
+	if (((h > 7) && (h < 11)) || ((h > 11) && (h < 14)) || ((h > 18) && (h < 21)))
+		p = 100;
+	if ((h == 11) || ((h > 20) && (h < 24)))
+		p = 45;
+	if (((h > 13) && (h < 17)) || (h == 18))
+		p = 35;
+	if (h == 17)
+		p = 60;
+	if ((h >= 0) && (h < 8))
+		p = 5;
 }
 
 void cpl11(int &p, int &h) {
 	int j, m;
 
-	/* debug('o1 cpl11'); */
 	calch(j, h, m);
-	if (((h > 8) && (h < 12)) || ((h > 20) && (h < 24)))  p = 25;
-	if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21)))  p = 5;
-	if ((h > 13) && (h < 17))  p = 55;
-	if ((h > 16) && (h < 19))  p = 45;
-	if ((h >= 0) && (h < 9))  p = 0;
+	if (((h > 8) && (h < 12)) || ((h > 20) && (h < 24)))
+		p = 25;
+	if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21)))
+		p = 5;
+	if ((h > 13) && (h < 17))
+		p = 55;
+	if ((h > 16) && (h < 19))
+		p = 45;
+	if ((h >= 0) && (h < 9))
+		p = 0;
 }
 
 void cpl12(int &p) {
 	int j, h, m;
 
-	/* debug('o1 cpl12'); */
 	calch(j, h, m);
-	if (((h > 8) && (h < 15)) || ((h > 16) && (h < 22)))  p = 55;
-	if (((h > 14) && (h < 17)) || ((h > 21) && (h < 24)))  p = 25;
-	if ((h >= 0) && (h < 5))  p = 0;
-	if ((h > 4) && (h < 9))  p = 15;
+	if (((h > 8) && (h < 15)) || ((h > 16) && (h < 22)))
+		p = 55;
+	if (((h > 14) && (h < 17)) || ((h > 21) && (h < 24)))
+		p = 25;
+	if ((h >= 0) && (h < 5))
+		p = 0;
+	if ((h > 4) && (h < 9))
+		p = 15;
 }
 
 void cpl13(int &p) {
-	/* debug('o1 cpl13'); */
 	p = 0;
 }
 
 void cpl15(int &p) {
 	int j, h, m;
 
-	/* debug('o1 cpl15'); */
 	calch(j, h, m);
-	if ((h > 7) && (h < 12))  p = 25;
-	if ((h > 11) && (h < 14))  p = 0;
-	if ((h > 13) && (h < 18))  p = 10;
-	if ((h > 17) && (h < 20))  p = 55;
-	if ((h > 19) && (h < 22))  p = 5;
-	if ((h > 21) && (h < 24))  p = 15;
-	if ((h >= 0) && (h < 8))  p = -15;
+	if ((h > 7) && (h < 12))
+		p = 25;
+	else if ((h > 11) && (h < 14))
+		p = 0;
+	else if ((h > 13) && (h < 18))
+		p = 10;
+	else if ((h > 17) && (h < 20))
+		p = 55;
+	else if ((h > 19) && (h < 22))
+		p = 5;
+	else if ((h > 21) && (h < 24))
+		p = 15;
+	else if ((h >= 0) && (h < 8))
+		p = -15;
 }
 
 void cpl20(int &p, int &h) {
 	int j, m;
 
-	/* debug('o1 cpl20'); */
 	calch(j, h, m);
-	if (h == 10)  p = 65;
-	if ((h > 10) && (h < 21))  p = 5;
-	if ((h > 20) && (h < 24))  p = -15;
-	if ((h >= 0) && (h < 5))  p = -300;
-	if ((h > 4) && (h < 10))  p = -5;
+	if (h == 10)
+		p = 65;
+	else if ((h > 10) && (h < 21))
+		p = 5;
+	else if ((h > 20) && (h < 24))
+		p = -15;
+	else if ((h >= 0) && (h < 5))
+		p = -300;
+	else if ((h > 4) && (h < 10))
+		p = -5;
 }
 
 void quelq1(int l) {
 	int per;
 
-	/* debug('o1 quelq1'); */
 	per = hazard(1, 2);
-	if (l == 1)
-		if (per == 1)  bh1 = true;
-		else bf1 = true;
-	if (l == 4)
-		if (per == 1)  bh4 = true;
-		else bf4 = true;
+	if (l == 1) {
+		if (per == 1)
+			bh1 = true;
+		else
+			bf1 = true;
+	} else if (l == 4) {
+		if (per == 1)
+			bh4 = true;
+		else
+			bf4 = true;
+	}
+
 	ipers = 10;
 }
 
 void quelq2() {
-	/* debug('o1 quelq2'); */
-	if (li == 2)  bh2 = true;
-	else bh9 = true;
+	if (li == 2)
+		bh2 = true;
+	else
+		bh9 = true;
+
 	ipers = 10;
 }
 
 void quelq5() {
-	/* debug('o1 quelq5'); */
 	bh5 = true;
 	ipers = 10;
 }
 
 void quelq6(int l) {
-	/* debug('o1 quelq6'); */
-	if (l == 6)  bh6 = true;
-	if (l == 8)  bh8 = true;
+	if (l == 6)
+		bh6 = true;
+	else if (l == 8)
+		bh8 = true;
+
 	ipers = 10;
 }
 
 void quelq10(int h, int &per) {
 	int min = 0, max = 0;
 
-	/* debug('o1 quelq10'); */
-	if ((h >= 0) && (h < 8))  chlm(per);
+	if ((h >= 0) && (h < 8))
+		chlm(per);
 	else {
 		if ((h > 7) && (h < 10)) {
 			min = 5;
 			max = 7;
-		}
-		if ((h > 9) && (h < 12)) {
+		} else if ((h > 9) && (h < 12)) {
 			min = 1;
 			max = 4;
-		}
-		if (((h > 11) && (h < 15)) || ((h > 18) && (h < 21))) {
+		} else if (((h > 11) && (h < 15)) || ((h > 18) && (h < 21))) {
 			min = 6;
 			max = 8;
-		}
-		if (((h > 14) && (h < 19)) || ((h > 20) && (h < 24))) {
+		} else if (((h > 14) && (h < 19)) || ((h > 20) && (h < 24))) {
 			min = 1;
 			max = 5;
 		}
@@ -768,18 +834,16 @@ void quelq10(int h, int &per) {
 void quelq11(int h, int &per) {
 	int min = 0, max = 0;
 
-	/* debug('o1 quelq11'); */
-	if ((h >= 0) && (h < 8))  chlm(per);
+	if ((h >= 0) && (h < 8))
+		chlm(per);
 	else {
 		if (((h > 7) && (h < 10)) || ((h > 20) && (h < 24))) {
 			min = 1;
 			max = 3;
-		}
-		if (((h > 9) && (h < 12)) || ((h > 13) && (h < 19))) {
+		} else if (((h > 9) && (h < 12)) || ((h > 13) && (h < 19))) {
 			min = 1;
 			max = 4;
-		}
-		if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21))) {
+		} else if (((h > 11) && (h < 14)) || ((h > 18) && (h < 21))) {
 			min = 1;
 			max = 2;
 		}
@@ -789,7 +853,6 @@ void quelq11(int h, int &per) {
 }
 
 void quelq12(int &per) {
-	/* debug('o1 quelq12'); */
 	chlm(per);
 	affper(per);
 }
@@ -798,41 +861,37 @@ void quelq15(int &per) {
 	int cx;
 	bool test;
 
-
-	/* debug('o1 quelq15'); */
 	per = 0;
-	if (per == 0) {
-		do {
-			cx = hazard(1, 8);
-			test = (((cx == 1) && (bh2 || bh9)) ||
-			        ((cx == 2) && bh8) ||
-			        ((cx == 3) && bh4) ||
-			        ((cx == 4) && bf4) ||
-			        ((cx == 5) && bh6) ||
-			        ((cx == 6) && bh1) ||
-			        ((cx == 7) && bf1) ||
-			        ((cx == 8) && bh5));
-		} while (!(! test));
-		conv(cx, per);
-		affper(per);
-	}
+
+	do {
+		cx = hazard(1, 8);
+		test = (((cx == 1) && (bh2 || bh9)) ||
+		        ((cx == 2) && bh8) ||
+		        ((cx == 3) && bh4) ||
+		        ((cx == 4) && bf4) ||
+		        ((cx == 5) && bh6) ||
+		        ((cx == 6) && bh1) ||
+		        ((cx == 7) && bf1) ||
+		        ((cx == 8) && bh5));
+	} while (!(! test));
+
+	conv(cx, per);
+	affper(per);
 }
 
 void quelq20(int h, int &per) {
 	int min = 0, max = 0;
 
-	/* debug('o1 quelq20'); */
-	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))  chlm(per);
+	if (((h >= 0) && (h < 10)) || ((h > 18) && (h < 24)))
+		chlm(per);
 	else {
 		if ((h > 9) && (h < 12)) {
 			min = 3;
 			max = 7;
-		}
-		if ((h > 11) && (h < 18)) {
+		} else if ((h > 11) && (h < 18)) {
 			min = 1;
 			max = 2;
-		}
-		if (h == 18) {
+		} else if (h == 18) {
 			min = 2;
 			max = 4;
 		}
@@ -847,61 +906,86 @@ void frap() {
 
 	/* debug('o1 frap'); */
 	calch(j, h, m);
-	if ((h >= 0) && (h < 8))  crep = 190;
+	if ((h >= 0) && (h < 8))
+		crep = 190;
 	else {
 		haz = hazard(1, 100);
-		if (haz > 70)  crep = 190;
-		else crep = 147;
+		if (haz > 70)
+			crep = 190;
+		else
+			crep = 147;
 	}
 }
 
 void nouvp(int l, int &p) {
-	/* debug('o1 nouvp'); */
 	p = 0;
 	if (l == 1) {
-		if (bh1)  p = 4;
-		if (bf1)  p = 2;
-	}
-	if (((l == 2) && (bh2)) || ((l == 9) && (bh9)))  p = 128;
-	if (l == 4) {
-		if (bh4)  p = 32;
-		if (bf4)  p = 16;
-	}
-	if ((l == 5) && (bh5))  p = 1;
-	if ((l == 6) && (bh6))  p = 8;
-	if ((l == 8) && (bh8))  p = 64;
-	if (((l == 3) && (bt3)) || ((l == 7) && (bt7)))  p = 9;
-	if (p != 9)  affper(p);
+		if (bh1)
+			p = 4;
+		if (bf1)
+			p = 2;
+	} else if (((l == 2) && (bh2)) || ((l == 9) && (bh9)))
+		p = 128;
+	else if (l == 4) {
+		if (bh4)
+			p = 32;
+		if (bf4)
+			p = 16;
+	} else if ((l == 5) && (bh5))
+		p = 1;
+	else if ((l == 6) && (bh6))
+		p = 8;
+	else if ((l == 8) && (bh8))
+		p = 64;
+	else if (((l == 3) && (bt3)) || ((l == 7) && (bt7)))
+		p = 9;
+
+	if (p != 9)
+		affper(p);
 }
 
 
 
 void tip(int ip, int &cx) {
-	/* debug('o1 tip'); */
-	if (ip == 128)  cx = 1;
-	else if (ip == 64)   cx = 2;
-	else if (ip == 32)   cx = 3;
-	else if (ip == 16)   cx = 4;
-	else if (ip == 8)    cx = 5;
-	else if (ip == 4)    cx = 6;
-	else if (ip == 2)    cx = 7;
-	else if (ip == 1)    cx = 8;
+	if (ip == 128)
+		cx = 1;
+	else if (ip == 64)
+		cx = 2;
+	else if (ip == 32)
+		cx = 3;
+	else if (ip == 16)
+		cx = 4;
+	else if (ip == 8)
+		cx = 5;
+	else if (ip == 4)
+		cx = 6;
+	else if (ip == 2)
+		cx = 7;
+	else if (ip == 1)
+		cx = 8;
 }
 
 
 void ecfren(int &p, int &haz, int cf, int l) {
 	/* debug('o1 ecfren'); */
-	if (l == 0)  person();
+	if (l == 0)
+		person();
 	p = -500;
 	haz = 0;
-	if (((l == 1) && (! bh1) && (! bf1))
-	        || ((l == 4) && (! bh4) && (! bf4)))  cpl1(p);
-	if ((l == 2) && (! bh2) && (! bh9))  cpl2(p);
-	if (((l == 3) && (! bt3)) || ((l == 7) && (! bt7)))  cpl3(p);
-	if ((l == 5) && (! bh5))  cpl5(p);
-	if (((l == 6) && (! bh6)) || ((l == 8) && (! bh8)))  cpl6(p);
-	if ((l == 9) && (! bh9) && (! bh2))  p = 10;
-	if (((l == 2) && (bh9)) || ((l == 9) && (bh2)))  p = -400;
+	if (((l == 1) && (! bh1) && (! bf1)) || ((l == 4) && (! bh4) && (! bf4)))
+		cpl1(p);
+	if ((l == 2) && (! bh2) && (! bh9))
+		cpl2(p);
+	if (((l == 3) && (! bt3)) || ((l == 7) && (! bt7)))
+		cpl3(p);
+	if ((l == 5) && (! bh5))
+		cpl5(p);
+	if (((l == 6) && (! bh6)) || ((l == 8) && (! bh8)))
+		cpl6(p);
+	if ((l == 9) && (! bh9) && (! bh2))
+		p = 10;
+	if (((l == 2) && (bh9)) || ((l == 9) && (bh2)))
+		p = -400;
 	if (p != -500) {
 		p = p + cf;
 		haz = hazard(1, 100);
@@ -915,19 +999,29 @@ void becfren(int l) {
 	if ((l == 1) || (l == 4)) {
 		haz = hazard(1, 2);
 		if (l == 1)
-			if (haz == 1)  bh1 = true;
-			else bf1 = true;
+			if (haz == 1)
+				bh1 = true;
+			else
+				bf1 = true;
 		if (l == 4)
-			if (haz == 1)  bh4 = true;
-			else bf4 = true;
-	}
-	if (l == 2)  bh2 = true;
-	else if (l == 3)  bt3 = true;
-	else if (l == 5)  bh5 = true;
-	else if (l == 6)  bh6 = true;
-	else if (l == 7)  bt7 = true;
-	else if (l == 8)  bh8 = true;
-	else if (l == 9)  bh9 = true;
+			if (haz == 1)
+				bh4 = true;
+			else
+				bf4 = true;
+	} else if (l == 2)
+		bh2 = true;
+	else if (l == 3)
+		bt3 = true;
+	else if (l == 5)
+		bh5 = true;
+	else if (l == 6)
+		bh6 = true;
+	else if (l == 7)
+		bt7 = true;
+	else if (l == 8)
+		bh8 = true;
+	else if (l == 9)
+		bh9 = true;
 }
 
 /* NIVEAU 10 */
@@ -941,7 +1035,7 @@ void init_nbrepm() {
 
 void phaz(int &haz, int &p, int cf) {
 	/* debug('phaz'); */
-	p = p + cf;
+	p += cf;
 	haz = hazard(1, 100);
 }
 
@@ -950,29 +1044,45 @@ void inzon() {
 
 	/* debug('o2 inzon'); */
 	copcha();
-	{
-		s.ipre  = false;
-		s.derobj = 0;
-		s.icave = 0;
-		s.iboul = 0;
-		s.ibag  = 0;
-		s.ipuit = 0;
-		s.ivier = 0;
-		s.iloic = 136;
-		s.icryp = 141;
-		s.conf  = hazard(4, 10);
-		s.mlieu = 21;
-		for (cx = 2; cx <= 6; cx ++) s.sjer[cx] = chr(0);
-		s.sjer[1] = chr(113);
-		s.heure = chr(20);
-		for (cx = 1; cx <= 10; cx ++) s.pourc[cx] = ' ';
-		for (cx = 1; cx <= 6; cx ++) s.teauto[cx] = '*';
-		for (cx = 7; cx <= 9; cx ++) s.teauto[cx] = ' ';
-		for (cx = 10; cx <= 28; cx ++) s.teauto[cx] = '*';
-		for (cx = 29; cx <= 42; cx ++) s.teauto[cx] = ' ';
-		s.teauto[33] = '*';
-	}
-	for (cx = 1; cx <= 8; cx ++) nbrep[cx] = 0;
+
+	s.ipre  = false;
+	s.derobj = 0;
+	s.icave = 0;
+	s.iboul = 0;
+	s.ibag  = 0;
+	s.ipuit = 0;
+	s.ivier = 0;
+	s.iloic = 136;
+	s.icryp = 141;
+	s.conf  = hazard(4, 10);
+	s.mlieu = 21;
+
+	for (cx = 2; cx <= 6; cx ++)
+		s.sjer[cx] = chr(0);
+
+	s.sjer[1] = chr(113);
+	s.heure = chr(20);
+
+	for (cx = 1; cx <= 10; cx ++)
+		s.pourc[cx] = ' ';
+
+	for (cx = 1; cx <= 6; cx ++)
+		s.teauto[cx] = '*';
+
+	for (cx = 7; cx <= 9; cx ++)
+		s.teauto[cx] = ' ';
+
+	for (cx = 10; cx <= 28; cx ++)
+		s.teauto[cx] = '*';
+
+	for (cx = 29; cx <= 42; cx ++)
+		s.teauto[cx] = ' ';
+
+	s.teauto[33] = '*';
+
+	for (cx = 1; cx <= 8; cx ++)
+		nbrep[cx] = 0;
+
 	init_nbrepm();
 }
 
@@ -981,7 +1091,8 @@ void dprog() {
 	li = 21;
 	/* jh:= t_settime(0);*/
 	jh = 0;
-	if (! s.ipre)  blo = true;
+	if (! s.ipre)
+		blo = true;
 	t = ti1;
 	mh = readclock();
 }
@@ -990,12 +1101,13 @@ void pl1(int cf) {
 	int p, haz;
 
 	/* debug('o2 pl1'); */
-	if (((li == 1) && (! bh1) && (! bf1))
-	        || ((li == 4) && (! bh4) && (! bf4))) {
+	if (((li == 1) && (! bh1) && (! bf1)) || ((li == 4) && (! bh4) && (! bf4))) {
 		cpl1(p);
 		phaz(haz, p, cf);
-		if (haz > p)  person();
-		else quelq1(li);
+		if (haz > p)
+			person();
+		else
+			quelq1(li);
 	}
 }
 
@@ -1006,8 +1118,10 @@ void pl2(int cf) {
 	if (! bh2) {
 		cpl2(p);
 		phaz(haz, p, cf);
-		if (haz > p)  person();
-		else quelq2();
+		if (haz > p)
+			person();
+		else
+			quelq2();
 	}
 }
 
@@ -1018,8 +1132,10 @@ void pl5(int cf) {
 	if (! bh5) {
 		cpl5(p);
 		phaz(haz, p, cf);
-		if (haz > p)  person();
-		else quelq5();
+		if (haz > p)
+			person();
+		else
+			quelq5();
 	}
 }
 
@@ -1030,8 +1146,10 @@ void pl6(int cf) {
 	if (((li == 6) && (! bh6)) || ((li == 8) && (! bh8))) {
 		cpl6(p);
 		phaz(haz, p, cf);
-		if (haz > p)  person();
-		else quelq6(li);
+		if (haz > p)
+			person();
+		else
+			quelq6(li);
 	}
 }
 
@@ -1042,8 +1160,10 @@ void pl9(int cf) {
 	if (! bh9) {
 		cf = -10;
 		phaz(haz, p, cf);
-		if (haz > p)  person();
-		else quelq2();
+		if (haz > p)
+			person();
+		else
+			quelq2();
 	}
 }
 
@@ -1053,8 +1173,10 @@ void pl10(int cf) {
 	/* debug('o2 pl10'); */
 	cpl10(p, h);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq10(h, p);
+	if (haz > p)
+		person();
+	else
+		quelq10(h, p);
 }
 
 void pl11(int cf) {
@@ -1063,8 +1185,10 @@ void pl11(int cf) {
 	/* debug('o2 pl11'); */
 	cpl11(p, h);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq11(h, p);
+	if (haz > p)
+		person();
+	else
+		quelq11(h, p);
 }
 
 void pl12(int cf) {
@@ -1073,8 +1197,10 @@ void pl12(int cf) {
 	/* debug('o2 pl12'); */
 	cpl12(p);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq12(p);
+	if (haz > p)
+		person();
+	else
+		quelq12(p);
 }
 
 void pl13(int cf) {
@@ -1083,8 +1209,10 @@ void pl13(int cf) {
 	/* debug('o2 pl13'); */
 	cpl13(p);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq12(p);
+	if (haz > p)
+		person();
+	else
+		quelq12(p);
 }
 
 void pl15(int cf) {
@@ -1093,8 +1221,10 @@ void pl15(int cf) {
 	/* debug('o2 pl15'); */
 	cpl15(p);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq15(p);
+	if (haz > p)
+		person();
+	else
+		quelq15(p);
 }
 
 void pl20(int cf) {
@@ -1103,8 +1233,10 @@ void pl20(int cf) {
 	/* debug('o2 pl20'); */
 	cpl20(p, h);
 	phaz(haz, p, cf);
-	if (haz > p)  person();
-	else quelq20(h, p);
+	if (haz > p)
+		person();
+	else
+		quelq20(h, p);
 }
 
 void t11(int l11, int &a) {
@@ -1113,7 +1245,7 @@ void t11(int l11, int &a) {
 	/* debug('o2 t11'); */
 	ecfren(p, haz, s.conf, l11);
 	li = l11;
-	if ((l11 > 0) && (l11 < 10))
+	if ((l11 > 0) && (l11 < 10)) {
 		if (p != -500) {
 			if (haz > p) {
 				person();
@@ -1122,46 +1254,63 @@ void t11(int l11, int &a) {
 				becfren(li);
 				nouvp(li, a);
 			}
-		} else nouvp(li, a);
-	if (l11 > 9)
-		if ((l11 > 15) && (l11 != 20) && (l11 != 26))  person();
+		} else
+			nouvp(li, a);
+	}
+
+	if (l11 > 9) {
+		if ((l11 > 15) && (l11 != 20) && (l11 != 26))
+			person();
 		else {
-			if (l11 == 10)  cpl10(p, h);
-			if (l11 == 11)  cpl11(p, h);
-			if (l11 == 12)  cpl12(p);
-			if ((l11 == 13) || (l11 == 14))  cpl13(p);
-			if ((l11 == 15) || (l11 == 26))  cpl15(p);
-			if (l11 == 20)  cpl20(p, h);
+			if (l11 == 10)
+				cpl10(p, h);
+			if (l11 == 11)
+				cpl11(p, h);
+			if (l11 == 12)
+				cpl12(p);
+			if ((l11 == 13) || (l11 == 14))
+				cpl13(p);
+			if ((l11 == 15) || (l11 == 26))
+				cpl15(p);
+			if (l11 == 20)
+				cpl20(p, h);
 			p = p + s.conf;
 			haz = hazard(1, 100);
 			if (haz > p) {
 				person();
 				a = 0;
 			} else {
-				if (l11 == 10)  quelq10(h, p);
-				if (l11 == 11)  quelq11(h, p);
-				if ((l11 == 12) || (l11 == 13) || (l11 == 14))  quelq12(p);
-				if ((l11 == 15) || (l11 == 26))  quelq15(p);
-				if (l11 == 20)  quelq20(h, p);
+				if (l11 == 10)
+					quelq10(h, p);
+				if (l11 == 11)
+					quelq11(h, p);
+				if ((l11 == 12) || (l11 == 13) || (l11 == 14))
+					quelq12(p);
+				if ((l11 == 15) || (l11 == 26))
+					quelq15(p);
+				if (l11 == 20)
+					quelq20(h, p);
 				a = p;
 			}
 		}
+	}
 }
 
-void cavegre()
-
-{
+void cavegre() {
 	int haz;
 
 	/* debug('cavegre'); */
 	s.conf = s.conf + 2;
-	if (s.conf > 69)  s.conf = s.conf + (s.conf / 10);
+	if (s.conf > 69)
+		s.conf += (s.conf / 10);
 	clsf3();
 	ecrf2();
 	ecr3(g_vm->getString(S_SOMEONE_ENTERS));
 	haz = (hazard(0, 4)) - 2;
 	parole(2, haz, 1);
-	for (haz = 0; haz <= 3000; haz ++);
+
+	// Useless?
+	for (haz = 0; haz <= 3000; haz++);
 	clsf3();
 	person();
 }
@@ -1183,15 +1332,21 @@ void messint(int nu) {
 }
 
 void aniof(int ouf, int num) {
-	int ad, offset;
+	if ((caff == 7) && ((num == 4) || (num == 5)))
+		return;
+	
+	if ((caff == 10) && (num == 7))
+		num = 6;
 
-	/* debug('aniof'); */
-	if ((caff == 7) && ((num == 4) || (num == 5)))  return;
-	if ((caff == 10) && (num == 7))  num = 6;
-	if (caff == 12)  if (num == 3)  num = 4;
-		else if (num == 4)  num = 3;
-	ad = adani;
-	offset = animof(ouf, num);
+	if (caff == 12) {
+		if (num == 3)
+			num = 4;
+		else if (num == 4)
+			num = 3;
+	}
+
+	int ad = adani;
+	int offset = animof(ouf, num);
 
 	GfxSurface surface;
 	surface.decode(&mem[ad * 16 + offset]);
@@ -1209,7 +1364,7 @@ void musique(int so) {
 		;
 	} else if ((prebru == 0) && (! s.ipre)) {
 		parole(10, 1, 1);
-		prebru = prebru + 1;
+		++prebru;
 	} else {
 		i = false;
 		if ((s.mlieu == 19) || (s.mlieu == 21) || (s.mlieu == 22)) {
@@ -1247,15 +1402,13 @@ void musique(int so) {
 
 /* NIVEAU 9 */
 void dessin(int ad) {
-	int cx;
-
-	/* debug('dessin'); */
-	if (ad != 0)  dessine(ades, ((ad % 160) * 2), (ad / 160));
+	if (ad != 0)
+		dessine(ades, ((ad % 160) * 2), (ad / 160));
 	else {
 		clsf1();
 		if (caff > 99) {
 			dessine(ades, 60, 33);
-			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         /* cadre moyen */          //Translation: Medium box
+			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 		} else if (caff > 69) {
 			dessine(ades, 112, 48);           /* tˆtes */                    //Translation: Heads
 			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
@@ -1263,17 +1416,30 @@ void dessin(int ad) {
 			dessine(ades, 0, 12);
 			ecrf1();
 			if ((caff < 30) || (caff > 32)) {
-				for (cx = 1; cx <= 6; cx ++)
-					if (ord(touv[cx]) != 0)  aniof(1, ord(touv[cx]));
-				if (caff == 13) {
-					if (s.iboul == 141)  aniof(1, 7);
-					if (s.ibag == 159)  aniof(1, 6);
+				for (int cx = 1; cx <= 6; cx ++) {
+					if (ord(touv[cx]) != 0)
+						aniof(1, ord(touv[cx]));
 				}
-				if ((caff == 14) && (s.icave == 151))  aniof(1, 2);
-				if ((caff == 17) && (s.ivier == 143))  aniof(1, 1);
-				if ((caff == 24) && (s.ipuit != 0))  aniof(1, 1);
+
+				if (caff == 13) {
+					if (s.iboul == 141)
+						aniof(1, 7);
+
+					if (s.ibag == 159)
+						aniof(1, 6);
+				}
+				if ((caff == 14) && (s.icave == 151))
+					aniof(1, 2);
+
+				if ((caff == 17) && (s.ivier == 143))
+					aniof(1, 1);
+
+				if ((caff == 24) && (s.ipuit != 0))
+					aniof(1, 1);
 			}
-			if (caff < 26)  musique(1);
+			
+			if (caff < 26)
+				musique(1);
 		}
 	}
 }

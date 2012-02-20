@@ -484,7 +484,8 @@ void GfxSurface::horizontal(const byte *&pSrc, byte *&pDest, const byte *&pLooku
 	for (;;) {
 		// If position is past end point, then skip this line
 		if (((_thickness - 1) * DEFAULT_WIDTH) + pDest >= pDestEnd) {
-			if (--_thickness == 0) break;
+			if (--_thickness == 0)
+				break;
 			continue;
 		}
 		
@@ -1081,7 +1082,7 @@ void ScreenSurface::writeg(const Common::String &l, int c) {
 	}
 	pt.x += 1;
 	pt.y += 1;
-	for (x = 1; x <= (int)l.size(); ++x) {
+	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
 		g_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
 		pt.x += i;
 	}

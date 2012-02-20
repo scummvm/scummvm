@@ -37,9 +37,7 @@ namespace Mortevielle {
 
 /* NIVEAU 15 */
 void copcha() {
-	int i;
-
-	i = acha;
+	int i = acha;
 	do {
 		tabdon[i] = tabdon[i + 390];
 		i = succ(int, i);
@@ -54,8 +52,11 @@ bool dans_rect(rectangle r) {
 	if ((x > r.x1) &&
 	        (x < r.x2) &&
 	        (y > r.y1) &&
-	        (y < r.y2))  dans_rect_result = true;
-	else dans_rect_result = false;
+	        (y < r.y2))
+		dans_rect_result = true;
+	else
+		dans_rect_result = false;
+
 	return dans_rect_result;
 }
 
@@ -63,27 +64,24 @@ void outbloc(int n, pattern p, t_nhom pal) {
 	int i, j, ad;
 
 	ad = n * 404 + 0xd700;
-	{
-		WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p.tax);
-		WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p.tay);
-		ad = ad + 4;
-		for (i = 1; i <= p.tax; i ++)
-			for (j = 1; j <= p.tay; j ++)
-				mem[0x6000 * 16 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
-	}
-}
 
+	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad], p.tax);
+	WRITE_LE_UINT16(&mem[0x6000 * 16 + ad + 2], p.tay);
+	ad = ad + 4;
+	for (i = 1; i <= p.tax; i ++)
+		for (j = 1; j <= p.tay; j ++)
+			mem[0x6000 * 16 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
+}
 
 void writepal(int n) {
 	int i;
 	t_nhom pal;
 
-
 	switch (gd) {
 	case tan:
 	case ega:
 	case ams :
-		for (i = 1; i <= 16; i ++) {
+		for (i = 1; i <= 16; i++) {
 			mem[0x7000 * 16 + 2 * i] = tabpal[n][i].x;
 			mem[0x7000 * 16 + succ(int, 2 * i)] = tabpal[n][i].y;
 		}
@@ -91,8 +89,10 @@ void writepal(int n) {
 	case cga : {
 		warning("TODO: If this code is needed, resolve the incompatible types");
 //		pal = palcga[n].a;
-		if (n < 89)  palette(palcga[n].p);
-		for (i = 0; i <= 15; i ++) outbloc(i, tpt[pal[i].n], pal);
+		if (n < 89)
+			palette(palcga[n].p);
+		for (i = 0; i <= 15; i++)
+			outbloc(i, tpt[pal[i].n], pal);
 	}
 	break;
 	}
@@ -152,7 +152,8 @@ int animof(int ouf, int num) {
 	int animof_result;
 	nani = mem[adani * 16 + 1];
 	aux = num;
-	if (ouf != 1)  aux = aux + nani;
+	if (ouf != 1)
+		aux += nani;
 	animof_result = (nani << 2) + 2 + READ_BE_UINT16(&mem[adani * 16 + (aux << 1)]);
 
 	return animof_result;

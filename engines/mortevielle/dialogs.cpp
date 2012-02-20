@@ -83,19 +83,23 @@ int Alert::show(const Common::String &msg, int n) {
 			cx = 320;
 			st = "";
 			while ((chaine[i + 1] != '\174') && (chaine[i + 1] != '\135')) {
-				i = i + 1;
+				++i;
 				st = st + chaine[i];
-				if (res == 2)  cx = cx - 3;
-				else cx = cx - 5;
+				if (res == 2)
+					cx -= 3;
+				else
+					cx -= 5;
 			}
 			g_vm->_screenSurface.putxy(cx, g_vm->_screenSurface._textPos.y);
 			g_vm->_screenSurface._textPos.y += 6;
 			g_vm->_screenSurface.writeg(st, 4);
-			i = i + 1;
+			++i;
 		} while (!(chaine[i] == ']'));
 	}
-	if (nbcase == 1)  esp = nbcol - 40;
-	else esp = (uint)(nbcol - nbcase * 40) >> 1;
+	if (nbcase == 1)
+		esp = nbcol - 40;
+	else
+		esp = (uint)(nbcol - nbcase * 40) >> 1;
 	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
 	fait_choix(cas, coldep, nbcase, &s[0], esp);
 	limit[1][1] = ((uint)(coldep) >> 1) * res;
@@ -121,11 +125,14 @@ int Alert::show(const Common::String &msg, int n) {
 		if (test) {
 			test1 = (cx > limit[1][1]) && (cx < limit[1][2]);
 			test2 = test1;
-			if (nbcase > 1)  test2 = test1 || ((cx > limit[2][1]) && (cx < limit[2][2]));
+			if (nbcase > 1)
+				test2 = test1 || ((cx > limit[2][1]) && (cx < limit[2][2]));
 			if (test2) {
 				newaff = true;
-				if (test1)  ix = 1;
-				else ix = 2;
+				if (test1)
+					ix = 1;
+				else
+					ix = 2;
 				if (ix != quoi) {
 					hideMouse();
 					if (quoi != 0) {
@@ -165,7 +172,7 @@ int Alert::show(const Common::String &msg, int n) {
 	} while (!g_vm->getMouseClick());
 	g_vm->setMouseClick(false);
 	hideMouse();
-	if (! test3)  {
+	if (!test3)  {
 		quoi = n;
 		setPosition(n, coldep, esp);
 		Common::String tmp4(" ");
@@ -199,26 +206,30 @@ void Alert::decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 	col = 0;
 
 	while (s[i] != ']') {
-		c = c + s[i];
+		c += s[i];
 		if ((s[i] == '|') || (s[i + 1] == ']')) {
-			if (k > col)  col = k;
+			if (k > col)
+				col = k;
 			k = 0;
 			nbl = nbl + 1;
-		} else if (s[i] != ' ')  v = false;
-		i = i + 1;
-		k = k + 1;
+		} else if (s[i] != ' ')
+			v = false;
+		++i;
+		++k;
 	}
 	if (v)  {
 		c = "";
 		col = 20;
 	} else {
-		c = c + ']';
-		col = col + 6;
+		c += ']';
+		col += 6;
 	}
-	i = i + 1;
+	++i;
 	cs = copy(s, i, 30);
-	if (res == 2)  col = col * 6;
-	else col = col * 10;
+	if (res == 2)
+		col *= 6;
+	else
+		col *= 10;
 }
 
 void Alert::setPosition(int ji, int coldep, int esp) {
@@ -228,7 +239,8 @@ void Alert::setPosition(int ji, int coldep, int esp) {
 void Alert::fait_boite(int lidep, int nli, int tx) {
 	int x, y, xx, yy;
 
-	if (tx > 640)  tx = 640;
+	if (tx > 640)
+		tx = 640;
 	x = 320 - ((uint)tx >> 1);
 	y = pred(int, lidep) << 3;
 	xx = x + tx;
@@ -249,12 +261,13 @@ void Alert::fait_choix(Common::String c, int coldep, int nbcase, Common::String 
 	for (l = 1; l <= nbcase; l ++) {
 		str[l] = "";
 		do {
-			i = i + 1;
+			++i;
 			ch = c[i];
-			str[l] = str[l] + ch;
+			str[l] += ch;
 		} while (!(c[i + 1] == ']'));
 		i = i + 2;
-		while (str[l].size() < 3)  str[l] = str[l] + ' ';
+		while (str[l].size() < 3)
+		str[l] += ' ';
 		g_vm->_screenSurface.putxy(x, 98);
 
 		Common::String tmp(" ");
@@ -262,7 +275,7 @@ void Alert::fait_choix(Common::String c, int coldep, int nbcase, Common::String 
 		tmp += " ";
 
 		g_vm->_screenSurface.writeg(tmp, 0);
-		x = x + esp + 40;
+		x += esp + 40;
 	}
 }
 
@@ -292,10 +305,12 @@ bool Ques::show() {
 		hideMouse();
 		hirs();
 		showMouse();
-		i = i + 1;
+		++i;
 		deline(ta[i], st, tay);
-		if (res == 1)  y = 29;
-		else y = 23;
+		if (res == 1)
+			y = 29;
+		else
+			y = 23;
 		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, y));
 		afftex(st, 20, 15, 100, 2, 0);
 		if (i != 10) {
@@ -310,29 +325,31 @@ bool Ques::show() {
 		memk = 1;
 		for (j = prem; j <= der; j ++) {
 			deline(j, st, tay);
-			if (tay > tmax)  tmax = tay;
+			if (tay > tmax)
+				tmax = tay;
 			afftex(st, 100, y, 100, 1, 0);
 			chaines[memk] = delig;
-			memk = memk + 1;
-			y = y + 8;
+			++memk;
+			y += 8;
 		}
-		for (j = 1; j <= succ(int, der - prem); j ++) {
-			{
-				rectangle &with = coor[j];
+		for (j = 1; j <= succ(int, der - prem); j++) {
+			rectangle &with = coor[j];
 
-				with.x1 = 45 * res;
-				with.x2 = (tmax * 3 + 55) * res;
-				with.y1 = 27 + j * 8;
-				with.y2 = 34 + j * 8;
-				with.etat = true;
-			}
+			with.x1 = 45 * res;
+			with.x2 = (tmax * 3 + 55) * res;
+			with.y1 = 27 + j * 8;
+			with.y2 = 34 + j * 8;
+			with.etat = true;
+
 			while ((int)chaines[j].size() < tmax) {
-				chaines[j] = chaines[j] + ' ';
+				chaines[j] += ' ';
 			}
 		}
 		coor[j + 1].etat = false;
-		if (res == 1)  rep = 10;
-		else rep = 6;
+		if (res == 1)
+			rep = 10;
+		else
+			rep = 6;
 		g_vm->_screenSurface.drawBox(80, 33, 40 + tmax * rep, (der - prem) * 8 + 16, 15);
 		rep = 0;
 		j = 0;
@@ -347,29 +364,40 @@ bool Ques::show() {
 			while (coor[k].etat && ! dans_rect(coor[k]))  k = k + 1;
 			if (coor[k].etat) {
 				if ((memk != 0) && (memk != k)) {
-					for (j = 1; j <= tmax; j ++) st[j] = chaines[memk][j];
+//					for (j = 1; j <= tmax; j ++)
+//						st[j] = chaines[memk][j];
+					strncpy(st, chaines[memk].c_str(), tmax);
+//
 					st[1 + tmax] = '$';
 					afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				}
 				if (memk != k) {
-					for (j = 1; j <= tmax; j ++) st[j] = chaines[k][j];
+//					for (j = 1; j <= tmax; j ++)
+//						st[j] = chaines[k][j];
+					strncpy(st, chaines[k].c_str(), tmax);
 					st[1 + tmax] = '$';
 					afftex(st, 100, 27 + k * 8, 100, 1, 1);
 					memk = k;
 				}
 			} else if (memk != 0) {
-				for (j = 1; j <= tmax; j ++) st[j] = chaines[memk][j];
+//				for (j = 1; j <= tmax; j ++)
+//					st[j] = chaines[memk][j];
+				strncpy(st, chaines[memk].c_str(), tmax);
 				st[1 + tmax] = '$';
 				afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				memk = 0;
 			}
 		} while (!((memk != 0) && g_vm->getMouseClick()));
-		if (memk == ok[i])  compte = compte + 1;
+		if (memk == ok[i])
+			++compte;
 		else {
-			if (i == 5)  i = i + 1;
-			if ((i == 7) || (i == 8))  i = 10;
+			if (i == 5)
+				++i;
+			if ((i == 7) || (i == 8))
+				i = 10;
 		}
-		if (i == 10)  q =   /*testprot*/ true;
+		if (i == 10)
+			q = /*testprot*/ true;
 	} while (!(i == 10));
 	ques_result = (compte == 10) && q;
 	return ques_result;

@@ -909,7 +909,11 @@ void fctKnock() {
 	}
 }
 
-void tposer() {
+/**
+ * Engine function - Put
+ * @remarks	Originally called 'tposer'
+ */
+void fctPut() {
 	int cx, chai;
 
 	if (!syn)
@@ -1099,7 +1103,7 @@ void fctEnter() {
 				tip(z, x);
 				++s.conf;
 				s.mlieu = 15;
-				msg[3] = discut;
+				msg[3] = MENU_DISCUSS;
 				msg[4] = g_vm->_menu._disc[x];
 				syn = true;
 				if (ment == 9) {
@@ -1275,7 +1279,11 @@ void fctSound() {
 	}
 }
 
-void tparler() {
+/**
+ * Engine function - Discuss
+ * @remarks	Originally called 'tparler'
+ */
+void fctDiscuss() {
 	bool te[47];
 	int ix, cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
