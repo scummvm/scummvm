@@ -494,7 +494,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	if (_context == nil) {
-		_orientation = UIDeviceOrientationLandscapeRight;
 		CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
 		eaglLayer.opaque = YES;
