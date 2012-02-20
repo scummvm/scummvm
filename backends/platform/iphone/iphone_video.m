@@ -31,9 +31,9 @@ static int _fullWidth;
 static int _fullHeight;
 static CGRect _screenRect;
 
-static char *_textureBuffer = 0;
-static int _textureWidth = 0;
-static int _textureHeight = 0;
+static char *_gameScreenTextureBuffer = 0;
+static int _gameScreenTextureWidth = 0;
+static int _gameScreenTextureHeight = 0;
 
 static char *_overlayTexBuffer = 0;
 static int _overlayTexWidth = 0;
@@ -132,7 +132,7 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	for (y = y1; y < y2; ++y)
-		memcpy(&_textureBuffer[(y * _textureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
+		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
@@ -261,7 +261,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[_keyboardView dealloc];
 	}
 
-	free(_textureBuffer);
+	free(_gameScreenTextureBuffer);
 	free(_overlayTexBuffer);
 }
 
@@ -332,8 +332,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_visibleWidth - _heightOffset,  _visibleHeight - _widthOffset
 	};
 
-	float texWidth = _width / (float)_textureWidth;
-	float texHeight = _height / (float)_textureHeight;
+	float texWidth = _width / (float)_gameScreenTextureWidth;
+	float texHeight = _height / (float)_gameScreenTextureHeight;
 
 	const GLfloat texCoords[] = {
 		texWidth, 0.0f,
@@ -350,7 +350,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _textureWidth, _textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _textureBuffer); printOpenGLError();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _gameScreenTextureWidth, _gameScreenTextureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _gameScreenTextureBuffer); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -439,12 +439,12 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)initSurface {
-	_textureWidth = getSizeNextPOT(_width);
-	_textureHeight = getSizeNextPOT(_height);
+	_gameScreenTextureWidth = getSizeNextPOT(_width);
+	_gameScreenTextureHeight = getSizeNextPOT(_height);
 
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 
-	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _textureWidth, _textureHeight);
+	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	if (_context == nil) {
 		orientation = UIDeviceOrientationLandscapeRight;
@@ -520,13 +520,10 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
 	setFilterModeForTexture(_overlayTexture, _graphicsMode);
 
-	if (_textureBuffer) {
-		free(_textureBuffer);
-	}
-
-	int textureSize = _textureWidth * _textureHeight * 2;
-	_textureBuffer = (char *)malloc(textureSize);
-	memset(_textureBuffer, 0, textureSize);
+	free(_gameScreenTextureBuffer);
+	int textureSize = _gameScreenTextureWidth * _gameScreenTextureHeight * 2;
+	_gameScreenTextureBuffer = (char *)malloc(textureSize);
+	memset(_gameScreenTextureBuffer, 0, textureSize);
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 
