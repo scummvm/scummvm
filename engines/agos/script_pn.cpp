@@ -466,8 +466,8 @@ void AGOSEngine_PN::opn_opcode35() {
 void AGOSEngine_PN::opn_opcode36() {
 	for (int i = 0; i < _dataBase[57] + 1; ++i)
 		_wordcp[i] = 0;
-	if (isSpace(*_inpp))
-		while ((*_inpp) && (isSpace(*_inpp)))
+	if (Common::isSpace(*_inpp))
+		while ((*_inpp) && (Common::isSpace(*_inpp)))
 			_inpp++;
 	if (*_inpp == 0) {
 		setScriptReturn(false);
@@ -481,7 +481,7 @@ void AGOSEngine_PN::opn_opcode36() {
 	}
 
 	int ct = 1;
-	while ((*_inpp != '.') && (*_inpp != ',') && (!isSpace(*_inpp)) && (*_inpp != '\0') &&
+	while ((*_inpp != '.') && (*_inpp != ',') && (!Common::isSpace(*_inpp)) && (*_inpp != '\0') &&
 		(*_inpp!='"')) {
 		if (ct < _dataBase[57])
 			_wordcp[ct++] = *_inpp;
@@ -581,7 +581,7 @@ void AGOSEngine_PN::opn_opcode46() {
 		return;
 	}
 	x++;
-	while ((*x != '.') && (*x != ',') && (*x != '"') && (!isSpace(*x)) && (*x != '\0'))
+	while ((*x != '.') && (*x != ',') && (*x != '"') && (!Common::isSpace(*x)) && (*x != '\0'))
 		pcf(*x++);
 	setScriptReturn(true);
 }

@@ -147,7 +147,7 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	Common::String source_str = s->_segMan->getString(argv[0]);
 	const char *source = source_str.c_str();
 
-	while (isSpace(*source))
+	while (Common::isSpace(*source))
 		source++; /* Skip whitespace */
 
 	int16 result = 0;
@@ -246,14 +246,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			/* int writelength; -- unused atm */
 
-			if (xfer && (isDigit(xfer) || xfer == '-' || xfer == '=')) {
+			if (xfer && (Common::isDigit(xfer) || xfer == '-' || xfer == '=')) {
 				char *destp;
 
 				if (xfer == '0')
 					fillchar = '0';
 				else if (xfer == '=')
 					align = ALIGN_CENTER;
-				else if (isDigit(xfer) || (xfer == '-'))
+				else if (Common::isDigit(xfer) || (xfer == '-'))
 					source--; // Go to start of length argument
 
 				strLength = strtol(source, &destp, 10);

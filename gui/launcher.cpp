@@ -90,7 +90,7 @@ public:
 
 protected:
 	bool tryInsertChar(byte c, int pos) {
-		if (isAlnum(c) || c == '-' || c == '_') {
+		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
 		}

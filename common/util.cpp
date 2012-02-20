@@ -415,9 +415,6 @@ void updateGameGUIOptions(const String &options, const String &langOption) {
 	}
 }
 
-} // End of namespace Common
-
-
 //
 // TODO: Instead of a blind cast, we might want to verify
 // if c equals EOS; and/or is in the range -255..+255;
@@ -435,10 +432,6 @@ bool isDigit(int c) {
 	return isdigit((byte)c);
 }
 
-bool isNumber(int c) {
-	return isnumber((byte)c);
-}
-
 bool isLower(int c) {
 	return islower((byte)c);
 }
@@ -450,3 +443,5 @@ bool isSpace(int c) {
 bool isUpper(int c) {
 	return isupper((byte)c);
 }
+
+} // End of namespace Common

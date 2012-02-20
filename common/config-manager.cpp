@@ -29,7 +29,7 @@
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
-	while (*p && (isAlnum(*p) || *p == '-' || *p == '_'))
+	while (*p && (Common::isAlnum(*p) || *p == '-' || *p == '_'))
 		p++;
 	return *p == 0;
 }

@@ -381,7 +381,7 @@ protected:
 	}
 
 	void accumPassword(uint16 ascii) {
-		if (!isDigit(ascii)) {
+		if (!Common::isDigit(ascii)) {
 			return;
 		}
 

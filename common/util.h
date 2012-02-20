@@ -34,17 +34,6 @@
           ((((size_t)value) & ((alignment) - 1)) == 0)
 
 
-//namespace{
-bool isAlnum(int c);
-bool isAlpha(int c);
-bool isDigit(int c);
-bool isNumber(int c);
-bool isLower(int c);
-bool isSpace(int c);
-bool isUpper(int c);
-//}
-
-
 #ifdef MIN
 #undef MIN
 #endif
@@ -143,6 +132,70 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
  * @return 	true if the string parsed correctly, false if an error occurred.
  */
 bool parseBool(const String &val, bool &valAsBool);
+
+
+/**
+ * Test whether the given character is alphanumeric (a-z, A-Z, 0-9).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is alphanumeric, false otherwise.
+ */
+bool isAlnum(int c);
+
+/**
+ * Test whether the given character is an alphabetic letter (a-z, A-Z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is TODO, false otherwise.
+ */
+bool isAlpha(int c);
+
+/**
+ * Test whether the given character is a decimal-digit (0-9).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a decimal-digit, false otherwise.
+ */
+bool isDigit(int c);
+
+/**
+ * Test whether the given character is a lower-case letter (a-z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a lower-case letter, false otherwise.
+ */
+bool isLower(int c);
+
+/**
+ * Test whether the given character is a white-space.
+ * White-space characters are ' ', '\t', '\r', '\n', '\v', '\f'.
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a white-space, false otherwise.
+ */
+bool isSpace(int c);
+
+/**
+ * Test whether the given character is an upper-case letter (A-Z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is an upper-case letter, false otherwise.
+ */
+bool isUpper(int c);
+
 
 /**
  * List of game language.

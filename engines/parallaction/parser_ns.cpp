@@ -534,7 +534,7 @@ DECLARE_INSTRUCTION_PARSER(endscript)  {
 
 void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 
-	if (isDigit(str[0]) || str[0] == '-') {
+	if (Common::isDigit(str[0]) || str[0] == '-') {
 		v.setImmediate(atoi(str));
 		return;
 	}

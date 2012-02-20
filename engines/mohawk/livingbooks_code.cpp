@@ -1766,7 +1766,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			{
 			Common::String tempString;
 			while (pos < source.size()) {
-				if (!isAlpha(source[pos]) && !isDigit(source[pos]))
+				if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
 					break;
 				tempString += source[pos++];
 			}
@@ -1777,7 +1777,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			}
 			break;
 		default:
-			if (isDigit(token)) {
+			if (Common::isDigit(token)) {
 				const char *in = source.c_str() + pos - 1;
 				// FIXME: handle floats?
 				char *endptr;
@@ -1792,11 +1792,11 @@ uint LBCode::parseCode(const Common::String &source) {
 				WRITE_BE_UINT16(tmp, (int16)intValue);
 				code.push_back(tmp[0]);
 				code.push_back(tmp[1]);
-			} else if (isAlpha(token)) {
+			} else if (Common::isAlpha(token)) {
 				Common::String tempString;
 				tempString += token;
 				while (pos < source.size()) {
-					if (!isAlpha(source[pos]) && !isDigit(source[pos]))
+					if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
 						break;
 					tempString += source[pos++];
 				}

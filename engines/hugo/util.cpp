@@ -119,7 +119,7 @@ char *strlwr(char *buffer) {
 	char *result = buffer;
 
 	while (*buffer != '\0') {
-		if (isUpper(*buffer))
+		if (Common::isUpper(*buffer))
 			*buffer = tolower(*buffer);
 		buffer++;
 	}

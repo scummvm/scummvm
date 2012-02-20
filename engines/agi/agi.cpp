@@ -250,7 +250,7 @@ void AgiEngine::processEvents() {
 				// Not a special key, so get the ASCII code for it
 				key = event.kbd.ascii;
 
-				if (isAlpha(key)) {
+				if (Common::isAlpha(key)) {
 					// Key is A-Z.
 					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
 					if (event.kbd.flags & Common::KBD_CTRL) {

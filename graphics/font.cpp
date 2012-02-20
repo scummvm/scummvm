@@ -184,7 +184,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 		// 'wrap point' where wrapping could take place. Everything that
 		// came before it can now safely be added to the line, as we know
 		// that it will not have to be wrapped.
-		if (isSpace(c)) {
+		if (Common::isSpace(c)) {
 			line += tmpStr;
 			lineWidth += tmpWidth;
 
@@ -208,7 +208,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 			if (lineWidth > 0) {
 				wrapper.add(line, lineWidth);
 				// Trim left side
-				while (tmpStr.size() && isSpace(tmpStr[0])) {
+				while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
 					tmpStr.deleteChar(0);
 					// This is not very fast, but it is the simplest way to
 					// assure we do not mess something up because of kerning.

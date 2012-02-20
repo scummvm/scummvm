@@ -186,7 +186,7 @@ static void trydecpoint (LexState *ls, SemInfo *seminfo) {
   sprintf(buf, "%.1f", 1.0);
   ls->decpoint = '.';
   for (i = 0; buf[i]; i++) {
-    if (!isSpace(buf[i]) && !isDigit(buf[i])) {
+    if (!Common::isSpace(buf[i]) && !Common::isDigit(buf[i])) {
       ls->decpoint = buf[i];
       break;
     }
@@ -202,13 +202,13 @@ static void trydecpoint (LexState *ls, SemInfo *seminfo) {
 
 /* LUA_NUMBER */
 static void read_numeral (LexState *ls, SemInfo *seminfo) {
-  lua_assert(isDigit(ls->current));
+  lua_assert(Common::isDigit(ls->current));
   do {
     save_and_next(ls);
-  } while (isDigit(ls->current) || ls->current == '.');
+  } while (Common::isDigit(ls->current) || ls->current == '.');
   if (check_next(ls, "Ee"))  /* `E'? */
     check_next(ls, "+-");  /* optional exponent sign */
-  while (isAlnum(ls->current) || ls->current == '_')
+  while (Common::isAlnum(ls->current) || ls->current == '_')
     save_and_next(ls);
   save(ls, '\0');
   buffreplace(ls, '.', ls->decpoint);  /* follow locale for decimal point */
@@ -311,7 +311,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
           case '\r': save(ls, '\n'); inclinenumber(ls); continue;
           case EOZ: continue;  /* will raise an error next loop */
           default: {
-            if (!isDigit(ls->current))
+            if (!Common::isDigit(ls->current))
               save_and_next(ls);  /* handles \\, \", \', and \? */
             else {  /* \xxx */
               int i = 0;
@@ -319,7 +319,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
               do {
                 c = 10*c + (ls->current-'0');
                 next(ls);
-              } while (++i<3 && isDigit(ls->current));
+              } while (++i<3 && Common::isDigit(ls->current));
               if (c > UCHAR_MAX)
                 luaX_lexerror(ls, "escape sequence too large", TK_STRING);
               save(ls, c);
@@ -410,7 +410,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
             return TK_DOTS;   /* ... */
           else return TK_CONCAT;   /* .. */
         }
-        else if (!isDigit(ls->current)) return '.';
+        else if (!Common::isDigit(ls->current)) return '.';
         else {
           read_numeral(ls, seminfo);
           return TK_NUMBER;
@@ -420,21 +420,21 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         return TK_EOS;
       }
       default: {
-        if (isSpace(ls->current)) {
+        if (Common::isSpace(ls->current)) {
           lua_assert(!currIsNewline(ls));
           next(ls);
           continue;
         }
-        else if (isDigit(ls->current)) {
+        else if (Common::isDigit(ls->current)) {
           read_numeral(ls, seminfo);
           return TK_NUMBER;
         }
-        else if (isAlpha(ls->current) || ls->current == '_') {
+        else if (Common::isAlpha(ls->current) || ls->current == '_') {
           /* identifier or reserved word */
           TString *ts;
           do {
             save_and_next(ls);
-          } while (isAlnum(ls->current) || ls->current == '_');
+          } while (Common::isAlnum(ls->current) || ls->current == '_');
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
           if (ts->tsv.reserved > 0)  /* reserved word? */

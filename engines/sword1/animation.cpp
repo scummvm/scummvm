@@ -115,7 +115,7 @@ bool MoviePlayer::load(uint32 id) {
 				int startFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 				int endFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 
-				while (*ptr && isSpace(*ptr))
+				while (*ptr && Common::isSpace(*ptr))
 					ptr++;
 
 				if (startFrame > endFrame) {
@@ -132,7 +132,7 @@ bool MoviePlayer::load(uint32 id) {
 				if (*ptr == '@') {
 					++ptr;
 					color = strtoul(ptr, const_cast<char **>(&ptr), 10);
-					while (*ptr && isSpace(*ptr))
+					while (*ptr && Common::isSpace(*ptr))
 						ptr++;
 				} 
 

@@ -72,7 +72,7 @@ int16 Text::count() {
 		strcpy(tmpStr, line.c_str());
 		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
 			continue;
-		if (!isDigit(*s))
+		if (!Common::isDigit(*s))
 			continue;
 
 		counter++;
@@ -105,7 +105,7 @@ void Text::load() {
 		strcpy(tmpStr, line.c_str());
 		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
 			continue;
-		if (!isDigit(*s))
+		if (!Common::isDigit(*s))
 			continue;
 
 		int r = atoi(s);
