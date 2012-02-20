@@ -19,6 +19,7 @@
 		164E6F4B14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4C14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4D14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
+		164E6F4F14F2A18E005C2C9A /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4E14F2A18E005C2C9A /* SDL.framework */; };
 		16B7A5DF14EBEF6500FA35FF /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A51C14EBEF6500FA35FF /* actor.cpp */; };
 		16B7A5E014EBEF6500FA35FF /* akos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A51F14EBEF6500FA35FF /* akos.cpp */; };
 		16B7A5E114EBEF6500FA35FF /* base-costume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A52114EBEF6500FA35FF /* base-costume.cpp */; };
@@ -2493,6 +2494,7 @@
 		164E6F3F14F28626005C2C9A /* libmad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmad.a; path = lib/libmad.a; sourceTree = "<group>"; };
 		164E6F4014F28626005C2C9A /* libmpeg2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmpeg2.a; path = lib/libmpeg2.a; sourceTree = "<group>"; };
 		164E6F4114F28626005C2C9A /* libvorbisidec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisidec.a; path = lib/libvorbisidec.a; sourceTree = "<group>"; };
+		164E6F4E14F2A18E005C2C9A /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		16B7A51C14EBEF6500FA35FF /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		16B7A51D14EBEF6500FA35FF /* actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
 		16B7A51E14EBEF6500FA35FF /* actor_he.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor_he.h; sourceTree = "<group>"; };
@@ -4519,6 +4521,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				164E6F4F14F2A18E005C2C9A /* SDL.framework in Frameworks */,
 				DF0943730F63D1DA002D821E /* CoreFoundation.framework in Frameworks */,
 				DF0943740F63D1DD002D821E /* Foundation.framework in Frameworks */,
 				DF0943750F63D1DE002D821E /* AudioToolbox.framework in Frameworks */,
@@ -5583,6 +5586,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				164E6F4E14F2A18E005C2C9A /* SDL.framework */,
 				16B7A92D14EBF5E500FA35FF /* common */,
 				DF2040461380C9ED0056300A /* audio */,
 				DF203F521380C2470056300A /* video */,
@@ -10177,7 +10181,10 @@
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					/Library/Frameworks,
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -10221,19 +10228,19 @@
 				);
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include/SDL,
-					/opt/local/include,
-					/sw/include/SDL,
-					/sw/include,
+					include/,
 					../../engines/,
 					../../,
+					/usr/local/include,
+					/opt/local/include/SDL,
+					/opt/local/include,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/../macosx/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					/sw/lib,
-					/opt/local/lib,
-					"$(inherited)",
 					"\"$(SRCROOT)/lib\"",
+					/usr/local/lib,
+					"$(inherited)",
+					/Library/Frameworks/SDL.framework/Versions/A/Resources,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
@@ -10251,6 +10258,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				SDKROOT = "";
+				USER_HEADER_SEARCH_PATHS = "../../engines/ ../../ /usr/local/include";
 				VALID_ARCHS = "i386 ppc ppc64 x86_64";
 				WARNING_CFLAGS = "-Wno-multichar";
 			};
@@ -10263,7 +10271,10 @@
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
+					/Library/Frameworks,
+				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -10305,19 +10316,19 @@
 				);
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include/SDL,
-					/opt/local/include,
-					/sw/include/SDL,
-					/sw/include,
+					include/,
 					../../engines/,
 					../../,
+					/usr/local/include,
+					/opt/local/include/SDL,
+					/opt/local/include,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/../macosx/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					/sw/lib,
-					/opt/local/lib,
-					"$(inherited)",
 					"\"$(SRCROOT)/lib\"",
+					/usr/local/lib,
+					"$(inherited)",
+					/Library/Frameworks/SDL.framework/Versions/A/Resources,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
@@ -10335,6 +10346,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				SDKROOT = "";
+				USER_HEADER_SEARCH_PATHS = "../../engines/ ../../ /usr/local/include";
 				VALID_ARCHS = "i386 ppc ppc64 x86_64";
 				WARNING_CFLAGS = "-Wno-multichar";
 				WRAPPER_EXTENSION = app;
