@@ -57,18 +57,20 @@ static int _mouseX = 0;
 static int _mouseY = 0;
 static int _mouseCursorEnabled = 0;
 
-// static long lastTick = 0;
-// static int frames = 0;
+#if 0
+static long lastTick = 0;
+static int frames = 0;
+#endif
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(const char *file, int line) {
-	int     retCode = 0;
+	int retCode = 0;
 
 	// returns 1 if an OpenGL error occurred, 0 otherwise.
 	GLenum glErr = glGetError();
 	while (glErr != GL_NO_ERROR) {
-		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line );
+		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line);
 		retCode = 1;
 		glErr = glGetError();
 	}
@@ -118,12 +120,6 @@ bool iPhone_isHighResDevice() {
 void iPhone_updateScreen(int mouseX, int mouseY) {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 
-	//_mouseX = _overlayHeight - (float)mouseX / _width * _overlayHeight;
-	//_mouseY = (float)mouseY / _height * _overlayWidth;
-
-	//_mouseX = _overlayHeight - mouseX;
-	//_mouseY = mouseY;
-
 	_mouseX = mouseX;
 	_mouseY = mouseY;
 
@@ -136,14 +132,14 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	for (y = y1; y < y2; ++y)
-		memcpy(&_textureBuffer[(y * _textureWidth + x1 )* 2], &screen[y * _width + x1], (x2 - x1) * 2);
+		memcpy(&_textureBuffer[(y * _textureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
 	for (y = y1; y < y2; ++y)
-		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1 )* 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
+		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void iPhone_initSurface(int width, int height) {
@@ -258,16 +254,14 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	return self;
 }
 
--(void)dealloc {
+- (void)dealloc {
 	[super dealloc];
 
 	if (_keyboardView != nil) {
 		[_keyboardView dealloc];
 	}
 
-	if (_screenTexture)
-		free(_textureBuffer);
-
+	free(_textureBuffer);
 	free(_overlayTexBuffer);
 }
 
@@ -276,16 +270,18 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)drawRect:(CGRect)frame {
-	// if (lastTick == 0) {
-	//	lastTick = time(0);
-	// }
-	//
-	// frames++;
-	// if (time(0) > lastTick) {
-	//	lastTick = time(0);
-	//	printf("FPS: %i\n", frames);
-	//	frames = 0;
-	// }
+#if 0
+	if (lastTick == 0) {
+		lastTick = time(0);
+	}
+
+	frames++;
+	if (time(0) > lastTick) {
+		lastTick = time(0);
+		printf("FPS: %i\n", frames);
+		frames = 0;
+	}
+#endif
 }
 
 - (void)setGraphicsMode {
@@ -315,7 +311,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 }
 
--(void)updateMouseCursor {
+- (void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
 		setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
@@ -456,7 +452,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 		eaglLayer.opaque = YES;
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-										[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
+		                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
 
 		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 		if (!_context || [EAGLContext setCurrentContext:_context]) {
