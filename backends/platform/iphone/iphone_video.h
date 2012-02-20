@@ -44,8 +44,8 @@
 	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
-	GLint _backingWidth;
-	GLint _backingHeight;
+	GLint _renderBufferWidth;
+	GLint _renderBufferHeight;
 	GLint _visibleWidth;
 	GLint _visibleHeight;
 	GLuint _screenTexture;

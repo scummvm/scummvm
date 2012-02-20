@@ -438,12 +438,12 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		width = width / (float)_width * gameHeight;
 		height = height / (float)_height * gameWidth;
 	} else {
-		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _backingWidth;
-		mouseY = mouseY / (float)_overlayHeight * _backingHeight;
-		hotspotX = hotspotX / (float)_overlayWidth * _backingWidth;
-		hotspotY = hotspotY / (float)_overlayHeight * _backingHeight;
-		width = width / (float)_overlayWidth * _backingWidth;
-		height = height / (float)_overlayHeight * _backingHeight;
+		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _renderBufferWidth;
+		mouseY = mouseY / (float)_overlayHeight * _renderBufferHeight;
+		hotspotX = hotspotX / (float)_overlayWidth * _renderBufferWidth;
+		hotspotY = hotspotY / (float)_overlayHeight * _renderBufferHeight;
+		width = width / (float)_overlayWidth * _renderBufferWidth;
+		height = height / (float)_overlayHeight * _renderBufferHeight;
 	}
 
 	mouseX -= hotspotX;
@@ -510,16 +510,16 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
 			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_backingWidth); printOpenGLError();
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_backingHeight); printOpenGLError();
+			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
+			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
 
 			if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
 				NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
 				return;
 			}
 
-			_overlayHeight = _backingWidth;
-			_overlayWidth = _backingHeight;
+			_overlayHeight = _renderBufferWidth;
+			_overlayWidth = _renderBufferHeight;
 			_overlayTexWidth = getSizeNextPOT(_overlayHeight);
 			_overlayTexHeight = getSizeNextPOT(_overlayWidth);
 
@@ -527,7 +527,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			_overlayTexBuffer = (char *)malloc(textureSize);
 			memset(_overlayTexBuffer, 0, textureSize);
 
-			glViewport(0, 0, _backingWidth, _backingHeight); printOpenGLError();
+			glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
 
 			glEnable(GL_BLEND);
@@ -550,7 +550,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		glRotatef(180, 0, 0, 1); printOpenGLError();
 	}
 
-	glOrthof(0, _backingWidth, 0, _backingHeight, 0, 1); printOpenGLError();
+	glOrthof(0, _renderBufferWidth, 0, _renderBufferHeight, 0, 1); printOpenGLError();
 
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
@@ -581,8 +581,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	}
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
-		_visibleHeight = _backingHeight;
-		_visibleWidth = _backingWidth;
+		_visibleHeight = _renderBufferHeight;
+		_visibleWidth = _renderBufferWidth;
 
 		float ratioDifference = ((float)_height / (float)_width) / ((float)_fullWidth / (float)_fullHeight);
 		int rectWidth, rectHeight;
@@ -608,7 +608,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_screenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
 
 		_visibleHeight = height;
-		_visibleWidth = _backingWidth;
+		_visibleWidth = _renderBufferWidth;
 		_heightOffset = 0.0f;
 		_widthOffset = 0.0f;
 
