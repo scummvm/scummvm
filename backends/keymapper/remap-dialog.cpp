@@ -62,6 +62,7 @@ void RemapDialog::open() {
 	if (activeKeymaps.size() > 0) {
 		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
 			_topKeymapIsGui = true;
+		// Add the entry for the "effective" special view. See RemapDialog::loadKeymap()
 		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
 	}
 
@@ -100,6 +101,8 @@ void RemapDialog::open() {
 		bool active = activeKeymaps[topIndex].transparent;
 		for (int i = topIndex - 1; i >= 0; --i) {
 			Keymapper::MapRecord mr = activeKeymaps[i];
+			// Add an entry for each keymap in the stack after the top keymap. Mark it Active if it is
+			// reachable or Blocked if an opaque keymap is on top of it thus blocking access to it.
 			_kmPopUp->appendEntry(mr.keymap->getName() + (active ? _(" (Active)") : _(" (Blocked)")), idx);
 			_keymapTable[idx++] = mr.keymap;
 			active &= mr.transparent;
@@ -108,8 +111,11 @@ void RemapDialog::open() {
 
 	_kmPopUp->appendEntry("");
 
+	// Now add entries for all known keymaps. Note that there will be duplicates with the stack entries.
+
 	if (_globalKeymaps) {
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
+			// "global" means its keybindings apply to all games; saved in a global conf domain
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Global)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
@@ -117,6 +123,7 @@ void RemapDialog::open() {
 
 	if (_gameKeymaps) {
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
+			// "game" means its keybindings are saved per-target
 			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
@@ -314,7 +321,9 @@ void RemapDialog::loadKeymap() {
 	debug(3, "RemapDialog::loadKeymap active keymaps: %u", activeKeymaps.size());
 
 	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
-		// load active keymaps
+		// This is the "effective" view which shows all effective actions:
+		// - all of the topmost keymap action
+		// - all mapped actions that are reachable
 
 		List<const HardwareKey *> freeKeys(_keymapper->getHardwareKeys());
 
@@ -364,6 +373,9 @@ void RemapDialog::loadKeymap() {
 		}
 
 	} else if (_kmPopUp->getSelected() != -1) {
+		// This is the regular view of a keymap that isn't the topmost one.
+		// It shows all of that keymap's actions
+
 		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 
 		List<Action *>::iterator it;
