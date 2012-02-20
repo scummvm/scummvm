@@ -297,6 +297,10 @@ protected:
 //		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur,
 //            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
 	}
+
+	virtual void drawTabAlg(int x, int y, int w, int h, int r,
+	    PixelType color, VectorRenderer::FillMode fill_m,
+	    int baseLeft = 0, int baseRight = 0);
 };
 #endif
 
