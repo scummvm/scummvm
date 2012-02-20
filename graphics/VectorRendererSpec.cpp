@@ -1837,12 +1837,12 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 				color1 = Base::calcGradient(real_radius - x, long_h);
 				color2 = Base::calcGradient(real_radius - y, long_h);
 
-				gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, real_radius - y);
+				Base::gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, real_radius - y);
 
 				// Only fill each horizontal line once (or we destroy
 				// the gradient effect at the edges)
 				if (T < oldT || y == 1)
-					gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, real_radius - x);
+					Base::gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, real_radius - x);
 
 				WU_DRAWCIRCLE_XCOLOR_TOP(ptr_tr, ptr_tl, x, y, px, py, a1, Base::blendPixelPtr);
 			} else {
@@ -1857,7 +1857,7 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 		ptr_fill += pitch * r;
 		while (short_h--) {
 			if (fill_m == Base::kFillGradient) {
-				gradientFill(ptr_fill, w + 1, x1, real_radius++);
+				Base::gradientFill(ptr_fill, w + 1, x1, real_radius++);
 			} else {
 				colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
 			}
@@ -1979,19 +1979,19 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				color3 = Base::calcGradient(h - r + x, h);
 				color4 = Base::calcGradient(h - r + y, h);
 
-				gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, r - y);
+				Base::gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, r - y);
 
 				// Only fill each horizontal line once (or we destroy
 				// the gradient effect at the edges)
 				if (T < oldT || y == 1)
-					gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, r - x);
+					Base::gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, r - x);
 
-				gradientFill(ptr_bl - x + py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, h - r + y);
+				Base::gradientFill(ptr_bl - x + py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, h - r + y);
 
 				// Only fill each horizontal line once (or we destroy
 				// the gradient effect at the edges)
 				if (T < oldT || y == 1)
-					gradientFill(ptr_bl - y + px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, h - r + x);
+					Base::gradientFill(ptr_bl - y + px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, h - r + x);
 
 				// This shape is used for dialog backgrounds.
 				// If we're drawing on top of an empty overlay background,
@@ -2006,7 +2006,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 			ptr_fill += pitch * r;
 			while (short_h-- >= 0) {
-				gradientFill(ptr_fill, w + 1, x1, r++);
+				Base::gradientFill(ptr_fill, w + 1, x1, r++);
 				ptr_fill += pitch;
 			}
 
