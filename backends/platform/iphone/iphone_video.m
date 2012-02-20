@@ -541,7 +541,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		break;
 
 	default:
-		_orientation = UIDeviceOrientationLandscapeRight;
+		_orientation = UIDeviceOrientationPortrait;
 	}
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
