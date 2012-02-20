@@ -268,6 +268,68 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	return [CAEAGLLayer class];
 }
 
+- (void)createContext {
+	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
+
+	eaglLayer.opaque = YES;
+	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+	                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
+
+	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+
+	// In case creating the OpenGL ES context failed, we will error out here.
+	if (_context == nil) {
+		fprintf(stderr, "Could not create OpenGL ES context\n");
+		exit(-1);
+	}
+
+	if ([EAGLContext setCurrentContext:_context]) {
+		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
+		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
+
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
+		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
+
+		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+
+		// Retrieve the render buffer size. This *should* match the frame size,
+		// i.e. _fullWidth and _fullHeight.
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
+
+		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
+			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+			return;
+		}
+
+		_overlayHeight = _renderBufferWidth;
+		_overlayWidth = _renderBufferHeight;
+		_overlayTexWidth = getSizeNextPOT(_overlayHeight);
+		_overlayTexHeight = getSizeNextPOT(_overlayWidth);
+
+		// Since the overlay size won't change the whole run, we can
+		// precalculate the texture coordinates for the overlay texture here
+		// and just use it later on.
+		_overlayTexCoords[0] = _overlayTexCoords[4] = _overlayWidth / (GLfloat)_overlayTexWidth;
+		_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
+
+		int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
+		_overlayTexBuffer = (char *)malloc(textureSize);
+		memset(_overlayTexBuffer, 0, textureSize);
+
+		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D); printOpenGLError();
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
+		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+	}
+}
+
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
@@ -283,7 +345,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	sharedInstance = self;
 
 	_keyboardView = nil;
-	_context = nil;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
@@ -307,6 +368,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	    _overlayTexCoords[2] = _overlayTexCoords[3] =
 	    _overlayTexCoords[4] = _overlayTexCoords[5] =
 	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
+
+	// Initialize the OpenGL ES context
+	[self createContext];
 
 	return self;
 }
@@ -481,55 +545,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	}
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
-
-	if (_context == nil) {
-		CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
-
-		eaglLayer.opaque = YES;
-		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-		                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
-
-		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-		if (!_context || [EAGLContext setCurrentContext:_context]) {
-			glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
-			glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
-
-			glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
-			glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-			[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
-			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
-
-			if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
-				NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-				return;
-			}
-
-			_overlayHeight = _renderBufferWidth;
-			_overlayWidth = _renderBufferHeight;
-			_overlayTexWidth = getSizeNextPOT(_overlayHeight);
-			_overlayTexHeight = getSizeNextPOT(_overlayWidth);
-
-			_overlayTexCoords[0] = _overlayTexCoords[4] = _overlayWidth / (GLfloat)_overlayTexWidth;
-			_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
-
-			int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
-			_overlayTexBuffer = (char *)malloc(textureSize);
-			memset(_overlayTexBuffer, 0, textureSize);
-
-			glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
-
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_TEXTURE_2D); printOpenGLError();
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
-			glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
-		}
-	}
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
