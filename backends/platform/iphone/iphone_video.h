@@ -53,6 +53,12 @@
 	GLuint _mouseCursorTexture;
 
 	UIDeviceOrientation _orientation;
+
+	GLfloat _gameScreenVertCoords[4 * 2];
+	GLfloat _gameScreenTexCoords[4 * 2];
+
+	GLfloat _overlayVertCoords[4 * 2];
+	GLfloat _overlayTexCoords[4 * 2];
 }
 
 - (id)initWithFrame:(struct CGRect)frame;

@@ -288,6 +288,26 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
+	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
+	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
+	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
+	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
+
+	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
+	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
+	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
+	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
+
+	_overlayVertCoords[0] = _overlayVertCoords[1] =
+	    _overlayVertCoords[2] = _overlayVertCoords[3] =
+	    _overlayVertCoords[4] = _overlayVertCoords[5] =
+	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
+
+	_overlayTexCoords[0] = _overlayTexCoords[1] =
+	    _overlayTexCoords[2] = _overlayTexCoords[3] =
+	    _overlayTexCoords[4] = _overlayTexCoords[5] =
+	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
+
 	return self;
 }
 
@@ -362,25 +382,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)updateMainSurface {
-	GLfloat vertices[] = {
-		0.0f + _heightOffset, 0.0f + _widthOffset,
-		_visibleWidth - _heightOffset, 0.0f + _widthOffset,
-		0.0f + _heightOffset,  _visibleHeight - _widthOffset,
-		_visibleWidth - _heightOffset,  _visibleHeight - _widthOffset
-	};
-
-	float texWidth = _width / (float)_gameScreenTextureWidth;
-	float texHeight = _height / (float)_gameScreenTextureHeight;
-
-	const GLfloat texCoords[] = {
-		texWidth, 0.0f,
-		0.0f, 0.0f,
-		texWidth, texHeight,
-		0.0f, texHeight
-	};
-
-	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
+	glVertexPointer(2, GL_FLOAT, 0, _gameScreenVertCoords); printOpenGLError();
+	glTexCoordPointer(2, GL_FLOAT, 0, _gameScreenTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
 
@@ -392,25 +395,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)updateOverlaySurface {
-	GLfloat vertices[] = {
-		0.0f, 0.0f,
-		_overlayHeight, 0.0f,
-		0.0f,  _overlayWidth * _overlayPortraitRatio,
-		_overlayHeight,  _overlayWidth * _overlayPortraitRatio
-	};
-
-	float texWidth = _overlayWidth / (float)_overlayTexWidth;
-	float texHeight = _overlayHeight / (float)_overlayTexHeight;
-
-	const GLfloat texCoords[] = {
-		texWidth, 0.0f,
-		0.0f, 0.0f,
-		texWidth, texHeight,
-		0.0f, texHeight
-	};
-
-	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
+	glVertexPointer(2, GL_FLOAT, 0, _overlayVertCoords); printOpenGLError();
+	glTexCoordPointer(2, GL_FLOAT, 0, _overlayTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _overlayTexWidth, _overlayTexHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _overlayTexBuffer); printOpenGLError();
@@ -479,6 +465,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	_gameScreenTextureWidth = getSizeNextPOT(_width);
 	_gameScreenTextureHeight = getSizeNextPOT(_height);
 
+	_gameScreenTexCoords[0] = _gameScreenTexCoords[4] = _width / (GLfloat)_gameScreenTextureWidth;
+	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _height / (GLfloat)_gameScreenTextureHeight;
+
 	_orientation = [[UIDevice currentDevice] orientation];
 
 	switch (_orientation) {
@@ -522,6 +511,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			_overlayWidth = _renderBufferHeight;
 			_overlayTexWidth = getSizeNextPOT(_overlayHeight);
 			_overlayTexHeight = getSizeNextPOT(_overlayWidth);
+
+			_overlayTexCoords[0] = _overlayTexCoords[4] = _overlayWidth / (GLfloat)_overlayTexWidth;
+			_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
 
 			int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
 			_overlayTexBuffer = (char *)malloc(textureSize);
@@ -623,6 +615,20 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[[_keyboardView inputView] becomeFirstResponder];
 		_overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
 	}
+
+	_gameScreenVertCoords[0] = _heightOffset;
+	_gameScreenVertCoords[1] = _widthOffset;
+	_gameScreenVertCoords[2] = _visibleWidth - _heightOffset;
+	_gameScreenVertCoords[3] = _widthOffset;
+	_gameScreenVertCoords[4] = _heightOffset;
+	_gameScreenVertCoords[5] = _visibleHeight - _widthOffset;
+	_gameScreenVertCoords[6] = _visibleWidth - _heightOffset;
+	_gameScreenVertCoords[7] = _visibleHeight - _widthOffset;
+
+	_overlayVertCoords[2] = _overlayHeight;
+	_overlayVertCoords[5] = _overlayWidth * _overlayPortraitRatio;
+	_overlayVertCoords[6] = _overlayHeight;
+	_overlayVertCoords[7] = _overlayWidth * _overlayPortraitRatio;
 }
 
 - (void)clearColorBuffer {
