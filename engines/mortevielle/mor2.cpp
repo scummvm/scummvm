@@ -39,10 +39,10 @@
 
 namespace Mortevielle {
 
-const int men[12] = { 0,
-		scacher, attacher, defoncer, dormir, 
-		entrer,  fermer,   frapper,  manger,
-		mettre,  ouvrir,   sortir
+const int men[12] = { OPCODE_NONE,
+		OPCODE_HIDE_SELF, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
+		OPCODE_ENTER,     OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
+		OPCODE_PLACE,     OPCODE_OPEN,   OPCODE_LEAVE
 };
 
 void tinke() {
@@ -251,7 +251,7 @@ void tlu(int af, int ob) {
 	repon(2, 999);
 	tkey1(true);
 	caff = af;
-	msg[3] = no_choice;
+	msg[3] = OPCODE_NONE;
 	crep = 998;
 }
 
@@ -276,8 +276,8 @@ void mfouen()
 	for (cx = 1; cx <= 11; cx ++)
 		g_vm->_menu.enableMenuItem(men[cx]);
 
-	g_vm->_menu.menut(sonder, g_vm->getString(S_PROBE));
-	g_vm->_menu.menut(soulever, g_vm->getString(S_RAISE));
+	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_PROBE));
+	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getString(S_RAISE));
 }
 
 /* NIVEAU 6 */
@@ -415,8 +415,8 @@ void mfoudi() {
 	for (cx = 1; cx <= 11; cx ++)
 		g_vm->_menu.disableMenuItem(men[cx]);
 
-	g_vm->_menu.menut(sonder, g_vm->getString(S_SUITE));
-	g_vm->_menu.menut(soulever, g_vm->getString(S_STOP));
+	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_SUITE));
+	g_vm->_menu.menut(OPCODE_LIFT, g_vm->getString(S_STOP));
 }
 
 void mennor() {

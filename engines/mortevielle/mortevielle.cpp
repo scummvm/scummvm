@@ -571,7 +571,7 @@ void MortevielleEngine::handleAction() {
 			temps = Alert::show(stpou, 1);
 			return;
 		} else if (inkey == '\77') {
-			if ((mnumo != no_choice) && ((msg[3] == action) || (msg[3] == saction))) {
+			if ((mnumo != OPCODE_NONE) && ((msg[3] == action) || (msg[3] == saction))) {
 				msg[4] = mnumo;
 				ecr3(g_vm->getString(S_IDEM));
 			} else return;
@@ -594,9 +594,9 @@ void MortevielleEngine::handleAction() {
 			if (! anyone) {
 				if ((fouil) || (obpart)) {
 					if (y_s < 12)  return;
-					if ((msg[4] == sonder) || (msg[4] == soulever)) {
+					if ((msg[4] == OPCODE_SOUND) || (msg[4] == OPCODE_LIFT)) {
 						oo = true;
-						if ((msg[4] == soulever) || (obpart)) {
+						if ((msg[4] == OPCODE_LIFT) || (obpart)) {
 							finfouil();
 							caff = s.mlieu;
 							crep = 998;

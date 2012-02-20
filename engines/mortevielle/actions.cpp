@@ -42,7 +42,11 @@
 namespace Mortevielle {
 
 
-void taller() {
+/**
+ * Engine function - Move
+ * @remarks	Originally called 'taller'
+ */
+void fctMove() {
 	//int mx, cx, cy;
 	int cx;
 
@@ -171,7 +175,11 @@ L2:
 	tmlieu(s.mlieu);
 }
 
-void tprendre() {
+/**
+ * Engine function - Take
+ * @remarks	Originally called 'tprendre'
+ */
+void fctTake() {
 	//int cx, cy, cz;
 	int cx;
 
@@ -305,7 +313,11 @@ void tsprendre() {
 	clsf2();
 }
 
-void tsoulever() {
+/**
+ * Engine function - Lift
+ * @remarks	Originally called 'tsoulever'
+ */
+void fctLift() {
 	int cx;
 
 	if (!syn)
@@ -337,7 +349,11 @@ void tsoulever() {
 		crep = 997;
 }
 
-void tlire() {
+/**
+ * Engine function - Read
+ * @remarks	Originally called 'tlire'
+ */
+void fctRead() {
 //	int iaff;
 
 	if (caff > 99)
@@ -361,7 +377,11 @@ void tslire() {
 		st4(s.derobj);
 }
 
-void tregarder() {
+/**
+ * Engine function - Look
+ * @remarks	Originally called 'tregarder'
+ */
+void fctLook() {
 	int cx;
 
 	if (caff > 99) {
@@ -442,7 +462,11 @@ void tsregarder() {
 		crep = 186;
 }
 
-void tfouiller() {
+/**
+ * Engine function - Search
+ * @remarks	Originally called 'tfouiller'
+ */
+void fctSearch() {
 	const byte r[14] = {123, 104, 123, 131, 131, 123, 104, 131, 123, 123, 106, 123, 123, 107};
 	int cx;
 
@@ -531,14 +555,18 @@ void tsfouiller() {
 		crep = 186;
 }
 
-void touvrir() {
+/**
+ * Engine function - Open
+ * @remarks	Originally called 'touvrir'
+ */
+void fctOpen() {
 	int cx, haz;
 
 	if (!syn)
 		ecr3(g_vm->getString(S_OPEN));
 	if (caff == 26) {
 		if (ment != 0) {
-			msg[4] = entrer;
+			msg[4] = OPCODE_ENTER;
 			syn = true;
 		} else
 			crep = 997;
@@ -588,7 +616,11 @@ void touvrir() {
 	}
 }
 
-void tmettre() {
+/**
+ * Engine function - Place
+ * @remarks	Originally called 'tmettre'
+ */
+void fctPlace() {
 	int quel;
 	bool entre;
 	char st[1410];
@@ -708,7 +740,11 @@ void tmettre() {
 	}
 }
 
-void ttourner() {
+/**
+ * Engine function - Turn
+ * @remarks	Originally called 'ttourner'
+ */
+void fctTurn() {
 	int quel;
 
 	if (caff > 99) {
@@ -746,7 +782,11 @@ void ttourner() {
 	}
 }
 
-void tcacher() {
+/**
+ * Engine function - Hide Self
+ * @remarks	Originally called 'tcacher'
+ */
+void fctHideSelf() {
 	if (!syn)
 		ecr3(g_vm->getString(S_HIDE_SELF));
 	tfleche();
@@ -761,7 +801,11 @@ void tcacher() {
 	}
 }
 
-void tattacher() {
+/**
+ * Engine function - Attach
+ * @remarks	Originally called 'tattacher'
+ */
+void fctAttach() {
 	if (s.derobj == 0)
 		crep = 186;
 	else {
@@ -784,7 +828,11 @@ void tattacher() {
 	}
 }
 
-void tfermer() {
+/**
+ * Engine function - Close
+ * @remarks	Originally called 'tfermer'
+ */
+void fctClose() {
 	int cx, chai;
 
 	if (!syn)
@@ -819,7 +867,11 @@ void tfermer() {
 		crep = 999;
 }
 
-void tfrapper() {
+/**
+ * Engine function - Knock
+ * @remarks	Originally called 'tfrapper'
+ */
+void fctKnock() {
 	int l, p, haz;
 
 	if (!syn)
@@ -942,7 +994,11 @@ void tposer() {
 	}
 }
 
-void tecouter() {
+/**
+ * Engine function - Listen
+ * @remarks	Originally called 'tecouter'
+ */
+void fctListen() {
 	int l, p, haz, j, h, m;
 
 	if (s.mlieu != 26)
@@ -976,7 +1032,11 @@ void tecouter() {
 	}
 }
 
-void tmanger() {
+/**
+ * Engine function - Eat
+ * @remarks	Originally called 'tmanger'
+ */
+void fctEat() {
 	int j, h, m;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26))
@@ -1008,7 +1068,11 @@ void tmanger() {
 	}
 }
 
-void tentrer() {
+/**
+ * Engine function - Enter
+ * @remarks	Originally called 'tentrer'
+ */
+void fctEnter() {
 	int x, z = 0;
 
 	if ((s.mlieu == 21) || (s.mlieu == 22)) {
@@ -1064,7 +1128,11 @@ void tentrer() {
 	}
 }
 
-void tdormir() {
+/**
+ * Engine function - Sleep
+ * @remarks	Originally called 'tdormir'
+ */
+void fctSleep() {
 	int z, j, h, m, quel;
 
 	if ((s.mlieu > 15) && (s.mlieu < 26)) {
@@ -1105,7 +1173,11 @@ void tdormir() {
 	num = 0;
 }
 
-void tdefoncer() {
+/**
+ * Engine function - Force
+ * @remarks	Originally called 'tdefoncer'
+ */
+void fctForce() {
 	if (!syn)
 		ecr3(g_vm->getString(S_SMASH));
 	if (caff < 25)
@@ -1119,7 +1191,11 @@ void tdefoncer() {
 		}
 }
 
-void tsortir() {
+/**
+ * Engine function - Leave
+ * @remarks	Originally called 'tsortir'
+ */
+void fctLeave() {
 	int lx = 0;
 
 	tsort();
@@ -1151,7 +1227,11 @@ void tsortir() {
 	}
 }
 
-void tattendre() {
+/**
+ * Engine function - Wait
+ * @remarks	Originally called 'tattendre'
+ */
+void fctWait() {
 	int quel;
 
 	mpers = 0;
@@ -1180,7 +1260,11 @@ void tattendre() {
 		tinke();
 }
 
-void tsonder() {
+/**
+ * Engine function - Sound
+ * @remarks	Originally called 'tsonder'
+ */
+void fctSound() {
 	if (!syn)
 		ecr3(g_vm->getString(S_PROBE2));
 	if (caff < 27) {
@@ -1387,7 +1471,11 @@ void tparler() {
 	clsf3();
 }
 
-void tsentir() {
+/**
+ * Engine function - Smell
+ * @remarks	Originally called 'tsentir'
+ */
+void fctSmell() {
 	crep = 119;
 	if (caff < 26) {
 		if (!syn)
@@ -1401,7 +1489,11 @@ void tsentir() {
 	num = 0;
 }
 
-void tgratter() {
+/**
+ * Engine function - Scratch
+ * @remarks	Originally called 'tgratter'
+ */
+void fctScratch() {
 	crep = 155;
 	if (caff < 27) {
 		if (!syn)

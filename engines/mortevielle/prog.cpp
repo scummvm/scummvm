@@ -157,37 +157,58 @@ void tsitu()
 	iesc = false;
 	if (anyone)  goto L1;
 	if (brt)
-		if ((msg[3] == depla) || (msg[4] == sortir) || (msg[4] == dormir) ||
-		        (msg[4] == manger)) {
+		if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
 			ctrm = 4;
 			goto L2;
 		}
-	if (msg[3] == depla)       taller();    //Translation: go to
+	if (msg[3] == MENU_MOVE)
+		fctMove();
 	if (msg[3] == discut)      tparler();   //Translation: talk
 	if (msg[3] == invent)      tsprendre(); //Translation: inventory/take
-	if (msg[4] == attacher)    tattacher(); //Translation: tie
-	if (msg[4] == attendre)    tattendre(); //Translation: wait
-	if (msg[4] == defoncer)    tdefoncer(); //Translation: smash
-	if (msg[4] == dormir)      tdormir();   //Translation: sleep
-	if (msg[4] == ecouter)     tecouter();  //Translation: listen
-	if (msg[4] == entrer)      tentrer();   //Translation: enter
-	if (msg[4] == fermer)      tfermer();   //Translation: close
-	if (msg[4] == fouiller)    tfouiller(); //Translation: search
-	if (msg[4] == frapper)     tfrapper();  //Translation: hit
-	if (msg[4] == gratter)     tgratter();  //Translation: scratch
-	if (msg[4] == lire)        tlire();     //Translation: read
-	if (msg[4] == manger)      tmanger();   //Translation: eat
-	if (msg[4] == mettre)      tmettre();   //Translation: put
-	if (msg[4] == ouvrir)      touvrir();   //Translation: open
-	if (msg[4] == prendre)     tprendre();  //Translation: take
-	if (msg[4] == regarder)    tregarder(); //Translation: look
-	if (msg[4] == sentir)      tsentir();   //Translation: smell
-	if (msg[4] == sonder)      tsonder();   //Translation: probe
-	if (msg[4] == sortir)      tsortir();   //Translation: exit
-	if (msg[4] == soulever)    tsoulever(); //Translation: lift
-	if (msg[4] == tourner)     ttourner();  //Translation: turn
-	if (msg[4] == scacher) {                //Translation: hide
-		tcacher();
+	if (msg[4] == OPCODE_ATTACH)
+		fctAttach();
+	if (msg[4] == OPCODE_WAIT)
+		fctWait();
+	if (msg[4] == OPCODE_FORCE)
+		fctForce();
+	if (msg[4] == OPCODE_SLEEP)
+		fctSleep();
+	if (msg[4] == OPCODE_LISTEN)
+		fctListen();
+	if (msg[4] == OPCODE_ENTER)
+		fctEnter();
+	if (msg[4] == OPCODE_CLOSE)
+		fctClose();
+	if (msg[4] == OPCODE_SEARCH)
+		fctSearch();
+	if (msg[4] == OPCODE_KNOCK)
+		fctKnock();
+	if (msg[4] == OPCODE_SCRATCH)
+		fctScratch();
+	if (msg[4] == OPCODE_READ)
+		fctRead();
+	if (msg[4] == OPCODE_EAT)
+		fctEat();
+	if (msg[4] == OPCODE_PLACE)
+		fctPlace();
+	if (msg[4] == OPCODE_OPEN)
+		fctOpen();
+	if (msg[4] == OPCODE_TAKE)
+		fctTake();
+	if (msg[4] == OPCODE_LOOK)
+		fctLook();
+	if (msg[4] == OPCODE_SMELL)
+		fctSmell();
+	if (msg[4] == OPCODE_SOUND)
+		fctSound();
+	if (msg[4] == OPCODE_LEAVE)
+		fctLeave();
+	if (msg[4] == OPCODE_LIFT)
+		fctLift();
+	if (msg[4] == OPCODE_TURN)
+		fctTurn();
+	if (msg[4] == OPCODE_HIDE_SELF) {                //Translation: hide
+		fctHideSelf();
 		goto L1;
 	}
 	if (msg[4] == sfouiller)   tsfouiller();//Translation: search 
