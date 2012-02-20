@@ -48,7 +48,7 @@ extern void fctHideSelf();
 extern void fctAttach();
 extern void fctClose();
 extern void fctKnock();
-extern void tposer();
+extern void fctPut();
 extern void fctListen();
 extern void fctEat();
 extern void fctEnter();
@@ -57,7 +57,7 @@ extern void fctForce();
 extern void fctLeave();
 extern void fctWait();
 extern void fctSound();
-extern void tparler();
+extern void fctDiscuss();
 extern void fctSmell();
 extern void fctScratch();
 /* NIVEAU 2 */

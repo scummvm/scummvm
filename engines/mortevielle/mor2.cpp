@@ -62,8 +62,9 @@ void tinke() {
 		jou = j;
 		cx = 0;
 		do {
-			cx = cx + 1;
-			if (nbrepm[cx] != 0)  nbrepm[cx] = nbrepm[cx] - 1;
+			++cx;
+			if (nbrepm[cx] != 0)
+				--nbrepm[cx];
 			nbrep[cx] = 0;
 		} while (!(cx == 8));
 	}
@@ -72,9 +73,15 @@ void tinke() {
 		min = 0;
 		pendule();
 		cf = 0;
-		for (cx = 1; cx <= 10; cx ++) if (s.pourc[cx] == '*')  cf = cf + 1;
-		if (cf == 10)  stpo = "10";
-		else stpo = chr(cf + 48);
+		for (cx = 1; cx <= 10; cx ++) {
+			if (s.pourc[cx] == '*')
+				++cf;
+		}
+
+		if (cf == 10)
+			stpo = "10";
+		else
+			stpo = chr(cf + 48);
 
 		stpou = Common::String(d3);
 		stpou += d5;
@@ -93,14 +100,21 @@ void tinke() {
 		min = 30;
 		pendule();
 	}
-	if (y_s < 12)  return;
+	if (y_s < 12)
+		return;
+
 	if (! blo) {
 		if ((h == 12) || ((h > 18) && (h < 21)) || ((h >= 0) && (h < 7)))
 			t = ti2;
-		else t = ti1;
+		else
+			t = ti1;
 		cf = s.conf;
-		if ((cf > 33) && (cf < 66))  t = t - (t / 3);
-		if (cf > 65)  t = t - ((t / 3) * 2);
+		if ((cf > 33) && (cf < 66))
+			t = t - (t / 3);
+
+		if (cf > 65)
+			t = t - ((t / 3) * 2);
+
 		nh = readclock();
 		if ((nh - mh) > t) {
 			am = g_vm->_menu._menuActive;
@@ -146,9 +160,12 @@ void tinke() {
 				pl20(cf);
 				break;
 			}
-			if ((mpers != 0) && (ipers != 10))  mpers = ipers;
+			if ((mpers != 0) && (ipers != 10))
+				mpers = ipers;
+
 			if ((mpers == 0) && (ipers > 0))
-				if ((s.mlieu == 13) || (s.mlieu == 14))  cavegre();
+				if ((s.mlieu == 13) || (s.mlieu == 14))
+					cavegre();
 				else if (ipers == 10) {
 					ipers = 0;
 					if (! brt) {
@@ -174,7 +191,8 @@ void tinke() {
 		nouvp(li, cx);
 		brt = false;
 		hdb = 0;
-		if ((s.mlieu > 0) && (s.mlieu < 10))  anyone = true;
+		if ((s.mlieu > 0) && (s.mlieu < 10))
+			anyone = true;
 	}
 }
 
@@ -209,14 +227,18 @@ void tkey1(bool d) {
 
 	hideMouse();
 	fenat('K');
-	while (keypressed())  key = testou();
+	while (keypressed())
+		key = testou();
+
 	do {
-		if (d)  tinke();
+		if (d)
+			tinke();
 		quest = keypressed();
 		getMousePos(x, y, c);
 		CHECK_QUIT;
 	} while (!(quest || (c != 0) || (d && anyone)));
-	if (quest)  key = testou();
+	if (quest)
+		key = testou();
 	g_vm->setMouseClick(false);
 	showMouse();
 }
@@ -227,18 +249,21 @@ void tmlieu(int mli) {
 	char st[1410];
 
 
-	if (mli == 26)  mli = 15;
+	if (mli == 26)
+		mli = 15;
+
 	i = 1;
 	while ((i < 8) && (v_lieu[i][mli] != 0)) {
 		cx = v_lieu[i][mli];
 		deline(cx + c_tmlieu, st, tail);
 		nomp = delig;
-		while (nomp.size() < 20)  nomp = nomp + ' ';
+		while (nomp.size() < 20)
+			nomp += ' ';
 		g_vm->_menu.menut(g_vm->_menu._depl[i], nomp);
-		i = i + 1;
+		++i;
 	}
 	nomp = "*                   ";
-	for (cx = 7; cx >= i; cx --)
+	for (cx = 7; cx >= i; cx--)
 		g_vm->_menu.menut(g_vm->_menu._depl[cx], nomp);
 }
 
@@ -267,9 +292,7 @@ void affrep() {
 	crep = s.mlieu;
 }
 
-void mfouen()
-
-{
+void mfouen() {
 	int cx;
 
 	tmlieu(s.mlieu);
@@ -304,12 +327,16 @@ void tperd() {
 }
 
 void tsort() {
-	int cx;
 
-	if ((iouv > 0) && (s.mlieu != 0))
-		if (s.conf < 50)  s.conf = s.conf + 2;
-		else s.conf = s.conf + (s.conf / 10);
-	for (cx = 1; cx <= 7; cx ++) touv[cx] = chr(0);
+	if ((iouv > 0) && (s.mlieu != 0)) {
+		if (s.conf < 50)
+			s.conf += 2;
+		else
+			s.conf += (s.conf / 10);
+	}
+
+	for (int cx = 1; cx <= 7; cx ++)
+		touv[cx] = chr(0);
 	ment = 0;
 	iouv = 0;
 	mchai = 0;
@@ -318,6 +345,7 @@ void tsort() {
 
 void st4(int ob) {
 	crep = 997;
+
 	switch (ob) {
 	case 114 :
 		crep = 109;
@@ -340,6 +368,8 @@ void st4(int ob) {
 	case 161 :
 		tlu(caff, ob);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -347,8 +377,11 @@ void cherjer(int ob, bool &d) {
 	int cx;
 
 	d = false;
-	for (cx = 1; cx <= 6; cx ++) d = (d || (ord(s.sjer[cx]) == ob));
-	if (s.derobj == ob)  d = true;
+	for (cx = 1; cx <= 6; cx++)
+		d = (d || (ord(s.sjer[cx]) == ob));
+
+	if (s.derobj == ob)
+		d = true;
 }
 
 void st1sama() {
@@ -357,12 +390,12 @@ void st1sama() {
 }
 
 void modinv() {
-	int cx, cy, tay, r;
+	int tay, r;
 	char nom[1410];
 	Common::String nomp;
 
-	cy = 0;
-	for (cx = 1; cx <= 6; cx ++)
+	int cy = 0;
+	for (int cx = 1; cx <= 6; cx++)
 		if (s.sjer[cx] != chr(0)) {
 			cy = succ(int, cy);
 			r = (ord(s.sjer[cx]) + 400);
@@ -372,7 +405,7 @@ void modinv() {
 			g_vm->_menu.enableMenuItem(g_vm->_menu._invt[cx]);
 		}
 	if (cy < 6)
-		for (cx = cy + 1; cx <= 6; cx ++) {
+		for (int cx = cy + 1; cx <= 6; cx++) {
 			g_vm->_menu.menut(g_vm->_menu._invt[cx], "                       ");
 			g_vm->_menu.disableMenuItem(g_vm->_menu._invt[cx]);
 		}
@@ -408,11 +441,10 @@ void finfouil() {
 }
 
 void mfoudi() {
-	int cx;
-
-	for (cx = 1; cx <= 7; cx ++) 
+	for (int cx = 1; cx <= 7; cx++) 
 		g_vm->_menu.disableMenuItem(g_vm->_menu._depl[cx]);
-	for (cx = 1; cx <= 11; cx ++)
+
+	for (int cx = 1; cx <= 11; cx++)
 		g_vm->_menu.disableMenuItem(men[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_SUITE));
@@ -430,45 +462,47 @@ void premtet() {
 
 /* NIVEAU 5 */
 void ajchai() {
-	int cx, cy, lderobj;
 
 
-	cy = (acha + pred(int, pred(int, mchai) * 10));
-	cx = 0;
+	int cy = (acha + pred(int, pred(int, mchai) * 10));
+	int cx = 0;
 	do {
-		cx = cx + 1;
+		++cx;
 	} while (!((cx > 9) || (tabdon[cy + cx] == 0)));
+
 	if (tabdon[cy + cx] == 0) {
-		lderobj = s.derobj;
+		int lderobj = s.derobj;
 		tabdon[cy + cx] = lderobj;
-	} else crep = 192;
+	} else
+		crep = 192;
 }
 
 void ajjer(int ob) {
-	int cx;
-
-	cx = 0;
+	int cx = 0;
 	do {
-		cx = cx + 1;
+		++cx;
 	} while (!((cx > 5) || (ord(s.sjer[cx]) == 0)));
+
 	if (ord(s.sjer[cx]) == 0) {
 		s.sjer[(cx)] = chr(ob);
 		modinv();
-	} else crep = 139;
+	} else
+		crep = 139;
 }
 
-void t1sama() {    /* On entre dans le manoir */                 //Translation: Entering manor
+void t1sama() {    //Entering manor
 	int j, h, m;
 	bool d;
 
 	calch(j, h, m);
 	if ((h < 5) && (s.mlieu > 18)) {
 		cherjer(137, d);
-		if (! d) {        /* On n'a pas les cl‚s et il est tard */   //Translation: You don't have the keys, and it's late
+		if (!d) {        /* On n'a pas les cl‚s et il est tard */   //Translation: You don't have the keys, and it's late
 			crep = 1511;
 			tperd();
-		} else st1sama();
-	} else if (! s.ipre) {     /* c'est votre premiŠre fois ? */   //Translation: Is it your first time?
+		} else
+			st1sama();
+	} else if (!s.ipre) {     /* c'est votre premiŠre fois ? */   //Translation: Is it your first time?
 		ipers = 255;
 		affper(ipers);
 		caff = 77;
@@ -487,12 +521,14 @@ void t1sama() {    /* On entre dans le manoir */                 //Translation: 
 		s.mlieu = 0;
 		affrep();
 		t5(10);
-		if (! blo)  t11(0, m);
+		if (! blo)
+			t11(0, m);
 		ipers = 0;
 		mpers = 0;
 		s.ipre = true;
 		/*chech;*/
-	} else  st1sama();
+	} else
+		st1sama();
 }
 
 void t1vier() {
@@ -501,7 +537,7 @@ void t1vier() {
 }
 
 void t1neig() {
-	inei = inei + 1;
+	++inei;
 	if (inei > 2) {
 		crep = 1506;
 		tperd();
@@ -543,20 +579,26 @@ void quelquun() {
 	crep = 997;
 L1:
 	if (! cache) {
-		if (crep == 997)  crep = 138;
+		if (crep == 997)
+			crep = 138;
 		repon(2, crep);
-		if (crep == 138)  parole(5, 2, 1);
-		else parole(4, 4, 1);
-		if (iouv == 0)  s.conf = s.conf + 2;
-		else if (s.conf < 50)  s.conf = s.conf + 4;
+		if (crep == 138)
+			parole(5, 2, 1);
 		else
-			s.conf = s.conf + (3 * (s.conf / 10));
+			parole(4, 4, 1);
+
+		if (iouv == 0)
+			s.conf += 2;
+		else if (s.conf < 50)
+			s.conf += 4;
+		else
+			s.conf += 3 * (s.conf / 10);
 		tsort();
 		tmlieu(15);
 		tip(ipers, cx);
 		caff = 69 + cx;
 		crep = caff;
-		msg[3] = discut;
+		msg[3] = MENU_DISCUSS;
 		msg[4] = g_vm->_menu._disc[cx];
 		syn = true;
 		col = true;
@@ -581,35 +623,39 @@ L1:
 }
 
 void tsuiv() {
-	int cx, tbcl;
-	int cl, cy;
+	int tbcl;
+	int cl;
 
-	cy = acha + ((mchai - 1) * 10) - 1;
-	cx = 0;
+	int cy = acha + ((mchai - 1) * 10) - 1;
+	int cx = 0;
 	do {
 		cx = cx + 1;
 		cs = cs + 1;
 		cl = cy + cs;
 		tbcl = tabdon[cl];
 	} while (!((tbcl != 0) || (cs > 9)));
+
 	if ((tbcl != 0) && (cs < 11)) {
 		is = is + 1;
 		caff = tbcl;
 		crep = caff + 400;
-		if (ipers != 0)  s.conf = s.conf + 2;
+		if (ipers != 0)
+			s.conf = s.conf + 2;
 	} else {
 		affrep();
 		finfouil();
-		if (cx > 9)  crep = 131;
+		if (cx > 9)
+			crep = 131;
 	}
 }
 
 void tfleche() {
 	bool qust;
 	char touch;
-	int dummy;
 
-	if (num == 9999)  return;
+	if (num == 9999)
+		return;
+
 	fenat(chr(152));
 	rect = false;
 	do {
@@ -624,19 +670,20 @@ void tfleche() {
 			tinke();
 		} while (!(qust || rect || anyone));
 
-		if (qust && (touch == '\103'))  dummy = Alert::show(stpou, 1);
-	} while (!((touch == '\73') || ((touch == '\104') && (x != 0) && (y != 0)) ||
-	           (anyone) || (rect)));
-	if (touch == '\73')  iesc = true;
+		if (qust && (touch == '\103'))
+			Alert::show(stpou, 1);
+	} while (!((touch == '\73') || ((touch == '\104') && (x != 0) && (y != 0)) || (anyone) || (rect)));
+
+	if (touch == '\73')
+		iesc = true;
+
 	if (rect) {
 		x = x_s;
 		y = y_s;
 	}
 }
 
-void tcoord(int sx)
-
-{
+void tcoord(int sx) {
 	int sy, ix, iy, cb, cy, ib;
 	int a, b, atdon;
 
@@ -647,50 +694,65 @@ void tcoord(int sx)
 	atdon = amzon + 3;
 	cy = 0;
 	while (cy < caff) {
-		a = a + tabdon[atdon];
-		atdon = atdon + 4;
+		a += tabdon[atdon];
+		atdon += 4;
 		cy = succ(int, cy);
 	}
 
 	b = tabdon[atdon];
-	if (b == 0)  goto L1;
-	a = a + fleche;
+	if (b == 0)
+		goto L1;
+	a += fleche;
 	cb = 0;
-	for (cy = 0; cy <= (sx - 2); cy ++) {
+	for (cy = 0; cy <= (sx - 2); cy++) {
 		ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
-		cb = cb + (ib * 4) + 2;
+		cb += (ib * 4) + 2;
 	}
 	ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
-	if (ib == 0)  goto L1;
+	if (ib == 0)
+		goto L1;
+
 	cy = 1;
 	do {
-		cb = cb + 2;
+		cb += 2;
 		sx = tabdon[a + cb] * res;
 		sy = tabdon[succ(int, a + cb)];
-		cb = cb + 2;
+		cb += 2;
 		ix = tabdon[a + cb] * res;
 		iy = tabdon[succ(int, a + cb)];
-		cy = cy + 1;
-	} while (!(((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy))
-	           || (cy > ib)));
-	if ((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy))
+		++cy;
+	} while (!(((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy)) || (cy > ib)));
 
-	{
+	if ((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy)) {
 		num = cy - 1;
 		return;
 	}
+
 L1:
 	crep = 997;
 }
 
 
 void st7(int ob) {
-	crep = 183;
-	if ((ob == 116) || (ob == 144))  crep = 104;
-	if ((ob == 126) || (ob == 111))  crep = 108;
-	if (ob == 132)  crep = 111;
-	if (ob == 142)  crep = 112;
-	if (crep == 183)  st4(ob);
+	switch (ob) {
+	case 116:
+	case 144:
+		crep = 104;
+		break;
+	case 126:
+	case 111:
+		crep = 108;
+		break;
+	case 132:
+		crep = 111;
+		break;
+	case 142:
+		crep = 112;
+		break;
+	default:
+		crep = 183;
+		st4(ob);
+	}
 }
 
 void treg(int ob) {
@@ -698,11 +760,12 @@ void treg(int ob) {
 
 	mdes = caff;
 	caff = ob;
-	if (((caff > 29) && (caff < 33)) || (caff == 144) ||
-	        (caff == 147) || (caff == 149) || (msg[4] == sregarder)) {
+	if (((caff > 29) && (caff < 33)) || (caff == 144) || (caff == 147) || (caff == 149) || (msg[4] == sregarder)) {
 		afdes(0);
-		if ((caff > 29) && (caff < 33))  repon(2, caff);
-		else repon(2, (caff + 400));
+		if ((caff > 29) && (caff < 33))
+			repon(2, caff);
+		else
+			repon(2, (caff + 400));
 		tkey1(true);
 		caff = mdes;
 		msg[3] = 0;
@@ -716,7 +779,8 @@ void treg(int ob) {
 
 void avpoing(int &ob) {
 	crep = 999;
-	if (s.derobj != 0)  ajjer(s.derobj);
+	if (s.derobj != 0)
+		ajjer(s.derobj);
 	if (crep != 139) {
 		modobj(ob + 400);
 		s.derobj = ob;
@@ -728,7 +792,8 @@ void rechai(int &ch) {
 	int cx;
 
 	cx = s.mlieu;
-	if (s.mlieu == 16)  cx = 14;
+	if (s.mlieu == 16)
+		cx = 14;
 	ch = tabdon[achai + (cx * 7) + pred(int, num)];
 }
 
@@ -737,7 +802,7 @@ void t23coul(int &l) {
 
 	cherjer(143, d);
 	l = 14;
-	if (! d) {
+	if (!d) {
 		crep = 1512;
 		tperd();
 	}
@@ -750,17 +815,17 @@ void maivid() {
 
 void st13(int ob) {
 	if ((ob == 114) || (ob == 116) || (ob == 126) || (ob == 132) ||
-	        (ob == 111) || (ob == 106) || (ob == 102) || (ob == 100) ||
-	        (ob == 110) || (ob == 153) || (ob == 154) || (ob == 155) ||
-	        (ob == 156) || (ob == 157) || (ob == 144) || (ob == 158) ||
-	        (ob == 150) || (ob == 152))  crep = 999;
-	else crep = 105;
+	    (ob == 111) || (ob == 106) || (ob == 102) || (ob == 100) ||
+	    (ob == 110) || (ob == 153) || (ob == 154) || (ob == 155) ||
+	    (ob == 156) || (ob == 157) || (ob == 144) || (ob == 158) ||
+	    (ob == 150) || (ob == 152))
+		crep = 999;
+	else
+		crep = 105;
 }
 
 void aldepl() {
-	int dummy;
-
-	dummy = Alert::show(g_vm->getString(S_USE_DEP_MENU), 1);
+	Alert::show(g_vm->getString(S_USE_DEP_MENU), 1);
 }
 
 } // End of namespace Mortevielle

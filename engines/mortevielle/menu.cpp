@@ -44,20 +44,19 @@ namespace Mortevielle {
  * Setup a menu's contents
  */
 void Menu::menut(int no, Common::String nom) {
-	byte h, l;
-	Common::String s;
+	byte h = hi(no);
+	byte l = lo(no);
+	Common::String s = nom;
 
-	h = hi(no);
-	l = lo(no);
-	s = nom;
 	if (! tesok) {
 		g_vm->quitGame();
 	}
+
 	while (s.size() < 20)
-		s = s + ' ';
+		s += ' ';
 
 	switch (h) {
-	case invent  :
+	case invent:
 		if (l != 7) {
 			_inv[l] = s;
 			_inv[l].insertChar(' ', 0);
@@ -72,7 +71,7 @@ void Menu::menut(int no, Common::String nom) {
 	case saction:
 		_self[l] = s;
 		break;
-	case discut:
+	case MENU_DISCUSS:
 		_dis[l] = s;
 		break;
 	}
@@ -83,13 +82,12 @@ void Menu::menut(int no, Common::String nom) {
  * @param no	Hi byte represents menu number, lo byte reprsents item index
  */
 void Menu::disableMenuItem(int no) {
-	byte h, l;
+	byte h = hi(no);
+	byte l = lo(no);
 
-	h = hi(no);
-	l = lo(no);
 	switch (h) {
 	case invent : {
-		if (l > 6)  {
+		if (l > 6) {
 			_inv[l].setChar('<', 0);
 			_inv[l].setChar('>', 21);
 		} else
@@ -105,7 +103,7 @@ void Menu::disableMenuItem(int no) {
 	case saction:
 		_self[l].setChar('*', 0);
 		break;
-	case discut:
+	case MENU_DISCUSS:
 		_dis[l].setChar('*', 0);
 		break;
 	}
@@ -116,28 +114,25 @@ void Menu::disableMenuItem(int no) {
  * @param no	Hi byte represents menu number, lo byte reprsents item index
  */
 void Menu::enableMenuItem(int no) {
-	byte h, l;
+	byte h = hi(no);
+	byte l = lo(no);
 
-	h = hi(no);
-	l = lo(no);
 	switch (h) {
-	case invent : {
+	case invent :
 		_inv[l].setChar(' ', 0);
 		_inv[l].setChar(' ', 21);
-	}
-	break;
+		break;
 	case MENU_MOVE:
 		_dep[l].setChar(' ', 0);
 		break;
 	case action:
 		_act[l].setChar(' ', 0);
 		break;
-	case saction: {
+	case saction:
 		_self[l].setChar(' ', 0);
 		_self[l].setChar(' ', 0);
-	}
-	break;
-	case discut:
+		break;
+	case MENU_DISCUSS:
 		_dis[l].setChar(' ', 0);
 		break;
 	}
@@ -152,17 +147,19 @@ void Menu::menu_aff() {
 	
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 	col = 28 * res;
-	if (gd == cga)  color = 1;
-	else color = 9;
+	if (gd == cga)
+		color = 1;
+	else
+		color = 9;
 	num_letr = 0;
-	do {       /* lettre par lettre */
-		num_letr = num_letr + 1;
+	do {       // One character after the other
+		++num_letr;
 		ind_tabl = 0;
 		y = 1;
-		do {      /* colonne par colonne */
+		do {     // One column after the other
 			k = 0;
 			x = col;
-			do {     /* ligne par ligne */
+			do {   // One line after the other
 				msk = 0x80;
 				for (pt = 0; pt <= 7; pt ++) {
 					if ((lettres[num_letr - 1][ind_tabl] & msk) != 0) {
@@ -171,14 +168,14 @@ void Menu::menu_aff() {
 						g_vm->_screenSurface.setPixel(Common::Point(x, y), color);
 					}
 					msk = (uint)msk >> 1;
-					x = x + 1;
+					++x;
 				}
 				ind_tabl = succ(int, ind_tabl);
 				k = succ(int, k);
 			} while (!(k == 3));
-			y = y + 1;
+			++y;
 		} while (!(y == 9));
-		col = col + 48 * res;
+		col += 48 * res;
 	} while (!(num_letr == 6));
 	showMouse();
 }
@@ -199,7 +196,9 @@ void Menu::drawMenu() {
 void Menu::invers(int ix) {
 	Common::String s;
 
-	if (msg4 == OPCODE_NONE)  return;
+	if (msg4 == OPCODE_NONE)
+		return;
+
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
 	case 1 :
@@ -248,8 +247,10 @@ void Menu::util(int x, int y) {
 	ymx = (don[msg3][4] << 3) + 16;
 	dxcar = don[msg3][3];
 	xmn = (don[msg3][1] << 2) * res;
-	if (res == 1)  ix = 5;
-	else ix = 3;
+	if (res == 1)
+		ix = 5;
+	else
+		ix = 3;
 	xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
 		ix = pred(int, ((uint)y >> 3)) + (msg3 << 8);
@@ -282,8 +283,10 @@ void Menu::menuDown(int ii) {
 	hideMouse();
 	sauvecr(10, succ(byte, don[ii][2]) << 1);
 	xco = xco << 3;
-	if (res == 1)  cx = 10;
-	else cx = 6;
+	if (res == 1)
+		cx = 10;
+	else
+		cx = 6;
 	xcc = xco + (don[ii][3] * cx) + 6;
 	g_vm->_screenSurface.fillRect(15, Common::Rect(xco, 12, xcc, 10 + (don[ii][2] << 1)));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(xcc, 12, xcc + 4, 10 + (don[ii][2] << 1)));
@@ -384,11 +387,12 @@ void Menu::mdn() {
 	/* debug('mdn'); */
 	if (!_menuActive)
 		return;
+
 	x = x_s;
 	y = y_s;
 	if (!g_vm->getMouseClick()) {
-		if ((x == xprec) &&
-		        (y == yprec))  return;
+		if ((x == xprec) && (y == yprec))
+			return;
 		else {
 			xprec = x;
 			yprec = y;
@@ -400,12 +404,19 @@ void Menu::mdn() {
 		                   || ((x > 220 * res) && (x < 220 * res + 24))
 		                   || ((x > 268 * res) && (x < 268 * res + 24)));
 		if (tes) {
-			if (x < 76 * res)  ix = invent;
-			else if (x < 124 * res)  ix = MENU_MOVE;
-			else if (x < 172 * res)  ix = action;
-			else if (x < 220 * res)  ix = saction;
-			else if (x < 268 * res)  ix = discut;
-			else ix = fichier;
+			if (x < 76 * res)
+				ix = invent;
+			else if (x < 124 * res)
+				ix = MENU_MOVE;
+			else if (x < 172 * res)
+				ix = action;
+			else if (x < 220 * res)
+				ix = saction;
+			else if (x < 268 * res)
+				ix = MENU_DISCUSS;
+			else
+				ix = fichier;
+
 			if ((ix != msg3) || (! test0))
 				if (!((ix == fichier) && ((msg3 == sauve) || (msg3 == charge)))) {
 					menuUp(msg3);
@@ -413,16 +424,19 @@ void Menu::mdn() {
 					msg3 = ix;
 					msg4 = OPCODE_NONE;
 				}
-		} else { /* Not in the MenuTitle line */
-			if ((y > 11) && (test0))  util(x, y);
+		} else { // Not in the MenuTitle line
+			if ((y > 11) && (test0))
+				util(x, y);
 		}
-	} else {       /* There was a click */
+	} else {       // There was a click
 		if ((msg3 == fichier) && (msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
 			menuUp(msg3);
-			if (lo(msg4) == 1)  msg3 = 7;
-			else msg3 = 8;
+			if (lo(msg4) == 1)
+				msg3 = 7;
+			else
+				msg3 = 8;
 			menuDown(msg3);
 
 			g_vm->setMouseClick(false);

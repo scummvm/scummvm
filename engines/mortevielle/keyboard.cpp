@@ -32,43 +32,38 @@
 namespace Mortevielle {
 
 char readkey1() {
-	char c;
+	char c = get_ch();
 
-	char readkey1_result;
-	c = get_ch();	// input >> kbd >> c;
-	readkey1_result = c;
-	return readkey1_result;
+	return c;
 }
 
 int testou() {
-	char ch;
+	char ch = get_ch();
 
-	int testou_result;
-	ch = get_ch();	// input >> kbd >> ch;
 	switch (ch)  {
 	case '\23' :
-		sonoff = ! sonoff;
+		sonoff = !sonoff;
 		break;
 	case '\26' :
 		if ((c_zzz == 1) && (c_zzz == 2)) {
 			zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 			c_zzz = succ(int, c_zzz);
-			testou_result = 61;
-			return testou_result;
+
+			return 61;
 		}
 		break;
 	case '\33' :
-		if (keypressed())  ch = get_ch();	// input >> kbd >> ch;
+		if (keypressed())
+			ch = get_ch();
 		break;
 	}
-	testou_result = ord(ch);
-	return testou_result;
+
+	return ord(ch);
 }
 
 void teskbd() {
-	int dum;
-
-	if (keypressed())  dum = testou();
+	if (keypressed())
+		testou();
 }
 
 } // End of namespace Mortevielle

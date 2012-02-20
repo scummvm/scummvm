@@ -136,11 +136,10 @@ enum verbs {OPCODE_ATTACH = 0x301, OPCODE_WAIT = 0x302,  OPCODE_FORCE = 0x303,  
 			OPCODE_LOOK = 0x310,   OPCODE_SMELL = 0x311, OPCODE_SOUND = 0x312,  OPCODE_LEAVE = 0x313, OPCODE_LIFT = 0x314,
 			OPCODE_TURN = 0x315};
 
-enum verbs2 {OPCODE_HIDE_SELF = 0x401};
+enum verbs2 {OPCODE_HIDE_SELF = 0x401, OPCODE_PUT = 0x404};
 
 const int sfouiller = 0x402;
 const int slire = 0x403;
-const int sposer = 0x404;
 const int sregarder = 0x405;
 
 const int max_patt = 20;
