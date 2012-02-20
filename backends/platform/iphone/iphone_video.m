@@ -232,7 +232,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 @implementation iPhoneView
 
-+ (Class) layerClass {
++ (Class)layerClass {
 	return [CAEAGLLayer class];
 }
 
@@ -261,7 +261,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	return self;
 }
 
--(void) dealloc {
+-(void)dealloc {
 	[super dealloc];
 
 	if (_keyboardView != nil) {
@@ -388,7 +388,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)updateMouseSurface {
-
 	int width = _mouseCursorWidth;
 	int height = _mouseCursorHeight;
 
@@ -604,7 +603,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		return nil;
 	}
 
-
 	id event = [_events objectAtIndex: 0];
 
 	[_events removeObjectAtIndex: 0];
@@ -613,7 +611,6 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)addEvent:(NSDictionary *)event {
-
 	if (_events == nil)
 		_events = [[NSMutableArray alloc] init];
 
@@ -631,57 +628,53 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
 
 	switch ([allTouches count]) {
-		case 1:
-		{
-			UITouch *touch = [touches anyObject];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
+	case 1: {
+		UITouch *touch = [touches anyObject];
+		CGPoint point = [touch locationInView:self];
+		if (!getLocalMouseCoords(&point))
+			return;
 
-			_firstTouch = touch;
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseDown], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+		_firstTouch = touch;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseDown], @"type",
+		  [NSNumber numberWithFloat:point.x], @"x",
+		  [NSNumber numberWithFloat:point.y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
-		case 2:
-		{
-			UITouch *touch = [touches anyObject];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
 
-			_secondTouch = touch;
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+	case 2: {
+		UITouch *touch = [touches anyObject];
+		CGPoint point = [touch locationInView:self];
+		if (!getLocalMouseCoords(&point))
+			return;
+
+		_secondTouch = touch;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
+		  [NSNumber numberWithFloat:point.x], @"x",
+		  [NSNumber numberWithFloat:point.y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
 	}
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	//NSSet *allTouches = [event allTouches];
 
-	for (UITouch* touch in touches) {
+	for (UITouch *touch in touches) {
 		if (touch == _firstTouch) {
-
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
@@ -694,9 +687,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			  nil
 			  ]
 			 ];
-
 		} else if (touch == _secondTouch) {
-
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
@@ -709,56 +700,51 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			  nil
 			  ]
 			 ];
-
 		}
 	}
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
 
 	switch ([allTouches count]) {
-		case 1:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
+	case 1: {
+		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+		CGPoint point = [touch locationInView:self];
+		if (!getLocalMouseCoords(&point))
+			return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseUp], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseUp], @"type",
+		  [NSNumber numberWithFloat:point.x], @"x",
+		  [NSNumber numberWithFloat:point.y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
-		case 2:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+	case 2: {
+		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
+		CGPoint point = [touch locationInView:self];
+		if (!getLocalMouseCoords(&point))
+			return;
+
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
+		  [NSNumber numberWithFloat:point.x], @"x",
+		  [NSNumber numberWithFloat:point.y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
 	}
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
 }
 
 - (void)handleKeyPress:(unichar)c {
