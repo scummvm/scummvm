@@ -27,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  iPhone port:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.
+   - Added support for custom cursor palettes, this makes the moderm theme use
+     the red pointer cursor for example.
 
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.

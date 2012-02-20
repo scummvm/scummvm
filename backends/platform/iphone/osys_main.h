@@ -82,12 +82,15 @@ protected:
 	uint32 _timeSuspended;
 
 	bool _mouseVisible;
+	bool _mouseCursorPaletteEnabled;
+	uint16 _mouseCursorPalette[256];
 	byte *_mouseBuf;
 	byte _mouseKeyColor;
 	uint _mouseWidth, _mouseHeight;
 	uint _mouseX, _mouseY;
 	int _mouseHotspotX, _mouseHotspotY;
 	bool _mouseDirty;
+	bool _mouseNeedTextureUpdate;
 	long _lastMouseDown;
 	long _lastMouseTap;
 	long _queuedEventTime;
@@ -159,6 +162,7 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
@@ -195,6 +199,7 @@ protected:
 	void drawDirtyRect(const Common::Rect &dirtyRect);
 	void drawDirtyOverlayRect(const Common::Rect &dirtyRect);
 	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
+	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 

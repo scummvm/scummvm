@@ -81,6 +81,7 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_fullScreenIsDirty = false;
 	dirtyFullScreen();
 	_mouseVisible = false;
+	_mouseCursorPaletteEnabled = false;
 	_screenChangeCount++;
 	updateScreen();
 }
@@ -174,6 +175,11 @@ void OSystem_IPHONE::updateScreen() {
 }
 
 void OSystem_IPHONE::internUpdateScreen() {
+	if (_mouseNeedTextureUpdate) {
+		updateMouseTexture();
+		_mouseNeedTextureUpdate = false;
+	}
+
 	while (_dirtyRects.size()) {
 		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size() - 1);
 
@@ -355,24 +361,6 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	//printf("setMouseCursor(%i, %i, scale %u)\n", hotspotX, hotspotY, cursorTargetScale);
 
-	int texWidth = getSizeNextPOT(w);
-	int texHeight = getSizeNextPOT(h);
-	int bufferSize =  texWidth * texHeight * sizeof(int16);
-	int16 *mouseBuf = (int16 *)malloc(bufferSize);
-	memset(mouseBuf, 0, bufferSize);
-
-	for (uint x = 0; x < w; ++x) {
-		for (uint y = 0; y < h; ++y) {
-			byte color = buf[y * w + x];
-			if (color != keycolor)
-				mouseBuf[y * texWidth + x] = _gamePaletteRGBA5551[color] | 0x1;
-			else
-				mouseBuf[y * texWidth + x] = 0x0;
-		}
-	}
-
-	iPhone_setMouseCursor(mouseBuf, w, h, hotspotX, hotspotY);
-
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
 		free(_mouseBuf);
 		_mouseBuf = NULL;
@@ -392,4 +380,45 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	memcpy(_mouseBuf, buf, w * h);
 
 	_mouseDirty = true;
+	_mouseNeedTextureUpdate = true;
+}
+
+void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) {
+	assert(start + num <= 256);
+
+	for (uint i = start; i < start + num; ++i, colors += 3)
+		_mouseCursorPalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(colors[0], colors[1], colors[2]);
+	
+	// FIXME: This is just stupid, our client code seems to assume that this
+	// automatically enables the cursor palette.
+	_mouseCursorPaletteEnabled = true;
+
+	if (_mouseCursorPaletteEnabled)
+		_mouseDirty = _mouseNeedTextureUpdate = true;
+}
+
+void OSystem_IPHONE::updateMouseTexture() {
+	int texWidth = getSizeNextPOT(_mouseWidth);
+	int texHeight = getSizeNextPOT(_mouseHeight);
+	int bufferSize = texWidth * texHeight * sizeof(int16);
+	uint16 *mouseBuf = (uint16 *)malloc(bufferSize);
+	memset(mouseBuf, 0, bufferSize);
+
+	const uint16 *palette;
+	if (_mouseCursorPaletteEnabled)
+		palette = _mouseCursorPalette;
+	else
+		palette = _gamePaletteRGBA5551;
+
+	for (uint x = 0; x < _mouseWidth; ++x) {
+		for (uint y = 0; y < _mouseHeight; ++y) {
+			const byte color = _mouseBuf[y * _mouseWidth + x];
+			if (color != _mouseKeyColor)
+				mouseBuf[y * texWidth + x] = palette[color] | 0x1;
+			else
+				mouseBuf[y * texWidth + x] = 0x0;
+		}
+	}
+
+	iPhone_setMouseCursor(mouseBuf, _mouseWidth, _mouseHeight, _mouseHotspotX, _mouseHotspotY);
 }

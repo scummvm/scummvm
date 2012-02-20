@@ -48,7 +48,7 @@ static int _overlayIsEnabled = 0;
 static UITouch *_firstTouch = NULL;
 static UITouch *_secondTouch = NULL;
 
-static short *_mouseCursor = NULL;
+static unsigned short *_mouseCursor = NULL;
 static int _mouseCursorHeight = 0;
 static int _mouseCursorWidth = 0;
 static int _mouseCursorHotspotX = 0;
@@ -79,7 +79,7 @@ void iPhone_showCursor(int state) {
 	_mouseCursorEnabled = state;
 }
 
-void iPhone_setMouseCursor(short *buffer, int width, int height, int hotspotX, int hotspotY) {
+void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY) {
 	_mouseCursor = buffer;
 
 	_mouseCursorWidth = width;
@@ -326,7 +326,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _textureWidth, _textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _textureBuffer); printOpenGLError();
-	glDisable(GL_BLEND);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -353,7 +352,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _overlayTexWidth, _overlayTexHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _overlayTexBuffer); printOpenGLError();
-	glEnable(GL_BLEND);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -413,7 +411,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-	glEnable(GL_BLEND);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -463,6 +460,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 			glViewport(0, 0, _backingWidth, _backingHeight); printOpenGLError();
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
 
+			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glEnable(GL_TEXTURE_2D); printOpenGLError();

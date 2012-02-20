@@ -56,11 +56,11 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_mixer(NULL), _gameScreenRaw(NULL),
 	_overlayVisible(false), _gameScreenConverted(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0), _queuedEventTime(0),
-	_secondaryTapped(false), _lastSecondaryTap(0),
+	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0) {
+	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0), _mouseCursorPaletteEnabled(false) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
@@ -99,14 +99,38 @@ void OSystem_IPHONE::initBackend() {
 }
 
 bool OSystem_IPHONE::hasFeature(Feature f) {
-	return false;
+	switch (f) {
+	case kFeatureCursorPalette:
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureCursorPalette:
+		if (_mouseCursorPaletteEnabled != enable) {
+			_mouseNeedTextureUpdate = true;
+			_mouseDirty = true;
+			_mouseCursorPaletteEnabled = enable;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 bool OSystem_IPHONE::getFeatureState(Feature f) {
-	return false;
+	switch (f) {
+	case kFeatureCursorPalette:
+		return _mouseCursorPaletteEnabled;
+
+	default:
+		return false;
+	}
 }
 
 void OSystem_IPHONE::suspendLoop() {
