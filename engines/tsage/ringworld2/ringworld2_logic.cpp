@@ -1551,36 +1551,130 @@ void Scene1200::sub9DAD6(int indx) {
 
 /*--------------------------------------------------------------------------*/
 
-ActionObject::ActionObject(): EventHandler() {
+AnimationPlayer::AnimationPlayer(): EventHandler() {
+	_endAction = NULL;
+	
+	_fieldA = NULL;
+	_field16 = NULL;
+	
+	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
+	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
+	_field3C = 0;
+	_field3A = 1;
+	_field5A = 0;
+	_field58 = 0;
 	_endAction = NULL;
 }
 
-void ActionObject::synchronize(Serializer &s) {
-	EventHandler::synchronize(s);
-
-	SYNC_POINTER(_endAction);
+AnimationPlayer::~AnimationPlayer() {
+	if (!method3())
+		method4();
 }
 
-void ActionObject::remove() {
+void AnimationPlayer::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	warning("TODO AnimationPlayer::load");
+}
+
+void AnimationPlayer::remove() {
 	if (_endAction)
 		_endAction->signal();
 
 	_endAction = NULL;
 }
 
-bool ActionObject::load(int rlbNum, Action *endAction) {
-	warning("TODO ActionOjbect::load");
-	return true;
+void AnimationPlayer::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
+			(_field3A)) {
+		_field90C = _field576;
+	} 
+}
+
+void AnimationPlayer::dispatch() {
+	uint32 gameFrame = R2_GLOBALS._events.getFrameNumber();
+	uint32 gameDiff = (gameFrame > _gameFrame) ? gameFrame - _gameFrame : _gameFrame - gameFrame;
+
+	if (gameDiff >= _field910) {
+		drawFrame(_field904 % _field57C);
+		++_field904;
+		_field90C = _field904 / _field57C;
+
+		if (_field90C == _field90E)
+			method2();
+
+		_field908 = _field904;
+		_gameFrame = gameFrame;
+	}
+}
+
+bool AnimationPlayer::load(int rlbNum, Action *endAction) {
+	ResourceEntry resEntry;
+	if (!g_resourceManager->first().getSectionEntry(_resourceFile, RES_IMAGE, rlbNum, 0, resEntry)) {
+		warning("Couldn't find resource index");
+		// TODO: Complete animation loading
+	}
+
+	_resourceFile.close();
+	return false;
+}
+
+void AnimationPlayer::drawFrame(int frameIndex) {
+	uint32 v = READ_LE_UINT32(_dataP);
+warning("v = %d", v);
+//TODO
+
+	// End check
+	if (_field56 == 42) {
+		_screenBounds.expandPanes();
+
+		R2_GLOBALS._sceneObjects->draw();
+	} else {
+		if (R2_GLOBALS._sceneManager._hasPalette) {
+			R2_GLOBALS._sceneManager._hasPalette = false;
+			R2_GLOBALS._scenePalette.refresh();
+		}
+	}
+}
+
+void AnimationPlayer::method2() {
+
+}
+
+bool AnimationPlayer::method3() {
+	return (_field90C >= _field576);
+}
+
+void AnimationPlayer::method4() {
+	if (_field38) {
+		switch (_field3C) {
+		case 0:
+			R2_GLOBALS._scenePalette.replace(&_palette);
+			changePane();
+			R2_GLOBALS._sceneManager._hasPalette = true;
+			break;
+		case 2:
+			proc14();
+			break;
+		default:
+			changePane();
+			break;
+		}
+	}
+
+// TODO
 }
 
 /*--------------------------------------------------------------------------*/
 
-void ActionObjectExt::synchronize(Serializer &s) {
-	ActionObject::synchronize(s);
-	s.syncAsSint16LE(_v1);
+AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
+	_v = 0;
+	_field3A = 0;
 }
 
-
+void AnimationPlayerExt::synchronize(Serializer &s) {
+	AnimationPlayer::synchronize(s);
+	s.syncAsSint16LE(_v);
+}
 
 } // End of namespace Ringworld2
 

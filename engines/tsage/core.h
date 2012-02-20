@@ -373,6 +373,7 @@ public:
 
 	bool loadPalette(int paletteNum);
 	void loadPalette(const byte *pSrc, int start, int count);
+	void replace(const ScenePalette *src) { loadPalette(src->_palette, 0, 256); }
 	void refresh();
 	void setPalette(int index, int count);
 	void getEntry(int index, uint *r, uint *g, uint *b);

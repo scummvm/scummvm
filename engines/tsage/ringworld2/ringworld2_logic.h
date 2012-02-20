@@ -325,29 +325,55 @@ public:
 	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
 
-class ActionObject: public EventHandler {
+class AnimationPlayer: public EventHandler {
 public:
-	EventHandler *_endAction;
+	Common::File _resourceFile;
+	void *_fieldA;
+	void *_field16;
+
+	byte *_dataP;
 	Rect _rect1, _screenBounds;
+	int _field38;
 	int _field3A, _field3C;
 	int _field56;
 	int _field58, _field5A;
 	ScenePalette _palette;
 	byte _palData[256 * 3];
+	Action *_endAction;
+	int _field576;
+	int _field57C;
+	int _palStart, _palSize;
+	int _field904;
+	int _field908;
+	int _field90C;
+	int _field90E;
+	uint _field910;
+	uint32 _gameFrame;
 public:
-	ActionObject();
+	AnimationPlayer();
+	~AnimationPlayer();
 
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void flipPane() {}
+	virtual void changePane() {}
+	virtual void proc14() {}
 
 	bool load(int rlbNum, Action *endAction = NULL);
-	bool proc1() { return false; }
-	void proc2() {}
+	void drawFrame(int frameIndex);
+	void method2();
+	bool method3();
+	void method4();
+	void method5() {}
 };
 
-class ActionObjectExt: public ActionObject {
+class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v1;
+	int _v;
+public:
+	AnimationPlayerExt();
 
 	virtual void synchronize(Serializer &s);
 };
