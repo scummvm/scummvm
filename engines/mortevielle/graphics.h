@@ -92,7 +92,7 @@ public:
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void writeg(const Common::String &l, int c);
 	int getStringWidth(const Common::String &s);
-	void droite(int x, int y, int xx, int yy, int coul);
+	void drawLine(int x, int y, int xx, int yy, int coul);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

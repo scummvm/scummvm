@@ -58,8 +58,8 @@ void tinke() {
 
 	anyone = false;
 	calch(j, h, m);
-	if (j != jou) {
-		jou = j;
+	if (j != _day) {
+		_day = j;
 		cx = 0;
 		do {
 			++cx;
@@ -68,10 +68,10 @@ void tinke() {
 			nbrep[cx] = 0;
 		} while (!(cx == 8));
 	}
-	if ((h > heu) || ((h == 0) && (heu == 23))) {
-		heu = h;
-		min = 0;
-		pendule();
+	if ((h > _hour) || ((h == 0) && (_hour == 23))) {
+		_hour = h;
+		_minute = 0;
+		drawClock();
 		cf = 0;
 		for (cx = 1; cx <= 10; cx ++) {
 			if (s.pourc[cx] == '*')
@@ -96,9 +96,9 @@ void tinke() {
 		stpou += d6;
 		stpou += d4;
 	}
-	if (m > min) {
-		min = 30;
-		pendule();
+	if (m > _minute) {
+		_minute = 30;
+		drawClock();
 	}
 	if (y_s < 12)
 		return;
@@ -110,16 +110,16 @@ void tinke() {
 			t = ti1;
 		cf = s.conf;
 		if ((cf > 33) && (cf < 66))
-			t = t - (t / 3);
+			t -= (t / 3);
 
 		if (cf > 65)
-			t = t - ((t / 3) * 2);
+			t -= ((t / 3) * 2);
 
 		nh = readclock();
 		if ((nh - mh) > t) {
 			am = g_vm->_menu._menuActive;
 			g_vm->_menu.eraseMenu();
-			jh = jh + ((nh - mh) / t);
+			jh += ((nh - mh) / t);
 			mh = nh;
 			switch (li) {
 			case 1:
@@ -516,7 +516,7 @@ void t1sama() {    //Entering manor
 		premtet();
 		sparl(0, 140);
 		dessine_rouleau();
-		pendule();
+		drawClock();
 		showMouse();
 		s.mlieu = 0;
 		affrep();

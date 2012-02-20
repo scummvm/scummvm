@@ -1098,7 +1098,7 @@ int ScreenSurface::getStringWidth(const Common::String &s) {
 	return s.size() * charWidth;
 }
 
-void ScreenSurface::droite(int x, int y, int xx, int yy, int coul) {
+void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 	int step, i;
 	float a, b;
 	float xr, yr, xro, yro;
