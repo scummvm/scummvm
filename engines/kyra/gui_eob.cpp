@@ -777,11 +777,11 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, (_screen->getPageScaleFactor(0) == 2) ? 1 : 12, Screen::CR_NO_P_CHECK);
 
 	_gui->runCampMenu();
 
-	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 120, 176, 24, (_screen->getPageScaleFactor(0) == 2) ? 1 : 12, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
 	drawScene(0);
 
@@ -1170,7 +1170,7 @@ int EoBCoreEngine::clickedSceneSpecial(Button *button) {
 
 int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_updateFlags = 0;
-	_screen->copyRegion(0, 0, 64, 121, 112, 56, 10, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 64, 121, 112, 56, (_screen->getPageScaleFactor(0) == 2) ? 4 : 10, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	gui_drawCompass(true);
 	gui_toggleButtons();
@@ -1392,9 +1392,11 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 
 	_charSelectRedraw = false;
 
+	_highLightColorTable = (_vm->game() == GI_EOB1 && (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA)) ? _highlightColorTableEGA : _highlightColorTableVGA;
 	_updateBoxIndex = -1;
 	_highLightBoxTimer = 0;
 	_updateBoxColorIndex = 0;
+
 	_needRest = false;
 }
 
@@ -2170,7 +2172,7 @@ void GUI_EoB::runCampMenu() {
 				if (cnt > 4) {
 					_vm->dropCharacter(selectCharacterDialogue(53));
 					_vm->gui_drawPlayField(false);
-					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, (_screen->getPageScaleFactor(0) == 2) ? 1 : 12, Screen::CR_NO_P_CHECK);
 					_screen->setFont(Screen::FID_6_FNT);
 					_vm->gui_drawAllCharPortraitsWithStats();
 					_screen->setFont(Screen::FID_8_FNT);
@@ -2411,8 +2413,6 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 }
 
 void GUI_EoB::updateBoxFrameHighLight(int box) {
-	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00 };
-
 	if (_updateBoxIndex == box) {
 		if (_updateBoxIndex == -1)
 			return;
@@ -2420,18 +2420,18 @@ void GUI_EoB::updateBoxFrameHighLight(int box) {
 		if (_vm->_system->getMillis() <= _highLightBoxTimer)
 			return;
 
-		if (!colorTable[_updateBoxColorIndex])
+		if (!_highLightColorTable[_updateBoxColorIndex])
 			_updateBoxColorIndex = 0;
 
-		const EoBRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
-		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, colorTable[_updateBoxColorIndex++]);
+		const EoBRect16 *r = &_highlightFrames[_updateBoxIndex];
+		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, _highLightColorTable[_updateBoxColorIndex++]);
 		_screen->updateScreen();
 
 		_highLightBoxTimer = _vm->_system->getMillis() + _vm->_tickLength;
 
 	} else {
 		if (_updateBoxIndex != -1) {
-			const EoBRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
+			const EoBRect16 *r = &_highlightFrames[_updateBoxIndex];
 			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
 			_screen->updateScreen();
 		}
@@ -2607,7 +2607,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 			break;
 	} while (_saveSlotIdTemp[slot] == -1);
 
-	_screen->copyRegion(72, 14, 72, 14, 176, 144, 12, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(72, 14, 72, 14, 176, 144, (_screen->getPageScaleFactor(0) == 2) ? 7 : 12, 0, Screen::CR_NO_P_CHECK);
 	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 
 	return (slot < 6) ? _savegameList[_savegameOffset + slot] : Common::String();
@@ -4054,7 +4054,7 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	_screen->setFont(of);
 }
 
-const EoBRect16 GUI_EoB::_updateBoxFrameHighLights[] = {
+const EoBRect16 GUI_EoB::_highlightFrames[] = {
 	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
 	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
 	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },
@@ -4076,6 +4076,10 @@ const EoBRect16 GUI_EoB::_updateBoxFrameHighLights[] = {
 	{ 0x0004, 0x0068, 0x0024, 0x0089 },
 	{ 0x00A3, 0x0068, 0x00C3, 0x0089 }
 };
+
+const uint8 GUI_EoB::_highlightColorTableVGA[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00 };
+
+const uint8 GUI_EoB::_highlightColorTableEGA[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
 
 } // End of namespace Kyra
 

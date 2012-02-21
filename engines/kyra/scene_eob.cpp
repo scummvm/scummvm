@@ -144,10 +144,10 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 
 		const char *vmpPattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.EMP" : "%s.VMP";
 		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format(vmpPattern, (const char *)pos));
-		uint16 size = s->readUint16LE();
+		_vmpSize = s->readUint16LE();
 		delete[] _vmpPtr;
-		_vmpPtr = new uint16[size];
-		for (int i = 0; i < size; i++)
+		_vmpPtr = new uint16[_vmpSize];
+		for (int i = 0; i < _vmpSize; i++)
 			_vmpPtr[i] = s->readUint16LE();
 		delete s;
 
@@ -185,6 +185,8 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
 			_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
 			_screen->setFadeTableIndex(4);
+			if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA)
+				_screen->setScreenPalette(_screen->getPalette(0));
 		}
 	}
 
@@ -280,25 +282,64 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	const char *filePattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN";
 	_screen->loadBitmap(Common::String::format(filePattern, _lastBlockDataFile).c_str(), 3, 3, 0);
 	const uint8 *pos = _screen->getCPagePtr(3);
-	uint32 tlen = READ_LE_UINT16(pos) << 5;
-	pos += 2;
-	if (!(_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)))
-		memcpy(_vcnColTable, pos, 32);
-	pos += 32;
-	delete[] _vcnBlocks;
-	_vcnBlocks = new uint8[tlen];
 
-	if (_configRenderMode == Common::kRenderCGA) {
+	uint32 vcnSize = READ_LE_UINT16(pos) * _vcnBlockWidth * _vcnBlockHeight;
+	pos += 2;
+
+	const uint8 *colMap = pos;
+	pos += 32;
+
+	delete[] _vcnBlocks;
+	_vcnBlocks = new uint8[vcnSize];
+
+	if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) {
+		const uint8 *egaTable = _screen->getEGADitheringTable();
+		assert(_vmpPtr);
+		assert(egaTable);
+
+		delete[] _vcnTransitionMask;
+		_vcnTransitionMask = new uint8[vcnSize];
+
+		for (int i = 0; i < _vmpSize; i++) {
+			uint16 vcnOffs = _vmpPtr[i] & 0x3FFF;
+			const uint8 *src = &pos[vcnOffs << 5];
+			uint8 *dst1 = &_vcnBlocks[vcnOffs << 7];
+			uint8 *dst3 = &_vcnTransitionMask[vcnOffs << 7];
+			int palOffset = (i < 330) ? 0 : _wllVcnOffset;
+
+			for (int y = 0; y < 8; y++) {
+				uint8 *dst2 = dst1 + 8;
+				uint8 *dst4 = dst3 + 8;
+
+				for (int x = 0; x < 4; x++) {
+					uint8 in = *src++;
+
+					dst1[0] = dst2[0] = egaTable[colMap[(in >> 4) + palOffset]];
+					dst1[1] = dst2[1] = egaTable[colMap[(in & 0x0f) + palOffset]];
+					dst3[0] = dst4[0] = (in & 0xf0) ? 0 : 0xff;
+					dst3[1] = dst4[1] = (in & 0x0f) ? 0 : 0xff;
+
+					dst1 += 2;
+					dst2 += 2;
+					dst3 += 2;
+					dst4 += 2;
+				}
+
+				dst1 += 8;
+				dst3 += 8;
+			}
+		}
+	} else if (_configRenderMode == Common::kRenderCGA) {
 		uint8 *tmp = _screen->encodeShape(0, 0, 1, 8, false, cgaMapping);
 		delete[] tmp;
 
 		delete[] _vcnTransitionMask;
-		_vcnTransitionMask = new uint8[tlen];
+		_vcnTransitionMask = new uint8[vcnSize];
 		uint8 tblSwitch = 0;
 		uint8 *dst = _vcnBlocks;
 		uint8 *dst2 = _vcnTransitionMask;
 
-		while (dst < _vcnBlocks + tlen) {
+		while (dst < _vcnBlocks + vcnSize) {
 			const uint16 *table = _screen->getCGADitheringTable((tblSwitch++) & 1);
 			for (int ii = 0; ii < 2; ii++) {
 				*dst++ = ((table[pos[0]] & 0x000f) << 4) | ((table[pos[0]] & 0x0f00) >> 8);
@@ -322,7 +363,9 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 			}
 		}
 	} else {
-		memcpy(_vcnBlocks, pos, tlen);
+		if (_configRenderMode != Common::kRenderEGA)
+			memcpy(_vcnColTable, colMap, 32);
+		memcpy(_vcnBlocks, pos, vcnSize);
 	}
 }
 

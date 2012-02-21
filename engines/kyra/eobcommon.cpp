@@ -371,7 +371,7 @@ Common::Error EoBCoreEngine::init() {
 
 	_screen = new Screen_EoB(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+	_screen->setResolution(_flags.useHiResOverlay || (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA));
 
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
@@ -1738,7 +1738,7 @@ void EoBCoreEngine::seq_portal() {
 bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->copyPage(0, 10);
+	_screen->copyPage(0, (_screen->getPageScaleFactor(0) == 2) ? 4 : 10);
 
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
@@ -1765,7 +1765,7 @@ bool EoBCoreEngine::checkPassword() {
 
 	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
 	_screen->setFont(of);
-	_screen->copyPage(10, 0);
+	_screen->copyPage((_screen->getPageScaleFactor(0) == 2) ? 4 : 10, 0);
 	return true;
 }
 

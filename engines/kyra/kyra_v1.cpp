@@ -230,13 +230,16 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _debugger;
 }
 
-Common::Point KyraEngine_v1::getMousePos() const {
+Common::Point KyraEngine_v1::getMousePos() {
 	Common::Point mouse = _eventMan->getMousePos();
 
 	if (_flags.useHiResOverlay) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
 	}
+
+	mouse.x /= screen()->getPageScaleFactor(0);
+	mouse.y /= screen()->getPageScaleFactor(0);
 
 	return mouse;
 }
@@ -313,6 +316,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
+			_mouseX /= screen()->getPageScaleFactor(0);
+			_mouseY /= screen()->getPageScaleFactor(0);
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
 			} break;
@@ -325,6 +330,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
+			_mouseX /= screen()->getPageScaleFactor(0);
+			_mouseY /= screen()->getPageScaleFactor(0);
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;

@@ -210,7 +210,7 @@ public:
 
 	// input
 	void setMousePos(int x, int y);
-	Common::Point getMousePos() const;
+	Common::Point getMousePos();
 
 	// config specific
 	bool speechEnabled();

@@ -69,7 +69,7 @@ Common::Error EoBEngine::init() {
 		_screen->loadPalette(_egaDefaultPalette, pal, 16);
 		_screen->setScreenPalette(pal);
 	} else {
-		_screen->loadPalette("palette.col", _screen->getPalette(0));
+		_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	}
 
 	return Common::kNoError;

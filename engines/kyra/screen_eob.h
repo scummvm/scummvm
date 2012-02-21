@@ -46,11 +46,18 @@ public:
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
+	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 	void printShadedText(const char *string, int x, int y, int col1, int col2);
+
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
 	void convertPage(int srcPage, int dstPage, const uint8 *cgaMapping);
+
+	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
+	void drawLine(bool vertical, int x, int y, int length, int color);
+	uint8 getPagePixel(int pageNum, int x, int y);
+	void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	void setScreenPalette(const Palette &pal);
 
@@ -76,14 +83,17 @@ public:
 	void setFadeTableIndex(int index);
 	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
 	uint8 *getFadeTable(int index);
+
 	const uint16 *getCGADitheringTable(int index);
+	const uint8 *getEGADitheringTable();
 
 private:
-	void drawShapeSetPixel(uint8 *dst, uint8 c);
+	void drawShapeSetPixel(uint8 *dst, uint8 col, uint16 pitch);
 	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
+	void generateEGADitheringTable(const Palette &pal);
 	void generateCGADitheringTables(const uint8 *mappingData);
 
 	int _dsDiv, _dsRem, _dsScaleTrans;
@@ -104,7 +114,7 @@ private:
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
 
-	uint8 *_egaColorMap;
+	uint8 *_egaDitheringTable;
 	uint8 *_egaPixelValueTable;
 	bool _useHiResEGADithering;
 

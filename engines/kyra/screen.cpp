@@ -39,7 +39,7 @@ namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
-	_cursorColorKey((vm->game() == GI_KYRA1) ? 0xFF : 0x00) {
+	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 
@@ -50,8 +50,14 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 
 	memset(_fonts, 0, sizeof(_fonts));
 
+	memset(_pagePtrs, 0, sizeof(_pagePtrs));
+	// Set scale factor to 1 (no scaling) for all pages
+	memset(_pageScaleFactor, 1, sizeof(_pageScaleFactor));
+	// In VGA mode the odd and even page pointers point to the same buffers.
+	for (int i = 0; i < SCREEN_PAGE_NUM; i++)
+		_pageMapping[i] = i & ~1;
+
 	_renderMode = Common::kRenderDefault;
-	_cgaDrawCharDitheringTable = 0;
 
 	_currentFont = FID_8_FNT;
 	_paletteChanged = true;
@@ -92,6 +98,12 @@ bool Screen::init() {
 	if (ConfMan.hasKey("render_mode"))
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
+	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
+		for (int i = 0; i < 8; i++)
+			_pageMapping[i] = i;
+	}
+
 	memset(_fonts, 0, sizeof(_fonts));
 
 	if (_vm->gameFlags().useHiResOverlay) {
@@ -119,25 +131,28 @@ bool Screen::init() {
 
 	_curPage = 0;
 
-	int numPages = SCREEN_PAGE_NUM / 2;
-	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
-	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)
-		numPages += 4;
+	Common::Array<uint8> realPages;
+	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
+		if (Common::find(realPages.begin(), realPages.end(), _pageMapping[i]) == realPages.end())
+			realPages.push_back(_pageMapping[i]);
+	}
 
-	uint8 *pagePtr = new uint8[numPages * SCREEN_PAGE_SIZE];
-	memset(pagePtr, 0, numPages * SCREEN_PAGE_SIZE);
+	int numPages = realPages.size();
+	uint32 bufferSize = 0;
+	for (int i = 0; i < numPages; i++)
+		bufferSize += (SCREEN_PAGE_SIZE * _pageScaleFactor[realPages[i]] * _pageScaleFactor[realPages[i]]);
 
-	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA) {
-		// Unlike VGA mode the odd and even page numbers do not always point to the same buffers.
-		// Instead, the odd pages are used for CGA/EGA specific graphics conversions.
-		int pageNum = 0;
-		for (; pageNum < 8; pageNum++)
-			_pagePtrs[pageNum] = pagePtr + pageNum * SCREEN_PAGE_SIZE;
-		for (; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
-			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum / 2) * SCREEN_PAGE_SIZE;
-	} else {
-		for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
-			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum / 2) * SCREEN_PAGE_SIZE;
+	uint8 *pagePtr = new uint8[bufferSize];
+	memset(pagePtr, 0, bufferSize);
+
+	memset(_pagePtrs, 0, sizeof(_pagePtrs));
+	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
+		if (_pagePtrs[_pageMapping[i]]) {
+			_pagePtrs[i] = _pagePtrs[_pageMapping[i]];
+		} else {
+			_pagePtrs[i] = pagePtr;
+			pagePtr += (SCREEN_PAGE_SIZE * _pageScaleFactor[i] * _pageScaleFactor[i]);
+		}
 	}
 
 	memset(_shapePages, 0, sizeof(_shapePages));
@@ -211,7 +226,7 @@ bool Screen::enableScreenDebug(bool enable) {
 
 	if (_debugEnabled != enable) {
 		_debugEnabled = enable;
-		setResolution();
+		setResolution(_vm->gameFlags().useHiResOverlay);
 		_forceFullUpdate = true;
 		updateScreen();
 	}
@@ -219,14 +234,14 @@ bool Screen::enableScreenDebug(bool enable) {
 	return temp;
 }
 
-void Screen::setResolution() {
+void Screen::setResolution(bool hiRes) {
 	byte palette[3*256];
 	_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	int width = 320, height = 200;
 	bool defaultTo1xScaler = false;
 
-	if (_vm->gameFlags().useHiResOverlay) {
+	if (hiRes) {
 		defaultTo1xScaler = true;
 		height = 400;
 
@@ -261,7 +276,7 @@ void Screen::updateScreen() {
 		needRealUpdate = true;
 
 		if (!_useOverlays)
-			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
+			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W * _pageScaleFactor[2], SCREEN_H * _pageScaleFactor[2]);
 		else
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 640, 0, SCREEN_W, SCREEN_H);
 	}
@@ -272,12 +287,12 @@ void Screen::updateScreen() {
 
 void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W * _pageScaleFactor[0], 0, 0, SCREEN_W * _pageScaleFactor[0], SCREEN_H * _pageScaleFactor[0]);
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+			_system->copyRectToScreen(page0 + it->top * SCREEN_W * _pageScaleFactor[0] + it->left, SCREEN_W * _pageScaleFactor[0], it->left, it->top, it->width(), it->height());
 		}
 	}
 	_forceFullUpdate = false;
@@ -451,6 +466,11 @@ const uint8 *Screen::getCPagePtr(int pageNum) const {
 	return _pagePtrs[pageNum];
 }
 
+int Screen::getPageScaleFactor(int pageNum) {
+	assert(pageNum < SCREEN_PAGE_NUM);
+	return _pageScaleFactor[pageNum];
+}
+
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	if (pageNum == 0 || pageNum == 1)
@@ -462,7 +482,7 @@ void Screen::clearPage(int pageNum) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	if (pageNum == 0 || pageNum == 1)
 		_forceFullUpdate = true;
-	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
+	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE * _pageScaleFactor[_curPage] * _pageScaleFactor[_curPage]);
 	clearOverlayPage(pageNum);
 }
 
@@ -476,7 +496,7 @@ int Screen::setCurPage(int pageNum) {
 void Screen::clearCurPage() {
 	if (_curPage == 0 || _curPage == 1)
 		_forceFullUpdate = true;
-	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
+	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE * _pageScaleFactor[_curPage] * _pageScaleFactor[_curPage]);
 	clearOverlayPage(_curPage);
 }
 
@@ -632,12 +652,17 @@ uint8 Screen::getPagePixel(int pageNum, int x, int y) {
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
 
 	if (_use16ColorMode) {
 		color &= 0x0F;
 		color |= (color << 4);
+	} else if (_renderMode == Common::kRenderCGA) {
+		color &= 0x03;
+	} else if (_renderMode == Common::kRenderEGA) {
+		color &= 0x0F;
 	}
 
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
@@ -845,16 +870,26 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
+	// Since we don't (need to) do any actual scaling, we check for compatible pages here
+	assert(_pageScaleFactor[srcPage] == _pageScaleFactor[dstPage]);
+
+	x1 *= _pageScaleFactor[srcPage];
+	y1 *= _pageScaleFactor[srcPage];
+	x2 *= _pageScaleFactor[dstPage];
+	y2 *= _pageScaleFactor[dstPage];
+	w *= _pageScaleFactor[srcPage];
+	h *= _pageScaleFactor[srcPage];
+
 	if (x2 < 0) {
 		if (x2  <= -w)
 			return;
 		w += x2;
 		x1 -= x2;
 		x2 = 0;
-	} else if (x2 + w >= SCREEN_W) {
-		if (x2 > SCREEN_W)
+	} else if (x2 + w >= SCREEN_W * _pageScaleFactor[dstPage]) {
+		if (x2 > SCREEN_W * _pageScaleFactor[dstPage])
 			return;
-		w = SCREEN_W - x2;
+		w = SCREEN_W * _pageScaleFactor[srcPage] - x2;
 	}
 
 	if (y2 < 0) {
@@ -863,14 +898,14 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 		h += y2;
 		y1 -= y2;
 		y2 = 0;
-	} else if (y2 + h >= SCREEN_H) {
-		if (y2 > SCREEN_H)
+	} else if (y2 + h >= SCREEN_H * _pageScaleFactor[dstPage]) {
+		if (y2 > SCREEN_H * _pageScaleFactor[dstPage])
 			return;
-		h = SCREEN_H - y2;
+		h = SCREEN_H * _pageScaleFactor[srcPage] - y2;
 	}
 
-	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
-	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
+	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W * _pageScaleFactor[srcPage] + x1;
+	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W * _pageScaleFactor[dstPage] + x2;
 
 	if (src == dst)
 		return;
@@ -883,8 +918,8 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	if (flags & CR_NO_P_CHECK) {
 		while (h--) {
 			memmove(dst, src, w);
-			src += SCREEN_W;
-			dst += SCREEN_W;
+			src += SCREEN_W * _pageScaleFactor[srcPage];
+			dst += SCREEN_W * _pageScaleFactor[dstPage];
 		}
 	} else {
 		while (h--) {
@@ -892,19 +927,24 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 				if (src[i])
 					dst[i] = src[i];
 			}
-			src += SCREEN_W;
-			dst += SCREEN_W;
+			src += SCREEN_W * _pageScaleFactor[srcPage];
+			dst += SCREEN_W * _pageScaleFactor[dstPage];
 		}
 	}
 }
 
 void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
+	x *= _pageScaleFactor[pageNum];
+	y *= _pageScaleFactor[pageNum];
+	w *= _pageScaleFactor[pageNum];
+	h *= _pageScaleFactor[pageNum];
+
 	if (y < 0) {
 		dest += (-y) * w;
 		h += y;
 		y = 0;
 	} else if (y + h > SCREEN_H) {
-		h = SCREEN_H - y;
+		h = SCREEN_H * _pageScaleFactor[pageNum] - y;
 	}
 
 	if (x < 0) {
@@ -912,7 +952,7 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 		w += x;
 		x = 0;
 	} else if (x + w > SCREEN_W) {
-		w = SCREEN_W - x;
+		w = SCREEN_W * _pageScaleFactor[pageNum] - x;
 	}
 
 	if (w < 0 || h < 0)
@@ -921,14 +961,17 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 	uint8 *pagePtr = getPagePtr(pageNum);
 
 	for (int i = y; i < y + h; ++i)
-		memcpy(dest + (i - y) * w, pagePtr + i * SCREEN_W + x, w);
+		memcpy(dest + (i - y) * w, pagePtr + i * SCREEN_W * _pageScaleFactor[pageNum] + x, w);
 }
 
 void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
+	// Since we don't (need to) do any actual scaling, we check for compatible pages here
+	assert(_pageScaleFactor[srcPage] == _pageScaleFactor[dstPage]);
+
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
 	if (src != dst)
-		memcpy(dst, src, SCREEN_W * SCREEN_H);
+		memcpy(dst, src, SCREEN_W * _pageScaleFactor[srcPage] * SCREEN_H * _pageScaleFactor[srcPage]);
 	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
 
 	if (dstPage == 0 || dstPage == 1)
@@ -955,7 +998,12 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	if (w < 0 || h < 0)
 		return;
 
-	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
+	x *= _pageScaleFactor[pageNum];
+	y *= _pageScaleFactor[pageNum];
+	w *= _pageScaleFactor[pageNum];
+	h *= _pageScaleFactor[pageNum];
+
+	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W * _pageScaleFactor[pageNum] + x;
 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, w, h);
@@ -964,7 +1012,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 
 	while (h--) {
 		memcpy(dst, src, w);
-		dst += SCREEN_W;
+		dst += SCREEN_W * _pageScaleFactor[pageNum];
 		src += w;
 	}
 }
@@ -1132,7 +1180,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		int currLine = 0;
 		while (currLine < length) {
 			*ptr = color;
-			ptr += SCREEN_W;
+			ptr += SCREEN_W * _pageScaleFactor[_curPage];
 			currLine++;
 		}
 	} else {
@@ -1178,7 +1226,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			fnt = new AMIGAFont();
 #ifdef ENABLE_EOB
 		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
-			fnt = new OldDOSFont(_renderMode, _cgaDrawCharDitheringTable);
+			fnt = new OldDOSFont(_renderMode, (_vm->game() == GI_EOB2) && (_renderMode == Common::kRenderEGA));
 #endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
@@ -1265,12 +1313,12 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			break;
 		} else if (c == '\r') {
 			x = x_start;
-			y += charHeightFnt + _charOffset;
+			y += (charHeightFnt + _charOffset);
 		} else {
 			int charWidth = getCharWidth(c);
 			if (x + charWidth > SCREEN_W) {
 				x = x_start;
-				y += charHeightFnt + _charOffset;
+				y += (charHeightFnt + _charOffset);
 				if (y >= SCREEN_H)
 					break;
 			}
@@ -1307,6 +1355,9 @@ void Screen::drawChar(uint16 c, int x, int y) {
 	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
 		return;
 
+	x *= _pageScaleFactor[_curPage];
+	y *= _pageScaleFactor[_curPage];
+
 	if (useOverlay) {
 		uint8 *destPage = getOverlayPtr(_curPage);
 		if (!destPage) {
@@ -1318,11 +1369,11 @@ void Screen::drawChar(uint16 c, int x, int y) {
 
 		fnt->drawChar(c, destPage, 640);
 	} else {
-		fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W + x, SCREEN_W);
+		fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W * _pageScaleFactor[_curPage] + x, SCREEN_W * _pageScaleFactor[_curPage]);
 	}
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, charWidth, charHeight);
+		addDirtyRect(x, y, charWidth * _pageScaleFactor[_curPage], charHeight * _pageScaleFactor[_curPage]);
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
@@ -3084,16 +3135,11 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 		numCols = stream->size() / Palette::kPC98BytesPerColor;
 		pal.loadPC98Palette(*stream, 0, MIN(maxCols, numCols));
 	} else if (_renderMode == Common::kRenderEGA) {
-		// EOB II checks the number of palette bytes to distinguish between real EGA palettes
-		// and normal palettes (which are used to generate a color map).
-		if (stream->size() == 16) {
-			numCols = 16;
-			pal.loadEGAPalette(*stream, 0, 16);
-		} else {
-			numCols = stream->size() / Palette::kVGABytesPerColor;
-			pal.loadVGAPalette(*stream, 0, numCols);
-		}
-
+		numCols = stream->size();
+		// There aren't any 16 color EGA palette files. So this shouldn't ever get triggered.
+		assert (numCols != 16);
+		numCols /= Palette::kVGABytesPerColor;
+		pal.loadVGAPalette(*stream, 0, numCols);
 	} else {
 		numCols = stream->size() / Palette::kVGABytesPerColor;
 		pal.loadVGAPalette(*stream, 0, MIN(maxCols, numCols));
@@ -3163,7 +3209,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	// Clip rectangle
-	r.clip(SCREEN_W, SCREEN_H);
+	r.clip(SCREEN_W * _pageScaleFactor[0], SCREEN_H * _pageScaleFactor[0]);
 
 	// If it is empty after clipping, we are done
 	if (r.isEmpty())
@@ -3270,6 +3316,8 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 	if (srcPage > 13 || dstPage > 13)
 		error("Screen::crossFadeRegion(): attempting to use temp page as source or dest page.");
 
+	assert(_pageScaleFactor[srcPage] == _pageScaleFactor[dstPage]);
+
 	hideMouse();
 
 	uint16 *wB = (uint16 *)_pagePtrs[14];
@@ -3287,23 +3335,19 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 	for (int i = 0; i < h; i++)
 		SWAP(hB[_vm->_rnd.getRandomNumberRng(0, h - 1)], hB[i]);
 
-	uint8 *s = _pagePtrs[srcPage];
-	uint8 *d = _pagePtrs[dstPage];
-
 	for (int i = 0; i < h; i++) {
 		int iH = i;
 		uint32 end = _system->getMillis() + 3;
 		for (int ii = 0; ii < w; ii++) {
-			int sX = x1 + wB[ii];
-			int sY = y1 + hB[iH];
-			int dX = x2 + wB[ii];
-			int dY = y2 + hB[iH];
+			int sX = (x1 + wB[ii]);
+			int sY = (y1 + hB[iH]);
+			int dX = (x2 + wB[ii]);
+			int dY = (y2 + hB[iH]);
 
 			if (++iH >= h)
 				iH = 0;
 
-			d[dY * 320 + dX] = s[sY * 320 + sX];
-			addDirtyRect(dX, dY, 1, 1);
+			setPagePixel(dstPage, dX, dY, getPagePixel(srcPage, sX, sY));
 		}
 
 		// This tries to speed things up, to get similiar speeds as in DOSBox etc.

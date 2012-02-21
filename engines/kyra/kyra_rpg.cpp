@@ -41,13 +41,17 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_currentLevel = 0;
 
-	_vmpPtr = 0;
 	_vcnBlocks = 0;
 	_vcfBlocks = 0;
 	_vcnTransitionMask = 0;
 	_vcnShift = 0;
 	_vcnColTable = 0;
+	_vcnBlockWidth = 4;
+	_vcnBlockHeight = 8;
+	_vcnFlip0 = 0;
+	_vcnFlip1 = 1;
 	_vmpPtr = 0;
+	_vmpSize = 0;
 	_blockBrightness = _wllVcnOffset = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
@@ -167,10 +171,17 @@ Common::Error KyraRpgEngine::init() {
 	_wllWallFlags = new uint8[256];
 	memset(_wllWallFlags, 0, 256);
 
+	if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) {
+		_vcnBlockWidth <<= 1;
+		_vcnBlockHeight <<= 1;
+		SWAP(_vcnFlip0, _vcnFlip1);
+	}
+
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
-	_sceneWindowBuffer = new uint8[21120];
-	memset(_sceneWindowBuffer, 0, 21120);
+	uint32 swbSize = 22 * _vcnBlockWidth * 2 * 15 * _vcnBlockHeight;
+	_sceneWindowBuffer = new uint8[swbSize];
+	memset(_sceneWindowBuffer, 0, swbSize);
 
 	_lvlShapeTop = new int16[18];
 	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
