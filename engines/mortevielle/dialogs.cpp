@@ -176,7 +176,7 @@ int Alert::show(const Common::String &msg, int n) {
 		tmp4 += " ";
 		g_vm->_screenSurface.writeg(tmp4, 1);
 	}
-	charecr(50, succ(int, nligne) << 4);
+	charecr(50, (nligne + 1) << 4);
 	showMouse();
 
 	/* Restore the background area */
@@ -233,7 +233,7 @@ void Alert::decodeAlertDetails(Common::String s, int &nbc, int &lineNumb, int &c
 }
 
 void Alert::setPosition(int ji, int coldep, int esp) {
-	g_vm->_screenSurface.putxy(coldep + (40 + esp) *pred(int, ji), 98);
+	g_vm->_screenSurface.putxy(coldep + (40 + esp) * (ji - 1), 98);
 }
 
 /**
@@ -244,7 +244,7 @@ void Alert::drawAlertBox(int lidep, int nli, int tx) {
 	if (tx > 640)
 		tx = 640;
 	int x = 320 - ((uint)tx >> 1);
-	int y = pred(int, lidep) << 3;
+	int y = (lidep - 1) << 3;
 	int xx = x + tx;
 	int yy = y + (nli << 3);
 	g_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
@@ -338,7 +338,7 @@ bool Ques::show() {
 			++memk;
 			y += 8;
 		}
-		for (j = 1; j <= succ(int, der - prem); ++j) {
+		for (j = 1; j <= der - prem + 1; ++j) {
 			rectangle &with = coor[j];
 
 			with.x1 = 45 * res;

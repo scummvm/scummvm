@@ -562,7 +562,7 @@ void MortevielleEngine::handleAction() {
 		g_vm->_menu.eraseMenu();
 		imen = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
-			changeGraphicalDevice((uint)pred(int, ord(inkey)) >> 1);
+			changeGraphicalDevice((uint)(ord(inkey) - 1) >> 1);
 			return;
 		}
 		if (choisi && (msg[3] == sauve)) {

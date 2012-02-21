@@ -188,21 +188,21 @@ void ecr2(Common::String str_) {
 	else
 		tab = 6;
 	g_vm->_screenSurface.putxy(8, 177);
-	int tlig = 59 + pred(int, res) * 36;
+	int tlig = 59 + (res - 1) * 36;
 	if ((int)str_.size() < tlig)
 		g_vm->_screenSurface.writeg(str_, 5);
 	else if ((int)str_.size() < (tlig << 1)) {
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.writeg(copy(str_, 1, pred(int, tlig)), 5);
+		g_vm->_screenSurface.writeg(copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
 		g_vm->_screenSurface.writeg(copy(str_, tlig, tlig << 1), 5);
 	} else {
 		f2_all = true;
 		clsf2();
 		g_vm->_screenSurface.putxy(8, 176);
-		g_vm->_screenSurface.writeg(copy(str_, 1, pred(int, tlig)), 5);
+		g_vm->_screenSurface.writeg(copy(str_, 1, (tlig - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 182);
-		g_vm->_screenSurface.writeg(copy(str_, tlig, pred(int, (tlig << 1))), 5);
+		g_vm->_screenSurface.writeg(copy(str_, tlig, ((tlig << 1) - 1)), 5);
 		g_vm->_screenSurface.putxy(8, 190);
 		g_vm->_screenSurface.writeg(copy(str_, tlig << 1, tlig * 3), 5);
 	}
@@ -303,7 +303,7 @@ void conv(int x, int &y) {
 	y = 128;
 	while (cx < x) {
 		y = (uint)y >> 1;
-		cx = succ(int, cx);
+		++cx;
 	}
 }
 
@@ -351,7 +351,7 @@ void repon(int f, int m) {
 
 	if ((m > 499) && (m < 563)) {
 		deline(m - 501 + c_st41, st, tay);
-		if (tay > ((58 + pred(int, res) * 37) << 1))
+		if (tay > ((58 + (res - 1) * 37) << 1))
 			f2_all = true;
 		else
 			f2_all = false;

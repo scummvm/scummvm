@@ -40,7 +40,7 @@ void copcha() {
 	int i = acha;
 	do {
 		tabdon[i] = tabdon[i + 390];
-		i = succ(int, i);
+		++i;
 	} while (!(i == acha + 390));
 }
 
@@ -62,7 +62,7 @@ void outbloc(int n, pattern p, t_nhom pal) {
 	ad += 4;
 	for (int i = 1; i <= p.tax; ++i)
 		for (int j = 1; j <= p.tay; ++j)
-			mem[0x6000 * 16 + ad + pred(int, j)*p.tax + pred(int, i)] = pal[n].hom[p.des[i][j]];
+			mem[(0x6000 * 16) + ad + (j - 1) * p.tax + i - 1] = pal[n].hom[p.des[i][j]];
 }
 
 void writepal(int n) {
@@ -73,8 +73,8 @@ void writepal(int n) {
 	case MODE_EGA:
 	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
-			mem[0x7000 * 16 + 2 * i] = tabpal[n][i].x;
-			mem[0x7000 * 16 + succ(int, 2 * i)] = tabpal[n][i].y;
+			mem[(0x7000 * 16) + (2 * i)] = tabpal[n][i].x;
+			mem[(0x7000 * 16) + (2 * i) + 1] = tabpal[n][i].y;
 		}
 		break;
 	case MODE_CGA:
