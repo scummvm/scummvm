@@ -40,21 +40,13 @@ namespace Mortevielle {
 
 static const int nligne = 7;
 
-/*
-static const int coord[3][4] = {
-	{0, 0, 0, 0},
-	{0, 150, 72, 103},
-	{0, 143, 107, 183}
-};
-*/
-
 int Alert::show(const Common::String &msg, int n) {
-	int coldep, esp, i, nbcase, quoi, ix;
+	int coldep, esp, i, caseNumb, quoi, ix;
 	Common::String st, chaine;
 	int limit[3][3];
 	char dumi;
 	Common::String s[3];
-	int cx, cy, nbcol, nblig;
+	int cx, cy, nbcol, lignNumb;
 	bool newaff, test, test1, test2, test3, dum;
 	Common::String cas;
 
@@ -69,14 +61,14 @@ int Alert::show(const Common::String &msg, int n) {
 		dumi = get_ch();	// input >> kbd >> dumi;
 
 	g_vm->setMouseClick(false);
-	decod(msg, nbcase, nblig, nbcol, chaine, cas);
-	sauvecr(50, succ(int, nligne) << 4);
+	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
+	sauvecr(50, (nligne + 1) << 4);
 
 	i = 0;
 	if (chaine == "") {
-		fait_boite(10, 5, nbcol);
+		drawAlertBox(10, 5, nbcol);
 	} else {
-		fait_boite(8, 7, nbcol);
+		drawAlertBox(8, 7, nbcol);
 		i = 0;
 		g_vm->_screenSurface._textPos.y = 70;
 		do {
@@ -96,15 +88,15 @@ int Alert::show(const Common::String &msg, int n) {
 			++i;
 		} while (!(chaine[i] == ']'));
 	}
-	if (nbcase == 1)
+	if (caseNumb == 1)
 		esp = nbcol - 40;
 	else
-		esp = (uint)(nbcol - nbcase * 40) >> 1;
+		esp = (uint)(nbcol - caseNumb * 40) >> 1;
 	coldep = 320 - ((uint)nbcol >> 1) + ((uint)esp >> 1);
-	fait_choix(cas, coldep, nbcase, &s[0], esp);
+	setButtonText(cas, coldep, caseNumb, &s[0], esp);
 	limit[1][1] = ((uint)(coldep) >> 1) * res;
 	limit[1][2] = limit[1][1] + 40;
-	if (nbcase == 1) {
+	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
 		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) >> 1) * res;
@@ -125,7 +117,7 @@ int Alert::show(const Common::String &msg, int n) {
 		if (test) {
 			test1 = (cx > limit[1][1]) && (cx < limit[1][2]);
 			test2 = test1;
-			if (nbcase > 1)
+			if (caseNumb > 1)
 				test2 = test1 || ((cx > limit[2][1]) && (cx < limit[2][2]));
 			if (test2) {
 				newaff = true;
@@ -190,7 +182,7 @@ int Alert::show(const Common::String &msg, int n) {
 	return do_alert_result;
 }
 
-void Alert::decod(Common::String s, int &nbc, int &nbl, int &col, Common::String &c, Common::String &cs) {
+void Alert::decodeAlertDetails(Common::String s, int &nbc, int &lineNumb, int &col, Common::String &c, Common::String &cs) {
 	int i, k;
 	bool v;
 
@@ -199,7 +191,7 @@ void Alert::decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 	i = 0;
 
 	c = "";
-	nbl = 0;
+	lineNumb = 0;
 	i = 5;
 	k = 0;
 	v = true;
@@ -211,7 +203,7 @@ void Alert::decod(Common::String s, int &nbc, int &nbl, int &col, Common::String
 			if (k > col)
 				col = k;
 			k = 0;
-			nbl = nbl + 1;
+			++lineNumb;
 		} else if (s[i] != ' ')
 			v = false;
 		++i;
@@ -236,23 +228,28 @@ void Alert::setPosition(int ji, int coldep, int esp) {
 	g_vm->_screenSurface.putxy(coldep + (40 + esp) *pred(int, ji), 98);
 }
 
-void Alert::fait_boite(int lidep, int nli, int tx) {
-	int x, y, xx, yy;
-
+/**
+ * Alert function - Draw Alert Box
+ * @remarks	Originally called 'fait_boite'
+ */
+void Alert::drawAlertBox(int lidep, int nli, int tx) {
 	if (tx > 640)
 		tx = 640;
-	x = 320 - ((uint)tx >> 1);
-	y = pred(int, lidep) << 3;
-	xx = x + tx;
-	yy = y + (nli << 3);
+	int x = 320 - ((uint)tx >> 1);
+	int y = pred(int, lidep) << 3;
+	int xx = x + tx;
+	int yy = y + (nli << 3);
 	g_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
 
 
-
-void Alert::fait_choix(Common::String c, int coldep, int nbcase, Common::String *str, int esp) {
+/**
+ * Alert function - Set Button Text
+ * @remarks	Originally called 'fait_choix'
+ */
+void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp) {
 	int i, l, x;
 	char ch;
 
@@ -265,9 +262,11 @@ void Alert::fait_choix(Common::String c, int coldep, int nbcase, Common::String 
 			ch = c[i];
 			str[l] += ch;
 		} while (!(c[i + 1] == ']'));
-		i = i + 2;
+		i += 2;
+
 		while (str[l].size() < 3)
-		str[l] += ' ';
+			str[l] += ' ';
+
 		g_vm->_screenSurface.putxy(x, 98);
 
 		Common::String tmp(" ");
