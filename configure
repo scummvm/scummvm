@@ -125,7 +125,7 @@ _smush=yes
 _vkeybd=no
 _keymapper=no
 # GUI translation options
-_translation=no
+_translation=yes
 # Default platform settings
 _backend=sdl
 _savegame_timestamp=auto
@@ -746,7 +746,7 @@ Game engines:
   --disable-all-engines    disable all engines
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
-  --enable-engine-static=<engine name>[,<engine name>...] 
+  --enable-engine-static=<engine name>[,<engine name>...]
       enable engine(s) listed as static builtin (when plugins are enabled)
   --enable-engine-dynamic=<engine name>[,<engine name>...]
       enable engine(s) listed as dynamic plugin (when plugins are enabled)
@@ -2313,7 +2313,7 @@ if test -n "$_host"; then
 			INCLUDES="$INCLUDES -I/usr/X11R6/include"
 			LIBS="$LIBS -lX11"
 			LIBS="$LIBS -L/usr/lib"
-			
+
 			_backend="maemo"
 			_vkeybd=yes
 			_keymapper=yes
