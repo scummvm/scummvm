@@ -974,7 +974,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 
 		// Allow the key only if is a letter, a digit, or one of a selected
 		// list of extra characters
-		if (isalnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
+		if (Common::isAlnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
 			textBuf += kbd.ascii;
 		}
 	}
