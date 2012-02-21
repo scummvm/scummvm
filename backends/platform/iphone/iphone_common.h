@@ -55,6 +55,10 @@ typedef enum {
 	kGraphicsModeNone = 1
 } GraphicsModes;
 
+typedef enum {
+    kAspectRatioCorrection
+} iPhoneFeature;
+
 #ifdef IPHONE_OFFICIAL
 //void iphone_main(int argc, char **argv);
 #endif
@@ -70,6 +74,7 @@ void iphone_main(int argc, char *argv[]);
 //#endif
 
 // On the ObjC side
+void iPhone_setFeatureState(iPhoneFeature f, bool enable);                                
 void iPhone_setGraphicsMode(int mode);
 void iPhone_updateScreen(int mouseX, int mouseY);
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);

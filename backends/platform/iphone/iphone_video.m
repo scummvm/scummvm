@@ -57,6 +57,9 @@ static int _mouseX = 0;
 static int _mouseY = 0;
 static int _mouseCursorEnabled = 0;
 
+static bool _aspectRatioCorrect = false;
+
+
 #if 0
 static long lastTick = 0;
 static int frames = 0;
@@ -81,6 +84,17 @@ void iPhone_setGraphicsMode(int mode) {
 	_graphicsMode = (GraphicsModes)mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
+}
+
+void iPhone_setFeatureState(iPhoneFeature f, bool enable) {
+    switch (f)
+    {
+        case kAspectRatioCorrection:
+            _aspectRatioCorrect = enable;
+            break;
+        default:
+            break;
+    }
 }
 
 void iPhone_showCursor(int state) {
@@ -597,6 +611,13 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_visibleWidth = _renderBufferWidth;
 
 		float ratioDifference = ((float)_height / (float)_width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
+        
+        if (_aspectRatioCorrect 
+            && ((_width == 320 && _height == 200)
+            || (_width == 640 && _height == 400)) )  {
+            ratioDifference = 1;
+        }
+        
 		int rectWidth, rectHeight;
 		if (ratioDifference < 1.0f) {
 			rectWidth = _renderBufferWidth * ratioDifference;

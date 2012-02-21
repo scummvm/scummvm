@@ -2497,6 +2497,14 @@
 		1692AE4014F3865200889F28 /* osys_sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_sound.cpp; sourceTree = "<group>"; };
 		1692AE4114F3865200889F28 /* osys_video.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_video.cpp; sourceTree = "<group>"; };
 		1692AE4914F3A31400889F28 /* EventMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventMapper.cpp; sourceTree = "<group>"; };
+		1692AE5414F3CDFB00889F28 /* glerrorcheck.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glerrorcheck.cpp; sourceTree = "<group>"; };
+		1692AE5514F3CDFB00889F28 /* glerrorcheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glerrorcheck.h; sourceTree = "<group>"; };
+		1692AE5614F3CDFB00889F28 /* gltexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gltexture.cpp; sourceTree = "<group>"; };
+		1692AE5714F3CDFB00889F28 /* gltexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gltexture.h; sourceTree = "<group>"; };
+		1692AE5814F3CDFB00889F28 /* opengl-graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "opengl-graphics.cpp"; sourceTree = "<group>"; };
+		1692AE5914F3CDFB00889F28 /* opengl-graphics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "opengl-graphics.h"; sourceTree = "<group>"; };
+		1692AE5B14F3CDFB00889F28 /* openglsdl-graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "openglsdl-graphics.cpp"; sourceTree = "<group>"; };
+		1692AE5C14F3CDFB00889F28 /* openglsdl-graphics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "openglsdl-graphics.h"; sourceTree = "<group>"; };
 		16B7A51C14EBEF6500FA35FF /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		16B7A51D14EBEF6500FA35FF /* actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
 		16B7A51E14EBEF6500FA35FF /* actor_he.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor_he.h; sourceTree = "<group>"; };
@@ -4574,6 +4582,30 @@
 			children = (
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		1692AE5314F3CDFB00889F28 /* opengl */ = {
+			isa = PBXGroup;
+			children = (
+				1692AE5414F3CDFB00889F28 /* glerrorcheck.cpp */,
+				1692AE5514F3CDFB00889F28 /* glerrorcheck.h */,
+				1692AE5614F3CDFB00889F28 /* gltexture.cpp */,
+				1692AE5714F3CDFB00889F28 /* gltexture.h */,
+				1692AE5814F3CDFB00889F28 /* opengl-graphics.cpp */,
+				1692AE5914F3CDFB00889F28 /* opengl-graphics.h */,
+			);
+			name = opengl;
+			path = graphics/opengl;
+			sourceTree = "<group>";
+		};
+		1692AE5A14F3CDFB00889F28 /* openglsdl */ = {
+			isa = PBXGroup;
+			children = (
+				1692AE5B14F3CDFB00889F28 /* openglsdl-graphics.cpp */,
+				1692AE5C14F3CDFB00889F28 /* openglsdl-graphics.h */,
+			);
+			name = openglsdl;
+			path = graphics/openglsdl;
 			sourceTree = "<group>";
 		};
 		16B7A51B14EBEF6500FA35FF /* scumm */ = {
@@ -7366,6 +7398,8 @@
 		F9946E07139E1C3E0072D195 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				1692AE5314F3CDFB00889F28 /* opengl */,
+				1692AE5A14F3CDFB00889F28 /* openglsdl */,
 				F9946E01139E1C390072D195 /* sdl */,
 			);
 			name = graphics;

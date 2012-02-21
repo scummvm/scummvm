@@ -63,7 +63,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
 	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0), _mouseCursorPaletteEnabled(false),
-	_currentGraphicsMode(kGraphicsModeLinear) {
+	_currentGraphicsMode(kGraphicsModeLinear), _arCorrectionEnabled(false) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
@@ -120,6 +120,9 @@ void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
 			_mouseCursorPaletteEnabled = enable;
 		}
 		break;
+    case kFeatureAspectRatioCorrection:
+            setARCorrectionEnabled(true);    
+        break;
 
 	default:
 		break;
