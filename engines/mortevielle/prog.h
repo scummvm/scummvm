@@ -30,7 +30,7 @@
 
 namespace Mortevielle {
 
-extern void change_gd(int ngd);
+extern void changeGraphicalDevice(int newDevice);
 
 /* NIVEAU 3 */
 /* procedure PROGRAMME */

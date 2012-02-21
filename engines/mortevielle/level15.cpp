@@ -68,7 +68,7 @@ void outbloc(int n, pattern p, t_nhom pal) {
 void writepal(int n) {
 	t_nhom pal;
 
-	switch (gd) {
+	switch (_currGraphicalDevice) {
 	case tan:
 	case ega:
 	case ams:
@@ -96,7 +96,7 @@ void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
 	surface.decode(&mem[seg * 16 + dep]);
 
-	if (gd == her) {
+	if (_currGraphicalDevice == her) {
 		mem[0x7000 * 16 + 2] = 0;
 		mem[0x7000 * 16 + 32] = 15;
 	}
@@ -109,13 +109,13 @@ void pictout(int seg, int dep, int x, int y) {
 
 void sauvecr(int y, int dy) {
 	hideMouse();
-	s_sauv(gd, y, dy);
+	s_sauv(_currGraphicalDevice, y, dy);
 	showMouse();
 }
 
 void charecr(int y, int dy) {
 	hideMouse();
-	s_char(gd, y, dy);
+	s_char(_currGraphicalDevice, y, dy);
 	showMouse();
 }
 

@@ -89,7 +89,7 @@ void hideMouse() {
 	if (mouse_shwn == 0) {
 		imp = odd(y_s);
 		j = p_o_s;
-		switch (gd) {
+		switch (_currGraphicalDevice) {
 		case cga:
 			k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
@@ -180,7 +180,7 @@ void showMouse() {
 	j = p_o_s;
 	imp = odd(y_s);
 	i = x_s & 7;
-	switch (gd) {
+	switch (_currGraphicalDevice) {
 	case cga:
 		k = 0;
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);

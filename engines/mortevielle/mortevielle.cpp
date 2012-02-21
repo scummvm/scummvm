@@ -120,7 +120,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	gd = ega;
+	_currGraphicalDevice = ega;
 	res = 2;
 
 	// Load the mort.dat resource
@@ -134,8 +134,8 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	gd = ega;
-	newgd = gd;
+	_currGraphicalDevice = ega;
+	_newGraphicalDevice = _currGraphicalDevice;
 	zuul = false;
 	tesok = false;
 	chartex();
@@ -153,10 +153,10 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	teskbd();
 	dialpre();
-	newgd = gd;
+	_newGraphicalDevice = _currGraphicalDevice;
 	teskbd();
-	if (newgd != gd)
-		gd = newgd;
+	if (_newGraphicalDevice != _currGraphicalDevice)
+		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 	ades = 0x7000;
 
@@ -469,11 +469,11 @@ Common::Error MortevielleEngine::run() {
 void MortevielleEngine::showIntroduction() {
 	f3f8::aff50(false);
 	mlec = 0;
-	f3f8::divers(142, false);
+	f3f8::checkForF8(142, false);
 	CHECK_QUIT;
 
 	f3f8::ani50();
-	f3f8::divers(143, true);
+	f3f8::checkForF8(143, true);
 	CHECK_QUIT;
 
 	// TODO: Once music is implemented, only use the below delay if music is turned off
@@ -558,7 +558,7 @@ void MortevielleEngine::handleAction() {
 		g_vm->_menu.eraseMenu();
 		imen = false;
 		if ((inkey == '\1') || (inkey == '\3') || (inkey == '\5') || (inkey == '\7') || (inkey == '\11')) {
-			change_gd((uint)pred(int, ord(inkey)) >> 1);
+			changeGraphicalDevice((uint)pred(int, ord(inkey)) >> 1);
 			return;
 		}
 		if (choisi && (msg[3] == sauve)) {
