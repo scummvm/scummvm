@@ -56,6 +56,8 @@ int testou() {
 		if (keypressed())
 			ch = get_ch();
 		break;
+	default:
+		break;
 	}
 
 	return ord(ch);

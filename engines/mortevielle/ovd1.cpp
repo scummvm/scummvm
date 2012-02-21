@@ -239,8 +239,8 @@ void suite() {
 	caff = 51;
 	taffich();
 	teskbd();
-	if (newgd != gd)
-		gd = newgd;
+	if (_newGraphicalDevice != _currGraphicalDevice)
+		_currGraphicalDevice = _newGraphicalDevice;
 	hirs();
 	dessine(ades, 0, 0);
 

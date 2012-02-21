@@ -200,9 +200,9 @@ void fenat(char ans) {
 	int coul;
 
 	hideMouse();
-	if (gd == cga)
+	if (_currGraphicalDevice == cga)
 		coul = 2;
-	else if (gd == her)
+	else if (_currGraphicalDevice == her)
 		coul = 1;
 	else
 		coul = 12;
@@ -425,7 +425,7 @@ void sparl(float adr, float rep) {
 	key = 0;
 	do {
 		parole(repint, haut[caff - 69], 0);
-		f3f8::atf3f8(key);
+		f3f8::waitForF3F8(key);
 		CHECK_QUIT;
 	} while (!(key == 66));
 	hirs();

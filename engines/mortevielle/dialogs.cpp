@@ -40,6 +40,10 @@ namespace Mortevielle {
 
 static const int nligne = 7;
 
+/**
+ * Alert function - Show
+ * @remarks	Originally called 'do_alert'
+ */
 int Alert::show(const Common::String &msg, int n) {
 	int coldep, esp, i, caseNumb, quoi, ix;
 	Common::String st, chaine;
@@ -182,6 +186,10 @@ int Alert::show(const Common::String &msg, int n) {
 	return do_alert_result;
 }
 
+/**
+ * Alert function - Decode Alert Details
+ * @remarks	Originally called 'decod'
+ */
 void Alert::decodeAlertDetails(Common::String s, int &nbc, int &lineNumb, int &col, Common::String &c, Common::String &cs) {
 	int i, k;
 	bool v;
@@ -243,7 +251,6 @@ void Alert::drawAlertBox(int lidep, int nli, int tx) {
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
 	g_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
-
 
 /**
  * Alert function - Set Button Text
@@ -425,34 +432,43 @@ void f3f8::draw() {
 	g_vm->_screenSurface.drawBox(0, 42, MAX(f3Width, f8Width) + 6, 16, 7);
 }
 
-void f3f8::divers(int np, bool b) {
+/**
+ * Alert function - Loop until F8 is pressed, update 
+ * Graphical Device if modified
+ * @remarks	Originally called 'diver'
+ */
+void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	teskbd();
 	do {
-		parole(np, 0, 0);
-		atf3f8(key);
+		parole(SpeechNum, 0, 0);
+		waitForF3F8(key);
 		CHECK_QUIT;
 
-		if (newgd != gd) {
-			gd = newgd;
+		if (_newGraphicalDevice != _currGraphicalDevice) {
+			_currGraphicalDevice = _newGraphicalDevice;
 			hirs();
-			aff50(b);
+			aff50(drawAni50Fl);
 		}
-	} while (!(key == 66));
+	} while (!(key == 66)); // keycode for F8
 }
 
-void f3f8::atf3f8(int &key) {
+/**
+ * Alert function - Loop until F3 or F8 is pressed
+ * @remarks	Originally called 'atf3f8'
+ */
+void f3f8::waitForF3F8(int &key) {
 	do {
 		key = testou();
 		CHECK_QUIT;
 	} while (!((key == 61) || (key == 66)));
 }
 
-void f3f8::aff50(bool c) {
+void f3f8::aff50(bool drawAni50Fl) {
 	caff = 50;
 	_maff = 0;
 	taffich();
 	dessine(ades, 63, 12);
-	if (c)
+	if (drawAni50Fl)
 		ani50();
 	else
 		repon(2, c_paroles + 142);

@@ -113,7 +113,7 @@ void dessine(int ad, int x, int y) {
 
 void dessine_rouleau() {
 	writepal(89);
-	if (gd == her) {
+	if (_currGraphicalDevice == her) {
 		mem[0x7000 * 16 + 14] = 15;
 	}
 	hideMouse();
@@ -266,7 +266,7 @@ void clsf10() {
 
 void stop() {
 	hirs();
-	gd = ams;
+	_currGraphicalDevice = ams;
 	hirs();
 	g_vm->quitGame();
 }
@@ -274,7 +274,7 @@ void stop() {
 void paint_rect(int x, int y, int dx, int dy) {
 	int co;
 
-	if (gd == cga)
+	if (_currGraphicalDevice == cga)
 		co = 3;
 	else
 		co = 11;
@@ -634,9 +634,10 @@ void drawClock() {
 	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
-	if ((gd == cga) || (gd == her))
+	if ((_currGraphicalDevice == cga) || (_currGraphicalDevice == her))
 		co = 0;
-	else co = 1;
+	else
+		co = 1;
 
 	if (_minute == 0)
 		g_vm->_screenSurface.drawLine(((uint)x >> 1)*res, y, ((uint)x >> 1)*res, (y - rg), co);

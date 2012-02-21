@@ -50,9 +50,9 @@ public:
 class f3f8 {
 public:
 	static void draw();
-	static void divers(int np, bool b);
-	static void atf3f8(int &key);
-	static void aff50(bool c);
+	static void checkForF8(int SpeechNum, bool drawAni50Fl);
+	static void waitForF3F8(int &key);
+	static void aff50(bool drawAni50Fl);
 	static void ani50();
 };
 	

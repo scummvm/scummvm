@@ -38,9 +38,13 @@
 
 namespace Mortevielle {
 
-void change_gd(int ngd) {
+/**
+ * Engine function - Change Graphical Device
+ * @remarks	Originally called 'change_gd'
+ */
+void changeGraphicalDevice(int newDevice) {
 	hideMouse();
-	gd = ngd;
+	_currGraphicalDevice = newDevice;
 	hirs();
 	initMouse();
 	showMouse();
