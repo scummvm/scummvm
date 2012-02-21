@@ -34,9 +34,7 @@ namespace Mortevielle {
 
 extern Common::String delig;
 
-//static void cinq_huit(char &c, int &ind, byte &pt, bool &the_end);
 extern void deline(int num , char *l , int &tl);
-//static int l_motsuiv(int p, char *ch, int &tab);
 extern void afftex(char *ch, int x, int y, int dx, int dy, int typ);
 
 } // End of namespace Mortevielle

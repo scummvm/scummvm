@@ -47,8 +47,10 @@ void change_gd(int ngd) {
 	dessine_rouleau();
 	tinke();
 	drawClock();
-	if (ipers != 0)  affper(ipers);
-	else person();
+	if (ipers != 0)
+		affper(ipers);
+	else
+		person();
 	clsf2();
 	clsf3();
 	_maff = 68;
@@ -65,7 +67,6 @@ void MortevielleEngine::gameLoaded() {
 	int k;
 	bool test[3];
 	char g[8];
-
 
 	hideMouse();
 	imen = false;
@@ -129,8 +130,10 @@ void MortevielleEngine::gameLoaded() {
 	_endGame = false;
 	tmlieu(s.mlieu);
 	modinv();
-	if (s.derobj != 0)  modobj2(s.derobj + 400, test[1], test[2]);
-	else tesok = test[1] || test[2];
+	if (s.derobj != 0)
+		modobj2(s.derobj + 400, test[1], test[2]);
+	else
+		tesok = test[1] || test[2];
 	showMouse();
 }
 
@@ -141,21 +144,22 @@ void tmaj3() {
 	int j, h, m;
 
 	calch(j, h, m);
-	if (m == 30)  m = 1;
-	h = h + (j * 24);
-	m = m + (h * 2);
+	if (m == 30)
+		m = 1;
+	h += j * 24;
+	m += h * 2;
 	s.heure = chr(m);
 }
 
-void tsitu()
-
-{
+void tsitu() {
 	int h, j, m;
 
-	if (! col)  clsf2();
+	if (! col)
+		clsf2();
 	syn = false;
 	iesc = false;
-	if (anyone)  goto L1;
+	if (anyone)
+		goto L1;
 	if (brt)
 		if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
 			ctrm = 4;
@@ -165,7 +169,8 @@ void tsitu()
 		fctMove();
 	if (msg[3] == MENU_DISCUSS)
 		fctDiscuss();
-	if (msg[3] == invent)      tsprendre(); //Translation: inventory/take
+	if (msg[3] == invent)
+		tsprendre(); //Translation: inventory/take
 	if (msg[4] == OPCODE_ATTACH)
 		fctAttach();
 	if (msg[4] == OPCODE_WAIT)
@@ -208,15 +213,18 @@ void tsitu()
 		fctLift();
 	if (msg[4] == OPCODE_TURN)
 		fctTurn();
-	if (msg[4] == OPCODE_HIDE_SELF) {                //Translation: hide
+	if (msg[4] == OPCODE_HIDE_SELF) {
 		fctHideSelf();
 		goto L1;
 	}
-	if (msg[4] == sfouiller)   tsfouiller();//Translation: search 
-	if (msg[4] == slire)       tslire();    //Translation: read
+	if (msg[4] == sfouiller)
+		tsfouiller();//Translation: search 
+	if (msg[4] == slire)
+		tslire();    //Translation: read
 	if (msg[4] == OPCODE_PUT)
 		fctPut();
-	if (msg[4] == sregarder)   tsregarder();//Translation: look
+	if (msg[4] == sregarder)
+		tsregarder();//Translation: look
 	cache = false;
 L1:
 	if (anyone) {
@@ -226,7 +234,8 @@ L1:
 	}
 	calch(j, h, m);
 	if ((((h == 12) || (h == 13) || (h == 19)) && (s.mlieu != 10)) ||
-	        ((h > 0) && (h < 6) && (s.mlieu != 0)))  s.conf = s.conf + 1;
+	        ((h > 0) && (h < 6) && (s.mlieu != 0)))
+		s.conf = s.conf + 1;
 	if (((s.mlieu < 16) || (s.mlieu > 19)) && (s.mlieu != 23)
 	        && (s.mlieu != 0) && (s.derobj != 152) && (!g_vm->_loseGame)) {
 		if ((s.conf > 99) && (h > 8) && (h < 16)) {
@@ -251,9 +260,9 @@ L2:
 void theure() {
 	vj = ord(s.heure);
 	vh = vj % 48;
-	vj = vj / 48;
+	vj /= 48;
 	vm = vh % 2;
-	vh = vh / 2;
+	vh /= 2;
 	_hour = vh;
 	if (vm == 1)
 		_minute = 30;

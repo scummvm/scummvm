@@ -37,7 +37,7 @@ void spfrac(int wor) {
 	if ((typlec == 0) && (c3.code != 9))
 		if (((c3.code > 4) && (c3.val != 20) && ((c3.rep != 3) && (c3.rep != 6) && (c3.rep != 9)) ||
 				((c3.code < 5) && ((c3.rep != 19) && (c3.rep != 22) && (c3.rep != 4) && (c3.rep != 9))))) {
-			c3.rep = c3.rep + 1;
+			++c3.rep;
 		}
 
 	c3.freq = ((uint)wor >> 6) & 7;
@@ -65,21 +65,19 @@ void charg_car() {
 		c3.code = 4;
 	} else {
 		switch (int_) {
-		case 60 : {
+		case 60:
 			c3.val = 32;  /*  " "  */
 			c3.code = 9;
-		}
-		break;
-		case 61 : {
+			break;
+		case 61:
 			c3.val = 46;  /*  "."  */
 			c3.code = 9;
-		}
-		break;
-		case 62 : {
+			break;
+		case 62:
 			c3.val = 35;  /*  "#"  */
 			c3.code = 9;
-		}
-		break;
+		default:
+			break;
 		}
 	}
 
@@ -90,7 +88,7 @@ void charg_car() {
 
 void entroct(byte o) {
 	mem[adtroct * 16 + ptr_oct] = o;
-	ptr_oct = ptr_oct + 1;
+	++ptr_oct;
 }
 
 void veracf(byte b) {
@@ -98,30 +96,26 @@ void veracf(byte b) {
 }
 
 void cctable(tablint &t) {
-	int k;
 	float tb[257];
 
-
 	tb[0] = 0;
-	for (k = 0; k <= 255; k ++) {
+	for (int k = 0; k <= 255; ++k) {
 		tb[k + 1] = addfix + tb[k];
 		t[255 - k] = abs((int)tb[k] + 1);
 	}
 }
 
 void regenbruit() {
-	int i, j;
-
-	i = offsetb3 + 8590;
-	j = 0;
+	int i = offsetb3 + 8590;
+	int j = 0;
 	do {
 		t_cph[j] = READ_LE_UINT16(&mem[adbruit3 + i]);
-		i = i + 2;
-		j = j + 1;
+		i += 2;
+		++j;
 	} while (!(i >= offsetb3 + 8790));
 }
 
-  void charge_son() {
+void charge_son() {
 	Common::File f;
 
 	if (!f.open("sonmus.mor"))
@@ -133,7 +127,7 @@ void regenbruit() {
 	f.close();
 }
 
-  void charge_phbruit() {
+void charge_phbruit() {
 	Common::File f;
 
 	if (!f.open("phbrui.mor"))
@@ -145,7 +139,7 @@ void regenbruit() {
 	f.close();
 }
 
-  void charge_bruit() {
+void charge_bruit() {
 	Common::File f;
 	int i;
 
@@ -153,54 +147,67 @@ void regenbruit() {
 		error("Missing file - bruits");
 
 	f.read(&mem[adbruit * 16 + 0], 250);
-	for (i = 0; i <= 19013; i ++) mem[adbruit * 16 + 32000 + i] = mem[adbruit5 + i];
+	for (i = 0; i <= 19013; ++i)
+		mem[adbruit * 16 + 32000 + i] = mem[adbruit5 + i];
 	f.read(&mem[adbruit1 * 16 + offsetb1], 149);
 
 	f.close();
 }
 
-  void trait_car() {
+void trait_car() {
 	byte d3;
 	int d2, i;
 
 	switch (c2.code) {
-	case 9 :
-		if (c2.val != ord('#'))  for (i = 0; i <= c2.rep; i ++) entroct(c2.val);
+	case 9:
+		if (c2.val != ord('#'))
+			for (i = 0; i <= c2.rep; ++i)
+				entroct(c2.val);
 		break;
-
 	case 5:
-	case 6 : {
-		if (c2.code == 6)  d3 = tabdph[(c2.val - 14) << 1];
-		else d3 = null;
+	case 6:
+		if (c2.code == 6)
+			d3 = tabdph[(c2.val - 14) << 1];
+		else
+			d3 = null;
 		if (c1.code >= 5) {
 			veracf(c2.acc);
 			if (c1.code == 9) {
 				entroct(4);
-				if (d3 == null)  entroct(c2.val);
-				else entroct(d3);
+				if (d3 == null)
+					entroct(c2.val);
+				else
+					entroct(d3);
 				entroct(22);
 			}
 		}
+
 		switch (c2.rep) {
-		case 0 : {
+		case 0:
 			entroct(0);
 			entroct(c2.val);
-			if (d3 == null)  if (c3.code == 9)  entroct(2);
-				else entroct(4);
-			else if (c3.code == 9)  entroct(0);
-			else entroct(1);
-		}
-		break;
+			if (d3 == null)
+				if (c3.code == 9)
+					entroct(2);
+				else
+					entroct(4);
+			else if (c3.code == 9)
+				entroct(0);
+			else
+				entroct(1);
+			break;
 		case 4:
 		case 5:
-		case 6 : {
+		case 6:
 			if (c2.rep != 4) {
 				i = c2.rep - 5;
 				do {
-					i = i - 1;
+					--i;
 					entroct(0);
-					if (d3 == null)  entroct(c2.val);
-					else entroct(d3);
+					if (d3 == null)
+						entroct(c2.val);
+					else
+						entroct(d3);
 					entroct(3);
 				} while (!(i < 0));
 			}
@@ -213,18 +220,19 @@ void regenbruit() {
 				entroct(c2.val);
 				entroct(3);
 			}
-		}
-		break;
+			break;
 		case 7:
 		case 8:
-		case 9 : {
+		case 9:
 			if (c2.rep != 7) {
 				i = c2.rep - 8;
 				do {
-					i = i - 1;
+					--i;
 					entroct(0);
-					if (d3 == null)  entroct(c2.val);
-					else entroct(d3);
+					if (d3 == null)
+						entroct(c2.val);
+					else
+						entroct(d3);
 					entroct(3);
 				} while (!(i < 0));
 			}
@@ -237,34 +245,37 @@ void regenbruit() {
 				entroct(c2.val);
 				entroct(0);
 			}
-		}
-		break;
+			break;
 		case 1:
 		case 2:
-		case 3 : {
+		case 3:
 			if (c2.rep != 1) {
 				i = c2.rep - 2;
 				do {
-					i = i - 1;
+					--i;
 					entroct(0);
-					if (d3 == null)  entroct(c2.val);
-					else entroct(d3);
+					if (d3 == null)
+						entroct(c2.val);
+					else
+						entroct(d3);
 					entroct(3);
 				} while (!(i < 0));
 			}
 			entroct(0);
 			entroct(c2.val);
-			if (c3.code == 9)  entroct(0);
-			else entroct(1);
-		}
+			if (c3.code == 9)
+				entroct(0);
+			else
+				entroct(1);
+			break;
+		default:
+			break;
+		}     //  switch  c2.rep
 		break;
-		}     /*  case  c2.rep  */
-	}
-	break;
 
 	case 2:
-	case 3 : {
-		d3 = c2.code + 5; /*  7 ou 8  => voyelle correspondante  */ //Translation: Corresponding vowel
+	case 3:
+		d3 = c2.code + 5; //  7 ou 8  => Corresponding vowel
 		if (c1.code > 4) {
 			veracf(c2.acc);
 			if (c1.code == 9) {
@@ -274,9 +285,10 @@ void regenbruit() {
 			}
 		}
 		i = c2.rep;
+		assert(i >= 0);
 		if (i != 0) {
 			do {
-				i = i - 1;
+				--i;
 				entroct(0);
 				entroct(d3);
 				entroct(3);
@@ -289,43 +301,47 @@ void regenbruit() {
 			entroct(c2.val);
 		} else {
 			entroct(4);
-			if (c3.val == 4)  entroct(3);
-			else entroct(c3.val);
+			if (c3.val == 4)
+				entroct(3);
+			else
+				entroct(c3.val);
 			entroct(c2.val);
 		}
-	}
-	break;
+		break;
 	case 0:
-	case 1 : {
+	case 1: 
 		veracf(c2.acc);
 		switch (c3.code) {
-		case 2 :
+		case 2:
 			d2 = 7;
 			break;
-		case 3 :
+		case 3:
 			d2 = 8;
 			break;
-		case 6 :
+		case 6:
 			d2 = tabdph[(c3.val - 14) << 1];
 			break;
-		case 5 :
+		case 5:
 			d2 = c3.val;
 			break;
 		default:
 			d2 = 10;
-		}       /*  case  c3.code  */
+			break;
+		}       //  switch  c3.code
 		d2 = d2 * 26 + c2.val;
-		if (tnocon[d2] == 0)  d3 = 2;
-		else d3 = 6;
+		if (tnocon[d2] == 0)
+			d3 = 2;
+		else
+			d3 = 6;
 		if (c2.rep >= 5) {
 			c2.rep = c2.rep - 5;
-			d3 = 8 - d3;       /*  echange 2 et 6  */    //Translation: swap 2 and 6
+			d3 = 8 - d3;       // Swap 2 and 6
 		}
 		if (c2.code == 0) {
 			i = c2.rep;
 			if (i != 0) {
 				do {
-					i = i - 1;
+					--i;
 					entroct(d3);
 					entroct(c2.val);
 					entroct(3);
@@ -341,7 +357,7 @@ void regenbruit() {
 			i = c2.rep;
 			if (i != 0) {
 				do {
-					i = i - 1;
+					--i;
 					entroct(d3);
 					entroct(c2.val);
 					entroct(4);
@@ -355,33 +371,40 @@ void regenbruit() {
 		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
 			veracf(c3.acc);
 			switch (c3.code) {
-			case 3 :
+			case 3:
 				d2 = 8;
 				break;
-			case 6 :
+			case 6:
 				d2 = tabdph[(c3.val - 14) << 1];
 				break;
-			case 5 :
+			case 5:
 				d2 = c3.val;
 				break;
 			default:
 				d2 = 7;
-			}     /*  case c3.code  */
-			if (d2 == 4)  d2 = 3;
-			if (intcon[c2.val] != 0)  c2.val = c2.val + 1;
-			if ((c2.val == 17) || (c2.val == 18))  c2.val = 16;
+				break;
+			}     //  switch c3.code
+			if (d2 == 4)
+				d2 = 3;
+
+			if (intcon[c2.val] != 0)
+				++c2.val;
+
+			if ((c2.val == 17) || (c2.val == 18))
+				c2.val = 16;
+
 			entroct(4);
 			entroct(d2);
 			entroct(c2.val);
 		}
-	}
-	break;
-	case 4 : {
+	
+		break;
+	case 4:
 		veracf(c2.acc);
 		i = c2.rep;
 		if (i != 0) {
 			do {
-				i = i - 1;
+				--i;
 				entroct(2);
 				entroct(c2.val);
 				entroct(3);
@@ -397,27 +420,35 @@ void regenbruit() {
 		} else if ((c3.code != 0) && (c3.code != 1) && (c3.code != 4)) {
 			veracf(c3.acc);
 			switch (c3.code) {
-			case 3 :
+			case 3:
 				d2 = 8;
 				break;
-			case 6 :
+			case 6:
 				d2 = tabdph[(c3.val - 14) << 1];
 				break;
-			case 5 :
+			case 5:
 				d2 = c3.val;
 				break;
 			default:
 				d2 = 7;
-			}     /*  case c3.code  */
-			if (d2 == 4)  d2 = 3;
-			if (intcon[c2.val] != 0)  c2.val = c2.val + 1;
+				break;
+			}     //  switch c3.code
+
+			if (d2 == 4)
+				d2 = 3;
+
+			if (intcon[c2.val] != 0)
+				++c2.val;
+
 			entroct(4);
 			entroct(d2);
 			entroct(tabdbc[((c2.val - 26) << 1) + 1]);
 		}
-	}
-	break;
-	}     /* case c2.code  */
+	
+		break;
+	default:
+		break;
+	}     // switch c2.code
 }
 
 } // End of namespace Mortevielle

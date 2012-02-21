@@ -79,44 +79,47 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 	oct = t_mot[idx];
 	oct = ((uint16)(oct << (16 - pt))) >> (16 - pt);
 	if (pt < 6) {
-		idx = idx + 1;
+		++idx;
 		oct = oct << (5 - pt);
-		pt = pt + 11;
+		pt += 11;
 		oct = oct | ((uint)t_mot[idx] >> pt);
 	} else {
-		pt = pt - 5;
+		pt -= 5;
 		oct = (uint)oct >> pt;
 	}
 
 	switch (oct) {
-	case 11 : {
+	case 11:
 		c = '$';
 		the_end = true;
-	}
-	break;
+		break;
 	case 30:
-	case 31 : {
+	case 31:
 		ocd = t_mot[idx];
 		ocd = (uint16)(ocd << (16 - pt)) >> (16 - pt);
 		if (pt < 6) {
-			idx = idx + 1;
+			++idx;
 			ocd = ocd << (5 - pt);
-			pt = pt + 11;
+			pt += 11;
 			ocd = ocd | ((uint)t_mot[idx] >> pt);
 		} else {
-			pt = pt - 5;
+			pt -= 5;
 			ocd = (uint)ocd >> pt;
 		}
-		if (oct == 30)  c = chr(tab30[ocd]);
-		else c = chr(tab31[ocd]);
+
+		if (oct == 30)
+			c = chr(tab30[ocd]);
+		else
+			c = chr(tab31[ocd]);
+
 		if (c == '\0') {
 			the_end = true;
 			c = '#';
 		}
-	}
-	break;
+		break;
 	default:
 		c = chr(tabdr[oct]);
+		break;
 	}
 }              /* 5-8 */
 
@@ -124,94 +127,88 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
  * Decode and extract the line with the given Id
  */
 void deline(int num, char *l , int &tl) {
-	int i, j, ts;
-	char let;
-	byte ps, k;
-	bool the_end;
-
 	if (num < 0) {
 		warning("deline: num < 0! Skipping");
 		return;
 	}
 
-	/* DETEX */
-	/*debug('  => DeLine');*/
+	// DETEX
 	delig = "";
-	ts = t_rec[num].indis;
-	ps = t_rec[num].point;
-	i = ts;
+	int ts = t_rec[num].indis;
+	byte ps = t_rec[num].point;
+	int i = ts;
 	tl = 1;
-	j = 1;
-	k = ps;
-	the_end = false;
+	int j = 1;
+	byte k = ps;
+	bool endFl = false;
+	char let;
 	do {
-		cinq_huit(let, i, k, the_end);
+		cinq_huit(let, i, k, endFl);
 		l[j] = let;
-		if (j < 254)  delig = delig + let;
-		j = j + 1;
-	} while (!the_end);
+		if (j < 254)
+			delig += let;
+		++j;
+	} while (!endFl);
 	tl = j - 1;
 	if (tl < 255)
-		delig.deleteLastChar();		// Remove trailing '$'
-}       /* DETEX */
+		// Remove trailing '$'
+		delig.deleteLastChar();
+}
 
 
 void afftex(char *ch, int x, int y, int dx, int dy, int typ);
 
 
 static int l_motsuiv(int p, char *ch, int &tab) {
-	int c;
+	int c = p;
 
-	int l_motsuiv_result;
-	c = p;
 	while ((ch[p] != ' ') && (ch[p] != '$') && (ch[p] != '@'))
 		++p;
-	l_motsuiv_result = tab * (p - c);
-	return l_motsuiv_result;
+
+	return tab * (p - c);
 }
 
 void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 	bool the_end;
-	int xf, yf;
-	int xc, yc;
-	int tab, p;
+	int tab;
 	Common::String s;
 	int i, j;
 
 
 	/*    debug('  .. Afftex');*/
 	g_vm->_screenSurface.putxy(x, y);
-	if (res == 1)  tab = 10;
-	else tab = 6;
-	dx = dx * 6;
-	dy = dy * 6;
-	xc = x;
-	yc = y;
-	xf = x + dx;
-	yf = y + dy;
-	p = 1;
+	if (res == 1)
+		tab = 10;
+	else
+		tab = 6;
+	dx *= 6;
+	dy *= 6;
+	int xc = x;
+	int yc = y;
+	int xf = x + dx;
+	int yf = y + dy;
+	int p = 1;
 	the_end = (ch[p] == '$');
 	s = "";
-	while (! the_end) {
+	while (!the_end) {
 		switch (ch[p]) {
-		case '@' : {
+		case '@':
 			g_vm->_screenSurface.writeg(s, typ);
 			s = "";
-			p = p + 1;
+			++p;
 			xc = x;
-			yc = yc + 6;
+			yc += 6;
 			g_vm->_screenSurface.putxy(xc, yc);
-		}
-		break;
-		case ' ' : {
-			s = s + ' ';
-			xc = xc + tab;
-			p = p + 1;
+			break;
+		case ' ':
+			s += ' ';
+			xc += tab;
+			++p;
 			if (l_motsuiv(p, ch, tab) + xc > xf) {
 				g_vm->_screenSurface.writeg(s, typ);
 				s = "";
 				xc = x;
-				yc = yc + 6;
+				yc += 6;
 				if (yc > yf) {
 					do {
 						;
@@ -222,26 +219,24 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 						do {
 							g_vm->_screenSurface.putxy(j, i);
 							g_vm->_screenSurface.writeg(" ", 0);
-							j = j + 6;
+							j += 6;
 						} while (!(j > xf));
-						i = i + 6;
+						i += 6;
 					} while (!(i > yf));
 					yc = y;
 				}
 				g_vm->_screenSurface.putxy(xc, yc);
 			}
-		}
-		break;
-		case '$' : {
+			break;
+		case '$':
 			the_end = true;
 			g_vm->_screenSurface.writeg(s, typ);
-		}
-		break;
-		default: {
-			s = s + ch[p];
-			p = p + 1;
-			xc = xc + tab;
-		}
+			break;
+		default:
+			s += ch[p];
+			++p;
+			xc += tab;
+			break;
 		}     /* case */
 	}
 }

@@ -258,7 +258,7 @@ void Alert::fait_choix(Common::String c, int coldep, int nbcase, Common::String 
 
 	i = 1;
 	x = coldep;
-	for (l = 1; l <= nbcase; l ++) {
+	for (l = 1; l <= nbcase; ++l) {
 		str[l] = "";
 		do {
 			++i;
@@ -323,7 +323,7 @@ bool Ques::show() {
 		y = 35;
 		tmax = 0;
 		memk = 1;
-		for (j = prem; j <= der; j ++) {
+		for (j = prem; j <= der; ++j) {
 			deline(j, st, tay);
 			if (tay > tmax)
 				tmax = tay;
@@ -332,7 +332,7 @@ bool Ques::show() {
 			++memk;
 			y += 8;
 		}
-		for (j = 1; j <= succ(int, der - prem); j++) {
+		for (j = 1; j <= succ(int, der - prem); ++j) {
 			rectangle &with = coor[j];
 
 			with.x1 = 45 * res;
@@ -364,7 +364,7 @@ bool Ques::show() {
 			while (coor[k].etat && ! dans_rect(coor[k]))  k = k + 1;
 			if (coor[k].etat) {
 				if ((memk != 0) && (memk != k)) {
-//					for (j = 1; j <= tmax; j ++)
+//					for (j = 1; j <= tmax; ++j)
 //						st[j] = chaines[memk][j];
 					strncpy(st, chaines[memk].c_str(), tmax);
 //
@@ -372,7 +372,7 @@ bool Ques::show() {
 					afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				}
 				if (memk != k) {
-//					for (j = 1; j <= tmax; j ++)
+//					for (j = 1; j <= tmax; ++j)
 //						st[j] = chaines[k][j];
 					strncpy(st, chaines[k].c_str(), tmax);
 					st[1 + tmax] = '$';
@@ -380,7 +380,7 @@ bool Ques::show() {
 					memk = k;
 				}
 			} else if (memk != 0) {
-//				for (j = 1; j <= tmax; j ++)
+//				for (j = 1; j <= tmax; ++j)
 //					st[j] = chaines[memk][j];
 				strncpy(st, chaines[memk].c_str(), tmax);
 				st[1 + tmax] = '$';
