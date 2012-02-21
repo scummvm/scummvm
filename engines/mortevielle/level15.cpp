@@ -69,15 +69,15 @@ void writepal(int n) {
 	t_nhom pal;
 
 	switch (_currGraphicalDevice) {
-	case tan:
-	case ega:
-	case ams:
+	case MODE_TANDY:
+	case MODE_EGA:
+	case MODE_AMSTRAD1512:
 		for (int i = 1; i <= 16; ++i) {
 			mem[0x7000 * 16 + 2 * i] = tabpal[n][i].x;
 			mem[0x7000 * 16 + succ(int, 2 * i)] = tabpal[n][i].y;
 		}
 		break;
-	case cga:
+	case MODE_CGA:
 		warning("TODO: If this code is needed, resolve the incompatible types");
 //		pal = palcga[n].a;
 		if (n < 89)
@@ -96,7 +96,7 @@ void pictout(int seg, int dep, int x, int y) {
 	GfxSurface surface;
 	surface.decode(&mem[seg * 16 + dep]);
 
-	if (_currGraphicalDevice == her) {
+	if (_currGraphicalDevice == MODE_HERCULES) {
 		mem[0x7000 * 16 + 2] = 0;
 		mem[0x7000 * 16 + 32] = 15;
 	}

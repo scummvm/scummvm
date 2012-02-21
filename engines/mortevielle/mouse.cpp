@@ -90,7 +90,7 @@ void hideMouse() {
 		imp = odd(y_s);
 		j = p_o_s;
 		switch (_currGraphicalDevice) {
-		case cga:
+		case MODE_CGA:
 			k = 0;
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 			do {
@@ -102,7 +102,7 @@ void hideMouse() {
 				k = succ(int, k);
 			} while (!(k >= 5));
 			break;
-		case ams:
+		case MODE_AMSTRAD1512:
 			for (i = 0; i <= 3; ++i) {
 				port[0x3dd] = 1 << i;
 				k = 0;
@@ -120,7 +120,7 @@ void hideMouse() {
 				} while (!(k >= 8));
 			}
 			break;
-		case ega:
+		case MODE_EGA:
 			port[0x3c4] = 2;
 			port[0x3ce] = 8;
 			port[0x3cf] = 255;
@@ -140,7 +140,7 @@ void hideMouse() {
 				++i;
 			} while (!(i == 4));
 			break;
-		case her:
+		case MODE_HERCULES:
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 			for (i = 0; i <= 5; ++i) {
 				for (k = 0; k <= 3; ++k) 
@@ -148,7 +148,7 @@ void hideMouse() {
 				j += 80;
 			}
 			break;
-		case tan:
+		case MODE_TANDY:
 			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 			k = 0;
 			do {
@@ -181,7 +181,7 @@ void showMouse() {
 	imp = odd(y_s);
 	i = x_s & 7;
 	switch (_currGraphicalDevice) {
-	case cga:
+	case MODE_CGA:
 		k = 0;
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 2);
 		do {
@@ -193,7 +193,7 @@ void showMouse() {
 			k = succ(int, k);
 		} while (!(k >= 5));
 		break;
-	case ams:
+	case MODE_AMSTRAD1512:
 		for (i = 0; i <= 3; ++i) {
 			j = p_o_s;
 			imp = odd(y_s);
@@ -212,7 +212,7 @@ void showMouse() {
 			} while (!(k >= 8));
 		}
 		break;
-	case ega:
+	case MODE_EGA:
 		port[0x3ce] = 4;
 		l = 0;
 		do {
@@ -227,7 +227,7 @@ void showMouse() {
 			++l;
 		} while (!(l == 4));
 		break;
-	case her:
+	case MODE_HERCULES:
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
 		for (i = 0; i <= 5; ++i) {
 			for (k = 0; k <= 3; ++k)
@@ -235,7 +235,7 @@ void showMouse() {
 			j += 80;
 		}
 		break;
-	case tan:
+	case MODE_TANDY:
 		j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 		k = 0;
 		do {
