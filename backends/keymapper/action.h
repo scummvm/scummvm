@@ -53,9 +53,6 @@ struct Action {
 
 	/** Events to be sent when mapped key is pressed */
 	List<Event> events;
-	int priority;
-	int group;
-	int flags;
 
 private:
 	/** Hardware key that is mapped to this Action */
@@ -63,8 +60,7 @@ private:
 	Keymap *_boss;
 
 public:
-	Action(Keymap *boss, const char *id, String des = "",
-		   int pri = 0, int flg = 0 );
+	Action(Keymap *boss, const char *id, String des = "");
 
 	void addEvent(const Event &evt) {
 		events.push_back(evt);
@@ -104,15 +100,6 @@ public:
 	void mapKey(const HardwareKey *key);
 	const HardwareKey *getMappedKey() const;
 
-};
-
-struct ActionPriorityComp : public BinaryFunction<Action, Action, bool> {
-	bool operator()(const Action *x, const Action *y) const {
-		return x->priority > y->priority;
-	}
-	bool operator()(const Action &x, const Action &y) const {
-		return x.priority > y.priority;
-	}
 };
 
 } // End of namespace Common

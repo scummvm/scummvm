@@ -28,9 +28,8 @@
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des, int pri, int flg)
-	: _boss(boss), description(des),
-	priority(pri), flags(flg), _hwKey(0) {
+Action::Action(Keymap *boss, const char *i,	String des)
+	: _boss(boss), description(des), _hwKey(0) {
 	assert(i);
 	assert(_boss);
 
