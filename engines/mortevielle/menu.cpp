@@ -48,9 +48,9 @@ void Menu::menut(int no, Common::String nom) {
 	byte l = lo(no);
 	Common::String s = nom;
 
-	if (! tesok) {
+	if (! tesok)
 		g_vm->quitGame();
-	}
+
 
 	while (s.size() < 20)
 		s += ' ';
@@ -74,6 +74,8 @@ void Menu::menut(int no, Common::String nom) {
 	case MENU_DISCUSS:
 		_dis[l] = s;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -86,14 +88,13 @@ void Menu::disableMenuItem(int no) {
 	byte l = lo(no);
 
 	switch (h) {
-	case invent : {
+	case invent:
 		if (l > 6) {
 			_inv[l].setChar('<', 0);
 			_inv[l].setChar('>', 21);
 		} else
 			_inv[l].setChar('*', 0);
-	}
-	break;
+		break;
 	case MENU_MOVE:
 		_dep[l].setChar('*', 0);
 		break;
@@ -105,6 +106,8 @@ void Menu::disableMenuItem(int no) {
 		break;
 	case MENU_DISCUSS:
 		_dis[l].setChar('*', 0);
+		break;
+	default:
 		break;
 	}
 }
@@ -135,6 +138,8 @@ void Menu::enableMenuItem(int no) {
 	case MENU_DISCUSS:
 		_dis[l].setChar(' ', 0);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -161,7 +166,7 @@ void Menu::menu_aff() {
 			x = col;
 			do {   // One line after the other
 				msk = 0x80;
-				for (pt = 0; pt <= 7; pt ++) {
+				for (pt = 0; pt <= 7; ++pt) {
 					if ((lettres[num_letr - 1][ind_tabl] & msk) != 0) {
 						g_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
 						g_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
@@ -201,30 +206,30 @@ void Menu::invers(int ix) {
 
 	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
 	switch (msg3) {
-	case 1 :
+	case 1:
 		s = _inv[lo(msg4)];
 		break;
-	case 2 :
+	case 2:
 		s = _dep[lo(msg4)];
 		break;
-	case 3 :
+	case 3:
 		s = _act[lo(msg4)];
 		break;
-	case 4 :
+	case 4:
 		s = _self[lo(msg4)];
 		break;
-	case 5 :
+	case 5:
 		s = _dis[lo(msg4)];
 		break;
-	case 6 :
+	case 6:
 		s = g_vm->getString(S_SAVE_LOAD + lo(msg4));
 		break;
-	case 7 :
+	case 7:
 		s = g_vm->getString(S_SAVE_LOAD + 1);
 		s += ' ';
 		s += (char)(48 + lo(msg4));
 		break;
-	case 8 :
+	case 8:
 		if (lo(msg4) == 1) {
 			s = g_vm->getString(S_RESTART);
 		} else {
@@ -232,6 +237,8 @@ void Menu::invers(int ix) {
 			s += ' ';
 			s += (char)(47 + lo(msg4));
 		}
+		break;
+	default:
 		break;
 	}
 	if ((s[0] != '*') && (s[0] != '<'))
@@ -241,17 +248,17 @@ void Menu::invers(int ix) {
 }
 
 void Menu::util(int x, int y) {
-	int ymx, dxcar, xmn, xmx, ix;
 
-	/* debug('util'); */
-	ymx = (don[msg3][4] << 3) + 16;
-	dxcar = don[msg3][3];
-	xmn = (don[msg3][1] << 2) * res;
+	int ymx = (don[msg3][4] << 3) + 16;
+	int dxcar = don[msg3][3];
+	int xmn = (don[msg3][1] << 2) * res;
+
+	int ix;
 	if (res == 1)
 		ix = 5;
 	else
 		ix = 3;
-	xmx = dxcar * ix * res + xmn + 2;
+	int xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
 		ix = pred(int, ((uint)y >> 3)) + (msg3 << 8);
 		if (ix != msg4) {
@@ -296,37 +303,37 @@ void Menu::menuDown(int ii) {
 	do {
 		cx = succ(int, cx);
 		switch (ii) {
-		case 1 :
+		case 1:
 			if (_inv[cx][0] != '*')
 				g_vm->_screenSurface.writeg(_inv[cx], 4);
 			break;
-		case 2 :
+		case 2:
 			if (_dep[cx][0] != '*')
 				g_vm->_screenSurface.writeg(_dep[cx], 4);
 			break;
-		case 3 :
+		case 3:
 			if (_act[cx][0] != '*')
 				g_vm->_screenSurface.writeg(_act[cx], 4);
 			break;
-		case 4 :
+		case 4:
 			if (_self[cx][0] != '*')
 				g_vm->_screenSurface.writeg(_self[cx], 4);
 			break;
-		case 5 :
+		case 5:
 			if (_dis[cx][0] != '*')
 				g_vm->_screenSurface.writeg(_dis[cx], 4);
 			break;
-		case 6 :
+		case 6:
 			g_vm->_screenSurface.writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
 			break;
-		case 7 : {
+		case 7: {
 			Common::String s = g_vm->getString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + cx);
 			g_vm->_screenSurface.writeg(s, 4);
+			}
 			break;
-		}
-		case 8 :
+		case 8:
 			if (cx == 1)
 				g_vm->_screenSurface.writeg(g_vm->getString(S_RESTART), 4);
 			else {
@@ -335,6 +342,8 @@ void Menu::menuDown(int ii) {
 				s += (char)(47 + cx);
 				g_vm->_screenSurface.writeg(s, 4);
 			}
+			break;
+		default:
 			break;
 		}
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
@@ -397,12 +406,14 @@ void Menu::mdn() {
 			xprec = x;
 			yprec = y;
 		}
-		tes = (y < 11) && ((x >= (28 * res) && x <= (28 * res + 24)) 
-						   || (x >= (76 * res) && x <= (76 * res + 24))
-		                   || ((x > 124 * res) && (x < 124 * res + 24))
-		                   || ((x > 172 * res) && (x < 172 * res + 24))
-		                   || ((x > 220 * res) && (x < 220 * res + 24))
-		                   || ((x > 268 * res) && (x < 268 * res + 24)));
+		
+		tes =  (y < 11) 
+		   && ((x >= (28 * res) && x <= (28 * res + 24)) 
+		   ||  (x >= (76 * res) && x <= (76 * res + 24))
+		   || ((x > 124 * res) && (x < 124 * res + 24))
+		   || ((x > 172 * res) && (x < 172 * res + 24))
+		   || ((x > 220 * res) && (x < 220 * res + 24))
+		   || ((x > 268 * res) && (x < 268 * res + 24)));
 		if (tes) {
 			if (x < 76 * res)
 				ix = invent;
@@ -468,10 +479,10 @@ void Menu::initMenu() {
 	// Ask to swap floppy
 	dem2();
 
-	for (i = 1; i <= 8; i ++)
+	for (i = 1; i <= 8; ++i)
 		_inv[i] = "*                     ";
 	_inv[7] = "< -*-*-*-*-*-*-*-*-*- ";
-	for (i = 1; i <= 7; i ++)
+	for (i = 1; i <= 7; ++i)
 		_dep[i] = "*                       ";
 	i = 1;
 	do {
@@ -492,7 +503,7 @@ void Menu::initMenu() {
 		}
 		i = succ(int, i);
 	} while (!(i == 22));
-	for (i = 1; i <= 8; i ++) {
+	for (i = 1; i <= 8; ++i) {
 		_disc[i] = 0x500 + i;
 		if (i < 8)
 			_depl[i] = 0x200 + i;

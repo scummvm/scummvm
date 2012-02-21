@@ -92,7 +92,7 @@ bool blo,
         bt7,
         bh9,
 
-        sonoff,
+        _soundOff,
         main1,
         choisi,
         test0,

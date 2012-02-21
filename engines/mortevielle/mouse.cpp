@@ -103,7 +103,7 @@ void hideMouse() {
 			} while (!(k >= 5));
 			break;
 		case ams:
-			for (i = 0; i <= 3; i ++) {
+			for (i = 0; i <= 3; ++i) {
 				port[0x3dd] = 1 << i;
 				k = 0;
 				j = p_o_s;
@@ -142,8 +142,8 @@ void hideMouse() {
 			break;
 		case her:
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
-			for (i = 0; i <= 5; i ++) {
-				for (k = 0; k <= 3; k ++) 
+			for (i = 0; i <= 5; ++i) {
+				for (k = 0; k <= 3; ++k) 
 					WRITE_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}
@@ -152,7 +152,7 @@ void hideMouse() {
 			j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 			k = 0;
 			do {
-				for (i = 0; i <= 3; i ++) {
+				for (i = 0; i <= 3; ++i) {
 					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
 					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
@@ -194,7 +194,7 @@ void showMouse() {
 		} while (!(k >= 5));
 		break;
 	case ams:
-		for (i = 0; i <= 3; i ++) {
+		for (i = 0; i <= 3; ++i) {
 			j = p_o_s;
 			imp = odd(y_s);
 			port[0x3de] = i;
@@ -229,8 +229,8 @@ void showMouse() {
 		break;
 	case her:
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
-		for (i = 0; i <= 5; i ++) {
-			for (k = 0; k <= 3; k ++)
+		for (i = 0; i <= 5; ++i) {
+			for (k = 0; k <= 3; ++k)
 				s_s[i][k] = READ_LE_UINT16(&mem[0xb000 * 16 + k * 0x200 + j]);
 			j += 80;
 		}
@@ -239,7 +239,7 @@ void showMouse() {
 		j = ((uint)y_s >> 2) * 160 + ((uint)x_s >> 1);
 		k = 0;
 		do {
-			for (i = 0; i <= 3; i ++) {
+			for (i = 0; i <= 3; ++i) {
 				s_s[k][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j]);
 				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2]);
 			}
@@ -415,7 +415,7 @@ void moveMouse(bool &funct, char &key) {
 			cy = 8;
 			break;
 		case '\23':
-			sonoff = !sonoff;
+			_soundOff = !_soundOff;
 			return;
 			break;
 		case '\26':

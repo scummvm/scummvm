@@ -108,7 +108,8 @@ void SavegameManager::takesav(int n) {
 	sync_save(sz);
 
 	s = s1;
-	for (i = 0; i <= 389; i ++) tabdon[i + acha] = bufcha[i];
+	for (i = 0; i <= 389; ++i)
+		tabdon[i + acha] = bufcha[i];
 
 	// Close the stream
 	delete stream;	
@@ -140,7 +141,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	hideMouse();
 	tmaj3();
 	
-	for (i = 0; i <= 389; i ++)
+	for (i = 0; i <= 389; ++i)
 		bufcha[i] = tabdon[i + acha];
 	s1 = s;
 	if (s1.mlieu == 26)

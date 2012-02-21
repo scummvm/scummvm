@@ -148,7 +148,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	initMouse();
 
 	init_lieu();
-	sonoff = false;
+	_soundOff = false;
 	f2_all = false;
 
 	teskbd();

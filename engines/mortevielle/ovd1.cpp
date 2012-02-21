@@ -55,7 +55,6 @@ void dem2() {
 void charpal() {
 	Common::File f;		// tabdb records
 	Common::File ft;	// tfxx
-	int i, j, k;
 	Common::File fb;	// byte values
 	byte b;
 
@@ -67,8 +66,8 @@ void charpal() {
 
 	if (!f.open("plxx.mor"))
 		error("Missing file - plxx.mor");
-	for (i = 0; i <= 90; ++i) {
-		for (j = 1; j <= 16; ++j) {
+	for (int i = 0; i <= 90; ++i) {
+		for (int j = 1; j <= 16; ++j) {
 			tabpal[i][j].x = f.readByte();
 			tabpal[i][j].y = f.readByte();
 		}
@@ -78,9 +77,9 @@ void charpal() {
 	if (!fb.open("cxx.mor"))
 		error("Missing file - cxx.mor");
 
-	for (j = 0; j <= 90; j ++) {
+	for (int j = 0; j <= 90; ++j) {
 		palcga[j].p = fb.readByte();
-		for (i = 0; i <= 15; i ++) {
+		for (int i = 0; i <= 15; ++i) {
 			nhom &with = palcga[j].a[i];
 
 			b = fb.readByte();
@@ -90,28 +89,26 @@ void charpal() {
 		}
 	}
 	palcga[10].a[9] = palcga[10].a[5];
-	for (j = 0; j <= 14; j ++) {
+	for (int j = 0; j <= 14; ++j) {
 		tpt[j].tax = fb.readByte();
 		tpt[j].tay = fb.readByte();
-		for (i = 1; i <= 20; i ++)
-			for (k = 1; k <= 20; k ++)
+		for (int i = 1; i <= 20; ++i)
+			for (int k = 1; k <= 20; ++k)
 				tpt[j].des[i][k] = fb.readByte();
 	}
 	fb.close();
 }
 
 void chartex() {
-	int i;
 	Common::File f;
 	char s[1410];
 
 	/* debug('o3 chartex'); */
-	i = 0;
 	if (!f.open("TXX.INP"))
 		error("Missing file - TXX.INP");
 
 	assert(f.size() <= (maxti * 2));
-	for (i = 0; i < f.size() / 2; ++i)
+	for (int i = 0; i < f.size() / 2; ++i)
 		t_mot[i] = f.readUint16LE();
 
 	f.close();
@@ -120,6 +117,7 @@ void chartex() {
 		error("Missing file - TXX.NTP");
 	
 	assert(f.size() <= (maxtd * 3));
+	int i;
 	for (i = 0; i < (f.size() / 3); ++i) {
 		t_rec[i].indis = f.readSint16LE();
 		t_rec[i].point = f.readByte();
@@ -171,7 +169,9 @@ void music() {
 
 
 	/* debug('o3 music'); */
-	if (sonoff)  return;
+	if (_soundOff)
+		return;
+
 	rech_cfiec = true;
 	
 	if (!fic.open("mort.img"))
@@ -190,10 +190,11 @@ void music() {
 	do {
 		fin = keypressed();
 		g_vm->_soundManager.musyc(tbi, 9958 , tempo_mus);
-		k = k + 1;
+		++k;
 		fin = fin | keypressed() | (k >= 5);
 	} while (!fin);
-	while (keypressed())  ch = get_ch();	// input >> kbd >> ch;
+	while (keypressed())
+		ch = get_ch();	// input >> kbd >> ch;
 }
 
 
@@ -238,7 +239,8 @@ void suite() {
 	caff = 51;
 	taffich();
 	teskbd();
-	if (newgd != gd)  gd = newgd;
+	if (newgd != gd)
+		gd = newgd;
 	hirs();
 	dessine(ades, 0, 0);
 

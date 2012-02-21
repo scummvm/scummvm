@@ -59,7 +59,7 @@ void chardes(Common::String filename, int32 skipSize, int length) {
 	}
 	f.close();
 
-	for (int i = remainingSkipSize; i <= length + remainingSkipSize; i ++) 
+	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i) 
 		mem[0x7000 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
 }
 
@@ -87,7 +87,7 @@ void charani(Common::String filename, int32 skipSize, int length) {
 	}
 	f.close();
 
-	for (int i = remainingSkipSize; i <= length + remainingSkipSize; i ++)
+	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
 		mem[0x7314 * 16 + i - remainingSkipSize] = mem[0x6000 * 16 + i];
 }
 
@@ -95,19 +95,18 @@ void taffich() {
 	byte tran1[] = { 121, 121, 138, 139, 120 };	// array<136, 140, byte>
 	byte tran2[] = { 150, 150, 152, 152, 100, 110, 159, 100, 100 };	// array<153, 161, byte>
 
-	int i, m, a, b, cx, handle,
-	        npal;
+	int i, m, cx, handle, npal;
 	int32 lgt;
 	int palh, k, j;
 	int alllum[16];
 
 
-	a = caff;
+	int a = caff;
 	if ((a >= 153) && (a <= 161))
 		a = tran2[a - 153];
 	else if ((a >= 136) && (a <= 140))
 		a = tran1[a - 136];
-	b = a;
+	int b = a;
 	if (_maff == a)
 		return;
 
@@ -193,7 +192,7 @@ void taffich() {
 			a = a - 1;
 		npal = a;
 
-		for (cx = 0; cx <= (a - 1); cx ++)
+		for (cx = 0; cx <= (a - 1); ++cx)
 			lgt = lgt + l[cx];
 		handle = l[a];
 
@@ -210,13 +209,15 @@ void taffich() {
 	}
 	chardes(filename, lgt, handle);
 	if (gd == her) {
-		for (i = 0; i <= 15; i ++) {
+		for (i = 0; i <= 15; ++i) {
 			palh = READ_LE_UINT16(&mem[0x7000 * 16 + (succ(int, i) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
-		for (i = 0; i <= 15; i ++) {
+		for (i = 0; i <= 15; ++i) {
 			k = 0;
-			for (j = 0; j <= 15; j ++) if (alllum[j] > alllum[k])  k = j;
+			for (j = 0; j <= 15; ++j)
+				if (alllum[j] > alllum[k])
+					k = j;
 			mem[0x7000 * 16 + 2 + (k << 1)] = rang[i];
 			alllum[k] = -1;
 		}
@@ -232,9 +233,9 @@ void taffich() {
 			else if (b == 24)
 				b = 17;
 			else if (b > 15)
-				b = b - 1;
-			for (cx = 0; cx <= (b - 1); cx ++)
-				lgt = lgt + l[cx + 89];
+				--b;
+			for (cx = 0; cx <= (b - 1); ++cx)
+				lgt += l[cx + 89];
 			handle = l[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {

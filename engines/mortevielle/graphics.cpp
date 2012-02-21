@@ -45,11 +45,11 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 	byte egaPalette[64 * 3];
 
 	byte *p = &egaPalette[0];
-	for (int i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; ++i) {
 		*p++ = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
 		*p++ = (i >> 1 & 1) * 0xaa + (i >> 4 & 1) * 0x55;
 		*p++ = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
-    }
+	}
 
 	// Loop through setting palette colours based on the passed indexes
 	for (; size > 0; --size, ++idx) {
