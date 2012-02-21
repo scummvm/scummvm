@@ -8,16 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		164E6F4214F28626005C2C9A /* libFLAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3E14F28626005C2C9A /* libFLAC.a */; };
-		164E6F4314F28626005C2C9A /* libFLAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3E14F28626005C2C9A /* libFLAC.a */; };
 		164E6F4414F28626005C2C9A /* libFLAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3E14F28626005C2C9A /* libFLAC.a */; };
 		164E6F4514F28626005C2C9A /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3F14F28626005C2C9A /* libmad.a */; };
-		164E6F4614F28626005C2C9A /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3F14F28626005C2C9A /* libmad.a */; };
 		164E6F4714F28626005C2C9A /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F3F14F28626005C2C9A /* libmad.a */; };
 		164E6F4814F28626005C2C9A /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4014F28626005C2C9A /* libmpeg2.a */; };
-		164E6F4914F28626005C2C9A /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4014F28626005C2C9A /* libmpeg2.a */; };
 		164E6F4A14F28626005C2C9A /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4014F28626005C2C9A /* libmpeg2.a */; };
 		164E6F4B14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
-		164E6F4C14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4D14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4F14F2A18E005C2C9A /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4E14F2A18E005C2C9A /* SDL.framework */; };
 		16B7A5DF14EBEF6500FA35FF /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A51C14EBEF6500FA35FF /* actor.cpp */; };
@@ -4534,10 +4530,6 @@
 				DF0944700F63FCCB002D821E /* IOKit.framework in Frameworks */,
 				DF0944780F63FD10002D821E /* Cocoa.framework in Frameworks */,
 				DF0944800F63FD67002D821E /* AudioUnit.framework in Frameworks */,
-				164E6F4314F28626005C2C9A /* libFLAC.a in Frameworks */,
-				164E6F4614F28626005C2C9A /* libmad.a in Frameworks */,
-				164E6F4914F28626005C2C9A /* libmpeg2.a in Frameworks */,
-				164E6F4C14F28626005C2C9A /* libvorbisidec.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10246,7 +10238,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lSDLmain",
+					"-lSDLMain",
 					"-logg",
 					"-lvorbisfile",
 					"-lvorbis",
@@ -10334,7 +10326,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lSDLmain",
+					"-lSDLMain",
 					"-logg",
 					"-lvorbisfile",
 					"-lvorbis",
