@@ -92,9 +92,10 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &
 	file->seek(0, SEEK_SET);
 
 	//Search a BEGIN statement with the right md5
+	fileSize = file->size();
 	for (line = _patch.begin(); line != _patch.end(); ++line)
 		if (line->ist == BEGIN)
-			if (md5.equalsIgnoreCase(line->args[0])) {
+			if (md5.equalsIgnoreCase(line->args[0]) && str2num(line->args[1]) == fileSize) {
 				++line;
 				break;
 			}
@@ -105,7 +106,6 @@ bool Patchr::patchFile(Common::SeekableReadStream *&file, const Common::String &
 	}
 
 	//Calc the maximum size of resulting file and read it
-	fileSize = file->size();
 	maxSize = fileSize + calcIncSize(line);
 	if (_err)
 		return false;

@@ -17,11 +17,12 @@ A block of instructions must be enclused between a BEGIN and an END statements (
 Availables instructions:
 
 -BEGIN
-Args: md5
-Indicates the start of a block of instructions. It takes the MD5 sum of the original flawed file as
+Args: md5 size
+Indicates the start of a block of instructions. It takes the MD5 sum and the size of the original flawed file as
 argument. This sum is performed only on the firsts 5000 bytes of the file. Under an unix system it could be
 calculated with:
 dd if=FILENAME count=5000 bs=1 2> /dev/null | md5sum | cut -d" " -f 1
+Note that the size must be expressed an hexadecimal number.
 Every block must be terminated by an END statement.
 If there are multiple different versions of the original file, you could provied differents patching instructions
 with a block for each version. The right instruction sequence is selected by the MD5.
@@ -60,7 +61,7 @@ Example:
 #This is a comment!
 
 #Version 1
-BEGIN 0123456789abcdef0123456789abcdef		#A begin with the checksum of the file
+BEGIN 0123456789abcdef0123456789abcdef 200	#A begin with the checksum of the file
 INSERT 100 100								#Insert 256 bytes at 0x100
 FILL 100 80 FF								#Fill the first half with FF
 REPLACE 180 AA BB CC						#Insert a specific sequence
@@ -69,7 +70,7 @@ DELETE 0 10									#Delte the copied sequence
 END											#The end of the chunk
 
 #Version 2
-BEGIN fedcba9876543210fedcba9876543210		#A begin with the checksum of the file of another version
+BEGIN fedcba9876543210fedcba9876543210 500	#A begin with the checksum of the file of another version
 INSERT 200 100								#The same instructions with a different offset
 FILL 200 80 FF
 REPLACE 280 AA BB CC

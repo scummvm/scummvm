@@ -1,6 +1,6 @@
 #Fix the missing dialogue with Domino at third year
 #It change the CheckFirstTime argument with the correct one
 
-BEGIN c79230c19c49d70f806e039a30e94396   #Both v1.0 and v1.01
+BEGIN c79230c19c49d70f806e039a30e94396 20a4  #Both v1.0 and v1.01
 REPLACE 02C5 CD D1 93 8A 9E FF FF FF
 END
