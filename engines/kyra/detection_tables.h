@@ -1463,7 +1463,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"eob",
 			0,
 			{
-				{ "EOBDATA2.PAK", 0, "feaf0345086b3a1d931352f4b0ad8feb", -1 },
+				{ "EOBDATA3.PAK", 0, "61aff543131bd61a8b7d7dc901a8278b", -1 },
 				{ 0, 0, 0, 0 }
 			},
 			Common::EN_ANY,
@@ -1479,7 +1479,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"eob",
 			0,
 			{
-				{ "SHINDIA.CPS", 0, "383b0c7ba0903eae5d04cad28ce90aaf", -1 },
+				{ "TEXT.DAT", 0, "fb59b50f97fd1806756911d986b9b2b5", -1 },
 				{ 0, 0, 0, 0 }
 			},
 			Common::DE_DEU,
