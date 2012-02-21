@@ -62,8 +62,6 @@ namespace Mortevielle {
 /*-------------------------     DEFINES    ----------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-#define pred(type, v) ((v) - 1)
-#define succ(type, v) ((v) + 1)
 #define ord(v) ((int) v)
 #define chr(v) ((char) v)
 #define lo(v) ((v) & 0xff)

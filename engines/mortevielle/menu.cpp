@@ -175,8 +175,8 @@ void Menu::menu_aff() {
 					msk = (uint)msk >> 1;
 					++x;
 				}
-				ind_tabl = succ(int, ind_tabl);
-				k = succ(int, k);
+				++ind_tabl;
+				++k;
 			} while (!(k == 3));
 			++y;
 		} while (!(y == 9));
@@ -204,7 +204,7 @@ void Menu::invers(int ix) {
 	if (msg4 == OPCODE_NONE)
 		return;
 
-	g_vm->_screenSurface.putxy(don[msg3][1] << 3, succ(void, lo(msg4)) << 3);
+	g_vm->_screenSurface.putxy(don[msg3][1] << 3, (lo(msg4) + 1) << 3);
 	switch (msg3) {
 	case 1:
 		s = _inv[lo(msg4)];
@@ -260,7 +260,7 @@ void Menu::util(int x, int y) {
 		ix = 3;
 	int xmx = dxcar * ix * res + xmn + 2;
 	if ((x > xmn) && (x < xmx) && (y < ymx) && (y > 15)) {
-		ix = pred(int, ((uint)y >> 3)) + (msg3 << 8);
+		ix = (((uint)y >> 3) - 1) + (msg3 << 8);
 		if (ix != msg4) {
 			invers(1);
 			msg4 = ix;
@@ -288,7 +288,7 @@ void Menu::menuDown(int ii) {
 	xco = don[ii][1];
 	nb_lig = don[ii][4];
 	hideMouse();
-	sauvecr(10, succ(byte, don[ii][2]) << 1);
+	sauvecr(10, (don[ii][2] + 1) << 1);
 	xco = xco << 3;
 	if (res == 1)
 		cx = 10;
@@ -301,7 +301,7 @@ void Menu::menuDown(int ii) {
 	g_vm->_screenSurface.putxy(xco, 16);
 	cx = 0;
 	do {
-		cx = succ(int, cx);
+		++cx;
 		switch (ii) {
 		case 1:
 			if (_inv[cx][0] != '*')
@@ -358,7 +358,7 @@ void Menu::menuDown(int ii) {
 void Menu::menuUp(int xx) {
 	/* debug('menuUp'); */
 	if (test0) {
-		charecr(10, succ(byte, don[xx][2]) << 1);
+		charecr(10, (don[xx][2] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
@@ -501,7 +501,7 @@ void Menu::initMenu() {
 			deline(i + c_dis, st, tai);
 			_dis[i] = delig + ' ';
 		}
-		i = succ(int, i);
+		++i;
 	} while (!(i == 22));
 	for (i = 1; i <= 8; ++i) {
 		_disc[i] = 0x500 + i;

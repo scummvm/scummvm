@@ -85,7 +85,7 @@ void hideMouse() {
 	int i, j, k, ps;;
 	bool imp;
 
-	mouse_shwn = pred(int, mouse_shwn);
+	--mouse_shwn;
 	if (mouse_shwn == 0) {
 		imp = odd(y_s);
 		j = p_o_s;
@@ -99,7 +99,7 @@ void hideMouse() {
 				WRITE_LE_UINT16(&mem[0xba00 * 16 + j], s_s[2][k]);
 				WRITE_LE_UINT16(&mem[0xba00 * 16 + j + 2], s_s[3][k]);
 				j += 80;
-				k = succ(int, k);
+				++k;
 			} while (!(k >= 5));
 			break;
 		case MODE_AMSTRAD1512:
@@ -116,7 +116,7 @@ void hideMouse() {
 						j += 0x2000;
 					}
 					imp = !imp;
-					k = succ(int, k);
+					++k;
 				} while (!(k >= 8));
 			}
 			break;
@@ -135,7 +135,7 @@ void hideMouse() {
 					ps = mem[0xa000 * 16 + j + 1];
 					mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j += 80;
-					k = succ(int, k);
+					++k;
 				} while (!(k >= 8));
 				++i;
 			} while (!(i == 4));
@@ -157,7 +157,7 @@ void hideMouse() {
 					WRITE_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j += 160;
-				k = succ(int, k);
+				++k;
 			} while (!(k == 3));
 			break;
 		default:
@@ -190,7 +190,7 @@ void showMouse() {
 			s_s[2][k] = READ_LE_UINT16(&mem[0xba00 * 16 + j]);
 			s_s[3][k] = READ_LE_UINT16(&mem[0xba00 * 16 + j + 2]);
 			j += 80;
-			k = succ(int, k);
+			++k;
 		} while (!(k >= 5));
 		break;
 	case MODE_AMSTRAD1512:
@@ -208,7 +208,7 @@ void showMouse() {
 					j += 0x2000;
 				}
 				imp = !imp;
-				k = succ(int, k);
+				++k;
 			} while (!(k >= 8));
 		}
 		break;
@@ -220,9 +220,9 @@ void showMouse() {
 			k = 0;
 			j = p_o_s;
 			do {
-				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[0xa000 * 16 + succ(int, j)] << 8);
+				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[(0xa000 * 16) + j + 1] << 8);
 				j += 80;
-				k = succ(int, k);
+				++k;
 			} while (!(k >= 8));
 			++l;
 		} while (!(l == 4));
@@ -244,7 +244,7 @@ void showMouse() {
 				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&mem[0xb800 * 16 + 0x200 * i + j + 2]);
 			}
 			j += 160;
-			k = succ(int, k);
+			++k;
 		} while (!(k == 3));
 		break;
 	default:
@@ -357,16 +357,16 @@ void moveMouse(bool &funct, char &key) {
 				} else {
 					switch (in2) {
 					case 'K':
-						cx = pred(int, cx);
+						--cx;
 						break;
 					case 'P':
-						cy = succ(int, cy);
+						++cy;
 						break;
 					case 'M':
 						cx += 2;
 						break;
 					case 'H':
-						cy = pred(int, cy);
+						--cy;
 						break;
 					case 'G':
 						--cx;

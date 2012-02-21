@@ -395,9 +395,9 @@ void modinv() {
 	Common::String nomp;
 
 	int cy = 0;
-	for (int cx = 1; cx <= 6; cx++)
+	for (int cx = 1; cx <= 6; ++cx)
 		if (s.sjer[cx] != chr(0)) {
-			cy = succ(int, cy);
+			++cy;
 			r = (ord(s.sjer[cx]) + 400);
 			deline(r - 501 + c_st41, nom, tay);
 			nomp = delig;
@@ -405,7 +405,7 @@ void modinv() {
 			g_vm->_menu.enableMenuItem(g_vm->_menu._invt[cx]);
 		}
 	if (cy < 6)
-		for (int cx = cy + 1; cx <= 6; cx++) {
+		for (int cx = cy + 1; cx <= 6; ++cx) {
 			g_vm->_menu.menut(g_vm->_menu._invt[cx], "                       ");
 			g_vm->_menu.disableMenuItem(g_vm->_menu._invt[cx]);
 		}
@@ -464,7 +464,7 @@ void premtet() {
 void ajchai() {
 
 
-	int cy = (acha + pred(int, pred(int, mchai) * 10));
+	int cy = acha + ((mchai - 1) * 10) - 1;
 	int cx = 0;
 	do {
 		++cx;
@@ -696,7 +696,7 @@ void tcoord(int sx) {
 	while (cy < caff) {
 		a += tabdon[atdon];
 		atdon += 4;
-		cy = succ(int, cy);
+		++cy;
 	}
 
 	b = tabdon[atdon];
@@ -704,11 +704,11 @@ void tcoord(int sx) {
 		goto L1;
 	a += fleche;
 	cb = 0;
-	for (cy = 0; cy <= (sx - 2); cy++) {
-		ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
+	for (cy = 0; cy <= (sx - 2); ++cy) {
+		ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
 		cb += (ib * 4) + 2;
 	}
-	ib = (tabdon[a + cb] << 8) + tabdon[succ(int, a + cb)];
+	ib = (tabdon[a + cb] << 8) + tabdon[(a + cb + 1)];
 	if (ib == 0)
 		goto L1;
 
@@ -716,10 +716,10 @@ void tcoord(int sx) {
 	do {
 		cb += 2;
 		sx = tabdon[a + cb] * res;
-		sy = tabdon[succ(int, a + cb)];
+		sy = tabdon[(a + cb + 1)];
 		cb += 2;
 		ix = tabdon[a + cb] * res;
-		iy = tabdon[succ(int, a + cb)];
+		iy = tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((x >= sx) && (x <= ix) && (y >= sy) && (y <= iy)) || (cy > ib)));
 
@@ -794,7 +794,7 @@ void rechai(int &ch) {
 	cx = s.mlieu;
 	if (s.mlieu == 16)
 		cx = 14;
-	ch = tabdon[achai + (cx * 7) + pred(int, num)];
+	ch = tabdon[achai + (cx * 7) + num - 1];
 }
 
 void t23coul(int &l) {

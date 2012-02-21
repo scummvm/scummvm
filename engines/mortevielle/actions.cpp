@@ -210,7 +210,7 @@ void fctTake() {
 				obpart = false;
 				affrep();
 			} else {
-				tabdon[acha + (pred(int, mchai) * 10) + pred(int, cs)] = 0;
+				tabdon[acha + ((mchai - 1) * 10) + cs - 1] = 0;
 				tsuiv();
 				++dobj;
 				if (dobj > 6) {
@@ -344,7 +344,7 @@ void fctLift() {
 		cx = 14;
 	else if (s.mlieu == 19)
 		cx = 15;
-	crep = tabdon[asoul + (cx << 3) + pred(int, num)];
+	crep = tabdon[asoul + (cx << 3) + (num - 1)];
 	if (crep == 255)
 		crep = 997;
 }
@@ -436,7 +436,7 @@ void fctLook() {
 		cx -= 4;
 	if (s.mlieu == 26)
 		cx = 21;
-	crep = tabdon[arega + (cx * 7) + pred(int, num)];
+	crep = tabdon[arega + (cx * 7) + num - 1];
 	if ((s.mlieu == 13) && (num == 8))
 		crep = 126;
 	if (s.mlieu == 19)
@@ -608,7 +608,7 @@ void fctOpen() {
 			cx = s.mlieu;
 			if (s.mlieu == 16)
 				cx = 14;
-			crep = tabdon[aouvr + (cx * 7) + pred(int, num)];
+			crep = tabdon[aouvr + (cx * 7) + num - 1];
 			if (crep == 254)
 				crep = 999;
 		} else
@@ -1330,7 +1330,7 @@ void fctDiscuss() {
 		co = 0;
 		lig = 0;
 		do {
-			icm = succ(int, icm);
+			++icm;
 			g_vm->_screenSurface.putxy(co, lig);
 			if (s.teauto[icm] == '*')
 				if (te[icm])
@@ -1356,7 +1356,7 @@ void fctDiscuss() {
 				cx = 41;
 			else
 				cx = 1;
-			cy = succ(int, ((uint)y >> 3));                  /* 0-199 => 1-25 */
+			cy = ((uint)y >> 3) + 1;      // 0-199 => 1-25
 			if ((cy > 23) || ((cx == 41) && ((cy >= 20) && (cy <= 22)))) {
 				if (choi != 0) {
 					lig = ((choi - 1) % 23) << 3;

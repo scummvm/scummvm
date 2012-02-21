@@ -54,7 +54,7 @@ void init_chariot() {
 void trait_ph() {
 	const int deca[3] = {300, 30, 40};
 
-	ptr_tcph = pred(int, num_ph);
+	ptr_tcph = num_ph - 1;
 	ledeb = swap(t_cph[ptr_tcph]) + deca[typlec];
 	lefin = swap(t_cph[ptr_tcph + 1]) + deca[typlec];
 	nb_word = lefin - ledeb;
