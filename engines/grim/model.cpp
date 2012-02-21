@@ -501,8 +501,7 @@ void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 		if (ts->isEof())
 			error("Expected face data, got EOF");
 
-		if (sscanf(ts->getCurrentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
-			error("Expected face data, got '%s'", ts->getCurrentLine());
+		ts->scanStringNoNewLine(" %d: %d %x %d %d %d %f %d%n", 8, &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen);
 
 		assert(materialid != -1);
 		_materialid[num] = materialid;
@@ -518,10 +517,7 @@ void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (sscanf(ts->getCurrentLine() + readlen, " %d, %d%n", &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2) < 2)
-				error("Could not read vertex indices in line '%s'",
-
-			ts->getCurrentLine());
+			ts->scanStringAtOffsetNoNewLine(readlen, " %d, %d%n", 2, &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2);
 			readlen += readlen2;
 		}
 		ts->nextLine();

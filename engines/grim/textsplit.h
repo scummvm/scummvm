@@ -61,6 +61,17 @@ public:
 	// argument), bail out with an error.  Advance to the next line.
 	void scanString(const char *fmt, int field_count, ...);
 
+	// Scan a line starting at offset 'offset' according to the given format
+	// (compatible with scanf); if not all fields are read (according to the
+	// field_count argument), bail out with an error.  Advance to the next line.
+	void scanStringAtOffset(int offset, const char *fmt, int field_count, ...);
+
+	// Just like scanString(), but without advancing to the next line.
+	void scanStringNoNewLine(const char *fmt, int field_count, ...);
+
+	// Just like scanStringAtOffset(), but without advancing to the next line.
+	void scanStringAtOffsetNoNewLine(int offset, const char *fmt, int field_count, ...);
+
 private:
 	char *_stringData;
 	char *_currLine;
