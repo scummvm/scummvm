@@ -113,7 +113,7 @@ void dessine(int ad, int x, int y) {
 
 void dessine_rouleau() {
 	writepal(89);
-	if (_currGraphicalDevice == her) {
+	if (_currGraphicalDevice == MODE_HERCULES) {
 		mem[0x7000 * 16 + 14] = 15;
 	}
 	hideMouse();
@@ -266,7 +266,7 @@ void clsf10() {
 
 void stop() {
 	hirs();
-	_currGraphicalDevice = ams;
+	_currGraphicalDevice = MODE_AMSTRAD1512;
 	hirs();
 	g_vm->quitGame();
 }
@@ -274,7 +274,7 @@ void stop() {
 void paint_rect(int x, int y, int dx, int dy) {
 	int co;
 
-	if (_currGraphicalDevice == cga)
+	if (_currGraphicalDevice == MODE_CGA)
 		co = 3;
 	else
 		co = 11;
@@ -634,7 +634,7 @@ void drawClock() {
 	
 	paint_rect(570, 118, 20, 10);
 	paint_rect(578, 114, 6, 18);
-	if ((_currGraphicalDevice == cga) || (_currGraphicalDevice == her))
+	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
 		co = 0;
 	else
 		co = 1;

@@ -120,7 +120,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Set the screen mode
-	_currGraphicalDevice = ega;
+	_currGraphicalDevice = MODE_EGA;
 	res = 2;
 
 	// Load the mort.dat resource
@@ -134,7 +134,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	// Setup the mouse cursor
 	initMouse();
 
-	_currGraphicalDevice = ega;
+	_currGraphicalDevice = MODE_EGA;
 	_newGraphicalDevice = _currGraphicalDevice;
 	zuul = false;
 	tesok = false;
@@ -296,8 +296,8 @@ bool MortevielleEngine::handleEvents() {
 			_mouseClick = true;
 		else if (event.type == Common::EVENT_LBUTTONUP)
 			_mouseClick = false;
-		break;
 
+		break;
 	case Common::EVENT_KEYDOWN:
 		addKeypress(event);
 		break;
@@ -445,7 +445,7 @@ Common::Error MortevielleEngine::run() {
 	int loadSlot = 0;
 	if (ConfMan.hasKey("save_slot")) {
 		int gameToLoad = ConfMan.getInt("save_slot");
-		if (gameToLoad >= 1 && gameToLoad <= 999)
+		if ((gameToLoad >= 1) && (gameToLoad <= 999))
 			loadSlot = gameToLoad;
 	}
 
@@ -487,9 +487,12 @@ void MortevielleEngine::showIntroduction() {
  * loses, and chooses to start playing the game again.
  */
 void MortevielleEngine::mainGame() {
-	if (rech_cfiec)  charge_cfiec();
+	if (rech_cfiec)
+		charge_cfiec();
+
 	for (crep = 1; crep <= c_zzz; crep ++) 
 		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+
 	charge_bruit5();
 	_menu.initMenu();
 
@@ -518,6 +521,7 @@ void MortevielleEngine::playGame() {
 		handleAction();
 		CHECK_QUIT;
 	} while (!((_quitGame) || (_endGame) || (_loseGame)));
+
 	if (_endGame)
 		endGame();
 	else if (_loseGame)
@@ -574,9 +578,11 @@ void MortevielleEngine::handleAction() {
 			if ((mnumo != OPCODE_NONE) && ((msg[3] == action) || (msg[3] == saction))) {
 				msg[4] = mnumo;
 				ecr3(g_vm->getString(S_IDEM));
-			} else return;
+			} else
+				return;
 		} else if (inkey == '\104') {
-			if ((x != 0) && (y != 0))  num = 9999;
+			if ((x != 0) && (y != 0))
+				num = 9999;
 			return;
 		}
 	}
@@ -584,39 +590,49 @@ void MortevielleEngine::handleAction() {
 		_quitGame = true;
 		tmaj3();
 	} else {
-		if ((funct) && (inkey != '\77'))  return;
+		if ((funct) && (inkey != '\77'))
+			return;
 		if (temps > lim) {
 			repon(2, 141);
-			if (num == 9999)  num = 0;
+			if (num == 9999)
+				num = 0;
 		} else {
 			mnumo = msg[3];
-			if ((msg[3] == action) || (msg[3] == saction))  mnumo = msg[4];
+			if ((msg[3] == action) || (msg[3] == saction))
+				mnumo = msg[4];
 			if (! anyone) {
 				if ((fouil) || (obpart)) {
-					if (y_s < 12)  return;
+					if (y_s < 12)
+						return;
+
 					if ((msg[4] == OPCODE_SOUND) || (msg[4] == OPCODE_LIFT)) {
 						oo = true;
 						if ((msg[4] == OPCODE_LIFT) || (obpart)) {
 							finfouil();
 							caff = s.mlieu;
 							crep = 998;
-						} else tsuiv();
+						} else
+							tsuiv();
 						mennor();
 					}
 				}
 			}
 			do {
-				if (! oo)  tsitu();
+				if (! oo)
+					tsitu();
+
 				if ((ctrm == 0) && (! _loseGame) && (! _endGame)) {
 					taffich();
 					if (okdes) {
 						okdes = false;
 						dessin(0);
 					}
-					if ((! syn) || (col))  repon(2, crep);
+					if ((! syn) || (col))
+						repon(2, crep);
 				}
 			} while (!(! syn));
-			if (ctrm != 0)  tctrm();
+			if (ctrm != 0)
+				tctrm();
 		}
 	}
 }

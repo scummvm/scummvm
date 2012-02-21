@@ -200,9 +200,9 @@ void fenat(char ans) {
 	int coul;
 
 	hideMouse();
-	if (_currGraphicalDevice == cga)
+	if (_currGraphicalDevice == MODE_CGA)
 		coul = 2;
-	else if (_currGraphicalDevice == her)
+	else if (_currGraphicalDevice == MODE_HERCULES)
 		coul = 1;
 	else
 		coul = 12;
