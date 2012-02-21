@@ -1,6 +1,6 @@
 #Fix issue #312: Manny disappears while holding & examing the sign the Ruba in Petrified forest
 
-begin fd7b996055e9e5144bd70ef2bd1834fd  #Both v1.0 and v1.01
+begin fd7b996055e9e5144bd70ef2bd1834fd 3dbf  #Both v1.0 and v1.01
 
 insert 24ad 06		#Make space for enable_head_control(FALSE)
 insert 24ef 09		#Make space for "if manny.is_holding ~= signpost then"
