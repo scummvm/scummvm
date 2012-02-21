@@ -118,7 +118,11 @@ struct Event {
 	CustomEventType customType;
 #endif
 
-	Event() : type(EVENT_INVALID), synthetic(false) {}
+	Event() : type(EVENT_INVALID), synthetic(false) {
+#ifdef ENABLE_KEYMAPPER
+		customType = 0;
+#endif
+	}
 };
 
 /**
