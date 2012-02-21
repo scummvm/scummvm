@@ -1,0 +1,12 @@
+begin c4cd0d09d2dbb4e346dd04ebd44860f0
+replace 1e27 9e         #Increase the size of function code block
+insert 1ea1 07          #Make space for code
+replace 1e8f 1f         #Change a jump according to new dimension
+replace 1ea1 22 29 11 33 20 79 01       #ha.do_door:close()
+
+#Const value
+replace 1ec7 21         #Increase the counter of constants by one
+insert 20c0 9           #Make space for one new string
+replace 20c0 53 00 06 9c 93 90 8c 9a ff         #Set string close (number 0x20)
+
+end
