@@ -534,7 +534,7 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 	do {
 
 		c = sentence[pos_in_sentence++];
-		if (isalnum(c) || (c == '-' && wordLen) || (c >= 0x80)) {
+		if (Common::isAlnum(c) || (c == '-' && wordLen) || (c >= 0x80)) {
 			currentWord[wordLen] = lowerCaseMap[c];
 			++wordLen;
 		}

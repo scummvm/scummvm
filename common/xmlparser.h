@@ -295,7 +295,7 @@ protected:
 	 * in their name.
 	 */
 	virtual inline bool isValidNameChar(char c) {
-		return isalnum(static_cast<unsigned char>(c)) || c == '_';
+		return isAlnum(c) || c == '_';
 	}
 
 	/**

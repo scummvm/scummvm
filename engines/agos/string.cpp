@@ -152,7 +152,7 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 	}
 
 	if (upperCase && *dst) {
-		if (islower(*dst))
+		if (Common::isLower(*dst))
 			*dst = toupper(*dst);
 	}
 

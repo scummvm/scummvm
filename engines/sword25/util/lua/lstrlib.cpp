@@ -5,6 +5,8 @@
 */
 
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
+
 #include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
