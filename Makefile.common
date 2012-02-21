@@ -106,7 +106,7 @@ ifdef CXX_UPDATE_DEP_FLAG
 
 %.o: %.m
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CPPFLAGS) $(OBJCFLAGS) -c $(<) -o $*.o
 
 # Build rule for assembler files with preprocessing
 %.o: %.S

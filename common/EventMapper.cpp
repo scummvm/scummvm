@@ -20,29 +20,35 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "blit_arm.h"
+#include "common/events.h"
 
-void blitLandscapeScreenRect16bpp(uint16 *dst, uint16 *src, int width, int height, int screenWidth, int screenHeight)
-{
-	for (int x = width; x > 0; x--) {
-		for (int y = height; y > 0; y--) {
-			*(dst++) = *src;
-			src += screenWidth;
+namespace Common {
+
+List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
+	List<Event> events;
+	Event mappedEvent;
+	if (ev.type == EVENT_KEYDOWN) {
+		if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
+			mappedEvent.type = EVENT_MAINMENU;
 		}
-		dst -= screenHeight + height;
-		src += 1 - height * screenWidth;
+#ifdef ENABLE_VKEYBD
+		else if (ev.kbd.keycode == KEYCODE_F7 && ev.kbd.hasFlags(0)) {
+			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
+		}
+#endif
+#ifdef ENABLE_KEYMAPPER
+		else if (ev.kbd.keycode == KEYCODE_F8 && ev.kbd.hasFlags(0)) {
+			mappedEvent.type = EVENT_KEYMAPPER_REMAP;
+		}
+#endif
 	}
+
+	// if it didn't get mapped, just pass it through
+	if (mappedEvent.type == EVENT_INVALID)
+		mappedEvent = ev;
+	events.push_back(mappedEvent);
+	return events;
 }
 
-void blitLandscapeScreenRect8bpp(uint16 *dst, byte *src, int width, int height, uint16 *palette, int screenWidth, int screenHeight)
-{
-	for (int x = width; x > 0; x--) {
-		for (int y = height; y > 0; y--) {
-			*(dst++) = palette[*src];
-			src += screenWidth;
-		}
-		dst -= screenHeight + height;
-		src += 1 - height * screenWidth;
-	}
-}
+
+} // namespace Common

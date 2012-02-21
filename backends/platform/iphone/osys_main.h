@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
+#define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
+
 #include "graphics/surface.h"
 #include "iphone_common.h"
 #include "backends/base-backend.h"
@@ -42,32 +45,36 @@
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
 
-typedef struct AQCallbackStruct {
-    AudioQueueRef queue;
-    uint32 frameCount;
-    AudioQueueBufferRef buffers[AUDIO_BUFFERS];
-    AudioStreamBasicDescription dataFormat;
-} AQCallbackStruct;
+struct AQCallbackStruct {
+	AudioQueueRef queue;
+	uint32 frameCount;
+	AudioQueueBufferRef buffers[AUDIO_BUFFERS];
+	AudioStreamBasicDescription dataFormat;
+};
 
 class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
 protected:
-
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
 
+	int _currentGraphicsMode;
+
 	Audio::MixerImpl *_mixer;
 
 	Graphics::Surface _framebuffer;
-	byte *_offscreen;
+	byte *_gameScreenRaw;
 	OverlayColor  *_overlayBuffer;
 	uint16 _overlayHeight;
 	uint16 _overlayWidth;
 
-	uint16 *_fullscreen;
+	uint16 *_gameScreenConverted;
 
-	uint16  _palette[256];
+	// For use with the game texture
+	uint16  _gamePalette[256];
+	// For use with the mouse texture
+	uint16  _gamePaletteRGBA5551[256];
 	bool _overlayVisible;
 	uint16 _screenWidth;
 	uint16 _screenHeight;
@@ -76,16 +83,18 @@ protected:
 	uint32 _timeSuspended;
 
 	bool _mouseVisible;
+	bool _mouseCursorPaletteEnabled;
+	uint16 _mouseCursorPalette[256];
 	byte *_mouseBuf;
 	byte _mouseKeyColor;
 	uint _mouseWidth, _mouseHeight;
 	uint _mouseX, _mouseY;
 	int _mouseHotspotX, _mouseHotspotY;
 	bool _mouseDirty;
+	bool _mouseNeedTextureUpdate;
 	long _lastMouseDown;
 	long _lastMouseTap;
 	long _queuedEventTime;
-	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
@@ -121,7 +130,6 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
@@ -154,6 +162,7 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
@@ -167,7 +176,7 @@ public:
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
 	virtual void setTimerCallback(TimerProc callback, int interval);
- 	virtual int getScreenChangeID() const { return _screenChangeCount; }
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
@@ -186,12 +195,11 @@ protected:
 	void internUpdateScreen();
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
-	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
-	void drawDirtyRect(const Common::Rect& dirtyRect);
-	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);
-	void drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect);
-	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);
+	void drawDirtyRect(const Common::Rect &dirtyRect);
+	void drawDirtyOverlayRect(const Common::Rect &dirtyRect);
+	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
+	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
@@ -208,3 +216,5 @@ protected:
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
 };
+
+#endif

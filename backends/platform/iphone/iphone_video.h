@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _IPHONE_VIDEO__H
-#define _IPHONE_VIDEO__H
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -31,28 +31,34 @@
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
-#import "iphone_keyboard.h"
+#include "iphone_keyboard.h"
 
-@interface iPhoneView : UIView
-{
-	void* _screenSurface;
-	NSMutableArray* _events;
-	SoftKeyboard* _keyboardView;
-	CALayer* _screenLayer;
+@interface iPhoneView : UIView {
+	void *_screenSurface;
+	NSMutableArray *_events;
+	SoftKeyboard *_keyboardView;
 
 	int _widthOffset;
 	int _heightOffset;
 
-	EAGLContext* _context;
+	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
-	GLint _backingWidth;
-	GLint _backingHeight;
+	GLint _renderBufferWidth;
+	GLint _renderBufferHeight;
 	GLint _visibleWidth;
 	GLint _visibleHeight;
 	GLuint _screenTexture;
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
+
+	UIDeviceOrientation _orientation;
+
+	GLfloat _gameScreenVertCoords[4 * 2];
+	GLfloat _gameScreenTexCoords[4 * 2];
+
+	GLfloat _overlayVertCoords[4 * 2];
+	GLfloat _overlayTexCoords[4 * 2];
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
@@ -63,17 +69,19 @@
 
 - (void)initSurface;
 
+- (void)setGraphicsMode;
+
 - (void)updateSurface;
 - (void)updateMainSurface;
 - (void)updateOverlaySurface;
 - (void)updateMouseSurface;
 - (void)clearColorBuffer;
 
--(void)updateMouseCursor;
+- (void)updateMouseCursor;
 
 - (id)getEvent;
 
-- (void)deviceOrientationChanged:(int)orientation;
+- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
 
 - (void)applicationSuspend;
 
@@ -81,6 +89,4 @@
 
 @end
 
-
-
-#endif /* _IPHONE_VIDEO__H */
+#endif

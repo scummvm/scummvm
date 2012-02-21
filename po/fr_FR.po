@@ -78,7 +78,6 @@ msgid "Remap keys"
 msgstr "Changer l'affectation des touches"
 
 #: gui/gui-manager.cpp:127 base/main.cpp:295
-#, fuzzy
 msgid "Toggle FullScreen"
 msgstr "Basculer en plein écran"
 
@@ -1386,9 +1385,8 @@ msgid "Refer to your Loom(TM) manual for help."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Standard (16bpp)"
+msgstr "Standard"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
@@ -2022,57 +2020,49 @@ msgstr "Échec de la sauvegarde."
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr ""
+msgstr "Attaque 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr ""
+msgstr "Attaque 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr ""
+msgstr "Attaque 3"
 
 #: engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr ""
+msgstr "Avancer"
 
 #: engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr ""
+msgstr "Reculer"
 
 #: engines/kyra/lol.cpp:483
-msgid "Slide Left"
-msgstr ""
+msgstr "Faire un pas vers la Gauche"
 
 #: engines/kyra/lol.cpp:484
-#, fuzzy
-msgid "Slide Right"
-msgstr "Droite"
+msgstr "Faire un pas vers la Droite"
 
 #: engines/kyra/lol.cpp:485
-#, fuzzy
 msgid "Turn Left"
-msgstr "Éteindre"
+msgstr "Tourner vers la Gauche"
 
 #: engines/kyra/lol.cpp:486
-#, fuzzy
 msgid "Turn Right"
-msgstr "Droit"
+msgstr "Tourner vers la Droite"
 
 #: engines/kyra/lol.cpp:487
-#, fuzzy
 msgid "Rest"
-msgstr "Charger"
+msgstr "Se Reposer"
 
 #: engines/kyra/lol.cpp:488
-#, fuzzy
 msgid "Options"
-msgstr "~O~ptions"
+msgstr "Options"
 
 #: engines/kyra/lol.cpp:489
-#, fuzzy
 msgid "Choose Spell"
-msgstr "Choisir"
+msgstr "Choisir un Sort"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -2406,7 +2396,7 @@ msgstr "Mode touchpad désactivé"
 
 #: backends/platform/maemo/maemo.cpp:178
 msgid "Click Mode"
-msgstr ""
+msgstr "Mode Clic"
 
 #: backends/platform/maemo/maemo.cpp:184
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2417,9 +2407,8 @@ msgid "Left Click"
 msgstr "Clic Gauche"
 
 #: backends/platform/maemo/maemo.cpp:187
-#, fuzzy
 msgid "Middle Click"
-msgstr "Élément au milieu à gauche"
+msgstr "Clic Milieu"
 
 #: backends/platform/maemo/maemo.cpp:190
 #: backends/platform/symbian/src/SymbianActions.cpp:43

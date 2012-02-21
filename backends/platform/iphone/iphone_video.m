@@ -24,61 +24,77 @@
 #include "iphone_common.h"
 
 static iPhoneView *sharedInstance = nil;
+static GraphicsModes _graphicsMode = kGraphicsModeLinear;
 static int _width = 0;
 static int _height = 0;
 static int _fullWidth;
 static int _fullHeight;
-static CGRect _screenRect;
+static CGRect _gameScreenRect;
 
-static char* _textureBuffer = 0;
-static int _textureWidth = 0;
-static int _textureHeight = 0;
+static char *_gameScreenTextureBuffer = 0;
+static int _gameScreenTextureWidth = 0;
+static int _gameScreenTextureHeight = 0;
 
-static char* _overlayTexBuffer = 0;
+static char *_overlayTexBuffer = 0;
 static int _overlayTexWidth = 0;
 static int _overlayTexHeight = 0;
 static int _overlayWidth = 0;
 static int _overlayHeight = 0;
 static float _overlayPortraitRatio = 1.0f;
 
-NSLock* _lock = nil;
 static int _needsScreenUpdate = 0;
 static int _overlayIsEnabled = 0;
 
-static UITouch* _firstTouch = NULL;
-static UITouch* _secondTouch = NULL;
+static UITouch *_firstTouch = NULL;
+static UITouch *_secondTouch = NULL;
 
-static short* _mouseCursor = NULL;
+static unsigned short *_mouseCursor = NULL;
 static int _mouseCursorHeight = 0;
 static int _mouseCursorWidth = 0;
+static int _mouseCursorHotspotX = 0;
+static int _mouseCursorHotspotY = 0;
 static int _mouseX = 0;
 static int _mouseY = 0;
+static int _mouseCursorEnabled = 0;
 
-// static long lastTick = 0;
-// static int frames = 0;
+#if 0
+static long lastTick = 0;
+static int frames = 0;
+#endif
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
-int printOglError(const char *file, int line)
-{
-	int     retCode = 0;
+int printOglError(const char *file, int line) {
+	int retCode = 0;
 
 	// returns 1 if an OpenGL error occurred, 0 otherwise.
 	GLenum glErr = glGetError();
-	while( glErr != GL_NO_ERROR)
-	{
-		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line );
+	while (glErr != GL_NO_ERROR) {
+		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line);
 		retCode = 1;
 		glErr = glGetError();
 	}
 	return retCode;
 }
 
-void iPhone_setMouseCursor(short* buffer, int width, int height) {
+void iPhone_setGraphicsMode(int mode) {
+	_graphicsMode = mode;
+
+	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
+}
+
+void iPhone_showCursor(int state) {
+	_mouseCursorEnabled = state;
+}
+
+void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY) {
 	_mouseCursor = buffer;
 
 	_mouseCursorWidth = width;
 	_mouseCursorHeight = height;
+
+	_mouseCursorHotspotX = hotspotX;
+	_mouseCursorHotspotY = hotspotY;
 
 	[sharedInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
@@ -104,14 +120,8 @@ bool iPhone_isHighResDevice() {
 void iPhone_updateScreen(int mouseX, int mouseY) {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 
-	//_mouseX = _overlayHeight - (float)mouseX / _width * _overlayHeight;
-	//_mouseY = (float)mouseY / _height * _overlayWidth;
-
-	//_mouseX = _overlayHeight - mouseX;
-	//_mouseY = mouseY;
-
-	_mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _overlayHeight;
-	_mouseY = mouseY / (float)_overlayHeight * _overlayWidth;
+	_mouseX = mouseX;
+	_mouseY = mouseY;
 
 	if (!_needsScreenUpdate) {
 		_needsScreenUpdate = 1;
@@ -119,17 +129,17 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 	}
 }
 
-void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	for (y = y1; y < y2; ++y)
-		memcpy(&_textureBuffer[(y * _textureWidth + x1 )* 2], &screen[y * _width + x1], (x2 - x1) * 2);
+		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
-void iPhone_updateOverlayRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	int y;
 	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
 	for (y = y1; y < y2; ++y)
-		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1 )* 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
+		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void iPhone_initSurface(int width, int height) {
@@ -138,7 +148,7 @@ void iPhone_initSurface(int width, int height) {
 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
-bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
+bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
 	id event = [sharedInstance getEvent];
 	if (event == nil) {
 		return false;
@@ -152,92 +162,227 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 	}
 
 	*outEvent = [type intValue];
-	*outX = [[event objectForKey:@"x"] floatValue];
-	*outY = [[event objectForKey:@"y"] floatValue];
+	*outX = [[event objectForKey:@"x"] intValue];
+	*outY = [[event objectForKey:@"y"] intValue];
 	return true;
 }
 
 uint getSizeNextPOT(uint size) {
-    if ((size & (size - 1)) || !size) {
-        int log = 0;
+	if ((size & (size - 1)) || !size) {
+		int log = 0;
 
-        while (size >>= 1)
-            ++log;
+		while (size >>= 1)
+			++log;
 
-        size = (2 << log);
-    }
+		size = (2 << log);
+	}
 
-    return size;
+	return size;
 }
 
-const char* iPhone_getDocumentsDir() {
+const char *iPhone_getDocumentsDir() {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths objectAtIndex:0];
 	return [documentsDirectory UTF8String];
 }
 
-bool getLocalMouseCoords(CGPoint *point) {
+static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
 	if (_overlayIsEnabled) {
-		point->x = point->x / _overlayHeight;
-		point->y = point->y / _overlayWidth;
+		switch (orientation) {
+		case UIDeviceOrientationLandscapeLeft:
+			*x = (int)point.y;
+			*y = _overlayHeight - (int)point.x;
+			break;
+
+		case UIDeviceOrientationLandscapeRight:
+			*x = _overlayWidth - (int)point.y;
+			*y =  (int)point.x;
+			break;
+
+		case UIDeviceOrientationPortrait:
+			*x = (int)point.x;
+			*y = (int)point.y;
+			break;
+
+		default:
+			return false;
+		}
 	} else {
-		if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
-			point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
+		if (point.x < _gameScreenRect.origin.x || point.x >= _gameScreenRect.origin.x + _gameScreenRect.size.width ||
+			point.y < _gameScreenRect.origin.y || point.y >= _gameScreenRect.origin.y + _gameScreenRect.size.height) {
 				return false;
 		}
 
-		point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
-		point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
+		point.x = (point.x - _gameScreenRect.origin.x) / _gameScreenRect.size.width;
+		point.y = (point.y - _gameScreenRect.origin.y) / _gameScreenRect.size.height;
+
+		switch (orientation) {
+		case UIDeviceOrientationLandscapeLeft:
+			*x = point.y * _width;
+			*y = (1.0f - point.x) * _height;
+			break;
+
+		case UIDeviceOrientationLandscapeRight:
+			*x = (1.0f - point.y) * _width;
+			*y = point.x * _height;
+			break;
+
+		case UIDeviceOrientationPortrait:
+			*x = point.x * _width;
+			*y = point.y * _height;
+			break;
+
+		default:
+			return false;
+		}
 	}
 
 	return true;
 }
 
+static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
+	if (!tex)
+		return;
+
+	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
+
+	GLint filter = GL_LINEAR;
+
+	switch (mode) {
+	case kGraphicsModeLinear:
+		filter = GL_LINEAR;
+		break;
+
+	case kGraphicsModeNone:
+		filter = GL_NEAREST;
+		break;
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
+}
 
 @implementation iPhoneView
 
-+ (Class) layerClass
-{
++ (Class)layerClass {
 	return [CAEAGLLayer class];
+}
+
+- (void)createContext {
+	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
+
+	eaglLayer.opaque = YES;
+	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+	                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
+
+	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+
+	// In case creating the OpenGL ES context failed, we will error out here.
+	if (_context == nil) {
+		fprintf(stderr, "Could not create OpenGL ES context\n");
+		exit(-1);
+	}
+
+	if ([EAGLContext setCurrentContext:_context]) {
+		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
+		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
+
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
+		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
+
+		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+
+		// Retrieve the render buffer size. This *should* match the frame size,
+		// i.e. _fullWidth and _fullHeight.
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
+
+		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
+			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+			return;
+		}
+
+		_overlayHeight = _renderBufferWidth;
+		_overlayWidth = _renderBufferHeight;
+		_overlayTexWidth = getSizeNextPOT(_overlayHeight);
+		_overlayTexHeight = getSizeNextPOT(_overlayWidth);
+
+		// Since the overlay size won't change the whole run, we can
+		// precalculate the texture coordinates for the overlay texture here
+		// and just use it later on.
+		_overlayTexCoords[0] = _overlayTexCoords[4] = _overlayWidth / (GLfloat)_overlayTexWidth;
+		_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
+
+		int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
+		_overlayTexBuffer = (char *)malloc(textureSize);
+		memset(_overlayTexBuffer, 0, textureSize);
+
+		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D); printOpenGLError();
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
+		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+	}
 }
 
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
-	if([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")])
-	{
-		if([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")])
-		{
+	if ([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")]) {
+		if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
 			//self.contentScaleFactor = [[UIScreen mainScreen] scale];
 		}
 	}
 
 	_fullWidth = frame.size.width;
 	_fullHeight = frame.size.height;
-	_screenLayer = nil;
 
 	sharedInstance = self;
 
-	_lock = [NSLock new];
 	_keyboardView = nil;
-	_context = nil;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
+	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
+	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
+	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
+	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
+
+	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
+	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
+	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
+	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
+
+	_overlayVertCoords[0] = _overlayVertCoords[1] =
+	    _overlayVertCoords[2] = _overlayVertCoords[3] =
+	    _overlayVertCoords[4] = _overlayVertCoords[5] =
+	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
+
+	_overlayTexCoords[0] = _overlayTexCoords[1] =
+	    _overlayTexCoords[2] = _overlayTexCoords[3] =
+	    _overlayTexCoords[4] = _overlayTexCoords[5] =
+	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
+
+	// Initialize the OpenGL ES context
+	[self createContext];
+
 	return self;
 }
 
--(void) dealloc {
+- (void)dealloc {
 	[super dealloc];
 
 	if (_keyboardView != nil) {
 		[_keyboardView dealloc];
 	}
 
-	if (_screenTexture)
-		free(_textureBuffer);
-
+	free(_gameScreenTextureBuffer);
 	free(_overlayTexBuffer);
 }
 
@@ -246,16 +391,24 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (void)drawRect:(CGRect)frame {
-	// if (lastTick == 0) {
-	//	lastTick = time(0);
-	// }
-	//
-	// frames++;
-	// if (time(0) > lastTick) {
-	//	lastTick = time(0);
-	//	printf("FPS: %i\n", frames);
-	//	frames = 0;
-	// }
+#if 0
+	if (lastTick == 0) {
+		lastTick = time(0);
+	}
+
+	frames++;
+	if (time(0) > lastTick) {
+		lastTick = time(0);
+		printf("FPS: %i\n", frames);
+		frames = 0;
+	}
+#endif
+}
+
+- (void)setGraphicsMode {
+	setFilterModeForTexture(_screenTexture, _graphicsMode);
+	setFilterModeForTexture(_overlayTexture, _graphicsMode);
+	setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
 }
 
 - (void)updateSurface {
@@ -264,28 +417,25 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 	_needsScreenUpdate = 0;
 
-	if (_overlayIsEnabled) {
-		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-	}
+	glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
 
 	[self updateMainSurface];
 
-	if (_overlayIsEnabled) {
+	if (_overlayIsEnabled)
 		[self updateOverlaySurface];
+
+	if (_mouseCursorEnabled)
 		[self updateMouseSurface];
-	}
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
 
 }
 
--(void)updateMouseCursor {
+- (void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
-		glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+		setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
@@ -296,73 +446,64 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (void)updateMainSurface {
-	GLfloat vertices[] = {
-		0.0f + _heightOffset, 0.0f + _widthOffset,
-		_visibleWidth - _heightOffset, 0.0f + _widthOffset,
-		0.0f + _heightOffset,  _visibleHeight - _widthOffset,
-		_visibleWidth - _heightOffset,  _visibleHeight - _widthOffset
-	};
-
-	float texWidth = _width / (float)_textureWidth;
-	float texHeight = _height / (float)_textureHeight;
-
-	const GLfloat texCoords[] = {
-		texWidth, 0.0f,
-		0.0f, 0.0f,
-		texWidth, texHeight,
-		0.0f, texHeight
-	};
-
-	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
+	glVertexPointer(2, GL_FLOAT, 0, _gameScreenVertCoords); printOpenGLError();
+	glTexCoordPointer(2, GL_FLOAT, 0, _gameScreenTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
 
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _textureWidth, _textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _textureBuffer); printOpenGLError();
-	glDisable(GL_BLEND);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _gameScreenTextureWidth, _gameScreenTextureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _gameScreenTextureBuffer); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)updateOverlaySurface {
-	GLfloat vertices[] = {
-		0.0f, 0.0f,
-		_overlayHeight, 0.0f,
-		0.0f,  _overlayWidth * _overlayPortraitRatio,
-		_overlayHeight,  _overlayWidth * _overlayPortraitRatio
-	};
-
-	float texWidth = _overlayWidth / (float)_overlayTexWidth;
-	float texHeight = _overlayHeight / (float)_overlayTexHeight;
-
-	const GLfloat texCoords[] = {
-		texWidth, 0.0f,
-		0.0f, 0.0f,
-		texWidth, texHeight,
-		0.0f, texHeight
-	};
-
-	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
+	glVertexPointer(2, GL_FLOAT, 0, _overlayVertCoords); printOpenGLError();
+	glTexCoordPointer(2, GL_FLOAT, 0, _overlayTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _overlayTexWidth, _overlayTexHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _overlayTexBuffer); printOpenGLError();
-	glEnable(GL_BLEND);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)updateMouseSurface {
+	int width = _mouseCursorWidth;
+	int height = _mouseCursorHeight;
 
-	int width = _mouseCursorWidth / (float)_backingWidth * _backingHeight;
-	int height = _mouseCursorHeight / (float)_backingHeight * _backingWidth;
+	int mouseX = _mouseX;
+	int mouseY = _mouseY;
+
+	int hotspotX = _mouseCursorHotspotX;
+	int hotspotY = _mouseCursorHotspotY;
+
+	if (!_overlayIsEnabled) {
+		const GLint gameWidth = (_visibleHeight - 2 * _widthOffset);
+		const GLint gameHeight = (_visibleWidth - 2 * _heightOffset);
+
+		mouseX = (_width - mouseX) / (float)_width * gameHeight + _heightOffset;
+		mouseY = mouseY / (float)_height * gameWidth + _widthOffset;
+		hotspotX = hotspotX / (float)_width * gameHeight;
+		hotspotY = hotspotY / (float)_height * gameWidth;
+		width = width / (float)_width * gameHeight;
+		height = height / (float)_height * gameWidth;
+	} else {
+		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _renderBufferWidth;
+		mouseY = mouseY / (float)_overlayHeight * _renderBufferHeight;
+		hotspotX = hotspotX / (float)_overlayWidth * _renderBufferWidth;
+		hotspotY = hotspotY / (float)_overlayHeight * _renderBufferHeight;
+		width = width / (float)_overlayWidth * _renderBufferWidth;
+		height = height / (float)_overlayHeight * _renderBufferHeight;
+	}
+
+	mouseX -= hotspotX;
+	mouseY -= hotspotY;
 
 	GLfloat vertices[] = {
-		_mouseX, _mouseY,
-		_mouseX + height, _mouseY,
-		_mouseX, _mouseY + width,
-		_mouseX + height,  _mouseY + width
+		mouseX        , mouseY,
+		mouseX + width, mouseY,
+		mouseX        , mouseY + height,
+		mouseX + width, mouseY + height
 	};
 
 	//printf("Cursor: width %u height %u\n", _mouseCursorWidth, _mouseCursorHeight);
@@ -381,102 +522,61 @@ bool getLocalMouseCoords(CGPoint *point) {
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-	glEnable(GL_BLEND);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)initSurface {
-	_textureWidth = getSizeNextPOT(_width);
-	_textureHeight = getSizeNextPOT(_height);
+	_gameScreenTextureWidth = getSizeNextPOT(_width);
+	_gameScreenTextureHeight = getSizeNextPOT(_height);
 
-	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	_gameScreenTexCoords[0] = _gameScreenTexCoords[4] = _width / (GLfloat)_gameScreenTextureWidth;
+	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _height / (GLfloat)_gameScreenTextureHeight;
 
-	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _textureWidth, _textureHeight);
+	_orientation = [[UIDevice currentDevice] orientation];
 
-	if (_context == nil) {
-		orientation = UIDeviceOrientationLandscapeRight;
-		CAEAGLLayer *eaglLayer = (CAEAGLLayer*) self.layer;
+	switch (_orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+	case UIDeviceOrientationLandscapeRight:
+	case UIDeviceOrientationPortrait:
+		break;
 
-		eaglLayer.opaque = YES;
-		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-										[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
-
-		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-		if (!_context || [EAGLContext setCurrentContext:_context]) {
-			glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
-			glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
-
-			glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
-			glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-			[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
-			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_backingWidth); printOpenGLError();
-			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_backingHeight); printOpenGLError();
-
-			if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
-				NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-				return;
-			}
-
-			_overlayHeight = _backingWidth;
-			_overlayWidth = _backingHeight;
-			_overlayTexWidth = getSizeNextPOT(_overlayHeight);
-			_overlayTexHeight = getSizeNextPOT(_overlayWidth);
-
-			int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
-			_overlayTexBuffer = (char *)malloc(textureSize);
-			memset(_overlayTexBuffer, 0, textureSize);
-
-			glViewport(0, 0, _backingWidth, _backingHeight); printOpenGLError();
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
-
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_TEXTURE_2D); printOpenGLError();
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
-			glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
-		}
+	default:
+		_orientation = UIDeviceOrientationPortrait;
 	}
+
+	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if (orientation ==  UIDeviceOrientationLandscapeRight) {
+	if (_orientation ==  UIDeviceOrientationLandscapeRight) {
 		glRotatef(-90, 0, 0, 1); printOpenGLError();
-	} else if (orientation == UIDeviceOrientationLandscapeLeft) {
+	} else if (_orientation == UIDeviceOrientationLandscapeLeft) {
 		glRotatef(90, 0, 0, 1); printOpenGLError();
 	} else {
 		glRotatef(180, 0, 0, 1); printOpenGLError();
 	}
 
-	glOrthof(0, _backingWidth, 0, _backingHeight, 0, 1); printOpenGLError();
+	glOrthof(0, _renderBufferWidth, 0, _renderBufferHeight, 0, 1); printOpenGLError();
 
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
 	}
 
 	glGenTextures(1, &_screenTexture); printOpenGLError();
-	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+	setFilterModeForTexture(_screenTexture, _graphicsMode);
 
 	if (_overlayTexture > 0) {
 		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
 	}
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
-	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); printOpenGLError();
+	setFilterModeForTexture(_overlayTexture, _graphicsMode);
 
-	if (_textureBuffer) {
-		free(_textureBuffer);
-	}
-
-	int textureSize = _textureWidth * _textureHeight * 2;
-	_textureBuffer = (char*)malloc(textureSize);
-	memset(_textureBuffer, 0, textureSize);
+	free(_gameScreenTextureBuffer);
+	int textureSize = _gameScreenTextureWidth * _gameScreenTextureHeight * 2;
+	_gameScreenTextureBuffer = (char *)malloc(textureSize);
+	memset(_gameScreenTextureBuffer, 0, textureSize);
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 
@@ -487,35 +587,35 @@ bool getLocalMouseCoords(CGPoint *point) {
 		[[_keyboardView inputView] removeFromSuperview];
 	}
 
-	if (orientation == UIDeviceOrientationLandscapeLeft || orientation ==  UIDeviceOrientationLandscapeRight) {
-		_visibleHeight = _backingHeight;
-		_visibleWidth = _backingWidth;
+	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
+		_visibleHeight = _renderBufferHeight;
+		_visibleWidth = _renderBufferWidth;
 
-		float ratioDifference = ((float)_height / (float)_width) / ((float)_fullWidth / (float)_fullHeight);
+		float ratioDifference = ((float)_height / (float)_width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
 		int rectWidth, rectHeight;
 		if (ratioDifference < 1.0f) {
-			rectWidth = _fullWidth * ratioDifference;
-			rectHeight = _fullHeight;
-			_widthOffset = (_fullWidth - rectWidth) / 2;
+			rectWidth = _renderBufferWidth * ratioDifference;
+			rectHeight = _renderBufferHeight;
+			_widthOffset = (_renderBufferWidth - rectWidth) / 2;
 			_heightOffset = 0;
 		} else {
-			rectWidth = _fullWidth;
-			rectHeight = _fullHeight / ratioDifference;
-			_heightOffset = (_fullHeight - rectHeight) / 2;
+			rectWidth = _renderBufferWidth;
+			rectHeight = _renderBufferHeight / ratioDifference;
+			_heightOffset = (_renderBufferHeight - rectHeight) / 2;
 			_widthOffset = 0;
 		}
 
 		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
-		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
+		_gameScreenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
 		_overlayPortraitRatio = 1.0f;
 	} else {
 		float ratio = (float)_height / (float)_width;
-		int height = _fullWidth * ratio;
-		//printf("Making rect (%u, %u)\n", _fullWidth, height);
-		_screenRect = CGRectMake(0, 0, _fullWidth - 1, height - 1);
+		int height = _renderBufferWidth * ratio;
+		//printf("Making rect (%u, %u)\n", _renderBufferWidth, height);
+		_gameScreenRect = CGRectMake(0, 0, _renderBufferWidth - 1, height - 1);
 
 		_visibleHeight = height;
-		_visibleWidth = _backingWidth;
+		_visibleWidth = _renderBufferWidth;
 		_heightOffset = 0.0f;
 		_widthOffset = 0.0f;
 
@@ -530,6 +630,20 @@ bool getLocalMouseCoords(CGPoint *point) {
 		[[_keyboardView inputView] becomeFirstResponder];
 		_overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
 	}
+
+	_gameScreenVertCoords[0] = _heightOffset;
+	_gameScreenVertCoords[1] = _widthOffset;
+	_gameScreenVertCoords[2] = _visibleWidth - _heightOffset;
+	_gameScreenVertCoords[3] = _widthOffset;
+	_gameScreenVertCoords[4] = _heightOffset;
+	_gameScreenVertCoords[5] = _visibleHeight - _widthOffset;
+	_gameScreenVertCoords[6] = _visibleWidth - _heightOffset;
+	_gameScreenVertCoords[7] = _visibleHeight - _widthOffset;
+
+	_overlayVertCoords[2] = _overlayHeight;
+	_overlayVertCoords[5] = _overlayWidth * _overlayPortraitRatio;
+	_overlayVertCoords[6] = _overlayHeight;
+	_overlayVertCoords[7] = _overlayWidth * _overlayPortraitRatio;
 }
 
 - (void)clearColorBuffer {
@@ -546,7 +660,6 @@ bool getLocalMouseCoords(CGPoint *point) {
 		return nil;
 	}
 
-
 	id event = [_events objectAtIndex: 0];
 
 	[_events removeObjectAtIndex: 0];
@@ -554,161 +667,163 @@ bool getLocalMouseCoords(CGPoint *point) {
 	return event;
 }
 
-- (void)addEvent:(NSDictionary*)event {
-
+- (void)addEvent:(NSDictionary *)event {
 	if (_events == nil)
 		_events = [[NSMutableArray alloc] init];
 
 	[_events addObject: event];
 }
 
-- (void)deviceOrientationChanged:(int)orientation {
+- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
+	switch (orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+	case UIDeviceOrientationLandscapeRight:
+	case UIDeviceOrientationPortrait:
+		_orientation = orientation;
+		break;
+
+	default:
+		return;
+	}
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputOrientationChanged], @"type",
-		 [NSNumber numberWithFloat:(float)orientation], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:orientation], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
+	int x, y;
 
 	switch ([allTouches count]) {
-		case 1:
-		{
-			UITouch *touch = [touches anyObject];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
+	case 1: {
+		UITouch *touch = [touches anyObject];
+		CGPoint point = [touch locationInView:self];
+		if (!getMouseCoords(_orientation, point, &x, &y))
+			return;
 
-			_firstTouch = touch;
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseDown], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+		_firstTouch = touch;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseDown], @"type",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
-		case 2:
-		{
-			UITouch *touch = [touches anyObject];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
 
-			_secondTouch = touch;
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+	case 2: {
+		UITouch *touch = [touches anyObject];
+		CGPoint point = [touch locationInView:self];
+		if (!getMouseCoords(_orientation, point, &x, &y))
+			return;
+
+		_secondTouch = touch;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
 	}
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	//NSSet *allTouches = [event allTouches];
+	int x, y;
 
-	for (UITouch* touch in touches) {
+	for (UITouch *touch in touches) {
 		if (touch == _firstTouch) {
-
 			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
+			if (!getMouseCoords(_orientation, point, &x, &y))
 				return;
 
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
+			  [NSNumber numberWithInt:x], @"x",
+			  [NSNumber numberWithInt:y], @"y",
 			  nil
 			  ]
 			 ];
-
 		} else if (touch == _secondTouch) {
-
 			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
+			if (!getMouseCoords(_orientation, point, &x, &y))
 				return;
 
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
+			  [NSNumber numberWithInt:x], @"x",
+			  [NSNumber numberWithInt:y], @"y",
 			  nil
 			  ]
 			 ];
-
 		}
 	}
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet *allTouches = [event allTouches];
+	int x, y;
 
 	switch ([allTouches count]) {
-		case 1:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
+	case 1: {
+		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+		CGPoint point = [touch locationInView:self];
+		if (!getMouseCoords(_orientation, point, &x, &y))
+			return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseUp], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseUp], @"type",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
-		case 2:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
-			CGPoint point = [touch locationInView:self];
-			if (!getLocalMouseCoords(&point))
-				return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
-			  [NSNumber numberWithFloat:point.x], @"x",
-			  [NSNumber numberWithFloat:point.y], @"y",
-			  nil
-			  ]
-			 ];
-			break;
+	case 2: {
+		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
+		CGPoint point = [touch locationInView:self];
+		if (!getMouseCoords(_orientation, point, &x, &y))
+			return;
+
+		[self addEvent:
+		 [[NSDictionary alloc] initWithObjectsAndKeys:
+		  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
+		  [NSNumber numberWithInt:x], @"x",
+		  [NSNumber numberWithInt:y], @"y",
+		  nil
+		  ]
+		 ];
+		break;
 		}
 	}
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
 }
 
 - (void)handleKeyPress:(unichar)c {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputKeyPressed], @"type",
-		 [NSNumber numberWithFloat:(float)c], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:c], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -724,8 +839,8 @@ bool getLocalMouseCoords(CGPoint *point) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputSwipe], @"type",
-		 [NSNumber numberWithFloat:(float)num], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:num], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -735,8 +850,8 @@ bool getLocalMouseCoords(CGPoint *point) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputApplicationSuspended], @"type",
-		 [NSNumber numberWithFloat:0], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:0], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];
@@ -746,8 +861,8 @@ bool getLocalMouseCoords(CGPoint *point) {
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputApplicationResumed], @"type",
-		 [NSNumber numberWithFloat:0], @"x",
-		 [NSNumber numberWithFloat:0], @"y",
+		 [NSNumber numberWithInt:0], @"x",
+		 [NSNumber numberWithInt:0], @"y",
 		 nil
 		]
 	];

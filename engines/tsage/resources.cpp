@@ -135,7 +135,7 @@ uint16 BitReader::readToken() {
 /*-------------------------------------------------------------------------*/
 
 TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
-		_memoryManager(memManager) {
+		_filename(filename), _memoryManager(memManager) {
 
 	// If the resource strings list isn't yet loaded, load them
 	if (_resStrings.size() == 0) {
@@ -158,25 +158,35 @@ TLib::~TLib() {
 	_resStrings.clear();
 }
 
+/**
+ * Load a section index from the given position in the file
+ */
 void TLib::loadSection(uint32 fileOffset) {
 	_resources.clear();
 	_file.seek(fileOffset);
 	_sections.fileOffset = fileOffset;
 
-	if (_file.readUint32BE() != 0x544D492D)
+	loadSection(_file, _resources);
+}
+
+/**
+ * Inner logic for decoding a section index into a passed resource list object
+ */
+void TLib::loadSection(Common::File &f, ResourceList &resources) {
+	if (f.readUint32BE() != 0x544D492D)
 		error("Data block is not valid Rlb data");
 
-	/*uint8 unknown1 = */_file.readByte();
-	uint16 numEntries = _file.readByte();
+	/*uint8 unknown1 = */f.readByte();
+	uint16 numEntries = f.readByte();
 
 	for (uint i = 0; i < numEntries; ++i) {
-		uint16 id = _file.readUint16LE();
-		uint16 size = _file.readUint16LE();
-		uint16 uncSize = _file.readUint16LE();
-		uint8 sizeHi = _file.readByte();
-		uint8 type = _file.readByte() >> 5;
+		uint16 id = f.readUint16LE();
+		uint16 size = f.readUint16LE();
+		uint16 uncSize = f.readUint16LE();
+		uint8 sizeHi = f.readByte();
+		uint8 type = f.readByte() >> 5;
 		assert(type <= 1);
-		uint32 offset = _file.readUint32LE();
+		uint32 offset = f.readUint32LE();
 
 		ResourceEntry re;
 		re.id = id;
@@ -185,7 +195,7 @@ void TLib::loadSection(uint32 fileOffset) {
 		re.size = ((sizeHi & 0xF) << 16) | size;
 		re.uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
 
-		_resources.push_back(re);
+		resources.push_back(re);
 	}
 }
 
@@ -439,6 +449,36 @@ bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool supp
 	result = Common::String(srcP);
 	_memoryManager.deallocate(msgData);
 	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+/**
+ * Open up the main resource file and get an entry from the root section
+ */
+bool TLib::getSectionEntry(Common::File &f, ResourceType resType, int rlbNum, int resNum, 
+									  ResourceEntry &resEntry) {
+	// Try and open the resource file
+	if (!f.open(_filename))
+	  return false;
+
+	// Load the root section index
+	ResourceList resList;
+	loadSection(f, resList);
+
+	// Loop through the index for the desired entry
+	ResourceList::iterator iter;
+	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
+		ResourceEntry &re = *iter;
+		if (re.id == resNum) {
+			// Found it, so exit
+			resEntry = re;
+			return true;
+		}
+	}
+
+	// No matching entry found
+	return false;
 }
 
 /*--------------------------------------------------------------------------*/

@@ -39,7 +39,7 @@ namespace Common {
 const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
-class Keymapper : public Common::EventMapper, private Common::ArtificialEventSource {
+class Keymapper : public Common::DefaultEventMapper {
 public:
 
 	struct MapRecord {
@@ -76,6 +76,9 @@ public:
 
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
+
+	// EventMapper interface
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 
 	/**
 	 * Registers a HardwareKeySet with the Keymapper
@@ -137,31 +140,27 @@ public:
 	 */
 	void popKeymap(const char *name = 0);
 
-	// Implementation of the EventMapper interface
-	bool notifyEvent(const Common::Event &ev);
-	bool pollEvent(Common::Event &ev) { return Common::ArtificialEventSource::pollEvent(ev); }
-
 	/**
 	 * @brief Map a key press event.
 	 * If the active keymap contains a Action mapped to the given key, then
 	 * the Action's events are pushed into the EventManager's event queue.
 	 * @param key		key that was pressed
 	 * @param keyDown	true for key down, false for key up
-	 * @return			true if key was mapped
+	 * @return			mapped events
 	 */
-	bool mapKey(const KeyState& key, bool keyDown);
+	List<Event> mapKey(const KeyState& key, bool keyDown);
 
 	/**
 	 * @brief Map a key down event.
 	 * @see mapKey
 	 */
-	bool mapKeyDown(const KeyState& key);
+	List<Event> mapKeyDown(const KeyState& key);
 
 	/**
 	 * @brief Map a key up event.
 	 * @see mapKey
 	 */
-	bool mapKeyUp(const KeyState& key);
+	List<Event> mapKeyUp(const KeyState& key);
 
 	/**
 	 * Enable/disable the keymapper
@@ -189,7 +188,7 @@ private:
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
 	Action *getAction(const KeyState& key);
-	void executeAction(const Action *act, bool keyDown);
+	List<Event> executeAction(const Action *act, bool keyDown);
 
 	EventManager *_eventMan;
 

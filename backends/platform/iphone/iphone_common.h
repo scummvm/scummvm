@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
 
 enum InputEvent {
 	kInputMouseDown,
@@ -41,13 +43,17 @@ enum ScreenOrientation {
 	kScreenOrientationFlippedLandscape
 };
 
-typedef enum
-{
+enum UIViewSwipeDirection {
 	kUIViewSwipeUp = 1,
 	kUIViewSwipeDown = 2,
 	kUIViewSwipeLeft = 4,
 	kUIViewSwipeRight = 8
-} UIViewSwipeDirection;
+};
+
+typedef enum {
+	kGraphicsModeLinear = 0,
+	kGraphicsModeNone = 1
+} GraphicsModes;
 
 #ifdef IPHONE_OFFICIAL
 void iphone_main(int argc, char **argv);
@@ -64,20 +70,24 @@ void iphone_main(int argc, char *argv[]);
 #endif
 
 // On the ObjC side
+void iPhone_setGraphicsMode(int mode);
 void iPhone_updateScreen(int mouseX, int mouseY);
-void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2);
-void iPhone_updateOverlayRect(unsigned short* screen, int x1, int y1, int x2, int y2);
+void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);
+void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2);
 void iPhone_initSurface(int width, int height);
-bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
-const char* iPhone_getDocumentsDir();
+bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
+const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
 int iPhone_getScreenHeight();
 int iPhone_getScreenWidth();
 void iPhone_enableOverlay(int state);
-void iPhone_setMouseCursor(short* buffer, int width, int height);
+void iPhone_showCursor(int state);
+void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY);
 
 uint getSizeNextPOT(uint size);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -398,7 +398,7 @@
 	<!-- Background of the slider widget -->
 	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
+					stroke = '1'
 					radius = '5'
 					fill = 'foreground'
 					fg_color = 'paleyellow'
@@ -687,6 +687,7 @@
 					radius = '5'
 					fg_color = 'paleyellow'
 					shadow = '0'
+					stroke = '1'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>

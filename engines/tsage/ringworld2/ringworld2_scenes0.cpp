@@ -1499,25 +1499,25 @@ Scene180::Scene180(): SceneExt(), _webbsterSpeaker(27) {
 
 	GfxFont font;
 	font.setFontNumber(7);
-	_fontHeight = font.getHeight();
+	_fontHeight = font.getHeight() + 1;
 
 	_sceneMode = (R2_GLOBALS._sceneManager._previousScene == 205) ? 10 : 0;
 	_gameTextSpeaker._displayMode = 9;
+}
+
+void Scene180::postInit(SceneObjectList *OwnerList) {
+	loadScene(9999);
+	SceneExt::postInit();
+
+	R2_GLOBALS._uiElements._active = true;
+	R2_GLOBALS._player.disableControl();
+
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_webbsterSpeaker);
 	_stripManager.addSpeaker(&_tealSpeaker);
 	_stripManager.addSpeaker(&_dutyOfficerSpeaker);
 
 	signal();
-}
-
-void Scene180::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(9999);
-
-	R2_GLOBALS._player._uiEnabled = false;
-	R2_GLOBALS._player.disableControl();
-
 }
 
 void Scene180::remove() {
@@ -1547,7 +1547,7 @@ void Scene180::synchronize(Serializer &s) {
 void Scene180::signal() {
 	R2_GLOBALS._playStream.stop();
 
-	switch (_sceneMode) {
+	switch (_sceneMode++) {
 	case 0:
 		setFrameInc(6);
 		break;
@@ -1555,13 +1555,13 @@ void Scene180::signal() {
 	case 1:
 		_field412 = 1;
 		R2_GLOBALS._sceneManager._hasPalette = true;
-		_actionObject._field3C = 2;
-		_actionObject._v1 = 1;
-		_actionObject._field56 = 1;
+		_animationPlayer._field3C = 2;
+		_animationPlayer._v = 1;
+		_animationPlayer._field56 = 1;
 		R2_GLOBALS._scene180Mode = 1;
 
-		_actionObject.load(1, NULL);
-		R2_GLOBALS._scenePalette.loadPalette(_actionObject._palData, 0, 256);
+		_animationPlayer.load(1, NULL);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._palData, 0, 256);
 
 		R2_GLOBALS._sound1.play(1);
 		break;
@@ -1598,14 +1598,14 @@ void Scene180::signal() {
 		break;
 
 	case 5:
-		_actionObject._field3C = 2;
-		_actionObject._v1 = 1;
-		_actionObject._field56 = 1;
+		_animationPlayer._field3C = 2;
+		_animationPlayer._v = 1;
+		_animationPlayer._field56 = 1;
 		R2_GLOBALS._scene180Mode = 2;
-		_actionObject.load(2);
+		_animationPlayer.load(2);
 
 		_field412 = 1;
-		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 6, NULL);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 6, NULL);
 		R2_GLOBALS._sound1.play(2);
 		break;
 
@@ -1701,11 +1701,11 @@ void Scene180::signal() {
 
 	case 29:
 		_field412 = 1;
-		_actionObject._field3C = 0;
-		_actionObject._v1 = 1;
-		_actionObject._field56 = 42;
+		_animationPlayer._field3C = 0;
+		_animationPlayer._v = 1;
+		_animationPlayer._field56 = 42;
 		R2_GLOBALS._scene180Mode = 3;
-		_actionObject.load(3);
+		_animationPlayer.load(3);
 		break;
 
 	case 31:
@@ -1801,12 +1801,12 @@ void Scene180::signal() {
 		break;
 
 	case 40:
-		_actionObject._field3C = 2;
-		_actionObject._field56 = 1;
+		_animationPlayer._field3C = 2;
+		_animationPlayer._field56 = 1;
 		R2_GLOBALS._scene180Mode = 4;
-		if (_actionObject.load(4)) {
-			_actionObject.dispatch();
-			R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 8, this);
+		if (_animationPlayer.load(4)) {
+			_animationPlayer.dispatch();
+			R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 8, this);
 		} else {
 			_sceneMode = 43;
 			setFrameInc(1);
@@ -1815,7 +1815,7 @@ void Scene180::signal() {
 
 	case 41:
 		_field412 = 1;
-		_actionObject._v1 = 1;
+		_animationPlayer._v = 1;
 		break;
 
 	case 42:
@@ -1834,19 +1834,19 @@ void Scene180::signal() {
 		break;
 
 	case 45:
-		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 28, this);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 28, this);
 		break;
 
 	case 48:
 		_field412 = 1;
-		_actionObject._field3C = 2;
-		_actionObject._v1 = 1;
-		_actionObject._field56 = 1;
+		_animationPlayer._field3C = 2;
+		_animationPlayer._v = 1;
+		_animationPlayer._field56 = 1;
 		R2_GLOBALS._scene180Mode = 15;
-		_actionObject.load(15, NULL);
+		_animationPlayer.load(15, NULL);
 
 		R2_GLOBALS._sound1.play(9);
-		R2_GLOBALS._scenePalette.addFader(_actionObject._palData, 256, 6, NULL);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 6, NULL);
 		break;
 
 	case 49:
@@ -1884,11 +1884,11 @@ void Scene180::process(Event &event) {
 
 void Scene180::dispatch() {
 	if (_frameInc) {
-		uint32 frameNumber = R2_GLOBALS._events.getFrameNumber();
+		uint32 gameFrame = R2_GLOBALS._events.getFrameNumber();
 
-		if (frameNumber >= (uint32)_frameNumber) {
-			_frameInc = frameNumber - _frameNumber;
-			_frameNumber = frameNumber;
+		if (gameFrame >= (uint32)_frameNumber) {
+			_frameInc -= gameFrame - _frameNumber;
+			_frameNumber = gameFrame;
 
 			if (_frameInc <= 0) {
 				_frameInc = 0;
@@ -1897,15 +1897,15 @@ void Scene180::dispatch() {
 		}
 	}
 
-	if (_actionObject._v1) {
-		if (_actionObject.proc1()) {
-			_actionObject._v1 = 0;
-			_actionObject.proc2();
-			_actionObject.remove();
+	if (_animationPlayer._v) {
+		if (_animationPlayer.method3()) {
+			_animationPlayer._v = 0;
+			_animationPlayer.method4();
+			_animationPlayer.remove();
 
 			signal();
 		} else {
-			_actionObject.dispatch();
+			_animationPlayer.dispatch();
 		}
 	}
 

@@ -145,10 +145,12 @@ private:
 	MemoryManager &_memoryManager;
 private:
 	Common::File _file;
+	Common::String _filename;
 	ResourceList _resources;
 	SectionList _sections;
 
 	void loadSection(uint32 fileOffset);
+	void loadSection(Common::File &f, ResourceList &resources);
 	void loadIndex();
 public:
 	TLib(MemoryManager &memManager, const Common::String &filename);
@@ -159,6 +161,8 @@ public:
 	bool getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries);
 	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
 	bool getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors = false);
+
+	bool getSectionEntry(Common::File &f, ResourceType resType, int rlbNum, int resNum, ResourceEntry &resEntry);
 };
 
 class ResourceManager {
@@ -174,6 +178,7 @@ public:
 	void getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries, bool suppressErrors = false);
 	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
 	Common::String getMessage(int resNum, int lineNum, bool suppressErrors = false);
+	TLib &first() { return **_libList.begin(); }
 };
 
 

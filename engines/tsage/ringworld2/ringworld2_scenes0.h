@@ -204,7 +204,7 @@ public:
 	SceneActor _object1, _object2, _object3, _object4, _object5;
 	ScenePalette _palette;
 	SceneText _textList[20];
-	ActionObjectExt _actionObject;
+	AnimationPlayerExt _animationPlayer;
 	SequenceManager _sequenceManager;
 	Action1 _action1;
 	ASoundExt _sound1;
@@ -287,7 +287,7 @@ private:
 					int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
 public:
-	ActionObject _actionObject;
+	AnimationPlayer _animationPlayer;
 	int _fontHeight;
 	SceneText _textList[15];
 	Object *_objList1[3];

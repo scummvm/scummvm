@@ -28,30 +28,30 @@
 void iphone_main(int argc, char *argv[]);
 
 @interface iPhoneMain : UIApplication {
-	UIWindow* _window;
-	iPhoneView* _view;
+	UIWindow *_window;
+	iPhoneView *_view;
 }
 
-- (void) mainLoop: (id)param;
-- (iPhoneView*) getView;
-- (UIWindow*) getWindow;
+- (void)mainLoop:(id)param;
+- (iPhoneView *)getView;
+- (UIWindow *)getWindow;
 - (void)didRotate:(NSNotification *)notification;
 @end
 
 static int gArgc;
-static char** gArgv;
+static char **gArgv;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	gArgc = argc;
 	gArgv = argv;
 
-    NSAutoreleasePool *autoreleasePool = [
-        [ NSAutoreleasePool alloc ] init
-    ];
+	NSAutoreleasePool *autoreleasePool = [
+		[NSAutoreleasePool alloc] init
+	];
 
-    int returnCode = UIApplicationMain(argc, argv, @"iPhoneMain", @"iPhoneMain");
-    [ autoreleasePool release ];
-    return returnCode;
+	int returnCode = UIApplicationMain(argc, argv, @"iPhoneMain", @"iPhoneMain");
+	[autoreleasePool release];
+	return returnCode;
 }
 
 @implementation iPhoneMain
@@ -63,14 +63,14 @@ int main(int argc, char** argv) {
 	return self;
 }
 
-- (void) mainLoop: (id)param {
+- (void)mainLoop:(id)param {
 	[[NSAutoreleasePool alloc] init];
 
 	iphone_main(gArgc, gArgv);
 	exit(0);
 }
 
-- (iPhoneView*) getView {
+- (iPhoneView *)getView {
 	return _view;
 }
 
@@ -78,38 +78,36 @@ int main(int argc, char** argv) {
 	CGRect  rect = [[UIScreen mainScreen] bounds];
 
 	// hide the status bar
-    [application setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
-    [application setStatusBarHidden:YES animated:YES];
+	[application setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
+	[application setStatusBarHidden:YES animated:YES];
 
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
-	_view = [[iPhoneView alloc] initWithFrame: rect];
+	_view = [[iPhoneView alloc] initWithFrame:rect];
 	_view.multipleTouchEnabled = YES;
 
-	[_window setContentView: _view];
+	[_window setContentView:_view];
 
   	[_window addSubview:_view];
 	[_window makeKeyAndVisible];
 
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(didRotate:)
-												 name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+	                                         selector:@selector(didRotate:)
+	                                             name:@"UIDeviceOrientationDidChangeNotification"
+	                                           object:nil];
 
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
-- (void)applicationDidResume
-{
+- (void)applicationDidResume {
 }
 
-- (void)applicationWillSuspend
-{
+- (void)applicationWillSuspend {
 }
 
-- (void)applicationWillTerminate
-{
+- (void)applicationWillTerminate {
 }
 
 - (void)applicationSuspend:(struct __GSEvent *)event {
@@ -122,14 +120,14 @@ int main(int argc, char** argv) {
 
 	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
 	// since the Springboard has put it back without apparently flagging our application.
-    [self setStatusBarHidden:YES animated:YES];
-    [self setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
-    [self setStatusBarHidden:YES animated:YES];
+	[self setStatusBarHidden:YES animated:YES];
+	[self setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
+	[self setStatusBarHidden:YES animated:YES];
 }
 
 - (void)didRotate:(NSNotification *)notification {
-	int screenOrientation = [[UIDevice currentDevice] orientation];
-	[_view deviceOrientationChanged: screenOrientation];
+	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
+	[_view deviceOrientationChanged:screenOrientation];
 }
 
 - (UIWindow*) getWindow {
