@@ -27,7 +27,6 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/types.h"
 #include "common/events.h"
 #include "common/func.h"
 #include "common/list.h"
@@ -54,8 +53,6 @@ struct Action {
 
 	/** Events to be sent when mapped key is pressed */
 	List<Event> events;
-	ActionType type;
-	KeyType preferredKey;
 	int priority;
 	int group;
 	int flags;
@@ -67,8 +64,6 @@ private:
 
 public:
 	Action(Keymap *boss, const char *id, String des = "",
-		   ActionType typ = kGenericActionType,
-		   KeyType prefKey = kGenericKeyType,
 		   int pri = 0, int flg = 0 );
 
 	void addEvent(const Event &evt) {

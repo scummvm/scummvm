@@ -189,13 +189,13 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 	evt.customType = Maemo::kEventClickMode;
 	act->addEvent(evt);
 
-	act = new Action(globalMap, "LCLK", _("Left Click"), kLeftClickActionType);
+	act = new Action(globalMap, "LCLK", _("Left Click"));
 	act->addLeftClickEvent();
 
 	act = new Action(globalMap, "MCLK", _("Middle Click"));
 	act->addMiddleClickEvent();
 
-	act = new Action(globalMap, "RCLK", _("Right Click"), kRightClickActionType);
+	act = new Action(globalMap, "RCLK", _("Right Click"));
 	act->addRightClickEvent();
 
 	return globalMap;

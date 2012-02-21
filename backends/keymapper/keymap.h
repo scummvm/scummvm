@@ -52,7 +52,7 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap(const String& name, Keymap *parent = 0) : _name(name), _parent(parent) {}
+	Keymap(const String& name) : _name(name) {}
 	Keymap(const Keymap& km);
 	~Keymap();
 
@@ -91,9 +91,6 @@ public:
 	 */
 	void saveMappings();
 
-
-	void automaticMapping(HardwareKeySet *hwKeys);
-
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
 	 * all HardwareKey's from the given set have been used up.
@@ -101,7 +98,6 @@ public:
 	bool isComplete(const HardwareKeySet *hwKeys);
 
 	const String& getName() { return _name; }
-	Keymap *getParent() { return _parent; }
 
 private:
 	friend struct Action;
@@ -131,12 +127,7 @@ private:
 	Action *findAction(const char *id);
 	const Action *findAction(const char *id) const;
 
-	void internalMapKey(Action *action, HardwareKey *hwKey);
-
-	Action *getParentMappedAction(KeyState key);
-
 	String _name;
-	Keymap *_parent;
 	List<Action *> _actions;
 	HashMap<KeyState, Action *> _keymap;
 	ConfigManager::Domain *_configDomain;

@@ -27,7 +27,6 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/types.h"
 #include "common/textconsole.h"
 
 namespace Common {
@@ -50,12 +49,8 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	KeyType type;
-	ActionType preferredAction;
-
-	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "",
-				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
-		: key(ky), description(desc), type(typ), preferredAction(prefAct) {
+	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "")
+		: key(ky), description(desc) {
 		assert(i);
 		Common::strlcpy(hwKeyId, i, HWKEY_ID_SIZE);
 	}
@@ -69,7 +64,6 @@ struct KeyTableEntry {
 	KeyCode keycode;
 	uint16 ascii;
 	const char *desc;
-	KeyType preferredAction;
 	bool shiftable;
 };
 
@@ -170,7 +164,7 @@ public:
 					snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
 				}
 
-				addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
+				addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
 			}
 		}
 	}
