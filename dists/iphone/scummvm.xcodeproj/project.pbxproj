@@ -16,6 +16,16 @@
 		164E6F4B14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4D14F28626005C2C9A /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4114F28626005C2C9A /* libvorbisidec.a */; };
 		164E6F4F14F2A18E005C2C9A /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 164E6F4E14F2A18E005C2C9A /* SDL.framework */; };
+		1692AE4214F3865200889F28 /* iphone_keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE3914F3865200889F28 /* iphone_keyboard.m */; };
+		1692AE4314F3865200889F28 /* iphone_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE3A14F3865200889F28 /* iphone_main.m */; };
+		1692AE4414F3865200889F28 /* iphone_video.m in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE3C14F3865200889F28 /* iphone_video.m */; };
+		1692AE4514F3865200889F28 /* osys_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE3D14F3865200889F28 /* osys_events.cpp */; };
+		1692AE4614F3865200889F28 /* osys_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE3E14F3865200889F28 /* osys_main.cpp */; };
+		1692AE4714F3865200889F28 /* osys_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE4014F3865200889F28 /* osys_sound.cpp */; };
+		1692AE4814F3865200889F28 /* osys_video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE4114F3865200889F28 /* osys_video.cpp */; };
+		1692AE4A14F3A31400889F28 /* EventMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE4914F3A31400889F28 /* EventMapper.cpp */; };
+		1692AE4B14F3A31400889F28 /* EventMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE4914F3A31400889F28 /* EventMapper.cpp */; };
+		1692AE4C14F3A31400889F28 /* EventMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1692AE4914F3A31400889F28 /* EventMapper.cpp */; };
 		16B7A5DF14EBEF6500FA35FF /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A51C14EBEF6500FA35FF /* actor.cpp */; };
 		16B7A5E014EBEF6500FA35FF /* akos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A51F14EBEF6500FA35FF /* akos.cpp */; };
 		16B7A5E114EBEF6500FA35FF /* base-costume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B7A52114EBEF6500FA35FF /* base-costume.cpp */; };
@@ -1498,14 +1508,6 @@
 		DF7585EC100CB6EA00CC3324 /* sjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585EA100CB6EA00CC3324 /* sjis.cpp */; };
 		DF7585ED100CB6EA00CC3324 /* sjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585EA100CB6EA00CC3324 /* sjis.cpp */; };
 		DF7585EE100CB6EA00CC3324 /* sjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585EA100CB6EA00CC3324 /* sjis.cpp */; };
-		DF758619100CBA0200CC3324 /* osys_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758614100CBA0200CC3324 /* osys_events.cpp */; };
-		DF75861A100CBA0200CC3324 /* osys_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758615100CBA0200CC3324 /* osys_main.cpp */; };
-		DF75861B100CBA0200CC3324 /* osys_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758617100CBA0200CC3324 /* osys_sound.cpp */; };
-		DF75861C100CBA0200CC3324 /* osys_video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758618100CBA0200CC3324 /* osys_video.cpp */; };
-		DF75861D100CBA0200CC3324 /* osys_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758614100CBA0200CC3324 /* osys_events.cpp */; };
-		DF75861E100CBA0200CC3324 /* osys_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758615100CBA0200CC3324 /* osys_main.cpp */; };
-		DF75861F100CBA0200CC3324 /* osys_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758617100CBA0200CC3324 /* osys_sound.cpp */; };
-		DF758620100CBA0200CC3324 /* osys_video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758618100CBA0200CC3324 /* osys_video.cpp */; };
 		DF7E8BFD0ED5FC77001CB19F /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF00ED5FC77001CB19F /* saveload.cpp */; };
 		DF7E8BFF0ED5FC77001CB19F /* ThemeEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF40ED5FC77001CB19F /* ThemeEngine.cpp */; };
 		DF7E8C000ED5FC77001CB19F /* ThemeEval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF60ED5FC77001CB19F /* ThemeEval.cpp */; };
@@ -1522,8 +1524,6 @@
 		DF7F28A511FF24C400159131 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F28A311FF24C400159131 /* console.cpp */; };
 		DF7F28A611FF24C400159131 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F28A311FF24C400159131 /* console.cpp */; };
 		DF7F28A711FF24C400159131 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7F28A311FF24C400159131 /* console.cpp */; };
-		DF841FDD0E7BA61800F5680E /* iphone_keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = DF841FD90E7BA61800F5680E /* iphone_keyboard.m */; };
-		DF841FDE0E7BA61800F5680E /* iphone_video.m in Sources */ = {isa = PBXBuildFile; fileRef = DF841FDB0E7BA61800F5680E /* iphone_video.m */; };
 		DF84258D0E7BA6AC00F5680E /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420AB0E7BA6A600F5680E /* actor.cpp */; };
 		DF84258F0E7BA6AC00F5680E /* background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420AE0E7BA6A600F5680E /* background.cpp */; };
 		DF8425910E7BA6AC00F5680E /* backgroundIncrust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420B10E7BA6A600F5680E /* backgroundIncrust.cpp */; };
@@ -1867,7 +1867,6 @@
 		DF8428570E7BA6AC00F5680E /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425060E7BA6AB00F5680E /* saveload.cpp */; };
 		DF8428580E7BA6AC00F5680E /* staticres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425070E7BA6AB00F5680E /* staticres.cpp */; };
 		DF8428590E7BA6AC00F5680E /* touche.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425080E7BA6AB00F5680E /* touche.cpp */; };
-		DF8428970E7BAAAB00F5680E /* blit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8428960E7BAAAB00F5680E /* blit.cpp */; };
 		DF842A1A0E7BB34E00F5680E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A160E7BB34E00F5680E /* CoreAudio.framework */; };
 		DF842A1B0E7BB34E00F5680E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A170E7BB34E00F5680E /* CoreFoundation.framework */; };
 		DF842A1C0E7BB34E00F5680E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A180E7BB34E00F5680E /* Foundation.framework */; };
@@ -1915,7 +1914,6 @@
 		DFE470D40D81F4BA00B6D1FB /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470CC0D81F4BA00B6D1FB /* version.cpp */; };
 		DFE4782B0D81F4E900B6D1FB /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470D80D81F4E700B6D1FB /* default-events.cpp */; };
 		DFE478380D81F4E900B6D1FB /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470F60D81F4E700B6D1FB /* posix-fs-factory.cpp */; };
-		DFE478C50D81F4E900B6D1FB /* iphone_main.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E10D81F4E700B6D1FB /* iphone_main.m */; };
 		DFE479B60D81F4E900B6D1FB /* posix-provider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473810D81F4E800B6D1FB /* posix-provider.cpp */; };
 		DFE479BA0D81F4E900B6D1FB /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE4738E0D81F4E800B6D1FB /* default-saves.cpp */; };
 		DFE479BB0D81F4E900B6D1FB /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473900D81F4E800B6D1FB /* savefile.cpp */; };
@@ -1968,7 +1966,6 @@
 		DFF9591A0FB22D5700A3EC78 /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470CC0D81F4BA00B6D1FB /* version.cpp */; };
 		DFF9591B0FB22D5700A3EC78 /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470D80D81F4E700B6D1FB /* default-events.cpp */; };
 		DFF9591C0FB22D5700A3EC78 /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470F60D81F4E700B6D1FB /* posix-fs-factory.cpp */; };
-		DFF9591D0FB22D5700A3EC78 /* iphone_main.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E10D81F4E700B6D1FB /* iphone_main.m */; };
 		DFF9591F0FB22D5700A3EC78 /* posix-provider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473810D81F4E800B6D1FB /* posix-provider.cpp */; };
 		DFF959200FB22D5700A3EC78 /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE4738E0D81F4E800B6D1FB /* default-saves.cpp */; };
 		DFF959210FB22D5700A3EC78 /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473900D81F4E800B6D1FB /* savefile.cpp */; };
@@ -2005,8 +2002,6 @@
 		DFF959710FB22D5700A3EC78 /* aspect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD518AB0DF34BA600854012 /* aspect.cpp */; };
 		DFF959740FB22D5700A3EC78 /* scale2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD518B50DF34BA600854012 /* scale2x.cpp */; };
 		DFF959750FB22D5700A3EC78 /* scale3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD518B80DF34BA600854012 /* scale3x.cpp */; };
-		DFF959760FB22D5700A3EC78 /* iphone_keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = DF841FD90E7BA61800F5680E /* iphone_keyboard.m */; };
-		DFF959770FB22D5700A3EC78 /* iphone_video.m in Sources */ = {isa = PBXBuildFile; fileRef = DF841FDB0E7BA61800F5680E /* iphone_video.m */; };
 		DFF959D90FB22D5700A3EC78 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420AB0E7BA6A600F5680E /* actor.cpp */; };
 		DFF959DA0FB22D5700A3EC78 /* background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420AE0E7BA6A600F5680E /* background.cpp */; };
 		DFF959DB0FB22D5700A3EC78 /* backgroundIncrust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8420B10E7BA6A600F5680E /* backgroundIncrust.cpp */; };
@@ -2350,7 +2345,6 @@
 		DFF95C0A0FB22D5700A3EC78 /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425060E7BA6AB00F5680E /* saveload.cpp */; };
 		DFF95C0B0FB22D5700A3EC78 /* staticres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425070E7BA6AB00F5680E /* staticres.cpp */; };
 		DFF95C0C0FB22D5700A3EC78 /* touche.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8425080E7BA6AB00F5680E /* touche.cpp */; };
-		DFF95C0D0FB22D5700A3EC78 /* blit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8428960E7BAAAB00F5680E /* blit.cpp */; };
 		DFF95C0E0FB22D5700A3EC78 /* timidity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF842A3D0E7BBB5000F5680E /* timidity.cpp */; };
 		DFF95C110FB22D5700A3EC78 /* stdiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF842A6B0E7BBD5700F5680E /* stdiostream.cpp */; };
 		DFF95C130FB22D5700A3EC78 /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF00ED5FC77001CB19F /* saveload.cpp */; };
@@ -2491,6 +2485,18 @@
 		164E6F4014F28626005C2C9A /* libmpeg2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmpeg2.a; path = lib/libmpeg2.a; sourceTree = "<group>"; };
 		164E6F4114F28626005C2C9A /* libvorbisidec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisidec.a; path = lib/libvorbisidec.a; sourceTree = "<group>"; };
 		164E6F4E14F2A18E005C2C9A /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		1692AE3714F3865200889F28 /* iphone_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_common.h; sourceTree = "<group>"; };
+		1692AE3814F3865200889F28 /* iphone_keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_keyboard.h; sourceTree = "<group>"; };
+		1692AE3914F3865200889F28 /* iphone_keyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iphone_keyboard.m; sourceTree = "<group>"; };
+		1692AE3A14F3865200889F28 /* iphone_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iphone_main.m; sourceTree = "<group>"; };
+		1692AE3B14F3865200889F28 /* iphone_video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_video.h; sourceTree = "<group>"; };
+		1692AE3C14F3865200889F28 /* iphone_video.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iphone_video.m; sourceTree = "<group>"; };
+		1692AE3D14F3865200889F28 /* osys_events.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_events.cpp; sourceTree = "<group>"; };
+		1692AE3E14F3865200889F28 /* osys_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_main.cpp; sourceTree = "<group>"; };
+		1692AE3F14F3865200889F28 /* osys_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osys_main.h; sourceTree = "<group>"; };
+		1692AE4014F3865200889F28 /* osys_sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_sound.cpp; sourceTree = "<group>"; };
+		1692AE4114F3865200889F28 /* osys_video.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_video.cpp; sourceTree = "<group>"; };
+		1692AE4914F3A31400889F28 /* EventMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventMapper.cpp; sourceTree = "<group>"; };
 		16B7A51C14EBEF6500FA35FF /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		16B7A51D14EBEF6500FA35FF /* actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
 		16B7A51E14EBEF6500FA35FF /* actor_he.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor_he.h; sourceTree = "<group>"; };
@@ -3695,11 +3701,6 @@
 		DF6BF4E310529E260069811F /* sound_amiga.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound_amiga.cpp; sourceTree = "<group>"; };
 		DF7585EA100CB6EA00CC3324 /* sjis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sjis.cpp; sourceTree = "<group>"; };
 		DF7585EB100CB6EA00CC3324 /* sjis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sjis.h; sourceTree = "<group>"; };
-		DF758614100CBA0200CC3324 /* osys_events.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_events.cpp; sourceTree = "<group>"; };
-		DF758615100CBA0200CC3324 /* osys_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_main.cpp; sourceTree = "<group>"; };
-		DF758616100CBA0200CC3324 /* osys_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osys_main.h; sourceTree = "<group>"; };
-		DF758617100CBA0200CC3324 /* osys_sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_sound.cpp; sourceTree = "<group>"; };
-		DF758618100CBA0200CC3324 /* osys_video.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_video.cpp; sourceTree = "<group>"; };
 		DF7E8BF00ED5FC77001CB19F /* saveload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload.cpp; sourceTree = "<group>"; };
 		DF7E8BF10ED5FC77001CB19F /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		DF7E8BF40ED5FC77001CB19F /* ThemeEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThemeEngine.cpp; sourceTree = "<group>"; };
@@ -3723,9 +3724,6 @@
 		DF7F288A11FF244F00159131 /* Tooltip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tooltip.h; sourceTree = "<group>"; };
 		DF7F28A311FF24C400159131 /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
 		DF7F28A411FF24C400159131 /* console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
-		DF841FD90E7BA61800F5680E /* iphone_keyboard.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = iphone_keyboard.m; sourceTree = "<group>"; };
-		DF841FDA0E7BA61800F5680E /* iphone_video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_video.h; sourceTree = "<group>"; };
-		DF841FDB0E7BA61800F5680E /* iphone_video.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = iphone_video.m; sourceTree = "<group>"; };
 		DF8420AB0E7BA6A600F5680E /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		DF8420AC0E7BA6A600F5680E /* actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
 		DF8420AE0E7BA6A600F5680E /* background.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = background.cpp; sourceTree = "<group>"; };
@@ -4319,7 +4317,6 @@
 		DF8425070E7BA6AB00F5680E /* staticres.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = staticres.cpp; sourceTree = "<group>"; };
 		DF8425080E7BA6AB00F5680E /* touche.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = touche.cpp; sourceTree = "<group>"; };
 		DF8425090E7BA6AB00F5680E /* touche.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = touche.h; sourceTree = "<group>"; };
-		DF8428960E7BAAAB00F5680E /* blit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = blit.cpp; sourceTree = "<group>"; };
 		DF842A160E7BB34E00F5680E /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		DF842A170E7BB34E00F5680E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		DF842A180E7BB34E00F5680E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -4371,10 +4368,6 @@
 		DFE470E80D81F4E700B6D1FB /* fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fs-factory.h"; sourceTree = "<group>"; };
 		DFE470F60D81F4E700B6D1FB /* posix-fs-factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "posix-fs-factory.cpp"; sourceTree = "<group>"; };
 		DFE470F70D81F4E700B6D1FB /* posix-fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "posix-fs-factory.h"; sourceTree = "<group>"; };
-		DFE471DC0D81F4E700B6D1FB /* blit_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blit_arm.h; sourceTree = "<group>"; };
-		DFE471DE0D81F4E700B6D1FB /* iphone_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_common.h; sourceTree = "<group>"; };
-		DFE471DF0D81F4E700B6D1FB /* iphone_keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_keyboard.h; sourceTree = "<group>"; };
-		DFE471E10D81F4E700B6D1FB /* iphone_main.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = iphone_main.m; sourceTree = "<group>"; };
 		DFE4737F0D81F4E800B6D1FB /* dynamic-plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "dynamic-plugin.h"; sourceTree = "<group>"; };
 		DFE473810D81F4E800B6D1FB /* posix-provider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "posix-provider.cpp"; sourceTree = "<group>"; };
 		DFE473820D81F4E800B6D1FB /* posix-provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "posix-provider.h"; sourceTree = "<group>"; };
@@ -5360,6 +5353,7 @@
 		16B7A92D14EBF5E500FA35FF /* common */ = {
 			isa = PBXGroup;
 			children = (
+				1692AE4914F3A31400889F28 /* EventMapper.cpp */,
 				16B7A92E14EBF5E500FA35FF /* algorithm.h */,
 				16B7A92F14EBF5E500FA35FF /* archive.cpp */,
 				16B7A93014EBF5E500FA35FF /* archive.h */,
@@ -7085,19 +7079,17 @@
 		DFE471D70D81F4E700B6D1FB /* iphone */ = {
 			isa = PBXGroup;
 			children = (
-				DF758614100CBA0200CC3324 /* osys_events.cpp */,
-				DF758615100CBA0200CC3324 /* osys_main.cpp */,
-				DF758616100CBA0200CC3324 /* osys_main.h */,
-				DF758617100CBA0200CC3324 /* osys_sound.cpp */,
-				DF758618100CBA0200CC3324 /* osys_video.cpp */,
-				DF8428960E7BAAAB00F5680E /* blit.cpp */,
-				DF841FD90E7BA61800F5680E /* iphone_keyboard.m */,
-				DF841FDA0E7BA61800F5680E /* iphone_video.h */,
-				DF841FDB0E7BA61800F5680E /* iphone_video.m */,
-				DFE471DC0D81F4E700B6D1FB /* blit_arm.h */,
-				DFE471DE0D81F4E700B6D1FB /* iphone_common.h */,
-				DFE471DF0D81F4E700B6D1FB /* iphone_keyboard.h */,
-				DFE471E10D81F4E700B6D1FB /* iphone_main.m */,
+				1692AE3714F3865200889F28 /* iphone_common.h */,
+				1692AE3814F3865200889F28 /* iphone_keyboard.h */,
+				1692AE3914F3865200889F28 /* iphone_keyboard.m */,
+				1692AE3A14F3865200889F28 /* iphone_main.m */,
+				1692AE3B14F3865200889F28 /* iphone_video.h */,
+				1692AE3C14F3865200889F28 /* iphone_video.m */,
+				1692AE3D14F3865200889F28 /* osys_events.cpp */,
+				1692AE3E14F3865200889F28 /* osys_main.cpp */,
+				1692AE3F14F3865200889F28 /* osys_main.h */,
+				1692AE4014F3865200889F28 /* osys_sound.cpp */,
+				1692AE4114F3865200889F28 /* osys_video.cpp */,
 			);
 			path = iphone;
 			sourceTree = "<group>";
@@ -7538,7 +7530,6 @@
 				DFE470D40D81F4BA00B6D1FB /* version.cpp in Sources */,
 				DFE4782B0D81F4E900B6D1FB /* default-events.cpp in Sources */,
 				DFE478380D81F4E900B6D1FB /* posix-fs-factory.cpp in Sources */,
-				DFE478C50D81F4E900B6D1FB /* iphone_main.m in Sources */,
 				DFE479B60D81F4E900B6D1FB /* posix-provider.cpp in Sources */,
 				DFE479BA0D81F4E900B6D1FB /* default-saves.cpp in Sources */,
 				DFE479BB0D81F4E900B6D1FB /* savefile.cpp in Sources */,
@@ -7575,8 +7566,6 @@
 				DFD518BD0DF34BA600854012 /* aspect.cpp in Sources */,
 				DFD518C50DF34BA600854012 /* scale2x.cpp in Sources */,
 				DFD518C70DF34BA600854012 /* scale3x.cpp in Sources */,
-				DF841FDD0E7BA61800F5680E /* iphone_keyboard.m in Sources */,
-				DF841FDE0E7BA61800F5680E /* iphone_video.m in Sources */,
 				DF84258D0E7BA6AC00F5680E /* actor.cpp in Sources */,
 				DF84258F0E7BA6AC00F5680E /* background.cpp in Sources */,
 				DF8425910E7BA6AC00F5680E /* backgroundIncrust.cpp in Sources */,
@@ -7920,7 +7909,6 @@
 				DF8428570E7BA6AC00F5680E /* saveload.cpp in Sources */,
 				DF8428580E7BA6AC00F5680E /* staticres.cpp in Sources */,
 				DF8428590E7BA6AC00F5680E /* touche.cpp in Sources */,
-				DF8428970E7BAAAB00F5680E /* blit.cpp in Sources */,
 				DF842A3E0E7BBB5000F5680E /* timidity.cpp in Sources */,
 				DF842A6D0E7BBD5700F5680E /* stdiostream.cpp in Sources */,
 				DF7E8BFD0ED5FC77001CB19F /* saveload.cpp in Sources */,
@@ -7991,10 +7979,6 @@
 				DF6118BE0FE3AA280042AD3F /* sound_pcspk.cpp in Sources */,
 				DF6118BF0FE3AA280042AD3F /* text_lol.cpp in Sources */,
 				DF7585EE100CB6EA00CC3324 /* sjis.cpp in Sources */,
-				DF75861D100CBA0200CC3324 /* osys_events.cpp in Sources */,
-				DF75861E100CBA0200CC3324 /* osys_main.cpp in Sources */,
-				DF75861F100CBA0200CC3324 /* osys_sound.cpp in Sources */,
-				DF758620100CBA0200CC3324 /* osys_video.cpp in Sources */,
 				DF6BF4C610529DA50069811F /* conversion.cpp in Sources */,
 				DF6BF4C710529DA50069811F /* jpeg.cpp in Sources */,
 				DF6BF4E510529E260069811F /* sound_amiga.cpp in Sources */,
@@ -8627,6 +8611,14 @@
 				16C4D7C214EE97100026AD95 /* TVA.cpp in Sources */,
 				16C4D7C314EE97100026AD95 /* TVF.cpp in Sources */,
 				16C4D7C414EE97100026AD95 /* TVP.cpp in Sources */,
+				1692AE4214F3865200889F28 /* iphone_keyboard.m in Sources */,
+				1692AE4314F3865200889F28 /* iphone_main.m in Sources */,
+				1692AE4414F3865200889F28 /* iphone_video.m in Sources */,
+				1692AE4514F3865200889F28 /* osys_events.cpp in Sources */,
+				1692AE4614F3865200889F28 /* osys_main.cpp in Sources */,
+				1692AE4714F3865200889F28 /* osys_sound.cpp in Sources */,
+				1692AE4814F3865200889F28 /* osys_video.cpp in Sources */,
+				1692AE4A14F3A31400889F28 /* EventMapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9270,6 +9262,7 @@
 				F9946DF8139E1BBF0072D195 /* sdl-mixer.cpp in Sources */,
 				F9946DFF139E1BEB0072D195 /* doublebuffersdl-mixer.cpp in Sources */,
 				F9946E05139E1C390072D195 /* sdl-graphics.cpp in Sources */,
+				1692AE4B14F3A31400889F28 /* EventMapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9283,7 +9276,6 @@
 				DFF9591A0FB22D5700A3EC78 /* version.cpp in Sources */,
 				DFF9591B0FB22D5700A3EC78 /* default-events.cpp in Sources */,
 				DFF9591C0FB22D5700A3EC78 /* posix-fs-factory.cpp in Sources */,
-				DFF9591D0FB22D5700A3EC78 /* iphone_main.m in Sources */,
 				DFF9591F0FB22D5700A3EC78 /* posix-provider.cpp in Sources */,
 				DFF959200FB22D5700A3EC78 /* default-saves.cpp in Sources */,
 				DFF959210FB22D5700A3EC78 /* savefile.cpp in Sources */,
@@ -9320,8 +9312,6 @@
 				DFF959710FB22D5700A3EC78 /* aspect.cpp in Sources */,
 				DFF959740FB22D5700A3EC78 /* scale2x.cpp in Sources */,
 				DFF959750FB22D5700A3EC78 /* scale3x.cpp in Sources */,
-				DFF959760FB22D5700A3EC78 /* iphone_keyboard.m in Sources */,
-				DFF959770FB22D5700A3EC78 /* iphone_video.m in Sources */,
 				DFF959D90FB22D5700A3EC78 /* actor.cpp in Sources */,
 				DFF959DA0FB22D5700A3EC78 /* background.cpp in Sources */,
 				DFF959DB0FB22D5700A3EC78 /* backgroundIncrust.cpp in Sources */,
@@ -9665,7 +9655,6 @@
 				DFF95C0A0FB22D5700A3EC78 /* saveload.cpp in Sources */,
 				DFF95C0B0FB22D5700A3EC78 /* staticres.cpp in Sources */,
 				DFF95C0C0FB22D5700A3EC78 /* touche.cpp in Sources */,
-				DFF95C0D0FB22D5700A3EC78 /* blit.cpp in Sources */,
 				DFF95C0E0FB22D5700A3EC78 /* timidity.cpp in Sources */,
 				DFF95C110FB22D5700A3EC78 /* stdiostream.cpp in Sources */,
 				DFF95C130FB22D5700A3EC78 /* saveload.cpp in Sources */,
@@ -9736,10 +9725,6 @@
 				DF6118C20FE3AA280042AD3F /* sound_pcspk.cpp in Sources */,
 				DF6118C30FE3AA280042AD3F /* text_lol.cpp in Sources */,
 				DF7585ED100CB6EA00CC3324 /* sjis.cpp in Sources */,
-				DF758619100CBA0200CC3324 /* osys_events.cpp in Sources */,
-				DF75861A100CBA0200CC3324 /* osys_main.cpp in Sources */,
-				DF75861B100CBA0200CC3324 /* osys_sound.cpp in Sources */,
-				DF75861C100CBA0200CC3324 /* osys_video.cpp in Sources */,
 				DF6BF4C410529DA50069811F /* conversion.cpp in Sources */,
 				DF6BF4C510529DA50069811F /* jpeg.cpp in Sources */,
 				DF6BF4E410529E260069811F /* sound_amiga.cpp in Sources */,
@@ -9915,6 +9900,7 @@
 				F9946DF9139E1BBF0072D195 /* sdl-mixer.cpp in Sources */,
 				F9946E00139E1BEB0072D195 /* doublebuffersdl-mixer.cpp in Sources */,
 				F9946E06139E1C3A0072D195 /* sdl-graphics.cpp in Sources */,
+				1692AE4C14F3A31400889F28 /* EventMapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9939,6 +9925,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_INPUT_FILETYPE = automatic;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -9982,8 +9969,10 @@
 					USE_TRANSLATION,
 					USE_MT32EMU,
 				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(OTHER_CFLAGS)";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					include/,
 					../../engines/,
@@ -9998,6 +9987,11 @@
 					"$(inherited)",
 				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-v",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "";
@@ -10026,6 +10020,7 @@
 				);
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_INPUT_FILETYPE = automatic;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -10069,8 +10064,10 @@
 					USE_TRANSLATION,
 					USE_MT32EMU,
 				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(OTHER_CFLAGS)";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					include/,
 					../../engines/,
@@ -10085,6 +10082,7 @@
 					"$(inherited)",
 				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "";

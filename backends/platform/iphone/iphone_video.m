@@ -78,7 +78,7 @@ int printOglError(const char *file, int line) {
 }
 
 void iPhone_setGraphicsMode(int mode) {
-	_graphicsMode = mode;
+	_graphicsMode = (GraphicsModes)mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 }
@@ -541,7 +541,12 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		break;
 
 	default:
-		_orientation = UIDeviceOrientationPortrait;
+        if (iPhone_isHighResDevice()) {
+            _orientation = UIDeviceOrientationLandscapeRight;
+        }
+        else {
+            _orientation = UIDeviceOrientationPortrait;
+        }
 	}
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);

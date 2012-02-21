@@ -56,7 +56,7 @@ typedef enum {
 } GraphicsModes;
 
 #ifdef IPHONE_OFFICIAL
-void iphone_main(int argc, char **argv);
+//void iphone_main(int argc, char **argv);
 #endif
 
 // We need this to be able to call functions from/in Objective-C.
@@ -65,9 +65,9 @@ extern "C" {
 #endif
 
 // On the C++ side
-#ifndef IPHONE_OFFICIAL
+//#ifndef IPHONE_OFFICIAL
 void iphone_main(int argc, char *argv[]);
-#endif
+//#endif
 
 // On the ObjC side
 void iPhone_setGraphicsMode(int mode);
