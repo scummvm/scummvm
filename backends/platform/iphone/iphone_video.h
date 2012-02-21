@@ -38,16 +38,9 @@
 	NSMutableArray *_events;
 	SoftKeyboard *_keyboardView;
 
-	int _widthOffset;
-	int _heightOffset;
-
 	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
-	GLint _renderBufferWidth;
-	GLint _renderBufferHeight;
-	GLint _visibleWidth;
-	GLint _visibleHeight;
 	GLuint _screenTexture;
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
