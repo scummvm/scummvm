@@ -120,12 +120,14 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 		_lastPadX = x;
 		_lastPadY = y;
 	} else {
-        debug("move mouse");
-        event.type = Common::EVENT_MOUSEMOVE;
-        event.mouse.x = x;
-        event.mouse.y = y;
-     	warpMouse(x, y);
-        ret = true;
+        warpMouse(x, y);
+        if (_mouseClickAndDragEnabled) {
+            debug("move mouse");
+            event.type = Common::EVENT_MOUSEMOVE;
+            event.mouse.x = x;
+            event.mouse.y = y;
+            ret = true;
+        }
     }
 
 	if (_mouseClickAndDragEnabled) {
