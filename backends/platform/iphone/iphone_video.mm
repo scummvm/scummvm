@@ -136,15 +136,13 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 }
 
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
-	int y;
-	for (y = y1; y < y2; ++y)
+	for (int y = y1; y < y2; ++y)
 		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
-	int y;
 	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
-	for (y = y1; y < y2; ++y)
+	for (int y = y1; y < y2; ++y)
 		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
 }
 
