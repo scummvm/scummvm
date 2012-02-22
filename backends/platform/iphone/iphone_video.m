@@ -605,18 +605,29 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[_keyboardView removeFromSuperview];
 		[[_keyboardView inputView] removeFromSuperview];
 	}
+    
+    float width = _width;
+    float height = _height;
+    if (_aspectRatioCorrect 
+        && ((_width == 320 && _height == 200)
+        || (_width == 640 && _height == 400)) )  {
+        
+        if (_height == 200) {
+            height = 240;
+        }
+        if (_height == 400) {
+            height = 480;
+        }
+    }
+
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
 		_visibleHeight = _renderBufferHeight;
 		_visibleWidth = _renderBufferWidth;
-
-		float ratioDifference = ((float)_height / (float)_width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
+                       
+		float ratioDifference = ((float)height / (float)width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
         
-        if (_aspectRatioCorrect 
-            && ((_width == 320 && _height == 200)
-            || (_width == 640 && _height == 400)) )  {
-            ratioDifference = 1;
-        }
+      
         
 		int rectWidth, rectHeight;
 		if (ratioDifference < 1.0f) {
@@ -635,7 +646,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_gameScreenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
 		_overlayPortraitRatio = 1.0f;
 	} else {
-		float ratio = (float)_height / (float)_width;
+		float ratio = (float)height / (float)width;
 		int height = _renderBufferWidth * ratio;
 		//printf("Making rect (%u, %u)\n", _renderBufferWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, _renderBufferWidth - 1, height - 1);
