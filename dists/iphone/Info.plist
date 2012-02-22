@@ -55,6 +55,8 @@
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
