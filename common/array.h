@@ -42,16 +42,18 @@ namespace Common {
  */
 template<class T>
 class Array {
-protected:
-	uint _capacity;
-	uint _size;
-	T *_storage;
-
 public:
 	typedef T *iterator;
 	typedef const T *const_iterator;
 
 	typedef T value_type;
+
+	typedef uint size_type;
+
+protected:
+	size_type _capacity;
+	size_type _size;
+	T *_storage;
 
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
@@ -67,7 +69,7 @@ public:
 	 * Construct an array by copying data from a regular array.
 	 */
 	template<class T2>
-	Array(const T2 *data, int n) {
+	Array(const T2 *data, size_type n) {
 		_size = n;
 		allocCapacity(n);
 		uninitialized_copy(data, data + _size, _storage);
@@ -128,19 +130,19 @@ public:
 	}
 
 
-	void insert_at(int idx, const T &element) {
-		assert(idx >= 0 && (uint)idx <= _size);
+	void insert_at(size_type idx, const T &element) {
+		assert(idx <= _size);
 		insert_aux(_storage + idx, &element, &element + 1);
 	}
 
-	void insert_at(int idx, const Array<T> &array) {
-		assert(idx >= 0 && (uint)idx <= _size);
+	void insert_at(size_type idx, const Array<T> &array) {
+		assert(idx <= _size);
 		insert_aux(_storage + idx, array.begin(), array.end());
 	}
 
 
-	T remove_at(int idx) {
-		assert(idx >= 0 && (uint)idx < _size);
+	T remove_at(size_type idx) {
+		assert(idx < _size);
 		T tmp = _storage[idx];
 		copy(_storage + idx + 1, _storage + _size, _storage + idx);
 		_size--;
@@ -151,13 +153,13 @@ public:
 
 	// TODO: insert, remove, ...
 
-	T& operator[](int idx) {
-		assert(idx >= 0 && (uint)idx < _size);
+	T& operator[](size_type idx) {
+		assert(idx < _size);
 		return _storage[idx];
 	}
 
-	const T& operator[](int idx) const {
-		assert(idx >= 0 && (uint)idx < _size);
+	const T& operator[](size_type idx) const {
+		assert(idx < _size);
 		return _storage[idx];
 	}
 
@@ -173,7 +175,7 @@ public:
 		return *this;
 	}
 
-	uint size() const {
+	size_type size() const {
 		return _size;
 	}
 
@@ -193,7 +195,7 @@ public:
 			return true;
 		if (_size != other._size)
 			return false;
-		for (uint i = 0; i < _size; ++i) {
+		for (size_type i = 0; i < _size; ++i) {
 			if (_storage[i] != other._storage[i])
 				return false;
 		}
@@ -220,7 +222,7 @@ public:
 		return _storage + _size;
 	}
 
-	void reserve(uint newCapacity) {
+	void reserve(size_type newCapacity) {
 		if (newCapacity <= _capacity)
 			return;
 
@@ -234,9 +236,9 @@ public:
 		}
 	}
 
-	void resize(uint newSize) {
+	void resize(size_type newSize) {
 		reserve(newSize);
-		for (uint i = _size; i < newSize; ++i)
+		for (size_type i = _size; i < newSize; ++i)
 			new ((void *)&_storage[i]) T();
 		_size = newSize;
 	}
@@ -249,28 +251,28 @@ public:
 	}
 
 protected:
-	static uint roundUpCapacity(uint capacity) {
+	static size_type roundUpCapacity(size_type capacity) {
 		// Round up capacity to the next power of 2;
 		// we use a minimal capacity of 8.
-		uint capa = 8;
+		size_type capa = 8;
 		while (capa < capacity)
 			capa <<= 1;
 		return capa;
 	}
 
-	void allocCapacity(uint capacity) {
+	void allocCapacity(size_type capacity) {
 		_capacity = capacity;
 		if (capacity) {
 			_storage = (T *)malloc(sizeof(T) * capacity);
 			if (!_storage)
-				::error("Common::Array: failure to allocate %u bytes", capacity * (uint)sizeof(T));
+				::error("Common::Array: failure to allocate %u bytes", capacity * (size_type)sizeof(T));
 		} else {
 			_storage = 0;
 		}
 	}
 
-	void freeStorage(T *storage, const uint elements) {
-		for (uint i = 0; i < elements; ++i)
+	void freeStorage(T *storage, const size_type elements) {
+		for (size_type i = 0; i < elements; ++i)
 			storage[i].~T();
 		free(storage);
 	}
@@ -291,9 +293,9 @@ protected:
 	iterator insert_aux(iterator pos, const_iterator first, const_iterator last) {
 		assert(_storage <= pos && pos <= _storage + _size);
 		assert(first <= last);
-		const uint n = last - first;
+		const size_type n = last - first;
 		if (n) {
-			const uint idx = pos - _storage;
+			const size_type idx = pos - _storage;
 			if (_size + n > _capacity || (_storage <= first && first <= _storage + _size)) {
 				T *const oldStorage = _storage;
 
