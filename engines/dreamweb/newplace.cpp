@@ -41,7 +41,7 @@ void DreamWebEngine::selectLocation() {
 	_pointerFrame = 22;
 	readCityPic();
 	showCity();
-	getRidOfTemp();
+	_cityGraphics.clear();
 	readDestIcon();
 	loadTravelText();
 	showPanel();
@@ -89,17 +89,17 @@ void DreamWebEngine::selectLocation() {
 		_getBack = 0;
 	}
 
-	getRidOfTemp();
-	getRidOfTemp2();
-	getRidOfTemp3();
+	_newplaceGraphics.clear();
+	_newplaceGraphics2.clear();
+	_newplaceGraphics3.clear();
 
 	_travelText.clear();
 }
 
 void DreamWebEngine::showCity() {
 	clearWork();
-	showFrame(_tempGraphics, 57, 32, 0, 0);
-	showFrame(_tempGraphics, 120+57, 32, 1, 0);
+	showFrame(_cityGraphics, 57, 32, 0, 0);
+	showFrame(_cityGraphics, 120+57, 32, 1, 0);
 }
 
 void DreamWebEngine::lookAtPlace() {
@@ -113,10 +113,10 @@ void DreamWebEngine::lookAtPlace() {
 	delPointer();
 	delTextLine();
 	getUnderCentre();
-	showFrame(_tempGraphics3, 60, 72, 0, 0);
-	showFrame(_tempGraphics3, 60, 72 + 55, 4, 0);
+	showFrame(_newplaceGraphics3, 60, 72, 0, 0);
+	showFrame(_newplaceGraphics3, 60, 72 + 55, 4, 0);
 	if (_foreignRelease)
-		showFrame(_tempGraphics3, 60, 72+55+21, 4, 0);
+		showFrame(_newplaceGraphics3, 60, 72+55+21, 4, 0);
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	findNextColon(&string);
@@ -143,21 +143,21 @@ void DreamWebEngine::locationPic() {
 	byte picture = roomPics[_destPos];
 
 	if (picture >= 6)
-		showFrame(_tempGraphics2, 104, 138 + 14, picture - 6, 0);	// Second slot
+		showFrame(_newplaceGraphics2, 104, 138 + 14, picture - 6, 0);	// Second slot
 	else
-		showFrame(_tempGraphics,  104, 138 + 14, picture + 4, 0);
+		showFrame(_newplaceGraphics,  104, 138 + 14, picture + 4, 0);
 
 	if (_destPos == _realLocation)
-		showFrame(_tempGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
+		showFrame(_newplaceGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	printDirect(string, 50, 20, 241, 241 & 1);
 }
 
 void DreamWebEngine::showArrows() {
-	showFrame(_tempGraphics, 116 - 12, 16, 0, 0);
-	showFrame(_tempGraphics, 226 + 12, 16, 1, 0);
-	showFrame(_tempGraphics, 280, 14, 2, 0);
+	showFrame(_newplaceGraphics, 116 - 12, 16, 0, 0);
+	showFrame(_newplaceGraphics, 226 + 12, 16, 1, 0);
+	showFrame(_newplaceGraphics, 280, 14, 2, 0);
 }
 
 void DreamWebEngine::nextDest() {
@@ -259,13 +259,13 @@ void DreamWebEngine::resetLocation(uint8 index) {
 }
 
 void DreamWebEngine::readDestIcon() {
-	loadIntoTemp("DREAMWEB.G05");
-	loadIntoTemp2("DREAMWEB.G06");
-	loadIntoTemp3("DREAMWEB.G08");
+	loadGraphicsFile(_newplaceGraphics, "DREAMWEB.G05");
+	loadGraphicsFile(_newplaceGraphics2, "DREAMWEB.G06");
+	loadGraphicsFile(_newplaceGraphics3, "DREAMWEB.G08");
 }
 
 void DreamWebEngine::readCityPic() {
-	loadIntoTemp("DREAMWEB.G04");
+	loadGraphicsFile(_cityGraphics, "DREAMWEB.G04");
 }
 
 } // End of namespace DreamWeb

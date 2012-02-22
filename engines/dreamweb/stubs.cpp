@@ -510,11 +510,26 @@ void DreamWebEngine::dreamwebFinalize() {
 	_icons1.clear();
 	_icons2.clear();
 	_charset1.clear();
-	_tempGraphics.clear();
-	_tempGraphics2.clear();
-	_tempGraphics3.clear();
-	_tempCharset.clear();
 	_mainSprites.clear();
+
+	// clear local graphics, just in case
+	_keypadGraphics.clear();
+	_menuGraphics.clear();
+	_menuGraphics2.clear();
+	_folderGraphics.clear();
+	_folderGraphics2.clear();
+	_folderGraphics3.clear();
+	_folderCharset.clear();
+	_symbolGraphics.clear();
+	_diaryGraphics.clear();
+	_diaryCharset.clear();
+	_monitorGraphics.clear();
+	_monitorCharset.clear();
+	_newplaceGraphics.clear();
+	_newplaceGraphics2.clear();
+	_newplaceGraphics3.clear();
+	_cityGraphics.clear();
+	_saveGraphics.clear();
 
 	_exFrames.clear();
 	_exText.clear();
@@ -850,22 +865,6 @@ void DreamWebEngine::loadTextSegment(TextFile &file, Common::File &inFile, unsig
 	file._text = new char[len - headerSize];
 	inFile.read((uint8 *)file._offsetsLE, headerSize);
 	inFile.read((uint8 *)file._text, len - headerSize);
-}
-
-void DreamWebEngine::loadIntoTemp(const char *fileName) {
-	loadGraphicsFile(_tempGraphics, fileName);
-}
-
-void DreamWebEngine::loadIntoTemp2(const char *fileName) {
-	loadGraphicsFile(_tempGraphics2, fileName);
-}
-
-void DreamWebEngine::loadIntoTemp3(const char *fileName) {
-	loadGraphicsFile(_tempGraphics3, fileName);
-}
-
-void DreamWebEngine::loadTempCharset(const char *fileName) {
-	loadGraphicsFile(_tempCharset, fileName);
 }
 
 void DreamWebEngine::hangOnCurs(uint16 frameCount) {
@@ -2065,28 +2064,12 @@ void DreamWebEngine::useCharset1() {
 	_currentCharset = &_charset1;
 }
 
-void DreamWebEngine::useTempCharset() {
-	_currentCharset = &_tempCharset;
-}
-
-void DreamWebEngine::getRidOfTemp() {
-	_tempGraphics.clear();
+void DreamWebEngine::useTempCharset(GraphicsFile *charset) {
+	_currentCharset = charset;
 }
 
 void DreamWebEngine::getRidOfTempText() {
 	_textFile1.clear();
-}
-
-void DreamWebEngine::getRidOfTemp2() {
-	_tempGraphics2.clear();
-}
-
-void DreamWebEngine::getRidOfTemp3() {
-	_tempGraphics3.clear();
-}
-
-void DreamWebEngine::getRidOfTempCharset() {
-	_tempCharset.clear();
 }
 
 void DreamWebEngine::getRidOfAll() {
@@ -2765,7 +2748,7 @@ void DreamWebEngine::decide() {
 	} while (!_getBack);
 
 	if (_getBack != 4)
-		getRidOfTemp();	// room not loaded
+		_saveGraphics.clear();	// room not loaded
 
 	_textAddressX = 13;
 	_textAddressY = 182;
@@ -2794,12 +2777,13 @@ void DreamWebEngine::showGun() {
 	_roomsSample = 34;
 	loadRoomsSample();
 	_volume = 0;
-	loadIntoTemp("DREAMWEB.G13");
+	GraphicsFile graphics;
+	loadGraphicsFile(graphics, "DREAMWEB.G13");
 	createPanel2();
-	showFrame(_tempGraphics, 100, 4, 0, 0);
-	showFrame(_tempGraphics, 158, 106, 1, 0);
+	showFrame(graphics, 100, 4, 0, 0);
+	showFrame(graphics, 158, 106, 1, 0);
 	workToScreen();
-	getRidOfTemp();
+	graphics.clear();
 	fadeScreenUp();
 	hangOn(160);
 	playChannel0(12, 0);
@@ -3018,7 +3002,7 @@ void DreamWebEngine::lookAtCard() {
 	getRidOfReels();
 	loadKeypad();
 	createPanel2();
-	showFrame(_tempGraphics, 160, 80, 42, 128);
+	showFrame(_keypadGraphics, 160, 80, 42, 128);
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -3028,12 +3012,12 @@ void DreamWebEngine::lookAtCard() {
 	workToScreenM();
 	hangOnW(280);
 	createPanel2();
-	showFrame(_tempGraphics, 160, 80, 42, 128);
+	showFrame(_keypadGraphics, 160, 80, 42, 128);
 	printDirect(obText, 36, 130, 241, 241 & 1);
 	workToScreenM();
 	hangOnW(200);
 	_manIsOffScreen = 0;
-	getRidOfTemp();
+	_keypadGraphics.clear();
 	restoreReels();
 	putBackObStuff();
 }
