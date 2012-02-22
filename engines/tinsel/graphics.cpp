@@ -40,7 +40,7 @@ namespace Tinsel {
 #define CHAR_WIDTH 4
 #define CHAR_HEIGHT 4
 
-extern uint8 transPalette[MAX_COLORS];
+extern uint8 g_transPalette[MAX_COLORS];
 
 //----------------- SUPPORT FUNCTIONS ---------------------
 
@@ -559,7 +559,7 @@ static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 	// Loop through any remaining lines
 	while (pObj->height > 0) {
 		for (int i = 0; i < pObj->width; ++i, ++destP)
-			*destP = transPalette[*destP];
+			*destP = g_transPalette[*destP];
 
 		--pObj->height;
 		destP += lineOffset;

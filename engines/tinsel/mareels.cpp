@@ -48,9 +48,9 @@ struct SCIdataStruct {
 
 // FIXME: Avoid non-const global vars
 
-static SCIdataStruct SCIdata[MAX_SCRENTRIES];
+static SCIdataStruct g_SCIdata[MAX_SCRENTRIES];
 
-static int scrEntries = 0;
+static int g_scrEntries = 0;
 
 /**
  * Sets an actor's walk reels
@@ -131,16 +131,16 @@ void SetScalingReels(int actor, int scale, int direction,
 	assert(!(scale == 1 && direction == D_UP) &&
 		!(scale == NUM_MAINSCALES && direction == D_DOWN)); // illegal direction from scale
 
-	assert(scrEntries < MAX_SCRENTRIES); // Scaling reels limit reached!
+	assert(g_scrEntries < MAX_SCRENTRIES); // Scaling reels limit reached!
 
-	SCIdata[scrEntries].actor = actor;
-	SCIdata[scrEntries].scale = scale;
-	SCIdata[scrEntries].direction = direction;
-	SCIdata[scrEntries].reels[LEFTREEL]	= left;
-	SCIdata[scrEntries].reels[RIGHTREEL]	= right;
-	SCIdata[scrEntries].reels[FORWARD]	= forward;
-	SCIdata[scrEntries].reels[AWAY]		= away;
-	scrEntries++;
+	g_SCIdata[g_scrEntries].actor = actor;
+	g_SCIdata[g_scrEntries].scale = scale;
+	g_SCIdata[g_scrEntries].direction = direction;
+	g_SCIdata[g_scrEntries].reels[LEFTREEL]	= left;
+	g_SCIdata[g_scrEntries].reels[RIGHTREEL]	= right;
+	g_SCIdata[g_scrEntries].reels[FORWARD]	= forward;
+	g_SCIdata[g_scrEntries].reels[AWAY]		= away;
+	g_scrEntries++;
 }
 
 /**
@@ -155,12 +155,12 @@ SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel) {
 	else
 		d = D_UP;
 
-	for (int i = 0; i < scrEntries; i++)	{
-		if (SCIdata[i].actor == ano && SCIdata[i].scale == scale1 && SCIdata[i].direction == d) {
-			if (SCIdata[i].reels[reel] == TF_NONE)
+	for (int i = 0; i < g_scrEntries; i++)	{
+		if (g_SCIdata[i].actor == ano && g_SCIdata[i].scale == scale1 && g_SCIdata[i].direction == d) {
+			if (g_SCIdata[i].reels[reel] == TF_NONE)
 				return 0;
 			else
-				return SCIdata[i].reels[reel];
+				return g_SCIdata[i].reels[reel];
 		}
 	}
 	return 0;
@@ -170,8 +170,8 @@ SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel) {
  * RebootScalingReels
  */
 void RebootScalingReels() {
-	scrEntries = 0;
-	memset(SCIdata, 0, sizeof(SCIdata));
+	g_scrEntries = 0;
+	memset(g_SCIdata, 0, sizeof(g_SCIdata));
 }
 
 /**
