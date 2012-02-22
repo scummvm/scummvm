@@ -158,10 +158,10 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 		ts->setLineNumber(2); // Skip copyright-line
 		ts->expectString("version\t1.0");
 		if (ts->checkString("name:"))
-			ts->scanString("name:\t%s", 1, readFileName);
+			ts->scanString("name:%s", 1, readFileName);
 		
 		while(!ts->checkString("END_OF_SECTION")) {
-			ts->scanString("tex:\t%s", 1, readFileName);
+			ts->scanString("tex:%s", 1, readFileName);
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(mFileName);
 		}
