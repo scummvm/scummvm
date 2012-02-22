@@ -83,7 +83,7 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-void iPhone_setGraphicsMode(int mode) {
+void iPhone_setGraphicsMode(GraphicsModes mode) {
 	_graphicsMode = mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];

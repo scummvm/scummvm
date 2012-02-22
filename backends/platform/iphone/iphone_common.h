@@ -50,27 +50,13 @@ enum UIViewSwipeDirection {
 	kUIViewSwipeRight = 8
 };
 
-typedef enum {
+enum GraphicsModes {
 	kGraphicsModeLinear = 0,
 	kGraphicsModeNone = 1
-} GraphicsModes;
-
-#ifdef IPHONE_OFFICIAL
-void iphone_main(int argc, char **argv);
-#endif
-
-// We need this to be able to call functions from/in Objective-C.
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-// On the C++ side
-#ifndef IPHONE_OFFICIAL
-void iphone_main(int argc, char *argv[]);
-#endif
+};
 
 // On the ObjC side
-void iPhone_setGraphicsMode(int mode);
+void iPhone_setGraphicsMode(GraphicsModes mode);
 void iPhone_updateScreen(int mouseX, int mouseY);
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2);
@@ -86,9 +72,5 @@ void iPhone_showCursor(int state);
 void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY);
 
 uint getSizeNextPOT(uint size);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -39,7 +39,7 @@ bool OSystem_IPHONE::setGraphicsMode(int mode) {
 	case kGraphicsModeNone:
 	case kGraphicsModeLinear:
 		_currentGraphicsMode = mode;
-		iPhone_setGraphicsMode(mode);
+		iPhone_setGraphicsMode((GraphicsModes)mode);
 		return true;
 
 	default:
