@@ -555,7 +555,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
 	688328c5bdc4c8ec4145688dfa077bf2	-1	de	All	HE 99	Demo	-	Joachim Eberhard
 	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
-	16effd200aa6b8abe9c569c3e578814d	-1	nl	Windows	HE 99	Demo	-	joostp
+	16effd200aa6b8abe9c569c3e578814d	-1	nl	All	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	-1	nl	Windows	HE 99	Demo	-	adutchguy
 	5fdb2ac2483908b065c6e77988338a54	-1	nl	Windows	HE 99	Demo	-	Ben
 	e03ed1474ec14de78359970e0457a820	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
