@@ -75,6 +75,7 @@ void iPhone_updateScreen(int mouseX, int mouseY);
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2);
 void iPhone_initSurface(int width, int height);
+void iPhone_setShakeOffset(int offset);
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();

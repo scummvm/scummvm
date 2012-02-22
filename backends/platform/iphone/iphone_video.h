@@ -61,6 +61,7 @@
 - (void *)getSurface;
 
 - (void)initSurface;
+- (void)setViewTransformation;
 
 - (void)setGraphicsMode;
 

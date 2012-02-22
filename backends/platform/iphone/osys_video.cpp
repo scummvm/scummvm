@@ -245,6 +245,9 @@ void OSystem_IPHONE::unlockScreen() {
 
 void OSystem_IPHONE::setShakePos(int shakeOffset) {
 	//printf("setShakePos(%i)\n", shakeOffset);
+	iPhone_setShakeOffset(shakeOffset);
+	// HACK: We use this to force a redraw.
+	_mouseDirty = true;
 }
 
 void OSystem_IPHONE::showOverlay() {

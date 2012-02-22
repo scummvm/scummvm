@@ -60,6 +60,9 @@ static int _mouseCursorEnabled = 0;
 static GLint _renderBufferWidth;
 static GLint _renderBufferHeight;
 
+static int _shakeOffsetY;
+static int _scaledShakeOffsetY;
+
 #if 0
 static long lastTick = 0;
 static int frames = 0;
@@ -148,7 +151,13 @@ void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, in
 void iPhone_initSurface(int width, int height) {
 	_width = width;
 	_height = height;
+	_shakeOffsetY = 0;
 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
+}
+
+void iPhone_setShakeOffset(int offset) {
+	_shakeOffsetY = offset;
+	[sharedInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
 }
 
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
@@ -214,38 +223,35 @@ static bool convertToRotatedCoords(UIDeviceOrientation orientation, CGPoint poin
 	}
 }
 
-static bool normalizeMouseCoords(CGPoint *point, CGRect area) {
-	if (point->x < CGRectGetMinX(area) || point->x > CGRectGetMaxX(area) ||
-	    point->y < CGRectGetMinY(area) || point->y > CGRectGetMaxY(area)) {
-			return false;
-	}
-
-	point->x = (point->x - CGRectGetMinX(area)) / CGRectGetWidth(area);
-	point->y = (point->y - CGRectGetMinY(area)) / CGRectGetHeight(area);
-	return true;
-}
-
 static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
 	if (!convertToRotatedCoords(orientation, point, &point))
 		return false;
 
-	int width, height;
+	CGRect *area;
+	int width, height, offsetY;
 	if (_overlayIsEnabled) {
-		if (!normalizeMouseCoords(&point, _overlayRect))
-			return false;
-
+		area = &_overlayRect;
 		width = _overlayWidth;
 		height = _overlayHeight;
+		offsetY = _shakeOffsetY;
 	} else {
-		if (!normalizeMouseCoords(&point, _gameScreenRect))
-			return false;
-
+		area = &_gameScreenRect;
 		width = _width;
 		height = _height;
+		offsetY = _scaledShakeOffsetY;
 	}
 
+	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
+	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
+
 	*x = point.x * width;
-	*y = point.y * height;
+	// offsetY describes the translation of the screen in the upward direction,
+	// thus we need to add it here.
+	*y = point.y * height + offsetY;
+
+	// Clip coordinates
+	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
+			return false;
 
 	return true;
 }
@@ -682,6 +688,22 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 	_overlayVertCoords[2] = _overlayVertCoords[6] = CGRectGetMaxX(_overlayRect);
 	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
+
+	[self setViewTransformation];
+}
+
+- (void)setViewTransformation {
+	// Set the modelview matrix. This matrix will be used for the shake offset
+	// support.
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// Scale the shake offset according to the overlay size. We need this to
+	// adjust the overlay mouse click coordinates when an offset is set.
+	_scaledShakeOffsetY = _shakeOffsetY / (GLfloat)_height * CGRectGetHeight(_overlayRect);
+
+	// Apply the shakeing to the output screen.
+	glTranslatef(0, -_scaledShakeOffsetY, 0);
 }
 
 - (void)clearColorBuffer {
