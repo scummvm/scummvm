@@ -221,8 +221,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	// Save image stack
 
-	for (i = 0; i < _imageStack.size(); i++) {
-		ImageStackElement ise = _imageStack[i];
+	for (Common::Stack<ImageStackElement>::size_type j = 0; j < _imageStack.size(); ++j) {
+		const ImageStackElement &ise = _imageStack[j];
 		out->writeByte(ise.type);
 		out->writeSint16BE(ise.parm1);
 		out->writeSint16BE(ise.parm2);
