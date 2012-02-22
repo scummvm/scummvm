@@ -47,7 +47,7 @@ int power(int base, int exp) {
 static float str2float(const char *str) {
 	int len = strlen(str);
 	int dotpos = len;
-	char *int_part = new char[len];
+	char *int_part = new char[len + 1];
 	int j = 0;
 	for (int i = 0; i < len; ++i) {
 		if (str[i] != '.') {
