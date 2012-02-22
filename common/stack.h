@@ -40,40 +40,49 @@ public:
 	bool empty() const {
 		return _size <= 0;
 	}
+
 	void clear() {
 		_size = 0;
 	}
+
 	void push(const T &x) {
 		assert(_size < MAX_SIZE);
 		_stack[_size++] = x;
 	}
+
 	const T &top() const {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
+
 	T &top() {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
+
 	T pop() {
 		T tmp = top();
 		--_size;
 		return tmp;
 	}
+
 	size_type size() const {
 		return _size;
 	}
+
 	T &operator[](size_type i) {
 		assert(i < MAX_SIZE);
 		return _stack[i];
 	}
+
 	const T &operator[](size_type i) const {
 		assert(i < MAX_SIZE);
 		return _stack[i];
 	}
+
 protected:
-	T	_stack[MAX_SIZE];
-	size_type	_size;
+	T         _stack[MAX_SIZE];
+	size_type _size;
 };
 
 
@@ -83,7 +92,7 @@ protected:
 template<class T>
 class Stack {
 private:
-	Array<T>	_stack;
+	Array<T> _stack;
 
 public:
 	typedef typename Array<T>::size_type size_type;
@@ -94,29 +103,37 @@ public:
 	bool empty() const {
 		return _stack.empty();
 	}
+
 	void clear() {
 		_stack.clear();
 	}
+
 	void push(const T &x) {
 		_stack.push_back(x);
 	}
+
 	T &top() {
 		return _stack.back();
 	}
+
 	const T &top() const {
 		return _stack.back();
 	}
+
 	T pop() {
 		T tmp = _stack.back();
 		_stack.pop_back();
 		return tmp;
 	}
+
 	size_type size() const {
 		return _stack.size();
 	}
+
 	T &operator[](size_type i) {
 		return _stack[i];
 	}
+
 	const T &operator[](size_type i) const {
 		return _stack[i];
 	}
