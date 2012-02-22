@@ -114,11 +114,21 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 	// secondary finger is lifted. Need to make sure we get out of that mode.
 	_secondaryTapped = false;
 
+    bool ret = false;
+    
 	if (_touchpadModeEnabled) {
 		_lastPadX = x;
 		_lastPadY = y;
-	} else
-		warpMouse(x, y);
+	} else {
+        warpMouse(x, y);
+        if (_mouseClickAndDragEnabled) {
+            debug("move mouse");
+            event.type = Common::EVENT_MOUSEMOVE;
+            event.mouse.x = x;
+            event.mouse.y = y;
+            ret = true;
+        }
+    }
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONDOWN;
@@ -128,7 +138,7 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 	} else {
 		_lastMouseDown = getMillis();
 	}
-	return false;
+	return ret;
 }
 
 bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {

@@ -57,6 +57,8 @@ enum GraphicsModes {
 
 // On the ObjC side
 void iPhone_setGraphicsMode(GraphicsModes mode);
+void iPhone_setAspectRatioState(bool enable); 
+bool iPhone_getAspectRatioState();
 void iPhone_updateScreen(int mouseX, int mouseY);
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2);
