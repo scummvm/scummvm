@@ -34,7 +34,7 @@ namespace Tinsel {
 // FIXME: Avoid non-const global vars
 
 // current background
-const BACKGND *pCurBgnd = NULL;
+const BACKGND *g_pCurBgnd = NULL;
 
 /**
  * Called to initialize a background.
@@ -46,7 +46,7 @@ void InitBackground(const BACKGND *pBgnd) {
 	PLAYFIELD *pPlayfield;	// pointer to current playfield
 
 	// set current background
-	pCurBgnd = pBgnd;
+	g_pCurBgnd = pBgnd;
 
 	// init background sky color
 	SetBgndColor(pBgnd->rgbSkyColor);
@@ -83,13 +83,13 @@ void PlayfieldSetPos(int which, int newXpos, int newYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	assert(g_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < g_pCurBgnd->numPlayfields);
 
 	// get playfield pointer
-	pPlayfield = pCurBgnd->fieldArray + which;
+	pPlayfield = g_pCurBgnd->fieldArray + which;
 
 	// set new integer position
 	pPlayfield->fieldX = intToFrac(newXpos);
@@ -110,13 +110,13 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	assert(g_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < g_pCurBgnd->numPlayfields);
 
 	// get playfield pointer
-	pPlayfield = pCurBgnd->fieldArray + which;
+	pPlayfield = g_pCurBgnd->fieldArray + which;
 
 	// get current integer position
 	*pXpos = fracToInt(pPlayfield->fieldX);
@@ -132,13 +132,13 @@ int PlayfieldGetCenterX(int which) {
 	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	assert(g_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < g_pCurBgnd->numPlayfields);
 
 	// get playfield pointer
-	pPlayfield = pCurBgnd->fieldArray + which;
+	pPlayfield = g_pCurBgnd->fieldArray + which;
 
 	// get current integer position
 	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH/2;
@@ -153,13 +153,13 @@ OBJECT **GetPlayfieldList(int which) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	assert(g_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < g_pCurBgnd->numPlayfields);
 
 	// get playfield pointer
-	pPlayfield = pCurBgnd->fieldArray + which;
+	pPlayfield = g_pCurBgnd->fieldArray + which;
 
 	// return the display list pointer for this playfield
 	return &pPlayfield->pDispList;
@@ -177,13 +177,13 @@ void DrawBackgnd() {
 	int prevX, prevY;	// save interger part of position
 	Common::Point ptWin;	// window top left
 
-	if (pCurBgnd == NULL)
+	if (g_pCurBgnd == NULL)
 		return;		// no current background
 
 	// scroll each background playfield
-	for (i = 0; i < pCurBgnd->numPlayfields; i++) {
+	for (i = 0; i < g_pCurBgnd->numPlayfields; i++) {
 		// get pointer to correct playfield
-		pPlay = pCurBgnd->fieldArray + i;
+		pPlay = g_pCurBgnd->fieldArray + i;
 
 		// save integer part of position
 		prevX = fracToInt(pPlay->fieldX);
@@ -220,11 +220,11 @@ void DrawBackgnd() {
 	for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {
 		// clear the clip rectangle on the virtual screen
 		// for each background playfield
-		for (i = 0; i < pCurBgnd->numPlayfields; i++) {
+		for (i = 0; i < g_pCurBgnd->numPlayfields; i++) {
 			Common::Rect rcPlayClip;	// clip rect for this playfield
 
 			// get pointer to correct playfield
-			pPlay = pCurBgnd->fieldArray + i;
+			pPlay = g_pCurBgnd->fieldArray + i;
 
 			// convert fixed point window pos to a int
 			ptWin.x = fracToInt(pPlay->fieldX);

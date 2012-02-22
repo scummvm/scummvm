@@ -28,9 +28,9 @@ namespace Tinsel {
 #define SCROLLPIXELS 8	// Number of pixels to scroll per iteration
 
 // Distance from edge that triggers a scroll
-#define RLDISTANCE (TinselV2 ? sd.xTrigger : 50)
-#define UDISTANCE (TinselV2 ? sd.yTriggerTop : 20)
-#define DDISTANCE (TinselV2 ? sd.yTriggerBottom : 20)
+#define RLDISTANCE (TinselV2 ? g_sd.xTrigger : 50)
+#define UDISTANCE (TinselV2 ? g_sd.yTriggerTop : 20)
+#define DDISTANCE (TinselV2 ? g_sd.yTriggerBottom : 20)
 
 // Number of iterations to make
 #define RLSCROLL 160	// 20*8 = 160 = half a screen

@@ -38,11 +38,11 @@ namespace Tinsel {
 
 #ifdef DEBUG
 // Diagnostic number
-int newestString;
+int g_newestString;
 #endif
 
 // buffer for resource strings
-static uint8 *textBuffer = 0;
+static uint8 *g_textBuffer = 0;
 
 static struct {
 	bool		bPresent;
@@ -50,7 +50,7 @@ static struct {
 	SCNHANDLE	hDescription;
 	SCNHANDLE	hFlagFilm;
 
-} languages[NUM_LANGUAGES] = {
+} g_languages[NUM_LANGUAGES] = {
 
 	{ false, "English",	0, 0 },
 	{ false, "French",	0, 0 },
@@ -65,9 +65,9 @@ static struct {
 
 
 // Set if we're handling 2-byte characters.
-bool bMultiByte = false;
+bool g_bMultiByte = false;
 
-LANGUAGE textLanguage, sampleLanguage = TXT_ENGLISH;
+LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
 
 //----------------- LOCAL DEFINES ----------------------------
 
@@ -85,12 +85,12 @@ void ChangeLanguage(LANGUAGE newLang) {
 	TinselFile f;
 	uint32 textLen = 0;	// length of buffer
 
-	textLanguage = newLang;
-	sampleLanguage = newLang;
+	g_textLanguage = newLang;
+	g_sampleLanguage = newLang;
 
 	// free the previous buffer
-	free(textBuffer);
-	textBuffer = NULL;
+	free(g_textBuffer);
+	g_textBuffer = NULL;
 
 	// Try and open the specified language file. If it fails, and the language
 	// isn't English, try falling back on opening 'english.txt' - some foreign
@@ -116,22 +116,22 @@ void ChangeLanguage(LANGUAGE newLang) {
 	if (textLen == CHUNK_STRING || textLen == CHUNK_MBSTRING) {
 		// the file is uncompressed
 
-		bMultiByte = (textLen == CHUNK_MBSTRING);
+		g_bMultiByte = (textLen == CHUNK_MBSTRING);
 
 		// get length of uncompressed file
 		textLen = f.size();
 		f.seek(0, SEEK_SET);	// Set to beginning of file
 
-		if (textBuffer == NULL) {
+		if (g_textBuffer == NULL) {
 			// allocate a text buffer for the strings
-			textBuffer = (uint8 *)malloc(textLen);
+			g_textBuffer = (uint8 *)malloc(textLen);
 
 			// make sure memory allocated
-			assert(textBuffer);
+			assert(g_textBuffer);
 		}
 
 		// load data
-		if (f.read(textBuffer, textLen) != textLen)
+		if (f.read(g_textBuffer, textLen) != textLen)
 			// file must be corrupt if we get to here
 			error(FILE_IS_CORRUPT, _vm->getTextFile(newLang));
 
@@ -147,7 +147,7 @@ void ChangeLanguage(LANGUAGE newLang) {
  */
 static byte *FindStringBase(int id) {
 	// base of string resource table
-	byte *pText = textBuffer;
+	byte *pText = g_textBuffer;
 
 	// For Tinsel 0, Ids are decremented by 1
 	if (TinselV0)
@@ -353,8 +353,8 @@ int SubStringCount(int id) {
 
 
 void FreeTextBuffer() {
-	free(textBuffer);
-	textBuffer = NULL;
+	free(g_textBuffer);
+	g_textBuffer = NULL;
 }
 
 /**
@@ -364,29 +364,29 @@ void FreeTextBuffer() {
 void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm) {
 	assert(language >= 0 && language < NUM_LANGUAGES);
 
-	languages[language].hDescription = hDescription;
-	languages[language].hFlagFilm	 = hFlagFilm;
+	g_languages[language].hDescription = hDescription;
+	g_languages[language].hFlagFilm	 = hFlagFilm;
 }
 
 /**
  * Gets the current subtitles language
  */
 LANGUAGE TextLanguage() {
-	return textLanguage;
+	return g_textLanguage;
 }
 
 /**
  * Gets the current voice language
  */
 LANGUAGE SampleLanguage() {
-	return sampleLanguage;
+	return g_sampleLanguage;
 }
 
 int NumberOfLanguages() {
 	int i, count;
 
 	for (i = 0, count = 0; i < NUM_LANGUAGES; i++) {
-		if (languages[i].bPresent)
+		if (g_languages[i].bPresent)
 			count++;
 	}
 	return count;
@@ -396,12 +396,12 @@ LANGUAGE NextLanguage(LANGUAGE thisOne) {
 	int i;
 
 	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
-		if (languages[i].bPresent)
+		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
 	for (i = 0; i < thisOne; i++) {
-		if (languages[i].bPresent)
+		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
@@ -413,12 +413,12 @@ LANGUAGE PrevLanguage(LANGUAGE thisOne) {
 	int i;
 
 	for (i = thisOne-1; i >= 0; i--) {
-		if (languages[i].bPresent)
+		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
 	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
-		if (languages[i].bPresent)
+		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
@@ -427,11 +427,11 @@ LANGUAGE PrevLanguage(LANGUAGE thisOne) {
 }
 
 SCNHANDLE LanguageDesc(LANGUAGE thisOne) {
-	return languages[thisOne].hDescription;
+	return g_languages[thisOne].hDescription;
 }
 
 SCNHANDLE LanguageFlag(LANGUAGE thisOne) {
-	return languages[thisOne].hFlagFilm;
+	return g_languages[thisOne].hFlagFilm;
 }
 
 } // End of namespace Tinsel

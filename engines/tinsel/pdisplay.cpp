@@ -50,7 +50,7 @@ namespace Tinsel {
 #ifdef DEBUG
 //extern int Overrun;		// The overrun counter, in DOS_DW.C
 
-extern int newestString;	// The overrun counter, in STRRES.C
+extern int g_newestString;	// The overrun counter, in STRRES.C
 #endif
 
 
@@ -73,17 +73,17 @@ enum HotSpotTag {
 
 // FIXME: Avoid non-const global vars
 
-static bool DispPath = false;
-static bool bShowString = false;
+static bool g_DispPath = false;
+static bool g_bShowString = false;
 
-static int	TaggedActor = 0;
-static HPOLYGON	hTaggedPolygon = NOPOLY;
+static int	g_TaggedActor = 0;
+static HPOLYGON	g_hTaggedPolygon = NOPOLY;
 
-static bool bTagsActive = true;
+static bool g_bTagsActive = true;
 
-static bool bPointingActive = true;
+static bool g_bPointingActive = true;
 
-static char tagBuffer[64];
+static char g_tagBuffer[64];
 
 #ifdef DEBUG
 /**
@@ -158,7 +158,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
 			_ctx->cpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
-			if (DispPath) {
+			if (g_DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
 				if (hp == NOPOLY)
 					sprintf(PositionString, "No path");
@@ -226,18 +226,18 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 		/*-------------*\
 		| String number	|
 		\*-------------*/
-		if (bShowString && newestString != _ctx->prevString) {
+		if (g_bShowString && g_newestString != _ctx->prevString) {
 			// kill current text objects
 			if (_ctx->spText) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->spText);
 			}
 
-			sprintf(PositionString, "String: %d", newestString);
+			sprintf(PositionString, "String: %d", g_newestString);
 			_ctx->spText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTER);
 
 			// update previous value
-			_ctx->prevString = newestString;
+			_ctx->prevString = g_newestString;
 		}
 
 		// update previous playfield position
@@ -257,7 +257,7 @@ void DisablePointing() {
 	int	i;
 	HPOLYGON hPoly;		// Polygon handle
 
-	bPointingActive = false;
+	g_bPointingActive = false;
 
 	for (i = 0; i < MAX_POLY; i++)	{
 		hPoly = GetPolyHandle(i);
@@ -284,7 +284,7 @@ void DisablePointing() {
  * EnablePointing()
  */
 void EnablePointing() {
-	bPointingActive = true;
+	g_bPointingActive = true;
 }
 
 /**
@@ -292,7 +292,7 @@ void EnablePointing() {
  * (if one is). Tag process asks us for this information, as does ProcessUserEvent().
  */
 static void SaveTaggedActor(int ano) {
-	TaggedActor = ano;
+	g_TaggedActor = ano;
 }
 
 /**
@@ -300,7 +300,7 @@ static void SaveTaggedActor(int ano) {
  * (if one is). Tag process asks us for this information, as does ProcessUserEvent().
  */
 int GetTaggedActor() {
-	return TaggedActor;
+	return g_TaggedActor;
 }
 
 /**
@@ -308,11 +308,11 @@ int GetTaggedActor() {
  * (if one is). Tag process asks us for this information, as does ProcessUserEvent().
  */
 static void SaveTaggedPoly(HPOLYGON hp) {
-	hTaggedPolygon = hp;
+	g_hTaggedPolygon = hp;
 }
 
 HPOLYGON GetTaggedPoly() {
-	return hTaggedPolygon;
+	return g_hTaggedPolygon;
 }
 
 /**
@@ -405,11 +405,11 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 
 			if (ActorTagIsWanted(actor)) {
 				GetActorTagPos(actor, &tagX, &tagY, false);
-				LoadStringRes(GetActorTagHandle(actor), tagBuffer, sizeof(tagBuffer));
+				LoadStringRes(GetActorTagHandle(actor), g_tagBuffer, sizeof(g_tagBuffer));
 
 				// May have buggered cursor
 				EndCursorFollowed();
-				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), tagBuffer,
+				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
 						0, tagX, tagY, GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
@@ -653,7 +653,7 @@ void TagProcess(CORO_PARAM, const void *) {
 	SaveTaggedPoly(NOPOLY);		// No tagged polygon yet
 
 	while (1) {
-		if (bTagsActive) {
+		if (g_bTagsActive) {
 			int	curX, curY;	// cursor position
 			while (!GetCursorXYNoWait(&curX, &curY, true))
 				CORO_SLEEP(1);
@@ -804,7 +804,7 @@ void PointProcess(CORO_PARAM, const void *) {
 			// allow re-scheduling
 			do {
 				CORO_SLEEP(1);
-			} while (!bPointingActive);
+			} while (!g_bPointingActive);
 		} else {
 			// allow re-scheduling
 			CORO_SLEEP(1);
@@ -815,15 +815,15 @@ void PointProcess(CORO_PARAM, const void *) {
 }
 
 void DisableTags() {
-	bTagsActive = false;
+	g_bTagsActive = false;
 }
 
 void EnableTags() {
-	bTagsActive = true;
+	g_bTagsActive = true;
 }
 
 bool DisableTagsIfEnabled() {
-	if (bTagsActive) {
+	if (g_bTagsActive) {
 		DisableTags();
 		return true;
 	} else
@@ -836,12 +836,12 @@ bool DisableTagsIfEnabled() {
  * cursor is in.
  */
 void TogglePathDisplay() {
-	DispPath ^= 1;	// Toggle path display (XOR with true)
+	g_DispPath ^= 1;	// Toggle path display (XOR with true)
 }
 
 
 void setshowstring() {
-	bShowString = true;
+	g_bShowString = true;
 }
 
 } // End of namespace Tinsel

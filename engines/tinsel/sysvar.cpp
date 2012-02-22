@@ -43,7 +43,7 @@ extern int NewestSavedGame();
 
 // FIXME: Avoid non-const global vars
 
-static int systemVars[SV_TOPVALID] = {
+static int g_systemVars[SV_TOPVALID] = {
 
 		INV_1,		// Default inventory
 
@@ -105,7 +105,7 @@ static int systemVars[SV_TOPVALID] = {
 		0		// ISV_GHOST_COLOR
 };
 
-static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global vars
+static SCNHANDLE g_systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global vars
 
 //static bool bFlagNoBlocking = false;
 
@@ -116,8 +116,8 @@ static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global v
  */
 
 void InitSysVars() {
-	systemVars[SV_SCROLL_XDISTANCE] = SCREEN_WIDTH / 2;
-	systemVars[SV_SCROLL_YDISTANCE] = SCREEN_BOX_HEIGHT1 / 2;
+	g_systemVars[SV_SCROLL_XDISTANCE] = SCREEN_WIDTH / 2;
+	g_systemVars[SV_SCROLL_YDISTANCE] = SCREEN_BOX_HEIGHT1 / 2;
 }
 
 /**
@@ -138,7 +138,7 @@ void SetSysVar(int varId, int newValue) {
 		error("SetSystemVar(): read only identifier");
 
 	default:
-		systemVars[varId] = newValue;
+		g_systemVars[varId] = newValue;
 	}
 }
 
@@ -167,28 +167,28 @@ int SysVar(int varId) {
 		//return bDebuggingAllowed;
 
 	default:
-		return systemVars[varId];
+		return g_systemVars[varId];
 	}
 }
 
 void SaveSysVars(int *pSv) {
-	memcpy(pSv, systemVars, sizeof(systemVars));
+	memcpy(pSv, g_systemVars, sizeof(g_systemVars));
 }
 
 void RestoreSysVars(int *pSv) {
-	memcpy(systemVars, pSv, sizeof(systemVars));
+	memcpy(g_systemVars, pSv, sizeof(g_systemVars));
 }
 
 void SetSysString(int number, SCNHANDLE hString) {
 	assert(number >= 0 && number < SS_MAX_VALID);
 
-	systemStrings[number] = hString;
+	g_systemStrings[number] = hString;
 }
 
 SCNHANDLE SysString(int number) {
 	assert(number >= 0 && number < SS_MAX_VALID);
 
-	return systemStrings[number];
+	return g_systemStrings[number];
 }
 
 /**
