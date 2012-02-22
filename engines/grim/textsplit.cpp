@@ -74,13 +74,19 @@ static float str2float(const char *str) {
 
 static void parse(const char *line, const char *fmt, int field_count, va_list va) {
 	char *str = strdup(line);
-	const char *format = fmt;
 	const int len = strlen(str);
 	for (int i = 0; i < len; ++i) {
 		if (str[i] == '\t')
 			str[i] = ' ';
 	}
+
+	char *format = strdup(fmt);
 	const int formatlen = strlen(format);
+	for (int i = 0; i < formatlen; ++i) {
+		if (format[i] == '\t')
+			format[i] = ' ';
+	}
+
 	int count = 0;
 	const char *src = str;
 	const char *end = str + len;
@@ -163,6 +169,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 		}
 	}
 	free(str);
+	free(format);
 
 	if (count < field_count) {
 		error("Expected line of format '%s', got '%s'", fmt, line);
