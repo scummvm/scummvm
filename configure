@@ -128,7 +128,7 @@ _keymapper=no
 _translation=yes
 # Default platform settings
 _backend=sdl
-_16bit=yes
+_16bit=auto
 _savegame_timestamp=auto
 _dynamic_modules=no
 _elf_loader=no
