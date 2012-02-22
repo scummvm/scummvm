@@ -15,11 +15,13 @@ MODULE_OBJS := \
 	gui_options.o \
 	hashmap.o \
 	iff_container.o \
+	language.o \
 	localization.o \
 	macresman.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
+	platform.o \
 	quicktime.o \
 	random.o \
 	rational.o \

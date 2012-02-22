@@ -23,7 +23,8 @@
 #ifndef SCUMM_DETECTION_H
 #define SCUMM_DETECTION_H
 
-#include "common/util.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 namespace Scumm {
 

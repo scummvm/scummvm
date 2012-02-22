@@ -23,7 +23,7 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
-#include "common/util.h"	// for Common::Language
+#include "common/language.h"
 
 #define GUIO_NONE			"\000"
 #define GUIO_NOSUBTITLES	"\001"
