@@ -1151,7 +1151,7 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX) {
 			break;
 		}
-		if (isalnum(keystate.ascii) || (keystate.ascii == ' ')) {
+		if (Common::isAlnum(keystate.ascii) || (keystate.ascii == ' ')) {
 			_statusTextInputString[_statusTextInputPos++] = keystate.ascii;
 			_statusTextInputString[_statusTextInputPos] = 0;
 		}
@@ -1209,7 +1209,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 		_textInputPos = _textInputStringLength + 1;
 		break;
 	default:
-		if (((keystate.ascii <= 255) && (isalnum(keystate.ascii))) || (keystate.ascii == ' ') ||
+		if (((keystate.ascii <= 255) && (Common::isAlnum(keystate.ascii))) || (keystate.ascii == ' ') ||
 		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
 			if (_textInputStringLength < save_title_size - 1) {
 				ch[0] = keystate.ascii;

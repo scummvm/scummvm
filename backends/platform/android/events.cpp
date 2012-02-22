@@ -227,17 +227,14 @@ void OSystem_Android::setupKeymapper() {
 	HardwareKeySet *keySet = new HardwareKeySet();
 
 	keySet->addHardwareKey(
-		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)",
-				kTriggerLeftKeyType,
-				kVirtualKeyboardActionType));
+		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)"));
 
 	mapper->registerHardwareKeySet(keySet);
 
 	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;
 
-	act = new Action(globalMap, "VIRT", "Display keyboard",
-						kVirtualKeyboardActionType);
+	act = new Action(globalMap, "VIRT", "Display keyboard");
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
 	mapper->addGlobalKeymap(globalMap);

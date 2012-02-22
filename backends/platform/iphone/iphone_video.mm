@@ -40,7 +40,7 @@ static int _overlayTexWidth = 0;
 static int _overlayTexHeight = 0;
 static int _overlayWidth = 0;
 static int _overlayHeight = 0;
-static float _overlayPortraitRatio = 1.0f;
+static CGRect _overlayRect;
 
 static int _needsScreenUpdate = 0;
 static int _overlayIsEnabled = 0;
@@ -57,8 +57,11 @@ static int _mouseX = 0;
 static int _mouseY = 0;
 static int _mouseCursorEnabled = 0;
 
-static bool _aspectRatioCorrect = false;
+static GLint _renderBufferWidth;
+static GLint _renderBufferHeight;
 
+static int _shakeOffsetY;
+static int _scaledShakeOffsetY;
 
 #if 0
 static long lastTick = 0;
@@ -80,21 +83,10 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-void iPhone_setGraphicsMode(int mode) {
-	_graphicsMode = (GraphicsModes)mode;
+void iPhone_setGraphicsMode(GraphicsModes mode) {
+	_graphicsMode = mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
-}
-
-void iPhone_setFeatureState(iPhoneFeature f, bool enable) {
-    switch (f)
-    {
-        case kAspectRatioCorrection:
-            _aspectRatioCorrect = enable;
-            break;
-        default:
-            break;
-    }
 }
 
 void iPhone_showCursor(int state) {
@@ -144,22 +136,26 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 }
 
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
-	int y;
-	for (y = y1; y < y2; ++y)
+	for (int y = y1; y < y2; ++y)
 		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
 }
 
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
-	int y;
 	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
-	for (y = y1; y < y2; ++y)
+	for (int y = y1; y < y2; ++y)
 		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void iPhone_initSurface(int width, int height) {
 	_width = width;
 	_height = height;
+	_shakeOffsetY = 0;
 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
+}
+
+void iPhone_setShakeOffset(int offset) {
+	_shakeOffsetY = offset;
+	[sharedInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
 }
 
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
@@ -200,56 +196,60 @@ const char *iPhone_getDocumentsDir() {
 	return [documentsDirectory UTF8String];
 }
 
-static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
-	if (_overlayIsEnabled) {
-		switch (orientation) {
-		case UIDeviceOrientationLandscapeLeft:
-			*x = (int)point.y;
-			*y = _overlayHeight - (int)point.x;
-			break;
+/**
+ * Converts portrait mode coordinates into rotated mode coordinates.
+ */
+static bool convertToRotatedCoords(UIDeviceOrientation orientation, CGPoint point, CGPoint *result) {
+	switch (orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+		result->x = point.y;
+		result->y = _renderBufferWidth - point.x;
+		return true;
 
-		case UIDeviceOrientationLandscapeRight:
-			*x = _overlayWidth - (int)point.y;
-			*y =  (int)point.x;
-			break;
+	case UIDeviceOrientationLandscapeRight:
+		result->x = _renderBufferHeight - point.y;
+		result->y = point.x;
+		return true;
 
-		case UIDeviceOrientationPortrait:
-			*x = (int)point.x;
-			*y = (int)point.y;
-			break;
+	case UIDeviceOrientationPortrait:
+		result->x = point.x;
+		result->y = point.y;
+		return true;
 
-		default:
-			return false;
-		}
-	} else {
-		if (point.x < _gameScreenRect.origin.x || point.x >= _gameScreenRect.origin.x + _gameScreenRect.size.width ||
-			point.y < _gameScreenRect.origin.y || point.y >= _gameScreenRect.origin.y + _gameScreenRect.size.height) {
-				return false;
-		}
-
-		point.x = (point.x - _gameScreenRect.origin.x) / _gameScreenRect.size.width;
-		point.y = (point.y - _gameScreenRect.origin.y) / _gameScreenRect.size.height;
-
-		switch (orientation) {
-		case UIDeviceOrientationLandscapeLeft:
-			*x = point.y * _width;
-			*y = (1.0f - point.x) * _height;
-			break;
-
-		case UIDeviceOrientationLandscapeRight:
-			*x = (1.0f - point.y) * _width;
-			*y = point.x * _height;
-			break;
-
-		case UIDeviceOrientationPortrait:
-			*x = point.x * _width;
-			*y = point.y * _height;
-			break;
-
-		default:
-			return false;
-		}
+	default:
+		return false;
 	}
+}
+
+static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
+	if (!convertToRotatedCoords(orientation, point, &point))
+		return false;
+
+	CGRect *area;
+	int width, height, offsetY;
+	if (_overlayIsEnabled) {
+		area = &_overlayRect;
+		width = _overlayWidth;
+		height = _overlayHeight;
+		offsetY = _shakeOffsetY;
+	} else {
+		area = &_gameScreenRect;
+		width = _width;
+		height = _height;
+		offsetY = _scaledShakeOffsetY;
+	}
+
+	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
+	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
+
+	*x = (int)(point.x * width);
+	// offsetY describes the translation of the screen in the upward direction,
+	// thus we need to add it here.
+	*y = (int)(point.y * height + offsetY);
+
+	// Clip coordinates
+	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
+			return false;
 
 	return true;
 }
@@ -325,7 +325,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		// Since the overlay size won't change the whole run, we can
 		// precalculate the texture coordinates for the overlay texture here
 		// and just use it later on.
-		_overlayTexCoords[0] = _overlayTexCoords[4] = _overlayWidth / (GLfloat)_overlayTexWidth;
+		_overlayTexCoords[2] = _overlayTexCoords[6] = _overlayWidth / (GLfloat)_overlayTexWidth;
 		_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
 
 		int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
@@ -353,8 +353,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		}
 	}
 
-	_fullWidth = frame.size.width;
-	_fullHeight = frame.size.height;
+	_fullWidth = (int)frame.size.width;
+	_fullHeight = (int)frame.size.height;
 
 	sharedInstance = self;
 
@@ -491,32 +491,43 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	int hotspotX = _mouseCursorHotspotX;
 	int hotspotY = _mouseCursorHotspotY;
 
-	if (!_overlayIsEnabled) {
-		const GLint gameWidth = (_visibleHeight - 2 * _widthOffset);
-		const GLint gameHeight = (_visibleWidth - 2 * _heightOffset);
+	CGRect *rect;
+	int maxWidth, maxHeight;
 
-		mouseX = (_width - mouseX) / (float)_width * gameHeight + _heightOffset;
-		mouseY = mouseY / (float)_height * gameWidth + _widthOffset;
-		hotspotX = hotspotX / (float)_width * gameHeight;
-		hotspotY = hotspotY / (float)_height * gameWidth;
-		width = width / (float)_width * gameHeight;
-		height = height / (float)_height * gameWidth;
+	if (!_overlayIsEnabled) {
+		rect = &_gameScreenRect;
+		maxWidth = _width;
+		maxHeight = _height;
 	} else {
-		mouseX = (_overlayWidth - mouseX) / (float)_overlayWidth * _renderBufferWidth;
-		mouseY = mouseY / (float)_overlayHeight * _renderBufferHeight;
-		hotspotX = hotspotX / (float)_overlayWidth * _renderBufferWidth;
-		hotspotY = hotspotY / (float)_overlayHeight * _renderBufferHeight;
-		width = width / (float)_overlayWidth * _renderBufferWidth;
-		height = height / (float)_overlayHeight * _renderBufferHeight;
+		rect = &_overlayRect;
+		maxWidth = _overlayWidth;
+		maxHeight = _overlayHeight;
 	}
+
+	const GLfloat scaleX = CGRectGetWidth(*rect) / (GLfloat)maxWidth;
+	const GLfloat scaleY = CGRectGetHeight(*rect) / (GLfloat)maxHeight;
+
+	mouseX = (int)(mouseX * scaleX);
+	mouseY = (int)(mouseY * scaleY);
+	hotspotX = (int)(hotspotX * scaleX);
+	hotspotY = (int)(hotspotY * scaleY);
+	width = (int)(width * scaleX);
+	height = (int)(height * scaleY);
 
 	mouseX -= hotspotX;
 	mouseY -= hotspotY;
 
+	mouseX += (int)CGRectGetMinX(*rect);
+	mouseY += (int)CGRectGetMinY(*rect);
+
 	GLfloat vertices[] = {
+		// Top left
 		mouseX        , mouseY,
+		// Top right
 		mouseX + width, mouseY,
+		// Bottom left
 		mouseX        , mouseY + height,
+		// Bottom right
 		mouseX + width, mouseY + height
 	};
 
@@ -526,10 +537,14 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	float texHeight = _mouseCursorHeight / (float)getSizeNextPOT(_mouseCursorHeight);
 
 	const GLfloat texCoords[] = {
-		texWidth, 0.0f,
-		0.0f, 0.0f,
-		texWidth, texHeight,
-		0.0f, texHeight
+		// Top left
+		0       , 0,
+		// Top right
+		texWidth, 0,
+		// Bottom left
+		0       , texHeight,
+		// Bottom right
+		texWidth, texHeight
 	};
 
 	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
@@ -543,7 +558,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	_gameScreenTextureWidth = getSizeNextPOT(_width);
 	_gameScreenTextureHeight = getSizeNextPOT(_height);
 
-	_gameScreenTexCoords[0] = _gameScreenTexCoords[4] = _width / (GLfloat)_gameScreenTextureWidth;
+	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _width / (GLfloat)_gameScreenTextureWidth;
 	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _height / (GLfloat)_gameScreenTextureHeight;
 
 	_orientation = [[UIDevice currentDevice] orientation];
@@ -555,12 +570,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		break;
 
 	default:
-        if (iPhone_isHighResDevice()) {
-            _orientation = UIDeviceOrientationLandscapeRight;
-        }
-        else {
-            _orientation = UIDeviceOrientationPortrait;
-        }
+		_orientation = UIDeviceOrientationPortrait;
 	}
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
@@ -568,15 +578,27 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if (_orientation ==  UIDeviceOrientationLandscapeRight) {
-		glRotatef(-90, 0, 0, 1); printOpenGLError();
-	} else if (_orientation == UIDeviceOrientationLandscapeLeft) {
-		glRotatef(90, 0, 0, 1); printOpenGLError();
-	} else {
-		glRotatef(180, 0, 0, 1); printOpenGLError();
-	}
+	int screenWidth, screenHeight;
 
-	glOrthof(0, _renderBufferWidth, 0, _renderBufferHeight, 0, 1); printOpenGLError();
+	// Set the origin (0,0) depending on the rotation mode.
+	if (_orientation ==  UIDeviceOrientationLandscapeRight) {
+		glRotatef( 90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+
+		screenWidth = _renderBufferHeight;
+		screenHeight = _renderBufferWidth;
+	} else if (_orientation == UIDeviceOrientationLandscapeLeft) {
+		glRotatef(-90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+
+		screenWidth = _renderBufferHeight;
+		screenHeight = _renderBufferWidth;
+	} else if (_orientation == UIDeviceOrientationPortrait) {
+		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();
+
+		screenWidth = _renderBufferWidth;
+		screenHeight = _renderBufferHeight;
+	}
 
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
@@ -605,56 +627,43 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[_keyboardView removeFromSuperview];
 		[[_keyboardView inputView] removeFromSuperview];
 	}
-    
-    float width = _width;
-    float height = _height;
-    if (_aspectRatioCorrect 
-        && ((_width == 320 && _height == 200)
-        || (_width == 640 && _height == 400)) )  {
-        
-        if (_height == 200) {
-            height = 240;
-        }
-        if (_height == 400) {
-            height = 480;
-        }
-    }
 
+	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
-		_visibleHeight = _renderBufferHeight;
-		_visibleWidth = _renderBufferWidth;
-                       
-		float ratioDifference = ((float)height / (float)width) / ((float)_renderBufferWidth / (float)_renderBufferHeight);
-        
-      
-        
+		GLfloat gameScreenRatio = (GLfloat)_width / (GLfloat)_height;
+		GLfloat screenRatio = (GLfloat)screenWidth / (GLfloat)screenHeight;
+
+		// These are the width/height according to the portrait layout!
 		int rectWidth, rectHeight;
-		if (ratioDifference < 1.0f) {
-			rectWidth = _renderBufferWidth * ratioDifference;
-			rectHeight = _renderBufferHeight;
-			_widthOffset = (_renderBufferWidth - rectWidth) / 2;
-			_heightOffset = 0;
+		int xOffset, yOffset;
+
+		if (gameScreenRatio < screenRatio) {
+			// When the game screen ratio is less than the screen ratio
+			// we need to scale the width, since the game screen was higher
+			// compared to the width than our output screen is.
+			rectWidth = (int)(screenHeight * gameScreenRatio);
+			rectHeight = screenHeight;
+			xOffset = (screenWidth - rectWidth) / 2;
+			yOffset = 0;
 		} else {
-			rectWidth = _renderBufferWidth;
-			rectHeight = _renderBufferHeight / ratioDifference;
-			_heightOffset = (_renderBufferHeight - rectHeight) / 2;
-			_widthOffset = 0;
+			// When the game screen ratio is bigger than the screen ratio
+			// we need to scale the height, since the game screen was wider
+			// compared to the height than our output screen is.
+			rectWidth = screenWidth;
+			rectHeight = (int)(screenWidth / gameScreenRatio);
+			xOffset = 0;
+			yOffset = (screenHeight - rectHeight) / 2;
 		}
 
-		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
-		_gameScreenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
-		_overlayPortraitRatio = 1.0f;
+		//printf("Rect: %i, %i, %i, %i\n", xOffset, yOffset, rectWidth, rectHeight);
+		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
+		overlayPortraitRatio = 1.0f;
 	} else {
-		float ratio = (float)height / (float)width;
-		int height = _renderBufferWidth * ratio;
-		//printf("Making rect (%u, %u)\n", _renderBufferWidth, height);
-		_gameScreenRect = CGRectMake(0, 0, _renderBufferWidth - 1, height - 1);
-
-		_visibleHeight = height;
-		_visibleWidth = _renderBufferWidth;
-		_heightOffset = 0.0f;
-		_widthOffset = 0.0f;
+		float ratio = (float)_height / (float)_width;
+		int height = (int)(screenWidth * ratio);
+		//printf("Making rect (%u, %u)\n", screenWidth, height);
+		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
 		CGRect keyFrame = CGRectMake(0.0f, 0.0f, 0.0f, 0.0f);
 		if (_keyboardView == nil) {
@@ -665,22 +674,34 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
-		_overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
+		overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
 	}
 
-	_gameScreenVertCoords[0] = _heightOffset;
-	_gameScreenVertCoords[1] = _widthOffset;
-	_gameScreenVertCoords[2] = _visibleWidth - _heightOffset;
-	_gameScreenVertCoords[3] = _widthOffset;
-	_gameScreenVertCoords[4] = _heightOffset;
-	_gameScreenVertCoords[5] = _visibleHeight - _widthOffset;
-	_gameScreenVertCoords[6] = _visibleWidth - _heightOffset;
-	_gameScreenVertCoords[7] = _visibleHeight - _widthOffset;
+	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
 
-	_overlayVertCoords[2] = _overlayHeight;
-	_overlayVertCoords[5] = _overlayWidth * _overlayPortraitRatio;
-	_overlayVertCoords[6] = _overlayHeight;
-	_overlayVertCoords[7] = _overlayWidth * _overlayPortraitRatio;
+	_gameScreenVertCoords[0] = _gameScreenVertCoords[4] = CGRectGetMinX(_gameScreenRect);
+	_gameScreenVertCoords[1] = _gameScreenVertCoords[3] = CGRectGetMinY(_gameScreenRect);
+	_gameScreenVertCoords[2] = _gameScreenVertCoords[6] = CGRectGetMaxX(_gameScreenRect);
+	_gameScreenVertCoords[5] = _gameScreenVertCoords[7] = CGRectGetMaxY(_gameScreenRect);
+
+	_overlayVertCoords[2] = _overlayVertCoords[6] = CGRectGetMaxX(_overlayRect);
+	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
+
+	[self setViewTransformation];
+}
+
+- (void)setViewTransformation {
+	// Set the modelview matrix. This matrix will be used for the shake offset
+	// support.
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// Scale the shake offset according to the overlay size. We need this to
+	// adjust the overlay mouse click coordinates when an offset is set.
+	_scaledShakeOffsetY = (int)(_shakeOffsetY / (GLfloat)_height * CGRectGetHeight(_overlayRect));
+
+	// Apply the shakeing to the output screen.
+	glTranslatef(0, -_scaledShakeOffsetY, 0);
 }
 
 - (void)clearColorBuffer {
@@ -881,6 +902,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		 nil
 		]
 	];
+
+	return 0;
 }
 
 - (void)applicationSuspend {

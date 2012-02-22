@@ -54,6 +54,19 @@ void warning(const char *s, ...) {
 	fprintf(stderr, "WARNING: %s!\n", buf);
 }
 
+int scumm_stricmp(const char *s1, const char *s2) {
+	byte l1, l2;
+	do {
+		// Don't use ++ inside tolower, in case the macro uses its
+		// arguments more than once.
+		l1 = (byte)*s1++;
+		l1 = tolower(l1);
+		l2 = (byte)*s2++;
+		l2 = tolower(l2);
+	} while (l1 == l2 && l1 != 0);
+	return l1 - l2;
+}
+
 void debug(int level, const char *s, ...) {
 	char buf[1024];
 	va_list va;

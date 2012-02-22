@@ -47,6 +47,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	  _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
 	  _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
 	  _teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
+
 	_screen = 0;
 	_gui = 0;
 	_debugger = 0;
@@ -64,7 +65,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_itemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
-	_tempIconShape = 0;
 
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
@@ -92,7 +92,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_doorSwitches = 0;
 	_monsterProps = 0;
 	_monsterDecorations = 0;
-	_monsterOvl1 = _monsterOvl2 = 0;
+	_monsterFlashOverlay = _monsterStoneOverlay = 0;
 	_monsters = 0;
 	_dstMonsterIndex = 0;
 	_preventMonsterFlash = false;
@@ -201,6 +201,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_coneOfColdDest1 = _coneOfColdDest2 = _coneOfColdDest3 = _coneOfColdDest4 = 0;
 	_coneOfColdGfxTblSize = 0;
 	_menuButtonDefs = 0;
+	_updateCharNum = 0;
 	_menuStringsMain = _menuStringsSaveLoad = _menuStringsOnOff = _menuStringsSpells = 0;
 	_menuStringsRest = _menuStringsDrop = _menuStringsExit = _menuStringsStarve = 0;
 	_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = 0;
@@ -211,6 +212,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj = _numSpellsPal = _numSpellsMage = 0;
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
+	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
+	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
 	memset(_doorType, 0, sizeof(_doorType));
@@ -267,8 +270,8 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete[] _itemNames;
 	delete[] _flyingObjects;
 
-	delete[] _monsterOvl1;
-	delete[] _monsterOvl2;
+	delete[] _monsterFlashOverlay;
+	delete[] _monsterStoneOverlay;
 	delete[] _monsters;
 
 	if (_monsterDecorations) {
@@ -363,9 +366,12 @@ Common::Error EoBCoreEngine::init() {
 	// This makes a tick length of 54.94.
 	_tickLength = 55;
 
+	if (ConfMan.hasKey("render_mode"))
+		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+
 	_screen = new Screen_EoB(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+	_screen->setResolution(_flags.useHiResOverlay || (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA));
 
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
@@ -384,7 +390,7 @@ Common::Error EoBCoreEngine::init() {
 	if (!_staticres->init())
 		error("_staticres->init() failed");
 
-	if (!screen()->init())
+	if (!_screen->init(_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA))
 		error("screen()->init() failed");
 
 	if (ConfMan.hasKey("save_slot")) {
@@ -476,11 +482,11 @@ Common::Error EoBCoreEngine::init() {
 	_doorSwitches = new SpriteDecoration[6];
 	memset(_doorSwitches, 0, 6 * sizeof(SpriteDecoration));
 
-	_monsterOvl1 = new uint8[16];
-	_monsterOvl2 = new uint8[16];
-	memset(_monsterOvl1, 15, 16 * sizeof(uint8));
-	memset(_monsterOvl2, 13, 16 * sizeof(uint8));
-	_monsterOvl1[0] = _monsterOvl2[0] = 0;
+	_monsterFlashOverlay = new uint8[16];
+	_monsterStoneOverlay = new uint8[16];
+	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xff : 0x0f, 16 * sizeof(uint8));
+	memset(_monsterStoneOverlay, 0x0d, 16 * sizeof(uint8));
+	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
@@ -496,8 +502,7 @@ Common::Error EoBCoreEngine::go() {
 	_debugger->initialize();
 
 	_txt->removePageBreakFlag();
-	_screen->loadPalette("palette.col", _screen->getPalette(0));
-	_screen->setScreenPalette(_screen->getPalette(0));
+
 	_screen->setFont(Screen::FID_8_FNT);
 
 	loadItemsAndDecorationsShapes();
@@ -660,44 +665,42 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 
 void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	releaseItemsAndDecorationsShapes();
-	_screen->setCurPage(2);
 
-	_screen->loadBitmap("ITEML1.CPS", 5, 3, 0);
+	_screen->loadShapeSetBitmap("ITEML1", 5, 3);
 	_largeItemShapes = new const uint8*[_numLargeItemShapes];
 	int div = (_flags.gameID == GI_EOB1) ? 3 : 8;
 	int mul = (_flags.gameID == GI_EOB1) ? 64 : 24;
 
 	for (int i = 0; i < _numLargeItemShapes; i++)
-		_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24);
+		_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
 
-	_screen->loadBitmap("ITEMS1.CPS", 5, 3, 0);
+	_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
 	_smallItemShapes = new const uint8*[_numSmallItemShapes];
 	for (int i = 0; i < _numSmallItemShapes; i++)
-		_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24);
+		_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
 
-	_screen->loadBitmap("THROWN.CPS", 5, 3, 0);
+	_screen->loadShapeSetBitmap("THROWN", 5, 3);
 	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
 	for (int i = 0; i < _numThrownItemShapes; i++)
-		_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24);
+		_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
 
 	_spellShapes = new const uint8*[4];
 	for (int i = 0; i < 4; i++)
-		_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32);
+		_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
 
 	_firebeamShapes = new const uint8*[3];
-	_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24);
-	_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24);
-	_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24);
-	_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24);
-	_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16);
+	_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
+	_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
+	_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
 
-	_screen->loadBitmap("ITEMICN.CPS", 5, 3, 0);
+	_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
 	for (int i = 0; i < _numItemIconShapes; i++)
-		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10);
-	_tempIconShape = new uint8[300];
+		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
 
-	_screen->loadBitmap("DECORATE.CPS", 5, 3, 0);
+	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
 
 	if (_flags.gameID == GI_EOB2) {
 		_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
@@ -708,16 +711,16 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	_teleporterShapes = new const uint8*[6];
 	for (int i = 0; i < 6; i++)
-		_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3]);
+		_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
 	_sparkShapes = new const uint8*[3];
-	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16);
-	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16);
-	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16);
-	_deadCharShape = _screen->encodeShape(0, 88, 4, 32);
-	_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32);
-	_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8);
-	_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16);
-	_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8);
+	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
+	_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
+	_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
+	_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
+	_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
+	_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
 
 	static const uint8 dHeight[] = { 17, 10, 10 };
 	static const uint8 dY[] = { 120, 137, 147 };
@@ -725,7 +728,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	_compassShapes = new const uint8*[12];
 	for (int y = 0; y < 3; y++) {
 		for (int x = 0; x < 4; x++)
-			_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y]);
+			_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
 	}
 }
 
@@ -769,7 +772,6 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		}
 		delete[] _itemIconShapes;
 	}
-	delete[] _tempIconShape;
 
 	if (_sparkShapes) {
 		for (int i = 0; i < 3; i++) {
@@ -833,18 +835,13 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	_itemInHand = itemIndex;
 	int icon = _items[_itemInHand].icon;
 	const uint8 *shp = _itemIconShapes[icon];
+	const uint8 *ovl = 0;
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
-		memcpy(_tempIconShape, shp, shp[1] * shp[2] * 4 + 20);
-		if (_flags.gameID == GI_EOB1)
-			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icon << 4]);
-		else
-			_screen->applyShapeOverlay(_tempIconShape, 3);
-		shp = _tempIconShape;
-	}
+	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2))
+		ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, 3);
 
 	int mouseOffs = itemIndex ? 8 : 0;
-	_screen->setMouseCursor(mouseOffs, mouseOffs, shp);
+	_screen->setMouseCursor(mouseOffs, mouseOffs, shp, ovl);
 }
 
 int EoBCoreEngine::getDexterityArmorClassModifier(int dexterity) {
@@ -1196,7 +1193,7 @@ void EoBCoreEngine::initNpc(int npcIndex) {
 
 	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
 	_screen->_curPage = 2;
-	c->faceShape = _screen->encodeShape(npcIndex << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
+	c->faceShape = _screen->encodeShape(npcIndex << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
 	_screen->_curPage = 0;
 }
 
@@ -1678,13 +1675,13 @@ void EoBCoreEngine::seq_portal() {
 	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
 
 	for (int i = 0; i < 5; i++) {
-		shapes1[i] = _screen->encodeShape(i * 3, 0, 3, 75);
-		shapes2[i] = _screen->encodeShape(i * 3, 80, 3, 75);
-		shapes3[i] = _screen->encodeShape(15, i * 18, 15, 18);
+		shapes1[i] = _screen->encodeShape(i * 3, 0, 3, 75, false, _cgaMappingDefault);
+		shapes2[i] = _screen->encodeShape(i * 3, 80, 3, 75, false, _cgaMappingDefault);
+		shapes3[i] = _screen->encodeShape(15, i * 18, 15, 18, false, _cgaMappingDefault);
 	}
 
-	shape0 = _screen->encodeShape(30, 0, 8, 77);
-	_screen->loadEoBBitmap("PORTALB", 0, 5, 3, 2);
+	shape0 = _screen->encodeShape(30, 0, 8, 77, false, _cgaMappingDefault);
+	_screen->loadEoBBitmap("PORTALB", _cgaMappingDefault, 5, 3, 2);
 
 	snd_playSoundEffect(33);
 	snd_playSoundEffect(19);
@@ -1741,7 +1738,7 @@ void EoBCoreEngine::seq_portal() {
 bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->copyPage(0, 10);
+	_screen->copyPage(0, (_screen->getPageScaleFactor(0) == 2) ? 4 : 10);
 
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
@@ -1768,7 +1765,7 @@ bool EoBCoreEngine::checkPassword() {
 
 	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
 	_screen->setFont(of);
-	_screen->copyPage(10, 0);
+	_screen->copyPage((_screen->getPageScaleFactor(0) == 2) ? 4 : 10, 0);
 	return true;
 }
 

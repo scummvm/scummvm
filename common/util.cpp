@@ -19,6 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_isalnum
+#define FORBIDDEN_SYMBOL_EXCEPTION_isalpha
+#define FORBIDDEN_SYMBOL_EXCEPTION_isdigit
+#define FORBIDDEN_SYMBOL_EXCEPTION_isnumber
+#define FORBIDDEN_SYMBOL_EXCEPTION_islower
+#define FORBIDDEN_SYMBOL_EXCEPTION_isspace
+#define FORBIDDEN_SYMBOL_EXCEPTION_isupper
+
+
 #include "common/util.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
@@ -277,7 +286,10 @@ const RenderModeDescription g_renderModes[] = {
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
 	{ "ega", "EGA", kRenderEGA },
+	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
+	{ "fmtowns", "FM-Towns", kRenderFMTowns },
+	{ "pc98", "PC-98", kRenderPC98 },
 	{0, 0, kRenderDefault}
 };
 
@@ -342,6 +354,15 @@ const struct GameOpt {
 	{ GUIO_NOASPECT,     "noAspect" },
 	{ GUIO_EGAUNDITHER,  "egaUndither" },
 
+	{ GUIO_RENDERHERCGREEN,	"hercGreen" },
+	{ GUIO_RENDERHERCAMBER,	"hercAmber" },
+	{ GUIO_RENDERCGA,		"cga" },
+	{ GUIO_RENDEREGA,		"ega" },
+	{ GUIO_RENDERVGA,		"vga" },
+	{ GUIO_RENDERAMIGA,		"amiga" },
+	{ GUIO_RENDERFMTOWNS,	"fmtowns" },
+	{ GUIO_RENDERPC98,		"pc98" },
+
 	{ GUIO_NONE, 0 }
 };
 
@@ -404,6 +425,40 @@ void updateGameGUIOptions(const String &options, const String &langOption) {
 		ConfMan.set("guioptions", newOptionString);
 		ConfMan.flushToDisk();
 	}
+}
+
+#define ENSURE_ASCII_CHAR(c) \
+		if (c < 0 || c > 127) \
+			return false
+
+bool isAlnum(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isalnum((byte)c);
+}
+
+bool isAlpha(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isalpha((byte)c);
+}
+
+bool isDigit(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isdigit((byte)c);
+}
+
+bool isLower(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return islower((byte)c);
+}
+
+bool isSpace(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isspace((byte)c);
+}
+
+bool isUpper(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isupper((byte)c);
 }
 
 } // End of namespace Common

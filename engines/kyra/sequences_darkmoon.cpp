@@ -41,11 +41,22 @@ public:
 		kFinale
 	};
 
-	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EoBShapeDef **shapeDefList, const EoBSequenceStep **seqList);
+	struct Config {
+		Config(Mode m, const char *const *str, const char *const *cps, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool paletteFading) : mode(m), strings(str), cpsFiles(cps), palFiles(pal), shapeDefs(shp), animData(anim), palFading(paletteFading) {}
+		Mode mode;
+		const char *const *strings;
+		const char *const *cpsFiles;
+		const char *const *palFiles;
+		const DarkMoonShapeDef **shapeDefs;
+		const DarkMoonAnimCommand **animData;
+		bool palFading;
+	};
+
+	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, const Config *config);
 	~DarkmoonSequenceHelper();
 
 	void loadScene(int index, int pageNum);
-	void runSequence(int index, int del = -1);
+	void animCommand(int index, int del = -1);
 
 	void printText(int index, int color);
 	void fadeText();
@@ -68,13 +79,7 @@ private:
 	OSystem *_system;
 	DarkMoonEngine *_vm;
 	Screen_EoB *_screen;
-	Mode _mode;
-
-	const char *const *_strings;
-	const char *const *_cpsFiles;
-	const char *const *_palFiles;
-	const EoBShapeDef **_shapeDefs;
-	const EoBSequenceStep **_seqData;
+	const Config *_config;
 
 	Palette *_palettes[12];
 
@@ -103,10 +108,14 @@ int DarkMoonEngine::mainMenu() {
 				_screen->loadFileDataToPage(s, 3, 64000);
 				delete s;
 			} else {
-				_screen->loadBitmap("MENU.CPS", 3, 2, &_screen->getPalette(0));
+				_screen->loadBitmap("MENU.CPS", 3, 3, &_screen->getPalette(0));
 			}
 
+			if (_configRenderMode == Common::kRenderEGA)
+				_screen->loadPalette("MENU.EGA", _screen->getPalette(0));
+
 			_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->convertPage(3, 2, 0);
 
 			of = _screen->setFont(Screen::FID_6_FNT);
 			op = _screen->setCurPage(2);
@@ -167,7 +176,8 @@ int DarkMoonEngine::mainMenuLoop() {
 }
 
 void DarkMoonEngine::seq_playIntro() {
-	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kIntro, _introStrings, _cpsFilesIntro, _palFilesIntro, _shapesIntro, _seqIntro);
+	DarkmoonSequenceHelper::Config config(DarkmoonSequenceHelper::kIntro, _introStrings, _cpsFilesIntro, _configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA, _shapesIntro,	_animIntro,	false);
+	DarkmoonSequenceHelper sq(_system, this, _screen, &config);
 
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
@@ -192,24 +202,24 @@ void DarkMoonEngine::seq_playIntro() {
 	removeInputTop();
 	sq.delay(18);
 
-	sq.runSequence(3, 18);
-	sq.runSequence(6, 18);
-	sq.runSequence(0);
+	sq.animCommand(3, 18);
+	sq.animCommand(6, 18);
+	sq.animCommand(0);
 
 	sq.waitForSongNotifier(1);
 
-	sq.runSequence(11);
-	sq.runSequence(7, 6);
-	sq.runSequence(2, 6);
+	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 12 : 11);
+	sq.animCommand(7, 6);
+	sq.animCommand(2, 6);
 
 	sq.waitForSongNotifier(2);
 
-	sq.runSequence(38);
-	sq.runSequence(3);
-	sq.runSequence(8);
-	sq.runSequence(1, 10);
-	sq.runSequence(0, 6);
-	sq.runSequence(2);
+	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 39 : 38);
+	sq.animCommand(3);
+	sq.animCommand(8);
+	sq.animCommand(1, 10);
+	sq.animCommand(0, 6);
+	sq.animCommand(2);
 
 	sq.waitForSongNotifier(3);
 
@@ -218,22 +228,22 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(0);
 
-	sq.runSequence(40);
-	sq.runSequence(7, 18);
+	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 41 : 40);
+	sq.animCommand(7, 18);
 
 	sq.printText(0, 16);    // You were settling...
-	sq.runSequence(7, 90);
+	sq.animCommand(7, 90);
 	sq.fadeText();
 
 	sq.printText(1, 16);    // Then a note was slipped to you
-	sq.runSequence(8);
-	sq.runSequence(2, 72);
+	sq.animCommand(8);
+	sq.animCommand(2, 72);
 	sq.fadeText();
 
 	sq.printText(2, 16);    // It was from your friend Khelben Blackstaff...
-	sq.runSequence(2);
-	sq.runSequence(6, 36);
-	sq.runSequence(3);
+	sq.animCommand(2);
+	sq.animCommand(6, 36);
+	sq.animCommand(3);
 	sq.fadeText();
 
 	sq.printText(3, 16);    // The message was urgent.
@@ -243,19 +253,33 @@ void DarkMoonEngine::seq_playIntro() {
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
-		for (int i = 0; i < 280; i += 3) {
-			uint32 endtime = _system->getMillis() + _tickLength;
-			_screen->copyRegion(11, 8, 8, 8, 301, 128, 0, 0, Screen::CR_NO_P_CHECK);
-			_screen->copyRegion(i, 0, 309, 8, 3, 128, 2, 0, Screen::CR_NO_P_CHECK);
-			_screen->updateScreen();
-			if (i == 96)
-				sq.runSequence(42);
-			delayUntil(endtime);
+		if (_configRenderMode == Common::kRenderEGA) {
+			for (int i = 0; i < 35; i++) {
+				uint32 endtime = _system->getMillis() + 2 * _tickLength;
+				_screen->copyRegion(16, 8, 8, 8, 296, 128, 0, 0, Screen::CR_NO_P_CHECK);
+				_screen->copyRegion(i << 3, 0, 304, 8, 8, 128, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->updateScreen();
+				if (i == 12)
+					sq.animCommand(42);
+				else if (i == 25)
+					snd_playSoundEffect(11);
+				delayUntil(endtime);
+			}
+		} else {
+			for (int i = 0; i < 280; i += 3) {
+				uint32 endtime = _system->getMillis() + _tickLength;
+				_screen->copyRegion(11, 8, 8, 8, 301, 128, 0, 0, Screen::CR_NO_P_CHECK);
+				_screen->copyRegion(i, 0, 309, 8, 3, 128, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->updateScreen();
+				if (i == 96)
+					sq.animCommand(42);
+				delayUntil(endtime);
+			}
 		}
 	}
 
 	_screen->copyRegion(8, 8, 0, 0, 304, 128, 0, 2, Screen::CR_NO_P_CHECK);
-	sq.runSequence(4);
+	sq.animCommand(4);
 	sq.fadeText();
 	sq.delay(10);
 
@@ -268,22 +292,22 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(3, 2);
 	sq.delay(54);
-	sq.runSequence(13);
+	sq.animCommand(13);
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
 
 	sq.printText(5, 15);    // Welcome, please come in
-	sq.runSequence(10);
-	sq.runSequence(10);
-	sq.runSequence(9);
-	sq.runSequence(9);
+	sq.animCommand(10);
+	sq.animCommand(10);
+	sq.animCommand(9);
+	sq.animCommand(9);
 	sq.fadeText();
 
 	sq.printText(6, 15);    // Khelben awaits you in his study
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(10);
-	sq.runSequence(9);
-	sq.runSequence(14);
+		sq.animCommand(10);
+	sq.animCommand(9);
+	sq.animCommand(14);
 	sq.loadScene(5, 2);
 
 	sq.waitForSongNotifier(5);
@@ -293,45 +317,50 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->updateScreen();
 
 	for (int i = 0; i < 6; i++)
-		sq.runSequence(15);
+		sq.animCommand(15);
+
+	if (_configRenderMode == Common::kRenderEGA && !skipFlag() && !shouldQuit()) {
+		_screen->loadPalette("INTRO.EGA", _screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
 
 	sq.loadScene(6, 2);
 	sq.loadScene(7, 2);
 	_screen->clearCurPage();
 	sq.update(2);
 
-	sq.runSequence(16);
+	sq.animCommand(16);
 	sq.printText(7, 15);    // Thank you for coming so quickly
-	sq.runSequence(16);
-	sq.runSequence(17);
+	sq.animCommand(16);
+	sq.animCommand(17);
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(16);
+		sq.animCommand(16);
 	sq.fadeText();
-	sq.runSequence(16);
+	sq.animCommand(16);
 
 	sq.loadScene(8, 2);
 	sq.update(2);
-	sq.runSequence(32);
+	sq.animCommand(32);
 	sq.printText(8, 15);    // I am troubled my friend
-	sq.runSequence(33);
-	sq.runSequence(33);
+	sq.animCommand(33);
+	sq.animCommand(33);
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(32);
+		sq.animCommand(32);
 	sq.fadeText();
 
 	sq.printText(9, 15);    // Ancient evil stirs in the Temple Darkmoon
-	sq.runSequence(33);
-	sq.runSequence(43);
-	sq.runSequence(33);
+	sq.animCommand(33);
+	sq.animCommand(43);
+	sq.animCommand(33);
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(32);
+		sq.animCommand(32);
 	sq.fadeText();
 
 	sq.printText(10, 15);   // I fear for the safety of our city
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(33);
-	sq.runSequence(32);
-	sq.runSequence(32);
+		sq.animCommand(33);
+	sq.animCommand(32);
+	sq.animCommand(32);
 
 	sq.loadScene(9, 2);
 	sq.fadeText();
@@ -339,67 +368,67 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.waitForSongNotifier(6);
 
 	sq.update(2);
-	sq.runSequence(34);
+	sq.animCommand(34);
 
 	sq.printText(11, 15);   // I need your help
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(34);
-	sq.runSequence(35);
+		sq.animCommand(34);
+	sq.animCommand(35);
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(34);
+		sq.animCommand(34);
 	sq.fadeText();
 
 	sq.loadScene(12, 2);
 	sq.update(2);
 	sq.loadScene(6, 2);
-	sq.runSequence(18);
+	sq.animCommand(18);
 
 	sq.printText(12, 15);   // Three nights ago I sent forth a scout
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(22);
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(18);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(22);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(18);
 	sq.fadeText();
 
 	sq.printText(13, 15);   // She has not yet returned
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(23);
-	sq.runSequence(24);
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(17);
-	sq.runSequence(18);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(23);
+	sq.animCommand(24);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(17);
+	sq.animCommand(18);
 	sq.fadeText();
 
 	sq.printText(14, 15);   // I fear for her safety
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(20);
-	sq.runSequence(18);
-	sq.runSequence(25);
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(20);
+	sq.animCommand(18);
+	sq.animCommand(25);
+	sq.animCommand(18);
+	sq.animCommand(18);
 	sq.fadeText();
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(18);
+	sq.animCommand(18);
 
 	sq.printText(15, 15);   // Take this coin
-	sq.runSequence(28);
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(28);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(18);
+	sq.animCommand(18);
 	sq.fadeText();
 
 	sq.loadScene(10, 2);
 	_screen->clearCurPage();
 	_screen->updateScreen();
 
-	sq.runSequence(37, 18);
-	sq.runSequence(36, 36);
+	sq.animCommand(37, 18);
+	sq.animCommand(36, 36);
 
 	sq.loadScene(12, 2);
 	_screen->clearCurPage();
@@ -407,44 +436,44 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(11, 2);
 	sq.printText(16, 15);   // I will use it to contact you
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(20);
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(20);
+	sq.animCommand(18);
+	sq.animCommand(18);
 	sq.fadeText();
 
 	sq.printText(17, 15);   // You must act quickly
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(18);
+	sq.animCommand(18);
 	sq.fadeText();
-	sq.runSequence(18);
+	sq.animCommand(18);
 
 	sq.printText(18, 15);   // I will teleport you near Darkmoon
-	sq.runSequence(20);
-	sq.runSequence(27);
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(18);
-	sq.runSequence(18);
+	sq.animCommand(20);
+	sq.animCommand(27);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(18);
+	sq.animCommand(18);
 	sq.fadeText();
-	sq.runSequence(18);
+	sq.animCommand(18);
 
 	sq.printText(19, 15);   // May luck be with you my friend
-	sq.runSequence(19);
-	sq.runSequence(19);
-	sq.runSequence(20);
-	sq.runSequence(18);
+	sq.animCommand(19);
+	sq.animCommand(19);
+	sq.animCommand(20);
+	sq.animCommand(18);
 	sq.fadeText();
-	sq.runSequence(29);
+	sq.animCommand(29);
 
 	sq.waitForSongNotifier(7);
 
-	sq.runSequence(30);
-	sq.runSequence(31);
+	sq.animCommand(30);
+	sq.animCommand(31);
 
 	sq.waitForSongNotifier(8, true);
 
@@ -454,17 +483,21 @@ void DarkMoonEngine::seq_playIntro() {
 		_screen->setScreenDim(17);
 		_screen->clearCurDim();
 		snd_playSoundEffect(14);
-		sq.fadePalette(10, 1);
+
+		if (_configRenderMode != Common::kRenderEGA)
+			sq.fadePalette(10, 1);
 		_screen->setClearScreenDim(18);
 		sq.delay(6);
-		sq.fadePalette(9, 1);
+		if (_configRenderMode != Common::kRenderEGA)
+			sq.fadePalette(9, 1);
 		_screen->clearCurPage();
 	}
 	sq.fadePalette(9, 10);
 }
 
 void DarkMoonEngine::seq_playFinale() {
-	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kFinale, _finaleStrings, _cpsFilesFinale, _palFilesFinale, _shapesFinale, _seqFinale);
+	DarkmoonSequenceHelper::Config config(DarkmoonSequenceHelper::kFinale, _finaleStrings, _cpsFilesFinale, _configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA, _shapesFinale, _animFinale, true);
+	DarkmoonSequenceHelper sq(_system, this, _screen, &config);
 
 	_screen->setCurPage(0);
 	_screen->setFont(Screen::FID_8_FNT);
@@ -485,76 +518,76 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(1, 2);
 
-	sq.runSequence(0);
-	sq.runSequence(0);
+	sq.animCommand(0);
+	sq.animCommand(0);
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(2);
-	sq.runSequence(1);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(2);
+	sq.animCommand(1);
+	sq.animCommand(2);
+	sq.animCommand(2);
 
 	sq.printText(0, 10);            // Finally, Dran has been defeated
 	for (int i = 0; i < 7; i++)
-		sq.runSequence(2);
+		sq.animCommand(2);
 	sq.fadeText();
-	sq.runSequence(2);
+	sq.animCommand(2);
 
 	sq.waitForSongNotifier(1);
 
 	sq.printText(1, 10);            // Suddenly, your friend Khelben appears
-	sq.runSequence(4);
+	sq.animCommand(4);
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(2);
+		sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(2, 15);            // Greetings, my victorious friends
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
-	sq.runSequence(6);
+	sq.animCommand(6);
 
 	sq.printText(3, 15);            // You have defeated Dran
 	for (int i = 0; i < 5; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(4, 15);            // I did not know Dran was a dragon
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(5, 15);            // He must have been over 300 years old
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(6, 15);            // His power is gone
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(7, 15);            // But Darkmoon is still a source of great evil
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.printText(8, 15);            // And many of his minions remain
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(5);
-	sq.runSequence(2);
-	sq.runSequence(2);
+		sq.animCommand(5);
+	sq.animCommand(2);
+	sq.animCommand(2);
 	sq.fadeText();
 
 	sq.loadScene(2, 2);
@@ -563,29 +596,32 @@ void DarkMoonEngine::seq_playFinale() {
 	_screen->copyRegion(8, 8, 0, 0, 304, 128, 0, 2, Screen::CR_NO_P_CHECK);
 
 	sq.printText(9, 15);            // Now we must leave this place
-	sq.runSequence(7);
-	sq.runSequence(8);
-	sq.runSequence(7);
-	sq.runSequence(7, 36);
+	sq.animCommand(7);
+	sq.animCommand(8);
+	sq.animCommand(7);
+	sq.animCommand(7, 36);
 	sq.fadeText();
 
 	sq.printText(10, 15);           // So my forces can destroy it..
 	for (int i = 0; i < 3; i++)
-		sq.runSequence(7);
-	sq.runSequence(8);
-	sq.runSequence(7);
-	sq.runSequence(7, 36);
-	sq.runSequence(8, 18);
+		sq.animCommand(7);
+	sq.animCommand(8);
+	sq.animCommand(7);
+	sq.animCommand(7, 36);
+	sq.animCommand(8, 18);
 	sq.fadeText();
 
 	sq.printText(11, 15);           // Follow me
-	sq.runSequence(7, 18);
-	sq.runSequence(9, 18);
-	sq.runSequence(8, 18);
+	sq.animCommand(7, 18);
+	sq.animCommand(9, 18);
+	sq.animCommand(8, 18);
 	sq.fadeText();
 
 	sq.loadScene(7, 2);
-	sq.copyPalette(3, 0);
+
+	if (_configRenderMode != Common::kRenderEGA)
+		sq.copyPalette(3, 0);
+
 	sq.loadScene(4, 2);
 
 	sq.waitForSongNotifier(2);
@@ -607,23 +643,23 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSoundEffect(7);
 	sq.delay(8);
 
-	sq.runSequence(10);
-	sq.runSequence(13);
+	sq.animCommand(10);
+	sq.animCommand(13);
 	sq.initDelayedPaletteFade(4, 1);
 
-	sq.runSequence(14);
-	sq.runSequence(13);
-	sq.runSequence(14);
-	sq.runSequence(14);
-	sq.runSequence(13);
+	sq.animCommand(14);
+	sq.animCommand(13);
+	sq.animCommand(14);
+	sq.animCommand(14);
+	sq.animCommand(13);
 	sq.initDelayedPaletteFade(2, 1);
 
-	sq.runSequence(15);
-	sq.runSequence(14);
-	sq.runSequence(13);
-	sq.runSequence(15);
-	sq.runSequence(15);
-	sq.runSequence(11);
+	sq.animCommand(15);
+	sq.animCommand(14);
+	sq.animCommand(13);
+	sq.animCommand(15);
+	sq.animCommand(15);
+	sq.animCommand(11);
 
 	sq.printText(13, 10);           // The temple's evil is very strong
 	sq.delay(72);
@@ -639,22 +675,22 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSoundEffect(7);
 	sq.delay(8);
 
-	sq.runSequence(10);
+	sq.animCommand(10);
 	sq.initDelayedPaletteFade(5, 1);
-	sq.runSequence(13);
-	sq.runSequence(14);
-	sq.runSequence(13);
-	sq.runSequence(14);
-	sq.runSequence(13);
-	sq.runSequence(13);
-	sq.runSequence(14);
-	sq.runSequence(14);
-	sq.runSequence(13);
-	sq.runSequence(12);
+	sq.animCommand(13);
+	sq.animCommand(14);
+	sq.animCommand(13);
+	sq.animCommand(14);
+	sq.animCommand(13);
+	sq.animCommand(13);
+	sq.animCommand(14);
+	sq.animCommand(14);
+	sq.animCommand(13);
+	sq.animCommand(12);
 	for (int i = 0; i < 4; i++)
-		sq.runSequence(16);
-	sq.runSequence(17);
-	sq.runSequence(18);
+		sq.animCommand(16);
+	sq.animCommand(17);
+	sq.animCommand(18);
 
 	sq.printText(15, 10);           // The temple ceases to exist
 	sq.initDelayedPaletteFade(6, 1);
@@ -672,40 +708,43 @@ void DarkMoonEngine::seq_playFinale() {
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(6);
 
-	if (!skipFlag() && !shouldQuit())
+	if (!skipFlag() && !shouldQuit()) {
+		if (_configRenderMode != Common::kRenderEGA)
+			sq.setPaletteWithoutTextColor(0);
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
+	}
 	sq.delay(18);
 
 	sq.printText(16, 15);           // My friends, our work is done
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(19, 36);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(19, 36);
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(12);
 	sq.fadeText();
 
 	sq.printText(17, 15);           // Thank you
-	sq.runSequence(19);
-	sq.runSequence(20, 36);
+	sq.animCommand(19);
+	sq.animCommand(20, 36);
 	sq.fadeText();
 
 	sq.printText(18, 15);           // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(11);
-	sq.runSequence(20);
-	sq.runSequence(19);
-	sq.runSequence(19);
+	sq.animCommand(20);
+	sq.animCommand(19);
+	sq.animCommand(19);
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(11);
 	sq.delay(36);
 	sq.fadeText();
 
 	sq.printText(19, 15);           // We will remember you always
-	sq.runSequence(19);
-	sq.runSequence(19, 18);
+	sq.animCommand(19);
+	sq.animCommand(19, 18);
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(11);
-	sq.runSequence(20, 18);
+	sq.animCommand(20, 18);
 	sq.fadeText();
 
 	sq.delay(28);
@@ -718,6 +757,8 @@ void DarkMoonEngine::seq_playFinale() {
 		_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	} else {
 		snd_playSoundEffect(6);
+		if (_configRenderMode != Common::kRenderEGA)
+			sq.setPaletteWithoutTextColor(0);
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
 	}
 
@@ -756,8 +797,10 @@ void DarkMoonEngine::seq_playFinale() {
 
 	resetSkipFlag(true);
 
-	sq.setPalette(11);
-	sq.fadePalette(9, 10);
+	if (_configRenderMode != Common::kRenderEGA) {
+		sq.setPalette(11);
+		sq.fadePalette(9, 10);
+	}
 
 	_screen->clearCurPage();
 	sq.loadScene(11, 2);
@@ -912,15 +955,15 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode, const char *const *strings, const char *const *cpsFiles, const char *const *palFiles, const EoBShapeDef **shapeDefList, const EoBSequenceStep **seqList) :
-	_system(system), _vm(vm), _screen(screen), _mode(mode), _strings(strings), _cpsFiles(cpsFiles), _palFiles(palFiles), _shapeDefs(shapeDefList), _seqData(seqList) {
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, const Config *config) :
+	_system(system), _vm(vm), _screen(screen), _config(config) {
 
-	for (int i = 0; _palFiles[i]; i++) {
+	for (int i = 0; _config->palFiles[i]; i++) {
 		if (i < 4)
 			_palettes[i] = &_screen->getPalette(i);
 		else
 			_palettes[i] = new Palette(256);
-		_screen->loadPalette(_palFiles[i], *_palettes[i]);
+		_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
 	}
 
 	_palettes[9] = new Palette(256);
@@ -946,7 +989,7 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 }
 
 DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
-	for (int i = 4; _palFiles[i]; i++)
+	for (int i = 4; _config->palFiles[i]; i++)
 		delete _palettes[i];
 	delete _palettes[9];
 	delete _palettes[10];
@@ -967,12 +1010,22 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 
 void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 	char file[13];
-	strcpy(file, _cpsFiles[index]);
+	strcpy(file, _config->cpsFiles[index]);
 
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(file);
-	if (s && file[0] != 'X') {
+	uint32 chunkID = 0;
+	if (s) {
+		chunkID = s->readUint32LE();
+		s->seek(0);
+	}
+
+	if (s && chunkID == MKTAG('F', 'O', 'R', 'M')) {
+		// The original code also handles files with FORM chunks and ILBM and PBM sub chunks. This will probably be necessary for Amiga versions.
+		// The DOS versions do not need this, but still have the code for it. We error out for now.
+		error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d - unhandled FORM chunk encountered", index);
+	} else if (s && file[0] != 'X') {
 		delete s;
-		_screen->loadBitmap(_cpsFiles[index], pageNum | 1, pageNum | 1, _palettes[0]);
+		_screen->loadBitmap(_config->cpsFiles[index], pageNum | 1, pageNum | 1, _palettes[0]);
 	} else {
 		if (!s) {
 			file[0] = 'X';
@@ -982,7 +1035,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 		if (!s)
 			error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d", index);
 
-		if (_mode == kFinale)
+		if (_config->mode == kFinale)
 			s->read(_palettes[0]->getData(), 768);
 		else
 			s->seek(768);
@@ -992,8 +1045,8 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 
 	int cp = _screen->setCurPage(pageNum);
 
-	if (_shapeDefs[index]) {
-		for (const EoBShapeDef *df = _shapeDefs[index]; df->w; df++) {
+	if (_config->shapeDefs[index]) {
+		for (const DarkMoonShapeDef *df = _config->shapeDefs[index]; df->w; df++) {
 			uint16 shapeIndex = (df->index < 0) ? df->index * -1 : df->index;
 			if (_shapes[shapeIndex])
 				delete[] _shapes[shapeIndex];
@@ -1002,20 +1055,24 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 	}
 
 	_screen->setCurPage(cp);
-	_screen->copyPage(pageNum | 1, pageNum);
+
+	if (_vm->_configRenderMode == Common::kRenderEGA)
+		setPalette(0);
+
+	_screen->convertPage(pageNum | 1, pageNum, 0);
 
 	if ((pageNum == 0 || pageNum == 1) && !_vm->skipFlag() && !_vm->shouldQuit())
 		_screen->updateScreen();
 }
 
-void DarkmoonSequenceHelper::runSequence(int index, int del) {
+void DarkmoonSequenceHelper::animCommand(int index, int del) {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
 
 	uint32 end = 0;
 
-	for (const EoBSequenceStep *s = _seqData[index]; s->command != 0xff && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
-		int palIndex = _mode == kFinale ? (s->pal + 1) : s->pal;
+	for (const DarkMoonAnimCommand *s = _config->animData[index]; s->command != 0xff && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
+		int palIndex = _config->mode == kFinale ? (s->pal + 1) : s->pal;
 		int x = s->x1;
 		int y = s->y1;
 		int x2 = 0;
@@ -1025,10 +1082,10 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 		switch (s->command) {
 		case 0:
 			// flash palette
-			if (s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 			delay(s->delay);
-			if (_mode == kIntro && s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && _config->mode == kIntro && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
@@ -1037,7 +1094,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			shapeW = _shapes[s->obj][2];
 			shapeH = _shapes[s->obj][3];
 
-			if (_mode == kFinale) {
+			if (_config->mode == kFinale) {
 				_screen->setScreenDim(18);
 				x -= (_screen->_curDim->sx << 3);
 				y -= _screen->_curDim->sy;
@@ -1047,17 +1104,17 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 					x2 = x;
 			}
 
-			_screen->drawShape(0, _shapes[s->obj], x, y, _mode == kIntro ? 0 : 18);
+			_screen->drawShape(0, _shapes[s->obj], x, y, _config->mode == kIntro ? 0 : 18);
 
-			if (s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 			else
 				_screen->updateScreen();
 
 			delay(s->delay);
 
-			if (_mode == kIntro) {
-				if (s->pal)
+			if (_config->mode == kIntro) {
+				if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 					setPaletteWithoutTextColor(0);
 				_screen->copyRegion(x - 8, y - 8, x, y, (shapeW + 1) << 3, shapeH, 2, 0, Screen::CR_NO_P_CHECK);
 			} else {
@@ -1071,50 +1128,59 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			// draw shape
 			_screen->drawShape(_screen->_curPage, _shapes[s->obj], x, y, 0);
 
-			if (s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 			else if (!_screen->_curPage)
 				_screen->updateScreen();
 
 			delay(s->delay);
 
-			if (_mode == kIntro && s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && _config->mode == kIntro && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
 		case 3:
 		case 4:
 			// fade shape in or out or restore background
-			if (_mode == kFinale)
+			if (_config->mode == kFinale)
 				break;
 
-			_screen->setShapeFadeMode(0, true);
-			_screen->setShapeFadeMode(1, true);
-
-			end = _system->getMillis() + s->delay * _vm->tickLength();
-
-			if (palIndex) {
-				_screen->setFadeTableIndex(palIndex - 1);
-
-				_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 4, Screen::CR_NO_P_CHECK);
-				_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
-				_screen->copyRegion(0, 0, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 4, 0, Screen::CR_NO_P_CHECK);
+			if (_vm->_configRenderMode == Common::kRenderEGA) {
+				if (palIndex)
+					_screen->drawShape(0, _shapes[s->obj], s->x1, y, 0);
+				else
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->updateScreen();
+				delay(s->delay /** 7*/);
 			} else {
-				_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
-			}
-			_screen->updateScreen();
+				_screen->setShapeFadeMode(0, true);
+				_screen->setShapeFadeMode(1, true);
 
-			_vm->delayUntil(end);
-			_screen->setShapeFadeMode(0, false);
-			_screen->setShapeFadeMode(1, false);
+				end = _system->getMillis() + s->delay * _vm->tickLength();
+
+				if (palIndex) {
+					_screen->setFadeTableIndex(palIndex - 1);
+
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 4, Screen::CR_NO_P_CHECK);
+					_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
+					_screen->copyRegion(0, 0, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 4, 0, Screen::CR_NO_P_CHECK);
+				} else {
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+				}
+				_screen->updateScreen();
+
+				_vm->delayUntil(end);
+				_screen->setShapeFadeMode(0, false);
+				_screen->setShapeFadeMode(1, false);
+			}
 			break;
 
 		case 5:
 			// copy region
-			if (_mode == kFinale && s->pal)
+			if (_config->mode == kFinale && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 
-			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, (s->obj && _mode == kFinale) ? 6 : 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, (s->obj && _config->mode == kFinale) ? 6 : 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 			delay(s->delay);
 			break;
@@ -1125,8 +1191,15 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 				_vm->snd_playSoundEffect(s->obj);
 			break;
 
+		case 7:
+			// restore background (only used in EGA mode)
+			delay(s->delay);
+			_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			break;
+
 		default:
-			error("DarkmoonSequenceHelper::runSequence(): Unknown animation opcode encountered.");
+			error("DarkmoonSequenceHelper::animCommand(): Unknown animation opcode encountered.");
 			break;
 		}
 	}
@@ -1140,12 +1213,17 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 		return;
 
 	_screen->setClearScreenDim(17);
-	_palettes[0]->copy(*_palettes[0], color, 1, 255);
-	setPalette(0);
+	uint8 col1 = 15;
 
-	char *temp = new char[strlen(_strings[index]) + 1];
+	if (_vm->_configRenderMode != Common::kRenderEGA) {
+		_palettes[0]->copy(*_palettes[0], color, 1, 255);
+		setPalette(0);
+		col1 = 255;
+	}
+
+	char *temp = new char[strlen(_config->strings[index]) + 1];
 	char *str = temp;
-	strcpy(str, _strings[index]);
+	strcpy(str, _config->strings[index]);
 
 	const ScreenDim *dm = _screen->_curDim;
 
@@ -1156,7 +1234,7 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 			*cr = 0;
 
 		uint32 len = strlen(str);
-		_screen->printText(str, (dm->sx + ((dm->w - len) >> 1)) << 3, dm->sy + yOffs, 255, dm->unkA);
+		_screen->printText(str, (dm->sx + ((dm->w - len) >> 1)) << 3, dm->sy + yOffs, col1, dm->unkA);
 
 		if (cr) {
 			*cr = 13;
@@ -1173,8 +1251,8 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 void DarkmoonSequenceHelper::fadeText() {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
-
-	_screen->fadeTextColor(_palettes[0], 255, 8);
+	if (_vm->_configRenderMode != Common::kRenderEGA)
+		_screen->fadeTextColor(_palettes[0], 255, 8);
 	_screen->clearCurDim();
 }
 
@@ -1183,11 +1261,13 @@ void DarkmoonSequenceHelper::update(int srcPage) {
 		return;
 
 	_screen->copyRegion(0, 0, 8, 8, 304, 128, srcPage, 0, Screen::CR_NO_P_CHECK);
-	setPaletteWithoutTextColor(0);
+
+	if (_vm->_configRenderMode != Common::kRenderEGA)
+		setPaletteWithoutTextColor(0);
 }
 
 void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
-	if (_vm->skipFlag() || _vm->shouldQuit())
+	if (_vm->_configRenderMode == Common::kRenderEGA || _vm->skipFlag() || _vm->shouldQuit())
 		return;
 
 	if (!memcmp(_palettes[11]->getData(), _palettes[index]->getData(), 765))
@@ -1198,6 +1278,7 @@ void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
 	setPalette(11);
 
 	_screen->updateScreen();
+	_system->delayMillis(10);
 }
 
 void DarkmoonSequenceHelper::setPalette(int index) {
@@ -1207,8 +1288,12 @@ void DarkmoonSequenceHelper::setPalette(int index) {
 void DarkmoonSequenceHelper::fadePalette(int index, int del) {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return;
-
-	_screen->fadePalette(*_palettes[index], del * _vm->tickLength());
+	if (_vm->_configRenderMode == Common::kRenderEGA) {
+		setPalette(index);
+		_screen->updateScreen();
+	} else {
+		_screen->fadePalette(*_palettes[index], del * _vm->tickLength());
+	}
 }
 
 void DarkmoonSequenceHelper::copyPalette(int srcIndex, int destIndex) {
@@ -1227,7 +1312,7 @@ bool DarkmoonSequenceHelper::processDelayedPaletteFade() {
 	if (_vm->skipFlag() || _vm->shouldQuit())
 		return true;
 
-	if (!_fadePalRate || (_system->getMillis() <= _fadePalTimer))
+	if (_vm->_configRenderMode == Common::kRenderEGA || !_fadePalRate || (_system->getMillis() <= _fadePalTimer))
 		return false;
 
 	if (_screen->delayedFadePalStep(_palettes[_fadePalIndex], _palettes[0], _fadePalRate)) {
@@ -1246,7 +1331,7 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 
 	uint32 end = _system->getMillis() + ticks * _vm->_tickLength;
 
-	if (_mode == kFinale) {
+	if (_config->palFading) {
 		do {
 			if (processDelayedPaletteFade())
 				break;
@@ -1263,11 +1348,11 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 	int seq = 0;
 	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
-			runSequence(30 | seq);
+			animCommand(30 | seq);
 			seq ^= 1;
 		}
 
-		if (_mode == kFinale)
+		if (_config->palFading)
 			processDelayedPaletteFade();
 
 		_vm->updateInput();

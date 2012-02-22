@@ -104,7 +104,6 @@ void Keymapper::initKeymap(Domain &domain, Keymap *map) {
 	map->loadMappings(_hardwareKeys);
 
 	if (map->isComplete(_hardwareKeys) == false) {
-		map->automaticMapping(_hardwareKeys);
 		map->saveMappings();
 		ConfMan.flushToDisk();
 	}

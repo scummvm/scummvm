@@ -41,12 +41,17 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_currentLevel = 0;
 
-	_vmpPtr = 0;
 	_vcnBlocks = 0;
 	_vcfBlocks = 0;
+	_vcnTransitionMask = 0;
 	_vcnShift = 0;
-	_vcnExpTable = 0;
+	_vcnColTable = 0;
+	_vcnBlockWidth = 4;
+	_vcnBlockHeight = 8;
+	_vcnFlip0 = 0;
+	_vcnFlip1 = 1;
 	_vmpPtr = 0;
+	_vmpSize = 0;
 	_blockBrightness = _wllVcnOffset = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
@@ -93,6 +98,10 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_dscDimMap = 0;
 	_dscDoorShpIndex = 0;
 	_dscDoorY2 = 0;
+	_dscDoorFrameY1 = 0;
+	_dscDoorFrameY2 = 0;
+	_dscDoorFrameIndex1 = 0;
+	_dscDoorFrameIndex2 = 0;
 
 	_shpDmX1 = _shpDmX2 = 0;
 
@@ -123,9 +132,10 @@ KyraRpgEngine::~KyraRpgEngine() {
 	delete[] _wllWallFlags;
 
 	delete[] _vmpPtr;
-	delete[] _vcnExpTable;
+	delete[] _vcnColTable;
 	delete[] _vcnBlocks;
 	delete[] _vcfBlocks;
+	delete[] _vcnTransitionMask;
 	delete[] _vcnShift;
 	delete[] _blockDrawingBuffer;
 	delete[] _sceneWindowBuffer;
@@ -161,10 +171,17 @@ Common::Error KyraRpgEngine::init() {
 	_wllWallFlags = new uint8[256];
 	memset(_wllWallFlags, 0, 256);
 
+	if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) {
+		_vcnBlockWidth <<= 1;
+		_vcnBlockHeight <<= 1;
+		SWAP(_vcnFlip0, _vcnFlip1);
+	}
+
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
-	_sceneWindowBuffer = new uint8[21120];
-	memset(_sceneWindowBuffer, 0, 21120);
+	uint32 swbSize = 22 * _vcnBlockWidth * 2 * 15 * _vcnBlockHeight;
+	_sceneWindowBuffer = new uint8[swbSize];
+	memset(_sceneWindowBuffer, 0, swbSize);
 
 	_lvlShapeTop = new int16[18];
 	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
@@ -173,9 +190,9 @@ Common::Error KyraRpgEngine::init() {
 	_lvlShapeLeftRight = new int16[36];
 	memset(_lvlShapeLeftRight, 0, 36 * sizeof(int16));
 
-	_vcnExpTable = new uint8[128];
+	_vcnColTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
-		_vcnExpTable[i] = i & 0x0f;
+		_vcnColTable[i] = i & 0x0f;
 
 	_doorShapes = new uint8*[6];
 	memset(_doorShapes, 0, 6 * sizeof(uint8 *));

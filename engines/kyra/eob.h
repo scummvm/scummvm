@@ -31,6 +31,7 @@ namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
+friend class EoBIntroPlayer;
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
 	~EoBEngine();
@@ -51,45 +52,9 @@ private:
 	void startupLoad();
 
 	// Intro/Outro
-	void seq_playOpeningCredits();
 	void seq_playIntro();
 	void seq_playFinale();
-
-	void seq_tower();
-	void seq_orb();
-	void seq_waterdeepEntry();
-	void seq_king();
-	void seq_hands();
-	void seq_waterdeepExit();
-	void seq_tunnel();
-
 	void seq_xdeath();
-
-	void loadSetIntroPalette(const char *filename);
-	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
-	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH);
-	void whirlTransition();
-
-	const char *const *_introFilesOpening;
-	const char *const *_introFilesTower;
-	const char *const *_introFilesOrb;
-	const char *const *_introFilesWdEntry;
-	const char *const *_introFilesKing;
-	const char *const *_introFilesHands;
-	const char *const *_introFilesWdExit;
-	const char *const *_introFilesTunnel;
-	const uint8 *_introOpeningFrmDelay;
-	const uint8 *_introWdEncodeX;
-	const uint8 *_introWdEncodeY;
-	const uint8 *_introWdEncodeWH;
-	const uint16 *_introWdDsX;
-	const uint8 *_introWdDsY;
-	const uint8 *_introTvlX1;
-	const uint8 *_introTvlY1;
-	const uint8 *_introTvlX2;
-	const uint8 *_introTvlY2;
-	const uint8 *_introTvlW;
-	const uint8 *_introTvlH;
 
 	const char *const *_finBonusStrings;
 
@@ -143,7 +108,9 @@ private:
 
 	const KyraRpgGUISettings *guiSettings();
 
-	static const KyraRpgGUISettings _guiSettings;
+	static const KyraRpgGUISettings _guiSettingsVGA;
+	static const KyraRpgGUISettings _guiSettingsEGA;
+	static const uint8 _egaDefaultPalette[];
 };
 
 

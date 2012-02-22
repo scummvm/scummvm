@@ -229,7 +229,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			break;
 
 		default:
-			if (_vm->game() == GI_LOL || c > 30) {
+			if (_vm->game() == GI_LOL || (unsigned char)c > 30) {
 				_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth((uint8)c));
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
@@ -282,14 +282,18 @@ void TextDisplayer_rpg::readNextPara() {
 			_tempString1 = 0;
 	}
 
-	if ((_vm->game() != GI_LOL) && (d & 0x80)) {
+	// This seems to be some sort of character conversion mechanism. The original doesn't make any use of it, however.
+	// All necessary conversions take place somewhere else. This code actually causes issues if the character conversions
+	// don't take place before calling displayText(). So we disable it for now. If some (not yet supported) localized
+	// versions depend on this code we'll have to look at this again.
+	/* if ((_vm->game() != GI_LOL) && (d & 0x80)) {
 		d &= 0x7f;
 		c = d & 7;
 		d = (d & 0x78) >> 3;
 		uint8 l = d;
 		c = _table1[(l << 3) + c];
 		d = _table2[l];
-	}
+	}*/
 
 	_ctrl[1] = d;
 	_ctrl[2] = c;

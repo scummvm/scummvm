@@ -37,7 +37,7 @@ void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bo
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
 	for (int i = 0; i < 6; i++, enc += 4)
-		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
+		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
 
 	generateMonsterPalettes(filename, monsterIndex);
 
@@ -335,6 +335,8 @@ const int16 *EoBCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, in
 
 void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, int x, int y, int sd, uint8 *ovl) {
 	const ScreenDim *d = _screen->getScreenDim(sd);
+	if (_flags.gameID == GI_EOB1)
+		x &= ~1;
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
@@ -342,9 +344,9 @@ void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipp
 	uint8 *ovl = 0;
 
 	if (flags & 2)
-		ovl = _monsterOvl1;
+		ovl = _monsterFlashOverlay;
 	else if (_flags.gameID == GI_EOB2 && flags & 0x20)
-		ovl = _monsterOvl2;
+		ovl = _monsterStoneOverlay;
 	else if (palIndex != -1)
 		ovl = _monsterPalettes[palIndex];
 
@@ -462,7 +464,7 @@ void EoBCoreEngine::drawDoor(int index) {
 
 	int16 y1 = 0;
 	int16 y2 = 0;
-	scaleLevelShapesDim(index, y1, y2, 5);
+	setDoorShapeDim(index, y1, y2, 5);
 	drawDoorIntern(type, index, x, y, w, s, d, y1, y2);
 	drawLevelModifyScreenDim(5, _shpDmX1, 0, _shpDmX2, 15);
 }

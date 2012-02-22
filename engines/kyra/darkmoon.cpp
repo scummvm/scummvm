@@ -29,22 +29,21 @@
 namespace Kyra {
 
 DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
-	_seqIntro = _seqFinale = 0;
+	_animIntro = _animFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
 	_menuChoiceInit = 4;
 
 	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npcStrings[0] = _npcStrings[1] = _hornStrings = 0;
-	_seqIntro = _seqFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_creditsData = _npcShpData = _dscDoorType5Offs = _hornSounds = 0;
 	_dreamSteps = 0;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {
-	delete[] _seqIntro;
-	delete[] _seqFinale;
+	delete[] _animIntro;
+	delete[] _animFinale;
 	delete[] _shapesIntro;
 	delete[] _shapesFinale;
 }
@@ -57,6 +56,15 @@ Common::Error DarkMoonEngine::init() {
 	initStaticResource();
 
 	_monsterProps = new EoBMonsterProperty[10];
+
+	if (_configRenderMode == Common::kRenderEGA) {
+		Palette pal(16);
+		_screen->loadPalette(_egaDefaultPalette, pal, 16);
+		_screen->setScreenPalette(pal);
+	}
+
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	return Common::kNoError;
 }
@@ -150,7 +158,9 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 		int colx = 302 + 3 * i;
 
 		for (int ii = 0; ii < 16; ii++) {
-			uint8 col = _screen->getPagePixel(_screen->_curPage, colx, 184 + ii);
+			// Don't use getPagePixel() here, since in EGA mode it will try to
+			// undither the pixel (although the shape bitmap is undithered already)
+			uint8 col = _screen->getCPagePtr(_screen->_curPage | 1)[(184 + ii) * Screen::SCREEN_W + colx];
 
 			int iii = 0;
 			for (; iii < 16; iii++) {
@@ -168,7 +178,9 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 			memcpy(tmpPal, _monsterShapes[dci] + 4, 16);
 
 			for (int iii = 0; iii < 16; iii++) {
-				uint8 col = _screen->getPagePixel(_screen->_curPage, colx + ii, 184 + iii);
+				// Don't use getPagePixel() here, since in EGA mode it will try to
+				// undither the pixel (although the shape bitmap is undithered already)
+				uint8 col = _screen->getCPagePtr(_screen->_curPage | 1)[(184 + iii) * Screen::SCREEN_W + colx + ii];
 				if (newPal[iii])
 					tmpPal[newPal[iii]] = col;
 			}

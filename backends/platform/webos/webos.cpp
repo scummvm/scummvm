@@ -58,7 +58,7 @@ HardwareKeySet *OSystem_SDL_WebOS::getHardwareKeySet() {
 
 	// Add WebOS specific keys
 	keySet->addHardwareKey(new HardwareKey("FORWARD",
-		KeyState((KeyCode) 229, 229, 0), "Forward", kActionKeyType));
+		KeyState((KeyCode) 229, 229, 0), "Forward"));
 
 	// Return the modified hardware key set
 	return keySet;
