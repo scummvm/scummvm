@@ -6,6 +6,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
+#include "common/util.h"
+
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/llex.h"
 #include "engines/grim/lua/lmem.h"
@@ -81,7 +83,7 @@ static int32 checkcond(char *buff) {
 	int32 i = luaO_findstring(buff, opts);
 	if (i >= 0)
 		return i;
-	else if (isalpha((byte)buff[0]) || buff[0] == '_')
+	else if (Common::isAlpha((byte)buff[0]) || buff[0] == '_')
 		return luaS_globaldefined(buff);
 	else {
 		luaY_syntaxerror("invalid $if condition", buff);
@@ -92,7 +94,7 @@ static int32 checkcond(char *buff) {
 static void readname(LexState *LS, char *buff) {
 	int32 i = 0;
 	skipspace(LS);
-	while (isalnum(LS->current) || LS->current == '_') {
+	while (Common::isAlnum(LS->current) || LS->current == '_') {
 		if (i >= PRAGMASIZE) {
 			buff[PRAGMASIZE] = 0;
 			luaY_syntaxerror("pragma too long", buff);
@@ -355,7 +357,7 @@ int32 luaY_lex(YYSTYPE *l) {
 					return DOTS;   // ...
 				} else
 					return CONC;   // ..
-				} else if (!isdigit(LS->current))
+				} else if (!Common::isDigit(LS->current))
 					return '.';
 				// LS->current is a digit: goes through to number/
 				a = 0.0;
@@ -374,7 +376,7 @@ int32 luaY_lex(YYSTYPE *l) {
 			do {
 				a = 10.0 * a + (LS->current - '0');
 				save_and_next(LS);
-			} while (isdigit(LS->current));
+			} while (Common::isDigit(LS->current));
 			if (LS->current == '.') {
 				save_and_next(LS);
 				if (LS->current == '.') {
@@ -385,7 +387,7 @@ int32 luaY_lex(YYSTYPE *l) {
 fraction:
 			{
 				double da = 0.1;
-				while (isdigit(LS->current)) {
+				while (Common::isDigit(LS->current)) {
 					a += (LS->current - '0') * da;
 					da /= 10.0;
 					save_and_next(LS);
@@ -398,14 +400,14 @@ fraction:
 					neg = (LS->current == '-');
 					if (LS->current == '+' || LS->current == '-')
 						save_and_next(LS);
-					if (!isdigit(LS->current)) {
+					if (!Common::isDigit(LS->current)) {
 						save(0);
 						return WRONGTOKEN;
 					}
 					do {
 						e = 10 * e + (LS->current - '0');
 						save_and_next(LS);
-					} while (isdigit(LS->current));
+					} while (Common::isDigit(LS->current));
 					for (ea = neg ? 0.1 : 10.0; e > 0; e >>= 1) {
 						if (e & 1)
 							a *= ea;
@@ -421,7 +423,7 @@ fraction:
 				luaY_syntaxerror("input ends inside a $if", "");
 			return 0;
 		default:
-			if (LS->current != '_' && !isalpha(LS->current)) {
+			if (LS->current != '_' && !Common::isAlpha(LS->current)) {
 				int32 c = LS->current;
 				save_and_next(LS);
 				return c;
@@ -429,7 +431,7 @@ fraction:
 				TaggedString *ts;
 				do {
 					save_and_next(LS);
-				} while (isalnum(LS->current) || LS->current == '_');
+				} while (Common::isAlnum(LS->current) || LS->current == '_');
 				save(0);
 				ts = luaS_new(Mbuffbase);
 				if (ts->head.marked >= 255)

@@ -50,6 +50,7 @@ public:
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;
 	virtual void updateScreen() = 0;
+	virtual void fillScreen(uint32 col) = 0;
 
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;

@@ -4,6 +4,8 @@
 */
 
 
+#include "common/util.h"
+
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lualib.h"
@@ -124,33 +126,33 @@ static int32 matchclass(int32 c, int32 cl) {
 		return 0;
 	switch (tolower((int)cl)) {
 	case 'a' :
-		res = isalpha(c);
+		res = Common::isAlpha(c);
 		break;
 	case 'c' :
 		res = iscntrl(c);
 		break;
 	case 'd' :
-		res = isdigit(c);
+		res = Common::isDigit(c);
 		break;
 	case 'l' :
-		res = islower(c);
+		res = Common::isLower(c);
 		break;
 	case 'p' :
 		res = ispunct(c);
 		break;
 	case 's' :
-		res = isspace(c);
+		res = Common::isSpace(c);
 		break;
 	case 'u' :
-		res = isupper(c);
+		res = Common::isUpper(c);
 		break;
 	case 'w' :
-		res = isalnum(c);
+		res = Common::isAlnum(c);
 		break;
 	default:
 		return (cl == c);
 	}
-	return (islower((byte)cl) ? res : !res);
+	return (Common::isLower((byte)cl) ? res : !res);
 }
 
 int32 luaI_singlematch(int32 c, const char *p, const char **ep) {
@@ -212,7 +214,7 @@ static const char *matchbalance(const char *s, int32 b, int32 e) {
 static const char *matchitem(const char *s, const char *p, Capture *cap, const char **ep) {
 	if (*p == ESC) {
 		p++;
-		if (isdigit((byte)*p)) {  // capture
+		if (Common::isDigit((byte)*p)) {  // capture
 			int32 l = check_cap(*p, cap);
 			*ep = p + 1;
 			if (strncmp(cap->capture[l].init, s, cap->capture[l].len) == 0)
@@ -344,7 +346,7 @@ static void add_s(lua_Object newp, Capture *cap) {
 	if (lua_isstring(newp)) {
 		const char *news = lua_getstring(newp);
 		while (*news) {
-			if (*news != ESC || !isdigit((byte)*++news))
+			if (*news != ESC || !Common::isDigit((byte)*++news))
 				luaL_addchar(*news++);
 			else {
 				int l = check_cap(*news++, cap);
@@ -435,7 +437,7 @@ static void str_format() {
 			strfrmt = match(strfrmt, "%d?%$?[-+ #]*(%d*)%.?(%d*)", &cap);
 			if (cap.capture[0].len > 3 || cap.capture[1].len > 3)  // < 1000?
 				lua_error("invalid format (width or precision too long)");
-			if (isdigit((byte)initf[0]) && initf[1] == '$') {
+			if (Common::isDigit((byte)initf[0]) && initf[1] == '$') {
 				arg = initf[0] - '0';
 				initf += 2;  // skip the 'n$'
 			}

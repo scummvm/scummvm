@@ -110,10 +110,11 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 			return _fullscreen;
 		default:
 			return false;
+	}
+}
+
 void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 	// dummy
-}
-	}
 }
 
 void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {

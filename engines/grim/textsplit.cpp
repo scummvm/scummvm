@@ -298,7 +298,7 @@ void TextSplitter::processLine() {
 
 	// Cut off trailing whitespace (including '\r')
 	char *strend = strchr(_currLine, '\0');
-	while (strend > _currLine && isspace(strend[-1]))
+	while (strend > _currLine && Common::isSpace(strend[-1]))
 		strend--;
 	*strend = '\0';
 

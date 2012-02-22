@@ -7,6 +7,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "common/util.h"
+
 #include "engines/grim/lua/lapi.h"
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lbuiltin.h"
@@ -200,7 +202,7 @@ static void tonumber() {
 		int32 n;
 		luaL_arg_check(0 <= base && base <= 36, 2, "base out of range");
 		n = (int32)strtol(s, &e, base);
-		while (isspace(*e))
+		while (Common::isSpace(*e))
 			e++; // skip trailing spaces
 		if (*e)
 			return; // invalid format: return nil

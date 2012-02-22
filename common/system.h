@@ -249,6 +249,8 @@ public:
 		kFeatureVirtualKeyboard,
 		kFeatureOpenGL,
 
+		kFeatureOverlaySupportsAlpha,
+
 		/**
 		 * This feature, set to true, is a hint toward the backend to disable all
 		 * key filtering/mapping, in cases where it would be beneficial to do so.
