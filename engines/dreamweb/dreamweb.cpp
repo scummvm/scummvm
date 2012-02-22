@@ -30,6 +30,8 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "engines/advancedDetector.h"
+
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -59,8 +61,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
-
-	_language = gameDesc->desc.language;
 
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
@@ -477,10 +477,9 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	if (c < 128)
 		return c;
 
-	switch(_language) {
+	switch(getLanguage()) {
 	case Common::DE_DEU:
-		switch(c)
-		{
+		switch(c) {
 		case 129:
 			return 'Z' + 3;
 		case 132:
@@ -528,11 +527,8 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	}
 }
 
-bool DreamWebEngine::isCD() {
-	return _gameDescription->desc.flags & ADGF_CD;
-}
-
 bool DreamWebEngine::hasSpeech() {
 	return isCD() && _hasSpeech;
 }
+
 } // End of namespace DreamWeb

@@ -25,6 +25,8 @@
 #include "common/algorithm.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
+
 #include "graphics/thumbnail.h"
 
 #include "dreamweb/dreamweb.h"
@@ -213,6 +215,14 @@ bool DreamWebEngine::canLoadGameStateCurrently() {
 
 bool DreamWebEngine::canSaveGameStateCurrently() {
 	return false;
+}
+
+Common::Language DreamWebEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
+bool DreamWebEngine::isCD() {
+	return _gameDescription->desc.flags & ADGF_CD;
 }
 
 } // End of namespace DreamWeb
