@@ -64,13 +64,13 @@ struct SOUND_BUFFER {
 // FIXME: Avoid non-const global vars
 
 // MIDI buffer
-static SOUND_BUFFER midiBuffer = { 0, 0 };
+static SOUND_BUFFER g_midiBuffer = { 0, 0 };
 
-static SCNHANDLE	currentMidi = 0;
-static bool		currentLoop = false;
+static SCNHANDLE	g_currentMidi = 0;
+static bool		g_currentLoop = false;
 
 // We allocate 155 entries because that's the maximum, used in the SCN version
-static SCNHANDLE midiOffsets[155];
+static SCNHANDLE g_midiOffsets[155];
 
 static const int enhancedAudioGRAVersion[] = {
 	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
@@ -110,16 +110,16 @@ static const int enhancedAudioSCNVersion[] = {
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
-	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
-		if (midiOffsets[i] == hMidi)
+	for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
+		if (g_midiOffsets[i] == hMidi)
 			return i;
 
 	return -1;
 }
 
 SCNHANDLE GetTrackOffset(int trackNumber) {
-	assert(trackNumber < ARRAYSIZE(midiOffsets));
-	return midiOffsets[trackNumber];
+	assert(trackNumber < ARRAYSIZE(g_midiOffsets));
+	return g_midiOffsets[trackNumber];
 }
 
 /**
@@ -128,8 +128,8 @@ SCNHANDLE GetTrackOffset(int trackNumber) {
  * @param bLoop				Whether to loop the sequence
  */
 bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
-	currentMidi = dwFileOffset;
-	currentLoop = bLoop;
+	g_currentMidi = dwFileOffset;
+	g_currentLoop = bLoop;
 
 	// Tinsel V1 PSX uses a different music format, so i
 	// disable it here.
@@ -166,8 +166,8 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 				StopMidi();
 
 				// StopMidi resets these fields, so set them again
-				currentMidi = dwFileOffset;
-				currentLoop = bLoop;
+				g_currentMidi = dwFileOffset;
+				g_currentLoop = bLoop;
 
 				// try to play track, but don't fall back to a true CD
 				g_system->getAudioCDManager()->play(track, bLoop ? -1 : 1, 0, 0, true);
@@ -203,13 +203,13 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		dwSeqLen = midiStream.readUint32LE();
 
 		// make sure buffer is large enough for this sequence
-		assert(dwSeqLen > 0 && dwSeqLen <= midiBuffer.size);
+		assert(dwSeqLen > 0 && dwSeqLen <= g_midiBuffer.size);
 
 		// stop any currently playing tune
 		_vm->_midiMusic->stop();
 
 		// read the sequence
-		if (midiStream.read(midiBuffer.pDat, dwSeqLen) != dwSeqLen)
+		if (midiStream.read(g_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
 			error(FILE_IS_CORRUPT, MIDI_FILE);
 
 		midiStream.close();
@@ -231,14 +231,14 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 			_vm->_midiMusic->send(0x7F07B0 | 13);
 		}
 
-		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->playXMIDI(g_midiBuffer.pDat, dwSeqLen, bLoop);
 
 		// Store the length
 		//dwLastSeqLen = dwSeqLen;
 	} else {
 	 	// dwFileOffset == dwLastMidiIndex
 		_vm->_midiMusic->stop();
-		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->playXMIDI(g_midiBuffer.pDat, dwSeqLen, bLoop);
 	}
 
 	return true;
@@ -259,8 +259,8 @@ bool MidiPlaying() {
  * Stops any currently playing midi.
  */
 bool StopMidi() {
-	currentMidi = 0;
-	currentLoop = false;
+	g_currentMidi = 0;
+	g_currentLoop = false;
 
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
 		g_system->getAudioCDManager()->stop();
@@ -295,8 +295,8 @@ void SetMidiVolume(int vol) {
 		_vm->_midiMusic->setVolume(vol);
 	} else if (vol != 0 && priorVolMusic == 0) {
 		// Perhaps restart last midi sequence
-		if (currentLoop)
-			PlayMidiSequence(currentMidi, true);
+		if (g_currentLoop)
+			PlayMidiSequence(g_currentMidi, true);
 
 		_vm->_midiMusic->setVolume(vol);
 	} else if (vol != 0 && priorVolMusic != 0) {
@@ -318,7 +318,7 @@ void OpenMidiFiles() {
 	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2) || TinselV1PSX)
 		return;
 
-	if (midiBuffer.pDat)
+	if (g_midiBuffer.pDat)
 		// already allocated
 		return;
 
@@ -327,15 +327,15 @@ void OpenMidiFiles() {
 		error(CANNOT_FIND_FILE, MIDI_FILE);
 
 	// gen length of the largest sequence
-	midiBuffer.size = midiStream.readUint32LE();
+	g_midiBuffer.size = midiStream.readUint32LE();
 	if (midiStream.eos() || midiStream.err())
 		error(FILE_IS_CORRUPT, MIDI_FILE);
 
-	if (midiBuffer.size) {
+	if (g_midiBuffer.size) {
 		// allocate a buffer big enough for the largest MIDI sequence
-		if ((midiBuffer.pDat = (uint8 *)malloc(midiBuffer.size)) != NULL) {
+		if ((g_midiBuffer.pDat = (uint8 *)malloc(g_midiBuffer.size)) != NULL) {
 			// clear out the buffer
-			memset(midiBuffer.pDat, 0, midiBuffer.size);
+			memset(g_midiBuffer.pDat, 0, g_midiBuffer.size);
 //			VMM_lock(midiBuffer.pDat, midiBuffer.size);
 		} else {
 			//mSeqHandle = NULL;
@@ -352,15 +352,15 @@ void OpenMidiFiles() {
 	uint32 songLength = 0;
 
 	// Init
-	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
-		midiOffsets[i] = 0;
+	for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
+		g_midiOffsets[i] = 0;
 
 	while (!midiStream.eos() && !midiStream.err()) {
 		if (curOffset + (4 * curTrack) >= (uint32)midiStream.size())
 			break;
 
-		assert(curTrack < ARRAYSIZE(midiOffsets));
-		midiOffsets[curTrack] = curOffset + (4 * curTrack);
+		assert(curTrack < ARRAYSIZE(g_midiOffsets));
+		g_midiOffsets[curTrack] = curOffset + (4 * curTrack);
 		//debug("%d: %d", curTrack, midiOffsets[curTrack]);
 
 		songLength = midiStream.readUint32LE();
@@ -374,8 +374,8 @@ void OpenMidiFiles() {
 }
 
 void DeleteMidiBuffer() {
-	free(midiBuffer.pDat);
-	midiBuffer.pDat = NULL;
+	free(g_midiBuffer.pDat);
+	g_midiBuffer.pDat = NULL;
 }
 
 MidiMusicPlayer::MidiMusicPlayer() {
@@ -860,22 +860,22 @@ void PCMMusicPlayer::stop() {
 }
 
 void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop) {
-	*pMidi = currentMidi;
-	*pLoop = currentLoop;
+	*pMidi = g_currentMidi;
+	*pLoop = g_currentLoop;
 }
 
 void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	StopMidi();
 
-	currentMidi = Midi;
-	currentLoop = Loop;
+	g_currentMidi = Midi;
+	g_currentLoop = Loop;
 
 	if (_vm->_config->_musicVolume != 0 && Loop) {
 		bool mute = false;
 		if (ConfMan.hasKey("mute"))
 			mute = ConfMan.getBool("mute");
 
-		PlayMidiSequence(currentMidi, true);
+		PlayMidiSequence(g_currentMidi, true);
 		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 	}
 }

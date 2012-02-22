@@ -62,10 +62,10 @@ struct PPINIT {
 
 // FIXME: Avoid non-const global vars
 
-static SOUNDREELS soundReels[MAX_SOUNDREELS];
-static int soundReelNumbers[MAX_SOUNDREELS];
+static SOUNDREELS g_soundReels[MAX_SOUNDREELS];
+static int g_soundReelNumbers[MAX_SOUNDREELS];
 
-static int soundReelWait;
+static int g_soundReelWait;
 
 //-------------------- METHODS ----------------------
 
@@ -148,31 +148,31 @@ static int RegisterSoundReel(SCNHANDLE hFilm, int column, int actorCol) {
 
 	for (i = 0; i < MAX_SOUNDREELS; i++) {
 		// Should assert this doesn't happen, but let's be tolerant
-		if (soundReels[i].hFilm == hFilm && soundReels[i].column == column)
+		if (g_soundReels[i].hFilm == hFilm && g_soundReels[i].column == column)
 			break;
 
-		if (!soundReels[i].hFilm) {
-			soundReels[i].hFilm = hFilm;
-			soundReels[i].column = column;
-			soundReels[i].actorCol = actorCol;
+		if (!g_soundReels[i].hFilm) {
+			g_soundReels[i].hFilm = hFilm;
+			g_soundReels[i].column = column;
+			g_soundReels[i].actorCol = actorCol;
 			break;
 		}
 	}
 
-	soundReelNumbers[i]++;
+	g_soundReelNumbers[i]++;
 	return i;
 }
 
 void NoSoundReels() {
-	memset(soundReels, 0, sizeof(soundReels));
-	soundReelWait = 0;
+	memset(g_soundReels, 0, sizeof(g_soundReels));
+	g_soundReelWait = 0;
 }
 
 static void DeRegisterSoundReel(SCNHANDLE hFilm, int column) {
 	for (int i = 0; i < MAX_SOUNDREELS; i++) {
 		// Should assert this doesn't happen, but let's be tolerant
-		if (soundReels[i].hFilm == hFilm && soundReels[i].column == column) {
-			soundReels[i].hFilm = 0;
+		if (g_soundReels[i].hFilm == hFilm && g_soundReels[i].column == column) {
+			g_soundReels[i].hFilm = 0;
 			break;
 		}
 	}
@@ -180,15 +180,15 @@ static void DeRegisterSoundReel(SCNHANDLE hFilm, int column) {
 
 void SaveSoundReels(PSOUNDREELS psr) {
 	for (int i = 0; i < MAX_SOUNDREELS; i++) {
-		if (IsCdPlayHandle(soundReels[i].hFilm))
-			soundReels[i].hFilm = 0;
+		if (IsCdPlayHandle(g_soundReels[i].hFilm))
+			g_soundReels[i].hFilm = 0;
 	}
 
-	memcpy(psr, soundReels, sizeof(soundReels));
+	memcpy(psr, g_soundReels, sizeof(g_soundReels));
 }
 
 void RestoreSoundReels(PSOUNDREELS psr) {
-	memcpy(soundReels, psr, sizeof(soundReels));
+	memcpy(g_soundReels, psr, sizeof(g_soundReels));
 }
 
 static uint32 GetZfactor(int actorID, PMOVER pMover, bool bNewMover) {
@@ -245,7 +245,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 	_ctx->bFinished = false;
 	_ctx->bLooped = false;
 	_ctx->myId = RegisterSoundReel(hFilm, column, actorCol);
-	_ctx->myNum = soundReelNumbers[_ctx->myId];
+	_ctx->myNum = g_soundReelNumbers[_ctx->myId];
 
 	do {
 		pFilm = (FILM *)LockMem(hFilm);
@@ -366,10 +366,10 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 
 			_ctx->bFinished = true;
 		}
-	} while (!_ctx->bFinished && _ctx->myNum == soundReelNumbers[_ctx->myId]);
+	} while (!_ctx->bFinished && _ctx->myNum == g_soundReelNumbers[_ctx->myId]);
 
 	// De-register - if not been replaced
-	if (_ctx->myNum == soundReelNumbers[_ctx->myId])
+	if (_ctx->myNum == g_soundReelNumbers[_ctx->myId])
 		DeRegisterSoundReel(hFilm, column);
 
 	CORO_END_CODE;
@@ -384,17 +384,17 @@ static void ResSoundReel(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, soundReels[i].hFilm, soundReels[i].column,
-		-1, 0, soundReels[i].actorCol));
+	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, g_soundReels[i].hFilm, g_soundReels[i].column,
+		-1, 0, g_soundReels[i].actorCol));
 
 	CORO_KILL_SELF();
 	CORO_END_CODE;
 }
 
 static void SoundReelWaitCheck() {
-	if (--soundReelWait == 0) {
+	if (--g_soundReelWait == 0) {
 		for (int i = 0; i < MAX_SOUNDREELS; i++) {
-			if (soundReels[i].hFilm) {
+			if (g_soundReels[i].hFilm) {
 				g_scheduler->createProcess(PID_REEL, ResSoundReel, &i, sizeof(i));
 			}
 		}
@@ -1162,7 +1162,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 			// Start display process for the reel
 			g_scheduler->createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
 
-			soundReelWait++;
+			g_soundReelWait++;
 		}
 	}
 }

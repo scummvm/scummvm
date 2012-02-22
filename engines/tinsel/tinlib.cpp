@@ -74,11 +74,11 @@ namespace Tinsel {
 //----------------- EXTERNAL GLOBAL DATA --------------------
 
 // In DOS_DW.C
-extern bool bRestart;		// restart flag - set to restart the game
-extern bool bHasRestarted;	// Set after a restart
+extern bool g_bRestart;		// restart flag - set to restart the game
+extern bool g_bHasRestarted;	// Set after a restart
 
 // In PCODE.CPP
-extern bool bNoPause;
+extern bool g_bNoPause;
 
 // In DOS_MAIN.C
 // TODO/FIXME: From dos_main.c: "Only used on PSX so far"
@@ -100,7 +100,7 @@ extern int NewestSavedGame();
 
 // in SCENE.CPP
 extern void setshowpos();
-extern int sceneCtr;
+extern int g_sceneCtr;
 
 // in TINSEL.CPP
 extern void SetCdChangeScene(SCNHANDLE hScene);
@@ -122,10 +122,10 @@ SCNHANDLE GetSceneHandle();
 
 // FIXME: Avoid non-const global vars
 
-bool bEnableMenu;
+bool g_bEnableMenu;
 
-static bool bInstantScroll = false;
-static bool bEscapedCdPlay = false;
+static bool g_bInstantScroll = false;
+static bool g_bEscapedCdPlay = false;
 
 
 //----------------- LOCAL DEFINES --------------------
@@ -298,13 +298,13 @@ static const MASTER_LIB_CODES DW2_CODES[] = {
 // as it was at control(off).
 // They are global so that MoveCursor(..) has a net effect if it
 // precedes control(on).
-static int controlX = 0, controlY = 0;
+static int g_controlX = 0, g_controlY = 0;
 
-static int offtype = 0;			// used by Control()
-static uint32 lastValue = 0;	// used by RandomFn()
-static int scrollNumber = 0;	// used by scroll()
+static int g_offtype = 0;			// used by Control()
+static uint32 g_lastValue = 0;	// used by RandomFn()
+static int g_scrollNumber = 0;	// used by scroll()
 
-static bool bNotPointedRunning = false;	// Used in Printobj and PrintObjPointed
+static bool g_bNotPointedRunning = false;	// Used in Printobj and PrintObjPointed
 
 //----------------- FORWARD REFERENCES --------------------
 
@@ -404,7 +404,7 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 		CORO_SLEEP(1);
 
 		// give up if have been superseded
-		if (psm->thisScroll != scrollNumber)
+		if (psm->thisScroll != g_scrollNumber)
 			break;
 
 		// If ESCAPE is pressed...
@@ -706,7 +706,7 @@ static void CDload(SCNHANDLE start, SCNHANDLE next, int myEscape) {
 
 	if (TinselV2) {
 		if (myEscape && myEscape != GetEscEvents()) {
-			bEscapedCdPlay = true;
+			g_bEscapedCdPlay = true;
 			return;
 		}
 
@@ -754,14 +754,14 @@ void Control(int param) {
 	}
 
 	// Tinsel 1 handling code
-	bEnableMenu = false;
+	g_bEnableMenu = false;
 
 	switch (param) {
 	case CONTROL_STARTOFF:
 		GetControlToken();	// Take control
 		DisableTags();			// Switch off tags
 		DwHideCursor();			// Blank out cursor
-		offtype = param;
+		g_offtype = param;
 		break;
 
 	case CONTROL_OFF:
@@ -771,17 +771,17 @@ void Control(int param) {
 			GetControlToken();	// Take control
 
 			DisableTags();			// Switch off tags
-			GetCursorXYNoWait(&controlX, &controlY, true);	// Store cursor position
+			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
 
 			// There may be a button timing out
 			GetToken(TOKEN_LEFT_BUT);
 			FreeToken(TOKEN_LEFT_BUT);
 		}
 
-		if (offtype == CONTROL_STARTOFF)
-			GetCursorXYNoWait(&controlX, &controlY, true);	// Store cursor position
+		if (g_offtype == CONTROL_STARTOFF)
+			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
 
-		offtype = param;
+		g_offtype = param;
 
 		if (param == CONTROL_OFF)
 			DwHideCursor();		// Blank out cursor
@@ -794,8 +794,8 @@ void Control(int param) {
 		break;
 
 	case CONTROL_ON:
-		if (offtype != CONTROL_OFFV2 && offtype != CONTROL_STARTOFF)
-			SetCursorXY(controlX, controlY);// ... where it was
+		if (g_offtype != CONTROL_OFFV2 && g_offtype != CONTROL_STARTOFF)
+			SetCursorXY(g_controlX, g_controlY);// ... where it was
 
 		FreeControlToken();	// Release control
 
@@ -1092,7 +1092,7 @@ static void DropEverything() {
  * EnableMenu
  */
 static void EnableMenu() {
-	bEnableMenu = true;
+	g_bEnableMenu = true;
 }
 
 /**
@@ -1212,7 +1212,7 @@ static void HailScene(SCNHANDLE scene) {
  * Returns TRUE if the game has been restarted, FALSE if not.
  */
 static bool HasRestarted() {
-	return bHasRestarted;
+	return g_bHasRestarted;
 }
 
 /**
@@ -1308,7 +1308,7 @@ static int IdleTime() {
  * Set flag if InstantScroll(on), reset if InstantScroll(off)
  */
 void InstantScroll(int onoff) {
-	bInstantScroll = (onoff != 0);
+	g_bInstantScroll = (onoff != 0);
 }
 
 /**
@@ -1419,8 +1419,8 @@ static int LToffset(int lort) {
 static void MoveCursor(int x, int y) {
 	SetCursorXY(x, y);
 
-	controlX = x;		// Save these values so that
-	controlY = y;		// control(on) doesn't undo this
+	g_controlX = x;		// Save these values so that
+	g_controlY = y;		// control(on) doesn't undo this
 }
 
 /**
@@ -1465,7 +1465,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 		GetControl(CONTROL_STARTOFF);
 
 	if (TinselV1)
-		++sceneCtr;
+		++g_sceneCtr;
 
 	// Prevent code subsequent to this call running before scene changes
 	if (g_scheduler->getCurrentPID() != PID_MASTER_SCR)
@@ -1541,8 +1541,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 
 
 	// Don't do CDPlay() for now if already escaped
-	if (bEscapedCdPlay) {
-		bEscapedCdPlay = false;
+	if (g_bEscapedCdPlay) {
+		g_bEscapedCdPlay = false;
 		return;
 	}
 
@@ -1583,8 +1583,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 	assert(hFilm != 0);
 
 	// Don't do CdPlay() for now if already escaped
-	if (bEscapedCdPlay) {
-		bEscapedCdPlay = false;
+	if (g_bEscapedCdPlay) {
+		g_bEscapedCdPlay = false;
 		return;
 	}
 
@@ -2068,11 +2068,11 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	_ctx->myEscape = myEscape;
 
 	if (hText == (SCNHANDLE)-1) {	// 'OFF'
-		bNotPointedRunning = true;
+		g_bNotPointedRunning = true;
 		return;
 	}
 	if (hText == (SCNHANDLE)-2) {	// 'ON'
-		bNotPointedRunning = false;
+		g_bNotPointedRunning = false;
 		return;
 	}
 
@@ -2092,10 +2092,10 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	* POINT/other event PrintObj() arbitration...
 	*/
 	if (event != POINTED) {
-		bNotPointedRunning = true;	// Get POINTED text to die
+		g_bNotPointedRunning = true;	// Get POINTED text to die
 		CORO_SLEEP(1);		// Give it chance to
 	} else if (!TinselV2)
-		bNotPointedRunning = false;	// There may have been an OFF without an ON
+		g_bNotPointedRunning = false;	// There may have been an OFF without an ON
 
 	// Make multi-ones escape
 	if (TinselV2 && (SubStringCount(hText) > 1) && !_ctx->myEscape)
@@ -2163,12 +2163,12 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						break;
 
 					// Give way to non-POINTED-generated text
-					if (bNotPointedRunning) {
+					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
 						MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 						_ctx->pText = NULL;
 
-						while (bNotPointedRunning)
+						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
 
 						GetCursorXY(&x, &y, false);
@@ -2262,7 +2262,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 	// Let POINTED text back in if this is the last
 	if (event != POINTED)
-		bNotPointedRunning = false;
+		g_bNotPointedRunning = false;
 
 	CORO_END_CODE;
 }
@@ -2281,11 +2281,11 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 				break;
 
 			// Give way to non-POINTED-generated text
-			if (bNotPointedRunning) {
+			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), pText);
 				pText = NULL;
-				while (bNotPointedRunning)
+				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
 				GetCursorXY(&x, &y, false);
@@ -2372,7 +2372,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 			}
 		} while (1);
 
-		bNotPointedRunning = false;	// Let POINTED text back in
+		g_bNotPointedRunning = false;	// Let POINTED text back in
 
 		if (_ctx->took_control)
 			Control(CONTROL_ON);	// Free control if we took it
@@ -2425,9 +2425,9 @@ static int RandomFn(int n1, int n2, int norpt) {
 
 	do {
 		value = n1 + _vm->getRandomNumber(n2 - n1);
-	} while ((lastValue == value) && (norpt == RAND_NORPT) && (++i <= 10));
+	} while ((g_lastValue == value) && (norpt == RAND_NORPT) && (++i <= 10));
 
-	lastValue = value;
+	g_lastValue = value;
 	return value;
 }
 
@@ -2446,8 +2446,8 @@ void FnRestartGame() {
 	StopMidi();
 	StopSample();
 
-	bRestart = true;
-	sceneCtr = 0;
+	g_bRestart = true;
+	g_sceneCtr = 0;
 }
 
 /**
@@ -2554,15 +2554,15 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 
 	CORO_BEGIN_CODE(_ctx);
 
-	++scrollNumber;
+	++g_scrollNumber;
 	_ctx->x = xp;
 	_ctx->y = yp;
 
-	if ((TinselV2 && bInstantScroll) || (escOn && myEscape != GetEscEvents())) {
+	if ((TinselV2 && g_bInstantScroll) || (escOn && myEscape != GetEscEvents())) {
 		// Instant completion!
 		Offset(extreme, _ctx->x, _ctx->y);
 	} else {
-		_ctx->thisScroll = scrollNumber;
+		_ctx->thisScroll = g_scrollNumber;
 		if (TinselV2)
 			DecodeExtreme(extreme, &_ctx->x, &_ctx->y);
 
@@ -2581,7 +2581,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 				}
 
 				// give up if have been superseded
-				if (_ctx->thisScroll != scrollNumber)
+				if (_ctx->thisScroll != g_scrollNumber)
 					CORO_KILL_SELF();
 
 				PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
@@ -2592,7 +2592,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 			// Scroll is escapable even though we're not waiting for it
 			sm.x = _ctx->x;
 			sm.y = _ctx->y;
-			sm.thisScroll = scrollNumber;
+			sm.thisScroll = g_scrollNumber;
 			sm.myEscape = myEscape;
 			g_scheduler->createProcess(PID_TCODE, ScrollMonitorProcess, &sm, sizeof(sm));
 		}
@@ -3410,8 +3410,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 		if (TinselV2 && _ctx->bSample) {
 			// Kick off the sample now (perhaps with a delay)
-			if (bNoPause)
-				bNoPause = false;
+			if (g_bNoPause)
+				g_bNoPause = false;
 			else if (!IsDemo)
 				CORO_SLEEP(SysVar(SV_SPEECHDELAY));
 
@@ -4899,7 +4899,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case NOPAUSE:
 		// DW2 only
-		bNoPause = true;
+		g_bNoPause = true;
 		return 0;
 
 	case NOSCROLL:
