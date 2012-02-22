@@ -43,6 +43,7 @@
 #include "agi/logic.h"
 #include "agi/sound.h"
 
+#include "gui/predictivedialog.h"
 
 namespace Common {
 class RandomSource;
@@ -1078,7 +1079,6 @@ public:
 	void clearPrompt(bool useBlackBg = false);
 	void clearLines(int, int, int);
 	void flushLines(int, int);
-	bool predictiveDialog();
 
 private:
 	void printStatus(const char *message, ...) GCC_PRINTF(2, 3);
@@ -1088,16 +1088,6 @@ private:
 	void loadDict();
 	bool matchWord();
 
-	// Predictive dialog
-	// TODO: Move this to a separate class
-	char *_predictiveDictText;
-	char **_predictiveDictLine;
-	int32 _predictiveDictLineCount;
-	char *_predictiveDictActLine;
-	Common::String _currentCode;
-	Common::String _currentWord;
-	int _wordNumber;
-	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
 

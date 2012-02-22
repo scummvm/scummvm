@@ -100,6 +100,7 @@
 		<bitmap filename = 'logo_small.bmp'/>
 		<bitmap filename = 'search.bmp'/>
 		<bitmap filename = 'eraser.bmp'/>
+		<bitmap filename = 'delbtn.bmp'/>
 	</bitmaps>
 
 	<fonts>

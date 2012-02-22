@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	message.o \
 	object.o \
 	options.o \
+	predictivedialog.o \
 	saveload.o \
 	themebrowser.o \
 	ThemeEngine.o \

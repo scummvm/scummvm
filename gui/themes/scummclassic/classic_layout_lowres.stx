@@ -43,6 +43,9 @@
 		<def var = 'Tooltip.XDelta' value = '8'/> <!-- basically cursor size -->
 		<def var = 'Tooltip.YDelta' value = '8'/>
 
+		<def var = 'Predictive.Button.Width' value = '45' />
+		<def var = 'Predictive.Button.Height' value = '15' />
+
 		<widget name = 'Button'
 				size = '72, 16'
 		/>
@@ -911,6 +914,99 @@
 			<widget name = 'Close'
 					type = 'Button'
 			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'Predictive' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '1, 1, 1, 1' center = 'true'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+					width = '150'
+					textalign = 'center'
+			/>
+			<layout type = 'horizontal' padding = '3, 3, 3, 3'>
+				<widget name = 'Word'
+					width  = '120'
+					height = 'Globals.Button.Height' 
+				/>
+				<widget name = 'Delete'
+					width  = '20'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
+			<!-- <space size = '3' /> -->
+			<layout type = 'horizontal' padding = '3, 3, 3, 3'>
+				<widget name = 'Button1'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button2'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button3'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '3, 3, 3, 3'>
+				<widget name = 'Button4'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button5'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button6'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '3, 3, 3, 3'>
+				<widget name = 'Button7'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button8'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button9'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '3, 3, 3, 0'>
+				<widget name = 'Pre'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Button0'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'Next'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
+			<space size = '3' />
+			<layout type = 'horizontal' padding = '3, 3, 0, 3'>
+				<widget name = 'Add'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<!-- <space size = '22'/> -->
+				<widget name = 'Cancel'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+				<widget name = 'OK'
+					width  = 'Globals.Predictive.Button.Width'
+					height = 'Globals.Predictive.Button.Height'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 </layout_info>

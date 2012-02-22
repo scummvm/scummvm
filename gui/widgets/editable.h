@@ -70,18 +70,17 @@ public:
 
 	virtual void handleTickle();
 	virtual bool handleKeyDown(Common::KeyState state);
-
 	virtual void reflowLayout();
+
+	bool setCaretPos(int newPos);
 
 protected:
 	virtual void startEditMode() = 0;
 	virtual void endEditMode() = 0;
-	virtual void abortEditMode() = 0;
-
+	virtual void abortEditMode() = 0;	
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
-	void drawCaret(bool erase);
-	bool setCaretPos(int newPos);
+	void drawCaret(bool erase);	
 	bool adjustOffset();
 	void makeCaretVisible();
 
