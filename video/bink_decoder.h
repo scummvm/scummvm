@@ -56,8 +56,6 @@ namespace Video {
  *
  * Video decoder used in engines:
  *  - scumm (he)
- *
- * This class is overriden in Residual to provide seek support
  */
 class BinkDecoder : public FixedRateVideoDecoder {
 public:

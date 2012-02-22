@@ -65,6 +65,7 @@ public:
 	virtual int16 getWidth();
 
 public:
+	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
 
 	virtual void showOverlay();

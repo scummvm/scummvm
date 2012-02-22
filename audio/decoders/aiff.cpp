@@ -32,7 +32,7 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "aiff.h"
+#include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {

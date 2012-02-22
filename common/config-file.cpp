@@ -30,7 +30,7 @@ namespace Common {
 
 bool ConfigFile::isValidName(const String &name) {
 	const char *p = name.c_str();
-	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
+	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 		p++;
 	return *p == 0;
 }
@@ -108,7 +108,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// is, verify that it only consists of alphanumerics,
 			// periods, dashes and underscores). Mohawk Living Books games
 			// can have periods in their section names.
-			while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
+			while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 				p++;
 
 			if (*p == '\0')
@@ -131,7 +131,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 			// Skip leading whitespaces
 			const char *t = line.c_str();
-			while (isspace(static_cast<unsigned char>(*t)))
+			while (isSpace(*t))
 				t++;
 
 			// Skip empty lines / lines with only whitespace

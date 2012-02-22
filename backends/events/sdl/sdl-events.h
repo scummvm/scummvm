@@ -118,7 +118,7 @@ protected:
 	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the 
 	 * graphics manager about the position change.
-	 *
+	 * ResidualVM addon:
 	 * The parameters relx and rely for relative mouse movement are Residual specific
 	 */
 	virtual void processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0);

@@ -27,20 +27,16 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/types.h"
 #include "common/textconsole.h"
 
 namespace Common {
-
-
-#define HWKEY_ID_SIZE (30)
 
 /**
 * Describes an available hardware key
 */
 struct HardwareKey {
 	/** unique id used for saving/loading to config */
-	char hwKeyId[HWKEY_ID_SIZE];
+	String id;
 
 	/** Human readable description */
 	String description;
@@ -51,17 +47,30 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	KeyType type;
-	ActionType preferredAction;
-
-	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "",
-				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
-		: key(ky), description(desc), type(typ), preferredAction(prefAct) {
-		assert(i);
-		Common::strlcpy(hwKeyId, i, HWKEY_ID_SIZE);
-	}
+	HardwareKey(String i, KeyState ky = KeyState(), String desc = "")
+		: id(i), key(ky), description(desc) { }
 };
 
+/**
+ * Entry in a static table of available non-modifier keys
+ */
+struct KeyTableEntry {
+	const char *hwId;
+	KeyCode keycode;
+	uint16 ascii;
+	const char *desc;
+	bool shiftable;
+};
+
+/**
+ * Entry in a static table of available key modifiers
+ */
+struct ModifierTableEntry {
+	byte flag;
+	const char *id;
+	const char *desc;
+	bool shiftable;
+};
 
 /**
  * Simple class to encapsulate a device's set of HardwareKeys.
@@ -71,30 +80,41 @@ struct HardwareKey {
 class HardwareKeySet {
 public:
 
+	/**
+	 * Add hardware keys to the set out of key and modifier tables.
+	 * @param keys       table of available keys
+	 * @param modifiers  table of available modifiers
+	 */
+	HardwareKeySet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+		addHardwareKeys(keys, modifiers);
+	}
+
+	HardwareKeySet() { }
+
 	virtual ~HardwareKeySet() {
-		List<const HardwareKey*>::const_iterator it;
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++)
 			delete *it;
 	}
 
-	void addHardwareKey(HardwareKey *key) {
+	void addHardwareKey(const HardwareKey *key) {
 		checkForKey(key);
 		_keys.push_back(key);
 	}
 
-	const HardwareKey *findHardwareKey(const char *id) const {
-		List<const HardwareKey*>::const_iterator it;
+	const HardwareKey *findHardwareKey(String id) const {
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if (strncmp((*it)->hwKeyId, id, HWKEY_ID_SIZE) == 0)
+			if ((*it)->id == id)
 				return (*it);
 		}
 		return 0;
 	}
 
 	const HardwareKey *findHardwareKey(const KeyState& keystate) const {
-		List<const HardwareKey*>::const_iterator it;
+		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->key == keystate)
@@ -103,7 +123,7 @@ public:
 		return 0;
 	}
 
-	const List<const HardwareKey*> &getHardwareKeys() const {
+	const List<const HardwareKey *> &getHardwareKeys() const {
 		return _keys;
 	}
 
@@ -111,23 +131,54 @@ public:
 		return _keys.size();
 	}
 
+	/**
+	 * Add hardware keys to the set out of key and modifier tables.
+	 * @param keys       table of available keys
+	 * @param modifiers  table of available modifiers
+	 */
+	void addHardwareKeys(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+		const KeyTableEntry *key;
+		const ModifierTableEntry *mod;
+		char fullKeyId[50];
+		char fullKeyDesc[100];
+		uint16 ascii;
+
+		for (mod = modifiers; mod->id; mod++) {
+			for (key = keys; key->hwId; key++) {
+				ascii = key->ascii;
+
+				if (mod->shiftable && key->shiftable) {
+					snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
+					snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
+					ascii = toupper(key->ascii);
+				} else if (mod->shiftable) {
+					snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
+					snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
+				} else {
+					snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
+					snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
+				}
+
+				addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
+			}
+		}
+	}
 
 private:
 
-	void checkForKey(HardwareKey *key) {
-		List<const HardwareKey*>::iterator it;
+	void checkForKey(const HardwareKey *key) {
+		List<const HardwareKey *>::iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if (strncmp((*it)->hwKeyId, key->hwKeyId, HWKEY_ID_SIZE) == 0)
-				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->hwKeyId);
+			if ((*it)->id == key->id)
+				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->id.c_str());
 			else if ((*it)->key == key->key)
 				error("Error adding HardwareKey '%s' - key already in use!", key->description.c_str());
 		}
 	}
 
-	List<const HardwareKey*> _keys;
+	List<const HardwareKey *> _keys;
 };
-
 
 } // End of namespace Common
 

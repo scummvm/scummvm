@@ -88,6 +88,11 @@ int16 ModularBackend::getWidth() {
 	return _graphicsManager->getWidth();
 }
 
+
+void ModularBackend::fillScreen(uint32 col) {
+	_graphicsManager->fillScreen(col);
+}
+
 void ModularBackend::updateScreen() {
 	_graphicsManager->updateScreen();
 }

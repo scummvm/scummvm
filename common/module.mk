@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	streamdebug.o \
 	error.o \
 	EventDispatcher.o \
+	EventMapper.o \
 	EventRecorder.o \
 	file.o \
 	fs.o \

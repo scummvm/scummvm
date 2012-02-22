@@ -86,6 +86,7 @@ void SurfaceSdlGraphicsManager::initEventObserver() {
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
+		(f == OSystem::kFeatureFullscreenMode) ||
 #ifdef USE_OPENGL
 		(f == OSystem::kFeatureOpenGL);
 #else
@@ -109,6 +110,9 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 			return _fullscreen;
 		default:
 			return false;
+void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
+	// dummy
+}
 	}
 }
 

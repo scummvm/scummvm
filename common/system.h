@@ -34,6 +34,7 @@ class Mixer;
 
 namespace Graphics {
 struct Surface;
+//ResidualVM specific:
 class PixelBuffer;
 }
 
@@ -52,7 +53,11 @@ class UpdateManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
+#ifdef ENABLE_KEYMAPPER
 class HardwareKeySet;
+class Keymap;
+class KeymapperDefaultBindings;
+#endif
 }
 
 class AudioCDManager;
@@ -305,6 +310,7 @@ public:
 	//@{
 
 	/**
+	 * !!! ResidualVM specific method !!!
 	 * Set the size of the launcher virtual screen.
 	 *
 	 * @param width		the new virtual screen width
@@ -322,6 +328,8 @@ public:
 	 * @param height		the new screen height
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
+
+	// !!! ResidualVM specific method: !!!
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
 
 	/**
@@ -339,9 +347,23 @@ public:
 	virtual int16 getWidth() = 0;
 
 	/**
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * @note We are using uint32 here even though currently
+	 * we only support 8bpp indexed mode. Thus the value should
+	 * be always inside [0, 255] for now.
+	 */
+	virtual void fillScreen(uint32 col) = 0;
+
+	/**
 	 * Flush the whole screen, that is render the current content of the screen
 	 * framebuffer to the display.
 	 *
+	 * This method could be called very often by engines. Backends are hence
+	 * supposed to only perform any redrawing if it is necessary, and otherwise
+	 * return immediately. See
+	 * <http://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
 	 */
 	virtual void updateScreen() = 0;
 
@@ -353,7 +375,20 @@ public:
 	 * @name Overlay
 	 * In order to be able to display dialogs atop the game graphics, backends
 	 * must provide an overlay mode.
+	 * !!! Not valid below for ResidualVM !!!
+	 * The overlay can be 8 or 16 bpp. Depending on which it is, OverlayColor
+	 * is 8 or 16 bit.
 	 *
+	 * For 'coolness' we usually want to have an overlay which is blended over
+	 * the game graphics. On backends which support alpha blending, this is
+	 * no issue; but on other systems (in particular those which only support
+	 * 8bpp), this needs some trickery.
+	 *
+	 * Essentially, we fake (alpha) blending on these systems by copying the
+	 * current game graphics into the overlay buffer when activating the overlay,
+	 * then manually compose whatever graphics we want to show in the overlay.
+	 * This works because we assume the game to be "paused" whenever an overlay
+	 * is active.
 	 */
 	//@{
 
@@ -376,11 +411,15 @@ public:
 	 * should be seeing only the game graphics. How this is achieved depends
 	 * on how the backend implements the overlay. Either it sets all pixels of
 	 * the overlay to be transparent (when alpha blending is used).
+	 *
+	 * Or, in case of fake alpha blending, it might just put a copy of the
+	 * current game graphics screen into the overlay.
 	 */
 	virtual void clearOverlay() = 0;
 
 	/**
 	 * Copy the content of the overlay into a buffer provided by the caller.
+	 * This is only used to implement fake alpha blending.
 	 */
 	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
 
@@ -510,8 +549,11 @@ public:
 		return _eventManager;
 	}
 
+#ifdef ENABLE_KEYMAPPER
 	/**
 	 * Register hardware keys with keymapper
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return HardwareKeySet with all keys and recommended mappings
 	 *
@@ -519,6 +561,30 @@ public:
 	 */
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
+	/**
+	 * Return a platform-specific global keymap
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
+	 *
+	 * @return Keymap with actions appropriate for the platform
+	 *
+	 * The caller will use and delete the return object.
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::Keymap *getGlobalKeymap() { return 0; }
+
+	/**
+	 * Return platform-specific default keybindings
+	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 * this, please talk to tsoliman and/or LordHoto.
+	 *
+	 * @return KeymapperDefaultBindings populated with keybindings
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return 0; }
+#endif
 	//@}
 
 

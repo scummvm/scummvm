@@ -70,6 +70,7 @@ public:
 
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
 
 	virtual void showOverlay();
@@ -87,13 +88,6 @@ public:
 
 	// ResidualVM specific method
 	virtual bool lockMouse(bool lock);
-
-	//@}
-
-	/** @name Events and Time */
-	//@{
-
-	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
 

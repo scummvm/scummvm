@@ -277,12 +277,16 @@ void Engine::openMainMenuDialog() {
 	// (not from inside the menu loop to avoid
 	// mouse cursor glitches and simliar bugs,
 	// e.g. #2822778).
-	// FIXME: For now we just ignore the return
-	// value, which is quite bad since it could
-	// be a fatal loading error, which renders
-	// the engine unusable.
-	if (_saveSlotToLoad >= 0)
-		loadGameState(_saveSlotToLoad);
+	if (_saveSlotToLoad >= 0) {
+		Common::Error status = loadGameState(_saveSlotToLoad);
+		if (status.getCode() != Common::kNoError) {
+			Common::String failMessage = Common::String::format(_("Gamestate load failed (%s)! "
+				  "Please consult the README for basic information, and for "
+				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+			GUI::MessageDialog dialog(failMessage);
+			dialog.runModal();
+		}
+	}
 
 	syncSoundSettings();
 }

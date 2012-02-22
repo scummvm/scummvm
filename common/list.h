@@ -226,7 +226,7 @@ public:
 	}
 
 	const_iterator	end() const {
-		return const_iterator(const_cast<NodeBase*>(&_anchor));
+		return const_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:

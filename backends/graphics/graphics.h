@@ -68,6 +68,10 @@ public:
 	virtual bool lockMouse(bool lock) = 0;
 
 	virtual void displayMessageOnOSD(const char *msg) {}
+
+	// Graphics::PaletteManager interface
+	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;
+	//virtual void grabPalette(byte *colors, uint start, uint num) = 0;
 };
 
 #endif

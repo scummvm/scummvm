@@ -60,14 +60,14 @@ struct IgnoreCase_Hash {
 // case insensitve hashing, then only because one wants to use
 // IgnoreCase_EqualTo, and then one has to specify a custom
 // hash anyway.
-template <>
+template<>
 struct Hash<String> {
 	uint operator()(const String& s) const {
 		return hashit(s.c_str());
 	}
 };
 
-template <>
+template<>
 struct Hash<const char *> {
 	uint operator()(const char *s) const {
 		return hashit(s);
