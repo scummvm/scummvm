@@ -502,6 +502,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
+	return; //ResidualVM: do not enable midi
 	_enableAudioSettings = enabled;
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
@@ -523,6 +524,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
+	return; //ResidualVM: do not enable midi
 	if (_guioptions.contains(GUIO_NOMIDI))
 		enabled = false;
 
@@ -546,6 +548,7 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 }
 
 void OptionsDialog::setMT32SettingsState(bool enabled) {
+	return; //ResidualVM: do not enable midi
 	_enableMT32Settings = enabled;
 
 	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
@@ -619,6 +622,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
+	return; //ResidualVM: do not enable midi
 	// The MIDI mode popup & a label
 	if (g_system->getOverlayWidth() > 320)
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
@@ -672,6 +676,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 }
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
+	return; //ResidualVM: do not enable midi
 	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", _("GM Device:"), _("Specifies default sound device for General MIDI output"));
 	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
 
@@ -727,6 +732,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 }
 
 void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefix) {
+	return; //ResidualVM: do not enable midi
 	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 

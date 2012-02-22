@@ -245,7 +245,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), 0, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
-
+/* ResidualVM: do nt enable midi
 	//
 	// 5) The MIDI tab
 	//
@@ -272,7 +272,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
 
 		addMT32Controls(tab, "GameOptions_MT32.");
-	}
+	}*/
 
 	//
 	// 7) The Paths tab
@@ -356,7 +356,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
-
+/*
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		e = ConfMan.hasKey("soundfont", _domain) ||
 			ConfMan.hasKey("multi_midi", _domain) ||
@@ -369,7 +369,7 @@ void EditGameDialog::open() {
 			ConfMan.hasKey("enable_gs", _domain);
 		_globalMT32Override->setState(e);
 	}
-
+*/
 	// TODO: game path
 
 	const Common::Language lang = Common::parseLanguage(ConfMan.get("language", _domain));
