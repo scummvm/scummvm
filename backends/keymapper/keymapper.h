@@ -149,6 +149,7 @@ public:
 	 * @return			mapped events
 	 */
 	List<Event> mapKey(const KeyState& key, bool keyDown);
+	List<Event> mapGesture(const GestureCode gesture);
 
 	/**
 	 * @brief Map a key down event.
@@ -183,6 +184,12 @@ public:
 
 private:
 
+	enum IncomingEventType {
+		kIncomingKeyDown,
+		kIncomingKeyUp,
+		kIncomingNonKey
+	};
+
 	void initKeymap(Domain &domain, Keymap *keymap);
 
 	Domain _globalDomain;
@@ -193,8 +200,8 @@ private:
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
 	Action *getAction(const KeyState& key);
-	List<Event> executeAction(const Action *act, bool keyDown);
-
+	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
+	EventType convertDownToUp(EventType eventType);
 	EventManager *_eventMan;
 
 	bool _enabled;

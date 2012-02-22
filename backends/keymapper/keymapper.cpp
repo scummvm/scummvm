@@ -190,6 +190,8 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 		mappedEvents = mapKeyDown(ev.kbd);
 	else if (ev.type == Common::EVENT_KEYUP)
 		mappedEvents = mapKeyUp(ev.kbd);
+	else if (ev.type == Common::EVENT_CUSTOM_GESTURE)
+		mappedEvents = mapGesture(ev.customType);
 
 	if (!mappedEvents.empty())
 		return mappedEvents;
@@ -236,7 +238,30 @@ List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	if (!action)
 		return List<Event>();
 
-	return executeAction(action, keyDown);
+	return executeAction(action, keyDown ? kIncomingKeyDown : kIncomingKeyUp);
+}
+
+
+List<Event> Keymapper::mapGesture(const GestureCode gesture) {
+	if (!_enabled || _activeMaps.empty())
+		return List<Event>();
+
+	Action *action = 0;
+
+	// Search for gesture in active keymap stack
+	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
+		MapRecord mr = _activeMaps[i];
+		debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
+		action = mr.keymap->getMappedAction(gesture);
+
+		if (action || !mr.transparent)
+			break;
+	}
+
+	if (!action)
+		return List<Event>();
+
+	return executeAction(action);
 }
 
 Action *Keymapper::getAction(const KeyState& key) {
@@ -245,50 +270,55 @@ Action *Keymapper::getAction(const KeyState& key) {
 	return action;
 }
 
-List<Event> Keymapper::executeAction(const Action *action, bool keyDown) {
+List<Event> Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	List<Event> mappedEvents;
 	List<Event>::const_iterator it;
 
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
-		Event evt = *it;
+		Event evt = Event(*it);
+		EventType convertedType = convertDownToUp(evt.type);
 
-		switch (evt.type) {
-		case EVENT_KEYDOWN:
-			if (!keyDown) evt.type = EVENT_KEYUP;
-			break;
-		case EVENT_KEYUP:
-			if (keyDown) evt.type = EVENT_KEYDOWN;
-			break;
-		case EVENT_LBUTTONDOWN:
-			if (!keyDown) evt.type = EVENT_LBUTTONUP;
-			break;
-		case EVENT_LBUTTONUP:
-			if (keyDown) evt.type = EVENT_LBUTTONDOWN;
-			break;
-		case EVENT_RBUTTONDOWN:
-			if (!keyDown) evt.type = EVENT_RBUTTONUP;
-			break;
-		case EVENT_RBUTTONUP:
-			if (keyDown) evt.type = EVENT_RBUTTONDOWN;
-			break;
-		case EVENT_MBUTTONDOWN:
-			if (!keyDown) evt.type = EVENT_MBUTTONUP;
-			break;
-		case EVENT_MBUTTONUP:
-			if (keyDown) evt.type = EVENT_MBUTTONDOWN;
-			break;
-		case EVENT_MAINMENU:
-			if (!keyDown) evt.type = EVENT_MAINMENU;
-			break;
-		default:
-			// don't deliver other events on key up
-			if (!keyDown) continue;
+		// hardware keys need to send up instead when they are up
+		if (incomingType == kIncomingKeyUp) {
+			if (convertedType == EVENT_INVALID)
+				continue; // don't send any non-down-converted events on up they were already sent on down
+			evt.type = convertedType;
 		}
 
 		evt.mouse = _eventMan->getMousePos();
 		mappedEvents.push_back(evt);
+
+		// gestures need to send up as well
+		// TODO: implement a way to add a delay
+		if (incomingType == kIncomingNonKey) {
+			if (convertedType == EVENT_INVALID)
+				continue; // don't send any non-down-converted events on up they were already sent on down
+			evt.type = convertedType;
+			mappedEvents.push_back(evt);
+		}
 	}
 	return mappedEvents;
+}
+
+EventType Keymapper::convertDownToUp(EventType type) {
+	EventType result = EVENT_INVALID;
+	switch (type) {
+	case EVENT_KEYDOWN:
+		result = EVENT_KEYUP;
+		break;
+	case EVENT_LBUTTONDOWN:
+		result = EVENT_LBUTTONUP;
+		break;
+	case EVENT_RBUTTONDOWN:
+		result = EVENT_RBUTTONUP;
+		break;
+	case EVENT_MBUTTONDOWN:
+		result = EVENT_MBUTTONUP;
+		break;
+	default:
+		break;
+	}
+	return result;
 }
 
 const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
