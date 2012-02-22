@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	EventRecorder.o \
 	file.o \
 	fs.o \
+	gui_options.o \
 	hashmap.o \
 	iff_container.o \
 	localization.o \
@@ -22,6 +23,7 @@ MODULE_OBJS := \
 	quicktime.o \
 	random.o \
 	rational.o \
+	rendermode.o \
 	str.o \
 	stream.o \
 	system.o \
