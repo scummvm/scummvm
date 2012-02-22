@@ -37,8 +37,8 @@ private:
 
 	unsigned int activePartialCount;
 	PatchCache patchCache[4];
-	Common::List<Poly*> freePolys;
-	Common::List<Poly*> activePolys;
+	Common::List<Poly *> freePolys;
+	Common::List<Poly *> activePolys;
 
 	void setPatch(const PatchParam *patch);
 	unsigned int midiKeyToKey(unsigned int midiKey);
