@@ -345,13 +345,13 @@ bool Ques::show() {
 			with.x2 = (tmax * 3 + 55) * res;
 			with.y1 = 27 + j * 8;
 			with.y2 = 34 + j * 8;
-			with.etat = true;
+			with.enabled = true;
 
 			while ((int)chaines[j].size() < tmax) {
 				chaines[j] += ' ';
 			}
 		}
-		coor[j + 1].etat = false;
+		coor[j + 1].enabled = false;
 		if (res == 1)
 			rep = 10;
 		else
@@ -367,8 +367,8 @@ bool Ques::show() {
 			CHECK_QUIT0;
 
 			k = 1;
-			while (coor[k].etat && ! dans_rect(coor[k]))  k = k + 1;
-			if (coor[k].etat) {
+			while (coor[k].enabled && ! dans_rect(coor[k]))  k = k + 1;
+			if (coor[k].enabled) {
 				if ((memk != 0) && (memk != k)) {
 //					for (j = 1; j <= tmax; ++j)
 //						st[j] = chaines[memk][j];

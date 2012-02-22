@@ -204,7 +204,7 @@ int tbi[256];
 chariot c1, c2, c3;
 float addfix;
 t_pcga palsav[91];
-doublet tabpal[91][17];
+Common::Point tabpal[91][17];
 t_pcga palcga[91];
 pattern tpt[15];
 
@@ -248,6 +248,7 @@ int port[0xfff];
 byte mem[65536 * 16];
 
 void intr(int intNum, registres &regs) {
+	warning("STUBBED: Call to DOS interrupt #%d", intNum);
 }
 
 /**
