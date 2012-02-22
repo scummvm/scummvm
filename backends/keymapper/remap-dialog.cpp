@@ -244,7 +244,7 @@ void RemapDialog::clearMapping(uint i) {
 
 	debug(3, "clear the mapping %u", i);
 	_activeRemapAction = _currentActions[_topAction + i].action;
-	_activeRemapAction->mapKey(0);
+	_activeRemapAction->mapInput(0);
 	_activeRemapAction->getParent()->saveMappings();
 	_changes = true;
 
@@ -286,12 +286,12 @@ void RemapDialog::handleKeyDown(Common::KeyState state) {
 
 void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
-		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
+		const HardwareInput *hwInput = _keymapper->findHardwareInput(state);
 
 		debug(4, "RemapDialog::handleKeyUp Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
 
-		if (hwkey) {
-			_activeRemapAction->mapKey(hwkey);
+		if (hwInput) {
+			_activeRemapAction->mapInput(hwInput);
 			_activeRemapAction->getParent()->saveMappings();
 			_changes = true;
 			stopRemapping();
@@ -325,7 +325,7 @@ void RemapDialog::loadKeymap() {
 		// - all of the topmost keymap action
 		// - all mapped actions that are reachable
 
-		List<const HardwareKey *> freeKeys(_keymapper->getHardwareKeys());
+		List<const HardwareInput *> freeInputs(_keymapper->getHardwareInputs());
 
 		int topIndex = activeKeymaps.size() - 1;
 
@@ -344,8 +344,8 @@ void RemapDialog::loadKeymap() {
 
 			_currentActions.push_back(info);
 
-			if (act->getMappedKey())
-				freeKeys.remove(act->getMappedKey());
+			if (act->getMappedInput())
+				freeInputs.remove(act->getMappedInput());
 		}
 
 		// loop through remaining finding mappings for unmapped keys
@@ -353,21 +353,25 @@ void RemapDialog::loadKeymap() {
 			for (int i = topIndex - 1; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
-				List<const HardwareKey *>::iterator keyIt = freeKeys.begin();
+				List<const HardwareInput *>::iterator inputIt = freeInputs.begin();
+				const HardwareInput *input = *inputIt;
+				while (inputIt != freeInputs.end()) {
 
-				while (keyIt != freeKeys.end()) {
-					Action *act = mr.keymap->getMappedAction((*keyIt)->key);
+					Action *act = 0;
+					// FIXME: Add support for kHardwareInputTypeGesture and really just make getMappedAction take the hwInput itself
+					if (input->type == kHardwareInputTypeKeyboard)
+						act = mr.keymap->getMappedAction(input->key);
 
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};
 						_currentActions.push_back(info);
-						freeKeys.erase(keyIt++);
+						freeInputs.erase(inputIt);
 					} else {
-						++keyIt;
+						++inputIt;
 					}
 				}
 
-				if (mr.transparent == false || freeKeys.empty())
+				if (mr.transparent == false || freeInputs.empty())
 					break;
 			}
 		}
@@ -420,10 +424,10 @@ void RemapDialog::refreshKeymap() {
 			widg.actionText->setLabel(info.description);
 			widg.actionText->setEnabled(!info.inherited);
 
-			const HardwareKey *mappedKey = info.action->getMappedKey();
+			const HardwareInput *mappedInput = info.action->getMappedInput();
 
-			if (mappedKey)
-				widg.keyButton->setLabel(mappedKey->description);
+			if (mappedInput)
+				widg.keyButton->setLabel(mappedInput->description);
 			else
 				widg.keyButton->setLabel("-");
 

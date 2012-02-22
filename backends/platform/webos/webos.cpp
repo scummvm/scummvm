@@ -52,16 +52,16 @@ void OSystem_SDL_WebOS::initBackend() {
  * @return The hardware key set with added webOS specific keys.
  */
 #ifdef ENABLE_KEYMAPPER
-HardwareKeySet *OSystem_SDL_WebOS::getHardwareKeySet() {
+HardwareInputSet *OSystem_SDL_WebOS::getHardwareInputSet() {
 	// Get the original SDL hardware key set
-	HardwareKeySet *keySet = OSystem_SDL::getHardwareKeySet();
+	HardwareInputSet *inputSet = OSystem_SDL::getHardwareInputSet();
 
 	// Add WebOS specific keys
-	keySet->addHardwareKey(new HardwareKey("FORWARD",
+	keySet->addHardwareInput(new HardwareInput("FORWARD",
 		KeyState((KeyCode) 229, 229, 0), "Forward"));
 
 	// Return the modified hardware key set
-	return keySet;
+	return inputSet;
 }
 #endif
 

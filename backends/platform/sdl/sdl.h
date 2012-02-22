@@ -59,7 +59,7 @@ public:
 	virtual void engineDone();
 #endif
 #ifdef ENABLE_KEYMAPPER
-	virtual Common::HardwareKeySet *getHardwareKeySet();
+	virtual Common::HardwareInputSet *getHardwareInputSet();
 #endif
 	virtual void quit();
 	virtual void fatalError();
