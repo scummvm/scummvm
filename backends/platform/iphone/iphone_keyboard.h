@@ -23,8 +23,8 @@
 #ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_KEYBOARD_H
 #define BACKENDS_PLATFORM_IPHONE_IPHONE_KEYBOARD_H
 
-#import <UIKit/UIKit.h>
-#import <UIKit/UITextView.h>
+#include <UIKit/UIKit.h>
+#include <UIKit/UITextView.h>
 
 @interface SoftKeyboard : UIView {
 	id inputDelegate;
