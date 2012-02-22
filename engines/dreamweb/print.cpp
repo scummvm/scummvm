@@ -210,7 +210,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 	bool done = false;
 	while (!done) {
 
-		uint16 count = getNumber(_tempCharset, (const uint8 *)iterator, 166, false, &x);
+		uint16 count = getNumber(_monitorCharset, (const uint8 *)iterator, 166, false, &x);
 		do {	
 			char c = *iterator++;
 			if (c == ':')
@@ -226,7 +226,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 				break;
 			}
 			c = modifyChar(c);
-			printChar(_tempCharset, &x, _monAdY, c, 0, NULL, NULL);
+			printChar(_monitorCharset, &x, _monAdY, c, 0, NULL, NULL);
 			_cursLocX = x;
 			_cursLocY = _monAdY;
 			_mainTimer = 1;

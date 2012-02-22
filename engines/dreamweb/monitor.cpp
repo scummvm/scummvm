@@ -54,11 +54,11 @@ void DreamWebEngine::useMon() {
 	showIcon();
 	drawFloor();
 	getRidOfAll();
-	loadIntoTemp("DREAMWEB.G03"); // mon. graphic name
+	loadGraphicsFile(_monitorGraphics, "DREAMWEB.G03"); // mon. graphic name
 	loadPersonal();
 	loadNews();
 	loadCart();
-	loadTempCharset("DREAMWEB.C01"); // character set 2
+	loadGraphicsFile(_monitorCharset, "DREAMWEB.C01"); // character set 2
 	printOuterMon();
 	initialMonCols();
 	printLogo();
@@ -89,8 +89,8 @@ void DreamWebEngine::useMon() {
 		if (_quitRequested) //TODO : Check why it crashes when put before the execcommand
 			break;
 	} while (!stop);
-	getRidOfTemp();
-	getRidOfTempCharset();
+	_monitorGraphics.clear();
+	_monitorCharset.clear();
 
 	_textFile1.clear();
 	_textFile2.clear();
@@ -188,14 +188,14 @@ void DreamWebEngine::monitorLogo() {
 }
 
 void DreamWebEngine::printLogo() {
-	showFrame(_tempGraphics, 56, 32, 0, 0);
+	showFrame(_monitorGraphics, 56, 32, 0, 0);
 	showCurrentFile();
 }
 
 void DreamWebEngine::input() {
 	memset(_inputLine, 0, 64);
 	_curPos = 0;
-	printChar(_tempCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
+	printChar(_monitorCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
 	multiDump(_monAdX, _monAdY, 6, 8);
 	_monAdX += 6;
 	_cursLocX = _monAdX;
@@ -227,7 +227,7 @@ void DreamWebEngine::input() {
 			continue;
 		multiGet(_mapStore + _curPos * 256, _monAdX, _monAdY, 8, 8);
 		uint8 charWidth;
-		printChar(_tempCharset, _monAdX, _monAdY, currentKey, 0, &charWidth, NULL);
+		printChar(_monitorCharset, _monAdX, _monAdY, currentKey, 0, &charWidth, NULL);
 		_inputLine[_curPos * 2 + 1] = charWidth;
 		_monAdX += charWidth;
 		++_curPos;
@@ -266,7 +266,7 @@ void DreamWebEngine::printCurs() {
 	multiGet(_textUnder, x, y, 6, height);
 	++_mainTimer;
 	if ((_mainTimer & 16) == 0)
-		showFrame(_tempCharset, x, y, '/' - 32, 0);
+		showFrame(_monitorCharset, x, y, '/' - 32, 0);
 	multiDump(x - 6, y, 12, height);
 }
 
@@ -302,17 +302,17 @@ void DreamWebEngine::showCurrentFile() {
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = modifyChar(c);
-		printChar(_tempCharset, &x, 37, c, 0, NULL, NULL);
+		printChar(_monitorCharset, &x, 37, c, 0, NULL, NULL);
 	}
 }
 
 void DreamWebEngine::accessLightOn() {
-	showFrame(_tempGraphics, 74, 182, 8, 0);
+	showFrame(_monitorGraphics, 74, 182, 8, 0);
 	multiDump(74, 182, 12, 8);
 }
 
 void DreamWebEngine::accessLightOff() {
-	showFrame(_tempGraphics, 74, 182, 7, 0);
+	showFrame(_monitorGraphics, 74, 182, 7, 0);
 	multiDump(74, 182, 12, 8);
 }
 
@@ -345,22 +345,22 @@ void DreamWebEngine::netError() {
 }
 
 void DreamWebEngine::powerLightOn() {
-	showFrame(_tempGraphics, 257+4, 182, 6, 0);
+	showFrame(_monitorGraphics, 257+4, 182, 6, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
 void DreamWebEngine::powerLightOff() {
-	showFrame(_tempGraphics, 257+4, 182, 5, 0);
+	showFrame(_monitorGraphics, 257+4, 182, 5, 0);
 	multiDump(257+4, 182, 12, 8);
 }
 
 void DreamWebEngine::lockLightOn() {
-	showFrame(_tempGraphics, 56, 182, 10, 0);
+	showFrame(_monitorGraphics, 56, 182, 10, 0);
 	multiDump(58, 182, 12, 8);
 }
 
 void DreamWebEngine::lockLightOff() {
-	showFrame(_tempGraphics, 56, 182, 9, 0);
+	showFrame(_monitorGraphics, 56, 182, 9, 0);
 	multiDump(58, 182, 12, 8);
 }
 
@@ -375,10 +375,10 @@ void DreamWebEngine::turnOnPower() {
 }
 
 void DreamWebEngine::printOuterMon() {
-	showFrame(_tempGraphics, 40, 32, 1, 0);
-	showFrame(_tempGraphics, 264, 32, 2, 0);
-	showFrame(_tempGraphics, 40, 12, 3, 0);
-	showFrame(_tempGraphics, 40, 164, 4, 0);
+	showFrame(_monitorGraphics, 40, 32, 1, 0);
+	showFrame(_monitorGraphics, 264, 32, 2, 0);
+	showFrame(_monitorGraphics, 40, 12, 3, 0);
+	showFrame(_monitorGraphics, 40, 164, 4, 0);
 }
 
 void DreamWebEngine::loadPersonal() {
