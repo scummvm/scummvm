@@ -97,7 +97,7 @@ private:
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
-	CheckboxWidget *_disableDitheringCheckbox;
+	CheckboxWidget *_softwareRenderingCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 

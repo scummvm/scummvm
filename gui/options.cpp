@@ -100,7 +100,7 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
-	_disableDitheringCheckbox = 0;
+	_softwareRenderingCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -174,6 +174,10 @@ void OptionsDialog::open() {
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 #endif // SMALL_SCREEN_DEVICE
+
+		// Software rendering setting - ResidualVM specific
+		_softwareRenderingCheckbox->setEnabled(true);
+		_softwareRenderingCheckbox->setState(ConfMan.getBool("software_rendering", _domain));
 	}
 
 	// Audio options
@@ -278,6 +282,7 @@ void OptionsDialog::close() {
 				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
 					graphicsModeChanged = true;
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
+				ConfMan.setBool("soft_renderer", _softwareRenderingCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
@@ -490,6 +495,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
 #endif
+	if (enabled)
+		_softwareRenderingCheckbox->setEnabled(true);
+	else
+		_softwareRenderingCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -605,6 +614,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
+	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grSoftwareRenderingCheckbox", _("Software Rendering"), _("Enable software rendering"));
 	_enableGraphicSettings = true;
 }
 
