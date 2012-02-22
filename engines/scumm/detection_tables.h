@@ -632,8 +632,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "chase", "chase", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "chase", "Cheese Chase", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "dog", "dog", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "dog", "dog", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "dog", "Dog on a Stick", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "dog", "Springparadijs", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "farm", "farm", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "farm", "farmdemo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -704,7 +705,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "MaliceMRC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi4", "Mm4demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
-	{ "FreddisFunShop", "FreddisFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "FreddisFunShop", "FreddisFunShop", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
+	{ "FreddisFunShop", "FreddisFunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "FreddisFunShop", "Freddi's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "jungle", "jungle", kGenHEPC, UNK_LANG, UNK, 0 },
