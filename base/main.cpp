@@ -264,7 +264,7 @@ static void setupKeymapper(OSystem &system) {
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
 
-	HardwareInputSet *inputSet = system.getHardwareInputSet();
+	HardwareKeySet *keySet = system.getHardwareKeySet();
 
 	// Query backend for hardware keys and register them
 	mapper->registerHardwareKeySet(keySet);
