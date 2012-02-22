@@ -117,6 +117,8 @@ protected:
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
+    
+    bool _arCorrectionEnabled;
 
 public:
 
@@ -215,6 +217,8 @@ protected:
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
+    
+    void setARCorrectionEnabled(bool enabled);
 };
 
 #endif

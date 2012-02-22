@@ -47,6 +47,11 @@ bool OSystem_IPHONE::setGraphicsMode(int mode) {
 	}
 }
 
+void OSystem_IPHONE::setARCorrectionEnabled(bool enabled) {
+    _arCorrectionEnabled = enabled;
+    iPhone_setFeatureState(kAspectRatioCorrection, enabled);
+}
+
 int OSystem_IPHONE::getGraphicsMode() const {
 	return _currentGraphicsMode;
 }
