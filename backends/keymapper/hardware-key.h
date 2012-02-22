@@ -31,14 +31,12 @@
 
 namespace Common {
 
-#define HWKEY_ID_SIZE (30)
-
 /**
 * Describes an available hardware key
 */
 struct HardwareKey {
 	/** unique id used for saving/loading to config */
-	char hwKeyId[HWKEY_ID_SIZE];
+	String id;
 
 	/** Human readable description */
 	String description;
@@ -49,11 +47,8 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "")
-		: key(ky), description(desc) {
-		assert(i);
-		Common::strlcpy(hwKeyId, i, HWKEY_ID_SIZE);
-	}
+	HardwareKey(String i, KeyState ky = KeyState(), String desc = "")
+		: id(i), key(ky), description(desc) { }
 };
 
 /**
@@ -108,11 +103,11 @@ public:
 		_keys.push_back(key);
 	}
 
-	const HardwareKey *findHardwareKey(const char *id) const {
+	const HardwareKey *findHardwareKey(String id) const {
 		List<const HardwareKey *>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if (strncmp((*it)->hwKeyId, id, HWKEY_ID_SIZE) == 0)
+			if ((*it)->id == id)
 				return (*it);
 		}
 		return 0;
@@ -175,8 +170,8 @@ private:
 		List<const HardwareKey *>::iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if (strncmp((*it)->hwKeyId, key->hwKeyId, HWKEY_ID_SIZE) == 0)
-				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->hwKeyId);
+			if ((*it)->id == key->id)
+				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->id.c_str());
 			else if ((*it)->key == key->key)
 				error("Error adding HardwareKey '%s' - key already in use!", key->description.c_str());
 		}

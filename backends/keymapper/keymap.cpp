@@ -185,12 +185,10 @@ void Keymap::saveMappings() {
 		actIdLen = (actIdLen > ACTION_ID_SIZE) ? ACTION_ID_SIZE : actIdLen;
 
 		String actId((*it)->id, (*it)->id + actIdLen);
-		char hwId[HWKEY_ID_SIZE+1];
-
-		memset(hwId, 0, HWKEY_ID_SIZE+1);
+		String hwId = "";
 
 		if ((*it)->getMappedKey()) {
-			memcpy(hwId, (*it)->getMappedKey()->hwKeyId, HWKEY_ID_SIZE);
+			hwId = (*it)->getMappedKey()->id;
 		}
 		_configDomain->setVal(prefix + actId, hwId);
 	}
