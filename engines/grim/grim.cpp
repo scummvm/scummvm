@@ -640,26 +640,27 @@ void GrimEngine::mainLoop() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
 			Common::EventType type = event.type;
-			if (type == Common::EVENT_KEYDOWN) {
-				if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
-					handleExit();
-					break;
-				} else {
-					handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
-				}
-			}
 			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+				if (type == Common::EVENT_KEYDOWN) {
+					if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
+						handleExit();
+						break;
+					} else {
+						handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+					}
+				}
+
 				handleControls(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+
+				// Allow lua to react to the event.
+				// Without this lua_update switching the entries in the menu is slow because
+				// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
+				// and it will break the lua scripts that checks for the state of the button
+				// with GetControlState()
+				luaUpdate();
 			}
 			if (type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
-
-			// Allow lua to react to the event.
-			// Without this lua_update switching the entries in the menu is slow because
-			// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
-			// and it will break the lua scripts that checks for the state of the button
-			// with GetControlState()
-			luaUpdate();
 		}
 
 		luaUpdate();
