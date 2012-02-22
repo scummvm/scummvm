@@ -68,6 +68,8 @@ static long lastTick = 0;
 static int frames = 0;
 #endif
 
+static bool _aspectRatioCorrect = false;
+
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(const char *file, int line) {
@@ -87,6 +89,14 @@ void iPhone_setGraphicsMode(GraphicsModes mode) {
 	_graphicsMode = mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
+}
+
+void iPhone_setAspectRatioState(bool enable) {
+	_aspectRatioCorrect = enable;
+}
+
+bool iPhone_getAspectRatioState() {
+	return _aspectRatioCorrect;
 }
 
 void iPhone_showCursor(int state) {
@@ -628,10 +638,22 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[[_keyboardView inputView] removeFromSuperview];
 	}
 
+	float adjustedWidth = _width;
+    float adjustedHeight = _height;
+    if (_aspectRatioCorrect && ((_width == 320 && _height == 200)
+		|| (_width == 640 && _height == 400)) )  {
+		if (_height == 200) {
+			adjustedHeight = 240;
+		}
+		if (_height == 400) {
+			adjustedHeight = 480;
+		}
+	}
+	
 	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
-		GLfloat gameScreenRatio = (GLfloat)_width / (GLfloat)_height;
+		GLfloat gameScreenRatio = (GLfloat)adjustedWidth / (GLfloat)adjustedHeight;
 		GLfloat screenRatio = (GLfloat)screenWidth / (GLfloat)screenHeight;
 
 		// These are the width/height according to the portrait layout!
@@ -660,7 +682,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
 	} else {
-		float ratio = (float)_height / (float)_width;
+		float ratio = (float)adjustedHeight / (float)adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
