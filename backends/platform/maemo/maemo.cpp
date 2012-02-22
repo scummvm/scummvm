@@ -173,8 +173,8 @@ void OSystem_SDL_Maemo::setupIcon() {
 }
 
 #ifdef ENABLE_KEYMAPPER
-Common::HardwareKeySet *OSystem_SDL_Maemo::getHardwareKeySet() {
-	return new Common::HardwareKeySet(Common::maemoKeys, Common::maemoModifiers);
+Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
+	return new Common::HardwareInputSet(Common::maemoKeys, Common::maemoModifiers);
 }
 
 Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {

@@ -29,6 +29,12 @@
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
+#ifdef ENABLE_KEYMAPPER
+namespace Common {
+struct Event;
+}
+#endif
+
 namespace GUI {
 
 class Widget;
@@ -82,6 +88,9 @@ protected:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+#ifdef ENABLE_KEYMAPPER
+	virtual void handleOtherEvent(Common::Event evt);
+#endif
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);

@@ -50,6 +50,7 @@ public:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleTickle();
+	virtual void handleOtherEvent(Common::Event ev);
 
 protected:
 	struct ActionWidgets {
