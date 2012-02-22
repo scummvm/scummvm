@@ -347,7 +347,6 @@ public:
 	virtual int16 getWidth() = 0;
 
 	/**
-	/**
 	 * !!! Not used in ResidualVM !!!
 	 *
 	 * @note We are using uint32 here even though currently
