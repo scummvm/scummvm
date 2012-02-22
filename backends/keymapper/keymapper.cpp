@@ -119,7 +119,7 @@ void Keymapper::cleanupGameKeymaps() {
 	// the game specific (=deleted) ones.
 	Stack<MapRecord> newStack;
 
-	for (int i = 0; i < _activeMaps.size(); i++) {
+	for (Stack<MapRecord>::size_type i = 0; i < _activeMaps.size(); i++) {
 		if (_activeMaps[i].global)
 			newStack.push(_activeMaps[i]);
 	}
