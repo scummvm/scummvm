@@ -75,22 +75,23 @@ namespace Mortevielle {
 
 const float freq0 = 1.19318e6;
 
-const int seg_syst = 0x6fed;
-const int segmou = 0x6f00;
-const int segdon = 0x6c00;
 const int adani = 0x7314;
-const int adword = 0x4000;
-const int adtroct = 0x406b;
 const int adbruit = 0x5cb0;/*2C00;*/
-const int adbruit1 = 0x6924;/*3874;*/
-const int adbruit2 = 0x6b30;/*3A80;*/
+const int adbruit1 = 0x6924;
 const int adbruit3 = 0x6ba6;/*3AF6;*/
 const int adbruit5 = 0x3b50;
 const int adson = 0x5cb0;/*2C00;*/
-const int adson2 = 0x60b0;/*3000;*/
+const int adtroct = 0x406b;
+const int adword = 0x4000;
 const int offsetb1 = 6;
-const int offsetb2 = 4;
 const int offsetb3 = 6;
+
+// Useless constants
+//const int segdon = 0x6c00;
+//const int adbruit2 = 0x6b30;/*3A80;*/
+//const int adson2 = 0x60b0;/*3000;*/
+//const int seg_syst = 0x6fed;
+//const int offsetb2 = 4;
 
 const int null = 255;
 
@@ -168,6 +169,7 @@ struct sav_chaine {
 	bool ipre;
 	char heure;
 };
+
 struct registres {
 	int ax, bx, cx, dx, bp, si, di, ds, es, flags;
 };
@@ -177,22 +179,23 @@ struct ind {
 	byte point;
 };
 
-typedef int word1;
 struct chariot {
 	int val,
-	        code,
-	        acc,
-	        freq,
-	        rep;
+		code,
+		acc,
+		freq,
+		rep;
 };
 
+/*
 struct doublet {
 	byte x, y;
 };
+*/
 
 struct rectangle {
 	int x1, x2, y1, y2;
-	bool etat;
+	bool enabled;
 };
 
 struct pattern {
@@ -214,7 +217,7 @@ struct t_pcga {
 };
 
 typedef int tablint[256];
-typedef doublet tabdb[17];
+//typedef Common::Point tabdb[17];
 typedef int tfxx[108];
 
 /*---------------------------------------------------------------------------*/
@@ -351,7 +354,7 @@ extern int tbi[256];
 extern chariot c1, c2, c3;
 extern float addfix;
 extern t_pcga palsav[91];
-extern doublet tabpal[91][17];
+extern Common::Point tabpal[91][17];
 extern t_pcga palcga[91];
 extern pattern tpt[15];
 
