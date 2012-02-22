@@ -843,17 +843,18 @@ void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *fileName) 
 	uint16 sizeInBytes = header.len(0);
 
 	assert(sizeInBytes >= kFrameBlocksize);
-	delete[] file._data;
+	file.clear();
 	file._data = new uint8[sizeInBytes - kFrameBlocksize];
-
+	file._frames = new Frame[kGraphicsFileFrameSize];
 	f.read((uint8 *)file._frames, kFrameBlocksize);
 	f.read(file._data, sizeInBytes - kFrameBlocksize);
 }
 
 void DreamWebEngine::loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len) {
 	assert(len >= kFrameBlocksize);
-	delete[] file._data;
+	file.clear();
 	file._data = new uint8[len - kFrameBlocksize];
+	file._frames = new Frame[kGraphicsFileFrameSize];
 	inFile.read((uint8 *)file._frames, kFrameBlocksize);
 	inFile.read(file._data, len - kFrameBlocksize);
 }
@@ -2257,6 +2258,7 @@ void DreamWebEngine::drawFloor() {
 void DreamWebEngine::allocateBuffers() {
 	_exFrames.clear();
 	_exFrames._data = new uint8[kExframeslen];
+	_exFrames._frames = new Frame[kGraphicsFileFrameSize];
 	_exText.clear();
 	_exText._text = new char[kExtextlen];
 }

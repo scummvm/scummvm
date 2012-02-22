@@ -76,6 +76,7 @@ const unsigned int kSymbolx = 64;
 const unsigned int kSymboly = 56;
 const unsigned int kLengthofvars = 68;
 const unsigned int kFrameBlocksize = 2080;
+const unsigned int kGraphicsFileFrameSize = 347; // ceil(2080 / sizeof(Frame))
 const unsigned int kNumexobjects = 114;
 const unsigned int kNumExTexts = kNumexobjects + 2;
 const uint16 kExtextlen = 18000;
