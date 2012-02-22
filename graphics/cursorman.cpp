@@ -88,6 +88,13 @@ void CursorManager::popAllCursors() {
 		delete cur;
 	}
 
+	if (g_system->hasFeature(OSystem::kFeatureCursorPalette)) {
+		while (!_cursorPaletteStack.empty()) {
+			Palette *pal = _cursorPaletteStack.pop();
+			delete pal;
+		}
+	}
+
 	g_system->showMouse(isVisible());
 }
 
@@ -136,23 +143,86 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 }
 
 bool CursorManager::supportsCursorPalettes() {
-	return false; //ResidualVM: not supported
+	return g_system->hasFeature(OSystem::kFeatureCursorPalette);
 }
 
 void CursorManager::disableCursorPalette(bool disable) {
-	return; //ResidualVM: not supported
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return;
+
+	if (_cursorPaletteStack.empty())
+		return;
+
+	Palette *pal = _cursorPaletteStack.top();
+	pal->_disabled = disable;
+
+	g_system->setFeatureState(OSystem::kFeatureCursorPalette, !disable);
 }
 
 void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {
-	return; //ResidualVM: not supported
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return;
+
+	Palette *pal = new Palette(colors, start, num);
+	_cursorPaletteStack.push(pal);
+
+	if (num)
+		g_system->setCursorPalette(colors, start, num);
+	else
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
 
 void CursorManager::popCursorPalette() {
-	return; //ResidualVM: not supported
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return;
+
+	if (_cursorPaletteStack.empty())
+		return;
+
+	Palette *pal = _cursorPaletteStack.pop();
+	delete pal;
+
+	if (_cursorPaletteStack.empty()) {
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
+		return;
+	}
+
+	pal = _cursorPaletteStack.top();
+
+	if (pal->_num && !pal->_disabled)
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+	else
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
 
 void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint num) {
-	return; //ResidualVM: not supported
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return;
+
+	if (_cursorPaletteStack.empty()) {
+		pushCursorPalette(colors, start, num);
+		return;
+	}
+
+	Palette *pal = _cursorPaletteStack.top();
+	uint size = 3 * num;
+
+	if (pal->_size < size) {
+		// Could not re-use the old buffer. Create a new one.
+		delete[] pal->_data;
+		pal->_data = new byte[size];
+		pal->_size = size;
+	}
+
+	pal->_start = start;
+	pal->_num = num;
+
+	if (num) {
+		memcpy(pal->_data, colors, size);
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+	} else {
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
+	}
 }
 
 CursorManager::Cursor::Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, const Graphics::PixelFormat *format) {

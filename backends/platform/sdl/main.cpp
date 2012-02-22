@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	// Invoke the actual ScummVM main entry point:
-	int res = residualvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
 	delete (OSystem_SDL *)g_system;

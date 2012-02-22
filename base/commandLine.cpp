@@ -877,8 +877,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listAudioDevices();
 		return true;
 	} else if (command == "version") {
-		printf("%s\n", gResidualVMFullVersion);
-		printf("Features compiled in: %s\n", gResidualVMFeatures);
+		printf("%s\n", gScummVMFullVersion);
+		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);

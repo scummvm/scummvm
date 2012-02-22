@@ -396,6 +396,7 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 	return (b[0] << 16) | (b[1] << 8) | (b[2]);
 }
 
+// ResidualVM specific:
 #if defined(SCUMM_BIG_ENDIAN)
 
 inline float get_float(const char *data) {

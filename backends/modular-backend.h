@@ -62,16 +62,37 @@ public:
 	//@{
 
 	virtual GraphicsManager *getGraphicsManager();
+	virtual const GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+	virtual void resetGraphicsScale();
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+#endif
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
+
 // ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
 // ResidualVM specific method
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 	virtual int getScreenChangeID() const;
 
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
+
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+	virtual PaletteManager *getPaletteManager();
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
+	virtual void setShakePos(int shakeOffset);
+	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -85,6 +106,7 @@ public:
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// ResidualVM specific method
 	virtual bool lockMouse(bool lock);

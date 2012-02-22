@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_H
-#define BACKENDS_GRAPHICS_SDL_H
+#ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #ifdef USE_OPENGL
 #include <SDL_opengl.h>
@@ -58,15 +58,41 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
+	static const OSystem::GraphicsMode *supportedGraphicsModes();
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+	virtual void resetGraphicsScale();
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+#endif
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual void launcherInitSize(uint w, uint h);
 	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
+
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
+
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
+protected:
+	// PaletteManager API
+	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
+
 public:
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
+	virtual void setShakePos(int shakeOffset);
+	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -74,14 +100,15 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	//ResidualVM specific implemention:
 	virtual int16 getOverlayHeight() { return _overlayHeight; }
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	void closeOverlay();
 
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) {}
-
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	// ResidualVM specific method
 	virtual bool lockMouse(bool lock);
 
@@ -101,7 +128,10 @@ protected:
 
 
 	SDL_Surface *_screen;
+#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
+	Common::List<Graphics::PixelFormat> _supportedFormats;
+#endif
 
 #ifdef USE_OPENGL
 	bool _opengl;

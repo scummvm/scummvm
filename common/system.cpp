@@ -100,6 +100,28 @@ void OSystem::initBackend() {
 // 		error("Backend failed to instantiate fs factory");
 }
 
+bool OSystem::setGraphicsMode(const char *name) {
+	return true; //ResidualVM not use it
+	if (!name)
+		return false;
+
+	// Special case for the 'default' filter
+	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
+		return setGraphicsMode(getDefaultGraphicsMode());
+	}
+
+	const GraphicsMode *gm = getSupportedGraphicsModes();
+
+	while (gm->name) {
+		if (!scumm_stricmp(gm->name, name)) {
+			return setGraphicsMode(gm->id);
+		}
+		gm++;
+	}
+
+	return false;
+}
+
 void OSystem::fatalError() {
 	quit();
 	exit(1);

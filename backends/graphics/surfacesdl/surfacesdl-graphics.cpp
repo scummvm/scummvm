@@ -40,6 +40,9 @@
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{0, 0, 0}
+};
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
@@ -63,12 +66,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	// may reset it.
 	SDL_EnableUNICODE(1);
 
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
-#endif
+	SDL_ShowCursor(SDL_DISABLE);
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -84,6 +82,10 @@ void SurfaceSdlGraphicsManager::initEventObserver() {
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
+void SurfaceSdlGraphicsManager::resetGraphicsScale() {
+	setGraphicsMode(0);
+}
+
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
@@ -96,11 +98,11 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-		case OSystem::kFeatureFullscreenMode:
-			_fullscreen = enable;
-			break;
-		default:
-			break;
+	case OSystem::kFeatureFullscreenMode:
+		_fullscreen = enable;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -113,8 +115,46 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
-	// dummy
+const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
+	return s_supportedGraphicsModes;
+}
+
+const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
+	return s_supportedGraphicsModes;
+}
+
+int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
+	return 0;// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::beginGFXTransaction() {
+	// ResidualVM: not use it
+}
+
+OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
+	// ResidualVM: not use it
+	return OSystem::kTransactionSuccess;
+}
+
+#ifdef USE_RGB_COLOR
+Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedFormats() const {
+	// ResidualVM: not use it
+	return _supportedFormats;
+}
+#endif
+
+bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
+	// ResidualVM: not use it
+	return true;
+}
+
+int SurfaceSdlGraphicsManager::getGraphicsMode() const {
+	// ResidualVM: not use it
+	return 0;
+}
+
+void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+	// ResidualVM: not use it
 }
 
 void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
@@ -391,14 +431,55 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	}
 }
 
+void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+	// ResidualVM: not use it
+}
+
+Graphics::Surface *SurfaceSdlGraphicsManager::lockScreen() {
+	return NULL; // ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::unlockScreen() {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
+	// ResidualVM: not use it
+}
+
 int16 SurfaceSdlGraphicsManager::getHeight() {
+	// ResidualVM specific
 	return _screen->h;
 }
 
 int16 SurfaceSdlGraphicsManager::getWidth() {
+	// ResidualVM specific
 	return _screen->w;
 }
 
+void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::setShakePos(int shake_pos) {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
+	// ResidualVM: not use it
+}
+
+void SurfaceSdlGraphicsManager::clearFocusRectangle() {
+	// ResidualVM: not use it
+}
 
 #pragma mark -
 #pragma mark --- Overlays ---
@@ -566,10 +647,26 @@ bool SurfaceSdlGraphicsManager::lockMouse(bool lock) {
 }
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
+	//ResidualVM specific
 	SDL_WarpMouse(x, y);
 }
 
+void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+	// ResidualVM: not use it
+}
+
+#pragma mark -
+#pragma mark --- On Screen Display ---
+#pragma mark -
+
+#ifdef USE_OSD
+void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
+	// ResidualVM: not use it
+}
+#endif
+
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
+	//ResidualVM specific
 	return false;
 }
 
@@ -591,14 +688,17 @@ void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
+	//ResidualVM specific:
 	updateScreen();
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	return; // ResidualVM: not use it
 }
 
 void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	transformMouseCoordinates(mouse);
+	// ResidualVM: not use that:
 	//setMousePos(mouse.x, mouse.y);
 }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2011  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -572,7 +572,7 @@ INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
 	return (waveBase[ index & waveMask ] * MulTable[ vol >> ENV_EXTRA ]) >> MUL_SH;
 #elif ( DBOPL_WAVE == WAVE_TABLELOG )
 	Bit32s wave = waveBase[ index & waveMask ];
-	Bit32u total = ( wave & 0x7fff ) + ( vol << ( 3 - ENV_EXTRA ) );
+	Bit32u total = ( wave & 0x7fff ) + vol << ( 3 - ENV_EXTRA );
 	Bit32s sig = ExpTable[ total & 0xff ];
 	Bit32u exp = total >> 8;
 	Bit32s neg = wave >> 16;
@@ -1131,14 +1131,14 @@ void Chip::WriteBD( Bit8u val ) {
 #define REGOP( _FUNC_ )															\
 	index = ( ( reg >> 3) & 0x20 ) | ( reg & 0x1f );								\
 	if ( OpOffsetTable[ index ] ) {													\
-		Operator* regOp = (Operator*)( ((char *)this ) + OpOffsetTable[ index ] );	\
+		Operator* regOp = (Operator *)( ((char *)this ) + OpOffsetTable[ index ] );	\
 		regOp->_FUNC_( this, val );													\
 	}
 
 #define REGCHAN( _FUNC_ )																\
 	index = ( ( reg >> 4) & 0x10 ) | ( reg & 0xf );										\
 	if ( ChanOffsetTable[ index ] ) {													\
-		Channel* regChan = (Channel*)( ((char *)this ) + ChanOffsetTable[ index ] );	\
+		Channel* regChan = (Channel *)( ((char *)this ) + ChanOffsetTable[ index ] );	\
 		regChan->_FUNC_( this, val );													\
 	}
 
@@ -1236,7 +1236,7 @@ void Chip::GenerateBlock2( Bitu total, Bit32s* output ) {
 void Chip::GenerateBlock3( Bitu total, Bit32s* output  ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
-		memset(output, 0, sizeof(Bit32s) * 2 * samples);
+		memset(output, 0, sizeof(Bit32s) * samples * 2);
 		int count = 0;
 		for( Channel* ch = chan; ch < chan + 18; ) {
 			count++;

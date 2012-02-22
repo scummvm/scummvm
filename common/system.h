@@ -242,19 +242,58 @@ public:
 		kFeatureFullscreenMode,
 
 		/**
+		 * Control aspect ratio correction. Aspect ratio correction is used to
+		 * correct games running at 320x200 (i.e with an aspect ratio of 8:5),
+		 * but which on their original hardware were displayed with the
+		 * standard 4:3 ratio (that is, the original graphics used non-square
+		 * pixels). When the backend support this, then games running at
+		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
+		 * resolutions, ignore this feature flag.
+		 * @note Backend implementors can find utility functions in common/scaler.h
+		 *       which can be used to implement aspect ratio correction. In
+		 *       stretch200To240() can stretch a rect, including (very fast)
+		 *       particular, interpolation, and works in-place.
+		 */
+		kFeatureAspectRatioCorrection,
+
+		/**
 		 * Determine whether a virtual keyboard is too be shown or not.
 		 * This would mostly be implemented by backends for hand held devices,
 		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
 		 */
 		kFeatureVirtualKeyboard,
-		kFeatureOpenGL,
 
+		/**
+		 * Backends supporting this feature allow specifying a custom palette
+		 * for the cursor. The custom palette is used if the feature state
+		 * is set to true by the client code via setFeatureState().
+		 *
+		 * It is currently used only by some Macintosh versions of Humongous
+		 * Entertainment games. If the backend doesn't implement this feature
+		 * then the engine switches to b/w versions of cursors.
+		 * The GUI also relies on this feature for mouse cursors.
+		 */
+		kFeatureCursorPalette,
+
+		/**
+		 * A backend have this feature if its overlay pixel format has an alpha
+		 * channel which offers at least 3-4 bits of accuracy (as opposed to
+		 * just a single alpha bit).
+		 *
+		 * This feature has no associated state.
+		 */
 		kFeatureOverlaySupportsAlpha,
 
 		/**
-		 * This feature, set to true, is a hint toward the backend to disable all
-		 * key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * Client code can set the state of this feature to true in order to
+		 * iconify the application window.
+		 */
+		kFeatureIconifyWindow,
+
+		/**
+		 * Setting the state of this feature to true tells the backend to disable
+		 * all key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the AGI engine's predictive dialog.
 		 * When the dialog is displayed this feature is set so that backends with
 		 * phone-like keypad temporarily unmap all user actions which leads to
 		 * comfortable word entry. Conversely, when the dialog exits the feature
@@ -269,6 +308,9 @@ public:
 		 * map for these actions, what do you want them set to?").
 		 */
 		kFeatureDisableKeyFiltering,
+
+		//ResidualVM specific
+		kFeatureOpenGL,
 
 		/**
 		 * The presence of this feature indicates whether the displayLogFile()
@@ -308,8 +350,243 @@ public:
 	 * an efficient manner. The downside of this is that it may be
 	 * rather complicated for backend authors to fully understand and
 	 * implement the semantics of the OSystem interface.
+	 *
+	 * !!! Below description not apply for ResidualVM !!!
+	 *
+	 * The graphics visible to the user in the end are actually
+	 * composed in three layers: the game graphics, the overlay
+	 * graphics, and the mouse.
+	 *
+	 * First, there are the game graphics. The methods in this section
+	 * deal with them exclusively. In particular, the size of the game
+	 * graphics is defined by a call to initSize(), and
+	 * copyRectToScreen() blits the data in the current pixel format
+	 * into the game layer. Let W and H denote the width and height of
+	 * the game graphics.
+	 *
+	 * Before the user sees these graphics, the backend may apply some
+	 * transformations to it; for example, the may be scaled to better
+	 * fit on the visible screen; or aspect ratio correction may be
+	 * performed (see kFeatureAspectRatioCorrection). As a result of
+	 * this, a pixel of the game graphics may occupy a region bigger
+	 * than a single pixel on the screen. We define p_w and p_h to be
+	 * the width resp. height of a game pixel on the screen.
+	 *
+	 * In addition, there is a vertical "shake offset" (as defined by
+	 * setShakePos) which is used in some games to provide a shaking
+	 * effect. Note that shaking is applied to all three layers, i.e.
+	 * also to the overlay and the mouse. We denote the shake offset
+	 * by S.
+	 *
+	 * Putting this together, a pixel (x,y) of the game graphics is
+	 * transformed to a rectangle of height p_h and width p_w
+	 * appearing at position (p_w * x, p_hw * (y + S)) on the real
+	 * screen (in addition, a backend may choose to offset
+	 * everything, e.g. to center the graphics on the screen).
+	 *
+	 *
+	 * The next layer is the overlay. It is composed over the game
+	 * graphics. By default, it has exactly the same size and
+	 * resolution as the game graphics. However, client code can
+	 * specify an overlay scale (as an additional parameter to
+	 * initSize()). This is meant to increase the resolution of the
+	 * overlay while keeping its size the same as that of the game
+	 * graphics. For example, if the overlay scale is 2, and the game
+	 * graphics have a resolution of 320x200; then the overlay shall
+	 * have a resolution of 640x400, but it still has the same
+	 * physical size as the game graphics.
+	 * The overlay usually uses 16bpp, but on some ports, only 8bpp
+	 * are availble, so that is supported, too, via a compile time
+	 * switch (see also the OverlayColor typedef in scummsys.h).
+	 *
+	 *
+	 * Finally, there is the mouse layer. This layer doesn't have to
+	 * actually exist within the backend -- it all depends on how a
+	 * backend chooses to implement mouse cursors, but in the default
+	 * SDL backend, it really is a separate layer. The mouse can
+	 * have a palette of its own, if the backend supports it.
+	 * The scale of the mouse cursor is called 'cursorTargetScale'.
+	 * This is meant as a hint to the backend. For example, let us
+	 * assume the overlay is not visible, and the game graphics are
+	 * displayed using a 2x scaler. If a mouse cursor with a
+	 * cursorTargetScale of 1 is set, then it should be scaled by
+	 * factor 2x, too, just like the game graphics. But if it has a
+	 * cursorTargetScale of 2, then it shouldn't be scaled again by
+	 * the game graphics scaler.
+	 *
+	 * On a note for OSystem users here. We do not require our graphics
+	 * to be thread safe and in fact most/all backends using OpenGL are
+	 * not. So do *not* try to call any of these functions from a timer
+	 * and/or audio callback (like readBuffer of AudioStreams).
 	 */
 	//@{
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Description of a graphics mode.
+	 */
+	struct GraphicsMode {
+		/**
+		 * The 'name' of the graphics mode. This name is matched when selecting
+		 * a mode via the command line, or via the config file.
+		 * Examples: "1x", "advmame2x", "hq3x"
+		 */
+		const char *name;
+		/**
+		 * Human readable description of the scaler.
+		 * Examples: "Normal (no scaling)", "AdvMAME2x", "HQ3x"
+		 */
+		const char *description;
+		/**
+		 * ID of the graphics mode. How to use this is completely up to the
+		 * backend. This value will be passed to the setGraphicsMode(int)
+		 * method by client code.
+		 */
+		int id;
+	};
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Retrieve a list of all graphics modes supported by this backend.
+	 * This can be both video modes as well as graphic filters/scalers;
+	 * it is completely up to the backend maintainer to decide what is
+	 * appropriate here and what not.
+	 * The list is terminated by an all-zero entry.
+	 * @return a list of supported graphics modes
+	 */
+	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Return the ID of the 'default' graphics mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom graphics mode is selected via
+	 * the command line or a config file).
+	 *
+	 * @return the ID of the 'default' graphics mode
+	 */
+	virtual int getDefaultGraphicsMode() const = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Switch to the specified graphics mode. If switching to the new mode
+	 * failed, this method returns false.
+	 *
+	 * @param mode	the ID of the new graphics mode
+	 * @return true if the switch was successful, false otherwise
+	 */
+	virtual bool setGraphicsMode(int mode) = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Switch to the graphics mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 *
+	 * @param name	the name of the new graphics mode
+	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setGraphicsMode(int) method, as well
+	 *       as getSupportedGraphicsModes() and getDefaultGraphicsMode().
+	 *       In particular, backends do not have to overload this!
+	 */
+	bool setGraphicsMode(const char *name);
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Determine which graphics mode is currently active.
+	 * @return the ID of the active graphics mode
+	 */
+	virtual int getGraphicsMode() const = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Sets the graphics scale factor to x1. Games with large screen sizes
+	 * reset the scale to x1 so the screen will not be too big when starting
+	 * the game.
+	 */
+	virtual void resetGraphicsScale() {}
+
+#ifdef USE_RGB_COLOR
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Determine the pixel format currently in use for screen rendering.
+	 * @return the active screen pixel format.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Returns a list of all pixel formats supported by the backend.
+	 * The first item in the list must be directly supported by hardware,
+	 * and provide the largest color space of those formats with direct
+	 * hardware support. It is also strongly recommended that remaining
+	 * formats should be placed in order of descending preference for the
+	 * backend to use.
+	 *
+	 * EG: a backend that supports 32-bit ABGR and 16-bit 555 BGR in hardware
+	 * and provides conversion from equivalent RGB(A) modes should order its list
+	 *    1) Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24)
+	 *    2) Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0)
+	 *    3) Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0)
+	 *    4) Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0)
+	 *    5) Graphics::PixelFormat::createFormatCLUT8()
+	 *
+	 * @see Graphics::PixelFormat
+	 *
+	 * @note Backends supporting RGB color should accept game data in RGB color
+	 *       order, even if hardware uses BGR or some other color order.
+	 */
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+#else
+	inline Graphics::PixelFormat getScreenFormat() const {
+		return Graphics::PixelFormat::createFormatCLUT8();
+	};
+
+	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+		Common::List<Graphics::PixelFormat> list;
+		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+		return list;
+	};
+#endif
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Set the size and color format of the virtual screen. Typical sizes include:
+	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
+	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
+	 *  - 640x480 (e.g. for Curse of Monkey Island)
+	 *
+	 * This is the resolution for which the client code generates data;
+	 * this is not necessarily equal to the actual display size. For example,
+	 * a backend may magnify the graphics to fit on screen (see also the
+	 * GraphicsMode); stretch the data to perform aspect ratio correction;
+	 * or shrink it to fit on small screens (in cell phones).
+	 *
+	 * Typical formats include:
+	 *  CLUT8 (e.g. 256 color, for most games)
+	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
+	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
+	 *
+	 * This is the pixel format for which the client code generates data;
+	 * this is not necessarily equal to the hardware pixel format. For example,
+	 * a backend may perform color lookup of 8-bit graphics before pushing
+	 * a screen to hardware, or correct the ARGB color order.
+	 *
+	 * @param width		the new virtual screen width
+	 * @param height	the new virtual screen height
+	 * @param format	the new virtual screen pixel format
+	 */
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * !!! ResidualVM specific method !!!
@@ -320,18 +597,82 @@ public:
 	 */
 	virtual void launcherInitSize(uint width, uint height) = 0;
 
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Return an int value which is changed whenever any screen
+	 * parameters (like the resolution) change. That is, whenever a
+	 * EVENT_SCREEN_CHANGED would be sent. You can track this value
+	 * in your code to detect screen changes in case you do not have
+	 * full control over the event loop(s) being used (like the GUI
+	 * code).
+	 *
+	 * @return an integer which can be used to track screen changes
+	 *
+	 * @note Backends which generate EVENT_SCREEN_CHANGED events MUST
+	 *       overload this method appropriately.
+	 */
 	virtual int getScreenChangeID() const { return 0; }
 
 	/**
-	 * Set the size of the screen.
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Begin a new GFX transaction, which is a sequence of GFX mode changes.
+	 * The idea behind GFX transactions is to make it possible to activate
+	 * several different GFX changes at once as a "batch" operation. For
+	 * example, assume we are running in 320x200 with a 2x scaler (thus using
+	 * 640x400 pixels in total). Now, we want to switch to 640x400 with the 1x
+	 * scaler. Without transactions, we have to choose whether we want to first
+	 * switch the scaler mode, or first to 640x400 mode. In either case,
+	 * depending on the backend implementation, some ugliness may result.
+	 * E.g. the window might briefly switch to 320x200 or 1280x800.
+	 * Using transactions, this can be avoided.
+	 *
+	 * @note Transaction support is optional, and the default implementations
+	 *       of the relevant methods simply do nothing.
+	 * @see endGFXTransaction
+	 */
+	virtual void beginGFXTransaction() {}
 
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * This type is able to save the different errors which can happen while
+	 * changing GFX config values inside GFX transactions.
+	 *
+	 * endGFXTransaction returns a ORed combination of the '*Failed' values
+	 * if any problem occures, on success 0.
+	 *
+	 * @see endGFXTransaction
+	 */
+	enum TransactionError {
+		kTransactionSuccess = 0,					/**< Everything fine (use EQUAL check for this one!) */
+		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switching aspect ratio correction mode */
+		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
+		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
+		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
+		kTransactionFormatNotSupported = (1 << 4)	/**< Failed setting the color format */
+	};
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * End (and thereby commit) the current GFX transaction.
+	 * @see beginGFXTransaction
+	 * @see kTransactionError
+	 * @return returns a ORed combination of TransactionError values or 0 on success
+	 */
+	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
+
+	/**
+	 * Set the size of the screen.
+	 * !!! ResidualVM specific method: !!!
 	 *
 	 * @param width			the new screen width
 	 * @param height		the new screen height
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 
-	// !!! ResidualVM specific method: !!!
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
 
 	/**
@@ -351,6 +692,70 @@ public:
 	/**
 	 * !!! Not used in ResidualVM !!!
 	 *
+	 * Return the palette manager singleton. For more information, refer
+	 * to the PaletteManager documentation.
+	 */
+	virtual PaletteManager *getPaletteManager() = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Blit a bitmap to the virtual screen.
+	 * The real screen will not immediately be updated to reflect the changes.
+	 * Client code has to to call updateScreen to ensure any changes are
+	 * visible to the user. This can be used to optimize drawing and reduce
+	 * flicker.
+	 * If the current pixel format has one byte per pixel, the graphics data
+	 * uses 8 bits per pixel, using the palette specified via setPalette.
+	 * If more than one byte per pixel is in use, the graphics data uses the
+	 * pixel format returned by getScreenFormat.
+	 *
+	 * @param buf		the buffer containing the graphics data source
+	 * @param pitch		the pitch of the buffer (number of bytes in a scanline)
+	 * @param x			the x coordinate of the destination rectangle
+	 * @param y			the y coordinate of the destination rectangle
+	 * @param w			the width of the destination rectangle
+	 * @param h			the height of the destination rectangle
+	 *
+	 * @note The specified destination rectangle must be completly contained
+	 *       in the visible screen space, and must be non-empty. If not, a
+	 *       backend may or may not perform clipping, trigger an assert or
+	 *       silently corrupt memory.
+	 *
+	 * @see updateScreen
+	 * @see getScreenFormat
+	 */
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Lock the active screen framebuffer and return a Graphics::Surface
+	 * representing it. The caller can then perform arbitrary graphics
+	 * transformations on the framebuffer (blitting, scrolling, etc.).
+	 * Must be followed by matching call to unlockScreen(). Calling code
+	 * should make sure to only lock the framebuffer for the briefest
+	 * periods of time possible, as the whole system is potentially stalled
+	 * while the lock is active.
+	 * Returns 0 if an error occurred. Otherwise a surface with the pixel
+	 * format described by getScreenFormat is returned.
+	 *
+	 * The returned surface must *not* be deleted by the client code.
+	 *
+	 * @see getScreenFormat
+	 */
+	virtual Graphics::Surface *lockScreen() = 0;
+
+	/**
+	 * Unlock the screen framebuffer, and mark it as dirty (i.e. during the
+	 * next updateScreen() call, the whole screen will be updated.
+	 */
+	virtual void unlockScreen() = 0;
+
+	/**
+	 * Fills the screen with a given color value.
+	 * !!! Not used in ResidualVM !!!
+	 *
 	 * @note We are using uint32 here even though currently
 	 * we only support 8bpp indexed mode. Thus the value should
 	 * be always inside [0, 255] for now.
@@ -368,6 +773,46 @@ public:
 	 */
 	virtual void updateScreen() = 0;
 
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Set current shake position, a feature needed for some SCUMM screen
+	 * effects. The effect causes the displayed graphics to be shifted upwards
+	 * by the specified (always positive) offset. The area at the bottom of the
+	 * screen which is moved into view by this is filled with black. This does
+	 * not cause any graphic data to be lost - that is, to restore the original
+	 * view, the game engine only has to call this method again with offset
+	 * equal to zero. No calls to copyRectToScreen are necessary.
+	 * @param shakeOffset	the shake offset
+	 *
+	 * @note This is currently used in the SCUMM, QUEEN and KYRA engines.
+	 */
+	virtual void setShakePos(int shakeOffset) = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Sets the area of the screen that has the focus.  For example, when a character
+	 * is speaking, they will have the focus.  Allows for pan-and-scan style views
+	 * where the backend could follow the speaking character or area of interest on
+	 * the screen.
+	 *
+	 * The backend is responsible for clipping the rectangle and deciding how best to
+	 * zoom the screen to show any shape and size rectangle the engine provides.
+	 *
+	 * @param rect A rectangle on the screen to be focused on
+	 * @see clearFocusRectangle
+	 */
+	virtual void setFocusRectangle(const Common::Rect& rect) {}
+
+	/**
+	 * Clears the focus set by a call to setFocusRectangle().  This allows the engine
+	 * to clear the focus during times when no particular area of the screen has the
+	 * focus.
+	 * @see setFocusRectangle
+	 */
+	virtual void clearFocusRectangle() {}
+
 	//@}
 
 
@@ -376,7 +821,7 @@ public:
 	 * @name Overlay
 	 * In order to be able to display dialogs atop the game graphics, backends
 	 * must provide an overlay mode.
-	 * !!! Not valid below for ResidualVM !!!
+	 * !!! Not valid for ResidualVM !!!
 	 * The overlay can be 8 or 16 bpp. Depending on which it is, OverlayColor
 	 * is 8 or 16 bit.
 	 *
@@ -499,6 +944,8 @@ public:
 	virtual void warpMouse(int x, int y) = 0;
 
 	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
 	 * Set the bitmap used for drawing the cursor.
 	 *
 	 * @param buf				the pixmap data to be used
@@ -513,6 +960,20 @@ public:
 	 * @param format			pointer to the pixel format which cursor graphic uses (0 means CLUT8)
 	 */
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Replace the specified range of cursor the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * Backends which implement it should have kFeatureCursorPalette flag set
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorPalette
+	 */
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
 	//@}
 
@@ -696,6 +1157,8 @@ public:
 	virtual void setWindowCaption(const char *caption) {}
 
 	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
 	 * Display a message in an 'on screen display'. That is, display it in a
 	 * fashion where it is visible on or near the screen (e.g. in a transparent
 	 * rectangle over the regular screen content; or in a message box beneath

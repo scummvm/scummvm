@@ -232,9 +232,19 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 }
 
 static void setupGraphics(OSystem &system) {
-	system.launcherInitSize(640, 400);
+
+	system.beginGFXTransaction();
+		// Set the user specified graphics mode (if any).
+		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+
+		system.initSize(320, 200);
+		system.launcherInitSize(640, 400);//ResidualVM specific
+
+		if (ConfMan.hasKey("aspect_ratio"))
+			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 		if (ConfMan.hasKey("fullscreen"))
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
 	// a --gui-theme option, to allow that option to be working, we need to initialize
@@ -243,14 +253,13 @@ static void setupGraphics(OSystem &system) {
 	GUI::GuiManager::instance();
 
 	// Set initial window caption
-	system.setWindowCaption(gResidualVMFullVersion);
+	system.setWindowCaption(gScummVMFullVersion);
 
 	// Clear the main screen
-	//system.fillScreen(0);
+	system.fillScreen(0);
 }
 
 static void setupKeymapper(OSystem &system) {
-
 #ifdef ENABLE_KEYMAPPER
 	using namespace Common;
 
@@ -303,7 +312,7 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
-extern "C" int residualvm_main(int argc, const char * const argv[]) {
+extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
 
@@ -327,7 +336,7 @@ extern "C" int residualvm_main(int argc, const char * const argv[]) {
 	}
 
 	// Update the config file
-	ConfMan.set("versioninfo", gResidualVMVersion, Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
@@ -371,6 +380,25 @@ extern "C" int residualvm_main(int argc, const char * const argv[]) {
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
+
+	// If we received an invalid graphics mode parameter via command line
+	// we check this here. We can't do it until after the backend is inited,
+	// or there won't be a graphics manager to ask for the supported modes.
+
+	if (settings.contains("gfx-mode")) {
+		const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+		Common::String option = settings["gfx-mode"];
+		bool isValid = false;
+
+		while (gm->name && !isValid) {
+			isValid = !scumm_stricmp(gm->name, option.c_str());
+			gm++;
+		}
+		if (!isValid) {
+			warning("Unrecognized graphics mode '%s'. Switching to default mode", option.c_str());
+			settings["gfx-mode"] = "default";
+		}
+	}
 
 	setupGraphics(system);
 

@@ -245,7 +245,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), 0, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
-/* ResidualVM: do nt enable midi
+/* ResidualVM: do not enable midi
 	//
 	// 5) The MIDI tab
 	//
@@ -551,7 +551,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 640, 400) {
+	: Dialog(0, 0, 640, 400) {//ResidualVM specific
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -567,12 +567,12 @@ LauncherDialog::LauncherDialog()
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
-		new StaticTextWidget(this, "Launcher.Version", gResidualVMVersionDate);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMVersionDate);
 	} else
-		new StaticTextWidget(this, "Launcher.Version", gResidualVMFullVersion);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", gResidualVMFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
 	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ResidualVM"), kQuitCmd);
@@ -1084,10 +1084,10 @@ void LauncherDialog::updateButtons() {
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
-			ver->setLabel(gResidualVMVersionDate);
+			ver->setLabel(gScummVMVersionDate);
 		}
 
 		if (!_logo)
@@ -1095,10 +1095,10 @@ void LauncherDialog::reflowLayout() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 	} else {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlign)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
-			ver->setLabel(gResidualVMFullVersion);
+			ver->setLabel(gScummVMFullVersion);
 		}
 
 		if (_logo) {

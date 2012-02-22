@@ -92,7 +92,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 #ifdef USE_ELF_LOADER
 #define PLUGIN_DYNAMIC_BUILD_DATE \
-	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gResidualVMPluginBuildDate; }
+	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gScummVMPluginBuildDate; }
 #else
 #define PLUGIN_DYNAMIC_BUILD_DATE
 #endif

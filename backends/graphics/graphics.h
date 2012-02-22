@@ -27,14 +27,13 @@
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
 
-//#include "graphics/palette.h"
+#include "graphics/palette.h"
 
 /**
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.
  */
-	// ResidualVM specific method
-class GraphicsManager : Common::NonCopyable  {
+class GraphicsManager : public PaletteManager {
 public:
 	virtual ~GraphicsManager() {}
 
@@ -42,15 +41,38 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) = 0;
 	virtual bool getFeatureState(OSystem::Feature f) = 0;
 
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const = 0;
+	virtual int getDefaultGraphicsMode() const = 0;
+	virtual bool setGraphicsMode(int mode) = 0;
+	virtual void resetGraphicsScale() = 0;
+	virtual int getGraphicsMode() const = 0;
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+#endif
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual int getScreenChangeID() const = 0;
+
+	virtual void beginGFXTransaction() = 0;
+	virtual OSystem::TransactionError endGFXTransaction() = 0;
+
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h) = 0;
 	// ResidualVM specific method
 	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
-	virtual int getScreenChangeID() const = 0;
+
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;
-	virtual void updateScreen() = 0;
+	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
+	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual Graphics::Surface *lockScreen() = 0;
+	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;
+	virtual void updateScreen() = 0;
+	virtual void setShakePos(int shakeOffset) = 0;
+	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
+	virtual void clearFocusRectangle() = 0;
 
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;
@@ -64,6 +86,7 @@ public:
 	virtual bool showMouse(bool visible) = 0;
 	virtual void warpMouse(int x, int y) = 0;
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
 
 	// ResidualVM specific method
 	virtual bool lockMouse(bool lock) = 0;

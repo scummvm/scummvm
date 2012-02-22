@@ -76,8 +76,8 @@ enum {
  * @param surf	a surface (will always have 16 bpp after this for now)
  * @return		false if a error occurred
  */
-//ResidualVM: not supported
-//extern bool createThumbnailFromScreen(Graphics::Surface *surf);
+//ResidualVM specific:
+inline bool createThumbnailFromScreen(Graphics::Surface *surf) { return true; }
 
 /**
  * Creates a thumbnail from a buffer.
@@ -88,7 +88,6 @@ enum {
  * @param h         height
  * @param palette   palette in RGB format
  */
-//ResidualVM: not supported
-//extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
+extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
 #endif

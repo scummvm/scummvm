@@ -23,8 +23,8 @@
  */
 
 
-#ifndef SOUND_SOFTSYNTH_OPL_MAME_H
-#define SOUND_SOFTSYNTH_OPL_MAME_H
+#ifndef AUDIO_SOFTSYNTH_OPL_MAME_H
+#define AUDIO_SOFTSYNTH_OPL_MAME_H
 
 #include "common/scummsys.h"
 #include "common/random.h"

@@ -154,13 +154,157 @@ Engine::~Engine() {
 	CursorMan.popCursorPalette();
 }
 
+void initCommonGFX(bool defaultTo1XScaler) {
+	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
+	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
+
+	assert(transientDomain);
+
+	const bool useDefaultGraphicsMode =
+		(!transientDomain->contains("gfx_mode") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
+		)
+		 &&
+		(
+		!gameDomain ||
+		!gameDomain->contains("gfx_mode") ||
+		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "default")
+		);
+
+	// See if the game should default to 1x scaler
+	if (useDefaultGraphicsMode && defaultTo1XScaler) {
+		g_system->resetGraphicsScale();
+	} else {
+		// Override global scaler with any game-specific define
+		if (ConfMan.hasKey("gfx_mode")) {
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+		}
+	}
+
+	// Note: The following code deals with the fullscreen / ASR settings. This
+	// is a bit tricky, because there are three ways the user can affect these
+	// settings: Via the config file, via the command line, and via in-game
+	// hotkeys.
+	// Any global or command line settings already have been applied at the time
+	// we get here. Hence we only do something
+
+	// (De)activate aspect-ratio correction as determined by the config settings
+	if (gameDomain && gameDomain->contains("aspect_ratio"))
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+
+	// (De)activate fullscreen mode as determined by the config settings
+	if (gameDomain && gameDomain->contains("fullscreen"))
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+}
+
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
+
+	g_system->beginGFXTransaction();
+
+		initCommonGFX(defaultTo1xScaler);
+#ifdef USE_RGB_COLOR
+		if (format)
+			g_system->initSize(width, height, format);
+		else {
+			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
+			g_system->initSize(width, height, &bestFormat);
+		}
+#else
+		g_system->initSize(width, height);
+#endif
+
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+	if (gfxError == OSystem::kTransactionSuccess)
+		return;
+
+	// Error out on size switch failure
+	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
+		Common::String message;
+		message = Common::String::format("Could not switch to resolution: '%dx%d'.", width, height);
+
+		GUIErrorMessage(message);
+		error("%s", message.c_str());
+	}
+
+	// Just show warnings then these occur:
+#ifdef USE_RGB_COLOR
+	if (gfxError & OSystem::kTransactionFormatNotSupported) {
+		Common::String message = _("Could not initialize color format.");
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+#endif
+
+	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
+		Common::String message = _("Could not switch to video mode: '");
+		message += ConfMan.get("gfx_mode");
+		message += "'.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
+		GUI::MessageDialog dialog(_("Could not apply aspect ratio setting."));
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionFullscreenFailed) {
+		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
+		dialog.runModal();
+	}
+}
+
+
+using Graphics::PixelFormat;
+
+/**
+ * Determines the first matching format between two lists.
+ *
+ * @param backend	The higher priority list, meant to be a list of formats supported by the backend
+ * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
+ * @return			The first item on the backend list that also occurs on the frontend list
+ *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
+ */
+inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+#ifdef USE_RGB_COLOR
+	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+			if (*i == *j)
+				return *i;
+		}
+	}
+#endif
+	return PixelFormat::createFormatCLUT8();
+}
+
+
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
+	initGraphics(width, height, defaultTo1xScaler, &format);
+}
+
+void initGraphics(int width, int height, bool defaultTo1xScaler) {
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(width, height, defaultTo1xScaler, &format);
+}
 
 void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
-	g_system->launcherInitSize(640, 400);
-	GUI::MessageDialog dialog(msg);
-	dialog.runModal();
-	error("%s", msg.c_str());
+	g_system->beginGFXTransaction();
+		initCommonGFX(false);
+		g_system->initSize(320, 200);
+		g_system->launcherInitSize(640, 400);//ResidualVM specific
+	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+	} else {
+		error("%s", msg.c_str());
+	}
 }
 
 void Engine::checkCD() {

@@ -85,10 +85,10 @@ AboutDialog::AboutDialog()
 		_lines.push_back("");
 
 	Common::String version("C0""ResidualVM ");
-	version += gResidualVMVersion;
+	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::format(_("(built on %s)"), gResidualVMBuildDate);
+	Common::String date = Common::String::format(_("(built on %s)"), gScummVMBuildDate);
 	_lines.push_back("C2" + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
@@ -98,7 +98,7 @@ AboutDialog::AboutDialog()
 	features += _("Features compiled in:");
 	addLine(features.c_str());
 	Common::String featureList("C0");
-	featureList += gResidualVMFeatures;
+	featureList += gScummVMFeatures;
 	addLine(featureList.c_str());
 
 	_lines.push_back("");

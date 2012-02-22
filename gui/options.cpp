@@ -294,8 +294,15 @@ void OptionsDialog::close() {
 
 		// Setup graphics again if needed
 		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
+			g_system->beginGFXTransaction();
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
+
+			if (ConfMan.hasKey("aspect_ratio"))
+				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 			if (ConfMan.hasKey("fullscreen"))
 				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
+			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
 			// Since this might change the screen resolution we need to give
 			// the GUI a chance to update it's internal state. Otherwise we might
 			// get a crash when the GUI tries to grab the overlay.
@@ -307,6 +314,40 @@ void OptionsDialog::close() {
 			// Dialog::close) is called, to prevent crashes caused by invalid
 			// widgets being referenced or similar errors.
 			g_gui.checkScreenChange();
+
+			if (gfxError != OSystem::kTransactionSuccess) {
+				// Revert ConfMan to what OSystem is using.
+				Common::String message = _("Failed to apply some of the graphic options changes:");
+
+				if (gfxError & OSystem::kTransactionModeSwitchFailed) {
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+					while (gm->name) {
+						if (gm->id == g_system->getGraphicsMode()) {
+							ConfMan.set("gfx_mode", gm->name, _domain);
+							break;
+						}
+						gm++;
+					}
+					message += "\n";
+					message += _("the video mode could not be changed.");
+				}
+
+				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
+					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
+					message += "\n";
+					message += _("the fullscreen setting could not be changed");
+				}
+
+				if (gfxError & OSystem::kTransactionFullscreenFailed) {
+					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
+					message += "\n";
+					message += _("the aspect ratio setting could not be changed");
+				}
+
+				// And display the error
+				GUI::MessageDialog dialog(message);
+				dialog.runModal();
+			}
 		}
 
 		// Volume options
@@ -888,6 +929,30 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (!found)
 		ConfMan.removeKey(setting, _domain);
+}
+
+Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
+	static const struct {
+		Common::RenderMode type;
+		const char *guio;
+	} renderGUIOMapping[] = {
+		{ Common::kRenderHercG,		GUIO_RENDERHERCGREEN },
+		{ Common::kRenderHercA,		GUIO_RENDERHERCAMBER },
+		{ Common::kRenderCGA,		GUIO_RENDERCGA },
+		{ Common::kRenderEGA,		GUIO_RENDEREGA },
+		{ Common::kRenderVGA,		GUIO_RENDERVGA },
+		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
+		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
+		{ Common::kRenderPC98,		GUIO_RENDERPC98 }
+	};
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(renderGUIOMapping); i++) {
+		if (renderType == renderGUIOMapping[i].type || renderType == (uint32)-1)
+			res += renderGUIOMapping[i].guio;
+	}
+
+	return res;
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {

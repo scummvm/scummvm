@@ -47,6 +47,14 @@ BrowserDialog::~BrowserDialog() {
 int BrowserDialog::runModal() {
 	bool choiceMade = false;
 
+	// If in fullscreen mode, switch to windowed mode
+	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+	if (wasFullscreen) {
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
+		g_system->endGFXTransaction();
+	}
+
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
@@ -57,6 +65,14 @@ int BrowserDialog::runModal() {
 		const char *filename = [[panel filename] UTF8String];
 		_choice = Common::FSNode(filename);
 		choiceMade = true;
+	}
+
+
+	// If we were in fullscreen mode, switch back
+	if (wasFullscreen) {
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
+		g_system->endGFXTransaction();
 	}
 
 	return choiceMade;

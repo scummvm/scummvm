@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # This tools is kind of a hack to be able to maintain the credits list of
-# ResidualVM in a single central location. We then generate the various versions
+# ScummVM in a single central location. We then generate the various versions
 # of the credits in other places from this source. In particular:
 # - The AUTHORS file
 # - The gui/credits.h header file

@@ -1277,7 +1277,8 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
-	return true; // ResidualVM doesn's support cursor palette mode
+	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return true;
 
 	// Try to locate the specified file among all loaded bitmaps
 	const Graphics::Surface *cursor = _bitmaps[filename];
@@ -1526,7 +1527,7 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 
 	Common::StringTokenizer tok(header, ":");
 
-	if (tok.nextToken() != RESIDUALVM_THEME_VERSION_STR)
+	if (tok.nextToken() != SCUMMVM_THEME_VERSION_STR)
 		return false;
 
 	themeName = tok.nextToken();

@@ -44,9 +44,9 @@ void Log::open(Common::WriteStream *stream) {
 
 	// Output information about the ScummVM version at the start of the log
 	// file
-	print(gResidualVMFullVersion);
+	print(gScummVMFullVersion);
 	print("\n");
-	print(gResidualVMFeatures);
+	print(gScummVMFeatures);
 	print("\n");
 	print("--- Log opened.\n");
 	_startOfLine = true;

@@ -66,6 +66,38 @@ GraphicsManager *ModularBackend::getGraphicsManager() {
 	return (GraphicsManager *)_graphicsManager;
 }
 
+const OSystem::GraphicsMode *ModularBackend::getSupportedGraphicsModes() const {
+	return _graphicsManager->getSupportedGraphicsModes();
+}
+
+int ModularBackend::getDefaultGraphicsMode() const {
+	return _graphicsManager->getDefaultGraphicsMode();
+}
+
+bool ModularBackend::setGraphicsMode(int mode) {
+	return _graphicsManager->setGraphicsMode(mode);
+}
+
+int ModularBackend::getGraphicsMode() const {
+	return _graphicsManager->getGraphicsMode();
+}
+
+void ModularBackend::resetGraphicsScale() {
+	_graphicsManager->resetGraphicsScale();
+}
+
+#ifdef USE_RGB_COLOR
+
+Graphics::PixelFormat ModularBackend::getScreenFormat() const {
+	return _graphicsManager->getScreenFormat();
+}
+
+Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const {
+	return _graphicsManager->getSupportedFormats();
+}
+
+#endif
+
 // ResidualVM specific method
 void ModularBackend::launcherInitSize(uint w, uint h) {
 	_graphicsManager->launcherInitSize(w, h);
@@ -76,8 +108,20 @@ Graphics::PixelBuffer ModularBackend::setupScreen(int screenW, int screenH, bool
 	return _graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 
+void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
+	_graphicsManager->initSize(w, h, format);
+}
+
 int ModularBackend::getScreenChangeID() const {
 	return _graphicsManager->getScreenChangeID();
+}
+
+void ModularBackend::beginGFXTransaction() {
+	_graphicsManager->beginGFXTransaction();
+}
+
+OSystem::TransactionError ModularBackend::endGFXTransaction() {
+	return _graphicsManager->endGFXTransaction();
 }
 
 int16 ModularBackend::getHeight() {
@@ -88,6 +132,21 @@ int16 ModularBackend::getWidth() {
 	return _graphicsManager->getWidth();
 }
 
+PaletteManager *ModularBackend::getPaletteManager() {
+	return _graphicsManager;
+}
+
+void ModularBackend::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
+}
+
+Graphics::Surface *ModularBackend::lockScreen() {
+	return _graphicsManager->lockScreen();
+}
+
+void ModularBackend::unlockScreen() {
+	_graphicsManager->unlockScreen();
+}
 
 void ModularBackend::fillScreen(uint32 col) {
 	_graphicsManager->fillScreen(col);
@@ -95,6 +154,17 @@ void ModularBackend::fillScreen(uint32 col) {
 
 void ModularBackend::updateScreen() {
 	_graphicsManager->updateScreen();
+}
+
+void ModularBackend::setShakePos(int shakeOffset) {
+	_graphicsManager->setShakePos(shakeOffset);
+}
+void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
+	_graphicsManager->setFocusRectangle(rect);
+}
+
+void ModularBackend::clearFocusRectangle() {
+	_graphicsManager->clearFocusRectangle();
 }
 
 void ModularBackend::showOverlay() {
@@ -144,6 +214,10 @@ void ModularBackend::warpMouse(int x, int y) {
 
 void ModularBackend::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
+}
+
+void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) {
+	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
 OSystem::MutexRef ModularBackend::createMutex() {

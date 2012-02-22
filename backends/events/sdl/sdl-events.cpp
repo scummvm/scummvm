@@ -347,14 +347,14 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
-/* ResidualVM doesn't support this
+
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
 	if (screenID != _lastScreenID) {
 		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
 		return true;
-	}*/
+	}
 
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {

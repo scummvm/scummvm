@@ -55,11 +55,11 @@
  * I don't know VC enough to be sure). And of course it must be robust enough
  * to properly work in exports (i.e. release tar balls etc.).
  */
-const char *gResidualVMVersion = RESIDUALVM_VERSION;
-const char *gResidualVMBuildDate = __DATE__ " " __TIME__;
-const char *gResidualVMVersionDate = RESIDUALVM_VERSION " (" __DATE__ " " __TIME__ ")";
-const char *gResidualVMFullVersion = "ResidualVM " RESIDUALVM_VERSION " (" __DATE__ " " __TIME__ ")";
-const char *gResidualVMFeatures = ""
+const char *gScummVMVersion = SCUMMVM_VERSION;
+const char *gScummVMBuildDate = __DATE__ " " __TIME__;
+const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ResidualVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default
 	"TAINTED "
