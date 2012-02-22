@@ -20,8 +20,8 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import <Foundation/NSThread.h>
+#include <UIKit/UIKit.h>
+#include <Foundation/NSThread.h>
 
 #include "iphone_video.h"
 

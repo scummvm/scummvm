@@ -195,7 +195,7 @@ void EoBCoreEngine::timerProcessFlyingObjects(int timerNum) {
 		if (newBl) {
 			bl = calcNewBlockPosition(fo->curBlock, fo->direction);
 			pos &= 3;
-			fo->u2 = 0;
+			fo->starting = 0;
 		}
 
 		if (updateObjectFlight(fo, bl, pos)) {

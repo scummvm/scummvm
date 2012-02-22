@@ -172,7 +172,7 @@ Common::Error KyraEngine_LoK::init() {
 	else
 		_screen = new Screen_LoK(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+	_screen->setResolution(_flags.useHiResOverlay);
 
 	_debugger = new Debugger_LoK(this);
 	assert(_debugger);

@@ -42,6 +42,8 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_emc = 0;
 	_debugger = 0;
 
+	_configRenderMode = Common::kRenderDefault;
+
 	if (_flags.platform == Common::kPlatformAmiga)
 		_gameSpeed = 50;
 	else
@@ -163,6 +165,9 @@ Common::Error KyraEngine_v1::init() {
 	if (_sound)
 		_sound->updateVolumeSettings();
 
+	if (ConfMan.hasKey("render_mode"))
+		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
@@ -225,13 +230,16 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _debugger;
 }
 
-Common::Point KyraEngine_v1::getMousePos() const {
+Common::Point KyraEngine_v1::getMousePos() {
 	Common::Point mouse = _eventMan->getMousePos();
 
 	if (_flags.useHiResOverlay) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
 	}
+
+	mouse.x /= screen()->getPageScaleFactor(0);
+	mouse.y /= screen()->getPageScaleFactor(0);
 
 	return mouse;
 }
@@ -308,6 +316,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
+			_mouseX /= screen()->getPageScaleFactor(0);
+			_mouseY /= screen()->getPageScaleFactor(0);
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
 			} break;
@@ -320,6 +330,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
+			_mouseX /= screen()->getPageScaleFactor(0);
+			_mouseY /= screen()->getPageScaleFactor(0);
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;

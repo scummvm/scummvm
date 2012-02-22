@@ -88,6 +88,10 @@ void KyraRpgEngine::initStaticResource() {
 	_dscDimMap = _staticres->loadRawData(kRpgCommonDscDimMap, temp);
 	_dscDoorShpIndex = _staticres->loadRawData(kRpgCommonDscDoorShapeIndex, _dscDoorShpIndexSize);
 	_dscDoorY2 = _staticres->loadRawData(kRpgCommonDscDoorY2, temp);
+	_dscDoorFrameY1 = _staticres->loadRawData(kRpgCommonDscDoorFrameY1, temp);
+	_dscDoorFrameY2 = _staticres->loadRawData(kRpgCommonDscDoorFrameY2, temp);
+	_dscDoorFrameIndex1 = _staticres->loadRawData(kRpgCommonDscDoorFrameIndex1, temp);
+	_dscDoorFrameIndex2 = _staticres->loadRawData(kRpgCommonDscDoorFrameIndex2, temp);
 	_moreStrings = _staticres->loadStrings(kRpgCommonMoreStrings, temp);
 }
 

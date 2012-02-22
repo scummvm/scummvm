@@ -23,13 +23,13 @@
 #ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 #define BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-#import <QuartzCore/QuartzCore.h>
+#include <UIKit/UIKit.h>
+#include <Foundation/Foundation.h>
+#include <QuartzCore/QuartzCore.h>
 
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
+#include <OpenGLES/EAGL.h>
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
 
 #include "iphone_keyboard.h"
 
@@ -38,16 +38,9 @@
 	NSMutableArray *_events;
 	SoftKeyboard *_keyboardView;
 
-	int _widthOffset;
-	int _heightOffset;
-
 	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
-	GLint _renderBufferWidth;
-	GLint _renderBufferHeight;
-	GLint _visibleWidth;
-	GLint _visibleHeight;
 	GLuint _screenTexture;
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
@@ -68,6 +61,7 @@
 - (void *)getSurface;
 
 - (void)initSurface;
+- (void)setViewTransformation;
 
 - (void)setGraphicsMode;
 

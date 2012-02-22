@@ -110,7 +110,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait < 0)
 			continue;
-		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true);
+		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true, _cgaMappingDefault);
 	}
 
 	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
@@ -118,7 +118,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		EoBCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait >= 0)
 			continue;
-		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
+		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
 	}
 	_screen->_curPage = 0;
 
@@ -255,7 +255,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			m->attackerId = in.readSint16BE();
 			m->item = in.readSint16BE();
 			m->curBlock = in.readUint16BE();
-			m->u2 = in.readUint16BE();
+			m->starting = in.readUint16BE();
 			m->u1 = in.readByte();
 			m->direction = in.readByte();
 			m->distance = in.readByte();
@@ -298,7 +298,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		useMagicBookOrSymbol(_openBookChar, _openBookType);
 	}
 
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, (_screen->getPageScaleFactor(0) == 2) ? 1 : 12, Screen::CR_NO_P_CHECK);
 
 	gui_toggleButtons();
 	setHandItem(_itemInHand);
@@ -494,7 +494,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeSint16BE(m->attackerId);
 			out->writeSint16BE(m->item);
 			out->writeUint16BE(m->curBlock);
-			out->writeUint16BE(m->u2);
+			out->writeUint16BE(m->starting);
 			out->writeByte(m->u1);
 			out->writeByte(m->direction);
 			out->writeByte(m->distance);

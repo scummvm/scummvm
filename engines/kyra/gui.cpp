@@ -56,7 +56,7 @@ void GUI::updateSaveFileList(Common::String targetName, bool excludeQuickSaves) 
 		s1 = (*i)[i->size() - 3];
 		s2 = (*i)[i->size() - 2];
 		s3 = (*i)[i->size() - 1];
-		if (!isdigit(static_cast<unsigned char>(s1)) || !isdigit(static_cast<unsigned char>(s2)) || !isdigit(static_cast<unsigned char>(s3)))
+		if (!Common::isDigit(s1) || !Common::isDigit(s2) || !Common::isDigit(s3))
 			continue;
 		s1 -= '0';
 		s2 -= '0';

@@ -51,7 +51,7 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 				if (t > x1) {
 					x1 = t;
 					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
+						setDoorShapeDim(index, y1, y2, -1);
 				}
 
 				t = _dscDim2[((m + i) << 1) + 1];
@@ -59,7 +59,7 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 				if (t < x2) {
 					x2 = t;
 					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
+						setDoorShapeDim(index, y1, y2, -1);
 				}
 			} else {
 				int t = _dscDim1[m + i];
@@ -100,17 +100,20 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 	drawLevelModifyScreenDim(dim, x1, 0, x2, 15);
 }
 
-void KyraRpgEngine::scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim) {
-	static const int8 dscY1[] = { 0x1E, 0x18, 0x10, 0x00 };
-	static const int8 dscY2[] = { 0x3B, 0x47, 0x56, 0x78 };
-
+void KyraRpgEngine::setDoorShapeDim(int index, int16 &y1, int16 &y2, int dim) {
 	uint8 a = _dscDimMap[index];
 
-	if (dim == -1 && a != 3)
+	if (_flags.gameID != GI_EOB1 && dim == -1 && a != 3)
 		a++;
 
-	y1 = dscY1[a];
-	y2 = dscY2[a];
+	uint8 b = a;
+	if (_flags.gameID == GI_EOB1) {
+		a += _dscDoorFrameIndex1[_currentLevel - 1];
+		b += _dscDoorFrameIndex2[_currentLevel - 1];
+	}
+
+	y1 = _dscDoorFrameY1[a];
+	y2 = _dscDoorFrameY2[b];
 
 	if (dim == -1)
 		return;
@@ -345,19 +348,21 @@ bool KyraRpgEngine::checkSceneUpdateNeed(int block) {
 void KyraRpgEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
 	uint16 *bdb = _blockDrawingBuffer;
+	uint16 pitch = 22 * _vcnBlockWidth * 2;
+	uint8 pxl[2];
+	pxl[0] = pxl[1] = 0;
 
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
 			bool horizontalFlip = false;
-			int remainder = 0;
-
 			uint16 vcnOffset = *bdb++;
+			uint16 vcnExtraOffsetWll = 0;
 			int wllVcnOffset = 0;
 			int wllVcnRmdOffset = 0;
 
 			if (vcnOffset & 0x8000) {
 				// this renders a wall block over the transparent pixels of a floor/ceiling block
-				remainder = vcnOffset - 0x8000;
+				vcnExtraOffsetWll = vcnOffset - 0x8000;
 				vcnOffset = 0;
 				wllVcnRmdOffset = _wllVcnOffset;
 			}
@@ -369,7 +374,7 @@ void KyraRpgEngine::drawVcnBlocks() {
 
 			uint8 *src = 0;
 			if (vcnOffset) {
-				src = &_vcnBlocks[vcnOffset << 5];
+				src = &_vcnBlocks[vcnOffset * _vcnBlockWidth * _vcnBlockHeight];
 				wllVcnOffset = _wllVcnOffset;
 			} else {
 				// floor/ceiling blocks
@@ -379,83 +384,101 @@ void KyraRpgEngine::drawVcnBlocks() {
 					vcnOffset &= 0x3fff;
 				}
 
-				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset << 5);
+				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset * _vcnBlockWidth * _vcnBlockHeight);
 			}
 
 			uint8 shift = _vcnShift ? _vcnShift[vcnOffset] : _blockBrightness;
 
 			if (horizontalFlip) {
-				for (int blockY = 0; blockY < 8; blockY++) {
-					src += 3;
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src--;
-						*d++ = _vcnExpTable[((t & 0x0f) + wllVcnOffset) | shift];
-						*d++ = _vcnExpTable[((t >> 4) + wllVcnOffset) | shift];
+				for (int blockY = 0; blockY < _vcnBlockHeight; blockY++) {
+					src += (_vcnBlockWidth - 1);
+					for (int blockX = 0; blockX < _vcnBlockWidth; blockX++) {
+						uint8 bl = *src--;
+						d[_vcnFlip0] = _vcnColTable[((bl & 0x0f) + wllVcnOffset) | shift];
+						d[_vcnFlip1] = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+						d += 2;
 					}
-					src += 5;
-					d += 168;
+					src += (_vcnBlockWidth + 1);
+					d += (pitch - 2 * _vcnBlockWidth);
 				}
 			} else {
-				for (int blockY = 0; blockY < 8; blockY++) {
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src++;
-						*d++ = _vcnExpTable[((t >> 4) + wllVcnOffset) | shift];
-						*d++ = _vcnExpTable[((t & 0x0f) + wllVcnOffset) | shift];
+				for (int blockY = 0; blockY < _vcnBlockHeight; blockY++) {
+					for (int blockX = 0; blockX < _vcnBlockWidth; blockX++) {
+						uint8 bl = *src++;
+						*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+						*d++ = _vcnColTable[((bl & 0x0f) + wllVcnOffset) | shift];
 					}
-					d += 168;
+					d += (pitch - 2 * _vcnBlockWidth);
 				}
 			}
-			d -= 1400;
+			d -= (pitch * _vcnBlockHeight - 2 * _vcnBlockWidth);
 
-			if (remainder) {
-				d -= 8;
+			if (vcnExtraOffsetWll) {
+				d -= (2 * _vcnBlockWidth);
 				horizontalFlip = false;
 
-				if (remainder & 0x4000) {
-					remainder &= 0x3fff;
+				if (vcnExtraOffsetWll & 0x4000) {
+					vcnExtraOffsetWll &= 0x3fff;
 					horizontalFlip = true;
 				}
 
-				shift = _vcnShift ? _vcnShift[remainder] : _blockBrightness;
-				src = &_vcnBlocks[remainder << 5];
+				shift = _vcnShift ? _vcnShift[vcnExtraOffsetWll] : _blockBrightness;
+				src = &_vcnBlocks[vcnExtraOffsetWll * _vcnBlockWidth * _vcnBlockHeight];
+				uint8 *maskTable = _vcnTransitionMask ? &_vcnTransitionMask[vcnExtraOffsetWll * _vcnBlockWidth * _vcnBlockHeight] : 0;
 
 				if (horizontalFlip) {
-					for (int blockY = 0; blockY < 8; blockY++) {
-						src += 3;
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src--;
-							uint8 h = _vcnExpTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnExpTable[((t >> 4) + wllVcnRmdOffset) | shift];
-							if (h)
-								*d = h;
+					for (int blockY = 0; blockY < _vcnBlockHeight; blockY++) {
+						src += (_vcnBlockWidth - 1);
+						maskTable += (_vcnBlockWidth - 1);
+						for (int blockX = 0; blockX < _vcnBlockWidth; blockX++) {
+							uint8 bl = *src--;
+							uint8 mask = _vcnTransitionMask ? *maskTable-- : 0;
+							pxl[_vcnFlip0] = _vcnColTable[((bl & 0x0f) + wllVcnRmdOffset) | shift];
+							pxl[_vcnFlip1] = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask & 0x0f)) | pxl[0];
+							else if (pxl[0])
+								*d = pxl[0];
 							d++;
-							if (l)
-								*d = l;
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask >> 4)) | pxl[1];
+							else if (pxl[1])
+								*d = pxl[1];
 							d++;
 						}
-						src += 5;
-						d += 168;
+						src += (_vcnBlockWidth + 1);
+						maskTable += (_vcnBlockWidth + 1);
+						d += (pitch - 2 * _vcnBlockWidth);
 					}
 				} else {
-					for (int blockY = 0; blockY < 8; blockY++) {
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src++;
-							uint8 h = _vcnExpTable[((t >> 4) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnExpTable[((t & 0x0f) + wllVcnRmdOffset) | shift];
-							if (h)
+					for (int blockY = 0; blockY < _vcnBlockHeight; blockY++) {
+						for (int blockX = 0; blockX < _vcnBlockWidth; blockX++) {
+							uint8 bl = *src++;
+							uint8 mask = _vcnTransitionMask ? *maskTable++ : 0;
+							uint8 h = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+							uint8 l = _vcnColTable[((bl & 0x0f) + wllVcnRmdOffset) | shift];
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask >> 4)) | h;
+							else if (h)
 								*d = h;
 							d++;
-							if (l)
+
+							if (_vcnTransitionMask)
+								*d = (*d & (mask & 0x0f)) | l;
+							else if (l)
 								*d = l;
 							d++;
 						}
-						d += 168;
+						d += (pitch - 2 * _vcnBlockWidth);
 					}
 				}
-				d -= 1400;
+				d -= (pitch * _vcnBlockHeight - 2 * _vcnBlockWidth);
 			}
 		}
-		d += 1232;
+		d += (pitch * (_vcnBlockHeight - 1));
 	}
 
 	screen()->copyBlockToPage(_sceneDrawPage1, _sceneXoffset, 0, 176, 120, _sceneWindowBuffer);

@@ -101,12 +101,22 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_NOASPECT		"\022"
 #define GUIO_EGAUNDITHER	"\023"
 
+#define GUIO_RENDERHERCGREEN	"\030"
+#define GUIO_RENDERHERCAMBER	"\031"
+#define GUIO_RENDERCGA		"\032"
+#define GUIO_RENDEREGA		"\033"
+#define GUIO_RENDERVGA		"\034"
+#define GUIO_RENDERAMIGA	"\035"
+#define GUIO_RENDERFMTOWNS	"\036"
+#define GUIO_RENDERPC98		"\037"
+
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)
 #define GUIO3(a,b,c) (a b c)
 #define GUIO4(a,b,c,d) (a b c d)
 #define GUIO5(a,b,c,d,e) (a b c d e)
+#define GUIO6(a,b,c,d,e,f) (a b c d e f)
 
 namespace Common {
 
@@ -132,6 +142,70 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
  * @return 	true if the string parsed correctly, false if an error occurred.
  */
 bool parseBool(const String &val, bool &valAsBool);
+
+
+/**
+ * Test whether the given character is alphanumeric (a-z, A-Z, 0-9).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is alphanumeric, false otherwise.
+ */
+bool isAlnum(int c);
+
+/**
+ * Test whether the given character is an alphabetic letter (a-z, A-Z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is TODO, false otherwise.
+ */
+bool isAlpha(int c);
+
+/**
+ * Test whether the given character is a decimal-digit (0-9).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a decimal-digit, false otherwise.
+ */
+bool isDigit(int c);
+
+/**
+ * Test whether the given character is a lower-case letter (a-z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a lower-case letter, false otherwise.
+ */
+bool isLower(int c);
+
+/**
+ * Test whether the given character is a white-space.
+ * White-space characters are ' ', '\t', '\r', '\n', '\v', '\f'.
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a white-space, false otherwise.
+ */
+bool isSpace(int c);
+
+/**
+ * Test whether the given character is an upper-case letter (A-Z).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is an upper-case letter, false otherwise.
+ */
+bool isUpper(int c);
+
 
 /**
  * List of game language.
@@ -235,11 +309,14 @@ extern const char *getPlatformDescription(Platform id);
  */
 enum RenderMode {
 	kRenderDefault = 0,
-	kRenderEGA = 1,
-	kRenderCGA = 2,
-	kRenderHercG = 3,
-	kRenderHercA = 4,
-	kRenderAmiga = 5
+	kRenderVGA = 1,
+	kRenderEGA = 2,
+	kRenderCGA = 3,
+	kRenderHercG = 4,
+	kRenderHercA = 5,
+	kRenderAmiga = 6,
+	kRenderFMTowns = 7,
+	kRenderPC98 = 8
 };
 
 struct RenderModeDescription {

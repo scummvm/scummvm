@@ -70,7 +70,7 @@ struct EoBFlyingObject {
 	int16 attackerId;
 	Item item;
 	uint16 curBlock;
-	uint16 u2;
+	uint16 starting;
 	uint8 u1;
 	uint8 direction;
 	uint8 distance;
@@ -183,7 +183,7 @@ protected:
 
 	virtual const uint8 *getBlockFileData(int levelIndex) = 0;
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);
-	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
+	void setDoorShapeDim(int index, int16 &y1, int16 &y2, int dim);
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void generateBlockDrawingBuffer();
 	void generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
@@ -222,14 +222,20 @@ protected:
 	uint16 _decorationCount;
 	int16 _mappedDecorationsCount;
 	uint16 *_vmpPtr;
+	uint16 _vmpSize;
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
+	uint8 *_vcnTransitionMask;
 	uint8 *_vcnShift;
-	uint8 *_vcnExpTable;
+	uint8 *_vcnColTable;
 	uint16 *_blockDrawingBuffer;
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;
 	uint8 _wllVcnOffset;
+	uint8 _vcnBlockWidth;
+	uint8 _vcnBlockHeight;
+	uint8 _vcnFlip0;
+	uint8 _vcnFlip1;
 
 	uint8 **_doorShapes;
 
@@ -270,6 +276,10 @@ protected:
 	const uint8 *_dscDoorShpIndex;
 	int _dscDoorShpIndexSize;
 	const uint8 *_dscDoorY2;
+	const uint8 *_dscDoorFrameY1;
+	const uint8 *_dscDoorFrameY2;
+	const uint8 *_dscDoorFrameIndex1;
+	const uint8 *_dscDoorFrameIndex2;
 
 	// Script
 	virtual void runLevelScript(int block, int flags) = 0;

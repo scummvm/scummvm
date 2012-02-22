@@ -148,9 +148,12 @@ private:
 
 	int _updateBoxIndex;
 	int _updateBoxColorIndex;
+	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
 
-	static const EoBRect16 _updateBoxFrameHighLights[];
+	static const EoBRect16 _highlightFrames[];
+	static const uint8 _highlightColorTableVGA[];
+	static const uint8 _highlightColorTableEGA[];
 };
 
 }	// End of namespace Kyra

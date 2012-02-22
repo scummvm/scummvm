@@ -39,7 +39,7 @@ bool OSystem_IPHONE::setGraphicsMode(int mode) {
 	case kGraphicsModeNone:
 	case kGraphicsModeLinear:
 		_currentGraphicsMode = mode;
-		iPhone_setGraphicsMode(mode);
+		iPhone_setGraphicsMode((GraphicsModes)mode);
 		return true;
 
 	default:
@@ -250,6 +250,9 @@ void OSystem_IPHONE::unlockScreen() {
 
 void OSystem_IPHONE::setShakePos(int shakeOffset) {
 	//printf("setShakePos(%i)\n", shakeOffset);
+	iPhone_setShakeOffset(shakeOffset);
+	// HACK: We use this to force a redraw.
+	_mouseDirty = true;
 }
 
 void OSystem_IPHONE::showOverlay() {

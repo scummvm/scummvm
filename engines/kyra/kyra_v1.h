@@ -210,7 +210,7 @@ public:
 
 	// input
 	void setMousePos(int x, int y);
-	Common::Point getMousePos() const;
+	Common::Point getMousePos();
 
 	// config specific
 	bool speechEnabled();
@@ -305,6 +305,8 @@ protected:
 	int _configMusic;
 	bool _configSounds;
 	uint8 _configVoice;
+
+	Common::RenderMode _configRenderMode;
 
 	// game speed
 	virtual bool skipFlag() const;
