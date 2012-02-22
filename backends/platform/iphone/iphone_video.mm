@@ -244,10 +244,10 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
 	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
 
-	*x = point.x * width;
+	*x = (int)(point.x * width);
 	// offsetY describes the translation of the screen in the upward direction,
 	// thus we need to add it here.
-	*y = point.y * height + offsetY;
+	*y = (int)(point.y * height + offsetY);
 
 	// Clip coordinates
 	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
@@ -355,8 +355,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		}
 	}
 
-	_fullWidth = frame.size.width;
-	_fullHeight = frame.size.height;
+	_fullWidth = (int)frame.size.width;
+	_fullHeight = (int)frame.size.height;
 
 	sharedInstance = self;
 
@@ -509,18 +509,18 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	const GLfloat scaleX = CGRectGetWidth(*rect) / (GLfloat)maxWidth;
 	const GLfloat scaleY = CGRectGetHeight(*rect) / (GLfloat)maxHeight;
 
-	mouseX = mouseX * scaleX;
-	mouseY = mouseY * scaleY;
-	hotspotX = hotspotX * scaleX;
-	hotspotY = hotspotY * scaleY;
-	width = width * scaleX;
-	height = height * scaleY;
+	mouseX = (int)(mouseX * scaleX);
+	mouseY = (int)(mouseY * scaleY);
+	hotspotX = (int)(hotspotX * scaleX);
+	hotspotY = (int)(hotspotY * scaleY);
+	width = (int)(width * scaleX);
+	height = (int)(height * scaleY);
 
 	mouseX -= hotspotX;
 	mouseY -= hotspotY;
 
-	mouseX += CGRectGetMinX(*rect);
-	mouseY += CGRectGetMinY(*rect);
+	mouseX += (int)CGRectGetMinX(*rect);
+	mouseY += (int)CGRectGetMinY(*rect);
 
 	GLfloat vertices[] = {
 		// Top left
@@ -644,7 +644,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			// When the game screen ratio is less than the screen ratio
 			// we need to scale the width, since the game screen was higher
 			// compared to the width than our output screen is.
-			rectWidth = screenHeight * gameScreenRatio;
+			rectWidth = (int)(screenHeight * gameScreenRatio);
 			rectHeight = screenHeight;
 			xOffset = (screenWidth - rectWidth) / 2;
 			yOffset = 0;
@@ -653,7 +653,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			// we need to scale the height, since the game screen was wider
 			// compared to the height than our output screen is.
 			rectWidth = screenWidth;
-			rectHeight = screenWidth / gameScreenRatio;
+			rectHeight = (int)(screenWidth / gameScreenRatio);
 			xOffset = 0;
 			yOffset = (screenHeight - rectHeight) / 2;
 		}
@@ -663,7 +663,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		overlayPortraitRatio = 1.0f;
 	} else {
 		float ratio = (float)_height / (float)_width;
-		int height = screenWidth * ratio;
+		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
@@ -700,7 +700,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
-	_scaledShakeOffsetY = _shakeOffsetY / (GLfloat)_height * CGRectGetHeight(_overlayRect);
+	_scaledShakeOffsetY = (int)(_shakeOffsetY / (GLfloat)_height * CGRectGetHeight(_overlayRect));
 
 	// Apply the shakeing to the output screen.
 	glTranslatef(0, -_scaledShakeOffsetY, 0);
@@ -904,6 +904,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		 nil
 		]
 	];
+
+	return 0;
 }
 
 - (void)applicationSuspend {
