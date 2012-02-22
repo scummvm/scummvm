@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
-#include "common/textconsole.h"	// For error()
+#include "common/textconsole.h" // For error()
 #include "common/memory.h"
 
 namespace Common {
@@ -153,17 +153,17 @@ public:
 
 	// TODO: insert, remove, ...
 
-	T& operator[](size_type idx) {
+	T &operator[](size_type idx) {
 		assert(idx < _size);
 		return _storage[idx];
 	}
 
-	const T& operator[](size_type idx) const {
+	const T &operator[](size_type idx) const {
 		assert(idx < _size);
 		return _storage[idx];
 	}
 
-	Array<T>& operator=(const Array<T> &array) {
+	Array<T> &operator=(const Array<T> &array) {
 		if (this == &array)
 			return *this;
 
@@ -201,24 +201,24 @@ public:
 		}
 		return true;
 	}
+
 	bool operator!=(const Array<T> &other) const {
 		return !(*this == other);
 	}
 
-
-	iterator		begin() {
+	iterator       begin() {
 		return _storage;
 	}
 
-	iterator		end() {
+	iterator       end() {
 		return _storage + _size;
 	}
 
-	const_iterator	begin() const {
+	const_iterator begin() const {
 		return _storage;
 	}
 
-	const_iterator	end() const {
+	const_iterator end() const {
 		return _storage + _size;
 	}
 
