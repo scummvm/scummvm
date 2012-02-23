@@ -37,7 +37,20 @@ static const ADGameDescription MortevielleGameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
-
+	// French
+	{
+		"mortevielle",
+		"",
+		{
+			{"menu.mor", 0, "3fef0a3f8fca99fdcb6dbca8cbcef46f", 160},
+			{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 	// German
 	{
 		"mortevielle",
