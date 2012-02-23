@@ -368,10 +368,6 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	free(_overlayTexBuffer);
 }
 
-- (void *)getSurface {
-	return _screenSurface;
-}
-
 - (void)drawRect:(CGRect)frame {
 #if 0
 	if (lastTick == 0) {

@@ -53,7 +53,6 @@ struct VideoContext {
 };
 
 @interface iPhoneView : UIView {
-	void *_screenSurface;
 	NSMutableArray *_events;
 	SoftKeyboard *_keyboardView;
 
@@ -76,8 +75,6 @@ struct VideoContext {
 - (id)initWithFrame:(struct CGRect)frame;
 
 - (void)drawRect:(CGRect)frame;
-
-- (void *)getSurface;
 
 - (void)initSurface;
 - (void)setViewTransformation;
