@@ -65,7 +65,6 @@ protected:
 
 	Graphics::Surface _framebuffer;
 	byte *_gameScreenRaw;
-	OverlayColor  *_overlayBuffer;
 
 	uint16 *_gameScreenConverted;
 
@@ -191,7 +190,6 @@ protected:
 	void dirtyFullOverlayScreen();
 	void suspendLoop();
 	void drawDirtyRect(const Common::Rect &dirtyRect);
-	void drawDirtyOverlayRect(const Common::Rect &dirtyRect);
 	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
 	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);

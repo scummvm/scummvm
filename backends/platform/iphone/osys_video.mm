@@ -68,10 +68,7 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_gameScreenRaw = (byte *)malloc(width * height);
 	bzero(_gameScreenRaw, width * height);
 
-	//free(_overlayBuffer);
-
 	int fullSize = _videoContext->screenWidth * _videoContext->screenHeight * sizeof(OverlayColor);
-	//_overlayBuffer = (OverlayColor *)malloc(fullSize);
 
 	free(_gameScreenConverted);
 
@@ -79,11 +76,6 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	bzero(_gameScreenConverted, fullSize);
 
 	updateOutputSurface();
-
-	if (_overlayBuffer == NULL) {
-		printf("Overlay: (%u x %u)\n", _videoContext->overlayWidth, _videoContext->overlayHeight);
-		_overlayBuffer = new OverlayColor[_videoContext->overlayHeight * _videoContext->overlayWidth];
-	}
 
 	clearOverlay();
 
@@ -203,12 +195,14 @@ void OSystem_IPHONE::internUpdateScreen() {
 	}
 
 	if (_videoContext->overlayVisible) {
-		while (_dirtyOverlayRects.size()) {
+		// TODO: Implement dirty rect code
+		_dirtyOverlayRects.clear();
+		/*while (_dirtyOverlayRects.size()) {
 			Common::Rect dirtyRect = _dirtyOverlayRects.remove_at(_dirtyOverlayRects.size() - 1);
 
 			//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 			drawDirtyOverlayRect(dirtyRect);
-		}
+		}*/
 	}
 }
 
@@ -225,16 +219,6 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 		dst += _videoContext->screenWidth - w;
 		src += _videoContext->screenWidth - w;
 	}
-}
-
-void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect &dirtyRect) {
-	const int x1 = dirtyRect.left;
-	const int y1 = dirtyRect.top;
-	const int x2 = dirtyRect.right;
-	const int y2 = dirtyRect.bottom;
-
-	for (int y = y1; y < y2; ++y)
-		memcpy(_videoContext->overlayTexture.getBasePtr(x1, y), &_overlayBuffer[y * _videoContext->overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect &updatedRect) {
@@ -290,18 +274,18 @@ void OSystem_IPHONE::hideOverlay() {
 
 void OSystem_IPHONE::clearOverlay() {
 	//printf("clearOverlay()\n");
-	bzero(_overlayBuffer, _videoContext->overlayWidth * _videoContext->overlayHeight * sizeof(OverlayColor));
+	bzero(_videoContext->overlayTexture.getBasePtr(0, 0), _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
 	dirtyFullOverlayScreen();
 }
 
 void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
 	//printf("grabOverlay()\n");
 	int h = _videoContext->overlayHeight;
-	OverlayColor *src = _overlayBuffer;
 
+	const byte *src = (const byte *)_videoContext->overlayTexture.getBasePtr(0, 0);
 	do {
 		memcpy(buf, src, _videoContext->overlayWidth * sizeof(OverlayColor));
-		src += _videoContext->overlayWidth;
+		src += _videoContext->overlayTexture.pitch;
 		buf += pitch;
 	} while (--h);
 }
@@ -335,16 +319,12 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		_dirtyOverlayRects.push_back(Common::Rect(x, y, x + w, y + h));
 	}
 
-	OverlayColor *dst = _overlayBuffer + (y * _videoContext->overlayWidth + x);
-	if ((int)_videoContext->overlayWidth == pitch && pitch == w)
-		memcpy(dst, buf, h * w * sizeof(OverlayColor));
-	else {
-		do {
-			memcpy(dst, buf, w * sizeof(OverlayColor));
-			buf += pitch;
-			dst += _videoContext->overlayWidth;
-		} while (--h);
-	}
+	byte *dst = (byte *)_videoContext->overlayTexture.getBasePtr(x, y);
+	do { 
+		memcpy(dst, buf, w * sizeof(OverlayColor));
+		buf += pitch;
+		dst += _videoContext->overlayTexture.pitch;
+	} while (--h);
 }
 
 int16 OSystem_IPHONE::getOverlayHeight() {
