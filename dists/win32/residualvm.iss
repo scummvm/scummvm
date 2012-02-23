@@ -2,15 +2,25 @@
 ; Inno Setup 5 Script for ResidualVM.
 
 [Setup]
+AppCopyright=2012
 AppName=ResidualVM
 AppVerName=ResidualVM GIT Snapshot
-AllowNoIcons=true
-Compression=lzma
+AppPublisher=The ResidualVM Team
+AppPublisherURL=http://www.residualvm.org/
+AppSupportURL=http://www.residualvm.org/
+AppUpdatesURL=http://www.residualvm.org/
 DefaultDirName={pf}\ResidualVM
 DefaultGroupName=ResidualVM
-SolidCompression=yes
-OutputDir=userdocs:ResidualVM_ISS5_Output
+AllowNoIcons=true
+AlwaysUsePersonalGroup=false
+EnableDirDoesntExistWarning=false
+Compression=lzma
+OutputDir=.
 OutputBaseFilename=residualvm-win32
+DisableStartupPrompt=true
+AppendDefaultDirName=false
+SolidCompression=true
+DirExistsWarning=no
 UninstallDisplayIcon={app}\residualvm.exe
 
 [Files]
@@ -28,7 +38,7 @@ Source: "SDL.dll"; DestDir: "{app}"
 
 [Icons]
 Name: {group}\{cm:UninstallProgram, ResidualVM}; Filename: {uninstallexe}
-Name: {group}\residualvm; Filename: {app}\residualvm.exe; WorkingDir: {app}; Comment: residualvm; Flags: createonlyiffileexists
+Name: {group}\ResidualVM; Filename: {app}\residualvm.exe; WorkingDir: {app}; Comment: residualvm; Flags: createonlyiffileexists
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
 Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
