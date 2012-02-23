@@ -237,7 +237,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 
 	// Clip coordinates
 	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
-			return false;
+		return false;
 
 	return true;
 }
