@@ -301,6 +301,21 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 	}
 }
 
+void RemapDialog::handleOtherEvent(Event ev) {
+	if (_activeRemapAction && ev.type == EVENT_CUSTOM_GESTURE) {
+		const HardwareInput *hwInput = _keymapper->findHardwareInput(ev.customType);
+
+		if (hwInput) {
+			_activeRemapAction->mapInput(hwInput);
+			_activeRemapAction->getParent()->saveMappings();
+			_changes = true;
+			stopRemapping();
+		}
+	} else {
+		GUI::Dialog::handleOtherEvent(ev);
+	}
+}
+
 void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_activeRemapAction)
 		stopRemapping();
@@ -358,9 +373,10 @@ void RemapDialog::loadKeymap() {
 				while (inputIt != freeInputs.end()) {
 
 					Action *act = 0;
-					// FIXME: Add support for kHardwareInputTypeGesture
 					if (input->type == kHardwareInputTypeKeyboard)
 						act = mr.keymap->getMappedAction(input->key);
+					else if (input->type == kHardwareInputTypeGesture)
+						act = mr.keymap->getMappedAction(input->gesture);
 
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};
