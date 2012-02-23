@@ -34,7 +34,7 @@ namespace Mortevielle {
 
 class Alert {
 private:
-	static void decodeAlertDetails(Common::String s, int &choiceNumb, int &lineNumb, int &col, Common::String &c, Common::String &cs);
+	static void decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr);
 	static void setPosition(int ji, int coldep, int esp);
 	static void drawAlertBox(int lidep, int nli, int tx);
 	static void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
