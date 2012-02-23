@@ -32,6 +32,25 @@
 #include <OpenGLES/ES1/glext.h>
 
 #include "iphone_keyboard.h"
+#include "iphone_common.h"
+
+struct VideoContext {
+	// Game screen state
+	int screenWidth, screenHeight;
+
+	// Overlay state
+	int overlayWidth, overlayHeight;
+
+	// Mouse cursor state
+	int mouseX, mouseY;
+	int mouseHotspotX, mouseHotspotY;
+	int mouseWidth, mouseHeight;
+	bool mouseIsVisible;
+
+	// Misc state
+	GraphicsModes graphicsMode;
+	int shakeOffsetY;
+};
 
 @interface iPhoneView : UIView {
 	void *_screenSurface;

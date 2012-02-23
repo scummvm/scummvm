@@ -21,12 +21,8 @@
  */
 
 #include "iphone_video.h"
-#include "iphone_common.h"
 
 static iPhoneView *sharedInstance = nil;
-static GraphicsModes _graphicsMode = kGraphicsModeLinear;
-static int _width = 0;
-static int _height = 0;
 static int _fullWidth;
 static int _fullHeight;
 static CGRect _gameScreenRect;
@@ -38,8 +34,6 @@ static int _gameScreenTextureHeight = 0;
 static char *_overlayTexBuffer = 0;
 static int _overlayTexWidth = 0;
 static int _overlayTexHeight = 0;
-static int _overlayWidth = 0;
-static int _overlayHeight = 0;
 static CGRect _overlayRect;
 
 static int _needsScreenUpdate = 0;
@@ -49,19 +43,13 @@ static UITouch *_firstTouch = NULL;
 static UITouch *_secondTouch = NULL;
 
 static unsigned short *_mouseCursor = NULL;
-static int _mouseCursorHeight = 0;
-static int _mouseCursorWidth = 0;
-static int _mouseCursorHotspotX = 0;
-static int _mouseCursorHotspotY = 0;
-static int _mouseX = 0;
-static int _mouseY = 0;
-static int _mouseCursorEnabled = 0;
 
 static GLint _renderBufferWidth;
 static GLint _renderBufferHeight;
 
-static int _shakeOffsetY;
 static int _scaledShakeOffsetY;
+
+static VideoContext _videoContext;
 
 #if 0
 static long lastTick = 0;
@@ -84,23 +72,23 @@ int printOglError(const char *file, int line) {
 }
 
 void iPhone_setGraphicsMode(GraphicsModes mode) {
-	_graphicsMode = mode;
+	_videoContext.graphicsMode = mode;
 
 	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 }
 
 void iPhone_showCursor(int state) {
-	_mouseCursorEnabled = state;
+	_videoContext.mouseIsVisible = state;
 }
 
 void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY) {
 	_mouseCursor = buffer;
 
-	_mouseCursorWidth = width;
-	_mouseCursorHeight = height;
+	_videoContext.mouseWidth = width;
+	_videoContext.mouseHeight = height;
 
-	_mouseCursorHotspotX = hotspotX;
-	_mouseCursorHotspotY = hotspotY;
+	_videoContext.mouseHotspotX = hotspotX;
+	_videoContext.mouseHotspotY = hotspotY;
 
 	[sharedInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
@@ -112,11 +100,11 @@ void iPhone_enableOverlay(int state) {
 }
 
 int iPhone_getScreenHeight() {
-	return _overlayHeight;
+	return _videoContext.overlayHeight;
 }
 
 int iPhone_getScreenWidth() {
-	return _overlayWidth;
+	return _videoContext.overlayWidth;
 }
 
 bool iPhone_isHighResDevice() {
@@ -126,8 +114,8 @@ bool iPhone_isHighResDevice() {
 void iPhone_updateScreen(int mouseX, int mouseY) {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 
-	_mouseX = mouseX;
-	_mouseY = mouseY;
+	_videoContext.mouseX = mouseX;
+	_videoContext.mouseY = mouseY;
 
 	if (!_needsScreenUpdate) {
 		_needsScreenUpdate = 1;
@@ -137,24 +125,24 @@ void iPhone_updateScreen(int mouseX, int mouseY) {
 
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
 	for (int y = y1; y < y2; ++y)
-		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _width + x1], (x2 - x1) * 2);
+		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _videoContext.screenWidth + x1], (x2 - x1) * 2);
 }
 
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
-	//printf("Overlaywidth: %u, fullwidth %u\n", _overlayWidth, _fullWidth);
+	//printf("Overlaywidth: %u, fullwidth %u\n", _videoContext.overlayWidth, _fullWidth);
 	for (int y = y1; y < y2; ++y)
-		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _overlayWidth + x1], (x2 - x1) * 2);
+		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _videoContext.overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void iPhone_initSurface(int width, int height) {
-	_width = width;
-	_height = height;
-	_shakeOffsetY = 0;
+	_videoContext.screenWidth = width;
+	_videoContext.screenHeight = height;
+	_videoContext.shakeOffsetY = 0;
 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
 void iPhone_setShakeOffset(int offset) {
-	_shakeOffsetY = offset;
+	_videoContext.shakeOffsetY = offset;
 	[sharedInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
 }
 
@@ -229,13 +217,13 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	int width, height, offsetY;
 	if (_overlayIsEnabled) {
 		area = &_overlayRect;
-		width = _overlayWidth;
-		height = _overlayHeight;
-		offsetY = _shakeOffsetY;
+		width = _videoContext.overlayWidth;
+		height = _videoContext.overlayHeight;
+		offsetY = _videoContext.shakeOffsetY;
 	} else {
 		area = &_gameScreenRect;
-		width = _width;
-		height = _height;
+		width = _videoContext.screenWidth;
+		height = _videoContext.screenHeight;
 		offsetY = _scaledShakeOffsetY;
 	}
 
@@ -317,16 +305,16 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 			return;
 		}
 
-		_overlayHeight = _renderBufferWidth;
-		_overlayWidth = _renderBufferHeight;
-		_overlayTexWidth = getSizeNextPOT(_overlayHeight);
-		_overlayTexHeight = getSizeNextPOT(_overlayWidth);
+		_videoContext.overlayHeight = _renderBufferWidth;
+		_videoContext.overlayWidth = _renderBufferHeight;
+		_overlayTexWidth = getSizeNextPOT(_videoContext.overlayHeight);
+		_overlayTexHeight = getSizeNextPOT(_videoContext.overlayWidth);
 
 		// Since the overlay size won't change the whole run, we can
 		// precalculate the texture coordinates for the overlay texture here
 		// and just use it later on.
-		_overlayTexCoords[2] = _overlayTexCoords[6] = _overlayWidth / (GLfloat)_overlayTexWidth;
-		_overlayTexCoords[5] = _overlayTexCoords[7] = _overlayHeight / (GLfloat)_overlayTexHeight;
+		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat)_overlayTexWidth;
+		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat)_overlayTexHeight;
 
 		int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
 		_overlayTexBuffer = (char *)malloc(textureSize);
@@ -362,6 +350,8 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
+
+	_videoContext.graphicsMode = kGraphicsModeLinear;
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
@@ -420,9 +410,9 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)setGraphicsMode {
-	setFilterModeForTexture(_screenTexture, _graphicsMode);
-	setFilterModeForTexture(_overlayTexture, _graphicsMode);
-	setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
+	setFilterModeForTexture(_screenTexture, _videoContext.graphicsMode);
+	setFilterModeForTexture(_overlayTexture, _videoContext.graphicsMode);
+	setFilterModeForTexture(_mouseCursorTexture, _videoContext.graphicsMode);
 }
 
 - (void)updateSurface {
@@ -438,7 +428,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	if (_overlayIsEnabled)
 		[self updateOverlaySurface];
 
-	if (_mouseCursorEnabled)
+	if (_videoContext.mouseIsVisible)
 		[self updateMouseSurface];
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
@@ -449,11 +439,11 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 - (void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
-		setFilterModeForTexture(_mouseCursorTexture, _graphicsMode);
+		setFilterModeForTexture(_mouseCursorTexture, _videoContext.graphicsMode);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getSizeNextPOT(_mouseCursorWidth), getSizeNextPOT(_mouseCursorHeight), 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _mouseCursor); printOpenGLError();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getSizeNextPOT(_videoContext.mouseWidth), getSizeNextPOT(_videoContext.mouseHeight), 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _mouseCursor); printOpenGLError();
 
 	free(_mouseCursor);
 	_mouseCursor = NULL;
@@ -482,26 +472,26 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)updateMouseSurface {
-	int width = _mouseCursorWidth;
-	int height = _mouseCursorHeight;
+	int width = _videoContext.mouseWidth;
+	int height = _videoContext.mouseHeight;
 
-	int mouseX = _mouseX;
-	int mouseY = _mouseY;
+	int mouseX = _videoContext.mouseX;
+	int mouseY = _videoContext.mouseY;
 
-	int hotspotX = _mouseCursorHotspotX;
-	int hotspotY = _mouseCursorHotspotY;
+	int hotspotX = _videoContext.mouseHotspotX;
+	int hotspotY = _videoContext.mouseHotspotY;
 
 	CGRect *rect;
 	int maxWidth, maxHeight;
 
 	if (!_overlayIsEnabled) {
 		rect = &_gameScreenRect;
-		maxWidth = _width;
-		maxHeight = _height;
+		maxWidth = _videoContext.screenWidth;
+		maxHeight = _videoContext.screenHeight;
 	} else {
 		rect = &_overlayRect;
-		maxWidth = _overlayWidth;
-		maxHeight = _overlayHeight;
+		maxWidth = _videoContext.overlayWidth;
+		maxHeight = _videoContext.overlayHeight;
 	}
 
 	const GLfloat scaleX = CGRectGetWidth(*rect) / (GLfloat)maxWidth;
@@ -531,10 +521,10 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		mouseX + width, mouseY + height
 	};
 
-	//printf("Cursor: width %u height %u\n", _mouseCursorWidth, _mouseCursorHeight);
+	//printf("Cursor: width %u height %u\n", _videoContext.mouseWidth, _videoContext.mouseHeight);
 
-	float texWidth = _mouseCursorWidth / (float)getSizeNextPOT(_mouseCursorWidth);
-	float texHeight = _mouseCursorHeight / (float)getSizeNextPOT(_mouseCursorHeight);
+	float texWidth = _videoContext.mouseWidth / (float)getSizeNextPOT(_videoContext.mouseWidth);
+	float texHeight = _videoContext.mouseHeight / (float)getSizeNextPOT(_videoContext.mouseHeight);
 
 	const GLfloat texCoords[] = {
 		// Top left
@@ -555,11 +545,11 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 }
 
 - (void)initSurface {
-	_gameScreenTextureWidth = getSizeNextPOT(_width);
-	_gameScreenTextureHeight = getSizeNextPOT(_height);
+	_gameScreenTextureWidth = getSizeNextPOT(_videoContext.screenWidth);
+	_gameScreenTextureHeight = getSizeNextPOT(_videoContext.screenHeight);
 
-	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _width / (GLfloat)_gameScreenTextureWidth;
-	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _height / (GLfloat)_gameScreenTextureHeight;
+	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)_gameScreenTextureWidth;
+	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)_gameScreenTextureHeight;
 
 	_orientation = [[UIDevice currentDevice] orientation];
 
@@ -573,7 +563,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_orientation = UIDeviceOrientationPortrait;
 	}
 
-	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _gameScreenTextureWidth, _gameScreenTextureHeight);
+	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _videoContext.screenWidth, _videoContext.screenHeight, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -605,14 +595,14 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	}
 
 	glGenTextures(1, &_screenTexture); printOpenGLError();
-	setFilterModeForTexture(_screenTexture, _graphicsMode);
+	setFilterModeForTexture(_screenTexture, _videoContext.graphicsMode);
 
 	if (_overlayTexture > 0) {
 		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
 	}
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
-	setFilterModeForTexture(_overlayTexture, _graphicsMode);
+	setFilterModeForTexture(_overlayTexture, _videoContext.graphicsMode);
 
 	free(_gameScreenTextureBuffer);
 	int textureSize = _gameScreenTextureWidth * _gameScreenTextureHeight * 2;
@@ -631,7 +621,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
-		GLfloat gameScreenRatio = (GLfloat)_width / (GLfloat)_height;
+		GLfloat gameScreenRatio = (GLfloat)_videoContext.screenWidth / (GLfloat)_videoContext.screenHeight;
 		GLfloat screenRatio = (GLfloat)screenWidth / (GLfloat)screenHeight;
 
 		// These are the width/height according to the portrait layout!
@@ -660,7 +650,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
 	} else {
-		float ratio = (float)_height / (float)_width;
+		float ratio = (float)_videoContext.screenHeight / (float)_videoContext.screenWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
@@ -674,7 +664,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
-		overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
+		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
 	}
 
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
@@ -698,7 +688,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
-	_scaledShakeOffsetY = (int)(_shakeOffsetY / (GLfloat)_height * CGRectGetHeight(_overlayRect));
+	_scaledShakeOffsetY = (int)(_videoContext.shakeOffsetY / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
 	// Apply the shakeing to the output screen.
 	glTranslatef(0, -_scaledShakeOffsetY, 0);
