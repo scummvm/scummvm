@@ -190,44 +190,40 @@ int Alert::show(const Common::String &msg, int n) {
  * Alert function - Decode Alert Details
  * @remarks	Originally called 'decod'
  */
-void Alert::decodeAlertDetails(Common::String s, int &choiceNumb, int &lineNumb, int &col, Common::String &c, Common::String &cs) {
-	int i, k;
-	bool v;
+void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr) {
+	// The second character of the string contains the number of choices
+	choiceNumb = atoi(inputStr.c_str() + 1);
 
-	//val(s[2], nbc, i);
-	choiceNumb = atoi(s.c_str() + 1);
-	i = 0;
-
-	c = "";
+	choiceStr = "";
+	col = 0;
 	lineNumb = 0;
 
 	// Originally set to 5, decreased to 4 because strings are 0 based, and not 1 based as in Pascal
-	i = 4;
-	k = 0;
-	v = true;
-	col = 0;
+	int i = 4;
+	int k = 0;
+	bool empty = true;
 
-	while (s[i] != ']') {
-		c += s[i];
-		if ((s[i] == '|') || (s[i + 1] == ']')) {
+	for (; inputStr[i] != ']'; ++i) {
+		choiceStr += inputStr[i];
+		if ((inputStr[i] == '|') || (inputStr[i + 1] == ']')) {
 			if (k > col)
 				col = k;
 			k = 0;
 			++lineNumb;
-		} else if (s[i] != ' ')
-			v = false;
-		++i;
+		} else if (inputStr[i] != ' ')
+			empty = false;
 		++k;
 	}
-	if (v)  {
-		c = "";
+
+	if (empty)  {
+		choiceStr = "";
 		col = 20;
 	} else {
-		c += ']';
+		choiceStr += ']';
 		col += 6;
 	}
 	++i;
-	cs = copy(s, i, 30);
+	choiceListStr = copy(inputStr, i, 30);
 	if (res == 2)
 		col *= 6;
 	else
