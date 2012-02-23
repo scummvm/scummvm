@@ -184,64 +184,6 @@ const char *iPhone_getDocumentsDir() {
 	return [documentsDirectory UTF8String];
 }
 
-/**
- * Converts portrait mode coordinates into rotated mode coordinates.
- */
-static bool convertToRotatedCoords(UIDeviceOrientation orientation, CGPoint point, CGPoint *result) {
-	switch (orientation) {
-	case UIDeviceOrientationLandscapeLeft:
-		result->x = point.y;
-		result->y = _renderBufferWidth - point.x;
-		return true;
-
-	case UIDeviceOrientationLandscapeRight:
-		result->x = _renderBufferHeight - point.y;
-		result->y = point.x;
-		return true;
-
-	case UIDeviceOrientationPortrait:
-		result->x = point.x;
-		result->y = point.y;
-		return true;
-
-	default:
-		return false;
-	}
-}
-
-static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *x, int *y) {
-	if (!convertToRotatedCoords(orientation, point, &point))
-		return false;
-
-	CGRect *area;
-	int width, height, offsetY;
-	if (_overlayIsEnabled) {
-		area = &_overlayRect;
-		width = _videoContext.overlayWidth;
-		height = _videoContext.overlayHeight;
-		offsetY = _scaledShakeOffsetY;
-	} else {
-		area = &_gameScreenRect;
-		width = _videoContext.screenWidth;
-		height = _videoContext.screenHeight;
-		offsetY = _videoContext.shakeOffsetY;
-	}
-
-	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
-	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
-
-	*x = (int)(point.x * width);
-	// offsetY describes the translation of the screen in the upward direction,
-	// thus we need to add it here.
-	*y = (int)(point.y * height + offsetY);
-
-	// Clip coordinates
-	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
-		return false;
-
-	return true;
-}
-
 @implementation iPhoneView
 
 + (Class)layerClass {
@@ -722,6 +664,64 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	[_events addObject: event];
 }
 
+/**
+ * Converts portrait mode coordinates into rotated mode coordinates.
+ */
+- (bool)convertToRotatedCoords:(CGPoint)point result:(CGPoint *)result {
+	switch (_orientation) {
+	case UIDeviceOrientationLandscapeLeft:
+		result->x = point.y;
+		result->y = _renderBufferWidth - point.x;
+		return true;
+
+	case UIDeviceOrientationLandscapeRight:
+		result->x = _renderBufferHeight - point.y;
+		result->y = point.x;
+		return true;
+
+	case UIDeviceOrientationPortrait:
+		result->x = point.x;
+		result->y = point.y;
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+- (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
+	if (![self convertToRotatedCoords:point result:&point])
+		return false;
+
+	CGRect *area;
+	int width, height, offsetY;
+	if (_overlayIsEnabled) {
+		area = &_overlayRect;
+		width = _videoContext.overlayWidth;
+		height = _videoContext.overlayHeight;
+		offsetY = _scaledShakeOffsetY;
+	} else {
+		area = &_gameScreenRect;
+		width = _videoContext.screenWidth;
+		height = _videoContext.screenHeight;
+		offsetY = _videoContext.shakeOffsetY;
+	}
+
+	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
+	point.y = (point.y - CGRectGetMinY(*area)) / CGRectGetHeight(*area);
+
+	*x = (int)(point.x * width);
+	// offsetY describes the translation of the screen in the upward direction,
+	// thus we need to add it here.
+	*y = (int)(point.y * height + offsetY);
+
+	// Clip coordinates
+	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
+		return false;
+
+	return true;
+}
+
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	switch (orientation) {
 	case UIDeviceOrientationLandscapeLeft:
@@ -752,7 +752,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	case 1: {
 		UITouch *touch = [touches anyObject];
 		CGPoint point = [touch locationInView:self];
-		if (!getMouseCoords(_orientation, point, &x, &y))
+		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
 		_firstTouch = touch;
@@ -770,7 +770,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	case 2: {
 		UITouch *touch = [touches anyObject];
 		CGPoint point = [touch locationInView:self];
-		if (!getMouseCoords(_orientation, point, &x, &y))
+		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
 		_secondTouch = touch;
@@ -794,7 +794,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	for (UITouch *touch in touches) {
 		if (touch == _firstTouch) {
 			CGPoint point = [touch locationInView:self];
-			if (!getMouseCoords(_orientation, point, &x, &y))
+			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
 
 			[self addEvent:
@@ -807,7 +807,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 			 ];
 		} else if (touch == _secondTouch) {
 			CGPoint point = [touch locationInView:self];
-			if (!getMouseCoords(_orientation, point, &x, &y))
+			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
 
 			[self addEvent:
@@ -830,7 +830,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	case 1: {
 		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
 		CGPoint point = [touch locationInView:self];
-		if (!getMouseCoords(_orientation, point, &x, &y))
+		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
 		[self addEvent:
@@ -847,7 +847,7 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	case 2: {
 		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 		CGPoint point = [touch locationInView:self];
-		if (!getMouseCoords(_orientation, point, &x, &y))
+		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
 		[self addEvent:
