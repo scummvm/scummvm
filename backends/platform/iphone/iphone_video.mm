@@ -242,28 +242,6 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	return true;
 }
 
-static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
-	if (!tex)
-		return;
-
-	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
-
-	GLint filter = GL_LINEAR;
-
-	switch (mode) {
-	case kGraphicsModeLinear:
-		filter = GL_LINEAR;
-		break;
-
-	case kGraphicsModeNone:
-		filter = GL_NEAREST;
-		break;
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
-}
-
 @implementation iPhoneView
 
 + (Class)layerClass {
@@ -409,10 +387,32 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 #endif
 }
 
+- (void)setFilterModeForTexture:(GLuint)tex {
+	if (!tex)
+		return;
+
+	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
+
+	GLint filter = GL_LINEAR;
+
+	switch (_videoContext.graphicsMode) {
+	case kGraphicsModeLinear:
+		filter = GL_LINEAR;
+		break;
+
+	case kGraphicsModeNone:
+		filter = GL_NEAREST;
+		break;
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
+}
+
 - (void)setGraphicsMode {
-	setFilterModeForTexture(_screenTexture, _videoContext.graphicsMode);
-	setFilterModeForTexture(_overlayTexture, _videoContext.graphicsMode);
-	setFilterModeForTexture(_mouseCursorTexture, _videoContext.graphicsMode);
+	[self setFilterModeForTexture:_screenTexture];
+	[self setFilterModeForTexture:_overlayTexture];
+	[self setFilterModeForTexture:_mouseCursorTexture];
 }
 
 - (void)updateSurface {
@@ -439,7 +439,7 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 - (void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
-		setFilterModeForTexture(_mouseCursorTexture, _videoContext.graphicsMode);
+		[self setFilterModeForTexture:_mouseCursorTexture];
 	}
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
@@ -595,14 +595,14 @@ static void setFilterModeForTexture(GLuint tex, GraphicsModes mode) {
 	}
 
 	glGenTextures(1, &_screenTexture); printOpenGLError();
-	setFilterModeForTexture(_screenTexture, _videoContext.graphicsMode);
+	[self setFilterModeForTexture:_screenTexture];
 
 	if (_overlayTexture > 0) {
 		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
 	}
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
-	setFilterModeForTexture(_overlayTexture, _videoContext.graphicsMode);
+	[self setFilterModeForTexture:_overlayTexture];
 
 	free(_gameScreenTextureBuffer);
 	int textureSize = _gameScreenTextureWidth * _gameScreenTextureHeight * 2;
