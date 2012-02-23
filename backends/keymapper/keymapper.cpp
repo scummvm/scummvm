@@ -24,9 +24,14 @@
 
 #ifdef ENABLE_KEYMAPPER
 
+#include "common/system.h"
 #include "common/config-manager.h"
 
 namespace Common {
+
+// These magic numbers are provided by fuzzie and WebOS
+static const uint32 kDelayKeyboardEventMillis = 250;
+static const uint32 kDelayMouseEventMillis = 50;
 
 void Keymapper::Domain::addKeymap(Keymap *map) {
 	iterator it = find(map->getName());
@@ -273,9 +278,9 @@ Action *Keymapper::getAction(const KeyState& key) {
 List<Event> Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	List<Event> mappedEvents;
 	List<Event>::const_iterator it;
-
+	Event evt;
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
-		Event evt = Event(*it);
+		evt = Event(*it);
 		EventType convertedType = convertDownToUp(evt.type);
 
 		// hardware keys need to send up instead when they are up
@@ -289,12 +294,13 @@ List<Event> Keymapper::executeAction(const Action *action, IncomingEventType inc
 		mappedEvents.push_back(evt);
 
 		// gestures need to send up as well
-		// TODO: implement a way to add a delay
 		if (incomingType == kIncomingNonKey) {
 			if (convertedType == EVENT_INVALID)
 				continue; // don't send any non-down-converted events on up they were already sent on down
 			evt.type = convertedType;
-			mappedEvents.push_back(evt);
+			// this action needs to be delayed
+			const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
+			addDelayedEvent(g_system->getMillis() + delay, evt);
 		}
 	}
 	return mappedEvents;

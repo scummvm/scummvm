@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -50,5 +51,23 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	return events;
 }
 
+
+void DefaultEventMapper::addDelayedEvent(uint32 millis, Event ev) {
+	DelayedEventsEntry entry(millis, ev);
+	_delayedEvents.push_back(entry);
+}
+
+List<Event> DefaultEventMapper::getDelayedEvents() {
+	List<Event> events;
+	uint32 now = g_system->getMillis();
+	for (List<DelayedEventsEntry>::iterator it = _delayedEvents.begin(); it != _delayedEvents.end(); ++it) {
+		DelayedEventsEntry entry = (*it);
+		if (entry.millis <= now) {
+			events.push_back(entry.event);
+			_delayedEvents.erase(it);
+		}
+	}
+	return events;
+}
 
 } // namespace Common
