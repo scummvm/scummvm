@@ -59,15 +59,13 @@ protected:
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
 
-	int _currentGraphicsMode;
-
 	Audio::MixerImpl *_mixer;
+
+	VideoContext _videoContext;
 
 	Graphics::Surface _framebuffer;
 	byte *_gameScreenRaw;
 	OverlayColor  *_overlayBuffer;
-	uint16 _overlayHeight;
-	uint16 _overlayWidth;
 
 	uint16 *_gameScreenConverted;
 
@@ -75,21 +73,14 @@ protected:
 	uint16  _gamePalette[256];
 	// For use with the mouse texture
 	uint16  _gamePaletteRGBA5551[256];
-	bool _overlayVisible;
-	uint16 _screenWidth;
-	uint16 _screenHeight;
 
 	struct timeval _startTime;
 	uint32 _timeSuspended;
 
-	bool _mouseVisible;
 	bool _mouseCursorPaletteEnabled;
 	uint16 _mouseCursorPalette[256];
 	byte *_mouseBuf;
 	byte _mouseKeyColor;
-	uint _mouseWidth, _mouseHeight;
-	uint _mouseX, _mouseY;
-	int _mouseHotspotX, _mouseHotspotY;
 	bool _mouseDirty;
 	bool _mouseNeedTextureUpdate;
 	long _lastMouseDown;
