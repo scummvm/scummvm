@@ -37,7 +37,6 @@ static int _overlayTexHeight = 0;
 static CGRect _overlayRect;
 
 static int _needsScreenUpdate = 0;
-static int _overlayIsEnabled = 0;
 
 static UITouch *_firstTouch = NULL;
 static UITouch *_secondTouch = NULL;
@@ -93,8 +92,8 @@ void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int ho
 	[sharedInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
 
-void iPhone_enableOverlay(int state) {
-	_overlayIsEnabled = state;
+void iPhone_enableOverlay(bool state) {
+	_videoContext.overlayVisible = state;
 
 	[sharedInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
@@ -272,6 +271,7 @@ const char *iPhone_getDocumentsDir() {
 	_mouseCursorTexture = 0;
 
 	_videoContext.graphicsMode = kGraphicsModeLinear;
+	_videoContext.overlayVisible = false;
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
@@ -363,7 +363,7 @@ const char *iPhone_getDocumentsDir() {
 
 	[self updateMainSurface];
 
-	if (_overlayIsEnabled)
+	if (_videoContext.overlayVisible)
 		[self updateOverlaySurface];
 
 	if (_videoContext.mouseIsVisible)
@@ -422,7 +422,7 @@ const char *iPhone_getDocumentsDir() {
 	CGRect *rect;
 	int maxWidth, maxHeight;
 
-	if (!_overlayIsEnabled) {
+	if (!_videoContext.overlayVisible) {
 		rect = &_gameScreenRect;
 		maxWidth = _videoContext.screenWidth;
 		maxHeight = _videoContext.screenHeight;
@@ -695,7 +695,7 @@ const char *iPhone_getDocumentsDir() {
 
 	CGRect *area;
 	int width, height, offsetY;
-	if (_overlayIsEnabled) {
+	if (_videoContext.overlayVisible) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;

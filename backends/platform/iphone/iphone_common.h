@@ -60,6 +60,7 @@ struct VideoContext {
 	int screenWidth, screenHeight;
 
 	// Overlay state
+	bool overlayVisible;
 	int overlayWidth, overlayHeight;
 
 	// Mouse cursor state
@@ -85,7 +86,7 @@ const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
 int iPhone_getScreenHeight();
 int iPhone_getScreenWidth();
-void iPhone_enableOverlay(int state);
+void iPhone_enableOverlay(bool state);
 void iPhone_showCursor(int state);
 void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY);
 
