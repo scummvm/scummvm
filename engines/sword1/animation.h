@@ -24,7 +24,6 @@
 #define SWORD1_ANIMATION_H
 
 #include "video/dxa_decoder.h"
-#include "video/smk_decoder.h"
 #include "video/video_decoder.h"
 
 #include "common/list.h"
@@ -38,7 +37,8 @@ namespace Sword1 {
 
 enum DecoderType {
 	kVideoDecoderDXA = 0,
-	kVideoDecoderSMK = 1
+	kVideoDecoderSMK = 1,
+	kVideoDecoderPSX = 2
 };
 
 class MovieText {
@@ -83,8 +83,8 @@ protected:
 	Common::List<MovieText> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
 	int _textColor;
-	byte _black;
-	byte _c1Color, _c2Color, _c3Color, _c4Color;
+	uint32 _black;
+	uint32 _c1Color, _c2Color, _c3Color, _c4Color;
 	DecoderType _decoderType;
 
 	Video::VideoDecoder *_decoder;
@@ -93,9 +93,10 @@ protected:
 
 	bool playVideo();
 	void performPostProcessing(byte *screen);
+	void drawFramePSX(const Graphics::Surface *frame);
 
-	byte findBlackPalIndex();
-	byte findTextColorPalIndex();
+	uint32 getBlackColor();
+	uint32 findTextColor();
 	void convertColor(byte r, byte g, byte b, float &h, float &s, float &v);
 };
 
