@@ -81,17 +81,17 @@ public:
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 
 	/**
-	 * Registers a HardwareKeySet with the Keymapper
+	 * Registers a HardwareInputSet with the Keymapper
 	 * @note should only be called once (during backend initialisation)
 	 */
-	void registerHardwareKeySet(HardwareKeySet *keys);
+	void registerHardwareInputSet(HardwareInputSet *inputs);
 
 	/**
-	 * Get a list of all registered HardwareKeys
+	 * Get a list of all registered HardwareInputs
 	 */
-	const List<const HardwareKey *> &getHardwareKeys() const {
-		assert(_hardwareKeys);
-		return _hardwareKeys->getHardwareKeys();
+	const List<const HardwareInput *> &getHardwareInputs() const {
+		assert(_hardwareInputs);
+		return _hardwareInputs->getHardwareInputs();
 	}
 
 	/**
@@ -168,14 +168,14 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
-	 * Return a HardwareKey pointer for the given key state
+	 * Return a HardwareInput pointer for the given key state
 	 */
-	const HardwareKey *findHardwareKey(const KeyState& key);
+	const HardwareInput *findHardwareInput(const KeyState& key);
 
 	/**
-	 * Return a HardwareKey pointer for the given gesture code
+	 * Return a HardwareInput pointer for the given gesture code
 	 */
-	const HardwareKey *findHardwareKey(const GestureCode gesture);
+	const HardwareInput *findHardwareInput(const GestureCode gesture);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
@@ -188,7 +188,7 @@ private:
 	Domain _globalDomain;
 	Domain _gameDomain;
 
-	HardwareKeySet *_hardwareKeys;
+	HardwareInputSet *_hardwareInputs;
 
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 

@@ -175,7 +175,7 @@ static const ModifierTableEntry sdlModifiers[] = {
 	{ 0, 0, 0, false }
 };
 
-Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
-	return new HardwareKeySet(sdlKeys, sdlModifiers);
+Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
+	return new HardwareInputSet(sdlKeys, sdlModifiers);
 }
 #endif
