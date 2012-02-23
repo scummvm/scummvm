@@ -66,8 +66,6 @@ protected:
 	Graphics::Surface _framebuffer;
 	byte *_gameScreenRaw;
 
-	uint16 *_gameScreenConverted;
-
 	// For use with the game texture
 	uint16  _gamePalette[256];
 	// For use with the mouse texture
@@ -190,7 +188,6 @@ protected:
 	void dirtyFullOverlayScreen();
 	void suspendLoop();
 	void drawDirtyRect(const Common::Rect &dirtyRect);
-	void updateHardwareSurfaceForRect(const Common::Rect &updatedRect);
 	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);

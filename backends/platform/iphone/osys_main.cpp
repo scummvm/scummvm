@@ -55,7 +55,7 @@ SoundProc OSystem_IPHONE::s_soundCallback = NULL;
 void *OSystem_IPHONE::s_soundParam = NULL;
 
 OSystem_IPHONE::OSystem_IPHONE() :
-	_mixer(NULL), _gameScreenRaw(NULL), _gameScreenConverted(NULL),
+	_mixer(NULL), _gameScreenRaw(NULL),
 	_mouseBuf(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
@@ -73,7 +73,6 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 
 	delete _mixer;
 	free(_gameScreenRaw);
-	free(_gameScreenConverted);
 }
 
 int OSystem_IPHONE::timerHandler(int t) {

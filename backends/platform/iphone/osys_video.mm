@@ -68,13 +68,6 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_gameScreenRaw = (byte *)malloc(width * height);
 	bzero(_gameScreenRaw, width * height);
 
-	int fullSize = _videoContext->screenWidth * _videoContext->screenHeight * sizeof(OverlayColor);
-
-	free(_gameScreenConverted);
-
-	_gameScreenConverted = (uint16 *)malloc(fullSize);
-	bzero(_gameScreenConverted, fullSize);
-
 	updateOutputSurface();
 
 	clearOverlay();
@@ -191,7 +184,8 @@ void OSystem_IPHONE::internUpdateScreen() {
 
 		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 		drawDirtyRect(dirtyRect);
-		updateHardwareSurfaceForRect(dirtyRect);
+		// TODO: Implement dirty rect code
+		//updateHardwareSurfaceForRect(dirtyRect);
 	}
 
 	if (_videoContext->overlayVisible) {
@@ -210,25 +204,16 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
-	byte  *src = &_gameScreenRaw[dirtyRect.top * _videoContext->screenWidth + dirtyRect.left];
-	uint16 *dst = &_gameScreenConverted[dirtyRect.top * _videoContext->screenWidth + dirtyRect.left];
+	byte *src = &_gameScreenRaw[dirtyRect.top * _videoContext->screenWidth + dirtyRect.left];
+	byte *dstRaw = (byte *)_videoContext->screenTexture.getBasePtr(dirtyRect.left, dirtyRect.top);
 	for (int y = h; y > 0; y--) {
+		uint16 *dst = (uint16 *)dstRaw;
 		for (int x = w; x > 0; x--)
 			*dst++ = _gamePalette[*src++];
 
-		dst += _videoContext->screenWidth - w;
+		dstRaw += _videoContext->screenTexture.pitch;
 		src += _videoContext->screenWidth - w;
 	}
-}
-
-void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect &updatedRect) {
-	const int x1 = updatedRect.left;
-	const int y1 = updatedRect.top;
-	const int x2 = updatedRect.right;
-	const int y2 = updatedRect.bottom;
-
-	for (int y = y1; y < y2; ++y)
-		memcpy(_videoContext->screenTexture.getBasePtr(x1, y), &_gameScreenConverted[y * _videoContext->screenWidth + x1], (x2 - x1) * 2);
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
