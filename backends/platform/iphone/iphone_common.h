@@ -55,6 +55,24 @@ enum GraphicsModes {
 	kGraphicsModeNone = 1
 };
 
+struct VideoContext {
+	// Game screen state
+	int screenWidth, screenHeight;
+
+	// Overlay state
+	int overlayWidth, overlayHeight;
+
+	// Mouse cursor state
+	int mouseX, mouseY;
+	int mouseHotspotX, mouseHotspotY;
+	int mouseWidth, mouseHeight;
+	bool mouseIsVisible;
+
+	// Misc state
+	GraphicsModes graphicsMode;
+	int shakeOffsetY;
+};
+
 // On the ObjC side
 void iPhone_setGraphicsMode(GraphicsModes mode);
 void iPhone_updateScreen(int mouseX, int mouseY);
