@@ -256,7 +256,7 @@ endif
 	cp $(srcdir)/AUTHORS ResidualVMWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING ResidualVMWin32/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL ResidualVMWin32/COPYING.LGPL.txt
-	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
+	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/README ResidualVMWin32/README.txt
