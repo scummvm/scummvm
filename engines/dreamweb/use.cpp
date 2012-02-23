@@ -1501,7 +1501,7 @@ void DreamWebEngine::useCashCard() {
 	showExit();
 	showMan();
 	uint16 y = (!_foreignRelease) ? 120 : 120 - 3;
-	showFrame(_tempGraphics, 114, y, 39, 0);
+	showFrame(_keypadGraphics, 114, y, 39, 0);
 	const uint8 *obText = getObTextStart();
 	findNextColon(&obText);
 	findNextColon(&obText);
@@ -1517,7 +1517,7 @@ void DreamWebEngine::useCashCard() {
 	_charShift = 0;
 	workToScreenM();
 	hangOnP(400);
-	getRidOfTemp();
+	_keypadGraphics.clear();
 	restoreReels();
 	putBackObStuff();
 }

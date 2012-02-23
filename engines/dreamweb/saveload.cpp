@@ -178,7 +178,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 	// If we reach this point, loadPosition() has just been called.
 	// Among other things, it will have filled g_MadeUpRoomDat.
 
-	getRidOfTemp();
+	_saveGraphics.clear();
 
 	startLoading(g_madeUpRoomDat);
 	loadRoomsSample();
@@ -270,7 +270,7 @@ void DreamWebEngine::saveGame() {
 			descbuf[++desclen] = 1;
 
 		// TODO: The below is copied from actualsave
-		getRidOfTemp();
+		_saveGraphics.clear();
 		restoreAll(); // reels
 		_textAddressX = 13;
 		_textAddressY = 182;
@@ -360,7 +360,7 @@ void DreamWebEngine::doSaveLoad() {
 	_textAddressY = 182;
 	_textLen = 240;
 	if (_getBack != 4) {
-		getRidOfTemp();
+		_saveGraphics.clear();
 		restoreAll();
 		redrawMainScrn();
 		workToScreenM();
@@ -388,16 +388,16 @@ void DreamWebEngine::getBackToOps() {
 }
 
 void DreamWebEngine::showMainOps() {
-	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 8, 0);
-	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 7, 0);
-	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(_saveGraphics, kOpsx+10, kOpsy+10, 8, 0);
+	showFrame(_saveGraphics, kOpsx+59, kOpsy+30, 7, 0);
+	showFrame(_saveGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
 void DreamWebEngine::showDiscOps() {
-	showFrame(_tempGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
-	showFrame(_tempGraphics, kOpsx+10, kOpsy+10, 9, 0);
-	showFrame(_tempGraphics, kOpsx+59, kOpsy+30, 10, 0);
-	showFrame(_tempGraphics, kOpsx+176+2, kOpsy+60-4, 5, 0);
+	showFrame(_saveGraphics, kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(_saveGraphics, kOpsx+10, kOpsy+10, 9, 0);
+	showFrame(_saveGraphics, kOpsx+59, kOpsy+30, 10, 0);
+	showFrame(_saveGraphics, kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
 void DreamWebEngine::discOps() {
@@ -450,7 +450,7 @@ void DreamWebEngine::actualSave() {
 
 	savePosition(slot, desc);
 
-	getRidOfTemp();
+	_saveGraphics.clear();
 	restoreAll(); // reels
 	_textAddressX = 13;
 	_textAddressY = 182;
@@ -703,12 +703,12 @@ void DreamWebEngine::loadOld() {
 void DreamWebEngine::showDecisions() {
 	createPanel2();
 	showOpBox();
-	showFrame(_tempGraphics, kOpsx + 17, kOpsy + 13, 6, 0);
+	showFrame(_saveGraphics, kOpsx + 17, kOpsy + 13, 6, 0);
 	underTextLine();
 }
 
 void DreamWebEngine::loadSaveBox() {
-	loadIntoTemp("DREAMWEB.G08");
+	loadGraphicsFile(_saveGraphics, "DREAMWEB.G08");
 }
 
 // show savegame names (original interface), and set kCursorpos
@@ -822,37 +822,37 @@ void DreamWebEngine::selectSlot() {
 void DreamWebEngine::showSlots() {
 	showFrame(_icons1, kOpsx + 158, kOpsy - 11, 12, 0);
 	showFrame(_icons1, kOpsx + 158 + 18 * _saveLoadPage, kOpsy - 11, 13 + _saveLoadPage, 0);
-	showFrame(_tempGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
+	showFrame(_saveGraphics, kOpsx + 7, kOpsy + 8, 2, 0);
 
 	uint16 y = kOpsy + 11;
 
 	for (int slot = 0; slot < 7; slot++) {
 		if (slot == _currentSlot)
-			showFrame(_tempGraphics, kOpsx + 10, y, 3, 0);
+			showFrame(_saveGraphics, kOpsx + 10, y, 3, 0);
 
 		y += 10;
 	}
 }
 
 void DreamWebEngine::showOpBox() {
-	showFrame(_tempGraphics, kOpsx, kOpsy, 0, 0);
+	showFrame(_saveGraphics, kOpsx, kOpsy, 0, 0);
 
 	// This call displays half of the ops dialog in the CD version. It's not
 	// in the floppy version, and if it's called, a stray red dot is shown in
 	// the game dialogs.
 	if (isCD())
-		showFrame(_tempGraphics, kOpsx, kOpsy + 55, 4, 0);
+		showFrame(_saveGraphics, kOpsx, kOpsy + 55, 4, 0);
 }
 
 void DreamWebEngine::showLoadOps() {
-	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	showFrame(_saveGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_saveGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 55, 101, (101 & 1));
 }
 
 void DreamWebEngine::showSaveOps() {
-	showFrame(_tempGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
-	showFrame(_tempGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
+	showFrame(_saveGraphics, kOpsx + 128 + 4, kOpsy + 12, 1, 0);
+	showFrame(_saveGraphics, kOpsx + 176 + 2, kOpsy + 60 - 4, 5, 0);
 	printMessage(kOpsx + 104, kOpsy + 14, 54, 101, (101 & 1));
 }
 
