@@ -219,12 +219,12 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;
-		offsetY = _videoContext.shakeOffsetY;
+		offsetY = _scaledShakeOffsetY;
 	} else {
 		area = &_gameScreenRect;
 		width = _videoContext.screenWidth;
 		height = _videoContext.screenHeight;
-		offsetY = _scaledShakeOffsetY;
+		offsetY = _videoContext.shakeOffsetY;
 	}
 
 	point.x = (point.x - CGRectGetMinX(*area)) / CGRectGetWidth(*area);
