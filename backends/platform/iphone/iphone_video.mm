@@ -39,8 +39,6 @@ static int _needsScreenUpdate = 0;
 static UITouch *_firstTouch = NULL;
 static UITouch *_secondTouch = NULL;
 
-static unsigned short *_mouseCursor = NULL;
-
 static GLint _renderBufferWidth;
 static GLint _renderBufferHeight;
 
@@ -64,11 +62,6 @@ int printOglError(const char *file, int line) {
 		glErr = glGetError();
 	}
 	return retCode;
-}
-
-void iPhone_setMouseCursor(unsigned short *buffer) {
-	_mouseCursor = buffer;
-	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
 
 bool iPhone_isHighResDevice() {
@@ -245,6 +238,7 @@ const char *iPhone_getDocumentsDir() {
 
 	_videoContext.screenTexture.free();
 	_videoContext.overlayTexture.free();
+	_videoContext.mouseTexture.free();
 }
 
 - (void)drawRect:(CGRect)frame {
@@ -318,10 +312,7 @@ const char *iPhone_getDocumentsDir() {
 	}
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getSizeNextPOT(_videoContext.mouseWidth), getSizeNextPOT(_videoContext.mouseHeight), 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _mouseCursor); printOpenGLError();
-
-	free(_mouseCursor);
-	_mouseCursor = NULL;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.pixels); printOpenGLError();
 }
 
 - (void)updateMainSurface {
@@ -398,8 +389,8 @@ const char *iPhone_getDocumentsDir() {
 
 	//printf("Cursor: width %u height %u\n", _videoContext.mouseWidth, _videoContext.mouseHeight);
 
-	float texWidth = _videoContext.mouseWidth / (float)getSizeNextPOT(_videoContext.mouseWidth);
-	float texHeight = _videoContext.mouseHeight / (float)getSizeNextPOT(_videoContext.mouseHeight);
+	float texWidth = _videoContext.mouseWidth / (float)_videoContext.mouseTexture.w;
+	float texHeight = _videoContext.mouseHeight / (float)_videoContext.mouseTexture.h;
 
 	const GLfloat texCoords[] = {
 		// Top left

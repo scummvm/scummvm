@@ -392,11 +392,12 @@ void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) 
 }
 
 void OSystem_IPHONE::updateMouseTexture() {
-	int texWidth = getSizeNextPOT(_videoContext->mouseWidth);
-	int texHeight = getSizeNextPOT(_videoContext->mouseHeight);
-	int bufferSize = texWidth * texHeight * sizeof(int16);
-	uint16 *mouseBuf = (uint16 *)malloc(bufferSize);
-	memset(mouseBuf, 0, bufferSize);
+	uint texWidth = getSizeNextPOT(_videoContext->mouseWidth);
+	uint texHeight = getSizeNextPOT(_videoContext->mouseHeight);
+
+	Graphics::Surface &mouseTexture = _videoContext->mouseTexture;
+	if (mouseTexture.w != texWidth || mouseTexture.h != texHeight)
+		mouseTexture.create(texWidth, texHeight, Graphics::createPixelFormat<5551>());
 
 	const uint16 *palette;
 	if (_mouseCursorPaletteEnabled)
@@ -404,6 +405,7 @@ void OSystem_IPHONE::updateMouseTexture() {
 	else
 		palette = _gamePaletteRGBA5551;
 
+	uint16 *mouseBuf = (uint16 *)mouseTexture.getBasePtr(0, 0);
 	for (uint x = 0; x < _videoContext->mouseWidth; ++x) {
 		for (uint y = 0; y < _videoContext->mouseHeight; ++y) {
 			const byte color = _mouseBuf[y * _videoContext->mouseWidth + x];
@@ -414,5 +416,5 @@ void OSystem_IPHONE::updateMouseTexture() {
 		}
 	}
 
-	iPhone_setMouseCursor(mouseBuf);
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }

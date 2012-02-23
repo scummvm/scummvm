@@ -78,6 +78,7 @@ struct VideoContext {
 	int mouseHotspotX, mouseHotspotY;
 	uint mouseWidth, mouseHeight;
 	bool mouseIsVisible;
+	Graphics::Surface mouseTexture;
 
 	// Misc state
 	GraphicsModes graphicsMode;
@@ -89,7 +90,6 @@ void iPhone_updateScreen();
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
-void iPhone_setMouseCursor(unsigned short *buffer);
 
 uint getSizeNextPOT(uint size);
 
