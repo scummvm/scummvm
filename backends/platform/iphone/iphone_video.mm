@@ -540,6 +540,44 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
+- (void)setUpOrientation:(UIDeviceOrientation)orientation width:(int *)width height:(int *)height {
+	_orientation = orientation;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	// We always force the origin (0,0) to be in the upper left corner.
+	switch (_orientation) {
+	case UIDeviceOrientationLandscapeRight:
+		glRotatef( 90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+
+		*width = _renderBufferHeight;
+		*height = _renderBufferWidth;
+		break;
+
+	case UIDeviceOrientationLandscapeLeft:
+		glRotatef(-90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+
+		*width = _renderBufferHeight;
+		*height = _renderBufferWidth;
+		break;
+
+	case UIDeviceOrientationPortrait:
+	default:
+		// We must force the portrait orientation here, since we might not know
+		// the real orientation.
+		_orientation = UIDeviceOrientationPortrait;
+
+		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();
+
+		*width = _renderBufferWidth;
+		*height = _renderBufferHeight;
+		break;
+	}
+}
+
 - (void)initSurface {
 	_gameScreenTextureWidth = getSizeNextPOT(_videoContext.screenWidth);
 	_gameScreenTextureHeight = getSizeNextPOT(_videoContext.screenHeight);
@@ -547,44 +585,10 @@ static bool getMouseCoords(UIDeviceOrientation orientation, CGPoint point, int *
 	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)_gameScreenTextureWidth;
 	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)_gameScreenTextureHeight;
 
-	_orientation = [[UIDevice currentDevice] orientation];
-
-	switch (_orientation) {
-	case UIDeviceOrientationLandscapeLeft:
-	case UIDeviceOrientationLandscapeRight:
-	case UIDeviceOrientationPortrait:
-		break;
-
-	default:
-		_orientation = UIDeviceOrientationPortrait;
-	}
+	int screenWidth, screenHeight;
+	[self setUpOrientation:[[UIDevice currentDevice] orientation] width:&screenWidth height:&screenHeight];
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _videoContext.screenWidth, _videoContext.screenHeight, _gameScreenTextureWidth, _gameScreenTextureHeight);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	int screenWidth, screenHeight;
-
-	// Set the origin (0,0) depending on the rotation mode.
-	if (_orientation ==  UIDeviceOrientationLandscapeRight) {
-		glRotatef( 90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
-
-		screenWidth = _renderBufferHeight;
-		screenHeight = _renderBufferWidth;
-	} else if (_orientation == UIDeviceOrientationLandscapeLeft) {
-		glRotatef(-90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
-
-		screenWidth = _renderBufferHeight;
-		screenHeight = _renderBufferWidth;
-	} else if (_orientation == UIDeviceOrientationPortrait) {
-		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();
-
-		screenWidth = _renderBufferWidth;
-		screenHeight = _renderBufferHeight;
-	}
 
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
