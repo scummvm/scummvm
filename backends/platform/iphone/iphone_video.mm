@@ -648,7 +648,7 @@ const char *iPhone_getDocumentsDir() {
 	*y = (int)(point.y * height + offsetY);
 
 	// Clip coordinates
-	if (*x < 0 || *x > CGRectGetWidth(*area) || *y < 0 || *y > CGRectGetHeight(*area))
+	if (*x < 0 || *x > width || *y < 0 || *y > height)
 		return false;
 
 	return true;
