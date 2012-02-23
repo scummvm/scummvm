@@ -57,16 +57,16 @@ enum GraphicsModes {
 
 struct VideoContext {
 	// Game screen state
-	int screenWidth, screenHeight;
+	uint screenWidth, screenHeight;
 
 	// Overlay state
 	bool overlayVisible;
-	int overlayWidth, overlayHeight;
+	uint overlayWidth, overlayHeight;
 
 	// Mouse cursor state
-	int mouseX, mouseY;
+	uint mouseX, mouseY;
 	int mouseHotspotX, mouseHotspotY;
-	int mouseWidth, mouseHeight;
+	uint mouseWidth, mouseHeight;
 	bool mouseIsVisible;
 
 	// Misc state

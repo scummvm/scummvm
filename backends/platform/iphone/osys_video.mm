@@ -137,11 +137,11 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 		y = 0;
 	}
 
-	if (w > _videoContext.screenWidth - x) {
+	if (w > (int)_videoContext.screenWidth - x) {
 		w = _videoContext.screenWidth - x;
 	}
 
-	if (h > _videoContext.screenHeight - y) {
+	if (h > (int)_videoContext.screenHeight - y) {
 		h = _videoContext.screenHeight - y;
 	}
 
@@ -154,7 +154,7 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 
 	byte *dst = _gameScreenRaw + y * _videoContext.screenWidth + x;
-	if (_videoContext.screenWidth == pitch && pitch == w)
+	if ((int)_videoContext.screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w);
 	else {
 		do {
@@ -300,10 +300,10 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		y = 0;
 	}
 
-	if (w > _videoContext.overlayWidth - x)
+	if (w > (int)_videoContext.overlayWidth - x)
 		w = _videoContext.overlayWidth - x;
 
-	if (h > _videoContext.overlayHeight - y)
+	if (h > (int)_videoContext.overlayHeight - y)
 		h = _videoContext.overlayHeight - y;
 
 	if (w <= 0 || h <= 0)
@@ -314,7 +314,7 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 	}
 
 	OverlayColor *dst = _overlayBuffer + (y * _videoContext.overlayWidth + x);
-	if (_videoContext.overlayWidth == pitch && pitch == w)
+	if ((int)_videoContext.overlayWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
 	else {
 		do {
