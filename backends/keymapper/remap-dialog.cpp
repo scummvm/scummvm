@@ -354,9 +354,13 @@ void RemapDialog::loadKeymap() {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
 				List<const HardwareKey *>::iterator keyIt = freeKeys.begin();
+				const HardwareKey *key = *keyIt;
 
 				while (keyIt != freeKeys.end()) {
-					Action *act = mr.keymap->getMappedAction((*keyIt)->key);
+					Action *act = 0;
+					// FIXME: Add support for kHardwareInputTypeGesture
+					if (key->type == kHardwareKeyTypeKeyboard)
+						act = mr.keymap->getMappedAction(key->key);
 
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};

@@ -39,7 +39,8 @@ Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDoma
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		const HardwareKey *hwKey = (*it)->getMappedKey();
 
-		if (hwKey) {
+		//FIXME: Add support for kHardwareKeyTypeGesture
+		if (hwKey && hwKey->type == kHardwareKeyTypeKeyboard) {
 			_keymap[hwKey->key] = *it;
 		}
 	}
@@ -62,21 +63,25 @@ void Keymap::addAction(Action *action) {
 void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
 	HashMap<KeyState, Action *>::iterator it;
 
-	it = _keymap.find(hwKey->key);
+	//FIXME: Add support for kHardwareKeyTypeGesture
+	if (hwKey->type == kHardwareKeyTypeKeyboard) {
+		it = _keymap.find(hwKey->key);
 
-	// if key is already mapped to a different action then un-map it
-	if (it != _keymap.end() && action != it->_value) {
-		it->_value->mapKey(0);
+		// if key is already mapped to a different action then un-map it
+		if (it != _keymap.end() && action != it->_value) {
+			it->_value->mapKey(0);
+		}
+		_keymap[hwKey->key] = action;
 	}
-
-	_keymap[hwKey->key] = action;
 }
 
 void Keymap::unregisterMapping(Action *action) {
 	const HardwareKey *hwKey = action->getMappedKey();
 
 	if (hwKey) {
-		_keymap.erase(hwKey->key);
+		//FIXME: Add support for kHardwareKeyTypeGesture
+		if (hwKey->type == kHardwareKeyTypeKeyboard)
+			_keymap.erase(hwKey->key);
 	}
 }
 

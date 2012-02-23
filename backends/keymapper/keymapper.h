@@ -172,6 +172,11 @@ public:
 	 */
 	const HardwareKey *findHardwareKey(const KeyState& key);
 
+	/**
+	 * Return a HardwareKey pointer for the given gesture code
+	 */
+	const HardwareKey *findHardwareKey(const GestureCode gesture);
+
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }

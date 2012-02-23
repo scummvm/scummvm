@@ -295,6 +295,10 @@ const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
+const HardwareKey *Keymapper::findHardwareKey(const GestureCode gesture) {
+	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(gesture) : 0;
+}
+
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER
