@@ -36,7 +36,6 @@ public:
 	virtual ~Screen_EoB();
 
 	bool init();
-	bool init(bool useHiResEGADithering);
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
@@ -116,7 +115,6 @@ private:
 
 	uint8 *_egaDitheringTable;
 	uint8 *_egaPixelValueTable;
-	bool _useHiResEGADithering;
 
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];

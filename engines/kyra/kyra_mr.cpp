@@ -203,7 +203,7 @@ KyraEngine_MR::~KyraEngine_MR() {
 Common::Error KyraEngine_MR::init() {
 	_screen = new Screen_MR(this, _system);
 	assert(_screen);
-	_screen->setResolution(_flags.useHiResOverlay);
+	_screen->setResolution();
 
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);

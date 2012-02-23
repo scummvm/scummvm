@@ -167,12 +167,12 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 }
 
 Common::Error KyraEngine_LoK::init() {
-	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiResOverlay && ConfMan.getBool("16_color"))
+	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiRes && ConfMan.getBool("16_color"))
 		_screen = new Screen_LoK_16(this, _system);
 	else
 		_screen = new Screen_LoK(this, _system);
 	assert(_screen);
-	_screen->setResolution(_flags.useHiResOverlay);
+	_screen->setResolution();
 
 	_debugger = new Debugger_LoK(this);
 	assert(_debugger);
@@ -961,7 +961,7 @@ void KyraEngine_LoK::registerDefaultSettings() {
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 2);
 
-	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiResOverlay)
+	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiRes)
 		ConfMan.registerDefault("16_color", false);
 }
 

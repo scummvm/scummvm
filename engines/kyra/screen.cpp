@@ -106,8 +106,9 @@ bool Screen::init() {
 
 	memset(_fonts, 0, sizeof(_fonts));
 
-	if (_vm->gameFlags().useHiResOverlay) {
-		_useOverlays = true;
+	_useOverlays = (_vm->gameFlags().useHiRes && _renderMode != Common::kRenderEGA);
+
+	if (_useOverlays) {
 		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
 		_sjisInvisibleColor = (_vm->game() == GI_KYRA1) ? 0x80 : 0xF6;
 
@@ -226,7 +227,7 @@ bool Screen::enableScreenDebug(bool enable) {
 
 	if (_debugEnabled != enable) {
 		_debugEnabled = enable;
-		setResolution(_vm->gameFlags().useHiResOverlay);
+		setResolution();
 		_forceFullUpdate = true;
 		updateScreen();
 	}
@@ -234,14 +235,14 @@ bool Screen::enableScreenDebug(bool enable) {
 	return temp;
 }
 
-void Screen::setResolution(bool hiRes) {
+void Screen::setResolution() {
 	byte palette[3*256];
 	_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	int width = 320, height = 200;
 	bool defaultTo1xScaler = false;
 
-	if (hiRes) {
+	if (_vm->gameFlags().useHiRes) {
 		defaultTo1xScaler = true;
 		height = 400;
 
@@ -464,11 +465,6 @@ uint8 *Screen::getPagePtr(int pageNum) {
 const uint8 *Screen::getCPagePtr(int pageNum) const {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	return _pagePtrs[pageNum];
-}
-
-int Screen::getPageScaleFactor(int pageNum) {
-	assert(pageNum < SCREEN_PAGE_NUM);
-	return _pageScaleFactor[pageNum];
 }
 
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
@@ -1226,7 +1222,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			fnt = new AMIGAFont();
 #ifdef ENABLE_EOB
 		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
-			fnt = new OldDOSFont(_renderMode, (_vm->game() == GI_EOB2) && (_renderMode == Common::kRenderEGA));
+			fnt = new OldDOSFont(_renderMode, _vm->gameFlags().useHiRes);
 #endif // ENABLE_EOB
 		else
 			fnt = new DOSFont();
@@ -2896,13 +2892,12 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape -= 2;
 
-	if (_vm->gameFlags().useHiResOverlay) {
+	if (_vm->gameFlags().useHiRes) {
 		x <<= 1;
 		y <<= 1;
 		mouseWidth <<= 1;
 		mouseHeight <<= 1;
 	}
-
 
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
 	fillRect(0, 0, mouseWidth, mouseHeight, _cursorColorKey, 8);
@@ -2910,7 +2905,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 
 	int xOffset = 0;
 
-	if (_vm->gameFlags().useHiResOverlay) {
+	if (_vm->gameFlags().useHiRes) {
 		xOffset = mouseWidth;
 		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
 		postProcessCursor(getPagePtr(8) + mouseWidth, mouseWidth, mouseHeight, SCREEN_W);

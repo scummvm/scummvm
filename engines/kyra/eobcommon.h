@@ -845,6 +845,8 @@ protected:
 	const uint8 *_cgaMappingLevel[5];
 	const uint8 *_cgaLevelMappingIndex;
 
+	bool _useHiResDithering;
+
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
 	Common::String readOriginalSaveFile(Common::String &file);

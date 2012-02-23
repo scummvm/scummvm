@@ -118,7 +118,7 @@ struct GameFlags {
 	bool useAltShapeHeader    : 1;    // alternative shape header (uses 2 bytes more, those are unused though)
 	bool isTalkie             : 1;
 	bool isOldFloppy          : 1;
-	bool useHiResOverlay      : 1;
+	bool useHiRes      : 1;
 	bool use16ColorMode       : 1;
 	bool useDigSound          : 1;
 	bool useInstallerPackage  : 1;

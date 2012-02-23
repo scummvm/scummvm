@@ -171,12 +171,6 @@ Common::Error KyraRpgEngine::init() {
 	_wllWallFlags = new uint8[256];
 	memset(_wllWallFlags, 0, 256);
 
-	if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) {
-		_vcnBlockWidth <<= 1;
-		_vcnBlockHeight <<= 1;
-		SWAP(_vcnFlip0, _vcnFlip1);
-	}
-
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
 	uint32 swbSize = 22 * _vcnBlockWidth * 2 * 15 * _vcnBlockHeight;

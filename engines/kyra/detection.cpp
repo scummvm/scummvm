@@ -140,6 +140,8 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Kyra::EoBEngine(syst, flags);
 		break;
 	case Kyra::GI_EOB2:
+		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
+			 flags.useHiRes = true;
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
 		break;
 #endif // ENABLE_EOB

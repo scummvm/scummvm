@@ -168,6 +168,7 @@ private:
 
 	Common::RenderMode _renderMode;
 	bool _useHiResEGADithering;
+	bool _useLoResEGA;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
@@ -398,7 +399,7 @@ public:
 
 	// init
 	virtual bool init();
-	virtual void setResolution(bool hiRes = false);
+	virtual void setResolution();
 
 	void updateScreen();
 
@@ -433,8 +434,6 @@ public:
 	virtual void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	const uint8 *getCPagePtr(int pageNum) const;
-	int getPageScaleFactor(int pageNum);
-
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
 
 	// palette handling
@@ -580,6 +579,8 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _useHiResEGADithering;
+	bool _useLoResEGA;
 	bool _isAmiga;
 	Common::RenderMode _renderMode;
 
