@@ -56,6 +56,12 @@ enum GraphicsModes {
 };
 
 struct VideoContext {
+	VideoContext() : screenWidth(), screenHeight(), overlayVisible(false),
+	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
+	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
+	                 mouseIsVisible(), graphicsMode(kGraphicsModeLinear), shakeOffsetY() {
+	}
+
 	// Game screen state
 	uint screenWidth, screenHeight;
 

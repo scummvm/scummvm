@@ -225,10 +225,6 @@ const char *iPhone_getDocumentsDir() {
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
-	memset(&_videoContext, 0, sizeof(_videoContext));
-	_videoContext.graphicsMode = kGraphicsModeLinear;
-	_videoContext.overlayVisible = false;
-
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
 	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
