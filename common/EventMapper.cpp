@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "common/textconsole.h"
 
 namespace Common {
 
@@ -46,6 +47,15 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	// if it didn't get mapped, just pass it through
 	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;
+
+#ifdef ENABLE_VKEYBD
+	// TODO: this check is not needed post-split
+	if (mappedEvent.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
+		warning("EVENT_CUSTOM_BACKEND_HARDWARE was not mapped");
+		return List<Event>();
+	}
+#endif
+
 	events.push_back(mappedEvent);
 	return events;
 }
