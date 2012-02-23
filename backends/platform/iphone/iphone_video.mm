@@ -22,7 +22,7 @@
 
 #include "iphone_video.h"
 
-static iPhoneView *sharedInstance = nil;
+iPhoneView *g_iPhoneViewInstance = nil;
 static int _fullWidth;
 static int _fullHeight;
 static CGRect _gameScreenRect;
@@ -48,8 +48,6 @@ static GLint _renderBufferHeight;
 
 static int _scaledShakeOffsetY;
 
-static VideoContext _videoContext;
-
 #if 0
 static long lastTick = 0;
 static int frames = 0;
@@ -70,83 +68,36 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-void iPhone_setGraphicsMode(GraphicsModes mode) {
-	_videoContext.graphicsMode = mode;
-
-	[sharedInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
-}
-
-void iPhone_showCursor(int state) {
-	_videoContext.mouseIsVisible = state;
-}
-
-void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY) {
+void iPhone_setMouseCursor(unsigned short *buffer) {
 	_mouseCursor = buffer;
-
-	_videoContext.mouseWidth = width;
-	_videoContext.mouseHeight = height;
-
-	_videoContext.mouseHotspotX = hotspotX;
-	_videoContext.mouseHotspotY = hotspotY;
-
-	[sharedInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
-}
-
-void iPhone_enableOverlay(bool state) {
-	_videoContext.overlayVisible = state;
-
-	[sharedInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
-}
-
-int iPhone_getScreenHeight() {
-	return _videoContext.overlayHeight;
-}
-
-int iPhone_getScreenWidth() {
-	return _videoContext.overlayWidth;
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
 }
 
 bool iPhone_isHighResDevice() {
 	return _fullHeight > 480;
 }
 
-void iPhone_updateScreen(int mouseX, int mouseY) {
+void iPhone_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
-
-	_videoContext.mouseX = mouseX;
-	_videoContext.mouseY = mouseY;
-
 	if (!_needsScreenUpdate) {
 		_needsScreenUpdate = 1;
-		[sharedInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
+		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
 	}
 }
 
-void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width) {
 	for (int y = y1; y < y2; ++y)
-		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * _videoContext.screenWidth + x1], (x2 - x1) * 2);
+		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * width + x1], (x2 - x1) * 2);
 }
 
-void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2) {
+void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width) {
 	//printf("Overlaywidth: %u, fullwidth %u\n", _videoContext.overlayWidth, _fullWidth);
 	for (int y = y1; y < y2; ++y)
-		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * _videoContext.overlayWidth + x1], (x2 - x1) * 2);
-}
-
-void iPhone_initSurface(int width, int height) {
-	_videoContext.screenWidth = width;
-	_videoContext.screenHeight = height;
-	_videoContext.shakeOffsetY = 0;
-	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
-}
-
-void iPhone_setShakeOffset(int offset) {
-	_videoContext.shakeOffsetY = offset;
-	[sharedInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
+		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * width + x1], (x2 - x1) * 2);
 }
 
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
-	id event = [sharedInstance getEvent];
+	id event = [g_iPhoneViewInstance getEvent];
 	if (event == nil) {
 		return false;
 	}
@@ -187,6 +138,10 @@ const char *iPhone_getDocumentsDir() {
 
 + (Class)layerClass {
 	return [CAEAGLLayer class];
+}
+
+- (VideoContext *)getVideoContext {
+	return &_videoContext;
 }
 
 - (void)createContext {
@@ -263,13 +218,14 @@ const char *iPhone_getDocumentsDir() {
 	_fullWidth = (int)frame.size.width;
 	_fullHeight = (int)frame.size.height;
 
-	sharedInstance = self;
+	g_iPhoneViewInstance = self;
 
 	_keyboardView = nil;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
 
+	memset(&_videoContext, 0, sizeof(_videoContext));
 	_videoContext.graphicsMode = kGraphicsModeLinear;
 	_videoContext.overlayVisible = false;
 

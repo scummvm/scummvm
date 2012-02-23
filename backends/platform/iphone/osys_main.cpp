@@ -65,11 +65,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
-
-	_videoContext.mouseWidth = _videoContext.mouseHeight = 0;
-	_videoContext.overlayWidth = _videoContext.overlayHeight = 0;
-	_videoContext.overlayVisible = false;
-	_videoContext.graphicsMode = kGraphicsModeLinear;
+	initVideoContext();
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {

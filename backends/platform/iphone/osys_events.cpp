@@ -122,8 +122,8 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		event.mouse.x = _videoContext.mouseX;
-		event.mouse.y = _videoContext.mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 		return true;
 	} else {
 		_lastMouseDown = getMillis();
@@ -140,17 +140,17 @@ bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 			return false;
 	} else if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _videoContext.mouseX;
-		event.mouse.y = _videoContext.mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 	} else {
 		if (getMillis() - _lastMouseDown < 250) {
 			event.type = Common::EVENT_LBUTTONDOWN;
-			event.mouse.x = _videoContext.mouseX;
-			event.mouse.y = _videoContext.mouseY;
+			event.mouse.x = _videoContext->mouseX;
+			event.mouse.y = _videoContext->mouseY;
 
 			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
-			_queuedInputEvent.mouse.x = _videoContext.mouseX;
-			_queuedInputEvent.mouse.y = _videoContext.mouseY;
+			_queuedInputEvent.mouse.x = _videoContext->mouseX;
+			_queuedInputEvent.mouse.y = _videoContext->mouseY;
 			_lastMouseTap = getMillis();
 			_queuedEventTime = _lastMouseTap + kQueuedInputEventDelay;
 		} else
@@ -167,12 +167,12 @@ bool OSystem_IPHONE::handleEvent_secondMouseDown(Common::Event &event, int x, in
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _videoContext.mouseX;
-		event.mouse.y = _videoContext.mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 
 		_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
-		_queuedInputEvent.mouse.x = _videoContext.mouseX;
-		_queuedInputEvent.mouse.y = _videoContext.mouseY;
+		_queuedInputEvent.mouse.x = _videoContext->mouseX;
+		_queuedInputEvent.mouse.y = _videoContext->mouseY;
 	} else
 		return false;
 
@@ -184,7 +184,7 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 
 	if (curTime - _lastSecondaryDown < 400) {
 		//printf("Right tap!\n");
-		if (curTime - _lastSecondaryTap < 400 && !_videoContext.overlayVisible) {
+		if (curTime - _lastSecondaryTap < 400 && !_videoContext->overlayVisible) {
 			//printf("Right escape!\n");
 			event.type = Common::EVENT_KEYDOWN;
 			_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -197,11 +197,11 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 		} else if (!_mouseClickAndDragEnabled) {
 			//printf("Rightclick!\n");
 			event.type = Common::EVENT_RBUTTONDOWN;
-			event.mouse.x = _videoContext.mouseX;
-			event.mouse.y = _videoContext.mouseY;
+			event.mouse.x = _videoContext->mouseX;
+			event.mouse.y = _videoContext->mouseY;
 			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
-			_queuedInputEvent.mouse.x = _videoContext.mouseX;
-			_queuedInputEvent.mouse.y = _videoContext.mouseY;
+			_queuedInputEvent.mouse.x = _videoContext->mouseX;
+			_queuedInputEvent.mouse.y = _videoContext->mouseY;
 			_lastSecondaryTap = curTime;
 			_queuedEventTime = curTime + kQueuedInputEventDelay;
 		} else {
@@ -211,8 +211,8 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 	}
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_RBUTTONUP;
-		event.mouse.x = _videoContext.mouseX;
-		event.mouse.y = _videoContext.mouseY;
+		event.mouse.x = _videoContext->mouseX;
+		event.mouse.y = _videoContext->mouseY;
 	}
 
 	return true;
@@ -234,11 +234,11 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 		_lastPadX = x;
 		_lastPadY = y;
 
-		mouseNewPosX = (int)(_videoContext.mouseX - deltaX / 0.5f);
-		mouseNewPosY = (int)(_videoContext.mouseY - deltaY / 0.5f);
+		mouseNewPosX = (int)(_videoContext->mouseX - deltaX / 0.5f);
+		mouseNewPosY = (int)(_videoContext->mouseY - deltaY / 0.5f);
 
-		int widthCap = _videoContext.overlayVisible ? _videoContext.overlayWidth : _videoContext.screenWidth;
-		int heightCap = _videoContext.overlayVisible ? _videoContext.overlayHeight : _videoContext.screenHeight;
+		int widthCap = _videoContext->overlayVisible ? _videoContext->overlayWidth : _videoContext->screenWidth;
+		int heightCap = _videoContext->overlayVisible ? _videoContext->overlayHeight : _videoContext->screenHeight;
 
 		if (mouseNewPosX < 0)
 			mouseNewPosX = 0;
@@ -350,10 +350,10 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
-		iPhone_initSurface(_videoContext.screenWidth, _videoContext.screenHeight);
+		updateOutputSurface();
 
 		dirtyFullScreen();
-		if (_videoContext.overlayVisible)
+		if (_videoContext->overlayVisible)
 			dirtyFullOverlayScreen();
 		updateScreen();
 	}

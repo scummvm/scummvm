@@ -35,6 +35,8 @@
 #include "iphone_common.h"
 
 @interface iPhoneView : UIView {
+	VideoContext _videoContext;
+
 	NSMutableArray *_events;
 	SoftKeyboard *_keyboardView;
 
@@ -55,6 +57,8 @@
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
+
+- (VideoContext *)getVideoContext;
 
 - (void)drawRect:(CGRect)frame;
 
@@ -80,5 +84,7 @@
 - (void)applicationResume;
 
 @end
+
+extern iPhoneView *g_iPhoneViewInstance;
 
 #endif

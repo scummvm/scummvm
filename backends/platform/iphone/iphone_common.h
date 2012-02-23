@@ -75,20 +75,13 @@ struct VideoContext {
 };
 
 // On the ObjC side
-void iPhone_setGraphicsMode(GraphicsModes mode);
-void iPhone_updateScreen(int mouseX, int mouseY);
-void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2);
-void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2);
-void iPhone_initSurface(int width, int height);
-void iPhone_setShakeOffset(int offset);
+void iPhone_updateScreen();
+void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);
+void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
-int iPhone_getScreenHeight();
-int iPhone_getScreenWidth();
-void iPhone_enableOverlay(bool state);
-void iPhone_showCursor(int state);
-void iPhone_setMouseCursor(unsigned short *buffer, int width, int height, int hotspotX, int hotspotY);
+void iPhone_setMouseCursor(unsigned short *buffer);
 
 uint getSizeNextPOT(uint size);
 

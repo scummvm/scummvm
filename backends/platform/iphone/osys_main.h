@@ -61,7 +61,7 @@ protected:
 
 	Audio::MixerImpl *_mixer;
 
-	VideoContext _videoContext;
+	VideoContext *_videoContext;
 
 	Graphics::Surface _framebuffer;
 	byte *_gameScreenRaw;
@@ -183,6 +183,9 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 protected:
+	void initVideoContext();
+	void updateOutputSurface();
+
 	void internUpdateScreen();
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
