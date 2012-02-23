@@ -20,6 +20,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <UIKit/UIKit.h>
 #include <Foundation/NSThread.h>
 

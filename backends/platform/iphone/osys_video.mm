@@ -228,11 +228,23 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 }
 
 void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect &dirtyRect) {
-	iPhone_updateOverlayRect(_overlayBuffer, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom, _videoContext->overlayWidth);
+	const int x1 = dirtyRect.left;
+	const int y1 = dirtyRect.top;
+	const int x2 = dirtyRect.right;
+	const int y2 = dirtyRect.bottom;
+
+	for (int y = y1; y < y2; ++y)
+		memcpy(_videoContext->overlayTexture.getBasePtr(x1, y), &_overlayBuffer[y * _videoContext->overlayWidth + x1], (x2 - x1) * 2);
 }
 
 void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect &updatedRect) {
-	iPhone_updateScreenRect(_gameScreenConverted, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom, _videoContext->screenWidth);
+	const int x1 = updatedRect.left;
+	const int y1 = updatedRect.top;
+	const int x2 = updatedRect.right;
+	const int y2 = updatedRect.bottom;
+
+	for (int y = y1; y < y2; ++y)
+		memcpy(_videoContext->screenTexture.getBasePtr(x1, y), &_gameScreenConverted[y * _videoContext->screenWidth + x1], (x2 - x1) * 2);
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {

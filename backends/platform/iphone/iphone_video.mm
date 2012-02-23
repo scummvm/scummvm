@@ -20,20 +20,18 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "iphone_video.h"
+
+#include "graphics/colormasks.h"
 
 iPhoneView *g_iPhoneViewInstance = nil;
 static int _fullWidth;
 static int _fullHeight;
 static CGRect _gameScreenRect;
 
-static char *_gameScreenTextureBuffer = 0;
-static int _gameScreenTextureWidth = 0;
-static int _gameScreenTextureHeight = 0;
-
-static char *_overlayTexBuffer = 0;
-static int _overlayTexWidth = 0;
-static int _overlayTexHeight = 0;
 static CGRect _overlayRect;
 
 static int _needsScreenUpdate = 0;
@@ -83,17 +81,6 @@ void iPhone_updateScreen() {
 		_needsScreenUpdate = 1;
 		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
 	}
-}
-
-void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width) {
-	for (int y = y1; y < y2; ++y)
-		memcpy(&_gameScreenTextureBuffer[(y * _gameScreenTextureWidth + x1) * 2], &screen[y * width + x1], (x2 - x1) * 2);
-}
-
-void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width) {
-	//printf("Overlaywidth: %u, fullwidth %u\n", _videoContext.overlayWidth, _fullWidth);
-	for (int y = y1; y < y2; ++y)
-		memcpy(&_overlayTexBuffer[(y * _overlayTexWidth + x1) * 2], &screen[y * width + x1], (x2 - x1) * 2);
 }
 
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
@@ -181,18 +168,16 @@ const char *iPhone_getDocumentsDir() {
 
 		_videoContext.overlayHeight = _renderBufferWidth;
 		_videoContext.overlayWidth = _renderBufferHeight;
-		_overlayTexWidth = getSizeNextPOT(_videoContext.overlayHeight);
-		_overlayTexHeight = getSizeNextPOT(_videoContext.overlayWidth);
+		uint overlayTextureWidth = getSizeNextPOT(_videoContext.overlayHeight);
+		uint overlayTextureHeight = getSizeNextPOT(_videoContext.overlayWidth);
 
 		// Since the overlay size won't change the whole run, we can
 		// precalculate the texture coordinates for the overlay texture here
 		// and just use it later on.
-		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat)_overlayTexWidth;
-		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat)_overlayTexHeight;
+		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat)overlayTextureWidth;
+		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat)overlayTextureHeight;
 
-		int textureSize = _overlayTexWidth * _overlayTexHeight * 2;
-		_overlayTexBuffer = (char *)malloc(textureSize);
-		memset(_overlayTexBuffer, 0, textureSize);
+		_videoContext.overlayTexture.create(overlayTextureWidth, overlayTextureHeight, Graphics::createPixelFormat<5551>());
 
 		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
@@ -258,8 +243,8 @@ const char *iPhone_getDocumentsDir() {
 		[_keyboardView dealloc];
 	}
 
-	free(_gameScreenTextureBuffer);
-	free(_overlayTexBuffer);
+	_videoContext.screenTexture.free();
+	_videoContext.overlayTexture.free();
 }
 
 - (void)drawRect:(CGRect)frame {
@@ -348,7 +333,7 @@ const char *iPhone_getDocumentsDir() {
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _gameScreenTextureWidth, _gameScreenTextureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _gameScreenTextureBuffer); printOpenGLError();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.pixels); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -357,7 +342,7 @@ const char *iPhone_getDocumentsDir() {
 	glTexCoordPointer(2, GL_FLOAT, 0, _overlayTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _overlayTexWidth, _overlayTexHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _overlayTexBuffer); printOpenGLError();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.overlayTexture.w, _videoContext.overlayTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.overlayTexture.pixels); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -473,16 +458,14 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)initSurface {
-	_gameScreenTextureWidth = getSizeNextPOT(_videoContext.screenWidth);
-	_gameScreenTextureHeight = getSizeNextPOT(_videoContext.screenHeight);
+	uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
+	uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
 
-	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)_gameScreenTextureWidth;
-	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)_gameScreenTextureHeight;
+	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)screenTexWidth;
+	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)screenTexHeight;
 
 	int screenWidth, screenHeight;
 	[self setUpOrientation:[[UIDevice currentDevice] orientation] width:&screenWidth height:&screenHeight];
-
-	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _videoContext.screenWidth, _videoContext.screenHeight, _gameScreenTextureWidth, _gameScreenTextureHeight);
 
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
@@ -498,10 +481,7 @@ const char *iPhone_getDocumentsDir() {
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
 	[self setFilterModeForTexture:_overlayTexture];
 
-	free(_gameScreenTextureBuffer);
-	int textureSize = _gameScreenTextureWidth * _gameScreenTextureHeight * 2;
-	_gameScreenTextureBuffer = (char *)malloc(textureSize);
-	memset(_gameScreenTextureBuffer, 0, textureSize);
+	_videoContext.screenTexture.create(screenTexWidth, screenTexHeight, Graphics::createPixelFormat<565>());
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 

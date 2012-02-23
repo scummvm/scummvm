@@ -23,6 +23,8 @@
 #ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
 #define BACKENDS_PLATFORM_IPHONE_IPHONE_COMMON_H
 
+#include "graphics/surface.h"
+
 enum InputEvent {
 	kInputMouseDown,
 	kInputMouseUp,
@@ -64,10 +66,12 @@ struct VideoContext {
 
 	// Game screen state
 	uint screenWidth, screenHeight;
+	Graphics::Surface screenTexture;
 
 	// Overlay state
 	bool overlayVisible;
 	uint overlayWidth, overlayHeight;
+	Graphics::Surface overlayTexture;
 
 	// Mouse cursor state
 	uint mouseX, mouseY;
@@ -82,8 +86,6 @@ struct VideoContext {
 
 // On the ObjC side
 void iPhone_updateScreen();
-void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);
-void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
