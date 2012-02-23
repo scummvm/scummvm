@@ -75,6 +75,8 @@ struct VideoContext {
 };
 
 // On the ObjC side
+void iPhone_setAspectRatioState(bool enable); 
+bool iPhone_getAspectRatioState();
 void iPhone_updateScreen();
 void iPhone_updateScreenRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);
 void iPhone_updateOverlayRect(unsigned short *screen, int x1, int y1, int x2, int y2, int width);

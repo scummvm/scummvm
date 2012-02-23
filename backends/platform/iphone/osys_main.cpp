@@ -119,6 +119,9 @@ void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
 			_mouseCursorPaletteEnabled = enable;
 		}
 		break;
+	case kFeatureAspectRatioCorrection:
+		iPhone_setAspectRatioState(enable);
+		break;
 
 	default:
 		break;
@@ -129,6 +132,8 @@ bool OSystem_IPHONE::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
 		return _mouseCursorPaletteEnabled;
+	case kFeatureAspectRatioCorrection:
+		return iPhone_getAspectRatioState();
 
 	default:
 		return false;
