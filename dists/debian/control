@@ -1,7 +1,7 @@
 Source: residualvm
 Section: games
 Priority: optional
-Maintainer: Pawel Kolodziejski <aquadran@users.sourceforge.net>
+Maintainer: Pawel Kolodziejski <aquadran@residualvm.org>
 Build-Depends: debhelper (>= 5.0.0), libgl1-mesa-dev, libsdl1.2-dev, libz-dev, libmad0-dev, libvorbis-dev (>= 1.0.0-2), libflac-dev (>= 1.1.1-2), libz-dev, libfluidsynth-dev
 Standards-Version: 3.8.0
 
