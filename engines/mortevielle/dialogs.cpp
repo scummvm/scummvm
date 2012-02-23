@@ -190,17 +190,19 @@ int Alert::show(const Common::String &msg, int n) {
  * Alert function - Decode Alert Details
  * @remarks	Originally called 'decod'
  */
-void Alert::decodeAlertDetails(Common::String s, int &nbc, int &lineNumb, int &col, Common::String &c, Common::String &cs) {
+void Alert::decodeAlertDetails(Common::String s, int &choiceNumb, int &lineNumb, int &col, Common::String &c, Common::String &cs) {
 	int i, k;
 	bool v;
 
 	//val(s[2], nbc, i);
-	nbc = atoi(s.c_str() + 1);
+	choiceNumb = atoi(s.c_str() + 1);
 	i = 0;
 
 	c = "";
 	lineNumb = 0;
-	i = 5;
+
+	// Originally set to 5, decreased to 4 because strings are 0 based, and not 1 based as in Pascal
+	i = 4;
 	k = 0;
 	v = true;
 	col = 0;
