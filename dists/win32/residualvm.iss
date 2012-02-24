@@ -28,6 +28,7 @@ Name: {group}\ResidualVM; Filename: {app}\residualvm.exe; WorkingDir: {app}; Com
 Name: {group}\ResidualVM (noconsole); Filename: {app}\residualvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: residualvm; Flags: createonlyiffileexists; IconIndex: 0
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
+Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
 Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 ;NEWS
@@ -52,6 +53,7 @@ Name: "{userappdata}\ResidualVM\Saved Games"; MinVersion: 0, 1
 [Files]
 Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
+Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
