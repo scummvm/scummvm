@@ -332,9 +332,9 @@ bool OSystem_IPHONE::showMouse(bool visible) {
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
 	//printf("warpMouse()\n");
-
 	_videoContext->mouseX = x;
 	_videoContext->mouseY = y;
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(notifyMouseMove) withObject:nil waitUntilDone: YES];
 	_mouseDirty = true;
 }
 

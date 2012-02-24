@@ -217,6 +217,11 @@ const char *iPhone_getDocumentsDir() {
 	    _overlayTexCoords[4] = _overlayTexCoords[5] =
 	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
 
+	_mouseVertCoords[0] = _mouseVertCoords[1] =
+	    _mouseVertCoords[2] = _mouseVertCoords[3] =
+	    _mouseVertCoords[4] = _mouseVertCoords[5] =
+	    _mouseVertCoords[6] = _mouseVertCoords[7] = 0;
+
 	_mouseTexCoords[0] = _mouseTexCoords[1] =
 	    _mouseTexCoords[2] = _mouseTexCoords[3] =
 	    _mouseTexCoords[4] = _mouseTexCoords[5] =
@@ -304,6 +309,16 @@ const char *iPhone_getDocumentsDir() {
 
 }
 
+- (void)notifyMouseMove {
+	const GLint mouseX = (GLint)(_videoContext.mouseX * _mouseScaleX) - _mouseHotspotX;
+	const GLint mouseY = (GLint)(_videoContext.mouseY * _mouseScaleY) - _mouseHotspotY;
+
+	_mouseVertCoords[0] = _mouseVertCoords[4] = mouseX;
+	_mouseVertCoords[1] = _mouseVertCoords[3] = mouseY;
+	_mouseVertCoords[2] = _mouseVertCoords[6] = mouseX + _mouseWidth;
+	_mouseVertCoords[5] = _mouseVertCoords[7] = mouseY + _mouseHeight;
+}
+
 - (void)updateMouseCursorScaling {
 	CGRect *rect;
 	int maxWidth, maxHeight;
@@ -338,6 +353,11 @@ const char *iPhone_getDocumentsDir() {
 	// since the hotspot offset is substracted from the position.
 	_mouseHotspotX -= (GLint)CGRectGetMinX(*rect);
 	_mouseHotspotY -= (GLint)CGRectGetMinY(*rect);
+
+	// FIXME: For now we also adapt the mouse position here. In reality we
+	// would be better off to also adjust the event position when switching
+	// from overlay to game screen or vica versa.
+	[self notifyMouseMove];
 }
 
 - (void)updateMouseCursor {
@@ -378,26 +398,7 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)updateMouseSurface {
-	int mouseX = _videoContext.mouseX;
-	int mouseY = _videoContext.mouseY;
-
-	mouseX = (int)(mouseX * _mouseScaleX) - _mouseHotspotX;
-	mouseY = (int)(mouseY * _mouseScaleY) - _mouseHotspotY;
-
-	GLfloat vertices[] = {
-		// Top left
-		mouseX              , mouseY,
-		// Top right
-		mouseX + _mouseWidth, mouseY,
-		// Bottom left
-		mouseX              , mouseY + _mouseHeight,
-		// Bottom right
-		mouseX + _mouseWidth, mouseY + _mouseHeight
-	};
-
-	//printf("Cursor: width %u height %u\n", _videoContext.mouseWidth, _videoContext.mouseHeight);
-
-	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
+	glVertexPointer(2, GL_FLOAT, 0, _mouseVertCoords); printOpenGLError();
 	glTexCoordPointer(2, GL_FLOAT, 0, _mouseTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
