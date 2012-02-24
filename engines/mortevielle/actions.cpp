@@ -621,7 +621,7 @@ void fctOpen() {
  * @remarks	Originally called 'tmettre'
  */
 void fctPlace() {
-	bool entre;
+	bool enterPassageFl;
 	char st[1410];
 	Common::String str_;
 	int i, tay;
@@ -663,17 +663,20 @@ void fctPlace() {
 			else {
 				s.icave = s.derobj;
 				if (s.derobj == 151) {
+					// Open hidden passage
 					aniof(1, 2);
 					aniof(1, 1);
 					repon(2, 165);
 					maivid();
 					parole(6, -9, 1);
+
+					// Do you want to enter the hidden passage?
 					int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
 					if (answer== 1)  {
 						deline(582, st, tay);
 						i = Alert::show(delig, 1);
 						tesok = false;
-						entre = Ques::show();
+						enterPassageFl = Ques::show();
 						hideMouse();
 						hirs();
 						dessine_rouleau();
@@ -688,7 +691,7 @@ void fctPlace() {
 							person();
 
 						g_vm->_menu.menu_aff();
-						if (entre) {
+						if (enterPassageFl) {
 							s.mlieu = 17;
 							tmlieu(17);
 						} else {
