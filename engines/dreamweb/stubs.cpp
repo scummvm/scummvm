@@ -2001,7 +2001,7 @@ void DreamWebEngine::readSetData() {
 	useCharset1();
 
 	// FIXME: Why is this commented out?
-	//openFile("DREAMWEB.VOL");
+	//openFile(getDatafilePrefix() + "VOL");
 	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
 	//readFromFile(volumeTab, 2048-256);
 	//closeFile();

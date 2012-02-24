@@ -409,7 +409,7 @@ bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
 	uint8* buf = new uint8[2000];
-	palFile.open("DREAMWEB.PAL");
+	palFile.open(getDatafilePrefix() + "PAL");
 	palFile.read(buf, 2000);
 	palFile.close();
 
