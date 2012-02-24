@@ -87,7 +87,7 @@ int Alert::show(const Common::String &msg, int n) {
 			g_vm->_screenSurface._textPos.y += 6;
 			g_vm->_screenSurface.writeg(st, 4);
 			++i;
-		} while (!(chaine[i] == ']'));
+		} while (chaine[i] != ']');
 	}
 	if (caseNumb == 1)
 		esp = nbcol - 40;
@@ -263,7 +263,7 @@ void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::Stri
 			++i;
 			ch = c[i];
 			str[l] += ch;
-		} while (!(c[i + 1] == ']'));
+		} while (c[i + 1] != ']');
 		i += 2;
 
 		while (str[l].size() < 3)
@@ -413,7 +413,7 @@ bool Ques::show() {
 			// tesok is set to true in testprot()
 			tesok = true;
 		}
-	} while (!(indx == 10));
+	} while (indx != 10);
 
 	return (correctCount == 10) && protectionCheck;
 }
@@ -458,7 +458,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 			hirs();
 			aff50(drawAni50Fl);
 		}
-	} while (!(key == 66)); // keycode for F8
+	} while (key != 66); // keycode for F8
 }
 
 /**
@@ -469,7 +469,7 @@ void f3f8::waitForF3F8(int &key) {
 	do {
 		key = testou();
 		CHECK_QUIT;
-	} while (!((key == 61) || (key == 66)));
+	} while ((key != 61) && (key != 66));
 }
 
 void f3f8::aff50(bool drawAni50Fl) {

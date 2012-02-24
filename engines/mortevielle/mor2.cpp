@@ -60,7 +60,7 @@ void tinke() {
 			if (nbrepm[cx] != 0)
 				--nbrepm[cx];
 			nbrep[cx] = 0;
-		} while (!(cx == 8));
+		} while (cx != 8);
 	}
 	if ((h > _hour) || ((h == 0) && (_hour == 23))) {
 		_hour = h;
@@ -414,7 +414,7 @@ void sparl(float adr, float rep) {
 		parole(repint, haut[caff - 69], 0);
 		f3f8::waitForF3F8(key);
 		CHECK_QUIT;
-	} while (!(key == 66));
+	} while (key != 66);
 	hirs();
 	showMouse();
 }
@@ -455,7 +455,7 @@ void ajchai() {
 	int cx = 0;
 	do {
 		++cx;
-	} while (!((cx > 9) || (tabdon[cy + cx] == 0)));
+	} while ((cx <= 9) && (tabdon[cy + cx] != 0));
 
 	if (tabdon[cy + cx] == 0) {
 		int lderobj = s.derobj;
@@ -468,7 +468,7 @@ void ajjer(int ob) {
 	int cx = 0;
 	do {
 		++cx;
-	} while (!((cx > 5) || (ord(s.sjer[cx]) == 0)));
+	} while ((cx <= 5) && (ord(s.sjer[cx]) != 0));
 
 	if (ord(s.sjer[cx]) == 0) {
 		s.sjer[(cx)] = chr(ob);
@@ -620,7 +620,7 @@ void tsuiv() {
 		cs = cs + 1;
 		cl = cy + cs;
 		tbcl = tabdon[cl];
-	} while (!((tbcl != 0) || (cs > 9)));
+	} while ((tbcl == 0) && (cs <= 9));
 
 	if ((tbcl != 0) && (cs < 11)) {
 		is = is + 1;

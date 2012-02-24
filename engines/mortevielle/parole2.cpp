@@ -64,7 +64,7 @@ void trait_ph() {
 		WRITE_LE_UINT16(&mem[adword + ptr_word], t_cph[ptr_tcph]);
 		ptr_word = ptr_word + 2;
 		ptr_tcph = ptr_tcph + 1;
-	} while (!(ptr_tcph >= (int)((uint)lefin >> 1)));
+	} while (ptr_tcph < (int)((uint)lefin >> 1));
 
 	ptr_oct = 0;
 	ptr_word = 0;
@@ -74,7 +74,7 @@ void trait_ph() {
 		rot_chariot();
 		charg_car();
 		trait_car();
-	} while (!(ptr_word >= nb_word));
+	} while (ptr_word < nb_word);
 
 	rot_chariot();
 	trait_car();

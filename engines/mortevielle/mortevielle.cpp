@@ -630,7 +630,7 @@ void MortevielleEngine::handleAction() {
 					if ((! syn) || (col))
 						repon(2, crep);
 				}
-			} while (!(! syn));
+			} while (syn);
 			if (ctrm != 0)
 				tctrm();
 		}

@@ -1117,7 +1117,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		do {
 			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i = i + step;
-		} while (!(i == yy));
+		} while (i != yy);
 	} else {
 		a = (float)((y - yy)) / (x - xx);
 		b = ((yro * xr) - (yr * xro)) / (x - xx);
@@ -1127,7 +1127,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		do {
 			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
-		} while (!(i == xx));
+		} while (i != xx);
 	}
 }
 

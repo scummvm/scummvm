@@ -89,7 +89,7 @@ void fctMove() {
 	cx = 0;
 	do {
 		++cx;
-	} while (!(g_vm->_menu._depl[cx] == msg[4]));
+	} while (g_vm->_menu._depl[cx] != msg[4]);
 	if (s.mlieu == 19) {
 		if (cx == 1)
 			t1deva();
@@ -297,14 +297,14 @@ void tsprendre() {
 	cx = 0;
 	do {
 		++cx;
-	} while (!(g_vm->_menu._invt[cx] == msg[4]));
+	} while (g_vm->_menu._invt[cx] != msg[4]);
 	cz = 0;
 	cy = 0;
 	do {
 		++cy;
 		if (ord(s.sjer[cy]) != 0)
 			++cz;
-	} while (!(cz == cx));
+	} while (cz != cx);
 	cz = ord(s.sjer[cy]);
 	s.sjer[cy] = chr(0);
 	modinv();
@@ -491,7 +491,7 @@ void fctSearch() {
 			cx = 0;
 			do {
 				++cx;
-			} while (!((cx > 6) || (num == ord(touv[cx]))));
+			} while ((cx <= 6) && (num != ord(touv[cx])));
 			if (num != ord(touv[cx]))
 				crep = 187;
 			else {
@@ -848,7 +848,7 @@ void fctClose() {
 			cx = 0;
 			do {
 				++cx;
-			} while (!((cx > 6) || (num == ord(touv[cx]))));
+			} while ((cx <= 6) && (num != ord(touv[cx])));
 			if (num == ord(touv[cx])) {
 				aniof(2, num);
 				crep = 998;
@@ -941,7 +941,7 @@ void fctPut() {
 				cx = 0;
 				do {
 					++cx;
-				} while (!((cx > 6) || (num == ord(touv[cx]))));
+				} while ((cx <= 6) && (num != ord(touv[cx])));
 				if (num != ord(touv[cx]))
 					crep = 187;
 				else {
@@ -1174,7 +1174,7 @@ void fctSleep() {
 		tinke();
 		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
 		anyone = false;
-	} while (!(answer == 1));
+	} while (answer != 1);
 	crep = 998;
 	num = 0;
 }
@@ -1262,7 +1262,7 @@ void fctWait() {
 		}
 		repon(2, 102);
 		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
-	} while (!(answer == 2));
+	} while (answer != 2);
 	crep = 998;
 	if (!anyone)
 		tinke();
@@ -1303,7 +1303,7 @@ void fctDiscuss() {
 		cx = 0;
 		do {
 			++cx;
-		} while (!(g_vm->_menu._disc[cx] == msg[4]));
+		} while (g_vm->_menu._disc[cx] != msg[4]);
 		caff = 69 + cx;
 		afdes(0);
 		repon(2, caff);
@@ -1345,7 +1345,7 @@ void fctDiscuss() {
 				co = 320;
 			} else
 				lig = lig + 8;
-		} while (!(icm == 42));
+		} while (icm != 42);
 		g_vm->_screenSurface.putxy(320, 176);
 		writetp(lib[46], 0);
 		tou = '\0';
@@ -1458,7 +1458,7 @@ void fctDiscuss() {
 			hirs();
 			showMouse();
 		}
-	} while (!((choi == 46) || (suj == 138)));
+	} while ((choi != 46) && (suj != 138));
 	if (col) {
 		s.conf = s.conf + (3 * (s.conf / 10));
 		hideMouse();
