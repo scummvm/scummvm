@@ -3701,7 +3701,7 @@ else
 fi
 
 #
-# Check whether to activate engines
+# Check whether to activate engines (ResidualVM specific)
 #
 if test `get_engine_build grim` = yes && test ! "$_zlib" = yes ; then
 	echo "...disabling Grim. zlib is required"
