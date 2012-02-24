@@ -41,6 +41,8 @@ static long lastTick = 0;
 static int frames = 0;
 #endif
 
+static bool _aspectRatioCorrect = false;
+
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(const char *file, int line) {
@@ -54,6 +56,14 @@ int printOglError(const char *file, int line) {
 		glErr = glGetError();
 	}
 	return retCode;
+}
+
+void iPhone_setAspectRatioState(bool enable) {
+	_aspectRatioCorrect = enable;
+}
+
+bool iPhone_getAspectRatioState() {
+	return _aspectRatioCorrect;
 }
 
 bool iPhone_isHighResDevice() {
@@ -478,10 +488,22 @@ const char *iPhone_getDocumentsDir() {
 		[[_keyboardView inputView] removeFromSuperview];
 	}
 
+	float adjustedWidth = _videoContext.screenWidth;
+	float adjustedHeight = _videoContext.screenHeight;
+    if (_aspectRatioCorrect && ((_videoContext.screenWidth == 320 && _videoContext.screenHeight == 200)
+		|| (_videoContext.screenWidth == 640 && _videoContext.screenHeight == 400)) )  {
+		if (_videoContext.screenHeight == 200) {
+			adjustedHeight = 240;
+		}
+		if (_videoContext.screenHeight == 400) {
+			adjustedHeight = 480;
+		}
+	}
+	
 	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
-		GLfloat gameScreenRatio = (GLfloat)_videoContext.screenWidth / (GLfloat)_videoContext.screenHeight;
+		GLfloat gameScreenRatio = (GLfloat)adjustedWidth / (GLfloat)adjustedHeight;
 		GLfloat screenRatio = (GLfloat)screenWidth / (GLfloat)screenHeight;
 
 		// These are the width/height according to the portrait layout!
@@ -510,7 +532,7 @@ const char *iPhone_getDocumentsDir() {
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
 	} else {
-		float ratio = (float)_videoContext.screenHeight / (float)_videoContext.screenWidth;
+		float ratio = (float)adjustedHeight / (float)adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);

@@ -86,6 +86,8 @@ struct VideoContext {
 };
 
 // On the ObjC side
+void iPhone_setAspectRatioState(bool enable); 
+bool iPhone_getAspectRatioState();
 void iPhone_updateScreen();
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
