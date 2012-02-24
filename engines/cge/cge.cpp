@@ -28,6 +28,7 @@
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "cge/cge.h"
 #include "cge/vga13h.h"

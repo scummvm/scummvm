@@ -34,7 +34,6 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "dreamweb/console.h"
@@ -99,9 +98,7 @@ enum {
 	kDebugSaveLoad = (1 << 1)
 };
 
-struct DreamWebGameDescription {
-	ADGameDescription desc;
-};
+struct DreamWebGameDescription;
 
 class DreamWebEngine : public Engine {
 private:
@@ -150,7 +147,7 @@ public:
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
 
-	Common::Language getLanguage() const { return _language; }
+	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
 
 	void stopSound(uint8 channel);
@@ -168,7 +165,6 @@ private:
 	bool _turbo;
 	uint _oldMouseState;
 	bool _enableSavingOrLoading;
-	Common::Language _language;
 
 	struct Sample {
 		uint offset;

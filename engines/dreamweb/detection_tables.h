@@ -25,6 +25,10 @@
 
 namespace DreamWeb {
 
+struct DreamWebGameDescription {
+	ADGameDescription desc;
+};
+
 static const DreamWebGameDescription gameDescriptions[] = {
 	// International floppy release
 	{
