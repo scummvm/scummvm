@@ -125,6 +125,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	glPolygonOffset(-6.0, -6.0);
 
 	initExtensions();
+	glGetIntegerv(GL_MAX_LIGHTS, &_maxLights);
 
 	return NULL;
 }
@@ -571,9 +572,7 @@ void GfxOpenGL::disableLights() {
 }
 
 void GfxOpenGL::setupLight(Light *light, int lightId) {
-	int max;
-	glGetIntegerv(GL_MAX_LIGHTS, &max);
-	if (lightId >= max) {
+	if (lightId >= _maxLights) {
 		return;
 	}
 

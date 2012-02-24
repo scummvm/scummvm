@@ -131,6 +131,7 @@ private:
 	byte *_storedDisplay;
 	bool _useDepthShader;
 	GLuint _fragmentProgram;
+	int _maxLights;
 };
 
 } // end of namespace Grim
