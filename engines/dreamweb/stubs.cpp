@@ -579,7 +579,7 @@ void DreamWebEngine::dreamweb() {
 	readSetData();
 	_wonGame = false;
 
-	loadSounds(0, "DREAMWEB.V99"); // basic sample
+	loadSounds(0, "V99"); // basic sample
 
 	bool firstLoop = true;
 

@@ -89,7 +89,7 @@ void DreamWebEngine::loadRoomsSample() {
 		return; // loaded already
 
 	assert(sample < 100);
-	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
+	Common::String sampleSuffix = Common::String::format("V%02d", sample);
 	_currentSample = sample;
 
 	uint8 ch0 = _channel0Playing;
@@ -98,7 +98,7 @@ void DreamWebEngine::loadRoomsSample() {
 	uint8 ch1 = _channel1Playing;
 	if (ch1 >= 12)
 		cancelCh1();
-	loadSounds(1, sampleName.c_str());
+	loadSounds(1, sampleSuffix.c_str());
 }
 
 } // End of namespace DreamWeb
@@ -240,7 +240,8 @@ void DreamWebEngine::soundHandler() {
 
 }
 
-void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
+void DreamWebEngine::loadSounds(uint bank, const Common::String &suffix) {
+	Common::String filename = getDatafilePrefix() + suffix;
 	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
 	Common::File file;
 	if (!file.open(filename)) {

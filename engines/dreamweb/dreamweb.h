@@ -142,7 +142,7 @@ public:
 
 	void quit();
 
-	void loadSounds(uint bank, const Common::String &file);
+	void loadSounds(uint bank, const Common::String &suffix);
 	bool loadSpeech(const Common::String &filename);
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
