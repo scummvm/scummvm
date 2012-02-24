@@ -101,7 +101,7 @@ void Meter::update() {
 
 	_surface->fill(_backColor);
 
-	int32 n = floor((((float) _width) / _maxValue * _value) + 0.5);
+	int32 n = (int32)floor((((float) _width) / _maxValue * _value) + 0.5);
 	if (n <= 0)
 		return;
 

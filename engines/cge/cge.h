@@ -31,10 +31,11 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "graphics/surface.h"
-#include "engines/advancedDetector.h"
 #include "cge/console.h"
 #include "cge/bitmap.h"
 #include "cge/sound.h"
+
+struct ADGameDescription;
 
 namespace CGE {
 

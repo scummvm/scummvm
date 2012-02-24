@@ -30,6 +30,7 @@
 #include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "engines/advancedDetector.h"
 #include "cge/events.h"
 #include "cge/events.h"
 #include "cge/text.h"
