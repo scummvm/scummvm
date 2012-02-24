@@ -152,6 +152,8 @@ public:
 
 	void stopSound(uint8 channel);
 
+	const Common::String& getDatafilePrefix() { return _datafilePrefix; };
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -160,6 +162,7 @@ private:
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
+	Common::String _datafilePrefix;
 
 	uint _speed;
 	bool _turbo;
@@ -1133,7 +1136,7 @@ public:
 	void doShake();
 	void vSync();
 	void setMode();
-	void showPCX(const Common::String &name);
+	void showPCX(const Common::String &suffix);
 	void showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height);
 	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);

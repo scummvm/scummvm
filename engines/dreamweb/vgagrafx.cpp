@@ -153,7 +153,8 @@ void DreamWebEngine::setMode() {
 	initGraphics(320, 200, false);
 }
 
-void DreamWebEngine::showPCX(const Common::String &name) {
+void DreamWebEngine::showPCX(const Common::String &suffix) {
+	Common::String name = getDatafilePrefix() + suffix;
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
