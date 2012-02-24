@@ -259,8 +259,8 @@ void Lua_V2::PopText() {
 
 void Lua_V2::GetSectorName() {
 	lua_Object xObj = lua_getparam(1);
-	lua_Object yObj = lua_getparam(2);
-	lua_Object zObj = lua_getparam(3);
+	/*lua_Object yObj =*/ lua_getparam(2);
+	/*lua_Object zObj =*/ lua_getparam(3);
 
 	if (!lua_isnumber(xObj) || !lua_isnumber(xObj) || !lua_isnumber(xObj)) {
 		lua_pushnil();
@@ -280,9 +280,9 @@ void Lua_V2::GetSectorName() {
 }
 
 // Stub function for builtin functions not yet implemented
-static void stubWarning(const char *funcName) {
+/*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
-}
+}*/
 
 static void stubError(const char *funcName) {
 	error("Stub function: %s", funcName);

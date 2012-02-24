@@ -222,8 +222,8 @@ void Lua_V2::FreeSound() {
 void Lua_V2::PlayLoadedSound() {
 	lua_Object idObj = lua_getparam(1);
 	lua_Object bool1Obj = lua_getparam(2);
-	lua_Object volumeObj = lua_getparam(3);
-	lua_Object bool2Obj = lua_getparam(4);
+	/*lua_Object volumeObj =*/ lua_getparam(3);
+	/*lua_Object bool2Obj =*/ lua_getparam(4);
 
 
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
