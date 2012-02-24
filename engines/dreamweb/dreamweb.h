@@ -142,7 +142,7 @@ public:
 
 	void quit();
 
-	void loadSounds(uint bank, const Common::String &file);
+	void loadSounds(uint bank, const Common::String &suffix);
 	bool loadSpeech(const Common::String &filename);
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
@@ -152,6 +152,8 @@ public:
 
 	void stopSound(uint8 channel);
 
+	const Common::String& getDatafilePrefix() { return _datafilePrefix; };
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -160,6 +162,7 @@ private:
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
+	Common::String _datafilePrefix;
 
 	uint _speed;
 	bool _turbo;
@@ -805,12 +808,12 @@ public:
 	const uint8 *getTextInFile1(uint16 index);
 	uint8 findNextColon(const uint8 **string);
 	void allocateBuffers();
-	void loadTextFile(TextFile &file, const char *fileName);
-	void loadGraphicsFile(GraphicsFile &file, const char *fileName);
+	void loadTextFile(TextFile &file, const char *suffix);
+	void loadGraphicsFile(GraphicsFile &file, const char *suffix);
 	void loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len);
 	void loadTextSegment(TextFile &file, Common::File &inFile, unsigned int len);
 	void loadTravelText();
-	void loadTempText(const char *fileName);
+	void loadTempText(const char *suffix);
 	void sortOutMap();
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset(GraphicsFile *charset);
@@ -1133,7 +1136,7 @@ public:
 	void doShake();
 	void vSync();
 	void setMode();
-	void showPCX(const Common::String &name);
+	void showPCX(const Common::String &suffix);
 	void showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height);
 	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);

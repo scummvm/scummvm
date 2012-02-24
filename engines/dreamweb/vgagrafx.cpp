@@ -153,7 +153,8 @@ void DreamWebEngine::setMode() {
 	initGraphics(320, 200, false);
 }
 
-void DreamWebEngine::showPCX(const Common::String &name) {
+void DreamWebEngine::showPCX(const Common::String &suffix) {
+	Common::String name = getDatafilePrefix() + suffix;
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
@@ -408,7 +409,7 @@ bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
 	uint8* buf = new uint8[2000];
-	palFile.open("DREAMWEB.PAL");
+	palFile.open(getDatafilePrefix() + "PAL");
 	palFile.read(buf, 2000);
 	palFile.close();
 

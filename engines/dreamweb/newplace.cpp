@@ -259,13 +259,13 @@ void DreamWebEngine::resetLocation(uint8 index) {
 }
 
 void DreamWebEngine::readDestIcon() {
-	loadGraphicsFile(_newplaceGraphics, "DREAMWEB.G05");
-	loadGraphicsFile(_newplaceGraphics2, "DREAMWEB.G06");
-	loadGraphicsFile(_newplaceGraphics3, "DREAMWEB.G08");
+	loadGraphicsFile(_newplaceGraphics, "G05");
+	loadGraphicsFile(_newplaceGraphics2, "G06");
+	loadGraphicsFile(_newplaceGraphics3, "G08");
 }
 
 void DreamWebEngine::readCityPic() {
-	loadGraphicsFile(_cityGraphics, "DREAMWEB.G04");
+	loadGraphicsFile(_cityGraphics, "G04");
 }
 
 } // End of namespace DreamWeb
