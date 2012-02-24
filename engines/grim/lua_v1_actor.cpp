@@ -1402,9 +1402,7 @@ void Lua_V1::GetVisibleThings() {
 	lua_Object result = lua_createtable();
 
 	// TODO verify code below
-	foreach (Actor *a, Actor::getPool()) {
-		if (!a->isInSet(g_grim->getSetName()))
-			continue;
+	foreach (Actor *a, g_grim->getActiveActors()) {
 		// Consider the active actor visible
 		if (actor == a || actor->getYawTo(a) < 90) {
 			lua_pushobject(result);

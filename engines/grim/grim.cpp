@@ -135,6 +135,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_savedState = NULL;
 	_fps[0] = 0;
 	_iris = new Iris();
+	_buildActiveActorsList = false;
 
 	Color c(0, 0, 0);
 
@@ -418,12 +419,12 @@ void GrimEngine::luaUpdate() {
 	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
-		foreach (Actor *a, Actor::getPool()) {
+		buildActiveActorsList();
+		foreach (Actor *a, _activeActors) {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
-			if (a->isInSet(_currSet->getName()))
-				a->update(_frameTime);
+			a->update(_frameTime);
 		}
 
 		_iris->update(_frameTime);
@@ -518,10 +519,12 @@ void GrimEngine::updateDisplayScene() {
 		}
 
 		// Draw actors
-		foreach (Actor *a, Actor::getPool()) {
-			if (a->isInSet(_currSet->getName()) && a->isVisible())
+		buildActiveActorsList();
+		foreach (Actor *a, _activeActors) {
+			if (a->isVisible())
 				a->draw();
-
+		}
+		foreach (Actor *a, Actor::getPool()) {
 			if (!a->isTalking())
 				a->shutUp();
 		}
@@ -781,6 +784,7 @@ void GrimEngine::savegameRestore() {
 
 	_shortFrame = true;
 	clearEventQueue();
+	invalidateActiveActorsList();
 }
 
 void GrimEngine::restoreGRIM() {
@@ -1010,6 +1014,7 @@ void GrimEngine::setSet(Set *scene) {
 	}
 	_shortFrame = true;
 	_setupChanged = true;
+	invalidateActiveActorsList();
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
@@ -1050,6 +1055,24 @@ Actor *GrimEngine::getTalkingActor() const {
 
 void GrimEngine::setTalkingActor(Actor *a) {
 	_talkingActor = a;
+}
+
+void GrimEngine::invalidateActiveActorsList() {
+	_buildActiveActorsList = true;
+}
+
+void GrimEngine::buildActiveActorsList() {
+	if (!_buildActiveActorsList) {
+		return;
+	}
+
+	_activeActors.clear();
+	foreach (Actor *a, Actor::getPool()) {
+		if (a->isInSet(_currSet->getName())) {
+			_activeActors.push_back(a);
+		}
+	}
+	_buildActiveActorsList = false;
 }
 
 const Common::String &GrimEngine::getSetName() const {

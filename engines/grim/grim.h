@@ -148,6 +148,16 @@ public:
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *getSelectedActor() { return _selectedActor; }
 
+	/**
+	 * Tell the engine that an actor has been moved into/outside a set,
+	 * and so that it should rebuild the list of active ones.
+	 */
+	void invalidateActiveActorsList();
+	/**
+	 * Return a list of the currently active actors, i. e. the actors in the current set.
+	 */
+	const Common::List<Actor *> &getActiveActors() const { return _activeActors; }
+
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
 
@@ -169,6 +179,7 @@ private:
 	void handleUserPaint();
 	void cameraChangeHandle(int prev, int next);
 	void cameraPostChangeHandle(int num);
+	void buildActiveActorsList();
 	void savegameCallback();
 
 	void savegameSave();
@@ -213,6 +224,9 @@ private:
 	Actor *_selectedActor;
 	Actor *_talkingActor;
 	Iris *_iris;
+
+	bool _buildActiveActorsList;
+	Common::List<Actor *> _activeActors;
 
 	uint32 _gameFlags;
 	GrimGameType _gameType;

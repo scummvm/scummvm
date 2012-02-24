@@ -1338,6 +1338,8 @@ void Actor::putInSet(const Common::String &setName) {
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	_setName = setName;
+
+	g_grim->invalidateActiveActorsList();
 }
 
 bool Actor::isInSet(const Common::String &setName) const {
