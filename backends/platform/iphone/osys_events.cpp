@@ -28,11 +28,6 @@
 
 #include "osys_main.h"
 
-#ifdef ENABLE_KEYMAPPER
-#include "backends/keymapper/keymapper.h"
-#include "iphone_gestures.h"
-#endif
-
 static const int kQueuedInputEventDelay = 50;
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
@@ -290,12 +285,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 
 		if (absX < kMaxDeviation && vecY >= kNeededLength) {
 			// Swipe down
-#ifdef ENABLE_KEYMAPPER
-			event.type = Common::EVENT_CUSTOM_GESTURE;
-			event.customType = Common::kIphoneGestureOneFingerHoldSecondFingerSwipeDown;
-#else
 			event.type = Common::EVENT_MAINMENU;
-#endif
 			_queuedInputEvent.type = Common::EVENT_INVALID;
 
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
