@@ -167,7 +167,8 @@ void tsitu() {
 	if (brt)
 		if ((msg[3] == MENU_MOVE) || (msg[4] == OPCODE_LEAVE) || (msg[4] == OPCODE_SLEEP) || (msg[4] == OPCODE_EAT)) {
 			ctrm = 4;
-			goto L2;
+			mennor();
+			return;
 		}
 	if (msg[3] == MENU_MOVE)
 		fctMove();
@@ -234,7 +235,8 @@ L1:
 	if (anyone) {
 		quelquun();
 		anyone = false;
-		goto L2;
+		mennor();
+		return;
 	}
 	calch(j, h, m);
 	if ((((h == 12) || (h == 13) || (h == 19)) && (s.mlieu != 10)) ||
@@ -255,7 +257,6 @@ L1:
 			tperd();
 		}
 	}
-L2:
 	mennor();
 }
 
