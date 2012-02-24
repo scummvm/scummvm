@@ -285,59 +285,59 @@ void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::Stri
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Questions asked before entering the hidden passage
+ */
 bool Ques::show() {
-	const int ta[11] = {0, 511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
-	const int ok[11] = {0, 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
+	const int textIndexArr[11] = {0, 511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
+	const int correctAnswerArr[11] = {0, 4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
-	bool q, func, test;
-	int i, j, k, y, memk;
+	int optionPosY;
 	int curLength, maxLength;
-	int rep, prem, der;
-	char st[1410];
+	int rep;
+	int firstOption, lastOption;
 	char key;
 	rectangle coor[max_rect];
 	Common::String choiceArray[15];
-	Common::String currChoice;
-	int compte;
+	char st[1410];
 
-
-	bool ques_result;
-	test = false;
-	i = 0;
-	compte = 0;
+	int currChoice, prevChoice;
+	int indx = 0;
+	int correctCount = 0;
+	bool protectionCheck = false;
 
 	do {
 		hideMouse();
 		hirs();
 		showMouse();
-		++i;
-		deline(ta[i], st, curLength);
+		++indx;
+		deline(textIndexArr[indx], st, curLength);
+		int dialogHeight;
 		if (res == 1)
-			y = 29;
+			dialogHeight = 29;
 		else
-			y = 23;
-		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, y));
+			dialogHeight = 23;
+		g_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		afftex(st, 20, 15, 100, 2, 0);
-		if (i != 10) {
-			prem = ta[i] + 1;
-			der = ta[i + 1] - 1;
+		if (indx != 10) {
+			firstOption = textIndexArr[indx] + 1;
+			lastOption = textIndexArr[indx + 1] - 1;
 		} else {
-			prem = 503;
-			der = 510;
+			firstOption = 503;
+			lastOption = 510;
 		}
-		y = 35;
+		optionPosY = 35;
 		maxLength = 0;
-		memk = 1;
-		for (j = prem; j <= der; ++j) {
+
+		for (int j = firstOption, prevChoice = 1; j <= lastOption; ++j, ++prevChoice) {
 			deline(j, st, curLength);
 			if (curLength > maxLength)
 				maxLength = curLength;
-			afftex(st, 100, y, 100, 1, 0);
-			choiceArray[memk] = delig;
-			++memk;
-			y += 8;
+			afftex(st, 100, optionPosY, 100, 1, 0);
+			choiceArray[prevChoice] = delig;
+			optionPosY += 8;
 		}
-		for (j = 1; j <= der - prem + 1; ++j) {
+		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
 			rectangle &with = coor[j];
 
 			with.x1 = 45 * res;
@@ -350,65 +350,73 @@ bool Ques::show() {
 				choiceArray[j] += ' ';
 			}
 		}
-		coor[j + 1].enabled = false;
+		coor[lastOption - firstOption + 2].enabled = false;
 		if (res == 1)
 			rep = 10;
 		else
 			rep = 6;
-		g_vm->_screenSurface.drawBox(80, 33, 40 + maxLength * rep, (der - prem) * 8 + 16, 15);
+		g_vm->_screenSurface.drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
 		rep = 0;
-		j = 0;
-		memk = 0;
+
+		prevChoice = 0;
 		do {
 			g_vm->setMouseClick(false);
 			tesok = false;
-			moveMouse(func, key);
+			bool flag;
+			moveMouse(flag, key);
 			CHECK_QUIT0;
 
-			k = 1;
-			while (coor[k].enabled && ! dans_rect(coor[k]))
-				++k;
-			if (coor[k].enabled) {
-				if ((memk != 0) && (memk != k)) {
+			currChoice = 1;
+			while (coor[currChoice].enabled && !dans_rect(coor[currChoice]))
+				++currChoice;
+			if (coor[currChoice].enabled) {
+				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					st[0] = ' ';
 //					for (j = 0; j <= maxLength; ++j)
-//						st[j + 1] = choiceArray[memk][j];
-					strncpy(st + 1, choiceArray[memk].c_str(), maxLength);
+//						st[j + 1] = choiceArray[prevChoice][j];
+					strncpy(st + 1, choiceArray[prevChoice].c_str(), maxLength);
 					st[1 + maxLength] = '$';
-					afftex(st, 100, 27 + memk * 8, 100, 1, 0);
+					afftex(st, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
-				if (memk != k) {
+				if (prevChoice != currChoice) {
 					st[0] = ' ';
 //					for (j = 0; j <= maxLength; ++j)
-//						st[j + 1] = choiceArray[k][j];
-					strncpy(st + 1, choiceArray[k].c_str(), maxLength);
+//						st[j + 1] = choiceArray[currChoice][j];
+					strncpy(st + 1, choiceArray[currChoice].c_str(), maxLength);
 					st[1 + maxLength] = '$';
-					afftex(st, 100, 27 + k * 8, 100, 1, 1);
-					memk = k;
+					afftex(st, 100, 27 + (currChoice * 8), 100, 1, 1);
+					prevChoice = currChoice;
 				}
-			} else if (memk != 0) {
+			} else if (prevChoice != 0) {
 					st[0] = ' ';
 //				for (j = 0; j <= maxLength; ++j)
-//					st[j + 1] = choiceArray[memk][j];
-				strncpy(st + 1, choiceArray[memk].c_str(), maxLength);
+//					st[j + 1] = choiceArray[prevChoice][j];
+				strncpy(st + 1, choiceArray[prevChoice].c_str(), maxLength);
 				st[1 + maxLength] = '$';
-				afftex(st, 100, 27 + memk * 8, 100, 1, 0);
-				memk = 0;
+				afftex(st, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				prevChoice = 0;
 			}
-		} while (!((memk != 0) && g_vm->getMouseClick()));
-		if (memk == ok[i])
-			++compte;
+		} while (!((prevChoice != 0) && g_vm->getMouseClick()));
+
+		warning("Expected answer: %d, answer: %d", prevChoice, correctAnswerArr[indx]);
+		if (prevChoice == correctAnswerArr[indx])
+			// Answer is correct
+			++correctCount;
 		else {
-			if (i == 5)
-				++i;
-			if ((i == 7) || (i == 8))
-				i = 10;
+			// Skip questions that may give hints on previous wrong answer
+			if (indx == 5)
+				++indx;
+
+			if ((indx == 7) || (indx == 8))
+				indx = 10;
 		}
-		if (i == 10)
-			q = /*testprot*/ true;
-	} while (!(i == 10));
-	ques_result = (compte == 10) && q;
-	return ques_result;
+		if (indx == 10) {
+			warning("Skipping protection check: testprot()");
+			protectionCheck = true;
+		}
+	} while (!(indx == 10));
+
+	return (correctCount == 10) && protectionCheck;
 }
 
 /*------------------------------------------------------------------------*/
