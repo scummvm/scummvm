@@ -808,7 +808,7 @@ public:
 	const uint8 *getTextInFile1(uint16 index);
 	uint8 findNextColon(const uint8 **string);
 	void allocateBuffers();
-	void loadTextFile(TextFile &file, const char *fileName);
+	void loadTextFile(TextFile &file, const char *suffix);
 	void loadGraphicsFile(GraphicsFile &file, const char *suffix);
 	void loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len);
 	void loadTextSegment(TextFile &file, Common::File &inFile, unsigned int len);

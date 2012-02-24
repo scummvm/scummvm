@@ -728,8 +728,8 @@ void DreamWebEngine::dreamweb() {
 	}
 }
 
-void DreamWebEngine::loadTextFile(TextFile &file, const char *fileName)
-{
+void DreamWebEngine::loadTextFile(TextFile &file, const char *suffix) {
+	Common::String fileName = getDatafilePrefix() + suffix;
 	FileHeader header;
 
 	Common::File f;
@@ -1996,8 +1996,8 @@ void DreamWebEngine::readSetData() {
 	loadGraphicsFile(_icons1, "G00");
 	loadGraphicsFile(_icons2, "G01");
 	loadGraphicsFile(_mainSprites, "S00");
-	loadTextFile(_puzzleText, "DREAMWEB.T80");
-	loadTextFile(_commandText, "DREAMWEB.T84");
+	loadTextFile(_puzzleText, "T80");
+	loadTextFile(_commandText, "T84");
 	useCharset1();
 
 	// FIXME: Why is this commented out?
@@ -2236,12 +2236,11 @@ const uint8 *DreamWebEngine::getTextInFile1(uint16 index) {
 }
 
 void DreamWebEngine::loadTravelText() {
-	loadTextFile(_travelText, "DREAMWEB.T81"); // location descs
+	loadTextFile(_travelText, "T81"); // location descs
 }
 
 void DreamWebEngine::loadTempText(const char *suffix) {
-	Common::String fileName = getDatafilePrefix() + suffix;
-	loadTextFile(_textFile1, fileName.c_str());
+	loadTextFile(_textFile1, suffix);
 }
 
 void DreamWebEngine::drawFloor() {
