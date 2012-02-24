@@ -108,7 +108,8 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_RENDERVGA		"\034"
 #define GUIO_RENDERAMIGA	"\035"
 #define GUIO_RENDERFMTOWNS	"\036"
-#define GUIO_RENDERPC98		"\037"
+#define GUIO_RENDERPC9821	"\037"
+#define GUIO_RENDERPC9801	"\040"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
@@ -316,7 +317,8 @@ enum RenderMode {
 	kRenderHercA = 5,
 	kRenderAmiga = 6,
 	kRenderFMTowns = 7,
-	kRenderPC98 = 8
+	kRenderPC9821 = 8,
+	kRenderPC9801 = 9
 };
 
 struct RenderModeDescription {

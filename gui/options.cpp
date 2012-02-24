@@ -1050,7 +1050,8 @@ Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
 		{ Common::kRenderVGA,		GUIO_RENDERVGA },
 		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
 		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
-		{ Common::kRenderPC98,		GUIO_RENDERPC98 }
+		{ Common::kRenderPC9821,	GUIO_RENDERPC9821 },
+		{ Common::kRenderPC9801,	GUIO_RENDERPC9801 }
 	};
 	Common::String res;
 

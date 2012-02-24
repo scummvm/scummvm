@@ -289,7 +289,8 @@ const RenderModeDescription g_renderModes[] = {
 	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
 	{ "fmtowns", "FM-Towns", kRenderFMTowns },
-	{ "pc98", "PC-98", kRenderPC98 },
+	{ "pc9821", "PC-9821 (256 Colors)", kRenderPC9821 },
+	{ "pc9801", "PC-9801 (16 Colors)", kRenderPC9801 },
 	{0, 0, kRenderDefault}
 };
 
@@ -361,7 +362,8 @@ const struct GameOpt {
 	{ GUIO_RENDERVGA,		"vga" },
 	{ GUIO_RENDERAMIGA,		"amiga" },
 	{ GUIO_RENDERFMTOWNS,	"fmtowns" },
-	{ GUIO_RENDERPC98,		"pc98" },
+	{ GUIO_RENDERPC9821,	"pc9821" },
+	{ GUIO_RENDERPC9801,	"pc9801" },
 
 	{ GUIO_NONE, 0 }
 };
