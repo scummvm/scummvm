@@ -32,7 +32,7 @@ public:
 
 	virtual void initBackend();
 #ifdef ENABLE_KEYMAPPER
-	virtual Common::HardwareKeySet *getHardwareKeySet();
+	virtual Common::HardwareInputSet *getHardwareInputSet();
 #endif
 };
 
