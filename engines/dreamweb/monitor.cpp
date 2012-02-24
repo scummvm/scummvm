@@ -54,11 +54,11 @@ void DreamWebEngine::useMon() {
 	showIcon();
 	drawFloor();
 	getRidOfAll();
-	loadGraphicsFile(_monitorGraphics, "DREAMWEB.G03"); // mon. graphic name
+	loadGraphicsFile(_monitorGraphics, "G03"); // mon. graphic name
 	loadPersonal();
 	loadNews();
 	loadCart();
-	loadGraphicsFile(_monitorCharset, "DREAMWEB.C01"); // character set 2
+	loadGraphicsFile(_monitorCharset, "C01"); // character set 2
 	printOuterMon();
 	initialMonCols();
 	printLogo();

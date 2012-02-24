@@ -41,7 +41,7 @@ void DreamWebEngine::monkSpeaking() {
 	_roomsSample = 35;
 	loadRoomsSample();
 	GraphicsFile graphics;
-	loadGraphicsFile(graphics, "DREAMWEB.G15");
+	loadGraphicsFile(graphics, "G15");
 	clearWork();
 	showFrame(graphics, 160, 72, 0, 128);	// show monk
 	workToScreen();

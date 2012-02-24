@@ -834,7 +834,8 @@ void DreamWebEngine::switchRyanOff() {
 	_vars._ryanOn = 1;
 }
 
-void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *fileName) {
+void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *suffix) {
+	Common::String fileName = getDatafilePrefix() + suffix;
 	FileHeader header;
 
 	Common::File f;
@@ -1991,10 +1992,10 @@ void DreamWebEngine::loadRoom() {
 }
 
 void DreamWebEngine::readSetData() {
-	loadGraphicsFile(_charset1, "DREAMWEB.C00");
-	loadGraphicsFile(_icons1, "DREAMWEB.G00");
-	loadGraphicsFile(_icons2, "DREAMWEB.G01");
-	loadGraphicsFile(_mainSprites, "DREAMWEB.S00");
+	loadGraphicsFile(_charset1, "C00");
+	loadGraphicsFile(_icons1, "G00");
+	loadGraphicsFile(_icons2, "G01");
+	loadGraphicsFile(_mainSprites, "S00");
 	loadTextFile(_puzzleText, "DREAMWEB.T80");
 	loadTextFile(_commandText, "DREAMWEB.T84");
 	useCharset1();
@@ -2781,7 +2782,7 @@ void DreamWebEngine::showGun() {
 	loadRoomsSample();
 	_volume = 0;
 	GraphicsFile graphics;
-	loadGraphicsFile(graphics, "DREAMWEB.G13");
+	loadGraphicsFile(graphics, "G13");
 	createPanel2();
 	showFrame(graphics, 100, 4, 0, 0);
 	showFrame(graphics, 158, 106, 1, 0);
