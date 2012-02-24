@@ -848,7 +848,6 @@ const Feature s_features[] = {
 
 	// Feature flags
 	{        "bink",        "USE_BINK",         "", true, "Bink video support" },
-	{       "smush",       "USE_SMUSH",         "", true, "Smush video support" },
 	{     "scalers",     "USE_SCALERS",         "", true, "Scalers" },
 	{   "hqscalers",  "USE_HQ_SCALERS",         "", true, "HQ scalers" },
 	{       "16bit",   "USE_RGB_COLOR",         "", true, "16bit color support" },

@@ -205,11 +205,11 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	state->endSection();
 }
 
-#if !defined(USE_MPEG2) || !defined(USE_SMUSH) || !defined(USE_BINK)
+#if !defined(USE_MPEG2) || !defined(USE_BINK)
 #define NEED_NULLPLAYER
 #endif
 
-// Fallback for when USE_MPEG2 / USE_BINK / USE_SMUSH isnt defined
+// Fallback for when USE_MPEG2 / USE_BINK isnt defined
 
 #ifdef NEED_NULLPLAYER
 class NullPlayer : public MoviePlayer {
@@ -237,12 +237,6 @@ private:
 #ifndef USE_MPEG2
 MoviePlayer *CreateMpegPlayer() {
 	return new NullPlayer("MPEG2");
-}
-#endif
-
-#ifndef USE_SMUSH
-MoviePlayer *CreateSmushPlayer(bool demo) {
-	return new NullPlayer("SMUSH");
 }
 #endif
 

@@ -31,8 +31,6 @@
 
 #include "graphics/surface.h"
 
-#ifdef USE_SMUSH
-
 namespace Audio {
 	class QueuingAudioStream;
 }
@@ -116,7 +114,5 @@ protected:
 };
 
 } // end of namespace Grim
-
-#endif // USE_SMUSH
 
 #endif

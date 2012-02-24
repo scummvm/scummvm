@@ -84,7 +84,7 @@ add_engine myst3 "Myst 3" yes
 #
 # Default settings
 #
-#ResidualVM defaults: mpeg2=no, faad=no, opengles=no
+#ResidualVM defaults: mpeg2=auto, faad=no, opengles=no
 #mt32emu=no, translation=no
 #
 # Default lib behaviour yes/no/auto
@@ -99,7 +99,7 @@ _timidity=auto
 _zlib=auto
 _sparkle=auto
 _png=no
-_mpeg2=yes
+_mpeg2=auto
 _theoradec=auto
 _faad=no
 _fluidsynth=auto
@@ -122,7 +122,6 @@ _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
-_smush=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -796,7 +795,7 @@ Optional Libraries:
   --disable-zlib           disable zlib (compression) support [autodetect]
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
-  --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
+  --disable-mpeg2          enable mpeg2 codec for cutscenes [autodetect]
 
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
@@ -869,7 +868,7 @@ for ac_option in $@; do
 	--disable-sparkle)        _sparkle=no     ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
-	--enable-mpeg2)           _mpeg2=yes      ;;
+	--disable-mpeg2)          _mpeg2=no       ;;
 	--disable-png)            _png=no         ;;
 	--enable-png)             _png=yes        ;;
 	--disable-theoradec)      _theoradec=no   ;;
@@ -3263,19 +3262,6 @@ define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
 
 #
-# Check whether to activate SMUSH & Monkey4, based on zlib
-#
-if test ! "$_smush" = no && test ! "$_zlib" = yes; then
-	echo "...disabling SMUSH. zlib is required"
-	_smush=no
-fi
-
-if test `get_engine_build monkey4` = yes && test ! "$_zlib" = yes ; then
-	echo "...disabling Escape from Monkey Island. zlib is required"
-	engine_disable monkey4
-fi
-
-#
 # Check for Sparkle if updates support is enabled
 #
 echocheck "Sparkle"
@@ -3579,11 +3565,6 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
-if test `get_engine_build myst3` = yes && test ! "$_opengl" = yes ; then
-	echo "...disabling Myst 3 engine. OpenGL is required"
-	engine_disable myst3
-fi
-
 #
 # Check for nasm
 #
@@ -3720,11 +3701,29 @@ else
 fi
 
 #
-# Check whether to build SMUSH video support
+# Check whether to activate engines
 #
-echo_n "Building SMUSH video support... "
-define_in_config_if_yes $_smush 'USE_SMUSH'
-echo "$_smush"
+if test `get_engine_build grim` = yes && test ! "$_zlib" = yes ; then
+	echo "...disabling Grim. zlib is required"
+	engine_disable grim
+	engine_disable monkey4
+fi
+
+if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
+	echo "...disabling Escape from Monkey Island. mpeg2dec is required"
+	engine_disable monkey4
+fi
+
+if test `get_engine_build monkey4` = yes && test ! "$_bink" = yes ; then
+	echo "...disabling Escape from Monkey Island. bink is required"
+	engine_disable monkey4
+fi
+
+if test `get_engine_build myst3` = yes && test ! "$_opengl" = yes ; then
+	echo "...disabling Myst 3 engine. OpenGL is required"
+	engine_disable myst3
+fi
+
 
 #
 # Figure out installation directories

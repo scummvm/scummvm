@@ -25,8 +25,6 @@
 
 #include "engines/grim/movie/movie.h"
 
-#ifdef USE_SMUSH
-
 namespace Grim {
 
 class SmushDecoder;
@@ -46,7 +44,5 @@ private:
 };
 
 } // end of namespace Grim
-
-#endif // USE_SMUSH
 
 #endif

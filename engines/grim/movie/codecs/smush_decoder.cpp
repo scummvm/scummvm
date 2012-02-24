@@ -37,8 +37,6 @@
 #include "engines/grim/movie/codecs/blocky16.h"
 #include "engines/grim/movie/codecs/smush_decoder.h"
 
-#ifdef USE_SMUSH
-
 namespace Grim {
 
 // Prototypes to avoid depending on grim.h
@@ -570,5 +568,3 @@ uint32 SmushDecoder::getTimeToNextFrame() const {
 }
 
 } // end of namespace Grim
-
-#endif // USE_SMUSH

@@ -27,8 +27,6 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
-#ifdef USE_SMUSH
-
 namespace Grim {
 
 MoviePlayer *CreateSmushPlayer(bool demo) {
@@ -91,5 +89,3 @@ void SmushPlayer::restoreState(SaveGame *state) {
 }
 
 } // end of namespace Grim
-
-#endif // USE_SMUSH
