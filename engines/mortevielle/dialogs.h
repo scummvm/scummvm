@@ -32,6 +32,8 @@
 
 namespace Mortevielle {
 
+static const int NUM_LINES = 7;
+
 class Alert {
 private:
 	static void decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr);

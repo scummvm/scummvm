@@ -101,7 +101,7 @@ public:
 
 	void playNote(int frequency, int32 length);
 
-	void demus(const byte *PSrc, byte *PDest, int NbreSeg);
+	void decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg);
 	void litph(tablint &t, int typ, int tempo);
 	void musyc(tablint &tb, int nbseg, int att);  
 };

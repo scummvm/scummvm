@@ -105,7 +105,8 @@ void chartex() {
 
 	/* debug('o3 chartex'); */
 	if (!f.open("TXX.INP"))
-		error("Missing file - TXX.INP");
+		if (!f.open("TXX.MOR"))
+			error("Missing file - TXX.INP or .MOR");
 
 	assert(f.size() <= (maxti * 2));
 	for (int i = 0; i < f.size() / 2; ++i)
@@ -114,7 +115,8 @@ void chartex() {
 	f.close();
 
 	if (!f.open("TXX.NTP"))
-		error("Missing file - TXX.NTP");
+		if (!f.open("TXX.IND"))
+			error("Missing file - TXX.NTP or .IND");
 	
 	assert(f.size() <= (maxtd * 3));
 	int i;

@@ -38,8 +38,6 @@
 
 namespace Mortevielle {
 
-static const int nligne = 7;
-
 /**
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
@@ -57,7 +55,6 @@ int Alert::show(const Common::String &msg, int n) {
 	// Make a copy of the current screen surface for later restore
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
-	/*debug('** do_alert **');*/
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 	int do_alert_result;
 	hideMouse();
@@ -66,7 +63,7 @@ int Alert::show(const Common::String &msg, int n) {
 
 	g_vm->setMouseClick(false);
 	decodeAlertDetails(msg, caseNumb, lignNumb, nbcol, chaine, cas);
-	sauvecr(50, (nligne + 1) << 4);
+	sauvecr(50, (NUM_LINES + 1) << 4);
 
 	i = 0;
 	if (chaine == "") {
@@ -176,7 +173,7 @@ int Alert::show(const Common::String &msg, int n) {
 		tmp4 += " ";
 		g_vm->_screenSurface.writeg(tmp4, 1);
 	}
-	charecr(50, (nligne + 1) << 4);
+	charecr(50, (NUM_LINES + 1) << 4);
 	showMouse();
 
 	/* Restore the background area */
@@ -413,6 +410,7 @@ bool Ques::show() {
 		if (indx == 10) {
 			warning("Skipping protection check: testprot()");
 			protectionCheck = true;
+			// tesok is set to true in testprot()
 			tesok = true;
 		}
 	} while (!(indx == 10));
