@@ -304,11 +304,49 @@ const char *iPhone_getDocumentsDir() {
 
 }
 
+- (void)updateMouseCursorScaling {
+	CGRect *rect;
+	int maxWidth, maxHeight;
+
+	if (!_videoContext.overlayVisible) {
+		rect = &_gameScreenRect;
+		maxWidth = _videoContext.screenWidth;
+		maxHeight = _videoContext.screenHeight;
+	} else {
+		rect = &_overlayRect;
+		maxWidth = _videoContext.overlayWidth;
+		maxHeight = _videoContext.overlayHeight;
+	}
+
+	if (!maxWidth || !maxHeight) {
+		printf("WARNING: updateMouseCursorScaling called when screen was not ready (%d)!\n", _videoContext.overlayVisible);
+		return;
+	}
+
+	_mouseScaleX = CGRectGetWidth(*rect) / (GLfloat)maxWidth;
+	_mouseScaleY = CGRectGetHeight(*rect) / (GLfloat)maxHeight;
+
+	_mouseWidth = (GLint)(_videoContext.mouseWidth * _mouseScaleX);
+	_mouseHeight = (GLint)(_videoContext.mouseHeight * _mouseScaleY);
+
+	_mouseHotspotX = (GLint)(_videoContext.mouseHotspotX * _mouseScaleX);
+	_mouseHotspotY = (GLint)(_videoContext.mouseHotspotY * _mouseScaleY);
+
+	// We subtract the screen offset to the hotspot here to simplify the
+	// screen offset handling in the mouse code. Note the subtraction here
+	// makes sure that the offset actually gets added to the mouse position,
+	// since the hotspot offset is substracted from the position.
+	_mouseHotspotX -= (GLint)CGRectGetMinX(*rect);
+	_mouseHotspotY -= (GLint)CGRectGetMinY(*rect);
+}
+
 - (void)updateMouseCursor {
 	if (_mouseCursorTexture == 0) {
 		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
 		[self setFilterModeForTexture:_mouseCursorTexture];
 	}
+
+	[self updateMouseCursorScaling];
 
 	_mouseTexCoords[2] = _mouseTexCoords[6] = _videoContext.mouseWidth / (GLfloat)_videoContext.mouseTexture.w;
 	_mouseTexCoords[5] = _mouseTexCoords[7] = _videoContext.mouseHeight / (GLfloat)_videoContext.mouseTexture.h;
@@ -340,53 +378,21 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)updateMouseSurface {
-	int width = _videoContext.mouseWidth;
-	int height = _videoContext.mouseHeight;
-
 	int mouseX = _videoContext.mouseX;
 	int mouseY = _videoContext.mouseY;
 
-	int hotspotX = _videoContext.mouseHotspotX;
-	int hotspotY = _videoContext.mouseHotspotY;
-
-	CGRect *rect;
-	int maxWidth, maxHeight;
-
-	if (!_videoContext.overlayVisible) {
-		rect = &_gameScreenRect;
-		maxWidth = _videoContext.screenWidth;
-		maxHeight = _videoContext.screenHeight;
-	} else {
-		rect = &_overlayRect;
-		maxWidth = _videoContext.overlayWidth;
-		maxHeight = _videoContext.overlayHeight;
-	}
-
-	const GLfloat scaleX = CGRectGetWidth(*rect) / (GLfloat)maxWidth;
-	const GLfloat scaleY = CGRectGetHeight(*rect) / (GLfloat)maxHeight;
-
-	mouseX = (int)(mouseX * scaleX);
-	mouseY = (int)(mouseY * scaleY);
-	hotspotX = (int)(hotspotX * scaleX);
-	hotspotY = (int)(hotspotY * scaleY);
-	width = (int)(width * scaleX);
-	height = (int)(height * scaleY);
-
-	mouseX -= hotspotX;
-	mouseY -= hotspotY;
-
-	mouseX += (int)CGRectGetMinX(*rect);
-	mouseY += (int)CGRectGetMinY(*rect);
+	mouseX = (int)(mouseX * _mouseScaleX) - _mouseHotspotX;
+	mouseY = (int)(mouseY * _mouseScaleY) - _mouseHotspotY;
 
 	GLfloat vertices[] = {
 		// Top left
-		mouseX        , mouseY,
+		mouseX              , mouseY,
 		// Top right
-		mouseX + width, mouseY,
+		mouseX + _mouseWidth, mouseY,
 		// Bottom left
-		mouseX        , mouseY + height,
+		mouseX              , mouseY + _mouseHeight,
 		// Bottom right
-		mouseX + width, mouseY + height
+		mouseX + _mouseWidth, mouseY + _mouseHeight
 	};
 
 	//printf("Cursor: width %u height %u\n", _videoContext.mouseWidth, _videoContext.mouseHeight);
@@ -531,6 +537,7 @@ const char *iPhone_getDocumentsDir() {
 	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
 
 	[self setViewTransformation];
+	[self updateMouseCursorScaling];
 }
 
 - (void)setViewTransformation {

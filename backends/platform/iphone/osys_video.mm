@@ -246,6 +246,7 @@ void OSystem_IPHONE::showOverlay() {
 	_videoContext->overlayVisible = true;
 	dirtyFullOverlayScreen();
 	updateScreen();
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
 
@@ -254,6 +255,7 @@ void OSystem_IPHONE::hideOverlay() {
 	_videoContext->overlayVisible = false;
 	_dirtyOverlayRects.clear();
 	dirtyFullScreen();
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
 

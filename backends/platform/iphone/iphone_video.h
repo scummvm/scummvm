@@ -61,6 +61,9 @@
 	CGRect _overlayRect;
 
 	GLfloat _mouseTexCoords[4 * 2];
+	GLint _mouseHotspotX, _mouseHotspotY;
+	GLint _mouseWidth, _mouseHeight;
+	GLfloat _mouseScaleX, _mouseScaleY;
 
 	int _scaledShakeOffsetY;
 }
@@ -82,6 +85,7 @@
 - (void)updateMouseSurface;
 - (void)clearColorBuffer;
 
+- (void)updateMouseCursorScaling;
 - (void)updateMouseCursor;
 
 - (id)getEvent;
