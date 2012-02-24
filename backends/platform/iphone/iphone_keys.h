@@ -176,6 +176,18 @@ static const ModifierTableEntry iphoneModifiers[] = {
 	{ 0, 0, 0, false }
 };
 
+enum IphoneGestureCode {
+	kIphoneGestureOneFingerHoldSecondFingerSwipeDown = 1,
+	// ...
+	kIphoneGestureInvalid = 0
+};
+
+static const GestureTableEntry iphoneGestures[] = {
+	{"1HOLD2SWIPEDOWN", kIphoneGestureOneFingerHoldSecondFingerSwipeDown, "H-SW D"},
+	// ...
+	{0, kIphoneGestureInvalid, 0}
+};
+
 } //namespace common
 
 #endif // #ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_KEYS_H

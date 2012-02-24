@@ -112,6 +112,7 @@ void OSystem_IPHONE::initBackend() {
 
 #ifdef ENABLE_KEYMAPPER
 	assert(_keymapperDefaultBindings);
+	_keymapperDefaultBindings->setDefaultBinding("global", "MEN", "1HOLD2SWIPEDOWN");
 #endif
 	EventsBaseBackend::initBackend();
 }
@@ -269,6 +270,7 @@ Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 
 Common::HardwareInputSet *OSystem_IPHONE::getHardwareInputSet() {
 	Common::HardwareInputSet *inputSet = new Common::HardwareInputSet(Common::iphoneKeys, Common::iphoneModifiers);
+	inputSet->addHardwareInputs(Common::iphoneGestures);
 	return inputSet;
 }
 #endif
