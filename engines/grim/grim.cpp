@@ -521,7 +521,9 @@ void GrimEngine::updateDisplayScene() {
 		foreach (Actor *a, Actor::getPool()) {
 			if (a->isInSet(_currSet->getName()) && a->isVisible())
 				a->draw();
-			a->undraw(a->isInSet(_currSet->getName()) && a->isVisible());
+
+			if (!a->isTalking())
+				a->shutUp();
 		}
 		flagRefreshShadowMask(false);
 

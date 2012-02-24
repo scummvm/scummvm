@@ -427,7 +427,6 @@ public:
 	}
 	void update(uint frameTime);
 	void draw();
-	void undraw(bool);
 
 	bool isLookAtVectorZero() {
 		return _lookAtVector.isZero();
@@ -487,6 +486,7 @@ private:
 	float _timeScale;
 	bool _lookingMode;
 	Common::String _talkSoundName;
+	bool _talking;
 	ObjectPtr<LipSync> _lipSync;
 	Common::List<Costume *> _costumeStack;
 

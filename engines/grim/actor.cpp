@@ -74,6 +74,7 @@ Actor::Actor(const Common::String &actorName) :
 	_collisionMode = CollisionOff;
 	_collisionScale = 1.f;
 	_puckOrient = false;
+	_talking = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -251,6 +252,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_puckOrient         = savedState->readBool();
 
 	_talkSoundName 		= savedState->readString();
+	_talking = _talkSoundName != "";
 
 	_collisionMode      = (CollisionMode)savedState->readLEUint32();
 	_collisionScale     = savedState->readFloat();
@@ -835,6 +837,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	}
 
 	g_grim->setTalkingActor(this);
+	_talking = true;
 
 	if (_sayLineText) {
 		delete TextObject::getPool().getObject(_sayLineText);
@@ -881,6 +884,10 @@ void Actor::lineCleanup() {
 }
 
 bool Actor::isTalking() {
+	if (!_talking) {
+		return false;
+	}
+
 	// If there's no sound file then we're obviously not talking
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	TextObject *textObject = NULL;
@@ -919,6 +926,8 @@ void Actor::shutUp() {
 	if (g_grim->getTalkingActor() == this) {
 		g_grim->setTalkingActor(NULL);
 	}
+
+	_talking = false;
 }
 
 void Actor::pushCostume(const char *n) {
@@ -1239,12 +1248,6 @@ void Actor::draw() {
 		}
 		_mustPlaceText = false;
 	}
-}
-
-// "Undraw objects" (handle objects for actors that may not be on screen)
-void Actor::undraw(bool /*visible*/) {
-	if (!isTalking())
-		shutUp();
 }
 
 void Actor::setShadowPlane(const char *n) {
