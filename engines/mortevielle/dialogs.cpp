@@ -413,6 +413,7 @@ bool Ques::show() {
 		if (indx == 10) {
 			warning("Skipping protection check: testprot()");
 			protectionCheck = true;
+			tesok = true;
 		}
 	} while (!(indx == 10));
 
