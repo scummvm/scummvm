@@ -39,12 +39,6 @@
 
 namespace Mortevielle {
 
-const int men[12] = { OPCODE_NONE,
-		OPCODE_HIDE_SELF, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
-		OPCODE_ENTER,     OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
-		OPCODE_PLACE,     OPCODE_OPEN,   OPCODE_LEAVE
-};
-
 void tinke() {
 	Common::String d1 = g_vm->getString(S_SHOULD_HAVE_NOTICED);
 	Common::String d2 = g_vm->getString(S_NUMBER_OF_HINTS);
@@ -73,7 +67,7 @@ void tinke() {
 		_minute = 0;
 		drawClock();
 		cf = 0;
-		for (cx = 1; cx <= 10; cx ++) {
+		for (cx = 1; cx <= 10; ++cx) {
 			if (s.pourc[cx] == '*')
 				++cf;
 		}
@@ -263,7 +257,7 @@ void tmlieu(int mli) {
 		++i;
 	}
 	nomp = "*                   ";
-	for (cx = 7; cx >= i; cx--)
+	for (cx = 7; cx >= i; --cx)
 		g_vm->_menu.menut(g_vm->_menu._depl[cx], nomp);
 }
 
@@ -289,7 +283,7 @@ void mfouen() {
 	int cx;
 
 	tmlieu(s.mlieu);
-	for (cx = 1; cx <= 11; cx ++)
+	for (cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.enableMenuItem(men[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_PROBE));
@@ -328,7 +322,7 @@ void tsort() {
 			s.conf += (s.conf / 10);
 	}
 
-	for (int cx = 1; cx <= 7; cx ++)
+	for (int cx = 1; cx <= 7; ++cx)
 		touv[cx] = chr(0);
 	ment = 0;
 	iouv = 0;
@@ -370,7 +364,7 @@ void cherjer(int ob, bool &d) {
 	int cx;
 
 	d = false;
-	for (cx = 1; cx <= 6; cx++)
+	for (cx = 1; cx <= 6; ++cx)
 		d = (d || (ord(s.sjer[cx]) == ob));
 
 	if (s.derobj == ob)
@@ -434,10 +428,10 @@ void finfouil() {
 }
 
 void mfoudi() {
-	for (int cx = 1; cx <= 7; cx++) 
+	for (int cx = 1; cx <= 7; ++cx) 
 		g_vm->_menu.disableMenuItem(g_vm->_menu._depl[cx]);
 
-	for (int cx = 1; cx <= 11; cx++)
+	for (int cx = 1; cx <= 11; ++cx)
 		g_vm->_menu.disableMenuItem(men[cx]);
 
 	g_vm->_menu.menut(OPCODE_SOUND, g_vm->getString(S_SUITE));

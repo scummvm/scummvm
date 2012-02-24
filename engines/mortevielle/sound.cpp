@@ -87,7 +87,7 @@ int PCSpeaker::readBuffer(int16 *buffer, const int numSamples) {
 
 	int i;
 
-	for (i = 0; (_remainingSamples || !_pendingNotes.empty())  && (i < numSamples); i++) {
+	for (i = 0; (_remainingSamples || !_pendingNotes.empty())  && (i < numSamples); ++i) {
 		if (!_remainingSamples)
 			// Used up the current note, so queue the next one
 			dequeueNote();
@@ -148,7 +148,7 @@ SoundManager::~SoundManager() {
 /**
  * Decode music data
  */
-void SoundManager::demus(const byte *PSrc, byte *PDest, int NbreSeg) {
+void SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg) {
 	int seed = 128;
 	int v;
 

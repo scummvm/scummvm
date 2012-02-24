@@ -28,7 +28,15 @@
 #ifndef MORTEVIELLE_MOR2_H
 #define MORTEVIELLE_MOR2_H
 
+#include "mortevielle/var_mor.h"
+
 namespace Mortevielle {
+
+static const int men[12] = { OPCODE_NONE,
+		OPCODE_HIDE_SELF, OPCODE_ATTACH, OPCODE_FORCE, OPCODE_SLEEP, 
+		OPCODE_ENTER,     OPCODE_CLOSE,  OPCODE_KNOCK, OPCODE_EAT,
+		OPCODE_PLACE,     OPCODE_OPEN,   OPCODE_LEAVE
+};
 
 extern void tinke();
 extern void fenat(char ans);

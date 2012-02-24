@@ -147,7 +147,7 @@ void text1(int x, int y, int nb, int m) {
 }
 
 void initouv() {
-	for (int cx = 1; cx <= 7; cx++)
+	for (int cx = 1; cx <= 7; ++cx)
 		touv[cx] = chr(0);
 }
 
@@ -444,7 +444,7 @@ void affper(int per) {
 	int cx;
 
 	/* debug('affper'); */
-	for (cx = 1; cx <= 8; cx ++)
+	for (cx = 1; cx <= 8; ++cx)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cx]);
 	clsf10();
 	if ((per & 128) == 128) {
@@ -595,7 +595,7 @@ void cpl6(int &p) {
  * Shows the you are alone message in the status area on the right hand side of the screen
  */
 void person() {
-	for (int cf = 1; cf <= 8; cf ++)
+	for (int cf = 1; cf <= 8; ++cf)
 		g_vm->_menu.disableMenuItem(g_vm->_menu._disc[cf]);
 
 	Common::String sYou = g_vm->getString(S_YOU);
@@ -1058,30 +1058,30 @@ void inzon() {
 	s.conf  = hazard(4, 10);
 	s.mlieu = 21;
 
-	for (cx = 2; cx <= 6; cx ++)
+	for (cx = 2; cx <= 6; ++cx)
 		s.sjer[cx] = chr(0);
 
 	s.sjer[1] = chr(113);
 	s.heure = chr(20);
 
-	for (cx = 1; cx <= 10; cx ++)
+	for (cx = 1; cx <= 10; ++cx)
 		s.pourc[cx] = ' ';
 
-	for (cx = 1; cx <= 6; cx ++)
+	for (cx = 1; cx <= 6; ++cx)
 		s.teauto[cx] = '*';
 
-	for (cx = 7; cx <= 9; cx ++)
+	for (cx = 7; cx <= 9; ++cx)
 		s.teauto[cx] = ' ';
 
-	for (cx = 10; cx <= 28; cx ++)
+	for (cx = 10; cx <= 28; ++cx)
 		s.teauto[cx] = '*';
 
-	for (cx = 29; cx <= 42; cx ++)
+	for (cx = 29; cx <= 42; ++cx)
 		s.teauto[cx] = ' ';
 
 	s.teauto[33] = '*';
 
-	for (cx = 1; cx <= 8; cx ++)
+	for (cx = 1; cx <= 8; ++cx)
 		nbrep[cx] = 0;
 
 	init_nbrepm();
@@ -1311,7 +1311,7 @@ void cavegre() {
 	parole(2, haz, 1);
 
 	// Useless?
-	for (haz = 0; haz <= 3000; haz++);
+	for (haz = 0; haz <= 3000; ++haz);
 	clsf3();
 	person();
 }
@@ -1411,13 +1411,13 @@ void dessin(int ad) {
 			dessine(ades, 60, 33);
 			g_vm->_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
 		} else if (caff > 69) {
-			dessine(ades, 112, 48);           /* tˆtes */                    //Translation: Heads
+			dessine(ades, 112, 48);           // Heads
 			g_vm->_screenSurface.drawBox(222, 47, 155, 91, 15);
 		} else {
 			dessine(ades, 0, 12);
 			ecrf1();
 			if ((caff < 30) || (caff > 32)) {
-				for (int cx = 1; cx <= 6; cx ++) {
+				for (int cx = 1; cx <= 6; ++cx) {
 					if (ord(touv[cx]) != 0)
 						aniof(1, ord(touv[cx]));
 				}

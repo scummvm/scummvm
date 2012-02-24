@@ -490,7 +490,7 @@ void MortevielleEngine::mainGame() {
 	if (rech_cfiec)
 		charge_cfiec();
 
-	for (crep = 1; crep <= c_zzz; crep ++) 
+	for (crep = 1; crep <= c_zzz; ++crep) 
 		zzuul(&adcfiec[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	charge_bruit5();

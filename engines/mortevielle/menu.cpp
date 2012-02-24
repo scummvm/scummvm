@@ -471,7 +471,9 @@ void Menu::initMenu() {
 	Common::File f;
 
 	if (!f.open("menufr.mor"))
-		error("Missing file - menufr.mor");
+		if (!f.open("menual.mor"))
+			if (!f.open("menu.mor"))
+				error("Missing file - menufr.mor or menual.mor or menu.mor");
 
 	f.read(lettres, 7 * 24);
 	f.close();
