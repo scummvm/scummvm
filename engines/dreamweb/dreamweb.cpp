@@ -62,6 +62,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel0 = 0;
 	_channel1 = 0;
 
+	_datafilePrefix = Common::String("DREAMWEB.");
+
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
 

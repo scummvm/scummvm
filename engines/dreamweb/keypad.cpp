@@ -108,7 +108,7 @@ bool DreamWebEngine::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 }
 
 void DreamWebEngine::loadKeypad() {
-	loadGraphicsFile(_keypadGraphics, "DREAMWEB.G02");
+	loadGraphicsFile(_keypadGraphics, "G02");
 }
 
 void DreamWebEngine::quitKey() {
@@ -293,8 +293,8 @@ void DreamWebEngine::showMenu() {
 }
 
 void DreamWebEngine::loadMenu() {
-	loadGraphicsFile(_menuGraphics, "DREAMWEB.S02"); // sprite name 3
-	loadGraphicsFile(_menuGraphics2, "DREAMWEB.G07"); // mon. graphics 2
+	loadGraphicsFile(_menuGraphics, "S02"); // sprite name 3
+	loadGraphicsFile(_menuGraphics2, "G07"); // mon. graphics 2
 }
 
 void DreamWebEngine::viewFolder() {
@@ -394,11 +394,11 @@ void DreamWebEngine::checkFolderCoords() {
 }
 
 void DreamWebEngine::loadFolder() {
-	loadGraphicsFile(_folderGraphics, "DREAMWEB.G09"); // folder graphics 1
-	loadGraphicsFile(_folderGraphics2, "DREAMWEB.G10"); // folder graphics 2
-	loadGraphicsFile(_folderGraphics3, "DREAMWEB.G11"); // folder graphics 3
-	loadGraphicsFile(_folderCharset, "DREAMWEB.C02"); // character set 3
-	loadTempText("DREAMWEB.T50"); // folder text
+	loadGraphicsFile(_folderGraphics, "G09"); // folder graphics 1
+	loadGraphicsFile(_folderGraphics2, "G10"); // folder graphics 2
+	loadGraphicsFile(_folderGraphics3, "G11"); // folder graphics 3
+	loadGraphicsFile(_folderCharset, "C02"); // character set 3
+	loadTempText("T50"); // folder text
 }
 
 void DreamWebEngine::showFolder() {
@@ -491,7 +491,7 @@ void DreamWebEngine::showRightPage() {
 void DreamWebEngine::enterSymbol() {
 	_manIsOffScreen = 1;
 	getRidOfReels();
-	loadGraphicsFile(_symbolGraphics, "DREAMWEB.G12"); // symbol graphics
+	loadGraphicsFile(_symbolGraphics, "G12"); // symbol graphics
 	_symbolTopX = 24;
 	_symbolTopDir = 0;
 	_symbolBotX = 24;
@@ -716,9 +716,9 @@ void DreamWebEngine::updateSymbolBot() {
 
 void DreamWebEngine::useDiary() {
 	getRidOfReels();
-	loadGraphicsFile(_diaryGraphics, "DREAMWEB.G14");
-	loadTempText("DREAMWEB.T51");
-	loadGraphicsFile(_diaryCharset, "DREAMWEB.C02");
+	loadGraphicsFile(_diaryGraphics, "G14");
+	loadTempText("T51");
+	loadGraphicsFile(_diaryCharset, "C02");
 	createPanel();
 	showIcon();
 	showDiary();

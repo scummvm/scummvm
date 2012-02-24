@@ -708,7 +708,7 @@ void DreamWebEngine::showDecisions() {
 }
 
 void DreamWebEngine::loadSaveBox() {
-	loadGraphicsFile(_saveGraphics, "DREAMWEB.G08");
+	loadGraphicsFile(_saveGraphics, "G08");
 }
 
 // show savegame names (original interface), and set kCursorpos
