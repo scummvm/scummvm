@@ -32,7 +32,7 @@
 	//DUNNO Keyon in 4op, switch to 2op without keyoff.
 */
 
-// Last synch with DOSBox SVN trunk r3556
+// Last synch with DOSBox SVN trunk r3752
 
 #include "dbopl.h"
 

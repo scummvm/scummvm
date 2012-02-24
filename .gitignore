@@ -57,6 +57,14 @@ project.xcworkspace
 /dists/msvc*/*.dat
 /dists/msvc*/*.dll
 
+/doc/*.aux
+/doc/*.dvi
+/doc/*.log
+/doc/*.out
+/doc/*.pdf
+/doc/*.ps
+/doc/*.toc
+
 /plugins
 
 /test/runner

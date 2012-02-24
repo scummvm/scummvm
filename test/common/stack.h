@@ -18,18 +18,20 @@ public:
 	}
 
 	void test_size() {
-		Common::Stack<int> stack;
-		TS_ASSERT_EQUALS(stack.size(), 0);
+		typedef Common::Stack<int> Stack;
+
+		Stack stack;
+		TS_ASSERT_EQUALS(stack.size(), (Stack::size_type)0);
 
 		stack.push(5);
-		TS_ASSERT_EQUALS(stack.size(), 1);
+		TS_ASSERT_EQUALS(stack.size(), (Stack::size_type)1);
 
 		stack.push(9);
 		stack.push(0);
-		TS_ASSERT_EQUALS(stack.size(), 3);
+		TS_ASSERT_EQUALS(stack.size(), (Stack::size_type)3);
 
 		stack.pop();
-		TS_ASSERT_EQUALS(stack.size(), 2);
+		TS_ASSERT_EQUALS(stack.size(), (Stack::size_type)2);
 	}
 
 	void test_top_pop() {

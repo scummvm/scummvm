@@ -73,6 +73,7 @@ static const char HELP_STRING[] =
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
+	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
 	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
@@ -114,8 +115,10 @@ static const char HELP_STRING[] =
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
 	"\n"
+#ifdef ENABLE_GRIM
 	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
 	"                           (default: 10)\n"
+#endif
 ;
 #endif
 
@@ -144,8 +147,8 @@ void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
-	ConfMan.registerDefault("soft_renderer", "false");
-	ConfMan.registerDefault("show_fps", "false");
+	ConfMan.registerDefault("soft_renderer", false);
+	ConfMan.registerDefault("show_fps", false);
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -182,7 +185,9 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("talkspeed", 60);
 
+#ifdef ENABLE_GRIM
 	ConfMan.registerDefault("dimuse_tempo", 10);
+#endif
 
 	// Miscellaneous
 	ConfMan.registerDefault("joystick_num", -1);
@@ -432,10 +437,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("gamma")
 			END_OPTION
 
-			DO_LONG_OPTION("soft-renderer")
+			DO_LONG_OPTION_BOOL("soft-renderer")
 			END_OPTION
 
-			DO_LONG_OPTION("show-fps")
+			DO_LONG_OPTION_BOOL("show-fps")
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
@@ -477,8 +482,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("target-md5")
 			END_OPTION
 
+#ifdef ENABLE_GRIM
 			DO_LONG_OPTION_INT("dimuse-tempo")
 			END_OPTION
+#endif
 
 
 			DO_LONG_OPTION("speech-mode")

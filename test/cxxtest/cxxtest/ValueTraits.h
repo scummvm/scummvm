@@ -70,7 +70,7 @@ namespace CxxTest
     //
     // The default ValueTraits class dumps up to 8 bytes as hex values
     //
-    template <class T>
+    template<class T>
     class ValueTraits
     {
         enum { MAX_BYTES = 8 };
@@ -85,7 +85,7 @@ namespace CxxTest
     // traits( T t )
     // Creates an object of type ValueTraits<T>
     //
-    template <class T>
+    template<class T>
     inline ValueTraits<T> traits( T t )
     {
         return ValueTraits<T>( t );

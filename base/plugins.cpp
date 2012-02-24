@@ -129,6 +129,7 @@ public:
 		LINK_PLUGIN(EAS)
 		#endif
 		LINK_PLUGIN(ADLIB)
+//ResidualVM: disabled belows
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
 		LINK_PLUGIN(CMS)

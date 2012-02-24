@@ -26,7 +26,7 @@
 #define PROJECT_DESCRIPTION "ResidualVM"  // Used in console output and build configuration
 #define PROJECT_NAME "residualvm"         // Used for folders, icons, resources and project/solution name
 #define LIBS_DEFINE "RESIDUALVM_LIBS"     // Name of the include environment variable
-#define REVISION_DEFINE "RESIDUALVM_INTERNAL_REVISION"
+#define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
 
 #define HAS_VIDEO_FOLDER 1
 #define ADDITIONAL_LIBRARY "glu32"

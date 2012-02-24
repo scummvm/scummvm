@@ -164,6 +164,7 @@ osxsnap: bundle
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
 	mkdir ScummVM-snapshot/doc
+	cp $(srcdir)/doc/QuickStart ./RsidualVM-snapshot/doc/QuickStart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
 	#cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
@@ -199,11 +200,12 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
+	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
-	cp $(srcdir)/dists/win32/residualvm.iss $(WIN32PATH)
+	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 #	unix2dos $(WIN32PATH)/doc/*.txt
 # Special target to create a win32 NSIS installer
@@ -259,8 +261,9 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
+	cp $(srcdir)/doc/QuickStart ResidualVMWin32/doc/QuickStart.txt
 	cp $(srcdir)/README ResidualVMWin32/README.txt
-	cp $(srcdir)/dists/win32/residualvm.iss ResidualVMWin32
+	cp $(srcdir)/dists/win32/ResidualVM.iss ResidualVMWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	toms ResidualVMWin32/*.txt

@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# configure -- custom configure script for Residual.
+# configure -- custom configure script for ScummVM.
 #
-# Residual is the legal property of its developers, whose names
+# ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
 # file distributed with this source distribution.
 #
@@ -99,7 +99,8 @@ _timidity=auto
 _zlib=auto
 _sparkle=auto
 _png=no
-_mpeg2=no
+_mpeg2=yes
+_theoradec=auto
 _faad=no
 _fluidsynth=auto
 _opengl=auto
@@ -116,7 +117,8 @@ _optimizations=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=no
-
+_build_scalers=yes
+_build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
@@ -165,7 +167,7 @@ _have_x86=no
 
 
 
-# Directories for installing ResidualVM.
+# Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
 # although the default value for datadir differs.
 # Like GNU autoconf, we distinguish datadir and datarootdir
@@ -3489,25 +3491,29 @@ define_in_config_h_if_yes "$_freetype2" "USE_FREETYPE2"
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
-#ResidualVM: specific changes in detection
-if test "$_opengl" = auto || test "$_opengl" = yes ; then
+if test "$_opengl" = auto ; then
 	_opengl=no
-
-	for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
-		# Test the current header for OpenGL
-		cat > $TMPC << EOF
+	if test "$_backend" = "sdl" ; then
+		# Try different header filenames
+		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
+		# 2) OpenGL/gl.h     This is used on Mac OS X
+		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
+		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
+			# Test the current header for OpenGL
+			cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_VERSION_1_1; }
 EOF
-		cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
 
-		# Test the current header for OpenGL ES
-		cat > $TMPC << EOF
+			# Test the current header for OpenGL ES
+			cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_OES_VERSION_1_1; }
 EOF
-		cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
-	done
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+		done
+	fi
 fi
 if test "$_opengl" = yes ; then
 	# Our simple test case

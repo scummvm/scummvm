@@ -108,7 +108,7 @@ ifdef CXX_UPDATE_DEP_FLAG
 
 %.o: %.m
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CPPFLAGS) $(OBJCFLAGS) -c $(<) -o $*.o
 
 # Build rule for assembler files with preprocessing
 %.o: %.S
@@ -182,7 +182,7 @@ endif
 # Define the Subversion revision if available, either autodetected or
 # specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_REV), undefined)
-base/version.o: CXXFLAGS:=$(CXXFLAGS) -DRESIDUALVM_REVISION=\"$(VER_REV)\"
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_REVISION=\"$(VER_REV)\"
 endif
 
 ######################################################################
@@ -211,7 +211,7 @@ $(VERFILE): $(srcdir)/base/internal_version.h
 ifneq ($(origin VER_REV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
 	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
-		"s/^#define RESIDUALVM_REVISION$$/#define RESIDUALVM_REVISION \"$(VER_REV)\"/g" \
+		"s/^#define SCUMMVM_REVISION$$/#define SCUMMVM_REVISION \"$(VER_REV)\"/g" \
 		> $(VERFILE)
 endif
 
@@ -232,7 +232,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYRIGHT NEWS README)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README)
 
 # Themes files
 DIST_FILES_THEMES=modern.zip
