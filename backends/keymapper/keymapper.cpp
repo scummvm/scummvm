@@ -54,26 +54,26 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0) {
+	: _eventMan(evtMgr), _enabled(true), _hardwareInputs(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
 }
 
 Keymapper::~Keymapper() {
-	delete _hardwareKeys;
+	delete _hardwareInputs;
 }
 
-void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
-	if (_hardwareKeys)
-		error("Hardware key set already registered");
+void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
+	if (_hardwareInputs)
+		error("Hardware input set already registered");
 
-	if (!keys) {
-		warning("No hardware keys are supplied");
+	if (!inputs) {
+		warning("No hardware input are supplied");
 		return;
 	}
 
-	_hardwareKeys = keys;
+	_hardwareInputs = inputs;
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
@@ -95,15 +95,15 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 }
 
 void Keymapper::initKeymap(Domain &domain, Keymap *map) {
-	if (!_hardwareKeys) {
-		warning("No hardware keys were registered yet (%s)", map->getName().c_str());
+	if (!_hardwareInputs) {
+		warning("No hardware inputs were registered yet (%s)", map->getName().c_str());
 		return;
 	}
 
 	map->setConfigDomain(domain.getConfigDomain());
-	map->loadMappings(_hardwareKeys);
+	map->loadMappings(_hardwareInputs);
 
-	if (map->isComplete(_hardwareKeys) == false) {
+	if (map->isComplete(_hardwareInputs) == false) {
 		map->saveMappings();
 		ConfMan.flushToDisk();
 	}
@@ -291,8 +291,8 @@ List<Event> Keymapper::executeAction(const Action *action, bool keyDown) {
 	return mappedEvents;
 }
 
-const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
-	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
+const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
+	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(key) : 0;
 }
 
 } // End of namespace Common

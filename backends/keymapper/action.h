@@ -34,7 +34,7 @@
 
 namespace Common {
 
-struct HardwareKey;
+struct HardwareInput;
 class Keymap;
 
 #define ACTION_ID_SIZE (4)
@@ -55,8 +55,8 @@ struct Action {
 	List<Event> events;
 
 private:
-	/** Hardware key that is mapped to this Action */
-	const HardwareKey *_hwKey;
+	/** Hardware input that is mapped to this Action */
+	const HardwareInput *_hwInput;
 	Keymap *_boss;
 
 public:
@@ -97,8 +97,8 @@ public:
 		return _boss;
 	}
 
-	void mapKey(const HardwareKey *key);
-	const HardwareKey *getMappedKey() const;
+	void mapInput(const HardwareInput *input);
+	const HardwareInput *getMappedInput() const;
 
 };
 

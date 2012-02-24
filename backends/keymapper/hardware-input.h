@@ -32,9 +32,9 @@
 namespace Common {
 
 /**
-* Describes an available hardware key
+* Describes an available hardware input
 */
-struct HardwareKey {
+struct HardwareInput {
 	/** unique id used for saving/loading to config */
 	String id;
 
@@ -47,7 +47,7 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	HardwareKey(String i, KeyState ky = KeyState(), String desc = "")
+	HardwareInput(String i, KeyState ky = KeyState(), String desc = "")
 		: id(i), key(ky), description(desc) { }
 };
 
@@ -73,70 +73,70 @@ struct ModifierTableEntry {
 };
 
 /**
- * Simple class to encapsulate a device's set of HardwareKeys.
- * Each device should instantiate this and call addHardwareKey a number of times
+ * Simple class to encapsulate a device's set of HardwareInputs.
+ * Each device should instantiate this and call addHardwareInput a number of times
  * in its constructor to define the device's available keys.
  */
-class HardwareKeySet {
+class HardwareInputSet {
 public:
 
 	/**
-	 * Add hardware keys to the set out of key and modifier tables.
+	 * Add hardware input keys to the set out of key and modifier tables.
 	 * @param keys       table of available keys
 	 * @param modifiers  table of available modifiers
 	 */
-	HardwareKeySet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
-		addHardwareKeys(keys, modifiers);
+	HardwareInputSet(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+		addHardwareInputs(keys, modifiers);
 	}
 
-	HardwareKeySet() { }
+	HardwareInputSet() { }
 
-	virtual ~HardwareKeySet() {
-		List<const HardwareKey *>::const_iterator it;
+	virtual ~HardwareInputSet() {
+		List<const HardwareInput *>::const_iterator it;
 
-		for (it = _keys.begin(); it != _keys.end(); it++)
+		for (it = _inputs.begin(); it != _inputs.end(); it++)
 			delete *it;
 	}
 
-	void addHardwareKey(const HardwareKey *key) {
-		checkForKey(key);
-		_keys.push_back(key);
+	void addHardwareInput(const HardwareInput *input) {
+		checkForInput(input);
+		_inputs.push_back(input);
 	}
 
-	const HardwareKey *findHardwareKey(String id) const {
-		List<const HardwareKey *>::const_iterator it;
+	const HardwareInput *findHardwareInput(String id) const {
+		List<const HardwareInput *>::const_iterator it;
 
-		for (it = _keys.begin(); it != _keys.end(); it++) {
+		for (it = _inputs.begin(); it != _inputs.end(); it++) {
 			if ((*it)->id == id)
 				return (*it);
 		}
 		return 0;
 	}
 
-	const HardwareKey *findHardwareKey(const KeyState& keystate) const {
-		List<const HardwareKey *>::const_iterator it;
+	const HardwareInput *findHardwareInput(const KeyState& keystate) const {
+		List<const HardwareInput *>::const_iterator it;
 
-		for (it = _keys.begin(); it != _keys.end(); it++) {
+		for (it = _inputs.begin(); it != _inputs.end(); it++) {
 			if ((*it)->key == keystate)
 				return (*it);
 		}
 		return 0;
 	}
 
-	const List<const HardwareKey *> &getHardwareKeys() const {
-		return _keys;
+	const List<const HardwareInput *> &getHardwareInputs() const {
+		return _inputs;
 	}
 
 	uint size() const {
-		return _keys.size();
+		return _inputs.size();
 	}
 
 	/**
-	 * Add hardware keys to the set out of key and modifier tables.
+	 * Add hardware inputs to the set out of key and modifier tables.
 	 * @param keys       table of available keys
 	 * @param modifiers  table of available modifiers
 	 */
-	void addHardwareKeys(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
+	void addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
 		const KeyTableEntry *key;
 		const ModifierTableEntry *mod;
 		char fullKeyId[50];
@@ -159,25 +159,25 @@ public:
 					snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
 				}
 
-				addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
+				addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
 			}
 		}
 	}
 
 private:
 
-	void checkForKey(const HardwareKey *key) {
-		List<const HardwareKey *>::iterator it;
+	void checkForInput(const HardwareInput *input) {
+		List<const HardwareInput *>::iterator it;
 
-		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if ((*it)->id == key->id)
-				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->id.c_str());
-			else if ((*it)->key == key->key)
-				error("Error adding HardwareKey '%s' - key already in use!", key->description.c_str());
+		for (it = _inputs.begin(); it != _inputs.end(); it++) {
+			if ((*it)->id == input->id)
+				error("Error adding HardwareInput '%s' - id of %s already in use!", input->description.c_str(), input->id.c_str());
+			else if ((*it)->key == input->key)
+				error("Error adding HardwareInput '%s' - key already in use!", input->description.c_str());
 		}
 	}
 
-	List<const HardwareKey *> _keys;
+	List<const HardwareInput *> _inputs;
 };
 
 } // End of namespace Common

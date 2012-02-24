@@ -42,7 +42,7 @@ public:
 	virtual void setWindowCaption(const char *caption);
 	virtual void setupIcon();
 #ifdef ENABLE_KEYMAPPER
-	virtual Common::HardwareKeySet *getHardwareKeySet();
+	virtual Common::HardwareInputSet *getHardwareInputSet();
 	virtual Common::Keymap *getGlobalKeymap();
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
 #endif

@@ -224,12 +224,12 @@ void OSystem_Android::setupKeymapper() {
 
 	Keymapper *mapper = getEventManager()->getKeymapper();
 
-	HardwareKeySet *keySet = new HardwareKeySet();
+	HardwareInputSet *inputSet = new HardwareInputSet();
 
-	keySet->addHardwareKey(
-		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)"));
+	keySet->addHardwareInput(
+		new HardwareInput("n", KeyState(KEYCODE_n), "n (vk)"));
 
-	mapper->registerHardwareKeySet(keySet);
+	mapper->registerHardwareInputSet(inputSet);
 
 	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;

@@ -106,7 +106,7 @@ static const Mod modifiers[] = {
 	{ 0, 0, 0, false }
 };
 
-Common::HardwareKeySet *OSystem_LINUXMOTO::getHardwareKeySet() {
-	return OSystem_SDL::getHardwareKeySet();
+Common::HardwareInputSet *OSystem_LINUXMOTO::getHardwareInputSet() {
+	return OSystem_SDL::getHardwareInputSet();
 }
 #endif
