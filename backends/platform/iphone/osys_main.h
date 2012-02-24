@@ -118,6 +118,10 @@ protected:
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
 
+#ifdef ENABLE_KEYMAPPER
+	Common::KeymapperDefaultBindings *_keymapperDefaultBindings;
+#endif
+
 public:
 
 	OSystem_IPHONE();
@@ -190,6 +194,11 @@ public:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::HardwareInputSet *getHardwareInputSet();
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
+#endif
 
 protected:
 	void internUpdateScreen();
