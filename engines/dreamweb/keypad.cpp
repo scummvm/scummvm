@@ -398,7 +398,7 @@ void DreamWebEngine::loadFolder() {
 	loadGraphicsFile(_folderGraphics2, "DREAMWEB.G10"); // folder graphics 2
 	loadGraphicsFile(_folderGraphics3, "DREAMWEB.G11"); // folder graphics 3
 	loadGraphicsFile(_folderCharset, "DREAMWEB.C02"); // character set 3
-	loadTempText("DREAMWEB.T50"); // folder text
+	loadTempText("T50"); // folder text
 }
 
 void DreamWebEngine::showFolder() {
@@ -717,7 +717,7 @@ void DreamWebEngine::updateSymbolBot() {
 void DreamWebEngine::useDiary() {
 	getRidOfReels();
 	loadGraphicsFile(_diaryGraphics, "DREAMWEB.G14");
-	loadTempText("DREAMWEB.T51");
+	loadTempText("T51");
 	loadGraphicsFile(_diaryCharset, "DREAMWEB.C02");
 	createPanel();
 	showIcon();

@@ -2238,8 +2238,9 @@ void DreamWebEngine::loadTravelText() {
 	loadTextFile(_travelText, "DREAMWEB.T81"); // location descs
 }
 
-void DreamWebEngine::loadTempText(const char *fileName) {
-	loadTextFile(_textFile1, fileName);
+void DreamWebEngine::loadTempText(const char *suffix) {
+	Common::String fileName = getDatafilePrefix() + suffix;
+	loadTextFile(_textFile1, fileName.c_str());
 }
 
 void DreamWebEngine::drawFloor() {
@@ -2789,7 +2790,7 @@ void DreamWebEngine::showGun() {
 	fadeScreenUp();
 	hangOn(160);
 	playChannel0(12, 0);
-	loadTempText("DREAMWEB.T83");
+	loadTempText("T83");
 	rollEndCreditsGameLost();
 	getRidOfTempText();
 }

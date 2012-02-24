@@ -26,7 +26,7 @@
 namespace DreamWeb {
 
 void DreamWebEngine::endGame() {
-	loadTempText("DREAMWEB.T83");
+	loadTempText("T83");
 	monkSpeaking();
 	if (_quitRequested)
 		return;
@@ -141,7 +141,7 @@ void DreamWebEngine::hangOne(uint16 delay) {
 }
 
 void DreamWebEngine::intro() {
-	loadTempText("DREAMWEB.T82");
+	loadTempText("T82");
 	loadPalFromIFF();
 	setMode();
 	_newLocation = 50;

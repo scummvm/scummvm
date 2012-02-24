@@ -813,7 +813,7 @@ public:
 	void loadGraphicsSegment(GraphicsFile &file, Common::File &inFile, unsigned int len);
 	void loadTextSegment(TextFile &file, Common::File &inFile, unsigned int len);
 	void loadTravelText();
-	void loadTempText(const char *fileName);
+	void loadTempText(const char *suffix);
 	void sortOutMap();
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset(GraphicsFile *charset);
