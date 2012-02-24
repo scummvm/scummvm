@@ -126,7 +126,7 @@ static void cinq_huit(char &c, int &idx, byte &pt, bool &the_end) {
 /**
  * Decode and extract the line with the given Id
  */
-void deline(int num, char *l , int &tl) {
+void deline(int num, char *line , int &length) {
 	if (num < 0) {
 		warning("deline: num < 0! Skipping");
 		return;
@@ -137,20 +137,22 @@ void deline(int num, char *l , int &tl) {
 	int ts = t_rec[num].indis;
 	byte ps = t_rec[num].point;
 	int i = ts;
-	tl = 1;
+	length = 1;
 	int j = 1;
+	// Initialize properly first string character
+	line[0] = ' ';
 	byte k = ps;
 	bool endFl = false;
 	char let;
 	do {
 		cinq_huit(let, i, k, endFl);
-		l[j] = let;
+		line[j] = let;
 		if (j < 254)
 			delig += let;
 		++j;
 	} while (!endFl);
-	tl = j - 1;
-	if (tl < 255)
+	length = j - 1;
+	if (length < 255)
 		// Remove trailing '$'
 		delig.deleteLastChar();
 }

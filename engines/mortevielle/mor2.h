@@ -38,7 +38,6 @@ extern void tkey1(bool d);
 extern void tmlieu(int mli);
 /* NIVEAU 7 */
 extern void tlu(int af, int ob);
-extern void delin(int n);
 extern void affrep();
 extern void mfouen();
 /* NIVEAU 6 */

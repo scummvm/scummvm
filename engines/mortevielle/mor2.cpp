@@ -280,13 +280,6 @@ void tlu(int af, int ob) {
 	crep = 998;
 }
 
-void delin(int n) {
-	char s[1410];
-	int t;
-
-	deline(n, s, t);
-}
-
 void affrep() {
 	caff = s.mlieu;
 	crep = s.mlieu;
