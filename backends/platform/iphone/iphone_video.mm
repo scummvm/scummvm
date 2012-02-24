@@ -30,19 +30,11 @@
 iPhoneView *g_iPhoneViewInstance = nil;
 static int _fullWidth;
 static int _fullHeight;
-static CGRect _gameScreenRect;
-
-static CGRect _overlayRect;
 
 static int _needsScreenUpdate = 0;
 
 static UITouch *_firstTouch = NULL;
 static UITouch *_secondTouch = NULL;
-
-static GLint _renderBufferWidth;
-static GLint _renderBufferHeight;
-
-static int _scaledShakeOffsetY;
 
 #if 0
 static long lastTick = 0;
@@ -202,6 +194,8 @@ const char *iPhone_getDocumentsDir() {
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
+
+	_scaledShakeOffsetY = 0;
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =

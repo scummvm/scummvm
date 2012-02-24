@@ -49,11 +49,18 @@
 
 	UIDeviceOrientation _orientation;
 
+	GLint _renderBufferWidth;
+	GLint _renderBufferHeight;
+
 	GLfloat _gameScreenVertCoords[4 * 2];
 	GLfloat _gameScreenTexCoords[4 * 2];
+	CGRect _gameScreenRect;
 
 	GLfloat _overlayVertCoords[4 * 2];
 	GLfloat _overlayTexCoords[4 * 2];
+	CGRect _overlayRect;
+
+	int _scaledShakeOffsetY;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
