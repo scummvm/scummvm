@@ -291,12 +291,13 @@ bool Ques::show() {
 
 	bool q, func, test;
 	int i, j, k, y, memk;
-	int tay , tmax;
+	int curLength, maxLength;
 	int rep, prem, der;
 	char st[1410];
 	char key;
 	rectangle coor[max_rect];
-	Common::String chaines[15];
+	Common::String choiceArray[15];
+	Common::String currChoice;
 	int compte;
 
 
@@ -310,7 +311,7 @@ bool Ques::show() {
 		hirs();
 		showMouse();
 		++i;
-		deline(ta[i], st, tay);
+		deline(ta[i], st, curLength);
 		if (res == 1)
 			y = 29;
 		else
@@ -325,14 +326,14 @@ bool Ques::show() {
 			der = 510;
 		}
 		y = 35;
-		tmax = 0;
+		maxLength = 0;
 		memk = 1;
 		for (j = prem; j <= der; ++j) {
-			deline(j, st, tay);
-			if (tay > tmax)
-				tmax = tay;
+			deline(j, st, curLength);
+			if (curLength > maxLength)
+				maxLength = curLength;
 			afftex(st, 100, y, 100, 1, 0);
-			chaines[memk] = delig;
+			choiceArray[memk] = delig;
 			++memk;
 			y += 8;
 		}
@@ -340,13 +341,13 @@ bool Ques::show() {
 			rectangle &with = coor[j];
 
 			with.x1 = 45 * res;
-			with.x2 = (tmax * 3 + 55) * res;
+			with.x2 = (maxLength * 3 + 55) * res;
 			with.y1 = 27 + j * 8;
 			with.y2 = 34 + j * 8;
 			with.enabled = true;
 
-			while ((int)chaines[j].size() < tmax) {
-				chaines[j] += ' ';
+			while ((int)choiceArray[j].size() < maxLength) {
+				choiceArray[j] += ' ';
 			}
 		}
 		coor[j + 1].enabled = false;
@@ -354,7 +355,7 @@ bool Ques::show() {
 			rep = 10;
 		else
 			rep = 6;
-		g_vm->_screenSurface.drawBox(80, 33, 40 + tmax * rep, (der - prem) * 8 + 16, 15);
+		g_vm->_screenSurface.drawBox(80, 33, 40 + maxLength * rep, (der - prem) * 8 + 16, 15);
 		rep = 0;
 		j = 0;
 		memk = 0;
@@ -365,29 +366,32 @@ bool Ques::show() {
 			CHECK_QUIT0;
 
 			k = 1;
-			while (coor[k].enabled && ! dans_rect(coor[k]))  k = k + 1;
+			while (coor[k].enabled && ! dans_rect(coor[k]))
+				++k;
 			if (coor[k].enabled) {
 				if ((memk != 0) && (memk != k)) {
-//					for (j = 1; j <= tmax; ++j)
-//						st[j] = chaines[memk][j];
-					strncpy(st, chaines[memk].c_str(), tmax);
-//
-					st[1 + tmax] = '$';
+					st[0] = ' ';
+//					for (j = 0; j <= maxLength; ++j)
+//						st[j + 1] = choiceArray[memk][j];
+					strncpy(st + 1, choiceArray[memk].c_str(), maxLength);
+					st[1 + maxLength] = '$';
 					afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				}
 				if (memk != k) {
-//					for (j = 1; j <= tmax; ++j)
-//						st[j] = chaines[k][j];
-					strncpy(st, chaines[k].c_str(), tmax);
-					st[1 + tmax] = '$';
+					st[0] = ' ';
+//					for (j = 0; j <= maxLength; ++j)
+//						st[j + 1] = choiceArray[k][j];
+					strncpy(st + 1, choiceArray[k].c_str(), maxLength);
+					st[1 + maxLength] = '$';
 					afftex(st, 100, 27 + k * 8, 100, 1, 1);
 					memk = k;
 				}
 			} else if (memk != 0) {
-//				for (j = 1; j <= tmax; ++j)
-//					st[j] = chaines[memk][j];
-				strncpy(st, chaines[memk].c_str(), tmax);
-				st[1 + tmax] = '$';
+					st[0] = ' ';
+//				for (j = 0; j <= maxLength; ++j)
+//					st[j + 1] = choiceArray[memk][j];
+				strncpy(st + 1, choiceArray[memk].c_str(), maxLength);
+				st[1 + maxLength] = '$';
 				afftex(st, 100, 27 + memk * 8, 100, 1, 0);
 				memk = 0;
 			}

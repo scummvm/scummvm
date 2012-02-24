@@ -34,7 +34,7 @@ namespace Mortevielle {
 
 extern Common::String delig;
 
-extern void deline(int num , char *l , int &tl);
+extern void deline(int num , char *line , int &length);
 extern void afftex(char *ch, int x, int y, int dx, int dy, int typ);
 
 } // End of namespace Mortevielle
