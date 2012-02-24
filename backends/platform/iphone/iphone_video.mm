@@ -217,6 +217,11 @@ const char *iPhone_getDocumentsDir() {
 	    _overlayTexCoords[4] = _overlayTexCoords[5] =
 	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
 
+	_mouseTexCoords[0] = _mouseTexCoords[1] =
+	    _mouseTexCoords[2] = _mouseTexCoords[3] =
+	    _mouseTexCoords[4] = _mouseTexCoords[5] =
+	    _mouseTexCoords[6] = _mouseTexCoords[7] = 0;
+
 	// Initialize the OpenGL ES context
 	[self createContext];
 
@@ -305,6 +310,9 @@ const char *iPhone_getDocumentsDir() {
 		[self setFilterModeForTexture:_mouseCursorTexture];
 	}
 
+	_mouseTexCoords[2] = _mouseTexCoords[6] = _videoContext.mouseWidth / (GLfloat)_videoContext.mouseTexture.w;
+	_mouseTexCoords[5] = _mouseTexCoords[7] = _videoContext.mouseHeight / (GLfloat)_videoContext.mouseTexture.h;
+
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.pixels); printOpenGLError();
 }
@@ -383,22 +391,8 @@ const char *iPhone_getDocumentsDir() {
 
 	//printf("Cursor: width %u height %u\n", _videoContext.mouseWidth, _videoContext.mouseHeight);
 
-	float texWidth = _videoContext.mouseWidth / (float)_videoContext.mouseTexture.w;
-	float texHeight = _videoContext.mouseHeight / (float)_videoContext.mouseTexture.h;
-
-	const GLfloat texCoords[] = {
-		// Top left
-		0       , 0,
-		// Top right
-		texWidth, 0,
-		// Bottom left
-		0       , texHeight,
-		// Bottom right
-		texWidth, texHeight
-	};
-
 	glVertexPointer(2, GL_FLOAT, 0, vertices); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoords); printOpenGLError();
+	glTexCoordPointer(2, GL_FLOAT, 0, _mouseTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();

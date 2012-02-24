@@ -60,6 +60,8 @@
 	GLfloat _overlayTexCoords[4 * 2];
 	CGRect _overlayRect;
 
+	GLfloat _mouseTexCoords[4 * 2];
+
 	int _scaledShakeOffsetY;
 }
 
