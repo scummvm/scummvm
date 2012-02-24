@@ -112,7 +112,7 @@ void regenbruit() {
 		t_cph[j] = READ_LE_UINT16(&mem[adbruit3 + i]);
 		i += 2;
 		++j;
-	} while (!(i >= offsetb3 + 8790));
+	} while (i < offsetb3 + 8790);
 }
 
 void charge_son() {
@@ -123,7 +123,7 @@ void charge_son() {
 	
 	f.read(&mem[0x7414 * 16 + 0], 273);
 
-	g_vm->_soundManager.demus(&mem[0x7414 * 16], &mem[adson * 16], 273);
+	g_vm->_soundManager.decodeMusic(&mem[0x7414 * 16], &mem[adson * 16], 273);
 	f.close();
 }
 
@@ -209,7 +209,7 @@ void trait_car() {
 					else
 						entroct(d3);
 					entroct(3);
-				} while (!(i < 0));
+				} while (i >= 0);
 			}
 			if (d3 == null) {
 				entroct(4);
@@ -234,7 +234,7 @@ void trait_car() {
 					else
 						entroct(d3);
 					entroct(3);
-				} while (!(i < 0));
+				} while (i >= 0);
 			}
 			if (d3 == null) {
 				entroct(0);
@@ -259,7 +259,7 @@ void trait_car() {
 					else
 						entroct(d3);
 					entroct(3);
-				} while (!(i < 0));
+				} while (i >= 0);
 			}
 			entroct(0);
 			entroct(c2.val);
@@ -292,7 +292,7 @@ void trait_car() {
 				entroct(0);
 				entroct(d3);
 				entroct(3);
-			} while (!(i <= 0));
+			} while (i > 0);
 		}
 		veracf(c3.acc);
 		if (c3.code == 6) {
@@ -345,7 +345,7 @@ void trait_car() {
 					entroct(d3);
 					entroct(c2.val);
 					entroct(3);
-				} while (!(i <= 0));
+				} while (i > 0);
 			}
 			entroct(d3);
 			entroct(c2.val);
@@ -361,7 +361,7 @@ void trait_car() {
 					entroct(d3);
 					entroct(c2.val);
 					entroct(4);
-				} while (!(i <= 0));
+				} while (i > 0);
 			}
 		}
 		if (c3.code == 9) {
@@ -408,7 +408,7 @@ void trait_car() {
 				entroct(2);
 				entroct(c2.val);
 				entroct(3);
-			} while (!(i <= 0));
+			} while (i > 0);
 		}
 		entroct(2);
 		entroct(c2.val);

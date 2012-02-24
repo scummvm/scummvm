@@ -222,9 +222,9 @@ void afftex(char *ch, int x, int y, int dx, int dy, int typ) {
 							g_vm->_screenSurface.putxy(j, i);
 							g_vm->_screenSurface.writeg(" ", 0);
 							j += 6;
-						} while (!(j > xf));
+						} while (j <= xf);
 						i += 6;
-					} while (!(i > yf));
+					} while (i <= yf);
 					yc = y;
 				}
 				g_vm->_screenSurface.putxy(xc, yc);

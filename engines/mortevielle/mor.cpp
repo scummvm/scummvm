@@ -874,7 +874,7 @@ void quelq15(int &per) {
 		        ((cx == 6) && bh1) ||
 		        ((cx == 7) && bf1) ||
 		        ((cx == 8) && bh5));
-	} while (!(! test));
+	} while (test);
 
 	conv(cx, per);
 	affper(per);

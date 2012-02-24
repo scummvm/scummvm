@@ -41,7 +41,7 @@ void copcha() {
 	do {
 		tabdon[i] = tabdon[i + 390];
 		++i;
-	} while (!(i == acha + 390));
+	} while (i != acha + 390);
 }
 
 bool dans_rect(rectangle r) {

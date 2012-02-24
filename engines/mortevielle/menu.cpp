@@ -177,11 +177,11 @@ void Menu::menu_aff() {
 				}
 				++ind_tabl;
 				++k;
-			} while (!(k == 3));
+			} while (k != 3);
 			++y;
-		} while (!(y == 9));
+		} while (y != 9);
 		col += 48 * res;
-	} while (!(num_letr == 6));
+	} while (num_letr != 6);
 	showMouse();
 }
 
@@ -347,7 +347,7 @@ void Menu::menuDown(int ii) {
 			break;
 		}
 		g_vm->_screenSurface.putxy(xco, g_vm->_screenSurface._textPos.y + 8);
-	} while (!(cx == nb_lig));
+	} while (cx != nb_lig);
 	test0 = true;
 	showMouse();
 }
@@ -504,7 +504,7 @@ void Menu::initMenu() {
 			_dis[i] = delig + ' ';
 		}
 		++i;
-	} while (!(i == 22));
+	} while (i != 22);
 	for (i = 1; i <= 8; ++i) {
 		_disc[i] = 0x500 + i;
 		if (i < 8)

@@ -100,7 +100,7 @@ void hideMouse() {
 				WRITE_LE_UINT16(&mem[0xba00 * 16 + j + 2], s_s[3][k]);
 				j += 80;
 				++k;
-			} while (!(k >= 5));
+			} while (k < 5);
 			break;
 		case MODE_AMSTRAD1512:
 			for (i = 0; i <= 3; ++i) {
@@ -117,7 +117,7 @@ void hideMouse() {
 					}
 					imp = !imp;
 					++k;
-				} while (!(k >= 8));
+				} while (k < 8);
 			}
 			break;
 		case MODE_EGA:
@@ -136,9 +136,9 @@ void hideMouse() {
 					mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j += 80;
 					++k;
-				} while (!(k >= 8));
+				} while (k < 8);
 				++i;
-			} while (!(i == 4));
+			} while (i != 4);
 			break;
 		case MODE_HERCULES:
 			j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
@@ -158,7 +158,7 @@ void hideMouse() {
 				}
 				j += 160;
 				++k;
-			} while (!(k == 3));
+			} while (k != 3);
 			break;
 		default:
 			break;
@@ -191,7 +191,7 @@ void showMouse() {
 			s_s[3][k] = READ_LE_UINT16(&mem[0xba00 * 16 + j + 2]);
 			j += 80;
 			++k;
-		} while (!(k >= 5));
+		} while (k < 5);
 		break;
 	case MODE_AMSTRAD1512:
 		for (i = 0; i <= 3; ++i) {
@@ -209,7 +209,7 @@ void showMouse() {
 				}
 				imp = !imp;
 				++k;
-			} while (!(k >= 8));
+			} while (k < 8);
 		}
 		break;
 	case MODE_EGA:
@@ -223,9 +223,9 @@ void showMouse() {
 				s_s[l][k] = mem[0xa000 * 16 + j] + (mem[(0xa000 * 16) + j + 1] << 8);
 				j += 80;
 				++k;
-			} while (!(k >= 8));
+			} while (k < 8);
 			++l;
-		} while (!(l == 4));
+		} while (l != 4);
 		break;
 	case MODE_HERCULES:
 		j = ((uint)y_s >> 1) * 80 + ((uint)x_s >> 3);
@@ -245,7 +245,7 @@ void showMouse() {
 			}
 			j += 160;
 			++k;
-		} while (!(k == 3));
+		} while (k != 3);
 		break;
 	default:
 		break;

@@ -183,7 +183,7 @@ void music() {
 	fic.read(&mem[0x47a0 * 16 + 0], 123);
 	fic.close();
 
-	g_vm->_soundManager.demus(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
+	g_vm->_soundManager.decodeMusic(&mem[0x3800 * 16], &mem[0x5000 * 16], 623);
 	addfix = (float)((tempo_mus - addv[1])) / 256;
 	cctable(tbi);
 
