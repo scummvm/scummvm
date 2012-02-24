@@ -43,6 +43,11 @@
 
 #include "osys_main.h"
 
+#ifdef ENABLE_KEYMAPPER
+#include "backends/keymapper/hardware-key.h"
+#include "backends/keymapper/keymapper-defaults.h"
+#include "backends/platform/iphone/iphone_keys.h"
+#endif
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{ "linear", "Linear filtering", kGraphicsModeLinear },
@@ -67,6 +72,9 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
+#ifdef ENABLE_KEYMAPPER
+	_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+#endif
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {
@@ -75,6 +83,10 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	delete _mixer;
 	free(_gameScreenRaw);
 	free(_gameScreenConverted);
+
+#ifdef ENABLE_KEYMAPPER
+	delete _keymapperDefaultBindings;
+#endif
 }
 
 int OSystem_IPHONE::timerHandler(int t) {
@@ -98,6 +110,9 @@ void OSystem_IPHONE::initBackend() {
 
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
+#ifdef ENABLE_KEYMAPPER
+	assert(_keymapperDefaultBindings);
+#endif
 	EventsBaseBackend::initBackend();
 }
 
@@ -249,6 +264,14 @@ Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 	return SCUMMVM_PREFS_PATH;
 #endif
 }
+
+#ifdef ENABLE_KEYMAPPER
+
+Common::HardwareInputSet *OSystem_IPHONE::getHardwareInputSet() {
+	Common::HardwareInputSet *inputSet = new Common::HardwareInputSet(Common::iphoneKeys, Common::iphoneModifiers);
+	return inputSet;
+}
+#endif
 
 void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Get URL of the Resource directory of the .app bundle
