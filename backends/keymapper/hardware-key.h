@@ -204,7 +204,7 @@ public:
 	 * Add hardware inputs to the set out of a gesture table.
 	 * @param gestures table of available gestures
 	 */
-	void addHardwareInputs(const GestureTableEntry gestures[], const ModifierTableEntry modifiers[]) {
+	void addHardwareInputs(const GestureTableEntry gestures[]) {
 		const GestureTableEntry *gesture;
 
 		for (gesture = gestures; gesture->hwId; gesture++) {
