@@ -161,9 +161,9 @@ extern const byte rang[16];
 
 struct sav_chaine {
 	int conf;
-	char pourc[11];
-	char teauto[43];
-	char sjer[31];
+	byte pourc[11];
+	byte teauto[43];
+	byte sjer[31];
 	int mlieu, iboul, ibag, icave, ivier, ipuit;
 	int derobj, iloic, icryp;
 	bool ipre;
