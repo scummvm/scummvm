@@ -166,37 +166,7 @@ void TLib::loadSection(uint32 fileOffset) {
 	_file.seek(fileOffset);
 	_sections.fileOffset = fileOffset;
 
-	loadSection(_file, _resources);
-}
-
-/**
- * Inner logic for decoding a section index into a passed resource list object
- */
-void TLib::loadSection(Common::File &f, ResourceList &resources) {
-	if (f.readUint32BE() != 0x544D492D)
-		error("Data block is not valid Rlb data");
-
-	/*uint8 unknown1 = */f.readByte();
-	uint16 numEntries = f.readByte();
-
-	for (uint i = 0; i < numEntries; ++i) {
-		uint16 id = f.readUint16LE();
-		uint16 size = f.readUint16LE();
-		uint16 uncSize = f.readUint16LE();
-		uint8 sizeHi = f.readByte();
-		uint8 type = f.readByte() >> 5;
-		assert(type <= 1);
-		uint32 offset = f.readUint32LE();
-
-		ResourceEntry re;
-		re.id = id;
-		re.fileOffset = offset;
-		re.isCompressed = type != 0;
-		re.size = ((sizeHi & 0xF) << 16) | size;
-		re.uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
-
-		resources.push_back(re);
-	}
+	ResourceManager::loadSection(_file, _resources);
 }
 
 struct DecodeReference {
@@ -342,6 +312,40 @@ byte *TLib::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool
 	return getResource(rlbNum, suppressErrors);
 }
 
+/**
+ * Gets the offset of the start of a resource in the resource file
+ */
+uint32 TLib::getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum, ResourceEntry &entry) {
+	// Find the correct section
+	SectionList::iterator i = _sections.begin();
+	while ((i != _sections.end()) && ((*i).resType != resType || (*i).resNum != resNum))
+		++i;
+	if (i == _sections.end()) {
+		error("Unknown resource type %d num %d", resType, resNum);
+	}
+
+	// Load in the section index
+	loadSection((*i).fileOffset);
+	
+	// Scan for an entry for the given Id
+	ResourceEntry *re = NULL;
+	ResourceList::iterator iter;
+	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
+		if ((*iter).id == rlbNum) {
+			re = &(*iter);
+			break;
+		}
+	}
+
+	// Throw an error if no resource was found, or the resource is compressed
+	if (!re || re->isCompressed)
+		error("Invalid resource Id #%d", rlbNum);
+
+	// Return the resource entry as well as the file offset 
+	entry = *re;
+	return _sections.fileOffset + entry.fileOffset;
+}
+
 void TLib::loadIndex() {
 	uint16 resNum, configId, fileOffset;
 
@@ -453,36 +457,6 @@ bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool supp
 
 /*--------------------------------------------------------------------------*/
 
-/**
- * Open up the main resource file and get an entry from the root section
- */
-bool TLib::getSectionEntry(Common::File &f, ResourceType resType, int rlbNum, int resNum, 
-									  ResourceEntry &resEntry) {
-	// Try and open the resource file
-	if (!f.open(_filename))
-	  return false;
-
-	// Load the root section index
-	ResourceList resList;
-	loadSection(f, resList);
-
-	// Loop through the index for the desired entry
-	ResourceList::iterator iter;
-	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
-		ResourceEntry &re = *iter;
-		if (re.id == resNum) {
-			// Found it, so exit
-			resEntry = re;
-			return true;
-		}
-	}
-
-	// No matching entry found
-	return false;
-}
-
-/*--------------------------------------------------------------------------*/
-
 ResourceManager::~ResourceManager() {
 	for (uint idx = 0; idx < _libList.size(); ++idx)
 		delete _libList[idx];
@@ -555,6 +529,64 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
 	if (!suppressErrors)
 		error("Unknown message %d line %d", resNum, lineNum);
 	return Common::String();
+}
+
+/*--------------------------------------------------------------------------*/
+
+/**
+ * Open up the given resource file using a passed file object. If the desired entry is found
+ * in the index, return the index entry for it, and move the file to the start of the resource
+ */
+bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, 
+									  ResourceEntry &resEntry) {
+	// Load the root section index
+	ResourceList resList;
+	loadSection(f, resList);
+
+	// Loop through the index for the desired entry
+	ResourceList::iterator iter;
+	for (iter = resList.begin(); iter != resList.end(); ++iter) {
+		ResourceEntry &re = *iter;
+		if (re.id == resNum) {
+			// Found it, so exit
+			resEntry = re;
+			f.seek(re.fileOffset);
+			return true;
+		}
+	}
+
+	// No matching entry found
+	return false;
+}
+
+/**
+ * Inner logic for decoding a section index into a passed resource list object
+ */
+void ResourceManager::loadSection(Common::File &f, ResourceList &resources) {
+	if (f.readUint32BE() != 0x544D492D)
+		error("Data block is not valid Rlb data");
+
+	/*uint8 unknown1 = */f.readByte();
+	uint16 numEntries = f.readByte();
+
+	for (uint i = 0; i < numEntries; ++i) {
+		uint16 id = f.readUint16LE();
+		uint16 size = f.readUint16LE();
+		uint16 uncSize = f.readUint16LE();
+		uint8 sizeHi = f.readByte();
+		uint8 type = f.readByte() >> 5;
+		assert(type <= 1);
+		uint32 offset = f.readUint32LE();
+
+		ResourceEntry re;
+		re.id = id;
+		re.fileOffset = offset;
+		re.isCompressed = type != 0;
+		re.size = ((sizeHi & 0xF) << 16) | size;
+		re.uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
+
+		resources.push_back(re);
+	}
 }
 
 } // end of namespace TsAGE

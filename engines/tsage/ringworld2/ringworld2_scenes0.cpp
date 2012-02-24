@@ -1561,7 +1561,7 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 1;
 
 		_animationPlayer.load(1, NULL);
-		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._palData, 0, 256);
+		R2_GLOBALS._scenePalette.loadPalette(_animationPlayer._subData._palData, 0, 256);
 
 		R2_GLOBALS._sound1.play(1);
 		break;
@@ -1605,7 +1605,7 @@ void Scene180::signal() {
 		_animationPlayer.load(2);
 
 		_field412 = 1;
-		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 6, NULL);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 6, NULL);
 		R2_GLOBALS._sound1.play(2);
 		break;
 
@@ -1806,7 +1806,7 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 4;
 		if (_animationPlayer.load(4)) {
 			_animationPlayer.dispatch();
-			R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 8, this);
+			R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 8, this);
 		} else {
 			_sceneMode = 43;
 			setFrameInc(1);
@@ -1834,7 +1834,7 @@ void Scene180::signal() {
 		break;
 
 	case 45:
-		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 28, this);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 28, this);
 		break;
 
 	case 48:
@@ -1846,7 +1846,7 @@ void Scene180::signal() {
 		_animationPlayer.load(15, NULL);
 
 		R2_GLOBALS._sound1.play(9);
-		R2_GLOBALS._scenePalette.addFader(_animationPlayer._palData, 256, 6, NULL);
+		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 6, NULL);
 		break;
 
 	case 49:

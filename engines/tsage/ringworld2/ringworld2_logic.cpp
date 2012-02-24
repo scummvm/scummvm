@@ -1551,6 +1551,27 @@ void Scene1200::sub9DAD6(int indx) {
 
 /*--------------------------------------------------------------------------*/
 
+void AnimationPlayerSubData::load(Common::File &f) {
+	f.skip(6);
+	_field6 = f.readUint16LE();
+	f.skip(2);
+	_fieldA = f.readUint16LE();
+	_fieldC = f.readUint16LE();
+	f.skip(4);
+	_field12 = f.readUint16LE();
+	_field14 = f.readUint16LE();
+	_field16 = f.readUint16LE();
+	f.skip(4);
+	_palStart = f.readUint16LE();
+	_palSize = f.readUint16LE();
+	f.read(_palData, 768);
+	_field320 = f.readSint32LE();
+	f.skip(12);
+	f.read(_field330, 96);
+}
+
+/*--------------------------------------------------------------------------*/
+
 AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_endAction = NULL;
 	
@@ -1586,7 +1607,7 @@ void AnimationPlayer::remove() {
 void AnimationPlayer::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
 			(_field3A)) {
-		_field90C = _field576;
+		_field90C = _subData._field6;
 	} 
 }
 
@@ -1595,9 +1616,9 @@ void AnimationPlayer::dispatch() {
 	uint32 gameDiff = (gameFrame > _gameFrame) ? gameFrame - _gameFrame : _gameFrame - gameFrame;
 
 	if (gameDiff >= _field910) {
-		drawFrame(_field904 % _field57C);
+		drawFrame(_field904 % _subData._fieldC);
 		++_field904;
-		_field90C = _field904 / _field57C;
+		_field90C = _field904 / _subData._fieldC;
 
 		if (_field90C == _field90E)
 			method2();
@@ -1607,18 +1628,63 @@ void AnimationPlayer::dispatch() {
 	}
 }
 
-bool AnimationPlayer::load(int rlbNum, Action *endAction) {
-	ResourceEntry resEntry;
-	if (!g_resourceManager->first().getSectionEntry(_resourceFile, RES_IMAGE, rlbNum, 0, resEntry)) {
-		warning("Couldn't find resource index");
-		// TODO: Complete animation loading
+bool AnimationPlayer::load(int animId, Action *endAction) {
+	// Open up the main resource file for access
+	TLib &libFile = g_resourceManager->first();
+	if (!_resourceFile.open(libFile.getFilename()))
+		error("Could not open resource");
+
+	// Get the offset of the given resource and seek to it in the player's file reference
+	ResourceEntry entry;
+	uint32 fileOffset = libFile.getResourceStart(RES_IMAGE, animId, 0, entry);
+	_resourceFile.seek(fileOffset);
+
+	// At this point, the file is pointing to the start of the resource data
+
+	// Set the end action
+	_endAction = endAction;
+	
+	// Load the sub data block
+	_subData.load(_resourceFile);
+
+	// Set other properties
+	_field908 = -1;
+	_field904 = 0;
+	_field910 = 60 / _subData._fieldA;
+	_gameFrame = R2_GLOBALS._events.getFrameNumber() - _field910;
+
+	if (_subData._field320) {
+		_field900 = _subData._field320;
+	} else {
+		int v = (_subData._field12 + 2) * _subData._field14 * _subData._fieldC;
+		_field900 = (_subData._field16 / _subData._fieldC) + v + 96;
+	}
+	
+	_animData = _fieldA = new byte[_field900];
+
+	if (_subData._fieldC <= 1) {
+		_subData._field16 = NULL;
+		_animPtr = _animData;
+	} else {
+		_field16 = new byte[_field900];
+		_animPtr = _field16;
 	}
 
-	_resourceFile.close();
+	_field90C = 0;
+	_field90E = 1;
+
+	// TODO: Stuff
+
+	if (_field3C) {
+
+	}
+
+
 	return false;
 }
 
 void AnimationPlayer::drawFrame(int frameIndex) {
+/*
 	uint32 v = READ_LE_UINT32(_dataP);
 warning("v = %d", v);
 //TODO
@@ -1634,6 +1700,7 @@ warning("v = %d", v);
 			R2_GLOBALS._scenePalette.refresh();
 		}
 	}
+*/
 }
 
 void AnimationPlayer::method2() {
@@ -1641,7 +1708,7 @@ void AnimationPlayer::method2() {
 }
 
 bool AnimationPlayer::method3() {
-	return (_field90C >= _field576);
+	return (_field90C >= _subData._field6);
 }
 
 void AnimationPlayer::method4() {

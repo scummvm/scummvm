@@ -325,24 +325,38 @@ public:
 	virtual Common::String getClassName() { return "UnkObject1200"; }
 };
 
+class AnimationPlayerSubData {
+public:
+	int _field6;
+	int _fieldA;
+	int _fieldC;
+	int _field12;
+	int _field14;
+	int _field16;
+	int _palStart;
+	int _palSize;
+	byte _palData[256 * 3];
+	int32 _field320;
+	byte _field330[96];
+public:
+	void load(Common::File &f);
+};
+
 class AnimationPlayer: public EventHandler {
 public:
+	byte *_fieldA;
+	byte *_field16;
+	byte *_animData, *_animPtr;
 	Common::File _resourceFile;
-	void *_fieldA;
-	void *_field16;
-
-	byte *_dataP;
 	Rect _rect1, _screenBounds;
 	int _field38;
 	int _field3A, _field3C;
 	int _field56;
 	int _field58, _field5A;
 	ScenePalette _palette;
-	byte _palData[256 * 3];
+	AnimationPlayerSubData _subData;
 	Action *_endAction;
-	int _field576;
-	int _field57C;
-	int _palStart, _palSize;
+	int _field900;
 	int _field904;
 	int _field908;
 	int _field90C;
@@ -361,7 +375,7 @@ public:
 	virtual void changePane() {}
 	virtual void proc14() {}
 
-	bool load(int rlbNum, Action *endAction = NULL);
+	bool load(int animId, Action *endAction = NULL);
 	void drawFrame(int frameIndex);
 	void method2();
 	bool method3();
