@@ -209,14 +209,31 @@ const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
 	return 0;
 }
 
+const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
+	List<const HardwareInput *>::const_iterator it;
+
+	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
+		const HardwareInput *entry = *it;
+		if (entry->type == kHardwareInputTypeGeneric && entry->inputCode == code)
+			return entry;
+	}
+	return 0;
+}
+
 const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState& keystate) const {
 	List<const HardwareInput *>::const_iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		if ((*it)->key == keystate)
-			return (*it);
+		const HardwareInput *entry = *it;
+		if (entry->type == kHardwareInputTypeKeyboard && entry->key == keystate)
+			return entry;
 	}
 	return 0;
+}
+
+void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[]) {
+	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry)
+		addHardwareInput(new HardwareInput(entry->hwId, entry->code, entry->desc));
 }
 
 void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
@@ -247,10 +264,6 @@ void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const Modif
 	}
 }
 
-void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[]) {
-	addHardwareInputs(keys, defaultModifiers);
-}
-
 void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
 	if (!input)
 		return;
@@ -259,7 +272,16 @@ void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
 		const HardwareInput *entry = (*it);
-		if (entry->id == input->id || entry->key == input->key) {
+		bool match = false;
+		if (entry->id == input->id)
+			match = true;
+		else if (input->type == entry->type) {
+			if (input->type == kHardwareInputTypeGeneric && input->inputCode == entry->inputCode)
+				match = true;
+			else if (input->type == kHardwareInputTypeKeyboard && input->key == entry->key)
+				match = true;
+		}
+		if (match) {
 			debug(7, "Removing hardware input [%s] (%s) because it matches [%s] (%s)", entry->id.c_str(), entry->description.c_str(), input->id.c_str(), input->description.c_str());
 			delete entry;
 			_inputs.erase(it);

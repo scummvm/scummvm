@@ -295,6 +295,10 @@ const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
 	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(key) : 0;
 }
 
+const HardwareInput *Keymapper::findHardwareInput(const HardwareInputCode code) {
+	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(code) : 0;
+}
+
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

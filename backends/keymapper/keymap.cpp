@@ -39,7 +39,8 @@ Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDoma
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		const HardwareInput *hwInput = (*it)->getMappedInput();
 
-		if (hwInput) {
+		//FIXME: Add support for kHardwareInputTypeGeneric
+		if (hwInput && hwInput->type == kHardwareInputTypeKeyboard) {
 			_keymap[hwInput->key] = *it;
 		}
 	}
@@ -62,21 +63,25 @@ void Keymap::addAction(Action *action) {
 void Keymap::registerMapping(Action *action, const HardwareInput *hwInput) {
 	HashMap<KeyState, Action *>::iterator it;
 
-	it = _keymap.find(hwInput->key);
+	//FIXME: Add support for kHardwareInputTypeGeneric
+	if (hwInput->type == kHardwareInputTypeKeyboard) {
+		it = _keymap.find(hwInput->key);
 
-	// if key is already mapped to a different action then un-map it
-	if (it != _keymap.end() && action != it->_value) {
-		it->_value->mapInput(0);
+		// if key is already mapped to a different action then un-map it
+		if (it != _keymap.end() && action != it->_value) {
+			it->_value->mapInput(0);
+		}
+		_keymap[hwInput->key] = action;
 	}
-
-	_keymap[hwInput->key] = action;
 }
 
 void Keymap::unregisterMapping(Action *action) {
 	const HardwareInput *hwInput = action->getMappedInput();
 
 	if (hwInput) {
-		_keymap.erase(hwInput->key);
+		//FIXME: Add support for kHardwareInputTypeGeneric
+		if (hwInput->type == kHardwareInputTypeKeyboard)
+			_keymap.erase(hwInput->key);
 	}
 }
 

@@ -172,6 +172,11 @@ public:
 	 */
 	const HardwareInput *findHardwareInput(const KeyState& key);
 
+	/**
+	 * Return a HardwareInput pointer for the given input code
+	 */
+	const HardwareInput *findHardwareInput(const HardwareInputCode code);
+
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
