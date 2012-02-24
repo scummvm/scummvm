@@ -422,6 +422,21 @@ void Screen_EoB::setScreenPalette(const Palette &pal) {
 	}
 }
 
+void Screen_EoB::getRealPalette(int num, uint8 *dst) {
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
+		const uint8 *pal = _screenPalette->getData();
+		for (int i = 0; i < 16; ++i) {
+			dst[0] = (pal[0] << 2) | (pal[0] & 3);
+			dst[1] = (pal[1] << 2) | (pal[1] & 3);
+			dst[2] = (pal[2] << 2) | (pal[2] & 3);
+			dst += 3;
+			pal += 3;
+		}
+	} else {
+		Screen::getRealPalette(num, dst);
+	}
+}
+
 uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit, const uint8 *cgaMapping) {
 	uint8 *shp = 0;
 	uint16 shapesize = 0;

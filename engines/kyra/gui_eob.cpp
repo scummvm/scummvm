@@ -2648,7 +2648,14 @@ bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selec
 void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screenPal = new uint8[768];
 	_screen->getRealPalette(0, screenPal);
-	::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+	uint16 width = Screen::SCREEN_W;
+	uint16 height = Screen::SCREEN_H;
+	if (_vm->_useHiResDithering) {
+		width <<= 1;
+		height <<= 1;
+	}
+
+	::createThumbnail(&dst, _screen->getCPagePtr(7), width, height, screenPal);
 	delete[] screenPal;
 }
 
