@@ -119,7 +119,7 @@ void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
 		}
 		break;
 	case kFeatureAspectRatioCorrection:
-		iPhone_setAspectRatioState(enable);
+		_videoContext->asprectRatioCorrection = enable;
 		break;
 
 	default:
@@ -132,7 +132,7 @@ bool OSystem_IPHONE::getFeatureState(Feature f) {
 	case kFeatureCursorPalette:
 		return _mouseCursorPaletteEnabled;
 	case kFeatureAspectRatioCorrection:
-		return iPhone_getAspectRatioState();
+		return _videoContext->asprectRatioCorrection;
 
 	default:
 		return false;

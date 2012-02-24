@@ -58,13 +58,14 @@ enum GraphicsModes {
 };
 
 struct VideoContext {
-	VideoContext() : screenWidth(), screenHeight(), overlayVisible(false),
+	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
 	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
 	                 mouseIsVisible(), graphicsMode(kGraphicsModeLinear), shakeOffsetY() {
 	}
 
 	// Game screen state
+	bool asprectRatioCorrection;
 	uint screenWidth, screenHeight;
 	Graphics::Surface screenTexture;
 
@@ -86,8 +87,6 @@ struct VideoContext {
 };
 
 // On the ObjC side
-void iPhone_setAspectRatioState(bool enable); 
-bool iPhone_getAspectRatioState();
 void iPhone_updateScreen();
 bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
 const char *iPhone_getDocumentsDir();
