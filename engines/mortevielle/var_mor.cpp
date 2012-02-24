@@ -176,7 +176,7 @@ byte tabdon[4001];
 
 Common::String stpou;               /* donne le % d'indices */ //Translation: "Provides the % of hints"
 byte is;
-char mode;
+byte mode;
 Common::String al_mess,
        err_mess,
        ind_mess,
@@ -185,7 +185,7 @@ Common::String al_mess,
 int nbrep[9];
 int nbrepm[9];
 int msg[5];
-char touv[8];
+byte touv[8];
 sav_chaine s, s1;
 byte bufcha[391];
 

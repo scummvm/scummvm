@@ -63,7 +63,7 @@ namespace Mortevielle {
 /*---------------------------------------------------------------------------*/
 
 #define ord(v) ((int) v)
-#define chr(v) ((char) v)
+#define chr(v) ((unsigned char) v)
 #define lo(v) ((v) & 0xff)
 #define hi(v) (((v) >> 8) & 0xff)
 #define swap(v) (((lo(v)) << 8) | ((hi(v)) >> 8)) 
@@ -167,7 +167,7 @@ struct sav_chaine {
 	int mlieu, iboul, ibag, icave, ivier, ipuit;
 	int derobj, iloic, icryp;
 	bool ipre;
-	char heure;
+	byte heure;
 };
 
 struct registres {
@@ -326,7 +326,7 @@ extern byte tabdon[4001];
 
 extern Common::String stpou;                               /* donne le % d'indices */
 extern byte is;
-extern char mode;
+extern byte mode;
 extern Common::String al_mess,
        err_mess,
        ind_mess,
@@ -335,7 +335,7 @@ extern Common::String al_mess,
 extern int nbrep[9];
 extern int nbrepm[9];
 extern int msg[5];
-extern char touv[8];
+extern byte touv[8];
 extern sav_chaine s, s1;
 extern byte bufcha[391];
 
