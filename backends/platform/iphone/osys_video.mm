@@ -44,7 +44,6 @@ bool OSystem_IPHONE::setGraphicsMode(int mode) {
 	case kGraphicsModeNone:
 	case kGraphicsModeLinear:
 		_videoContext->graphicsMode = (GraphicsModes)mode;
-		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 		return true;
 
 	default:
@@ -68,17 +67,21 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_gameScreenRaw = (byte *)malloc(width * height);
 	bzero(_gameScreenRaw, width * height);
 
-	updateOutputSurface();
-
-	clearOverlay();
-
 	_fullScreenIsDirty = false;
 	dirtyFullScreen();
-	_videoContext->mouseIsVisible = false;
 	_mouseCursorPaletteEnabled = false;
-	_screenChangeCount++;
+}
 
-	updateScreen();
+void OSystem_IPHONE::beginGFXTransaction() {
+}
+
+OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
+	_screenChangeCount++;
+	updateOutputSurface();
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
+
+	// TODO: Can we return better error codes?
+	return kTransactionSuccess;
 }
 
 void OSystem_IPHONE::updateOutputSurface() {

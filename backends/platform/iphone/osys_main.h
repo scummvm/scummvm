@@ -121,6 +121,10 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
+
+	virtual void beginGFXTransaction();
+	virtual TransactionError endGFXTransaction();
+
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
