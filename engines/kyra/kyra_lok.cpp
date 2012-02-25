@@ -960,9 +960,6 @@ void KyraEngine_LoK::registerDefaultSettings() {
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 2);
-
-	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiRes)
-		ConfMan.registerDefault("16_color", false);
 }
 
 void KyraEngine_LoK::readSettings() {
