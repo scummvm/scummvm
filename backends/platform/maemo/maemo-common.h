@@ -43,15 +43,6 @@ struct Model {
 	bool hasMenuKey;
 };
 
-static const Model models[] = {
-	{"SU-18", kModelType770, "770", false, true},
-	{"RX-34", kModelTypeN800, "N800", false, true},
-	{"RX-44", kModelTypeN810, "N810", true, true},
-	{"RX-48", kModelTypeN810, "N810W", true, true},
-	{"RX-51", kModelTypeN900, "N900", true, false},
-	{0, kModelTypeInvalid, 0, true, true}
-};
-
 enum CustomEventType {
 	kEventClickMode = 1,
 	kEventInvalid = 0

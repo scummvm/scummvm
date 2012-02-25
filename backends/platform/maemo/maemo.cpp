@@ -156,10 +156,19 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 	setXWindowName(cap.c_str());
 }
 
+static const Model models[] = {
+	{"SU-18", kModelType770, "770", false, true},
+	{"RX-34", kModelTypeN800, "N800", false, true},
+	{"RX-44", kModelTypeN810, "N810", true, true},
+	{"RX-48", kModelTypeN810, "N810W", true, true},
+	{"RX-51", kModelTypeN900, "N900", true, false},
+	{0, kModelTypeInvalid, 0, true, true}
+};
+
 const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
 	const Model *model;
-	for (model = models; model->hwId; model++) {
+	for (model = models; model->hwId; ++model) {
 		if (deviceHwId.equals(model->hwId))
 			return *model;
 	}
