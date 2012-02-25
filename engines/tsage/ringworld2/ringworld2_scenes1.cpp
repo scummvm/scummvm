@@ -11432,9 +11432,9 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 void Scene1850::remove() {
 	g_globals->_scenePalette.loadPalette(0);
 
-	R2_GLOBALS._scenePalette._palette[771] = 255;
-	R2_GLOBALS._scenePalette._palette[772] = 255;
-	R2_GLOBALS._scenePalette._palette[773] = 255;
+	R2_GLOBALS._scenePalette._palette[765] = 255;
+	R2_GLOBALS._scenePalette._palette[766] = 255;
+	R2_GLOBALS._scenePalette._palette[767] = 255;
 	
 	SceneExt::remove();
 }
