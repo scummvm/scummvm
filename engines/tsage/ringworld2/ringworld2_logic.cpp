@@ -40,16 +40,16 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 
 	switch (sceneNumber) {
 	/* Scene group #0 */
-	case 50: 
+	case 50:
 		// Waking up cutscene
 		return new Scene50();
-	case 100: 
+	case 100:
 		// Quinn's room
 		return new Scene100();
-	case 125: 
+	case 125:
 		// Computer console
 		return new Scene125();
-	case 150: 
+	case 150:
 		// Empty Bedroom #1
 		return new Scene150();
 	case 160:
@@ -166,7 +166,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Ice Maze: Large empty room
 		return new Scene2400();
 	case 2425:
-		// Ice Maze: 
+		// Ice Maze:
 		return new Scene2425();
 	case 2430:
 		// Ice Maze: Bedroom
@@ -326,7 +326,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 
 	int prevScene = R2_GLOBALS._sceneManager._previousScene;
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50)) 
+	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
 			|| ((prevScene == 205) && (sceneNumber == 100))
 			|| ((prevScene == 180) && (sceneNumber == 100))) {
@@ -549,7 +549,7 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 			tmp += abs(tmpPal[(3 * j) + 2] - newB);
 			if (tmp >= varC)
 				continue;
-			
+
 			varC = tmp;
 			varD = j;
 		}
@@ -628,11 +628,11 @@ void SceneHandlerExt::setupPaletteMaps() {
 					diffSum += ABS(palP[pIndex2 * 3 + 1] - g);
 					if (diffSum >= threshold)
 						continue;
-					
+
 					diffSum += ABS(palP[pIndex2 * 3 + 2] - b);
 					if (diffSum >= threshold)
 						continue;
-					
+
 					threshold = diffSum;
 					foundIndex = pIndex2;
 				}
@@ -1257,12 +1257,12 @@ void SceneAreaObject::setDetails(int visage, int strip, int frameNumber, const C
 	_cursorNum = CURSOR_INVALID;
 	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
 	scene->_sceneAreas.push_front(this);
-	
+
 	_insetCount = ++R2_GLOBALS._insetUp;
 }
 
 void SceneAreaObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 
+	((SceneHotspot *)(this))->setDetails(resNum, lookLineNum, talkLineNum, useLineNum,
 		2, (SceneItem *)NULL);
 }
 
@@ -1306,7 +1306,7 @@ void UnkObject1200::sub51AE9(int arg1) {
 int UnkObject1200::sub51AF8(Common::Point pt) {
 	if (!_rect1.contains(pt))
 		return -1;
-	
+
 	int tmp1 = (pt.x - _rect1.left + _field2E) / _field2A;
 	int tmp2 = (pt.y - _rect1.top + _field30) / _field2C;
 
@@ -1358,7 +1358,7 @@ void UnkObject1200::sub9EDE8(Rect rect) {
 int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
 	arg1 /= _field2A;
 	arg2 /= _field2C;
-	
+
 	if ((arg1 >= 0) && (arg2 >= 0) && (_field26 > arg1) && (_field28 > arg2)) {
 		return _field16[(((_field26 * arg2) + arg1) * 2)];
 	}
@@ -1368,13 +1368,13 @@ int UnkObject1200::sub9EE22(int &arg1, int &arg2) {
 
 void Scene1200::sub9DAD6(int indx) {
 	_object1.sub9EE22(R2_GLOBALS._v56AA2, R2_GLOBALS._v56AA4);
-	
+
 	switch (indx) {
 	case 0:
-		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36)) 
-			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
-				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
-				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+		if ( ((_object1.sub51AF8(Common::Point(200, 50)) > 36) || (_object1.sub51AF8(Common::Point(200, 88)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 3) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
+				|| ((R2_GLOBALS._v56AA2 == 13) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
+				|| ((R2_GLOBALS._v56AA2 == 29) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
 				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 41)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
@@ -1415,10 +1415,10 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 1:
-		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36)) 
-			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4)) 
-				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2)) 
-				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1)) 
+		if ( ((_object1.sub51AF8(Common::Point(120, 50)) > 36) || (_object1.sub51AF8(Common::Point(120, 88)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 7) && (R2_GLOBALS._v56AA4 == 33) && (_field418 != 4))
+				|| ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 21) && (_field418 != 2))
+				|| ((R2_GLOBALS._v56AA2 == 33) && (R2_GLOBALS._v56AA4 == 17) && (_field418 != 1))
 				|| ((R2_GLOBALS._v56AA2 == 5) && (R2_GLOBALS._v56AA4 == 5)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
@@ -1459,8 +1459,8 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 2:
-		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36)) 
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3)) 
+		if ( ((_object1.sub51AF8(Common::Point(140, 110)) > 36) || (_object1.sub51AF8(Common::Point(178, 110)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 5) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 41) && (R2_GLOBALS._v56AA4 == 21)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
@@ -1501,8 +1501,8 @@ void Scene1200::sub9DAD6(int indx) {
 		}
 		break;
 	case 3:
-		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36)) 
-			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3)) 
+		if ( ((_object1.sub51AF8(Common::Point(140, 30)) > 36) || (_object1.sub51AF8(Common::Point(178, 30)) > 36))
+			&& ( ((R2_GLOBALS._v56AA2 == 17) && (R2_GLOBALS._v56AA4 == 9) && (_field418 != 3))
 				|| ((R2_GLOBALS._v56AA2 == 35) && (R2_GLOBALS._v56AA4 == 17)) )
 				)	{
 			R2_GLOBALS._player.disableControl();
@@ -1574,10 +1574,10 @@ void AnimationPlayerSubData::load(Common::File &f) {
 
 AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_endAction = NULL;
-	
+
 	_fieldA = NULL;
 	_field16 = NULL;
-	
+
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_field3C = 0;
@@ -1608,7 +1608,7 @@ void AnimationPlayer::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
 			(_field3A)) {
 		_field90C = _subData._field6;
-	} 
+	}
 }
 
 void AnimationPlayer::dispatch() {
@@ -1643,7 +1643,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 	// Set the end action
 	_endAction = endAction;
-	
+
 	// Load the sub data block
 	_subData.load(_resourceFile);
 
@@ -1659,7 +1659,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 		int v = (_subData._field12 + 2) * _subData._field14 * _subData._fieldC;
 		_field900 = (_subData._field16 / _subData._fieldC) + v + 96;
 	}
-	
+
 	_animData = _fieldA = new byte[_field900];
 
 	if (_subData._fieldC <= 1) {

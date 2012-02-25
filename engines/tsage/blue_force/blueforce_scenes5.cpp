@@ -60,7 +60,7 @@ bool Scene550::Lyle::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_TALK:
-		if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) || 
+		if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) ||
 				(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
 			if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) &&
 					(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
@@ -132,7 +132,7 @@ bool Scene550::Vechile::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2;
 			scene->setAction(&scene->_sequenceManager, scene, 5501, &BF_GLOBALS._player, NULL);
-		} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) || 
+		} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) ||
 					(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
 			if (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1) {
 				scene->_sceneMode = 5501;
@@ -164,11 +164,11 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 1;
 		signal();
 		return;
-	} 
+	}
 
 	SceneExt::postInit();
 	loadScene(550);
-	
+
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_lyleHatSpeaker);
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
@@ -216,7 +216,7 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 		if (BF_GLOBALS.getFlag(onDuty)) {
 			_vechile.setVisage(301);
 			_vechile.setStrip(1);
-			
+
 			BF_GLOBALS._player.setVisage(304);
 		} else {
 			_vechile.setVisage(580);
@@ -224,7 +224,7 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 			_vechile.setFrame(2);
 
 			BF_GLOBALS._player.setVisage(303);
-		}		
+		}
 	}
 
 	BF_GLOBALS._sceneItems.push_back(&_vechile);
@@ -299,7 +299,7 @@ void Scene551::Action2::signal() {
 		BF_GLOBALS._walkRegions.enableRegion(18);
 		BF_GLOBALS._walkRegions.enableRegion(4);
 		scene->_field1CD2 = 1;
-		
+
 		scene->_harrison.setObjectWrapper(new SceneObjectWrapper());
 		scene->_harrison.animate(ANIM_MODE_1, NULL);
 
@@ -506,7 +506,7 @@ void Scene551::TrunkInset::remove() {
 	BF_GLOBALS._player.disableControl();
 
 	scene->_sceneMode = 0;
-	scene->setAction(&scene->_sequenceManager, scene, 5516, &scene->_harrison, 
+	scene->setAction(&scene->_sequenceManager, scene, 5516, &scene->_harrison,
 		&scene->_patrolCarTrunk, NULL);
 
 	FocusObject::remove();
@@ -711,7 +711,7 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 		_object12.show();
 		_object12.setDetails(550, 25, -1, 26, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.push_front(&_object12);
-		
+
 		_harrison.postInit();
 		_harrison.setVisage(304);
 		_harrison.setPosition(Common::Point(67, 102));
@@ -1076,7 +1076,7 @@ void Scene560::SafeInset::postInit(SceneObjectList *OwnerList) {
 		_item4.setDetails(Rect(143, 86, 159, 102), 560, 49, 50, -1, 1, NULL);
 		_item5.setDetails(Rect(159, 86, 175, 102), 560, 49, 50, -1, 1, NULL);
 		_item6.setDetails(Rect(175, 86, 191, 102), 560, 49, 50, -1, 1, NULL);
-		
+
 		BF_GLOBALS._sceneItems.remove(&_item1);
 		BF_GLOBALS._sceneItems.remove(&_item2);
 		BF_GLOBALS._sceneItems.remove(&_item3);
@@ -1114,9 +1114,9 @@ void Scene560::SafeInset::postInit(SceneObjectList *OwnerList) {
 		_digit0.setStrip(3);
 		_digit0.setPosition(Common::Point(183, 94));
 		_digit0.fixPriority(252);
-		
+
 		int amount = (BF_GLOBALS._safeCombination != 0) ? BF_GLOBALS._safeCombination : 1000;
-		
+
 		// Get digit 0 portion
 		int remainder = amount % 10;
 		amount /= 10;
@@ -1135,7 +1135,7 @@ void Scene560::SafeInset::postInit(SceneObjectList *OwnerList) {
 
 void Scene560::SafeInset::remove() {
 	Scene560 *scene = (Scene560 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	_item1.remove();
 	_item2.remove();
 	_item3.remove();
@@ -1145,7 +1145,7 @@ void Scene560::SafeInset::remove() {
 	_digit2.remove();
 	_digit1.remove();
 	_digit0.remove();
-	
+
 	scene->_nickel.remove();
 
 	if (BF_GLOBALS._events.getCursor() == CURSOR_USE) {
@@ -1293,7 +1293,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 		default:
 			break;
 		}
-		
+
 		scene->_safeInset.signal();
 		scene->_sound1.play(75);
 		return true;
@@ -1345,7 +1345,7 @@ bool Scene560::BoxInset::Item1::startAction(CursorType action, Event &event) {
 		scene->_safeInset.setPosition(Common::Point(160, 141));
 		scene->_safeInset.fixPriority(251);
 		scene->_safeInset.setDetails(560, 45, 46, -1);
-		
+
 		scene->_sceneMode = 3;
 		scene->_boxInset.remove();
 
@@ -1414,7 +1414,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 	_deskChair.setPosition(Common::Point(81, 149));
 	_deskChair.fixPriority(151);
 	_deskChair.changeZoom(81);
-	
+
 	if (BF_GLOBALS._sceneManager._previousScene == 570) {
 		// Returning from using computer
 		BF_GLOBALS._events.setCursor(CURSOR_USE);
@@ -1448,7 +1448,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player._moveDiff.x = 11;
 		BF_GLOBALS._player.changeZoom(-1);
 		BF_GLOBALS._player.disableControl();
-		
+
 		_sceneMode = 10;
 		ADD_MOVER(BF_GLOBALS._player, 85, 115);
 	}
@@ -1516,7 +1516,7 @@ void Scene560::signal() {
 				T2_GLOBALS._uiElements.addScore(10);
 				BF_GLOBALS.setFlag(fGotPointsForPunch);
 			}
-			
+
 			_boxInset.postInit();
 			_boxInset.setVisage(560);
 			_boxInset.setStrip(2);
@@ -1605,7 +1605,7 @@ void Scene570::PasswordEntry::postInit(SceneObjectList *OwnerList) {
 void Scene570::PasswordEntry::process(Event &event) {
 	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 	bool entryChanged = false;
-	
+
 	switch (event.eventType) {
 	case EVENT_KEYPRESS: {
 		int key = toupper(event.kbd.ascii);
@@ -1648,7 +1648,7 @@ void Scene570::PasswordEntry::process(Event &event) {
 		_entryText.setPosition(Common::Point(213, 40));
 		_entryText.fixPriority(255);
 		_entryText.setup(_entryBuffer);
-		
+
 		// Pad entered text with spaces to make up the allowed width and then display
 		Common::String msg = _entryBuffer;
 		while (msg.size() < 10)
@@ -1658,7 +1658,7 @@ void Scene570::PasswordEntry::process(Event &event) {
 }
 
 void Scene570::PasswordEntry::checkPassword() {
-	// Check if the password is correctly entered as 'JACKIE' or, as a nod to the 
+	// Check if the password is correctly entered as 'JACKIE' or, as a nod to the
 	// reimplementation in ScummVM, as the project name.
 	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
@@ -1794,7 +1794,7 @@ void Scene570::Icon::remove() {
 }
 
 bool Scene570::Icon::startAction(CursorType action, Event &event) {
-	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
@@ -1907,7 +1907,7 @@ bool Scene570::Icon::startAction(CursorType action, Event &event) {
 }
 
 void Scene570::Icon::setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg) {
-	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;	
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 	NamedObject::postInit();
 
 	_iconId = iconId;
@@ -1929,7 +1929,7 @@ void Scene570::Icon::setDetails(int iconId, int folderId, int parentFolderId, in
 /*--------------------------------------------------------------------------*/
 
 bool Scene570::PowerSwitch::startAction(CursorType action, Event &event) {
-	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
@@ -1972,7 +1972,7 @@ bool Scene570::PrinterIcon::startAction(CursorType action, Event &event) {
 }
 
 void Scene570::Object3::remove() {
-	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 	scene->_object4._flag = 0;
 
 	scene->_printerIcon.remove();
@@ -1998,7 +1998,7 @@ void Scene570::Object3::remove() {
 /*--------------------------------------------------------------------------*/
 
 bool Scene570::FloppyDrive::startAction(CursorType action, Event &event) {
-	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
@@ -2326,7 +2326,7 @@ bool Scene590::Skip::startAction(CursorType action, Event &event) {
 		} else {
 			scene->_stripNumber = !scene->_field17DC ? 5901 : 5902;
 		}
-		
+
 		scene->setAction(&scene->_action1);
 		scene->_field17DC = 1;
 		return true;
@@ -2404,7 +2404,7 @@ void Scene590::Action2::signal() {
 	case 4:
 		scene->_skip.setStrip(1);
 		scene->_skip.animate(ANIM_MODE_1, NULL);
-		
+
 		BF_GLOBALS._player.setVisage(368);
 		BF_GLOBALS._player.setStrip(7);
 		BF_GLOBALS._player.setPosition(Common::Point(238, 131));
@@ -2456,7 +2456,7 @@ void Scene590::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_skipSpeaker);
 	_stripManager.addSpeaker(&_lauraSpeaker);
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
-	
+
 	if (BF_GLOBALS.getFlag(onDuty)) {
 		BF_GLOBALS._player.setVisage(361);
 		BF_GLOBALS._player._moveDiff = Common::Point(6, 2);
@@ -2488,7 +2488,7 @@ void Scene590::postInit(SceneObjectList *OwnerList) {
 	_item10.setDetails(13, 590, 9, -1, 21, 1);
 	_item11.setDetails(15, 590, 10, -1, 22, 1);
 	_item12.setDetails(17, 590, 11, -1, 23, 1);
-	
+
 	BF_GLOBALS._player.disableControl();
 	_sceneMode = 0;
 	setAction(&_sequenceManager, this, 5900, &BF_GLOBALS._player, NULL);

@@ -326,7 +326,7 @@ uint32 TLib::getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum
 
 	// Load in the section index
 	loadSection((*i).fileOffset);
-	
+
 	// Scan for an entry for the given Id
 	ResourceEntry *re = NULL;
 	ResourceList::iterator iter;
@@ -341,7 +341,7 @@ uint32 TLib::getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum
 	if (!re || re->isCompressed)
 		error("Invalid resource Id #%d", rlbNum);
 
-	// Return the resource entry as well as the file offset 
+	// Return the resource entry as well as the file offset
 	entry = *re;
 	return _sections.fileOffset + entry.fileOffset;
 }
@@ -441,7 +441,7 @@ bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool supp
 
 	while (lineNum-- > 0) {
 		srcP += strlen(srcP) + 1;
-		
+
 		if (srcP >= endP) {
 			if (suppressErrors)
 				return false;
@@ -537,7 +537,7 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
  * Open up the given resource file using a passed file object. If the desired entry is found
  * in the index, return the index entry for it, and move the file to the start of the resource
  */
-bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, 
+bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum,
 									  ResourceEntry &resEntry) {
 	// Load the root section index
 	ResourceList resList;

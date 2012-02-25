@@ -316,7 +316,7 @@ void UIElements::synchronize(Serializer &s) {
 }
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && GLOBALS._player._enabled && 
+	if (_clearScreen && GLOBALS._player._enabled &&
 			((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
 		if (_bounds.contains(event.mousePos)) {
 			// Cursor inside UI area

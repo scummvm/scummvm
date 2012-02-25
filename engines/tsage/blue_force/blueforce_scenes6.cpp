@@ -49,7 +49,7 @@ void Scene600::Action1::signal() {
 		break;
 	case 2:
 		scene->_sound1.play(59);
-		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan, 
+		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan,
 			&BF_GLOBALS._player, &scene->_skidMarks, NULL);
 		break;
 	case 3:
@@ -149,7 +149,7 @@ void Scene600::remove() {
 void Scene620::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(999);
-	
+
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.disableControl();
 	BF_GLOBALS._player.setVisage(621);
@@ -176,14 +176,14 @@ void Scene620::signal() {
 	case 13:
 	case 16:
 	case 19:
-		addFader((const byte *)&black, 2, this);	
+		addFader((const byte *)&black, 2, this);
 		break;
 	case 2:
 		BF_GLOBALS._player.remove();
 		_object1.postInit();
 		_object1.setVisage(622);
 		_object1.setPosition(Common::Point(101, 41));
-		add2Faders((const byte *)&black, 2, 622, this);	
+		add2Faders((const byte *)&black, 2, 622, this);
 		break;
 	case 5:
 		_object1.remove();
@@ -441,7 +441,7 @@ void Scene690::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._dayNumber = 1;
 
 	_stripManager.addSpeaker(&_jakeSpeaker);
-	
+
 	_object1.postInit();
 	_object1.setVisage(690);
 	_object1.setStrip2(2);

@@ -305,7 +305,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 			if (ri != g_globals->_sceneRegions.end()) {
 				// Fill out the areas defined by the region
 				Region &r = *ri;
-			
+
 				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
 					LineSliceSet set = r.getLineSlices(y);
 
@@ -615,7 +615,7 @@ bool BlueForceDebugger::Cmd_MoveObject(int argc, const char **argv) {
 
 	if ((objNum > 0) && (objNum < 65))
 		BF_INVENTORY.setObjectScene(objNum, sceneNum);
-	else 
+	else
 		DebugPrintf("Invalid object Id %s\n", argv[1]);
 
 	return true;
@@ -702,7 +702,7 @@ bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 
 	if ((objNum > 0) && (objNum < 53))
 		R2_INVENTORY.setObjectScene(objNum, sceneNum);
-	else 
+	else
 		DebugPrintf("Invalid object Id %s\n", argv[1]);
 
 	return true;

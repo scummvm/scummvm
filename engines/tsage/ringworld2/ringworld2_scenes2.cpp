@@ -261,7 +261,7 @@ void Scene2000::initExits() {
 				_mazePlayerMode = 0;
 		} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
 			_mazePlayerMode = 1;
-		else 
+		else
 			_mazePlayerMode = 10;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
@@ -422,12 +422,12 @@ void Scene2000::Action1::signal() {
 		default:
 			break;
 		}
-		
+
 		if (R2_GLOBALS._v56605[3 + _state] == R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex])
 			scene->_objList1[_state].show();
 		else
 			scene->_objList1[_state].hide();
-		
+
 		signal();
 		break;
 	case 5: {
@@ -783,7 +783,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(200);
 	initExits();
 	g_globals->_sceneManager._fadeMode = FADEMODE_IMMEDIATE;
-	
+
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
@@ -1003,9 +1003,9 @@ void Scene2000::signal() {
 }
 
 void Scene2000::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && 
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) &&
 			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)) {
-		
+
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -1048,7 +1048,7 @@ bool Scene2350::Actor3::startAction(CursorType action, Event &event) {
 
 void Scene2350::ExitUp::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
-	
+
 	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
 	scene->_sceneMode = 12;
 	if (R2_GLOBALS._player._characterIndex == 1)
@@ -1056,7 +1056,7 @@ void Scene2350::ExitUp::changeScene() {
 	else
 		scene->setAction(&scene->_sequenceManager, scene, 2352, &R2_GLOBALS._player, NULL);
 }
-	
+
 void Scene2350::ExitWest::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
 
@@ -1129,7 +1129,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 		if (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] == 34) {
 			if (R2_GLOBALS._player._characterIndex == 1)
 				_sceneMode = 2351;
-			else 
+			else
 				_sceneMode = 2353;
 			setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		} else {
@@ -1147,7 +1147,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	}
 	R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2350;
 }
-	
+
 void Scene2350::remove() {
 	R2_GLOBALS._sound1.fadeOut(NULL);
 	SceneExt::remove();
@@ -1189,7 +1189,7 @@ void Scene2350::signal() {
 }
 
 void Scene2350::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) && 
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) &&
 			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)){
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
@@ -1205,7 +1205,7 @@ void Scene2350::process(Event &event) {
  *--------------------------------------------------------------------------*/
 void Scene2400::Exit1::changeScene() {
 	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
-	
+
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 10;
 
@@ -1214,7 +1214,7 @@ void Scene2400::Exit1::changeScene() {
 	R2_GLOBALS._player.addMover(mover, &pt, scene);
 
 }
-	
+
 void Scene2400::Exit2::changeScene() {
 	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
 
@@ -1244,7 +1244,7 @@ void Scene2400::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 2401, &R2_GLOBALS._player, NULL);
 	}
 }
-	
+
 void Scene2400::signal() {
 	switch (_sceneMode) {
 	case 10:
@@ -1339,7 +1339,7 @@ bool Scene2425::Actor1::startAction(CursorType action, Event &event) {
 		}
 	} else if (R2_GLOBALS._events.getCursor() == R2_GUNPOWDER)
 		return false;
-	else 
+	else
 		return SceneActor::startAction(action, event);
 }
 
@@ -1405,7 +1405,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 		_actor1.setup(2426, 1, 1);
 	else
 		_actor1.setup(2426, 1, 2);
-	
+
 	_actor1.setPosition(Common::Point(290, 9));
 	_actor1.fixPriority(20);
 	_actor1.setDetails(2455, 12, -1, -1, 1, (SceneItem *)NULL);
@@ -1511,7 +1511,7 @@ bool Scene2430::Actor3::startAction(CursorType action, Event &event) {
 
 void Scene2430::Exit1::changeScene() {
 	Scene2430 *scene = (Scene2430 *)R2_GLOBALS._sceneManager._scene;
-	
+
 	scene->_sceneMode = 0;
 	R2_GLOBALS._events.setCursor(R2_NEGATOR_GUN);
 	R2_GLOBALS._player.disableControl();
@@ -1790,7 +1790,7 @@ bool Scene2440::Actor2::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 2440;
 		scene->setAction(&scene->_sequenceManager, scene, 2440, &R2_GLOBALS._player, &scene->_actor2, NULL);
 		return true;
-	} 
+	}
 
 	return SceneActor::startAction(action, event);
 }
@@ -2296,7 +2296,7 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 			_actor1.setup(2456, 3, 3);
 			_actor1.setPosition(Common::Point(162, 165));
 			_actor1.setDetails(2455, 15, 1, -1, 1, (SceneItem *)NULL);
-		}	
+		}
 	} else {
 		_actor3.postInit();
 		_actor3.setup(2456, 3, 1);
@@ -2309,9 +2309,9 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 		_actor2.setup(2456, 3, 2);
 		_actor2.setDetails(2455, 9, 1, -1, 1, (SceneItem *)NULL);
 	} else {
-		if ((R2_INVENTORY.getObjectScene(50) != 2455) && (R2_INVENTORY.getObjectScene(49) != 2455)) 
+		if ((R2_INVENTORY.getObjectScene(50) != 2455) && (R2_INVENTORY.getObjectScene(49) != 2455))
 			_actor2.setup(2455, 1, 1);
-		else 
+		else
 			_actor2.setup(2456, 1, 1);
 		_actor2.setDetails(2455, 3, 1, -1, 1, (SceneItem *)NULL);
 	}
@@ -3679,7 +3679,7 @@ void Scene2700::process(Event &event) {
 					break;
 				}
 			}
-		} 
+		}
 	}
 	Scene::process(event);
 }
@@ -4184,7 +4184,7 @@ bool Scene2800::Actor1::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 10;
 		scene->setAction(&scene->_sequenceManager, scene, 2802, &R2_GLOBALS._player, &scene->_actor2, &scene->_actor1, NULL);
 		return true;
-	} else 
+	} else
 		return SceneActor::startAction(action, event);
 }
 
@@ -4432,7 +4432,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		_actor1.animate(ANIM_MODE_NONE, NULL);
 		_actor1.setDetails(2800, -1, -1, -1, 1, (SceneItem *)NULL);
 	}
-	
+
 	_item1.setDetails(Rect(0, 0, 320, 200), 2800, -1, -1, -1, 1, NULL);
 
 	_stripManager.setColors(60, 255);

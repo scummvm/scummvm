@@ -733,7 +733,7 @@ void SceneExt::remove() {
 			_action->_endHandler = NULL;
 		_action->remove();
 	}
-	
+
 	_focusObject = NULL;
 }
 
@@ -1326,7 +1326,7 @@ bool BlueForceInvObjectList::SelectItem(int objectNumber) {
 		AmmoBeltDialog *dlg = new AmmoBeltDialog();
 		dlg->execute();
 		delete dlg;
-	
+
 		return true;
 	}
 
@@ -1408,7 +1408,7 @@ void SceneMessage::signal() {
 }
 
 void SceneMessage::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) || 
+	if ((event.eventType == EVENT_BUTTON_DOWN) ||
 		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
 		signal();
 	}
@@ -1439,7 +1439,7 @@ void SceneMessage::draw() {
 
 void SceneMessage::clear() {
 	// Fade out the text display
-	static const uint32 black = 0;	
+	static const uint32 black = 0;
 	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
 
 	// Refresh the background

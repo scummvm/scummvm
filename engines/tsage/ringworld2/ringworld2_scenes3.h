@@ -494,7 +494,7 @@ public:
 	Exit1 _exit1;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
-	
+
 	int _field11B2;
 
 	Scene3385();
@@ -536,7 +536,7 @@ public:
 	Actor4 _actor4;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
-	
+
 	int _field142E;
 
 	Scene3395();
@@ -600,10 +600,10 @@ class Scene3500 : public SceneExt {
 	class Item4 : public NamedHotspot {
 	public:
 		int _field34;
-		
+
 		Item4();
 		virtual void synchronize(Serializer &s);
-		
+
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -615,7 +615,7 @@ class Scene3500 : public SceneExt {
 		int _fieldAA;
 		int _fieldAC;
 		int _fieldAE;
-		
+
 		Actor7();
 		virtual void synchronize(Serializer &s);
 
@@ -695,7 +695,7 @@ class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:
 		int _field1E, _field20;
-		
+
 		Action3600();
 		virtual void synchronize(Serializer &s);
 		virtual void signal();

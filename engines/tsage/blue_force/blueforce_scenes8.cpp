@@ -434,7 +434,7 @@ void Scene810::Action2::signal() {
 		scene->_lyle.setVisage(813);
 		scene->_lyle.setStrip(2);
 		scene->_lyle.setFrame(1);
-		
+
 		ADD_PLAYER_MOVER(84, 113);
 		break;
 	case 5:
@@ -611,7 +611,7 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 	default:
 		return NamedObjectExt::startAction(action, event);
 	}
-}		
+}
 
 bool Scene810::Chair::startAction(CursorType action, Event &event) {
 	switch (action) {
@@ -709,7 +709,7 @@ bool Scene810::Object5::startAction(CursorType action, Event &event) {
 	case CURSOR_USE: {
 		scene->_sceneMode = 8195;
 		BF_GLOBALS._player.disableControl();
-		
+
 		PlayerMover *mover = new PlayerMover();
 		Common::Point destPos(67, 111);
 		BF_GLOBALS._player.addMover(mover, &destPos, scene);
@@ -804,7 +804,7 @@ bool Scene810::FaxMachine::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 811;
 
 			if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
-				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105, 
+				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105,
 					&BF_GLOBALS._player, &scene->_object6, NULL);
 			} else {
 				scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player,
@@ -1058,12 +1058,12 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 	case 820:
 		BF_GLOBALS._player.setStrip(7);
 		BF_GLOBALS._player.setPosition(Common::Point(278, 116));
-		
+
 		_lyle.setVisage(845);
 		_lyle.setPosition(Common::Point(340, 175));
 		_lyle.setObjectWrapper(new SceneObjectWrapper());
 		_lyle.animate(ANIM_MODE_1, NULL);
-		
+
 		_chair.show();
 
 		BF_GLOBALS._player.disableControl();
@@ -1121,7 +1121,7 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 	_item12._sceneRegionId = 8;
 	BF_GLOBALS._sceneItems.push_back(&_item12);
 
-	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan, 
+	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan,
 		&_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
 	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y));
 }
@@ -1276,7 +1276,7 @@ void Scene810::dispatch() {
 		_lyle.updateAngle(BF_GLOBALS._player._position);
 	}
 
-	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) && 
+	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) &&
 			(BF_GLOBALS._player._position.y != 111)) {
 		_faxMachineInset.remove();
 	}
@@ -1341,7 +1341,7 @@ bool Scene820::PowerButton::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._scenePalette.loadPalette(821);
 			BF_GLOBALS._scenePalette.refresh();
 
-			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 				SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		} else {
 			BF_GLOBALS._scenePalette.loadPalette(820);
@@ -1388,7 +1388,7 @@ bool Scene820::BackButton::startAction(CursorType action, Event &event) {
 			scene->_object5.hide();
 		}
 
-		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		return true;
 	default:
@@ -1419,7 +1419,7 @@ bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
 		if (scene->_pageNumber < 4)
 			++scene->_pageNumber;
 
-		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
 			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 
 		if (scene->_pageNumber == 4) {
@@ -1447,7 +1447,7 @@ void Scene820::synchronize(Serializer &s) {
 void Scene820::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(820);
-	
+
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 
 	_powerButton.postInit();
@@ -3115,7 +3115,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 			_lyle.setPosition(Common::Point(156, 148));
 			_lyle.fixPriority(149);
 		}
-	
+
 		if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) &&
 				(BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
 			_object4.postInit();
@@ -3135,7 +3135,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	}
-	
+
 	_boat.setDetails(7, 870, 3, 4, 5, 1);
 	_crate.setDetails(14, 870, 12, 13, 14, 1);
 	_water.setDetails(5, 870, 24, 25, 26, 1);
@@ -3393,7 +3393,7 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 			_object4.setFrame2(_object4.getFrameCount());
 			_object4.fixPriority(160);
 			_object4.setPosition(Common::Point(255, 148));
-			
+
 			_seqNumber = 8816;
 		} else if (BF_GLOBALS.getFlag(fBlowUpGoon)) {
 			_object4.setStrip(7);
@@ -3405,7 +3405,7 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 		} else {
 			_object4.setStrip(2);
 			_object4.setPosition(Common::Point(258, 147));
-		
+
 			_object3.postInit();
 			_object3.setVisage(871);
 			_object3.setStrip(4);
@@ -3600,7 +3600,7 @@ void Scene880::handleAction(Action *action) {
 		action->_owner = NULL;
 	}
 }
-	
+
 void Scene880::dispatch() {
 	SceneExt::dispatch();
 

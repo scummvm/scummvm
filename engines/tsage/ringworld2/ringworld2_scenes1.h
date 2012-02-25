@@ -142,7 +142,7 @@ class Scene1200 : public SceneExt {
 		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
-		
+
 public:
 	NamedHotspot _item1;
 	SceneActor _actor1;
@@ -567,7 +567,7 @@ class Scene1575 : public SceneExt {
 	public:
 		int _field34;
 		int _field36;
-		
+
 		Hotspot1();
 		void synchronize(Serializer &s);
 		void subA910D(int indx);
@@ -750,7 +750,7 @@ public:
 	Exit2 _exit2;
 	Exit3 _exit3;
 	SequenceManager _sequenceManager;
-	
+
 	int _field77A;
 	int _field77C;
 
@@ -772,7 +772,7 @@ class Scene1750 : public SceneExt {
 		int _fieldAA;
 		int _fieldAC;
 		int _fieldAE;
-		
+
 		Actor4();
 		virtual void synchronize(Serializer &s);
 		void subB1A76(int arg1, int arg2, int arg3, int arg4, int arg5);
@@ -782,11 +782,11 @@ class Scene1750 : public SceneExt {
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	
+
 	class Actor5 : public SceneActor {
 	public:
 		int _fieldA4;
-		
+
 		Actor5();
 		virtual void synchronize(Serializer &s);
 
@@ -845,7 +845,7 @@ class Scene1800 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	
+
 	class Exit1 : public SceneExit {
 	public:
 		virtual void changeScene();
@@ -897,7 +897,7 @@ class Scene1850 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	
+
 public:
 	int _field412;
 	int _field414;
@@ -936,11 +936,11 @@ class Scene1875 : public SceneExt {
 	public:
 		int _fieldA4;
 		int _fieldA6;
-		
+
 		Actor1875();
 		void subB84AB();
 		void subB8271(int indx);
-		
+
 		void synchronize(Serializer &s);
 		virtual void process(Event &event);
 	};

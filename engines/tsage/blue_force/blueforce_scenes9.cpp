@@ -386,7 +386,7 @@ void Scene900::Action3::signal() {
 		break;
 	default:
 		break;
-	} 
+	}
 }
 
 void Scene900::Action4::signal() {
@@ -540,7 +540,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 				_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, (SceneItem *)NULL);
 				_lyle.animate(ANIM_MODE_1, NULL);
 				_lyle.setObjectWrapper(new SceneObjectWrapper());
-			} 
+			}
 
 			_sceneMode = 9000;
 			setAction(&_sequenceManager1, this, 9000, &BF_GLOBALS._player, NULL);
@@ -2125,7 +2125,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_lyle.setFrame(3);
 		_lyle._field90 = 1;
 		_lyle.setDetails(910, 69, 70 ,71 , 5, &_item4);
-	
+
 		BF_GLOBALS._walkRegions.disableRegion(15);
 		BF_GLOBALS._walkRegions.disableRegion(16);
 		BF_GLOBALS._walkRegions.disableRegion(14);

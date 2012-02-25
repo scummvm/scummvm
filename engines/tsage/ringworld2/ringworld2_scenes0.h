@@ -45,9 +45,9 @@ class Scene50: public SceneExt {
 	public:
 		void signal();
 	};
-	
+
 public:
-	Action1 _action1;	
+	Action1 _action1;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
@@ -208,7 +208,7 @@ public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
 	ASoundExt _sound1;
-	
+
 	int _frameNumber;
 	int _field412, _field480;
 	int _field482, _frameInc;
@@ -217,7 +217,7 @@ public:
 public:
 	Scene180();
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
@@ -283,7 +283,7 @@ class Scene205: public SceneExt {
 	};
 private:
 	void setup();
-	void processList(Object **ObjList, int count, const Common::Rect &bounds, 
+	void processList(Object **ObjList, int count, const Common::Rect &bounds,
 					int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
 public:
@@ -445,7 +445,7 @@ class Scene325: public SceneExt {
 		void showIcon();
 		void hideIcon();
 	};
-	
+
 private:
 	void removeText();
 	void consoleAction(int id);
@@ -531,7 +531,7 @@ class Scene500: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	
+
 	/* Objects */
 	class Object2: public SceneActor {
 	public:

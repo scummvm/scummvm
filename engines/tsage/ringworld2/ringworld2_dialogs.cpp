@@ -389,7 +389,7 @@ HelpDialog::HelpDialog() {
 	_msgTitle._bounds.moveTo(5, 0);
 	_msgVersion.set(GAME_VERSION, 172, ALIGN_CENTER);
 	_msgVersion._bounds.moveTo(5, _msgTitle._bounds.bottom + 3);
-	addElements(&_msgTitle, &_msgVersion, NULL);	
+	addElements(&_msgTitle, &_msgVersion, NULL);
 
 	// Set buttons
 	_btnList[0].setText(F2);

@@ -945,7 +945,7 @@ void Scene315::Action1::signal() {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
 			//HACK: This has to be checked wether or not it occurs in the original.
-			//When the _sceneMode is set to 3169, the value desn't change. 
+			//When the _sceneMode is set to 3169, the value desn't change.
 			//If you show the forest rapsheet, it gives points (and again... and again...)
 			scene->_sceneMode = 3154;
 		}
@@ -4509,12 +4509,12 @@ void Scene360::signal() {
 		break;
 	case 3607:
 	case 3609:
-		// Original game was only using at this place visage 1363. 
+		// Original game was only using at this place visage 1363.
 		// This workaround allow Harrison to keep his gun handy
 		// when entering the romm (if required)
 		if (! BF_GLOBALS.getFlag(gunDrawn))
 			_harrison.setVisage(1363);
-		else 
+		else
 			_harrison.setVisage(363);
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -5365,7 +5365,7 @@ bool Scene385::Jim::startAction(CursorType action, Event &event) {
 	} else if (action < CURSOR_WALK)
 		// Any other inventory item
 		return false;
-	else 
+	else
 		return NamedObject::startAction(action, event);
 }
 

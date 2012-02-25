@@ -1083,7 +1083,7 @@ void Scene415::postInit(SceneObjectList *OwnerList) {
 	_animatedSeat.setStrip(1);
 	_animatedSeat.setPosition(Common::Point(306, 116));
 	_animatedSeat.fixPriority(80);
-	
+
 	_windowLever.setDetails(16, 415, 25, -1, 26, 1);
 	_item7.setDetails(17, 415, 32, -1, 33, 1);
 	_seatBelt.setDetails(14, 415, 29, -1, 30, 1);
@@ -1271,7 +1271,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 
 		BF_GLOBALS._player.setVisage(303);
 		BF_GLOBALS._player.setPosition(Common::Point(187, 104));
-		
+
 		_lyle.setPosition(Common::Point(135, 128));
 		_lyle.show();
 
@@ -1291,7 +1291,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 			_vechile.setVisage(580);
 			_vechile.setStrip(2);
 			_vechile.setFrame(3);
-			
+
 			BF_GLOBALS._player.setVisage(303);
 		}
 	}
@@ -1310,7 +1310,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 		_lyle.setPosition(Common::Point(143, 93));
 		_lyle.setStrip(5);
 		_lyle.fixPriority(90);
-		
+
 		_doorway.setFrame(_doorway.getFrameCount());
 		_sceneMode = 4401;
 		setAction(&_sequenceManager, this, 4401, &BF_GLOBALS._player, &_doorway, NULL);
@@ -1375,7 +1375,7 @@ bool Scene450::Weasel::startAction(CursorType action, Event &event) {
 		T2_GLOBALS._uiElements.addScore(30);
 
 		scene->_sceneMode = 4505;
-		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this, 
+		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this,
 			&scene->_counterDoor, &scene->_object2, NULL);
 		return true;
 	default:
@@ -1427,7 +1427,7 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS.getFlag(takenWeasel) && !BF_GLOBALS.getFlag(gotTrailer450)) {
 			BF_GLOBALS.setFlag(gotTrailer450);
 			scene->_sceneMode = 4517;
-			scene->setAction(&scene->_sequenceManager, scene, 4517, &BF_GLOBALS._player, this, 
+			scene->setAction(&scene->_sequenceManager, scene, 4517, &BF_GLOBALS._player, this,
 				&scene->_door, NULL);
 		} else {
 			animate(ANIM_MODE_8, 1, NULL);
@@ -1485,11 +1485,11 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 		} else {
 			animate(ANIM_MODE_8, 1, NULL);
 			BF_GLOBALS._player.disableControl();
-			
+
 			if (!BF_GLOBALS.getFlag(showEugeneID))
 				T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(showEugeneID);
-			
+
 			if ((BF_GLOBALS.getFlag(showRapEugene) || BF_GLOBALS.getFlag(showEugeneNapkin)) &&
 					!BF_GLOBALS.getFlag(fMgrCallsWeasel)) {
 				T2_GLOBALS._uiElements.addScore(30);
