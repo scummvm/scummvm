@@ -56,7 +56,7 @@ void Menu::menut(int no, Common::String nom) {
 		s += ' ';
 
 	switch (h) {
-	case invent:
+	case MENU_INVENTORY:
 		if (l != 7) {
 			_inv[l] = s;
 			_inv[l].insertChar(' ', 0);
@@ -65,10 +65,10 @@ void Menu::menut(int no, Common::String nom) {
 	case MENU_MOVE:
 		_dep[l] = s;
 		break;
-	case action:
+	case MENU_ACTION:
 		_act[l] = s;
 		break;
-	case saction:
+	case MENU_SUB_ACTION:
 		_self[l] = s;
 		break;
 	case MENU_DISCUSS:
@@ -88,7 +88,7 @@ void Menu::disableMenuItem(int no) {
 	byte l = lo(no);
 
 	switch (h) {
-	case invent:
+	case MENU_INVENTORY:
 		if (l > 6) {
 			_inv[l].setChar('<', 0);
 			_inv[l].setChar('>', 21);
@@ -98,10 +98,10 @@ void Menu::disableMenuItem(int no) {
 	case MENU_MOVE:
 		_dep[l].setChar('*', 0);
 		break;
-	case action:
+	case MENU_ACTION:
 		_act[l].setChar('*', 0);
 		break;
-	case saction:
+	case MENU_SUB_ACTION:
 		_self[l].setChar('*', 0);
 		break;
 	case MENU_DISCUSS:
@@ -121,17 +121,17 @@ void Menu::enableMenuItem(int no) {
 	byte l = lo(no);
 
 	switch (h) {
-	case invent :
+	case MENU_INVENTORY:
 		_inv[l].setChar(' ', 0);
 		_inv[l].setChar(' ', 21);
 		break;
 	case MENU_MOVE:
 		_dep[l].setChar(' ', 0);
 		break;
-	case action:
+	case MENU_ACTION:
 		_act[l].setChar(' ', 0);
 		break;
-	case saction:
+	case MENU_SUB_ACTION:
 		_self[l].setChar(' ', 0);
 		_self[l].setChar(' ', 0);
 		break;
@@ -222,18 +222,18 @@ void Menu::invers(int ix) {
 		s = _dis[lo(msg4)];
 		break;
 	case 6:
-		s = g_vm->getString(S_SAVE_LOAD + lo(msg4));
+		s = g_vm->getEngineString(S_SAVE_LOAD + lo(msg4));
 		break;
 	case 7:
-		s = g_vm->getString(S_SAVE_LOAD + 1);
+		s = g_vm->getEngineString(S_SAVE_LOAD + 1);
 		s += ' ';
 		s += (char)(48 + lo(msg4));
 		break;
 	case 8:
 		if (lo(msg4) == 1) {
-			s = g_vm->getString(S_RESTART);
+			s = g_vm->getEngineString(S_RESTART);
 		} else {
-			s = g_vm->getString(S_SAVE_LOAD + 2);
+			s = g_vm->getEngineString(S_SAVE_LOAD + 2);
 			s += ' ';
 			s += (char)(47 + lo(msg4));
 		}
@@ -324,10 +324,10 @@ void Menu::menuDown(int ii) {
 				g_vm->_screenSurface.writeg(_dis[cx], 4);
 			break;
 		case 6:
-			g_vm->_screenSurface.writeg(g_vm->getString(S_SAVE_LOAD + cx), 4);
+			g_vm->_screenSurface.writeg(g_vm->getEngineString(S_SAVE_LOAD + cx), 4);
 			break;
 		case 7: {
-			Common::String s = g_vm->getString(S_SAVE_LOAD + 1);
+			Common::String s = g_vm->getEngineString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + cx);
 			g_vm->_screenSurface.writeg(s, 4);
@@ -335,9 +335,9 @@ void Menu::menuDown(int ii) {
 			break;
 		case 8:
 			if (cx == 1)
-				g_vm->_screenSurface.writeg(g_vm->getString(S_RESTART), 4);
+				g_vm->_screenSurface.writeg(g_vm->getEngineString(S_RESTART), 4);
 			else {
-				Common::String s = g_vm->getString(S_SAVE_LOAD + 2);
+				Common::String s = g_vm->getEngineString(S_SAVE_LOAD + 2);
 				s += ' ';
 				s += (char)(47 + cx);
 				g_vm->_screenSurface.writeg(s, 4);
@@ -416,20 +416,20 @@ void Menu::mdn() {
 		   || ((x > 268 * res) && (x < 268 * res + 24)));
 		if (tes) {
 			if (x < 76 * res)
-				ix = invent;
+				ix = MENU_INVENTORY;
 			else if (x < 124 * res)
 				ix = MENU_MOVE;
 			else if (x < 172 * res)
-				ix = action;
+				ix = MENU_ACTION;
 			else if (x < 220 * res)
-				ix = saction;
+				ix = MENU_SUB_ACTION;
 			else if (x < 268 * res)
 				ix = MENU_DISCUSS;
 			else
-				ix = fichier;
+				ix = MENU_FILE;
 
 			if ((ix != msg3) || (! test0))
-				if (!((ix == fichier) && ((msg3 == sauve) || (msg3 == charge)))) {
+				if (!((ix == MENU_FILE) && ((msg3 == MENU_SAVE) || (msg3 == MENU_LOAD)))) {
 					menuUp(msg3);
 					menuDown(ix);
 					msg3 = ix;
@@ -440,7 +440,7 @@ void Menu::mdn() {
 				util(x, y);
 		}
 	} else {       // There was a click
-		if ((msg3 == fichier) && (msg4 != OPCODE_NONE)) {
+		if ((msg3 == MENU_FILE) && (msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			g_vm->setMouseClick(false);
 			menuUp(msg3);

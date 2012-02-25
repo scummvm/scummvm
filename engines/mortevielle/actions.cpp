@@ -58,7 +58,7 @@ void fctMove() {
 	}
 	if ((s.mlieu == 15) && (msg[4] == g_vm->_menu._depl[6])) {
 		if (!syn)
-			ecr3(g_vm->getString(S_GO_TO));
+			ecr3(g_vm->getEngineString(S_GO_TO));
 		tfleche();
 		if (iesc)
 			okdes = false;
@@ -222,7 +222,7 @@ void fctTake() {
 		return;
 	}
 	if (!syn)
-		ecr3(g_vm->getString(S_TAKE));
+		ecr3(g_vm->getEngineString(S_TAKE));
 	tfleche();
 	if ((anyone) || (iesc))
 		return;
@@ -321,7 +321,7 @@ void fctLift() {
 	int cx;
 
 	if (!syn)
-		ecr3(g_vm->getString(S_LIFT));
+		ecr3(g_vm->getEngineString(S_LIFT));
 	tfleche();
 	if ((anyone) || (iesc))
 		return;
@@ -360,7 +360,7 @@ void fctRead() {
 		st4(caff);
 	else {
 		if (!syn)
-			ecr3(g_vm->getString(S_READ));
+			ecr3(g_vm->getEngineString(S_READ));
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(4);
@@ -389,7 +389,7 @@ void fctLook() {
 		return;
 	}
 	if (!syn)
-		ecr3(g_vm->getString(S_LOOK));
+		ecr3(g_vm->getEngineString(S_LOOK));
 	tfleche();
 	if ((anyone) || (iesc))
 		return;
@@ -475,7 +475,7 @@ void fctSearch() {
 		return;
 	}
 	if (!syn)
-		ecr3(g_vm->getString(S_SEARCH));
+		ecr3(g_vm->getEngineString(S_SEARCH));
 	tfleche();
 	if (anyone || iesc)
 		return;
@@ -563,7 +563,7 @@ void fctOpen() {
 	int cx, haz;
 
 	if (!syn)
-		ecr3(g_vm->getString(S_OPEN));
+		ecr3(g_vm->getEngineString(S_OPEN));
 	if (caff == 26) {
 		if (ment != 0) {
 			msg[4] = OPCODE_ENTER;
@@ -631,7 +631,7 @@ void fctPlace() {
 		return;
 	}
 	if (!syn)
-		ecr3(g_vm->getString(S_PUT));
+		ecr3(g_vm->getEngineString(S_PUT));
 	tfleche();
 	if (iesc)
 		crep = 998;
@@ -671,7 +671,7 @@ void fctPlace() {
 					parole(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
-					int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+					int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 					if (answer== 1)  {
 						deline(582, st, tay);
 						i = Alert::show(delig, 1);
@@ -752,7 +752,7 @@ void fctTurn() {
 		return;
 	}
 	if (!syn)
-		ecr3(g_vm->getString(S_TURN));
+		ecr3(g_vm->getEngineString(S_TURN));
 	tfleche();
 	if ((anyone) || (iesc))
 		return;
@@ -762,7 +762,7 @@ void fctTurn() {
 		if ((s.mlieu == 13) && (s.ibag == 159) && (s.iboul == 141)) {
 			repon(2, 167);
 			parole(7, 9, 1);
-			int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1)
 				g_vm->_endGame = true;
 			else
@@ -772,7 +772,7 @@ void fctTurn() {
 			repon(2, 175);
 			clsf3();
 			parole(6, -9, 1);
-			int answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+			int answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
 				s.mlieu = 16;
 				affrep();
@@ -788,7 +788,7 @@ void fctTurn() {
  */
 void fctHideSelf() {
 	if (!syn)
-		ecr3(g_vm->getString(S_HIDE_SELF));
+		ecr3(g_vm->getEngineString(S_HIDE_SELF));
 	tfleche();
 	if (!(anyone) && !(iesc)) {
 		tcoord(10);
@@ -810,7 +810,7 @@ void fctAttach() {
 		crep = 186;
 	else {
 		if (!syn)
-			ecr3(g_vm->getString(S_TIE));
+			ecr3(g_vm->getEngineString(S_TIE));
 		tfleche();
 		if (!(anyone) && !(iesc)) {
 			tcoord(8);
@@ -836,7 +836,7 @@ void fctClose() {
 	int cx, chai;
 
 	if (!syn)
-		ecr3(g_vm->getString(S_CLOSE));
+		ecr3(g_vm->getEngineString(S_CLOSE));
 	if (caff < 26) {
 		tfleche();
 		if (iesc)
@@ -875,9 +875,9 @@ void fctKnock() {
 	int l, p, haz;
 
 	if (!syn)
-		ecr3(g_vm->getString(S_HIT));
+		ecr3(g_vm->getEngineString(S_HIT));
 	if (s.mlieu == 15) {
-		l = Alert::show(g_vm->getString(S_BEFORE_USE_DEP_MENU), 1);
+		l = Alert::show(g_vm->getEngineString(S_BEFORE_USE_DEP_MENU), 1);
 		return;
 	}
 	if (s.mlieu < 25) {
@@ -917,7 +917,7 @@ void fctPut() {
 	int cx, chai;
 
 	if (!syn)
-		ecr3(g_vm->getString(S_POSE));
+		ecr3(g_vm->getEngineString(S_POSE));
 	if (s.derobj == 0)
 		crep = 186;
 	else {
@@ -1154,7 +1154,7 @@ void fctSleep() {
 	clsf3();
 	clsf2();
 	ecrf2();
-	ecr2(g_vm->getString(S_WANT_TO_WAKE_UP));
+	ecr2(g_vm->getEngineString(S_WANT_TO_WAKE_UP));
 	calch(j, h, m);
 
 	int answer;
@@ -1172,7 +1172,7 @@ void fctSleep() {
 		if (h > 23)
 			h = 0;
 		tinke();
-		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+		answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 		anyone = false;
 	} while (answer != 1);
 	crep = 998;
@@ -1185,7 +1185,7 @@ void fctSleep() {
  */
 void fctForce() {
 	if (!syn)
-		ecr3(g_vm->getString(S_SMASH));
+		ecr3(g_vm->getEngineString(S_SMASH));
 	if (caff < 25)
 		tfleche();
 	if ((! anyone) && (! iesc))
@@ -1261,7 +1261,7 @@ void fctWait() {
 			return;
 		}
 		repon(2, 102);
-		answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+		answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 	} while (answer != 2);
 	crep = 998;
 	if (!anyone)
@@ -1274,7 +1274,7 @@ void fctWait() {
  */
 void fctSound() {
 	if (!syn)
-		ecr3(g_vm->getString(S_PROBE2));
+		ecr3(g_vm->getEngineString(S_PROBE2));
 	if (caff < 27) {
 		tfleche();
 		if (!(anyone) && (!iesc))
@@ -1289,7 +1289,7 @@ void fctSound() {
  */
 void fctDiscuss() {
 	bool te[47];
-	int ix, cy, cx, max, haz, suj, co, lig, icm,
+	int cy, cx, max, haz, suj, co, lig, icm,
 	        i, tay, choi, x, y, c;
 	char tou;
 	Common::String lib[47];
@@ -1316,9 +1316,9 @@ void fctDiscuss() {
 	premtet();
 	sparl(0, suj);
 	hirs();
-	for (ix = 1; ix <= 46; ++ix)
+	for (int ix = 1; ix <= 46; ++ix)
 		te[ix] = false;
-	for (ix = 1; ix <= 45; ++ix) {
+	for (int ix = 1; ix <= 45; ++ix) {
 		deline(ix + c_tparler, st, tay);
 		lib[ix] = delig;
 		for (i = tay; i <= 40; ++i)
@@ -1376,7 +1376,7 @@ void fctDiscuss() {
 					choi = 0;
 				}
 			} else {
-				ix = cy;
+				int ix = cy;
 				if (cx == 41)
 					ix = ix + 23;
 				if (ix != choi) {
@@ -1413,7 +1413,7 @@ void fctDiscuss() {
 		} while (!((tou == '\15') || (((c != 0) || g_vm->getMouseClick()) && (choi != 0))));
 		g_vm->setMouseClick(false);
 		if (choi != 46) {
-			ix = choi - 1;
+			int ix = choi - 1;
 			if (col) {
 				col = false;
 				s.mlieu = 15;
@@ -1446,7 +1446,7 @@ void fctDiscuss() {
 				s.teauto[7] = '*';
 			}
 			if ((suj == 106) || (suj == 108) || (suj == 94)) {
-				for (ix = 29; ix <= 31; ++ix)
+				for (int ix = 29; ix <= 31; ++ix)
 					s.teauto[ix] = '*';
 				s.pourc[7] = '*';
 			}
@@ -1491,7 +1491,7 @@ void fctSmell() {
 	crep = 119;
 	if (caff < 26) {
 		if (!syn)
-			ecr3(g_vm->getString(S_SMELL));
+			ecr3(g_vm->getEngineString(S_SMELL));
 		tfleche();
 		if (!(anyone) && !(iesc))
 			if (caff == 16)
@@ -1509,7 +1509,7 @@ void fctScratch() {
 	crep = 155;
 	if (caff < 27) {
 		if (!syn)
-			ecr3(g_vm->getString(S_SCRATCH));
+			ecr3(g_vm->getEngineString(S_SCRATCH));
 		tfleche();
 	}
 	num = 0;
@@ -1570,7 +1570,7 @@ void MortevielleEngine::loseGame() {
 	_hour = 10;
 	_day = 0;
 	repon(2, 180);
-	answer = Alert::show(g_vm->getString(S_YES_NO), 1);
+	answer = Alert::show(g_vm->getEngineString(S_YES_NO), 1);
 	_quitGame = (answer != 1);
 }
 

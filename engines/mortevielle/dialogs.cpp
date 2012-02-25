@@ -424,8 +424,8 @@ bool Ques::show() {
  * Draw the F3/F8 dialog
  */
 void f3f8::draw() {
-	Common::String f3 = g_vm->getString(S_F3);
-	Common::String f8 = g_vm->getString(S_F8);
+	Common::String f3 = g_vm->getEngineString(S_F3);
+	Common::String f8 = g_vm->getEngineString(S_F8);
 
 	// Write the F3 and F8 text strings
 	g_vm->_screenSurface.putxy(3, 44);
