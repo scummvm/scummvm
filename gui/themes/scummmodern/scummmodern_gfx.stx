@@ -125,7 +125,7 @@
 		/>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'
-				scalable_file = 'FreeSansBold.ttf'
+				scalable_file = 'FreeSans.ttf'
 		/>
 		<font	resolution = 'y<400'
 		   		id = 'text_normal'
