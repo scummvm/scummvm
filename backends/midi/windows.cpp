@@ -177,13 +177,49 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 	int numDevs = midiOutGetNumDevs();
 	MIDIOUTCAPS tmp;
 
+	Common::StringArray deviceNames;
 	for (int i = 0; i < numDevs; i++) {
 		if (midiOutGetDevCaps(i, &tmp, sizeof(MIDIOUTCAPS)) != MMSYSERR_NOERROR)
 			break;
+		deviceNames.push_back(tmp.szPname);
+	}
+
+	// Check for non-unique device names. This may happen if someone has devices with identical
+	// names (e. g. more than one USB device of the exact same hardware type). It seems that this
+	// does happen in reality sometimes. We generate index numbers for these devices.
+	// This is not an ideal solution, since this index could change whenever another USB
+	// device gets plugged in or removed, switched off or just plugged into a different port.
+	// Unfortunately midiOutGetDevCaps() does not generate any other unique information
+	// that could be used. Our index numbers which match the device order should at least be
+	// a little more stable than just using the midiOutGetDevCaps() device ID, since a missing
+	// device (e.g. switched off) should actually not be harmful to our indices (as it would be
+	// when using the device IDs). The cases where users have devices with identical names should
+	// be rare enough anyway.
+	Common::Array<int> nonUniqueIndex;
+	for (int i = 0; i < numDevs; i++) {
+		int match = -1;
+		for (int ii = 0; ii < i; ii++) {
+			if (deviceNames[i] == deviceNames[ii]) {
+				if (nonUniqueIndex[ii] == -1)
+					nonUniqueIndex[ii] = 0;
+				if (++match == 0)
+					++match;
+			}
+		}
+		nonUniqueIndex.push_back(match);
+	}
+
+	// We now add the index number to the non-unique device names to make them unique.
+	for (int i = 0; i < numDevs; i++) {
+		if (nonUniqueIndex[i] != -1)
+			deviceNames[i] = Common::String::format("%s - #%.02d", deviceNames[i].c_str(), nonUniqueIndex[i]);
+	}
+
+	for (Common::StringArray::iterator i = deviceNames.begin(); i != deviceNames.end(); ++i)
 		// There is no way to detect the "MusicType" so I just set it to MT_GM
 		// The user will have to manually select his MT32 type device and his GM type device.
-		devices.push_back(MusicDevice(this, tmp.szPname, MT_GM));
-	}
+		devices.push_back(MusicDevice(this, *i, MT_GM));
+
 	return devices;
 }
 
